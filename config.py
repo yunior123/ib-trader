@@ -11,10 +11,10 @@ IB_PORT = int(os.getenv("IB_PORT", 7496))
 IB_CLIENT_ID = int(os.getenv("IB_CLIENT_ID", 7))
 
 # --- Universe ---
-# Korean penny stocks (KRX) - min lot = 1 share, uses SMART routing
-SYMBOLS = ["000040"]  # KR MOTORS CO LTD - 267 KRW (~0.28 CAD), ~200K avg volume
+# UK penny stocks (LSE) - min lot = 1 share, no $2500 CAD minimum
+SYMBOLS = ["KOD"]  # KODAL MINERALS PLC - 0.31 GBP (~0.52 CAD), ~238K avg volume
 EXCHANGE = "SMART"
-CURRENCY = "KRW"
+CURRENCY = "GBP"
 
 # --- Trend / momentum indicators ---
 EMA_FAST = 20

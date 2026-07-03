@@ -1,0 +1,6 @@
+venv/
+trades.db
+ib_trader.log
+__pycache__/
+*.pyc
+.DS_Store

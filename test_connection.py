@@ -17,9 +17,9 @@ def test_connection():
     nav = get_account_value(ib)
     print(f"✓ Net Liquidation: ${nav:,.2f}")
 
-    # Test historical data for a symbol
-    symbol = "2134"
-    print(f"\nFetching history for {symbol}...")
+    # Test historical data for configured symbol
+    symbol = cfg.SYMBOLS[0]
+    print(f"\nFetching history for {symbol} ({cfg.CURRENCY})...")
     df = get_history(ib, symbol, cfg)
     print(f"✓ Got {len(df)} bars")
     print(df.tail(3))
