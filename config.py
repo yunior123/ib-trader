@@ -12,10 +12,9 @@ IB_CLIENT_ID = int(os.getenv("IB_CLIENT_ID", 7))
 IB_ACCOUNT = os.getenv("IB_ACCOUNT", "U26942420")  # TFSA account; set to U26642820 for individual
 
 # --- Universe ---
-# UK penny stocks (LSE) - min lot = 1 share, no $2500 CAD minimum
-SYMBOLS = ["KOD"]  # KODAL MINERALS PLC - 0.31 GBP (~0.52 CAD), ~238K avg volume
+SYMBOLS = ["CUPR"]  # SUPER COPPER CORP - ~0.47 CAD, Canadian
 EXCHANGE = "SMART"
-CURRENCY = "GBP"
+CURRENCY = "CAD"
 
 # --- Trend / momentum indicators ---
 EMA_FAST = 20
