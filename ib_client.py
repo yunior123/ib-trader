@@ -8,8 +8,8 @@ log = logging.getLogger("ib-trader.client")
 
 def connect(cfg) -> IB:
     ib = IB()
-    ib.connect(cfg.IB_HOST, cfg.IB_PORT, clientId=cfg.IB_CLIENT_ID)
-    log.info("Connected to IBKR at %s:%s (clientId=%s)", cfg.IB_HOST, cfg.IB_PORT, cfg.IB_CLIENT_ID)
+    ib.connect(cfg.IB_HOST, cfg.IB_PORT, clientId=cfg.IB_CLIENT_ID, account=cfg.IB_ACCOUNT)
+    log.info("Connected to IBKR at %s:%s (clientId=%s, account=%s)", cfg.IB_HOST, cfg.IB_PORT, cfg.IB_CLIENT_ID, cfg.IB_ACCOUNT)
     return ib
 
 

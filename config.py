@@ -9,6 +9,7 @@ import os
 IB_HOST = os.getenv("IB_HOST", "127.0.0.1")
 IB_PORT = int(os.getenv("IB_PORT", 7496))
 IB_CLIENT_ID = int(os.getenv("IB_CLIENT_ID", 7))
+IB_ACCOUNT = os.getenv("IB_ACCOUNT", "U26942420")  # TFSA account; set to U26642820 for individual
 
 # --- Universe ---
 # UK penny stocks (LSE) - min lot = 1 share, no $2500 CAD minimum
