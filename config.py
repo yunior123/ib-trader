@@ -7,13 +7,14 @@ import os
 # --- Connection ---
 # TWS paper = 7497, TWS live = 7496, IB Gateway paper = 4002, IB Gateway live = 4001
 IB_HOST = os.getenv("IB_HOST", "127.0.0.1")
-IB_PORT = int(os.getenv("IB_PORT", 7497))
+IB_PORT = int(os.getenv("IB_PORT", 7496))
 IB_CLIENT_ID = int(os.getenv("IB_CLIENT_ID", 7))
 
 # --- Universe ---
-SYMBOLS = ["NVDA", "AMD"]
+# Korean penny stocks (KRX) - min lot = 1 share, uses SMART routing
+SYMBOLS = ["000040"]  # KR MOTORS CO LTD - 267 KRW (~0.28 CAD), ~200K avg volume
 EXCHANGE = "SMART"
-CURRENCY = "USD"
+CURRENCY = "KRW"
 
 # --- Trend / momentum indicators ---
 EMA_FAST = 20

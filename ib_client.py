@@ -32,7 +32,7 @@ def get_history(ib: IB, symbol: str, cfg) -> pd.DataFrame:
 
 def get_account_value(ib: IB) -> float:
     for v in ib.accountValues():
-        if v.tag == "NetLiquidation" and v.currency == "USD":
+        if v.tag == "NetLiquidation":
             return float(v.value)
     raise RuntimeError("Could not find NetLiquidation in account values")
 
