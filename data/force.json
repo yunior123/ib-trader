@@ -1,0 +1,47 @@
+{
+ "NVDA": {
+  "sym": "NVDA",
+  "force": 31.1,
+  "dir": "ARRIBA",
+  "phase": "MADURO",
+  "accel": -0.318,
+  "vol_trend": 0.162,
+  "rng_trend": -0.071,
+  "rsi": 63.8,
+  "rsi_div": false,
+  "leg_bars": 2,
+  "exhaustion": 2,
+  "action": "trail normal: stop a 1.2 ATR bajo el ultimo swing, no adelantar",
+  "ts": 1784620832
+ },
+ "QQQ": {
+  "sym": "QQQ",
+  "force": -33.3,
+  "dir": "ABAJO",
+  "phase": "GIRO",
+  "accel": -0.254,
+  "vol_trend": 0.157,
+  "rng_trend": -0.003,
+  "rsi": 31.2,
+  "rsi_div": false,
+  "leg_bars": 0,
+  "exhaustion": 0,
+  "action": "FUERA: la fuerza se giro \u2014 cerrar; solo re-entrar en direccion opuesta con print",
+  "ts": 1784620832
+ },
+ "SPY": {
+  "sym": "SPY",
+  "force": 26.0,
+  "dir": "ARRIBA",
+  "phase": "MADURO",
+  "accel": -0.137,
+  "vol_trend": 0.18,
+  "rng_trend": 0.004,
+  "rsi": 38.2,
+  "rsi_div": false,
+  "leg_bars": 2,
+  "exhaustion": 1,
+  "action": "trail normal: stop a 1.2 ATR bajo el ultimo swing, no adelantar",
+  "ts": 1784620832
+ }
+}

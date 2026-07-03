@@ -1,0 +1,29 @@
+{
+ "abs_wall": 95.0,
+ "abs_wall_sign": "+",
+ "asof": 1787490725,
+ "band_biased": true,
+ "band_pct": 14.605,
+ "contracts_used": 96,
+ "corr_abs_wall_60d": null,
+ "exp_max": 20260828,
+ "full_chain": "data/history/2026-08-17/chain_full_hood.json",
+ "max_pain": 94.0,
+ "max_pain_ibkr_band": 94.0,
+ "min_oi_required": 1000,
+ "nota": "descriptivo: p_pin=null (4 viernes de historico) y corr_abs_wall_60d=null (sin archivo de max_pain). El primer test de esta feature es COLINEALIDAD con abs_wall, no edge.",
+ "oi_in_zone": 25452,
+ "oi_src": "polygon_snapshot",
+ "p_pin": null,
+ "pin": 94.0,
+ "reason": null,
+ "spot": 95.54,
+ "sym": "HOOD",
+ "verdict": "PIN_DAY",
+ "width": 1.0,
+ "zero_dte_buy_forbidden": false,
+ "zone": [
+  93.75,
+  94.25
+ ]
+}

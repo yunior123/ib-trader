@@ -1,0 +1,7 @@
+# NBBO congelado antes de entrar: GATE_SKIP, sin trade
+{"t_ms":0,"ev":"hhmm","v":1005}
+{"t_ms":0,"ev":"chain","spot_c":70850,"iv":0.20,"spread_c":4,"exp":20260721}
+{"t_ms":0,"ev":"und","bid_c":70848,"ask_c":70852,"stale_s":10}
+{"t_ms":100,"ev":"alert","side":"CALLS","sym":"QQQ"}
+{"t_ms":4000,"ev":"expect_state","v":"IDLE"}
+{"t_ms":4000,"ev":"expect_trades","v":0}

@@ -1,0 +1,28 @@
+# picaro_recipes.txt — nombre|filtros f=|orden o=|descripcion (editable en caliente, sin tocar codigo)
+# Sintaxis investigada+validada 2026-07-17. OJO: en ta_perf_* la 'o'=ganancia, 'u'=perdida (blogs lo invierten).
+# ===== PREMARKET / DIA =====
+gappers|ta_gap_u5,sh_float_u20,sh_price_u20,sh_relvol_o5|-gap|Warrior clasico: gap>5% float<20M relvol>5x — correr 7:00-9:25 cada 10min
+gappers-calidad|ta_gap_u4,sh_price_o10,sh_avgvol_o500,sh_relvol_o2,sh_opt_option,ind_stocksonly|-gap|gappers con opciones y liquidez — para NUESTRO estilo (spreads finos)
+gap-down-fade|ta_gap_d5,sh_price_o5,sh_avgvol_o1000,ta_sma200_pa|change|gap-down>5% en nombre sano (sobre 200MA) — candidato a reversal
+momo-extremo|ta_perf_d10o,sh_relvol_o3,sh_curvol_o2000,sh_price_o5|-change|+10% HOY con relvol 3x — momentum vivo (zona de halts, cuidado)
+unusual-vol|sh_relvol_o5,sh_avgvol_o300,sh_price_o2,ind_stocksonly|-relativevolume|volumen inusual puro — algo pasa, averiguar QUE (v=320 news)
+# ===== SQUEEZE =====
+squeeze|sh_short_o20,sh_avgvol_o500,ta_perf_dup|-shortfloat|short>20% Y subiendo HOY = mecha encendida
+squeeze-radar|sh_short_o20,sh_float_u50,sh_price_o2,sh_avgvol_o500,ta_sma20_pa|-shortfloat|watchlist nocturna: SI alto sobre 20MA — falta el catalizador (SI de FINRA = 2 sem viejo)
+# ===== SWING =====
+swing-pullback|ta_sma200_pa,ta_sma50_pa,ta_sma20_pb,sh_price_o10,sh_avgvol_o500,cap_smallover|-perf4w|uptrend intacto bajo la 20MA = comprar el retroceso (exigir volumen decreciente a ojo)
+breakout-52w|ta_highlow52w_nh,sh_relvol_o1.5,sh_avgvol_o750,sh_price_o10,ta_sma200_pa|-relativevolume|maximo 52w con volumen — el retest manda (playbook regla 2)
+canslim|cap_smallover,fa_epsqoq_o20,fa_epsyoy_o20,fa_salesqoq_o20,sh_instown_o10,ta_highlow52w_b0to10h,ta_sma200_pa,sh_avgvol_o200|-perf13w|crecimiento+institucional cerca de maximos
+momo-burst|ta_perf_4w30o,ta_sma20_pa,ta_volatility_wo4,sh_avgvol_o1000,sh_price_o5|-perf4w|Qullamaggie: +30% en 4sem + ADR>4% — buscar la consolidacion a ojo (v=211)
+mean-reversion|idx_sp500,ta_rsi_os30,ta_sma200_pa|change|SP500 sano en RSI<30 — el rebote de calidad
+# ===== PEAD / EARNINGS =====
+pead|earningsdate_prevdays5,ta_gap_u5,sh_avgvol_o500|-gap|drift post-earnings dias 0-5 (entrar tras cierre dia1 > apertura)
+pead-calidad|earningsdate_prevdays5,ta_gap_u5,cap_midover,sh_price_o10,sh_opt_option,sh_avgvol_o1000|-gap|PEAD institucional con opciones — el drift mas fiable
+pre-earnings|earningsdate_nextweek,sh_opt_optionshort,sh_avgvol_o1000,ta_volatility_wo3,cap_midover|-volume|reportan la semana proxima + volatiles = radar de IV (debit spreads, regla 6)
+# ===== INSIDER =====
+insider|sh_insidertrans_o10,cap_smallover,sh_avgvol_o300|-change|insiders compraron >10% neto 6m (clusters reales: openinsider.com)
+# ===== OPCIONES / LEVERAGE =====
+options-liquid|sh_opt_optionshort,sh_avgvol_o2000,sh_price_o20,cap_midover,ind_stocksonly|-volume|universo liquido para spreads
+new-high-rs|ta_highlow52w_nh,ta_perf_13w30o,ta_sma200_pa,sh_avgvol_o1000|-perf13w|new high + fuerza relativa 13sem — el leverage de tendencia
+ipo-momo|ipodate_prevyear,ta_highlow52w_nh,sh_avgvol_o500|-perf4w|IPO <1año en maximos (como SPCX antes del scrub)
+wheel|sh_opt_option,cap_largeover,fa_div_pos,sh_avgvol_o1000,ta_rsi_os40|change|calidad con dividendo en RSI<40 — venta de puts/wheel

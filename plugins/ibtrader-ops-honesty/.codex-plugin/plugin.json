@@ -1,0 +1,18 @@
+{
+  "name": "ibtrader-ops-honesty",
+  "version": "0.1.0",
+  "description": "Diagnose stale market artifacts, source entitlement, and safe producer recovery.",
+  "author": {
+    "name": "ib-trader"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Ibtrader Ops Honesty",
+    "shortDescription": "Audit market-data freshness and ownership.",
+    "longDescription": "Read-only workflows for tracing producer-artifact-consumer paths, source latency, entitlement, and safe scoped recovery.",
+    "developerName": "ib-trader",
+    "category": "Developer Tools",
+    "capabilities": ["Read"],
+    "defaultPrompt": "Trace this stale market-data field to its owner."
+  }
+}

@@ -1,0 +1,18 @@
+name = "ibtrader"
+main = "worker.mjs"
+compatibility_date = "2026-08-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ibtrader"
+database_id = "b8877539-3a59-4093-839b-095fd5354f3f"
+
+# Cada 5 min. El propio worker decide si la ventana esta abierta: un cron no sabe de festivos.
+[triggers]
+crons = ["* * * * *"]
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+not_found_handling = "none"
+html_handling = "none"

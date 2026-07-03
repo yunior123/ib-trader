@@ -1,0 +1,182 @@
+{
+ "AAPL": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756604
+ },
+ "ADBE": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268225.830431
+ },
+ "AMD": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756604
+ },
+ "AMZN": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.7566059
+ },
+ "ASML": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756608
+ },
+ "AVGO": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756609
+ },
+ "COIN": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756615
+ },
+ "CRWV": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.7566159
+ },
+ "DRAM": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756611
+ },
+ "EWY": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756611
+ },
+ "GOOGL": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756607
+ },
+ "HOOD": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756614
+ },
+ "IBM": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.7566159
+ },
+ "INTC": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756607
+ },
+ "LRCX": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756613
+ },
+ "META": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.7566059
+ },
+ "MSFT": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756605
+ },
+ "MSTR": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756615
+ },
+ "MU": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756602
+ },
+ "NFLX": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.7566102
+ },
+ "NOK": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.7566102
+ },
+ "NVDA": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.7566001
+ },
+ "PLTR": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756614
+ },
+ "QCOM": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756609
+ },
+ "QQQ": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756598
+ },
+ "RKLB": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.7566159
+ },
+ "SKHY": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756612
+ },
+ "SMH": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.7566028
+ },
+ "SNDK": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756613
+ },
+ "SPCX": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756611
+ },
+ "SPY": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756599
+ },
+ "TSLA": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756601
+ },
+ "TSM": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756608
+ },
+ "TXN": {
+  "ok": true,
+  "src": "bybit-ws",
+  "ts": 1786268170.756617
+ },
+ "WDC": {
+  "ok": true,
+  "src": "okx-ws",
+  "ts": 1786268170.756614
+ },
+ "XLK": {
+  "ok": true,
+  "src": "bybit-ws",
+  "ts": 1786268170.756617
+ }
+}

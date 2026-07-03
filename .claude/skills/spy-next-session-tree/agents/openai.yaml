@@ -1,0 +1,4 @@
+interface:
+  display_name: "SPY Next-session Tree"
+  short_description: "Build conditional SPY trees with valid probabilities"
+  default_prompt: "Use $spy-next-session-tree to build a source-labeled SPY scenario tree whose branch probabilities sum correctly."

@@ -1,0 +1,39 @@
+{
+ "fuente": "naver_polling",
+ "delay_declarado_s": 0,
+ "nbbo": null,
+ "nbbo_motivo": "Naver no publica libro (askingPrice -> 404): no se escribe nbbo_*",
+ "simbolos": [
+  "dbhitek",
+  "hanmi",
+  "hpsp",
+  "isc",
+  "kodex200",
+  "kospi",
+  "kospi200",
+  "leeno",
+  "samsung",
+  "skhynix",
+  "solbrain",
+  "wonikips"
+ ],
+ "tipos": {
+  "dbhitek": "stock",
+  "hanmi": "stock",
+  "hpsp": "stock",
+  "isc": "stock",
+  "kodex200": "stock",
+  "kospi": "index",
+  "kospi200": "index",
+  "leeno": "stock",
+  "samsung": "stock",
+  "skhynix": "stock",
+  "solbrain": "stock",
+  "wonikips": "stock"
+ },
+ "ultimo_sondeo": 1786737723,
+ "mercado_abierto": false,
+ "barras_cerradas_este_ciclo": 0,
+ "barras_de_subasta_este_ciclo": 0,
+ "prevclose_oficiales_persistidos": 0
+}

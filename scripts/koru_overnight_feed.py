@@ -1,0 +1,42 @@
+#!/usr/bin/env python3
+"""koru_overnight_feed.py — quotes overnight de KORU (3x bull Corea) y KORZ
+(3x bear) a data/nbbo_{koru,korz}.txt para price_alarm/sirenas durante la
+sesion KRX (dom-jue 20:00-02:30 ET). Creado 2026-07-19, KORZ añadido misma
+noche (orden "avisame para comprar koru o korz"). Señal-solamente.
+clientId 96. reqMarketDataType(1) — delayed PROHIBIDO."""
+import sys, time
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, REPO); sys.path.insert(0, os.path.join(REPO, "scripts"))
+from ib_mode import get_port  # fuente unica: scripts/ib_mode.py (CLAUDE.md #7)
+import os
+os.chdir(REPO)
+from ib_insync import IB, Stock
+
+SYMS = ["KORU", "SOXS", "SQQQ", "SOXL", "TQQQ"]
+
+while True:
+    try:
+        ib = IB(); ib.connect("127.0.0.1", get_port(), clientId=96, readonly=True, timeout=15)
+        ib.RequestTimeout = 15   # causa raiz 2026-07-28 (opt_whale_watch.py): sin esto, qualifyContracts cuelga para siempre si TWS no responde
+        ib.reqMarketDataType(1)
+        tickers = {}
+        for sym in SYMS:
+            try:
+                c = Stock(sym, "OVERNIGHT", "USD")
+                if ib.qualifyContracts(c):
+                    tickers[sym.lower()] = ib.reqMktData(c, "", False, False)
+                    print(f"{sym} feed: OVERNIGHT suscrito", file=sys.stderr)
+                else:
+                    print(f"{sym}: no cualifica en OVERNIGHT", file=sys.stderr)
+            except Exception as e:
+                print(f"{sym}: subscribe fallo ({e})", file=sys.stderr)
+        while ib.isConnected():
+            ib.sleep(2)
+            for name, t in tickers.items():
+                if t.bid and t.ask and t.bid > 0 and t.ask > t.bid:
+                    with open(f"data/nbbo_{name}.txt", "w") as f:
+                        f.write(f"{time.time():.0f} {t.bid:.4f} {t.ask:.4f}\n")
+        raise ConnectionError("TWS desconectado")
+    except Exception as e:
+        print(f"koru/korz feed caido: {e} — retry 15s", file=sys.stderr)
+        time.sleep(15)

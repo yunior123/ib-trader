@@ -1,0 +1,46 @@
+{
+ "n_blocks": 40,
+ "symbols": [
+  "QQQ",
+  "SPY"
+ ],
+ "n_days": 20,
+ "trades": 4534574,
+ "volume": 276199155.0,
+ "pct_vol_at_ask": 41.77551231103513,
+ "pct_vol_at_bid": 42.17465618242026,
+ "pct_vol_inside_spread": 16.049831506544617,
+ "pct_vol_noquote_or_crossed": 0.0,
+ "pct_vol_tickrule_buy": 8.109403882861264,
+ "pct_vol_tickrule_sell": 7.93972486990411,
+ "pct_vol_unclassifiable": 0.0007027537792430972,
+ "pct_rows_subpenny": 2.3542012987328027,
+ "rows_out_of_rth": 0,
+ "auditoria_side_nativo": {
+  "pct_vol_side_B": 41.391981449038106,
+  "pct_vol_side_A": 42.12960064993682,
+  "pct_vol_side_N": 16.47841790102508,
+  "acuerdo_at_ask_con_B": 97.68174184042705,
+  "acuerdo_at_bid_con_A": 98.25072006050785
+ },
+ "per_sym": {
+  "QQQ": {
+   "rows": 2376998,
+   "vol": 142082256.0,
+   "at_ask": 40.38173000293576,
+   "at_bid": 43.28642064917663,
+   "inside": 16.331849347887605,
+   "noquote": 0.0,
+   "unclass": 0.0009438194731367441
+  },
+  "SPY": {
+   "rows": 2157576,
+   "vol": 134116899.0,
+   "at_ask": 43.25207295465428,
+   "at_bid": 40.99686274434365,
+   "inside": 15.751064301002069,
+   "noquote": 0.0,
+   "unclass": 0.00044737091632278197
+  }
+ }
+}

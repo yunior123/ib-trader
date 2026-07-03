@@ -1,0 +1,630 @@
+{
+ "ficheros": [
+  {
+   "file": "NVDA_2026-07-10_tbbo.csv.zst",
+   "sym": "NVDA",
+   "day": "2026-07-10",
+   "bars": 390,
+   "rows": 318609,
+   "volume": 20811042,
+   "pct_N": 28.618
+  },
+  {
+   "file": "NVDA_2026-07-13_tbbo.csv.zst",
+   "sym": "NVDA",
+   "day": "2026-07-13",
+   "bars": 390,
+   "rows": 348874,
+   "volume": 18914065,
+   "pct_N": 32.392
+  },
+  {
+   "file": "NVDA_2026-07-14_tbbo.csv.zst",
+   "sym": "NVDA",
+   "day": "2026-07-14",
+   "bars": 390,
+   "rows": 355720,
+   "volume": 20206201,
+   "pct_N": 28.159
+  },
+  {
+   "file": "NVDA_2026-07-15_tbbo.csv.zst",
+   "sym": "NVDA",
+   "day": "2026-07-15",
+   "bars": 390,
+   "rows": 392580,
+   "volume": 19578510,
+   "pct_N": 35.43
+  },
+  {
+   "file": "NVDA_2026-07-16_tbbo.csv.zst",
+   "sym": "NVDA",
+   "day": "2026-07-16",
+   "bars": 390,
+   "rows": 378697,
+   "volume": 18754355,
+   "pct_N": 35.373
+  },
+  {
+   "file": "NVDA_2026-07-17_tbbo.csv.zst",
+   "sym": "NVDA",
+   "day": "2026-07-17",
+   "bars": 390,
+   "rows": 421386,
+   "volume": 26695797,
+   "pct_N": 50.059
+  },
+  {
+   "file": "NVDA_2026-07-20_tbbo.csv.zst",
+   "sym": "NVDA",
+   "day": "2026-07-20",
+   "bars": 390,
+   "rows": 281754,
+   "volume": 14097190,
+   "pct_N": 33.318
+  },
+  {
+   "file": "NVDA_2026-07-21_tbbo.csv.zst",
+   "sym": "NVDA",
+   "day": "2026-07-21",
+   "bars": 390,
+   "rows": 304429,
+   "volume": 16309853,
+   "pct_N": 30.536
+  },
+  {
+   "file": "NVDA_2026-07-22_tbbo.csv.zst",
+   "sym": "NVDA",
+   "day": "2026-07-22",
+   "bars": 390,
+   "rows": 324910,
+   "volume": 19869971,
+   "pct_N": 29.803
+  },
+  {
+   "file": "NVDA_2026-07-23_tbbo.csv.zst",
+   "sym": "NVDA",
+   "day": "2026-07-23",
+   "bars": 390,
+   "rows": 324927,
+   "volume": 16190845,
+   "pct_N": 28.84
+  },
+  {
+   "file": "NVDA_2026-07-24_tbbo.csv.zst",
+   "sym": "NVDA",
+   "day": "2026-07-24",
+   "bars": 390,
+   "rows": 350100,
+   "volume": 17579979,
+   "pct_N": 31.902
+  },
+  {
+   "file": "NVDA_2026-07-27_tbbo.csv.zst",
+   "sym": "NVDA",
+   "day": "2026-07-27",
+   "bars": 390,
+   "rows": 512781,
+   "volume": 23734257,
+   "pct_N": 26.644
+  },
+  {
+   "file": "NVDA_2026-07-28_tbbo.csv.zst",
+   "sym": "NVDA",
+   "day": "2026-07-28",
+   "bars": 390,
+   "rows": 421373,
+   "volume": 21520659,
+   "pct_N": 31.421
+  },
+  {
+   "file": "NVDA_2026-07-29_tbbo.csv.zst",
+   "sym": "NVDA",
+   "day": "2026-07-29",
+   "bars": 390,
+   "rows": 527854,
+   "volume": 24442600,
+   "pct_N": 29.851
+  },
+  {
+   "file": "NVDA_2026-07-30_tbbo.csv.zst",
+   "sym": "NVDA",
+   "day": "2026-07-30",
+   "bars": 390,
+   "rows": 402344,
+   "volume": 21305695,
+   "pct_N": 29.053
+  },
+  {
+   "file": "NVDA_2026-07-31_tbbo.csv.zst",
+   "sym": "NVDA",
+   "day": "2026-07-31",
+   "bars": 390,
+   "rows": 423884,
+   "volume": 21122441,
+   "pct_N": 32.563
+  },
+  {
+   "file": "NVDA_2026-08-03_tbbo.csv.zst",
+   "sym": "NVDA",
+   "day": "2026-08-03",
+   "bars": 390,
+   "rows": 365115,
+   "volume": 19889270,
+   "pct_N": 28.898
+  },
+  {
+   "file": "NVDA_2026-08-04_tbbo.csv.zst",
+   "sym": "NVDA",
+   "day": "2026-08-04",
+   "bars": 390,
+   "rows": 367826,
+   "volume": 19462100,
+   "pct_N": 30.781
+  },
+  {
+   "file": "NVDA_2026-08-05_tbbo.csv.zst",
+   "sym": "NVDA",
+   "day": "2026-08-05",
+   "bars": 390,
+   "rows": 482754,
+   "volume": 27284973,
+   "pct_N": 31.436
+  },
+  {
+   "file": "NVDA_2026-08-06_tbbo.csv.zst",
+   "sym": "NVDA",
+   "day": "2026-08-06",
+   "bars": 390,
+   "rows": 337025,
+   "volume": 16842498,
+   "pct_N": 32.514
+  },
+  {
+   "file": "NVDA_2026-08-07_tbbo.csv.zst",
+   "sym": "NVDA",
+   "day": "2026-08-07",
+   "bars": 390,
+   "rows": 268924,
+   "volume": 15978979,
+   "pct_N": 27.588
+  },
+  {
+   "file": "NVDA_2026-08-10_tbbo.csv.zst",
+   "sym": "NVDA",
+   "day": "2026-08-10",
+   "bars": 390,
+   "rows": 293711,
+   "volume": 16903909,
+   "pct_N": 31.396
+  },
+  {
+   "file": "QQQ_2026-07-10_tbbo.csv.zst",
+   "sym": "QQQ",
+   "day": "2026-07-10",
+   "bars": 390,
+   "rows": 78658,
+   "volume": 5092644,
+   "pct_N": 13.984
+  },
+  {
+   "file": "QQQ_2026-07-13_tbbo.csv.zst",
+   "sym": "QQQ",
+   "day": "2026-07-13",
+   "bars": 390,
+   "rows": 114657,
+   "volume": 6895917,
+   "pct_N": 15.03
+  },
+  {
+   "file": "QQQ_2026-07-14_tbbo.csv.zst",
+   "sym": "QQQ",
+   "day": "2026-07-14",
+   "bars": 390,
+   "rows": 91390,
+   "volume": 5177351,
+   "pct_N": 16.37
+  },
+  {
+   "file": "QQQ_2026-07-15_tbbo.csv.zst",
+   "sym": "QQQ",
+   "day": "2026-07-15",
+   "bars": 390,
+   "rows": 107182,
+   "volume": 6624320,
+   "pct_N": 11.813
+  },
+  {
+   "file": "QQQ_2026-07-16_tbbo.csv.zst",
+   "sym": "QQQ",
+   "day": "2026-07-16",
+   "bars": 390,
+   "rows": 118735,
+   "volume": 6814516,
+   "pct_N": 15.072
+  },
+  {
+   "file": "QQQ_2026-07-17_tbbo.csv.zst",
+   "sym": "QQQ",
+   "day": "2026-07-17",
+   "bars": 390,
+   "rows": 140368,
+   "volume": 9010296,
+   "pct_N": 18.819
+  },
+  {
+   "file": "QQQ_2026-07-20_tbbo.csv.zst",
+   "sym": "QQQ",
+   "day": "2026-07-20",
+   "bars": 390,
+   "rows": 89794,
+   "volume": 5759350,
+   "pct_N": 17.414
+  },
+  {
+   "file": "QQQ_2026-07-21_tbbo.csv.zst",
+   "sym": "QQQ",
+   "day": "2026-07-21",
+   "bars": 390,
+   "rows": 82857,
+   "volume": 5111352,
+   "pct_N": 15.238
+  },
+  {
+   "file": "QQQ_2026-07-22_tbbo.csv.zst",
+   "sym": "QQQ",
+   "day": "2026-07-22",
+   "bars": 390,
+   "rows": 61431,
+   "volume": 4042523,
+   "pct_N": 15.286
+  },
+  {
+   "file": "QQQ_2026-07-23_tbbo.csv.zst",
+   "sym": "QQQ",
+   "day": "2026-07-23",
+   "bars": 390,
+   "rows": 123067,
+   "volume": 7462723,
+   "pct_N": 18.051
+  },
+  {
+   "file": "QQQ_2026-07-24_tbbo.csv.zst",
+   "sym": "QQQ",
+   "day": "2026-07-24",
+   "bars": 390,
+   "rows": 123889,
+   "volume": 7408862,
+   "pct_N": 15.128
+  },
+  {
+   "file": "QQQ_2026-07-27_tbbo.csv.zst",
+   "sym": "QQQ",
+   "day": "2026-07-27",
+   "bars": 390,
+   "rows": 154046,
+   "volume": 8449016,
+   "pct_N": 13.764
+  },
+  {
+   "file": "QQQ_2026-07-28_tbbo.csv.zst",
+   "sym": "QQQ",
+   "day": "2026-07-28",
+   "bars": 390,
+   "rows": 165283,
+   "volume": 9359221,
+   "pct_N": 19.529
+  },
+  {
+   "file": "QQQ_2026-07-29_tbbo.csv.zst",
+   "sym": "QQQ",
+   "day": "2026-07-29",
+   "bars": 390,
+   "rows": 178474,
+   "volume": 9668516,
+   "pct_N": 19.809
+  },
+  {
+   "file": "QQQ_2026-07-30_tbbo.csv.zst",
+   "sym": "QQQ",
+   "day": "2026-07-30",
+   "bars": 390,
+   "rows": 156269,
+   "volume": 9551360,
+   "pct_N": 15.774
+  },
+  {
+   "file": "QQQ_2026-07-31_tbbo.csv.zst",
+   "sym": "QQQ",
+   "day": "2026-07-31",
+   "bars": 390,
+   "rows": 137267,
+   "volume": 8155353,
+   "pct_N": 28.334
+  },
+  {
+   "file": "QQQ_2026-08-03_tbbo.csv.zst",
+   "sym": "QQQ",
+   "day": "2026-08-03",
+   "bars": 390,
+   "rows": 109588,
+   "volume": 7107041,
+   "pct_N": 13.586
+  },
+  {
+   "file": "QQQ_2026-08-04_tbbo.csv.zst",
+   "sym": "QQQ",
+   "day": "2026-08-04",
+   "bars": 390,
+   "rows": 147137,
+   "volume": 8638436,
+   "pct_N": 14.352
+  },
+  {
+   "file": "QQQ_2026-08-05_tbbo.csv.zst",
+   "sym": "QQQ",
+   "day": "2026-08-05",
+   "bars": 390,
+   "rows": 99694,
+   "volume": 5698537,
+   "pct_N": 16.856
+  },
+  {
+   "file": "QQQ_2026-08-06_tbbo.csv.zst",
+   "sym": "QQQ",
+   "day": "2026-08-06",
+   "bars": 390,
+   "rows": 97212,
+   "volume": 6054922,
+   "pct_N": 12.985
+  },
+  {
+   "file": "QQQ_2026-08-07_tbbo.csv.zst",
+   "sym": "QQQ",
+   "day": "2026-08-07",
+   "bars": 390,
+   "rows": 91173,
+   "volume": 5509591,
+   "pct_N": 14.804
+  },
+  {
+   "file": "QQQ_2026-08-10_tbbo.csv.zst",
+   "sym": "QQQ",
+   "day": "2026-08-10",
+   "bars": 390,
+   "rows": 66590,
+   "volume": 4030792,
+   "pct_N": 15.593
+  },
+  {
+   "file": "SPY_2026-07-10_tbbo.csv.zst",
+   "sym": "SPY",
+   "day": "2026-07-10",
+   "bars": 390,
+   "rows": 90192,
+   "volume": 5397733,
+   "pct_N": 14.369
+  },
+  {
+   "file": "SPY_2026-07-13_tbbo.csv.zst",
+   "sym": "SPY",
+   "day": "2026-07-13",
+   "bars": 390,
+   "rows": 108205,
+   "volume": 6534724,
+   "pct_N": 11.62
+  },
+  {
+   "file": "SPY_2026-07-14_tbbo.csv.zst",
+   "sym": "SPY",
+   "day": "2026-07-14",
+   "bars": 390,
+   "rows": 78823,
+   "volume": 4787945,
+   "pct_N": 16.036
+  },
+  {
+   "file": "SPY_2026-07-15_tbbo.csv.zst",
+   "sym": "SPY",
+   "day": "2026-07-15",
+   "bars": 390,
+   "rows": 101963,
+   "volume": 6421098,
+   "pct_N": 13.665
+  },
+  {
+   "file": "SPY_2026-07-16_tbbo.csv.zst",
+   "sym": "SPY",
+   "day": "2026-07-16",
+   "bars": 390,
+   "rows": 102610,
+   "volume": 6612303,
+   "pct_N": 14.414
+  },
+  {
+   "file": "SPY_2026-07-17_tbbo.csv.zst",
+   "sym": "SPY",
+   "day": "2026-07-17",
+   "bars": 390,
+   "rows": 118191,
+   "volume": 8383759,
+   "pct_N": 17.869
+  },
+  {
+   "file": "SPY_2026-07-20_tbbo.csv.zst",
+   "sym": "SPY",
+   "day": "2026-07-20",
+   "bars": 390,
+   "rows": 117581,
+   "volume": 6763212,
+   "pct_N": 11.25
+  },
+  {
+   "file": "SPY_2026-07-21_tbbo.csv.zst",
+   "sym": "SPY",
+   "day": "2026-07-21",
+   "bars": 390,
+   "rows": 77803,
+   "volume": 4576211,
+   "pct_N": 13.988
+  },
+  {
+   "file": "SPY_2026-07-22_tbbo.csv.zst",
+   "sym": "SPY",
+   "day": "2026-07-22",
+   "bars": 390,
+   "rows": 66559,
+   "volume": 4063010,
+   "pct_N": 14.341
+  },
+  {
+   "file": "SPY_2026-07-23_tbbo.csv.zst",
+   "sym": "SPY",
+   "day": "2026-07-23",
+   "bars": 390,
+   "rows": 113882,
+   "volume": 7002201,
+   "pct_N": 13.931
+  },
+  {
+   "file": "SPY_2026-07-24_tbbo.csv.zst",
+   "sym": "SPY",
+   "day": "2026-07-24",
+   "bars": 390,
+   "rows": 92757,
+   "volume": 5887570,
+   "pct_N": 15.084
+  },
+  {
+   "file": "SPY_2026-07-27_tbbo.csv.zst",
+   "sym": "SPY",
+   "day": "2026-07-27",
+   "bars": 390,
+   "rows": 97931,
+   "volume": 6173747,
+   "pct_N": 18.284
+  },
+  {
+   "file": "SPY_2026-07-28_tbbo.csv.zst",
+   "sym": "SPY",
+   "day": "2026-07-28",
+   "bars": 390,
+   "rows": 104724,
+   "volume": 6003292,
+   "pct_N": 13.348
+  },
+  {
+   "file": "SPY_2026-07-29_tbbo.csv.zst",
+   "sym": "SPY",
+   "day": "2026-07-29",
+   "bars": 390,
+   "rows": 172053,
+   "volume": 10693864,
+   "pct_N": 17.877
+  },
+  {
+   "file": "SPY_2026-07-30_tbbo.csv.zst",
+   "sym": "SPY",
+   "day": "2026-07-30",
+   "bars": 390,
+   "rows": 126341,
+   "volume": 8703502,
+   "pct_N": 19.106
+  },
+  {
+   "file": "SPY_2026-07-31_tbbo.csv.zst",
+   "sym": "SPY",
+   "day": "2026-07-31",
+   "bars": 390,
+   "rows": 127060,
+   "volume": 7815903,
+   "pct_N": 21.376
+  },
+  {
+   "file": "SPY_2026-08-03_tbbo.csv.zst",
+   "sym": "SPY",
+   "day": "2026-08-03",
+   "bars": 390,
+   "rows": 128346,
+   "volume": 7760097,
+   "pct_N": 20.102
+  },
+  {
+   "file": "SPY_2026-08-04_tbbo.csv.zst",
+   "sym": "SPY",
+   "day": "2026-08-04",
+   "bars": 390,
+   "rows": 132924,
+   "volume": 9432319,
+   "pct_N": 17.767
+  },
+  {
+   "file": "SPY_2026-08-05_tbbo.csv.zst",
+   "sym": "SPY",
+   "day": "2026-08-05",
+   "bars": 390,
+   "rows": 101503,
+   "volume": 5810102,
+   "pct_N": 20.253
+  },
+  {
+   "file": "SPY_2026-08-06_tbbo.csv.zst",
+   "sym": "SPY",
+   "day": "2026-08-06",
+   "bars": 390,
+   "rows": 98128,
+   "volume": 5294307,
+   "pct_N": 15.154
+  },
+  {
+   "file": "SPY_2026-08-07_tbbo.csv.zst",
+   "sym": "SPY",
+   "day": "2026-08-07",
+   "bars": 390,
+   "rows": 82611,
+   "volume": 4782468,
+   "pct_N": 17.293
+  },
+  {
+   "file": "SPY_2026-08-10_tbbo.csv.zst",
+   "sym": "SPY",
+   "day": "2026-08-10",
+   "bars": 390,
+   "rows": 67449,
+   "volume": 4017264,
+   "pct_N": 17.927
+  }
+ ],
+ "n_rows_total": 13047974,
+ "n_nontrade_total": 0,
+ "n_bars": 25740,
+ "syms": [
+  "NVDA",
+  "QQQ",
+  "SPY"
+ ],
+ "days": [
+  "2026-07-10",
+  "2026-07-13",
+  "2026-07-14",
+  "2026-07-15",
+  "2026-07-16",
+  "2026-07-17",
+  "2026-07-20",
+  "2026-07-21",
+  "2026-07-22",
+  "2026-07-23",
+  "2026-07-24",
+  "2026-07-27",
+  "2026-07-28",
+  "2026-07-29",
+  "2026-07-30",
+  "2026-07-31",
+  "2026-08-03",
+  "2026-08-04",
+  "2026-08-05",
+  "2026-08-06",
+  "2026-08-07",
+  "2026-08-10"
+ ]
+}

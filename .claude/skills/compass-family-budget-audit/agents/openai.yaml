@@ -1,0 +1,4 @@
+interface:
+  display_name: "Compass Family Budget Audit"
+  short_description: "Audit independent compass families and veto caps"
+  default_prompt: "Use $compass-family-budget-audit to inspect compass family independence, caps, vetoes, and hit rates."

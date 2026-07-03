@@ -1,0 +1,9 @@
+# Fuentes de pago dadas de baja (Yunior 2026-08-23: "only free api. paid api gone all for now").
+# Una fuente listada aquí NO produce críticos: su caída es una decisión, no una avería.
+# Para reactivarla: renovar la suscripción y quitar su línea.
+finviz
+unusual_whales
+intrinio
+databento
+polygon
+finviz_elite

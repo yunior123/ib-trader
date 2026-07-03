@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.ibtrader.polychains</string>
+  <!-- Archivador de cadenas de Polygon con griegas/IV/OI REALES (2026-07-25).
+       Sin esto la flota queda MUTEADA fuera de RTH: de 16:16 a 09:30 las cadenas de IBKR
+       vienen iv=-1 en todas las filas, y el mapa gamma salia de una IV FABRICADA de 0.30
+       — justo la foto que leen los 26 PDFs de las 04:00 y todo el fin de semana.
+       16:20 captura el OI de cierre del dia (lo que necesitan los planes de las 04:00);
+       08:45 recoge la actualizacion de OI de la noche antes de la apertura.
+       ~1,5 min por corrida (2026-07-26: 35 simbolos, ~400 paginas; la ventana de
+       5 peticiones/60s era de la key anterior, remedido 219 seguidas sin un 429). -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string><string>-lc</string>
+    <string>cd "$HOME/ib-trader" &amp;&amp; ./venv/bin/python -u scripts/poly_chain_archive.py &gt;&gt; poly_chain_archive.log 2&gt;&amp;1</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict><key>Hour</key><integer>16</integer><key>Minute</key><integer>20</integer></dict>
+    <dict><key>Hour</key><integer>8</integer><key>Minute</key><integer>45</integer></dict>
+  </array>
+  <key>RunAtLoad</key><false/>
+  <key>StandardErrorPath</key><string>/tmp/ibtrader.polychains.err</string>
+</dict>
+</plist>

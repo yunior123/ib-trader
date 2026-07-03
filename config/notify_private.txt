@@ -1,0 +1,14 @@
+# Patrones (ERE, case-insensitive) de info PERSONAL de trades: lo que case JAMAS sale a
+# ntfy/Resend/Discord — solo banner osascript + voz LOCAL (Yunior 2026-08-04, TODO 20).
+# Lo leen scripts/notify_relay.sh y scripts/discord_layout.is_private(). Editar AQUI, no en codigo.
+# Sintaxis comun grep -E + Python re: usar [0-9] (no \d); \b y \s funcionan en ambos (verificado).
+order_engine
+ORDEN (ENVIADA|RECHAZADA|LIMITE)
+\bFILL\b
+realizedPnl
+EXPIRA HOY
+POSICIONES? (ABIERTA|CERRADA|DESCONOCIDAS)
+\bU[0-9]{8}\b
+comisi[oó]n
+ARM_LIVE
+CERRAR\s

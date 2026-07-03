@@ -1,0 +1,61 @@
+{
+ "medido": "2026-08-08 (sabado, bolsa US y FX cerrados; cripto vivo)",
+ "por": "orquestador, tramas CRUDAS sin el SDK (websockets directo)",
+ "ws_url": "wss://data-ws.londonstrategicedge.com",
+ "handshake": {
+  "welcome_symbols_available": 8074,
+  "welcome_options_available": 276038,
+  "auth": {
+   "action": "auth",
+   "api_key": "<LSE_API_KEY>"
+  },
+  "subscribe": {
+   "action": "subscribe",
+   "symbol": "<UNO>"
+  },
+  "subscribe_options": {
+   "action": "subscribe_options",
+   "underlying": "<SYM>"
+  },
+  "OJO": "el campo es 'symbol' en singular; 'symbols' en plural da error MISSING_SYMBOL"
+ },
+ "categorias_en_el_socket": {
+  "Stocks": 3987,
+  "sin_categoria": 3906,
+  "Forex": 62,
+  "Crypto": 58,
+  "ETFs": 25,
+  "Commodities": 23,
+  "Indices": 13,
+  "total": 8074
+ },
+ "campos_de_la_trama_tick": [
+  "type",
+  "symbol",
+  "ts",
+  "price",
+  "bid",
+  "ask",
+  "volume"
+ ],
+ "NO_HAY_CAMPO_DE_LADO_AGRESOR": true,
+ "price_vs_bid": {
+  "muestra_ticks": 1110,
+  "price==bid": 1110,
+  "price==ask": 0,
+  "independiente": 0,
+  "conclusion": "el socket publica la PUJA en el campo price, no el precio cruzado. La quote rule daria 100% vendedor agresor => INUTIL para delta/footprint. Concluyente para cripto (vivo). En acciones la trama era el snapshot del cierre del viernes: re-verificar en sesion viva, aunque la trama no tiene ningun campo que pueda dar el lado."
+ },
+ "limite_de_suscripciones": {
+  "max": 16,
+  "plan": "registered",
+  "error": "LIMIT_REACHED: Max 16 symbols on registered plan",
+  "prueba": "se pidieron los 30 de data/fleet.txt: 16 aceptadas, 14 rechazadas",
+  "consecuencia": "un socket NO cubre la flota de 30. La suscripcion de opciones de un subyacente cuenta como 1 (SPY = 18.180 contratos, 1 cupo)"
+ },
+ "options_flow_rest": {
+  "campos": 18,
+  "trae_lado_agresor": false,
+  "verificado_contra_endpoint_crudo": "si — /vault/options/flow devuelve los mismos 18 campos que el SDK; _clean_option_rows solo redondea"
+ }
+}

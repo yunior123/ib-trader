@@ -1,0 +1,67 @@
+### OPEN+5 2026-07-30 09:34:59 EDT
+SPY: spot 734.13 flip 737.8604137342437 (recompute_15pct) NEG CW 740.0/pin PW 733.0/trampilla | viernes 238 contratos P/C 2.419 | supervivientes 3/12
+AAPL: spot 335.2 flip 338.0124054621849 (recompute_15pct) NEG CW 340.0/pin PW 325.0/trampilla | viernes 88 contratos P/C 1.066 | supervivientes 5/9
+/Users/yuniorrodriguezosorio/ib-trader/data/trees/arboles.html (45 KB, 2 hojas)
+--- VALLA ---
+{
+ "sym": "SPY",
+ "asof": 1785418499,
+ "em_src": "straddle",
+ "em_straddle": 3.68,
+ "em_straddle_pct": 0.005004,
+ "em_pct": 0.005004,
+ "em_hi": 739.1592,
+ "em_lo": 731.7992,
+ "spot": 735.47,
+ "exp": 20260730,
+ "atm_strike": 735.0,
+ "span_days": 1,
+ "calendar_days": 1,
+ "exp_span_days": 1,
+ "scaled_from_exp": false,
+ "snap_ts": 1785418397,
+ "snap_origin": "live",
+ "invalid_reason": null,
+ "earnings_checked": false,
+ "earnings_src": null,
+ "confluence": null,
+ "coverage_hist": null,
+ "nota": "coverage_hist=null: los percentiles condicionados piden ~250 sesiones y poly_bars tiene 21. No se publica probabilidad de contencion.",
+ "target_session": "2026-07-30",
+ "snap_date": "2026-07-30",
+ "snap_age_market_days": 0
+}
+vallas publicadas: 1/1 (0 fallos)
+{
+ "sym": "AAPL",
+ "asof": 1785418499,
+ "em_src": "straddle",
+ "em_straddle": 8.9,
+ "em_straddle_pct": 0.026773,
+ "em_pct": 0.026773,
+ "em_hi": 341.4402,
+ "em_lo": 323.6381,
+ "spot": 332.42,
+ "exp": 20260731,
+ "atm_strike": 332.5,
+ "span_days": 1,
+ "calendar_days": 1,
+ "exp_span_days": 1,
+ "scaled_from_exp": false,
+ "snap_ts": 1785418248,
+ "snap_origin": "live",
+ "invalid_reason": null,
+ "earnings_checked": false,
+ "earnings_src": null,
+ "confluence": null,
+ "coverage_hist": null,
+ "nota": "coverage_hist=null: los percentiles condicionados piden ~250 sesiones y poly_bars tiene 21. No se publica probabilidad de contencion.",
+ "target_session": "2026-07-30",
+ "snap_date": "2026-07-30",
+ "snap_age_market_days": 0
+}
+vallas publicadas: 1/1 (0 fallos)
+Thu Jul 30 09:35:04 EDT 2026 IMPRESO SPY -> HP_OfficeJet_Pro_9120e_Series
+Thu Jul 30 09:35:04 EDT 2026 IMPRESO AAPL -> HP_OfficeJet_Pro_9120e_Series
+439757 bytes written to file /Users/yuniorrodriguezosorio/Desktop/ib-trader/hoy/planes-2026-07-30/ARBOLES_open5_spy_aapl.pdf
+IMPRESO ARBOLES open5

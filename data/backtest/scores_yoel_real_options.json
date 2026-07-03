@@ -1,0 +1,226 @@
+{
+ "result": {
+  "con": {
+   "w": 8,
+   "n": 12,
+   "ret": 4.495078593742252
+  },
+  "sin": {
+   "w": 6,
+   "n": 10,
+   "ret": 2.166897546897547
+  }
+ },
+ "conservative": {
+  "con": {
+   "w": 6,
+   "n": 12,
+   "ret": 0.5016840180642119
+  },
+  "sin": {
+   "w": 6,
+   "n": 10,
+   "ret": 2.166897546897547
+  }
+ },
+ "detail": [
+  {
+   "sym": "amd",
+   "date": "2026-07-13",
+   "cp": "C",
+   "strike": 535,
+   "vol_ok": true,
+   "entry": 19.05,
+   "ret": 1.0
+  },
+  {
+   "sym": "asml",
+   "date": "2026-07-15",
+   "cp": "P",
+   "strike": 1830,
+   "vol_ok": true,
+   "entry": 86,
+   "ret": -0.51
+  },
+  {
+   "sym": "avgo",
+   "date": "2026-05-27",
+   "cp": "C",
+   "strike": 422.5,
+   "vol_ok": false,
+   "entry": 5.5,
+   "ret": 1.0
+  },
+  {
+   "sym": "avgo",
+   "date": "2026-07-13",
+   "cp": "P",
+   "strike": 385,
+   "vol_ok": true,
+   "entry": 6.15,
+   "ret": 1.0
+  },
+  {
+   "sym": "googl",
+   "date": "2026-05-26",
+   "cp": "C",
+   "strike": 390,
+   "vol_ok": true,
+   "entry": 3.5,
+   "ret": -1.0
+  },
+  {
+   "sym": "googl",
+   "date": "2026-05-26",
+   "cp": "C",
+   "strike": 390,
+   "vol_ok": false,
+   "entry": 2.89,
+   "ret": 1.0
+  },
+  {
+   "sym": "googl",
+   "date": "2026-05-28",
+   "cp": "C",
+   "strike": 390,
+   "vol_ok": true,
+   "entry": 1.8,
+   "ret": 1.0
+  },
+  {
+   "sym": "msft",
+   "date": "2026-05-22",
+   "cp": "P",
+   "strike": 417.5,
+   "vol_ok": true,
+   "entry": 1,
+   "ret": 1.0
+  },
+  {
+   "sym": "msft",
+   "date": "2026-05-22",
+   "cp": "P",
+   "strike": 417.5,
+   "vol_ok": false,
+   "entry": 0.63,
+   "ret": -0.97
+  },
+  {
+   "sym": "msft",
+   "date": "2026-05-22",
+   "cp": "P",
+   "strike": 417.5,
+   "vol_ok": false,
+   "entry": 0.2,
+   "ret": -0.9
+  },
+  {
+   "sym": "nvda",
+   "date": "2026-05-28",
+   "cp": "C",
+   "strike": 215,
+   "vol_ok": false,
+   "entry": 0.91,
+   "ret": 1.0
+  },
+  {
+   "sym": "qqq",
+   "date": "2026-07-06",
+   "cp": "P",
+   "strike": 722.5,
+   "vol_ok": false,
+   "entry": 6.43,
+   "ret": 1.0
+  },
+  {
+   "sym": "qqq",
+   "date": "2026-07-09",
+   "cp": "C",
+   "strike": 723,
+   "vol_ok": true,
+   "entry": 2.1,
+   "ret": 1.0
+  },
+  {
+   "sym": "qqq",
+   "date": "2026-07-15",
+   "cp": "P",
+   "strike": 718,
+   "vol_ok": true,
+   "entry": 3.8,
+   "ret": 1.0
+  },
+  {
+   "sym": "qqq",
+   "date": "2026-07-15",
+   "cp": "P",
+   "strike": 718,
+   "vol_ok": false,
+   "entry": 5.16,
+   "ret": 1.0
+  },
+  {
+   "sym": "spy",
+   "date": "2026-06-22",
+   "cp": "C",
+   "strike": 744,
+   "vol_ok": true,
+   "entry": 8.71,
+   "ret": -1.0
+  },
+  {
+   "sym": "tsla",
+   "date": "2026-06-03",
+   "cp": "C",
+   "strike": 425,
+   "vol_ok": true,
+   "entry": 6.5,
+   "ret": -1.0
+  },
+  {
+   "sym": "tsla",
+   "date": "2026-06-03",
+   "cp": "C",
+   "strike": 425,
+   "vol_ok": false,
+   "entry": 5.5,
+   "ret": -1.0
+  },
+  {
+   "sym": "tsm",
+   "date": "2026-06-25",
+   "cp": "C",
+   "strike": 435,
+   "vol_ok": false,
+   "entry": 9.9,
+   "ret": -0.97
+  },
+  {
+   "sym": "txn",
+   "date": "2026-06-23",
+   "cp": "P",
+   "strike": 305,
+   "vol_ok": true,
+   "entry": 4.87,
+   "ret": 1.0
+  },
+  {
+   "sym": "txn",
+   "date": "2026-07-08",
+   "cp": "C",
+   "strike": 302.5,
+   "vol_ok": true,
+   "entry": 5.3,
+   "ret": 1.0
+  },
+  {
+   "sym": "xlk",
+   "date": "2026-06-11",
+   "cp": "C",
+   "strike": 182.5,
+   "vol_ok": false,
+   "entry": 0.6,
+   "ret": 1.0
+  }
+ ]
+}

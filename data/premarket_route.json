@@ -1,0 +1,104 @@
+{
+ "AMD": {
+  "bolsa_primaria": "Nasdaq",
+  "dataset": "XNAS.ITCH",
+  "evidencia": {
+   "ARCX.PILLAR": 0,
+   "BATS.PITCH": "ERR:BentoClientError",
+   "EPRL.DOM": 0,
+   "IEXG.TOPS": 0,
+   "MEMX.MEMOIR": "ERR:BentoClientError",
+   "XASE.PILLAR": 0,
+   "XCHI.PILLAR": 0,
+   "XNAS.ITCH": 138,
+   "XNYS.PILLAR": 0
+  },
+  "medido_en": "2026-07-23",
+  "metodo": "record_count(imbalance) por feed directo; la subasta solo la publica la bolsa donde el simbolo cotiza"
+ },
+ "MU": {
+  "bolsa_primaria": "Nasdaq",
+  "dataset": "XNAS.ITCH",
+  "evidencia": {
+   "ARCX.PILLAR": 0,
+   "BATS.PITCH": "ERR:BentoClientError",
+   "EPRL.DOM": 0,
+   "IEXG.TOPS": 0,
+   "MEMX.MEMOIR": "ERR:BentoClientError",
+   "XASE.PILLAR": 0,
+   "XCHI.PILLAR": 0,
+   "XNAS.ITCH": 138,
+   "XNYS.PILLAR": 0
+  },
+  "medido_en": "2026-07-23",
+  "metodo": "record_count(imbalance) por feed directo; la subasta solo la publica la bolsa donde el simbolo cotiza"
+ },
+ "NVDA": {
+  "bolsa_primaria": "Nasdaq",
+  "dataset": "XNAS.ITCH",
+  "evidencia": {
+   "ARCX.PILLAR": 0,
+   "BATS.PITCH": "ERR:BentoClientError",
+   "EPRL.DOM": 0,
+   "IEXG.TOPS": 0,
+   "MEMX.MEMOIR": "ERR:BentoClientError",
+   "XASE.PILLAR": 0,
+   "XCHI.PILLAR": 0,
+   "XNAS.ITCH": 138,
+   "XNYS.PILLAR": 0
+  },
+  "medido_en": "2026-07-23",
+  "metodo": "record_count(imbalance) por feed directo; la subasta solo la publica la bolsa donde el simbolo cotiza"
+ },
+ "QQQ": {
+  "bolsa_primaria": "Nasdaq",
+  "dataset": "XNAS.ITCH",
+  "evidencia": {
+   "ARCX.PILLAR": 0,
+   "BATS.PITCH": "ERR:BentoClientError",
+   "EPRL.DOM": 0,
+   "IEXG.TOPS": 0,
+   "MEMX.MEMOIR": "ERR:BentoClientError",
+   "XASE.PILLAR": 0,
+   "XCHI.PILLAR": 0,
+   "XNAS.ITCH": 138,
+   "XNYS.PILLAR": 0
+  },
+  "medido_en": "2026-07-23",
+  "metodo": "record_count(imbalance) por feed directo; la subasta solo la publica la bolsa donde el simbolo cotiza"
+ },
+ "SMH": {
+  "bolsa_primaria": "Nasdaq",
+  "dataset": "XNAS.ITCH",
+  "evidencia": {
+   "ARCX.PILLAR": 0,
+   "BATS.PITCH": "ERR:BentoClientError",
+   "EPRL.DOM": 0,
+   "IEXG.TOPS": 0,
+   "MEMX.MEMOIR": "ERR:BentoClientError",
+   "XASE.PILLAR": 0,
+   "XCHI.PILLAR": 0,
+   "XNAS.ITCH": 138,
+   "XNYS.PILLAR": 0
+  },
+  "medido_en": "2026-07-23",
+  "metodo": "record_count(imbalance) por feed directo; la subasta solo la publica la bolsa donde el simbolo cotiza"
+ },
+ "SPY": {
+  "bolsa_primaria": "NYSE Arca",
+  "dataset": "ARCX.PILLAR",
+  "evidencia": {
+   "ARCX.PILLAR": 516,
+   "BATS.PITCH": "ERR:BentoClientError",
+   "EPRL.DOM": 0,
+   "IEXG.TOPS": 0,
+   "MEMX.MEMOIR": "ERR:BentoClientError",
+   "XASE.PILLAR": 0,
+   "XCHI.PILLAR": 0,
+   "XNAS.ITCH": 138,
+   "XNYS.PILLAR": 0
+  },
+  "medido_en": "2026-08-05",
+  "metodo": "record_count(imbalance) por feed directo; la subasta solo la publica la bolsa donde el simbolo cotiza"
+ }
+}

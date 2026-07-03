@@ -1,0 +1,27 @@
+{
+ "method": "faithful-v4-real-BB-2sigma-15m",
+ "rebote_sma20": {
+  "con": {
+   "n": 111,
+   "p_win": 0.58,
+   "avg_ret": 0.16
+  },
+  "sin": {
+   "n": 594,
+   "p_win": 0.46,
+   "avg_ret": -0.05
+  }
+ },
+ "iman_BB": {
+  "con": {
+   "n": 1849,
+   "p_win": 0.47,
+   "avg_ret": -0.03
+  },
+  "sin": {
+   "n": 811,
+   "p_win": 0.51,
+   "avg_ret": 0.05
+  }
+ }
+}

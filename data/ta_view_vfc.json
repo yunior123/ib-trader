@@ -1,0 +1,16 @@
+{
+ "ts": 1785333210,
+ "sym": "VFC",
+ "veredicto": "bear",
+ "rating": "Underweight",
+ "prob": null,
+ "tesis": "Sell 40-50% of any existing VFC position immediately at the market; hold the remainder for a potential bounce with a hard stop-loss at $14.50. For new capital, do not initiate a position. This phased reduction acknowledges the 47.1% hold rate on 4th+ touches in a negative regime (statistically significant, n_eff=70.9) while limiting catastrophic tail risk from the death cross, MACD bearish flip, and 12% gap-down on 5.3M institutional distribution.",
+ "niveles": [
+  {
+   "tipo": "target",
+   "nivel": 14.5
+  }
+ ],
+ "latency_s": 181.4,
+ "fuente": "tradingagents"
+}

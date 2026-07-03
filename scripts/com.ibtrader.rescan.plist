@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Autonomous intraday research (Yunior 2026-07-10): every 15 min during
+     market hours rescan.sh re-runs the full scanner — Finviz Elite realtime
+     top gainers + MANDATORY TradingAgents vetting — and refreshes today's
+     watchlist. The alert bot picks up new names automatically each poll.
+     Install: cp scripts/com.ibtrader.rescan.plist ~/Library/LaunchAgents/
+              launchctl load ~/Library/LaunchAgents/com.ibtrader.rescan.plist -->
+<plist version="1.0">
+<dict>
+    <key>Label</key><string>com.ibtrader.rescan</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/zsh</string>
+        <string>/Users/yuniorrodriguezosorio/ib-trader/screener/rescan.sh</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/yuniorrodriguezosorio/ib-trader</string>
+    <key>RunAtLoad</key><true/>
+    <key>StartInterval</key><integer>900</integer>
+    <key>AbandonProcessGroup</key><true/>
+    <key>StandardOutPath</key>
+    <string>/Users/yuniorrodriguezosorio/ib-trader/screener/rescan_agent.out</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/yuniorrodriguezosorio/ib-trader/screener/rescan_agent.err</string>
+</dict>
+</plist>

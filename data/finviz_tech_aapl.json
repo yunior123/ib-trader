@@ -1,0 +1,23 @@
+{
+ "price": 341.25,
+ "beta": 1.06,
+ "atr14": 7.63,
+ "rsi14": 69.49,
+ "change_pct": 0.34,
+ "change_from_open_pct": -0.02,
+ "gap_pct": 0.37,
+ "volume": 205236.0,
+ "sma20_pct": 5.8,
+ "sma20": 322.5425,
+ "sma50_pct": 10.56,
+ "sma50": 308.6559,
+ "sma200_pct": 23.09,
+ "sma200": 277.2362,
+ "wk52_hi_pct": -0.48,
+ "wk52_hi": 342.8959,
+ "wk52_lo_pct": 69.35,
+ "wk52_lo": 201.5058,
+ "sym": "AAPL",
+ "src": "finviz",
+ "feed_ts": 1785314834.606452
+}

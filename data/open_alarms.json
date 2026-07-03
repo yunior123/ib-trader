@@ -1,0 +1,65 @@
+{
+ "_meta": {
+  "set": "2026-07-31 09:38 ET",
+  "source": "0DTE UW live + IBKR print",
+  "regime": "NEG gamma al spot en los 6 = extiende+whip"
+ },
+ "MU": {
+  "spot": 926,
+  "bias": "FADE (1000 no validado, puts frescos 920)",
+  "buy": "solo si ROMPE 950 con sweeps frescos 950/960C + print (ahora ausentes)",
+  "sell_fade": "rechaza 950 (2 lecturas) O pierde 900 -> gamma NEG acelera a max pain 850, luego 800",
+  "levels": {
+   "resist": 950,
+   "shelf": 900,
+   "target_down": 850
+  },
+  "fired": "through850->800"
+ },
+ "QQQ": {
+  "spot": 694,
+  "bias": "BULL (sweeps frescos 692/695C, 9:1)",
+  "buy": "rompe 700 con sweeps continuos / retest-rechazo-y-va",
+  "invalid": "pierde 690",
+  "levels": {
+   "wall": 700,
+   "support": 690
+  },
+  "fired": "lose690"
+ },
+ "NVDA": {
+  "spot": 199.7,
+  "bias": "BULL peque\u00f1o en el techo",
+  "buy": "rompe 200 con volumen",
+  "sell_scalp": "rechaza 200 (techo, calls escritas)",
+  "invalid": "pierde 195",
+  "levels": {
+   "wall": 200,
+   "support": 195
+  },
+  "fired": "reject200"
+ },
+ "SPY": {
+  "spot": 745.8,
+  "bias": "reclam\u00f3 flip 745",
+  "buy": "aguanta >745 -> 750",
+  "sell": "pierde 745 -> NEG acelera a 740",
+  "levels": {
+   "flip": 745,
+   "callwall": 750,
+   "putwall": 740
+  },
+  "fired": "lost740"
+ },
+ "NOK": {
+  "spot": 9.51,
+  "bias": "PIN 9.5 (max pain)",
+  "buy": "rompe 10 con calls frescos (ausentes)",
+  "levels": {
+   "pin": 9.5,
+   "break": 10,
+   "support": 9.17
+  },
+  "fired": "lost9.17"
+ }
+}

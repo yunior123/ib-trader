@@ -1,0 +1,541 @@
+11:42:38 | TEST-LARGO | AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA11:42:38 | TEST-CORTO | ok
+18:51:33 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 390.0 ↑ · prob 31% (estructural, no WR medido)
+18:51:33 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 25% (estructural, no WR medido)
+18:52:53 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 390.0 ↑ · prob 31% (estructural, no WR medido)
+18:52:53 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 25% (estructural, no WR medido)
+18:57:56 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 25% (estructural, no WR medido)
+18:57:56 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 390.0 ↑ · prob 31% (estructural, no WR medido)
+19:01:12 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 390.0 ↑ · prob 31% (estructural, no WR medido)
+19:01:12 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 25% (estructural, no WR medido)
+19:03:11 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 390.0 ↑ · prob 31% (estructural, no WR medido)
+19:03:11 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 25% (estructural, no WR medido)
+19:05:19 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 390.0 ↑ · prob 31% (estructural, no WR medido)
+19:05:19 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 25% (estructural, no WR medido)
+19:08:01 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 25% (estructural, no WR medido)
+19:08:01 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 390.0 ↑ · prob 31% (estructural, no WR medido)
+19:13:03 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 25% (estructural, no WR medido)
+19:13:03 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 390.0 ↑ · prob 31% (estructural, no WR medido)
+19:17:46 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 25% (estructural, no WR medido)
+19:17:46 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 390.0 ↑ · prob 31% (estructural, no WR medido)
+19:22:49 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 25% (estructural, no WR medido)
+19:22:49 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 390.0 ↑ · prob 31% (estructural, no WR medido)
+19:27:52 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 25% (estructural, no WR medido)
+19:27:52 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 390.0 ↑ · prob 31% (estructural, no WR medido)
+19:32:54 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 25% (estructural, no WR medido)
+19:32:54 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 390.0 ↑ · prob 31% (estructural, no WR medido)
+19:36:26 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 390.0 ↑ · prob 31% (estructural, no WR medido)
+19:36:27 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 25% (estructural, no WR medido)
+19:38:20 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 390.0 ↑ · prob 31% (estructural, no WR medido)
+19:38:20 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 25% (estructural, no WR medido)
+19:39:25 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 25% (estructural, no WR medido)
+19:39:25 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 390.0 ↑ · prob 31% (estructural, no WR medido)
+19:43:23 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 390.0 ↑ · prob 31% (estructural, no WR medido)
+19:43:23 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 25% (estructural, no WR medido)
+19:48:09 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 25% (estructural, no WR medido)
+19:48:09 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 390.0 ↑ · prob 31% (estructural, no WR medido)
+19:53:12 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 390.0 ↑ · prob 31% (estructural, no WR medido)
+19:53:12 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 25% (estructural, no WR medido)
+19:54:55 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 25% (estructural, no WR medido)
+19:54:55 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 390.0 ↑ · prob 31% (estructural, no WR medido)
+19:57:57 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 390.0 ↑ · prob 31% (estructural, no WR medido)
+19:57:57 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 25% (estructural, no WR medido)
+19:58:21 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 390.0 ↑ · prob 31% (estructural, no WR medido)
+19:58:21 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 25% (estructural, no WR medido)
+20:02:40 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+20:02:40 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+20:02:40 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+20:02:40 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+20:02:40 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.74% px 10.89
+20:02:40 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.38% px 10.32
+20:02:40 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.90% px 10.46
+20:02:40 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.29% px 10.52
+20:02:40 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -6.48% px 9.86
+20:02:40 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.41% px 9.80
+20:02:40 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.04% px 9.73
+20:02:40 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.21% px 9.51
+20:02:40 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.04% px 9.70
+20:02:40 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.34% px 9.41
+20:02:40 | WARMUP NOK: SELL | NOK @ 9.29 | prob 60% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+20:02:40 | WARMUP NOK: SELL | NOK @ 9.25 | prob 60% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+20:02:40 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.01% px 9.15
+20:02:40 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.59% px 59.12
+20:02:40 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.74% px 58.53
+20:02:40 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.34% px 57.43
+20:02:40 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +3.03% px 58.60
+20:02:40 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.02% px 57.86
+20:02:40 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.17% px 58.62
+20:02:40 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.72% px 58.21
+20:02:40 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.77% px 58.79
+20:02:40 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.66% px 58.08
+20:02:40 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.19% px 56.10
+20:02:40 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.50% px 56.95
+20:02:40 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.30% px 207.45
+20:02:40 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.88% px 55.94
+20:02:40 | WARMUP DRAM: SELL | DRAM @ 53.95 | prob 57% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+20:02:40 | WARMUP DRAM: SELL | DRAM @ 53.62 | prob 57% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+20:02:40 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.02% px 210.28
+20:02:40 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.05% px 206.02
+20:02:40 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.14% px 210.19
+20:02:40 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.03% px 207.49
+20:02:40 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.43% px 53.62
+20:02:40 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.07% px 54.57
+20:02:40 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.57% px 54.31
+20:02:40 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.53% px 53.66
+20:02:40 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.01% px 415.31
+20:02:40 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.26% px 411.30
+20:02:40 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.00% px 407.75
+20:02:40 | WARMUP TSM: SELL | TSM @ 405.36 | prob 63% | rebote-4%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=TREND_DOWN
+20:02:40 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.17% px 541.58
+20:02:40 | WARMUP AMD: SELL | AMD @ 538.10 | prob 56% | rompe-TL-1m-abajo+vol-2.0x+ST5-alineado+ribbon15-bajista+bajo-VWAP+retest-ok | fase=UNKNOWN
+20:02:40 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.09% px 533.50
+20:02:40 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.34% px 544.00
+20:02:40 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.22% px 1783.00
+20:02:40 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.10% px 541.80
+20:02:40 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.05% px 1804.54
+20:02:40 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +3.32% px 1848.46
+20:02:40 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.42% px 531.90
+20:02:40 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.31% px 536.42
+20:02:40 | WARMUP AAPL: SELL | AAPL @ 321.63 | prob 60% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=UNKNOWN
+20:02:40 | WARMUP AAPL TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.58% px 320.58
+20:02:40 | WARMUP AAPL: BUY | COMPRAR AAPL @ 320.81 | reversal a alza | entrada 333.53 | mov +4.0%
+20:02:40 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.08% px 523.85
+20:02:40 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.46% px 1803.50
+20:02:40 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.54% px 1767.17
+20:02:40 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.13% px 1792.45
+20:02:40 | WARMUP AAPL: BUY | COMPRAR AAPL @ 320.81 | target 333.64 | floor 324.02 | capitulacion confirmada
+20:02:40 | WARMUP ASML: SELL | ASML @ 1775.03 | prob 61% | rebote-10%+MACD1-gira-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=TREND_DOWN
+20:02:40 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.00% px 1761.77
+20:02:40 | WARMUP TSM: SELL | TSM @ 406.33 | prob 63% | rebote-23%+MACD1-gira-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=TREND_DOWN
+20:02:41 | WARMUP AAPL TERREMOTO ALZA | CUSUM: subiendo fuerte +1.51% px 324.24
+20:02:41 | WARMUP AAPL: BUY | AAPL @ 326.22 | prob 56% | estructura-rota-arriba+MACD15-flip-arriba+recupera-BB15mid+MACD15-verde+ST5-alineado | fase=UNKNOWN
+20:02:41 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.18% px 401.80
+20:02:41 | WARMUP AAPL TERREMOTO ALZA | CUSUM: subiendo fuerte +1.63% px 329.22
+20:02:41 | WARMUP AAPL: BUY | AAPL @ 329.75 | prob 59% | pullback-1%+MACD1-gira+MACD15-verde+ST5-alineado+ribbon15-alcista | fase=TREND_UP
+20:02:41 | WARMUP AAPL: SELL | VENDER AAPL @ 333.64 | target | entrada 320.81 | PnL +4.0%
+20:02:41 | WARMUP EWY: SELL | EWY @ 171.37 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=UNKNOWN
+20:02:41 | WARMUP EWY: SELL | EWY @ 172.65 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=UNKNOWN
+20:02:41 | WARMUP MU TERREMOTO ALZA | CUSUM: subiendo fuerte +5.32% px 1010.12
+20:02:41 | WARMUP MU TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.21% px 960.00
+20:02:41 | WARMUP EWY TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.84% px 167.47
+20:02:41 | WARMUP MU TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.11% px 936.23
+20:02:41 | WARMUP EWY: SELL | EWY @ 165.45 | prob 62% | rebote-23%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=TREND_DOWN
+20:02:41 | WARMUP EWY: SELL | EWY @ 164.83 | prob 62% | rebote-50%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=TREND_DOWN
+20:02:41 | WARMUP MU: SELL | MU @ 933.18 | prob 62% | rebote-5%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+20:02:41 | WARMUP MU: SELL | MU @ 928.60 | prob 60% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+20:02:41 | WARMUP MU: SELL | MU @ 922.59 | prob 60% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+20:02:41 | WARMUP EWY: SELL | EWY @ 165.63 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=TREND_DOWN
+20:07:40 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+20:07:40 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+20:07:41 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+20:07:41 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+20:10:24 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.54 — TRANSICIÓN, no direccional
+20:12:41 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+20:12:41 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+20:12:41 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+20:12:41 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+20:17:42 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+20:17:42 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+20:17:42 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+20:17:42 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+20:21:33 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+20:21:33 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+20:21:33 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+20:21:33 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+20:21:34 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.74% px 10.89
+20:21:34 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.59% px 59.12
+20:21:34 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.38% px 10.32
+20:21:34 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.90% px 10.46
+20:21:34 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.29% px 10.52
+20:21:34 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -6.48% px 9.86
+20:21:34 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.74% px 58.53
+20:21:34 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.41% px 9.80
+20:21:34 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.34% px 57.43
+20:21:34 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.04% px 9.73
+20:21:34 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.21% px 9.51
+20:21:34 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +3.03% px 58.60
+20:21:34 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.04% px 9.70
+20:21:34 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.02% px 57.86
+20:21:34 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.17% px 58.62
+20:21:34 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.72% px 58.21
+20:21:34 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.77% px 58.79
+20:21:34 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.34% px 9.41
+20:21:34 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.66% px 58.08
+20:21:34 | WARMUP NOK: SELL | NOK @ 9.29 | prob 60% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+20:21:34 | WARMUP NOK: SELL | NOK @ 9.25 | prob 60% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+20:21:34 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.01% px 9.15
+20:21:34 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.19% px 56.10
+20:21:34 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.50% px 56.95
+20:21:34 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.88% px 55.94
+20:21:34 | WARMUP DRAM: SELL | DRAM @ 53.95 | prob 57% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+20:21:34 | WARMUP DRAM: SELL | DRAM @ 53.62 | prob 57% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+20:21:34 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.43% px 53.62
+20:21:34 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.07% px 54.57
+20:21:34 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.57% px 54.31
+20:21:34 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.53% px 53.66
+20:21:34 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.30% px 207.45
+20:21:34 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.02% px 210.28
+20:21:34 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.05% px 206.02
+20:21:34 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.14% px 210.19
+20:21:34 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.03% px 207.49
+20:21:34 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.01% px 415.31
+20:21:34 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.17% px 541.58
+20:21:34 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.26% px 411.30
+20:21:34 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.00% px 407.75
+20:21:34 | WARMUP AMD: SELL | AMD @ 538.10 | prob 56% | rompe-TL-1m-abajo+vol-2.0x+ST5-alineado+ribbon15-bajista+bajo-VWAP+retest-ok | fase=UNKNOWN
+20:21:34 | WARMUP TSM: SELL | TSM @ 405.36 | prob 63% | rebote-4%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=TREND_DOWN
+20:21:34 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.09% px 533.50
+20:21:34 | WARMUP TSM: SELL | TSM @ 406.33 | prob 63% | rebote-23%+MACD1-gira-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=TREND_DOWN
+20:21:34 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.18% px 401.80
+20:21:34 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.34% px 544.00
+20:21:34 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.10% px 541.80
+20:21:34 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.42% px 531.90
+20:21:34 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.31% px 536.42
+20:21:34 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.08% px 523.85
+20:21:34 | WARMUP AAPL: SELL | AAPL @ 321.63 | prob 60% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=UNKNOWN
+20:21:34 | WARMUP AAPL TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.58% px 320.58
+20:21:34 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.22% px 1783.00
+20:21:34 | WARMUP AAPL: BUY | COMPRAR AAPL @ 320.81 | reversal a alza | entrada 333.53 | mov +4.0%
+20:21:34 | WARMUP AAPL: BUY | COMPRAR AAPL @ 320.81 | target 333.64 | floor 324.02 | capitulacion confirmada
+20:21:34 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.05% px 1804.54
+20:21:34 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +3.32% px 1848.46
+20:21:34 | WARMUP AAPL TERREMOTO ALZA | CUSUM: subiendo fuerte +1.51% px 324.24
+20:21:34 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.46% px 1803.50
+20:21:34 | WARMUP AAPL: BUY | AAPL @ 326.22 | prob 56% | estructura-rota-arriba+MACD15-flip-arriba+recupera-BB15mid+MACD15-verde+ST5-alineado | fase=UNKNOWN
+20:21:34 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.54% px 1767.17
+20:21:34 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.13% px 1792.45
+20:21:34 | WARMUP AAPL TERREMOTO ALZA | CUSUM: subiendo fuerte +1.63% px 329.22
+20:21:34 | WARMUP ASML: SELL | ASML @ 1775.03 | prob 61% | rebote-10%+MACD1-gira-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=TREND_DOWN
+20:21:34 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.00% px 1761.77
+20:21:34 | WARMUP AAPL: BUY | AAPL @ 329.75 | prob 59% | pullback-1%+MACD1-gira+MACD15-verde+ST5-alineado+ribbon15-alcista | fase=TREND_UP
+20:21:34 | WARMUP AAPL: SELL | VENDER AAPL @ 333.64 | target | entrada 320.81 | PnL +4.0%
+20:21:34 | WARMUP MU TERREMOTO ALZA | CUSUM: subiendo fuerte +5.32% px 1010.12
+20:21:34 | WARMUP MU TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.21% px 960.00
+20:21:34 | WARMUP MU TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.11% px 936.23
+20:21:34 | WARMUP MU: SELL | MU @ 933.18 | prob 62% | rebote-5%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+20:21:34 | WARMUP MU: SELL | MU @ 928.60 | prob 60% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+20:21:34 | WARMUP MU: SELL | MU @ 922.59 | prob 60% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+20:21:34 | WARMUP EWY: SELL | EWY @ 171.37 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=UNKNOWN
+20:21:34 | WARMUP EWY: SELL | EWY @ 172.65 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=UNKNOWN
+20:21:34 | WARMUP EWY TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.84% px 167.47
+20:21:34 | WARMUP EWY: SELL | EWY @ 165.45 | prob 62% | rebote-23%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=TREND_DOWN
+20:21:34 | WARMUP EWY: SELL | EWY @ 164.83 | prob 62% | rebote-50%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=TREND_DOWN
+20:21:34 | WARMUP EWY: SELL | EWY @ 165.63 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=TREND_DOWN
+20:22:50 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 390.0 ↑ · prob 31% (estructural, no WR medido)
+20:23:05 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 28% (estructural, no WR medido)
+20:26:34 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+20:26:34 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+20:26:34 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+20:26:34 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+20:31:35 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+20:31:35 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+20:31:35 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+20:31:35 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+20:36:36 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+20:36:36 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+20:36:36 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+20:36:36 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+20:41:37 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+20:41:37 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+20:41:37 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+20:41:37 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+20:46:37 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+20:46:37 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+20:46:37 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+20:46:37 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+20:51:38 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+20:51:38 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+20:51:38 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+20:51:38 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+20:56:39 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+20:56:39 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+20:56:39 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+20:56:39 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+21:01:39 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+21:01:39 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+21:01:39 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+21:01:39 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+21:06:40 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+21:06:40 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+21:06:40 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+21:06:40 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+21:11:12 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.52 — TRANSICIÓN, no direccional
+21:11:41 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+21:11:41 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+21:11:41 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+21:11:41 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+21:12:12 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.51 — TRANSICIÓN, no direccional
+21:12:42 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.52 — TRANSICIÓN, no direccional
+21:13:57 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.53 — TRANSICIÓN, no direccional
+21:14:12 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.52 — TRANSICIÓN, no direccional
+21:14:57 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.53 — TRANSICIÓN, no direccional
+21:15:28 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.52 — TRANSICIÓN, no direccional
+21:16:42 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+21:16:42 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+21:16:42 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+21:16:42 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+21:17:58 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.51 — TRANSICIÓN, no direccional
+21:18:58 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.53 — TRANSICIÓN, no direccional
+21:19:13 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.51 — TRANSICIÓN, no direccional
+21:19:32 | 🧲 ESTRUCTURAL flip MU | MU pegado al flip 934.0 — TRANSICIÓN, no direccional
+21:19:43 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.52 — TRANSICIÓN, no direccional
+21:19:47 | 🧲 ESTRUCTURAL flip MU | MU pegado al flip 934.01 — TRANSICIÓN, no direccional
+21:20:02 | 🧲 ESTRUCTURAL flip MU | MU pegado al flip 934.04 — TRANSICIÓN, no direccional
+21:20:17 | 🧲 ESTRUCTURAL flip MU | MU pegado al flip 934.0 — TRANSICIÓN, no direccional
+21:21:42 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+21:21:42 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+21:21:42 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+21:21:42 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+21:23:59 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.51 — TRANSICIÓN, no direccional
+21:25:18 | 🧲 ESTRUCTURAL flip MU | MU pegado al flip 934.08 — TRANSICIÓN, no direccional
+21:25:33 | 🧲 ESTRUCTURAL flip MU | MU pegado al flip 934.05 — TRANSICIÓN, no direccional
+21:25:49 | 🧲 ESTRUCTURAL flip MU | MU pegado al flip 934.07 — TRANSICIÓN, no direccional
+21:26:04 | 🧲 ESTRUCTURAL flip MU | MU pegado al flip 934.04 — TRANSICIÓN, no direccional
+21:26:19 | 🧲 ESTRUCTURAL flip MU | MU pegado al flip 934.05 — TRANSICIÓN, no direccional
+21:26:34 | 🧲 ESTRUCTURAL flip MU | MU pegado al flip 934.04 — TRANSICIÓN, no direccional
+21:26:43 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+21:26:43 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+21:26:43 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+21:26:43 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+21:27:19 | 🧲 ESTRUCTURAL flip MU | MU pegado al flip 934.07 — TRANSICIÓN, no direccional
+21:27:34 | 🧲 ESTRUCTURAL flip MU | MU pegado al flip 934.02 — TRANSICIÓN, no direccional
+21:27:49 | 🧲 ESTRUCTURAL flip MU | MU pegado al flip 934.09 — TRANSICIÓN, no direccional
+21:28:04 | 🧲 ESTRUCTURAL flip MU | MU pegado al flip 934.07 — TRANSICIÓN, no direccional
+21:28:19 | 🧲 ESTRUCTURAL flip MU | MU pegado al flip 934.04 — TRANSICIÓN, no direccional
+21:30:50 | 🧲 ESTRUCTURAL flip MU | MU pegado al flip 934.09 — TRANSICIÓN, no direccional
+21:31:05 | 🧲 ESTRUCTURAL flip MU | MU pegado al flip 934.07 — TRANSICIÓN, no direccional
+21:31:20 | 🧲 ESTRUCTURAL flip MU | MU pegado al flip 934.1 — TRANSICIÓN, no direccional
+21:31:44 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+21:31:44 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+21:31:44 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+21:31:44 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+21:34:15 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.52 — TRANSICIÓN, no direccional
+21:34:45 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.51 — TRANSICIÓN, no direccional
+21:35:15 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.52 — TRANSICIÓN, no direccional
+21:35:21 | 🧲 ESTRUCTURAL flip MU | MU pegado al flip 934.08 — TRANSICIÓN, no direccional
+21:35:51 | 🧲 ESTRUCTURAL flip MU | MU pegado al flip 934.13 — TRANSICIÓN, no direccional
+21:36:06 | 🧲 ESTRUCTURAL flip MU | MU pegado al flip 934.06 — TRANSICIÓN, no direccional
+21:36:21 | 🧲 ESTRUCTURAL flip MU | MU pegado al flip 934.08 — TRANSICIÓN, no direccional
+21:36:45 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+21:36:45 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+21:36:45 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+21:36:45 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+21:37:46 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.51 — TRANSICIÓN, no direccional
+21:41:45 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+21:41:45 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+21:41:45 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+21:41:45 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+21:42:16 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.52 — TRANSICIÓN, no direccional
+21:42:31 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.51 — TRANSICIÓN, no direccional
+21:46:46 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+21:46:46 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+21:46:46 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+21:46:46 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+21:48:47 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.52 — TRANSICIÓN, no direccional
+21:50:32 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.51 — TRANSICIÓN, no direccional
+21:51:03 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.5 — TRANSICIÓN, no direccional
+21:51:18 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.51 — TRANSICIÓN, no direccional
+21:51:47 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+21:51:47 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+21:51:47 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+21:51:47 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+21:54:48 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.52 — TRANSICIÓN, no direccional
+21:56:03 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.5 — TRANSICIÓN, no direccional
+21:56:47 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+21:56:47 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+21:56:47 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+21:56:47 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+21:59:49 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.51 — TRANSICIÓN, no direccional
+22:01:48 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+22:01:48 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+22:01:48 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+22:01:48 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+22:03:49 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.52 — TRANSICIÓN, no direccional
+22:06:20 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.51 — TRANSICIÓN, no direccional
+22:06:35 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.5 — TRANSICIÓN, no direccional
+22:06:49 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+22:06:49 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+22:06:49 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+22:06:49 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+22:07:50 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.51 — TRANSICIÓN, no direccional
+22:08:05 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.5 — TRANSICIÓN, no direccional
+22:10:50 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.51 — TRANSICIÓN, no direccional
+22:11:49 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+22:11:49 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+22:11:49 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+22:11:49 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+22:16:50 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+22:16:50 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+22:16:50 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+22:16:50 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+22:21:51 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+22:21:51 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+22:21:51 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+22:21:51 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+22:26:52 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+22:26:52 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+22:26:52 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+22:26:52 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+22:31:52 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+22:31:52 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+22:31:52 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+22:31:52 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+22:36:53 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+22:36:53 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+22:36:53 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+22:36:53 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+22:41:54 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+22:41:54 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+22:41:54 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+22:41:54 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+22:46:54 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+22:46:54 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+22:46:54 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+22:46:54 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+22:51:56 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+22:51:56 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+22:51:56 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+22:51:56 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+22:56:57 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+22:56:57 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+22:56:57 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+22:56:57 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+23:01:57 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+23:01:57 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+23:01:57 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+23:01:57 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+23:06:58 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+23:06:58 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+23:06:58 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+23:06:58 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+23:09:29 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.5 — TRANSICIÓN, no direccional
+23:09:59 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.49 — TRANSICIÓN, no direccional
+23:11:59 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+23:11:59 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+23:11:59 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+23:11:59 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+23:16:59 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+23:16:59 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+23:16:59 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+23:16:59 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+23:22:00 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+23:22:00 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+23:22:00 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+23:22:00 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+23:27:01 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+23:27:01 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+23:27:01 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+23:27:01 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+23:29:46 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.48 — TRANSICIÓN, no direccional
+23:32:02 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+23:32:02 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+23:32:02 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+23:32:02 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+23:32:02 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.49 — TRANSICIÓN, no direccional
+23:35:02 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.48 — TRANSICIÓN, no direccional
+23:35:47 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.49 — TRANSICIÓN, no direccional
+23:37:02 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+23:37:02 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+23:37:02 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+23:37:02 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+23:37:02 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.48 — TRANSICIÓN, no direccional
+23:38:48 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.49 — TRANSICIÓN, no direccional
+23:39:18 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.48 — TRANSICIÓN, no direccional
+23:42:03 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+23:42:03 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+23:42:03 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+23:42:03 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+23:47:04 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+23:47:04 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+23:47:04 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+23:47:04 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+23:52:04 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+23:52:04 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+23:52:04 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+23:52:04 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+23:56:39 | 🧲 ESTRUCTURAL flip NVDA | NVDA pegado al flip 208.48 — TRANSICIÓN, no direccional
+23:56:39 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 390.0 ↑ · prob 33% (estructural, no WR medido)
+23:56:55 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 27% (estructural, no WR medido)
+23:57:06 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+23:57:06 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+23:57:06 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+23:57:06 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+23:57:07 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.59% px 59.12
+23:57:07 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.74% px 10.89
+23:57:07 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.74% px 58.53
+23:57:07 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.01% px 415.31
+23:57:07 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.38% px 10.32
+23:57:07 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.34% px 57.43
+23:57:07 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.90% px 10.46
+23:57:07 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.30% px 207.45
+23:57:07 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.29% px 10.52
+23:57:07 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.02% px 210.28
+23:57:07 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +3.03% px 58.60
+23:57:07 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.02% px 57.86
+23:57:07 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.26% px 411.30
+23:57:07 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.05% px 206.02
+23:57:07 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.14% px 210.19
+23:57:07 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.00% px 407.75
+23:57:07 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -6.48% px 9.86
+23:57:07 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.17% px 58.62
+23:57:07 | WARMUP TSM: SELL | TSM @ 405.36 | prob 63% | rebote-4%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=TREND_DOWN
+23:57:07 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.72% px 58.21
+23:57:07 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.03% px 207.49
+23:57:07 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.77% px 58.79
+23:57:07 | WARMUP TSM: SELL | TSM @ 406.33 | prob 63% | rebote-23%+MACD1-gira-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=TREND_DOWN
+23:57:07 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.66% px 58.08
+23:57:07 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.19% px 56.10
+23:57:07 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.50% px 56.95
+23:57:07 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.88% px 55.94
+23:57:07 | WARMUP DRAM: SELL | DRAM @ 53.95 | prob 57% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+23:57:07 | WARMUP DRAM: SELL | DRAM @ 53.62 | prob 57% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+23:57:07 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.43% px 53.62
+23:57:07 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.07% px 54.57
+23:57:07 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.57% px 54.31
+23:57:07 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.53% px 53.66
+23:57:07 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.41% px 9.80
+23:57:07 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.04% px 9.73
+23:57:07 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.18% px 401.80
+23:57:07 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.17% px 541.58
+23:57:07 | WARMUP AMD: SELL | AMD @ 538.10 | prob 56% | rompe-TL-1m-abajo+vol-2.0x+ST5-alineado+ribbon15-bajista+bajo-VWAP+retest-ok | fase=UNKNOWN
+23:57:07 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.21% px 9.51
+23:57:07 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.09% px 533.50
+23:57:07 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.22% px 1783.00
+23:57:07 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.34% px 544.00
+23:57:07 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.04% px 9.70
+23:57:07 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.10% px 541.80
+23:57:07 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.05% px 1804.54
+23:57:07 | WARMUP AAPL: SELL | AAPL @ 321.63 | prob 60% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=UNKNOWN
+23:57:07 | WARMUP AAPL TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.58% px 320.58
+23:57:07 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.42% px 531.90
+23:57:07 | WARMUP AAPL: BUY | COMPRAR AAPL @ 320.81 | reversal a alza | entrada 333.53 | mov +4.0%
+23:57:07 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.34% px 9.41
+23:57:07 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +3.32% px 1848.46
+23:57:07 | WARMUP NOK: SELL | NOK @ 9.29 | prob 60% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+23:57:07 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.31% px 536.42
+23:57:07 | WARMUP AAPL: BUY | COMPRAR AAPL @ 320.81 | target 333.64 | floor 324.02 | capitulacion confirmada
+23:57:07 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.08% px 523.85
+23:57:07 | WARMUP NOK: SELL | NOK @ 9.25 | prob 60% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+23:57:07 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.46% px 1803.50
+23:57:07 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.01% px 9.15
+23:57:07 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.54% px 1767.17
+23:57:07 | WARMUP AAPL TERREMOTO ALZA | CUSUM: subiendo fuerte +1.51% px 324.24
+23:57:07 | WARMUP AAPL: BUY | AAPL @ 326.22 | prob 56% | estructura-rota-arriba+MACD15-flip-arriba+recupera-BB15mid+MACD15-verde+ST5-alineado | fase=UNKNOWN
+23:57:07 | WARMUP AAPL TERREMOTO ALZA | CUSUM: subiendo fuerte +1.63% px 329.22
+23:57:07 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.13% px 1792.45
+23:57:07 | WARMUP ASML: SELL | ASML @ 1775.03 | prob 61% | rebote-10%+MACD1-gira-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=TREND_DOWN
+23:57:07 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.00% px 1761.77
+23:57:07 | WARMUP AAPL: BUY | AAPL @ 329.75 | prob 59% | pullback-1%+MACD1-gira+MACD15-verde+ST5-alineado+ribbon15-alcista | fase=TREND_UP
+23:57:07 | WARMUP AAPL: SELL | VENDER AAPL @ 333.64 | target | entrada 320.81 | PnL +4.0%
+23:57:07 | WARMUP MU TERREMOTO ALZA | CUSUM: subiendo fuerte +5.32% px 1010.12
+23:57:07 | WARMUP MU TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.21% px 960.00
+23:57:07 | WARMUP MU TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.11% px 936.23
+23:57:07 | WARMUP MU: SELL | MU @ 933.18 | prob 62% | rebote-5%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+23:57:07 | WARMUP MU: SELL | MU @ 928.60 | prob 60% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+23:57:07 | WARMUP EWY: SELL | EWY @ 171.37 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=UNKNOWN
+23:57:07 | WARMUP MU: SELL | MU @ 922.59 | prob 60% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+23:57:07 | WARMUP EWY: SELL | EWY @ 172.65 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=UNKNOWN
+23:57:07 | WARMUP EWY TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.84% px 167.47
+23:57:07 | WARMUP EWY: SELL | EWY @ 165.45 | prob 62% | rebote-23%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=TREND_DOWN
+23:57:07 | WARMUP EWY: SELL | EWY @ 164.83 | prob 62% | rebote-50%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=TREND_DOWN
+23:57:07 | WARMUP EWY: SELL | EWY @ 165.63 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=TREND_DOWN
+23:57:11 | SKHYNIX: SELL | SKHYNIX @ 1753000.00 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=UNKNOWN

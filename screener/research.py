@@ -1,0 +1,129 @@
+#!/usr/bin/env python3
+"""TradingAgents research layer — runs the local multi-agent framework on the
+top candidates before the open (the 6 AM step, like Yunior's friend).
+
+It is subprocess-isolated and timeout-guarded: TradingAgents is a long LLM chain,
+so a hang or crash (or a missing LLM key) must NEVER block the scanner. If it
+can't run, research_ticker() returns None and the scanner proceeds on its own
+selective ranking. When it does run, it returns BUY/HOLD/SELL + the raw decision
+so Claude can weight the trade.
+
+Enable via env for the 6 AM job:
+  TA_RESEARCH=1  TA_RESEARCH_TOPN=3  TA_TIMEOUT=360
+  (plus whatever LLM keys TradingAgents needs, e.g. OPENAI_API_KEY)
+"""
+import json
+import os
+import subprocess
+import sys
+
+TA_REPO = os.getenv("TA_REPO", os.path.expanduser("~/Documents/GitHub/TradingAgents"))
+TIMEOUT = int(os.getenv("TA_TIMEOUT", "360"))
+# TradingAgents needs Python 3.10+ (our main venv is 3.9), so it runs in its own
+# py3.12 venv. research_ticker() invokes _run through this interpreter.
+_TA_PY = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "ta_venv", "bin", "python")
+TA_PYTHON = os.getenv("TA_PYTHON", _TA_PY if os.path.exists(_TA_PY) else sys.executable)
+
+
+REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def _load_env_file(name):
+    p = os.path.join(REPO_ROOT, "config", name)
+    if not os.path.exists(p):
+        return
+    for line in open(p):
+        line = line.strip()
+        if line and not line.startswith("#") and "=" in line:
+            k, v = line.split("=", 1)
+            os.environ.setdefault(k.strip(), v.strip().strip('"'))
+
+
+def _configure_llm_env():
+    """Load the configured TradingAgents provider; fail closed if its key is absent."""
+    _load_env_file("llm.env")
+    _load_env_file("feeds.env")
+    sys.path.insert(0, os.path.join(REPO_ROOT, "scripts"))
+    from ta_llm_bridge import apply as apply_ta_bridge
+    apply_ta_bridge()
+    provider = os.environ.get("TA_LLM_PROVIDER", "").lower()
+    required = {"nvidia": "NVIDIA_API_KEY", "openai": "OPENAI_API_KEY",
+                "deepseek": "DEEPSEEK_API_KEY"}.get(provider)
+    if required and not os.environ.get(required):
+        raise RuntimeError(f"configured provider {provider!r} is missing {required}")
+    if provider == "deepseek" and os.environ.get("DEEPSEEK_API_KEY"):
+        os.environ.setdefault("OPENAI_API_KEY", os.environ["DEEPSEEK_API_KEY"])
+    # FinnHub tool key (data layer)
+    if os.environ.get("FINNHUB_KEY") and not os.environ.get("FINNHUB_API_KEY"):
+        os.environ["FINNHUB_API_KEY"] = os.environ["FINNHUB_KEY"]
+
+
+# ---- subprocess entrypoint: `python research.py _run SYM DATE` ----
+def _run(sym, date_str):
+    _configure_llm_env()
+    sys.path.insert(0, TA_REPO)
+    from tradingagents.graph.trading_graph import TradingAgentsGraph
+    from tradingagents.default_config import DEFAULT_CONFIG as C
+    cfg = dict(C)
+    cfg["max_debate_rounds"] = int(os.getenv("TA_DEBATE_ROUNDS", "1"))
+    cfg["max_risk_discuss_rounds"] = int(os.getenv("TA_RISK_ROUNDS", "1"))
+    cfg["online_tools"] = True
+    analysts = os.getenv("TA_ANALYSTS", "market,news").split(",")
+    ta = TradingAgentsGraph(selected_analysts=[a.strip() for a in analysts if a.strip()],
+                            debug=False, config=cfg)
+    _, decision = ta.propagate(sym, date_str)
+    print(json.dumps({"sym": sym, "decision": str(decision)}))
+
+
+def research_ticker(sym, date_str, timeout=None):
+    """Best-effort. Returns {'sym','action','decision'} or None."""
+    timeout = timeout or TIMEOUT
+    try:
+        r = subprocess.run([TA_PYTHON, os.path.abspath(__file__), "_run", sym, date_str],
+                           capture_output=True, text=True, timeout=timeout,
+                           cwd=os.path.dirname(os.path.abspath(__file__)))
+        line = [l for l in r.stdout.splitlines() if l.strip().startswith("{")]
+        if not line:
+            print(f"[research] {sym}: no decision ({(r.stderr or '')[:80]})", file=sys.stderr)
+            return None
+        obj = json.loads(line[-1])
+        dec = obj.get("decision", "")
+        up = dec.upper()
+        action = "BUY" if "BUY" in up else "SELL" if "SELL" in up else "HOLD"
+        return {"sym": sym, "action": action, "decision": dec[:400]}
+    except subprocess.TimeoutExpired:
+        print(f"[research] {sym}: timeout {timeout}s — skipping", file=sys.stderr)
+        return None
+    except Exception as e:
+        print(f"[research] {sym}: {repr(e)[:100]}", file=sys.stderr)
+        return None
+
+
+def enrich_candidates(cands, date_str, topn=None):
+    """Attach a TradingAgents note to the top-N candidates; leave the rest as-is.
+    MANDATORY BY DEFAULT (Yunior 2026-07-09: use TradingAgents properly EVERY
+    scan — the 2026-07-09 midday scan skipped it and traded unvetted names).
+    Opt out only with TA_RESEARCH=0."""
+    if os.getenv("TA_RESEARCH", "1") == "0":
+        return cands
+    topn = topn or int(os.getenv("TA_RESEARCH_TOPN", "3"))
+    # vet the top-N UNVETTED names (Yunior 2026-07-10 "make sure we use trading
+    # agents for the top gainers"): verdicts persist across rescans, so each
+    # 15-min pass spends the TA budget on NEW gainers instead of re-vetting
+    # the same top 3 all day — coverage grows toward the whole watchlist.
+    for c in [x for x in cands if not x.get("ta_action")][:topn]:
+        note = research_ticker(c["sym"], date_str)
+        if note:
+            c["ta_action"] = note["action"]
+            c["ta_note"] = note["decision"]
+            print(f"[research] {c['sym']} -> {note['action']}", file=sys.stderr)
+    return cands
+
+
+if __name__ == "__main__":
+    if len(sys.argv) >= 4 and sys.argv[1] == "_run":
+        _run(sys.argv[2], sys.argv[3])
+    else:
+        sym = sys.argv[1] if len(sys.argv) > 1 else "NVDA"
+        date = sys.argv[2] if len(sys.argv) > 2 else "2024-05-10"
+        print(research_ticker(sym, date))

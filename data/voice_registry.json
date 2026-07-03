@@ -1,0 +1,58 @@
+{
+ "danger_frozen_limit": 8,
+ "emitters": {
+  "cinta_ciega": {
+   "calib_cell": "salud",
+   "class": "DANGER",
+   "enabled": true,
+   "module": "scripts/ibkr_bar_bridge.py:308",
+   "nota": "1 vez/dia por sym; registrado 2026-07-28, ocupa la plaza 8 de 8 \u2014 el proximo DANGER desplaza"
+  },
+  "compass_caida": {
+   "calib_cell": "salud",
+   "class": "DANGER",
+   "enabled": true,
+   "module": "scripts/compass_keepalive.sh:22,40"
+  },
+  "manada_cpp": {
+   "calib_cell": "consenso",
+   "class": "DANGER",
+   "enabled": false,
+   "module": "scripts/fleet_consensus.cpp:403",
+   "nota": "WIP no desplegado: el daemon vivo es manada_py"
+  },
+  "manada_py": {
+   "calib_cell": "consenso",
+   "class": "DANGER",
+   "enabled": true,
+   "module": "scripts/fleet_consensus.py:124"
+  },
+  "permisos_flota": {
+   "calib_cell": "salud",
+   "class": "DANGER",
+   "enabled": true,
+   "module": "scripts/fleet_keepalive_start.sh:98"
+  },
+  "price_alarm": {
+   "calib_cell": "nivel_impreso",
+   "class": "DANGER",
+   "enabled": true,
+   "module": "scripts/price_alarm.cpp:254"
+  },
+  "tws_zombie": {
+   "calib_cell": "salud",
+   "class": "DANGER",
+   "enabled": true,
+   "module": "scripts/tws_watchdog.sh:109,130,146"
+  },
+  "whale_espada": {
+   "calib_cell": "whale/flow",
+   "class": "DANGER",
+   "enabled": true,
+   "module": "scripts/opt_whale_watch.py:51"
+  }
+ },
+ "frozen_at": 1784988877,
+ "nota": "el conteo de emisores DANGER esta CONGELADO en el de hoy + 1: un DANGER nuevo debe DESPLAZAR a uno existente (regla del doc #12).",
+ "nota_audit_2026_07_28": "lineas re-verificadas; manada_cpp compilado pero no desplegado"
+}

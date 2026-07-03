@@ -1,0 +1,19 @@
+{
+ "sym": "DRAM",
+ "asof": 1784988148,
+ "spot": 53.58,
+ "em": 7.56,
+ "vt_open": null,
+ "vt_live": null,
+ "zero_gamma": 55.0,
+ "shelf_gex_pct": null,
+ "vt_source": null,
+ "n_strikes": 7,
+ "source": "polygon_snapshot_v3",
+ "frozen_at": null,
+ "frozen_day": null,
+ "dist_vt_em": null,
+ "regime_vt": null,
+ "licencia": null,
+ "why": "7 strikes poblados < 40: la estanteria seria un artefacto de una cadena escasa, no un nivel"
+}

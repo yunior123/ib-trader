@@ -1,0 +1,741 @@
+{
+ "sym": "MSFT",
+ "generado": "2026-08-06T16:25:51",
+ "viernes": "2026-08-07",
+ "chain_dir": "2026-08-06",
+ "spot": 500.02,
+ "spot_source": "ibkr_bridge",
+ "spot_age_s": 982.9,
+ "band": 0.405,
+ "exp_hasta_fichero": "2026-08-21",
+ "greeks_src": "polygon_directo",
+ "oi_src": "polygon_directo",
+ "bid_ask": "NO_ENTITLED",
+ "n_contratos_cadena": 961,
+ "n_hasta_viernes": 174,
+ "n_solo_viernes": 174,
+ "regime": "POS",
+ "net_gex": 38812736.24646971,
+ "flip": 482.39193146008404,
+ "flip_src": "recompute_15pct",
+ "call_wall": 505.0,
+ "call_wall_kind": "pin",
+ "put_wall": 490.0,
+ "put_wall_kind": "pin",
+ "abs_wall": 500.0,
+ "abs_wall_kind": "pin",
+ "oi_call_wall": 510.0,
+ "oi_put_wall": 380.0,
+ "profile": [
+  {
+   "strike": 300.0,
+   "gex": -8794.645877412124
+  },
+  {
+   "strike": 305.0,
+   "gex": -808.1320687857082
+  },
+  {
+   "strike": 310.0,
+   "gex": -1704.2286041256016
+  },
+  {
+   "strike": 315.0,
+   "gex": -798.7206056549225
+  },
+  {
+   "strike": 320.0,
+   "gex": -760.185044285891
+  },
+  {
+   "strike": 322.5,
+   "gex": -509.85326557581715
+  },
+  {
+   "strike": 325.0,
+   "gex": -927.7186789444693
+  },
+  {
+   "strike": 327.5,
+   "gex": -1423.307459816412
+  },
+  {
+   "strike": 330.0,
+   "gex": -7452.321490285536
+  },
+  {
+   "strike": 332.5,
+   "gex": -1284.2216662923586
+  },
+  {
+   "strike": 335.0,
+   "gex": -4000.4869072471874
+  },
+  {
+   "strike": 337.5,
+   "gex": -291.0098041794045
+  },
+  {
+   "strike": 340.0,
+   "gex": -2813.208733437942
+  },
+  {
+   "strike": 342.5,
+   "gex": -10.8585256219184
+  },
+  {
+   "strike": 345.0,
+   "gex": -27973.869378740947
+  },
+  {
+   "strike": 347.5,
+   "gex": -657.1817931811794
+  },
+  {
+   "strike": 350.0,
+   "gex": -29608.62160559359
+  },
+  {
+   "strike": 352.5,
+   "gex": -552.7535233180241
+  },
+  {
+   "strike": 355.0,
+   "gex": -4319.62432970281
+  },
+  {
+   "strike": 357.5,
+   "gex": -1037.8910228169975
+  },
+  {
+   "strike": 360.0,
+   "gex": -8451.549977540677
+  },
+  {
+   "strike": 362.5,
+   "gex": -272.01386058447724
+  },
+  {
+   "strike": 365.0,
+   "gex": -7789.916946601069
+  },
+  {
+   "strike": 367.5,
+   "gex": -3313.3553826739376
+  },
+  {
+   "strike": 370.0,
+   "gex": -53563.455675349105
+  },
+  {
+   "strike": 372.5,
+   "gex": -45.451320500641486
+  },
+  {
+   "strike": 375.0,
+   "gex": -1148.5105008044884
+  },
+  {
+   "strike": 377.5,
+   "gex": -296.5456524807941
+  },
+  {
+   "strike": 380.0,
+   "gex": -12841.988946892028
+  },
+  {
+   "strike": 382.5,
+   "gex": 1314.513354116687
+  },
+  {
+   "strike": 385.0,
+   "gex": 11040.232760327059
+  },
+  {
+   "strike": 387.5,
+   "gex": -3002.1493485687183
+  },
+  {
+   "strike": 390.0,
+   "gex": 44557.11922853346
+  },
+  {
+   "strike": 392.5,
+   "gex": 4654.375140484346
+  },
+  {
+   "strike": 395.0,
+   "gex": -9208.513345883508
+  },
+  {
+   "strike": 397.5,
+   "gex": 889.1280172939692
+  },
+  {
+   "strike": 400.0,
+   "gex": 108246.72598422918
+  },
+  {
+   "strike": 402.5,
+   "gex": 2024.1401860438618
+  },
+  {
+   "strike": 405.0,
+   "gex": 12802.390112596733
+  },
+  {
+   "strike": 407.5,
+   "gex": -464.79278408966593
+  },
+  {
+   "strike": 410.0,
+   "gex": -10442.932214531567
+  },
+  {
+   "strike": 412.5,
+   "gex": 11956.552001382706
+  },
+  {
+   "strike": 415.0,
+   "gex": 41509.51728163987
+  },
+  {
+   "strike": 417.5,
+   "gex": -1934.2670982639681
+  },
+  {
+   "strike": 420.0,
+   "gex": 15093.439254648158
+  },
+  {
+   "strike": 422.5,
+   "gex": -37399.86350497055
+  },
+  {
+   "strike": 425.0,
+   "gex": 62143.463410835044
+  },
+  {
+   "strike": 427.5,
+   "gex": -64031.277896504864
+  },
+  {
+   "strike": 430.0,
+   "gex": 286536.57315009076
+  },
+  {
+   "strike": 432.5,
+   "gex": 1465.8697434681853
+  },
+  {
+   "strike": 435.0,
+   "gex": -14962.392523883891
+  },
+  {
+   "strike": 437.5,
+   "gex": -5457.853242514783
+  },
+  {
+   "strike": 440.0,
+   "gex": 5640.393400197332
+  },
+  {
+   "strike": 442.5,
+   "gex": -23119.071900527513
+  },
+  {
+   "strike": 445.0,
+   "gex": -316.45300228484484
+  },
+  {
+   "strike": 447.5,
+   "gex": -21075.761975185116
+  },
+  {
+   "strike": 450.0,
+   "gex": 228261.08925787616
+  },
+  {
+   "strike": 452.5,
+   "gex": 8457.81847387617
+  },
+  {
+   "strike": 455.0,
+   "gex": 414118.0170312287
+  },
+  {
+   "strike": 457.5,
+   "gex": 136987.52587191516
+  },
+  {
+   "strike": 460.0,
+   "gex": 363435.4017053755
+  },
+  {
+   "strike": 462.5,
+   "gex": 131886.34821969416
+  },
+  {
+   "strike": 465.0,
+   "gex": 309445.69808190875
+  },
+  {
+   "strike": 467.5,
+   "gex": 229405.80479908668
+  },
+  {
+   "strike": 470.0,
+   "gex": -404975.9989655661
+  },
+  {
+   "strike": 472.5,
+   "gex": -146161.74397216662
+  },
+  {
+   "strike": 475.0,
+   "gex": -387083.795669875
+  },
+  {
+   "strike": 477.5,
+   "gex": 114165.08037891725
+  },
+  {
+   "strike": 480.0,
+   "gex": -645309.9916471402
+  },
+  {
+   "strike": 482.5,
+   "gex": 504193.0599663396
+  },
+  {
+   "strike": 485.0,
+   "gex": -721405.0670062011
+  },
+  {
+   "strike": 487.5,
+   "gex": -134507.68778143055
+  },
+  {
+   "strike": 490.0,
+   "gex": 943531.4782643542
+  },
+  {
+   "strike": 492.5,
+   "gex": 554087.8796183113
+  },
+  {
+   "strike": 495.0,
+   "gex": 3433825.159218982
+  },
+  {
+   "strike": 497.5,
+   "gex": 261569.223892026
+  },
+  {
+   "strike": 500.0,
+   "gex": 13330220.109383093
+  },
+  {
+   "strike": 502.5,
+   "gex": 2580316.9284881186
+  },
+  {
+   "strike": 505.0,
+   "gex": 6184796.023206558
+  },
+  {
+   "strike": 507.5,
+   "gex": 871976.4891377138
+  },
+  {
+   "strike": 510.0,
+   "gex": 4755360.02458333
+  },
+  {
+   "strike": 512.5,
+   "gex": 832367.0881682909
+  },
+  {
+   "strike": 515.0,
+   "gex": 2540978.3277435247
+  },
+  {
+   "strike": 517.5,
+   "gex": 172657.33310135247
+  },
+  {
+   "strike": 520.0,
+   "gex": 1010486.702057538
+  },
+  {
+   "strike": 522.5,
+   "gex": 93960.22367368055
+  },
+  {
+   "strike": 525.0,
+   "gex": 472499.802902199
+  },
+  {
+   "strike": 527.5,
+   "gex": 13350.70642822598
+  },
+  {
+   "strike": 530.0,
+   "gex": 304305.8756824196
+  },
+  {
+   "strike": 532.5,
+   "gex": 2376.894180122666
+  },
+  {
+   "strike": 535.0,
+   "gex": 40625.8654115503
+  },
+  {
+   "strike": 537.5,
+   "gex": 662.7411588140185
+  },
+  {
+   "strike": 540.0,
+   "gex": 42385.53263950521
+  },
+  {
+   "strike": 542.5,
+   "gex": 14005.88596339746
+  },
+  {
+   "strike": 545.0,
+   "gex": 33515.63413945774
+  },
+  {
+   "strike": 550.0,
+   "gex": 40704.38921904019
+  },
+  {
+   "strike": 552.5,
+   "gex": 2267.263636137179
+  },
+  {
+   "strike": 560.0,
+   "gex": 39003.73683043876
+  },
+  {
+   "strike": 580.0,
+   "gex": 1671.3402606255236
+  },
+  {
+   "strike": 590.0,
+   "gex": 796.9479932480743
+  },
+  {
+   "strike": 600.0,
+   "gex": 2000.2564008809732
+  },
+  {
+   "strike": 680.0,
+   "gex": 511.3488027046177
+  }
+ ],
+ "viernes_call_wall": 510.0,
+ "viernes_put_wall": 380.0,
+ "viernes_calls_oi": 95344,
+ "viernes_puts_oi": 94331,
+ "viernes_pc_oi": 0.989,
+ "viernes_top_calls": [
+  {
+   "strike": 500.0,
+   "oi": 7980
+  },
+  {
+   "strike": 430.0,
+   "oi": 3937
+  },
+  {
+   "strike": 510.0,
+   "oi": 3868
+  },
+  {
+   "strike": 505.0,
+   "oi": 3594
+  },
+  {
+   "strike": 455.0,
+   "oi": 3566
+  },
+  {
+   "strike": 515.0,
+   "oi": 3509
+  }
+ ],
+ "viernes_top_puts": [
+  {
+   "strike": 380.0,
+   "oi": 6642
+  },
+  {
+   "strike": 450.0,
+   "oi": 3991
+  },
+  {
+   "strike": 400.0,
+   "oi": 3981
+  },
+  {
+   "strike": 470.0,
+   "oi": 3860
+  },
+  {
+   "strike": 415.0,
+   "oi": 3783
+  },
+  {
+   "strike": 480.0,
+   "oi": 3313
+  }
+ ],
+ "supervivientes": [
+  {
+   "lado": "C",
+   "strike": 450.0,
+   "dias_semana_pasada": 2,
+   "oi_entonces": 11627.0,
+   "oi_ahora": 2601,
+   "rank_ahora": 14,
+   "ratio_oi": 22.4,
+   "estado": "DECAIDO",
+   "exp_entonces": "20260731",
+   "oi_viernes": 2601
+  },
+  {
+   "lado": "C",
+   "strike": 400.0,
+   "dias_semana_pasada": 3,
+   "oi_entonces": 10627.0,
+   "oi_ahora": 3174,
+   "rank_ahora": 8,
+   "ratio_oi": 29.9,
+   "estado": "DECAIDO",
+   "exp_entonces": "20260727",
+   "oi_viernes": 3174
+  },
+  {
+   "lado": "C",
+   "strike": 410.0,
+   "dias_semana_pasada": 1,
+   "oi_entonces": 8669.0,
+   "oi_ahora": 595,
+   "rank_ahora": 39,
+   "ratio_oi": 6.9,
+   "estado": "SIN RASTRO",
+   "exp_entonces": "20260731",
+   "oi_viernes": 595
+  },
+  {
+   "lado": "C",
+   "strike": 470.0,
+   "dias_semana_pasada": 1,
+   "oi_entonces": 7650.0,
+   "oi_ahora": null,
+   "rank_ahora": null,
+   "ratio_oi": null,
+   "estado": "SIN RASTRO",
+   "exp_entonces": "20260731",
+   "oi_viernes": null
+  },
+  {
+   "lado": "C",
+   "strike": 460.0,
+   "dias_semana_pasada": 2,
+   "oi_entonces": 7503.0,
+   "oi_ahora": 2960,
+   "rank_ahora": 11,
+   "ratio_oi": 39.5,
+   "estado": "DECAIDO",
+   "exp_entonces": "20260731",
+   "oi_viernes": 2960
+  },
+  {
+   "lado": "C",
+   "strike": 440.0,
+   "dias_semana_pasada": 1,
+   "oi_entonces": 7119.0,
+   "oi_ahora": 1748,
+   "rank_ahora": 22,
+   "ratio_oi": 24.6,
+   "estado": "SIN RASTRO",
+   "exp_entonces": "20260731",
+   "oi_viernes": 1748
+  },
+  {
+   "lado": "C",
+   "strike": 390.0,
+   "dias_semana_pasada": 3,
+   "oi_entonces": 6138.0,
+   "oi_ahora": 2998,
+   "rank_ahora": 10,
+   "ratio_oi": 48.8,
+   "estado": "DECAIDO",
+   "exp_entonces": "20260727",
+   "oi_viernes": 2998
+  },
+  {
+   "lado": "P",
+   "strike": 450.0,
+   "dias_semana_pasada": 2,
+   "oi_entonces": 5493.0,
+   "oi_ahora": 3991,
+   "rank_ahora": 2,
+   "ratio_oi": 72.7,
+   "estado": "SOBREVIVE",
+   "exp_entonces": "20260731",
+   "oi_viernes": 3991
+  },
+  {
+   "lado": "P",
+   "strike": 455.0,
+   "dias_semana_pasada": 1,
+   "oi_entonces": 3833.0,
+   "oi_ahora": 1420,
+   "rank_ahora": 27,
+   "ratio_oi": 37.0,
+   "estado": "SIN RASTRO",
+   "exp_entonces": "20260731",
+   "oi_viernes": 1420
+  },
+  {
+   "lado": "C",
+   "strike": 405.0,
+   "dias_semana_pasada": 1,
+   "oi_entonces": 3703.0,
+   "oi_ahora": 446,
+   "rank_ahora": 45,
+   "ratio_oi": 12.0,
+   "estado": "SIN RASTRO",
+   "exp_entonces": "20260731",
+   "oi_viernes": 446
+  },
+  {
+   "lado": "P",
+   "strike": 380.0,
+   "dias_semana_pasada": 2,
+   "oi_entonces": 3131.0,
+   "oi_ahora": 6642,
+   "rank_ahora": 1,
+   "ratio_oi": 212.1,
+   "estado": "SOBREVIVE",
+   "exp_entonces": "20260727",
+   "oi_viernes": 6642
+  },
+  {
+   "lado": "P",
+   "strike": 395.0,
+   "dias_semana_pasada": 1,
+   "oi_entonces": 2032.0,
+   "oi_ahora": 1268,
+   "rank_ahora": 29,
+   "ratio_oi": 62.4,
+   "estado": "SIN RASTRO",
+   "exp_entonces": "20260731",
+   "oi_viernes": 1268
+  },
+  {
+   "lado": "P",
+   "strike": 390.0,
+   "dias_semana_pasada": 1,
+   "oi_entonces": 2010.0,
+   "oi_ahora": 1515,
+   "rank_ahora": 24,
+   "ratio_oi": 75.4,
+   "estado": "SIN RASTRO",
+   "exp_entonces": "20260731",
+   "oi_viernes": 1515
+  },
+  {
+   "lado": "P",
+   "strike": 385.0,
+   "dias_semana_pasada": 1,
+   "oi_entonces": 2002.0,
+   "oi_ahora": 518,
+   "rank_ahora": 48,
+   "ratio_oi": 25.9,
+   "estado": "SIN RASTRO",
+   "exp_entonces": "20260731",
+   "oi_viernes": 518
+  },
+  {
+   "lado": "P",
+   "strike": 382.5,
+   "dias_semana_pasada": 2,
+   "oi_entonces": 1891.0,
+   "oi_ahora": 118,
+   "rank_ahora": 66,
+   "ratio_oi": 6.2,
+   "estado": "SIN RASTRO",
+   "exp_entonces": "20260727",
+   "oi_viernes": 118
+  },
+  {
+   "lado": "P",
+   "strike": 400.0,
+   "dias_semana_pasada": 1,
+   "oi_entonces": 1477.0,
+   "oi_ahora": 3981,
+   "rank_ahora": 3,
+   "ratio_oi": 269.5,
+   "estado": "SOBREVIVE",
+   "exp_entonces": "20260731",
+   "oi_viernes": 3981
+  },
+  {
+   "lado": "P",
+   "strike": 470.0,
+   "dias_semana_pasada": 1,
+   "oi_entonces": 1245.0,
+   "oi_ahora": 3860,
+   "rank_ahora": 4,
+   "ratio_oi": 310.0,
+   "estado": "SOBREVIVE",
+   "exp_entonces": "20260731",
+   "oi_viernes": 3860
+  },
+  {
+   "lado": "P",
+   "strike": 440.0,
+   "dias_semana_pasada": 1,
+   "oi_entonces": 55.0,
+   "oi_ahora": 2364,
+   "rank_ahora": 15,
+   "ratio_oi": 4298.2,
+   "estado": "DECAIDO",
+   "exp_entonces": "20260731",
+   "oi_viernes": 2364
+  },
+  {
+   "lado": "P",
+   "strike": 460.0,
+   "dias_semana_pasada": 1,
+   "oi_entonces": 53.0,
+   "oi_ahora": 2403,
+   "rank_ahora": 13,
+   "ratio_oi": 4534.0,
+   "estado": "DECAIDO",
+   "exp_entonces": "20260731",
+   "oi_viernes": 2403
+  }
+ ],
+ "toques": null,
+ "semana_pasada_fechas": [
+  "2026-07-27",
+  "2026-07-28",
+  "2026-07-29",
+  "2026-07-30",
+  "2026-07-31"
+ ],
+ "caveats": [
+  "OI de la semana pasada = contratos YA EXPIRADOS (exp 07-22/23/24): el cociente de OI NO es like-for-like. La supervivencia se decide por RANGO del strike en el libro de hoy.",
+  "Muros de la semana pasada: cadena IBKR/TWS del vencimiento MAS CERCANO de cada dia. Muros de hoy: cadena Polygon con banda adaptativa, todos los vencimientos hasta el viernes.",
+  "spot 500.02 con edad 982s = cierre del viernes (mercado cerrado).",
+  "Polygon = 15 min de retraso (HISTORIA/ESTRUCTURA). Ningun nivel de aqui dispara una orden: el PRINT que confirma es de IBKR en tiempo real.",
+  "bid/ask NO_ENTITLED en este plan de Polygon: no hay gate de spread en esta hoja."
+ ]
+}

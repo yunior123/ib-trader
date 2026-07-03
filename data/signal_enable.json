@@ -1,0 +1,375 @@
+{
+ "bollinger|AAPL": {
+  "ci_hi": 82,
+  "enabled": true,
+  "n": 24,
+  "why": "viva",
+  "wr": 67
+ },
+ "bollinger|AMD": {
+  "ci_hi": 74,
+  "enabled": true,
+  "n": 26,
+  "why": "viva",
+  "wr": 58
+ },
+ "bollinger|AMZN": {
+  "ci_hi": 63,
+  "enabled": true,
+  "n": 23,
+  "why": "viva",
+  "wr": 43
+ },
+ "bollinger|ASML": {
+  "ci_hi": 57,
+  "enabled": true,
+  "n": 24,
+  "why": "viva",
+  "wr": 38
+ },
+ "bollinger|AVGO": {
+  "ci_hi": 57,
+  "enabled": true,
+  "n": 22,
+  "why": "viva",
+  "wr": 36
+ },
+ "bollinger|META": {
+  "ci_hi": 73,
+  "enabled": true,
+  "n": 22,
+  "why": "viva",
+  "wr": 55
+ },
+ "bollinger|MSFT": {
+  "ci_hi": 69,
+  "enabled": true,
+  "n": 22,
+  "why": "viva",
+  "wr": 50
+ },
+ "bollinger|MU": {
+  "ci_hi": 67,
+  "enabled": true,
+  "n": 23,
+  "why": "viva",
+  "wr": 48
+ },
+ "bollinger|NFLX": {
+  "ci_hi": 66,
+  "enabled": true,
+  "n": 27,
+  "why": "viva",
+  "wr": 48
+ },
+ "bollinger|NVDA": {
+  "ci_hi": 65,
+  "enabled": true,
+  "n": 22,
+  "why": "viva",
+  "wr": 45
+ },
+ "bollinger|QCOM": {
+  "ci_hi": 43,
+  "enabled": false,
+  "n": 22,
+  "why": "muerta: Wilson-hi 43%<45% n=22",
+  "wr": 23
+ },
+ "bollinger|QQQ": {
+  "ci_hi": 63,
+  "enabled": true,
+  "n": 25,
+  "why": "viva",
+  "wr": 44
+ },
+ "bollinger|SMH": {
+  "ci_hi": 69,
+  "enabled": true,
+  "n": 22,
+  "why": "viva",
+  "wr": 50
+ },
+ "bollinger|SPY": {
+  "ci_hi": 53,
+  "enabled": true,
+  "n": 22,
+  "why": "viva",
+  "wr": 32
+ },
+ "bollinger|TSLA": {
+  "ci_hi": 42,
+  "enabled": false,
+  "n": 23,
+  "why": "muerta: Wilson-hi 42%<45% n=23",
+  "wr": 22
+ },
+ "bollinger|TXN": {
+  "ci_hi": 63,
+  "enabled": true,
+  "n": 25,
+  "why": "viva",
+  "wr": 44
+ },
+ "cusum|AAPL": {
+  "ci_hi": 47,
+  "enabled": false,
+  "n": 8,
+  "silenced_at": "2026-07-25 10:49",
+  "why": "DEAD medido 2026-07-25: 501/501 sesiones regeneradas, n=12679 n_eff=1513, edge -0.034 con CI [-0.060,-0.005] ENTERO bajo cero -> peor que entrar al azar. enabled=false = BANNER SOLAMENTE (la se\u00f1al se sigue viendo, deja de hablar). Revertir: cp data/signal_enable.json.bak-2026-07-25 data/signal_enable.json",
+  "wr": 12
+ },
+ "cusum|AMD": {
+  "ci_hi": 53,
+  "enabled": false,
+  "n": 113,
+  "silenced_at": "2026-07-25 10:49",
+  "why": "DEAD medido 2026-07-25: 501/501 sesiones regeneradas, n=12679 n_eff=1513, edge -0.034 con CI [-0.060,-0.005] ENTERO bajo cero -> peor que entrar al azar. enabled=false = BANNER SOLAMENTE (la se\u00f1al se sigue viendo, deja de hablar). Revertir: cp data/signal_enable.json.bak-2026-07-25 data/signal_enable.json",
+  "wr": 44
+ },
+ "cusum|ASML": {
+  "ci_hi": 59,
+  "enabled": false,
+  "n": 94,
+  "silenced_at": "2026-07-25 10:49",
+  "why": "DEAD medido 2026-07-25: 501/501 sesiones regeneradas, n=12679 n_eff=1513, edge -0.034 con CI [-0.060,-0.005] ENTERO bajo cero -> peor que entrar al azar. enabled=false = BANNER SOLAMENTE (la se\u00f1al se sigue viendo, deja de hablar). Revertir: cp data/signal_enable.json.bak-2026-07-25 data/signal_enable.json",
+  "wr": 49
+ },
+ "cusum|MU": {
+  "ci_hi": 68,
+  "enabled": false,
+  "n": 12,
+  "silenced_at": "2026-07-25 10:49",
+  "why": "DEAD medido 2026-07-25: 501/501 sesiones regeneradas, n=12679 n_eff=1513, edge -0.034 con CI [-0.060,-0.005] ENTERO bajo cero -> peor que entrar al azar. enabled=false = BANNER SOLAMENTE (la se\u00f1al se sigue viendo, deja de hablar). Revertir: cp data/signal_enable.json.bak-2026-07-25 data/signal_enable.json",
+  "wr": 42
+ },
+ "cusum|NVDA": {
+  "ci_hi": 60,
+  "enabled": false,
+  "n": 68,
+  "silenced_at": "2026-07-25 10:49",
+  "why": "DEAD medido 2026-07-25: 501/501 sesiones regeneradas, n=12679 n_eff=1513, edge -0.034 con CI [-0.060,-0.005] ENTERO bajo cero -> peor que entrar al azar. enabled=false = BANNER SOLAMENTE (la se\u00f1al se sigue viendo, deja de hablar). Revertir: cp data/signal_enable.json.bak-2026-07-25 data/signal_enable.json",
+  "wr": 49
+ },
+ "cusum|QQQ": {
+  "ci_hi": 54,
+  "enabled": false,
+  "n": 30,
+  "silenced_at": "2026-07-25 10:49",
+  "why": "DEAD medido 2026-07-25: 501/501 sesiones regeneradas, n=12679 n_eff=1513, edge -0.034 con CI [-0.060,-0.005] ENTERO bajo cero -> peor que entrar al azar. enabled=false = BANNER SOLAMENTE (la se\u00f1al se sigue viendo, deja de hablar). Revertir: cp data/signal_enable.json.bak-2026-07-25 data/signal_enable.json",
+  "wr": 37
+ },
+ "cusum|SMH": {
+  "ci_hi": 56,
+  "enabled": false,
+  "n": 3,
+  "silenced_at": "2026-07-25 10:49",
+  "why": "DEAD medido 2026-07-25: 501/501 sesiones regeneradas, n=12679 n_eff=1513, edge -0.034 con CI [-0.060,-0.005] ENTERO bajo cero -> peor que entrar al azar. enabled=false = BANNER SOLAMENTE (la se\u00f1al se sigue viendo, deja de hablar). Revertir: cp data/signal_enable.json.bak-2026-07-25 data/signal_enable.json",
+  "wr": 0
+ },
+ "cusum|TSLA": {
+  "ci_hi": 64,
+  "enabled": false,
+  "n": 13,
+  "silenced_at": "2026-07-25 10:49",
+  "why": "DEAD medido 2026-07-25: 501/501 sesiones regeneradas, n=12679 n_eff=1513, edge -0.034 con CI [-0.060,-0.005] ENTERO bajo cero -> peor que entrar al azar. enabled=false = BANNER SOLAMENTE (la se\u00f1al se sigue viendo, deja de hablar). Revertir: cp data/signal_enable.json.bak-2026-07-25 data/signal_enable.json",
+  "wr": 38
+ },
+ "cusum|TXN": {
+  "ci_hi": 59,
+  "enabled": false,
+  "n": 8,
+  "silenced_at": "2026-07-25 10:49",
+  "why": "DEAD medido 2026-07-25: 501/501 sesiones regeneradas, n=12679 n_eff=1513, edge -0.034 con CI [-0.060,-0.005] ENTERO bajo cero -> peor que entrar al azar. enabled=false = BANNER SOLAMENTE (la se\u00f1al se sigue viendo, deja de hablar). Revertir: cp data/signal_enable.json.bak-2026-07-25 data/signal_enable.json",
+  "wr": 25
+ },
+ "dip|AAPL": {
+  "ci_hi": 79,
+  "enabled": true,
+  "n": 1,
+  "why": "viva",
+  "wr": 0
+ },
+ "dip|AMZN": {
+  "ci_hi": 100,
+  "enabled": true,
+  "n": 1,
+  "why": "viva",
+  "wr": 100
+ },
+ "dip|MSFT": {
+  "ci_hi": 79,
+  "enabled": true,
+  "n": 1,
+  "why": "viva",
+  "wr": 0
+ },
+ "dip|TSLA": {
+  "ci_hi": 79,
+  "enabled": true,
+  "n": 1,
+  "why": "viva",
+  "wr": 0
+ },
+ "flow|AAPL": {
+  "ci_hi": 56,
+  "enabled": true,
+  "n": 3,
+  "why": "viva",
+  "wr": 0
+ },
+ "flow|AMD": {
+  "ci_hi": 96,
+  "enabled": true,
+  "n": 5,
+  "why": "viva",
+  "wr": 80
+ },
+ "flow|AMZN": {
+  "ci_hi": 79,
+  "enabled": true,
+  "n": 3,
+  "why": "viva",
+  "wr": 33
+ },
+ "flow|AVGO": {
+  "ci_hi": 94,
+  "enabled": true,
+  "n": 3,
+  "why": "viva",
+  "wr": 67
+ },
+ "flow|MSFT": {
+  "ci_hi": 77,
+  "enabled": true,
+  "n": 5,
+  "why": "viva",
+  "wr": 40
+ },
+ "flow|MU": {
+  "ci_hi": 79,
+  "enabled": true,
+  "n": 3,
+  "why": "viva",
+  "wr": 33
+ },
+ "flow|NFLX": {
+  "ci_hi": 100,
+  "enabled": true,
+  "n": 1,
+  "why": "viva",
+  "wr": 100
+ },
+ "flow|QQQ": {
+  "ci_hi": 79,
+  "enabled": true,
+  "n": 3,
+  "why": "viva",
+  "wr": 33
+ },
+ "structural|NVDA": {
+  "ci_hi": 96,
+  "enabled": true,
+  "n": 5,
+  "why": "viva",
+  "wr": 80
+ },
+ "whale|AAPL": {
+  "ci_hi": 91,
+  "enabled": true,
+  "n": 2,
+  "why": "viva",
+  "wr": 50
+ },
+ "whale|AMD": {
+  "ci_hi": 70,
+  "enabled": true,
+  "n": 4,
+  "why": "viva",
+  "wr": 25
+ },
+ "whale|AMZN": {
+  "ci_hi": 79,
+  "enabled": true,
+  "n": 1,
+  "why": "viva",
+  "wr": 0
+ },
+ "whale|AVGO": {
+  "ci_hi": 84,
+  "enabled": true,
+  "n": 7,
+  "why": "viva",
+  "wr": 57
+ },
+ "whale|META": {
+  "ci_hi": 56,
+  "enabled": true,
+  "n": 3,
+  "why": "viva",
+  "wr": 0
+ },
+ "whale|MSFT": {
+  "ci_hi": 69,
+  "enabled": true,
+  "n": 8,
+  "why": "viva",
+  "wr": 38
+ },
+ "whale|MU": {
+  "ci_hi": 73,
+  "enabled": true,
+  "n": 9,
+  "why": "viva",
+  "wr": 44
+ },
+ "whale|NFLX": {
+  "ci_hi": 77,
+  "enabled": true,
+  "n": 5,
+  "why": "viva",
+  "wr": 40
+ },
+ "whale|NVDA": {
+  "ci_hi": 62,
+  "enabled": true,
+  "n": 5,
+  "why": "viva",
+  "wr": 20
+ },
+ "whale|QCOM": {
+  "ci_hi": 81,
+  "enabled": true,
+  "n": 6,
+  "why": "viva",
+  "wr": 50
+ },
+ "whale|QQQ": {
+  "ci_hi": 77,
+  "enabled": true,
+  "n": 5,
+  "why": "viva",
+  "wr": 40
+ },
+ "whale|SMH": {
+  "ci_hi": 69,
+  "enabled": true,
+  "n": 8,
+  "why": "viva",
+  "wr": 38
+ },
+ "whale|SPY": {
+  "ci_hi": 91,
+  "enabled": true,
+  "n": 2,
+  "why": "viva",
+  "wr": 50
+ },
+ "whale|TSLA": {
+  "ci_hi": 43,
+  "enabled": true,
+  "n": 5,
+  "why": "viva",
+  "wr": 0
+ }
+}

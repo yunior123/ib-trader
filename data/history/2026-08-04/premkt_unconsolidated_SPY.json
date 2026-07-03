@@ -1,0 +1,1588 @@
+{
+ "meta": {
+  "sym": "SPY",
+  "fecha": "2026-08-04",
+  "dataset": "ARCX.PILLAR",
+  "bolsa_primaria": "NYSE Arca",
+  "clase_dato": "unconsolidated_direct",
+  "schemas": {
+   "tape": "tbbo",
+   "imbalance": "imbalance",
+   "resultado": "ohlcv-1m",
+   "prev_close": "ohlcv-1m"
+  },
+  "ventana_premkt_et": "04:00-09:30",
+  "tramo_min": 5,
+  "coste_usd_medido": 0.009287,
+  "coste_desglose": {
+   "tbbo": 0.00255,
+   "imbalance": 0.006696,
+   "ohlcv-1m-open": 2.2e-05,
+   "ohlcv-1m-prev": 1.9e-05
+  },
+  "ts_descarga": 1786070158,
+  "generador": "scripts/premarket_unconsolidated.py",
+  "clasificacion_cinta": "lee-ready con bid_px_00/ask_px_00 del propio tbbo; sin quote valida = NO clasificado (jamas repartido)",
+  "n_trades_crudos": 5705,
+  "n_imbalance_crudos": 4012
+ },
+ "tape": [
+  {
+   "t": "04:00",
+   "n_trades": 41,
+   "vol": 929,
+   "buy_vol": 554,
+   "sell_vol": 357,
+   "n_sin_clasificar": 3,
+   "vol_sin_clasificar": 18,
+   "vwap": 759.270571,
+   "signed_vol": 197
+  },
+  {
+   "t": "04:05",
+   "n_trades": 57,
+   "vol": 2107,
+   "buy_vol": 1777,
+   "sell_vol": 330,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 759.331291,
+   "signed_vol": 1447
+  },
+  {
+   "t": "04:10",
+   "n_trades": 29,
+   "vol": 922,
+   "buy_vol": 548,
+   "sell_vol": 374,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 759.223872,
+   "signed_vol": 174
+  },
+  {
+   "t": "04:15",
+   "n_trades": 45,
+   "vol": 3731,
+   "buy_vol": 1815,
+   "sell_vol": 1916,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 759.369544,
+   "signed_vol": -101
+  },
+  {
+   "t": "04:20",
+   "n_trades": 39,
+   "vol": 1609,
+   "buy_vol": 620,
+   "sell_vol": 989,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 759.457775,
+   "signed_vol": -369
+  },
+  {
+   "t": "04:25",
+   "n_trades": 24,
+   "vol": 756,
+   "buy_vol": 385,
+   "sell_vol": 371,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 759.19881,
+   "signed_vol": 14
+  },
+  {
+   "t": "04:30",
+   "n_trades": 38,
+   "vol": 642,
+   "buy_vol": 202,
+   "sell_vol": 440,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 759.00919,
+   "signed_vol": -238
+  },
+  {
+   "t": "04:35",
+   "n_trades": 31,
+   "vol": 1415,
+   "buy_vol": 546,
+   "sell_vol": 869,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.759731,
+   "signed_vol": -323
+  },
+  {
+   "t": "04:40",
+   "n_trades": 17,
+   "vol": 351,
+   "buy_vol": 177,
+   "sell_vol": 174,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.734444,
+   "signed_vol": 3
+  },
+  {
+   "t": "04:45",
+   "n_trades": 51,
+   "vol": 2737,
+   "buy_vol": 2294,
+   "sell_vol": 443,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.518418,
+   "signed_vol": 1851
+  },
+  {
+   "t": "04:50",
+   "n_trades": 32,
+   "vol": 736,
+   "buy_vol": 598,
+   "sell_vol": 138,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.506277,
+   "signed_vol": 460
+  },
+  {
+   "t": "04:55",
+   "n_trades": 17,
+   "vol": 732,
+   "buy_vol": 573,
+   "sell_vol": 159,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.726489,
+   "signed_vol": 414
+  },
+  {
+   "t": "05:00",
+   "n_trades": 42,
+   "vol": 1496,
+   "buy_vol": 555,
+   "sell_vol": 941,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.466457,
+   "signed_vol": -386
+  },
+  {
+   "t": "05:05",
+   "n_trades": 105,
+   "vol": 8251,
+   "buy_vol": 2115,
+   "sell_vol": 6136,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.247032,
+   "signed_vol": -4021
+  },
+  {
+   "t": "05:10",
+   "n_trades": 41,
+   "vol": 1847,
+   "buy_vol": 362,
+   "sell_vol": 1485,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.208522,
+   "signed_vol": -1123
+  },
+  {
+   "t": "05:15",
+   "n_trades": 106,
+   "vol": 7949,
+   "buy_vol": 2363,
+   "sell_vol": 5586,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.176754,
+   "signed_vol": -3223
+  },
+  {
+   "t": "05:20",
+   "n_trades": 43,
+   "vol": 4763,
+   "buy_vol": 1254,
+   "sell_vol": 3509,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.206177,
+   "signed_vol": -2255
+  },
+  {
+   "t": "05:25",
+   "n_trades": 32,
+   "vol": 1156,
+   "buy_vol": 757,
+   "sell_vol": 399,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.21923,
+   "signed_vol": 358
+  },
+  {
+   "t": "05:30",
+   "n_trades": 23,
+   "vol": 680,
+   "buy_vol": 568,
+   "sell_vol": 112,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.409059,
+   "signed_vol": 456
+  },
+  {
+   "t": "05:35",
+   "n_trades": 17,
+   "vol": 1194,
+   "buy_vol": 854,
+   "sell_vol": 340,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.490084,
+   "signed_vol": 514
+  },
+  {
+   "t": "05:40",
+   "n_trades": 32,
+   "vol": 720,
+   "buy_vol": 94,
+   "sell_vol": 626,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.694667,
+   "signed_vol": -532
+  },
+  {
+   "t": "05:45",
+   "n_trades": 41,
+   "vol": 3293,
+   "buy_vol": 1677,
+   "sell_vol": 1616,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.645299,
+   "signed_vol": 61
+  },
+  {
+   "t": "05:50",
+   "n_trades": 12,
+   "vol": 299,
+   "buy_vol": 253,
+   "sell_vol": 46,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.51592,
+   "signed_vol": 207
+  },
+  {
+   "t": "05:55",
+   "n_trades": 20,
+   "vol": 1801,
+   "buy_vol": 76,
+   "sell_vol": 1725,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.552293,
+   "signed_vol": -1649
+  },
+  {
+   "t": "06:00",
+   "n_trades": 10,
+   "vol": 143,
+   "buy_vol": 136,
+   "sell_vol": 7,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.646224,
+   "signed_vol": 129
+  },
+  {
+   "t": "06:05",
+   "n_trades": 8,
+   "vol": 62,
+   "buy_vol": 4,
+   "sell_vol": 58,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.625,
+   "signed_vol": -54
+  },
+  {
+   "t": "06:10",
+   "n_trades": 46,
+   "vol": 1769,
+   "buy_vol": 266,
+   "sell_vol": 1503,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.740362,
+   "signed_vol": -1237
+  },
+  {
+   "t": "06:15",
+   "n_trades": 31,
+   "vol": 1154,
+   "buy_vol": 370,
+   "sell_vol": 784,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.662296,
+   "signed_vol": -414
+  },
+  {
+   "t": "06:20",
+   "n_trades": 32,
+   "vol": 726,
+   "buy_vol": 340,
+   "sell_vol": 386,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.624904,
+   "signed_vol": -46
+  },
+  {
+   "t": "06:25",
+   "n_trades": 134,
+   "vol": 8720,
+   "buy_vol": 6057,
+   "sell_vol": 2663,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.685063,
+   "signed_vol": 3394
+  },
+  {
+   "t": "06:30",
+   "n_trades": 169,
+   "vol": 9325,
+   "buy_vol": 6133,
+   "sell_vol": 3192,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.829325,
+   "signed_vol": 2941
+  },
+  {
+   "t": "06:35",
+   "n_trades": 48,
+   "vol": 2382,
+   "buy_vol": 394,
+   "sell_vol": 1988,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.822725,
+   "signed_vol": -1594
+  },
+  {
+   "t": "06:40",
+   "n_trades": 74,
+   "vol": 2253,
+   "buy_vol": 851,
+   "sell_vol": 1402,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 758.889206,
+   "signed_vol": -551
+  },
+  {
+   "t": "06:45",
+   "n_trades": 96,
+   "vol": 3977,
+   "buy_vol": 2928,
+   "sell_vol": 1049,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 759.512512,
+   "signed_vol": 1879
+  },
+  {
+   "t": "06:50",
+   "n_trades": 26,
+   "vol": 1665,
+   "buy_vol": 498,
+   "sell_vol": 1167,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 759.184865,
+   "signed_vol": -669
+  },
+  {
+   "t": "06:55",
+   "n_trades": 54,
+   "vol": 2873,
+   "buy_vol": 1399,
+   "sell_vol": 1474,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 759.27661,
+   "signed_vol": -75
+  },
+  {
+   "t": "07:00",
+   "n_trades": 71,
+   "vol": 2100,
+   "buy_vol": 1457,
+   "sell_vol": 643,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 759.289471,
+   "signed_vol": 814
+  },
+  {
+   "t": "07:05",
+   "n_trades": 35,
+   "vol": 1354,
+   "buy_vol": 688,
+   "sell_vol": 666,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 759.1763,
+   "signed_vol": 22
+  },
+  {
+   "t": "07:10",
+   "n_trades": 19,
+   "vol": 1046,
+   "buy_vol": 1029,
+   "sell_vol": 17,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 759.189331,
+   "signed_vol": 1012
+  },
+  {
+   "t": "07:15",
+   "n_trades": 38,
+   "vol": 2876,
+   "buy_vol": 2818,
+   "sell_vol": 58,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 759.34136,
+   "signed_vol": 2760
+  },
+  {
+   "t": "07:20",
+   "n_trades": 52,
+   "vol": 1900,
+   "buy_vol": 1384,
+   "sell_vol": 516,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 759.514379,
+   "signed_vol": 868
+  },
+  {
+   "t": "07:25",
+   "n_trades": 47,
+   "vol": 2431,
+   "buy_vol": 2172,
+   "sell_vol": 259,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 759.69501,
+   "signed_vol": 1913
+  },
+  {
+   "t": "07:30",
+   "n_trades": 22,
+   "vol": 1680,
+   "buy_vol": 1361,
+   "sell_vol": 319,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 759.701643,
+   "signed_vol": 1042
+  },
+  {
+   "t": "07:35",
+   "n_trades": 50,
+   "vol": 2128,
+   "buy_vol": 574,
+   "sell_vol": 1554,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 759.63484,
+   "signed_vol": -980
+  },
+  {
+   "t": "07:40",
+   "n_trades": 441,
+   "vol": 33145,
+   "buy_vol": 13247,
+   "sell_vol": 19898,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 760.091943,
+   "signed_vol": -6651
+  },
+  {
+   "t": "07:45",
+   "n_trades": 161,
+   "vol": 13806,
+   "buy_vol": 10686,
+   "sell_vol": 3120,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 760.298259,
+   "signed_vol": 7566
+  },
+  {
+   "t": "07:50",
+   "n_trades": 141,
+   "vol": 12035,
+   "buy_vol": 8954,
+   "sell_vol": 3081,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 760.443062,
+   "signed_vol": 5873
+  },
+  {
+   "t": "07:55",
+   "n_trades": 252,
+   "vol": 28584,
+   "buy_vol": 16118,
+   "sell_vol": 12466,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 760.359182,
+   "signed_vol": 3652
+  },
+  {
+   "t": "08:00",
+   "n_trades": 95,
+   "vol": 5926,
+   "buy_vol": 2576,
+   "sell_vol": 3350,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 760.257513,
+   "signed_vol": -774
+  },
+  {
+   "t": "08:05",
+   "n_trades": 289,
+   "vol": 19588,
+   "buy_vol": 12638,
+   "sell_vol": 6950,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 760.572983,
+   "signed_vol": 5688
+  },
+  {
+   "t": "08:10",
+   "n_trades": 69,
+   "vol": 5213,
+   "buy_vol": 1612,
+   "sell_vol": 3601,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 760.322076,
+   "signed_vol": -1989
+  },
+  {
+   "t": "08:15",
+   "n_trades": 107,
+   "vol": 23072,
+   "buy_vol": 16043,
+   "sell_vol": 7029,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 760.053781,
+   "signed_vol": 9014
+  },
+  {
+   "t": "08:20",
+   "n_trades": 60,
+   "vol": 3537,
+   "buy_vol": 1283,
+   "sell_vol": 2254,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 760.38868,
+   "signed_vol": -971
+  },
+  {
+   "t": "08:25",
+   "n_trades": 61,
+   "vol": 4604,
+   "buy_vol": 1811,
+   "sell_vol": 2793,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 760.390532,
+   "signed_vol": -982
+  },
+  {
+   "t": "08:30",
+   "n_trades": 73,
+   "vol": 3533,
+   "buy_vol": 1519,
+   "sell_vol": 2014,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 760.313756,
+   "signed_vol": -495
+  },
+  {
+   "t": "08:35",
+   "n_trades": 69,
+   "vol": 4009,
+   "buy_vol": 1791,
+   "sell_vol": 2218,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 760.391412,
+   "signed_vol": -427
+  },
+  {
+   "t": "08:40",
+   "n_trades": 58,
+   "vol": 3598,
+   "buy_vol": 2601,
+   "sell_vol": 997,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 760.404027,
+   "signed_vol": 1604
+  },
+  {
+   "t": "08:45",
+   "n_trades": 62,
+   "vol": 6129,
+   "buy_vol": 3136,
+   "sell_vol": 2993,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 760.162403,
+   "signed_vol": 143
+  },
+  {
+   "t": "08:50",
+   "n_trades": 33,
+   "vol": 280,
+   "buy_vol": 207,
+   "sell_vol": 73,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 760.184571,
+   "signed_vol": 134
+  },
+  {
+   "t": "08:55",
+   "n_trades": 76,
+   "vol": 3965,
+   "buy_vol": 1609,
+   "sell_vol": 2356,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 760.098247,
+   "signed_vol": -747
+  },
+  {
+   "t": "09:00",
+   "n_trades": 173,
+   "vol": 9539,
+   "buy_vol": 2305,
+   "sell_vol": 7234,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 760.066075,
+   "signed_vol": -4929
+  },
+  {
+   "t": "09:05",
+   "n_trades": 94,
+   "vol": 8336,
+   "buy_vol": 7350,
+   "sell_vol": 986,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 760.290893,
+   "signed_vol": 6364
+  },
+  {
+   "t": "09:10",
+   "n_trades": 70,
+   "vol": 2117,
+   "buy_vol": 1001,
+   "sell_vol": 1116,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 760.268493,
+   "signed_vol": -115
+  },
+  {
+   "t": "09:15",
+   "n_trades": 156,
+   "vol": 6095,
+   "buy_vol": 3332,
+   "sell_vol": 2763,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 760.326277,
+   "signed_vol": 569
+  },
+  {
+   "t": "09:20",
+   "n_trades": 724,
+   "vol": 67454,
+   "buy_vol": 40610,
+   "sell_vol": 26844,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 760.849972,
+   "signed_vol": 13766
+  },
+  {
+   "t": "09:25",
+   "n_trades": 444,
+   "vol": 55945,
+   "buy_vol": 29911,
+   "sell_vol": 26034,
+   "n_sin_clasificar": 0,
+   "vol_sin_clasificar": 0,
+   "vwap": 760.847001,
+   "signed_vol": 3877
+  }
+ ],
+ "tape_total": {
+  "n_trades": 5705,
+  "vol": 421190,
+  "buy_vol": 232216,
+  "sell_vol": 188956,
+  "n_sin_clasificar": 3,
+  "vol_sin_clasificar": 18,
+  "vwap": 760.092708,
+  "signed_vol": 43260,
+  "last_px": 760.6,
+  "last_ts": 1785850199
+ },
+ "imbalance": [
+  {
+   "ts": 1785844859,
+   "hhmm": "08:00",
+   "ref_price": 760.32,
+   "paired_qty": 14558,
+   "total_imbalance_qty": 8548,
+   "side": "A",
+   "imbalance_ratio": 0.3699471998615078
+  },
+  {
+   "ts": 1785844917,
+   "hhmm": "08:01",
+   "ref_price": 760.2,
+   "paired_qty": 15076,
+   "total_imbalance_qty": 8007,
+   "side": "A",
+   "imbalance_ratio": 0.346878655287441
+  },
+  {
+   "ts": 1785844979,
+   "hhmm": "08:02",
+   "ref_price": 760.275,
+   "paired_qty": 15076,
+   "total_imbalance_qty": 8034,
+   "side": "A",
+   "imbalance_ratio": 0.34764171354392037
+  },
+  {
+   "ts": 1785845038,
+   "hhmm": "08:03",
+   "ref_price": 760.275,
+   "paired_qty": 15643,
+   "total_imbalance_qty": 8935,
+   "side": "A",
+   "imbalance_ratio": 0.36353649605338106
+  },
+  {
+   "ts": 1785845099,
+   "hhmm": "08:04",
+   "ref_price": 760.345,
+   "paired_qty": 16262,
+   "total_imbalance_qty": 12105,
+   "side": "A",
+   "imbalance_ratio": 0.4267282405612155
+  },
+  {
+   "ts": 1785845158,
+   "hhmm": "08:05",
+   "ref_price": 760.295,
+   "paired_qty": 16300,
+   "total_imbalance_qty": 14137,
+   "side": "A",
+   "imbalance_ratio": 0.4644675887899596
+  },
+  {
+   "ts": 1785845219,
+   "hhmm": "08:06",
+   "ref_price": 760.18,
+   "paired_qty": 16307,
+   "total_imbalance_qty": 13884,
+   "side": "A",
+   "imbalance_ratio": 0.4598721473286741
+  },
+  {
+   "ts": 1785845279,
+   "hhmm": "08:07",
+   "ref_price": 760.225,
+   "paired_qty": 16329,
+   "total_imbalance_qty": 14170,
+   "side": "A",
+   "imbalance_ratio": 0.46460539689825897
+  },
+  {
+   "ts": 1785845338,
+   "hhmm": "08:08",
+   "ref_price": 760.33,
+   "paired_qty": 16385,
+   "total_imbalance_qty": 14416,
+   "side": "A",
+   "imbalance_ratio": 0.46803675205350476
+  },
+  {
+   "ts": 1785845399,
+   "hhmm": "08:09",
+   "ref_price": 760.38,
+   "paired_qty": 16421,
+   "total_imbalance_qty": 14606,
+   "side": "A",
+   "imbalance_ratio": 0.47075128114223097
+  },
+  {
+   "ts": 1785845459,
+   "hhmm": "08:10",
+   "ref_price": 760.32,
+   "paired_qty": 20389,
+   "total_imbalance_qty": 15111,
+   "side": "A",
+   "imbalance_ratio": 0.4256619718309859
+  },
+  {
+   "ts": 1785845518,
+   "hhmm": "08:11",
+   "ref_price": 760.315,
+   "paired_qty": 20821,
+   "total_imbalance_qty": 16053,
+   "side": "A",
+   "imbalance_ratio": 0.4353473992515051
+  },
+  {
+   "ts": 1785845576,
+   "hhmm": "08:12",
+   "ref_price": 760.265,
+   "paired_qty": 21000,
+   "total_imbalance_qty": 16211,
+   "side": "A",
+   "imbalance_ratio": 0.43565074843460266
+  },
+  {
+   "ts": 1785845638,
+   "hhmm": "08:13",
+   "ref_price": 760.25,
+   "paired_qty": 21122,
+   "total_imbalance_qty": 16089,
+   "side": "A",
+   "imbalance_ratio": 0.4323721480207465
+  },
+  {
+   "ts": 1785845696,
+   "hhmm": "08:14",
+   "ref_price": 760.1,
+   "paired_qty": 21302,
+   "total_imbalance_qty": 15440,
+   "side": "A",
+   "imbalance_ratio": 0.4202275325240869
+  },
+  {
+   "ts": 1785845759,
+   "hhmm": "08:15",
+   "ref_price": 760.115,
+   "paired_qty": 22333,
+   "total_imbalance_qty": 15235,
+   "side": "A",
+   "imbalance_ratio": 0.40553130323679726
+  },
+  {
+   "ts": 1785845819,
+   "hhmm": "08:16",
+   "ref_price": 760.155,
+   "paired_qty": 22581,
+   "total_imbalance_qty": 15910,
+   "side": "A",
+   "imbalance_ratio": 0.4133433789717077
+  },
+  {
+   "ts": 1785845878,
+   "hhmm": "08:17",
+   "ref_price": 760.08,
+   "paired_qty": 25075,
+   "total_imbalance_qty": 12985,
+   "side": "A",
+   "imbalance_ratio": 0.34117183394640044
+  },
+  {
+   "ts": 1785845938,
+   "hhmm": "08:18",
+   "ref_price": 760.195,
+   "paired_qty": 29835,
+   "total_imbalance_qty": 8882,
+   "side": "A",
+   "imbalance_ratio": 0.22940827026887414
+  },
+  {
+   "ts": 1785845992,
+   "hhmm": "08:19",
+   "ref_price": 760.335,
+   "paired_qty": 29814,
+   "total_imbalance_qty": 9209,
+   "side": "A",
+   "imbalance_ratio": 0.2359890321092689
+  },
+  {
+   "ts": 1785846059,
+   "hhmm": "08:20",
+   "ref_price": 760.345,
+   "paired_qty": 29914,
+   "total_imbalance_qty": 9108,
+   "side": "A",
+   "imbalance_ratio": 0.2334067961662652
+  },
+  {
+   "ts": 1785846119,
+   "hhmm": "08:21",
+   "ref_price": 760.385,
+   "paired_qty": 29962,
+   "total_imbalance_qty": 9607,
+   "side": "A",
+   "imbalance_ratio": 0.24279107382041498
+  },
+  {
+   "ts": 1785846178,
+   "hhmm": "08:22",
+   "ref_price": 760.41,
+   "paired_qty": 30005,
+   "total_imbalance_qty": 9932,
+   "side": "A",
+   "imbalance_ratio": 0.24869168941082204
+  },
+  {
+   "ts": 1785846239,
+   "hhmm": "08:23",
+   "ref_price": 760.38,
+   "paired_qty": 30092,
+   "total_imbalance_qty": 9604,
+   "side": "A",
+   "imbalance_ratio": 0.24193873438129787
+  },
+  {
+   "ts": 1785846297,
+   "hhmm": "08:24",
+   "ref_price": 760.37,
+   "paired_qty": 30259,
+   "total_imbalance_qty": 9521,
+   "side": "A",
+   "imbalance_ratio": 0.2393413775766717
+  },
+  {
+   "ts": 1785846359,
+   "hhmm": "08:25",
+   "ref_price": 760.42,
+   "paired_qty": 30383,
+   "total_imbalance_qty": 9916,
+   "side": "A",
+   "imbalance_ratio": 0.24606069629519342
+  },
+  {
+   "ts": 1785846419,
+   "hhmm": "08:26",
+   "ref_price": 760.425,
+   "paired_qty": 30389,
+   "total_imbalance_qty": 10021,
+   "side": "A",
+   "imbalance_ratio": 0.2479831724820589
+  },
+  {
+   "ts": 1785846479,
+   "hhmm": "08:27",
+   "ref_price": 760.395,
+   "paired_qty": 30550,
+   "total_imbalance_qty": 9474,
+   "side": "A",
+   "imbalance_ratio": 0.23670797521487108
+  },
+  {
+   "ts": 1785846539,
+   "hhmm": "08:28",
+   "ref_price": 760.365,
+   "paired_qty": 30813,
+   "total_imbalance_qty": 9299,
+   "side": "A",
+   "imbalance_ratio": 0.2318258875149581
+  },
+  {
+   "ts": 1785846599,
+   "hhmm": "08:29",
+   "ref_price": 760.345,
+   "paired_qty": 30985,
+   "total_imbalance_qty": 9295,
+   "side": "A",
+   "imbalance_ratio": 0.230759682224429
+  },
+  {
+   "ts": 1785846659,
+   "hhmm": "08:30",
+   "ref_price": 760.355,
+   "paired_qty": 37373,
+   "total_imbalance_qty": 4933,
+   "side": "A",
+   "imbalance_ratio": 0.1166028459320191
+  },
+  {
+   "ts": 1785846719,
+   "hhmm": "08:31",
+   "ref_price": 760.195,
+   "paired_qty": 37806,
+   "total_imbalance_qty": 4274,
+   "side": "A",
+   "imbalance_ratio": 0.10156844106463879
+  },
+  {
+   "ts": 1785846779,
+   "hhmm": "08:32",
+   "ref_price": 760.235,
+   "paired_qty": 38506,
+   "total_imbalance_qty": 4192,
+   "side": "A",
+   "imbalance_ratio": 0.09817790060424376
+  },
+  {
+   "ts": 1785846839,
+   "hhmm": "08:33",
+   "ref_price": 760.35,
+   "paired_qty": 39061,
+   "total_imbalance_qty": 3894,
+   "side": "A",
+   "imbalance_ratio": 0.09065300896286811
+  },
+  {
+   "ts": 1785846899,
+   "hhmm": "08:34",
+   "ref_price": 760.39,
+   "paired_qty": 38825,
+   "total_imbalance_qty": 4274,
+   "side": "A",
+   "imbalance_ratio": 0.09916703403791272
+  },
+  {
+   "ts": 1785846959,
+   "hhmm": "08:35",
+   "ref_price": 760.425,
+   "paired_qty": 38809,
+   "total_imbalance_qty": 4870,
+   "side": "A",
+   "imbalance_ratio": 0.11149522653906911
+  },
+  {
+   "ts": 1785847019,
+   "hhmm": "08:36",
+   "ref_price": 760.35,
+   "paired_qty": 40770,
+   "total_imbalance_qty": 2277,
+   "side": "A",
+   "imbalance_ratio": 0.052895672172276816
+  },
+  {
+   "ts": 1785847079,
+   "hhmm": "08:37",
+   "ref_price": 760.365,
+   "paired_qty": 41309,
+   "total_imbalance_qty": 1744,
+   "side": "A",
+   "imbalance_ratio": 0.040508210809931944
+  },
+  {
+   "ts": 1785847137,
+   "hhmm": "08:38",
+   "ref_price": 760.355,
+   "paired_qty": 41338,
+   "total_imbalance_qty": 1708,
+   "side": "A",
+   "imbalance_ratio": 0.03967848348278586
+  },
+  {
+   "ts": 1785847199,
+   "hhmm": "08:39",
+   "ref_price": 760.36,
+   "paired_qty": 41990,
+   "total_imbalance_qty": 1164,
+   "side": "A",
+   "imbalance_ratio": 0.026973165871066414
+  },
+  {
+   "ts": 1785847259,
+   "hhmm": "08:40",
+   "ref_price": 760.42,
+   "paired_qty": 44872,
+   "total_imbalance_qty": 1663,
+   "side": "A",
+   "imbalance_ratio": 0.035736542387450304
+  },
+  {
+   "ts": 1785847319,
+   "hhmm": "08:41",
+   "ref_price": 760.38,
+   "paired_qty": 43614,
+   "total_imbalance_qty": 2306,
+   "side": "A",
+   "imbalance_ratio": 0.05021777003484321
+  },
+  {
+   "ts": 1785847379,
+   "hhmm": "08:42",
+   "ref_price": 760.405,
+   "paired_qty": 43596,
+   "total_imbalance_qty": 2671,
+   "side": "A",
+   "imbalance_ratio": 0.05773013162729375
+  },
+  {
+   "ts": 1785847439,
+   "hhmm": "08:43",
+   "ref_price": 760.375,
+   "paired_qty": 43624,
+   "total_imbalance_qty": 2302,
+   "side": "A",
+   "imbalance_ratio": 0.050124112703044024
+  },
+  {
+   "ts": 1785847498,
+   "hhmm": "08:44",
+   "ref_price": 760.41,
+   "paired_qty": 43660,
+   "total_imbalance_qty": 2777,
+   "side": "A",
+   "imbalance_ratio": 0.059801451428817536
+  },
+  {
+   "ts": 1785847559,
+   "hhmm": "08:45",
+   "ref_price": 760.37,
+   "paired_qty": 44111,
+   "total_imbalance_qty": 2299,
+   "side": "A",
+   "imbalance_ratio": 0.04953673777203189
+  },
+  {
+   "ts": 1785847619,
+   "hhmm": "08:46",
+   "ref_price": 760.335,
+   "paired_qty": 44256,
+   "total_imbalance_qty": 2138,
+   "side": "A",
+   "imbalance_ratio": 0.046083545286028364
+  },
+  {
+   "ts": 1785847679,
+   "hhmm": "08:47",
+   "ref_price": 760.23,
+   "paired_qty": 43941,
+   "total_imbalance_qty": 2315,
+   "side": "A",
+   "imbalance_ratio": 0.050047561397440335
+  },
+  {
+   "ts": 1785847739,
+   "hhmm": "08:48",
+   "ref_price": 760.08,
+   "paired_qty": 44476,
+   "total_imbalance_qty": 1429,
+   "side": "A",
+   "imbalance_ratio": 0.031129506589696113
+  },
+  {
+   "ts": 1785847796,
+   "hhmm": "08:49",
+   "ref_price": 760.09,
+   "paired_qty": 43947,
+   "total_imbalance_qty": 2105,
+   "side": "A",
+   "imbalance_ratio": 0.04570919829757665
+  },
+  {
+   "ts": 1785847859,
+   "hhmm": "08:50",
+   "ref_price": 760.16,
+   "paired_qty": 44521,
+   "total_imbalance_qty": 2272,
+   "side": "A",
+   "imbalance_ratio": 0.0485542709379608
+  },
+  {
+   "ts": 1785847917,
+   "hhmm": "08:51",
+   "ref_price": 760.235,
+   "paired_qty": 45247,
+   "total_imbalance_qty": 1874,
+   "side": "A",
+   "imbalance_ratio": 0.039769953948345746
+  },
+  {
+   "ts": 1785847979,
+   "hhmm": "08:52",
+   "ref_price": 760.15,
+   "paired_qty": 44685,
+   "total_imbalance_qty": 2167,
+   "side": "A",
+   "imbalance_ratio": 0.04625202766157261
+  },
+  {
+   "ts": 1785848039,
+   "hhmm": "08:53",
+   "ref_price": 760.19,
+   "paired_qty": 44712,
+   "total_imbalance_qty": 2324,
+   "side": "A",
+   "imbalance_ratio": 0.0494089633472234
+  },
+  {
+   "ts": 1785848096,
+   "hhmm": "08:54",
+   "ref_price": 760.15,
+   "paired_qty": 45309,
+   "total_imbalance_qty": 2026,
+   "side": "A",
+   "imbalance_ratio": 0.04280130981303475
+  },
+  {
+   "ts": 1785848159,
+   "hhmm": "08:55",
+   "ref_price": 760.145,
+   "paired_qty": 44785,
+   "total_imbalance_qty": 2825,
+   "side": "A",
+   "imbalance_ratio": 0.059336273892039486
+  },
+  {
+   "ts": 1785848219,
+   "hhmm": "08:56",
+   "ref_price": 760.085,
+   "paired_qty": 44861,
+   "total_imbalance_qty": 2281,
+   "side": "A",
+   "imbalance_ratio": 0.04838572822536168
+  },
+  {
+   "ts": 1785848278,
+   "hhmm": "08:57",
+   "ref_price": 760.18,
+   "paired_qty": 45518,
+   "total_imbalance_qty": 2284,
+   "side": "A",
+   "imbalance_ratio": 0.04778042759717167
+  },
+  {
+   "ts": 1785848337,
+   "hhmm": "08:58",
+   "ref_price": 760.125,
+   "paired_qty": 45804,
+   "total_imbalance_qty": 1882,
+   "side": "A",
+   "imbalance_ratio": 0.03946651008681793
+  },
+  {
+   "ts": 1785848399,
+   "hhmm": "08:59",
+   "ref_price": 760.05,
+   "paired_qty": 45401,
+   "total_imbalance_qty": 9948,
+   "side": "A",
+   "imbalance_ratio": 0.17973224448499522
+  },
+  {
+   "ts": 1785848459,
+   "hhmm": "09:00",
+   "ref_price": 759.98,
+   "paired_qty": 35244,
+   "total_imbalance_qty": 10668,
+   "side": "B",
+   "imbalance_ratio": 0.2323575535807632
+  },
+  {
+   "ts": 1785848519,
+   "hhmm": "09:01",
+   "ref_price": 760.075,
+   "paired_qty": 44248,
+   "total_imbalance_qty": 13957,
+   "side": "A",
+   "imbalance_ratio": 0.23979039601408814
+  },
+  {
+   "ts": 1785848579,
+   "hhmm": "09:02",
+   "ref_price": 760.115,
+   "paired_qty": 46825,
+   "total_imbalance_qty": 30693,
+   "side": "A",
+   "imbalance_ratio": 0.39594674785211176
+  },
+  {
+   "ts": 1785848638,
+   "hhmm": "09:03",
+   "ref_price": 760.175,
+   "paired_qty": 47467,
+   "total_imbalance_qty": 30178,
+   "side": "A",
+   "imbalance_ratio": 0.388666366153648
+  },
+  {
+   "ts": 1785848699,
+   "hhmm": "09:04",
+   "ref_price": 760.13,
+   "paired_qty": 47757,
+   "total_imbalance_qty": 29932,
+   "side": "A",
+   "imbalance_ratio": 0.3852797693367143
+  },
+  {
+   "ts": 1785848759,
+   "hhmm": "09:05",
+   "ref_price": 760.22,
+   "paired_qty": 47994,
+   "total_imbalance_qty": 30563,
+   "side": "A",
+   "imbalance_ratio": 0.38905508102396985
+  },
+  {
+   "ts": 1785848817,
+   "hhmm": "09:06",
+   "ref_price": 760.26,
+   "paired_qty": 48065,
+   "total_imbalance_qty": 30699,
+   "side": "A",
+   "imbalance_ratio": 0.3897592808897466
+  },
+  {
+   "ts": 1785848877,
+   "hhmm": "09:07",
+   "ref_price": 760.27,
+   "paired_qty": 48282,
+   "total_imbalance_qty": 30617,
+   "side": "A",
+   "imbalance_ratio": 0.38805308052066567
+  },
+  {
+   "ts": 1785848939,
+   "hhmm": "09:08",
+   "ref_price": 760.29,
+   "paired_qty": 49117,
+   "total_imbalance_qty": 29813,
+   "side": "A",
+   "imbalance_ratio": 0.3777144305080451
+  },
+  {
+   "ts": 1785848999,
+   "hhmm": "09:09",
+   "ref_price": 760.275,
+   "paired_qty": 50572,
+   "total_imbalance_qty": 28362,
+   "side": "A",
+   "imbalance_ratio": 0.35931284364152327
+  },
+  {
+   "ts": 1785849057,
+   "hhmm": "09:10",
+   "ref_price": 760.3,
+   "paired_qty": 51929,
+   "total_imbalance_qty": 27412,
+   "side": "A",
+   "imbalance_ratio": 0.3454960234935279
+  },
+  {
+   "ts": 1785849119,
+   "hhmm": "09:11",
+   "ref_price": 760.245,
+   "paired_qty": 52189,
+   "total_imbalance_qty": 27129,
+   "side": "A",
+   "imbalance_ratio": 0.34202829118232936
+  },
+  {
+   "ts": 1785849179,
+   "hhmm": "09:12",
+   "ref_price": 760.26,
+   "paired_qty": 53237,
+   "total_imbalance_qty": 26289,
+   "side": "A",
+   "imbalance_ratio": 0.3305711339687649
+  },
+  {
+   "ts": 1785849239,
+   "hhmm": "09:13",
+   "ref_price": 760.255,
+   "paired_qty": 53364,
+   "total_imbalance_qty": 26275,
+   "side": "A",
+   "imbalance_ratio": 0.3299262923944299
+  },
+  {
+   "ts": 1785849298,
+   "hhmm": "09:14",
+   "ref_price": 760.28,
+   "paired_qty": 53468,
+   "total_imbalance_qty": 26246,
+   "side": "A",
+   "imbalance_ratio": 0.32925207617231605
+  },
+  {
+   "ts": 1785849358,
+   "hhmm": "09:15",
+   "ref_price": 760.325,
+   "paired_qty": 54342,
+   "total_imbalance_qty": 28781,
+   "side": "A",
+   "imbalance_ratio": 0.3462459247139781
+  },
+  {
+   "ts": 1785849418,
+   "hhmm": "09:16",
+   "ref_price": 760.325,
+   "paired_qty": 54513,
+   "total_imbalance_qty": 29249,
+   "side": "A",
+   "imbalance_ratio": 0.3491917575989112
+  },
+  {
+   "ts": 1785849479,
+   "hhmm": "09:17",
+   "ref_price": 760.42,
+   "paired_qty": 55447,
+   "total_imbalance_qty": 32353,
+   "side": "A",
+   "imbalance_ratio": 0.3684851936218679
+  },
+  {
+   "ts": 1785849538,
+   "hhmm": "09:18",
+   "ref_price": 760.295,
+   "paired_qty": 56107,
+   "total_imbalance_qty": 30669,
+   "side": "A",
+   "imbalance_ratio": 0.3534272148981285
+  },
+  {
+   "ts": 1785849599,
+   "hhmm": "09:19",
+   "ref_price": 760.255,
+   "paired_qty": 56543,
+   "total_imbalance_qty": 31476,
+   "side": "A",
+   "imbalance_ratio": 0.35760460809597927
+  },
+  {
+   "ts": 1785849659,
+   "hhmm": "09:20",
+   "ref_price": 761.15,
+   "paired_qty": 63584,
+   "total_imbalance_qty": 31486,
+   "side": "A",
+   "imbalance_ratio": 0.331187546018723
+  },
+  {
+   "ts": 1785849719,
+   "hhmm": "09:21",
+   "ref_price": 760.8,
+   "paired_qty": 60308,
+   "total_imbalance_qty": 32816,
+   "side": "A",
+   "imbalance_ratio": 0.3523903612387784
+  },
+  {
+   "ts": 1785849779,
+   "hhmm": "09:22",
+   "ref_price": 760.775,
+   "paired_qty": 65357,
+   "total_imbalance_qty": 41072,
+   "side": "A",
+   "imbalance_ratio": 0.3859098553965554
+  },
+  {
+   "ts": 1785849839,
+   "hhmm": "09:23",
+   "ref_price": 760.755,
+   "paired_qty": 64493,
+   "total_imbalance_qty": 43686,
+   "side": "A",
+   "imbalance_ratio": 0.4038306880263267
+  },
+  {
+   "ts": 1785849899,
+   "hhmm": "09:24",
+   "ref_price": 760.64,
+   "paired_qty": 65479,
+   "total_imbalance_qty": 41105,
+   "side": "A",
+   "imbalance_ratio": 0.3856582601516175
+  },
+  {
+   "ts": 1785849959,
+   "hhmm": "09:25",
+   "ref_price": 760.8,
+   "paired_qty": 67225,
+   "total_imbalance_qty": 42678,
+   "side": "A",
+   "imbalance_ratio": 0.38832424956552597
+  },
+  {
+   "ts": 1785850019,
+   "hhmm": "09:26",
+   "ref_price": 760.895,
+   "paired_qty": 81690,
+   "total_imbalance_qty": 40206,
+   "side": "A",
+   "imbalance_ratio": 0.32983855089584563
+  },
+  {
+   "ts": 1785850079,
+   "hhmm": "09:27",
+   "ref_price": 760.885,
+   "paired_qty": 90106,
+   "total_imbalance_qty": 36325,
+   "side": "A",
+   "imbalance_ratio": 0.2873108652150185
+  },
+  {
+   "ts": 1785850139,
+   "hhmm": "09:28",
+   "ref_price": 760.87,
+   "paired_qty": 99394,
+   "total_imbalance_qty": 33159,
+   "side": "A",
+   "imbalance_ratio": 0.25015654115712205
+  },
+  {
+   "ts": 1785850199,
+   "hhmm": "09:29",
+   "ref_price": 760.64,
+   "paired_qty": 137071,
+   "total_imbalance_qty": 2677,
+   "side": "A",
+   "imbalance_ratio": 0.019155909208002978
+  }
+ ],
+ "resultado": {
+  "open": 760.6,
+  "px_30m": 763.39,
+  "prev_close": 757.66,
+  "fuente": "ARCX.PILLAR ohlcv-1m",
+  "nota": null
+ }
+}

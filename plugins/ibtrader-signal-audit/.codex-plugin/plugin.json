@@ -1,0 +1,18 @@
+{
+  "name": "ibtrader-signal-audit",
+  "version": "0.1.0",
+  "description": "Trace ib-trader signal inputs, families, vetoes, calibration, and output honesty.",
+  "author": {
+    "name": "ib-trader"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Ibtrader Signal Audit",
+    "shortDescription": "Audit live signal logic and calibration.",
+    "longDescription": "Read-only workflows for tracing compass inputs, independent families, vetoes, calibration gates, and displayed output.",
+    "developerName": "ib-trader",
+    "category": "Developer Tools",
+    "capabilities": ["Read"],
+    "defaultPrompt": "Audit why this compass signal is active or neutral."
+  }
+}

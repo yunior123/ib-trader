@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.ibtrader.truthlock</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/Users/yuniorrodriguezosorio/ib-trader/venv/bin/python</string>
+		<string>/Users/yuniorrodriguezosorio/ib-trader/scripts/truth_lock.py</string>
+		<string>--check</string>
+	</array>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>StartInterval</key>
+	<integer>120</integer>
+	<key>StandardErrorPath</key>
+	<string>/Users/yuniorrodriguezosorio/ib-trader/truth_lock.log</string>
+	<key>StandardOutPath</key>
+	<string>/Users/yuniorrodriguezosorio/ib-trader/truth_lock.log</string>
+	<key>WorkingDirectory</key>
+	<string>/Users/yuniorrodriguezosorio/ib-trader</string>
+</dict>
+</plist>

@@ -1,0 +1,3633 @@
+{
+ "_meta": {
+  "titulo": "Estudio medido: ¿cae el Nasdaq el MISMO dia en que el KOSPI se desploma?",
+  "afirmacion_verificada": "Yunior: 'historic possibility of nasdaq falling drastically today given a fall in kospi, the pattern is quite common, verify'",
+  "generado_ET": "2026-08-03 ~07:30",
+  "fuente_precios": "yfinance / Yahoo Finance, barras DIARIAS, auto_adjust=False, descargadas 2026-08-03 ~07:00 ET",
+  "latencia_de_la_fuente": "EOD, no tiempo real. La fila KOSPI 2026-08-03 es el cierre coreano YA consumado (02:30 ET). Las filas US llegan a 2026-07-31: la sesion US de hoy NO existe todavia. Ningun numero de este estudio dispara una orden.",
+  "series": {
+   "KOSPI": "^KS11 (composite)",
+   "Nasdaq-100": "^NDX",
+   "Nasdaq Composite": "^IXIC",
+   "ETF": "QQQ (Open real de bolsa)"
+  },
+  "series_descartadas": {
+   "^KS200": "hueco de datos: salta de 2026-07-16 a 2026-08-03, serie inutilizable. NO se usa.",
+   "Open de ^NDX": "30,34% de las sesiones tienen gap exactamente 0 = Open replicado del cierre previo. Inservible para gaps. El gap se mide con QQQ (1,18% de ceros)."
+  },
+  "alineacion_temporal": "Corea cierra 15:30 KST = 01:30 ET (EST) / 02:30 ET (EDT) del MISMO dia calendario, 7-8 h ANTES de la apertura US (09:30 ET). Por tanto el join correcto es por FECHA DE CALENDARIO LOCAL, sin desplazamiento: KOSPI[D] es informacion DISPONIBLE antes de que empiece la sesion US[D]. Verificacion de que la alineacion no esta invertida: corr(NDX[D-1], KOSPI[D]) debe ser CLARAMENTE mayor que corr(KOSPI[D], NDX[D]) — es el lead conocido de Wall Street sobre Seul. Ver seccion G.",
+  "bug_cazado_en_este_estudio": "La primera version parseaba el indice con pd.to_datetime(utc=True): 2026-08-03 00:00+09:00 (Seul) -> 2026-08-02 15:00 UTC -> 2026-08-02. Eso desplazaba TODA la serie coreana un dia atras y el estudio acababa midiendo Nasdaq[D] -> KOSPI[D+1] (causalidad INVERTIDA), lo que producia un falso 'patron' con P(rojo)=78% a -5%. Detectado porque corr(NDX[D-1],KOSPI[D]) salia 0,003 cuando la literatura y el sentido comun exigen ~0,3.",
+  "definicion_de_n_eff": "Los dias que califican llegan en rafagas (una crisis = varios dias seguidos). n_eff = numero de EPISODIOS independientes (grupos separados por >5 sesiones), topado por n. Todo Wilson usa n_eff. Las BASES usan n porque el retorno diario del indice no tiene autocorrelacion apreciable; la asimetria es DELIBERADA y conservadora (endurece el test del condicional, no lo afloja).",
+  "n_minima_para_publicar": 30
+ },
+ "A_cobertura_y_exclusiones": {
+  "KOSPI": {
+   "n_sesiones": 7295,
+   "desde": "1996-12-12",
+   "hasta": "2026-08-03"
+  },
+  "NDX": {
+   "n_sesiones": 10286,
+   "desde": "1985-10-02",
+   "hasta": "2026-07-31"
+  },
+  "solape_analizado": {
+   "desde": "1996-12-12",
+   "hasta": "2026-07-31",
+   "sesiones_conjuntas": 7068
+  },
+  "excluidos_dias_KOSPI_abierto_US_cerrado": {
+   "n": 226,
+   "motivo": "festivos US (4-Jul, Thanksgiving, Navidad, Labor Day...)",
+   "ejemplos": [
+    "1997-02-17",
+    "1997-03-28",
+    "1997-05-26",
+    "1997-07-04",
+    "1997-09-01",
+    "1997-11-27",
+    "...",
+    "2026-04-03",
+    "2026-06-19",
+    "2026-07-03"
+   ]
+  },
+  "excluidos_dias_US_abierto_KOSPI_cerrado": {
+   "n": 386,
+   "motivo": "festivos coreanos (Seollal, Chuseok, Dia de la Fundacion, elecciones...)",
+   "ejemplos": [
+    "1996-12-30",
+    "1996-12-31",
+    "1997-01-02",
+    "1997-02-07",
+    "1997-05-01",
+    "1997-05-05",
+    "...",
+    "2026-05-05",
+    "2026-06-03",
+    "2026-07-17"
+   ]
+  },
+  "regla_de_exclusion": "Si una de las dos bolsas no abrio ese dia calendario, el par NO existe y se excluye. Nunca se rellena con 0 ni se arrastra el cierre previo."
+ },
+ "B_incondicional_NDX": [
+  {
+   "celda": "BASE incondicional (todas las sesiones conjuntas)",
+   "n": 7068,
+   "episodios_independientes": 1,
+   "n_eff": 7068.0,
+   "publicable_n_eff_ge_30": true,
+   "P_rojo": 0.4512,
+   "P_rojo_CI95_neff": [
+    0.4396,
+    0.4628
+   ],
+   "P_cae_ge_1pct": 0.2002,
+   "P_cae_ge_1pct_CI95_neff": [
+    0.191,
+    0.2097
+   ],
+   "P_cae_ge_2pct": 0.0934,
+   "P_cae_ge_2pct_CI95_neff": [
+    0.0868,
+    0.1004
+   ],
+   "ret_medio": 0.0587,
+   "ret_mediana": 0.1175,
+   "ret_p25": -0.708,
+   "ret_p75": 0.8629,
+   "ret_min": -12.1932,
+   "ret_max": 18.7713,
+   "intradia_QQQ": {
+    "n": 6538,
+    "gap_medio": 0.0553,
+    "gap_mediana": 0.0715,
+    "open_close_medio": -0.0059,
+    "open_close_mediana": 0.0616,
+    "P_open_close_rojo": 0.4693
+   }
+  },
+  {
+   "celda": "KOSPI<=-2%",
+   "n": 562,
+   "episodios_independientes": 239,
+   "n_eff": 239.0,
+   "publicable_n_eff_ge_30": true,
+   "P_rojo": 0.5445,
+   "P_rojo_CI95_neff": [
+    0.4811,
+    0.6064
+   ],
+   "P_cae_ge_1pct": 0.3808,
+   "P_cae_ge_1pct_CI95_neff": [
+    0.3216,
+    0.4438
+   ],
+   "P_cae_ge_2pct": 0.2242,
+   "P_cae_ge_2pct_CI95_neff": [
+    0.1759,
+    0.2812
+   ],
+   "ret_medio": -0.3571,
+   "ret_mediana": -0.2815,
+   "ret_p25": -1.7653,
+   "ret_p75": 1.0899,
+   "ret_min": -12.1932,
+   "ret_max": 10.0722,
+   "intradia_QQQ": {
+    "n": 451,
+    "gap_medio": -0.5295,
+    "gap_mediana": -0.3543,
+    "open_close_medio": 0.0665,
+    "open_close_mediana": 0.0,
+    "P_open_close_rojo": 0.4878
+   },
+   "base_comparada": "BASE incondicional (todas las sesiones conjuntas)",
+   "base_P_rojo": 0.4512,
+   "lift_P_rojo_pp": 9.33,
+   "lift_P_cae_ge_1pct_pp": 18.06,
+   "delta_ret_medio_pp": -0.4158,
+   "z_P_rojo_una_cola": [
+    2.849,
+    0.0022
+   ],
+   "z_P_cae1_una_cola": [
+    6.788,
+    0.0
+   ]
+  },
+  {
+   "celda": "KOSPI<=-3%",
+   "n": 275,
+   "episodios_independientes": 141,
+   "n_eff": 141.0,
+   "publicable_n_eff_ge_30": true,
+   "P_rojo": 0.5345,
+   "P_rojo_CI95_neff": [
+    0.4524,
+    0.6149
+   ],
+   "P_cae_ge_1pct": 0.4109,
+   "P_cae_ge_1pct_CI95_neff": [
+    0.3331,
+    0.4934
+   ],
+   "P_cae_ge_2pct": 0.2436,
+   "P_cae_ge_2pct_CI95_neff": [
+    0.1802,
+    0.3207
+   ],
+   "ret_medio": -0.4106,
+   "ret_mediana": -0.28,
+   "ret_p25": -1.9672,
+   "ret_p75": 1.1464,
+   "ret_min": -12.1932,
+   "ret_max": 10.0722,
+   "intradia_QQQ": {
+    "n": 211,
+    "gap_medio": -0.6291,
+    "gap_mediana": -0.3871,
+    "open_close_medio": 0.1925,
+    "open_close_mediana": 0.0465,
+    "P_open_close_rojo": 0.4645
+   },
+   "base_comparada": "BASE incondicional (todas las sesiones conjuntas)",
+   "base_P_rojo": 0.4512,
+   "lift_P_rojo_pp": 8.33,
+   "lift_P_cae_ge_1pct_pp": 21.07,
+   "delta_ret_medio_pp": -0.4693,
+   "z_P_rojo_una_cola": [
+    1.969,
+    0.0245
+   ],
+   "z_P_cae1_una_cola": [
+    6.144,
+    0.0
+   ]
+  },
+  {
+   "celda": "KOSPI<=-5%",
+   "n": 75,
+   "episodios_independientes": 49,
+   "n_eff": 49.0,
+   "publicable_n_eff_ge_30": true,
+   "P_rojo": 0.5733,
+   "P_rojo_CI95_neff": [
+    0.4345,
+    0.7015
+   ],
+   "P_cae_ge_1pct": 0.48,
+   "P_cae_ge_1pct_CI95_neff": [
+    0.3467,
+    0.6162
+   ],
+   "P_cae_ge_2pct": 0.28,
+   "P_cae_ge_2pct_CI95_neff": [
+    0.1739,
+    0.4181
+   ],
+   "ret_medio": -0.5369,
+   "ret_mediana": -0.6464,
+   "ret_p25": -2.3563,
+   "ret_p75": 0.7863,
+   "ret_min": -7.4914,
+   "ret_max": 10.0216,
+   "intradia_QQQ": {
+    "n": 54,
+    "gap_medio": -0.8995,
+    "gap_mediana": -0.8022,
+    "open_close_medio": 0.6217,
+    "open_close_mediana": 0.0,
+    "P_open_close_rojo": 0.463
+   },
+   "base_comparada": "BASE incondicional (todas las sesiones conjuntas)",
+   "base_P_rojo": 0.4512,
+   "lift_P_rojo_pp": 12.21,
+   "lift_P_cae_ge_1pct_pp": 27.98,
+   "delta_ret_medio_pp": -0.5956,
+   "z_P_rojo_una_cola": [
+    1.712,
+    0.04346
+   ],
+   "z_P_cae1_una_cola": [
+    4.86,
+    0.0
+   ]
+  },
+  {
+   "celda": "KOSPI<=-8%",
+   "n": 13,
+   "episodios_independientes": 13,
+   "n_eff": 13.0,
+   "publicable_n_eff_ge_30": false,
+   "P_rojo": 0.5385,
+   "P_rojo_CI95_neff": [
+    0.2914,
+    0.7679
+   ],
+   "P_cae_ge_1pct": 0.4615,
+   "P_cae_ge_1pct_CI95_neff": [
+    0.2321,
+    0.7086
+   ],
+   "P_cae_ge_2pct": 0.3846,
+   "P_cae_ge_2pct_CI95_neff": [
+    0.1771,
+    0.6448
+   ],
+   "ret_medio": 0.2547,
+   "ret_mediana": -0.9846,
+   "ret_p25": -2.4958,
+   "ret_p75": 1.577,
+   "ret_min": -3.2946,
+   "ret_max": 10.0216,
+   "intradia_QQQ": {
+    "n": 11,
+    "gap_medio": -1.6087,
+    "gap_mediana": -0.8635,
+    "open_close_medio": 2.296,
+    "open_close_mediana": 1.0908,
+    "P_open_close_rojo": 0.4545
+   },
+   "base_comparada": "BASE incondicional (todas las sesiones conjuntas)",
+   "base_P_rojo": 0.4512,
+   "lift_P_rojo_pp": 8.73,
+   "lift_P_cae_ge_1pct_pp": 26.13,
+   "delta_ret_medio_pp": 0.196,
+   "z_P_rojo_una_cola": [
+    0.632,
+    0.2638
+   ],
+   "z_P_cae1_una_cola": [
+    2.351,
+    0.00937
+   ]
+  }
+ ],
+ "C_curva_sensibilidad": [
+  {
+   "umbral_kospi": -1,
+   "n": 1292,
+   "episodios": 363,
+   "P_rojo": 0.5441,
+   "P_cae_ge_1pct": 0.3251,
+   "ret_medio": -0.2905,
+   "ret_mediana": -0.1837
+  },
+  {
+   "umbral_kospi": -1.5,
+   "n": 862,
+   "episodios": 315,
+   "P_rojo": 0.5406,
+   "P_cae_ge_1pct": 0.3561,
+   "ret_medio": -0.3303,
+   "ret_mediana": -0.272
+  },
+  {
+   "umbral_kospi": -2,
+   "n": 562,
+   "episodios": 239,
+   "P_rojo": 0.5445,
+   "P_cae_ge_1pct": 0.3808,
+   "ret_medio": -0.3571,
+   "ret_mediana": -0.2815
+  },
+  {
+   "umbral_kospi": -2.5,
+   "n": 391,
+   "episodios": 183,
+   "P_rojo": 0.5371,
+   "P_cae_ge_1pct": 0.3811,
+   "ret_medio": -0.3596,
+   "ret_mediana": -0.2276
+  },
+  {
+   "umbral_kospi": -3,
+   "n": 275,
+   "episodios": 141,
+   "P_rojo": 0.5345,
+   "P_cae_ge_1pct": 0.4109,
+   "ret_medio": -0.4106,
+   "ret_mediana": -0.28
+  },
+  {
+   "umbral_kospi": -4,
+   "n": 137,
+   "episodios": 82,
+   "P_rojo": 0.5912,
+   "P_cae_ge_1pct": 0.4818,
+   "ret_medio": -0.6642,
+   "ret_mediana": -0.6464
+  },
+  {
+   "umbral_kospi": -5,
+   "n": 75,
+   "episodios": 49,
+   "P_rojo": 0.5733,
+   "P_cae_ge_1pct": 0.48,
+   "ret_medio": -0.5369,
+   "ret_mediana": -0.6464
+  },
+  {
+   "umbral_kospi": -6,
+   "n": 39,
+   "episodios": 32,
+   "P_rojo": 0.6154,
+   "P_cae_ge_1pct": 0.5385,
+   "ret_medio": -0.6642,
+   "ret_mediana": -1.0904
+  },
+  {
+   "umbral_kospi": -8,
+   "n": 13,
+   "episodios": 13,
+   "P_rojo": 0.5385,
+   "P_cae_ge_1pct": 0.4615,
+   "ret_medio": 0.2547,
+   "ret_mediana": -0.9846
+  }
+ ],
+ "D_condicionado_por_causa": {
+  "A_domestica__NDXprev_ge_0": {
+   "descripcion": "Corea cae por lo suyo: Wall Street NO cayo la vispera",
+   "filas": [
+    {
+     "celda": "BASE A_domestica__NDXprev_ge_0",
+     "n": 3884,
+     "episodios_independientes": 60,
+     "n_eff": 3884.0,
+     "publicable_n_eff_ge_30": true,
+     "P_rojo": 0.4606,
+     "P_rojo_CI95_neff": [
+      0.445,
+      0.4763
+     ],
+     "P_cae_ge_1pct": 0.1892,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.1772,
+      0.2019
+     ],
+     "P_cae_ge_2pct": 0.0878,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.0793,
+      0.0971
+     ],
+     "ret_medio": 0.0073,
+     "ret_mediana": 0.0913,
+     "ret_p25": -0.6432,
+     "ret_p75": 0.7379,
+     "ret_min": -12.1932,
+     "ret_max": 11.6846
+    },
+    {
+     "celda": "A_domestica__NDXprev_ge_0 & KOSPI<=-2%",
+     "n": 188,
+     "episodios_independientes": 127,
+     "n_eff": 127.0,
+     "publicable_n_eff_ge_30": true,
+     "P_rojo": 0.5479,
+     "P_rojo_CI95_neff": [
+      0.4612,
+      0.6318
+     ],
+     "P_cae_ge_1pct": 0.3989,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.3179,
+      0.4859
+     ],
+     "P_cae_ge_2pct": 0.2287,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.1643,
+      0.3091
+     ],
+     "ret_medio": -0.3471,
+     "ret_mediana": -0.2665,
+     "ret_p25": -1.7472,
+     "ret_p75": 1.1108,
+     "ret_min": -12.1932,
+     "ret_max": 9.5027,
+     "intradia_QQQ": {
+      "n": 129,
+      "gap_medio": -0.6876,
+      "gap_mediana": -0.4539,
+      "open_close_medio": 0.2563,
+      "open_close_mediana": 0.0852,
+      "P_open_close_rojo": 0.4884
+     },
+     "base_comparada": "BASE A_domestica__NDXprev_ge_0",
+     "base_P_rojo": 0.4606,
+     "lift_P_rojo_pp": 8.73,
+     "lift_P_cae_ge_1pct_pp": 20.97,
+     "delta_ret_medio_pp": -0.3544,
+     "z_P_rojo_una_cola": [
+      1.941,
+      0.02614
+     ],
+     "z_P_cae1_una_cola": [
+      5.861,
+      0.0
+     ]
+    },
+    {
+     "celda": "A_domestica__NDXprev_ge_0 & KOSPI<=-3%",
+     "n": 82,
+     "episodios_independientes": 61,
+     "n_eff": 61.0,
+     "publicable_n_eff_ge_30": true,
+     "P_rojo": 0.5366,
+     "P_rojo_CI95_neff": [
+      0.413,
+      0.6558
+     ],
+     "P_cae_ge_1pct": 0.4634,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.3442,
+      0.587
+     ],
+     "P_cae_ge_2pct": 0.2561,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.1633,
+      0.3778
+     ],
+     "ret_medio": -0.4989,
+     "ret_mediana": -0.6514,
+     "ret_p25": -2.0627,
+     "ret_p75": 1.0398,
+     "ret_min": -12.1932,
+     "ret_max": 6.3349,
+     "intradia_QQQ": {
+      "n": 47,
+      "gap_medio": -1.0887,
+      "gap_mediana": -0.5415,
+      "open_close_medio": 0.6121,
+      "open_close_mediana": 0.0911,
+      "P_open_close_rojo": 0.4468
+     },
+     "base_comparada": "BASE A_domestica__NDXprev_ge_0",
+     "base_P_rojo": 0.4606,
+     "lift_P_rojo_pp": 7.6,
+     "lift_P_cae_ge_1pct_pp": 27.42,
+     "delta_ret_medio_pp": -0.5062,
+     "z_P_rojo_una_cola": [
+      1.181,
+      0.11877
+     ],
+     "z_P_cae1_una_cola": [
+      5.38,
+      0.0
+     ]
+    },
+    {
+     "celda": "A_domestica__NDXprev_ge_0 & KOSPI<=-5%",
+     "n": 14,
+     "episodios_independientes": 14,
+     "n_eff": 14.0,
+     "publicable_n_eff_ge_30": false,
+     "P_rojo": 0.7857,
+     "P_rojo_CI95_neff": [
+      0.5241,
+      0.9243
+     ],
+     "P_cae_ge_1pct": 0.6429,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.3876,
+      0.8366
+     ],
+     "P_cae_ge_2pct": 0.3571,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.1634,
+      0.6124
+     ],
+     "ret_medio": -1.3608,
+     "ret_mediana": -1.3163,
+     "ret_p25": -2.9015,
+     "ret_p75": -0.139,
+     "ret_min": -4.4954,
+     "ret_max": 2.5155,
+     "intradia_QQQ": {
+      "n": 6,
+      "gap_medio": -2.2168,
+      "gap_mediana": -1.3159,
+      "open_close_medio": 1.1914,
+      "open_close_mediana": 0.3971,
+      "P_open_close_rojo": 0.5
+     },
+     "base_comparada": "BASE A_domestica__NDXprev_ge_0",
+     "base_P_rojo": 0.4606,
+     "lift_P_rojo_pp": 32.51,
+     "lift_P_cae_ge_1pct_pp": 45.37,
+     "delta_ret_medio_pp": -1.3681,
+     "z_P_rojo_una_cola": [
+      2.436,
+      0.00743
+     ],
+     "z_P_cae1_una_cola": [
+      4.312,
+      1e-05
+     ]
+    },
+    {
+     "celda": "A_domestica__NDXprev_ge_0 & KOSPI<=-8%",
+     "n": 2,
+     "episodios_independientes": 2,
+     "n_eff": 2.0,
+     "publicable_n_eff_ge_30": false,
+     "P_rojo": 1.0,
+     "P_rojo_CI95_neff": [
+      0.3424,
+      1.0
+     ],
+     "P_cae_ge_1pct": 1.0,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.3424,
+      1.0
+     ],
+     "P_cae_ge_2pct": 0.5,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.0945,
+      0.9055
+     ],
+     "ret_medio": -2.429,
+     "ret_mediana": -2.429,
+     "ret_p25": -2.703,
+     "ret_p75": -2.155,
+     "ret_min": -2.977,
+     "ret_max": -1.881,
+     "intradia_QQQ": {
+      "n": 2,
+      "gap_medio": -4.243,
+      "gap_mediana": -4.243,
+      "open_close_medio": 1.8505,
+      "open_close_mediana": 1.8505,
+      "P_open_close_rojo": 0.5
+     },
+     "base_comparada": "BASE A_domestica__NDXprev_ge_0",
+     "base_P_rojo": 0.4606,
+     "lift_P_rojo_pp": 53.94,
+     "lift_P_cae_ge_1pct_pp": 81.08,
+     "delta_ret_medio_pp": -2.4363,
+     "z_P_rojo_una_cola": [
+      1.53,
+      0.06301
+     ],
+     "z_P_cae1_una_cola": [
+      2.924,
+      0.00173
+     ]
+    }
+   ]
+  },
+  "B_eco__NDXprev_le_-1pct": {
+   "descripcion": "Corea REPLICA a Wall Street: el NDX ya cayo >=1% la vispera",
+   "filas": [
+    {
+     "celda": "BASE B_eco__NDXprev_le_-1pct",
+     "n": 1410,
+     "episodios_independientes": 348,
+     "n_eff": 1410.0,
+     "publicable_n_eff_ge_30": true,
+     "P_rojo": 0.444,
+     "P_rojo_CI95_neff": [
+      0.4182,
+      0.47
+     ],
+     "P_cae_ge_1pct": 0.2518,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.2298,
+      0.2751
+     ],
+     "P_cae_ge_2pct": 0.1326,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.1159,
+      0.1513
+     ],
+     "ret_medio": 0.1879,
+     "ret_mediana": 0.1822,
+     "ret_p25": -1.0193,
+     "ret_p75": 1.3151,
+     "ret_min": -9.8574,
+     "ret_max": 18.7713
+    },
+    {
+     "celda": "B_eco__NDXprev_le_-1pct & KOSPI<=-2%",
+     "n": 284,
+     "episodios_independientes": 178,
+     "n_eff": 178.0,
+     "publicable_n_eff_ge_30": true,
+     "P_rojo": 0.5176,
+     "P_rojo_CI95_neff": [
+      0.4446,
+      0.5899
+     ],
+     "P_cae_ge_1pct": 0.3732,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.3056,
+      0.4463
+     ],
+     "P_cae_ge_2pct": 0.2289,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.1733,
+      0.2959
+     ],
+     "ret_medio": -0.3122,
+     "ret_mediana": -0.1192,
+     "ret_p25": -1.7962,
+     "ret_p75": 1.2692,
+     "ret_min": -9.7318,
+     "ret_max": 10.0722,
+     "intradia_QQQ": {
+      "n": 245,
+      "gap_medio": -0.4391,
+      "gap_mediana": -0.2096,
+      "open_close_medio": -0.0025,
+      "open_close_mediana": 0.0,
+      "P_open_close_rojo": 0.4857
+     },
+     "base_comparada": "BASE B_eco__NDXprev_le_-1pct",
+     "base_P_rojo": 0.444,
+     "lift_P_rojo_pp": 7.36,
+     "lift_P_cae_ge_1pct_pp": 12.14,
+     "delta_ret_medio_pp": -0.5001,
+     "z_P_rojo_una_cola": [
+      1.859,
+      0.0315
+     ],
+     "z_P_cae1_una_cola": [
+      3.458,
+      0.00027
+     ]
+    },
+    {
+     "celda": "B_eco__NDXprev_le_-1pct & KOSPI<=-3%",
+     "n": 148,
+     "episodios_independientes": 96,
+     "n_eff": 96.0,
+     "publicable_n_eff_ge_30": true,
+     "P_rojo": 0.4865,
+     "P_rojo_CI95_neff": [
+      0.389,
+      0.585
+     ],
+     "P_cae_ge_1pct": 0.3649,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.2755,
+      0.4646
+     ],
+     "P_cae_ge_2pct": 0.223,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.1513,
+      0.316
+     ],
+     "ret_medio": -0.2226,
+     "ret_mediana": 0.0439,
+     "ret_p25": -1.7409,
+     "ret_p75": 1.297,
+     "ret_min": -9.7318,
+     "ret_max": 10.0722,
+     "intradia_QQQ": {
+      "n": 128,
+      "gap_medio": -0.4732,
+      "gap_mediana": -0.3214,
+      "open_close_medio": 0.2437,
+      "open_close_mediana": 0.1101,
+      "P_open_close_rojo": 0.4297
+     },
+     "base_comparada": "BASE B_eco__NDXprev_le_-1pct",
+     "base_P_rojo": 0.444,
+     "lift_P_rojo_pp": 4.25,
+     "lift_P_cae_ge_1pct_pp": 11.31,
+     "delta_ret_medio_pp": -0.4105,
+     "z_P_rojo_una_cola": [
+      0.81,
+      0.20891
+     ],
+     "z_P_cae1_una_cola": [
+      2.447,
+      0.00721
+     ]
+    },
+    {
+     "celda": "B_eco__NDXprev_le_-1pct & KOSPI<=-5%",
+     "n": 49,
+     "episodios_independientes": 38,
+     "n_eff": 38.0,
+     "publicable_n_eff_ge_30": true,
+     "P_rojo": 0.4286,
+     "P_rojo_CI95_neff": [
+      0.285,
+      0.5852
+     ],
+     "P_cae_ge_1pct": 0.3673,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.2329,
+      0.5261
+     ],
+     "P_cae_ge_2pct": 0.2041,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.1061,
+      0.3564
+     ],
+     "ret_medio": -0.0414,
+     "ret_mediana": 0.1249,
+     "ret_p25": -1.6108,
+     "ret_p75": 1.2153,
+     "ret_min": -7.4914,
+     "ret_max": 10.0216,
+     "intradia_QQQ": {
+      "n": 39,
+      "gap_medio": -0.7365,
+      "gap_mediana": -0.5153,
+      "open_close_medio": 0.9384,
+      "open_close_mediana": 0.2439,
+      "P_open_close_rojo": 0.3846
+     },
+     "base_comparada": "BASE B_eco__NDXprev_le_-1pct",
+     "base_P_rojo": 0.444,
+     "lift_P_rojo_pp": -1.54,
+     "lift_P_cae_ge_1pct_pp": 11.55,
+     "delta_ret_medio_pp": -0.2293,
+     "z_P_rojo_una_cola": [
+      -0.189,
+      0.57492
+     ],
+     "z_P_cae1_una_cola": [
+      1.613,
+      0.05338
+     ]
+    },
+    {
+     "celda": "B_eco__NDXprev_le_-1pct & KOSPI<=-8%",
+     "n": 8,
+     "episodios_independientes": 8,
+     "n_eff": 8.0,
+     "publicable_n_eff_ge_30": false,
+     "P_rojo": 0.25,
+     "P_rojo_CI95_neff": [
+      0.0715,
+      0.5907
+     ],
+     "P_cae_ge_1pct": 0.25,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.0715,
+      0.5907
+     ],
+     "P_cae_ge_2pct": 0.25,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.0715,
+      0.5907
+     ],
+     "ret_medio": 1.868,
+     "ret_mediana": 1.5442,
+     "ret_p25": -0.4986,
+     "ret_p75": 2.5659,
+     "ret_min": -2.9591,
+     "ret_max": 10.0216,
+     "intradia_QQQ": {
+      "n": 7,
+      "gap_medio": -0.7624,
+      "gap_mediana": 0.4289,
+      "open_close_medio": 3.1366,
+      "open_close_mediana": 1.1213,
+      "P_open_close_rojo": 0.2857
+     },
+     "base_comparada": "BASE B_eco__NDXprev_le_-1pct",
+     "base_P_rojo": 0.444,
+     "lift_P_rojo_pp": -19.4,
+     "lift_P_cae_ge_1pct_pp": -0.18,
+     "delta_ret_medio_pp": 1.6801,
+     "z_P_rojo_una_cola": [
+      -1.102,
+      0.86467
+     ],
+     "z_P_cae1_una_cola": [
+      -0.012,
+      0.50467
+     ]
+    }
+   ]
+  },
+  "C_gris__NDXprev_entre_-1_y_0": {
+   "descripcion": "zona gris",
+   "filas": [
+    {
+     "celda": "BASE C_gris__NDXprev_entre_-1_y_0",
+     "n": 1774,
+     "episodios_independientes": 370,
+     "n_eff": 1774.0,
+     "publicable_n_eff_ge_30": true,
+     "P_rojo": 0.4363,
+     "P_rojo_CI95_neff": [
+      0.4134,
+      0.4595
+     ],
+     "P_cae_ge_1pct": 0.1832,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.1659,
+      0.2019
+     ],
+     "P_cae_ge_2pct": 0.0744,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.0631,
+      0.0876
+     ],
+     "ret_medio": 0.0686,
+     "ret_mediana": 0.1561,
+     "ret_p25": -0.6584,
+     "ret_p75": 0.8615,
+     "ret_min": -10.5195,
+     "ret_max": 12.5799
+    },
+    {
+     "celda": "C_gris__NDXprev_entre_-1_y_0 & KOSPI<=-2%",
+     "n": 90,
+     "episodios_independientes": 78,
+     "n_eff": 78.0,
+     "publicable_n_eff_ge_30": true,
+     "P_rojo": 0.6222,
+     "P_rojo_CI95_neff": [
+      0.5113,
+      0.7217
+     ],
+     "P_cae_ge_1pct": 0.3667,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.2683,
+      0.4775
+     ],
+     "P_cae_ge_2pct": 0.2,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.1263,
+      0.3019
+     ],
+     "ret_medio": -0.5198,
+     "ret_mediana": -0.5796,
+     "ret_p25": -1.63,
+     "ret_p75": 0.6002,
+     "ret_min": -6.1106,
+     "ret_max": 5.2203,
+     "intradia_QQQ": {
+      "n": 77,
+      "gap_medio": -0.5522,
+      "gap_mediana": -0.5012,
+      "open_close_medio": -0.032,
+      "open_close_mediana": 0.0,
+      "P_open_close_rojo": 0.4935
+     },
+     "base_comparada": "BASE C_gris__NDXprev_entre_-1_y_0",
+     "base_P_rojo": 0.4363,
+     "lift_P_rojo_pp": 18.59,
+     "lift_P_cae_ge_1pct_pp": 18.35,
+     "delta_ret_medio_pp": -0.5884,
+     "z_P_rojo_una_cola": [
+      3.234,
+      0.00061
+     ],
+     "z_P_cae1_una_cola": [
+      4.035,
+      3e-05
+     ]
+    },
+    {
+     "celda": "C_gris__NDXprev_entre_-1_y_0 & KOSPI<=-3%",
+     "n": 45,
+     "episodios_independientes": 42,
+     "n_eff": 42.0,
+     "publicable_n_eff_ge_30": true,
+     "P_rojo": 0.6889,
+     "P_rojo_CI95_neff": [
+      0.5381,
+      0.808
+     ],
+     "P_cae_ge_1pct": 0.4667,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.325,
+      0.6139
+     ],
+     "P_cae_ge_2pct": 0.2889,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.1742,
+      0.439
+     ],
+     "ret_medio": -0.868,
+     "ret_mediana": -0.7436,
+     "ret_p25": -2.1772,
+     "ret_p75": 0.1766,
+     "ret_min": -6.1106,
+     "ret_max": 5.2203,
+     "intradia_QQQ": {
+      "n": 36,
+      "gap_medio": -0.5838,
+      "gap_mediana": -0.5323,
+      "open_close_medio": -0.5371,
+      "open_close_mediana": -0.5837,
+      "P_open_close_rojo": 0.6111
+     },
+     "base_comparada": "BASE C_gris__NDXprev_entre_-1_y_0",
+     "base_P_rojo": 0.4363,
+     "lift_P_rojo_pp": 25.26,
+     "lift_P_cae_ge_1pct_pp": 28.35,
+     "delta_ret_medio_pp": -0.9366,
+     "z_P_rojo_una_cola": [
+      3.258,
+      0.00056
+     ],
+     "z_P_cae1_una_cola": [
+      4.631,
+      0.0
+     ]
+    },
+    {
+     "celda": "C_gris__NDXprev_entre_-1_y_0 & KOSPI<=-5%",
+     "n": 12,
+     "episodios_independientes": 11,
+     "n_eff": 11.0,
+     "publicable_n_eff_ge_30": false,
+     "P_rojo": 0.9167,
+     "P_rojo_CI95_neff": [
+      0.6316,
+      0.986
+     ],
+     "P_cae_ge_1pct": 0.75,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.4557,
+      0.9149
+     ],
+     "P_cae_ge_2pct": 0.5,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.2456,
+      0.7544
+     ],
+     "ret_medio": -1.5991,
+     "ret_mediana": -1.8941,
+     "ret_p25": -2.6924,
+     "ret_p75": -1.1116,
+     "ret_min": -4.7692,
+     "ret_max": 5.2203,
+     "intradia_QQQ": {
+      "n": 9,
+      "gap_medio": -0.7276,
+      "gap_mediana": -0.8579,
+      "open_close_medio": -1.1304,
+      "open_close_mediana": -0.8525,
+      "P_open_close_rojo": 0.7778
+     },
+     "base_comparada": "BASE C_gris__NDXprev_entre_-1_y_0",
+     "base_P_rojo": 0.4363,
+     "lift_P_rojo_pp": 48.04,
+     "lift_P_cae_ge_1pct_pp": 56.68,
+     "delta_ret_medio_pp": -1.6677,
+     "z_P_rojo_una_cola": [
+      3.2,
+      0.00069
+     ],
+     "z_P_cae1_una_cola": [
+      4.809,
+      0.0
+     ]
+    },
+    {
+     "celda": "C_gris__NDXprev_entre_-1_y_0 & KOSPI<=-8%",
+     "n": 3,
+     "episodios_independientes": 3,
+     "n_eff": 3.0,
+     "publicable_n_eff_ge_30": false,
+     "P_rojo": 1.0,
+     "P_rojo_CI95_neff": [
+      0.4385,
+      1.0
+     ],
+     "P_cae_ge_1pct": 0.6667,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.2077,
+      0.9385
+     ],
+     "P_cae_ge_2pct": 0.6667,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.2077,
+      0.9385
+     ],
+     "ret_medio": -2.2583,
+     "ret_mediana": -2.4958,
+     "ret_p25": -2.8952,
+     "ret_p75": -1.7402,
+     "ret_min": -3.2946,
+     "ret_max": -0.9846,
+     "intradia_QQQ": {
+      "n": 2,
+      "gap_medio": -1.9366,
+      "gap_mediana": -1.9366,
+      "open_close_medio": -0.2007,
+      "open_close_mediana": -0.2007,
+      "P_open_close_rojo": 1.0
+     },
+     "base_comparada": "BASE C_gris__NDXprev_entre_-1_y_0",
+     "base_P_rojo": 0.4363,
+     "lift_P_rojo_pp": 56.37,
+     "lift_P_cae_ge_1pct_pp": 48.35,
+     "delta_ret_medio_pp": -2.3269,
+     "z_P_rojo_una_cola": [
+      1.967,
+      0.02461
+     ],
+     "z_P_cae1_una_cola": [
+      2.159,
+      0.01542
+     ]
+    }
+   ]
+  },
+  "AC_no_eco__NDXprev_gt_-1pct": {
+   "descripcion": "A+C combinados: la caida coreana NO es eco de un desplome US",
+   "filas": [
+    {
+     "celda": "BASE AC_no_eco__NDXprev_gt_-1pct",
+     "n": 5658,
+     "episodios_independientes": 4,
+     "n_eff": 5658.0,
+     "publicable_n_eff_ge_30": true,
+     "P_rojo": 0.453,
+     "P_rojo_CI95_neff": [
+      0.4401,
+      0.466
+     ],
+     "P_cae_ge_1pct": 0.1873,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.1774,
+      0.1977
+     ],
+     "P_cae_ge_2pct": 0.0836,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.0767,
+      0.0911
+     ],
+     "ret_medio": 0.0265,
+     "ret_mediana": 0.1075,
+     "ret_p25": -0.6463,
+     "ret_p75": 0.7749,
+     "ret_min": -12.1932,
+     "ret_max": 12.5799
+    },
+    {
+     "celda": "AC_no_eco__NDXprev_gt_-1pct & KOSPI<=-2%",
+     "n": 278,
+     "episodios_independientes": 177,
+     "n_eff": 177.0,
+     "publicable_n_eff_ge_30": true,
+     "P_rojo": 0.5719,
+     "P_rojo_CI95_neff": [
+      0.4983,
+      0.6425
+     ],
+     "P_cae_ge_1pct": 0.3885,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.3198,
+      0.4619
+     ],
+     "P_cae_ge_2pct": 0.2194,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.1648,
+      0.286
+     ],
+     "ret_medio": -0.403,
+     "ret_mediana": -0.4076,
+     "ret_p25": -1.7078,
+     "ret_p75": 0.9654,
+     "ret_min": -12.1932,
+     "ret_max": 9.5027,
+     "intradia_QQQ": {
+      "n": 206,
+      "gap_medio": -0.637,
+      "gap_mediana": -0.4957,
+      "open_close_medio": 0.1485,
+      "open_close_mediana": 0.0,
+      "P_open_close_rojo": 0.4903
+     },
+     "base_comparada": "BASE AC_no_eco__NDXprev_gt_-1pct",
+     "base_P_rojo": 0.453,
+     "lift_P_rojo_pp": 11.89,
+     "lift_P_cae_ge_1pct_pp": 20.12,
+     "delta_ret_medio_pp": -0.4295,
+     "z_P_rojo_una_cola": [
+      3.128,
+      0.00088
+     ],
+     "z_P_cae1_una_cola": [
+      6.673,
+      0.0
+     ]
+    },
+    {
+     "celda": "AC_no_eco__NDXprev_gt_-1pct & KOSPI<=-3%",
+     "n": 127,
+     "episodios_independientes": 89,
+     "n_eff": 89.0,
+     "publicable_n_eff_ge_30": true,
+     "P_rojo": 0.5906,
+     "P_rojo_CI95_neff": [
+      0.4867,
+      0.6869
+     ],
+     "P_cae_ge_1pct": 0.4646,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.3646,
+      0.5675
+     ],
+     "P_cae_ge_2pct": 0.2677,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.1868,
+      0.3679
+     ],
+     "ret_medio": -0.6297,
+     "ret_mediana": -0.7436,
+     "ret_p25": -2.1037,
+     "ret_p75": 0.9449,
+     "ret_min": -12.1932,
+     "ret_max": 6.3349,
+     "intradia_QQQ": {
+      "n": 83,
+      "gap_medio": -0.8697,
+      "gap_mediana": -0.5415,
+      "open_close_medio": 0.1136,
+      "open_close_mediana": -0.1094,
+      "P_open_close_rojo": 0.5181
+     },
+     "base_comparada": "BASE AC_no_eco__NDXprev_gt_-1pct",
+     "base_P_rojo": 0.453,
+     "lift_P_rojo_pp": 13.76,
+     "lift_P_cae_ge_1pct_pp": 27.73,
+     "delta_ret_medio_pp": -0.6562,
+     "z_P_rojo_una_cola": [
+      2.586,
+      0.00486
+     ],
+     "z_P_cae1_una_cola": [
+      6.595,
+      0.0
+     ]
+    },
+    {
+     "celda": "AC_no_eco__NDXprev_gt_-1pct & KOSPI<=-5%",
+     "n": 26,
+     "episodios_independientes": 23,
+     "n_eff": 23.0,
+     "publicable_n_eff_ge_30": false,
+     "P_rojo": 0.8462,
+     "P_rojo_CI95_neff": [
+      0.6514,
+      0.9418
+     ],
+     "P_cae_ge_1pct": 0.6923,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.488,
+      0.8415
+     ],
+     "P_cae_ge_2pct": 0.4231,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.2469,
+      0.6213
+     ],
+     "ret_medio": -1.4708,
+     "ret_mediana": -1.6742,
+     "ret_p25": -2.9015,
+     "ret_p75": -0.731,
+     "ret_min": -4.7692,
+     "ret_max": 5.2203,
+     "intradia_QQQ": {
+      "n": 15,
+      "gap_medio": -1.3233,
+      "gap_mediana": -1.0737,
+      "open_close_medio": -0.2017,
+      "open_close_mediana": -0.1704,
+      "P_open_close_rojo": 0.6667
+     },
+     "base_comparada": "BASE AC_no_eco__NDXprev_gt_-1pct",
+     "base_P_rojo": 0.453,
+     "lift_P_rojo_pp": 39.32,
+     "lift_P_cae_ge_1pct_pp": 50.5,
+     "delta_ret_medio_pp": -1.4973,
+     "z_P_rojo_una_cola": [
+      3.779,
+      8e-05
+     ],
+     "z_P_cae1_una_cola": [
+      6.169,
+      0.0
+     ]
+    },
+    {
+     "celda": "AC_no_eco__NDXprev_gt_-1pct & KOSPI<=-8%",
+     "n": 5,
+     "episodios_independientes": 5,
+     "n_eff": 5.0,
+     "publicable_n_eff_ge_30": false,
+     "P_rojo": 1.0,
+     "P_rojo_CI95_neff": [
+      0.5655,
+      1.0
+     ],
+     "P_cae_ge_1pct": 0.8,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.3755,
+      0.9638
+     ],
+     "P_cae_ge_2pct": 0.6,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.2307,
+      0.8824
+     ],
+     "ret_medio": -2.3266,
+     "ret_mediana": -2.4958,
+     "ret_p25": -2.977,
+     "ret_p75": -1.881,
+     "ret_min": -3.2946,
+     "ret_max": -0.9846,
+     "intradia_QQQ": {
+      "n": 4,
+      "gap_medio": -3.0898,
+      "gap_mediana": -2.0417,
+      "open_close_medio": 0.8249,
+      "open_close_mediana": -0.2007,
+      "P_open_close_rojo": 0.75
+     },
+     "base_comparada": "BASE AC_no_eco__NDXprev_gt_-1pct",
+     "base_P_rojo": 0.453,
+     "lift_P_rojo_pp": 54.7,
+     "lift_P_cae_ge_1pct_pp": 61.27,
+     "delta_ret_medio_pp": -2.3531,
+     "z_P_rojo_una_cola": [
+      2.456,
+      0.00703
+     ],
+     "z_P_cae1_una_cola": [
+      3.506,
+      0.00023
+     ]
+    }
+   ],
+   "detalle_KOSPI_le_-5": [
+    {
+     "fecha": "1997-11-24",
+     "kospi_D": -10.95,
+     "kospi_D-1": 3.62,
+     "ndx_D-1": -0.56,
+     "gap_qqq_D": null,
+     "qqq_open_close_D": null,
+     "ndx_D_close_close": -2.5
+    },
+    {
+     "fecha": "1997-12-09",
+     "kospi_D": -6.47,
+     "kospi_D-1": -4.44,
+     "ndx_D-1": 1.18,
+     "gap_qqq_D": null,
+     "qqq_open_close_D": null,
+     "ndx_D_close_close": -2.98
+    },
+    {
+     "fecha": "1997-12-23",
+     "kospi_D": -7.5,
+     "kospi_D-1": -0.24,
+     "ndx_D-1": 0.59,
+     "gap_qqq_D": null,
+     "qqq_open_close_D": null,
+     "ndx_D_close_close": -2.68
+    },
+    {
+     "fecha": "1998-01-21",
+     "kospi_D": -5.04,
+     "kospi_D-1": 0.9,
+     "ndx_D-1": 2.09,
+     "gap_qqq_D": null,
+     "qqq_open_close_D": null,
+     "ndx_D_close_close": -0.04
+    },
+    {
+     "fecha": "1998-03-05",
+     "kospi_D": -6.47,
+     "kospi_D-1": 0.33,
+     "ndx_D-1": 0.35,
+     "gap_qqq_D": null,
+     "qqq_open_close_D": null,
+     "ndx_D_close_close": -4.5
+    },
+    {
+     "fecha": "1998-04-14",
+     "kospi_D": -5.51,
+     "kospi_D-1": 5.68,
+     "ndx_D-1": 0.51,
+     "gap_qqq_D": null,
+     "qqq_open_close_D": null,
+     "ndx_D_close_close": 0.84
+    },
+    {
+     "fecha": "1998-05-04",
+     "kospi_D": -6.98,
+     "kospi_D-1": 1.0,
+     "ndx_D-1": 0.27,
+     "gap_qqq_D": null,
+     "qqq_open_close_D": null,
+     "ndx_D_close_close": 0.34
+    },
+    {
+     "fecha": "1998-05-26",
+     "kospi_D": -6.0,
+     "kospi_D-1": -6.16,
+     "ndx_D-1": -0.78,
+     "gap_qqq_D": null,
+     "qqq_open_close_D": null,
+     "ndx_D_close_close": -1.15
+    },
+    {
+     "fecha": "1998-07-23",
+     "kospi_D": -5.69,
+     "kospi_D-1": -0.74,
+     "ndx_D-1": -0.09,
+     "gap_qqq_D": null,
+     "qqq_open_close_D": null,
+     "ndx_D_close_close": -1.73
+    },
+    {
+     "fecha": "1998-12-16",
+     "kospi_D": -5.84,
+     "kospi_D-1": 3.68,
+     "ndx_D-1": 3.08,
+     "gap_qqq_D": null,
+     "qqq_open_close_D": null,
+     "ndx_D_close_close": -0.45
+    },
+    {
+     "fecha": "1999-01-21",
+     "kospi_D": -5.12,
+     "kospi_D-1": -0.76,
+     "ndx_D-1": 0.0,
+     "gap_qqq_D": null,
+     "qqq_open_close_D": null,
+     "ndx_D_close_close": -3.54
+    },
+    {
+     "fecha": "2000-10-17",
+     "kospi_D": -6.77,
+     "kospi_D-1": 4.86,
+     "ndx_D-1": -0.86,
+     "gap_qqq_D": 1.37,
+     "qqq_open_close_D": -5.86,
+     "ndx_D_close_close": -2.38
+    },
+    {
+     "fecha": "2001-11-28",
+     "kospi_D": -5.68,
+     "kospi_D-1": -0.66,
+     "ndx_D-1": -0.6,
+     "gap_qqq_D": -1.17,
+     "qqq_open_close_D": -2.47,
+     "ndx_D_close_close": -3.28
+    },
+    {
+     "fecha": "2002-10-10",
+     "kospi_D": -5.79,
+     "kospi_D-1": -2.35,
+     "ndx_D-1": -0.5,
+     "gap_qqq_D": 0.2,
+     "qqq_open_close_D": 4.88,
+     "ndx_D_close_close": 5.22
+    },
+    {
+     "fecha": "2004-05-10",
+     "kospi_D": -5.73,
+     "kospi_D-1": 0.13,
+     "ndx_D-1": -0.66,
+     "gap_qqq_D": -0.86,
+     "qqq_open_close_D": 0.0,
+     "ndx_D_close_close": -0.65
+    },
+    {
+     "fecha": "2008-10-24",
+     "kospi_D": -10.57,
+     "kospi_D-1": -7.48,
+     "ndx_D-1": 0.17,
+     "gap_qqq_D": -7.41,
+     "qqq_open_close_D": 4.53,
+     "ndx_D_close_close": -2.98
+    },
+    {
+     "fecha": "2011-10-05",
+     "kospi_D": -5.83,
+     "kospi_D-1": 0.02,
+     "ndx_D-1": 2.12,
+     "gap_qqq_D": -0.25,
+     "qqq_open_close_D": 2.82,
+     "ndx_D_close_close": 2.52
+    },
+    {
+     "fecha": "2026-03-03",
+     "kospi_D": -7.24,
+     "kospi_D-1": -1.0,
+     "ndx_D-1": 0.13,
+     "gap_qqq_D": -1.93,
+     "qqq_open_close_D": 0.88,
+     "ndx_D_close_close": -1.09
+    },
+    {
+     "fecha": "2026-05-15",
+     "kospi_D": -6.12,
+     "kospi_D-1": 1.75,
+     "ndx_D-1": 0.73,
+     "gap_qqq_D": -1.34,
+     "qqq_open_close_D": -0.17,
+     "ndx_D_close_close": -1.54
+    },
+    {
+     "fecha": "2026-06-05",
+     "kospi_D": -5.54,
+     "kospi_D-1": -1.84,
+     "ndx_D-1": -0.53,
+     "gap_qqq_D": -1.42,
+     "qqq_open_close_D": -3.42,
+     "ndx_D_close_close": -4.77
+    },
+    {
+     "fecha": "2026-06-23",
+     "kospi_D": -9.99,
+     "kospi_D-1": 0.69,
+     "ndx_D-1": -0.19,
+     "gap_qqq_D": -3.01,
+     "qqq_open_close_D": -0.29,
+     "ndx_D_close_close": -3.29
+    },
+    {
+     "fecha": "2026-06-26",
+     "kospi_D": -5.81,
+     "kospi_D-1": 5.42,
+     "ndx_D-1": 0.75,
+     "gap_qqq_D": -1.29,
+     "qqq_open_close_D": -0.09,
+     "ndx_D_close_close": -1.09
+    },
+    {
+     "fecha": "2026-07-13",
+     "kospi_D": -8.95,
+     "kospi_D-1": 2.52,
+     "ndx_D-1": 0.33,
+     "gap_qqq_D": -1.07,
+     "qqq_open_close_D": -0.83,
+     "ndx_D_close_close": -1.88
+    },
+    {
+     "fecha": "2026-07-16",
+     "kospi_D": -6.37,
+     "kospi_D-1": 6.24,
+     "ndx_D-1": -0.28,
+     "gap_qqq_D": -0.8,
+     "qqq_open_close_D": -0.85,
+     "ndx_D_close_close": -1.62
+    },
+    {
+     "fecha": "2026-07-28",
+     "kospi_D": -10.84,
+     "kospi_D-1": 0.97,
+     "ndx_D-1": -0.32,
+     "gap_qqq_D": -0.86,
+     "qqq_open_close_D": -0.11,
+     "ndx_D_close_close": -0.98
+    },
+    {
+     "fecha": "2026-07-29",
+     "kospi_D": -5.98,
+     "kospi_D-1": -10.84,
+     "ndx_D-1": -0.98,
+     "gap_qqq_D": 0.0,
+     "qqq_open_close_D": -2.04,
+     "ndx_D_close_close": -2.06
+    }
+   ]
+  }
+ },
+ "E_post_rally_coreano": {
+  "KOSPIprev_ge_2pct": {
+   "filas": [
+    {
+     "celda": "BASE KOSPI[D-1]>=+2%",
+     "n": 514,
+     "episodios_independientes": 235,
+     "n_eff": 514.0,
+     "publicable_n_eff_ge_30": true,
+     "P_rojo": 0.4805,
+     "P_rojo_CI95_neff": [
+      0.4377,
+      0.5237
+     ],
+     "P_cae_ge_1pct": 0.286,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.2486,
+      0.3265
+     ],
+     "P_cae_ge_2pct": 0.1595,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.1304,
+      0.1937
+     ],
+     "ret_medio": -0.0226,
+     "ret_mediana": 0.0612,
+     "ret_p25": -1.1638,
+     "ret_p75": 1.0736,
+     "ret_min": -8.8202,
+     "ret_max": 18.7713
+    },
+    {
+     "celda": "KOSPI[D-1]>=+2% & KOSPI[D]<=-2%",
+     "n": 68,
+     "episodios_independientes": 54,
+     "n_eff": 54.0,
+     "publicable_n_eff_ge_30": true,
+     "P_rojo": 0.4706,
+     "P_rojo_CI95_neff": [
+      0.3439,
+      0.6012
+     ],
+     "P_cae_ge_1pct": 0.3382,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.2266,
+      0.4714
+     ],
+     "P_cae_ge_2pct": 0.1912,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.1083,
+      0.3151
+     ],
+     "ret_medio": -0.1654,
+     "ret_mediana": 0.088,
+     "ret_p25": -1.6384,
+     "ret_p75": 1.0481,
+     "ret_min": -8.8202,
+     "ret_max": 6.3349,
+     "intradia_QQQ": {
+      "n": 50,
+      "gap_medio": -0.3832,
+      "gap_mediana": -0.639,
+      "open_close_medio": -0.1501,
+      "open_close_mediana": -0.1405,
+      "P_open_close_rojo": 0.6
+     },
+     "base_comparada": "BASE KOSPI[D-1]>=+2%",
+     "base_P_rojo": 0.4805,
+     "lift_P_rojo_pp": -0.99,
+     "lift_P_cae_ge_1pct_pp": 5.22,
+     "delta_ret_medio_pp": -0.1428,
+     "z_P_rojo_una_cola": [
+      -0.139,
+      0.55515
+     ],
+     "z_P_cae1_una_cola": [
+      0.804,
+      0.21072
+     ]
+    },
+    {
+     "celda": "KOSPI[D-1]>=+2% & KOSPI[D]<=-3%",
+     "n": 38,
+     "episodios_independientes": 30,
+     "n_eff": 30.0,
+     "publicable_n_eff_ge_30": true,
+     "P_rojo": 0.5,
+     "P_rojo_CI95_neff": [
+      0.3315,
+      0.6685
+     ],
+     "P_cae_ge_1pct": 0.4211,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.2634,
+      0.5966
+     ],
+     "P_cae_ge_2pct": 0.1842,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.0846,
+      0.3555
+     ],
+     "ret_medio": -0.4022,
+     "ret_mediana": -0.095,
+     "ret_p25": -1.6828,
+     "ret_p75": 0.5222,
+     "ret_min": -5.3519,
+     "ret_max": 6.3349,
+     "intradia_QQQ": {
+      "n": 26,
+      "gap_medio": -0.4943,
+      "gap_mediana": -0.6668,
+      "open_close_medio": -0.4062,
+      "open_close_mediana": -0.3163,
+      "P_open_close_rojo": 0.6154
+     },
+     "base_comparada": "BASE KOSPI[D-1]>=+2%",
+     "base_P_rojo": 0.4805,
+     "lift_P_rojo_pp": 1.95,
+     "lift_P_cae_ge_1pct_pp": 13.51,
+     "delta_ret_medio_pp": -0.3796,
+     "z_P_rojo_una_cola": [
+      0.208,
+      0.4177
+     ],
+     "z_P_cae1_una_cola": [
+      1.579,
+      0.05716
+     ]
+    },
+    {
+     "celda": "KOSPI[D-1]>=+2% & KOSPI[D]<=-5%",
+     "n": 18,
+     "episodios_independientes": 14,
+     "n_eff": 14.0,
+     "publicable_n_eff_ge_30": false,
+     "P_rojo": 0.6111,
+     "P_rojo_CI95_neff": [
+      0.3597,
+      0.8147
+     ],
+     "P_cae_ge_1pct": 0.5556,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.3127,
+      0.7745
+     ],
+     "P_cae_ge_2pct": 0.2222,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.0801,
+      0.484
+     ],
+     "ret_medio": -0.7937,
+     "ret_mediana": -1.0953,
+     "ret_p25": -1.837,
+     "ret_p75": 0.1666,
+     "ret_min": -4.4624,
+     "ret_max": 4.4383,
+     "intradia_QQQ": {
+      "n": 12,
+      "gap_medio": -0.5653,
+      "gap_mediana": -0.8241,
+      "open_close_medio": -1.0001,
+      "open_close_mediana": -0.8038,
+      "P_open_close_rojo": 0.75
+     },
+     "base_comparada": "BASE KOSPI[D-1]>=+2%",
+     "base_P_rojo": 0.4805,
+     "lift_P_rojo_pp": 13.06,
+     "lift_P_cae_ge_1pct_pp": 26.96,
+     "delta_ret_medio_pp": -0.7711,
+     "z_P_rojo_una_cola": [
+      0.965,
+      0.16731
+     ],
+     "z_P_cae1_una_cola": [
+      2.186,
+      0.0144
+     ]
+    }
+   ]
+  },
+  "KOSPIprev_ge_3pct": {
+   "filas": [
+    {
+     "celda": "BASE KOSPI[D-1]>=+3%",
+     "n": 246,
+     "episodios_independientes": 136,
+     "n_eff": 246.0,
+     "publicable_n_eff_ge_30": true,
+     "P_rojo": 0.5081,
+     "P_rojo_CI95_neff": [
+      0.446,
+      0.57
+     ],
+     "P_cae_ge_1pct": 0.3333,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.2774,
+      0.3944
+     ],
+     "P_cae_ge_2pct": 0.1585,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.1182,
+      0.2094
+     ],
+     "ret_medio": 0.0027,
+     "ret_mediana": -0.0248,
+     "ret_p25": -1.3638,
+     "ret_p75": 1.0813,
+     "ret_min": -8.8202,
+     "ret_max": 18.7713
+    },
+    {
+     "celda": "KOSPI[D-1]>=+3% & KOSPI[D]<=-2%",
+     "n": 43,
+     "episodios_independientes": 36,
+     "n_eff": 36.0,
+     "publicable_n_eff_ge_30": true,
+     "P_rojo": 0.4884,
+     "P_rojo_CI95_neff": [
+      0.3343,
+      0.6447
+     ],
+     "P_cae_ge_1pct": 0.3488,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.2147,
+      0.5121
+     ],
+     "P_cae_ge_2pct": 0.186,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.0917,
+      0.3409
+     ],
+     "ret_medio": -0.2309,
+     "ret_mediana": 0.0697,
+     "ret_p25": -1.122,
+     "ret_p75": 0.9698,
+     "ret_min": -8.8202,
+     "ret_max": 6.3349,
+     "intradia_QQQ": {
+      "n": 29,
+      "gap_medio": -0.3181,
+      "gap_mediana": -0.5672,
+      "open_close_medio": -0.3694,
+      "open_close_mediana": -0.3635,
+      "P_open_close_rojo": 0.6552
+     },
+     "base_comparada": "BASE KOSPI[D-1]>=+3%",
+     "base_P_rojo": 0.5081,
+     "lift_P_rojo_pp": -1.97,
+     "lift_P_cae_ge_1pct_pp": 1.55,
+     "delta_ret_medio_pp": -0.2336,
+     "z_P_rojo_una_cola": [
+      -0.221,
+      0.5875
+     ],
+     "z_P_cae1_una_cola": [
+      0.184,
+      0.42684
+     ]
+    },
+    {
+     "celda": "KOSPI[D-1]>=+3% & KOSPI[D]<=-3%",
+     "n": 26,
+     "episodios_independientes": 21,
+     "n_eff": 21.0,
+     "publicable_n_eff_ge_30": false,
+     "P_rojo": 0.5385,
+     "P_rojo_CI95_neff": [
+      0.3364,
+      0.7286
+     ],
+     "P_cae_ge_1pct": 0.4231,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.2403,
+      0.6296
+     ],
+     "P_cae_ge_2pct": 0.1538,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.0557,
+      0.359
+     ],
+     "ret_medio": -0.3312,
+     "ret_mediana": -0.3552,
+     "ret_p25": -1.1347,
+     "ret_p75": 0.3439,
+     "ret_min": -5.3519,
+     "ret_max": 6.3349,
+     "intradia_QQQ": {
+      "n": 17,
+      "gap_medio": -0.2308,
+      "gap_mediana": -0.224,
+      "open_close_medio": -0.5591,
+      "open_close_mediana": -0.3635,
+      "P_open_close_rojo": 0.7059
+     },
+     "base_comparada": "BASE KOSPI[D-1]>=+3%",
+     "base_P_rojo": 0.5081,
+     "lift_P_rojo_pp": 3.04,
+     "lift_P_cae_ge_1pct_pp": 8.98,
+     "delta_ret_medio_pp": -0.3339,
+     "z_P_rojo_una_cola": [
+      0.267,
+      0.39467
+     ],
+     "z_P_cae1_una_cola": [
+      0.833,
+      0.2023
+     ]
+    },
+    {
+     "celda": "KOSPI[D-1]>=+3% & KOSPI[D]<=-5%",
+     "n": 12,
+     "episodios_independientes": 10,
+     "n_eff": 10.0,
+     "publicable_n_eff_ge_30": false,
+     "P_rojo": 0.6667,
+     "P_rojo_CI95_neff": [
+      0.3678,
+      0.873
+     ],
+     "P_cae_ge_1pct": 0.5833,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.2995,
+      0.821
+     ],
+     "P_cae_ge_2pct": 0.25,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.0809,
+      0.5578
+     ],
+     "ret_medio": -0.9911,
+     "ret_mediana": -1.0953,
+     "ret_p25": -1.8067,
+     "ret_p75": 0.0974,
+     "ret_min": -3.0323,
+     "ret_max": 0.8437,
+     "intradia_QQQ": {
+      "n": 7,
+      "gap_medio": -0.2375,
+      "gap_mediana": -0.224,
+      "open_close_medio": -1.3831,
+      "open_close_mediana": -0.8525,
+      "P_open_close_rojo": 0.8571
+     },
+     "base_comparada": "BASE KOSPI[D-1]>=+3%",
+     "base_P_rojo": 0.5081,
+     "lift_P_rojo_pp": 15.86,
+     "lift_P_cae_ge_1pct_pp": 25.0,
+     "delta_ret_medio_pp": -0.9938,
+     "z_P_rojo_una_cola": [
+      0.983,
+      0.16268
+     ],
+     "z_P_cae1_una_cola": [
+      1.633,
+      0.05127
+     ]
+    }
+   ]
+  },
+  "KOSPIprev_ge_5pct": {
+   "filas": [
+    {
+     "celda": "BASE KOSPI[D-1]>=+5%",
+     "n": 84,
+     "episodios_independientes": 57,
+     "n_eff": 84.0,
+     "publicable_n_eff_ge_30": true,
+     "P_rojo": 0.4643,
+     "P_rojo_CI95_neff": [
+      0.3615,
+      0.5702
+     ],
+     "P_cae_ge_1pct": 0.3571,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.263,
+      0.4638
+     ],
+     "P_cae_ge_2pct": 0.1548,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.0927,
+      0.247
+     ],
+     "ret_medio": 0.0612,
+     "ret_mediana": 0.1143,
+     "ret_p25": -1.4657,
+     "ret_p75": 1.1076,
+     "ret_min": -8.8202,
+     "ret_max": 6.6906
+    },
+    {
+     "celda": "KOSPI[D-1]>=+5% & KOSPI[D]<=-2%",
+     "n": 21,
+     "episodios_independientes": 21,
+     "n_eff": 21.0,
+     "publicable_n_eff_ge_30": false,
+     "P_rojo": 0.3333,
+     "P_rojo_CI95_neff": [
+      0.1719,
+      0.5463
+     ],
+     "P_cae_ge_1pct": 0.2857,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.1381,
+      0.4996
+     ],
+     "P_cae_ge_2pct": 0.0476,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.0085,
+      0.2267
+     ],
+     "ret_medio": 0.182,
+     "ret_mediana": 0.3507,
+     "ret_p25": -1.0013,
+     "ret_p75": 1.0336,
+     "ret_min": -8.8202,
+     "ret_max": 6.3349,
+     "intradia_QQQ": {
+      "n": 12,
+      "gap_medio": -0.3198,
+      "gap_mediana": -0.4716,
+      "open_close_medio": -0.3715,
+      "open_close_mediana": -0.1777,
+      "P_open_close_rojo": 0.5833
+     },
+     "base_comparada": "BASE KOSPI[D-1]>=+5%",
+     "base_P_rojo": 0.4643,
+     "lift_P_rojo_pp": -13.1,
+     "lift_P_cae_ge_1pct_pp": -7.14,
+     "delta_ret_medio_pp": 0.1208,
+     "z_P_rojo_una_cola": [
+      -1.082,
+      0.86036
+     ],
+     "z_P_cae1_una_cola": [
+      -0.616,
+      0.7312
+     ]
+    },
+    {
+     "celda": "KOSPI[D-1]>=+5% & KOSPI[D]<=-3%",
+     "n": 13,
+     "episodios_independientes": 13,
+     "n_eff": 13.0,
+     "publicable_n_eff_ge_30": false,
+     "P_rojo": 0.3846,
+     "P_rojo_CI95_neff": [
+      0.1771,
+      0.6448
+     ],
+     "P_cae_ge_1pct": 0.3846,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.1771,
+      0.6448
+     ],
+     "P_cae_ge_2pct": 0.0,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.0,
+      0.2281
+     ],
+     "ret_medio": 0.3275,
+     "ret_mediana": 0.1806,
+     "ret_p25": -1.0899,
+     "ret_p75": 1.0087,
+     "ret_min": -1.9821,
+     "ret_max": 6.3349,
+     "intradia_QQQ": {
+      "n": 8,
+      "gap_medio": -0.316,
+      "gap_mediana": -0.4716,
+      "open_close_medio": 0.3918,
+      "open_close_mediana": -0.1777,
+      "P_open_close_rojo": 0.625
+     },
+     "base_comparada": "BASE KOSPI[D-1]>=+5%",
+     "base_P_rojo": 0.4643,
+     "lift_P_rojo_pp": -7.97,
+     "lift_P_cae_ge_1pct_pp": 2.75,
+     "delta_ret_medio_pp": 0.2663,
+     "z_P_rojo_una_cola": [
+      -0.537,
+      0.70438
+     ],
+     "z_P_cae1_una_cola": [
+      0.192,
+      0.42378
+     ]
+    },
+    {
+     "celda": "KOSPI[D-1]>=+5% & KOSPI[D]<=-5%",
+     "n": 4,
+     "episodios_independientes": 4,
+     "n_eff": 4.0,
+     "publicable_n_eff_ge_30": false,
+     "P_rojo": 0.5,
+     "P_rojo_CI95_neff": [
+      0.15,
+      0.85
+     ],
+     "P_cae_ge_1pct": 0.5,
+     "P_cae_ge_1pct_CI95_neff": [
+      0.15,
+      0.85
+     ],
+     "P_cae_ge_2pct": 0.0,
+     "P_cae_ge_2pct_CI95_neff": [
+      0.0,
+      0.4899
+     ],
+     "ret_medio": -0.4215,
+     "ret_mediana": -0.4567,
+     "ret_p25": -1.2246,
+     "ret_p75": 0.3464,
+     "ret_min": -1.6162,
+     "ret_max": 0.8437,
+     "intradia_QQQ": {
+      "n": 3,
+      "gap_medio": -0.6536,
+      "gap_mediana": -0.7983,
+      "open_close_medio": -0.4026,
+      "open_close_mediana": -0.2691,
+      "P_open_close_rojo": 1.0
+     },
+     "base_comparada": "BASE KOSPI[D-1]>=+5%",
+     "base_P_rojo": 0.4643,
+     "lift_P_rojo_pp": 3.57,
+     "lift_P_cae_ge_1pct_pp": 14.29,
+     "delta_ret_medio_pp": -0.4827,
+     "z_P_rojo_una_cola": [
+      0.14,
+      0.44439
+     ],
+     "z_P_cae1_una_cola": [
+      0.58,
+      0.2808
+     ]
+    }
+   ]
+  }
+ },
+ "F_analogo_de_hoy": {
+  "perfil_de_hoy": {
+   "KOSPI_D_pct_yfinance": -5.125,
+   "KOSPI_D_pct_prensa": -4.88,
+   "nota_discrepancia": "yfinance -5,125% (cierre 6257,45) vs prensa coreana -4,88% (6.273). Se declara, NO se promedia. Ambas caen en el mismo bucket (<=-3%, no llega a -8%).",
+   "proxy_interno_KODEX200_pct": -8.93,
+   "aviso_proxy": "El proxy interno de la casa (KODEX 200, 069500) cayo -8,93%, casi el DOBLE que el indice. Las tablas de aqui usan el INDICE ^KS11. No mezclar.",
+   "KOSPI_D-1_pct": 17.911,
+   "NDX_D-1_pct_2026-07-31": 0.597,
+   "QQQ_D-1_close": 687.99,
+   "NQ_futuro_0641ET_pct": -0.613,
+   "NQ_fuente": "yfinance futuros, lag ~10 min declarado (dato del orquestador)",
+   "grupo_causal_al_que_pertenece_hoy": "A_domestica (NDX[D-1]=+0,597% >= 0) Y ADEMAS post-rally (KOSPI[D-1]=+17,91%)"
+  },
+  "F1_post_rally": {
+   "celda": "KOSPI<=-3% & KOSPI[D-1]>=+3%",
+   "n": 26,
+   "episodios_independientes": 21,
+   "n_eff": 21.0,
+   "publicable_n_eff_ge_30": false,
+   "P_rojo": 0.5385,
+   "P_rojo_CI95_neff": [
+    0.3364,
+    0.7286
+   ],
+   "P_cae_ge_1pct": 0.4231,
+   "P_cae_ge_1pct_CI95_neff": [
+    0.2403,
+    0.6296
+   ],
+   "P_cae_ge_2pct": 0.1538,
+   "P_cae_ge_2pct_CI95_neff": [
+    0.0557,
+    0.359
+   ],
+   "ret_medio": -0.3312,
+   "ret_mediana": -0.3552,
+   "ret_p25": -1.1347,
+   "ret_p75": 0.3439,
+   "ret_min": -5.3519,
+   "ret_max": 6.3349,
+   "intradia_QQQ": {
+    "n": 17,
+    "gap_medio": -0.2308,
+    "gap_mediana": -0.224,
+    "open_close_medio": -0.5591,
+    "open_close_mediana": -0.3635,
+    "P_open_close_rojo": 0.7059
+   },
+   "base_comparada": "BASE incondicional (todas las sesiones conjuntas)",
+   "base_P_rojo": 0.4512,
+   "lift_P_rojo_pp": 8.73,
+   "lift_P_cae_ge_1pct_pp": 22.29,
+   "delta_ret_medio_pp": -0.3899,
+   "z_P_rojo_una_cola": [
+    0.802,
+    0.21117
+   ],
+   "z_P_cae1_una_cola": [
+    2.545,
+    0.00546
+   ]
+  },
+  "F2_post_rally_sin_eco": {
+   "celda": "+ NDX[D-1]>-1%",
+   "n": 16,
+   "episodios_independientes": 14,
+   "n_eff": 14.0,
+   "publicable_n_eff_ge_30": false,
+   "P_rojo": 0.5,
+   "P_rojo_CI95_neff": [
+    0.268,
+    0.732
+   ],
+   "P_cae_ge_1pct": 0.375,
+   "P_cae_ge_1pct_CI95_neff": [
+    0.1757,
+    0.6282
+   ],
+   "P_cae_ge_2pct": 0.125,
+   "P_cae_ge_2pct_CI95_neff": [
+    0.0323,
+    0.3791
+   ],
+   "ret_medio": -0.0049,
+   "ret_mediana": -0.1722,
+   "ret_p25": -1.0909,
+   "ret_p75": 0.885,
+   "ret_min": -2.4958,
+   "ret_max": 6.3349,
+   "intradia_QQQ": {
+    "n": 9,
+    "gap_medio": -0.1089,
+    "gap_mediana": -0.1448,
+    "open_close_medio": -0.3135,
+    "open_close_mediana": -0.1426,
+    "P_open_close_rojo": 0.6667
+   },
+   "base_comparada": "BASE incondicional (todas las sesiones conjuntas)",
+   "base_P_rojo": 0.4512,
+   "lift_P_rojo_pp": 4.88,
+   "lift_P_cae_ge_1pct_pp": 17.48,
+   "delta_ret_medio_pp": -0.0636,
+   "z_P_rojo_una_cola": [
+    0.367,
+    0.35697
+   ],
+   "z_P_cae1_una_cola": [
+    1.632,
+    0.05136
+   ]
+  },
+  "F3_post_rally_sin_eco_gap_plano": {
+   "celda": "+ gap QQQ>=-1,5% (proxy del NQ plano de hoy)",
+   "n": 8,
+   "episodios_independientes": 7,
+   "n_eff": 7.0,
+   "publicable_n_eff_ge_30": false,
+   "P_rojo": 0.625,
+   "P_rojo_CI95_neff": [
+    0.2891,
+    0.8723
+   ],
+   "P_cae_ge_1pct": 0.5,
+   "P_cae_ge_1pct_CI95_neff": [
+    0.2024,
+    0.7976
+   ],
+   "P_cae_ge_2pct": 0.125,
+   "P_cae_ge_2pct_CI95_neff": [
+    0.0204,
+    0.4954
+   ],
+   "ret_medio": -0.0269,
+   "ret_mediana": -0.9863,
+   "ret_p25": -1.2246,
+   "ret_p75": 0.2075,
+   "ret_min": -2.3779,
+   "ret_max": 6.3349,
+   "intradia_QQQ": {
+    "n": 8,
+    "gap_medio": 0.0987,
+    "gap_mediana": -0.0724,
+    "open_close_medio": -0.5924,
+    "open_close_mediana": -0.275,
+    "P_open_close_rojo": 0.75
+   },
+   "base_comparada": "BASE incondicional (todas las sesiones conjuntas)",
+   "base_P_rojo": 0.4512,
+   "lift_P_rojo_pp": 17.38,
+   "lift_P_cae_ge_1pct_pp": 29.98,
+   "delta_ret_medio_pp": -0.0856,
+   "z_P_rojo_una_cola": [
+    0.924,
+    0.17785
+   ],
+   "z_P_cae1_una_cola": [
+    1.98,
+    0.02384
+   ]
+  },
+  "F1_detalle": [
+   {
+    "fecha": "1997-11-24",
+    "kospi_D": -10.95,
+    "kospi_D-1": 3.62,
+    "ndx_D-1": -0.56,
+    "gap_qqq_D": null,
+    "qqq_open_close_D": null,
+    "ndx_D_close_close": -2.5
+   },
+   {
+    "fecha": "1997-12-08",
+    "kospi_D": -4.44,
+    "kospi_D-1": 6.98,
+    "ndx_D-1": 1.66,
+    "gap_qqq_D": null,
+    "qqq_open_close_D": null,
+    "ndx_D_close_close": 1.18
+   },
+   {
+    "fecha": "1997-12-11",
+    "kospi_D": -5.62,
+    "kospi_D-1": 3.05,
+    "ndx_D-1": -1.66,
+    "gap_qqq_D": null,
+    "qqq_open_close_D": null,
+    "ndx_D_close_close": -3.03
+   },
+   {
+    "fecha": "1997-12-19",
+    "kospi_D": -5.13,
+    "kospi_D-1": 3.52,
+    "ndx_D-1": -1.71,
+    "gap_qqq_D": null,
+    "qqq_open_close_D": null,
+    "ndx_D_close_close": 0.32
+   },
+   {
+    "fecha": "1998-01-16",
+    "kospi_D": -3.53,
+    "kospi_D-1": 6.49,
+    "ndx_D-1": -0.08,
+    "gap_qqq_D": null,
+    "qqq_open_close_D": null,
+    "ndx_D_close_close": 1.03
+   },
+   {
+    "fecha": "1998-04-14",
+    "kospi_D": -5.51,
+    "kospi_D-1": 5.68,
+    "ndx_D-1": 0.51,
+    "gap_qqq_D": null,
+    "qqq_open_close_D": null,
+    "ndx_D_close_close": 0.84
+   },
+   {
+    "fecha": "1998-06-19",
+    "kospi_D": -3.76,
+    "kospi_D-1": 7.14,
+    "ndx_D-1": 0.27,
+    "gap_qqq_D": null,
+    "qqq_open_close_D": null,
+    "ndx_D_close_close": 1.01
+   },
+   {
+    "fecha": "1998-12-16",
+    "kospi_D": -5.84,
+    "kospi_D-1": 3.68,
+    "ndx_D-1": 3.08,
+    "gap_qqq_D": null,
+    "qqq_open_close_D": null,
+    "ndx_D_close_close": -0.45
+   },
+   {
+    "fecha": "1998-12-22",
+    "kospi_D": -3.1,
+    "kospi_D-1": 7.7,
+    "ndx_D-1": 3.01,
+    "gap_qqq_D": null,
+    "qqq_open_close_D": null,
+    "ndx_D_close_close": -1.09
+   },
+   {
+    "fecha": "1999-11-17",
+    "kospi_D": -3.98,
+    "kospi_D-1": 3.38,
+    "ndx_D-1": 2.24,
+    "gap_qqq_D": 0.0,
+    "qqq_open_close_D": -1.35,
+    "ndx_D_close_close": -0.97
+   },
+   {
+    "fecha": "2000-01-05",
+    "kospi_D": -6.87,
+    "kospi_D-1": 3.01,
+    "ndx_D-1": -6.45,
+    "gap_qqq_D": -0.85,
+    "qqq_open_close_D": -1.71,
+    "ndx_D_close_close": -1.1
+   },
+   {
+    "fecha": "2000-05-26",
+    "kospi_D": -6.13,
+    "kospi_D-1": 3.64,
+    "ndx_D-1": -2.55,
+    "gap_qqq_D": 0.0,
+    "qqq_open_close_D": 0.0,
+    "ndx_D_close_close": 0.07
+   },
+   {
+    "fecha": "2000-10-17",
+    "kospi_D": -6.77,
+    "kospi_D-1": 4.86,
+    "ndx_D-1": -0.86,
+    "gap_qqq_D": 1.37,
+    "qqq_open_close_D": -5.86,
+    "ndx_D_close_close": -2.38
+   },
+   {
+    "fecha": "2000-10-23",
+    "kospi_D": -3.22,
+    "kospi_D-1": 6.01,
+    "ndx_D-1": 1.58,
+    "gap_qqq_D": -0.14,
+    "qqq_open_close_D": 0.0,
+    "ndx_D_close_close": -1.0
+   },
+   {
+    "fecha": "2000-11-28",
+    "kospi_D": -3.09,
+    "kospi_D-1": 4.37,
+    "ndx_D-1": -2.15,
+    "gap_qqq_D": -0.9,
+    "qqq_open_close_D": -5.05,
+    "ndx_D_close_close": -5.35
+   },
+   {
+    "fecha": "2002-09-18",
+    "kospi_D": -3.15,
+    "kospi_D-1": 3.18,
+    "ndx_D-1": -1.21,
+    "gap_qqq_D": -0.77,
+    "qqq_open_close_D": -0.36,
+    "ndx_D_close_close": -0.26
+   },
+   {
+    "fecha": "2004-05-13",
+    "kospi_D": -3.3,
+    "kospi_D-1": 3.3,
+    "ndx_D-1": -0.5,
+    "gap_qqq_D": -0.57,
+    "qqq_open_close_D": -0.14,
+    "ndx_D_close_close": 0.16
+   },
+   {
+    "fecha": "2008-10-29",
+    "kospi_D": -3.02,
+    "kospi_D-1": 5.57,
+    "ndx_D-1": 10.92,
+    "gap_qqq_D": 0.16,
+    "qqq_open_close_D": -0.41,
+    "ndx_D_close_close": 0.35
+   },
+   {
+    "fecha": "2008-11-24",
+    "kospi_D": -3.35,
+    "kospi_D-1": 5.8,
+    "ndx_D-1": 4.73,
+    "gap_qqq_D": 2.06,
+    "qqq_open_close_D": 3.97,
+    "ndx_D_close_close": 6.33
+   },
+   {
+    "fecha": "2009-02-24",
+    "kospi_D": -3.24,
+    "kospi_D-1": 3.15,
+    "ndx_D-1": -3.73,
+    "gap_qqq_D": 0.54,
+    "qqq_open_close_D": 2.75,
+    "ndx_D_close_close": 3.76
+   },
+   {
+    "fecha": "2020-03-23",
+    "kospi_D": -5.34,
+    "kospi_D-1": 7.44,
+    "ndx_D-1": -4.04,
+    "gap_qqq_D": 0.13,
+    "qqq_open_close_D": -0.27,
+    "ndx_D_close_close": 0.18
+   },
+   {
+    "fecha": "2026-04-02",
+    "kospi_D": -4.47,
+    "kospi_D-1": 8.44,
+    "ndx_D-1": 1.18,
+    "gap_qqq_D": -1.77,
+    "qqq_open_close_D": 1.92,
+    "ndx_D_close_close": 0.11
+   },
+   {
+    "fecha": "2026-06-10",
+    "kospi_D": -4.52,
+    "kospi_D-1": 8.18,
+    "ndx_D-1": -1.12,
+    "gap_qqq_D": -0.87,
+    "qqq_open_close_D": -1.14,
+    "ndx_D_close_close": -1.98
+   },
+   {
+    "fecha": "2026-06-26",
+    "kospi_D": -5.81,
+    "kospi_D-1": 5.42,
+    "ndx_D-1": 0.75,
+    "gap_qqq_D": -1.29,
+    "qqq_open_close_D": -0.09,
+    "ndx_D_close_close": -1.09
+   },
+   {
+    "fecha": "2026-07-16",
+    "kospi_D": -6.37,
+    "kospi_D-1": 6.24,
+    "ndx_D-1": -0.28,
+    "gap_qqq_D": -0.8,
+    "qqq_open_close_D": -0.85,
+    "ndx_D_close_close": -1.62
+   },
+   {
+    "fecha": "2026-07-24",
+    "kospi_D": -5.72,
+    "kospi_D-1": 4.4,
+    "ndx_D-1": -1.87,
+    "gap_qqq_D": -0.22,
+    "qqq_open_close_D": -0.9,
+    "ndx_D_close_close": -1.15
+   }
+  ],
+  "F3_detalle": [
+   {
+    "fecha": "1999-11-17",
+    "kospi_D": -3.98,
+    "kospi_D-1": 3.38,
+    "ndx_D-1": 2.24,
+    "gap_qqq_D": 0.0,
+    "qqq_open_close_D": -1.35,
+    "ndx_D_close_close": -0.97
+   },
+   {
+    "fecha": "2000-10-17",
+    "kospi_D": -6.77,
+    "kospi_D-1": 4.86,
+    "ndx_D-1": -0.86,
+    "gap_qqq_D": 1.37,
+    "qqq_open_close_D": -5.86,
+    "ndx_D_close_close": -2.38
+   },
+   {
+    "fecha": "2000-10-23",
+    "kospi_D": -3.22,
+    "kospi_D-1": 6.01,
+    "ndx_D-1": 1.58,
+    "gap_qqq_D": -0.14,
+    "qqq_open_close_D": 0.0,
+    "ndx_D_close_close": -1.0
+   },
+   {
+    "fecha": "2004-05-13",
+    "kospi_D": -3.3,
+    "kospi_D-1": 3.3,
+    "ndx_D-1": -0.5,
+    "gap_qqq_D": -0.57,
+    "qqq_open_close_D": -0.14,
+    "ndx_D_close_close": 0.16
+   },
+   {
+    "fecha": "2008-10-29",
+    "kospi_D": -3.02,
+    "kospi_D-1": 5.57,
+    "ndx_D-1": 10.92,
+    "gap_qqq_D": 0.16,
+    "qqq_open_close_D": -0.41,
+    "ndx_D_close_close": 0.35
+   },
+   {
+    "fecha": "2008-11-24",
+    "kospi_D": -3.35,
+    "kospi_D-1": 5.8,
+    "ndx_D-1": 4.73,
+    "gap_qqq_D": 2.06,
+    "qqq_open_close_D": 3.97,
+    "ndx_D_close_close": 6.33
+   },
+   {
+    "fecha": "2026-06-26",
+    "kospi_D": -5.81,
+    "kospi_D-1": 5.42,
+    "ndx_D-1": 0.75,
+    "gap_qqq_D": -1.29,
+    "qqq_open_close_D": -0.09,
+    "ndx_D_close_close": -1.09
+   },
+   {
+    "fecha": "2026-07-16",
+    "kospi_D": -6.37,
+    "kospi_D-1": 6.24,
+    "ndx_D-1": -0.28,
+    "gap_qqq_D": -0.8,
+    "qqq_open_close_D": -0.85,
+    "ndx_D_close_close": -1.62
+   }
+  ]
+ },
+ "G_volatilidad_vs_direccion": {
+  "lectura": "Si la caida coreana infla LAS DOS colas del Nasdaq, lo que predice es VOLATILIDAD, no DIRECCION.",
+  "filas": [
+   {
+    "celda": "BASE",
+    "n": 7068,
+    "n_eff": 7068.0,
+    "P_cae_ge_1pct": 0.2002,
+    "P_sube_ge_1pct": 0.2201,
+    "P_abs_ge_1pct": 0.4203,
+    "P_cae_ge_2pct": 0.0934,
+    "P_sube_ge_2pct": 0.0862,
+    "ratio_colas_baja_sobre_alta": 0.909,
+    "sd_ret_NDX": 1.7463
+   },
+   {
+    "celda": "KOSPI<=-2%",
+    "n": 562,
+    "n_eff": 239.0,
+    "P_cae_ge_1pct": 0.3808,
+    "P_sube_ge_1pct": 0.2669,
+    "P_abs_ge_1pct": 0.6477,
+    "P_cae_ge_2pct": 0.2242,
+    "P_sube_ge_2pct": 0.1335,
+    "ratio_colas_baja_sobre_alta": 1.427,
+    "sd_ret_NDX": 2.5808
+   },
+   {
+    "celda": "KOSPI<=-3%",
+    "n": 275,
+    "n_eff": 141.0,
+    "P_cae_ge_1pct": 0.4109,
+    "P_sube_ge_1pct": 0.2836,
+    "P_abs_ge_1pct": 0.6945,
+    "P_cae_ge_2pct": 0.2436,
+    "P_sube_ge_2pct": 0.1382,
+    "ratio_colas_baja_sobre_alta": 1.449,
+    "sd_ret_NDX": 2.8066
+   },
+   {
+    "celda": "KOSPI<=-5%",
+    "n": 75,
+    "n_eff": 49.0,
+    "P_cae_ge_1pct": 0.48,
+    "P_sube_ge_1pct": 0.2267,
+    "P_abs_ge_1pct": 0.7067,
+    "P_cae_ge_2pct": 0.28,
+    "P_sube_ge_2pct": 0.1067,
+    "ratio_colas_baja_sobre_alta": 2.118,
+    "sd_ret_NDX": 2.7294
+   }
+  ]
+ },
+ "G_correlaciones": {
+  "corr_NDX[D-1]_vs_KOSPI[D]__canal_causal_real": 0.3102,
+  "corr_KOSPI[D]_vs_NDX[D]__el_que_afirma_el_patron": 0.1298,
+  "corr_contemporanea_residualizada_por_NDX[D-1]": 0.1627,
+  "lectura": "Wall Street arrastra a Seul (0,310) MAS DEL DOBLE de lo que Seul arrastra a Wall Street (0,130). El poco enlace contemporaneo que queda tras residualizar (0,163) es factor comun del mismo dia (macro/semis), no transmision de Seul a Nueva York. La flecha del patron apunta al reves de como se cuenta."
+ },
+ "H_estabilidad_por_epoca": [
+  {
+   "epoca": "1997-2007",
+   "n_sesiones": 2633,
+   "base_P_rojo": 0.4611,
+   "base_ret_medio": 0.0491,
+   "KOSPI<=-2%": {
+    "n": 357,
+    "episodios": 128,
+    "P_rojo": 0.521,
+    "ret_medio": -0.2192,
+    "ret_mediana": -0.1808
+   },
+   "KOSPI<=-3%": {
+    "n": 179,
+    "episodios": 94,
+    "P_rojo": 0.5196,
+    "ret_medio": -0.2666,
+    "ret_mediana": -0.1974
+   },
+   "KOSPI<=-5%": {
+    "n": 42,
+    "episodios": 31,
+    "P_rojo": 0.619,
+    "ret_medio": -0.4635,
+    "ret_mediana": -0.6061
+   }
+  },
+  {
+   "epoca": "2008-2016",
+   "n_sesiones": 2167,
+   "base_P_rojo": 0.4596,
+   "base_ret_medio": 0.0447,
+   "KOSPI<=-2%": {
+    "n": 102,
+    "episodios": 55,
+    "P_rojo": 0.5882,
+    "ret_medio": -0.5099,
+    "ret_mediana": -0.4349
+   },
+   "KOSPI<=-3%": {
+    "n": 41,
+    "episodios": 22,
+    "P_rojo": 0.4634,
+    "ret_medio": -0.0835,
+    "ret_mediana": 0.0474
+   },
+   "KOSPI<=-5%": {
+    "n": 12,
+    "episodios": 9,
+    "P_rojo": 0.4167,
+    "ret_medio": -0.4444,
+    "ret_mediana": 0.1074
+   }
+  },
+  {
+   "epoca": "2017-2025",
+   "n_sesiones": 2130,
+   "base_P_rojo": 0.43,
+   "base_ret_medio": 0.0834,
+   "KOSPI<=-2%": {
+    "n": 74,
+    "episodios": 50,
+    "P_rojo": 0.5405,
+    "ret_medio": -0.648,
+    "ret_mediana": -0.181
+   },
+   "KOSPI<=-3%": {
+    "n": 30,
+    "episodios": 19,
+    "P_rojo": 0.6333,
+    "ret_medio": -1.426,
+    "ret_mediana": -0.8237
+   },
+   "KOSPI<=-5%": {
+    "n": 4,
+    "episodios": 3,
+    "P_rojo": 0.25,
+    "ret_medio": -0.2523,
+    "ret_mediana": 0.1851
+   }
+  },
+  {
+   "epoca": "2026 (regimen actual)",
+   "n_sesiones": 138,
+   "base_P_rojo": 0.4565,
+   "base_ret_medio": 0.0824,
+   "KOSPI<=-2%": {
+    "n": 29,
+    "episodios": 6,
+    "P_rojo": 0.6897,
+    "ret_medio": -0.7751,
+    "ret_mediana": -1.0904
+   },
+   "KOSPI<=-3%": {
+    "n": 25,
+    "episodios": 6,
+    "P_rojo": 0.64,
+    "ret_medio": -0.76,
+    "ret_mediana": -1.094
+   },
+   "KOSPI<=-5%": {
+    "n": 17,
+    "episodios": 6,
+    "P_rojo": 0.6471,
+    "ret_medio": -0.8507,
+    "ret_mediana": -1.094
+   }
+  }
+ ],
+ "H_2026_giveback_post_rally": {
+  "n": 5,
+  "veredicto_n": "n INSUFICIENTE para publicar probabilidad (n_eff < 30)",
+  "detalle": [
+   {
+    "fecha": "2026-04-02",
+    "kospi_D": -4.47,
+    "kospi_D-1": 8.44,
+    "ndx_D-1": 1.18,
+    "gap_qqq_D": -1.77,
+    "qqq_open_close_D": 1.92,
+    "ndx_D_close_close": 0.11
+   },
+   {
+    "fecha": "2026-06-10",
+    "kospi_D": -4.52,
+    "kospi_D-1": 8.18,
+    "ndx_D-1": -1.12,
+    "gap_qqq_D": -0.87,
+    "qqq_open_close_D": -1.14,
+    "ndx_D_close_close": -1.98
+   },
+   {
+    "fecha": "2026-06-26",
+    "kospi_D": -5.81,
+    "kospi_D-1": 5.42,
+    "ndx_D-1": 0.75,
+    "gap_qqq_D": -1.29,
+    "qqq_open_close_D": -0.09,
+    "ndx_D_close_close": -1.09
+   },
+   {
+    "fecha": "2026-07-16",
+    "kospi_D": -6.37,
+    "kospi_D-1": 6.24,
+    "ndx_D-1": -0.28,
+    "gap_qqq_D": -0.8,
+    "qqq_open_close_D": -0.85,
+    "ndx_D_close_close": -1.62
+   },
+   {
+    "fecha": "2026-07-24",
+    "kospi_D": -5.72,
+    "kospi_D-1": 4.4,
+    "ndx_D-1": -1.87,
+    "gap_qqq_D": -0.22,
+    "qqq_open_close_D": -0.9,
+    "ndx_D_close_close": -1.15
+   }
+  ],
+  "resumen_crudo": {
+   "cuantos_NDX_rojo": 4,
+   "cuantos_NDX_cae_ge_1pct": 4,
+   "cuantos_NDX_cae_ge_2pct": 0,
+   "ret_medio": -1.1467,
+   "ret_mediana": -1.1473
+  }
+ },
+ "I_regimen_actual": {
+  "sd_KOSPI_muestra_completa_pct": 1.717,
+  "sd_KOSPI_ultimas_23_sesiones_pct": 6.318,
+  "sd63_actual_pct": 5.075,
+  "percentil_de_la_sd63_actual_en_30_anos": 99.99,
+  "dias_KOSPI_le_-5pct_en_toda_la_historia": 80,
+  "de_ellos_desde_2026-07-01": 8,
+  "top10_movimientos_absolutos": [
+   {
+    "fecha": "2026-07-31",
+    "ret": 17.91
+   },
+   {
+    "fecha": "2026-03-04",
+    "ret": -12.06
+   },
+   {
+    "fecha": "2001-09-12",
+    "ret": -12.02
+   },
+   {
+    "fecha": "2008-10-30",
+    "ret": 11.95
+   },
+   {
+    "fecha": "2000-04-17",
+    "ret": -11.63
+   },
+   {
+    "fecha": "1997-11-24",
+    "ret": -10.95
+   },
+   {
+    "fecha": "2026-07-28",
+    "ret": -10.84
+   },
+   {
+    "fecha": "2008-10-24",
+    "ret": -10.57
+   },
+   {
+    "fecha": "1998-07-20",
+    "ret": 10.54
+   },
+   {
+    "fecha": "1998-12-07",
+    "ret": 10.33
+   }
+  ],
+  "aviso": "El regimen coreano de HOY esta FUERA de la muestra sobre la que se miden estas tablas: la sd63 esta en el percentil 99,99 de 30 anos y ~10% de TODOS los dias <=-5% de la historia ocurrieron en las ultimas 5 semanas. Toda probabilidad de este estudio se estimo en un mundo con un cuarto de la volatilidad coreana actual."
+ },
+ "J_BH_FDR": {
+  "q": 0.1,
+  "m_contrastes": 64,
+  "n_que_pasan": 39,
+  "nota": "Familia = todos los contrastes de una cola contra la base de su propio grupo. Sin esta correccion, con m contrastes se compran falsos positivos por construccion.",
+  "contrastes": [
+   {
+    "tabla": "B_incondicional",
+    "celda": "KOSPI<=-2%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 239.0,
+    "z": 6.788,
+    "p": 0.0,
+    "rango": 1,
+    "umbral_BH": 0.00156,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "B_incondicional",
+    "celda": "KOSPI<=-3%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 141.0,
+    "z": 6.144,
+    "p": 0.0,
+    "rango": 2,
+    "umbral_BH": 0.00313,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "B_incondicional",
+    "celda": "KOSPI<=-5%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 49.0,
+    "z": 4.86,
+    "p": 0.0,
+    "rango": 3,
+    "umbral_BH": 0.00469,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_A_domestica__NDXprev_ge_0",
+    "celda": "A_domestica__NDXprev_ge_0 & KOSPI<=-2%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 127.0,
+    "z": 5.861,
+    "p": 0.0,
+    "rango": 4,
+    "umbral_BH": 0.00625,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_A_domestica__NDXprev_ge_0",
+    "celda": "A_domestica__NDXprev_ge_0 & KOSPI<=-3%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 61.0,
+    "z": 5.38,
+    "p": 0.0,
+    "rango": 5,
+    "umbral_BH": 0.00781,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_C_gris__NDXprev_entre_-1_y_0",
+    "celda": "C_gris__NDXprev_entre_-1_y_0 & KOSPI<=-3%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 42.0,
+    "z": 4.631,
+    "p": 0.0,
+    "rango": 6,
+    "umbral_BH": 0.00938,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_C_gris__NDXprev_entre_-1_y_0",
+    "celda": "C_gris__NDXprev_entre_-1_y_0 & KOSPI<=-5%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 11.0,
+    "z": 4.809,
+    "p": 0.0,
+    "rango": 7,
+    "umbral_BH": 0.01094,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_AC_no_eco__NDXprev_gt_-1pct",
+    "celda": "AC_no_eco__NDXprev_gt_-1pct & KOSPI<=-2%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 177.0,
+    "z": 6.673,
+    "p": 0.0,
+    "rango": 8,
+    "umbral_BH": 0.0125,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_AC_no_eco__NDXprev_gt_-1pct",
+    "celda": "AC_no_eco__NDXprev_gt_-1pct & KOSPI<=-3%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 89.0,
+    "z": 6.595,
+    "p": 0.0,
+    "rango": 9,
+    "umbral_BH": 0.01406,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_AC_no_eco__NDXprev_gt_-1pct",
+    "celda": "AC_no_eco__NDXprev_gt_-1pct & KOSPI<=-5%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 23.0,
+    "z": 6.169,
+    "p": 0.0,
+    "rango": 10,
+    "umbral_BH": 0.01562,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_A_domestica__NDXprev_ge_0",
+    "celda": "A_domestica__NDXprev_ge_0 & KOSPI<=-5%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 14.0,
+    "z": 4.312,
+    "p": 1e-05,
+    "rango": 11,
+    "umbral_BH": 0.01719,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_C_gris__NDXprev_entre_-1_y_0",
+    "celda": "C_gris__NDXprev_entre_-1_y_0 & KOSPI<=-2%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 78.0,
+    "z": 4.035,
+    "p": 3e-05,
+    "rango": 12,
+    "umbral_BH": 0.01875,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_AC_no_eco__NDXprev_gt_-1pct",
+    "celda": "AC_no_eco__NDXprev_gt_-1pct & KOSPI<=-5%",
+    "metrica": "P_rojo",
+    "n_eff": 23.0,
+    "z": 3.779,
+    "p": 8e-05,
+    "rango": 13,
+    "umbral_BH": 0.02031,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_AC_no_eco__NDXprev_gt_-1pct",
+    "celda": "AC_no_eco__NDXprev_gt_-1pct & KOSPI<=-8%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 5.0,
+    "z": 3.506,
+    "p": 0.00023,
+    "rango": 14,
+    "umbral_BH": 0.02188,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_B_eco__NDXprev_le_-1pct",
+    "celda": "B_eco__NDXprev_le_-1pct & KOSPI<=-2%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 178.0,
+    "z": 3.458,
+    "p": 0.00027,
+    "rango": 15,
+    "umbral_BH": 0.02344,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_C_gris__NDXprev_entre_-1_y_0",
+    "celda": "C_gris__NDXprev_entre_-1_y_0 & KOSPI<=-3%",
+    "metrica": "P_rojo",
+    "n_eff": 42.0,
+    "z": 3.258,
+    "p": 0.00056,
+    "rango": 16,
+    "umbral_BH": 0.025,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_C_gris__NDXprev_entre_-1_y_0",
+    "celda": "C_gris__NDXprev_entre_-1_y_0 & KOSPI<=-2%",
+    "metrica": "P_rojo",
+    "n_eff": 78.0,
+    "z": 3.234,
+    "p": 0.00061,
+    "rango": 17,
+    "umbral_BH": 0.02656,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_C_gris__NDXprev_entre_-1_y_0",
+    "celda": "C_gris__NDXprev_entre_-1_y_0 & KOSPI<=-5%",
+    "metrica": "P_rojo",
+    "n_eff": 11.0,
+    "z": 3.2,
+    "p": 0.00069,
+    "rango": 18,
+    "umbral_BH": 0.02813,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_AC_no_eco__NDXprev_gt_-1pct",
+    "celda": "AC_no_eco__NDXprev_gt_-1pct & KOSPI<=-2%",
+    "metrica": "P_rojo",
+    "n_eff": 177.0,
+    "z": 3.128,
+    "p": 0.00088,
+    "rango": 19,
+    "umbral_BH": 0.02969,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_A_domestica__NDXprev_ge_0",
+    "celda": "A_domestica__NDXprev_ge_0 & KOSPI<=-8%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 2.0,
+    "z": 2.924,
+    "p": 0.00173,
+    "rango": 20,
+    "umbral_BH": 0.03125,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "B_incondicional",
+    "celda": "KOSPI<=-2%",
+    "metrica": "P_rojo",
+    "n_eff": 239.0,
+    "z": 2.849,
+    "p": 0.0022,
+    "rango": 21,
+    "umbral_BH": 0.03281,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_AC_no_eco__NDXprev_gt_-1pct",
+    "celda": "AC_no_eco__NDXprev_gt_-1pct & KOSPI<=-3%",
+    "metrica": "P_rojo",
+    "n_eff": 89.0,
+    "z": 2.586,
+    "p": 0.00486,
+    "rango": 22,
+    "umbral_BH": 0.03438,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "F_analogo_hoy",
+    "celda": "KOSPI<=-3% & KOSPI[D-1]>=+3%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 21.0,
+    "z": 2.545,
+    "p": 0.00546,
+    "rango": 23,
+    "umbral_BH": 0.03594,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_AC_no_eco__NDXprev_gt_-1pct",
+    "celda": "AC_no_eco__NDXprev_gt_-1pct & KOSPI<=-8%",
+    "metrica": "P_rojo",
+    "n_eff": 5.0,
+    "z": 2.456,
+    "p": 0.00703,
+    "rango": 24,
+    "umbral_BH": 0.0375,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_B_eco__NDXprev_le_-1pct",
+    "celda": "B_eco__NDXprev_le_-1pct & KOSPI<=-3%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 96.0,
+    "z": 2.447,
+    "p": 0.00721,
+    "rango": 25,
+    "umbral_BH": 0.03906,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_A_domestica__NDXprev_ge_0",
+    "celda": "A_domestica__NDXprev_ge_0 & KOSPI<=-5%",
+    "metrica": "P_rojo",
+    "n_eff": 14.0,
+    "z": 2.436,
+    "p": 0.00743,
+    "rango": 26,
+    "umbral_BH": 0.04063,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "B_incondicional",
+    "celda": "KOSPI<=-8%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 13.0,
+    "z": 2.351,
+    "p": 0.00937,
+    "rango": 27,
+    "umbral_BH": 0.04219,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "E_KOSPIprev_ge_2pct",
+    "celda": "KOSPI[D-1]>=+2% & KOSPI[D]<=-5%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 14.0,
+    "z": 2.186,
+    "p": 0.0144,
+    "rango": 28,
+    "umbral_BH": 0.04375,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_C_gris__NDXprev_entre_-1_y_0",
+    "celda": "C_gris__NDXprev_entre_-1_y_0 & KOSPI<=-8%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 3.0,
+    "z": 2.159,
+    "p": 0.01542,
+    "rango": 29,
+    "umbral_BH": 0.04531,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "F_analogo_hoy",
+    "celda": "+ gap QQQ>=-1,5% (proxy del NQ plano de hoy)",
+    "metrica": "P_cae>=1%",
+    "n_eff": 7.0,
+    "z": 1.98,
+    "p": 0.02384,
+    "rango": 30,
+    "umbral_BH": 0.04688,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "B_incondicional",
+    "celda": "KOSPI<=-3%",
+    "metrica": "P_rojo",
+    "n_eff": 141.0,
+    "z": 1.969,
+    "p": 0.0245,
+    "rango": 31,
+    "umbral_BH": 0.04844,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_C_gris__NDXprev_entre_-1_y_0",
+    "celda": "C_gris__NDXprev_entre_-1_y_0 & KOSPI<=-8%",
+    "metrica": "P_rojo",
+    "n_eff": 3.0,
+    "z": 1.967,
+    "p": 0.02461,
+    "rango": 32,
+    "umbral_BH": 0.05,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_A_domestica__NDXprev_ge_0",
+    "celda": "A_domestica__NDXprev_ge_0 & KOSPI<=-2%",
+    "metrica": "P_rojo",
+    "n_eff": 127.0,
+    "z": 1.941,
+    "p": 0.02614,
+    "rango": 33,
+    "umbral_BH": 0.05156,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_B_eco__NDXprev_le_-1pct",
+    "celda": "B_eco__NDXprev_le_-1pct & KOSPI<=-2%",
+    "metrica": "P_rojo",
+    "n_eff": 178.0,
+    "z": 1.859,
+    "p": 0.0315,
+    "rango": 34,
+    "umbral_BH": 0.05313,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "B_incondicional",
+    "celda": "KOSPI<=-5%",
+    "metrica": "P_rojo",
+    "n_eff": 49.0,
+    "z": 1.712,
+    "p": 0.04346,
+    "rango": 35,
+    "umbral_BH": 0.05469,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "E_KOSPIprev_ge_3pct",
+    "celda": "KOSPI[D-1]>=+3% & KOSPI[D]<=-5%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 10.0,
+    "z": 1.633,
+    "p": 0.05127,
+    "rango": 36,
+    "umbral_BH": 0.05625,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "F_analogo_hoy",
+    "celda": "+ NDX[D-1]>-1%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 14.0,
+    "z": 1.632,
+    "p": 0.05136,
+    "rango": 37,
+    "umbral_BH": 0.05781,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_B_eco__NDXprev_le_-1pct",
+    "celda": "B_eco__NDXprev_le_-1pct & KOSPI<=-5%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 38.0,
+    "z": 1.613,
+    "p": 0.05338,
+    "rango": 38,
+    "umbral_BH": 0.05938,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "E_KOSPIprev_ge_2pct",
+    "celda": "KOSPI[D-1]>=+2% & KOSPI[D]<=-3%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 30.0,
+    "z": 1.579,
+    "p": 0.05716,
+    "rango": 39,
+    "umbral_BH": 0.06094,
+    "pasa_BH_q010": true
+   },
+   {
+    "tabla": "D_A_domestica__NDXprev_ge_0",
+    "celda": "A_domestica__NDXprev_ge_0 & KOSPI<=-8%",
+    "metrica": "P_rojo",
+    "n_eff": 2.0,
+    "z": 1.53,
+    "p": 0.06301,
+    "rango": 40,
+    "umbral_BH": 0.0625,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "D_A_domestica__NDXprev_ge_0",
+    "celda": "A_domestica__NDXprev_ge_0 & KOSPI<=-3%",
+    "metrica": "P_rojo",
+    "n_eff": 61.0,
+    "z": 1.181,
+    "p": 0.11877,
+    "rango": 41,
+    "umbral_BH": 0.06406,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "E_KOSPIprev_ge_3pct",
+    "celda": "KOSPI[D-1]>=+3% & KOSPI[D]<=-5%",
+    "metrica": "P_rojo",
+    "n_eff": 10.0,
+    "z": 0.983,
+    "p": 0.16268,
+    "rango": 42,
+    "umbral_BH": 0.06563,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "E_KOSPIprev_ge_2pct",
+    "celda": "KOSPI[D-1]>=+2% & KOSPI[D]<=-5%",
+    "metrica": "P_rojo",
+    "n_eff": 14.0,
+    "z": 0.965,
+    "p": 0.16731,
+    "rango": 43,
+    "umbral_BH": 0.06719,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "F_analogo_hoy",
+    "celda": "+ gap QQQ>=-1,5% (proxy del NQ plano de hoy)",
+    "metrica": "P_rojo",
+    "n_eff": 7.0,
+    "z": 0.924,
+    "p": 0.17785,
+    "rango": 44,
+    "umbral_BH": 0.06875,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "E_KOSPIprev_ge_3pct",
+    "celda": "KOSPI[D-1]>=+3% & KOSPI[D]<=-3%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 21.0,
+    "z": 0.833,
+    "p": 0.2023,
+    "rango": 45,
+    "umbral_BH": 0.07031,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "D_B_eco__NDXprev_le_-1pct",
+    "celda": "B_eco__NDXprev_le_-1pct & KOSPI<=-3%",
+    "metrica": "P_rojo",
+    "n_eff": 96.0,
+    "z": 0.81,
+    "p": 0.20891,
+    "rango": 46,
+    "umbral_BH": 0.07188,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "E_KOSPIprev_ge_2pct",
+    "celda": "KOSPI[D-1]>=+2% & KOSPI[D]<=-2%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 54.0,
+    "z": 0.804,
+    "p": 0.21072,
+    "rango": 47,
+    "umbral_BH": 0.07344,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "F_analogo_hoy",
+    "celda": "KOSPI<=-3% & KOSPI[D-1]>=+3%",
+    "metrica": "P_rojo",
+    "n_eff": 21.0,
+    "z": 0.802,
+    "p": 0.21117,
+    "rango": 48,
+    "umbral_BH": 0.075,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "B_incondicional",
+    "celda": "KOSPI<=-8%",
+    "metrica": "P_rojo",
+    "n_eff": 13.0,
+    "z": 0.632,
+    "p": 0.2638,
+    "rango": 49,
+    "umbral_BH": 0.07656,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "E_KOSPIprev_ge_5pct",
+    "celda": "KOSPI[D-1]>=+5% & KOSPI[D]<=-5%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 4.0,
+    "z": 0.58,
+    "p": 0.2808,
+    "rango": 50,
+    "umbral_BH": 0.07812,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "F_analogo_hoy",
+    "celda": "+ NDX[D-1]>-1%",
+    "metrica": "P_rojo",
+    "n_eff": 14.0,
+    "z": 0.367,
+    "p": 0.35697,
+    "rango": 51,
+    "umbral_BH": 0.07969,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "E_KOSPIprev_ge_3pct",
+    "celda": "KOSPI[D-1]>=+3% & KOSPI[D]<=-3%",
+    "metrica": "P_rojo",
+    "n_eff": 21.0,
+    "z": 0.267,
+    "p": 0.39467,
+    "rango": 52,
+    "umbral_BH": 0.08125,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "E_KOSPIprev_ge_2pct",
+    "celda": "KOSPI[D-1]>=+2% & KOSPI[D]<=-3%",
+    "metrica": "P_rojo",
+    "n_eff": 30.0,
+    "z": 0.208,
+    "p": 0.4177,
+    "rango": 53,
+    "umbral_BH": 0.08281,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "E_KOSPIprev_ge_5pct",
+    "celda": "KOSPI[D-1]>=+5% & KOSPI[D]<=-3%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 13.0,
+    "z": 0.192,
+    "p": 0.42378,
+    "rango": 54,
+    "umbral_BH": 0.08438,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "E_KOSPIprev_ge_3pct",
+    "celda": "KOSPI[D-1]>=+3% & KOSPI[D]<=-2%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 36.0,
+    "z": 0.184,
+    "p": 0.42684,
+    "rango": 55,
+    "umbral_BH": 0.08594,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "E_KOSPIprev_ge_5pct",
+    "celda": "KOSPI[D-1]>=+5% & KOSPI[D]<=-5%",
+    "metrica": "P_rojo",
+    "n_eff": 4.0,
+    "z": 0.14,
+    "p": 0.44439,
+    "rango": 56,
+    "umbral_BH": 0.0875,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "D_B_eco__NDXprev_le_-1pct",
+    "celda": "B_eco__NDXprev_le_-1pct & KOSPI<=-8%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 8.0,
+    "z": -0.012,
+    "p": 0.50467,
+    "rango": 57,
+    "umbral_BH": 0.08906,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "E_KOSPIprev_ge_2pct",
+    "celda": "KOSPI[D-1]>=+2% & KOSPI[D]<=-2%",
+    "metrica": "P_rojo",
+    "n_eff": 54.0,
+    "z": -0.139,
+    "p": 0.55515,
+    "rango": 58,
+    "umbral_BH": 0.09063,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "D_B_eco__NDXprev_le_-1pct",
+    "celda": "B_eco__NDXprev_le_-1pct & KOSPI<=-5%",
+    "metrica": "P_rojo",
+    "n_eff": 38.0,
+    "z": -0.189,
+    "p": 0.57492,
+    "rango": 59,
+    "umbral_BH": 0.09219,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "E_KOSPIprev_ge_3pct",
+    "celda": "KOSPI[D-1]>=+3% & KOSPI[D]<=-2%",
+    "metrica": "P_rojo",
+    "n_eff": 36.0,
+    "z": -0.221,
+    "p": 0.5875,
+    "rango": 60,
+    "umbral_BH": 0.09375,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "E_KOSPIprev_ge_5pct",
+    "celda": "KOSPI[D-1]>=+5% & KOSPI[D]<=-3%",
+    "metrica": "P_rojo",
+    "n_eff": 13.0,
+    "z": -0.537,
+    "p": 0.70438,
+    "rango": 61,
+    "umbral_BH": 0.09531,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "E_KOSPIprev_ge_5pct",
+    "celda": "KOSPI[D-1]>=+5% & KOSPI[D]<=-2%",
+    "metrica": "P_cae>=1%",
+    "n_eff": 21.0,
+    "z": -0.616,
+    "p": 0.7312,
+    "rango": 62,
+    "umbral_BH": 0.09688,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "E_KOSPIprev_ge_5pct",
+    "celda": "KOSPI[D-1]>=+5% & KOSPI[D]<=-2%",
+    "metrica": "P_rojo",
+    "n_eff": 21.0,
+    "z": -1.082,
+    "p": 0.86036,
+    "rango": 63,
+    "umbral_BH": 0.09844,
+    "pasa_BH_q010": false
+   },
+   {
+    "tabla": "D_B_eco__NDXprev_le_-1pct",
+    "celda": "B_eco__NDXprev_le_-1pct & KOSPI<=-8%",
+    "metrica": "P_rojo",
+    "n_eff": 8.0,
+    "z": -1.102,
+    "p": 0.86467,
+    "rango": 64,
+    "umbral_BH": 0.1,
+    "pasa_BH_q010": false
+   }
+  ]
+ },
+ "K_celda_AC_no_eco_le5_desglose": {
+  "aviso_concentracion": "La celda mas fuerte del estudio (AC no-eco & KOSPI<=-5%, n=26, 23 'episodios') NO son 23 sorteos independientes: se reparte en 3 regimenes y dos de ellos son UNA crisis cada uno.",
+  "reparto_por_epoca": {
+   "1997-1999": 11,
+   "2000-2011": 6,
+   "2012-2025": 0,
+   "2026": 9
+  },
+  "subcelda_2026_regimen_actual": {
+   "n": 9,
+   "NDX_rojo": 9,
+   "NDX_cae_ge_1pct": 8,
+   "NDX_cae_ge_2pct": 3,
+   "ndx_medio": -2.0361,
+   "ndx_mediana": -1.6162,
+   "gap_qqq_medio": -1.3036,
+   "gap_qqq_mediana": -1.2912,
+   "gap_qqq_menos_negativo": 0.003,
+   "open_close_medio": -0.7697,
+   "P_open_close_rojo": 0.8889,
+   "veredicto_n": "n=9 en UN solo regimen -> n INSUFICIENTE para publicar una probabilidad; se cita como CONTEO CRUDO (9 de 9), nunca como 100%.",
+   "detalle": [
+    {
+     "fecha": "2026-03-03",
+     "kospi_D": -7.24,
+     "gap_qqq": -1.93,
+     "qqq_open_close": 0.88,
+     "ndx_D": -1.09
+    },
+    {
+     "fecha": "2026-05-15",
+     "kospi_D": -6.12,
+     "gap_qqq": -1.34,
+     "qqq_open_close": -0.17,
+     "ndx_D": -1.54
+    },
+    {
+     "fecha": "2026-06-05",
+     "kospi_D": -5.54,
+     "gap_qqq": -1.42,
+     "qqq_open_close": -3.42,
+     "ndx_D": -4.77
+    },
+    {
+     "fecha": "2026-06-23",
+     "kospi_D": -9.99,
+     "gap_qqq": -3.01,
+     "qqq_open_close": -0.29,
+     "ndx_D": -3.29
+    },
+    {
+     "fecha": "2026-06-26",
+     "kospi_D": -5.81,
+     "gap_qqq": -1.29,
+     "qqq_open_close": -0.09,
+     "ndx_D": -1.09
+    },
+    {
+     "fecha": "2026-07-13",
+     "kospi_D": -8.95,
+     "gap_qqq": -1.07,
+     "qqq_open_close": -0.83,
+     "ndx_D": -1.88
+    },
+    {
+     "fecha": "2026-07-16",
+     "kospi_D": -6.37,
+     "gap_qqq": -0.8,
+     "qqq_open_close": -0.85,
+     "ndx_D": -1.62
+    },
+    {
+     "fecha": "2026-07-28",
+     "kospi_D": -10.84,
+     "gap_qqq": -0.86,
+     "qqq_open_close": -0.11,
+     "ndx_D": -0.98
+    },
+    {
+     "fecha": "2026-07-29",
+     "kospi_D": -5.98,
+     "gap_qqq": 0.0,
+     "qqq_open_close": -2.04,
+     "ndx_D": -2.06
+    }
+   ]
+  }
+ }
+}

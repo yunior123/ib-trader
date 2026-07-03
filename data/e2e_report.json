@@ -1,0 +1,67 @@
+{
+  "generated_epoch": 1787501327,
+  "generated": "2026-08-23T12:08:47-0400",
+  "market_state": "DEAD",
+  "steps": [
+    {
+      "id": "1",
+      "name": "portero fleet_hours",
+      "status": "PASS",
+      "evidence": "state=DEAD live=False now=dom 2026-08-23 12:08 EDT window=dom20:00-vie20:00 detail=faltan 7h51m para el arranque (dom 20:00) "
+    },
+    {
+      "id": "2",
+      "name": "contrato ficheros vivos (bars/nbbo/chain)",
+      "status": "FAIL",
+      "evidence": "MALFORMADOS: QQQ:4 cadena campos=11 (esperado 10) | SPY:4 cadena campos=11 (esperado 10) | NVDA:4 cadena campos=11 (esperado 10) | TSLA:4 cadena campos=11 (esperado 10) | MU:4 cadena campos=11 (esperado 10) | SMH:4 cadena campos=11 (esperado 10) || 32 syms | 64 ficheros validos | edad 8833-13167 min (viejo=bars_SPY) | faltan 0 "
+    },
+    {
+      "id": "3",
+      "name": "opt_quick sobre cadena real",
+      "status": "PASS",
+      "evidence": "AAPL: AAPL | spot 309.69 | cache 2026-08-23 12:08:12  (edad 0m14s) | exps 20260824 20260826 20260828 20260831 20260902 20260904 20260911 "
+    },
+    {
+      "id": "4",
+      "name": "reversal_router --once",
+      "status": "PASS",
+      "evidence": "QQQ=INSUFFICIENT_DATA SPY=INSUFFICIENT_DATA NVDA=INSUFFICIENT_DATA (INSUFFICIENT_DATA es el estado legitimo con barras cortas) "
+    },
+    {
+      "id": "5",
+      "name": "shock_calibrator --once",
+      "status": "PASS",
+      "evidence": "2 simbolos: QQQ(INFO), SPY(INFO) | metric=reversion_prob = fraccion de shocks comparables pasados con ALGUN cierre opuesto dentro del horizonte (OCURRENCIA, NO first-touch ni PnL). Condicion de alerta, no prediccion; None si muestra < piso. min_n=20 "
+    },
+    {
+      "id": "6",
+      "name": "terminal mit (gex_heatmap + trace)",
+      "status": "PASS",
+      "evidence": "puerto 57448: heatmap 185 strikes x 32 exps, 3141 celdas, spot 767.0 | trace 185 strikes, 120 velas, call_wall=770.0 put_wall=765.0 flip=769.7905224779048 max_pain=750.0 | screenshot data/e2e_shots/mit_terminal.png (472046 bytes, PNG completo) "
+    },
+    {
+      "id": "7",
+      "name": "guarda anti-mock + cero fugas de key",
+      "status": "PASS",
+      "evidence": "resuelto market=LibreProvider options=LibreProvider | provider_status market=intrinio options=polygon | market_source=libre | 38 secretos vigilados, 0 fugas "
+    },
+    {
+      "id": "8",
+      "name": "suite base pytest tests/",
+      "status": "SKIPPED",
+      "evidence": "--fast: suites omitidas a peticion "
+    },
+    {
+      "id": "9",
+      "name": "suite mit backend/tests",
+      "status": "SKIPPED",
+      "evidence": "--fast: suites omitidas a peticion "
+    }
+  ],
+  "summary": {
+    "pass": 6,
+    "fail": 1,
+    "skipped": 2,
+    "total": 9
+  }
+}

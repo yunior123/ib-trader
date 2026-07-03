@@ -1,0 +1,567 @@
+{
+ "generado": "2026-07-26T11:43:17",
+ "base": "printed=1",
+ "definiciones": {
+  "aguanta": [
+   "BOUNCE",
+   "RETEST_REJECT"
+  ],
+  "falla": [
+   "BREAK"
+  ],
+  "ambiguo_no_cuenta": [
+   "WICK_REJECT"
+  ],
+  "nota": "WICK_REJECT NO cuenta como aguante: una mecha no es un rebote."
+ },
+ "muestra": {
+  "sesiones": 2,
+  "syms": 30,
+  "desde": "2026-07-23",
+  "hasta": "2026-07-24",
+  "eventos_resolutorios": 1454,
+  "rho_flota": 0.41,
+  "n_eff_min": 30
+ },
+ "por_toque": {
+  "3": {
+   "aguanta": 14,
+   "falla": 11,
+   "mecha_ambigua": 62,
+   "n": 25,
+   "n_clusters": 26,
+   "n_eff": 25.4,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.371,
+    0.733
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 25.4 < 30"
+  },
+  "4+": {
+   "aguanta": 190,
+   "falla": 221,
+   "mecha_ambigua": 737,
+   "n": 411,
+   "n_clusters": 44,
+   "n_eff": 93.0,
+   "pct_aguanta": 46.2,
+   "wilson_nominal": [
+    0.415,
+    0.511
+   ],
+   "wilson_efectivo": [
+    0.365,
+    0.563
+   ],
+   "suficiente": true,
+   "motivo": null
+  },
+  "1": {
+   "aguanta": 37,
+   "falla": 27,
+   "mecha_ambigua": 89,
+   "n": 64,
+   "n_clusters": 28,
+   "n_eff": 41.9,
+   "pct_aguanta": 57.8,
+   "wilson_nominal": [
+    0.456,
+    0.691
+   ],
+   "wilson_efectivo": [
+    0.422,
+    0.709
+   ],
+   "suficiente": true,
+   "motivo": null
+  },
+  "2": {
+   "aguanta": 8,
+   "falla": 11,
+   "mecha_ambigua": 47,
+   "n": 19,
+   "n_clusters": 20,
+   "n_eff": 19.4,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.231,
+    0.637
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 19.4 < 30"
+  }
+ },
+ "por_toque_y_regimen": {
+  "3|POS": {
+   "aguanta": 3,
+   "falla": 2,
+   "mecha_ambigua": 10,
+   "n": 5,
+   "n_clusters": 4,
+   "n_eff": 4.5,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.231,
+    0.882
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 4.5 < 30"
+  },
+  "4+|POS": {
+   "aguanta": 25,
+   "falla": 36,
+   "mecha_ambigua": 172,
+   "n": 61,
+   "n_clusters": 11,
+   "n_eff": 21.3,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.295,
+    0.535
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 21.3 < 30"
+  },
+  "1|POS": {
+   "aguanta": 14,
+   "falla": 9,
+   "mecha_ambigua": 27,
+   "n": 23,
+   "n_clusters": 7,
+   "n_eff": 11.9,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.408,
+    0.778
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 11.9 < 30"
+  },
+  "2|POS": {
+   "aguanta": 1,
+   "falla": 3,
+   "mecha_ambigua": 10,
+   "n": 4,
+   "n_clusters": 3,
+   "n_eff": 3.5,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.046,
+    0.699
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 3.5 < 30"
+  },
+  "1|NEG": {
+   "aguanta": 23,
+   "falla": 18,
+   "mecha_ambigua": 62,
+   "n": 41,
+   "n_clusters": 21,
+   "n_eff": 29.5,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.41,
+    0.701
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 29.5 < 30"
+  },
+  "2|NEG": {
+   "aguanta": 7,
+   "falla": 8,
+   "mecha_ambigua": 37,
+   "n": 15,
+   "n_clusters": 17,
+   "n_eff": 15.8,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.248,
+    0.699
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 15.8 < 30"
+  },
+  "3|NEG": {
+   "aguanta": 11,
+   "falla": 9,
+   "mecha_ambigua": 52,
+   "n": 20,
+   "n_clusters": 22,
+   "n_eff": 20.8,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.342,
+    0.742
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 20.8 < 30"
+  },
+  "4+|NEG": {
+   "aguanta": 165,
+   "falla": 185,
+   "mecha_ambigua": 565,
+   "n": 350,
+   "n_clusters": 33,
+   "n_eff": 70.9,
+   "pct_aguanta": 47.1,
+   "wilson_nominal": [
+    0.42,
+    0.524
+   ],
+   "wilson_efectivo": [
+    0.354,
+    0.58
+   ],
+   "suficiente": true,
+   "motivo": null
+  }
+ },
+ "por_toque_y_tipo": {
+  "3|OI_PUT_WALL": {
+   "aguanta": 2,
+   "falla": 0,
+   "mecha_ambigua": 9,
+   "n": 2,
+   "n_clusters": 4,
+   "n_eff": 2.5,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.342,
+    1.0
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 2.5 < 30"
+  },
+  "4+|OI_PUT_WALL": {
+   "aguanta": 18,
+   "falla": 27,
+   "mecha_ambigua": 60,
+   "n": 45,
+   "n_clusters": 11,
+   "n_eff": 19.8,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.27,
+    0.545
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 19.8 < 30"
+  },
+  "1|FLIP_OPEN": {
+   "aguanta": 7,
+   "falla": 7,
+   "mecha_ambigua": 24,
+   "n": 14,
+   "n_clusters": 14,
+   "n_eff": 14.0,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.268,
+    0.732
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 14.0 < 30"
+  },
+  "2|FLIP_OPEN": {
+   "aguanta": 1,
+   "falla": 4,
+   "mecha_ambigua": 13,
+   "n": 5,
+   "n_clusters": 8,
+   "n_eff": 5.9,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.036,
+    0.624
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 5.9 < 30"
+  },
+  "1|OI_CALL_WALL": {
+   "aguanta": 11,
+   "falla": 7,
+   "mecha_ambigua": 24,
+   "n": 18,
+   "n_clusters": 14,
+   "n_eff": 16.1,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.386,
+    0.797
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 16.1 < 30"
+  },
+  "2|OI_CALL_WALL": {
+   "aguanta": 1,
+   "falla": 2,
+   "mecha_ambigua": 9,
+   "n": 3,
+   "n_clusters": 10,
+   "n_eff": 4.2,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.061,
+    0.792
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 4.2 < 30"
+  },
+  "3|OI_CALL_WALL": {
+   "aguanta": 2,
+   "falla": 2,
+   "mecha_ambigua": 10,
+   "n": 4,
+   "n_clusters": 8,
+   "n_eff": 5.0,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.15,
+    0.85
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 5.0 < 30"
+  },
+  "4+|OI_CALL_WALL": {
+   "aguanta": 59,
+   "falla": 56,
+   "mecha_ambigua": 203,
+   "n": 115,
+   "n_clusters": 25,
+   "n_eff": 46.4,
+   "pct_aguanta": 51.3,
+   "wilson_nominal": [
+    0.423,
+    0.602
+   ],
+   "wilson_efectivo": [
+    0.381,
+    0.659
+   ],
+   "suficiente": true,
+   "motivo": null
+  },
+  "4+|ROUND": {
+   "aguanta": 43,
+   "falla": 67,
+   "mecha_ambigua": 228,
+   "n": 110,
+   "n_clusters": 25,
+   "n_eff": 45.9,
+   "pct_aguanta": 39.1,
+   "wilson_nominal": [
+    0.305,
+    0.484
+   ],
+   "wilson_efectivo": [
+    0.264,
+    0.535
+   ],
+   "suficiente": true,
+   "motivo": null
+  },
+  "3|FLIP_OPEN": {
+   "aguanta": 2,
+   "falla": 6,
+   "mecha_ambigua": 13,
+   "n": 8,
+   "n_clusters": 9,
+   "n_eff": 8.4,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.071,
+    0.591
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 8.4 < 30"
+  },
+  "4+|FLIP_OPEN": {
+   "aguanta": 38,
+   "falla": 40,
+   "mecha_ambigua": 144,
+   "n": 78,
+   "n_clusters": 22,
+   "n_eff": 38.2,
+   "pct_aguanta": 48.7,
+   "wilson_nominal": [
+    0.379,
+    0.596
+   ],
+   "wilson_efectivo": [
+    0.348,
+    0.652
+   ],
+   "suficiente": true,
+   "motivo": null
+  },
+  "2|ROUND": {
+   "aguanta": 6,
+   "falla": 4,
+   "mecha_ambigua": 21,
+   "n": 10,
+   "n_clusters": 11,
+   "n_eff": 10.4,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.313,
+    0.832
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 10.4 < 30"
+  },
+  "3|ROUND": {
+   "aguanta": 6,
+   "falla": 3,
+   "mecha_ambigua": 22,
+   "n": 9,
+   "n_clusters": 13,
+   "n_eff": 10.3,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.354,
+    0.879
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 10.3 < 30"
+  },
+  "2|OI_PUT_WALL": {
+   "aguanta": 0,
+   "falla": 0,
+   "mecha_ambigua": 1,
+   "n": 0,
+   "n_clusters": 1,
+   "n_eff": null,
+   "pct_aguanta": null,
+   "wilson_nominal": null,
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff  < 30"
+  },
+  "2|ABS_WALL": {
+   "aguanta": 0,
+   "falla": 1,
+   "mecha_ambigua": 3,
+   "n": 1,
+   "n_clusters": 3,
+   "n_eff": 1.4,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.0,
+    0.793
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 1.4 < 30"
+  },
+  "4+|ABS_WALL": {
+   "aguanta": 32,
+   "falla": 31,
+   "mecha_ambigua": 102,
+   "n": 63,
+   "n_clusters": 13,
+   "n_eff": 24.4,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.388,
+    0.627
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 24.4 < 30"
+  },
+  "1|ABS_WALL": {
+   "aguanta": 7,
+   "falla": 2,
+   "mecha_ambigua": 10,
+   "n": 9,
+   "n_clusters": 7,
+   "n_eff": 8.1,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.453,
+    0.937
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 8.1 < 30"
+  },
+  "3|ABS_WALL": {
+   "aguanta": 2,
+   "falla": 0,
+   "mecha_ambigua": 8,
+   "n": 2,
+   "n_clusters": 4,
+   "n_eff": 2.5,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.342,
+    1.0
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 2.5 < 30"
+  },
+  "1|ROUND": {
+   "aguanta": 8,
+   "falla": 5,
+   "mecha_ambigua": 17,
+   "n": 13,
+   "n_clusters": 12,
+   "n_eff": 12.6,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.355,
+    0.823
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 12.6 < 30"
+  },
+  "1|OI_PUT_WALL": {
+   "aguanta": 4,
+   "falla": 6,
+   "mecha_ambigua": 14,
+   "n": 10,
+   "n_clusters": 6,
+   "n_eff": 7.9,
+   "pct_aguanta": null,
+   "wilson_nominal": [
+    0.168,
+    0.687
+   ],
+   "wilson_efectivo": null,
+   "suficiente": false,
+   "motivo": "n_eff 7.9 < 30"
+  }
+ },
+ "doctrina": {
+  "afirma_toque1": 0.7,
+  "afirma_touch_exhaust": 3,
+  "soporte_toque1": "CONFIRMA",
+  "la_curva_decae": true,
+  "touch_exhaust_medido": null,
+  "veredicto": "la curva decae; TOUCH_EXHAUST medido en el campo touch_exhaust_medido"
+ }
+}

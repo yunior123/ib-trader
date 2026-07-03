@@ -1,0 +1,4 @@
+interface:
+  display_name: "UW Aggressor Flow Read"
+  short_description: "Read UW flow without call-put direction mistakes"
+  default_prompt: "Use $uw-aggressor-flow-read to summarize signed UW premium and aggressor-side alerts with freshness caveats."

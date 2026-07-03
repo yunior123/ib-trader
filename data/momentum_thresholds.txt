@@ -1,0 +1,5 @@
+bull_med 5
+bull_p75 11
+bear_med 5
+bear_p75 13
+bear_morn_p75 6

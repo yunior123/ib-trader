@@ -1,0 +1,35 @@
+{
+ "sym": "TXN",
+ "lock_ts": 1786348936,
+ "src": "poly_bars 1m (ts en ms)",
+ "n_bars_1m": 7300,
+ "window_bars": 365,
+ "cap": 5,
+ "atr14_diario": 13.9088,
+ "tfs": {
+  "1m": {
+   "tf": "1m",
+   "atr14": 0.4668,
+   "kde": [
+    280.2458
+   ],
+   "why": null
+  },
+  "5m": {
+   "tf": "5m",
+   "atr14": 0.9811,
+   "kde": [
+    281.6518
+   ],
+   "why": null
+  },
+  "15m": {
+   "tf": "15m",
+   "atr14": 1.7168,
+   "kde": [
+    285.9575
+   ],
+   "why": null
+  }
+ }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Audit Live Signal"
+  short_description: "Trace and audit a live ib-trader signal"
+  default_prompt: "Use $audit-live-signal to trace one live signal from inputs through compass output."

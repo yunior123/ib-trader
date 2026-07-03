@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.ibtrader.tracecube</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/bin/zsh</string>
+		<string>-lc</string>
+		<string>cd "$HOME/ib-trader" &amp;&amp; H=$(date +%H%M); if [ "$H" -ge 0935 ] &amp;&amp; [ "$H" -le 1625 ] &amp;&amp; ./bin/fleet_hours &gt;/dev/null 2&gt;&amp;1; then ./scripts/trace_cube_run.sh; fi</string>
+	</array>
+	<key>RunAtLoad</key>
+	<false/>
+	<key>StandardErrorPath</key>
+	<string>/tmp/ibtrader.tracecube.err</string>
+	<key>StandardOutPath</key>
+	<string>/tmp/ibtrader.tracecube.out</string>
+	<key>StartInterval</key>
+	<integer>600</integer>
+</dict>
+</plist>

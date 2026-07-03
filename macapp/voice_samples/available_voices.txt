@@ -1,0 +1,25 @@
+Bubbles             en_US    # Hello! My name is Bubbles.
+Eddy (Espagnol (Espagne)) es_ES    # ¡Hola! Me llamo Eddy.
+Eddy (Espagnol (Mexique)) es_MX    # ¡Hola! Me llamo Eddy.
+Flo (Espagnol (Espagne)) es_ES    # ¡Hola! Me llamo Flo.
+Flo (Espagnol (Mexique)) es_MX    # ¡Hola! Me llamo Flo.
+Grandma (Espagnol (Espagne)) es_ES    # ¡Hola! Me llamo Grandma.
+Grandma (Espagnol (Mexique)) es_MX    # ¡Hola! Me llamo Grandma.
+Grandpa (Espagnol (Espagne)) es_ES    # ¡Hola! Me llamo Grandpa.
+Grandpa (Espagnol (Mexique)) es_MX    # ¡Hola! Me llamo Grandpa.
+Jester              en_US    # Hello! My name is Jester.
+Ioana               ro_RO    # Salut! Numele meu este Ioana.
+Jacques             fr_FR    # Bonjour, je m’appelle Jacques.
+Lesya               uk_UA    # Привіт! Мене звуть Леся.
+Mónica              es_ES    # ¡Hola! Me llamo Mónica.
+Montse              ca_ES    # Hola! Em dic Montse.
+Paulina             es_MX    # ¡Hola! Me llamo Paulina.
+Reed (Espagnol (Espagne)) es_ES    # ¡Hola! Me llamo Reed.
+Reed (Espagnol (Mexique)) es_MX    # ¡Hola! Me llamo Reed.
+Rocko (Espagnol (Espagne)) es_ES    # ¡Hola! Me llamo Rocko.
+Rocko (Espagnol (Mexique)) es_MX    # ¡Hola! Me llamo Rocko.
+Sandy (Espagnol (Espagne)) es_ES    # ¡Hola! Me llamo Sandy.
+Sandy (Espagnol (Mexique)) es_MX    # ¡Hola! Me llamo Sandy.
+Shelley (Espagnol (Espagne)) es_ES    # ¡Hola! Me llamo Shelley.
+Shelley (Espagnol (Mexique)) es_MX    # ¡Hola! Me llamo Shelley.
+Tessa               en_ZA    # Hello! My name is Tessa.

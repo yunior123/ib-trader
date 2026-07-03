@@ -1,0 +1,36 @@
+{
+ "sym": "NFLX",
+ "lock_ts": 1786348936,
+ "src": "poly_bars 1m (ts en ms)",
+ "n_bars_1m": 7300,
+ "window_bars": 365,
+ "cap": 5,
+ "atr14_diario": 2.6236,
+ "tfs": {
+  "1m": {
+   "tf": "1m",
+   "atr14": 0.0273,
+   "kde": [
+    70.1574
+   ],
+   "why": null
+  },
+  "5m": {
+   "tf": "5m",
+   "atr14": 0.0741,
+   "kde": [
+    68.7089,
+    70.1434
+   ],
+   "why": null
+  },
+  "15m": {
+   "tf": "15m",
+   "atr14": 0.1656,
+   "kde": [
+    68.7562
+   ],
+   "why": null
+  }
+ }
+}

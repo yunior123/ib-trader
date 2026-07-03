@@ -1,0 +1,4 @@
+interface:
+  display_name: "Korean US Read-through"
+  short_description: "Map KRX memory moves into US semiconductor risk"
+  default_prompt: "Use $korean-us-readthrough to relate live KRX memory leaders to US semiconductor symbols without double counting."

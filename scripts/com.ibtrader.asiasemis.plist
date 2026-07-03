@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.ibtrader.asiasemis</string>
+  <!-- Taiwan/Japon/China-semis a Discord cada 30 min (Yunior 2026-08-04 #31).
+       Lote informativo fuera del camino de senal; el filtro de ventana vive en el script. -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string><string>-lc</string>
+    <string>cd "$HOME/ib-trader" &amp;&amp; ./venv/bin/python scripts/asia_semis_watch.py >> logs/asia_semis.log 2>&amp;1</string>
+  </array>
+  <key>RunAtLoad</key><false/>
+  <key>StartInterval</key><integer>1800</integer>
+  <key>StandardOutPath</key><string>/tmp/ibtrader.asiasemis.out</string>
+  <key>StandardErrorPath</key><string>/tmp/ibtrader.asiasemis.err</string>
+</dict>
+</plist>

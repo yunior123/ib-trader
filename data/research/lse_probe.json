@@ -1,0 +1,5105 @@
+{
+ "probe_utc": "2026-08-23T09:08:52.367121+00:00",
+ "sdk_version": "0.14.0",
+ "usage_before": {
+  "bytes_used_month": 4824425623,
+  "bytes_cap_month": 53687091200,
+  "bytes_used_week": 2365778778,
+  "bytes_cap_week": 16106127360,
+  "exports_this_hour": 0,
+  "exports_cap_hour": 5,
+  "historical_data_months": -1,
+  "calls_per_minute": 200,
+  "max_rows_per_request": 5000,
+  "vault_concurrency": 2
+ },
+ "meta": {
+  "datasets": [
+   "bond_futures",
+   "bonds",
+   "commodity",
+   "corporate_bonds",
+   "credit_indices",
+   "crypto",
+   "currency_index",
+   "economics",
+   "etf",
+   "futures",
+   "fx",
+   "fx_derivatives",
+   "index",
+   "interest_rates",
+   "options",
+   "sovereign_yields",
+   "stocks",
+   "volatility"
+  ],
+  "candle_classes": [
+   "commodity",
+   "crypto",
+   "etf",
+   "futures",
+   "fx",
+   "index",
+   "stocks"
+  ],
+  "synth_candle_classes": [
+   "currency_index",
+   "interest_rates",
+   "volatility"
+  ],
+  "timeframes": [
+   "1s",
+   "5s",
+   "15s",
+   "30s",
+   "1m",
+   "3m",
+   "5m",
+   "15m",
+   "30m",
+   "1h",
+   "4h",
+   "1d",
+   "1w",
+   "1mo"
+  ],
+  "reference": [
+   "bond_yields",
+   "company_profiles",
+   "cot",
+   "dividends",
+   "economic_calendar",
+   "financial_reports",
+   "insider_trades",
+   "stock_fundamentals",
+   "stock_splits"
+  ],
+  "options": {
+   "chain": true,
+   "flow": true,
+   "flow_1m": true
+  },
+  "options_timeframes": [
+   "1m",
+   "3m",
+   "5m",
+   "15m",
+   "30m",
+   "1h",
+   "4h",
+   "1d",
+   "1w",
+   "1mo"
+  ],
+  "series_classes": [
+   "bond_futures",
+   "bonds",
+   "corporate_bonds",
+   "credit_indices",
+   "economics",
+   "fx_derivatives",
+   "sovereign_yields"
+  ],
+  "series_timeframes": {
+   "bonds": [
+    "1d",
+    "1h"
+   ]
+  },
+  "access": {
+   "stocks": [
+    "candles",
+    "export"
+   ],
+   "fx": [
+    "candles",
+    "export"
+   ],
+   "crypto": [
+    "candles",
+    "export"
+   ],
+   "options": [
+    "export",
+    "options"
+   ],
+   "etf": [
+    "candles",
+    "export"
+   ],
+   "index": [
+    "candles",
+    "export"
+   ],
+   "commodity": [
+    "candles",
+    "export"
+   ],
+   "volatility": [
+    "candles",
+    "export"
+   ],
+   "interest_rates": [
+    "candles",
+    "export"
+   ],
+   "currency_index": [
+    "candles",
+    "export"
+   ],
+   "futures": [
+    "candles",
+    "export"
+   ],
+   "economics": [
+    "export",
+    "series"
+   ],
+   "bonds": [
+    "export",
+    "series"
+   ],
+   "sovereign_yields": [
+    "export",
+    "series"
+   ],
+   "corporate_bonds": [
+    "export",
+    "series"
+   ],
+   "credit_indices": [
+    "export",
+    "series"
+   ],
+   "bond_futures": [
+    "export",
+    "series"
+   ],
+   "fx_derivatives": [
+    "export",
+    "series"
+   ]
+  },
+  "preview_classes": [
+   "bond_futures",
+   "bonds",
+   "commodity",
+   "corporate_bonds",
+   "credit_indices",
+   "crypto",
+   "economics",
+   "etf",
+   "futures",
+   "fx",
+   "fx_derivatives",
+   "index",
+   "sovereign_yields",
+   "stocks"
+  ]
+ },
+ "reference_meta": [
+  {
+   "dataset": "options_flow_1m",
+   "rows": 221096432,
+   "first": "2026-01-02 14:30:00",
+   "last": "2026-08-21 20:35:00"
+  },
+  {
+   "dataset": "options_flow",
+   "rows": 154094954,
+   "first": "2026-06-26 13:30:03.283291",
+   "last": "2026-08-21 20:35:19.134322"
+  },
+  {
+   "dataset": "insider_trades",
+   "rows": 11902897,
+   "first": "2003-12-23",
+   "last": "2026-08-21"
+  },
+  {
+   "dataset": "options_chain",
+   "rows": 1793343,
+   "first": "2026-06-11 14:53:25.633953",
+   "last": "2026-08-21 20:35:43.706355"
+  },
+  {
+   "dataset": "dividends",
+   "rows": 919140,
+   "first": "1970-01-26",
+   "last": "2027-04-08"
+  },
+  {
+   "dataset": "bond_yields",
+   "rows": 708808,
+   "first": "1990-01-01",
+   "last": "2026-07-24"
+  },
+  {
+   "dataset": "financial_reports",
+   "rows": 205610,
+   "first": "2013-04-30",
+   "last": "2026-08-07"
+  },
+  {
+   "dataset": "economic_calendar",
+   "rows": 137929,
+   "first": "2015-01-01",
+   "last": "2026-11-20"
+  },
+  {
+   "dataset": "stock_splits",
+   "rows": 46028,
+   "first": "1970-01-01",
+   "last": "2026-09-29"
+  },
+  {
+   "dataset": "cot",
+   "rows": 34126,
+   "first": "2015-01-06",
+   "last": "2026-08-18"
+  },
+  {
+   "dataset": "stock_fundamentals",
+   "rows": 8304,
+   "first": null,
+   "last": null
+  },
+  {
+   "dataset": "company_profiles",
+   "rows": 8304,
+   "first": null,
+   "last": null
+  }
+ ],
+ "catalog_call": {
+  "kind": "sdk",
+  "target": "catalog()",
+  "ms": 1435.4,
+  "bytes": 8731110,
+  "rows": 22851,
+  "ok": true,
+  "cols": [
+   "category",
+   "country",
+   "dataset",
+   "first",
+   "last",
+   "name",
+   "symbol",
+   "ticks"
+  ]
+ },
+ "dataset_counts": {
+  "bond_futures": 2,
+  "bonds": 202,
+  "commodity": 23,
+  "corporate_bonds": 192,
+  "credit_indices": 79,
+  "crypto": 58,
+  "currency_index": 1,
+  "economics": 14795,
+  "etf": 25,
+  "futures": 69,
+  "fx": 62,
+  "fx_derivatives": 63,
+  "index": 19,
+  "interest_rates": 4,
+  "options": 3186,
+  "sovereign_yields": 88,
+  "stocks": 3982,
+  "volatility": 1
+ },
+ "datasets": {
+  "bond_futures": {
+   "caps_declared": [
+    "export",
+    "series"
+   ],
+   "n_symbols": 2,
+   "samples": [
+    {
+     "symbol": "JGBc1",
+     "name": "10Y Japanese Government Bond Future, Continuation 1, JPY, Osaka Exchange",
+     "catalog_ticks": 71857,
+     "catalog_first_tick": "2010-01-04 00:00:00.000000",
+     "catalog_last_tick": "2026-08-10 00:00:00.000000",
+     "candles": {},
+     "series": {
+      "kind": "sdk",
+      "target": "series(JGBc1,bond_futures,desc,5000)",
+      "ms": 391.6,
+      "bytes": 218778,
+      "rows": 4061,
+      "ok": true,
+      "cols": [
+       "date",
+       "symbol",
+       "value"
+      ],
+      "shape": {
+       "n": 4061,
+       "first": "2010-01-04T00:00:00+00:00",
+       "last": "2026-08-10T00:00:00+00:00",
+       "span_days": 6062.0,
+       "step_median_s": 86400.0,
+       "gaps_max_s": [
+        950400.0,
+        604800.0,
+        604800.0
+       ],
+       "tod_utc_min": "00:00",
+       "tod_utc_max": "00:00",
+       "n_steps": 4060,
+       "n_gaps_gt_step": 919,
+       "n_gaps_intrasession": 885,
+       "bars_expected_if_continuous": 6063,
+       "fill_pct_vs_continuous": 66.98
+      },
+      "sample_row": {
+       "symbol": "JGBc1",
+       "date": "2026-08-10",
+       "value": 126.9
+      },
+      "oldest_row": {
+       "symbol": "JGBc1",
+       "date": "2010-01-04",
+       "value": 139.33
+      }
+     },
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "candles(JGBc1,1d) [cross]",
+      "ms": 526.8,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 404,
+      "error": "{\"detail\":\"'JGBc1' has no candle data; browse /catalog\"}"
+     }
+    },
+    {
+     "symbol": "SJBc1",
+     "name": "Mini Japanese Government Bond Future, Continuation 1, JPY, Singapore Exchange",
+     "catalog_ticks": 71735,
+     "catalog_first_tick": "2010-01-04 00:00:00.000000",
+     "catalog_last_tick": "2026-08-11 00:00:00.000000",
+     "candles": {},
+     "series": {
+      "kind": "sdk",
+      "target": "series(SJBc1,bond_futures,desc,5000)",
+      "ms": 379.9,
+      "bytes": 231180,
+      "rows": 4291,
+      "ok": true,
+      "cols": [
+       "date",
+       "symbol",
+       "value"
+      ],
+      "shape": {
+       "n": 4291,
+       "first": "2010-01-04T00:00:00+00:00",
+       "last": "2026-08-11T00:00:00+00:00",
+       "span_days": 6063.0,
+       "step_median_s": 86400.0,
+       "gaps_max_s": [
+        518400.0,
+        432000.0,
+        345600.0
+       ],
+       "tod_utc_min": "00:00",
+       "tod_utc_max": "00:00",
+       "n_steps": 4290,
+       "n_gaps_gt_step": 881,
+       "n_gaps_intrasession": 879,
+       "bars_expected_if_continuous": 6064,
+       "fill_pct_vs_continuous": 70.76
+      },
+      "sample_row": {
+       "symbol": "SJBc1",
+       "date": "2026-08-11",
+       "value": 126.53
+      },
+      "oldest_row": {
+       "symbol": "SJBc1",
+       "date": "2010-01-04",
+       "value": 139.23
+      }
+     },
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "candles(SJBc1,1d) [cross]",
+      "ms": 281.4,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 404,
+      "error": "{\"detail\":\"'SJBc1' has no candle data; browse /catalog\"}"
+     }
+    }
+   ]
+  },
+  "bonds": {
+   "caps_declared": [
+    "export",
+    "series"
+   ],
+   "n_symbols": 202,
+   "samples": [
+    {
+     "symbol": "UK5Y",
+     "name": "United Kingdom 5Y yield",
+     "catalog_ticks": 10190,
+     "catalog_first_tick": "1990-01-01 00:00:00.000000",
+     "catalog_last_tick": "2026-07-24 00:00:00.000000",
+     "candles": {},
+     "series": {
+      "kind": "sdk",
+      "target": "series(UK5Y,bonds,desc,5000)",
+      "ms": 397.1,
+      "bytes": 260090,
+      "rows": 5000,
+      "ok": true,
+      "cols": [
+       "date",
+       "symbol",
+       "value"
+      ],
+      "shape": {
+       "n": 5000,
+       "first": "2009-07-16T00:00:00+00:00",
+       "last": "2026-07-24T00:00:00+00:00",
+       "span_days": 6217.0,
+       "step_median_s": 86400.0,
+       "gaps_max_s": [
+        432000.0,
+        432000.0,
+        432000.0
+       ],
+       "tod_utc_min": "00:00",
+       "tod_utc_max": "00:00",
+       "n_steps": 4999,
+       "n_gaps_gt_step": 716,
+       "n_gaps_intrasession": 704,
+       "bars_expected_if_continuous": 6218,
+       "fill_pct_vs_continuous": 80.41
+      },
+      "sample_row": {
+       "symbol": "UK5Y",
+       "date": "2026-07-24",
+       "value": 4.6197
+      },
+      "oldest_row": {
+       "symbol": "UK5Y",
+       "date": "1990-01-01",
+       "value": 11.06
+      }
+     },
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "candles(UK5Y,1d) [cross]",
+      "ms": 279.6,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 404,
+      "error": "{\"detail\":\"'UK5Y' has no candle data; browse /catalog\"}"
+     }
+    },
+    {
+     "symbol": "KR3Y",
+     "name": "South Korea 3Y yield",
+     "catalog_ticks": 4094,
+     "catalog_first_tick": "2010-06-28 00:00:00.000000",
+     "catalog_last_tick": "2026-07-24 00:00:00.000000",
+     "candles": {},
+     "series": {
+      "kind": "sdk",
+      "target": "series(KR3Y,bonds,desc,5000)",
+      "ms": 299.9,
+      "bytes": 210077,
+      "rows": 4094,
+      "ok": true,
+      "cols": [
+       "date",
+       "symbol",
+       "value"
+      ],
+      "shape": {
+       "n": 4094,
+       "first": "2010-06-28T00:00:00+00:00",
+       "last": "2026-07-24T00:00:00+00:00",
+       "span_days": 5870.0,
+       "step_median_s": 86400.0,
+       "gaps_max_s": [
+        604800.0,
+        604800.0,
+        518400.0
+       ],
+       "tod_utc_min": "00:00",
+       "tod_utc_max": "00:00",
+       "n_steps": 4093,
+       "n_gaps_gt_step": 868,
+       "n_gaps_intrasession": 858,
+       "bars_expected_if_continuous": 5871,
+       "fill_pct_vs_continuous": 69.73
+      },
+      "sample_row": {
+       "symbol": "KR3Y",
+       "date": "2026-07-24",
+       "value": 3.973
+      },
+      "oldest_row": {
+       "symbol": "KR3Y",
+       "date": "2010-06-28",
+       "value": 3.92
+      }
+     },
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "candles(KR3Y,1d) [cross]",
+      "ms": 246.3,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 404,
+      "error": "{\"detail\":\"'KR3Y' has no candle data; browse /catalog\"}"
+     }
+    },
+    {
+     "symbol": "JP1M",
+     "name": "Japan 1M yield",
+     "catalog_ticks": 245,
+     "catalog_first_tick": "2025-07-07 00:00:00.000000",
+     "catalog_last_tick": "2026-07-24 00:00:00.000000",
+     "candles": {},
+     "series": {
+      "kind": "sdk",
+      "target": "series(JP1M,bonds,desc,5000)",
+      "ms": 242.3,
+      "bytes": 12708,
+      "rows": 245,
+      "ok": true,
+      "cols": [
+       "date",
+       "symbol",
+       "value"
+      ],
+      "shape": {
+       "n": 245,
+       "first": "2025-07-07T00:00:00+00:00",
+       "last": "2026-07-24T00:00:00+00:00",
+       "span_days": 382.0,
+       "step_median_s": 86400.0,
+       "gaps_max_s": [
+        518400.0,
+        518400.0,
+        518400.0
+       ],
+       "tod_utc_min": "00:00",
+       "tod_utc_max": "00:00",
+       "n_steps": 244,
+       "n_gaps_gt_step": 63,
+       "n_gaps_intrasession": 59,
+       "bars_expected_if_continuous": 383,
+       "fill_pct_vs_continuous": 63.97
+      },
+      "sample_row": {
+       "symbol": "JP1M",
+       "date": "2026-07-24",
+       "value": 0.947
+      },
+      "oldest_row": {
+       "symbol": "JP1M",
+       "date": "2025-07-07",
+       "value": 0.457
+      }
+     },
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "candles(JP1M,1d) [cross]",
+      "ms": 263.8,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 404,
+      "error": "{\"detail\":\"'JP1M' has no candle data; browse /catalog\"}"
+     }
+    }
+   ]
+  },
+  "commodity": {
+   "caps_declared": [
+    "candles",
+    "export"
+   ],
+   "n_symbols": 23,
+   "samples": [
+    {
+     "symbol": "XAU/USD",
+     "name": "Gold",
+     "catalog_ticks": 15554640,
+     "catalog_first_tick": "2026-04-27 00:00:00.132405",
+     "catalog_last_tick": "2026-08-21 20:59:05.054305",
+     "candles": {
+      "1m": {
+       "kind": "sdk",
+       "target": "candles(XAU/USD,1m,desc,5000)",
+       "ms": 576.3,
+       "bytes": 636890,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-08-18T06:28:00+00:00",
+        "last": "2026-08-21T20:59:00+00:00",
+        "span_days": 3.605,
+        "step_median_s": 60.0,
+        "gaps_max_s": [
+         3900.0,
+         3900.0,
+         3900.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:59",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 3,
+        "n_gaps_intrasession": 3,
+        "bars_expected_if_continuous": 5192,
+        "fill_pct_vs_continuous": 96.3
+       },
+       "oldest_call": {
+        "ms": 424.8,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2006-03-19T20:29:00.000000Z"
+      },
+      "5m": {
+       "kind": "sdk",
+       "target": "candles(XAU/USD,5m,desc,5000)",
+       "ms": 799.3,
+       "bytes": 638297,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-07-28T18:20:00+00:00",
+        "last": "2026-08-21T20:55:00+00:00",
+        "span_days": 24.108,
+        "step_median_s": 300.0,
+        "gaps_max_s": [
+         176700.0,
+         176700.0,
+         176700.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:55",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 18,
+        "n_gaps_intrasession": 15,
+        "bars_expected_if_continuous": 6944,
+        "fill_pct_vs_continuous": 72.0
+       },
+       "oldest_call": {
+        "ms": 465.6,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2006-03-19T20:25:00.000000Z"
+      },
+      "1h": {
+       "kind": "sdk",
+       "target": "candles(XAU/USD,1h,desc,5000)",
+       "ms": 446.1,
+       "bytes": 686734,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2025-10-16T16:00:00+00:00",
+        "last": "2026-08-21T20:00:00+00:00",
+        "span_days": 309.167,
+        "step_median_s": 3600.0,
+        "gaps_max_s": [
+         266400.0,
+         194400.0,
+         194400.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 218,
+        "n_gaps_intrasession": 172,
+        "bars_expected_if_continuous": 7421,
+        "fill_pct_vs_continuous": 67.38
+       },
+       "oldest_call": {
+        "ms": 426.1,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2006-03-19T20:00:00.000000Z"
+      },
+      "1d": {
+       "kind": "sdk",
+       "target": "candles(XAU/USD,1d,desc,5000)",
+       "ms": 384.7,
+       "bytes": 714324,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2010-09-22T00:00:00+00:00",
+        "last": "2026-08-21T00:00:00+00:00",
+        "span_days": 5812.0,
+        "step_median_s": 86400.0,
+        "gaps_max_s": [
+         259200.0,
+         259200.0,
+         259200.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "00:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 785,
+        "n_gaps_intrasession": 785,
+        "bars_expected_if_continuous": 5813,
+        "fill_pct_vs_continuous": 86.01
+       },
+       "oldest_call": {
+        "ms": 273.7,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2006-03-19T00:00:00.000000Z"
+      }
+     },
+     "series": null,
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "series(XAU/USD) [cross]",
+      "ms": 189.3,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 400,
+      "error": "{\"detail\":\"not a series dataset; valid: ['bond_futures', 'bonds', 'corporate_bonds', 'credit_indices', 'economics', 'fx_derivatives', 'sovereign_yields']\"}"
+     }
+    },
+    {
+     "symbol": "WHEAT/USD",
+     "name": "Wheat",
+     "catalog_ticks": 559782,
+     "catalog_first_tick": "2026-04-28 10:42:37.814820",
+     "catalog_last_tick": "2026-08-21 18:19:05.102778",
+     "candles": {
+      "1m": {
+       "kind": "sdk",
+       "target": "candles(WHEAT/USD,1m,desc,5000)",
+       "ms": 434.8,
+       "bytes": 615956,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-08-14T17:46:00+00:00",
+        "last": "2026-08-21T18:19:00+00:00",
+        "span_days": 7.023,
+        "step_median_s": 60.0,
+        "gaps_max_s": [
+         193260.0,
+         20460.0,
+         20460.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "18:19",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 237,
+        "n_gaps_intrasession": 232,
+        "bars_expected_if_continuous": 10114,
+        "fill_pct_vs_continuous": 49.44
+       },
+       "oldest_call": {
+        "ms": 401.6,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2003-03-14T15:30:00.000000Z"
+      },
+      "5m": {
+       "kind": "sdk",
+       "target": "candles(WHEAT/USD,5m,desc,5000)",
+       "ms": 450.0,
+       "bytes": 615733,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-07-21T04:10:00+00:00",
+        "last": "2026-08-21T18:15:00+00:00",
+        "span_days": 31.587,
+        "step_median_s": 300.0,
+        "gaps_max_s": [
+         193500.0,
+         193500.0,
+         193500.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "18:15",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 61,
+        "n_gaps_intrasession": 38,
+        "bars_expected_if_continuous": 9098,
+        "fill_pct_vs_continuous": 54.96
+       },
+       "oldest_call": {
+        "ms": 348.5,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2003-03-14T15:30:00.000000Z"
+      },
+      "1h": {
+       "kind": "sdk",
+       "target": "candles(WHEAT/USD,1h,desc,5000)",
+       "ms": 387.3,
+       "bytes": 615958,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2025-08-01T11:00:00+00:00",
+        "last": "2026-08-21T18:00:00+00:00",
+        "span_days": 385.292,
+        "step_median_s": 3600.0,
+        "gaps_max_s": [
+         280800.0,
+         280800.0,
+         280800.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "19:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 266,
+        "n_gaps_intrasession": 1,
+        "bars_expected_if_continuous": 9248,
+        "fill_pct_vs_continuous": 54.07
+       },
+       "oldest_call": {
+        "ms": 357.5,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2003-03-14T15:00:00.000000Z"
+      },
+      "1d": {
+       "kind": "sdk",
+       "target": "candles(WHEAT/USD,1d,desc,5000)",
+       "ms": 488.7,
+       "bytes": 613727,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2007-08-09T00:00:00+00:00",
+        "last": "2026-08-21T00:00:00+00:00",
+        "span_days": 6952.0,
+        "step_median_s": 86400.0,
+        "gaps_max_s": [
+         345600.0,
+         345600.0,
+         345600.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "00:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 1030,
+        "n_gaps_intrasession": 1030,
+        "bars_expected_if_continuous": 6953,
+        "fill_pct_vs_continuous": 71.91
+       },
+       "oldest_call": {
+        "ms": 268.2,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2003-03-14T00:00:00.000000Z"
+      }
+     },
+     "series": null,
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "series(WHEAT/USD) [cross]",
+      "ms": 209.6,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 400,
+      "error": "{\"detail\":\"not a series dataset; valid: ['bond_futures', 'bonds', 'corporate_bonds', 'credit_indices', 'economics', 'fx_derivatives', 'sovereign_yields']\"}"
+     }
+    },
+    {
+     "symbol": "LUMBER/USD",
+     "name": "Lumber",
+     "catalog_ticks": 39417,
+     "catalog_first_tick": "2026-04-27 00:44:54.820422",
+     "catalog_last_tick": "2026-08-23 01:07:32.078138",
+     "candles": {
+      "1m": {
+       "kind": "sdk",
+       "target": "candles(LUMBER/USD,1m,desc,5000)",
+       "ms": 454.1,
+       "bytes": 644746,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-07-21T16:52:00+00:00",
+        "last": "2026-08-23T07:07:00+00:00",
+        "span_days": 32.594,
+        "step_median_s": 120.0,
+        "gaps_max_s": [
+         26940.0,
+         25260.0,
+         23760.0
+        ],
+        "tod_utc_min": "00:07",
+        "tod_utc_max": "23:59",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 2804,
+        "n_gaps_intrasession": 2724,
+        "bars_expected_if_continuous": 46936,
+        "fill_pct_vs_continuous": 10.65
+       },
+       "oldest_call": {
+        "ms": 581.7,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2025-12-31T17:06:00.000000Z"
+      },
+      "5m": {
+       "kind": "sdk",
+       "target": "candles(LUMBER/USD,5m,desc,5000)",
+       "ms": 379.8,
+       "bytes": 643091,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-06-18T15:45:00+00:00",
+        "last": "2026-08-23T07:05:00+00:00",
+        "span_days": 65.639,
+        "step_median_s": 300.0,
+        "gaps_max_s": [
+         43200.0,
+         43200.0,
+         27000.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:55",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 873,
+        "n_gaps_intrasession": 715,
+        "bars_expected_if_continuous": 18905,
+        "fill_pct_vs_continuous": 26.45
+       },
+       "oldest_call": {
+        "ms": 511.7,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2025-12-31T16:50:00.000000Z"
+      },
+      "1h": {
+       "kind": "sdk",
+       "target": "candles(LUMBER/USD,1h,desc,5000)",
+       "ms": 536.2,
+       "bytes": 230718,
+       "rows": 1791,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 1791,
+        "first": "2025-12-31T16:00:00+00:00",
+        "last": "2026-08-23T07:00:00+00:00",
+        "span_days": 234.625,
+        "step_median_s": 3600.0,
+        "gaps_max_s": [
+         324000.0,
+         324000.0,
+         324000.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:00",
+        "n_steps": 1790,
+        "n_gaps_gt_step": 491,
+        "n_gaps_intrasession": 129,
+        "bars_expected_if_continuous": 5632,
+        "fill_pct_vs_continuous": 31.8
+       },
+       "oldest_call": {
+        "ms": 430.3,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2025-12-31T16:00:00.000000Z"
+      },
+      "1d": {
+       "kind": "sdk",
+       "target": "candles(LUMBER/USD,1d,desc,5000)",
+       "ms": 244.9,
+       "bytes": 26087,
+       "rows": 202,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 202,
+        "first": "2025-12-31T00:00:00+00:00",
+        "last": "2026-08-23T00:00:00+00:00",
+        "span_days": 235.0,
+        "step_median_s": 86400.0,
+        "gaps_max_s": [
+         345600.0,
+         345600.0,
+         345600.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "00:00",
+        "n_steps": 201,
+        "n_gaps_gt_step": 18,
+        "n_gaps_intrasession": 18,
+        "bars_expected_if_continuous": 236,
+        "fill_pct_vs_continuous": 85.59
+       },
+       "oldest_call": {
+        "ms": 222.0,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2025-12-31T00:00:00.000000Z"
+      }
+     },
+     "series": null,
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "series(LUMBER/USD) [cross]",
+      "ms": 249.8,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 400,
+      "error": "{\"detail\":\"not a series dataset; valid: ['bond_futures', 'bonds', 'corporate_bonds', 'credit_indices', 'economics', 'fx_derivatives', 'sovereign_yields']\"}"
+     }
+    }
+   ]
+  },
+  "corporate_bonds": {
+   "caps_declared": [
+    "export",
+    "series"
+   ],
+   "n_symbols": 192,
+   "samples": [
+    {
+     "symbol": "ES006083706=",
+     "name": "Santander UK PLC, Plain Vanilla Fixed Coupon Bond, SANDUK 10.063",
+     "catalog_ticks": 55833,
+     "catalog_first_tick": "2020-01-01 00:00:00.000000",
+     "catalog_last_tick": "2026-08-11 00:00:00.000000",
+     "candles": {},
+     "series": {
+      "kind": "sdk",
+      "target": "series(ES006083706=,corporate_bonds,desc,5000)",
+      "ms": 352.7,
+      "bytes": 105653,
+      "rows": 1724,
+      "ok": true,
+      "cols": [
+       "date",
+       "symbol",
+       "value"
+      ],
+      "shape": {
+       "n": 1724,
+       "first": "2020-01-01T00:00:00+00:00",
+       "last": "2026-08-11T00:00:00+00:00",
+       "span_days": 2414.0,
+       "step_median_s": 86400.0,
+       "gaps_max_s": [
+        345600.0,
+        259200.0,
+        259200.0
+       ],
+       "tod_utc_min": "00:00",
+       "tod_utc_max": "00:00",
+       "n_steps": 1723,
+       "n_gaps_gt_step": 345,
+       "n_gaps_intrasession": 345,
+       "bars_expected_if_continuous": 2415,
+       "fill_pct_vs_continuous": 71.39
+      },
+      "sample_row": {
+       "symbol": "ES006083706=",
+       "date": "2026-08-11",
+       "value": 154.874
+      },
+      "oldest_row": {
+       "symbol": "ES006083706=",
+       "date": "2020-01-01",
+       "value": 162.833
+      }
+     },
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "candles(ES006083706=,1d) [cross]",
+      "ms": 282.3,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 404,
+      "error": "{\"detail\":\"'ES006083706=' has no candle data; browse /catalog\"}"
+     }
+    },
+    {
+     "symbol": "INIBULPP=",
+     "name": "Sammaan Capital Ltd, Plain Vanilla Fixed Coupon Bond, INBF 10.6",
+     "catalog_ticks": 10149,
+     "catalog_first_tick": "2020-01-01 00:00:00.000000",
+     "catalog_last_tick": "2024-01-02 00:00:00.000000",
+     "candles": {},
+     "series": {
+      "kind": "sdk",
+      "target": "series(INIBULPP=,corporate_bonds,desc,5000)",
+      "ms": 315.3,
+      "bytes": 61,
+      "rows": 1,
+      "ok": true,
+      "cols": [
+       "date",
+       "symbol",
+       "value"
+      ],
+      "shape": {
+       "n": 1,
+       "first": "2021-01-01 00:00:00+00:00",
+       "last": "2021-01-01 00:00:00+00:00"
+      },
+      "sample_row": {
+       "symbol": "INIBULPP=",
+       "date": "2021-01-01",
+       "value": 110.2944
+      },
+      "oldest_row": {
+       "symbol": "INIBULPP=",
+       "date": "2021-01-01",
+       "value": 110.2944
+      }
+     },
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "candles(INIBULPP=,1d) [cross]",
+      "ms": 260.6,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 404,
+      "error": "{\"detail\":\"'INIBULPP=' has no candle data; browse /catalog\"}"
+     }
+    },
+    {
+     "symbol": "INANADRPPE=",
+     "name": "Anand Rathi Global Finance Ltd, Plain Vanilla Fixed Coupon Bond, ANADR 9.5",
+     "catalog_ticks": 33,
+     "catalog_first_tick": "2026-06-25 00:00:00.000000",
+     "catalog_last_tick": "2026-08-11 00:00:00.000000",
+     "candles": {},
+     "series": {
+      "kind": "sdk",
+      "target": "series(INANADRPPE=,corporate_bonds,desc,5000)",
+      "ms": 412.0,
+      "bytes": 1976,
+      "rows": 33,
+      "ok": true,
+      "cols": [
+       "date",
+       "symbol",
+       "value"
+      ],
+      "shape": {
+       "n": 33,
+       "first": "2026-06-25T00:00:00+00:00",
+       "last": "2026-08-11T00:00:00+00:00",
+       "span_days": 47.0,
+       "step_median_s": 86400.0,
+       "gaps_max_s": [
+        345600.0,
+        259200.0,
+        259200.0
+       ],
+       "tod_utc_min": "00:00",
+       "tod_utc_max": "00:00",
+       "n_steps": 32,
+       "n_gaps_gt_step": 7,
+       "n_gaps_intrasession": 7,
+       "bars_expected_if_continuous": 48,
+       "fill_pct_vs_continuous": 68.75
+      },
+      "sample_row": {
+       "symbol": "INANADRPPE=",
+       "date": "2026-08-11",
+       "value": 5.7781
+      },
+      "oldest_row": {
+       "symbol": "INANADRPPE=",
+       "date": "2026-06-25",
+       "value": 4.6849
+      }
+     },
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "candles(INANADRPPE=,1d) [cross]",
+      "ms": 275.1,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 404,
+      "error": "{\"detail\":\"'INANADRPPE=' has no candle data; browse /catalog\"}"
+     }
+    }
+   ]
+  },
+  "credit_indices": {
+   "caps_declared": [
+    "export",
+    "series"
+   ],
+   "n_symbols": 79,
+   "samples": [
+    {
+     "symbol": ".IBBEU003D",
+     "name": "EUR Corporates Index, Corporate Bond Index",
+     "catalog_ticks": 92715,
+     "catalog_first_tick": "2010-01-04 00:00:00.000000",
+     "catalog_last_tick": "2026-08-11 00:00:00.000000",
+     "candles": {},
+     "series": {
+      "kind": "sdk",
+      "target": "series(.IBBEU003D,credit_indices,desc,5000)",
+      "ms": 353.1,
+      "bytes": 261793,
+      "rows": 4285,
+      "ok": true,
+      "cols": [
+       "date",
+       "symbol",
+       "value"
+      ],
+      "shape": {
+       "n": 4285,
+       "first": "2010-01-04T00:00:00+00:00",
+       "last": "2026-08-11T00:00:00+00:00",
+       "span_days": 6063.0,
+       "step_median_s": 86400.0,
+       "gaps_max_s": [
+        518400.0,
+        432000.0,
+        432000.0
+       ],
+       "tod_utc_min": "00:00",
+       "tod_utc_max": "00:00",
+       "n_steps": 4284,
+       "n_gaps_gt_step": 879,
+       "n_gaps_intrasession": 864,
+       "bars_expected_if_continuous": 6064,
+       "fill_pct_vs_continuous": 70.66
+      },
+      "sample_row": {
+       "symbol": ".IBBEU003D",
+       "date": "2026-08-11",
+       "value": 243.331
+      },
+      "oldest_row": {
+       "symbol": ".IBBEU003D",
+       "date": "2010-01-04",
+       "value": 159.11207
+      }
+     },
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "candles(.IBBEU003D,1d) [cross]",
+      "ms": 276.2,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 404,
+      "error": "{\"detail\":\"'.IBBEU003D' has no candle data; browse /catalog\"}"
+     }
+    },
+    {
+     "symbol": ".IBBEU0062",
+     "name": "EUR Corporates BBB 5-7 Index, Corporate Bond Index",
+     "catalog_ticks": 88872,
+     "catalog_first_tick": "2010-01-04 00:00:00.000000",
+     "catalog_last_tick": "2026-08-11 00:00:00.000000",
+     "candles": {},
+     "series": {
+      "kind": "sdk",
+      "target": "series(.IBBEU0062,credit_indices,desc,5000)",
+      "ms": 358.2,
+      "bytes": 261840,
+      "rows": 4286,
+      "ok": true,
+      "cols": [
+       "date",
+       "symbol",
+       "value"
+      ],
+      "shape": {
+       "n": 4286,
+       "first": "2010-01-04T00:00:00+00:00",
+       "last": "2026-08-11T00:00:00+00:00",
+       "span_days": 6063.0,
+       "step_median_s": 86400.0,
+       "gaps_max_s": [
+        518400.0,
+        432000.0,
+        432000.0
+       ],
+       "tod_utc_min": "00:00",
+       "tod_utc_max": "00:00",
+       "n_steps": 4285,
+       "n_gaps_gt_step": 879,
+       "n_gaps_intrasession": 864,
+       "bars_expected_if_continuous": 6064,
+       "fill_pct_vs_continuous": 70.68
+      },
+      "sample_row": {
+       "symbol": ".IBBEU0062",
+       "date": "2026-08-11",
+       "value": 332.2878
+      },
+      "oldest_row": {
+       "symbol": ".IBBEU0062",
+       "date": "2010-01-04",
+       "value": 182.26945
+      }
+     },
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "candles(.IBBEU0062,1d) [cross]",
+      "ms": 234.6,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 404,
+      "error": "{\"detail\":\"'.IBBEU0062' has no candle data; browse /catalog\"}"
+     }
+    },
+    {
+     "symbol": ".IBXXE03P",
+     "name": "EUR FRN Investment Grade 0-3 Capped Index CPI, Corporate Bond Index",
+     "catalog_ticks": 1994,
+     "catalog_first_tick": "2018-12-31 00:00:00.000000",
+     "catalog_last_tick": "2026-08-11 00:00:00.000000",
+     "candles": {},
+     "series": {
+      "kind": "sdk",
+      "target": "series(.IBXXE03P,credit_indices,desc,5000)",
+      "ms": 303.9,
+      "bytes": 119907,
+      "rows": 1994,
+      "ok": true,
+      "cols": [
+       "date",
+       "symbol",
+       "value"
+      ],
+      "shape": {
+       "n": 1994,
+       "first": "2018-12-31T00:00:00+00:00",
+       "last": "2026-08-11T00:00:00+00:00",
+       "span_days": 2780.0,
+       "step_median_s": 86400.0,
+       "gaps_max_s": [
+        432000.0,
+        432000.0,
+        345600.0
+       ],
+       "tod_utc_min": "00:00",
+       "tod_utc_max": "00:00",
+       "n_steps": 1993,
+       "n_gaps_gt_step": 403,
+       "n_gaps_intrasession": 401,
+       "bars_expected_if_continuous": 2781,
+       "fill_pct_vs_continuous": 71.7
+      },
+      "sample_row": {
+       "symbol": ".IBXXE03P",
+       "date": "2026-08-11",
+       "value": 98.48225
+      },
+      "oldest_row": {
+       "symbol": ".IBXXE03P",
+       "date": "2018-12-31",
+       "value": 100
+      }
+     },
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "candles(.IBXXE03P,1d) [cross]",
+      "ms": 705.3,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 404,
+      "error": "{\"detail\":\"'.IBXXE03P' has no candle data; browse /catalog\"}"
+     }
+    }
+   ]
+  },
+  "crypto": {
+   "caps_declared": [
+    "candles",
+    "export"
+   ],
+   "n_symbols": 58,
+   "samples": [
+    {
+     "symbol": "BTC/USD",
+     "name": "Bitcoin",
+     "catalog_ticks": 4051535766,
+     "catalog_first_tick": "2017-08-17 04:00:28.322000",
+     "catalog_last_tick": "2026-08-23 04:32:17.884000",
+     "candles": {
+      "1m": {
+       "kind": "sdk",
+       "target": "candles(BTC/USD,1m,desc,5000)",
+       "ms": 577.9,
+       "bytes": 715263,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-08-19T21:49:00+00:00",
+        "last": "2026-08-23T09:09:00+00:00",
+        "span_days": 3.472,
+        "step_median_s": 60.0,
+        "gaps_max_s": [
+         120.0,
+         60.0,
+         60.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:59",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 1,
+        "n_gaps_intrasession": 1,
+        "bars_expected_if_continuous": 5001,
+        "fill_pct_vs_continuous": 99.98
+       },
+       "oldest_call": {
+        "ms": 565.4,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2017-08-17T04:00:00.000000Z"
+      },
+      "5m": {
+       "kind": "sdk",
+       "target": "candles(BTC/USD,5m,desc,5000)",
+       "ms": 651.7,
+       "bytes": 716424,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-08-06T00:30:00+00:00",
+        "last": "2026-08-23T09:05:00+00:00",
+        "span_days": 17.358,
+        "step_median_s": 300.0,
+        "gaps_max_s": [
+         300.0,
+         300.0,
+         300.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:55",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 0,
+        "n_gaps_intrasession": 0,
+        "bars_expected_if_continuous": 5000,
+        "fill_pct_vs_continuous": 100.0
+       },
+       "oldest_call": {
+        "ms": 285.1,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2017-08-17T04:00:00.000000Z"
+      },
+      "1h": {
+       "kind": "sdk",
+       "target": "candles(BTC/USD,1h,desc,5000)",
+       "ms": 739.2,
+       "bytes": 718402,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-01-27T02:00:00+00:00",
+        "last": "2026-08-23T09:00:00+00:00",
+        "span_days": 208.292,
+        "step_median_s": 3600.0,
+        "gaps_max_s": [
+         3600.0,
+         3600.0,
+         3600.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 0,
+        "n_gaps_intrasession": 0,
+        "bars_expected_if_continuous": 5000,
+        "fill_pct_vs_continuous": 100.0
+       },
+       "oldest_call": {
+        "ms": 518.5,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2017-08-17T04:00:00.000000Z"
+      },
+      "1d": {
+       "kind": "sdk",
+       "target": "candles(BTC/USD,1d,desc,5000)",
+       "ms": 450.5,
+       "bytes": 450669,
+       "rows": 3139,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 3139,
+        "first": "2017-08-17T00:00:00+00:00",
+        "last": "2026-08-23T00:00:00+00:00",
+        "span_days": 3293.0,
+        "step_median_s": 86400.0,
+        "gaps_max_s": [
+         2764800.0,
+         2764800.0,
+         2764800.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "00:00",
+        "n_steps": 3138,
+        "n_gaps_gt_step": 5,
+        "n_gaps_intrasession": 0,
+        "bars_expected_if_continuous": 3294,
+        "fill_pct_vs_continuous": 95.29
+       },
+       "oldest_call": {
+        "ms": 332.4,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2017-08-17T00:00:00.000000Z"
+      }
+     },
+     "series": null,
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "series(BTC/USD) [cross]",
+      "ms": 266.1,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 400,
+      "error": "{\"detail\":\"not a series dataset; valid: ['bond_futures', 'bonds', 'corporate_bonds', 'credit_indices', 'economics', 'fx_derivatives', 'sovereign_yields']\"}"
+     }
+    },
+    {
+     "symbol": "FET/USD",
+     "name": "Artificial Superintelligence Alliance",
+     "catalog_ticks": 134807611,
+     "catalog_first_tick": "2019-02-28 10:00:00.034000",
+     "catalog_last_tick": "2026-08-23 04:32:16.997000",
+     "candles": {
+      "1m": {
+       "kind": "sdk",
+       "target": "candles(FET/USD,1m,desc,5000)",
+       "ms": 588.0,
+       "bytes": 664909,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-08-19T21:32:00+00:00",
+        "last": "2026-08-23T09:09:00+00:00",
+        "span_days": 3.484,
+        "step_median_s": 60.0,
+        "gaps_max_s": [
+         120.0,
+         120.0,
+         120.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:59",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 18,
+        "n_gaps_intrasession": 18,
+        "bars_expected_if_continuous": 5018,
+        "fill_pct_vs_continuous": 99.64
+       },
+       "oldest_call": {
+        "ms": 421.6,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2019-02-28T10:00:00.000000Z"
+      },
+      "5m": {
+       "kind": "sdk",
+       "target": "candles(FET/USD,5m,desc,5000)",
+       "ms": 500.6,
+       "bytes": 671289,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-08-06T00:25:00+00:00",
+        "last": "2026-08-23T09:05:00+00:00",
+        "span_days": 17.361,
+        "step_median_s": 300.0,
+        "gaps_max_s": [
+         600.0,
+         300.0,
+         300.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:55",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 1,
+        "n_gaps_intrasession": 1,
+        "bars_expected_if_continuous": 5001,
+        "fill_pct_vs_continuous": 99.98
+       },
+       "oldest_call": {
+        "ms": 328.2,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2019-02-28T10:00:00.000000Z"
+      },
+      "1h": {
+       "kind": "sdk",
+       "target": "candles(FET/USD,1h,desc,5000)",
+       "ms": 452.2,
+       "bytes": 678462,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-01-27T02:00:00+00:00",
+        "last": "2026-08-23T09:00:00+00:00",
+        "span_days": 208.292,
+        "step_median_s": 3600.0,
+        "gaps_max_s": [
+         3600.0,
+         3600.0,
+         3600.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 0,
+        "n_gaps_intrasession": 0,
+        "bars_expected_if_continuous": 5000,
+        "fill_pct_vs_continuous": 100.0
+       },
+       "oldest_call": {
+        "ms": 313.5,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2019-02-28T10:00:00.000000Z"
+      },
+      "1d": {
+       "kind": "sdk",
+       "target": "candles(FET/USD,1d,desc,5000)",
+       "ms": 302.1,
+       "bytes": 350509,
+       "rows": 2611,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 2611,
+        "first": "2019-02-28T00:00:00+00:00",
+        "last": "2026-08-23T00:00:00+00:00",
+        "span_days": 2733.0,
+        "step_median_s": 86400.0,
+        "gaps_max_s": [
+         2764800.0,
+         2764800.0,
+         2764800.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "00:00",
+        "n_steps": 2610,
+        "n_gaps_gt_step": 4,
+        "n_gaps_intrasession": 0,
+        "bars_expected_if_continuous": 2734,
+        "fill_pct_vs_continuous": 95.5
+       },
+       "oldest_call": {
+        "ms": 295.5,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2019-02-28T00:00:00.000000Z"
+      }
+     },
+     "series": null,
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "series(FET/USD) [cross]",
+      "ms": 176.1,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 400,
+      "error": "{\"detail\":\"not a series dataset; valid: ['bond_futures', 'bonds', 'corporate_bonds', 'credit_indices', 'economics', 'fx_derivatives', 'sovereign_yields']\"}"
+     }
+    },
+    {
+     "symbol": "FLOW/USD",
+     "name": "Flow",
+     "catalog_ticks": 20772456,
+     "catalog_first_tick": "2021-07-30 13:00:00.000000",
+     "catalog_last_tick": "2026-08-23 04:30:25.478000",
+     "candles": {
+      "1m": {
+       "kind": "sdk",
+       "target": "candles(FLOW/USD,1m,desc,5000)",
+       "ms": 885.2,
+       "bytes": 674203,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-08-17T11:48:00+00:00",
+        "last": "2026-08-23T09:07:00+00:00",
+        "span_days": 5.888,
+        "step_median_s": 60.0,
+        "gaps_max_s": [
+         1440.0,
+         1080.0,
+         960.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:59",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 1548,
+        "n_gaps_intrasession": 1548,
+        "bars_expected_if_continuous": 8480,
+        "fill_pct_vs_continuous": 58.96
+       },
+       "oldest_call": {
+        "ms": 374.6,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2021-07-30T13:00:00.000000Z"
+      },
+      "5m": {
+       "kind": "sdk",
+       "target": "candles(FLOW/USD,5m,desc,5000)",
+       "ms": 425.4,
+       "bytes": 684610,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-08-04T15:25:00+00:00",
+        "last": "2026-08-23T09:05:00+00:00",
+        "span_days": 18.736,
+        "step_median_s": 300.0,
+        "gaps_max_s": [
+         1500.0,
+         1500.0,
+         1500.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:55",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 322,
+        "n_gaps_intrasession": 322,
+        "bars_expected_if_continuous": 5397,
+        "fill_pct_vs_continuous": 92.64
+       },
+       "oldest_call": {
+        "ms": 298.5,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2021-07-30T13:00:00.000000Z"
+      },
+      "1h": {
+       "kind": "sdk",
+       "target": "candles(FLOW/USD,1h,desc,5000)",
+       "ms": 428.8,
+       "bytes": 699423,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-01-27T02:00:00+00:00",
+        "last": "2026-08-23T09:00:00+00:00",
+        "span_days": 208.292,
+        "step_median_s": 3600.0,
+        "gaps_max_s": [
+         3600.0,
+         3600.0,
+         3600.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 0,
+        "n_gaps_intrasession": 0,
+        "bars_expected_if_continuous": 5000,
+        "fill_pct_vs_continuous": 100.0
+       },
+       "oldest_call": {
+        "ms": 322.0,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2021-07-30T13:00:00.000000Z"
+      },
+      "1d": {
+       "kind": "sdk",
+       "target": "candles(FLOW/USD,1d,desc,5000)",
+       "ms": 286.6,
+       "bytes": 229190,
+       "rows": 1668,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 1668,
+        "first": "2021-07-30T00:00:00+00:00",
+        "last": "2026-08-23T00:00:00+00:00",
+        "span_days": 1850.0,
+        "step_median_s": 86400.0,
+        "gaps_max_s": [
+         2764800.0,
+         2764800.0,
+         2764800.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "00:00",
+        "n_steps": 1667,
+        "n_gaps_gt_step": 6,
+        "n_gaps_intrasession": 0,
+        "bars_expected_if_continuous": 1851,
+        "fill_pct_vs_continuous": 90.11
+       },
+       "oldest_call": {
+        "ms": 216.6,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2021-07-30T00:00:00.000000Z"
+      }
+     },
+     "series": null,
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "series(FLOW/USD) [cross]",
+      "ms": 234.1,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 400,
+      "error": "{\"detail\":\"not a series dataset; valid: ['bond_futures', 'bonds', 'corporate_bonds', 'credit_indices', 'economics', 'fx_derivatives', 'sovereign_yields']\"}"
+     }
+    }
+   ]
+  },
+  "currency_index": {
+   "caps_declared": [
+    "candles",
+    "export"
+   ],
+   "n_symbols": 1,
+   "samples": [
+    {
+     "symbol": "DXY/USD",
+     "name": "US Dollar Index",
+     "catalog_ticks": 801264,
+     "catalog_first_tick": "2026-06-30 21:23:16.000000",
+     "catalog_last_tick": "2026-08-22 03:58:57.202105",
+     "candles": {
+      "1m": {
+       "kind": "sdk",
+       "target": "candles(DXY/USD,1m,desc,5000)",
+       "ms": 368.8,
+       "bytes": 568087,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-08-18T15:00:00+00:00",
+        "last": "2026-08-22T03:58:00+00:00",
+        "span_days": 3.54,
+        "step_median_s": 60.0,
+        "gaps_max_s": [
+         180.0,
+         180.0,
+         180.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:59",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 96,
+        "n_gaps_intrasession": 96,
+        "bars_expected_if_continuous": 5099,
+        "fill_pct_vs_continuous": 98.06
+       },
+       "oldest_call": {
+        "ms": 247.5,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2026-06-30T21:23:00Z"
+      },
+      "5m": {
+       "kind": "sdk",
+       "target": "candles(DXY/USD,5m,desc,5000)",
+       "ms": 358.5,
+       "bytes": 568893,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-07-29T19:20:00+00:00",
+        "last": "2026-08-22T03:55:00+00:00",
+        "span_days": 23.358,
+        "step_median_s": 300.0,
+        "gaps_max_s": [
+         173100.0,
+         173100.0,
+         173100.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:55",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 3,
+        "n_gaps_intrasession": 0,
+        "bars_expected_if_continuous": 6728,
+        "fill_pct_vs_continuous": 74.32
+       },
+       "oldest_call": {
+        "ms": 247.2,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2026-06-30T21:20:00Z"
+      },
+      "1h": {
+       "kind": "sdk",
+       "target": "candles(DXY/USD,1h,desc,5000)",
+       "ms": 304.7,
+       "bytes": 103864,
+       "rows": 898,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 898,
+        "first": "2026-06-30T21:00:00+00:00",
+        "last": "2026-08-22T03:00:00+00:00",
+        "span_days": 52.25,
+        "step_median_s": 3600.0,
+        "gaps_max_s": [
+         201600.0,
+         201600.0,
+         201600.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:00",
+        "n_steps": 897,
+        "n_gaps_gt_step": 7,
+        "n_gaps_intrasession": 0,
+        "bars_expected_if_continuous": 1255,
+        "fill_pct_vs_continuous": 71.55
+       },
+       "oldest_call": {
+        "ms": 237.8,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2026-06-30T21:00:00Z"
+      },
+      "1d": {
+       "kind": "sdk",
+       "target": "candles(DXY/USD,1d,desc,5000)",
+       "ms": 252.9,
+       "bytes": 5120,
+       "rows": 44,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 44,
+        "first": "2026-06-30T00:00:00+00:00",
+        "last": "2026-08-22T00:00:00+00:00",
+        "span_days": 53.0,
+        "step_median_s": 86400.0,
+        "gaps_max_s": [
+         259200.0,
+         259200.0,
+         259200.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "00:00",
+        "n_steps": 43,
+        "n_gaps_gt_step": 7,
+        "n_gaps_intrasession": 7,
+        "bars_expected_if_continuous": 54,
+        "fill_pct_vs_continuous": 81.48
+       },
+       "oldest_call": {
+        "ms": 253.4,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2026-06-30T00:00:00Z"
+      }
+     },
+     "series": null,
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "series(DXY/USD) [cross]",
+      "ms": 230.2,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 400,
+      "error": "{\"detail\":\"not a series dataset; valid: ['bond_futures', 'bonds', 'corporate_bonds', 'credit_indices', 'economics', 'fx_derivatives', 'sovereign_yields']\"}"
+     }
+    }
+   ]
+  },
+  "economics": {
+   "caps_declared": [
+    "export",
+    "series"
+   ],
+   "n_symbols": 14795,
+   "samples": [
+    {
+     "symbol": "chlinfind",
+     "name": "CL Inflation Index",
+     "catalog_ticks": 10031,
+     "catalog_first_tick": "1999-02-21 00:00:00.000000",
+     "catalog_last_tick": "2026-08-09 00:00:00.000000",
+     "candles": {},
+     "series": {
+      "kind": "sdk",
+      "target": "series(chlinfind,economics,desc,5000)",
+      "ms": 274.8,
+      "bytes": 299418,
+      "rows": 5000,
+      "ok": true,
+      "cols": [
+       "date",
+       "symbol",
+       "value"
+      ],
+      "shape": {
+       "n": 5000,
+       "first": "2012-11-30T00:00:00+00:00",
+       "last": "2026-08-09T00:00:00+00:00",
+       "span_days": 5000.0,
+       "step_median_s": 86400.0,
+       "gaps_max_s": [
+        172800.0,
+        86400.0,
+        86400.0
+       ],
+       "tod_utc_min": "00:00",
+       "tod_utc_max": "00:00",
+       "n_steps": 4999,
+       "n_gaps_gt_step": 1,
+       "n_gaps_intrasession": 1,
+       "bars_expected_if_continuous": 5001,
+       "fill_pct_vs_continuous": 99.98
+      },
+      "sample_row": {
+       "symbol": "chlinfind",
+       "date": "2026-08-09",
+       "value": 40844.79
+      },
+      "oldest_row": {
+       "symbol": "chlinfind",
+       "date": "1999-02-21",
+       "value": 14744.1
+      }
+     },
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "candles(chlinfind,1d) [cross]",
+      "ms": 208.6,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 404,
+      "error": "{\"detail\":\"'chlinfind' has no candle data; browse /catalog\"}"
+     }
+    },
+    {
+     "symbol": "mdvtemp",
+     "name": "MV Temperature",
+     "catalog_ticks": 124,
+     "catalog_first_tick": "1901-01-01 00:00:00.000000",
+     "catalog_last_tick": "2024-01-01 00:00:00.000000",
+     "candles": {},
+     "series": {
+      "kind": "sdk",
+      "target": "series(mdvtemp,economics,desc,5000)",
+      "ms": 242.3,
+      "bytes": 6811,
+      "rows": 124,
+      "ok": true,
+      "cols": [
+       "date",
+       "symbol",
+       "value"
+      ],
+      "shape": {
+       "n": 124,
+       "first": "1901-01-01T00:00:00+00:00",
+       "last": "2024-01-01T00:00:00+00:00",
+       "span_days": 44925.0,
+       "step_median_s": 31536000.0,
+       "gaps_max_s": [
+        31622400.0,
+        31622400.0,
+        31622400.0
+       ],
+       "tod_utc_min": "00:00",
+       "tod_utc_max": "00:00",
+       "n_steps": 123,
+       "n_gaps_gt_step": 123,
+       "n_gaps_intrasession": 0,
+       "bars_expected_if_continuous": 44926,
+       "fill_pct_vs_continuous": 0.28
+      },
+      "sample_row": {
+       "symbol": "mdvtemp",
+       "date": "2024-01-01",
+       "value": 28.37
+      },
+      "oldest_row": {
+       "symbol": "mdvtemp",
+       "date": "1901-01-01",
+       "value": 27.68
+      }
+     },
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "candles(mdvtemp,1d) [cross]",
+      "ms": 212.4,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 404,
+      "error": "{\"detail\":\"'mdvtemp' has no candle data; browse /catalog\"}"
+     }
+    },
+    {
+     "symbol": "philippineexppri",
+     "name": "PH Export Prices",
+     "catalog_ticks": 3,
+     "catalog_first_tick": "2025-03-01 00:00:00.000000",
+     "catalog_last_tick": "2026-03-01 00:00:00.000000",
+     "candles": {},
+     "series": {
+      "kind": "sdk",
+      "target": "series(philippineexppri,economics,desc,5000)",
+      "ms": 283.4,
+      "bytes": 195,
+      "rows": 3,
+      "ok": true,
+      "cols": [
+       "date",
+       "symbol",
+       "value"
+      ],
+      "shape": {
+       "n": 3,
+       "first": "2025-03-01T00:00:00+00:00",
+       "last": "2026-03-01T00:00:00+00:00",
+       "span_days": 365.0,
+       "step_median_s": 15768000.0,
+       "gaps_max_s": [
+        23760000.0,
+        7776000.0
+       ],
+       "tod_utc_min": "00:00",
+       "tod_utc_max": "00:00",
+       "n_steps": 2,
+       "n_gaps_gt_step": 2,
+       "n_gaps_intrasession": 0,
+       "bars_expected_if_continuous": 366,
+       "fill_pct_vs_continuous": 0.82
+      },
+      "sample_row": {
+       "symbol": "philippineexppri",
+       "date": "2026-03-01",
+       "value": 101.5
+      },
+      "oldest_row": {
+       "symbol": "philippineexppri",
+       "date": "2025-03-01",
+       "value": 100.52
+      }
+     },
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "candles(philippineexppri,1d) [cross]",
+      "ms": 261.0,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 404,
+      "error": "{\"detail\":\"'philippineexppri' has no candle data; browse /catalog\"}"
+     }
+    }
+   ]
+  },
+  "etf": {
+   "caps_declared": [
+    "candles",
+    "export"
+   ],
+   "n_symbols": 25,
+   "samples": [
+    {
+     "symbol": "SOXL",
+     "name": "Direxion Daily Semiconductor Bull 3X ETF",
+     "catalog_ticks": 55777322,
+     "catalog_first_tick": "2026-04-27 13:38:17.573000",
+     "catalog_last_tick": "2026-08-21 23:59:59.399461",
+     "candles": {
+      "1m": {
+       "kind": "sdk",
+       "target": "candles(SOXL,1m,desc,5000)",
+       "ms": 458.0,
+       "bytes": 609810,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-08-14T20:40:00+00:00",
+        "last": "2026-08-21T23:59:00+00:00",
+        "span_days": 7.138,
+        "step_median_s": 60.0,
+        "gaps_max_s": [
+         201660.0,
+         28860.0,
+         28860.0
+        ],
+        "tod_utc_min": "08:00",
+        "tod_utc_max": "23:59",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 5,
+        "n_gaps_intrasession": 0,
+        "bars_expected_if_continuous": 10280,
+        "fill_pct_vs_continuous": 48.64
+       },
+       "oldest_call": {
+        "ms": 393.1,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2010-03-11T14:56:00.000000Z"
+      },
+      "5m": {
+       "kind": "sdk",
+       "target": "candles(SOXL,5m,desc,5000)",
+       "ms": 346.6,
+       "bytes": 613225,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-07-16T23:20:00+00:00",
+        "last": "2026-08-21T23:55:00+00:00",
+        "span_days": 36.024,
+        "step_median_s": 300.0,
+        "gaps_max_s": [
+         201900.0,
+         201900.0,
+         201900.0
+        ],
+        "tod_utc_min": "08:00",
+        "tod_utc_max": "23:55",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 26,
+        "n_gaps_intrasession": 0,
+        "bars_expected_if_continuous": 10376,
+        "fill_pct_vs_continuous": 48.19
+       },
+       "oldest_call": {
+        "ms": 346.7,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2010-03-11T14:55:00.000000Z"
+      },
+      "1h": {
+       "kind": "sdk",
+       "target": "candles(SOXL,1h,desc,5000)",
+       "ms": 454.7,
+       "bytes": 618369,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2024-03-06T16:00:00+00:00",
+        "last": "2026-08-21T23:00:00+00:00",
+        "span_days": 898.292,
+        "step_median_s": 3600.0,
+        "gaps_max_s": [
+         331200.0,
+         324000.0,
+         324000.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 621,
+        "n_gaps_intrasession": 1,
+        "bars_expected_if_continuous": 21560,
+        "fill_pct_vs_continuous": 23.19
+       },
+       "oldest_call": {
+        "ms": 398.9,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2010-03-11T14:00:00.000000Z"
+      },
+      "1d": {
+       "kind": "sdk",
+       "target": "candles(SOXL,1d,desc,5000)",
+       "ms": 374.9,
+       "bytes": 592159,
+       "rows": 4144,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 4144,
+        "first": "2010-03-11T00:00:00+00:00",
+        "last": "2026-08-21T00:00:00+00:00",
+        "span_days": 6007.0,
+        "step_median_s": 86400.0,
+        "gaps_max_s": [
+         432000.0,
+         345600.0,
+         345600.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "00:00",
+        "n_steps": 4143,
+        "n_gaps_gt_step": 899,
+        "n_gaps_intrasession": 898,
+        "bars_expected_if_continuous": 6008,
+        "fill_pct_vs_continuous": 68.97
+       },
+       "oldest_call": {
+        "ms": 264.5,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2010-03-11T00:00:00.000000Z"
+      }
+     },
+     "series": null,
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "series(SOXL) [cross]",
+      "ms": 194.4,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 400,
+      "error": "{\"detail\":\"not a series dataset; valid: ['bond_futures', 'bonds', 'corporate_bonds', 'credit_indices', 'economics', 'fx_derivatives', 'sovereign_yields']\"}"
+     }
+    },
+    {
+     "symbol": "XLE",
+     "name": "State Street Energy Select Sector SPDR ETF",
+     "catalog_ticks": 5789113,
+     "catalog_first_tick": "2026-04-27 13:38:17.068000",
+     "catalog_last_tick": "2026-08-21 23:59:04.703096",
+     "candles": {
+      "1m": {
+       "kind": "sdk",
+       "target": "candles(XLE,1m,desc,5000)",
+       "ms": 447.6,
+       "bytes": 582740,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-08-12T13:18:00+00:00",
+        "last": "2026-08-21T23:59:00+00:00",
+        "span_days": 9.445,
+        "step_median_s": 60.0,
+        "gaps_max_s": [
+         201660.0,
+         29220.0,
+         28980.0
+        ],
+        "tod_utc_min": "08:00",
+        "tod_utc_max": "23:59",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 826,
+        "n_gaps_intrasession": 819,
+        "bars_expected_if_continuous": 13602,
+        "fill_pct_vs_continuous": 36.76
+       },
+       "oldest_call": {
+        "ms": 527.9,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2003-09-10T13:32:00.000000Z"
+      },
+      "5m": {
+       "kind": "sdk",
+       "target": "candles(XLE,5m,desc,5000)",
+       "ms": 383.4,
+       "bytes": 584076,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-07-14T19:05:00+00:00",
+        "last": "2026-08-21T23:55:00+00:00",
+        "span_days": 38.201,
+        "step_median_s": 300.0,
+        "gaps_max_s": [
+         201900.0,
+         201900.0,
+         201900.0
+        ],
+        "tod_utc_min": "08:00",
+        "tod_utc_max": "23:55",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 339,
+        "n_gaps_intrasession": 311,
+        "bars_expected_if_continuous": 11003,
+        "fill_pct_vs_continuous": 45.44
+       },
+       "oldest_call": {
+        "ms": 956.4,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2003-09-10T13:30:00.000000Z"
+      },
+      "1h": {
+       "kind": "sdk",
+       "target": "candles(XLE,1h,desc,5000)",
+       "ms": 441.2,
+       "bytes": 614179,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2024-03-07T15:00:00+00:00",
+        "last": "2026-08-21T23:00:00+00:00",
+        "span_days": 897.333,
+        "step_median_s": 3600.0,
+        "gaps_max_s": [
+         331200.0,
+         324000.0,
+         324000.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 617,
+        "n_gaps_intrasession": 0,
+        "bars_expected_if_continuous": 21537,
+        "fill_pct_vs_continuous": 23.22
+       },
+       "oldest_call": {
+        "ms": 337.7,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2003-09-10T13:00:00.000000Z"
+      },
+      "1d": {
+       "kind": "sdk",
+       "target": "candles(XLE,1d,desc,5000)",
+       "ms": 381.1,
+       "bytes": 617157,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2006-10-11T00:00:00+00:00",
+        "last": "2026-08-21T00:00:00+00:00",
+        "span_days": 7254.0,
+        "step_median_s": 86400.0,
+        "gaps_max_s": [
+         432000.0,
+         432000.0,
+         345600.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "00:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 1087,
+        "n_gaps_intrasession": 1085,
+        "bars_expected_if_continuous": 7255,
+        "fill_pct_vs_continuous": 68.92
+       },
+       "oldest_call": {
+        "ms": 386.7,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2003-09-10T00:00:00.000000Z"
+      }
+     },
+     "series": null,
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "series(XLE) [cross]",
+      "ms": 257.8,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 400,
+      "error": "{\"detail\":\"not a series dataset; valid: ['bond_futures', 'bonds', 'corporate_bonds', 'credit_indices', 'economics', 'fx_derivatives', 'sovereign_yields']\"}"
+     }
+    },
+    {
+     "symbol": "BITO",
+     "name": "ProShares Bitcoin Strategy ETF",
+     "catalog_ticks": 1534991,
+     "catalog_first_tick": "2026-04-27 16:57:05.875000",
+     "catalog_last_tick": "2026-08-21 23:53:23.990735",
+     "candles": {
+      "1m": {
+       "kind": "sdk",
+       "target": "candles(BITO,1m,desc,5000)",
+       "ms": 373.8,
+       "bytes": 573562,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-08-11T14:05:00+00:00",
+        "last": "2026-08-21T23:53:00+00:00",
+        "span_days": 10.408,
+        "step_median_s": 60.0,
+        "gaps_max_s": [
+         202740.0,
+         30960.0,
+         29820.0
+        ],
+        "tod_utc_min": "08:00",
+        "tod_utc_max": "23:59",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 973,
+        "n_gaps_intrasession": 965,
+        "bars_expected_if_continuous": 14989,
+        "fill_pct_vs_continuous": 33.36
+       },
+       "oldest_call": {
+        "ms": 460.9,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2021-10-19T13:31:00.000000Z"
+      },
+      "5m": {
+       "kind": "sdk",
+       "target": "candles(BITO,5m,desc,5000)",
+       "ms": 367.2,
+       "bytes": 572184,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-07-10T10:30:00+00:00",
+        "last": "2026-08-21T23:50:00+00:00",
+        "span_days": 42.556,
+        "step_median_s": 300.0,
+        "gaps_max_s": [
+         203100.0,
+         202800.0,
+         202800.0
+        ],
+        "tod_utc_min": "08:00",
+        "tod_utc_max": "23:55",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 566,
+        "n_gaps_intrasession": 536,
+        "bars_expected_if_continuous": 12257,
+        "fill_pct_vs_continuous": 40.79
+       },
+       "oldest_call": {
+        "ms": 423.6,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2021-10-19T13:30:00.000000Z"
+      },
+      "1h": {
+       "kind": "sdk",
+       "target": "candles(BITO,1h,desc,5000)",
+       "ms": 427.2,
+       "bytes": 608742,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2024-03-13T14:00:00+00:00",
+        "last": "2026-08-21T23:00:00+00:00",
+        "span_days": 891.375,
+        "step_median_s": 3600.0,
+        "gaps_max_s": [
+         331200.0,
+         324000.0,
+         324000.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 614,
+        "n_gaps_intrasession": 0,
+        "bars_expected_if_continuous": 21394,
+        "fill_pct_vs_continuous": 23.37
+       },
+       "oldest_call": {
+        "ms": 349.6,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2021-10-19T13:00:00.000000Z"
+      },
+      "1d": {
+       "kind": "sdk",
+       "target": "candles(BITO,1d,desc,5000)",
+       "ms": 305.0,
+       "bytes": 149363,
+       "rows": 1222,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 1222,
+        "first": "2021-10-19T00:00:00+00:00",
+        "last": "2026-08-21T00:00:00+00:00",
+        "span_days": 1767.0,
+        "step_median_s": 86400.0,
+        "gaps_max_s": [
+         345600.0,
+         345600.0,
+         345600.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "00:00",
+        "n_steps": 1221,
+        "n_gaps_gt_step": 266,
+        "n_gaps_intrasession": 266,
+        "bars_expected_if_continuous": 1768,
+        "fill_pct_vs_continuous": 69.12
+       },
+       "oldest_call": {
+        "ms": 295.6,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2021-10-19T00:00:00.000000Z"
+      }
+     },
+     "series": null,
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "series(BITO) [cross]",
+      "ms": 185.4,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 400,
+      "error": "{\"detail\":\"not a series dataset; valid: ['bond_futures', 'bonds', 'corporate_bonds', 'credit_indices', 'economics', 'fx_derivatives', 'sovereign_yields']\"}"
+     }
+    }
+   ]
+  },
+  "futures": {
+   "caps_declared": [
+    "candles",
+    "export"
+   ],
+   "n_symbols": 69,
+   "samples": [
+    {
+     "symbol": "FGBL",
+     "name": "Euro Bund",
+     "catalog_ticks": 46704580,
+     "catalog_first_tick": "2025-03-11 00:15:01.042009",
+     "catalog_last_tick": "2026-07-03 17:43:47.541268",
+     "candles": {
+      "1m": {
+       "kind": "sdk",
+       "target": "candles(FGBL,1m,desc,5000)",
+       "ms": 385.4,
+       "bytes": 601660,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-06-29T01:47:00+00:00",
+        "last": "2026-07-03T17:43:00+00:00",
+        "span_days": 4.664,
+        "step_median_s": 60.0,
+        "gaps_max_s": [
+         15360.0,
+         15360.0,
+         15360.0
+        ],
+        "tod_utc_min": "00:15",
+        "tod_utc_max": "20:03",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 393,
+        "n_gaps_intrasession": 389,
+        "bars_expected_if_continuous": 6717,
+        "fill_pct_vs_continuous": 74.44
+       },
+       "oldest_call": {
+        "ms": 255.6,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2025-03-11T00:15:00.000000Z"
+      },
+      "5m": {
+       "kind": "sdk",
+       "target": "candles(FGBL,5m,desc,5000)",
+       "ms": 426.7,
+       "bytes": 604779,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-06-04T09:25:00+00:00",
+        "last": "2026-07-03T17:40:00+00:00",
+        "span_days": 29.344,
+        "step_median_s": 300.0,
+        "gaps_max_s": [
+         188700.0,
+         188100.0,
+         188100.0
+        ],
+        "tod_utc_min": "00:15",
+        "tod_utc_max": "20:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 73,
+        "n_gaps_intrasession": 52,
+        "bars_expected_if_continuous": 8452,
+        "fill_pct_vs_continuous": 59.16
+       },
+       "oldest_call": {
+        "ms": 401.8,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2025-03-11T00:15:00.000000Z"
+      },
+      "1h": {
+       "kind": "sdk",
+       "target": "candles(FGBL,1h,desc,5000)",
+       "ms": 434.7,
+       "bytes": 609972,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2025-07-28T11:00:00+00:00",
+        "last": "2026-07-03T17:00:00+00:00",
+        "span_days": 340.25,
+        "step_median_s": 3600.0,
+        "gaps_max_s": [
+         442800.0,
+         360000.0,
+         273600.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "21:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 236,
+        "n_gaps_intrasession": 145,
+        "bars_expected_if_continuous": 8167,
+        "fill_pct_vs_continuous": 61.22
+       },
+       "oldest_call": {
+        "ms": 473.7,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2025-03-11T00:00:00.000000Z"
+      },
+      "1d": {
+       "kind": "sdk",
+       "target": "candles(FGBL,1d,desc,5000)",
+       "ms": 463.9,
+       "bytes": 41243,
+       "rows": 333,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 333,
+        "first": "2025-03-11T00:00:00+00:00",
+        "last": "2026-07-03T00:00:00+00:00",
+        "span_days": 479.0,
+        "step_median_s": 86400.0,
+        "gaps_max_s": [
+         518400.0,
+         432000.0,
+         432000.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "00:00",
+        "n_steps": 332,
+        "n_gaps_gt_step": 70,
+        "n_gaps_intrasession": 67,
+        "bars_expected_if_continuous": 480,
+        "fill_pct_vs_continuous": 69.38
+       },
+       "oldest_call": {
+        "ms": 225.4,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2025-03-11T00:00:00.000000Z"
+      }
+     },
+     "series": null,
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "series(FGBL) [cross]",
+      "ms": 190.5,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 400,
+      "error": "{\"detail\":\"not a series dataset; valid: ['bond_futures', 'bonds', 'corporate_bonds', 'credit_indices', 'economics', 'fx_derivatives', 'sovereign_yields']\"}"
+     }
+    },
+    {
+     "symbol": "FST3",
+     "name": "Euro STR",
+     "catalog_ticks": 49815,
+     "catalog_first_tick": "2025-03-11 07:14:45.895879",
+     "catalog_last_tick": "2026-06-16 16:26:30.474142",
+     "candles": {
+      "1m": {
+       "kind": "sdk",
+       "target": "candles(FST3,1m,desc,5000)",
+       "ms": 481.3,
+       "bytes": 337766,
+       "rows": 2794,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 2794,
+        "first": "2025-03-11T07:14:00+00:00",
+        "last": "2026-06-16T16:26:00+00:00",
+        "span_days": 462.383,
+        "step_median_s": 360.0,
+        "gaps_max_s": [
+         5503140.0,
+         5501820.0,
+         5501040.0
+        ],
+        "tod_utc_min": "05:31",
+        "tod_utc_max": "19:59",
+        "n_steps": 2793,
+        "n_gaps_gt_step": 1954,
+        "n_gaps_intrasession": 1744,
+        "bars_expected_if_continuous": 665833,
+        "fill_pct_vs_continuous": 0.42
+       },
+       "oldest_call": {
+        "ms": 286.4,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2025-03-11T07:14:00.000000Z"
+      },
+      "5m": {
+       "kind": "sdk",
+       "target": "candles(FST3,5m,desc,5000)",
+       "ms": 415.1,
+       "bytes": 232612,
+       "rows": 1924,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 1924,
+        "first": "2025-03-11T07:10:00+00:00",
+        "last": "2026-06-16T16:25:00+00:00",
+        "span_days": 462.385,
+        "step_median_s": 900.0,
+        "gaps_max_s": [
+         5503200.0,
+         5501700.0,
+         5501100.0
+        ],
+        "tod_utc_min": "05:30",
+        "tod_utc_max": "19:55",
+        "n_steps": 1923,
+        "n_gaps_gt_step": 1272,
+        "n_gaps_intrasession": 1062,
+        "bars_expected_if_continuous": 133168,
+        "fill_pct_vs_continuous": 1.44
+       },
+       "oldest_call": {
+        "ms": 346.3,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2025-03-11T07:10:00.000000Z"
+      },
+      "1h": {
+       "kind": "sdk",
+       "target": "candles(FST3,1h,desc,5000)",
+       "ms": 436.4,
+       "bytes": 102979,
+       "rows": 851,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 851,
+        "first": "2025-03-11T07:00:00+00:00",
+        "last": "2026-06-16T16:00:00+00:00",
+        "span_days": 462.375,
+        "step_median_s": 3600.0,
+        "gaps_max_s": [
+         5500800.0,
+         5500800.0,
+         5500800.0
+        ],
+        "tod_utc_min": "05:00",
+        "tod_utc_max": "19:00",
+        "n_steps": 850,
+        "n_gaps_gt_step": 408,
+        "n_gaps_intrasession": 211,
+        "bars_expected_if_continuous": 11098,
+        "fill_pct_vs_continuous": 7.67
+       },
+       "oldest_call": {
+        "ms": 313.0,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2025-03-11T07:00:00.000000Z"
+      },
+      "1d": {
+       "kind": "sdk",
+       "target": "candles(FST3,1d,desc,5000)",
+       "ms": 251.8,
+       "bytes": 18288,
+       "rows": 150,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 150,
+        "first": "2025-03-11T00:00:00+00:00",
+        "last": "2026-06-16T00:00:00+00:00",
+        "span_days": 462.0,
+        "step_median_s": 86400.0,
+        "gaps_max_s": [
+         5529600.0,
+         5529600.0,
+         5529600.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "00:00",
+        "n_steps": 149,
+        "n_gaps_gt_step": 36,
+        "n_gaps_intrasession": 30,
+        "bars_expected_if_continuous": 463,
+        "fill_pct_vs_continuous": 32.4
+       },
+       "oldest_call": {
+        "ms": 425.2,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2025-03-11T00:00:00.000000Z"
+      }
+     },
+     "series": null,
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "series(FST3) [cross]",
+      "ms": 219.6,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 400,
+      "error": "{\"detail\":\"not a series dataset; valid: ['bond_futures', 'bonds', 'corporate_bonds', 'credit_indices', 'economics', 'fx_derivatives', 'sovereign_yields']\"}"
+     }
+    },
+    {
+     "symbol": "FMEF",
+     "name": "MSCI Emerging Markets",
+     "catalog_ticks": 1,
+     "catalog_first_tick": "2026-03-20 16:46:42.705742",
+     "catalog_last_tick": "2026-03-20 16:46:42.705742",
+     "candles": {
+      "1m": {
+       "kind": "sdk",
+       "target": "candles(FMEF,1m,desc,5000)",
+       "ms": 494.0,
+       "bytes": 112,
+       "rows": 1,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 1,
+        "first": "2026-03-20 16:46:00+00:00",
+        "last": "2026-03-20 16:46:00+00:00"
+       },
+       "oldest_call": {
+        "ms": 305.8,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2026-03-20T16:46:00.000000Z"
+      },
+      "5m": {
+       "kind": "sdk",
+       "target": "candles(FMEF,5m,desc,5000)",
+       "ms": 322.9,
+       "bytes": 112,
+       "rows": 1,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 1,
+        "first": "2026-03-20 16:45:00+00:00",
+        "last": "2026-03-20 16:45:00+00:00"
+       },
+       "oldest_call": {
+        "ms": 279.0,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2026-03-20T16:45:00.000000Z"
+      },
+      "1h": {
+       "kind": "sdk",
+       "target": "candles(FMEF,1h,desc,5000)",
+       "ms": 338.2,
+       "bytes": 112,
+       "rows": 1,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 1,
+        "first": "2026-03-20 16:00:00+00:00",
+        "last": "2026-03-20 16:00:00+00:00"
+       },
+       "oldest_call": {
+        "ms": 260.8,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2026-03-20T16:00:00.000000Z"
+      },
+      "1d": {
+       "kind": "sdk",
+       "target": "candles(FMEF,1d,desc,5000)",
+       "ms": 230.3,
+       "bytes": 112,
+       "rows": 1,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 1,
+        "first": "2026-03-20 00:00:00+00:00",
+        "last": "2026-03-20 00:00:00+00:00"
+       },
+       "oldest_call": {
+        "ms": 226.1,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2026-03-20T00:00:00.000000Z"
+      }
+     },
+     "series": null,
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "series(FMEF) [cross]",
+      "ms": 196.6,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 400,
+      "error": "{\"detail\":\"not a series dataset; valid: ['bond_futures', 'bonds', 'corporate_bonds', 'credit_indices', 'economics', 'fx_derivatives', 'sovereign_yields']\"}"
+     }
+    }
+   ]
+  },
+  "fx": {
+   "caps_declared": [
+    "candles",
+    "export"
+   ],
+   "n_symbols": 62,
+   "samples": [
+    {
+     "symbol": "EUR/JPY",
+     "name": "Euro / Japanese Yen",
+     "catalog_ticks": 1305683707,
+     "catalog_first_tick": "2009-09-25 04:00:00.000000",
+     "catalog_last_tick": "2026-08-21 20:59:05.069410",
+     "candles": {
+      "1m": {
+       "kind": "sdk",
+       "target": "candles(EUR/JPY,1m,desc,5000)",
+       "ms": 429.6,
+       "bytes": 572706,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-08-18T09:22:00+00:00",
+        "last": "2026-08-21T20:59:00+00:00",
+        "span_days": 3.484,
+        "step_median_s": 60.0,
+        "gaps_max_s": [
+         300.0,
+         300.0,
+         300.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:59",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 8,
+        "n_gaps_intrasession": 8,
+        "bars_expected_if_continuous": 5018,
+        "fill_pct_vs_continuous": 99.64
+       },
+       "oldest_call": {
+        "ms": 591.8,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2003-01-01T20:58:00.000000Z"
+      },
+      "5m": {
+       "kind": "sdk",
+       "target": "candles(EUR/JPY,5m,desc,5000)",
+       "ms": 464.4,
+       "bytes": 572718,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-07-29T12:20:00+00:00",
+        "last": "2026-08-21T20:55:00+00:00",
+        "span_days": 23.358,
+        "step_median_s": 300.0,
+        "gaps_max_s": [
+         173100.0,
+         173100.0,
+         173100.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:55",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 3,
+        "n_gaps_intrasession": 0,
+        "bars_expected_if_continuous": 6728,
+        "fill_pct_vs_continuous": 74.32
+       },
+       "oldest_call": {
+        "ms": 483.8,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2003-01-01T20:55:00.000000Z"
+      },
+      "1h": {
+       "kind": "sdk",
+       "target": "candles(EUR/JPY,1h,desc,5000)",
+       "ms": 464.8,
+       "bytes": 571561,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2025-10-31T17:00:00+00:00",
+        "last": "2026-08-21T20:00:00+00:00",
+        "span_days": 294.125,
+        "step_median_s": 3600.0,
+        "gaps_max_s": [
+         180000.0,
+         176400.0,
+         176400.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 44,
+        "n_gaps_intrasession": 0,
+        "bars_expected_if_continuous": 7060,
+        "fill_pct_vs_continuous": 70.82
+       },
+       "oldest_call": {
+        "ms": 527.3,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2003-01-01T20:00:00.000000Z"
+      },
+      "1d": {
+       "kind": "sdk",
+       "target": "candles(EUR/JPY,1d,desc,5000)",
+       "ms": 380.7,
+       "bytes": 574756,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2011-04-01T00:00:00+00:00",
+        "last": "2026-08-21T00:00:00+00:00",
+        "span_days": 5621.0,
+        "step_median_s": 86400.0,
+        "gaps_max_s": [
+         259200.0,
+         259200.0,
+         259200.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "00:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 616,
+        "n_gaps_intrasession": 616,
+        "bars_expected_if_continuous": 5622,
+        "fill_pct_vs_continuous": 88.94
+       },
+       "oldest_call": {
+        "ms": 262.5,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2003-01-01T00:00:00.000000Z"
+      }
+     },
+     "series": null,
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "series(EUR/JPY) [cross]",
+      "ms": 198.2,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 400,
+      "error": "{\"detail\":\"not a series dataset; valid: ['bond_futures', 'bonds', 'corporate_bonds', 'credit_indices', 'economics', 'fx_derivatives', 'sovereign_yields']\"}"
+     }
+    },
+    {
+     "symbol": "CAD/CHF",
+     "name": "Canadian Dollar / Swiss Franc",
+     "catalog_ticks": 590491169,
+     "catalog_first_tick": "2009-09-25 04:00:00.000000",
+     "catalog_last_tick": "2026-08-21 20:59:05.063664",
+     "candles": {
+      "1m": {
+       "kind": "sdk",
+       "target": "candles(CAD/CHF,1m,desc,5000)",
+       "ms": 376.1,
+       "bytes": 572607,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-08-18T04:01:00+00:00",
+        "last": "2026-08-21T20:59:00+00:00",
+        "span_days": 3.707,
+        "step_median_s": 60.0,
+        "gaps_max_s": [
+         480.0,
+         360.0,
+         360.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:59",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 232,
+        "n_gaps_intrasession": 232,
+        "bars_expected_if_continuous": 5339,
+        "fill_pct_vs_continuous": 93.65
+       },
+       "oldest_call": {
+        "ms": 663.4,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2004-05-31T20:59:00.000000Z"
+      },
+      "5m": {
+       "kind": "sdk",
+       "target": "candles(CAD/CHF,5m,desc,5000)",
+       "ms": 376.4,
+       "bytes": 572691,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-07-29T10:40:00+00:00",
+        "last": "2026-08-21T20:55:00+00:00",
+        "span_days": 23.427,
+        "step_median_s": 300.0,
+        "gaps_max_s": [
+         173100.0,
+         173100.0,
+         173100.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:55",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 22,
+        "n_gaps_intrasession": 19,
+        "bars_expected_if_continuous": 6748,
+        "fill_pct_vs_continuous": 74.1
+       },
+       "oldest_call": {
+        "ms": 414.2,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2004-05-31T20:55:00.000000Z"
+      },
+      "1h": {
+       "kind": "sdk",
+       "target": "candles(CAD/CHF,1h,desc,5000)",
+       "ms": 567.1,
+       "bytes": 571303,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2025-10-31T17:00:00+00:00",
+        "last": "2026-08-21T20:00:00+00:00",
+        "span_days": 294.125,
+        "step_median_s": 3600.0,
+        "gaps_max_s": [
+         180000.0,
+         176400.0,
+         176400.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 44,
+        "n_gaps_intrasession": 0,
+        "bars_expected_if_continuous": 7060,
+        "fill_pct_vs_continuous": 70.82
+       },
+       "oldest_call": {
+        "ms": 424.4,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2004-05-31T20:00:00.000000Z"
+      },
+      "1d": {
+       "kind": "sdk",
+       "target": "candles(CAD/CHF,1d,desc,5000)",
+       "ms": 474.3,
+       "bytes": 571253,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2010-10-22T00:00:00+00:00",
+        "last": "2026-08-21T00:00:00+00:00",
+        "span_days": 5782.0,
+        "step_median_s": 86400.0,
+        "gaps_max_s": [
+         259200.0,
+         259200.0,
+         259200.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "00:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 776,
+        "n_gaps_intrasession": 776,
+        "bars_expected_if_continuous": 5783,
+        "fill_pct_vs_continuous": 86.46
+       },
+       "oldest_call": {
+        "ms": 500.0,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2004-05-31T00:00:00.000000Z"
+      }
+     },
+     "series": null,
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "series(CAD/CHF) [cross]",
+      "ms": 235.3,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 400,
+      "error": "{\"detail\":\"not a series dataset; valid: ['bond_futures', 'bonds', 'corporate_bonds', 'credit_indices', 'economics', 'fx_derivatives', 'sovereign_yields']\"}"
+     }
+    },
+    {
+     "symbol": "USD/THB",
+     "name": "US Dollar / Thai Baht",
+     "catalog_ticks": 60329163,
+     "catalog_first_tick": "2009-09-27 21:00:48.000000",
+     "catalog_last_tick": "2026-08-21 20:59:05.073945",
+     "candles": {
+      "1m": {
+       "kind": "sdk",
+       "target": "candles(USD/THB,1m,desc,5000)",
+       "ms": 400.6,
+       "bytes": 552830,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-08-17T13:36:00+00:00",
+        "last": "2026-08-21T20:59:00+00:00",
+        "span_days": 4.308,
+        "step_median_s": 60.0,
+        "gaps_max_s": [
+         1380.0,
+         1080.0,
+         1080.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:59",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 636,
+        "n_gaps_intrasession": 636,
+        "bars_expected_if_continuous": 6204,
+        "fill_pct_vs_continuous": 80.59
+       },
+       "oldest_call": {
+        "ms": 685.0,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2004-01-19T17:33:00.000000Z"
+      },
+      "5m": {
+       "kind": "sdk",
+       "target": "candles(USD/THB,5m,desc,5000)",
+       "ms": 953.6,
+       "bytes": 552812,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-07-29T04:05:00+00:00",
+        "last": "2026-08-21T20:55:00+00:00",
+        "span_days": 23.701,
+        "step_median_s": 300.0,
+        "gaps_max_s": [
+         173100.0,
+         173100.0,
+         173100.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:55",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 75,
+        "n_gaps_intrasession": 72,
+        "bars_expected_if_continuous": 6827,
+        "fill_pct_vs_continuous": 73.24
+       },
+       "oldest_call": {
+        "ms": 448.5,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2004-01-19T17:30:00.000000Z"
+      },
+      "1h": {
+       "kind": "sdk",
+       "target": "candles(USD/THB,1h,desc,5000)",
+       "ms": 404.1,
+       "bytes": 549687,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2025-10-31T17:00:00+00:00",
+        "last": "2026-08-21T20:00:00+00:00",
+        "span_days": 294.125,
+        "step_median_s": 3600.0,
+        "gaps_max_s": [
+         180000.0,
+         176400.0,
+         176400.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 44,
+        "n_gaps_intrasession": 0,
+        "bars_expected_if_continuous": 7060,
+        "fill_pct_vs_continuous": 70.82
+       },
+       "oldest_call": {
+        "ms": 562.1,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2004-01-19T17:00:00.000000Z"
+      },
+      "1d": {
+       "kind": "sdk",
+       "target": "candles(USD/THB,1d,desc,5000)",
+       "ms": 426.9,
+       "bytes": 548861,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2010-12-10T00:00:00+00:00",
+        "last": "2026-08-21T00:00:00+00:00",
+        "span_days": 5733.0,
+        "step_median_s": 86400.0,
+        "gaps_max_s": [
+         259200.0,
+         172800.0,
+         172800.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "00:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 733,
+        "n_gaps_intrasession": 733,
+        "bars_expected_if_continuous": 5734,
+        "fill_pct_vs_continuous": 87.2
+       },
+       "oldest_call": {
+        "ms": 272.6,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2004-01-19T00:00:00.000000Z"
+      }
+     },
+     "series": null,
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "series(USD/THB) [cross]",
+      "ms": 208.1,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 400,
+      "error": "{\"detail\":\"not a series dataset; valid: ['bond_futures', 'bonds', 'corporate_bonds', 'credit_indices', 'economics', 'fx_derivatives', 'sovereign_yields']\"}"
+     }
+    }
+   ]
+  },
+  "fx_derivatives": {
+   "caps_declared": [
+    "export",
+    "series"
+   ],
+   "n_symbols": 63,
+   "samples": [
+    {
+     "symbol": "SEKSW=",
+     "name": "US Dollar/Swedish Krona Spot Week FX Forward Swap, FX Forward Swap, Spot Week",
+     "catalog_ticks": 70497,
+     "catalog_first_tick": "2015-01-01 00:00:00.000000",
+     "catalog_last_tick": "2026-08-11 00:00:00.000000",
+     "candles": {},
+     "series": {
+      "kind": "sdk",
+      "target": "series(SEKSW=,fx_derivatives,desc,5000)",
+      "ms": 592.7,
+      "bytes": 166351,
+      "rows": 3024,
+      "ok": true,
+      "cols": [
+       "date",
+       "symbol",
+       "value"
+      ],
+      "shape": {
+       "n": 3024,
+       "first": "2015-01-01T00:00:00+00:00",
+       "last": "2026-08-11T00:00:00+00:00",
+       "span_days": 4240.0,
+       "step_median_s": 86400.0,
+       "gaps_max_s": [
+        345600.0,
+        345600.0,
+        345600.0
+       ],
+       "tod_utc_min": "00:00",
+       "tod_utc_max": "00:00",
+       "n_steps": 3023,
+       "n_gaps_gt_step": 608,
+       "n_gaps_intrasession": 608,
+       "bars_expected_if_continuous": 4241,
+       "fill_pct_vs_continuous": 71.3
+      },
+      "sample_row": {
+       "symbol": "SEKSW=",
+       "date": "2026-08-11",
+       "value": -36.835
+      },
+      "oldest_row": {
+       "symbol": "SEKSW=",
+       "date": "2015-01-01",
+       "value": -1.6
+      }
+     },
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "candles(SEKSW=,1d) [cross]",
+      "ms": 212.4,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 404,
+      "error": "{\"detail\":\"'SEKSW=' has no candle data; browse /catalog\"}"
+     }
+    },
+    {
+     "symbol": "JPY1YO=",
+     "name": "US Dollar/Japanese Yen 1 Year ATM Option, FX At-The-Money Option, 1 Year",
+     "catalog_ticks": 29487,
+     "catalog_first_tick": "2015-01-01 00:00:00.000000",
+     "catalog_last_tick": "2026-08-11 00:00:00.000000",
+     "candles": {},
+     "series": {
+      "kind": "sdk",
+      "target": "series(JPY1YO=,fx_derivatives,desc,5000)",
+      "ms": 421.6,
+      "bytes": 165684,
+      "rows": 3028,
+      "ok": true,
+      "cols": [
+       "date",
+       "symbol",
+       "value"
+      ],
+      "shape": {
+       "n": 3028,
+       "first": "2015-01-01T00:00:00+00:00",
+       "last": "2026-08-11T00:00:00+00:00",
+       "span_days": 4240.0,
+       "step_median_s": 86400.0,
+       "gaps_max_s": [
+        345600.0,
+        259200.0,
+        259200.0
+       ],
+       "tod_utc_min": "00:00",
+       "tod_utc_max": "00:00",
+       "n_steps": 3027,
+       "n_gaps_gt_step": 606,
+       "n_gaps_intrasession": 606,
+       "bars_expected_if_continuous": 4241,
+       "fill_pct_vs_continuous": 71.4
+      },
+      "sample_row": {
+       "symbol": "JPY1YO=",
+       "date": "2026-08-11",
+       "value": 8.42
+      },
+      "oldest_row": {
+       "symbol": "JPY1YO=",
+       "date": "2015-01-01",
+       "value": 11.25
+      }
+     },
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "candles(JPY1YO=,1d) [cross]",
+      "ms": 236.9,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 404,
+      "error": "{\"detail\":\"'JPY1YO=' has no candle data; browse /catalog\"}"
+     }
+    },
+    {
+     "symbol": "SEK9MO=",
+     "name": "US Dollar/Swedish Krona 9 Month ATM Option, FX At-The-Money Option, 9 Month",
+     "catalog_ticks": 29283,
+     "catalog_first_tick": "2015-01-01 00:00:00.000000",
+     "catalog_last_tick": "2026-08-11 00:00:00.000000",
+     "candles": {},
+     "series": {
+      "kind": "sdk",
+      "target": "series(SEK9MO=,fx_derivatives,desc,5000)",
+      "ms": 295.4,
+      "bytes": 165414,
+      "rows": 3028,
+      "ok": true,
+      "cols": [
+       "date",
+       "symbol",
+       "value"
+      ],
+      "shape": {
+       "n": 3028,
+       "first": "2015-01-01T00:00:00+00:00",
+       "last": "2026-08-11T00:00:00+00:00",
+       "span_days": 4240.0,
+       "step_median_s": 86400.0,
+       "gaps_max_s": [
+        345600.0,
+        259200.0,
+        259200.0
+       ],
+       "tod_utc_min": "00:00",
+       "tod_utc_max": "00:00",
+       "n_steps": 3027,
+       "n_gaps_gt_step": 606,
+       "n_gaps_intrasession": 606,
+       "bars_expected_if_continuous": 4241,
+       "fill_pct_vs_continuous": 71.4
+      },
+      "sample_row": {
+       "symbol": "SEK9MO=",
+       "date": "2026-08-11",
+       "value": 8.921
+      },
+      "oldest_row": {
+       "symbol": "SEK9MO=",
+       "date": "2015-01-01",
+       "value": 11.2
+      }
+     },
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "candles(SEK9MO=,1d) [cross]",
+      "ms": 689.0,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 404,
+      "error": "{\"detail\":\"'SEK9MO=' has no candle data; browse /catalog\"}"
+     }
+    }
+   ]
+  },
+  "index": {
+   "caps_declared": [
+    "candles",
+    "export"
+   ],
+   "n_symbols": 19,
+   "samples": [
+    {
+     "symbol": "NAS100/USD",
+     "name": "NASDAQ 100",
+     "catalog_ticks": 37007012,
+     "catalog_first_tick": "2023-02-15 14:30:15.000000",
+     "catalog_last_tick": "2026-08-21 20:59:05.080102",
+     "candles": {
+      "1m": {
+       "kind": "sdk",
+       "target": "candles(NAS100/USD,1m,desc,5000)",
+       "ms": 384.1,
+       "bytes": 651789,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-08-18T06:40:00+00:00",
+        "last": "2026-08-21T20:59:00+00:00",
+        "span_days": 3.597,
+        "step_median_s": 60.0,
+        "gaps_max_s": [
+         3660.0,
+         3660.0,
+         3660.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:59",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 3,
+        "n_gaps_intrasession": 3,
+        "bars_expected_if_continuous": 5180,
+        "fill_pct_vs_continuous": 96.53
+       },
+       "oldest_call": {
+        "ms": 459.9,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2003-03-21T14:30:00.000000Z"
+      },
+      "5m": {
+       "kind": "sdk",
+       "target": "candles(NAS100/USD,5m,desc,5000)",
+       "ms": 482.1,
+       "bytes": 653413,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-07-28T18:20:00+00:00",
+        "last": "2026-08-21T20:55:00+00:00",
+        "span_days": 24.108,
+        "step_median_s": 300.0,
+        "gaps_max_s": [
+         176700.0,
+         176700.0,
+         176700.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:55",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 18,
+        "n_gaps_intrasession": 15,
+        "bars_expected_if_continuous": 6944,
+        "fill_pct_vs_continuous": 72.0
+       },
+       "oldest_call": {
+        "ms": 523.1,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2003-03-21T14:30:00.000000Z"
+      },
+      "1h": {
+       "kind": "sdk",
+       "target": "candles(NAS100/USD,1h,desc,5000)",
+       "ms": 465.3,
+       "bytes": 683074,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2025-09-17T17:00:00+00:00",
+        "last": "2026-08-21T20:00:00+00:00",
+        "span_days": 338.125,
+        "step_median_s": 3600.0,
+        "gaps_max_s": [
+         234000.0,
+         234000.0,
+         205200.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 386,
+        "n_gaps_intrasession": 298,
+        "bars_expected_if_continuous": 8116,
+        "fill_pct_vs_continuous": 61.61
+       },
+       "oldest_call": {
+        "ms": 428.1,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2003-03-21T14:00:00.000000Z"
+      },
+      "1d": {
+       "kind": "sdk",
+       "target": "candles(NAS100/USD,1d,desc,5000)",
+       "ms": 375.1,
+       "bytes": 699881,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2007-06-11T00:00:00+00:00",
+        "last": "2026-08-21T00:00:00+00:00",
+        "span_days": 7011.0,
+        "step_median_s": 86400.0,
+        "gaps_max_s": [
+         345600.0,
+         345600.0,
+         345600.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "00:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 1019,
+        "n_gaps_intrasession": 1019,
+        "bars_expected_if_continuous": 7012,
+        "fill_pct_vs_continuous": 71.31
+       },
+       "oldest_call": {
+        "ms": 301.6,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2003-03-21T00:00:00.000000Z"
+      }
+     },
+     "series": null,
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "series(NAS100/USD) [cross]",
+      "ms": 237.2,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 400,
+      "error": "{\"detail\":\"not a series dataset; valid: ['bond_futures', 'bonds', 'corporate_bonds', 'credit_indices', 'economics', 'fx_derivatives', 'sovereign_yields']\"}"
+     }
+    },
+    {
+     "symbol": "US2000/USD",
+     "name": "Russell 2000",
+     "catalog_ticks": 10101133,
+     "catalog_first_tick": "2024-09-09 13:30:05.000000",
+     "catalog_last_tick": "2026-08-21 20:59:05.081028",
+     "candles": {
+      "1m": {
+       "kind": "sdk",
+       "target": "candles(US2000/USD,1m,desc,5000)",
+       "ms": 371.1,
+       "bytes": 665885,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-08-18T06:38:00+00:00",
+        "last": "2026-08-21T20:59:00+00:00",
+        "span_days": 3.598,
+        "step_median_s": 60.0,
+        "gaps_max_s": [
+         3660.0,
+         3660.0,
+         3660.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:59",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 5,
+        "n_gaps_intrasession": 5,
+        "bars_expected_if_continuous": 5182,
+        "fill_pct_vs_continuous": 96.49
+       },
+       "oldest_call": {
+        "ms": 402.3,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2003-03-21T14:30:00.000000Z"
+      },
+      "5m": {
+       "kind": "sdk",
+       "target": "candles(US2000/USD,5m,desc,5000)",
+       "ms": 477.1,
+       "bytes": 667344,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-07-28T18:20:00+00:00",
+        "last": "2026-08-21T20:55:00+00:00",
+        "span_days": 24.108,
+        "step_median_s": 300.0,
+        "gaps_max_s": [
+         176700.0,
+         176700.0,
+         176700.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:55",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 18,
+        "n_gaps_intrasession": 15,
+        "bars_expected_if_continuous": 6944,
+        "fill_pct_vs_continuous": 72.0
+       },
+       "oldest_call": {
+        "ms": 369.8,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2003-03-21T14:30:00.000000Z"
+      },
+      "1h": {
+       "kind": "sdk",
+       "target": "candles(US2000/USD,1h,desc,5000)",
+       "ms": 392.3,
+       "bytes": 685080,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2025-09-15T18:00:00+00:00",
+        "last": "2026-08-21T20:00:00+00:00",
+        "span_days": 340.083,
+        "step_median_s": 3600.0,
+        "gaps_max_s": [
+         234000.0,
+         234000.0,
+         205200.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 392,
+        "n_gaps_intrasession": 300,
+        "bars_expected_if_continuous": 8163,
+        "fill_pct_vs_continuous": 61.25
+       },
+       "oldest_call": {
+        "ms": 352.9,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2003-03-21T14:00:00.000000Z"
+      },
+      "1d": {
+       "kind": "sdk",
+       "target": "candles(US2000/USD,1d,desc,5000)",
+       "ms": 374.1,
+       "bytes": 719228,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2007-06-06T00:00:00+00:00",
+        "last": "2026-08-21T00:00:00+00:00",
+        "span_days": 7016.0,
+        "step_median_s": 86400.0,
+        "gaps_max_s": [
+         432000.0,
+         345600.0,
+         345600.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "00:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 1020,
+        "n_gaps_intrasession": 1019,
+        "bars_expected_if_continuous": 7017,
+        "fill_pct_vs_continuous": 71.26
+       },
+       "oldest_call": {
+        "ms": 558.5,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2003-03-21T00:00:00.000000Z"
+      }
+     },
+     "series": null,
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "series(US2000/USD) [cross]",
+      "ms": 453.7,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 400,
+      "error": "{\"detail\":\"not a series dataset; valid: ['bond_futures', 'bonds', 'corporate_bonds', 'credit_indices', 'economics', 'fx_derivatives', 'sovereign_yields']\"}"
+     }
+    },
+    {
+     "symbol": "AU200/AUD",
+     "name": "S&P/ASX 200",
+     "catalog_ticks": 1477046,
+     "catalog_first_tick": "2026-04-28 16:30:43.822885",
+     "catalog_last_tick": "2026-08-21 20:59:05.081241",
+     "candles": {
+      "1m": {
+       "kind": "sdk",
+       "target": "candles(AU200/AUD,1m,desc,5000)",
+       "ms": 403.2,
+       "bytes": 621991,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-08-17T13:22:00+00:00",
+        "last": "2026-08-21T20:59:00+00:00",
+        "span_days": 4.317,
+        "step_median_s": 60.0,
+        "gaps_max_s": [
+         10260.0,
+         10260.0,
+         10260.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:59",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 262,
+        "n_gaps_intrasession": 262,
+        "bars_expected_if_continuous": 6218,
+        "fill_pct_vs_continuous": 80.41
+       },
+       "oldest_call": {
+        "ms": 1113.0,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2004-03-17T23:00:00.000000Z"
+      },
+      "5m": {
+       "kind": "sdk",
+       "target": "candles(AU200/AUD,5m,desc,5000)",
+       "ms": 715.2,
+       "bytes": 623003,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2026-07-24T13:30:00+00:00",
+        "last": "2026-08-21T20:55:00+00:00",
+        "span_days": 28.309,
+        "step_median_s": 300.0,
+        "gaps_max_s": [
+         183300.0,
+         183300.0,
+         183300.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:55",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 49,
+        "n_gaps_intrasession": 45,
+        "bars_expected_if_continuous": 8154,
+        "fill_pct_vs_continuous": 61.32
+       },
+       "oldest_call": {
+        "ms": 452.2,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2004-03-17T23:00:00.000000Z"
+      },
+      "1h": {
+       "kind": "sdk",
+       "target": "candles(AU200/AUD,1h,desc,5000)",
+       "ms": 464.5,
+       "bytes": 641590,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2025-06-30T02:00:00+00:00",
+        "last": "2026-08-21T20:00:00+00:00",
+        "span_days": 417.75,
+        "step_median_s": 3600.0,
+        "gaps_max_s": [
+         414000.0,
+         385200.0,
+         241200.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "23:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 446,
+        "n_gaps_intrasession": 286,
+        "bars_expected_if_continuous": 10027,
+        "fill_pct_vs_continuous": 49.87
+       },
+       "oldest_call": {
+        "ms": 142.7,
+        "ok": false,
+        "rows": null,
+        "status": 429,
+        "error": "too many concurrent requests for this key; retry shortly"
+       },
+       "oldest_bar": null
+      },
+      "1d": {
+       "kind": "sdk",
+       "target": "candles(AU200/AUD,1d,desc,5000)",
+       "ms": 351.4,
+       "bytes": 679418,
+       "rows": 5000,
+       "ok": true,
+       "cols": [
+        "close",
+        "high",
+        "low",
+        "open",
+        "symbol",
+        "timestamp",
+        "volume"
+       ],
+       "shape": {
+        "n": 5000,
+        "first": "2008-05-26T00:00:00+00:00",
+        "last": "2026-08-21T00:00:00+00:00",
+        "span_days": 6661.0,
+        "step_median_s": 86400.0,
+        "gaps_max_s": [
+         1296000.0,
+         1123200.0,
+         1036800.0
+        ],
+        "tod_utc_min": "00:00",
+        "tod_utc_max": "00:00",
+        "n_steps": 4999,
+        "n_gaps_gt_step": 976,
+        "n_gaps_intrasession": 941,
+        "bars_expected_if_continuous": 6662,
+        "fill_pct_vs_continuous": 75.05
+       },
+       "oldest_call": {
+        "ms": 270.8,
+        "ok": true,
+        "rows": 1,
+        "status": null,
+        "error": null
+       },
+       "oldest_bar": "2004-03-17T00:00:00.000000Z"
+      }
+     },
+     "series": null,
+     "cross_probe": {
+      "kind": "sdk",
+      "target": "series(AU200/AUD) [cross]",
+      "ms": 206.3,
+      "bytes": 0,
+      "rows": null,
+      "ok": false,
+      "status": 400,
+      "error": "{\"detail\":\"not a series dataset; valid: ['bond_futures', 'bonds', 'corporate_bonds', 'credit_indices', 'economics', 'fx_derivatives', 'sovereign_yields']\"}"
+     }
+    }
+   ]
+  }
+ }
+}

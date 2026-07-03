@@ -1,0 +1,88 @@
+//@version=6
+indicator("Bento Dual-Timeframe Reversal Predictor v2", overlay = true, max_labels_count = 500)
+
+// Independent REVERSAL detector reconstructed from the public message.
+// Recommended chart: 5 minutes, regular session only.
+// A strong signal requires the opening gap plus confirmed 15m AND 30m
+// closes beyond their Bollinger Bands with matching RSI extremes.
+
+string tz = input.string("America/New_York", "Session timezone")
+string rth = input.session("0930-1600", "Regular session")
+float minimumGap = input.float(0.0, "Minimum opening gap (%)", step = 0.05) / 100
+int bbLength = input.int(20, "Bollinger length", minval = 2)
+float bbDeviation = input.float(2.0, "Bollinger deviations", step = 0.1)
+int rsiLength = input.int(14, "RSI length", minval = 2)
+float overbought = input.float(70.0, "RSI overbought")
+float oversold = input.float(30.0, "RSI oversold")
+bool showEarly15 = input.bool(true, "Show early 15m watch")
+bool showBands = input.bool(true, "Show 15m Bollinger Bands")
+bool dynamicWebhookAlerts = input.bool(true, "Send dynamic alert() JSON")
+
+bool isFiveMinute = timeframe.isminutes and timeframe.multiplier == 5
+bool inSession = not na(time(timeframe.period, rth, tz))
+bool firstSessionBar = inSession and not inSession[1]
+var float sessionOpen = na
+if firstSessionBar
+    sessionOpen := open
+
+float previousDailyClose = request.security(
+     syminfo.tickerid, "D", close[1], gaps = barmerge.gaps_off,
+     lookahead = barmerge.lookahead_on)
+
+f_bb_state() =>
+    float basis = ta.sma(close, bbLength)
+    float deviation = bbDeviation * ta.stdev(close, bbLength)
+    [close, basis, basis + deviation, basis - deviation, ta.rsi(close, rsiLength)]
+
+[c15, basis15, upper15, lower15, rsi15] = request.security(
+     syminfo.tickerid, "15", f_bb_state(), gaps = barmerge.gaps_off,
+     lookahead = barmerge.lookahead_off)
+[c30, basis30, upper30, lower30, rsi30] = request.security(
+     syminfo.tickerid, "30", f_bb_state(), gaps = barmerge.gaps_off,
+     lookahead = barmerge.lookahead_off)
+
+float gapPct = previousDailyClose != 0 ? sessionOpen / previousDailyClose - 1 : 0
+bool gapUp = gapPct >= minimumGap
+bool gapDown = gapPct <= -minimumGap
+// On a 5m chart, the bar stamped 09:40 closes at 09:45 and completes the first 15m.
+// The bar stamped 09:55 closes at 10:00 and completes the first 30m.
+bool first15Close = inSession and hour(time, tz) == 9 and minute(time, tz) == 40
+bool first30Close = inSession and hour(time, tz) == 9 and minute(time, tz) == 55
+
+bool earlyDown = showEarly15 and first15Close and gapUp and c15 > upper15 and rsi15 >= overbought
+bool earlyUp = showEarly15 and first15Close and gapDown and c15 < lower15 and rsi15 <= oversold
+bool confirmedDown = first30Close and gapUp and c15 > upper15 and rsi15 >= overbought and c30 > upper30 and rsi30 >= overbought
+bool confirmedUp = first30Close and gapDown and c15 < lower15 and rsi15 <= oversold and c30 < lower30 and rsi30 <= oversold
+
+plot(showBands ? basis15 : na, "15m BB basis", color = color.new(color.gray, 20))
+pUpper = plot(showBands ? upper15 : na, "15m BB upper", color = color.new(color.gray, 45))
+pLower = plot(showBands ? lower15 : na, "15m BB lower", color = color.new(color.gray, 45))
+fill(pUpper, pLower, color = color.new(color.gray, 93))
+
+plotshape(earlyDown, "Early reversal watch down", shape.circle, location.abovebar, color.orange, size = size.tiny, text = "15R")
+plotshape(earlyUp, "Early reversal watch up", shape.circle, location.belowbar, color.orange, size = size.tiny, text = "15R")
+plotshape(confirmedDown, "Confirmed reversal down", shape.triangledown, location.abovebar, color.red, size = size.large, text = "REV")
+plotshape(confirmedUp, "Confirmed reversal up", shape.triangleup, location.belowbar, color.lime, size = size.large, text = "REV")
+
+alertcondition(confirmedDown, "Bento reversal predicted down", "Bento dual-timeframe opening reversal predicts DOWN.")
+alertcondition(confirmedUp, "Bento reversal predicted up", "Bento dual-timeframe opening reversal predicts UP.")
+
+if dynamicWebhookAlerts and confirmedDown
+    alert('{"indicator":"bento_v2","symbol":"' + syminfo.ticker + '","direction":"down","gap_pct":' + str.tostring(gapPct * 100, "#.###") + ',"rsi15":' + str.tostring(rsi15, "#.##") + ',"rsi30":' + str.tostring(rsi30, "#.##") + '}', alert.freq_once_per_bar_close)
+if dynamicWebhookAlerts and confirmedUp
+    alert('{"indicator":"bento_v2","symbol":"' + syminfo.ticker + '","direction":"up","gap_pct":' + str.tostring(gapPct * 100, "#.###") + ',"rsi15":' + str.tostring(rsi15, "#.##") + ',"rsi30":' + str.tostring(rsi30, "#.##") + '}', alert.freq_once_per_bar_close)
+
+var table dashboard = table.new(position.top_right, 2, 6, border_width = 1)
+if barstate.islast
+    table.cell(dashboard, 0, 0, "BENTO v2")
+    table.cell(dashboard, 1, 0, isFiveMinute ? "5m READY" : "USE 5m", bgcolor = isFiveMinute ? color.new(color.green, 75) : color.new(color.red, 70))
+    table.cell(dashboard, 0, 1, "Opening gap")
+    table.cell(dashboard, 1, 1, str.tostring(gapPct * 100, "+#.##;-#.##") + "%")
+    table.cell(dashboard, 0, 2, "15m RSI")
+    table.cell(dashboard, 1, 2, str.tostring(rsi15, "#.0"))
+    table.cell(dashboard, 0, 3, "30m RSI")
+    table.cell(dashboard, 1, 3, str.tostring(rsi30, "#.0"))
+    table.cell(dashboard, 0, 4, "15m state")
+    table.cell(dashboard, 1, 4, c15 > upper15 ? "ABOVE UPPER" : c15 < lower15 ? "BELOW LOWER" : "INSIDE")
+    table.cell(dashboard, 0, 5, "Output")
+    table.cell(dashboard, 1, 5, confirmedDown ? "REVERSAL DOWN" : confirmedUp ? "REVERSAL UP" : earlyDown or earlyUp ? "EARLY WATCH" : "NO SETUP")

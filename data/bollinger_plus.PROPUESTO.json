@@ -1,0 +1,2974 @@
+{
+ "AAPL": {
+  "base": {
+   "n": 157,
+   "n_eff": 33.5,
+   "p": 58.6,
+   "wilson": [
+    41.9,
+    73.5
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F5_squeeze",
+    "n": 45,
+    "n_eff": 24.7,
+    "p": 68.9,
+    "uplift": 10.3,
+    "wilson": [
+     49.2,
+     83.5
+    ],
+    "pval": 0.26084,
+    "fdr_q": 0.9794,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9794) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_0945",
+    "n": 17,
+    "n_eff": 12.1,
+    "p": 35.3,
+    "uplift": -23.3,
+    "wilson": [
+     15.1,
+     62.6
+    ],
+    "pval": 0.11937,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "AMD": {
+  "base": {
+   "n": 161,
+   "n_eff": 34.3,
+   "p": 72.7,
+   "wilson": [
+    56.1,
+    84.7
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F1_rvol15",
+    "n": 21,
+    "n_eff": 14.9,
+    "p": 81.0,
+    "uplift": 8.3,
+    "wilson": [
+     55.7,
+     93.5
+    ],
+    "pval": 0.48506,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F4_zvwap15",
+    "n": 21,
+    "n_eff": 14.9,
+    "p": 52.4,
+    "uplift": -20.3,
+    "wilson": [
+     29.3,
+     74.5
+    ],
+    "pval": 0.10833,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F5_squeeze",
+    "n": 49,
+    "n_eff": 26.9,
+    "p": 87.8,
+    "uplift": 15.1,
+    "wilson": [
+     70.5,
+     95.5
+    ],
+    "pval": 0.0719,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_0945",
+    "n": 19,
+    "n_eff": 13.5,
+    "p": 52.6,
+    "uplift": -20.1,
+    "wilson": [
+     28.5,
+     75.6
+    ],
+    "pval": 0.12903,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1400",
+    "n": 43,
+    "n_eff": 23.6,
+    "p": 81.4,
+    "uplift": 8.7,
+    "wilson": [
+     61.8,
+     92.2
+    ],
+    "pval": 0.30843,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "AMZN": {
+  "base": {
+   "n": 165,
+   "n_eff": 35.2,
+   "p": 61.2,
+   "wilson": [
+    44.8,
+    75.4
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F1_rvol15",
+    "n": 17,
+    "n_eff": 12.1,
+    "p": 82.4,
+    "uplift": 21.2,
+    "wilson": [
+     54.2,
+     94.8
+    ],
+    "pval": 0.13987,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F4_zvwap15",
+    "n": 23,
+    "n_eff": 16.3,
+    "p": 43.5,
+    "uplift": -17.7,
+    "wilson": [
+     23.0,
+     66.4
+    ],
+    "pval": 0.16833,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F5_squeeze",
+    "n": 45,
+    "n_eff": 24.7,
+    "p": 73.3,
+    "uplift": 12.1,
+    "wilson": [
+     53.7,
+     86.7
+    ],
+    "pval": 0.18388,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "ASML": {
+  "base": {
+   "n": 151,
+   "n_eff": 35.3,
+   "p": 68.2,
+   "wilson": [
+    51.7,
+    81.1
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F6_0945",
+    "n": 17,
+    "n_eff": 12.1,
+    "p": 52.9,
+    "uplift": -15.3,
+    "wilson": [
+     27.7,
+     76.8
+    ],
+    "pval": 0.27834,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1030",
+    "n": 29,
+    "n_eff": 20.6,
+    "p": 79.3,
+    "uplift": 11.1,
+    "wilson": [
+     58.0,
+     91.4
+    ],
+    "pval": 0.28552,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1130",
+    "n": 64,
+    "n_eff": 28.7,
+    "p": 57.8,
+    "uplift": -10.4,
+    "wilson": [
+     39.9,
+     73.9
+    ],
+    "pval": 0.14712,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1400",
+    "n": 41,
+    "n_eff": 22.5,
+    "p": 82.9,
+    "uplift": 14.7,
+    "wilson": [
+     63.0,
+     93.3
+    ],
+    "pval": 0.10563,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F8a_adx_lt20",
+    "n": 39,
+    "n_eff": 17.5,
+    "p": 74.4,
+    "uplift": 6.2,
+    "wilson": [
+     50.9,
+     89.0
+    ],
+    "pval": 0.62099,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "AVGO": {
+  "base": {
+   "n": 157,
+   "n_eff": 33.5,
+   "p": 70.7,
+   "wilson": [
+    53.8,
+    83.3
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F4_zvwap15",
+    "n": 24,
+    "n_eff": 17.0,
+    "p": 50.0,
+    "uplift": -20.7,
+    "wilson": [
+     28.5,
+     71.5
+    ],
+    "pval": 0.08103,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_0945",
+    "n": 18,
+    "n_eff": 12.8,
+    "p": 55.6,
+    "uplift": -15.1,
+    "wilson": [
+     30.3,
+     78.2
+    ],
+    "pval": 0.2676,
+    "fdr_q": 0.9794,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9794) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1400",
+    "n": 39,
+    "n_eff": 21.4,
+    "p": 82.1,
+    "uplift": 11.4,
+    "wilson": [
+     61.4,
+     92.9
+    ],
+    "pval": 0.21839,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "DRAM": {
+  "base": {
+   "n": 153,
+   "n_eff": 35.7,
+   "p": 58.8,
+   "wilson": [
+    42.6,
+    73.3
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F5_squeeze",
+    "n": 47,
+    "n_eff": 25.8,
+    "p": 70.2,
+    "uplift": 11.4,
+    "wilson": [
+     50.9,
+     84.3
+    ],
+    "pval": 0.2102,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1130",
+    "n": 66,
+    "n_eff": 29.6,
+    "p": 47.0,
+    "uplift": -11.8,
+    "wilson": [
+     30.4,
+     64.2
+    ],
+    "pval": 0.10833,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1400",
+    "n": 42,
+    "n_eff": 23.1,
+    "p": 76.2,
+    "uplift": 17.4,
+    "wilson": [
+     55.9,
+     89.0
+    ],
+    "pval": 0.0704,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F8a_adx_lt20",
+    "n": 34,
+    "n_eff": 18.7,
+    "p": 52.9,
+    "uplift": -5.9,
+    "wilson": [
+     31.8,
+     73.1
+    ],
+    "pval": 0.56155,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "EWY": {
+  "base": {
+   "n": 140,
+   "n_eff": 32.7,
+   "p": 62.1,
+   "wilson": [
+    45.1,
+    76.6
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F5_squeeze",
+    "n": 37,
+    "n_eff": 20.3,
+    "p": 70.3,
+    "uplift": 8.2,
+    "wilson": [
+     48.5,
+     85.6
+    ],
+    "pval": 0.35397,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_0945",
+    "n": 24,
+    "n_eff": 17.0,
+    "p": 70.8,
+    "uplift": 8.7,
+    "wilson": [
+     47.1,
+     86.9
+    ],
+    "pval": 0.46316,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1030",
+    "n": 23,
+    "n_eff": 16.3,
+    "p": 56.5,
+    "uplift": -5.6,
+    "wilson": [
+     33.6,
+     77.0
+    ],
+    "pval": 0.64726,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1130",
+    "n": 56,
+    "n_eff": 25.1,
+    "p": 57.1,
+    "uplift": -5.0,
+    "wilson": [
+     38.1,
+     74.2
+    ],
+    "pval": 0.52052,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1400",
+    "n": 37,
+    "n_eff": 20.3,
+    "p": 67.6,
+    "uplift": 5.5,
+    "wilson": [
+     45.9,
+     83.6
+    ],
+    "pval": 0.59517,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "GLD": {
+  "base": {
+   "n": 158,
+   "n_eff": 33.7,
+   "p": 62.7,
+   "wilson": [
+    45.8,
+    76.9
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F1_rvol15",
+    "n": 38,
+    "n_eff": 20.9,
+    "p": 68.4,
+    "uplift": 5.7,
+    "wilson": [
+     47.0,
+     84.1
+    ],
+    "pval": 0.57684,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F5_squeeze",
+    "n": 50,
+    "n_eff": 27.5,
+    "p": 76.0,
+    "uplift": 13.3,
+    "wilson": [
+     57.5,
+     88.1
+    ],
+    "pval": 0.12347,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_0945",
+    "n": 20,
+    "n_eff": 14.2,
+    "p": 50.0,
+    "uplift": -12.7,
+    "wilson": [
+     26.9,
+     73.1
+    ],
+    "pval": 0.35302,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1400",
+    "n": 38,
+    "n_eff": 20.9,
+    "p": 71.1,
+    "uplift": 8.4,
+    "wilson": [
+     49.6,
+     86.0
+    ],
+    "pval": 0.41471,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "GOOGL": {
+  "base": {
+   "n": 163,
+   "n_eff": 34.8,
+   "p": 67.5,
+   "wilson": [
+    50.9,
+    80.6
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F5_squeeze",
+    "n": 52,
+    "n_eff": 23.3,
+    "p": 88.5,
+    "uplift": 21.0,
+    "wilson": [
+     69.8,
+     96.2
+    ],
+    "pval": 0.01067,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_0945",
+    "n": 18,
+    "n_eff": 12.8,
+    "p": 61.1,
+    "uplift": -6.4,
+    "wilson": [
+     35.0,
+     82.1
+    ],
+    "pval": 0.64437,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1400",
+    "n": 42,
+    "n_eff": 23.1,
+    "p": 73.8,
+    "uplift": 6.3,
+    "wilson": [
+     53.5,
+     87.4
+    ],
+    "pval": 0.50239,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F8a_adx_lt20",
+    "n": 55,
+    "n_eff": 20.8,
+    "p": 83.6,
+    "uplift": 16.1,
+    "wilson": [
+     62.9,
+     93.9
+    ],
+    "pval": 0.05331,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F8b_adx_ge25",
+    "n": 78,
+    "n_eff": 29.5,
+    "p": 52.6,
+    "uplift": -14.9,
+    "wilson": [
+     35.3,
+     69.2
+    ],
+    "pval": 0.02714,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "INTC": {
+  "base": {
+   "n": 166,
+   "n_eff": 35.4,
+   "p": 61.4,
+   "wilson": [
+    45.1,
+    75.6
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F4_zvwap15",
+    "n": 19,
+    "n_eff": 13.5,
+    "p": 36.8,
+    "uplift": -24.6,
+    "wilson": [
+     16.9,
+     62.7
+    ],
+    "pval": 0.08101,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F5_squeeze",
+    "n": 60,
+    "n_eff": 26.9,
+    "p": 76.7,
+    "uplift": 15.3,
+    "wilson": [
+     58.0,
+     88.7
+    ],
+    "pval": 0.07212,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_0945",
+    "n": 17,
+    "n_eff": 12.1,
+    "p": 47.1,
+    "uplift": -14.3,
+    "wilson": [
+     23.2,
+     72.3
+    ],
+    "pval": 0.3295,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1030",
+    "n": 31,
+    "n_eff": 22.0,
+    "p": 67.7,
+    "uplift": 6.3,
+    "wilson": [
+     46.9,
+     83.3
+    ],
+    "pval": 0.55596,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F8a_adx_lt20",
+    "n": 54,
+    "n_eff": 24.2,
+    "p": 68.5,
+    "uplift": 7.1,
+    "wilson": [
+     48.6,
+     83.4
+    ],
+    "pval": 0.45254,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "LRCX": {
+  "base": {
+   "n": 151,
+   "n_eff": 35.3,
+   "p": 64.2,
+   "wilson": [
+    47.8,
+    77.9
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F4_zvwap15",
+    "n": 15,
+    "n_eff": 10.6,
+    "p": 46.7,
+    "uplift": -17.5,
+    "wilson": [
+     21.8,
+     73.3
+    ],
+    "pval": 0.25156,
+    "fdr_q": 0.9794,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9794) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F5_squeeze",
+    "n": 44,
+    "n_eff": 24.2,
+    "p": 79.5,
+    "uplift": 15.3,
+    "wilson": [
+     60.0,
+     91.0
+    ],
+    "pval": 0.08783,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1130",
+    "n": 69,
+    "n_eff": 26.1,
+    "p": 58.0,
+    "uplift": -6.2,
+    "wilson": [
+     39.3,
+     74.6
+    ],
+    "pval": 0.36432,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1400",
+    "n": 43,
+    "n_eff": 23.6,
+    "p": 76.7,
+    "uplift": 12.5,
+    "wilson": [
+     56.8,
+     89.2
+    ],
+    "pval": 0.17337,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F8a_adx_lt20",
+    "n": 40,
+    "n_eff": 17.9,
+    "p": 72.5,
+    "uplift": 8.3,
+    "wilson": [
+     49.4,
+     87.7
+    ],
+    "pval": 0.41948,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F8b_adx_ge25",
+    "n": 83,
+    "n_eff": 27.2,
+    "p": 59.0,
+    "uplift": -5.2,
+    "wilson": [
+     40.6,
+     75.3
+    ],
+    "pval": 0.37768,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "META": {
+  "base": {
+   "n": 158,
+   "n_eff": 33.7,
+   "p": 69.6,
+   "wilson": [
+    52.8,
+    82.5
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F4_zvwap15",
+    "n": 18,
+    "n_eff": 12.8,
+    "p": 50.0,
+    "uplift": -19.6,
+    "wilson": [
+     26.0,
+     74.0
+    ],
+    "pval": 0.15686,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_0945",
+    "n": 17,
+    "n_eff": 12.1,
+    "p": 76.5,
+    "uplift": 6.9,
+    "wilson": [
+     48.3,
+     91.9
+    ],
+    "pval": 0.61579,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1030",
+    "n": 23,
+    "n_eff": 16.3,
+    "p": 56.5,
+    "uplift": -13.1,
+    "wilson": [
+     33.6,
+     77.0
+    ],
+    "pval": 0.27719,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1130",
+    "n": 70,
+    "n_eff": 26.5,
+    "p": 62.9,
+    "uplift": -6.7,
+    "wilson": [
+     44.0,
+     78.5
+    ],
+    "pval": 0.32829,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1400",
+    "n": 48,
+    "n_eff": 26.4,
+    "p": 83.3,
+    "uplift": 13.7,
+    "wilson": [
+     65.1,
+     93.0
+    ],
+    "pval": 0.09371,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "MSFT": {
+  "base": {
+   "n": 167,
+   "n_eff": 35.6,
+   "p": 66.5,
+   "wilson": [
+    50.0,
+    79.7
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F4_zvwap15",
+    "n": 16,
+    "n_eff": 11.3,
+    "p": 25.0,
+    "uplift": -41.5,
+    "wilson": [
+     8.6,
+     54.0
+    ],
+    "pval": 0.00615,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F5_squeeze",
+    "n": 50,
+    "n_eff": 27.5,
+    "p": 84.0,
+    "uplift": 17.5,
+    "wilson": [
+     66.3,
+     93.3
+    ],
+    "pval": 0.03833,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_0945",
+    "n": 18,
+    "n_eff": 12.8,
+    "p": 61.1,
+    "uplift": -5.4,
+    "wilson": [
+     35.0,
+     82.1
+    ],
+    "pval": 0.69953,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1030",
+    "n": 31,
+    "n_eff": 22.0,
+    "p": 48.4,
+    "uplift": -18.1,
+    "wilson": [
+     29.4,
+     67.9
+    ],
+    "pval": 0.09248,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1400",
+    "n": 53,
+    "n_eff": 23.8,
+    "p": 73.6,
+    "uplift": 7.1,
+    "wilson": [
+     53.5,
+     87.1
+    ],
+    "pval": 0.40801,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F7_15m_in",
+    "n": 135,
+    "n_eff": 34.9,
+    "p": 71.9,
+    "uplift": 5.4,
+    "wilson": [
+     55.4,
+     84.0
+    ],
+    "pval": 0.03548,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F8a_adx_lt20",
+    "n": 55,
+    "n_eff": 20.8,
+    "p": 78.2,
+    "uplift": 11.7,
+    "wilson": [
+     56.9,
+     90.7
+    ],
+    "pval": 0.21925,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "MU": {
+  "base": {
+   "n": 167,
+   "n_eff": 35.6,
+   "p": 61.7,
+   "wilson": [
+    45.3,
+    75.8
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F4_zvwap15",
+    "n": 22,
+    "n_eff": 15.6,
+    "p": 54.5,
+    "uplift": -7.2,
+    "wilson": [
+     31.5,
+     75.8
+    ],
+    "pval": 0.58345,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F5_squeeze",
+    "n": 50,
+    "n_eff": 22.4,
+    "p": 72.0,
+    "uplift": 10.3,
+    "wilson": [
+     51.3,
+     86.3
+    ],
+    "pval": 0.25678,
+    "fdr_q": 0.9794,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9794) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_0945",
+    "n": 21,
+    "n_eff": 14.9,
+    "p": 47.6,
+    "uplift": -14.1,
+    "wilson": [
+     25.5,
+     70.7
+    ],
+    "pval": 0.29283,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1400",
+    "n": 40,
+    "n_eff": 22.0,
+    "p": 75.0,
+    "uplift": 13.3,
+    "wilson": [
+     54.2,
+     88.4
+    ],
+    "pval": 0.18405,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F8b_adx_ge25",
+    "n": 82,
+    "n_eff": 23.7,
+    "p": 56.1,
+    "uplift": -5.6,
+    "wilson": [
+     36.7,
+     73.8
+    ],
+    "pval": 0.38864,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "NFLX": {
+  "base": {
+   "n": 160,
+   "n_eff": 34.1,
+   "p": 78.1,
+   "wilson": [
+    61.8,
+    88.7
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F1_rvol15",
+    "n": 20,
+    "n_eff": 14.2,
+    "p": 70.0,
+    "uplift": -8.1,
+    "wilson": [
+     44.2,
+     87.3
+    ],
+    "pval": 0.49105,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F4_zvwap15",
+    "n": 21,
+    "n_eff": 14.9,
+    "p": 66.7,
+    "uplift": -11.4,
+    "wilson": [
+     41.6,
+     84.9
+    ],
+    "pval": 0.32571,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F5_squeeze",
+    "n": 54,
+    "n_eff": 24.2,
+    "p": 83.3,
+    "uplift": 5.2,
+    "wilson": [
+     64.2,
+     93.3
+    ],
+    "pval": 0.42307,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_0945",
+    "n": 16,
+    "n_eff": 11.3,
+    "p": 68.8,
+    "uplift": -9.3,
+    "wilson": [
+     40.2,
+     87.8
+    ],
+    "pval": 0.47395,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1030",
+    "n": 30,
+    "n_eff": 21.3,
+    "p": 70.0,
+    "uplift": -8.1,
+    "wilson": [
+     48.8,
+     85.1
+    ],
+    "pval": 0.39724,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1400",
+    "n": 43,
+    "n_eff": 23.6,
+    "p": 88.4,
+    "uplift": 10.3,
+    "wilson": [
+     69.9,
+     96.1
+    ],
+    "pval": 0.19035,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F8a_adx_lt20",
+    "n": 48,
+    "n_eff": 21.5,
+    "p": 72.9,
+    "uplift": -5.2,
+    "wilson": [
+     51.8,
+     87.1
+    ],
+    "pval": 0.52587,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "NOK": {
+  "base": {
+   "n": 160,
+   "n_eff": 34.1,
+   "p": 68.8,
+   "wilson": [
+    52.0,
+    81.7
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F1_rvol15",
+    "n": 27,
+    "n_eff": 19.1,
+    "p": 81.5,
+    "uplift": 12.7,
+    "wilson": [
+     59.5,
+     92.9
+    ],
+    "pval": 0.2334,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F4_zvwap15",
+    "n": 19,
+    "n_eff": 13.5,
+    "p": 47.4,
+    "uplift": -21.4,
+    "wilson": [
+     24.4,
+     71.5
+    ],
+    "pval": 0.11667,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F5_squeeze",
+    "n": 57,
+    "n_eff": 25.6,
+    "p": 80.7,
+    "uplift": 11.9,
+    "wilson": [
+     61.9,
+     91.5
+    ],
+    "pval": 0.15432,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1030",
+    "n": 29,
+    "n_eff": 20.6,
+    "p": 55.2,
+    "uplift": -13.6,
+    "wilson": [
+     34.6,
+     74.1
+    ],
+    "pval": 0.21215,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1400",
+    "n": 40,
+    "n_eff": 22.0,
+    "p": 75.0,
+    "uplift": 6.2,
+    "wilson": [
+     54.2,
+     88.4
+    ],
+    "pval": 0.5138,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F8a_adx_lt20",
+    "n": 56,
+    "n_eff": 25.1,
+    "p": 76.8,
+    "uplift": 8.0,
+    "wilson": [
+     57.4,
+     89.0
+    ],
+    "pval": 0.38352,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "NVDA": {
+  "base": {
+   "n": 156,
+   "n_eff": 33.3,
+   "p": 66.0,
+   "wilson": [
+    49.0,
+    79.7
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F1_rvol15",
+    "n": 16,
+    "n_eff": 11.3,
+    "p": 87.5,
+    "uplift": 21.5,
+    "wilson": [
+     58.9,
+     97.2
+    ],
+    "pval": 0.13058,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F4_zvwap15",
+    "n": 21,
+    "n_eff": 14.9,
+    "p": 57.1,
+    "uplift": -8.9,
+    "wilson": [
+     33.2,
+     78.1
+    ],
+    "pval": 0.48875,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F5_squeeze",
+    "n": 48,
+    "n_eff": 26.4,
+    "p": 79.2,
+    "uplift": 13.2,
+    "wilson": [
+     60.5,
+     90.4
+    ],
+    "pval": 0.13754,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1030",
+    "n": 28,
+    "n_eff": 19.9,
+    "p": 53.6,
+    "uplift": -12.4,
+    "wilson": [
+     32.9,
+     73.1
+    ],
+    "pval": 0.26796,
+    "fdr_q": 0.9794,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9794) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1400",
+    "n": 43,
+    "n_eff": 23.6,
+    "p": 76.7,
+    "uplift": 10.7,
+    "wilson": [
+     56.8,
+     89.2
+    ],
+    "pval": 0.23957,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "QCOM": {
+  "base": {
+   "n": 147,
+   "n_eff": 34.3,
+   "p": 70.1,
+   "wilson": [
+    53.4,
+    82.7
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F1_rvol15",
+    "n": 31,
+    "n_eff": 17.0,
+    "p": 83.9,
+    "uplift": 13.8,
+    "wilson": [
+     60.7,
+     94.6
+    ],
+    "pval": 0.18912,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F4_zvwap15",
+    "n": 15,
+    "n_eff": 10.6,
+    "p": 86.7,
+    "uplift": 16.6,
+    "wilson": [
+     56.9,
+     97.0
+    ],
+    "pval": 0.23804,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F5_squeeze",
+    "n": 43,
+    "n_eff": 23.6,
+    "p": 81.4,
+    "uplift": 11.3,
+    "wilson": [
+     61.8,
+     92.2
+    ],
+    "pval": 0.20164,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_0945",
+    "n": 15,
+    "n_eff": 10.6,
+    "p": 60.0,
+    "uplift": -10.1,
+    "wilson": [
+     32.0,
+     82.7
+    ],
+    "pval": 0.49169,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1030",
+    "n": 30,
+    "n_eff": 21.3,
+    "p": 76.7,
+    "uplift": 6.6,
+    "wilson": [
+     55.6,
+     89.6
+    ],
+    "pval": 0.50653,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1130",
+    "n": 63,
+    "n_eff": 28.3,
+    "p": 65.1,
+    "uplift": -5.0,
+    "wilson": [
+     46.7,
+     79.9
+    ],
+    "pval": 0.4624,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1400",
+    "n": 39,
+    "n_eff": 21.4,
+    "p": 76.9,
+    "uplift": 6.8,
+    "wilson": [
+     55.9,
+     89.8
+    ],
+    "pval": 0.46178,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F8a_adx_lt20",
+    "n": 54,
+    "n_eff": 24.2,
+    "p": 64.8,
+    "uplift": -5.3,
+    "wilson": [
+     45.0,
+     80.6
+    ],
+    "pval": 0.45865,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F8b_adx_ge25",
+    "n": 60,
+    "n_eff": 26.9,
+    "p": 76.7,
+    "uplift": 6.6,
+    "wilson": [
+     58.0,
+     88.7
+    ],
+    "pval": 0.38246,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "QQQ": {
+  "base": {
+   "n": 145,
+   "n_eff": 33.9,
+   "p": 66.9,
+   "wilson": [
+    50.1,
+    80.3
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F1_rvol15",
+    "n": 20,
+    "n_eff": 14.2,
+    "p": 60.0,
+    "uplift": -6.9,
+    "wilson": [
+     35.2,
+     80.6
+    ],
+    "pval": 0.59712,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F5_squeeze",
+    "n": 45,
+    "n_eff": 24.7,
+    "p": 84.4,
+    "uplift": 17.5,
+    "wilson": [
+     65.7,
+     93.9
+    ],
+    "pval": 0.04098,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_0945",
+    "n": 17,
+    "n_eff": 12.1,
+    "p": 52.9,
+    "uplift": -14.0,
+    "wilson": [
+     27.7,
+     76.8
+    ],
+    "pval": 0.326,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1030",
+    "n": 28,
+    "n_eff": 19.9,
+    "p": 60.7,
+    "uplift": -6.2,
+    "wilson": [
+     39.2,
+     78.7
+    ],
+    "pval": 0.56851,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1400",
+    "n": 36,
+    "n_eff": 19.8,
+    "p": 80.6,
+    "uplift": 13.7,
+    "wilson": [
+     58.9,
+     92.3
+    ],
+    "pval": 0.16933,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F8a_adx_lt20",
+    "n": 33,
+    "n_eff": 14.8,
+    "p": 72.7,
+    "uplift": 5.8,
+    "wilson": [
+     47.3,
+     88.8
+    ],
+    "pval": 0.63515,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "SKHY": {
+  "base": {
+   "n": 71,
+   "n_eff": 16.6,
+   "p": 57.7,
+   "wilson": [
+    34.8,
+    77.8
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F5_squeeze",
+    "n": 18,
+    "n_eff": 9.9,
+    "p": 83.3,
+    "uplift": 25.6,
+    "wilson": [
+     52.2,
+     95.8
+    ],
+    "pval": 0.0772,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1400",
+    "n": 18,
+    "n_eff": 9.9,
+    "p": 50.0,
+    "uplift": -7.7,
+    "wilson": [
+     23.6,
+     76.4
+    ],
+    "pval": 0.60802,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F8a_adx_lt20",
+    "n": 21,
+    "n_eff": 8.0,
+    "p": 66.7,
+    "uplift": 9.0,
+    "wilson": [
+     33.8,
+     88.7
+    ],
+    "pval": 0.53203,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "SMH": {
+  "base": {
+   "n": 154,
+   "n_eff": 32.8,
+   "p": 62.3,
+   "wilson": [
+    45.3,
+    76.8
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F5_squeeze",
+    "n": 38,
+    "n_eff": 20.9,
+    "p": 71.1,
+    "uplift": 8.8,
+    "wilson": [
+     49.6,
+     86.0
+    ],
+    "pval": 0.39028,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_0945",
+    "n": 20,
+    "n_eff": 14.2,
+    "p": 45.0,
+    "uplift": -17.3,
+    "wilson": [
+     23.1,
+     69.1
+    ],
+    "pval": 0.19853,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1030",
+    "n": 27,
+    "n_eff": 19.1,
+    "p": 77.8,
+    "uplift": 15.5,
+    "wilson": [
+     55.5,
+     90.8
+    ],
+    "pval": 0.16945,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1130",
+    "n": 70,
+    "n_eff": 26.5,
+    "p": 52.9,
+    "uplift": -9.4,
+    "wilson": [
+     34.7,
+     70.3
+    ],
+    "pval": 0.17251,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1400",
+    "n": 37,
+    "n_eff": 20.3,
+    "p": 78.4,
+    "uplift": 16.1,
+    "wilson": [
+     56.8,
+     90.9
+    ],
+    "pval": 0.11427,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F8a_adx_lt20",
+    "n": 37,
+    "n_eff": 16.6,
+    "p": 48.6,
+    "uplift": -13.7,
+    "wilson": [
+     27.2,
+     70.6
+    ],
+    "pval": 0.21412,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "SNDK": {
+  "base": {
+   "n": 158,
+   "n_eff": 33.7,
+   "p": 65.8,
+   "wilson": [
+    48.9,
+    79.5
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F1_rvol15",
+    "n": 21,
+    "n_eff": 14.9,
+    "p": 57.1,
+    "uplift": -8.7,
+    "wilson": [
+     33.2,
+     78.1
+    ],
+    "pval": 0.50619,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F4_zvwap15",
+    "n": 20,
+    "n_eff": 14.2,
+    "p": 50.0,
+    "uplift": -15.8,
+    "wilson": [
+     26.9,
+     73.1
+    ],
+    "pval": 0.24,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F5_squeeze",
+    "n": 45,
+    "n_eff": 24.7,
+    "p": 75.6,
+    "uplift": 9.8,
+    "wilson": [
+     56.0,
+     88.2
+    ],
+    "pval": 0.30371,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_0945",
+    "n": 18,
+    "n_eff": 12.8,
+    "p": 50.0,
+    "uplift": -15.8,
+    "wilson": [
+     26.0,
+     74.0
+    ],
+    "pval": 0.2628,
+    "fdr_q": 0.9794,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9794) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1030",
+    "n": 30,
+    "n_eff": 21.3,
+    "p": 60.0,
+    "uplift": -5.8,
+    "wilson": [
+     39.3,
+     77.7
+    ],
+    "pval": 0.58916,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1130",
+    "n": 66,
+    "n_eff": 29.6,
+    "p": 60.6,
+    "uplift": -5.2,
+    "wilson": [
+     42.8,
+     76.0
+    ],
+    "pval": 0.46746,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1400",
+    "n": 44,
+    "n_eff": 24.2,
+    "p": 84.1,
+    "uplift": 18.3,
+    "wilson": [
+     65.1,
+     93.7
+    ],
+    "pval": 0.04004,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F8a_adx_lt20",
+    "n": 36,
+    "n_eff": 16.1,
+    "p": 58.3,
+    "uplift": -7.5,
+    "wilson": [
+     35.1,
+     78.4
+    ],
+    "pval": 0.46084,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "SPCX": {
+  "base": {
+   "n": 153,
+   "n_eff": 35.7,
+   "p": 66.0,
+   "wilson": [
+    49.6,
+    79.3
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F5_squeeze",
+    "n": 39,
+    "n_eff": 21.4,
+    "p": 76.9,
+    "uplift": 10.9,
+    "wilson": [
+     55.9,
+     89.8
+    ],
+    "pval": 0.30408,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1030",
+    "n": 26,
+    "n_eff": 18.4,
+    "p": 53.8,
+    "uplift": -12.2,
+    "wilson": [
+     32.5,
+     73.9
+    ],
+    "pval": 0.29625,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F8a_adx_lt20",
+    "n": 41,
+    "n_eff": 18.4,
+    "p": 61.0,
+    "uplift": -5.0,
+    "wilson": [
+     38.7,
+     79.4
+    ],
+    "pval": 0.54222,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F8b_adx_ge25",
+    "n": 80,
+    "n_eff": 26.2,
+    "p": 72.5,
+    "uplift": 6.5,
+    "wilson": [
+     53.4,
+     85.8
+    ],
+    "pval": 0.37193,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "SPY": {
+  "base": {
+   "n": 167,
+   "n_eff": 35.6,
+   "p": 64.1,
+   "wilson": [
+    47.7,
+    77.7
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F4_zvwap15",
+    "n": 24,
+    "n_eff": 17.0,
+    "p": 50.0,
+    "uplift": -14.1,
+    "wilson": [
+     28.5,
+     71.5
+    ],
+    "pval": 0.25813,
+    "fdr_q": 0.9794,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9794) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F5_squeeze",
+    "n": 54,
+    "n_eff": 24.2,
+    "p": 72.2,
+    "uplift": 8.1,
+    "wilson": [
+     52.3,
+     86.0
+    ],
+    "pval": 0.3766,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1030",
+    "n": 34,
+    "n_eff": 24.1,
+    "p": 70.6,
+    "uplift": 6.5,
+    "wilson": [
+     50.6,
+     84.9
+    ],
+    "pval": 0.51621,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "STX": {
+  "base": {
+   "n": 164,
+   "n_eff": 35.0,
+   "p": 64.0,
+   "wilson": [
+    47.5,
+    77.8
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F1_rvol15",
+    "n": 29,
+    "n_eff": 15.9,
+    "p": 69.0,
+    "uplift": 5.0,
+    "wilson": [
+     44.6,
+     86.0
+    ],
+    "pval": 0.67757,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F4_zvwap15",
+    "n": 20,
+    "n_eff": 14.2,
+    "p": 50.0,
+    "uplift": -14.0,
+    "wilson": [
+     26.9,
+     73.1
+    ],
+    "pval": 0.30042,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F5_squeeze",
+    "n": 59,
+    "n_eff": 26.5,
+    "p": 78.0,
+    "uplift": 14.0,
+    "wilson": [
+     59.2,
+     89.6
+    ],
+    "pval": 0.08645,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_0945",
+    "n": 18,
+    "n_eff": 12.8,
+    "p": 38.9,
+    "uplift": -25.1,
+    "wilson": [
+     17.9,
+     65.0
+    ],
+    "pval": 0.07967,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1400",
+    "n": 39,
+    "n_eff": 21.4,
+    "p": 84.6,
+    "uplift": 20.6,
+    "wilson": [
+     64.3,
+     94.4
+    ],
+    "pval": 0.03705,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F8a_adx_lt20",
+    "n": 50,
+    "n_eff": 18.9,
+    "p": 70.0,
+    "uplift": 6.0,
+    "wilson": [
+     47.5,
+     85.7
+    ],
+    "pval": 0.59829,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F8b_adx_ge25",
+    "n": 87,
+    "n_eff": 28.5,
+    "p": 58.6,
+    "uplift": -5.4,
+    "wilson": [
+     40.6,
+     74.6
+    ],
+    "pval": 0.29027,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "TSLA": {
+  "base": {
+   "n": 161,
+   "n_eff": 34.3,
+   "p": 68.9,
+   "wilson": [
+    52.2,
+    81.8
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F1_rvol15",
+    "n": 25,
+    "n_eff": 17.7,
+    "p": 52.0,
+    "uplift": -16.9,
+    "wilson": [
+     30.6,
+     72.7
+    ],
+    "pval": 0.14793,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F4_zvwap15",
+    "n": 15,
+    "n_eff": 10.6,
+    "p": 60.0,
+    "uplift": -8.9,
+    "wilson": [
+     32.0,
+     82.7
+    ],
+    "pval": 0.54867,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F5_squeeze",
+    "n": 46,
+    "n_eff": 25.3,
+    "p": 76.1,
+    "uplift": 7.2,
+    "wilson": [
+     56.8,
+     88.5
+    ],
+    "pval": 0.38321,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "TSM": {
+  "base": {
+   "n": 164,
+   "n_eff": 35.0,
+   "p": 66.5,
+   "wilson": [
+    49.9,
+    79.8
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F1_rvol15",
+    "n": 20,
+    "n_eff": 14.2,
+    "p": 75.0,
+    "uplift": 8.5,
+    "wilson": [
+     49.0,
+     90.4
+    ],
+    "pval": 0.50975,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F5_squeeze",
+    "n": 47,
+    "n_eff": 25.8,
+    "p": 76.6,
+    "uplift": 10.1,
+    "wilson": [
+     57.5,
+     88.8
+    ],
+    "pval": 0.26867,
+    "fdr_q": 0.9794,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9794) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1130",
+    "n": 73,
+    "n_eff": 27.7,
+    "p": 58.9,
+    "uplift": -7.6,
+    "wilson": [
+     40.6,
+     75.0
+    ],
+    "pval": 0.27603,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1400",
+    "n": 42,
+    "n_eff": 23.1,
+    "p": 83.3,
+    "uplift": 16.8,
+    "wilson": [
+     63.7,
+     93.4
+    ],
+    "pval": 0.07022,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "TXN": {
+  "base": {
+   "n": 144,
+   "n_eff": 33.6,
+   "p": 66.0,
+   "wilson": [
+    49.1,
+    79.6
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F1_rvol15",
+    "n": 33,
+    "n_eff": 18.1,
+    "p": 84.8,
+    "uplift": 18.8,
+    "wilson": [
+     62.6,
+     94.9
+    ],
+    "pval": 0.07101,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F5_squeeze",
+    "n": 48,
+    "n_eff": 26.4,
+    "p": 72.9,
+    "uplift": 6.9,
+    "wilson": [
+     53.9,
+     86.1
+    ],
+    "pval": 0.46265,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1030",
+    "n": 28,
+    "n_eff": 19.9,
+    "p": 60.7,
+    "uplift": -5.3,
+    "wilson": [
+     39.2,
+     78.7
+    ],
+    "pval": 0.62933,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1400",
+    "n": 36,
+    "n_eff": 19.8,
+    "p": 77.8,
+    "uplift": 11.8,
+    "wilson": [
+     55.9,
+     90.6
+    ],
+    "pval": 0.23978,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "WDC": {
+  "base": {
+   "n": 162,
+   "n_eff": 34.5,
+   "p": 67.3,
+   "wilson": [
+    50.6,
+    80.5
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F4_zvwap15",
+    "n": 22,
+    "n_eff": 15.6,
+    "p": 31.8,
+    "uplift": -35.5,
+    "wilson": [
+     14.4,
+     56.4
+    ],
+    "pval": 0.00656,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F5_squeeze",
+    "n": 59,
+    "n_eff": 26.5,
+    "p": 72.9,
+    "uplift": 5.6,
+    "wilson": [
+     53.9,
+     86.1
+    ],
+    "pval": 0.51612,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1030",
+    "n": 29,
+    "n_eff": 20.6,
+    "p": 62.1,
+    "uplift": -5.2,
+    "wilson": [
+     40.8,
+     79.5
+    ],
+    "pval": 0.63041,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F8b_adx_ge25",
+    "n": 79,
+    "n_eff": 25.9,
+    "p": 62.0,
+    "uplift": -5.3,
+    "wilson": [
+     43.0,
+     78.0
+    ],
+    "pval": 0.32736,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "XLK": {
+  "base": {
+   "n": 139,
+   "n_eff": 32.5,
+   "p": 64.7,
+   "wilson": [
+    47.6,
+    78.8
+   ]
+  },
+  "best_filters": [],
+  "veto_filters": [],
+  "descartadas_por_multiplicidad": [
+   {
+    "filtro": "F1_rvol15",
+    "n": 27,
+    "n_eff": 19.1,
+    "p": 51.9,
+    "uplift": -12.8,
+    "wilson": [
+     31.1,
+     72.0
+    ],
+    "pval": 0.25294,
+    "fdr_q": 0.9794,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9794) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F4_zvwap15",
+    "n": 20,
+    "n_eff": 14.2,
+    "p": 75.0,
+    "uplift": 10.3,
+    "wilson": [
+     49.0,
+     90.4
+    ],
+    "pval": 0.42132,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F5_squeeze",
+    "n": 46,
+    "n_eff": 25.3,
+    "p": 76.1,
+    "uplift": 11.4,
+    "wilson": [
+     56.8,
+     88.5
+    ],
+    "pval": 0.21611,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_0945",
+    "n": 18,
+    "n_eff": 12.8,
+    "p": 72.2,
+    "uplift": 7.5,
+    "wilson": [
+     44.9,
+     89.2
+    ],
+    "pval": 0.58494,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1030",
+    "n": 22,
+    "n_eff": 15.6,
+    "p": 50.0,
+    "uplift": -14.7,
+    "wilson": [
+     27.8,
+     72.2
+    ],
+    "pval": 0.23823,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1130",
+    "n": 57,
+    "n_eff": 25.6,
+    "p": 59.6,
+    "uplift": -5.1,
+    "wilson": [
+     40.6,
+     76.2
+    ],
+    "pval": 0.49909,
+    "fdr_q": 0.983,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.983) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   },
+   {
+    "filtro": "F6_1400",
+    "n": 42,
+    "n_eff": 23.1,
+    "p": 76.2,
+    "uplift": 11.5,
+    "wilson": [
+     55.9,
+     89.0
+    ],
+    "pval": 0.20331,
+    "fdr_q": 0.9721,
+    "fdr_ok": false,
+    "why": "NO pasa BH-FDR q=0.10 (q=0.9721) sobre las pruebas del grid: indistinguible del ruido. El criterio viejo (n>=15, |uplift|>=5) la habria publicado."
+   }
+  ]
+ },
+ "_meta": {
+  "generado": "2026-07-26 01:13 ET",
+  "outcome": "P(toca media BB20-1m congelada, 30min)",
+  "criterio": "BH-FDR q=0.10 sobre las pruebas del grid + n_eff>=30 (rho=0.41 medida). Solo se publica lo que sobrevive.",
+  "criterio_anterior": "n>=15 y |uplift|>=5pts vs base del ticker — SIN p-valor, SIN correccion por multiplicidad y sobre n CRUDA. Reproducia ~113 celdas sobre ruido puro.",
+  "antes_despues": {
+   "best_viejo": 80,
+   "best_nuevo": 0,
+   "veto_viejo": 70,
+   "veto_nuevo": 0
+  },
+  "multiplicidad": {
+   "rho_flota": 0.41,
+   "fdr_q": 0.1,
+   "min_n_eff": 30.0,
+   "n_celdas_familia": 404,
+   "n_pruebas_testeables": 401,
+   "n_sobreviven_bh": 0,
+   "nota": "BH-FDR q=0.10 sobre las 401 pruebas del grid, con Wilson y z-test sobre muestra EFECTIVA (rho=0.41 medida). Sin esto el criterio viejo (n>=15, |uplift|>=5) publica ~113 celdas sobre RUIDO PURO."
+  },
+  "fleet_base": {
+   "n": 4619,
+   "k": 3039,
+   "n_eff": 41.2,
+   "n_eff_tope_clusters": 17.0,
+   "n_clusters": 17,
+   "p": 65.8,
+   "wilson_lo": 50.5,
+   "wilson_hi": 78.4
+  },
+  "fleet_filters": {
+   "F1_rvol15": {
+    "n": 718,
+    "k": 492,
+    "n_eff": 39.4,
+    "n_eff_tope_clusters": 17.0,
+    "n_clusters": 17,
+    "p": 68.5,
+    "wilson_lo": 52.9,
+    "wilson_hi": 80.8,
+    "uplift": 2.7,
+    "desc": "RVOL vela fire >= 1.5",
+    "pval": 0.7580168259206559,
+    "scope": "flota",
+    "cell_id": "FLOTA|F1_rvol15",
+    "fdr_reject": false,
+    "fdr_q": 0.983
+   },
+   "F2_rsi2_ext": {
+    "n": 281,
+    "k": 149,
+    "n_eff": 37.2,
+    "n_eff_tope_clusters": 17.0,
+    "n_clusters": 17,
+    "p": 53.0,
+    "wilson_lo": 37.5,
+    "wilson_hi": 68.0,
+    "uplift": -12.8,
+    "desc": "RSI(2) extremo (dn<10 / up>90)",
+    "pval": 0.21986056345225458,
+    "scope": "flota",
+    "cell_id": "FLOTA|F2_rsi2_ext",
+    "fdr_reject": false,
+    "fdr_q": 0.9721
+   },
+   "F3a_depth05": {
+    "n": 4527,
+    "k": 2982,
+    "n_eff": 41.1,
+    "n_eff_tope_clusters": 17.0,
+    "n_clusters": 17,
+    "p": 65.9,
+    "wilson_lo": 50.6,
+    "wilson_hi": 78.4,
+    "uplift": 0.1,
+    "desc": "pierce depth > 0.05 del ancho",
+    "pval": 0.7333390821303294,
+    "scope": "flota",
+    "cell_id": "FLOTA|F3a_depth05",
+    "fdr_reject": false,
+    "fdr_q": 0.983
+   },
+   "F3b_depth15": {
+    "n": 3688,
+    "k": 2420,
+    "n_eff": 41.2,
+    "n_eff_tope_clusters": 17.0,
+    "n_clusters": 17,
+    "p": 65.6,
+    "wilson_lo": 50.3,
+    "wilson_hi": 78.2,
+    "uplift": -0.2,
+    "desc": "pierce depth > 0.15 del ancho",
+    "pval": 0.9339915004199129,
+    "scope": "flota",
+    "cell_id": "FLOTA|F3b_depth15",
+    "fdr_reject": false,
+    "fdr_q": 0.9974
+   },
+   "F4_zvwap15": {
+    "n": 578,
+    "k": 317,
+    "n_eff": 39.8,
+    "n_eff_tope_clusters": 17.0,
+    "n_clusters": 17,
+    "p": 54.8,
+    "wilson_lo": 39.6,
+    "wilson_hi": 69.2,
+    "uplift": -11.0,
+    "desc": "z-VWAP >= |1.5| contra el lado",
+    "pval": 0.24800182571377194,
+    "scope": "flota",
+    "cell_id": "FLOTA|F4_zvwap15",
+    "fdr_reject": false,
+    "fdr_q": 0.9794
+   },
+   "F5_squeeze": {
+    "n": 1424,
+    "k": 1093,
+    "n_eff": 40.7,
+    "n_eff_tope_clusters": 17.0,
+    "n_clusters": 17,
+    "p": 76.8,
+    "wilson_lo": 61.8,
+    "wilson_hi": 87.1,
+    "uplift": 11.0,
+    "desc": "bandwidth 1m pctile <= 20 (post-squeeze)",
+    "pval": 0.1296227498715965,
+    "scope": "flota",
+    "cell_id": "FLOTA|F5_squeeze",
+    "fdr_reject": false,
+    "fdr_q": 0.9721
+   },
+   "F6_0945": {
+    "n": 535,
+    "k": 311,
+    "n_eff": 39.0,
+    "n_eff_tope_clusters": 17.0,
+    "n_clusters": 17,
+    "p": 58.1,
+    "wilson_lo": 42.6,
+    "wilson_hi": 72.2,
+    "uplift": -7.7,
+    "desc": "hora 9:50-10:30",
+    "pval": 0.4230311228626722,
+    "scope": "flota",
+    "cell_id": "FLOTA|F6_0945",
+    "fdr_reject": false,
+    "fdr_q": 0.983
+   },
+   "F6_1030": {
+    "n": 838,
+    "k": 533,
+    "n_eff": 39.7,
+    "n_eff_tope_clusters": 17.0,
+    "n_clusters": 17,
+    "p": 63.6,
+    "wilson_lo": 48.1,
+    "wilson_hi": 76.7,
+    "uplift": -2.2,
+    "desc": "hora 10:30-11:30",
+    "pval": 0.8010423703480092,
+    "scope": "flota",
+    "cell_id": "FLOTA|F6_1030",
+    "fdr_reject": false,
+    "fdr_q": 0.983
+   },
+   "F6_1130": {
+    "n": 2023,
+    "k": 1278,
+    "n_eff": 41.0,
+    "n_eff_tope_clusters": 17.0,
+    "n_clusters": 17,
+    "p": 63.2,
+    "wilson_lo": 47.9,
+    "wilson_hi": 76.2,
+    "uplift": -2.6,
+    "desc": "picadora 11:30-14:00",
+    "pval": 0.657096661487053,
+    "scope": "flota",
+    "cell_id": "FLOTA|F6_1130",
+    "fdr_reject": false,
+    "fdr_q": 0.983
+   },
+   "F6_1400": {
+    "n": 1223,
+    "k": 917,
+    "n_eff": 40.6,
+    "n_eff_tope_clusters": 17.0,
+    "n_clusters": 17,
+    "p": 75.0,
+    "wilson_lo": 59.9,
+    "wilson_hi": 85.7,
+    "uplift": 9.2,
+    "desc": "hora 14:00-15:30",
+    "pval": 0.2232653515068419,
+    "scope": "flota",
+    "cell_id": "FLOTA|F6_1400",
+    "fdr_reject": false,
+    "fdr_q": 0.9721
+   },
+   "F7_15m_in": {
+    "n": 3881,
+    "k": 2612,
+    "n_eff": 41.1,
+    "n_eff_tope_clusters": 17.0,
+    "n_clusters": 17,
+    "p": 67.3,
+    "wilson_lo": 52.0,
+    "wilson_hi": 79.6,
+    "uplift": 1.5,
+    "desc": "cierre 15m DENTRO de su banda",
+    "pval": 0.4570646433895158,
+    "scope": "flota",
+    "cell_id": "FLOTA|F7_15m_in",
+    "fdr_reject": false,
+    "fdr_q": 0.983
+   },
+   "F8a_adx_lt20": {
+    "n": 1364,
+    "k": 924,
+    "n_eff": 40.4,
+    "n_eff_tope_clusters": 17.0,
+    "n_clusters": 17,
+    "p": 67.7,
+    "wilson_lo": 52.3,
+    "wilson_hi": 80.1,
+    "uplift": 1.9,
+    "desc": "ADX(14) 5m < 20 (rango)",
+    "pval": 0.8379899392983969,
+    "scope": "flota",
+    "cell_id": "FLOTA|F8a_adx_lt20",
+    "fdr_reject": false,
+    "fdr_q": 0.983
+   },
+   "F8b_adx_ge25": {
+    "n": 2396,
+    "k": 1550,
+    "n_eff": 41.0,
+    "n_eff_tope_clusters": 17.0,
+    "n_clusters": 17,
+    "p": 64.7,
+    "wilson_lo": 49.4,
+    "wilson_hi": 77.5,
+    "uplift": -1.1,
+    "desc": "ADX(14) 5m >= 25 (tendencia)",
+    "pval": 0.7497781170443711,
+    "scope": "flota",
+    "cell_id": "FLOTA|F8b_adx_ge25",
+    "fdr_reject": false,
+    "fdr_q": 0.983
+   }
+  },
+  "fleet_combos": {
+   "F5_squeeze+F6_1400": {
+    "n": 389,
+    "k": 331,
+    "n_eff": 38.8,
+    "n_eff_tope_clusters": 17.0,
+    "n_clusters": 17,
+    "p": 85.1,
+    "wilson_lo": 70.8,
+    "wilson_hi": 93.1,
+    "uplift": 19.3,
+    "pval": 0.031227361862408598,
+    "scope": "combo",
+    "cell_id": "COMBO|F5_squeeze+F6_1400",
+    "fdr_reject": false,
+    "fdr_q": 0.9721
+   }
+  }
+ }
+}

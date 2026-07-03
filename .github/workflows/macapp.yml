@@ -1,0 +1,164 @@
+name: macapp
+
+# Cada push a main deja un .app PORTABLE (backend + frontend + icono dentro) como
+# artefacto descargable. No se puede firmar con Developer ID ni notarizar: GitHub no
+# tiene el certificado de Yunior. Sale con firma ad-hoc -> en el Mac de destino,
+# primer arranque: clic derecho > Abrir, o `xattr -dr com.apple.quarantine <app>`.
+
+on:
+  push:
+    branches: [main]
+    # espejo de macapp/bundled_paths.txt (fuente unica de lo que va DENTRO del .app).
+    # Si añades una ruta alli, añadela aqui: la puerta de abajo lo verifica.
+    paths:
+      - 'macapp/**'
+      - 'macapp/voice_bank/**'
+      - 'macapp/voice_bank_texts.txt'
+      - 'macapp/voice_player.py'
+      - 'charts/indicator_panel.js'
+      - 'charts/gex_heatmap_widget.js'
+      - 'charts/mm_fractal_widget.js'
+      - 'charts/order_ticket_ui.js'
+      - 'charts/orderflow_panel.js'
+      - 'charts/uw_widgets.js'
+      - 'charts/live.html'
+      - 'charts/lightweight-charts-v5.js'
+      - 'charts/lightweight-charts.js'
+      - 'config/feeds.env'
+      - 'config/llm.env'
+      - 'data/fleet.txt'
+      - 'data/lse_catalog.json'
+      - 'scripts/chart_bridge.py'
+      - 'scripts/chart_levels.py'
+      - 'scripts/architect_lse.py'
+      - 'scripts/compass.cpp'
+      - 'scripts/confluence_engine.py'
+      - 'scripts/direction_view.py'
+      - 'scripts/free_oi.py'
+      - 'scripts/gex_core.py'
+      - 'scripts/ib_mode.py'
+      - 'scripts/lse_client.py'
+      - 'scripts/lse_gamma_map.py'
+      - 'scripts/narrator.py'
+      - 'scripts/optgate.py'
+      - 'scripts/order_ticket.py'
+      - 'scripts/poly_chain_archive.py'
+      - 'scripts/poly_client.py'
+      - 'scripts/polygon_oi.py'
+      - 'scripts/rt_last.py'
+      - 'scripts/signal_conditioning.py'
+      - 'scripts/universe.py'
+      - 'scripts/wall_integrity.py'
+      - 'order_engine/**'
+      - '.github/workflows/macapp.yml'
+  workflow_dispatch:
+
+jobs:
+  bundle:
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pillow para generar el icono en el pipeline
+        run: python3 -m pip install --quiet --break-system-packages Pillow
+
+      - name: Regenerar el icono (no se confia en el .icns commiteado)
+        run: |
+          python3 macapp/icon/make_icon.py
+          test -f macapp/icon/AppIcon.icns
+
+      - name: Cache del Python relocatable
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ib-trader-python
+          key: pbs-cpython-3.12.13-arm64
+
+      - name: Construir el bundle
+        env:
+          CI: 'true'
+        run: zsh macapp/build.sh
+
+      # El fallo clasico: shebangs de pip con la ruta del Mac que compilo.
+      # build.sh ya aborta si los encuentra; aqui se repite como puerta explicita.
+      - name: Puerta de portabilidad (cero rutas absolutas)
+        run: |
+          APP="macapp/ib-trader Cockpit.app"
+          RUNTIME=("$APP/Contents/MacOS" "$APP/Contents/Resources/backend" "$APP/Contents/Resources/python/bin")
+          if grep -Ilr "$HOME" "${RUNTIME[@]}"; then echo "::error::ruta del runner en texto runtime"; exit 1; fi
+          if grep -Ilr "/Users/yuniorrodriguezosorio" "${RUNTIME[@]}"; then echo "::error::ruta del Mac de Yunior en texto runtime"; exit 1; fi
+          codesign --verify --deep "$APP"
+          test -f "$APP/Contents/Resources/AppIcon.icns"
+          test -x "$APP/Contents/Resources/backend/run.sh"
+          test -x "$APP/Contents/Resources/python/bin/python3.12"
+          /usr/libexec/PlistBuddy -c "Print :IBTCommit" "$APP/Contents/Info.plist"
+          echo "portable OK"
+
+      # el disparador de arriba tiene que cubrir TODO lo que el bundle empotra;
+      # si se desincroniza, la .app se queda rancia sin que nadie se entere
+      - name: El disparador cubre todo lo empotrado
+        run: |
+          miss=0
+          while IFS= read -r p; do
+            case "$p" in ""|"#"*) continue;; esac
+            key="${p%/}"
+            grep -q -- "- '$key" .github/workflows/macapp.yml || { echo "::error::$p no esta en paths del workflow"; miss=1; }
+          done < <(sed 's/#.*//' macapp/bundled_paths.txt | tr -d ' ')
+          exit $miss
+
+      # la trampa medida 2026-07-26: ib_mode.py embotado se quedo con PAPER_PORTS
+      # viejos mientras el original ya estaba gateway-only. Byte a byte contra el
+      # arbol, no contra memoria: si bundle_backend.sh deja una copia rancia (o un
+      # patron nuevo no matchea su case) esto revienta ANTES de publicar el .zip.
+      - name: Backend embotado == arbol (sin copia rancia)
+        run: |
+          APP="macapp/ib-trader Cockpit.app"
+          BK="$APP/Contents/Resources/backend"
+          stale=0
+          while IFS= read -r p; do
+            case "$p" in
+              ""|"#"*) continue;;
+              scripts/*.py) dst="$BK/scripts/$(basename "$p")";;
+              charts/*)     dst="$BK/charts/$(basename "$p")";;
+              data/*)       dst="$BK/data/$(basename "$p")";;
+              *) continue;;
+            esac
+            [ -f "$p" ] || continue
+            if [ ! -f "$dst" ]; then
+              echo "::error::$p no llego a $dst — bundle_backend.sh lo perdio"; stale=1; continue
+            fi
+            cmp -s "$p" "$dst" || { echo "::error::$dst DIFIERE del arbol ($p) — copia rancia"; stale=1; }
+          done < <(sed 's/#.*//' macapp/bundled_paths.txt | tr -d ' ')
+          [ -x "$APP/Contents/Resources/engine/compass" ] || { echo "::error::falta engine/compass (brujula) en el bundle"; stale=1; }
+          exit $stale
+
+      # el mismo Python/backend que se entrega, sin TWS ni fastapi: valida que
+      # arranca e importa limpio antes de firmar y comprimir 151 MB al vacio
+      - name: Selftest del backend embotado
+        run: |
+          APP="macapp/ib-trader Cockpit.app"
+          "$APP/Contents/Resources/python/bin/python3.12" \
+            "$APP/Contents/Resources/backend/scripts/chart_bridge.py" --selftest --sym qqq
+
+      # el binario Swift tiene que sobrevivir al arranque; sin display real no
+      # navega, pero un crash inmediato (dylib rota, firma invalida) se ve aqui
+      - name: Smoke — el cockpit arranca sin crashear
+        run: |
+          APP="macapp/ib-trader Cockpit.app"
+          open -n "$APP" --args --url "http://127.0.0.1:1" &
+          sleep 5
+          if ! pgrep -f "Contents/MacOS/cockpit" >/dev/null; then
+            echo "::error::el binario del cockpit no sigue vivo tras 5s (crash al arrancar)"
+            exit 1
+          fi
+          pkill -f "Contents/MacOS/cockpit" || true
+          echo "smoke OK: cockpit arranca y sigue vivo"
+
+      - name: Comprimir preservando el sello
+        run: ditto -c -k --sequesterRsrc --keepParent "macapp/ib-trader Cockpit.app" ib-trader-Cockpit.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ib-trader-Cockpit-${{ github.sha }}
+          path: ib-trader-Cockpit.zip
+          retention-days: 30

@@ -1,0 +1,212 @@
+{
+  "QQQ": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "SPY": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "NVDA": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "TSLA": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "MU": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "SMH": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "AMD": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "AAPL": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "MSFT": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "META": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "AMZN": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "GOOGL": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "INTC": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "TSM": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "ASML": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "TXN": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "QCOM": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "AVGO": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "NFLX": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "NOK": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "GLD": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "XLK": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "EWY": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "DRAM": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "SPCX": {
+    "source": "IBKR",
+    "bars": 2079,
+    "days": 27,
+    "first": "2026-06-12",
+    "last": "2026-07-22"
+  },
+  "SKHY": {
+    "source": "IBKR",
+    "bars": 678,
+    "days": 9,
+    "first": "2026-07-10",
+    "last": "2026-07-22"
+  },
+  "LRCX": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "SNDK": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "WDC": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  },
+  "STX": {
+    "source": "IBKR",
+    "bars": 4836,
+    "days": 62,
+    "first": "2026-04-23",
+    "last": "2026-07-22"
+  }
+}

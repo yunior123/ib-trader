@@ -1,0 +1,16 @@
+{
+ "ts": 1785327851,
+ "sym": "PSN",
+ "veredicto": "bull",
+ "rating": "Overweight",
+ "prob": null,
+ "tesis": "Reduce long exposure by 15-20% into the $62 area; maintain the remaining position with a tightened stop at $58.50. Do not exit entirely\u2014the dynamic support structure (rising 10-EMA at $58.16 and 50-SMA at $55.46) and expanding MACD histogram (+0.59) argue that the uptrend still has unfinished business. Target a partial take-profit at $64.50 (just above the 200-SMA) on the remaining position; if PSN breaks $64 on above-average volume, add back the trimmed exposure.",
+ "niveles": [
+  {
+   "tipo": "target",
+   "nivel": 64.5
+  }
+ ],
+ "latency_s": 181.8,
+ "fuente": "tradingagents"
+}

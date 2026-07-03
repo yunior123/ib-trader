@@ -1,0 +1,280 @@
+<meta charset="utf-8">
+<title>Los 2 árboles — AAPL · SPY</title>
+<style>
+:root{
+ --ground:#0d1014; --panel:#141920; --panel2:#1b212a; --line:#28303b;
+ --ink:#e8e6e0; --ink2:#a7a49c; --ink3:#6f6d67;
+ --gold:#d7a12c; --violet:#8b6bff; --call:#3f9d6b; --put:#c9543f; --warn:#d78b2c;
+ --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,monospace;
+ --disp:"Avenir Next Condensed","HelveticaNeue-CondensedBold","Arial Narrow",system-ui,sans-serif;
+ --body:system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme:light){
+ :root{--ground:#f6f5f1;--panel:#fffefb;--panel2:#efeee8;--line:#dad7cd;
+ --ink:#1a1c1f;--ink2:#5a5852;--ink3:#8b8880;--gold:#9a6f10;--violet:#5a3fd6;
+ --call:#2f7d52;--put:#a63c2a;--warn:#9a6410;}
+}
+:root[data-theme="dark"]{--ground:#0d1014;--panel:#141920;--panel2:#1b212a;--line:#28303b;
+ --ink:#e8e6e0;--ink2:#a7a49c;--ink3:#6f6d67;--gold:#d7a12c;--violet:#8b6bff;
+ --call:#3f9d6b;--put:#c9543f;--warn:#d78b2c;}
+:root[data-theme="light"]{--ground:#f6f5f1;--panel:#fffefb;--panel2:#efeee8;--line:#dad7cd;
+ --ink:#1a1c1f;--ink2:#5a5852;--ink3:#8b8880;--gold:#9a6f10;--violet:#5a3fd6;
+ --call:#2f7d52;--put:#a63c2a;--warn:#9a6410;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:var(--body);
+ font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1120px;margin:0 auto;padding:clamp(20px,4vw,52px) clamp(14px,3vw,28px) 64px}
+.top{border-bottom:2px solid var(--line);padding-bottom:22px;margin-bottom:34px}
+.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+ color:var(--gold);margin:0 0 10px}
+h1{font-family:var(--disp);font-size:clamp(38px,7vw,68px);line-height:.95;letter-spacing:-.01em;
+ margin:0 0 12px;text-wrap:balance;font-weight:600}
+.lede{max-width:62ch;color:var(--ink2);margin:0 0 18px;font-size:17px}
+.nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.nav a{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-decoration:none;
+ color:var(--ink2);border:1px solid var(--line);border-radius:2px;padding:5px 11px;background:var(--panel)}
+.nav a:hover,.nav a:focus-visible{color:var(--ground);background:var(--gold);border-color:var(--gold);outline:none}
+.stamp{font-family:var(--mono);font-size:11.5px;color:var(--ink3);margin:0;max-width:82ch}
+.sheet{border:1px solid var(--line);background:var(--panel);padding:clamp(16px,2.4vw,28px);
+ margin-bottom:30px;scroll-margin-top:16px}
+.sh{border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:18px}
+.ord{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink3)}
+h2{font-family:var(--disp);font-size:clamp(30px,5vw,46px);margin:2px 0 6px;letter-spacing:.01em;font-weight:600}
+.sub{font-family:var(--mono);font-size:12px;color:var(--ink2);margin:0}
+h3{font-family:var(--mono);font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;
+ color:var(--gold);margin:26px 0 10px;font-weight:600}
+h3:first-child{margin-top:0}
+.hint{color:var(--ink3);letter-spacing:.04em;text-transform:none}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));gap:1px;
+ background:var(--line);border:1px solid var(--line);margin-bottom:6px}
+.stat{background:var(--panel2);padding:11px 13px;display:flex;flex-direction:column;gap:2px}
+.sl{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink3)}
+.sv{font-family:var(--mono);font-size:20px;font-variant-numeric:tabular-nums;color:var(--ink)}
+.sv .of{font-size:13px;color:var(--ink3)}
+.sn{font-family:var(--mono);font-size:10.5px;color:var(--ink2)}
+.reg.neg{color:var(--violet)}.reg.pos{color:var(--gold)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:8px}
+@media(max-width:860px){.two{grid-template-columns:1fr}}
+.tree{list-style:none;margin:0;padding:0;font-family:var(--mono);font-size:12.5px}
+.tree li{display:grid;grid-template-columns:22px 74px 62px 1fr;gap:6px;align-items:baseline;
+ padding:7px 0;border-bottom:1px dotted var(--line)}
+.tree li:last-child{border-bottom:none}
+.tree .arw{color:var(--ink3)}
+.tree .up .arw{color:var(--call)}.tree .dn .arw{color:var(--put)}
+.tree .node{background:var(--panel2);margin:4px -8px;padding:9px 8px;border-left:2px solid var(--gold)}
+.tree b{font-variant-numeric:tabular-nums;font-size:14px}
+.tree .dd{color:var(--ink3);font-size:11px}
+.tree .why{color:var(--ink2);line-height:1.5;grid-column:1/-1}
+@media(min-width:600px){.tree .why{grid-column:4}}
+.ladder{font-family:var(--mono);font-size:12.5px;border:1px solid var(--line)}
+.ladder .row{display:flex;align-items:center;gap:9px;padding:8px 11px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.ladder .row:last-child{border-bottom:none}
+.ladder .row.spot{background:var(--panel2);border-left:2px solid var(--gold)}
+.ladder .k{font-variant-numeric:tabular-nums;min-width:74px}
+.ladder .lab{color:var(--ink2);flex:1;min-width:110px}
+.ladder .d{color:var(--ink3);font-variant-numeric:tabular-nums}
+.chip{font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding:2px 7px;border:1px solid}
+.chip.pin{color:var(--gold);border-color:var(--gold)}
+.chip.trap{color:var(--violet);border-color:var(--violet)}
+.chip.flip{color:var(--ink2);border-color:var(--line)}
+.chip.none{color:var(--ink3);border-color:var(--line)}
+.prof{width:100%;height:auto;display:block;background:var(--panel2);border:1px solid var(--line)}
+.prof .pos{fill:var(--call)}.prof .neg{fill:var(--put)}
+.prof .ax{stroke:var(--line);stroke-width:1}
+.prof .klab{font-family:var(--mono);font-size:8.5px;fill:var(--ink3)}
+.prof .axlab{font-family:var(--mono);font-size:8.5px;fill:var(--ink3);letter-spacing:.06em}
+.prof .spotl{stroke:var(--gold);stroke-width:1;stroke-dasharray:4 3}
+.prof .flipl{stroke:var(--violet);stroke-width:1;stroke-dasharray:2 3}
+.prof .spotlt{fill:var(--gold)}.prof .fliplt{fill:var(--violet)}
+.prof .lvlab{font-family:var(--mono);font-size:9px;letter-spacing:.04em}
+.scroll{overflow-x:auto;border:1px solid var(--line)}
+.tbl{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12px}
+.tbl th{background:var(--panel2);text-align:left;padding:7px 10px;font-size:10px;letter-spacing:.1em;
+ text-transform:uppercase;color:var(--ink3);font-weight:600;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl td{padding:6px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+.tbl tr:last-child td{border-bottom:none}
+.tbl .n{font-variant-numeric:tabular-nums;text-align:right}
+.tbl .c{color:var(--call)}.tbl .p{color:var(--put)}
+.st{font-size:10px;letter-spacing:.06em;padding:2px 7px;border:1px solid}
+.st.ok{color:var(--call);border-color:var(--call)}
+.st.warn{color:var(--warn);border-color:var(--warn)}
+.st.bad{color:var(--ink3);border-color:var(--line)}
+.verdict{font-size:13.5px;line-height:1.6;padding:12px 15px;margin:14px 0 0;
+ border-left:2px solid var(--line);background:var(--panel2);color:var(--ink2);max-width:78ch}
+.verdict.neg{border-color:var(--violet)}
+.verdict.pos{border-color:var(--gold)}
+.verdict.warn{border-color:var(--warn)}
+.verdict b{color:var(--ink)}
+.void{color:var(--ink3);font-family:var(--mono);font-size:12px;margin:6px 0}
+.declara{font-size:12px;line-height:1.5;color:var(--ink2);margin:0 0 9px;max-width:96ch;
+ border-left:2px solid var(--warn);padding:7px 11px;background:var(--panel2)}
+.declara b{color:var(--ink)}
+.cav{margin-top:22px;border-top:1px solid var(--line);padding-top:12px}
+.cav summary{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+ color:var(--ink3);cursor:pointer}
+.cav summary:focus-visible{outline:1px solid var(--gold);outline-offset:3px}
+.cav ul{margin:10px 0 0;padding-left:20px;color:var(--ink2);font-size:13px;max-width:82ch}
+.cav li{margin-bottom:6px}
+.doct h2{font-size:clamp(24px,4vw,36px)}
+.curve{display:flex;flex-direction:column;gap:5px;font-family:var(--mono);font-size:11.5px;margin:6px 0 4px}
+.cb{display:grid;grid-template-columns:26px 1fr 44px 62px;gap:9px;align-items:center}
+.cb .ct{color:var(--ink3);text-align:right}
+.cbar{background:var(--panel2);border:1px solid var(--line);height:15px}
+.cbar div{height:100%;background:var(--gold);opacity:.75}
+.cb .cp{font-variant-numeric:tabular-nums;text-align:right}
+.cb .cn{color:var(--ink3);font-variant-numeric:tabular-nums}
+.foot{border-top:1px solid var(--line);margin-top:34px;padding-top:16px}
+.foot p{font-family:var(--mono);font-size:11.5px;color:var(--ink3);margin:0;max-width:76ch}
+code{font-family:var(--mono);font-size:.92em;color:var(--ink)}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{
+ :root{--ground:#fff;--panel:#fff;--panel2:#fff;--line:#999;--ink:#000;--ink2:#000;
+   --ink3:#333;--gold:#000;--violet:#000;--call:#000;--put:#000;--warn:#000;}
+ body{background:#fff;color:#000;font-size:6.9pt;line-height:1.28}
+ .wrap{max-width:100%;padding:0}
+ .nav,.stamp,.cav,.foot{display:none}
+ .top{border-bottom:1pt solid #000;padding-bottom:2.5pt;margin-bottom:4pt}
+ .kicker{font-size:6.4pt;margin:0;color:#000;display:inline}
+ h1{font-size:12pt;margin:0;display:inline;margin-left:6pt}
+ .lede{font-size:6.6pt;margin:1pt 0 0;max-width:none;color:#000}
+ /* una hoja de papel por ticker: el arbol jamas se parte */
+ .sheet{border:.75pt solid #000;padding:4pt;margin:0;background:#fff;
+   break-inside:avoid;page-break-inside:avoid}
+ .sheet+.sheet{break-before:page;page-break-before:always}
+ .sh{padding-bottom:2pt;margin-bottom:4pt;border-bottom:.5pt solid #999}
+ .ord{font-size:6.2pt;color:#333}
+h2{font-size:11.5pt;margin:0 0 1pt}.sub{font-size:6.4pt;color:#000}
+h3{font-size:6.8pt;color:#000;border-bottom:.5pt solid #999;margin:4.5pt 0 2.5pt;padding-bottom:1pt}
+ .hint{color:#333}
+ .stats{grid-template-columns:repeat(4,1fr);gap:0;border:.5pt solid #999;background:#fff;margin-bottom:3pt}
+ .stat{background:#fff;border-right:.5pt solid #999;border-bottom:.5pt solid #999;padding:1.8pt 4pt;gap:0}
+.sv{font-size:8.6pt}.sl,.sn{font-size:6.1pt;color:#333}
+ .reg.neg,.reg.pos{color:#000;font-weight:700}
+ .two{grid-template-columns:1fr 1fr;gap:6pt;margin-top:2pt}
+ .tree{font-size:6.7pt}
+ .tree .why{font-size:6.3pt;color:#000}.tree li{padding:1.1pt 0}
+ .tree li{grid-template-columns:13px 50px 42px 1fr}
+ .tree b{font-size:7.6pt}.tree .dd{font-size:6.1pt}
+ .ladder{font-size:6.5pt}.ladder .row{padding:1.1pt 4pt;gap:5px}
+ .ladder .k{min-width:52px}.ladder .lab{min-width:78px}
+ .chip{border-color:#000;color:#000;font-size:6pt;padding:0 3pt}
+ .ladder .row.spot{background:#eee;border-left:1pt solid #000}
+ .tree .node{background:#eee;border-left:1pt solid #000;margin:2pt -5pt;padding:3pt 5pt}
+ .tree li,.ladder .row{break-inside:avoid;page-break-inside:avoid}
+ /* el perfil escala POR ANCHO: con height fija el viewBox se encoge a una tira ilegible */
+ .prof{background:#fff;border:.5pt solid #999;width:100%;height:auto;max-height:82mm}
+ /* gris = nada: calls HUECAS, puts MACIZAS. La forma distingue, no el color */
+ .prof .pos{fill:#fff;stroke:#000;stroke-width:.6}.prof .neg{fill:#000;stroke:none}
+ /* el viewBox mide 560u en ~88mm: 8.5u seria 3.8pt en papel, ilegible */
+ .prof .klab{font-size:12px}.prof .axlab{font-size:11px}.prof .lvlab{font-size:12px}
+ .prof .klab,.prof .axlab,.prof .lvlab{fill:#000}
+ .prof .ax{stroke:#000}
+ .prof .spotl{stroke:#000;stroke-dasharray:5 2}
+ .prof .flipl{stroke:#000;stroke-dasharray:1 2}
+ .prof .spotlt,.prof .fliplt{fill:#000}
+ .verdict{background:#fff;border-left:1pt solid #000;font-size:6.4pt;padding:2.5pt 4pt;margin:3pt 0 0;
+   max-width:none;break-inside:avoid}
+ .void{font-size:6.3pt;color:#333}
+ .declara{font-size:6pt;background:#fff;border-left:1pt solid #000;padding:2pt 4pt;
+   margin:0 0 2.5pt;max-width:none;color:#000;break-inside:avoid}
+ .scroll{overflow:visible;border:.5pt solid #999;break-inside:avoid}
+ .tbl{font-size:6.3pt}
+ .tbl th{background:#eee;color:#000;padding:1.4pt 4pt;font-size:5.8pt}
+ .tbl td{padding:1.1pt 4pt;border-bottom:.25pt solid #ccc}
+ /* CALL/PUT se leen por la ETIQUETA de texto y el grosor, jamas por el color */
+ .tbl .c,.tbl .p{color:#000}.tbl .c{font-weight:700}
+ .st{font-size:5.8pt;padding:0 3pt}
+ .st.ok,.st.warn,.st.bad{color:#000;border-color:#000}
+ .st.ok{font-weight:700}.st.bad{border-style:dotted}
+ .doct{break-before:page;page-break-before:always}
+ .doct h2{font-size:12pt}
+ /* trama en vez de macizo: la barra se lee igual y gasta un tercio de tinta */
+ .cbar{border:.5pt solid #999;height:9pt}
+ .cbar div{background:repeating-linear-gradient(90deg,#000 0 .5pt,#fff .5pt 2.5pt);opacity:1}
+ .curve{font-size:6.8pt}
+ @page{margin:11mm 9mm}
+}
+
+</style>
+<div class="wrap">
+<header class="top">
+ <p class="kicker">ib-trader · mapa de posicionamiento · señal-solamente</p>
+ <h1>Los 2 árboles</h1>
+ <p class="lede">Qué muros de la semana pasada siguen en pie, qué libro hay hasta el viernes
+ 2026-08-14, y qué expira ese día. Una hoja de papel por ticker.</p>
+ <nav class="nav"><a href="#aapl">AAPL</a><a href="#spy">SPY</a><a href="#decay">doctrina</a></nav>
+ <p class="stamp">generado 2026-08-10 09:20 · cadena 2026-08-10 · Polygon (15 min de retraso) para la estructura ·
+ el disparo es de IBKR en tiempo real, nunca de aquí</p>
+</header>
+<section class="sheet" id="aapl">
+<header class="sh">
+ <span class="ord">hoja 1 de 2</span>
+ <h2>AAPL</h2>
+ <p class="sub">76 contratos al viernes 2026-08-14 · 200 hasta esa fecha · banda 0.27 · griegas polygon_directo</p>
+</header>
+<div class="stats"><div class="stat"><span class="sl">spot</span><span class="sv">309.00</span><span class="sn">cierre del viernes</span></div><div class="stat"><span class="sl">régimen</span><span class="sv"><span class="reg pos">POS</span></span><span class="sn">POS amortigua · NEG amplifica</span></div><div class="stat"><span class="sl">gamma-flip</span><span class="sv">305.21</span><span class="sn">-1.23% del spot</span></div><div class="stat"><span class="sl">net GEX</span><span class="sv">28.22 M</span><span class="sn">convención de la casa (×spot)</span></div><div class="stat"><span class="sl">muro de calls</span><span class="sv">315.00</span><span class="sn">pin</span></div><div class="stat"><span class="sl">muro de puts</span><span class="sv">307.50</span><span class="sn">pin</span></div><div class="stat"><span class="sl">P/C del viernes</span><span class="sv">0.32</span><span class="sn">35 802 puts / 113 631 calls</span></div><div class="stat"><span class="sl">supervivientes</span><span class="sv">5<span class="of">/10</span></span><span class="sn">muros de la semana pasada aún en el top 6</span></div></div>
+<div class="two">
+ <div class="col">
+  <h3>El árbol</h3>
+  <ul class="tree"><li class="up"><span class="arw">▲</span><b>315.00</b><span class="dd">+1.94%</span><span class="why">muro de calls en régimen POS: los dealers amortiguan. El nivel aguanta — se cobra ahí, no se persigue a través.</span></li><li class="node"><span class="arw">◆</span><b>309.00</b><span class="dd">spot</span><span class="why">cierre del viernes — el print que confirme cualquiera de estas ramas tiene que venir de IBKR en tiempo real, no de aquí.</span></li><li class="dn"><span class="arw">▼</span><b>307.50</b><span class="dd">-0.49%</span><span class="why">muro de puts en régimen POS: los dealers amortiguan. El nivel aguanta — se cobra ahí, no se persigue a través.</span></li><li class="dn"><span class="arw">▼</span><b>305.21</b><span class="dd">-1.23%</span><span class="why">Cruzar el flip cambia el régimen: por encima los dealers amortiguan, por debajo amplifican.</span></li></ul><p class="verdict pos">Régimen POS: los dealers amortiguan. Los niveles tienden a aguantar y el rango se comprime hacia el imán dominante (315.00).</p>
+  <h3>La escalera</h3>
+  <div class="ladder"><div class="row"><b class="k">315.00</b><span class="lab">muro de calls</span><span class="chip pin">pin · aguanta</span><span class="d">+1.94%</span></div><div class="row"><b class="k">315.00</b><span class="lab">muro dominante</span><span class="chip pin">pin · aguanta</span><span class="d">+1.94%</span></div><div class="row"><b class="k">315.00</b><span class="lab">muro OI calls</span><span class="chip none">sin régimen</span><span class="d">+1.94%</span></div><div class="row spot"><b class="k">309.00</b><span class="lab">SPOT (cierre viernes)</span><span class="d">+0.00%</span></div><div class="row"><b class="k">307.50</b><span class="lab">muro de puts</span><span class="chip pin">pin · aguanta</span><span class="d">-0.49%</span></div><div class="row"><b class="k">305.21</b><span class="lab">gamma-flip</span><span class="chip flip">gamma cero</span><span class="d">-1.23%</span></div><div class="row"><b class="k">300.00</b><span class="lab">muro OI puts</span><span class="chip none">sin régimen</span><span class="d">-2.91%</span></div></div>
+ </div>
+ <div class="col">
+  <h3>Gamma neta por strike <span class="hint">±5.5% del spot</span></h3>
+  <svg viewBox="0 0 560 240" role="img" aria-label="Perfil de gamma neta por strike" class="prof"><line x1="250" y1="8" x2="250" y2="232" class="ax"/><rect x="250.0" y="15.0" width="39.5" height="13.1" class="pos"/><text x="246" y="25.1" class="klab" text-anchor="end">325</text><rect x="250.0" y="30.1" width="27.9" height="13.1" class="pos"/><text x="246" y="40.2" class="klab" text-anchor="end">322.5</text><rect x="250.0" y="45.3" width="108.3" height="13.1" class="pos"/><text x="246" y="55.4" class="klab" text-anchor="end">320</text><rect x="250.0" y="60.4" width="81.1" height="13.1" class="pos"/><text x="246" y="70.5" class="klab" text-anchor="end">317.5</text><rect x="250.0" y="75.6" width="192.0" height="13.1" class="pos"/><text x="246" y="85.6" class="klab" text-anchor="end">315</text><rect x="250.0" y="90.7" width="68.9" height="13.1" class="pos"/><text x="246" y="100.8" class="klab" text-anchor="end">312.5</text><rect x="60.7" y="105.9" width="189.3" height="13.1" class="neg"/><text x="254" y="115.9" class="klab" text-anchor="start">310</text><rect x="178.5" y="121.0" width="71.5" height="13.1" class="neg"/><text x="254" y="131.1" class="klab" text-anchor="start">307.5</text><rect x="193.0" y="136.1" width="57.0" height="13.1" class="neg"/><text x="254" y="146.2" class="klab" text-anchor="start">305</text><rect x="237.2" y="151.3" width="12.8" height="13.1" class="neg"/><text x="254" y="161.4" class="klab" text-anchor="start">302.5</text><rect x="215.0" y="166.4" width="35.0" height="13.1" class="neg"/><text x="254" y="176.5" class="klab" text-anchor="start">300</text><rect x="239.4" y="181.6" width="10.6" height="13.1" class="neg"/><text x="254" y="191.6" class="klab" text-anchor="start">297.5</text><rect x="234.6" y="196.7" width="15.4" height="13.1" class="neg"/><text x="254" y="206.8" class="klab" text-anchor="start">295</text><rect x="245.2" y="211.9" width="4.8" height="13.1" class="neg"/><text x="254" y="221.9" class="klab" text-anchor="start">292.5</text><line x1="14" y1="118.5" x2="546" y2="118.5" class="spotl"/><text x="546" y="114.5" class="lvlab spotlt" text-anchor="end">spot 309.00</text><line x1="14" y1="141.4" x2="546" y2="141.4" class="flipl"/><text x="546" y="137.4" class="lvlab fliplt" text-anchor="end">flip 305.21</text><text x="258" y="238" class="axlab">calls · gamma +</text><text x="242" y="238" class="axlab" text-anchor="end">puts · gamma −</text></svg>
+  <h3>La cadena que expira el viernes 2026-08-14</h3>
+  <div class="scroll"><table class="tbl"><thead><tr><th colspan="2">CALLS</th><th colspan="2">PUTS</th></tr><tr><th>strike</th><th>OI</th><th>strike</th><th>OI</th></tr></thead><tbody><tr><td class="n c">320</td><td class="n">12 985</td><td class="n p">300</td><td class="n">6 724</td></tr><tr><td class="n c">315</td><td class="n">11 610</td><td class="n p">295</td><td class="n">3 349</td></tr><tr><td class="n c">325</td><td class="n">9 231</td><td class="n p">307.5</td><td class="n">3 096</td></tr><tr><td class="n c">340</td><td class="n">8 821</td><td class="n p">292.5</td><td class="n">3 041</td></tr><tr><td class="n c">310</td><td class="n">8 536</td><td class="n p">305</td><td class="n">2 929</td></tr><tr><td class="n c">330</td><td class="n">6 828</td><td class="n p">310</td><td class="n">2 915</td></tr></tbody></table></div>
+ </div>
+</div>
+<h3>Muros de la semana pasada (2026-08-03 → 2026-08-07)</h3>
+<p class="declara"><b>Dos ventanas distintas, no se comparan a ciegas:</b> los muros de la semana
+pasada salen de cadenas IBKR/TWS archivadas con banda <b>±4,5%</b> y del vencimiento más cercano
+de cada día — contratos <b>ya expirados</b>. El libro de hoy es Polygon con banda adaptativa
+<b>0.27</b> y todos los vencimientos hasta el viernes. Por eso la supervivencia se
+decide por <b>RANGO del strike</b> en el libro de hoy, nunca por el cociente de OI.</p>
+<div class="scroll"><table class="tbl"><thead><tr><th>lado</th><th>strike</th><th>días</th><th>OI entonces</th><th>OI ahora</th><th>rango</th><th>OI viernes</th><th>estado</th></tr></thead><tbody><tr><td class="c">CALL</td><td class="n">340</td><td class="n">3</td><td class="n">40 817</td><td class="n">9 991</td><td class="n">#8</td><td class="n">8 821</td><td><span class="st warn">DECAIDO</span></td></tr><tr><td class="p">PUT</td><td class="n">300</td><td class="n">4</td><td class="n">31 242</td><td class="n">10 831</td><td class="n">#1</td><td class="n">6 724</td><td><span class="st ok">SOBREVIVE</span></td></tr><tr><td class="c">CALL</td><td class="n">330</td><td class="n">3</td><td class="n">29 254</td><td class="n">13 847</td><td class="n">#5</td><td class="n">6 828</td><td><span class="st ok">SOBREVIVE</span></td></tr><tr><td class="c">CALL</td><td class="n">310</td><td class="n">4</td><td class="n">26 978</td><td class="n">13 415</td><td class="n">#6</td><td class="n">8 536</td><td><span class="st ok">SOBREVIVE</span></td></tr><tr><td class="p">PUT</td><td class="n">275</td><td class="n">3</td><td class="n">18 254</td><td class="n">1 036</td><td class="n">#15</td><td class="n">885</td><td><span class="st warn">DECAIDO</span></td></tr><tr><td class="p">PUT</td><td class="n">315</td><td class="n">2</td><td class="n">18 150</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td><span class="st bad">SIN RASTRO</span></td></tr><tr><td class="p">PUT</td><td class="n">292.5</td><td class="n">1</td><td class="n">7 512</td><td class="n">3 724</td><td class="n">#7</td><td class="n">3 041</td><td><span class="st warn">DECAIDO</span></td></tr><tr><td class="p">PUT</td><td class="n">310</td><td class="n">1</td><td class="n">5 982</td><td class="n">7 908</td><td class="n">#3</td><td class="n">2 915</td><td><span class="st ok">SOBREVIVE</span></td></tr><tr><td class="c">CALL</td><td class="n">300</td><td class="n">1</td><td class="n">4 315</td><td class="n">1 889</td><td class="n">#20</td><td class="n">1 767</td><td><span class="st bad">SIN RASTRO</span></td></tr><tr><td class="c">CALL</td><td class="n">315</td><td class="n">1</td><td class="n">4 040</td><td class="n">29 990</td><td class="n">#1</td><td class="n">11 610</td><td><span class="st ok">SOBREVIVE</span></td></tr></tbody></table></div>
+<details class="cav"><summary>Lo que este mapa NO dice (5)</summary><ul><li>OI de la semana pasada = contratos YA EXPIRADOS (exp 07-22/23/24): el cociente de OI NO es like-for-like. La supervivencia se decide por RANGO del strike en el libro de hoy.</li><li>Muros de la semana pasada: cadena IBKR/TWS del vencimiento MAS CERCANO de cada dia. Muros de hoy: cadena Polygon con banda adaptativa, todos los vencimientos hasta el viernes.</li><li>spot 309.0 con edad 70s = cierre del viernes (mercado cerrado).</li><li>Polygon = 15 min de retraso (HISTORIA/ESTRUCTURA). Ningun nivel de aqui dispara una orden: el PRINT que confirma es de IBKR en tiempo real.</li><li>bid/ask NO_ENTITLED en este plan de Polygon: no hay gate de spread en esta hoja.</li></ul></details>
+</section><section class="sheet" id="spy">
+<header class="sh">
+ <span class="ord">hoja 2 de 2</span>
+ <h2>SPY</h2>
+ <p class="sub">268 contratos al viernes 2026-08-14 · 1050 hasta esa fecha · banda 0.18 · griegas polygon_directo</p>
+</header>
+<div class="stats"><div class="stat"><span class="sl">spot</span><span class="sv">772.90</span><span class="sn">cierre del viernes</span></div><div class="stat"><span class="sl">régimen</span><span class="sv"><span class="reg pos">POS</span></span><span class="sn">POS amortigua · NEG amplifica</span></div><div class="stat"><span class="sl">gamma-flip</span><span class="sv">766.54</span><span class="sn">-0.82% del spot</span></div><div class="stat"><span class="sl">net GEX</span><span class="sv">983.84 M</span><span class="sn">convención de la casa (×spot)</span></div><div class="stat"><span class="sl">muro de calls</span><span class="sv">780.00</span><span class="sn">pin</span></div><div class="stat"><span class="sl">muro de puts</span><span class="sv">770.00</span><span class="sn">pin</span></div><div class="stat"><span class="sl">P/C del viernes</span><span class="sv">0.54</span><span class="sn">334 849 puts / 618 442 calls</span></div><div class="stat"><span class="sl">supervivientes</span><span class="sv">4<span class="of">/14</span></span><span class="sn">muros de la semana pasada aún en el top 6</span></div></div>
+<div class="two">
+ <div class="col">
+  <h3>El árbol</h3>
+  <ul class="tree"><li class="up"><span class="arw">▲</span><b>780.00</b><span class="dd">+0.92%</span><span class="why">muro de calls en régimen POS: los dealers amortiguan. El nivel aguanta — se cobra ahí, no se persigue a través.</span></li><li class="node"><span class="arw">◆</span><b>772.90</b><span class="dd">spot</span><span class="why">cierre del viernes — el print que confirme cualquiera de estas ramas tiene que venir de IBKR en tiempo real, no de aquí.</span></li><li class="dn"><span class="arw">▼</span><b>770.00</b><span class="dd">-0.38%</span><span class="why">muro de puts en régimen POS: los dealers amortiguan. El nivel aguanta — se cobra ahí, no se persigue a través.</span></li><li class="dn"><span class="arw">▼</span><b>766.54</b><span class="dd">-0.82%</span><span class="why">Cruzar el flip cambia el régimen: por encima los dealers amortiguan, por debajo amplifican.</span></li></ul><p class="verdict pos">Régimen POS: los dealers amortiguan. Los niveles tienden a aguantar y el rango se comprime hacia el imán dominante (780.00).</p>
+  <h3>La escalera</h3>
+  <div class="ladder"><div class="row"><b class="k">780.00</b><span class="lab">muro de calls</span><span class="chip pin">pin · aguanta</span><span class="d">+0.92%</span></div><div class="row"><b class="k">780.00</b><span class="lab">muro dominante</span><span class="chip pin">pin · aguanta</span><span class="d">+0.92%</span></div><div class="row"><b class="k">780.00</b><span class="lab">muro OI calls</span><span class="chip none">sin régimen</span><span class="d">+0.92%</span></div><div class="row spot"><b class="k">772.90</b><span class="lab">SPOT (cierre viernes)</span><span class="d">+0.00%</span></div><div class="row"><b class="k">770.00</b><span class="lab">muro de puts</span><span class="chip pin">pin · aguanta</span><span class="d">-0.38%</span></div><div class="row"><b class="k">766.54</b><span class="lab">gamma-flip</span><span class="chip flip">gamma cero</span><span class="d">-0.82%</span></div><div class="row"><b class="k">750.00</b><span class="lab">muro OI puts</span><span class="chip none">sin régimen</span><span class="d">-2.96%</span></div></div>
+ </div>
+ <div class="col">
+  <h3>Gamma neta por strike <span class="hint">±5.5% del spot</span></h3>
+  <svg viewBox="0 0 560 1245" role="img" aria-label="Perfil de gamma neta por strike" class="prof"><line x1="250" y1="8" x2="250" y2="1237" class="ax"/><rect x="250.0" y="15.0" width="0.3" height="13.0" class="pos"/><text x="246" y="25.0" class="klab" text-anchor="end">815</text><rect x="250.0" y="30.0" width="0.2" height="13.0" class="pos"/><text x="246" y="40.0" class="klab" text-anchor="end">810</text><rect x="250.0" y="45.0" width="0.0" height="13.0" class="pos"/><text x="246" y="55.1" class="klab" text-anchor="end">809</text><rect x="250.0" y="60.1" width="0.1" height="13.0" class="pos"/><text x="246" y="70.1" class="klab" text-anchor="end">808</text><rect x="250.0" y="75.1" width="0.7" height="13.0" class="pos"/><text x="246" y="85.1" class="klab" text-anchor="end">807</text><rect x="250.0" y="90.1" width="0.7" height="13.0" class="pos"/><text x="246" y="100.1" class="klab" text-anchor="end">806</text><rect x="250.0" y="105.1" width="0.5" height="13.0" class="pos"/><text x="246" y="115.2" class="klab" text-anchor="end">805</text><rect x="250.0" y="120.2" width="0.6" height="13.0" class="pos"/><text x="246" y="130.2" class="klab" text-anchor="end">804</text><rect x="250.0" y="135.2" width="0.6" height="13.0" class="pos"/><text x="246" y="145.2" class="klab" text-anchor="end">803</text><rect x="250.0" y="150.2" width="0.1" height="13.0" class="pos"/><text x="246" y="160.2" class="klab" text-anchor="end">802</text><rect x="250.0" y="165.2" width="0.5" height="13.0" class="pos"/><text x="246" y="175.3" class="klab" text-anchor="end">801</text><rect x="250.0" y="180.3" width="2.1" height="13.0" class="pos"/><text x="246" y="190.3" class="klab" text-anchor="end">800</text><rect x="250.0" y="195.3" width="0.4" height="13.0" class="pos"/><text x="246" y="205.3" class="klab" text-anchor="end">799</text><rect x="250.0" y="210.3" width="0.3" height="13.0" class="pos"/><text x="246" y="220.3" class="klab" text-anchor="end">798</text><rect x="250.0" y="225.3" width="0.4" height="13.0" class="pos"/><text x="246" y="235.4" class="klab" text-anchor="end">797</text><rect x="250.0" y="240.4" width="0.2" height="13.0" class="pos"/><text x="246" y="250.4" class="klab" text-anchor="end">796</text><rect x="250.0" y="255.4" width="1.8" height="13.0" class="pos"/><text x="246" y="265.4" class="klab" text-anchor="end">795</text><rect x="250.0" y="270.4" width="0.5" height="13.0" class="pos"/><text x="246" y="280.4" class="klab" text-anchor="end">794</text><rect x="250.0" y="285.4" width="0.4" height="13.0" class="pos"/><text x="246" y="295.5" class="klab" text-anchor="end">793</text><rect x="250.0" y="300.5" width="0.9" height="13.0" class="pos"/><text x="246" y="310.5" class="klab" text-anchor="end">792</text><rect x="250.0" y="315.5" width="0.5" height="13.0" class="pos"/><text x="246" y="325.5" class="klab" text-anchor="end">791</text><rect x="250.0" y="330.5" width="5.9" height="13.0" class="pos"/><text x="246" y="340.5" class="klab" text-anchor="end">790</text><rect x="250.0" y="345.5" width="1.4" height="13.0" class="pos"/><text x="246" y="355.6" class="klab" text-anchor="end">789</text><rect x="250.0" y="360.6" width="82.4" height="13.0" class="pos"/><text x="246" y="370.6" class="klab" text-anchor="end">788</text><rect x="250.0" y="375.6" width="2.4" height="13.0" class="pos"/><text x="246" y="385.6" class="klab" text-anchor="end">787</text><rect x="250.0" y="390.6" width="5.4" height="13.0" class="pos"/><text x="246" y="400.6" class="klab" text-anchor="end">786</text><rect x="250.0" y="405.6" width="12.3" height="13.0" class="pos"/><text x="246" y="415.7" class="klab" text-anchor="end">785</text><rect x="250.0" y="420.7" width="8.1" height="13.0" class="pos"/><text x="246" y="430.7" class="klab" text-anchor="end">784</text><rect x="250.0" y="435.7" width="6.8" height="13.0" class="pos"/><text x="246" y="445.7" class="klab" text-anchor="end">783</text><rect x="250.0" y="450.7" width="11.0" height="13.0" class="pos"/><text x="246" y="460.7" class="klab" text-anchor="end">782</text><rect x="250.0" y="465.7" width="7.4" height="13.0" class="pos"/><text x="246" y="475.8" class="klab" text-anchor="end">781</text><rect x="250.0" y="480.8" width="192.0" height="13.0" class="pos"/><text x="246" y="490.8" class="klab" text-anchor="end">780</text><rect x="250.0" y="495.8" width="20.9" height="13.0" class="pos"/><text x="246" y="505.8" class="klab" text-anchor="end">779</text><rect x="250.0" y="510.8" width="11.8" height="13.0" class="pos"/><text x="246" y="520.8" class="klab" text-anchor="end">778</text><rect x="250.0" y="525.8" width="21.0" height="13.0" class="pos"/><text x="246" y="535.9" class="klab" text-anchor="end">777</text><rect x="250.0" y="540.9" width="23.6" height="13.0" class="pos"/><text x="246" y="550.9" class="klab" text-anchor="end">776</text><rect x="250.0" y="555.9" width="159.2" height="13.0" class="pos"/><text x="246" y="565.9" class="klab" text-anchor="end">775</text><rect x="250.0" y="570.9" width="13.5" height="13.0" class="pos"/><text x="246" y="580.9" class="klab" text-anchor="end">774</text><rect x="250.0" y="585.9" width="19.7" height="13.0" class="pos"/><text x="246" y="596.0" class="klab" text-anchor="end">773</text><rect x="250.0" y="601.0" width="4.6" height="13.0" class="pos"/><text x="246" y="611.0" class="klab" text-anchor="end">772</text><rect x="250.0" y="616.0" width="3.9" height="13.0" class="pos"/><text x="246" y="626.0" class="klab" text-anchor="end">771</text><rect x="237.8" y="631.0" width="12.2" height="13.0" class="neg"/><text x="254" y="641.0" class="klab" text-anchor="start">770</text><rect x="243.4" y="646.0" width="6.6" height="13.0" class="neg"/><text x="254" y="656.0" class="klab" text-anchor="start">769</text><rect x="239.2" y="661.1" width="10.8" height="13.0" class="neg"/><text x="254" y="671.1" class="klab" text-anchor="start">768</text><rect x="229.0" y="676.1" width="21.0" height="13.0" class="neg"/><text x="254" y="686.1" class="klab" text-anchor="start">767</text><rect x="243.7" y="691.1" width="6.3" height="13.0" class="neg"/><text x="254" y="701.1" class="klab" text-anchor="start">766</text><rect x="228.4" y="706.1" width="21.6" height="13.0" class="neg"/><text x="254" y="716.1" class="klab" text-anchor="start">765</text><rect x="245.1" y="721.2" width="4.9" height="13.0" class="neg"/><text x="254" y="731.2" class="klab" text-anchor="start">764</text><rect x="239.8" y="736.2" width="10.2" height="13.0" class="neg"/><text x="254" y="746.2" class="klab" text-anchor="start">763</text><rect x="245.1" y="751.2" width="4.9" height="13.0" class="neg"/><text x="254" y="761.2" class="klab" text-anchor="start">762</text><rect x="246.1" y="766.2" width="3.9" height="13.0" class="neg"/><text x="254" y="776.2" class="klab" text-anchor="start">761</text><rect x="245.9" y="781.3" width="4.1" height="13.0" class="neg"/><text x="254" y="791.3" class="klab" text-anchor="start">760</text><rect x="250.0" y="796.3" width="0.5" height="13.0" class="pos"/><text x="246" y="806.3" class="klab" text-anchor="end">759</text><rect x="239.2" y="811.3" width="10.8" height="13.0" class="neg"/><text x="254" y="821.3" class="klab" text-anchor="start">758</text><rect x="248.4" y="826.3" width="1.6" height="13.0" class="neg"/><text x="254" y="836.3" class="klab" text-anchor="start">757</text><rect x="249.4" y="841.4" width="0.6" height="13.0" class="neg"/><text x="254" y="851.4" class="klab" text-anchor="start">756</text><rect x="246.9" y="856.4" width="3.1" height="13.0" class="neg"/><text x="254" y="866.4" class="klab" text-anchor="start">755</text><rect x="249.1" y="871.4" width="0.9" height="13.0" class="neg"/><text x="254" y="881.4" class="klab" text-anchor="start">754</text><rect x="248.6" y="886.4" width="1.4" height="13.0" class="neg"/><text x="254" y="896.4" class="klab" text-anchor="start">753</text><rect x="249.6" y="901.5" width="0.4" height="13.0" class="neg"/><text x="254" y="911.5" class="klab" text-anchor="start">752</text><rect x="249.6" y="916.5" width="0.4" height="13.0" class="neg"/><text x="254" y="926.5" class="klab" text-anchor="start">751</text><rect x="247.7" y="931.5" width="2.3" height="13.0" class="neg"/><text x="254" y="941.5" class="klab" text-anchor="start">750</text><rect x="250.0" y="946.5" width="0.0" height="13.0" class="pos"/><text x="246" y="956.5" class="klab" text-anchor="end">749</text><rect x="249.2" y="961.6" width="0.8" height="13.0" class="neg"/><text x="254" y="971.6" class="klab" text-anchor="start">748</text><rect x="249.5" y="976.6" width="0.5" height="13.0" class="neg"/><text x="254" y="986.6" class="klab" text-anchor="start">747</text><rect x="249.7" y="991.6" width="0.3" height="13.0" class="neg"/><text x="254" y="1001.6" class="klab" text-anchor="start">746</text><rect x="249.5" y="1006.6" width="0.5" height="13.0" class="neg"/><text x="254" y="1016.6" class="klab" text-anchor="start">745</text><rect x="250.0" y="1021.7" width="0.1" height="13.0" class="pos"/><text x="246" y="1031.7" class="klab" text-anchor="end">744</text><rect x="250.0" y="1036.7" width="0.1" height="13.0" class="pos"/><text x="246" y="1046.7" class="klab" text-anchor="end">743</text><rect x="249.5" y="1051.7" width="0.5" height="13.0" class="neg"/><text x="254" y="1061.7" class="klab" text-anchor="start">742</text><rect x="249.4" y="1066.7" width="0.6" height="13.0" class="neg"/><text x="254" y="1076.7" class="klab" text-anchor="start">741</text><rect x="247.7" y="1081.8" width="2.3" height="13.0" class="neg"/><text x="254" y="1091.8" class="klab" text-anchor="start">740</text><rect x="249.9" y="1096.8" width="0.1" height="13.0" class="neg"/><text x="254" y="1106.8" class="klab" text-anchor="start">739</text><rect x="249.6" y="1111.8" width="0.4" height="13.0" class="neg"/><text x="254" y="1121.8" class="klab" text-anchor="start">738</text><rect x="249.6" y="1126.8" width="0.4" height="13.0" class="neg"/><text x="254" y="1136.8" class="klab" text-anchor="start">737</text><rect x="249.8" y="1141.9" width="0.2" height="13.0" class="neg"/><text x="254" y="1151.9" class="klab" text-anchor="start">736</text><rect x="249.3" y="1156.9" width="0.7" height="13.0" class="neg"/><text x="254" y="1166.9" class="klab" text-anchor="start">735</text><rect x="249.9" y="1171.9" width="0.1" height="13.0" class="neg"/><text x="254" y="1181.9" class="klab" text-anchor="start">734</text><rect x="249.5" y="1186.9" width="0.5" height="13.0" class="neg"/><text x="254" y="1196.9" class="klab" text-anchor="start">733</text><rect x="249.5" y="1202.0" width="0.5" height="13.0" class="neg"/><text x="254" y="1212.0" class="klab" text-anchor="start">732</text><rect x="250.0" y="1217.0" width="0.0" height="13.0" class="neg"/><text x="254" y="1227.0" class="klab" text-anchor="start">731</text><line x1="14" y1="594.0" x2="546" y2="594.0" class="spotl"/><text x="546" y="590.0" class="lvlab spotlt" text-anchor="end">spot 772.90</text><line x1="14" y1="689.6" x2="546" y2="689.6" class="flipl"/><text x="546" y="685.6" class="lvlab fliplt" text-anchor="end">flip 766.54</text><text x="258" y="1243" class="axlab">calls · gamma +</text><text x="242" y="1243" class="axlab" text-anchor="end">puts · gamma −</text></svg>
+  <h3>La cadena que expira el viernes 2026-08-14</h3>
+  <div class="scroll"><table class="tbl"><thead><tr><th colspan="2">CALLS</th><th colspan="2">PUTS</th></tr><tr><th>strike</th><th>OI</th><th>strike</th><th>OI</th></tr></thead><tbody><tr><td class="n c">780</td><td class="n">145 531</td><td class="n p">758</td><td class="n">27 143</td></tr><tr><td class="n c">788</td><td class="n">139 721</td><td class="n p">750</td><td class="n">26 651</td></tr><tr><td class="n c">775</td><td class="n">90 973</td><td class="n p">740</td><td class="n">17 329</td></tr><tr><td class="n c">750</td><td class="n">28 332</td><td class="n p">767</td><td class="n">10 763</td></tr><tr><td class="n c">760</td><td class="n">21 710</td><td class="n p">760</td><td class="n">10 356</td></tr><tr><td class="n c">758</td><td class="n">13 226</td><td class="n p">770</td><td class="n">8 929</td></tr></tbody></table></div>
+ </div>
+</div>
+<h3>Muros de la semana pasada (2026-08-03 → 2026-08-07)</h3>
+<p class="declara"><b>Dos ventanas distintas, no se comparan a ciegas:</b> los muros de la semana
+pasada salen de cadenas IBKR/TWS archivadas con banda <b>±4,5%</b> y del vencimiento más cercano
+de cada día — contratos <b>ya expirados</b>. El libro de hoy es Polygon con banda adaptativa
+<b>0.18</b> y todos los vencimientos hasta el viernes. Por eso la supervivencia se
+decide por <b>RANGO del strike</b> en el libro de hoy, nunca por el cociente de OI.</p>
+<div class="scroll"><table class="tbl"><thead><tr><th>lado</th><th>strike</th><th>días</th><th>OI entonces</th><th>OI ahora</th><th>rango</th><th>OI viernes</th><th>estado</th></tr></thead><tbody><tr><td class="p">PUT</td><td class="n">720</td><td class="n">3</td><td class="n">96 353</td><td class="n">13 353</td><td class="n">#21</td><td class="n">8 928</td><td><span class="st bad">SIN RASTRO</span></td></tr><tr><td class="c">CALL</td><td class="n">775</td><td class="n">2</td><td class="n">88 813</td><td class="n">107 544</td><td class="n">#3</td><td class="n">90 973</td><td><span class="st ok">SOBREVIVE</span></td></tr><tr><td class="p">PUT</td><td class="n">721</td><td class="n">1</td><td class="n">59 447</td><td class="n">5 521</td><td class="n">#51</td><td class="n">978</td><td><span class="st bad">SIN RASTRO</span></td></tr><tr><td class="p">PUT</td><td class="n">750</td><td class="n">3</td><td class="n">58 089</td><td class="n">44 522</td><td class="n">#1</td><td class="n">26 651</td><td><span class="st ok">SOBREVIVE</span></td></tr><tr><td class="p">PUT</td><td class="n">730</td><td class="n">2</td><td class="n">47 173</td><td class="n">15 923</td><td class="n">#14</td><td class="n">6 024</td><td><span class="st warn">DECAIDO</span></td></tr><tr><td class="c">CALL</td><td class="n">750</td><td class="n">3</td><td class="n">28 727</td><td class="n">29 408</td><td class="n">#4</td><td class="n">28 332</td><td><span class="st ok">SOBREVIVE</span></td></tr><tr><td class="c">CALL</td><td class="n">760</td><td class="n">3</td><td class="n">22 054</td><td class="n">27 857</td><td class="n">#5</td><td class="n">21 710</td><td><span class="st ok">SOBREVIVE</span></td></tr><tr><td class="p">PUT</td><td class="n">695</td><td class="n">1</td><td class="n">20 455</td><td class="n">4 414</td><td class="n">#61</td><td class="n">2 839</td><td><span class="st bad">SIN RASTRO</span></td></tr><tr><td class="c">CALL</td><td class="n">758</td><td class="n">1</td><td class="n">15 622</td><td class="n">14 364</td><td class="n">#16</td><td class="n">13 226</td><td><span class="st bad">SIN RASTRO</span></td></tr><tr><td class="c">CALL</td><td class="n">755</td><td class="n">1</td><td class="n">13 846</td><td class="n">4 748</td><td class="n">#43</td><td class="n">2 838</td><td><span class="st bad">SIN RASTRO</span></td></tr><tr><td class="p">PUT</td><td class="n">735</td><td class="n">1</td><td class="n">12 711</td><td class="n">17 729</td><td class="n">#10</td><td class="n">2 569</td><td><span class="st warn">DECAIDO</span></td></tr><tr><td class="c">CALL</td><td class="n">754</td><td class="n">1</td><td class="n">12 676</td><td class="n">3 569</td><td class="n">#56</td><td class="n">2 220</td><td><span class="st bad">SIN RASTRO</span></td></tr><tr><td class="c">CALL</td><td class="n">753</td><td class="n">1</td><td class="n">11 514</td><td class="n">2 665</td><td class="n">#67</td><td class="n">1 371</td><td><span class="st bad">SIN RASTRO</span></td></tr><tr><td class="p">PUT</td><td class="n">725</td><td class="n">1</td><td class="n">11 277</td><td class="n">6 869</td><td class="n">#45</td><td class="n">3 518</td><td><span class="st bad">SIN RASTRO</span></td></tr></tbody></table></div>
+<details class="cav"><summary>Lo que este mapa NO dice (5)</summary><ul><li>OI de la semana pasada = contratos YA EXPIRADOS (exp 07-22/23/24): el cociente de OI NO es like-for-like. La supervivencia se decide por RANGO del strike en el libro de hoy.</li><li>Muros de la semana pasada: cadena IBKR/TWS del vencimiento MAS CERCANO de cada dia. Muros de hoy: cadena Polygon con banda adaptativa, todos los vencimientos hasta el viernes.</li><li>spot 772.9 con edad 70s = cierre del viernes (mercado cerrado).</li><li>Polygon = 15 min de retraso (HISTORIA/ESTRUCTURA). Ningun nivel de aqui dispara una orden: el PRINT que confirma es de IBKR en tiempo real.</li><li>bid/ask NO_ENTITLED en este plan de Polygon: no hay gate de spread en esta hoja.</li></ul></details>
+</section>
+<section class="sheet doct" id="decay">
+<header class="sh"><span class="ord">control de doctrina</span>
+<h2>¿De verdad el primer toque rebota al 70%?</h2>
+<p class="sub">La casa opera con esa constante y con <code>TOUCH_EXHAUST = 3</code>. Nunca se midió. Esto es lo que dicen los datos que hay.</p></header>
+<div class="curve"><div class="cb"><span class="ct">0</span><div class="cbar"><div style="width:69.7%"></div></div><span class="cp">70%</span><span class="cn">n=99</span></div><div class="cb"><span class="ct">1</span><div class="cbar"><div style="width:82.4%"></div></div><span class="cp">82%</span><span class="cn">n=273</span></div><div class="cb"><span class="ct">2</span><div class="cbar"><div style="width:89.9%"></div></div><span class="cp">90%</span><span class="cn">n=217</span></div><div class="cb"><span class="ct">3</span><div class="cbar"><div style="width:88.3%"></div></div><span class="cp">88%</span><span class="cn">n=214</span></div><div class="cb"><span class="ct">4</span><div class="cbar"><div style="width:85.6%"></div></div><span class="cp">86%</span><span class="cn">n=216</span></div><div class="cb"><span class="ct">5</span><div class="cbar"><div style="width:87.6%"></div></div><span class="cp">88%</span><span class="cn">n=201</span></div><div class="cb"><span class="ct">6</span><div class="cbar"><div style="width:81.7%"></div></div><span class="cp">82%</span><span class="cn">n=191</span></div><div class="cb"><span class="ct">7</span><div class="cbar"><div style="width:85.5%"></div></div><span class="cp">86%</span><span class="cn">n=166</span></div></div>
+<p class="verdict warn">Veredicto: <b>DATOS INSUFICIENTES</b> — 2 sesiones y 30 símbolos correlacionados
+(ρ̄ de la flota = 0,41, así que la muestra efectiva es una fracción de la nominal). Con lo que hay, la tasa de aguante
+<b>no decae</b> con el número de toque, que es lo contrario de lo que dice la doctrina. No se cambia la doctrina con esto,
+y tampoco se afirma que sea cierta: hace falta ~40 sesiones. El reloj ya corre.</p>
+</section>
+<footer class="foot"><p>Nada de esto es una orden ni un consejo financiero. Describe el libro de opciones;
+no predice el precio. Sin print de IBKR no hay entrada.</p></footer>
+</div>

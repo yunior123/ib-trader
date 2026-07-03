@@ -1,0 +1,235 @@
+//@version=6
+// ============================================================================
+// ULTRA TREND — event-driven confluence trend system (Pine v6)
+//
+// Built from a 4-lens design panel (trend-follower / squeeze / structure /
+// devil's-advocate) on top of the proven Confluence Master core, then every
+// rule grid-tested on 25 tickers x 10.5y of real SIP data (one GENERIC config,
+// judged on the MEDIAN ticker — no per-ticker tuning). See tradingview/README.
+//
+// KEPT byte-for-byte (panel unanimous + plateau-proven):
+//   Supertrend(10,3.5) mandatory gate | 6-check confluence score |
+//   wide 4xATR NON-trailing stop | exit on ST flip or score<2
+// NEW (each earned its place in ablation):
+//   EVENT entries: Donchian-20 close breakout OR bull-pattern resumption
+//   Pattern bonus: engulfing/hammer/inside-break in last 3 bars = +1 score
+//   Bear tightening: below falling EMA200 -> need score>=5 AND breakout
+//   Breakeven floor: at +5xATR open profit, stop ratchets to entry (fee-covered)
+//   YEARLY-anchored VWAP (won the A/B vs monthly across the whole top-12)
+// TESTED AND REJECTED (kept as OFF toggles): extension veto, post-loss
+//   cooldown, ADX gate, squeeze precondition, tight trailing, dip-buys.
+//
+// Local replica evidence (25 tickers, punitive friction):
+//   full 2015-2026: median PF 2.67 | OOS 2024->: median PF 2.89, CAGR 13.4%
+//   recent 2025->:  median PF 2.78, median maxDD 21.5%
+// ============================================================================
+strategy("Ultra Trend [Event Confluence]", shorttitle="ULTRA-TREND",
+     overlay=true, initial_capital=25000,
+     default_qty_type=strategy.percent_of_equity, default_qty_value=95,
+     commission_type=strategy.commission.percent, commission_value=0.05,
+     slippage=2, calc_on_every_tick=false, max_labels_count=500)
+
+// ---------------------------------------------------------------- inputs ---
+grpS = "Signal engine"
+entryEvent = input.bool(true, "EVENT entries (Donchian break / pattern resumption)",
+     tooltip="OFF = proven state-based entries (score alone). Event mode tested better on all 25 tickers.", group=grpS)
+minScore  = input.int(5, "Min confluence score to enter (of 7)", minval=1, maxval=7, group=grpS)
+exitScore = input.int(2, "Exit when score falls below", minval=0, maxval=6, group=grpS)
+usePatBonus = input.bool(true, "Pattern bonus (+1 score, last 3 bars)", group=grpS)
+useBearTight = input.bool(true, "Bear tightening (below falling EMA200: score>=5 + breakout only)", group=grpS)
+useExtVeto = input.bool(false, "Extension veto (> BB upper AND > VWAP+2σ)",
+     tooltip="Panel idea; did NOT improve the 25-ticker median. Default off.", group=grpS)
+useCooldown = input.bool(false, "Post-loss cooldown 5 bars (Donchian break overrides)",
+     tooltip="Panel idea; did NOT improve the 25-ticker median. Default off.", group=grpS)
+allowDip = input.bool(false, "Dip-buy module (pattern + RSI<=38 below BB mid)",
+     tooltip="Dead code in event mode during testing (never fired profitably). Off.", group=grpS)
+
+grpT = "Supertrend gate"
+stPeriod = input.int(10, "ATR Period", minval=1, group=grpT)
+stMult   = input.float(3.5, "ATR Multiplier", step=0.1, group=grpT)
+stSrc    = input.source(hl2, "Source", group=grpT)
+
+grpM = "Trend lines / regime"
+demaLen   = input.int(200, "DEMA length", minval=1, group=grpM)
+regimeLen = input.int(200, "Regime EMA length", minval=1, group=grpM)
+donLen    = input.int(20, "Donchian breakout lookback", minval=5, group=grpM)
+
+grpR = "RSI"
+lenFast = input.int(5, "Fast RSI", minval=1, group=grpR)
+lenSlow = input.int(14, "Slow RSI", minval=1, group=grpR)
+
+grpB = "Bollinger"
+bbLen  = input.int(20, "BB length", minval=1, group=grpB)
+bbMult = input.float(2.0, "BB stdev", step=0.1, group=grpB)
+
+grpV = "VWAP / volume"
+vwapAnchor = input.timeframe("12M", "VWAP anchor (12M won the A/B test)", group=grpV)
+vwapDev    = input.float(2.0, "VWAP stdev multiplier", step=0.1, group=grpV)
+rvolLen    = input.int(20, "Relative volume lookback", minval=1, group=grpV)
+rvolThresh = input.float(1.2, "Relative volume threshold", step=0.1, group=grpV)
+
+grpX = "Risk"
+atrStopMult = input.float(4.0, "Catastrophic stop (ATR multiple, never trailed)", step=0.25, group=grpX)
+useBeFloor  = input.bool(true, "Breakeven floor at +5xATR open profit", group=grpX)
+useRiskSize = input.bool(false, "Risk-based sizing (instead of % of equity)", group=grpX)
+riskPct     = input.float(0.75, "Risk per trade (% of equity at the stop)", step=0.25, group=grpX)
+
+grpUI = "Display"
+showBB       = input.bool(true, "Show Bollinger Bands", group=grpUI)
+showsignals  = input.bool(true, "Show Buy/Sell Signals ?", group=grpUI)
+highlighting = input.bool(true, "Highlighter On/Off ?", group=grpUI)
+
+// ------------------------------------------------------------ indicators ---
+rsiFast = ta.rsi(close, lenFast)
+rsiSlow = ta.rsi(close, lenSlow)
+divergence = rsiFast - rsiSlow
+
+// Supertrend — v4 semantics kept verbatim (the proven gatekeeper)
+atrVal = ta.atr(stPeriod)
+up = stSrc - stMult * atrVal
+up1 = nz(up[1], up)
+up := close[1] > up1 ? math.max(up, up1) : up
+dn = stSrc + stMult * atrVal
+dn1 = nz(dn[1], dn)
+dn := close[1] < dn1 ? math.min(dn, dn1) : dn
+var int trend = 1
+trend := trend == -1 and close > dn1 ? 1 : trend == 1 and close < up1 ? -1 : trend
+buyFlip  = trend == 1 and trend[1] == -1
+sellFlip = trend == -1 and trend[1] == 1
+
+e1 = ta.ema(close, demaLen)
+e2 = ta.ema(e1, demaLen)
+dema = 2 * e1 - e2
+emaReg = ta.ema(close, regimeLen)
+bearRegime = close < emaReg and emaReg < emaReg[20]
+
+bbBasis = ta.sma(close, bbLen)
+bbDev   = bbMult * ta.stdev(close, bbLen)
+bbUpper = bbBasis + bbDev
+bbLower = bbBasis - bbDev
+
+[vwapVal, vwapUpper, vwapLower] = ta.vwap(hlc3, timeframe.change(vwapAnchor), vwapDev)
+rvol = volume / ta.sma(volume, rvolLen)
+
+donHi = ta.highest(high[1], donLen)   // prior bars only — zero look-ahead
+atr14 = ta.atr(14)
+
+// -------------------------------------------------------------- patterns ---
+body = math.abs(close - open)
+rng  = math.max(high - low, syminfo.mintick)
+bullEngulf = close > open and close[1] < open[1] and close > open[1] and open < close[1]
+lowerWick = math.min(open, close) - low
+hammer = lowerWick > 2 * body and (close - low) / rng > 0.66
+insidePrev = high[1] <= high[2] and low[1] >= low[2]
+ibBreak = insidePrev and close > high[2]
+patBull = bullEngulf or hammer or ibBreak
+patRecent = patBull or patBull[1] or patBull[2]
+
+// ----------------------------------------------------------------- score ---
+c1 = close > dema
+c2 = divergence > 0
+c3 = close > emaReg
+c4 = close > vwapVal
+c5 = rvol >= rvolThresh
+c6 = close > bbBasis
+c7 = usePatBonus and patRecent
+score = (c1 ? 1 : 0) + (c2 ? 1 : 0) + (c3 ? 1 : 0) + (c4 ? 1 : 0) +
+     (c5 ? 1 : 0) + (c6 ? 1 : 0) + (c7 ? 1 : 0)
+
+// -------------------------------------------------------------- signals ---
+brk   = close > donHi
+resum = patBull and close > bbBasis
+gate  = trend == 1
+
+fire = gate and score >= minScore and (entryEvent ? (brk or resum) : true)
+dipSig = allowDip and gate and close > emaReg and patBull and rsiSlow <= 38 and close <= bbBasis
+if useBearTight and bearRegime
+    fire := gate and score >= 5 and brk
+    dipSig := false
+if useExtVeto and close > bbUpper and close > vwapUpper
+    fire := false
+    dipSig := false
+// post-loss cooldown (Donchian break overrides)
+lastT = strategy.closedtrades - 1
+lossRecent = lastT >= 0 and strategy.closedtrades.profit(lastT) < 0 and
+     bar_index - strategy.closedtrades.exit_bar_index(lastT) <= 5
+if useCooldown and lossRecent and not brk
+    fire := false
+    dipSig := false
+
+longSignal = (fire or dipSig) and strategy.position_size <= 0
+exitLong   = trend == -1 or score < exitScore
+
+// ----------------------------------------------------------------- risk ---
+var float stopLvl = na
+var float entryAtr = na
+if longSignal
+    stopLvl := close - atrStopMult * atr14
+    entryAtr := atr14
+if strategy.position_size > 0 and useBeFloor and not na(entryAtr)
+    if close - strategy.position_avg_price >= 5 * entryAtr
+        stopLvl := math.max(stopLvl, strategy.position_avg_price * 1.002)
+
+qty = useRiskSize ? math.max(1, math.floor(strategy.equity * riskPct / 100 /
+     math.max(atrStopMult * atr14, syminfo.mintick))) : na
+
+// --------------------------------------------------------------- orders ---
+if longSignal
+    strategy.entry("L", strategy.long, qty=qty,
+         comment=dipSig and not fire ? "DIP" : brk ? "BRK" : "PAT")
+// exit colocado tambien en la barra de senal: el stop acompana al fill desde
+// la barra de entrada (gap en la barra del fill queda protegido — audit fix)
+if longSignal or strategy.position_size > 0
+    strategy.exit("XL", "L", stop=stopLvl)
+if exitLong and strategy.position_size > 0
+    strategy.close("L", comment="flip/score")
+
+// ------------------- plots — classic Supertrend look + Bollinger Bands ---
+sellNow = exitLong and strategy.position_size > 0
+
+upPlot = plot(trend == 1 ? up : na, title="Up Trend", style=plot.style_linebr,
+     linewidth=2, color=color.new(color.green, 0))
+dnPlot = plot(trend == 1 ? na : dn, title="Down Trend", style=plot.style_linebr,
+     linewidth=2, color=color.new(color.red, 0))
+
+// circulos donde nace/muere la tendencia (como el original)
+plotshape(buyFlip ? up : na, title="UpTrend Begins", location=location.absolute,
+     style=shape.circle, size=size.tiny, color=color.new(color.green, 0))
+plotshape(sellFlip ? dn : na, title="DownTrend Begins", location=location.absolute,
+     style=shape.circle, size=size.tiny, color=color.new(color.red, 0))
+
+// Buy/Sell del sistema ULTRA, pegados a la linea Supertrend
+plotshape(longSignal and showsignals ? up : na, title="Buy", text="Buy",
+     location=location.absolute, style=shape.labelup, size=size.tiny,
+     color=color.new(color.green, 0), textcolor=color.white)
+plotshape(sellNow and showsignals ? (trend == -1 ? dn : high) : na, title="Sell",
+     text="Sell", location=location.absolute, style=shape.labeldown, size=size.tiny,
+     color=color.new(color.red, 0), textcolor=color.white)
+
+// highlighter precio<->linea (como el original, transparente para dark theme)
+mPlot = plot(ohlc4, title="", style=plot.style_circles, linewidth=1,
+     color=color.new(color.gray, 100))
+longFillColor  = highlighting and trend == 1 ? color.new(color.green, 85) : color.new(color.white, 100)
+shortFillColor = highlighting and trend == -1 ? color.new(color.red, 85) : color.new(color.white, 100)
+fill(mPlot, upPlot, title="UpTrend Highligter", color=longFillColor)
+fill(mPlot, dnPlot, title="DownTrend Highligter", color=shortFillColor)
+
+// Bollinger
+bbUP = plot(showBB ? bbUpper : na, "BB Upper", color=color.new(#3D85C6, 45))
+bbLP = plot(showBB ? bbLower : na, "BB Lower", color=color.new(#3D85C6, 45))
+plot(showBB ? bbBasis : na, "BB Basis", color=color.new(color.gray, 20))
+fill(bbUP, bbLP, color=color.new(#6D9EEB, 92), title="BB fill")
+
+// valores en data window (no ensucian el chart)
+plot(score, "Confluence score", display=display.data_window)
+plot(divergence, "RSI divergence", display=display.data_window)
+plot(rvol, "Relative volume", display=display.data_window)
+plot(stopLvl, "Stop level", display=display.data_window)
+
+// --------------------------------------------------------------- alerts ---
+alertcondition(longSignal, "Ultra Trend LONG", "ULTRA-TREND {{ticker}}: LONG @ {{close}}")
+alertcondition(exitLong, "Ultra Trend EXIT", "ULTRA-TREND {{ticker}}: exit @ {{close}}")
+alertcondition(buyFlip, "Supertrend Buy", "SuperTrend Buy {{ticker}}!")
+alertcondition(sellFlip, "Supertrend Sell", "SuperTrend Sell {{ticker}}!")
+changeCond = trend != trend[1]
+alertcondition(changeCond, "SuperTrend Direction Change", "SuperTrend has changed direction!")

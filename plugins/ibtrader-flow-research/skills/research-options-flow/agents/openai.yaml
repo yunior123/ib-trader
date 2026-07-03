@@ -1,0 +1,4 @@
+interface:
+  display_name: "Research Options Flow"
+  short_description: "Research signed options flow honestly"
+  default_prompt: "Use $research-options-flow to analyze signed options flow with source and side caveats."

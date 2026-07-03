@@ -1,0 +1,304 @@
+{
+ "sym": "NOK",
+ "generado": "2026-07-30T09:04:30",
+ "viernes": "2026-07-31",
+ "chain_dir": "2026-07-30",
+ "spot": 8.95,
+ "spot_source": "ibkr_bridge",
+ "spot_age_s": 94.0,
+ "band": 0.6,
+ "exp_hasta_fichero": "2026-08-21",
+ "greeks_src": "polygon_directo",
+ "oi_src": "polygon_directo",
+ "bid_ask": "NO_ENTITLED",
+ "n_contratos_cadena": 111,
+ "n_hasta_viernes": 26,
+ "n_solo_viernes": 26,
+ "regime": "POS",
+ "net_gex": 86934446.78300238,
+ "flip": 8.508258272058821,
+ "flip_src": "recompute_15pct",
+ "call_wall": 9.0,
+ "call_wall_kind": "pin",
+ "put_wall": 8.5,
+ "put_wall_kind": "trampilla",
+ "abs_wall": 9.0,
+ "abs_wall_kind": "pin",
+ "oi_call_wall": 9.0,
+ "oi_put_wall": 8.5,
+ "profile": [
+  {
+   "strike": 5.0,
+   "gex": -233.85374800431646
+  },
+  {
+   "strike": 7.0,
+   "gex": -22885.593027268755
+  },
+  {
+   "strike": 8.0,
+   "gex": -615627.1660718264
+  },
+  {
+   "strike": 8.5,
+   "gex": -4393991.52767997
+  },
+  {
+   "strike": 9.0,
+   "gex": 82221846.36560526
+  },
+  {
+   "strike": 9.5,
+   "gex": 3184496.1625918513
+  },
+  {
+   "strike": 10.0,
+   "gex": 1506773.3927182558
+  },
+  {
+   "strike": 10.5,
+   "gex": 453032.617641198
+  },
+  {
+   "strike": 11.0,
+   "gex": 1834251.588177915
+  },
+  {
+   "strike": 11.5,
+   "gex": 359058.2524109241
+  },
+  {
+   "strike": 12.0,
+   "gex": 611350.8300826118
+  },
+  {
+   "strike": 12.5,
+   "gex": 308974.909773449
+  },
+  {
+   "strike": 13.0,
+   "gex": 242999.49074151632
+  },
+  {
+   "strike": 13.5,
+   "gex": 512762.0166106772
+  },
+  {
+   "strike": 14.0,
+   "gex": 731639.2971757739
+  }
+ ],
+ "viernes_call_wall": 9.0,
+ "viernes_put_wall": 8.5,
+ "viernes_calls_oi": 180875,
+ "viernes_puts_oi": 47706,
+ "viernes_pc_oi": 0.264,
+ "viernes_top_calls": [
+  {
+   "strike": 9.0,
+   "oi": 58418
+  },
+  {
+   "strike": 11.0,
+   "oi": 27008
+  },
+  {
+   "strike": 14.0,
+   "oi": 21547
+  },
+  {
+   "strike": 10.0,
+   "oi": 19168
+  },
+  {
+   "strike": 9.5,
+   "oi": 11156
+  },
+  {
+   "strike": 12.0,
+   "oi": 10432
+  }
+ ],
+ "viernes_top_puts": [
+  {
+   "strike": 8.5,
+   "oi": 15534
+  },
+  {
+   "strike": 9.0,
+   "oi": 11833
+  },
+  {
+   "strike": 10.0,
+   "oi": 11589
+  },
+  {
+   "strike": 9.5,
+   "oi": 3262
+  },
+  {
+   "strike": 8.0,
+   "oi": 2879
+  },
+  {
+   "strike": 12.5,
+   "oi": 658
+  }
+ ],
+ "supervivientes": [
+  {
+   "lado": "P",
+   "strike": 10.0,
+   "dias_semana_pasada": 3,
+   "oi_entonces": 25267.0,
+   "oi_ahora": 11589,
+   "rank_ahora": 3,
+   "ratio_oi": 45.9,
+   "estado": "SOBREVIVE",
+   "exp_entonces": "20260724",
+   "oi_viernes": 11589
+  },
+  {
+   "lado": "C",
+   "strike": 10.5,
+   "dias_semana_pasada": 2,
+   "oi_entonces": 11644.0,
+   "oi_ahora": 4640,
+   "rank_ahora": 10,
+   "ratio_oi": 39.8,
+   "estado": "DECAIDO",
+   "exp_entonces": "20260724",
+   "oi_viernes": 4640
+  },
+  {
+   "lado": "P",
+   "strike": 9.0,
+   "dias_semana_pasada": 1,
+   "oi_entonces": 10234.0,
+   "oi_ahora": 11833,
+   "rank_ahora": 2,
+   "ratio_oi": 115.6,
+   "estado": "SOBREVIVE",
+   "exp_entonces": "20260724",
+   "oi_viernes": 11833
+  },
+  {
+   "lado": "P",
+   "strike": 9.5,
+   "dias_semana_pasada": 2,
+   "oi_entonces": 9487.0,
+   "oi_ahora": 3262,
+   "rank_ahora": 4,
+   "ratio_oi": 34.4,
+   "estado": "SOBREVIVE",
+   "exp_entonces": "20260724",
+   "oi_viernes": 3262
+  },
+  {
+   "lado": "P",
+   "strike": 10.5,
+   "dias_semana_pasada": 2,
+   "oi_entonces": 6544.0,
+   "oi_ahora": 49,
+   "rank_ahora": 12,
+   "ratio_oi": 0.7,
+   "estado": "DECAIDO",
+   "exp_entonces": "20260724",
+   "oi_viernes": 49
+  },
+  {
+   "lado": "C",
+   "strike": 10.0,
+   "dias_semana_pasada": 3,
+   "oi_entonces": 5612.0,
+   "oi_ahora": 19168,
+   "rank_ahora": 4,
+   "ratio_oi": 341.6,
+   "estado": "SOBREVIVE",
+   "exp_entonces": "20260724",
+   "oi_viernes": 19168
+  },
+  {
+   "lado": "C",
+   "strike": 9.5,
+   "dias_semana_pasada": 2,
+   "oi_entonces": 2412.0,
+   "oi_ahora": 11156,
+   "rank_ahora": 5,
+   "ratio_oi": 462.5,
+   "estado": "SOBREVIVE",
+   "exp_entonces": "20260724",
+   "oi_viernes": 11156
+  },
+  {
+   "lado": "C",
+   "strike": 9.0,
+   "dias_semana_pasada": 1,
+   "oi_entonces": 1022.0,
+   "oi_ahora": 58418,
+   "rank_ahora": 1,
+   "ratio_oi": 5716.0,
+   "estado": "SOBREVIVE",
+   "exp_entonces": "20260724",
+   "oi_viernes": 58418
+  }
+ ],
+ "toques": [
+  {
+   "toque": 1,
+   "n": 4,
+   "aguanta": 4,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 2,
+   "n": 4,
+   "aguanta": 4,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 3,
+   "n": 4,
+   "aguanta": 4,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 4,
+   "n": 4,
+   "aguanta": 4,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 5,
+   "n": 4,
+   "aguanta": 4,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 6,
+   "n": 4,
+   "aguanta": 4,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  }
+ ],
+ "semana_pasada_fechas": [
+  "2026-07-20",
+  "2026-07-21",
+  "2026-07-22",
+  "2026-07-23",
+  "2026-07-24"
+ ],
+ "caveats": [
+  "OI de la semana pasada = contratos YA EXPIRADOS (exp 07-22/23/24): el cociente de OI NO es like-for-like. La supervivencia se decide por RANGO del strike en el libro de hoy.",
+  "Muros de la semana pasada: cadena IBKR/TWS del vencimiento MAS CERCANO de cada dia. Muros de hoy: cadena Polygon con banda adaptativa, todos los vencimientos hasta el viernes.",
+  "spot 8.95 con edad 94s = cierre del viernes (mercado cerrado).",
+  "Polygon = 15 min de retraso (HISTORIA/ESTRUCTURA). Ningun nivel de aqui dispara una orden: el PRINT que confirma es de IBKR en tiempo real.",
+  "bid/ask NO_ENTITLED en este plan de Polygon: no hay gate de spread en esta hoja."
+ ]
+}

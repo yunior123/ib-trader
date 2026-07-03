@@ -1,0 +1,29 @@
+{
+ "sym": "COIN",
+ "lock_ts": 1786348936,
+ "src": "poly_bars 1m (ts en ms)",
+ "n_bars_1m": 0,
+ "window_bars": 365,
+ "cap": 5,
+ "atr14_diario": null,
+ "tfs": {
+  "1m": {
+   "tf": "1m",
+   "atr14": null,
+   "kde": null,
+   "why": "sin ATR o sin barras suficientes"
+  },
+  "5m": {
+   "tf": "5m",
+   "atr14": null,
+   "kde": null,
+   "why": "sin ATR o sin barras suficientes"
+  },
+  "15m": {
+   "tf": "15m",
+   "atr14": null,
+   "kde": null,
+   "why": "sin ATR o sin barras suficientes"
+  }
+ }
+}

@@ -1,0 +1,1037 @@
+04:03:08 | 🛰 FINVIZ | AVGO: recom 1.31→1.33 (empeora)
+04:03:08 | 🛰 FINVIZ | META: target price 750.94→749.20
+04:23:13 | 🛰 FINVIZ | AMZN: recom 1.20→1.22 (empeora)
+06:58:58 | 🔒 TRUTH-LOCK INFO | NVDA: PASADO reescrito (103 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:58:58 | 🔒 TRUTH-LOCK INFO | QQQ: PASADO reescrito (83 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:58:58 | 🔒 TRUTH-LOCK INFO | SPY: PASADO reescrito (41 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:58:58 | 🔒 TRUTH-LOCK INFO | TSLA: PASADO reescrito (92 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:00:59 | 🔒 TRUTH-LOCK INFO | AAPL: PASADO reescrito (79 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:00:59 | 🔒 TRUTH-LOCK INFO | AMD: PASADO reescrito (112 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:00:59 | 🔒 TRUTH-LOCK INFO | AMZN: PASADO reescrito (60 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:00:59 | 🔒 TRUTH-LOCK INFO | ASML: PASADO reescrito (24 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:00:59 | 🔒 TRUTH-LOCK INFO | AVGO: PASADO reescrito (53 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:00:59 | 🔒 TRUTH-LOCK INFO | GLD: PASADO reescrito (30 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:00:59 | 🔒 TRUTH-LOCK INFO | GOOGL: PASADO reescrito (75 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:00:59 | 🔒 TRUTH-LOCK INFO | INTC: PASADO reescrito (84 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:01:00 | 🔒 TRUTH-LOCK INFO | LRCX: PASADO reescrito (24 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:01:00 | 🔒 TRUTH-LOCK INFO | META: PASADO reescrito (35 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:01:00 | 🔒 TRUTH-LOCK INFO | MSFT: PASADO reescrito (58 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:01:00 | 🔒 TRUTH-LOCK INFO | MU: PASADO reescrito (111 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:01:00 | 🔒 TRUTH-LOCK INFO | NFLX: PASADO reescrito (15 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:01:00 | 🔒 TRUTH-LOCK INFO | NOK: PASADO reescrito (11 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:01:00 | 🔒 TRUTH-LOCK INFO | QCOM: PASADO reescrito (38 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:01:00 | 🔒 TRUTH-LOCK INFO | SMH: PASADO reescrito (28 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:01:01 | 🔒 TRUTH-LOCK INFO | SNDK: PASADO reescrito (113 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:01:01 | 🔒 TRUTH-LOCK INFO | STX: PASADO reescrito (11 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:01:01 | 🔒 TRUTH-LOCK INFO | TSM: PASADO reescrito (50 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:01:01 | 🔒 TRUTH-LOCK INFO | TXN: PASADO reescrito (18 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:01:01 | 🔒 TRUTH-LOCK INFO | WDC: PASADO reescrito (39 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:01:01 | 🔒 TRUTH-LOCK INFO | XLK: PASADO reescrito (8 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:02:50 | 🩸 EARNINGS-FALL ROTO | export Finviz caido
+07:02:50 | 🩸 EARNINGS-FALL AAA -9.0% | largo
+07:02:50 | 🩸 EARNINGS-FALL TGTX -8.0% | linea tecnica larga con score 68
+07:05:02 | 🔒 TRUTH-LOCK INFO | AAPL: PASADO reescrito (1 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:05:02 | 🔒 TRUTH-LOCK INFO | AMD: PASADO reescrito (5 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:05:02 | 🔒 TRUTH-LOCK INFO | AMZN: PASADO reescrito (3 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:05:02 | 🔒 TRUTH-LOCK INFO | ASML: PASADO reescrito (1 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:05:03 | 🔒 TRUTH-LOCK INFO | AVGO: PASADO reescrito (2 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:05:03 | 🔒 TRUTH-LOCK INFO | GOOGL: PASADO reescrito (4 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:05:03 | 🔒 TRUTH-LOCK INFO | INTC: PASADO reescrito (3 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:05:03 | 🔒 TRUTH-LOCK INFO | META: PASADO reescrito (4 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:05:03 | 🔒 TRUTH-LOCK INFO | MSFT: PASADO reescrito (4 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:05:03 | 🔒 TRUTH-LOCK INFO | MU: PASADO reescrito (5 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:05:03 | 🔒 TRUTH-LOCK INFO | NFLX: PASADO reescrito (1 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:05:04 | 🔒 TRUTH-LOCK INFO | NVDA: PASADO reescrito (5 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:05:04 | 🔒 TRUTH-LOCK INFO | QCOM: PASADO reescrito (1 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:05:04 | 🔒 TRUTH-LOCK INFO | QQQ: PASADO reescrito (2 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:05:04 | 🔒 TRUTH-LOCK INFO | SMH: PASADO reescrito (2 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:05:04 | 🔒 TRUTH-LOCK INFO | SNDK: PASADO reescrito (4 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:05:04 | 🔒 TRUTH-LOCK INFO | SPY: PASADO reescrito (1 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:05:04 | 🔒 TRUTH-LOCK INFO | STX: PASADO reescrito (1 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:05:05 | 🔒 TRUTH-LOCK INFO | TSLA: PASADO reescrito (2 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:05:05 | 🔒 TRUTH-LOCK INFO | TSM: PASADO reescrito (2 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:05:05 | 🔒 TRUTH-LOCK INFO | WDC: PASADO reescrito (3 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:22:55 | 🩸 EARNINGS-FALL ROTO | export Finviz caido
+07:22:55 | 🩸 EARNINGS-FALL AAA -9.0% | largo
+07:22:55 | 🩸 EARNINGS-FALL TGTX -8.0% | linea tecnica larga con score 68
+07:25:08 | 🔒 TRUTH-LOCK INFO | AAPL: PASADO reescrito (16 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:25:08 | 🔒 TRUTH-LOCK INFO | AMD: PASADO reescrito (19 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:25:08 | 🔒 TRUTH-LOCK INFO | AMZN: PASADO reescrito (13 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:25:08 | 🔒 TRUTH-LOCK INFO | AVGO: PASADO reescrito (7 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:25:08 | 🔒 TRUTH-LOCK INFO | GLD: PASADO reescrito (7 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:25:08 | 🔒 TRUTH-LOCK INFO | GOOGL: PASADO reescrito (17 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:25:08 | 🔒 TRUTH-LOCK INFO | HOOD: PASADO reescrito (2 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:25:09 | 🔒 TRUTH-LOCK INFO | INTC: PASADO reescrito (15 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:25:09 | 🔒 TRUTH-LOCK INFO | META: PASADO reescrito (17 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:25:09 | 🔒 TRUTH-LOCK INFO | MSFT: PASADO reescrito (15 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:25:09 | 🔒 TRUTH-LOCK INFO | MU: PASADO reescrito (19 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:25:09 | 🔒 TRUTH-LOCK INFO | NFLX: PASADO reescrito (5 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:25:09 | 🔒 TRUTH-LOCK INFO | NVDA: PASADO reescrito (19 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:25:10 | 🔒 TRUTH-LOCK INFO | QQQ: PASADO reescrito (10 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:25:10 | 🔒 TRUTH-LOCK INFO | SMH: PASADO reescrito (2 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:25:10 | 🔒 TRUTH-LOCK INFO | SNDK: PASADO reescrito (18 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:25:10 | 🔒 TRUTH-LOCK INFO | SPY: PASADO reescrito (4 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:25:10 | 🔒 TRUTH-LOCK INFO | STX: PASADO reescrito (3 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:25:10 | 🔒 TRUTH-LOCK INFO | TSLA: PASADO reescrito (17 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:25:10 | 🔒 TRUTH-LOCK INFO | TSM: PASADO reescrito (14 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:25:11 | 🔒 TRUTH-LOCK INFO | TXN: PASADO reescrito (2 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:25:11 | 🔒 TRUTH-LOCK INFO | WDC: PASADO reescrito (9 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+07:31:57 | 🩸 EARNINGS-FALL ROTO | export Finviz caido
+07:31:57 | 🩸 EARNINGS-FALL AAA -9.0% | largo
+07:31:57 | 🩸 EARNINGS-FALL TGTX -8.0% | linea tecnica larga con score 68
+07:32:43 | 🩸 EARNINGS-FALL ROTO | export Finviz caido
+07:32:43 | 🩸 EARNINGS-FALL AAA -9.0% | largo
+07:32:43 | 🩸 EARNINGS-FALL TGTX -8.0% | linea tecnica larga con score 68
+07:39:32 | 🕳 CINTA CIEGA | CINTA CIEGA: 3 de la flota sin tape tick-by-tick (AAPL AMD TSM) — sus ballenas NO se ven, no es que no haya
+07:39:43 | 🩸 EARNINGS-FALL ROTO | export Finviz caido
+07:39:43 | 🩸 EARNINGS-FALL AAA -9.0% | largo
+07:39:43 | 🩸 EARNINGS-FALL TGTX -8.0% | linea tecnica larga con score 68
+07:39:49 | 🩸 EARNINGS-FALL ROTO | export Finviz caido
+07:39:49 | 🩸 EARNINGS-FALL AAA -9.0% | largo
+07:39:49 | 🩸 EARNINGS-FALL TGTX -8.0% | linea tecnica larga con score 68
+07:47:53 | 🕳 CINTA CIEGA | CINTA CIEGA: 3 de la flota sin tape tick-by-tick (AAPL AMD TSM) — sus ballenas NO se ven, no es que no haya
+07:48:00 | 🕳 CINTA CIEGA | CINTA CIEGA: 3 de la flota sin tape tick-by-tick (AAPL AMD TSM) — sus ballenas NO se ven, no es que no haya
+07:48:08 | 🩸 EARNINGS-FALL ROTO | export Finviz caido
+07:48:08 | 🩸 EARNINGS-FALL AAA -9.0% | largo
+07:48:08 | 🩸 EARNINGS-FALL TGTX -8.0% | linea tecnica larga con score 68
+07:53:47 | 🕳 CINTA CIEGA | CINTA CIEGA: 3 de la flota sin tape tick-by-tick (AAPL AMD TSM) — sus ballenas NO se ven, no es que no haya
+08:20:24 | 🩸 EARNINGS-FALL FLUT -7.3% | 🩸 EARNINGS-FALL FLUT -7.3% (score 67, OPCIONES s/d (IBKR no disponible) — default ACCIONES, TA: pendiente)
+08:20:24 | 🩸 EARNINGS-FALL PODD -17.0% | 🩸 EARNINGS-FALL PODD -17.0% (score 66, OPCIONES s/d (IBKR no disponible) — default ACCIONES, TA: pendiente)
+08:20:24 | 🩸 EARNINGS-FALL CDW -20.8% | 🩸 EARNINGS-FALL CDW -20.8% (score 63, OPCIONES s/d (IBKR no disponible) — default ACCIONES, TA: pendiente, capitan QQQ/XLK)
+08:20:24 | 🩸 EARNINGS-FALL SEDG -13.9% | 🩸 EARNINGS-FALL SEDG -13.9% (score 63, OPCIONES s/d, TA: pendiente, capitan QQQ/XLK)
+08:20:24 | 🩸 EARNINGS-FALL MDLN -15.6% | 🩸 EARNINGS-FALL MDLN -15.6% (score 60, OPCIONES s/d, TA: pendiente)
+08:20:24 | 🩸 EARNINGS-FALL SPCX -10.5% | 🩸 EARNINGS-FALL SPCX -10.5% (score 60, OPCIONES s/d, TA: pendiente)
+08:20:24 | 🩸 EARNINGS-FALL EXTR -13.2% | 🩸 EARNINGS-FALL EXTR -13.2% (score 57, OPCIONES s/d, TA: pendiente, capitan QQQ/XLK)
+08:20:24 | 🩸 EARNINGS-FALL TDC -13.3% | 🩸 EARNINGS-FALL TDC -13.3% (score 56, OPCIONES s/d, TA: pendiente, capitan QQQ/XLK)
+08:20:24 | 🩸 EARNINGS-FALL MTCH -9.3% | 🩸 EARNINGS-FALL MTCH -9.3% (score 53, OPCIONES s/d, TA: pendiente)
+08:20:24 | 🩸 EARNINGS-FALL AMD -8.8% | 🩸 EARNINGS-FALL AMD -8.8% (score 50, OPCIONES s/d, TA: pendiente, capitan SMH)
+08:20:24 | 🩸 EARNINGS-FALL NYT -8.7% | 🩸 EARNINGS-FALL NYT -8.7% (score 50, OPCIONES s/d, TA: pendiente)
+08:20:24 | 🩸 EARNINGS-FALL PINS -9.3% | 🩸 EARNINGS-FALL PINS -9.3% (score 49, OPCIONES s/d, TA: pendiente)
+08:20:24 | 🩸 EARNINGS-FALL TMDX -8.5% | 🩸 EARNINGS-FALL TMDX -8.5% (score 47, OPCIONES s/d, TA: pendiente)
+09:23:08 | 🕳 CINTA CIEGA | CINTA CIEGA: 3 de la flota sin tape tick-by-tick (AAPL AMD TSM) — sus ballenas NO se ven, no es que no haya
+09:30:23 | 🛰 FINVIZ | META: gap +2.1% — abre fuera de rango
+09:31:21 | 🎯 APERTURA FUERA DE BANDA | SPY abrio 775.43 arriba de la banda 15m (774.39). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:21 | 🎯 APERTURA FUERA DE BANDA | NVDA abrio 215.05 arriba de la banda 15m (213.35). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:21 | 🎯 APERTURA FUERA DE BANDA | MU abrio 875.28 abajo de la banda 15m (888.55). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:21 | 🎯 APERTURA FUERA DE BANDA | SMH abrio 570.68 abajo de la banda 15m (570.69). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:21 | 🎯 APERTURA FUERA DE BANDA | AMD abrio 479.31 abajo de la banda 15m (519.04). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:21 | 🎯 APERTURA FUERA DE BANDA | NFLX abrio 74.78 arriba de la banda 15m (73.57). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:21 | 🎯 APERTURA FUERA DE BANDA | NOK abrio 9.85 abajo de la banda 15m (9.87). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:21 | 🎯 APERTURA FUERA DE BANDA | GLD abrio 384.58 arriba de la banda 15m (375.85). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:26 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+09:31:41 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 500.0 ↑ · prob 72% (estructural, no WR medido)
+09:31:42 | 🎯 RE-ENTRADA A BANDA | SMH imprimio re-entrada en 572.53. Target la media 574.92, prob medida 56 por ciento. Contexto, no gatillo: pedir confluencia. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:31:42 | 🎯 APERTURA FUERA DE BANDA | MSFT abrio 498.50 arriba de la banda 15m (498.44). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:42 | 🎯 APERTURA FUERA DE BANDA | META abrio 600.89 arriba de la banda 15m (593.36). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:42 | 🎯 APERTURA FUERA DE BANDA | AMZN abrio 281.75 arriba de la banda 15m (279.21). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:42 | 🎯 APERTURA FUERA DE BANDA | GOOGL abrio 383.02 arriba de la banda 15m (381.12). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:42 | 🎯 APERTURA FUERA DE BANDA | INTC abrio 98.38 abajo de la banda 15m (99.41). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:42 | 🎯 APERTURA FUERA DE BANDA | QCOM abrio 160.53 abajo de la banda 15m (161.03). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:51 | 🔒 TRUTH-LOCK INFO | AAPL: PASADO reescrito (49 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:51 | 🔒 TRUTH-LOCK INFO | AMD: PASADO reescrito (100 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:51 | 🔒 TRUTH-LOCK INFO | AMZN: PASADO reescrito (65 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:51 | 🔒 TRUTH-LOCK INFO | ASML: PASADO reescrito (10 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:52 | 🔒 TRUTH-LOCK INFO | AVGO: PASADO reescrito (45 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:52 | 🔒 TRUTH-LOCK INFO | GLD: PASADO reescrito (60 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:52 | 🔒 TRUTH-LOCK INFO | GOOGL: PASADO reescrito (90 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:52 | 🔒 TRUTH-LOCK INFO | HOOD: PASADO reescrito (10 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:52 | 🔒 TRUTH-LOCK INFO | INTC: PASADO reescrito (60 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:53 | 🔒 TRUTH-LOCK INFO | LRCX: PASADO reescrito (12 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:53 | 🔒 TRUTH-LOCK INFO | META: PASADO reescrito (71 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:53 | 🔒 TRUTH-LOCK INFO | MSFT: PASADO reescrito (92 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:53 | 🔒 TRUTH-LOCK INFO | MU: PASADO reescrito (101 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:53 | 🔒 TRUTH-LOCK INFO | NFLX: PASADO reescrito (21 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:53 | 🔒 TRUTH-LOCK INFO | NVDA: PASADO reescrito (110 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:54 | 🔒 TRUTH-LOCK INFO | QCOM: PASADO reescrito (17 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:54 | 🔒 TRUTH-LOCK INFO | QQQ: PASADO reescrito (105 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:54 | 🔒 TRUTH-LOCK INFO | SMH: PASADO reescrito (16 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:54 | 🔒 TRUTH-LOCK INFO | SNDK: PASADO reescrito (114 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:54 | 🔒 TRUTH-LOCK INFO | SPY: PASADO reescrito (36 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:55 | 🔒 TRUTH-LOCK INFO | STX: PASADO reescrito (15 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:55 | 🔒 TRUTH-LOCK INFO | TSLA: PASADO reescrito (74 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:55 | 🔒 TRUTH-LOCK INFO | TSM: PASADO reescrito (44 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:55 | 🔒 TRUTH-LOCK INFO | TXN: PASADO reescrito (8 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:55 | 🔒 TRUTH-LOCK INFO | WDC: PASADO reescrito (49 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:31:56 | 🔒 TRUTH-LOCK INFO | XLK: PASADO reescrito (6 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:32:03 | 🎯 RE-ENTRADA A BANDA | INTC imprimio re-entrada en 100.02. Target la media 100.31, prob medida 56 por ciento. Contexto, no gatillo: pedir confluencia. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:32:03 | 🎯 APERTURA FUERA DE BANDA | WDC abrio 544.00 abajo de la banda 15m (546.68). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:32:03 | 🎯 APERTURA FUERA DE BANDA | STX abrio 838.74 abajo de la banda 15m (846.04). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:32:03 | 🎯 APERTURA FUERA DE BANDA | HOOD abrio 93.74 arriba de la banda 15m (93.70). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:32:03 | 🎯 APERTURA FUERA DE BANDA | MSTR abrio 97.85 arriba de la banda 15m (97.79). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:32:03 | 🎯 APERTURA FUERA DE BANDA | CRWV abrio 90.23 abajo de la banda 15m (90.77). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:32:20 | NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.28% px 218.65
+09:32:23 | 🎯 RE-ENTRADA A BANDA | WDC imprimio re-entrada en 547.52. Target la media 552.30, prob medida 56 por ciento. Contexto, no gatillo: pedir confluencia. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:32:23 | 🎯 RE-ENTRADA A BANDA | HOOD imprimio re-entrada en 93.47. Target la media 92.86, prob medida 56 por ciento. Contexto, no gatillo: pedir confluencia. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:32:23 | 🎯 RE-ENTRADA A BANDA | MSTR imprimio re-entrada en 97.57. Target la media 96.52, prob medida 56 por ciento. Contexto, no gatillo: pedir confluencia. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:32:51 | FINVIZ MOMENTUM BREAKOUT · (pre-open match) · BUY 2 SELL 0 WATCH 0 | WBS BUY $79.10 +1.5% RVOL 9.2x score 6/7 | SAN BUY $14.65 +1.3% RVOL 7.7x score 4/7
+09:33:16 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 310.0 ↑ · prob 67% (estructural, no WR medido)
+09:33:23 | 🎯 RE-ENTRADA A BANDA | MSFT imprimio re-entrada en 497.25. Target la media 496.37, prob medida 56 por ciento. Contexto, no gatillo: pedir confluencia. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:33:23 | 🎯 RE-ENTRADA A BANDA | CRWV imprimio re-entrada en 90.97. Target la media 92.59, prob medida 56 por ciento. Contexto, no gatillo: pedir confluencia. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:34:21 | SMH: SELL | VENDER SMH @ 573.20 | target 564.61 | floor 571.77 | senal de BAJADA (blow-off)
+09:35:24 | 🎯 RE-ENTRADA A BANDA | NOK imprimio re-entrada en 9.88. Target la media 9.97, prob medida 56 por ciento. Contexto, no gatillo: pedir confluencia. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:35:30 | 🧲 ESTRUCTURAL pin MU | MU en su imán 900.0 — pin · prob 60% (estructural, no WR medido)
+09:36:02 | AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.95% px 485.98
+09:36:17 | 🧲 ESTRUCTURAL pin MU | MU en su imán 900.0 — pin · prob 60% (estructural, no WR medido)
+09:36:25 | 🎯 RE-ENTRADA A BANDA | STX imprimio re-entrada en 846.49. Target la media 863.40, prob medida 56 por ciento. Contexto, no gatillo: pedir confluencia. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:36:27 | 🎈 BB BAND-WALK [MUTED p<55] | SPY camina la banda ARRIBA tambien en 5 minutos (775.65). Continuacion probable — NO hacer fade. prob medida 47 por ciento (n=17). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:36:27 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | MSFT reventó la banda 15 minutos ARRIBA y re-entró en 495.10 — elastico mayor, digestion probable. prob medida 0 por ciento (n=2). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:36:27 | 🎈 BB REBOTE [VETO medido] | TXN reventó la banda ABAJO y re-entró en 280.91. Elastico: rebote hacia la media 281.47 si imprime — chico y seguro. prob medida 67 por ciento (n=187). [post-squeeze: el fade mejora +11 medido; VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:36:27 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | AVGO reventó la banda 15 minutos ARRIBA y re-entró en 416.30 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:36:27 | 🎈 BB BAND-WALK | RKLB camina la banda ABAJO tambien en 5 minutos (74.11). Continuacion probable — NO hacer fade. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:36:27 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 56, calls 52
+09:36:33 | 🧲 ESTRUCTURAL magnet MU | MU se dirige a su imán 900.0 ↑ · prob 59% (estructural, no WR medido)
+09:37:27 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | QQQ reventó la banda 15 minutos ARRIBA y re-entró en 724.54 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:37:27 | 🎈 BB REBOTE | QQQ reventó la banda ARRIBA y re-entró en 724.54. Elastico: reversion corta hacia la media 725.16 si imprime — chico y seguro. prob medida 70 por ciento (n=190). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:37:27 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SPY reventó la banda 15 minutos ARRIBA y re-entró en 775.55 — elastico mayor, digestion probable. prob medida 0 por ciento (n=8). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:37:27 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | MU reventó la banda 15 minutos ABAJO y re-entró en 874.16 — elastico mayor, digestion probable. prob medida 0 por ciento (n=3). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:37:27 | 🎈 BB REBOTE | MU reventó la banda ABAJO y re-entró en 874.16. Elastico: rebote hacia la media 875.28 si imprime — chico y seguro. prob medida 65 por ciento (n=202). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:37:27 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SMH reventó la banda 15 minutos ARRIBA y re-entró en 574.93 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:37:27 | 🎈 BB BAND-WALK [MUTED p<55] | SMH camina la banda ARRIBA tambien en 5 minutos (574.93). Continuacion probable — NO hacer fade. prob medida 44 por ciento (n=16). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:37:27 | 🎈 BB REBOTE | INTC reventó la banda ARRIBA y re-entró en 99.51. Elastico: reversion corta hacia la media 98.81 si imprime — chico y seguro. prob medida 68 por ciento (n=211). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:37:27 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | XLK reventó la banda 15 minutos ARRIBA y re-entró en 186.83 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:37:27 | 🎈 BB REBOTE | XLK reventó la banda ARRIBA y re-entró en 186.83. Elastico: reversion corta hacia la media 187.03 si imprime — chico y seguro. prob medida 69 por ciento (n=183). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:37:27 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | WDC reventó la banda 15 minutos ARRIBA y re-entró en 548.62 — elastico mayor, digestion probable. prob medida 0 por ciento (n=3). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:37:27 | 🎈 BB REBOTE | WDC reventó la banda ARRIBA y re-entró en 548.62. Elastico: reversion corta hacia la media 546.39 si imprime — chico y seguro. prob medida 72 por ciento (n=204). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:37:27 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | STX reventó la banda 15 minutos ARRIBA y re-entró en 842.83 — elastico mayor, digestion probable. prob medida 33 por ciento (n=3). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:37:27 | 🎈 BB BAND-WALK [MUTED p<55] | STX camina la banda ARRIBA tambien en 5 minutos (842.83). Continuacion probable — NO hacer fade. prob medida 50 por ciento (n=14). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:37:27 | 🎈 BB 15m RE-ENTRADA | PLTR reventó la banda 15 minutos ARRIBA y re-entró en 162.73 — elastico mayor, digestion probable. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:38:28 | 🎈 BB BAND-WALK | NVDA camina la banda ARRIBA tambien en 5 minutos (219.09). Continuacion probable — NO hacer fade. prob medida 55 por ciento (n=20). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:38:28 | 🎈 BB BAND-WALK [MUTED p<55] | AMD camina la banda ARRIBA tambien en 5 minutos (484.35). Continuacion probable — NO hacer fade. prob medida 38 por ciento (n=16). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:38:28 | 🎈 BB REBOTE | MSFT reventó la banda ABAJO y re-entró en 497.23. Elastico: rebote hacia la media 497.52 si imprime — chico y seguro. prob medida 70 por ciento (n=203). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:38:28 | 🎈 BB REBOTE | TSM reventó la banda ABAJO y re-entró en 419.58. Elastico: rebote hacia la media 418.05 si imprime — chico y seguro. prob medida 68 por ciento (n=203). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:38:28 | 🎈 BB BAND-WALK | MSTR camina la banda ABAJO tambien en 5 minutos (96.88). Continuacion probable — NO hacer fade. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:39:05 | 🎯 RE-ENTRADA A BANDA | AMZN imprimio re-entrada en 279.09. Target la media 277.95, prob medida 56 por ciento. Contexto, no gatillo: pedir confluencia. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:39:28 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | AAPL reventó la banda 15 minutos ABAJO y re-entró en 307.07 — elastico mayor, digestion probable. prob medida 20 por ciento (n=5). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:39:28 | 🎈 BB REBOTE | AAPL reventó la banda ABAJO y re-entró en 307.07. Elastico: rebote hacia la media 308.39 si imprime — chico y seguro. prob medida 65 por ciento (n=196). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:39:28 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | META reventó la banda 15 minutos ARRIBA y re-entró en 600.56 — elastico mayor, digestion probable. prob medida 38 por ciento (n=8). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:39:28 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | NOK reventó la banda 15 minutos ABAJO y re-entró en 9.86 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:39:28 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SNDK reventó la banda 15 minutos ABAJO y re-entró en 1398.26 — elastico mayor, digestion probable. prob medida 14 por ciento (n=7). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:39:28 | 🎈 BB 15m RE-ENTRADA | HOOD reventó la banda 15 minutos ABAJO y re-entró en 93.73 — elastico mayor, digestion probable. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:39:28 | 🎈 BB 15m RE-ENTRADA | MSTR reventó la banda 15 minutos ABAJO y re-entró en 97.03 — elastico mayor, digestion probable. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:40:28 | 🎈 BB REBOTE | MU reventó la banda ARRIBA y re-entró en 874.82. Elastico: reversion corta hacia la media 875.30 si imprime — chico y seguro. prob medida 65 por ciento (n=202). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:40:28 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | INTC reventó la banda 15 minutos ARRIBA y re-entró en 99.14 — elastico mayor, digestion probable. prob medida 0 por ciento (n=5). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:40:33 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 500.0 ↑ · prob 75% (estructural, no WR medido)
+09:41:13 | TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.01% px 422.26
+09:41:22 | 🩸 EARNINGS-FALL ROTO | export Finviz caido
+09:41:22 | 🩸 EARNINGS-FALL AAA -9.0% | largo
+09:41:22 | 🩸 EARNINGS-FALL TGTX -8.0% | linea tecnica larga con score 68
+09:41:28 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | TSLA reventó la banda 15 minutos ABAJO y re-entró en 324.89 — elastico mayor, digestion probable. prob medida 0 por ciento (n=9). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:41:29 | 🎈 BB REBOTE | AMZN reventó la banda ABAJO y re-entró en 279.34. Elastico: rebote hacia la media 281.29 si imprime — chico y seguro. prob medida 68 por ciento (n=193). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:41:29 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | QCOM reventó la banda 15 minutos ABAJO y re-entró en 160.15 — elastico mayor, digestion probable. prob medida 0 por ciento (n=2). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:41:29 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | AVGO reventó la banda 15 minutos ABAJO y re-entró en 415.50 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:41:29 | 🎈 BB BAND-WALK | PLTR camina la banda ARRIBA tambien en 5 minutos (165.44). Continuacion probable — NO hacer fade. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:41:29 | 🎈 BB 15m RE-ENTRADA | RKLB reventó la banda 15 minutos ABAJO y re-entró en 74.53 — elastico mayor, digestion probable. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:41:55 | 🕳 CINTA CIEGA | CINTA CIEGA: 3 de la flota sin tape tick-by-tick (AAPL AMD TSM) — sus ballenas NO se ven, no es que no haya
+09:42:11 | 🧲 ESTRUCTURAL pin MU | MU en su imán 900.0 — pin · prob 57% (estructural, no WR medido)
+09:43:27 | 🎯 RE-ENTRADA A BANDA | MU imprimio re-entrada en 894.31. Target la media 894.29, prob medida 56 por ciento. Contexto, no gatillo: pedir confluencia. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:43:29 | 🎈 BB REBOTE | TSLA reventó la banda ARRIBA y re-entró en 324.15. Elastico: reversion corta hacia la media 323.62 si imprime — chico y seguro. prob medida 70 por ciento (n=200). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:43:29 | 🎈 BB 15m RE-ENTRADA | COIN reventó la banda 15 minutos ABAJO y re-entró en 150.11 — elastico mayor, digestion probable. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:43:32 | 🧲 ESTRUCTURAL pin QQQ | QQQ en su imán 730.0 — pin · prob 63% (estructural, no WR medido)
+09:43:47 | 🧲 ESTRUCTURAL magnet QQQ | QQQ se dirige a su imán 730.0 ↑ · prob 62% (estructural, no WR medido)
+09:43:49 | 🩸 EARNINGS-FALL ROTO | export Finviz caido
+09:43:49 | 🩸 EARNINGS-FALL AAA -9.0% | largo
+09:43:49 | 🩸 EARNINGS-FALL TGTX -8.0% | linea tecnica larga con score 68
+09:44:02 | 🧲 ESTRUCTURAL pin QQQ | QQQ en su imán 730.0 — pin · prob 59% (estructural, no WR medido)
+09:44:18 | 🧲 ESTRUCTURAL magnet QQQ | QQQ se dirige a su imán 730.0 ↑ · prob 59% (estructural, no WR medido)
+09:44:22 | 🕳 CINTA CIEGA | CINTA CIEGA: 3 de la flota sin tape tick-by-tick (AAPL AMD TSM) — sus ballenas NO se ven, no es que no haya
+09:44:27 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 310.0 ↑ · prob 68% (estructural, no WR medido)
+09:44:29 | 🎈 BB BAND-WALK | GOOGL camina la banda ABAJO tambien en 5 minutos (381.40). Continuacion probable — NO hacer fade. prob medida 63 por ciento (n=19). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:44:29 | 🎈 BB BAND-WALK [MUTED p<55] | TSM camina la banda ARRIBA tambien en 5 minutos (422.03). Continuacion probable — NO hacer fade. prob medida 44 por ciento (n=18). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:44:49 | 🧲 ESTRUCTURAL pin QQQ | QQQ en su imán 730.0 — pin · prob 59% (estructural, no WR medido)
+09:45:08 | 🎯 RE-ENTRADA A BANDA | QCOM imprimio re-entrada en 161.06. Target la media 162.18, prob medida 56 por ciento. Contexto, no gatillo: pedir confluencia. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:45:35 | 🧲 ESTRUCTURAL magnet QQQ | QQQ se dirige a su imán 730.0 ↑ · prob 59% (estructural, no WR medido)
+09:45:54 | FINVIZ MOMENTUM BREAKOUT · NUEVOS · BUY 1 SELL 0 WATCH 0 | NUE BUY $278.65 +1.7% RVOL 1.5x score 7/7
+09:46:30 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | GOOGL reventó la banda 15 minutos ABAJO y re-entró en 381.20 — elastico mayor, digestion probable. prob medida 0 por ciento (n=7). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:46:30 | 🎈 BB REBOTE [VETO medido] | NOK reventó la banda ARRIBA y re-entró en 9.91. Elastico: reversion corta hacia la media 9.85 si imprime — chico y seguro. prob medida 72 por ciento (n=205). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:46:37 | 🧲 ESTRUCTURAL pin QQQ | QQQ en su imán 730.0 — pin · prob 59% (estructural, no WR medido)
+09:46:48 | FINVIZ SHORT SQUEEZE · WEATHER · BUY 1 SELL 0 WATCH 0 | HYMC BUY $24.25 +8.4% RVOL 2.2x score 5/7
+09:46:52 | 🧲 ESTRUCTURAL magnet QQQ | QQQ se dirige a su imán 730.0 ↑ · prob 59% (estructural, no WR medido)
+09:46:54 | FINVIZ MOMENTUM BREAKOUT · NUEVOS · BUY 1 SELL 0 WATCH 0 | ACRS BUY $6.08 +1.7% RVOL 4.2x score 7/7
+09:47:23 | 🧲 ESTRUCTURAL pin QQQ | QQQ en su imán 730.0 — pin · prob 65% (estructural, no WR medido)
+09:47:28 | 🎯 RE-ENTRADA A BANDA | GOOGL imprimio re-entrada en 379.75. Target la media 377.93, prob medida 56 por ciento. Contexto, no gatillo: pedir confluencia. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:47:30 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | LRCX reventó la banda 15 minutos ARRIBA y re-entró en 317.19 — elastico mayor, digestion probable. prob medida 0 por ciento (n=1). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:47:30 | 🎈 BB REBOTE [VETO medido] | LRCX reventó la banda ARRIBA y re-entró en 317.19. Elastico: reversion corta hacia la media 315.04 si imprime — chico y seguro. prob medida 68 por ciento (n=193). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:47:30 | 🎈 BB 15m RE-ENTRADA | HOOD reventó la banda 15 minutos ARRIBA y re-entró en 94.35 — elastico mayor, digestion probable. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:47:30 | 🎈 BB REBOTE [VETO medido] | HOOD reventó la banda ARRIBA y re-entró en 94.35. Elastico: reversion corta hacia la media 93.69 si imprime — chico y seguro. [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:47:30 | 🎈 BB BAND-WALK | CRWV camina la banda ARRIBA tambien en 5 minutos (92.78). Continuacion probable — NO hacer fade. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:47:34 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 71% (estructural, no WR medido)
+09:47:38 | 🧲 ESTRUCTURAL magnet QQQ | QQQ se dirige a su imán 730.0 ↑ · prob 65% (estructural, no WR medido)
+09:47:55 | FINVIZ MOMENTUM BREAKOUT · WEATHER · BUY 1 SELL 0 WATCH 0 | ELAN BUY $27.45 +7.2% RVOL 1.8x score 7/7
+09:48:02 | 🩸 DIP VETADO | DIP VETADO por valuacion en AAPL: -7.9% desde el high de 5 dias, pero inflada (PEG 2.6).
+09:48:08 | 🧲 ESTRUCTURAL pin QQQ | QQQ en su imán 730.0 — pin · prob 66% (estructural, no WR medido)
+09:48:30 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | MSFT reventó la banda 15 minutos ABAJO y re-entró en 493.32 — elastico mayor, digestion probable. prob medida 0 por ciento (n=2). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:48:30 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | ASML reventó la banda 15 minutos ARRIBA y re-entró en 1706.69 — elastico mayor, digestion probable. prob medida 50 por ciento (n=2). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:48:30 | 🎈 BB REBOTE [VETO medido] | QCOM reventó la banda ARRIBA y re-entró en 160.85. Elastico: reversion corta hacia la media 160.32 si imprime — chico y seguro. prob medida 69 por ciento (n=182). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:48:48 | FINVIZ SHORT SQUEEZE · WEATHER · BUY 2 SELL 0 WATCH 0 | JLHL BUY $9.07 +67.3% RVOL 24.8x score 4/7 | ARDT BUY $10.77 +0.2% RVOL 1.8x score 4/7
+09:49:15 | INTC TERREMOTO ALZA | CUSUM: subiendo fuerte +5.24% px 101.89
+09:49:31 | 🎈 BB BAND-WALK | META camina la banda ABAJO tambien en 5 minutos (596.56). Continuacion probable — NO hacer fade. prob medida 56 por ciento (n=16). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:49:31 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | AMZN reventó la banda 15 minutos ABAJO y re-entró en 278.78 — elastico mayor, digestion probable. prob medida 14 por ciento (n=7). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:50:23 | 🩸 EARNINGS-FALL RBA -13.1% | 🩸 EARNINGS-FALL RBA -13.1% (score 88, OPCIONES s/d (IBKR no disponible) — default ACCIONES, TA: pendiente)
+09:50:23 | 🩸 EARNINGS-FALL CC -15.7% | 🩸 EARNINGS-FALL CC -15.7% (score 81, OPCIONES s/d (IBKR no disponible) — default ACCIONES, TA: pendiente)
+09:50:23 | 🩸 EARNINGS-FALL GLXY -9.4% | 🩸 EARNINGS-FALL GLXY -9.4% (score 71, OPCIONES s/d, TA: pendiente)
+09:50:23 | 🩸 EARNINGS-FALL VVV -6.8% | 🩸 EARNINGS-FALL VVV -6.8% (score 67, OPCIONES s/d, TA: pendiente)
+09:50:23 | 🩸 EARNINGS-FALL CE -6.6% | 🩸 EARNINGS-FALL CE -6.6% (score 66, OPCIONES s/d, TA: pendiente)
+09:50:23 | 🩸 EARNINGS-FALL RRX -11.4% | 🩸 EARNINGS-FALL RRX -11.4% (score 66, OPCIONES s/d, TA: pendiente)
+09:50:23 | 🩸 EARNINGS-FALL GXO -6.3% | 🩸 EARNINGS-FALL GXO -6.3% (score 63, OPCIONES s/d, TA: pendiente)
+09:50:23 | 🩸 EARNINGS-FALL VSH -7.6% | 🩸 EARNINGS-FALL VSH -7.6% (score 60, OPCIONES s/d, TA: pendiente, capitan SMH)
+09:50:23 | 🩸 EARNINGS-FALL CVS -6.3% | 🩸 EARNINGS-FALL CVS -6.3% (score 54, OPCIONES s/d, TA: pendiente)
+09:50:31 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | TSLA reventó la banda 15 minutos ARRIBA y re-entró en 324.69 — elastico mayor, digestion probable. prob medida 0 por ciento (n=9). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:50:37 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 73% (estructural, no WR medido)
+09:50:41 | 🧲 ESTRUCTURAL pin QQQ | QQQ en su imán 725.0 — pin · prob 62% (estructural, no WR medido)
+09:50:48 | FINVIZ SHORT SQUEEZE · NUEVOS · BUY 1 SELL 0 WATCH 0 | SVV BUY $10.88 +1.4% RVOL 1.6x score 6/7
+09:51:31 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SNDK reventó la banda 15 minutos ARRIBA y re-entró en 1410.26 — elastico mayor, digestion probable. prob medida 14 por ciento (n=7). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:51:31 | 🎈 BB REBOTE [VETO medido] | SNDK reventó la banda ARRIBA y re-entró en 1410.26. Elastico: reversion corta hacia la media 1400.65 si imprime — chico y seguro. prob medida 73 por ciento (n=194). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:52:31 | 🎈 BB REBOTE [VETO medido] | SPY reventó la banda ABAJO y re-entró en 775.23. Elastico: rebote hacia la media 775.74 si imprime — chico y seguro. prob medida 72 por ciento (n=213). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:52:31 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | QCOM reventó la banda 15 minutos ARRIBA y re-entró en 161.83 — elastico mayor, digestion probable. prob medida 0 por ciento (n=2). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:52:31 | 🎈 BB BAND-WALK | NFLX camina la banda ABAJO tambien en 5 minutos (73.95). Continuacion probable — NO hacer fade. prob medida 56 por ciento (n=18). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:52:41 | FINVIZ BUFFETT · WEATHER · BUY 4 SELL 1 WATCH 0 | PAAS BUY $47.60 +6.0% RVOL 1.8x score 4/6 | IAG BUY $15.78 +6.6% RVOL 1.6x score 4/6 | KGC BUY $25.28 +7.1% RVOL 1.6x score 4/6 | +2 más
+09:52:48 | FINVIZ SHORT SQUEEZE · NUEVOS · BUY 1 SELL 0 WATCH 0 | GRPN BUY $28.57 +3.9% RVOL 1.6x score 7/7
+09:52:55 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 65% (estructural, no WR medido)
+09:53:10 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 76% (estructural, no WR medido)
+09:53:30 | 🧲 ESTRUCTURAL magnet QQQ | QQQ se dirige a su imán 730.0 ↑ · prob 62% (estructural, no WR medido)
+09:53:32 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | NFLX reventó la banda 15 minutos ABAJO y re-entró en 74.00 — elastico mayor, digestion probable. prob medida 0 por ciento (n=7). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:53:41 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 65% (estructural, no WR medido)
+09:53:56 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 76% (estructural, no WR medido)
+09:54:32 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | TSM reventó la banda 15 minutos ARRIBA y re-entró en 421.11 — elastico mayor, digestion probable. prob medida 0 por ciento (n=6). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:54:38 | 🧲 ESTRUCTURAL magnet MU | MU se dirige a su imán 900.0 ↓ · prob 63% (estructural, no WR medido)
+09:54:49 | FINVIZ SHORT SQUEEZE · WEATHER · BUY 1 SELL 0 WATCH 0 | FUBO BUY $9.65 +1.1% RVOL 4.4x score 5/7
+09:55:09 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 310.0 ↑ · prob 57% (estructural, no WR medido)
+09:55:17 | TSM: BUY | TSM @ 422.55 | prob 61% | estructura-rota-arriba+MACD15-flip-arriba+MACD15-verde+ST5-alineado+ribbon15-alcista | fase=UNKNOWN
+09:56:02 | 🔒 TRUTH-LOCK INFO | AAPL: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:02 | 🔒 TRUTH-LOCK INFO | AMD: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:02 | 🔒 TRUTH-LOCK INFO | AMZN: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:02 | 🔒 TRUTH-LOCK INFO | ASML: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:02 | 🔒 TRUTH-LOCK INFO | AVGO: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:02 | 🔒 TRUTH-LOCK INFO | COIN: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:03 | 🔒 TRUTH-LOCK INFO | CRWV: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:03 | 🔒 TRUTH-LOCK INFO | GLD: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:03 | 🔒 TRUTH-LOCK INFO | GOOGL: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:03 | 🔒 TRUTH-LOCK INFO | HOOD: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:03 | 🔒 TRUTH-LOCK INFO | INTC: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:03 | 🔒 TRUTH-LOCK INFO | LRCX: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:04 | 🔒 TRUTH-LOCK INFO | META: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:04 | 🔒 TRUTH-LOCK INFO | MSFT: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:04 | 🔒 TRUTH-LOCK INFO | MSTR: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:04 | 🔒 TRUTH-LOCK INFO | MU: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:04 | 🔒 TRUTH-LOCK INFO | NFLX: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:04 | 🔒 TRUTH-LOCK INFO | NOK: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:04 | 🔒 TRUTH-LOCK INFO | NVDA: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:05 | 🔒 TRUTH-LOCK INFO | PLTR: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:05 | 🔒 TRUTH-LOCK INFO | QCOM: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:05 | 🔒 TRUTH-LOCK INFO | QQQ: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:05 | 🔒 TRUTH-LOCK INFO | RKLB: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:05 | 🔒 TRUTH-LOCK INFO | SMH: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:05 | 🔒 TRUTH-LOCK INFO | SNDK: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:05 | 🔒 TRUTH-LOCK INFO | SPY: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:06 | 🔒 TRUTH-LOCK INFO | STX: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:06 | 🔒 TRUTH-LOCK INFO | TSLA: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:06 | 🔒 TRUTH-LOCK INFO | TSM: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:06 | 🔒 TRUTH-LOCK INFO | TXN: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:06 | 🔒 TRUTH-LOCK INFO | WDC: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:56:06 | 🔒 TRUTH-LOCK INFO | XLK: PASADO reescrito (120 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+09:57:30 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 75% (estructural, no WR medido)
+09:57:57 | FINVIZ MOMENTUM BREAKOUT · WEATHER · BUY 1 SELL 0 WATCH 0 | PGEN BUY $7.20 +10.3% RVOL 6.2x score 6/7
+09:58:33 | 🎈 BB REBOTE [VETO medido] | PLTR reventó la banda ABAJO y re-entró en 162.26. Elastico: rebote hacia la media 164.10 si imprime — chico y seguro. [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:59:33 | 🎈 BB BAND-WALK | RKLB camina la banda ARRIBA tambien en 5 minutos (76.60). Continuacion probable — NO hacer fade. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:00:16 | 🧲 ESTRUCTURAL pin QQQ | QQQ en su imán 725.0 — pin · prob 59% (estructural, no WR medido)
+10:01:23 | ASML: BUY | ASML @ 1718.63 | prob 65% | estructura-rota-arriba+MACD15-flip-arriba+MACD15-verde+ST5-alineado+ribbon15-alcista | fase=UNKNOWN
+10:02:41 | FINVIZ BUFFETT · WEATHER · BUY 0 SELL 1 WATCH 0 | PUK SELL $27.81 -5.8% RVOL 5.0x score -3/6
+10:03:08 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 220.0 ↓ · prob 71% (estructural, no WR medido)
+10:03:34 | 🎈 BB REBOTE [VETO medido] | COIN reventó la banda ARRIBA y re-entró en 151.83. Elastico: reversion corta hacia la media 150.18 si imprime — chico y seguro. [VETO apertura: peor hora del elastico, 58 por ciento; VETO RSI2 extremo: impulso en curso, 53 por ciento; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:03:59 | FINVIZ MOMENTUM BREAKOUT · WEATHER · BUY 1 SELL 0 WATCH 0 | XYZ BUY $85.02 +0.5% RVOL 1.8x score 4/7
+10:04:35 | 🎈 BB REBOTE [VETO medido] | QQQ reventó la banda ABAJO y re-entró en 725.79. Elastico: rebote hacia la media 726.95 si imprime — chico y seguro. prob medida 70 por ciento (n=190). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:04:35 | 🎈 BB REBOTE [VETO medido] | INTC reventó la banda ABAJO y re-entró en 100.61. Elastico: rebote hacia la media 101.02 si imprime — chico y seguro. prob medida 68 por ciento (n=211). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:04:35 | 🎈 BB REBOTE [VETO medido] | GLD reventó la banda ARRIBA y re-entró en 385.89. Elastico: reversion corta hacia la media 385.22 si imprime — chico y seguro. prob medida 64 por ciento (n=194). [VETO apertura: peor hora del elastico, 58 por ciento; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:04:35 | 🎈 BB REBOTE [VETO medido] | HOOD reventó la banda ABAJO y re-entró en 94.25. Elastico: rebote hacia la media 94.84 si imprime — chico y seguro. [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:04:35 | 🎈 BB 15m RE-ENTRADA | CRWV reventó la banda 15 minutos ARRIBA y re-entró en 92.30 — elastico mayor, digestion probable. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:04:40 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 71% (estructural, no WR medido)
+10:04:55 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 220.0 ↓ · prob 71% (estructural, no WR medido)
+10:06:35 | 🎈 BB BAND-WALK [MUTED p<55] | NOK camina la banda ABAJO tambien en 5 minutos (9.81). Continuacion probable — NO hacer fade. prob medida 50 por ciento (n=16). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:06:58 | 🧲 ESTRUCTURAL magnet QQQ | QQQ se dirige a su imán 730.0 ↑ · prob 65% (estructural, no WR medido)
+10:07:35 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | QQQ reventó la banda 15 minutos ARRIBA y re-entró en 726.68 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:07:35 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SPY reventó la banda 15 minutos ARRIBA y re-entró en 775.47 — elastico mayor, digestion probable. prob medida 0 por ciento (n=8). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:07:35 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | AVGO reventó la banda 15 minutos ARRIBA y re-entró en 421.14 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:07:35 | 🎈 BB REBOTE [VETO medido] | MSTR reventó la banda ARRIBA y re-entró en 98.37. Elastico: reversion corta hacia la media 97.66 si imprime — chico y seguro. [VETO apertura: peor hora del elastico, 58 por ciento; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:07:59 | FINVIZ MOMENTUM BREAKOUT · NUEVOS · BUY 1 SELL 0 WATCH 0 | HELP BUY $9.68 +4.3% RVOL 1.6x score 6/7
+10:08:36 | 🎈 BB BAND-WALK [MUTED p<55] | STX camina la banda ARRIBA tambien en 5 minutos (863.60). Continuacion probable — NO hacer fade. prob medida 50 por ciento (n=14). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:10:16 | 🧲 ESTRUCTURAL pin SMH | SMH en su imán 580.0 — pin · prob 56% (estructural, no WR medido)
+10:10:36 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | INTC reventó la banda 15 minutos ARRIBA y re-entró en 100.26 — elastico mayor, digestion probable. prob medida 0 por ciento (n=5). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:10:36 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | XLK reventó la banda 15 minutos ARRIBA y re-entró en 187.79 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:11:18 | 🧲 ESTRUCTURAL pin SMH | SMH en su imán 580.0 — pin · prob 57% (estructural, no WR medido)
+10:12:19 | 🧲 ESTRUCTURAL pin SMH | SMH en su imán 580.0 — pin · prob 56% (estructural, no WR medido)
+10:13:07 | 🎈 BB REBOTE [VETO medido] | NVDA reventó la banda ARRIBA y re-entró en 221.79. Elastico: reversion corta hacia la media 220.85 si imprime — chico y seguro. prob medida 69 por ciento (n=196). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:14:51 | FINVIZ SHORT SQUEEZE · NUEVOS · BUY 1 SELL 0 WATCH 0 | CHH BUY $112.60 +3.7% RVOL 1.6x score 7/7
+10:15:01 | FINVIZ MOMENTUM BREAKOUT · WEATHER · BUY 1 SELL 0 WATCH 0 | BLMN BUY $12.22 +36.9% RVOL 8.6x score 6/7
+10:16:38 | 🎈 BB REBOTE [VETO medido] | AAPL reventó la banda ARRIBA y re-entró en 308.13. Elastico: reversion corta hacia la media 307.84 si imprime — chico y seguro. prob medida 65 por ciento (n=196). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:17:38 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SMH reventó la banda 15 minutos ARRIBA y re-entró en 580.32 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:17:38 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | AMD reventó la banda 15 minutos ARRIBA y re-entró en 490.12 — elastico mayor, digestion probable. prob medida 40 por ciento (n=5). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:17:38 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | GLD reventó la banda 15 minutos ARRIBA y re-entró en 387.51 — elastico mayor, digestion probable. prob medida 0 por ciento (n=9). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:18:01 | FINVIZ MOMENTUM BREAKOUT · NUEVOS · BUY 2 SELL 0 WATCH 0 | URGN BUY $43.94 +10.1% RVOL 2.3x score 7/7 | DYN BUY $27.03 +4.1% RVOL 1.5x score 7/7
+10:18:38 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | MU reventó la banda 15 minutos ARRIBA y re-entró en 907.43 — elastico mayor, digestion probable. prob medida 0 por ciento (n=3). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:18:38 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | ASML reventó la banda 15 minutos ARRIBA y re-entró en 1710.67 — elastico mayor, digestion probable. prob medida 50 por ciento (n=2). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:18:38 | 🎈 BB 15m RE-ENTRADA | MSTR reventó la banda 15 minutos ARRIBA y re-entró en 98.65 — elastico mayor, digestion probable. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:19:39 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | LRCX reventó la banda 15 minutos ARRIBA y re-entró en 319.33 — elastico mayor, digestion probable. prob medida 0 por ciento (n=1). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:20:39 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | AMZN reventó la banda 15 minutos ABAJO y re-entró en 276.80 — elastico mayor, digestion probable. prob medida 14 por ciento (n=7). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:20:39 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | WDC reventó la banda 15 minutos ARRIBA y re-entró en 555.17 — elastico mayor, digestion probable. prob medida 0 por ciento (n=3). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:21:39 | 🎈 BB REBOTE [VETO medido] | XLK reventó la banda ABAJO y re-entró en 187.72. Elastico: rebote hacia la media 187.92 si imprime — chico y seguro. prob medida 69 por ciento (n=183). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:21:39 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SNDK reventó la banda 15 minutos ARRIBA y re-entró en 1416.14 — elastico mayor, digestion probable. prob medida 14 por ciento (n=7). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:22:40 | 🎈 BB REBOTE [VETO medido] | SMH reventó la banda ABAJO y re-entró en 579.06. Elastico: rebote hacia la media 580.07 si imprime — chico y seguro. prob medida 66 por ciento (n=188). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:22:40 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | QCOM reventó la banda 15 minutos ABAJO y re-entró en 160.17 — elastico mayor, digestion probable. prob medida 0 por ciento (n=2). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:22:40 | 🎈 BB 15m RE-ENTRADA | HOOD reventó la banda 15 minutos ARRIBA y re-entró en 94.84 — elastico mayor, digestion probable. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:22:52 | FINVIZ SHORT SQUEEZE · WEATHER · BUY 0 SELL 1 WATCH 0 | TYRA SELL $28.48 -12.5% RVOL 3.6x score -4/7
+10:23:10 | 🎈 BB REBOTE [VETO medido] | SPY reventó la banda ABAJO y re-entró en 775.31. Elastico: rebote hacia la media 775.83 si imprime — chico y seguro. prob medida 72 por ciento (n=213). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:23:40 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | NFLX reventó la banda 15 minutos ABAJO y re-entró en 74.08 — elastico mayor, digestion probable. prob medida 0 por ciento (n=7). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:24:10 | 🎈 BB BAND-WALK [MUTED p<55] | TSLA camina la banda ARRIBA tambien en 5 minutos (326.44). Continuacion probable — NO hacer fade. prob medida 53 por ciento (n=15). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:24:40 | 🎈 BB REBOTE [VETO medido] | QCOM reventó la banda ABAJO y re-entró en 160.39. Elastico: rebote hacia la media 161.24 si imprime — chico y seguro. prob medida 69 por ciento (n=182). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:25:02 | FINVIZ MOMENTUM BREAKOUT · BUY | ATKR $93.61 +0.1% RVOL 12.5x
+10:25:40 | 🎈 BB REBOTE [VETO medido] | SNDK reventó la banda ABAJO y re-entró en 1417.88. Elastico: rebote hacia la media 1421.55 si imprime — chico y seguro. prob medida 73 por ciento (n=194). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:25:40 | 🎈 BB REBOTE [VETO medido] | MSTR reventó la banda ABAJO y re-entró en 97.70. Elastico: rebote hacia la media 98.35 si imprime — chico y seguro. [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:25:40 | 🎈 BB REBOTE [VETO medido] | RKLB reventó la banda ABAJO y re-entró en 76.41. Elastico: rebote hacia la media 76.54 si imprime — chico y seguro. [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:26:10 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | TSLA reventó la banda 15 minutos ARRIBA y re-entró en 325.55 — elastico mayor, digestion probable. prob medida 0 por ciento (n=9). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:26:40 | 🎈 BB REBOTE [VETO medido] | CRWV reventó la banda ABAJO y re-entró en 91.87. Elastico: rebote hacia la media 92.27 si imprime — chico y seguro. [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:27:41 | 🎈 BB REBOTE [VETO medido] | TXN reventó la banda ABAJO y re-entró en 282.33. Elastico: rebote hacia la media 282.80 si imprime — chico y seguro. prob medida 67 por ciento (n=187). [post-squeeze: el fade mejora +11 medido; VETO apertura: peor hora del elastico, 58 por ciento; VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:27:57 | 🧲 ESTRUCTURAL pin QQQ | QQQ en su imán 725.0 — pin · prob 67% (estructural, no WR medido)
+10:28:41 | 🎈 BB REBOTE [VETO medido] | LRCX reventó la banda ABAJO y re-entró en 315.30. Elastico: rebote hacia la media 319.83 si imprime — chico y seguro. prob medida 68 por ciento (n=193). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:28:59 | 🧲 ESTRUCTURAL pin QQQ | QQQ en su imán 725.0 — pin · prob 69% (estructural, no WR medido)
+10:29:11 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | GOOGL reventó la banda 15 minutos ABAJO y re-entró en 380.40 — elastico mayor, digestion probable. prob medida 0 por ciento (n=7). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:29:14 | 🧲 ESTRUCTURAL pin QQQ | QQQ en su imán 725.0 — pin · prob 69% (estructural, no WR medido)
+10:29:46 | 🧲 ESTRUCTURAL pin QQQ | QQQ en su imán 725.0 — pin · prob 69% (estructural, no WR medido)
+10:30:12 | 🎈 BB REBOTE | GOOGL reventó la banda ARRIBA y re-entró en 380.35. Elastico: reversion corta hacia la media 379.56 si imprime — chico y seguro. prob medida 68 por ciento (n=197). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:30:14 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 74% (estructural, no WR medido)
+10:31:12 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | NVDA reventó la banda 15 minutos ARRIBA y re-entró en 220.42 — elastico mayor, digestion probable. prob medida 0 por ciento (n=9). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:31:12 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | MSFT reventó la banda 15 minutos ABAJO y re-entró en 489.84 — elastico mayor, digestion probable. prob medida 0 por ciento (n=2). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:32:12 | 🎈 BB REBOTE | AAPL reventó la banda ABAJO y re-entró en 307.07. Elastico: rebote hacia la media 307.99 si imprime — chico y seguro. prob medida 65 por ciento (n=196). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:32:22 | 🎯 RE-ENTRADA A BANDA | META imprimio re-entrada en 593.29. Target la media 586.00, prob medida 56 por ciento. volumen debil (x0.9 MA50) — sin confirmacion Yoel Contexto, no gatillo: pedir confluencia. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:33:04 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 75% (estructural, no WR medido)
+10:33:40 | FINVIZ SHORT SQUEEZE · SELL (giro) | IEP $7.39 -4.4% RVOL 3.6x
+10:34:36 | 🧲 ESTRUCTURAL magnet SMH | SMH se dirige a su imán 580.0 ↑ · prob 55% (estructural, no WR medido)
+10:34:43 | 🎈 BB REBOTE | NVDA reventó la banda ABAJO y re-entró en 220.42. Elastico: rebote hacia la media 221.30 si imprime — chico y seguro. prob medida 69 por ciento (n=196). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:34:43 | 🎈 BB REBOTE | TSLA reventó la banda ABAJO y re-entró en 324.69. Elastico: rebote hacia la media 325.47 si imprime — chico y seguro. prob medida 70 por ciento (n=200). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:34:43 | 🎈 BB REBOTE | MSFT reventó la banda ARRIBA y re-entró en 490.03. Elastico: reversion corta hacia la media 488.73 si imprime — chico y seguro. prob medida 70 por ciento (n=203). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:34:43 | 🎈 BB REBOTE [VETO medido] | INTC reventó la banda ABAJO y re-entró en 98.95. Elastico: rebote hacia la media 99.65 si imprime — chico y seguro. prob medida 68 por ciento (n=211). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:34:43 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SNDK reventó la banda 15 minutos ABAJO y re-entró en 1416.56 — elastico mayor, digestion probable. prob medida 14 por ciento (n=7). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:35:03 | FINVIZ SHORT SQUEEZE · BUY (giro) | LIFE $26.12 -5.5% RVOL 6.9x
+10:35:43 | 🎈 BB REBOTE | QQQ reventó la banda ABAJO y re-entró en 725.58. Elastico: rebote hacia la media 725.84 si imprime — chico y seguro. prob medida 70 por ciento (n=190). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:37:44 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | AVGO reventó la banda 15 minutos ARRIBA y re-entró en 422.43 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:38:01 | FINVIZ MOMENTUM BREAKOUT · BUY (giro) | STGW $9.03 +0.2% RVOL 1.9x
+10:38:15 | 🎈 BB REBOTE | AMZN reventó la banda ARRIBA y re-entró en 277.44. Elastico: reversion corta hacia la media 276.84 si imprime — chico y seguro. prob medida 68 por ciento (n=193). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:39:04 | FINVIZ SHORT SQUEEZE · SELL (giro) | METC $9.57 -0.7% RVOL 1.7x
+10:39:15 | 🎈 BB REBOTE | AMD reventó la banda ABAJO y re-entró en 485.52. Elastico: rebote hacia la media 489.37 si imprime — chico y seguro. prob medida 69 por ciento (n=195). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:39:15 | 🎈 BB REBOTE | NFLX reventó la banda ARRIBA y re-entró en 74.24. Elastico: reversion corta hacia la media 74.12 si imprime — chico y seguro. prob medida 77 por ciento (n=202). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:39:45 | 🧲 ESTRUCTURAL pin MU | MU en su imán 900.0 — pin · prob 74% (estructural, no WR medido)
+10:40:15 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | TXN reventó la banda 15 minutos ABAJO y re-entró en 280.75 — elastico mayor, digestion probable. prob medida 25 por ciento (n=8). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:40:15 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | STX reventó la banda 15 minutos ARRIBA y re-entró en 857.72 — elastico mayor, digestion probable. prob medida 33 por ciento (n=3). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:40:15 | 🎈 BB REBOTE | HOOD reventó la banda ABAJO y re-entró en 94.30. Elastico: rebote hacia la media 94.62 si imprime — chico y seguro. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:41:16 | 🎈 BB REBOTE | ASML reventó la banda ABAJO y re-entró en 1696.35. Elastico: rebote hacia la media 1704.37 si imprime — chico y seguro. prob medida 68 por ciento (n=189). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:41:16 | 🎈 BB REBOTE | AVGO reventó la banda ABAJO y re-entró en 421.53. Elastico: rebote hacia la media 422.63 si imprime — chico y seguro. prob medida 68 por ciento (n=197). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:41:16 | 🎈 BB REBOTE | STX reventó la banda ABAJO y re-entró en 860.76. Elastico: rebote hacia la media 864.94 si imprime — chico y seguro. prob medida 72 por ciento (n=209). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:41:51 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 73% (estructural, no WR medido)
+10:42:02 | FINVIZ MOMENTUM BREAKOUT · BUY | WT $22.65 +1.2% RVOL 1.5x
+10:42:06 | 🧲 ESTRUCTURAL pin MU | MU en su imán 900.0 — pin · prob 75% (estructural, no WR medido)
+10:42:07 | AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.37% px 483.82
+10:42:38 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 76% (estructural, no WR medido)
+10:42:54 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 65% (estructural, no WR medido)
+10:43:41 | 🧲 ESTRUCTURAL magnet MU | MU se dirige a su imán 900.0 ↓ · prob 74% (estructural, no WR medido)
+10:45:17 | 🎈 BB REBOTE [VETO medido] | TSM reventó la banda ABAJO y re-entró en 417.85. Elastico: rebote hacia la media 419.39 si imprime — chico y seguro. prob medida 68 por ciento (n=203). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:45:29 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 70% (estructural, no WR medido)
+10:46:47 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 73% (estructural, no WR medido)
+10:48:19 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | GLD reventó la banda 15 minutos ARRIBA y re-entró en 388.72 — elastico mayor, digestion probable. prob medida 0 por ciento (n=9). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:49:19 | 🎈 BB REBOTE | MU reventó la banda ABAJO y re-entró en 908.53. Elastico: rebote hacia la media 917.05 si imprime — chico y seguro. prob medida 65 por ciento (n=202). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:49:37 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 74% (estructural, no WR medido)
+10:50:19 | 🎈 BB BAND-WALK [MUTED p<55] | AAPL camina la banda ARRIBA tambien en 5 minutos (309.52). Continuacion probable — NO hacer fade. prob medida 20 por ciento (n=15). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:50:19 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | NOK reventó la banda 15 minutos ABAJO y re-entró en 9.72 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:50:19 | 🎈 BB REBOTE | PLTR reventó la banda ABAJO y re-entró en 160.90. Elastico: rebote hacia la media 161.21 si imprime — chico y seguro. [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:50:19 | 🎈 BB REBOTE | COIN reventó la banda ABAJO y re-entró en 150.97. Elastico: rebote hacia la media 152.12 si imprime — chico y seguro. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:51:13 | AAPL TERREMOTO ALZA | CUSUM: subiendo fuerte +1.50% px 310.71
+10:51:19 | 🎈 BB REBOTE [VETO medido] | GLD reventó la banda ARRIBA y re-entró en 389.48. Elastico: reversion corta hacia la media 388.68 si imprime — chico y seguro. prob medida 64 por ciento (n=194). [VETO RSI2 extremo: impulso en curso, 53 por ciento; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:51:39 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 220.0 ↑ · prob 75% (estructural, no WR medido)
+10:53:58 | 🧲 ESTRUCTURAL pin MU | MU en su imán 900.0 — pin · prob 72% (estructural, no WR medido)
+10:54:13 | 🧲 ESTRUCTURAL magnet MU | MU se dirige a su imán 900.0 ↓ · prob 71% (estructural, no WR medido)
+10:55:20 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | QQQ reventó la banda 15 minutos ABAJO y re-entró en 722.49 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:55:20 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SPY reventó la banda 15 minutos ABAJO y re-entró en 773.21 — elastico mayor, digestion probable. prob medida 0 por ciento (n=8). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:55:21 | 🎈 BB BAND-WALK [MUTED p<55] | XLK camina la banda ABAJO tambien en 5 minutos (186.25). Continuacion probable — NO hacer fade. prob medida 52 por ciento (n=21). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:55:51 | 🎈 BB REBOTE [VETO medido] | MSTR reventó la banda ABAJO y re-entró en 96.89. Elastico: rebote hacia la media 97.24 si imprime — chico y seguro. [post-squeeze: el fade mejora +11 medido; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:55:51 | 🎈 BB 15m RE-ENTRADA | RKLB reventó la banda 15 minutos ABAJO y re-entró en 74.22 — elastico mayor, digestion probable. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:55:51 | 🎈 BB REBOTE [VETO medido] | RKLB reventó la banda ABAJO y re-entró en 74.22. Elastico: rebote hacia la media 74.89 si imprime — chico y seguro. [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:57:21 | 🎈 BB BAND-WALK [MUTED p<55] | SPY camina la banda ABAJO tambien en 5 minutos (773.32). Continuacion probable — NO hacer fade. prob medida 47 por ciento (n=17). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:57:51 | 🎈 BB REBOTE [VETO medido] | QCOM reventó la banda ABAJO y re-entró en 158.14. Elastico: rebote hacia la media 158.68 si imprime — chico y seguro. prob medida 69 por ciento (n=182). [post-squeeze: el fade mejora +11 medido; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:58:34 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 220.0 ↑ · prob 73% (estructural, no WR medido)
+10:58:49 | 🧲 ESTRUCTURAL magnet QQQ | QQQ se dirige a su imán 725.0 ↑ · prob 59% (estructural, no WR medido)
+10:58:51 | 🎈 BB 15m RE-ENTRADA | MSTR reventó la banda 15 minutos ABAJO y re-entró en 97.05 — elastico mayor, digestion probable. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:59:20 | 🧲 ESTRUCTURAL pin QQQ | QQQ en su imán 725.0 — pin · prob 60% (estructural, no WR medido)
+10:59:21 | 🎈 BB REBOTE | CRWV reventó la banda ARRIBA y re-entró en 91.74. Elastico: reversion corta hacia la media 91.48 si imprime — chico y seguro. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:01:12 | AAPL: BUY | AAPL @ 311.01 | prob 56% | estructura-rota-arriba+MACD15-flip-arriba+MACD15-verde+ST5-alineado+ribbon15-alcista | fase=UNKNOWN
+11:01:22 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | TSM reventó la banda 15 minutos ABAJO y re-entró en 414.81 — elastico mayor, digestion probable. prob medida 0 por ciento (n=6). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:02:23 | 🎈 BB REBOTE | HOOD reventó la banda ARRIBA y re-entró en 94.29. Elastico: reversion corta hacia la media 94.07 si imprime — chico y seguro. [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:03:23 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | ASML reventó la banda 15 minutos ABAJO y re-entró en 1687.34 — elastico mayor, digestion probable. prob medida 50 por ciento (n=2). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:03:58 | 🧲 ESTRUCTURAL magnet QQQ | QQQ se dirige a su imán 725.0 ↑ · prob 62% (estructural, no WR medido)
+11:04:54 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SNDK reventó la banda 15 minutos ABAJO y re-entró en 1392.52 — elastico mayor, digestion probable. prob medida 14 por ciento (n=7). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:05:14 | 🧲 ESTRUCTURAL pin QQQ | QQQ en su imán 725.0 — pin · prob 63% (estructural, no WR medido)
+11:07:12 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 312.5 ↑ · prob 69% (estructural, no WR medido)
+11:09:25 | 🎈 BB 15m RE-ENTRADA | PLTR reventó la banda 15 minutos ABAJO y re-entró en 159.40 — elastico mayor, digestion probable. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:09:45 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 312.5 — pin · prob 70% (estructural, no WR medido)
+11:10:00 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 312.5 ↑ · prob 69% (estructural, no WR medido)
+11:10:25 | 🎈 BB REBOTE | AMZN reventó la banda ABAJO y re-entró en 277.50. Elastico: rebote hacia la media 277.58 si imprime — chico y seguro. prob medida 68 por ciento (n=193). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:10:25 | 🎈 BB REBOTE | GOOGL reventó la banda ABAJO y re-entró en 381.27. Elastico: rebote hacia la media 381.57 si imprime — chico y seguro. prob medida 68 por ciento (n=197). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:10:25 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | XLK reventó la banda 15 minutos ABAJO y re-entró en 186.35 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:10:33 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 73% (estructural, no WR medido)
+11:10:46 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 312.5 — pin · prob 69% (estructural, no WR medido)
+11:10:49 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 220.0 ↑ · prob 73% (estructural, no WR medido)
+11:11:04 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 73% (estructural, no WR medido)
+11:11:26 | 🎈 BB REBOTE | MSTR reventó la banda ARRIBA y re-entró en 97.74. Elastico: reversion corta hacia la media 97.18 si imprime — chico y seguro. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:11:34 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 220.0 ↑ · prob 73% (estructural, no WR medido)
+11:11:48 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 312.5 ↑ · prob 69% (estructural, no WR medido)
+11:12:18 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 312.5 — pin · prob 69% (estructural, no WR medido)
+11:12:26 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | TSLA reventó la banda 15 minutos ABAJO y re-entró en 323.41 — elastico mayor, digestion probable. prob medida 0 por ciento (n=9). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:12:26 | 🎈 BB REBOTE | SMH reventó la banda ARRIBA y re-entró en 571.10. Elastico: reversion corta hacia la media 571.32 si imprime — chico y seguro. prob medida 66 por ciento (n=188). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:12:26 | 🎈 BB REBOTE | AMD reventó la banda ARRIBA y re-entró en 481.87. Elastico: reversion corta hacia la media 481.30 si imprime — chico y seguro. prob medida 69 por ciento (n=195). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:12:26 | 🎈 BB REBOTE | MSFT reventó la banda ABAJO y re-entró en 490.38. Elastico: rebote hacia la media 490.74 si imprime — chico y seguro. prob medida 70 por ciento (n=203). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:12:26 | 🎈 BB REBOTE | SNDK reventó la banda ARRIBA y re-entró en 1397.64. Elastico: reversion corta hacia la media 1384.20 si imprime — chico y seguro. prob medida 73 por ciento (n=194). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:12:33 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 312.5 ↑ · prob 69% (estructural, no WR medido)
+11:13:27 | 🎈 BB REBOTE | INTC reventó la banda ARRIBA y re-entró en 99.16. Elastico: reversion corta hacia la media 98.66 si imprime — chico y seguro. prob medida 68 por ciento (n=211). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:13:27 | 🎈 BB REBOTE [VETO medido] | LRCX reventó la banda ABAJO y re-entró en 306.96. Elastico: rebote hacia la media 308.00 si imprime — chico y seguro. prob medida 68 por ciento (n=193). [post-squeeze: el fade mejora +11 medido; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:13:52 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 220.0 ↑ · prob 73% (estructural, no WR medido)
+11:14:07 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 73% (estructural, no WR medido)
+11:14:27 | 🎈 BB BAND-WALK [MUTED p<55] | TXN camina la banda ABAJO tambien en 5 minutos (278.22). Continuacion probable — NO hacer fade. prob medida 47 por ciento (n=15). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:14:27 | 🎈 BB REBOTE | NFLX reventó la banda ABAJO y re-entró en 73.98. Elastico: rebote hacia la media 74.21 si imprime — chico y seguro. prob medida 77 por ciento (n=202). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:14:53 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 220.0 ↑ · prob 73% (estructural, no WR medido)
+11:15:08 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 75% (estructural, no WR medido)
+11:15:28 | 🧲 ESTRUCTURAL magnet QQQ | QQQ se dirige a su imán 725.0 ↑ · prob 60% (estructural, no WR medido)
+11:16:07 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 67% (estructural, no WR medido)
+11:16:52 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 84% (estructural, no WR medido)
+11:17:23 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 68% (estructural, no WR medido)
+11:17:28 | 🎈 BB REBOTE | QQQ reventó la banda ABAJO y re-entró en 722.97. Elastico: rebote hacia la media 723.17 si imprime — chico y seguro. prob medida 70 por ciento (n=190). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:18:29 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | GLD reventó la banda 15 minutos ARRIBA y re-entró en 390.30 — elastico mayor, digestion probable. prob medida 0 por ciento (n=9). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:18:29 | 🎈 BB REBOTE | HOOD reventó la banda ABAJO y re-entró en 94.09. Elastico: rebote hacia la media 94.36 si imprime — chico y seguro. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:20:30 | 🎈 BB REBOTE | NVDA reventó la banda ABAJO y re-entró en 219.01. Elastico: rebote hacia la media 219.21 si imprime — chico y seguro. prob medida 69 por ciento (n=196). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:22:00 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 75% (estructural, no WR medido)
+11:22:05 | 🧲 ESTRUCTURAL pin QQQ | QQQ en su imán 725.0 — pin · prob 61% (estructural, no WR medido)
+11:22:36 | 🧲 ESTRUCTURAL magnet QQQ | QQQ se dirige a su imán 725.0 ↑ · prob 61% (estructural, no WR medido)
+11:22:52 | 🧲 ESTRUCTURAL pin QQQ | QQQ en su imán 725.0 — pin · prob 61% (estructural, no WR medido)
+11:23:07 | 🧲 ESTRUCTURAL magnet QQQ | QQQ se dirige a su imán 725.0 ↑ · prob 61% (estructural, no WR medido)
+11:23:31 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | LRCX reventó la banda 15 minutos ABAJO y re-entró en 308.83 — elastico mayor, digestion probable. prob medida 0 por ciento (n=1). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:23:37 | 🧲 ESTRUCTURAL pin QQQ | QQQ en su imán 725.0 — pin · prob 61% (estructural, no WR medido)
+11:23:53 | 🧲 ESTRUCTURAL magnet QQQ | QQQ se dirige a su imán 725.0 ↑ · prob 61% (estructural, no WR medido)
+11:24:31 | 🎈 BB REBOTE | AAPL reventó la banda ABAJO y re-entró en 310.12. Elastico: rebote hacia la media 310.72 si imprime — chico y seguro. prob medida 65 por ciento (n=196). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:24:31 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | GOOGL reventó la banda 15 minutos ABAJO y re-entró en 379.99 — elastico mayor, digestion probable. prob medida 0 por ciento (n=7). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:24:33 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 75% (estructural, no WR medido)
+11:24:48 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 220.0 ↑ · prob 75% (estructural, no WR medido)
+11:25:32 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | QQQ reventó la banda 15 minutos ABAJO y re-entró en 722.62 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:25:32 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SPY reventó la banda 15 minutos ABAJO y re-entró en 773.46 — elastico mayor, digestion probable. prob medida 0 por ciento (n=8). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:27:51 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 73% (estructural, no WR medido)
+11:28:06 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 220.0 ↑ · prob 72% (estructural, no WR medido)
+11:28:33 | 🎈 BB REBOTE [VETO medido] | SPY reventó la banda ABAJO y re-entró en 772.78. Elastico: rebote hacia la media 773.10 si imprime — chico y seguro. prob medida 72 por ciento (n=213). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:29:33 | 🎈 BB REBOTE [VETO medido] | TSLA reventó la banda ABAJO y re-entró en 322.51. Elastico: rebote hacia la media 323.09 si imprime — chico y seguro. prob medida 70 por ciento (n=200). [post-squeeze: el fade mejora +11 medido; VETO RSI2 extremo: impulso en curso, 53 por ciento; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:29:33 | 🎈 BB REBOTE | MU reventó la banda ARRIBA y re-entró en 916.07. Elastico: reversion corta hacia la media 912.84 si imprime — chico y seguro. prob medida 65 por ciento (n=202). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:29:33 | 🎈 BB REBOTE [VETO medido] | ASML reventó la banda ARRIBA y re-entró en 1696.36. Elastico: reversion corta hacia la media 1689.38 si imprime — chico y seguro. prob medida 68 por ciento (n=189). [VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:30:33 | 🎈 BB REBOTE | NOK reventó la banda ABAJO y re-entró en 9.71. Elastico: rebote hacia la media 9.71 si imprime — chico y seguro. prob medida 72 por ciento (n=205). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:31:16 | 🧲 ESTRUCTURAL pin QQQ | QQQ en su imán 725.0 — pin · prob 59% (estructural, no WR medido)
+11:31:33 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | META reventó la banda 15 minutos ABAJO y re-entró en 589.65 — elastico mayor, digestion probable. prob medida 38 por ciento (n=8). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:32:26 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 77% (estructural, no WR medido)
+11:32:34 | 🎈 BB REBOTE | TSM reventó la banda ARRIBA y re-entró en 415.10. Elastico: reversion corta hacia la media 414.87 si imprime — chico y seguro. prob medida 68 por ciento (n=203). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:32:34 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | STX reventó la banda 15 minutos ARRIBA y re-entró en 870.54 — elastico mayor, digestion probable. prob medida 33 por ciento (n=3). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:33:04 | 🎈 BB REBOTE | MSFT reventó la banda ARRIBA y re-entró en 491.09. Elastico: reversion corta hacia la media 490.65 si imprime — chico y seguro. prob medida 70 por ciento (n=203). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:33:34 | 🎈 BB REBOTE | AVGO reventó la banda ABAJO y re-entró en 420.13. Elastico: rebote hacia la media 420.46 si imprime — chico y seguro. prob medida 68 por ciento (n=197). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:33:34 | 🎈 BB REBOTE | NOK reventó la banda ARRIBA y re-entró en 9.72. Elastico: reversion corta hacia la media 9.71 si imprime — chico y seguro. prob medida 72 por ciento (n=205). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:33:49 | 🧲 ESTRUCTURAL magnet QQQ | QQQ se dirige a su imán 725.0 ↑ · prob 59% (estructural, no WR medido)
+11:34:05 | 🧲 ESTRUCTURAL pin QQQ | QQQ en su imán 725.0 — pin · prob 59% (estructural, no WR medido)
+11:34:10 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 310.0 ↑ · prob 62% (estructural, no WR medido)
+11:34:50 | 🧲 ESTRUCTURAL magnet QQQ | QQQ se dirige a su imán 725.0 ↑ · prob 58% (estructural, no WR medido)
+11:35:35 | 🎈 BB REBOTE | NVDA reventó la banda ARRIBA y re-entró en 219.59. Elastico: reversion corta hacia la media 219.26 si imprime — chico y seguro. prob medida 69 por ciento (n=196). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:35:35 | 🎈 BB REBOTE | PLTR reventó la banda ARRIBA y re-entró en 159.62. Elastico: reversion corta hacia la media 159.30 si imprime — chico y seguro. [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:37:24 | 🧲 ESTRUCTURAL pin QQQ | QQQ en su imán 725.0 — pin · prob 63% (estructural, no WR medido)
+11:37:30 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 76% (estructural, no WR medido)
+11:39:06 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | QCOM reventó la banda 15 minutos ABAJO y re-entró en 158.17 — elastico mayor, digestion probable. prob medida 0 por ciento (n=2). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:39:11 | 🧲 ESTRUCTURAL magnet QQQ | QQQ se dirige a su imán 725.0 ↑ · prob 61% (estructural, no WR medido)
+11:39:27 | 🧲 ESTRUCTURAL pin QQQ | QQQ en su imán 725.0 — pin · prob 63% (estructural, no WR medido)
+11:39:36 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | NFLX reventó la banda 15 minutos ABAJO y re-entró en 73.82 — elastico mayor, digestion probable. prob medida 0 por ciento (n=7). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:39:36 | 🎈 BB 15m RE-ENTRADA | PLTR reventó la banda 15 minutos ABAJO y re-entró en 160.10 — elastico mayor, digestion probable. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:40:06 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | AMZN reventó la banda 15 minutos ABAJO y re-entró en 275.17 — elastico mayor, digestion probable. prob medida 14 por ciento (n=7). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:40:28 | 🧲 ESTRUCTURAL magnet QQQ | QQQ se dirige a su imán 725.0 ↑ · prob 63% (estructural, no WR medido)
+11:40:36 | 🎈 BB BAND-WALK [MUTED p<55] | AMZN camina la banda ABAJO tambien en 5 minutos (275.17). Continuacion probable — NO hacer fade. prob medida 38 por ciento (n=16). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:40:36 | 🎈 BB REBOTE [VETO medido] | GOOGL reventó la banda ABAJO y re-entró en 378.68. Elastico: rebote hacia la media 379.53 si imprime — chico y seguro. prob medida 68 por ciento (n=197). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:40:43 | 🧲 ESTRUCTURAL pin QQQ | QQQ en su imán 725.0 — pin · prob 63% (estructural, no WR medido)
+11:41:07 | 🎈 BB REBOTE [VETO medido] | META reventó la banda ABAJO y re-entró en 587.30. Elastico: rebote hacia la media 589.10 si imprime — chico y seguro. prob medida 74 por ciento (n=212). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:41:12 | FINVIZ SHORT SQUEEZE · BUY (giro) | BOBS $18.53 +0.1% RVOL 1.6x
+11:41:14 | 🧲 ESTRUCTURAL magnet QQQ | QQQ se dirige a su imán 725.0 ↑ · prob 63% (estructural, no WR medido)
+11:41:19 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 79% (estructural, no WR medido)
+11:41:37 | 🎈 BB REBOTE | MSTR reventó la banda ARRIBA y re-entró en 97.19. Elastico: reversion corta hacia la media 97.11 si imprime — chico y seguro. [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:42:05 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 76% (estructural, no WR medido)
+11:42:07 | 🎈 BB REBOTE | WDC reventó la banda ARRIBA y re-entró en 555.42. Elastico: reversion corta hacia la media 552.67 si imprime — chico y seguro. prob medida 72 por ciento (n=204). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:42:36 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 77% (estructural, no WR medido)
+11:42:37 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | TSLA reventó la banda 15 minutos ABAJO y re-entró en 322.88 — elastico mayor, digestion probable. prob medida 0 por ciento (n=9). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:42:37 | 🎈 BB REBOTE | SMH reventó la banda ARRIBA y re-entró en 572.90. Elastico: reversion corta hacia la media 572.91 si imprime — chico y seguro. prob medida 66 por ciento (n=188). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:43:01 | 🧲 ESTRUCTURAL pin QQQ | QQQ en su imán 725.0 — pin · prob 63% (estructural, no WR medido)
+11:43:17 | 🧲 ESTRUCTURAL magnet QQQ | QQQ se dirige a su imán 725.0 ↑ · prob 63% (estructural, no WR medido)
+11:43:37 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 68% (estructural, no WR medido)
+11:44:07 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 78% (estructural, no WR medido)
+11:44:38 | 🎈 BB REBOTE | AMD reventó la banda ARRIBA y re-entró en 485.98. Elastico: reversion corta hacia la media 484.17 si imprime — chico y seguro. prob medida 69 por ciento (n=195). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:44:38 | 🎈 BB REBOTE | INTC reventó la banda ARRIBA y re-entró en 100.54. Elastico: reversion corta hacia la media 99.91 si imprime — chico y seguro. prob medida 68 por ciento (n=211). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:45:39 | 🎈 BB REBOTE | MSFT reventó la banda ABAJO y re-entró en 490.14. Elastico: rebote hacia la media 490.92 si imprime — chico y seguro. prob medida 70 por ciento (n=203). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:45:39 | 🎈 BB REBOTE | AVGO reventó la banda ARRIBA y re-entró en 420.43. Elastico: reversion corta hacia la media 420.54 si imprime — chico y seguro. prob medida 68 por ciento (n=197). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:45:39 | 🎈 BB REBOTE | GLD reventó la banda ABAJO y re-entró en 390.38. Elastico: rebote hacia la media 390.63 si imprime — chico y seguro. prob medida 64 por ciento (n=194). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:45:39 | 🎈 BB REBOTE | XLK reventó la banda ABAJO y re-entró en 186.62. Elastico: rebote hacia la media 186.85 si imprime — chico y seguro. prob medida 69 por ciento (n=183). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:50:40 | 🎈 BB BAND-WALK | NFLX camina la banda ABAJO tambien en 5 minutos (73.68). Continuacion probable — NO hacer fade. prob medida 56 por ciento (n=18). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:52:41 | 🎈 BB 15m RE-ENTRADA | HOOD reventó la banda 15 minutos ABAJO y re-entró en 93.32 — elastico mayor, digestion probable. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:52:41 | 🎈 BB REBOTE [VETO medido] | HOOD reventó la banda ABAJO y re-entró en 93.32. Elastico: rebote hacia la media 93.54 si imprime — chico y seguro. [post-squeeze: el fade mejora +11 medido; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:54:12 | 🎈 BB REBOTE | QQQ reventó la banda ABAJO y re-entró en 722.76. Elastico: rebote hacia la media 722.37 si imprime — chico y seguro. prob medida 70 por ciento (n=190). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:54:12 | 🎈 BB REBOTE | NVDA reventó la banda ABAJO y re-entró en 219.36. Elastico: rebote hacia la media 219.77 si imprime — chico y seguro. prob medida 69 por ciento (n=196). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:55:12 | 🎈 BB REBOTE [VETO medido] | MSTR reventó la banda ABAJO y re-entró en 96.64. Elastico: rebote hacia la media 97.00 si imprime — chico y seguro. [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:55:42 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | QQQ reventó la banda 15 minutos ABAJO y re-entró en 722.26 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:56:13 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | TXN reventó la banda 15 minutos ABAJO y re-entró en 278.19 — elastico mayor, digestion probable. prob medida 25 por ciento (n=8). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:58:13 | 🎈 BB REBOTE | SMH reventó la banda ABAJO y re-entró en 574.21. Elastico: rebote hacia la media 574.13 si imprime — chico y seguro. prob medida 66 por ciento (n=188). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:58:13 | 🎈 BB REBOTE | QCOM reventó la banda ABAJO y re-entró en 157.65. Elastico: rebote hacia la media 157.86 si imprime — chico y seguro. prob medida 69 por ciento (n=182). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:58:44 | 🎈 BB REBOTE [VETO medido] | SPY reventó la banda ABAJO y re-entró en 771.22. Elastico: rebote hacia la media 771.81 si imprime — chico y seguro. prob medida 72 por ciento (n=213). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:59:14 | 🎈 BB REBOTE | TSM reventó la banda ABAJO y re-entró en 416.25. Elastico: rebote hacia la media 416.33 si imprime — chico y seguro. prob medida 68 por ciento (n=203). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:02:40 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 77% (estructural, no WR medido)
+12:02:45 | 🎈 BB REBOTE | TSLA reventó la banda ABAJO y re-entró en 322.70. Elastico: rebote hacia la media 322.74 si imprime — chico y seguro. prob medida 70 por ciento (n=200). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:05:46 | 🎈 BB REBOTE [VETO medido] | PLTR reventó la banda ARRIBA y re-entró en 160.17. Elastico: reversion corta hacia la media 159.94 si imprime — chico y seguro. [post-squeeze: el fade mejora +11 medido; VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:05:46 | 🎈 BB 15m RE-ENTRADA | MSTR reventó la banda 15 minutos ABAJO y re-entró en 96.48 — elastico mayor, digestion probable. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:07:47 | 🎈 BB REBOTE | AVGO reventó la banda ABAJO y re-entró en 419.68. Elastico: rebote hacia la media 420.86 si imprime — chico y seguro. prob medida 68 por ciento (n=197). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:07:47 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | STX reventó la banda 15 minutos ARRIBA y re-entró en 881.55 — elastico mayor, digestion probable. prob medida 33 por ciento (n=3). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:08:18 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 65% (estructural, no WR medido)
+12:08:47 | 🎈 BB REBOTE [VETO medido] | HOOD reventó la banda ARRIBA y re-entró en 93.74. Elastico: reversion corta hacia la media 93.30 si imprime — chico y seguro. [VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:09:17 | 🎈 BB REBOTE | MU reventó la banda ABAJO y re-entró en 915.74. Elastico: rebote hacia la media 918.60 si imprime — chico y seguro. prob medida 65 por ciento (n=202). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:09:17 | 🎈 BB REBOTE | AAPL reventó la banda ARRIBA y re-entró en 308.88. Elastico: reversion corta hacia la media 308.39 si imprime — chico y seguro. prob medida 65 por ciento (n=196). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:09:17 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | QCOM reventó la banda 15 minutos ABAJO y re-entró en 157.58 — elastico mayor, digestion probable. prob medida 0 por ciento (n=2). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:09:48 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | NFLX reventó la banda 15 minutos ABAJO y re-entró en 73.65 — elastico mayor, digestion probable. prob medida 0 por ciento (n=7). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:10:48 | 🎈 BB BAND-WALK | GOOGL camina la banda ABAJO tambien en 5 minutos (376.16). Continuacion probable — NO hacer fade. prob medida 63 por ciento (n=19). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:10:48 | 🎈 BB 15m RE-ENTRADA | COIN reventó la banda 15 minutos ABAJO y re-entró en 149.75 — elastico mayor, digestion probable. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:10:48 | 🎈 BB REBOTE | COIN reventó la banda ABAJO y re-entró en 149.75. Elastico: rebote hacia la media 150.06 si imprime — chico y seguro. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:11:18 | 🎈 BB REBOTE | ASML reventó la banda ABAJO y re-entró en 1690.73. Elastico: rebote hacia la media 1692.21 si imprime — chico y seguro. prob medida 68 por ciento (n=189). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:14:24 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 310.0 ↑ · prob 64% (estructural, no WR medido)
+12:15:20 | 🎈 BB REBOTE | LRCX reventó la banda ABAJO y re-entró en 311.20. Elastico: rebote hacia la media 311.47 si imprime — chico y seguro. prob medida 68 por ciento (n=193). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:16:26 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 74% (estructural, no WR medido)
+12:17:20 | 🎈 BB REBOTE | MSTR reventó la banda ARRIBA y re-entró en 96.73. Elastico: reversion corta hacia la media 96.47 si imprime — chico y seguro. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:17:51 | 🎈 BB REBOTE | MSFT reventó la banda ABAJO y re-entró en 488.41. Elastico: rebote hacia la media 488.80 si imprime — chico y seguro. prob medida 70 por ciento (n=203). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:17:51 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | AMZN reventó la banda 15 minutos ABAJO y re-entró en 272.47 — elastico mayor, digestion probable. prob medida 14 por ciento (n=7). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:18:21 | 🎈 BB REBOTE | INTC reventó la banda ARRIBA y re-entró en 100.88. Elastico: reversion corta hacia la media 100.73 si imprime — chico y seguro. prob medida 68 por ciento (n=211). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:18:51 | 🎈 BB REBOTE | NVDA reventó la banda ARRIBA y re-entró en 220.01. Elastico: reversion corta hacia la media 219.40 si imprime — chico y seguro. prob medida 69 por ciento (n=196). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:19:30 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 78% (estructural, no WR medido)
+12:19:51 | 🎈 BB BAND-WALK [MUTED p<55] | AMD camina la banda ARRIBA tambien en 5 minutos (487.46). Continuacion probable — NO hacer fade. prob medida 38 por ciento (n=16). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:20:16 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 68% (estructural, no WR medido)
+12:20:52 | 🎈 BB REBOTE [VETO medido] | NFLX reventó la banda ABAJO y re-entró en 73.56. Elastico: rebote hacia la media 73.61 si imprime — chico y seguro. prob medida 77 por ciento (n=202). [VETO RSI2 extremo: impulso en curso, 53 por ciento; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:20:52 | 🎈 BB REBOTE | RKLB reventó la banda ARRIBA y re-entró en 75.34. Elastico: reversion corta hacia la media 75.09 si imprime — chico y seguro. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:21:02 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 76% (estructural, no WR medido)
+12:21:02 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 65% (estructural, no WR medido)
+12:21:16 | FINVIZ MOMENTUM BREAKOUT · BUY | ING $35.92 +1.6% RVOL 2.4x
+12:22:22 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SPY reventó la banda 15 minutos ABAJO y re-entró en 771.61 — elastico mayor, digestion probable. prob medida 0 por ciento (n=8). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:23:05 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 310.0 ↑ · prob 65% (estructural, no WR medido)
+12:23:16 | FINVIZ MOMENTUM BREAKOUT · BUY (giro) | AEG $9.48 +1.0% RVOL 1.5x
+12:23:23 | 🎈 BB REBOTE | SPY reventó la banda ARRIBA y re-entró en 771.19. Elastico: reversion corta hacia la media 770.74 si imprime — chico y seguro. prob medida 72 por ciento (n=213). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:24:23 | 🎈 BB REBOTE | NOK reventó la banda ARRIBA y re-entró en 9.71. Elastico: reversion corta hacia la media 9.70 si imprime — chico y seguro. prob medida 72 por ciento (n=205). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:24:23 | 🎈 BB REBOTE | XLK reventó la banda ARRIBA y re-entró en 186.92. Elastico: reversion corta hacia la media 186.79 si imprime — chico y seguro. prob medida 69 por ciento (n=183). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:25:23 | 🎈 BB REBOTE | ASML reventó la banda ARRIBA y re-entró en 1693.12. Elastico: reversion corta hacia la media 1689.79 si imprime — chico y seguro. prob medida 68 por ciento (n=189). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:25:23 | 🎈 BB REBOTE | QCOM reventó la banda ARRIBA y re-entró en 157.77. Elastico: reversion corta hacia la media 157.68 si imprime — chico y seguro. prob medida 69 por ciento (n=182). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:25:53 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | QQQ reventó la banda 15 minutos ABAJO y re-entró en 721.16 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:25:54 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 65% (estructural, no WR medido)
+12:26:24 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 310.0 ↑ · prob 65% (estructural, no WR medido)
+12:26:55 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 65% (estructural, no WR medido)
+12:27:24 | 🎈 BB REBOTE | QQQ reventó la banda ARRIBA y re-entró en 721.01. Elastico: reversion corta hacia la media 720.57 si imprime — chico y seguro. prob medida 70 por ciento (n=190). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:27:42 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 310.0 ↑ · prob 64% (estructural, no WR medido)
+12:28:24 | 🎈 BB REBOTE | TSLA reventó la banda ARRIBA y re-entró en 322.88. Elastico: reversion corta hacia la media 322.51 si imprime — chico y seguro. prob medida 70 por ciento (n=200). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:28:24 | 🎈 BB REBOTE | AMZN reventó la banda ARRIBA y re-entró en 272.90. Elastico: reversion corta hacia la media 272.61 si imprime — chico y seguro. prob medida 68 por ciento (n=193). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:28:24 | 🎈 BB REBOTE | CRWV reventó la banda ARRIBA y re-entró en 92.22. Elastico: reversion corta hacia la media 92.20 si imprime — chico y seguro. [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:29:25 | 🎈 BB REBOTE [VETO medido] | META reventó la banda ABAJO y re-entró en 581.29. Elastico: rebote hacia la media 582.25 si imprime — chico y seguro. prob medida 74 por ciento (n=212). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:29:25 | 🎈 BB BAND-WALK | COIN camina la banda ARRIBA tambien en 5 minutos (151.38). Continuacion probable — NO hacer fade. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:30:40 | 🩸 EARNINGS-FALL UBER -6.9% | 🩸 EARNINGS-FALL UBER -6.9% (score 71, OPCIONES s/d, TA: pendiente, capitan QQQ/XLK)
+12:30:40 | 🩸 EARNINGS-FALL PARR -9.9% | 🩸 EARNINGS-FALL PARR -9.9% (score 70, OPCIONES s/d, TA: pendiente)
+12:30:40 | 🩸 EARNINGS-FALL TRI -9.1% | 🩸 EARNINGS-FALL TRI -9.1% (score 66, OPCIONES s/d, TA: pendiente)
+12:30:40 | 🩸 EARNINGS-FALL ALAB -8.2% | 🩸 EARNINGS-FALL ALAB -8.2% (score 57, OPCIONES s/d, TA: pendiente, capitan SMH)
+12:30:40 | 🩸 EARNINGS-FALL EOG -5.7% | 🩸 EARNINGS-FALL EOG -5.7% (score 56, OPCIONES s/d, TA: pendiente)
+12:30:40 | 🩸 EARNINGS-FALL DK -6.5% | 🩸 EARNINGS-FALL DK -6.5% (score 54, OPCIONES s/d, TA: pendiente)
+12:30:40 | 🩸 EARNINGS-FALL LSCC -6.3% | 🩸 EARNINGS-FALL LSCC -6.3% (score 53, OPCIONES s/d, TA: pendiente, capitan SMH)
+12:30:40 | 🩸 EARNINGS-FALL PRIM -6.8% | 🩸 EARNINGS-FALL PRIM -6.8% (score 48, OPCIONES s/d, TA: pendiente)
+12:30:55 | 🎈 BB REBOTE | TSM reventó la banda ARRIBA y re-entró en 415.96. Elastico: reversion corta hacia la media 415.43 si imprime — chico y seguro. prob medida 68 por ciento (n=203). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:31:25 | 🎈 BB REBOTE | MU reventó la banda ARRIBA y re-entró en 917.29. Elastico: reversion corta hacia la media 917.44 si imprime — chico y seguro. prob medida 65 por ciento (n=202). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:31:25 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | META reventó la banda 15 minutos ABAJO y re-entró en 581.67 — elastico mayor, digestion probable. prob medida 38 por ciento (n=8). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:32:26 | 🎈 BB REBOTE | SMH reventó la banda ARRIBA y re-entró en 575.36. Elastico: reversion corta hacia la media 573.78 si imprime — chico y seguro. prob medida 66 por ciento (n=188). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:32:26 | 🎈 BB REBOTE | AAPL reventó la banda ABAJO y re-entró en 308.90. Elastico: rebote hacia la media 308.99 si imprime — chico y seguro. prob medida 65 por ciento (n=196). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:34:26 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | INTC reventó la banda 15 minutos ARRIBA y re-entró en 101.78 — elastico mayor, digestion probable. prob medida 0 por ciento (n=5). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:34:26 | 🎈 BB REBOTE | STX reventó la banda ABAJO y re-entró en 876.95. Elastico: rebote hacia la media 877.82 si imprime — chico y seguro. prob medida 72 por ciento (n=209). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:35:14 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 220.0 ↓ · prob 59% (estructural, no WR medido)
+12:36:27 | 🎈 BB REBOTE [VETO medido] | AVGO reventó la banda ARRIBA y re-entró en 419.89. Elastico: reversion corta hacia la media 419.18 si imprime — chico y seguro. prob medida 68 por ciento (n=197). [VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:37:09 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 64% (estructural, no WR medido)
+12:37:24 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 310.0 ↑ · prob 63% (estructural, no WR medido)
+12:37:58 | 🎈 BB REBOTE | CRWV reventó la banda ABAJO y re-entró en 91.89. Elastico: rebote hacia la media 92.18 si imprime — chico y seguro. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:39:28 | 🎈 BB REBOTE [VETO medido] | META reventó la banda ARRIBA y re-entró en 584.21. Elastico: reversion corta hacia la media 582.46 si imprime — chico y seguro. prob medida 74 por ciento (n=212). [VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:39:58 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | NFLX reventó la banda 15 minutos ABAJO y re-entró en 73.41 — elastico mayor, digestion probable. prob medida 0 por ciento (n=7). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:40:19 | FINVIZ MOMENTUM BREAKOUT · BUY | BSP $45.72 +22.1% RVOL 1.5x
+12:44:32 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 64% (estructural, no WR medido)
+12:45:06 | FINVIZ BUFFETT · BUY (giro) | VIPS $15.55 -0.3% RVOL 1.6x
+12:46:31 | 🎈 BB REBOTE | AAPL reventó la banda ARRIBA y re-entró en 309.18. Elastico: reversion corta hacia la media 308.88 si imprime — chico y seguro. prob medida 65 por ciento (n=196). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:46:50 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 310.0 ↑ · prob 63% (estructural, no WR medido)
+12:47:31 | 🎈 BB REBOTE | PLTR reventó la banda ABAJO y re-entró en 160.35. Elastico: rebote hacia la media 160.75 si imprime — chico y seguro. [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:48:01 | 🎈 BB REBOTE | HOOD reventó la banda ABAJO y re-entró en 94.35. Elastico: rebote hacia la media 94.47 si imprime — chico y seguro. [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:49:32 | 🎈 BB REBOTE | RKLB reventó la banda ABAJO y re-entró en 75.29. Elastico: rebote hacia la media 75.37 si imprime — chico y seguro. [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:51:02 | 🎈 BB REBOTE [VETO medido] | NFLX reventó la banda ABAJO y re-entró en 73.31. Elastico: rebote hacia la media 73.40 si imprime — chico y seguro. prob medida 77 por ciento (n=202). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:53:57 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 63% (estructural, no WR medido)
+12:54:13 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 310.0 ↑ · prob 63% (estructural, no WR medido)
+12:55:04 | 🧲 ESTRUCTURAL magnet MU | MU se dirige a su imán 930.0 ↑ · prob 78% (estructural, no WR medido)
+12:56:22 | 🩸 EARNINGS-FALL ROTO | export Finviz caido
+12:56:22 | 🩸 EARNINGS-FALL AAA -9.0% | largo
+12:56:22 | 🩸 EARNINGS-FALL TGTX -8.0% | linea tecnica larga con score 68
+12:56:30 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 64% (estructural, no WR medido)
+12:56:45 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 310.0 ↑ · prob 64% (estructural, no WR medido)
+12:56:56 | 🕳 CINTA CIEGA | CINTA CIEGA: 3 de la flota sin tape tick-by-tick (AAPL AMD TSM) — sus ballenas NO se ven, no es que no haya
+12:57:35 | 🎈 BB REBOTE | GOOGL reventó la banda ARRIBA y re-entró en 363.74. Elastico: reversion corta hacia la media 363.19 si imprime — chico y seguro. prob medida 68 por ciento (n=197). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:59:36 | 🎈 BB REBOTE | GLD reventó la banda ABAJO y re-entró en 389.01. Elastico: rebote hacia la media 389.23 si imprime — chico y seguro. prob medida 64 por ciento (n=194). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:01:03 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 64% (estructural, no WR medido)
+13:01:18 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 310.0 ↑ · prob 64% (estructural, no WR medido)
+13:01:36 | 🎈 BB REBOTE | MSFT reventó la banda ABAJO y re-entró en 488.51. Elastico: rebote hacia la media 488.79 si imprime — chico y seguro. prob medida 70 por ciento (n=203). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:02:36 | 🎈 BB REBOTE | AMZN reventó la banda ABAJO y re-entró en 272.44. Elastico: rebote hacia la media 272.55 si imprime — chico y seguro. prob medida 68 por ciento (n=193). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:02:36 | 🎈 BB REBOTE | TSM reventó la banda ABAJO y re-entró en 416.52. Elastico: rebote hacia la media 417.03 si imprime — chico y seguro. prob medida 68 por ciento (n=203). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:02:48 | 🩸 EARNINGS-FALL ROTO | export Finviz caido
+13:02:48 | 🩸 EARNINGS-FALL AAA -9.0% | largo
+13:02:48 | 🩸 EARNINGS-FALL TGTX -8.0% | linea tecnica larga con score 68
+13:03:24 | 🕳 CINTA CIEGA | CINTA CIEGA: 3 de la flota sin tape tick-by-tick (AAPL AMD TSM) — sus ballenas NO se ven, no es que no haya
+13:06:25 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 72% (estructural, no WR medido)
+13:06:38 | 🎈 BB REBOTE | QQQ reventó la banda ABAJO y re-entró en 721.46. Elastico: rebote hacia la media 722.00 si imprime — chico y seguro. prob medida 70 por ciento (n=190). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:06:40 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 220.0 ↓ · prob 71% (estructural, no WR medido)
+13:07:37 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 65% (estructural, no WR medido)
+13:07:38 | 🎈 BB REBOTE | SMH reventó la banda ABAJO y re-entró en 577.40. Elastico: rebote hacia la media 577.08 si imprime — chico y seguro. prob medida 66 por ciento (n=188). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:08:38 | 🎈 BB REBOTE | NVDA reventó la banda ABAJO y re-entró en 221.23. Elastico: rebote hacia la media 221.32 si imprime — chico y seguro. prob medida 69 por ciento (n=196). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:08:38 | 🎈 BB REBOTE | AMD reventó la banda ABAJO y re-entró en 488.03. Elastico: rebote hacia la media 488.47 si imprime — chico y seguro. prob medida 69 por ciento (n=195). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:08:39 | 🎈 BB REBOTE | XLK reventó la banda ABAJO y re-entró en 187.38. Elastico: rebote hacia la media 187.51 si imprime — chico y seguro. prob medida 69 por ciento (n=183). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:08:39 | 🎈 BB REBOTE | MSTR reventó la banda ABAJO y re-entró en 97.47. Elastico: rebote hacia la media 97.59 si imprime — chico y seguro. [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:08:39 | 🎈 BB BAND-WALK | CRWV camina la banda ABAJO tambien en 5 minutos (91.55). Continuacion probable — NO hacer fade. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:11:09 | 🎈 BB REBOTE | MU reventó la banda ABAJO y re-entró en 924.71. Elastico: rebote hacia la media 922.99 si imprime — chico y seguro. prob medida 65 por ciento (n=202). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:12:10 | 🎈 BB REBOTE | SPY reventó la banda ABAJO y re-entró en 771.62. Elastico: rebote hacia la media 771.67 si imprime — chico y seguro. prob medida 72 por ciento (n=213). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:12:10 | 🎈 BB REBOTE | INTC reventó la banda ABAJO y re-entró en 101.87. Elastico: rebote hacia la media 102.09 si imprime — chico y seguro. prob medida 68 por ciento (n=211). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:16:41 | 🎈 BB REBOTE | QCOM reventó la banda ABAJO y re-entró en 158.08. Elastico: rebote hacia la media 158.43 si imprime — chico y seguro. prob medida 69 por ciento (n=182). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:16:41 | 🎈 BB REBOTE | AVGO reventó la banda ABAJO y re-entró en 420.83. Elastico: rebote hacia la media 421.23 si imprime — chico y seguro. prob medida 68 por ciento (n=197). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:18:41 | 🎈 BB BAND-WALK [MUTED p<55] | AAPL camina la banda ARRIBA tambien en 5 minutos (309.77). Continuacion probable — NO hacer fade. prob medida 20 por ciento (n=15). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:19:41 | 🎈 BB REBOTE [VETO medido] | NFLX reventó la banda ARRIBA y re-entró en 73.27. Elastico: reversion corta hacia la media 73.25 si imprime — chico y seguro. prob medida 77 por ciento (n=202). [post-squeeze: el fade mejora +11 medido; VETO RSI2 extremo: impulso en curso, 53 por ciento; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:24:12 | 🎈 BB REBOTE [VETO medido] | STX reventó la banda ABAJO y re-entró en 868.93. Elastico: rebote hacia la media 870.33 si imprime — chico y seguro. prob medida 72 por ciento (n=209). [VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:25:43 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | GOOGL reventó la banda 15 minutos ABAJO y re-entró en 363.24 — elastico mayor, digestion probable. prob medida 0 por ciento (n=7). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:27:44 | 🎈 BB REBOTE | SNDK reventó la banda ABAJO y re-entró en 1414.20. Elastico: rebote hacia la media 1419.46 si imprime — chico y seguro. prob medida 73 por ciento (n=194). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:30:14 | 🎈 BB REBOTE | TSLA reventó la banda ABAJO y re-entró en 323.46. Elastico: rebote hacia la media 323.65 si imprime — chico y seguro. prob medida 70 por ciento (n=200). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:30:14 | 🎈 BB REBOTE | GOOGL reventó la banda ABAJO y re-entró en 362.81. Elastico: rebote hacia la media 363.58 si imprime — chico y seguro. prob medida 68 por ciento (n=197). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:31:45 | 🎈 BB REBOTE | NOK reventó la banda ARRIBA y re-entró en 9.70. Elastico: reversion corta hacia la media 9.69 si imprime — chico y seguro. prob medida 72 por ciento (n=205). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:31:45 | 🎈 BB REBOTE | GLD reventó la banda ARRIBA y re-entró en 389.22. Elastico: reversion corta hacia la media 388.98 si imprime — chico y seguro. prob medida 64 por ciento (n=194). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:31:45 | 🎈 BB REBOTE [VETO medido] | MSTR reventó la banda ARRIBA y re-entró en 97.57. Elastico: reversion corta hacia la media 97.33 si imprime — chico y seguro. [VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:33:06 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 88% (estructural, no WR medido)
+13:33:15 | 🎈 BB REBOTE | MSFT reventó la banda ARRIBA y re-entró en 488.28. Elastico: reversion corta hacia la media 488.25 si imprime — chico y seguro. prob medida 70 por ciento (n=203). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:33:15 | 🎈 BB BAND-WALK | RKLB camina la banda ABAJO tambien en 5 minutos (74.76). Continuacion probable — NO hacer fade. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:33:21 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 72% (estructural, no WR medido)
+13:33:51 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 88% (estructural, no WR medido)
+13:34:36 | 🩸 EARNINGS-FALL ROTO | export Finviz caido
+13:34:36 | 🩸 EARNINGS-FALL AAA -9.0% | largo
+13:34:36 | 🩸 EARNINGS-FALL TGTX -8.0% | linea tecnica larga con score 68
+13:36:16 | 🎈 BB REBOTE | PLTR reventó la banda ABAJO y re-entró en 159.35. Elastico: rebote hacia la media 159.51 si imprime — chico y seguro. [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:37:24 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 71% (estructural, no WR medido)
+13:37:55 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 87% (estructural, no WR medido)
+13:38:10 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 71% (estructural, no WR medido)
+13:42:17 | 🎈 BB REBOTE | QQQ reventó la banda ARRIBA y re-entró en 720.98. Elastico: reversion corta hacia la media 720.91 si imprime — chico y seguro. prob medida 70 por ciento (n=190). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:42:17 | 🎈 BB REBOTE | SPY reventó la banda ARRIBA y re-entró en 771.72. Elastico: reversion corta hacia la media 771.45 si imprime — chico y seguro. prob medida 72 por ciento (n=213). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:42:47 | 🎈 BB REBOTE [VETO medido] | TSM reventó la banda ARRIBA y re-entró en 415.36. Elastico: reversion corta hacia la media 415.03 si imprime — chico y seguro. prob medida 68 por ciento (n=203). [post-squeeze: el fade mejora +11 medido; VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:42:47 | 🎈 BB REBOTE | XLK reventó la banda ARRIBA y re-entró en 187.49. Elastico: reversion corta hacia la media 187.37 si imprime — chico y seguro. prob medida 69 por ciento (n=183). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:42:48 | 🎈 BB REBOTE | HOOD reventó la banda ARRIBA y re-entró en 94.32. Elastico: reversion corta hacia la media 94.22 si imprime — chico y seguro. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:42:48 | 🎈 BB REBOTE | CRWV reventó la banda ARRIBA y re-entró en 91.45. Elastico: reversion corta hacia la media 91.37 si imprime — chico y seguro. [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:42:49 | 🩸 EARNINGS-FALL ROTO | export Finviz caido
+13:42:49 | 🩸 EARNINGS-FALL AAA -9.0% | largo
+13:42:49 | 🩸 EARNINGS-FALL TGTX -8.0% | linea tecnica larga con score 68
+13:43:13 | 🩸 EARNINGS-FALL ROTO | export Finviz caido
+13:43:13 | 🩸 EARNINGS-FALL AAA -9.0% | largo
+13:43:13 | 🩸 EARNINGS-FALL TGTX -8.0% | linea tecnica larga con score 68
+13:43:50 | 🩸 EARNINGS-FALL ROTO | export Finviz caido
+13:43:50 | 🩸 EARNINGS-FALL AAA -9.0% | largo
+13:43:50 | 🩸 EARNINGS-FALL TGTX -8.0% | linea tecnica larga con score 68
+13:45:18 | 🎈 BB REBOTE | MU reventó la banda ARRIBA y re-entró en 920.98. Elastico: reversion corta hacia la media 919.78 si imprime — chico y seguro. prob medida 65 por ciento (n=202). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:47:19 | 🎈 BB REBOTE | QQQ reventó la banda ABAJO y re-entró en 720.68. Elastico: rebote hacia la media 720.92 si imprime — chico y seguro. prob medida 70 por ciento (n=190). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:48:19 | 🎈 BB REBOTE | AMD reventó la banda ABAJO y re-entró en 486.15. Elastico: rebote hacia la media 486.25 si imprime — chico y seguro. prob medida 69 por ciento (n=195). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:48:19 | 🎈 BB REBOTE | INTC reventó la banda ABAJO y re-entró en 101.65. Elastico: rebote hacia la media 101.70 si imprime — chico y seguro. prob medida 68 por ciento (n=211). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:50:19 | 🎈 BB REBOTE | AAPL reventó la banda ABAJO y re-entró en 309.43. Elastico: rebote hacia la media 309.76 si imprime — chico y seguro. prob medida 65 por ciento (n=196). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:51:20 | 🎈 BB REBOTE | NFLX reventó la banda ARRIBA y re-entró en 73.57. Elastico: reversion corta hacia la media 73.50 si imprime — chico y seguro. prob medida 77 por ciento (n=202). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:52:35 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 310.0 ↑ · prob 62% (estructural, no WR medido)
+13:52:50 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 62% (estructural, no WR medido)
+13:53:20 | 🎈 BB REBOTE | QCOM reventó la banda ARRIBA y re-entró en 158.04. Elastico: reversion corta hacia la media 157.89 si imprime — chico y seguro. prob medida 69 por ciento (n=182). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:53:20 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 310.0 ↑ · prob 62% (estructural, no WR medido)
+13:53:35 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 62% (estructural, no WR medido)
+13:53:50 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 310.0 ↑ · prob 62% (estructural, no WR medido)
+13:54:05 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 62% (estructural, no WR medido)
+13:55:20 | 🎈 BB REBOTE | AMZN reventó la banda ARRIBA y re-entró en 271.80. Elastico: reversion corta hacia la media 271.64 si imprime — chico y seguro. prob medida 68 por ciento (n=193). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:55:20 | 🎈 BB REBOTE | HOOD reventó la banda ABAJO y re-entró en 94.01. Elastico: rebote hacia la media 94.24 si imprime — chico y seguro. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:56:21 | 🎈 BB REBOTE | META reventó la banda ABAJO y re-entró en 583.55. Elastico: rebote hacia la media 583.92 si imprime — chico y seguro. prob medida 74 por ciento (n=212). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:57:07 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 310.0 ↑ · prob 63% (estructural, no WR medido)
+13:57:28 | FINVIZ SCREENERS ROTO | MOMENTUM BREAKOUT: transporte curl · reintento 5m
+13:57:45 | 🛰 FINVIZ ROTO | transporte curl fallo — reintento 5min
+13:58:42 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.51% px 49.32
+13:58:42 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.10% px 9.32
+13:58:42 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.51% px 48.60
+13:58:42 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.53% px 48.06
+13:58:42 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.69% px 48.45
+13:58:42 | WARMUP NOK: BUY | COMPRAR NOK @ 9.33 | reversal a alza | entrada 9.91 | mov +6.2%
+13:58:42 | WARMUP NOK: BUY | COMPRAR NOK @ 9.33 | target 10.08 | floor 9.42 | capitulacion confirmada
+13:58:42 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.06% px 47.68
+13:58:42 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +3.57% px 47.91
+13:58:42 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.39% px 48.60
+13:58:42 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.57% px 48.03
+13:58:42 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.52% px 48.28
+13:58:42 | WARMUP NOK: SELL | VENDER NOK @ 9.36 | time-stop (no revirtio) | entrada 9.33 | PnL +0.3%
+13:58:42 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.54% px 48.40
+13:58:42 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.56% px 48.30
+13:58:42 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +3.94% px 46.87
+13:58:42 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -11.96% px 43.12
+13:58:42 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +8.72% px 47.05
+13:58:42 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.44% px 46.88
+13:58:42 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.69% px 47.68
+13:58:42 | WARMUP DRAM: SELL | DRAM @ 46.67 | prob 57% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=SPIKE_FADE
+13:58:42 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.53% px 46.40
+13:58:42 | WARMUP TSLA: SELL | VENDER TSLA @ 322.82 | trail 3xATR roto | entrada 317.98 | PnL +1.5%
+13:58:42 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.29% px 45.72
+13:58:42 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.02% px 45.40
+13:58:42 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.69% px 46.07
+13:58:42 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +4.22% px 47.90
+13:58:42 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -6.64% px 45.14
+13:58:42 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.58% px 43.99
+13:58:42 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.21% px 43.96
+13:58:42 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.49% px 43.61
+13:58:42 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +7.34% px 46.78
+13:58:42 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.99% px 45.16
+13:58:42 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.69% px 43.99
+13:58:42 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.03% px 43.80
+13:58:42 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.86% px 44.47
+13:58:42 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.61% px 43.76
+13:58:42 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.31% px 44.30
+13:58:42 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.62% px 44.86
+13:58:42 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.79% px 45.67
+13:58:43 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.09% px 499.06
+13:58:43 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.17% px 511.43
+13:58:43 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.01% px 523.75
+13:58:43 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -11.80% px 470.59
+13:58:43 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.00% px 480.20
+13:58:43 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.19% px 485.98
+13:58:43 | WARMUP AMD: BUY | AMD @ 495.28 | prob 63% | pullback-23%+MACD1-gira+MACD15-verde+ST5-alineado+sobre-VWAP | fase=TREND_UP
+13:58:43 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.37% px 483.82
+13:58:43 | WARMUP AMD: SELL | VENDER AMD @ 486.20 | trail 3xATR roto | entrada 481.30 | PnL +1.0%
+13:58:43 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.76% px 46.42
+13:58:43 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +3.58% px 48.09
+13:58:43 | WARMUP DRAM: BUY | DRAM @ 50.70 | prob 55% | rompe-OR-arriba+vol-2.8x+MACD15-verde+ST5-alineado+ribbon15-alcista+retest-ok | fase=TREND_UP
+13:58:43 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +5.96% px 50.97
+13:58:43 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.98% px 51.11
+13:58:43 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.58% px 51.68
+13:58:43 | WARMUP DRAM: BUY | DRAM @ 51.79 | prob 56% | rompe-TL-1m+vol-1.5x+ST5-alineado+ribbon15-alcista+sobre-VWAP+retest-ok | fase=TREND_UP
+13:58:43 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.59% px 52.04
+13:58:43 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.98% px 52.66
+13:58:43 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.63% px 53.19
+13:58:43 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +3.38% px 55.01
+13:58:43 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.46% px 53.45
+13:58:43 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.82% px 53.67
+13:58:43 | WARMUP TXN: BUY | COMPRAR TXN @ 276.31 | reversal a alza | entrada 271.52 | mov -1.7%
+13:58:43 | WARMUP QQQ: SELL | VENDER QQQ @ 693.37 | target | entrada 689.92 | PnL +0.5%
+13:58:43 | WARMUP SMH: BUY | COMPRAR SMH @ 530.96 | reversal a alza | entrada 573.20 | mov +8.0%
+13:58:43 | WARMUP SPY: SELL | VENDER SPY @ 756.28 | trail 3xATR roto | entrada 755.36 | PnL +0.1%
+13:58:43 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.97% px 54.41
+13:58:43 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.55% px 55.22
+13:58:43 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.41% px 54.46
+13:58:43 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.52% px 53.61
+13:58:43 | WARMUP SMH: BUY | COMPRAR SMH @ 530.96 | target 552.20 | floor 536.27 | capitulacion confirmada
+13:58:43 | WARMUP TXN: BUY | COMPRAR TXN @ 276.31 | target 279.07 | floor 277.00 | capitulacion confirmada
+13:58:43 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.60% px 54.23
+13:58:43 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.51% px 54.58
+13:58:43 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.58% px 54.00
+13:58:43 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.69% px 55.09
+13:58:43 | WARMUP TXN: SELL | VENDER TXN @ 275.73 | supertrend flip DOWN | entrada 276.31 | PnL -0.2%
+13:58:43 | WARMUP SMH: SELL | VENDER SMH @ 540.10 | trail 3xATR roto | entrada 530.96 | PnL +1.7%
+13:58:43 | WARMUP DRAM: SELL | DRAM @ 50.47 | prob 57% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=SPIKE_FADE
+13:58:43 | WARMUP GLD: BUY | COMPRAR GLD @ 369.99 | reversal a alza | entrada 374.19 | mov +1.1%
+13:58:43 | WARMUP GLD: BUY | COMPRAR GLD @ 369.99 | target 374.43 | floor 370.91 | capitulacion confirmada
+13:58:43 | WARMUP GLD: SELL | VENDER GLD @ 370.29 | time-stop (no revirtio) | entrada 369.99 | PnL +0.1%
+13:58:43 | WARMUP DRAM: SELL | DRAM @ 51.17 | prob 57% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=SPIKE_FADE
+13:58:43 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -7.71% px 51.17
+13:58:43 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.50% px 50.47
+13:58:43 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.63% px 51.30
+13:58:43 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.64% px 51.29
+13:58:43 | WARMUP DRAM: SELL | DRAM @ 51.19 | prob 64% | rebote-16%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+13:58:43 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.63% px 50.51
+13:58:47 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 56, calls 52
+13:58:48 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+13:58:59 | FINVIZ SCREENERS | Feed recuperado
+13:59:48 | 🎈 BB REBOTE [VETO medido] | META reventó la banda ABAJO y re-entró en 583.44. Elastico: rebote hacia la media 583.77 si imprime — chico y seguro. prob medida 74 por ciento (n=212). [post-squeeze: el fade mejora +11 medido; VETO distancia: la media esta a 3.2 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:00:49 | 🔒 TRUTH-LOCK INFO | AAPL: PASADO reescrito (8 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:49 | 🎈 BB REBOTE [VETO medido] | TSM reventó la banda ARRIBA y re-entró en 415.64. Elastico: reversion corta hacia la media 415.32 si imprime — chico y seguro. prob medida 68 por ciento (n=203). [VETO distancia: la media esta a 1.6 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:00:49 | 🔒 TRUTH-LOCK INFO | AMD: PASADO reescrito (8 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:49 | 🔒 TRUTH-LOCK INFO | AMZN: PASADO reescrito (11 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:49 | 🔒 TRUTH-LOCK INFO | ASML: PASADO reescrito (61 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:49 | 🔒 TRUTH-LOCK INFO | AVGO: PASADO reescrito (75 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:49 | 🔒 TRUTH-LOCK INFO | COIN: PASADO reescrito (65 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:50 | 🔒 TRUTH-LOCK INFO | CRWV: PASADO reescrito (48 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:50 | 🔒 TRUTH-LOCK INFO | GLD: PASADO reescrito (21 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:50 | 🔒 TRUTH-LOCK INFO | GOOGL: PASADO reescrito (25 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:50 | 🔒 TRUTH-LOCK INFO | HOOD: PASADO reescrito (22 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:50 | 🔒 TRUTH-LOCK INFO | INTC: PASADO reescrito (5 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:50 | 🔒 TRUTH-LOCK INFO | LRCX: PASADO reescrito (43 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:50 | 🔒 TRUTH-LOCK INFO | META: PASADO reescrito (57 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:51 | 🔒 TRUTH-LOCK INFO | MSFT: PASADO reescrito (51 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:51 | 🔒 TRUTH-LOCK INFO | MSTR: PASADO reescrito (16 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:51 | 🔒 TRUTH-LOCK INFO | MU: PASADO reescrito (14 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:51 | 🔒 TRUTH-LOCK INFO | NFLX: PASADO reescrito (10 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:51 | 🔒 TRUTH-LOCK INFO | NOK: PASADO reescrito (20 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:51 | 🔒 TRUTH-LOCK INFO | NVDA: PASADO reescrito (7 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:51 | 🔒 TRUTH-LOCK INFO | PLTR: PASADO reescrito (7 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:52 | 🔒 TRUTH-LOCK INFO | QCOM: PASADO reescrito (31 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:52 | 🔒 TRUTH-LOCK INFO | QQQ: PASADO reescrito (6 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:52 | 🔒 TRUTH-LOCK INFO | RKLB: PASADO reescrito (16 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:52 | 🔒 TRUTH-LOCK INFO | SMH: PASADO reescrito (8 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:52 | 🔒 TRUTH-LOCK INFO | SNDK: PASADO reescrito (40 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:52 | 🔒 TRUTH-LOCK INFO | SPY: PASADO reescrito (4 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:52 | 🔒 TRUTH-LOCK INFO | STX: PASADO reescrito (77 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:53 | 🔒 TRUTH-LOCK INFO | TSLA: PASADO reescrito (34 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:53 | 🔒 TRUTH-LOCK INFO | TSM: PASADO reescrito (28 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:53 | 🔒 TRUTH-LOCK INFO | TXN: PASADO reescrito (44 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:53 | 🔒 TRUTH-LOCK INFO | WDC: PASADO reescrito (53 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:00:53 | 🔒 TRUTH-LOCK INFO | XLK: PASADO reescrito (4 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+14:01:49 | 🎈 BB REBOTE [VETO medido] | INTC reventó la banda ARRIBA y re-entró en 101.96. Elastico: reversion corta hacia la media 101.74 si imprime — chico y seguro. prob medida 68 por ciento (n=211). [VETO distancia: la media esta a 1.6 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:03:49 | 🎈 BB REBOTE [VETO medido] | LRCX reventó la banda ARRIBA y re-entró en 312.37. Elastico: reversion corta hacia la media 312.03 si imprime — chico y seguro. prob medida 68 por ciento (n=193). [VETO distancia: la media esta a 4.9 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:04:19 | 🎈 BB REBOTE [VETO medido] | AAPL reventó la banda ABAJO y re-entró en 308.73. Elastico: rebote hacia la media 309.20 si imprime — chico y seguro. prob medida 65 por ciento (n=196). [VETO distancia: la media esta a 1.4 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:04:19 | 🎈 BB REBOTE | AMZN reventó la banda ABAJO y re-entró en 271.53. Elastico: rebote hacia la media 271.66 si imprime — chico y seguro. prob medida 68 por ciento (n=193). [distancia 0.66 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:04:49 | 🎈 BB REBOTE [VETO medido] | CRWV reventó la banda ARRIBA y re-entró en 91.61. Elastico: reversion corta hacia la media 91.49 si imprime — chico y seguro. [VETO distancia: la media esta a 1.5 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:05:19 | 🎈 BB REBOTE [VETO medido] | GOOGL reventó la banda ARRIBA y re-entró en 363.14. Elastico: reversion corta hacia la media 362.26 si imprime — chico y seguro. prob medida 68 por ciento (n=197). [VETO distancia: la media esta a 1.4 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:06:20 | 🎈 BB REBOTE | QQQ reventó la banda ARRIBA y re-entró en 721.12. Elastico: reversion corta hacia la media 720.95 si imprime — chico y seguro. prob medida 70 por ciento (n=190). [distancia 0.70 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:06:20 | 🎈 BB REBOTE [VETO medido] | GLD reventó la banda ARRIBA y re-entró en 389.98. Elastico: reversion corta hacia la media 389.84 si imprime — chico y seguro. prob medida 64 por ciento (n=194). [VETO distancia: la media esta a 1.3 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:07:20 | 🎈 BB REBOTE [VETO medido] | SMH reventó la banda ARRIBA y re-entró en 575.60. Elastico: reversion corta hacia la media 575.26 si imprime — chico y seguro. prob medida 66 por ciento (n=188). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido; VETO distancia: la media esta a 1.3 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:07:20 | 🎈 BB REBOTE [VETO medido] | MSFT reventó la banda ARRIBA y re-entró en 488.96. Elastico: reversion corta hacia la media 488.67 si imprime — chico y seguro. prob medida 70 por ciento (n=203). [VETO distancia: la media esta a 1.4 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:07:20 | 🎈 BB REBOTE [VETO medido] | QCOM reventó la banda ARRIBA y re-entró en 158.39. Elastico: reversion corta hacia la media 158.12 si imprime — chico y seguro. prob medida 69 por ciento (n=182). [VETO distancia: la media esta a 2.8 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:08:14 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 62% (estructural, no WR medido)
+14:08:59 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 220.0 ↓ · prob 61% (estructural, no WR medido)
+14:09:21 | 🎈 BB BAND-WALK | NVDA camina la banda ABAJO tambien en 5 minutos (220.76). Continuacion probable — NO hacer fade. prob medida 55 por ciento (n=20). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:09:21 | 🎈 BB REBOTE | MSFT reventó la banda ABAJO y re-entró en 488.64. Elastico: rebote hacia la media 488.68 si imprime — chico y seguro. prob medida 70 por ciento (n=203). [distancia 0.15 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:12:21 | 🎈 BB REBOTE [VETO medido] | NFLX reventó la banda ABAJO y re-entró en 73.49. Elastico: rebote hacia la media 73.54 si imprime — chico y seguro. prob medida 77 por ciento (n=202). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido; VETO distancia: la media esta a 1.3 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:12:21 | 🎈 BB REBOTE ⭐[degradada] | XLK reventó la banda ARRIBA y re-entró en 187.50. Elastico: reversion corta hacia la media 187.49 si imprime — chico y seguro. prob medida 69 por ciento (n=183). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido; distancia 0.16 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:12:51 | 🎈 BB REBOTE [VETO medido] | SPY reventó la banda ARRIBA y re-entró en 771.92. Elastico: reversion corta hacia la media 771.75 si imprime — chico y seguro. prob medida 72 por ciento (n=213). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido; VETO distancia: la media esta a 1.0 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:13:51 | 🎈 BB REBOTE [VETO medido] | SNDK reventó la banda ABAJO y re-entró en 1416.91. Elastico: rebote hacia la media 1419.20 si imprime — chico y seguro. prob medida 73 por ciento (n=194). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido; VETO distancia: la media esta a 3.5 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:15:22 | 🎈 BB REBOTE [VETO medido] | NVDA reventó la banda ARRIBA y re-entró en 221.07. Elastico: reversion corta hacia la media 220.89 si imprime — chico y seguro. prob medida 69 por ciento (n=196). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido; VETO distancia: la media esta a 1.0 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:17:22 | 🎈 BB REBOTE [VETO medido] | PLTR reventó la banda ARRIBA y re-entró en 160.29. Elastico: reversion corta hacia la media 159.48 si imprime — chico y seguro. [VETO distancia: la media esta a 1.9 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:17:22 | 🎈 BB BAND-WALK | MSTR camina la banda ARRIBA tambien en 5 minutos (98.28). Continuacion probable — NO hacer fade. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:20:23 | 🎈 BB REBOTE [VETO medido] | AVGO reventó la banda ARRIBA y re-entró en 421.04. Elastico: reversion corta hacia la media 420.44 si imprime — chico y seguro. prob medida 68 por ciento (n=197). [VETO distancia: la media esta a 8.7 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:24:11 | GLD TERREMOTO ALZA | CUSUM: subiendo fuerte +1.05% px 391.37
+14:24:16 | 🧲 ESTRUCTURAL pin MU | MU en su imán 920.0 — pin · prob 65% (estructural, no WR medido)
+14:26:24 | 🎈 BB REBOTE [VETO medido] | QCOM reventó la banda ABAJO y re-entró en 158.18. Elastico: rebote hacia la media 158.32 si imprime — chico y seguro. prob medida 69 por ciento (n=182). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido; VETO RSI2 a favor del pierce: impulso vivo, 36 por ciento; VETO distancia: la media esta a 1.9 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:26:24 | 🎈 BB REBOTE [VETO medido] | RKLB reventó la banda ABAJO y re-entró en 74.51. Elastico: rebote hacia la media 74.65 si imprime — chico y seguro. [VETO distancia: la media esta a 2.1 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:26:49 | 🧲 ESTRUCTURAL pin MU | MU en su imán 920.0 — pin · prob 65% (estructural, no WR medido)
+14:29:25 | 🎈 BB REBOTE ⭐[degradada] | AMD reventó la banda ARRIBA y re-entró en 487.45. Elastico: reversion corta hacia la media 487.15 si imprime — chico y seguro. prob medida 69 por ciento (n=195). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido; distancia 0.64 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:30:25 | 🎈 BB REBOTE ⭐[degradada] | MU reventó la banda ABAJO y re-entró en 918.98. Elastico: rebote hacia la media 919.74 si imprime — chico y seguro. prob medida 65 por ciento (n=202). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido; distancia 0.56 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:30:25 | 🎈 BB REBOTE [VETO medido] | META reventó la banda ABAJO y re-entró en 583.51. Elastico: rebote hacia la media 583.58 si imprime — chico y seguro. prob medida 74 por ciento (n=212). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido; VETO distancia: la media esta a 1.1 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:31:25 | 🎈 BB REBOTE | TSLA reventó la banda ABAJO y re-entró en 322.25. Elastico: rebote hacia la media 322.36 si imprime — chico y seguro. prob medida 70 por ciento (n=200). [distancia 0.55 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:31:55 | 🎈 BB REBOTE | INTC reventó la banda ARRIBA y re-entró en 102.20. Elastico: reversion corta hacia la media 102.11 si imprime — chico y seguro. prob medida 68 por ciento (n=211). [distancia 0.95 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:32:09 | ASML: SELL | ASML @ 1693.85 | prob 62% | rompe-TL-1m-abajo+vol-3.1x+MACD15-rojo+bajo-VWAP+RVOL-3.1x+retest-ok | fase=UNKNOWN
+14:33:26 | 🎈 BB REBOTE [VETO medido] | SPY reventó la banda ABAJO y re-entró en 771.68. Elastico: rebote hacia la media 771.89 si imprime — chico y seguro. prob medida 72 por ciento (n=213). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido; VETO distancia: la media esta a 1.3 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:34:26 | 🎈 BB REBOTE [VETO medido] | GOOGL reventó la banda ABAJO y re-entró en 362.54. Elastico: rebote hacia la media 363.42 si imprime — chico y seguro. prob medida 68 por ciento (n=197). [VETO distancia: la media esta a 1.0 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:34:26 | 🎈 BB REBOTE [VETO medido] | TSM reventó la banda ABAJO y re-entró en 415.67. Elastico: rebote hacia la media 416.00 si imprime — chico y seguro. prob medida 68 por ciento (n=203). [VETO distancia: la media esta a 1.7 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:34:26 | 🎈 BB REBOTE [VETO medido] | PLTR reventó la banda ABAJO y re-entró en 159.39. Elastico: rebote hacia la media 159.95 si imprime — chico y seguro. [VETO RSI2 a favor del pierce: impulso vivo, 36 por ciento; VETO distancia: la media esta a 1.5 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:35:26 | 🎈 BB 15m RE-ENTRADA [VETO distancia 2.0 ATR] | TSLA reventó la banda 15 minutos ABAJO y re-entró en 321.36 — elastico mayor, digestion probable. prob medida 0 por ciento (n=9). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:35:26 | 🎈 BB REBOTE | SMH reventó la banda ABAJO y re-entró en 575.41. Elastico: rebote hacia la media 575.69 si imprime — chico y seguro. prob medida 66 por ciento (n=188). [distancia 0.78 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:35:26 | 🎈 BB REBOTE | AMZN reventó la banda ABAJO y re-entró en 271.33. Elastico: rebote hacia la media 271.59 si imprime — chico y seguro. prob medida 68 por ciento (n=193). [distancia 0.99 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:35:26 | 🎈 BB REBOTE [VETO medido] | HOOD reventó la banda ABAJO y re-entró en 93.66. Elastico: rebote hacia la media 93.79 si imprime — chico y seguro. [VETO RSI2 a favor del pierce: impulso vivo, 36 por ciento; VETO distancia: la media esta a 2.3 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:36:26 | 🎈 BB BAND-WALK | CRWV camina la banda ABAJO tambien en 5 minutos (91.11). Continuacion probable — NO hacer fade. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:37:06 | AAPL: BUY | COMPRAR AAPL @ 308.43 | target 320.76 | floor 311.51 | capitulacion confirmada
+14:41:57 | 🎈 BB REBOTE ⭐[degradada] | MSFT reventó la banda ABAJO y re-entró en 489.63. Elastico: rebote hacia la media 489.70 si imprime — chico y seguro. prob medida 70 por ciento (n=203). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido; distancia 0.41 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:43:27 | 🎈 BB REBOTE [VETO medido] | MU reventó la banda ARRIBA y re-entró en 921.03. Elastico: reversion corta hacia la media 919.60 si imprime — chico y seguro. prob medida 65 por ciento (n=202). [VETO distancia: la media esta a 1.1 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:43:27 | 🎈 BB REBOTE | XLK reventó la banda ABAJO y re-entró en 187.62. Elastico: rebote hacia la media 187.53 si imprime — chico y seguro. prob medida 69 por ciento (n=183). [distancia 0.55 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:44:28 | 🎈 BB REBOTE | AAPL reventó la banda ARRIBA y re-entró en 308.42. Elastico: reversion corta hacia la media 308.37 si imprime — chico y seguro. prob medida 65 por ciento (n=196). [distancia 0.31 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:44:49 | FINVIZ MOMENTUM BREAKOUT · BUY | AVT $96.47 +4.3% RVOL 1.5x
+14:45:28 | 🎈 BB REBOTE [VETO medido] | STX reventó la banda ARRIBA y re-entró en 873.40. Elastico: reversion corta hacia la media 873.12 si imprime — chico y seguro. prob medida 72 por ciento (n=209). [VETO distancia: la media esta a 1.3 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:46:28 | 🎈 BB REBOTE | XLK reventó la banda ARRIBA y re-entró en 187.54. Elastico: reversion corta hacia la media 187.54 si imprime — chico y seguro. prob medida 69 por ciento (n=183). [distancia 0.03 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:47:28 | 🎈 BB REBOTE [VETO medido] | HOOD reventó la banda ARRIBA y re-entró en 93.87. Elastico: reversion corta hacia la media 93.73 si imprime — chico y seguro. [VETO RSI2 a favor del pierce: impulso vivo, 36 por ciento; VETO distancia: la media esta a 2.6 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:48:29 | 🎈 BB REBOTE [VETO medido] | NFLX reventó la banda ABAJO y re-entró en 73.39. Elastico: rebote hacia la media 73.45 si imprime — chico y seguro. prob medida 77 por ciento (n=202). [VETO distancia: la media esta a 1.8 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:49:29 | 🎈 BB REBOTE | RKLB reventó la banda ARRIBA y re-entró en 74.54. Elastico: reversion corta hacia la media 74.44 si imprime — chico y seguro. [distancia 0.98 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:51:16 | GLD: BUY | GLD @ 390.87 | prob 65% | pullback-33%+MACD1-gira+MACD15-verde+ST5-alineado+ribbon15-alcista | fase=TREND_UP
+14:51:29 | 🎈 BB REBOTE [VETO medido] | TSM reventó la banda ARRIBA y re-entró en 416.39. Elastico: reversion corta hacia la media 415.90 si imprime — chico y seguro. prob medida 68 por ciento (n=203). [VETO distancia: la media esta a 2.2 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:53:50 | FINVIZ MOMENTUM BREAKOUT · BUY | WTTR $21.66 +17.1% RVOL 2.8x
+14:54:30 | 🎈 BB REBOTE [VETO medido] | CRWV reventó la banda ARRIBA y re-entró en 91.40. Elastico: reversion corta hacia la media 91.17 si imprime — chico y seguro. [VETO distancia: la media esta a 2.3 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:55:30 | 🎈 BB REBOTE ⭐[degradada] | INTC reventó la banda ABAJO y re-entró en 102.19. Elastico: rebote hacia la media 102.24 si imprime — chico y seguro. prob medida 68 por ciento (n=211). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido; distancia 0.50 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:56:30 | 🎈 BB REBOTE | MSFT reventó la banda ARRIBA y re-entró en 489.76. Elastico: reversion corta hacia la media 489.74 si imprime — chico y seguro. prob medida 70 por ciento (n=203). [distancia 0.13 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:57:30 | 🎈 BB REBOTE [VETO medido] | MSTR reventó la banda ABAJO y re-entró en 97.42. Elastico: rebote hacia la media 97.63 si imprime — chico y seguro. [VETO distancia: la media esta a 2.3 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:58:31 | 🎈 BB BAND-WALK [MUTED p<55] | QQQ camina la banda ABAJO tambien en 5 minutos (720.31). Continuacion probable — NO hacer fade. prob medida 52 por ciento (n=25). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:58:31 | 🎈 BB REBOTE ⭐[degradada] | NVDA reventó la banda ABAJO y re-entró en 221.63. Elastico: rebote hacia la media 221.67 si imprime — chico y seguro. prob medida 69 por ciento (n=196). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido; distancia 0.23 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:58:31 | 🎈 BB REBOTE ⭐[degradada] | QCOM reventó la banda ABAJO y re-entró en 157.90. Elastico: rebote hacia la media 157.94 si imprime — chico y seguro. prob medida 69 por ciento (n=182). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido; distancia 0.74 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:01:31 | 🎈 BB REBOTE | AMD reventó la banda ABAJO y re-entró en 488.03. Elastico: rebote hacia la media 487.72 si imprime — chico y seguro. prob medida 69 por ciento (n=195). [distancia 0.62 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:03:31 | 🎈 BB REBOTE [VETO medido] | NVDA reventó la banda ARRIBA y re-entró en 221.87. Elastico: reversion corta hacia la media 221.70 si imprime — chico y seguro. prob medida 69 por ciento (n=196). [VETO distancia: la media esta a 1.0 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:05:32 | 🎈 BB 15m RE-ENTRADA [VETO distancia 2.5 ATR] | TSLA reventó la banda 15 minutos ABAJO y re-entró en 320.69 — elastico mayor, digestion probable. prob medida 0 por ciento (n=9). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:05:32 | 🎈 BB REBOTE [VETO medido] | QCOM reventó la banda ARRIBA y re-entró en 158.20. Elastico: reversion corta hacia la media 157.96 si imprime — chico y seguro. prob medida 69 por ciento (n=182). [VETO distancia: la media esta a 2.7 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:05:32 | 🎈 BB REBOTE ⭐[degradada] | PLTR reventó la banda ABAJO y re-entró en 159.28. Elastico: rebote hacia la media 159.35 si imprime — chico y seguro. [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido; distancia 0.75 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:07:32 | 🎈 BB REBOTE [VETO medido] | QQQ reventó la banda ARRIBA y re-entró en 720.87. Elastico: reversion corta hacia la media 720.58 si imprime — chico y seguro. prob medida 70 por ciento (n=190). [VETO distancia: la media esta a 1.1 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:07:32 | 🎈 BB REBOTE | SPY reventó la banda ARRIBA y re-entró en 771.67. Elastico: reversion corta hacia la media 771.62 si imprime — chico y seguro. prob medida 72 por ciento (n=213). [distancia 0.30 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:07:32 | 🎈 BB REBOTE [VETO medido] | SMH reventó la banda ARRIBA y re-entró en 576.12. Elastico: reversion corta hacia la media 575.64 si imprime — chico y seguro. prob medida 66 por ciento (n=188). [VETO distancia: la media esta a 1.3 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:07:32 | 🎈 BB BAND-WALK [MUTED p<55] | INTC camina la banda ARRIBA tambien en 5 minutos (102.62). Continuacion probable — NO hacer fade. prob medida 31 por ciento (n=13). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:07:32 | 🎈 BB REBOTE [VETO medido] | MSTR reventó la banda ARRIBA y re-entró en 97.90. Elastico: reversion corta hacia la media 97.63 si imprime — chico y seguro. [VETO distancia: la media esta a 1.8 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:09:33 | 🎈 BB REBOTE [VETO medido] | TSLA reventó la banda ARRIBA y re-entró en 320.82. Elastico: reversion corta hacia la media 320.72 si imprime — chico y seguro. prob medida 70 por ciento (n=200). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento; distancia 0.58 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:11:33 | 🎈 BB 15m RE-ENTRADA [VETO distancia 1.2 ATR] | MSTR reventó la banda 15 minutos ARRIBA y re-entró en 98.38 — elastico mayor, digestion probable. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:12:33 | 🎈 BB REBOTE [VETO medido] | NFLX reventó la banda ARRIBA y re-entró en 73.60. Elastico: reversion corta hacia la media 73.43 si imprime — chico y seguro. prob medida 77 por ciento (n=202). [VETO distancia: la media esta a 1.6 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:16:34 | 🎈 BB REBOTE [VETO medido] | MU reventó la banda ARRIBA y re-entró en 919.68. Elastico: reversion corta hacia la media 918.17 si imprime — chico y seguro. prob medida 65 por ciento (n=202). [VETO RSI2 a favor del pierce: impulso vivo, 36 por ciento; distancia 0.81 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:17:34 | 🎈 BB REBOTE | AMD reventó la banda ARRIBA y re-entró en 487.87. Elastico: reversion corta hacia la media 487.57 si imprime — chico y seguro. prob medida 69 por ciento (n=195). [distancia 0.51 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:17:34 | 🎈 BB REBOTE [VETO medido] | META reventó la banda ABAJO y re-entró en 584.94. Elastico: rebote hacia la media 583.23 si imprime — chico y seguro. prob medida 74 por ciento (n=212). [VETO distancia: la media esta a 5.1 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:17:34 | 🎈 BB REBOTE [VETO medido] | AVGO reventó la banda ARRIBA y re-entró en 421.36. Elastico: reversion corta hacia la media 421.18 si imprime — chico y seguro. prob medida 68 por ciento (n=197). [VETO distancia: la media esta a 2.5 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:17:55 | FINVIZ MOMENTUM BREAKOUT · BUY | AMCX $12.32 +8.1% RVOL 1.5x
+15:19:27 | FINVIZ SHORT SQUEEZE · BUY | AMCX $12.32 +8.1% RVOL 1.5x
+15:19:35 | 🎈 BB REBOTE [VETO medido] | META reventó la banda ARRIBA y re-entró en 582.71. Elastico: reversion corta hacia la media 583.35 si imprime — chico y seguro. prob medida 74 por ciento (n=212). [VETO distancia: la media esta a 1.0 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:19:35 | 🎈 BB REBOTE [VETO medido] | LRCX reventó la banda ARRIBA y re-entró en 312.96. Elastico: reversion corta hacia la media 312.25 si imprime — chico y seguro. prob medida 68 por ciento (n=193). [VETO RSI2 a favor del pierce: impulso vivo, 36 por ciento; VETO distancia: la media esta a 4.0 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:20:35 | 🎈 BB REBOTE [VETO medido] | GLD reventó la banda ABAJO y re-entró en 390.48. Elastico: rebote hacia la media 390.71 si imprime — chico y seguro. prob medida 64 por ciento (n=194). [VETO distancia: la media esta a 1.3 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:24:11 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 62% (estructural, no WR medido)
+15:26:36 | 🎈 BB REBOTE ⭐[degradada] | GOOGL reventó la banda ARRIBA y re-entró en 361.98. Elastico: reversion corta hacia la media 361.76 si imprime — chico y seguro. prob medida 68 por ciento (n=197). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido; distancia 0.73 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:26:36 | 🎈 BB 15m RE-ENTRADA [VETO distancia 1.2 ATR] | PLTR reventó la banda 15 minutos ABAJO y re-entró en 158.92 — elastico mayor, digestion probable. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:28:06 | 🎈 BB BAND-WALK [MUTED p<55] | AAPL camina la banda ARRIBA tambien en 5 minutos (309.60). Continuacion probable — NO hacer fade. prob medida 20 por ciento (n=15). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:30:07 | 🎈 BB 15m RE-ENTRADA [VETO distancia 1.9 ATR] | QCOM reventó la banda 15 minutos ARRIBA y re-entró en 159.25 — elastico mayor, digestion probable. prob medida 0 por ciento (n=2). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:31:37 | 🎈 BB REBOTE | AMD reventó la banda ABAJO y re-entró en 487.21. Elastico: rebote hacia la media 487.16 si imprime — chico y seguro. prob medida 69 por ciento (n=195). [distancia 0.07 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:31:37 | 🎈 BB REBOTE | INTC reventó la banda ABAJO y re-entró en 102.55. Elastico: rebote hacia la media 102.53 si imprime — chico y seguro. prob medida 68 por ciento (n=211). [distancia 0.11 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:31:37 | 🎈 BB REBOTE [VETO medido] | TSM reventó la banda ARRIBA y re-entró en 418.21. Elastico: reversion corta hacia la media 417.94 si imprime — chico y seguro. prob medida 68 por ciento (n=203). [VETO distancia: la media esta a 1.1 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:32:33 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 72% (estructural, no WR medido)
+15:32:37 | 🎈 BB 15m RE-ENTRADA [VETO distancia 1.6 ATR] | TSM reventó la banda 15 minutos ARRIBA y re-entró en 418.09 — elastico mayor, digestion probable. prob medida 0 por ciento (n=6). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:32:37 | 🎈 BB 15m RE-ENTRADA [VETO distancia 1.9 ATR] | AVGO reventó la banda 15 minutos ARRIBA y re-entró en 422.20 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:32:37 | 🎈 BB BAND-WALK | HOOD camina la banda ARRIBA tambien en 5 minutos (94.38). Continuacion probable — NO hacer fade. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:32:48 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 69% (estructural, no WR medido)
+15:33:37 | 🎈 BB BAND-WALK [MUTED p<55] | WDC camina la banda ABAJO tambien en 5 minutos (537.32). Continuacion probable — NO hacer fade. prob medida 46 por ciento (n=13). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:33:37 | 🎈 BB REBOTE [VETO medido] | RKLB reventó la banda ABAJO y re-entró en 74.99. Elastico: rebote hacia la media 75.15 si imprime — chico y seguro. [VETO distancia: la media esta a 1.5 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:34:34 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 72% (estructural, no WR medido)
+15:35:05 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 68% (estructural, no WR medido)
+15:35:38 | 🎈 BB REBOTE | MSFT reventó la banda ABAJO y re-entró en 490.56. Elastico: rebote hacia la media 490.46 si imprime — chico y seguro. prob medida 70 por ciento (n=203). [distancia 0.31 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:35:38 | 🎈 BB REBOTE [VETO medido] | TSM reventó la banda ABAJO y re-entró en 417.55. Elastico: rebote hacia la media 417.99 si imprime — chico y seguro. prob medida 68 por ciento (n=203). [VETO distancia: la media esta a 2.0 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:35:38 | 🎈 BB REBOTE [VETO medido] | XLK reventó la banda ABAJO y re-entró en 187.47. Elastico: rebote hacia la media 187.60 si imprime — chico y seguro. prob medida 69 por ciento (n=183). [VETO distancia: la media esta a 1.1 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:36:38 | 🎈 BB REBOTE [VETO medido] | PLTR reventó la banda ABAJO y re-entró en 158.46. Elastico: rebote hacia la media 158.79 si imprime — chico y seguro. [VETO RSI2 a favor del pierce: impulso vivo, 36 por ciento; VETO distancia: la media esta a 1.2 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:37:38 | 🎈 BB REBOTE [VETO medido] | NVDA reventó la banda ABAJO y re-entró en 221.22. Elastico: rebote hacia la media 221.70 si imprime — chico y seguro. prob medida 69 por ciento (n=196). [VETO distancia: la media esta a 2.0 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:38:38 | 🎈 BB BAND-WALK [MUTED p<55] | QQQ camina la banda ABAJO tambien en 5 minutos (720.21). Continuacion probable — NO hacer fade. prob medida 52 por ciento (n=25). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:38:38 | 🎈 BB REBOTE [VETO medido] | MU reventó la banda ABAJO y re-entró en 917.40. Elastico: rebote hacia la media 920.40 si imprime — chico y seguro. prob medida 65 por ciento (n=202). [VETO distancia: la media esta a 1.5 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:38:38 | 🎈 BB REBOTE | SMH reventó la banda ABAJO y re-entró en 576.79. Elastico: rebote hacia la media 577.15 si imprime — chico y seguro. prob medida 66 por ciento (n=188). [distancia 0.54 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:40:39 | 🎈 BB REBOTE | SPY reventó la banda ABAJO y re-entró en 771.65. Elastico: rebote hacia la media 771.72 si imprime — chico y seguro. prob medida 72 por ciento (n=213). [post-squeeze: el fade mejora +11 medido; distancia 0.41 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:40:39 | 🎈 BB REBOTE | CRWV reventó la banda ARRIBA y re-entró en 92.11. Elastico: reversion corta hacia la media 92.05 si imprime — chico y seguro. [distancia 0.36 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:41:39 | 🎈 BB 15m RE-ENTRADA [VETO distancia 1.6 ATR] | MSTR reventó la banda 15 minutos ARRIBA y re-entró en 98.70 — elastico mayor, digestion probable. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:43:39 | 🎈 BB REBOTE [VETO medido] | LRCX reventó la banda ABAJO y re-entró en 312.66. Elastico: rebote hacia la media 313.12 si imprime — chico y seguro. prob medida 68 por ciento (n=193). [VETO distancia: la media esta a 2.1 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:43:39 | 🎈 BB BAND-WALK [MUTED p<55] | SNDK camina la banda ABAJO tambien en 5 minutos (1395.86). Continuacion probable — NO hacer fade. prob medida 46 por ciento (n=22). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:43:39 | 🎈 BB REBOTE [VETO medido] | PLTR reventó la banda ARRIBA y re-entró en 159.03. Elastico: reversion corta hacia la media 158.71 si imprime — chico y seguro. [VETO distancia: la media esta a 1.5 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:44:39 | 🎈 BB BAND-WALK [MUTED p<55] | STX camina la banda ABAJO tambien en 5 minutos (857.21). Continuacion probable — NO hacer fade. prob medida 50 por ciento (n=14). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:45:11 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 71% (estructural, no WR medido)
+15:46:12 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 55% (estructural, no WR medido)
+15:46:28 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 69% (estructural, no WR medido)
+15:46:40 | 🎈 BB REBOTE | AMZN reventó la banda ARRIBA y re-entró en 271.64. Elastico: reversion corta hacia la media 271.47 si imprime — chico y seguro. prob medida 68 por ciento (n=193). [distancia 0.98 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:46:40 | 🎈 BB 15m RE-ENTRADA [VETO distancia 2.5 ATR] | ASML reventó la banda 15 minutos ARRIBA y re-entró en 1702.35 — elastico mayor, digestion probable. prob medida 50 por ciento (n=2). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:47:40 | 🎈 BB 15m RE-ENTRADA [VETO distancia 2.7 ATR] | TXN reventó la banda 15 minutos ARRIBA y re-entró en 280.64 — elastico mayor, digestion probable. prob medida 25 por ciento (n=8). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:47:40 | 🎈 BB BAND-WALK [MUTED p<55] | TXN camina la banda ARRIBA tambien en 5 minutos (280.64). Continuacion probable — NO hacer fade. prob medida 47 por ciento (n=15). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:48:10 | 🎈 BB 15m RE-ENTRADA [VETO distancia 1.2 ATR] | QQQ reventó la banda 15 minutos ABAJO y re-entró en 719.72 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:48:14 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 64% (estructural, no WR medido)
+15:48:20 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 68% (estructural, no WR medido)
+15:49:10 | NVDA: SELL | VENDER NVDA @ 220.20 | target 218.96 | floor 219.10 | senal de BAJADA (blow-off)
+15:49:17 | NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.07% px 9.62
+15:49:40 | 🎈 BB REBOTE | MSFT reventó la banda ARRIBA y re-entró en 490.68. Elastico: reversion corta hacia la media 490.37 si imprime — chico y seguro. prob medida 70 por ciento (n=203). [distancia 0.71 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:49:40 | 🎈 BB 15m RE-ENTRADA [VETO distancia 1.3 ATR] | CRWV reventó la banda 15 minutos ABAJO y re-entró en 91.21 — elastico mayor, digestion probable. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:49:45 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 310.0 — pin · prob 70% (estructural, no WR medido)
+15:49:51 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 68% (estructural, no WR medido)
+15:50:40 | 🎈 BB REBOTE [VETO medido] | CRWV reventó la banda ABAJO y re-entró en 91.55. Elastico: rebote hacia la media 91.96 si imprime — chico y seguro. [VETO distancia: la media esta a 1.6 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:51:10 | 🎈 BB REBOTE [VETO medido] | TSLA reventó la banda ABAJO y re-entró en 322.04. Elastico: rebote hacia la media 322.29 si imprime — chico y seguro. prob medida 70 por ciento (n=200). [VETO distancia: la media esta a 1.2 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:51:41 | 🎈 BB BAND-WALK | NFLX camina la banda ARRIBA tambien en 5 minutos (73.92). Continuacion probable — NO hacer fade. prob medida 56 por ciento (n=18). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:51:41 | 🎈 BB REBOTE [VETO medido] | HOOD reventó la banda ABAJO y re-entró en 93.78. Elastico: rebote hacia la media 94.14 si imprime — chico y seguro. [VETO distancia: la media esta a 2.4 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:51:41 | 🎈 BB REBOTE [VETO medido] | MSTR reventó la banda ABAJO y re-entró en 98.67. Elastico: rebote hacia la media 98.72 si imprime — chico y seguro. [VETO z-VWAP estirado: dia de tendencia, 55 por ciento; distancia 0.36 ATR, 60 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:52:11 | 🎈 BB REBOTE [VETO medido] | GLD reventó la banda ABAJO y re-entró en 389.78. Elastico: rebote hacia la media 389.96 si imprime — chico y seguro. prob medida 64 por ciento (n=194). [VETO distancia: la media esta a 1.4 ATR (tope 1.0), 20 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:55:09 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 80% (estructural, no WR medido)
+15:55:11 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+15:56:00 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+15:56:00 | 🧲 ESTRUCTURAL pin MU | MU en su imán 900.0 — pin · prob 59% (estructural, no WR medido)
+15:56:55 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 69% (estructural, no WR medido)
+15:57:56 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 220.0 — pin · prob 64% (estructural, no WR medido)
+16:00:17 | 🩸 DIP VIGIA | 16:00 — vigia de dips fuera hasta mañana
+20:02:03 | KOSPI TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.65% px 101585.00
+20:02:03 | SAMSUNG TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.98% px 240250.00
+20:02:09 | SKHYNIX TERREMOTO CAIDA | CUSUM: cayendo fuerte -7.71% px 1572000.00
+20:35:02 | SKHYNIX: SELL | SKHYNIX @ 1549000.00 | prob 60% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=SPIKE_FADE
+20:51:00 | KOSPI: SELL | KOSPI @ 99915.00 | prob 60% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=SPIKE_FADE
+21:12:02 | SAMSUNG TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.70% px 233750.00

@@ -1,0 +1,36 @@
+{
+ "sym": "AVGO",
+ "lock_ts": 1786348936,
+ "src": "poly_bars 1m (ts en ms)",
+ "n_bars_1m": 7300,
+ "window_bars": 365,
+ "cap": 5,
+ "atr14_diario": 16.2755,
+ "tfs": {
+  "1m": {
+   "tf": "1m",
+   "atr14": 0.166,
+   "kde": [
+    381.6709
+   ],
+   "why": null
+  },
+  "5m": {
+   "tf": "5m",
+   "atr14": 0.646,
+   "kde": [
+    382.5838,
+    391.3356
+   ],
+   "why": null
+  },
+  "15m": {
+   "tf": "15m",
+   "atr14": 1.5614,
+   "kde": [
+    385.23
+   ],
+   "why": null
+  }
+ }
+}

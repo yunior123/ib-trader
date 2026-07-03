@@ -1,0 +1,4 @@
+Notificaciones APAGADAS por orden de Yunior (2026-08-23): "kill email, mac, all notifications, discord too".
+Corta: banner y sonido del Mac (scripts/osa_gate), voz (speak.sh), ntfy y email (notify_short.py),
+Discord (discord_send.py) y el email por ticker (send_ticker_email.py).
+Para volver a encenderlas: borrar este fichero. No hace falta reiniciar nada.

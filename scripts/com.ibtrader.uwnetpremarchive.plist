@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.ibtrader.uwnetpremarchive</string>
+  <!-- TODOS 8d: archivador forward-only de net-prem-ticks de los 30 de fleet.txt. Una pasada a
+       las 16:10 ET (10 min tras el cierre, con la sesion ya completa en el endpoint): 30
+       peticiones = 0,1% del cupo. La serie intradia NO se recupera hacia atras mas alla de la
+       pared de 90 dias, asi que cada sesion sin archivar es una sesion que las alertas de flujo
+       no podran validar jamas. El portero de dia de mercado vive DENTRO del script. -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string><string>-lc</string>
+    <string>cd "$HOME/ib-trader" &amp;&amp; ./venv/bin/python scripts/uw_netprem_archive.py</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key><integer>16</integer>
+    <key>Minute</key><integer>10</integer>
+  </dict>
+  <key>RunAtLoad</key><false/>
+  <key>StandardOutPath</key><string>/tmp/ibtrader.uwnetpremarchive.out</string>
+  <key>StandardErrorPath</key><string>/tmp/ibtrader.uwnetpremarchive.err</string>
+</dict>
+</plist>

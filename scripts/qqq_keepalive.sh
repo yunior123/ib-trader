@@ -1,0 +1,39 @@
+#!/bin/zsh
+cd "$(dirname "$0")/.."
+# CONFIG WR-70 (backtest 2026 completo ene-jul, orden Yunior 2026-07-11
+# "all of them should be above 70 percent"): TREND FULL26 178T 135W WR76% +14.0% pf2.1 (OOS 76%)
+export QQQ_MODE=trend
+export QQQ_TREND_CUSUM=0.004
+export QQQ_TARGET=0.5
+export QQQ_STOP=0.8
+export QQQ_TRAIL_ATR=2
+export QQQ_MAX_DAY=2
+export QQQ_FLOOR=0.1
+export QQQ_SKIP_OPEN=0
+export QQQ_EOD_FORCE=1
+export QQQ_TIME_STOP_MIN=240
+# LADO CORTO v4 (2026-07-11 'both directions'): cortos FULL26 151T 111W WR74% +15.4% pf2.5 (OOS 76%)
+export QQQ_SHORTS=1
+export QQQ_S_TARGET=1.0
+export QQQ_S_STOP=1.5
+export QQQ_S_TRAIL=2
+export QQQ_S_TSTOP=240
+export QQQ_S_FLOOR=0.1
+# TERREMOTO banner AMBAS direcciones (orden 2026-07-11 'detect up and down
+# in ALL of them'; precision 2026: UP96/DOWN96%, umbral por ticker)
+export QQQ_QUAKE_BANNER=1
+export QQQ_QUAKE_MIN=0.01
+# live: gate de spread NBBO + umbral whale (v3)
+export QQQ_SPREAD_MAX=0.3
+export QQQ_WHALE_USD=250000
+# WFO v2 2026-07-11: 90d , seleccion solo-train, OOS intacto, velas
+export QQQ_S_CANDLE=1
+export QQQ_S_MODE=trend
+export QQQ_S_TREND_CUSUM=0.005
+while true; do
+  pkill -x qqq_signal_bot 2>/dev/null
+  sleep 1
+  bots/qqq_signal_bot >> logs/qqq_signals.log 2>&1
+  echo "$(date) qqq_signal_bot salio; relanzando" >> logs/qqq_signals.log
+  sleep 30
+done

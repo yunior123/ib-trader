@@ -1,0 +1,4 @@
+interface:
+  display_name: "Stale Artifact Triage"
+  short_description: "Trace stale market artifacts to their owner"
+  default_prompt: "Use $stale-artifact-triage to identify the producer, timestamp, consumer, and safe restart for stale market data."

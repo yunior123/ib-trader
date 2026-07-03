@@ -1,0 +1,250 @@
+{
+  "_meta": {
+    "generado_por": "scripts/whale_week_agg.py",
+    "asof_local": "2026-07-31 15:56 local",
+    "week_start": "2026-07-27",
+    "week_end": "2026-07-31",
+    "source": "data/uw_premium_flow_hist.jsonl (Unusual Whales trial feed \u2014 DELAYED, not realtime)",
+    "n_rows": 2486
+  },
+  "NVDA": {
+    "net_call_premium": -4618720.0,
+    "net_put_premium": 20388014.0,
+    "signed_premium": -25006734.0,
+    "n": 86,
+    "last_ts": 1785527281,
+    "bias": "puts"
+  },
+  "AMD": {
+    "net_call_premium": 7532520.0,
+    "net_put_premium": -3059253.0,
+    "signed_premium": 10591773.0,
+    "n": 84,
+    "last_ts": 1785527296,
+    "bias": "calls"
+  },
+  "INTC": {
+    "net_call_premium": -44966328.0,
+    "net_put_premium": 13144637.0,
+    "signed_premium": -58110965.0,
+    "n": 85,
+    "last_ts": 1785527743,
+    "bias": "puts"
+  },
+  "TSM": {
+    "net_call_premium": -55841794.0,
+    "net_put_premium": -17758441.0,
+    "signed_premium": -38083353.0,
+    "n": 84,
+    "last_ts": 1785527325,
+    "bias": "puts"
+  },
+  "SMH": {
+    "net_call_premium": -6154062.0,
+    "net_put_premium": 10302901.0,
+    "signed_premium": -16456963.0,
+    "n": 84,
+    "last_ts": 1785527292,
+    "bias": "puts"
+  },
+  "QQQ": {
+    "net_call_premium": -4057896.0,
+    "net_put_premium": -42494019.0,
+    "signed_premium": 38436123.0,
+    "n": 88,
+    "last_ts": 1785527273,
+    "bias": "calls"
+  },
+  "SPY": {
+    "net_call_premium": -20394533.0,
+    "net_put_premium": -124796075.0,
+    "signed_premium": 104401542.0,
+    "n": 82,
+    "last_ts": 1785527698,
+    "bias": "calls"
+  },
+  "AAPL": {
+    "net_call_premium": 6480836.0,
+    "net_put_premium": 53054254.0,
+    "signed_premium": -46573418.0,
+    "n": 86,
+    "last_ts": 1785527722,
+    "bias": "puts"
+  },
+  "MSFT": {
+    "net_call_premium": 248892519.0,
+    "net_put_premium": -36068439.0,
+    "signed_premium": 284960958.0,
+    "n": 83,
+    "last_ts": 1785527306,
+    "bias": "calls"
+  },
+  "META": {
+    "net_call_premium": -24834658.0,
+    "net_put_premium": 23717244.0,
+    "signed_premium": -48551902.0,
+    "n": 82,
+    "last_ts": 1785527310,
+    "bias": "puts"
+  },
+  "AMZN": {
+    "net_call_premium": 126083132.0,
+    "net_put_premium": 28715109.0,
+    "signed_premium": 97368023.0,
+    "n": 83,
+    "last_ts": 1785527734,
+    "bias": "calls"
+  },
+  "TSLA": {
+    "net_call_premium": -60963514.0,
+    "net_put_premium": 42432390.0,
+    "signed_premium": -103395904.0,
+    "n": 86,
+    "last_ts": 1785527284,
+    "bias": "puts"
+  },
+  "GOOGL": {
+    "net_call_premium": 31375542.0,
+    "net_put_premium": 15194298.0,
+    "signed_premium": 16181244.0,
+    "n": 83,
+    "last_ts": 1785527318,
+    "bias": "calls"
+  },
+  "NOK": {
+    "net_call_premium": 2876520.0,
+    "net_put_premium": -135513.0,
+    "signed_premium": 3012033.0,
+    "n": 85,
+    "last_ts": 1785527348,
+    "bias": "calls"
+  },
+  "TXN": {
+    "net_call_premium": -661324.0,
+    "net_put_premium": 2501262.0,
+    "signed_premium": -3162586.0,
+    "n": 80,
+    "last_ts": 1785527333,
+    "bias": "puts"
+  },
+  "NFLX": {
+    "net_call_premium": -10748563.0,
+    "net_put_premium": 3550173.0,
+    "signed_premium": -14298736.0,
+    "n": 81,
+    "last_ts": 1785527765,
+    "bias": "puts"
+  },
+  "GLD": {
+    "net_call_premium": -28654541.0,
+    "net_put_premium": 3176726.0,
+    "signed_premium": -31831267.0,
+    "n": 85,
+    "last_ts": 1785527353,
+    "bias": "puts"
+  },
+  "LRCX": {
+    "net_call_premium": -974397.0,
+    "net_put_premium": 3689304.0,
+    "signed_premium": -4663701.0,
+    "n": 82,
+    "last_ts": 1785527797,
+    "bias": "puts"
+  },
+  "WDC": {
+    "net_call_premium": -744288.0,
+    "net_put_premium": 23329321.0,
+    "signed_premium": -24073609.0,
+    "n": 82,
+    "last_ts": 1785527384,
+    "bias": "puts"
+  },
+  "STX": {
+    "net_call_premium": -3366114.0,
+    "net_put_premium": 2067484.0,
+    "signed_premium": -5433598.0,
+    "n": 79,
+    "last_ts": 1785527808,
+    "bias": "puts"
+  },
+  "MU": {
+    "net_call_premium": -52699372.0,
+    "net_put_premium": 8883614.0,
+    "signed_premium": -61582986.0,
+    "n": 85,
+    "last_ts": 1785527710,
+    "bias": "puts"
+  },
+  "ASML": {
+    "net_call_premium": 8252708.0,
+    "net_put_premium": -5180370.0,
+    "signed_premium": 13433078.0,
+    "n": 79,
+    "last_ts": 1785527329,
+    "bias": "calls"
+  },
+  "QCOM": {
+    "net_call_premium": -7247074.0,
+    "net_put_premium": 2697281.0,
+    "signed_premium": -9944355.0,
+    "n": 84,
+    "last_ts": 1785527337,
+    "bias": "puts"
+  },
+  "AVGO": {
+    "net_call_premium": 15340640.0,
+    "net_put_premium": -10676095.0,
+    "signed_premium": 26016735.0,
+    "n": 84,
+    "last_ts": 1785527341,
+    "bias": "calls"
+  },
+  "EWY": {
+    "net_call_premium": 7349550.0,
+    "net_put_premium": 12032730.0,
+    "signed_premium": -4683180.0,
+    "n": 82,
+    "last_ts": 1785527780,
+    "bias": "puts"
+  },
+  "DRAM": {
+    "net_call_premium": 12105948.0,
+    "net_put_premium": 1907249.0,
+    "signed_premium": 10198699.0,
+    "n": 79,
+    "last_ts": 1785527784,
+    "bias": "calls"
+  },
+  "SPCX": {
+    "net_call_premium": 7661770.0,
+    "net_put_premium": 37119381.0,
+    "signed_premium": -29457611.0,
+    "n": 83,
+    "last_ts": 1785527369,
+    "bias": "puts"
+  },
+  "SKHY": {
+    "net_call_premium": 15747324.0,
+    "net_put_premium": 18501132.0,
+    "signed_premium": -2753808.0,
+    "n": 83,
+    "last_ts": 1785527793,
+    "bias": "puts"
+  },
+  "SNDK": {
+    "net_call_premium": 19590597.0,
+    "net_put_premium": -79614697.0,
+    "signed_premium": 99205294.0,
+    "n": 80,
+    "last_ts": 1785527381,
+    "bias": "calls"
+  },
+  "XLK": {
+    "net_call_premium": -690075.0,
+    "net_put_premium": -1833276.0,
+    "signed_premium": 1143201.0,
+    "n": 77,
+    "last_ts": 1785527357,
+    "bias": "calls"
+  }
+}

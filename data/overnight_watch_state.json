@@ -1,0 +1,157 @@
+{
+ "_meta": {
+  "created": "2026-07-31",
+  "desc": "dedupe overnight alerts sym|dir|level; log pulls with ts to measure ~00:30 pump pattern"
+ },
+ "alerts_sent": [],
+ "pull_log": [
+  {
+   "ts_et": "2026-07-31T00:30",
+   "SPY": 745.14,
+   "QQQ": 690.51,
+   "MU": 906.0,
+   "AMZN": 259.87,
+   "AAPL": 313.26,
+   "top": "AMZN+10.35"
+  },
+  {
+   "ts_et": "2026-07-31T01:00",
+   "SPY": 745.7,
+   "QQQ": 691.57,
+   "MU": 908.31,
+   "AMZN": 259.51,
+   "AAPL": 313.42,
+   "SMH": 552.1,
+   "NVDA": 198.46,
+   "top": "SNDK+6.80",
+   "note": "MU estancado >900 plano vol thin; SMH 552 (<flip574); no trigger seguro; SILENCIO"
+  },
+  {
+   "ts_et": "2026-07-31T01:29",
+   "SPY": 745.8,
+   "QQQ": 692.05,
+   "MU": 919.74,
+   "AMZN": 259.4,
+   "AAPL": 312.33,
+   "SMH": 553.47,
+   "NVDA": 198.67,
+   "MUD": 11.09,
+   "top": "SNDK+8.62",
+   "note": "MU 919.74 TOCA linea 920 Yunior, acelera vol 1.02M thin-pero-subiendo; Korea VOLANDO SKHynix+30 Samsung+25 KOSPI+17 sidecar compra; AAPL fade -6.33; NO auto-email (extendido+thin, fade-risk RTH); conid json tiene mapeos malos en no-focus (WDC/LRCX/EWY/GOOGL magnitudes raras)-focus fiable"
+  },
+  {
+   "ts_et": "2026-07-31T01:59",
+   "SPY": 745.69,
+   "QQQ": 692.16,
+   "MU": 916.5,
+   "AMZN": 260.26,
+   "AAPL": 311.99,
+   "SMH": 555.0,
+   "NVDA": 198.47,
+   "MUD": 11.12,
+   "SNDK": 1380.63,
+   "top": "AMZN+10.51",
+   "note": "MU chop 910-920 (916.5) sin romper 920 ni perder 900, vol 1.09M thin; MUD 11.12 plano; SMH 555<flip574; AMZN nuevo max >260; AAPL estable -6.43; NO trigger, SILENCIO. Korea cierra 02:30ET=proximo tell"
+  },
+  {
+   "ts_et": "2026-07-31T02:27",
+   "SPY": 745.58,
+   "QQQ": 692.42,
+   "MU": 919.43,
+   "AMZN": 259.25,
+   "AAPL": 311.92,
+   "SMH": 555.0,
+   "NVDA": 198.4,
+   "MUD": 11.08,
+   "SNDK": 1389.28,
+   "top": "AMZN+10.08",
+   "note": "MU 919.43 techo del chop, ~1h estancado 910-920 sin romper 920 ni perder 900, vol 1.16M thin=globo atascado bajo muro (apoya math 0DTE: sin flujo fresco no clava 950/1000); MUD 11.08 min overnight; SMH 555<flip574; AAPL -6.45 estable; NO trigger SILENCIO. Korea cierra ahora. Prox tell=premarket 4am volumen"
+  },
+  {
+   "ts_et": "2026-07-31T03:44",
+   "MU": 901.0,
+   "MUD": 11.32,
+   "note": "MU rompi\u00f3 900; venta pendiente apertura 4am (Gateway bloquea overnight); stop re-armado"
+  },
+  {
+   "ts_et": "2026-07-31T04:08",
+   "MU": 907.67,
+   "MUD": 11.42,
+   "note": "MUD VENDIDO @11.24 en apertura, pos flat, guardia terminada"
+  },
+  {
+   "ts_et": "2026-07-31T09:46",
+   "MU": 882.22,
+   "SPY": 742.72,
+   "QQQ": 687.99,
+   "NVDA": 198.13,
+   "NOK": 9.28,
+   "note": "REVERSION gap-and-fade: SPY<745 QQQ<690 (capitanes), MU crash\u00f3<900->882 (max pain 850), NVDA rechaz\u00f3 200. Email enviado."
+  },
+  {
+   "ts_et": "2026-07-31T09:52",
+   "MU": 873.21,
+   "SPY": 742.21,
+   "QQQ": 686.98,
+   "NVDA": 197.8,
+   "NOK": 9.22,
+   "note": "MU borr\u00f3 todo el gap: rojo -0.17% (low 865), rumbo max pain 850 (no lleg\u00f3). SPY/QQQ/NVDA/NOK bajando sin perder sig nivel (740/680/195/9.17). Nada NUEVO cruz\u00f3=SILENCIO."
+  },
+  {
+   "ts_et": "2026-07-31T09:57",
+   "MU": 867.17,
+   "SPY": 742.83,
+   "QQQ": 687.85,
+   "NVDA": 198.25,
+   "NOK": 9.22,
+   "note": "MU 867 (low 859) a ~9pts de max pain 850. Indices estabilizando (NVDA 198 rebote, QQQ 688, SPY 743) sin perder sig nivel. Nada NUEVO cruz\u00f3=SILENCIO."
+  },
+  {
+   "ts_et": "2026-07-31T10:02",
+   "MU": 844.95,
+   "SPY": 740.36,
+   "QQQ": 684.2,
+   "NVDA": 196.45,
+   "NOK": 9.2,
+   "AAPL": 302.04,
+   "note": "MU atraves\u00f3 max pain 850 (low 843) rumbo 800. SPY EN 740 (edge), NVDA EN 195 (edge). AAPL 302 borde 300 (Yunior tiene 1x AAPL 300P 0DTE @1.43). Email MU850 enviado."
+  },
+  {
+   "ts_et": "2026-07-31T10:10",
+   "MU": 833.0,
+   "SPY": 738.98,
+   "QQQ": 681.33,
+   "NVDA": 195.53,
+   "NOK": 9.12,
+   "AAPL": 302.95,
+   "note": "SPY perdi\u00f3 740 (capit\u00e1n acelera), NOK<9.17, MU 833 rumbo 800, NVDA 195.5 filo. AAPL rebot\u00f3 de 300 (302.95) NO rompi\u00f3=put no paga aun. Email enviado."
+  },
+  {
+   "ts_et": "2026-07-31T10:15",
+   "MU": 838.18,
+   "SPY": 738.26,
+   "QQQ": 680.78,
+   "NVDA": 195.07,
+   "AAPL": 302.23,
+   "note": "Caida pausa en soporte: MU rebot\u00f3 838 (low 828), NVDA aguanta 195 (low 194.95), QQQ aguanta 680. AAPL 302 SIGUE aguantando 300 (put decae theta). Nada nuevo confirmado=SILENCIO."
+  }
+ ],
+ "mud_guard": {
+  "active": false,
+  "account": "U26942420",
+  "pos": "10 MUD long @11.51",
+  "rules": "Yunior 03:15 ET (durmiendo): MU>=900 -> SELL MUD no-matter-what (cortar perdida ~-1.70); MU<=850 -> SELL MUD (take-profit grande ~+4.60). Cambio: salida movida de 885 a 850 para dejar correr el downside.",
+  "mud_levels": {
+   "MU900_sell_at_MUD": 11.34,
+   "MU850_sell_at_MUD": 11.97
+  },
+  "native_orders": {
+   "id5": "SELL STOPLIMIT 11.34/10.80 (MU900, dispara 4am)",
+   "id6": "SELL LIMIT 11.97 (MU850 TP)",
+   "oca": "MUD_open4am"
+  },
+  "watcher_job": "cada wake: leer MU+MUD+posicion via Gateway 4001. Si pos MUD=0 -> ejecucion ocurrio, EMAIL fill a Yunior + parar guardia. Si MU>=900 y pos sigue abierta -> disparar SELL 10 MUD marketable-limit (garantiza no-matter-what) via ib_insync. Si MU<=885 el limite nativo 11.53 lo hace, verificar. Overnight (20-04) el stop nativo puede no disparar=el watcher es el enforcer.",
+  "status_0344": "MU rompi\u00f3 900 (901) ~03:44 ET. Stop nativo NO dispar\u00f3 overnight + API bloquea ruteo directo OVERNIGHT (err 10329) y SMART no alcanza overnight. RE-ARMADO stop id5 STOP 11.34/lmt 10.80 (ya breachado) + TP id6 LIMIT 11.97, OCA MUD_open4am. Disparar\u00e1 en apertura SMART 4:00 ET. Email enviado bb6194c8.",
+  "closed": "VENDIDO 10 MUD @11.24 04:00:02 ET, P&L -$2.70, motivo stop MU900. Guardia terminada."
+ }
+}

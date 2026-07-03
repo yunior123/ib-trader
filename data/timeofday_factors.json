@@ -1,0 +1,236 @@
+{
+ "cusum": {
+  "premarket": {
+   "n": 181,
+   "wr": 41,
+   "ci_low": 34,
+   "ci_high": 48,
+   "factor": 0.939
+  },
+  "auction": {
+   "n": 9,
+   "wr": 56,
+   "ci_low": 27,
+   "ci_high": 81,
+   "factor": 1.083
+  },
+  "golden": {
+   "n": 49,
+   "wr": 53,
+   "ci_low": 39,
+   "ci_high": 66,
+   "factor": 1.149
+  },
+  "mid_am": {
+   "n": 1,
+   "wr": 0,
+   "ci_low": 0,
+   "ci_high": 79,
+   "factor": 0.952
+  },
+  "lunch": {
+   "n": 3,
+   "wr": 67,
+   "ci_low": 21,
+   "ci_high": 94,
+   "factor": 1.068
+  },
+  "pm": {
+   "n": 40,
+   "wr": 48,
+   "ci_low": 33,
+   "ci_high": 63,
+   "factor": 1.056
+  },
+  "power": {
+   "n": 5,
+   "wr": 0,
+   "ci_low": 0,
+   "ci_high": 43,
+   "factor": 0.8
+  },
+  "afterhours": {
+   "n": 61,
+   "wr": 44,
+   "ci_low": 33,
+   "ci_high": 57,
+   "factor": 1.007
+  }
+ },
+ "whale": {
+  "auction": {
+   "n": 11,
+   "wr": 55,
+   "ci_low": 28,
+   "ci_high": 79,
+   "factor": 1.187
+  },
+  "golden": {
+   "n": 15,
+   "wr": 33,
+   "ci_low": 15,
+   "ci_high": 58,
+   "factor": 0.971
+  },
+  "mid_am": {
+   "n": 10,
+   "wr": 30,
+   "ci_low": 11,
+   "ci_high": 60,
+   "factor": 0.947
+  },
+  "lunch": {
+   "n": 18,
+   "wr": 33,
+   "ci_low": 16,
+   "ci_high": 56,
+   "factor": 0.968
+  },
+  "pm": {
+   "n": 3,
+   "wr": 67,
+   "ci_low": 21,
+   "ci_high": 94,
+   "factor": 1.113
+  },
+  "power": {
+   "n": 11,
+   "wr": 18,
+   "ci_low": 5,
+   "ci_high": 48,
+   "factor": 0.826
+  },
+  "afterhours": {
+   "n": 2,
+   "wr": 50,
+   "ci_low": 9,
+   "ci_high": 91,
+   "factor": 1.036
+  }
+ },
+ "bollinger": {
+  "golden": {
+   "n": 42,
+   "wr": 50,
+   "ci_low": 36,
+   "ci_high": 64,
+   "factor": 1.09
+  },
+  "mid_am": {
+   "n": 50,
+   "wr": 40,
+   "ci_low": 28,
+   "ci_high": 54,
+   "factor": 0.933
+  },
+  "lunch": {
+   "n": 136,
+   "wr": 43,
+   "ci_low": 35,
+   "ci_high": 52,
+   "factor": 0.985
+  },
+  "pm": {
+   "n": 69,
+   "wr": 39,
+   "ci_low": 28,
+   "ci_high": 51,
+   "factor": 0.912
+  },
+  "power": {
+   "n": 77,
+   "wr": 49,
+   "ci_low": 38,
+   "ci_high": 60,
+   "factor": 1.094
+  }
+ },
+ "dip": {
+  "lunch": {
+   "n": 3,
+   "wr": 33,
+   "ci_low": 6,
+   "ci_high": 79,
+   "factor": 1.043
+  },
+  "pm": {
+   "n": 1,
+   "wr": 0,
+   "ci_low": 0,
+   "ci_high": 79,
+   "factor": 0.952
+  }
+ },
+ "flow": {
+  "lunch": {
+   "n": 11,
+   "wr": 45,
+   "ci_low": 21,
+   "ci_high": 72,
+   "factor": 0.995
+  },
+  "pm": {
+   "n": 8,
+   "wr": 50,
+   "ci_low": 22,
+   "ci_high": 78,
+   "factor": 1.024
+  },
+  "power": {
+   "n": 7,
+   "wr": 43,
+   "ci_low": 16,
+   "ci_high": 75,
+   "factor": 0.981
+  }
+ },
+ "structural": {
+  "lunch": {
+   "n": 4,
+   "wr": 100,
+   "ci_low": 51,
+   "ci_high": 100,
+   "factor": 1.042
+  },
+  "pm": {
+   "n": 1,
+   "wr": 0,
+   "ci_low": 0,
+   "ci_high": 79,
+   "factor": 0.952
+  }
+ },
+ "_meta": {
+  "ts": 1784921811.6087942,
+  "at": "2026-07-24 15:36:51",
+  "horizon": 15,
+  "run_ts": 1784909329.107317,
+  "shrink_k": 20,
+  "source_overall": {
+   "cusum": {
+    "n": 349,
+    "wr": 44
+   },
+   "whale": {
+    "n": 70,
+    "wr": 36
+   },
+   "bollinger": {
+    "n": 374,
+    "wr": 44
+   },
+   "dip": {
+    "n": 4,
+    "wr": 25
+   },
+   "flow": {
+    "n": 26,
+    "wr": 46
+   },
+   "structural": {
+    "n": 5,
+    "wr": 80
+   }
+  }
+ }
+}

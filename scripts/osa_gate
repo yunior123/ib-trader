@@ -1,0 +1,6 @@
+#!/bin/zsh
+# Portero de osascript: con data/notify_off presente, ningún banner ni sonido sale del Mac.
+# Todo lo demás (AppleScript que no notifica) pasa igual.
+ROOT="${0:A:h}/.."
+[ -f "$ROOT/data/notify_off" ] && exit 0
+exec /usr/bin/osascript "$@"

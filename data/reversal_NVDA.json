@@ -1,0 +1,12 @@
+{
+ "symbol": "NVDA",
+ "state": "INSUFFICIENT_DATA",
+ "scores": {},
+ "reasons": [
+  "n_bars 147 < required 260 (5m-equivalent)"
+ ],
+ "bar_epoch": 1786651140,
+ "n_bars": 147,
+ "updated_utc": "2026-08-23T16:08:26.259969+00:00",
+ "shadow": true
+}

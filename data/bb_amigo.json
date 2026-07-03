@@ -1,0 +1,43 @@
+{
+ "fecha": "2026-07-22",
+ "fuente": "tesis amigo de Yunior, verificada 17 sesiones 1m x 30 tickers",
+ "setup_toque_ligero": {
+  "def": "high/low toca banda, cierre DENTRO, penetracion <30% del ancho -> rebote a media movil; stop banda+0.3w; 45min",
+  "flota_am": "971/1608=60.4%",
+  "flota_pm": "2153/3477=61.9%",
+  "top_am": {
+   "QCOM": 74,
+   "INTC": 69,
+   "WDC": 68,
+   "AMZN": 67,
+   "TSLA": 67,
+   "NVDA": 66
+  },
+  "veto_am": {
+   "AVGO": 46,
+   "SMH": 47,
+   "MU": 50
+  }
+ },
+ "setup_squeeze_break_hold": {
+  "def": "bandwidth pctile<=20 + cierre FUERA + siguiente barra sigue fuera -> continuacion 1.5*ATR, stop media; 60min",
+  "flota_am": "255/426=59.9%",
+  "flota_pm": "1183/2072=57.1%",
+  "top_am": {
+   "WDC": 89,
+   "DRAM": 80,
+   "AAPL": 74,
+   "MSFT": 73,
+   "XLK": 72,
+   "TXN": 71
+  },
+  "trampa_am": {
+   "QQQ": 36,
+   "GOOGL": 43,
+   "AMZN": 44,
+   "NVDA": 46,
+   "ASML": 46
+  },
+  "regla": "nombres SI (memoria/old-tech), INDICE NO \u2014 ruptura matinal de squeeze en QQQ es head-fake (fade 64%)"
+ }
+}

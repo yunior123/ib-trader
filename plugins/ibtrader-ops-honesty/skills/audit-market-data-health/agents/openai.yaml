@@ -1,0 +1,4 @@
+interface:
+  display_name: "Audit Market Data Health"
+  short_description: "Audit live market-data health and freshness"
+  default_prompt: "Use $audit-market-data-health to trace stale or missing market data safely."

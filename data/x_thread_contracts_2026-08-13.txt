@@ -1,0 +1,31 @@
+[1/10] Screened 152 under-100 USD tickers people keep posting about, for options specifically: real prices, full chains, dealer maps. One thing dominates today. Gamma is POSITIVE in 44 of 44 survivors. Spot sits above the gamma flip in every single name. VIX 14.6.
+
+[2/10] That is a pin regime, not a trend regime. Dealers dampen, first touch of a wall bounces roughly 70-75 percent, rallies get sold, dips get bought. For bought premium it is the worst tape there is: theta eats whoever reaches far. You go TO the magnet, never THROUGH the wall.
+
+[3/10] That single rule killed 61 candidates outright, strike on the wrong side of the wall. Not a small filter. It is the whole difference between buying a lottery ticket and buying the move dealers are already defending with their own hedges.
+
+[4/10] Ranking metric is need/EM: how much of the expiry expected move (ATM straddle) you burn just to reach break-even. Under 0.50 the BE sits inside the first half of the envelope. Over 1.00 you are paying for a move the chain itself does not price.
+
+[5/10] Calls clearing a hard 5 percent spread gate, 14 Aug to 4 Sep, under 200 USD, with need/EM:
+$NFLX 74C 8/14 - 82 - minus 0.32
+SMCI 38C 8/21 - 168 - 0.28
+RIOT 20C 8/21 - 127 - 0.44
+SOFI 18C 8/21 - 46 - 0.54
+UEC 11.5C 8/21 - 43 - 0.56
+SOUN 7.5C 8/21 - 29 - 0.58
+
+[6/10] Puts through the same gate:
+$RKLB 80P 8/14 - 166 - 0.10, spot already under the strike
+BAC 65P 8/14 - 43 - 0.36
+MARA 10P 8/21 - 69 - 0.37
+SOFI 18P 8/21 - 51 - 0.46
+SOFI 18P 8/28 - 68 - 0.47
+NFLX 75P 8/21 - 178 - 0.73
+
+[7/10] Where puts run instead of bouncing: four names whose dominant wall sits BELOW the flip, so price accelerates through it rather than rebounding. $F at 13, GME 18, UPST 29, WULF 15. Watch also the ones within 1.2 percent of flipping negative: MARA, GME, CLSK, COIN, PINS.
+
+[8/10] Already vetoed before you see the list: expiries containing earnings, strikes across the wall, spread above gate, premium over 200 USD, open interest under 500, volume under 100, delta outside 0.15 to 0.62. Roughly half of what looked tradeable did not survive.
+
+[9/10] Honesty on the data: chain is CBOE delayed, so this is the prior close. Good for PICKING a contract, useless for firing one. Re-check the spread live before paying, it can open twice as wide. And a delayed level never triggers an order.
+
+[10/10] Model probabilities here are lognormal Black-Scholes with each contract own implied vol. They are MODEL numbers, not measured hit rates. Nothing in this thread is a prediction and none of it is financial advice. Signal only. Do your own work.

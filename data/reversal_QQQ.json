@@ -1,0 +1,12 @@
+{
+ "symbol": "QQQ",
+ "state": "INSUFFICIENT_DATA",
+ "scores": {},
+ "reasons": [
+  "n_bars 156 < required 260 (5m-equivalent)"
+ ],
+ "bar_epoch": 1786651140,
+ "n_bars": 156,
+ "updated_utc": "2026-08-23T16:08:26.244460+00:00",
+ "shadow": true
+}

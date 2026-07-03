@@ -1,0 +1,58 @@
+{
+ "engine": "combo_probe",
+ "spec": "docs/ENGINE-SCORING-SPEC.md",
+ "generated_utc": "2026-07-23T07:30:58Z",
+ "horizon_bars_5m": 24,
+ "signals_files": [
+  "/tmp/combo_nvda.csv",
+  "/tmp/combo_qqq.csv"
+ ],
+ "skipped_sin_barras": 0,
+ "por_ticker": {
+  "NVDA": {
+   "n": 2,
+   "wins": 1,
+   "losses": 1,
+   "timeouts": 0,
+   "wr": 0.5,
+   "wilson_lo": 0.0945,
+   "pnl_bps_median": 2.31,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 0
+  },
+  "QQQ": {
+   "n": 3,
+   "wins": 1,
+   "losses": 2,
+   "timeouts": 0,
+   "wr": 0.3333,
+   "wilson_lo": 0.0615,
+   "pnl_bps_median": -7.16,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 0
+  }
+ },
+ "global": {
+  "n": 5,
+  "wins": 2,
+  "losses": 3,
+  "timeouts": 0,
+  "wr": 0.4,
+  "wilson_lo": 0.1176,
+  "pnl_bps_median": -7.16,
+  "timeout_pnl_bps_median": null,
+  "overnight_cross": 0
+ },
+ "spread_impact_global": {
+  "2bps_side": {
+   "round_trip_bps": 4.0,
+   "pnl_bps_median_net": -11.16,
+   "wins_net_negative": 0
+  },
+  "5bps_side": {
+   "round_trip_bps": 10.0,
+   "pnl_bps_median_net": -17.16,
+   "wins_net_negative": 1
+  }
+ }
+}

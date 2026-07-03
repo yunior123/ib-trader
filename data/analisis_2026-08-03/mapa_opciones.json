@@ -1,0 +1,3971 @@
+{
+ "_meta": {
+  "generado": "2026-08-03 06:58:02",
+  "epoch": 1785754682,
+  "autor": "agente analisis Tarea A (2026-08-03)",
+  "fuentes": {
+   "cadenas": "Polygon /v3/snapshot/options descargada 06:5x ET hoy — OI y griegas MEDIDAS por Polygon. LATENCIA: 15 min (doctrina medida, docs/LATENCIA-FUENTES.md). OI = cierre de la sesion ANTERIOR (viernes 31-jul).",
+   "spot": "Finnhub WS (trade impreso, TIEMPO REAL) donde existe data/rt_last_<SYM>.txt; si no, cabecera de data/opt_chain_<sym>.txt = Polygon 15 min delayed.",
+   "ibkr": "NO USADO. Prohibido esta semana (orden 2026-08-02). Cero conexiones a 4001/4002/7496/7497.",
+   "straddle": "NO DISPONIBLE: Polygon Starter no sirve last_quote -> bid/ask=0 en el 100% de las filas. El expected move del straddle que pide la skill expected-move-envelope NO se puede calcular hoy."
+  },
+  "probabilidades": "NINGUNA. Este fichero es descriptivo: niveles, OI y gamma medidos. Los umbrales de PIN (3x mediana) son DOCTRINA etiquetada, no medicion.",
+  "simbolos": [
+   "QQQ",
+   "SPY",
+   "SMH",
+   "NVDA",
+   "AMZN",
+   "META",
+   "GOOGL",
+   "MU",
+   "AAPL",
+   "NOK",
+   "INTC"
+  ]
+ },
+ "QQQ": {
+  "spot_usado": 690.97,
+  "spot_fuente": "finnhub_ws_trade",
+  "spot_latencia": "TIEMPO REAL (trade impreso, edad 987s)",
+  "spot_edad_s": 986.9,
+  "rt_last_edad_s": 986.9,
+  "rt_last_descartado": false,
+  "frescura_cobertura": {
+   "fichero": "data/opt_chain_qqq.txt",
+   "epoch": 1785754648.0,
+   "edad_min": 0.6,
+   "fuente_declarada": "polygon",
+   "latencia_fuente": "Polygon = 15 min DELAYED (doctrina medida LATENCIA-FUENTES.md)",
+   "n_contratos": 180,
+   "n_oi_pos": 150,
+   "n_gamma_pos": 100,
+   "n_bidask": 0,
+   "vencimientos_en_fichero": [
+    "20260803"
+   ],
+   "vencimientos_vivos_en_polygon": [
+    "20260803",
+    "20260804",
+    "20260805",
+    "20260806",
+    "20260807",
+    "20260810",
+    "20260811",
+    "20260812",
+    "20260813",
+    "20260814",
+    "20260821",
+    "20260828",
+    "20260831",
+    "20260904",
+    "20260911",
+    "20260918",
+    "20260930"
+   ],
+   "n_venc_fichero": 1,
+   "n_venc_polygon": 17,
+   "agosto_completo": false,
+   "agosto_vencimientos_polygon": [
+    "20260803",
+    "20260804",
+    "20260805",
+    "20260806",
+    "20260807",
+    "20260810",
+    "20260811",
+    "20260812",
+    "20260813",
+    "20260814",
+    "20260821",
+    "20260828",
+    "20260831"
+   ],
+   "agosto_vencimientos_fichero": [
+    "20260803"
+   ],
+   "recorte": "SI: el fichero trae 1 de 17 vencimientos vivos (scripts/provider_bridge.py:160 NEAR_EXPS=2)",
+   "band_declarada": 0.15,
+   "straddle_atm": "SIN DATO: bid/ask=0 en el 100% de las filas (Polygon Starter no sirve last_quote)"
+  },
+  "mapa_2venc": {
+   "scope": "2 vencimientos cercanos (20260803+20260804) = mismo alcance que el fichero vivo",
+   "n_contratos_usados": 391,
+   "n_strikes_poblados": 170,
+   "flip": 686.75,
+   "flip_src": "recompute_15pct",
+   "flip_dist_pct": -0.61,
+   "regime": "POSITIVE",
+   "regime_short": "POS",
+   "regime_raw": "POS",
+   "regime_why": "signo crudo del net GEX; paridad no determina",
+   "net_gex_house": 103059371,
+   "net_gex_dollar1pct": 712109333,
+   "gross_gex": 310958033,
+   "call_usd": 248284998,
+   "put_usd": -145225627,
+   "score_M_per_pt": 103.059,
+   "bias": "CALL",
+   "call_wall": 695.0,
+   "call_wall_kind": "pin",
+   "put_wall": 685.0,
+   "put_wall_kind": "trampilla",
+   "abs_wall": 690.0,
+   "abs_wall_kind": "pin",
+   "poc": 690.0,
+   "magnets": [
+    685.0,
+    690.0,
+    695.0
+   ],
+   "oi_call_wall": 700.0,
+   "oi_put_wall": 650.0,
+   "net_dex": 137019090,
+   "net_dex_shares": 198300,
+   "dex_sentiment": "alcista",
+   "dex_flow_impact": "mm_compra",
+   "abs_dex_wall": 685.0,
+   "delta_ok_pct": 1.0,
+   "parity_ok_pct": 0.0,
+   "pin_risk_score": 38.69,
+   "fortress_pin": false
+  },
+  "mapa_todos_venc": {
+   "scope": "TODOS los vencimientos vivos hasta 2026-09-30, banda strikes +-22%%",
+   "n_contratos_usados": 3706,
+   "n_strikes_poblados": 282,
+   "flip": 689.04,
+   "flip_src": "recompute_15pct",
+   "flip_dist_pct": -0.28,
+   "regime": "NEGATIVE",
+   "regime_short": "NEG",
+   "regime_raw": "POS",
+   "regime_why": "signo crudo POS CONTRADICHO por la paridad put-call (pares coherentes 12%; lecturas legales -0.49..-0.34 B $/1%)",
+   "net_gex_house": 55538001,
+   "net_gex_dollar1pct": 383750924,
+   "gross_gex": 1135966943,
+   "call_usd": 1111698669,
+   "put_usd": -1056160669,
+   "score_M_per_pt": 55.538,
+   "bias": "PUT",
+   "call_wall": 700.0,
+   "call_wall_kind": "pin",
+   "put_wall": 680.0,
+   "put_wall_kind": "trampilla",
+   "abs_wall": 680.0,
+   "abs_wall_kind": "trampilla",
+   "poc": 680.0,
+   "magnets": [
+    680.0,
+    700.0
+   ],
+   "oi_call_wall": 700.0,
+   "oi_put_wall": 660.0,
+   "net_dex": -2596248125,
+   "net_dex_shares": -3757396,
+   "dex_sentiment": "bajista",
+   "dex_flow_impact": "mm_vende",
+   "abs_dex_wall": 680.0,
+   "delta_ok_pct": 1.0,
+   "parity_ok_pct": 0.1172,
+   "pin_risk_score": 23.42,
+   "fortress_pin": false
+  },
+  "expected_move": {
+   "venc_cercano": {
+    "exp": "20260803",
+    "strike_atm": 691.0,
+    "iv_atm": 0.3604,
+    "T_anos": 0.001031,
+    "em_1sd_usd": 8.0,
+    "em_1sd_pct": 1.16,
+    "rango_lo": 682.97,
+    "rango_hi": 698.97,
+    "metodo": "S*IV_atm*sqrt(T) con IV MEDIDA por Polygon (delayed 15min). NO es el straddle capturado que pide la skill expected-move-envelope: bid/ask no existen en este plan de Polygon.",
+    "fiabilidad": "APROXIMADO (lognormal 1sd), no el straddle",
+    "straddle_cierre_previo": {
+     "strike_atm": 691.0,
+     "call_close": 2.33,
+     "put_close": 5.38,
+     "straddle_usd": 7.71,
+     "straddle_pct": 1.12,
+     "fuente": "Polygon day.close = CIERRE DEL VIERNES 31-jul (el contrato tenia 1 DTE mas)",
+     "uso": "cota superior / referencia; NO es el straddle de hoy (bid/ask no existen en este plan)"
+    }
+   },
+   "venc_siguiente": {
+    "exp": "20260804",
+    "strike_atm": 691.0,
+    "iv_atm": 0.2994,
+    "T_anos": 0.003771,
+    "em_1sd_usd": 12.7,
+    "em_1sd_pct": 1.84,
+    "rango_lo": 678.27,
+    "rango_hi": 703.67,
+    "metodo": "S*IV_atm*sqrt(T) con IV MEDIDA por Polygon (delayed 15min). NO es el straddle capturado que pide la skill expected-move-envelope: bid/ask no existen en este plan de Polygon.",
+    "fiabilidad": "APROXIMADO (lognormal 1sd), no el straddle",
+    "straddle_cierre_previo": {
+     "strike_atm": 691.0,
+     "call_close": 3.91,
+     "put_close": 7.62,
+     "straddle_usd": 11.53,
+     "straddle_pct": 1.67,
+     "fuente": "Polygon day.close = CIERRE DEL VIERNES 31-jul (el contrato tenia 1 DTE mas)",
+     "uso": "cota superior / referencia; NO es el straddle de hoy (bid/ask no existen en este plan)"
+    }
+   }
+  },
+  "por_vencimiento": {
+   "cercano": {
+    "exp": "20260803",
+    "dte_dias_mercado": null,
+    "top5_call_oi": [
+     {
+      "strike": 700.0,
+      "oi": 12690,
+      "dist_pct": 1.31,
+      "dentro_EM": false
+     },
+     {
+      "strike": 705.0,
+      "oi": 7766,
+      "dist_pct": 2.03,
+      "dentro_EM": false
+     },
+     {
+      "strike": 695.0,
+      "oi": 7198,
+      "dist_pct": 0.58,
+      "dentro_EM": true
+     },
+     {
+      "strike": 690.0,
+      "oi": 6645,
+      "dist_pct": -0.14,
+      "dentro_EM": true
+     },
+     {
+      "strike": 703.0,
+      "oi": 6560,
+      "dist_pct": 1.74,
+      "dentro_EM": false
+     }
+    ],
+    "top5_put_oi": [
+     {
+      "strike": 650.0,
+      "oi": 8670,
+      "dist_pct": -5.93,
+      "dentro_EM": false
+     },
+     {
+      "strike": 685.0,
+      "oi": 8208,
+      "dist_pct": -0.86,
+      "dentro_EM": true
+     },
+     {
+      "strike": 595.0,
+      "oi": 7710,
+      "dist_pct": -13.89,
+      "dentro_EM": false
+     },
+     {
+      "strike": 620.0,
+      "oi": 7579,
+      "dist_pct": -10.27,
+      "dentro_EM": false
+     },
+     {
+      "strike": 670.0,
+      "oi": 7465,
+      "dist_pct": -3.03,
+      "dentro_EM": false
+     }
+    ],
+    "max_pain": 689.0,
+    "max_pain_dist_pct": -0.29,
+    "max_pain_nota": "calculado sobre el OI de la banda +-22% del spot (Polygon snapshot, OI = cierre de la sesion anterior). Si el OI real vive fuera de la banda, sesga.",
+    "pin": {
+     "strike_atm_pm1": 690.0,
+     "oi": 9214,
+     "oi_mediana_banda3pct": 2666,
+     "ratio": 3.46,
+     "es_pin": true,
+     "strike_step": 1.0,
+     "umbral": "ratio>=3x mediana banda +-3% (DOCTRINA oi-magnets-protocol, no medido)"
+    }
+   },
+   "siguiente": {
+    "exp": "20260804",
+    "dte_dias_mercado": null,
+    "top5_call_oi": [
+     {
+      "strike": 710.0,
+      "oi": 3340,
+      "dist_pct": 2.75,
+      "dentro_EM": false
+     },
+     {
+      "strike": 705.0,
+      "oi": 2415,
+      "dist_pct": 2.03,
+      "dentro_EM": false
+     },
+     {
+      "strike": 700.0,
+      "oi": 2373,
+      "dist_pct": 1.31,
+      "dentro_EM": true
+     },
+     {
+      "strike": 709.0,
+      "oi": 2322,
+      "dist_pct": 2.61,
+      "dentro_EM": false
+     },
+     {
+      "strike": 698.0,
+      "oi": 2294,
+      "dist_pct": 1.02,
+      "dentro_EM": true
+     }
+    ],
+    "top5_put_oi": [
+     {
+      "strike": 575.0,
+      "oi": 6973,
+      "dist_pct": -16.78,
+      "dentro_EM": false
+     },
+     {
+      "strike": 635.0,
+      "oi": 6490,
+      "dist_pct": -8.1,
+      "dentro_EM": false
+     },
+     {
+      "strike": 620.0,
+      "oi": 5684,
+      "dist_pct": -10.27,
+      "dentro_EM": false
+     },
+     {
+      "strike": 650.0,
+      "oi": 5283,
+      "dist_pct": -5.93,
+      "dentro_EM": false
+     },
+     {
+      "strike": 630.0,
+      "oi": 4305,
+      "dist_pct": -8.82,
+      "dentro_EM": false
+     }
+    ],
+    "max_pain": 688.0,
+    "max_pain_dist_pct": -0.43,
+    "max_pain_nota": "calculado sobre el OI de la banda +-22% del spot (Polygon snapshot, OI = cierre de la sesion anterior). Si el OI real vive fuera de la banda, sesga.",
+    "pin": {
+     "strike_atm_pm1": 690.0,
+     "oi": 2108,
+     "oi_mediana_banda3pct": 917,
+     "ratio": 2.3,
+     "es_pin": false,
+     "strike_step": 1.0,
+     "umbral": "ratio>=3x mediana banda +-3% (DOCTRINA oi-magnets-protocol, no medido)"
+    }
+   }
+  },
+  "snapshot_0400_repo": {
+   "asof_local": "2026-08-03 06:54:33",
+   "edad_h": 0.06,
+   "spot": 690.78,
+   "flip": 675.79,
+   "regime": "POS",
+   "call_wall": 695.0,
+   "put_wall": 625.0,
+   "abs_wall": 690.0,
+   "abs_wall_kind": "pin",
+   "net_gex": 196331794,
+   "chain_src_declarado": "polygon",
+   "chain_exp_hasta": "20260803",
+   "aviso": "chain_src dice 'ibkr_tws' pero es ETIQUETA HARDCODEADA (scripts/gex_snapshot.py:206-207 contracts_from_tws): lee data/opt_chain_*.txt sin mirar la cabecera, que hoy dice 'fuente polygon'. IBKR esta PROHIBIDO esta semana.",
+   "spot_delta_pct_vs_ahora": -0.03
+  }
+ },
+ "SPY": {
+  "spot_usado": 750.86,
+  "spot_fuente": "polygon_via_opt_chain_header",
+  "spot_latencia": "POLYGON ~15 min DELAYED (fichero escrito hace 666s)",
+  "spot_edad_s": 665.6,
+  "rt_last_edad_s": null,
+  "rt_last_descartado": null,
+  "frescura_cobertura": {
+   "fichero": "data/opt_chain_spy.txt",
+   "epoch": 1785754657.0,
+   "edad_min": 0.4,
+   "fuente_declarada": "polygon",
+   "latencia_fuente": "Polygon = 15 min DELAYED (doctrina medida LATENCIA-FUENTES.md)",
+   "n_contratos": 176,
+   "n_oi_pos": 166,
+   "n_gamma_pos": 110,
+   "n_bidask": 0,
+   "vencimientos_en_fichero": [
+    "20260803"
+   ],
+   "vencimientos_vivos_en_polygon": [
+    "20260803",
+    "20260804",
+    "20260805",
+    "20260806",
+    "20260807",
+    "20260810",
+    "20260811",
+    "20260812",
+    "20260813",
+    "20260814",
+    "20260821",
+    "20260828",
+    "20260831",
+    "20260904",
+    "20260911",
+    "20260918",
+    "20260930"
+   ],
+   "n_venc_fichero": 1,
+   "n_venc_polygon": 17,
+   "agosto_completo": false,
+   "agosto_vencimientos_polygon": [
+    "20260803",
+    "20260804",
+    "20260805",
+    "20260806",
+    "20260807",
+    "20260810",
+    "20260811",
+    "20260812",
+    "20260813",
+    "20260814",
+    "20260821",
+    "20260828",
+    "20260831"
+   ],
+   "agosto_vencimientos_fichero": [
+    "20260803"
+   ],
+   "recorte": "SI: el fichero trae 1 de 17 vencimientos vivos (scripts/provider_bridge.py:160 NEAR_EXPS=2)",
+   "band_declarada": 0.15,
+   "straddle_atm": "SIN DATO: bid/ask=0 en el 100% de las filas (Polygon Starter no sirve last_quote)"
+  },
+  "mapa_2venc": {
+   "scope": "2 vencimientos cercanos (20260803+20260804) = mismo alcance que el fichero vivo",
+   "n_contratos_usados": 285,
+   "n_strikes_poblados": 138,
+   "flip": 749.53,
+   "flip_src": "recompute_15pct",
+   "flip_dist_pct": -0.18,
+   "regime": null,
+   "regime_short": null,
+   "regime_raw": "POS",
+   "regime_why": "signo NO determinado: las dos lecturas de paridad discrepan (-0.48 vs +2.76 B $/1%)",
+   "net_gex_house": 405238101,
+   "net_gex_dollar1pct": 3042770804,
+   "gross_gex": 953358014,
+   "call_usd": 695951529,
+   "put_usd": -290713428,
+   "score_M_per_pt": 405.238,
+   "bias": "CALL",
+   "call_wall": 752.0,
+   "call_wall_kind": "pin",
+   "put_wall": 745.0,
+   "put_wall_kind": "trampilla",
+   "abs_wall": 752.0,
+   "abs_wall_kind": "pin",
+   "poc": 752.0,
+   "magnets": [
+    745.0,
+    752.0
+   ],
+   "oi_call_wall": 754.0,
+   "oi_put_wall": 695.0,
+   "net_dex": -822121056,
+   "net_dex_shares": -1094906,
+   "dex_sentiment": "bajista",
+   "dex_flow_impact": "mm_vende",
+   "abs_dex_wall": 752.0,
+   "delta_ok_pct": 1.0,
+   "parity_ok_pct": 0.0,
+   "pin_risk_score": 88.8,
+   "fortress_pin": true
+  },
+  "mapa_todos_venc": {
+   "scope": "TODOS los vencimientos vivos hasta 2026-09-30, banda strikes +-22%%",
+   "n_contratos_usados": 3506,
+   "n_strikes_poblados": 283,
+   "flip": 748.82,
+   "flip_src": "recompute_15pct",
+   "flip_dist_pct": -0.27,
+   "regime": null,
+   "regime_short": null,
+   "regime_raw": "POS",
+   "regime_why": "signo NO determinado: las dos lecturas de paridad discrepan (-2.67 vs +3.96 B $/1%)",
+   "net_gex_house": 684415816,
+   "net_gex_dollar1pct": 5139004599,
+   "gross_gex": 3469615549,
+   "call_usd": 2797193832,
+   "put_usd": -2112778015,
+   "score_M_per_pt": 684.416,
+   "bias": "CALL",
+   "call_wall": 752.0,
+   "call_wall_kind": "pin",
+   "put_wall": 750.0,
+   "put_wall_kind": "pin",
+   "abs_wall": 750.0,
+   "abs_wall_kind": "pin",
+   "poc": 750.0,
+   "magnets": [
+    750.0,
+    752.0
+   ],
+   "oi_call_wall": 800.0,
+   "oi_put_wall": 710.0,
+   "net_dex": 8269720961,
+   "net_dex_shares": 11013666,
+   "dex_sentiment": "alcista",
+   "dex_flow_impact": "mm_compra",
+   "abs_dex_wall": 750.0,
+   "delta_ok_pct": 1.0,
+   "parity_ok_pct": 0.0642,
+   "pin_risk_score": 27.06,
+   "fortress_pin": false
+  },
+  "expected_move": {
+   "venc_cercano": {
+    "exp": "20260803",
+    "strike_atm": 751.0,
+    "iv_atm": 0.21,
+    "T_anos": 0.001031,
+    "em_1sd_usd": 5.06,
+    "em_1sd_pct": 0.67,
+    "rango_lo": 745.8,
+    "rango_hi": 755.92,
+    "metodo": "S*IV_atm*sqrt(T) con IV MEDIDA por Polygon (delayed 15min). NO es el straddle capturado que pide la skill expected-move-envelope: bid/ask no existen en este plan de Polygon.",
+    "fiabilidad": "APROXIMADO (lognormal 1sd), no el straddle",
+    "straddle_cierre_previo": {
+     "strike_atm": 751.0,
+     "call_close": 0.46,
+     "put_close": 4.32,
+     "straddle_usd": 4.78,
+     "straddle_pct": 0.64,
+     "fuente": "Polygon day.close = CIERRE DEL VIERNES 31-jul (el contrato tenia 1 DTE mas)",
+     "uso": "cota superior / referencia; NO es el straddle de hoy (bid/ask no existen en este plan)"
+    }
+   },
+   "venc_siguiente": {
+    "exp": "20260804",
+    "strike_atm": 751.0,
+    "iv_atm": 0.1519,
+    "T_anos": 0.003771,
+    "em_1sd_usd": 7.0,
+    "em_1sd_pct": 0.93,
+    "rango_lo": 743.86,
+    "rango_hi": 757.86,
+    "metodo": "S*IV_atm*sqrt(T) con IV MEDIDA por Polygon (delayed 15min). NO es el straddle capturado que pide la skill expected-move-envelope: bid/ask no existen en este plan de Polygon.",
+    "fiabilidad": "APROXIMADO (lognormal 1sd), no el straddle",
+    "straddle_cierre_previo": {
+     "strike_atm": 751.0,
+     "call_close": 1.05,
+     "put_close": 4.85,
+     "straddle_usd": 5.9,
+     "straddle_pct": 0.79,
+     "fuente": "Polygon day.close = CIERRE DEL VIERNES 31-jul (el contrato tenia 1 DTE mas)",
+     "uso": "cota superior / referencia; NO es el straddle de hoy (bid/ask no existen en este plan)"
+    }
+   }
+  },
+  "por_vencimiento": {
+   "cercano": {
+    "exp": "20260803",
+    "dte_dias_mercado": null,
+    "top5_call_oi": [
+     {
+      "strike": 754.0,
+      "oi": 12676,
+      "dist_pct": 0.42,
+      "dentro_EM": true
+     },
+     {
+      "strike": 753.0,
+      "oi": 11514,
+      "dist_pct": 0.29,
+      "dentro_EM": true
+     },
+     {
+      "strike": 755.0,
+      "oi": 10628,
+      "dist_pct": 0.55,
+      "dentro_EM": true
+     },
+     {
+      "strike": 752.0,
+      "oi": 9089,
+      "dist_pct": 0.15,
+      "dentro_EM": true
+     },
+     {
+      "strike": 756.0,
+      "oi": 7296,
+      "dist_pct": 0.68,
+      "dentro_EM": false
+     }
+    ],
+    "top5_put_oi": [
+     {
+      "strike": 695.0,
+      "oi": 20455,
+      "dist_pct": -7.44,
+      "dentro_EM": false
+     },
+     {
+      "strike": 740.0,
+      "oi": 15153,
+      "dist_pct": -1.45,
+      "dentro_EM": false
+     },
+     {
+      "strike": 735.0,
+      "oi": 12711,
+      "dist_pct": -2.11,
+      "dentro_EM": false
+     },
+     {
+      "strike": 725.0,
+      "oi": 11277,
+      "dist_pct": -3.44,
+      "dentro_EM": false
+     },
+     {
+      "strike": 730.0,
+      "oi": 10299,
+      "dist_pct": -2.78,
+      "dentro_EM": false
+     }
+    ],
+    "max_pain": 751.0,
+    "max_pain_dist_pct": 0.02,
+    "max_pain_nota": "calculado sobre el OI de la banda +-22% del spot (Polygon snapshot, OI = cierre de la sesion anterior). Si el OI real vive fuera de la banda, sesga.",
+    "pin": {
+     "strike_atm_pm1": 751.0,
+     "oi": 6282,
+     "oi_mediana_banda3pct": 4312,
+     "ratio": 1.46,
+     "es_pin": false,
+     "strike_step": 1.0,
+     "umbral": "ratio>=3x mediana banda +-3% (DOCTRINA oi-magnets-protocol, no medido)"
+    }
+   },
+   "siguiente": {
+    "exp": "20260804",
+    "dte_dias_mercado": null,
+    "top5_call_oi": [
+     {
+      "strike": 750.0,
+      "oi": 5353,
+      "dist_pct": -0.11,
+      "dentro_EM": true
+     },
+     {
+      "strike": 752.0,
+      "oi": 3618,
+      "dist_pct": 0.15,
+      "dentro_EM": true
+     },
+     {
+      "strike": 769.0,
+      "oi": 3208,
+      "dist_pct": 2.42,
+      "dentro_EM": false
+     },
+     {
+      "strike": 755.0,
+      "oi": 2982,
+      "dist_pct": 0.55,
+      "dentro_EM": true
+     },
+     {
+      "strike": 760.0,
+      "oi": 2773,
+      "dist_pct": 1.22,
+      "dentro_EM": false
+     }
+    ],
+    "top5_put_oi": [
+     {
+      "strike": 714.0,
+      "oi": 12375,
+      "dist_pct": -4.91,
+      "dentro_EM": false
+     },
+     {
+      "strike": 721.0,
+      "oi": 11029,
+      "dist_pct": -3.98,
+      "dentro_EM": false
+     },
+     {
+      "strike": 704.0,
+      "oi": 8388,
+      "dist_pct": -6.24,
+      "dentro_EM": false
+     },
+     {
+      "strike": 703.0,
+      "oi": 7774,
+      "dist_pct": -6.37,
+      "dentro_EM": false
+     },
+     {
+      "strike": 726.0,
+      "oi": 6959,
+      "dist_pct": -3.31,
+      "dentro_EM": false
+     }
+    ],
+    "max_pain": 750.0,
+    "max_pain_dist_pct": -0.11,
+    "max_pain_nota": "calculado sobre el OI de la banda +-22% del spot (Polygon snapshot, OI = cierre de la sesion anterior). Si el OI real vive fuera de la banda, sesga.",
+    "pin": {
+     "strike_atm_pm1": 750.0,
+     "oi": 6288,
+     "oi_mediana_banda3pct": 1561,
+     "ratio": 4.03,
+     "es_pin": true,
+     "strike_step": 1.0,
+     "umbral": "ratio>=3x mediana banda +-3% (DOCTRINA oi-magnets-protocol, no medido)"
+    }
+   }
+  },
+  "snapshot_0400_repo": {
+   "asof_local": "2026-08-03 06:54:33",
+   "edad_h": 0.06,
+   "spot": 750.87,
+   "flip": 748.64,
+   "regime": "POS",
+   "call_wall": 751.0,
+   "put_wall": 735.0,
+   "abs_wall": 751.0,
+   "abs_wall_kind": "pin",
+   "net_gex": 477235172,
+   "chain_src_declarado": "polygon",
+   "chain_exp_hasta": "20260803",
+   "aviso": "chain_src dice 'ibkr_tws' pero es ETIQUETA HARDCODEADA (scripts/gex_snapshot.py:206-207 contracts_from_tws): lee data/opt_chain_*.txt sin mirar la cabecera, que hoy dice 'fuente polygon'. IBKR esta PROHIBIDO esta semana.",
+   "spot_delta_pct_vs_ahora": 0.0
+  }
+ },
+ "SMH": {
+  "spot_usado": 536.0,
+  "spot_fuente": "polygon_via_opt_chain_header",
+  "spot_latencia": "POLYGON ~15 min DELAYED (fichero escrito hace 632s)",
+  "spot_edad_s": 631.6,
+  "rt_last_edad_s": null,
+  "rt_last_descartado": null,
+  "frescura_cobertura": {
+   "fichero": "data/opt_chain_smh.txt",
+   "epoch": 1785754450.0,
+   "edad_min": 3.9,
+   "fuente_declarada": "polygon",
+   "latencia_fuente": "Polygon = 15 min DELAYED (doctrina medida LATENCIA-FUENTES.md)",
+   "n_contratos": 128,
+   "n_oi_pos": 115,
+   "n_gamma_pos": 102,
+   "n_bidask": 0,
+   "vencimientos_en_fichero": [
+    "20260803"
+   ],
+   "vencimientos_vivos_en_polygon": [
+    "20260803",
+    "20260805",
+    "20260807",
+    "20260810",
+    "20260812",
+    "20260814",
+    "20260821",
+    "20260828",
+    "20260904",
+    "20260911",
+    "20260918"
+   ],
+   "n_venc_fichero": 1,
+   "n_venc_polygon": 11,
+   "agosto_completo": false,
+   "agosto_vencimientos_polygon": [
+    "20260803",
+    "20260805",
+    "20260807",
+    "20260810",
+    "20260812",
+    "20260814",
+    "20260821",
+    "20260828"
+   ],
+   "agosto_vencimientos_fichero": [
+    "20260803"
+   ],
+   "recorte": "SI: el fichero trae 1 de 11 vencimientos vivos (scripts/provider_bridge.py:160 NEAR_EXPS=2)",
+   "band_declarada": 0.15,
+   "straddle_atm": "SIN DATO: bid/ask=0 en el 100% de las filas (Polygon Starter no sirve last_quote)"
+  },
+  "mapa_2venc": {
+   "scope": "2 vencimientos cercanos (20260803+20260805) = mismo alcance que el fichero vivo",
+   "n_contratos_usados": 254,
+   "n_strikes_poblados": 92,
+   "flip": 553.33,
+   "flip_src": "recompute_15pct",
+   "flip_dist_pct": 3.23,
+   "regime": "NEGATIVE",
+   "regime_short": "NEG",
+   "regime_raw": "NEG",
+   "regime_why": "signo crudo del net GEX; paridad no determina",
+   "net_gex_house": -15451045,
+   "net_gex_dollar1pct": -82817604,
+   "gross_gex": 22822890,
+   "call_usd": 5720921,
+   "put_usd": -21171967,
+   "score_M_per_pt": -15.451,
+   "bias": "PUT",
+   "call_wall": 550.0,
+   "call_wall_kind": "trampilla",
+   "put_wall": 530.0,
+   "put_wall_kind": "trampilla",
+   "abs_wall": 530.0,
+   "abs_wall_kind": "trampilla",
+   "poc": 530.0,
+   "magnets": [
+    530.0,
+    550.0
+   ],
+   "oi_call_wall": 590.0,
+   "oi_put_wall": 427.5,
+   "net_dex": -219188026,
+   "net_dex_shares": -408933,
+   "dex_sentiment": "bajista",
+   "dex_flow_impact": "mm_vende",
+   "abs_dex_wall": 525.0,
+   "delta_ok_pct": 1.0,
+   "parity_ok_pct": 0.0845,
+   "pin_risk_score": 64.57,
+   "fortress_pin": false
+  },
+  "mapa_todos_venc": {
+   "scope": "TODOS los vencimientos vivos hasta 2026-09-30, banda strikes +-22%%",
+   "n_contratos_usados": 1254,
+   "n_strikes_poblados": 94,
+   "flip": 590.24,
+   "flip_src": "recompute_15pct",
+   "flip_dist_pct": 10.12,
+   "regime": "NEGATIVE",
+   "regime_short": "NEG",
+   "regime_raw": "NEG",
+   "regime_why": "signo crudo del net GEX; paridad no determina",
+   "net_gex_house": -82092669,
+   "net_gex_dollar1pct": -440016704,
+   "gross_gex": 117769321,
+   "call_usd": 54050784,
+   "put_usd": -136143453,
+   "score_M_per_pt": -82.093,
+   "bias": "PUT",
+   "call_wall": 550.0,
+   "call_wall_kind": "trampilla",
+   "put_wall": 530.0,
+   "put_wall_kind": "trampilla",
+   "abs_wall": 500.0,
+   "abs_wall_kind": "trampilla",
+   "poc": 500.0,
+   "magnets": [
+    500.0,
+    530.0,
+    550.0
+   ],
+   "oi_call_wall": 600.0,
+   "oi_put_wall": 500.0,
+   "net_dex": -4792727249,
+   "net_dex_shares": -8941655,
+   "dex_sentiment": "bajista",
+   "dex_flow_impact": "mm_vende",
+   "abs_dex_wall": 500.0,
+   "delta_ok_pct": 1.0,
+   "parity_ok_pct": 0.1146,
+   "pin_risk_score": 45.39,
+   "fortress_pin": false
+  },
+  "expected_move": {
+   "venc_cercano": {
+    "exp": "20260803",
+    "strike_atm": 535.0,
+    "iv_atm": 0.9905,
+    "T_anos": 0.001031,
+    "em_1sd_usd": 17.05,
+    "em_1sd_pct": 3.18,
+    "rango_lo": 518.95,
+    "rango_hi": 553.05,
+    "metodo": "S*IV_atm*sqrt(T) con IV MEDIDA por Polygon (delayed 15min). NO es el straddle capturado que pide la skill expected-move-envelope: bid/ask no existen en este plan de Polygon.",
+    "fiabilidad": "APROXIMADO (lognormal 1sd), no el straddle",
+    "straddle_cierre_previo": {
+     "strike_atm": 535.0,
+     "call_close": 13.58,
+     "put_close": 5.43,
+     "straddle_usd": 19.01,
+     "straddle_pct": 3.55,
+     "fuente": "Polygon day.close = CIERRE DEL VIERNES 31-jul (el contrato tenia 1 DTE mas)",
+     "uso": "cota superior / referencia; NO es el straddle de hoy (bid/ask no existen en este plan)"
+    }
+   },
+   "venc_siguiente": {
+    "exp": "20260805",
+    "strike_atm": 535.0,
+    "iv_atm": 0.7184,
+    "T_anos": 0.006511,
+    "em_1sd_usd": 31.07,
+    "em_1sd_pct": 5.8,
+    "rango_lo": 504.93,
+    "rango_hi": 567.07,
+    "metodo": "S*IV_atm*sqrt(T) con IV MEDIDA por Polygon (delayed 15min). NO es el straddle capturado que pide la skill expected-move-envelope: bid/ask no existen en este plan de Polygon.",
+    "fiabilidad": "APROXIMADO (lognormal 1sd), no el straddle",
+    "straddle_cierre_previo": {
+     "strike_atm": 535.0,
+     "call_close": 19.4,
+     "put_close": 8.5,
+     "straddle_usd": 27.9,
+     "straddle_pct": 5.21,
+     "fuente": "Polygon day.close = CIERRE DEL VIERNES 31-jul (el contrato tenia 1 DTE mas)",
+     "uso": "cota superior / referencia; NO es el straddle de hoy (bid/ask no existen en este plan)"
+    }
+   }
+  },
+  "por_vencimiento": {
+   "cercano": {
+    "exp": "20260803",
+    "dte_dias_mercado": null,
+    "top5_call_oi": [
+     {
+      "strike": 590.0,
+      "oi": 5172,
+      "dist_pct": 10.07,
+      "dentro_EM": false
+     },
+     {
+      "strike": 550.0,
+      "oi": 1113,
+      "dist_pct": 2.61,
+      "dentro_EM": true
+     },
+     {
+      "strike": 580.0,
+      "oi": 774,
+      "dist_pct": 8.21,
+      "dentro_EM": false
+     },
+     {
+      "strike": 602.5,
+      "oi": 632,
+      "dist_pct": 12.41,
+      "dentro_EM": false
+     },
+     {
+      "strike": 600.0,
+      "oi": 503,
+      "dist_pct": 11.94,
+      "dentro_EM": false
+     }
+    ],
+    "top5_put_oi": [
+     {
+      "strike": 427.5,
+      "oi": 16968,
+      "dist_pct": -20.24,
+      "dentro_EM": false
+     },
+     {
+      "strike": 500.0,
+      "oi": 4230,
+      "dist_pct": -6.72,
+      "dentro_EM": false
+     },
+     {
+      "strike": 495.0,
+      "oi": 3068,
+      "dist_pct": -7.65,
+      "dentro_EM": false
+     },
+     {
+      "strike": 530.0,
+      "oi": 2452,
+      "dist_pct": -1.12,
+      "dentro_EM": true
+     },
+     {
+      "strike": 527.5,
+      "oi": 2143,
+      "dist_pct": -1.59,
+      "dentro_EM": true
+     }
+    ],
+    "max_pain": 540.0,
+    "max_pain_dist_pct": 0.75,
+    "max_pain_nota": "calculado sobre el OI de la banda +-22% del spot (Polygon snapshot, OI = cierre de la sesion anterior). Si el OI real vive fuera de la banda, sesga.",
+    "pin": {
+     "strike_atm_pm1": 537.5,
+     "oi": 428,
+     "oi_mediana_banda3pct": 1156,
+     "ratio": 0.37,
+     "es_pin": false,
+     "strike_step": 2.5,
+     "umbral": "ratio>=3x mediana banda +-3% (DOCTRINA oi-magnets-protocol, no medido)"
+    }
+   },
+   "siguiente": {
+    "exp": "20260805",
+    "dte_dias_mercado": null,
+    "top5_call_oi": [
+     {
+      "strike": 580.0,
+      "oi": 858,
+      "dist_pct": 8.21,
+      "dentro_EM": false
+     },
+     {
+      "strike": 535.0,
+      "oi": 510,
+      "dist_pct": -0.19,
+      "dentro_EM": true
+     },
+     {
+      "strike": 610.0,
+      "oi": 303,
+      "dist_pct": 13.81,
+      "dentro_EM": false
+     },
+     {
+      "strike": 555.0,
+      "oi": 238,
+      "dist_pct": 3.54,
+      "dentro_EM": true
+     },
+     {
+      "strike": 560.0,
+      "oi": 217,
+      "dist_pct": 4.48,
+      "dentro_EM": true
+     }
+    ],
+    "top5_put_oi": [
+     {
+      "strike": 525.0,
+      "oi": 1464,
+      "dist_pct": -2.05,
+      "dentro_EM": true
+     },
+     {
+      "strike": 500.0,
+      "oi": 468,
+      "dist_pct": -6.72,
+      "dentro_EM": false
+     },
+     {
+      "strike": 492.5,
+      "oi": 445,
+      "dist_pct": -8.12,
+      "dentro_EM": false
+     },
+     {
+      "strike": 425.0,
+      "oi": 427,
+      "dist_pct": -20.71,
+      "dentro_EM": false
+     },
+     {
+      "strike": 527.5,
+      "oi": 331,
+      "dist_pct": -1.59,
+      "dentro_EM": true
+     }
+    ],
+    "max_pain": 535.0,
+    "max_pain_dist_pct": -0.19,
+    "max_pain_nota": "calculado sobre el OI de la banda +-22% del spot (Polygon snapshot, OI = cierre de la sesion anterior). Si el OI real vive fuera de la banda, sesga.",
+    "pin": {
+     "strike_atm_pm1": 535.0,
+     "oi": 642,
+     "oi_mediana_banda3pct": 293,
+     "ratio": 2.19,
+     "es_pin": false,
+     "strike_step": 2.5,
+     "umbral": "ratio>=3x mediana banda +-3% (DOCTRINA oi-magnets-protocol, no medido)"
+    }
+   }
+  },
+  "snapshot_0400_repo": {
+   "asof_local": "2026-08-03 06:54:33",
+   "edad_h": 0.06,
+   "spot": 536.5,
+   "flip": 554.01,
+   "regime": "NEG",
+   "call_wall": 550.0,
+   "put_wall": 530.0,
+   "abs_wall": 530.0,
+   "abs_wall_kind": "trampilla",
+   "net_gex": -13825105,
+   "chain_src_declarado": "polygon",
+   "chain_exp_hasta": "20260803",
+   "aviso": "chain_src dice 'ibkr_tws' pero es ETIQUETA HARDCODEADA (scripts/gex_snapshot.py:206-207 contracts_from_tws): lee data/opt_chain_*.txt sin mirar la cabecera, que hoy dice 'fuente polygon'. IBKR esta PROHIBIDO esta semana.",
+   "spot_delta_pct_vs_ahora": 0.09
+  }
+ },
+ "NVDA": {
+  "spot_usado": 200.19,
+  "spot_fuente": "finnhub_ws_trade",
+  "spot_latencia": "TIEMPO REAL (trade impreso, edad 529s)",
+  "spot_edad_s": 529.3,
+  "rt_last_edad_s": 529.3,
+  "rt_last_descartado": false,
+  "frescura_cobertura": {
+   "fichero": "data/opt_chain_nvda.txt",
+   "epoch": 1785754666.0,
+   "edad_min": 0.3,
+   "fuente_declarada": "polygon",
+   "latencia_fuente": "Polygon = 15 min DELAYED (doctrina medida LATENCIA-FUENTES.md)",
+   "n_contratos": 96,
+   "n_oi_pos": 92,
+   "n_gamma_pos": 79,
+   "n_bidask": 0,
+   "vencimientos_en_fichero": [
+    "20260803",
+    "20260805"
+   ],
+   "vencimientos_vivos_en_polygon": [
+    "20260803",
+    "20260805",
+    "20260807",
+    "20260810",
+    "20260812",
+    "20260814",
+    "20260821",
+    "20260828",
+    "20260904",
+    "20260911",
+    "20260918"
+   ],
+   "n_venc_fichero": 2,
+   "n_venc_polygon": 11,
+   "agosto_completo": false,
+   "agosto_vencimientos_polygon": [
+    "20260803",
+    "20260805",
+    "20260807",
+    "20260810",
+    "20260812",
+    "20260814",
+    "20260821",
+    "20260828"
+   ],
+   "agosto_vencimientos_fichero": [
+    "20260803",
+    "20260805"
+   ],
+   "recorte": "SI: el fichero trae 2 de 11 vencimientos vivos (scripts/provider_bridge.py:160 NEAR_EXPS=2)",
+   "band_declarada": 0.15,
+   "straddle_atm": "SIN DATO: bid/ask=0 en el 100% de las filas (Polygon Starter no sirve last_quote)"
+  },
+  "mapa_2venc": {
+   "scope": "2 vencimientos cercanos (20260803+20260805) = mismo alcance que el fichero vivo",
+   "n_contratos_usados": 97,
+   "n_strikes_poblados": 31,
+   "flip": 196.68,
+   "flip_src": "recompute_15pct",
+   "flip_dist_pct": -1.75,
+   "regime": "POSITIVE",
+   "regime_short": "POS",
+   "regime_raw": "POS",
+   "regime_why": "signo crudo del net GEX; paridad no determina",
+   "net_gex_house": 43234012,
+   "net_gex_dollar1pct": 86550168,
+   "gross_gex": 88803173,
+   "call_usd": 100251588,
+   "put_usd": -57017576,
+   "score_M_per_pt": 43.234,
+   "bias": "CALL",
+   "call_wall": 205.0,
+   "call_wall_kind": "pin",
+   "put_wall": 200.0,
+   "put_wall_kind": "pin",
+   "abs_wall": 205.0,
+   "abs_wall_kind": "pin",
+   "poc": 205.0,
+   "magnets": [
+    200.0,
+    205.0
+   ],
+   "oi_call_wall": 205.0,
+   "oi_put_wall": 195.0,
+   "net_dex": 562561172,
+   "net_dex_shares": 2810136,
+   "dex_sentiment": "alcista",
+   "dex_flow_impact": "mm_compra",
+   "abs_dex_wall": 200.0,
+   "delta_ok_pct": 1.0,
+   "parity_ok_pct": 0.0571,
+   "pin_risk_score": 108.38,
+   "fortress_pin": true
+  },
+  "mapa_todos_venc": {
+   "scope": "TODOS los vencimientos vivos hasta 2026-09-30, banda strikes +-22%%",
+   "n_contratos_usados": 493,
+   "n_strikes_poblados": 34,
+   "flip": 193.24,
+   "flip_src": "recompute_15pct",
+   "flip_dist_pct": -3.47,
+   "regime": "POSITIVE",
+   "regime_short": "POS",
+   "regime_raw": "POS",
+   "regime_why": "signo crudo del net GEX; paridad no determina",
+   "net_gex_house": 212841761,
+   "net_gex_dollar1pct": 426087922,
+   "gross_gex": 478803108,
+   "call_usd": 578388311,
+   "put_usd": -365546549,
+   "score_M_per_pt": 212.842,
+   "bias": "CALL",
+   "call_wall": 210.0,
+   "call_wall_kind": "pin",
+   "put_wall": 200.0,
+   "put_wall_kind": "pin",
+   "abs_wall": 210.0,
+   "abs_wall_kind": "pin",
+   "poc": 210.0,
+   "magnets": [
+    200.0,
+    210.0
+   ],
+   "oi_call_wall": 210.0,
+   "oi_put_wall": 180.0,
+   "net_dex": 5301652686,
+   "net_dex_shares": 26483104,
+   "dex_sentiment": "alcista",
+   "dex_flow_impact": "mm_compra",
+   "abs_dex_wall": 195.0,
+   "delta_ok_pct": 1.0,
+   "parity_ok_pct": 0.1422,
+   "pin_risk_score": 56.36,
+   "fortress_pin": true
+  },
+  "expected_move": {
+   "venc_cercano": {
+    "exp": "20260803",
+    "strike_atm": 200.0,
+    "iv_atm": 0.6943,
+    "T_anos": 0.001031,
+    "em_1sd_usd": 4.46,
+    "em_1sd_pct": 2.23,
+    "rango_lo": 195.73,
+    "rango_hi": 204.65,
+    "metodo": "S*IV_atm*sqrt(T) con IV MEDIDA por Polygon (delayed 15min). NO es el straddle capturado que pide la skill expected-move-envelope: bid/ask no existen en este plan de Polygon.",
+    "fiabilidad": "APROXIMADO (lognormal 1sd), no el straddle",
+    "straddle_cierre_previo": {
+     "strike_atm": 200.0,
+     "call_close": 2.52,
+     "put_close": 1.75,
+     "straddle_usd": 4.27,
+     "straddle_pct": 2.13,
+     "fuente": "Polygon day.close = CIERRE DEL VIERNES 31-jul (el contrato tenia 1 DTE mas)",
+     "uso": "cota superior / referencia; NO es el straddle de hoy (bid/ask no existen en este plan)"
+    }
+   },
+   "venc_siguiente": {
+    "exp": "20260805",
+    "strike_atm": 200.0,
+    "iv_atm": 0.5292,
+    "T_anos": 0.006511,
+    "em_1sd_usd": 8.55,
+    "em_1sd_pct": 4.27,
+    "rango_lo": 191.64,
+    "rango_hi": 208.74,
+    "metodo": "S*IV_atm*sqrt(T) con IV MEDIDA por Polygon (delayed 15min). NO es el straddle capturado que pide la skill expected-move-envelope: bid/ask no existen en este plan de Polygon.",
+    "fiabilidad": "APROXIMADO (lognormal 1sd), no el straddle",
+    "straddle_cierre_previo": {
+     "strike_atm": 200.0,
+     "call_close": 3.9,
+     "put_close": 3.1,
+     "straddle_usd": 7.0,
+     "straddle_pct": 3.5,
+     "fuente": "Polygon day.close = CIERRE DEL VIERNES 31-jul (el contrato tenia 1 DTE mas)",
+     "uso": "cota superior / referencia; NO es el straddle de hoy (bid/ask no existen en este plan)"
+    }
+   }
+  },
+  "por_vencimiento": {
+   "cercano": {
+    "exp": "20260803",
+    "dte_dias_mercado": null,
+    "top5_call_oi": [
+     {
+      "strike": 200.0,
+      "oi": 14745,
+      "dist_pct": -0.09,
+      "dentro_EM": true
+     },
+     {
+      "strike": 205.0,
+      "oi": 14614,
+      "dist_pct": 2.4,
+      "dentro_EM": false
+     },
+     {
+      "strike": 210.0,
+      "oi": 13214,
+      "dist_pct": 4.9,
+      "dentro_EM": false
+     },
+     {
+      "strike": 202.5,
+      "oi": 12114,
+      "dist_pct": 1.15,
+      "dentro_EM": true
+     },
+     {
+      "strike": 207.5,
+      "oi": 8540,
+      "dist_pct": 3.65,
+      "dentro_EM": false
+     }
+    ],
+    "top5_put_oi": [
+     {
+      "strike": 195.0,
+      "oi": 9768,
+      "dist_pct": -2.59,
+      "dentro_EM": false
+     },
+     {
+      "strike": 190.0,
+      "oi": 8486,
+      "dist_pct": -5.09,
+      "dentro_EM": false
+     },
+     {
+      "strike": 185.0,
+      "oi": 6207,
+      "dist_pct": -7.59,
+      "dentro_EM": false
+     },
+     {
+      "strike": 200.0,
+      "oi": 5638,
+      "dist_pct": -0.09,
+      "dentro_EM": true
+     },
+     {
+      "strike": 192.5,
+      "oi": 5624,
+      "dist_pct": -3.84,
+      "dentro_EM": false
+     }
+    ],
+    "max_pain": 195.0,
+    "max_pain_dist_pct": -2.59,
+    "max_pain_nota": "calculado sobre el OI de la banda +-22% del spot (Polygon snapshot, OI = cierre de la sesion anterior). Si el OI real vive fuera de la banda, sesga.",
+    "pin": {
+     "strike_atm_pm1": 200.0,
+     "oi": 20383,
+     "oi_mediana_banda3pct": 14614,
+     "ratio": 1.39,
+     "es_pin": false,
+     "strike_step": 2.5,
+     "umbral": "ratio>=3x mediana banda +-3% (DOCTRINA oi-magnets-protocol, no medido)"
+    }
+   },
+   "siguiente": {
+    "exp": "20260805",
+    "dte_dias_mercado": null,
+    "top5_call_oi": [
+     {
+      "strike": 205.0,
+      "oi": 6537,
+      "dist_pct": 2.4,
+      "dentro_EM": true
+     },
+     {
+      "strike": 212.5,
+      "oi": 6475,
+      "dist_pct": 6.15,
+      "dentro_EM": false
+     },
+     {
+      "strike": 200.0,
+      "oi": 5046,
+      "dist_pct": -0.09,
+      "dentro_EM": true
+     },
+     {
+      "strike": 210.0,
+      "oi": 5025,
+      "dist_pct": 4.9,
+      "dentro_EM": false
+     },
+     {
+      "strike": 202.5,
+      "oi": 4010,
+      "dist_pct": 1.15,
+      "dentro_EM": true
+     }
+    ],
+    "top5_put_oi": [
+     {
+      "strike": 187.5,
+      "oi": 7640,
+      "dist_pct": -6.34,
+      "dentro_EM": false
+     },
+     {
+      "strike": 185.0,
+      "oi": 6759,
+      "dist_pct": -7.59,
+      "dentro_EM": false
+     },
+     {
+      "strike": 170.0,
+      "oi": 6431,
+      "dist_pct": -15.08,
+      "dentro_EM": false
+     },
+     {
+      "strike": 177.5,
+      "oi": 6273,
+      "dist_pct": -11.33,
+      "dentro_EM": false
+     },
+     {
+      "strike": 182.5,
+      "oi": 5381,
+      "dist_pct": -8.84,
+      "dentro_EM": false
+     }
+    ],
+    "max_pain": 197.5,
+    "max_pain_dist_pct": -1.34,
+    "max_pain_nota": "calculado sobre el OI de la banda +-22% del spot (Polygon snapshot, OI = cierre de la sesion anterior). Si el OI real vive fuera de la banda, sesga.",
+    "pin": {
+     "strike_atm_pm1": 200.0,
+     "oi": 7819,
+     "oi_mediana_banda3pct": 5576,
+     "ratio": 1.4,
+     "es_pin": false,
+     "strike_step": 2.5,
+     "umbral": "ratio>=3x mediana banda +-3% (DOCTRINA oi-magnets-protocol, no medido)"
+    }
+   }
+  },
+  "snapshot_0400_repo": {
+   "asof_local": "2026-08-03 06:54:33",
+   "edad_h": 0.06,
+   "spot": 199.99,
+   "flip": 196.67,
+   "regime": "POS",
+   "call_wall": 200.0,
+   "put_wall": 195.0,
+   "abs_wall": 205.0,
+   "abs_wall_kind": "pin",
+   "net_gex": 42973467,
+   "chain_src_declarado": "polygon",
+   "chain_exp_hasta": "20260805",
+   "aviso": "chain_src dice 'ibkr_tws' pero es ETIQUETA HARDCODEADA (scripts/gex_snapshot.py:206-207 contracts_from_tws): lee data/opt_chain_*.txt sin mirar la cabecera, que hoy dice 'fuente polygon'. IBKR esta PROHIBIDO esta semana.",
+   "spot_delta_pct_vs_ahora": -0.1
+  }
+ },
+ "AMZN": {
+  "spot_usado": 276.29,
+  "spot_fuente": "polygon_via_opt_chain_header",
+  "spot_latencia": "POLYGON ~15 min DELAYED (fichero escrito hace 527s)",
+  "spot_edad_s": 526.6,
+  "rt_last_edad_s": 1995.9,
+  "rt_last_descartado": true,
+  "frescura_cobertura": {
+   "fichero": "data/opt_chain_amzn.txt",
+   "epoch": 1785754492.0,
+   "edad_min": 3.2,
+   "fuente_declarada": "polygon",
+   "latencia_fuente": "Polygon = 15 min DELAYED (doctrina medida LATENCIA-FUENTES.md)",
+   "n_contratos": 120,
+   "n_oi_pos": 117,
+   "n_gamma_pos": 91,
+   "n_bidask": 0,
+   "vencimientos_en_fichero": [
+    "20260803",
+    "20260805"
+   ],
+   "vencimientos_vivos_en_polygon": [
+    "20260803",
+    "20260805",
+    "20260807",
+    "20260810",
+    "20260812",
+    "20260814",
+    "20260821",
+    "20260828",
+    "20260904",
+    "20260911",
+    "20260918"
+   ],
+   "n_venc_fichero": 2,
+   "n_venc_polygon": 11,
+   "agosto_completo": false,
+   "agosto_vencimientos_polygon": [
+    "20260803",
+    "20260805",
+    "20260807",
+    "20260810",
+    "20260812",
+    "20260814",
+    "20260821",
+    "20260828"
+   ],
+   "agosto_vencimientos_fichero": [
+    "20260803",
+    "20260805"
+   ],
+   "recorte": "SI: el fichero trae 2 de 11 vencimientos vivos (scripts/provider_bridge.py:160 NEAR_EXPS=2)",
+   "band_declarada": 0.15,
+   "straddle_atm": "SIN DATO: bid/ask=0 en el 100% de las filas (Polygon Starter no sirve last_quote)"
+  },
+  "mapa_2venc": {
+   "scope": "2 vencimientos cercanos (20260803+20260805) = mismo alcance que el fichero vivo",
+   "n_contratos_usados": 107,
+   "n_strikes_poblados": 40,
+   "flip": 270.01,
+   "flip_src": "recompute_15pct",
+   "flip_dist_pct": -2.27,
+   "regime": "POSITIVE",
+   "regime_short": "POS",
+   "regime_raw": "POS",
+   "regime_why": "signo crudo del net GEX; paridad no determina",
+   "net_gex_house": 44778032,
+   "net_gex_dollar1pct": 123717226,
+   "gross_gex": 64583328,
+   "call_usd": 58768940,
+   "put_usd": -13990907,
+   "score_M_per_pt": 44.778,
+   "bias": "CALL",
+   "call_wall": 280.0,
+   "call_wall_kind": "pin",
+   "put_wall": 270.0,
+   "put_wall_kind": "trampilla",
+   "abs_wall": 275.0,
+   "abs_wall_kind": "pin",
+   "poc": 275.0,
+   "magnets": [
+    270.0,
+    275.0,
+    280.0
+   ],
+   "oi_call_wall": 280.0,
+   "oi_put_wall": 235.0,
+   "net_dex": 124683512,
+   "net_dex_shares": 451278,
+   "dex_sentiment": "alcista",
+   "dex_flow_impact": "mm_compra",
+   "abs_dex_wall": 275.0,
+   "delta_ok_pct": 1.0,
+   "parity_ok_pct": 0.0357,
+   "pin_risk_score": 175.16,
+   "fortress_pin": false
+  },
+  "mapa_todos_venc": {
+   "scope": "TODOS los vencimientos vivos hasta 2026-09-30, banda strikes +-22%%",
+   "n_contratos_usados": 482,
+   "n_strikes_poblados": 42,
+   "flip": 256.19,
+   "flip_src": "recompute_15pct",
+   "flip_dist_pct": -7.28,
+   "regime": "POSITIVE",
+   "regime_short": "POS",
+   "regime_raw": "POS",
+   "regime_why": "signo crudo del net GEX; paridad no determina",
+   "net_gex_house": 271761343,
+   "net_gex_dollar1pct": 750849413,
+   "gross_gex": 344951514,
+   "call_usd": 343523298,
+   "put_usd": -71761956,
+   "score_M_per_pt": 271.761,
+   "bias": "CALL",
+   "call_wall": 280.0,
+   "call_wall_kind": "pin",
+   "put_wall": 260.0,
+   "put_wall_kind": "pin",
+   "abs_wall": 280.0,
+   "abs_wall_kind": "pin",
+   "poc": 280.0,
+   "magnets": [
+    260.0,
+    280.0
+   ],
+   "oi_call_wall": 280.0,
+   "oi_put_wall": 220.0,
+   "net_dex": 5745591307,
+   "net_dex_shares": 20795509,
+   "dex_sentiment": "alcista",
+   "dex_flow_impact": "mm_compra",
+   "abs_dex_wall": 270.0,
+   "delta_ok_pct": 1.0,
+   "parity_ok_pct": 0.0397,
+   "pin_risk_score": 97.45,
+   "fortress_pin": true
+  },
+  "expected_move": {
+   "venc_cercano": {
+    "exp": "20260803",
+    "strike_atm": 277.5,
+    "iv_atm": 1.0233,
+    "T_anos": 0.001031,
+    "em_1sd_usd": 9.08,
+    "em_1sd_pct": 3.29,
+    "rango_lo": 267.21,
+    "rango_hi": 285.37,
+    "metodo": "S*IV_atm*sqrt(T) con IV MEDIDA por Polygon (delayed 15min). NO es el straddle capturado que pide la skill expected-move-envelope: bid/ask no existen en este plan de Polygon.",
+    "fiabilidad": "APROXIMADO (lognormal 1sd), no el straddle",
+    "straddle_cierre_previo": {
+     "strike_atm": 277.5,
+     "call_close": 1.4,
+     "put_close": 7.4,
+     "straddle_usd": 8.8,
+     "straddle_pct": 3.19,
+     "fuente": "Polygon day.close = CIERRE DEL VIERNES 31-jul (el contrato tenia 1 DTE mas)",
+     "uso": "cota superior / referencia; NO es el straddle de hoy (bid/ask no existen en este plan)"
+    }
+   },
+   "venc_siguiente": {
+    "exp": "20260805",
+    "strike_atm": 277.5,
+    "iv_atm": 0.5851,
+    "T_anos": 0.006511,
+    "em_1sd_usd": 13.04,
+    "em_1sd_pct": 4.72,
+    "rango_lo": 263.25,
+    "rango_hi": 289.33,
+    "metodo": "S*IV_atm*sqrt(T) con IV MEDIDA por Polygon (delayed 15min). NO es el straddle capturado que pide la skill expected-move-envelope: bid/ask no existen en este plan de Polygon.",
+    "fiabilidad": "APROXIMADO (lognormal 1sd), no el straddle",
+    "straddle_cierre_previo": {
+     "strike_atm": 277.5,
+     "call_close": 2.58,
+     "put_close": 7.8,
+     "straddle_usd": 10.38,
+     "straddle_pct": 3.76,
+     "fuente": "Polygon day.close = CIERRE DEL VIERNES 31-jul (el contrato tenia 1 DTE mas)",
+     "uso": "cota superior / referencia; NO es el straddle de hoy (bid/ask no existen en este plan)"
+    }
+   }
+  },
+  "por_vencimiento": {
+   "cercano": {
+    "exp": "20260803",
+    "dte_dias_mercado": null,
+    "top5_call_oi": [
+     {
+      "strike": 280.0,
+      "oi": 7631,
+      "dist_pct": 1.34,
+      "dentro_EM": true
+     },
+     {
+      "strike": 277.5,
+      "oi": 4923,
+      "dist_pct": 0.44,
+      "dentro_EM": true
+     },
+     {
+      "strike": 275.0,
+      "oi": 4911,
+      "dist_pct": -0.47,
+      "dentro_EM": true
+     },
+     {
+      "strike": 282.5,
+      "oi": 2779,
+      "dist_pct": 2.25,
+      "dentro_EM": true
+     },
+     {
+      "strike": 300.0,
+      "oi": 1865,
+      "dist_pct": 8.58,
+      "dentro_EM": false
+     }
+    ],
+    "top5_put_oi": [
+     {
+      "strike": 235.0,
+      "oi": 4274,
+      "dist_pct": -14.94,
+      "dentro_EM": false
+     },
+     {
+      "strike": 265.0,
+      "oi": 2457,
+      "dist_pct": -4.09,
+      "dentro_EM": false
+     },
+     {
+      "strike": 255.0,
+      "oi": 2386,
+      "dist_pct": -7.71,
+      "dentro_EM": false
+     },
+     {
+      "strike": 247.5,
+      "oi": 2126,
+      "dist_pct": -10.42,
+      "dentro_EM": false
+     },
+     {
+      "strike": 270.0,
+      "oi": 2082,
+      "dist_pct": -2.28,
+      "dentro_EM": true
+     }
+    ],
+    "max_pain": 275.0,
+    "max_pain_dist_pct": -0.47,
+    "max_pain_nota": "calculado sobre el OI de la banda +-22% del spot (Polygon snapshot, OI = cierre de la sesion anterior). Si el OI real vive fuera de la banda, sesga.",
+    "pin": {
+     "strike_atm_pm1": 275.0,
+     "oi": 5606,
+     "oi_mediana_banda3pct": 5269,
+     "ratio": 1.06,
+     "es_pin": false,
+     "strike_step": 2.5,
+     "umbral": "ratio>=3x mediana banda +-3% (DOCTRINA oi-magnets-protocol, no medido)"
+    }
+   },
+   "siguiente": {
+    "exp": "20260805",
+    "dte_dias_mercado": null,
+    "top5_call_oi": [
+     {
+      "strike": 280.0,
+      "oi": 4105,
+      "dist_pct": 1.34,
+      "dentro_EM": true
+     },
+     {
+      "strike": 272.5,
+      "oi": 2176,
+      "dist_pct": -1.37,
+      "dentro_EM": true
+     },
+     {
+      "strike": 275.0,
+      "oi": 1377,
+      "dist_pct": -0.47,
+      "dentro_EM": true
+     },
+     {
+      "strike": 285.0,
+      "oi": 1207,
+      "dist_pct": 3.15,
+      "dentro_EM": true
+     },
+     {
+      "strike": 290.0,
+      "oi": 1187,
+      "dist_pct": 4.96,
+      "dentro_EM": false
+     }
+    ],
+    "top5_put_oi": [
+     {
+      "strike": 225.0,
+      "oi": 2444,
+      "dist_pct": -18.56,
+      "dentro_EM": false
+     },
+     {
+      "strike": 250.0,
+      "oi": 2074,
+      "dist_pct": -9.52,
+      "dentro_EM": false
+     },
+     {
+      "strike": 265.0,
+      "oi": 1424,
+      "dist_pct": -4.09,
+      "dentro_EM": true
+     },
+     {
+      "strike": 270.0,
+      "oi": 1266,
+      "dist_pct": -2.28,
+      "dentro_EM": true
+     },
+     {
+      "strike": 230.0,
+      "oi": 1195,
+      "dist_pct": -16.75,
+      "dentro_EM": false
+     }
+    ],
+    "max_pain": 275.0,
+    "max_pain_dist_pct": -0.47,
+    "max_pain_nota": "calculado sobre el OI de la banda +-22% del spot (Polygon snapshot, OI = cierre de la sesion anterior). Si el OI real vive fuera de la banda, sesga.",
+    "pin": {
+     "strike_atm_pm1": 275.0,
+     "oi": 1534,
+     "oi_mediana_banda3pct": 1534,
+     "ratio": 1.0,
+     "es_pin": false,
+     "strike_step": 2.5,
+     "umbral": "ratio>=3x mediana banda +-3% (DOCTRINA oi-magnets-protocol, no medido)"
+    }
+   }
+  },
+  "snapshot_0400_repo": {
+   "asof_local": "2026-08-03 06:54:33",
+   "edad_h": 0.06,
+   "spot": 276.29,
+   "flip": 269.86,
+   "regime": "POS",
+   "call_wall": 280.0,
+   "put_wall": 270.0,
+   "abs_wall": 280.0,
+   "abs_wall_kind": "pin",
+   "net_gex": 43797394,
+   "chain_src_declarado": "polygon",
+   "chain_exp_hasta": "20260805",
+   "aviso": "chain_src dice 'ibkr_tws' pero es ETIQUETA HARDCODEADA (scripts/gex_snapshot.py:206-207 contracts_from_tws): lee data/opt_chain_*.txt sin mirar la cabecera, que hoy dice 'fuente polygon'. IBKR esta PROHIBIDO esta semana.",
+   "spot_delta_pct_vs_ahora": 0.0
+  }
+ },
+ "META": {
+  "spot_usado": 565.09,
+  "spot_fuente": "finnhub_ws_trade",
+  "spot_latencia": "TIEMPO REAL (trade impreso, edad 1044s)",
+  "spot_edad_s": 1043.6,
+  "rt_last_edad_s": 1043.6,
+  "rt_last_descartado": false,
+  "frescura_cobertura": {
+   "fichero": "data/opt_chain_meta.txt",
+   "epoch": 1785754483.0,
+   "edad_min": 3.3,
+   "fuente_declarada": "polygon",
+   "latencia_fuente": "Polygon = 15 min DELAYED (doctrina medida LATENCIA-FUENTES.md)",
+   "n_contratos": 136,
+   "n_oi_pos": 125,
+   "n_gamma_pos": 104,
+   "n_bidask": 0,
+   "vencimientos_en_fichero": [
+    "20260803"
+   ],
+   "vencimientos_vivos_en_polygon": [
+    "20260803",
+    "20260805",
+    "20260807",
+    "20260810",
+    "20260812",
+    "20260814",
+    "20260821",
+    "20260828",
+    "20260904",
+    "20260911",
+    "20260918"
+   ],
+   "n_venc_fichero": 1,
+   "n_venc_polygon": 11,
+   "agosto_completo": false,
+   "agosto_vencimientos_polygon": [
+    "20260803",
+    "20260805",
+    "20260807",
+    "20260810",
+    "20260812",
+    "20260814",
+    "20260821",
+    "20260828"
+   ],
+   "agosto_vencimientos_fichero": [
+    "20260803"
+   ],
+   "recorte": "SI: el fichero trae 1 de 11 vencimientos vivos (scripts/provider_bridge.py:160 NEAR_EXPS=2)",
+   "band_declarada": 0.15,
+   "straddle_atm": "SIN DATO: bid/ask=0 en el 100% de las filas (Polygon Starter no sirve last_quote)"
+  },
+  "mapa_2venc": {
+   "scope": "2 vencimientos cercanos (20260803+20260805) = mismo alcance que el fichero vivo",
+   "n_contratos_usados": 240,
+   "n_strikes_poblados": 91,
+   "flip": 558.12,
+   "flip_src": "recompute_15pct",
+   "flip_dist_pct": -1.23,
+   "regime": "POSITIVE",
+   "regime_short": "POS",
+   "regime_raw": "POS",
+   "regime_why": "signo crudo del net GEX; paridad no determina",
+   "net_gex_house": 11090632,
+   "net_gex_dollar1pct": 62672052,
+   "gross_gex": 20557230,
+   "call_usd": 17976514,
+   "put_usd": -6885883,
+   "score_M_per_pt": 11.091,
+   "bias": "CALL",
+   "call_wall": 570.0,
+   "call_wall_kind": "pin",
+   "put_wall": 540.0,
+   "put_wall_kind": "trampilla",
+   "abs_wall": 570.0,
+   "abs_wall_kind": "pin",
+   "poc": 570.0,
+   "magnets": [
+    540.0,
+    570.0
+   ],
+   "oi_call_wall": 580.0,
+   "oi_put_wall": 540.0,
+   "net_dex": -37703384,
+   "net_dex_shares": -66721,
+   "dex_sentiment": "bajista",
+   "dex_flow_impact": "mm_vende",
+   "abs_dex_wall": 600.0,
+   "delta_ok_pct": 1.0,
+   "parity_ok_pct": 0.0339,
+   "pin_risk_score": 58.28,
+   "fortress_pin": true
+  },
+  "mapa_todos_venc": {
+   "scope": "TODOS los vencimientos vivos hasta 2026-09-30, banda strikes +-22%%",
+   "n_contratos_usados": 1180,
+   "n_strikes_poblados": 95,
+   "flip": 558.35,
+   "flip_src": "recompute_15pct",
+   "flip_dist_pct": -1.19,
+   "regime": null,
+   "regime_short": null,
+   "regime_raw": "POS",
+   "regime_why": "signo NO determinado: las dos lecturas de paridad discrepan (-0.01 vs +0.02 B $/1%)",
+   "net_gex_house": 15571286,
+   "net_gex_dollar1pct": 87991779,
+   "gross_gex": 73822432,
+   "call_usd": 84569866,
+   "put_usd": -68998580,
+   "score_M_per_pt": 15.571,
+   "bias": "CALL",
+   "call_wall": 600.0,
+   "call_wall_kind": "pin",
+   "put_wall": 550.0,
+   "put_wall_kind": "trampilla",
+   "abs_wall": 570.0,
+   "abs_wall_kind": "pin",
+   "poc": 570.0,
+   "magnets": [
+    550.0,
+    570.0,
+    600.0
+   ],
+   "oi_call_wall": 600.0,
+   "oi_put_wall": 550.0,
+   "net_dex": -2339745692,
+   "net_dex_shares": -4140483,
+   "dex_sentiment": "bajista",
+   "dex_flow_impact": "mm_vende",
+   "abs_dex_wall": 650.0,
+   "delta_ok_pct": 1.0,
+   "parity_ok_pct": 0.0619,
+   "pin_risk_score": 29.99,
+   "fortress_pin": false
+  },
+  "expected_move": {
+   "venc_cercano": {
+    "exp": "20260803",
+    "strike_atm": 565.0,
+    "iv_atm": 0.8095,
+    "T_anos": 0.001031,
+    "em_1sd_usd": 14.69,
+    "em_1sd_pct": 2.6,
+    "rango_lo": 550.4,
+    "rango_hi": 579.78,
+    "metodo": "S*IV_atm*sqrt(T) con IV MEDIDA por Polygon (delayed 15min). NO es el straddle capturado que pide la skill expected-move-envelope: bid/ask no existen en este plan de Polygon.",
+    "fiabilidad": "APROXIMADO (lognormal 1sd), no el straddle",
+    "straddle_cierre_previo": {
+     "strike_atm": 565.0,
+     "call_close": 3.04,
+     "put_close": 11.39,
+     "straddle_usd": 14.43,
+     "straddle_pct": 2.55,
+     "fuente": "Polygon day.close = CIERRE DEL VIERNES 31-jul (el contrato tenia 1 DTE mas)",
+     "uso": "cota superior / referencia; NO es el straddle de hoy (bid/ask no existen en este plan)"
+    }
+   },
+   "venc_siguiente": {
+    "exp": "20260805",
+    "strike_atm": 565.0,
+    "iv_atm": 0.5664,
+    "T_anos": 0.006511,
+    "em_1sd_usd": 25.83,
+    "em_1sd_pct": 4.57,
+    "rango_lo": 539.26,
+    "rango_hi": 590.92,
+    "metodo": "S*IV_atm*sqrt(T) con IV MEDIDA por Polygon (delayed 15min). NO es el straddle capturado que pide la skill expected-move-envelope: bid/ask no existen en este plan de Polygon.",
+    "fiabilidad": "APROXIMADO (lognormal 1sd), no el straddle",
+    "straddle_cierre_previo": {
+     "strike_atm": 565.0,
+     "call_close": 7.15,
+     "put_close": 14.5,
+     "straddle_usd": 21.65,
+     "straddle_pct": 3.83,
+     "fuente": "Polygon day.close = CIERRE DEL VIERNES 31-jul (el contrato tenia 1 DTE mas)",
+     "uso": "cota superior / referencia; NO es el straddle de hoy (bid/ask no existen en este plan)"
+    }
+   }
+  },
+  "por_vencimiento": {
+   "cercano": {
+    "exp": "20260803",
+    "dte_dias_mercado": null,
+    "top5_call_oi": [
+     {
+      "strike": 590.0,
+      "oi": 2107,
+      "dist_pct": 4.41,
+      "dentro_EM": false
+     },
+     {
+      "strike": 580.0,
+      "oi": 2099,
+      "dist_pct": 2.64,
+      "dentro_EM": false
+     },
+     {
+      "strike": 627.5,
+      "oi": 1532,
+      "dist_pct": 11.04,
+      "dentro_EM": false
+     },
+     {
+      "strike": 600.0,
+      "oi": 1300,
+      "dist_pct": 6.18,
+      "dentro_EM": false
+     },
+     {
+      "strike": 630.0,
+      "oi": 1202,
+      "dist_pct": 11.49,
+      "dentro_EM": false
+     }
+    ],
+    "top5_put_oi": [
+     {
+      "strike": 540.0,
+      "oi": 1083,
+      "dist_pct": -4.44,
+      "dentro_EM": false
+     },
+     {
+      "strike": 525.0,
+      "oi": 1068,
+      "dist_pct": -7.09,
+      "dentro_EM": false
+     },
+     {
+      "strike": 550.0,
+      "oi": 854,
+      "dist_pct": -2.67,
+      "dentro_EM": false
+     },
+     {
+      "strike": 535.0,
+      "oi": 807,
+      "dist_pct": -5.32,
+      "dentro_EM": false
+     },
+     {
+      "strike": 500.0,
+      "oi": 804,
+      "dist_pct": -11.52,
+      "dentro_EM": false
+     }
+    ],
+    "max_pain": 567.5,
+    "max_pain_dist_pct": 0.43,
+    "max_pain_nota": "calculado sobre el OI de la banda +-22% del spot (Polygon snapshot, OI = cierre de la sesion anterior). Si el OI real vive fuera de la banda, sesga.",
+    "pin": {
+     "strike_atm_pm1": 565.0,
+     "oi": 731,
+     "oi_mediana_banda3pct": 374,
+     "ratio": 1.95,
+     "es_pin": false,
+     "strike_step": 2.5,
+     "umbral": "ratio>=3x mediana banda +-3% (DOCTRINA oi-magnets-protocol, no medido)"
+    }
+   },
+   "siguiente": {
+    "exp": "20260805",
+    "dte_dias_mercado": null,
+    "top5_call_oi": [
+     {
+      "strike": 600.0,
+      "oi": 855,
+      "dist_pct": 6.18,
+      "dentro_EM": false
+     },
+     {
+      "strike": 605.0,
+      "oi": 788,
+      "dist_pct": 7.06,
+      "dentro_EM": false
+     },
+     {
+      "strike": 610.0,
+      "oi": 581,
+      "dist_pct": 7.95,
+      "dentro_EM": false
+     },
+     {
+      "strike": 607.5,
+      "oi": 442,
+      "dist_pct": 7.5,
+      "dentro_EM": false
+     },
+     {
+      "strike": 597.5,
+      "oi": 352,
+      "dist_pct": 5.74,
+      "dentro_EM": false
+     }
+    ],
+    "top5_put_oi": [
+     {
+      "strike": 502.5,
+      "oi": 782,
+      "dist_pct": -11.08,
+      "dentro_EM": false
+     },
+     {
+      "strike": 540.0,
+      "oi": 539,
+      "dist_pct": -4.44,
+      "dentro_EM": true
+     },
+     {
+      "strike": 600.0,
+      "oi": 535,
+      "dist_pct": 6.18,
+      "dentro_EM": false
+     },
+     {
+      "strike": 487.5,
+      "oi": 501,
+      "dist_pct": -13.73,
+      "dentro_EM": false
+     },
+     {
+      "strike": 537.5,
+      "oi": 485,
+      "dist_pct": -4.88,
+      "dentro_EM": false
+     }
+    ],
+    "max_pain": 580.0,
+    "max_pain_dist_pct": 2.64,
+    "max_pain_nota": "calculado sobre el OI de la banda +-22% del spot (Polygon snapshot, OI = cierre de la sesion anterior). Si el OI real vive fuera de la banda, sesga.",
+    "pin": {
+     "strike_atm_pm1": 565.0,
+     "oi": 196,
+     "oi_mediana_banda3pct": 130,
+     "ratio": 1.51,
+     "es_pin": false,
+     "strike_step": 2.5,
+     "umbral": "ratio>=3x mediana banda +-3% (DOCTRINA oi-magnets-protocol, no medido)"
+    }
+   }
+  },
+  "snapshot_0400_repo": {
+   "asof_local": "2026-08-03 06:54:33",
+   "edad_h": 0.06,
+   "spot": 565.59,
+   "flip": 558.27,
+   "regime": "POS",
+   "call_wall": 570.0,
+   "put_wall": 550.0,
+   "abs_wall": 570.0,
+   "abs_wall_kind": "pin",
+   "net_gex": 9543386,
+   "chain_src_declarado": "polygon",
+   "chain_exp_hasta": "20260803",
+   "aviso": "chain_src dice 'ibkr_tws' pero es ETIQUETA HARDCODEADA (scripts/gex_snapshot.py:206-207 contracts_from_tws): lee data/opt_chain_*.txt sin mirar la cabecera, que hoy dice 'fuente polygon'. IBKR esta PROHIBIDO esta semana.",
+   "spot_delta_pct_vs_ahora": 0.09
+  }
+ },
+ "GOOGL": {
+  "spot_usado": 363.1,
+  "spot_fuente": "finnhub_ws_trade",
+  "spot_latencia": "TIEMPO REAL (trade impreso, edad 857s)",
+  "spot_edad_s": 856.8,
+  "rt_last_edad_s": 856.8,
+  "rt_last_descartado": false,
+  "frescura_cobertura": {
+   "fichero": "data/opt_chain_googl.txt",
+   "epoch": 1785754500.0,
+   "edad_min": 3.0,
+   "fuente_declarada": "polygon",
+   "latencia_fuente": "Polygon = 15 min DELAYED (doctrina medida LATENCIA-FUENTES.md)",
+   "n_contratos": 150,
+   "n_oi_pos": 125,
+   "n_gamma_pos": 109,
+   "n_bidask": 0,
+   "vencimientos_en_fichero": [
+    "20260803",
+    "20260805"
+   ],
+   "vencimientos_vivos_en_polygon": [
+    "20260803",
+    "20260805",
+    "20260807",
+    "20260810",
+    "20260812",
+    "20260814",
+    "20260821",
+    "20260828",
+    "20260904",
+    "20260911",
+    "20260918"
+   ],
+   "n_venc_fichero": 2,
+   "n_venc_polygon": 11,
+   "agosto_completo": false,
+   "agosto_vencimientos_polygon": [
+    "20260803",
+    "20260805",
+    "20260807",
+    "20260810",
+    "20260812",
+    "20260814",
+    "20260821",
+    "20260828"
+   ],
+   "agosto_vencimientos_fichero": [
+    "20260803",
+    "20260805"
+   ],
+   "recorte": "SI: el fichero trae 2 de 11 vencimientos vivos (scripts/provider_bridge.py:160 NEAR_EXPS=2)",
+   "band_declarada": 0.15,
+   "straddle_atm": "SIN DATO: bid/ask=0 en el 100% de las filas (Polygon Starter no sirve last_quote)"
+  },
+  "mapa_2venc": {
+   "scope": "2 vencimientos cercanos (20260803+20260805) = mismo alcance que el fichero vivo",
+   "n_contratos_usados": 115,
+   "n_strikes_poblados": 53,
+   "flip": 360.37,
+   "flip_src": "recompute_15pct",
+   "flip_dist_pct": -0.75,
+   "regime": null,
+   "regime_short": null,
+   "regime_raw": "POS",
+   "regime_why": "signo NO determinado: las dos lecturas de paridad discrepan (-0.01 vs +0.04 B $/1%)",
+   "net_gex_house": 12306713,
+   "net_gex_dollar1pct": 44685675,
+   "gross_gex": 34267187,
+   "call_usd": 23456784,
+   "put_usd": -11150071,
+   "score_M_per_pt": 12.307,
+   "bias": "CALL",
+   "call_wall": 365.0,
+   "call_wall_kind": "pin",
+   "put_wall": 350.0,
+   "put_wall_kind": "trampilla",
+   "abs_wall": 362.5,
+   "abs_wall_kind": "pin",
+   "poc": 362.5,
+   "magnets": [
+    350.0,
+    362.5,
+    365.0
+   ],
+   "oi_call_wall": 377.5,
+   "oi_put_wall": 350.0,
+   "net_dex": -6358445,
+   "net_dex_shares": -17512,
+   "dex_sentiment": "bajista",
+   "dex_flow_impact": "mm_vende",
+   "abs_dex_wall": 350.0,
+   "delta_ok_pct": 1.0,
+   "parity_ok_pct": 0.0,
+   "pin_risk_score": 145.04,
+   "fortress_pin": false
+  },
+  "mapa_todos_venc": {
+   "scope": "TODOS los vencimientos vivos hasta 2026-09-30, banda strikes +-22%%",
+   "n_contratos_usados": 556,
+   "n_strikes_poblados": 53,
+   "flip": 347.15,
+   "flip_src": "recompute_15pct",
+   "flip_dist_pct": -4.39,
+   "regime": "POSITIVE",
+   "regime_short": "POS",
+   "regime_raw": "POS",
+   "regime_why": "signo crudo del net GEX; paridad no determina",
+   "net_gex_house": 102500888,
+   "net_gex_dollar1pct": 372180723,
+   "gross_gex": 169750667,
+   "call_usd": 165890150,
+   "put_usd": -63389262,
+   "score_M_per_pt": 102.501,
+   "bias": "CALL",
+   "call_wall": 370.0,
+   "call_wall_kind": "pin",
+   "put_wall": 350.0,
+   "put_wall_kind": "pin",
+   "abs_wall": 360.0,
+   "abs_wall_kind": "pin",
+   "poc": 360.0,
+   "magnets": [
+    350.0,
+    360.0,
+    370.0
+   ],
+   "oi_call_wall": 400.0,
+   "oi_put_wall": 310.0,
+   "net_dex": 2397027896,
+   "net_dex_shares": 6601564,
+   "dex_sentiment": "alcista",
+   "dex_flow_impact": "mm_compra",
+   "abs_dex_wall": 350.0,
+   "delta_ok_pct": 1.0,
+   "parity_ok_pct": 0.0377,
+   "pin_risk_score": 56.69,
+   "fortress_pin": false
+  },
+  "expected_move": {
+   "venc_cercano": {
+    "exp": "20260803",
+    "strike_atm": 362.5,
+    "iv_atm": 0.759,
+    "T_anos": 0.001031,
+    "em_1sd_usd": 8.85,
+    "em_1sd_pct": 2.44,
+    "rango_lo": 354.25,
+    "rango_hi": 371.95,
+    "metodo": "S*IV_atm*sqrt(T) con IV MEDIDA por Polygon (delayed 15min). NO es el straddle capturado que pide la skill expected-move-envelope: bid/ask no existen en este plan de Polygon.",
+    "fiabilidad": "APROXIMADO (lognormal 1sd), no el straddle",
+    "straddle_cierre_previo": {
+     "strike_atm": 362.5,
+     "call_close": 1.17,
+     "put_close": 7.35,
+     "straddle_usd": 8.52,
+     "straddle_pct": 2.35,
+     "fuente": "Polygon day.close = CIERRE DEL VIERNES 31-jul (el contrato tenia 1 DTE mas)",
+     "uso": "cota superior / referencia; NO es el straddle de hoy (bid/ask no existen en este plan)"
+    }
+   },
+   "venc_siguiente": {
+    "exp": "20260805",
+    "strike_atm": 362.5,
+    "iv_atm": 0.4929,
+    "T_anos": 0.006511,
+    "em_1sd_usd": 14.44,
+    "em_1sd_pct": 3.98,
+    "rango_lo": 348.66,
+    "rango_hi": 377.54,
+    "metodo": "S*IV_atm*sqrt(T) con IV MEDIDA por Polygon (delayed 15min). NO es el straddle capturado que pide la skill expected-move-envelope: bid/ask no existen en este plan de Polygon.",
+    "fiabilidad": "APROXIMADO (lognormal 1sd), no el straddle",
+    "straddle_cierre_previo": {
+     "strike_atm": 362.5,
+     "call_close": 3.0,
+     "put_close": 9.2,
+     "straddle_usd": 12.2,
+     "straddle_pct": 3.36,
+     "fuente": "Polygon day.close = CIERRE DEL VIERNES 31-jul (el contrato tenia 1 DTE mas)",
+     "uso": "cota superior / referencia; NO es el straddle de hoy (bid/ask no existen en este plan)"
+    }
+   }
+  },
+  "por_vencimiento": {
+   "cercano": {
+    "exp": "20260803",
+    "dte_dias_mercado": null,
+    "top5_call_oi": [
+     {
+      "strike": 372.5,
+      "oi": 1554,
+      "dist_pct": 2.59,
+      "dentro_EM": false
+     },
+     {
+      "strike": 362.5,
+      "oi": 1346,
+      "dist_pct": -0.17,
+      "dentro_EM": true
+     },
+     {
+      "strike": 370.0,
+      "oi": 1187,
+      "dist_pct": 1.9,
+      "dentro_EM": true
+     },
+     {
+      "strike": 365.0,
+      "oi": 980,
+      "dist_pct": 0.52,
+      "dentro_EM": true
+     },
+     {
+      "strike": 405.0,
+      "oi": 478,
+      "dist_pct": 11.54,
+      "dentro_EM": false
+     }
+    ],
+    "top5_put_oi": [
+     {
+      "strike": 350.0,
+      "oi": 4221,
+      "dist_pct": -3.61,
+      "dentro_EM": false
+     },
+     {
+      "strike": 345.0,
+      "oi": 2578,
+      "dist_pct": -4.98,
+      "dentro_EM": false
+     },
+     {
+      "strike": 347.5,
+      "oi": 2130,
+      "dist_pct": -4.3,
+      "dentro_EM": false
+     },
+     {
+      "strike": 340.0,
+      "oi": 1776,
+      "dist_pct": -6.36,
+      "dentro_EM": false
+     },
+     {
+      "strike": 355.0,
+      "oi": 1607,
+      "dist_pct": -2.23,
+      "dentro_EM": true
+     }
+    ],
+    "max_pain": 362.5,
+    "max_pain_dist_pct": -0.17,
+    "max_pain_nota": "calculado sobre el OI de la banda +-22% del spot (Polygon snapshot, OI = cierre de la sesion anterior). Si el OI real vive fuera de la banda, sesga.",
+    "pin": {
+     "strike_atm_pm1": 362.5,
+     "oi": 1359,
+     "oi_mediana_banda3pct": 1116,
+     "ratio": 1.22,
+     "es_pin": false,
+     "strike_step": 2.5,
+     "umbral": "ratio>=3x mediana banda +-3% (DOCTRINA oi-magnets-protocol, no medido)"
+    }
+   },
+   "siguiente": {
+    "exp": "20260805",
+    "dte_dias_mercado": null,
+    "top5_call_oi": [
+     {
+      "strike": 377.5,
+      "oi": 1762,
+      "dist_pct": 3.97,
+      "dentro_EM": true
+     },
+     {
+      "strike": 360.0,
+      "oi": 738,
+      "dist_pct": -0.85,
+      "dentro_EM": true
+     },
+     {
+      "strike": 365.0,
+      "oi": 515,
+      "dist_pct": 0.52,
+      "dentro_EM": true
+     },
+     {
+      "strike": 400.0,
+      "oi": 327,
+      "dist_pct": 10.16,
+      "dentro_EM": false
+     },
+     {
+      "strike": 362.5,
+      "oi": 281,
+      "dist_pct": -0.17,
+      "dentro_EM": true
+     }
+    ],
+    "top5_put_oi": [
+     {
+      "strike": 295.0,
+      "oi": 2643,
+      "dist_pct": -18.76,
+      "dentro_EM": false
+     },
+     {
+      "strike": 350.0,
+      "oi": 2143,
+      "dist_pct": -3.61,
+      "dentro_EM": true
+     },
+     {
+      "strike": 347.5,
+      "oi": 2118,
+      "dist_pct": -4.3,
+      "dentro_EM": false
+     },
+     {
+      "strike": 310.0,
+      "oi": 489,
+      "dist_pct": -14.62,
+      "dentro_EM": false
+     },
+     {
+      "strike": 340.0,
+      "oi": 419,
+      "dist_pct": -6.36,
+      "dentro_EM": false
+     }
+    ],
+    "max_pain": 360.0,
+    "max_pain_dist_pct": -0.85,
+    "max_pain_nota": "calculado sobre el OI de la banda +-22% del spot (Polygon snapshot, OI = cierre de la sesion anterior). Si el OI real vive fuera de la banda, sesga.",
+    "pin": {
+     "strike_atm_pm1": 365.0,
+     "oi": 589,
+     "oi_mediana_banda3pct": 230,
+     "ratio": 2.56,
+     "es_pin": false,
+     "strike_step": 2.5,
+     "umbral": "ratio>=3x mediana banda +-3% (DOCTRINA oi-magnets-protocol, no medido)"
+    }
+   }
+  },
+  "snapshot_0400_repo": {
+   "asof_local": "2026-08-03 06:54:33",
+   "edad_h": 0.06,
+   "spot": 362.9,
+   "flip": 360.28,
+   "regime": null,
+   "call_wall": 365.0,
+   "put_wall": 350.0,
+   "abs_wall": 362.5,
+   "abs_wall_kind": "pin",
+   "net_gex": 9013501,
+   "chain_src_declarado": "polygon",
+   "chain_exp_hasta": "20260805",
+   "aviso": "chain_src dice 'ibkr_tws' pero es ETIQUETA HARDCODEADA (scripts/gex_snapshot.py:206-207 contracts_from_tws): lee data/opt_chain_*.txt sin mirar la cabecera, que hoy dice 'fuente polygon'. IBKR esta PROHIBIDO esta semana.",
+   "spot_delta_pct_vs_ahora": -0.06
+  }
+ },
+ "MU": {
+  "spot_usado": 802.61,
+  "spot_fuente": "finnhub_ws_trade",
+  "spot_latencia": "TIEMPO REAL (trade impreso, edad 1043s)",
+  "spot_edad_s": 1042.8,
+  "rt_last_edad_s": 1042.8,
+  "rt_last_descartado": false,
+  "frescura_cobertura": {
+   "fichero": "data/opt_chain_mu.txt",
+   "epoch": 1785754683.0,
+   "edad_min": -0.0,
+   "fuente_declarada": "polygon",
+   "latencia_fuente": "Polygon = 15 min DELAYED (doctrina medida LATENCIA-FUENTES.md)",
+   "n_contratos": 69,
+   "n_oi_pos": 61,
+   "n_gamma_pos": 69,
+   "n_bidask": 0,
+   "vencimientos_en_fichero": [
+    "20260803"
+   ],
+   "vencimientos_vivos_en_polygon": [
+    "20260803",
+    "20260805",
+    "20260807",
+    "20260810",
+    "20260812",
+    "20260814",
+    "20260821",
+    "20260828",
+    "20260904",
+    "20260911",
+    "20260918"
+   ],
+   "n_venc_fichero": 1,
+   "n_venc_polygon": 11,
+   "agosto_completo": false,
+   "agosto_vencimientos_polygon": [
+    "20260803",
+    "20260805",
+    "20260807",
+    "20260810",
+    "20260812",
+    "20260814",
+    "20260821",
+    "20260828"
+   ],
+   "agosto_vencimientos_fichero": [
+    "20260803"
+   ],
+   "recorte": "SI: el fichero trae 1 de 11 vencimientos vivos (scripts/provider_bridge.py:160 NEAR_EXPS=2)",
+   "band_declarada": 0.15,
+   "straddle_atm": "SIN DATO: bid/ask=0 en el 100% de las filas (Polygon Starter no sirve last_quote)"
+  },
+  "mapa_2venc": {
+   "scope": "2 vencimientos cercanos (20260803+20260805) = mismo alcance que el fichero vivo",
+   "n_contratos_usados": 275,
+   "n_strikes_poblados": 95,
+   "flip": 824.77,
+   "flip_src": "recompute_15pct",
+   "flip_dist_pct": 2.76,
+   "regime": "NEGATIVE",
+   "regime_short": "NEG",
+   "regime_raw": "NEG",
+   "regime_why": "signo crudo del net GEX; paridad no determina",
+   "net_gex_house": -5676148,
+   "net_gex_dollar1pct": -45557331,
+   "gross_gex": 17713435,
+   "call_usd": 8127025,
+   "put_usd": -13803173,
+   "score_M_per_pt": -5.676,
+   "bias": "PUT",
+   "call_wall": 900.0,
+   "call_wall_kind": "pin",
+   "put_wall": 800.0,
+   "put_wall_kind": "trampilla",
+   "abs_wall": 790.0,
+   "abs_wall_kind": "trampilla",
+   "poc": 790.0,
+   "magnets": [
+    790.0,
+    800.0,
+    900.0
+   ],
+   "oi_call_wall": 900.0,
+   "oi_put_wall": 700.0,
+   "net_dex": -57134322,
+   "net_dex_shares": -71186,
+   "dex_sentiment": "bajista",
+   "dex_flow_impact": "mm_vende",
+   "abs_dex_wall": 790.0,
+   "delta_ok_pct": 1.0,
+   "parity_ok_pct": 0.0353,
+   "pin_risk_score": 30.3,
+   "fortress_pin": false
+  },
+  "mapa_todos_venc": {
+   "scope": "TODOS los vencimientos vivos hasta 2026-09-30, banda strikes +-22%%",
+   "n_contratos_usados": 1439,
+   "n_strikes_poblados": 106,
+   "flip": 907.1,
+   "flip_src": "recompute_15pct",
+   "flip_dist_pct": 13.02,
+   "regime": "NEGATIVE",
+   "regime_short": "NEG",
+   "regime_raw": "NEG",
+   "regime_why": "signo crudo del net GEX; paridad no determina",
+   "net_gex_house": -30257254,
+   "net_gex_dollar1pct": -242847745,
+   "gross_gex": 45259668,
+   "call_usd": 25904891,
+   "put_usd": -56162145,
+   "score_M_per_pt": -30.257,
+   "bias": "PUT",
+   "call_wall": 900.0,
+   "call_wall_kind": "trampilla",
+   "put_wall": 800.0,
+   "put_wall_kind": "trampilla",
+   "abs_wall": 800.0,
+   "abs_wall_kind": "trampilla",
+   "poc": 800.0,
+   "magnets": [
+    800.0,
+    900.0
+   ],
+   "oi_call_wall": 900.0,
+   "oi_put_wall": 800.0,
+   "net_dex": -3256776328,
+   "net_dex_shares": -4057732,
+   "dex_sentiment": "bajista",
+   "dex_flow_impact": "mm_vende",
+   "abs_dex_wall": 800.0,
+   "delta_ok_pct": 1.0,
+   "parity_ok_pct": 0.0385,
+   "pin_risk_score": 47.11,
+   "fortress_pin": false
+  },
+  "expected_move": {
+   "venc_cercano": {
+    "exp": "20260803",
+    "strike_atm": 805.0,
+    "iv_atm": 1.9547,
+    "T_anos": 0.001031,
+    "em_1sd_usd": 50.38,
+    "em_1sd_pct": 6.28,
+    "rango_lo": 752.23,
+    "rango_hi": 852.99,
+    "metodo": "S*IV_atm*sqrt(T) con IV MEDIDA por Polygon (delayed 15min). NO es el straddle capturado que pide la skill expected-move-envelope: bid/ask no existen en este plan de Polygon.",
+    "fiabilidad": "APROXIMADO (lognormal 1sd), no el straddle",
+    "straddle_cierre_previo": {
+     "strike_atm": 805.0,
+     "call_close": 36.16,
+     "put_close": 14.69,
+     "straddle_usd": 50.85,
+     "straddle_pct": 6.34,
+     "fuente": "Polygon day.close = CIERRE DEL VIERNES 31-jul (el contrato tenia 1 DTE mas)",
+     "uso": "cota superior / referencia; NO es el straddle de hoy (bid/ask no existen en este plan)"
+    }
+   },
+   "venc_siguiente": {
+    "exp": "20260805",
+    "strike_atm": 805.0,
+    "iv_atm": 1.401,
+    "T_anos": 0.006511,
+    "em_1sd_usd": 90.73,
+    "em_1sd_pct": 11.3,
+    "rango_lo": 711.88,
+    "rango_hi": 893.34,
+    "metodo": "S*IV_atm*sqrt(T) con IV MEDIDA por Polygon (delayed 15min). NO es el straddle capturado que pide la skill expected-move-envelope: bid/ask no existen en este plan de Polygon.",
+    "fiabilidad": "APROXIMADO (lognormal 1sd), no el straddle",
+    "straddle_cierre_previo": {
+     "strike_atm": 805.0,
+     "call_close": 48.5,
+     "put_close": 27.59,
+     "straddle_usd": 76.09,
+     "straddle_pct": 9.48,
+     "fuente": "Polygon day.close = CIERRE DEL VIERNES 31-jul (el contrato tenia 1 DTE mas)",
+     "uso": "cota superior / referencia; NO es el straddle de hoy (bid/ask no existen en este plan)"
+    }
+   }
+  },
+  "por_vencimiento": {
+   "cercano": {
+    "exp": "20260803",
+    "dte_dias_mercado": null,
+    "top5_call_oi": [
+     {
+      "strike": 900.0,
+      "oi": 3647,
+      "dist_pct": 12.13,
+      "dentro_EM": false
+     },
+     {
+      "strike": 960.0,
+      "oi": 2440,
+      "dist_pct": 19.61,
+      "dentro_EM": false
+     },
+     {
+      "strike": 950.0,
+      "oi": 1959,
+      "dist_pct": 18.36,
+      "dentro_EM": false
+     },
+     {
+      "strike": 835.0,
+      "oi": 1940,
+      "dist_pct": 4.04,
+      "dentro_EM": true
+     },
+     {
+      "strike": 850.0,
+      "oi": 1767,
+      "dist_pct": 5.9,
+      "dentro_EM": true
+     }
+    ],
+    "top5_put_oi": [
+     {
+      "strike": 700.0,
+      "oi": 4994,
+      "dist_pct": -12.78,
+      "dentro_EM": false
+     },
+     {
+      "strike": 747.5,
+      "oi": 1981,
+      "dist_pct": -6.87,
+      "dentro_EM": false
+     },
+     {
+      "strike": 720.0,
+      "oi": 1935,
+      "dist_pct": -10.29,
+      "dentro_EM": false
+     },
+     {
+      "strike": 710.0,
+      "oi": 1780,
+      "dist_pct": -11.54,
+      "dentro_EM": false
+     },
+     {
+      "strike": 800.0,
+      "oi": 1706,
+      "dist_pct": -0.33,
+      "dentro_EM": true
+     }
+    ],
+    "max_pain": 800.0,
+    "max_pain_dist_pct": -0.33,
+    "max_pain_nota": "calculado sobre el OI de la banda +-22% del spot (Polygon snapshot, OI = cierre de la sesion anterior). Si el OI real vive fuera de la banda, sesga.",
+    "pin": {
+     "strike_atm_pm1": 805.0,
+     "oi": 382,
+     "oi_mediana_banda3pct": 828,
+     "ratio": 0.46,
+     "es_pin": false,
+     "strike_step": 2.5,
+     "umbral": "ratio>=3x mediana banda +-3% (DOCTRINA oi-magnets-protocol, no medido)"
+    }
+   },
+   "siguiente": {
+    "exp": "20260805",
+    "dte_dias_mercado": null,
+    "top5_call_oi": [
+     {
+      "strike": 900.0,
+      "oi": 1254,
+      "dist_pct": 12.13,
+      "dentro_EM": false
+     },
+     {
+      "strike": 950.0,
+      "oi": 946,
+      "dist_pct": 18.36,
+      "dentro_EM": false
+     },
+     {
+      "strike": 920.0,
+      "oi": 606,
+      "dist_pct": 14.63,
+      "dentro_EM": false
+     },
+     {
+      "strike": 800.0,
+      "oi": 318,
+      "dist_pct": -0.33,
+      "dentro_EM": true
+     },
+     {
+      "strike": 940.0,
+      "oi": 318,
+      "dist_pct": 17.12,
+      "dentro_EM": false
+     }
+    ],
+    "top5_put_oi": [
+     {
+      "strike": 790.0,
+      "oi": 1403,
+      "dist_pct": -1.57,
+      "dentro_EM": true
+     },
+     {
+      "strike": 700.0,
+      "oi": 548,
+      "dist_pct": -12.78,
+      "dentro_EM": false
+     },
+     {
+      "strike": 800.0,
+      "oi": 511,
+      "dist_pct": -0.33,
+      "dentro_EM": true
+     },
+     {
+      "strike": 750.0,
+      "oi": 482,
+      "dist_pct": -6.55,
+      "dentro_EM": true
+     },
+     {
+      "strike": 650.0,
+      "oi": 309,
+      "dist_pct": -19.01,
+      "dentro_EM": false
+     }
+    ],
+    "max_pain": 820.0,
+    "max_pain_dist_pct": 2.17,
+    "max_pain_nota": "calculado sobre el OI de la banda +-22% del spot (Polygon snapshot, OI = cierre de la sesion anterior). Si el OI real vive fuera de la banda, sesga.",
+    "pin": {
+     "strike_atm_pm1": 805.0,
+     "oi": 170,
+     "oi_mediana_banda3pct": 344,
+     "ratio": 0.49,
+     "es_pin": false,
+     "strike_step": 2.5,
+     "umbral": "ratio>=3x mediana banda +-3% (DOCTRINA oi-magnets-protocol, no medido)"
+    }
+   }
+  },
+  "snapshot_0400_repo": {
+   "asof_local": "2026-08-03 06:54:33",
+   "edad_h": 0.06,
+   "spot": 802.22,
+   "flip": 717.77,
+   "regime": "POS",
+   "call_wall": 835.0,
+   "put_wall": 695.0,
+   "abs_wall": 835.0,
+   "abs_wall_kind": "pin",
+   "net_gex": 5167485,
+   "chain_src_declarado": "polygon",
+   "chain_exp_hasta": "20260803",
+   "aviso": "chain_src dice 'ibkr_tws' pero es ETIQUETA HARDCODEADA (scripts/gex_snapshot.py:206-207 contracts_from_tws): lee data/opt_chain_*.txt sin mirar la cabecera, que hoy dice 'fuente polygon'. IBKR esta PROHIBIDO esta semana.",
+   "spot_delta_pct_vs_ahora": -0.05
+  }
+ },
+ "AAPL": {
+  "spot_usado": 310.5,
+  "spot_fuente": "finnhub_ws_trade",
+  "spot_latencia": "TIEMPO REAL (trade impreso, edad 852s)",
+  "spot_edad_s": 851.8,
+  "rt_last_edad_s": 851.8,
+  "rt_last_descartado": false,
+  "frescura_cobertura": {
+   "fichero": "data/opt_chain_aapl.txt",
+   "epoch": 1785754467.0,
+   "edad_min": 3.6,
+   "fuente_declarada": "polygon",
+   "latencia_fuente": "Polygon = 15 min DELAYED (doctrina medida LATENCIA-FUENTES.md)",
+   "n_contratos": 140,
+   "n_oi_pos": 136,
+   "n_gamma_pos": 114,
+   "n_bidask": 0,
+   "vencimientos_en_fichero": [
+    "20260803",
+    "20260805"
+   ],
+   "vencimientos_vivos_en_polygon": [
+    "20260803",
+    "20260805",
+    "20260807",
+    "20260810",
+    "20260812",
+    "20260814",
+    "20260821",
+    "20260828",
+    "20260904",
+    "20260911",
+    "20260918"
+   ],
+   "n_venc_fichero": 2,
+   "n_venc_polygon": 11,
+   "agosto_completo": false,
+   "agosto_vencimientos_polygon": [
+    "20260803",
+    "20260805",
+    "20260807",
+    "20260810",
+    "20260812",
+    "20260814",
+    "20260821",
+    "20260828"
+   ],
+   "agosto_vencimientos_fichero": [
+    "20260803",
+    "20260805"
+   ],
+   "recorte": "SI: el fichero trae 2 de 11 vencimientos vivos (scripts/provider_bridge.py:160 NEAR_EXPS=2)",
+   "band_declarada": 0.15,
+   "straddle_atm": "SIN DATO: bid/ask=0 en el 100% de las filas (Polygon Starter no sirve last_quote)"
+  },
+  "mapa_2venc": {
+   "scope": "2 vencimientos cercanos (20260803+20260805) = mismo alcance que el fichero vivo",
+   "n_contratos_usados": 135,
+   "n_strikes_poblados": 47,
+   "flip": 304.15,
+   "flip_src": "recompute_15pct",
+   "flip_dist_pct": -2.04,
+   "regime": "POSITIVE",
+   "regime_short": "POS",
+   "regime_raw": "POS",
+   "regime_why": "signo crudo del net GEX; paridad no determina",
+   "net_gex_house": 16874450,
+   "net_gex_dollar1pct": 52395169,
+   "gross_gex": 50558481,
+   "call_usd": 58829801,
+   "put_usd": -41955350,
+   "score_M_per_pt": 16.874,
+   "bias": "CALL",
+   "call_wall": 315.0,
+   "call_wall_kind": "pin",
+   "put_wall": 300.0,
+   "put_wall_kind": "trampilla",
+   "abs_wall": 300.0,
+   "abs_wall_kind": "trampilla",
+   "poc": 300.0,
+   "magnets": [
+    300.0,
+    315.0
+   ],
+   "oi_call_wall": 315.0,
+   "oi_put_wall": 300.0,
+   "net_dex": 31379872,
+   "net_dex_shares": 101062,
+   "dex_sentiment": "alcista",
+   "dex_flow_impact": "mm_compra",
+   "abs_dex_wall": 302.5,
+   "delta_ok_pct": 1.0,
+   "parity_ok_pct": 0.0714,
+   "pin_risk_score": 78.19,
+   "fortress_pin": false
+  },
+  "mapa_todos_venc": {
+   "scope": "TODOS los vencimientos vivos hasta 2026-09-30, banda strikes +-22%%",
+   "n_contratos_usados": 682,
+   "n_strikes_poblados": 49,
+   "flip": 298.16,
+   "flip_src": "recompute_15pct",
+   "flip_dist_pct": -3.97,
+   "regime": "POSITIVE",
+   "regime_short": "POS",
+   "regime_raw": "POS",
+   "regime_why": "signo crudo del net GEX; paridad no determina",
+   "net_gex_house": 139900892,
+   "net_gex_dollar1pct": 434392270,
+   "gross_gex": 248074562,
+   "call_usd": 344726602,
+   "put_usd": -204825710,
+   "score_M_per_pt": 139.901,
+   "bias": "CALL",
+   "call_wall": 320.0,
+   "call_wall_kind": "pin",
+   "put_wall": 300.0,
+   "put_wall_kind": "pin",
+   "abs_wall": 310.0,
+   "abs_wall_kind": "pin",
+   "poc": 310.0,
+   "magnets": [
+    300.0,
+    310.0,
+    320.0
+   ],
+   "oi_call_wall": 350.0,
+   "oi_put_wall": 300.0,
+   "net_dex": 3769945402,
+   "net_dex_shares": 12141531,
+   "dex_sentiment": "alcista",
+   "dex_flow_impact": "mm_compra",
+   "abs_dex_wall": 310.0,
+   "delta_ok_pct": 1.0,
+   "parity_ok_pct": 0.1931,
+   "pin_risk_score": 68.95,
+   "fortress_pin": false
+  },
+  "expected_move": {
+   "venc_cercano": {
+    "exp": "20260803",
+    "strike_atm": 310.0,
+    "iv_atm": 0.703,
+    "T_anos": 0.001031,
+    "em_1sd_usd": 7.01,
+    "em_1sd_pct": 2.26,
+    "rango_lo": 303.49,
+    "rango_hi": 317.51,
+    "metodo": "S*IV_atm*sqrt(T) con IV MEDIDA por Polygon (delayed 15min). NO es el straddle capturado que pide la skill expected-move-envelope: bid/ask no existen en este plan de Polygon.",
+    "fiabilidad": "APROXIMADO (lognormal 1sd), no el straddle",
+    "straddle_cierre_previo": {
+     "strike_atm": 310.0,
+     "call_close": 2.78,
+     "put_close": 3.85,
+     "straddle_usd": 6.63,
+     "straddle_pct": 2.14,
+     "fuente": "Polygon day.close = CIERRE DEL VIERNES 31-jul (el contrato tenia 1 DTE mas)",
+     "uso": "cota superior / referencia; NO es el straddle de hoy (bid/ask no existen en este plan)"
+    }
+   },
+   "venc_siguiente": {
+    "exp": "20260805",
+    "strike_atm": 310.0,
+    "iv_atm": 0.4572,
+    "T_anos": 0.006511,
+    "em_1sd_usd": 11.46,
+    "em_1sd_pct": 3.69,
+    "rango_lo": 299.04,
+    "rango_hi": 321.96,
+    "metodo": "S*IV_atm*sqrt(T) con IV MEDIDA por Polygon (delayed 15min). NO es el straddle capturado que pide la skill expected-move-envelope: bid/ask no existen en este plan de Polygon.",
+    "fiabilidad": "APROXIMADO (lognormal 1sd), no el straddle",
+    "straddle_cierre_previo": {
+     "strike_atm": 310.0,
+     "call_close": 4.2,
+     "put_close": 4.62,
+     "straddle_usd": 8.82,
+     "straddle_pct": 2.84,
+     "fuente": "Polygon day.close = CIERRE DEL VIERNES 31-jul (el contrato tenia 1 DTE mas)",
+     "uso": "cota superior / referencia; NO es el straddle de hoy (bid/ask no existen en este plan)"
+    }
+   }
+  },
+  "por_vencimiento": {
+   "cercano": {
+    "exp": "20260803",
+    "dte_dias_mercado": null,
+    "top5_call_oi": [
+     {
+      "strike": 310.0,
+      "oi": 6229,
+      "dist_pct": -0.16,
+      "dentro_EM": true
+     },
+     {
+      "strike": 315.0,
+      "oi": 4040,
+      "dist_pct": 1.45,
+      "dentro_EM": true
+     },
+     {
+      "strike": 302.5,
+      "oi": 3826,
+      "dist_pct": -2.58,
+      "dentro_EM": false
+     },
+     {
+      "strike": 305.0,
+      "oi": 3675,
+      "dist_pct": -1.77,
+      "dentro_EM": true
+     },
+     {
+      "strike": 320.0,
+      "oi": 3522,
+      "dist_pct": 3.06,
+      "dentro_EM": false
+     }
+    ],
+    "top5_put_oi": [
+     {
+      "strike": 292.5,
+      "oi": 7512,
+      "dist_pct": -5.8,
+      "dentro_EM": false
+     },
+     {
+      "strike": 300.0,
+      "oi": 6112,
+      "dist_pct": -3.38,
+      "dentro_EM": false
+     },
+     {
+      "strike": 310.0,
+      "oi": 5982,
+      "dist_pct": -0.16,
+      "dentro_EM": true
+     },
+     {
+      "strike": 297.5,
+      "oi": 3811,
+      "dist_pct": -4.19,
+      "dentro_EM": false
+     },
+     {
+      "strike": 285.0,
+      "oi": 3470,
+      "dist_pct": -8.21,
+      "dentro_EM": false
+     }
+    ],
+    "max_pain": 310.0,
+    "max_pain_dist_pct": -0.16,
+    "max_pain_nota": "calculado sobre el OI de la banda +-22% del spot (Polygon snapshot, OI = cierre de la sesion anterior). Si el OI real vive fuera de la banda, sesga.",
+    "pin": {
+     "strike_atm_pm1": 310.0,
+     "oi": 12211,
+     "oi_mediana_banda3pct": 5254,
+     "ratio": 2.32,
+     "es_pin": false,
+     "strike_step": 2.5,
+     "umbral": "ratio>=3x mediana banda +-3% (DOCTRINA oi-magnets-protocol, no medido)"
+    }
+   },
+   "siguiente": {
+    "exp": "20260805",
+    "dte_dias_mercado": null,
+    "top5_call_oi": [
+     {
+      "strike": 310.0,
+      "oi": 2759,
+      "dist_pct": -0.16,
+      "dentro_EM": true
+     },
+     {
+      "strike": 327.5,
+      "oi": 2442,
+      "dist_pct": 5.48,
+      "dentro_EM": false
+     },
+     {
+      "strike": 325.0,
+      "oi": 2186,
+      "dist_pct": 4.67,
+      "dentro_EM": false
+     },
+     {
+      "strike": 305.0,
+      "oi": 1900,
+      "dist_pct": -1.77,
+      "dentro_EM": true
+     },
+     {
+      "strike": 320.0,
+      "oi": 1364,
+      "dist_pct": 3.06,
+      "dentro_EM": true
+     }
+    ],
+    "top5_put_oi": [
+     {
+      "strike": 300.0,
+      "oi": 5461,
+      "dist_pct": -3.38,
+      "dentro_EM": true
+     },
+     {
+      "strike": 307.5,
+      "oi": 2939,
+      "dist_pct": -0.97,
+      "dentro_EM": true
+     },
+     {
+      "strike": 285.0,
+      "oi": 2319,
+      "dist_pct": -8.21,
+      "dentro_EM": false
+     },
+     {
+      "strike": 295.0,
+      "oi": 1775,
+      "dist_pct": -4.99,
+      "dentro_EM": false
+     },
+     {
+      "strike": 290.0,
+      "oi": 1458,
+      "dist_pct": -6.6,
+      "dentro_EM": false
+     }
+    ],
+    "max_pain": 307.5,
+    "max_pain_dist_pct": -0.97,
+    "max_pain_nota": "calculado sobre el OI de la banda +-22% del spot (Polygon snapshot, OI = cierre de la sesion anterior). Si el OI real vive fuera de la banda, sesga.",
+    "pin": {
+     "strike_atm_pm1": 310.0,
+     "oi": 3271,
+     "oi_mediana_banda3pct": 2041,
+     "ratio": 1.6,
+     "es_pin": false,
+     "strike_step": 2.5,
+     "umbral": "ratio>=3x mediana banda +-3% (DOCTRINA oi-magnets-protocol, no medido)"
+    }
+   }
+  },
+  "snapshot_0400_repo": {
+   "asof_local": "2026-08-03 06:54:33",
+   "edad_h": 0.06,
+   "spot": 310.33,
+   "flip": 305.85,
+   "regime": "POS",
+   "call_wall": 315.0,
+   "put_wall": 300.0,
+   "abs_wall": 310.0,
+   "abs_wall_kind": "pin",
+   "net_gex": 17462425,
+   "chain_src_declarado": "polygon",
+   "chain_exp_hasta": "20260805",
+   "aviso": "chain_src dice 'ibkr_tws' pero es ETIQUETA HARDCODEADA (scripts/gex_snapshot.py:206-207 contracts_from_tws): lee data/opt_chain_*.txt sin mirar la cabecera, que hoy dice 'fuente polygon'. IBKR esta PROHIBIDO esta semana.",
+   "spot_delta_pct_vs_ahora": -0.05
+  }
+ },
+ "NOK": {
+  "spot_usado": 8.99,
+  "spot_fuente": "polygon_via_opt_chain_header",
+  "spot_latencia": "POLYGON ~15 min DELAYED (fichero escrito hace 791s)",
+  "spot_edad_s": 790.6,
+  "rt_last_edad_s": null,
+  "rt_last_descartado": null,
+  "frescura_cobertura": {
+   "fichero": "data/opt_chain_nok.txt",
+   "epoch": 1785754569.0,
+   "edad_min": 1.9,
+   "fuente_declarada": "polygon",
+   "latencia_fuente": "Polygon = 15 min DELAYED (doctrina medida LATENCIA-FUENTES.md)",
+   "n_contratos": 258,
+   "n_oi_pos": 258,
+   "n_gamma_pos": 257,
+   "n_bidask": 0,
+   "vencimientos_en_fichero": [
+    "20260807",
+    "20260814"
+   ],
+   "vencimientos_vivos_en_polygon": [
+    "20260807",
+    "20260814",
+    "20260821",
+    "20260828",
+    "20260904",
+    "20260911",
+    "20260918"
+   ],
+   "n_venc_fichero": 2,
+   "n_venc_polygon": 7,
+   "agosto_completo": false,
+   "agosto_vencimientos_polygon": [
+    "20260807",
+    "20260814",
+    "20260821",
+    "20260828"
+   ],
+   "agosto_vencimientos_fichero": [
+    "20260807",
+    "20260814"
+   ],
+   "recorte": "SI: el fichero trae 2 de 7 vencimientos vivos (scripts/provider_bridge.py:160 NEAR_EXPS=2)",
+   "band_declarada": 0.15,
+   "straddle_atm": "SIN DATO: bid/ask=0 en el 100% de las filas (Polygon Starter no sirve last_quote)"
+  },
+  "mapa_2venc": {
+   "scope": "2 vencimientos cercanos (20260807+20260814) = mismo alcance que el fichero vivo",
+   "n_contratos_usados": 23,
+   "n_strikes_poblados": 7,
+   "flip": 9.12,
+   "flip_src": "recompute_15pct",
+   "flip_dist_pct": 1.49,
+   "regime": "POSITIVE",
+   "regime_short": "POS",
+   "regime_raw": "NEG",
+   "regime_why": "signo crudo NEG CONTRADICHO por la paridad put-call (pares coherentes 11%; lecturas legales +0.00..+0.00 B $/1%)",
+   "net_gex_house": -2082452,
+   "net_gex_dollar1pct": -187212,
+   "gross_gex": 21461480,
+   "call_usd": 14775483,
+   "put_usd": -16857935,
+   "score_M_per_pt": -2.082,
+   "bias": "CALL",
+   "call_wall": 9.5,
+   "call_wall_kind": "pin",
+   "put_wall": 8.0,
+   "put_wall_kind": "trampilla",
+   "abs_wall": 9.0,
+   "abs_wall_kind": "trampilla",
+   "poc": 9.0,
+   "magnets": [
+    8.0,
+    9.0,
+    9.5
+   ],
+   "oi_call_wall": 10.0,
+   "oi_put_wall": 8.0,
+   "net_dex": 3238006,
+   "net_dex_shares": 360179,
+   "dex_sentiment": "alcista",
+   "dex_flow_impact": "mm_compra",
+   "abs_dex_wall": 10.0,
+   "delta_ok_pct": 1.0,
+   "parity_ok_pct": 0.1111,
+   "pin_risk_score": 15.48,
+   "fortress_pin": false
+  },
+  "mapa_todos_venc": {
+   "scope": "TODOS los vencimientos vivos hasta 2026-09-30, banda strikes +-22%%",
+   "n_contratos_usados": 79,
+   "n_strikes_poblados": 7,
+   "flip": 9.85,
+   "flip_src": "recompute_15pct",
+   "flip_dist_pct": 9.57,
+   "regime": "NEGATIVE",
+   "regime_short": "NEG",
+   "regime_raw": "NEG",
+   "regime_why": "signo crudo del net GEX; paridad no determina",
+   "net_gex_house": -18699753,
+   "net_gex_dollar1pct": -1681108,
+   "gross_gex": 43375900,
+   "call_usd": 31639897,
+   "put_usd": -50339651,
+   "score_M_per_pt": -18.7,
+   "bias": "PUT",
+   "call_wall": 10.0,
+   "call_wall_kind": "pin",
+   "put_wall": 8.0,
+   "put_wall_kind": "trampilla",
+   "abs_wall": 9.0,
+   "abs_wall_kind": "trampilla",
+   "poc": 9.0,
+   "magnets": [
+    8.0,
+    9.0,
+    10.0
+   ],
+   "oi_call_wall": 10.0,
+   "oi_put_wall": 8.0,
+   "net_dex": -32844357,
+   "net_dex_shares": -3653432,
+   "dex_sentiment": "bajista",
+   "dex_flow_impact": "mm_vende",
+   "abs_dex_wall": 9.0,
+   "delta_ok_pct": 1.0,
+   "parity_ok_pct": 0.0571,
+   "pin_risk_score": 18.87,
+   "fortress_pin": false
+  },
+  "expected_move": {
+   "venc_cercano": {
+    "exp": "20260807",
+    "strike_atm": 9.0,
+    "iv_atm": 0.8483,
+    "T_anos": 0.01199,
+    "em_1sd_usd": 0.84,
+    "em_1sd_pct": 9.29,
+    "rango_lo": 8.15,
+    "rango_hi": 9.83,
+    "metodo": "S*IV_atm*sqrt(T) con IV MEDIDA por Polygon (delayed 15min). NO es el straddle capturado que pide la skill expected-move-envelope: bid/ask no existen en este plan de Polygon.",
+    "fiabilidad": "APROXIMADO (lognormal 1sd), no el straddle",
+    "straddle_cierre_previo": {
+     "strike_atm": 9.0,
+     "call_close": 0.4,
+     "put_close": 0.27,
+     "straddle_usd": 0.67,
+     "straddle_pct": 7.45,
+     "fuente": "Polygon day.close = CIERRE DEL VIERNES 31-jul (el contrato tenia 1 DTE mas)",
+     "uso": "cota superior / referencia; NO es el straddle de hoy (bid/ask no existen en este plan)"
+    }
+   },
+   "venc_siguiente": {
+    "exp": "20260814",
+    "strike_atm": 9.0,
+    "iv_atm": 0.7859,
+    "T_anos": 0.031168,
+    "em_1sd_usd": 1.25,
+    "em_1sd_pct": 13.88,
+    "rango_lo": 7.74,
+    "rango_hi": 10.24,
+    "metodo": "S*IV_atm*sqrt(T) con IV MEDIDA por Polygon (delayed 15min). NO es el straddle capturado que pide la skill expected-move-envelope: bid/ask no existen en este plan de Polygon.",
+    "fiabilidad": "APROXIMADO (lognormal 1sd), no el straddle",
+    "straddle_cierre_previo": {
+     "strike_atm": 9.0,
+     "call_close": 0.56,
+     "put_close": 0.42,
+     "straddle_usd": 0.98,
+     "straddle_pct": 10.9,
+     "fuente": "Polygon day.close = CIERRE DEL VIERNES 31-jul (el contrato tenia 1 DTE mas)",
+     "uso": "cota superior / referencia; NO es el straddle de hoy (bid/ask no existen en este plan)"
+    }
+   }
+  },
+  "por_vencimiento": {
+   "cercano": {
+    "exp": "20260807",
+    "dte_dias_mercado": null,
+    "top5_call_oi": [
+     {
+      "strike": 10.5,
+      "oi": 10442,
+      "dist_pct": 16.8,
+      "dentro_EM": false
+     },
+     {
+      "strike": 10.0,
+      "oi": 8199,
+      "dist_pct": 11.23,
+      "dentro_EM": false
+     },
+     {
+      "strike": 9.5,
+      "oi": 6646,
+      "dist_pct": 5.67,
+      "dentro_EM": true
+     },
+     {
+      "strike": 9.0,
+      "oi": 5500,
+      "dist_pct": 0.11,
+      "dentro_EM": true
+     },
+     {
+      "strike": 8.5,
+      "oi": 783,
+      "dist_pct": -5.45,
+      "dentro_EM": true
+     }
+    ],
+    "top5_put_oi": [
+     {
+      "strike": 9.0,
+      "oi": 13722,
+      "dist_pct": 0.11,
+      "dentro_EM": true
+     },
+     {
+      "strike": 8.0,
+      "oi": 12440,
+      "dist_pct": -11.01,
+      "dentro_EM": false
+     },
+     {
+      "strike": 8.5,
+      "oi": 5580,
+      "dist_pct": -5.45,
+      "dentro_EM": true
+     },
+     {
+      "strike": 9.5,
+      "oi": 783,
+      "dist_pct": 5.67,
+      "dentro_EM": true
+     },
+     {
+      "strike": 7.5,
+      "oi": 10,
+      "dist_pct": -16.57,
+      "dentro_EM": false
+     }
+    ],
+    "max_pain": 9.0,
+    "max_pain_dist_pct": 0.11,
+    "max_pain_nota": "calculado sobre el OI de la banda +-22% del spot (Polygon snapshot, OI = cierre de la sesion anterior). Si el OI real vive fuera de la banda, sesga.",
+    "pin": null
+   },
+   "siguiente": {
+    "exp": "20260814",
+    "dte_dias_mercado": null,
+    "top5_call_oi": [
+     {
+      "strike": 10.0,
+      "oi": 9989,
+      "dist_pct": 11.23,
+      "dentro_EM": true
+     },
+     {
+      "strike": 9.5,
+      "oi": 7795,
+      "dist_pct": 5.67,
+      "dentro_EM": true
+     },
+     {
+      "strike": 9.0,
+      "oi": 6564,
+      "dist_pct": 0.11,
+      "dentro_EM": true
+     },
+     {
+      "strike": 10.5,
+      "oi": 4256,
+      "dist_pct": 16.8,
+      "dentro_EM": false
+     },
+     {
+      "strike": 8.5,
+      "oi": 1164,
+      "dist_pct": -5.45,
+      "dentro_EM": true
+     }
+    ],
+    "top5_put_oi": [
+     {
+      "strike": 8.0,
+      "oi": 11196,
+      "dist_pct": -11.01,
+      "dentro_EM": true
+     },
+     {
+      "strike": 9.0,
+      "oi": 4648,
+      "dist_pct": 0.11,
+      "dentro_EM": true
+     },
+     {
+      "strike": 9.5,
+      "oi": 1314,
+      "dist_pct": 5.67,
+      "dentro_EM": true
+     },
+     {
+      "strike": 8.5,
+      "oi": 1009,
+      "dist_pct": -5.45,
+      "dentro_EM": true
+     },
+     {
+      "strike": 7.5,
+      "oi": 454,
+      "dist_pct": -16.57,
+      "dentro_EM": false
+     }
+    ],
+    "max_pain": 9.0,
+    "max_pain_dist_pct": 0.11,
+    "max_pain_nota": "calculado sobre el OI de la banda +-22% del spot (Polygon snapshot, OI = cierre de la sesion anterior). Si el OI real vive fuera de la banda, sesga.",
+    "pin": null
+   }
+  },
+  "snapshot_0400_repo": null
+ },
+ "INTC": {
+  "spot_usado": 89.05,
+  "spot_fuente": "finnhub_ws_trade",
+  "spot_latencia": "TIEMPO REAL (trade impreso, edad 1174s)",
+  "spot_edad_s": 1173.6,
+  "rt_last_edad_s": 1173.6,
+  "rt_last_descartado": false,
+  "frescura_cobertura": {
+   "fichero": "data/opt_chain_intc.txt",
+   "epoch": 1785754509.0,
+   "edad_min": 2.9,
+   "fuente_declarada": "polygon",
+   "latencia_fuente": "Polygon = 15 min DELAYED (doctrina medida LATENCIA-FUENTES.md)",
+   "n_contratos": 81,
+   "n_oi_pos": 81,
+   "n_gamma_pos": 72,
+   "n_bidask": 0,
+   "vencimientos_en_fichero": [
+    "20260803",
+    "20260805"
+   ],
+   "vencimientos_vivos_en_polygon": [
+    "20260803",
+    "20260805",
+    "20260807",
+    "20260810",
+    "20260812",
+    "20260814",
+    "20260821",
+    "20260828",
+    "20260904",
+    "20260911",
+    "20260918"
+   ],
+   "n_venc_fichero": 2,
+   "n_venc_polygon": 11,
+   "agosto_completo": false,
+   "agosto_vencimientos_polygon": [
+    "20260803",
+    "20260805",
+    "20260807",
+    "20260810",
+    "20260812",
+    "20260814",
+    "20260821",
+    "20260828"
+   ],
+   "agosto_vencimientos_fichero": [
+    "20260803",
+    "20260805"
+   ],
+   "recorte": "SI: el fichero trae 2 de 11 vencimientos vivos (scripts/provider_bridge.py:160 NEAR_EXPS=2)",
+   "band_declarada": 0.15,
+   "straddle_atm": "SIN DATO: bid/ask=0 en el 100% de las filas (Polygon Starter no sirve last_quote)"
+  },
+  "mapa_2venc": {
+   "scope": "2 vencimientos cercanos (20260803+20260805) = mismo alcance que el fichero vivo",
+   "n_contratos_usados": 127,
+   "n_strikes_poblados": 39,
+   "flip": 92.22,
+   "flip_src": "recompute_15pct",
+   "flip_dist_pct": 3.56,
+   "regime": "NEGATIVE",
+   "regime_short": "NEG",
+   "regime_raw": "NEG",
+   "regime_why": "signo crudo del net GEX; paridad no determina",
+   "net_gex_house": -8801062,
+   "net_gex_dollar1pct": -7837345,
+   "gross_gex": 23705382,
+   "call_usd": 17472396,
+   "put_usd": -26273458,
+   "score_M_per_pt": -8.801,
+   "bias": "PUT",
+   "call_wall": 90.0,
+   "call_wall_kind": "trampilla",
+   "put_wall": 88.0,
+   "put_wall_kind": "trampilla",
+   "abs_wall": 86.0,
+   "abs_wall_kind": "trampilla",
+   "poc": 86.0,
+   "magnets": [
+    86.0,
+    88.0,
+    90.0
+   ],
+   "oi_call_wall": 90.0,
+   "oi_put_wall": 86.0,
+   "net_dex": -13500465,
+   "net_dex_shares": -151605,
+   "dex_sentiment": "bajista",
+   "dex_flow_impact": "mm_vende",
+   "abs_dex_wall": 92.0,
+   "delta_ok_pct": 1.0,
+   "parity_ok_pct": 0.0612,
+   "pin_risk_score": 67.0,
+   "fortress_pin": false
+  },
+  "mapa_todos_venc": {
+   "scope": "TODOS los vencimientos vivos hasta 2026-09-30, banda strikes +-22%%",
+   "n_contratos_usados": 695,
+   "n_strikes_poblados": 46,
+   "flip": 94.22,
+   "flip_src": "recompute_15pct",
+   "flip_dist_pct": 5.81,
+   "regime": "NEGATIVE",
+   "regime_short": "NEG",
+   "regime_raw": "NEG",
+   "regime_why": "signo crudo del net GEX; paridad no determina",
+   "net_gex_house": -24182648,
+   "net_gex_dollar1pct": -21534648,
+   "gross_gex": 51280746,
+   "call_usd": 65072727,
+   "put_usd": -89255374,
+   "score_M_per_pt": -24.183,
+   "bias": "PUT",
+   "call_wall": 100.0,
+   "call_wall_kind": "pin",
+   "put_wall": 80.0,
+   "put_wall_kind": "trampilla",
+   "abs_wall": 80.0,
+   "abs_wall_kind": "trampilla",
+   "poc": 80.0,
+   "magnets": [
+    80.0,
+    100.0
+   ],
+   "oi_call_wall": 100.0,
+   "oi_put_wall": 70.0,
+   "net_dex": -190072049,
+   "net_dex_shares": -2134442,
+   "dex_sentiment": "bajista",
+   "dex_flow_impact": "mm_vende",
+   "abs_dex_wall": 70.0,
+   "delta_ok_pct": 1.0,
+   "parity_ok_pct": 0.0669,
+   "pin_risk_score": 44.61,
+   "fortress_pin": false
+  },
+  "expected_move": {
+   "venc_cercano": {
+    "exp": "20260803",
+    "strike_atm": 89.0,
+    "iv_atm": 1.7178,
+    "T_anos": 0.001031,
+    "em_1sd_usd": 4.91,
+    "em_1sd_pct": 5.52,
+    "rango_lo": 84.14,
+    "rango_hi": 93.96,
+    "metodo": "S*IV_atm*sqrt(T) con IV MEDIDA por Polygon (delayed 15min). NO es el straddle capturado que pide la skill expected-move-envelope: bid/ask no existen en este plan de Polygon.",
+    "fiabilidad": "APROXIMADO (lognormal 1sd), no el straddle",
+    "straddle_cierre_previo": {
+     "strike_atm": 89.0,
+     "call_close": 3.03,
+     "put_close": 1.68,
+     "straddle_usd": 4.71,
+     "straddle_pct": 5.29,
+     "fuente": "Polygon day.close = CIERRE DEL VIERNES 31-jul (el contrato tenia 1 DTE mas)",
+     "uso": "cota superior / referencia; NO es el straddle de hoy (bid/ask no existen en este plan)"
+    }
+   },
+   "venc_siguiente": {
+    "exp": "20260805",
+    "strike_atm": 89.0,
+    "iv_atm": 1.2318,
+    "T_anos": 0.006511,
+    "em_1sd_usd": 8.85,
+    "em_1sd_pct": 9.94,
+    "rango_lo": 80.2,
+    "rango_hi": 97.9,
+    "metodo": "S*IV_atm*sqrt(T) con IV MEDIDA por Polygon (delayed 15min). NO es el straddle capturado que pide la skill expected-move-envelope: bid/ask no existen en este plan de Polygon.",
+    "fiabilidad": "APROXIMADO (lognormal 1sd), no el straddle",
+    "straddle_cierre_previo": {
+     "strike_atm": 89.0,
+     "call_close": 4.4,
+     "put_close": 3.0,
+     "straddle_usd": 7.4,
+     "straddle_pct": 8.31,
+     "fuente": "Polygon day.close = CIERRE DEL VIERNES 31-jul (el contrato tenia 1 DTE mas)",
+     "uso": "cota superior / referencia; NO es el straddle de hoy (bid/ask no existen en este plan)"
+    }
+   }
+  },
+  "por_vencimiento": {
+   "cercano": {
+    "exp": "20260803",
+    "dte_dias_mercado": null,
+    "top5_call_oi": [
+     {
+      "strike": 90.0,
+      "oi": 8428,
+      "dist_pct": 1.07,
+      "dentro_EM": true
+     },
+     {
+      "strike": 101.0,
+      "oi": 5204,
+      "dist_pct": 13.42,
+      "dentro_EM": false
+     },
+     {
+      "strike": 100.0,
+      "oi": 4619,
+      "dist_pct": 12.3,
+      "dentro_EM": false
+     },
+     {
+      "strike": 88.0,
+      "oi": 4521,
+      "dist_pct": -1.18,
+      "dentro_EM": true
+     },
+     {
+      "strike": 95.0,
+      "oi": 3720,
+      "dist_pct": 6.68,
+      "dentro_EM": false
+     }
+    ],
+    "top5_put_oi": [
+     {
+      "strike": 86.0,
+      "oi": 6365,
+      "dist_pct": -3.43,
+      "dentro_EM": true
+     },
+     {
+      "strike": 88.0,
+      "oi": 6134,
+      "dist_pct": -1.18,
+      "dentro_EM": true
+     },
+     {
+      "strike": 90.0,
+      "oi": 5150,
+      "dist_pct": 1.07,
+      "dentro_EM": true
+     },
+     {
+      "strike": 87.0,
+      "oi": 4748,
+      "dist_pct": -2.3,
+      "dentro_EM": true
+     },
+     {
+      "strike": 92.0,
+      "oi": 3009,
+      "dist_pct": 3.31,
+      "dentro_EM": true
+     }
+    ],
+    "max_pain": 90.0,
+    "max_pain_dist_pct": 1.07,
+    "max_pain_nota": "calculado sobre el OI de la banda +-22% del spot (Polygon snapshot, OI = cierre de la sesion anterior). Si el OI real vive fuera de la banda, sesga.",
+    "pin": {
+     "strike_atm_pm1": 90.0,
+     "oi": 13578,
+     "oi_mediana_banda3pct": 5369,
+     "ratio": 2.53,
+     "es_pin": false,
+     "strike_step": 1.0,
+     "umbral": "ratio>=3x mediana banda +-3% (DOCTRINA oi-magnets-protocol, no medido)"
+    }
+   },
+   "siguiente": {
+    "exp": "20260805",
+    "dte_dias_mercado": null,
+    "top5_call_oi": [
+     {
+      "strike": 102.0,
+      "oi": 3207,
+      "dist_pct": 14.54,
+      "dentro_EM": false
+     },
+     {
+      "strike": 105.0,
+      "oi": 3078,
+      "dist_pct": 17.91,
+      "dentro_EM": false
+     },
+     {
+      "strike": 100.0,
+      "oi": 1280,
+      "dist_pct": 12.3,
+      "dentro_EM": false
+     },
+     {
+      "strike": 95.0,
+      "oi": 950,
+      "dist_pct": 6.68,
+      "dentro_EM": true
+     },
+     {
+      "strike": 93.0,
+      "oi": 808,
+      "dist_pct": 4.44,
+      "dentro_EM": true
+     }
+    ],
+    "top5_put_oi": [
+     {
+      "strike": 90.0,
+      "oi": 2152,
+      "dist_pct": 1.07,
+      "dentro_EM": true
+     },
+     {
+      "strike": 85.0,
+      "oi": 703,
+      "dist_pct": -4.55,
+      "dentro_EM": true
+     },
+     {
+      "strike": 78.0,
+      "oi": 519,
+      "dist_pct": -12.41,
+      "dentro_EM": false
+     },
+     {
+      "strike": 80.0,
+      "oi": 496,
+      "dist_pct": -10.16,
+      "dentro_EM": false
+     },
+     {
+      "strike": 87.0,
+      "oi": 488,
+      "dist_pct": -2.3,
+      "dentro_EM": true
+     }
+    ],
+    "max_pain": 90.0,
+    "max_pain_dist_pct": 1.07,
+    "max_pain_nota": "calculado sobre el OI de la banda +-22% del spot (Polygon snapshot, OI = cierre de la sesion anterior). Si el OI real vive fuera de la banda, sesga.",
+    "pin": {
+     "strike_atm_pm1": 90.0,
+     "oi": 2404,
+     "oi_mediana_banda3pct": 598,
+     "ratio": 4.02,
+     "es_pin": true,
+     "strike_step": 1.0,
+     "umbral": "ratio>=3x mediana banda +-3% (DOCTRINA oi-magnets-protocol, no medido)"
+    }
+   }
+  },
+  "snapshot_0400_repo": {
+   "asof_local": "2026-08-03 06:54:33",
+   "edad_h": 0.06,
+   "spot": 89.09,
+   "flip": 92.1,
+   "regime": null,
+   "call_wall": 90.0,
+   "put_wall": 88.0,
+   "abs_wall": 86.0,
+   "abs_wall_kind": "trampilla",
+   "net_gex": -7441666,
+   "chain_src_declarado": "polygon",
+   "chain_exp_hasta": "20260805",
+   "aviso": "chain_src dice 'ibkr_tws' pero es ETIQUETA HARDCODEADA (scripts/gex_snapshot.py:206-207 contracts_from_tws): lee data/opt_chain_*.txt sin mirar la cabecera, que hoy dice 'fuente polygon'. IBKR esta PROHIBIDO esta semana.",
+   "spot_delta_pct_vs_ahora": 0.04
+  }
+ }
+}

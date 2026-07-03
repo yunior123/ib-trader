@@ -1,0 +1,11 @@
+# FICHAS 2026-07-22 (v2 — sin crypto, anti-montaña; confirmar en REFRESH 8:30 vs gaps + KOSPI)
+# Doctrina $200/$100: entrada EN DIP/reclaim con print x2, 9:45-10:30, jamas perseguir gap
+INTC call 106 exp 20260724 ~1.20 | entrada: dip 102.5-103 sostenido (patron dia-despues-Corea) o >104.80 x2 | target 106.5-107 | stop 101.90 | FUERA miercoles antes cierre (earnings 7/23 AMC)
+MSFT call 405 exp 20260722 ~1.11 | entrada: reclaim >400.50 x2 o dip 395.5-396 sostenido | target 402.5-403 (+50-80% premium) | stop <395 | tesis: catch-up rezagado, P/C 0.23, sin earnings antes de expiry
+# CLSK eliminada (orden Yunior: no crypto, candidata a caida grande)
+# NFLX vigilar: cuchillo hoy (z -2.98) pero 33k calls — si BASA manana, candidata tarde
+# FILTRO TRADINGAGENTS (DeepSeek, 21-jul 16:00) — lado corto añadido:
+HAL put (stock ~33) | entrada: rebote 34-35 IMPRESO + rechazo x2 | stop 35.50 | tesis: SELL TA — ruptura SMA50/200 + distribucion 3x vol + softening admitido | #1 del ranking
+DHR put | entrada: rebote 185-190 impreso + rechazo | stop 192 | tesis: SELL TA — guia recortada + -13% bajo SMA200 | suplente
+# FCX VETADO (IV pre-earnings jueves) · HL no operable (datos contaminados)
+# Libro balanceado: 2 calls (INTC/MSFT) + 2 puts (HAL/DHR) — REFRESH 8:30 elige max 2 segun KOSPI/gaps

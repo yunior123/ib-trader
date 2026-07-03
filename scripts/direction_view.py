@@ -1,0 +1,437 @@
+#!/usr/bin/env python3
+"""direction_view.py — lectura DIRECCIONAL compuesta del ticker seleccionado, para pintar una
+FLECHA semitransparente en el chart con su % (orden Yunior 2026-07-24: "overlayed arrow con la
+dirección predicha basada en fleet state, walls, gex, gamma flip y cuantos factores relevantes
+sea posible, con porcentaje, limpia y un poco transparente").
+
+Combina, en tiempo real y TODO MEDIDO/derivado (nada inventado):
+  · gamma flip + régimen  (spot sobre/bajo flip; en POS el flip sostiene, en NEG amplifica)
+  · muros call/put + POC  (espacio a la resistencia vs al piso -> sesgo de recorrido)
+  · GEX net + dealer pressure (pin vs aceleración)
+  · dirección de la FLOTA / capitanes (signal_conditioning.fleet_bias)
+  · momentum reciente (bars 1m)
+  · valuación/inflación (inflation_score) como viento de cola/frente
+  · imán estructural (narrator.structural_signal) si hay nodo oro dominante
+
+Devuelve {dir, score: float[-1..1], doctrine_score: int% (contexto, NUNCA prob), prob:
+int%|None (solo "medido", bucket propio en calibration.json), prob_source, calib_context,
+factors:{...}, why:[...]}.
+doctrine_score es la vieja media ponderada (bias, no win-rate). prob es Optional a
+propósito (~/CLAUDE.md #3): patrón exacto de scripts/compass.cpp prob_of()/calib_context,
+ya aplicado en order_engine/prob_profit.py._measured_prob. SEÑAL-SOLAMENTE.
+"""
+import os, sys
+
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(REPO, "scripts"))
+
+CALIB_PATH = os.path.join(REPO, "data", "calibration.json")   # calibration_ledger.calibrate()
+CALIB_MIN_N = 20                                              # mismo umbral que MIN_N ahi
+NC_PATH = os.path.join(REPO, "data", "null_control.json")
+_NC_SOURCE_FOR_FACTOR = {"magnet": "structural", "captain_flow": "whale", "bollinger": "bollinger"}
+
+
+def _measured_prob(regime):
+    """Bucket "direction_view|<regime>" en data/calibration.json. None si no hay celda con
+    trust y n>=CALIB_MIN_N -- jamas un prior inventado."""
+    if not regime:
+        return None, None
+    try:
+        import json
+        cal = json.load(open(CALIB_PATH))
+    except Exception:
+        return None, None
+    b = cal.get(f"direction_view|{regime}")
+    if not b or not b.get("trust") or b.get("n", 0) < CALIB_MIN_N:
+        return None, None
+    return int(round(max(1, min(99, b["rate"] * 100)))), b
+
+
+def _calib_context(factors, weights):
+    """Veredicto MEDIDO (null_control.json) de la fuente cruda con mas peso en este computo,
+    publicado como CONTEXTO -- jamas como probabilidad (source_verdict de compass.cpp)."""
+    best_f, best_w = None, 0.0
+    for f, nc_src in _NC_SOURCE_FOR_FACTOR.items():
+        if f not in factors:
+            continue
+        w = abs(factors[f]) * weights.get(f, 1.0)
+        if w > best_w:
+            best_w, best_f = w, nc_src
+    if not best_f:
+        return None
+    try:
+        import json
+        nc = json.load(open(NC_PATH))
+    except Exception:
+        return None
+    sec = nc.get(best_f)
+    if not isinstance(sec, dict) or "verdict" not in sec:
+        return None
+    return (f"{best_f}:{sec['verdict']} n_eff={sec.get('n_eff', 0):.0f} "
+            f"fdr_ok={int(bool(sec.get('fdr_cells_passed', 0)))}")
+
+
+def _clamp(x, lo=-1.0, hi=1.0):
+    return max(lo, min(hi, x))
+
+
+def _bars_mom(sym, n=6):
+    p = os.path.join(REPO, f"data/bars_{sym.lower()}_ibkr.txt")
+    if not os.path.exists(p):
+        return None
+    try:
+        c = [float(l.split()[4]) for l in open(p) if l.strip()]
+    except Exception:
+        return None
+    if len(c) < n + 1:
+        return None
+    return 100 * (c[-1] - c[-1 - n]) / c[-1 - n]
+
+
+def _closes(sym):
+    p = os.path.join(REPO, f"data/bars_{sym.lower()}_ibkr.txt")
+    try:
+        return [float(l.split()[4]) for l in open(p) if l.strip()]
+    except Exception:
+        return []
+
+
+def _pctb(closes, n=20, k=2.0):
+    """%B de Bollinger(n,k) sobre el último cierre. 0=banda baja, 1=banda alta, extremos=riesgo
+    de reversión (doctrina BOLLINGER-SIEMPRE). None si no hay data."""
+    if len(closes) < n:
+        return None
+    import statistics as _st
+    w = closes[-n:]; m = _st.mean(w); sd = _st.pstdev(w)
+    if sd == 0:
+        return 0.5
+    up, lo = m + k * sd, m - k * sd
+    return (closes[-1] - lo) / (up - lo)
+
+
+def book_coef(sym):
+    """Coeficiente de CALIDAD DEL LIBRO de opciones para `sym`, medido por scripts/book_quality.py.
+
+    `coef` in [0,1] = cuanto se puede creer HOY a los niveles gamma de este nombre.
+    `coef == 0.0` (etiqueta THIN) significa literalmente "los niveles gamma son decoracion hoy
+    para este nombre: operar solo precio / momentum / capitan".
+
+    Devuelve (coef, label), o (None, None) si NO hay medicion. Jamas un numero plausible
+    inventado: sin medicion no se penaliza ni se premia — se declara que no se sabe y los
+    pesos gamma quedan como estaban (degradacion limpia, no silenciosa).
+    """
+    p = os.path.join(REPO, "data", "book_quality.json")
+    if not os.path.exists(p):
+        return None, None
+    try:
+        import json
+        with open(p) as f:
+            d = json.load(f)
+    except (OSError, ValueError):
+        return None, None
+    sec = d.get(sym.upper())
+    if not isinstance(sec, dict):
+        return None, None
+    lab = sec.get("book_label")
+    lab = lab if isinstance(lab, str) else None
+    c = sec.get("coef")
+    if not isinstance(c, (int, float)) or isinstance(c, bool):
+        return None, lab
+    return float(max(0.0, min(1.0, float(c)))), lab
+
+
+def compute(sym, lv=None):
+    sym = sym.upper()
+    try:
+        import chart_levels
+        if lv is None:
+            lv = chart_levels.gen(sym, write=False)
+    except Exception:
+        lv = lv or {}
+    if not lv or not lv.get("spot") or not lv.get("flip"):
+        return {"dir": "flat", "prob": None, "prob_source": "sin_lectura", "calib_context": None,
+                "doctrine_score": 50, "score": 0.0, "factors": {},
+                "why": ["sin mapa GEX fresco"], "book_label": None, "book_coef": None}
+    spot = lv["spot"]; flip = lv["flip"]; reg = lv.get("regime", "POS")
+    em = lv.get("em")   # None es legitimo (gex_core: sin IV no hay EM). Jamas fabricar la valla
+                        # al 2% (AUDIT #6): la doctrina expected-move la MIDE con el straddle ATM
+    cw = lv.get("call_wall"); pw = lv.get("put_wall")
+    press = lv.get("pressure") or 0
+    factors = {}; why = []; weights = {}
+
+    # 0) CALIDAD DEL LIBRO como MULTIPLICADOR de los pesos gamma (flip / muros / iman).
+    # No es un factor mas: es cuanto valen los factores gamma hoy. Con coef 0 (THIN) esos tres
+    # pesos van a 0 y la media ponderada se RENORMALIZA sola con los factores no-gamma
+    # (flota, momentum, bollinger, inflacion), porque el denominador solo suma pesos presentes.
+    bq_coef, bq_label = book_coef(sym)
+    gmul = 1.0 if bq_coef is None else bq_coef
+    if bq_coef is not None and bq_coef < 1.0:
+        if bq_coef <= 0.0:
+            why.append(f"libro {bq_label or 'THIN'}: niveles gamma = decoracion (peso 0)")
+        else:
+            why.append(f"libro {bq_label or '?'} coef {bq_coef:.2f}: gamma con peso reducido")
+
+    # 1) posición vs flip (régimen manda el signo del efecto)
+    dflip = _clamp((spot - flip) / em) if em else None
+    reg_pos = (reg == "POS")
+    if dflip is None:
+        why.append("sin EM medido: el flip no vota")
+    else:
+        f_flip = dflip * (1.0 if reg_pos else 0.5)   # en NEG el flip es whippy -> menos peso
+        factors["flip"] = round(f_flip, 2); weights["flip"] = 1.5 * gmul
+        if abs(dflip) > 0.15 and gmul > 0:
+            why.append(f"{'sobre' if dflip>0 else 'bajo'} el flip {flip} ({reg})")
+
+    # 2) espacio muros: cerca del put wall con recorrido al call wall = sesgo arriba (y viceversa)
+    f_wall = 0.0
+    if cw and pw and cw > pw:
+        pos = (spot - pw) / (cw - pw)            # 0=en put wall, 1=en call wall
+        f_wall = _clamp((0.5 - pos) * 2)          # cerca del piso -> +; pegado al techo -> -
+        factors["walls"] = round(f_wall, 2); weights["walls"] = 1.0 * gmul
+        if gmul > 0 and pos > 0.82:
+            why.append(f"pegado al call wall {cw} (techo)")
+        elif gmul > 0 and pos < 0.18:
+            why.append(f"pegado al put wall {pw} (piso)")
+
+    # 3) GEX net + pressure: pin (POS, pressure+) frena; NEG con pressure- acelera el movimiento
+    f_gex = 0.0
+    if not reg_pos and press and dflip is not None:
+        # en NEG, la aceleración va EN el sentido del momentum/flip actual
+        f_gex = _clamp(dflip) * 0.4
+        factors["gex_accel"] = round(f_gex, 2); weights["gex_accel"] = 0.8
+        why.append("régimen NEG: acelera el movimiento (whipsaw)")
+
+    # 4) FLOTA / capitanes
+    f_fleet = 0.0
+    try:
+        import signal_conditioning as SC
+        fb = SC.fleet_bias()
+        gov_key, gov_name = SC.governing_captain(sym)
+        cd = fb.get(gov_key, 0)
+        if cd and sym not in ("SPY", "QQQ", "SMH"):
+            f_fleet = float(cd)
+            why.append(f"capitán {gov_name or gov_key} {'↑' if cd>0 else '↓'}")
+        elif sym in ("SPY", "QQQ", "SMH"):
+            f_fleet = float(fb.get("market" if sym != "SMH" else "semis", 0))
+        # 0.0 incluye "faltan barras/excepción" (signal_conditioning.py:157,171-175): registrarlo
+        # con peso 1.4 diluia la flecha 28,6% (AUDIT-2026-08-04 #3). Sin dato no hay familia.
+        if f_fleet != 0.0:
+            factors["fleet"] = f_fleet; weights["fleet"] = 1.4
+    except Exception:
+        pass
+
+    # 4b) COMPONENTES del índice (QQQ/SPY): LOCAL rápido (sin red) — si MSFT/AMZN/TSLA caen, hereda
+    if sym in ("QQQ", "SPY"):
+        try:
+            import signal_conditioning as SC
+            comp = SC.component_bias(sym)
+            if comp is not None:                  # None = sin bars de componentes, no diluye con 0
+                f_comp = _clamp(comp * 1.5)
+                factors["components"] = round(f_comp, 2); weights["components"] = 1.3
+                if abs(f_comp) > 0.1:
+                    why.append(f"componentes {'↓' if f_comp < 0 else '↑'} ({comp:+.2f})")
+        except Exception:
+            pass
+
+    # 4d) AMORTIGUADOR cor-fleet (ficha 23): la regla 12 como VARIABLE DE ESTADO.
+    #     MULTIPLICATIVO sobre los pesos EXISTENTES fleet(1.4)/components(1.3) — jamás
+    #     una familia nueva (hay tope duro de familias). DESACTIVADO POR DEFECTO:
+    #     solo actúa con COR_FLEET_DAMPER=1 en el entorno. Su validación (re-calificar
+    #     las 972 señales por tercil de rho) sigue pendiente; hasta entonces no toca
+    #     ninguna flecha en producción. NINGUNA VOZ NUEVA.
+    if os.environ.get("COR_FLEET_DAMPER") == "1" and ("fleet" in weights or "components" in weights):
+        try:
+            from cor_fleet import captain_damper, apply_damper
+            cap_coef, _name_coef, cf_why = captain_damper()
+            if cap_coef != 1.0:
+                weights = apply_damper(weights, cap_coef)
+                if cf_why:
+                    why.append(cf_why)          # el coeficiente aplicado SIEMPRE impreso
+        except Exception:
+            pass                                # neutro: los pesos quedan como estaban
+
+    # 4c) SPIKES de opciones de CAPITANES en tiempo real (SPY/QQQ/SMH) — Yunior 2026-07-24
+    try:
+        import signal_conditioning as SC
+        cf = SC.captain_flow_bias()
+        gk, _ = SC.governing_captain(sym)
+        cfv = cf.get("semis" if gk == "semis" else "market", 0.0)
+        if abs(cfv) > 0.2:
+            factors["captain_flow"] = round(cfv, 2); weights["captain_flow"] = 1.2
+            why.append(f"spike-flow capitanes {'↑ (puts=piso)' if cfv > 0 else '↓ (calls=techo)'}")
+    except Exception:
+        pass
+
+    # 4e) ESTRUCTURA DE CADENAS de majors+ETFs+indices hermanos (Yunior 2026-07-28: "weight all
+    #     major companies... including big etfs, options chain in those etfs, spy, spx").
+    #     MULTIPLICATIVO sobre fleet/components via apply_peer (doctrina: jamas factor aditivo).
+    #     PEER_STRUCT=0 apaga.
+    if os.environ.get("PEER_STRUCT") != "0" and sym in ("QQQ", "SPY") \
+            and ("fleet" in weights or "components" in weights):
+        try:
+            from peer_structure import peer_coef, apply_peer
+            local_dir = factors.get("components") or factors.get("fleet") or 0.0
+            ps_coef, ps_why = peer_coef(sym, local_dir)
+            if ps_coef != 1.0:
+                weights = apply_peer(weights, ps_coef)
+                why.append(ps_why)              # el coeficiente aplicado SIEMPRE impreso
+        except Exception:
+            pass
+
+    # 4f) OVERNIGHT: NQ + Corea FUERA de RTH US (Yunior 2026-07-28).
+    #     MULTIPLICATIVO sobre fleet/components via apply_overnight (mismo patrón que peer).
+    #     OVERNIGHT_STRUCT=0 apaga. Solo aplica FUERA de RTH.
+    if os.environ.get("OVERNIGHT_STRUCT") != "0" and ("fleet" in weights or "components" in weights):
+        try:
+            import gex_core
+            if not gex_core.in_rth():
+                from overnight_structure import overnight_coef, apply_overnight
+                local_dir = factors.get("components") or factors.get("fleet") or 0.0
+                og_coef, og_why = overnight_coef(sym, local_dir)
+                if og_coef != 1.0:
+                    weights = apply_overnight(weights, og_coef)
+                    why.insert(0, og_why)          # overnight SIEMPRE priorizado en output
+        except Exception as e:
+            import sys
+            sys.stderr.write(f"[OVERNIGHT] {type(e).__name__}: {e}\n")
+
+    # 5) momentum reciente
+    mom = _bars_mom(sym)
+    if mom is not None:
+        f_mom = _clamp(mom / 0.5)                 # 0.5% ~ saturación
+        factors["momentum"] = round(f_mom, 2); weights["momentum"] = 1.0
+        if abs(mom) > 0.15:
+            why.append(f"momentum {mom:+.2f}%")
+
+    # 5b) %B de Bollinger (BOLLINGER-SIEMPRE): en EXTREMO manda la reversión de corto plazo
+    closes = _closes(sym)
+    pctb = _pctb(closes)
+    if pctb is not None:
+        f_bb = 0.0
+        if pctb >= 0.85:
+            f_bb = -min(1.0, (pctb - 0.85) / 0.15)     # sobrecompra -> sesgo fade abajo
+        elif pctb <= 0.15:
+            f_bb = min(1.0, (0.15 - pctb) / 0.15)       # sobreventa -> sesgo fade arriba
+        if f_bb != 0.0:
+            factors["bollinger"] = round(f_bb, 2); weights["bollinger"] = 1.15
+            why.append(f"%B 1m {pctb:.2f} {'extremo alto→fade' if f_bb<0 else 'extremo bajo→rebote'}")
+
+    # 5c) patrón de velas (contexto de reversión/continuación, no gatillo)
+    try:
+        import candles
+        pats = candles.read(sym, 1).get("patterns", [])
+        net = sum(1 if p["bias"] == "bull" else -1 if p["bias"] == "bear" else 0 for p in pats)
+        if net != 0:
+            factors["candle"] = 1.0 if net > 0 else -1.0; weights["candle"] = 0.6
+            why.append(f"velas {'alcista' if net > 0 else 'bajista'} ({pats[-1]['name']})")
+    except Exception:
+        pass
+
+    # 6) inflación (viento de cola/frente lento)
+    try:
+        import json
+        infl = json.load(open(os.path.join(REPO, "data/inflation_score.json")))
+        row = infl.get(sym)
+        if row and row.get("score") is not None:
+            f_infl = -row["score"] * 0.4          # inflada -> sesgo abajo
+            factors["inflation"] = round(f_infl, 2); weights["inflation"] = 0.5
+    except Exception:
+        pass
+
+    # 7) imán estructural
+    mag_price = None; mag_kind = None
+    try:
+        import narrator
+        sig = narrator.structural_signal(lv)
+        if sig and sig.get("dir") in ("up", "down"):
+            f_str = 1.0 if sig["dir"] == "up" else -1.0
+            factors["magnet"] = f_str; weights["magnet"] = 1.1 * gmul
+            if gmul > 0:
+                why.append(sig["text"])
+            mag_price = sig.get("price"); mag_kind = sig.get("kind")   # imán/pin
+    except Exception:
+        pass
+
+    # combinar (media ponderada de los factores presentes)
+    num = sum(factors[k] * weights.get(k, 1.0) for k in factors)
+    den = sum(weights.get(k, 1.0) for k in factors)
+    if den <= 0:
+        # Todo lo presente pesa 0: o no hay factores, o los unicos que hay son gamma y el libro
+        # los anula. NO se fabrica un sesgo "plausible": se dice que no hay lectura.
+        msg = ("libro THIN y solo factores gamma: SIN LECTURA direccional" if factors
+               else "sin factores medibles")
+        return {"dir": "flat", "prob": None, "prob_source": "sin_lectura", "calib_context": None,
+                "doctrine_score": 50, "score": 0.0, "target": None,
+                "target_label": None, "target_pct": None, "spot": round(spot, 2),
+                "factors": factors, "why": ([msg] + why)[:5], "sym": sym,
+                "book_label": bq_label, "book_coef": bq_coef}
+    score = _clamp(num / den)
+    if score > 0.15:
+        d = "up"
+    elif score < -0.15:
+        d = "down"
+    else:
+        d = "flat"
+    # doctrine_score = vieja media ponderada, ahora CONTEXTO (nunca "prob"): source_verdict/
+    # prob_of de scripts/compass.cpp, ya aplicado en order_engine/prob_profit.py._measured_prob.
+    # calibration_barrier.json (n=1154) mide la señal CRUDA de bollinger, no este setup
+    # compuesto -> no se usa aqui (misma falacia que compass rechaza con prob_retroceso_50).
+    doctrine_score = int(round(50 + abs(score) * 40)) if d != "flat" else 50
+    doctrine_score = max(50, min(90, doctrine_score))
+    calib_context = _calib_context(factors, weights)
+    prob, _bucket = _measured_prob(reg) if d != "flat" else (None, None)
+    prob_source = "medido" if prob is not None else "doctrina" if d == "flat" else "sin_medir"
+    if prob_source == "sin_medir":
+        why.append(f'prob SIN MEDIR (bucket "direction_view|{reg}" sin trust/n>={CALIB_MIN_N} '
+                    "en data/calibration.json) — doctrine_score es CONTEXTO, no probabilidad")
+    # 50 esta en la lista de numeros PROHIBIDOS: "flat sin bucket medido" es no-se, no
+    # moneda-al-aire medida. prob se queda None y el porque lo dice prob_source.
+
+    # PRÓXIMO OBJETIVO en el sentido de la flecha: imán estructural si va hacia él, si no
+    # el muro/nodo más cercano en esa dirección (call wall arriba / put wall abajo / POC).
+    target = None; target_lab = None
+    cands_up = [x for x in (cw, lv.get("abs_wall"), lv.get("poc")) if x and x > spot * 1.0005]
+    cands_dn = [x for x in (pw, lv.get("abs_wall"), lv.get("poc")) if x and x < spot * 0.9995]
+    if d == "up":
+        if mag_price and mag_price >= spot:
+            target, target_lab = mag_price, ("pin" if mag_kind == "pin" else "imán")
+        elif cands_up:
+            target, target_lab = min(cands_up), "muro call"
+    elif d == "down":
+        if mag_price and mag_price <= spot:
+            target, target_lab = mag_price, ("pin" if mag_kind == "pin" else "imán")
+        elif cands_dn:
+            target, target_lab = max(cands_dn), "muro put"
+    else:  # flat: el borde de caja más cercano
+        near = [x for x in (cw, pw) if x]
+        if near:
+            target = min(near, key=lambda x: abs(x - spot)); target_lab = "borde"
+    tgt_pct = round((target - spot) / spot * 100, 2) if target else None
+
+    return {"dir": d, "prob": prob, "prob_source": prob_source, "calib_context": calib_context,
+            "doctrine_score": doctrine_score, "score": round(score, 3),
+            "target": round(target, 2) if target else None, "target_label": target_lab,
+            "target_pct": tgt_pct, "spot": round(spot, 2),
+            "factors": factors, "why": why[:5], "sym": sym,
+            "book_label": bq_label, "book_coef": bq_coef}
+
+
+def _cli():
+    import json
+    sym = sys.argv[1] if len(sys.argv) > 1 else "NVDA"
+    r = compute(sym)
+    arrow = "▲" if r["dir"] == "up" else "▼" if r["dir"] == "down" else "▬"
+    tgt = (f"  → {r['target_label']} {r['target']} ({r['target_pct']:+.2f}%)"
+           if r.get("target") else "")
+    pr = f"{r['prob']}% ({r['prob_source']})" if r["prob"] is not None else "SIN MEDIR"
+    print(f"{arrow} {sym}: {r['dir'].upper()} P(profit) {pr}  doctrine_score "
+          f"{r['doctrine_score']} (score {r['score']:+.2f}){tgt}")
+    if r.get("calib_context"):
+        print(f"    calib_context: {r['calib_context']}")
+    for w in r["why"]:
+        print(f"    · {w}")
+    print("    factores:", json.dumps(r["factors"]))
+
+
+if __name__ == "__main__":
+    _cli()

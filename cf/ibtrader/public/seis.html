@@ -1,0 +1,110 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ib-trader · cockpit</title>
+<style>
+:root{--bg:#0a0c0f;--line:#1e232c;--fg:#e6e9ef;--fg2:#8b93a3}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font:13px/1.4 -apple-system,BlinkMacSystemFont,sans-serif;overflow:hidden}
+#barra{height:30px;display:flex;align-items:center;gap:8px;padding:0 10px;background:#101318;
+       border-bottom:1px solid var(--line);font:600 11px/1 ui-monospace,Menlo,monospace}
+#barra .t{color:var(--fg2);letter-spacing:.06em}
+#barra button,#barra a{background:transparent;border:1px solid var(--line);color:var(--fg2);
+  cursor:pointer;font:600 10px/1 ui-monospace,Menlo,monospace;padding:4px 8px;border-radius:3px;
+  text-decoration:none}
+#barra button.on{color:var(--fg);border-color:var(--fg2);background:#1a1f28}
+#barra select{background:#0d1015;border:1px solid var(--line);color:var(--fg);border-radius:3px;
+  font:600 10px/1 ui-monospace,Menlo,monospace;padding:4px 6px}
+#barra input{background:#0d1015;border:1px solid var(--line);color:var(--fg);border-radius:3px;
+  font:600 10px/1 ui-monospace,Menlo,monospace;padding:4px 6px;width:270px}
+#rejilla{display:grid;gap:1px;background:var(--line);height:calc(100vh - 30px)}
+iframe{border:0;width:100%;height:100%;display:block;background:#0a0c0f}
+@media(max-width:700px){#rejilla{grid-template-columns:1fr !important;
+  grid-template-rows:repeat(var(--n),70vh) !important;height:auto;overflow-y:auto}body{overflow:auto}}
+</style></head><body>
+<div id="barra">
+  <span class="t">IB-TRADER</span>
+  <select id="n"></select>
+  <input id="syms" value="QQQ,SPY,NVDA,TSLA,SMH,SPCX" spellcheck="false">
+  <button id="aplicar">aplicar</button>
+  <button id="b-cash" class="on">acciones</button>
+  <button id="b-perp">perp 24/7</button>
+  <span style="margin-left:auto"><a href="/panel">panel</a> <a href="/chart?sym=QQQ">1 ventana</a></span>
+</div>
+<div id="rejilla"></div>
+<script>
+const P = new URLSearchParams(location.search);
+const POR_DEFECTO = ["QQQ","SPY","NVDA","TSLA","SMH","SPCX","AAPL","MSFT","AMD"];
+// Rejillas que reparten bien la pantalla para cada numero de ventanas.
+const REJILLA = {1:[1,1], 2:[2,1], 3:[3,1], 4:[2,2], 6:[3,2], 8:[4,2], 9:[3,3]};
+let MODO = P.get("modo") === "perp" ? "perp" : "cash";
+let SYMS = (P.get("syms") || "").toUpperCase().split(",").map(s => s.trim()).filter(Boolean);
+let N = Number(P.get("n")) || (SYMS.length || 6);
+if (!REJILLA[N]) N = 6;
+if (!SYMS.length) SYMS = POR_DEFECTO.slice(0, N);
+
+const sel = document.getElementById("n");
+Object.keys(REJILLA).forEach(k => {
+  const o = document.createElement("option");
+  o.value = k; o.textContent = k + (k === "1" ? " ventana" : " ventanas");
+  sel.appendChild(o);
+});
+
+function ajustar() {
+  // Al subir de numero se rellena con los siguientes del universo; al bajar, se recorta.
+  if (SYMS.length < N) {
+    for (const s of POR_DEFECTO) { if (SYMS.length >= N) break; if (!SYMS.includes(s)) SYMS.push(s); }
+    let i = 0;
+    while (SYMS.length < N) SYMS.push(POR_DEFECTO[i++ % POR_DEFECTO.length]);
+  }
+  SYMS = SYMS.slice(0, N);
+}
+
+function pintar() {
+  ajustar();
+  sel.value = String(N);
+  document.getElementById("syms").value = SYMS.join(",");
+  document.getElementById("b-cash").className = MODO === "cash" ? "on" : "";
+  document.getElementById("b-perp").className = MODO === "perp" ? "on" : "";
+  const [cols, filas] = REJILLA[N];
+  const r = document.getElementById("rejilla");
+  r.style.gridTemplateColumns = `repeat(${cols},1fr)`;
+  r.style.gridTemplateRows = `repeat(${filas},1fr)`;
+  r.style.setProperty("--n", N);
+  r.innerHTML = "";
+  // Cada ventana es el chart COMPLETO de la .app, no una version recortada.
+  for (const s of SYMS) {
+    const f = document.createElement("iframe");
+    f.src = `/chart?sym=${encodeURIComponent(s)}${MODO === "perp" ? "&modo=perp" : ""}&cb=${Date.now()}`;
+    f.loading = "eager";
+    r.appendChild(f);
+  }
+  const q = new URLSearchParams();
+  q.set("n", String(N));
+  q.set("syms", SYMS.join(","));
+  if (MODO === "perp") q.set("modo", "perp");
+  history.replaceState(null, "", "?" + q);
+  try { localStorage.setItem("ibt_cockpit", JSON.stringify({ n: N, syms: SYMS, modo: MODO })); } catch {}
+}
+
+sel.onchange = () => { N = Number(sel.value); pintar(); };
+document.getElementById("aplicar").onclick = () => {
+  const v = document.getElementById("syms").value.toUpperCase().split(",").map(s => s.trim()).filter(Boolean);
+  if (!v.length) return;
+  SYMS = v; N = REJILLA[v.length] ? v.length : N;
+  pintar();
+};
+document.getElementById("syms").addEventListener("keydown", e => {
+  if (e.key === "Enter") document.getElementById("aplicar").click();
+});
+document.getElementById("b-cash").onclick = () => { MODO = "cash"; pintar(); };
+document.getElementById("b-perp").onclick = () => { MODO = "perp"; pintar(); };
+
+// Sin parametros en la URL se recupera lo ultimo que el usuario dejo puesto.
+if (![...P.keys()].length) {
+  try {
+    const g = JSON.parse(localStorage.getItem("ibt_cockpit") || "null");
+    if (g && REJILLA[g.n]) { N = g.n; SYMS = g.syms || SYMS; MODO = g.modo || MODO; }
+  } catch {}
+}
+pintar();
+</script></body></html>

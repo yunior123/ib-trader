@@ -1,0 +1,12 @@
+# HALT file aparece con el BUY vivo (ENTRY_PENDING): cancelar YA, cero dinero.
+# El put se encarece (QQQ cae) justo tras enviar el BUY -> la orden descansa sin fill.
+{"t_ms":0,"ev":"hhmm","v":1005}
+{"t_ms":0,"ev":"chain","spot_c":70850,"iv":0.20,"spread_c":4,"exp":20260721}
+{"t_ms":0,"ev":"und","bid_c":70848,"ask_c":70852}
+{"t_ms":100,"ev":"alert","side":"CALLS","sym":"QQQ"}
+{"t_ms":2610,"ev":"und","bid_c":70748,"ask_c":70752}
+{"t_ms":2620,"ev":"expect_state","v":"ENTRY_PENDING"}
+{"t_ms":2700,"ev":"halt"}
+{"t_ms":3000,"ev":"expect_state","v":"IDLE"}
+{"t_ms":9000,"ev":"expect_state","v":"IDLE"}
+{"t_ms":9000,"ev":"expect_trades","v":0}

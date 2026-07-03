@@ -1,0 +1,242 @@
+{
+ "QQQ": {
+  "flip": 687.61,
+  "regime": "NEGATIVE",
+  "call_wall": 690.0,
+  "put_wall": 680.0,
+  "poc": 685.0,
+  "close_spot": 686.5
+ },
+ "SPY": {
+  "flip": 744.63,
+  "regime": "NEGATIVE",
+  "call_wall": 745.0,
+  "put_wall": 740.0,
+  "poc": 730.0,
+  "close_spot": 743.49
+ },
+ "NVDA": {
+  "flip": 193.85,
+  "regime": "POSITIVE",
+  "call_wall": 200.0,
+  "put_wall": 195.0,
+  "poc": 200.0,
+  "close_spot": 196.0
+ },
+ "TSLA": {
+  "flip": 304.4,
+  "regime": "POSITIVE",
+  "call_wall": 310.0,
+  "put_wall": 300.0,
+  "poc": 300.0,
+  "close_spot": 307.37
+ },
+ "MU": {
+  "flip": 895.01,
+  "regime": "NEGATIVE",
+  "call_wall": 900.0,
+  "put_wall": 800.0,
+  "poc": 800.0,
+  "close_spot": 893.0
+ },
+ "SMH": {
+  "flip": 574.05,
+  "regime": "NEGATIVE",
+  "call_wall": 580.0,
+  "put_wall": 520.0,
+  "poc": 520.0,
+  "close_spot": 539.64
+ },
+ "AMD": {
+  "flip": 460.45,
+  "regime": "POSITIVE",
+  "call_wall": 500.0,
+  "put_wall": 450.0,
+  "poc": 500.0,
+  "close_spot": 487.14
+ },
+ "AAPL": {
+  "flip": 322.48,
+  "regime": "POSITIVE",
+  "call_wall": 345.0,
+  "put_wall": 325.0,
+  "poc": 345.0,
+  "close_spot": 335.2
+ },
+ "MSFT": {
+  "flip": 379.75,
+  "regime": "POSITIVE",
+  "call_wall": 460.0,
+  "put_wall": 420.0,
+  "poc": 460.0,
+  "close_spot": 449.32
+ },
+ "META": {
+  "flip": 565.26,
+  "regime": "NEGATIVE",
+  "call_wall": 600.0,
+  "put_wall": 540.0,
+  "poc": 550.0,
+  "close_spot": 542.5
+ },
+ "AMZN": {
+  "flip": 231.76,
+  "regime": "POSITIVE",
+  "call_wall": 260.0,
+  "put_wall": 220.0,
+  "poc": 250.0,
+  "close_spot": 256.95
+ },
+ "GOOGL": {
+  "flip": 325.21,
+  "regime": "POSITIVE",
+  "call_wall": 335.0,
+  "put_wall": 330.0,
+  "poc": 335.0,
+  "close_spot": 333.61
+ },
+ "INTC": {
+  "flip": 86.76,
+  "regime": "POSITIVE",
+  "call_wall": 95.0,
+  "put_wall": 90.0,
+  "poc": 95.0,
+  "close_spot": 91.78
+ },
+ "TSM": {
+  "flip": 397.7,
+  "regime": "POSITIVE",
+  "call_wall": 410.0,
+  "put_wall": 400.0,
+  "poc": 405.0,
+  "close_spot": 404.83
+ },
+ "ASML": {
+  "flip": 1644.23,
+  "regime": "POSITIVE",
+  "call_wall": 1700.0,
+  "put_wall": 1600.0,
+  "poc": 1700.0,
+  "close_spot": 1663.96
+ },
+ "TXN": {
+  "flip": 270.43,
+  "regime": "POSITIVE",
+  "call_wall": 285.0,
+  "put_wall": 260.0,
+  "poc": 285.0,
+  "close_spot": 276.52
+ },
+ "QCOM": {
+  "flip": 164.13,
+  "regime": "NEGATIVE",
+  "call_wall": 175.0,
+  "put_wall": 150.0,
+  "poc": 150.0,
+  "close_spot": 151.0
+ },
+ "AVGO": {
+  "flip": 377.43,
+  "regime": "POSITIVE",
+  "call_wall": 400.0,
+  "put_wall": 380.0,
+  "poc": 395.0,
+  "close_spot": 386.74
+ },
+ "NFLX": {
+  "flip": 71.58,
+  "regime": "POSITIVE",
+  "call_wall": 75.0,
+  "put_wall": 70.0,
+  "poc": 75.0,
+  "close_spot": 72.5
+ },
+ "NOK": {
+  "flip": 8.56,
+  "regime": "POSITIVE",
+  "call_wall": 10.0,
+  "put_wall": 9.0,
+  "poc": 9.0,
+  "close_spot": 9.13
+ },
+ "GLD": {
+  "flip": 370.54,
+  "regime": "POSITIVE",
+  "call_wall": 380.0,
+  "put_wall": 370.0,
+  "poc": 380.0,
+  "close_spot": 377.33
+ },
+ "XLK": {
+  "flip": 179.15,
+  "regime": "NEGATIVE",
+  "call_wall": 180.0,
+  "put_wall": 170.0,
+  "poc": 170.0,
+  "close_spot": 175.83
+ },
+ "EWY": {
+  "flip": 163.82,
+  "regime": "NEGATIVE",
+  "call_wall": 170.0,
+  "put_wall": 160.0,
+  "poc": 150.0,
+  "close_spot": 161.56
+ },
+ "DRAM": {
+  "flip": 49.38,
+  "regime": "POSITIVE",
+  "call_wall": 55.0,
+  "put_wall": 50.0,
+  "poc": 62.0,
+  "close_spot": 52.75
+ },
+ "SPCX": {
+  "flip": 120.52,
+  "regime": "NEGATIVE",
+  "call_wall": 115.0,
+  "put_wall": 110.0,
+  "poc": 110.0,
+  "close_spot": 112.54
+ },
+ "SKHY": {
+  "flip": 154.34,
+  "regime": "NEGATIVE",
+  "call_wall": 155.0,
+  "put_wall": 150.0,
+  "poc": 155.0,
+  "close_spot": 151.74
+ },
+ "LRCX": {
+  "flip": 292.88,
+  "regime": "POSITIVE",
+  "call_wall": 300.0,
+  "put_wall": 290.0,
+  "poc": 300.0,
+  "close_spot": 297.72
+ },
+ "SNDK": {
+  "flip": 1315.13,
+  "regime": "NEGATIVE",
+  "call_wall": 1400.0,
+  "put_wall": 1100.0,
+  "poc": 1390.0,
+  "close_spot": 1323.0
+ },
+ "WDC": {
+  "flip": 529.58,
+  "regime": "POSITIVE",
+  "call_wall": 600.0,
+  "put_wall": 540.0,
+  "poc": 600.0,
+  "close_spot": 544.09
+ },
+ "STX": {
+  "flip": 782.73,
+  "regime": "POSITIVE",
+  "call_wall": 890.0,
+  "put_wall": 750.0,
+  "poc": 850.0,
+  "close_spot": 864.49
+ }
+}

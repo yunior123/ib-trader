@@ -1,0 +1,35 @@
+{
+  "year": 2026,
+  "_source": "FOMC: federalreserve.gov/monetarypolicy/fomccalendars.htm (8/8 oficial) | CPI: BLS schedule via usinflationcalculator.com/inflation/consumer-price-index-release-schedule/ (12/12 oficial) | NFP: busqueda web verificada 2026-07-26, SOLO 5/12 confirmados (feb/jun/jul/sep/oct/nov/dic sin confirmar tras varios intentos, bls.gov bloquea scraping directo con 403) -> NO se adivina el resto con 'primer viernes': medido que esa regla falla 2/5 veces contra los confirmados (ene=9 no 2, may=8 no 1, por feriado/ajuste BLS). Faltantes se quedan AUSENTES, nunca fabricados. Refrescar/completar cuando haya fuente.",
+  "fomc": [
+    {"start": "2026-01-27", "end": "2026-01-28", "source": "federalreserve.gov"},
+    {"start": "2026-03-17", "end": "2026-03-18", "source": "federalreserve.gov"},
+    {"start": "2026-04-28", "end": "2026-04-29", "source": "federalreserve.gov"},
+    {"start": "2026-06-16", "end": "2026-06-17", "source": "federalreserve.gov"},
+    {"start": "2026-07-28", "end": "2026-07-29", "source": "federalreserve.gov"},
+    {"start": "2026-09-15", "end": "2026-09-16", "source": "federalreserve.gov"},
+    {"start": "2026-10-27", "end": "2026-10-28", "source": "federalreserve.gov"},
+    {"start": "2026-12-08", "end": "2026-12-09", "source": "federalreserve.gov"}
+  ],
+  "cpi": [
+    {"date": "2026-01-13", "source": "bls.gov (dic-2025 data)"},
+    {"date": "2026-02-13", "source": "bls.gov (ene-2026 data, reprogramado del 11)"},
+    {"date": "2026-03-11", "source": "bls.gov (feb-2026 data)"},
+    {"date": "2026-04-10", "source": "bls.gov (mar-2026 data)"},
+    {"date": "2026-05-12", "source": "bls.gov (abr-2026 data)"},
+    {"date": "2026-06-10", "source": "bls.gov (may-2026 data)"},
+    {"date": "2026-07-14", "source": "bls.gov (jun-2026 data)"},
+    {"date": "2026-08-12", "source": "bls.gov (jul-2026 data)"},
+    {"date": "2026-09-11", "source": "bls.gov (ago-2026 data)"},
+    {"date": "2026-10-14", "source": "bls.gov (sep-2026 data)"},
+    {"date": "2026-11-10", "source": "bls.gov (oct-2026 data)"},
+    {"date": "2026-12-10", "source": "bls.gov (nov-2026 data)"}
+  ],
+  "nfp": [
+    {"date": "2026-01-09", "source": "bls.gov (dic-2025 data, confirmado via busqueda web)"},
+    {"date": "2026-03-06", "source": "bls.gov (feb-2026 data, confirmado via busqueda web)"},
+    {"date": "2026-04-03", "source": "bls.gov (mar-2026 data, confirmado via busqueda web)"},
+    {"date": "2026-05-08", "source": "bls.gov (abr-2026 data, confirmado via busqueda web)"},
+    {"date": "2026-08-07", "source": "bls.gov (jul-2026 data, confirmado via busqueda web)"}
+  ]
+}

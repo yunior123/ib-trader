@@ -1,0 +1,29 @@
+# Festivos KRX (mercado CERRADO). Una fecha ISO por linea; '#' comenta.
+# Lunares (Seollal/Chuseok) y sustitutos NO son derivables: se tabulan por año, igual que
+# exchange_calendars precomputa XKRX (issue #128 "revert XKRX lunar/solar based holidays to
+# hardcoded dates"). Un año SIN lineas aqui = "no cubierto": overnight_feed.ref_session_ok
+# pasa a aceptar la referencia mas reciente <=6 dias y la etiqueta _gap (degradada).
+# Fuentes 2026: kstockguide.com/holidays + markethours.io/market-holidays/krx (union).
+# Sobrar dias es INOCUO (solo se usa para aceptar referencias, no para callar alarmas);
+# faltar dias es lo que tira una referencia buena. Revisar cada diciembre.
+2026-01-01   # Año Nuevo
+2026-02-16   # Seollal (vispera)
+2026-02-17   # Seollal
+2026-02-18   # Seollal (siguiente)
+2026-03-02   # Dia del Movimiento de Independencia (sustituto, 1-mar domingo)
+2026-05-01   # Dia del Trabajo
+2026-05-05   # Dia del Niño
+2026-05-25   # Cumpleaños de Buda (sustituto, 24-may domingo)
+2026-06-03   # Elecciones locales (festivo estatutario)
+2026-06-06   # Dia de los Caidos (sabado)
+2026-07-17   # Dia de la Constitucion (reinstaurado en 2026)
+2026-08-15   # Dia de la Liberacion (sabado)
+2026-08-17   # Dia de la Liberacion (sustituto)
+2026-09-24   # Chuseok (vispera)
+2026-09-25   # Chuseok
+2026-09-26   # Chuseok (siguiente, sabado)
+2026-10-03   # Dia de la Fundacion Nacional (sabado)
+2026-10-05   # Dia de la Fundacion Nacional (sustituto)
+2026-10-09   # Dia del Hangeul
+2026-12-25   # Navidad
+2026-12-31   # Cierre de fin de año (KRX no negocia el ultimo dia habil)

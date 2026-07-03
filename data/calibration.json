@@ -1,0 +1,18 @@
+{
+ "reclaim_wall|POSITIVO": {
+  "rate": 0.56,
+  "ci_low": 0.493,
+  "ci_high": 0.64,
+  "n": 169,
+  "wins": 96,
+  "trust": true
+ },
+ "reclaim_wall|NEGATIVO": {
+  "rate": 0.465,
+  "ci_low": 0.355,
+  "ci_high": 0.571,
+  "n": 78,
+  "wins": 36,
+  "trust": true
+ }
+}

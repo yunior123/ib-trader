@@ -1,0 +1,6 @@
+# v6 prob table cper | generado 2026-07-16 por v6_backtest.py | train 2026-05-28..2026-06-23 (60% de 30 sesiones)
+ORB_LONG 2 1 50.0
+ORB_SHORT 4 2 50.0
+TREND_REVERSAL_LONG 13 3 23.1 # DEGRADADA wr_oos=40% n_oos=5
+TREND_REVERSAL_SHORT 12 9 75.0
+VWAP_LOSS_SHORT 6 3 50.0

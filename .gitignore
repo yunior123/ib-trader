@@ -1,0 +1,168 @@
+venv/
+.venv/
+*venv/
+.claude/settings.local.json
+trades.db
+trades.db-journal
+__pycache__/
+*.pyc
+.DS_Store
+models/
+alpaca.env
+feeds.env
+
+# runtime logs (all bots)
+*.log
+
+# top-gainer runtime
+screener/*.log
+screener/*.err
+screener/*.out
+data/screener/
+screener/__pycache__/
+llm.env
+ta_venv/
+*.env
+screener/_ta*
+
+# compiled C++ bots (rebuild: clang++ -std=c++17 -O2 -o <bot> <bot>.cpp [-lcurl])
+dram_signal_bot
+nok_signal_bot
+spcx_signal_bot
+tsla_signal_bot
+momentum_bot
+screener/screener_watchdog
+screener/screener_alert
+scan_server
+scan_server.out
+scan_server.err
+
+# ws daemon runtime (bars/quotes/positions per symbol)
+data/bars_*.txt
+data/pos_*.txt
+data/quote_*.txt
+data/screener/ws_watch
+fleet_autostart.err
+fleet_autostart.out
+# compiled fleet binaries (build from .cpp)
+*_signal_bot
+alpaca_ws_bridge
+x_whale_bot
+finviz_scout
+qqq_xray
+opt_quick
+price_alarm
+data/x_budget.txt
+data/x_posts.jsonl
+data/x_whale_bot.pid
+data/whale_*.txt
+data/nbbo_*.txt
+data/bt_*.txt
+data/etf_positions.json
+data/etf_armed
+data/etf_ledger.csv
+trades.db-shm
+trades.db-wal
+data/topgainer
+topgainer/
+
+# cuarentenas y pre-ediciones (la historia vive en git)
+backup/
+data/options_hunt_*.csv
+data/options_picks.txt
+data/.finviz_last_call
+data/fleet_sleep
+
+# whale scalper runtime
+scalper/ledger/
+scalper/HALT
+scalper/ARM_LIVE
+scalper/whale_scalper
+scalper/whale_scalper_asan
+venv-chart/
+
+# .app compilada (se reconstruye con: zsh macapp/build.sh)
+macapp/*.app/
+macapp/build.log
+
+# cuenta IBKR del usuario: NO se versiona (cada uno la suya)
+data/account.txt
+
+# brujula (2026-07-25): binarios y salida de runtime
+compass
+compass_asan
+compass_asan.dSYM/
+data/compass_*.json
+compass.log
+fleet_consensus
+fleet_consensus_asan
+fleet_consensus_asan.dSYM/
+gate
+gate_asan
+gate_asan.dSYM/
+replay
+replay_asan
+replay_asan.dSYM/
+data/gate_*.json
+data/replay/
+
+# levels-5min archive (feature #18): las COPIAS sueltas de cada slot son transitorias
+# (la retencion las pliega al levels_5m.jsonl del dia y las borra). 26 syms x 78 slots =
+# 2028 ficheros/dia -> fuera de git; el jsonl del dia SI se versiona (1 fichero, ~4 MB).
+data/history/*/levels_*_[0-9][0-9][0-9][0-9].json
+
+# equity-prints archiver (feature #15): la cinta firmada cruda son ~5,6 MB/dia de sesion
+# (medido: 7477 prints = 216 KB en una ventana de 15 min x 5 syms). Vive en disco con
+# retencion de 180 dias y gzip desde el dia 2; en git solo su cobertura (prints_coverage.json).
+# Si Yunior prefiere que git haga de copia offsite, borrar esta linea (~1,7 GB/año de .git).
+data/prints/
+data/session_regime.json
+
+# voice-budget (#12): el gasto diario de voz es runtime local, no historia versionable
+data/voice_spend/
+data/voice_suppressed.jsonl*
+data/voice_budget_enable
+
+# portero de la ventana dom20:00-vie20:00 (build: scripts/build_fleet_hours.sh)
+fleet_hours
+fleet_hours.dSYM/
+
+# cadenas crudas: la banda adaptativa (2026-07-26) las llevo de 2 MB a 27 MB/dia.
+# Se quedan en disco (gex_snapshot las lee) pero fuera de git: 35 MB/dia de
+# crecimiento permanente. La retencion la hace chain_cube_archive (bundle .gz dia>=2).
+data/history/*/chain_full_*.json
+
+# build artifacts (regenerables)
+*_asan
+*.dSYM/
+bots/*_signal_bot
+logs/
+*.out
+*.err
+macapp/.rebuild-pending
+macapp/.rebuild-waiting
+order_engine/commands.jsonl
+
+# venv del proyecto mit (py3.12, 288 MB). OJO: la regla `*venv/` de arriba NO lo captura
+# porque el nombre no TERMINA en "venv" — sin esta linea el venv entero entra al repo.
+venv-mit/
+# pid de la cola de voz: estado de runtime, cambia en cada arranque/parada de la flota.
+data/voice_queue.pid
+# cubo strike x tiempo del panel TRACE: lo regenera com.ibtrader.tracecube cada 10 min.
+data/trace_cube_*.json
+
+# Discord: las URLs de webhook son credenciales (quien la tiene, publica)
+config/discord_webhooks.json
+.webhooks.json
+# JAMÁS al repo: cualquier renombrado/backup de credenciales
+*.apagado
+*borrados*
+# series intradia de UW (backfill + daemon): ~1 GB re-descargable del vendor (0 coste marginal)
+data/history/*/uw_*.json
+data/history/*/uw_*.HUECO
+data/uw_backfill_report.json
+venv-lse/
+# Local compiled helpers that are not part of the tracked release set.
+bin/lse_price_alarm
+bin/orderflow_footprint
+bin/premarket_arrow

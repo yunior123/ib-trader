@@ -1,0 +1,114 @@
+001 | Alerta ballena.
+002 | Alerta premium.
+003 | Alto volumen de puts en
+004 | Alto volumen de calls en
+005 | El piso se refuerza, más probable el rebote.
+006 | El techo se refuerza, más probable el retroceso.
+007 | Sigue entrando volumen de puts en
+008 | Sigue entrando volumen de calls en
+009 | Barrida alcista en
+010 | Barrida bajista en
+011 | millones netos comprados en calls en quince minutos.
+012 | millones netos comprados en puts en quince minutos.
+013 | Capitulación en Nasdaq. Manada, ruptura y régimen negativo, las tres.
+014 | Memoria subiendo. D RAM a favor.
+015 | Memoria bajando. Cuidado con D RAM.
+016 | Manada bajista. Peligro.
+017 | Manada alcista.
+018 | Cinta ciega. Revisar la conexión.
+019 | Ballenas ciegas. Sin cobertura de flujo.
+020 | abrió fuera de rango.
+021 | volvió a su rango.
+022 | bajó y se calmó. Buen momento para comprar.
+023 | sigue subiendo fuerte.
+024 | sigue bajando fuerte.
+025 | puede rebotar.
+026 | puede caer.
+027 | cayó fuerte tras resultados.
+028 | Compra
+029 | Vende
+030 | calls de
+031 | puts de
+032 | Stop en
+033 | Objetivo en
+034 | Fuera a las
+035 | No compres. El spread está muy ancho.
+036 | No compres. Sale muy caro.
+037 | No compres. Poca liquidez.
+038 | Sin ventaja ahora.
+039 | Nasdaq
+040 | S P quinientos
+041 | Nvidia
+042 | Tesla
+043 | Micron
+044 | semis
+045 | A M D
+046 | Apple
+047 | Microsoft
+048 | Meta
+049 | Amazon
+050 | Google
+051 | Intel
+052 | Taiwán Semi
+053 | A S M L
+054 | Texas Instruments
+055 | Qualcomm
+056 | Broadcom
+057 | Netflix
+058 | Nokia
+059 | oro
+060 | tecnología
+061 | Korea E T F
+062 | D RAM
+063 | Space X
+064 | S K Hynix
+065 | Lam Research
+066 | Sandisk
+067 | Western Digital
+068 | Seagate
+069 | Samsung
+070 | Kospi
+071 | cero
+072 | uno
+073 | dos
+074 | tres
+075 | cuatro
+076 | cinco
+077 | seis
+078 | siete
+079 | ocho
+080 | nueve
+081 | diez
+082 | once
+083 | doce
+084 | trece
+085 | catorce
+086 | quince
+087 | dieciséis
+088 | diecisiete
+089 | dieciocho
+090 | diecinueve
+091 | veinte
+092 | treinta
+093 | cuarenta
+094 | cincuenta
+095 | sesenta
+096 | setenta
+097 | ochenta
+098 | noventa
+099 | cien
+100 | doscientos
+101 | trescientos
+102 | cuatrocientos
+103 | quinientos
+104 | seiscientos
+105 | setecientos
+106 | ochocientos
+107 | novecientos
+108 | mil
+109 | coma
+110 | y
+111 | punto
+112 | millones
+113 | por ciento
+114 | dólares

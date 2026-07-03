@@ -1,0 +1,468 @@
+{
+ "sym": "GLW",
+ "generado": "2026-08-04T16:25:42",
+ "viernes": "2026-08-07",
+ "chain_dir": "2026-08-04",
+ "spot": 146.64,
+ "spot_source": "polygon_prev_close",
+ "spot_age_s": 87906.3,
+ "band": 0.6,
+ "exp_hasta_fichero": "2026-08-21",
+ "greeks_src": "polygon_directo",
+ "oi_src": "polygon_directo",
+ "bid_ask": "NO_ENTITLED",
+ "n_contratos_cadena": 337,
+ "n_hasta_viernes": 122,
+ "n_solo_viernes": 122,
+ "regime": "POS",
+ "net_gex": 2675772.716796935,
+ "flip": 139.0904275210084,
+ "flip_src": "recompute_15pct",
+ "call_wall": 160.0,
+ "call_wall_kind": "pin",
+ "put_wall": 137.0,
+ "put_wall_kind": "trampilla",
+ "abs_wall": 160.0,
+ "abs_wall_kind": "pin",
+ "oi_call_wall": 160.0,
+ "oi_put_wall": 115.0,
+ "profile": [
+  {
+   "strike": 80.0,
+   "gex": -107.61095798973106
+  },
+  {
+   "strike": 85.0,
+   "gex": -587.7366423743775
+  },
+  {
+   "strike": 90.0,
+   "gex": -214.17601274651645
+  },
+  {
+   "strike": 95.0,
+   "gex": -892.4814433659257
+  },
+  {
+   "strike": 97.0,
+   "gex": -620.3644304280929
+  },
+  {
+   "strike": 98.0,
+   "gex": -89.77312449719652
+  },
+  {
+   "strike": 99.0,
+   "gex": -157.11619763968085
+  },
+  {
+   "strike": 100.0,
+   "gex": -8735.243759896057
+  },
+  {
+   "strike": 101.0,
+   "gex": -562.7022503946802
+  },
+  {
+   "strike": 102.0,
+   "gex": -267.89267975857274
+  },
+  {
+   "strike": 103.0,
+   "gex": -359.24668588091305
+  },
+  {
+   "strike": 104.0,
+   "gex": -554.1667624866202
+  },
+  {
+   "strike": 105.0,
+   "gex": -1393.1731236562694
+  },
+  {
+   "strike": 106.0,
+   "gex": -138.39899844425315
+  },
+  {
+   "strike": 107.0,
+   "gex": -766.9292674756636
+  },
+  {
+   "strike": 108.0,
+   "gex": -373.29475298840686
+  },
+  {
+   "strike": 109.0,
+   "gex": -260.900201244285
+  },
+  {
+   "strike": 110.0,
+   "gex": -6517.939265633257
+  },
+  {
+   "strike": 111.0,
+   "gex": -3415.9016654427337
+  },
+  {
+   "strike": 112.0,
+   "gex": -1594.880621728776
+  },
+  {
+   "strike": 113.0,
+   "gex": -12824.912558291155
+  },
+  {
+   "strike": 114.0,
+   "gex": -2022.54838967036
+  },
+  {
+   "strike": 115.0,
+   "gex": -9294.309983426043
+  },
+  {
+   "strike": 116.0,
+   "gex": -1854.2859581691719
+  },
+  {
+   "strike": 117.0,
+   "gex": -709.4877644700896
+  },
+  {
+   "strike": 118.0,
+   "gex": -1524.0552424617804
+  },
+  {
+   "strike": 119.0,
+   "gex": -7471.677800487367
+  },
+  {
+   "strike": 120.0,
+   "gex": -17059.739233512493
+  },
+  {
+   "strike": 121.0,
+   "gex": -3394.3982042568077
+  },
+  {
+   "strike": 122.0,
+   "gex": -8882.065672496343
+  },
+  {
+   "strike": 123.0,
+   "gex": -4785.29737971089
+  },
+  {
+   "strike": 124.0,
+   "gex": -7919.903586967423
+  },
+  {
+   "strike": 125.0,
+   "gex": -37825.7254433453
+  },
+  {
+   "strike": 126.0,
+   "gex": -2775.726789926409
+  },
+  {
+   "strike": 127.0,
+   "gex": -8762.318833586913
+  },
+  {
+   "strike": 128.0,
+   "gex": -5802.822464979752
+  },
+  {
+   "strike": 129.0,
+   "gex": -6805.634465074647
+  },
+  {
+   "strike": 130.0,
+   "gex": -29159.250949582423
+  },
+  {
+   "strike": 131.0,
+   "gex": -4095.083537071731
+  },
+  {
+   "strike": 132.0,
+   "gex": -10590.92839074324
+  },
+  {
+   "strike": 133.0,
+   "gex": -10542.29053969454
+  },
+  {
+   "strike": 134.0,
+   "gex": -9326.430391916185
+  },
+  {
+   "strike": 135.0,
+   "gex": -58544.189157898014
+  },
+  {
+   "strike": 136.0,
+   "gex": -6041.020433525514
+  },
+  {
+   "strike": 137.0,
+   "gex": -102923.29807952071
+  },
+  {
+   "strike": 138.0,
+   "gex": 27934.333017130597
+  },
+  {
+   "strike": 139.0,
+   "gex": -5777.3588768991685
+  },
+  {
+   "strike": 140.0,
+   "gex": -91652.49873422427
+  },
+  {
+   "strike": 141.0,
+   "gex": -19889.514991320895
+  },
+  {
+   "strike": 142.0,
+   "gex": 12578.737832745432
+  },
+  {
+   "strike": 143.0,
+   "gex": 2239.5490105492245
+  },
+  {
+   "strike": 144.0,
+   "gex": 65166.61114910048
+  },
+  {
+   "strike": 145.0,
+   "gex": 15946.896079162929
+  },
+  {
+   "strike": 146.0,
+   "gex": 23458.268768393387
+  },
+  {
+   "strike": 147.0,
+   "gex": 59600.20778584367
+  },
+  {
+   "strike": 148.0,
+   "gex": 41351.555093379
+  },
+  {
+   "strike": 149.0,
+   "gex": 15194.983909633367
+  },
+  {
+   "strike": 150.0,
+   "gex": 298146.4057734721
+  },
+  {
+   "strike": 152.5,
+   "gex": 88466.91232347341
+  },
+  {
+   "strike": 155.0,
+   "gex": 372484.5253879773
+  },
+  {
+   "strike": 157.5,
+   "gex": 134334.72034442105
+  },
+  {
+   "strike": 160.0,
+   "gex": 657846.0437803601
+  },
+  {
+   "strike": 162.5,
+   "gex": 163205.68594612123
+  },
+  {
+   "strike": 165.0,
+   "gex": 191133.22524307016
+  },
+  {
+   "strike": 167.5,
+   "gex": 84251.07654928694
+  },
+  {
+   "strike": 170.0,
+   "gex": 418033.5318058662
+  },
+  {
+   "strike": 172.5,
+   "gex": 111691.38442497468
+  },
+  {
+   "strike": 175.0,
+   "gex": 31581.140974133035
+  },
+  {
+   "strike": 177.5,
+   "gex": 15269.907425477475
+  },
+  {
+   "strike": 180.0,
+   "gex": 185511.335248043
+  },
+  {
+   "strike": 182.5,
+   "gex": 648.0365339920979
+  },
+  {
+   "strike": 185.0,
+   "gex": 47040.342271737725
+  },
+  {
+   "strike": 187.5,
+   "gex": 8684.353671159453
+  },
+  {
+   "strike": 190.0,
+   "gex": 33348.9260517415
+  },
+  {
+   "strike": 192.5,
+   "gex": 2275.4527668481596
+  },
+  {
+   "strike": 195.0,
+   "gex": 7587.40103362819
+  },
+  {
+   "strike": 197.5,
+   "gex": 4959.12715323648
+  },
+  {
+   "strike": 200.0,
+   "gex": 14926.027420573279
+  },
+  {
+   "strike": 202.5,
+   "gex": 4832.938439699019
+  },
+  {
+   "strike": 205.0,
+   "gex": 826.5995362383516
+  },
+  {
+   "strike": 207.5,
+   "gex": 1431.9449311645187
+  },
+  {
+   "strike": 210.0,
+   "gex": 1764.3977382726246
+  },
+  {
+   "strike": 212.5,
+   "gex": 961.9544650413206
+  },
+  {
+   "strike": 215.0,
+   "gex": 4576.7608462599
+  },
+  {
+   "strike": 217.5,
+   "gex": 2128.8226110151727
+  },
+  {
+   "strike": 220.0,
+   "gex": 17523.77580335413
+  },
+  {
+   "strike": 222.5,
+   "gex": 2078.3996894710745
+  },
+  {
+   "strike": 225.0,
+   "gex": 4497.307827356696
+  },
+  {
+   "strike": 227.5,
+   "gex": 13396.578881245998
+  },
+  {
+   "strike": 230.0,
+   "gex": 1702.961872617117
+  },
+  {
+   "strike": 232.5,
+   "gex": 1020.272076968557
+  }
+ ],
+ "viernes_call_wall": 160.0,
+ "viernes_put_wall": 115.0,
+ "viernes_calls_oi": 17122,
+ "viernes_puts_oi": 16654,
+ "viernes_pc_oi": 0.973,
+ "viernes_top_calls": [
+  {
+   "strike": 160.0,
+   "oi": 1870
+  },
+  {
+   "strike": 145.0,
+   "oi": 1448
+  },
+  {
+   "strike": 170.0,
+   "oi": 1282
+  },
+  {
+   "strike": 150.0,
+   "oi": 1280
+  },
+  {
+   "strike": 220.0,
+   "oi": 1137
+  },
+  {
+   "strike": 155.0,
+   "oi": 1086
+  }
+ ],
+ "viernes_top_puts": [
+  {
+   "strike": 115.0,
+   "oi": 1249
+  },
+  {
+   "strike": 120.0,
+   "oi": 1186
+  },
+  {
+   "strike": 110.0,
+   "oi": 1080
+  },
+  {
+   "strike": 137.0,
+   "oi": 1055
+  },
+  {
+   "strike": 125.0,
+   "oi": 974
+  },
+  {
+   "strike": 135.0,
+   "oi": 778
+  }
+ ],
+ "supervivientes": [],
+ "toques": null,
+ "semana_pasada_fechas": [
+  "2026-07-27",
+  "2026-07-28",
+  "2026-07-29",
+  "2026-07-30",
+  "2026-07-31"
+ ],
+ "caveats": [
+  "OI de la semana pasada = contratos YA EXPIRADOS (exp 07-22/23/24): el cociente de OI NO es like-for-like. La supervivencia se decide por RANGO del strike en el libro de hoy.",
+  "Muros de la semana pasada: cadena IBKR/TWS del vencimiento MAS CERCANO de cada dia. Muros de hoy: cadena Polygon con banda adaptativa, todos los vencimientos hasta el viernes.",
+  "spot 146.64 con edad 87906s = cierre del viernes (mercado cerrado).",
+  "Polygon = 15 min de retraso (HISTORIA/ESTRUCTURA). Ningun nivel de aqui dispara una orden: el PRINT que confirma es de IBKR en tiempo real.",
+  "bid/ask NO_ENTITLED en este plan de Polygon: no hay gate de spread en esta hoja."
+ ]
+}

@@ -1,0 +1,73 @@
+{
+  "segments": {
+    "alerts": [
+      {"id": "whale_alert", "text": "Alerta ballena"},
+      {"id": "high_vol_puts", "text": "alto volumen de puts"},
+      {"id": "high_vol_calls", "text": "alto volumen de calls"},
+      {"id": "floor_reinforced", "text": "el piso se refuerza"},
+      {"id": "ceiling_reinforced", "text": "el techo se refuerza"},
+      {"id": "bounce_likely", "text": "más probable el rebote"},
+      {"id": "retracement_likely", "text": "más probable el retroceso"},
+      {"id": "upward_sweep", "text": "Barrida alcista"},
+      {"id": "downward_sweep", "text": "Barrida bajista"}
+    ],
+    "actions": [
+      {"id": "buy", "text": "compra"},
+      {"id": "sell", "text": "vende"},
+      {"id": "stop", "text": "stop"},
+      {"id": "exit", "text": "fuera"}
+    ],
+    "symbols": [
+      {"id": "qqq", "text": "Cue Cue Cue"},
+      {"id": "spy", "text": "Es Pi Y"},
+      {"id": "nvda", "text": "Ene Ve De A"},
+      {"id": "asml", "text": "A S M L"},
+      {"id": "amd", "text": "A M D"},
+      {"id": "smh", "text": "Es M H"},
+      {"id": "dram", "text": "D R A M"},
+      {"id": "mú", "text": "Mu"},
+      {"id": "tsl", "text": "Te Es Ele"},
+      {"id": "msft", "text": "M S F T"},
+      {"id": "aapl", "text": "A P L"},
+      {"id": "goog", "text": "Goog"},
+      {"id": "amzn", "text": "Am Zn"},
+      {"id": "xom", "text": "X O M"},
+      {"id": "jnj", "text": "J N J"}
+    ],
+    "numbers": [
+      {"id": "num_0", "text": "cero"},
+      {"id": "num_1", "text": "uno"},
+      {"id": "num_2", "text": "dos"},
+      {"id": "num_3", "text": "tres"},
+      {"id": "num_4", "text": "cuatro"},
+      {"id": "num_5", "text": "cinco"},
+      {"id": "num_10", "text": "diez"},
+      {"id": "num_20", "text": "veinte"},
+      {"id": "num_50", "text": "cincuenta"},
+      {"id": "num_100", "text": "cien"},
+      {"id": "decimal_point", "text": "coma"},
+      {"id": "million", "text": "millones"},
+      {"id": "percent", "text": "por ciento"}
+    ],
+    "context": [
+      {"id": "in", "text": "en"},
+      {"id": "up", "text": "hacia arriba"},
+      {"id": "down", "text": "hacia abajo"},
+      {"id": "continued", "text": "sigue"}
+    ]
+  },
+  "voice_config": {
+    "motor": "ElevenLabs",
+    "model": "eleven_multilingual_v2",
+    "voice_id": "EXAVITQu4vr4xnSDxMaL",
+    "voice_name": "Sarah",
+    "language": "es_ES"
+  },
+  "metadata": {
+    "total_segments": 56,
+    "estimated_chars": 450,
+    "estimated_cost": 0.01,
+    "date": "2026-07-29",
+    "note": "Banco mínimo viabiliidad. Cuando hay créditos ElevenLabs, run: zsh generate_voice_bank.sh"
+  }
+}

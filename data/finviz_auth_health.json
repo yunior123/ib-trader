@@ -1,0 +1,17 @@
+{
+ "caduca_declarado": "2026-08-01",
+ "clave_efectiva": "FINVIZ_AUTH3",
+ "dias_restantes": -22,
+ "fecha": "2026-08-23",
+ "http": 401,
+ "motivo": "HTTP 401",
+ "orden_de_busqueda": [
+  "FINVIZ_AUTH3",
+  "FINVIZ_AUTH"
+ ],
+ "origen": "fichero",
+ "sano": false,
+ "token_cola": "2acb",
+ "ts": 1787489709,
+ "veredicto": "CADUCADO"
+}

@@ -1,0 +1,464 @@
+[
+ {
+  "symbol": "SPY",
+  "date": "2026-07-10",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/SPY_2026-07-10_tbbo.csv.zst",
+  "bytes": 4245984,
+  "cost_usd": 0.040319
+ },
+ {
+  "symbol": "SPY",
+  "date": "2026-07-13",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/SPY_2026-07-13_tbbo.csv.zst",
+  "bytes": 5289615,
+  "cost_usd": 0.048371
+ },
+ {
+  "symbol": "SPY",
+  "date": "2026-07-14",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/SPY_2026-07-14_tbbo.csv.zst",
+  "bytes": 3835081,
+  "cost_usd": 0.035237
+ },
+ {
+  "symbol": "SPY",
+  "date": "2026-07-15",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/SPY_2026-07-15_tbbo.csv.zst",
+  "bytes": 4967577,
+  "cost_usd": 0.045581
+ },
+ {
+  "symbol": "SPY",
+  "date": "2026-07-16",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/SPY_2026-07-16_tbbo.csv.zst",
+  "bytes": 4969995,
+  "cost_usd": 0.04587
+ },
+ {
+  "symbol": "SPY",
+  "date": "2026-07-17",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/SPY_2026-07-17_tbbo.csv.zst",
+  "bytes": 5867784,
+  "cost_usd": 0.052835
+ },
+ {
+  "symbol": "SPY",
+  "date": "2026-07-20",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/SPY_2026-07-20_tbbo.csv.zst",
+  "bytes": 5713409,
+  "cost_usd": 0.052563
+ },
+ {
+  "symbol": "SPY",
+  "date": "2026-07-21",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/SPY_2026-07-21_tbbo.csv.zst",
+  "bytes": 3799966,
+  "cost_usd": 0.034781
+ },
+ {
+  "symbol": "SPY",
+  "date": "2026-07-22",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/SPY_2026-07-22_tbbo.csv.zst",
+  "bytes": 3268093,
+  "cost_usd": 0.029754
+ },
+ {
+  "symbol": "SPY",
+  "date": "2026-07-23",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/SPY_2026-07-23_tbbo.csv.zst",
+  "bytes": 5557605,
+  "cost_usd": 0.050909
+ },
+ {
+  "symbol": "SPY",
+  "date": "2026-07-24",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/SPY_2026-07-24_tbbo.csv.zst",
+  "bytes": 4600138,
+  "cost_usd": 0.041466
+ },
+ {
+  "symbol": "SPY",
+  "date": "2026-07-27",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/SPY_2026-07-27_tbbo.csv.zst",
+  "bytes": 4880250,
+  "cost_usd": 0.043779
+ },
+ {
+  "symbol": "SPY",
+  "date": "2026-07-28",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/SPY_2026-07-28_tbbo.csv.zst",
+  "bytes": 5186817,
+  "cost_usd": 0.046815
+ },
+ {
+  "symbol": "SPY",
+  "date": "2026-07-29",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/SPY_2026-07-29_tbbo.csv.zst",
+  "bytes": 8410822,
+  "cost_usd": 0.076914
+ },
+ {
+  "symbol": "SPY",
+  "date": "2026-07-30",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/SPY_2026-07-30_tbbo.csv.zst",
+  "bytes": 6232606,
+  "cost_usd": 0.056479
+ },
+ {
+  "symbol": "SPY",
+  "date": "2026-07-31",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/SPY_2026-07-31_tbbo.csv.zst",
+  "bytes": 6249283,
+  "cost_usd": 0.0568
+ },
+ {
+  "symbol": "SPY",
+  "date": "2026-08-03",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/SPY_2026-08-03_tbbo.csv.zst",
+  "bytes": 6345137,
+  "cost_usd": 0.057375
+ },
+ {
+  "symbol": "SPY",
+  "date": "2026-08-04",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/SPY_2026-08-04_tbbo.csv.zst",
+  "bytes": 6301641,
+  "cost_usd": 0.059422
+ },
+ {
+  "symbol": "SPY",
+  "date": "2026-08-05",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/SPY_2026-08-05_tbbo.csv.zst",
+  "bytes": 5012238,
+  "cost_usd": 0.045375
+ },
+ {
+  "symbol": "SPY",
+  "date": "2026-08-06",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/SPY_2026-08-06_tbbo.csv.zst",
+  "bytes": 4823297,
+  "cost_usd": 0.043867
+ },
+ {
+  "symbol": "QQQ",
+  "date": "2026-07-10",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/QQQ_2026-07-10_tbbo.csv.zst",
+  "bytes": 3969773,
+  "cost_usd": 0.035163
+ },
+ {
+  "symbol": "QQQ",
+  "date": "2026-07-13",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/QQQ_2026-07-13_tbbo.csv.zst",
+  "bytes": 5717672,
+  "cost_usd": 0.051256
+ },
+ {
+  "symbol": "QQQ",
+  "date": "2026-07-14",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/QQQ_2026-07-14_tbbo.csv.zst",
+  "bytes": 4586143,
+  "cost_usd": 0.040855
+ },
+ {
+  "symbol": "QQQ",
+  "date": "2026-07-15",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/QQQ_2026-07-15_tbbo.csv.zst",
+  "bytes": 5397855,
+  "cost_usd": 0.047914
+ },
+ {
+  "symbol": "QQQ",
+  "date": "2026-07-16",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/QQQ_2026-07-16_tbbo.csv.zst",
+  "bytes": 5846356,
+  "cost_usd": 0.053079
+ },
+ {
+  "symbol": "QQQ",
+  "date": "2026-07-17",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/QQQ_2026-07-17_tbbo.csv.zst",
+  "bytes": 6976416,
+  "cost_usd": 0.062749
+ },
+ {
+  "symbol": "QQQ",
+  "date": "2026-07-20",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/QQQ_2026-07-20_tbbo.csv.zst",
+  "bytes": 4534020,
+  "cost_usd": 0.040141
+ },
+ {
+  "symbol": "QQQ",
+  "date": "2026-07-21",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/QQQ_2026-07-21_tbbo.csv.zst",
+  "bytes": 4161161,
+  "cost_usd": 0.03704
+ },
+ {
+  "symbol": "QQQ",
+  "date": "2026-07-22",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/QQQ_2026-07-22_tbbo.csv.zst",
+  "bytes": 3140836,
+  "cost_usd": 0.027462
+ },
+ {
+  "symbol": "QQQ",
+  "date": "2026-07-23",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/QQQ_2026-07-23_tbbo.csv.zst",
+  "bytes": 6135771,
+  "cost_usd": 0.055015
+ },
+ {
+  "symbol": "QQQ",
+  "date": "2026-07-24",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/QQQ_2026-07-24_tbbo.csv.zst",
+  "bytes": 6142555,
+  "cost_usd": 0.055383
+ },
+ {
+  "symbol": "QQQ",
+  "date": "2026-07-27",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/QQQ_2026-07-27_tbbo.csv.zst",
+  "bytes": 7569381,
+  "cost_usd": 0.068864
+ },
+ {
+  "symbol": "QQQ",
+  "date": "2026-07-28",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/QQQ_2026-07-28_tbbo.csv.zst",
+  "bytes": 8031691,
+  "cost_usd": 0.073887
+ },
+ {
+  "symbol": "QQQ",
+  "date": "2026-07-29",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/QQQ_2026-07-29_tbbo.csv.zst",
+  "bytes": 8735366,
+  "cost_usd": 0.079784
+ },
+ {
+  "symbol": "QQQ",
+  "date": "2026-07-30",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/QQQ_2026-07-30_tbbo.csv.zst",
+  "bytes": 7746605,
+  "cost_usd": 0.069858
+ },
+ {
+  "symbol": "QQQ",
+  "date": "2026-07-31",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/QQQ_2026-07-31_tbbo.csv.zst",
+  "bytes": 6870393,
+  "cost_usd": 0.061363
+ },
+ {
+  "symbol": "QQQ",
+  "date": "2026-08-03",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/QQQ_2026-08-03_tbbo.csv.zst",
+  "bytes": 5421432,
+  "cost_usd": 0.04899
+ },
+ {
+  "symbol": "QQQ",
+  "date": "2026-08-04",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/QQQ_2026-08-04_tbbo.csv.zst",
+  "bytes": 7160864,
+  "cost_usd": 0.065775
+ },
+ {
+  "symbol": "QQQ",
+  "date": "2026-08-05",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/QQQ_2026-08-05_tbbo.csv.zst",
+  "bytes": 5028063,
+  "cost_usd": 0.044567
+ },
+ {
+  "symbol": "QQQ",
+  "date": "2026-08-06",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/QQQ_2026-08-06_tbbo.csv.zst",
+  "bytes": 4980765,
+  "cost_usd": 0.043457
+ },
+ {
+  "symbol": "NVDA",
+  "date": "2026-07-10",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/NVDA_2026-07-10_tbbo.csv.zst",
+  "bytes": 13742980,
+  "cost_usd": 0.142429
+ },
+ {
+  "symbol": "NVDA",
+  "date": "2026-07-13",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/NVDA_2026-07-13_tbbo.csv.zst",
+  "bytes": 15462823,
+  "cost_usd": 0.155959
+ },
+ {
+  "symbol": "NVDA",
+  "date": "2026-07-14",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/NVDA_2026-07-14_tbbo.csv.zst",
+  "bytes": 15406742,
+  "cost_usd": 0.15902
+ },
+ {
+  "symbol": "NVDA",
+  "date": "2026-07-15",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/NVDA_2026-07-15_tbbo.csv.zst",
+  "bytes": 16975501,
+  "cost_usd": 0.175497
+ },
+ {
+  "symbol": "NVDA",
+  "date": "2026-07-16",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/NVDA_2026-07-16_tbbo.csv.zst",
+  "bytes": 16905450,
+  "cost_usd": 0.169291
+ },
+ {
+  "symbol": "NVDA",
+  "date": "2026-07-17",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/NVDA_2026-07-17_tbbo.csv.zst",
+  "bytes": 18673052,
+  "cost_usd": 0.188374
+ },
+ {
+  "symbol": "NVDA",
+  "date": "2026-07-20",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/NVDA_2026-07-20_tbbo.csv.zst",
+  "bytes": 12365497,
+  "cost_usd": 0.125954
+ },
+ {
+  "symbol": "NVDA",
+  "date": "2026-07-21",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/NVDA_2026-07-21_tbbo.csv.zst",
+  "bytes": 13102270,
+  "cost_usd": 0.13609
+ },
+ {
+  "symbol": "NVDA",
+  "date": "2026-07-22",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/NVDA_2026-07-22_tbbo.csv.zst",
+  "bytes": 13933102,
+  "cost_usd": 0.145246
+ },
+ {
+  "symbol": "NVDA",
+  "date": "2026-07-23",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/NVDA_2026-07-23_tbbo.csv.zst",
+  "bytes": 14257817,
+  "cost_usd": 0.145254
+ },
+ {
+  "symbol": "NVDA",
+  "date": "2026-07-24",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/NVDA_2026-07-24_tbbo.csv.zst",
+  "bytes": 15480787,
+  "cost_usd": 0.156507
+ },
+ {
+  "symbol": "NVDA",
+  "date": "2026-07-27",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/NVDA_2026-07-27_tbbo.csv.zst",
+  "bytes": 21874238,
+  "cost_usd": 0.229231
+ },
+ {
+  "symbol": "NVDA",
+  "date": "2026-07-28",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/NVDA_2026-07-28_tbbo.csv.zst",
+  "bytes": 18551819,
+  "cost_usd": 0.188368
+ },
+ {
+  "symbol": "NVDA",
+  "date": "2026-07-29",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/NVDA_2026-07-29_tbbo.csv.zst",
+  "bytes": 23123626,
+  "cost_usd": 0.235969
+ },
+ {
+  "symbol": "NVDA",
+  "date": "2026-07-30",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/NVDA_2026-07-30_tbbo.csv.zst",
+  "bytes": 17541273,
+  "cost_usd": 0.179862
+ },
+ {
+  "symbol": "NVDA",
+  "date": "2026-07-31",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/NVDA_2026-07-31_tbbo.csv.zst",
+  "bytes": 18365966,
+  "cost_usd": 0.189491
+ },
+ {
+  "symbol": "NVDA",
+  "date": "2026-08-03",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/NVDA_2026-08-03_tbbo.csv.zst",
+  "bytes": 15888844,
+  "cost_usd": 0.163219
+ },
+ {
+  "symbol": "NVDA",
+  "date": "2026-08-04",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/NVDA_2026-08-04_tbbo.csv.zst",
+  "bytes": 16077622,
+  "cost_usd": 0.164431
+ },
+ {
+  "symbol": "NVDA",
+  "date": "2026-08-05",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/NVDA_2026-08-05_tbbo.csv.zst",
+  "bytes": 20917050,
+  "cost_usd": 0.215808
+ },
+ {
+  "symbol": "NVDA",
+  "date": "2026-08-06",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/NVDA_2026-08-06_tbbo.csv.zst",
+  "bytes": 14796699,
+  "cost_usd": 0.150662
+ },
+ {
+  "symbol": "NVDA",
+  "date": "2026-08-07",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/NVDA_2026-08-07_tbbo.csv.zst",
+  "bytes": 11903111,
+  "cost_usd": 0.120218
+ },
+ {
+  "symbol": "NVDA",
+  "date": "2026-08-10",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/NVDA_2026-08-10_tbbo.csv.zst",
+  "bytes": 12879869,
+  "cost_usd": 0.131299
+ },
+ {
+  "symbol": "QQQ",
+  "date": "2026-08-07",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/QQQ_2026-08-07_tbbo.csv.zst",
+  "bytes": 4659657,
+  "cost_usd": 0.040758
+ },
+ {
+  "symbol": "QQQ",
+  "date": "2026-08-10",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/QQQ_2026-08-10_tbbo.csv.zst",
+  "bytes": 3417878,
+  "cost_usd": 0.029768
+ },
+ {
+  "symbol": "SPY",
+  "date": "2026-08-07",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/SPY_2026-08-07_tbbo.csv.zst",
+  "bytes": 4071807,
+  "cost_usd": 0.03693
+ },
+ {
+  "symbol": "SPY",
+  "date": "2026-08-10",
+  "path": "/Users/yuniorrodriguezosorio/ib-trader/data/research/databento/SPY_2026-08-10_tbbo.csv.zst",
+  "bytes": 3364310,
+  "cost_usd": 0.030152
+ }
+]

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.ibtrader.uwfleetflow</string>
+  <!-- Cinta de flujo UW de la flota (descriptiva, senal-solamente). Sustituto del
+       vigia de ballenas IBKR mientras el Gateway esta prohibido. El portero RTH vive
+       dentro del script (in_session), que launchd no conoce; por eso KeepAlive y no
+       StartCalendarInterval.
+        -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string><string>-lc</string>
+    <string>cd "$HOME/ib-trader" &amp;&amp; ./scripts/uw_fleet_flow_keepalive.sh</string>
+  </array>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>ThrottleInterval</key><integer>60</integer>
+  <key>StandardOutPath</key><string>/tmp/ibtrader.uwfleetflow.out</string>
+  <key>StandardErrorPath</key><string>/tmp/ibtrader.uwfleetflow.err</string>
+</dict>
+</plist>

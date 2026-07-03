@@ -1,0 +1,132 @@
+{
+ "_meta": {
+  "ts": 1786070789,
+  "n_dias": 10,
+  "n_simbolos": 6,
+  "fuente": "databento ARCX.PILLAR XNAS.ITCH",
+  "clase_dato": "unconsolidated_direct",
+  "metodo": "obs = sym x fecha; buckets q1..q5 por rango dentro del PROPIO simbolo; exito = signo(feature) == signo(open->open+30m) del MISMO dataset; n_eff Kish con rho=0.835 medido entre simbolos sobre >=5 fechas comunes (sin rho medible, n_eff = n\u00ba de FECHAS distintas: los sym-dias de la flota estan correlacionados y no son independientes); Wilson 95% sobre n_eff; medido solo con n_eff>=30; 0 observaciones con movimiento exactamente 0 excluidas por empate."
+ },
+ "buckets": {
+  "SIGNED_VOL|q1": {
+   "n": 12,
+   "n_eff": 8,
+   "wr": 0.25,
+   "lo": 0.0715,
+   "mean_bps": 4.18,
+   "medido": false
+  },
+  "SIGNED_VOL|q2": {
+   "n": 12,
+   "n_eff": 8,
+   "wr": 0.75,
+   "lo": 0.4093,
+   "mean_bps": 93.98,
+   "medido": false
+  },
+  "SIGNED_VOL|q3": {
+   "n": 12,
+   "n_eff": 8,
+   "wr": 0.3333,
+   "lo": 0.1368,
+   "mean_bps": -32.27,
+   "medido": false
+  },
+  "SIGNED_VOL|q4": {
+   "n": 12,
+   "n_eff": 8,
+   "wr": 0.75,
+   "lo": 0.4093,
+   "mean_bps": 99.2,
+   "medido": false
+  },
+  "SIGNED_VOL|q5": {
+   "n": 12,
+   "n_eff": 8,
+   "wr": 0.4167,
+   "lo": 0.1368,
+   "mean_bps": -41.08,
+   "medido": false
+  },
+  "IMBALANCE|q1": {
+   "n": 12,
+   "n_eff": 9,
+   "wr": 0.5,
+   "lo": 0.2666,
+   "mean_bps": -4.35,
+   "medido": false
+  },
+  "IMBALANCE|q2": {
+   "n": 8,
+   "n_eff": 5,
+   "wr": 0.625,
+   "lo": 0.2307,
+   "mean_bps": -0.45,
+   "medido": false
+  },
+  "IMBALANCE|q3": {
+   "n": 9,
+   "n_eff": 7,
+   "wr": 0.5556,
+   "lo": 0.2505,
+   "mean_bps": -112.9,
+   "medido": false
+  },
+  "IMBALANCE|q4": {
+   "n": 8,
+   "n_eff": 7,
+   "wr": 0.5,
+   "lo": 0.2505,
+   "mean_bps": 104.55,
+   "medido": false
+  },
+  "IMBALANCE|q5": {
+   "n": 7,
+   "n_eff": 6,
+   "wr": 0.7143,
+   "lo": 0.3,
+   "mean_bps": 17.65,
+   "medido": false
+  },
+  "GAP|q1": {
+   "n": 12,
+   "n_eff": 6,
+   "wr": 0.5833,
+   "lo": 0.1876,
+   "mean_bps": 35.4,
+   "medido": false
+  },
+  "GAP|q2": {
+   "n": 12,
+   "n_eff": 7,
+   "wr": 0.5,
+   "lo": 0.1582,
+   "mean_bps": -2.36,
+   "medido": false
+  },
+  "GAP|q3": {
+   "n": 12,
+   "n_eff": 8,
+   "wr": 0.6667,
+   "lo": 0.3057,
+   "mean_bps": -39.61,
+   "medido": false
+  },
+  "GAP|q4": {
+   "n": 12,
+   "n_eff": 8,
+   "wr": 0.4167,
+   "lo": 0.1368,
+   "mean_bps": -79.94,
+   "medido": false
+  },
+  "GAP|q5": {
+   "n": 12,
+   "n_eff": 6,
+   "wr": 0.5833,
+   "lo": 0.1876,
+   "mean_bps": 37.98,
+   "medido": false
+  }
+ }
+}

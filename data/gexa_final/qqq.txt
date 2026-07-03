@@ -1,0 +1,7 @@
+# GEXA SNAPSHOT QQQ — 2026-07-23 close (LIVE 16:31 ET) — última noche de gexa
+spot 695.50 | Exp 2026-07-24 | VIX 18.7
+flip 709 (-14pt) | regime NEGATIVE (precio debajo del flip)
+Vanna +3.6B | Drift +53.2B
+Pressure +1 FLAT | Bias BEARISH | Call$ 0.60M Put$ 7.43M (puts dominan)
+DEEP ANALYSIS (QQQ/SPX): 7499->7408, fortress-pin en 7400 toda la tarde; gatekeeper_fade fue el edge (fade los bordes del box, nunca perseguir la ruptura). Pressure inusable (~160 flips). LESSON: mapa all-accelerator sin piso magnet + pressure whipsaw -> las rupturas no aguantan, el pin de expiry gana.
+NOTA CALIBRACION: comparar nuestro flip QQQ vs 709 al ampliar cache mañana.

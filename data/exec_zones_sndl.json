@@ -1,0 +1,2 @@
+[{"id":"test-overnight-1","price":1.30,"side":"buy","instrument":"stk","qty":1,
+  "exec":true,"armed_date":"2026-07-26","stop":{"on":false}}]

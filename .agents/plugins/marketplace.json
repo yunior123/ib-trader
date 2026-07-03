@@ -1,0 +1,44 @@
+{
+  "name": "personal",
+  "interface": {
+    "displayName": "Personal"
+  },
+  "plugins": [
+    {
+      "name": "ibtrader-signal-audit",
+      "source": {
+        "source": "local",
+        "path": "./plugins/ibtrader-signal-audit"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "ibtrader-flow-research",
+      "source": {
+        "source": "local",
+        "path": "./plugins/ibtrader-flow-research"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "ibtrader-ops-honesty",
+      "source": {
+        "source": "local",
+        "path": "./plugins/ibtrader-ops-honesty"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

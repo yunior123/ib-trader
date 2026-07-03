@@ -1,0 +1,68 @@
+{
+ "rho_real_qqq": 0.1026,
+ "rho_real_smh": 0.4252,
+ "rho_head": 0.2639,
+ "pct_60d": 0.2333,
+ "pct_60d_reason": null,
+ "regime": "DISPERSION",
+ "captain_coef": 0.75,
+ "name_coef": 1.2,
+ "join_drop_pct": 0.0,
+ "n_pairs": 191,
+ "generated_at": 1785013498,
+ "data_age_s": 88798,
+ "window_min": 60,
+ "detail": {
+  "qqq": {
+   "n_pairs": 55,
+   "n_obs": 60,
+   "join_drop_pct": 0.0,
+   "drop_exceeded": false,
+   "reason": null,
+   "syms": [
+    "AAPL",
+    "AMD",
+    "AMZN",
+    "AVGO",
+    "GOOGL",
+    "META",
+    "MSFT",
+    "NFLX",
+    "NVDA",
+    "QCOM",
+    "TSLA"
+   ]
+  },
+  "smh": {
+   "n_pairs": 136,
+   "n_obs": 60,
+   "join_drop_pct": 0.0,
+   "drop_exceeded": false,
+   "reason": null,
+   "syms": [
+    "AMD",
+    "ASML",
+    "AVGO",
+    "DRAM",
+    "INTC",
+    "LRCX",
+    "MU",
+    "NOK",
+    "NVDA",
+    "QCOM",
+    "SKHY",
+    "SMH",
+    "SNDK",
+    "STX",
+    "TSM",
+    "TXN",
+    "WDC"
+   ]
+  },
+  "missing_bars_qqq": [],
+  "missing_bars_smh": [],
+  "regime_reason": null
+ },
+ "why": "cor-fleet DISPERSION: capitan x0.75, rho 0.26",
+ "signal_only": true
+}

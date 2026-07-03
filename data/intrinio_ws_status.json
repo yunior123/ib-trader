@@ -1,0 +1,71 @@
+{
+ "epoch": 1787488964,
+ "et": "2026-08-23 08:42:07",
+ "phase": "weekend",
+ "auth": {
+  "realtime-mx": {
+   "ok": false,
+   "http": null,
+   "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+   "secs": 5.279
+  },
+  "realtime-delayed-sip": {
+   "ok": false,
+   "http": null,
+   "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+   "secs": 5.093
+  },
+  "realtime-nasdaq-basic": {
+   "ok": false,
+   "http": null,
+   "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+   "secs": 5.258
+  },
+  "cboe-one": {
+   "ok": false,
+   "http": null,
+   "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+   "secs": 5.112
+  },
+  "equities-edge": {
+   "ok": false,
+   "http": null,
+   "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+   "secs": 5.469
+  },
+  "realtime-options": {
+   "ok": false,
+   "http": null,
+   "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+   "secs": 5.129
+  },
+  "options-edge": {
+   "ok": false,
+   "http": null,
+   "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
+   "secs": 5.416
+  }
+ },
+ "socket": {},
+ "tls_idle": {
+  "handshake": 0.078,
+  "idle_close": 5.103,
+  "bytes": 0
+ },
+ "controls": {
+  "intrinio_rest": {
+   "http": 401,
+   "last_time": null,
+   "source": null,
+   "has_bid": false,
+   "secs": 0.128
+  },
+  "polygon_ws": {
+   "connects": true,
+   "hello": "[{\"ev\":\"status\",\"status\":\"connected\",\"message\":\"Connected Successfully\"}]",
+   "secs": 0.159
+  }
+ },
+ "any_up": [],
+ "socket_ok": []
+}

@@ -1,0 +1,397 @@
+{
+ "days": {
+  "2026-07-22": {
+   "SPIKE_CALLS|normal": {
+    "n": 10,
+    "ok": 6,
+    "mfe_ok": 5
+   },
+   "SPIKE_CALLS|muro": {
+    "n": 6,
+    "ok": 3,
+    "mfe_ok": 2
+   },
+   "SPIKE_PUTS|normal": {
+    "n": 8,
+    "ok": 7,
+    "mfe_ok": 7
+   },
+   "SPIKE_PUTS|muro": {
+    "n": 1,
+    "ok": 1,
+    "mfe_ok": 1
+   },
+   "SPIKE_CALLS|bandwalk": {
+    "n": 2,
+    "ok": 1,
+    "mfe_ok": 2
+   },
+   "CAPITAN_REVIERTE|baja": {
+    "n": 1,
+    "ok": 1,
+    "mfe_ok": 0
+   },
+   "SPIKE_PUTS|override": {
+    "n": 1,
+    "ok": 0,
+    "mfe_ok": 0
+   }
+  },
+  "2026-07-23": {
+   "SPIKE_CALLS|normal": {
+    "n": 19,
+    "ok": 13,
+    "mfe_ok": 12
+   },
+   "SPIKE_CALLS|bandwalk": {
+    "n": 3,
+    "ok": 3,
+    "mfe_ok": 3
+   },
+   "SPIKE_PUTS|muro": {
+    "n": 17,
+    "ok": 7,
+    "mfe_ok": 9
+   },
+   "SPIKE_PUTS|normal": {
+    "n": 7,
+    "ok": 4,
+    "mfe_ok": 3
+   },
+   "SPIKE_CALLS|muro": {
+    "n": 4,
+    "ok": 4,
+    "mfe_ok": 4
+   },
+   "CAPITAN_REVIERTE|alza": {
+    "n": 4,
+    "ok": 1,
+    "mfe_ok": 2
+   },
+   "SPIKE_CALLS|override": {
+    "n": 8,
+    "ok": 3,
+    "mfe_ok": 6
+   }
+  },
+  "2026-07-24": {
+   "SPIKE_PUTS|bandwalk": {
+    "n": 2,
+    "ok": 0,
+    "mfe_ok": 1
+   },
+   "SPIKE_PUTS|normal": {
+    "n": 6,
+    "ok": 4,
+    "mfe_ok": 5
+   },
+   "SPIKE_CALLS|normal": {
+    "n": 24,
+    "ok": 16,
+    "mfe_ok": 16
+   },
+   "SPIKE_CALLS|muro": {
+    "n": 8,
+    "ok": 5,
+    "mfe_ok": 5
+   },
+   "CAPITAN_REVIERTE|baja": {
+    "n": 6,
+    "ok": 5,
+    "mfe_ok": 3
+   },
+   "SPIKE_PUTS|muro": {
+    "n": 10,
+    "ok": 6,
+    "mfe_ok": 5
+   },
+   "SPIKE_CALLS|bandwalk": {
+    "n": 4,
+    "ok": 4,
+    "mfe_ok": 4
+   },
+   "CAPITAN_REVIERTE|alza": {
+    "n": 2,
+    "ok": 1,
+    "mfe_ok": 1
+   },
+   "SPIKE_PUTS|override": {
+    "n": 9,
+    "ok": 8,
+    "mfe_ok": 8
+   }
+  },
+  "2026-07-25": {},
+  "2026-07-26": {},
+  "2026-07-27": {},
+  "2026-07-28": {
+   "SPIKE_CALLS|normal": {
+    "n": 10,
+    "ok": 4,
+    "mfe_ok": 6
+   },
+   "SPIKE_PUTS|normal": {
+    "n": 8,
+    "ok": 4,
+    "mfe_ok": 4
+   },
+   "SPIKE_CALLS|muro": {
+    "n": 4,
+    "ok": 1,
+    "mfe_ok": 1
+   },
+   "SPIKE_PUTS|muro": {
+    "n": 7,
+    "ok": 4,
+    "mfe_ok": 5
+   },
+   "CAPITAN_REVIERTE|alza": {
+    "n": 2,
+    "ok": 1,
+    "mfe_ok": 1
+   },
+   "SPIKE_CALLS|override": {
+    "n": 6,
+    "ok": 4,
+    "mfe_ok": 3
+   },
+   "SPIKE_PUTS|bandwalk": {
+    "n": 1,
+    "ok": 1,
+    "mfe_ok": 1
+   }
+  },
+  "2026-07-29": {
+   "SPIKE_PUTS|normal": {
+    "n": 18,
+    "ok": 10,
+    "mfe_ok": 10
+   },
+   "SPIKE_CALLS|normal": {
+    "n": 24,
+    "ok": 11,
+    "mfe_ok": 12
+   },
+   "SPIKE_CALLS|muro": {
+    "n": 2,
+    "ok": 2,
+    "mfe_ok": 2
+   },
+   "SPIKE_CALLS|bandwalk": {
+    "n": 3,
+    "ok": 2,
+    "mfe_ok": 2
+   },
+   "CAPITAN_REVIERTE|baja": {
+    "n": 1,
+    "ok": 1,
+    "mfe_ok": 1
+   },
+   "SPIKE_PUTS|muro": {
+    "n": 5,
+    "ok": 3,
+    "mfe_ok": 3
+   },
+   "SPIKE_PUTS|override": {
+    "n": 2,
+    "ok": 1,
+    "mfe_ok": 1
+   },
+   "CAPITAN_REVIERTE|alza": {
+    "n": 2,
+    "ok": 1,
+    "mfe_ok": 1
+   },
+   "SPIKE_CALLS|override": {
+    "n": 2,
+    "ok": 1,
+    "mfe_ok": 1
+   },
+   "SPIKE_PUTS|bandwalk": {
+    "n": 1,
+    "ok": 0,
+    "mfe_ok": 1
+   }
+  },
+  "2026-07-30": {
+   "SPIKE_PUTS|normal": {
+    "n": 15,
+    "ok": 7,
+    "mfe_ok": 10
+   },
+   "SPIKE_CALLS|normal": {
+    "n": 40,
+    "ok": 20,
+    "mfe_ok": 24
+   },
+   "SPIKE_CALLS|bandwalk": {
+    "n": 5,
+    "ok": 1,
+    "mfe_ok": 3
+   },
+   "CAPITAN_REVIERTE|alza": {
+    "n": 3,
+    "ok": 1,
+    "mfe_ok": 0
+   },
+   "SPIKE_CALLS|override": {
+    "n": 4,
+    "ok": 3,
+    "mfe_ok": 4
+   },
+   "SPIKE_CALLS|muro": {
+    "n": 3,
+    "ok": 2,
+    "mfe_ok": 2
+   },
+   "SPIKE_PUTS|muro": {
+    "n": 1,
+    "ok": 1,
+    "mfe_ok": 0
+   }
+  },
+  "2026-07-31": {
+   "SPIKE_CALLS|normal": {
+    "n": 19,
+    "ok": 6,
+    "mfe_ok": 12
+   },
+   "SPIKE_PUTS|normal": {
+    "n": 15,
+    "ok": 7,
+    "mfe_ok": 11
+   },
+   "SPIKE_CALLS|muro": {
+    "n": 6,
+    "ok": 3,
+    "mfe_ok": 5
+   },
+   "SPIKE_PUTS|override": {
+    "n": 1,
+    "ok": 1,
+    "mfe_ok": 1
+   },
+   "SPIKE_CALLS|override": {
+    "n": 4,
+    "ok": 1,
+    "mfe_ok": 0
+   },
+   "SPIKE_PUTS|muro": {
+    "n": 3,
+    "ok": 2,
+    "mfe_ok": 1
+   },
+   "CAPITAN_REVIERTE|alza": {
+    "n": 1,
+    "ok": 1,
+    "mfe_ok": 0
+   },
+   "SPIKE_CALLS|bandwalk": {
+    "n": 3,
+    "ok": 2,
+    "mfe_ok": 2
+   },
+   "SPIKE_PUTS|bandwalk": {
+    "n": 3,
+    "ok": 2,
+    "mfe_ok": 2
+   }
+  },
+  "2026-08-02": {},
+  "2026-08-04": {},
+  "2026-08-05": {},
+  "2026-08-06": {},
+  "2026-08-08": {},
+  "2026-08-09": {}
+ },
+ "SPIKE_CALLS|normal": {
+  "n": 146,
+  "ok": 76,
+  "mfe_ok": 87,
+  "raw_pct": 52,
+  "wilson_lo": 44,
+  "mfe_pct": 60,
+  "pct": 52
+ },
+ "SPIKE_CALLS|muro": {
+  "n": 33,
+  "ok": 20,
+  "mfe_ok": 21,
+  "raw_pct": 61,
+  "wilson_lo": 44,
+  "mfe_pct": 64,
+  "pct": 61
+ },
+ "SPIKE_PUTS|normal": {
+  "n": 77,
+  "ok": 43,
+  "mfe_ok": 50,
+  "raw_pct": 56,
+  "wilson_lo": 45,
+  "mfe_pct": 65,
+  "pct": 56
+ },
+ "SPIKE_PUTS|muro": {
+  "n": 44,
+  "ok": 24,
+  "mfe_ok": 24,
+  "raw_pct": 55,
+  "wilson_lo": 40,
+  "mfe_pct": 55,
+  "pct": 55
+ },
+ "SPIKE_CALLS|bandwalk": {
+  "n": 20,
+  "ok": 13,
+  "mfe_ok": 16,
+  "raw_pct": 65,
+  "wilson_lo": 43,
+  "mfe_pct": 80,
+  "pct": 65
+ },
+ "CAPITAN_REVIERTE|baja": {
+  "n": 8,
+  "ok": 7,
+  "mfe_ok": 4,
+  "raw_pct": 88,
+  "wilson_lo": 53,
+  "mfe_pct": 50,
+  "pct": 88
+ },
+ "SPIKE_PUTS|override": {
+  "n": 13,
+  "ok": 10,
+  "mfe_ok": 10,
+  "raw_pct": 77,
+  "wilson_lo": 50,
+  "mfe_pct": 77,
+  "pct": 77
+ },
+ "CAPITAN_REVIERTE|alza": {
+  "n": 14,
+  "ok": 6,
+  "mfe_ok": 5,
+  "raw_pct": 43,
+  "wilson_lo": 21,
+  "mfe_pct": 36,
+  "pct": 43
+ },
+ "SPIKE_CALLS|override": {
+  "n": 24,
+  "ok": 12,
+  "mfe_ok": 14,
+  "raw_pct": 50,
+  "wilson_lo": 31,
+  "mfe_pct": 58,
+  "pct": 50
+ },
+ "SPIKE_PUTS|bandwalk": {
+  "n": 7,
+  "ok": 3,
+  "mfe_ok": 5,
+  "raw_pct": 43,
+  "wilson_lo": 16,
+  "mfe_pct": 71,
+  "pct": 43
+ }
+}

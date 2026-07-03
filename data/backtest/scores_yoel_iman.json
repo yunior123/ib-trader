@@ -1,0 +1,365 @@
+{
+ "engine": "yoel:iman",
+ "spec": "docs/ENGINE-SCORING-SPEC.md",
+ "generated_utc": "2026-07-23T08:00:41Z",
+ "horizon_bars_5m": 24,
+ "signals_files": [
+  "/Users/yuniorrodriguezosorio/ib-trader/data/backtest/signals_yoel_iman.csv"
+ ],
+ "skipped_sin_barras": 0,
+ "por_ticker": {
+  "AAPL": {
+   "n": 77,
+   "wins": 33,
+   "losses": 44,
+   "timeouts": 0,
+   "wr": 0.4286,
+   "wilson_lo": 0.324,
+   "pnl_bps_median": -34.66,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 7
+  },
+  "AMD": {
+   "n": 106,
+   "wins": 58,
+   "losses": 48,
+   "timeouts": 0,
+   "wr": 0.5472,
+   "wilson_lo": 0.4524,
+   "pnl_bps_median": 30.59,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 2
+  },
+  "AMZN": {
+   "n": 90,
+   "wins": 50,
+   "losses": 39,
+   "timeouts": 1,
+   "wr": 0.5618,
+   "wilson_lo": 0.4583,
+   "pnl_bps_median": 33.62,
+   "timeout_pnl_bps_median": -1.64,
+   "overnight_cross": 5
+  },
+  "ASML": {
+   "n": 121,
+   "wins": 55,
+   "losses": 66,
+   "timeouts": 0,
+   "wr": 0.4545,
+   "wilson_lo": 0.3686,
+   "pnl_bps_median": -30.82,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 4
+  },
+  "AVGO": {
+   "n": 103,
+   "wins": 48,
+   "losses": 54,
+   "timeouts": 1,
+   "wr": 0.4706,
+   "wilson_lo": 0.3766,
+   "pnl_bps_median": -30.45,
+   "timeout_pnl_bps_median": 24.64,
+   "overnight_cross": 1
+  },
+  "DRAM": {
+   "n": 156,
+   "wins": 75,
+   "losses": 81,
+   "timeouts": 0,
+   "wr": 0.4808,
+   "wilson_lo": 0.4038,
+   "pnl_bps_median": -30.37,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 4
+  },
+  "EWY": {
+   "n": 152,
+   "wins": 69,
+   "losses": 83,
+   "timeouts": 0,
+   "wr": 0.4539,
+   "wilson_lo": 0.3769,
+   "pnl_bps_median": -31.98,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 9
+  },
+  "GLD": {
+   "n": 157,
+   "wins": 67,
+   "losses": 67,
+   "timeouts": 23,
+   "wr": 0.5,
+   "wilson_lo": 0.4165,
+   "pnl_bps_median": 3.19,
+   "timeout_pnl_bps_median": 3.19,
+   "overnight_cross": 29
+  },
+  "GOOGL": {
+   "n": 85,
+   "wins": 44,
+   "losses": 40,
+   "timeouts": 1,
+   "wr": 0.5238,
+   "wilson_lo": 0.4183,
+   "pnl_bps_median": 33.86,
+   "timeout_pnl_bps_median": 8.34,
+   "overnight_cross": 3
+  },
+  "INTC": {
+   "n": 113,
+   "wins": 46,
+   "losses": 67,
+   "timeouts": 0,
+   "wr": 0.4071,
+   "wilson_lo": 0.321,
+   "pnl_bps_median": -33.2,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 1
+  },
+  "LRCX": {
+   "n": 127,
+   "wins": 68,
+   "losses": 59,
+   "timeouts": 0,
+   "wr": 0.5354,
+   "wilson_lo": 0.4489,
+   "pnl_bps_median": 28.0,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 2
+  },
+  "META": {
+   "n": 106,
+   "wins": 54,
+   "losses": 51,
+   "timeouts": 1,
+   "wr": 0.5143,
+   "wilson_lo": 0.4199,
+   "pnl_bps_median": 22.82,
+   "timeout_pnl_bps_median": -7.47,
+   "overnight_cross": 7
+  },
+  "MSFT": {
+   "n": 101,
+   "wins": 51,
+   "losses": 46,
+   "timeouts": 4,
+   "wr": 0.5258,
+   "wilson_lo": 0.4273,
+   "pnl_bps_median": 27.9,
+   "timeout_pnl_bps_median": 5.83,
+   "overnight_cross": 4
+  },
+  "MU": {
+   "n": 138,
+   "wins": 60,
+   "losses": 78,
+   "timeouts": 0,
+   "wr": 0.4348,
+   "wilson_lo": 0.3549,
+   "pnl_bps_median": -31.88,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 0
+  },
+  "NFLX": {
+   "n": 83,
+   "wins": 44,
+   "losses": 37,
+   "timeouts": 2,
+   "wr": 0.5432,
+   "wilson_lo": 0.4352,
+   "pnl_bps_median": 33.68,
+   "timeout_pnl_bps_median": 2.88,
+   "overnight_cross": 8
+  },
+  "NOK": {
+   "n": 127,
+   "wins": 51,
+   "losses": 76,
+   "timeouts": 0,
+   "wr": 0.4016,
+   "wilson_lo": 0.3204,
+   "pnl_bps_median": -27.77,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 0
+  },
+  "NVDA": {
+   "n": 103,
+   "wins": 49,
+   "losses": 54,
+   "timeouts": 0,
+   "wr": 0.4757,
+   "wilson_lo": 0.3819,
+   "pnl_bps_median": -34.03,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 0
+  },
+  "QCOM": {
+   "n": 102,
+   "wins": 41,
+   "losses": 61,
+   "timeouts": 0,
+   "wr": 0.402,
+   "wilson_lo": 0.312,
+   "pnl_bps_median": -31.03,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 0
+  },
+  "QQQ": {
+   "n": 128,
+   "wins": 57,
+   "losses": 59,
+   "timeouts": 12,
+   "wr": 0.4914,
+   "wilson_lo": 0.4021,
+   "pnl_bps_median": -11.24,
+   "timeout_pnl_bps_median": -11.24,
+   "overnight_cross": 27
+  },
+  "SKHY": {
+   "n": 5,
+   "wins": 2,
+   "losses": 3,
+   "timeouts": 0,
+   "wr": 0.4,
+   "wilson_lo": 0.1176,
+   "pnl_bps_median": -28.61,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 0
+  },
+  "SMH": {
+   "n": 144,
+   "wins": 70,
+   "losses": 72,
+   "timeouts": 2,
+   "wr": 0.493,
+   "wilson_lo": 0.412,
+   "pnl_bps_median": -10.08,
+   "timeout_pnl_bps_median": -10.08,
+   "overnight_cross": 9
+  },
+  "SNDK": {
+   "n": 129,
+   "wins": 46,
+   "losses": 83,
+   "timeouts": 0,
+   "wr": 0.3566,
+   "wilson_lo": 0.2792,
+   "pnl_bps_median": -30.19,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 0
+  },
+  "SPCX": {
+   "n": 35,
+   "wins": 22,
+   "losses": 13,
+   "timeouts": 0,
+   "wr": 0.6286,
+   "wilson_lo": 0.4634,
+   "pnl_bps_median": 34.31,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 0
+  },
+  "SPY": {
+   "n": 98,
+   "wins": 40,
+   "losses": 30,
+   "timeouts": 28,
+   "wr": 0.5714,
+   "wilson_lo": 0.4548,
+   "pnl_bps_median": 6.72,
+   "timeout_pnl_bps_median": -0.48,
+   "overnight_cross": 38
+  },
+  "STX": {
+   "n": 134,
+   "wins": 63,
+   "losses": 71,
+   "timeouts": 0,
+   "wr": 0.4701,
+   "wilson_lo": 0.3877,
+   "pnl_bps_median": -20.98,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 0
+  },
+  "TSLA": {
+   "n": 112,
+   "wins": 53,
+   "losses": 59,
+   "timeouts": 0,
+   "wr": 0.4732,
+   "wilson_lo": 0.3832,
+   "pnl_bps_median": -32.87,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 8
+  },
+  "TSM": {
+   "n": 97,
+   "wins": 44,
+   "losses": 53,
+   "timeouts": 0,
+   "wr": 0.4536,
+   "wilson_lo": 0.3582,
+   "pnl_bps_median": -32.54,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 2
+  },
+  "TXN": {
+   "n": 95,
+   "wins": 47,
+   "losses": 48,
+   "timeouts": 0,
+   "wr": 0.4947,
+   "wilson_lo": 0.3964,
+   "pnl_bps_median": -0.0,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 7
+  },
+  "WDC": {
+   "n": 120,
+   "wins": 54,
+   "losses": 66,
+   "timeouts": 0,
+   "wr": 0.45,
+   "wilson_lo": 0.3639,
+   "pnl_bps_median": -28.35,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 2
+  },
+  "XLK": {
+   "n": 135,
+   "wins": 64,
+   "losses": 67,
+   "timeouts": 4,
+   "wr": 0.4885,
+   "wilson_lo": 0.4045,
+   "pnl_bps_median": -9.26,
+   "timeout_pnl_bps_median": 0.61,
+   "overnight_cross": 24
+  }
+ },
+ "global": {
+  "n": 3279,
+  "wins": 1525,
+  "losses": 1675,
+  "timeouts": 79,
+  "wr": 0.4766,
+  "wilson_lo": 0.4593,
+  "pnl_bps_median": -24.19,
+  "timeout_pnl_bps_median": -1.49,
+  "overnight_cross": 203
+ },
+ "spread_impact_global": {
+  "2bps_side": {
+   "round_trip_bps": 4.0,
+   "pnl_bps_median_net": -28.19,
+   "wins_net_negative": 36
+  },
+  "5bps_side": {
+   "round_trip_bps": 10.0,
+   "pnl_bps_median_net": -34.19,
+   "wins_net_negative": 37
+  }
+ }
+}

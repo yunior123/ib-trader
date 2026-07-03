@@ -1,0 +1,142 @@
+{
+ "engine": "flow_pulse v3/v4 replay (spikes 3x, veto band-walk)",
+ "spec": "docs/ENGINE-SCORING-SPEC.md",
+ "generated_utc": "2026-07-22T22:37:22Z",
+ "horizon_bars_5m": 24,
+ "signals_files": [
+  "/Users/yuniorrodriguezosorio/ib-trader/data/backtest/flow_signals.csv"
+ ],
+ "skipped_sin_barras": 0,
+ "por_ticker": {
+  "AAPL": {
+   "n": 2,
+   "wins": 2,
+   "losses": 0,
+   "timeouts": 0,
+   "wr": 1.0,
+   "wilson_lo": 0.3424,
+   "pnl_bps_median": 37.32,
+   "timeout_pnl_bps_median": null
+  },
+  "AMD": {
+   "n": 1,
+   "wins": 1,
+   "losses": 0,
+   "timeouts": 0,
+   "wr": 1.0,
+   "wilson_lo": 0.2065,
+   "pnl_bps_median": 17.28,
+   "timeout_pnl_bps_median": null
+  },
+  "AVGO": {
+   "n": 4,
+   "wins": 2,
+   "losses": 2,
+   "timeouts": 0,
+   "wr": 0.5,
+   "wilson_lo": 0.15,
+   "pnl_bps_median": -1.1,
+   "timeout_pnl_bps_median": null
+  },
+  "GOOGL": {
+   "n": 3,
+   "wins": 1,
+   "losses": 2,
+   "timeouts": 0,
+   "wr": 0.3333,
+   "wilson_lo": 0.0615,
+   "pnl_bps_median": -30.68,
+   "timeout_pnl_bps_median": null
+  },
+  "META": {
+   "n": 1,
+   "wins": 1,
+   "losses": 0,
+   "timeouts": 0,
+   "wr": 1.0,
+   "wilson_lo": 0.2065,
+   "pnl_bps_median": 37.81,
+   "timeout_pnl_bps_median": null
+  },
+  "MSFT": {
+   "n": 1,
+   "wins": 0,
+   "losses": 1,
+   "timeouts": 0,
+   "wr": 0.0,
+   "wilson_lo": 0.0,
+   "pnl_bps_median": -29.58,
+   "timeout_pnl_bps_median": null
+  },
+  "MU": {
+   "n": 2,
+   "wins": 1,
+   "losses": 1,
+   "timeouts": 0,
+   "wr": 0.5,
+   "wilson_lo": 0.0945,
+   "pnl_bps_median": -2.91,
+   "timeout_pnl_bps_median": null
+  },
+  "NFLX": {
+   "n": 1,
+   "wins": 0,
+   "losses": 1,
+   "timeouts": 0,
+   "wr": 0.0,
+   "wilson_lo": 0.0,
+   "pnl_bps_median": 4.9,
+   "timeout_pnl_bps_median": null
+  },
+  "NOK": {
+   "n": 1,
+   "wins": 1,
+   "losses": 0,
+   "timeouts": 0,
+   "wr": 1.0,
+   "wilson_lo": 0.2065,
+   "pnl_bps_median": 30.62,
+   "timeout_pnl_bps_median": null
+  },
+  "NVDA": {
+   "n": 6,
+   "wins": 4,
+   "losses": 2,
+   "timeouts": 0,
+   "wr": 0.6667,
+   "wilson_lo": 0.3,
+   "pnl_bps_median": 33.72,
+   "timeout_pnl_bps_median": null
+  },
+  "QQQ": {
+   "n": 2,
+   "wins": 0,
+   "losses": 0,
+   "timeouts": 2,
+   "wr": null,
+   "wilson_lo": null,
+   "pnl_bps_median": 6.44,
+   "timeout_pnl_bps_median": 6.44
+  },
+  "TSLA": {
+   "n": 2,
+   "wins": 2,
+   "losses": 0,
+   "timeouts": 0,
+   "wr": 1.0,
+   "wilson_lo": 0.3424,
+   "pnl_bps_median": 27.09,
+   "timeout_pnl_bps_median": null
+  }
+ },
+ "global": {
+  "n": 26,
+  "wins": 15,
+  "losses": 9,
+  "timeouts": 2,
+  "wr": 0.625,
+  "wilson_lo": 0.4271,
+  "pnl_bps_median": 17.71,
+  "timeout_pnl_bps_median": 6.44
+ }
+}

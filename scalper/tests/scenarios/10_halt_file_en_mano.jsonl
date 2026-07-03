@@ -1,0 +1,13 @@
+# trade verde primero; luego HALT file: la alerta nueva NO entra
+{"t_ms":0,"ev":"hhmm","v":1005}
+{"t_ms":0,"ev":"chain","spot_c":70850,"iv":0.20,"spread_c":4,"exp":20260721}
+{"t_ms":0,"ev":"und","bid_c":70848,"ask_c":70852}
+{"t_ms":100,"ev":"alert","side":"CALLS","sym":"QQQ"}
+{"t_ms":4000,"ev":"expect_state","v":"HOLDING"}
+{"t_ms":4500,"ev":"und","bid_c":70747,"ask_c":70750}
+{"t_ms":10000,"ev":"expect_state","v":"IDLE"}
+{"t_ms":10000,"ev":"expect_trades","v":1}
+{"t_ms":10500,"ev":"halt"}
+{"t_ms":10600,"ev":"alert","side":"PUTS","sym":"NVDA"}
+{"t_ms":10700,"ev":"expect_state","v":"IDLE"}
+{"t_ms":10700,"ev":"expect_trades","v":1}

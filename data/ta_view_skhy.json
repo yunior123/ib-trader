@@ -1,0 +1,16 @@
+{
+ "ts": 1785308690,
+ "sym": "SKHY",
+ "veredicto": "bear",
+ "rating": "Underweight",
+ "prob": null,
+ "tesis": "Sell 50-75% of any long SKHY position at current levels (~$126). Do not initiate new shorts. Place a stop-loss at $112 on any remaining core position.",
+ "niveles": [
+  {
+   "tipo": "target",
+   "nivel": 112.0
+  }
+ ],
+ "latency_s": 211.1,
+ "fuente": "tradingagents"
+}

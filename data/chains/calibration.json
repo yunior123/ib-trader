@@ -1,0 +1,189 @@
+{
+ "TSM": {
+  "has_options": true,
+  "liquid": true,
+  "expiry": "2026-07-17",
+  "dte": 10,
+  "spot": 437.14,
+  "iv": 0.6029,
+  "spread_pct": 5.37,
+  "strike_step": 2.5,
+  "median_oi": 376
+ },
+ "AMD": {
+  "has_options": true,
+  "liquid": true,
+  "expiry": "2026-07-17",
+  "dte": 10,
+  "spot": 521.79,
+  "iv": 0.7638,
+  "spread_pct": 3.94,
+  "strike_step": 2.5,
+  "median_oi": 315
+ },
+ "DRAM": {
+  "has_options": true,
+  "liquid": true,
+  "expiry": "2026-07-17",
+  "dte": 10,
+  "spot": 60.9,
+  "iv": 1.0139,
+  "spread_pct": 5.33,
+  "strike_step": 1.0,
+  "median_oi": 961
+ },
+ "ASML": {
+  "has_options": true,
+  "liquid": true,
+  "expiry": "2026-07-17",
+  "dte": 10,
+  "spot": 1755.81,
+  "iv": 0.7607,
+  "spread_pct": 4.89,
+  "strike_step": 5.0,
+  "median_oi": 102
+ },
+ "SPCX": {
+  "has_options": true,
+  "liquid": true,
+  "expiry": "2026-07-17",
+  "dte": 10,
+  "spot": 152.0,
+  "iv": 0.7316,
+  "spread_pct": 3.87,
+  "strike_step": 2.5,
+  "median_oi": 1704
+ },
+ "TSLA": {
+  "has_options": true,
+  "liquid": true,
+  "expiry": "2026-07-13",
+  "dte": 6,
+  "spot": 407.12,
+  "iv": 0.4264,
+  "spread_pct": 3.18,
+  "strike_step": 2.5,
+  "median_oi": 223
+ },
+ "NVDA": {
+  "has_options": true,
+  "liquid": true,
+  "expiry": "2026-07-13",
+  "dte": 6,
+  "spot": 197.75,
+  "iv": 0.3586,
+  "spread_pct": 4.29,
+  "strike_step": 2.5,
+  "median_oi": 518
+ },
+ "NOK": {
+  "has_options": true,
+  "liquid": true,
+  "expiry": "2026-07-17",
+  "dte": 10,
+  "spot": 11.91,
+  "iv": 0.7402,
+  "spread_pct": 6.14,
+  "strike_step": 0.5,
+  "median_oi": 8400
+ },
+ "AAPL": {
+  "has_options": true,
+  "liquid": true,
+  "expiry": "2026-07-13",
+  "dte": 6,
+  "spot": 312.83,
+  "iv": 0.2449,
+  "spread_pct": 8.89,
+  "strike_step": 2.5,
+  "median_oi": 211
+ },
+ "INTC": {
+  "has_options": true,
+  "liquid": true,
+  "expiry": "2026-07-17",
+  "dte": 10,
+  "spot": 111.11,
+  "iv": 0.8864,
+  "spread_pct": 3.7,
+  "strike_step": 1.0,
+  "median_oi": 3216
+ },
+ "TXN": {
+  "has_options": true,
+  "liquid": true,
+  "expiry": "2026-07-17",
+  "dte": 10,
+  "spot": 294.66,
+  "iv": 0.5958,
+  "spread_pct": 9.74,
+  "strike_step": 2.5,
+  "median_oi": 112
+ },
+ "MU": {
+  "has_options": true,
+  "liquid": true,
+  "expiry": "2026-07-17",
+  "dte": 10,
+  "spot": 934.56,
+  "iv": 1.0403,
+  "spread_pct": 3.2,
+  "strike_step": 10.0,
+  "median_oi": 1044
+ },
+ "GOOGL": {
+  "has_options": true,
+  "liquid": true,
+  "expiry": "2026-07-13",
+  "dte": 6,
+  "spot": 370.32,
+  "iv": 0.2948,
+  "spread_pct": 11.11,
+  "strike_step": 2.5,
+  "median_oi": 48
+ },
+ "QCOM": {
+  "has_options": true,
+  "liquid": true,
+  "expiry": "2026-07-17",
+  "dte": 10,
+  "spot": 183.22,
+  "iv": 0.6857,
+  "spread_pct": 5.29,
+  "strike_step": 5.0,
+  "median_oi": 1981
+ },
+ "SMH": {
+  "has_options": true,
+  "liquid": true,
+  "expiry": "2026-07-17",
+  "dte": 10,
+  "spot": 583.8,
+  "iv": 0.5414,
+  "spread_pct": 4.35,
+  "strike_step": 5.0,
+  "median_oi": 3287
+ },
+ "SPY": {
+  "has_options": true,
+  "liquid": true,
+  "expiry": "2026-07-13",
+  "dte": 6,
+  "spot": 748.91,
+  "iv": 0.1169,
+  "spread_pct": 4.46,
+  "strike_step": 1.0,
+  "median_oi": 290
+ },
+ "QQQ": {
+  "has_options": true,
+  "liquid": true,
+  "expiry": "2026-07-13",
+  "dte": 6,
+  "spot": 713.11,
+  "iv": 0.1944,
+  "spread_pct": 1.83,
+  "strike_step": 1.0,
+  "median_oi": 149
+ }
+}

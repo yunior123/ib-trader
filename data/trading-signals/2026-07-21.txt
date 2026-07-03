@@ -1,0 +1,229 @@
+04:20:21 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.13% px 54.75
+04:20:21 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.64% px 55.24
+04:20:21 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.68% px 54.33
+04:20:21 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.64% px 53.72
+04:20:21 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.66% px 54.22
+04:20:21 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.73% px 53.74
+04:20:21 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.67% px 52.91
+04:20:21 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.54% px 52.16
+04:20:21 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.56% px 52.82
+04:20:21 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.66% px 51.95
+04:20:21 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.53% px 52.75
+04:20:21 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.70% px 52.03
+04:20:21 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.24% px 49.44
+04:20:21 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.26% px 50.12
+04:20:21 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.77% px 51.53
+04:20:21 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.64% px 50.72
+04:20:21 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.73% px 49.90
+04:20:21 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +8.46% px 53.01
+04:20:21 | WARMUP DRAM: BUY | DRAM @ 53.07 | prob 56% | rompe-TL-1m+vol-3.6x+MACD15-verde+ST5-alineado+sobre-VWAP+retest-ok | fase=UNKNOWN
+04:20:21 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +3.23% px 53.45
+04:20:21 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.12% px 54.36
+04:20:21 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.84% px 54.34
+04:20:21 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.56% px 53.56
+04:20:21 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.49% px 52.38
+04:20:21 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.50% px 53.00
+04:20:21 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.89% px 53.95
+04:20:21 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.80% px 52.50
+04:20:21 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.54% px 53.11
+04:20:21 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.94% px 53.48
+04:20:21 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.85% px 52.50
+04:20:21 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.59% px 53.23
+04:20:21 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.62% px 54.10
+04:20:21 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.54% px 54.84
+04:20:21 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.45% px 53.69
+04:20:21 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.62% px 54.10
+04:20:21 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.51% px 53.87
+04:20:21 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.71% px 53.29
+04:20:21 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.07% px 10.90
+04:20:21 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.05% px 10.65
+04:20:21 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.04% px 10.38
+04:20:21 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.00% px 9.95
+04:20:21 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.10% px 10.17
+04:20:21 | WARMUP TSLA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.04% px 387.87
+04:20:21 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.18% px 9.91
+04:20:21 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.33% px 134.88
+04:20:21 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.10% px 10.15
+04:20:21 | WARMUP TSLA: BUY | COMPRAR TSLA @ 392.95 | reversal a alza | entrada 376.95 | mov -4.1%
+04:20:21 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.41% px 135.50
+04:20:21 | WARMUP TSLA: BUY | COMPRAR TSLA @ 392.95 | target 404.74 | floor 393.34 | capitulacion confirmada
+04:20:21 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.95% px 134.90
+04:20:21 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.04% px 10.34
+04:20:21 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.56% px 133.64
+04:20:21 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.07% px 207.52
+04:20:21 | WARMUP SPCX: SELL | SPCX @ 132.81 | prob 61% | rompe-TL-1m-abajo+vol-1.6x+MACD15-rojo+ST5-alineado+ribbon15-bajista+retest-ok | fase=UNKNOWN
+04:20:21 | WARMUP TSLA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.24% px 394.45
+04:20:21 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.47% px 131.86
+04:20:21 | WARMUP TSLA: SELL | VENDER TSLA @ 393.38 | trail 3xATR roto | entrada 392.95 | PnL +0.1%
+04:20:21 | WARMUP NOK: SELL | VENDER NOK @ 10.12 | time-stop (no revirtio) | entrada 10.13 | PnL -0.1%
+04:20:21 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.89% px 201.20
+04:20:21 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.09% px 202.26
+04:20:21 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.47% px 132.72
+04:20:21 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.01% px 206.37
+04:20:21 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.17% px 202.14
+04:20:21 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.32% px 132.37
+04:20:21 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.17% px 125.87
+04:20:21 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.44% px 124.62
+04:20:21 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.74% px 126.65
+04:20:21 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.36% px 125.89
+04:20:21 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.40% px 126.82
+04:20:21 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.43% px 1770.84
+04:20:21 | WARMUP SPCX: SELL | SPCX @ 124.60 | prob 62% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=UNKNOWN
+04:20:21 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.21% px 515.08
+04:20:21 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +2.77% px 125.66
+04:20:21 | WARMUP AMD: SELL | AMD @ 507.11 | prob 56% | rompe-TL-1m-abajo+vol-1.7x+MACD15-rojo+ST5-alineado+bajo-VWAP+retest-ok | fase=UNKNOWN
+04:20:21 | WARMUP AMD: SELL | AMD @ 507.29 | prob 56% | rompe-TL-1m-abajo+vol-1.8x+MACD15-rojo+ST5-alineado+ribbon15-bajista+retest-ok | fase=UNKNOWN
+04:20:21 | WARMUP INTC TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.57% px 98.66
+04:20:21 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.35% px 1769.92
+04:20:21 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.01% px 205.81
+04:20:21 | WARMUP INTC TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.14% px 95.79
+04:20:21 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.14% px 1808.28
+04:20:21 | WARMUP INTC TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.32% px 92.20
+04:20:21 | WARMUP SPCX: SELL | SPCX @ 124.25 | prob 64% | rebote-29%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=UNKNOWN
+04:20:21 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.02% px 502.24
+04:20:21 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.19% px 1829.79
+04:20:21 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.02% px 478.00
+04:20:21 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.60% px 124.25
+04:20:21 | WARMUP INTC TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.01% px 90.30
+04:20:21 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.10% px 203.32
+04:20:21 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.40% px 124.85
+04:20:21 | WARMUP INTC: BUY | COMPRAR INTC @ 92.77 | reversal a alza | entrada 97.64 | mov +5.2%
+04:20:21 | WARMUP INTC: BUY | COMPRAR INTC @ 92.77 | target 100.19 | floor 93.70 | capitulacion confirmada
+04:20:21 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +3.39% px 129.16
+04:20:21 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.00% px 488.69
+04:20:21 | WARMUP INTC: SELL | VENDER INTC @ 93.72 | trail 3xATR roto | entrada 92.77 | PnL +1.0%
+04:20:21 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.56% px 123.40
+04:20:21 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.08% px 1792.05
+04:20:21 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.04% px 477.50
+04:20:21 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +5.32% px 485.76
+04:20:21 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.10% px 1765.04
+04:20:21 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.03% px 1733.51
+04:20:21 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.14% px 498.19
+04:20:21 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +2.15% px 126.03
+04:20:21 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.00% px 507.00
+04:20:21 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.14% px 1771.02
+04:20:21 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.42% px 124.62
+04:20:21 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.78% px 121.27
+04:20:21 | WARMUP SPCX: BUY | COMPRAR SPCX @ 121.85 | trail ATR roto | entrada 122.58 | mov +0.6%
+04:20:21 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.01% px 1745.31
+04:20:21 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.21% px 1711.39
+04:20:21 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.18% px 1746.52
+04:20:21 | WARMUP MU TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.02% px 864.50
+04:20:21 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.03% px 510.50
+04:20:21 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.40% px 1778.16
+04:20:21 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.07% px 1752.50
+04:20:21 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.11% px 524.16
+04:20:22 | WARMUP MU: SELL | MU @ 856.55 | prob 55% | rompe-TL-1m-abajo+vol-1.8x+MACD15-rojo+ST5-alineado+ribbon15-bajista+retest-ok | fase=UNKNOWN
+04:20:22 | WARMUP AMD: SELL | AMD @ 509.45 | prob 57% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=SPIKE_FADE
+04:20:22 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.07% px 509.01
+04:20:22 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.20% px 1780.00
+04:20:22 | WARMUP MU TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.15% px 838.50
+04:20:22 | WARMUP MU TERREMOTO ALZA | CUSUM: subiendo fuerte +5.15% px 851.98
+04:20:22 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.08% px 1786.72
+04:20:22 | WARMUP ASML: SELL | ASML @ 1752.83 | prob 61% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+04:20:22 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.48% px 1748.34
+04:20:22 | WARMUP MU TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.01% px 817.00
+04:20:22 | WARMUP MU: BUY | MU @ 866.50 | prob 55% | estructura-rota-arriba+MACD15-flip-arriba+MACD15-verde+ST5-alineado+sobre-VWAP | fase=UNKNOWN
+04:20:22 | WARMUP MU TERREMOTO ALZA | CUSUM: subiendo fuerte +8.02% px 872.47
+04:20:22 | WARMUP MU TERREMOTO ALZA | CUSUM: subiendo fuerte +5.08% px 892.70
+04:20:22 | WARMUP ASML: SELL | ASML @ 1747.06 | prob 61% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+04:20:22 | WARMUP MU TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.03% px 858.32
+04:20:22 | WARMUP MU TERREMOTO ALZA | CUSUM: subiendo fuerte +5.09% px 879.09
+04:20:22 | WARMUP MU TERREMOTO ALZA | CUSUM: subiendo fuerte +5.12% px 891.49
+04:20:22 | WARMUP MU: BUY | COMPRAR MU @ 870.93 | trail ATR roto | entrada 874.26 | mov +0.4%
+04:20:29 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.85% px 52.94
+04:20:35 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.01% px 203.49
+04:20:44 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.39% px 515.15
+04:20:44 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.23% px 518.46
+04:20:50 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.13% px 1736.96
+04:20:50 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.55% px 1774.00
+04:21:23 | 🛰 FINVIZ | TSLA: earnings en 36h (7/22/2026 4:30:00 PM)
+04:21:23 | 🛰 FINVIZ | TXN: earnings en 36h (7/22/2026 4:30:00 PM)
+04:22:23 | 🛰 FINVIZ | MSFT: target price 556.19→555.30
+04:22:23 | 🛰 FINVIZ | NOK: target price 13.41→13.44
+04:22:23 | 🛰 FINVIZ | SKHY: target price 233.92→234.03
+04:22:57 | 🧪 TEST ALARMA | QQQ: prueba de cadena notificacion — si ves banner+voz+email, todo sincronizado
+04:27:00 | DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +6.37% px 56.42
+05:21:00 | TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.01% px 418.18
+06:23:35 | 🛰 FINVIZ | META: target price 819.45→821.14
+07:48:43 | 🛰 FINVIZ | DRAM: rel volume 2.5x — cruza 2.5x
+08:16:00 | SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.62% px 122.91
+08:23:46 | 🛰 FINVIZ | AMZN: target price 317.33→316.99
+08:23:46 | 🛰 FINVIZ | META: target price 821.14→822.72
+08:28:00 | SKHY TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.10% px 159.57
+08:30:47 | 🛰 FINVIZ | NOK: earnings en 47h (7/23/2026 8:30:00 AM)
+08:57:49 | 🛰 FINVIZ | SLND: rel volume 2.5x — cruza 2.5x
+09:28:00 | NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.22% px 206.85
+09:28:00 | TXN TERREMOTO ALZA | CUSUM: subiendo fuerte +2.09% px 296.00
+09:30:40 | 🐋 BALLENA CALLS | NVDA: flujo calls masivo, P C 0.28 (37,778 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+09:30:53 | 🛰 FINVIZ | NVDA: gap +2.1% — abre fuera de rango
+09:31:31 | 🐋 BALLENA CALLS | META: flujo calls masivo, P C 0.28 (4,113 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+09:33:00 | SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.75% px 120.92
+09:36:00 | SKHY TERREMOTO ALZA | CUSUM: subiendo fuerte +3.42% px 164.72
+09:36:00 | SPCX: SELL | SPCX @ 121.03 | prob 62% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=UNKNOWN
+09:37:00 | INTC: BUY | INTC @ 103.81 | prob 56% | squeeze-p2+cierre-fuera-BB15+MACD15-verde+ST5-alineado+ribbon15-alcista+retest-ok | fase=UNKNOWN
+09:37:00 | NVDA: BUY | NVDA @ 206.80 | prob 56% | squeeze-p5+cierre-fuera-BB15+MACD15-verde+ST5-alineado+ribbon15-alcista+retest-ok | fase=UNKNOWN
+09:37:00 | SKHY: BUY | SKHY @ 165.58 | prob 56% | squeeze-p1+cierre-fuera-BB15+MACD15-verde+ST5-alineado+ribbon15-alcista+retest-ok | fase=UNKNOWN
+09:37:33 | 🐋 BALLENA CALLS | MSFT: flujo calls masivo, P C 0.34 (2,580 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+09:39:00 | MU: BUY | MU @ 940.90 | prob 56% | squeeze-p2+cierre-fuera-BB15+MACD15-verde+ST5-alineado+ribbon15-alcista+retest-ok | fase=UNKNOWN
+09:43:01 | 🐋 BALLENA CALLS | AMD: flujo calls masivo, P C 0.16 (2,831 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+09:44:00 | NOK: BUY | NOK @ 10.57 | prob 55% | squeeze-p14+cierre-fuera-BB15+MACD15-verde+ST5-alineado+ribbon15-alcista+retest-ok | fase=UNKNOWN
+09:44:43 | SPY ALARMA PRECIO | SPY toco 744.50 (regla: spy 744.5 down       COMPRA: put 744 0DTE     target 743 (flip), correr a 741    stop 745.80) px=744.4500
+09:45:53 | 🛰 FINVIZ | SLND: rel volume 2.5x — cruza 2.5x
+09:49:08 | 🐋 BALLENA CALLS | INTC: flujo calls masivo, P C 0.14 (5,352 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+09:49:27 | NVDA ALARMA PRECIO | NVDA toco 205.90 (regla: nvda 205.9 down      STOP tesis NVDA     perdio el piso de sesion, NO comprar nada) px=205.8950
+09:50:37 | SKHY ALARMA PRECIO | SKHY toco 165.00 (regla: skhy 165 up          COMPRA: call SKHY SOLO si NO llevas NVDA (misma tesis Corea)     167    stop 162) px=165.0250
+10:07:12 | 🐋 BALLENA CALLS | SMH: flujo calls masivo, P C 0.26 (2,434 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+10:08:00 | TXN: SELL | TXN @ 291.27 | prob 64% | rebote-33%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=TREND_DOWN
+10:10:45 | MU ALARMA PRECIO | MU toco 918.00 (regla: mu 918 down          MU pierde la cinta     desangre sigue a 910, semis confirman giro) px=917.8650
+10:14:33 | SPY ALARMA PRECIO | SPY toco 745.80 (regla: spy 745.8 up         STOP del put SPY     reclamo el nivel, tesis muerta, FUERA) px=745.8500
+10:19:02 | 🐋 BALLENA CALLS | TSM: flujo calls masivo, P C 0.32 (2,473 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+10:20:00 | SPY: BUY | SPY @ 746.02 | prob 55% | rompe-TL-1m+vol-1.6x+MACD15-verde+ribbon15-alcista+sobre-VWAP+retest-ok | fase=UNKNOWN
+10:27:55 | 🛰 FINVIZ | ASML: recom 1.43→1.42 (mejora)
+10:27:55 | 🛰 FINVIZ | AVGO: target price 527.73→528.60
+10:27:55 | 🛰 FINVIZ | INTC: target price 113.29→113.09
+10:27:55 | 🛰 FINVIZ | INTC: recom 2.52→2.53 (empeora)
+10:27:55 | 🛰 FINVIZ | MU: target price 1570.27→1568.74
+10:27:55 | 🛰 FINVIZ | MU: recom 1.32→1.31 (mejora)
+10:27:55 | 🛰 FINVIZ | TXN: target price 307.40→308.73
+10:30:31 | QQQ ALARMA PRECIO | QQQ toco 1.00 (regla: qqq 1 up            TEST de audio end-to-end 10:30) px=706.2300
+10:31:46 | 🐋 BALLENA CALLS | INTC: flujo calls masivo, P C 0.29 (7,924 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+10:31:55 | SPY ALARMA PRECIO | SPY toco 747.20 (regla: spy 747.2 up         COMPRA: call 747 0DTE (im  n 747 roto impreso)     748.75/750    stop 745.90) px=747.2250
+10:33:28 | 🐋 BALLENA CALLS | NOK: flujo calls masivo, P C 0.07 (7,075 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+10:33:43 | 🐋 BALLENA CALLS | NFLX: flujo calls masivo, P C 0.19 (24,169 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+10:35:23 | INTC ALARMA PRECIO | INTC toco 103.00 (regla: intc 103 up          COMPRA alt: INTC 105C exp22 a   1.45     target 105    stop 101.50 (SOLO uno: NVDA o INTC)) px=103.0500
+10:39:20 | 🐋 BALLENA CALLS | SMH: flujo calls masivo, P C 0.31 (2,447 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+10:39:45 | 🐋 BALLENA CALLS | AMZN: flujo calls masivo, P C 0.34 (15,859 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+10:42:12 | QQQ ALARMA PRECIO | QQQ toco 705.30 (regla: qqq 705.3 down       ZONA DE COMPRA: pullback al soporte 705 (90/100)     si aguanta impreso, call target 707    stop 704.40) px=705.2800
+10:43:24 | QQQ ALARMA PRECIO | QQQ toco 706.20 (regla: qqq 706.2 up         RE-ENTRADA (si la quieres): escalon reclamado     call target 708    stop 704.90    MEDIA posicion (boleto 3, el ultimo)) px=706.2650
+10:45:21 | QQQ ALARMA PRECIO | QQQ toco 707.20 (regla: qqq 707.2 up         CAP POC: NO comprar ruptura     es el techo-iman  si llevas call, VENDER aqui) px=707.2950
+11:00:04 | NVDA ALARMA PRECIO | NVDA toco 206.00 (regla: nvda 206 up          COMPRA: NVDA 207.5C exp22 a   0.90 (reclaim impreso)     vender en 207.5-208    stop nvda 204) px=206.1300
+11:02:58 | QQQ ALARMA PRECIO | QQQ toco 706.00 (regla: qqq 706 down         AVISO: piso del box 7490 cediendo     put casi listo, esperar 704.90) px=706.0000
+11:06:40 | DRAM ALARMA PRECIO | DRAM toco 58.00 (regla: dram 58 up           LIDER COREA: gatillo del plan roto     acciones DRAM o SOXL (opciones DRAM vetadas por spread)    target 60/63    stop 56.50) px=58.0250
+11:07:15 | SMH ALARMA PRECIO | SMH toco 580.50 (regla: smh 580.5 up         familia semis rompe     confirma a DRAM/SOXL, target 582 (HOD) / 585) px=580.6000
+11:08:00 | QQQ: BUY | COMPRAR QQQ @ 706.84 | target 710.37 | floor 707.55 | capitulacion confirmada
+11:08:01 | SMH: BUY | SMH @ 581.09 | prob 56% | squeeze-p9+cierre-fuera-BB15+MACD15-verde+ribbon15-alcista+sobre-VWAP+retest-ok | fase=UNKNOWN
+11:08:09 | QQQ ALARMA PRECIO | QQQ toco 707.50 (regla: qqq 707.5 up         A+ VIOLENTO: 3er toque rompe el cap     COMPRA NVDA 207.5C (composite con nvda 206)    target 207.5-208    stop 205.40) px=707.5100
+11:08:31 | INTC ALARMA PRECIO | INTC toco 104.20 (regla: intc 104.2 up        COMPRA: call 104 exp22     target 105/107    stop 102.90 (SOLO si no llevas ya un semi)) px=104.2150
+11:08:31 | INTC ALARMA PRECIO | INTC toco 104.19 (regla: intc 104.19 up       TARGET 1 INTC     vender MITAD del 105C (HOD roto)) px=104.2150
+11:09:49 | QQQ ALARMA PRECIO | QQQ toco 708.00 (regla: qqq 708 up           TARGET del call re-entrada     VENDER aqui, no pedir 710) px=708.0050
+11:11:59 | 🐋 BALLENA CALLS | GLD: flujo calls masivo, P C 0.34 (3,169 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+11:12:40 | SMH ALARMA PRECIO | SMH toco 582.00 (regla: smh 582 up           HOD semis     si llevas SOXL, cobrar aqui) px=582.1150
+11:23:29 | 🐋 BALLENA CALLS | NVDA: flujo calls masivo, P C 0.25 (75,634 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+11:26:27 | QQQ ALARMA PRECIO | QQQ toco 708.80 (regla: qqq 708.8 up         TARGET del 708C     VENDER TODO (710 es muro, no se pide)) px=708.8100
+11:43:21 | 🐋 BALLENA CALLS | NOK: flujo calls masivo, P C 0.19 (2,999 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+12:45:38 | 🐋 BALLENA CALLS | MU: flujo calls masivo, P C 0.22 (29,924 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+13:33:13 | NVDA ALARMA PRECIO | NVDA toco 206.75 (regla: nvda 206.75 up       ASALTO AL 207: portero roto     207.5C (post-14:00 pleno  antes solo A+ con volumen)    target 207.5-208    stop 205.40) px=206.7800
+13:50:11 | QQQ ALARMA PRECIO | QQQ toco 710.00 (regla: qqq 710 up           EL MURO del dia tocado (82/100)     1er toque rebota 70%: NO comprar call  si rechaza impreso post-13:30   candidato put) px=710.0300
+13:54:58 | 🐋 BALLENA CALLS | MU: flujo calls masivo, P C 0.31 (35,003 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+14:07:33 | 🐋 BALLENA CALLS | MU: flujo calls masivo, P C 0.23 (28,425 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+14:26:41 | QQQ ALARMA PRECIO | QQQ toco 709.20 (regla: qqq 709.2 down       RESORTE SUELTA: piso de las velas-doji roto     cuchillo fase 1, preparar (confirmacion 707.40)) px=709.1950
+14:31:46 | MU ALARMA PRECIO | MU toco 970.00 (regla: mu 970 down          GRIETA 1 del lider     parabola perdiendo el escalon  verificar z y velas 5m) px=969.6950
+14:31:57 | QQQ ALARMA PRECIO | QQQ toco 708.90 (regla: qqq 708.9 down       rechazo del muro confirmandose     si viene del toque de 710, el fade esta vivo (put con print  707.9)) px=708.8950
+14:51:41 | 🐋 BALLENA CALLS | MU: flujo calls masivo, P C 0.35 (37,680 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+15:11:31 | 🐋 BALLENA CALLS | QCOM: flujo calls masivo, P C 0.28 (2,517 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+15:28:52 | MU ALARMA PRECIO | MU toco 962.00 (regla: mu 962 down          GRIETA 2 confirmada     cima probable: SOXS/puts semis en juego + QQQ fade sube prob) px=961.5950
+15:30:13 | SMH ALARMA PRECIO | SMH toco 582.00 (regla: smh 582 down         CONFIRMACION sector: con MU 970   SOXS convicci  n plena    target SMH 580/578) px=581.9850
+15:30:31 | 🐋 BALLENA CALLS | NFLX: flujo calls masivo, P C 0.15 (97,219 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+15:57:07 | NVDA ALARMA PRECIO | NVDA toco 207.50 (regla: nvda 207.5 up        COMPRA: call 210 semanal     verifica 2a lectura y entra    target 210    stop 205.90) px=207.5150
+15:57:08 | NVDA ALARMA PRECIO | NVDA toco 207.50 (regla: nvda 207.5 up        TARGET del 207.5C     VENDER en el iman 207.5-208 (nodo 17.7M), no pedir 210) px=207.5150

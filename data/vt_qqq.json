@@ -1,0 +1,19 @@
+{
+ "sym": "QQQ",
+ "asof": 1784988148,
+ "spot": 684.66,
+ "em": 10.27,
+ "vt_open": null,
+ "vt_live": 698.0,
+ "zero_gamma": 698.23,
+ "shelf_gex_pct": 0.0039,
+ "vt_source": "respaldo_strike_junto_a_gamma_cero",
+ "n_strikes": 48,
+ "source": "polygon_snapshot_v3",
+ "frozen_at": null,
+ "frozen_day": null,
+ "dist_vt_em": -1.299,
+ "regime_vt": "BELOW",
+ "licencia": "MOMENTUM: fadear PROHIBIDO, stops mas anchos, sin pin, sin venta de premium; banda estirada en contra = CONTINUACION",
+ "why": null
+}

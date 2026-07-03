@@ -1,0 +1,13 @@
+# qqq_weights.txt — top-10 miembros del QQQ con peso % (fuente: playbook 2026-07-16)
+# ACTUALIZADO: 2026-07-16 — refrescar MENSUAL (invesco.com/qqq holdings)
+# formato: SYM PESO%   (el xray tolera miembros sin feed: los marca s/d y renormaliza)
+NVDA 9.5
+MSFT 8.5
+AAPL 7.5
+AMZN 5.5
+GOOGL 5.2
+AVGO 5.0
+META 4.8
+TSLA 3.5
+COST 2.5
+NFLX 2.2

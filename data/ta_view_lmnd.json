@@ -1,0 +1,16 @@
+{
+ "ts": 1785328036,
+ "sym": "LMND",
+ "veredicto": "bear",
+ "rating": "Underweight",
+ "prob": null,
+ "tesis": "Execute a partial trim of 25% of the LMND position at ~$63.00, with a hard stop on the remaining 75% at $57.50. If price bounces to the $65-67 resistance zone (200-SMA/20-SMA confluence), trim an additional 25%. If $60 breaks on high volume, exit the full remaining position.",
+ "niveles": [
+  {
+   "tipo": "target",
+   "nivel": 55.0
+  }
+ ],
+ "latency_s": 185.6,
+ "fuente": "tradingagents"
+}

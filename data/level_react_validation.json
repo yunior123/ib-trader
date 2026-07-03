@@ -1,0 +1,46 @@
+{
+ "generated_at": 1785013644.392181,
+ "syms": [
+  "QQQ",
+  "SPY",
+  "NVDA",
+  "MU",
+  "SMH",
+  "AMD"
+ ],
+ "sessions_used": 1398,
+ "barrier": {
+  "k_atr": 1.5,
+  "h_bars": 30,
+  "timeout_is_not_a_win": true
+ },
+ "real": {
+  "wins": 2022,
+  "losses": 3393,
+  "timeouts": 15,
+  "n": 5415,
+  "rate": 0.3734072022160665,
+  "wilson_lo": 0.3606174947444776,
+  "wilson_hi": 0.3863764015155645
+ },
+ "null": {
+  "wins": 16075,
+  "losses": 25094,
+  "timeouts": 117,
+  "n": 41169,
+  "rate": 0.3904636984138551,
+  "wilson_lo": 0.38576152247338025,
+  "wilson_hi": 0.3951863147533805,
+  "sets_per_session": 10
+ },
+ "delta_pp": -1.71,
+ "bar_pp": 6.0,
+ "niveles_no_reconstruibles": [
+  "OI_CALL_WALL",
+  "OI_PUT_WALL",
+  "ABS_WALL",
+  "FLIP_OPEN"
+ ],
+ "por_que": "no existe historia de OI a ningun precio en este plan; el as_of del snapshot de Polygon devuelve OK e IGNORA la fecha",
+ "veredicto": "NO SUPERA LA VARA"
+}

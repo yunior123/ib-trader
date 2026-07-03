@@ -1,0 +1,6 @@
+16:52:47 | TEST SEÑAL — NVDA | BUY prob 64% (ProChord)
+16:52:47 | TEST BALLENA — QQQ | Muro 700, 42k puts (ProAlert)
+16:52:47 | TEST CRÍTICO — TSLA | Veto, perdió el piso (ProAlarm)
+17:09:16 | BENCH 1/3 — NVDA | latencia del caller (hot path)
+17:09:16 | BENCH 2/3 — MU | latencia del caller (hot path)
+17:09:16 | BENCH 3/3 — QQQ | latencia del caller (hot path)

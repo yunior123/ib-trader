@@ -1,0 +1,35 @@
+{
+ "caps": {
+  "cooldown_sym_sec": 0,
+  "day_total_cap": 40,
+  "gated_classes": [
+   "SIGNAL"
+  ],
+  "hour_signal_cap": 12,
+  "nota": "DANGER cuenta para el total pero NUNCA se suprime. Cambiar aqui, no en el codigo."
+ },
+ "danger": {
+  "frozen_limit": 8,
+  "never_suppressed": true,
+  "registered": 8
+ },
+ "date": "2026-08-09",
+ "enabled": false,
+ "nota": "spent = locuciones ENCOLADAS por speak.sh; voice_log_today = lo que el daemon hablo de verdad. La diferencia es informacion, no un error.",
+ "per_hour": {
+  "08": {
+   "SIGNAL": 1
+  }
+ },
+ "signal_this_hour": 0,
+ "spent": {
+  "SIGNAL": 1
+ },
+ "spent_total": 1,
+ "suppressed": {
+  "by_reason": {},
+  "total": 0
+ },
+ "updated": 1786307141,
+ "voice_log_today": {}
+}

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0"><dict>
+  <key>Label</key><string>com.ibtrader.cboechains</string>
+  <key>ProgramArguments</key><array>
+    <string>/bin/zsh</string><string>-lc</string>
+    <string>cd "$HOME/ib-trader" &amp;&amp; H=$(date +%H%M); if [ "$H" -ge 0400 ] &amp;&amp; [ "$H" -le 2000 ]; then ./venv/bin/python -u scripts/cboe_chain_snap.py --mapa &gt;&gt; logs/cboe_chain_snap.log 2&gt;&amp;1; fi</string>
+  </array>
+  <key>StartInterval</key><integer>300</integer>
+  <key>RunAtLoad</key><false/>
+  <key>StandardOutPath</key><string>/tmp/ibtrader.cboechains.out</string>
+  <key>StandardErrorPath</key><string>/tmp/ibtrader.cboechains.err</string>
+</dict></plist>

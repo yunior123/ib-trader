@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Fleet Charts — operaciones sobre velas 1m (90d, hora ET)</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; background: #131722; color: #d1d4dc;
+         font: 14px -apple-system, BlinkMacSystemFont, sans-serif; }
+  header { display: flex; align-items: center; gap: 12px; padding: 10px 16px;
+           background: #1e222d; border-bottom: 1px solid #2a2e39; flex-wrap: wrap; }
+  select, button { background: #2a2e39; color: #d1d4dc; border: 1px solid #363a45;
+                   border-radius: 6px; padding: 6px 10px; font-size: 14px; }
+  button.active { background: #2962ff; border-color: #2962ff; color: #fff; }
+  #chart { position: absolute; top: 56px; bottom: 26px; left: 0; right: 0; }
+  footer { position: absolute; bottom: 0; height: 26px; left: 0; right: 0;
+           display: flex; align-items: center; gap: 16px; padding: 0 16px;
+           background: #1e222d; font-size: 12px; color: #787b86; }
+  .dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%;
+         margin-right: 4px; }
+  #stats { margin-left: auto; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<header>
+  <strong>Fleet 13</strong>
+  <select id="sym"></select>
+  <span id="tfs"></span>
+  <span id="loading"></span>
+</header>
+<div id="chart"></div>
+<footer>
+  <span><span class="dot" style="background:#26a69a"></span>BUY (shares/CALL)</span>
+  <span><span class="dot" style="background:#ff9800"></span>SELL</span>
+  <span><span class="dot" style="background:#ab47bc"></span>BUY PUT</span>
+  <span><span class="dot" style="background:#29b6f6"></span>SELL PUT</span>
+  <span><span class="dot" style="background:#ef5350"></span>STOP</span>
+  <span id="stats"></span>
+</footer>
+<script src="lightweight-charts.js"></script>
+<script>
+const TFS = [["1m", 60], ["5m", 300], ["15m", 900], ["1h", 3600]];
+let raw = null, tf = 300, chart, candleS, volS;
+
+function makeChart() {
+  const el = document.getElementById("chart");
+  chart = LightweightCharts.createChart(el, {
+    layout: { background: { color: "#131722" }, textColor: "#d1d4dc" },
+    grid: { vertLines: { color: "#1e222d" }, horzLines: { color: "#1e222d" } },
+    timeScale: { timeVisible: true, secondsVisible: false, borderColor: "#2a2e39" },
+    rightPriceScale: { borderColor: "#2a2e39" },
+    crosshair: { mode: 0 },
+  });
+  candleS = chart.addCandlestickSeries({
+    upColor: "#26a69a", downColor: "#ef5350", borderVisible: false,
+    wickUpColor: "#26a69a", wickDownColor: "#ef5350",
+  });
+  volS = chart.addHistogramSeries({
+    priceFormat: { type: "volume" }, priceScaleId: "vol",
+  });
+  chart.priceScale("vol").applyOptions({ scaleMargins: { top: 0.82, bottom: 0 } });
+  new ResizeObserver(() => chart.applyOptions(
+    { width: el.clientWidth, height: el.clientHeight })).observe(el);
+}
+
+function resample(candles, volume, sec) {
+  if (sec === 60) return { c: candles, v: volume };
+  const c = [], v = [];
+  let cur = null, vol = 0;
+  for (let i = 0; i < candles.length; i++) {
+    const b = candles[i], bkt = Math.floor(b.time / sec) * sec;
+    if (!cur || cur.time !== bkt) {
+      if (cur) { c.push(cur); v.push({ time: cur.time, value: vol,
+        color: cur.close >= cur.open ? "rgba(38,166,154,0.4)" : "rgba(239,83,80,0.4)" }); }
+      cur = { time: bkt, open: b.open, high: b.high, low: b.low, close: b.close };
+      vol = 0;
+    } else {
+      cur.high = Math.max(cur.high, b.high);
+      cur.low = Math.min(cur.low, b.low);
+      cur.close = b.close;
+    }
+    vol += volume[i].value;
+  }
+  if (cur) { c.push(cur); v.push({ time: cur.time, value: vol,
+    color: cur.close >= cur.open ? "rgba(38,166,154,0.4)" : "rgba(239,83,80,0.4)" }); }
+  return { c, v };
+}
+
+function render() {
+  if (!raw) return;
+  const { c, v } = resample(raw.candles, raw.volume, tf);
+  candleS.setData(c);
+  volS.setData(v);
+  // marcas alineadas al bucket del timeframe activo
+  const marks = raw.markers.map(m => ({ ...m, time: Math.floor(m.time / tf) * tf }));
+  candleS.setMarkers(marks);
+  const buys = raw.markers.filter(m => m.text.startsWith("BUY ")).length;
+  const puts = raw.markers.filter(m => m.text.startsWith("BUY PUT")).length;
+  document.getElementById("stats").textContent =
+    `${raw.symbol}: ${raw.candles.length} velas 1m | ${buys} BUY | ${puts} BUY PUT | ${raw.markers.length} marcas`;
+}
+
+async function load(sym) {
+  document.getElementById("loading").textContent = "cargando…";
+  raw = await (await fetch(`data/${sym.toLowerCase()}.json`)).json();
+  document.getElementById("loading").textContent = "";
+  render();
+  chart.timeScale().fitContent();
+}
+
+(async () => {
+  makeChart();
+  const syms = await (await fetch("symbols.json")).json();
+  const sel = document.getElementById("sym");
+  syms.forEach(s => sel.add(new Option(s, s)));
+  sel.onchange = () => load(sel.value);
+  const tfsEl = document.getElementById("tfs");
+  TFS.forEach(([lbl, sec]) => {
+    const b = document.createElement("button");
+    b.textContent = lbl;
+    if (sec === tf) b.classList.add("active");
+    b.onclick = () => { tf = sec;
+      tfsEl.querySelectorAll("button").forEach(x => x.classList.remove("active"));
+      b.classList.add("active"); render(); };
+    tfsEl.appendChild(b);
+  });
+  load(syms[0]);
+})();
+</script>
+</body>
+</html>

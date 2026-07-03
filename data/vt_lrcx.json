@@ -1,0 +1,19 @@
+{
+ "sym": "LRCX",
+ "asof": 1784988148,
+ "spot": 304.98,
+ "em": null,
+ "vt_open": null,
+ "vt_live": null,
+ "zero_gamma": null,
+ "shelf_gex_pct": null,
+ "vt_source": null,
+ "n_strikes": 0,
+ "source": "ibkr_tws",
+ "frozen_at": null,
+ "frozen_day": null,
+ "dist_vt_em": null,
+ "regime_vt": null,
+ "licencia": null,
+ "why": "gamma muteada: griegas usables 0% (<50%) sobre 18 contratos"
+}

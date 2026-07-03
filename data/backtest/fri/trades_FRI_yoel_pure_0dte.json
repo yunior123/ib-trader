@@ -1,0 +1,134 @@
+[
+ {
+  "t": 1784899800,
+  "sym": "ASML",
+  "side": "SHORT",
+  "kind": "cambio_tend",
+  "strike": 1787.5,
+  "exp": "20260724",
+  "entry": 15.3,
+  "oi": 61.0,
+  "ret": 1.0
+ },
+ {
+  "t": 1784899800,
+  "sym": "DRAM",
+  "side": "SHORT",
+  "kind": "cambio_tend",
+  "strike": 55.0,
+  "exp": "20260724",
+  "entry": 1.0,
+  "oi": 6496.0,
+  "ret": 1.0
+ },
+ {
+  "t": 1784899800,
+  "sym": "GOOGL",
+  "side": "LONG",
+  "kind": "fuera_banda",
+  "strike": 320.0,
+  "exp": "20260724",
+  "entry": 1.9,
+  "oi": 4941.0,
+  "ret": 1.0
+ },
+ {
+  "t": 1784899800,
+  "sym": "TSLA",
+  "side": "LONG",
+  "kind": "fuera_banda",
+  "strike": 317.5,
+  "exp": "20260724",
+  "entry": 3.15,
+  "oi": 1297.0,
+  "ret": -0.997
+ },
+ {
+  "t": 1784899800,
+  "sym": "WDC",
+  "side": "LONG",
+  "kind": "iman",
+  "strike": 537.5,
+  "exp": "20260724",
+  "entry": 11.75,
+  "oi": 82.0,
+  "ret": -0.999
+ },
+ {
+  "t": 1784900700,
+  "sym": "LRCX",
+  "side": "SHORT",
+  "kind": "cambio_tend",
+  "strike": 312.5,
+  "exp": "20260724",
+  "entry": 6.1,
+  "oi": 164.0,
+  "ret": 0.148
+ },
+ {
+  "t": 1784901600,
+  "sym": "DRAM",
+  "side": "LONG",
+  "kind": "iman",
+  "strike": 53.5,
+  "exp": "20260724",
+  "entry": 1.62,
+  "oi": 108.0,
+  "ret": -0.981
+ },
+ {
+  "t": 1784901600,
+  "sym": "MU",
+  "side": "LONG",
+  "kind": "iman",
+  "strike": 930.0,
+  "exp": "20260724",
+  "entry": 9.45,
+  "oi": 872.0,
+  "ret": 1.0
+ },
+ {
+  "t": 1784901600,
+  "sym": "NVDA",
+  "side": "LONG",
+  "kind": "cambio_tend",
+  "strike": 207.5,
+  "exp": "20260724",
+  "entry": 1.19,
+  "oi": 35436.0,
+  "ret": 1.0
+ },
+ {
+  "t": 1784901600,
+  "sym": "SNDK",
+  "side": "LONG",
+  "kind": "iman",
+  "strike": 1490.0,
+  "exp": "20260724",
+  "entry": 22.5,
+  "oi": 238.0,
+  "ret": -0.993
+ },
+ {
+  "t": 1784901600,
+  "sym": "STX",
+  "side": "LONG",
+  "kind": "iman",
+  "strike": 880.0,
+  "exp": "20260724",
+  "entry": 16.7,
+  "oi": 78.0,
+  "ret": -0.967
+ },
+ {
+  "t": 1784918700,
+  "sym": "SMH",
+  "side": "LONG",
+  "kind": "iman",
+  "strike": 560.0,
+  "exp": "20260724",
+  "entry": 3.5,
+  "oi": 361.0,
+  "ret": -0.831
+ }
+]

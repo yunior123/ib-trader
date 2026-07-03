@@ -1,0 +1,54 @@
+//@version=6
+// ═══════════════════════════════════════════════════════════════════════════════
+// CM_MacD_Ult_MTF by ChrisMoody — 1:1 port from Pine v3 to v6.
+// Companion pane indicator to combo5.pine (add both to the chart).
+// 4-color histogram, MacD line color on signal cross, cross dots, MTF via
+// custom timeframe input — all original logic and colors preserved.
+// ═══════════════════════════════════════════════════════════════════════════════
+indicator("CM_MacD_Ult_MTF", "CM_Ult_MacD_MTF", overlay = false)
+
+useCurrentRes    = input.bool(true, "Use Current Chart Resolution?")
+resCustom        = input.timeframe("60", "Use Different Timeframe? Uncheck Box Above")
+smd              = input.bool(true, "Show MacD & Signal Line? Also Turn Off Dots Below")
+sd               = input.bool(true, "Show Dots When MacD Crosses Signal Line?")
+sh               = input.bool(true, "Show Histogram?")
+macd_colorChange = input.bool(true, "Change MacD Line Color-Signal Line Cross?")
+hist_colorChange = input.bool(true, "MacD Histogram 4 Colors?")
+fastLength   = input.int(12, "Fast Length", minval = 1)
+slowLength   = input.int(26, "Slow Length", minval = 1)
+signalLength = input.int(9, "Signal Length", minval = 1)
+
+res = useCurrentRes ? timeframe.period : resCustom
+source = close
+
+fastMA = ta.ema(source, fastLength)
+slowMA = ta.ema(source, slowLength)
+macd   = fastMA - slowMA
+signal = ta.sma(macd, signalLength)
+hist   = macd - signal
+
+outMacD   = request.security(syminfo.tickerid, res, macd)
+outSignal = request.security(syminfo.tickerid, res, signal)
+outHist   = request.security(syminfo.tickerid, res, hist)
+
+histA_IsUp   = outHist > outHist[1] and outHist > 0
+histA_IsDown = outHist < outHist[1] and outHist > 0
+histB_IsDown = outHist < outHist[1] and outHist <= 0
+histB_IsUp   = outHist > outHist[1] and outHist <= 0
+
+macd_IsAbove = outMacD >= outSignal
+
+plot_color   = hist_colorChange ? (histA_IsUp ? color.aqua : histA_IsDown ? color.blue : histB_IsDown ? color.red : histB_IsUp ? color.maroon : color.yellow) : color.gray
+macd_color   = macd_colorChange ? (macd_IsAbove ? color.lime : color.red) : color.red
+signal_color = macd_colorChange ? color.yellow : color.lime
+
+circleYPosition = outSignal
+macCross = ta.cross(outMacD, outSignal)
+
+plot(smd ? outMacD : na, "MACD", color = macd_color, linewidth = 4)
+plot(smd ? outSignal : na, "Signal Line", color = signal_color, linewidth = 2)
+plot(sh ? outHist : na, "Histogram", color = plot_color, style = plot.style_histogram, linewidth = 4)
+plot(sd and macCross ? circleYPosition : na, "Cross", style = plot.style_circles, linewidth = 4, color = macd_color)
+hline(0, "0 Line", linestyle = hline.style_solid, linewidth = 2, color = color.white)
+
+alertcondition(macCross, "MacD/Signal Cross", "MacD crossed the Signal line!")

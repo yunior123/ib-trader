@@ -1,0 +1,43 @@
+# (que copia) y rebuild_hook.sh (que decide si hay que reconstruir). Cuando las dos
+# Rutas del repo que ACABAN DENTRO del .app. Fuente unica: la lee bundle_backend.sh
+# Una ruta por linea. Terminada en "/" = prefijo.
+# listas eran distintas el hook ignoro 21 commits seguidos y la .app quedo rancia.
+charts/indicator_panel.js
+charts/gex_heatmap_widget.js
+charts/mm_fractal_widget.js
+charts/lightweight-charts-v5.js
+charts/lightweight-charts.js
+charts/live.html
+charts/order_ticket_ui.js
+charts/orderflow_panel.js
+charts/uw_widgets.js
+config/feeds.env
+config/llm.env
+data/fleet.txt
+data/lse_catalog.json
+macapp/
+macapp/voice_bank/
+macapp/voice_bank_texts.txt
+macapp/voice_player.py
+order_engine/
+scripts/chart_bridge.py
+scripts/chart_levels.py
+scripts/architect_lse.py
+scripts/compass.cpp
+scripts/confluence_engine.py
+scripts/direction_view.py
+scripts/free_oi.py
+scripts/gex_core.py
+scripts/ib_mode.py
+scripts/lse_client.py
+scripts/lse_gamma_map.py
+scripts/narrator.py
+scripts/optgate.py
+scripts/order_ticket.py
+scripts/poly_chain_archive.py
+scripts/poly_client.py
+scripts/polygon_oi.py
+scripts/rt_last.py
+scripts/signal_conditioning.py
+scripts/universe.py
+scripts/wall_integrity.py

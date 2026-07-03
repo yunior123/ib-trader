@@ -1,0 +1,1 @@
+{"provider":"massive","status":"FAILED","reason":"RuntimeError: Your plan doesn't include websocket access. Visit https://massive.com/pricing to upgrade.","symbols":["QQQ"],"counts":{"trades":0,"quotes":0,"Q":0,"T":0,"U":0,"late_rejected":0,"duplicates":0},"ts":1786342213.750301,"pid":75602,"doctrine":"REALTIME_OR_FAIL_CLOSED"}

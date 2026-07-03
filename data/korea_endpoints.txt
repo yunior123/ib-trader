@@ -1,0 +1,6 @@
+# NAME TIPO CODIGO — TIPO fija la RUTA del endpoint de Naver (index|stock).
+# Lo declarado aqui MANDA; lo que solo este en korea_contracts.txt entra como accion.
+# 2026-08-03 medido: KODEX200 (ETF) cerro -8,93% y el KOSPI -5,12%. El ETF NO es el indice.
+KOSPI     index KOSPI
+KOSPI200  index KPI200
+KODEX200  stock 069500

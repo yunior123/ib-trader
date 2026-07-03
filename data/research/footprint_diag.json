@@ -1,0 +1,153 @@
+{
+ "doble_toque": [
+  {
+   "bracket": "ticks 0.10/0.10",
+   "doble_toque_se\u00f1al": 35.83,
+   "doble_toque_aleatorio": 32.64,
+   "exceso_pp": 3.19
+  },
+  {
+   "bracket": "ticks 0.20/0.20",
+   "doble_toque_se\u00f1al": 12.26,
+   "doble_toque_aleatorio": 11.15,
+   "exceso_pp": 1.12
+  },
+  {
+   "bracket": "ticks 0.30/0.15",
+   "doble_toque_se\u00f1al": 10.04,
+   "doble_toque_aleatorio": 8.96,
+   "exceso_pp": 1.09
+  },
+  {
+   "bracket": "ATR 1.00/1.00",
+   "doble_toque_se\u00f1al": 0.21,
+   "doble_toque_aleatorio": 0.22,
+   "exceso_pp": -0.02
+  },
+  {
+   "bracket": "ATR 1.00/0.75",
+   "doble_toque_se\u00f1al": 0.41,
+   "doble_toque_aleatorio": 0.41,
+   "exceso_pp": 0.0
+  }
+ ],
+ "volatilidad_barra_se\u00f1al": {
+  "rango_sobre_atr_se\u00f1al": 1.029,
+  "rango_sobre_atr_aleatorio": 0.9504,
+  "ratio": 1.0828,
+  "n_se\u00f1al": 7298,
+  "n_aleatorio": 36490
+ },
+ "mejor_limpia": {
+  "cfg": {
+   "nmin": 1,
+   "inc_tick": false,
+   "ratio": 2.0,
+   "min_vol": 0,
+   "K": 5,
+   "mode": "sigue",
+   "k_tp": 1.0,
+   "k_sl": 0.75,
+   "H": 30
+  },
+  "n": 5954,
+  "wr": 0.4489,
+  "null_wr": 0.4365,
+  "edge": 0.0124,
+  "edge_ci": [
+   -0.005,
+   0.0302
+  ],
+  "p_cluster": 0.1889,
+  "clusters": 40,
+  "n_eff": 40.0,
+  "wr_wilson_neff": [
+   0.3061,
+   0.6007
+  ],
+  "mfe_atr_p60": 0.838,
+  "mae_atr_p75": 1.042,
+  "cortes": {
+   "QQQ": {
+    "n": 3623,
+    "wr": 0.4325,
+    "null": 0.4386,
+    "edge": -0.0061
+   },
+   "SPY": {
+    "n": 2331,
+    "wr": 0.4745,
+    "null": 0.4333,
+    "edge": 0.0412
+   },
+   "dias_1a10": {
+    "n": 2770,
+    "wr": 0.439,
+    "null": 0.4402,
+    "edge": -0.0012
+   },
+   "dias_11a20": {
+    "n": 3184,
+    "wr": 0.4576,
+    "null": 0.433,
+    "edge": 0.0246
+   }
+  }
+ },
+ "pre_registrada": {
+  "cfg": {
+   "nmin": 1,
+   "inc_tick": true,
+   "ratio": 4.0,
+   "min_vol": 50,
+   "K": 3,
+   "mode": "sigue",
+   "k_tp": 1.0,
+   "k_sl": 0.75,
+   "H": 30
+  },
+  "n": 7298,
+  "wr": 0.4433,
+  "null_wr": 0.4289,
+  "edge": 0.0144,
+  "edge_ci": [
+   -0.0002,
+   0.0272
+  ],
+  "p_cluster": 0.04158,
+  "clusters": 40,
+  "n_eff": 40.0,
+  "wr_wilson_neff": [
+   0.3011,
+   0.5954
+  ],
+  "mfe_atr_p60": 0.805,
+  "mae_atr_p75": 1.06,
+  "cortes": {
+   "QQQ": {
+    "n": 4215,
+    "wr": 0.4335,
+    "null": 0.4266,
+    "edge": 0.0068
+   },
+   "SPY": {
+    "n": 3083,
+    "wr": 0.4567,
+    "null": 0.432,
+    "edge": 0.0247
+   },
+   "dias_1a10": {
+    "n": 3517,
+    "wr": 0.4407,
+    "null": 0.4274,
+    "edge": 0.0133
+   },
+   "dias_11a20": {
+    "n": 3781,
+    "wr": 0.4456,
+    "null": 0.4304,
+    "edge": 0.0153
+   }
+  }
+ }
+}

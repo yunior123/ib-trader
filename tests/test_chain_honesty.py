@@ -1,0 +1,660 @@
+"""Tests de HONESTIDAD DE CADENA — features minadas #5 chain-honesty, #6 flip-honesty
+y #13 next-day-map roll-off (2026-07-25).
+
+Lo que estos tests defienden, con lo que se medio ese dia:
+  - En RTH el cache TWS trae griegas en el 100% de las filas (QQQ 80/80, NVDA 40/40 a las
+    10:00/12:00/14:00/15:30 de data/history/2026-07-24). A las 16:16, tras el cierre, TODAS
+    las filas vienen iv=-1 delta=-1 gamma=-1 y bid/ask=-1.
+  - Antes de la feature #5 ese caso caia en `iv=0.3` y se publicaban muros, flip y regimen
+    como si fueran medidos. Los planes de las 04:00 leen justamente esa foto.
+  - El unico filtro de vencimiento era `exp >= hoy`, asi que el contrato que vencia HOY
+    seguia contando de 16:00 a 23:59 y desaparecia a las 00:00:00 -> los muros de la flota
+    SALTABAN a medianoche (MANADA a las 00:00:45).
+"""
+import datetime as dt
+import json
+import math
+import os
+import sys
+import threading
+import time
+
+import pytest
+
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(REPO, "scripts"))
+
+import gex_core as G           # noqa: E402
+
+
+# ---------------------------------------------------------------- utilidades
+def _weekday_1100():
+    """Epoch de un dia de semana a las 11:00 locales (= ET, reloj de la casa). Los tests de
+    inversion de IV necesitan estar DENTRO de RTH: fuera de RTH la inversion esta prohibida
+    a proposito (bid/ask valen -1 y el mid seria una mentira convincente)."""
+    d = dt.date.today()
+    while d.weekday() >= 5:
+        d += dt.timedelta(days=1)
+    return time.mktime(dt.datetime.combine(d, dt.time(11, 0)).timetuple())
+
+
+def _saturday_1100():
+    d = dt.date.today()
+    while d.weekday() != 5:
+        d += dt.timedelta(days=1)
+    return time.mktime(dt.datetime.combine(d, dt.time(11, 0)).timetuple())
+
+
+def _chain_file(tmp_path, rows, spot, epoch, exps, name="opt_chain_x.txt"):
+    """Escribe una cadena con el formato POSICIONAL de produccion
+    (# strike right exp bid ask vol oi iv delta gamma)."""
+    p = tmp_path / name
+    body = [f"# opt_chain X | epoch {int(epoch)} | ts | spot {spot:.2f} | exps {' '.join(exps)}",
+            "# strike right exp bid ask vol oi iv delta gamma"]
+    body += rows
+    p.write_text("\n".join(body) + "\n")
+    return str(p)
+
+
+def _row(k, right, exp, bid, ask, oi, iv, gamma, vol=100):
+    return (f"{k:.2f} {right} {exp} {bid:.2f} {ask:.2f} {vol:.0f} {oi:.0f} "
+            f"{iv:.4f} -1.0000 {gamma:.6f}")
+
+
+# ============================================ 1. inversion de IV: ida y vuelta
+@pytest.mark.parametrize("iv", [0.08, 0.1234, 0.25, 0.60, 1.35])
+@pytest.mark.parametrize("cp", ["C", "P"])
+def test_iv_inversion_recupera_la_sigma(iv, cp):
+    """precio BS -> invertir -> recupera la sigma de entrada (tolerancia 1e-4)."""
+    S, K, T = 100.0, 103.0, 0.0821
+    px = G.bs_price(S, K, T, iv, cp)
+    back = G.implied_vol(px, S, K, T, cp)
+    assert back is not None
+    assert abs(back - iv) < 1e-4
+
+
+def test_iv_inversion_devuelve_None_no_un_default():
+    """Lo que NO se puede invertir vale None. Jamas 0, 0.3, 0.5 ni 50."""
+    assert G.implied_vol(0.0, 100, 100, 0.1) is None          # precio nulo
+    assert G.implied_vol(1.0, 100, 100, 0.0) is None          # sin tiempo
+    assert G.implied_vol(1.0, 100, 100, -0.1) is None         # T negativo
+    assert G.implied_vol(1.0, 130, 100, 0.1, "C") is None     # por debajo del intrinseco
+    assert G.implied_vol(99.0, 100, 100, 0.1, "C") is None    # fuera del bracket (IV>500%)
+    assert G.implied_vol(None, 100, 100, 0.1) is None
+    assert G.implied_vol(1.0, 0, 100, 0.1) is None             # sin spot
+
+
+def test_forward_por_paridad_put_call():
+    """F = K + (C-P)e^{rT}: con precios generados desde el mismo S/iv la paridad debe
+    devolver EXACTAMENTE el forward S·e^{rT}."""
+    S, K, T, iv = 250.0, 245.0, 0.05, 0.28
+    c = G.bs_price(S, K, T, iv, "C")
+    p = G.bs_price(S, K, T, iv, "P")
+    F = G.forward_from_parity(c, p, K, T)
+    assert F == pytest.approx(S * math.exp(G.R_FREE * T), rel=1e-9)
+    assert G.forward_from_parity(None, p, K, T) is None
+    assert G.forward_from_parity(c, p, K, 0.0) is None
+
+
+# ================== 2. cadena con TODO a -1: o se invierte, o None. Nunca 0.
+def test_cadena_sin_griegas_ni_cotizaciones_da_None_no_cero(tmp_path):
+    """La foto de las 16:16: iv=-1, gamma=-1, bid=-1, ask=-1. No hay nada que invertir
+    (un mid de -1 seria peor que el bug) -> gamma MUTEADA, no un numero derivado de 0.3."""
+    now = _weekday_1100()
+    exp = time.strftime("%Y%m%d", time.localtime(now + 3 * 86400))
+    rows = [_row(k, r, exp, -1, -1, 500, -1, -1)
+            for k in (98.0, 99.0, 100.0, 101.0, 102.0) for r in ("C", "P")]
+    path = _chain_file(tmp_path, rows, 100.0, now, [exp])
+    out = G.from_ibkr_cache(path, 100.0, now=now)
+
+    assert out is not None
+    assert out["gamma_ok"] is False
+    assert out["greeks_ok_pct"] == 0.0
+    for k in ("net_gex", "flip", "flip_open" if "flip_open" in out else "flip_static",
+              "call_wall", "put_wall", "abs_wall", "em", "iv_atm", "gross_gex", "hhi"):
+        assert out[k] is None, f"{k} deberia ser None y vale {out[k]!r}"
+    assert out["regime"] is None
+    # el cero plausible prohibido por ~/CLAUDE.md
+    assert out["net_gex"] != 0 and out["net_gex"] != 0.0
+    assert out["degraded_reason"]
+    # el OI SI es dato real y no necesita griegas: los muros por OI sobreviven
+    assert out["oi_call_wall"] is not None
+    assert out["oi_put_wall"] is not None
+
+
+def test_inversion_rescata_la_cadena_cuando_hay_mid_en_rth(tmp_path):
+    """Mismo caso pero con bid/ask REALES en RTH: la IV se invierte del mid, el perfil se
+    reconstruye y el mapa vuelve a ser publicable — con `iv_source='inverted'` visible."""
+    now = _weekday_1100()
+    exp = time.strftime("%Y%m%d", time.localtime(now + 3 * 86400))
+    T = G._T_of(exp, now)
+    spot, iv_true = 100.0, 0.27
+    rows = []
+    for k in (97.0, 98.0, 99.0, 100.0, 101.0, 102.0, 103.0):
+        for r in ("C", "P"):
+            px = G.bs_price(spot, k, T, iv_true, r)
+            rows.append(_row(k, r, exp, px * 0.995, px * 1.005, 500, -1, -1))
+    path = _chain_file(tmp_path, rows, spot, now, [exp])
+    out = G.from_ibkr_cache(path, spot, now=now)
+
+    assert out["gamma_ok"] is True
+    assert out["greeks_ok_pct"] == 1.0
+    assert out["iv_source"] == "inverted"
+    assert out["n_iv_inverted"] == len(rows)
+    assert out["iv_inv_stats"]["forward_paridad"] == len(rows)
+    assert out["iv_atm"] == pytest.approx(iv_true, abs=2e-3)   # el mid lleva 0.5% de spread
+    assert out["net_gex"] is not None
+    assert out["em"] > 0
+
+
+def test_fuera_de_rth_no_se_invierte_aunque_haya_mid(tmp_path):
+    """Guarda explicita: a las 11:00 del SABADO los precios del fichero son del cierre del
+    viernes. No se inventa una IV "de ahora" a partir de ellos."""
+    sat = _saturday_1100()
+    exp = time.strftime("%Y%m%d", time.localtime(sat + 3 * 86400))
+    T = G._T_of(exp, sat)
+    rows = []
+    for k in (99.0, 100.0, 101.0):
+        for r in ("C", "P"):
+            px = G.bs_price(100.0, k, T, 0.3, r)
+            rows.append(_row(k, r, exp, px * 0.99, px * 1.01, 500, -1, -1))
+    path = _chain_file(tmp_path, rows, 100.0, sat, [exp])
+    out = G.from_ibkr_cache(path, 100.0, now=sat)
+    assert out["gamma_ok"] is False
+    assert out["n_iv_inverted"] == 0
+    assert out["quotes_ok"] is False
+    assert out["net_gex"] is None
+
+
+# ==================================== 3. greeks_ok_pct en cadena mitad y mitad
+def test_greeks_ok_pct_en_cadena_mitad_buena_mitad_ausente(tmp_path):
+    """8 contratos con gamma medida + 8 sin nada invertible = 0.5 exacto. Y 0.5 NO es
+    suficiente por si solo: el umbral es `< MIN_GREEKS_OK` para mutear, asi que 0.5 pasa."""
+    now = _weekday_1100()
+    exp = time.strftime("%Y%m%d", time.localtime(now + 5 * 86400))
+    buenos = [_row(k, r, exp, -1, -1, 400, 0.30, 0.05)
+              for k in (99.0, 100.0, 101.0, 102.0) for r in ("C", "P")]
+    malos = [_row(k, r, exp, -1, -1, 400, -1, -1)
+             for k in (97.0, 97.5, 98.0, 98.5) for r in ("C", "P")]
+    path = _chain_file(tmp_path, buenos + malos, 100.0, now, [exp])
+    out = G.from_ibkr_cache(path, 100.0, now=now)
+    assert out["n_candidates"] == 16
+    assert out["n_gamma_ok"] == 8
+    assert out["n_no_greeks"] == 8
+    assert out["greeks_ok_pct"] == pytest.approx(0.5)
+    assert out["gamma_ok"] is True                    # 0.5 no es "< 0.5"
+
+    # un contrato bueno menos -> 7/16 = 0.4375 < 0.5 -> MUTEADO
+    path2 = _chain_file(tmp_path, buenos[1:] + malos, 100.0, now, [exp], "opt_chain_y.txt")
+    out2 = G.from_ibkr_cache(path2, 100.0, now=now)
+    assert out2["greeks_ok_pct"] < G.MIN_GREEKS_OK
+    assert out2["gamma_ok"] is False
+    assert out2["net_gex"] is None
+
+
+def test_cabecera_de_cadena_se_publica(tmp_path):
+    """La cabecera honesta: banda usada, nº de vencimientos, edad del snapshot, fuente."""
+    now = _weekday_1100()
+    exp = time.strftime("%Y%m%d", time.localtime(now + 5 * 86400))
+    rows = [_row(k, r, exp, -1, -1, 400, 0.3, 0.04)
+            for k in (99.0, 100.0, 101.0) for r in ("C", "P")]
+    path = _chain_file(tmp_path, rows, 100.0, now - 600, [exp])
+    out = G.from_ibkr_cache(path, 100.0, now=now)
+    assert out["chain_age_s"] == pytest.approx(600, abs=1)
+    assert out["band_used"] == 0.035
+    assert out["n_expiries"] == 1
+    assert out["rows_total"] == 6
+    assert out["chain_src"] == "ibkr_tws"
+    assert out["session"] == "rth"
+    hdr = G.parse_chain_header(path)
+    assert hdr["spot"] == 100.0 and hdr["exps"] == [exp]
+
+
+def test_cadena_rancia_en_rth_es_emergencia(tmp_path):
+    """>45 min de edad DENTRO de RTH = el daemon del cache esta muerto -> mutear.
+    (Fuera de RTH la misma edad es normal: el libro del cierre es el libro correcto.)"""
+    now = _weekday_1100()
+    exp = time.strftime("%Y%m%d", time.localtime(now + 5 * 86400))
+    rows = [_row(k, r, exp, -1, -1, 400, 0.3, 0.04)
+            for k in (99.0, 100.0, 101.0) for r in ("C", "P")]
+    path = _chain_file(tmp_path, rows, 100.0, now - 3 * 3600, [exp])
+    out = G.from_ibkr_cache(path, 100.0, now=now)
+    assert out["stale"] is True
+    assert out["gamma_ok"] is False
+    assert "rancia" in out["degraded_reason"]
+    assert out["stale_reason"]
+
+
+# ================= 5b. la cabecera que ESCRIBE opt_chain_cache (funcion pura, sin TWS)
+def test_cabecera_escrita_por_el_cache_es_append_only_y_parseable(tmp_path):
+    """Linea 1 INTACTA (scripts/opt_quick.cpp la parsea posicionalmente y busca
+    "epoch "/"spot "/"exps " por substring) y linea 2 append-only. `band` publicado es la
+    banda EXTERIOR: gex_core la usa de FILTRO, asi que si dijera la del ATM (0.08) tiraria
+    la ola lejana de los NARROW y el arreglo de BAND_FLOOR seria inerte."""
+    import opt_chain_cache as OC
+    exp = "20260807"
+    rows = [_row(k, r, exp, 1.0, 1.1, 500, 0.30, 0.05)
+            for k in (400.0, 462.5, 530.0) for r in ("C", "P")]
+    h = OC.header_lines("MSFT", 462.19, [exp], rows, OC.PCT_BAND, OC.NARROW_BAND,
+                        OC.NARROW_MAX_STRIKES, OC.NARROW_FAR_MAX_STRIKES, True,
+                        epoch=1785526231, stamp="2026-07-31 15:30:31")
+    assert h[0] == ("# opt_chain MSFT | epoch 1785526231 | 2026-07-31 15:30:31 | "
+                    "spot 462.19 | exps 20260807")
+    for tok in ("epoch ", "spot ", "exps "):
+        assert tok not in h[1] and tok not in h[2], f"{tok!r} colisiona con opt_quick.cpp"
+    p = tmp_path / "opt_chain_msft.txt"
+    p.write_text("\n".join(h + rows) + "\n")
+    hdr = G.parse_chain_header(str(p))
+    assert hdr["epoch"] == 1785526231 and hdr["spot"] == 462.19 and hdr["exps"] == [exp]
+    assert hdr["band"] == pytest.approx(OC.PCT_BAND)          # exterior, no la del ATM
+    assert hdr["max_strikes"] == OC.NARROW_MAX_STRIKES and hdr["narrow"] == 1
+    assert hdr["greeks_ok_pct"] == 1.0
+    campos = h[1].split()
+    assert campos[campos.index("band_atm") + 1] == f"{OC.NARROW_BAND:.4f}"
+    assert campos[campos.index("span_pct") + 1] == "0.1406"    # (530-400)/2/462.19
+    assert campos[campos.index("far_max_strikes") + 1] == str(OC.NARROW_FAR_MAX_STRIKES)
+    assert campos[campos.index("bidask_ok_pct") + 1] == "1.0000"
+
+
+def test_cabecera_sin_filas_no_inventa_un_span():
+    """0 filas -> span_pct -1 (centinela de 'sin dato' del formato), jamas 0.0000."""
+    import opt_chain_cache as OC
+    h = OC.header_lines("ZZ", 100.0, ["20260807"], [], 0.15, 0.15, 20, 20, False)
+    campos = h[1].split()
+    assert campos[campos.index("span_pct") + 1] == "-1.0000"
+
+
+# =============================== 8. ROLL-OFF: el vencimiento rueda EN EL CIERRE
+def test_expiry_rueda_en_el_cierre_no_a_medianoche():
+    """El bug de MANADA de las 00:00:45. `exp_status` es la unica fuente de verdad."""
+    hoy = dt.date.today()
+    e_hoy = hoy.strftime("%Y%m%d")
+    e_manana = (hoy + dt.timedelta(days=3)).strftime("%Y%m%d")
+    e_ayer = (hoy - dt.timedelta(days=1)).strftime("%Y%m%d")
+    t = lambda h, m: time.mktime(dt.datetime.combine(hoy, dt.time(h, m)).timetuple())
+
+    assert G.exp_status(e_hoy, t(15, 59)) == "vivo"          # antes del cierre: cuenta
+    assert G.exp_status(e_hoy, t(16, 0)) == "vencido_hoy"     # al cierre: deja de existir
+    assert G.exp_status(e_hoy, t(23, 59)) == "vencido_hoy"    # NO espera a medianoche
+    assert G.exp_status(e_manana, t(23, 59)) == "vivo"
+    assert G.exp_status(e_ayer, t(10, 0)) == "expirado"
+
+
+def test_el_mapa_usa_el_expiry_VIVO_cuando_el_frontal_ya_vencio(tmp_path):
+    """Cadena con el vencimiento de HOY + el siguiente. A las 15:00 el mapa es del de hoy;
+    a las 16:30 rueda al siguiente Y lo DICE (`exp_rolled`, `roll_reason`)."""
+    hoy = dt.date.today()
+    while hoy.weekday() >= 5:                    # necesitamos RTH para el tramo de las 15:00
+        hoy += dt.timedelta(days=1)
+    e0 = hoy.strftime("%Y%m%d")
+    e1 = (hoy + dt.timedelta(days=7)).strftime("%Y%m%d")
+    t = lambda h, m: time.mktime(dt.datetime.combine(hoy, dt.time(h, m)).timetuple())
+    rows = []
+    for e in (e0, e1):
+        for k in (99.0, 100.0, 101.0):
+            for r in ("C", "P"):
+                rows.append(_row(k, r, e, -1, -1, 700 if e == e0 else 300, 0.30, 0.05))
+    path = _chain_file(tmp_path, rows, 100.0, t(14, 55), [e0, e1])
+
+    antes = G.from_ibkr_cache(path, 100.0, now=t(15, 0))
+    assert antes["exp"] == e0
+    assert antes["exp_rolled"] is False
+    assert antes["gamma_ok"] is True
+
+    # misma foto, 90 minutos despues: el frontal ya no existe
+    despues = G.from_ibkr_cache(path, 100.0, now=t(16, 30))
+    assert despues["exp"] == e1
+    assert despues["exp_rolled"] is True
+    assert e0 in despues["roll_reason"] and e1 in despues["roll_reason"]
+    # y el mapa cambia porque cambia el LIBRO, no porque el reloj pasara de las 23:59
+    assert despues["n_candidates"] == 6
+
+    # medianoche: MISMO resultado que a las 16:30 -> no hay salto de medianoche
+    manana = t(0, 5) + 86400
+    tras_medianoche = G.from_ibkr_cache(path, 100.0, now=manana)
+    assert tras_medianoche["exp"] == e1
+
+
+def test_cadena_entera_vencida_no_inventa_niveles(tmp_path):
+    """Todos los contratos expirados -> None en todo, motivo nombrado, sin ceros."""
+    hoy = dt.date.today()
+    e = (hoy - dt.timedelta(days=2)).strftime("%Y%m%d")
+    rows = [_row(k, r, e, -1, -1, 900, 0.3, 0.05)
+            for k in (99.0, 100.0, 101.0) for r in ("C", "P")]
+    path = _chain_file(tmp_path, rows, 100.0, time.time(), [e])
+    out = G.from_ibkr_cache(path, 100.0)
+    assert out["gamma_ok"] is False
+    assert out["net_gex"] is None
+    assert out["exp_rolled"] is True
+    assert "muertos" in out["degraded_reason"]
+
+
+# ================================================ 6/7. flip: raices y congelacion
+def _perfil_asimetrico():
+    """Libro sintetico ASIMETRICO (puts pesados abajo, calls arriba) = el del autotest de
+    gex_core. Un solo cruce, pero sirve para el contrato de claves."""
+    demo = []
+    for k in range(90, 111):
+        demo.append({"strike": float(k), "right": "C", "oi": 400.0 * max(0, k - 100),
+                     "gamma": 0.03, "iv": 0.30, "T": 0.02})
+        demo.append({"strike": float(k), "right": "P", "oi": 300.0 * max(0, 100 - k),
+                     "gamma": 0.03, "iv": 0.30, "T": 0.02})
+    return demo
+
+
+def test_flip_devuelve_TODAS_las_raices_ordenadas_por_cercania():
+    """`_flip` daba UNA raiz y se quedaba tan ancho. Con tres cruces reales, la segunda
+    por debajo del spot es la TRAMPILLA y hasta hoy se tiraba."""
+    prof = {90.0: 5.0, 95.0: -12.0, 100.0: 14.0, 105.0: -20.0}
+    roots = G._flip_roots(prof, spot=100.0)
+    assert len(roots) == 3, f"tres cruces esperados, salieron {roots}"
+    assert roots == sorted(roots, key=lambda r: abs(r - 100.0))
+    assert G._flip(prof) in roots        # la unica raiz del contrato viejo es una de estas
+    assert G._flip_roots({}, 100.0) == []
+    assert G._flip_roots({90.0: 3.0, 95.0: 1.0}, 100.0) == []   # sin cruce, sin raices
+
+
+def test_build_gex_publica_las_raices():
+    g = G.build_gex(_perfil_asimetrico(), 100.0)
+    assert isinstance(g["roots"], list)
+    assert g["flip"] in g["roots"] or g["roots"] == []
+    assert g["flip_static"] is not None
+
+
+def test_trapdoor_root_exige_escala():
+    roots = [104.0, 97.0, 80.0]
+    assert G.trapdoor_root(roots, 100.0, em=5.0) == 97.0     # dentro de 1x em
+    assert G.trapdoor_root(roots, 100.0, em=1.0) is None     # ninguna lo bastante cerca
+    assert G.trapdoor_root(roots, 100.0, em=None) is None    # sin em no se inventa umbral
+    assert G.trapdoor_root([], 100.0, em=5.0) is None
+
+
+def test_flip_open_no_se_mueve_con_el_spot_pero_flip_live_si(tmp_path, monkeypatch):
+    """Feature #6: `flip_open` congelado a las 09:35 no cambia intradia; `flip_live` si.
+    Un nivel que no puede oscilar no puede dar falsas alarmas."""
+    import chart_levels as CL
+    monkeypatch.setattr(CL, "OUT", str(tmp_path))
+
+    hoy = time.strftime("%Y-%m-%d")
+    # ya congelado hoy -> se mantiene aunque el flip vivo se haya ido a otro sitio
+    (tmp_path / "levels_qqq.json").write_text(json.dumps(
+        {"flip_open": 660.0, "frozen_day": hoy, "frozen_at": 1}))
+    prev_open, prev_day, _at = CL._frozen_flip("qqq")
+    assert (prev_open, prev_day) == (660.0, hoy)
+    assert CL.freeze_decision(699.0, prev_open, prev_day, hoy, 15 * 60, True) == (660.0, False)
+
+    # sin congelar aun: a las 09:34 NO se congela; a las 09:35 si
+    assert CL.freeze_decision(699.0, None, None, hoy, CL.FREEZE_MIN - 1, True) == (None, False)
+    assert CL.freeze_decision(699.0, None, None, hoy, CL.FREEZE_MIN, True) == (699.0, True)
+    # fin de semana: no hay apertura que congelar
+    assert CL.freeze_decision(699.0, None, None, hoy, 12 * 60, False) == (None, False)
+    # dia nuevo: el congelado de ayer NO se hereda
+    assert CL.freeze_decision(701.0, 660.0, "1999-01-01", hoy, 12 * 60, True) == (701.0, True)
+    # sin flip vivo no se congela nada
+    assert CL.freeze_decision(None, None, None, hoy, 12 * 60, True) == (None, False)
+
+
+def test_flip_repriced_gana_y_lo_declara(tmp_path):
+    """Antes se pagaba `flip_recompute` y se SOBREESCRIBIA con el estatico, en silencio.
+    Ahora el repreciado gana cuando existe y `flip_src` lo dice."""
+    now = _weekday_1100()
+    exp = time.strftime("%Y%m%d", time.localtime(now + 5 * 86400))
+    rows = []
+    # OI asimetrico: puts pesados abajo, calls arriba (si no, el perfil neto es 0 en todos
+    # los strikes y no hay raiz que repreciar).
+    for i, k in enumerate((97.0, 98.0, 99.0, 100.0, 101.0, 102.0, 103.0)):
+        iv = 0.20 + 0.02 * i
+        rows.append(_row(k, "C", exp, -1, -1, 100 + 400 * i, iv, -1))
+        rows.append(_row(k, "P", exp, -1, -1, 2500 - 400 * i, iv, -1))
+    path = _chain_file(tmp_path, rows, 100.0, now, [exp])
+    out = G.from_ibkr_cache(path, 100.0, now=now)
+    assert out["flip_src"] == "repriced"
+    assert out["flip"] == out["flip_recompute"]
+    assert out["flip_why"]
+
+
+# ================================================= 9. escritura ATOMICA del mapa
+def test_escritura_atomica_ningun_lector_ve_json_invalido(tmp_path, monkeypatch):
+    """bin/compass lee charts/data/levels_<sym>.json cada 0.25 s. Con json.dump directo sobre
+    el destino un lector podia leer JSON TRUNCADO. Aqui se escribe 60 veces mientras se lee
+    en bucle: cada lectura que abra el fichero DEBE parsear."""
+    import chart_levels as CL
+    monkeypatch.setattr(CL, "OUT", str(tmp_path))
+    dst = tmp_path / "levels_zz.json"
+    payload = {"sym": "ZZ", "profile": [{"strike": i, "gex": i * 1.5} for i in range(400)]}
+    dst.write_text(json.dumps(payload))
+
+    fallos, parado = [], threading.Event()
+
+    def escritor():
+        for i in range(60):
+            payload["asof"] = i
+            tmp = str(dst) + f".tmp{os.getpid()}"
+            with open(tmp, "w") as f:
+                json.dump(payload, f, indent=1)
+            os.replace(tmp, str(dst))
+        parado.set()
+
+    th = threading.Thread(target=escritor)
+    th.start()
+    lecturas = 0
+    while not parado.is_set() or lecturas < 50:
+        try:
+            with open(dst) as f:
+                json.load(f)
+            lecturas += 1
+        except ValueError as e:
+            fallos.append(str(e))
+        except OSError:
+            pass
+        if lecturas > 4000:
+            break
+    th.join()
+    assert not fallos, f"{len(fallos)} lecturas vieron JSON invalido: {fallos[:2]}"
+    assert lecturas >= 50
+    # y el generador real usa os.replace, no json.dump al destino
+    src = open(os.path.join(REPO, "scripts", "chart_levels.py")).read()
+    assert "os.replace(tmp, dst)" in src
+
+
+# ============================================== 10. CONTRATO de build_gex / levels
+CLAVES_PREVIAS_BUILD_GEX = {
+    "profile", "call_gex", "put_gex", "net_gex", "regime", "flip", "flip_static",
+    "flip_recompute", "spot", "scale", "call_wall", "put_wall", "abs_wall",
+    "oi_call_wall", "oi_put_wall",
+    "call_wall_net", "call_wall_regime", "call_wall_kind",
+    "put_wall_net", "put_wall_regime", "put_wall_kind",
+    "abs_wall_net", "abs_wall_regime", "abs_wall_kind",
+}
+
+
+def test_contrato_build_gex_conserva_todas_las_claves():
+    g = G.build_gex(_perfil_asimetrico(), 100.0)
+    faltan = CLAVES_PREVIAS_BUILD_GEX - set(g)
+    assert not faltan, f"build_gex perdio claves que ya consumia alguien: {faltan}"
+
+
+CLAVES_PREVIAS_LEVELS = {
+    "sym", "spot", "asof", "exp", "dte", "scope", "net_vex", "vex_peak", "vex_profile",
+    "pressure", "pressure_lab", "iv_atm", "em", "net_gex", "regime", "flip", "flip_static",
+    "call_wall", "put_wall", "abs_wall", "poc_dom", "call_wall_gex", "put_wall_gex",
+    "abs_wall_gex", "oi_call_wall", "oi_put_wall", "near_call_wall", "near_put_wall",
+    "near_flip", "profile", "call_wall_kind", "call_wall_regime", "call_wall_net",
+    "put_wall_kind", "put_wall_regime", "put_wall_net",
+    "abs_wall_kind", "abs_wall_regime", "abs_wall_net",
+}
+
+
+def test_contrato_levels_json_solo_crece():
+    """bin/compass (C++, cada 0.25 s), chart_bridge.py, fleet_consensus.{py,cpp} leen este
+    JSON por nombre de clave. Se AÑADE, no se renombra ni se quita."""
+    import chart_levels as CL
+    for sym in ("qqq", "nok", "spy", "nvda"):
+        p = os.path.join(REPO, CL.OUT, f"levels_{sym}.json")
+        if not os.path.exists(p):
+            continue
+        d = json.load(open(p))
+        faltan = CLAVES_PREVIAS_LEVELS - set(d)
+        assert not faltan, f"levels_{sym}.json perdio claves: {faltan}"
+        # y la cabecera de honestidad esta presente
+        for k in ("gamma_ok", "greeks_ok_pct", "chain_src", "flip_live", "flip_src",
+                  "flip_open", "roots", "exp_rolled", "band_used", "n_expiries"):
+            assert k in d, f"levels_{sym}.json sin la clave de honestidad {k}"
+
+
+def test_gamma_muteada_nunca_publica_un_cero_en_levels():
+    """Si gamma_ok es false, las claves gamma del JSON son null. Un 0 ahi seria leido como
+    'regimen neutro medido' por la brujula."""
+    import chart_levels as CL
+    for sym in ("qqq", "nok", "spy", "nvda", "mu"):
+        p = os.path.join(REPO, CL.OUT, f"levels_{sym}.json")
+        if not os.path.exists(p):
+            continue
+        d = json.load(open(p))
+        if d.get("gamma_ok"):
+            continue
+        for k in ("net_gex", "flip", "call_wall", "put_wall", "abs_wall", "pressure",
+                  "em", "iv_atm", "gross_gex", "hhi", "bifurcation"):
+            assert d.get(k) is None, f"levels_{sym}.json muteado pero {k}={d.get(k)!r}"
+
+
+# ========== VOL-TRIGGER congelado a las 09:35 (feature #20, hermano de #6)
+def test_vt_es_la_ultima_ESTANTERIA_densa_no_el_cruce_por_cero():
+    """`VT = max{K<=spot : gex(K)>0 y gex(K)>=5% de Σ|gex| y los dos vecinos poblados}`.
+    NO es el gamma-cero: es la ultima estanteria DENSA de gamma positiva debajo del spot."""
+    import vol_trigger as VT
+    # rejilla de 1.0 con dos estantes de gamma+ debajo del spot (95 y 98) y uno flojo (91)
+    prof = {90.0: -300.0, 91.0: 20.0, 92.0: -400.0, 93.0: -500.0, 94.0: -600.0,
+            95.0: 900.0, 96.0: -200.0, 97.0: -150.0, 98.0: 800.0, 99.0: -100.0,
+            100.0: -50.0, 101.0: 700.0}
+    vt, shelf, src, why = VT.vt_from_profile(prof, spot=99.5, zero_gamma=97.0)
+    assert vt == 98.0, f"deberia ganar el estante MAS ALTO por debajo del spot, salio {vt}"
+    assert src == "estante_denso"
+    assert why is None
+    assert 0 < shelf < 1
+    # 101 esta por ENCIMA del spot: no puede ser el VT
+    assert vt < 99.5
+
+
+def test_vt_exige_vecinos_poblados_y_peso_minimo():
+    import vol_trigger as VT
+    # estante gordo pero SIN vecino izquierdo poblado -> no cuenta (rejilla de 1.0)
+    prof = {95.0: 900.0, 96.0: -100.0, 97.0: -100.0, 98.0: -100.0, 99.0: -100.0}
+    vt, _s, src, _w = VT.vt_from_profile(prof, spot=99.5, zero_gamma=None)
+    assert vt is None or src == "respaldo_strike_junto_a_gamma_cero"
+    # estante por debajo del 5% del libro -> no cuenta
+    prof2 = {94.0: -1000.0, 95.0: 1.0, 96.0: -1000.0, 97.0: -1000.0}
+    vt2, _s2, _src2, why2 = VT.vt_from_profile(prof2, spot=98.0, zero_gamma=None)
+    assert vt2 is None and why2
+
+
+def test_vt_sin_estante_ni_respaldo_devuelve_None_con_motivo():
+    import vol_trigger as VT
+    for args in (({}, 100.0, None), ({100.0: 0.0}, 100.0, None)):
+        vt, shelf, src, why = VT.vt_from_profile(*args)
+        assert vt is None and shelf is None and src is None and why
+
+
+def test_vt_puerta_de_40_strikes(tmp_path, monkeypatch):
+    """Kill-risk de la spec: con cadena escasa el nivel congelado es arbitrario y la regla de
+    prohibir-fadear hace daño real. Por debajo de 40 strikes: sin VT, y se dice por que."""
+    import vol_trigger as VT
+    lv = {"spot": 100.0, "em": 2.0, "gamma_ok": True, "n_strikes_populated": 12,
+          "flip_live": 99.0, "chain_src": "polygon_snapshot_v3",
+          "profile": [{"strike": 99.0, "gex": 500.0}, {"strike": 100.0, "gex": -500.0}]}
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("data", exist_ok=True)
+    out = VT.gen("zz", lv=lv, write=False)
+    assert out["vt_live"] is None
+    assert out["vt_open"] is None
+    assert "40" in out["why"]
+    assert out["regime_vt"] is None
+    assert out["dist_vt_em"] is None
+
+
+def test_vt_gamma_muteada_no_publica_nivel(monkeypatch, tmp_path):
+    import vol_trigger as VT
+    lv = {"spot": 100.0, "em": 2.0, "gamma_ok": False, "n_strikes_populated": 0,
+          "degraded_reason": "griegas usables 0% (<50%) sobre 40 contratos",
+          "profile": [], "chain_src": "ibkr_tws"}
+    monkeypatch.chdir(tmp_path)
+    out = VT.gen("zz", lv=lv, write=False)
+    assert out["vt_live"] is None and out["vt_open"] is None
+    assert "muteada" in out["why"]
+
+
+def test_vt_open_congelado_igual_que_el_flip():
+    import vol_trigger as VT
+    hoy = "2026-07-27"
+    assert VT.freeze_decision(105.0, 100.0, hoy, hoy, 15 * 60, True) == (100.0, False)
+    assert VT.freeze_decision(105.0, None, None, hoy, VT.FREEZE_MIN - 1, True) == (None, False)
+    assert VT.freeze_decision(105.0, None, None, hoy, VT.FREEZE_MIN, True) == (105.0, True)
+    assert VT.freeze_decision(105.0, None, None, hoy, 12 * 60, False) == (None, False)
+
+
+def test_strike_width_modal():
+    import vol_trigger as VT
+    assert VT.strike_width([90, 91, 92, 93, 95]) == 1.0        # el paso modal, no el hueco
+    assert VT.strike_width([100, 102.5, 105, 107.5]) == 2.5
+    assert VT.strike_width([100.0]) is None
+    assert VT.strike_width([]) is None
+
+
+def test_respaldo_polygon_mira_atras_pero_no_indefinidamente(tmp_path, monkeypatch):
+    """El OI no cambia con el mercado cerrado, asi que el snapshot del ultimo cierre es el
+    libro correcto para el mapa del premarket y de las 04:00 (con el fin de semana por medio).
+    Pero con un tope: mas alla de la ventana, mejor sin mapa que con un libro de otra semana."""
+    import chart_levels as CL
+    monkeypatch.chdir(tmp_path)
+    hoy = time.strftime("%Y-%m-%d")
+    hace3 = time.strftime("%Y-%m-%d", time.localtime(time.time() - 3 * 86400))
+    hace9 = time.strftime("%Y-%m-%d", time.localtime(time.time() - 9 * 86400))
+    for d, hhmm in ((hace9, "1558"), (hace3, "1558"), (hace3, "2030")):
+        os.makedirs(f"data/history/{d}", exist_ok=True)
+        open(f"data/history/{d}/poly_chain_zz_{hhmm}.txt", "w").write("# x\n")
+    assert CL.poly_chain_path("zz").endswith(f"{hace3}/poly_chain_zz_2030.txt")
+    assert CL.poly_chain_path("zz", lookback=1) is None       # nada de hoy
+    assert CL.poly_chain_path("zz", day=hoy, lookback=4).endswith("2030.txt")
+    assert CL.poly_chain_path("nohaycadena") is None
+
+
+# --------------------------------------------------------------------------
+# T = 0.02: el plazo inventado (bug medido 2026-07-25)
+# --------------------------------------------------------------------------
+
+def test_T_of_ilegible_devuelve_None_no_una_semana():
+    """Antes: `except: return 0.02` = 7,3 dias. Un plazo plausible desplaza el flip,
+    y del flip sale pin-vs-trampilla, que es VETO DURO sobre 0DTE comprado."""
+    assert G._T_of("no-es-una-fecha") is None
+    assert G._T_of("") is None
+
+
+def test_T_from_deriva_el_plazo_del_expiry_cuando_no_viene_T():
+    """gex_snapshot construia los contratos SIN `T`; ahora se deriva de `exp`."""
+    ts = 1785000000.0
+    c = {"strike": 100, "right": "C", "oi": 10, "exp": "20260801"}
+    t = G._T_from(c, now=ts)
+    assert t is not None and 0 < t < 0.05
+
+
+def test_T_from_sin_T_ni_exp_es_None():
+    assert G._T_from({"strike": 100, "right": "C", "oi": 10}) is None
+
+
+def test_T_from_prefiere_la_T_explicita():
+    c = {"strike": 100, "exp": "20260801", "T": 0.5}
+    assert G._T_from(c, now=1785000000.0) == 0.5
+
+
+def test_contrato_sin_plazo_no_entra_en_el_perfil_repreciado():
+    """_gex_at es de donde sale el flip: un contrato sin plazo se EXCLUYE, no se
+    reprecia con 7,3 dias fabricados."""
+    sin_t = [{"strike": 100, "right": "C", "oi": 1000, "iv": 0.3}]
+    tot, used = G._gex_at(sin_t, 100.0)
+    assert used == 0
+    assert tot == 0.0
+
+
+def test_dte_of_no_revienta_con_expiry_roto():
+    """Antes `round(_T_of(...) * 365, 2)` lanzaba TypeError al volver None."""
+    assert G._dte_of("basura") is None

@@ -1,0 +1,224 @@
+// ===== MOTOR v5 — CONFLUENCIA MULTI-TIMEFRAME (orden Yunior 2026-07-15) =====
+// "los bots deben usar al menos la barra de 1 min y la de 15 min para
+// trabajar con bollinger y ver si revienta la banda... plus macd, plus
+// lineas de tendencia, plus breakouts, plus whales... solo buy and sell...
+// en los mensajes pon al lado la probabilidad de acierto"
+// Capas: BB(20,2) en 1m/5m/15m (banda reventada en >=2 TF = fuerza) +
+// MACD(12,26,9) 4-estados en 1m y 15m (CM_MacD_Ult_MTF) + trendlines con
+// breaks (LuxAlgo, pivots 14) + ribbon Madrid 15m (EMA5..100) + escenario
+// del dia (open-drive/fade, rally, lateral) + VWAP + whales. Señal BUY/SELL
+// unica con prob% (logistica calibrada por backtest; @SYM@_V5_A/B).
+// @SYM@_V5=1 activa; default 0 = byte-identico al motor previo.
+static const double V5        = envd("@SYM@_V5", 0);
+static const double V5_MIN    = envd("@SYM@_V5_MIN", 5.0);   // score minimo (de 8)
+static const double V5_A      = envd("@SYM@_V5_A", -3.2);    // logistica: prob = 1/(1+e^-(A+B*score))
+static const double V5_B      = envd("@SYM@_V5_B", 0.62);
+static const double V5_COOL   = envd("@SYM@_V5_COOL", 1800); // s entre señales mismo lado
+
+struct V5EMA { double v = 0; bool init = false;
+    double upd(double x, int n) { double k = 2.0 / (n + 1);
+        v = init ? x * k + v * (1 - k) : x; init = true; return v; } };
+
+struct V5MACD {  // CM_MacD_Ult_MTF: EMA12-EMA26, señal SMA9, hist 4 estados
+    V5EMA e12, e26; double sig9[9] = {0}; int nsig = 0;
+    double macd = 0, sig = 0, hist = 0, hist1 = 0;
+    void upd(double c) {
+        macd = e12.upd(c, 12) - e26.upd(c, 26);
+        sig9[nsig % 9] = macd; nsig++;
+        int k = nsig < 9 ? nsig : 9; double s = 0;
+        for (int i = 0; i < k; i++) s += sig9[i];
+        hist1 = hist; sig = s / k; hist = macd - sig; }
+    bool a_up()  const { return hist > hist1 && hist > 0; }   // aqua: impulso arriba
+    bool b_up()  const { return hist > hist1 && hist <= 0; }  // maroon: girando desde abajo
+    bool a_dn()  const { return hist < hist1 && hist > 0; }   // blue: debilitandose
+    bool b_dn()  const { return hist < hist1 && hist <= 0; }  // red: impulso abajo
+    bool above() const { return macd >= sig; } };
+
+struct V5BB {   // BB(20,2) incremental sobre un ring de closes
+    double ring[20] = {0}; int n = 0;
+    double mid = 0, up = 0, dn = 0;
+    void upd(double c) { ring[n % 20] = c; n++;
+        int k = n < 20 ? n : 20; double s = 0, s2 = 0;
+        for (int i = 0; i < k; i++) { s += ring[i]; s2 += ring[i] * ring[i]; }
+        mid = s / k; double var = s2 / k - mid * mid;
+        double sd = var > 0 ? std::sqrt(var) : 0;
+        up = mid + 2 * sd; dn = mid - 2 * sd; }
+    bool burst_up(double c) const { return n >= 20 && c > up; }
+    bool burst_dn(double c) const { return n >= 20 && c < dn; } };
+
+struct V5TF {   // agregador 5m/15m desde bars de 1m
+    int mins; double ep0 = 0, o = 0, h = 0, l = 0, c = 0;
+    V5BB bb; V5MACD macd; bool closed = false;
+    V5TF(int m) : mins(m) {}
+    void upd(const Bar& b) {
+        closed = false;
+        double bucket = b.t - std::fmod(b.t, mins * 60.0);
+        if (bucket != ep0) {
+            if (ep0 > 0) { bb.upd(c); macd.upd(c); closed = true; }
+            ep0 = bucket; o = b.o; h = b.h; l = b.l; c = b.c;
+        } else { if (b.h > h) h = b.h; if (b.l < l) l = b.l; c = b.c; } } };
+
+// trendlines con breaks (LuxAlgo 1:1): pivots lookback 14, pendiente ATR/14,
+// upos/dnos = flags de ruptura. Incremental, pivote confirmado 14 bars tarde.
+struct V5TL {
+    static const int N = 14;
+    double hs[2 * N + 1] = {0}, ls[2 * N + 1] = {0}; int nb = 0;
+    double atr = 0, prev_c = 0;
+    double upper = 0, lower = 0, sph = 0, spl = 0;
+    int upos = 0, dnos = 0; bool up_break = false, dn_break = false;
+    void upd(const Bar& b) {
+        up_break = dn_break = false;
+        double tr = b.h - b.l;
+        if (prev_c > 0) { double a = std::fabs(b.h - prev_c), c2 = std::fabs(b.l - prev_c);
+            if (a > tr) tr = a; if (c2 > tr) tr = c2; }
+        prev_c = b.c;
+        atr = atr > 0 ? (atr * (N - 1) + tr) / N : tr;
+        for (int i = 0; i < 2 * N; i++) { hs[i] = hs[i + 1]; ls[i] = ls[i + 1]; }
+        hs[2 * N] = b.h; ls[2 * N] = b.l; nb++;
+        if (nb < 2 * N + 1) return;
+        double slope = atr / N;                       // tlMult = 1.0
+        bool is_ph = true, is_pl = true;              // pivote en el centro (lag N)
+        for (int i = 0; i < 2 * N + 1; i++) {
+            if (i != N && hs[i] >= hs[N]) is_ph = false;
+            if (i != N && ls[i] <= ls[N]) is_pl = false; }
+        if (is_ph) { sph = slope; upper = hs[N]; upos = 0; }
+        else if (upper > 0) upper -= sph;
+        if (is_pl) { spl = slope; lower = ls[N]; dnos = 0; }
+        else if (lower > 0) lower += spl;
+        // breaks contra la linea proyectada al bar actual (offset N del pivote)
+        if (!is_ph && upper > 0 && upos == 0 && b.c > upper - sph * N) { upos = 1; up_break = true; }
+        if (!is_pl && lower > 0 && dnos == 0 && b.c < lower + spl * N) { dnos = 1; dn_break = true; } } };
+
+// ribbon Madrid 15m: EMAs 5..100; score = (subiendo&&>ema100) - (bajando&&<ema100), norm -1..1
+struct V5Ribbon {
+    V5EMA e[20]; double prev[20] = {0}; int lens[20] =
+        {5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95,100};
+    double score = 0;
+    void upd(double c) {
+        double e100 = e[19].upd(c, 100); int up = 0, dn = 0;
+        for (int i = 0; i < 19; i++) {
+            double v = e[i].upd(c, lens[i]);
+            if (v >= prev[i] && v > e100) up++;
+            if (v < prev[i] && v < e100) dn++;
+            prev[i] = v; }
+        score = (up - dn) / 19.0; } };
+
+static V5TF v5_tf5(5), v5_tf15(15);
+static V5BB v5_bb1;
+static V5MACD v5_macd1;
+static V5TL v5_tl;
+static V5Ribbon v5_rib;
+static double v5_vwap_pv = 0, v5_vwap_v = 0, v5_day = 0;
+static double v5_day_open = 0, v5_or_hi = 0, v5_or_lo = 1e18; // opening range 30m
+static double v5_last_buy = 0, v5_last_sell = 0;
+static int    v5_bb1_dn_ago = 999, v5_bb1_up_ago = 999;      // bars desde burst 1m
+static int    v5_bb5_dn_ago = 999, v5_bb5_up_ago = 999;
+static int    v5_bb15_dn_ago = 999, v5_bb15_up_ago = 999;
+
+// contexto de opciones (sidecar scripts/options_context.py, <=20 min de edad):
+// "EPOCH iv delta gamma theta oi_call oi_put opt_vol"
+static int v5_opt(char* out, size_t n) {
+    FILE* f = fopen("data/options_@sym@.txt", "r");
+    if (!f) { out[0] = 0; return 0; }
+    double ep, iv, de, ga, th, oic, oip, ov;
+    int k = fscanf(f, "%lf %lf %lf %lf %lf %lf %lf %lf", &ep, &iv, &de, &ga, &th, &oic, &oip, &ov);
+    fclose(f);
+    if (k < 8 || time(nullptr) - (time_t)ep > 1200) { out[0] = 0; return 0; }
+    snprintf(out, n, " | IV %.0f%% D%.2f G%.3f Th%.2f OI %.0fk/%.0fk",
+             iv * 100, de, ga, th, oic / 1000, oip / 1000);
+    return 1;
+}
+
+// clasificador de escenario del dia (los 3 casos de Yunior + tendencia)
+static const char* v5_scenario(double c) {
+    if (v5_day_open <= 0 || v5_or_hi <= 0) return "?";
+    double rng = v5_or_hi - v5_or_lo;
+    if (rng <= 0) return "lateral";
+    if (c > v5_or_hi) return v5_rib.score > 0.15 ? "tendencia-alcista" : "rompimiento-arriba";
+    if (c < v5_or_lo) return v5_rib.score < -0.15 ? "tendencia-bajista" : "rompimiento-abajo";
+    if (c > v5_day_open && v5_rib.score < -0.1) return "pullback-en-bajada";
+    if (c < v5_day_open && v5_rib.score > 0.1) return "pullback-en-subida";
+    return "lateral";
+}
+
+// hook por bar de 1m: actualiza todo y dispara BUY/SELL con prob%
+static void v5_on_bar(const Bar& b, bool alert_hours, int H, int M) {
+    // dia nuevo -> reset VWAP/opening-range
+    double day = b.t - std::fmod(b.t, 86400.0);
+    if (day != v5_day) { v5_day = day; v5_vwap_pv = v5_vwap_v = 0;
+        v5_day_open = b.o; v5_or_hi = 0; v5_or_lo = 1e18; }
+    double tp = (b.h + b.l + b.c) / 3;
+    v5_vwap_pv += tp * b.v; v5_vwap_v += b.v;
+    double vwap = v5_vwap_v > 0 ? v5_vwap_pv / v5_vwap_v : b.c;
+    int hm = H * 100 + M;
+    if (hm >= 930 && hm < 1000) { if (b.h > v5_or_hi) v5_or_hi = b.h;
+        if (b.l < v5_or_lo) v5_or_lo = b.l; }
+    v5_bb1.upd(b.c); v5_macd1.upd(b.c);
+    v5_tf5.upd(b); v5_tf15.upd(b);
+    if (v5_tf15.closed) v5_rib.upd(v5_tf15.c);
+    v5_tl.upd(b);
+    v5_bb1_dn_ago  = v5_bb1.burst_dn(b.c) ? 0 : v5_bb1_dn_ago + 1;
+    v5_bb1_up_ago  = v5_bb1.burst_up(b.c) ? 0 : v5_bb1_up_ago + 1;
+    if (v5_tf5.closed)  { v5_bb5_dn_ago  = v5_tf5.bb.burst_dn(v5_tf5.c)  ? 0 : v5_bb5_dn_ago + 1;
+                          v5_bb5_up_ago  = v5_tf5.bb.burst_up(v5_tf5.c)  ? 0 : v5_bb5_up_ago + 1; }
+    if (v5_tf15.closed) { v5_bb15_dn_ago = v5_tf15.bb.burst_dn(v5_tf15.c) ? 0 : v5_bb15_dn_ago + 1;
+                          v5_bb15_up_ago = v5_tf15.bb.burst_up(v5_tf15.c) ? 0 : v5_bb15_up_ago + 1; }
+    if (V5 <= 0 || !alert_hours || v5_tf15.macd.nsig < 9) return;
+
+    // ---- confluencia BUY (pullback/reversion al alza o breakout con tendencia)
+    // banda inferior reventada en >=2 TF hace poco + bar verde = capitulacion multi-TF
+    int bb_dn_tfs = (v5_bb1_dn_ago <= 3) + (v5_bb5_dn_ago <= 2) + (v5_bb15_dn_ago <= 1);
+    int bb_up_tfs = (v5_bb1_up_ago <= 3) + (v5_bb5_up_ago <= 2) + (v5_bb15_up_ago <= 1);
+    double now_w = (double)time(nullptr);
+    double wh_buy = whale_score(now_w, 1), wh_sell = whale_score(now_w, -1);
+    const char* sc = v5_scenario(b.c);
+    double sbuy = 0; char rb[240] = ""; size_t lb = 0;
+    auto add = [](char* r, size_t& l, const char* s) {
+        size_t n = strlen(s); if (l + n + 2 < 238) { if (l) { r[l++] = '+'; } memcpy(r + l, s, n); l += n; r[l] = 0; } };
+    if (bb_dn_tfs >= 2 && b.c > b.o)            { sbuy += 2; add(rb, lb, bb_dn_tfs >= 3 ? "BB-3TF-abajo" : "BB-2TF-abajo"); }
+    if (v5_macd1.b_up())                         { sbuy += 1; add(rb, lb, "MACD1-girando"); }
+    if (v5_tf15.macd.above() || v5_tf15.macd.b_up()) { sbuy += 1; add(rb, lb, "MACD15-alcista"); }
+    if (v5_tl.up_break)                          { sbuy += 1.5; add(rb, lb, "rompe-trendline"); }
+    if (v5_rib.score > 0.2)                      { sbuy += 1; add(rb, lb, "ribbon15-alcista"); }
+    if (b.c > vwap)                              { sbuy += 0.5; add(rb, lb, "sobre-VWAP"); }
+    if (wh_buy > 0.3)                            { sbuy += 1; add(rb, lb, "whales-comprando"); }
+    if (!strcmp(sc, "pullback-en-subida") || !strcmp(sc, "tendencia-alcista")) { sbuy += 0.5; add(rb, lb, sc); }
+    double ssell = 0; char rs[240] = ""; size_t ls2 = 0;
+    if (bb_up_tfs >= 2 && b.c < b.o)             { ssell += 2; add(rs, ls2, bb_up_tfs >= 3 ? "BB-3TF-arriba" : "BB-2TF-arriba"); }
+    if (v5_macd1.a_dn() || v5_macd1.b_dn())      { ssell += 1; add(rs, ls2, "MACD1-cayendo"); }
+    if (!v5_tf15.macd.above() || v5_tf15.macd.a_dn()) { ssell += 1; add(rs, ls2, "MACD15-bajista"); }
+    if (v5_tl.dn_break)                          { ssell += 1.5; add(rs, ls2, "rompe-trendline-abajo"); }
+    if (v5_rib.score < -0.2)                     { ssell += 1; add(rs, ls2, "ribbon15-bajista"); }
+    if (b.c < vwap)                              { ssell += 0.5; add(rs, ls2, "bajo-VWAP"); }
+    if (wh_sell > 0.3)                           { ssell += 1; add(rs, ls2, "whales-vendiendo"); }
+    if (!strcmp(sc, "pullback-en-bajada") || !strcmp(sc, "tendencia-bajista")) { ssell += 0.5; add(rs, ls2, sc); }
+
+    char opt[96];
+    if (sbuy >= V5_MIN && b.t - v5_last_buy >= V5_COOL && sbuy > ssell) {
+        v5_last_buy = b.t;
+        double p = 100.0 / (1.0 + std::exp(-(V5_A + V5_B * sbuy)));
+        v5_opt(opt, sizeof(opt));
+        char m[420];
+        std::snprintf(m, sizeof(m), "@SYM@ @ %.2f | prob %.0f%% | %s | %s%s",
+                      b.c, p, rb, sc, opt);
+        std::printf("[%02d:%02d] *** @SYM@ V5 BUY *** score %.1f prob %.0f%% %s t=%.0f\n",
+                    H, M, sbuy, p, rb, b.t);
+        std::fflush(stdout);
+        notify("@SYM@: BUY", m, true);
+        if (audio_gate(true)) { play("sounds/dram_buy.wav", "Glass"); speak("buy @sym@ now"); }
+    }
+    if (ssell >= V5_MIN && b.t - v5_last_sell >= V5_COOL && ssell > sbuy) {
+        v5_last_sell = b.t;
+        double p = 100.0 / (1.0 + std::exp(-(V5_A + V5_B * ssell)));
+        v5_opt(opt, sizeof(opt));
+        char m[420];
+        std::snprintf(m, sizeof(m), "@SYM@ @ %.2f | prob %.0f%% | %s | %s%s",
+                      b.c, p, rs, sc, opt);
+        std::printf("[%02d:%02d] *** @SYM@ V5 SELL *** score %.1f prob %.0f%% %s t=%.0f\n",
+                    H, M, ssell, p, rs, b.t);
+        std::fflush(stdout);
+        notify("@SYM@: SELL", m, true);
+        if (audio_gate(true)) { play("sounds/dram_sell.wav", "Basso"); speak("sell @sym@ now"); }
+    }
+}
+// ===== FIN MOTOR v5 =====

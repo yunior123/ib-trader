@@ -1,0 +1,22 @@
+04:02:31 | 🛰 FINVIZ ROTO | HTTP 401 — reintento 5min
+06:12:44 | 🔒 TRUTH-LOCK INFO | MU: PASADO reescrito (13 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:12:44 | 🔒 TRUTH-LOCK INFO | NVDA: PASADO reescrito (11 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:12:44 | 🔒 TRUTH-LOCK INFO | QQQ: PASADO reescrito (9 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:12:45 | 🔒 TRUTH-LOCK INFO | SPY: PASADO reescrito (3 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:12:45 | 🔒 TRUTH-LOCK INFO | TSLA: PASADO reescrito (12 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:14:46 | 🔒 TRUTH-LOCK INFO | AAPL: PASADO reescrito (6 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:14:46 | 🔒 TRUTH-LOCK INFO | AMD: PASADO reescrito (10 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:14:47 | 🔒 TRUTH-LOCK INFO | AMZN: PASADO reescrito (10 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:14:47 | 🔒 TRUTH-LOCK INFO | GOOGL: PASADO reescrito (8 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:14:47 | 🔒 TRUTH-LOCK INFO | INTC: PASADO reescrito (11 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:14:47 | 🔒 TRUTH-LOCK INFO | META: PASADO reescrito (5 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:14:47 | 🔒 TRUTH-LOCK INFO | MSFT: PASADO reescrito (11 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:14:48 | 🔒 TRUTH-LOCK INFO | SMH: PASADO reescrito (2 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:16:49 | 🔒 TRUTH-LOCK INFO | AMD: PASADO reescrito (1 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:16:49 | 🔒 TRUTH-LOCK INFO | AVGO: PASADO reescrito (4 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:16:49 | 🔒 TRUTH-LOCK INFO | LRCX: PASADO reescrito (2 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:16:50 | 🔒 TRUTH-LOCK INFO | QCOM: PASADO reescrito (2 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:16:50 | 🔒 TRUTH-LOCK INFO | TSM: PASADO reescrito (6 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:18:52 | 🔒 TRUTH-LOCK INFO | SNDK: PASADO reescrito (15 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:18:52 | 🔒 TRUTH-LOCK INFO | STX: PASADO reescrito (2 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:18:52 | 🔒 TRUTH-LOCK INFO | WDC: PASADO reescrito (4 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.

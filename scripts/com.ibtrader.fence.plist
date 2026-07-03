@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.ibtrader.fence</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/bin/zsh</string>
+		<string>-c</string>
+		<string>cd /Users/yuniorrodriguezosorio/ib-trader &amp;&amp; ./venv/bin/python scripts/em_envelope.py --all; ./venv/bin/python scripts/pin_clock.py --all</string>
+	</array>
+	<key>RunAtLoad</key>
+	<false/>
+	<key>StartCalendarInterval</key>
+	<array>
+		<dict><key>Hour</key><integer>9</integer><key>Minute</key><integer>12</integer></dict>
+		<dict><key>Hour</key><integer>15</integer><key>Minute</key><integer>56</integer></dict>
+	</array>
+	<key>StandardErrorPath</key>
+	<string>/Users/yuniorrodriguezosorio/ib-trader/fence.log</string>
+	<key>StandardOutPath</key>
+	<string>/Users/yuniorrodriguezosorio/ib-trader/fence.log</string>
+	<key>WorkingDirectory</key>
+	<string>/Users/yuniorrodriguezosorio/ib-trader</string>
+</dict>
+</plist>
