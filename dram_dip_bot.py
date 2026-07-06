@@ -18,13 +18,14 @@ import pandas as pd
 
 # Try to import ib_insync for live mode; allow import to fail for dry-run testing
 try:
-    from ib_insync import IB, Stock, MarketOrder, util
+    from ib_insync import IB, Stock, MarketOrder, LimitOrder, util
     IB_AVAILABLE = True
 except ImportError:
     IB_AVAILABLE = False
     IB = None
     Stock = None
     MarketOrder = None
+    LimitOrder = None
     util = None
 
 logging.basicConfig(
@@ -47,22 +48,39 @@ DRAM_EXCHANGE = TICKER_EXCHANGE
 DRAM_CURRENCY = TICKER_CURRENCY
 
 # Default strategy parameters (can be overridden via CLI)
+# Single-lot dip-cycle mode (validated 2026-07-06 on 14d of real 1m data):
+# buy panic dips, sell via GTC limit at entry+target (never below break-even
+# incl. commissions), hold the bag until it recovers. Realized PnL can never
+# be negative by construction.
 DEFAULT_CONFIG = {
     "bb_period": 20,
-    "bb_std": 2.0,
+    "bb_std": 3.0,          # only true panic breaks the 3-sigma band
     "rsi_period": 14,
-    "rsi_oversold": 35.0,
+    "rsi_oversold": 25.0,   # deep capitulation only (35 buys the first shallow dip = top)
     "volume_ma_period": 20,
     "volume_mult": 1.2,
     "ceiling_price": None,
     "min_profit_pct": 2.0,
     "trail_giveback_pct": None,
-    "capital_per_lot": 70.0,
-    "max_lots": 20,
-    "max_capital_pct": 90.0,
-    "buy_cooldown_bars": 5,
+    "capital_per_lot": 100.0,
+    "max_lots": 1,
+    "max_capital_pct": 100.0,
+    "buy_cooldown_bars": 0,
     "thesis_floor": None,
+    "commission_per_order": 1.0,   # IBKR fixed US: $0.005/share, min $1.00/order
+    "fractional_shares": False,    # whole shares like the live account
 }
+
+
+def exit_limit_price(entry: float, qty: float, cfg: dict) -> float:
+    """Sell-limit price: entry+target, but never below break-even incl. both
+    commissions. Guarantees every realized cycle is net-positive."""
+    target = entry * (1 + cfg["min_profit_pct"] / 100)
+    comm = cfg.get("commission_per_order", 0.0)
+    if qty > 0 and comm > 0:
+        breakeven = entry + (2 * comm) / qty
+        target = max(target, breakeven * 1.001)
+    return target
 
 # ===================== INDICATORS =====================
 def compute_rsi(close: pd.Series, period: int = 14) -> pd.Series:
@@ -99,6 +117,8 @@ class Lot:
     qty: float
     entry_time: datetime
     peak_price: float = 0.0
+    limit_price: float = 0.0   # GTC sell-limit; fills only at this price or better
+    entry_bar: int = -1        # bar index of the fill (no same-bar exits)
 
 
 @dataclass
@@ -109,6 +129,9 @@ class Portfolio:
     realized_pnl: float = 0.0
     last_buy_bar_index: int = -9999
     thesis_broken_alerted: bool = False
+    commissions: float = 0.0
+    buy_count: int = 0
+    sell_count: int = 0
 
     def deployed_capital(self) -> float:
         return sum(l.entry_price * l.qty for l in self.lots)
@@ -124,6 +147,7 @@ class DipAccumulatorBot:
         self.cfg = cfg
         self.portfolio = Portfolio(cash=capital, starting_cash=capital)
         self._bar_index = 0
+        self._pending_buy = False  # signal armed on bar close, filled next bar open
 
     def _buy_signal(self, row) -> bool:
         c = self.cfg
@@ -166,37 +190,78 @@ class DipAccumulatorBot:
         return self._buy_capital() > 0
 
     def step(self, row, ts: datetime):
+        """Process one COMPLETED bar. Chronology inside the bar:
+        1. fill last bar's armed entry at this bar's OPEN (no look-ahead)
+        2. check GTC sell-limits against this bar's HIGH (intrabar fill)
+        3. thesis-floor check on close (blocks new buys, never forces a sale)
+        4. evaluate entry signal on this bar's close -> arm for next bar
+        """
         c = self.cfg
         p = self.portfolio
         self._bar_index += 1
-        thesis_broken = self._check_thesis_floor(row, ts)
+        comm = c.get("commission_per_order", 0.0)
 
-        if not thesis_broken and self._can_buy_more() and self._buy_signal(row):
-            buy_capital = self._buy_capital()
-            qty = buy_capital / row["close"]
-            p.lots.append(
-                Lot(entry_price=row["close"], qty=qty, entry_time=ts, peak_price=row["close"])
-            )
-            p.cash -= buy_capital
-            p.last_buy_bar_index = self._bar_index
-            log.info(f"[{ts}] BUY (sim) ${buy_capital:.2f} / {qty:.4f} @ {row['close']:.2f}")
+        # --- 1) Fill pending entry at this bar's open ---
+        if self._pending_buy:
+            self._pending_buy = False
+            price = float(row["open"])
+            available = self._buy_capital()
+            if price > 0 and available > comm:
+                if c.get("fractional_shares", False):
+                    qty = (available - comm) / price
+                else:
+                    qty = float(int((available - comm) / price))
+                cost = qty * price + comm
+                if qty > 0 and cost <= p.cash + 1e-9:
+                    lot = Lot(
+                        entry_price=price, qty=qty, entry_time=ts, peak_price=price,
+                        limit_price=exit_limit_price(price, qty, c), entry_bar=self._bar_index,
+                    )
+                    p.lots.append(lot)
+                    p.cash -= cost
+                    p.commissions += comm
+                    p.buy_count += 1
+                    p.last_buy_bar_index = self._bar_index
+                    log.info(f"[{ts}] BUY {qty:g} @ {price:.2f} (GTC sell-limit {lot.limit_price:.2f})")
 
+        # --- 2) Exits ---
         still_open = []
         for lot in p.lots:
-            lot.peak_price = max(lot.peak_price, row["close"])
-            gain_pct = (row["close"] - lot.entry_price) / lot.entry_price * 100
-            should_sell = gain_pct >= c["min_profit_pct"]
-            if should_sell and c["trail_giveback_pct"] is not None:
-                giveback = (lot.peak_price - row["close"]) / lot.peak_price * 100
-                should_sell = giveback >= c["trail_giveback_pct"]
-            if should_sell:
-                proceeds = lot.qty * row["close"]
-                pnl = proceeds - (lot.qty * lot.entry_price)
-                p.cash += proceeds
-                p.realized_pnl += pnl
+            lot.peak_price = max(lot.peak_price, float(row["high"]))
+            filled = False
+            if c["trail_giveback_pct"] is None:
+                # GTC limit: fills any bar whose high reaches it, at limit or better.
+                # Never fills below limit => realized PnL is net-positive by construction.
+                if lot.entry_bar != self._bar_index and float(row["high"]) >= lot.limit_price:
+                    open_px = float(row["open"])
+                    fill = open_px if open_px > lot.limit_price else lot.limit_price
+                    p.cash += lot.qty * fill - comm
+                    p.commissions += comm
+                    pnl = lot.qty * (fill - lot.entry_price) - 2 * comm
+                    p.realized_pnl += pnl
+                    p.sell_count += 1
+                    filled = True
+                    log.info(f"[{ts}] SELL {lot.qty:g} @ {fill:.2f} (net {pnl:+.2f})")
             else:
+                # Legacy close-based trailing exit (still never below profit target)
+                gain_pct = (row["close"] - lot.entry_price) / lot.entry_price * 100
+                giveback = (lot.peak_price - row["close"]) / lot.peak_price * 100
+                if gain_pct >= c["min_profit_pct"] and giveback >= c["trail_giveback_pct"]:
+                    p.cash += lot.qty * row["close"] - comm
+                    p.commissions += comm
+                    p.realized_pnl += lot.qty * (row["close"] - lot.entry_price) - 2 * comm
+                    p.sell_count += 1
+                    filled = True
+            if not filled:
                 still_open.append(lot)
         p.lots = still_open
+
+        # --- 3) Thesis floor (blocks new buys only) ---
+        thesis_broken = self._check_thesis_floor(row, ts)
+
+        # --- 4) Arm entry for next bar's open ---
+        if not thesis_broken and self._can_buy_more() and self._buy_signal(row):
+            self._pending_buy = True
 
     def summary(self, last_price: float):
         p = self.portfolio
@@ -207,6 +272,9 @@ class DipAccumulatorBot:
             "realized_pnl": p.realized_pnl,
             "unrealized_pnl": unrealized,
             "total_equity": p.total_equity(last_price),
+            "buys": p.buy_count,
+            "sells": p.sell_count,
+            "commissions": p.commissions,
         }
 
 
@@ -256,11 +324,13 @@ def run_backtest(df: pd.DataFrame, cfg: dict, starting_cash: float):
 
     last_price = df.iloc[-1]["close"]
     s = bot.summary(last_price)
+    sessions = len(pd.Series(df.index.date).unique())
     log.info("=== BACKTEST SUMMARY ===")
-    log.info(f"Final price: ${last_price:.2f}")
+    log.info(f"Final price: ${last_price:.2f} | sessions: {sessions}")
+    log.info(f"Trades: {s['buys']} buys / {s['sells']} sells ({(s['buys'] + s['sells']) / max(sessions, 1):.1f}/day) | commissions: ${s['commissions']:.2f}")
     log.info(f"Open lots: {s['open_lots']}")
     log.info(f"Cash: ${s['cash']:.2f}")
-    log.info(f"Realized PnL: ${s['realized_pnl']:.2f}")
+    log.info(f"Realized PnL (net of fees): ${s['realized_pnl']:.2f}")
     log.info(f"Unrealized PnL: ${s['unrealized_pnl']:.2f}")
     log.info(f"Total equity: ${s['total_equity']:.2f}")
     log.info(f"Return: {(s['total_equity'] / starting_cash - 1) * 100:.2f}%")
@@ -352,63 +422,66 @@ def run_live_or_paper(args, cfg: dict):
             df = add_indicators(df, cfg)
 
             latest_ts = df.index[-1]
-            if latest_ts != last_bar_time:
-                row = df.iloc[-1]
+            if latest_ts != last_bar_time and len(df) >= 2:
+                # The newest bar may still be forming: act on the last COMPLETED bar.
+                row = df.iloc[-2]
+                signal_ts = df.index[-2]
                 price = row["close"]
 
                 log.info(
-                    f"[{latest_ts}] Cash: ${current_cash:,.2f} | "
+                    f"[{signal_ts}] Cash: ${current_cash:,.2f} | "
                     f"Pos: {current_shares} @ ${avg_cost:.2f} | Price: ${price:.2f}"
                 )
 
                 if args.live:
-                    # Dynamic buy with compounding (up to 90% of available cash per lot)
+                    comm = cfg.get("commission_per_order", 0.0)
+
+                    # Entry: market buy only if cash truly covers whole shares + fee
                     if (
                         bot._buy_signal(row)
-                        and current_cash >= price
+                        and current_shares == 0
                         and len(bot.portfolio.lots) < cfg["max_lots"]
                         and (cfg["thesis_floor"] is None or price > cfg["thesis_floor"])
                     ):
-                        available = min(cfg["capital_per_lot"], current_cash * 0.90)
-                        qty = max(1, int(available / price))
-                        order = MarketOrder("BUY", qty)
-                        ib.placeOrder(contract, order)
-                        log.info(f"BUY REAL {qty} {TICKER_SYMBOL} @ ~${price:.2f}")
-
-                        bot.portfolio.lots.append(
-                            Lot(entry_price=price, qty=qty, entry_time=latest_ts.to_pydatetime())
-                        )
-                        bot.portfolio.cash = current_cash - (qty * price)
-                        bot.portfolio.last_buy_bar_index = bot._bar_index
-
-                    # Sell logic using IBKR avgCost when available
-                    if current_shares > 0:
-                        if avg_cost > 0:
-                            gain_pct = (price - avg_cost) / avg_cost * 100
-                            if gain_pct >= cfg["min_profit_pct"]:
-                                order = MarketOrder("SELL", int(current_shares))
-                                ib.placeOrder(contract, order)
-                                log.info(f"SELL REAL {current_shares} @ +{gain_pct:.2f}%")
-                                bot.portfolio.realized_pnl += current_shares * (price - avg_cost)
-                                bot.portfolio.cash = current_cash + (current_shares * price)
-                                bot.portfolio.lots = []
+                        available = min(cfg["capital_per_lot"], current_cash * 0.95) - comm
+                        qty = int(available // price)
+                        if qty >= 1:
+                            ib.placeOrder(contract, MarketOrder("BUY", qty))
+                            log.info(f"BUY REAL {qty} {TICKER_SYMBOL} @ ~${price:.2f}")
+                            bot.portfolio.lots.append(
+                                Lot(entry_price=price, qty=qty,
+                                    entry_time=signal_ts.to_pydatetime(),
+                                    limit_price=exit_limit_price(price, qty, cfg))
+                            )
+                            bot.portfolio.last_buy_bar_index = bot._bar_index
                         else:
-                            # Fallback to internal lot tracking
-                            still_open = []
-                            for lot in list(bot.portfolio.lots):
-                                lot.peak_price = max(lot.peak_price, price)
-                                gain = (price - lot.entry_price) / lot.entry_price * 100
-                                if gain >= cfg["min_profit_pct"]:
-                                    order = MarketOrder("SELL", int(lot.qty))
-                                    ib.placeOrder(contract, order)
-                                    log.info(f"SELL REAL {lot.qty} @ +{gain:.2f}%")
-                                    bot.portfolio.realized_pnl += lot.qty * (price - lot.entry_price)
-                                    bot.portfolio.cash += lot.qty * price
-                                else:
-                                    still_open.append(lot)
-                            bot.portfolio.lots = still_open
+                            log.info(
+                                "Skip buy: cash $%.2f cannot cover 1 share @ $%.2f + $%.2f fee",
+                                current_cash, price, comm,
+                            )
 
-                bot.step(row, latest_ts.to_pydatetime())
+                    # Exit: maintain a GTC LIMIT SELL at avg_cost + target (never
+                    # below break-even incl. fees). The order lives at IBKR, so it
+                    # can never fill at a loss and survives bot restarts/crashes.
+                    if current_shares > 0 and avg_cost > 0:
+                        has_open_sell = any(
+                            t.contract.symbol == TICKER_SYMBOL
+                            and t.order.action == "SELL"
+                            and t.orderStatus.status in ("PreSubmitted", "Submitted")
+                            for t in ib.openTrades()
+                        )
+                        if not has_open_sell:
+                            lp = round(exit_limit_price(avg_cost, current_shares, cfg), 2)
+                            ib.placeOrder(
+                                contract,
+                                LimitOrder("SELL", int(current_shares), lp, tif="GTC"),
+                            )
+                            log.info(
+                                "Placed GTC LIMIT SELL %d @ $%.2f (profit-only exit)",
+                                int(current_shares), lp,
+                            )
+
+                bot.step(row, signal_ts.to_pydatetime())
                 last_bar_time = latest_ts
                 if args.once:
                     log.info("One-shot paper/dry-run check complete.")
@@ -431,15 +504,17 @@ def build_arg_parser():
     p.add_argument("--client-id", type=int, default=7)
     p.add_argument("--account", default=LIVE_TFSA_ACCOUNT, help="Live account; live mode is TFSA-only")
     p.add_argument("--live", action="store_true", help="Send real orders (default: paper/dry-run)")
-    p.add_argument("--capital", type=float, default=70.0, help="Starting capital for backtest")
-    p.add_argument("--capital-per-lot", type=float, default=70.0)
-    p.add_argument("--max-lots", type=int, default=20)
+    p.add_argument("--capital", type=float, default=100.0, help="Starting capital for backtest")
+    p.add_argument("--capital-per-lot", type=float, default=100.0)
+    p.add_argument("--max-lots", type=int, default=1)
     p.add_argument("--min-profit-pct", type=float, default=2.0)
     p.add_argument("--thesis-floor", type=float, default=None)
     p.add_argument("--ceiling", type=float, default=None)
     p.add_argument("--bb-period", type=int, default=20)
-    p.add_argument("--rsi-oversold", type=float, default=35.0)
-    p.add_argument("--volume-mult", type=float, default=1.2)
+    p.add_argument("--bb-std", type=float, default=DEFAULT_CONFIG["bb_std"])
+    p.add_argument("--rsi-oversold", type=float, default=DEFAULT_CONFIG["rsi_oversold"])
+    p.add_argument("--volume-mult", type=float, default=DEFAULT_CONFIG["volume_mult"])
+    p.add_argument("--commission", type=float, default=1.0, help="Commission per order (USD)")
     p.add_argument("--duration", default="30 D", help="Backtest history duration")
     p.add_argument("--bar-size", default="15 mins", help="Backtest bar size")
     p.add_argument("--data-file", help="Backtest from a local OHLCV CSV instead of IBKR")
@@ -462,6 +537,8 @@ def main():
             "rsi_oversold": args.rsi_oversold,
             "volume_mult": args.volume_mult,
             "bb_period": args.bb_period,
+            "bb_std": args.bb_std,
+            "commission_per_order": args.commission,
         }
     )
 

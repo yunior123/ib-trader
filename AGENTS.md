@@ -155,3 +155,21 @@ Strategy per Yunior: budget in 1 lot, buy the dip, sell ONLY at profit (+5%), re
   - Target +10%: only 1 cycle then trapped; +5% cycles reliably off open-panic capitulation lows.
 - Both test windows are crash regime; entry fires ~once per 3-4 sessions at panic opens ($68-70 zone).
 - CLI does not expose bb_std yet; single-lot mode = `--capital-per-lot <budget> --max-lots 1 --min-profit-pct 5 --rsi-oversold 25` + bb_std change in DEFAULT_CONFIG.
+
+## Hardened Engine + Final Config (2026-07-06, target +2%)
+Code hardening (all in `dram_dip_bot.py`):
+- **No look-ahead**: signal on completed bar close -> fill at NEXT bar open.
+- **GTC limit exits**: sell limit at `max(entry*(1+target), breakeven+fees)` placed at IBKR; fills intrabar at limit or better. **Realized PnL can never be negative by construction** — the profit-only guarantee lives at the broker, survives bot crashes.
+- **Commissions modeled**: $1/order (IBKR fixed min). Whole-share sizing (`fractional_shares: False`).
+- Live fixes: acts on last COMPLETED bar (was: partial bar), buy skipped when cash can't cover shares+fee (was: forced 1-share buy), market-sell replaced by GTC limit maintenance.
+- New CLI: `--bb-std`, `--commission`. Defaults now: $100, 1 lot, BB 3.0, RSI<=25, +2%.
+
+Commission math (critical): with 1 share of a ~$70 stock, $2 round-trip fees force the
+break-even floor to ~+2.9%; net per +2% cycle is pennies. Fees stop mattering with size:
+| Budget | +2% net (14d) | +5% net (14d) |
+|--------|---------------|---------------|
+| $100   | +0.23%        | +4.48%        |
+| $200   | +1.19%        | +7.48%        |
+| $500   | +4.67%        | +13.47%       |
+| $1000  | +5.27%        | +14.07%       |
+All configs end in cash (3 cycles, entry BB3.0/RSI25). +5% target dominates +2% at every budget on this tape.
