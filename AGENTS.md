@@ -119,7 +119,14 @@ use read-only/dry-run or switch TWS to paper before testing.
 - Default config (BB 20/2.0, RSI≤35, vol×1.2, +2% take, cooldown 5): **+34.7%**, 14 buys / 13 sells, max equity DD −9.0%, max open-lot DD −12.9%.
 - Best sweep config (BB std 1.5, RSI≤55, vol×0.8, +2% take, cooldown 5): **+72.4%**, 25 buys / 22 sells, max equity DD −10.0%.
 - Stress (aggressive config, price gap after last bar): +5% rebound → +58.6%; −10% → +46.6%; −25% → +34.6%; −40% → +22.6%. Realized PnL survives; open lots carry the damage.
-- Caveats: single 3-month window of a post-IPO melt-up — the strategy underperforms buy&hold in straight uptrends and has never been tested through a bear phase (none exists yet for DRAM). Sweep winners are fit to this one window; do not treat +72% as expected forward return.
+- Caveats: single 3-month window of a post-IPO melt-up — the strategy underperforms buy&hold in straight uptrends. Sweep winners are fit to this one window; do not treat +72% as expected forward return.
+
+## Crash-Week Test — Real Data (last 7 sessions, 1m extended-hours bars, Jun 25 → Jul 6 2026, Sun 8pm→Fri 8pm Toronto window)
+- Data: `data/dram_1m_7d.csv` (6,414 bars incl. pre/post market 4am–8pm ET; Jul 3 market holiday). DRAM fell **−17.75%** ($78.82 → $64.83, low $58.90).
+- $70 capital: both configs **−15.9%** — first signal deploys the full $63 lot (90% cap), then no ammo left. With $70, "dip laddering" degenerates to one all-in buy.
+- $700 capital, default: **−12.2%** (10 buys down the crash, 1 profitable scalp +$1.45, 9 lots open, worst lot −25.2%, max equity DD −19.6%).
+- $700, sweep-winner config: **−13.5%** — *worse* than default in a crash, confirming the sweep params were overfit to the melt-up window.
+- Takeaways: bot beats buy&hold slightly in a crash but still takes double-digit MTM losses; never-sell-at-a-loss means capital gets fully locked in underwater lots by day 2 of a sustained decline. Thesis floor / max drawdown guard matters more than entry tuning.
 
 ## Conventions
 - All timestamps in UTC.
