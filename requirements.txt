@@ -1,3 +1,4 @@
 ib_insync>=0.9.86
 pandas>=1.5
 numpy>=1.23
+yfinance>=1.0
