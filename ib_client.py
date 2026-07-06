@@ -7,9 +7,28 @@ log = logging.getLogger("ib-trader.client")
 
 
 def connect(cfg) -> IB:
+    if not cfg.DRY_RUN and cfg.IB_ACCOUNT != cfg.TFSA_ACCOUNT:
+        raise RuntimeError(
+            f"Live trading is restricted to TFSA account {cfg.TFSA_ACCOUNT}; "
+            f"refusing account {cfg.IB_ACCOUNT}."
+        )
+
     ib = IB()
-    ib.connect(cfg.IB_HOST, cfg.IB_PORT, clientId=cfg.IB_CLIENT_ID, account=cfg.IB_ACCOUNT)
-    log.info("Connected to IBKR at %s:%s (clientId=%s, account=%s)", cfg.IB_HOST, cfg.IB_PORT, cfg.IB_CLIENT_ID, cfg.IB_ACCOUNT)
+    ib.connect(
+        cfg.IB_HOST,
+        cfg.IB_PORT,
+        clientId=cfg.IB_CLIENT_ID,
+        readonly=cfg.DRY_RUN,
+        account=cfg.IB_ACCOUNT if not cfg.DRY_RUN else "",
+    )
+    log.info(
+        "Connected to IBKR at %s:%s (clientId=%s, account=%s, readonly=%s)",
+        cfg.IB_HOST,
+        cfg.IB_PORT,
+        cfg.IB_CLIENT_ID,
+        cfg.IB_ACCOUNT if not cfg.DRY_RUN else "paper/default",
+        cfg.DRY_RUN,
+    )
     return ib
 
 

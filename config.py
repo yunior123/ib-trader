@@ -7,14 +7,18 @@ import os
 # --- Connection ---
 # TWS paper = 7497, TWS live = 7496, IB Gateway paper = 4002, IB Gateway live = 4001
 IB_HOST = os.getenv("IB_HOST", "127.0.0.1")
-IB_PORT = int(os.getenv("IB_PORT", 7496))
+IB_PORT = int(os.getenv("IB_PORT", 7497))
 IB_CLIENT_ID = int(os.getenv("IB_CLIENT_ID", 7))
-IB_ACCOUNT = os.getenv("IB_ACCOUNT", "U26942420")  # TFSA account; set to U26642820 for individual
+CASH_ACCOUNT = "U26642820"
+TFSA_ACCOUNT = "U26942420"
+IB_ACCOUNT = os.getenv("IB_ACCOUNT", TFSA_ACCOUNT)
 
 # --- Universe ---
-SYMBOLS = ["CUPR"]  # SUPER COPPER CORP - ~0.47 CAD, Canadian
+# Canadian penny stocks have API restriction (CTCI). Use UK penny stock.
+# UK penny stocks (LSE) - min lot = 1 share, no $2500 CAD minimum, no CTCI block
+SYMBOLS = ["KOD"]  # KODAL MINERALS PLC - 0.31 GBP (~0.52 CAD), ~238K avg volume
 EXCHANGE = "SMART"
-CURRENCY = "CAD"
+CURRENCY = "GBP"
 
 # --- Trend / momentum indicators ---
 EMA_FAST = 20
