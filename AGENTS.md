@@ -146,3 +146,12 @@ use read-only/dry-run or switch TWS to paper before testing.
 |-------------|-----|------------|
 | Paper       | 7497 | 4002 |
 | Live        | 7496 | 4001 |
+
+## Single-Lot Cycle Mode — Validated Config (2026-07-06)
+Strategy per Yunior: budget in 1 lot, buy the dip, sell ONLY at profit (+5%), repeat. Hold bag if underwater.
+- Tested on 14 sessions of 1m extended-hours data (Jun 22 → Jul 6, DRAM −18.1%, `data/dram_1m_14d.csv`):
+  - **Winner: BB std 3.0, RSI≤25, vol×1.2, target +5%** → 3 cycles, +16.6% ($100 → $116.59), ended in cash. Same config won the 7d test (+5.4%).
+  - Default entry (BB 2.0, RSI≤35): buys the first shallow dip = top in a decline → −18.8% bag.
+  - Target +10%: only 1 cycle then trapped; +5% cycles reliably off open-panic capitulation lows.
+- Both test windows are crash regime; entry fires ~once per 3-4 sessions at panic opens ($68-70 zone).
+- CLI does not expose bb_std yet; single-lot mode = `--capital-per-lot <budget> --max-lots 1 --min-profit-pct 5 --rsi-oversold 25` + bb_std change in DEFAULT_CONFIG.
