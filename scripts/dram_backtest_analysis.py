@@ -9,7 +9,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from dram_dip_bot import DEFAULT_CONFIG, DipAccumulatorBot, add_indicators, load_ohlcv_csv, log
+from day_trading_bot import DEFAULT_CONFIG, DipAccumulatorBot, add_indicators, load_ohlcv_csv, log
 
 
 def simulate(df: pd.DataFrame, cfg: dict, capital: float = 70.0) -> dict:
