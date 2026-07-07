@@ -11,8 +11,10 @@ TSM, AMD, DRAM, ASML, SPCX, TSLA, NVDA, NOK, AAPL, INTC, TXN, MU, GOOGL, QCOM, S
 - 7d test 2026-07-06 ($500, defaults): bot only fires on real panic — big winners DRAM +4.5% (vs −21% B&H), TSM +4.6%, TXN +2.5%, GOOGL +3.0%, AAPL +2.4%; calm tickers (SPY/QQQ/SMH/MU/ASML) = 0 trades, in cash. Never lost realized money on any of 17.
 
 ## Strategy (day_trading_bot.py)
-- **Entry** (`--entry-mode`): `dip` (DEFAULT: close ≤ BB(20, 3.0) lower AND RSI(14) ≤ 25 AND vol ≥ 1.2×MA20 → buy next bar open) | `reclaim` (same dip arms, buy on close > prior 10-bar high = bullish BOS; caught a dead-cat bounce on DRAM 60d — dip is more robust).
-- **Exit** (`--exit-mode`): `breakout` (DEFAULT: ATR(14) Chandelier — ride rebound, exit on 3×ATR retrace from peak) | `fixed` (GTC limit at entry+target).
+- **Entry** (`--entry-mode`): `confirmed` (DEFAULT: capitulation BB(20,3.0)+RSI≤25+vol arms; buy ONLY on reversal confirmation bar — green close above panic bar's high with RSI turning up) | `dip` (buy panic bar directly) | `reclaim` (dip + close > 10-bar high) | `momentum` (Donchian 20-bar breakout + RSI≥60) | `both` (dip OR momentum).
+- **Exit** (`--exit-mode`): `adaptive` (DEFAULT: resting limit at +4% target → trail 3×ATR → after 120 bars time-stop decays limit to floor → 15:45 ET flatten; floor = max(entry+1%, break-even+fees), NEVER sells below) | `breakout` (ATR trail, floor entry+5%) | `fixed` (GTC limit entry+target).
+- **Session discipline**: entries only 9:30–15:30 ET (rth_only + entry_cutoff); EOD flatten prefers cash over overnight bags.
+- 17-ticker 7d validation (crash week): new defaults = 7 cycles all profitable, 1 bag (vs 6 bags before), 0 losing sells, worst sell +$0.77. Cash-first behavior confirmed.
 - **Never sell at a loss**: exit floor = max(entry × (1 + min_profit_pct), break-even incl. fees), enforced at fill. Realized PnL cannot be negative. Bag is held until recovery (unrealized losses possible — that's accepted risk).
 - **Sizing**: `use_all_cash: True` — full balance each cycle, whole shares, compounding. Live buys use 98% (fee/slippage buffer; TFSA = cash account).
 - **Costs modeled**: $1/order commission. With 1 share of a ~$70 stock, fees force the floor to ~+3%; commission drag fades with budget ≥ $500.

@@ -81,7 +81,7 @@ DEFAULT_CONFIG = {
     "fractional_shares": False,    # whole shares like the live account
     "use_all_cash": True,          # redeploy the FULL balance every cycle (compounding)
     # --- Breakout modes (Dual Thrust / BOS entry + Chandelier/ATR exit) ---
-    "entry_mode": "dip",           # "dip" = buy the capitulation bar; "reclaim" = wait for
+    "entry_mode": "confirmed",     # "dip" = buy the capitulation bar; "reclaim" = wait for
                                    #   a close above the prior N-bar high after the dip (BOS);
                                    #   "momentum" = Donchian breakout (buy strength);
                                    #   "both" = dip OR momentum, whichever fires first
@@ -89,11 +89,40 @@ DEFAULT_CONFIG = {
     "reclaim_window_bars": 60,     # dip signal stays armed this many bars awaiting reclaim
     "momo_lookback": 20,           # Donchian: close > prior N-bar high = momentum breakout
     "momo_rsi_min": 60.0,          # momentum entries need RSI strength (not oversold)
-    "exit_mode": "breakout",       # "fixed" = GTC limit at entry+target;
-                                   # "breakout" = ATR Chandelier trail, floor at entry+target
+    "exit_mode": "adaptive",       # "fixed" = GTC limit at entry+target;
+                                   # "breakout" = ATR Chandelier trail, floor at entry+target;
+                                   # "adaptive" = target limit + trail + time-stop to floor +
+                                   #   EOD flatten. Floor = max(entry+floor_pct, break-even).
     "atr_period": 14,
     "trail_atr_mult": 3.0,         # exit when price retraces this many ATRs off the peak
+    # --- Adaptive exit (sell fast, worst case floor, cash > bag) ---
+    "profit_target_pct": 4.0,      # initial resting limit (captures explosive moves)
+    "floor_pct": 1.0,              # hard floor above entry; NEVER sell below this (nor break-even)
+    "time_stop_bars": 120,         # bars after which the limit decays to the floor (sell fast)
+    "eod_flatten": True,           # at 15:45 ET, exit at >= floor rather than hold overnight
+    # --- Session discipline ---
+    "rth_only": True,              # entries only 9:30-16:00 ET (no thin pre/post market)
+    "entry_cutoff": (15, 30),      # no NEW buys after 15:30 ET (no time left to exit)
 }
+
+
+def _bar_et(ts) -> tuple:
+    """(hour, minute) of a bar timestamp in America/Toronto."""
+    return (ts.astimezone(TORONTO).hour, ts.astimezone(TORONTO).minute)
+
+
+def _in_rth(ts) -> bool:
+    hm = _bar_et(ts)
+    return (9, 30) <= hm < (16, 0)
+
+
+def floor_price(entry: float, qty: float, cfg: dict) -> float:
+    """Adaptive-exit hard floor: entry + floor_pct, never below break-even incl. fees."""
+    floor = entry * (1 + cfg.get("floor_pct", 1.0) / 100)
+    comm = cfg.get("commission_per_order", 0.0)
+    if qty > 0 and comm > 0:
+        floor = max(floor, (entry + (2 * comm) / qty) * 1.001)
+    return floor
 
 
 def exit_limit_price(entry: float, qty: float, cfg: dict) -> float:
@@ -186,7 +215,9 @@ class DipAccumulatorBot:
         self.portfolio = Portfolio(cash=capital, starting_cash=capital)
         self._bar_index = 0
         self._pending_buy = False    # signal armed on bar close, filled next bar open
-        self._dip_armed_bar = None   # reclaim mode: bar index of the last capitulation signal
+        self._dip_armed_bar = None   # reclaim/confirmed: bar index of last capitulation signal
+        self._dip_high = 0.0         # confirmed mode: panic bar's high (confirmation threshold)
+        self._dip_rsi = 50.0         # confirmed mode: panic bar's RSI (must turn up)
 
     def _buy_signal(self, row) -> bool:
         c = self.cfg
@@ -263,6 +294,9 @@ class DipAccumulatorBot:
             self._pending_buy = False
             price = float(row["open"])
             available = self._buy_capital()
+            # RTH discipline: never fill outside 9:30-16:00 ET (cash > thin fills)
+            if c.get("rth_only", False) and not _in_rth(ts):
+                price = 0.0
             if price > 0 and available > comm:
                 if c.get("fractional_shares", False):
                     qty = (available - comm) / price
@@ -270,9 +304,13 @@ class DipAccumulatorBot:
                     qty = float(int((available - comm) / price))
                 cost = qty * price + comm
                 if qty > 0 and cost <= p.cash + 1e-9:
+                    if c.get("exit_mode") == "adaptive":
+                        lp = floor_price(price, qty, c)   # hard floor (entry+1% / break-even)
+                    else:
+                        lp = exit_limit_price(price, qty, c)
                     lot = Lot(
                         entry_price=price, qty=qty, entry_time=ts, peak_price=price,
-                        limit_price=exit_limit_price(price, qty, c), entry_bar=self._bar_index,
+                        limit_price=lp, entry_bar=self._bar_index,
                     )
                     p.lots.append(lot)
                     p.cash -= cost
@@ -286,6 +324,54 @@ class DipAccumulatorBot:
         exit_mode = c.get("exit_mode", "fixed")
         for lot in p.lots:
             filled = False
+            if exit_mode == "adaptive" and c["trail_giveback_pct"] is None:
+                # Sell fast, never below floor, prefer cash over bags:
+                #   stage 1: resting limit at entry+target (catches explosive moves)
+                #   stage 2: after time_stop_bars, limit decays to the floor (out fast)
+                #   trail:   3xATR retrace off peak -> out at next open if >= floor
+                #   EOD:     15:45 ET flatten at >= floor rather than hold overnight
+                floor_px = lot.limit_price
+                bars_held = self._bar_index - lot.entry_bar
+                target_px = lot.entry_price * (1 + c.get("profit_target_pct", 4.0) / 100)
+                limit_now = target_px if bars_held < c.get("time_stop_bars", 120) else floor_px
+                limit_now = max(limit_now, floor_px)
+
+                # 2a) pending exit (trail/EOD) fills at this bar's open, floor-checked
+                if lot.pending_exit:
+                    lot.pending_exit = False
+                    open_px = float(row["open"])
+                    if lot.entry_bar != self._bar_index and open_px >= floor_px:
+                        p.cash += lot.qty * open_px - comm
+                        p.commissions += comm
+                        pnl = lot.qty * (open_px - lot.entry_price) - 2 * comm
+                        p.realized_pnl += pnl
+                        p.sell_count += 1
+                        filled = True
+                        log.info(f"[{ts}] SELL (flat) {lot.qty:g} @ {open_px:.2f} (net {pnl:+.2f})")
+                # 2b) resting limit touched intrabar
+                if not filled and lot.entry_bar != self._bar_index and float(row["high"]) >= limit_now:
+                    open_px = float(row["open"])
+                    fill = open_px if open_px > limit_now else limit_now
+                    p.cash += lot.qty * fill - comm
+                    p.commissions += comm
+                    pnl = lot.qty * (fill - lot.entry_price) - 2 * comm
+                    p.realized_pnl += pnl
+                    p.sell_count += 1
+                    filled = True
+                    log.info(f"[{ts}] SELL (limit) {lot.qty:g} @ {fill:.2f} (net {pnl:+.2f})")
+                if not filled:
+                    lot.peak_price = max(lot.peak_price, float(row["high"]))
+                    close_px = float(row["close"])
+                    atr = float(row["atr"]) if not pd.isna(row["atr"]) else 0.0
+                    if lot.entry_bar != self._bar_index and close_px > floor_px:
+                        trail_broken = (
+                            atr > 0 and close_px < lot.peak_price - c.get("trail_atr_mult", 3.0) * atr
+                        )
+                        eod = c.get("eod_flatten", False) and _bar_et(ts) >= (15, 45) and _in_rth(ts)
+                        if trail_broken or eod:
+                            lot.pending_exit = True
+                    still_open.append(lot)
+                continue
             if exit_mode == "breakout" and c["trail_giveback_pct"] is None:
                 floor_px = lot.limit_price  # break-even + fees; never sell below this
                 # 2a) pending trailing exit fills at THIS bar's open, floor enforced
@@ -344,9 +430,29 @@ class DipAccumulatorBot:
         # --- 3) Thesis floor (blocks new buys only) ---
         thesis_broken = self._check_thesis_floor(row, ts)
 
-        # --- 4) Arm entry for next bar's open ---
-        if not thesis_broken and self._can_buy_more():
+        # --- 4) Arm entry for next bar's open (RTH + cutoff discipline) ---
+        session_ok = True
+        if c.get("rth_only", False):
+            session_ok = _in_rth(ts) and _bar_et(ts) < tuple(c.get("entry_cutoff", (15, 30)))
+        if not thesis_broken and self._can_buy_more() and session_ok:
             mode = c.get("entry_mode", "dip")
+            if mode == "confirmed":
+                # Capitulation arms the setup; buy ONLY when the next bar confirms
+                # the reversal: green close above the panic bar's high with RSI
+                # turning up (hammer + confirmation). Cash until proof.
+                if self._buy_signal(row):
+                    self._dip_armed_bar = self._bar_index
+                    self._dip_high = float(row["high"])
+                    self._dip_rsi = float(row["rsi"])
+                elif (
+                    self._dip_armed_bar is not None
+                    and self._bar_index - self._dip_armed_bar <= c.get("reclaim_window_bars", 60)
+                    and float(row["close"]) > self._dip_high
+                    and float(row["close"]) > float(row["open"])
+                    and float(row["rsi"]) > self._dip_rsi
+                ):
+                    self._pending_buy = True
+                    self._dip_armed_bar = None
             if mode in ("momentum", "both") and self._momentum_signal(row):
                 self._pending_buy = True
             if mode == "both" and self._buy_signal(row):
@@ -733,7 +839,7 @@ def build_arg_parser():
     p.add_argument("--rsi-oversold", type=float, default=DEFAULT_CONFIG["rsi_oversold"])
     p.add_argument("--volume-mult", type=float, default=DEFAULT_CONFIG["volume_mult"])
     p.add_argument("--commission", type=float, default=1.0, help="Commission per order (USD)")
-    p.add_argument("--entry-mode", choices=["dip", "reclaim", "momentum", "both"],
+    p.add_argument("--entry-mode", choices=["dip", "reclaim", "confirmed", "momentum", "both"],
                    default=DEFAULT_CONFIG["entry_mode"],
                    help="dip = buy fear; reclaim = dip + BOS confirm; momentum = Donchian "
                         "breakout (buy strength); both = dip OR momentum")
