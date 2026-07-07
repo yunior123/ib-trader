@@ -101,9 +101,15 @@ OPT_CONFIG = {
     "iv_pctile_block_long": 70.0,   # RV percentile above this: block "long" structure
     # --- Risk sizing (defined risk makes this exact) ---
     "risk_fraction": 0.25,          # max net debit per position = 25% of cash
-    "allow_single_spread": True,    # small accounts: 1 spread if affordable
+    "allow_single_spread": True,    # small accounts: 1 spread if affordable...
+    "max_single_frac": 0.40,        # ...but NEVER if that one spread costs > 40% of cash
+                                    # (oversized "forced" positions caused the only big losses)
     "commission_per_contract": 1.0, # per leg per contract (IBKR ~$0.65, min $1)
     "multiplier": 100,
+    # --- Real-chain calibration (backtest) ---
+    "iv_abs": None,                 # real ATM IV from today's chain (overrides RV proxy)
+    "fill_haircut_pct": 0.0,        # half the real bid/ask spread, paid on entry AND exit
+    "strike_step": None,            # real strike increment from the chain
     # --- Synthetic pricing (backtest) ---
     "risk_free_rate": 0.04,
     "iv_premium": 1.10,
@@ -127,14 +133,15 @@ def bs_price(S, K, T, r, sigma, right) -> float:
     return K * math.exp(-r * T) * _cdf(-d2) - S * _cdf(-d1)
 
 
-def strike_for_delta(S, T, r, sigma, right, delta) -> float:
+def strike_for_delta(S, T, r, sigma, right, delta, step=None) -> float:
     """Inverse BS: strike whose |delta| equals the target (delta-targeted legs)."""
     if right == "C":
         d1 = _N.inv_cdf(min(max(delta, 0.01), 0.99))
     else:  # put delta = N(d1) - 1
         d1 = _N.inv_cdf(min(max(1.0 - delta, 0.01), 0.99))
     K = S * math.exp((r + 0.5 * sigma ** 2) * T - d1 * sigma * math.sqrt(T))
-    step = 0.5 if S < 25 else (1.0 if S < 200 else 5.0)
+    if step is None:
+        step = 0.5 if S < 25 else (1.0 if S < 200 else 5.0)
     return max(step, round(K / step) * step)
 
 
@@ -289,22 +296,24 @@ class OptionsBot:
             if structure == "long" and iv_pct >= c["iv_pctile_block_long"]:
                 structure = "spread"  # IV too rich to buy naked premium
                 log.info(f"[{ts}] IV pct {iv_pct:.0f} >= {c['iv_pctile_block_long']:.0f}: forcing spread structure")
-            k_long = strike_for_delta(S, T, r, sigma, right, c["long_delta"])
+            k_long = strike_for_delta(S, T, r, sigma, right, c["long_delta"], step=c.get("strike_step"))
             k_short = None
             debit = bs_price(S, k_long, T, r, sigma, right)
             if structure == "spread":
-                k_short = strike_for_delta(S, T, r, sigma, right, c["short_delta"])
+                k_short = strike_for_delta(S, T, r, sigma, right, c["short_delta"], step=c.get("strike_step"))
                 if (right == "C" and k_short <= k_long) or (right == "P" and k_short >= k_long):
                     k_short = None  # degenerate; stay long-only
                 else:
                     debit -= bs_price(S, k_short, T, r, sigma, right)
+            debit *= (1 + c.get("fill_haircut_pct", 0.0) / 100)  # pay half-spread to enter
             legs = 2 if k_short is not None else 1
             comm_in = c["commission_per_contract"] * legs
             if debit > 0.05:
                 cost_1 = debit * mult + comm_in
                 budget = p.cash * c["risk_fraction"]
                 n = int(budget / cost_1)
-                if n < 1 and c["allow_single_spread"] and p.cash >= cost_1:
+                if (n < 1 and c["allow_single_spread"]
+                        and cost_1 <= p.cash * c.get("max_single_frac", 0.40)):
                     n = 1
                 if n >= 1:
                     width = abs((k_short or k_long) - k_long)
@@ -341,6 +350,8 @@ class OptionsBot:
 
             def close_out(v_fill, tag):
                 nonlocal sold
+                if tag != "expiry":  # market exits cross the half-spread again
+                    v_fill *= (1 - c.get("fill_haircut_pct", 0.0) / 100)
                 proceeds = pos.contracts * v_fill * mult - comm_out
                 pnl = pos.contracts * (v_fill - pos.entry_debit) * mult - comm_out - \
                     c["commission_per_contract"] * legs  # entry legs commission
@@ -418,8 +429,11 @@ def run_backtest(df: pd.DataFrame, cfg: dict, capital: float):
     dates = pd.Series([ts.date() for ts in data.index], index=data.index)
     sig = {}
     for d in dates.unique():
-        upto = closes[dates <= d]
-        sig[d] = min(max(realized_vol(upto) * cfg["iv_premium"], cfg["iv_floor"]), cfg["iv_cap"])
+        if cfg.get("iv_abs"):
+            sig[d] = min(max(cfg["iv_abs"], cfg["iv_floor"]), cfg["iv_cap"])
+        else:
+            upto = closes[dates <= d]
+            sig[d] = min(max(realized_vol(upto) * cfg["iv_premium"], cfg["iv_floor"]), cfg["iv_cap"])
     for ts, row in data.iterrows():
         bot.step(row, ts, sig[ts.date()])
     last_ts = data.index[-1]
