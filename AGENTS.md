@@ -173,3 +173,23 @@ break-even floor to ~+2.9%; net per +2% cycle is pennies. Fees stop mattering wi
 | $500   | +4.67%        | +13.47%       |
 | $1000  | +5.27%        | +14.07%       |
 All configs end in cash (3 cycles, entry BB3.0/RSI25). +5% target dominates +2% at every budget on this tape.
+
+## Breakout Engine (2026-07-06) — current defaults
+Researched top GitHub algos (je-suis-tm/quant-trading ~7k*, joshyattridge/smart-money-concepts ~2k*, Donchian/Turtle, Chandelier exit) and implemented:
+- **Entry modes**: `dip` (buy capitulation bar, DEFAULT) | `reclaim` (wait for close > prior 10-bar high = bullish BOS after the dip). Reclaim caught a dead-cat bounce in the 60d window (bag -$87) — dip is more robust on DRAM.
+- **Exit modes**: `fixed` (GTC limit entry+target) | `breakout` (DEFAULT: ATR Chandelier — ride the rebound, exit on 3xATR retrace from peak, **hard floor = max(entry+5%, break-even+fees)** enforced at fill time; if floor unreachable, hold the bag).
+- **use_all_cash: True** — every cycle redeploys the full balance (live: 98% buffer for fees/slippage; TFSA = cash account).
+- Realized PnL can never be negative in either mode (floor checked at fill; live sells are LIMIT orders capped >= floor).
+
+### All-cash results ($500 start):
+| Window | dip+breakout3ATR (DEFAULT) | dip+fixed+5% |
+|--------|---------------------------|--------------|
+| 14d crash (1m) | **+18.53%** | +13.47% |
+| 7d crash (1m)  | **+4.53%**  | +4.51%  |
+| 60d total (15m)| +13.39%     | **+26.98%** |
+All realized-positive, fees included. `--exit-mode fixed --min-profit-pct 5` to switch.
+
+### IBKR integration audit (2026-07-06)
+- ib_insync 0.9.86 verified: connect/qualifyContracts/reqHistoricalData/accountSummary/positions/openTrades/placeOrder/LimitOrder(tif=GTC) all present; imports prefer `ib_async` (maintained fork) when installed.
+- Live loop hardened: reconnect guard (TWS restart survival), restart position recovery (seeds synthetic lot from IBKR avgCost so breakout trail works after crash), acts only on completed bars, cash-checked whole-share buys, graceful exit when no TWS.
+- Ports checked 2026-07-06 22:12: 7496/7497/4001/4002 all closed (TWS not running). Start TWS Paper (port 7497) once `DUR197573` activates, then: `venv/bin/python dram_dip_bot.py --mode trade --port 7497 --once`

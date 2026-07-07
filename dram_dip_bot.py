@@ -16,17 +16,22 @@ from typing import List, Tuple
 import numpy as np
 import pandas as pd
 
-# Try to import ib_insync for live mode; allow import to fail for dry-run testing
+# IBKR API: prefer ib_async (maintained successor), fall back to ib_insync.
+# Both expose the identical IB/Stock/Order/util API surface.
 try:
-    from ib_insync import IB, Stock, MarketOrder, LimitOrder, util
+    from ib_async import IB, Stock, MarketOrder, LimitOrder, util
     IB_AVAILABLE = True
 except ImportError:
-    IB_AVAILABLE = False
-    IB = None
-    Stock = None
-    MarketOrder = None
-    LimitOrder = None
-    util = None
+    try:
+        from ib_insync import IB, Stock, MarketOrder, LimitOrder, util
+        IB_AVAILABLE = True
+    except ImportError:
+        IB_AVAILABLE = False
+        IB = None
+        Stock = None
+        MarketOrder = None
+        LimitOrder = None
+        util = None
 
 logging.basicConfig(
     level=logging.INFO,
@@ -60,7 +65,7 @@ DEFAULT_CONFIG = {
     "volume_ma_period": 20,
     "volume_mult": 1.2,
     "ceiling_price": None,
-    "min_profit_pct": 2.0,
+    "min_profit_pct": 5.0,   # exit floor: never sell below entry+5% (nor break-even+fees)
     "trail_giveback_pct": None,
     "capital_per_lot": 100.0,
     "max_lots": 1,
@@ -69,6 +74,16 @@ DEFAULT_CONFIG = {
     "thesis_floor": None,
     "commission_per_order": 1.0,   # IBKR fixed US: $0.005/share, min $1.00/order
     "fractional_shares": False,    # whole shares like the live account
+    "use_all_cash": True,          # redeploy the FULL balance every cycle (compounding)
+    # --- Breakout modes (Dual Thrust / BOS entry + Chandelier/ATR exit) ---
+    "entry_mode": "dip",           # "dip" = buy the capitulation bar; "reclaim" = wait for
+                                   #   a close above the prior N-bar high after the dip (BOS)
+    "reclaim_lookback": 10,        # N-bar high that defines the reclaim breakout
+    "reclaim_window_bars": 60,     # dip signal stays armed this many bars awaiting reclaim
+    "exit_mode": "breakout",       # "fixed" = GTC limit at entry+target;
+                                   # "breakout" = ATR Chandelier trail, floor at entry+target
+    "atr_period": 14,
+    "trail_atr_mult": 3.0,         # exit when price retraces this many ATRs off the peak
 }
 
 
@@ -100,6 +115,14 @@ def compute_bollinger(close: pd.Series, period: int = 20, num_std: float = 2.0):
     return mid, mid + num_std * std, mid - num_std * std
 
 
+def compute_atr(df: pd.DataFrame, period: int = 14) -> pd.Series:
+    hl = df["high"] - df["low"]
+    hc = (df["high"] - df["close"].shift()).abs()
+    lc = (df["low"] - df["close"].shift()).abs()
+    tr = pd.concat([hl, hc, lc], axis=1).max(axis=1)
+    return tr.ewm(alpha=1 / period, min_periods=period, adjust=False).mean()
+
+
 def add_indicators(df: pd.DataFrame, cfg: dict) -> pd.DataFrame:
     df = df.copy()
     df["bb_mid"], df["bb_upper"], df["bb_lower"] = compute_bollinger(
@@ -107,6 +130,9 @@ def add_indicators(df: pd.DataFrame, cfg: dict) -> pd.DataFrame:
     )
     df["rsi"] = compute_rsi(df["close"], cfg["rsi_period"])
     df["vol_ma"] = df["volume"].rolling(cfg["volume_ma_period"]).mean()
+    df["atr"] = compute_atr(df, cfg.get("atr_period", 14))
+    # Prior N-bar high: a close above it = bullish break of structure (reclaim)
+    df["reclaim_high"] = df["high"].shift(1).rolling(cfg.get("reclaim_lookback", 10)).max()
     return df
 
 
@@ -117,8 +143,9 @@ class Lot:
     qty: float
     entry_time: datetime
     peak_price: float = 0.0
-    limit_price: float = 0.0   # GTC sell-limit; fills only at this price or better
+    limit_price: float = 0.0   # fixed mode: GTC sell-limit; breakout mode: break-even floor
     entry_bar: int = -1        # bar index of the fill (no same-bar exits)
+    pending_exit: bool = False # breakout mode: trail broken, exit at next bar open (floor-checked)
 
 
 @dataclass
@@ -147,7 +174,8 @@ class DipAccumulatorBot:
         self.cfg = cfg
         self.portfolio = Portfolio(cash=capital, starting_cash=capital)
         self._bar_index = 0
-        self._pending_buy = False  # signal armed on bar close, filled next bar open
+        self._pending_buy = False    # signal armed on bar close, filled next bar open
+        self._dip_armed_bar = None   # reclaim mode: bar index of the last capitulation signal
 
     def _buy_signal(self, row) -> bool:
         c = self.cfg
@@ -182,6 +210,9 @@ class DipAccumulatorBot:
             return 0.0
         if self._bar_index - p.last_buy_bar_index < c["buy_cooldown_bars"]:
             return 0.0
+        if c.get("use_all_cash", False):
+            # Full-compounding mode: every cycle redeploys the whole balance.
+            return p.cash
         max_deployable = p.starting_cash * (c["max_capital_pct"] / 100)
         remaining_deployable = max_deployable - p.deployed_capital()
         return max(0.0, min(c["capital_per_lot"], remaining_deployable, p.cash))
@@ -226,9 +257,37 @@ class DipAccumulatorBot:
 
         # --- 2) Exits ---
         still_open = []
+        exit_mode = c.get("exit_mode", "fixed")
         for lot in p.lots:
-            lot.peak_price = max(lot.peak_price, float(row["high"]))
             filled = False
+            if exit_mode == "breakout" and c["trail_giveback_pct"] is None:
+                floor_px = lot.limit_price  # break-even + fees; never sell below this
+                # 2a) pending trailing exit fills at THIS bar's open, floor enforced
+                if lot.pending_exit:
+                    lot.pending_exit = False
+                    open_px = float(row["open"])
+                    if lot.entry_bar != self._bar_index and open_px >= floor_px:
+                        p.cash += lot.qty * open_px - comm
+                        p.commissions += comm
+                        pnl = lot.qty * (open_px - lot.entry_price) - 2 * comm
+                        p.realized_pnl += pnl
+                        p.sell_count += 1
+                        filled = True
+                        log.info(f"[{ts}] SELL (trail) {lot.qty:g} @ {open_px:.2f} (net {pnl:+.2f})")
+                if not filled:
+                    # 2b) update peak, then arm Chandelier exit on close:
+                    #     price retraced trail_atr_mult ATRs off the peak AND is
+                    #     still above the break-even floor -> exit next bar open.
+                    lot.peak_price = max(lot.peak_price, float(row["high"]))
+                    atr = float(row["atr"]) if not pd.isna(row["atr"]) else 0.0
+                    if lot.entry_bar != self._bar_index and atr > 0:
+                        trail = lot.peak_price - c.get("trail_atr_mult", 2.0) * atr
+                        close_px = float(row["close"])
+                        if close_px < trail and close_px > floor_px:
+                            lot.pending_exit = True
+                    still_open.append(lot)
+                continue
+            lot.peak_price = max(lot.peak_price, float(row["high"]))
             if c["trail_giveback_pct"] is None:
                 # GTC limit: fills any bar whose high reaches it, at limit or better.
                 # Never fills below limit => realized PnL is net-positive by construction.
@@ -260,8 +319,23 @@ class DipAccumulatorBot:
         thesis_broken = self._check_thesis_floor(row, ts)
 
         # --- 4) Arm entry for next bar's open ---
-        if not thesis_broken and self._can_buy_more() and self._buy_signal(row):
-            self._pending_buy = True
+        if not thesis_broken and self._can_buy_more():
+            if c.get("entry_mode", "dip") == "reclaim":
+                # Two-stage: capitulation arms the dip; a close above the prior
+                # N-bar high (bullish break of structure) confirms the rebound.
+                if self._buy_signal(row):
+                    self._dip_armed_bar = self._bar_index
+                if (
+                    self._dip_armed_bar is not None
+                    and self._bar_index > self._dip_armed_bar
+                    and self._bar_index - self._dip_armed_bar <= c.get("reclaim_window_bars", 60)
+                    and not pd.isna(row["reclaim_high"])
+                    and float(row["close"]) > float(row["reclaim_high"])
+                ):
+                    self._pending_buy = True
+                    self._dip_armed_bar = None
+            elif self._buy_signal(row):
+                self._pending_buy = True
 
     def summary(self, last_price: float):
         p = self.portfolio
@@ -393,9 +467,36 @@ def run_live_or_paper(args, cfg: dict):
     bot = DipAccumulatorBot(cfg, current_cash)
     log.info(f"Connected. Starting cash: ${current_cash:,.2f}")
 
+    # Restart recovery: if IBKR already holds shares, seed a synthetic lot so
+    # the breakout trail has a peak/floor to work from (otherwise a restarted
+    # bot would never exit an existing position in breakout mode).
+    boot_shares, boot_avg = get_position(ib, TICKER_SYMBOL, account=account)
+    if boot_shares > 0 and boot_avg > 0 and not bot.portfolio.lots:
+        bot.portfolio.lots.append(
+            Lot(entry_price=boot_avg, qty=boot_shares,
+                entry_time=datetime.utcnow(), peak_price=boot_avg,
+                limit_price=exit_limit_price(boot_avg, boot_shares, cfg))
+        )
+        log.info("Recovered existing position: %s shares @ $%.2f", boot_shares, boot_avg)
+
     last_bar_time = None
     try:
         while True:
+            # Reconnect guard: TWS restarts / network blips must not kill the bot.
+            if not ib.isConnected():
+                log.warning("Lost IBKR connection; reconnecting in 30s...")
+                ib.sleep(30)
+                try:
+                    ib.connect(
+                        args.host, args.port, clientId=args.client_id,
+                        timeout=15, readonly=not args.live, account=account,
+                    )
+                    ib.qualifyContracts(contract)
+                    log.info("Reconnected to IBKR.")
+                except Exception as exc:
+                    log.error("Reconnect failed: %s", exc)
+                    continue
+
             current_cash = get_account_value(ib, account=account)
             current_shares, avg_cost = get_position(ib, TICKER_SYMBOL, account=account)
 
@@ -436,14 +537,21 @@ def run_live_or_paper(args, cfg: dict):
                 if args.live:
                     comm = cfg.get("commission_per_order", 0.0)
 
-                    # Entry: market buy only if cash truly covers whole shares + fee
+                    # Entry: bot.step() on the previous bar armed _pending_buy
+                    # (handles both dip and reclaim/BOS modes identically to sim)
                     if (
-                        bot._buy_signal(row)
+                        bot._pending_buy
                         and current_shares == 0
                         and len(bot.portfolio.lots) < cfg["max_lots"]
                         and (cfg["thesis_floor"] is None or price > cfg["thesis_floor"])
                     ):
-                        available = min(cfg["capital_per_lot"], current_cash * 0.95) - comm
+                        # All-cash mode: deploy ~98% of cash (2% buffer covers fee +
+                        # market movement between signal bar and market-order fill;
+                        # TFSA is a cash account, an over-budget order gets rejected).
+                        if cfg.get("use_all_cash", False):
+                            available = current_cash * 0.98 - comm
+                        else:
+                            available = min(cfg["capital_per_lot"], current_cash * 0.95) - comm
                         qty = int(available // price)
                         if qty >= 1:
                             ib.placeOrder(contract, MarketOrder("BUY", qty))
@@ -460,9 +568,7 @@ def run_live_or_paper(args, cfg: dict):
                                 current_cash, price, comm,
                             )
 
-                    # Exit: maintain a GTC LIMIT SELL at avg_cost + target (never
-                    # below break-even incl. fees). The order lives at IBKR, so it
-                    # can never fill at a loss and survives bot restarts/crashes.
+                    # Exit: profit-only, floor = break-even incl. fees at IBKR
                     if current_shares > 0 and avg_cost > 0:
                         has_open_sell = any(
                             t.contract.symbol == TICKER_SYMBOL
@@ -470,8 +576,29 @@ def run_live_or_paper(args, cfg: dict):
                             and t.orderStatus.status in ("PreSubmitted", "Submitted")
                             for t in ib.openTrades()
                         )
-                        if not has_open_sell:
-                            lp = round(exit_limit_price(avg_cost, current_shares, cfg), 2)
+                        floor_px = exit_limit_price(avg_cost, current_shares, cfg)
+                        if cfg.get("exit_mode", "fixed") == "breakout":
+                            # Chandelier trail off the peak; sell with a marketable
+                            # LIMIT capped at >= floor so a fill below break-even
+                            # is impossible even on slippage/gaps.
+                            lots = bot.portfolio.lots
+                            atr = float(row["atr"]) if not pd.isna(row["atr"]) else 0.0
+                            if not has_open_sell and lots and atr > 0:
+                                trail = lots[0].peak_price - cfg.get("trail_atr_mult", 2.0) * atr
+                                if price < trail and price > floor_px:
+                                    lp = round(max(floor_px, price * 0.995), 2)
+                                    ib.placeOrder(
+                                        contract,
+                                        LimitOrder("SELL", int(current_shares), lp, tif="GTC"),
+                                    )
+                                    log.info(
+                                        "Trail broken: GTC LIMIT SELL %d @ >=$%.2f (floor $%.2f)",
+                                        int(current_shares), lp, floor_px,
+                                    )
+                        elif not has_open_sell:
+                            # Fixed mode: resting GTC limit at entry+target, lives at
+                            # the broker, survives bot restarts/crashes.
+                            lp = round(floor_px, 2)
                             ib.placeOrder(
                                 contract,
                                 LimitOrder("SELL", int(current_shares), lp, tif="GTC"),
@@ -507,7 +634,7 @@ def build_arg_parser():
     p.add_argument("--capital", type=float, default=100.0, help="Starting capital for backtest")
     p.add_argument("--capital-per-lot", type=float, default=100.0)
     p.add_argument("--max-lots", type=int, default=1)
-    p.add_argument("--min-profit-pct", type=float, default=2.0)
+    p.add_argument("--min-profit-pct", type=float, default=DEFAULT_CONFIG["min_profit_pct"])
     p.add_argument("--thesis-floor", type=float, default=None)
     p.add_argument("--ceiling", type=float, default=None)
     p.add_argument("--bb-period", type=int, default=20)
@@ -515,6 +642,11 @@ def build_arg_parser():
     p.add_argument("--rsi-oversold", type=float, default=DEFAULT_CONFIG["rsi_oversold"])
     p.add_argument("--volume-mult", type=float, default=DEFAULT_CONFIG["volume_mult"])
     p.add_argument("--commission", type=float, default=1.0, help="Commission per order (USD)")
+    p.add_argument("--entry-mode", choices=["dip", "reclaim"], default=DEFAULT_CONFIG["entry_mode"],
+                   help="dip = buy capitulation bar; reclaim = wait for break of structure")
+    p.add_argument("--exit-mode", choices=["fixed", "breakout"], default=DEFAULT_CONFIG["exit_mode"],
+                   help="fixed = GTC limit at entry+target; breakout = ATR trail, break-even floor")
+    p.add_argument("--trail-atr-mult", type=float, default=DEFAULT_CONFIG["trail_atr_mult"])
     p.add_argument("--duration", default="30 D", help="Backtest history duration")
     p.add_argument("--bar-size", default="15 mins", help="Backtest bar size")
     p.add_argument("--data-file", help="Backtest from a local OHLCV CSV instead of IBKR")
@@ -539,6 +671,9 @@ def main():
             "bb_period": args.bb_period,
             "bb_std": args.bb_std,
             "commission_per_order": args.commission,
+            "entry_mode": args.entry_mode,
+            "exit_mode": args.exit_mode,
+            "trail_atr_mult": args.trail_atr_mult,
         }
     )
 
