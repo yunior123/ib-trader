@@ -98,7 +98,7 @@ DEFAULT_CONFIG = {
     # --- Adaptive exit (sell fast, worst case floor, cash > bag) ---
     "profit_target_pct": 4.0,      # initial resting limit (captures explosive moves)
     "floor_pct": 1.0,              # hard floor above entry; NEVER sell below this (nor break-even)
-    "time_stop_bars": 120,         # bars after which the limit decays to the floor (sell fast)
+    "time_stop_bars": 390,         # ~1 trading day on 1m bars; EOD flatten is the real deadline
     "eod_flatten": True,           # at 15:45 ET, exit at >= floor rather than hold overnight
     # --- Session discipline ---
     "rth_only": True,              # entries only 9:30-16:00 ET (no thin pre/post market)
