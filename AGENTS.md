@@ -193,3 +193,12 @@ All realized-positive, fees included. `--exit-mode fixed --min-profit-pct 5` to 
 - ib_insync 0.9.86 verified: connect/qualifyContracts/reqHistoricalData/accountSummary/positions/openTrades/placeOrder/LimitOrder(tif=GTC) all present; imports prefer `ib_async` (maintained fork) when installed.
 - Live loop hardened: reconnect guard (TWS restart survival), restart position recovery (seeds synthetic lot from IBKR avgCost so breakout trail works after crash), acts only on completed bars, cash-checked whole-share buys, graceful exit when no TWS.
 - Ports checked 2026-07-06 22:12: 7496/7497/4001/4002 all closed (TWS not running). Start TWS Paper (port 7497) once `DUR197573` activates, then: `venv/bin/python dram_dip_bot.py --mode trade --port 7497 --once`
+
+## 24/5 Scheduling (2026-07-06)
+No Flask/web server needed — the bot is a long-running process managed by launchd:
+- `--schedule`: bot only trades Sun 20:00 -> Fri 20:00 Toronto; sleeps outside the window (verified with DST-aware zoneinfo, edge cases tested).
+- `--wait-tws`: socket-probes the TWS/Gateway port and waits/retries instead of exiting — the conditional "is TWS running?" check. Also used on reconnect.
+- `scripts/run_dram_bot.sh` + `scripts/com.ibtrader.dram.plist` (launchd: RunAtLoad + KeepAlive, logs to dram_bot_stdout/stderr.log).
+- Install: `cp scripts/com.ibtrader.dram.plist ~/Library/LaunchAgents/ && launchctl load ~/Library/LaunchAgents/com.ibtrader.dram.plist`
+- Uninstall: `launchctl unload ~/Library/LaunchAgents/com.ibtrader.dram.plist`
+- NOTE: TWS itself must be running and logged in (bot waits for it but cannot start it). TWS auto-logs-off daily by default — set Global Configuration > Lock and Exit > Auto restart, or use IB Gateway which is lighter. Market data/orders only flow during market hours regardless of the 24/5 loop.

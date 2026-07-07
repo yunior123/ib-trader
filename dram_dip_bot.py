@@ -8,10 +8,15 @@ Never sells at a loss. Dynamic sizing with compounding from real account cash.
 
 import argparse
 import logging
+import socket
+import time
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import List, Tuple
+from zoneinfo import ZoneInfo
+
+TORONTO = ZoneInfo("America/Toronto")
 
 import numpy as np
 import pandas as pd
@@ -352,6 +357,48 @@ class DipAccumulatorBot:
         }
 
 
+# ===================== SCHEDULE / TWS AVAILABILITY =====================
+def in_trading_window(now=None) -> bool:
+    """24/5 window: Sunday 20:00 Toronto -> Friday 20:00 Toronto."""
+    now = now or datetime.now(TORONTO)
+    wd, hm = now.weekday(), (now.hour, now.minute)  # Mon=0..Sun=6
+    if wd <= 3:                      # Mon-Thu: always inside
+        return True
+    if wd == 4:                      # Friday: until 20:00
+        return hm < (20, 0)
+    if wd == 6:                      # Sunday: from 20:00
+        return hm >= (20, 0)
+    return False                     # Saturday
+
+
+def seconds_until_window_opens(now=None) -> float:
+    now = now or datetime.now(TORONTO)
+    probe = now
+    while not in_trading_window(probe):
+        probe = (probe + timedelta(minutes=15)).replace(second=0, microsecond=0)
+    return max(60.0, (probe - now).total_seconds())
+
+
+def tws_port_open(host: str, port: int, timeout: float = 3.0) -> bool:
+    """Cheap socket probe: is TWS/IB Gateway listening?"""
+    try:
+        with socket.create_connection((host, port), timeout=timeout):
+            return True
+    except OSError:
+        return False
+
+
+def wait_for_tws(host: str, port: int, retry_seconds: int = 60) -> None:
+    """Block until the TWS/Gateway API port accepts connections."""
+    while not tws_port_open(host, port):
+        log.warning(
+            "TWS/IB Gateway not reachable at %s:%s - retrying in %ss "
+            "(start TWS and enable API in Global Configuration > API > Settings)",
+            host, port, retry_seconds,
+        )
+        time.sleep(retry_seconds)
+
+
 # ===================== IBKR HELPERS (LIVE MODE) =====================
 def get_account_value(ib, tag="TotalCashValue", account: str = "") -> float:
     try:
@@ -440,6 +487,11 @@ def run_live_or_paper(args, cfg: dict):
             log.info("Cancelled.")
             return
 
+    # Wait for TWS instead of dying: lets launchd start the bot at boot and
+    # have it sit patiently until TWS/Gateway is up (or come back after a restart).
+    if args.wait_tws:
+        wait_for_tws(args.host, args.port)
+
     ib = IB()
     account = args.account if args.live else ""
     try:
@@ -482,10 +534,23 @@ def run_live_or_paper(args, cfg: dict):
     last_bar_time = None
     try:
         while True:
+            # 24/5 schedule: Sunday 20:00 Toronto -> Friday 20:00 Toronto.
+            if args.schedule and not in_trading_window():
+                wait = seconds_until_window_opens()
+                log.info(
+                    "Outside Sun 20:00 -> Fri 20:00 Toronto window; sleeping %.0f min "
+                    "until it reopens.", wait / 60,
+                )
+                time.sleep(wait)
+                continue
+
             # Reconnect guard: TWS restarts / network blips must not kill the bot.
             if not ib.isConnected():
-                log.warning("Lost IBKR connection; reconnecting in 30s...")
-                ib.sleep(30)
+                log.warning("Lost IBKR connection; waiting for TWS...")
+                if args.wait_tws:
+                    wait_for_tws(args.host, args.port)
+                else:
+                    ib.sleep(30)
                 try:
                     ib.connect(
                         args.host, args.port, clientId=args.client_id,
@@ -652,6 +717,10 @@ def build_arg_parser():
     p.add_argument("--data-file", help="Backtest from a local OHLCV CSV instead of IBKR")
     p.add_argument("--save-data", help="Save fetched IBKR OHLCV data to CSV before backtesting")
     p.add_argument("--once", action="store_true", help="Process one completed bar then exit")
+    p.add_argument("--schedule", action="store_true",
+                   help="Only trade Sun 20:00 -> Fri 20:00 Toronto; sleep outside the window")
+    p.add_argument("--wait-tws", action="store_true",
+                   help="If TWS/Gateway is not up, wait and retry instead of exiting")
     return p
 
 

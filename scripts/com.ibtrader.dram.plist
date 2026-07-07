@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.ibtrader.dram</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/scripts/run_dram_bot.sh</string>
+    </array>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/dram_bot_stdout.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/dram_bot_stderr.log</string>
+    <key>WorkingDirectory</key>
+    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader</string>
+</dict>
+</plist>
