@@ -102,7 +102,7 @@ OPT_CONFIG = {
     # --- Risk sizing (defined risk makes this exact) ---
     "risk_fraction": 0.25,          # max net debit per position = 25% of cash
     "allow_single_spread": True,    # small accounts: 1 spread if affordable...
-    "max_single_frac": 0.40,        # ...but NEVER if that one spread costs > 40% of cash
+    "max_single_frac": 0.50,        # ...but NEVER if that one spread costs > 40% of cash
                                     # (oversized "forced" positions caused the only big losses)
     "commission_per_contract": 1.0, # per leg per contract (IBKR ~$0.65, min $1)
     "multiplier": 100,
