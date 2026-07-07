@@ -82,9 +82,13 @@ DEFAULT_CONFIG = {
     "use_all_cash": True,          # redeploy the FULL balance every cycle (compounding)
     # --- Breakout modes (Dual Thrust / BOS entry + Chandelier/ATR exit) ---
     "entry_mode": "dip",           # "dip" = buy the capitulation bar; "reclaim" = wait for
-                                   #   a close above the prior N-bar high after the dip (BOS)
+                                   #   a close above the prior N-bar high after the dip (BOS);
+                                   #   "momentum" = Donchian breakout (buy strength);
+                                   #   "both" = dip OR momentum, whichever fires first
     "reclaim_lookback": 10,        # N-bar high that defines the reclaim breakout
     "reclaim_window_bars": 60,     # dip signal stays armed this many bars awaiting reclaim
+    "momo_lookback": 20,           # Donchian: close > prior N-bar high = momentum breakout
+    "momo_rsi_min": 60.0,          # momentum entries need RSI strength (not oversold)
     "exit_mode": "breakout",       # "fixed" = GTC limit at entry+target;
                                    # "breakout" = ATR Chandelier trail, floor at entry+target
     "atr_period": 14,
@@ -138,6 +142,8 @@ def add_indicators(df: pd.DataFrame, cfg: dict) -> pd.DataFrame:
     df["atr"] = compute_atr(df, cfg.get("atr_period", 14))
     # Prior N-bar high: a close above it = bullish break of structure (reclaim)
     df["reclaim_high"] = df["high"].shift(1).rolling(cfg.get("reclaim_lookback", 10)).max()
+    # Donchian upper (prior N bars): a close above it = momentum breakout (Turtle-style)
+    df["momo_high"] = df["high"].shift(1).rolling(cfg.get("momo_lookback", 20)).max()
     return df
 
 
@@ -194,6 +200,21 @@ class DipAccumulatorBot:
             row["vol_ma"] > 0 and row["volume"] >= row["vol_ma"] * c["volume_mult"]
         )
         return bool(near_lower_band and oversold and volume_confirmed)
+
+    def _momentum_signal(self, row) -> bool:
+        """Donchian/Turtle breakout: close above the prior N-bar high with RSI
+        strength and volume confirmation — buy strength, not fear."""
+        c = self.cfg
+        if c["ceiling_price"] is not None and row["close"] >= c["ceiling_price"]:
+            return False
+        if pd.isna(row["momo_high"]) or pd.isna(row["rsi"]) or pd.isna(row["vol_ma"]):
+            return False
+        broke_out = float(row["close"]) > float(row["momo_high"])
+        strong = float(row["rsi"]) >= c.get("momo_rsi_min", 60.0)
+        volume_confirmed = (
+            row["vol_ma"] > 0 and row["volume"] >= row["vol_ma"] * c["volume_mult"]
+        )
+        return bool(broke_out and strong and volume_confirmed)
 
     def _check_thesis_floor(self, row, ts) -> bool:
         c = self.cfg
@@ -325,7 +346,12 @@ class DipAccumulatorBot:
 
         # --- 4) Arm entry for next bar's open ---
         if not thesis_broken and self._can_buy_more():
-            if c.get("entry_mode", "dip") == "reclaim":
+            mode = c.get("entry_mode", "dip")
+            if mode in ("momentum", "both") and self._momentum_signal(row):
+                self._pending_buy = True
+            if mode == "both" and self._buy_signal(row):
+                self._pending_buy = True
+            if mode == "reclaim":
                 # Two-stage: capitulation arms the dip; a close above the prior
                 # N-bar high (bullish break of structure) confirms the rebound.
                 if self._buy_signal(row):
@@ -339,7 +365,7 @@ class DipAccumulatorBot:
                 ):
                     self._pending_buy = True
                     self._dip_armed_bar = None
-            elif self._buy_signal(row):
+            elif mode == "dip" and self._buy_signal(row):
                 self._pending_buy = True
 
     def summary(self, last_price: float):
@@ -569,7 +595,7 @@ def run_live_or_paper(args, cfg: dict):
                 contract,
                 endDateTime="",
                 durationStr="5 D",
-                barSizeSetting="15 mins",
+                barSizeSetting=args.bar_size,  # live candle: --bar-size ("5 mins", "15 mins", ...)
                 whatToShow="TRADES",
                 useRTH=True,
                 formatDate=1,
@@ -707,13 +733,18 @@ def build_arg_parser():
     p.add_argument("--rsi-oversold", type=float, default=DEFAULT_CONFIG["rsi_oversold"])
     p.add_argument("--volume-mult", type=float, default=DEFAULT_CONFIG["volume_mult"])
     p.add_argument("--commission", type=float, default=1.0, help="Commission per order (USD)")
-    p.add_argument("--entry-mode", choices=["dip", "reclaim"], default=DEFAULT_CONFIG["entry_mode"],
-                   help="dip = buy capitulation bar; reclaim = wait for break of structure")
+    p.add_argument("--entry-mode", choices=["dip", "reclaim", "momentum", "both"],
+                   default=DEFAULT_CONFIG["entry_mode"],
+                   help="dip = buy fear; reclaim = dip + BOS confirm; momentum = Donchian "
+                        "breakout (buy strength); both = dip OR momentum")
+    p.add_argument("--momo-lookback", type=int, default=DEFAULT_CONFIG["momo_lookback"])
+    p.add_argument("--momo-rsi-min", type=float, default=DEFAULT_CONFIG["momo_rsi_min"])
     p.add_argument("--exit-mode", choices=["fixed", "breakout"], default=DEFAULT_CONFIG["exit_mode"],
                    help="fixed = GTC limit at entry+target; breakout = ATR trail, break-even floor")
     p.add_argument("--trail-atr-mult", type=float, default=DEFAULT_CONFIG["trail_atr_mult"])
     p.add_argument("--duration", default="30 D", help="Backtest history duration")
-    p.add_argument("--bar-size", default="15 mins", help="Backtest bar size")
+    p.add_argument("--bar-size", default="5 mins",
+                   help='Candle for live trading AND IBKR backtest fetch ("1 min", "5 mins", "15 mins")')
     p.add_argument("--data-file", help="Backtest from a local OHLCV CSV instead of IBKR")
     p.add_argument("--save-data", help="Save fetched IBKR OHLCV data to CSV before backtesting")
     p.add_argument("--once", action="store_true", help="Process one completed bar then exit")
@@ -748,6 +779,8 @@ def main():
             "bb_std": args.bb_std,
             "commission_per_order": args.commission,
             "entry_mode": args.entry_mode,
+            "momo_lookback": args.momo_lookback,
+            "momo_rsi_min": args.momo_rsi_min,
             "exit_mode": args.exit_mode,
             "trail_atr_mult": args.trail_atr_mult,
         }
