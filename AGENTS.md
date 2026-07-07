@@ -78,3 +78,16 @@ Key flags: `--symbol/--exchange/--currency`, `--entry-mode dip|reclaim`, `--exit
 - Logging INFO → stdout + ib_trader.log; launchd logs → dram_bot_stdout/stderr.log.
 - Deps: ib_insync≥0.9.86, pandas, numpy, yfinance (venv/, Python 3.9 — no `X | Y` type syntax).
 - DRAM thesis: supply shortage through 2028, long-bias justified; thesis ≠ guarantee — backtests must report realized AND mark-to-market.
+
+## Options Bot — `options_trading_bot.py` (2026-07-07)
+Same confirmed-reversal engine, options execution: capitulation->CALL, euphoria->PUT.
+- **Never 0DTE**: hard floor DTE>=3 (default min 5, weekly Fridays); DTE<=2 escape exit only at >= floor.
+- **Liquidity gates** (live): spread <= 10% of mid, OI >= 100, limit-at-mid orders ONLY (never market). Chain via reqSecDefOptParams, ATM strike.
+- **Profit-only sells**: GTC limit premium+25%; trail 25% giveback; floor = max(premium+3%, break-even+fees).
+- **THETA WARNING (cannot be engineered away)**: an option held past its floor window can expire worthless — expiration can realize a loss even though the bot never *sells* at one. Sizing (`risk_fraction` 0.5) is the real protection. 30d test: 2 expiry losses (INTC -$555, QQQ bag) out of 38 positions.
+- Backtest prices synthetic ATM options via Black-Scholes over real underlying 1m bars (RV*1.10 IV proxy) — optimistic vs real spreads; treat results as upper bound.
+- 30d/17-ticker result ($1k each): **+27.9% total**, 36 cycles, stars GOOGL +183%, NVDA +75%, TSLA +68%; failures INTC -56% (expiry), QQQ -65% MTM (single contract ate full budget on expensive underlying).
+- **Sizing rule learned**: on expensive underlyings (QQQ/SPY/GOOGL), 1 ATM contract > risk budget with $1k — either fund $2.5k+ per options ticker or trade only underlyings where premium*100 <= risk_fraction*cash.
+- Run: `venv/bin/python options_trading_bot.py --mode backtest --data-file data/nvda_1m_30d.csv --capital 1000`
+- Live: `venv/bin/python options_trading_bot.py --mode trade --symbol NVDA --port 4002 --wait-tws --schedule` (paper first; requires options trading permission + market data on the account).
+- Refs: PyOptionTrader (ib_insync patterns), lambdaclass/options_portfolio_backtester (DTE/delta/liquidity gating), lumibot.
