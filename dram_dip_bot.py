@@ -721,11 +721,18 @@ def build_arg_parser():
                    help="Only trade Sun 20:00 -> Fri 20:00 Toronto; sleep outside the window")
     p.add_argument("--wait-tws", action="store_true",
                    help="If TWS/Gateway is not up, wait and retry instead of exiting")
+    p.add_argument("--symbol", default=TICKER_SYMBOL, help="Ticker symbol (default: DRAM)")
+    p.add_argument("--exchange", default=TICKER_EXCHANGE, help="Exchange (default: SMART)")
+    p.add_argument("--currency", default=TICKER_CURRENCY, help="Currency (default: USD)")
     return p
 
 
 def main():
+    global TICKER_SYMBOL, TICKER_EXCHANGE, TICKER_CURRENCY
     args = build_arg_parser().parse_args()
+    TICKER_SYMBOL = args.symbol.upper()
+    TICKER_EXCHANGE = args.exchange
+    TICKER_CURRENCY = args.currency
 
     cfg = DEFAULT_CONFIG.copy()
     cfg.update(
