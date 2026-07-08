@@ -102,3 +102,11 @@ DRAM->RAM, SPCX->SPCH, TSLA->TSLL, AAPL->AAPU, NVDA->NVDL, TSM->TSMU, TXN->TXNU,
 - Thin tapes: TSMU (~2.5k bars/30d), TXNU (~2k), RAM (~8k) = illiquid; expect wide spreads live.
 - Run: `venv/bin/python day_trading_leveraged_bot.py --mode backtest --base NVDA --letf NVDL --base-file data/nvda_1m_30d.csv --letf-file data/nvdl_1m_30d.csv --capital 500`
 - Live: `venv/bin/python day_trading_leveraged_bot.py --mode trade --base NVDA --port 4002 --wait-tws --schedule`
+
+## Memory Sector Bot — `ram_leveraged_bot.py` (2026-07-07)
+Long/short memory complex WITHOUT shorting (TFSA-safe): signals from DRAM+MU+Samsung(005930.KS)+SK Hynix(000660.KS), executes RAM (bull) or SOXS (bear, 3x inverse semis — closest liquid proxy, not memory-pure).
+- Entries: (a) confirmed reversal on any constituent + quorum >=2 corroborating via RSI breadth; (b) **Korea read-through**: both .KS names close same session beyond +/-2% -> arm matching ETF for next US open (Korea trades overnight Toronto = the 24/5 window's edge).
+- Exits: adaptive profit-only (target/trail/time-stop/EOD flatten, floor entry+1%/break-even). One position at a time (bull XOR bear).
+- 30d backtest ($1k): **+34.53%, 6/6 cycles profitable, ended in cash** (4 bear + 2 bull wins; read-through fired 3x correctly).
+- Catalysts: `--mode catalysts` fetches earnings+news for the complex; seeded: SK Hynix US ADR listing 2026-07-10. `--blackout` blocks new entries on catalyst days.
+- Live: US legs via IBKR; Korean legs polled via yfinance (IBKR retail lacks KRX). `venv/bin/python ram_leveraged_bot.py --mode trade --port 4002 --wait-tws --schedule`
