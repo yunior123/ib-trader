@@ -88,7 +88,7 @@ SECTOR_CONFIG.update({
     "vwap_filter": True,
     "db_log": True,             # every transaction -> trades.db (bot_trades table)
     "alloc_pct": 50.0,          # igual % de la cuenta por ticker/lado (fraccional)
-    "fractional_shares": True,  # compras fraccionales por defecto
+    "fractional_shares": False, # API IBKR Canada rechaza fraccionales (Error 10243); solo TWS manual
 })
 
 SEOUL_OFFSET = 9  # hours vs UTC (KRX session date grouping)
@@ -634,8 +634,8 @@ def build_parser():
     p.add_argument("--capital", type=float, default=1000.0)
     p.add_argument("--quorum", type=int, default=SECTOR_CONFIG["quorum"])
     p.add_argument("--blackout", action="store_true", help="No new entries on catalyst days")
-    p.add_argument("--fractional", action="store_true", default=True,
-                   help="Fractional-share orders (default ON; needs IBKR fractional permission)")
+    p.add_argument("--fractional", action="store_true", default=False,
+                   help="Fraccionales via API: BLOQUEADO por IBKR Canada (Error 10243); solo manual en TWS")
     p.add_argument("--alloc-pct", type=float, default=50.0,
                    help="Igual %% de la cuenta por ticker/lado (default 50)")
     p.add_argument("--profit-target-pct", type=float, default=SECTOR_CONFIG["profit_target_pct"])

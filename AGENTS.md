@@ -145,3 +145,5 @@ the repo's own env extracts "prices" from normalized features — broken, we fix
 - **Tiny USD buys work from a CAD-only balance** (IBKR carried the $0.18 USD debit) — micro US positions don't need pre-conversion.
 - Penny screening: yfinance across candidate list, filter price 0.05-0.25 + vol>100k. 2026-07-08 survivors: GNS $0.184 (1.9M vol), COSM $0.247 (29M vol) — most 2021-era pennies are delisted.
 - All manual orders logged to trades.db (bot=manual, mode=live).
+- **Fractional via API: BLOCKED by IBKR Canada** (Error 10243, tested live 2026-07-08 despite "Global Trade in Fractions" permission — desktop TWS only). Bots trade whole shares + alloc_pct equal allocation.
+- **Auto-FX is FREE for micro buys**: GNS purchase auto-converted CAD->USD via IDEALPRO at $0.00 commission (auto-liquidation). No pre-conversion needed for small US buys.
