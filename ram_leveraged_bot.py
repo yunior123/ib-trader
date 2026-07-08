@@ -41,6 +41,7 @@ from typing import Optional
 import pandas as pd
 
 from day_trading_bot import (
+    order_commission,
     IB_AVAILABLE, IB, Stock, MarketOrder, LimitOrder, util,
     TORONTO, _bar_et, _in_rth,
     DipAccumulatorBot, Lot, DEFAULT_CONFIG,
@@ -72,6 +73,13 @@ SECTOR_CONFIG.update({
     # closed their session strongly in the same direction, arm the matching
     # ETF for the next US open (the "tonight Korea -> tomorrow US" thesis).
     "readthrough_pct": 2.0,     # both .KS names beyond +/- this % -> arm BULL/BEAR
+    # Burst mode: capture brief-but-strong intraday moves without waiting for
+    # session close or full reversal patterns. Any constituent moving hard in
+    # a short window arms the matching ETF immediately.
+    "burst_enabled": False,  # probado 2x en 30d: -16.8% y -39.1% vs +34.5% sin el (persigue tops)
+    "burst_pct": 3.0,           # % move within the window that triggers
+    "burst_minutes": 20,        # lookback window for the move
+    "burst_quorum": 2,          # constituents that must burst the SAME direction
 })
 
 SEOUL_OFFSET = 9  # hours vs UTC (KRX session date grouping)
@@ -166,6 +174,9 @@ class MemorySectorBot:
         self._ks_session = {}   # sym -> {"date": d, "open": px, "close": px}
         self._ks_closed = {}    # sym -> (session_date, pct_change)
         self._rt_consumed = set()
+        # Burst mode: recent closes per constituent for fast-move detection
+        self._recent = {sym: [] for sym in CONSTITUENTS}  # [(ts, close)]
+        self._last_burst_ts = None
 
     def _quorum(self, side: str, now) -> int:
         c = self.cfg
@@ -212,9 +223,46 @@ class MemorySectorBot:
             elif side:
                 self._rt_consumed.add(a[0])
 
+    def _burst_check(self, sym, row, ts):
+        """Brief-but-strong move on any constituent -> arm the matching ETF now."""
+        from datetime import timedelta as _td
+        c = self.cfg
+        if not c.get("burst_enabled", False):
+            return
+        buf = self._recent[sym]
+        buf.append((ts, float(row["close"])))
+        cutoff = ts - _td(minutes=c.get("burst_minutes", 20))
+        while buf and buf[0][0] < cutoff:
+            buf.pop(0)
+        if len(buf) < 3 or self.position_side is not None or self.pending_side is not None:
+            return
+        move = (buf[-1][1] / buf[0][1] - 1) * 100
+        side = "BULL" if move >= c["burst_pct"] else ("BEAR" if move <= -c["burst_pct"] else None)
+        if side:
+            if not hasattr(self, "_sym_burst"):
+                self._sym_burst = {}
+            self._sym_burst[sym] = (side, ts, move)
+            # quorum: N constituents bursting the SAME direction within the window
+            agree = [
+                (s, m) for s, (sd, t2, m) in self._sym_burst.items()
+                if sd == side and (ts - t2).total_seconds() <= c.get("burst_minutes", 20) * 60
+            ]
+            if len(agree) < c.get("burst_quorum", 2):
+                return
+            if self.cfg.get("catalyst_blackout") and ts.astimezone(TORONTO).date() in self.catalyst_days:
+                return
+            if self._last_burst_ts and (ts - self._last_burst_ts).total_seconds() < 1800:
+                return
+            self._last_burst_ts = ts
+            self.pending_side = side
+            self.pending_ts = ts
+            names = ", ".join(f"{s} {m:+.1f}%" for s, m in agree)
+            log.info(f"[{ts}] BURST {side} quorum {len(agree)}: {names} -> armado")
+
     def on_signal_bar(self, sym: str, row, ts):
         if sym.endswith(".KS"):
             self._korea_readthrough(sym, row, ts)
+        self._burst_check(sym, row, ts)
         confirm = self.trackers[sym].update(row, ts)
         if confirm is None or self.position_side is not None or self.pending_side is not None:
             return
@@ -240,8 +288,12 @@ class MemorySectorBot:
                 and _in_rth(ts) and _bar_et(ts) < tuple(c.get("entry_cutoff", (15, 30)))):
             price = float(row["open"])
             available = p.cash
+            comm = order_commission(available, c)
             if price > 0 and available > comm:
-                qty = float(int((available - comm) / price))
+                if c.get("fractional_shares", False):
+                    qty = (available - comm) / price
+                else:
+                    qty = float(int((available - comm) / price))
                 cost = qty * price + comm
                 if qty > 0 and cost <= p.cash + 1e-9:
                     b._bar_index += 1

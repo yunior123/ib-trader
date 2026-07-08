@@ -106,6 +106,14 @@ DEFAULT_CONFIG = {
 }
 
 
+def order_commission(trade_value: float, cfg: dict) -> float:
+    """IBKR Canada: per-order commission capped at 0.5% of trade value.
+    Micro orders pay ~0.5% of value (pennies), bigger orders pay the fixed min."""
+    fixed = cfg.get("commission_per_order", 1.0)
+    cap_pct = cfg.get("commission_pct_cap", 0.5)
+    return min(fixed, trade_value * cap_pct / 100)
+
+
 def _bar_et(ts) -> tuple:
     """(hour, minute) of a bar timestamp in America/Toronto."""
     return (ts.astimezone(TORONTO).hour, ts.astimezone(TORONTO).minute)
@@ -119,7 +127,7 @@ def _in_rth(ts) -> bool:
 def floor_price(entry: float, qty: float, cfg: dict) -> float:
     """Adaptive-exit hard floor: entry + floor_pct, never below break-even incl. fees."""
     floor = entry * (1 + cfg.get("floor_pct", 1.0) / 100)
-    comm = cfg.get("commission_per_order", 0.0)
+    comm = order_commission(entry * qty, cfg)
     if qty > 0 and comm > 0:
         floor = max(floor, (entry + (2 * comm) / qty) * 1.001)
     return floor
@@ -129,7 +137,7 @@ def exit_limit_price(entry: float, qty: float, cfg: dict) -> float:
     """Sell-limit price: entry+target, but never below break-even incl. both
     commissions. Guarantees every realized cycle is net-positive."""
     target = entry * (1 + cfg["min_profit_pct"] / 100)
-    comm = cfg.get("commission_per_order", 0.0)
+    comm = order_commission(entry * qty, cfg)
     if qty > 0 and comm > 0:
         breakeven = entry + (2 * comm) / qty
         target = max(target, breakeven * 1.001)
