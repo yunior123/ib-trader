@@ -106,11 +106,14 @@ DEFAULT_CONFIG = {
 }
 
 
-SOUNDS = {
-    "momentum": "/System/Library/Sounds/Ping.aiff",   # favorite ticker has momentum
-    "enter": "/System/Library/Sounds/Glass.aiff",     # trade entered
-    "exit": "/System/Library/Sounds/Hero.aiff",       # trade exited
-    "alert": "/System/Library/Sounds/Sosumi.aiff",    # attention needed
+import os as _os
+_S = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "sounds")
+SOUNDS = {  # downloaded sounds first, system fallback
+    "momentum": _os.path.join(_S, "momentum_up.wav") if _os.path.exists(_os.path.join(_S, "momentum_up.wav")) else "/System/Library/Sounds/Ping.aiff",
+    "momentum_down": _os.path.join(_S, "momentum_down.wav") if _os.path.exists(_os.path.join(_S, "momentum_down.wav")) else "/System/Library/Sounds/Basso.aiff",
+    "enter": _os.path.join(_S, "trade_enter.wav") if _os.path.exists(_os.path.join(_S, "trade_enter.wav")) else "/System/Library/Sounds/Glass.aiff",
+    "exit": _os.path.join(_S, "trade_exit.wav") if _os.path.exists(_os.path.join(_S, "trade_exit.wav")) else "/System/Library/Sounds/Hero.aiff",
+    "alert": "/System/Library/Sounds/Sosumi.aiff",
 }
 
 

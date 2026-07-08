@@ -27,11 +27,15 @@ static double g_threshold = 1.0;   // % move that counts as momentum
 static double g_window    = 600;   // seconds of lookback (10 min)
 static double g_debounce  = 900;   // seconds between alerts per symbol
 
-static void play_async(const char* sound) {
-    // fork+exec afplay detached; "&" keeps the detector non-blocking
-    char cmd[256];
-    std::snprintf(cmd, sizeof(cmd),
-                  "afplay /System/Library/Sounds/%s.aiff >/dev/null 2>&1 &", sound);
+#include <unistd.h>
+static void play_async(const char* custom, const char* fallback) {
+    // downloaded sound if present, else macOS system sound; always async
+    char cmd[512];
+    if (access(custom, R_OK) == 0)
+        std::snprintf(cmd, sizeof(cmd), "afplay '%s' >/dev/null 2>&1 &", custom);
+    else
+        std::snprintf(cmd, sizeof(cmd),
+                      "afplay /System/Library/Sounds/%s.aiff >/dev/null 2>&1 &", fallback);
     std::system(cmd);
 }
 
@@ -78,7 +82,8 @@ int main(int argc, char** argv) {
             std::printf("[MOMENTUM %s] %s %+.2f%% en %.0f min (px %.2f)\n",
                         dir, sym, move, g_window / 60.0, px);
             std::fflush(stdout);
-            play_async(move > 0 ? "Ping" : "Basso");
+            if (move > 0) play_async("sounds/momentum_up.wav", "Ping");
+            else play_async("sounds/momentum_down.wav", "Basso");
         }
     }
     if (!use_stdin) pclose(in);
