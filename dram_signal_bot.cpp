@@ -42,8 +42,11 @@ static void speak(const char* phrase) {
     // or "Zoe (Premium)", then export DRAM_VOICE="Ava (Premium)".
     const char* v = std::getenv("DRAM_VOICE");
     if (!v || !*v) v = "Daniel";
-    char cmd[320];
-    std::snprintf(cmd, sizeof(cmd), "say -v '%s' -r 170 '%s' >/dev/null 2>&1 &", v, phrase);
+    char cmd[400];
+    // una sola voz a la vez: corta cualquier locucion previa antes de hablar
+    std::snprintf(cmd, sizeof(cmd),
+                  "killall say >/dev/null 2>&1; say -v '%s' -r 170 '%s' >/dev/null 2>&1 &",
+                  v, phrase);
     std::system(cmd);
 }
 
