@@ -106,6 +106,47 @@ DEFAULT_CONFIG = {
 }
 
 
+class TradeLog:
+    """SQLite log of EVERY transaction + account snapshots (trades.db)."""
+
+    def __init__(self, db_path: str = "trades.db", bot: str = "bot", mode: str = "live"):
+        import sqlite3
+        self.bot = bot
+        self.mode = mode
+        self.conn = sqlite3.connect(db_path)
+        self.conn.execute("""CREATE TABLE IF NOT EXISTS bot_trades (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, ts TEXT, bot TEXT, mode TEXT,
+            symbol TEXT, side TEXT, qty REAL, price REAL, value REAL,
+            commission REAL, pnl REAL, reason TEXT)""")
+        self.conn.execute("""CREATE TABLE IF NOT EXISTS bot_snapshots (
+            id INTEGER PRIMARY KEY AUTOINCREMENT, ts TEXT, bot TEXT, mode TEXT,
+            cash REAL, position_symbol TEXT, position_qty REAL, equity REAL)""")
+        self.conn.commit()
+
+    def trade(self, ts, symbol, side, qty, price, commission=0.0, pnl=None, reason=""):
+        try:
+            self.conn.execute(
+                "INSERT INTO bot_trades (ts,bot,mode,symbol,side,qty,price,value,commission,pnl,reason) "
+                "VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+                (str(ts), self.bot, self.mode, symbol, side, float(qty), float(price),
+                 float(qty) * float(price), float(commission),
+                 None if pnl is None else float(pnl), reason))
+            self.conn.commit()
+        except Exception as exc:  # logging must never kill the trading loop
+            log.error("TradeLog.trade failed: %s", exc)
+
+    def snapshot(self, ts, cash, position_symbol="", position_qty=0.0, equity=None):
+        try:
+            self.conn.execute(
+                "INSERT INTO bot_snapshots (ts,bot,mode,cash,position_symbol,position_qty,equity) "
+                "VALUES (?,?,?,?,?,?,?)",
+                (str(ts), self.bot, self.mode, float(cash), position_symbol,
+                 float(position_qty), None if equity is None else float(equity)))
+            self.conn.commit()
+        except Exception as exc:
+            log.error("TradeLog.snapshot failed: %s", exc)
+
+
 def order_commission(trade_value: float, cfg: dict) -> float:
     """IBKR Canada: per-order commission capped at 0.5% of trade value.
     Micro orders pay ~0.5% of value (pennies), bigger orders pay the fixed min."""
@@ -169,6 +210,17 @@ def compute_atr(df: pd.DataFrame, period: int = 14) -> pd.Series:
     return tr.ewm(alpha=1 / period, min_periods=period, adjust=False).mean()
 
 
+def compute_vwap(df: pd.DataFrame) -> pd.Series:
+    """Session-anchored VWAP (resets each Toronto calendar day)."""
+    tp = (df["high"] + df["low"] + df["close"]) / 3
+    pv = tp * df["volume"]
+    day = pd.Series([ts.tz_convert(TORONTO).date() if getattr(ts, "tzinfo", None) else ts.date()
+                     for ts in df.index], index=df.index)
+    cum_pv = pv.groupby(day).cumsum()
+    cum_v = df["volume"].groupby(day).cumsum().replace(0, np.nan)
+    return (cum_pv / cum_v).fillna(df["close"])
+
+
 def add_indicators(df: pd.DataFrame, cfg: dict) -> pd.DataFrame:
     df = df.copy()
     df["bb_mid"], df["bb_upper"], df["bb_lower"] = compute_bollinger(
@@ -177,6 +229,7 @@ def add_indicators(df: pd.DataFrame, cfg: dict) -> pd.DataFrame:
     df["rsi"] = compute_rsi(df["close"], cfg["rsi_period"])
     df["vol_ma"] = df["volume"].rolling(cfg["volume_ma_period"]).mean()
     df["atr"] = compute_atr(df, cfg.get("atr_period", 14))
+    df["vwap"] = compute_vwap(df)
     # Prior N-bar high: a close above it = bullish break of structure (reclaim)
     df["reclaim_high"] = df["high"].shift(1).rolling(cfg.get("reclaim_lookback", 10)).max()
     # Donchian upper (prior N bars): a close above it = momentum breakout (Turtle-style)

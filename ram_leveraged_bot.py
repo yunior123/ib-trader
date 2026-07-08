@@ -80,6 +80,13 @@ SECTOR_CONFIG.update({
     "burst_pct": 3.0,           # % move within the window that triggers
     "burst_minutes": 20,        # lookback window for the move
     "burst_quorum": 2,          # constituents that must burst the SAME direction
+    # 24/5 execution: entries 4:00-19:30 ET (pre/post via outsideRth limits) and
+    # the IBKR Overnight session (IBEOS, 20:00-03:50 ET) for true night trading.
+    "extended_hours": True,
+    # VWAP regime filter: BULL only at/below session VWAP (buy value, not chase),
+    # BEAR only at/above VWAP. Standard practice in day-trading repos.
+    "vwap_filter": True,
+    "db_log": True,             # every transaction -> trades.db (bot_trades table)
 })
 
 SEOUL_OFFSET = 9  # hours vs UTC (KRX session date grouping)
@@ -177,6 +184,7 @@ class MemorySectorBot:
         # Burst mode: recent closes per constituent for fast-move detection
         self._recent = {sym: [] for sym in CONSTITUENTS}  # [(ts, close)]
         self._last_burst_ts = None
+        self.db = None  # set by run_live/run_backtest when db_log enabled
 
     def _quorum(self, side: str, now) -> int:
         c = self.cfg
@@ -269,6 +277,12 @@ class MemorySectorBot:
         if self.cfg.get("catalyst_blackout") and ts.astimezone(TORONTO).date() in self.catalyst_days:
             log.info(f"[{ts}] {confirm} confirm from {sym} suppressed: catalyst blackout day")
             return
+        if self.cfg.get("vwap_filter", False) and "vwap" in row and not pd.isna(row["vwap"]):
+            px, vw = float(row["close"]), float(row["vwap"])
+            if confirm == "BULL" and px > vw * 1.005:
+                return  # no chases above fair value
+            if confirm == "BEAR" and px < vw * 0.995:
+                return
         q = self._quorum(confirm, ts)
         if q >= self.cfg["quorum"]:
             self.pending_side = confirm
@@ -282,10 +296,16 @@ class MemorySectorBot:
         p = b.portfolio
         comm = c.get("commission_per_order", 0.0)
 
-        # entry: pending side matches this ETF, bar strictly after arming, RTH
+        # entry: pending side matches this ETF, bar strictly after arming,
+        # inside the tradeable session (RTH, or 4:00-19:30 ET when extended)
+        if c.get("extended_hours", False):
+            hm = _bar_et(ts)
+            session_ok = (4, 0) <= hm < (19, 30)
+        else:
+            session_ok = _in_rth(ts) and _bar_et(ts) < tuple(c.get("entry_cutoff", (15, 30)))
         if (self.pending_side == side and self.position_side is None
                 and self.pending_ts is not None and ts > self.pending_ts
-                and _in_rth(ts) and _bar_et(ts) < tuple(c.get("entry_cutoff", (15, 30)))):
+                and session_ok):
             price = float(row["open"])
             available = p.cash
             comm = order_commission(available, c)
@@ -305,6 +325,8 @@ class MemorySectorBot:
                     p.buy_count += 1
                     self.position_side = side
                     log.info(f"[{ts}] BUY {side} ETF {qty:g} @ {price:.2f} (floor {lot.limit_price:.2f})")
+                    if getattr(self, "db", None):
+                        self.db.trade(ts, side, "BUY", qty, price, comm, reason="entry")
             self.pending_side = None
             self.pending_ts = None
 
@@ -330,6 +352,8 @@ class MemorySectorBot:
                     p.sell_count += 1
                     filled = True
                     log.info(f"[{ts}] SELL {side} (flat) @ {open_px:.2f} (net {pnl:+.2f})")
+                    if getattr(self, "db", None):
+                        self.db.trade(ts, side, "SELL", lot.qty, open_px, comm, pnl, "flat")
             if not filled and lot.entry_bar != b._bar_index and float(row["high"]) >= limit_now:
                 open_px = float(row["open"])
                 fill = open_px if open_px > limit_now else limit_now
@@ -340,6 +364,8 @@ class MemorySectorBot:
                 p.sell_count += 1
                 filled = True
                 log.info(f"[{ts}] SELL {side} (limit) @ {fill:.2f} (net {pnl:+.2f})")
+                if getattr(self, "db", None):
+                    self.db.trade(ts, side, "SELL", lot.qty, fill, comm, pnl, "limit")
             if not filled:
                 lot.peak_price = max(lot.peak_price, float(row["high"]))
                 close_px = float(row["close"])
@@ -415,6 +441,9 @@ def run_backtest(cfg, capital, files_sig: dict, files_etf: dict, catalysts=None)
             events.append((ts.to_pydatetime(), 1, "etf", side, row))
     events.sort(key=lambda e: (e[0], e[1]))
     bot = MemorySectorBot(cfg, capital, catalysts)
+    if cfg.get("db_log"):
+        from day_trading_bot import TradeLog
+        bot.db = TradeLog(bot="ram_sector", mode="backtest")
     for ts, _, kind, key, row in events:
         if kind == "sig":
             bot.on_signal_bar(key, row, ts)
@@ -453,8 +482,29 @@ def run_live(args, cfg, catalysts=None):
     etfs = {"BULL": Stock(args.bull, "SMART", "USD"), "BEAR": Stock(args.bear, "SMART", "USD")}
     for ctr in list(us_syms.values()) + list(etfs.values()):
         ib.qualifyContracts(ctr)
+    # IBKR Overnight session (IBEOS): separate routing for the 20:00-03:50 ET band
+    night_etfs = {}
+    for side, sym in (("BULL", args.bull), ("BEAR", args.bear)):
+        try:
+            nc = Stock(sym, "OVERNIGHT", "USD")
+            ib.qualifyContracts(nc)
+            night_etfs[side] = nc
+        except Exception:
+            log.warning("%s no disponible en sesion OVERNIGHT (IBEOS)", sym)
+
+    def _band(now_hm):
+        if (9, 30) <= now_hm < (16, 0):
+            return "rth"
+        if (4, 0) <= now_hm < (9, 30) or (16, 0) <= now_hm < (20, 0):
+            return "ext"
+        return "overnight"
     bot = MemorySectorBot(cfg, get_account_value(ib, account=account), catalysts)
-    log.info("Sector bot live: bull=%s bear=%s cash=$%.2f", args.bull, args.bear, bot.bot.portfolio.cash)
+    if cfg.get("db_log"):
+        from day_trading_bot import TradeLog
+        bot.db = TradeLog(bot="ram_sector", mode="live" if args.live else "paper")
+    log.info("Sector bot live: bull=%s bear=%s cash=$%.2f | extended_hours=%s db_log=%s",
+             args.bull, args.bear, bot.bot.portfolio.cash,
+             cfg.get("extended_hours"), cfg.get("db_log"))
     seen = set()
     try:
         while True:
@@ -500,23 +550,53 @@ def run_live(args, cfg, catalysts=None):
                             seen.add(key)
                             # live order mirroring: pending -> real market buy; GTC exits
                             if args.live and bot.pending_side == side and bot.position_side is None:
+                                from datetime import datetime as _dt
                                 price = float(df.iloc[-2]["close"])
                                 cash = get_account_value(ib, account=account)
                                 qty = int((cash * 0.98 - cfg.get("commission_per_order", 1.0)) // price)
                                 if qty >= 1:
-                                    ib.placeOrder(ctr, MarketOrder("BUY", qty))
-                                    log.info("BUY REAL %d %s", qty, ctr.symbol)
+                                    band = _band(_bar_et(_dt.now(TORONTO)))
+                                    lp = round(price * 1.003, 2)  # marketable limit: capped slippage
+                                    if band == "overnight" and side in night_etfs:
+                                        order = LimitOrder("BUY", qty, lp, tif="DAY")
+                                        target_ctr = night_etfs[side]
+                                    else:
+                                        order = LimitOrder("BUY", qty, lp, tif="DAY",
+                                                           outsideRth=(band != "rth"))
+                                        target_ctr = ctr
+                                    trade = ib.placeOrder(target_ctr, order)
+                                    ib.sleep(3)
+                                    st = trade.orderStatus
+                                    log.info("BUY %s x%d limit %.2f [%s] status=%s filled=%s avg=%s",
+                                             ctr.symbol, qty, lp, band, st.status, st.filled, st.avgFillPrice)
+                                    if bot.db:
+                                        bot.db.trade(_dt.utcnow(), ctr.symbol, "BUY",
+                                                     st.filled or qty, st.avgFillPrice or lp,
+                                                     cfg.get("commission_per_order", 1.0),
+                                                     reason=f"live-{band}-{st.status}")
                             shares, avg = get_position(ib, ctr.symbol, account=account)
                             if args.live and shares > 0 and avg > 0:
                                 has_sell = any(t.contract.symbol == ctr.symbol and t.order.action == "SELL"
                                                and t.orderStatus.status in ("PreSubmitted", "Submitted")
                                                for t in ib.openTrades())
                                 if not has_sell:
+                                    from datetime import datetime as _dt
                                     lp = round(max(avg * (1 + cfg.get("profit_target_pct", 4.0) / 100),
                                                    floor_price(avg, shares, cfg)), 2)
-                                    ib.placeOrder(ctr, LimitOrder("SELL", int(shares), lp, tif="GTC"))
-                                    log.info("GTC SELL %d %s @ %.2f", int(shares), ctr.symbol, lp)
+                                    # GTC + outsideRth: the profit-only exit works pre/post too
+                                    ib.placeOrder(ctr, LimitOrder("SELL", int(shares), lp,
+                                                                  tif="GTC", outsideRth=True))
+                                    log.info("GTC SELL %d %s @ %.2f (outsideRth)", int(shares), ctr.symbol, lp)
+                                    if bot.db:
+                                        bot.db.trade(_dt.utcnow(), ctr.symbol, "SELL-ORDER",
+                                                     shares, lp, reason="gtc-exit-placed")
                             bot.on_etf_bar(side, df.iloc[-2], ts.to_pydatetime())
+            if bot.db:
+                from datetime import datetime as _dt
+                pos_sym = (args.bull if bot.position_side == "BULL"
+                           else args.bear if bot.position_side == "BEAR" else "")
+                bot.db.snapshot(_dt.utcnow(), get_account_value(ib, account=account),
+                                pos_sym, sum(l.qty for l in bot.bot.portfolio.lots))
             if args.once:
                 log.info("One-shot sector check complete.")
                 break
