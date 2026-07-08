@@ -348,6 +348,9 @@ class DipAccumulatorBot:
             return 0.0
         if self._bar_index - p.last_buy_bar_index < c["buy_cooldown_bars"]:
             return 0.0
+        if c.get("alloc_pct"):
+            # Equal-percentage allocation per ticker (fractional-friendly)
+            return p.cash * c["alloc_pct"] / 100.0
         if c.get("use_all_cash", False):
             # Full-compounding mode: every cycle redeploys the whole balance.
             return p.cash

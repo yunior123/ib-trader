@@ -87,6 +87,8 @@ SECTOR_CONFIG.update({
     # BEAR only at/above VWAP. Standard practice in day-trading repos.
     "vwap_filter": True,
     "db_log": True,             # every transaction -> trades.db (bot_trades table)
+    "alloc_pct": 50.0,          # igual % de la cuenta por ticker/lado (fraccional)
+    "fractional_shares": True,  # compras fraccionales por defecto
 })
 
 SEOUL_OFFSET = 9  # hours vs UTC (KRX session date grouping)
@@ -309,11 +311,11 @@ class MemorySectorBot:
                 and self.pending_ts is not None and ts > self.pending_ts
                 and session_ok):
             price = float(row["open"])
-            available = p.cash
+            available = p.cash * c.get("alloc_pct", 100.0) / 100.0
             comm = order_commission(available, c)
             if price > 0 and available > comm:
-                if c.get("fractional_shares", False):
-                    qty = (available - comm) / price
+                if c.get("fractional_shares", True):
+                    qty = round((available - comm) / price, 4)
                 else:
                     qty = float(int((available - comm) / price))
                 cost = qty * price + comm
@@ -558,7 +560,8 @@ def run_live(args, cfg, catalysts=None):
                                 from datetime import datetime as _dt
                                 price = float(df.iloc[-2]["close"])
                                 cash = get_account_value(ib, account=account)
-                                available = cash * 0.98 - order_commission(cash, cfg)
+                                available = cash * cfg.get("alloc_pct", 50.0) / 100.0 \
+                                    - order_commission(cash, cfg)
                                 qty = float(int(available // price))
                                 if qty < 1 and cfg.get("fractional_shares", False):
                                     # IBKR fractional: needs the permission enabled and
@@ -631,8 +634,10 @@ def build_parser():
     p.add_argument("--capital", type=float, default=1000.0)
     p.add_argument("--quorum", type=int, default=SECTOR_CONFIG["quorum"])
     p.add_argument("--blackout", action="store_true", help="No new entries on catalyst days")
-    p.add_argument("--fractional", action="store_true",
-                   help="Allow fractional-share orders (requires IBKR fractional permission)")
+    p.add_argument("--fractional", action="store_true", default=True,
+                   help="Fractional-share orders (default ON; needs IBKR fractional permission)")
+    p.add_argument("--alloc-pct", type=float, default=50.0,
+                   help="Igual %% de la cuenta por ticker/lado (default 50)")
     p.add_argument("--profit-target-pct", type=float, default=SECTOR_CONFIG["profit_target_pct"])
     p.add_argument("--floor-pct", type=float, default=SECTOR_CONFIG["floor_pct"])
     p.add_argument("--host", default="127.0.0.1")
@@ -651,7 +656,7 @@ def main():
     args = build_parser().parse_args()
     cfg = SECTOR_CONFIG.copy()
     cfg.update({"quorum": args.quorum, "catalyst_blackout": args.blackout,
-                "fractional_shares": args.fractional,
+                "fractional_shares": args.fractional, "alloc_pct": args.alloc_pct,
                 "profit_target_pct": args.profit_target_pct, "floor_pct": args.floor_pct})
     cat_path = Path("data/catalysts_dram.json")
     catalysts = json.load(open(cat_path)) if cat_path.exists() else KNOWN_CATALYSTS
