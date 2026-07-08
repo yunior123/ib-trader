@@ -115,3 +115,14 @@ Long/short memory complex WITHOUT shorting (TFSA-safe): signals from DRAM+MU+Sam
 - 30d backtest ($1k): **+34.53%, 6/6 cycles profitable, ended in cash** (4 bear + 2 bull wins; read-through fired 3x correctly).
 - Catalysts: `--mode catalysts` fetches earnings+news for the complex; seeded: SK Hynix US ADR listing 2026-07-10. `--blackout` blocks new entries on catalyst days.
 - Live: US legs via IBKR; Korean legs polled via yfinance (IBKR retail lacks KRX). `venv/bin/python ram_leveraged_bot.py --mode trade --port 4002 --wait-tws --schedule`
+
+## Best Trading Repos on GitHub — Distilled (2026-07-08)
+Top frameworks by stars: freqtrade (~48k, crypto bot, mature strategy/backtest framework), Zipline (~20k), QuantConnect/Lean (~18k, institutional-grade multi-asset), Hummingbot (~18k, market making), vectorbt (fast numpy backtesting), Qlib (Microsoft, ML alpha factors). Rising 2026: ai-hedge-fund + TauricResearch/TradingAgents (multi-agent LLM traders, +9k stars/week).
+**What we took from them (already in our bots):**
+1. Signal != execution: signal on completed bars, fill next bar open, limit orders always (Lean/freqtrade discipline).
+2. Regime awareness: mean-reversion (buy panic) wins in chop/crash; momentum-chasing loses (verified 2x on our data). VWAP as fair-value anchor.
+3. Defined risk beats stops on noisy marks: spreads/floors > price stops (tastytrade mechanics, options_portfolio_backtester).
+4. Costs modeled ALWAYS (commissions capped 0.5% IBKR Canada, spread haircuts both ways) — every repo that skips this overfits.
+5. Breadth/quorum: multiple constituents confirming > single-name signals (sector rotation pattern, QuantConnect ETF rotation).
+6. One position, full attention; DB-log everything (bot_trades/bot_snapshots in trades.db); sounds for human awareness.
+**Fleet:** day_trading_bot (stock dip-cycle) | day_trading_leveraged_bot (2x wrappers) | ram_leveraged_bot (memory sector long/short, LIVE 24/5) | options_trading_bot (debit spreads) | octopus_bot (opening-drive scalps, +2.1%/30d marginal - scalping is the hardest game) | momentum_bot.cpp (C++ detector + sounds).
