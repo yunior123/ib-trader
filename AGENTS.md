@@ -126,3 +126,14 @@ Top frameworks by stars: freqtrade (~48k, crypto bot, mature strategy/backtest f
 5. Breadth/quorum: multiple constituents confirming > single-name signals (sector rotation pattern, QuantConnect ETF rotation).
 6. One position, full attention; DB-log everything (bot_trades/bot_snapshots in trades.db); sounds for human awareness.
 **Fleet:** day_trading_bot (stock dip-cycle) | day_trading_leveraged_bot (2x wrappers) | ram_leveraged_bot (memory sector long/short, LIVE 24/5) | options_trading_bot (debit spreads) | octopus_bot (opening-drive scalps, +2.1%/30d marginal - scalping is the hardest game) | momentum_bot.cpp (C++ detector + sounds).
+
+## HF PPO Agent Evaluation (2026-07-08)
+Model: Adilbai/stock-trading-rl-agent (SB3 PPO, 4.9MB, runs instantly on the 8GB Mac, CPU).
+Evaluated on 250 fresh out-of-sample days with REAL price accounting (`hf_ppo_bot.py`;
+the repo's own env extracts "prices" from normalized features — broken, we fixed accounting):
+- Absolute returns positive everywhere (AAPL +22%, AMD +145%, MU +299%) BUT loses to
+  buy&hold on ALL 6 tickers (avg -102 pts). It holds ~78% of days, buys small, almost
+  never sells (0-2 sells/250d) = a diluted long with cash drag.
+- Verdict: NOT better than our rule-based bots. Kept as reference; don't trade it.
+- Octopus note: opening-drive scalps only marginally positive (+2.1%/30d after tuning) —
+  scalping is the hardest edge; the sector bot remains the flagship.
