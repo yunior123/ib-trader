@@ -137,3 +137,11 @@ the repo's own env extracts "prices" from normalized features — broken, we fix
 - Verdict: NOT better than our rule-based bots. Kept as reference; don't trade it.
 - Octopus note: opening-drive scalps only marginally positive (+2.1%/30d after tuning) —
   scalping is the hardest edge; the sector bot remains the flagship.
+
+## Live Trading Learnings (2026-07-08 — first real fill)
+- **FIRST REAL TRADE: BUY 1 GNS @ $0.1833 USD (AMEX, via IBKRATS), TFSA U26942420. Commission $0.001836** — confirms the 0.5%-of-value cap model exactly. Position lives in the account.
+- **CUPR/Canadian products**: IBKR Canada hard-blocks API orders for Canadian products (Error 201 CTCI). Manual TWS orders work. US products flow fine via API.
+- **Price-band protection**: IBKR rejects limits "too aggressive" vs market (GNS: cap was ~+9.8% over mkt). Marketable limits must stay within ~5-10% of last — retry closer to market on Error/Warning 202.
+- **Tiny USD buys work from a CAD-only balance** (IBKR carried the $0.18 USD debit) — micro US positions don't need pre-conversion.
+- Penny screening: yfinance across candidate list, filter price 0.05-0.25 + vol>100k. 2026-07-08 survivors: GNS $0.184 (1.9M vol), COSM $0.247 (29M vol) — most 2021-era pennies are delisted.
+- All manual orders logged to trades.db (bot=manual, mode=live).
