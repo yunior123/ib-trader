@@ -15,6 +15,23 @@ import yfinance as yf  # noqa: E402
 POLL = 30
 
 
+def fetch_tws():
+    """Primary source: REAL 1m bars straight from TWS (no subscription needed)."""
+    import sys as _s; _s.path.insert(0, ".")
+    from day_trading_bot import IB, Stock, util
+    ib = IB()
+    ib.connect("127.0.0.1", 7496, clientId=28, timeout=10, readonly=True)
+    c = Stock("DRAM", "SMART", "USD")
+    ib.qualifyContracts(c)
+    bars = ib.reqHistoricalData(c, "", "2 D", "1 min", "TRADES", False, 1)
+    ib.disconnect()
+    if not bars:
+        return None
+    df = util.df(bars)
+    df["date"] = __import__("pandas").to_datetime(df["date"])
+    return df.set_index("date").rename(columns=str.capitalize)
+
+
 def main():
     db = sqlite3.connect("trades.db")
     db.execute("""CREATE TABLE IF NOT EXISTS dram_bars (
@@ -22,10 +39,18 @@ def main():
     db.commit()
     print("dram bridge: Yahoo 1m real, almacenando en trades.db", file=sys.stderr)
     last = None
+    source = "?"
     # warm-up: emit the last 2 days so indicators are hot at startup
     while True:
         try:
-            df = yf.Ticker("DRAM").history(period="2d", interval="1m", prepost=True)
+            df = None
+            try:
+                df = fetch_tws(); source = "TWS"
+            except Exception:
+                df = None
+            if df is None or df.empty:
+                df = yf.Ticker("DRAM").history(period="2d", interval="1m", prepost=True)
+                source = "Yahoo"
             if not df.empty and len(df) >= 3:
                 completed = df.iloc[:-1]  # exclude the forming bar
                 new = completed if last is None else completed[completed.index > last]
@@ -37,6 +62,7 @@ def main():
                                (ep, r.Open, r.High, r.Low, r.Close, float(r.Volume)))
                 if len(completed):
                     last = completed.index[-1]
+                    print(f"src={source} bars={len(new)}", file=sys.stderr) if len(new) else None
                 sys.stdout.flush()
                 db.commit()
         except Exception as e:
