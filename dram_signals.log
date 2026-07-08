@@ -1,0 +1,5 @@
+DRAM signal bot vivo | poll 30s | buy=sounds/dram_buy.wav sell=sounds/dram_sell.wav
+2026-07-08 15:55:00 | INFO    | [2026-07-07 09:41:00-04:00] BUY 16 @ 60.44 (GTC sell-limit 61.04)
+[2026-07-07 09:41:00-04:00] *** DRAM: COMPRAR *** @ ~60.44 (capitulacion confirmada)
+2026-07-08 15:55:00 | INFO    | [2026-07-08 04:00:00-04:00] SELL (limit) 16 @ 61.04 (net +7.67)
+[2026-07-08 04:00:00-04:00] *** DRAM: VENDER *** @ ~58.94 (exit adaptativo: target/trail/EOD)
