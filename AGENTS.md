@@ -147,3 +147,16 @@ the repo's own env extracts "prices" from normalized features — broken, we fix
 - All manual orders logged to trades.db (bot=manual, mode=live).
 - **Fractional via API: BLOCKED by IBKR Canada** (Error 10243, tested live 2026-07-08 despite "Global Trade in Fractions" permission — desktop TWS only). Bots trade whole shares + alloc_pct equal allocation.
 - **Auto-FX is FREE for micro buys**: GNS purchase auto-converted CAD->USD via IDEALPRO at $0.00 commission (auto-liquidation). No pre-conversion needed for small US buys.
+
+## ESTADO ACTUAL — DRAM-ONLY MODE (2026-07-08)
+**Unico bot conectado**: `dram_signal_bot` (C++) via `scripts/dram_keepalive.sh`, 24/5, instancia unica.
+- Habla: "buy DRAM now" / "sell DRAM now" (voz sistema Daniel; override `DRAM_VOICE`; killall-say = una sola voz). Sonidos propios: sounds/dram_buy.wav / dram_sell.wav.
+- Datos: Yahoo 1m REAL (delayed IBKR rechazado por Yunior; cuenta sin subscripciones RT), bridge `scripts/dram_bar_bridge.py`, almacenado en trades.db (dram_bars).
+- Motor C++ con paridad de senales verificada vs Python en 30d reales (BUY $70.09 / SELL +4% identicos).
+- Todos los demas bots APAGADOS por orden (sector live, momentum 17-ticker, señalizador python).
+- Rebuild: `clang++ -std=c++17 -O2 -o dram_signal_bot dram_signal_bot.cpp`
+- Voz premium gratis: System Settings > Accessibility > Spoken Content > Manage Voices > "Ava (Premium)" -> `export DRAM_VOICE="Ava (Premium)"`.
+
+## First Real Trades Log
+- 2026-07-08: BUY 1 GNS @ $0.1833 (FILLED, fee $0.0018) — primera posicion real, vive en TFSA.
+- 2026-07-08: CUPR rechazada (Error 201 CTCI API canadiense) | fraccional SOXS rechazada (Error 10243).
