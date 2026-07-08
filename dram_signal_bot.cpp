@@ -82,6 +82,15 @@ int main(int argc, char** argv) {
     // confirmed-entry state
     bool armed = false; double armed_high = 0, armed_rsi = 0; long armed_bar = 0;
     bool pending_buy = false;
+    // --- detection layers (alerting, not trading) ---
+    // CUSUM (Lopez de Prado structural breaks): all abrupt falls/rises
+    double cusum_up = 0, cusum_dn = 0, ret_var = 1e-6;
+    // Supertrend(10,3): tendency change
+    double st_upper = 0, st_lower = 0; int st_trend = 0;  // 1 up, -1 down
+    // Donchian(20): breakout of prior range
+    std::deque<double> dh20, dl20;
+    // debounce per alert type
+    double last_cusum = 0, last_st = 0, last_don = 0;
     // virtual position
     bool in_pos = false; double entry = 0, peak = 0, floor_px = 0, target_px = 0;
 
@@ -122,6 +131,98 @@ int main(int argc, char** argv) {
 
         int H, M; et_hm(b.t, H, M);
         bool rth_entry = (H > 9 || (H == 9 && M >= 30)) && (H < 15 || (H == 15 && M < 30));
+        bool alert_hours = (H >= 4) && (H < 20);   // pre/post incluidos para ALERTAS
+
+        // ===== DETECTION LAYERS =====
+        // 1) CUSUM filter (Lopez de Prado): statistical break -> falls/rises of ANY kind
+        if (nbars > 1 && prev_close > 0) { /* prev_close ya actualizado: usar retorno del bar */ }
+        {
+            static double last_c_for_ret = 0;
+            if (last_c_for_ret > 0) {
+                double r = std::log(b.c / last_c_for_ret);
+                ret_var += (r * r - ret_var) / 50.0;           // EWMA variance
+                double hthr = std::max(8.0 * std::sqrt(ret_var), 0.020);  // 8-sigma y minimo 2%
+                cusum_up = std::max(0.0, cusum_up + r);
+                cusum_dn = std::min(0.0, cusum_dn + r);
+                if (alert_hours && b.t - last_cusum > 3600) {
+                    if (cusum_up > hthr) {
+                        std::printf("[%02d:%02d] CUSUM: DRAM SUBIENDO fuerte (+%.2f%% acumulado) px %.2f\n",
+                                    H, M, cusum_up * 100, b.c);
+                        std::fflush(stdout);
+                        play("sounds/momentum_up.wav", "Ping"); speak("DRAM rising fast");
+                        cusum_up = 0; cusum_dn = 0; last_cusum = b.t;
+                    } else if (cusum_dn < -hthr) {
+                        std::printf("[%02d:%02d] CUSUM: DRAM CAYENDO fuerte (%.2f%% acumulado) px %.2f\n",
+                                    H, M, cusum_dn * 100, b.c);
+                        std::fflush(stdout);
+                        play("sounds/momentum_down.wav", "Basso"); speak("DRAM falling fast");
+                        cusum_up = 0; cusum_dn = 0; last_cusum = b.t;
+                    }
+                }
+            }
+            last_c_for_ret = b.c;
+        }
+        // 2) Supertrend(10,3) sobre barras 5m agregadas (menos ruido que 1m)
+        static double a5o = 0, a5h = -1e18, a5l = 1e18, a5c = 0; static int a5n = 0;
+        static double atr5 = 0, prev5c = 0; static long n5 = 0;
+        if (a5n == 0) { a5o = b.o; a5h = b.h; a5l = b.l; }
+        a5h = std::max(a5h, b.h); a5l = std::min(a5l, b.l); a5c = b.c; a5n++;
+        bool bar5 = (a5n >= 5);
+        if (bar5) {
+            n5++;
+            if (prev5c > 0) {
+                double tr5 = a5h - a5l;
+                tr5 = std::max(tr5, std::fabs(a5h - prev5c));
+                tr5 = std::max(tr5, std::fabs(a5l - prev5c));
+                atr5 = (n5 <= 10) ? (atr5 * (n5 - 1) + tr5) / n5 : atr5 + (tr5 - atr5) / 10.0;
+            }
+        }
+        if (bar5 && atr5 > 0 && n5 > 10) {
+            double mid = (a5h + a5l) / 2.0;
+            double bu = mid + 4.0 * atr5, bl = mid - 4.0 * atr5;
+            double bc = a5c;
+            static double prev_c2 = 0;
+            double b_c_save = b.c; (void)b_c_save;
+            st_upper = (st_upper == 0 || bu < st_upper || prev_c2 > st_upper) ? bu : st_upper;
+            st_lower = (st_lower == 0 || bl > st_lower || prev_c2 < st_lower) ? bl : st_lower;
+            int nt = st_trend;
+            if (st_trend >= 0) nt = (bc < st_lower) ? -1 : 1;
+            else               nt = (bc > st_upper) ? 1 : -1;
+            if (st_trend != 0 && nt != st_trend && alert_hours && b.t - last_st > 3600) {
+                if (nt > 0) {
+                    std::printf("[%02d:%02d] SUPERTREND: tendencia DRAM cambio a ALCISTA px %.2f\n", H, M, b.c);
+                    play("sounds/momentum_up.wav", "Ping"); speak("DRAM trend is now up");
+                } else {
+                    std::printf("[%02d:%02d] SUPERTREND: tendencia DRAM cambio a BAJISTA px %.2f\n", H, M, b.c);
+                    play("sounds/momentum_down.wav", "Basso"); speak("DRAM trend is now down");
+                }
+                std::fflush(stdout);
+                last_st = b.t;
+                st_upper = bu; st_lower = bl;  // reset bands on flip
+            }
+            st_trend = nt;
+            prev_c2 = bc;
+        }
+        if (bar5) { a5n = 0; prev5c = a5c; a5h = -1e18; a5l = 1e18; }
+        // 3) Donchian(20): ruptura del rango previo (Turtle)
+        if ((int)dh20.size() == 390 && alert_hours && b.t - last_don > 3600) {
+            double hi = -1e18, lo = 1e18;
+            for (double x : dh20) hi = std::max(hi, x);
+            for (double x : dl20) lo = std::min(lo, x);
+            if (b.c > hi) {
+                std::printf("[%02d:%02d] DONCHIAN: DRAM rompe maximo del dia px %.2f > %.2f\n", H, M, b.c, hi);
+                std::fflush(stdout);
+                play("sounds/momentum_up.wav", "Ping"); speak("DRAM breaking out");
+                last_don = b.t;
+            } else if (b.c < lo) {
+                std::printf("[%02d:%02d] DONCHIAN: DRAM rompe minimo del dia px %.2f < %.2f\n", H, M, b.c, lo);
+                std::fflush(stdout);
+                play("sounds/momentum_down.wav", "Basso"); speak("DRAM breaking down");
+                last_don = b.t;
+            }
+        }
+        dh20.push_back(b.h); if (dh20.size() > 390) dh20.pop_front();
+        dl20.push_back(b.l); if (dl20.size() > 390) dl20.pop_front();
 
         // ---- SELL management on virtual position ----
         if (in_pos) {
