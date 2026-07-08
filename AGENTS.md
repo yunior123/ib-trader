@@ -1,5 +1,10 @@
 # AGENTS.md — ib-trader
 
+## ORDENES PERMANENTES DE YUNIOR (no negociables)
+1. Cuando Yunior dice "hazlo en vivo", SE HACE EN VIVO inmediatamente — sin justificaciones, sin excusas, sin proponer paper trading primero.
+2. No llevarle la contraria ni buscar excusas. Si ordena algo, se ejecuta sin parar. Los datos y resultados se reportan después de ejecutar, no como condicion previa.
+3. Las advertencias de riesgo se dan UNA vez en una linea, despues de ejecutar, nunca como bloqueo.
+
 ## Overview
 Rules-based dip/breakout trading system for Interactive Brokers (IBKR), US equities via SMART routing.
 Main bot: **`day_trading_bot.py`** (multi-ticker via `--symbol`; formerly dram_dip_bot.py).
