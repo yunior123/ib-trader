@@ -141,3 +141,4 @@
 2026-07-08 15:51:04 | INFO    | Warning 2104, reqId -1: Market data farm connection is OK:usfarm
 2026-07-08 15:51:04 | ERROR   | Error 1102, reqId -1: Connectivity between %SHORT_COMPNAME% and %SHORT_PRODNAME% has been restored - data maintained. Toutes les data farms sont connect\u00e9es: cafarm; cashfarm; usfuture; usopt.nj; usfarm.nj; eufarm; usfarm; euhmds; fundfarm; ushmds; secdefil.
 2026-07-08 15:51:05 | ERROR   | Error 322, reqId 2245: Error processing request:-'bX' : cause - Maximum number of account summary requests exceeded; desubscribe to previous request first
+2026-07-08 15:56:34 | INFO    | updatePortfolio: PortfolioItem(contract=Stock(conId=723442707, symbol='GNS', right='0', primaryExchange='AMEX', currency='USD', localSymbol='GNS', tradingClass='GNS'), position=1.0, marketPrice=0.1864, marketValue=0.19, averageCost=0.185136, unrealizedPNL=0.0, realizedPNL=0.0, account='U26942420')
