@@ -91,3 +91,14 @@ Same confirmed-reversal engine, options execution: capitulation->CALL, euphoria-
 - Run: `venv/bin/python options_trading_bot.py --mode backtest --data-file data/nvda_1m_30d.csv --capital 1000`
 - Live: `venv/bin/python options_trading_bot.py --mode trade --symbol NVDA --port 4002 --wait-tws --schedule` (paper first; requires options trading permission + market data on the account).
 - Refs: PyOptionTrader (ib_insync patterns), lambdaclass/options_portfolio_backtester (DTE/delta/liquidity gating), lumibot.
+
+## Leveraged Bot — `day_trading_leveraged_bot.py` (2026-07-07)
+Signals on the BASE ticker, trades its LEVERAGED ETF (2x wrapper). Pairs:
+DRAM->RAM, SPCX->SPCH, TSLA->TSLL, AAPL->AAPU, NVDA->NVDL, TSM->TSMU, TXN->TXNU, AMD->AMDD, INTC->INTW, ASML->ASMU
+- Engine: same confirmed entry + adaptive exit; floors/targets on the ETF's own prices (never-sell-below-floor intact). EOD flatten extra-critical here (daily-reset decay makes LETF bags bleed).
+- 30d backtest ($500/pair): **+$108.95 (+2.18%), 18/18 cycles profitable, 1 bag (AMDD -$14)**.
+  Star result: bot +3.7% on NVDL while NVDL B&H did **-70.7%**; +6.6% on INTW vs B&H -86.7% — scalp the bounce, never hold the decay.
+- **WARNING - verify ETF direction before live**: AMDD moved OPPOSITE to AMD (+15.6% vs -12.6%) => likely a BEAR/inverse ETF; INTW's -80.8% vs INTC +19.8% also suggests inverse/heavy decay. Buying a bear ETF on a bullish base signal is backwards. Confirm each wrapper is 2x LONG (check issuer sheet) or remap.
+- Thin tapes: TSMU (~2.5k bars/30d), TXNU (~2k), RAM (~8k) = illiquid; expect wide spreads live.
+- Run: `venv/bin/python day_trading_leveraged_bot.py --mode backtest --base NVDA --letf NVDL --base-file data/nvda_1m_30d.csv --letf-file data/nvdl_1m_30d.csv --capital 500`
+- Live: `venv/bin/python day_trading_leveraged_bot.py --mode trade --base NVDA --port 4002 --wait-tws --schedule`
