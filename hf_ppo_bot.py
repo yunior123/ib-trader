@@ -11,7 +11,20 @@ recent out-of-sample year. Reports agent return vs buy & hold per ticker.
 
 Action space (matches the model card):
   action[0] 0=Hold 1=Buy 2=Sell | action[1] position size 0-1
+
+SECURITY WARNING (accepted risk, research-only tool):
+  * PPO.load() and scaler.pkl deserialize PICKLE data -> arbitrary code
+    execution if the files are malicious. dataprocessor/enviromentcreator
+    are third-party code executed locally.
+  * Mitigation: files come only from the pinned HF revision below (no silent
+    updates), models/ is gitignored, and this bot NEVER touches the broker —
+    it is an offline evaluator. Do not point it at other repos casually.
+  * Verdict was "do not trade this model" — see AGENTS.md.
 """
+
+# Pin the exact HF revision evaluated; refuse silent upstream changes.
+HF_REPO = "Adilbai/stock-trading-rl-agent"
+HF_REVISION = "a317fec1939eda44d04088b47b48ca3ee158bc1f"  # pinned commit evaluated 2026-07-08
 
 import sys
 import warnings
