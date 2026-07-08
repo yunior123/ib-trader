@@ -1,17 +1,29 @@
-2026-07-07 21:58:13 | WARNING | !!! REAL MONEY (leveraged sector ETFs) - Type YES !!!
-> 2026-07-07 21:58:13 | INFO    | Connecting to 127.0.0.1:7496 with clientId 10...
-2026-07-07 21:58:13 | INFO    | Connected
-2026-07-07 21:58:13 | INFO    | Logged on to server version 176
-2026-07-07 21:58:13 | INFO    | Warning 2104, reqId -1: Market data farm connection is OK:cafarm
-2026-07-07 21:58:13 | INFO    | Warning 2104, reqId -1: Market data farm connection is OK:cashfarm
-2026-07-07 21:58:13 | INFO    | API connection ready
-2026-07-07 21:58:13 | INFO    | Warning 2104, reqId -1: Market data farm connection is OK:usfuture
-2026-07-07 21:58:13 | INFO    | Warning 2104, reqId -1: Market data farm connection is OK:usfarm.nj
-2026-07-07 21:58:13 | INFO    | Warning 2104, reqId -1: Market data farm connection is OK:usfarm
-2026-07-07 21:58:13 | INFO    | Warning 2106, reqId -1: HMDS data farm connection is OK:euhmds
-2026-07-07 21:58:13 | INFO    | Warning 2106, reqId -1: HMDS data farm connection is OK:fundfarm
-2026-07-07 21:58:13 | INFO    | Warning 2106, reqId -1: HMDS data farm connection is OK:ushmds
-2026-07-07 21:58:13 | INFO    | Warning 2158, reqId -1: Sec-def data farm connection is OK:secdefil
-2026-07-07 21:58:14 | INFO    | Synchronization complete
-2026-07-07 21:58:14 | INFO    | Managed accounts visible: U26642820, U26942420
-2026-07-07 21:58:14 | INFO    | Sector bot live: bull=RAM bear=SOXS cash=$2.50 | extended_hours=True db_log=True
+2026-07-08 09:42:40 | WARNING | !!! REAL MONEY (leveraged sector ETFs) - Type YES !!!
+> 2026-07-08 09:42:40 | INFO    | Connecting to 127.0.0.1:7496 with clientId 10...
+2026-07-08 09:42:40 | INFO    | Connected
+2026-07-08 09:42:40 | INFO    | Logged on to server version 176
+2026-07-08 09:42:40 | INFO    | API connection ready
+2026-07-08 09:42:40 | INFO    | Warning 2104, reqId -1: Market data farm connection is OK:cafarm
+2026-07-08 09:42:40 | INFO    | Warning 2104, reqId -1: Market data farm connection is OK:hfarm
+2026-07-08 09:42:40 | INFO    | Warning 2104, reqId -1: Market data farm connection is OK:eufarmnj
+2026-07-08 09:42:40 | INFO    | Warning 2104, reqId -1: Market data farm connection is OK:cashfarm
+2026-07-08 09:42:40 | INFO    | Warning 2104, reqId -1: Market data farm connection is OK:usfuture
+2026-07-08 09:42:40 | INFO    | Warning 2104, reqId -1: Market data farm connection is OK:usopt.nj
+2026-07-08 09:42:40 | INFO    | Warning 2104, reqId -1: Market data farm connection is OK:jfarm
+2026-07-08 09:42:40 | INFO    | Warning 2104, reqId -1: Market data farm connection is OK:usfarm.nj
+2026-07-08 09:42:40 | INFO    | Warning 2104, reqId -1: Market data farm connection is OK:usfarm
+2026-07-08 09:42:40 | INFO    | Warning 2106, reqId -1: HMDS data farm connection is OK:euhmds
+2026-07-08 09:42:40 | INFO    | Warning 2106, reqId -1: HMDS data farm connection is OK:fundfarm
+2026-07-08 09:42:40 | INFO    | Warning 2106, reqId -1: HMDS data farm connection is OK:ushmds
+2026-07-08 09:42:40 | INFO    | Warning 2158, reqId -1: Sec-def data farm connection is OK:secdefil
+2026-07-08 09:42:40 | INFO    | Synchronization complete
+2026-07-08 09:42:40 | INFO    | Managed accounts visible: U26642820, U26942420
+2026-07-08 09:42:41 | INFO    | Sector bot live: bull=RAM bear=SOXS cash=$2.50 | extended_hours=True db_log=True
+2026-07-08 09:43:59 | INFO    | Warning 2108, reqId -1: Market data farm connection is inactive but should be available upon demand.hfarm
+2026-07-08 09:43:59 | INFO    | Warning 2108, reqId -1: Market data farm connection is inactive but should be available upon demand.hfarm
+2026-07-08 09:43:59 | INFO    | Warning 2108, reqId -1: Market data farm connection is inactive but should be available upon demand.eufarmnj
+2026-07-08 09:43:59 | INFO    | Warning 2108, reqId -1: Market data farm connection is inactive but should be available upon demand.eufarmnj
+2026-07-08 09:43:59 | INFO    | Warning 2108, reqId -1: Market data farm connection is inactive but should be available upon demand.usopt.nj
+2026-07-08 09:43:59 | INFO    | Warning 2108, reqId -1: Market data farm connection is inactive but should be available upon demand.usopt.nj
+2026-07-08 09:43:59 | INFO    | Warning 2108, reqId -1: Market data farm connection is inactive but should be available upon demand.jfarm
+2026-07-08 09:43:59 | INFO    | Warning 2108, reqId -1: Market data farm connection is inactive but should be available upon demand.jfarm

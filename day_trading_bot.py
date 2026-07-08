@@ -106,6 +106,26 @@ DEFAULT_CONFIG = {
 }
 
 
+SOUNDS = {
+    "momentum": "/System/Library/Sounds/Ping.aiff",   # favorite ticker has momentum
+    "enter": "/System/Library/Sounds/Glass.aiff",     # trade entered
+    "exit": "/System/Library/Sounds/Hero.aiff",       # trade exited
+    "alert": "/System/Library/Sounds/Sosumi.aiff",    # attention needed
+}
+
+
+def play_sound(kind: str) -> None:
+    """Async, non-blocking sound alert (macOS afplay). Never breaks the loop."""
+    try:
+        import subprocess
+        path = SOUNDS.get(kind)
+        if path:
+            subprocess.Popen(["afplay", path], stdout=subprocess.DEVNULL,
+                             stderr=subprocess.DEVNULL)
+    except Exception:
+        pass
+
+
 class TradeLog:
     """SQLite log of EVERY transaction + account snapshots (trades.db)."""
 

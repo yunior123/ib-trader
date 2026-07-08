@@ -41,7 +41,7 @@ from typing import Optional
 import pandas as pd
 
 from day_trading_bot import (
-    order_commission,
+    order_commission, play_sound,
     IB_AVAILABLE, IB, Stock, MarketOrder, LimitOrder, util,
     TORONTO, _bar_et, _in_rth,
     DipAccumulatorBot, Lot, DEFAULT_CONFIG,
@@ -228,6 +228,7 @@ class MemorySectorBot:
                 self.pending_ts = ts
                 log.info(f"[{ts}] KOREA READ-THROUGH {side}: Samsung {a[1]:+.1f}% / Hynix {b[1]:+.1f}% "
                          f"(sesion {a[0]}) -> armado para el open de US")
+                play_sound("momentum")
             elif side:
                 self._rt_consumed.add(a[0])
 
@@ -288,6 +289,7 @@ class MemorySectorBot:
             self.pending_side = confirm
             self.pending_ts = ts
             log.info(f"[{ts}] SECTOR {confirm} armed by {sym} (quorum {q}/{len(CONSTITUENTS)})")
+            play_sound("momentum")
 
     def on_etf_bar(self, side: str, row, ts):
         """Called for each bar of BOTH ETFs; acts only on the relevant one."""
@@ -325,6 +327,7 @@ class MemorySectorBot:
                     p.buy_count += 1
                     self.position_side = side
                     log.info(f"[{ts}] BUY {side} ETF {qty:g} @ {price:.2f} (floor {lot.limit_price:.2f})")
+                    play_sound("enter")
                     if getattr(self, "db", None):
                         self.db.trade(ts, side, "BUY", qty, price, comm, reason="entry")
             self.pending_side = None
@@ -352,6 +355,7 @@ class MemorySectorBot:
                     p.sell_count += 1
                     filled = True
                     log.info(f"[{ts}] SELL {side} (flat) @ {open_px:.2f} (net {pnl:+.2f})")
+                    play_sound("exit")
                     if getattr(self, "db", None):
                         self.db.trade(ts, side, "SELL", lot.qty, open_px, comm, pnl, "flat")
             if not filled and lot.entry_bar != b._bar_index and float(row["high"]) >= limit_now:
@@ -364,6 +368,7 @@ class MemorySectorBot:
                 p.sell_count += 1
                 filled = True
                 log.info(f"[{ts}] SELL {side} (limit) @ {fill:.2f} (net {pnl:+.2f})")
+                play_sound("exit")
                 if getattr(self, "db", None):
                     self.db.trade(ts, side, "SELL", lot.qty, fill, comm, pnl, "limit")
             if not filled:
@@ -553,9 +558,19 @@ def run_live(args, cfg, catalysts=None):
                                 from datetime import datetime as _dt
                                 price = float(df.iloc[-2]["close"])
                                 cash = get_account_value(ib, account=account)
-                                qty = int((cash * 0.98 - cfg.get("commission_per_order", 1.0)) // price)
-                                if qty >= 1:
+                                available = cash * 0.98 - order_commission(cash, cfg)
+                                qty = float(int(available // price))
+                                if qty < 1 and cfg.get("fractional_shares", False):
+                                    # IBKR fractional: needs the permission enabled and
+                                    # min $1 order value; not available in IBEOS overnight
+                                    fq = round(max(0.0, available) / price, 4)
+                                    if fq * price >= 1.0:
+                                        qty = fq
+                                if qty > 0:
                                     band = _band(_bar_et(_dt.now(TORONTO)))
+                                    if band == "overnight" and qty != int(qty):
+                                        log.info("Fractional no disponible en sesion OVERNIGHT; espero sesion 4:00 ET")
+                                        continue
                                     lp = round(price * 1.003, 2)  # marketable limit: capped slippage
                                     if band == "overnight" and side in night_etfs:
                                         order = LimitOrder("BUY", qty, lp, tif="DAY")
@@ -584,9 +599,9 @@ def run_live(args, cfg, catalysts=None):
                                     lp = round(max(avg * (1 + cfg.get("profit_target_pct", 4.0) / 100),
                                                    floor_price(avg, shares, cfg)), 2)
                                     # GTC + outsideRth: the profit-only exit works pre/post too
-                                    ib.placeOrder(ctr, LimitOrder("SELL", int(shares), lp,
+                                    ib.placeOrder(ctr, LimitOrder("SELL", shares if shares != int(shares) else int(shares), lp,
                                                                   tif="GTC", outsideRth=True))
-                                    log.info("GTC SELL %d %s @ %.2f (outsideRth)", int(shares), ctr.symbol, lp)
+                                    log.info("GTC SELL %s %s @ %.2f (outsideRth)", shares, ctr.symbol, lp)
                                     if bot.db:
                                         bot.db.trade(_dt.utcnow(), ctr.symbol, "SELL-ORDER",
                                                      shares, lp, reason="gtc-exit-placed")
@@ -616,6 +631,8 @@ def build_parser():
     p.add_argument("--capital", type=float, default=1000.0)
     p.add_argument("--quorum", type=int, default=SECTOR_CONFIG["quorum"])
     p.add_argument("--blackout", action="store_true", help="No new entries on catalyst days")
+    p.add_argument("--fractional", action="store_true",
+                   help="Allow fractional-share orders (requires IBKR fractional permission)")
     p.add_argument("--profit-target-pct", type=float, default=SECTOR_CONFIG["profit_target_pct"])
     p.add_argument("--floor-pct", type=float, default=SECTOR_CONFIG["floor_pct"])
     p.add_argument("--host", default="127.0.0.1")
@@ -634,6 +651,7 @@ def main():
     args = build_parser().parse_args()
     cfg = SECTOR_CONFIG.copy()
     cfg.update({"quorum": args.quorum, "catalyst_blackout": args.blackout,
+                "fractional_shares": args.fractional,
                 "profit_target_pct": args.profit_target_pct, "floor_pct": args.floor_pct})
     cat_path = Path("data/catalysts_dram.json")
     catalysts = json.load(open(cat_path)) if cat_path.exists() else KNOWN_CATALYSTS
