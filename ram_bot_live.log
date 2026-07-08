@@ -1,0 +1,26 @@
+2026-07-08 10:19:08 | WARNING | !!! REAL MONEY (leveraged sector ETFs) - Type YES !!!
+> 2026-07-08 10:19:08 | INFO    | Connecting to 127.0.0.1:7496 with clientId 10...
+2026-07-08 10:19:08 | INFO    | Connected
+2026-07-08 10:19:08 | INFO    | Logged on to server version 176
+2026-07-08 10:19:08 | INFO    | Warning 2104, reqId -1: Market data farm connection is OK:cafarm
+2026-07-08 10:19:08 | INFO    | Warning 2104, reqId -1: Market data farm connection is OK:cashfarm
+2026-07-08 10:19:08 | INFO    | Warning 2104, reqId -1: Market data farm connection is OK:usfuture
+2026-07-08 10:19:08 | INFO    | Warning 2104, reqId -1: Market data farm connection is OK:usopt.nj
+2026-07-08 10:19:08 | INFO    | Warning 2104, reqId -1: Market data farm connection is OK:usfarm.nj
+2026-07-08 10:19:08 | INFO    | Warning 2104, reqId -1: Market data farm connection is OK:eufarm
+2026-07-08 10:19:08 | INFO    | Warning 2104, reqId -1: Market data farm connection is OK:usfarm
+2026-07-08 10:19:08 | INFO    | Warning 2106, reqId -1: HMDS data farm connection is OK:euhmds
+2026-07-08 10:19:08 | INFO    | Warning 2106, reqId -1: HMDS data farm connection is OK:fundfarm
+2026-07-08 10:19:08 | INFO    | Warning 2106, reqId -1: HMDS data farm connection is OK:ushmds
+2026-07-08 10:19:08 | INFO    | Warning 2158, reqId -1: Sec-def data farm connection is OK:secdefil
+2026-07-08 10:19:08 | INFO    | API connection ready
+2026-07-08 10:19:08 | INFO    | position: Position(account='U26942420', contract=Forex('USDCAD', conId=15016062, localSymbol='USD.CAD', tradingClass='USD.CAD'), position=0.0, avgCost=0.0)
+2026-07-08 10:19:08 | INFO    | position: Position(account='U26942420', contract=Stock(conId=723442707, symbol='GNS', exchange='AMEX', currency='USD', localSymbol='GNS', tradingClass='GNS'), position=1.0, avgCost=0.185136)
+2026-07-08 10:19:08 | INFO    | updatePortfolio: PortfolioItem(contract=Stock(conId=723442707, symbol='GNS', right='0', primaryExchange='AMEX', currency='USD', localSymbol='GNS', tradingClass='GNS'), position=1.0, marketPrice=0.1832281, marketValue=0.18, averageCost=0.185136, unrealizedPNL=-0.0, realizedPNL=0.0, account='U26942420')
+2026-07-08 10:19:09 | INFO    | execDetails Execution(execId='0000fed1.6a4e43dc.01.01', time=datetime.datetime(2026, 7, 8, 14, 5, 22, tzinfo=datetime.timezone.utc), acctNumber='U26942420', exchange='IBKRATS', side='BOT', shares=1.0, price=0.1833, permId=439243579, clientId=25, orderId=5, liquidation=0, cumQty=1.0, avgPrice=0.1833, orderRef='', evRule='', evMultiplier=0.0, modelCode='', lastLiquidity=2)
+2026-07-08 10:19:09 | INFO    | execDetails Execution(execId='0000d5db.6da82d9a.01.01', time=datetime.datetime(2026, 7, 8, 14, 5, 22, tzinfo=datetime.timezone.utc), acctNumber='U26942420', exchange='IDEALPRO', side='BOT', shares=0.18, price=1.41803, permId=1078406263, clientId=0, orderId=0, liquidation=1, cumQty=0.18, avgPrice=1.41803, orderRef='', evRule='', evMultiplier=0.0, modelCode='', lastLiquidity=2)
+2026-07-08 10:19:09 | INFO    | commissionReport: CommissionReport(execId='0000fed1.6a4e43dc.01.01', commission=0.001836, currency='USD', realizedPNL=0.0, yield_=0.0, yieldRedemptionDate=0)
+2026-07-08 10:19:09 | INFO    | commissionReport: CommissionReport(execId='0000d5db.6da82d9a.01.01', commission=0.0, currency='CAD', realizedPNL=0.0, yield_=0.0, yieldRedemptionDate=0)
+2026-07-08 10:19:09 | INFO    | Synchronization complete
+2026-07-08 10:19:09 | INFO    | Managed accounts visible: U26642820, U26942420
+2026-07-08 10:19:09 | INFO    | Sector bot live: bull=RAM bear=SOXS cash=$2.24 | extended_hours=False db_log=True

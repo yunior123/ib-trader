@@ -82,7 +82,7 @@ SECTOR_CONFIG.update({
     "burst_quorum": 2,          # constituents that must burst the SAME direction
     # 24/5 execution: entries 4:00-19:30 ET (pre/post via outsideRth limits) and
     # the IBKR Overnight session (IBEOS, 20:00-03:50 ET) for true night trading.
-    "extended_hours": True,
+    "extended_hours": False,  # ORDEN YUNIOR 2026-07-08: operar SOLO 9:30-16:00 ET
     # VWAP regime filter: BULL only at/below session VWAP (buy value, not chase),
     # BEAR only at/above VWAP. Standard practice in day-trading repos.
     "vwap_filter": True,
@@ -603,8 +603,8 @@ def run_live(args, cfg, catalysts=None):
                                                    floor_price(avg, shares, cfg)), 2)
                                     # GTC + outsideRth: the profit-only exit works pre/post too
                                     ib.placeOrder(ctr, LimitOrder("SELL", shares if shares != int(shares) else int(shares), lp,
-                                                                  tif="GTC", outsideRth=True))
-                                    log.info("GTC SELL %s %s @ %.2f (outsideRth)", shares, ctr.symbol, lp)
+                                                                  tif="GTC", outsideRth=False))
+                                    log.info("GTC SELL %s %s @ %.2f (RTH only)", shares, ctr.symbol, lp)
                                     if bot.db:
                                         bot.db.trade(_dt.utcnow(), ctr.symbol, "SELL-ORDER",
                                                      shares, lp, reason="gtc-exit-placed")
