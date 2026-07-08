@@ -10,3 +10,5 @@ Wed Jul  8 15:59:34 EDT 2026 dram_signal_bot salio; relanzando en 30s
 dram_signal_bot (C++): bridge DRAM 1m real iniciado
 [09:41] *** DRAM: COMPRAR *** ~60.44 (capitulacion confirmada; target 62.86, floor 61.04)
 [15:45] *** DRAM: VENDER *** ~61.65 (EOD flatten 15:45, entrada 60.44)
+Wed Jul  8 16:01:06 EDT 2026 dram_signal_bot salio; relanzando en 30s
+dram_signal_bot (C++): bridge DRAM 1m real iniciado

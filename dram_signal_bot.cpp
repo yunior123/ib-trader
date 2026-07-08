@@ -36,9 +36,14 @@ static const int    CONFIRM_WINDOW = 60;
 static const double TARGET_PCT = 4.0, FLOOR_PCT = 1.0, TRAIL_ATR = 3.0;
 
 static void speak(const char* phrase) {
-    // macOS text-to-speech, async: the bot literally SAYS what to do
-    char cmd[256];
-    std::snprintf(cmd, sizeof(cmd), "say -v Samantha '%s' >/dev/null 2>&1 &", phrase);
+    // System TTS (macOS `say`), async. Voice: $DRAM_VOICE override, else Daniel
+    // (most natural installed). For an even more human voice: System Settings >
+    // Accessibility > Spoken Content > Manage Voices > download "Ava (Premium)"
+    // or "Zoe (Premium)", then export DRAM_VOICE="Ava (Premium)".
+    const char* v = std::getenv("DRAM_VOICE");
+    if (!v || !*v) v = "Daniel";
+    char cmd[320];
+    std::snprintf(cmd, sizeof(cmd), "say -v '%s' -r 170 '%s' >/dev/null 2>&1 &", v, phrase);
     std::system(cmd);
 }
 
