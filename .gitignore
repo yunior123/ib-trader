@@ -7,3 +7,9 @@ __pycache__/
 models/
 alpaca.env
 feeds.env
+
+# top-gainer runtime
+topgainer/*.log
+topgainer/*.err
+data/topgainer/
+topgainer/__pycache__/
