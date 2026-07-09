@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Signal-bot fleet autostart (dram/nok/spcx/tsla keepalives).
+     RunAtLoad = arranca al login; StartInterval 300 = cada 5 min relanza
+     cualquier keepalive muerto (el starter es idempotente via pgrep).
+     Requiere Full Disk Access para /bin/zsh (concedido 2026-07-09).
+     Install: cp scripts/com.ibtrader.fleet.plist ~/Library/LaunchAgents/
+              launchctl load ~/Library/LaunchAgents/com.ibtrader.fleet.plist -->
+<plist version="1.0">
+<dict>
+    <key>Label</key><string>com.ibtrader.fleet</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/zsh</string>
+        <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/scripts/fleet_keepalive_start.sh</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader</string>
+    <key>RunAtLoad</key><true/>
+    <key>AbandonProcessGroup</key><true/>
+    <key>StartInterval</key><integer>300</integer>
+    <key>StandardOutPath</key>
+    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/fleet_autostart.out</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/fleet_autostart.err</string>
+</dict>
+</plist>

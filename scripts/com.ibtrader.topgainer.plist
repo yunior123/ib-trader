@@ -13,15 +13,13 @@
     <key>ProgramArguments</key>
     <array>
         <string>/bin/zsh</string>
-        <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/topgainer/start_all.sh</string>
+        <string>-c</string>
+        <string>export TOPGAINER_LIVE=1; exec /bin/zsh /Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/topgainer/start_all.sh</string>
     </array>
-    <key>EnvironmentVariables</key>
-    <dict>
-        <key>TOPGAINER_LIVE</key><string>1</string>
-    </dict>
     <key>WorkingDirectory</key>
     <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader</string>
     <key>RunAtLoad</key><true/>
+    <key>AbandonProcessGroup</key><true/>
     <key>StandardOutPath</key>
     <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/topgainer/autostart.out</string>
     <key>StandardErrorPath</key>
