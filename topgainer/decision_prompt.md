@@ -18,8 +18,11 @@ hour.
 Buy a selective penny-stock top gainer only on a CONFIRMED breakout, sell
 higher, and be out quickly: the ideal trade resolves within ~5 minutes; the
 watchdog force-flattens at 15 minutes no matter what. Never buy the parabolic
-blow-off top. One position at a time. 50% of account max. Every trade has a
-stop-loss (watchdog, default -3%) — small controlled loss beats holding a bag.
+blow-off top. One position at a time. SIZING (zero to hero): 10% of the
+account per trade to start, scaling gradually as results prove out, hard
+ceiling 25% — the executor's budget already reflects this, never exceed it.
+Every trade has a stop-loss (watchdog, default -3%) — small controlled loss
+beats holding a bag.
 
 ## Do exactly this, then STOP
 1. Read state AND the FULL live TFSA snapshot (Yunior's standing order: before

@@ -44,7 +44,9 @@ CLIENT_ID = int(os.getenv("TOPGAINER_CLIENTID", "41"))
 BAND = 0.08   # keep limit within 8% of market (under the ~10% reject band)
 # balance guard: never spend more than available funds minus a fee/FX buffer, so
 # the account can NEVER go negative (which would trigger high fees).
-ALLOC = float(os.getenv("TOPGAINER_ALLOC", "1.0"))     # fraction of buffered budget to use
+# SIZING DOCTRINE (Yunior 2026-07-09, "zero to hero"): start at 10% of the
+# account per trade, scale gradually, NEVER above 25% — hard-clamped here.
+ALLOC = min(0.25, max(0.01, float(os.getenv("TOPGAINER_ALLOC", "0.10"))))
 FEE_BUFFER_CAD = float(os.getenv("TOPGAINER_FEE_BUFFER_CAD", "1.50"))  # fixed reserve
 FX_MARKUP = 1.02                                        # assume FX 2% worse than quoted
 

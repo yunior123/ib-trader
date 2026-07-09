@@ -160,7 +160,30 @@ the repo's own env extracts "prices" from normalized features — broken, we fix
 - **HOT LOOPS EN C++ (2026-07-09)**: `topgainer/topgainer_watchdog.cpp` (guardian por-segundo: stop/target/trail/time-stop/deadman/reconcile/cooldown, Finnhub libcurl + price.py fallback, paridad matematica verificada 32/32 vs Python, ventas via exec_trade.py subprocess porque ib_insync no tiene gemelo C++) y `topgainer/topgainer_alert.cpp` (señales BUY-CONSIDER). Build: `clang++ -std=c++17 -O2 -o <bin> <src> -lcurl`. watchdog.py/alert_bot.py quedan como fallback probado (keepalive/start_all usan el binario si existe).
 - **LECCION telegram plugin (2026-07-09)**: cada `claude -p` del trader loop heredaba los plugins globales; el plugin telegram filtraba un daemon bun (~35% CPU c/u) POR CICLO → 8 huerfanos rompieron coreaudiod (audio) y dispararon el fan. Fix: `topgainer/claude_settings/settings.json` ahora pone enabledPlugins todo-false, y telegram quedo deshabilitado global. Si el audio se rompe: `sudo killall coreaudiod`.
 
-## ESTADO ACTUAL — DRAM-ONLY MODE (2026-07-08)
+## DOCTRINA DE FLOTA (2026-07-09, orden de Yunior — "from zero to hero")
+Dos sistemas TOTALMENTE SEPARADOS; no se mezclan nunca:
+
+**1) Flota de señales (4 bots C++, SOLO ALERTAS — jamás ordenan):**
+`dram/nok/spcx/tsla_signal_bot` + keepalives + bridges. Voz/banner/log para
+YUNIOR (humano). Motor validado (capitulación confirmada + CUSUM + Supertrend +
+Donchian). Cero conexión con topgainer; cero acceso a órdenes IBKR.
+
+**2) El "AI dios" — topgainer/ (el ÚNICO sistema que tradea, Claude decide):**
+- **Pre-9:30**: research automatizado — Finviz Elite topgainers (realtime) +
+  TradingAgents OBLIGATORIO → watchlist selectiva (scanner 6AM + on-demand).
+- **En sesión**: el motor de breakout confirmado (Donchian level + hold 45s +
+  CUSUM burst, nuestros algos) detecta la entrada EN los top gainers elegidos;
+  Claude (loop bash headless) valida contra el snapshot COMPLETO de la cuenta
+  (`exec_trade.py account`: fondos, posiciones, órdenes — obligatorio antes de
+  CUALQUIER transacción) y compra; vende para profit completo (target/trail);
+  el watchdog determinista C++ garantiza stop-3%/time-stop/dead-man.
+- **SIZING zero-to-hero**: 10% de la cuenta por trade al inicio, escalar
+  gradualmente con resultados, TECHO DURO 25% (clamp en exec_trade.py ALLOC;
+  env TOPGAINER_ALLOC dentro de [0.01, 0.25]).
+- Solo Claude abre posiciones. El watchdog solo hace ventas protectoras. Los
+  signal bots jamás tocan la cuenta.
+
+## ESTADO HISTORICO — DRAM-ONLY MODE (2026-07-08, superseded: hoy corren los 4 signal bots + topgainer)
 **Unico bot conectado**: `dram_signal_bot` (C++) via `scripts/dram_keepalive.sh`, 24/5, instancia unica.
 - Habla: "buy DRAM now" / "sell DRAM now" (voz sistema Daniel; override `DRAM_VOICE`; killall-say = una sola voz). Sonidos propios: sounds/dram_buy.wav / dram_sell.wav.
 - Datos: Yahoo 1m REAL (delayed IBKR rechazado por Yunior; cuenta sin subscripciones RT), bridge `scripts/dram_bar_bridge.py`, almacenado en trades.db (dram_bars).
