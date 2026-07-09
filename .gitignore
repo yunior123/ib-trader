@@ -16,3 +16,4 @@ topgainer/__pycache__/
 llm.env
 ta_venv/
 *.env
+topgainer/_ta*
