@@ -60,6 +60,31 @@ static void play(const char* f, const char* fb) {
     std::system(cmd);
 }
 
+// ---- notifications: Mac (osascript) + phone (ntfy, same topic as scriptures) + ops log
+static void notify(const char* title, const char* msg, bool urgent) {
+    char cmd[1024];
+    // 1) macOS notification center
+    std::snprintf(cmd, sizeof(cmd),
+        "osascript -e 'display notification \"%s\" with title \"%s\" sound name \"Glass\"' "
+        ">/dev/null 2>&1 &", msg, title);
+    std::system(cmd);
+    // 2) phone via ntfy (church-scriptures pattern, topic yunior-daily-brief-2026)
+    std::snprintf(cmd, sizeof(cmd),
+        "curl -s -m 10 -X POST 'https://ntfy.sh/yunior-daily-brief-2026' "
+        "-H 'Title: %s' -H 'Priority: %s' -H 'Tags: %s' -d '%s' >/dev/null 2>&1 &",
+        title, urgent ? "urgent" : "default", urgent ? "rotating_light,chart" : "chart", msg);
+    std::system(cmd);
+    // 3) structured operations log
+    FILE* f = std::fopen("dram_operations.log", "a");
+    if (f) {
+        time_t now = time(nullptr); struct tm lt; localtime_r(&now, &lt);
+        std::fprintf(f, "%04d-%02d-%02d %02d:%02d:%02d | %s | %s\n",
+                     lt.tm_year + 1900, lt.tm_mon + 1, lt.tm_mday,
+                     lt.tm_hour, lt.tm_min, lt.tm_sec, title, msg);
+        std::fclose(f);
+    }
+}
+
 static void et_hm(double epoch, int& h, int& m) {  // Mac local tz == Toronto/ET
     time_t t = (time_t)epoch;
     struct tm lt; localtime_r(&t, &lt);
@@ -150,12 +175,14 @@ int main(int argc, char** argv) {
                                     H, M, cusum_up * 100, b.c);
                         std::fflush(stdout);
                         play("sounds/momentum_up.wav", "Ping"); speak("DRAM rising fast");
+                        { char m[160]; std::snprintf(m, sizeof(m), "CUSUM: subiendo fuerte %+.2f%% px %.2f", cusum_up*100, b.c); notify("DRAM alza", m, false); }
                         cusum_up = 0; cusum_dn = 0; last_cusum = b.t;
                     } else if (cusum_dn < -hthr) {
                         std::printf("[%02d:%02d] CUSUM: DRAM CAYENDO fuerte (%.2f%% acumulado) px %.2f\n",
                                     H, M, cusum_dn * 100, b.c);
                         std::fflush(stdout);
                         play("sounds/momentum_down.wav", "Basso"); speak("DRAM falling fast");
+                        { char m[160]; std::snprintf(m, sizeof(m), "CUSUM: cayendo fuerte %.2f%% px %.2f", cusum_dn*100, b.c); notify("DRAM caida", m, false); }
                         cusum_up = 0; cusum_dn = 0; last_cusum = b.t;
                     }
                 }
@@ -192,9 +219,11 @@ int main(int argc, char** argv) {
                 if (nt > 0) {
                     std::printf("[%02d:%02d] SUPERTREND: tendencia DRAM cambio a ALCISTA px %.2f\n", H, M, b.c);
                     play("sounds/momentum_up.wav", "Ping"); speak("DRAM trend is now up");
+                    { char m[120]; std::snprintf(m, sizeof(m), "Supertrend: tendencia ALCISTA px %.2f", b.c); notify("DRAM tendencia", m, false); }
                 } else {
                     std::printf("[%02d:%02d] SUPERTREND: tendencia DRAM cambio a BAJISTA px %.2f\n", H, M, b.c);
                     play("sounds/momentum_down.wav", "Basso"); speak("DRAM trend is now down");
+                    { char m[120]; std::snprintf(m, sizeof(m), "Supertrend: tendencia BAJISTA px %.2f", b.c); notify("DRAM tendencia", m, false); }
                 }
                 std::fflush(stdout);
                 last_st = b.t;
@@ -213,11 +242,13 @@ int main(int argc, char** argv) {
                 std::printf("[%02d:%02d] DONCHIAN: DRAM rompe maximo del dia px %.2f > %.2f\n", H, M, b.c, hi);
                 std::fflush(stdout);
                 play("sounds/momentum_up.wav", "Ping"); speak("DRAM breaking out");
+                { char m[120]; std::snprintf(m, sizeof(m), "Donchian: rompe maximo del dia px %.2f", b.c); notify("DRAM breakout", m, false); }
                 last_don = b.t;
             } else if (b.c < lo) {
                 std::printf("[%02d:%02d] DONCHIAN: DRAM rompe minimo del dia px %.2f < %.2f\n", H, M, b.c, lo);
                 std::fflush(stdout);
                 play("sounds/momentum_down.wav", "Basso"); speak("DRAM breaking down");
+                { char m[120]; std::snprintf(m, sizeof(m), "Donchian: rompe minimo del dia px %.2f", b.c); notify("DRAM breakdown", m, false); }
                 last_don = b.t;
             }
         }
@@ -240,6 +271,10 @@ int main(int argc, char** argv) {
                 std::fflush(stdout);
                 play("sounds/dram_sell.wav", "Hero");
                 speak("sell DRAM now");
+                { char m[200]; std::snprintf(m, sizeof(m),
+                    "VENDER DRAM @ %.2f | %s | entrada %.2f | PnL %+.1f%%",
+                    b.c, why, entry, (b.c / entry - 1) * 100);
+                  notify("DRAM: SELL NOW", m, true); }
                 in_pos = false;
             }
         }
@@ -256,6 +291,10 @@ int main(int argc, char** argv) {
                 std::fflush(stdout);
                 play("sounds/dram_buy.wav", "Glass");
                 speak("buy DRAM now");
+                { char m[200]; std::snprintf(m, sizeof(m),
+                    "COMPRAR DRAM @ %.2f | target %.2f (+4%%) | floor %.2f | capitulacion confirmada",
+                    entry, target_px, floor_px);
+                  notify("DRAM: BUY NOW", m, true); }
             }
         }
         if (ind_ok && !in_pos && !pending_buy && rth_entry) {
