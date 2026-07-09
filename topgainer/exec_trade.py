@@ -212,6 +212,49 @@ def do_sell(sym: str, qty: int, entry: float, limit: float = None, force_flat: b
         ib.disconnect()
 
 
+def do_account():
+    """FULL TFSA snapshot, READONLY — Yunior's order 2026-07-09: before ANY
+    transaction Claude must know everything about the account: money available,
+    shares held, open orders. Prints JSON so the decision cycle can reason on it."""
+    import json
+    ib = IB()
+    ib.connect(IB_HOST, IB_PORT, clientId=CLIENT_ID + 33, timeout=15,
+               readonly=True, account=IB_ACCOUNT)
+    try:
+        snap = {"account": IB_ACCOUNT, "type": "TFSA"}
+        for tag in ("NetLiquidation", "TotalCashValue", "AvailableFunds", "BuyingPower"):
+            try:
+                snap[tag] = round(get_account_value(ib, tag, IB_ACCOUNT), 2)
+            except Exception:
+                snap[tag] = None
+        snap["budget"] = account_budget(ib)
+        snap["positions"] = [
+            {"sym": p.contract.symbol, "qty": float(p.position),
+             "avg_cost": round(float(p.avgCost), 4), "currency": p.contract.currency}
+            for p in ib.positions(IB_ACCOUNT) if p.position
+        ]
+        ib.reqAllOpenOrders()
+        ib.sleep(1.5)
+        snap["open_orders"] = [
+            {"sym": t.contract.symbol, "action": t.order.action,
+             "qty": float(t.order.totalQuantity), "type": t.order.orderType,
+             "limit": float(getattr(t.order, "lmtPrice", 0) or 0),
+             "status": t.orderStatus.status}
+            for t in ib.openTrades()
+        ]
+        local = state.read_position()
+        snap["local_position"] = local or None
+        # ghost check: local position that IBKR no longer holds -> tell Claude
+        if local:
+            held = sum(float(p.position) for p in ib.positions(IB_ACCOUNT)
+                       if p.contract.symbol == local["sym"])
+            snap["local_matches_ibkr"] = held >= local["qty"]
+    finally:
+        ib.disconnect()
+    print(json.dumps(snap, indent=1))
+    return 0
+
+
 def do_reconcile(sym: str):
     """Compare position.json against the LIVE IBKR position (read-only connect).
     If IBKR holds 0 shares the position was sold OUTSIDE the bot (manual TWS sell,
@@ -260,8 +303,11 @@ def main():
     s.add_argument("--force-flat", action="store_true")
     f = sub.add_parser("flat"); f.add_argument("sym")
     sub.add_parser("balance")
+    sub.add_parser("account")   # full TFSA snapshot: balances+positions+orders
     r = sub.add_parser("reconcile"); r.add_argument("sym")
     a = ap.parse_args()
+    if a.cmd == "account":
+        return do_account()
     if a.cmd == "balance":
         import json
         bud = account_budget(None)   # LIVE read from IBKR, never hardcoded

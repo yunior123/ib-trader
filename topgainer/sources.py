@@ -35,10 +35,10 @@ def _load_env():
 _load_env()
 
 
-def finviz_elite_gainers(max_price=10.0, auth=None):
-    """REAL-TIME top gainers via Finviz Elite export API (paid; needs auth token).
-    This is the realtime source Yunior wants. Set FINVIZ_AUTH in llm.env/feeds.env
-    (the 'auth=' value from an Elite export URL). Returns [] if no token."""
+def _finviz_elite_export(signal, max_price=10.0, auth=None, src="finviz_elite",
+                         breakout=False):
+    """Shared Finviz Elite export fetch for any screener signal (paid; needs
+    auth token in FINVIZ_AUTH). Returns [] if no token or on error."""
     auth = auth or os.environ.get("FINVIZ_AUTH") or os.environ.get("FINVIZ_API_KEY")
     if not auth:
         return []
@@ -46,7 +46,7 @@ def finviz_elite_gainers(max_price=10.0, auth=None):
     # NOTE: use the /export/screener path. The legacy export.ashx 301-redirects to
     # an EMPTY body for clients that don't follow redirects. urllib follows 301 by
     # default, but the direct path avoids the round-trip entirely.
-    url = (f"https://elite.finviz.com/export/screener?v=111&s=ta_topgainers"
+    url = (f"https://elite.finviz.com/export/screener?v=111&s={signal}"
            f"&f={price_f}&o=-change&auth={auth}")
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
@@ -59,13 +59,30 @@ def finviz_elite_gainers(max_price=10.0, auth=None):
                             "gain_pct": float(str(row.get("Change", "0")).replace("%", "") or 0),
                             "premarket_pct": 0.0,
                             "volume": float(str(row.get("Volume", "0")).replace(",", "") or 0),
-                            "market_cap": 0.0, "src": "finviz_elite_realtime"})
+                            "market_cap": 0.0, "src": src, "breakout": breakout})
             except Exception:
                 continue
         return out
     except Exception as e:
-        print(f"finviz_elite err {repr(e)[:100]}")
+        print(f"finviz_elite err ({signal}) {repr(e)[:100]}")
         return []
+
+
+def finviz_elite_gainers(max_price=10.0, auth=None):
+    """REAL-TIME top gainers via Finviz Elite export API (paid; needs auth token).
+    This is the realtime source Yunior wants. Set FINVIZ_AUTH in llm.env/feeds.env
+    (the 'auth=' value from an Elite export URL). Returns [] if no token."""
+    return _finviz_elite_export("ta_topgainers", max_price, auth,
+                                src="finviz_elite_realtime")
+
+
+def finviz_elite_breakouts(max_price=10.0, auth=None):
+    """REAL-TIME breakouts via Finviz Elite: names making a NEW HIGH (the
+    classic breakout screen). Yunior's order 2026-07-09: use topgainers AND
+    breakout screens together. Rows are tagged breakout=True so the scanner
+    scores them with a breakout bonus and a relaxed min-gain gate."""
+    return _finviz_elite_export("ta_newhigh", max_price, auth,
+                                src="finviz_elite_breakout", breakout=True)
 
 
 def yahoo_penny_gainers(max_price=10.0, min_change=4.0, min_vol=300_000, size=100):

@@ -1,11 +1,20 @@
 // topgainer_alert.cpp — C++ port of alert_bot.py (Yunior 2026-07-09: avoid python).
 // Watches today's watchlist and fires BUY-CONSIDER signals to the Mac + the
-// Claude decision session (signals.jsonl) when a candidate makes a fresh
-// intraday high with real gain inside the execution window. Never places orders.
+// Claude decision session (signals.jsonl). Never places orders.
 //
-// Behavior parity with alert_bot.py:
+// CONFIRMED-BREAKOUT ENGINE (Yunior 2026-07-09: "recognize breakout in top
+// gainers to enter, use our modern algos") — the fleet's validated detection
+// suite, adapted to per-second top-gainer polling:
+//   1) Donchian level: running intraday high = the breakout ceiling.
+//   2) CUSUM burst filter (Lopez de Prado, same math as the signal bots):
+//      EWMA-variance of poll-to-poll log returns; the accumulated up-move must
+//      exceed max(6*sigma, TG_BURST_MIN) — a statistical burst, not noise.
+//   3) HOLD confirmation (never buy the first green spike): after the level
+//      breaks, price must HOLD at/above the broken level for TG_CONFIRM_SECS
+//      before the signal fires; fading back under the level cancels and re-arms.
 //   poll ALERT_POLL (2s) | window ALERT_WIN_START/END (09:30-10:00, Mon-Fri)
-//   signal when: px > running-high AND in window AND gain>=5% AND once per sym/day
+//   fire when: level broken AND held TG_CONFIRM_SECS AND CUSUM burst AND
+//              in window AND gain>=5% AND once per sym/day
 // Notifications: Mac osascript banner only (ntfy removed fleet-wide 2026-07-09).
 //
 // Build: clang++ -std=c++17 -O2 -o topgainer_alert topgainer_alert.cpp -lcurl
@@ -14,6 +23,8 @@
 #include <curl/curl.h>
 #include <unistd.h>
 
+#include <algorithm>
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -31,6 +42,9 @@ static const double POLL = envd("ALERT_POLL", 2.0);
 static const std::string WIN_START = envs("ALERT_WIN_START", "09:30");
 static const std::string WIN_END = envs("ALERT_WIN_END", "10:00");
 static const double MIN_GAIN = envd("ALERT_MIN_GAIN", 5.0);
+static const double CONFIRM_SECS = envd("TG_CONFIRM_SECS", 45.0);  // hold above level
+static const double BURST_MIN = envd("TG_BURST_MIN", 0.015);       // min CUSUM up-move (1.5%)
+static const double FADE_TOL = envd("TG_FADE_TOL", 0.002);         // 0.2% under level = failed
 static const char* SIGNALS = "data/topgainer/signals.jsonl";
 
 static void sh_sanitize(const char* in, char* out, size_t n) {
@@ -130,47 +144,106 @@ static std::vector<Cand> read_watchlist(const std::string& day) {
     return out;
 }
 
-static void append_signal(const Cand& c, double px, double gain) {
+static void append_signal(const Cand& c, double px, double gain, double level,
+                          double held_secs, double cusum_pct) {
     FILE* f = fopen(SIGNALS, "a");
     if (!f) return;
     fprintf(f, "{\"ts\": \"%s\", \"kind\": \"buy_consider\", \"sym\": \"%s\", "
                "\"price\": %.4f, \"gain_pct\": %.2f, \"watchlist_score\": %.2f, "
-               "\"note\": \"fresh intraday high in window\"}\n",
-            now_iso().c_str(), c.sym.c_str(), px, gain, c.score);
+               "\"breakout_level\": %.4f, \"held_secs\": %.0f, \"cusum_pct\": %.2f, "
+               "\"note\": \"CONFIRMED breakout: held %.0fs above level, CUSUM burst +%.2f%%\"}\n",
+            now_iso().c_str(), c.sym.c_str(), px, gain, c.score,
+            level, held_secs, cusum_pct, held_secs, cusum_pct);
     fclose(f);
 }
 
+// per-symbol confirmed-breakout state (fleet detection suite)
+struct Track {
+    double high = 0;            // Donchian level: running intraday high
+    double last_px = 0;         // for poll-to-poll log returns
+    double ret_var = 1e-6;      // EWMA variance (CUSUM threshold)
+    double cusum_up = 0;        // accumulated up-move
+    double pending_level = 0;   // broken ceiling being confirmed (0 = none)
+    time_t pending_since = 0;
+};
+
 int main() {
     curl_global_init(CURL_GLOBAL_DEFAULT);
-    printf("[alert-c++] up. window %s-%s ET, poll %.1fs, min gain %.1f%%\n",
-           WIN_START.c_str(), WIN_END.c_str(), POLL, MIN_GAIN);
+    printf("[alert-c++] up. window %s-%s ET, poll %.1fs, min gain %.1f%%, "
+           "confirm %.0fs hold + CUSUM>=max(6sigma,%.1f%%)\n",
+           WIN_START.c_str(), WIN_END.c_str(), POLL, MIN_GAIN,
+           CONFIRM_SECS, BURST_MIN * 100);
     fflush(stdout);
-    std::map<std::string, double> highs;   // sym -> running intraday high
+    std::map<std::string, Track> tracks;
     std::set<std::string> fired;           // one BUY-CONSIDER per sym per day
     std::string day;
     while (true) {
         time_t t = time(nullptr); struct tm lt; localtime_r(&t, &lt);
         char today[16]; strftime(today, sizeof(today), "%Y%m%d", &lt);
-        if (day != today) { day = today; highs.clear(); fired.clear(); }
+        if (day != today) { day = today; tracks.clear(); fired.clear(); }
         for (const Cand& c : read_watchlist(day)) {
             double px = 0, pc = 0;
             if (!quote(c.sym, px, pc)) continue;
             double ref = pc > 0 ? pc : (c.price > 0 ? c.price : px);
             double gain = ref > 0 ? (px - ref) / ref * 100.0 : 0;
-            double prev_high = highs.count(c.sym) ? highs[c.sym] : (c.price > 0 ? c.price : px);
-            if (px > prev_high) {
-                highs[c.sym] = px;
-                if (in_window() && !fired.count(c.sym) && gain >= MIN_GAIN) {
-                    fired.insert(c.sym);
-                    char msg[240];
-                    snprintf(msg, sizeof(msg),
-                             "%s rompe maximo intradia $%.4f (+%.1f%%). Candidato de compra — claude evalua.",
-                             c.sym.c_str(), px, gain);
-                    notify("BUY-CONSIDER", msg);
-                    append_signal(c, px, gain);
-                    printf("[alert-c++] SIGNAL %s $%.4f +%.1f%%\n", c.sym.c_str(), px, gain);
+            Track& tr = tracks[c.sym];
+            if (tr.high <= 0) tr.high = (c.price > 0 ? c.price : px);
+
+            // 1) CUSUM burst filter (same math as the signal bots)
+            if (tr.last_px > 0 && px > 0) {
+                double r = std::log(px / tr.last_px);
+                tr.ret_var += (r * r - tr.ret_var) / 50.0;
+                tr.cusum_up = std::max(0.0, tr.cusum_up + r);
+            }
+            tr.last_px = px;
+            double hthr = std::max(6.0 * std::sqrt(tr.ret_var), BURST_MIN);
+
+            time_t now = time(nullptr);
+            if (tr.pending_level > 0) {
+                // 3) HOLD confirmation: price must stay at/above the broken level
+                if (px < tr.pending_level * (1.0 - FADE_TOL)) {
+                    printf("[alert-c++] %s breakout FAILED (fell under %.4f) — re-armed\n",
+                           c.sym.c_str(), tr.pending_level);
+                    fflush(stdout);
+                    tr.pending_level = 0;   // failed spike; re-arm on next break
+                } else if (now - tr.pending_since >= (time_t)CONFIRM_SECS) {
+                    bool burst = tr.cusum_up >= hthr;
+                    if (in_window() && !fired.count(c.sym) && gain >= MIN_GAIN && burst) {
+                        fired.insert(c.sym);
+                        double held = (double)(now - tr.pending_since);
+                        char msg[280];
+                        snprintf(msg, sizeof(msg),
+                                 "%s breakout CONFIRMADO: aguanta %.0fs sobre $%.4f (+%.1f%%, CUSUM +%.1f%%). Claude evalua.",
+                                 c.sym.c_str(), held, tr.pending_level, gain, tr.cusum_up * 100);
+                        notify("BUY-CONSIDER", msg);
+                        append_signal(c, px, gain, tr.pending_level, held, tr.cusum_up * 100);
+                        printf("[alert-c++] CONFIRMED SIGNAL %s $%.4f +%.1f%% (level %.4f, CUSUM +%.1f%%)\n",
+                               c.sym.c_str(), px, gain, tr.pending_level, tr.cusum_up * 100);
+                        fflush(stdout);
+                        tr.cusum_up = 0;
+                        tr.pending_level = 0;
+                    } else if (!burst) {
+                        // held the level but no statistical burst -> keep waiting;
+                        // a real breakout keeps pushing and the CUSUM catches up
+                        if (now - tr.pending_since > (time_t)(CONFIRM_SECS * 4)) {
+                            printf("[alert-c++] %s: held level but no CUSUM burst in %.0fs — stale, re-armed\n",
+                                   c.sym.c_str(), CONFIRM_SECS * 4);
+                            fflush(stdout);
+                            tr.pending_level = 0;
+                        }
+                    }
+                }
+            }
+            if (px > tr.high) {
+                // 2) Donchian break: fresh intraday high starts the confirmation clock
+                if (tr.pending_level <= 0 && !fired.count(c.sym) && gain >= MIN_GAIN) {
+                    tr.pending_level = tr.high;   // the broken ceiling to hold
+                    tr.pending_since = now;
+                    printf("[alert-c++] %s breaks level %.4f -> confirming (%.0fs hold + burst)\n",
+                           c.sym.c_str(), tr.high, CONFIRM_SECS);
                     fflush(stdout);
                 }
+                tr.high = px;
             }
         }
         usleep((useconds_t)(POLL * 1e6));
