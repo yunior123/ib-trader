@@ -43,7 +43,10 @@ def finviz_elite_gainers(max_price=10.0, auth=None):
     if not auth:
         return []
     price_f = "sh_price_u10" if max_price >= 10 else ("sh_price_u5" if max_price >= 5 else "sh_price_u1")
-    url = (f"https://elite.finviz.com/export.ashx?v=111&s=ta_topgainers"
+    # NOTE: use the /export/screener path. The legacy export.ashx 301-redirects to
+    # an EMPTY body for clients that don't follow redirects. urllib follows 301 by
+    # default, but the direct path avoids the round-trip entirely.
+    url = (f"https://elite.finviz.com/export/screener?v=111&s=ta_topgainers"
            f"&f={price_f}&o=-change&auth={auth}")
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
