@@ -40,12 +40,16 @@ def _load_env_file(name):
 
 
 def _configure_llm_env():
-    """Point TradingAgents at NVIDIA NIM (OpenAI-compatible). MANDATORY layer."""
+    """Point TradingAgents at the research LLM (OpenAI-compatible). MANDATORY layer.
+    Prefers DeepSeek (Yunior's choice), falls back to NVIDIA NIM if only that key
+    is present. langchain ChatOpenAI (provider 'openai') reads OPENAI_API_KEY."""
     _load_env_file("llm.env")
     _load_env_file("feeds.env")
+    ds = os.environ.get("DEEPSEEK_API_KEY", "")
     nv = os.environ.get("NVIDIA_API_KEY", "")
-    if nv:
-        # langchain ChatOpenAI (provider 'openai') reads these:
+    if ds:
+        os.environ["OPENAI_API_KEY"] = ds
+    elif nv:
         os.environ["OPENAI_API_KEY"] = nv
     # FinnHub tool key (data layer)
     if os.environ.get("FINNHUB_KEY") and not os.environ.get("FINNHUB_API_KEY"):

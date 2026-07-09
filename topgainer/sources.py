@@ -10,10 +10,59 @@ Both return dicts: {sym, price, gain_pct, premarket_pct, volume, market_cap, src
 The scanner then applies the selectivity filters (penny range, liquidity,
 skip parabolic blow-offs) — the junk $0.00 +900% names get dropped there.
 """
+import csv
+import io
 import os
+import urllib.request
 import warnings
 
 warnings.filterwarnings("ignore")
+
+_REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+def _load_env():
+    for name in ("llm.env", "feeds.env"):
+        p = os.path.join(_REPO, name)
+        if os.path.exists(p):
+            for line in open(p):
+                line = line.strip()
+                if line and not line.startswith("#") and "=" in line:
+                    k, v = line.split("=", 1)
+                    os.environ.setdefault(k.strip(), v.strip().strip('"'))
+
+
+_load_env()
+
+
+def finviz_elite_gainers(max_price=10.0, auth=None):
+    """REAL-TIME top gainers via Finviz Elite export API (paid; needs auth token).
+    This is the realtime source Yunior wants. Set FINVIZ_AUTH in llm.env/feeds.env
+    (the 'auth=' value from an Elite export URL). Returns [] if no token."""
+    auth = auth or os.environ.get("FINVIZ_AUTH") or os.environ.get("FINVIZ_API_KEY")
+    if not auth:
+        return []
+    price_f = "sh_price_u10" if max_price >= 10 else ("sh_price_u5" if max_price >= 5 else "sh_price_u1")
+    url = (f"https://elite.finviz.com/export.ashx?v=111&s=ta_topgainers"
+           f"&f={price_f}&o=-change&auth={auth}")
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        text = urllib.request.urlopen(req, timeout=20).read().decode("utf-8", "ignore")
+        out = []
+        for row in csv.DictReader(io.StringIO(text)):
+            try:
+                out.append({"sym": row["Ticker"].strip(),
+                            "price": float(row.get("Price", 0) or 0),
+                            "gain_pct": float(str(row.get("Change", "0")).replace("%", "") or 0),
+                            "premarket_pct": 0.0,
+                            "volume": float(str(row.get("Volume", "0")).replace(",", "") or 0),
+                            "market_cap": 0.0, "src": "finviz_elite_realtime"})
+            except Exception:
+                continue
+        return out
+    except Exception as e:
+        print(f"finviz_elite err {repr(e)[:100]}")
+        return []
 
 
 def yahoo_penny_gainers(max_price=10.0, min_change=4.0, min_vol=300_000, size=100):
@@ -82,8 +131,15 @@ def finviz_gainers(max_price=10.0):
 
 
 def top_gainer_universe(premarket=False, max_price=10.0, favorites=None):
-    """Merged, deduped candidate rows (best gain kept per symbol)."""
+    """Merged, deduped candidate rows (best gain kept per symbol).
+    Priority: Finviz Elite REALTIME (if auth token) -> Yahoo screener (delayed
+    ~15m, free) -> Finviz free scrape. The realtime source leads when available."""
     rows = []
+    elite = finviz_elite_gainers(max_price)      # REALTIME (paid, needs FINVIZ_AUTH)
+    rows += elite
+    if not elite:
+        print("[sources] no FINVIZ_AUTH -> using Yahoo screener (~15m delayed). "
+              "Set FINVIZ_AUTH in llm.env for realtime.")
     rows += (yahoo_premarket_gainers(max_price) if premarket
              else yahoo_penny_gainers(max_price=max_price))
     rows += finviz_gainers(max_price)
