@@ -75,6 +75,56 @@ def test_buy_limit_clamped_to_band():
     assert exec_trade._clamp_buy_limit(mkt, 5.0) <= mkt * (1 + exec_trade.BAND) + 1e-9
 
 
+# ---------- balance guard: never exceed available funds (no negative balance) ----------
+def test_affordable_qty_never_exceeds_budget():
+    import exec_trade
+    # $14 budget, $0.19 stock -> some whole shares, cost incl commission <= budget
+    for budget in [14.0, 5.0, 0.94, 0.0, 100.0]:
+        for px in [0.19, 1.50, 3.33]:
+            q = exec_trade.affordable_qty(px, budget)
+            val = q * px
+            comm = exec_trade.order_commission(val, exec_trade.DEFAULT_CONFIG)
+            assert val + comm <= budget + 1e-9, f"q={q} px={px} budget={budget} overspends"
+            # and it's the MAX such qty (one more would overspend)
+            if q > 0:
+                val2 = (q + 1) * px
+                assert val2 + exec_trade.order_commission(val2, exec_trade.DEFAULT_CONFIG) > budget
+
+
+def test_affordable_qty_zero_when_too_poor():
+    import exec_trade
+    assert exec_trade.affordable_qty(5.0, 3.0) == 0     # can't afford one $5 share on $3
+    assert exec_trade.affordable_qty(0.19, 0.0) == 0
+
+
+def test_buy_refuses_when_budget_zero(monkeypatch, capsys):
+    import exec_trade
+    monkeypatch.setattr(exec_trade, "last_price", lambda s: {"price": 0.20, "prev_close": 0.18})
+    monkeypatch.setattr(exec_trade, "_live_enabled", lambda: False)
+    monkeypatch.setattr(exec_trade, "account_budget", lambda ib: {"budget_usd": 0.0,
+                        "available_cad": 0.0, "buffer_cad": 1.5, "fx_usdcad": 1.45})
+    rc = exec_trade.do_buy("GNS", 10)
+    out = capsys.readouterr().out
+    assert rc == 0 and "REFUSE" in out and "0 shares" in out
+
+
+def test_buy_clamps_to_budget(monkeypatch, capsys):
+    import exec_trade
+    monkeypatch.setattr(exec_trade, "last_price", lambda s: {"price": 0.20, "prev_close": 0.18})
+    monkeypatch.setattr(exec_trade, "_live_enabled", lambda: False)
+    # $2 budget, ~$0.204 limit -> at most ~9 shares, requested 1000 must clamp down
+    monkeypatch.setattr(exec_trade, "account_budget", lambda ib: {"budget_usd": 2.0,
+                        "available_cad": 3.0, "buffer_cad": 1.5, "fx_usdcad": 1.45})
+    rc = exec_trade.do_buy("GNS", 1000)
+    out = capsys.readouterr().out
+    assert rc == 0 and "clamped" in out and "[DRY] BUY" in out
+    # extract clamped qty and confirm it fits the $2 budget
+    import re
+    m = re.search(r"\[DRY\] BUY (\d+) GNS LMT ([\d.]+)", out)
+    q, lim = int(m.group(1)), float(m.group(2))
+    assert q * lim <= 2.0 + 1e-9
+
+
 # ---------- watchdog exit logic (deterministic, no LLM, no orders) ----------
 def _wd_with_price(monkeypatch, price):
     import watchdog

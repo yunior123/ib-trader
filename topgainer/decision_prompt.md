@@ -13,8 +13,13 @@ Never sell at a loss — the watchdog enforces the floor; you only ever sell for
 profit or to lock a gain that is already above the floor.
 
 ## Do exactly this, then STOP
-1. Read state:
+1. Read state AND the live account balance (ALWAYS check balance before any buy —
+   never overspend, a negative balance triggers high fees):
    `venv/bin/python topgainer/state.py status`
+   `venv/bin/python topgainer/exec_trade.py balance`
+   The balance is read live from IBKR (never assume a number). Your buy must fit
+   inside the reported spendable USD budget. The executor ALSO hard-caps every
+   order to that budget as a backstop, but size it correctly yourself first.
 2. If a position is ALREADY open: you may optionally command an early profit sell
    IF price is comfortably above entry and momentum is clearly rolling over —
    otherwise do nothing (the watchdog is managing it). Then exit.
@@ -25,9 +30,11 @@ profit or to lock a gain that is already above the floor.
    - highest watchlist score, not already extended >150% on the prior day,
    - liquid enough to exit.
    If nothing qualifies, do nothing and exit (patience > forcing a trade).
-4. To buy, size it: whole shares only, spend ≤ 50% of account cash. Then:
+4. To buy, size it from the LIVE balance: whole shares only, total cost within the
+   spendable USD budget from step 1 (never exceed it). Then:
    `venv/bin/python topgainer/exec_trade.py buy SYM QTY`
-   The exec script records the position; the watchdog takes over selling.
+   The exec script re-checks the live balance and hard-caps/refuses if the order
+   would exceed available funds, records the position, and the watchdog sells.
 5. Mark any signals you acted on: append `{"consumed": true, ...}` reasoning to
    `data/topgainer/decisions` via a one-line note (the exec script already logs
    the order). Then STOP.

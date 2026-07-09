@@ -29,11 +29,12 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # repo root
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))                   # topgainer/
 import state  # noqa: E402
-from price import last_price  # noqa: E402
+from price import last_price, usdcad  # noqa: E402
 
 # reuse the validated engine helpers
 from day_trading_bot import (IB, Stock, LimitOrder, floor_price,  # noqa: E402
-                             exit_limit_price, DEFAULT_CONFIG)
+                             exit_limit_price, order_commission, get_account_value,
+                             DEFAULT_CONFIG)
 
 IB_HOST = os.getenv("IB_HOST", "127.0.0.1")
 IB_PORT = int(os.getenv("IB_PORT", "7496"))     # live TWS
@@ -41,6 +42,11 @@ IB_ACCOUNT = os.getenv("IB_ACCOUNT", "U26942420")
 CLIENT_ID = int(os.getenv("TOPGAINER_CLIENTID", "41"))
 
 BAND = 0.08   # keep limit within 8% of market (under the ~10% reject band)
+# balance guard: never spend more than available funds minus a fee/FX buffer, so
+# the account can NEVER go negative (which would trigger high fees).
+ALLOC = float(os.getenv("TOPGAINER_ALLOC", "1.0"))     # fraction of buffered budget to use
+FEE_BUFFER_CAD = float(os.getenv("TOPGAINER_FEE_BUFFER_CAD", "1.50"))  # fixed reserve
+FX_MARKUP = 1.02                                        # assume FX 2% worse than quoted
 
 
 def _live_enabled() -> bool:
@@ -58,6 +64,48 @@ def _clamp_buy_limit(mkt: float, want: float) -> float:
     return round(min(want, hi), 4)
 
 
+def account_budget(ib=None):
+    """Return the spendable budget in USD, computed from the LIVE TFSA available
+    funds (CAD base) minus a fee/FX buffer, converted at a conservative FX. This
+    is the hard ceiling: an order is never allowed to exceed it, so the account
+    cannot go negative. Returns dict with cad/usd/fx/available so callers + Claude
+    can see the numbers. If ib is None, connects read-only just to read balance."""
+    own = False
+    if ib is None:
+        ib = IB()
+        ib.connect(IB_HOST, IB_PORT, clientId=CLIENT_ID + 30, timeout=15,
+                   readonly=True, account=IB_ACCOUNT)
+        own = True
+    try:
+        avail_cad = get_account_value(ib, "AvailableFunds", IB_ACCOUNT)
+        if avail_cad <= 0:
+            avail_cad = get_account_value(ib, "TotalCashValue", IB_ACCOUNT)
+    finally:
+        if own:
+            ib.disconnect()
+    fx = usdcad() * FX_MARKUP                       # conservative (fewer USD)
+    buffer_cad = max(FEE_BUFFER_CAD, avail_cad * 0.10)
+    budget_cad = max(0.0, (avail_cad - buffer_cad)) * ALLOC
+    budget_usd = budget_cad / fx if fx else 0.0
+    return {"available_cad": round(avail_cad, 2), "buffer_cad": round(buffer_cad, 2),
+            "budget_cad": round(budget_cad, 2), "fx_usdcad": round(fx, 4),
+            "budget_usd": round(budget_usd, 2)}
+
+
+def affordable_qty(limit_px: float, budget_usd: float) -> int:
+    """Max whole shares whose cost + commission stays within budget_usd."""
+    if limit_px <= 0 or budget_usd <= 0:
+        return 0
+    q = int(budget_usd // limit_px)
+    # back off until value + commission fits (commission is min($1, 0.5% value))
+    while q > 0:
+        val = q * limit_px
+        if val + order_commission(val, DEFAULT_CONFIG) <= budget_usd:
+            return q
+        q -= 1
+    return 0
+
+
 def do_buy(sym: str, qty: int, limit: float = None):
     q = last_price(sym)
     if not q:
@@ -65,12 +113,38 @@ def do_buy(sym: str, qty: int, limit: float = None):
         return 2
     mkt = q["price"]
     lim = _clamp_buy_limit(mkt, limit if limit else mkt * 1.02)  # cross a hair to fill
+
+    # ---- HARD BALANCE GUARD: never exceed available funds (no negative balance) ----
+    ib = None
+    if _live_enabled():
+        ib = _connect()
+        bud = account_budget(ib)
+    else:
+        try:
+            bud = account_budget(None)   # read-only balance check even in DRY
+        except Exception as e:
+            print(f"[DRY] balance check skipped ({str(e)[:60]}); using $0 budget guard demo")
+            bud = {"budget_usd": 0.0, "available_cad": 0.0, "fx_usdcad": usdcad() * FX_MARKUP}
+    max_q = affordable_qty(lim, bud["budget_usd"])
+    req_q = qty
+    qty = min(qty, max_q)
+    if qty < 1:
+        print(f"REFUSE buy {sym}: budget ${bud['budget_usd']:.2f} USD "
+              f"(avail {bud.get('available_cad')} CAD @ fx {bud['fx_usdcad']}) "
+              f"buys 0 shares at ${lim} — no order (protects against negative balance).")
+        if ib:
+            ib.disconnect()
+        return 0
+    if qty < req_q:
+        print(f"[guard] {sym}: requested {req_q} -> clamped to {qty} shares "
+              f"(budget ${bud['budget_usd']:.2f} USD @ ${lim})")
     val = lim * qty
+
     if not _live_enabled():
-        print(f"[DRY] BUY {qty} {sym} LMT {lim} (mkt {mkt}, ~${val:.2f}) "
+        print(f"[DRY] BUY {qty} {sym} LMT {lim} (mkt {mkt}, ~${val:.2f}, "
+              f"budget ${bud['budget_usd']:.2f} USD / {bud.get('available_cad')} CAD) "
               f"armed={state.is_armed()} LIVE={os.getenv('TOPGAINER_LIVE')}")
         return 0
-    ib = _connect()
     try:
         c = Stock(sym, "SMART", "USD")
         ib.qualifyContracts(c)
@@ -146,7 +220,16 @@ def main():
     s.add_argument("--entry", type=float, required=True); s.add_argument("--limit", type=float)
     s.add_argument("--force-flat", action="store_true")
     f = sub.add_parser("flat"); f.add_argument("sym")
+    sub.add_parser("balance")
     a = ap.parse_args()
+    if a.cmd == "balance":
+        import json
+        bud = account_budget(None)   # LIVE read from IBKR, never hardcoded
+        print(json.dumps(bud, indent=2))
+        print(f"\nSpendable now: ~${bud['budget_usd']:.2f} USD "
+              f"(= {bud['available_cad']} CAD available - {bud['buffer_cad']} CAD buffer, "
+              f"@ fx {bud['fx_usdcad']}). Orders are hard-capped to this.")
+        return 0
     if a.cmd == "buy":
         return do_buy(a.sym, a.qty, a.limit)
     if a.cmd == "sell":

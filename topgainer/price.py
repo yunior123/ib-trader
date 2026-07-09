@@ -66,6 +66,20 @@ def yahoo_last(symbol: str):
         return None
 
 
+def usdcad(default: float = 1.45) -> float:
+    """USD->CAD rate. TFSA base is CAD; USD buys draw CAD via auto-FX, so we need
+    this to size orders against the CAD balance. Biased slightly HIGH by callers
+    (fewer USD, more conservative) to avoid ever overspending. Yahoo primary."""
+    try:
+        import yfinance as yf
+        v = float(yf.Ticker("CAD=X").history(period="1d").Close.iloc[-1])
+        if 1.0 < v < 2.0:
+            return v
+    except Exception:
+        pass
+    return default
+
+
 def last_price(symbol: str):
     """Best-available real last price. Finnhub first (fast), Yahoo fallback."""
     q = finnhub_quote(symbol)

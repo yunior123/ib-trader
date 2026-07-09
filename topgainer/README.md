@@ -38,8 +38,14 @@ alive) and the deterministic watchdog (keeps the money safe regardless of Claude
 - **Live orders fire ONLY if `armed` file exists AND `TOPGAINER_LIVE=1`.**
   Otherwise every order is DRY (printed, not placed) — the whole pipeline runs
   and can be tested without touching the account.
+- **Balance hard-cap (no negative balance):** every buy reads `AvailableFunds`
+  LIVE from IBKR (never hardcoded), subtracts a fee/FX buffer (max(1.50 CAD, 10%)),
+  converts CAD→USD at a conservative FX, and clamps the order to that budget —
+  refusing entirely if it can't afford one whole share. Check anytime:
+  `exec_trade.py balance`.
 - US stocks only (Canadian + fractional are API-blocked). Whole shares.
-- One position at a time, ≤50% of account cash, no averaging down.
+- One position at a time, no averaging down. `TOPGAINER_ALLOC` (default 1.0) sets
+  how much of the buffered budget to deploy.
 
 ## Operating it
 ```sh
