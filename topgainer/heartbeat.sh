@@ -11,10 +11,9 @@ TICK="${HEARTBEAT_SOUND:-/System/Library/Sounds/Tink.aiff}"
 ALERT="${HEARTBEAT_ALERT_SOUND:-/System/Library/Sounds/Submarine.aiff}"
 
 while true; do
-  POS=$("$PY" "$ROOT/topgainer/state.py" status 2>/dev/null | grep -A1 '"sym"' | head -1)
-  if [[ -n "$POS" ]]; then
+  SYM=$("$PY" "$ROOT/topgainer/state.py" pos 2>/dev/null)
+  if [[ -n "$SYM" ]]; then
     afplay "$ALERT" >/dev/null 2>&1 &
-    SYM=$(echo "$POS" | sed -E 's/.*"sym": *"([A-Z]+)".*/\1/')
     say -v Daniel -r 180 "holding $SYM, watchdog active" >/dev/null 2>&1 &
     echo "$(date +%T) heartbeat: POSITION OPEN ($SYM), watchdog managing" >> "$ROOT/topgainer/heartbeat.log"
   else

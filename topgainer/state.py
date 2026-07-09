@@ -126,6 +126,10 @@ if __name__ == "__main__":
         print("position:", json.dumps(read_position(), indent=2))
         print("watchlist:", json.dumps(read_watchlist(), indent=2))
         print("unconsumed signals:", len(unconsumed_signals()))
+    elif cmd == "pos":
+        # print ONLY the open position symbol (empty if flat) — for the heartbeat
+        p = read_position()
+        print(p["sym"] if p else "", end="")
     elif cmd == "arm":
         open(ARMED, "w").write(now_iso())
         print("ARMED — live orders enabled")
