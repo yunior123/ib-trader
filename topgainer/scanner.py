@@ -38,7 +38,9 @@ PENNY_MIN = float(os.getenv("SCAN_PENNY_MIN", "0.10"))
 PENNY_MAX = float(os.getenv("SCAN_PENNY_MAX", "8.0"))
 MIN_GAIN_PCT = float(os.getenv("SCAN_MIN_GAIN", "5.0"))
 MIN_DOLLAR_VOL = float(os.getenv("SCAN_MIN_DOLLARVOL", "1_000_000".replace("_", "")))
-BLOWOFF_PCT = float(os.getenv("SCAN_BLOWOFF", "150.0"))   # skip already-parabolic
+BLOWOFF_PCT = float(os.getenv("SCAN_BLOWOFF", "150.0"))   # skip already-parabolic (prior day)
+MAX_INTRADAY_GAIN = float(os.getenv("SCAN_MAX_GAIN", "40.0"))  # skip already up >40% today:
+# too extended to chase, and LULD volatility-halt risk means orders won't even fill
 TOP_N = int(os.getenv("SCAN_TOPN", "8"))
 FAVORITES = ["GNS", "KOD", "DRAM", "NOK", "SPCX"]
 
@@ -69,6 +71,8 @@ def evaluate(row):
     if not (PENNY_MIN <= px <= PENNY_MAX):
         return None
     if gain < MIN_GAIN_PCT:
+        return None
+    if gain > MAX_INTRADAY_GAIN:   # already too extended today -> chase/halt risk, skip
         return None
     vol = row.get("volume", 0) or 0
     dollar_vol = vol * px

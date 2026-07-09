@@ -35,7 +35,9 @@ profit or to lock a gain that is already above the floor.
    `data/topgainer/watchlist_*.json`. Pick AT MOST ONE best candidate that is:
    - a fresh intraday-high breakout (the window is already open — see above),
    - highest watchlist score, not already extended >150% on the prior day,
-   - liquid enough to exit.
+   - NOT already up more than ~40% intraday (too extended to chase, and a name
+     up huge is likely in a volatility/LULD halt so the order won't even fill),
+   - liquid enough to exit, and prefer true penny prices.
    If nothing qualifies, do nothing and exit (patience > forcing a trade).
 4. To buy, size it from the LIVE balance: whole shares only, total cost within the
    spendable USD budget from step 1 (never exceed it). Then:
