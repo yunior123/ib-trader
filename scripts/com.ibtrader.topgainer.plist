@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Top-gainer system autostart (watchdog + alert bot + Claude loop + heartbeat).
+     Runs at login AND relaunches if the launcher exits, so the system survives
+     reboots. LIVE orders enabled here (TOPGAINER_LIVE=1) — the interlock file
+     data/topgainer/armed is still required, so `rm data/topgainer/armed` fully
+     disarms even with this loaded.
+     Install: cp scripts/com.ibtrader.topgainer.plist ~/Library/LaunchAgents/
+              launchctl load ~/Library/LaunchAgents/com.ibtrader.topgainer.plist -->
+<plist version="1.0">
+<dict>
+    <key>Label</key><string>com.ibtrader.topgainer</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/zsh</string>
+        <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/topgainer/start_all.sh</string>
+    </array>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>TOPGAINER_LIVE</key><string>1</string>
+    </dict>
+    <key>WorkingDirectory</key>
+    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader</string>
+    <key>RunAtLoad</key><true/>
+    <key>StandardOutPath</key>
+    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/topgainer/autostart.out</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/topgainer/autostart.err</string>
+</dict>
+</plist>
