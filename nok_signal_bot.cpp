@@ -20,6 +20,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <cctype>
 #include <cmath>
 #include <ctime>
 #include <deque>
@@ -35,6 +36,18 @@ static const int    ATR_N = 14;
 static const int    CONFIRM_WINDOW = 60;
 static const double TARGET_PCT = 4.0, FLOOR_PCT = 1.0, TRAIL_ATR = 3.0;
 
+// ---- shell safety: whitelist filter for anything interpolated into system()
+// Solo alnum + " .,%+-:/()_"; todo lo demas -> espacio. Sin comillas, $, `,
+// ;, |, &, \ ni saltos de linea: imposible inyectar shell o AppleScript.
+static void sh_sanitize(const char* in, char* out, size_t n) {
+    size_t j = 0;
+    for (size_t i = 0; in && in[i] && j + 1 < n; ++i) {
+        unsigned char c = (unsigned char)in[i];
+        out[j++] = (std::isalnum(c) || std::strchr(" .,%+-:/()_", c)) ? (char)c : ' ';
+    }
+    out[j] = 0;
+}
+
 static void speak(const char* phrase) {
     // System TTS (macOS `say`), async. Voice: $DRAM_VOICE override, else Daniel
     // (most natural installed). For an even more human voice: System Settings >
@@ -42,37 +55,43 @@ static void speak(const char* phrase) {
     // or "Zoe (Premium)", then export DRAM_VOICE="Ava (Premium)".
     const char* v = std::getenv("DRAM_VOICE");
     if (!v || !*v) v = "Daniel";
-    char cmd[400];
+    char sv[64], sp[240], cmd[400];
+    sh_sanitize(v, sv, sizeof(sv));
+    sh_sanitize(phrase, sp, sizeof(sp));
     // una sola voz a la vez: corta cualquier locucion previa antes de hablar
     std::snprintf(cmd, sizeof(cmd),
                   "killall say >/dev/null 2>&1; say -v '%s' -r 170 '%s' >/dev/null 2>&1 &",
-                  v, phrase);
+                  sv, sp);
     std::system(cmd);
 }
 
 static void play(const char* f, const char* fb) {
-    char cmd[512];
+    char sf[256], sfb[64], cmd[512];
+    sh_sanitize(f, sf, sizeof(sf));
+    sh_sanitize(fb, sfb, sizeof(sfb));
     if (access(f, R_OK) == 0)
-        std::snprintf(cmd, sizeof(cmd), "afplay '%s' >/dev/null 2>&1 &", f);
+        std::snprintf(cmd, sizeof(cmd), "afplay '%s' >/dev/null 2>&1 &", sf);
     else
         std::snprintf(cmd, sizeof(cmd),
-                      "afplay /System/Library/Sounds/%s.aiff >/dev/null 2>&1 &", fb);
+                      "afplay /System/Library/Sounds/%s.aiff >/dev/null 2>&1 &", sfb);
     std::system(cmd);
 }
 
 // ---- notifications: Mac (osascript) + phone (ntfy, same topic as scriptures) + ops log
 static void notify(const char* title, const char* msg, bool urgent) {
-    char cmd[1024];
+    char st[128], sm[512], cmd[1024];
+    sh_sanitize(title, st, sizeof(st));
+    sh_sanitize(msg, sm, sizeof(sm));
     // 1) macOS notification center
     std::snprintf(cmd, sizeof(cmd),
         "osascript -e 'display notification \"%s\" with title \"%s\" sound name \"Glass\"' "
-        ">/dev/null 2>&1 &", msg, title);
+        ">/dev/null 2>&1 &", sm, st);
     std::system(cmd);
     // 2) phone via ntfy (church-scriptures pattern, topic yunior-daily-brief-2026)
     std::snprintf(cmd, sizeof(cmd),
         "curl -s -m 10 -X POST 'https://ntfy.sh/yunior-daily-brief-2026' "
         "-H 'Title: %s' -H 'Priority: %s' -H 'Tags: %s' -d '%s' >/dev/null 2>&1 &",
-        title, urgent ? "urgent" : "default", urgent ? "rotating_light,chart" : "chart", msg);
+        st, urgent ? "urgent" : "default", urgent ? "rotating_light,chart" : "chart", sm);
     std::system(cmd);
     // 3) structured operations log
     FILE* f = std::fopen("nok_operations.log", "a");
