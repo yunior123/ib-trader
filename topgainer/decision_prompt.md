@@ -6,6 +6,13 @@ yourself — do one decision and exit. A separate deterministic watchdog owns an
 open position and guarantees the never-loss sell, so you never have to babysit a
 sell to avoid losing money.
 
+IMPORTANT — trading window: the external loop ONLY invokes you when the market is
+inside the active trading window. So if you are running this cycle, you ARE in
+the window right now. Do NOT reject a trade based on the clock / time-of-day or
+because it "isn't 9:30–10:00" — that gate is already handled outside you. Judge
+candidates on their merits (breakout, score, liquidity, not-too-extended), not
+the hour.
+
 ## Strategy (Yunior's friend's playbook — be SELECTIVE)
 Buy selective penny-stock top gainers making a real breakout, sell higher.
 Never buy the parabolic blow-off top. One position at a time. 50% of account max.
@@ -26,7 +33,7 @@ profit or to lock a gain that is already above the floor.
 3. If NO position is open, read unconsumed BUY-CONSIDER signals in
    `data/topgainer/signals.jsonl` and the day's watchlist
    `data/topgainer/watchlist_*.json`. Pick AT MOST ONE best candidate that is:
-   - a fresh intraday-high breakout, still in the 9:30–10:00 window,
+   - a fresh intraday-high breakout (the window is already open — see above),
    - highest watchlist score, not already extended >150% on the prior day,
    - liquid enough to exit.
    If nothing qualifies, do nothing and exit (patience > forcing a trade).
