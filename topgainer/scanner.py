@@ -31,6 +31,8 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import state  # noqa: E402
 from price import finnhub_quote, yahoo_last, _load_finnhub_key  # noqa: E402
+from sources import top_gainer_universe  # noqa: E402
+import research  # noqa: E402
 
 PENNY_MIN = float(os.getenv("SCAN_PENNY_MIN", "0.10"))
 PENNY_MAX = float(os.getenv("SCAN_PENNY_MAX", "8.0"))
@@ -41,99 +43,80 @@ TOP_N = int(os.getenv("SCAN_TOPN", "8"))
 FAVORITES = ["GNS", "KOD", "DRAM", "NOK", "SPCX"]
 
 
-def finnhub_movers():
-    """Pull a candidate universe. Finnhub free tier has no movers endpoint, so we
-    take the US symbol list once and let the per-name quote filter do the work.
-    To stay fast/free we cap to a rotating slice unless SCAN_FULL=1."""
-    key = _load_finnhub_key()
-    if not key:
-        return []
-    try:
-        import urllib.request
-        import json
-        url = f"https://finnhub.io/api/v1/stock/symbol?exchange=US&token={key}"
-        with urllib.request.urlopen(url, timeout=15) as r:
-            syms = json.load(r)
-        names = [s["symbol"] for s in syms if s.get("type") == "Common Stock"
-                 and s.get("symbol") and "." not in s["symbol"]]
-        if os.getenv("SCAN_FULL") == "1":
-            return names
-        # rotating slice keeps free-tier rate limits sane; favorites always included
-        cap = int(os.getenv("SCAN_SLICE", "600"))
-        return names[:cap]
-    except Exception as e:
-        print(f"universe err {e}", file=sys.stderr)
-        return []
-
-
-def enrich_yahoo(sym):
+def prior_day_move(sym):
     try:
         import yfinance as yf
-        t = yf.Ticker(sym)
-        fi = getattr(t, "fast_info", {}) or {}
-        mc = fi.get("market_cap") or 0
-        vol = fi.get("last_volume") or 0
-        prev = fi.get("previous_close") or 0
-        last = fi.get("last_price") or 0
-        # prior-day move
-        hist = t.history(period="5d", interval="1d")
-        prior_move = 0.0
+        hist = yf.Ticker(sym).history(period="5d", interval="1d")
         if len(hist) >= 2:
-            prior_move = (hist.Close.iloc[-1] - hist.Close.iloc[-2]) / hist.Close.iloc[-2] * 100
-        return {"market_cap": float(mc or 0), "volume": float(vol or 0),
-                "prev_close": float(prev or 0), "last": float(last or 0),
-                "prior_move": float(prior_move)}
+            return (hist.Close.iloc[-1] - hist.Close.iloc[-2]) / hist.Close.iloc[-2] * 100
     except Exception:
-        return {}
+        pass
+    return 0.0
 
 
-def evaluate(sym):
-    q = finnhub_quote(sym) or yahoo_last(sym)
-    if not q or q["price"] <= 0:
-        return None
-    px = q["price"]
-    prev = q.get("prev_close") or 0
-    gain = (px - prev) / prev * 100 if prev else 0.0
+def evaluate(row):
+    """Apply the selectivity filters to a real top-gainer source row. The junk
+    (sub-penny, illiquid, +900% parabolic pumps) is dropped here."""
+    sym = row["sym"]
+    px = row.get("price") or 0
+    gain = max(row.get("premarket_pct", 0) or 0, row.get("gain_pct", 0) or 0)
+    if px <= 0:
+        q = finnhub_quote(sym) or yahoo_last(sym)   # favorites arrive with px 0
+        if not q:
+            return None
+        px = q["price"]
+        gain = gain or ((px - (q.get("prev_close") or px)) / (q.get("prev_close") or px) * 100)
     if not (PENNY_MIN <= px <= PENNY_MAX):
         return None
     if gain < MIN_GAIN_PCT:
         return None
-    y = enrich_yahoo(sym)
-    dollar_vol = (y.get("volume", 0) or 0) * px
-    prior = y.get("prior_move", 0)
+    vol = row.get("volume", 0) or 0
+    dollar_vol = vol * px
     if dollar_vol and dollar_vol < MIN_DOLLAR_VOL:
         return None
+    prior = prior_day_move(sym)
     if prior >= BLOWOFF_PCT:      # already blew off yesterday -> skip (selectivity)
         return None
-    # score: reward the move + liquidity, penalize being extended
     liq = min(1.0, dollar_vol / (MIN_DOLLAR_VOL * 10)) if dollar_vol else 0.3
     extended_pen = max(0.0, (prior - 40) / 100)
     score = gain * (0.5 + liq) - extended_pen * 10
     return {"sym": sym, "price": round(px, 4), "gain_pct": round(gain, 2),
-            "prior_day_pct": round(prior, 2), "market_cap": y.get("market_cap", 0),
-            "dollar_vol": round(dollar_vol), "score": round(score, 2)}
+            "prior_day_pct": round(prior, 2), "market_cap": row.get("market_cap", 0),
+            "dollar_vol": round(dollar_vol), "score": round(score, 2), "src": row.get("src")}
 
 
 def main():
-    explicit = [a.upper() for a in sys.argv[1:]]
-    universe = explicit or (finnhub_movers() + FAVORITES)
-    seen, uniq = set(), []
-    for s in universe:
-        if s not in seen:
-            seen.add(s); uniq.append(s)
-    print(f"scanning {len(uniq)} symbols...", file=sys.stderr)
+    explicit = [a.upper() for a in sys.argv[1:] if not a.startswith("--")]
+    premarket = "--premarket" in sys.argv
+    if explicit:
+        universe = [{"sym": s, "price": 0, "gain_pct": 0, "premarket_pct": 0,
+                     "volume": 0, "market_cap": 0, "src": "explicit"} for s in explicit]
+    else:
+        universe = top_gainer_universe(premarket=premarket, max_price=PENNY_MAX,
+                                       favorites=FAVORITES)
+    print(f"scanning {len(universe)} real top-gainer rows "
+          f"({'premarket' if premarket else 'regular'})...", file=sys.stderr)
     hits = []
-    for i, s in enumerate(uniq):
-        r = evaluate(s)
+    for row in universe:
+        r = evaluate(row)
         if r:
             hits.append(r)
             print(f"  candidate {r['sym']} +{r['gain_pct']}% ${r['price']} score {r['score']}",
                   file=sys.stderr)
-        if i % 100 == 0 and i:
-            print(f"  ...{i}/{len(uniq)}", file=sys.stderr)
     hits.sort(key=lambda x: x["score"], reverse=True)
     top = hits[:TOP_N]
+
+    # MANDATORY TradingAgents research on the finalists (6 AM job sets TA_RESEARCH=1).
+    date_str = state.datetime.now().astimezone().strftime("%Y-%m-%d")
+    top = research.enrich_candidates(top, date_str)
+    if os.getenv("TA_RESEARCH") == "1":
+        # research is mandatory: drop finalists TradingAgents did not bless as BUY
+        vetted = [c for c in top if c.get("ta_action") == "BUY"]
+        print(f"TradingAgents: {len(vetted)}/{len(top)} finalists rated BUY", file=sys.stderr)
+        top = vetted or top   # if TA blessed none, keep list but flagged (Claude sees ta_action)
+
     data = {"date": state.now_iso(), "generated_by": "scanner",
+            "premarket": premarket, "research_mandatory": os.getenv("TA_RESEARCH") == "1",
             "filters": {"penny": [PENNY_MIN, PENNY_MAX], "min_gain": MIN_GAIN_PCT,
                         "min_dollar_vol": MIN_DOLLAR_VOL, "blowoff": BLOWOFF_PCT},
             "candidates": top}

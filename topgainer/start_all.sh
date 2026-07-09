@@ -18,6 +18,7 @@ echo "TOPGAINER_LIVE=$TOPGAINER_LIVE"
 pkill -f "topgainer/watchdog_keepalive.sh" 2>/dev/null
 pkill -f "topgainer/alert_bot.py" 2>/dev/null
 pkill -f "topgainer/claude_trader_loop.sh" 2>/dev/null
+pkill -f "topgainer/heartbeat.sh" 2>/dev/null
 sleep 1
 
 nohup zsh "$ROOT/topgainer/watchdog_keepalive.sh" >/dev/null 2>&1 &
@@ -27,4 +28,6 @@ nohup "$PY" "$ROOT/topgainer/alert_bot.py" >>"$ROOT/topgainer/alert_bot.log" 2>&
 echo "alert_bot pid $!"
 nohup zsh "$ROOT/topgainer/claude_trader_loop.sh" >/dev/null 2>&1 &
 echo "claude trader loop pid $!"
+nohup zsh "$ROOT/topgainer/heartbeat.sh" >/dev/null 2>&1 &
+echo "heartbeat pid $! (beeps every minute so you know it's alive)"
 echo "up. logs: topgainer/*.log  | status: $PY topgainer/state.py status"

@@ -13,3 +13,6 @@ topgainer/*.log
 topgainer/*.err
 data/topgainer/
 topgainer/__pycache__/
+llm.env
+ta_venv/
+*.env

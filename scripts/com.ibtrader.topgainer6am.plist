@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- 6 AM daily premarket top-gainer scan + MANDATORY TradingAgents research.
+     Install: cp scripts/com.ibtrader.topgainer6am.plist ~/Library/LaunchAgents/
+              launchctl load ~/Library/LaunchAgents/com.ibtrader.topgainer6am.plist -->
+<plist version="1.0">
+<dict>
+    <key>Label</key><string>com.ibtrader.topgainer6am</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/zsh</string>
+        <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/topgainer/run_6am_scan.sh</string>
+    </array>
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key><integer>6</integer>
+        <key>Minute</key><integer>0</integer>
+    </dict>
+    <key>WorkingDirectory</key>
+    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader</string>
+    <key>StandardOutPath</key>
+    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/topgainer/scan_6am.out</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/topgainer/scan_6am.err</string>
+</dict>
+</plist>
