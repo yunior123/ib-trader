@@ -16,6 +16,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <cctype>
 #include <ctime>
 #include <deque>
 #include <map>
@@ -37,6 +38,41 @@ static void play_async(const char* custom, const char* fallback) {
         std::snprintf(cmd, sizeof(cmd),
                       "afplay /System/Library/Sounds/%s.aiff >/dev/null 2>&1 &", fallback);
     std::system(cmd);
+}
+
+// shell-safety whitelist (same as the signal bots): sym/msg come from an external
+// stream, so anything going into system() is filtered to alnum + " .,%+-:/()_".
+static void sh_sanitize(const char* in, char* out, size_t n) {
+    size_t j = 0;
+    for (size_t i = 0; in && in[i] && j + 1 < n; ++i) {
+        unsigned char c = (unsigned char)in[i];
+        out[j++] = (std::isalnum(c) || std::strchr(" .,%+-:/()_", c)) ? (char)c : ' ';
+    }
+    out[j] = 0;
+}
+
+// fleet-standard notify: Mac (osascript) + phone (ntfy) + local operations log
+static void notify(const char* title, const char* msg, bool urgent) {
+    char st[128], sm[512], cmd[1024];
+    sh_sanitize(title, st, sizeof(st));
+    sh_sanitize(msg, sm, sizeof(sm));
+    std::snprintf(cmd, sizeof(cmd),
+        "osascript -e 'display notification \"%s\" with title \"%s\" sound name \"Glass\"' "
+        ">/dev/null 2>&1 &", sm, st);
+    std::system(cmd);
+    std::snprintf(cmd, sizeof(cmd),
+        "curl -s -m 10 -X POST 'https://ntfy.sh/yunior-daily-brief-2026' "
+        "-H 'Title: %s' -H 'Priority: %s' -H 'Tags: %s' -d '%s' >/dev/null 2>&1 &",
+        st, urgent ? "urgent" : "default", urgent ? "rotating_light,chart" : "chart", sm);
+    std::system(cmd);
+    FILE* f = std::fopen("momentum_operations.log", "a");
+    if (f) {
+        time_t now = time(nullptr); struct tm lt; localtime_r(&now, &lt);
+        std::fprintf(f, "%04d-%02d-%02d %02d:%02d:%02d | %s | %s\n",
+                     lt.tm_year + 1900, lt.tm_mon + 1, lt.tm_mday,
+                     lt.tm_hour, lt.tm_min, lt.tm_sec, st, sm);
+        std::fclose(f);
+    }
 }
 
 int main(int argc, char** argv) {
@@ -84,6 +120,12 @@ int main(int argc, char** argv) {
             std::fflush(stdout);
             if (move > 0) play_async("sounds/momentum_up.wav", "Ping");
             else play_async("sounds/momentum_down.wav", "Basso");
+            // Mac + phone notification + local log (fleet standard)
+            char title[64], msg[160];
+            std::snprintf(title, sizeof(title), "MOMENTUM %s %s", sym, dir);
+            std::snprintf(msg, sizeof(msg), "%s %+.2f%% en %.0f min (px %.2f)",
+                          sym, move, g_window / 60.0, px);
+            notify(title, msg, false);
         }
     }
     if (!use_stdin) pclose(in);
