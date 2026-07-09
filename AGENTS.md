@@ -160,3 +160,8 @@ the repo's own env extracts "prices" from normalized features — broken, we fix
 ## First Real Trades Log
 - 2026-07-08: BUY 1 GNS @ $0.1833 (FILLED, fee $0.0018) — primera posicion real, vive en TFSA.
 - 2026-07-08: CUPR rechazada (Error 201 CTCI API canadiense) | fraccional SOXS rechazada (Error 10243).
+
+## NOK Bot + Alpaca Seconds (2026-07-08)
+- `nok_signal_bot` (C++23) live 24/5: same detection suite as DRAM, voice "buy/sell Nokia now".
+- Data: **Alpaca IEX websocket tick-by-tick** (wss://stream.data.alpaca.markets/v2/iex, trades NOK) -> 1m bars emitted ~1s after minute close + every tick in nok_ticks; REST backfill/gap-fill each 60s; Yahoo fallback. Keys: alpaca.env (GITIGNORED — never commit).
+- Replay 30d NOK: 6 BUY/5 SELL signals, ~11 alerts/day.
