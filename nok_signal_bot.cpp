@@ -25,6 +25,7 @@
 #include <ctime>
 #include <deque>
 #include <unistd.h>
+#include <csignal>
 
 struct Bar { double t, o, h, l, c, v; };
 
@@ -46,6 +47,25 @@ static void sh_sanitize(const char* in, char* out, size_t n) {
         out[j++] = (std::isalnum(c) || std::strchr(" .,%+-:/()_", c)) ? (char)c : ' ';
     }
     out[j] = 0;
+}
+
+// ---- gobernador de audio (fix sobrecarga coreaudiod 2026-07-09) ----
+// El bridge re-emite ~2 dias de barras (warm-up) en cada arranque; sin gate,
+// cada alerta historica lanzaba say/afplay/osascript simultaneos y saturaba
+// el audio del Mac. Reglas: (1) solo suenan barras en tiempo real (<=240s de
+// edad); (2) minimo 20s entre audios de deteccion; BUY/SELL saltan (2) pero
+// nunca (1). Warm-up y replays --stdin quedan 100% mudos (solo log/stdout).
+static double g_bar_epoch = 0;   // epoch de la barra en proceso (set en el loop)
+static time_t g_last_audio = 0;
+static bool bar_is_live() {
+    return g_bar_epoch > 0 && time(nullptr) - (time_t)g_bar_epoch <= 240;
+}
+static bool audio_gate(bool money) {
+    if (!bar_is_live()) return false;                     // historica: mudo
+    time_t now = time(nullptr);
+    if (!money && now - g_last_audio < 20) return false;  // anti-rafaga
+    g_last_audio = now;
+    return true;
 }
 
 static void speak(const char* phrase) {
@@ -70,29 +90,29 @@ static void play(const char* f, const char* fb) {
     sh_sanitize(f, sf, sizeof(sf));
     sh_sanitize(fb, sfb, sizeof(sfb));
     if (access(f, R_OK) == 0)
-        std::snprintf(cmd, sizeof(cmd), "afplay '%s' >/dev/null 2>&1 &", sf);
+        std::snprintf(cmd, sizeof(cmd),
+                      "[ $(pgrep -x afplay | wc -l) -lt 3 ] && afplay '%s' >/dev/null 2>&1 &", sf);
     else
         std::snprintf(cmd, sizeof(cmd),
+                      "[ $(pgrep -x afplay | wc -l) -lt 3 ] && "
                       "afplay /System/Library/Sounds/%s.aiff >/dev/null 2>&1 &", sfb);
     std::system(cmd);
 }
 
-// ---- notifications: Mac (osascript) + phone (ntfy, same topic as scriptures) + ops log
+// ---- notifications: Mac (osascript) + ops log (solo Mac desde 2026-07-09)
 static void notify(const char* title, const char* msg, bool urgent) {
     char st[128], sm[512], cmd[1024];
     sh_sanitize(title, st, sizeof(st));
     sh_sanitize(msg, sm, sizeof(sm));
-    // 1) macOS notification center
-    std::snprintf(cmd, sizeof(cmd),
-        "osascript -e 'display notification \"%s\" with title \"%s\" sound name \"Glass\"' "
-        ">/dev/null 2>&1 &", sm, st);
-    std::system(cmd);
-    // 2) phone via ntfy (church-scriptures pattern, topic yunior-daily-brief-2026)
-    std::snprintf(cmd, sizeof(cmd),
-        "curl -s -m 10 -X POST 'https://ntfy.sh/yunior-daily-brief-2026' "
-        "-H 'Title: %s' -H 'Priority: %s' -H 'Tags: %s' -d '%s' >/dev/null 2>&1 &",
-        st, urgent ? "urgent" : "default", urgent ? "rotating_light,chart" : "chart", sm);
-    std::system(cmd);
+    // 1) macOS notification center — solo tiempo real (warm-up no banners)
+    if (bar_is_live()) {
+        std::snprintf(cmd, sizeof(cmd),
+            "osascript -e 'display notification \"%s\" with title \"%s\" sound name \"Glass\"' "
+            ">/dev/null 2>&1 &", sm, st);
+        std::system(cmd);
+    }
+    // phone push (ntfy) removido 2026-07-09: solo Mac, por orden de Yunior
+    (void)urgent;
     // 3) structured operations log
     FILE* f = std::fopen("nok_operations.log", "a");
     if (f) {
@@ -110,7 +130,17 @@ static void et_hm(double epoch, int& h, int& m) {  // Mac local tz == Toronto/ET
     h = lt.tm_hour; m = lt.tm_min;
 }
 
+// ---- cierre seguro: SIGTERM/SIGINT tumban tambien al bridge (mismo grupo) ----
+static void on_term(int) {
+    std::signal(SIGTERM, SIG_IGN);   // inmune a nuestro propio kill de grupo
+    kill(0, SIGTERM);                // bridge (sh + python) cae con nosotros
+    _exit(0);
+}
+
 int main(int argc, char** argv) {
+    setpgid(0, 0);                    // grupo propio: el killpg no toca al keepalive
+    std::signal(SIGINT, on_term);  std::signal(SIGTERM, on_term);
+    std::signal(SIGHUP, on_term);  std::signal(SIGPIPE, SIG_IGN);
     bool use_stdin = (argc > 1 && !std::strcmp(argv[1], "--stdin"));
     FILE* in = stdin;
     if (!use_stdin) {
@@ -143,6 +173,7 @@ int main(int argc, char** argv) {
         if (std::sscanf(line, "%lf %lf %lf %lf %lf %lf",
                         &b.t, &b.o, &b.h, &b.l, &b.c, &b.v) != 6) continue;
         nbars++;
+        g_bar_epoch = b.t;
 
         // ---- incremental indicators ----
         double gain = 0, loss = 0;
@@ -193,14 +224,14 @@ int main(int argc, char** argv) {
                         std::printf("[%02d:%02d] CUSUM: NOK SUBIENDO fuerte (+%.2f%% acumulado) px %.2f\n",
                                     H, M, cusum_up * 100, b.c);
                         std::fflush(stdout);
-                        play("sounds/momentum_up.wav", "Ping"); speak("Nokia rising fast");
+                        if (audio_gate(false)) { play("sounds/momentum_up.wav", "Ping"); speak("Nokia rising fast"); }
                         { char m[160]; std::snprintf(m, sizeof(m), "CUSUM: subiendo fuerte %+.2f%% px %.2f", cusum_up*100, b.c); notify("NOK alza", m, false); }
                         cusum_up = 0; cusum_dn = 0; last_cusum = b.t;
                     } else if (cusum_dn < -hthr) {
                         std::printf("[%02d:%02d] CUSUM: NOK CAYENDO fuerte (%.2f%% acumulado) px %.2f\n",
                                     H, M, cusum_dn * 100, b.c);
                         std::fflush(stdout);
-                        play("sounds/momentum_down.wav", "Basso"); speak("Nokia falling fast");
+                        if (audio_gate(false)) { play("sounds/momentum_down.wav", "Basso"); speak("Nokia falling fast"); }
                         { char m[160]; std::snprintf(m, sizeof(m), "CUSUM: cayendo fuerte %.2f%% px %.2f", cusum_dn*100, b.c); notify("NOK caida", m, false); }
                         cusum_up = 0; cusum_dn = 0; last_cusum = b.t;
                     }
@@ -237,11 +268,11 @@ int main(int argc, char** argv) {
             if (st_trend != 0 && nt != st_trend && alert_hours && b.t - last_st > 3600) {
                 if (nt > 0) {
                     std::printf("[%02d:%02d] SUPERTREND: tendencia NOK cambio a ALCISTA px %.2f\n", H, M, b.c);
-                    play("sounds/momentum_up.wav", "Ping"); speak("Nokia trend is now up");
+                    if (audio_gate(false)) { play("sounds/momentum_up.wav", "Ping"); speak("Nokia trend is now up"); }
                     { char m[120]; std::snprintf(m, sizeof(m), "Supertrend: tendencia ALCISTA px %.2f", b.c); notify("NOK tendencia", m, false); }
                 } else {
                     std::printf("[%02d:%02d] SUPERTREND: tendencia NOK cambio a BAJISTA px %.2f\n", H, M, b.c);
-                    play("sounds/momentum_down.wav", "Basso"); speak("Nokia trend is now down");
+                    if (audio_gate(false)) { play("sounds/momentum_down.wav", "Basso"); speak("Nokia trend is now down"); }
                     { char m[120]; std::snprintf(m, sizeof(m), "Supertrend: tendencia BAJISTA px %.2f", b.c); notify("NOK tendencia", m, false); }
                 }
                 std::fflush(stdout);
@@ -260,13 +291,13 @@ int main(int argc, char** argv) {
             if (b.c > hi) {
                 std::printf("[%02d:%02d] DONCHIAN: NOK rompe maximo del dia px %.2f > %.2f\n", H, M, b.c, hi);
                 std::fflush(stdout);
-                play("sounds/momentum_up.wav", "Ping"); speak("Nokia breaking out");
+                if (audio_gate(false)) { play("sounds/momentum_up.wav", "Ping"); speak("Nokia breaking out"); }
                 { char m[120]; std::snprintf(m, sizeof(m), "Donchian: rompe maximo del dia px %.2f", b.c); notify("NOK breakout", m, false); }
                 last_don = b.t;
             } else if (b.c < lo) {
                 std::printf("[%02d:%02d] DONCHIAN: NOK rompe minimo del dia px %.2f < %.2f\n", H, M, b.c, lo);
                 std::fflush(stdout);
-                play("sounds/momentum_down.wav", "Basso"); speak("Nokia breaking down");
+                if (audio_gate(false)) { play("sounds/momentum_down.wav", "Basso"); speak("Nokia breaking down"); }
                 { char m[120]; std::snprintf(m, sizeof(m), "Donchian: rompe minimo del dia px %.2f", b.c); notify("NOK breakdown", m, false); }
                 last_don = b.t;
             }
@@ -288,8 +319,7 @@ int main(int argc, char** argv) {
                 std::printf("[%02d:%02d] *** NOK: VENDER *** ~%.2f (%s, entrada %.2f)\n",
                             H, M, b.c, why, entry);
                 std::fflush(stdout);
-                play("sounds/dram_sell.wav", "Hero");
-                speak("sell Nokia now");
+                if (audio_gate(true)) { play("sounds/dram_sell.wav", "Hero"); speak("sell Nokia now"); }
                 { char m[200]; std::snprintf(m, sizeof(m),
                     "VENDER NOK @ %.2f | %s | entrada %.2f | PnL %+.1f%%",
                     b.c, why, entry, (b.c / entry - 1) * 100);
@@ -308,8 +338,7 @@ int main(int argc, char** argv) {
                 std::printf("[%02d:%02d] *** NOK: COMPRAR *** ~%.2f (capitulacion confirmada; "
                             "target %.2f, floor %.2f)\n", H, M, entry, target_px, floor_px);
                 std::fflush(stdout);
-                play("sounds/dram_buy.wav", "Glass");
-                speak("buy Nokia now");
+                if (audio_gate(true)) { play("sounds/dram_buy.wav", "Glass"); speak("buy Nokia now"); }
                 { char m[200]; std::snprintf(m, sizeof(m),
                     "COMPRAR NOK @ %.2f | target %.2f (+4%%) | floor %.2f | capitulacion confirmada",
                     entry, target_px, floor_px);

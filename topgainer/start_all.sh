@@ -17,14 +17,21 @@ echo "TOPGAINER_LIVE=$TOPGAINER_LIVE"
 
 pkill -f "topgainer/watchdog_keepalive.sh" 2>/dev/null
 pkill -f "topgainer/alert_bot.py" 2>/dev/null
+pkill -x topgainer_alert 2>/dev/null
+pkill -x topgainer_watchdog 2>/dev/null
 pkill -f "topgainer/claude_trader_loop.sh" 2>/dev/null
 pkill -f "topgainer/heartbeat.sh" 2>/dev/null
 sleep 1
 
 nohup zsh "$ROOT/topgainer/watchdog_keepalive.sh" >/dev/null 2>&1 &
-echo "watchdog keepalive pid $!"
+echo "watchdog keepalive pid $! (C++ topgainer_watchdog primary)"
 PY="$ROOT/venv/bin/python"; [[ -x "$PY" ]] || PY="python3"
-nohup "$PY" "$ROOT/topgainer/alert_bot.py" >>"$ROOT/topgainer/alert_bot.log" 2>&1 &
+# alert bot: C++ primary (avoid python — Yunior 2026-07-09), python fallback
+if [[ -x "$ROOT/topgainer/topgainer_alert" ]]; then
+  nohup "$ROOT/topgainer/topgainer_alert" >>"$ROOT/topgainer/alert_bot.log" 2>&1 &
+else
+  nohup "$PY" "$ROOT/topgainer/alert_bot.py" >>"$ROOT/topgainer/alert_bot.log" 2>&1 &
+fi
 echo "alert_bot pid $!"
 nohup zsh "$ROOT/topgainer/claude_trader_loop.sh" >/dev/null 2>&1 &
 echo "claude trader loop pid $!"

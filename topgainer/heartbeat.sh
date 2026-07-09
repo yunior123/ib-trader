@@ -12,12 +12,14 @@ ALERT="${HEARTBEAT_ALERT_SOUND:-/System/Library/Sounds/Submarine.aiff}"
 
 while true; do
   SYM=$("$PY" "$ROOT/topgainer/state.py" pos 2>/dev/null)
+  # nunca apilar audio: si ya suena afplay/say, saltar este beep, y correr en
+  # foreground (autolimitado) — los & huerfanos saturaban coreaudiod (fix 2026-07-09)
   if [[ -n "$SYM" ]]; then
-    afplay "$ALERT" >/dev/null 2>&1 &
-    say -v Daniel -r 180 "holding $SYM, watchdog active" >/dev/null 2>&1 &
+    pgrep -x afplay >/dev/null || afplay "$ALERT" >/dev/null 2>&1
+    pgrep -x say >/dev/null || say -v Daniel -r 180 "holding $SYM, watchdog active" >/dev/null 2>&1
     echo "$(date +%T) heartbeat: POSITION OPEN ($SYM), watchdog managing" >> "$ROOT/topgainer/heartbeat.log"
   else
-    afplay "$TICK" >/dev/null 2>&1 &
+    pgrep -x afplay >/dev/null || afplay "$TICK" >/dev/null 2>&1
     echo "$(date +%T) heartbeat: alive, flat" >> "$ROOT/topgainer/heartbeat.log"
   fi
   sleep "$INTERVAL"

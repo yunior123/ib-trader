@@ -29,15 +29,26 @@ static double g_window    = 600;   // seconds of lookback (10 min)
 static double g_debounce  = 900;   // seconds between alerts per symbol
 
 #include <unistd.h>
+#include <csignal>
 static void play_async(const char* custom, const char* fallback) {
-    // downloaded sound if present, else macOS system sound; always async
+    // downloaded sound if present, else macOS system sound; always async.
+    // Tope de 3 afplay concurrentes en todo el Mac (fix sobrecarga coreaudiod).
     char cmd[512];
     if (access(custom, R_OK) == 0)
-        std::snprintf(cmd, sizeof(cmd), "afplay '%s' >/dev/null 2>&1 &", custom);
+        std::snprintf(cmd, sizeof(cmd),
+                      "[ $(pgrep -x afplay | wc -l) -lt 3 ] && afplay '%s' >/dev/null 2>&1 &", custom);
     else
         std::snprintf(cmd, sizeof(cmd),
+                      "[ $(pgrep -x afplay | wc -l) -lt 3 ] && "
                       "afplay /System/Library/Sounds/%s.aiff >/dev/null 2>&1 &", fallback);
     std::system(cmd);
+}
+
+// ---- cierre seguro: SIGTERM/SIGINT tumban tambien al bridge (mismo grupo) ----
+static void on_term(int) {
+    std::signal(SIGTERM, SIG_IGN);   // inmune a nuestro propio kill de grupo
+    kill(0, SIGTERM);                // bridge (sh + python) cae con nosotros
+    _exit(0);
 }
 
 // shell-safety whitelist (same as the signal bots): sym/msg come from an external
@@ -51,7 +62,7 @@ static void sh_sanitize(const char* in, char* out, size_t n) {
     out[j] = 0;
 }
 
-// fleet-standard notify: Mac (osascript) + phone (ntfy) + local operations log
+// fleet-standard notify: Mac (osascript) + local operations log (solo Mac desde 2026-07-09)
 static void notify(const char* title, const char* msg, bool urgent) {
     char st[128], sm[512], cmd[1024];
     sh_sanitize(title, st, sizeof(st));
@@ -60,11 +71,8 @@ static void notify(const char* title, const char* msg, bool urgent) {
         "osascript -e 'display notification \"%s\" with title \"%s\" sound name \"Glass\"' "
         ">/dev/null 2>&1 &", sm, st);
     std::system(cmd);
-    std::snprintf(cmd, sizeof(cmd),
-        "curl -s -m 10 -X POST 'https://ntfy.sh/yunior-daily-brief-2026' "
-        "-H 'Title: %s' -H 'Priority: %s' -H 'Tags: %s' -d '%s' >/dev/null 2>&1 &",
-        st, urgent ? "urgent" : "default", urgent ? "rotating_light,chart" : "chart", sm);
-    std::system(cmd);
+    // phone push (ntfy) removido 2026-07-09: solo Mac, por orden de Yunior
+    (void)urgent;
     FILE* f = std::fopen("momentum_operations.log", "a");
     if (f) {
         time_t now = time(nullptr); struct tm lt; localtime_r(&now, &lt);
@@ -87,6 +95,10 @@ int main(int argc, char** argv) {
         else if (!std::strcmp(argv[i], "--window") && i + 1 < argc)
             g_window = std::atof(argv[++i]);
     }
+
+    setpgid(0, 0);                    // grupo propio: el kill(0) no toca al keepalive
+    std::signal(SIGINT, on_term);  std::signal(SIGTERM, on_term);
+    std::signal(SIGHUP, on_term);  std::signal(SIGPIPE, SIG_IGN);
 
     FILE* in = stdin;
     if (!use_stdin) {

@@ -1,7 +1,21 @@
 {
-  "$comment": "Slim, fast config for the headless top-gainer decision session. No hooks, no audio, no extra skills/MCP — minimal context so each claude -p call is fast. Only the trading tools are allowed.",
+  "$comment": "Slim, fast config for the headless top-gainer decision session. No hooks, no audio, no extra skills/MCP/plugins - minimal context so each claude -p call is fast. enabledPlugins all-false is CRITICAL: without it every decision cycle inherited the user's global plugins and the telegram plugin leaked one bun daemon per cycle (8 orphans at 35% CPU each broke audio + fan, found 2026-07-09).",
   "disableAllHooks": true,
   "includeCoAuthoredBy": false,
+  "enabledPlugins": {
+    "context7@claude-plugins-official": false,
+    "github@claude-plugins-official": false,
+    "superpowers@claude-plugins-official": false,
+    "Notion@claude-plugins-official": false,
+    "code-review@claude-plugins-official": false,
+    "pyright-lsp@claude-plugins-official": false,
+    "security-guidance@claude-plugins-official": false,
+    "commit-commands@claude-plugins-official": false,
+    "equity-research@anthropics-financial-services-plugins": false,
+    "wealth-management@anthropics-financial-services-plugins": false,
+    "telegram@claude-plugins-official": false,
+    "clangd-lsp@claude-plugins-official": false
+  },
   "permissions": {
     "defaultMode": "acceptEdits",
     "allow": [

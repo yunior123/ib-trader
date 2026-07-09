@@ -104,8 +104,10 @@ def research_ticker(sym, date_str, timeout=None):
 
 def enrich_candidates(cands, date_str, topn=None):
     """Attach a TradingAgents note to the top-N candidates; leave the rest as-is.
-    Only runs if TA_RESEARCH=1 (so the default fast path is untouched)."""
-    if os.getenv("TA_RESEARCH") != "1":
+    MANDATORY BY DEFAULT (Yunior 2026-07-09: use TradingAgents properly EVERY
+    scan — the 2026-07-09 midday scan skipped it and traded unvetted names).
+    Opt out only with TA_RESEARCH=0."""
+    if os.getenv("TA_RESEARCH", "1") == "0":
         return cands
     topn = topn or int(os.getenv("TA_RESEARCH_TOPN", "3"))
     for c in cands[:topn]:

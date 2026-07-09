@@ -161,7 +161,8 @@ def do_buy(sym: str, qty: int, limit: float = None):
                             "status": st.status, "filled": filled, "avg": avg})
         if filled > 0:
             pos = {"sym": sym, "qty": int(filled), "entry": float(avg),
-                   "opened": state.now_iso(), "peak": float(avg)}
+                   "opened": state.now_iso(), "opened_ts": state.utc_ts(),
+                   "peak": float(avg)}
             state.write_position(pos)
             print(f"FILLED BUY {filled} {sym} @ {avg}; position recorded")
         else:
@@ -211,6 +212,44 @@ def do_sell(sym: str, qty: int, entry: float, limit: float = None, force_flat: b
         ib.disconnect()
 
 
+def do_reconcile(sym: str):
+    """Compare position.json against the LIVE IBKR position (read-only connect).
+    If IBKR holds 0 shares the position was sold OUTSIDE the bot (manual TWS sell,
+    broker-side fill of a resting GTC, liquidation) -> clear the local position so
+    the watchdog stops managing a ghost and spamming sell orders/notifications.
+    If IBKR holds fewer shares than recorded (partial manual sell) -> adjust qty."""
+    pos = state.read_position()
+    if not pos or pos["sym"] != sym:
+        print(f"OK no local {sym} position")
+        return 0
+    ib = IB()
+    ib.connect(IB_HOST, IB_PORT, clientId=CLIENT_ID + 32, timeout=15,
+               readonly=True, account=IB_ACCOUNT)
+    try:
+        qty = 0
+        for p in ib.positions(IB_ACCOUNT):
+            if p.contract.symbol == sym:
+                qty += int(p.position)
+    finally:
+        ib.disconnect()
+    if qty <= 0:
+        state.log_decision({"action": "reconcile_clear_position", "sym": sym,
+                            "reason": "IBKR holds 0 — sold outside the bot",
+                            "stale_position": pos})
+        state.clear_position()
+        print(f"CLEARED {sym}: IBKR holds 0 (sold outside the bot); local position removed")
+    elif qty < pos["qty"]:
+        old = pos["qty"]
+        pos["qty"] = qty
+        state.write_position(pos)
+        state.log_decision({"action": "reconcile_adjust_qty", "sym": sym,
+                            "from": old, "to": qty})
+        print(f"ADJUSTED {sym}: qty {old} -> {qty} (partial external sell)")
+    else:
+        print(f"OK {sym}: IBKR qty {qty} matches local {pos['qty']}")
+    return 0
+
+
 def main():
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -221,6 +260,7 @@ def main():
     s.add_argument("--force-flat", action="store_true")
     f = sub.add_parser("flat"); f.add_argument("sym")
     sub.add_parser("balance")
+    r = sub.add_parser("reconcile"); r.add_argument("sym")
     a = ap.parse_args()
     if a.cmd == "balance":
         import json
@@ -230,6 +270,8 @@ def main():
               f"(= {bud['available_cad']} CAD available - {bud['buffer_cad']} CAD buffer, "
               f"@ fx {bud['fx_usdcad']}). Orders are hard-capped to this.")
         return 0
+    if a.cmd == "reconcile":
+        return do_reconcile(a.sym)
     if a.cmd == "buy":
         return do_buy(a.sym, a.qty, a.limit)
     if a.cmd == "sell":

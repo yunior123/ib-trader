@@ -110,17 +110,19 @@ def main():
     hits.sort(key=lambda x: x["score"], reverse=True)
     top = hits[:TOP_N]
 
-    # MANDATORY TradingAgents research on the finalists (6 AM job sets TA_RESEARCH=1).
+    # MANDATORY TradingAgents research on the finalists — default ON for EVERY
+    # scan (6AM and on-demand); opt out only with TA_RESEARCH=0 (Yunior 2026-07-09).
+    ta_on = os.getenv("TA_RESEARCH", "1") != "0"
     date_str = state.datetime.now().astimezone().strftime("%Y-%m-%d")
     top = research.enrich_candidates(top, date_str)
-    if os.getenv("TA_RESEARCH") == "1":
+    if ta_on:
         # research is mandatory: drop finalists TradingAgents did not bless as BUY
         vetted = [c for c in top if c.get("ta_action") == "BUY"]
         print(f"TradingAgents: {len(vetted)}/{len(top)} finalists rated BUY", file=sys.stderr)
         top = vetted or top   # if TA blessed none, keep list but flagged (Claude sees ta_action)
 
     data = {"date": state.now_iso(), "generated_by": "scanner",
-            "premarket": premarket, "research_mandatory": os.getenv("TA_RESEARCH") == "1",
+            "premarket": premarket, "research_mandatory": ta_on,
             "filters": {"penny": [PENNY_MIN, PENNY_MAX], "min_gain": MIN_GAIN_PCT,
                         "min_dollar_vol": MIN_DOLLAR_VOL, "blowoff": BLOWOFF_PCT},
             "candidates": top}
@@ -129,15 +131,14 @@ def main():
     for c in top:
         print(f"  {c['sym']:6s} +{c['gain_pct']:6.2f}% ${c['price']:8.4f} "
               f"score {c['score']:6.2f} $vol {c['dollar_vol']:,}")
-    # phone summary
+    # Mac notification summary (ntfy removed 2026-07-09: Mac-only por orden de Yunior)
     if top:
         names = ", ".join(f"{c['sym']}+{c['gain_pct']:.0f}%" for c in top[:5])
         try:
             import subprocess
-            subprocess.Popen(["curl", "-s", "-m", "10", "-X", "POST",
-                              "https://ntfy.sh/yunior-daily-brief-2026",
-                              "-H", "Title: Top gainers 6AM", "-H", "Tags: chart",
-                              "-d", f"Candidatos hoy: {names}"],
+            subprocess.Popen(["osascript", "-e",
+                              f'display notification "Candidatos hoy: {names}" '
+                              f'with title "Top gainers 6AM" sound name "Glass"'],
                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except Exception:
             pass

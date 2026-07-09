@@ -23,7 +23,6 @@ from price import last_price  # noqa: E402
 POLL = float(os.getenv("ALERT_POLL", "2.0"))
 WIN_START = os.getenv("ALERT_WIN_START", "09:30")
 WIN_END = os.getenv("ALERT_WIN_END", "10:00")
-NTFY = "yunior-daily-brief-2026"
 
 
 def in_window(now=None):
@@ -33,14 +32,11 @@ def in_window(now=None):
 
 
 def notify(title, msg, urgent=False):
+    # Mac-only por orden de Yunior 2026-07-09 (ntfy llegaba tarde/acumulado)
     import subprocess
     try:
         subprocess.Popen(["osascript", "-e",
                           f'display notification "{msg}" with title "{title}" sound name "Glass"'],
-                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        subprocess.Popen(["curl", "-s", "-m", "10", "-X", "POST", f"https://ntfy.sh/{NTFY}",
-                          "-H", f"Title: {title}", "-H", f"Priority: {'urgent' if urgent else 'high'}",
-                          "-H", "Tags: rotating_light,chart", "-d", msg],
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except Exception:
         pass

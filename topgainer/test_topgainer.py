@@ -131,13 +131,19 @@ def _wd_with_price(monkeypatch, price):
     importlib.reload(watchdog)
     monkeypatch.setattr(watchdog, "last_price", lambda s: {"price": price, "prev_close": price})
     sold = {}
-    monkeypatch.setattr(watchdog, "sell", lambda pos, reason: sold.update(pos=pos, reason=reason))
+
+    def fake_sell(pos, reason, force=False, limit=None):
+        sold.update(pos=pos, reason=reason, force=force, limit=limit)
+        return True
+
+    monkeypatch.setattr(watchdog, "sell", fake_sell)
     monkeypatch.setattr(watchdog.state, "write_position", lambda p: None)
     return watchdog, sold
 
 
 def _pos(entry=0.20, qty=5, **kw):
-    p = {"sym": "GNS", "qty": qty, "entry": entry, "peak": entry}
+    p = {"sym": "GNS", "qty": qty, "entry": entry, "peak": entry,
+         "opened": state.now_iso()}   # just-opened so the time-stop stays quiet
     p.update(kw)
     return p
 
@@ -148,11 +154,26 @@ def test_watchdog_sells_at_target(monkeypatch):
     assert closed and "target" in sold["reason"]
 
 
-def test_watchdog_holds_below_floor_never_loss(monkeypatch):
-    wd, sold = _wd_with_price(monkeypatch, 0.15)   # under floor -> BAG, must NOT sell
+def test_watchdog_stop_loss_flattens(monkeypatch):
+    # regime change 2026-07-09 (Yunior): ALWAYS use stop loss — a drop below
+    # entry*(1-TG_STOP_PCT%) sells immediately instead of holding the bag.
+    wd, sold = _wd_with_price(monkeypatch, 0.15)   # -25% vs entry, way past the stop
     pos, closed = wd.manage(_pos())
-    assert not closed and not sold
-    assert pos["in_bag"] is True
+    assert closed and "STOP-LOSS" in sold["reason"]
+    assert sold["force"] is True                    # force-flat, may realize a loss
+    assert sold["limit"] is not None and sold["limit"] < 0.15   # marketable limit
+
+
+def test_watchdog_time_stop_flattens(monkeypatch):
+    # 15-minute time-box: win or lose, the trade is flattened after MAX_HOLD.
+    from datetime import datetime, timedelta
+    wd, sold = _wd_with_price(monkeypatch, 0.205)  # above floor, below target
+    opened = (datetime.now().astimezone() - timedelta(seconds=wd.MAX_HOLD + 60)) \
+        .isoformat(timespec="seconds")
+    pos = _pos(peak=0.205, reached_floor=True, opened=opened)
+    _, closed = wd.manage(pos)
+    assert closed and "TIME-STOP" in sold["reason"]
+    assert sold["force"] is True
 
 
 def test_watchdog_trailing_locks_gain_above_floor(monkeypatch):
@@ -171,6 +192,21 @@ def test_watchdog_no_sell_when_between_floor_and_target_no_retrace(monkeypatch):
     pos = _pos(peak=0.205, reached_floor=True)
     _, closed = wd.manage(pos)
     assert not closed and not sold
+
+
+def test_watchdog_sell_cooldown_blocks_spam(monkeypatch):
+    # a resting/rejected order must NOT re-fire a sell + notification every poll
+    import watchdog
+    importlib.reload(watchdog)
+    calls = []
+    monkeypatch.setattr(watchdog.subprocess, "run",
+                        lambda *a, **k: calls.append(a) or types.SimpleNamespace(stdout="", stderr=""))
+    monkeypatch.setattr(watchdog, "notify", lambda *a, **k: None)
+    monkeypatch.setattr(watchdog.state, "write_position", lambda p: None)
+    pos = _pos()
+    assert watchdog.sell(pos, "first") is True
+    assert watchdog.sell(pos, "second immediately") is False   # inside cooldown
+    assert len(calls) == 1
 
 
 # ---------- state IO robustness ----------

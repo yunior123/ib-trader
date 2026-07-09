@@ -148,6 +148,18 @@ the repo's own env extracts "prices" from normalized features — broken, we fix
 - **Fractional via API: BLOCKED by IBKR Canada** (Error 10243, tested live 2026-07-08 despite "Global Trade in Fractions" permission — desktop TWS only). Bots trade whole shares + alloc_pct equal allocation.
 - **Auto-FX is FREE for micro buys**: GNS purchase auto-converted CAD->USD via IDEALPRO at $0.00 commission (auto-liquidation). No pre-conversion needed for small US buys.
 
+## Top-gainer safety regime (2026-07-09 — ordenes de Yunior)
+- **Claude Code SIEMPRE decide**; el loop corre en la ventana de compra Y siempre que haya posicion abierta (management mode). Cada ciclo sano toca `data/topgainer/claude_alive`.
+- **DEAD-MAN**: si Claude deja de responder (`claude_alive` viejo > TG_DEADMAN_SEC=240) con posicion abierta → el watchdog VENDE YA (force-flat, limite market*0.97). Probado en DRY.
+- **STOP-LOSS SIEMPRE** (TG_STOP_PCT=3%) + **TIME-STOP** (TG_MAX_HOLD_SEC=900; ideal ~5 min por trade) — reemplaza el hold-the-bag SOLO en topgainer. Entrada solo con breakout CONFIRMADO (precio aguantando el nivel, nunca el primer spike).
+- **RECONCILE** cada 60s vs IBKR (readonly): venta manual/externa detectada → limpia position.json (bug fantasma CIRC 2026-07-09: venta manual dejo al watchdog spammeando sells rechazados Error 201). `exec_trade.py reconcile SYM`.
+- Cooldown de sell (TG_SELL_RETRY_SEC=90) — no mas spam de notificaciones.
+- **Notificaciones SOLO Mac** (osascript banner+Glass, async) — ntfy eliminado de TODA la flota (llegaba tarde/acumulado). TradingAgents research OBLIGATORIO en cada scan (default ON, opt-out TA_RESEARCH=0).
+- **LaunchAgent autostart NO funciona** (TCC: launchd no puede leer ~/Documents, exit 127). Arranque manual `TOPGAINER_LIVE=1 zsh topgainer/start_all.sh` hasta que Yunior de Full Disk Access a /bin/zsh (System Settings → Privacy → Full Disk Access).
+- Python dormante movido a `backup/` (ver backup/README.md); C++ preferido en toda la flota. `day_trading_bot.py` queda en la raiz (exec_trade importa sus helpers).
+- **HOT LOOPS EN C++ (2026-07-09)**: `topgainer/topgainer_watchdog.cpp` (guardian por-segundo: stop/target/trail/time-stop/deadman/reconcile/cooldown, Finnhub libcurl + price.py fallback, paridad matematica verificada 32/32 vs Python, ventas via exec_trade.py subprocess porque ib_insync no tiene gemelo C++) y `topgainer/topgainer_alert.cpp` (señales BUY-CONSIDER). Build: `clang++ -std=c++17 -O2 -o <bin> <src> -lcurl`. watchdog.py/alert_bot.py quedan como fallback probado (keepalive/start_all usan el binario si existe).
+- **LECCION telegram plugin (2026-07-09)**: cada `claude -p` del trader loop heredaba los plugins globales; el plugin telegram filtraba un daemon bun (~35% CPU c/u) POR CICLO → 8 huerfanos rompieron coreaudiod (audio) y dispararon el fan. Fix: `topgainer/claude_settings/settings.json` ahora pone enabledPlugins todo-false, y telegram quedo deshabilitado global. Si el audio se rompe: `sudo killall coreaudiod`.
+
 ## ESTADO ACTUAL — DRAM-ONLY MODE (2026-07-08)
 **Unico bot conectado**: `dram_signal_bot` (C++) via `scripts/dram_keepalive.sh`, 24/5, instancia unica.
 - Habla: "buy DRAM now" / "sell DRAM now" (voz sistema Daniel; override `DRAM_VOICE`; killall-say = una sola voz). Sonidos propios: sounds/dram_buy.wav / dram_sell.wav.
