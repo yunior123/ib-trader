@@ -169,8 +169,12 @@ YUNIOR (humano). Motor validado (capitulación confirmada + CUSUM + Supertrend +
 Donchian). Cero conexión con topgainer; cero acceso a órdenes IBKR.
 
 **2) El "AI dios" — topgainer/ (el ÚNICO sistema que tradea, Claude decide):**
-- **Pre-9:30**: research automatizado — Finviz Elite topgainers (realtime) +
-  TradingAgents OBLIGATORIO → watchlist selectiva (scanner 6AM + on-demand).
+- **Research AUTONOMO en 3 carriles (2026-07-10)**: 6AM scan completo |
+  rescan cada 15 min con TA vetting obligatorio (com.ibtrader.rescan) |
+  **fast lane Finviz cada 1 MIN** (com.ibtrader.fastscan: fastscan.py mergea
+  movers nuevos al watchlist al minuto; el proximo rescan los veta).
+- **Ventana ALL-DAY**: alertas y compras 09:30-15:30 ET (corte RTH de la
+  flota); el time-stop de 15 min del watchdog garantiza flat ~15:45.
 - **En sesión**: el motor de breakout confirmado (Donchian level + hold 45s +
   CUSUM burst, nuestros algos) detecta la entrada EN los top gainers elegidos;
   Claude (loop bash headless) valida contra el snapshot COMPLETO de la cuenta
