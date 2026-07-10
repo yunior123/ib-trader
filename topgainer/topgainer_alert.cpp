@@ -52,6 +52,7 @@ static void sh_sanitize(const char* in, char* out, size_t n) {
     for (size_t i = 0; in[i] && o + 1 < n; i++) {
         char c = in[i];
         if (c == '"' || c == '\'' || c == '\\' || c == '`' || c == '$') c = ' ';
+        if ((unsigned char)c < 0x20) c = ' ';   // newlines/CR/tab rompen el JSON de una linea
         out[o++] = c;
     }
     out[o] = 0;

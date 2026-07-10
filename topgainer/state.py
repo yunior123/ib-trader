@@ -106,7 +106,10 @@ def unconsumed_signals():
             line = line.strip()
             if not line:
                 continue
-            s = json.loads(line)
+            try:
+                s = json.loads(line)
+            except Exception:
+                continue   # partial/malformed line — skip, never crash the decision cycle
             if not s.get("consumed"):
                 out.append(s)
     return out
