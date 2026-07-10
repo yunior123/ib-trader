@@ -301,10 +301,13 @@ int main(int argc, char** argv) {
             if (!p.valid) continue;
         }
 
-        // 2) dead-man — Claude Code silent while money at risk -> sell NOW
+        // 2) dead-man — Claude Code silent while money at risk -> sell NOW.
+        // opened_ts cuenta como señal de vida: la compra misma vino de un ciclo
+        // sano de Claude (fix 2026-07-10: alive quedo stale por un session-limit
+        // y el deadman disparo 4s despues del fill de RXT — race real en vivo).
         struct stat st{};
         double alive = (stat(ALIVE, &st) == 0) ? (double)st.st_mtime : 0;
-        double silent = now - std::fmax(alive, start);
+        double silent = now - std::fmax(std::fmax(alive, start), p.opened_ts);
         if (DEADMAN > 0 && silent > DEADMAN) {
             double px = last_price(p.sym);
             if (px <= 0) px = p.last > 0 ? p.last : p.entry;

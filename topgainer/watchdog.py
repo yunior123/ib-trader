@@ -182,9 +182,12 @@ def main():
                 if not pos:
                     continue
 
-            # 2) dead-man — Claude Code silent while money at risk -> sell NOW
+            # 2) dead-man — Claude Code silent while money at risk -> sell NOW.
+            # opened_ts counts as a life signal: the buy itself came from a healthy
+            # Claude cycle (fix 2026-07-10: stale alive during a session-limit fired
+            # the deadman 4s after the RXT fill — real live race).
             alive = os.path.getmtime(ALIVE) if os.path.exists(ALIVE) else 0.0
-            silent = now - max(alive, start)
+            silent = now - max(alive, start, pos.get("opened_ts", 0) or 0)
             if DEADMAN > 0 and silent > DEADMAN:
                 q = last_price(pos["sym"])
                 px = q["price"] if q else pos.get("last", pos["entry"])

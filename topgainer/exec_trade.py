@@ -23,6 +23,7 @@ Usage:
   exec_trade.py flat SYM                       # sell whatever we hold, at/above floor
 """
 import argparse
+import math
 import os
 import sys
 
@@ -61,9 +62,21 @@ def _connect():
     return ib
 
 
+def _tick(px: float) -> float:
+    """US equity minimum price variation: $0.01 at/above $1, $0.0001 below."""
+    return 0.01 if px >= 1.0 else 0.0001
+
+
+def _round_tick(px: float, up: bool = False) -> float:
+    t = _tick(px)
+    n = px / t
+    n = math.ceil(n - 1e-9) if up else math.floor(n + 1e-9)
+    return round(n * t, 4)
+
+
 def _clamp_buy_limit(mkt: float, want: float) -> float:
     hi = mkt * (1 + BAND)
-    return round(min(want, hi), 4)
+    return _round_tick(min(want, hi))  # down: stays in band and budget
 
 
 def account_budget(ib=None):
@@ -166,6 +179,9 @@ def do_buy(sym: str, qty: int, limit: float = None):
                    "opened": state.now_iso(), "opened_ts": state.utc_ts(),
                    "peak": float(avg)}
             state.write_position(pos)
+            # the buy itself is proof of a live Claude cycle: refresh the dead-man
+            # file so a stale mtime (e.g. session-limit gap) can't fire on entry
+            open(os.path.join("data", "topgainer", "claude_alive"), "w").close()
             print(f"FILLED BUY {filled} {sym} @ {avg}; position recorded")
         else:
             print(f"BUY {sym} status={st.status} filled=0")
