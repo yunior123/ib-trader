@@ -33,3 +33,6 @@ tsla_signal_bot
 momentum_bot
 topgainer/topgainer_watchdog
 topgainer/topgainer_alert
+scan_server
+scan_server.out
+scan_server.err
