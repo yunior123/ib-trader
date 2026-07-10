@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- 1-minute Finviz fast lane (Yunior 2026-07-10): every 60s during market
+     hours fastscan.py pulls Finviz Elite realtime gainers and merges new
+     qualifying symbols into today's watchlist so the breakout engine tracks
+     them within a minute. TA vetting stays on the 15-min rescan lane.
+     Install: cp scripts/com.ibtrader.fastscan.plist ~/Library/LaunchAgents/
+              launchctl load ~/Library/LaunchAgents/com.ibtrader.fastscan.plist -->
+<plist version="1.0">
+<dict>
+    <key>Label</key><string>com.ibtrader.fastscan</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/zsh</string>
+        <string>-c</string>
+        <string>cd /Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader &amp;&amp; venv/bin/python topgainer/fastscan.py >> topgainer/fastscan.log 2>&amp;1</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader</string>
+    <key>RunAtLoad</key><true/>
+    <key>StartInterval</key><integer>60</integer>
+    <key>AbandonProcessGroup</key><true/>
+    <key>StandardOutPath</key>
+    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/topgainer/fastscan_agent.out</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/topgainer/fastscan_agent.err</string>
+</dict>
+</plist>

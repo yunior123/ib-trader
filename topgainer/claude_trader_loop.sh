@@ -31,7 +31,7 @@ fi
 
 MODEL="${TG_MODEL:-claude-fable-5}"      # latest Claude 5
 WIN_START="${TG_WIN_START:-09:30}"
-WIN_END="${TG_WIN_END:-10:00}"
+WIN_END="${TG_WIN_END:-15:30}"     # all-day (Yunior 2026-07-10); RTH entry cutoff
 INTERVAL="${TG_INTERVAL:-8}"             # seconds between decision cycles
 MAX_TURNS="${TG_MAX_TURNS:-12}"
 BUDGET="${TG_BUDGET_USD:-2.00}"

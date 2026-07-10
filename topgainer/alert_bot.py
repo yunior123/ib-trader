@@ -27,7 +27,7 @@ CONFIRM_SECS = float(os.getenv("TG_CONFIRM_SECS", "45"))
 BURST_MIN = float(os.getenv("TG_BURST_MIN", "0.015"))
 FADE_TOL = float(os.getenv("TG_FADE_TOL", "0.002"))
 WIN_START = os.getenv("ALERT_WIN_START", "09:30")
-WIN_END = os.getenv("ALERT_WIN_END", "10:00")
+WIN_END = os.getenv("ALERT_WIN_END", "15:30")  # all-day (Yunior 2026-07-10)
 
 
 def in_window(now=None):
