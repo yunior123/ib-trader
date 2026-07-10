@@ -18,6 +18,17 @@ set -u
 cd "$(dirname "$0")/.." || exit 1
 ROOT="$(pwd)"
 
+# launchd arranca con PATH pelado (/usr/bin:/bin) -> claude no se encuentra y
+# CADA ciclo muere rc=127 (paso 2026-07-10, ventana entera perdida). Resolver
+# el binario en absoluto y ampliar PATH SIEMPRE.
+export PATH="$HOME/.local/bin:/opt/homebrew/bin:/usr/local/bin:$PATH"
+CLAUDE_BIN="${TG_CLAUDE_BIN:-$(command -v claude || true)}"
+[[ -z "$CLAUDE_BIN" && -x "$HOME/.local/bin/claude" ]] && CLAUDE_BIN="$HOME/.local/bin/claude"
+if [[ -z "$CLAUDE_BIN" ]]; then
+  echo "[trader_loop] FATAL: claude binary not found (PATH=$PATH)" >> "$ROOT/topgainer/trader_loop.err"
+  exit 1
+fi
+
 MODEL="${TG_MODEL:-claude-fable-5}"      # latest Claude 5
 WIN_START="${TG_WIN_START:-09:30}"
 WIN_END="${TG_WIN_END:-10:00}"
@@ -45,7 +56,7 @@ while true; do
   POS_SYM="$("$PY" "$ROOT/topgainer/state.py" pos 2>/dev/null)"
   if in_window || [[ -n "$POS_SYM" ]]; then
     # ONE decision cycle, fresh context, hard turn/budget caps.
-    timeout 120 claude -p "$PROMPT" \
+    timeout 120 "$CLAUDE_BIN" -p "$PROMPT" \
       --model "$MODEL" \
       --settings "$SETTINGS" \
       --max-turns "$MAX_TURNS" \
