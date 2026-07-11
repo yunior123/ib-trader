@@ -1,12 +1,15 @@
 #!/bin/zsh
 cd "$(dirname "$0")/.."
-# AAPL: sweep 90d dio OOS NEGATIVO en todo el grid -> defaults
-# raro-limpio (BB3/RSI25, solo panico real). Regla: sin OOS+ no se shippea.
-# params por-ticker via env AAPL_* (defaults del motor hasta que el sweep
-# walk-forward los valide; regla: nada se shippea sin OOS positivo)
-export AAPL_STOP=3
+# CONFIG WR-70 (backtest 2026 completo ene-jul, orden Yunior 2026-07-11
+# "all of them should be above 70 percent"): FULL26 49T 40W WR82% +14.2% pf1.4 (OOS 89% +10.6%)
+export AAPL_BB_STD=2.0
+export AAPL_RSI_OS=30
+export AAPL_VOL_MULT=1.0
+export AAPL_TARGET=4
+export AAPL_TRAIL_ATR=2
+export AAPL_STOP=4
+export AAPL_TIME_STOP_MIN=0
 export AAPL_SKIP_OPEN=5
-export AAPL_TIME_STOP_MIN=240
 # live: gate de spread NBBO + umbral whale (v3)
 export AAPL_SPREAD_MAX=0.3
 export AAPL_WHALE_USD=250000

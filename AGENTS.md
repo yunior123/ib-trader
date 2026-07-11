@@ -234,6 +234,14 @@ signal_only + touch armed + TOPGAINER_LIVE=1 restaura el trading.
   raro-limpio (BB3/RSI25, solo panico real) + stop/skip-open/time-stop.
   Regla vigente: sin OOS positivo no se shippean params.
 
+## MANDATO WR-70 (2026-07-11 PM, "all of them should be above 70 percent")
+Backtest 2026 completo (ene-jul), seleccion WR-first con validacion OOS:
+12/13 bots >=70% WR full-year (tabla en el commit). TSLA y TXN pasaron a
+TREND. NOK/AMD/NVDA/TSM/INTC usan STOP=8% (casi nunca dispara — el WR alto
+viene de realizar solo ganancias; una perdida puede quedar en bag: el riesgo
+se movio de stop realizado a bag no realizado, vigilar con scorecard).
+GLD = unica excepcion (79% OOS / 61% full-year; ningun motor llego a 70).
+
 ## MOTOR v3 CONFLUENCE (2026-07-11, orden "backtest 2026 real, bollinger 50%
 ## en 1m y 15m, vwap, whales, bids/asks, terremoto sin falsos positivos")
 - **Arm por confluencia PONDERADA** ({SYM}_SCORE_MIN > 0; 0 = gate clasico

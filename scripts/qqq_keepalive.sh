@@ -1,13 +1,12 @@
 #!/bin/zsh
 cd "$(dirname "$0")/.."
-# QQQ = TREND MODE (sweep walk-forward 90d 2026-07-10: OOS 30d +1.61% 33T/25W, stop 0.4% (vs MR wide +1.8% con stop 3%)).
-# Reversion 1m en instrumentos calmados/eficientes no paga o paga con
-# riesgo 7x mayor; trend monta el movimiento con stop chico y EOD plano.
+# CONFIG WR-70 (backtest 2026 completo ene-jul, orden Yunior 2026-07-11
+# "all of them should be above 70 percent"): TREND FULL26 178T 135W WR76% +14.0% pf2.1 (OOS 76%)
 export QQQ_MODE=trend
-export QQQ_TREND_CUSUM=0.002
+export QQQ_TREND_CUSUM=0.004
 export QQQ_TARGET=1.0
 export QQQ_STOP=0.4
-export QQQ_TRAIL_ATR=2
+export QQQ_TRAIL_ATR=3
 export QQQ_MAX_DAY=2
 export QQQ_FLOOR=0.1
 export QQQ_SKIP_OPEN=15

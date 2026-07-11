@@ -1,17 +1,17 @@
 #!/bin/zsh
 cd "$(dirname "$0")/.."
-# SPCX = TREND MODE (estudio 30d 2026-07-10): el dip-engine confirmo 0% en
-# SPCX (waterfalls sin reclaim, follow-through negativo); trend +17.2% 16/18W
-# in-sample CON stops reales. OOS corto (ticker joven) -> rieles duros y
-# scorecard semanal; revisar en 2 semanas.
+# CONFIG WR-70 (backtest 2026 completo ene-jul, orden Yunior 2026-07-11
+# "all of them should be above 70 percent"): TREND vida 20T 19W WR95% +19.2% pf12.2
 export SPCX_MODE=trend
-export SPCX_TRAIL_ATR=2
-export SPCX_STOP=2
-export SPCX_TARGET=6
-export SPCX_FLOOR=0.5
-export SPCX_EOD_FORCE=1
+export SPCX_TREND_CUSUM=0.002
+export SPCX_TARGET=2.0
+export SPCX_STOP=1.5
+export SPCX_TRAIL_ATR=3
 export SPCX_MAX_DAY=2
+export SPCX_FLOOR=0.1
 export SPCX_SKIP_OPEN=15
+export SPCX_EOD_FORCE=1
+export SPCX_TIME_STOP_MIN=0
 # live: gate de spread NBBO + umbral whale (v3)
 export SPCX_SPREAD_MAX=0.3
 export SPCX_WHALE_USD=100000

@@ -1,12 +1,17 @@
 #!/bin/zsh
 cd "$(dirname "$0")/.."
-# TXN: sweep 90d dio OOS NEGATIVO en todo el grid -> defaults
-# raro-limpio (BB3/RSI25, solo panico real). Regla: sin OOS+ no se shippea.
-# params por-ticker via env TXN_* (defaults del motor hasta que el sweep
-# walk-forward los valide; regla: nada se shippea sin OOS positivo)
-export TXN_STOP=3
-export TXN_SKIP_OPEN=5
-export TXN_TIME_STOP_MIN=240
+# CONFIG WR-70 (backtest 2026 completo ene-jul, orden Yunior 2026-07-11
+# "all of them should be above 70 percent"): TREND FULL26 166T 117W WR70% +10.5% pf1.4 (OOS 70%)
+export TXN_MODE=trend
+export TXN_TREND_CUSUM=0.004
+export TXN_TARGET=0.5
+export TXN_STOP=0.8
+export TXN_TRAIL_ATR=3
+export TXN_MAX_DAY=2
+export TXN_FLOOR=0.1
+export TXN_SKIP_OPEN=15
+export TXN_EOD_FORCE=1
+export TXN_TIME_STOP_MIN=0
 # live: gate de spread NBBO + umbral whale (v3)
 export TXN_SPREAD_MAX=0.3
 export TXN_WHALE_USD=250000

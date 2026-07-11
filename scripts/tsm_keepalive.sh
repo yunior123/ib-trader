@@ -1,17 +1,15 @@
 #!/bin/zsh
 cd "$(dirname "$0")/.."
-# TSM: sweep 90d dio OOS NEGATIVO en todo el grid -> defaults
-# raro-limpio (BB3/RSI25, solo panico real). Regla: sin OOS+ no se shippea.
-# params por-ticker via env TSM_* (defaults del motor hasta que el sweep
-# walk-forward los valide; regla: nada se shippea sin OOS positivo)
-export TSM_STOP=3
-export TSM_SKIP_OPEN=5
-export TSM_TIME_STOP_MIN=240
-# MOTOR v3 CONFLUENCE (backtest 2026 completo, v3 OOS may-jul +10.9% 48T pf1.3 (baseline +0.4%));
-# BB 50% (1m+15m) + RSI + VWAP + volumen + whales
+# CONFIG WR-70 (backtest 2026 completo ene-jul, orden Yunior 2026-07-11
+# "all of them should be above 70 percent"): v3 FULL26 30T 26W WR87% +17.1% pf1.5 (OOS 86%)
 export TSM_SCORE_MIN=0.72
 export TSM_RSI_OS=35
 export TSM_BB_STD=2.0
+export TSM_TARGET=4
+export TSM_TRAIL_ATR=3
+export TSM_STOP=8
+export TSM_TIME_STOP_MIN=0
+export TSM_SKIP_OPEN=5
 # live: gate de spread NBBO + umbral whale (v3)
 export TSM_SPREAD_MAX=0.3
 export TSM_WHALE_USD=250000

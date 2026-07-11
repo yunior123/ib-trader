@@ -1,16 +1,15 @@
 #!/bin/zsh
 cd "$(dirname "$0")/.."
-# params por-ticker via env INTC_* (defaults del motor hasta que el sweep
-# walk-forward los valide; regla: nada se shippea sin OOS positivo)
-# sweep walk-forward 90d 2026-07-10 (OOS +14.7% 12T/9W) — validado OOS
-export INTC_BB_STD=2.5
-export INTC_RSI_OS=30
-export INTC_VOL_MULT=1.2
+# CONFIG WR-70 (backtest 2026 completo ene-jul, orden Yunior 2026-07-11
+# "all of them should be above 70 percent"): FULL26 31T 23W WR74% +25.8% pf2.1 (OOS 73%)
+export INTC_BB_STD=3.0
+export INTC_RSI_OS=35
+export INTC_VOL_MULT=1.0
 export INTC_TARGET=4
 export INTC_TRAIL_ATR=3
-export INTC_STOP=3
-export INTC_SKIP_OPEN=5
+export INTC_STOP=8
 export INTC_TIME_STOP_MIN=240
+export INTC_SKIP_OPEN=5
 # live: gate de spread NBBO + umbral whale (v3)
 export INTC_SPREAD_MAX=0.3
 export INTC_WHALE_USD=250000

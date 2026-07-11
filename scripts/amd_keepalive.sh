@@ -1,16 +1,15 @@
 #!/bin/zsh
 cd "$(dirname "$0")/.."
-# params por-ticker via env AMD_* (defaults del motor hasta que el sweep
-# walk-forward los valide; regla: nada se shippea sin OOS positivo)
-# sweep walk-forward 90d 2026-07-10 (OOS +7.3% 13T) — validado OOS
+# CONFIG WR-70 (backtest 2026 completo ene-jul, orden Yunior 2026-07-11
+# "all of them should be above 70 percent"): FULL26 69T 60W WR87% +37.0% pf1.5 (OOS 84% +15.7%)
 export AMD_BB_STD=2.0
-export AMD_RSI_OS=25
-export AMD_VOL_MULT=1.0
+export AMD_RSI_OS=30
+export AMD_VOL_MULT=1.2
 export AMD_TARGET=4
 export AMD_TRAIL_ATR=3
-export AMD_STOP=3
+export AMD_STOP=8
+export AMD_TIME_STOP_MIN=0
 export AMD_SKIP_OPEN=5
-export AMD_TIME_STOP_MIN=240
 # live: gate de spread NBBO + umbral whale (v3)
 export AMD_SPREAD_MAX=0.3
 export AMD_WHALE_USD=250000

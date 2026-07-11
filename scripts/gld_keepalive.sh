@@ -1,18 +1,17 @@
 #!/bin/zsh
 cd "$(dirname "$0")/.."
-# GLD = TREND MODE (sweep walk-forward 90d 2026-07-10: OOS 30d +1.87% 25T/19W (vs MR +0.93%)).
-# Reversion 1m en instrumentos calmados/eficientes no paga o paga con
-# riesgo 7x mayor; trend monta el movimiento con stop chico y EOD plano.
-export GLD_MODE=trend
-export GLD_TREND_CUSUM=0.002
-export GLD_TARGET=0.5
-export GLD_STOP=0.4
-export GLD_TRAIL_ATR=2
-export GLD_MAX_DAY=2
-export GLD_FLOOR=0.1
-export GLD_SKIP_OPEN=15
+# CONFIG WR-70 (backtest 2026 completo ene-jul, orden Yunior 2026-07-11
+# "all of them should be above 70 percent"): calm-MR: OOS WR79% +3.3%; full-year 61% — UNICO bajo 70 (ningun motor lo alcanzo)
+export GLD_BB_STD=2.0
+export GLD_RSI_OS=25
+export GLD_VOL_MULT=1.0
+export GLD_TARGET=1.2
+export GLD_FLOOR=0.25
+export GLD_TRAIL_ATR=3
+export GLD_STOP=0.75
+export GLD_TIME_STOP_MIN=120
 export GLD_EOD_FORCE=1
-export GLD_TIME_STOP_MIN=0
+export GLD_SKIP_OPEN=5
 # live: gate de spread NBBO + umbral whale (v3)
 export GLD_SPREAD_MAX=0.3
 export GLD_WHALE_USD=250000
