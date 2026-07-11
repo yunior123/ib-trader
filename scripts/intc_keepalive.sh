@@ -12,6 +12,15 @@ export INTC_TIME_STOP_MIN=240
 export INTC_SKIP_OPEN=5
 # lado corto EVALUADO y APAGADO (sweep 2026: sin config >=70% OOS-limpia
 # — el uptrend 2026 castiga cortos en este nombre); radar avisa igual
+# LADO CORTO optimizado (sweep independiente 2026-07-11): cortos trend FULL26 255T 205W WR80% +106.4% pf2.1 (OOS +53.5% 83%)
+export INTC_SHORTS=1
+export INTC_S_MODE=trend
+export INTC_S_TREND_CUSUM=0.002
+export INTC_S_TARGET=1.5
+export INTC_S_STOP=4
+export INTC_S_TRAIL=3
+export INTC_S_TSTOP=0
+export INTC_S_FLOOR=0.5
 # live: gate de spread NBBO + umbral whale (v3)
 export INTC_SPREAD_MAX=0.3
 export INTC_WHALE_USD=250000

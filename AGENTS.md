@@ -240,8 +240,12 @@ confirmado por bar rojo que pierde el minimo del bar de euforia -> SHORT NOW;
 en trend: flip bajista/ruptura del minimo del dia + CUSUM negativo. Cover
 simetrico con exits PROPIOS ({SYM}_S_*). El largo NO cambia (invariancia
 verificada); un largo confirmado cubre el corto (reversal). Gate {SYM}_SHORTS.
-Sweep 2026: ON en TXN(80% +28% pf3.3)/QQQ(74%)/SPCX(85%)/AMD(70%)/GLD(73%);
-OFF en los 8 alcistas (sin config >=70 OOS — no forzar cortos contra el bull).
+Optimizacion independiente del corto (entradas propias {SYM}_S_MODE/
+S_BB_STD/S_RSI_OS/S_SCORE_MIN/S_TREND_CUSUM — el corto puede correr OTRO
+motor que el largo): 8/13 bidireccionales — INTC trend-short 255T WR80%
++106% pf2.1 (OOS +53%!), AMD +46.8% pf4.7, GLD +32% pf4.3, NVDA 87% pf8.8,
+TXN 80% +28%, QQQ 74%, SPCX 85% pf8.3, ASML 70%. Long-only tras busqueda
+completa: DRAM/NOK/TSLA/TSM/AAPL (re-barrer si cambia el regimen).
 
 ## MANDATO WR-70 (2026-07-11 PM, "all of them should be above 70 percent")
 Backtest 2026 completo (ene-jul), seleccion WR-first con validacion OOS:

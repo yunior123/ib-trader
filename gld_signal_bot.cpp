@@ -94,6 +94,22 @@ static const double S_STOP   = envd("GLD_S_STOP", STOP_PCT);
 static const double S_TRAIL  = envd("GLD_S_TRAIL", TRAIL_ATR);
 static const double S_FLOOR  = envd("GLD_S_FLOOR", FLOOR_PCT);
 static const double S_TSTOP  = envd("GLD_S_TSTOP", TIME_STOP_MIN);
+// entradas PROPIAS del corto (optimize shorts 2026-07-11): sin definir
+// heredan el lado largo. S_MODE fuerza el motor del corto ("mr" o "trend")
+// independiente del largo — un ticker trend-largo puede cortear mejor en
+// blow-off MR y viceversa.
+static const double S_BB_STD    = envd("GLD_S_BB_STD", BB_STD);
+static const double S_RSI_OS    = envd("GLD_S_RSI_OS", RSI_OS);
+static const double S_VOL_MULT  = envd("GLD_S_VOL_MULT", VOL_MULT);
+static const double S_SCORE_MIN = envd("GLD_S_SCORE_MIN", SCORE_MIN);
+static const double S_TCUSUM    = envd("GLD_S_TREND_CUSUM", TREND_CUSUM);
+static const bool S_MODE_TREND = [] {
+    const char* v = std::getenv("GLD_S_MODE");
+    if (v && !std::strcmp(v, "trend")) return true;
+    if (v && !std::strcmp(v, "mr")) return false;
+    const char* m = std::getenv("GLD_MODE");           // hereda el modo largo
+    return m && !std::strcmp(m, "trend");
+}();
 static const char* SPOS_FILE = "data/pos_gld_s.txt";
 static void save_spos(double e, double tr, double fl, double tg, double ep) {
     FILE* f = fopen(SPOS_FILE, "w");
@@ -319,12 +335,14 @@ int main(int argc, char** argv) {
         closes.push_back(b.c); if ((int)closes.size() > BB_N) closes.pop_front();
         vols.push_back(b.v);   if ((int)vols.size() > VOL_N)  vols.pop_front();
         double bb_low = 0, bb_up = 0, vol_ma = 0, bb_z = 0; bool ind_ok = false;
+        double bb_mean = 0, bb_sd = 0;
         if ((int)closes.size() == BB_N && nbars > RSI_N) {
             double mean = 0; for (double x : closes) mean += x; mean /= BB_N;
             double var = 0;  for (double x : closes) var += (x - mean) * (x - mean);
             double sd = std::sqrt(var / BB_N);
             bb_low = mean - BB_STD * sd;
             bb_up  = mean + BB_STD * sd;
+            bb_mean = mean; bb_sd = sd;
             if (sd > 1e-12) bb_z = (mean - b.c) / sd;   // + = debajo de la media
             for (double x : vols) vol_ma += x; vol_ma /= VOL_N;
             ind_ok = vol_ma > 0;
@@ -468,12 +486,12 @@ int main(int argc, char** argv) {
                 std::fflush(stdout);
             }
         }
-        if (TREND_MODE && SHORTS > 0 && !in_pos && !in_short && !pending_short &&
+        if (S_MODE_TREND && SHORTS > 0 && !in_pos && !in_short && !pending_short &&
             !pending_buy && nbars > 30) {
             bool trend_rth = mins >= 570 + (int)SKIP_OPEN && mins < 930;
             bool flip_dn = st_prev_trend >= 0 && st_trend < 0;
             bool don_break_dn = tday_lo > 0 && b.c < tday_lo;
-            if (trend_rth && (flip_dn || don_break_dn) && cusum_dn <= -TREND_CUSUM) {
+            if (trend_rth && (flip_dn || don_break_dn) && cusum_dn <= -S_TCUSUM) {
                 pending_short = true;
                 std::printf("[%02d:%02d] TREND-SHORT armado: %s px %.2f (CUSUM %.2f%%)\n",
                             H, M, flip_dn ? "Supertrend flip DOWN" : "ruptura min del dia",
@@ -600,7 +618,7 @@ int main(int argc, char** argv) {
                 bool cov = false; const char* why = ""; double exit_px = b.c;
                 if (b.c >= s_entry * (1 + S_STOP / 100.0)) { cov = true; why = "HARD STOP"; }
                 else if (b.l <= s_target) { cov = true; why = "target"; exit_px = s_target; }
-                else if (TREND_MODE && st_trend > 0) { cov = true; why = "supertrend flip UP"; }
+                else if (S_MODE_TREND && st_trend > 0) { cov = true; why = "supertrend flip UP"; }
                 else if (atr > 0 && b.c > s_trough + S_TRAIL * atr && b.c < s_floor) {
                     cov = true; why = "trail ATR roto";
                 } else if (S_TSTOP > 0 && b.t - spos_epoch >= S_TSTOP * 60 &&
@@ -643,14 +661,14 @@ int main(int argc, char** argv) {
             }
             // señal corta MR: espejo exacto del largo (euforia -> bar rojo que
             // pierde el minimo del bar de euforia con RSI cayendo)
-            if (!TREND_MODE && ind_ok && !in_pos && !in_short && !pending_short &&
+            if (!S_MODE_TREND && ind_ok && !in_pos && !in_short && !pending_short &&
                 !pending_buy && rth_entry) {
                 bool blow;
-                if (SCORE_MIN > 0) {
-                    double s_z1  = std::min(1.0, std::max(0.0, -bb_z / BB_STD));
+                if (S_SCORE_MIN > 0) {
+                    double s_z1  = std::min(1.0, std::max(0.0, -bb_z / S_BB_STD));
                     double s_z15 = std::min(1.0, std::max(0.0, -z15 / 2.0));
                     double s_rsi = std::min(1.0, std::max(0.0,
-                                        (rsi - (100.0 - RSI_OS - 10.0)) / 20.0));
+                                        (rsi - (100.0 - S_RSI_OS - 10.0)) / 20.0));
                     double atr_pct = b.c > 0 ? atr / b.c : 0;
                     double s_vw = (vwap > 0 && atr_pct > 1e-6)
                         ? std::min(1.0, std::max(0.0, ((b.c - vwap) / b.c) / (2.0 * atr_pct))) : 0;
@@ -659,9 +677,11 @@ int main(int argc, char** argv) {
                     double sc = 0.25 * s_z1 + 0.25 * s_z15 + 0.15 * s_rsi
                               + 0.15 * s_vw + 0.15 * s_vol;
                     if (bar_is_live()) sc += 0.05 * whale_score(b.t, -1);
-                    blow = sc >= SCORE_MIN;
+                    blow = sc >= S_SCORE_MIN;
                 } else {
-                    blow = b.c >= bb_up && rsi >= 100.0 - RSI_OS && b.v >= vol_ma * VOL_MULT;
+                    double bb_up_s = bb_sd > 0 ? bb_mean + S_BB_STD * bb_sd : bb_up;
+                    blow = b.c >= bb_up_s && rsi >= 100.0 - S_RSI_OS &&
+                           b.v >= vol_ma * S_VOL_MULT;
                 }
                 if (blow) { armed_s = true; armed_low = b.l; armed_rsi_s = rsi; armed_bar_s = nbars; }
                 else if (armed_s && nbars - armed_bar_s <= CONFIRM_WINDOW

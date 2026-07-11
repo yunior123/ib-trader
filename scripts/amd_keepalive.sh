@@ -10,8 +10,10 @@ export AMD_TRAIL_ATR=3
 export AMD_STOP=8
 export AMD_TIME_STOP_MIN=0
 export AMD_SKIP_OPEN=5
-# LADO CORTO v4 (2026-07-11 'both directions'): cortos FULL26 67T 47W WR70% +16.8% pf1.5 (OOS 69%)
+# LADO CORTO optimizado (sweep independiente 2026-07-11): cortos trend FULL26 128T 98W WR77% +46.8% pf4.7 (OOS +18.8%; antes +6.3)
 export AMD_SHORTS=1
+export AMD_S_MODE=trend
+export AMD_S_TREND_CUSUM=0.008
 export AMD_S_TARGET=4
 export AMD_S_STOP=2
 export AMD_S_TRAIL=3

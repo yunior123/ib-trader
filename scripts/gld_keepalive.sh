@@ -12,11 +12,13 @@ export GLD_STOP=0.75
 export GLD_TIME_STOP_MIN=120
 export GLD_EOD_FORCE=1
 export GLD_SKIP_OPEN=5
-# LADO CORTO v4 (2026-07-11 'both directions'): cortos FULL26 55T 40W WR73% +2.4% pf1.3 (OOS 76%)
+# LADO CORTO optimizado (sweep independiente 2026-07-11): cortos trend FULL26 190T 142W WR75% +32.0% pf4.3 (antes +2.4%)
 export GLD_SHORTS=1
-export GLD_S_TARGET=0.5
-export GLD_S_STOP=1.5
-export GLD_S_TRAIL=3
+export GLD_S_MODE=trend
+export GLD_S_TREND_CUSUM=0.008
+export GLD_S_TARGET=1.0
+export GLD_S_STOP=0.8
+export GLD_S_TRAIL=2
 export GLD_S_TSTOP=120
 export GLD_S_FLOOR=0.1
 # live: gate de spread NBBO + umbral whale (v3)

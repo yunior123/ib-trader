@@ -12,6 +12,15 @@ export NVDA_TIME_STOP_MIN=0
 export NVDA_SKIP_OPEN=5
 # lado corto EVALUADO y APAGADO (sweep 2026: sin config >=70% OOS-limpia
 # — el uptrend 2026 castiga cortos en este nombre); radar avisa igual
+# LADO CORTO optimizado (sweep independiente 2026-07-11): cortos trend FULL26 71T 62W WR87% +16.2% pf8.8 (OOS 92%)
+export NVDA_SHORTS=1
+export NVDA_S_MODE=trend
+export NVDA_S_TREND_CUSUM=0.008
+export NVDA_S_TARGET=1.5
+export NVDA_S_STOP=1
+export NVDA_S_TRAIL=2
+export NVDA_S_TSTOP=0
+export NVDA_S_FLOOR=0.5
 # live: gate de spread NBBO + umbral whale (v3)
 export NVDA_SPREAD_MAX=0.3
 export NVDA_WHALE_USD=250000
