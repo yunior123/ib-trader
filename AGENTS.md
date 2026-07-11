@@ -4,6 +4,11 @@
 1. Cuando Yunior dice "hazlo en vivo", SE HACE EN VIVO inmediatamente — sin justificaciones, sin excusas, sin proponer paper trading primero.
 2. No llevarle la contraria ni buscar excusas. Si ordena algo, se ejecuta sin parar. Los datos y resultados se reportan después de ejecutar, no como condicion previa.
 3. Las advertencias de riesgo se dan UNA vez en una linea, despues de ejecutar, nunca como bloqueo.
+4. **PYTHON PROHIBIDO salvo que sea realmente necesario — es demasiado lento** (orden 2026-07-10). Todo codigo nuevo de la flota en C++. Python solo cuando una libreria lo exige sin alternativa razonable (ib_insync, la lane de research TA).
+5. **CAPITAL EN JUEGO (orden 2026-07-10): operamos con MAS DE $30,000 USD en otras cuentas — NO podemos perder dinero.** Las señales mueven decisiones manuales sobre ese capital: cada señal tiene que llegar SIN DELAY (C++, sin cuellos de botella) y solo sobre **tickers con buena liquidez y spread bid-ask pequeño**, para entrar y salir rapido con ganancia real despues de las comisiones del broker (~$1/orden IBKR, cap 0.5%). Un ticker ilíquido o de spread ancho NO es señalable.
+6. **YAHOO Y DATOS DELAYED PROHIBIDOS** (orden 2026-07-10 "yahoo or delayed shit is forbidden, are we clear?"): nada de Yahoo ni feeds con retraso en NINGUN camino de señal/scan. Solo realtime: Alpaca ws/REST (feed=iex), Finviz Elite export, Finnhub. Si la fuente realtime cae, se falla EN VOZ ALTA con resultado vacio — jamas degradar en silencio a una fuente delayed. Ejecutado 2026-07-10: bridges Yahoo borrados (los 4 bots van por alpaca_ws_bridge), yahoo screener/yahoo_last/finviz-free eliminados del scan, prior_day_move ahora Alpaca daily bars.
+7. **WEBSOCKETS antes que REST polling** donde exista ws (orden 2026-07-10).
+8. **TradingAgents OBLIGATORIO en los top gainers, TODOS los carriles** (orden 2026-07-10 "make sure we use trading agents"): 6AM + rescan 15-min (TA_RESEARCH=1) + fastscan 1-min (revet_watchlist en background). Los veredictos ta_action PERSISTEN entre rescans (scanner los arrastra del watchlist previo; enrich vetea los top-N SIN vetar) → la cobertura crece durante el dia en vez de re-vetear los mismos 3.
 
 ## Overview
 Rules-based dip/breakout trading system for Interactive Brokers (IBKR), US equities via SMART routing.
@@ -160,7 +165,154 @@ the repo's own env extracts "prices" from normalized features — broken, we fix
 - **HOT LOOPS EN C++ (2026-07-09)**: `topgainer/topgainer_watchdog.cpp` (guardian por-segundo: stop/target/trail/time-stop/deadman/reconcile/cooldown, Finnhub libcurl + price.py fallback, paridad matematica verificada 32/32 vs Python, ventas via exec_trade.py subprocess porque ib_insync no tiene gemelo C++) y `topgainer/topgainer_alert.cpp` (señales BUY-CONSIDER). Build: `clang++ -std=c++17 -O2 -o <bin> <src> -lcurl`. watchdog.py/alert_bot.py quedan como fallback probado (keepalive/start_all usan el binario si existe).
 - **LECCION telegram plugin (2026-07-09)**: cada `claude -p` del trader loop heredaba los plugins globales; el plugin telegram filtraba un daemon bun (~35% CPU c/u) POR CICLO → 8 huerfanos rompieron coreaudiod (audio) y dispararon el fan. Fix: `topgainer/claude_settings/settings.json` ahora pone enabledPlugins todo-false, y telegram quedo deshabilitado global. Si el audio se rompe: `sudo killall coreaudiod`.
 
+## MODO ACTUAL: 5 BOTS DE SEÑALES, CERO TRADING (2026-07-10, orden de Yunior)
+"For now we are only using top gainers for sending signals, claude will not
+operate trades." — TFSA liquidada (flat, $98.06 CAD cash), `armed` borrado,
+`data/topgainer/signal_only` presente → ensure_all/start_all NO lanzan el
+claude_trader_loop (lo matan si revive) y fuerzan TOPGAINER_LIVE=0. El plist
+com.ibtrader.topgainer ya no exporta TOPGAINER_LIVE=1. Quitar el flag
+signal_only + touch armed + TOPGAINER_LIVE=1 restaura el trading.
+- **Los 5 bots de señales**: dram/nok/spcx/tsla_signal_bot (C++) + topgainer
+  (alert C++ + 3 carriles de research). El watchdog sigue vivo como red de
+  seguridad (sin posiciones no hace nada).
+- **EMAIL Y TELEGRAM ELIMINADOS (orden Yunior 2026-07-10 "lets remove
+  telegram and email, just mac")**: canal único = banner Mac URGENTE via
+  `fleet_notify.h` (posix_spawn C++, 0.2-1.4ms medidos en el caller, cero
+  red, cero daemons). signal_email_bot / email_signal / email.env /
+  notify.env borrados; NO re-proponer email/telegram/ntfy.
+  fastscan sigue mandando banner Mac al MINUTO cuando entra un gainer nuevo.
+- **Scoring con liquidez Y volatilidad (orden 2026-07-10)**: scanner.evaluate
+  añade range_pct (rango intradía % vía Finnhub, solo survivors) →
+  score = gain*(0.4+0.6*liq)*(0.7+0.6*vola)*tight − extended_pen*10.
+- **Spread bid-ask (orden 2026-07-10 "gran liquidez y poca diferencia bid-ask")**:
+  `price.alpaca_spread()` (Alpaca latest quote IEX, stale-guard 5 min) — gate
+  duro SCAN_MAX_SPREAD=3% (salvo spread de 1 tick) + multiplicador `tight`.
+- **PRE-BREAKOUT (orden 2026-07-10 "detectar breakout antes de que ocurra")**:
+  topgainer_alert.cpp avisa cuando el precio esta a <=TG_NEAR_PCT (1.5%) del
+  nivel del dia con CUSUM >=50% del umbral de burst → banner "PRE-BREAKOUT"
+  + signals.jsonl (kind pre_breakout), 1 por simbolo por dia.
+- **PRIORIDAD USA (orden 2026-07-10 "priority to us companies")**: sources
+  captura la columna Country de Finviz; scanner.evaluate multiplica el score
+  por us_mult = 1.0 USA / 0.9 desconocido / 0.6 extranjero (pumps chinos de
+  reverse-split = trampa clásica). Verificado: SNAL (USA) supera a YMAT/PMA
+  (Taiwan/HK) aunque suban más %.
+
+## IBKR MARKET DATA (Client Portal verificado 2026-07-10)
+- **Status subscriber: NON-PROFESSIONAL confirmado**; Market Data API
+  Acknowledgement firmado 2026-07-03; cuenta facturable U26642820; CAD 0/mes.
+- Subs activas (todas fee-waived): **US Real-Time Non Consolidated Streaming
+  Quotes** (streaming US real-time YA existe, pero tape parcial no-SIP),
+  PAXOS crypto, US Mutual Funds, Alt EU Equities, Eurex Core, HK Derivatives,
+  Korea Equities, IDEALPRO FX, US/EU Bonds.
+- **Snapshots US Equities de pago funcionan** ($0.01/snapshot; contador vivo:
+  2 usados = USD 0.02).
+- **Falta para tape completo**: "US Securities Snapshot and Futures Value
+  Bundle" $10/mes non-pro (waived con $30/mes de comisiones) = Network A+B+C
+  consolidado. Es el upgrade que decide la calidad de volumen de los bars.
+- **VERIFICADO 2026-07-10 en vivo: Error 10089 SIGUE para la API** — la sub
+  waived de streaming no-consolidado es SOLO para el desktop de TWS, no API.
+  Para streaming API hay que COMPRAR una sub (el bundle $10 o Cboe One $1).
+  Al comprarla: reiniciar TWS, re-probar reqMktData, y entonces construir el
+  bridge C++ TWS → data/bars_*.txt (bots sin cambios).
+
+## FLOTA 13 BOTS (2026-07-10 noche, orden "add these as essentials")
+- **13 signal bots C++**: dram nok spcx tsla + NUEVOS nvda txn tsm amd intc
+  asml aapl + gld (proxy oro = GLD ETF) + qqq (proxy NAS100 = QQQ ETF).
+  Todos clones del motor NOK (v2/v2.1 completo), todos por alpaca_ws_bridge
+  (13 syms en bars+trades SELF-AGG; watchlist topgainer baja a 17 slots —
+  limite Alpaca free 30 syms). Keepalives scripts/<sym>_keepalive.sh,
+  lanzados por fleet_keepalive_start.sh (launchd com.ibtrader.fleet).
+- **Sweep walk-forward 90d (train 60d / OOS 30d) de los 9 nuevos**:
+  SHIP (OOS positivo): AMD +7.3%, INTC +14.7% (el mejor), ASML +3.5%.
+- **GLD/QQQ = TREND MODE ("super important", 2026-07-10)**: la reversion 1m
+  en ETFs calmados/eficientes falla OOS o exige stop 3% (riesgo 7x). Ambos
+  corren trend (flip Supertrend 5m / ruptura max del dia + CUSUM tunable
+  {SYM}_TREND_CUSUM=0.002, stop 0.4%, EOD plano forzado, max 2/dia):
+  GLD OOS +1.87% 25T/19W, QQQ OOS +1.61% 33T/25W (76% WR ambos).
+  Motor trend vive en spcx/gld/qqq. ATRs: GLD 0.033%/1m, QQQ 0.042%/1m.
+  NO-SHIP (OOS negativo en todo el grid): NVDA, TXN, TSM, AAPL → defaults
+  raro-limpio (BB3/RSI25, solo panico real) + stop/skip-open/time-stop.
+  Regla vigente: sin OOS positivo no se shippean params.
+
+## MOTOR DE SEÑALES v2 (2026-07-10 PM, decisiones de Yunior tras auditoria)
+- **HARD STOP alert**: a -X% del entry (default 3%, env {SYM}_STOP) el bot grita
+  "SELL-STOP" en vez de callarse a esperar el floor. La posicion virtual se
+  cierra (realized) — humano decide, pero enterado.
+- **MONEY-ONLY banners**: solo BUY/SELL/STOP hacen banner+voz+sonido; el radar
+  (CUSUM/Supertrend/Donchian) va SOLO a ops log + stdout. Ratio ruido:dinero
+  era 40-160:1.
+- **Posicion persistida**: data/pos_<sym>.txt sobrevive restarts; bars previos
+  al entry no la gestionan; su SELL avisa aunque caiga en warm-up.
+- **Ops log etiqueta WARMUP**: las lineas de replay historico ya no se
+  confunden con señales vivas. `scripts/scorecard.sh [dias]` = expectancy real
+  (solo lineas vivas, PnL por bot).
+- **Fill realista**: target reporta target_px (limit), no el close del bar.
+- **PARAMS POR TICKER via env {SYM}_*** (sweep 30d bars reales 2026-07-10,
+  seteados en los keepalives): DRAM BB2.5/RSI35/TGT6 (+15.7% 20T/16W vs
+  baseline -3.1%); NOK RSI30/TGT6/TRAIL2 (+1.5%); SPCX RSI30/TRAIL2 (+2.1%);
+  TSLA VOL1.0 (IEX fino en TSLA). Baseline clonado era malpractice — re-tunear
+  tras cambios de regimen (sweep en scratchpad/bench).
+- **Quotes por ws para topgainer_alert (fix 429)**: alert escribe
+  data/topgainer/ws_watch → daemon suscribe trades (cap 24) → data/quote_*.txt;
+  Finnhub queda en 1 llamada/sym/dia (prev_close) + fallback.
+- **Knobs de riesgo v2.1 (skills mean-reversion/exit-strategies, 2026-07-10)**,
+  todos via env {SYM}_*, default = comportamiento previo: SKIP_OPEN (min sin
+  entradas tras 9:30), TIME_STOP_MIN (no revirtio en N min = hipotesis muerta,
+  eject bajo floor), EOD_FORCE (15:45 plano SIEMPRE), CONFIRM_STRICT (bar de
+  confirmacion con vol>=volMA y close en mitad alta), MAX_DAY (entradas/dia).
+- **SPCX = TREND MODE** (`SPCX_MODE=trend`): dip-engine REFUTADO en SPCX
+  (0% confirmacion default, -3.8% estricto; ticker joven, solo ~30d de vida).
+  Trend: entra en Supertrend-5m flip UP o ruptura del max del dia con CUSUM
+  >=1%, sale en flip DOWN/trail 2ATR/stop 2%/EOD forzado, max 2/dia.
+  In-sample +17.2% (16/18W con stops reales); OOS corto -> scorecard semanal,
+  revisar ~2026-07-24.
+- **TSLA: retune agresivo RECHAZADO por walk-forward** (BB2/RSI30/T1.5 dio
+  +0.06% en 58 trades sobre 60 dias NUNCA vistos = churn sin edge; los +27-45%
+  del estudio eran artefactos never-sell-loss). TSLA queda raro-y-limpio
+  (BB3/RSI25/V1.0/T4) + stop 1.5% + skip-open 5m. Regla: NINGUN param se
+  shippea sin walk-forward OOS positivo.
+- **DRAM/NOK re-validados con stops reales**: DRAM +20.4% (mejor que sin stop:
+  el stop corta el drag de bags), NOK +1.5%. Time-stop 240 min añadido a ambos.
+
+## NOTIFICACIONES: URGENTES + C++ (2026-07-10, ordenes de Yunior)
+- **Todas las notificaciones son URGENTES y en C++**: `fleet_notify.h` →
+  `fleet_notify_urgent()` hace posix_spawn de /usr/bin/osascript directo (sin
+  shell, ~1.5ms, inyección imposible, SIGCHLD auto-reap). Los 5 bots la usan.
+- Para banners persistentes: System Settings → Notifications → Script Editor
+  → estilo "Alerts" (no scriptable, ajuste manual una vez).
+- **FIX señales tarde (2026-07-10)**: los bots recibian bars 5-19 min tarde.
+  Causa raiz: los bridges ws (nok_bar_bridge, ws_bar_bridge) solo emitian el
+  bar al llegar el PRIMER tick del minuto siguiente — en feeds finos (IEX =
+  2-3% del volumen) pasan minutos sin tick. Fix: WALL-CLOCK FLUSH — loop de
+  2s emite el bar formado cuando su minuto cerro hace >=3s, con o sin tick.
+  Ademas stderr de bridges ya NO va a /dev/null → bridge_{dram,nok,spcx,tsla}.log
+  (los 429/errores de feed eran invisibles).
+- **WEBSOCKETS, no REST (orden 2026-07-10 "avoid rest api calls when u can
+  use websockets")**: `alpaca_ws_bridge.cpp` (C++, Network.framework — el
+  libcurl del sistema no trae ws). Alpaca free = UNA conexion ws por cuenta →
+  un daemon compartido (`./alpaca_ws_bridge NOK SPCX`, vigilado por
+  ensure_all/start_all, log ws_daemon.log) se suscribe al canal "bars" (bares
+  1m NATIVOS, llegan ~1s tras cerrar el minuto) y los escribe en
+  data/bars_<sym>.txt; cada bot popen-ea `./alpaca_ws_bridge read SYM`
+  (warm-up REST una sola vez — historia no existe por ws — y sigue el archivo
+  cada 200ms). Esto MATO los bridges python de NOK (Alpaca ticks) y SPCX
+  (Polygon ws que NUNCA conecto: plan sin acceso ws — bridge_spcx.log lo
+  revelo). 2026-07-10 PM: DRAM (Yahoo poll 30s ⇒ ~2-30s tarde) y TSLA
+  (Finnhub ws + backfill Yahoo) tambien migrados → el daemon corre
+  `NOK SPCX DRAM TSLA`, CERO bridges python, CERO Yahoo (orden #6). Los .py
+  viejos en backup/bridges_python_2026-07-10/. Feed iex: minuto sin trades
+  IEX = sin bar (REST tiene el mismo hueco, es el mismo feed).
+  Velocidad v2 (orden "1ms average", 2026-07-10 noche): el daemon tambien
+  suscribe TRADES de los 4 syms y ARMA el bar 1m el mismo (SELF-AGG),
+  emitiendolo <=250ms tras cerrar el minuto (sin esperar el push agregado de
+  Alpaca de ~0.1-1s; canal bars oficial queda de fallback, reader dedupe por
+  epoch). Reader poll 200ms→50ms (hop medido: mediana 20ms). Presupuesto por
+  bar: emision <=250ms + hop ~20ms + motor 5µs + banner ~0.2ms ≈ <=0.3s del
+  cierre del minuto al banner; el procesamiento en el Mac es <1ms — el resto
+  es la fisica del feed. topgainer: quotes via trades ws (fix 429).
+
 ## DOCTRINA DE FLOTA (2026-07-09, orden de Yunior — "from zero to hero")
+[HISTÓRICO — trading suspendido 2026-07-10, ver MODO ACTUAL arriba]
 Dos sistemas TOTALMENTE SEPARADOS; no se mezclan nunca:
 
 **1) Flota de señales (4 bots C++, SOLO ALERTAS — jamás ordenan):**

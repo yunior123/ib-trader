@@ -58,6 +58,25 @@ def main():
         state.write_watchlist(data)
         for r in added:
             print(f"fastscan +{r['sym']} +{r['gain_pct']}% ${r['price']} score {r['score']}")
+        # on-time delivery (Yunior 2026-07-10): the moment a new top gainer
+        # passes the filters, banner Mac al instante — don't wait for a
+        # breakout. (email/telegram eliminados 2026-07-10: solo Mac)
+        import subprocess
+        short = ", ".join(f"{r['sym']}+{r['gain_pct']:.0f}%" for r in added)
+        subprocess.Popen(["osascript", "-e",
+                          f'display notification "{short}" with title '
+                          f'"TOP GAINER nuevo" sound name "Glass"'],
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        # TradingAgents en la fast lane (Yunior 2026-07-10 "make sure we use
+        # trading agents for the top gainers"): los nombres nuevos entran sin
+        # vetar (el banner no espera minutos de LLM); revet corre en background
+        # y les atacha ta_action — el alert bot relee el watchlist en cada poll.
+        root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        subprocess.Popen(
+            f'pgrep -f "revet_watchlist|topgainer/scanner.py" >/dev/null || '
+            f'nohup "{root}/venv/bin/python" "{root}/topgainer/revet_watchlist.py" 3 '
+            f'>> "{root}/topgainer/rescan.log" 2>&1 &',
+            shell=True, cwd=root)
     return 0
 
 

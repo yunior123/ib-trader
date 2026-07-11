@@ -36,3 +36,14 @@ topgainer/topgainer_alert
 scan_server
 scan_server.out
 scan_server.err
+
+# ws daemon runtime (bars/quotes/positions per symbol)
+data/bars_*.txt
+data/pos_*.txt
+data/quote_*.txt
+data/topgainer/ws_watch
+fleet_autostart.err
+fleet_autostart.out
+# compiled fleet binaries (build from .cpp)
+*_signal_bot
+alpaca_ws_bridge

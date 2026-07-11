@@ -12,7 +12,10 @@ cd "$(dirname "$0")/.." || exit 1
 ROOT="$(pwd)"
 
 echo "== top-gainer system =="
+SIGNAL_ONLY=0; [[ -f data/topgainer/signal_only ]] && SIGNAL_ONLY=1
+echo "signal_only: $([[ $SIGNAL_ONLY -eq 1 ]] && echo 'YES — señales solamente, sin trading')"
 echo "armed:      $([[ -f data/topgainer/armed ]] && echo YES || echo no)"
+[[ $SIGNAL_ONLY -eq 1 ]] && export TOPGAINER_LIVE=0
 echo "TOPGAINER_LIVE=$TOPGAINER_LIVE"
 
 pkill -f "topgainer/watchdog_keepalive.sh" 2>/dev/null
@@ -33,8 +36,16 @@ else
   nohup "$PY" "$ROOT/topgainer/alert_bot.py" >>"$ROOT/topgainer/alert_bot.log" 2>&1 &
 fi
 echo "alert_bot pid $!"
-nohup zsh "$ROOT/topgainer/claude_trader_loop.sh" >/dev/null 2>&1 &
-echo "claude trader loop pid $!"
+if [[ $SIGNAL_ONLY -eq 1 ]]; then
+  echo "claude trader loop: OFF (signal_only)"
+else
+  nohup zsh "$ROOT/topgainer/claude_trader_loop.sh" >/dev/null 2>&1 &
+  echo "claude trader loop pid $!"
+fi
+if ! pgrep -f "alpaca_ws_bridge NOK" >/dev/null && [[ -x "$ROOT/alpaca_ws_bridge" ]]; then
+  nohup "$ROOT/alpaca_ws_bridge" NOK SPCX DRAM TSLA NVDA TXN TSM AMD INTC ASML AAPL GLD QQQ >>"$ROOT/ws_daemon.log" 2>&1 &
+  echo "alpaca ws daemon pid $! (bars 1m NOK+SPCX+DRAM+TSLA, unica conexion ws Alpaca)"
+fi
 nohup zsh "$ROOT/topgainer/heartbeat.sh" >/dev/null 2>&1 &
 echo "heartbeat pid $! (beeps every minute so you know it's alive)"
 echo "up. logs: topgainer/*.log  | status: $PY topgainer/state.py status"

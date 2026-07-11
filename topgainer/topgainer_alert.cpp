@@ -45,6 +45,12 @@ static const double MIN_GAIN = envd("ALERT_MIN_GAIN", 5.0);
 static const double CONFIRM_SECS = envd("TG_CONFIRM_SECS", 45.0);  // hold above level
 static const double BURST_MIN = envd("TG_BURST_MIN", 0.015);       // min CUSUM up-move (1.5%)
 static const double FADE_TOL = envd("TG_FADE_TOL", 0.002);         // 0.2% under level = failed
+// PRE-BREAKOUT (Yunior 2026-07-10: "detectar breakout ANTES de que ocurra"):
+// price coiling within TG_NEAR_PCT under the day-high level while the CUSUM
+// up-move is already building (>= TG_NEAR_CUSUM of the burst threshold) ->
+// early-warning signal BEFORE the level breaks. One per sym per day.
+static const double NEAR_PCT = envd("TG_NEAR_PCT", 0.015);         // within 1.5% of level
+static const double NEAR_CUSUM = envd("TG_NEAR_CUSUM", 0.5);       // 50% of burst thr
 static const char* SIGNALS = "data/topgainer/signals.jsonl";
 
 static void sh_sanitize(const char* in, char* out, size_t n) {
@@ -62,13 +68,11 @@ static std::string now_iso() {
     char b[64]; strftime(b, sizeof(b), "%Y-%m-%dT%H:%M:%S%z", &lt);
     return b;
 }
+#include "../fleet_notify.h"
+
 static void notify(const char* title, const char* msg) {
-    char st[128], sm[400], cmd[1024];
-    sh_sanitize(title, st, sizeof(st)); sh_sanitize(msg, sm, sizeof(sm));
-    snprintf(cmd, sizeof(cmd),
-        "osascript -e 'display notification \"%s\" with title \"%s\" sound name \"Glass\"' "
-        ">/dev/null 2>&1 &", sm, st);
-    std::system(cmd);
+    // URGENTE siempre, posix_spawn C++ sin shell (Yunior 2026-07-10)
+    fleet_notify_urgent(title, msg);
 }
 
 static bool in_window() {
@@ -103,7 +107,7 @@ static std::string finnhub_key() {
     }();
     return key;
 }
-static bool quote(const std::string& sym, double& px, double& prev_close) {
+static bool finnhub_quote_rest(const std::string& sym, double& px, double& prev_close) {
     std::string key = finnhub_key();
     if (key.empty()) return false;
     std::string url = "https://finnhub.io/api/v1/quote?symbol=" + sym + "&token=" + key, body;
@@ -119,6 +123,34 @@ static bool quote(const std::string& sym, double& px, double& prev_close) {
     px = prev_close = 0;
     extract_num(body, "c", px);
     extract_num(body, "pc", prev_close);
+    return px > 0;
+}
+
+// quote(): precio VIVO del ws daemon + prev_close cacheado 1 vez/dia por sym.
+// Fix 429 (2026-07-10): Finnhub free = 60 req/min; el poll de 2s sobre el
+// watchlist entero lo reventaba y degradaba las señales en silencio. Ahora
+// Finnhub solo paga 1 llamada/sym/dia (prev_close) o el fallback cuando el
+// archivo del ws lleva >15s sin trade IEX.
+static bool quote(const std::string& sym, double& px, double& prev_close) {
+    static std::map<std::string, std::pair<std::string, double>> pc_cache;
+    px = prev_close = 0;
+    std::string low = sym;
+    for (char& ch : low) ch = (char)tolower((unsigned char)ch);
+    time_t now = time(nullptr); struct tm lt; localtime_r(&now, &lt);
+    char today[12]; strftime(today, sizeof(today), "%Y%m%d", &lt);
+    if (FILE* f = fopen(("data/quote_" + low + ".txt").c_str(), "r")) {
+        long ep = 0; double p = 0;
+        if (fscanf(f, "%ld %lf", &ep, &p) == 2 && p > 0 && now - ep <= 15) px = p;
+        fclose(f);
+    }
+    auto& e = pc_cache[sym];
+    if (px > 0 && e.first == today && e.second > 0) { prev_close = e.second; return true; }
+    double rpx = 0, rpc = 0;
+    if (!finnhub_quote_rest(sym, rpx, rpc))
+        return px > 0 && prev_close > 0;   // 429/red: al menos el px del ws
+    if (rpc > 0) e = {today, rpc};
+    prev_close = rpc;
+    if (px <= 0) px = rpx;                 // sin trade IEX fresco -> REST manda
     return px > 0;
 }
 
@@ -177,12 +209,25 @@ int main() {
     fflush(stdout);
     std::map<std::string, Track> tracks;
     std::set<std::string> fired;           // one BUY-CONSIDER per sym per day
+    std::set<std::string> prefired;        // one PRE-BREAKOUT per sym per day
     std::string day;
     while (true) {
         time_t t = time(nullptr); struct tm lt; localtime_r(&t, &lt);
         char today[16]; strftime(today, sizeof(today), "%Y%m%d", &lt);
-        if (day != today) { day = today; tracks.clear(); fired.clear(); }
-        for (const Cand& c : read_watchlist(day)) {
+        if (day != today) { day = today; tracks.clear(); fired.clear(); prefired.clear(); }
+        std::vector<Cand> cands = read_watchlist(day);
+        // publicar el watchlist al ws daemon (data/topgainer/ws_watch): el
+        // daemon suscribe trades de estos nombres -> quotes vivos sin 429
+        {
+            static std::string last_watch;
+            std::string watch;
+            for (const Cand& c : cands) watch += c.sym + "\n";
+            if (watch != last_watch) {
+                FILE* w = fopen("data/topgainer/ws_watch", "w");
+                if (w) { fputs(watch.c_str(), w); fclose(w); last_watch = watch; }
+            }
+        }
+        for (const Cand& c : cands) {
             double px = 0, pc = 0;
             if (!quote(c.sym, px, pc)) continue;
             double ref = pc > 0 ? pc : (c.price > 0 ? c.price : px);
@@ -234,6 +279,33 @@ int main() {
                         }
                     }
                 }
+            }
+            // 0) PRE-BREAKOUT early warning: coiling just under the level with
+            //    momentum already building — fires BEFORE the break.
+            if (tr.pending_level <= 0 && !fired.count(c.sym) && !prefired.count(c.sym) &&
+                in_window() && gain >= MIN_GAIN && tr.high > 0 &&
+                px < tr.high && px >= tr.high * (1.0 - NEAR_PCT) &&
+                tr.cusum_up >= NEAR_CUSUM * hthr && tr.cusum_up > 0) {
+                prefired.insert(c.sym);
+                char msg[280];
+                snprintf(msg, sizeof(msg),
+                         "%s a %.1f%% del nivel $%.4f con momentum (CUSUM +%.1f%%, +%.1f%% hoy) — breakout INMINENTE",
+                         c.sym.c_str(), (tr.high - px) / tr.high * 100, tr.high,
+                         tr.cusum_up * 100, gain);
+                notify("PRE-BREAKOUT", msg);
+                FILE* f = fopen(SIGNALS, "a");
+                if (f) {
+                    fprintf(f, "{\"ts\": \"%s\", \"kind\": \"pre_breakout\", \"sym\": \"%s\", "
+                               "\"price\": %.4f, \"gain_pct\": %.2f, \"level\": %.4f, "
+                               "\"cusum_pct\": %.2f, \"note\": \"coiling under level — breakout imminent\"}\n",
+                            now_iso().c_str(), c.sym.c_str(), px, gain, tr.high,
+                            tr.cusum_up * 100);
+                    fclose(f);
+                }
+                printf("[alert-c++] PRE-BREAKOUT %s $%.4f, %.1f%% under level %.4f, CUSUM +%.1f%%\n",
+                       c.sym.c_str(), px, (tr.high - px) / tr.high * 100, tr.high,
+                       tr.cusum_up * 100);
+                fflush(stdout);
             }
             if (px > tr.high) {
                 // 2) Donchian break: fresh intraday high starts the confirmation clock

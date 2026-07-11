@@ -110,7 +110,11 @@ def enrich_candidates(cands, date_str, topn=None):
     if os.getenv("TA_RESEARCH", "1") == "0":
         return cands
     topn = topn or int(os.getenv("TA_RESEARCH_TOPN", "3"))
-    for c in cands[:topn]:
+    # vet the top-N UNVETTED names (Yunior 2026-07-10 "make sure we use trading
+    # agents for the top gainers"): verdicts persist across rescans, so each
+    # 15-min pass spends the TA budget on NEW gainers instead of re-vetting
+    # the same top 3 all day — coverage grows toward the whole watchlist.
+    for c in [x for x in cands if not x.get("ta_action")][:topn]:
         note = research_ticker(c["sym"], date_str)
         if note:
             c["ta_action"] = note["action"]

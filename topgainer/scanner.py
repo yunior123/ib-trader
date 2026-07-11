@@ -30,7 +30,7 @@ warnings.filterwarnings("ignore")
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import state  # noqa: E402
-from price import finnhub_quote, yahoo_last, _load_finnhub_key  # noqa: E402
+from price import finnhub_quote, alpaca_spread, _load_finnhub_key  # noqa: E402
 from sources import top_gainer_universe  # noqa: E402
 import research  # noqa: E402
 
@@ -42,15 +42,34 @@ BLOWOFF_PCT = float(os.getenv("SCAN_BLOWOFF", "150.0"))   # skip already-parabol
 MAX_INTRADAY_GAIN = float(os.getenv("SCAN_MAX_GAIN", "40.0"))  # skip already up >40% today:
 # too extended to chase, and LULD volatility-halt risk means orders won't even fill
 TOP_N = int(os.getenv("SCAN_TOPN", "8"))
+# spread gate (Yunior 2026-07-10): wide bid-ask = illiquid trap, skip it.
+# One tick of spread is unavoidable on pennies, so <=1 cent always passes.
+MAX_SPREAD_PCT = float(os.getenv("SCAN_MAX_SPREAD", "3.0"))
 FAVORITES = ["GNS", "KOD", "DRAM", "NOK", "SPCX"]
 
 
 def prior_day_move(sym):
+    """% move of the PRIOR session. Alpaca daily bars (Yahoo PROHIBIDO —
+    Yunior 2026-07-10 'yahoo or delayed shit is forbidden')."""
     try:
-        import yfinance as yf
-        hist = yf.Ticker(sym).history(period="5d", interval="1d")
-        if len(hist) >= 2:
-            return (hist.Close.iloc[-1] - hist.Close.iloc[-2]) / hist.Close.iloc[-2] * 100
+        import json
+        import urllib.request
+        from price import _load_alpaca_keys
+        key, sec = _load_alpaca_keys()
+        if not key:
+            return 0.0
+        from datetime import datetime, timedelta, timezone
+        start = (datetime.now(timezone.utc) - timedelta(days=10)).strftime("%Y-%m-%d")
+        req = urllib.request.Request(
+            f"https://data.alpaca.markets/v2/stocks/{sym}/bars"
+            f"?timeframe=1Day&limit=10&feed=iex&start={start}",
+            headers={"APCA-API-KEY-ID": key, "APCA-API-SECRET-KEY": sec})
+        with urllib.request.urlopen(req, timeout=6) as r:
+            bars = json.load(r).get("bars") or []
+        if len(bars) >= 2:
+            c1, c0 = float(bars[-1]["c"]), float(bars[-2]["c"])
+            if c0 > 0:
+                return (c1 - c0) / c0 * 100
     except Exception:
         pass
     return 0.0
@@ -63,7 +82,7 @@ def evaluate(row):
     px = row.get("price") or 0
     gain = max(row.get("premarket_pct", 0) or 0, row.get("gain_pct", 0) or 0)
     if px <= 0:
-        q = finnhub_quote(sym) or yahoo_last(sym)   # favorites arrive with px 0
+        q = finnhub_quote(sym)   # favorites arrive with px 0; Finnhub only (no Yahoo)
         if not q:
             return None
         px = q["price"]
@@ -82,11 +101,37 @@ def evaluate(row):
     if prior >= BLOWOFF_PCT:      # already blew off yesterday -> skip (selectivity)
         return None
     liq = min(1.0, dollar_vol / (MIN_DOLLAR_VOL * 10)) if dollar_vol else 0.3
+    # volatility (Yunior 2026-07-10: prefer gainers with liquidity AND volatility):
+    # intraday range as % of price, from the live quote. A mover with a wide,
+    # active range gives the breakout room to pay; a flat drifter does not.
+    range_pct = 0.0
+    q = finnhub_quote(sym)
+    if q and q.get("high") and q.get("low") and px > 0:
+        range_pct = max(0.0, (q["high"] - q["low"]) / px * 100)
+    vola = min(1.0, range_pct / 15.0)      # 15%+ intraday range = full marks
+    # bid-ask spread gate + bonus (only survivors reach here — few API calls)
+    spread_pct = None
+    sp = alpaca_spread(sym)
+    if sp:
+        spread_pct = sp["spread_pct"]
+        one_tick = (sp["ask"] - sp["bid"]) <= 0.011   # min increment, unavoidable
+        if spread_pct > MAX_SPREAD_PCT and not one_tick:
+            return None                    # can't exit cleanly -> not a candidate
+    tight = 1.0 - min(spread_pct, 5.0) / 10.0 if spread_pct is not None else 0.85
+    # US priority (Yunior 2026-07-10 "the top screener should give priority to
+    # us companies"): país de la columna Country de Finviz. Extranjero (los
+    # pumps chinos de reverse-split, la trampa clásica) baja fuerte; país
+    # desconocido (fila solo-Yahoo) apenas.
+    country = str(row.get("country") or "").strip()
+    us_mult = 1.0 if country == "USA" else (0.9 if not country else 0.6)
     extended_pen = max(0.0, (prior - 40) / 100)
-    score = gain * (0.5 + liq) - extended_pen * 10
+    score = gain * (0.4 + 0.6 * liq) * (0.7 + 0.6 * vola) * tight * us_mult \
+        - extended_pen * 10
     return {"sym": sym, "price": round(px, 4), "gain_pct": round(gain, 2),
             "prior_day_pct": round(prior, 2), "market_cap": row.get("market_cap", 0),
-            "dollar_vol": round(dollar_vol), "score": round(score, 2), "src": row.get("src")}
+            "dollar_vol": round(dollar_vol), "range_pct": round(range_pct, 2),
+            "spread_pct": spread_pct, "country": country or None,
+            "score": round(score, 2), "src": row.get("src")}
 
 
 def main():
@@ -114,6 +159,15 @@ def main():
     # scan (6AM and on-demand); opt out only with TA_RESEARCH=0 (Yunior 2026-07-09).
     ta_on = os.getenv("TA_RESEARCH", "1") != "0"
     date_str = state.datetime.now().astimezone().strftime("%Y-%m-%d")
+    # carry over today's TA verdicts (rescan corre cada 15 min y reconstruye
+    # los dicts desde cero — sin esto, re-vetea los mismos 3 nombres todo el
+    # dia y los nuevos gainers nunca reciben research)
+    prev = {c["sym"]: c for c in (state.read_watchlist() or {}).get("candidates", [])
+            if c.get("ta_action")}
+    for c in top:
+        if c["sym"] in prev and not c.get("ta_action"):
+            c["ta_action"] = prev[c["sym"]]["ta_action"]
+            c["ta_note"] = prev[c["sym"]].get("ta_note", "")
     top = research.enrich_candidates(top, date_str)
     if ta_on:
         # research is mandatory: drop finalists TradingAgents did not bless as BUY

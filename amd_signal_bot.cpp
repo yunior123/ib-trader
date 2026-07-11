@@ -1,4 +1,4 @@
-// nok_signal_bot.cpp — NOK buy/sell signal engine, pure C++
+// amd_signal_bot.cpp — AMD buy/sell signal engine, pure C++ (clon del motor NOK, 2026-07-10; gold/nas100 = proxies GLD/QQQ)
 // ============================================================
 // Mirrors the validated Python engine (confirmed capitulation entry +
 // adaptive exit) computing all indicators incrementally in C++:
@@ -13,9 +13,9 @@
 // Data: alpaca_ws_bridge (C++ ws daemon, 1 conexion Alpaca compartida) streams
 //       REAL 1m completed bars as "EPOCH OPEN HIGH LOW CLOSE VOLUME" lines.
 //
-// build: clang++ -std=c++17 -O2 -o nok_signal_bot nok_signal_bot.cpp
-// run:   ./nok_signal_bot            (spawns bridge)
-//        ./nok_signal_bot --stdin    (replay: feed bar lines for testing)
+// build: clang++ -std=c++17 -O2 -o amd_signal_bot amd_signal_bot.cpp
+// run:   ./amd_signal_bot            (spawns bridge)
+//        ./amd_signal_bot --stdin    (replay: feed bar lines for testing)
 
 #include <cstdio>
 #include <cstdlib>
@@ -30,38 +30,38 @@
 struct Bar { double t, o, h, l, c, v; };
 
 // ---- config (mirror of DEFAULT_CONFIG) ----
-// ---- params: por-ticker via env NOK_* (orden Yunior 2026-07-10 "tune per
+// ---- params: por-ticker via env AMD_* (orden Yunior 2026-07-10 "tune per
 // ticker") — un solo set de parametros en 4 microestructuras distintas mata
 // la expectancy; ahora el keepalive exporta el set ajustado por backtest.
 static double envd(const char* k, double d) {
     const char* v = std::getenv(k);
     return (v && *v) ? atof(v) : d;
 }
-static const int    BB_N = 20;      static const double BB_STD = envd("NOK_BB_STD", 3.0);
-static const int    RSI_N = 14;     static const double RSI_OS = envd("NOK_RSI_OS", 25.0);
-static const int    VOL_N = 20;     static const double VOL_MULT = envd("NOK_VOL_MULT", 1.2);
+static const int    BB_N = 20;      static const double BB_STD = envd("AMD_BB_STD", 3.0);
+static const int    RSI_N = 14;     static const double RSI_OS = envd("AMD_RSI_OS", 25.0);
+static const int    VOL_N = 20;     static const double VOL_MULT = envd("AMD_VOL_MULT", 1.2);
 static const int    ATR_N = 14;
 static const int    CONFIRM_WINDOW = 60;
-static const double TARGET_PCT = envd("NOK_TARGET", 4.0),
-                    FLOOR_PCT  = envd("NOK_FLOOR", 1.0),
-                    TRAIL_ATR  = envd("NOK_TRAIL_ATR", 3.0);
-// HARD STOP alert (orden 2026-07-10): a -NOK_STOP% del entry el bot GRITA la
+static const double TARGET_PCT = envd("AMD_TARGET", 4.0),
+                    FLOOR_PCT  = envd("AMD_FLOOR", 1.0),
+                    TRAIL_ATR  = envd("AMD_TRAIL_ATR", 3.0);
+// HARD STOP alert (orden 2026-07-10): a -AMD_STOP% del entry el bot GRITA la
 // perdida (SELL-STOP) en vez de callarse a esperar el floor. Humano decide.
-static const double STOP_PCT = envd("NOK_STOP", 3.0);
+static const double STOP_PCT = envd("AMD_STOP", 3.0);
 // afinado 2026-07-10 (skills mean-reversion/exit-strategies + estudio 30d):
 // SKIP_OPEN: min tras 9:30 sin entradas (los arms del open eran subasta);
 // TIME_STOP_MIN: trade que no revirtio en N min = hipotesis muerta -> eject;
 // EOD_FORCE: 15:45 plano SIEMPRE (sin bag overnight; para SPCX obligatorio);
 // CONFIRM_STRICT: bar de confirmacion con volumen>=volMA y close en mitad alta;
 // MAX_DAY: entradas max por dia (0 = sin limite).
-static const double SKIP_OPEN      = envd("NOK_SKIP_OPEN", 0);
-static const double TIME_STOP_MIN  = envd("NOK_TIME_STOP_MIN", 0);
-static const double EOD_FORCE      = envd("NOK_EOD_FORCE", 0);
-static const double CONFIRM_STRICT = envd("NOK_CONFIRM_STRICT", 0);
-static const double MAX_DAY        = envd("NOK_MAX_DAY", 0);
+static const double SKIP_OPEN      = envd("AMD_SKIP_OPEN", 0);
+static const double TIME_STOP_MIN  = envd("AMD_TIME_STOP_MIN", 0);
+static const double EOD_FORCE      = envd("AMD_EOD_FORCE", 0);
+static const double CONFIRM_STRICT = envd("AMD_CONFIRM_STRICT", 0);
+static const double MAX_DAY        = envd("AMD_MAX_DAY", 0);
 // posicion virtual PERSISTIDA (fix 2026-07-10: un restart perdia la posicion
 // y los SELL se desincronizaban de lo que Yunior realmente tiene)
-static const char* POS_FILE = "data/pos_nok.txt";
+static const char* POS_FILE = "data/pos_amd.txt";
 static bool g_pos_restored = false;
 static void save_pos(double e, double pk, double fl, double tg, double ep) {
     FILE* f = fopen(POS_FILE, "w");
@@ -142,7 +142,7 @@ static void notify(const char* title, const char* msg, bool urgent) {
     // Posicion restaurada de disco: su SELL avisa aunque el bar sea warm-up.
     if (urgent && (bar_is_live() || g_pos_restored)) fleet_notify_urgent(title, msg);
     // 3) structured operations log
-    FILE* f = std::fopen("nok_operations.log", "a");
+    FILE* f = std::fopen("amd_operations.log", "a");
     if (f) {
         time_t now = time(nullptr); struct tm lt; localtime_r(&now, &lt);
         std::fprintf(f, "%04d-%02d-%02d %02d:%02d:%02d | %s%s | %s\n",
@@ -173,11 +173,11 @@ int main(int argc, char** argv) {
     bool use_stdin = (argc > 1 && !std::strcmp(argv[1], "--stdin"));
     FILE* in = stdin;
     if (!use_stdin) {
-        // ws daemon compartido escribe data/bars_nok.txt; el reader lo sigue
+        // ws daemon compartido escribe data/bars_amd.txt; el reader lo sigue
         // (Yunior 2026-07-10: websockets, no REST; C++, no python)
-        in = popen("./alpaca_ws_bridge read NOK 2>>bridge_nok.log", "r");
+        in = popen("./alpaca_ws_bridge read AMD 2>>bridge_amd.log", "r");
         if (!in) { std::fprintf(stderr, "no bridge\n"); return 1; }
-        std::fprintf(stderr, "nok_signal_bot (C++): bridge NOK 1m real iniciado\n");
+        std::fprintf(stderr, "amd_signal_bot (C++): bridge AMD 1m real iniciado\n");
     }
 
     std::deque<double> closes, vols;      // rolling 20
@@ -262,16 +262,16 @@ int main(int argc, char** argv) {
                 cusum_dn = std::min(0.0, cusum_dn + r);
                 if (alert_hours && b.t - last_cusum > 3600) {
                     if (cusum_up > hthr) {
-                        std::printf("[%02d:%02d] CUSUM: NOK SUBIENDO fuerte (+%.2f%% acumulado) px %.2f\n",
+                        std::printf("[%02d:%02d] CUSUM: AMD SUBIENDO fuerte (+%.2f%% acumulado) px %.2f\n",
                                     H, M, cusum_up * 100, b.c);
                         std::fflush(stdout);
-                        { char m[160]; std::snprintf(m, sizeof(m), "CUSUM: subiendo fuerte %+.2f%% px %.2f", cusum_up*100, b.c); notify("NOK alza", m, false); }
+                        { char m[160]; std::snprintf(m, sizeof(m), "CUSUM: subiendo fuerte %+.2f%% px %.2f", cusum_up*100, b.c); notify("AMD alza", m, false); }
                         cusum_up = 0; cusum_dn = 0; last_cusum = b.t;
                     } else if (cusum_dn < -hthr) {
-                        std::printf("[%02d:%02d] CUSUM: NOK CAYENDO fuerte (%.2f%% acumulado) px %.2f\n",
+                        std::printf("[%02d:%02d] CUSUM: AMD CAYENDO fuerte (%.2f%% acumulado) px %.2f\n",
                                     H, M, cusum_dn * 100, b.c);
                         std::fflush(stdout);
-                        { char m[160]; std::snprintf(m, sizeof(m), "CUSUM: cayendo fuerte %.2f%% px %.2f", cusum_dn*100, b.c); notify("NOK caida", m, false); }
+                        { char m[160]; std::snprintf(m, sizeof(m), "CUSUM: cayendo fuerte %.2f%% px %.2f", cusum_dn*100, b.c); notify("AMD caida", m, false); }
                         cusum_up = 0; cusum_dn = 0; last_cusum = b.t;
                     }
                 }
@@ -306,11 +306,11 @@ int main(int argc, char** argv) {
             else               nt = (bc > st_upper) ? 1 : -1;
             if (st_trend != 0 && nt != st_trend && alert_hours && b.t - last_st > 3600) {
                 if (nt > 0) {
-                    std::printf("[%02d:%02d] SUPERTREND: tendencia NOK cambio a ALCISTA px %.2f\n", H, M, b.c);
-                    { char m[120]; std::snprintf(m, sizeof(m), "Supertrend: tendencia ALCISTA px %.2f", b.c); notify("NOK tendencia", m, false); }
+                    std::printf("[%02d:%02d] SUPERTREND: tendencia AMD cambio a ALCISTA px %.2f\n", H, M, b.c);
+                    { char m[120]; std::snprintf(m, sizeof(m), "Supertrend: tendencia ALCISTA px %.2f", b.c); notify("AMD tendencia", m, false); }
                 } else {
-                    std::printf("[%02d:%02d] SUPERTREND: tendencia NOK cambio a BAJISTA px %.2f\n", H, M, b.c);
-                    { char m[120]; std::snprintf(m, sizeof(m), "Supertrend: tendencia BAJISTA px %.2f", b.c); notify("NOK tendencia", m, false); }
+                    std::printf("[%02d:%02d] SUPERTREND: tendencia AMD cambio a BAJISTA px %.2f\n", H, M, b.c);
+                    { char m[120]; std::snprintf(m, sizeof(m), "Supertrend: tendencia BAJISTA px %.2f", b.c); notify("AMD tendencia", m, false); }
                 }
                 std::fflush(stdout);
                 last_st = b.t;
@@ -326,14 +326,14 @@ int main(int argc, char** argv) {
             for (double x : dh20) hi = std::max(hi, x);
             for (double x : dl20) lo = std::min(lo, x);
             if (b.c > hi) {
-                std::printf("[%02d:%02d] DONCHIAN: NOK rompe maximo del dia px %.2f > %.2f\n", H, M, b.c, hi);
+                std::printf("[%02d:%02d] DONCHIAN: AMD rompe maximo del dia px %.2f > %.2f\n", H, M, b.c, hi);
                 std::fflush(stdout);
-                { char m[120]; std::snprintf(m, sizeof(m), "Donchian: rompe maximo del dia px %.2f", b.c); notify("NOK breakout", m, false); }
+                { char m[120]; std::snprintf(m, sizeof(m), "Donchian: rompe maximo del dia px %.2f", b.c); notify("AMD breakout", m, false); }
                 last_don = b.t;
             } else if (b.c < lo) {
-                std::printf("[%02d:%02d] DONCHIAN: NOK rompe minimo del dia px %.2f < %.2f\n", H, M, b.c, lo);
+                std::printf("[%02d:%02d] DONCHIAN: AMD rompe minimo del dia px %.2f < %.2f\n", H, M, b.c, lo);
                 std::fflush(stdout);
-                { char m[120]; std::snprintf(m, sizeof(m), "Donchian: rompe minimo del dia px %.2f", b.c); notify("NOK breakdown", m, false); }
+                { char m[120]; std::snprintf(m, sizeof(m), "Donchian: rompe minimo del dia px %.2f", b.c); notify("AMD breakdown", m, false); }
                 last_don = b.t;
             }
         }
@@ -357,14 +357,14 @@ int main(int argc, char** argv) {
                 if (b.c >= floor_px || EOD_FORCE > 0) { sold = true; why = "EOD flatten 15:45"; }
             }
             if (sold) {
-                std::printf("[%02d:%02d] *** NOK: VENDER *** ~%.2f (%s, entrada %.2f)\n",
+                std::printf("[%02d:%02d] *** AMD: VENDER *** ~%.2f (%s, entrada %.2f)\n",
                             H, M, exit_px, why, entry);
                 std::fflush(stdout);
-                if (audio_gate(true)) { play("sounds/dram_sell.wav", "Hero"); speak("sell Nokia now"); }
+                if (audio_gate(true)) { play("sounds/dram_sell.wav", "Hero"); speak("sell A M D now"); }
                 { char m[200]; std::snprintf(m, sizeof(m),
-                    "VENDER NOK @ %.2f | %s | entrada %.2f | PnL %+.1f%%",
+                    "VENDER AMD @ %.2f | %s | entrada %.2f | PnL %+.1f%%",
                     exit_px, why, entry, (exit_px / entry - 1) * 100);
-                  notify(why[0] == 'H' ? "NOK: SELL-STOP" : "NOK: SELL NOW", m, true); }
+                  notify(why[0] == 'H' ? "AMD: SELL-STOP" : "AMD: SELL NOW", m, true); }
                 in_pos = false; g_pos_restored = false;
                 unlink(POS_FILE);
             }
@@ -381,14 +381,14 @@ int main(int argc, char** argv) {
                 target_px = entry * (1 + TARGET_PCT / 100.0);
                 pos_epoch = b.t; day_entries++;
                 save_pos(entry, peak, floor_px, target_px, pos_epoch);
-                std::printf("[%02d:%02d] *** NOK: COMPRAR *** ~%.2f (capitulacion confirmada; "
+                std::printf("[%02d:%02d] *** AMD: COMPRAR *** ~%.2f (capitulacion confirmada; "
                             "target %.2f, floor %.2f)\n", H, M, entry, target_px, floor_px);
                 std::fflush(stdout);
-                if (audio_gate(true)) { play("sounds/dram_buy.wav", "Glass"); speak("buy Nokia now"); }
+                if (audio_gate(true)) { play("sounds/dram_buy.wav", "Glass"); speak("buy A M D now"); }
                 { char m[200]; std::snprintf(m, sizeof(m),
-                    "COMPRAR NOK @ %.2f | target %.2f (+4%%) | floor %.2f | capitulacion confirmada",
+                    "COMPRAR AMD @ %.2f | target %.2f (+4%%) | floor %.2f | capitulacion confirmada",
                     entry, target_px, floor_px);
-                  notify("NOK: BUY NOW", m, true); }
+                  notify("AMD: BUY NOW", m, true); }
             }
         }
         if (ind_ok && !in_pos && !pending_buy && rth_entry) {

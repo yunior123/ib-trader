@@ -52,16 +52,58 @@ def finnhub_quote(symbol: str):
         return None
 
 
-def yahoo_last(symbol: str):
+# yahoo_last BORRADO (Yunior 2026-07-10: yahoo/delayed prohibido)
+
+
+def _load_alpaca_keys():
+    """ALPACA_KEY/ALPACA_SECRET from alpaca.env at repo root (gitignored)."""
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    keys = {}
     try:
-        import yfinance as yf
-        df = yf.Ticker(symbol).history(period="1d", interval="1m", prepost=True)
-        if df.empty:
+        for line in open(os.path.join(root, "alpaca.env")):
+            line = line.strip()
+            if line and not line.startswith("#") and "=" in line:
+                k, v = line.split("=", 1)
+                keys[k.strip()] = v.strip().strip('"')
+    except OSError:
+        pass
+    return keys.get("ALPACA_KEY"), keys.get("ALPACA_SECRET")
+
+
+def alpaca_spread(symbol: str):
+    """Live bid/ask from Alpaca latest quote (IEX feed, free plan). Returns
+    {bid, ask, spread_pct} or None. Yunior 2026-07-10: prefer top gainers with
+    high liquidity and a TIGHT bid-ask spread — a wide spread eats the profit
+    on entry+exit and marks a name you can't get out of."""
+    key, sec = _load_alpaca_keys()
+    if not key or not sec:
+        return None
+    try:
+        import urllib.request
+        import json
+        req = urllib.request.Request(
+            f"https://data.alpaca.markets/v2/stocks/{symbol}/quotes/latest?feed=iex",
+            headers={"APCA-API-KEY-ID": key, "APCA-API-SECRET-KEY": sec})
+        with urllib.request.urlopen(req, timeout=4) as r:
+            q = json.load(r).get("quote") or {}
+        bid, ask = float(q.get("bp") or 0), float(q.get("ap") or 0)
+        if bid <= 0 or ask <= 0 or ask < bid:
             return None
-        last = df.iloc[-1]
-        return {"price": float(last.Close), "prev_close": float(df.iloc[0].Open),
-                "high": float(df.High.max()), "low": float(df.Low.min()),
-                "ts": df.index[-1].timestamp(), "src": "yahoo"}
+        # stale guard: an off-hours/idle IEX quote shows a junk-wide spread that
+        # would wrongly kill a good name — only trust quotes < 5 min old
+        ts = q.get("t") or ""
+        if len(ts) >= 19:   # "YYYY-MM-DDTHH:MM:SS..." (UTC, ns precision)
+            from datetime import datetime, timezone
+            try:
+                qt = datetime.strptime(ts[:19], "%Y-%m-%dT%H:%M:%S") \
+                             .replace(tzinfo=timezone.utc)
+                if (datetime.now(timezone.utc) - qt).total_seconds() > 300:
+                    return None
+            except ValueError:
+                pass
+        mid = (bid + ask) / 2
+        return {"bid": bid, "ask": ask,
+                "spread_pct": round((ask - bid) / mid * 100, 3)}
     except Exception:
         return None
 
@@ -81,11 +123,12 @@ def usdcad(default: float = 1.45) -> float:
 
 
 def last_price(symbol: str):
-    """Best-available real last price. Finnhub first (fast), Yahoo fallback."""
+    """Real last price, Finnhub only (realtime). Yahoo fallback ELIMINADO —
+    Yunior 2026-07-10: 'yahoo or delayed shit is forbidden'."""
     q = finnhub_quote(symbol)
     if q and q["price"] > 0:
         return q
-    return yahoo_last(symbol)
+    return None
 
 
 if __name__ == "__main__":

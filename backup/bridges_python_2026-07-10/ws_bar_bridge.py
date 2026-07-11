@@ -83,5 +83,14 @@ def ws_loop():
 print(f"{PFX} bridge: {PROV} websocket + Yahoo backfill", file=sys.stderr)
 backfill()
 threading.Thread(target=ws_loop, daemon=True).start()
+# WALL-CLOCK BAR FLUSH (fix 2026-07-10: alertas tarde). Antes el bar formado
+# solo salia al llegar un tick del minuto siguiente; con ticks escasos
+# (pre/post market o feed fino) se retenia minutos. Ahora sale por reloj a
+# los >=3s de cerrar su minuto, con o sin tick nuevo.
+_last_bf = time.time()
 while True:
-    time.sleep(90); backfill()
+    time.sleep(2)
+    if cur["m"] is not None and time.time() >= cur["m"] + 63:
+        emit()
+    if time.time() - _last_bf >= 90:
+        backfill(); _last_bf = time.time()

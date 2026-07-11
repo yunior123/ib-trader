@@ -89,9 +89,19 @@ def main():
     print("nok bridge v2: Alpaca WEBSOCKET ticks (segundos) + backfill REST", file=sys.stderr)
     backfill()
     threading.Thread(target=ws_loop, daemon=True).start()
+    # WALL-CLOCK BAR FLUSH (fix 2026-07-10: señales llegaban 5-15 min tarde).
+    # El bar solo se emitia al llegar el PRIMER tick del minuto siguiente — en
+    # el feed IEX (2-3% del volumen) NOK puede pasar minutos sin tick y el bar
+    # quedaba retenido. Ahora: si el minuto del bar ya cerro hace >=3s, se
+    # emite por reloj, con o sin tick nuevo.
+    last_backfill = time.time()
     while True:
-        time.sleep(60)
-        backfill()  # cubre huecos si el ws estuvo callado
+        time.sleep(2)
+        if cur["m"] is not None and time.time() >= cur["m"] + 63:
+            emit_bar()
+        if time.time() - last_backfill >= 60:
+            backfill()  # cubre huecos si el ws estuvo callado
+            last_backfill = time.time()
 
 if __name__ == "__main__":
     main()

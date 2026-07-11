@@ -8,7 +8,14 @@
 # reviven en <=2 min. Idempotente via pgrep.
 cd "$(dirname "$0")/.." || exit 1
 ROOT="$(pwd)"
-export TOPGAINER_LIVE="${TOPGAINER_LIVE:-1}"
+# SIGNAL-ONLY MODE (Yunior 2026-07-10): data/topgainer/signal_only present ->
+# topgainer es el 5to bot de SEÑALES: nada de trading, ni Claude loop, ni LIVE.
+SIGNAL_ONLY=0; [[ -f "$ROOT/data/topgainer/signal_only" ]] && SIGNAL_ONLY=1
+if [[ $SIGNAL_ONLY -eq 1 ]]; then
+  export TOPGAINER_LIVE=0
+else
+  export TOPGAINER_LIVE="${TOPGAINER_LIVE:-1}"
+fi
 PY="$ROOT/venv/bin/python"; [[ -x "$PY" ]] || PY="python3"
 log() { echo "$(date '+%F %T') ensure: $1" >> "$ROOT/topgainer/ensure.log"; }
 
@@ -26,10 +33,25 @@ if ! pgrep -x topgainer_alert >/dev/null && ! pgrep -f "topgainer/alert_bot.py" 
   log "alert bot relanzado (pid $!)"
 fi
 
-if ! pgrep -f "topgainer/claude_trader_loop.sh" >/dev/null; then
+if [[ $SIGNAL_ONLY -eq 1 ]]; then
+  # señales solamente: el loop de trading no debe existir; matarlo si revivio
+  if pgrep -f "topgainer/claude_trader_loop.sh" >/dev/null; then
+    pkill -f "topgainer/claude_trader_loop.sh"
+    log "signal_only: claude_trader_loop matado"
+  fi
+elif ! pgrep -f "topgainer/claude_trader_loop.sh" >/dev/null; then
   nohup zsh "$ROOT/topgainer/claude_trader_loop.sh" >/dev/null 2>&1 &
   log "claude_trader_loop relanzado (pid $!)"
 fi
+
+# ws daemon (C++): LA conexion Alpaca (limite 1/cuenta) — bars 1m nativos de
+# NOK+SPCX+DRAM+TSLA a data/bars_*.txt; los bots los leen via "alpaca_ws_bridge read SYM"
+if ! pgrep -f "alpaca_ws_bridge NOK" >/dev/null && [[ -x "$ROOT/alpaca_ws_bridge" ]]; then
+  nohup "$ROOT/alpaca_ws_bridge" NOK SPCX DRAM TSLA NVDA TXN TSM AMD INTC ASML AAPL GLD QQQ >>"$ROOT/ws_daemon.log" 2>&1 &
+  log "alpaca_ws_bridge daemon relanzado (pid $!)"
+fi
+
+# email/telegram ELIMINADOS (Yunior 2026-07-10): solo Mac, fleet_notify.h C++
 
 if ! pgrep -f "topgainer/heartbeat.sh" >/dev/null; then
   nohup zsh "$ROOT/topgainer/heartbeat.sh" >/dev/null 2>&1 &

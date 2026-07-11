@@ -30,12 +30,43 @@
 struct Bar { double t, o, h, l, c, v; };
 
 // ---- config (mirror of DEFAULT_CONFIG) ----
-static const int    BB_N = 20;      static const double BB_STD = 3.0;
-static const int    RSI_N = 14;     static const double RSI_OS = 25.0;
-static const int    VOL_N = 20;     static const double VOL_MULT = 1.2;
+// ---- params: por-ticker via env TSLA_* (orden Yunior 2026-07-10 "tune per
+// ticker") — un solo set de parametros en 4 microestructuras distintas mata
+// la expectancy; ahora el keepalive exporta el set ajustado por backtest.
+static double envd(const char* k, double d) {
+    const char* v = std::getenv(k);
+    return (v && *v) ? atof(v) : d;
+}
+static const int    BB_N = 20;      static const double BB_STD = envd("TSLA_BB_STD", 3.0);
+static const int    RSI_N = 14;     static const double RSI_OS = envd("TSLA_RSI_OS", 25.0);
+static const int    VOL_N = 20;     static const double VOL_MULT = envd("TSLA_VOL_MULT", 1.2);
 static const int    ATR_N = 14;
 static const int    CONFIRM_WINDOW = 60;
-static const double TARGET_PCT = 4.0, FLOOR_PCT = 1.0, TRAIL_ATR = 3.0;
+static const double TARGET_PCT = envd("TSLA_TARGET", 4.0),
+                    FLOOR_PCT  = envd("TSLA_FLOOR", 1.0),
+                    TRAIL_ATR  = envd("TSLA_TRAIL_ATR", 3.0);
+// HARD STOP alert (orden 2026-07-10): a -TSLA_STOP% del entry el bot GRITA la
+// perdida (SELL-STOP) en vez de callarse a esperar el floor. Humano decide.
+static const double STOP_PCT = envd("TSLA_STOP", 3.0);
+// afinado 2026-07-10 (skills mean-reversion/exit-strategies + estudio 30d):
+// SKIP_OPEN: min tras 9:30 sin entradas (los arms del open eran subasta);
+// TIME_STOP_MIN: trade que no revirtio en N min = hipotesis muerta -> eject;
+// EOD_FORCE: 15:45 plano SIEMPRE (sin bag overnight; para SPCX obligatorio);
+// CONFIRM_STRICT: bar de confirmacion con volumen>=volMA y close en mitad alta;
+// MAX_DAY: entradas max por dia (0 = sin limite).
+static const double SKIP_OPEN      = envd("TSLA_SKIP_OPEN", 0);
+static const double TIME_STOP_MIN  = envd("TSLA_TIME_STOP_MIN", 0);
+static const double EOD_FORCE      = envd("TSLA_EOD_FORCE", 0);
+static const double CONFIRM_STRICT = envd("TSLA_CONFIRM_STRICT", 0);
+static const double MAX_DAY        = envd("TSLA_MAX_DAY", 0);
+// posicion virtual PERSISTIDA (fix 2026-07-10: un restart perdia la posicion
+// y los SELL se desincronizaban de lo que Yunior realmente tiene)
+static const char* POS_FILE = "data/pos_tsla.txt";
+static bool g_pos_restored = false;
+static void save_pos(double e, double pk, double fl, double tg, double ep) {
+    FILE* f = fopen(POS_FILE, "w");
+    if (f) { fprintf(f, "%f %f %f %f %f\n", e, pk, fl, tg, ep); fclose(f); }
+}
 
 // ---- shell safety: whitelist filter for anything interpolated into system()
 // Solo alnum + " .,%+-:/()_"; todo lo demas -> espacio. Sin comillas, $, `,
@@ -99,27 +130,25 @@ static void play(const char* f, const char* fb) {
     std::system(cmd);
 }
 
-// ---- notifications: Mac (osascript) + ops log (solo Mac desde 2026-07-09)
+#include "fleet_notify.h"
+
+// ---- notifications: Mac (posix_spawn C++) + ops log (solo Mac desde 2026-07-09)
 static void notify(const char* title, const char* msg, bool urgent) {
-    char st[128], sm[512], cmd[1024];
-    sh_sanitize(title, st, sizeof(st));
-    sh_sanitize(msg, sm, sizeof(sm));
-    // 1) macOS notification center — solo tiempo real (warm-up no banners)
-    if (bar_is_live()) {
-        std::snprintf(cmd, sizeof(cmd),
-            "osascript -e 'display notification \"%s\" with title \"%s\" sound name \"Glass\"' "
-            ">/dev/null 2>&1 &", sm, st);
-        std::system(cmd);
-    }
-    // phone push (ntfy) removido 2026-07-09: solo Mac, por orden de Yunior
-    (void)urgent;
+    // 1) banner Mac URGENTE via posix_spawn C++ (Yunior 2026-07-10: todas las
+    //    notificaciones urgentes, sin shell) — solo tiempo real (warm-up no banners)
+    // MONEY-ONLY banners (orden Yunior 2026-07-10): solo BUY/SELL/STOP suenan;
+    // el radar (CUSUM/Supertrend/Donchian) va SOLO al log — ratio ruido:dinero
+    // era 40-160:1 y entrenaba a ignorar la urgencia.
+    // Posicion restaurada de disco: su SELL avisa aunque el bar sea warm-up.
+    if (urgent && (bar_is_live() || g_pos_restored)) fleet_notify_urgent(title, msg);
     // 3) structured operations log
     FILE* f = std::fopen("tsla_operations.log", "a");
     if (f) {
         time_t now = time(nullptr); struct tm lt; localtime_r(&now, &lt);
-        std::fprintf(f, "%04d-%02d-%02d %02d:%02d:%02d | %s | %s\n",
+        std::fprintf(f, "%04d-%02d-%02d %02d:%02d:%02d | %s%s | %s\n",
                      lt.tm_year + 1900, lt.tm_mon + 1, lt.tm_mday,
-                     lt.tm_hour, lt.tm_min, lt.tm_sec, title, msg);
+                     lt.tm_hour, lt.tm_min, lt.tm_sec,
+                     bar_is_live() ? "" : "WARMUP ", title, msg);
         std::fclose(f);
     }
 }
@@ -144,7 +173,8 @@ int main(int argc, char** argv) {
     bool use_stdin = (argc > 1 && !std::strcmp(argv[1], "--stdin"));
     FILE* in = stdin;
     if (!use_stdin) {
-        in = popen("venv/bin/python scripts/ws_bar_bridge.py finnhub TSLA tsla 2>/dev/null", "r");
+        // alpaca ws daemon (C++): Yahoo/delayed PROHIBIDO (Yunior 2026-07-10)
+        in = popen("./alpaca_ws_bridge read TSLA 2>>bridge_tsla.log", "r");
         if (!in) { std::fprintf(stderr, "no bridge\n"); return 1; }
         std::fprintf(stderr, "tsla_signal_bot (C++): bridge TSLA 1m real iniciado\n");
     }
@@ -165,8 +195,17 @@ int main(int argc, char** argv) {
     std::deque<double> dh20, dl20;
     // debounce per alert type
     double last_cusum = 0, last_st = 0, last_don = 0;
-    // virtual position
+    // virtual position (persistida en POS_FILE; sobrevive restarts)
     bool in_pos = false; double entry = 0, peak = 0, floor_px = 0, target_px = 0;
+    double pos_epoch = 0;
+    if (FILE* pf = fopen(POS_FILE, "r")) {
+        if (fscanf(pf, "%lf %lf %lf %lf %lf",
+                   &entry, &peak, &floor_px, &target_px, &pos_epoch) == 5 && entry > 0) {
+            in_pos = true; g_pos_restored = true;
+            fprintf(stderr, "posicion restaurada de disco: entry %.4f\n", entry);
+        }
+        fclose(pf);
+    }
 
     char line[512]; Bar b;
     while (std::fgets(line, sizeof(line), in)) {
@@ -205,7 +244,8 @@ int main(int argc, char** argv) {
         }
 
         int H, M; et_hm(b.t, H, M);
-        bool rth_entry = (H > 9 || (H == 9 && M >= 30)) && (H < 15 || (H == 15 && M < 30));
+        int mins = H * 60 + M;
+        bool rth_entry = mins >= 570 + (int)SKIP_OPEN && mins < 930;
         bool alert_hours = (H >= 4) && (H < 20);   // pre/post incluidos para ALERTAS
 
         // ===== DETECTION LAYERS =====
@@ -224,14 +264,12 @@ int main(int argc, char** argv) {
                         std::printf("[%02d:%02d] CUSUM: TSLA SUBIENDO fuerte (+%.2f%% acumulado) px %.2f\n",
                                     H, M, cusum_up * 100, b.c);
                         std::fflush(stdout);
-                        if (audio_gate(false)) { play("sounds/momentum_up.wav", "Ping"); speak("Tesla rising fast"); }
                         { char m[160]; std::snprintf(m, sizeof(m), "CUSUM: subiendo fuerte %+.2f%% px %.2f", cusum_up*100, b.c); notify("TSLA alza", m, false); }
                         cusum_up = 0; cusum_dn = 0; last_cusum = b.t;
                     } else if (cusum_dn < -hthr) {
                         std::printf("[%02d:%02d] CUSUM: TSLA CAYENDO fuerte (%.2f%% acumulado) px %.2f\n",
                                     H, M, cusum_dn * 100, b.c);
                         std::fflush(stdout);
-                        if (audio_gate(false)) { play("sounds/momentum_down.wav", "Basso"); speak("Tesla falling fast"); }
                         { char m[160]; std::snprintf(m, sizeof(m), "CUSUM: cayendo fuerte %.2f%% px %.2f", cusum_dn*100, b.c); notify("TSLA caida", m, false); }
                         cusum_up = 0; cusum_dn = 0; last_cusum = b.t;
                     }
@@ -239,7 +277,7 @@ int main(int argc, char** argv) {
             }
             last_c_for_ret = b.c;
         }
-        // 2) Supertrend(10,3) sobre barras 5m agregadas (menos ruido que 1m)
+        // 2) Supertrend 5m: bandas mid +/- 4.0*ATR5(10) (menos ruido que 1m)
         static double a5o = 0, a5h = -1e18, a5l = 1e18, a5c = 0; static int a5n = 0;
         static double atr5 = 0, prev5c = 0; static long n5 = 0;
         if (a5n == 0) { a5o = b.o; a5h = b.h; a5l = b.l; }
@@ -268,11 +306,9 @@ int main(int argc, char** argv) {
             if (st_trend != 0 && nt != st_trend && alert_hours && b.t - last_st > 3600) {
                 if (nt > 0) {
                     std::printf("[%02d:%02d] SUPERTREND: tendencia TSLA cambio a ALCISTA px %.2f\n", H, M, b.c);
-                    if (audio_gate(false)) { play("sounds/momentum_up.wav", "Ping"); speak("Tesla trend is now up"); }
                     { char m[120]; std::snprintf(m, sizeof(m), "Supertrend: tendencia ALCISTA px %.2f", b.c); notify("TSLA tendencia", m, false); }
                 } else {
                     std::printf("[%02d:%02d] SUPERTREND: tendencia TSLA cambio a BAJISTA px %.2f\n", H, M, b.c);
-                    if (audio_gate(false)) { play("sounds/momentum_down.wav", "Basso"); speak("Tesla trend is now down"); }
                     { char m[120]; std::snprintf(m, sizeof(m), "Supertrend: tendencia BAJISTA px %.2f", b.c); notify("TSLA tendencia", m, false); }
                 }
                 std::fflush(stdout);
@@ -283,7 +319,7 @@ int main(int argc, char** argv) {
             prev_c2 = bc;
         }
         if (bar5) { a5n = 0; prev5c = a5c; a5h = -1e18; a5l = 1e18; }
-        // 3) Donchian(20): ruptura del rango previo (Turtle)
+        // 3) Donchian 390x1m (~sesion completa): ruptura del rango del dia
         if ((int)dh20.size() == 390 && alert_hours && b.t - last_don > 3600) {
             double hi = -1e18, lo = 1e18;
             for (double x : dh20) hi = std::max(hi, x);
@@ -291,13 +327,11 @@ int main(int argc, char** argv) {
             if (b.c > hi) {
                 std::printf("[%02d:%02d] DONCHIAN: TSLA rompe maximo del dia px %.2f > %.2f\n", H, M, b.c, hi);
                 std::fflush(stdout);
-                if (audio_gate(false)) { play("sounds/momentum_up.wav", "Ping"); speak("Tesla breaking out"); }
                 { char m[120]; std::snprintf(m, sizeof(m), "Donchian: rompe maximo del dia px %.2f", b.c); notify("TSLA breakout", m, false); }
                 last_don = b.t;
             } else if (b.c < lo) {
                 std::printf("[%02d:%02d] DONCHIAN: TSLA rompe minimo del dia px %.2f < %.2f\n", H, M, b.c, lo);
                 std::fflush(stdout);
-                if (audio_gate(false)) { play("sounds/momentum_down.wav", "Basso"); speak("Tesla breaking down"); }
                 { char m[120]; std::snprintf(m, sizeof(m), "Donchian: rompe minimo del dia px %.2f", b.c); notify("TSLA breakdown", m, false); }
                 last_don = b.t;
             }
@@ -306,35 +340,46 @@ int main(int argc, char** argv) {
         dl20.push_back(b.l); if (dl20.size() > 390) dl20.pop_front();
 
         // ---- SELL management on virtual position ----
-        if (in_pos) {
-            if (b.h > peak) peak = b.h;
+        // (bars anteriores al entry restaurado no gestionan la posicion)
+        if (in_pos && b.t >= pos_epoch) {
+            if (b.h > peak) { peak = b.h; save_pos(entry, peak, floor_px, target_px, pos_epoch); }
             bool sold = false; const char* why = "";
-            if (b.h >= target_px) { sold = true; why = "target +4%"; }
+            double exit_px = b.c;   // fill realista: target = limit en target_px
+            if (b.c <= entry * (1 - STOP_PCT / 100.0)) { sold = true; why = "HARD STOP"; }
+            else if (b.h >= target_px) { sold = true; why = "target"; exit_px = target_px; }
             else if (atr > 0 && b.c < peak - TRAIL_ATR * atr && b.c > floor_px) {
                 sold = true; why = "trail 3xATR roto";
+            } else if (TIME_STOP_MIN > 0 && b.t - pos_epoch >= TIME_STOP_MIN * 60 &&
+                       b.c < floor_px) {
+                sold = true; why = "time-stop (no revirtio)";
             } else if (H > 15 || (H == 15 && M >= 45)) {
-                if (b.c >= floor_px) { sold = true; why = "EOD flatten 15:45"; }
+                if (b.c >= floor_px || EOD_FORCE > 0) { sold = true; why = "EOD flatten 15:45"; }
             }
             if (sold) {
                 std::printf("[%02d:%02d] *** TSLA: VENDER *** ~%.2f (%s, entrada %.2f)\n",
-                            H, M, b.c, why, entry);
+                            H, M, exit_px, why, entry);
                 std::fflush(stdout);
                 if (audio_gate(true)) { play("sounds/dram_sell.wav", "Hero"); speak("sell Tesla now"); }
                 { char m[200]; std::snprintf(m, sizeof(m),
                     "VENDER TSLA @ %.2f | %s | entrada %.2f | PnL %+.1f%%",
-                    b.c, why, entry, (b.c / entry - 1) * 100);
-                  notify("TSLA: SELL NOW", m, true); }
-                in_pos = false;
+                    exit_px, why, entry, (exit_px / entry - 1) * 100);
+                  notify(why[0] == 'H' ? "TSLA: SELL-STOP" : "TSLA: SELL NOW", m, true); }
+                in_pos = false; g_pos_restored = false;
+                unlink(POS_FILE);
             }
         }
 
         // ---- BUY: pending fill then arming (mirrors engine order) ----
+        static long entry_day = 0; static int day_entries = 0;
+        if ((long)(b.t / 86400) != entry_day) { entry_day = (long)(b.t / 86400); day_entries = 0; }
         if (pending_buy && !in_pos) {
             pending_buy = false;
-            if (rth_entry) {
+            if (rth_entry && (MAX_DAY == 0 || day_entries < (int)MAX_DAY)) {
                 in_pos = true; entry = b.o; peak = b.h;
                 floor_px = entry * (1 + FLOOR_PCT / 100.0);
                 target_px = entry * (1 + TARGET_PCT / 100.0);
+                pos_epoch = b.t; day_entries++;
+                save_pos(entry, peak, floor_px, target_px, pos_epoch);
                 std::printf("[%02d:%02d] *** TSLA: COMPRAR *** ~%.2f (capitulacion confirmada; "
                             "target %.2f, floor %.2f)\n", H, M, entry, target_px, floor_px);
                 std::fflush(stdout);
@@ -349,7 +394,9 @@ int main(int argc, char** argv) {
             bool capit = b.c <= bb_low && rsi <= RSI_OS && b.v >= vol_ma * VOL_MULT;
             if (capit) { armed = true; armed_high = b.h; armed_rsi = rsi; armed_bar = nbars; }
             else if (armed && nbars - armed_bar <= CONFIRM_WINDOW
-                     && b.c > armed_high && b.c > b.o && rsi > armed_rsi) {
+                     && b.c > armed_high && b.c > b.o && rsi > armed_rsi
+                     && (CONFIRM_STRICT == 0 ||
+                         (b.v >= vol_ma && b.c >= b.l + 0.5 * (b.h - b.l)))) {
                 pending_buy = true; armed = false;
             }
             if (armed && nbars - armed_bar > CONFIRM_WINDOW) armed = false;
