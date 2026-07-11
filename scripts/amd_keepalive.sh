@@ -3,19 +3,19 @@ cd "$(dirname "$0")/.."
 # CONFIG WR-70 (backtest 2026 completo ene-jul, orden Yunior 2026-07-11
 # "all of them should be above 70 percent"): FULL26 69T 60W WR87% +37.0% pf1.5 (OOS 84% +15.7%)
 export AMD_BB_STD=2.0
-export AMD_RSI_OS=30
+export AMD_RSI_OS=35
 export AMD_VOL_MULT=1.2
-export AMD_TARGET=4
-export AMD_TRAIL_ATR=3
+export AMD_TARGET=8.0
+export AMD_TRAIL_ATR=5
 export AMD_STOP=8
 export AMD_TIME_STOP_MIN=0
-export AMD_SKIP_OPEN=5
+export AMD_SKIP_OPEN=0
 # LADO CORTO optimizado (sweep independiente 2026-07-11): cortos trend FULL26 128T 98W WR77% +46.8% pf4.7 (OOS +18.8%; antes +6.3)
 export AMD_SHORTS=1
 export AMD_S_MODE=trend
-export AMD_S_TREND_CUSUM=0.008
-export AMD_S_TARGET=4
-export AMD_S_STOP=2
+export AMD_S_TREND_CUSUM=0.005
+export AMD_S_TARGET=2.0
+export AMD_S_STOP=1.0
 export AMD_S_TRAIL=3
 export AMD_S_TSTOP=0
 export AMD_S_FLOOR=0.5

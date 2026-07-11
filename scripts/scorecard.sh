@@ -11,7 +11,7 @@ for f in dram nok spcx tsla nvda txn tsm amd intc asml aapl gld qqq; do
   L="${f}_operations.log"
   [[ -f $L ]] || continue
   awk -v since="$SINCE" -v sym="${f:u}" '
-    $1 >= since && !/WARMUP/ && /SELL NOW|SELL-STOP|COVER NOW|COVER-STOP|VENDER|CUBRIR/ {
+    $1 >= since && !/WARMUP/ && /SELL NOW|SELL-STOP|COVER NOW|COVER-STOP|SELL PUT|PUT-STOP|VENDER|CUBRIR/ {
       if (match($0, /PnL [+-][0-9.]+%/)) {
         pnl = substr($0, RSTART+4, RLENGTH-5) + 0
         n++; tot += pnl; if (pnl > 0) w++
@@ -19,7 +19,7 @@ for f in dram nok spcx tsla nvda txn tsm amd intc asml aapl gld qqq; do
       }
     }
     $1 >= since && !/WARMUP/ && /BUY NOW|COMPRAR/ { buys++ }
-    $1 >= since && !/WARMUP/ && /SHORT NOW/ { shorts++ }
+    $1 >= since && !/WARMUP/ && /SHORT NOW|BUY PUT/ { shorts++ }
     END {
       if (n + buys == 0) { printf "  %-5s sin señales\n", sym; exit }
       printf "  %-5s %d buys, %d shorts, %d sells (%d wins, %d stops) | PnL total %+.1f%% | media %+.2f%%/trade\n",

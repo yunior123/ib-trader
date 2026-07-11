@@ -26,6 +26,8 @@
 #include <Network/Network.h>
 #include <curl/curl.h>
 #include <dispatch/dispatch.h>
+#include <fcntl.h>
+#include <sys/event.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -87,6 +89,13 @@ static nw_connection_t g_conn;
 static dispatch_semaphore_t g_dead;         // signaled when the connection dies
 static volatile time_t g_last_msg = 0;
 static std::vector<std::string> g_syms;
+// quotes (NBBO) SOLO para nombres finos donde el gate SPREAD_MAX (0.3-0.5%)
+// puede saltar de verdad; los megacaps rondan 1-2 centavos de spread y jamas
+// disparan el gate — suscribirles quotes solo quemaba presupuesto. Limite
+// Alpaca free (evidencia 405 2026-07-11): quotes+trades <= 30 simbolos por
+// conexion (bars NO cuentan: bars13+trades30 fue aceptado). Override:
+// WS_QUOTES="NOK,SPCX,..." en el env del daemon.
+static std::vector<std::string> g_quotes;
 static bool g_subscribed = false;
 // quotes vivos para topgainer_alert (fix 429 2026-07-10: Finnhub free = 60
 // req/min y el poll de 2s sobre el watchlist entero lo reventaba). El alert
@@ -105,7 +114,9 @@ static void check_watch() {                          // corre SIEMPRE en g_q
     for (auto& s : g_syms) want.insert(s);
     std::ifstream f("data/topgainer/ws_watch");
     std::string line;
-    while (std::getline(f, line) && want.size() < 30) {   // 30 syms/conn: 13 flota + 17 watchlist
+    // presupuesto: quotes(g_quotes) + trades(want) <= 30 o Alpaca corta con 405
+    size_t max_trades = 30 > g_quotes.size() ? 30 - g_quotes.size() : 0;
+    while (std::getline(f, line) && want.size() < max_trades) {
         while (!line.empty() && (line.back() == '\r' || line.back() == ' '))
             line.pop_back();
         if (!line.empty()) want.insert(line);
@@ -170,6 +181,56 @@ static void agg_flush(time_t now) {                  // timer 250ms en g_q
         }
 }
 
+// ---- OVERNIGHT 24/5 (orden Yunior 2026-07-11 "24/5 starting at 20h on
+// sundays till 20 on friday"): la sesion Blue Ocean (Dom-Jue 20:00->04:00 ET)
+// NO tiene websocket en el plan free (404 en /v2/boats y /v2/overnight;
+// evidencia 2026-07-11) y feed=overnight solo existe en latest-trades ->
+// poll REST multi-simbolo (UNA request/5s para toda la flota) en cola aparte,
+// ingerido al mismo self-agg. Bares MUESTREADOS: close exacto, volumen
+// subcontado (<=12 muestras/min) — suficiente para CUSUM/terremoto.
+static bool http_get(const std::string& url, std::string& body);
+static std::map<std::string, std::string> g_on_seen;   // sym -> ultimo "t" (solo en g_q)
+
+static bool overnight_now() {
+    time_t now = time(nullptr); struct tm lt; localtime_r(&now, &lt);
+    int wd = lt.tm_wday, h = lt.tm_hour;
+    return (wd <= 4 && h >= 20) || (wd >= 1 && wd <= 5 && h < 4);
+}
+
+static void overnight_ingest(const std::string& body) {   // corre en g_q
+    for (auto& sym : g_syms) {
+        size_t i = body.find("\"" + sym + "\":{");
+        if (i == std::string::npos) continue;
+        size_t end = body.find('}', i);
+        if (end == std::string::npos) continue;
+        std::string obj = body.substr(i, end - i + 1);
+        double p = 0, sz = 0;
+        size_t tq = obj.find("\"t\":\"");
+        if (!num_key(obj, "p", p) || p <= 0 || tq == std::string::npos) continue;
+        std::string ts = obj.substr(tq + 5, obj.find('"', tq + 5) - (tq + 5));
+        if (g_on_seen[sym] == ts) continue;                // mismo print: nada nuevo
+        g_on_seen[sym] = ts;
+        num_key(obj, "s", sz);
+        double ep = iso_epoch(ts.c_str());
+        if (ep > 0) agg_trade(sym, p, sz, (time_t)ep);
+    }
+}
+
+static void overnight_fetch() {                            // corre en cola aparte
+    if (!overnight_now()) return;
+    static std::string url;
+    if (url.empty()) {
+        std::string list;
+        for (auto& s : g_syms) list += (list.empty() ? "" : ",") + s;
+        url = "https://data.alpaca.markets/v2/stocks/trades/latest?symbols=" +
+              list + "&feed=overnight";
+    }
+    std::string body;
+    if (!http_get(url, body)) return;
+    std::string* heap = new std::string(std::move(body));
+    dispatch_async(g_q, ^{ overnight_ingest(*heap); delete heap; });
+}
+
 static void handle_msg(const std::string& m) {
     if (m.find("\"msg\":\"connected\"") != std::string::npos) {
         fprintf(stderr, "ws: connected -> auth\n");
@@ -178,10 +239,13 @@ static void handle_msg(const std::string& m) {
         return;
     }
     if (m.find("\"msg\":\"authenticated\"") != std::string::npos) {
-        std::string list;
+        std::string list, qlist;
         for (auto& s : g_syms) list += (list.empty() ? "\"" : ",\"") + s + "\"";
-        fprintf(stderr, "ws: authenticated -> subscribe bars+quotes [%s]\n", list.c_str());
-        ws_send("{\"action\":\"subscribe\",\"bars\":[" + list + "],\"quotes\":[" + list + "]}");
+        for (auto& s : g_quotes) qlist += (qlist.empty() ? "\"" : ",\"") + s + "\"";
+        fprintf(stderr, "ws: authenticated -> subscribe bars [%s] quotes [%s]\n",
+                list.c_str(), qlist.c_str());
+        ws_send("{\"action\":\"subscribe\",\"bars\":[" + list + "]" +
+                (qlist.empty() ? "" : ",\"quotes\":[" + qlist + "]") + "}");
         return;
     }
     if (m.find("\"T\":\"subscription\"") != std::string::npos) {
@@ -212,7 +276,9 @@ static void handle_msg(const std::string& m) {
         // "EPOCH PRICE USD DIR" (dir por tick-rule; cada bot filtra por su
         // {SYM}_WHALE_USD al puntuar). Archivo truncado al cambiar de dia.
         static std::map<std::string, double> lastpx;
-        static long wday = 0;
+        static std::map<std::string, long> wdays;   // reset diario POR simbolo
+                                                    // (bug: un wday global solo
+                                                    // truncaba el 1er sym del dia)
         for (auto& fs : g_syms)
             if (fs == sym) {
                 double sz = 0; num_key(obj, "s", sz);
@@ -221,7 +287,8 @@ static void handle_msg(const std::string& m) {
                 if (usd >= 50000) {
                     long d = (long)(now / 86400);
                     const char* mode = "a";
-                    if (d != wday) { wday = d; mode = "w"; }
+                    long& wd = wdays[sym];
+                    if (d != wd) { wd = d; mode = "w"; }
                     int dir = 0;
                     auto it = lastpx.find(sym);
                     if (it != lastpx.end())
@@ -347,6 +414,20 @@ static void run_connection() {
 
 static int daemon_main(int argc, char** argv) {
     for (int i = 1; i < argc; ++i) g_syms.push_back(argv[i]);
+    // quotes: WS_QUOTES="A,B,C" o default nombres finos; siempre ∩ g_syms
+    {
+        std::set<std::string> want;
+        if (const char* q = getenv("WS_QUOTES")) {
+            std::string s = q, tok;
+            for (char c : s + ",") {
+                if (c == ',') { if (!tok.empty()) want.insert(tok); tok.clear(); }
+                else if (!isspace((unsigned char)c)) tok += (char)toupper((unsigned char)c);
+            }
+        } else {
+            want = {"DRAM", "SPCX", "NOK", "ASML"};
+        }
+        for (auto& s : g_syms) if (want.count(s)) g_quotes.push_back(s);
+    }
     g_q = dispatch_queue_create("ws", DISPATCH_QUEUE_SERIAL);
     g_dead = dispatch_semaphore_create(0);
     // archivo limpio por arranque: los readers dedupe-an por epoch y el
@@ -355,11 +436,20 @@ static int daemon_main(int argc, char** argv) {
     fprintf(stderr, "alpaca_ws_bridge daemon: %zu syms, feed iex, canal bars "
                     "+ SELF-AGG de trades (bar emitido <=250ms tras cerrar el minuto)\n",
             g_syms.size());
-    // timer 250ms: emite el bar formado apenas su minuto cierra
+    // timer 25ms: emite el bar formado apenas su minuto cierra (bench 2026-07-11
+    // "1ms": el tick de 250ms era el peor caso del pipeline; los stragglers que
+    // pierda los cubre el canal "bars" oficial via dedupe del reader)
     dispatch_source_t tm = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, g_q);
-    dispatch_source_set_timer(tm, DISPATCH_TIME_NOW, 250 * NSEC_PER_MSEC, 50 * NSEC_PER_MSEC);
+    dispatch_source_set_timer(tm, DISPATCH_TIME_NOW, 25 * NSEC_PER_MSEC, 5 * NSEC_PER_MSEC);
     dispatch_source_set_event_handler(tm, ^{ agg_flush(time(nullptr)); });
     dispatch_resume(tm);
+    // timer 5s cola aparte: poll overnight (solo activo Dom20->Vie04 ET;
+    // el curl bloqueante nunca pisa la cola del ws)
+    dispatch_queue_t onq = dispatch_queue_create("overnight", DISPATCH_QUEUE_SERIAL);
+    dispatch_source_t on = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, onq);
+    dispatch_source_set_timer(on, DISPATCH_TIME_NOW, 5 * NSEC_PER_SEC, NSEC_PER_SEC);
+    dispatch_source_set_event_handler(on, ^{ overnight_fetch(); });
+    dispatch_resume(on);
     while (true) {
         run_connection();
         fprintf(stderr, "ws: reintento en 3s\n");
@@ -424,38 +514,133 @@ static double backfill(const std::string& sym) {   // returns last epoch emitted
     return last;
 }
 
-static int reader_main(const std::string& sym) {
-    setvbuf(stdout, nullptr, _IOLBF, 0);   // line-buffered al pipe del bot
-    fprintf(stderr, "%s reader: warm-up REST + follow %s (ws daemon)\n",
-            sym.c_str(), bars_path(sym).c_str());
-    double last = backfill(sym);
-    std::string path = bars_path(sym);
-    long off = 0;
-    while (true) {
-        struct stat st;
-        if (stat(path.c_str(), &st) == 0) {
-            if (st.st_size < off) off = 0;         // daemon reinicio/truncado
-            if (st.st_size > off) {
-                FILE* f = fopen(path.c_str(), "r");
-                if (f) {
-                    fseek(f, off, SEEK_SET);
-                    char line[256];
-                    while (fgets(line, sizeof(line), f)) {
-                        size_t L = strlen(line);
-                        if (!L || line[L - 1] != '\n') break;   // linea a medias
-                        off = ftell(f);
-                        double t, o, h, l, c, v;
-                        if (sscanf(line, "%lf %lf %lf %lf %lf %lf",
-                                   &t, &o, &h, &l, &c, &v) == 6 && t > last) {
-                            printf("%.0f %.4f %.4f %.4f %.4f %.0f\n", t, o, h, l, c, v);
-                            last = t;
-                        }
+// ---- reader DUAL-SOURCE (orden Yunior 2026-07-11 "bots ready for ibkr, use
+// alpaca as fallback"): sigue DOS archivos por simbolo —
+//   primario : data/bars_<sym>_ibkr.txt (bridge TWS, tape SIP completo)
+//   fallback : data/bars_<sym>.txt      (daemon alpaca ws IEX)
+// Regla anti-mezcla de volumen (IEX ~2-5% del SIP; volMA se envenena si las
+// fuentes se alternan por minuto): un bar alpaca se emite AL INSTANTE si el
+// stream ibkr lleva >120s sin producir (hoy: sin subscripcion => siempre), y
+// se retiene HOLD 2s si ibkr esta vivo — el tape premium gana la carrera y
+// alpaca solo cubre el hueco. Dedupe por epoch (t > last), primero gana.
+struct Tail { std::string path; long off = 0; int wfd = -1; };
+
+static bool tail_read(Tail& T, int kq,
+                      void (*sink)(double*, void*), void* ctx) {
+    if (kq >= 0 && T.wfd < 0) {
+        T.wfd = open(T.path.c_str(), O_RDONLY);
+        if (T.wfd >= 0) {
+            struct kevent ev;
+            EV_SET(&ev, T.wfd, EVFILT_VNODE, EV_ADD | EV_CLEAR,
+                   NOTE_WRITE | NOTE_EXTEND | NOTE_DELETE | NOTE_RENAME, 0, nullptr);
+            if (kevent(kq, &ev, 1, nullptr, 0, nullptr) < 0) { close(T.wfd); T.wfd = -1; }
+        }
+    }
+    bool got = false;
+    struct stat st;
+    if (stat(T.path.c_str(), &st) == 0) {
+        if (st.st_size < T.off) T.off = 0;          // daemon reinicio/truncado
+        if (st.st_size > T.off) {
+            FILE* f = fopen(T.path.c_str(), "r");
+            if (f) {
+                fseek(f, T.off, SEEK_SET);
+                char line[256];
+                while (fgets(line, sizeof(line), f)) {
+                    size_t L = strlen(line);
+                    if (!L || line[L - 1] != '\n') break;    // linea a medias
+                    T.off = ftell(f);
+                    double b[6];
+                    if (sscanf(line, "%lf %lf %lf %lf %lf %lf",
+                               &b[0], &b[1], &b[2], &b[3], &b[4], &b[5]) == 6) {
+                        sink(b, ctx);
+                        got = true;
                     }
-                    fclose(f);
                 }
+                fclose(f);
             }
         }
-        usleep(50000);    // 50ms: el daemon emite el bar <=250ms tras el cierre
+    } else if (T.wfd >= 0) { close(T.wfd); T.wfd = -1; }
+    return got;
+}
+
+struct RdState {
+    double last = 0;                 // ultimo epoch emitido (dedupe global)
+    double ibkr_seen = 0;            // wall-clock del ultimo bar ibkr
+    bool   on_ibkr = false;          // fuente activa (solo para el log)
+    struct Held { double b[6]; double due; };
+    std::vector<Held> held;          // bars alpaca retenidos HOLD ms
+};
+
+static void emit_bar(double* b, RdState& S) {
+    if (b[0] <= S.last || b[4] <= 0) return;
+    printf("%.0f %.4f %.4f %.4f %.4f %.0f\n", b[0], b[1], b[2], b[3], b[4], b[5]);
+    S.last = b[0];
+}
+
+static int reader_main(const std::string& sym) {
+    setvbuf(stdout, nullptr, _IOLBF, 0);   // line-buffered al pipe del bot
+    std::string p_al = bars_path(sym);
+    std::string p_ib = "data/bars_" + lower(sym) + "_ibkr.txt";
+    fprintf(stderr, "%s reader: warm-up REST + dual follow %s (SIP prio) | %s\n",
+            sym.c_str(), p_ib.c_str(), p_al.c_str());
+    RdState S;
+    S.last = backfill(sym);
+    Tail t_ib{p_ib}, t_al{p_al};
+    int kq = kqueue();
+    const double IBKR_STALE_S = 120, HOLD_S = 2.0;
+    auto nowf = [] {
+        struct timespec ts; clock_gettime(CLOCK_MONOTONIC, &ts);
+        return ts.tv_sec + ts.tv_nsec * 1e-9;
+    };
+    while (true) {
+        // 1) primario ibkr: emision inmediata
+        struct IbCtx { RdState* S; double now; } ic{&S, nowf()};
+        if (tail_read(t_ib, kq, [](double* b, void* c) {
+                IbCtx* x = (IbCtx*)c;
+                emit_bar(b, *x->S);
+                x->S->ibkr_seen = x->now;
+            }, &ic)) {
+            if (!S.on_ibkr) {
+                fprintf(stderr, "%s reader: fuente -> IBKR SIP\n", sym.c_str());
+                S.on_ibkr = true;
+            }
+        }
+        bool ibkr_live = nowf() - S.ibkr_seen < IBKR_STALE_S && S.ibkr_seen > 0;
+        if (!ibkr_live && S.on_ibkr) {
+            fprintf(stderr, "%s reader: IBKR silente -> fallback alpaca\n", sym.c_str());
+            S.on_ibkr = false;
+        }
+        // 2) fallback alpaca: directo si ibkr muerto, retenido HOLD si vivo
+        struct AlCtx { RdState* S; bool live; double due; } ac{&S, ibkr_live, nowf() + HOLD_S};
+        tail_read(t_al, kq, [](double* b, void* c) {
+            AlCtx* x = (AlCtx*)c;
+            if (!x->live) emit_bar(b, *x->S);
+            else {
+                RdState::Held h; memcpy(h.b, b, sizeof(h.b)); h.due = x->due;
+                x->S->held.push_back(h);
+            }
+        }, &ac);
+        // 3) drena retenidos vencidos (si ibkr ya emitio ese epoch, dedupe los tira)
+        if (!S.held.empty()) {
+            double now = nowf();
+            size_t w = 0;
+            for (auto& h : S.held) {
+                if (h.due <= now || !ibkr_live) emit_bar(h.b, S);
+                else S.held[w++] = h;
+            }
+            S.held.resize(w);
+        }
+        if (kq >= 0 && (t_ib.wfd >= 0 || t_al.wfd >= 0)) {
+            struct kevent ev;
+            struct timespec ts{0, 50 * 1000000};   // 50ms fallback / drena holds
+            int n = kevent(kq, nullptr, 0, &ev, 1, &ts);
+            if (n > 0 && (ev.fflags & (NOTE_DELETE | NOTE_RENAME))) {
+                if ((int)ev.ident == t_ib.wfd) { close(t_ib.wfd); t_ib.wfd = -1; }
+                if ((int)ev.ident == t_al.wfd) { close(t_al.wfd); t_al.wfd = -1; }
+            }
+        } else {
+            usleep(50000);                         // sin kqueue: poll clasico
+        }
     }
 }
 

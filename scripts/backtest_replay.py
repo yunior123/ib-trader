@@ -53,27 +53,27 @@ def run(sym, hist, env_pairs):
     low = sym.lower()
     env = dict(os.environ)
     env.update(dict(p.split("=", 1) for p in env_pairs))
-    for f in (f"data/pos_{low}.txt", f"data/pos_{low}_s.txt"):
-        try:
-            os.remove(os.path.join(ROOT, f))
-        except OSError:
-            pass
-    out = subprocess.run([os.path.join(ROOT, f"{low}_signal_bot"), "--stdin"],
-                         stdin=open(hist), capture_output=True, text=True,
-                         env=env, cwd=ROOT).stdout
+    # cwd AISLADO (fix 2026-07-11): correr en ROOT pisaba data/pos_*.txt
+    # VIVOS de la flota y ensuciaba los ops logs con historia de replay.
+    import tempfile
+    with tempfile.TemporaryDirectory(prefix=f"rp_{low}_") as tmp:
+        os.makedirs(os.path.join(tmp, "data"), exist_ok=True)
+        out = subprocess.run([os.path.join(ROOT, f"{low}_signal_bot"), "--stdin"],
+                             stdin=open(hist), capture_output=True, text=True,
+                             env=env, cwd=tmp).stdout
     sides = {"L": [], "S": []}
     le = se = None
     for line in out.splitlines():
-        m = re.search(r"COMPRAR \*\*\* ~([\d.]+)", line)
+        m = re.search(r": COMPRAR \*\*\* ~([\d.]+)", line)
         if m:
             le = float(m.group(1)); continue
-        m = re.search(r"VENDER \*\*\* ~([\d.]+)", line)
+        m = re.search(r": VENDER \*\*\* ~([\d.]+)", line)
         if m and le:
             sides["L"].append(float(m.group(1)) / le - 1); le = None; continue
-        m = re.search(r"SHORT \*\*\* ~([\d.]+)", line)
+        m = re.search(r": PUT \*\*\* ~([\d.]+)", line)
         if m:
             se = float(m.group(1)); continue
-        m = re.search(r"CUBRIR \*\*\* ~([\d.]+)", line)
+        m = re.search(r"VENDER PUT \*\*\* ~([\d.]+)", line)
         if m and se:
             sides["S"].append(se / float(m.group(1)) - 1); se = None
     for name, lbl in (("L", "LONGS "), ("S", "SHORTS")):

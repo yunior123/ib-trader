@@ -1,0 +1,14 @@
+generated 2026-07-11T13:59:20.038294
+DRAM L74T +81.24% S52T +27.56% bagL=True bagS=False
+NOK L93T +43.06% S58T +32.46% bagL=False bagS=False
+SPCX L19T +27.78% S19T +25.00% bagL=False bagS=False
+TSLA L90T +27.09% S85T +30.38% bagL=False bagS=False
+NVDA L27T +20.48% S44T +12.85% bagL=False bagS=False
+TXN L73T +23.45% S75T +18.57% bagL=False bagS=False
+TSM L16T +30.04% S19T +15.57% bagL=True bagS=False
+AMD L57T +59.42% S53T +27.73% bagL=False bagS=False
+INTC L17T +27.51% S154T +91.66% bagL=False bagS=False
+ASML L32T +54.60% S29T +21.47% bagL=True bagS=False
+AAPL L26T +31.84% S16T +1.66% bagL=False bagS=False
+GLD L34T +3.33% S75T +8.67% bagL=False bagS=False
+QQQ L100T +7.28% S52T +6.98% bagL=False bagS=False

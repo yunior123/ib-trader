@@ -103,6 +103,32 @@ static const double S_RSI_OS    = envd("AAPL_S_RSI_OS", RSI_OS);
 static const double S_VOL_MULT  = envd("AAPL_S_VOL_MULT", VOL_MULT);
 static const double S_SCORE_MIN = envd("AAPL_S_SCORE_MIN", SCORE_MIN);
 static const double S_TCUSUM    = envd("AAPL_S_TREND_CUSUM", TREND_CUSUM);
+
+// ===== PATRONES DE VELAS (orden Yunior 2026-07-11 "signals have also into
+// account candle patterns"; ref TA-Lib CDL*): con {SYM}_CANDLE=1 el bar de
+// confirmacion/entrada debe ADEMAS ser patron direccional — engulfing,
+// hammer/shooting-star o marubozu. 0 = off (regresion byte-identica). El
+// optimizador WFO decide ON/OFF por ticker con datos, no por fe.
+static const double CANDLE   = envd("AAPL_CANDLE", 0);
+static const double S_CANDLE = envd("AAPL_S_CANDLE", CANDLE);
+static bool candle_bull(const Bar& p, const Bar& b) {
+    double body = b.c - b.o, rng = b.h - b.l;
+    if (rng <= 1e-12) return false;
+    bool engulf = b.c > b.o && p.c < p.o && b.c >= p.o && b.o <= p.c;
+    double lower = (b.o < b.c ? b.o : b.c) - b.l;
+    bool hammer = lower >= 2.0 * std::fabs(body) && b.c >= b.l + 0.6 * rng;
+    bool marubozu = body > 0 && body >= 0.8 * rng;
+    return engulf || hammer || marubozu;
+}
+static bool candle_bear(const Bar& p, const Bar& b) {
+    double body = b.o - b.c, rng = b.h - b.l;
+    if (rng <= 1e-12) return false;
+    bool engulf = b.c < b.o && p.c > p.o && b.c <= p.o && b.o >= p.c;
+    double upper = b.h - (b.o > b.c ? b.o : b.c);
+    bool star = upper >= 2.0 * std::fabs(b.c - b.o) && b.c <= b.h - 0.6 * rng;
+    bool marubozu = body > 0 && body >= 0.8 * rng;
+    return engulf || star || marubozu;
+}
 // TERREMOTO banner-grade (orden Yunior 2026-07-11: "detect up and down in
 // ALL of them"): el CUSUM detecta movimientos fuertes en AMBAS direcciones
 // en los 13; con QUAKE_BANNER=1 dejan de ser solo-log y hacen banner+sonido.
@@ -314,7 +340,7 @@ int main(int argc, char** argv) {
         fclose(pf);
     }
 
-    char line[512]; Bar b;
+    char line[512]; Bar b; Bar pb{}; bool has_pb = false;
     while (std::fgets(line, sizeof(line), in)) {
         if (std::sscanf(line, "%lf %lf %lf %lf %lf %lf",
                         &b.t, &b.o, &b.h, &b.l, &b.c, &b.v) != 6) continue;
@@ -358,7 +384,12 @@ int main(int argc, char** argv) {
         int H, M; et_hm(b.t, H, M);
         int mins = H * 60 + M;
         bool rth_entry = mins >= 570 + (int)SKIP_OPEN && mins < 930;
-        bool alert_hours = (H >= 4) && (H < 20);   // pre/post incluidos para ALERTAS
+        // 24/5 (orden Yunior 2026-07-11): alertas Dom 20:00 -> Vie 20:00 ET;
+        // fuera de esa ventana no hay venue US abierto (el gate es defensivo,
+        // los bars solo llegan cuando una sesion imprime)
+        struct tm awd; time_t abt = (time_t)b.t; localtime_r(&abt, &awd);
+        bool alert_hours = !(awd.tm_wday == 6 || (awd.tm_wday == 5 && H >= 20)
+                             || (awd.tm_wday == 0 && H < 20));
 
         // ---- contexto v3: VWAP de sesion (RTH) + Bollinger 15m ----
         static long vday = 0; static double vwap_pv = 0, vwap_v = 0;
@@ -485,7 +516,8 @@ int main(int argc, char** argv) {
             bool don_break = tday_hi > 0 && b.c > tday_hi;
             bool vwap_ok = TREND_VWAP == 0 ||
                            (vwap > 0 && b.c > vwap && vol_ma > 0 && b.v >= vol_ma);
-            if (trend_rth && (flip_up || don_break) && cusum_up >= TREND_CUSUM && vwap_ok) {
+            if (trend_rth && (flip_up || don_break) && cusum_up >= TREND_CUSUM && vwap_ok
+                && (CANDLE == 0 || (has_pb && candle_bull(pb, b)))) {
                 pending_buy = true;
                 std::printf("[%02d:%02d] TREND-ENTRY armado: %s px %.2f (CUSUM +%.2f%%)\n",
                             H, M, flip_up ? "Supertrend flip UP" : "ruptura max del dia",
@@ -498,9 +530,10 @@ int main(int argc, char** argv) {
             bool trend_rth = mins >= 570 + (int)SKIP_OPEN && mins < 930;
             bool flip_dn = st_prev_trend >= 0 && st_trend < 0;
             bool don_break_dn = tday_lo > 0 && b.c < tday_lo;
-            if (trend_rth && (flip_dn || don_break_dn) && cusum_dn <= -S_TCUSUM) {
+            if (trend_rth && (flip_dn || don_break_dn) && cusum_dn <= -S_TCUSUM
+                && (S_CANDLE == 0 || (has_pb && candle_bear(pb, b)))) {
                 pending_short = true;
-                std::printf("[%02d:%02d] TREND-SHORT armado: %s px %.2f (CUSUM %.2f%%)\n",
+                std::printf("[%02d:%02d] TREND-PUT armado: %s px %.2f (CUSUM %.2f%%)\n",
                             H, M, flip_dn ? "Supertrend flip DOWN" : "ruptura min del dia",
                             b.c, cusum_dn * 100);
                 std::fflush(stdout);
@@ -516,7 +549,15 @@ int main(int argc, char** argv) {
             if (b.h > peak) { peak = b.h; save_pos(entry, peak, floor_px, target_px, pos_epoch); }
             bool sold = false; const char* why = "";
             double exit_px = b.c;   // fill realista: target = limit en target_px
-            if (b.c <= entry * (1 - STOP_PCT / 100.0)) { sold = true; why = "HARD STOP"; }
+            double stop_px = entry * (1 - STOP_PCT / 100.0);
+            if (b.c <= stop_px) { sold = true; why = "HARD STOP"; }
+            // bar ambiguo (toco stop Y target en el mismo bar): manda el STOP.
+            // Un limit en target no se asume lleno cuando el bar barrio el
+            // stop; fill pesimista al stop (o al open si abrio por debajo).
+            else if (b.h >= target_px && b.l <= stop_px) {
+                sold = true; why = "HARD STOP (bar ambiguo)";
+                exit_px = std::min(b.o, stop_px);
+            }
             else if (b.h >= target_px) { sold = true; why = "target"; exit_px = target_px; }
             else if (TREND_MODE && st_trend < 0) { sold = true; why = "supertrend flip DOWN"; }
             else if (atr > 0 && b.c < peak - TRAIL_ATR * atr && b.c > floor_px) {
@@ -528,8 +569,8 @@ int main(int argc, char** argv) {
                 if (b.c >= floor_px || EOD_FORCE > 0) { sold = true; why = "EOD flatten 15:45"; }
             }
             if (sold) {
-                std::printf("[%02d:%02d] *** AAPL: VENDER *** ~%.2f (%s, entrada %.2f)\n",
-                            H, M, exit_px, why, entry);
+                std::printf("[%02d:%02d] *** AAPL: VENDER *** ~%.2f (%s, entrada %.2f) t=%.0f\n",
+                            H, M, exit_px, why, entry, b.t);
                 std::fflush(stdout);
                 if (audio_gate(true)) { play("sounds/dram_sell.wav", "Hero"); speak("sell Apple now"); }
                 { char m[200]; std::snprintf(m, sizeof(m),
@@ -549,14 +590,14 @@ int main(int argc, char** argv) {
             if (rth_entry && (MAX_DAY == 0 || day_entries < (int)MAX_DAY)) {
                 if (in_short) {   // reversal: capitulacion confirmada = cubrir corto
                     double px = b.o;
-                    std::printf("[%02d:%02d] *** AAPL: CUBRIR *** ~%.2f (reversal a largo, entrada %.2f)\n",
-                                H, M, px, s_entry);
+                    std::printf("[%02d:%02d] *** AAPL: VENDER PUT *** ~%.2f (reversal a largo, entrada %.2f) t=%.0f\n",
+                                H, M, px, s_entry, b.t);
                     std::fflush(stdout);
-                    if (audio_gate(true)) { play("sounds/dram_buy.wav", "Glass"); speak("cover Apple now"); }
+                    if (audio_gate(true)) { play("sounds/dram_buy.wav", "Glass"); speak("sell Apple put now"); }
                     { char m[200]; std::snprintf(m, sizeof(m),
-                        "CUBRIR AAPL @ %.2f | reversal a largo | entrada %.2f | PnL %+.1f%%",
+                        "VENDER PUT AAPL @ %.2f | reversal a alza | entrada %.2f | mov %+.1f%%",
                         px, s_entry, (s_entry / px - 1) * 100);
-                      notify("AAPL: COVER NOW", m, true); }
+                      notify("AAPL: SELL PUT", m, true); }
                     in_short = false; unlink(SPOS_FILE);
                 }
                 in_pos = true; entry = b.o; peak = b.h;
@@ -565,11 +606,11 @@ int main(int argc, char** argv) {
                 pos_epoch = b.t; day_entries++;
                 save_pos(entry, peak, floor_px, target_px, pos_epoch);
                 std::printf("[%02d:%02d] *** AAPL: COMPRAR *** ~%.2f (capitulacion confirmada; "
-                            "target %.2f, floor %.2f)\n", H, M, entry, target_px, floor_px);
+                            "target %.2f, floor %.2f) t=%.0f\n", H, M, entry, target_px, floor_px, b.t);
                 std::fflush(stdout);
                 if (audio_gate(true)) { play("sounds/dram_buy.wav", "Glass"); speak("buy Apple now"); }
                 { char m[200]; std::snprintf(m, sizeof(m),
-                    "COMPRAR AAPL @ %.2f | target %.2f (+4%%) | floor %.2f | capitulacion confirmada",
+                    "COMPRAR AAPL @ %.2f (shares o CALL) | target %.2f | floor %.2f | capitulacion confirmada",
                     entry, target_px, floor_px);
                   notify("AAPL: BUY NOW", m, true); }
             }
@@ -603,6 +644,7 @@ int main(int argc, char** argv) {
             if (capit) { armed = true; armed_high = b.h; armed_rsi = rsi; armed_bar = nbars; }
             else if (armed && nbars - armed_bar <= CONFIRM_WINDOW
                      && b.c > armed_high && b.c > b.o && rsi > armed_rsi
+                     && (CANDLE == 0 || (has_pb && candle_bull(pb, b)))
                      && (CONFIRM_STRICT == 0 ||
                          (b.v >= vol_ma && b.c >= b.l + 0.5 * (b.h - b.l)))) {
                 double sp = (SPREAD_MAX > 0 && bar_is_live()) ? nbbo_spread_pct() : 0;
@@ -623,7 +665,14 @@ int main(int argc, char** argv) {
             if (in_short && b.t >= spos_epoch) {
                 if (b.l < s_trough) { s_trough = b.l; save_spos(s_entry, s_trough, s_floor, s_target, spos_epoch); }
                 bool cov = false; const char* why = ""; double exit_px = b.c;
-                if (b.c >= s_entry * (1 + S_STOP / 100.0)) { cov = true; why = "HARD STOP"; }
+                double s_stop_px = s_entry * (1 + S_STOP / 100.0);
+                if (b.c >= s_stop_px) { cov = true; why = "HARD STOP"; }
+                // espejo corto del bar ambiguo: si el bar toco cover-stop Y
+                // target, manda el STOP (fill al stop o al open si abrio arriba)
+                else if (b.l <= s_target && b.h >= s_stop_px) {
+                    cov = true; why = "HARD STOP (bar ambiguo)";
+                    exit_px = std::max(b.o, s_stop_px);
+                }
                 else if (b.l <= s_target) { cov = true; why = "target"; exit_px = s_target; }
                 else if (S_MODE_TREND && st_trend > 0) { cov = true; why = "supertrend flip UP"; }
                 else if (atr > 0 && b.c > s_trough + S_TRAIL * atr && b.c < s_floor) {
@@ -635,14 +684,14 @@ int main(int argc, char** argv) {
                     if (b.c <= s_floor || EOD_FORCE > 0) { cov = true; why = "EOD cover 15:45"; }
                 }
                 if (cov) {
-                    std::printf("[%02d:%02d] *** AAPL: CUBRIR *** ~%.2f (%s, entrada %.2f)\n",
-                                H, M, exit_px, why, s_entry);
+                    std::printf("[%02d:%02d] *** AAPL: VENDER PUT *** ~%.2f (%s, entrada %.2f) t=%.0f\n",
+                                H, M, exit_px, why, s_entry, b.t);
                     std::fflush(stdout);
-                    if (audio_gate(true)) { play("sounds/dram_buy.wav", "Ping"); speak("cover Apple now"); }
+                    if (audio_gate(true)) { play("sounds/dram_buy.wav", "Ping"); speak("sell Apple put now"); }
                     { char m[200]; std::snprintf(m, sizeof(m),
-                        "CUBRIR AAPL @ %.2f | %s | entrada %.2f | PnL %+.1f%%",
+                        "VENDER PUT AAPL @ %.2f | %s | entrada %.2f | mov %+.1f%%",
                         exit_px, why, s_entry, (s_entry / exit_px - 1) * 100);
-                      notify(why[0] == 'H' ? "AAPL: COVER-STOP" : "AAPL: COVER NOW", m, true); }
+                      notify(why[0] == 'H' ? "AAPL: PUT-STOP" : "AAPL: SELL PUT", m, true); }
                     in_short = false; g_pos_restored = false;
                     unlink(SPOS_FILE);
                 }
@@ -656,14 +705,14 @@ int main(int argc, char** argv) {
                     s_target = s_entry * (1 - S_TARGET / 100.0);
                     spos_epoch = b.t; sday_entries++;
                     save_spos(s_entry, s_trough, s_floor, s_target, spos_epoch);
-                    std::printf("[%02d:%02d] *** AAPL: SHORT *** ~%.2f (blow-off confirmado; "
-                                "target %.2f, floor %.2f)\n", H, M, s_entry, s_target, s_floor);
+                    std::printf("[%02d:%02d] *** AAPL: PUT *** ~%.2f (blow-off confirmado; "
+                                "target %.2f, floor %.2f) t=%.0f\n", H, M, s_entry, s_target, s_floor, b.t);
                     std::fflush(stdout);
-                    if (audio_gate(true)) { play("sounds/dram_sell.wav", "Basso"); speak("short Apple now"); }
+                    if (audio_gate(true)) { play("sounds/dram_sell.wav", "Basso"); speak("buy Apple put now"); }
                     { char m[200]; std::snprintf(m, sizeof(m),
-                        "SHORT AAPL @ %.2f | target %.2f | floor %.2f | blow-off confirmado",
+                        "COMPRAR PUT AAPL @ %.2f | target %.2f | floor %.2f | senal de BAJADA (blow-off)",
                         s_entry, s_target, s_floor);
-                      notify("AAPL: SHORT NOW", m, true); }
+                      notify("AAPL: BUY PUT", m, true); }
                 }
             }
             // señal corta MR: espejo exacto del largo (euforia -> bar rojo que
@@ -693,6 +742,7 @@ int main(int argc, char** argv) {
                 if (blow) { armed_s = true; armed_low = b.l; armed_rsi_s = rsi; armed_bar_s = nbars; }
                 else if (armed_s && nbars - armed_bar_s <= CONFIRM_WINDOW
                          && b.c < armed_low && b.c < b.o && rsi < armed_rsi_s
+                         && (S_CANDLE == 0 || (has_pb && candle_bear(pb, b)))
                          && (CONFIRM_STRICT == 0 ||
                              (b.v >= vol_ma && b.c <= b.h - 0.5 * (b.h - b.l)))) {
                     double sp = (SPREAD_MAX > 0 && bar_is_live()) ? nbbo_spread_pct() : 0;
@@ -701,6 +751,7 @@ int main(int argc, char** argv) {
                 if (armed_s && nbars - armed_bar_s > CONFIRM_WINDOW) armed_s = false;
             }
         }
+        pb = b; has_pb = true;
     }
     if (!use_stdin) pclose(in);
     return 0;

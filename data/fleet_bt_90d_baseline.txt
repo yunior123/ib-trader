@@ -1,0 +1,150 @@
+... running DRAM
+... running NOK
+... running SPCX
+... running TSLA
+... running NVDA
+... running TXN
+... running TSM
+... running AMD
+... running INTC
+... running ASML
+... running AAPL
+... running GLD
+... running QQQ
+
+========================================================================================
+FLEET BACKTEST — production keepalive params, Alpaca IEX 1m, C++ --stdin
+========================================================================================
+
+## DRAM  bars=22581  2026-04-13 → 2026-07-10  (0.1s)
+   mode=mr shorts=0 target=9.0% stop=6.0%  score=0 eod_force=0
+  LONGS     74T   66W WR   89% tot  +81.24%  pf  2.60  avgW +2.00% avgL -6.33%  stops 8
+  SHORTS   0T   —
+  L-OOS40   30T   25W WR   83% tot  +18.97%  pf  1.61  avgW +2.00% avgL -6.18%  stops 5
+  *** OPEN BAG LONG  entry=63.4000  (unrealized NOT in totals — capital stuck)
+   exits: L:trail 3xATR roto=60, L:HARD STOP=8, L:EOD flatten 15:45=5, L:target=1
+
+## NOK  bars=26453  2026-04-13 → 2026-07-10  (0.1s)
+   mode=mr shorts=0 target=4.0% stop=8%  score=0 eod_force=0
+  LONGS      6T    6W WR  100% tot  +12.48%  pf 99.00  avgW +2.08% avgL -0.00%  stops 0
+  SHORTS   0T   —
+  L-OOS40    3T    3W WR  100% tot   +9.01%  pf 99.00  avgW +3.00% avgL -0.00%  stops 0
+   exits: L:trail 3xATR roto=3, L:target=2, L:EOD flatten 15:45=1
+
+## SPCX  bars=7487  2026-06-12 → 2026-07-10  (0.0s)
+   mode=trend shorts=1 target=3.0% stop=0.75%  score=0 eod_force=1
+  LONGS     19T   17W WR   89% tot  +27.78%  pf 18.33  avgW +1.73% avgL -0.80%  stops 2
+  SHORTS    23T   20W WR   87% tot  +23.76%  pf 10.08  avgW +1.32% avgL -0.87%  stops 0
+  L-OOS40    8T    7W WR   88% tot   +7.23%  pf 10.34  avgW +1.14% avgL -0.77%  stops 1
+  S-OOS40   10T   10W WR  100% tot   +6.49%  pf 99.00  avgW +0.65% avgL -0.00%  stops 0
+   exits: S:supertrend flip UP=13, L:target=8, L:supertrend flip DOWN=6, S:trail ATR roto=5, S:EOD cover 15:45=3, L:HARD STOP=2, L:trail 3xATR roto=2, S:target=1
+
+## TSLA  bars=24706  2026-04-13 → 2026-07-10  (0.1s)
+   mode=trend shorts=1 target=3.0% stop=1.2%  score=0 eod_force=1
+  LONGS     90T   66W WR   73% tot  +27.09%  pf  2.36  avgW +0.71% avgL -0.83%  stops 12
+  SHORTS    87T   67W WR   77% tot  +24.23%  pf  3.01  avgW +0.54% avgL -0.60%  stops 2
+  L-OOS40   36T   24W WR   67% tot   +5.19%  pf  1.41  avgW +0.74% avgL -1.04%  stops 8
+  S-OOS40   35T   28W WR   80% tot  +15.60%  pf  7.93  avgW +0.64% avgL -0.32%  stops 0
+   exits: L:supertrend flip DOWN=38, L:trail 3xATR roto=31, S:supertrend flip UP=29, S:target=23, S:trail ATR roto=21, L:HARD STOP=11, S:reversal a largo=8, L:target=7
+
+## NVDA  bars=24806  2026-04-13 → 2026-07-10  (0.1s)
+   mode=mr shorts=1 target=4% stop=8%  score=0.66 eod_force=0
+  LONGS     27T   25W WR   93% tot  +20.48%  pf  2.28  avgW +1.46% avgL -8.03%  stops 2
+  SHORTS    43T   35W WR   81% tot  +11.96%  pf  5.27  avgW +0.42% avgL -0.35%  stops 3
+  L-OOS40   11T   10W WR   91% tot   +6.26%  pf  1.78  avgW +1.43% avgL -8.04%  stops 1
+  S-OOS40   18T   14W WR   78% tot   +3.64%  pf  3.86  avgW +0.35% avgL -0.32%  stops 1
+   exits: L:trail 3xATR roto=21, S:supertrend flip UP=20, S:target=11, S:reversal a largo=9, L:EOD flatten 15:45=3, S:HARD STOP=3, L:HARD STOP=2, L:target=1
+
+## TXN  bars=20646  2026-04-13 → 2026-07-10  (0.1s)
+   mode=trend shorts=1 target=0.5% stop=1.2%  score=0 eod_force=1
+  LONGS     96T   79W WR   82% tot  +20.94%  pf  2.92  avgW +0.40% avgL -0.64%  stops 7
+  SHORTS    81T   67W WR   83% tot  +10.87%  pf  3.53  avgW +0.23% avgL -0.31%  stops 0
+  L-OOS40   39T   34W WR   87% tot  +12.91%  pf  6.62  avgW +0.45% avgL -0.46%  stops 1
+  S-OOS40   33T   25W WR   76% tot   +4.08%  pf  3.27  avgW +0.24% avgL -0.22%  stops 0
+   exits: L:target=56, S:target=55, L:supertrend flip DOWN=24, S:supertrend flip UP=19, L:trail 3xATR roto=9, L:HARD STOP=7, S:reversal a largo=6, S:EOD cover 15:45=1
+
+## TSM  bars=24095  2026-04-13 → 2026-07-10  (0.1s)
+   mode=mr shorts=1 target=8.0% stop=8%  score=0.78 eod_force=0
+  LONGS     16T   16W WR  100% tot  +30.04%  pf 99.00  avgW +1.88% avgL -0.00%  stops 0
+  SHORTS    20T   15W WR   75% tot  +13.52%  pf  1.99  avgW +1.81% avgL -2.73%  stops 1
+  L-OOS40    7T    7W WR  100% tot  +14.15%  pf 99.00  avgW +2.02% avgL -0.00%  stops 0
+  S-OOS40    8T    5W WR   62% tot   -0.45%  pf  0.96  avgW +2.00% avgL -3.49%  stops 1
+  *** OPEN BAG LONG  entry=438.8400  (unrealized NOT in totals — capital stuck)
+   exits: L:trail 3xATR roto=13, S:trail ATR roto=8, S:reversal a largo=7, L:EOD flatten 15:45=3, S:target=2, S:EOD cover 15:45=2, S:HARD STOP=1
+
+## AMD  bars=23550  2026-04-13 → 2026-07-10  (0.1s)
+   mode=mr shorts=1 target=8.0% stop=8%  score=0 eod_force=0
+  LONGS     57T   50W WR   88% tot  +59.42%  pf  2.02  avgW +2.36% avgL -8.35%  stops 7
+  SHORTS    47T   40W WR   85% tot  +24.00%  pf  6.38  avgW +0.71% avgL -0.64%  stops 1
+  L-OOS40   23T   20W WR   87% tot  +34.06%  pf  2.37  avgW +2.94% avgL -8.27%  stops 3
+  S-OOS40   19T   15W WR   79% tot  +11.91%  pf  6.45  avgW +0.94% avgL -0.55%  stops 0
+   exits: L:trail 3xATR roto=39, S:supertrend flip UP=30, L:EOD flatten 15:45=9, S:trail ATR roto=8, S:reversal a largo=8, L:HARD STOP=7, L:target=2, S:HARD STOP=1
+
+## INTC  bars=24739  2026-04-13 → 2026-07-10  (0.1s)
+   mode=mr shorts=1 target=8.0% stop=8%  score=0 eod_force=0
+  LONGS     17T   15W WR   88% tot  +27.51%  pf  4.88  avgW +2.31% avgL -3.54%  stops 5
+  SHORTS   161T  125W WR   78% tot  +95.55%  pf  3.78  avgW +1.04% avgL -0.96%  stops 20
+  L-OOS40    7T    5W WR   71% tot   +7.69%  pf  2.09  avgW +2.96% avgL -3.54%  stops 2
+  S-OOS40   65T   49W WR   75% tot  +37.50%  pf  3.08  avgW +1.13% avgL -1.13%  stops 10
+   exits: S:target=61, S:supertrend flip UP=61, S:time-stop (no cayo)=18, S:trail ATR roto=9, L:trail 3xATR roto=6, S:reversal a largo=5, L:time-stop (no revirtio)=5, S:EOD cover 15:45=5
+
+## ASML  bars=21402  2026-04-13 → 2026-07-10  (0.1s)
+   mode=mr shorts=1 target=8.0% stop=8.0%  score=0 eod_force=0
+  LONGS     15T   15W WR  100% tot  +30.27%  pf 99.00  avgW +2.02% avgL -0.00%  stops 0
+  SHORTS    48T   32W WR   67% tot   +5.74%  pf  1.14  avgW +1.44% avgL -2.52%  stops 16
+  L-OOS40    6T    6W WR  100% tot  +12.00%  pf 99.00  avgW +2.00% avgL -0.00%  stops 0
+  S-OOS40   20T   14W WR   70% tot   +2.25%  pf  1.15  avgW +1.22% avgL -2.48%  stops 6
+  *** OPEN BAG LONG  entry=1838.4600  (unrealized NOT in totals — capital stuck)
+   exits: S:trail ATR roto=20, S:HARD STOP=16, L:trail 3xATR roto=12, S:reversal a largo=9, L:EOD flatten 15:45=3, S:EOD cover 15:45=2, S:target=1
+
+## AAPL  bars=24907  2026-04-13 → 2026-07-10  (0.1s)
+   mode=mr shorts=0 target=4.0% stop=2.0%  score=0 eod_force=0
+  LONGS     26T   24W WR   92% tot  +31.84%  pf  8.48  avgW +1.50% avgL -2.13%  stops 2
+  SHORTS   0T   —
+  L-OOS40   11T    9W WR   82% tot  +10.43%  pf  3.45  avgW +1.63% avgL -2.13%  stops 2
+   exits: L:trail 3xATR roto=18, L:EOD flatten 15:45=4, L:target=2, L:HARD STOP=2
+
+## GLD  bars=18983  2026-04-13 → 2026-07-10  (0.1s)
+   mode=mr shorts=1 target=1.2% stop=0.75%  score=0 eod_force=1
+  LONGS     34T   25W WR   74% tot   +3.33%  pf  1.81  avgW +0.30% avgL -0.46%  stops 12
+  SHORTS   109T   78W WR   72% tot   +8.40%  pf  2.43  avgW +0.18% avgL -0.19%  stops 9
+  L-OOS40   14T    9W WR   64% tot   -0.72%  pf  0.74  avgW +0.22% avgL -0.55%  stops 5
+  S-OOS40   44T   33W WR   75% tot   +5.06%  pf  2.78  avgW +0.24% avgL -0.26%  stops 4
+   exits: S:supertrend flip UP=46, S:trail ATR roto=36, L:trail 3xATR roto=13, S:HARD STOP=9, S:reversal a largo=9, L:time-stop (no revirtio)=8, L:EOD flatten 15:45=8, S:EOD cover 15:45=7
+
+## QQQ  bars=25235  2026-04-13 → 2026-07-10  (0.1s)
+   mode=trend shorts=1 target=0.5% stop=0.8%  score=0 eod_force=1
+  LONGS    100T   77W WR   77% tot   +7.28%  pf  1.86  avgW +0.20% avgL -0.37%  stops 7
+  SHORTS    77T   49W WR   64% tot   +7.10%  pf  2.17  avgW +0.27% avgL -0.22%  stops 11
+  L-OOS40   40T   30W WR   75% tot   +0.91%  pf  1.16  avgW +0.22% avgL -0.58%  stops 7
+  S-OOS40   31T   23W WR   74% tot   +4.80%  pf  3.24  avgW +0.30% avgL -0.27%  stops 1
+   exits: L:trail 3xATR roto=44, L:supertrend flip DOWN=37, S:supertrend flip UP=31, S:target=18, S:time-stop (no cayo)=11, S:reversal a largo=10, L:target=10, L:HARD STOP=6
+
+========================================================================================
+PORTFOLIO SUMMARY (sum of per-ticker closed trade returns — not capital-weighted)
+========================================================================================
+SYM     L_T  L_WR    L_tot  S_T  S_WR    S_tot   BAG      ALL
+DRAM     74   89%   +81.2%    0    0%    +0.0%     L   +81.2%
+NOK       6  100%   +12.5%    0    0%    +0.0%     -   +12.5%
+SPCX     19   89%   +27.8%   23   87%   +23.8%     -   +51.5%
+TSLA     90   73%   +27.1%   87   77%   +24.2%     -   +51.3%
+NVDA     27   93%   +20.5%   43   81%   +12.0%     -   +32.4%
+TXN      96   82%   +20.9%   81   83%   +10.9%     -   +31.8%
+TSM      16  100%   +30.0%   20   75%   +13.5%     L   +43.6%
+AMD      57   88%   +59.4%   47   85%   +24.0%     -   +83.4%
+INTC     17   88%   +27.5%  161   78%   +95.6%     -  +123.1%
+ASML     15  100%   +30.3%   48   67%    +5.7%     L   +36.0%
+AAPL     26   92%   +31.8%    0    0%    +0.0%     -   +31.8%
+GLD      34   74%    +3.3%  109   72%    +8.4%     -   +11.7%
+QQQ     100   77%    +7.3%   77   64%    +7.1%     -   +14.4%
+
+Sum closed long R:  +379.72%
+Sum closed short R: +225.12%
+Sum closed ALL R:   +604.84%
+Tickers ending in open bag: 3
+
+NOTE: returns are uncompounded sum of trade % (full-cash assumption each trade).
+NOTE: no commissions/slippage modeled in C++ signal PnL.
+NOTE: IEX tape = incomplete volume/gaps vs SIP — live fills worse.
+
+Wrote /Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/data/fleet_bt_summary.txt

@@ -15,10 +15,10 @@ export GLD_SKIP_OPEN=5
 # LADO CORTO optimizado (sweep independiente 2026-07-11): cortos trend FULL26 190T 142W WR75% +32.0% pf4.3 (antes +2.4%)
 export GLD_SHORTS=1
 export GLD_S_MODE=trend
-export GLD_S_TREND_CUSUM=0.008
-export GLD_S_TARGET=1.0
-export GLD_S_STOP=0.8
-export GLD_S_TRAIL=2
+export GLD_S_TREND_CUSUM=0.005
+export GLD_S_TARGET=0.5
+export GLD_S_STOP=0.6
+export GLD_S_TRAIL=3
 export GLD_S_TSTOP=120
 export GLD_S_FLOOR=0.1
 # TERREMOTO banner AMBAS direcciones (orden 2026-07-11 'detect up and down
@@ -28,6 +28,8 @@ export GLD_QUAKE_MIN=0.01
 # live: gate de spread NBBO + umbral whale (v3)
 export GLD_SPREAD_MAX=0.3
 export GLD_WHALE_USD=250000
+# WFO v2 2026-07-11: 90d Alpaca, seleccion solo-train, OOS intacto, velas
+export GLD_S_CANDLE=1
 while true; do
   pkill -x gld_signal_bot 2>/dev/null
   pkill -f "alpaca_ws_bridge read GLD" 2>/dev/null
