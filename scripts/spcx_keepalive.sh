@@ -12,6 +12,9 @@ export SPCX_FLOOR=0.5
 export SPCX_EOD_FORCE=1
 export SPCX_MAX_DAY=2
 export SPCX_SKIP_OPEN=15
+# live: gate de spread NBBO + umbral whale (v3)
+export SPCX_SPREAD_MAX=0.3
+export SPCX_WHALE_USD=100000
 while true; do
   pkill -x spcx_signal_bot 2>/dev/null
   pkill -f "alpaca_ws_bridge read SPCX" 2>/dev/null

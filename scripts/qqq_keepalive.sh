@@ -13,6 +13,9 @@ export QQQ_FLOOR=0.1
 export QQQ_SKIP_OPEN=15
 export QQQ_EOD_FORCE=1
 export QQQ_TIME_STOP_MIN=0
+# live: gate de spread NBBO + umbral whale (v3)
+export QQQ_SPREAD_MAX=0.3
+export QQQ_WHALE_USD=250000
 while true; do
   pkill -x qqq_signal_bot 2>/dev/null
   pkill -f "alpaca_ws_bridge read QQQ" 2>/dev/null

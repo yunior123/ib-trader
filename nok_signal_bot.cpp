@@ -59,6 +59,53 @@ static const double TIME_STOP_MIN  = envd("NOK_TIME_STOP_MIN", 0);
 static const double EOD_FORCE      = envd("NOK_EOD_FORCE", 0);
 static const double CONFIRM_STRICT = envd("NOK_CONFIRM_STRICT", 0);
 static const double MAX_DAY        = envd("NOK_MAX_DAY", 0);
+// ===== MOTOR v3 CONFLUENCE (orden Yunior 2026-07-11: "bollinger 50% en 1m
+// y 15m, vwap, rsi, volumen, whales, bids/asks — terremoto sin falsos
+// positivos"). SCORE_MIN > 0 activa el arm por confluencia PONDERADA:
+//   0.25 BB-1m(z) + 0.25 BB-15m(z) + 0.15 RSI + 0.15 dist-VWAP + 0.15 vol
+//   + 0.05 whales (solo live, data/whale_*.txt del daemon)
+// SCORE_MIN = 0 (default) -> gate clasico duro, comportamiento previo intacto.
+static const double SCORE_MIN  = envd("NOK_SCORE_MIN", 0);
+static const double WHALE_USD  = envd("NOK_WHALE_USD", 75000);
+// SPREAD_MAX > 0: al confirmar, si el NBBO vivo (data/nbbo_*.txt del daemon)
+// muestra spread% mayor, NO se confirma (proteccion live; backtest no afecta).
+static const double SPREAD_MAX = envd("NOK_SPREAD_MAX", 0);
+// TREND MODE generico (NOK_MODE=trend): flip Supertrend 5m / ruptura max del
+// dia con CUSUM >= TREND_CUSUM; TREND_VWAP=1 exige ademas c>VWAP y vol>=volMA.
+static const bool TREND_MODE = [] {
+    const char* v = std::getenv("NOK_MODE");
+    return v && !std::strcmp(v, "trend");
+}();
+static const double TREND_CUSUM = envd("NOK_TREND_CUSUM", 0.01);
+static const double TREND_VWAP  = envd("NOK_TREND_VWAP", 0);
+static const char* WHALE_FILE = "data/whale_nok.txt";
+static const char* NBBO_FILE  = "data/nbbo_nok.txt";
+
+// ballenas recientes (<=10 min) por encima de WHALE_USD -> 0..1 (solo live)
+static double whale_score(double now) {
+    FILE* f = fopen(WHALE_FILE, "r");
+    if (!f) return 0;
+    double sc = 0; char line[160];
+    while (fgets(line, sizeof(line), f)) {
+        double ep = 0, px = 0, usd = 0; int dir = 0;
+        if (sscanf(line, "%lf %lf %lf %d", &ep, &px, &usd, &dir) >= 3 &&
+            now - ep <= 600 && usd >= WHALE_USD)
+            sc += (dir >= 0 ? 0.5 : 0.25);   // compras pesan doble que ventas
+    }
+    fclose(f);
+    return sc > 1.0 ? 1.0 : sc;
+}
+// spread % del NBBO vivo del daemon; 0 si no hay dato fresco (<=10s)
+static double nbbo_spread_pct() {
+    FILE* f = fopen(NBBO_FILE, "r");
+    if (!f) return 0;
+    double ep = 0, bid = 0, ask = 0;
+    int n = fscanf(f, "%lf %lf %lf", &ep, &bid, &ask);
+    fclose(f);
+    if (n != 3 || bid <= 0 || ask <= bid) return 0;
+    if (time(nullptr) - (time_t)ep > 10) return 0;
+    return (ask - bid) / ((ask + bid) / 2) * 100.0;
+}
 // posicion virtual PERSISTIDA (fix 2026-07-10: un restart perdia la posicion
 // y los SELL se desincronizaban de lo que Yunior realmente tiene)
 static const char* POS_FILE = "data/pos_nok.txt";
@@ -235,11 +282,13 @@ int main(int argc, char** argv) {
 
         closes.push_back(b.c); if ((int)closes.size() > BB_N) closes.pop_front();
         vols.push_back(b.v);   if ((int)vols.size() > VOL_N)  vols.pop_front();
-        double bb_low = 0, vol_ma = 0; bool ind_ok = false;
+        double bb_low = 0, vol_ma = 0, bb_z = 0; bool ind_ok = false;
         if ((int)closes.size() == BB_N && nbars > RSI_N) {
             double mean = 0; for (double x : closes) mean += x; mean /= BB_N;
             double var = 0;  for (double x : closes) var += (x - mean) * (x - mean);
-            bb_low = mean - BB_STD * std::sqrt(var / BB_N);
+            double sd = std::sqrt(var / BB_N);
+            bb_low = mean - BB_STD * sd;
+            if (sd > 1e-12) bb_z = (mean - b.c) / sd;   // + = debajo de la media
             for (double x : vols) vol_ma += x; vol_ma /= VOL_N;
             ind_ok = vol_ma > 0;
         }
@@ -248,6 +297,30 @@ int main(int argc, char** argv) {
         int mins = H * 60 + M;
         bool rth_entry = mins >= 570 + (int)SKIP_OPEN && mins < 930;
         bool alert_hours = (H >= 4) && (H < 20);   // pre/post incluidos para ALERTAS
+
+        // ---- contexto v3: VWAP de sesion (RTH) + Bollinger 15m ----
+        static long vday = 0; static double vwap_pv = 0, vwap_v = 0;
+        if ((long)(b.t / 86400) != vday) { vday = (long)(b.t / 86400); vwap_pv = vwap_v = 0; }
+        if (mins >= 570 && mins < 960) {
+            double tp = (b.h + b.l + b.c) / 3.0;
+            vwap_pv += tp * b.v; vwap_v += b.v;
+        }
+        double vwap = vwap_v > 0 ? vwap_pv / vwap_v : 0;
+        static std::deque<double> c15q; static long cur15 = 0; static double last15c = 0;
+        long bkt15 = (long)(b.t / 900);
+        if (cur15 == 0) cur15 = bkt15;
+        if (bkt15 != cur15) {
+            c15q.push_back(last15c); if (c15q.size() > 20) c15q.pop_front();
+            cur15 = bkt15;
+        }
+        last15c = b.c;
+        double z15 = 0;
+        if (c15q.size() == 20) {
+            double m15 = 0; for (double x : c15q) m15 += x; m15 /= 20;
+            double v15 = 0; for (double x : c15q) v15 += (x - m15) * (x - m15);
+            double sd15 = std::sqrt(v15 / 20);
+            if (sd15 > 1e-9) z15 = (m15 - b.c) / sd15;
+        }
 
         // ===== DETECTION LAYERS =====
         // 1) CUSUM filter (Lopez de Prado): statistical break -> falls/rises of ANY kind
@@ -260,7 +333,8 @@ int main(int argc, char** argv) {
                 double hthr = std::max(8.0 * std::sqrt(ret_var), 0.020);  // 8-sigma y minimo 2%
                 cusum_up = std::max(0.0, cusum_up + r);
                 cusum_dn = std::min(0.0, cusum_dn + r);
-                if (alert_hours && b.t - last_cusum > 3600) {
+                bool vol_ok_radar = vol_ma <= 0 || b.v >= vol_ma;   // terremoto
+                if (alert_hours && vol_ok_radar && b.t - last_cusum > 3600) {
                     if (cusum_up > hthr) {
                         std::printf("[%02d:%02d] CUSUM: NOK SUBIENDO fuerte (+%.2f%% acumulado) px %.2f\n",
                                     H, M, cusum_up * 100, b.c);
@@ -339,6 +413,26 @@ int main(int argc, char** argv) {
         }
         dh20.push_back(b.h); if (dh20.size() > 390) dh20.pop_front();
         dl20.push_back(b.l); if (dl20.size() > 390) dl20.pop_front();
+        // ---- TREND MODE: señal de entrada (generico desde 2026-07-11) ----
+        static int st_prev_trend = 0;
+        static long tday = 0; static double tday_hi = 0;
+        if ((long)(b.t / 86400) != tday) { tday = (long)(b.t / 86400); tday_hi = 0; }
+        if (TREND_MODE && !in_pos && !pending_buy && nbars > 30) {
+            bool trend_rth = mins >= 570 + (int)SKIP_OPEN && mins < 930;
+            bool flip_up = st_prev_trend <= 0 && st_trend > 0;
+            bool don_break = tday_hi > 0 && b.c > tday_hi;
+            bool vwap_ok = TREND_VWAP == 0 ||
+                           (vwap > 0 && b.c > vwap && vol_ma > 0 && b.v >= vol_ma);
+            if (trend_rth && (flip_up || don_break) && cusum_up >= TREND_CUSUM && vwap_ok) {
+                pending_buy = true;
+                std::printf("[%02d:%02d] TREND-ENTRY armado: %s px %.2f (CUSUM +%.2f%%)\n",
+                            H, M, flip_up ? "Supertrend flip UP" : "ruptura max del dia",
+                            b.c, cusum_up * 100);
+                std::fflush(stdout);
+            }
+        }
+        st_prev_trend = st_trend;
+        if (b.h > tday_hi) tday_hi = b.h;
 
         // ---- SELL management on virtual position ----
         // (bars anteriores al entry restaurado no gestionan la posicion)
@@ -348,6 +442,7 @@ int main(int argc, char** argv) {
             double exit_px = b.c;   // fill realista: target = limit en target_px
             if (b.c <= entry * (1 - STOP_PCT / 100.0)) { sold = true; why = "HARD STOP"; }
             else if (b.h >= target_px) { sold = true; why = "target"; exit_px = target_px; }
+            else if (TREND_MODE && st_trend < 0) { sold = true; why = "supertrend flip DOWN"; }
             else if (atr > 0 && b.c < peak - TRAIL_ATR * atr && b.c > floor_px) {
                 sold = true; why = "trail 3xATR roto";
             } else if (TIME_STOP_MIN > 0 && b.t - pos_epoch >= TIME_STOP_MIN * 60 &&
@@ -391,14 +486,43 @@ int main(int argc, char** argv) {
                   notify("NOK: BUY NOW", m, true); }
             }
         }
-        if (ind_ok && !in_pos && !pending_buy && rth_entry) {
-            bool capit = b.c <= bb_low && rsi <= RSI_OS && b.v >= vol_ma * VOL_MULT;
+        if (!TREND_MODE && ind_ok && !in_pos && !pending_buy && rth_entry) {
+            bool capit;
+            if (SCORE_MIN > 0) {
+                // v3: confluencia ponderada — BB pesa 50% (25% 1m + 25% 15m)
+                double s_z1  = std::min(1.0, std::max(0.0, bb_z / BB_STD));
+                double s_z15 = std::min(1.0, std::max(0.0, z15 / 2.0));
+                double s_rsi = std::min(1.0, std::max(0.0, (RSI_OS + 10 - rsi) / 20.0));
+                double atr_pct = b.c > 0 ? atr / b.c : 0;
+                double s_vw = (vwap > 0 && atr_pct > 1e-6)
+                    ? std::min(1.0, std::max(0.0, ((vwap - b.c) / b.c) / (2.0 * atr_pct))) : 0;
+                double s_vol = vol_ma > 0
+                    ? std::min(1.0, std::max(0.0, b.v / vol_ma - 0.8)) : 0;
+                double sc = 0.25 * s_z1 + 0.25 * s_z15 + 0.15 * s_rsi
+                          + 0.15 * s_vw + 0.15 * s_vol;
+                if (bar_is_live()) sc += 0.05 * whale_score(b.t);
+                capit = sc >= SCORE_MIN;
+                if (capit) {
+                    std::printf("[%02d:%02d] v3-ARM score %.2f (z1 %.2f z15 %.2f rsi %.0f "
+                                "vwapd %.2f%% vol %.1fx)\n", H, M, sc, bb_z, z15, rsi,
+                                vwap > 0 ? (vwap - b.c) / b.c * 100 : 0,
+                                vol_ma > 0 ? b.v / vol_ma : 0);
+                    std::fflush(stdout);
+                }
+            } else {
+                capit = b.c <= bb_low && rsi <= RSI_OS && b.v >= vol_ma * VOL_MULT;
+            }
             if (capit) { armed = true; armed_high = b.h; armed_rsi = rsi; armed_bar = nbars; }
             else if (armed && nbars - armed_bar <= CONFIRM_WINDOW
                      && b.c > armed_high && b.c > b.o && rsi > armed_rsi
                      && (CONFIRM_STRICT == 0 ||
                          (b.v >= vol_ma && b.c >= b.l + 0.5 * (b.h - b.l)))) {
-                pending_buy = true; armed = false;
+                double sp = (SPREAD_MAX > 0 && bar_is_live()) ? nbbo_spread_pct() : 0;
+                if (sp > SPREAD_MAX && SPREAD_MAX > 0) {
+                    std::printf("[%02d:%02d] confirm BLOQUEADO: spread %.2f%% > %.2f%%\n",
+                                H, M, sp, SPREAD_MAX);
+                    std::fflush(stdout);
+                } else { pending_buy = true; armed = false; }
             }
             if (armed && nbars - armed_bar > CONFIRM_WINDOW) armed = false;
         }

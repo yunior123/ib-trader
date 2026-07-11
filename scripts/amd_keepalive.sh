@@ -11,6 +11,9 @@ export AMD_TRAIL_ATR=3
 export AMD_STOP=3
 export AMD_SKIP_OPEN=5
 export AMD_TIME_STOP_MIN=240
+# live: gate de spread NBBO + umbral whale (v3)
+export AMD_SPREAD_MAX=0.3
+export AMD_WHALE_USD=250000
 while true; do
   pkill -x amd_signal_bot 2>/dev/null
   pkill -f "alpaca_ws_bridge read AMD" 2>/dev/null

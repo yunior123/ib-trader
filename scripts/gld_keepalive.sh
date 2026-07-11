@@ -13,6 +13,9 @@ export GLD_FLOOR=0.1
 export GLD_SKIP_OPEN=15
 export GLD_EOD_FORCE=1
 export GLD_TIME_STOP_MIN=0
+# live: gate de spread NBBO + umbral whale (v3)
+export GLD_SPREAD_MAX=0.3
+export GLD_WHALE_USD=250000
 while true; do
   pkill -x gld_signal_bot 2>/dev/null
   pkill -f "alpaca_ws_bridge read GLD" 2>/dev/null

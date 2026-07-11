@@ -7,6 +7,9 @@ cd "$(dirname "$0")/.."
 export TXN_STOP=3
 export TXN_SKIP_OPEN=5
 export TXN_TIME_STOP_MIN=240
+# live: gate de spread NBBO + umbral whale (v3)
+export TXN_SPREAD_MAX=0.3
+export TXN_WHALE_USD=250000
 while true; do
   pkill -x txn_signal_bot 2>/dev/null
   pkill -f "alpaca_ws_bridge read TXN" 2>/dev/null

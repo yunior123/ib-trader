@@ -7,6 +7,9 @@ cd "$(dirname "$0")/.."
 export AAPL_STOP=3
 export AAPL_SKIP_OPEN=5
 export AAPL_TIME_STOP_MIN=240
+# live: gate de spread NBBO + umbral whale (v3)
+export AAPL_SPREAD_MAX=0.3
+export AAPL_WHALE_USD=250000
 while true; do
   pkill -x aapl_signal_bot 2>/dev/null
   pkill -f "alpaca_ws_bridge read AAPL" 2>/dev/null

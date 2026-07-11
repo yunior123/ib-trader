@@ -10,6 +10,9 @@ export DRAM_TARGET=6
 export DRAM_TRAIL_ATR=3
 export DRAM_STOP=3
 export DRAM_TIME_STOP_MIN=240
+# live: gate de spread NBBO + umbral whale (v3)
+export DRAM_SPREAD_MAX=0.5
+export DRAM_WHALE_USD=100000
 while true; do
   pkill -x dram_signal_bot 2>/dev/null      # nunca dos motores
   pkill -f "alpaca_ws_bridge read DRAM" 2>/dev/null      # nunca bridges huerfanos

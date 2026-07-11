@@ -47,3 +47,5 @@ fleet_autostart.out
 # compiled fleet binaries (build from .cpp)
 *_signal_bot
 alpaca_ws_bridge
+data/whale_*.txt
+data/nbbo_*.txt

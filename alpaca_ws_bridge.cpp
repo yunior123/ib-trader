@@ -180,8 +180,8 @@ static void handle_msg(const std::string& m) {
     if (m.find("\"msg\":\"authenticated\"") != std::string::npos) {
         std::string list;
         for (auto& s : g_syms) list += (list.empty() ? "\"" : ",\"") + s + "\"";
-        fprintf(stderr, "ws: authenticated -> subscribe bars [%s]\n", list.c_str());
-        ws_send("{\"action\":\"subscribe\",\"bars\":[" + list + "]}");
+        fprintf(stderr, "ws: authenticated -> subscribe bars+quotes [%s]\n", list.c_str());
+        ws_send("{\"action\":\"subscribe\",\"bars\":[" + list + "],\"quotes\":[" + list + "]}");
         return;
     }
     if (m.find("\"T\":\"subscription\"") != std::string::npos) {
@@ -207,13 +207,59 @@ static void handle_msg(const std::string& m) {
         if (sq == std::string::npos || !num_key(obj, "p", p) || p <= 0) continue;
         std::string sym = obj.substr(sq + 5, obj.find('"', sq + 5) - (sq + 5));
         time_t now = time(nullptr);
-        // syms de la flota: armar el bar 1m nosotros (emision al cierre)
+        // syms de la flota: armar el bar 1m nosotros (emision al cierre) +
+        // WHALES (v3 2026-07-11): print >= $50k -> data/whale_<sym>.txt
+        // "EPOCH PRICE USD DIR" (dir por tick-rule; cada bot filtra por su
+        // {SYM}_WHALE_USD al puntuar). Archivo truncado al cambiar de dia.
+        static std::map<std::string, double> lastpx;
+        static long wday = 0;
         for (auto& fs : g_syms)
-            if (fs == sym) { double sz = 0; num_key(obj, "s", sz); agg_trade(sym, p, sz, now); break; }
+            if (fs == sym) {
+                double sz = 0; num_key(obj, "s", sz);
+                agg_trade(sym, p, sz, now);
+                double usd = p * sz;
+                if (usd >= 50000) {
+                    long d = (long)(now / 86400);
+                    const char* mode = "a";
+                    if (d != wday) { wday = d; mode = "w"; }
+                    int dir = 0;
+                    auto it = lastpx.find(sym);
+                    if (it != lastpx.end())
+                        dir = p > it->second ? 1 : (p < it->second ? -1 : 0);
+                    FILE* wf = fopen(("data/whale_" + lower(sym) + ".txt").c_str(), mode);
+                    if (wf) {
+                        fprintf(wf, "%ld %.4f %.0f %d\n", (long)now, p, usd, dir);
+                        fclose(wf);
+                    }
+                }
+                if (sz > 0) lastpx[sym] = p;
+                break;
+            }
         if (now == g_qwrite[sym]) continue;
         g_qwrite[sym] = now;
         FILE* f = fopen(("data/quote_" + lower(sym) + ".txt").c_str(), "w");
         if (f) { fprintf(f, "%ld %.4f\n", (long)now, p); fclose(f); }
+    }
+    // NBBO vivo (v3): quotes "T":"q" -> data/nbbo_<sym>.txt "EPOCH BID ASK"
+    // (throttle 1/s por sym; los bots lo usan como gate de spread al confirmar)
+    size_t qi = 0;
+    while ((qi = m.find("\"T\":\"q\"", qi)) != std::string::npos) {
+        size_t beg = m.rfind('{', qi);
+        size_t end = m.find('}', qi);
+        if (beg == std::string::npos || end == std::string::npos) break;
+        std::string obj = m.substr(beg, end - beg + 1);
+        qi = end + 1;
+        size_t sq = obj.find("\"S\":\"");
+        double bp = 0, ap = 0;
+        if (sq == std::string::npos || !num_key(obj, "bp", bp) ||
+            !num_key(obj, "ap", ap) || bp <= 0 || ap <= bp) continue;
+        std::string sym = obj.substr(sq + 5, obj.find('"', sq + 5) - (sq + 5));
+        static std::map<std::string, time_t> nb_write;
+        time_t now = time(nullptr);
+        if (now == nb_write[sym]) continue;
+        nb_write[sym] = now;
+        FILE* f = fopen(("data/nbbo_" + lower(sym) + ".txt").c_str(), "w");
+        if (f) { fprintf(f, "%ld %.4f %.4f\n", (long)now, bp, ap); fclose(f); }
     }
     // bar objects: {"T":"b","S":"NOK","o":..,"h":..,"l":..,"c":..,"v":..,"t":"..Z",..}
     size_t i = 0;

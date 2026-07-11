@@ -234,6 +234,29 @@ signal_only + touch armed + TOPGAINER_LIVE=1 restaura el trading.
   raro-limpio (BB3/RSI25, solo panico real) + stop/skip-open/time-stop.
   Regla vigente: sin OOS positivo no se shippean params.
 
+## MOTOR v3 CONFLUENCE (2026-07-11, orden "backtest 2026 real, bollinger 50%
+## en 1m y 15m, vwap, whales, bids/asks, terremoto sin falsos positivos")
+- **Arm por confluencia PONDERADA** ({SYM}_SCORE_MIN > 0; 0 = gate clasico
+  intacto): 0.25 BB-1m(z) + 0.25 BB-15m(z) [= Bollinger 50%] + 0.15 RSI +
+  0.15 dist-VWAP(sesion RTH, en ATRs) + 0.15 volumen + 0.05 whales (live).
+  El confirm (reclaim verde) sigue siendo el anti-falso-positivo central.
+- **Daemon v3**: quotes ws de los 13 syms → data/nbbo_*.txt (bid/ask 1/s;
+  gate {SYM}_SPREAD_MAX bloquea confirms con spread ancho, live-only);
+  prints >= $50k → data/whale_*.txt (tick-rule dir; bot filtra {SYM}_WHALE_USD).
+- **Radar CUSUM con gate de volumen** (terremoto: sin volumen no hay alerta).
+- **Backtest 2026 COMPLETO (ene-jul reales IEX), train ene-abr / OOS may-jul**:
+  BASELINES CONFIRMADOS en 2.5 meses OOS: DRAM +28.0%, INTC +23.7%,
+  ASML +13.1%, AMD +10.0%, QQQ trend +3.7% pf1.6, GLD trend +1.5%,
+  SPCX trend +17.5% pf4.8 (vida completa).
+  V3 SHIPPED donde gana OOS: NOK S0.72/RSI25/BB2.5 (+2.25% vs -7.2% del
+  baseline — el unico baseline que FALLO el año), TSM S0.72/RSI35/BB2.0
+  (+10.9% pf1.3), NVDA S0.65/RSI25/BB2.0 (+8.0% pf1.4, WR 54%).
+  RECHAZADO por OOS: v3 en DRAM/INTC/ASML/AMD/TXN/TSLA/AAPL (baseline gana);
+  TREND_VWAP=1 en gld/qqq/spcx (mejora train, degrada OOS = overfit).
+- Regresion verificada: SCORE_MIN=0 reproduce v2 bit a bit (DRAM 20T +20.36%).
+- Los 13 .cpp REGENERADOS del master NOK (drift cero); trend mode ahora
+  generico ({SYM}_MODE=trend + {SYM}_TREND_CUSUM/{SYM}_TREND_VWAP).
+
 ## MOTOR DE SEÑALES v2 (2026-07-10 PM, decisiones de Yunior tras auditoria)
 - **HARD STOP alert**: a -X% del entry (default 3%, env {SYM}_STOP) el bot grita
   "SELL-STOP" en vez de callarse a esperar el floor. La posicion virtual se

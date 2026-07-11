@@ -11,6 +11,9 @@ export INTC_TRAIL_ATR=3
 export INTC_STOP=3
 export INTC_SKIP_OPEN=5
 export INTC_TIME_STOP_MIN=240
+# live: gate de spread NBBO + umbral whale (v3)
+export INTC_SPREAD_MAX=0.3
+export INTC_WHALE_USD=250000
 while true; do
   pkill -x intc_signal_bot 2>/dev/null
   pkill -f "alpaca_ws_bridge read INTC" 2>/dev/null

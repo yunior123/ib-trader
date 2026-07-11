@@ -9,6 +9,9 @@ export TSLA_TARGET=4
 export TSLA_TRAIL_ATR=3
 export TSLA_STOP=1.5
 export TSLA_SKIP_OPEN=5
+# live: gate de spread NBBO + umbral whale (v3)
+export TSLA_SPREAD_MAX=0.3
+export TSLA_WHALE_USD=250000
 while true; do
   pkill -x tsla_signal_bot 2>/dev/null
   pkill -f "alpaca_ws_bridge read TSLA" 2>/dev/null
