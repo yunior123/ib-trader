@@ -19,6 +19,10 @@ export TXN_S_STOP=1.5
 export TXN_S_TRAIL=2
 export TXN_S_TSTOP=0
 export TXN_S_FLOOR=0.1
+# TERREMOTO banner AMBAS direcciones (orden 2026-07-11 'detect up and down
+# in ALL of them'; precision 2026: UP96/DOWN94%, umbral por ticker)
+export TXN_QUAKE_BANNER=1
+export TXN_QUAKE_MIN=0.02
 # live: gate de spread NBBO + umbral whale (v3)
 export TXN_SPREAD_MAX=0.3
 export TXN_WHALE_USD=250000

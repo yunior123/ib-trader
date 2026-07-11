@@ -19,6 +19,10 @@ export AMD_S_STOP=2
 export AMD_S_TRAIL=3
 export AMD_S_TSTOP=0
 export AMD_S_FLOOR=0.5
+# TERREMOTO banner AMBAS direcciones (orden 2026-07-11 'detect up and down
+# in ALL of them'; precision 2026: UP93/DOWN94%, umbral por ticker)
+export AMD_QUAKE_BANNER=1
+export AMD_QUAKE_MIN=0.03
 # live: gate de spread NBBO + umbral whale (v3)
 export AMD_SPREAD_MAX=0.3
 export AMD_WHALE_USD=250000

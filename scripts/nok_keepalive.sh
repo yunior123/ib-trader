@@ -12,6 +12,10 @@ export NOK_TIME_STOP_MIN=0
 export NOK_SKIP_OPEN=5
 # lado corto EVALUADO y APAGADO (sweep 2026: sin config >=70% OOS-limpia
 # — el uptrend 2026 castiga cortos en este nombre); radar avisa igual
+# TERREMOTO banner AMBAS direcciones (orden 2026-07-11 'detect up and down
+# in ALL of them'; precision 2026: UP98/DOWN93%, umbral por ticker)
+export NOK_QUAKE_BANNER=1
+export NOK_QUAKE_MIN=0.03
 # live: gate de spread NBBO + umbral whale (v3)
 export NOK_SPREAD_MAX=0.3
 export NOK_WHALE_USD=150000

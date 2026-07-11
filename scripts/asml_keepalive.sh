@@ -24,6 +24,10 @@ export ASML_S_STOP=2
 export ASML_S_TRAIL=3
 export ASML_S_TSTOP=0
 export ASML_S_FLOOR=0.5
+# TERREMOTO banner AMBAS direcciones (orden 2026-07-11 'detect up and down
+# in ALL of them'; precision 2026: UP98/DOWN95%, umbral por ticker)
+export ASML_QUAKE_BANNER=1
+export ASML_QUAKE_MIN=0.02
 # live: gate de spread NBBO + umbral whale (v3)
 export ASML_SPREAD_MAX=0.3
 export ASML_WHALE_USD=250000

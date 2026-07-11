@@ -234,6 +234,13 @@ signal_only + touch armed + TOPGAINER_LIVE=1 restaura el trading.
   raro-limpio (BB3/RSI25, solo panico real) + stop/skip-open/time-stop.
   Regla vigente: sin OOS positivo no se shippean params.
 
+## TERREMOTO BANNER-GRADE, AMBAS DIRECCIONES, LOS 13 (2026-07-11)
+CUSUM quake promovido de solo-log a banner+sonido ({SYM}_QUAKE_BANNER=1),
+umbral {SYM}_QUAKE_MIN por ticker (backtest 2026: precision 88-99% en AMBAS
+direcciones, TP = el movimiento no retrocede >50% en 30 min, <=10/semana).
+DETECCION universal en los 13 (sube Y baja); tomar POSICION sigue siendo
+solo donde valido OOS (largos 13, cortos 8).
+
 ## v4 AMBAS DIRECCIONES (2026-07-11, "signals when going down and also up")
 Espejo corto completo: euforia sobre banda + RSI sobrecomprado + volumen,
 confirmado por bar rojo que pierde el minimo del bar de euforia -> SHORT NOW;

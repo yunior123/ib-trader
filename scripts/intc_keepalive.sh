@@ -21,6 +21,10 @@ export INTC_S_STOP=4
 export INTC_S_TRAIL=3
 export INTC_S_TSTOP=0
 export INTC_S_FLOOR=0.5
+# TERREMOTO banner AMBAS direcciones (orden 2026-07-11 'detect up and down
+# in ALL of them'; precision 2026: UP94/DOWN99%, umbral por ticker)
+export INTC_QUAKE_BANNER=1
+export INTC_QUAKE_MIN=0.05
 # live: gate de spread NBBO + umbral whale (v3)
 export INTC_SPREAD_MAX=0.3
 export INTC_WHALE_USD=250000

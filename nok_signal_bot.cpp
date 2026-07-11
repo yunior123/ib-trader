@@ -103,6 +103,13 @@ static const double S_RSI_OS    = envd("NOK_S_RSI_OS", RSI_OS);
 static const double S_VOL_MULT  = envd("NOK_S_VOL_MULT", VOL_MULT);
 static const double S_SCORE_MIN = envd("NOK_S_SCORE_MIN", SCORE_MIN);
 static const double S_TCUSUM    = envd("NOK_S_TREND_CUSUM", TREND_CUSUM);
+// TERREMOTO banner-grade (orden Yunior 2026-07-11: "detect up and down in
+// ALL of them"): el CUSUM detecta movimientos fuertes en AMBAS direcciones
+// en los 13; con QUAKE_BANNER=1 dejan de ser solo-log y hacen banner+sonido.
+// QUAKE_MIN = movimiento acumulado minimo (fraccion), afinado por ticker en
+// backtest 2026 para precision >=70% (el movimiento aguanta, no es ruido).
+static const double QUAKE_MIN    = envd("NOK_QUAKE_MIN", 0.02);
+static const double QUAKE_BANNER = envd("NOK_QUAKE_BANNER", 0);
 static const bool S_MODE_TREND = [] {
     const char* v = std::getenv("NOK_S_MODE");
     if (v && !std::strcmp(v, "trend")) return true;
@@ -385,22 +392,22 @@ int main(int argc, char** argv) {
             if (last_c_for_ret > 0) {
                 double r = std::log(b.c / last_c_for_ret);
                 ret_var += (r * r - ret_var) / 50.0;           // EWMA variance
-                double hthr = std::max(8.0 * std::sqrt(ret_var), 0.020);  // 8-sigma y minimo 2%
+                double hthr = std::max(8.0 * std::sqrt(ret_var), QUAKE_MIN);  // 8-sigma y minimo QUAKE_MIN
                 cusum_up = std::max(0.0, cusum_up + r);
                 cusum_dn = std::min(0.0, cusum_dn + r);
                 bool vol_ok_radar = vol_ma <= 0 || b.v >= vol_ma;   // terremoto
                 if (alert_hours && vol_ok_radar && b.t - last_cusum > 3600) {
                     if (cusum_up > hthr) {
-                        std::printf("[%02d:%02d] CUSUM: NOK SUBIENDO fuerte (+%.2f%% acumulado) px %.2f\n",
-                                    H, M, cusum_up * 100, b.c);
+                        std::printf("[%02d:%02d] CUSUM: NOK SUBIENDO fuerte (+%.2f%% acumulado) px %.2f t=%.0f\n",
+                                    H, M, cusum_up * 100, b.c, b.t);
                         std::fflush(stdout);
-                        { char m[160]; std::snprintf(m, sizeof(m), "CUSUM: subiendo fuerte %+.2f%% px %.2f", cusum_up*100, b.c); notify("NOK alza", m, false); }
+                        { char m[160]; std::snprintf(m, sizeof(m), "CUSUM: subiendo fuerte %+.2f%% px %.2f", cusum_up*100, b.c); notify("NOK TERREMOTO ALZA", m, QUAKE_BANNER > 0); }
                         cusum_up = 0; cusum_dn = 0; last_cusum = b.t;
                     } else if (cusum_dn < -hthr) {
-                        std::printf("[%02d:%02d] CUSUM: NOK CAYENDO fuerte (%.2f%% acumulado) px %.2f\n",
-                                    H, M, cusum_dn * 100, b.c);
+                        std::printf("[%02d:%02d] CUSUM: NOK CAYENDO fuerte (%.2f%% acumulado) px %.2f t=%.0f\n",
+                                    H, M, cusum_dn * 100, b.c, b.t);
                         std::fflush(stdout);
-                        { char m[160]; std::snprintf(m, sizeof(m), "CUSUM: cayendo fuerte %.2f%% px %.2f", cusum_dn*100, b.c); notify("NOK caida", m, false); }
+                        { char m[160]; std::snprintf(m, sizeof(m), "CUSUM: cayendo fuerte %.2f%% px %.2f", cusum_dn*100, b.c); notify("NOK TERREMOTO CAIDA", m, QUAKE_BANNER > 0); }
                         cusum_up = 0; cusum_dn = 0; last_cusum = b.t;
                     }
                 }

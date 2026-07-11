@@ -21,6 +21,10 @@ export NVDA_S_STOP=1
 export NVDA_S_TRAIL=2
 export NVDA_S_TSTOP=0
 export NVDA_S_FLOOR=0.5
+# TERREMOTO banner AMBAS direcciones (orden 2026-07-11 'detect up and down
+# in ALL of them'; precision 2026: UP96/DOWN97%, umbral por ticker)
+export NVDA_QUAKE_BANNER=1
+export NVDA_QUAKE_MIN=0.02
 # live: gate de spread NBBO + umbral whale (v3)
 export NVDA_SPREAD_MAX=0.3
 export NVDA_WHALE_USD=250000

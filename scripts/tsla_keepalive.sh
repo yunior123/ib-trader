@@ -14,6 +14,10 @@ export TSLA_EOD_FORCE=1
 export TSLA_TIME_STOP_MIN=0
 # lado corto EVALUADO y APAGADO (sweep 2026: sin config >=70% OOS-limpia
 # — el uptrend 2026 castiga cortos en este nombre); radar avisa igual
+# TERREMOTO banner AMBAS direcciones (orden 2026-07-11 'detect up and down
+# in ALL of them'; precision 2026: UP94/DOWN96%, umbral por ticker)
+export TSLA_QUAKE_BANNER=1
+export TSLA_QUAKE_MIN=0.02
 # live: gate de spread NBBO + umbral whale (v3)
 export TSLA_SPREAD_MAX=0.3
 export TSLA_WHALE_USD=250000

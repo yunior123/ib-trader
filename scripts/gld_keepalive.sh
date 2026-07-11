@@ -21,6 +21,10 @@ export GLD_S_STOP=0.8
 export GLD_S_TRAIL=2
 export GLD_S_TSTOP=120
 export GLD_S_FLOOR=0.1
+# TERREMOTO banner AMBAS direcciones (orden 2026-07-11 'detect up and down
+# in ALL of them'; precision 2026: UP97/DOWN95%, umbral por ticker)
+export GLD_QUAKE_BANNER=1
+export GLD_QUAKE_MIN=0.01
 # live: gate de spread NBBO + umbral whale (v3)
 export GLD_SPREAD_MAX=0.3
 export GLD_WHALE_USD=250000

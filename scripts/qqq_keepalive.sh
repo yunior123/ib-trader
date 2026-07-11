@@ -19,6 +19,10 @@ export QQQ_S_STOP=1.5
 export QQQ_S_TRAIL=3
 export QQQ_S_TSTOP=120
 export QQQ_S_FLOOR=0.1
+# TERREMOTO banner AMBAS direcciones (orden 2026-07-11 'detect up and down
+# in ALL of them'; precision 2026: UP96/DOWN96%, umbral por ticker)
+export QQQ_QUAKE_BANNER=1
+export QQQ_QUAKE_MIN=0.01
 # live: gate de spread NBBO + umbral whale (v3)
 export QQQ_SPREAD_MAX=0.3
 export QQQ_WHALE_USD=250000

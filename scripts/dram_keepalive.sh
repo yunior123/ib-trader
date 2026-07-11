@@ -12,6 +12,10 @@ export DRAM_TIME_STOP_MIN=240
 export DRAM_SKIP_OPEN=0
 # lado corto EVALUADO y APAGADO (sweep 2026: sin config >=70% OOS-limpia
 # — el uptrend 2026 castiga cortos en este nombre); radar avisa igual
+# TERREMOTO banner AMBAS direcciones (orden 2026-07-11 'detect up and down
+# in ALL of them'; precision 2026: UP95/DOWN88%, umbral por ticker)
+export DRAM_QUAKE_BANNER=1
+export DRAM_QUAKE_MIN=0.015
 # live: gate de spread NBBO + umbral whale (v3)
 export DRAM_SPREAD_MAX=0.5
 export DRAM_WHALE_USD=100000

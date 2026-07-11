@@ -12,6 +12,10 @@ export AAPL_TIME_STOP_MIN=0
 export AAPL_SKIP_OPEN=5
 # lado corto EVALUADO y APAGADO (sweep 2026: sin config >=70% OOS-limpia
 # — el uptrend 2026 castiga cortos en este nombre); radar avisa igual
+# TERREMOTO banner AMBAS direcciones (orden 2026-07-11 'detect up and down
+# in ALL of them'; precision 2026: UP97/DOWN99%, umbral por ticker)
+export AAPL_QUAKE_BANNER=1
+export AAPL_QUAKE_MIN=0.015
 # live: gate de spread NBBO + umbral whale (v3)
 export AAPL_SPREAD_MAX=0.3
 export AAPL_WHALE_USD=250000
