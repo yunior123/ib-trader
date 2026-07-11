@@ -10,6 +10,13 @@ export AMD_TRAIL_ATR=3
 export AMD_STOP=8
 export AMD_TIME_STOP_MIN=0
 export AMD_SKIP_OPEN=5
+# LADO CORTO v4 (2026-07-11 'both directions'): cortos FULL26 67T 47W WR70% +16.8% pf1.5 (OOS 69%)
+export AMD_SHORTS=1
+export AMD_S_TARGET=4
+export AMD_S_STOP=2
+export AMD_S_TRAIL=3
+export AMD_S_TSTOP=0
+export AMD_S_FLOOR=0.5
 # live: gate de spread NBBO + umbral whale (v3)
 export AMD_SPREAD_MAX=0.3
 export AMD_WHALE_USD=250000

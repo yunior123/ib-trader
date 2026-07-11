@@ -7,11 +7,11 @@ DAYS="${1:-30}"
 SINCE=$(date -v-${DAYS}d '+%Y-%m-%d')
 
 echo "== scorecard señales de dinero (desde $SINCE, sin WARMUP) =="
-for f in dram nok spcx tsla; do
+for f in dram nok spcx tsla nvda txn tsm amd intc asml aapl gld qqq; do
   L="${f}_operations.log"
   [[ -f $L ]] || continue
   awk -v since="$SINCE" -v sym="${f:u}" '
-    $1 >= since && !/WARMUP/ && /SELL NOW|SELL-STOP|VENDER/ {
+    $1 >= since && !/WARMUP/ && /SELL NOW|SELL-STOP|COVER NOW|COVER-STOP|VENDER|CUBRIR/ {
       if (match($0, /PnL [+-][0-9.]+%/)) {
         pnl = substr($0, RSTART+4, RLENGTH-5) + 0
         n++; tot += pnl; if (pnl > 0) w++
@@ -19,10 +19,11 @@ for f in dram nok spcx tsla; do
       }
     }
     $1 >= since && !/WARMUP/ && /BUY NOW|COMPRAR/ { buys++ }
+    $1 >= since && !/WARMUP/ && /SHORT NOW/ { shorts++ }
     END {
       if (n + buys == 0) { printf "  %-5s sin señales\n", sym; exit }
-      printf "  %-5s %d buys, %d sells (%d wins, %d stops) | PnL total %+.1f%% | media %+.2f%%/trade\n",
-             sym, buys, n, w, stops, tot, n ? tot/n : 0
+      printf "  %-5s %d buys, %d shorts, %d sells (%d wins, %d stops) | PnL total %+.1f%% | media %+.2f%%/trade\n",
+             sym, buys, shorts, n, w, stops, tot, n ? tot/n : 0
     }' "$L"
 done
 echo "(bruto, sin comisiones ~\$1/orden IBKR — restar ~0.1-0.5% por roundtrip segun tamaño)"

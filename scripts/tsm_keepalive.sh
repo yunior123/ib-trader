@@ -10,6 +10,8 @@ export TSM_TRAIL_ATR=3
 export TSM_STOP=8
 export TSM_TIME_STOP_MIN=0
 export TSM_SKIP_OPEN=5
+# lado corto EVALUADO y APAGADO (sweep 2026: sin config >=70% OOS-limpia
+# — el uptrend 2026 castiga cortos en este nombre); radar avisa igual
 # live: gate de spread NBBO + umbral whale (v3)
 export TSM_SPREAD_MAX=0.3
 export TSM_WHALE_USD=250000

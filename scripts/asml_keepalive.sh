@@ -10,6 +10,8 @@ export ASML_TRAIL_ATR=2
 export ASML_STOP=4
 export ASML_TIME_STOP_MIN=0
 export ASML_SKIP_OPEN=5
+# lado corto EVALUADO y APAGADO (sweep 2026: sin config >=70% OOS-limpia
+# — el uptrend 2026 castiga cortos en este nombre); radar avisa igual
 # live: gate de spread NBBO + umbral whale (v3)
 export ASML_SPREAD_MAX=0.3
 export ASML_WHALE_USD=250000

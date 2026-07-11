@@ -12,6 +12,8 @@ export TSLA_FLOOR=0.1
 export TSLA_SKIP_OPEN=15
 export TSLA_EOD_FORCE=1
 export TSLA_TIME_STOP_MIN=0
+# lado corto EVALUADO y APAGADO (sweep 2026: sin config >=70% OOS-limpia
+# — el uptrend 2026 castiga cortos en este nombre); radar avisa igual
 # live: gate de spread NBBO + umbral whale (v3)
 export TSLA_SPREAD_MAX=0.3
 export TSLA_WHALE_USD=250000

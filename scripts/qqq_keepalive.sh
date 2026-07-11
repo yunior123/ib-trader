@@ -12,6 +12,13 @@ export QQQ_FLOOR=0.1
 export QQQ_SKIP_OPEN=15
 export QQQ_EOD_FORCE=1
 export QQQ_TIME_STOP_MIN=0
+# LADO CORTO v4 (2026-07-11 'both directions'): cortos FULL26 151T 111W WR74% +15.4% pf2.5 (OOS 76%)
+export QQQ_SHORTS=1
+export QQQ_S_TARGET=0.5
+export QQQ_S_STOP=1.5
+export QQQ_S_TRAIL=3
+export QQQ_S_TSTOP=120
+export QQQ_S_FLOOR=0.1
 # live: gate de spread NBBO + umbral whale (v3)
 export QQQ_SPREAD_MAX=0.3
 export QQQ_WHALE_USD=250000

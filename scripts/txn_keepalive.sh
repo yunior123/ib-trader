@@ -12,6 +12,13 @@ export TXN_FLOOR=0.1
 export TXN_SKIP_OPEN=15
 export TXN_EOD_FORCE=1
 export TXN_TIME_STOP_MIN=0
+# LADO CORTO v4 (2026-07-11 'both directions'): cortos FULL26 158T 127W WR80% +28.0% pf3.3 (OOS 91%)
+export TXN_SHORTS=1
+export TXN_S_TARGET=0.5
+export TXN_S_STOP=1.5
+export TXN_S_TRAIL=2
+export TXN_S_TSTOP=0
+export TXN_S_FLOOR=0.1
 # live: gate de spread NBBO + umbral whale (v3)
 export TXN_SPREAD_MAX=0.3
 export TXN_WHALE_USD=250000

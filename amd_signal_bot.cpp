@@ -78,11 +78,32 @@ static const bool TREND_MODE = [] {
 }();
 static const double TREND_CUSUM = envd("AMD_TREND_CUSUM", 0.01);
 static const double TREND_VWAP  = envd("AMD_TREND_VWAP", 0);
+// ===== v4 AMBAS DIRECCIONES (orden Yunior 2026-07-11: señales cuando sube
+// Y cuando baja). AMD_SHORTS=1 activa el espejo corto: blow-off arriba de la
+// banda + RSI sobrecomprado + volumen, confirmado por bar rojo que pierde el
+// minimo del bar de euforia -> "SHORT NOW"; gestion simetrica (target abajo,
+// trail sobre el minimo, HARD STOP arriba, EOD cover). En trend mode: flip
+// bajista del Supertrend / ruptura del MINIMO del dia con CUSUM negativo.
+// El lado largo NO se toca (los cortos ceden ante un largo confirmado:
+// cover por reversal). Default 0 -> comportamiento identico byte a byte.
+static const double SHORTS = envd("AMD_SHORTS", 0);
+// exits propios del corto (los mercados caen distinto a como suben);
+// sin definir heredan los del largo
+static const double S_TARGET = envd("AMD_S_TARGET", TARGET_PCT);
+static const double S_STOP   = envd("AMD_S_STOP", STOP_PCT);
+static const double S_TRAIL  = envd("AMD_S_TRAIL", TRAIL_ATR);
+static const double S_FLOOR  = envd("AMD_S_FLOOR", FLOOR_PCT);
+static const double S_TSTOP  = envd("AMD_S_TSTOP", TIME_STOP_MIN);
+static const char* SPOS_FILE = "data/pos_amd_s.txt";
+static void save_spos(double e, double tr, double fl, double tg, double ep) {
+    FILE* f = fopen(SPOS_FILE, "w");
+    if (f) { fprintf(f, "%f %f %f %f %f\n", e, tr, fl, tg, ep); fclose(f); }
+}
 static const char* WHALE_FILE = "data/whale_amd.txt";
 static const char* NBBO_FILE  = "data/nbbo_amd.txt";
 
 // ballenas recientes (<=10 min) por encima de WHALE_USD -> 0..1 (solo live)
-static double whale_score(double now) {
+static double whale_score(double now, int want_dir = 1) {
     FILE* f = fopen(WHALE_FILE, "r");
     if (!f) return 0;
     double sc = 0; char line[160];
@@ -90,7 +111,7 @@ static double whale_score(double now) {
         double ep = 0, px = 0, usd = 0; int dir = 0;
         if (sscanf(line, "%lf %lf %lf %d", &ep, &px, &usd, &dir) >= 3 &&
             now - ep <= 600 && usd >= WHALE_USD)
-            sc += (dir >= 0 ? 0.5 : 0.25);   // compras pesan doble que ventas
+            sc += (dir * want_dir >= 0 ? 0.5 : 0.25);   // el lado buscado pesa doble
     }
     fclose(f);
     return sc > 1.0 ? 1.0 : sc;
@@ -234,6 +255,21 @@ int main(int argc, char** argv) {
     // confirmed-entry state
     bool armed = false; double armed_high = 0, armed_rsi = 0; long armed_bar = 0;
     bool pending_buy = false;
+    // short-entry state (v4, activo solo con SHORTS=1)
+    bool armed_s = false; double armed_low = 0, armed_rsi_s = 0; long armed_bar_s = 0;
+    bool pending_short = false;
+    bool in_short = false; double s_entry = 0, s_trough = 0, s_floor = 0, s_target = 0;
+    double spos_epoch = 0;
+    if (SHORTS > 0) {
+        if (FILE* pf = fopen(SPOS_FILE, "r")) {
+            if (fscanf(pf, "%lf %lf %lf %lf %lf",
+                       &s_entry, &s_trough, &s_floor, &s_target, &spos_epoch) == 5 && s_entry > 0) {
+                in_short = true; g_pos_restored = true;
+                fprintf(stderr, "posicion CORTA restaurada: entry %.4f\n", s_entry);
+            }
+            fclose(pf);
+        }
+    }
     // --- detection layers (alerting, not trading) ---
     // CUSUM (Lopez de Prado structural breaks): all abrupt falls/rises
     double cusum_up = 0, cusum_dn = 0, ret_var = 1e-6;
@@ -282,12 +318,13 @@ int main(int argc, char** argv) {
 
         closes.push_back(b.c); if ((int)closes.size() > BB_N) closes.pop_front();
         vols.push_back(b.v);   if ((int)vols.size() > VOL_N)  vols.pop_front();
-        double bb_low = 0, vol_ma = 0, bb_z = 0; bool ind_ok = false;
+        double bb_low = 0, bb_up = 0, vol_ma = 0, bb_z = 0; bool ind_ok = false;
         if ((int)closes.size() == BB_N && nbars > RSI_N) {
             double mean = 0; for (double x : closes) mean += x; mean /= BB_N;
             double var = 0;  for (double x : closes) var += (x - mean) * (x - mean);
             double sd = std::sqrt(var / BB_N);
             bb_low = mean - BB_STD * sd;
+            bb_up  = mean + BB_STD * sd;
             if (sd > 1e-12) bb_z = (mean - b.c) / sd;   // + = debajo de la media
             for (double x : vols) vol_ma += x; vol_ma /= VOL_N;
             ind_ok = vol_ma > 0;
@@ -415,8 +452,8 @@ int main(int argc, char** argv) {
         dl20.push_back(b.l); if (dl20.size() > 390) dl20.pop_front();
         // ---- TREND MODE: señal de entrada (generico desde 2026-07-11) ----
         static int st_prev_trend = 0;
-        static long tday = 0; static double tday_hi = 0;
-        if ((long)(b.t / 86400) != tday) { tday = (long)(b.t / 86400); tday_hi = 0; }
+        static long tday = 0; static double tday_hi = 0, tday_lo = 0;
+        if ((long)(b.t / 86400) != tday) { tday = (long)(b.t / 86400); tday_hi = 0; tday_lo = 0; }
         if (TREND_MODE && !in_pos && !pending_buy && nbars > 30) {
             bool trend_rth = mins >= 570 + (int)SKIP_OPEN && mins < 930;
             bool flip_up = st_prev_trend <= 0 && st_trend > 0;
@@ -431,8 +468,22 @@ int main(int argc, char** argv) {
                 std::fflush(stdout);
             }
         }
+        if (TREND_MODE && SHORTS > 0 && !in_pos && !in_short && !pending_short &&
+            !pending_buy && nbars > 30) {
+            bool trend_rth = mins >= 570 + (int)SKIP_OPEN && mins < 930;
+            bool flip_dn = st_prev_trend >= 0 && st_trend < 0;
+            bool don_break_dn = tday_lo > 0 && b.c < tday_lo;
+            if (trend_rth && (flip_dn || don_break_dn) && cusum_dn <= -TREND_CUSUM) {
+                pending_short = true;
+                std::printf("[%02d:%02d] TREND-SHORT armado: %s px %.2f (CUSUM %.2f%%)\n",
+                            H, M, flip_dn ? "Supertrend flip DOWN" : "ruptura min del dia",
+                            b.c, cusum_dn * 100);
+                std::fflush(stdout);
+            }
+        }
         st_prev_trend = st_trend;
         if (b.h > tday_hi) tday_hi = b.h;
+        if (tday_lo == 0 || b.l < tday_lo) tday_lo = b.l;
 
         // ---- SELL management on virtual position ----
         // (bars anteriores al entry restaurado no gestionan la posicion)
@@ -471,6 +522,18 @@ int main(int argc, char** argv) {
         if (pending_buy && !in_pos) {
             pending_buy = false;
             if (rth_entry && (MAX_DAY == 0 || day_entries < (int)MAX_DAY)) {
+                if (in_short) {   // reversal: capitulacion confirmada = cubrir corto
+                    double px = b.o;
+                    std::printf("[%02d:%02d] *** AMD: CUBRIR *** ~%.2f (reversal a largo, entrada %.2f)\n",
+                                H, M, px, s_entry);
+                    std::fflush(stdout);
+                    if (audio_gate(true)) { play("sounds/dram_buy.wav", "Glass"); speak("cover A M D now"); }
+                    { char m[200]; std::snprintf(m, sizeof(m),
+                        "CUBRIR AMD @ %.2f | reversal a largo | entrada %.2f | PnL %+.1f%%",
+                        px, s_entry, (s_entry / px - 1) * 100);
+                      notify("AMD: COVER NOW", m, true); }
+                    in_short = false; unlink(SPOS_FILE);
+                }
                 in_pos = true; entry = b.o; peak = b.h;
                 floor_px = entry * (1 + FLOOR_PCT / 100.0);
                 target_px = entry * (1 + TARGET_PCT / 100.0);
@@ -525,6 +588,91 @@ int main(int argc, char** argv) {
                 } else { pending_buy = true; armed = false; }
             }
             if (armed && nbars - armed_bar > CONFIRM_WINDOW) armed = false;
+        }
+
+        // ===== LADO CORTO v4 (señales tambien cuando BAJA) =====
+        if (SHORTS > 0) {
+            static int sday_entries = 0; static long sday = 0;
+            if ((long)(b.t / 86400) != sday) { sday = (long)(b.t / 86400); sday_entries = 0; }
+            // gestion de la posicion corta virtual
+            if (in_short && b.t >= spos_epoch) {
+                if (b.l < s_trough) { s_trough = b.l; save_spos(s_entry, s_trough, s_floor, s_target, spos_epoch); }
+                bool cov = false; const char* why = ""; double exit_px = b.c;
+                if (b.c >= s_entry * (1 + S_STOP / 100.0)) { cov = true; why = "HARD STOP"; }
+                else if (b.l <= s_target) { cov = true; why = "target"; exit_px = s_target; }
+                else if (TREND_MODE && st_trend > 0) { cov = true; why = "supertrend flip UP"; }
+                else if (atr > 0 && b.c > s_trough + S_TRAIL * atr && b.c < s_floor) {
+                    cov = true; why = "trail ATR roto";
+                } else if (S_TSTOP > 0 && b.t - spos_epoch >= S_TSTOP * 60 &&
+                           b.c > s_floor) {
+                    cov = true; why = "time-stop (no cayo)";
+                } else if (H > 15 || (H == 15 && M >= 45)) {
+                    if (b.c <= s_floor || EOD_FORCE > 0) { cov = true; why = "EOD cover 15:45"; }
+                }
+                if (cov) {
+                    std::printf("[%02d:%02d] *** AMD: CUBRIR *** ~%.2f (%s, entrada %.2f)\n",
+                                H, M, exit_px, why, s_entry);
+                    std::fflush(stdout);
+                    if (audio_gate(true)) { play("sounds/dram_buy.wav", "Ping"); speak("cover A M D now"); }
+                    { char m[200]; std::snprintf(m, sizeof(m),
+                        "CUBRIR AMD @ %.2f | %s | entrada %.2f | PnL %+.1f%%",
+                        exit_px, why, s_entry, (s_entry / exit_px - 1) * 100);
+                      notify(why[0] == 'H' ? "AMD: COVER-STOP" : "AMD: COVER NOW", m, true); }
+                    in_short = false; g_pos_restored = false;
+                    unlink(SPOS_FILE);
+                }
+            }
+            // fill del corto pendiente (cede ante un largo abierto)
+            if (pending_short && !in_short && !in_pos) {
+                pending_short = false;
+                if (rth_entry && (MAX_DAY == 0 || sday_entries < (int)MAX_DAY)) {
+                    in_short = true; s_entry = b.o; s_trough = b.l;
+                    s_floor = s_entry * (1 - S_FLOOR / 100.0);
+                    s_target = s_entry * (1 - S_TARGET / 100.0);
+                    spos_epoch = b.t; sday_entries++;
+                    save_spos(s_entry, s_trough, s_floor, s_target, spos_epoch);
+                    std::printf("[%02d:%02d] *** AMD: SHORT *** ~%.2f (blow-off confirmado; "
+                                "target %.2f, floor %.2f)\n", H, M, s_entry, s_target, s_floor);
+                    std::fflush(stdout);
+                    if (audio_gate(true)) { play("sounds/dram_sell.wav", "Basso"); speak("short A M D now"); }
+                    { char m[200]; std::snprintf(m, sizeof(m),
+                        "SHORT AMD @ %.2f | target %.2f | floor %.2f | blow-off confirmado",
+                        s_entry, s_target, s_floor);
+                      notify("AMD: SHORT NOW", m, true); }
+                }
+            }
+            // señal corta MR: espejo exacto del largo (euforia -> bar rojo que
+            // pierde el minimo del bar de euforia con RSI cayendo)
+            if (!TREND_MODE && ind_ok && !in_pos && !in_short && !pending_short &&
+                !pending_buy && rth_entry) {
+                bool blow;
+                if (SCORE_MIN > 0) {
+                    double s_z1  = std::min(1.0, std::max(0.0, -bb_z / BB_STD));
+                    double s_z15 = std::min(1.0, std::max(0.0, -z15 / 2.0));
+                    double s_rsi = std::min(1.0, std::max(0.0,
+                                        (rsi - (100.0 - RSI_OS - 10.0)) / 20.0));
+                    double atr_pct = b.c > 0 ? atr / b.c : 0;
+                    double s_vw = (vwap > 0 && atr_pct > 1e-6)
+                        ? std::min(1.0, std::max(0.0, ((b.c - vwap) / b.c) / (2.0 * atr_pct))) : 0;
+                    double s_vol = vol_ma > 0
+                        ? std::min(1.0, std::max(0.0, b.v / vol_ma - 0.8)) : 0;
+                    double sc = 0.25 * s_z1 + 0.25 * s_z15 + 0.15 * s_rsi
+                              + 0.15 * s_vw + 0.15 * s_vol;
+                    if (bar_is_live()) sc += 0.05 * whale_score(b.t, -1);
+                    blow = sc >= SCORE_MIN;
+                } else {
+                    blow = b.c >= bb_up && rsi >= 100.0 - RSI_OS && b.v >= vol_ma * VOL_MULT;
+                }
+                if (blow) { armed_s = true; armed_low = b.l; armed_rsi_s = rsi; armed_bar_s = nbars; }
+                else if (armed_s && nbars - armed_bar_s <= CONFIRM_WINDOW
+                         && b.c < armed_low && b.c < b.o && rsi < armed_rsi_s
+                         && (CONFIRM_STRICT == 0 ||
+                             (b.v >= vol_ma && b.c <= b.h - 0.5 * (b.h - b.l)))) {
+                    double sp = (SPREAD_MAX > 0 && bar_is_live()) ? nbbo_spread_pct() : 0;
+                    if (!(sp > SPREAD_MAX && SPREAD_MAX > 0)) { pending_short = true; armed_s = false; }
+                }
+                if (armed_s && nbars - armed_bar_s > CONFIRM_WINDOW) armed_s = false;
+            }
         }
     }
     if (!use_stdin) pclose(in);

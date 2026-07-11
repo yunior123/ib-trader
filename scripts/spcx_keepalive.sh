@@ -12,6 +12,13 @@ export SPCX_FLOOR=0.1
 export SPCX_SKIP_OPEN=15
 export SPCX_EOD_FORCE=1
 export SPCX_TIME_STOP_MIN=0
+# LADO CORTO v4 (2026-07-11 'both directions'): cortos vida 26T 22W WR85% +17.2% pf8.3
+export SPCX_SHORTS=1
+export SPCX_S_TARGET=4
+export SPCX_S_STOP=4
+export SPCX_S_TRAIL=2
+export SPCX_S_TSTOP=0
+export SPCX_S_FLOOR=0.5
 # live: gate de spread NBBO + umbral whale (v3)
 export SPCX_SPREAD_MAX=0.3
 export SPCX_WHALE_USD=100000

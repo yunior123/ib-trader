@@ -234,6 +234,15 @@ signal_only + touch armed + TOPGAINER_LIVE=1 restaura el trading.
   raro-limpio (BB3/RSI25, solo panico real) + stop/skip-open/time-stop.
   Regla vigente: sin OOS positivo no se shippean params.
 
+## v4 AMBAS DIRECCIONES (2026-07-11, "signals when going down and also up")
+Espejo corto completo: euforia sobre banda + RSI sobrecomprado + volumen,
+confirmado por bar rojo que pierde el minimo del bar de euforia -> SHORT NOW;
+en trend: flip bajista/ruptura del minimo del dia + CUSUM negativo. Cover
+simetrico con exits PROPIOS ({SYM}_S_*). El largo NO cambia (invariancia
+verificada); un largo confirmado cubre el corto (reversal). Gate {SYM}_SHORTS.
+Sweep 2026: ON en TXN(80% +28% pf3.3)/QQQ(74%)/SPCX(85%)/AMD(70%)/GLD(73%);
+OFF en los 8 alcistas (sin config >=70 OOS — no forzar cortos contra el bull).
+
 ## MANDATO WR-70 (2026-07-11 PM, "all of them should be above 70 percent")
 Backtest 2026 completo (ene-jul), seleccion WR-first con validacion OOS:
 12/13 bots >=70% WR full-year (tabla en el commit). TSLA y TXN pasaron a
