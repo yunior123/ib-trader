@@ -1,6 +1,50 @@
 # tradingview/ — Pine strategies + local backtest lab
 
-## confluence_master.pine (Pine v6 strategy — THE one file)
+## ultra_trend.pine (Pine v6 — the ULTRA trend system, GENERIC across 25 tickers)
+
+Evolution of Confluence Master designed by a 4-lens multi-agent panel
+(trend-follower / squeeze-breakout / market-structure / devil's-advocate),
+then every proposed rule grid-tested (128 configs) and one-out ablated on
+**25 tickers** (indices, mega-tech, semis, metals/oil ETFs, TQQQ, COIN/PLTR/
+MSTR) with **one single config judged on the MEDIAN ticker** — the generic
+mandate. Local replica: `backtest/bt_ultra.py`.
+
+**Kept byte-for-byte** (panel unanimous + plateau-proven): Supertrend(10,3.5)
+gate, confluence score, wide 4×ATR non-trailing stop, exit on flip / score<2.
+
+**New, each earned its place in ablation** (train PF delta when removed):
+- **EVENT entries** — Donchian-20 close breakout OR bull-pattern resumption
+  (engulfing/hammer/inside-break closing above BB mid). State→event is the
+  anti-chop fix (−0.34 PF if removed).
+- **Pattern bonus** — bull pattern in last 3 bars = +1 score, 7-point scale,
+  entry needs 5/7 (−0.55 PF if removed).
+- **Bear tightening** — below a falling EMA200: score≥5 AND breakout only
+  (−0.42 PF if removed). Not a binary lockout, so V-recoveries stay reachable.
+- **Breakeven floor** — at +5×ATR open profit, stop ratchets to entry×1.002,
+  never further (converts monsters into non-losers without being a trail).
+- **YEARLY-anchored VWAP** — won the A/B vs monthly across the entire top-12.
+
+**Tested and REJECTED** (ship as OFF toggles): extension veto, post-loss
+cooldown (panel loved both; the 25-ticker median didn't), ADX gate (lags trend
+births: CAGR 9.6→6.4%), squeeze precondition (starves: OOS median PF 1.27),
+dip-buys (dead code in event mode), any tight trailing.
+
+### Evidence (25 tickers, one config, punitive friction)
+
+| Window | Median PF | Median WR | Median CAGR | Median maxDD | Trades |
+|---|---|---|---|---|---|
+| Full 2015→2026-07 | 2.67 | 42.9% | 8.5% | 41.4% | 755 |
+| OOS 2024→ (unseen in tuning) | **2.89** | 50.0% | **13.4%** | 27.6% | 211 |
+| Recent 2025→ | **2.78** | 50.0% | 12.9% | 21.5% | 126 |
+
+vs the old confluence core on the same 25-ticker OOS: PF 2.64 / WR 41.7% /
+DD 29.9% — Ultra wins on all three at equal CAGR. QQQ year-by-year: 8/11
+positive, losers −3.8/−4.0/−9.1% (2022, vs QQQ −33%). Recent losers are the
+names in real bear trends (MSTR −68% B&H, COIN −38% B&H) where it correctly
+stays small/out. Honest read: still a trend profile (WR ~43-50%), still lags
+raw B&H on parabolic single names; the payoff is surviving their 60-90% DDs.
+
+## confluence_master.pine (Pine v6 strategy — the original proven core)
 
 Single-file merge of the classic scripts, modernized to Pine v6 `strategy()` so
 TradingView's Strategy Tester backtests it natively:
