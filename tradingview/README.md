@@ -29,6 +29,17 @@ cooldown (panel loved both; the 25-ticker median didn't), ADX gate (lags trend
 births: CAGR 9.6→6.4%), squeeze precondition (starves: OOS median PF 1.27),
 dip-buys (dead code in event mode), any tight trailing.
 
+**Chart display is minimal by design** (Yunior 2026-07-12): Bollinger Bands +
+BUY/SELL labels only. Everything else (score, RSI divergence, rvol, stop level)
+lives in the Data Window. Logic untouched — re-verified identical medians.
+
+**DRAM note**: the ticker is two different companies — Dataram 2016→jun-2017,
+then an 8.8-year listing gap, and the current DRAM relisted 2026-04-02 with
+only ~68 daily bars. The system's 200-bar indicators cannot arm on it yet
+(needs ~200 bars ≈ Jan-2027); mixing segments across the gap is invalid. As of
+2026-07-10 the raw components read: Supertrend DOWN, below BB mid, no breakout,
+no bull pattern — the system would not touch DRAM today even if armed.
+
 ### Evidence (25 tickers, one config, punitive friction)
 
 | Window | Median PF | Median WR | Median CAGR | Median maxDD | Trades |

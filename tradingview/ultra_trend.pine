@@ -75,8 +75,7 @@ useRiskSize = input.bool(false, "Risk-based sizing (instead of % of equity)", gr
 riskPct     = input.float(0.75, "Risk per trade (% of equity at the stop)", step=0.25, group=grpX)
 
 grpUI = "Display"
-showTable = input.bool(true, "Show confluence table", group=grpUI)
-showBands = input.bool(true, "Show BB + VWAP bands", group=grpUI)
+showBB = input.bool(true, "Show Bollinger Bands", group=grpUI)
 
 // ------------------------------------------------------------ indicators ---
 rsiFast = ta.rsi(close, lenFast)
@@ -183,54 +182,24 @@ if longSignal or strategy.position_size > 0
 if exitLong and strategy.position_size > 0
     strategy.close("L", comment="flip/score")
 
-// ---------------------------------------------------------------- plots ---
-upPlot = plot(trend == 1 ? up : na, "Supertrend Up", style=plot.style_linebr, linewidth=2, color=color.new(color.green, 0))
-dnPlot = plot(trend == 1 ? na : dn, "Supertrend Down", style=plot.style_linebr, linewidth=2, color=color.new(color.red, 0))
-plotshape(buyFlip ? up : na, "ST flip up", style=shape.labelup, location=location.absolute,
-     size=size.tiny, color=color.green, text="ST", textcolor=color.white)
-plotshape(sellFlip ? dn : na, "ST flip down", style=shape.labeldown, location=location.absolute,
-     size=size.tiny, color=color.red, text="ST", textcolor=color.white)
-plot(dema, "DEMA", color=color.new(#43A047, 0), linewidth=2)
-plot(emaReg, "Regime EMA", color=color.new(#1155CC, 20), linewidth=2)
-plot(donHi, "Donchian high", color=color.new(color.orange, 40), style=plot.style_linebr)
-bbU = plot(showBands ? bbUpper : na, "BB Upper", color=color.new(#3D85C6, 45))
-bbL = plot(showBands ? bbLower : na, "BB Lower", color=color.new(#3D85C6, 45))
-plot(showBands ? bbBasis : na, "BB Basis", color=color.new(color.gray, 20))
+// ------------------------------------------------- plots (minimal: BB) ---
+bbU = plot(showBB ? bbUpper : na, "BB Upper", color=color.new(#3D85C6, 45))
+bbL = plot(showBB ? bbLower : na, "BB Lower", color=color.new(#3D85C6, 45))
+plot(showBB ? bbBasis : na, "BB Basis", color=color.new(color.gray, 20))
 fill(bbU, bbL, color=color.new(#6D9EEB, 92), title="BB fill")
-plot(showBands ? vwapVal : na, "AVWAP", color=color.new(color.black, 0), style=plot.style_circles)
-plot(showBands ? vwapUpper : na, "AVWAP +2σ", color=color.new(color.red, 40), style=plot.style_circles)
-plot(showBands ? vwapLower : na, "AVWAP -2σ", color=color.new(color.green, 40), style=plot.style_circles)
-plotshape(patBull, "Bull pattern", style=shape.triangleup, location=location.belowbar,
-     size=size.tiny, color=color.new(color.teal, 30))
+
+// BUY / SELL labels — the only signals on the chart
+sellNow = exitLong and strategy.position_size > 0
+plotshape(longSignal, "BUY", style=shape.labelup, location=location.belowbar,
+     size=size.small, color=color.new(color.green, 0), text="BUY", textcolor=color.white)
+plotshape(sellNow, "SELL", style=shape.labeldown, location=location.abovebar,
+     size=size.small, color=color.new(color.red, 0), text="SELL", textcolor=color.white)
+
+// valores en data window (no ensucian el chart)
 plot(score, "Confluence score", display=display.data_window)
 plot(divergence, "RSI divergence", display=display.data_window)
 plot(rvol, "Relative volume", display=display.data_window)
-
-// ---------------------------------------------------------------- table ---
-mark(bool ok) => ok ? "✓" : "✗"
-col(bool ok) => ok ? color.new(color.green, 70) : color.new(color.red, 70)
-if showTable and barstate.islast
-    var table t = table.new(position.top_right, 2, 10, border_width=1)
-    table.cell(t, 0, 0, "ULTRA " + str.tostring(score) + "/7", bgcolor=color.new(color.blue, 60), text_color=color.white)
-    table.cell(t, 1, 0, trend == 1 ? "ST UP" : "ST DOWN", bgcolor=trend == 1 ? color.new(color.green, 50) : color.new(color.red, 50), text_color=color.white)
-    table.cell(t, 0, 1, "Close > DEMA200")
-    table.cell(t, 1, 1, mark(c1), bgcolor=col(c1))
-    table.cell(t, 0, 2, "RSI div > 0")
-    table.cell(t, 1, 2, mark(c2), bgcolor=col(c2))
-    table.cell(t, 0, 3, "Close > EMA200")
-    table.cell(t, 1, 3, mark(c3), bgcolor=col(c3))
-    table.cell(t, 0, 4, "Above AVWAP(12M)")
-    table.cell(t, 1, 4, mark(c4), bgcolor=col(c4))
-    table.cell(t, 0, 5, "RelVol ≥ thr")
-    table.cell(t, 1, 5, mark(c5), bgcolor=col(c5))
-    table.cell(t, 0, 6, "Upper BB half")
-    table.cell(t, 1, 6, mark(c6), bgcolor=col(c6))
-    table.cell(t, 0, 7, "Pattern (3 bars)")
-    table.cell(t, 1, 7, mark(c7), bgcolor=col(c7))
-    table.cell(t, 0, 8, "Event: " + (brk ? "BREAKOUT" : resum ? "RESUMPTION" : "—"))
-    table.cell(t, 1, 8, bearRegime ? "BEAR reg." : "bull reg.", bgcolor=bearRegime ? color.new(color.red, 50) : color.new(color.green, 70))
-    table.cell(t, 0, 9, "Stop")
-    table.cell(t, 1, 9, na(stopLvl) ? "—" : str.tostring(stopLvl, format.mintick))
+plot(stopLvl, "Stop level", display=display.data_window)
 
 // --------------------------------------------------------------- alerts ---
 alertcondition(longSignal, "Ultra Trend LONG", "ULTRA-TREND {{ticker}}: LONG @ {{close}}")
