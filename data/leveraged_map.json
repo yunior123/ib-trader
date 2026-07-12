@@ -1,66 +1,114 @@
 {
  "TSLA": {
   "bull": "TSLL",
-  "bear": "TSLS"
+  "bear": "TSLS",
+  "lev_bull": 2,
+  "lev_bear": 1,
+  "bucket": "tech"
  },
  "AAPL": {
   "bull": "AAPU",
-  "bear": "AAPD"
+  "bear": "AAPD",
+  "lev_bull": 2,
+  "lev_bear": 1,
+  "bucket": "tech"
  },
  "TSM": {
   "bull": "TSMU",
-  "bear": "TSMZ"
+  "bear": "TSMZ",
+  "lev_bull": 2,
+  "lev_bear": 1,
+  "bucket": "tech"
  },
  "NVDA": {
   "bull": "NVDL",
-  "bear": "NVDD"
+  "bear": "NVDD",
+  "lev_bull": 2,
+  "lev_bear": 1,
+  "bucket": "tech"
  },
  "AMD": {
   "bull": "AMDL",
-  "bear": "AMDD"
+  "bear": "AMDD",
+  "lev_bull": 2,
+  "lev_bear": 1,
+  "bucket": "tech"
  },
  "INTC": {
   "bull": "INTW",
-  "bear": null
+  "bear": null,
+  "lev_bull": 2,
+  "lev_bear": 0,
+  "bucket": "tech"
  },
  "ASML": {
   "bull": "ASMU",
-  "bear": null
+  "bear": null,
+  "lev_bull": 2,
+  "lev_bear": 0,
+  "bucket": "tech"
  },
  "TXN": {
   "bull": "TXNU",
-  "bear": null
+  "bear": null,
+  "lev_bull": 2,
+  "lev_bear": 0,
+  "bucket": "tech"
  },
  "QQQ": {
   "bull": "TQQQ",
-  "bear": "SQQQ"
+  "bear": "SQQQ",
+  "lev_bull": 3,
+  "lev_bear": 3,
+  "bucket": "tech"
  },
  "GLD": {
   "bull": "UGL",
-  "bear": "GLL"
+  "bear": "GLL",
+  "lev_bull": 2,
+  "lev_bear": 2,
+  "bucket": "commod"
  },
  "SLV": {
   "bull": "AGQ",
-  "bear": "ZSL"
+  "bear": "ZSL",
+  "lev_bull": 2,
+  "lev_bear": 2,
+  "bucket": "commod"
  },
  "USO": {
   "bull": "UCO",
-  "bear": "SCO"
+  "bear": "SCO",
+  "lev_bull": 2,
+  "lev_bear": 2,
+  "bucket": "commod"
  },
  "CPER": {
   "bull": "CPXR",
-  "bear": null
+  "bear": null,
+  "lev_bull": 2,
+  "lev_bear": 0,
+  "bucket": "commod"
  },
  "NOK": {
   "bull": "LNOK",
-  "bear": null
+  "bear": null,
+  "lev_bull": 2,
+  "lev_bear": 0,
+  "bucket": "tech"
  },
  "SPCX": {
   "bull": "LOFF",
-  "bear": "SNK"
+  "bear": "SNK",
+  "lev_bull": 2,
+  "lev_bear": 2,
+  "bucket": "tech"
  },
  "DRAM": {
   "bull": "RAM",
-  "bear": null
+  "bear": null,
+  "lev_bull": 2,
+  "lev_bear": 0,
+  "bucket": "tech"
  }
 }

@@ -1,76 +1,47 @@
-# IB Trader
+# ib-trader
 
-A rules-based swing-trading loop for Interactive Brokers: trend + pullback
-entries, a laddered partial-profit exit, a never-sold "core" position
-alongside an actively-traded slice, and volatility-adjusted position sizing.
+Real-time trading system: **16 C++ signal engines** on 1-minute bars (validated
+WR≥70 + out-of-sample walk-forward per ticker), a **~0.3ms local signal pipeline**
+(shared Alpaca websocket daemon + IBKR SIP daemon + kqueue dual-source readers), and a
+**leveraged-ETF execution layer** on IBKR with broker-resident protection (OCA pairs:
+recovery GTC + catastrophic stop). Double-purpose by design: signals drive a human
+trading options; the executor autonomously trades leveraged ETFs on the same signals.
 
-**This is a starting point for your own testing, not a finished profitable
-strategy, and not financial advice.** Markets can trend against every rule
-here for extended periods, and past performance of any rule set doesn't
-predict future results.
+**Not financial advice. Live-money code — read the docs before touching anything.**
 
-## How it decides
+## Documentation
 
-- **Entry**: 50 EMA > 200 EMA and price > 200 EMA (uptrend), plus RSI < 35
-  with price at/below the 20 EMA (pullback).
-- **Sizing**: risks a fixed % of account equity per trade, scaled by ATR
-  (wider ATR → smaller size).
-- **Split**: a new position is split into a `CORE_FRACTION` that is never
-  sold by the bot, and a `TRADING_FRACTION` that is scaled in/out.
-- **Exit**: as gains from the trading slice's average cost cross each rung
-  in `PROFIT_LADDER`, that fraction of the trading shares is sold. An
-  overbought/overextended reading triggers a full trading-slice exit as a
-  safety valve.
-- **Buyback**: after a pullback from a recent high while still in an
-  uptrend, the trading slice is rebuilt.
+| Doc | What's in it |
+|---|---|
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Full system design: data plane, signal engines, execution plane, file contracts, measured latencies |
+| [docs/OPERATIONS.md](docs/OPERATIONS.md) | Runbook: start/stop, kill switch, health checks, activation day, troubleshooting table |
+| [docs/TRADING-RULES.md](docs/TRADING-RULES.md) | The trading law: owner orders, ETF map, bull/bear/bag rules, evidence trail, change control |
+| [AGENTS.md](AGENTS.md) | Agent-facing operational law: standing orders, master trading playbook, per-component history |
 
-All of this is configurable in `config.py`.
-
-## Setup
-
-1. Install TWS or IB Gateway and enable the API:
-   Configuration → API → Settings → check "Enable ActiveX and Socket
-   Clients", and note the socket port.
-2. Install dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
-3. Edit `config.py`:
-   - `IB_PORT`: 7497 for TWS paper, 4002 for IB Gateway paper (start here),
-     7496 / 4001 for live.
-   - `SYMBOLS`, thresholds, sizing, and the profit ladder.
-4. Run:
-   ```
-   python main.py
-   ```
-
-## Safety
-
-- `DRY_RUN = True` by default. In this mode every decision is logged and
-  written to `trades.db`, but **no order is ever sent to IBKR**.
-- Only switch `DRY_RUN = False` after testing against a **paper trading**
-  account for an extended period (weeks, across different market
-  conditions) — never point it at a live account first.
-- `state.json` persists the core/trading split and ladder progress across
-  restarts. Delete it to reset a symbol's tracked state.
-- `ib_trader.log` and `trades.db` record everything the bot decided and
-  did, for review.
-- There is no built-in kill switch beyond `Ctrl+C` / stopping the process —
-  add monitoring/alerting before trusting this with real capital.
-
-## Project layout
+## The system in five lines
 
 ```
-ib-trader/
-├── config.py       strategy & connection settings
-├── indicators.py   EMA / RSI / ATR
-├── risk.py         volatility-adjusted position sizing
-├── portfolio.py    persisted core/trading share state
-├── strategy.py     entry / exit / buyback decision logic
-├── execution.py    order placement (dry-run aware)
-├── ib_client.py    IBKR connection & data fetch
-├── logger.py       logging setup
-├── database.py     SQLite trade log
-├── main.py         the loop
-└── requirements.txt
+Alpaca ws / IBKR TWS ─► C++ daemons ─► bars files ─► kqueue readers (~0.3ms)
+  ─► 16 C++ signal bots (1.1µs/bar: capitulation/trend/terremoto engines)
+      ├─► Mac banners + voice ─► HUMAN trades options (BUY NOW=call, BUY PUT=put)
+      └─► operations logs ─► fleet_executor (ib_insync) ─► leveraged ETFs on IBKR TFSA
+            bulls: sell-higher-only + bag w/ GTC+stop OCA · bears: quake-only, stopped, never overnight
 ```
+
+## Quick start (existing installation)
+
+```bash
+zsh scripts/fleet_keepalive_start.sh   # everything signal-side + executor
+zsh topgainer/ensure_all.sh            # ws daemon + scanner stack
+rm data/etf_armed                      # KILL SWITCH (trading off; signals unaffected)
+```
+
+Key safety facts: the executor only trades when `data/etf_armed` exists AND account
+NetLiq ≥ USD 500; circuit breakers (daily-loss halt −5%, sector concurrency cap,
+gross leverage ≤1.5×, settled-cash budget) gate every buy; every position carries
+broker-resident protective orders that work with this machine powered off; the
+account (not local state) is the source of truth; full audit trail in
+`data/etf_ledger.csv` **and** `trades.db` (`etf_operations`, `etf_signals`).
+
+Legacy Python was deleted 2026-07-11 (recoverable from git history).
+`day_trading_bot.py` remains only as a helper library imported by the topgainer stack.

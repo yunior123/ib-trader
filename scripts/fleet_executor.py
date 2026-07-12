@@ -33,7 +33,7 @@ cierre inmediato, reconcile de posiciones/ordenes huerfanas al arrancar y cada
 10 min, TWS caido -> reconexion + fallback, precio sin subscripcion IBKR ->
 cadena Alpaca quote/trade fresco o NO se opera (jamas precio viejo/delayed).
 """
-import json, math, os, re, subprocess, sys, time, urllib.request
+import json, math, os, re, sqlite3, subprocess, sys, time, urllib.request
 from datetime import datetime
 
 ROOT = "/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader"
@@ -65,9 +65,24 @@ BULL_STOP    = envf("ETF_BULL_STOP", 25.0)
 # Stop apretado, time-stop, salida por quake inverso y EOD 15:50 SIEMPRE
 # (inverso apalancado jamas pasa la noche).
 QUAKE_BEARS  = envf("ETF_QUAKE_BEARS", 1) > 0
-QUAKE_STOP   = envf("ETF_QUAKE_BEAR_STOP", 3.0)  # % stop del quake-bear
+# stop del quake-bear NORMALIZADO por leverage (auditoria pro 2026-07-11: un
+# -3% plano era 1% de QQQ en SQQQ (chop-out) vs 3% de TSLA en TSLS — el mismo
+# error del stop plano que mato a los bears regulares). Riesgo subyacente
+# constante: stop_etf = lev * QUAKE_USTOP, acotado [1.5%, 4.5%].
+QUAKE_USTOP  = envf("ETF_QUAKE_UNDERLYING_STOP", 1.5)   # % del SUBYACENTE
 QUAKE_HOLD   = envf("ETF_QUAKE_HOLD_MIN", 45)    # min max en un quake-bear
 MAX_BEARS    = int(envf("ETF_MAX_BEARS", 2))     # bears simultaneos max
+# ===== CIRCUIT BREAKERS (auditoria pro 2026-07-11: "el peor caso era el caso
+# por defecto" — 4 semis apalancados comprados en el mismo panico sin freno).
+# (a) HALT diario: perdida realizada del dia >= DAY_LOSS_PCT% del NetLiq =>
+#     no mas COMPRAS hasta la proxima sesion (las salidas siguen vivas)
+# (b) cap por sector: max BUCKET_MAX bulls activos por bucket (tech/commod);
+#     ademas >=2 bolsas en el bucket bloquean nuevas compras ahi (no promediar
+#     un regimen muriendo)
+# (c) cap de apalancamiento bruto: sum(lev*notional) <= GROSS_CAP x NetLiq
+DAY_LOSS_PCT = envf("ETF_DAY_LOSS_PCT", 5.0)
+BUCKET_MAX   = int(envf("ETF_BUCKET_MAX", 2))
+GROSS_CAP    = envf("ETF_GROSS_CAP", 1.5)
 # BEARS OFF por defecto: el backtest 90d de la traduccion (data/leveraged_bt_90d.txt)
 # dio WR 37% / -84% — el stop plano -5% en el ETF es 2-5x mas ancho que los stops
 # afinados de los bots y las fees se comen el edge corto. Orden permanente #7
@@ -80,12 +95,25 @@ STATE_FILE   = "data/etf_positions.json"
 LOG_FILE     = "fleet_executor.log"
 HOST, PORT, CID = "127.0.0.1", 7496, 90
 
-MAP = json.load(open("data/leveraged_map.json"))          # base -> {bull, bear}
+MAP = json.load(open("data/leveraged_map.json"))          # base -> {bull, bear, lev_*, bucket}
 BULL_OF = {b: m["bull"] for b, m in MAP.items()}
 BEAR_OF = {b: m["bear"] for b, m in MAP.items() if m.get("bear")}
 ALL_ETFS = set(BULL_OF.values()) | set(BEAR_OF.values())
 BEAR_ETFS = set(BEAR_OF.values())
 BASES = list(MAP.keys())
+LEV = {}                                                   # etf -> leverage
+BUCKET_OF = {}                                             # etf -> sector bucket
+for b, m in MAP.items():
+    LEV[m["bull"]] = m.get("lev_bull", 2); BUCKET_OF[m["bull"]] = m.get("bucket", "tech")
+    if m.get("bear"):
+        LEV[m["bear"]] = m.get("lev_bear", 1); BUCKET_OF[m["bear"]] = m.get("bucket", "tech")
+
+def quake_stop_pct(etf):
+    return min(4.5, max(1.5, LEV.get(etf, 1) * QUAKE_USTOP))
+
+def bull_stop_pct(etf):
+    # -25% calibrado para 2x; se escala por leverage real (TQQQ 3x -> mas aire)
+    return min(35.0, max(15.0, BULL_STOP * LEV.get(etf, 2) / 2.0)) if BULL_STOP > 0 else 0
 
 AL = {}
 for line in open("alpaca.env"):
@@ -133,21 +161,91 @@ def cent_ceil(px):
 def profit_floor(entry, qty):
     """Precio minimo de venta que GARANTIZA ganancia neta de comisiones
     (orden: 'consider broker fees to sell in profit all the time, never sell
-    on loss'). Posiciones chicas exigen % mayor: 2 lados de fee + slippage."""
+    on loss'). Modelo de fees corregido en auditoria pro 2026-07-11: IBKR
+    cobra $0.005/sh con minimo (~$0.35 tiered, verificado en vivo: micro-
+    ordenes pagan centavos) y CAP de 0.5% del notional — el modelo anterior
+    ($1 plano/lado) DOBLABA el floor en posiciones chicas y retenia bolsas
+    mas tiempo del necesario."""
     notional = max(entry * max(qty, 1), 1e-9)
-    fee_pct = 2 * FEE_MIN_USD / notional * 100
+    fee_side = min(max(0.005 * max(qty, 1), FEE_MIN_USD * 0.35), 0.005 * notional)
+    fee_pct = 2 * fee_side / notional * 100
     return cent_ceil(entry * (1 + max(BAG_MIN_GAIN, fee_pct + 0.2) / 100))
 
 LEDGER = "data/etf_ledger.csv"
-def ledger(event, etf, base, side, qty, px, fee=0.0, pnl="", note=""):
-    """Historial COMPLETO append-only (orden: 'records should be kept by
-    operations, full history'). Fuente auditable ademas del broker."""
+DB_FILE = "trades.db"
+_DB = [None]
+
+def db():
+    """SQLite local (orden 2026-07-11 'register all operations and trades in
+    database locally'): etf_operations + etf_signals en trades.db, WAL para
+    lectores concurrentes. La DB JAMAS bloquea trading (todo en try/except;
+    el CSV sigue siendo el respaldo plano)."""
+    if _DB[0] is None:
+        c = sqlite3.connect(DB_FILE, timeout=5)
+        c.execute("PRAGMA journal_mode=WAL")
+        c.execute("""CREATE TABLE IF NOT EXISTS etf_operations(
+            id INTEGER PRIMARY KEY AUTOINCREMENT, ts TEXT NOT NULL, event TEXT NOT NULL,
+            etf TEXT, base TEXT, side TEXT, qty INTEGER, px REAL, fee_usd REAL,
+            pnl_pct TEXT, pnl_usd REAL DEFAULT 0, note TEXT)""")
+        try: c.execute("ALTER TABLE etf_operations ADD COLUMN pnl_usd REAL DEFAULT 0")
+        except Exception: pass
+        c.execute("""CREATE TABLE IF NOT EXISTS etf_signals(
+            id INTEGER PRIMARY KEY AUTOINCREMENT, ts TEXT NOT NULL, base TEXT NOT NULL,
+            action TEXT NOT NULL, sig_px REAL, msg TEXT)""")
+        c.commit()
+        try:   # migracion unica: CSV existente -> DB si la tabla nace vacia
+            if not c.execute("SELECT 1 FROM etf_operations LIMIT 1").fetchone() \
+               and os.path.exists(LEDGER):
+                import csv as _csv
+                rows = [(r["ts"], r["event"], r["etf"], r["base"], r["side"],
+                         r["qty"], r["px"], r["fee_usd"], r["pnl_pct"], r["note"])
+                        for r in _csv.DictReader(open(LEDGER))]
+                c.executemany("INSERT INTO etf_operations(ts,event,etf,base,side,"
+                              "qty,px,fee_usd,pnl_pct,note) VALUES(?,?,?,?,?,?,?,?,?,?)", rows)
+                c.commit()
+                log(f"db: {len(rows)} filas migradas del CSV")
+        except Exception as e:
+            log(f"db migracion: {e}")
+        _DB[0] = c
+    return _DB[0]
+
+def db_signal(base, action, sig_px, msg):
+    try:
+        db().execute("INSERT INTO etf_signals(ts,base,action,sig_px,msg) VALUES(?,?,?,?,?)",
+                     (f"{datetime.now():%Y-%m-%d %H:%M:%S}", base, action, sig_px, msg[:300]))
+        db().commit()
+    except Exception as e:
+        log(f"db señal error: {e}")
+
+def ledger(event, etf, base, side, qty, px, fee=0.0, pnl="", note="", pnl_usd=0.0):
+    """Historial COMPLETO append-only: CSV + trades.db (orden: 'records should
+    be kept by operations, full history'). pnl_usd alimenta el HALT diario."""
     new = not os.path.exists(LEDGER)
     with open(LEDGER, "a") as f:
         if new:
-            f.write("ts,event,etf,base,side,qty,px,fee_usd,pnl_pct,note\n")
+            f.write("ts,event,etf,base,side,qty,px,fee_usd,pnl_pct,pnl_usd,note\n")
         f.write(f"{datetime.now():%Y-%m-%d %H:%M:%S},{event},{etf},{base},{side},"
-                f"{qty},{px:.4f},{fee:.2f},{pnl},{note}\n")
+                f"{qty},{px:.4f},{fee:.2f},{pnl},{pnl_usd:.2f},{note}\n")
+    try:
+        db().execute("INSERT INTO etf_operations(ts,event,etf,base,side,qty,px,"
+                     "fee_usd,pnl_pct,pnl_usd,note) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+                     (f"{datetime.now():%Y-%m-%d %H:%M:%S}", event, etf, base, side,
+                      qty, px, fee, pnl, pnl_usd, note))
+        db().commit()
+    except Exception as e:
+        log(f"db ledger error: {e}")
+
+def day_realized_usd():
+    """PnL realizado HOY (ventas + cierres server-side) — alimenta el circuit
+    breaker diario. DB caida => 0 con log (no bloquea, pero se grita)."""
+    try:
+        row = db().execute(
+            "SELECT COALESCE(SUM(pnl_usd),0) FROM etf_operations "
+            "WHERE ts >= ? AND event IN ('sell','sell_partial','closed_serverside','closed_external')",
+            (f"{datetime.now():%Y-%m-%d} 00:00:00",)).fetchone()
+        return float(row[0])
+    except Exception as e:
+        log(f"day_realized error: {e}"); return 0.0
 
 # ---------------- precio confiable (jamas delayed) ----------------
 def alpaca_price(sym):
@@ -178,7 +276,9 @@ def ref_price(ib, sym):
     if ib and ib.isConnected():
         try:
             c = Stock(sym, "SMART", "USD"); ib.qualifyContracts(c)
-            tk = ib.reqMktData(c, "", True, False)   # snapshot ($0.01, capped)
+            tk = ib.reqMktData(c, "", True, False)   # snapshot normal: gratis
+            # con subscripcion propia; sin ella -> err 354, ticks NaN y caemos
+            # a Alpaca (el "$0.01" es del REGULATORY snapshot, que NO usamos)
             ib.sleep(2.5)
             if tk.bid and tk.ask and tk.bid > 0 and tk.ask > tk.bid:
                 return (tk.bid, tk.ask)
@@ -230,11 +330,16 @@ class Ibkr:
         except Exception as e:
             log(f"netliq error: {e}"); return 0
     def avail_usd(self):
+        """min(AvailableFunds, SettledCash) — cuenta CASH: comprar con proceeds
+        sin liquidar y revender = free-riding (auditoria pro 2026-07-11)."""
         try:
+            vals = {}
             for v in self.ib.accountValues(ACCOUNT):
-                if v.tag == "AvailableFunds":
+                if v.tag in ("AvailableFunds", "SettledCash"):
                     x = float(v.value)
-                    return x if v.currency == "USD" else x / FX_FALLBACK
+                    vals[v.tag] = x if v.currency == "USD" else x / FX_FALLBACK
+            if not vals: return 0
+            return min(vals.values())
         except Exception: pass
         return 0
     def qualify(self, sym):
@@ -267,6 +372,7 @@ class Ibkr:
         return self._place_checked(sym, o)
     def place_gtc_stop(self, sym, qty, px, oca=None):   # stop servidor-side
         o = StopOrder("SELL", qty, round(px, 2), tif="GTC", account=ACCOUNT)
+        o.triggerMethod = 3      # double-last: un print suelto en ETF fino no dispara
         if oca: o.ocaGroup, o.ocaType = oca, 1
         return self._place_checked(sym, o)
     def cancel_confirmed(self, order_id, sym=None, timeout=10):
@@ -319,8 +425,15 @@ class Ibkr:
             self.ib.cancelOrder(tr.order); self.ib.sleep(2)
             filled = tr.filled(); avg = tr.orderStatus.avgFillPrice or 0
         try:
+            end2 = time.time() + 4        # commissionReport llega DESPUES del
+            while time.time() < end2:     # fill (mensaje aparte, docs ib_insync)
+                if filled and any(f.commissionReport and f.commissionReport.execId
+                                  for f in tr.fills):
+                    break
+                self.ib.sleep(0.5)
             self.last_fee = sum(f.commissionReport.commission
-                                for f in tr.fills if f.commissionReport)
+                                for f in tr.fills
+                                if f.commissionReport and f.commissionReport.execId)
         except Exception:
             self.last_fee = 0.0
         return (int(filled), float(avg))
@@ -392,6 +505,7 @@ def preflight(ibkr, etf, is_buy):
     live = ibkr.connected()
     venue = ibkr if live else AlpacaPaper()
     if is_buy:
+        nl = 0
         if live:
             nl = ibkr.netliq_usd()
             if nl < MIN_EQUITY:
@@ -404,6 +518,23 @@ def preflight(ibkr, etf, is_buy):
             return (None, f"cap {MAX_OPEN} posiciones activas alcanzado")
         if len(bags()) >= BAG_MAX:
             return (None, f"cap {BAG_MAX} bolsas alcanzado")
+        # ---- CIRCUIT BREAKERS (auditoria pro 2026-07-11) ----
+        if live and DAY_LOSS_PCT > 0:
+            dr = day_realized_usd()
+            if dr <= -(DAY_LOSS_PCT / 100.0) * max(nl, MIN_EQUITY):
+                return (None, f"HALT DIARIO: perdida realizada hoy {dr:+.0f} USD "
+                              f">= {DAY_LOSS_PCT}% del equity — sin compras hasta mañana")
+        bkt = BUCKET_OF.get(etf, "tech")
+        actives_bkt = [p for e, p in STATE["positions"].items()
+                       if not p.get("bag") and BUCKET_OF.get(e) == bkt]
+        if len(actives_bkt) >= BUCKET_MAX:
+            return (None, f"cap sector '{bkt}': ya {len(actives_bkt)} activas "
+                          f"(no 4 semis apalancados en el mismo panico)")
+        bags_bkt = [p for e, p in STATE["positions"].items()
+                    if p.get("bag") and BUCKET_OF.get(e) == bkt]
+        if len(bags_bkt) >= 2:
+            return (None, f"sector '{bkt}' con {len(bags_bkt)} bolsas abiertas — "
+                          f"no se promedia un regimen muriendo")
     return (venue, "ok")
 
 def rth_now():
@@ -444,8 +575,20 @@ def do_buy(ibkr, base, side, etf, sig_msg, stop_pct=None, kind="signal"):
     budget = min(slot, max(0.0, avail - CASH_RESERVE - BATCH_SPENT[0]))
     qty = int(budget // ask)
     if qty < 1:
-        banner(f"{etf}: SIN PRESUPUESTO", f"slot {slot:.0f} ask {ask:.2f} avail {avail:.0f} — 0 shares")
+        today = f"{datetime.now():%Y-%m-%d}"
+        if STATE.setdefault("nobudget", {}).get(etf) != today:
+            STATE["nobudget"][etf] = today
+            banner(f"{etf}: SIN PRESUPUESTO", f"slot {slot:.0f} ask {ask:.2f} avail {avail:.0f} — 0 shares")
+        else:
+            log(f"{etf}: sin presupuesto (repetido hoy, sin banner)")
         return
+    # cap de apalancamiento BRUTO: sum(lev x notional) <= GROSS_CAP x NetLiq
+    if not paper:
+        gross = sum(LEV.get(e, 2) * p["qty"] * p["entry"] for e, p in STATE["positions"].items())
+        if gross + LEV.get(etf, 2) * qty * ask > GROSS_CAP * max(equity, 1):
+            log(f"SKIP BUY {etf}: gross leverage {gross:.0f}+{LEV.get(etf,2)*qty*ask:.0f} "
+                f"> {GROSS_CAP}x{equity:.0f} — cap de exposicion bruta")
+            return
     limit = ask * 1.001
     if paper:
         oid = venue.order(etf, "buy", qty, "limit", px=limit)
@@ -472,9 +615,10 @@ def do_buy(ibkr, base, side, etf, sig_msg, stop_pct=None, kind="signal"):
             return
     elif BULL_STOP > 0:
         # stop CATASTROFICO del bull en el broker (orden 2026-07-11 "stop loss
-        # on price as well"): la bolsa vive para caidas normales, el colapso
-        # se corta. Si falla no se aborta el bull (reconcile reintenta en 5min).
-        stop_px = avg * (1 - BULL_STOP / 100)
+        # on price as well"), escalado por leverage real del ETF (TQQQ 3x
+        # respira mas). La bolsa vive para caidas normales, el colapso se
+        # corta. Si falla no se aborta el bull (reconcile reintenta en 5min).
+        stop_px = avg * (1 - bull_stop_pct(etf) / 100)
         try:
             oca = f"B{etf}{int(time.time())}"
             if paper:
@@ -501,6 +645,13 @@ def do_sell(ibkr, base, kind):
     pos = STATE["positions"].get(etf or "")
     if not pos or pos["side"] != want or pos.get("bag"):
         return                                        # nada que hacer (o ya es bolsa con GTC)
+    if not rth_now():
+        # verificado contra docs IBKR (agente 2026-07-11): un MKT/DAY fuera de
+        # horario queda en cola y llena en el OPEN siguiente = comer el gap en
+        # un inverso apalancado. Fuera de RTH mandan las ordenes del broker
+        # (stop GTC); esta salida se reintenta al abrir.
+        log(f"SKIP SELL {etf}: fuera de RTH — el stop GTC protege; reintento en el open")
+        return
     venue, why = preflight(ibkr, etf, False)
     if venue is None:
         log(f"SKIP SELL {etf}: {why}"); return
@@ -547,7 +698,8 @@ def do_sell(ibkr, base, kind):
                 pnl = (avg - pos["entry"]) / pos["entry"] * 100
                 banner(f"{etf}: VENDIDO +{pnl:.1f}%", f"{filled} @ {avg:.2f} (entry {pos['entry']:.2f})")
                 ledger("sell", etf, base, "bull", filled, avg,
-                       getattr(venue, "last_fee", 0.0), f"{pnl:+.2f}")
+                       getattr(venue, "last_fee", 0.0), f"{pnl:+.2f}",
+                       pnl_usd=(avg - pos["entry"]) * filled)
                 STATE["history"].append({**pos, "event": "sell", "exit": avg, "at": time.time()})
                 del STATE["positions"][etf]; save_state(); return
             if filled > 0:      # fill parcial: lo vendido se contabiliza, el resto va a bolsa
@@ -555,7 +707,8 @@ def do_sell(ibkr, base, kind):
                                          "exit": avg, "at": time.time()})
                 ledger("sell_partial", etf, base, "bull", filled, avg,
                        getattr(venue, "last_fee", 0.0),
-                       f"{(avg - pos['entry']) / pos['entry'] * 100:+.2f}")
+                       f"{(avg - pos['entry']) / pos['entry'] * 100:+.2f}",
+                       pnl_usd=(avg - pos["entry"]) * filled)
                 pos["qty"] -= filled
         # no se vende por debajo: BOLSA = par OCA en el broker — GTC de
         # recuperacion en floor + stop catastrofico; una llena, la otra muere
@@ -574,7 +727,7 @@ def do_sell(ibkr, base, kind):
                 if BULL_STOP > 0:
                     try:
                         pos["stop_oid"] = venue.place_gtc_stop(
-                            etf, pos["qty"], pos["entry"] * (1 - BULL_STOP / 100), oca=oca)
+                            etf, pos["qty"], pos["entry"] * (1 - bull_stop_pct(etf) / 100), oca=oca)
                     except Exception as e2:
                         # segunda pata fallo: rollback de la primera — jamas
                         # dejar media proteccion fuera de un OCA coherente
@@ -602,7 +755,8 @@ def do_sell(ibkr, base, kind):
         pnl = (avg - pos["entry"]) / pos["entry"] * 100 if avg else 0
         banner(f"{etf}: BEAR CERRADO {pnl:+.1f}%", f"@ {avg:.2f} (entry {pos['entry']:.2f})")
         ledger("sell", etf, base, "bear", pos["qty"], avg,
-               getattr(venue, "last_fee", 0.0), f"{pnl:+.2f}", note=pos.get("kind", ""))
+               getattr(venue, "last_fee", 0.0), f"{pnl:+.2f}", note=pos.get("kind", ""),
+               pnl_usd=(avg - pos["entry"]) * pos["qty"] if avg else 0.0)
         STATE["history"].append({**pos, "event": "sell", "exit": avg, "at": time.time()})
         del STATE["positions"][etf]; save_state()
 
@@ -621,9 +775,17 @@ def reconcile(ibkr):
             if p.contract.symbol in ALL_ETFS and p.position < 0:
                 banner(f"{p.contract.symbol}: SHORT DETECTADO",
                        f"{p.position} shares — el bot NO gestiona shorts, revisar YA")
-        open_ids = {tr.order.orderId for tr in ibkr.ib.openTrades()}
+        open_ids = {(tr.contract.symbol, tr.order.orderId) for tr in ibkr.ib.openTrades()}
         for sym, p in real.items():
             pos = STATE["positions"].get(sym)
+            if pos and pos["entry"] > 0 and \
+               abs(float(p.avgCost) - pos["entry"]) / pos["entry"] > 0.20:
+                # corporate action (reverse split) o adopcion desfasada: el
+                # avgCost del broker manda; floor/stops se recalculan del real
+                log(f"reconcile: {sym} entry {pos['entry']:.2f} -> avgCost "
+                    f"{float(p.avgCost):.2f} (re-baseline, proteccion recreada)")
+                pos["entry"] = float(p.avgCost)
+                pos["stop_oid"] = pos["bag_oid"] = None
             if pos and int(p.position) < pos["qty"]:
                 # el humano vendio parte a mano: la proteccion debe cubrir lo REAL
                 log(f"reconcile: {sym} broker {int(p.position)} < estado {pos['qty']} — qty ajustada")
@@ -637,25 +799,25 @@ def reconcile(ibkr):
                        "bag_oid": None, "stop_oid": None}
                 STATE["positions"][sym] = pos
                 log(f"reconcile: adoptada {sym} {pos['qty']}@{pos['entry']:.2f} ({side})")
-            if pos["side"] == "bear" and pos.get("stop_oid") not in open_ids:
-                sp = QUAKE_STOP if pos.get("kind") == "quake" else BEAR_STOP
+            if pos["side"] == "bear" and (sym, pos.get("stop_oid")) not in open_ids:
+                sp = quake_stop_pct(sym) if pos.get("kind") == "quake" else BEAR_STOP
                 pos["stop_oid"] = ibkr.place_gtc_stop(sym, pos["qty"], pos["entry"] * (1 - sp / 100))
-                log(f"reconcile: stop bear re-colocado {sym} (-{sp}%)")
+                log(f"reconcile: stop bear re-colocado {sym} (-{sp:.1f}%)")
             if pos["side"] == "bull" and pos.get("venue", "ibkr") == "ibkr":
                 # proteccion bull = stop catastrofico (+ GTC recuperacion si es
                 # bolsa) SIEMPRE presentes; si falta cualquiera se recrea el par
                 # completo en un OCA fresco (mezclar ordenes de grupos viejos
                 # dejaria huecos de oversell)
-                need_stop = BULL_STOP > 0 and pos.get("stop_oid") not in open_ids
-                need_bag = pos.get("bag") and pos.get("bag_oid") not in open_ids
+                need_stop = BULL_STOP > 0 and (sym, pos.get("stop_oid")) not in open_ids
+                need_bag = pos.get("bag") and (sym, pos.get("bag_oid")) not in open_ids
                 if need_stop or need_bag:
                     for oid in (pos.get("stop_oid"), pos.get("bag_oid")):
-                        if oid and oid in open_ids:
+                        if oid and (sym, oid) in open_ids:
                             ibkr.cancel(oid)
                     oca = f"B{sym}{int(time.time())}"
                     if BULL_STOP > 0:
                         pos["stop_oid"] = ibkr.place_gtc_stop(
-                            sym, pos["qty"], pos["entry"] * (1 - BULL_STOP / 100), oca=oca)
+                            sym, pos["qty"], pos["entry"] * (1 - bull_stop_pct(sym) / 100), oca=oca)
                     if pos.get("bag"):
                         pos["bag_oid"] = ibkr.place_gtc_sell(
                             sym, pos["qty"], profit_floor(pos["entry"], pos["qty"]), oca=oca)
@@ -669,8 +831,21 @@ def reconcile(ibkr):
             for sym in list(STATE["positions"]):
                 pos = STATE["positions"][sym]
                 if pos["venue"] == "ibkr" and sym not in real:
-                    # el broker dice que ya no existe (GTC/stop se lleno estando muertos)
-                    banner(f"{sym}: cerrada en broker", "GTC/stop se ejecuto — posicion retirada del estado")
+                    # el broker dice que ya no existe (GTC/stop se lleno estando
+                    # muertos): precio real de la ejecucion de hoy si existe
+                    exit_px = 0.0
+                    try:
+                        for f in ibkr.ib.reqExecutions():
+                            if f.contract.symbol == sym and f.execution.side == "SLD":
+                                exit_px = float(f.execution.avgPrice or f.execution.price)
+                    except Exception:
+                        pass
+                    pnl_usd = (exit_px - pos["entry"]) * pos["qty"] if exit_px else 0.0
+                    banner(f"{sym}: cerrada en broker",
+                           f"GTC/stop se ejecuto ({exit_px:.2f}) — retirada del estado")
+                    ledger("closed_serverside", sym, pos.get("base", "?"), pos["side"],
+                           pos["qty"], exit_px, pnl_usd=pnl_usd,
+                           note="fill estando executor caido" if exit_px else "precio no hallado")
                     STATE["history"].append({**pos, "event": "closed_serverside", "at": time.time()})
                     del STATE["positions"][sym]
         save_state()
@@ -703,12 +878,19 @@ def selftest():
     for b in BASES:
         assert BULL_OF[b], b
     assert BEAR_OF.get("TSLA") == "TSLS" and "INTC" not in BEAR_OF
-    # floor SIEMPRE gana neto de fees: 3 shares @ $33 (~$100) exige > 2.2%
+    # floor gana neto de fees SIN doblarlas: 3 shares @ $33 (~$100) — fee/lado
+    # = max(0.35 tiered, 0.005*3sh)=0.35, cap 0.5% -> ~0.9% total -> floor 1.0-1.3%
     f = profit_floor(33.0, 3)
-    assert f >= 33.0 * 1.022, f"floor {f} no cubre fees en notional chico"
+    assert 33.0 * 1.009 <= f <= 33.0 * 1.014, f"floor {f} fuera de rango fee-real"
     # notional grande converge al minimo BAG_MIN_GAIN
     f2 = profit_floor(80.0, 100)
-    assert abs(f2 - 80.0 * (1 + BAG_MIN_GAIN / 100)) < 0.01
+    assert abs(f2 - cent_ceil(80.0 * (1 + BAG_MIN_GAIN / 100))) < 0.011
+    # stops normalizados por leverage
+    assert quake_stop_pct("SQQQ") == 4.5 and quake_stop_pct("TSLS") == 1.5
+    assert bull_stop_pct("TQQQ") == 35.0 and bull_stop_pct("TSLL") == 25.0
+    # buckets y breakers cargados
+    assert BUCKET_OF["TQQQ"] == "tech" and BUCKET_OF["UGL"] == "commod"
+    assert DAY_LOSS_PCT > 0 and GROSS_CAP > 0
     print("selftest:", "OK" if ok else "FAIL")
     return 0 if ok else 1
 
@@ -717,7 +899,12 @@ if "--selftest" in sys.argv:
     sys.exit(selftest())
 
 log(f"fleet_executor arrancando: {len(BULL_OF)} bulls, {len(BEAR_OF)} bears, "
-    f"armed={armed()}, min_equity={MIN_EQUITY} USD, cuenta {ACCOUNT}")
+    f"armed={armed()}, min_equity={MIN_EQUITY} USD, cuenta {ACCOUNT}, "
+    f"breakers: dia -{DAY_LOSS_PCT}% / sector {BUCKET_MAX} / bruto {GROSS_CAP}x")
+try:
+    db()   # tablas listas desde el arranque (registro de TODA operacion/señal)
+except Exception as e:
+    log(f"db init error: {e}")
 ibkr = Ibkr()
 reconcile(ibkr)
 last_reconcile = time.time()
@@ -727,6 +914,7 @@ while True:
         for base, action, sig_px, msg in new_log_lines():
             if base not in MAP: continue
             log(f"señal {base} {action} @ {sig_px} :: {msg[:80]}")
+            db_signal(base, action, sig_px, msg)
             if action == "BUY NOW":
                 do_buy(ibkr, base, "bull", BULL_OF[base], msg)
             elif action in ("SELL NOW", "SELL-STOP"):
@@ -753,7 +941,8 @@ while True:
                 elif time.localtime().tm_hour * 60 + time.localtime().tm_min >= 920:
                     log(f"{base}: quake despues de 15:20 — sin entrada (EOD 15:50 lo sacaria ya)")
                 else:
-                    do_buy(ibkr, base, "bear", etf, msg, stop_pct=QUAKE_STOP, kind="quake")
+                    do_buy(ibkr, base, "bear", etf, msg,
+                           stop_pct=quake_stop_pct(etf), kind="quake")
             elif action == "QUAKE ALZA":
                 etf = BEAR_OF.get(base)
                 if etf and STATE["positions"].get(etf, {}).get("kind") == "quake":
