@@ -33,7 +33,7 @@ cierre inmediato, reconcile de posiciones/ordenes huerfanas al arrancar y cada
 10 min, TWS caido -> reconexion + fallback, precio sin subscripcion IBKR ->
 cadena Alpaca quote/trade fresco o NO se opera (jamas precio viejo/delayed).
 """
-import json, os, re, subprocess, sys, time, urllib.request
+import json, math, os, re, subprocess, sys, time, urllib.request
 from datetime import datetime
 
 ROOT = "/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader"
@@ -115,6 +115,8 @@ def load_state():
         return {"positions": {}, "offsets": {}, "cooldown": {}, "history": []}
 STATE = load_state()
 def save_state():
+    if len(STATE.get("history", [])) > 4000:            # el CSV es el historial
+        STATE["history"] = STATE["history"][-4000:]     # completo; esto es cache
     tmp = STATE_FILE + ".tmp"
     json.dump(STATE, open(tmp, "w"), indent=1)
     os.replace(tmp, STATE_FILE)
@@ -122,13 +124,19 @@ def save_state():
 def armed():
     return os.path.exists(ARMED_FILE)
 
+def cent_ceil(px):
+    """Redondeo SIEMPRE hacia arriba al centavo en limits de VENTA — round()
+    normal podia caer 1c bajo el profit_floor y violar 'never sell on loss'
+    (adversarial review 2026-07-11)."""
+    return math.ceil(px * 100 - 1e-9) / 100
+
 def profit_floor(entry, qty):
     """Precio minimo de venta que GARANTIZA ganancia neta de comisiones
     (orden: 'consider broker fees to sell in profit all the time, never sell
     on loss'). Posiciones chicas exigen % mayor: 2 lados de fee + slippage."""
     notional = max(entry * max(qty, 1), 1e-9)
     fee_pct = 2 * FEE_MIN_USD / notional * 100
-    return entry * (1 + max(BAG_MIN_GAIN, fee_pct + 0.2) / 100)
+    return cent_ceil(entry * (1 + max(BAG_MIN_GAIN, fee_pct + 0.2) / 100))
 
 LEDGER = "data/etf_ledger.csv"
 def ledger(event, etf, base, side, qty, px, fee=0.0, pnl="", note=""):
@@ -183,7 +191,7 @@ def ref_price(ib, sym):
 # ---------------- venue IBKR ----------------
 class Ibkr:
     def __init__(self):
-        self.ib = IB(); self.last_try = 0
+        self.ib = IB(); self.last_try = 0; self.connect_time = 0
     def connected(self):
         if self.ib.isConnected(): return True
         if time.time() - self.last_try < 30: return False
@@ -191,10 +199,25 @@ class Ibkr:
         try:
             self.ib.connect(HOST, PORT, clientId=CID, timeout=15, account=ACCOUNT)
             self.ib.reqMarketDataType(1)             # REALTIME only, jamas delayed
+            self.connect_time = time.time()
             log(f"IBKR conectado (cuenta {ACCOUNT})")
             return True
         except Exception as e:
             log(f"IBKR sin conexion: {e}"); return False
+    def fx_rate(self):
+        """USDCAD del broker si esta (ExchangeRate tag); si no, fallback
+        conservador 1.45 (subestima el poder de compra = lado seguro)."""
+        try:
+            for v in self.ib.accountValues(ACCOUNT):
+                if v.tag == "ExchangeRate" and v.currency == "USD":
+                    r = float(v.value)
+                    if 0.4 < r < 1.0:      # USD->CAD viene como CAD/USD invertido
+                        return 1.0 / r
+                    if 1.0 < r < 2.0:
+                        return r
+        except Exception:
+            pass
+        return FX_FALLBACK
     def netliq_usd(self):
         try:
             vals = {(v.tag, v.currency): float(v.value)
@@ -202,7 +225,7 @@ class Ibkr:
                     if v.tag in ("NetLiquidation", "ExchangeRate", "AvailableFunds")}
             nl_base = vals.get(("NetLiquidation", "CAD")) or vals.get(("NetLiquidation", "USD"))
             if ("NetLiquidation", "USD") in vals: return vals[("NetLiquidation", "USD")]
-            fx = FX_FALLBACK
+            fx = max(self.fx_rate(), FX_FALLBACK)    # el mas conservador gana
             return (nl_base or 0) / fx
         except Exception as e:
             log(f"netliq error: {e}"); return 0
@@ -220,22 +243,58 @@ class Ibkr:
         tr = self.ib.placeOrder(self.qualify(sym),
                                 LimitOrder("BUY", qty, round(px, 2), tif="DAY",
                                            account=ACCOUNT, outsideRth=False))
-        return self._wait_fill(tr, 300)
+        # 90s (era 300): un limit marketable llena en segundos; esperar 5min
+        # bloqueaba el loop entero y podia perder la ventana EOD de los bears
+        return self._wait_fill(tr, 90)
     def sell_limit_day(self, sym, qty, px):
         tr = self.ib.placeOrder(self.qualify(sym),
-                                LimitOrder("SELL", qty, round(px, 2), tif="DAY", account=ACCOUNT))
+                                LimitOrder("SELL", qty, cent_ceil(px), tif="DAY", account=ACCOUNT))
         return self._wait_fill(tr, 120)
     def sell_market(self, sym, qty):
         tr = self.ib.placeOrder(self.qualify(sym), MarketOrder("SELL", qty, account=ACCOUNT))
         return self._wait_fill(tr, 120)
+    def _place_checked(self, sym, o):
+        """Coloca y VERIFICA aceptacion (adversarial review: un stop rechazado
+        en silencio dejaba un bear sin proteccion). Rechazo -> excepcion."""
+        tr = self.ib.placeOrder(self.qualify(sym), o)
+        self.ib.sleep(1.5)
+        if tr.orderStatus.status in ("Cancelled", "Inactive", "ApiCancelled"):
+            raise RuntimeError(f"orden rechazada: {tr.orderStatus.status} {tr.log[-1].message if tr.log else ''}")
+        return tr.order.orderId
     def place_gtc_sell(self, sym, qty, px, oca=None):   # bolsa bull: recuperacion
-        o = LimitOrder("SELL", qty, round(px, 2), tif="GTC", account=ACCOUNT)
+        o = LimitOrder("SELL", qty, cent_ceil(px), tif="GTC", account=ACCOUNT)
         if oca: o.ocaGroup, o.ocaType = oca, 1          # una se llena -> la otra muere
-        return self.ib.placeOrder(self.qualify(sym), o).order.orderId
+        return self._place_checked(sym, o)
     def place_gtc_stop(self, sym, qty, px, oca=None):   # stop servidor-side
         o = StopOrder("SELL", qty, round(px, 2), tif="GTC", account=ACCOUNT)
         if oca: o.ocaGroup, o.ocaType = oca, 1
-        return self.ib.placeOrder(self.qualify(sym), o).order.orderId
+        return self._place_checked(sym, o)
+    def cancel_confirmed(self, order_id, sym=None, timeout=10):
+        """Cancela y ESPERA confirmacion (adversarial review: el cancel async
+        + venta manual inmediata podia dejar DOS sells vivos = short). Refresca
+        reqAllOpenOrders (ordenes de sesiones previas invisibles a openTrades)
+        y verifica simbolo antes de cancelar (orderIds se reusan tras reiniciar
+        TWS). True = confirmado muerto; False = NO vender manualmente."""
+        try:
+            self.ib.reqAllOpenOrders(); self.ib.sleep(1)
+            target = None
+            for tr in self.ib.openTrades():
+                if tr.order.orderId == order_id and \
+                   (sym is None or tr.contract.symbol == sym):
+                    target = tr; break
+            if target is None:
+                return True                      # ya no existe: muerto
+            self.ib.cancelOrder(target.order)
+            end = time.time() + timeout
+            while time.time() < end:
+                self.ib.sleep(0.5)
+                if target.orderStatus.status in ("Cancelled", "ApiCancelled", "Inactive", "Filled"):
+                    # Filled = el stop gano la carrera: la posicion ya salio
+                    return target.orderStatus.status != "Filled"
+            return False
+        except Exception as e:
+            log(f"cancel_confirmed error {sym} #{order_id}: {e}")
+            return False
     def cancel(self, order_id):
         for tr in self.ib.openTrades():
             if tr.order.orderId == order_id:
@@ -298,10 +357,16 @@ def new_log_lines():
             STATE["offsets"][path] = {"ino": st.st_ino, "off": st.st_size}   # EOF: JAMAS replay
             continue
         if st.st_size > rec["off"]:
-            with open(path) as f:
+            with open(path, "rb") as f:
                 f.seek(rec["off"])
-                chunk = f.read()
-                rec["off"] = f.tell()
+                raw = f.read()
+            # solo consumir hasta el ULTIMO \n: una linea a medio escribir por
+            # el bot C++ se dejaria para el proximo ciclo (adversarial review:
+            # avanzar el offset sobre una linea parcial PERDIA esa señal)
+            nl = raw.rfind(b"\n")
+            if nl < 0: continue
+            rec["off"] += nl + 1
+            chunk = raw[:nl + 1].decode("utf-8", "replace")
             for line in chunk.splitlines():
                 parts = [p.strip() for p in line.split(" | ", 2)]
                 if len(parts) != 3 or parts[1].startswith("WARMUP"): continue
@@ -345,6 +410,8 @@ def rth_now():
     lt = time.localtime()
     return lt.tm_wday < 5 and (570 <= lt.tm_hour * 60 + lt.tm_min < 959)
 
+BATCH_SPENT = [0.0]   # USD gastados en el ciclo actual (reset en el loop)
+
 def do_buy(ibkr, base, side, etf, sig_msg, stop_pct=None, kind="signal"):
     venue, why = preflight(ibkr, etf, True)
     if venue is None:
@@ -372,7 +439,9 @@ def do_buy(ibkr, base, side, etf, sig_msg, stop_pct=None, kind="signal"):
     equity = MIN_EQUITY if paper else ibkr.netliq_usd()
     slot = max(50.0, equity / MAX_OPEN)
     avail = equity if paper else ibkr.avail_usd()
-    budget = min(slot, max(0.0, avail - CASH_RESERVE))
+    # rafaga de señales: AvailableFunds del broker actualiza con latencia —
+    # lo gastado en ESTE ciclo se descuenta a mano (adversarial review)
+    budget = min(slot, max(0.0, avail - CASH_RESERVE - BATCH_SPENT[0]))
     qty = int(budget // ask)
     if qty < 1:
         banner(f"{etf}: SIN PRESUPUESTO", f"slot {slot:.0f} ask {ask:.2f} avail {avail:.0f} — 0 shares")
@@ -415,6 +484,7 @@ def do_buy(ibkr, base, side, etf, sig_msg, stop_pct=None, kind="signal"):
                 pos["oca"] = oca
         except Exception as e:
             log(f"{etf}: stop catastrofico fallo ({e}) — reconcile reintentara")
+    BATCH_SPENT[0] += filled * avg
     STATE["positions"][etf] = pos
     STATE["cooldown"][etf] = time.time()
     STATE["history"].append({**pos, "event": "buy", "at": time.time()})
@@ -434,6 +504,14 @@ def do_sell(ibkr, base, kind):
     venue, why = preflight(ibkr, etf, False)
     if venue is None:
         log(f"SKIP SELL {etf}: {why}"); return
+    # la venta se enruta al venue DUEÑO de la posicion (fix review 2026-07-11):
+    # una posicion IBKR con TWS caido JAMAS se "vende" en paper — se espera
+    # (los stops/GTC del broker siguen protegiendo) y se reintenta luego
+    if pos["venue"] == "ibkr" and isinstance(venue, AlpacaPaper):
+        log(f"SKIP SELL {etf}: TWS caido y la posicion es IBKR — broker protege, reintento")
+        return
+    if pos["venue"] == "alpaca_paper" and not isinstance(venue, AlpacaPaper):
+        venue = AlpacaPaper()
     paper = isinstance(venue, AlpacaPaper)
     if not paper:
         # cuenta = fuente de verdad: el humano pudo vender/ajustar a mano
@@ -451,12 +529,14 @@ def do_sell(ibkr, base, kind):
     if want == "bull":
         floor = profit_floor(pos["entry"], pos["qty"])   # garantiza ganancia NETA de fees
         if bid >= floor:
-            # el stop catastrofico se cancela ANTES de vender (evita doble venta);
-            # si la venta no llena, el par stop+GTC se recrea en el camino de bolsa
+            # el stop catastrofico se cancela CON CONFIRMACION antes de vender:
+            # cancel async + venta inmediata = dos sells vivos = short posible
             if not paper and pos.get("stop_oid"):
-                try: venue.cancel(pos["stop_oid"])
-                except Exception: pass
-                pos["stop_oid"] = None
+                if not venue.cancel_confirmed(pos["stop_oid"], etf):
+                    log(f"{etf}: cancel del stop NO confirmado — venta pospuesta "
+                        f"(la proteccion del broker sigue viva, cero riesgo de oversell)")
+                    return
+                pos["stop_oid"] = None; save_state()
             if paper:
                 venue.order(etf, "sell", pos["qty"], "limit", px=max(floor, bid * 0.999))
                 filled, avg = pos["qty"], max(floor, bid * 0.999)
@@ -473,6 +553,9 @@ def do_sell(ibkr, base, kind):
             if filled > 0:      # fill parcial: lo vendido se contabiliza, el resto va a bolsa
                 STATE["history"].append({**pos, "event": "sell_partial", "qty": filled,
                                          "exit": avg, "at": time.time()})
+                ledger("sell_partial", etf, base, "bull", filled, avg,
+                       getattr(venue, "last_fee", 0.0),
+                       f"{(avg - pos['entry']) / pos['entry'] * 100:+.2f}")
                 pos["qty"] -= filled
         # no se vende por debajo: BOLSA = par OCA en el broker — GTC de
         # recuperacion en floor + stop catastrofico; una llena, la otra muere
@@ -481,14 +564,23 @@ def do_sell(ibkr, base, kind):
             if paper:
                 pos["bag_oid"] = venue.order(etf, "sell", pos["qty"], "limit", px=floor, tif="gtc")
             else:
-                if pos.get("stop_oid"):          # stop suelto del buy: fuera,
-                    try: venue.cancel(pos["stop_oid"])   # el par nuevo lo reemplaza
-                    except Exception: pass
+                if pos.get("stop_oid"):          # stop suelto del buy: fuera CON
+                    if not venue.cancel_confirmed(pos["stop_oid"], etf):   # confirmacion
+                        log(f"{etf}: cancel del stop viejo NO confirmado — bolsa pospuesta")
+                        return
+                    pos["stop_oid"] = None
                 oca = f"B{etf}{int(time.time())}"
-                pos["bag_oid"] = venue.place_gtc_sell(etf, pos["qty"], floor, oca=oca)
+                new_gtc = venue.place_gtc_sell(etf, pos["qty"], floor, oca=oca)
                 if BULL_STOP > 0:
-                    pos["stop_oid"] = venue.place_gtc_stop(
-                        etf, pos["qty"], pos["entry"] * (1 - BULL_STOP / 100), oca=oca)
+                    try:
+                        pos["stop_oid"] = venue.place_gtc_stop(
+                            etf, pos["qty"], pos["entry"] * (1 - BULL_STOP / 100), oca=oca)
+                    except Exception as e2:
+                        # segunda pata fallo: rollback de la primera — jamas
+                        # dejar media proteccion fuera de un OCA coherente
+                        venue.cancel_confirmed(new_gtc, etf)
+                        raise RuntimeError(f"pata stop del OCA fallo: {e2}")
+                pos["bag_oid"] = new_gtc
                 pos["oca"] = oca
             pos["bag"] = True; save_state()
             ledger("bag", etf, base, "bull", pos["qty"], floor, note="GTC recuperacion")
@@ -498,8 +590,11 @@ def do_sell(ibkr, base, kind):
             log(f"{etf}: GTC bolsa fallo: {e} — reintenta reconcile")
     else:
         if pos.get("stop_oid") and not paper:
-            try: venue.cancel(pos["stop_oid"])
-            except Exception: pass
+            if not venue.cancel_confirmed(pos["stop_oid"], etf):
+                log(f"{etf}: cancel del stop bear NO confirmado — salida pospuesta "
+                    f"(el stop sigue protegiendo); reintento en el proximo ciclo")
+                return
+            pos["stop_oid"] = None; save_state()
         filled, avg = ((pos["qty"], bid) if paper else venue.sell_limit_day(etf, pos["qty"], bid * 0.997 if bid else pos["entry"]))
         if paper: venue.order(etf, "sell", pos["qty"], "market")
         if not paper and filled < pos["qty"]:
@@ -517,11 +612,23 @@ def reconcile(ibkr):
     try:
         ibkr.ib.reqAllOpenOrders()      # GTC/stops de sesiones previas tambien
         ibkr.ib.sleep(1.5)
-        real = {p.contract.symbol: p for p in ibkr.ib.positions(ACCOUNT)
+        allpos = ibkr.ib.positions(ACCOUNT)
+        real = {p.contract.symbol: p for p in allpos
                 if p.contract.symbol in ALL_ETFS and p.position > 0}
+        # SHORT en nuestros ETFs = algo salio muy mal (o el humano shortea a
+        # proposito): alarma, no se toca (cuenta = verdad, puede ser suyo)
+        for p in allpos:
+            if p.contract.symbol in ALL_ETFS and p.position < 0:
+                banner(f"{p.contract.symbol}: SHORT DETECTADO",
+                       f"{p.position} shares — el bot NO gestiona shorts, revisar YA")
         open_ids = {tr.order.orderId for tr in ibkr.ib.openTrades()}
         for sym, p in real.items():
             pos = STATE["positions"].get(sym)
+            if pos and int(p.position) < pos["qty"]:
+                # el humano vendio parte a mano: la proteccion debe cubrir lo REAL
+                log(f"reconcile: {sym} broker {int(p.position)} < estado {pos['qty']} — qty ajustada")
+                pos["qty"] = int(p.position)
+                pos["stop_oid"] = pos["bag_oid"] = None   # fuerza recreacion del par abajo
             if not pos:
                 side = "bear" if sym in BEAR_ETFS else "bull"
                 pos = {"base": next((b for b, m in MAP.items() if sym in (m["bull"], m.get("bear"))), "?"),
@@ -555,13 +662,17 @@ def reconcile(ibkr):
                     pos["oca"] = oca
                     log(f"reconcile: proteccion bull re-colocada {sym} "
                         f"(stop -{BULL_STOP}%{' + GTC bolsa' if pos.get('bag') else ''})")
-        for sym in list(STATE["positions"]):
-            pos = STATE["positions"][sym]
-            if pos["venue"] == "ibkr" and sym not in real:
-                # el broker dice que ya no existe (GTC/stop se lleno estando muertos)
-                banner(f"{sym}: cerrada en broker", "GTC/stop se ejecuto — posicion retirada del estado")
-                STATE["history"].append({**pos, "event": "closed_serverside", "at": time.time()})
-                del STATE["positions"][sym]
+        # PODA solo con la conexion ya sincronizada (adversarial review: un
+        # positions() vacio recien conectado borraba posiciones reales del
+        # estado y duplicaba stops al re-adoptar)
+        if time.time() - ibkr.connect_time > 15:
+            for sym in list(STATE["positions"]):
+                pos = STATE["positions"][sym]
+                if pos["venue"] == "ibkr" and sym not in real:
+                    # el broker dice que ya no existe (GTC/stop se lleno estando muertos)
+                    banner(f"{sym}: cerrada en broker", "GTC/stop se ejecuto — posicion retirada del estado")
+                    STATE["history"].append({**pos, "event": "closed_serverside", "at": time.time()})
+                    del STATE["positions"][sym]
         save_state()
     except Exception as e:
         log(f"reconcile error: {e}")
@@ -612,6 +723,7 @@ reconcile(ibkr)
 last_reconcile = time.time()
 while True:
     try:
+        BATCH_SPENT[0] = 0.0
         for base, action, sig_px, msg in new_log_lines():
             if base not in MAP: continue
             log(f"señal {base} {action} @ {sig_px} :: {msg[:80]}")
@@ -638,6 +750,8 @@ while True:
                     log(f"{base}: bull/bolsa abierta — sin quake-bear (conflicto)")
                 elif nbears >= MAX_BEARS:
                     log(f"{base}: cap {MAX_BEARS} bears alcanzado — quake ignorado")
+                elif time.localtime().tm_hour * 60 + time.localtime().tm_min >= 920:
+                    log(f"{base}: quake despues de 15:20 — sin entrada (EOD 15:50 lo sacaria ya)")
                 else:
                     do_buy(ibkr, base, "bear", etf, msg, stop_pct=QUAKE_STOP, kind="quake")
             elif action == "QUAKE ALZA":
@@ -653,8 +767,13 @@ while True:
             if not p or p["side"] != "bear" or p.get("bag"): continue
             timed_out = p.get("deadline") and time.time() > p["deadline"]
             eod = lt.tm_wday < 5 and mins >= 950 and mins < 960
-            if timed_out or eod:
-                log(f"{sym}: exit programado bear ({'time-stop' if timed_out else 'EOD 15:50'})")
+            # red de seguridad (review 2026-07-11): si el executor estuvo caido
+            # en la ventana EOD, un bear sin deadline quedaria vivo para siempre
+            # — edad maxima 8h lo saca en la proxima sesion si o si
+            stale = time.time() - p.get("t", 0) > 8 * 3600
+            if timed_out or eod or stale:
+                why = "time-stop" if timed_out else ("EOD 15:50" if eod else "edad>8h")
+                log(f"{sym}: exit programado bear ({why})")
                 do_sell(ibkr, p["base"], "bear_exit")
         if time.time() - last_reconcile > 300:
             reconcile(ibkr); last_reconcile = time.time()

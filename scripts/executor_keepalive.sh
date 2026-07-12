@@ -8,7 +8,7 @@ cd "$(dirname "$0")/.."
 # KILL SWITCH: rm data/etf_armed (pasa a dry-run al instante).
 while true; do
   pkill -f "scripts/fleet_executor.py" 2>/dev/null
-  sleep 1
+  sleep 3   # TWS libera el clientId 90 antes del reconnect
   ./venv/bin/python scripts/fleet_executor.py >> fleet_executor.log 2>&1
   echo "$(date) fleet_executor salio; relanzando" >> fleet_executor.log
   sleep 30
