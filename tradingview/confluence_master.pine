@@ -1,0 +1,211 @@
+//@version=6
+// ============================================================================
+// CONFLUENCE MASTER — single-file merge of the classics, modernized to Pine v6
+//   1) RSI Divergence (fast 5 vs slow 14 RSI spread)         [momentum]
+//   2) Supertrend (ATR 10 x 3.0, the "super good" v4 script) [trend engine]
+//   3) DEMA (Double EMA 9)                                   [fast trigger line]
+//   4) Multi-MA regime (EMA 200, optional higher timeframe)  [bull/bear filter]
+//   5) Bollinger Bands 20/2.0                                [location]
+//   6) VWAP + stdev bands (anchored, default Monthly)        [institutional level]
+//   7) Relative Volume                                       [participation]
+//
+// Logic: Supertrend is the gatekeeper. On top of it, 6 confluence checks are
+// scored 0-6; a long needs `minScore` of them. Exits: Supertrend flip, score
+// collapse, or ATR stop that ratchets up along the Supertrend line.
+// Defaults below are the walk-forward tuned plateau from the local backtest
+// (see tradingview/README.md) — not a curve-fit spike.
+// ============================================================================
+strategy("Confluence Master [RSIdiv+ST+DEMA+BB+VWAP+Vol]", shorttitle="CONFLUENCE",
+     overlay=true, initial_capital=25000,
+     default_qty_type=strategy.percent_of_equity, default_qty_value=95,
+     commission_type=strategy.commission.percent, commission_value=0.05,
+     slippage=2, calc_on_every_tick=false, max_labels_count=500)
+
+// ---------------------------------------------------------------- inputs ---
+grpS  = "Signal engine"
+minScore     = input.int(4, "Min confluence score to enter (of 6)", minval=1, maxval=6, group=grpS)
+exitScore    = input.int(2, "Exit when score falls below", minval=0, maxval=5, group=grpS)
+allowDipBuy  = input.bool(true, "Dip-buy: BB-lower tag inside uptrend", group=grpS)
+allowShorts  = input.bool(false, "Allow shorts (mirror logic)", group=grpS)
+
+grpT  = "Supertrend"
+stPeriod = input.int(10, "ATR Period", minval=1, group=grpT)
+stMult   = input.float(3.5, "ATR Multiplier", step=0.1, group=grpT)
+stSrc    = input.source(hl2, "Source", group=grpT)
+
+grpR  = "RSI divergence (fast-slow spread)"
+lenFast = input.int(5, "Length Fast RSI", minval=1, group=grpR)
+lenSlow = input.int(14, "Length Slow RSI", minval=1, group=grpR)
+dipRsi  = input.float(38, "Dip-buy: slow RSI below", group=grpR)
+
+grpM  = "Moving averages / regime"
+demaLen   = input.int(9, "DEMA length", minval=1, group=grpM)
+regimeLen = input.int(200, "Regime EMA length", minval=1, group=grpM)
+regimeTf  = input.timeframe("", "Regime EMA timeframe (blank = chart)", group=grpM)
+
+grpB  = "Bollinger Bands"
+bbLen  = input.int(20, "BB length", minval=1, group=grpB)
+bbMult = input.float(2.0, "BB stdev", step=0.1, group=grpB)
+
+grpV  = "VWAP bands"
+vwapAnchor = input.timeframe("M", "VWAP anchor period", group=grpV)
+vwapDev    = input.float(2.0, "VWAP stdev multiplier", step=0.1, group=grpV)
+
+grpVol = "Volume"
+rvolLen    = input.int(20, "Relative volume lookback", minval=1, group=grpVol)
+rvolThresh = input.float(1.2, "Relative volume threshold", step=0.1, group=grpVol)
+
+grpX  = "Risk"
+atrStopMult = input.float(4.0, "Initial stop: ATR multiple", step=0.25, group=grpX)
+useTrail    = input.bool(false, "Ratchet stop up along Supertrend line", group=grpX)
+useTp       = input.bool(false, "Use take-profit", group=grpX)
+tpR         = input.float(3.0, "Take-profit (R multiple)", step=0.25, group=grpX)
+
+grpUI = "Display"
+showTable = input.bool(true, "Show confluence table", group=grpUI)
+showBands = input.bool(true, "Show BB + VWAP bands", group=grpUI)
+
+// ------------------------------------------------------------ indicators ---
+// 1) RSI divergence — fast minus slow RSI (the original study, verbatim math)
+rsiFast    = ta.rsi(close, lenFast)
+rsiSlow    = ta.rsi(close, lenSlow)
+divergence = rsiFast - rsiSlow
+
+// 2) Supertrend — ported 1:1 from the v4 script (nz/ratchet semantics kept)
+atrVal = ta.atr(stPeriod)
+up = stSrc - stMult * atrVal
+up1 = nz(up[1], up)
+up := close[1] > up1 ? math.max(up, up1) : up
+dn = stSrc + stMult * atrVal
+dn1 = nz(dn[1], dn)
+dn := close[1] < dn1 ? math.min(dn, dn1) : dn
+var int trend = 1
+trend := trend == -1 and close > dn1 ? 1 : trend == 1 and close < up1 ? -1 : trend
+buyFlip  = trend == 1 and trend[1] == -1
+sellFlip = trend == -1 and trend[1] == 1
+
+// 3) DEMA
+e1 = ta.ema(close, demaLen)
+e2 = ta.ema(e1, demaLen)
+dema = 2 * e1 - e2
+
+// 4) Regime EMA (optionally from a higher timeframe)
+emaRegime = request.security(syminfo.tickerid, regimeTf == "" ? timeframe.period : regimeTf,
+     ta.ema(close, regimeLen), lookahead=barmerge.lookahead_off)
+
+// 5) Bollinger Bands
+bbBasis = ta.sma(close, bbLen)
+bbDev   = bbMult * ta.stdev(close, bbLen)
+bbUpper = bbBasis + bbDev
+bbLower = bbBasis - bbDev
+
+// 6) Anchored VWAP with stdev bands (v6 native — replaces the v2 script)
+[vwapVal, vwapUpper, vwapLower] = ta.vwap(hlc3, timeframe.change(vwapAnchor), vwapDev)
+
+// 7) Relative volume
+rvol = volume / ta.sma(volume, rvolLen)
+
+// ----------------------------------------------------------------- score ---
+c1 = close > dema            // price above fast trigger line
+c2 = divergence > 0          // fast RSI leading slow = momentum thrust
+c3 = close > emaRegime       // bull regime
+c4 = close > vwapVal         // above institutional anchor
+c5 = rvol >= rvolThresh      // real participation
+c6 = close > bbBasis         // upper half of the band
+score = (c1 ? 1 : 0) + (c2 ? 1 : 0) + (c3 ? 1 : 0) + (c4 ? 1 : 0) + (c5 ? 1 : 0) + (c6 ? 1 : 0)
+
+scoreShort = (close < dema ? 1 : 0) + (divergence < 0 ? 1 : 0) + (close < emaRegime ? 1 : 0) +
+     (close < vwapVal ? 1 : 0) + (c5 ? 1 : 0) + (close < bbBasis ? 1 : 0)
+
+// -------------------------------------------------------------- signals ---
+longMomentum = trend == 1 and score >= minScore
+longDip      = allowDipBuy and trend == 1 and c3 and rsiSlow <= dipRsi and close <= bbLower
+longSignal   = (longMomentum or longDip) and strategy.position_size <= 0
+exitLong     = trend == -1 or score < exitScore
+
+shortSignal = allowShorts and trend == -1 and scoreShort >= minScore and strategy.position_size >= 0
+exitShort   = trend == 1 or scoreShort < exitScore
+
+// ----------------------------------------------------------------- risk ---
+var float stopLvl = na
+var float riskPer = na
+if longSignal
+    stopLvl := close - atrStopMult * atrVal
+    riskPer := atrStopMult * atrVal
+if shortSignal
+    stopLvl := close + atrStopMult * atrVal
+    riskPer := atrStopMult * atrVal
+
+if strategy.position_size > 0 and useTrail
+    stopLvl := math.max(stopLvl, up)   // Supertrend line only ratchets up in an uptrend
+if strategy.position_size < 0 and useTrail
+    stopLvl := math.min(stopLvl, dn)
+
+// --------------------------------------------------------------- orders ---
+if longSignal
+    strategy.entry("L", strategy.long, comment=longDip and not longMomentum ? "DIP" : "LONG")
+if strategy.position_size > 0
+    strategy.exit("XL", "L", stop=stopLvl, limit=useTp ? strategy.position_avg_price + tpR * riskPer : na)
+if exitLong and strategy.position_size > 0
+    strategy.close("L", comment="flip/score")
+
+if shortSignal
+    strategy.entry("S", strategy.short, comment="SHORT")
+if strategy.position_size < 0
+    strategy.exit("XS", "S", stop=stopLvl, limit=useTp ? strategy.position_avg_price - tpR * riskPer : na)
+if exitShort and strategy.position_size < 0
+    strategy.close("S", comment="flip/score")
+
+// ---------------------------------------------------------------- plots ---
+upPlot = plot(trend == 1 ? up : na, "Supertrend Up", style=plot.style_linebr, linewidth=2, color=color.new(color.green, 0))
+dnPlot = plot(trend == 1 ? na : dn, "Supertrend Down", style=plot.style_linebr, linewidth=2, color=color.new(color.red, 0))
+plotshape(buyFlip ? up : na, "ST flip up", style=shape.labelup, location=location.absolute,
+     size=size.tiny, color=color.green, text="ST", textcolor=color.white)
+plotshape(sellFlip ? dn : na, "ST flip down", style=shape.labeldown, location=location.absolute,
+     size=size.tiny, color=color.red, text="ST", textcolor=color.white)
+
+plot(dema, "DEMA", color=color.new(#43A047, 0), linewidth=1)
+plot(emaRegime, "Regime EMA", color=color.new(#1155CC, 20), linewidth=2)
+
+bbU = plot(showBands ? bbUpper : na, "BB Upper", color=color.new(#3D85C6, 45))
+bbL = plot(showBands ? bbLower : na, "BB Lower", color=color.new(#3D85C6, 45))
+plot(showBands ? bbBasis : na, "BB Basis", color=color.new(color.gray, 20))
+fill(bbU, bbL, color=color.new(#6D9EEB, 92), title="BB fill")
+
+plot(showBands ? vwapVal : na, "VWAP", color=color.new(color.black, 0), style=plot.style_circles)
+vwU = plot(showBands ? vwapUpper : na, "VWAP +dev", color=color.new(color.red, 40), style=plot.style_circles)
+vwL = plot(showBands ? vwapLower : na, "VWAP -dev", color=color.new(color.green, 40), style=plot.style_circles)
+
+// data-window series (keep the chart clean, values on hover)
+plot(divergence, "RSI divergence (fast-slow)", display=display.data_window)
+plot(rsiSlow, "RSI slow", display=display.data_window)
+plot(rvol, "Relative volume", display=display.data_window)
+plot(score, "Confluence score", display=display.data_window)
+
+// ---------------------------------------------------------------- table ---
+mark(bool ok) => ok ? "✓" : "✗"
+col(bool ok) => ok ? color.new(color.green, 70) : color.new(color.red, 70)
+if showTable and barstate.islast
+    var table t = table.new(position.top_right, 2, 8, border_width=1)
+    table.cell(t, 0, 0, "CONFLUENCE " + str.tostring(score) + "/6", bgcolor=color.new(color.blue, 60), text_color=color.white)
+    table.cell(t, 1, 0, trend == 1 ? "ST UP" : "ST DOWN", bgcolor=trend == 1 ? color.new(color.green, 50) : color.new(color.red, 50), text_color=color.white)
+    table.cell(t, 0, 1, "Close > DEMA")
+    table.cell(t, 1, 1, mark(c1), bgcolor=col(c1))
+    table.cell(t, 0, 2, "RSI div > 0")
+    table.cell(t, 1, 2, mark(c2), bgcolor=col(c2))
+    table.cell(t, 0, 3, "Regime EMA")
+    table.cell(t, 1, 3, mark(c3), bgcolor=col(c3))
+    table.cell(t, 0, 4, "Above VWAP")
+    table.cell(t, 1, 4, mark(c4), bgcolor=col(c4))
+    table.cell(t, 0, 5, "RelVol ≥ thr")
+    table.cell(t, 1, 5, mark(c5), bgcolor=col(c5))
+    table.cell(t, 0, 6, "Upper BB half")
+    table.cell(t, 1, 6, mark(c6), bgcolor=col(c6))
+    table.cell(t, 0, 7, "Stop")
+    table.cell(t, 1, 7, na(stopLvl) ? "—" : str.tostring(stopLvl, format.mintick))
+
+// --------------------------------------------------------------- alerts ---
+alertcondition(longSignal, "Confluence LONG", "CONFLUENCE {{ticker}}: LONG @ {{close}}")
+alertcondition(exitLong, "Confluence EXIT LONG", "CONFLUENCE {{ticker}}: exit long @ {{close}}")
+alertcondition(buyFlip, "Supertrend Buy", "SuperTrend Buy {{ticker}}!")
+alertcondition(sellFlip, "Supertrend Sell", "SuperTrend Sell {{ticker}}!")

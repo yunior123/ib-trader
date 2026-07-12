@@ -35,19 +35,34 @@ def _load_env():
 _load_env()
 
 
+def _mcap_millions(raw):
+    """Finviz export Market Cap viene en millones ("512.34") o vacio ("-")."""
+    try:
+        return float(str(raw).replace(",", ""))
+    except Exception:
+        return 0.0
+
+
 def _finviz_elite_export(signal, max_price=10.0, auth=None, src="finviz_elite",
-                         breakout=False):
+                         breakout=False, filters=None, price_cap=True):
     """Shared Finviz Elite export fetch for any screener signal (paid; needs
-    auth token in FINVIZ_AUTH). Returns [] if no token or on error."""
+    auth token in FINVIZ_AUTH). Returns [] if no token or on error.
+    filters: lista extra de codigos finviz (f=) que se suman al price cap.
+    price_cap=False: sin filtro de precio penny (screens de calidad/no-penny)."""
     auth = auth or os.environ.get("FINVIZ_AUTH") or os.environ.get("FINVIZ_API_KEY")
     if not auth:
         return []
-    price_f = "sh_price_u10" if max_price >= 10 else ("sh_price_u5" if max_price >= 5 else "sh_price_u1")
+    fparts = list(filters or [])
+    if price_cap:
+        fparts.insert(0, "sh_price_u10" if max_price >= 10 else
+                      ("sh_price_u5" if max_price >= 5 else "sh_price_u1"))
+    sig = f"&s={signal}" if signal else ""
+    fstr = f"&f={','.join(fparts)}" if fparts else ""
     # NOTE: use the /export/screener path. The legacy export.ashx 301-redirects to
     # an EMPTY body for clients that don't follow redirects. urllib follows 301 by
     # default, but the direct path avoids the round-trip entirely.
-    url = (f"https://elite.finviz.com/export/screener?v=111&s={signal}"
-           f"&f={price_f}&o=-change&auth={auth}")
+    url = (f"https://elite.finviz.com/export/screener?v=111{sig}"
+           f"{fstr}&o=-change&auth={auth}")
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
         text = urllib.request.urlopen(req, timeout=20).read().decode("utf-8", "ignore")
@@ -62,12 +77,13 @@ def _finviz_elite_export(signal, max_price=10.0, auth=None, src="finviz_elite",
                             # país de la empresa (v=111 lo trae): USA priorizado
                             # en el score (orden Yunior 2026-07-10)
                             "country": str(row.get("Country", "") or "").strip(),
-                            "market_cap": 0.0, "src": src, "breakout": breakout})
+                            "market_cap": _mcap_millions(row.get("Market Cap", 0)),
+                            "src": src, "breakout": breakout})
             except Exception:
                 continue
         return out
     except Exception as e:
-        print(f"finviz_elite err ({signal}) {repr(e)[:100]}")
+        print(f"finviz_elite err ({signal or ','.join(fparts)}) {repr(e)[:100]}")
         return []
 
 
@@ -86,6 +102,42 @@ def finviz_elite_breakouts(max_price=10.0, auth=None):
     scores them with a breakout bonus and a relaxed min-gain gate."""
     return _finviz_elite_export("ta_newhigh", max_price, auth,
                                 src="finviz_elite_breakout", breakout=True)
+
+
+# --------------------------------------------------------------------------
+# SCREENS adicionales (Yunior 2026-07-12) — presets Finviz Elite realtime.
+# NO se mezclan en top_gainer_universe: el scanner es penny-gated y los
+# filtraria; son universos aparte (swing/calidad). CLI: --screen <name>.
+# --------------------------------------------------------------------------
+SCREENS = {
+    # 1) gainers de CALIDAD: mcap>$50M, precio sobre SMA20, beta>1.5,
+    #    EPS next-5Y>10%, ROE>15%, current ratio>1.5, y subiendo >=2% hoy.
+    #    OJO: el signal ta_topgainers (top ~1% del dia) intersectado con
+    #    estos fundamentales da 0 casi siempre (verificado 2026-07-12);
+    #    ta_change_u2 es la version util del mismo concepto.
+    "quality": dict(signal=None, price_cap=False, filters=[
+        "cap_microover", "ta_sma20_pa", "ta_beta_o1.5",
+        "fa_estltgrowth_o10", "fa_roe_o15", "fa_curratio_o1.5",
+        "ta_change_u2"]),
+    # 2) rebote: RSI oversold(30) + dia verde + relative volume > 2
+    "oversold": dict(signal=None, price_cap=False, filters=[
+        "ta_rsi_os30", "ta_change_u", "sh_relvol_o2"]),
+    # 3) cosecha propia — squeeze igniter: short float >20% + rvol>2 + dia
+    #    verde + sobre SMA20 + liquidez minima. Los cortos atrapados son la
+    #    gasolina de los top gainers de MAÑANA: este screen los ve encenderse.
+    #    (rvol>1.5 y no >2: con >2 el stack completo da 0 en dias tranquilos
+    #    — verificado 2026-07-12)
+    "squeeze": dict(signal=None, price_cap=False, filters=[
+        "sh_short_o20", "sh_relvol_o1.5", "ta_change_u",
+        "ta_sma20_pa", "sh_avgvol_o300", "cap_microover"]),
+}
+
+
+def finviz_elite_screen(name, auth=None):
+    """Corre un preset de SCREENS y devuelve rows estandar (src=finviz_<name>)."""
+    cfg = SCREENS[name]
+    return _finviz_elite_export(cfg["signal"], auth=auth, src=f"finviz_{name}",
+                                filters=cfg["filters"], price_cap=cfg["price_cap"])
 
 
 # yahoo_penny_gainers / yahoo_premarket_gainers / finviz_gainers BORRADOS
@@ -121,6 +173,16 @@ def top_gainer_universe(premarket=False, max_price=10.0, favorites=None):
 
 if __name__ == "__main__":
     import sys
+    if "--screen" in sys.argv:
+        name = sys.argv[sys.argv.index("--screen") + 1]
+        rows = finviz_elite_screen(name)
+        rows.sort(key=lambda r: r["gain_pct"], reverse=True)
+        print(f"screen '{name}': {len(rows)} matches")
+        for r in rows[:30]:
+            print(f"  {r['sym']:6s} ${r['price']:9.2f} {r['gain_pct']:+6.1f}% "
+                  f"vol {r['volume']:>12,.0f} mcap ${r['market_cap']:>9,.0f}M "
+                  f"{r['country']}")
+        sys.exit(0)
     pm = "--premarket" in sys.argv
     u = top_gainer_universe(premarket=pm)
     u.sort(key=lambda r: max(r.get("premarket_pct", 0), r.get("gain_pct", 0)), reverse=True)
