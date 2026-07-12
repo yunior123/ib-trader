@@ -39,7 +39,7 @@ lenSlow = input.int(14, "Length Slow RSI", minval=1, group=grpR)
 dipRsi  = input.float(38, "Dip-buy: slow RSI below", group=grpR)
 
 grpM  = "Moving averages / regime"
-demaLen   = input.int(9, "DEMA length", minval=1, group=grpM)
+demaLen   = input.int(200, "DEMA length", minval=1, group=grpM)
 regimeLen = input.int(200, "Regime EMA length", minval=1, group=grpM)
 regimeTf  = input.timeframe("", "Regime EMA timeframe (blank = chart)", group=grpM)
 

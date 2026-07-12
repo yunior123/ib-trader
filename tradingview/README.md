@@ -9,7 +9,7 @@ TradingView's Strategy Tester backtests it natively:
 |---|---|---|
 | RSI Divergence (fast 5 − slow 14) | v1 study | momentum thrust |
 | Supertrend ATR(10)×3.5 | v4 "super good" script, ported 1:1 | trend gatekeeper |
-| DEMA(9) | v6 indicator | fast trigger line |
+| DEMA(200) | v6 indicator | slow trend line (Yunior: DEMA 200, not 9) |
 | EMA(200) regime (MTF-able) | replaces the Multi-SMA/EMA/BB v3 monster | bull/bear filter |
 | Bollinger 20/2.0 | v3 script | location (upper/lower half, dip tags) |
 | VWAP + stdev bands (anchored M) | v2 VWAP Stdev Bands, now native `ta.vwap` | institutional level |
@@ -32,31 +32,31 @@ Shipped defaults = **plateau center** of a 216-config grid (top-10 configs are
 all neighbors: stMult 3.5, atrStop 3–4, minScore 3–4 → not a curve-fit spike),
 trained ≤ 2023-12-31, validated OOS 2024-01-01→2026-07.
 
-### Full period 2015→2026 (shipped config)
+### Full period 2015→2026 (shipped config, DEMA 200)
 
 | Sym | Trades | WR | PF | Ret | CAGR | maxDD | Exposure | B&H ret / DD |
 |---|---|---|---|---|---|---|---|---|
-| QQQ  | 59 | 52.5% | 3.45 | +215%  | 11.6% | 17.9% | 54% | +616% / 35% |
-| SPY  | 58 | 51.7% | 2.07 | +68%   | 5.1%  | 22.1% | 55% | +341% / 34% |
-| TQQQ | 71 | 40.8% | 2.00 | +373%  | 16.0% | 45.4% | 48% | +3525% / 82% |
-| NVDA | 79 | 43.0% | 2.84 | +1353% | 29.1% | 51.0% | 48% | +26651% / 66% |
-| AAPL | 65 | 46.2% | 3.36 | +427%  | 17.2% | 18.6% | 49% | +1230% / 39% |
-| AMD  | 83 | 43.4% | 2.65 | +1235% | 28.0% | 37.6% | 41% | +20040% / 65% |
-| TSLA | 61 | 44.3% | 4.64 | +2990% | 38.7% | 51.7% | 36% | +2638% / 74% |
+| QQQ  | 40 | 57.5% | 4.16 | +237%  | 12.3% | 20.3% | 55% | +616% / 35% |
+| SPY  | 46 | 47.8% | 1.75 | +47%   | 3.7%  | 26.6% | 56% | +341% / 34% |
+| TQQQ | 44 | 40.9% | 2.28 | +426%  | 17.1% | 50.4% | 50% | +3525% / 82% |
+| NVDA | 46 | 45.7% | 4.34 | +1969% | 33.5% | 56.6% | 52% | +26651% / 66% |
+| AAPL | 42 | 52.4% | 4.76 | +492%  | 18.5% | 19.9% | 51% | +1230% / 39% |
+| AMD  | 60 | 40.0% | 3.09 | +1076% | 26.5% | 42.9% | 45% | +20040% / 65% |
+| TSLA | 43 | 39.5% | 3.71 | +1125% | 27.0% | 58.8% | 39% | +2638% / 74% |
 
 ### Out-of-sample 2024→2026-07 (never seen during tuning)
 
-PF ≥ 1.75 on all 7 tickers. QQQ: PF 4.41, +48.6% at 11% maxDD (B&H: +83% at
-23% DD). TSLA: PF 4.22, +77% vs B&H +64% at half the drawdown.
+PF ≥ 1.67 on all 7 tickers. QQQ: PF 6.04, WR 66.7%, +52.1% at 12% maxDD
+(B&H: +83% at 23% DD). AMD: PF 4.01, +139% OOS.
 
 ### Year-by-year QQQ (regime robustness)
 
-8 of 11 years positive. Losing years are all small: 2016 −3.6%, 2018 −5.1%,
-**2022 −4.4% while QQQ dropped −33%** — the system sat in cash most of the bear.
+8 of 11 years positive. Losing years are all small: 2016 −3.7%, 2018 −5.8%,
+**2022 −8.9% while QQQ dropped −33%** — the system sat in cash most of the bear.
 
 ### Honest read (what this is and isn't)
 
-- It's a **trend-following profile**: WR ~45–52% with avg-win ≫ avg-loss and
+- It's a **trend-following profile**: WR ~40–58% with avg-win ≫ avg-loss and
   PF 2–4.6. It does NOT meet the fleet's WR≥70 ship-gate — that gate is for the
   C++ signal bots; this is a TradingView chart/alert tool.
 - It underperforms raw B&H return on mega-bull names (any stopped trend system

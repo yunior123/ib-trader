@@ -239,7 +239,7 @@ def compute(d, p):
 
 
 # ----------------------------------------------------------- simulation ----
-BASE = dict(lenFast=5, lenSlow=14, demaLen=9, regimeLen=200, bbLen=20, bbMult=2.0,
+BASE = dict(lenFast=5, lenSlow=14, demaLen=200, regimeLen=200, bbLen=20, bbMult=2.0,
             vwapDev=2.0, rvolLen=20, rvolThresh=1.2, stPeriod=10, stMult=3.0,
             minScore=4, exitScore=2, atrStop=3.0, trail=True, dip=True, dipRsi=38)
 
