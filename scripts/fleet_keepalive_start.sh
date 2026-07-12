@@ -19,3 +19,9 @@ if ! pgrep -f "ibkr_bar_bridge.py --daemon" >/dev/null; then
   nohup ./venv/bin/python scripts/ibkr_bar_bridge.py --daemon NOK SPCX DRAM TSLA NVDA TXN TSM AMD INTC ASML AAPL GLD QQQ SLV CPER USO >> bridge_ibkr_fleet.log 2>&1 &
   echo "$(date) fleet: ibkr fleet daemon lanzado (pid $!)" >> fleet_autostart.log
 fi
+
+# ejecutor de ETFs apalancados (dinero real cuando TFSA >= 450 USD + etf_armed)
+if ! pgrep -f "scripts/executor_keepalive.sh" >/dev/null; then
+  nohup zsh "$ROOT/scripts/executor_keepalive.sh" >/dev/null 2>&1 &
+  echo "$(date) fleet: executor_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+fi

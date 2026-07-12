@@ -1,0 +1,19 @@
+TSLA  TSLL  L: 85 cerradas wr=100% tot= +110.5% bolsas_rec=63 (max 26.1d) ABIERTAS=5 mtm= -79.8% | TSLS  S: 50 wr= 48% tot=  -18.9% | skip=35
+AAPL  AAPU  L: 22 cerradas wr=100% tot=  +49.7% bolsas_rec= 1 (max 6.0d) ABIERTAS=1 mtm=  -2.4% | AAPD  S: 12 wr= 17% tot=   -9.2% | skip=7
+TSM   TSMU  L:  1 cerradas wr=100% tot=   +0.8% bolsas_rec= 1 (max 1.1d) ABIERTAS=0 mtm=  +0.0% | TSMZ  S:  1 wr=100% tot=   +1.3% | skip=34
+NVDA  NVDL  L: 23 cerradas wr=100% tot=  +55.6% bolsas_rec= 3 (max 8.0d) ABIERTAS=3 mtm=-200.0% | NVDD  S: 11 wr=  9% tot=  -22.5% | skip=34
+AMD   AMDL  L: 54 cerradas wr=100% tot= +209.8% bolsas_rec= 7 (max 10.8d) ABIERTAS=1 mtm=  -4.8% | AMDD  S: 44 wr= 23% tot=  -16.2% | skip=11
+INTC  INTW  L:  3 cerradas wr=100% tot=   +6.4% bolsas_rec= 1 (max 0.1d) ABIERTAS=0 mtm=  +0.0% | sin bear | skip=14
+ASML  ASMU  L:  5 cerradas wr=100% tot=  +15.4% bolsas_rec= 0 (max 0.0d) ABIERTAS=0 mtm=  +0.0% | sin bear | skip=28
+TXN   TXNU  L:  1 cerradas wr=100% tot=   +0.8% bolsas_rec= 1 (max 1.0d) ABIERTAS=0 mtm=  +0.0% | sin bear | skip=72
+QQQ   TQQQ  L: 92 cerradas wr=100% tot=  +77.2% bolsas_rec=81 (max 11.9d) ABIERTAS=8 mtm= -44.1% | SQQQ  S: 52 wr= 54% tot=   -3.4%
+GLD   UGL   L: 20 cerradas wr=100% tot=  +17.1% bolsas_rec=19 (max 10.8d) ABIERTAS=8 mtm=-170.6% | GLL   S: 66 wr= 32% tot=  -21.7% | skip=15
+SLV   AGQ   L:  0 cerradas wr=  0% tot=   +0.0% bolsas_rec= 0 (max 0.0d) ABIERTAS=0 mtm=  +0.0% | ZSL   S:  0 wr=  0% tot=   +0.0%
+USO   UCO   L:  0 cerradas wr=  0% tot=   +0.0% bolsas_rec= 0 (max 0.0d) ABIERTAS=0 mtm=  +0.0% | SCO   S:  0 wr=  0% tot=   +0.0%
+CPER  CPXR  L:  0 cerradas wr=  0% tot=   +0.0% bolsas_rec= 0 (max 0.0d) ABIERTAS=0 mtm=  +0.0% | sin bear
+NOK   LNOK  L: 16 cerradas wr=100% tot=  +21.1% bolsas_rec=11 (max 5.1d) ABIERTAS=3 mtm= -92.0% | sin bear | skip=74
+SPCX  LOFF  L: 13 cerradas wr=100% tot=  +27.5% bolsas_rec= 8 (max 0.3d) ABIERTAS=0 mtm=  +0.0% | SNK   S: 16 wr= 44% tot=   +6.4% | skip=9
+DRAM  RAM   L: 14 cerradas wr=100% tot=  +41.0% bolsas_rec= 2 (max 3.9d) ABIERTAS=3 mtm= -60.4% | sin bear | skip=58
+----------------------------------------------------------------------------------------------------
+TOTAL bull cerradas: n=349 wr=100% tot=+632.9% | bolsas abiertas: 32 mtm=-654.3% | bear: n=252 wr=37% tot=-84.2%
+(fees 0.2%/lado; wr bull cerradas ~100% POR CONSTRUCCION — la regla 'solo vender arriba' convierte perdidas en bolsas; el coste real son las ABIERTAS)

@@ -1,0 +1,66 @@
+{
+ "TSLA": {
+  "bull": "TSLL",
+  "bear": "TSLS"
+ },
+ "AAPL": {
+  "bull": "AAPU",
+  "bear": "AAPD"
+ },
+ "TSM": {
+  "bull": "TSMU",
+  "bear": "TSMZ"
+ },
+ "NVDA": {
+  "bull": "NVDL",
+  "bear": "NVDD"
+ },
+ "AMD": {
+  "bull": "AMDL",
+  "bear": "AMDD"
+ },
+ "INTC": {
+  "bull": "INTW",
+  "bear": null
+ },
+ "ASML": {
+  "bull": "ASMU",
+  "bear": null
+ },
+ "TXN": {
+  "bull": "TXNU",
+  "bear": null
+ },
+ "QQQ": {
+  "bull": "TQQQ",
+  "bear": "SQQQ"
+ },
+ "GLD": {
+  "bull": "UGL",
+  "bear": "GLL"
+ },
+ "SLV": {
+  "bull": "AGQ",
+  "bear": "ZSL"
+ },
+ "USO": {
+  "bull": "UCO",
+  "bear": "SCO"
+ },
+ "CPER": {
+  "bull": "CPXR",
+  "bear": null
+ },
+ "NOK": {
+  "bull": "LNOK",
+  "bear": null
+ },
+ "SPCX": {
+  "bull": "LOFF",
+  "bear": "SNK"
+ },
+ "DRAM": {
+  "bull": "RAM",
+  "bear": null
+ }
+}
