@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Re-run MANDATORY TradingAgents vetting on today's already-written watchlist
 (for when the 6AM research timed out) and rewrite it with ta_action attached.
-Usage: venv/bin/python topgainer/revet_watchlist.py [TOPN]"""
+Usage: venv/bin/python screener/revet_watchlist.py [TOPN]"""
 import json
 import os
 import sys
@@ -16,7 +16,7 @@ import state  # noqa: E402
 def main():
     topn = int(sys.argv[1]) if len(sys.argv) > 1 else 3
     day = datetime.now().astimezone().strftime("%Y%m%d")
-    path = f"data/topgainer/watchlist_{day}.json"
+    path = f"data/screener/watchlist_{day}.json"
     data = json.load(open(path))
     cands = data.get("candidates", [])
     if not cands:

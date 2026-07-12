@@ -109,14 +109,14 @@ Added 5 lines, removed 2 lines
 
   Searched for 1 pattern, read 1 file
 
-⏺ Update(topgainer/exec_trade.py)
+⏺ Update(screener/exec_trade.py)
 Added 3 lines
                    "opened": state.nutc_ts(),
                    "peak": float(avg)}
             state.write_position(pos)
             # the buy itself is prooresh the dead-man
             # file so a stale mtime (e.g. session-limit gap) can't fire on entry
-            open(os.path.join("data", "topgainer", "claude_alive"), "w").close()
+            open(os.path.join("data", "screener", "claude_alive"), "w").close()
             print(f"FILLED BUY {fillecorded")
         else:
             print(f"BUY {sym} status={st.status} filled=0")

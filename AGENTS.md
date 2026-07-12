@@ -244,25 +244,25 @@ the repo's own env extracts "prices" from normalized features — broken, we fix
 - **Auto-FX is FREE for micro buys**: GNS purchase auto-converted CAD->USD via IDEALPRO at $0.00 commission (auto-liquidation). No pre-conversion needed for small US buys.
 
 ## Top-gainer safety regime (2026-07-09 — ordenes de Yunior)
-- **Claude Code SIEMPRE decide**; el loop corre en la ventana de compra Y siempre que haya posicion abierta (management mode). Cada ciclo sano toca `data/topgainer/claude_alive`.
+- **Claude Code SIEMPRE decide**; el loop corre en la ventana de compra Y siempre que haya posicion abierta (management mode). Cada ciclo sano toca `data/screener/claude_alive`.
 - **DEAD-MAN**: si Claude deja de responder (`claude_alive` viejo > TG_DEADMAN_SEC=240) con posicion abierta → el watchdog VENDE YA (force-flat, limite market*0.97). Probado en DRY.
-- **STOP-LOSS SIEMPRE** (TG_STOP_PCT=3%) + **TIME-STOP** (TG_MAX_HOLD_SEC=900; ideal ~5 min por trade) — reemplaza el hold-the-bag SOLO en topgainer. Entrada solo con breakout CONFIRMADO (precio aguantando el nivel, nunca el primer spike).
+- **STOP-LOSS SIEMPRE** (TG_STOP_PCT=3%) + **TIME-STOP** (TG_MAX_HOLD_SEC=900; ideal ~5 min por trade) — reemplaza el hold-the-bag SOLO en screener. Entrada solo con breakout CONFIRMADO (precio aguantando el nivel, nunca el primer spike).
 - **RECONCILE** cada 60s vs IBKR (readonly): venta manual/externa detectada → limpia position.json (bug fantasma CIRC 2026-07-09: venta manual dejo al watchdog spammeando sells rechazados Error 201). `exec_trade.py reconcile SYM`.
 - Cooldown de sell (TG_SELL_RETRY_SEC=90) — no mas spam de notificaciones.
 - **Notificaciones SOLO Mac** (osascript banner+Glass, async) — ntfy eliminado de TODA la flota (llegaba tarde/acumulado). TradingAgents research OBLIGATORIO en cada scan (default ON, opt-out TA_RESEARCH=0).
-- **LaunchAgent autostart NO funciona** (TCC: launchd no puede leer ~/Documents, exit 127). Arranque manual `TOPGAINER_LIVE=1 zsh topgainer/start_all.sh` hasta que Yunior de Full Disk Access a /bin/zsh (System Settings → Privacy → Full Disk Access).
+- **LaunchAgent autostart NO funciona** (TCC: launchd no puede leer ~/Documents, exit 127). Arranque manual `SCREENER_LIVE=1 zsh screener/start_all.sh` hasta que Yunior de Full Disk Access a /bin/zsh (System Settings → Privacy → Full Disk Access).
 - Python dormante movido a `backup/` (ver backup/README.md); C++ preferido en toda la flota. `day_trading_bot.py` queda en la raiz (exec_trade importa sus helpers).
-- **HOT LOOPS EN C++ (2026-07-09)**: `topgainer/topgainer_watchdog.cpp` (guardian por-segundo: stop/target/trail/time-stop/deadman/reconcile/cooldown, Finnhub libcurl + price.py fallback, paridad matematica verificada 32/32 vs Python, ventas via exec_trade.py subprocess porque ib_insync no tiene gemelo C++) y `topgainer/topgainer_alert.cpp` (señales BUY-CONSIDER). Build: `clang++ -std=c++17 -O2 -o <bin> <src> -lcurl`. watchdog.py/alert_bot.py quedan como fallback probado (keepalive/start_all usan el binario si existe).
-- **LECCION telegram plugin (2026-07-09)**: cada `claude -p` del trader loop heredaba los plugins globales; el plugin telegram filtraba un daemon bun (~35% CPU c/u) POR CICLO → 8 huerfanos rompieron coreaudiod (audio) y dispararon el fan. Fix: `topgainer/claude_settings/settings.json` ahora pone enabledPlugins todo-false, y telegram quedo deshabilitado global. Si el audio se rompe: `sudo killall coreaudiod`.
+- **HOT LOOPS EN C++ (2026-07-09)**: `screener/screener_watchdog.cpp` (guardian por-segundo: stop/target/trail/time-stop/deadman/reconcile/cooldown, Finnhub libcurl + price.py fallback, paridad matematica verificada 32/32 vs Python, ventas via exec_trade.py subprocess porque ib_insync no tiene gemelo C++) y `screener/screener_alert.cpp` (señales BUY-CONSIDER). Build: `clang++ -std=c++17 -O2 -o <bin> <src> -lcurl`. watchdog.py/alert_bot.py quedan como fallback probado (keepalive/start_all usan el binario si existe).
+- **LECCION telegram plugin (2026-07-09)**: cada `claude -p` del trader loop heredaba los plugins globales; el plugin telegram filtraba un daemon bun (~35% CPU c/u) POR CICLO → 8 huerfanos rompieron coreaudiod (audio) y dispararon el fan. Fix: `screener/claude_settings/settings.json` ahora pone enabledPlugins todo-false, y telegram quedo deshabilitado global. Si el audio se rompe: `sudo killall coreaudiod`.
 
 ## MODO ACTUAL: 5 BOTS DE SEÑALES, CERO TRADING (2026-07-10, orden de Yunior)
 "For now we are only using top gainers for sending signals, claude will not
 operate trades." — TFSA liquidada (flat, $98.06 CAD cash), `armed` borrado,
-`data/topgainer/signal_only` presente → ensure_all/start_all NO lanzan el
-claude_trader_loop (lo matan si revive) y fuerzan TOPGAINER_LIVE=0. El plist
-com.ibtrader.topgainer ya no exporta TOPGAINER_LIVE=1. Quitar el flag
-signal_only + touch armed + TOPGAINER_LIVE=1 restaura el trading.
-- **Los 5 bots de señales**: dram/nok/spcx/tsla_signal_bot (C++) + topgainer
+`data/screener/signal_only` presente → ensure_all/start_all NO lanzan el
+claude_trader_loop (lo matan si revive) y fuerzan SCREENER_LIVE=0. El plist
+com.ibtrader.screener ya no exporta SCREENER_LIVE=1. Quitar el flag
+signal_only + touch armed + SCREENER_LIVE=1 restaura el trading.
+- **Los 5 bots de señales**: dram/nok/spcx/tsla_signal_bot (C++) + screener
   (alert C++ + 3 carriles de research). El watchdog sigue vivo como red de
   seguridad (sin posiciones no hace nada).
 - **EMAIL Y TELEGRAM ELIMINADOS (orden Yunior 2026-07-10 "lets remove
@@ -278,7 +278,7 @@ signal_only + touch armed + TOPGAINER_LIVE=1 restaura el trading.
   `price.alpaca_spread()` (Alpaca latest quote IEX, stale-guard 5 min) — gate
   duro SCAN_MAX_SPREAD=3% (salvo spread de 1 tick) + multiplicador `tight`.
 - **PRE-BREAKOUT (orden 2026-07-10 "detectar breakout antes de que ocurra")**:
-  topgainer_alert.cpp avisa cuando el precio esta a <=TG_NEAR_PCT (1.5%) del
+  screener_alert.cpp avisa cuando el precio esta a <=TG_NEAR_PCT (1.5%) del
   nivel del dia con CUSUM >=50% del umbral de burst → banner "PRE-BREAKOUT"
   + signals.jsonl (kind pre_breakout), 1 por simbolo por dia.
 - **PRIORIDAD USA (orden 2026-07-10 "priority to us companies")**: sources
@@ -309,7 +309,7 @@ signal_only + touch armed + TOPGAINER_LIVE=1 restaura el trading.
 - **13 signal bots C++**: dram nok spcx tsla + NUEVOS nvda txn tsm amd intc
   asml aapl + gld (proxy oro = GLD ETF) + qqq (proxy NAS100 = QQQ ETF).
   Todos clones del motor NOK (v2/v2.1 completo), todos por alpaca_ws_bridge
-  (13 syms en bars+trades SELF-AGG; watchlist topgainer baja a 17 slots —
+  (13 syms en bars+trades SELF-AGG; watchlist screener baja a 17 slots —
   limite Alpaca free 30 syms). Keepalives scripts/<sym>_keepalive.sh,
   lanzados por fleet_keepalive_start.sh (launchd com.ibtrader.fleet).
 - **Sweep walk-forward 90d (train 60d / OOS 30d) de los 9 nuevos**:
@@ -393,8 +393,8 @@ GLD = unica excepcion (79% OOS / 61% full-year; ningun motor llego a 70).
   baseline -3.1%); NOK RSI30/TGT6/TRAIL2 (+1.5%); SPCX RSI30/TRAIL2 (+2.1%);
   TSLA VOL1.0 (IEX fino en TSLA). Baseline clonado era malpractice — re-tunear
   tras cambios de regimen (sweep en scratchpad/bench).
-- **Quotes por ws para topgainer_alert (fix 429)**: alert escribe
-  data/topgainer/ws_watch → daemon suscribe trades (cap 24) → data/quote_*.txt;
+- **Quotes por ws para screener_alert (fix 429)**: alert escribe
+  data/screener/ws_watch → daemon suscribe trades (cap 24) → data/quote_*.txt;
   Finnhub queda en 1 llamada/sym/dia (prev_close) + fallback.
 - **Knobs de riesgo v2.1 (skills mean-reversion/exit-strategies, 2026-07-10)**,
   todos via env {SYM}_*, default = comportamiento previo: SKIP_OPEN (min sin
@@ -450,7 +450,7 @@ GLD = unica excepcion (79% OOS / 61% full-year; ningun motor llego a 70).
   epoch). Reader poll 200ms→50ms (hop medido: mediana 20ms). Presupuesto por
   bar: emision <=250ms + hop ~20ms + motor 5µs + banner ~0.2ms ≈ <=0.3s del
   cierre del minuto al banner; el procesamiento en el Mac es <1ms — el resto
-  es la fisica del feed. topgainer: quotes via trades ws (fix 429).
+  es la fisica del feed. screener: quotes via trades ws (fix 429).
 
 ## DOCTRINA DE FLOTA (2026-07-09, orden de Yunior — "from zero to hero")
 [HISTÓRICO — trading suspendido 2026-07-10, ver MODO ACTUAL arriba]
@@ -459,9 +459,9 @@ Dos sistemas TOTALMENTE SEPARADOS; no se mezclan nunca:
 **1) Flota de señales (4 bots C++, SOLO ALERTAS — jamás ordenan):**
 `dram/nok/spcx/tsla_signal_bot` + keepalives + bridges. Voz/banner/log para
 YUNIOR (humano). Motor validado (capitulación confirmada + CUSUM + Supertrend +
-Donchian). Cero conexión con topgainer; cero acceso a órdenes IBKR.
+Donchian). Cero conexión con screener; cero acceso a órdenes IBKR.
 
-**2) El "AI dios" — topgainer/ (el ÚNICO sistema que tradea, Claude decide):**
+**2) El "AI dios" — screener/ (el ÚNICO sistema que tradea, Claude decide):**
 - **Research AUTONOMO en 3 carriles (2026-07-10)**: 6AM scan completo |
   rescan cada 15 min con TA vetting obligatorio (com.ibtrader.rescan) |
   **fast lane Finviz cada 1 MIN** (com.ibtrader.fastscan: fastscan.py mergea
@@ -476,11 +476,11 @@ Donchian). Cero conexión con topgainer; cero acceso a órdenes IBKR.
   el watchdog determinista C++ garantiza stop-3%/time-stop/dead-man.
 - **SIZING zero-to-hero**: 10% de la cuenta por trade al inicio, escalar
   gradualmente con resultados, TECHO DURO 25% (clamp en exec_trade.py ALLOC;
-  env TOPGAINER_ALLOC dentro de [0.01, 0.25]).
+  env SCREENER_ALLOC dentro de [0.01, 0.25]).
 - Solo Claude abre posiciones. El watchdog solo hace ventas protectoras. Los
   signal bots jamás tocan la cuenta.
 
-## ESTADO HISTORICO — DRAM-ONLY MODE (2026-07-08, superseded: hoy corren los 4 signal bots + topgainer)
+## ESTADO HISTORICO — DRAM-ONLY MODE (2026-07-08, superseded: hoy corren los 4 signal bots + screener)
 **Unico bot conectado**: `dram_signal_bot` (C++) via `scripts/dram_keepalive.sh`, 24/5, instancia unica.
 - Habla: "buy DRAM now" / "sell DRAM now" (voz sistema Daniel; override `DRAM_VOICE`; killall-say = una sola voz). Sonidos propios: sounds/dram_buy.wav / dram_sell.wav.
 - Datos: Yahoo 1m REAL (delayed IBKR rechazado por Yunior; cuenta sin subscripciones RT), bridge `scripts/dram_bar_bridge.py`, almacenado en trades.db (dram_bars).

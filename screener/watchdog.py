@@ -3,8 +3,8 @@
 
 Claude Code (the headless decision loop) is ALWAYS the decision-maker while it
 is alive. The watchdog is the deterministic safety net that owns the position
-the instant one exists in data/topgainer/position.json, checking the price every
-second. Per Yunior's orders (2026-07-09) the topgainer trade is a fast in/out:
+the instant one exists in data/screener/position.json, checking the price every
+second. Per Yunior's orders (2026-07-09) the screener trade is a fast in/out:
 enter on confirmation, resolve within ~5 minutes ideally, 15 minutes max, and
 ALWAYS use a stop loss (this replaces the old hold-the-bag mode for this bot).
 

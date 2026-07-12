@@ -4,7 +4,7 @@ signals to BOTH the human (ntfy/Mac) and the Claude decision session (signal
 file). This is the "send data to me AND to claude-u" piece.
 
 Per-second-ish scan of each candidate. CONFIRMED-BREAKOUT engine (parity with
-topgainer_alert.cpp, the primary): Donchian intraday-high break + price must
+screener_alert.cpp, the primary): Donchian intraday-high break + price must
 HOLD at/above the broken level for TG_CONFIRM_SECS + CUSUM statistical burst
 (fleet algos — never signal the first green spike). Only emits actionable BUY
 signals inside the RTH execution window 9:30-10:00 ET (env-widenable). It never

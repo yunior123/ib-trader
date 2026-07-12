@@ -10,7 +10,7 @@ cd ~/Documents/GitHub/ib-trader
 
 # START everything (idempotent — safe to re-run; this is also the reboot fix)
 zsh scripts/fleet_keepalive_start.sh     # 16 bot keepalives + executor + ibkr daemon
-zsh topgainer/ensure_all.sh              # ws daemon + topgainer stack (also pgrep-guarded)
+zsh screener/ensure_all.sh              # ws daemon + screener stack (also pgrep-guarded)
 
 # STOP trading only (signals keep running) — THE KILL SWITCH
 rm data/etf_armed                        # executor → dry-run instantly, logs decisions only

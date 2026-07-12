@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <!-- 6 AM daily premarket top-gainer scan + MANDATORY TradingAgents research.
-     Install: cp scripts/com.ibtrader.topgainer6am.plist ~/Library/LaunchAgents/
-              launchctl load ~/Library/LaunchAgents/com.ibtrader.topgainer6am.plist -->
+     Install: cp scripts/com.ibtrader.screener6am.plist ~/Library/LaunchAgents/
+              launchctl load ~/Library/LaunchAgents/com.ibtrader.screener6am.plist -->
 <plist version="1.0">
 <dict>
-    <key>Label</key><string>com.ibtrader.topgainer6am</string>
+    <key>Label</key><string>com.ibtrader.screener6am</string>
     <key>ProgramArguments</key>
     <array>
         <string>/bin/zsh</string>
-        <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/topgainer/run_6am_scan.sh</string>
+        <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/screener/run_6am_scan.sh</string>
     </array>
     <key>StartCalendarInterval</key>
     <dict>
@@ -19,8 +19,8 @@
     <key>WorkingDirectory</key>
     <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader</string>
     <key>StandardOutPath</key>
-    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/topgainer/scan_6am.out</string>
+    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/screener/scan_6am.out</string>
     <key>StandardErrorPath</key>
-    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/topgainer/scan_6am.err</string>
+    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/screener/scan_6am.err</string>
 </dict>
 </plist>

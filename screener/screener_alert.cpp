@@ -1,4 +1,4 @@
-// topgainer_alert.cpp — C++ port of alert_bot.py (Yunior 2026-07-09: avoid python).
+// screener_alert.cpp — C++ port of alert_bot.py (Yunior 2026-07-09: avoid python).
 // Watches today's watchlist and fires BUY-CONSIDER signals to the Mac + the
 // Claude decision session (signals.jsonl). Never places orders.
 //
@@ -17,8 +17,8 @@
 //              in window AND gain>=5% AND once per sym/day
 // Notifications: Mac osascript banner only (ntfy removed fleet-wide 2026-07-09).
 //
-// Build: clang++ -std=c++17 -O2 -o topgainer_alert topgainer_alert.cpp -lcurl
-// Run from repo root: ./topgainer/topgainer_alert
+// Build: clang++ -std=c++17 -O2 -o screener_alert screener_alert.cpp -lcurl
+// Run from repo root: ./screener/screener_alert
 
 #include <curl/curl.h>
 #include <unistd.h>
@@ -51,7 +51,7 @@ static const double FADE_TOL = envd("TG_FADE_TOL", 0.002);         // 0.2% under
 // early-warning signal BEFORE the level breaks. One per sym per day.
 static const double NEAR_PCT = envd("TG_NEAR_PCT", 0.015);         // within 1.5% of level
 static const double NEAR_CUSUM = envd("TG_NEAR_CUSUM", 0.5);       // 50% of burst thr
-static const char* SIGNALS = "data/topgainer/signals.jsonl";
+static const char* SIGNALS = "data/screener/signals.jsonl";
 
 static void sh_sanitize(const char* in, char* out, size_t n) {
     size_t o = 0;
@@ -154,11 +154,11 @@ static bool quote(const std::string& sym, double& px, double& prev_close) {
     return px > 0;
 }
 
-// ---------- watchlist: data/topgainer/watchlist_YYYYMMDD.json ----------
+// ---------- watchlist: data/screener/watchlist_YYYYMMDD.json ----------
 struct Cand { std::string sym; double price = 0, score = 0; };
 static std::vector<Cand> read_watchlist(const std::string& day) {
     std::vector<Cand> out;
-    std::ifstream f("data/topgainer/watchlist_" + day + ".json");
+    std::ifstream f("data/screener/watchlist_" + day + ".json");
     if (!f) return out;
     std::stringstream ss; ss << f.rdbuf();
     std::string j = ss.str();
@@ -216,14 +216,14 @@ int main() {
         char today[16]; strftime(today, sizeof(today), "%Y%m%d", &lt);
         if (day != today) { day = today; tracks.clear(); fired.clear(); prefired.clear(); }
         std::vector<Cand> cands = read_watchlist(day);
-        // publicar el watchlist al ws daemon (data/topgainer/ws_watch): el
+        // publicar el watchlist al ws daemon (data/screener/ws_watch): el
         // daemon suscribe trades de estos nombres -> quotes vivos sin 429
         {
             static std::string last_watch;
             std::string watch;
             for (const Cand& c : cands) watch += c.sym + "\n";
             if (watch != last_watch) {
-                FILE* w = fopen("data/topgainer/ws_watch", "w");
+                FILE* w = fopen("data/screener/ws_watch", "w");
                 if (w) { fputs(watch.c_str(), w); fclose(w); last_watch = watch; }
             }
         }

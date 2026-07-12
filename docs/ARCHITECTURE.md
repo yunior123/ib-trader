@@ -55,7 +55,7 @@
 
 **Daemon mode** (`./alpaca_ws_bridge NOK SPCX … USO`, 16 symbols, one instance):
 - Single Alpaca websocket (free tier = ONE connection) on `wss://stream.data.alpaca.markets/v2/iex`.
-- Subscribes `bars` (official 1m, fallback) + `trades` (fleet syms + topgainer watchlist,
+- Subscribes `bars` (official 1m, fallback) + `trades` (fleet syms + screener watchlist,
   ≤30 cap: quotes+trades count, bars don't) + `quotes` for thin names (NBBO spread gate).
 - **SELF-AGG**: builds the 1m bar from live trades itself and emits it the moment the
   minute closes — event-driven on the first trade of the next minute (ms), 25ms flush
@@ -148,8 +148,8 @@ Key engineering properties, each adversarially reviewed (commit `1ef5021`):
 
 - Each bot: `scripts/<sym>_keepalive.sh` (env config + restart loop). Executor:
   `scripts/executor_keepalive.sh`. IBKR daemon + ws daemon: pgrep-guarded launches in
-  `scripts/fleet_keepalive_start.sh` and `topgainer/ensure_all.sh` / `start_all.sh`.
-- LaunchAgents (`com.ibtrader.fleet` every 5 min, `com.ibtrader.topgainer` every 120s)
+  `scripts/fleet_keepalive_start.sh` and `screener/ensure_all.sh` / `start_all.sh`.
+- LaunchAgents (`com.ibtrader.fleet` every 5 min, `com.ibtrader.screener` every 120s)
   re-run the guards — **currently broken by macOS TCC (exit 78)**; see OPERATIONS.md.
 
 ## File contracts (the glue)

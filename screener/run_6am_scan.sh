@@ -15,6 +15,6 @@ export TA_RESEARCH_TOPN="${TA_RESEARCH_TOPN:-3}"
 export TA_TIMEOUT="${TA_TIMEOUT:-900}"     # generous — runs ~3.5h before the open
 
 echo "[6am] $(date) premarket scan + MANDATORY TradingAgents research" \
-     >> "$ROOT/topgainer/scan_6am.log"
-"$PY" "$ROOT/topgainer/scanner.py" --premarket >> "$ROOT/topgainer/scan_6am.log" 2>&1
-echo "[6am] done $(date)" >> "$ROOT/topgainer/scan_6am.log"
+     >> "$ROOT/screener/scan_6am.log"
+"$PY" "$ROOT/screener/scanner.py" --premarket >> "$ROOT/screener/scan_6am.log" 2>&1
+echo "[6am] done $(date)" >> "$ROOT/screener/scan_6am.log"

@@ -97,9 +97,9 @@ static std::vector<std::string> g_syms;
 // WS_QUOTES="NOK,SPCX,..." en el env del daemon.
 static std::vector<std::string> g_quotes;
 static bool g_subscribed = false;
-// quotes vivos para topgainer_alert (fix 429 2026-07-10: Finnhub free = 60
+// quotes vivos para screener_alert (fix 429 2026-07-10: Finnhub free = 60
 // req/min y el poll de 2s sobre el watchlist entero lo reventaba). El alert
-// bot escribe data/topgainer/ws_watch (1 simbolo/linea); el daemon suscribe
+// bot escribe data/screener/ws_watch (1 simbolo/linea); el daemon suscribe
 // "trades" de esos nombres y escribe el ultimo precio en data/quote_<sym>.txt.
 static std::set<std::string> g_trades;               // suscritos (solo en g_q)
 static std::map<std::string, time_t> g_qwrite;       // throttle 1 write/s/sym
@@ -112,7 +112,7 @@ static void check_watch() {                          // corre SIEMPRE en g_q
     // mismo (SELF-AGG) y lo emite AL CERRAR el minuto — sin esperar el push
     // agregado de Alpaca (~0.1-1s). Orden Yunior 2026-07-10: "1ms average".
     for (auto& s : g_syms) want.insert(s);
-    std::ifstream f("data/topgainer/ws_watch");
+    std::ifstream f("data/screener/ws_watch");
     std::string line;
     // presupuesto: quotes(g_quotes) + trades(want) <= 30 o Alpaca corta con 405
     size_t max_trades = 30 > g_quotes.size() ? 30 - g_quotes.size() : 0;

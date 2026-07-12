@@ -9,7 +9,7 @@ Hard constraints (live-verified, see memory/ibkr-account-facts):
   - Commission capped at 0.5% of trade value.
 
 Safety interlocks:
-  - LIVE orders fire ONLY if data/topgainer/armed exists AND env TOPGAINER_LIVE=1.
+  - LIVE orders fire ONLY if data/screener/armed exists AND env SCREENER_LIVE=1.
     Otherwise this runs DRY (prints the order it WOULD place). This lets the
     whole pipeline be tested end-to-end without touching the account; Yunior
     arms it with one command when he wants it hot.
@@ -28,7 +28,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # repo root
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))                   # topgainer/
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))                   # screener/
 import state  # noqa: E402
 from price import last_price, usdcad  # noqa: E402
 
@@ -40,20 +40,20 @@ from day_trading_bot import (IB, Stock, LimitOrder, floor_price,  # noqa: E402
 IB_HOST = os.getenv("IB_HOST", "127.0.0.1")
 IB_PORT = int(os.getenv("IB_PORT", "7496"))     # live TWS
 IB_ACCOUNT = os.getenv("IB_ACCOUNT", "U26942420")
-CLIENT_ID = int(os.getenv("TOPGAINER_CLIENTID", "41"))
+CLIENT_ID = int(os.getenv("SCREENER_CLIENTID", "41"))
 
 BAND = 0.08   # keep limit within 8% of market (under the ~10% reject band)
 # balance guard: never spend more than available funds minus a fee/FX buffer, so
 # the account can NEVER go negative (which would trigger high fees).
 # SIZING DOCTRINE (Yunior 2026-07-09, "zero to hero"): start at 10% of the
 # account per trade, scale gradually, NEVER above 25% — hard-clamped here.
-ALLOC = min(0.25, max(0.01, float(os.getenv("TOPGAINER_ALLOC", "0.10"))))
-FEE_BUFFER_CAD = float(os.getenv("TOPGAINER_FEE_BUFFER_CAD", "1.50"))  # fixed reserve
+ALLOC = min(0.25, max(0.01, float(os.getenv("SCREENER_ALLOC", "0.10"))))
+FEE_BUFFER_CAD = float(os.getenv("SCREENER_FEE_BUFFER_CAD", "1.50"))  # fixed reserve
 FX_MARKUP = 1.02                                        # assume FX 2% worse than quoted
 
 
 def _live_enabled() -> bool:
-    return state.is_armed() and os.getenv("TOPGAINER_LIVE") == "1"
+    return state.is_armed() and os.getenv("SCREENER_LIVE") == "1"
 
 
 def _connect():
@@ -158,7 +158,7 @@ def do_buy(sym: str, qty: int, limit: float = None):
     if not _live_enabled():
         print(f"[DRY] BUY {qty} {sym} LMT {lim} (mkt {mkt}, ~${val:.2f}, "
               f"budget ${bud['budget_usd']:.2f} USD / {bud.get('available_cad')} CAD) "
-              f"armed={state.is_armed()} LIVE={os.getenv('TOPGAINER_LIVE')}")
+              f"armed={state.is_armed()} LIVE={os.getenv('SCREENER_LIVE')}")
         return 0
     try:
         c = Stock(sym, "SMART", "USD")
@@ -181,7 +181,7 @@ def do_buy(sym: str, qty: int, limit: float = None):
             state.write_position(pos)
             # the buy itself is proof of a live Claude cycle: refresh the dead-man
             # file so a stale mtime (e.g. session-limit gap) can't fire on entry
-            open(os.path.join("data", "topgainer", "claude_alive"), "w").close()
+            open(os.path.join("data", "screener", "claude_alive"), "w").close()
             print(f"FILLED BUY {filled} {sym} @ {avg}; position recorded")
         else:
             print(f"BUY {sym} status={st.status} filled=0")
@@ -204,7 +204,7 @@ def do_sell(sym: str, qty: int, entry: float, limit: float = None, force_flat: b
     lim = max(lim, floor) if not force_flat else lim
     if not _live_enabled():
         print(f"[DRY] SELL {qty} {sym} LMT {lim} (mkt {mkt}, floor {floor:.4f}, "
-              f"force_flat={force_flat}) armed={state.is_armed()} LIVE={os.getenv('TOPGAINER_LIVE')}")
+              f"force_flat={force_flat}) armed={state.is_armed()} LIVE={os.getenv('SCREENER_LIVE')}")
         return 0
     ib = _connect()
     try:

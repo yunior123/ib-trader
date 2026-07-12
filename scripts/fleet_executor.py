@@ -22,7 +22,7 @@ el lado put queda señal-solo.
 Diseño: tail de los 16 *_operations.log (formato "FECHA | TITULO | MSG",
 WARMUP filtrado). Los motores C++ validados NO se tocan. Python/ib_insync
 porque la conexion al broker con fills/stops/reconcile no tiene gemelo C++
-(precedente: topgainer exec_trade.py); no esta en el camino de latencia de
+(precedente: screener exec_trade.py); no esta en el camino de latencia de
 ticks — las señales son eventos de bar de 1m.
 
 Edge cases cubiertos: replay de log tras restart (offsets persistidos, arranque

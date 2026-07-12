@@ -4,7 +4,7 @@ Yahoo screener y Finviz free scrape ELIMINADOS 2026-07-10 (orden Yunior:
 "yahoo or delayed shit is forbidden").
 
 Providers:
-  1) Finviz Elite topgainers (realtime, FINVIZ_AUTH)
+  1) Finviz Elite top gainers (realtime, FINVIZ_AUTH)
   2) Finviz Elite new-high breakouts (realtime, tag breakout=True)
 Rows: {sym, price, gain_pct, premarket_pct, volume, market_cap, country, src}.
 The scanner then applies the selectivity filters (penny range, liquidity,
@@ -97,7 +97,7 @@ def finviz_elite_gainers(max_price=10.0, auth=None):
 
 def finviz_elite_breakouts(max_price=10.0, auth=None):
     """REAL-TIME breakouts via Finviz Elite: names making a NEW HIGH (the
-    classic breakout screen). Yunior's order 2026-07-09: use topgainers AND
+    classic breakout screen). Yunior's order 2026-07-09: use top gainers AND
     breakout screens together. Rows are tagged breakout=True so the scanner
     scores them with a breakout bonus and a relaxed min-gain gate."""
     return _finviz_elite_export("ta_newhigh", max_price, auth,
@@ -172,7 +172,7 @@ def finviz_elite_screen(name, auth=None):
 
 def top_gainer_universe(premarket=False, max_price=10.0, favorites=None):
     """Merged, deduped candidate rows (best gain kept per symbol).
-    SOLO Finviz Elite REALTIME (topgainers + breakouts). Yahoo screener
+    SOLO Finviz Elite REALTIME (top gainers + breakouts). Yahoo screener
     (~15m delayed) y Finviz free scrape ELIMINADOS — Yunior 2026-07-10:
     'yahoo or delayed shit is forbidden'. Sin FINVIZ_AUTH el scanner grita
     en vez de degradarse en silencio a datos viejos."""

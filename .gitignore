@@ -15,15 +15,15 @@ feeds.env
 *.log
 
 # top-gainer runtime
-topgainer/*.log
-topgainer/*.err
-topgainer/*.out
-data/topgainer/
-topgainer/__pycache__/
+screener/*.log
+screener/*.err
+screener/*.out
+data/screener/
+screener/__pycache__/
 llm.env
 ta_venv/
 *.env
-topgainer/_ta*
+screener/_ta*
 
 # compiled C++ bots (rebuild: clang++ -std=c++17 -O2 -o <bot> <bot>.cpp [-lcurl])
 dram_signal_bot
@@ -31,8 +31,8 @@ nok_signal_bot
 spcx_signal_bot
 tsla_signal_bot
 momentum_bot
-topgainer/topgainer_watchdog
-topgainer/topgainer_alert
+screener/screener_watchdog
+screener/screener_alert
 scan_server
 scan_server.out
 scan_server.err
@@ -41,7 +41,7 @@ scan_server.err
 data/bars_*.txt
 data/pos_*.txt
 data/quote_*.txt
-data/topgainer/ws_watch
+data/screener/ws_watch
 fleet_autostart.err
 fleet_autostart.out
 # compiled fleet binaries (build from .cpp)
@@ -55,3 +55,5 @@ data/etf_armed
 data/etf_ledger.csv
 trades.db-shm
 trades.db-wal
+data/topgainer
+topgainer/

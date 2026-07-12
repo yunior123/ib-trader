@@ -6,7 +6,7 @@ headless Claude decision session, the watchdog, the exec scripts) coordinates
 through files instead of shared memory. Every file is small JSON, atomically
 written, so a crash never leaves a half-written record.
 
-Files (all under data/topgainer/):
+Files (all under data/screener/):
   watchlist_YYYYMMDD.json   scanner output: today's selective candidates
   signals.jsonl             append-only alerts the Claude session consumes
   position.json             the ONE open position the watchdog owns (or null)
@@ -18,7 +18,7 @@ import os
 import time
 from datetime import datetime, timezone
 
-BASE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "topgainer")
+BASE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "screener")
 os.makedirs(BASE, exist_ok=True)
 
 POSITION = os.path.join(BASE, "position.json")
@@ -49,7 +49,7 @@ def _atomic_write(path: str, text: str) -> None:
 
 def is_armed() -> bool:
     """Live orders fire ONLY when this interlock file exists.
-    Arm with:  touch data/topgainer/armed     Disarm with:  rm data/topgainer/armed"""
+    Arm with:  touch data/screener/armed     Disarm with:  rm data/screener/armed"""
     return os.path.exists(ARMED)
 
 

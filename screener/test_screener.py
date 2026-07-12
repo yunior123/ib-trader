@@ -3,9 +3,9 @@
 
 Focus: the money-safety invariants (never sell at a loss, interlocks block live
 orders, watchdog exit logic) and state IO robustness. Run:
-    venv/bin/python -m pytest topgainer/test_topgainer.py -q
+    venv/bin/python -m pytest screener/test_screener.py -q
 or standalone:
-    venv/bin/python topgainer/test_topgainer.py
+    venv/bin/python screener/test_screener.py
 """
 import importlib
 import os
@@ -42,14 +42,14 @@ def test_exit_limit_never_below_floor():
 # ---------- interlock: live orders blocked unless armed AND env ----------
 def test_live_disabled_by_default(monkeypatch):
     import exec_trade
-    monkeypatch.delenv("TOPGAINER_LIVE", raising=False)
+    monkeypatch.delenv("SCREENER_LIVE", raising=False)
     monkeypatch.setattr(exec_trade.state, "is_armed", lambda: False)
     assert exec_trade._live_enabled() is False
     # armed but no env -> still blocked
     monkeypatch.setattr(exec_trade.state, "is_armed", lambda: True)
     assert exec_trade._live_enabled() is False
     # env but not armed -> still blocked
-    monkeypatch.setenv("TOPGAINER_LIVE", "1")
+    monkeypatch.setenv("SCREENER_LIVE", "1")
     monkeypatch.setattr(exec_trade.state, "is_armed", lambda: False)
     assert exec_trade._live_enabled() is False
     # both -> enabled

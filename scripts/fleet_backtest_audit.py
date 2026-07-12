@@ -26,7 +26,7 @@ from collections import defaultdict
 from datetime import datetime, timezone
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(ROOT, "topgainer"))
+sys.path.insert(0, os.path.join(ROOT, "screener"))
 
 SYMS = [
     "DRAM", "NOK", "SPCX", "TSLA", "NVDA", "TXN", "TSM",

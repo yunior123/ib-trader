@@ -1,10 +1,10 @@
-// topgainer_watchdog.cpp — C++ port of the per-second position guard.
+// screener_watchdog.cpp — C++ port of the per-second position guard.
 // Yunior 2026-07-09: "replace by c++ as much as possible... python is too slow,
 // there is money in stake". This is the hot loop; IBKR order placement stays in
 // Python (ib_insync has no C++ twin here) and is invoked as a subprocess only at
 // the rare sell/reconcile moments.
 //
-// Behavior mirrors topgainer/watchdog.py EXACTLY (same env knobs, same math —
+// Behavior mirrors screener/watchdog.py EXACTLY (same env knobs, same math —
 // parity-tested via --calc against day_trading_bot.floor_price/exit_limit_price):
 //   STOP LOSS   px <= entry*(1-TG_STOP_PCT%)                  -> flatten now
 //   TARGET      px >= exit_limit(entry)                        -> sell (profit)
@@ -15,8 +15,8 @@
 //   COOLDOWN    TG_SELL_RETRY_SEC between sell attempts        -> no spam
 // Notifications: Mac osascript banner only (ntfy removed fleet-wide 2026-07-09).
 //
-// Build: clang++ -std=c++17 -O2 -o topgainer_watchdog topgainer_watchdog.cpp -lcurl
-// Run from the repo root (keepalive does): ./topgainer/topgainer_watchdog
+// Build: clang++ -std=c++17 -O2 -o screener_watchdog screener_watchdog.cpp -lcurl
+// Run from the repo root (keepalive does): ./screener/screener_watchdog
 
 #include <curl/curl.h>
 #include <sys/stat.h>
@@ -51,10 +51,10 @@ static const double FLOOR_PCT      = 1.0;   // floor: entry+1%
 static const double COMM_FIXED     = 1.0;   // $1/order...
 static const double COMM_CAP_PCT   = 0.5;   // ...capped at 0.5% of value
 
-static const char* POSITION = "data/topgainer/position.json";
-static const char* SIGNALS  = "data/topgainer/signals.jsonl";
-static const char* ALIVE    = "data/topgainer/claude_alive";
-static const char* EXECPY   = "topgainer/exec_trade.py";
+static const char* POSITION = "data/screener/position.json";
+static const char* SIGNALS  = "data/screener/signals.jsonl";
+static const char* ALIVE    = "data/screener/claude_alive";
+static const char* EXECPY   = "screener/exec_trade.py";
 static const char* VENV_PY  = "venv/bin/python";
 
 // ---------- exit math (parity with day_trading_bot.py) ----------
@@ -229,7 +229,7 @@ static double last_price(const std::string& sym) {
         }
     }
     // slow path: python price.py (Yahoo etc). Rare — only when Finnhub fails.
-    std::string out = run_capture(std::string(VENV_PY) + " topgainer/price.py " + sym);
+    std::string out = run_capture(std::string(VENV_PY) + " screener/price.py " + sym);
     size_t i = out.find("'price':");
     if (i != std::string::npos) { double px = atof(out.c_str() + i + 8); if (px > 0) return px; }
     return 0;

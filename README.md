@@ -32,7 +32,7 @@ Alpaca ws / IBKR TWS ─► C++ daemons ─► bars files ─► kqueue readers 
 
 ```bash
 zsh scripts/fleet_keepalive_start.sh   # everything signal-side + executor
-zsh topgainer/ensure_all.sh            # ws daemon + scanner stack
+zsh screener/ensure_all.sh            # ws daemon + scanner stack
 rm data/etf_armed                      # KILL SWITCH (trading off; signals unaffected)
 ```
 
@@ -44,4 +44,4 @@ account (not local state) is the source of truth; full audit trail in
 `data/etf_ledger.csv` **and** `trades.db` (`etf_operations`, `etf_signals`).
 
 Legacy Python was deleted 2026-07-11 (recoverable from git history).
-`day_trading_bot.py` remains only as a helper library imported by the topgainer stack.
+`day_trading_bot.py` remains only as a helper library imported by the screener stack.

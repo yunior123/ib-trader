@@ -9,14 +9,14 @@
 cd "$(dirname "$0")/.." || exit 1
 ROOT="$(pwd)"
 PY="$ROOT/venv/bin/python"; [[ -x "$PY" ]] || PY="python3"
-LOG="$ROOT/topgainer/rescan.log"
+LOG="$ROOT/screener/rescan.log"
 
 DOW=$(date +%u); HM=$(date +%H%M)
 [[ $DOW -le 5 ]] || exit 0
 [[ $HM -ge 0600 && $HM -le 1600 ]] || exit 0
 
 # no solapar: si un scanner (6am o rescan) sigue corriendo, saltar este tick
-if pgrep -f "topgainer/scanner.py" >/dev/null; then
+if pgrep -f "screener/scanner.py" >/dev/null; then
   echo "$(date '+%F %T') rescan: scanner ya corriendo, salto" >> "$LOG"
   exit 0
 fi
@@ -29,5 +29,5 @@ export TA_TIMEOUT="${TA_TIMEOUT:-300}"
 FLAG=""
 [[ $HM -lt 0930 ]] && FLAG="--premarket"
 echo "$(date '+%F %T') rescan: scanner $FLAG (Finviz+TA)" >> "$LOG"
-"$PY" "$ROOT/topgainer/scanner.py" $FLAG >> "$LOG" 2>&1
+"$PY" "$ROOT/screener/scanner.py" $FLAG >> "$LOG" 2>&1
 echo "$(date '+%F %T') rescan: done" >> "$LOG"

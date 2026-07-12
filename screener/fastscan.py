@@ -34,7 +34,7 @@ def main():
     if not rows:
         return 0
     day = now.strftime("%Y%m%d")
-    path = os.path.join("data", "topgainer", f"watchlist_{day}.json")
+    path = os.path.join("data", "screener", f"watchlist_{day}.json")
     if os.path.exists(path):
         data = json.load(open(path))
     else:
@@ -73,9 +73,9 @@ def main():
         # y les atacha ta_action — el alert bot relee el watchlist en cada poll.
         root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         subprocess.Popen(
-            f'pgrep -f "revet_watchlist|topgainer/scanner.py" >/dev/null || '
-            f'nohup "{root}/venv/bin/python" "{root}/topgainer/revet_watchlist.py" 3 '
-            f'>> "{root}/topgainer/rescan.log" 2>&1 &',
+            f'pgrep -f "revet_watchlist|screener/scanner.py" >/dev/null || '
+            f'nohup "{root}/venv/bin/python" "{root}/screener/revet_watchlist.py" 3 '
+            f'>> "{root}/screener/rescan.log" 2>&1 &',
             shell=True, cwd=root)
     return 0
 

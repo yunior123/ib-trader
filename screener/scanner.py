@@ -17,10 +17,10 @@ Pipeline:
        - not a prior-day parabolic blowoff (avoid buying the top of a +300% day)
   4) SCORE = gain% weighted by liquidity, penalized for gap-too-extended.
   5) Optionally enrich the top N with a TradingAgents research note (local repo).
-  6) Write data/topgainer/watchlist_YYYYMMDD.json + push a summary to phone.
+  6) Write data/screener/watchlist_YYYYMMDD.json + push a summary to phone.
 
-Run:  venv/bin/python topgainer/scanner.py            (auto universe)
-      venv/bin/python topgainer/scanner.py GNS KOD ... (explicit tickers)
+Run:  venv/bin/python screener/scanner.py            (auto universe)
+      venv/bin/python screener/scanner.py GNS KOD ... (explicit tickers)
 """
 import os
 import sys

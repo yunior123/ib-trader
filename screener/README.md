@@ -32,10 +32,10 @@ alive) and the deterministic watchdog (keeps the money safe regardless of Claude
 | `price.py` | Real last price: Finnhub `/quote` (sub-second) → Yahoo fallback. | lib |
 | `state.py` | Atomic file-based coordination (position, signals, watchlist, decisions). | lib/CLI |
 
-## Money-safety invariants (unit-tested in `test_topgainer.py`)
+## Money-safety invariants (unit-tested in `test_screener.py`)
 - **Never sell below floor** = `max(entry+1%, breakeven incl. both commissions)`.
   Under floor → hold the bag, keep watching, never realize a loss.
-- **Live orders fire ONLY if `armed` file exists AND `TOPGAINER_LIVE=1`.**
+- **Live orders fire ONLY if `armed` file exists AND `SCREENER_LIVE=1`.**
   Otherwise every order is DRY (printed, not placed) — the whole pipeline runs
   and can be tested without touching the account.
 - **Balance hard-cap (no negative balance):** every buy reads `AvailableFunds`
@@ -44,28 +44,28 @@ alive) and the deterministic watchdog (keeps the money safe regardless of Claude
   refusing entirely if it can't afford one whole share. Check anytime:
   `exec_trade.py balance`.
 - US stocks only (Canadian + fractional are API-blocked). Whole shares.
-- One position at a time, no averaging down. `TOPGAINER_ALLOC` (default 1.0) sets
+- One position at a time, no averaging down. `SCREENER_ALLOC` (default 1.0) sets
   how much of the buffered budget to deploy.
 
 ## Operating it
 ```sh
 # 6 AM research (or on demand with explicit tickers)
-venv/bin/python topgainer/scanner.py
+venv/bin/python screener/scanner.py
 
 # bring up watchdog + alert bot + Claude loop (DRY until armed)
-topgainer/start_all.sh
+screener/start_all.sh
 
 # check state anytime
-venv/bin/python topgainer/state.py status
+venv/bin/python screener/state.py status
 
 # GO LIVE (both required):
-touch data/topgainer/armed
-export TOPGAINER_LIVE=1        # in the shell that launches start_all.sh
+touch data/screener/armed
+export SCREENER_LIVE=1        # in the shell that launches start_all.sh
 # STOP LIVE:
-rm data/topgainer/armed
+rm data/screener/armed
 
 # tests
-venv/bin/python -m pytest topgainer/test_topgainer.py -q
+venv/bin/python -m pytest screener/test_screener.py -q
 ```
 
 ## Data feed note

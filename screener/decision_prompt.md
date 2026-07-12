@@ -28,8 +28,8 @@ beats holding a bag.
 1. Read state AND the FULL live TFSA snapshot (Yunior's standing order: before
    ANY transaction know everything about the account — money available, shares
    held, open orders):
-   `venv/bin/python topgainer/state.py status`
-   `venv/bin/python topgainer/exec_trade.py account`
+   `venv/bin/python screener/state.py status`
+   `venv/bin/python screener/exec_trade.py account`
    The snapshot is read live from IBKR (never assume a number). It gives you
    NetLiquidation, cash, AvailableFunds, the spendable USD budget, ALL positions,
    ALL open orders, and whether the local position file matches IBKR.
@@ -38,7 +38,7 @@ beats holding a bag.
      correctly yourself first (never overspend — a negative balance triggers
      high fees).
    - If `local_matches_ibkr` is false, or you see an open order / position you
-     did not expect, run `venv/bin/python topgainer/exec_trade.py reconcile SYM`
+     did not expect, run `venv/bin/python screener/exec_trade.py reconcile SYM`
      and DO NOT buy this cycle.
    - If the account snapshot cannot be read (TWS down), DO NOT trade. Exit.
 2. If a position is ALREADY open: sell early for profit if price is above entry
@@ -47,13 +47,13 @@ beats holding a bag.
    when the tape already told you. Otherwise do nothing (the watchdog manages
    stop/target/time-stop). Then exit.
 3. If NO position is open, read unconsumed BUY-CONSIDER signals in
-   `data/topgainer/signals.jsonl` and the day's watchlist
-   `data/topgainer/watchlist_*.json`. The alert engine only emits CONFIRMED
+   `data/screener/signals.jsonl` and the day's watchlist
+   `data/screener/watchlist_*.json`. The alert engine only emits CONFIRMED
    breakouts now (fleet algos: Donchian level break + held `held_secs` above
    `breakout_level` + CUSUM statistical burst `cusum_pct`) — but confirmation
    at signal time is not confirmation NOW. Pick AT MOST ONE best candidate that is:
    - a confirmed breakout that is STILL confirmed — re-check the live price
-     (`venv/bin/python topgainer/price.py SYM`) and require it to be HOLDING
+     (`venv/bin/python screener/price.py SYM`) and require it to be HOLDING
      at/above the signal's `breakout_level`, not fading back under it. A signal
      more than ~10 minutes old whose price no longer confirms is dead — skip it.
      Prefer signals with higher `cusum_pct` and longer `held_secs`,
@@ -64,12 +64,12 @@ beats holding a bag.
    If nothing qualifies, do nothing and exit (patience > forcing a trade).
 4. To buy, size it from the LIVE balance: whole shares only, total cost within the
    spendable USD budget from step 1 (never exceed it). Then:
-   `venv/bin/python topgainer/exec_trade.py buy SYM QTY`
+   `venv/bin/python screener/exec_trade.py buy SYM QTY`
    The exec script re-checks the live balance and hard-caps/refuses if the order
    would exceed available funds, records the position; the watchdog then owns
    stop-loss / target / trail / 15-min time-stop.
 5. Mark any signals you acted on: append `{"consumed": true, ...}` reasoning to
-   `data/topgainer/decisions` via a one-line note (the exec script already logs
+   `data/screener/decisions` via a one-line note (the exec script already logs
    the order). Then STOP.
 
 ## Hard rules

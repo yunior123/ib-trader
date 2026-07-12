@@ -20,7 +20,7 @@ import urllib.request
 from datetime import datetime, timedelta, timezone
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-sys.path.insert(0, os.path.join(ROOT, "topgainer"))
+sys.path.insert(0, os.path.join(ROOT, "screener"))
 from price import _load_alpaca_keys  # noqa: E402
 
 
