@@ -75,7 +75,9 @@ useRiskSize = input.bool(false, "Risk-based sizing (instead of % of equity)", gr
 riskPct     = input.float(0.75, "Risk per trade (% of equity at the stop)", step=0.25, group=grpX)
 
 grpUI = "Display"
-showBB = input.bool(true, "Show Bollinger Bands", group=grpUI)
+showBB       = input.bool(true, "Show Bollinger Bands", group=grpUI)
+showsignals  = input.bool(true, "Show Buy/Sell Signals ?", group=grpUI)
+highlighting = input.bool(true, "Highlighter On/Off ?", group=grpUI)
 
 // ------------------------------------------------------------ indicators ---
 rsiFast = ta.rsi(close, lenFast)
@@ -182,18 +184,41 @@ if longSignal or strategy.position_size > 0
 if exitLong and strategy.position_size > 0
     strategy.close("L", comment="flip/score")
 
-// ------------------------------------------------- plots (minimal: BB) ---
-bbU = plot(showBB ? bbUpper : na, "BB Upper", color=color.new(#3D85C6, 45))
-bbL = plot(showBB ? bbLower : na, "BB Lower", color=color.new(#3D85C6, 45))
-plot(showBB ? bbBasis : na, "BB Basis", color=color.new(color.gray, 20))
-fill(bbU, bbL, color=color.new(#6D9EEB, 92), title="BB fill")
-
-// BUY / SELL labels — the only signals on the chart
+// ------------------- plots — classic Supertrend look + Bollinger Bands ---
 sellNow = exitLong and strategy.position_size > 0
-plotshape(longSignal, "BUY", style=shape.labelup, location=location.belowbar,
-     size=size.small, color=color.new(color.green, 0), text="BUY", textcolor=color.white)
-plotshape(sellNow, "SELL", style=shape.labeldown, location=location.abovebar,
-     size=size.small, color=color.new(color.red, 0), text="SELL", textcolor=color.white)
+
+upPlot = plot(trend == 1 ? up : na, title="Up Trend", style=plot.style_linebr,
+     linewidth=2, color=color.new(color.green, 0))
+dnPlot = plot(trend == 1 ? na : dn, title="Down Trend", style=plot.style_linebr,
+     linewidth=2, color=color.new(color.red, 0))
+
+// circulos donde nace/muere la tendencia (como el original)
+plotshape(buyFlip ? up : na, title="UpTrend Begins", location=location.absolute,
+     style=shape.circle, size=size.tiny, color=color.new(color.green, 0))
+plotshape(sellFlip ? dn : na, title="DownTrend Begins", location=location.absolute,
+     style=shape.circle, size=size.tiny, color=color.new(color.red, 0))
+
+// Buy/Sell del sistema ULTRA, pegados a la linea Supertrend
+plotshape(longSignal and showsignals ? up : na, title="Buy", text="Buy",
+     location=location.absolute, style=shape.labelup, size=size.tiny,
+     color=color.new(color.green, 0), textcolor=color.white)
+plotshape(sellNow and showsignals ? (trend == -1 ? dn : high) : na, title="Sell",
+     text="Sell", location=location.absolute, style=shape.labeldown, size=size.tiny,
+     color=color.new(color.red, 0), textcolor=color.white)
+
+// highlighter precio<->linea (como el original, transparente para dark theme)
+mPlot = plot(ohlc4, title="", style=plot.style_circles, linewidth=1,
+     color=color.new(color.gray, 100))
+longFillColor  = highlighting and trend == 1 ? color.new(color.green, 85) : color.new(color.white, 100)
+shortFillColor = highlighting and trend == -1 ? color.new(color.red, 85) : color.new(color.white, 100)
+fill(mPlot, upPlot, title="UpTrend Highligter", color=longFillColor)
+fill(mPlot, dnPlot, title="DownTrend Highligter", color=shortFillColor)
+
+// Bollinger
+bbUP = plot(showBB ? bbUpper : na, "BB Upper", color=color.new(#3D85C6, 45))
+bbLP = plot(showBB ? bbLower : na, "BB Lower", color=color.new(#3D85C6, 45))
+plot(showBB ? bbBasis : na, "BB Basis", color=color.new(color.gray, 20))
+fill(bbUP, bbLP, color=color.new(#6D9EEB, 92), title="BB fill")
 
 // valores en data window (no ensucian el chart)
 plot(score, "Confluence score", display=display.data_window)
@@ -206,3 +231,5 @@ alertcondition(longSignal, "Ultra Trend LONG", "ULTRA-TREND {{ticker}}: LONG @ {
 alertcondition(exitLong, "Ultra Trend EXIT", "ULTRA-TREND {{ticker}}: exit @ {{close}}")
 alertcondition(buyFlip, "Supertrend Buy", "SuperTrend Buy {{ticker}}!")
 alertcondition(sellFlip, "Supertrend Sell", "SuperTrend Sell {{ticker}}!")
+changeCond = trend != trend[1]
+alertcondition(changeCond, "SuperTrend Direction Change", "SuperTrend has changed direction!")
