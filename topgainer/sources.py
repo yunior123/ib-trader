@@ -130,6 +130,32 @@ SCREENS = {
     "squeeze": dict(signal=None, price_cap=False, filters=[
         "sh_short_o20", "sh_relvol_o1.5", "ta_change_u",
         "ta_sma20_pa", "sh_avgvol_o300", "cap_microover"]),
+    # 4) newhigh (Yunior 2026-07-12): sobre SMA20 y SMA50, NEW HIGH de 50
+    #    dias, deuda/equity < 1, ROE > 20%, avg vol > 100k. Momentum de
+    #    calidad: maximos nuevos sin balance apalancado.
+    "newhigh": dict(signal=None, price_cap=False, filters=[
+        "ta_sma20_pa", "ta_sma50_pa", "ta_highlow50d_nh",
+        "fa_debteq_u1", "fa_roe_o20", "sh_avgvol_o100"]),
+    # 5) shorts (Yunior 2026-07-12) — universo para POSICIONES CORTAS:
+    #    mcap > $300M, short float > 20%, avg vol > 500k, rvol > 1,
+    #    volumen del dia > 500k. Liquido y muy shorteado.
+    "shorts": dict(signal=None, price_cap=False, filters=[
+        "cap_smallover", "sh_short_o20", "sh_avgvol_o500",
+        "sh_relvol_o1", "sh_curvol_o500"]),
+    # 6) recovery (Yunior 2026-07-12): sobre SMA20 pero AUN bajo SMA50
+    #    (rebote temprano dentro de correccion), avg vol > 400k, rvol > 1,
+    #    volumen del dia > 2M.
+    "recovery": dict(signal=None, price_cap=False, filters=[
+        "ta_sma20_pa", "ta_sma50_pb", "sh_avgvol_o400",
+        "sh_relvol_o1", "sh_curvol_o2000"]),
+    # 7) earnings (Yunior 2026-07-12): sobre SMA200, avg vol > 400k,
+    #    EPS growth this year > 25%, EPS qtr/qtr > 25%, RSI not oversold
+    #    (>50), EPS next year > 25%. OJO: Finviz NO tiene filtro "sales
+    #    growth next year" — se usa sales qtr/qtr > 25% como proxy.
+    "earnings": dict(signal=None, price_cap=False, filters=[
+        "ta_sma200_pa", "sh_avgvol_o400", "fa_epsyoy_o25",
+        "fa_epsqoq_o25", "ta_rsi_nos50", "fa_epsyoy1_o25",
+        "fa_salesqoq_o25"]),
 }
 
 
