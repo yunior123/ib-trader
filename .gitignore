@@ -52,3 +52,4 @@ data/nbbo_*.txt
 data/bt_*.txt
 data/etf_positions.json
 data/etf_armed
+data/etf_ledger.csv

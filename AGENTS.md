@@ -21,6 +21,85 @@
 - Piezas: `scripts/fleet_executor.py` (motor, `--selftest`), `scripts/executor_keepalive.sh`, estado en `data/etf_positions.json` (offsets de logs + posiciones), reconcile con el broker al arrancar y cada 10min (adopta posiciones, re-coloca GTC/stops perdidos, detecta fills server-side). Señales = tail de `*_operations.log` (WARMUP filtrado; terremoto NO se opera). Los motores C++ validados NO SE TOCAN.
 - Backtest de la traduccion (90d, fees 0.2%/lado): `scripts/leveraged_backtest.py` → `data/leveraged_bt_90d.txt`. Veredicto: BULLS bien (349 ventas cerradas +632.9%, 198 bolsas recuperadas = 86%, 32 abiertas mtm −654% — con 500 USD el cash se congela con ~4-5 bolsas hasta que las GTC llenen, es la regla operando). **BEARS pierden como estan especificados (WR 37%, −84%): el stop plano −5% es 2-5× los stops afinados y las fees se comen el edge → `ETF_BEARS=0` por defecto (orden permanente #7: sin WR≥70 queda OFF)**; para activar: export ETF_BEARS=1 en executor_keepalive.sh — antes conviene re-afinar stop por ticker (S_STOP del bot × leverage del ETF).
 
+## MASTER TRADING PLAYBOOK (2026-07-11 — conocimiento vivo para day/swing/options)
+Destilado de investigacion web 2025-2026 + repos quant de referencia + experiencia de la flota.
+Fuentes clave: tradersmastermind ORB, chartswatcher VWAP, je-suis-tm/quant-trading (patrones,
+London Breakout, Dual Thrust, parabolic SAR), wilsonfreitas/awesome-quant, leoncuhk/awesome-quant-ai.
+
+### 1. Marcos temporales — quien manda a quien
+- **Regla de 3 marcos**: contexto (15m) → setup (5m/3m) → gatillo (1m). El marco superior VETA:
+  nunca comprar un gatillo 1m contra la tendencia 15m; nunca shortear sobre VWAP con 15m alcista.
+- 1m = SOLO ejecucion (ruido 60-70%); 3m = compromiso (menos fakeouts que 1m, mas entradas que 5m);
+  5m = el caballo de batalla intradia (nuestra flota: Supertrend 5m); 15m = estructura del dia
+  (nuestro z15 de BB-15m ya lo codifica). Swing: 1h contexto → 15m gatillo, o diario → 1h.
+- **Alineacion**: A+ setup = los 3 marcos apuntan igual. Solo-gatillo sin contexto = C setup, skip.
+
+### 2. Setups nucleo (mecanicos, backtesteables)
+- **ORB (Opening Range Breakout)**: rango = primeros 15 min (9:30-9:45); entrada = CIERRE de vela
+  5m fuera del rango CON volumen > promedio Y VWAP del mismo lado Y 21-EMA alineada. Stop = lado
+  opuesto del rango (o 50%). Target 2R o cierre EOD. Estudios 2025: ~60-65% dias con seguimiento
+  cuando el gap inicial > 0.5 ATR diario; una sola operacion/dia. NUESTRO SKIP_OPEN ya evita
+  operar DENTRO de la subasta — el ORB opera la RESOLUCION de esa subasta.
+- **VWAP**: (a) reclaim — precio pierde VWAP, lo recupera con volumen → long, stop bajo el minimo
+  del reclaim; (b) fade a VWAP — extension >2 ATR de VWAP sin noticia → reversion a VWAP (nuestro
+  s_vw del score v3 es exactamente esta distancia); (c) tendencia — pullbacks que respetan VWAP
+  todo el dia = institucional, comprarlos. VWAP win-rate historico ~60% con 1:1 — la ventaja esta
+  en el filtro de contexto, no en el indicador.
+- **Break-and-retest**: la ruptura NO se persigue; se espera el retest del nivel roto que aguanta
+  (cierre en la direccion) — mitad del riesgo, misma ganancia. Aplica a ORB, Donchian y trendlines
+  (skill trendline-trading: fractal-5, 3 toques, cierre ±0.25 ATR).
+- **Capitulacion confirmada** (motor de la flota): BB inferior + RSI<umbral + volumen → NO se
+  compra el cuchillo: se ARMA y se compra la vela verde que recupera el maximo del panico. La
+  confirmacion es lo que sube el WR de ~45% a 70%+. Espejo para blow-off arriba.
+- **Liquidity sweep** (skill liquidity-trading): barrida de maximos/minimos iguales (wick >0.25 ATR
+  que CIERRA de vuelta) + confirmacion = entrada contra el sweep; los stops cazados son el combustible.
+- **London/Dual-Thrust (sesiones)**: rangos de sesion previa como niveles (je-suis-tm) — util para
+  el overnight 24/5: el rango overnight define el mapa del open.
+
+### 3. Patrones de velas que SI mueven la aguja (contexto > patron)
+Engulfing / hammer / shooting-star / marubozu (ya en los bots via {SYM}_CANDLE) SOLO valen:
+en nivel (VWAP, banda, trendline, rango) + con volumen + en el marco 5m/15m (en 1m son ruido).
+Tres velas del mismo color acelerando + volumen decreciente = agotamiento, no fuerza.
+
+### 4. Regimen — la meta-señal (nuestro regime-detection skill)
+- Tendencia vs rango: ADX>25 o Supertrend estable = seguir rupturas; ADX<20 = fade extremos.
+  Cambiar de familia de setup segun regimen VALE MAS que optimizar parametros dentro de una.
+- Volatilidad: ATR% define stops y targets — stops fijos en % son mentira; 3xATR trail (flota) ✓.
+- El CUSUM/terremoto ES un detector de cambio de regimen: tras un quake, el playbook cambia
+  (momentum manda 30-60 min; mean-reversion queda vetada ese rato). Por eso los quake-bears.
+
+### 5. Opciones (el humano opera con las señales; regla broker-generico #9)
+- BUY NOW → CALL (o shares); BUY PUT → PUT. Vencimiento: intradia = 0-2 DTE solo con liquidez
+  (spread <5% del premium); swing = 2-4 semanas, delta 0.5-0.7 (ITM ligero paga el theta).
+- 0DTE: solo primeras 2h o ultima 1h, tamaño mitad, NUNCA hold overnight, el theta es un incendio.
+- IV alta (earnings, VIX>25): comprar opciones = pagar caro — usar debit spreads (compra ITM,
+  vende OTM) para neutralizar IV; IV baja = calls/puts secas mejor.
+- Nuestra ventaja: el bot da la DIRECCION y el TIMING; la opcion es solo el vehiculo con
+  perdida maxima definida (TFSA-safe, sin margen).
+
+### 6. Riesgo — lo unico no negociable
+- Riesgo por trade <=1-2% del equity (Kelly fraccional 0.25-0.5 del Kelly pleno; skill kelly-criterion).
+- 3 perdidas seguidas = STOP del dia (tilt es real). Perdida diaria max 5% = semana protegida.
+- Fees SIEMPRE en el calculo: floor de venta = entry + max(1%, fees ida+vuelta + 0.2%) — codificado
+  en fleet_executor.profit_floor(). Posiciones chicas exigen % mayor; sin excepcion.
+- Bolsas (regla Yunior): SOLO en bulls apalancados de tickers favoritos, con GTC de recuperacion
+  en el broker; JAMAS en inversos (decay diario + rebalanceo los pudre — stop y fuera).
+- Apalancados 2x-3x: producto DIARIO — la variance drag castiga holds largos; una bolsa 2x tarda
+  MAS en recuperar que el subyacente. Aceptado por orden explicita; no añadir sin orden.
+
+### 7. Microestructura (por que ganamos con ~1ms)
+- Primer trade del minuto siguiente cierra el bar → señal ~1ms despues (kqueue). El edge no es
+  HFT: es NO llegar tarde al retest/confirmacion que el resto ve 3-30s despues (pollers).
+- Spread gate (SPREAD_MAX/NBBO) antes de confirmar: un spread ancho se come un dia de expectancy.
+- Volumen IEX ≈2-5% del SIP: gates de volumen RELATIVOS (vol/volMA) son escala-invariantes ✓;
+  jamas mezclar fuentes de volumen por minuto (reader dual-source: hold 2s anti-mezcla).
+
+### 8. Proceso (lo que separa pro de amateur)
+- Todo setup nuevo: replay 90d → train/OOS 60/40 → WR>=70 + OOS positivo o NO SE ENVIA (#7).
+- Cada regla optimizada contra los MISMOS datos dos veces = overfit; walk-forward o nada.
+- Diario de operaciones = data/etf_ledger.csv (auto) + scorecard. Revision semanal: bolsas
+  abiertas, stop-rate de bears, expectancy por ticker. Lo que no se mide se degrada.
+
 ## Overview
 Rules-based dip/breakout trading system for Interactive Brokers (IBKR), US equities via SMART routing.
 Main bot: **`day_trading_bot.py`** (multi-ticker via `--symbol`; formerly dram_dip_bot.py).

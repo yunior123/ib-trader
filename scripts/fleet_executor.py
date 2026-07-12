@@ -43,12 +43,23 @@ from ib_insync import IB, Stock, LimitOrder, StopOrder, MarketOrder  # noqa
 
 # ---------------- config (env-overridable) ----------------
 def envf(k, d): v = os.getenv(k); return float(v) if v else d
-MIN_EQUITY   = envf("ETF_MIN_EQUITY", 450.0)    # USD; debajo = no operar
+MIN_EQUITY   = envf("ETF_MIN_EQUITY", 500.0)    # USD; orden 2026-07-11: opera con >500 en activos
 MAX_OPEN     = int(envf("ETF_MAX_OPEN", 4))     # posiciones activas (bolsas no cuentan)
 BAG_MAX      = int(envf("ETF_BAG_MAX", 6))      # bolsas max simultaneas
-BAG_MIN_GAIN = envf("ETF_BAG_MIN_GAIN", 1.0)    # % sobre entry para vender bull (cubre 2x0.5% fee cap)
-BEAR_STOP    = envf("ETF_BEAR_STOP", 5.0)       # % stop servidor en el bear ETF
+BAG_MIN_GAIN = envf("ETF_BAG_MIN_GAIN", 1.0)    # % minimo sobre entry (el floor real suma fees, abajo)
+BEAR_STOP    = envf("ETF_BEAR_STOP", 5.0)       # % stop servidor en el bear ETF (señal regular)
 COOLDOWN_S   = envf("ETF_COOLDOWN_S", 900)      # anti re-entrada por ETF
+CASH_RESERVE = envf("ETF_CASH_RESERVE", 25.0)   # USD que JAMAS se gastan (colchon anti-negativo)
+FEE_MIN_USD  = envf("ETF_FEE_MIN_USD", 1.0)     # peor caso comision IBKR por lado (micro-orden)
+# BEARS por TERREMOTO (orden 2026-07-11 "only use leveraged inversed when sure
+# and real fast when earthquake"): el CUSUM banner-grade (precision 88-99% por
+# ticker) es el gatillo, NO la señal PUT regular (esa fallo el backtest, WR37).
+# Stop apretado, time-stop, salida por quake inverso y EOD 15:50 SIEMPRE
+# (inverso apalancado jamas pasa la noche).
+QUAKE_BEARS  = envf("ETF_QUAKE_BEARS", 1) > 0
+QUAKE_STOP   = envf("ETF_QUAKE_BEAR_STOP", 3.0)  # % stop del quake-bear
+QUAKE_HOLD   = envf("ETF_QUAKE_HOLD_MIN", 45)    # min max en un quake-bear
+MAX_BEARS    = int(envf("ETF_MAX_BEARS", 2))     # bears simultaneos max
 # BEARS OFF por defecto: el backtest 90d de la traduccion (data/leveraged_bt_90d.txt)
 # dio WR 37% / -84% — el stop plano -5% en el ETF es 2-5x mas ancho que los stops
 # afinados de los bots y las fees se comen el edge corto. Orden permanente #7
@@ -102,6 +113,25 @@ def save_state():
 
 def armed():
     return os.path.exists(ARMED_FILE)
+
+def profit_floor(entry, qty):
+    """Precio minimo de venta que GARANTIZA ganancia neta de comisiones
+    (orden: 'consider broker fees to sell in profit all the time, never sell
+    on loss'). Posiciones chicas exigen % mayor: 2 lados de fee + slippage."""
+    notional = max(entry * max(qty, 1), 1e-9)
+    fee_pct = 2 * FEE_MIN_USD / notional * 100
+    return entry * (1 + max(BAG_MIN_GAIN, fee_pct + 0.2) / 100)
+
+LEDGER = "data/etf_ledger.csv"
+def ledger(event, etf, base, side, qty, px, fee=0.0, pnl="", note=""):
+    """Historial COMPLETO append-only (orden: 'records should be kept by
+    operations, full history'). Fuente auditable ademas del broker."""
+    new = not os.path.exists(LEDGER)
+    with open(LEDGER, "a") as f:
+        if new:
+            f.write("ts,event,etf,base,side,qty,px,fee_usd,pnl_pct,note\n")
+        f.write(f"{datetime.now():%Y-%m-%d %H:%M:%S},{event},{etf},{base},{side},"
+                f"{qty},{px:.4f},{fee:.2f},{pnl},{note}\n")
 
 # ---------------- precio confiable (jamas delayed) ----------------
 def alpaca_price(sym):
@@ -202,6 +232,16 @@ class Ibkr:
         for tr in self.ib.openTrades():
             if tr.order.orderId == order_id:
                 self.ib.cancelOrder(tr.order)
+    def broker_qty(self, sym):
+        """Cantidad REAL en el broker (cuenta = fuente de verdad; el humano
+        tambien opera esta cuenta a mano). None si no se pudo consultar."""
+        try:
+            for p in self.ib.positions(ACCOUNT):
+                if p.contract.symbol == sym:
+                    return int(p.position)
+            return 0
+        except Exception:
+            return None
     def _wait_fill(self, tr, timeout):
         end = time.time() + timeout
         while time.time() < end and not tr.isDone():
@@ -211,6 +251,11 @@ class Ibkr:
         if not tr.isDone():
             self.ib.cancelOrder(tr.order); self.ib.sleep(2)
             filled = tr.filled(); avg = tr.orderStatus.avgFillPrice or 0
+        try:
+            self.last_fee = sum(f.commissionReport.commission
+                                for f in tr.fills if f.commissionReport)
+        except Exception:
+            self.last_fee = 0.0
         return (int(filled), float(avg))
 
 # ---------------- venue Alpaca (PAPER — fallback, NO dinero real) ----------------
@@ -230,6 +275,8 @@ class AlpacaPaper:
 # ---------------- parser de señales ----------------
 # titulo "SYM: BUY NOW" / "SELL NOW" / "SELL-STOP" / "BUY PUT" / "SELL PUT" / "PUT-STOP"
 RX_TITLE = re.compile(r"^([A-Z]+): (BUY NOW|SELL NOW|SELL-STOP|BUY PUT|SELL PUT|PUT-STOP)$")
+# terremoto banner-grade: "SYM TERREMOTO ALZA|CAIDA" — gatillo de los quake-bears
+RX_QUAKE = re.compile(r"^([A-Z]+) TERREMOTO (ALZA|CAIDA)$")
 RX_PRICE = re.compile(r"@ ([\d.]+)")
 
 def new_log_lines():
@@ -251,9 +298,13 @@ def new_log_lines():
                 parts = [p.strip() for p in line.split(" | ", 2)]
                 if len(parts) != 3 or parts[1].startswith("WARMUP"): continue
                 m = RX_TITLE.match(parts[1])
-                if not m: continue      # terremoto/tendencia/etc: no se opera
-                pm = RX_PRICE.search(parts[2])
-                out.append((m.group(1), m.group(2), float(pm.group(1)) if pm else 0, parts[2]))
+                if m:
+                    pm = RX_PRICE.search(parts[2])
+                    out.append((m.group(1), m.group(2), float(pm.group(1)) if pm else 0, parts[2]))
+                    continue
+                q = RX_QUAKE.match(parts[1])
+                if q:
+                    out.append((q.group(1), "QUAKE " + q.group(2), 0, parts[2]))
     return out
 
 # ---------------- motor de reglas ----------------
@@ -286,22 +337,34 @@ def rth_now():
     lt = time.localtime()
     return lt.tm_wday < 5 and (570 <= lt.tm_hour * 60 + lt.tm_min < 959)
 
-def do_buy(ibkr, base, side, etf, sig_msg):
+def do_buy(ibkr, base, side, etf, sig_msg, stop_pct=None, kind="signal"):
     venue, why = preflight(ibkr, etf, True)
     if venue is None:
         log(f"SKIP BUY {etf} ({base} {side}): {why}"); return
     if not rth_now():
         log(f"SKIP BUY {etf}: fuera de RTH"); return
+    paper = isinstance(venue, AlpacaPaper)
+    if not paper:
+        # cuenta = fuente de verdad: si el humano ya compro este ETF a mano,
+        # NO se duplica (reconcile lo adopta en el proximo pase)
+        rq = venue.broker_qty(etf)
+        if rq and rq > 0:
+            banner(f"{etf}: ya en cuenta (manual)", "no se duplica — reconcile la adopta")
+            return
     px = ref_price(ibkr.ib if isinstance(venue, Ibkr) else None, etf)
     if not px:
         banner(f"{etf}: SIN PRECIO", "ni IBKR ni Alpaca fresco — trade abortado (jamas precio viejo)")
         return
     bid, ask = px
-    paper = isinstance(venue, AlpacaPaper)
+    # BALANCE FRESCO inmediatamente antes de ordenar (orden 2026-07-11: "always
+    # check current balance before buying, avoid negative balance") + reserva
+    # intocable. Multiples señales en rafaga: el executor es secuencial y cada
+    # compra espera su fill, asi que el AvailableFunds del broker ya refleja la
+    # compra anterior antes de calcular la siguiente.
     equity = MIN_EQUITY if paper else ibkr.netliq_usd()
     slot = max(50.0, equity / MAX_OPEN)
     avail = equity if paper else ibkr.avail_usd()
-    budget = min(slot, max(0, avail - 5))            # buffer fees/FX
+    budget = min(slot, max(0.0, avail - CASH_RESERVE))
     qty = int(budget // ask)
     if qty < 1:
         banner(f"{etf}: SIN PRESUPUESTO", f"slot {slot:.0f} ask {ask:.2f} avail {avail:.0f} — 0 shares")
@@ -315,11 +378,13 @@ def do_buy(ibkr, base, side, etf, sig_msg):
         filled, avg = venue.buy_limit(etf, qty, limit)
     if filled < 1:
         banner(f"{etf}: BUY sin fill", f"limit {limit:.2f} no lleno en 5min — cancelado"); return
+    sp = stop_pct if stop_pct is not None else BEAR_STOP
     pos = {"base": base, "side": side, "qty": filled, "entry": avg,
            "t": time.time(), "venue": "alpaca_paper" if paper else "ibkr",
-           "bag": False, "bag_oid": None, "stop_oid": None}
+           "bag": False, "bag_oid": None, "stop_oid": None, "kind": kind,
+           "deadline": time.time() + QUAKE_HOLD * 60 if kind == "quake" else None}
     if side == "bear":
-        stop_px = avg * (1 - BEAR_STOP / 100)
+        stop_px = avg * (1 - sp / 100)
         try:
             pos["stop_oid"] = (venue.order(etf, "sell", filled, "stop", stop=stop_px, tif="gtc")
                                if paper else venue.place_gtc_stop(etf, filled, stop_px))
@@ -332,8 +397,10 @@ def do_buy(ibkr, base, side, etf, sig_msg):
     STATE["cooldown"][etf] = time.time()
     STATE["history"].append({**pos, "event": "buy", "at": time.time()})
     save_state()
+    ledger("buy", etf, base, side, filled, avg, getattr(venue, "last_fee", 0.0),
+           note=kind + (" PAPER" if paper else ""))
     banner(f"{etf}: {'BEAR' if side=='bear' else 'BULL'} COMPRADO",
-           f"{filled} @ {avg:.2f} ({base} señal) " + (f"stop {avg*(1-BEAR_STOP/100):.2f}" if side == "bear" else ""))
+           f"{filled} @ {avg:.2f} ({base} {kind}) " + (f"stop {avg*(1-sp/100):.2f}" if side == "bear" else ""))
 
 def do_sell(ibkr, base, kind):
     """kind: bull_exit (SELL NOW/SELL-STOP) | bear_exit (SELL PUT/PUT-STOP)"""
@@ -346,10 +413,21 @@ def do_sell(ibkr, base, kind):
     if venue is None:
         log(f"SKIP SELL {etf}: {why}"); return
     paper = isinstance(venue, AlpacaPaper)
+    if not paper:
+        # cuenta = fuente de verdad: el humano pudo vender/ajustar a mano
+        rq = venue.broker_qty(etf)
+        if rq == 0:
+            banner(f"{etf}: ya cerrada en broker", "vendida manualmente o GTC/stop lleno — estado limpiado")
+            ledger("closed_external", etf, base, pos["side"], pos["qty"], 0)
+            STATE["history"].append({**pos, "event": "closed_external", "at": time.time()})
+            del STATE["positions"][etf]; save_state(); return
+        if rq is not None and rq < pos["qty"]:
+            log(f"{etf}: broker tiene {rq} < estado {pos['qty']} — se vende lo real")
+            pos["qty"] = rq
     px = ref_price(None if paper else ibkr.ib, etf)
     bid = px[0] if px else 0
     if want == "bull":
-        floor = pos["entry"] * (1 + BAG_MIN_GAIN / 100)
+        floor = profit_floor(pos["entry"], pos["qty"])   # garantiza ganancia NETA de fees
         if bid >= floor:
             if paper:
                 venue.order(etf, "sell", pos["qty"], "limit", px=max(floor, bid * 0.999))
@@ -360,6 +438,8 @@ def do_sell(ibkr, base, kind):
             if filled >= pos["qty"]:
                 pnl = (avg - pos["entry"]) / pos["entry"] * 100
                 banner(f"{etf}: VENDIDO +{pnl:.1f}%", f"{filled} @ {avg:.2f} (entry {pos['entry']:.2f})")
+                ledger("sell", etf, base, "bull", filled, avg,
+                       getattr(venue, "last_fee", 0.0), f"{pnl:+.2f}")
                 STATE["history"].append({**pos, "event": "sell", "exit": avg, "at": time.time()})
                 del STATE["positions"][etf]; save_state(); return
             if filled > 0:      # fill parcial: lo vendido se contabiliza, el resto va a bolsa
@@ -371,6 +451,7 @@ def do_sell(ibkr, base, kind):
             oid = (venue.order(etf, "sell", pos["qty"], "limit", px=floor, tif="gtc")
                    if paper else venue.place_gtc_sell(etf, pos["qty"], floor))
             pos["bag"] = True; pos["bag_oid"] = oid; save_state()
+            ledger("bag", etf, base, "bull", pos["qty"], floor, note="GTC recuperacion")
             banner(f"{etf}: BOLSA", f"señal de venta bajo entry ({bid:.2f} < {floor:.2f}) — "
                                     f"aguantamos con GTC {floor:.2f} (sobrevive reinicios)")
         except Exception as e:
@@ -385,6 +466,8 @@ def do_sell(ibkr, base, kind):
             filled, avg = venue.sell_market(etf, pos["qty"] - filled)   # bear no se queda colgado
         pnl = (avg - pos["entry"]) / pos["entry"] * 100 if avg else 0
         banner(f"{etf}: BEAR CERRADO {pnl:+.1f}%", f"@ {avg:.2f} (entry {pos['entry']:.2f})")
+        ledger("sell", etf, base, "bear", pos["qty"], avg,
+               getattr(venue, "last_fee", 0.0), f"{pnl:+.2f}", note=pos.get("kind", ""))
         STATE["history"].append({**pos, "event": "sell", "exit": avg, "at": time.time()})
         del STATE["positions"][etf]; save_state()
 
@@ -411,7 +494,7 @@ def reconcile(ibkr):
                 pos["stop_oid"] = ibkr.place_gtc_stop(sym, pos["qty"], pos["entry"] * (1 - BEAR_STOP / 100))
                 log(f"reconcile: stop re-colocado {sym}")
             if pos["side"] == "bull" and pos.get("bag") and pos.get("bag_oid") not in open_ids:
-                pos["bag_oid"] = ibkr.place_gtc_sell(sym, pos["qty"], pos["entry"] * (1 + BAG_MIN_GAIN / 100))
+                pos["bag_oid"] = ibkr.place_gtc_sell(sym, pos["qty"], profit_floor(pos["entry"], pos["qty"]))
                 log(f"reconcile: GTC bolsa re-colocada {sym}")
         for sym in list(STATE["positions"]):
             pos = STATE["positions"][sym]
@@ -429,9 +512,12 @@ def selftest():
     lines = [
         ("2026-01-01 10:00:00 | WARMUP NVDA: BUY NOW | COMPRAR NVDA @ 100.00", None),
         ("2026-01-01 10:00:00 | NVDA: BUY NOW | COMPRAR NVDA @ 100.00 (shares o CALL)", ("NVDA", "BUY NOW")),
-        ("2026-01-01 10:01:00 | NVDA TERREMOTO ALZA | CUSUM subiendo", None),
+        ("2026-01-01 10:01:00 | NVDA TERREMOTO ALZA | CUSUM subiendo", ("NVDA", "QUAKE ALZA")),
         ("2026-01-01 10:02:00 | TSLA: BUY PUT | COMPRAR PUT TSLA @ 404.00", ("TSLA", "BUY PUT")),
         ("2026-01-01 10:03:00 | TSLA: PUT-STOP | VENDER PUT TSLA @ 410.00", ("TSLA", "PUT-STOP")),
+        ("2026-01-01 10:04:00 | GLD TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.2%", ("GLD", "QUAKE CAIDA")),
+        ("2026-01-01 10:05:00 | GLD TERREMOTO ALZA | CUSUM: subiendo fuerte +1.2%", ("GLD", "QUAKE ALZA")),
+        ("2026-01-01 10:06:00 | WARMUP GLD TERREMOTO CAIDA | CUSUM: cayendo", None),
     ]
     ok = True
     for raw, want in lines:
@@ -440,10 +526,19 @@ def selftest():
         if len(parts) == 3 and not parts[1].startswith("WARMUP"):
             m = RX_TITLE.match(parts[1])
             if m: got = (m.group(1), m.group(2))
+            else:
+                q = RX_QUAKE.match(parts[1])
+                if q: got = (q.group(1), "QUAKE " + q.group(2))
         if got != want: ok = False; print(f"FAIL parse: {raw} -> {got} != {want}")
     for b in BASES:
         assert BULL_OF[b], b
     assert BEAR_OF.get("TSLA") == "TSLS" and "INTC" not in BEAR_OF
+    # floor SIEMPRE gana neto de fees: 3 shares @ $33 (~$100) exige > 2.2%
+    f = profit_floor(33.0, 3)
+    assert f >= 33.0 * 1.022, f"floor {f} no cubre fees en notional chico"
+    # notional grande converge al minimo BAG_MIN_GAIN
+    f2 = profit_floor(80.0, 100)
+    assert abs(f2 - 80.0 * (1 + BAG_MIN_GAIN / 100)) < 0.01
     print("selftest:", "OK" if ok else "FAIL")
     return 0 if ok else 1
 
@@ -468,15 +563,44 @@ while True:
             elif action == "BUY PUT":
                 etf = BEAR_OF.get(base)
                 if not BEARS_ON:
-                    log(f"{base}: BEARS OFF (backtest 37% WR — gate WR-70); ETF_BEARS=1 activa")
+                    log(f"{base}: BEARS regulares OFF (backtest 37% WR — gate WR-70); ETF_BEARS=1 activa")
                 elif etf: do_buy(ibkr, base, "bear", etf, msg)
                 else: log(f"{base}: sin bear ETF listado — put queda señal-solo")
             elif action in ("SELL PUT", "PUT-STOP"):
                 do_sell(ibkr, base, "bear_exit")
-        if time.time() - last_reconcile > 600:
+            elif action == "QUAKE CAIDA":
+                # BEAR por TERREMOTO: "only when sure and real fast when earthquake"
+                etf = BEAR_OF.get(base)
+                nbears = len([p for p in STATE["positions"].values()
+                              if p["side"] == "bear" and not p.get("bag")])
+                if not QUAKE_BEARS: log(f"{base}: quake-bears OFF (ETF_QUAKE_BEARS=0)")
+                elif not etf: log(f"{base}: quake CAIDA sin bear ETF — señal-solo")
+                elif BULL_OF.get(base) in STATE["positions"]:
+                    log(f"{base}: bull/bolsa abierta — sin quake-bear (conflicto)")
+                elif nbears >= MAX_BEARS:
+                    log(f"{base}: cap {MAX_BEARS} bears alcanzado — quake ignorado")
+                else:
+                    do_buy(ibkr, base, "bear", etf, msg, stop_pct=QUAKE_STOP, kind="quake")
+            elif action == "QUAKE ALZA":
+                etf = BEAR_OF.get(base)
+                if etf and STATE["positions"].get(etf, {}).get("kind") == "quake":
+                    log(f"{base}: quake INVERSO — cerrando quake-bear ya")
+                    do_sell(ibkr, base, "bear_exit")
+        # exits programados de bears: time-stop del quake + EOD 15:50 SIEMPRE
+        # (inverso apalancado JAMAS pasa la noche — decay + gap)
+        lt = time.localtime(); mins = lt.tm_hour * 60 + lt.tm_min
+        for sym in list(STATE["positions"]):
+            p = STATE["positions"].get(sym)
+            if not p or p["side"] != "bear" or p.get("bag"): continue
+            timed_out = p.get("deadline") and time.time() > p["deadline"]
+            eod = lt.tm_wday < 5 and mins >= 950 and mins < 960
+            if timed_out or eod:
+                log(f"{sym}: exit programado bear ({'time-stop' if timed_out else 'EOD 15:50'})")
+                do_sell(ibkr, p["base"], "bear_exit")
+        if time.time() - last_reconcile > 300:
             reconcile(ibkr); last_reconcile = time.time()
         save_state()
-        time.sleep(2)
+        time.sleep(0.5)
     except KeyboardInterrupt:
         break
     except Exception as e:
