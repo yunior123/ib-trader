@@ -51,6 +51,14 @@ BEAR_STOP    = envf("ETF_BEAR_STOP", 5.0)       # % stop servidor en el bear ETF
 COOLDOWN_S   = envf("ETF_COOLDOWN_S", 900)      # anti re-entrada por ETF
 CASH_RESERVE = envf("ETF_CASH_RESERVE", 25.0)   # USD que JAMAS se gastan (colchon anti-negativo)
 FEE_MIN_USD  = envf("ETF_FEE_MIN_USD", 1.0)     # peor caso comision IBKR por lado (micro-orden)
+# STOP CATASTROFICO en bulls (orden 2026-07-11 "stop loss should be on price
+# as well... we are handling a lot of money in the future"): la bolsa sigue
+# viva para caidas normales (backtest: bolsas ~-20% recuperan 86%), pero un
+# colapso del nombre se corta a -25% del ETF (~-12% subyacente en 2x) con STP
+# GTC SERVIDOR-side. Convive con la GTC de recuperacion en un grupo OCA del
+# broker: una se llena -> la otra se cancela SOLA (imposible oversell, funciona
+# con el Mac muerto). ETF_BULL_STOP=0 lo desactiva.
+BULL_STOP    = envf("ETF_BULL_STOP", 25.0)
 # BEARS por TERREMOTO (orden 2026-07-11 "only use leveraged inversed when sure
 # and real fast when earthquake"): el CUSUM banner-grade (precision 88-99% por
 # ticker) es el gatillo, NO la señal PUT regular (esa fallo el backtest, WR37).
@@ -220,14 +228,14 @@ class Ibkr:
     def sell_market(self, sym, qty):
         tr = self.ib.placeOrder(self.qualify(sym), MarketOrder("SELL", qty, account=ACCOUNT))
         return self._wait_fill(tr, 120)
-    def place_gtc_sell(self, sym, qty, px):       # bolsa bull: recuperacion
-        tr = self.ib.placeOrder(self.qualify(sym),
-                                LimitOrder("SELL", qty, round(px, 2), tif="GTC", account=ACCOUNT))
-        return tr.order.orderId
-    def place_gtc_stop(self, sym, qty, px):       # bear: stop servidor-side
-        tr = self.ib.placeOrder(self.qualify(sym),
-                                StopOrder("SELL", qty, round(px, 2), tif="GTC", account=ACCOUNT))
-        return tr.order.orderId
+    def place_gtc_sell(self, sym, qty, px, oca=None):   # bolsa bull: recuperacion
+        o = LimitOrder("SELL", qty, round(px, 2), tif="GTC", account=ACCOUNT)
+        if oca: o.ocaGroup, o.ocaType = oca, 1          # una se llena -> la otra muere
+        return self.ib.placeOrder(self.qualify(sym), o).order.orderId
+    def place_gtc_stop(self, sym, qty, px, oca=None):   # stop servidor-side
+        o = StopOrder("SELL", qty, round(px, 2), tif="GTC", account=ACCOUNT)
+        if oca: o.ocaGroup, o.ocaType = oca, 1
+        return self.ib.placeOrder(self.qualify(sym), o).order.orderId
     def cancel(self, order_id):
         for tr in self.ib.openTrades():
             if tr.order.orderId == order_id:
@@ -393,6 +401,20 @@ def do_buy(ibkr, base, side, etf, sig_msg, stop_pct=None, kind="signal"):
             venue.order(etf, "sell", filled, "market") if paper else venue.sell_market(etf, filled)
             banner(f"{etf}: BEAR ABORTADO", "no se pudo colocar stop — posicion cerrada")
             return
+    elif BULL_STOP > 0:
+        # stop CATASTROFICO del bull en el broker (orden 2026-07-11 "stop loss
+        # on price as well"): la bolsa vive para caidas normales, el colapso
+        # se corta. Si falla no se aborta el bull (reconcile reintenta en 5min).
+        stop_px = avg * (1 - BULL_STOP / 100)
+        try:
+            oca = f"B{etf}{int(time.time())}"
+            if paper:
+                pos["stop_oid"] = venue.order(etf, "sell", filled, "stop", stop=stop_px, tif="gtc")
+            else:
+                pos["stop_oid"] = venue.place_gtc_stop(etf, filled, stop_px, oca=oca)
+                pos["oca"] = oca
+        except Exception as e:
+            log(f"{etf}: stop catastrofico fallo ({e}) — reconcile reintentara")
     STATE["positions"][etf] = pos
     STATE["cooldown"][etf] = time.time()
     STATE["history"].append({**pos, "event": "buy", "at": time.time()})
@@ -429,6 +451,12 @@ def do_sell(ibkr, base, kind):
     if want == "bull":
         floor = profit_floor(pos["entry"], pos["qty"])   # garantiza ganancia NETA de fees
         if bid >= floor:
+            # el stop catastrofico se cancela ANTES de vender (evita doble venta);
+            # si la venta no llena, el par stop+GTC se recrea en el camino de bolsa
+            if not paper and pos.get("stop_oid"):
+                try: venue.cancel(pos["stop_oid"])
+                except Exception: pass
+                pos["stop_oid"] = None
             if paper:
                 venue.order(etf, "sell", pos["qty"], "limit", px=max(floor, bid * 0.999))
                 filled, avg = pos["qty"], max(floor, bid * 0.999)
@@ -446,11 +474,23 @@ def do_sell(ibkr, base, kind):
                 STATE["history"].append({**pos, "event": "sell_partial", "qty": filled,
                                          "exit": avg, "at": time.time()})
                 pos["qty"] -= filled
-        # no se vende por debajo: BOLSA + GTC de recuperacion (regla Yunior)
+        # no se vende por debajo: BOLSA = par OCA en el broker — GTC de
+        # recuperacion en floor + stop catastrofico; una llena, la otra muere
+        # sola (imposible oversell, sobrevive reinicios y muerte del Mac)
         try:
-            oid = (venue.order(etf, "sell", pos["qty"], "limit", px=floor, tif="gtc")
-                   if paper else venue.place_gtc_sell(etf, pos["qty"], floor))
-            pos["bag"] = True; pos["bag_oid"] = oid; save_state()
+            if paper:
+                pos["bag_oid"] = venue.order(etf, "sell", pos["qty"], "limit", px=floor, tif="gtc")
+            else:
+                if pos.get("stop_oid"):          # stop suelto del buy: fuera,
+                    try: venue.cancel(pos["stop_oid"])   # el par nuevo lo reemplaza
+                    except Exception: pass
+                oca = f"B{etf}{int(time.time())}"
+                pos["bag_oid"] = venue.place_gtc_sell(etf, pos["qty"], floor, oca=oca)
+                if BULL_STOP > 0:
+                    pos["stop_oid"] = venue.place_gtc_stop(
+                        etf, pos["qty"], pos["entry"] * (1 - BULL_STOP / 100), oca=oca)
+                pos["oca"] = oca
+            pos["bag"] = True; save_state()
             ledger("bag", etf, base, "bull", pos["qty"], floor, note="GTC recuperacion")
             banner(f"{etf}: BOLSA", f"señal de venta bajo entry ({bid:.2f} < {floor:.2f}) — "
                                     f"aguantamos con GTC {floor:.2f} (sobrevive reinicios)")
@@ -491,11 +531,30 @@ def reconcile(ibkr):
                 STATE["positions"][sym] = pos
                 log(f"reconcile: adoptada {sym} {pos['qty']}@{pos['entry']:.2f} ({side})")
             if pos["side"] == "bear" and pos.get("stop_oid") not in open_ids:
-                pos["stop_oid"] = ibkr.place_gtc_stop(sym, pos["qty"], pos["entry"] * (1 - BEAR_STOP / 100))
-                log(f"reconcile: stop re-colocado {sym}")
-            if pos["side"] == "bull" and pos.get("bag") and pos.get("bag_oid") not in open_ids:
-                pos["bag_oid"] = ibkr.place_gtc_sell(sym, pos["qty"], profit_floor(pos["entry"], pos["qty"]))
-                log(f"reconcile: GTC bolsa re-colocada {sym}")
+                sp = QUAKE_STOP if pos.get("kind") == "quake" else BEAR_STOP
+                pos["stop_oid"] = ibkr.place_gtc_stop(sym, pos["qty"], pos["entry"] * (1 - sp / 100))
+                log(f"reconcile: stop bear re-colocado {sym} (-{sp}%)")
+            if pos["side"] == "bull" and pos.get("venue", "ibkr") == "ibkr":
+                # proteccion bull = stop catastrofico (+ GTC recuperacion si es
+                # bolsa) SIEMPRE presentes; si falta cualquiera se recrea el par
+                # completo en un OCA fresco (mezclar ordenes de grupos viejos
+                # dejaria huecos de oversell)
+                need_stop = BULL_STOP > 0 and pos.get("stop_oid") not in open_ids
+                need_bag = pos.get("bag") and pos.get("bag_oid") not in open_ids
+                if need_stop or need_bag:
+                    for oid in (pos.get("stop_oid"), pos.get("bag_oid")):
+                        if oid and oid in open_ids:
+                            ibkr.cancel(oid)
+                    oca = f"B{sym}{int(time.time())}"
+                    if BULL_STOP > 0:
+                        pos["stop_oid"] = ibkr.place_gtc_stop(
+                            sym, pos["qty"], pos["entry"] * (1 - BULL_STOP / 100), oca=oca)
+                    if pos.get("bag"):
+                        pos["bag_oid"] = ibkr.place_gtc_sell(
+                            sym, pos["qty"], profit_floor(pos["entry"], pos["qty"]), oca=oca)
+                    pos["oca"] = oca
+                    log(f"reconcile: proteccion bull re-colocada {sym} "
+                        f"(stop -{BULL_STOP}%{' + GTC bolsa' if pos.get('bag') else ''})")
         for sym in list(STATE["positions"]):
             pos = STATE["positions"][sym]
             if pos["venue"] == "ibkr" and sym not in real:
