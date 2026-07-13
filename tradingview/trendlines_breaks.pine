@@ -1,0 +1,67 @@
+//@version=6
+// ═══════════════════════════════════════════════════════════════════════════════
+// Trendlines with Breaks [LuxAlgo] — 1:1 port from Pine v5 to v6.
+// CC BY-NC-SA 4.0 https://creativecommons.org/licenses/by-nc-sa/4.0/ © LuxAlgo
+//
+// OPTIONAL companion to combo5.pine — omitted from the combo (Yunior
+// 2026-07-12) to fit the Madrid Ribbon inside Pine's 64-plot budget.
+// Add this as its own indicator whenever trendline breaks are wanted.
+// ═══════════════════════════════════════════════════════════════════════════════
+indicator("Trendlines with Breaks [LuxAlgo]", "LuxAlgo - Trendlines with Breaks", overlay = true)
+
+tlLength    = input.int(14, "Swing Detection Lookback")
+tlMult      = input.float(1.0, "Slope", minval = 0, step = 0.1)
+tlCalc      = input.string("Atr", "Slope Calculation Method", options = ["Atr", "Stdev", "Linreg"])
+tlBackpaint = input.bool(true, "Backpaint", tooltip = "Backpainting offsets displayed elements in the past. Disable to see real-time information.")
+tlUpCss     = input.color(color.teal, "Up Trendline Color", group = "Style")
+tlDnCss     = input.color(color.red, "Down Trendline Color", group = "Style")
+tlShowExt   = input.bool(true, "Show Extended Lines")
+
+var float tl_upper = 0.0
+var float tl_lower = 0.0
+var float tl_slope_ph = 0.0
+var float tl_slope_pl = 0.0
+tl_offset = tlBackpaint ? tlLength : 0
+
+tl_src = close
+tl_ph = ta.pivothigh(tlLength, tlLength)
+tl_pl = ta.pivotlow(tlLength, tlLength)
+
+tl_slope = switch tlCalc
+    "Atr"    => ta.atr(tlLength) / tlLength * tlMult
+    "Stdev"  => ta.stdev(tl_src, tlLength) / tlLength * tlMult
+    "Linreg" => math.abs(ta.sma(tl_src * bar_index, tlLength) - ta.sma(tl_src, tlLength) * ta.sma(bar_index, tlLength)) / ta.variance(bar_index, tlLength) / 2 * tlMult
+
+tl_slope_ph := not na(tl_ph) ? tl_slope : tl_slope_ph
+tl_slope_pl := not na(tl_pl) ? tl_slope : tl_slope_pl
+
+tl_upper := not na(tl_ph) ? tl_ph : tl_upper - tl_slope_ph
+tl_lower := not na(tl_pl) ? tl_pl : tl_lower + tl_slope_pl
+
+var int tl_upos = 0
+var int tl_dnos = 0
+tl_upos := not na(tl_ph) ? 0 : close > tl_upper - tl_slope_ph * tlLength ? 1 : tl_upos
+tl_dnos := not na(tl_pl) ? 0 : close < tl_lower + tl_slope_pl * tlLength ? 1 : tl_dnos
+
+var line tl_uptl = line.new(na, na, na, na, color = tlUpCss, style = line.style_dashed, extend = extend.right)
+var line tl_dntl = line.new(na, na, na, na, color = tlDnCss, style = line.style_dashed, extend = extend.right)
+
+if not na(tl_ph) and tlShowExt
+    tl_uptl.set_xy1(bar_index - tl_offset, tlBackpaint ? tl_ph : tl_upper - tl_slope_ph * tlLength)
+    tl_uptl.set_xy2(bar_index - tl_offset + 1, tlBackpaint ? tl_ph - tl_slope : tl_upper - tl_slope_ph * (tlLength + 1))
+
+if not na(tl_pl) and tlShowExt
+    tl_dntl.set_xy1(bar_index - tl_offset, tlBackpaint ? tl_pl : tl_lower + tl_slope_pl * tlLength)
+    tl_dntl.set_xy2(bar_index - tl_offset + 1, tlBackpaint ? tl_pl + tl_slope : tl_lower + tl_slope_pl * (tlLength + 1))
+
+plot(tlBackpaint ? tl_upper : tl_upper - tl_slope_ph * tlLength, "Upper Trendline", color = not na(tl_ph) ? color(na) : tlUpCss, offset = -tl_offset)
+plot(tlBackpaint ? tl_lower : tl_lower + tl_slope_pl * tlLength, "Lower Trendline", color = not na(tl_pl) ? color(na) : tlDnCss, offset = -tl_offset)
+
+tlUpBreak = tl_upos > tl_upos[1]
+tlDnBreak = tl_dnos > tl_dnos[1]
+
+plotshape(tlUpBreak ? low : na, "Upper Break", shape.labelup, location.absolute, tlUpCss, text = "B", textcolor = color.white, size = size.tiny)
+plotshape(tlDnBreak ? high : na, "Lower Break", shape.labeldown, location.absolute, tlDnCss, text = "B", textcolor = color.white, size = size.tiny)
+
+alertcondition(tlUpBreak, "Upward Breakout", "Price broke the down-trendline upward")
+alertcondition(tlDnBreak, "Downward Breakout", "Price broke the up-trendline downward")

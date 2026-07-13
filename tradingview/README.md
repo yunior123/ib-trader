@@ -120,6 +120,27 @@ PF ≥ 1.67 on all 7 tickers. QQQ: PF 6.04, WR 66.7%, +52.1% at 12% maxDD
 - Best fit: QQQ/index swing on Daily. On TQQQ it cuts the 82% B&H drawdown
   to 45% — that's the use case that matters for the leveraged-ETF playbook.
 
+## combo_tl.pine + macd_mtf.pine (Pine v6 — Yunior's favorites, merged verbatim)
+
+The main pair (per Yunior 2026-07-12): `combo_tl.pine` (overlay, 63/64 plot
+counts): ① Supertrend (v4 classic, same port as ultra_trend incl. price↔line
+highlighter fills), ② Multi SMA + BB MTF by RagingRocketBull (v3, BB fill
+intact, EMA GROUP CUT to fit the budget), ③ Trendlines with Breaks [LuxAlgo]
+(v5, 1:1), ④ Madrid MA Ribbon (v4, all 18 lines + 4-color logic).
+`macd_mtf.pine` (pane): ⑤ CM_MacD_Ult_MTF by ChrisMoody (v3). Add both.
+
+Constraints that shaped the packaging (TradingView hard limits, hit live
+07-12): (a) one script can't own the price chart AND a pane without losing
+fill() (no force_overlay on fills) → MACD separate; (b) the 64-plot-count
+budget — series-colored plots cost 2, alertconditions 1, so the ribbon alone
+is 36 counts. Cuts chosen in combo_tl to fit: the 5-EMA group (Yunior's call),
+the SMA1 slot (original default length 0 = hidden anyway), and the redundant
+"Direction Change" alert (Buy + Sell cover both flips).
+
+Variants kept: `combo5.pine` (62/64) = same but WITH the full 5-EMA group and
+WITHOUT trendlines; `trendlines_breaks.pine` = LuxAlgo standalone 1:1. Only
+cosmetic loss everywhere: SMA circles unjoined (v3 `join=` removed from Pine).
+
 ## backtest/bt.py
 
 ```
@@ -136,3 +157,31 @@ Original pasted scripts kept for provenance (Supertrend v4, RSI Divergence v1,
 DEMA v6). The Multi-SMA/EMA/WMA/HMA-BB v3 and VWAP-Stdev v2 scripts were not
 kept verbatim — their functionality is subsumed by native v6 `ta.vwap` bands
 and the regime-EMA/BB blocks in confluence_master.
+
+
+
+COMBO-TL — Supertrend + Multi SMA/BB (MTF) + Trendlines with Breaks + Madrid Ribbon
+
+Four classic, battle-tested indicators merged into a single overlay script — original logic preserved 1:1, no repainting tricks added, no signals altered. One indicator slot instead of four.
+
+What's inside
+
+🟢 Supertrend (10, 3.0) — the classic version: trend line witharkers where a trend is born, Buy/Sell labels on the line, andthe price↔line highlighter fill. Source, ATR period, multiplier and ATR calculation method are configurable.
+
+📊 Multi SMA + Bollinger Bands, multi-timeframe (based on Ragi four MA slots (20/50/100/200 by default) that can each be SMA,EMA, WMA, HMA, VWMA, SWMA, ALMA, RMA or LINREG, plus Bollinger Bands with their own MA type. Both groups accept a custom timeframe (e.g. show the Daily 200 SMA on an hourly chart — supports "4H"-style input), with the original X/Y point-density smoothing to tame MTF stair-stepping.
+
+📐 Trendlines with Breaks (LuxAlgo) — pivot-based up/down trendlines with ATR/Stdev/Linreg slope, dashed extended lines, and "B" labels on confirmed breakouts. Backpainting toggle included: keep it on for clean visuals, turn it off for real-time line placement.
+
+🌈 Madrid Moving Average Ribbon — the well-known 18-line ribbon (MA 5→90 vs MA 100), EMA or SMA. Lime = uptrend, green = buy-the-dip reentry, red = downtrend, maroon = sell-the-peak reentry.
+
+Alerts (4)
+- SuperTrend Buy / SuperTrend Sell
+- Upward Breakout / Downward Breakout (trendline breaks)
+
+Notes
+- Each module has its own show/hide toggle and input group.
+- The script sits at 63 of Pine's 64 plot budget — that's why cond (EMA) group isn't included; use the MA-type dropdown if you want the SMA slots to be EMAs.
+- Works on any symbol and timeframe. Best paired with a MACD in a separate pane.
+
+Credits — this is a merge/port to Pine v6 of open-source classics: Supertrend (community v4 classic), Multi SMA EMA WMA HMA BB MTF by RagingRocketBull (v3), Trendlines with Breaks by LuxAlgo (v5, CC BY-NC-SA 4.0), Madrid Moving Average Ribbon by Madrid (v4, MPL 2.0). All trading logic belongs to the
+original authors; this script only unifies them into one slot.

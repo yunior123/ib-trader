@@ -1,0 +1,302 @@
+//@version=6
+// ═══════════════════════════════════════════════════════════════════════════════
+// COMBO — battle-tested chart indicators merged, logic preserved verbatim:
+//   ① Supertrend (v4 classic port — same port already live-verified in ultra_trend)
+//   ② Multi SMA/EMA/WMA/HMA + BB MTF by RagingRocketBull (v3 port)
+//   ③ Madrid Moving Average Ribbon (v4 port, MPL 2.0)
+//
+// Plot budget: 62 of TradingView's hard 64 limit (series-colored plots cost 2
+// counts each — the ribbon alone is 36; alertconditions cost 1 each).
+// Trendlines with Breaks [LuxAlgo] was omitted to fit the ribbon (Yunior
+// 2026-07-12) — it lives in trendlines_breaks.pine if ever wanted separately.
+// CM_MacD_Ult_MTF is a pane indicator → macd_mtf.pine, add as 2nd indicator.
+//
+// Cosmetic-only v3 loss: plot(join=...) no longer exists in Pine, so the
+// SMA-group "circles" style plots as unjoined dots (identical values).
+// ═══════════════════════════════════════════════════════════════════════════════
+indicator("COMBO: Supertrend + MultiMA/BB MTF + Madrid Ribbon", "COMBO", overlay = true, format = format.price, precision = 2, dynamic_requests = true)
+
+// ┌─────────────────────────────────────────────────────────────────────────────┐
+// │ ① SUPERTREND                                                                │
+// └─────────────────────────────────────────────────────────────────────────────┘
+GRP_ST = "① Supertrend"
+stShow      = input.bool(true, "Show Supertrend", group = GRP_ST)
+stPeriods   = input.int(10, "ATR Period", group = GRP_ST)
+stSrc       = input.source(hl2, "ST Source", group = GRP_ST)
+stMult      = input.float(3.0, "ATR Multiplier", step = 0.1, group = GRP_ST)
+stChangeATR = input.bool(true, "Change ATR Calculation Method ?", group = GRP_ST)
+stSignals   = input.bool(true, "Show Buy/Sell Signals ?", group = GRP_ST)
+stHighlight = input.bool(true, "Highlighter On/Off ?", group = GRP_ST)
+
+stAtr2 = ta.sma(ta.tr, stPeriods)
+stAtr  = stChangeATR ? ta.atr(stPeriods) : stAtr2
+
+stUp  = stSrc - stMult * stAtr
+stUp1 = nz(stUp[1], stUp)
+stUp := close[1] > stUp1 ? math.max(stUp, stUp1) : stUp
+
+stDn  = stSrc + stMult * stAtr
+stDn1 = nz(stDn[1], stDn)
+stDn := close[1] < stDn1 ? math.min(stDn, stDn1) : stDn
+
+stTrend  = 1
+stTrend := nz(stTrend[1], stTrend)
+stTrend := stTrend == -1 and close > stDn1 ? 1 : stTrend == 1 and close < stUp1 ? -1 : stTrend
+
+stBuySignal  = stTrend == 1 and stTrend[1] == -1
+stSellSignal = stTrend == -1 and stTrend[1] == 1
+stChangeCond = stTrend != stTrend[1]
+
+stUpPlot = plot(stShow and stTrend == 1 ? stUp : na, "ST Up Trend", style = plot.style_linebr, linewidth = 2, color = color.new(color.green, 0))
+stDnPlot = plot(stShow and stTrend != 1 ? stDn : na, "ST Down Trend", style = plot.style_linebr, linewidth = 2, color = color.new(color.red, 0))
+
+plotshape(stShow and stBuySignal ? stUp : na, "ST UpTrend Begins", location = location.absolute, style = shape.circle, size = size.tiny, color = color.new(color.green, 0))
+plotshape(stShow and stBuySignal and stSignals ? stUp : na, "ST Buy", text = "Buy", location = location.absolute, style = shape.labelup, size = size.tiny, color = color.new(color.green, 0), textcolor = color.white)
+plotshape(stShow and stSellSignal ? stDn : na, "ST DownTrend Begins", location = location.absolute, style = shape.circle, size = size.tiny, color = color.new(color.red, 0))
+plotshape(stShow and stSellSignal and stSignals ? stDn : na, "ST Sell", text = "Sell", location = location.absolute, style = shape.labeldown, size = size.tiny, color = color.new(color.red, 0), textcolor = color.white)
+
+// highlighter precio<->linea (transparent for dark theme, same as ultra_trend)
+stMPlot = plot(ohlc4, "", style = plot.style_circles, linewidth = 1, color = color.new(color.gray, 100))
+stLongFill  = stShow and stHighlight and stTrend == 1 ? color.new(color.green, 85) : color.new(color.white, 100)
+stShortFill = stShow and stHighlight and stTrend == -1 ? color.new(color.red, 85) : color.new(color.white, 100)
+fill(stMPlot, stUpPlot, title = "UpTrend Highligter", color = stLongFill)
+fill(stMPlot, stDnPlot, title = "DownTrend Highligter", color = stShortFill)
+
+alertcondition(stBuySignal, "SuperTrend Buy", "SuperTrend Buy!")
+alertcondition(stSellSignal, "SuperTrend Sell", "SuperTrend Sell!")
+alertcondition(stChangeCond, "SuperTrend Direction Change", "SuperTrend has changed direction!")
+
+// ┌─────────────────────────────────────────────────────────────────────────────┐
+// │ ② MULTI SMA/EMA/WMA/HMA + BB (MTF) — RagingRocketBull                       │
+// └─────────────────────────────────────────────────────────────────────────────┘
+GRP_MA = "② Multi MA + BB (MTF)"
+showEMAs = input.bool(true, "Show All EMAs", group = GRP_MA)
+showSMAs = input.bool(true, "Show All SMAs", group = GRP_MA)
+showBB   = input.bool(true, "Show All BB", group = GRP_MA)
+ma_src   = input.source(close, "MA Source", group = GRP_MA)
+
+tf1_ref  = input.string("0", "EMA Group Timeframe (0=Current, 15, 60, 4H, D, W, M...)", group = GRP_MA)
+ema_type = input.string("ema", "EMA Group MA Type", options = ["sma", "ema", "wma", "swma", "vwma", "hma", "alma", "rma", "linreg"], group = GRP_MA)
+ema1_len = input.int(12, "EMA1 length", minval = 0, group = GRP_MA)
+ema2_len = input.int(26, "EMA2 length", minval = 0, group = GRP_MA)
+ema3_len = input.int(50, "EMA3 length", minval = 0, group = GRP_MA)
+ema4_len = input.int(100, "EMA4 length", minval = 0, group = GRP_MA)
+ema5_len = input.int(200, "EMA5 length", minval = 0, group = GRP_MA)
+
+tf2_ref  = input.string("0", "SMA Group Timeframe", group = GRP_MA)
+sma_type = input.string("sma", "SMA Group MA Type", options = ["sma", "ema", "wma", "swma", "vwma", "hma", "alma", "rma", "linreg"], group = GRP_MA)
+sma1_len = input.int(0, "SMA1 length", minval = 0, group = GRP_MA)
+sma2_len = input.int(20, "SMA2 length", minval = 0, group = GRP_MA)
+sma3_len = input.int(50, "SMA3 length", minval = 0, group = GRP_MA)
+sma4_len = input.int(100, "SMA4 length", minval = 0, group = GRP_MA)
+sma5_len = input.int(200, "SMA5 length", minval = 0, group = GRP_MA)
+
+tf3_ref    = input.string("0", "BB Group Timeframe", group = GRP_MA)
+bb_type    = input.string("sma", "BB Group MA Type", options = ["sma", "ema", "wma", "swma", "vwma", "hma", "alma", "rma", "linreg"], group = GRP_MA)
+sma_bb_len = input.int(20, "BB length", minval = 0, group = GRP_MA)
+bbStdDev   = input.float(2, "BB standard deviation", minval = 0.1, group = GRP_MA)
+
+deltaX_tf_ref = input.string("D", "Apply MA X Smoothing only for TFs Lower Than (0 = apply to all)", group = GRP_MA)
+deltaX = input.float(5, "MA X Point Density/Step Line Smoothing (0 = disabled)", minval = 0, group = GRP_MA)
+deltaY = input.float(0.001, "MA Y Point Density/Step Line Smoothing (0 = disabled)", minval = 0, group = GRP_MA)
+
+alma_offset   = input.float(0.85, "ALMA Offset (for alma only)", minval = 0, group = GRP_MA)
+alma_sigma    = input.float(6, "ALMA Sigma Smoothing (for alma only)", minval = 0, group = GRP_MA)
+linreg_offset = input.int(0, "Linreg Offset (for linreg only)", minval = 0, group = GRP_MA)
+
+color_transp = 20
+ema1_color = color.new(color.aqua, color_transp)
+ema2_color = color.new(color.purple, color_transp)
+ema3_color = color.new(#CC0000, color_transp)
+ema4_color = color.new(#FFD966, color_transp)
+ema5_color = color.new(#1155CC, color_transp)
+sma1_color = color.new(color.aqua, color_transp)
+sma2_color = color.new(color.green, color_transp)
+sma3_color = color.new(#CC0000, color_transp)
+sma4_color = color.new(#FFD966, color_transp)
+sma5_color = color.new(#1155CC, color_transp)
+bb_border_color = color.new(#3D85C6, 45)
+bb_median_color = color.new(#989898, color_transp)
+
+ema_src = ma_src
+sma_src = ma_src
+bb_src  = ma_src
+
+// Expand "H"-style TFs ("4H"/"H4") into minutes; security doesn't accept H notation
+tf_check(string tf) =>
+    string res = tf == "H" ? "60" : tf
+    if res == tf and tf != "0" and tf != "H"
+        for i = 1 to 24
+            s = str.tostring(i)
+            if tf == s + "H" or tf == "H" + s
+                res := str.tostring(i * 60)
+                break
+    res
+
+// TF → minutes (replaces the v3 security(tf_to_mins) hack; identical values)
+tf_mins(string tf) =>
+    timeframe.in_seconds(tf == "0" ? timeframe.period : tf) / 60.0
+
+// Hull MA — max(2,len) wrapper prevents wma(src, 0) when len <= 1
+f_hma(src, length) =>
+    len = math.max(2, length)
+    ta.wma(2 * ta.wma(src, math.floor(len / 2)) - ta.wma(src, len), math.round(math.sqrt(len)))
+
+// MA value by type; max(1,len) wrapper prevents zero-length errors
+f_ma(src, maType, length) =>
+    len = math.max(1, length)
+    switch maType
+        "sma"    => ta.sma(src, len)
+        "ema"    => ta.ema(src, len)
+        "wma"    => ta.wma(src, len)
+        "vwma"   => ta.vwma(src, len)
+        "swma"   => ta.swma(src)
+        "hma"    => f_hma(src, len)
+        "alma"   => ta.alma(src, len, alma_offset, alma_sigma)
+        "rma"    => ta.rma(src, len)
+        "linreg" => ta.linreg(src, len, linreg_offset)
+
+ema_mtf(len, tf) =>
+    len > 0 ? (tf == "0" ? f_ma(ema_src, ema_type, len) : request.security(syminfo.tickerid, tf, f_ma(ema_src, ema_type, len))) : na
+
+sma_mtf(len, tf) =>
+    len > 0 ? (tf == "0" ? f_ma(sma_src, sma_type, len) : request.security(syminfo.tickerid, tf, f_ma(sma_src, sma_type, len))) : na
+
+bb_ma_mtf(len, tf) =>
+    len > 0 ? (tf == "0" ? f_ma(bb_src, bb_type, len) : request.security(syminfo.tickerid, tf, f_ma(bb_src, bb_type, len))) : na
+
+bb_stdev_mtf(length, tf) =>
+    len = math.max(1, length)
+    length > 0 ? (tf == "0" ? ta.stdev(bb_src, len) * bbStdDev : request.security(syminfo.tickerid, tf, ta.stdev(bb_src, len) * bbStdDev)) : na
+
+// X/Y Point Density smoothing — decides whether to show/hide MA values (see
+// original RRB comments for the full state table)
+ma_new(float ma, bool max_tf_cond) =>
+    chg = math.abs(ta.change(ma))
+    deltaY_cond = deltaY > 0 and chg >= deltaY
+    bs = ta.barssince(deltaY_cond)
+    deltaX_cond   = deltaX > 0 and bar_index % deltaX == 0 and max_tf_cond
+    deltaXY_cond  = deltaX == 0 and deltaY == 0
+    deltaXY_cond2 = deltaX > 0 and deltaY == 0 and not max_tf_cond
+    deltaY_bars   = deltaY == 0 or (deltaY > 0 and bs >= deltaX)
+    deltaXY_cond or deltaXY_cond2 or (deltaX_cond and deltaY_bars) or deltaY_cond ? true : barstate.islast and not barstate.isconfirmed
+
+ema_tf = tf_check(tf1_ref)
+sma_tf = tf_check(tf2_ref)
+bb_tf  = tf_check(tf3_ref)
+deltaX_max_tf = tf_check(deltaX_tf_ref)
+
+tf_max_mins = deltaX_max_tf == "0" ? 0.0 : tf_mins(deltaX_max_tf)
+ema_tf_mins = tf_mins(ema_tf)
+sma_tf_mins = tf_mins(sma_tf)
+bb_tf_mins  = tf_mins(bb_tf)
+
+ema_tf_cond = ema_tf_mins < tf_max_mins or tf_max_mins == 0
+sma_tf_cond = sma_tf_mins < tf_max_mins or tf_max_mins == 0
+bb_tf_cond  = bb_tf_mins < tf_max_mins or tf_max_mins == 0
+
+ema1 = ema_mtf(ema1_len, ema_tf)
+ema2 = ema_mtf(ema2_len, ema_tf)
+ema3 = ema_mtf(ema3_len, ema_tf)
+ema4 = ema_mtf(ema4_len, ema_tf)
+ema5 = ema_mtf(ema5_len, ema_tf)
+
+ema1_new = ma_new(ema1, ema_tf_cond)
+ema2_new = ma_new(ema2, ema_tf_cond)
+ema3_new = ma_new(ema3, ema_tf_cond)
+ema4_new = ma_new(ema4, ema_tf_cond)
+ema5_new = ma_new(ema5, ema_tf_cond)
+
+plot(showEMAs and ema1_new ? ema1 : na, "EMA1", color = ema1_color, linewidth = 1)
+plot(showEMAs and ema2_new ? ema2 : na, "EMA2", color = ema2_color, linewidth = 1)
+plot(showEMAs and ema3_new ? ema3 : na, "EMA3", color = ema3_color, linewidth = 2)
+plot(showEMAs and ema4_new ? ema4 : na, "EMA4", color = ema4_color, linewidth = 2)
+plot(showEMAs and ema5_new ? ema5 : na, "EMA5", color = ema5_color, linewidth = 2)
+
+sma1 = sma_mtf(sma1_len, sma_tf)
+sma2 = sma_mtf(sma2_len, sma_tf)
+sma3 = sma_mtf(sma3_len, sma_tf)
+sma4 = sma_mtf(sma4_len, sma_tf)
+sma5 = sma_mtf(sma5_len, sma_tf)
+
+sma1_new = ma_new(sma1, sma_tf_cond)
+sma2_new = ma_new(sma2, sma_tf_cond)
+sma3_new = ma_new(sma3, sma_tf_cond)
+sma4_new = ma_new(sma4, sma_tf_cond)
+sma5_new = ma_new(sma5, sma_tf_cond)
+
+plot(showSMAs and sma1_new ? sma1 : na, "SMA1", color = sma1_color, linewidth = 1, style = plot.style_circles)
+plot(showSMAs and sma2_new ? sma2 : na, "SMA2", color = sma2_color, linewidth = 1, style = plot.style_circles)
+plot(showSMAs and sma3_new ? sma3 : na, "SMA3", color = sma3_color, linewidth = 2, style = plot.style_circles)
+plot(showSMAs and sma4_new ? sma4 : na, "SMA4", color = sma4_color, linewidth = 2, style = plot.style_circles)
+plot(showSMAs and sma5_new ? sma5 : na, "SMA5", color = sma5_color, linewidth = 2, style = plot.style_circles)
+
+sma_bb     = bb_ma_mtf(sma_bb_len, bb_tf)
+sma_bb_new = ma_new(sma_bb, bb_tf_cond)
+stdev_bb   = bb_stdev_mtf(sma_bb_len, bb_tf)
+sma_bb_up   = sma_bb + stdev_bb
+sma_bb_down = sma_bb - stdev_bb
+
+plot(showBB and sma_bb_new ? sma_bb : na, "Middle BB", color = bb_median_color, linewidth = 1)
+plot_bb_up   = plot(showBB ? sma_bb_up : na, "Upper BB", color = bb_border_color, linewidth = 1)
+plot_bb_down = plot(showBB ? sma_bb_down : na, "Lower BB", color = bb_border_color, linewidth = 1)
+fill(plot_bb_up, plot_bb_down, color = color.new(#6D9EEB, 90), title = "BB Background")
+
+// ┌─────────────────────────────────────────────────────────────────────────────┐
+// │ ③ MADRID MOVING AVERAGE RIBBON — MPL 2.0                                    │
+// └─────────────────────────────────────────────────────────────────────────────┘
+GRP_MMA = "③ Madrid Ribbon"
+showRibbon = input.bool(true, "Show Madrid Ribbon", group = GRP_MMA)
+mma_exp    = input.bool(true, "Exponential MA", group = GRP_MMA)
+
+MMA_LIME   = #00FF00
+MMA_GREEN  = #008000
+MMA_RUBI   = #FF0000
+MMA_MAROON = #800000
+MMA_GRAY   = #808080
+
+mmaColor(_ma, _maRef) =>
+    diffMA = ta.change(_ma)
+    diffMA >= 0 and _ma > _maRef ? MMA_LIME : diffMA < 0 and _ma > _maRef ? MMA_MAROON : diffMA <= 0 and _ma < _maRef ? MMA_RUBI : diffMA >= 0 and _ma < _maRef ? MMA_GREEN : MMA_GRAY
+
+f_mma(len) =>
+    mma_exp ? ta.ema(close, len) : ta.sma(close, len)
+
+mma05 = f_mma(5)
+mma10 = f_mma(10)
+mma15 = f_mma(15)
+mma20 = f_mma(20)
+mma25 = f_mma(25)
+mma30 = f_mma(30)
+mma35 = f_mma(35)
+mma40 = f_mma(40)
+mma45 = f_mma(45)
+mma50 = f_mma(50)
+mma55 = f_mma(55)
+mma60 = f_mma(60)
+mma65 = f_mma(65)
+mma70 = f_mma(70)
+mma75 = f_mma(75)
+mma80 = f_mma(80)
+mma85 = f_mma(85)
+mma90 = f_mma(90)
+mma100 = f_mma(100)
+
+plot(showRibbon ? mma05 : na, "MMA05", color = mmaColor(mma05, mma100), linewidth = 3)
+plot(showRibbon ? mma10 : na, "MMA10", color = mmaColor(mma10, mma100), linewidth = 1)
+plot(showRibbon ? mma15 : na, "MMA15", color = mmaColor(mma15, mma100), linewidth = 1)
+plot(showRibbon ? mma20 : na, "MMA20", color = mmaColor(mma20, mma100), linewidth = 1)
+plot(showRibbon ? mma25 : na, "MMA25", color = mmaColor(mma25, mma100), linewidth = 1)
+plot(showRibbon ? mma30 : na, "MMA30", color = mmaColor(mma30, mma100), linewidth = 1)
+plot(showRibbon ? mma35 : na, "MMA35", color = mmaColor(mma35, mma100), linewidth = 1)
+plot(showRibbon ? mma40 : na, "MMA40", color = mmaColor(mma40, mma100), linewidth = 1)
+plot(showRibbon ? mma45 : na, "MMA45", color = mmaColor(mma45, mma100), linewidth = 1)
+plot(showRibbon ? mma50 : na, "MMA50", color = mmaColor(mma50, mma100), linewidth = 1)
+plot(showRibbon ? mma55 : na, "MMA55", color = mmaColor(mma55, mma100), linewidth = 1)
+plot(showRibbon ? mma60 : na, "MMA60", color = mmaColor(mma60, mma100), linewidth = 1)
+plot(showRibbon ? mma65 : na, "MMA65", color = mmaColor(mma65, mma100), linewidth = 1)
+plot(showRibbon ? mma70 : na, "MMA70", color = mmaColor(mma70, mma100), linewidth = 1)
+plot(showRibbon ? mma75 : na, "MMA75", color = mmaColor(mma75, mma100), linewidth = 1)
+plot(showRibbon ? mma80 : na, "MMA80", color = mmaColor(mma80, mma100), linewidth = 1)
+plot(showRibbon ? mma85 : na, "MMA85", color = mmaColor(mma85, mma100), linewidth = 1)
+plot(showRibbon ? mma90 : na, "MMA90", color = mmaColor(mma90, mma100), linewidth = 3)
