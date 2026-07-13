@@ -5,7 +5,7 @@
 # re-ejecuta cada 5 min (StartInterval) = watchdog de los watchdogs.
 cd "$(dirname "$0")/.." || exit 1
 ROOT="$(pwd)"
-for b in dram nok spcx tsla nvda txn tsm amd intc asml aapl gld qqq slv cper uso; do
+for b in dram nok spcx tsla nvda txn tsm amd intc asml aapl gld qqq slv cper uso skhynix samsung; do
   if ! pgrep -f "scripts/${b}_keepalive.sh" >/dev/null; then
     nohup zsh "$ROOT/scripts/${b}_keepalive.sh" >/dev/null 2>&1 &
     echo "$(date) fleet: ${b}_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
@@ -18,6 +18,14 @@ done
 if ! pgrep -f "ibkr_bar_bridge.py --daemon" >/dev/null; then
   nohup ./venv/bin/python scripts/ibkr_bar_bridge.py --daemon NOK SPCX DRAM TSLA NVDA TXN TSM AMD INTC ASML AAPL GLD QQQ SLV CPER USO >> bridge_ibkr_fleet.log 2>&1 &
   echo "$(date) fleet: ibkr fleet daemon lanzado (pid $!)" >> fleet_autostart.log
+fi
+
+# bridge KRX realtime (SK Hynix + Samsung) — sub Korea waived cubre la API
+# (verificado 2026-07-12): mercado de memoria/DRAM en vivo y gratis, lider ~13h
+# antes que EE.UU. para MU/DRAM. Escribe data/bars_{skhynix,samsung}.txt.
+if ! pgrep -f "scripts/korea_bar_bridge.py" >/dev/null; then
+  nohup ./venv/bin/python scripts/korea_bar_bridge.py --daemon >> bridge_korea.log 2>&1 &
+  echo "$(date) fleet: korea bridge lanzado (pid $!)" >> fleet_autostart.log
 fi
 
 # ejecutor de ETFs apalancados (dinero real cuando TFSA >= 450 USD + etf_armed)
