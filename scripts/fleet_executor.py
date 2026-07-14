@@ -453,8 +453,10 @@ class AlpacaPaper:
         return o.get("id")
 
 # ---------------- parser de señales ----------------
-# titulo "SYM: BUY NOW" / "SELL NOW" / "SELL-STOP" / "BUY PUT" / "SELL PUT" / "PUT-STOP"
-RX_TITLE = re.compile(r"^([A-Z]+): (BUY NOW|SELL NOW|SELL-STOP|BUY PUT|SELL PUT|PUT-STOP)$")
+# titulo "SYM: BUY NOW" / "SELL NOW" / "SELL-STOP" / "BUY PUT" / "BUY CALL" / "PUT-STOP"
+# (BUY CALL reemplaza SELL PUT 2026-07-13 — mismo cierre de posicion bajista,
+# "SELL PUT" queda reconocido por compat con logs viejos)
+RX_TITLE = re.compile(r"^([A-Z]+): (BUY NOW|SELL NOW|SELL-STOP|BUY PUT|BUY CALL|SELL PUT|PUT-STOP)$")
 # terremoto banner-grade: "SYM TERREMOTO ALZA|CAIDA" — gatillo de los quake-bears
 RX_QUAKE = re.compile(r"^([A-Z]+) TERREMOTO (ALZA|CAIDA)$")
 RX_PRICE = re.compile(r"@ ([\d.]+)")
@@ -639,7 +641,7 @@ def do_buy(ibkr, base, side, etf, sig_msg, stop_pct=None, kind="signal"):
            f"{filled} @ {avg:.2f} ({base} {kind}) " + (f"stop {avg*(1-sp/100):.2f}" if side == "bear" else ""))
 
 def do_sell(ibkr, base, kind):
-    """kind: bull_exit (SELL NOW/SELL-STOP) | bear_exit (SELL PUT/PUT-STOP)"""
+    """kind: bull_exit (SELL NOW/SELL-STOP) | bear_exit (BUY CALL/SELL PUT/PUT-STOP)"""
     want = "bull" if kind == "bull_exit" else "bear"
     etf = BULL_OF.get(base) if want == "bull" else BEAR_OF.get(base)
     pos = STATE["positions"].get(etf or "")
@@ -860,6 +862,7 @@ def selftest():
         ("2026-01-01 10:01:00 | NVDA TERREMOTO ALZA | CUSUM subiendo", ("NVDA", "QUAKE ALZA")),
         ("2026-01-01 10:02:00 | TSLA: BUY PUT | COMPRAR PUT TSLA @ 404.00", ("TSLA", "BUY PUT")),
         ("2026-01-01 10:03:00 | TSLA: PUT-STOP | VENDER PUT TSLA @ 410.00", ("TSLA", "PUT-STOP")),
+        ("2026-01-01 10:03:30 | TSLA: BUY CALL | COMPRAR CALL TSLA @ 411.00", ("TSLA", "BUY CALL")),
         ("2026-01-01 10:04:00 | GLD TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.2%", ("GLD", "QUAKE CAIDA")),
         ("2026-01-01 10:05:00 | GLD TERREMOTO ALZA | CUSUM: subiendo fuerte +1.2%", ("GLD", "QUAKE ALZA")),
         ("2026-01-01 10:06:00 | WARMUP GLD TERREMOTO CAIDA | CUSUM: cayendo", None),
@@ -925,7 +928,7 @@ while True:
                     log(f"{base}: BEARS regulares OFF (backtest 37% WR — gate WR-70); ETF_BEARS=1 activa")
                 elif etf: do_buy(ibkr, base, "bear", etf, msg)
                 else: log(f"{base}: sin bear ETF listado — put queda señal-solo")
-            elif action in ("SELL PUT", "PUT-STOP"):
+            elif action in ("BUY CALL", "SELL PUT", "PUT-STOP"):
                 do_sell(ibkr, base, "bear_exit")
             elif action == "QUAKE CAIDA":
                 # BEAR por TERREMOTO: "only when sure and real fast when earthquake"

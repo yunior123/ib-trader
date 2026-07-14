@@ -36,9 +36,12 @@ RETRY_ENTITLEMENT_S = 600
 NO_PERM_ERRORS = {420, 10089, 10090, 354}
 
 # name -> (conId, symbol legible). Contratos KRX verificados en vivo 2026-07-12.
+# El indice KOSPI directo (K200) NO tiene sub API (error 354); usamos KODEX 200
+# (069500), ETF que replica el KOSPI200 y ES accion -> sub waived lo cubre RT.
 KOREA = {
     "skhynix": (17382246, "000660"),         # SK Hynix
     "samsung": (17382528, "005930"),         # Samsung Electronics
+    "kospi":   (76006841, "069500"),         # KODEX 200 ETF = proxy KOSPI200
 }
 
 class SymState:

@@ -1,4 +1,4 @@
-// slv_signal_bot.cpp — SLV buy/sell signal engine, pure C++
+// kospi_signal_bot.cpp — KOSPI buy/sell signal engine, pure C++
 // ============================================================
 // Mirrors the validated Python engine (confirmed capitulation entry +
 // adaptive exit) computing all indicators incrementally in C++:
@@ -13,9 +13,9 @@
 // Data: alpaca_ws_bridge (C++ ws daemon, 1 conexion Alpaca compartida) streams
 //       REAL 1m completed bars as "EPOCH OPEN HIGH LOW CLOSE VOLUME" lines.
 //
-// build: clang++ -std=c++17 -O2 -o slv_signal_bot slv_signal_bot.cpp
-// run:   ./slv_signal_bot            (spawns bridge)
-//        ./slv_signal_bot --stdin    (replay: feed bar lines for testing)
+// build: clang++ -std=c++17 -O2 -o kospi_signal_bot kospi_signal_bot.cpp
+// run:   ./kospi_signal_bot            (spawns bridge)
+//        ./kospi_signal_bot --stdin    (replay: feed bar lines for testing)
 
 #include <cstdio>
 #include <cstdlib>
@@ -30,87 +30,87 @@
 struct Bar { double t, o, h, l, c, v; };
 
 // ---- config (mirror of DEFAULT_CONFIG) ----
-// ---- params: por-ticker via env SLV_* (orden Yunior 2026-07-10 "tune per
+// ---- params: por-ticker via env KOSPI_* (orden Yunior 2026-07-10 "tune per
 // ticker") — un solo set de parametros en 4 microestructuras distintas mata
 // la expectancy; ahora el keepalive exporta el set ajustado por backtest.
 static double envd(const char* k, double d) {
     const char* v = std::getenv(k);
     return (v && *v) ? atof(v) : d;
 }
-static const int    BB_N = 20;      static const double BB_STD = envd("SLV_BB_STD", 3.0);
-static const int    RSI_N = 14;     static const double RSI_OS = envd("SLV_RSI_OS", 25.0);
-static const int    VOL_N = 20;     static const double VOL_MULT = envd("SLV_VOL_MULT", 1.2);
+static const int    BB_N = 20;      static const double BB_STD = envd("KOSPI_BB_STD", 3.0);
+static const int    RSI_N = 14;     static const double RSI_OS = envd("KOSPI_RSI_OS", 25.0);
+static const int    VOL_N = 20;     static const double VOL_MULT = envd("KOSPI_VOL_MULT", 1.2);
 static const int    ATR_N = 14;
 static const int    CONFIRM_WINDOW = 60;
-static const double TARGET_PCT = envd("SLV_TARGET", 4.0),
-                    FLOOR_PCT  = envd("SLV_FLOOR", 1.0),
-                    TRAIL_ATR  = envd("SLV_TRAIL_ATR", 3.0);
-// HARD STOP alert (orden 2026-07-10): a -SLV_STOP% del entry el bot GRITA la
+static const double TARGET_PCT = envd("KOSPI_TARGET", 4.0),
+                    FLOOR_PCT  = envd("KOSPI_FLOOR", 1.0),
+                    TRAIL_ATR  = envd("KOSPI_TRAIL_ATR", 3.0);
+// HARD STOP alert (orden 2026-07-10): a -KOSPI_STOP% del entry el bot GRITA la
 // perdida (SELL-STOP) en vez de callarse a esperar el floor. Humano decide.
-static const double STOP_PCT = envd("SLV_STOP", 3.0);
+static const double STOP_PCT = envd("KOSPI_STOP", 3.0);
 // afinado 2026-07-10 (skills mean-reversion/exit-strategies + estudio 30d):
 // SKIP_OPEN: min tras 9:30 sin entradas (los arms del open eran subasta);
 // TIME_STOP_MIN: trade que no revirtio en N min = hipotesis muerta -> eject;
 // EOD_FORCE: 15:45 plano SIEMPRE (sin bag overnight; para SPCX obligatorio);
 // CONFIRM_STRICT: bar de confirmacion con volumen>=volMA y close en mitad alta;
 // MAX_DAY: entradas max por dia (0 = sin limite).
-static const double SKIP_OPEN      = envd("SLV_SKIP_OPEN", 0);
-static const double TIME_STOP_MIN  = envd("SLV_TIME_STOP_MIN", 0);
-static const double EOD_FORCE      = envd("SLV_EOD_FORCE", 0);
-static const double CONFIRM_STRICT = envd("SLV_CONFIRM_STRICT", 0);
-static const double MAX_DAY        = envd("SLV_MAX_DAY", 0);
+static const double SKIP_OPEN      = envd("KOSPI_SKIP_OPEN", 0);
+static const double TIME_STOP_MIN  = envd("KOSPI_TIME_STOP_MIN", 0);
+static const double EOD_FORCE      = envd("KOSPI_EOD_FORCE", 0);
+static const double CONFIRM_STRICT = envd("KOSPI_CONFIRM_STRICT", 0);
+static const double MAX_DAY        = envd("KOSPI_MAX_DAY", 0);
 // ===== MOTOR v3 CONFLUENCE (orden Yunior 2026-07-11: "bollinger 50% en 1m
 // y 15m, vwap, rsi, volumen, whales, bids/asks — terremoto sin falsos
 // positivos"). SCORE_MIN > 0 activa el arm por confluencia PONDERADA:
 //   0.25 BB-1m(z) + 0.25 BB-15m(z) + 0.15 RSI + 0.15 dist-VWAP + 0.15 vol
 //   + 0.05 whales (solo live, data/whale_*.txt del daemon)
 // SCORE_MIN = 0 (default) -> gate clasico duro, comportamiento previo intacto.
-static const double SCORE_MIN  = envd("SLV_SCORE_MIN", 0);
-static const double WHALE_USD  = envd("SLV_WHALE_USD", 75000);
+static const double SCORE_MIN  = envd("KOSPI_SCORE_MIN", 0);
+static const double WHALE_USD  = envd("KOSPI_WHALE_USD", 75000);
 // SPREAD_MAX > 0: al confirmar, si el NBBO vivo (data/nbbo_*.txt del daemon)
 // muestra spread% mayor, NO se confirma (proteccion live; backtest no afecta).
-static const double SPREAD_MAX = envd("SLV_SPREAD_MAX", 0);
-// TREND MODE generico (SLV_MODE=trend): flip Supertrend 5m / ruptura max del
+static const double SPREAD_MAX = envd("KOSPI_SPREAD_MAX", 0);
+// TREND MODE generico (KOSPI_MODE=trend): flip Supertrend 5m / ruptura max del
 // dia con CUSUM >= TREND_CUSUM; TREND_VWAP=1 exige ademas c>VWAP y vol>=volMA.
 static const bool TREND_MODE = [] {
-    const char* v = std::getenv("SLV_MODE");
+    const char* v = std::getenv("KOSPI_MODE");
     return v && !std::strcmp(v, "trend");
 }();
-static const double TREND_CUSUM = envd("SLV_TREND_CUSUM", 0.01);
-static const double TREND_VWAP  = envd("SLV_TREND_VWAP", 0);
+static const double TREND_CUSUM = envd("KOSPI_TREND_CUSUM", 0.01);
+static const double TREND_VWAP  = envd("KOSPI_TREND_VWAP", 0);
 // ===== v4 AMBAS DIRECCIONES (orden Yunior 2026-07-11: señales cuando sube
-// Y cuando baja). SLV_SHORTS=1 activa el espejo corto: blow-off arriba de la
+// Y cuando baja). KOSPI_SHORTS=1 activa el espejo corto: blow-off arriba de la
 // banda + RSI sobrecomprado + volumen, confirmado por bar rojo que pierde el
 // minimo del bar de euforia -> "SHORT NOW"; gestion simetrica (target abajo,
 // trail sobre el minimo, HARD STOP arriba, EOD cover). En trend mode: flip
 // bajista del Supertrend / ruptura del MINIMO del dia con CUSUM negativo.
 // El lado largo NO se toca (los cortos ceden ante un largo confirmado:
 // cover por reversal). Default 0 -> comportamiento identico byte a byte.
-static const double SHORTS = envd("SLV_SHORTS", 0);
+static const double SHORTS = envd("KOSPI_SHORTS", 0);
 // exits propios del corto (los mercados caen distinto a como suben);
 // sin definir heredan los del largo
-static const double S_TARGET = envd("SLV_S_TARGET", TARGET_PCT);
-static const double S_STOP   = envd("SLV_S_STOP", STOP_PCT);
-static const double S_TRAIL  = envd("SLV_S_TRAIL", TRAIL_ATR);
-static const double S_FLOOR  = envd("SLV_S_FLOOR", FLOOR_PCT);
-static const double S_TSTOP  = envd("SLV_S_TSTOP", TIME_STOP_MIN);
+static const double S_TARGET = envd("KOSPI_S_TARGET", TARGET_PCT);
+static const double S_STOP   = envd("KOSPI_S_STOP", STOP_PCT);
+static const double S_TRAIL  = envd("KOSPI_S_TRAIL", TRAIL_ATR);
+static const double S_FLOOR  = envd("KOSPI_S_FLOOR", FLOOR_PCT);
+static const double S_TSTOP  = envd("KOSPI_S_TSTOP", TIME_STOP_MIN);
 // entradas PROPIAS del corto (optimize shorts 2026-07-11): sin definir
 // heredan el lado largo. S_MODE fuerza el motor del corto ("mr" o "trend")
 // independiente del largo — un ticker trend-largo puede cortear mejor en
 // blow-off MR y viceversa.
-static const double S_BB_STD    = envd("SLV_S_BB_STD", BB_STD);
-static const double S_RSI_OS    = envd("SLV_S_RSI_OS", RSI_OS);
-static const double S_VOL_MULT  = envd("SLV_S_VOL_MULT", VOL_MULT);
-static const double S_SCORE_MIN = envd("SLV_S_SCORE_MIN", SCORE_MIN);
-static const double S_TCUSUM    = envd("SLV_S_TREND_CUSUM", TREND_CUSUM);
+static const double S_BB_STD    = envd("KOSPI_S_BB_STD", BB_STD);
+static const double S_RSI_OS    = envd("KOSPI_S_RSI_OS", RSI_OS);
+static const double S_VOL_MULT  = envd("KOSPI_S_VOL_MULT", VOL_MULT);
+static const double S_SCORE_MIN = envd("KOSPI_S_SCORE_MIN", SCORE_MIN);
+static const double S_TCUSUM    = envd("KOSPI_S_TREND_CUSUM", TREND_CUSUM);
 
 // ===== PATRONES DE VELAS (orden Yunior 2026-07-11 "signals have also into
 // account candle patterns"; ref TA-Lib CDL*): con {SYM}_CANDLE=1 el bar de
 // confirmacion/entrada debe ADEMAS ser patron direccional — engulfing,
 // hammer/shooting-star o marubozu. 0 = off (regresion byte-identica). El
 // optimizador WFO decide ON/OFF por ticker con datos, no por fe.
-static const double CANDLE   = envd("SLV_CANDLE", 0);
-static const double S_CANDLE = envd("SLV_S_CANDLE", CANDLE);
+static const double CANDLE   = envd("KOSPI_CANDLE", 0);
+static const double S_CANDLE = envd("KOSPI_S_CANDLE", CANDLE);
 static bool candle_bull(const Bar& p, const Bar& b) {
     double body = b.c - b.o, rng = b.h - b.l;
     if (rng <= 1e-12) return false;
@@ -134,22 +134,22 @@ static bool candle_bear(const Bar& p, const Bar& b) {
 // en los 13; con QUAKE_BANNER=1 dejan de ser solo-log y hacen banner+sonido.
 // QUAKE_MIN = movimiento acumulado minimo (fraccion), afinado por ticker en
 // backtest 2026 para precision >=70% (el movimiento aguanta, no es ruido).
-static const double QUAKE_MIN    = envd("SLV_QUAKE_MIN", 0.02);
-static const double QUAKE_BANNER = envd("SLV_QUAKE_BANNER", 0);
+static const double QUAKE_MIN    = envd("KOSPI_QUAKE_MIN", 0.02);
+static const double QUAKE_BANNER = envd("KOSPI_QUAKE_BANNER", 0);
 static const bool S_MODE_TREND = [] {
-    const char* v = std::getenv("SLV_S_MODE");
+    const char* v = std::getenv("KOSPI_S_MODE");
     if (v && !std::strcmp(v, "trend")) return true;
     if (v && !std::strcmp(v, "mr")) return false;
-    const char* m = std::getenv("SLV_MODE");           // hereda el modo largo
+    const char* m = std::getenv("KOSPI_MODE");           // hereda el modo largo
     return m && !std::strcmp(m, "trend");
 }();
-static const char* SPOS_FILE = "data/pos_slv_s.txt";
+static const char* SPOS_FILE = "data/pos_kospi_s.txt";
 static void save_spos(double e, double tr, double fl, double tg, double ep) {
     FILE* f = fopen(SPOS_FILE, "w");
     if (f) { fprintf(f, "%f %f %f %f %f\n", e, tr, fl, tg, ep); fclose(f); }
 }
-static const char* WHALE_FILE = "data/whale_slv.txt";
-static const char* NBBO_FILE  = "data/nbbo_slv.txt";
+static const char* WHALE_FILE = "data/whale_kospi.txt";
+static const char* NBBO_FILE  = "data/nbbo_kospi.txt";
 
 // ballenas recientes (<=10 min) por encima de WHALE_USD -> 0..1 (solo live)
 static double whale_score(double now, int want_dir = 1) {
@@ -178,7 +178,7 @@ static double nbbo_spread_pct() {
 }
 // posicion virtual PERSISTIDA (fix 2026-07-10: un restart perdia la posicion
 // y los SELL se desincronizaban de lo que Yunior realmente tiene)
-static const char* POS_FILE = "data/pos_slv.txt";
+static const char* POS_FILE = "data/pos_kospi.txt";
 static bool g_pos_restored = false;
 static void save_pos(double e, double pk, double fl, double tg, double ep) {
     FILE* f = fopen(POS_FILE, "w");
@@ -259,9 +259,9 @@ static void notify(const char* title, const char* msg, bool urgent) {
     // Posicion restaurada de disco: su SELL avisa aunque el bar sea warm-up.
     if (urgent && (bar_is_live() || g_pos_restored)) fleet_notify_urgent(title, msg);
     // 3) structured operations log
-    FILE* f = std::fopen("slv_operations.log", "a");
+    FILE* f = std::fopen("kospi_operations.log", "a");
     if (f) {
-        time_t now = time(nullptr); struct tm lt; localtime_r(&now, &lt);
+        time_t now = time(nullptr) + 9*3600; struct tm lt; gmtime_r(&now, &lt);  // KST: log en hora de Corea
         std::fprintf(f, "%04d-%02d-%02d %02d:%02d:%02d | %s%s | %s\n",
                      lt.tm_year + 1900, lt.tm_mon + 1, lt.tm_mday,
                      lt.tm_hour, lt.tm_min, lt.tm_sec,
@@ -270,9 +270,9 @@ static void notify(const char* title, const char* msg, bool urgent) {
     }
 }
 
-static void et_hm(double epoch, int& h, int& m) {  // Mac local tz == Toronto/ET
-    time_t t = (time_t)epoch;
-    struct tm lt; localtime_r(&t, &lt);
+static void et_hm(double epoch, int& h, int& m) {  // KRX bots: hora de Corea (KST=UTC+9, sin DST)
+    time_t t = (time_t)epoch + 9*3600;
+    struct tm lt; gmtime_r(&t, &lt);
     h = lt.tm_hour; m = lt.tm_min;
 }
 
@@ -290,11 +290,11 @@ int main(int argc, char** argv) {
     bool use_stdin = (argc > 1 && !std::strcmp(argv[1], "--stdin"));
     FILE* in = stdin;
     if (!use_stdin) {
-        // ws daemon compartido escribe data/bars_slv.txt; el reader lo sigue
+        // ws daemon compartido escribe data/bars_kospi.txt; el reader lo sigue
         // (Yunior 2026-07-10: websockets, no REST; C++, no python)
-        in = popen("./alpaca_ws_bridge read SLV 2>>bridge_slv.log", "r");
+        in = popen("tail -n +1 -F data/bars_kospi.txt 2>>bridge_kospi.log", "r");
         if (!in) { std::fprintf(stderr, "no bridge\n"); return 1; }
-        std::fprintf(stderr, "slv_signal_bot (C++): bridge SLV 1m real iniciado\n");
+        std::fprintf(stderr, "kospi_signal_bot (C++): bridge KOSPI 1m real iniciado\n");
     }
 
     std::deque<double> closes, vols;      // rolling 20
@@ -384,12 +384,13 @@ int main(int argc, char** argv) {
         int H, M; et_hm(b.t, H, M);
         int mins = H * 60 + M;
         bool rth_entry = mins >= 570 + (int)SKIP_OPEN && mins < 930;
-        // 24/5 (orden Yunior 2026-07-11): alertas Dom 20:00 -> Vie 20:00 ET;
-        // fuera de esa ventana no hay venue US abierto (el gate es defensivo,
-        // los bars solo llegan cuando una sesion imprime)
-        struct tm awd; time_t abt = (time_t)b.t; localtime_r(&abt, &awd);
-        bool alert_hours = !(awd.tm_wday == 6 || (awd.tm_wday == 5 && H >= 20)
-                             || (awd.tm_wday == 0 && H < 20));
+        // Hora de Corea (orden Yunior 2026-07-12 "put them in korea time"):
+        // KRX sesion regular 09:00-15:30 KST (UTC+9, sin DST), L-V. Fuera de
+        // esa ventana los bars no imprimen; gate defensivo en KST.
+        struct tm awd; time_t abt = (time_t)b.t + 9*3600; gmtime_r(&abt, &awd);
+        int kmin_gate = awd.tm_hour * 60 + awd.tm_min;
+        bool alert_hours = (awd.tm_wday >= 1 && awd.tm_wday <= 5)
+                           && kmin_gate >= 540 && kmin_gate <= 930;
 
         // ---- contexto v3: VWAP de sesion (RTH) + Bollinger 15m ----
         static long vday = 0; static double vwap_pv = 0, vwap_v = 0;
@@ -429,16 +430,16 @@ int main(int argc, char** argv) {
                 bool vol_ok_radar = vol_ma <= 0 || b.v >= vol_ma;   // terremoto
                 if (alert_hours && vol_ok_radar && b.t - last_cusum > 3600) {
                     if (cusum_up > hthr) {
-                        std::printf("[%02d:%02d] CUSUM: SLV SUBIENDO fuerte (+%.2f%% acumulado) px %.2f t=%.0f\n",
+                        std::printf("[%02d:%02d] CUSUM: KOSPI SUBIENDO fuerte (+%.2f%% acumulado) px %.2f t=%.0f\n",
                                     H, M, cusum_up * 100, b.c, b.t);
                         std::fflush(stdout);
-                        { char m[160]; std::snprintf(m, sizeof(m), "CUSUM: subiendo fuerte %+.2f%% px %.2f", cusum_up*100, b.c); notify("SLV TERREMOTO ALZA", m, QUAKE_BANNER > 0); }
+                        { char m[160]; std::snprintf(m, sizeof(m), "CUSUM: subiendo fuerte %+.2f%% px %.2f", cusum_up*100, b.c); notify("KOSPI TERREMOTO ALZA", m, QUAKE_BANNER > 0); }
                         cusum_up = 0; cusum_dn = 0; last_cusum = b.t;
                     } else if (cusum_dn < -hthr) {
-                        std::printf("[%02d:%02d] CUSUM: SLV CAYENDO fuerte (%.2f%% acumulado) px %.2f t=%.0f\n",
+                        std::printf("[%02d:%02d] CUSUM: KOSPI CAYENDO fuerte (%.2f%% acumulado) px %.2f t=%.0f\n",
                                     H, M, cusum_dn * 100, b.c, b.t);
                         std::fflush(stdout);
-                        { char m[160]; std::snprintf(m, sizeof(m), "CUSUM: cayendo fuerte %.2f%% px %.2f", cusum_dn*100, b.c); notify("SLV TERREMOTO CAIDA", m, QUAKE_BANNER > 0); }
+                        { char m[160]; std::snprintf(m, sizeof(m), "CUSUM: cayendo fuerte %.2f%% px %.2f", cusum_dn*100, b.c); notify("KOSPI TERREMOTO CAIDA", m, QUAKE_BANNER > 0); }
                         cusum_up = 0; cusum_dn = 0; last_cusum = b.t;
                     }
                 }
@@ -473,11 +474,11 @@ int main(int argc, char** argv) {
             else               nt = (bc > st_upper) ? 1 : -1;
             if (st_trend != 0 && nt != st_trend && alert_hours && b.t - last_st > 3600) {
                 if (nt > 0) {
-                    std::printf("[%02d:%02d] SUPERTREND: tendencia SLV cambio a ALCISTA px %.2f\n", H, M, b.c);
-                    { char m[120]; std::snprintf(m, sizeof(m), "Supertrend: tendencia ALCISTA px %.2f", b.c); notify("SLV tendencia", m, false); }
+                    std::printf("[%02d:%02d] SUPERTREND: tendencia KOSPI cambio a ALCISTA px %.2f\n", H, M, b.c);
+                    { char m[120]; std::snprintf(m, sizeof(m), "Supertrend: tendencia ALCISTA px %.2f", b.c); notify("KOSPI tendencia", m, false); }
                 } else {
-                    std::printf("[%02d:%02d] SUPERTREND: tendencia SLV cambio a BAJISTA px %.2f\n", H, M, b.c);
-                    { char m[120]; std::snprintf(m, sizeof(m), "Supertrend: tendencia BAJISTA px %.2f", b.c); notify("SLV tendencia", m, false); }
+                    std::printf("[%02d:%02d] SUPERTREND: tendencia KOSPI cambio a BAJISTA px %.2f\n", H, M, b.c);
+                    { char m[120]; std::snprintf(m, sizeof(m), "Supertrend: tendencia BAJISTA px %.2f", b.c); notify("KOSPI tendencia", m, false); }
                 }
                 std::fflush(stdout);
                 last_st = b.t;
@@ -493,14 +494,14 @@ int main(int argc, char** argv) {
             for (double x : dh20) hi = std::max(hi, x);
             for (double x : dl20) lo = std::min(lo, x);
             if (b.c > hi) {
-                std::printf("[%02d:%02d] DONCHIAN: SLV rompe maximo del dia px %.2f > %.2f\n", H, M, b.c, hi);
+                std::printf("[%02d:%02d] DONCHIAN: KOSPI rompe maximo del dia px %.2f > %.2f\n", H, M, b.c, hi);
                 std::fflush(stdout);
-                { char m[120]; std::snprintf(m, sizeof(m), "Donchian: rompe maximo del dia px %.2f", b.c); notify("SLV breakout", m, false); }
+                { char m[120]; std::snprintf(m, sizeof(m), "Donchian: rompe maximo del dia px %.2f", b.c); notify("KOSPI breakout", m, false); }
                 last_don = b.t;
             } else if (b.c < lo) {
-                std::printf("[%02d:%02d] DONCHIAN: SLV rompe minimo del dia px %.2f < %.2f\n", H, M, b.c, lo);
+                std::printf("[%02d:%02d] DONCHIAN: KOSPI rompe minimo del dia px %.2f < %.2f\n", H, M, b.c, lo);
                 std::fflush(stdout);
-                { char m[120]; std::snprintf(m, sizeof(m), "Donchian: rompe minimo del dia px %.2f", b.c); notify("SLV breakdown", m, false); }
+                { char m[120]; std::snprintf(m, sizeof(m), "Donchian: rompe minimo del dia px %.2f", b.c); notify("KOSPI breakdown", m, false); }
                 last_don = b.t;
             }
         }
@@ -569,14 +570,14 @@ int main(int argc, char** argv) {
                 if (b.c >= floor_px || EOD_FORCE > 0) { sold = true; why = "EOD flatten 15:45"; }
             }
             if (sold) {
-                std::printf("[%02d:%02d] *** SLV: VENDER *** ~%.2f (%s, entrada %.2f) t=%.0f\n",
+                std::printf("[%02d:%02d] *** KOSPI: VENDER *** ~%.2f (%s, entrada %.2f) t=%.0f\n",
                             H, M, exit_px, why, entry, b.t);
                 std::fflush(stdout);
-                if (audio_gate(true)) { play("sounds/dram_sell.wav", "Hero"); speak("sell Silver now"); }
+                if (audio_gate(true)) { play("sounds/dram_sell.wav", "Hero"); speak("sell Kospi now"); }
                 { char m[200]; std::snprintf(m, sizeof(m),
-                    "VENDER SLV @ %.2f | %s | entrada %.2f | PnL %+.1f%%",
+                    "VENDER KOSPI @ %.2f | %s | entrada %.2f | PnL %+.1f%%",
                     exit_px, why, entry, (exit_px / entry - 1) * 100);
-                  notify(why[0] == 'H' ? "SLV: SELL-STOP" : "SLV: SELL NOW", m, true); }
+                  notify(why[0] == 'H' ? "KOSPI: SELL-STOP" : "KOSPI: SELL NOW", m, true); }
                 in_pos = false; g_pos_restored = false;
                 unlink(POS_FILE);
             }
@@ -590,14 +591,14 @@ int main(int argc, char** argv) {
             if (rth_entry && (MAX_DAY == 0 || day_entries < (int)MAX_DAY)) {
                 if (in_short) {   // reversal: capitulacion confirmada = cubrir corto
                     double px = b.o;
-                    std::printf("[%02d:%02d] *** SLV: VENDER PUT *** ~%.2f (reversal a largo, entrada %.2f) t=%.0f\n",
+                    std::printf("[%02d:%02d] *** KOSPI: VENDER PUT *** ~%.2f (reversal a largo, entrada %.2f) t=%.0f\n",
                                 H, M, px, s_entry, b.t);
                     std::fflush(stdout);
-                    if (audio_gate(true)) { play("sounds/dram_buy.wav", "Glass"); speak("buy Silver call now"); }
+                    if (audio_gate(true)) { play("sounds/dram_buy.wav", "Glass"); speak("buy Kospi call now"); }
                     { char m[200]; std::snprintf(m, sizeof(m),
-                        "COMPRAR CALL SLV @ %.2f | reversal a alza | entrada %.2f | mov %+.1f%%",
+                        "COMPRAR CALL KOSPI @ %.2f | reversal a alza | entrada %.2f | mov %+.1f%%",
                         px, s_entry, (s_entry / px - 1) * 100);
-                      notify("SLV: BUY CALL", m, true); }
+                      notify("KOSPI: BUY CALL", m, true); }
                     in_short = false; unlink(SPOS_FILE);
                 }
                 in_pos = true; entry = b.o; peak = b.h;
@@ -605,14 +606,14 @@ int main(int argc, char** argv) {
                 target_px = entry * (1 + TARGET_PCT / 100.0);
                 pos_epoch = b.t; day_entries++;
                 save_pos(entry, peak, floor_px, target_px, pos_epoch);
-                std::printf("[%02d:%02d] *** SLV: COMPRAR *** ~%.2f (capitulacion confirmada; "
+                std::printf("[%02d:%02d] *** KOSPI: COMPRAR *** ~%.2f (capitulacion confirmada; "
                             "target %.2f, floor %.2f) t=%.0f\n", H, M, entry, target_px, floor_px, b.t);
                 std::fflush(stdout);
-                if (audio_gate(true)) { play("sounds/dram_buy.wav", "Glass"); speak("buy Silver now"); }
+                if (audio_gate(true)) { play("sounds/dram_buy.wav", "Glass"); speak("buy Kospi now"); }
                 { char m[200]; std::snprintf(m, sizeof(m),
-                    "COMPRAR SLV @ %.2f (shares o CALL) | target %.2f | floor %.2f | capitulacion confirmada",
+                    "COMPRAR KOSPI @ %.2f (shares o CALL) | target %.2f | floor %.2f | capitulacion confirmada",
                     entry, target_px, floor_px);
-                  notify("SLV: BUY NOW", m, true); }
+                  notify("KOSPI: BUY NOW", m, true); }
             }
         }
         if (!TREND_MODE && ind_ok && !in_pos && !pending_buy && rth_entry) {
@@ -684,14 +685,14 @@ int main(int argc, char** argv) {
                     if (b.c <= s_floor || EOD_FORCE > 0) { cov = true; why = "EOD cover 15:45"; }
                 }
                 if (cov) {
-                    std::printf("[%02d:%02d] *** SLV: VENDER PUT *** ~%.2f (%s, entrada %.2f) t=%.0f\n",
+                    std::printf("[%02d:%02d] *** KOSPI: VENDER PUT *** ~%.2f (%s, entrada %.2f) t=%.0f\n",
                                 H, M, exit_px, why, s_entry, b.t);
                     std::fflush(stdout);
-                    if (audio_gate(true)) { play("sounds/dram_buy.wav", "Ping"); speak("buy Silver call now"); }
+                    if (audio_gate(true)) { play("sounds/dram_buy.wav", "Ping"); speak("buy Kospi call now"); }
                     { char m[200]; std::snprintf(m, sizeof(m),
-                        "COMPRAR CALL SLV @ %.2f | %s | entrada %.2f | mov %+.1f%%",
+                        "COMPRAR CALL KOSPI @ %.2f | %s | entrada %.2f | mov %+.1f%%",
                         exit_px, why, s_entry, (s_entry / exit_px - 1) * 100);
-                      notify(why[0] == 'H' ? "SLV: PUT-STOP" : "SLV: BUY CALL", m, true); }
+                      notify(why[0] == 'H' ? "KOSPI: PUT-STOP" : "KOSPI: BUY CALL", m, true); }
                     in_short = false; g_pos_restored = false;
                     unlink(SPOS_FILE);
                 }
@@ -705,14 +706,14 @@ int main(int argc, char** argv) {
                     s_target = s_entry * (1 - S_TARGET / 100.0);
                     spos_epoch = b.t; sday_entries++;
                     save_spos(s_entry, s_trough, s_floor, s_target, spos_epoch);
-                    std::printf("[%02d:%02d] *** SLV: PUT *** ~%.2f (blow-off confirmado; "
+                    std::printf("[%02d:%02d] *** KOSPI: PUT *** ~%.2f (blow-off confirmado; "
                                 "target %.2f, floor %.2f) t=%.0f\n", H, M, s_entry, s_target, s_floor, b.t);
                     std::fflush(stdout);
-                    if (audio_gate(true)) { play("sounds/dram_sell.wav", "Basso"); speak("buy Silver put now"); }
+                    if (audio_gate(true)) { play("sounds/dram_sell.wav", "Basso"); speak("buy Kospi put now"); }
                     { char m[200]; std::snprintf(m, sizeof(m),
-                        "COMPRAR PUT SLV @ %.2f | target %.2f | floor %.2f | senal de BAJADA (blow-off)",
+                        "COMPRAR PUT KOSPI @ %.2f | target %.2f | floor %.2f | senal de BAJADA (blow-off)",
                         s_entry, s_target, s_floor);
-                      notify("SLV: BUY PUT", m, true); }
+                      notify("KOSPI: BUY PUT", m, true); }
                 }
             }
             // señal corta MR: espejo exacto del largo (euforia -> bar rojo que

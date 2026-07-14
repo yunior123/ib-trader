@@ -594,11 +594,11 @@ int main(int argc, char** argv) {
                     std::printf("[%02d:%02d] *** SKHYNIX: VENDER PUT *** ~%.2f (reversal a largo, entrada %.2f) t=%.0f\n",
                                 H, M, px, s_entry, b.t);
                     std::fflush(stdout);
-                    if (audio_gate(true)) { play("sounds/dram_buy.wav", "Glass"); speak("sell Hynix put now"); }
+                    if (audio_gate(true)) { play("sounds/dram_buy.wav", "Glass"); speak("buy Hynix call now"); }
                     { char m[200]; std::snprintf(m, sizeof(m),
-                        "VENDER PUT SKHYNIX @ %.2f | reversal a alza | entrada %.2f | mov %+.1f%%",
+                        "COMPRAR CALL SKHYNIX @ %.2f | reversal a alza | entrada %.2f | mov %+.1f%%",
                         px, s_entry, (s_entry / px - 1) * 100);
-                      notify("SKHYNIX: SELL PUT", m, true); }
+                      notify("SKHYNIX: BUY CALL", m, true); }
                     in_short = false; unlink(SPOS_FILE);
                 }
                 in_pos = true; entry = b.o; peak = b.h;
@@ -688,11 +688,11 @@ int main(int argc, char** argv) {
                     std::printf("[%02d:%02d] *** SKHYNIX: VENDER PUT *** ~%.2f (%s, entrada %.2f) t=%.0f\n",
                                 H, M, exit_px, why, s_entry, b.t);
                     std::fflush(stdout);
-                    if (audio_gate(true)) { play("sounds/dram_buy.wav", "Ping"); speak("sell Hynix put now"); }
+                    if (audio_gate(true)) { play("sounds/dram_buy.wav", "Ping"); speak("buy Hynix call now"); }
                     { char m[200]; std::snprintf(m, sizeof(m),
-                        "VENDER PUT SKHYNIX @ %.2f | %s | entrada %.2f | mov %+.1f%%",
+                        "COMPRAR CALL SKHYNIX @ %.2f | %s | entrada %.2f | mov %+.1f%%",
                         exit_px, why, s_entry, (s_entry / exit_px - 1) * 100);
-                      notify(why[0] == 'H' ? "SKHYNIX: PUT-STOP" : "SKHYNIX: SELL PUT", m, true); }
+                      notify(why[0] == 'H' ? "SKHYNIX: PUT-STOP" : "SKHYNIX: BUY CALL", m, true); }
                     in_short = false; g_pos_restored = false;
                     unlink(SPOS_FILE);
                 }
