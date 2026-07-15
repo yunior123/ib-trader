@@ -274,10 +274,31 @@ def prune_whales(st):
         pass
 
 
+def _resub_all(ib, why):
+    """Suelta TODAS las suscripciones y fuerza resuscripcion (Error 1101
+    'data lost' / stall: tras un flap del uplink —hoy causado por ProtonVPN—
+    TWS reconecta pero las suscripciones NO reviven solas; el daemon creia
+    estar suscrito y se quedaba ciego. Cazado en vivo 2026-07-15 17:23)."""
+    print(f"RESUB-ALL ({why}): soltando suscripciones y resuscribiendo",
+          file=sys.stderr)
+    for st in STATES.values():
+        for sub in st.subs:
+            try:
+                if hasattr(sub, "contract"):
+                    ib.cancelMktData(sub.contract)
+            except Exception:
+                pass
+        st.subs = []
+        st.blocked_until = 0
+        st.whales_on = False
+
+
 def run_daemon():
     ib = IB()
     ib.connect(HOST, PORT, clientId=CLIENT_ID, readonly=True, timeout=20)
     ib.reqMarketDataType(1)                  # 1 = REALTIME. Delayed PROHIBIDO.
+    ib.errorEvent += lambda r, c, m, ct=None, *a: (
+        c == 1101 and _resub_all(ib, "Error 1101 data-lost"))
     print(f"ibkr fleet daemon: TWS {HOST}:{PORT}, {len(SYMS)} syms "
           f"(bars 5s->1m + NBBO SIP + whales tick-by-tick + overnight)",
           file=sys.stderr)
@@ -290,6 +311,15 @@ def run_daemon():
             for st in STATES.values():
                 if st.whales_on:
                     prune_whales(st)
+        # STALL WATCHDOG: conectado + suscrito pero NINGUN bar en 5 min en
+        # ventana de mercado (L-V 04:00-20:00 ET o KRX via US overnight) =
+        # suscripciones muertas (caso 1100->reconexion sin 1101 explicito).
+        lt = time.localtime()
+        market = lt.tm_wday < 5 and 4 <= lt.tm_hour < 20
+        newest = max((st.last_emitted for st in STATES.values()), default=0)
+        subscribed = any(st.subs for st in STATES.values())
+        if market and subscribed and newest > 0 and time.time() - newest > 300:
+            _resub_all(ib, f"stall {time.time() - newest:.0f}s sin bars")
         ib.sleep(15)
     raise ConnectionError("TWS desconectado")
 
