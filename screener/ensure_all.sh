@@ -26,7 +26,7 @@ fi
 
 if ! pgrep -x screener_alert >/dev/null && ! pgrep -f "screener/alert_bot.py" >/dev/null; then
   if [[ -x "$ROOT/screener/screener_alert" ]]; then
-    nohup "$ROOT/screener/screener_alert" >>"$ROOT/screener/alert_bot.log" 2>&1 &
+    ALERT_POLL=1 nohup "$ROOT/screener/screener_alert" >>"$ROOT/screener/alert_bot.log" 2>&1 &   # poll 1s (orden 2026-07-15 blazing fast)
   else
     nohup "$PY" "$ROOT/screener/alert_bot.py" >>"$ROOT/screener/alert_bot.log" 2>&1 &
   fi

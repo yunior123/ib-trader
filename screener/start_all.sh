@@ -31,7 +31,7 @@ echo "watchdog keepalive pid $! (C++ screener_watchdog primary)"
 PY="$ROOT/venv/bin/python"; [[ -x "$PY" ]] || PY="python3"
 # alert bot: C++ primary (avoid python — Yunior 2026-07-09), python fallback
 if [[ -x "$ROOT/screener/screener_alert" ]]; then
-  nohup "$ROOT/screener/screener_alert" >>"$ROOT/screener/alert_bot.log" 2>&1 &
+  ALERT_POLL=1 nohup "$ROOT/screener/screener_alert" >>"$ROOT/screener/alert_bot.log" 2>&1 &   # poll 1s (orden 2026-07-15 blazing fast)
 else
   nohup "$PY" "$ROOT/screener/alert_bot.py" >>"$ROOT/screener/alert_bot.log" 2>&1 &
 fi

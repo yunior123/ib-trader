@@ -97,8 +97,8 @@ def make_on_nbbo(st):
         now = time.time()
         if t.bid and t.ask and t.bid > 0 and t.ask > t.bid:
             st.bid, st.ask = t.bid, t.ask     # siempre fresco para las ballenas
-            if now - st.nbbo_last < 1.0:
-                return
+            if now - st.nbbo_last < 0.25:     # 4/s (era 1/s; orden 2026-07-15
+                return                        # "blazing fast" — spread gate fresco)
             st.nbbo_last = now
             with open(f"data/nbbo_{st.sym.lower()}.txt", "w") as f:
                 f.write(f"{now:.0f} {t.bid:.4f} {t.ask:.4f}\n")
@@ -145,6 +145,24 @@ def warmup_sym(ib, st):
     actual); dedupe via last_emitted."""
     if st.warmed:
         return
+    # restart rapido (2026-07-15 "blazing fast"): si el archivo ya tiene bars
+    # frescos (<30 min) NO re-bajar 2 dias de historia (17 syms ≈ 2 min de
+    # resuscripcion que disparaba el banner de outage de los readers) — solo
+    # retomar el ultimo epoch y seguir appendeando en vivo.
+    try:
+        p = bars_path(st.sym)
+        if os.path.exists(p) and os.path.getsize(p) > 0:
+            with open(p, "rb") as f:
+                f.seek(max(0, os.path.getsize(p) - 200))
+                last_ep = float(f.read().decode().strip().splitlines()[-1].split()[0])
+            if time.time() - last_ep < 1800:
+                st.last_emitted = last_ep
+                st.warmed = True
+                print(f"{st.sym}: warm-up SALTADO (archivo fresco, "
+                      f"ultimo bar hace {time.time() - last_ep:.0f}s)", file=sys.stderr)
+                return
+    except Exception:
+        pass
     try:
         smart = Stock(st.sym, "SMART", "USD")
         ib.qualifyContracts(smart)
