@@ -203,7 +203,10 @@ def subscribe_sym(ib, st):
         rtb.updateEvent += make_on_bar5(st)
         tkr = ib.reqMktData(smart, "", False, False)
         tkr.updateEvent += make_on_nbbo(st)
-        ib.sleep(3)                          # deja aterrizar un posible 420
+        ib.sleep(1.5)                        # deja aterrizar un posible 420
+                                             # (3s->1.5s 2026-07-15: 17 syms
+                                             # seriales cruzaban los 120s del
+                                             # reader y disparaban outage)
         if got_err:
             ib.cancelRealTimeBars(rtb); ib.cancelMktData(smart)
             st.blocked_until = time.time() + RETRY_ENTITLEMENT_S
@@ -225,7 +228,7 @@ def subscribe_sym(ib, st):
             ib.errorEvent += on_tbt_err
             tbt = ib.reqTickByTickData(smart, "AllLast", 0, False)
             tbt.updateEvent += make_on_whale(st)
-            ib.sleep(2)
+            ib.sleep(1)
             ib.errorEvent -= on_tbt_err
             if tbt_err:
                 ib.cancelTickByTickData(smart, "AllLast")
