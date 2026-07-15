@@ -44,8 +44,9 @@ if ! pgrep -f "scripts/bargain_keepalive.sh" >/dev/null; then
   echo "$(date) fleet: bargain_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
 fi
 
-# ejecutor de ETFs apalancados (dinero real cuando TFSA >= 450 USD + etf_armed)
-if ! pgrep -f "scripts/executor_keepalive.sh" >/dev/null; then
-  nohup zsh "$ROOT/scripts/executor_keepalive.sh" >/dev/null 2>&1 &
-  echo "$(date) fleet: executor_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
-fi
+# EJECUTOR ELIMINADO 2026-07-15 (orden Yunior: "borra todo lo que ejecute
+# operaciones en tws, los bots son un peligro, solo señales"). El executor
+# ADOPTABA posiciones manuales via reconcile y les colocaba stop+GTC REALES
+# aun DESARMADO (vendio RAM 13:45 e INTW 15:31 contra su voluntad, y
+# re-coloco las ordenes tras un global-cancel). Archivado en
+# backup/executors_retired_2026-07-15/. LA FLOTA ES 100% SEÑALES, 24/5.

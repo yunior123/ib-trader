@@ -163,6 +163,9 @@ def do_buy(sym: str, qty: int, limit: float = None):
     try:
         c = Stock(sym, "SMART", "USD")
         ib.qualifyContracts(c)
+        if _exec_blocked():
+            print("EXEC BLOQUEADO (2026-07-15 solo señales): BUY no enviado")
+            return None
         trade = ib.placeOrder(c, LimitOrder("BUY", qty, lim, account=IB_ACCOUNT))
         ib.sleep(3)
         for _ in range(20):
@@ -210,6 +213,9 @@ def do_sell(sym: str, qty: int, entry: float, limit: float = None, force_flat: b
     try:
         c = Stock(sym, "SMART", "USD")
         ib.qualifyContracts(c)
+        if _exec_blocked():
+            print("EXEC BLOQUEADO (2026-07-15 solo señales): SELL no enviado")
+            return None
         trade = ib.placeOrder(c, LimitOrder("SELL", qty, lim, tif="GTC", account=IB_ACCOUNT))
         ib.sleep(3)
         for _ in range(20):
@@ -310,6 +316,17 @@ def do_reconcile(sym: str):
         print(f"OK {sym}: IBKR qty {qty} matches local {pos['qty']}")
     return 0
 
+
+
+# ==== GUARDIA ANTI-EJECUCION (orden Yunior 2026-07-15: "borra todo lo que
+# ejecute operaciones en tws... solo señales") ====
+# NINGUNA orden real sale de este proceso salvo triple override explicito:
+# archivo data/screener/exec_enabled + env EXEC_ENABLED=1. Hoy el executor
+# de ETFs vendio posiciones manuales del humano; cero tolerancia.
+import os as _os
+def _exec_blocked():
+    return not (_os.path.exists("data/screener/exec_enabled")
+                and _os.environ.get("EXEC_ENABLED") == "1")
 
 def main():
     ap = argparse.ArgumentParser()
