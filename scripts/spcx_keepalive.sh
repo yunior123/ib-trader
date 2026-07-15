@@ -22,7 +22,7 @@ export SPCX_S_FLOOR=0.5
 # TERREMOTO banner AMBAS direcciones (orden 2026-07-11 'detect up and down
 # in ALL of them'; precision 2026: UP96/DOWN91%, umbral por ticker)
 export SPCX_QUAKE_BANNER=1
-export SPCX_QUAKE_MIN=0.006
+export SPCX_QUAKE_MIN=0.013   # 0.006->0.013 2026-07-15: falso ALZA +1.27% en apertura (retrace), TRUE del dia -2.01% se mantiene; revisar con mas dias
 # live: gate de spread NBBO + umbral whale (v3)
 export SPCX_SPREAD_MAX=0.3
 export SPCX_WHALE_USD=100000

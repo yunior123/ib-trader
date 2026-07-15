@@ -29,6 +29,14 @@ if ! pgrep -f "scripts/korea_bar_bridge.py" >/dev/null; then
   echo "$(date) fleet: korea bridge lanzado (pid $!)" >> fleet_autostart.log
 fi
 
+# TWS watchdog (2026-07-15, tras 75 min de ceguera): vigila puerto 7496 en
+# ventanas de mercado, relanza TWS colgado y GRITA por el login (que siempre
+# es del humano). El eslabon debil del dia fue TWS, no las señales.
+if ! pgrep -f "scripts/tws_watchdog.sh" >/dev/null; then
+  nohup zsh "$ROOT/scripts/tws_watchdog.sh" >/dev/null 2>&1 &
+  echo "$(date) fleet: tws_watchdog lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+fi
+
 # bargain bot (2026-07-15): gangas en flota + top gainers + oversold, vetadas
 # por TradingAgents — solo BUY notifica. Signal-only, cada 10 min en RTH.
 if ! pgrep -f "scripts/bargain_keepalive.sh" >/dev/null; then
