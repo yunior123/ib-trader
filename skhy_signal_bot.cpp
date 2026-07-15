@@ -1,4 +1,4 @@
-// amd_signal_bot.cpp — AMD buy/sell signal engine, pure C++
+// skhy_signal_bot.cpp — SKHY buy/sell signal engine, pure C++
 // ============================================================
 // Mirrors the validated Python engine (confirmed capitulation entry +
 // adaptive exit) computing all indicators incrementally in C++:
@@ -13,9 +13,9 @@
 // Data: alpaca_ws_bridge (C++ ws daemon, 1 conexion Alpaca compartida) streams
 //       REAL 1m completed bars as "EPOCH OPEN HIGH LOW CLOSE VOLUME" lines.
 //
-// build: clang++ -std=c++17 -O2 -o amd_signal_bot amd_signal_bot.cpp
-// run:   ./amd_signal_bot            (spawns bridge)
-//        ./amd_signal_bot --stdin    (replay: feed bar lines for testing)
+// build: clang++ -std=c++17 -O2 -o skhy_signal_bot skhy_signal_bot.cpp
+// run:   ./skhy_signal_bot            (spawns bridge)
+//        ./skhy_signal_bot --stdin    (replay: feed bar lines for testing)
 
 #include <cstdio>
 #include <cstdlib>
@@ -30,87 +30,87 @@
 struct Bar { double t, o, h, l, c, v; };
 
 // ---- config (mirror of DEFAULT_CONFIG) ----
-// ---- params: por-ticker via env AMD_* (orden Yunior 2026-07-10 "tune per
+// ---- params: por-ticker via env SKHY_* (orden Yunior 2026-07-10 "tune per
 // ticker") — un solo set de parametros en 4 microestructuras distintas mata
 // la expectancy; ahora el keepalive exporta el set ajustado por backtest.
 static double envd(const char* k, double d) {
     const char* v = std::getenv(k);
     return (v && *v) ? atof(v) : d;
 }
-static const int    BB_N = 20;      static const double BB_STD = envd("AMD_BB_STD", 3.0);
-static const int    RSI_N = 14;     static const double RSI_OS = envd("AMD_RSI_OS", 25.0);
-static const int    VOL_N = 20;     static const double VOL_MULT = envd("AMD_VOL_MULT", 1.2);
+static const int    BB_N = 20;      static const double BB_STD = envd("SKHY_BB_STD", 3.0);
+static const int    RSI_N = 14;     static const double RSI_OS = envd("SKHY_RSI_OS", 25.0);
+static const int    VOL_N = 20;     static const double VOL_MULT = envd("SKHY_VOL_MULT", 1.2);
 static const int    ATR_N = 14;
 static const int    CONFIRM_WINDOW = 60;
-static const double TARGET_PCT = envd("AMD_TARGET", 4.0),
-                    FLOOR_PCT  = envd("AMD_FLOOR", 1.0),
-                    TRAIL_ATR  = envd("AMD_TRAIL_ATR", 3.0);
-// HARD STOP alert (orden 2026-07-10): a -AMD_STOP% del entry el bot GRITA la
+static const double TARGET_PCT = envd("SKHY_TARGET", 4.0),
+                    FLOOR_PCT  = envd("SKHY_FLOOR", 1.0),
+                    TRAIL_ATR  = envd("SKHY_TRAIL_ATR", 3.0);
+// HARD STOP alert (orden 2026-07-10): a -SKHY_STOP% del entry el bot GRITA la
 // perdida (SELL-STOP) en vez de callarse a esperar el floor. Humano decide.
-static const double STOP_PCT = envd("AMD_STOP", 3.0);
+static const double STOP_PCT = envd("SKHY_STOP", 3.0);
 // afinado 2026-07-10 (skills mean-reversion/exit-strategies + estudio 30d):
 // SKIP_OPEN: min tras 9:30 sin entradas (los arms del open eran subasta);
 // TIME_STOP_MIN: trade que no revirtio en N min = hipotesis muerta -> eject;
 // EOD_FORCE: 15:45 plano SIEMPRE (sin bag overnight; para SPCX obligatorio);
 // CONFIRM_STRICT: bar de confirmacion con volumen>=volMA y close en mitad alta;
 // MAX_DAY: entradas max por dia (0 = sin limite).
-static const double SKIP_OPEN      = envd("AMD_SKIP_OPEN", 0);
-static const double TIME_STOP_MIN  = envd("AMD_TIME_STOP_MIN", 0);
-static const double EOD_FORCE      = envd("AMD_EOD_FORCE", 0);
-static const double CONFIRM_STRICT = envd("AMD_CONFIRM_STRICT", 0);
-static const double MAX_DAY        = envd("AMD_MAX_DAY", 0);
+static const double SKIP_OPEN      = envd("SKHY_SKIP_OPEN", 0);
+static const double TIME_STOP_MIN  = envd("SKHY_TIME_STOP_MIN", 0);
+static const double EOD_FORCE      = envd("SKHY_EOD_FORCE", 0);
+static const double CONFIRM_STRICT = envd("SKHY_CONFIRM_STRICT", 0);
+static const double MAX_DAY        = envd("SKHY_MAX_DAY", 0);
 // ===== MOTOR v3 CONFLUENCE (orden Yunior 2026-07-11: "bollinger 50% en 1m
 // y 15m, vwap, rsi, volumen, whales, bids/asks — terremoto sin falsos
 // positivos"). SCORE_MIN > 0 activa el arm por confluencia PONDERADA:
 //   0.25 BB-1m(z) + 0.25 BB-15m(z) + 0.15 RSI + 0.15 dist-VWAP + 0.15 vol
 //   + 0.05 whales (solo live, data/whale_*.txt del daemon)
 // SCORE_MIN = 0 (default) -> gate clasico duro, comportamiento previo intacto.
-static const double SCORE_MIN  = envd("AMD_SCORE_MIN", 0);
-static const double WHALE_USD  = envd("AMD_WHALE_USD", 75000);
+static const double SCORE_MIN  = envd("SKHY_SCORE_MIN", 0);
+static const double WHALE_USD  = envd("SKHY_WHALE_USD", 75000);
 // SPREAD_MAX > 0: al confirmar, si el NBBO vivo (data/nbbo_*.txt del daemon)
 // muestra spread% mayor, NO se confirma (proteccion live; backtest no afecta).
-static const double SPREAD_MAX = envd("AMD_SPREAD_MAX", 0);
-// TREND MODE generico (AMD_MODE=trend): flip Supertrend 5m / ruptura max del
+static const double SPREAD_MAX = envd("SKHY_SPREAD_MAX", 0);
+// TREND MODE generico (SKHY_MODE=trend): flip Supertrend 5m / ruptura max del
 // dia con CUSUM >= TREND_CUSUM; TREND_VWAP=1 exige ademas c>VWAP y vol>=volMA.
 static const bool TREND_MODE = [] {
-    const char* v = std::getenv("AMD_MODE");
+    const char* v = std::getenv("SKHY_MODE");
     return v && !std::strcmp(v, "trend");
 }();
-static const double TREND_CUSUM = envd("AMD_TREND_CUSUM", 0.01);
-static const double TREND_VWAP  = envd("AMD_TREND_VWAP", 0);
+static const double TREND_CUSUM = envd("SKHY_TREND_CUSUM", 0.01);
+static const double TREND_VWAP  = envd("SKHY_TREND_VWAP", 0);
 // ===== v4 AMBAS DIRECCIONES (orden Yunior 2026-07-11: señales cuando sube
-// Y cuando baja). AMD_SHORTS=1 activa el espejo corto: blow-off arriba de la
+// Y cuando baja). SKHY_SHORTS=1 activa el espejo corto: blow-off arriba de la
 // banda + RSI sobrecomprado + volumen, confirmado por bar rojo que pierde el
 // minimo del bar de euforia -> "SHORT NOW"; gestion simetrica (target abajo,
 // trail sobre el minimo, HARD STOP arriba, EOD cover). En trend mode: flip
 // bajista del Supertrend / ruptura del MINIMO del dia con CUSUM negativo.
 // El lado largo NO se toca (los cortos ceden ante un largo confirmado:
 // cover por reversal). Default 0 -> comportamiento identico byte a byte.
-static const double SHORTS = envd("AMD_SHORTS", 0);
+static const double SHORTS = envd("SKHY_SHORTS", 0);
 // exits propios del corto (los mercados caen distinto a como suben);
 // sin definir heredan los del largo
-static const double S_TARGET = envd("AMD_S_TARGET", TARGET_PCT);
-static const double S_STOP   = envd("AMD_S_STOP", STOP_PCT);
-static const double S_TRAIL  = envd("AMD_S_TRAIL", TRAIL_ATR);
-static const double S_FLOOR  = envd("AMD_S_FLOOR", FLOOR_PCT);
-static const double S_TSTOP  = envd("AMD_S_TSTOP", TIME_STOP_MIN);
+static const double S_TARGET = envd("SKHY_S_TARGET", TARGET_PCT);
+static const double S_STOP   = envd("SKHY_S_STOP", STOP_PCT);
+static const double S_TRAIL  = envd("SKHY_S_TRAIL", TRAIL_ATR);
+static const double S_FLOOR  = envd("SKHY_S_FLOOR", FLOOR_PCT);
+static const double S_TSTOP  = envd("SKHY_S_TSTOP", TIME_STOP_MIN);
 // entradas PROPIAS del corto (optimize shorts 2026-07-11): sin definir
 // heredan el lado largo. S_MODE fuerza el motor del corto ("mr" o "trend")
 // independiente del largo — un ticker trend-largo puede cortear mejor en
 // blow-off MR y viceversa.
-static const double S_BB_STD    = envd("AMD_S_BB_STD", BB_STD);
-static const double S_RSI_OS    = envd("AMD_S_RSI_OS", RSI_OS);
-static const double S_VOL_MULT  = envd("AMD_S_VOL_MULT", VOL_MULT);
-static const double S_SCORE_MIN = envd("AMD_S_SCORE_MIN", SCORE_MIN);
-static const double S_TCUSUM    = envd("AMD_S_TREND_CUSUM", TREND_CUSUM);
+static const double S_BB_STD    = envd("SKHY_S_BB_STD", BB_STD);
+static const double S_RSI_OS    = envd("SKHY_S_RSI_OS", RSI_OS);
+static const double S_VOL_MULT  = envd("SKHY_S_VOL_MULT", VOL_MULT);
+static const double S_SCORE_MIN = envd("SKHY_S_SCORE_MIN", SCORE_MIN);
+static const double S_TCUSUM    = envd("SKHY_S_TREND_CUSUM", TREND_CUSUM);
 
 // ===== PATRONES DE VELAS (orden Yunior 2026-07-11 "signals have also into
 // account candle patterns"; ref TA-Lib CDL*): con {SYM}_CANDLE=1 el bar de
 // confirmacion/entrada debe ADEMAS ser patron direccional — engulfing,
 // hammer/shooting-star o marubozu. 0 = off (regresion byte-identica). El
 // optimizador WFO decide ON/OFF por ticker con datos, no por fe.
-static const double CANDLE   = envd("AMD_CANDLE", 0);
-static const double S_CANDLE = envd("AMD_S_CANDLE", CANDLE);
+static const double CANDLE   = envd("SKHY_CANDLE", 0);
+static const double S_CANDLE = envd("SKHY_S_CANDLE", CANDLE);
 static bool candle_bull(const Bar& p, const Bar& b) {
     double body = b.c - b.o, rng = b.h - b.l;
     if (rng <= 1e-12) return false;
@@ -134,22 +134,22 @@ static bool candle_bear(const Bar& p, const Bar& b) {
 // en los 13; con QUAKE_BANNER=1 dejan de ser solo-log y hacen banner+sonido.
 // QUAKE_MIN = movimiento acumulado minimo (fraccion), afinado por ticker en
 // backtest 2026 para precision >=70% (el movimiento aguanta, no es ruido).
-static const double QUAKE_MIN    = envd("AMD_QUAKE_MIN", 0.02);
-static const double QUAKE_BANNER = envd("AMD_QUAKE_BANNER", 0);
+static const double QUAKE_MIN    = envd("SKHY_QUAKE_MIN", 0.02);
+static const double QUAKE_BANNER = envd("SKHY_QUAKE_BANNER", 0);
 static const bool S_MODE_TREND = [] {
-    const char* v = std::getenv("AMD_S_MODE");
+    const char* v = std::getenv("SKHY_S_MODE");
     if (v && !std::strcmp(v, "trend")) return true;
     if (v && !std::strcmp(v, "mr")) return false;
-    const char* m = std::getenv("AMD_MODE");           // hereda el modo largo
+    const char* m = std::getenv("SKHY_MODE");           // hereda el modo largo
     return m && !std::strcmp(m, "trend");
 }();
-static const char* SPOS_FILE = "data/pos_amd_s.txt";
+static const char* SPOS_FILE = "data/pos_skhy_s.txt";
 static void save_spos(double e, double tr, double fl, double tg, double ep) {
     FILE* f = fopen(SPOS_FILE, "w");
     if (f) { fprintf(f, "%f %f %f %f %f\n", e, tr, fl, tg, ep); fclose(f); }
 }
-static const char* WHALE_FILE = "data/whale_amd.txt";
-static const char* NBBO_FILE  = "data/nbbo_amd.txt";
+static const char* WHALE_FILE = "data/whale_skhy.txt";
+static const char* NBBO_FILE  = "data/nbbo_skhy.txt";
 
 // ballenas recientes (<=10 min) por encima de WHALE_USD -> 0..1 (solo live)
 static double whale_score(double now, int want_dir = 1) {
@@ -178,7 +178,7 @@ static double nbbo_spread_pct() {
 }
 // posicion virtual PERSISTIDA (fix 2026-07-10: un restart perdia la posicion
 // y los SELL se desincronizaban de lo que Yunior realmente tiene)
-static const char* POS_FILE = "data/pos_amd.txt";
+static const char* POS_FILE = "data/pos_skhy.txt";
 static bool g_pos_restored = false;
 static void save_pos(double e, double pk, double fl, double tg, double ep) {
     FILE* f = fopen(POS_FILE, "w");
@@ -269,7 +269,7 @@ static void notify(const char* title, const char* msg, bool urgent) {
         }
     }
     // 3) structured operations log
-    FILE* f = std::fopen("amd_operations.log", "a");
+    FILE* f = std::fopen("skhy_operations.log", "a");
     if (f) {
         time_t now = time(nullptr); struct tm lt; localtime_r(&now, &lt);
         std::fprintf(f, "%04d-%02d-%02d %02d:%02d:%02d | %s%s | %s\n",
@@ -300,11 +300,11 @@ int main(int argc, char** argv) {
     bool use_stdin = (argc > 1 && !std::strcmp(argv[1], "--stdin"));
     FILE* in = stdin;
     if (!use_stdin) {
-        // ws daemon compartido escribe data/bars_amd.txt; el reader lo sigue
+        // ws daemon compartido escribe data/bars_skhy.txt; el reader lo sigue
         // (Yunior 2026-07-10: websockets, no REST; C++, no python)
-        in = popen("./alpaca_ws_bridge read AMD 2>>bridge_amd.log", "r");
+        in = popen("./alpaca_ws_bridge read SKHY 2>>bridge_skhy.log", "r");
         if (!in) { std::fprintf(stderr, "no bridge\n"); return 1; }
-        std::fprintf(stderr, "amd_signal_bot (C++): bridge AMD 1m real iniciado\n");
+        std::fprintf(stderr, "skhy_signal_bot (C++): bridge SKHY 1m real iniciado\n");
     }
 
     std::deque<double> closes, vols;      // rolling 20
@@ -439,16 +439,16 @@ int main(int argc, char** argv) {
                 bool vol_ok_radar = vol_ma <= 0 || b.v >= vol_ma;   // terremoto
                 if (alert_hours && vol_ok_radar && b.t - last_cusum > 3600) {
                     if (cusum_up > hthr) {
-                        std::printf("[%02d:%02d] CUSUM: AMD SUBIENDO fuerte (+%.2f%% acumulado) px %.2f t=%.0f\n",
+                        std::printf("[%02d:%02d] CUSUM: SKHY SUBIENDO fuerte (+%.2f%% acumulado) px %.2f t=%.0f\n",
                                     H, M, cusum_up * 100, b.c, b.t);
                         std::fflush(stdout);
-                        { char m[160]; std::snprintf(m, sizeof(m), "CUSUM: subiendo fuerte %+.2f%% px %.2f", cusum_up*100, b.c); notify("AMD TERREMOTO ALZA", m, QUAKE_BANNER > 0); }
+                        { char m[160]; std::snprintf(m, sizeof(m), "CUSUM: subiendo fuerte %+.2f%% px %.2f", cusum_up*100, b.c); notify("SKHY TERREMOTO ALZA", m, QUAKE_BANNER > 0); }
                         cusum_up = 0; cusum_dn = 0; last_cusum = b.t;
                     } else if (cusum_dn < -hthr) {
-                        std::printf("[%02d:%02d] CUSUM: AMD CAYENDO fuerte (%.2f%% acumulado) px %.2f t=%.0f\n",
+                        std::printf("[%02d:%02d] CUSUM: SKHY CAYENDO fuerte (%.2f%% acumulado) px %.2f t=%.0f\n",
                                     H, M, cusum_dn * 100, b.c, b.t);
                         std::fflush(stdout);
-                        { char m[160]; std::snprintf(m, sizeof(m), "CUSUM: cayendo fuerte %.2f%% px %.2f", cusum_dn*100, b.c); notify("AMD TERREMOTO CAIDA", m, QUAKE_BANNER > 0); }
+                        { char m[160]; std::snprintf(m, sizeof(m), "CUSUM: cayendo fuerte %.2f%% px %.2f", cusum_dn*100, b.c); notify("SKHY TERREMOTO CAIDA", m, QUAKE_BANNER > 0); }
                         cusum_up = 0; cusum_dn = 0; last_cusum = b.t;
                     }
                 }
@@ -483,11 +483,11 @@ int main(int argc, char** argv) {
             else               nt = (bc > st_upper) ? 1 : -1;
             if (st_trend != 0 && nt != st_trend && alert_hours && b.t - last_st > 3600) {
                 if (nt > 0) {
-                    std::printf("[%02d:%02d] SUPERTREND: tendencia AMD cambio a ALCISTA px %.2f\n", H, M, b.c);
-                    { char m[120]; std::snprintf(m, sizeof(m), "Supertrend: tendencia ALCISTA px %.2f", b.c); notify("AMD tendencia", m, false); }
+                    std::printf("[%02d:%02d] SUPERTREND: tendencia SKHY cambio a ALCISTA px %.2f\n", H, M, b.c);
+                    { char m[120]; std::snprintf(m, sizeof(m), "Supertrend: tendencia ALCISTA px %.2f", b.c); notify("SKHY tendencia", m, false); }
                 } else {
-                    std::printf("[%02d:%02d] SUPERTREND: tendencia AMD cambio a BAJISTA px %.2f\n", H, M, b.c);
-                    { char m[120]; std::snprintf(m, sizeof(m), "Supertrend: tendencia BAJISTA px %.2f", b.c); notify("AMD tendencia", m, false); }
+                    std::printf("[%02d:%02d] SUPERTREND: tendencia SKHY cambio a BAJISTA px %.2f\n", H, M, b.c);
+                    { char m[120]; std::snprintf(m, sizeof(m), "Supertrend: tendencia BAJISTA px %.2f", b.c); notify("SKHY tendencia", m, false); }
                 }
                 std::fflush(stdout);
                 last_st = b.t;
@@ -503,14 +503,14 @@ int main(int argc, char** argv) {
             for (double x : dh20) hi = std::max(hi, x);
             for (double x : dl20) lo = std::min(lo, x);
             if (b.c > hi) {
-                std::printf("[%02d:%02d] DONCHIAN: AMD rompe maximo del dia px %.2f > %.2f\n", H, M, b.c, hi);
+                std::printf("[%02d:%02d] DONCHIAN: SKHY rompe maximo del dia px %.2f > %.2f\n", H, M, b.c, hi);
                 std::fflush(stdout);
-                { char m[120]; std::snprintf(m, sizeof(m), "Donchian: rompe maximo del dia px %.2f", b.c); notify("AMD breakout", m, false); }
+                { char m[120]; std::snprintf(m, sizeof(m), "Donchian: rompe maximo del dia px %.2f", b.c); notify("SKHY breakout", m, false); }
                 last_don = b.t;
             } else if (b.c < lo) {
-                std::printf("[%02d:%02d] DONCHIAN: AMD rompe minimo del dia px %.2f < %.2f\n", H, M, b.c, lo);
+                std::printf("[%02d:%02d] DONCHIAN: SKHY rompe minimo del dia px %.2f < %.2f\n", H, M, b.c, lo);
                 std::fflush(stdout);
-                { char m[120]; std::snprintf(m, sizeof(m), "Donchian: rompe minimo del dia px %.2f", b.c); notify("AMD breakdown", m, false); }
+                { char m[120]; std::snprintf(m, sizeof(m), "Donchian: rompe minimo del dia px %.2f", b.c); notify("SKHY breakdown", m, false); }
                 last_don = b.t;
             }
         }
@@ -579,14 +579,14 @@ int main(int argc, char** argv) {
                 if (b.c >= floor_px || EOD_FORCE > 0) { sold = true; why = "EOD flatten 15:45"; }
             }
             if (sold) {
-                std::printf("[%02d:%02d] *** AMD: VENDER *** ~%.2f (%s, entrada %.2f) t=%.0f\n",
+                std::printf("[%02d:%02d] *** SKHY: VENDER *** ~%.2f (%s, entrada %.2f) t=%.0f\n",
                             H, M, exit_px, why, entry, b.t);
                 std::fflush(stdout);
-                if (audio_gate(true)) { play("sounds/dram_sell.wav", "Hero"); speak("sell A M D now"); }
+                if (audio_gate(true)) { play("sounds/dram_sell.wav", "Hero"); speak("sell SK Hynix now"); }
                 { char m[200]; std::snprintf(m, sizeof(m),
-                    "VENDER AMD @ %.2f | %s | entrada %.2f | PnL %+.1f%%",
+                    "VENDER SKHY @ %.2f | %s | entrada %.2f | PnL %+.1f%%",
                     exit_px, why, entry, (exit_px / entry - 1) * 100);
-                  notify(why[0] == 'H' ? "AMD: SELL-STOP" : "AMD: SELL NOW", m, true); }
+                  notify(why[0] == 'H' ? "SKHY: SELL-STOP" : "SKHY: SELL NOW", m, true); }
                 in_pos = false; g_pos_restored = false;
                 unlink(POS_FILE);
             }
@@ -600,14 +600,14 @@ int main(int argc, char** argv) {
             if (rth_entry && (MAX_DAY == 0 || day_entries < (int)MAX_DAY)) {
                 if (in_short) {   // reversal: capitulacion confirmada = cubrir corto
                     double px = b.o;
-                    std::printf("[%02d:%02d] *** AMD: VENDER PUT *** ~%.2f (reversal a largo, entrada %.2f) t=%.0f\n",
+                    std::printf("[%02d:%02d] *** SKHY: VENDER PUT *** ~%.2f (reversal a largo, entrada %.2f) t=%.0f\n",
                                 H, M, px, s_entry, b.t);
                     std::fflush(stdout);
-                    if (audio_gate(true)) { play("sounds/dram_buy.wav", "Glass"); speak("buy A M D call now"); }
+                    if (audio_gate(true)) { play("sounds/dram_buy.wav", "Glass"); speak("buy SK Hynix call now"); }
                     { char m[200]; std::snprintf(m, sizeof(m),
-                        "COMPRAR CALL AMD @ %.2f | reversal a alza | entrada %.2f | mov %+.1f%%",
+                        "COMPRAR CALL SKHY @ %.2f | reversal a alza | entrada %.2f | mov %+.1f%%",
                         px, s_entry, (s_entry / px - 1) * 100);
-                      notify("AMD: BUY CALL", m, true); }
+                      notify("SKHY: BUY CALL", m, true); }
                     in_short = false; unlink(SPOS_FILE);
                 }
                 in_pos = true; entry = b.o; peak = b.h;
@@ -615,14 +615,14 @@ int main(int argc, char** argv) {
                 target_px = entry * (1 + TARGET_PCT / 100.0);
                 pos_epoch = b.t; day_entries++;
                 save_pos(entry, peak, floor_px, target_px, pos_epoch);
-                std::printf("[%02d:%02d] *** AMD: COMPRAR *** ~%.2f (capitulacion confirmada; "
+                std::printf("[%02d:%02d] *** SKHY: COMPRAR *** ~%.2f (capitulacion confirmada; "
                             "target %.2f, floor %.2f) t=%.0f\n", H, M, entry, target_px, floor_px, b.t);
                 std::fflush(stdout);
-                if (audio_gate(true)) { play("sounds/dram_buy.wav", "Glass"); speak("buy A M D now"); }
+                if (audio_gate(true)) { play("sounds/dram_buy.wav", "Glass"); speak("buy SK Hynix now"); }
                 { char m[200]; std::snprintf(m, sizeof(m),
-                    "COMPRAR AMD @ %.2f (shares o CALL) | target %.2f | floor %.2f | capitulacion confirmada",
+                    "COMPRAR SKHY @ %.2f (shares o CALL) | target %.2f | floor %.2f | capitulacion confirmada",
                     entry, target_px, floor_px);
-                  notify("AMD: BUY NOW", m, true); }
+                  notify("SKHY: BUY NOW", m, true); }
             }
         }
         if (!TREND_MODE && ind_ok && !in_pos && !pending_buy && rth_entry) {
@@ -694,14 +694,14 @@ int main(int argc, char** argv) {
                     if (b.c <= s_floor || EOD_FORCE > 0) { cov = true; why = "EOD cover 15:45"; }
                 }
                 if (cov) {
-                    std::printf("[%02d:%02d] *** AMD: VENDER PUT *** ~%.2f (%s, entrada %.2f) t=%.0f\n",
+                    std::printf("[%02d:%02d] *** SKHY: VENDER PUT *** ~%.2f (%s, entrada %.2f) t=%.0f\n",
                                 H, M, exit_px, why, s_entry, b.t);
                     std::fflush(stdout);
-                    if (audio_gate(true)) { play("sounds/dram_buy.wav", "Ping"); speak("buy A M D call now"); }
+                    if (audio_gate(true)) { play("sounds/dram_buy.wav", "Ping"); speak("buy SK Hynix call now"); }
                     { char m[200]; std::snprintf(m, sizeof(m),
-                        "COMPRAR CALL AMD @ %.2f | %s | entrada %.2f | mov %+.1f%%",
+                        "COMPRAR CALL SKHY @ %.2f | %s | entrada %.2f | mov %+.1f%%",
                         exit_px, why, s_entry, (s_entry / exit_px - 1) * 100);
-                      notify(why[0] == 'H' ? "AMD: PUT-STOP" : "AMD: BUY CALL", m, true); }
+                      notify(why[0] == 'H' ? "SKHY: PUT-STOP" : "SKHY: BUY CALL", m, true); }
                     in_short = false; g_pos_restored = false;
                     unlink(SPOS_FILE);
                 }
@@ -715,14 +715,14 @@ int main(int argc, char** argv) {
                     s_target = s_entry * (1 - S_TARGET / 100.0);
                     spos_epoch = b.t; sday_entries++;
                     save_spos(s_entry, s_trough, s_floor, s_target, spos_epoch);
-                    std::printf("[%02d:%02d] *** AMD: PUT *** ~%.2f (blow-off confirmado; "
+                    std::printf("[%02d:%02d] *** SKHY: PUT *** ~%.2f (blow-off confirmado; "
                                 "target %.2f, floor %.2f) t=%.0f\n", H, M, s_entry, s_target, s_floor, b.t);
                     std::fflush(stdout);
-                    if (audio_gate(true)) { play("sounds/dram_sell.wav", "Basso"); speak("buy A M D put now"); }
+                    if (audio_gate(true)) { play("sounds/dram_sell.wav", "Basso"); speak("buy SK Hynix put now"); }
                     { char m[200]; std::snprintf(m, sizeof(m),
-                        "COMPRAR PUT AMD @ %.2f | target %.2f | floor %.2f | senal de BAJADA (blow-off)",
+                        "COMPRAR PUT SKHY @ %.2f | target %.2f | floor %.2f | senal de BAJADA (blow-off)",
                         s_entry, s_target, s_floor);
-                      notify("AMD: BUY PUT", m, true); }
+                      notify("SKHY: BUY PUT", m, true); }
                 }
             }
             // señal corta MR: espejo exacto del largo (euforia -> bar rojo que

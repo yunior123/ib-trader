@@ -40,7 +40,13 @@ def main():
     else:
         data = {"date": state.now_iso(), "generated_by": "fastscan",
                 "premarket": now.strftime("%H:%M") < "09:30", "candidates": []}
-    have = {c["sym"] for c in data.get("candidates", [])}
+    # SOLO-TA al watchlist (Yunior 2026-07-15 "only send notifications on
+    # finviz trading agents selected candidates"): los movers nuevos van a
+    # pending_ta_*.json (staging, SIN banner); revet_watchlist corre TA en
+    # background y promueve al watchlist — y bannerea — solo los BUY.
+    pending = state.read_pending_ta(day)
+    have = ({c["sym"] for c in data.get("candidates", [])}
+            | {c["sym"] for c in pending})
     added = []
     for row in rows:
         if row["sym"] in have:
@@ -49,28 +55,22 @@ def main():
         if r:
             r["merged_by"] = "fastscan"
             r["merged_at"] = state.now_iso()
-            data["candidates"].append(r)
+            pending.append(r)
             have.add(r["sym"])
             added.append(r)
     if added:
-        data["candidates"].sort(key=lambda c: c.get("score", 0), reverse=True)
-        data["fastscan_at"] = state.now_iso()
-        state.write_watchlist(data)
+        state.write_pending_ta(pending, day)
         for r in added:
-            print(f"fastscan +{r['sym']} +{r['gain_pct']}% ${r['price']} score {r['score']}")
-        # on-time delivery (Yunior 2026-07-10): the moment a new top gainer
-        # passes the filters, banner Mac al instante — don't wait for a
-        # breakout. (email/telegram eliminados 2026-07-10: solo Mac)
+            print(f"fastscan +{r['sym']} +{r['gain_pct']}% ${r['price']} "
+                  f"score {r['score']} -> pending TA")
+        # registro para validacion EOD (Yunior 2026-07-15 "u store all signals")
+        try:
+            with open(os.path.join("data", "screener", f"scan_log_{day}.jsonl"), "a") as f:
+                f.write(json.dumps({"ts": state.now_iso(), "src": "fastscan",
+                                    "pending_ta": added}) + "\n")
+        except Exception:
+            pass
         import subprocess
-        short = ", ".join(f"{r['sym']}+{r['gain_pct']:.0f}%" for r in added)
-        subprocess.Popen(["osascript", "-e",
-                          f'display notification "{short}" with title '
-                          f'"TOP GAINER nuevo" sound name "Glass"'],
-                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        # TradingAgents en la fast lane (Yunior 2026-07-10 "make sure we use
-        # trading agents for the top gainers"): los nombres nuevos entran sin
-        # vetar (el banner no espera minutos de LLM); revet corre en background
-        # y les atacha ta_action — el alert bot relee el watchlist en cada poll.
         root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         subprocess.Popen(
             f'pgrep -f "revet_watchlist|screener/scanner.py" >/dev/null || '

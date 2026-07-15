@@ -257,7 +257,17 @@ static void notify(const char* title, const char* msg, bool urgent) {
     // el radar (CUSUM/Supertrend/Donchian) va SOLO al log — ratio ruido:dinero
     // era 40-160:1 y entrenaba a ignorar la urgencia.
     // Posicion restaurada de disco: su SELL avisa aunque el bar sea warm-up.
-    if (urgent && (bar_is_live() || g_pos_restored)) fleet_notify_urgent(title, msg);
+    if (urgent && (bar_is_live() || g_pos_restored)) {
+        // banner de warm-up (pos restaurada): tag WARMUP visible en banner y
+        // espejo Desktop — el humano compara hora-de-notificacion vs grafico
+        // (orden 2026-07-15) y un replay sin tag pareceria un error del bot
+        if (bar_is_live()) fleet_notify_urgent(title, msg);
+        else {
+            char wt[300];
+            std::snprintf(wt, sizeof(wt), "WARMUP %s", title);
+            fleet_notify_urgent(wt, msg);
+        }
+    }
     // 3) structured operations log
     FILE* f = std::fopen("nvda_operations.log", "a");
     if (f) {

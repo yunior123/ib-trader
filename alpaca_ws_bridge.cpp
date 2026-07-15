@@ -43,6 +43,8 @@
 #include <string>
 #include <vector>
 
+#include "fleet_notify.h"   // banner LOUD si el feed ibkr-only calla (2026-07-15)
+
 static std::string KEY, SEC;
 
 static void load_keys() {
@@ -581,10 +583,20 @@ static int reader_main(const std::string& sym) {
     setvbuf(stdout, nullptr, _IOLBF, 0);   // line-buffered al pipe del bot
     std::string p_al = bars_path(sym);
     std::string p_ib = "data/bars_" + lower(sym) + "_ibkr.txt";
-    fprintf(stderr, "%s reader: warm-up REST + dual follow %s (SIP prio) | %s\n",
+    // IBKR-ONLY por defecto (orden Yunior 2026-07-15 "for the bot fleet, we
+    // are gonna connect to ibkr only"): subs NA reales compradas 07-15 (Cboe
+    // One + Network A/B/C, 10089 verificado MUERTO), el daemon ibkr escribe
+    // warm-up historico SIP + bars vivos en p_ib — sin backfill REST alpaca,
+    // sin fallback. Si IBKR calla >120s: banner LOUD, JAMAS degradar en
+    // silencio (orden #4). export ALPACA_FALLBACK=1 revive el modo dual.
+    const char* fbe = getenv("ALPACA_FALLBACK");
+    const bool alpaca_fb = fbe && *fbe == '1';
+    fprintf(stderr, alpaca_fb
+                ? "%s reader: warm-up REST + dual follow %s (SIP prio) | %s\n"
+                : "%s reader: IBKR-ONLY follow %s (fallback OFF) | (%s ignorado)\n",
             sym.c_str(), p_ib.c_str(), p_al.c_str());
     RdState S;
-    S.last = backfill(sym);
+    if (alpaca_fb) S.last = backfill(sym);
     Tail t_ib{p_ib}, t_al{p_al};
     int kq = kqueue();
     const double IBKR_STALE_S = 120, HOLD_S = 2.0;
@@ -592,6 +604,8 @@ static int reader_main(const std::string& sym) {
         struct timespec ts; clock_gettime(CLOCK_MONOTONIC, &ts);
         return ts.tv_sec + ts.tv_nsec * 1e-9;
     };
+    double next_outage_warn = 0;           // ibkr-only: aviso LOUD cada 10 min
+    const double start_t = nowf();
     while (true) {
         // 1) primario ibkr: emision inmediata
         struct IbCtx { RdState* S; double now; } ic{&S, nowf()};
@@ -607,28 +621,47 @@ static int reader_main(const std::string& sym) {
         }
         bool ibkr_live = nowf() - S.ibkr_seen < IBKR_STALE_S && S.ibkr_seen > 0;
         if (!ibkr_live && S.on_ibkr) {
-            fprintf(stderr, "%s reader: IBKR silente -> fallback alpaca\n", sym.c_str());
+            fprintf(stderr, "%s reader: IBKR silente%s\n", sym.c_str(),
+                    alpaca_fb ? " -> fallback alpaca" : " (IBKR-ONLY, sin fallback)");
             S.on_ibkr = false;
         }
-        // 2) fallback alpaca: directo si ibkr muerto, retenido HOLD si vivo
-        struct AlCtx { RdState* S; bool live; double due; } ac{&S, ibkr_live, nowf() + HOLD_S};
-        tail_read(t_al, kq, [](double* b, void* c) {
-            AlCtx* x = (AlCtx*)c;
-            if (!x->live) emit_bar(b, *x->S);
-            else {
-                RdState::Held h; memcpy(h.b, b, sizeof(h.b)); h.due = x->due;
-                x->S->held.push_back(h);
-            }
-        }, &ac);
-        // 3) drena retenidos vencidos (si ibkr ya emitio ese epoch, dedupe los tira)
-        if (!S.held.empty()) {
+        if (!alpaca_fb) {
+            // IBKR-ONLY: sin datos = gritar, no degradar. Aviso a los 120s de
+            // silencio (o del arranque) y cada 10 min mientras dure el hueco.
             double now = nowf();
-            size_t w = 0;
-            for (auto& h : S.held) {
-                if (h.due <= now || !ibkr_live) emit_bar(h.b, S);
-                else S.held[w++] = h;
+            double ref = S.ibkr_seen > 0 ? S.ibkr_seen : start_t;
+            if (now - ref >= IBKR_STALE_S && now >= next_outage_warn) {
+                char m[160];
+                snprintf(m, sizeof(m),
+                         "%.0f s sin bars IBKR (ibkr-only, sin fallback) — "
+                         "revisar TWS/daemon ibkr_bar_bridge", now - ref);
+                fleet_notify_urgent((sym + ": SIN DATOS IBKR").c_str(), m, "Sosumi");
+                fprintf(stderr, "%s reader: %s\n", sym.c_str(), m);
+                next_outage_warn = now + 600;
+            } else if (now - ref < IBKR_STALE_S) {
+                next_outage_warn = 0;
             }
-            S.held.resize(w);
+        } else {
+            // 2) fallback alpaca: directo si ibkr muerto, retenido HOLD si vivo
+            struct AlCtx { RdState* S; bool live; double due; } ac{&S, ibkr_live, nowf() + HOLD_S};
+            tail_read(t_al, kq, [](double* b, void* c) {
+                AlCtx* x = (AlCtx*)c;
+                if (!x->live) emit_bar(b, *x->S);
+                else {
+                    RdState::Held h; memcpy(h.b, b, sizeof(h.b)); h.due = x->due;
+                    x->S->held.push_back(h);
+                }
+            }, &ac);
+            // 3) drena retenidos vencidos (si ibkr ya emitio ese epoch, dedupe los tira)
+            if (!S.held.empty()) {
+                double now = nowf();
+                size_t w = 0;
+                for (auto& h : S.held) {
+                    if (h.due <= now || !ibkr_live) emit_bar(h.b, S);
+                    else S.held[w++] = h;
+                }
+                S.held.resize(w);
+            }
         }
         if (kq >= 0 && (t_ib.wfd >= 0 || t_al.wfd >= 0)) {
             struct kevent ev;
@@ -652,7 +685,14 @@ int main(int argc, char** argv) {
     }
     curl_global_init(CURL_GLOBAL_DEFAULT);
     load_keys();
+    // reader IBKR-only no necesita keys alpaca (solo el backfill/daemon las usa)
+    if (!strcmp(argv[1], "read") && argc >= 3) {
+        const char* fbe = getenv("ALPACA_FALLBACK");
+        if (fbe && *fbe == '1' && (KEY.empty() || SEC.empty())) {
+            fprintf(stderr, "no alpaca.env keys\n"); return 1;
+        }
+        return reader_main(argv[2]);
+    }
     if (KEY.empty() || SEC.empty()) { fprintf(stderr, "no alpaca.env keys\n"); return 1; }
-    if (!strcmp(argv[1], "read") && argc >= 3) return reader_main(argv[2]);
     return daemon_main(argc, argv);
 }

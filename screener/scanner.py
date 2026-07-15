@@ -45,7 +45,20 @@ TOP_N = int(os.getenv("SCAN_TOPN", "8"))
 # spread gate (Yunior 2026-07-10): wide bid-ask = illiquid trap, skip it.
 # One tick of spread is unavoidable on pennies, so <=1 cent always passes.
 MAX_SPREAD_PCT = float(os.getenv("SCAN_MAX_SPREAD", "3.0"))
+# selectividad extra (Yunior 2026-07-15 "try making finviz more selective,
+# like > 50 millions in market cap, etc"): mcap minimo en $M. Finviz export
+# trae Market Cap en millones; 0/desconocido NO pasa (estricto a proposito —
+# los shells sin mcap reportado son la trampa clasica de los pumps).
+MIN_MCAP_M = float(os.getenv("SCAN_MIN_MCAP", "50.0"))
 FAVORITES = ["GNS", "KOD", "DRAM", "NOK", "SPCX"]
+
+
+def _mcap_m(row):
+    """Market cap en $M de la fila (Finviz export la trae en millones)."""
+    try:
+        return float(row.get("market_cap") or 0)
+    except Exception:
+        return 0.0
 
 
 def prior_day_move(sym):
@@ -96,6 +109,10 @@ def evaluate(row):
     vol = row.get("volume", 0) or 0
     dollar_vol = vol * px
     if dollar_vol and dollar_vol < MIN_DOLLAR_VOL:
+        return None
+    # mcap >= $50M (Yunior 2026-07-15): fuera micro-shells; explicit/argv salta
+    # el gate (el humano ya eligio el ticker a mano)
+    if row.get("src") != "explicit" and _mcap_m(row) < MIN_MCAP_M:
         return None
     prior = prior_day_move(sym)
     if prior >= BLOWOFF_PCT:      # already blew off yesterday -> skip (selectivity)
@@ -169,33 +186,47 @@ def main():
             c["ta_action"] = prev[c["sym"]]["ta_action"]
             c["ta_note"] = prev[c["sym"]].get("ta_note", "")
     top = research.enrich_candidates(top, date_str)
+    rejected = []
     if ta_on:
-        # research is mandatory: drop finalists TradingAgents did not bless as BUY
+        # research is mandatory Y EXCLUYENTE (Yunior 2026-07-15 "only send
+        # notifications on finviz trading agents selected candidates"): al
+        # watchlist — que es lo que alerta screener_alert — SOLO entran los
+        # BUY de TradingAgents. Cero fallback a la lista sin vetar.
         vetted = [c for c in top if c.get("ta_action") == "BUY"]
+        rejected = [c for c in top if c.get("ta_action") != "BUY"]
         print(f"TradingAgents: {len(vetted)}/{len(top)} finalists rated BUY", file=sys.stderr)
-        top = vetted or top   # if TA blessed none, keep list but flagged (Claude sees ta_action)
+        top = vetted
+
+    # registro append-only de TODO lo escaneado (Yunior 2026-07-15 "u store
+    # all signals... also finviz"): cada corrida deja hits crudos + veredictos
+    # para la validacion de fin de dia, aunque el watchlist quede vacio.
+    try:
+        import json as _json
+        day = state.datetime.now().astimezone().strftime("%Y%m%d")
+        with open(os.path.join(state.BASE, f"scan_log_{day}.jsonl"), "a") as f:
+            f.write(_json.dumps({"ts": state.now_iso(), "premarket": premarket,
+                                 "raw_hits": hits, "ta_buy": top,
+                                 "ta_rejected": rejected}) + "\n")
+    except Exception as e:
+        print(f"scan_log append fallo: {e}", file=sys.stderr)
 
     data = {"date": state.now_iso(), "generated_by": "scanner",
             "premarket": premarket, "research_mandatory": ta_on,
             "filters": {"penny": [PENNY_MIN, PENNY_MAX], "min_gain": MIN_GAIN_PCT,
-                        "min_dollar_vol": MIN_DOLLAR_VOL, "blowoff": BLOWOFF_PCT},
+                        "min_dollar_vol": MIN_DOLLAR_VOL, "blowoff": BLOWOFF_PCT,
+                        "min_mcap_m": MIN_MCAP_M},
             "candidates": top}
+    # OJO: los rechazados NO van al watchlist — screener_alert.cpp parsea TODOS
+    # los "sym" del JSON y alertaria sobre ellos; quedan solo en scan_log_*.jsonl
     p = state.write_watchlist(data)
     print(f"wrote {p}: {len(top)} candidates", file=sys.stderr)
     for c in top:
         print(f"  {c['sym']:6s} +{c['gain_pct']:6.2f}% ${c['price']:8.4f} "
               f"score {c['score']:6.2f} $vol {c['dollar_vol']:,}")
-    # Mac notification summary (ntfy removed 2026-07-09: Mac-only por orden de Yunior)
+    # Mac notification summary + espejo Desktop (solo candidatos TA-BUY)
     if top:
         names = ", ".join(f"{c['sym']}+{c['gain_pct']:.0f}%" for c in top[:5])
-        try:
-            import subprocess
-            subprocess.Popen(["osascript", "-e",
-                              f'display notification "Candidatos hoy: {names}" '
-                              f'with title "Top gainers 6AM" sound name "Glass"'],
-                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        except Exception:
-            pass
+        state.notify_mac("Top gainers (TA BUY)", f"Candidatos hoy: {names}")
 
 
 if __name__ == "__main__":

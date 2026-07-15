@@ -120,8 +120,9 @@ SCREENS = {
         "fa_estltgrowth_o10", "fa_roe_o15", "fa_curratio_o1.5",
         "ta_change_u2"]),
     # 2) rebote: RSI oversold(30) + dia verde + relative volume > 2
+    #    (+mcap>=$50M 2026-07-15 "more selective")
     "oversold": dict(signal=None, price_cap=False, filters=[
-        "ta_rsi_os30", "ta_change_u", "sh_relvol_o2"]),
+        "cap_microover", "ta_rsi_os30", "ta_change_u", "sh_relvol_o2"]),
     # 3) cosecha propia — squeeze igniter: short float >20% + rvol>2 + dia
     #    verde + sobre SMA20 + liquidez minima. Los cortos atrapados son la
     #    gasolina de los top gainers de MAÑANA: este screen los ve encenderse.
@@ -134,7 +135,7 @@ SCREENS = {
     #    dias, deuda/equity < 1, ROE > 20%, avg vol > 100k. Momentum de
     #    calidad: maximos nuevos sin balance apalancado.
     "newhigh": dict(signal=None, price_cap=False, filters=[
-        "ta_sma20_pa", "ta_sma50_pa", "ta_highlow50d_nh",
+        "cap_microover", "ta_sma20_pa", "ta_sma50_pa", "ta_highlow50d_nh",
         "fa_debteq_u1", "fa_roe_o20", "sh_avgvol_o100"]),
     # 5) shorts (Yunior 2026-07-12) — universo para POSICIONES CORTAS:
     #    mcap > $300M, short float > 20%, avg vol > 500k, rvol > 1,
@@ -146,14 +147,14 @@ SCREENS = {
     #    (rebote temprano dentro de correccion), avg vol > 400k, rvol > 1,
     #    volumen del dia > 2M.
     "recovery": dict(signal=None, price_cap=False, filters=[
-        "ta_sma20_pa", "ta_sma50_pb", "sh_avgvol_o400",
+        "cap_microover", "ta_sma20_pa", "ta_sma50_pb", "sh_avgvol_o400",
         "sh_relvol_o1", "sh_curvol_o2000"]),
     # 7) earnings (Yunior 2026-07-12): sobre SMA200, avg vol > 400k,
     #    EPS growth this year > 25%, EPS qtr/qtr > 25%, RSI not oversold
     #    (>50), EPS next year > 25%. OJO: Finviz NO tiene filtro "sales
     #    growth next year" — se usa sales qtr/qtr > 25% como proxy.
     "earnings": dict(signal=None, price_cap=False, filters=[
-        "ta_sma200_pa", "sh_avgvol_o400", "fa_epsyoy_o25",
+        "cap_microover", "ta_sma200_pa", "sh_avgvol_o400", "fa_epsyoy_o25",
         "fa_epsqoq_o25", "ta_rsi_nos50", "fa_epsyoy1_o25",
         "fa_salesqoq_o25"]),
 }

@@ -47,6 +47,7 @@ class SymState:
         self.nbbo_last = 0
         self.blocked_until = 0.0      # entitlement backoff por venue
         self.subs = []
+        self.warmed = False           # warm-up historico ya escrito
 
 STATES = {s: SymState(s) for s in SYMS}
 
@@ -96,10 +97,42 @@ def make_on_nbbo(st):
                 f.write(f"{now:.0f} {t.bid:.4f} {t.ask:.4f}\n")
     return on_tick
 
+def warmup_sym(ib, st):
+    """Warm-up historico SIP (orden Yunior 2026-07-15 "connect to ibkr only"):
+    el archivo de bars queda AUTOSUFICIENTE — 2 dias de 1m TRADES reescritos
+    ordenados (truncate) antes de appendear bars vivos, para que el reader C++
+    no necesite el backfill REST de alpaca. Solo minutos COMPLETOS (< minuto
+    actual); dedupe via last_emitted."""
+    if st.warmed:
+        return
+    try:
+        smart = Stock(st.sym, "SMART", "USD")
+        ib.qualifyContracts(smart)
+        hist = ib.reqHistoricalData(smart, "", "2 D", "1 min", "TRADES",
+                                    useRTH=False, formatDate=2)
+        cur_min = time.time() - time.time() % 60
+        n = 0
+        with open(bars_path(st.sym), "w") as f:
+            for b in hist:
+                ep = b.date.timestamp(); ep -= ep % 60
+                if ep >= cur_min or b.close <= 0:
+                    continue
+                v = float(b.volume) if b.volume and b.volume > 0 else 0
+                f.write(f"{ep:.0f} {b.open:.4f} {b.high:.4f} "
+                        f"{b.low:.4f} {b.close:.4f} {v:.0f}\n")
+                st.last_emitted = max(st.last_emitted, ep)
+                n += 1
+        print(f"{st.sym}: warm-up historico {n} bars 1m (2D SIP)", file=sys.stderr)
+        st.warmed = True
+    except Exception as e:
+        print(f"{st.sym}: warm-up fallo ({e}) — reintento proximo ciclo",
+              file=sys.stderr)
+
 def subscribe_sym(ib, st):
     """(re)intenta suscribir un simbolo; deja backoff si no hay permisos."""
     if time.time() < st.blocked_until or st.subs:
         return
+    warmup_sym(ib, st)
     got_err = []
     def on_err(reqId, code, msg, contract):
         if code in NO_PERM_ERRORS:

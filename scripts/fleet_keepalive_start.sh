@@ -5,18 +5,19 @@
 # re-ejecuta cada 5 min (StartInterval) = watchdog de los watchdogs.
 cd "$(dirname "$0")/.." || exit 1
 ROOT="$(pwd)"
-for b in dram nok spcx tsla nvda txn tsm amd intc asml aapl gld qqq slv cper uso skhynix samsung kospi; do
+for b in dram nok spcx tsla nvda txn tsm amd intc asml aapl gld qqq slv cper uso skhy skhynix samsung kospi; do
   if ! pgrep -f "scripts/${b}_keepalive.sh" >/dev/null; then
     nohup zsh "$ROOT/scripts/${b}_keepalive.sh" >/dev/null 2>&1 &
     echo "$(date) fleet: ${b}_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
   fi
 done
 
-# daemon IBKR de flota (orden 2026-07-11 "ready for ibkr, alpaca fallback"):
-# SIP bars 1m + NBBO a data/*_ibkr.txt / nbbo_*.txt; auto-activa al comprar
-# el sub ($10 SIP bundle, >= USD 500 equity). Reader C++ preferencia+fallback.
+# daemon IBKR de flota — FUENTE UNICA desde 2026-07-15 ("connect to ibkr
+# only"; subs NA reales compradas: Cboe One + Network A/B/C, 10089 muerto).
+# SIP warm-up historico + bars 1m + NBBO a data/*_ibkr.txt / nbbo_*.txt.
+# Reader C++ en modo IBKR-ONLY (sin alpaca; ALPACA_FALLBACK=1 revive dual).
 if ! pgrep -f "ibkr_bar_bridge.py --daemon" >/dev/null; then
-  nohup ./venv/bin/python scripts/ibkr_bar_bridge.py --daemon NOK SPCX DRAM TSLA NVDA TXN TSM AMD INTC ASML AAPL GLD QQQ SLV CPER USO >> bridge_ibkr_fleet.log 2>&1 &
+  nohup ./venv/bin/python scripts/ibkr_bar_bridge.py --daemon NOK SPCX DRAM TSLA NVDA TXN TSM AMD INTC ASML AAPL GLD QQQ SLV CPER USO SKHY >> bridge_ibkr_fleet.log 2>&1 &
   echo "$(date) fleet: ibkr fleet daemon lanzado (pid $!)" >> fleet_autostart.log
 fi
 
@@ -26,6 +27,13 @@ fi
 if ! pgrep -f "scripts/korea_bar_bridge.py" >/dev/null; then
   nohup ./venv/bin/python scripts/korea_bar_bridge.py --daemon >> bridge_korea.log 2>&1 &
   echo "$(date) fleet: korea bridge lanzado (pid $!)" >> fleet_autostart.log
+fi
+
+# bargain bot (2026-07-15): gangas en flota + top gainers + oversold, vetadas
+# por TradingAgents — solo BUY notifica. Signal-only, cada 10 min en RTH.
+if ! pgrep -f "scripts/bargain_keepalive.sh" >/dev/null; then
+  nohup zsh "$ROOT/scripts/bargain_keepalive.sh" >/dev/null 2>&1 &
+  echo "$(date) fleet: bargain_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
 fi
 
 # ejecutor de ETFs apalancados (dinero real cuando TFSA >= 450 USD + etf_armed)

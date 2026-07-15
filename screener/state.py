@@ -53,6 +53,50 @@ def is_armed() -> bool:
     return os.path.exists(ARMED)
 
 
+def notify_mac(title: str, msg: str, sound: str = "Glass") -> None:
+    """Banner Mac + espejo Desktop (Yunior 2026-07-15 "make sure that we see
+    the notifications in desktop notes files as well"): mismo formato que
+    fleet_notify.h — ~/Desktop/trading-signals/YYYY-MM-DD.txt, una linea
+    'HH:MM:SS | titulo | msg' para comparar hora-de-notificacion vs grafico."""
+    import subprocess
+    t = title.replace('"', "'")
+    m = msg.replace('"', "'")
+    try:
+        subprocess.Popen(["osascript", "-e",
+                          f'display notification "{m}" with title "{t}" '
+                          f'sound name "{sound}"'],
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except Exception:
+        pass
+    try:
+        now = datetime.now().astimezone()
+        d = os.path.expanduser("~/Desktop/trading-signals")
+        os.makedirs(d, exist_ok=True)
+        with open(os.path.join(d, now.strftime("%Y-%m-%d") + ".txt"), "a") as f:
+            f.write(f"{now.strftime('%H:%M:%S')} | {title} | {msg}\n")
+    except Exception:
+        pass
+
+
+def pending_ta_path(day: str = None) -> str:
+    day = day or datetime.now().astimezone().strftime("%Y%m%d")
+    return os.path.join(BASE, f"pending_ta_{day}.json")
+
+
+def read_pending_ta(day: str = None) -> list:
+    p = pending_ta_path(day)
+    try:
+        return json.load(open(p)) if os.path.exists(p) else []
+    except Exception:
+        return []
+
+
+def write_pending_ta(cands: list, day: str = None) -> str:
+    p = pending_ta_path(day)
+    _atomic_write(p, json.dumps(cands, indent=1))
+    return p
+
+
 def watchlist_path(day: str = None) -> str:
     day = day or datetime.now().astimezone().strftime("%Y%m%d")
     return os.path.join(BASE, f"watchlist_{day}.json")
