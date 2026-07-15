@@ -71,41 +71,10 @@ def _load_alpaca_keys():
 
 
 def alpaca_spread(symbol: str):
-    """Live bid/ask from Alpaca latest quote (IEX feed, free plan). Returns
-    {bid, ask, spread_pct} or None. Yunior 2026-07-10: prefer top gainers with
-    high liquidity and a TIGHT bid-ask spread — a wide spread eats the profit
-    on entry+exit and marks a name you can't get out of."""
-    key, sec = _load_alpaca_keys()
-    if not key or not sec:
-        return None
-    try:
-        import urllib.request
-        import json
-        req = urllib.request.Request(
-            f"https://data.alpaca.markets/v2/stocks/{symbol}/quotes/latest?feed=iex",
-            headers={"APCA-API-KEY-ID": key, "APCA-API-SECRET-KEY": sec})
-        with urllib.request.urlopen(req, timeout=4) as r:
-            q = json.load(r).get("quote") or {}
-        bid, ask = float(q.get("bp") or 0), float(q.get("ap") or 0)
-        if bid <= 0 or ask <= 0 or ask < bid:
-            return None
-        # stale guard: an off-hours/idle IEX quote shows a junk-wide spread that
-        # would wrongly kill a good name — only trust quotes < 5 min old
-        ts = q.get("t") or ""
-        if len(ts) >= 19:   # "YYYY-MM-DDTHH:MM:SS..." (UTC, ns precision)
-            from datetime import datetime, timezone
-            try:
-                qt = datetime.strptime(ts[:19], "%Y-%m-%dT%H:%M:%S") \
-                             .replace(tzinfo=timezone.utc)
-                if (datetime.now(timezone.utc) - qt).total_seconds() > 300:
-                    return None
-            except ValueError:
-                pass
-        mid = (bid + ask) / 2
-        return {"bid": bid, "ask": ask,
-                "spread_pct": round((ask - bid) / mid * 100, 3)}
-    except Exception:
-        return None
+    """RETIRADO 2026-07-15 (orden 'no alpaca all over, just ibkr') —
+    usar ibkr_data.spread(). Se mantiene el nombre por compat de imports."""
+    import ibkr_data
+    return ibkr_data.spread(symbol)
 
 
 def usdcad(default: float = 1.45) -> float:

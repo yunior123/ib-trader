@@ -30,7 +30,8 @@ warnings.filterwarnings("ignore")
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import state  # noqa: E402
-from price import finnhub_quote, alpaca_spread, _load_finnhub_key  # noqa: E402
+from price import finnhub_quote, _load_finnhub_key  # noqa: E402
+import ibkr_data  # noqa: E402  (spread + prior-day via IBKR — no alpaca 2026-07-15)
 from sources import top_gainer_universe  # noqa: E402
 import research  # noqa: E402
 
@@ -62,30 +63,9 @@ def _mcap_m(row):
 
 
 def prior_day_move(sym):
-    """% move of the PRIOR session. Alpaca daily bars (Yahoo PROHIBIDO —
-    Yunior 2026-07-10 'yahoo or delayed shit is forbidden')."""
-    try:
-        import json
-        import urllib.request
-        from price import _load_alpaca_keys
-        key, sec = _load_alpaca_keys()
-        if not key:
-            return 0.0
-        from datetime import datetime, timedelta, timezone
-        start = (datetime.now(timezone.utc) - timedelta(days=10)).strftime("%Y-%m-%d")
-        req = urllib.request.Request(
-            f"https://data.alpaca.markets/v2/stocks/{sym}/bars"
-            f"?timeframe=1Day&limit=10&feed=iex&start={start}",
-            headers={"APCA-API-KEY-ID": key, "APCA-API-SECRET-KEY": sec})
-        with urllib.request.urlopen(req, timeout=6) as r:
-            bars = json.load(r).get("bars") or []
-        if len(bars) >= 2:
-            c1, c0 = float(bars[-1]["c"]), float(bars[-2]["c"])
-            if c0 > 0:
-                return (c1 - c0) / c0 * 100
-    except Exception:
-        pass
-    return 0.0
+    """% move of the PRIOR session. IBKR daily bars (no alpaca — orden Yunior
+    2026-07-15 'no alpaca all over, just ibkr'; Yahoo/delayed PROHIBIDO)."""
+    return ibkr_data.prior_day_move(sym)
 
 
 def evaluate(row):
@@ -128,7 +108,7 @@ def evaluate(row):
     vola = min(1.0, range_pct / 15.0)      # 15%+ intraday range = full marks
     # bid-ask spread gate + bonus (only survivors reach here — few API calls)
     spread_pct = None
-    sp = alpaca_spread(sym)
+    sp = ibkr_data.spread(sym)   # NBBO IBKR (no alpaca, 2026-07-15)
     if sp:
         spread_pct = sp["spread_pct"]
         one_tick = (sp["ask"] - sp["bid"]) <= 0.011   # min increment, unavoidable

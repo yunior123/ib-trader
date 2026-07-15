@@ -10,6 +10,17 @@ Uso:
   venv/bin/python scripts/backtest_replay.py fetch NOK 180        # dias -> data/bt_nok.txt
   venv/bin/python scripts/backtest_replay.py run NOK data/bt_nok.txt NOK_BB_STD=2.5 NOK_SHORTS=1 ...
 """
+
+# ==== GUARDIA NO-ALPACA (orden Yunior 2026-07-15 "no alpaca all over") ====
+# Este script de backtest aun trae historia via Alpaca REST. Migracion a
+# reqHistoricalData IBKR pendiente (chunks de 30d por pacing). Hasta entonces
+# NO corre salvo override explicito.
+import os as _os
+if _os.environ.get("ALPACA_LEGACY") != "1":
+    raise SystemExit(f"{__file__}: usa Alpaca (prohibido 2026-07-15). "
+                     "Migrar a IBKR hist o correr con ALPACA_LEGACY=1.")
+# ==========================================================================
+
 import json
 import os
 import re

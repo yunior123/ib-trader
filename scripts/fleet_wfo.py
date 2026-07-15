@@ -21,6 +21,17 @@ tot>0) y se reporta honesto.
 
 Usage: venv/bin/python scripts/fleet_wfo.py [SYM ...]
 """
+
+# ==== GUARDIA NO-ALPACA (orden Yunior 2026-07-15 "no alpaca all over") ====
+# Este script de backtest aun trae historia via Alpaca REST. Migracion a
+# reqHistoricalData IBKR pendiente (chunks de 30d por pacing). Hasta entonces
+# NO corre salvo override explicito.
+import os as _os
+if _os.environ.get("ALPACA_LEGACY") != "1":
+    raise SystemExit(f"{__file__}: usa Alpaca (prohibido 2026-07-15). "
+                     "Migrar a IBKR hist o correr con ALPACA_LEGACY=1.")
+# ==========================================================================
+
 from __future__ import annotations
 
 import itertools
