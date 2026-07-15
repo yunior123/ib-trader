@@ -22,10 +22,30 @@ in_window() {
   return 0
 }
 
+newest_bar_age() {
+  # edad (s) del bar mas nuevo de toda la flota — proxy de salud END-TO-END
+  local newest=0 ep
+  for f in data/bars_*_ibkr.txt; do
+    [[ -f $f ]] || continue
+    ep=$(tail -1 "$f" 2>/dev/null | awk '{print $1}')
+    [[ -n $ep && $ep -gt $newest ]] && newest=$ep
+  done
+  [[ $newest -eq 0 ]] && { echo 999999; return; }
+  echo $(( $(date +%s) - newest - 60 ))
+}
+
 while true; do
   if in_window; then
     if nc -z -w2 127.0.0.1 7496 2>/dev/null; then
-      fails=0
+      # ZOMBIE check (cazado 2026-07-15 17:29: puerto vivo, API muerta tras
+      # flap de ProtonVPN): puerto abierto pero CERO bars nuevos en 12 min
+      # con el daemon vivo = TWS wedged -> cuenta como fallo igual.
+      if pgrep -f "ibkr_bar_bridge.py --daemon" >/dev/null && \
+         [[ $(newest_bar_age) -gt 720 ]]; then
+        fails=$((fails+1))
+      else
+        fails=0
+      fi
     else
       fails=$((fails+1))
       if [[ $fails -ge 3 && $(( $(date +%s) - last_action )) -ge 900 ]]; then
