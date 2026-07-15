@@ -628,9 +628,16 @@ static int reader_main(const std::string& sym) {
         if (!alpaca_fb) {
             // IBKR-ONLY: sin datos = gritar, no degradar. Aviso a los 120s de
             // silencio (o del arranque) y cada 10 min mientras dure el hueco.
+            // GATE horario (2026-07-15, post-cierre): solo L-V 04:00-19:59 ET
+            // — de noche/finde el silencio es NORMAL (mercado cerrado) y sin
+            // gate esto seria una tormenta de falsos positivos toda la noche.
+            time_t wt = time(nullptr); struct tm wlt; localtime_r(&wt, &wlt);
+            bool market_window = wlt.tm_wday >= 1 && wlt.tm_wday <= 5 &&
+                                 wlt.tm_hour >= 4 && wlt.tm_hour < 20;
             double now = nowf();
             double ref = S.ibkr_seen > 0 ? S.ibkr_seen : start_t;
-            if (now - ref >= IBKR_STALE_S && now >= next_outage_warn) {
+            if (market_window &&
+                now - ref >= IBKR_STALE_S && now >= next_outage_warn) {
                 char m[160];
                 snprintf(m, sizeof(m),
                          "%.0f s sin bars IBKR (ibkr-only, sin fallback) — "
