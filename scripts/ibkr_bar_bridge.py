@@ -111,9 +111,12 @@ def make_on_whale(st):
     los bots ya lee; feed alpaca retirado 2026-07-15 era-ibkr-only).
     DIR: +1 agresor comprador (px>=ask), -1 vendedor (px<=bid), 0 indeterminado.
     Truncado diario para que el archivo no crezca sin limite."""
-    def on_ticks(ticks):
+    def on_ticks(ticker):
+        # updateEvent emite el Ticker; los ticks nuevos del batch vienen en
+        # ticker.tickByTicks (iterar el Ticker directo revienta en silencio
+        # dentro del event-loop de ib_insync — bug cazado 2026-07-15 al abrir)
         lines = []
-        for t in ticks:
+        for t in (getattr(ticker, "tickByTicks", None) or []):
             px = float(t.price or 0); sz = float(t.size or 0)
             usd = px * sz
             if usd < WHALE_MIN_USD or px <= 0:
