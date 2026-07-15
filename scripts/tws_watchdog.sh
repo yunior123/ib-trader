@@ -13,6 +13,9 @@ TWS_APP="/Users/yuniorrodriguezosorio/Applications/Trader Workstation/Trader Wor
 MIRROR_DIR="$HOME/Desktop/trading-signals"
 fails=0
 last_action=0
+awaiting_login=0   # tras relanzar, NO volver a matar hasta ver el puerto vivo
+                   # (el puerto solo abre POST-login; matar TWS mientras Yunior
+                   # esta en el 2FA seria sabotaje — race cazada 17:32)
 
 in_window() {
   local dow=$(date +%u) hm=$(date +%H%M)   # dow 1=lunes
@@ -37,6 +40,7 @@ newest_bar_age() {
 while true; do
   if in_window; then
     if nc -z -w2 127.0.0.1 7496 2>/dev/null; then
+      awaiting_login=0
       # ZOMBIE check (cazado 2026-07-15 17:29: puerto vivo, API muerta tras
       # flap de ProtonVPN): puerto abierto pero CERO bars nuevos en 12 min
       # con el daemon vivo = TWS wedged -> cuenta como fallo igual.
@@ -48,7 +52,15 @@ while true; do
       fi
     else
       fails=$((fails+1))
-      if [[ $fails -ge 3 && $(( $(date +%s) - last_action )) -ge 900 ]]; then
+      if [[ $awaiting_login -eq 1 ]]; then
+        # TWS ya relanzado y esperando login humano: solo recordatorio suave
+        # cada 15 min, JAMAS pkill (el puerto abre despues del login)
+        if [[ $(( $(date +%s) - last_action )) -ge 900 ]]; then
+          last_action=$(date +%s)
+          osascript -e 'display notification "TWS sigue esperando tu LOGIN + 2FA" with title "🔑 LOGIN TWS PENDIENTE" sound name "Glass"' 2>/dev/null
+        fi
+        fails=0
+      elif [[ $fails -ge 3 && $(( $(date +%s) - last_action )) -ge 900 ]]; then
         last_action=$(date +%s)
         # launcher colgado (visto 2026-07-15: 0% CPU, sin ventana) -> matar
         pkill -f "Trader Workstation" 2>/dev/null
@@ -59,6 +71,7 @@ while true; do
         mkdir -p "$MIRROR_DIR"
         echo "$(date '+%H:%M:%S') | 🚨 TWS WATCHDOG | puerto 7496 caido ${fails} min — TWS relanzado, login requerido" >> "$MIRROR_DIR/$(date +%Y-%m-%d).txt"
         fails=0
+        awaiting_login=1
       fi
     fi
   else
