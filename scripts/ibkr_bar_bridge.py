@@ -39,6 +39,8 @@ LIVE_ONLY = "--live-only" in sys.argv
 SYMS = [a for a in sys.argv[1:] if not a.startswith("--")] or ["USO"]
 CLIENT_ID = 84 if DAEMON else 83
 
+WHALE_MIN_USD = float(os.environ.get("WHALE_MIN_USD", "50000"))
+
 class SymState:
     def __init__(self, sym):
         self.sym = sym
@@ -48,6 +50,10 @@ class SymState:
         self.blocked_until = 0.0      # entitlement backoff por venue
         self.subs = []
         self.warmed = False           # warm-up historico ya escrito
+        self.bid = 0.0                # NBBO vivo (para el lado de la ballena)
+        self.ask = 0.0
+        self.whale_day = ""           # truncado diario del whale file
+        self.whales_on = False        # tick-by-tick suscrito (cap IBKR)
 
 STATES = {s: SymState(s) for s in SYMS}
 
@@ -89,13 +95,44 @@ def make_on_bar5(st):
 def make_on_nbbo(st):
     def on_tick(t):
         now = time.time()
-        if now - st.nbbo_last < 1.0:
-            return
         if t.bid and t.ask and t.bid > 0 and t.ask > t.bid:
+            st.bid, st.ask = t.bid, t.ask     # siempre fresco para las ballenas
+            if now - st.nbbo_last < 1.0:
+                return
             st.nbbo_last = now
             with open(f"data/nbbo_{st.sym.lower()}.txt", "w") as f:
                 f.write(f"{now:.0f} {t.bid:.4f} {t.ask:.4f}\n")
     return on_tick
+
+
+def make_on_whale(st):
+    """Prints gordos (>= WHALE_MIN_USD) del tape SIP tick-by-tick -> APPEND
+    "EPOCH PX USD DIR" a data/whale_<sym>.txt (formato que whale_score() de
+    los bots ya lee; feed alpaca retirado 2026-07-15 era-ibkr-only).
+    DIR: +1 agresor comprador (px>=ask), -1 vendedor (px<=bid), 0 indeterminado.
+    Truncado diario para que el archivo no crezca sin limite."""
+    def on_ticks(ticks):
+        lines = []
+        for t in ticks:
+            px = float(t.price or 0); sz = float(t.size or 0)
+            usd = px * sz
+            if usd < WHALE_MIN_USD or px <= 0:
+                continue
+            ep = t.time.timestamp() if getattr(t, "time", None) else time.time()
+            d = 0
+            if st.ask > 0 and px >= st.ask:
+                d = 1
+            elif st.bid > 0 and px <= st.bid:
+                d = -1
+            lines.append(f"{ep:.0f} {px:.4f} {usd:.0f} {d}\n")
+        if not lines:
+            return
+        day = time.strftime("%Y%m%d")
+        mode = "a" if st.whale_day == day else "w"   # nuevo dia -> truncar
+        st.whale_day = day
+        with open(f"data/whale_{st.sym.lower()}.txt", mode) as f:
+            f.writelines(lines)
+    return on_ticks
 
 def warmup_sym(ib, st):
     """Warm-up historico SIP (orden Yunior 2026-07-15 "connect to ibkr only"):
@@ -155,6 +192,31 @@ def subscribe_sym(ib, st):
             return
         st.subs = [rtb, tkr]
         print(f"{st.sym}: SIP bars+NBBO suscritos (premium activo)", file=sys.stderr)
+        # ballenas tick-by-tick (2026-07-15, reemplaza el feed alpaca): IBKR
+        # capea las suscripciones tick-by-tick por cuenta — best-effort en el
+        # orden de la lista de simbolos; sin ballenas el bot solo pierde el 5%
+        # del score (gate degradado, no roto). Error tipico al topar: 10190.
+        try:
+            tbt_err = []
+            def on_tbt_err(reqId, code, msg, contract):
+                if code in (10190, 322, 102):
+                    tbt_err.append(code)
+            ib.errorEvent += on_tbt_err
+            tbt = ib.reqTickByTickData(smart, "AllLast", 0, False)
+            tbt.updateEvent += make_on_whale(st)
+            ib.sleep(2)
+            ib.errorEvent -= on_tbt_err
+            if tbt_err:
+                ib.cancelTickByTickData(smart, "AllLast")
+                print(f"{st.sym}: whales tick-by-tick DENEGADO (err {tbt_err[0]}"
+                      f" — cap de suscripciones)", file=sys.stderr)
+            else:
+                st.subs.append(tbt)
+                st.whales_on = True
+                print(f"{st.sym}: whales tick-by-tick ON (>= "
+                      f"{WHALE_MIN_USD:.0f} USD)", file=sys.stderr)
+        except Exception as e:
+            print(f"{st.sym}: whales sub fallo ({e})", file=sys.stderr)
         try:                                  # venue overnight best-effort
             onc = Stock(st.sym, "OVERNIGHT", "USD")
             ib.qualifyContracts(onc)
@@ -169,15 +231,41 @@ def subscribe_sym(ib, st):
     finally:
         ib.errorEvent -= on_err
 
+def prune_whales(st):
+    """Recorta whale_<sym>.txt a los ultimos 15 min: los bots solo puntuan
+    prints <=10 min y escanean el archivo ENTERO por barra — en TSLA/NVDA
+    ($50k = print normal) creceria a cientos de miles de lineas al dia."""
+    p = f"data/whale_{st.sym.lower()}.txt"
+    try:
+        if not os.path.exists(p) or os.path.getsize(p) < 64 * 1024:
+            return
+        cut = time.time() - 900
+        keep = [ln for ln in open(p)
+                if ln.split(" ", 1)[0].isdigit() and float(ln.split(" ", 1)[0]) >= cut]
+        tmp = p + ".tmp"
+        with open(tmp, "w") as f:
+            f.writelines(keep)
+        os.replace(tmp, p)
+    except Exception:
+        pass
+
+
 def run_daemon():
     ib = IB()
     ib.connect(HOST, PORT, clientId=CLIENT_ID, readonly=True, timeout=20)
     ib.reqMarketDataType(1)                  # 1 = REALTIME. Delayed PROHIBIDO.
     print(f"ibkr fleet daemon: TWS {HOST}:{PORT}, {len(SYMS)} syms "
-          f"(bars 5s->1m + NBBO SIP + overnight)", file=sys.stderr)
+          f"(bars 5s->1m + NBBO SIP + whales tick-by-tick + overnight)",
+          file=sys.stderr)
+    last_prune = 0.0
     while ib.isConnected():
         for st in STATES.values():
             subscribe_sym(ib, st)
+        if time.time() - last_prune > 600:
+            last_prune = time.time()
+            for st in STATES.values():
+                if st.whales_on:
+                    prune_whales(st)
         ib.sleep(15)
     raise ConnectionError("TWS desconectado")
 
