@@ -47,6 +47,14 @@ fleet_autostart.out
 # compiled fleet binaries (build from .cpp)
 *_signal_bot
 alpaca_ws_bridge
+x_whale_bot
+finviz_scout
+qqq_xray
+opt_quick
+price_alarm
+data/x_budget.txt
+data/x_posts.jsonl
+data/x_whale_bot.pid
 data/whale_*.txt
 data/nbbo_*.txt
 data/bt_*.txt
@@ -57,3 +65,6 @@ trades.db-shm
 trades.db-wal
 data/topgainer
 topgainer/
+
+# cuarentenas y pre-ediciones (la historia vive en git)
+backup/

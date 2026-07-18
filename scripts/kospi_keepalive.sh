@@ -1,4 +1,5 @@
 #!/bin/zsh
+export KOSPI_KRX=1   # sesion KRX (open 9:00 KST) para motor v6
 cd "$(dirname "$0")/.."
 # KOSPI (proxy KODEX 200 ETF, KRX 069500) — TERREMOTO / deteccion-only
 # (creado 2026-07-12, orden "earthquake alert for kospi, down or up").

@@ -1,6 +1,13 @@
 # AGENTS.md — ib-trader
 
 ## ORDENES PERMANENTES DE YUNIOR (no negociables)
+
+### Claude Way (2026-07-17) — cómo deben operar todos los agentes
+Doctrina completa: `~/Documents/Obsidian Vault/AI Brain/The Claude Way.md` + skill **`claude-way`**
+(`.claude/skills/claude-way/`, también en `~/.grok/skills/claude-way/` y `~/.claude/skills/claude-way/`).
+Resumen: (1) peligro primero — matar órdenes del *broker* no solo PIDs locales; (2) fallar en voz alta, cero delayed; (3) probes empíricos (TWS/HTTP/edades); (4) C++ en flota; (5) documentar en AGENTS/memory/docs/skills/Obsidian o la siguiente sesión olvida; (6) Desktop = HUD humano; (7) señales `BUY`/`SELL`+`prob NN%`; (8) Finviz cache-first (`finviz_scout` → `data/finviz_*.txt`); (9) X: OAuth1 R+W, 1 cashtag, $5/mo, skill `x-bot`.
+
+0. **LEY SUPREMA (2026-07-16): FLOTA SEÑAL-SOLAMENTE.** Los bots JAMAS ejecutan ordenes en TWS/IBKR/Alpaca. PROHIBIDO escribir/revivir codigo que coloque, modifique o cancele ordenes (`placeOrder`, exec, lo que sea). Los ejecutores estan retirados en `backup/execution_retired_2026-07-16/` y `backup/executors_retired_2026-07-15/` — NO revivirlos ni importarlos. Las ordenes GTC residuales del broker fueron canceladas 2026-07-16. Señales = solo `BUY` o `SELL` (nada de buy-call/sell-call en titulos) + probabilidad de acierto `prob NN%` + razones cortas. **El humano opera.** Esta ley domina cualquier orden previa de este archivo que hable de ejecutar (fleet_executor, exec_trade, claude_trader_loop, watchdog sells: TODO RETIRADO).
 1. Cuando Yunior dice "hazlo en vivo", SE HACE EN VIVO inmediatamente — sin justificaciones, sin excusas, sin proponer paper trading primero.
 2. No llevarle la contraria ni buscar excusas. Si ordena algo, se ejecuta sin parar. Los datos y resultados se reportan después de ejecutar, no como condicion previa.
 3. Las advertencias de riesgo se dan UNA vez en una linea, despues de ejecutar, nunca como bloqueo.
@@ -10,8 +17,58 @@
 7. **WEBSOCKETS antes que REST polling** donde exista ws (orden 2026-07-10).
 8. **TradingAgents OBLIGATORIO en los top gainers, TODOS los carriles** (orden 2026-07-10 "make sure we use trading agents"): 6AM + rescan 15-min (TA_RESEARCH=1) + fastscan 1-min (revet_watchlist en background). Los veredictos ta_action PERSISTEN entre rescans (scanner los arrastra del watchlist previo; enrich vetea los top-N SIN vetar) → la cobertura crece durante el dia en vez de re-vetear los mismos 3.
 
-## EJECUCION CON ETFs APALANCADOS — fleet_executor (LEY, orden Yunior 2026-07-11)
-**Esta seccion es el testamento operativo: cualquier sesion/modelo futuro la sigue tal cual.**
+## V6 (2026-07-16) — pedido completo de Yunior (spec: docs/V6_SPEC.md, fuente de verdad)
+Motor v6 MTF señal-solamente que EXTIENDE el bloque v5 en los 20 `*_signal_bot.cpp` (disparo v5 neutralizado con `V5_MIN=99` default; v5 queda de feeder). Todo C++ (Python solo donde una libreria lo exige: ib_insync/ib_async para greeks). 24/5, todo visible en el Desktop (mirror `~/Desktop/trading-signals/YYYY-MM-DD.txt` + banners Mac + voz/sonidos).
+1. **Escenarios de apertura** (clasificador de fase, evaluado 10:00/10:30 y congelado): SPIKE_FADE (spike y desangre bajo VWAP), DIP_CLIMB (gap-up, dip bajo VWAP, reclaim con volumen 2x), TREND_UP/TREND_DOWN (>=80% de bars de un lado del VWAP), LATERAL (OR estrecho + VWAP plano). Gap breakaway (>1xATR15) veta los fades contra el gap. La fase habilita/veta clases de señal.
+2. **Pullback vs cambio de tendencia**: pullback = retroceso <=50% del ultimo swing + hold VWAP/BB15mid + gatillo MACD 1m (continuacion); reversal = >=2 de 3 {retr>62% o higher-low roto, flip MACD15, cierre al otro lado de BB15.mid tras band-walk}.
+3. **Bollinger multi-TF**: BB 1m/5m/15m con %B y bandwidth-percentile; squeeze (percentil <=10) + primer cierre fuera con RVOL>=1.5 = breakout; reversion MTF (bandas reventadas en >=2 TF) solo con ADX15<20; band-walk con ADX>25 prohibe vender por tocar banda.
+4. **MACD 4-color (CM)**: 15m = contexto que MANDA (a_dn veta BUY, a_up veta SELL — excepciones: MTF_BB_REV en rango y TREND_REVERSAL); 1m = gatillo de timing.
+5. **Trendlines** (LuxAlgo): break 1m confirmado sin trendline 15m intacta en contra.
+6. **Probabilidad %**: cada señal sale como `BUY`/`SELL` + `prob NN%` (tabla `data/prob_table_<sym>.txt` calibrada por backtest 30d + WFO 60/40, shrinkage k=20 hacia priors; sin señal bajo `V6_PROB_MIN=55`).
+7. **Overlay de opciones** (`scripts/options_enrich.py`, ib_insync **readonly=True**, TWS 7496, jamas delayed): tras cada `SYM: BUY`/`SYM: SELL` del mirror elige el contrato 0-2 DTE delta~0.55 y anexa linea `SYM: OPT | C/P fecha strike | delta gamma theta IV | OI vol spread | APTO same-day / NO-APTO (razon)` — para que el humano compre la opcion y la venda el mismo dia.
+8. **Alarmas de precio** (`scripts/price_alarm.cpp` + `~/Desktop/price-alerts.txt` editable a mano: `sym precio [up|down]`): al tocar el nivel → SIRENA 3x (`sounds/fire_alarm.wav`) + voz + banner + mirror; la linea queda `FIRED ...`. **Alerta urgente activa: `intc 100 down`** (INTC < 100).
+9. **Sin flatten por reloj**: ninguna venta programada 15:30/15:45/15:50 por defecto (branch EOD gated por `{SYM}_EOD_FLATTEN`, default 0); salidas por stop/target/trail/time-stop por duracion se mantienen.
+Modulos M1-M5, contratos de formato, gates G1-G10 y plan de rollout: `docs/V6_SPEC.md`.
+
+### v6.1 retest-confirm (2026-07-16 noche) — señales anti-trampa
+Mejora #2 de Yunior ("no entrar cuando viene el pullback; confirmacion completa y rebote hecho; ojo trampas de ballena") = regla 2 del PLAYBOOK codificada. En los **22 bots** (los 20 del spec + mu/smh): las clases de ruptura (TLINE_BREAK_*, ORB_*, SQUEEZE_BREAK_*, VWAP_LOSS_SHORT) ya NO disparan al romper — quedan **ARMADAS** y solo emiten con (a) pullback al nivel roto (retrace 30-70% del impulso o toque ±0.25×ATR) + (b) vela 1m de RECHAZO en la direccion (tag `+retest-ok`), o (c) 3 cierres consecutivos sosteniendo sin retest (tag `+breakaway`). Pullback que ATRAVIESA el nivel (cierre en contra >50% del impulso) = **TRAMPA-EVITADA** (cancelada + log; 107 trampas evitadas en el backtest 30d). Expira a 20 bars; veto 15m re-verificado al confirmar. Off por bot: `{SYM}_V6_RETEST=0`. Backtest antes/despues en `docs/V6_BACKTEST.md` §v6.1: TLINE_BREAK_LONG 37%→50% WR; VWAP_LOSS_SHORT empeoraba (62%→44%) → **EXENTA por clase** via `{SYM}_V6_RETEST_EXEMPT` (csv, default `"VWAP_LOSS_SHORT"`, ""=ninguna): dispara inmediato v6.0 y su WR quedo restaurado (62.3% comb. / 73.3% OOS en el re-backtest). Re-aplicar template a la flota: `python3 scripts/apply_v6.py --update` (remueve el bloque viejo por marcadores y re-inserta; compila+smoke secuencial). Voz de mu/smh corregida de paso (decian "buy Intel now" por clonado; ahora "Micron" / "S M H").
+
+### Ley flujo de opciones en el análisis (orden Yunior 2026-07-17)
+Toda señal direccional DEBE integrar el flujo de opciones (delta de volumen call/put por strike entre lecturas — `scripts/fetch_option_walls.py` via TWS 7496, o alertas de flujo del humano). Reglas observadas en vivo (OPEX 2026-07-17, NVDA +117k calls 205-210 → empuje a 204.8 y retroceso):
+1. **Flujo alto de CALLS ≠ subida inmediata**: pico de compra de calls = retail tarde + dealers cortos de gamma vendiendo el subyacente al cubrir → techo/retroceso local ANTES de continuar. No gatillar compra en el primer empuje; la entrada es el pullback posterior.
+2. Strike con calls masivos = imán Y techo al primer toque; puts masivos en un strike = piso probable (cobertura).
+3. Flujo unilateral extremo intradía (especialmente OPEX) = riesgo de reversión/pin a corto plazo. El flujo confirma dirección a medio plazo; NO es gatillo de persecución.
+4. Cada señal menciona el flujo explícitamente y ajusta su `prob NN%` con él.
+
+### Opciones rapidas: opt_chain_cache + opt_quick (2026-07-16 noche)
+- **`scripts/opt_chain_cache.py`** (ib_insync **readonly=True**, TWS 7496, clientId **48**, realtime `reqMarketDataType(1)` — jamas delayed): cada 3 min durante 9:00-16:15 ET vuelca a `data/opt_chain_<sym>.txt` la cadena **±6% ATM** del vencimiento mas cercano + el siguiente, para los 17 de la flota (SMH TSM QQQ NVDA MU ASML INTC DRAM SKHY SPCX AMD TXN TSLA NOK AAPL GOOGL QCOM): `strike right exp bid ask vol oi iv delta gamma` (n/d = -1; escritura atomica). Watchdog `scripts/opt_chain_keepalive.sh` (lanzado por fleet_keepalive_start.sh). Test manual: `--once` (ignora la ventana). Ciclo medido: ~157s / 972 contratos.
+- **`opt_quick`** (C++, `scripts/opt_quick.cpp`, compilar `clang++ -std=c++17 -O2 -o opt_quick scripts/opt_quick.cpp`): lector instantaneo del cache, CERO red. `./opt_quick NVDA` → P/C de volumen y de OI (total y por vencimiento), **max pain**, top-5 muros (OI+vol), spread% por strike con gates del playbook (**spread<=5% y OI>500** → APTO). `./opt_quick NVDA 210 C` → detalle del contrato con veredicto de gates. Aviso "CACHE VIEJO" si >5 min.
+- (2026-07-16 noche) opt_chain_cache ampliado 17→21 syms: +MSFT AVGO AMZN META (banda ±4%, 12 strikes, 4s ticks) para el P/C de qqq_xray; verificar ciclo <180s en vivo.
+
+### qqq_xray — radiografia instantanea del QQQ (2026-07-16 noche, C++, señal-solamente)
+- **`scripts/qqq_xray.cpp`** → `./qqq_xray` (<50ms, CERO red, solo lee `data/`): por miembro top-10 (`data/qqq_weights.txt`, editable, refrescar MENSUAL) precio, %dia, contribucion ponderada, tendencia (OLS 30 closes 1m + HH/HL vs LH/LL), RVOL y P/C; agregado: contrib top-10 vs %real QQQ (divergencia), **DIQUE** (MSFT+AAPL: VERDE/MIXTO/ROTO), **LASTRE** (NVDA+AVGO+AMD: SANGRAN/NEUTRO/EMPUJAN) y VEREDICTO estilo playbook ("dique aguanta + semis sangran = empate interno, no operar QQQ").
+- `./qqq_xray --watch`: loop 60s; SOLO al CAMBIAR dique/veredicto → banner Mac + voz Paulina + linea en `~/Desktop/trading-signals/YYYY-MM-DD.txt` (anti-spam). `--data DIR` para tests sinteticos. Miembros sin feed (COST/NFLX) → "s/d" + pesos renormalizados. Compilar: `clang++ -std=c++17 -O2 -o qqq_xray scripts/qqq_xray.cpp`.
+
+### finviz_scout — datos Finviz Elite en vivo (2026-07-17 madrugada, C++, señal-solamente)
+- `scripts/finviz_scout.cpp` → `./finviz_scout` (compilar `clang++ -std=c++17 -O2 -o finviz_scout scripts/finviz_scout.cpp -lcurl`): UN request/ciclo (60s premarket 4:00-9:30 ET, 180s RTH, dormido fuera) con focus_ticker(US)+MSFT AVGO AMZN META QQQ SMH → `data/finviz_<sym>.txt` (clave=valor: short float, gap, rel vol, earnings date, analyst recom col 62, target price col 69...). Token `FINVIZ_AUTH3` de feeds.env, jamas hardcodeado.
+- Banners (fleet_notify.h) SOLO cambios de estado vs ciclo previo: gap>±2%, rel vol cruza 2.5x, short float ±0.5pt, earnings <48h (1/dia/ticker, `data/finviz_earn_notified.txt`), target/recom cambian; primer ciclo silencioso. Feed roto (HTTP≠200/CSV vacio/HTML/429) → "FINVIZ ROTO" banner+log en voz alta + backoff 5 min.
+- Test manual: `./finviz_scout --once [SYM extra...]`; watchdog `scripts/finviz_scout_keepalive.sh` (lo lanza fleet_keepalive_start.sh; fleet_sleep lo mata). Detalles: `.claude/skills/finviz-elite/SKILL.md`.
+
+### Skill fleet-ops
+`.claude/skills/fleet-ops` — operacion rapida de la flota (modo foco `data/focus_ticker`, reinicios via keepalives, sirenas/alarmas de precio, escaneo de opciones, estado). Usarla cuando Yunior pida activar/apagar bots o estado; todo señal-only (ley #0).
+
+### x_whale_bot — posts diarios a X / semis+whales (2026-07-17, C++, señal-solamente)
+- **Memo canónico:** [`docs/X-WHALE-BOT.md`](docs/X-WHALE-BOT.md) (presupuesto, auth, comandos, flujo). Runbook: `docs/OPERATIONS.md` § X whale bot. Playbook: inventario en `docs/PLAYBOOK-2026-07-16-el-mejor-dia.md`.
+- `scripts/x_whale_bot.cpp` → `./x_whale_bot` (compilar con Homebrew OpenSSL: `-I/opt/homebrew/opt/openssl@3/include -L.../lib -lcurl -lcrypto`).
+- **Budget hard $5/mo** (X pay-per-use ~$0.015/post sin URL; **URLs prohibidas** ~$0.20). Ledger `data/x_budget.txt`, audit `data/x_posts.jsonl`. Max 1 post/día, ≤30/mes.
+- Fuente: Finviz Elite live (`FINVIZ_AUTH3`) o cache `data/finviz_*.txt`. Universo = focus_ticker + semis flota. Score RVOL/gap/short float.
+- Creds en `x.env` (gitignored): **OAuth1 user** Read+Write; Bearer app-only = 403 (probado 2026-07-17).
+- Schedule: `--daemon` ventana 09:00–09:15 America/Toronto (keepalive `scripts/x_whale_bot_keepalive.sh`).
+- Skill agentes: `.claude/skills/x-bot/SKILL.md` — dry-run por defecto; `--post-now` solo si Yunior lo pide.
+- Manual: `./x_whale_bot --dry-run` | `--budget` | `--post-now` | `--daemon`.
+
+## [RETIRADA 2026-07-16] EJECUCION CON ETFs APALANCADOS — fleet_executor (era LEY 2026-07-11)
+**SECCION RETIRADA por la ORDEN PERMANENTE #0 (flota señal-solamente).** El fleet_executor y su keepalive viven en `backup/execution_retired_2026-07-16/`; las GTC/stops residuales del broker se cancelaron 2026-07-16. NO seguir estas instrucciones; se conservan solo como historia del mapa de ETFs apalancados y sus reglas de riesgo.
 - **No se opera el ticker, se opera su ETF apalancado** (mapa VERIFICADO en vivo Alpaca+IBKR: `data/leveraged_map.json`): BUY del subyacente → comprar ETF **bull** (TSLA→TSLL, AAPL→AAPU, TSM→TSMU, NVDA→NVDL, AMD→AMDL, INTC→INTW, ASML→ASMU, TXN→TXNU, QQQ→TQQQ, GLD→UGL, SLV→AGQ, USO→UCO, CPER→CPXR, NOK→LNOK, SPCX→LOFF, DRAM→RAM); señal de BAJADA (BUY PUT) → comprar ETF **bear** (TSLS/AAPD/TSMZ/NVDD/AMDD/SQQQ/GLL/ZSL/SCO/SNK). Sin bear listado (INTC/ASML/TXN/NOK/DRAM/CPER): el put queda señal-solo.
 - **BULL: "we buy and sell higher only, if not we keep the bag"** — vender SOLO ≥ profit_floor (entry + max(1%, fees ida+vuelta + 0.2%)); señal de venta por debajo ⇒ BOLSA + limit **GTC** de recuperacion EN EL BROKER (sobrevive reinicios/muerte del Mac). **PERO con STOP CATASTROFICO en precio** (orden 2026-07-11 "stop loss on price as well... a lot of money in the future"): STP GTC a −25% del ETF (`ETF_BULL_STOP`, ~−12% subyacente en 2x) — la bolsa vive para caidas normales (backtest: bolsas ~−20% recuperan 86%), el colapso del nombre se corta. GTC de recuperacion + stop en el MISMO grupo **OCA** del broker: una se llena → la otra se cancela sola (imposible oversell, cero dependencia del Mac).
 - **BEAR: jamas bolsa** — STOP GTC servidor-side SIEMPRE (bears regulares −5% `ETF_BEAR_STOP`; QUAKE-bears normalizado por leverage: `lev × 1.5%` acotado 1.5–4.5%, i.e. TSLS 1.5% / GLL 3% / SQQQ 4.5% — mismo riesgo subyacente en todos); si el stop no se puede colocar, la posicion se cierra al instante. QUAKE-bears (los UNICOS activos por defecto, `ETF_QUAKE_BEARS=1`): entran SOLO con banner TERREMOTO CAIDA, time-stop 45min, sin entradas despues de 15:20, flatten 15:50, edad max 8h, max 2 simultaneos, bloqueados si hay bull/bolsa del mismo subyacente. Sale ademas con la señal de cover / TERREMOTO ALZA.
@@ -76,6 +133,9 @@ Tres velas del mismo color acelerando + volumen decreciente = agotamiento, no fu
   vende OTM) para neutralizar IV; IV baja = calls/puts secas mejor.
 - Nuestra ventaja: el bot da la DIRECCION y el TIMING; la opcion es solo el vehiculo con
   perdida maxima definida (TFSA-safe, sin margen).
+- FLUJO (ley 2026-07-17): pico de flujo de calls = techo local probable (dealers cubren vendiendo);
+  entrar en el pullback, no en el empuje. Calls masivos en strike = iman+techo; puts masivos = piso.
+  Toda señal cita el flujo y ajusta su prob.
 
 ### 6. Riesgo — lo unico no negociable
 - Riesgo por trade <=1-2% del equity (Kelly fraccional 0.25-0.5 del Kelly pleno; skill kelly-criterion).

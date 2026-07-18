@@ -130,3 +130,14 @@ flat by 15:50 precisely for this). Their findings produced:
 Any parameter change to a shipped strategy: replay 90d → train/OOS 60/40 → WR ≥ 70 +
 positive OOS or it does not ship. Any executor logic change: `--selftest` + the
 adversarial checklist in memory (`leveraged-etf-execution.md` — "do NOT reintroduce").
+
+## Options-flow law (order 2026-07-17)
+Evidence: OPEX 2026-07-17 — +117k fresh NVDA calls 205-210 in 38 min pushed price to 204.8, then
+pullback to 203.1 before continuation. Pattern confirmed live by Yunior's flow alerts.
+1. High call-flow spike = local top risk, NOT an immediate-buy signal (late retail + short-gamma
+   dealers selling the underlying as they hedge). Entry is the pullback after the spike.
+2. Massive-OI call strike = magnet AND ceiling on first touch; massive-OI put strike = probable floor.
+3. Extreme one-sided intraday flow (especially OPEX) = short-term reversion/pin risk; flow confirms
+   medium-term direction only.
+4. Every directional signal must cite current flow and adjust its `prob NN%` accordingly.
+   Source: scripts/fetch_option_walls.py (TWS 7496, OI+volume delta between reads).

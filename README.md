@@ -16,6 +16,7 @@ trading options; the executor autonomously trades leveraged ETFs on the same sig
 | [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Full system design: data plane, signal engines, execution plane, file contracts, measured latencies |
 | [docs/OPERATIONS.md](docs/OPERATIONS.md) | Runbook: start/stop, kill switch, health checks, activation day, troubleshooting table |
 | [docs/TRADING-RULES.md](docs/TRADING-RULES.md) | The trading law: owner orders, ETF map, bull/bear/bag rules, evidence trail, change control |
+| [docs/X-WHALE-BOT.md](docs/X-WHALE-BOT.md) | Daily X semis/whale poster: $5/mo budget, Finviz fleet scan, OAuth1, 09:00 Toronto |
 | [AGENTS.md](AGENTS.md) | Agent-facing operational law: standing orders, master trading playbook, per-component history |
 
 ## The system in five lines

@@ -57,7 +57,7 @@ while true; do
         # cada 15 min, JAMAS pkill (el puerto abre despues del login)
         if [[ $(( $(date +%s) - last_action )) -ge 900 ]]; then
           last_action=$(date +%s)
-          osascript -e 'display notification "TWS sigue esperando tu LOGIN + 2FA" with title "🔑 LOGIN TWS PENDIENTE" sound name "Glass"' 2>/dev/null
+          osascript -e 'display notification "TWS sigue esperando tu LOGIN + 2FA" with title "🔑 LOGIN TWS PENDIENTE" sound name "ProChord"' 2>/dev/null
         fi
         fails=0
       elif [[ $fails -ge 3 && $(( $(date +%s) - last_action )) -ge 900 ]]; then
@@ -66,7 +66,7 @@ while true; do
         pkill -f "Trader Workstation" 2>/dev/null
         sleep 5
         open -a "$TWS_APP" 2>/dev/null
-        osascript -e 'display notification "TWS caido — relanzado, LOGIN + 2FA requerido" with title "🚨 TWS WATCHDOG" sound name "Sosumi"' 2>/dev/null
+        osascript -e 'display notification "TWS caido — relanzado, LOGIN + 2FA requerido" with title "🚨 TWS WATCHDOG" sound name "ProAlarm"' 2>/dev/null
         say -v Daniel "T W S is down. Login required." >/dev/null 2>&1 &
         mkdir -p "$MIRROR_DIR"
         echo "$(date '+%H:%M:%S') | 🚨 TWS WATCHDOG | puerto 7496 caido ${fails} min — TWS relanzado, login requerido" >> "$MIRROR_DIR/$(date +%Y-%m-%d).txt"

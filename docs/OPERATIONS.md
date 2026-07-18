@@ -80,6 +80,7 @@ tail -3 bridge_ibkr_fleet.log    # pre-subscription: "SIN PERMISOS (err 420) —
 | `<sym>_signals.log` | bot stdout (indicators, arms, trades with `t=`) |
 | `ws_daemon.log`, `bridge_ibkr_fleet.log`, `bridge_<sym>.log` | data plane |
 | `fleet_autostart.log` | keepalive/guard launches |
+| `x_whale_bot.log`, `data/x_posts.jsonl`, `data/x_budget.txt` | X daily whale poster (see [X-WHALE-BOT.md](X-WHALE-BOT.md)) |
 
 ## Database queries (trades.db)
 
@@ -103,3 +104,33 @@ retains full history and re-imports automatically into the empty table).
 ./venv/bin/python scripts/gen_charts.py && (cd charts && python3 -m http.server 8899)
 ```
 Ship gate (standing order #7): WR ≥ 70% AND positive out-of-sample walk-forward, or OFF.
+
+## X whale bot (daily semis / whale post) — 2026-07-17
+
+Full memo: **[X-WHALE-BOT.md](X-WHALE-BOT.md)**. Agent skill: `.claude/skills/x-bot/`.
+
+**Budget hard cap $5/mo.** ~$0.015/post without URL; **URLs forbidden** (~$0.20). Target
+1 post/weekday at **09:00 America/Toronto**. Signal-only (no broker).
+
+```bash
+cd ~/Documents/GitHub/ib-trader
+# build (OpenSSL via Homebrew)
+OPENSSL=/opt/homebrew/opt/openssl@3
+clang++ -std=c++17 -O2 -I"$OPENSSL/include" -L"$OPENSSL/lib" \
+  -o x_whale_bot scripts/x_whale_bot.cpp -lcurl -lcrypto
+
+./x_whale_bot --budget          # remaining $
+./x_whale_bot --dry-run         # compose from Finviz, $0
+./x_whale_bot --post-now        # live (needs OAuth1 user keys in x.env)
+zsh scripts/x_whale_bot_keepalive.sh   # daemon 09:00 Toronto
+```
+
+| File | Role |
+|---|---|
+| `x.env` | Secrets + budget knobs (**gitignored**) |
+| `data/x_budget.txt` | Month ledger `YYYY-MM posts spent` |
+| `data/x_posts.jsonl` | Audit log |
+| `feeds.env` | `FINVIZ_AUTH3` for live export |
+
+**Auth gotcha:** Bearer app-only → HTTP 403 on POST. Need OAuth1 user Read+Write
+(`X_API_KEY`, `X_API_SECRET`, `X_ACCESS_TOKEN`, `X_ACCESS_SECRET`) in `x.env`.

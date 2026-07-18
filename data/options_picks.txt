@@ -1,0 +1,12 @@
+# options_picks — 2026-07-18 17:29 (señal-only, humano decide)
+# SYM    LANE         BIAS                     PX   CHG%  RVOL  RSI  PERFW%  $VOL(M)  EARNINGS
+ISRG     jugosas      PUT                  345.42  -14.2   4.4   30   -15.1     3994  7/16/2026 4:30:00 PM
+TRVI     jugosas      CALL                  19.07    9.8   4.0   61     6.9      159  5/5/2026 4:30:00 PM
+CDNS     jugosas      PUT                  330.11   -9.5   2.2   29   -14.1     1713  7/27/2026 4:30:00 PM
+AA       jugosas      PUT!sobrevendido      43.98   -6.1   2.2   25    -9.7      514  7/16/2026 4:30:00 PM
+STX      jugosas      CALL                 787.66    5.7   1.6   42   -13.5     5524  7/28/2026 4:30:00 PM
+PNR      jugosas      PUT                   62.45   -4.9   2.0   27   -18.0      314  7/28/2026 8:30:00 AM
+NXT      jugosas      PUT                  103.10   -3.5   2.4   40    -7.5      713  7/30/2026 4:30:00 PM
+AEHR     jugosas      MIXTO                 81.05   -3.7   1.9   47    11.6      412  7/14/2026 4:30:00 PM
+ARWR     jugosas      CALL                  74.30    4.1   1.8   43    -2.8      280  5/7/2026 4:30:00 PM
+SKM      jugosas      PUT                   30.62   -3.6   1.7   37    -7.8      136  5/27/2026 4:30:00 PM

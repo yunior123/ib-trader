@@ -1,0 +1,192 @@
+# v6_wfo_report | 2026-07-16 08:15 | v6_backtest.py (ventana 30 sesiones, split 60/40, triple-barrier 0.75xATR14_1m/60min, PROB_MIN=0 en replay para observar todas las clases)
+# grid WFO 27-combos (V6_MIN/V6_RVOL/V6_RETR_CONT) NO corrido — fase 2 manual (`--grid`); este reporte = calibracion con defaults.
+
+AAPL: 30 sesiones 2026-05-28..2026-07-10 | 68 trades WR 50% (train 36 / oos 32) | WARN set señales difiere entre pasadas
+  ORB_LONG                 train   3n  33.3% | oos   8n  87.5% | avgW +0.10% avgL -0.10% | prob_bot 50% | PRIOR
+  ORB_SHORT                train   8n  37.5% | oos   2n  50.0% | avgW +0.10% avgL -0.08% | prob_bot 49% | PRIOR
+  SQUEEZE_BREAK_LONG       train   1n 100.0% | oos   2n  50.0% | avgW +0.13% avgL -0.11% | prob_bot 58% | PRIOR
+  TLINE_BREAK_LONG         train   2n 100.0% | oos   5n  20.0% | avgW +0.05% avgL -0.07% | prob_bot 52% | DEGRADADA
+  TLINE_BREAK_SHORT        train   9n  22.2% | oos   3n  33.3% | avgW +0.06% avgL -0.07% | prob_bot 45% | PRIOR
+  TREND_PULLBACK_LONG      train   1n   0.0% | oos   3n 100.0% | avgW +0.06% avgL -0.09% | prob_bot 59% | PRIOR
+  TREND_REVERSAL_LONG      train   5n  60.0% | oos   4n  25.0% | avgW +0.14% avgL -0.10% | prob_bot 56% | PRIOR
+  TREND_REVERSAL_SHORT     train   5n  80.0% | oos   5n  40.0% | avgW +0.14% avgL -0.09% | prob_bot 57% | DEGRADADA
+  VWAP_LOSS_SHORT          train   2n  50.0% | oos   0n   0.0% | avgW +0.04% avgL -0.04% | prob_bot 59% | PRIOR
+AMD: 30 sesiones 2026-05-28..2026-07-10 | 67 trades WR 46% (train 39 / oos 28) | WARN set señales difiere entre pasadas
+  ORB_LONG                 train   2n  50.0% | oos   2n   0.0% | avgW +0.20% avgL -0.21% | prob_bot 53% | PRIOR
+  ORB_SHORT                train   5n  80.0% | oos   7n  57.1% | avgW +0.24% avgL -0.25% | prob_bot 58% | PRIOR
+  TLINE_BREAK_LONG         train   6n  16.7% | oos   3n  66.7% | avgW +0.08% avgL -0.08% | prob_bot 46% | PRIOR
+  TLINE_BREAK_SHORT        train   6n  66.7% | oos   3n  33.3% | avgW +0.14% avgL -0.13% | prob_bot 58% | PRIOR
+  TREND_PULLBACK_LONG      train   3n  66.7% | oos   1n   0.0% | avgW +0.27% avgL -0.20% | prob_bot 63% | PRIOR
+  TREND_PULLBACK_SHORT     train   1n 100.0% | oos   1n   0.0% | avgW +0.17% avgL -0.08% | prob_bot 64% | PRIOR
+  TREND_REVERSAL_LONG      train   7n  42.9% | oos   3n  33.3% | avgW +0.20% avgL -0.23% | prob_bot 52% | PRIOR
+  TREND_REVERSAL_SHORT     train   8n  37.5% | oos   6n  33.3% | avgW +0.32% avgL -0.24% | prob_bot 47% | DEGRADADA
+  VWAP_LOSS_SHORT          train   1n   0.0% | oos   2n 100.0% | avgW +0.26% avgL -0.30% | prob_bot 57% | PRIOR
+ASML: 30 sesiones 2026-05-28..2026-07-10 | 64 trades WR 50% (train 39 / oos 25) | WARN set señales difiere entre pasadas
+  MTF_BB_REV_LONG          train   0n   0.0% | oos   1n   0.0% | avgW +0.00% avgL -0.09% | prob_bot 55% | PRIOR
+  ORB_LONG                 train   4n   0.0% | oos   1n 100.0% | avgW +0.12% avgL -0.12% | prob_bot 44% | PRIOR
+  ORB_SHORT                train   1n   0.0% | oos   5n  40.0% | avgW +0.16% avgL -0.13% | prob_bot 48% | DEGRADADA
+  TLINE_BREAK_LONG         train   7n  14.3% | oos   4n  50.0% | avgW +0.13% avgL -0.09% | prob_bot 44% | PRIOR
+  TLINE_BREAK_SHORT        train   8n  75.0% | oos   3n 100.0% | avgW +0.12% avgL -0.09% | prob_bot 61% | PRIOR
+  TREND_PULLBACK_LONG      train   1n   0.0% | oos   1n   0.0% | avgW +0.00% avgL -0.05% | prob_bot 59% | PRIOR
+  TREND_PULLBACK_SHORT     train   2n  50.0% | oos   2n 100.0% | avgW +0.12% avgL -0.21% | prob_bot 61% | PRIOR
+  TREND_REVERSAL_LONG      train   6n 100.0% | oos   2n  50.0% | avgW +0.21% avgL -0.25% | prob_bot 65% | PRIOR
+  TREND_REVERSAL_SHORT     train   7n  28.6% | oos   6n  50.0% | avgW +0.12% avgL -0.21% | prob_bot 48% | DEGRADADA
+  VWAP_LOSS_SHORT          train   3n  66.7% | oos   0n   0.0% | avgW +0.15% avgL -0.09% | prob_bot 61% | PRIOR
+CPER: 30 sesiones 2026-05-28..2026-07-10 | 48 trades WR 44% (train 35 / oos 13) | WARN set señales difiere entre pasadas
+  ORB_LONG                 train   3n  33.3% | oos   1n 100.0% | avgW +0.09% avgL -0.07% | prob_bot 50% | PRIOR
+  ORB_SHORT                train   4n  50.0% | oos   4n   0.0% | avgW +0.07% avgL -0.07% | prob_bot 52% | PRIOR
+  SQUEEZE_BREAK_LONG       train   1n   0.0% | oos   0n   0.0% | avgW +0.00% avgL -0.05% | prob_bot 53% | PRIOR
+  SQUEEZE_BREAK_SHORT      train   1n 100.0% | oos   0n   0.0% | avgW +0.16% avgL +0.00% | prob_bot 58% | PRIOR
+  TLINE_BREAK_SHORT        train   1n 100.0% | oos   0n   0.0% | avgW +0.02% avgL +0.00% | prob_bot 57% | PRIOR
+  TREND_REVERSAL_LONG      train   8n  12.5% | oos   5n  40.0% | avgW +0.08% avgL -0.07% | prob_bot 42% | DEGRADADA
+  TREND_REVERSAL_SHORT     train  11n  72.7% | oos   3n  33.3% | avgW +0.09% avgL -0.07% | prob_bot 61% | PRIOR
+  VWAP_LOSS_SHORT          train   6n  50.0% | oos   0n   0.0% | avgW +0.05% avgL -0.04% | prob_bot 58% | PRIOR
+DRAM: 30 sesiones 2026-05-28..2026-07-10 | 58 trades WR 40% (train 40 / oos 18) | WARN set señales difiere entre pasadas
+  MTF_BB_REV_LONG          train   1n   0.0% | oos   0n   0.0% | avgW +0.00% avgL -0.17% | prob_bot 52% | PRIOR
+  ORB_LONG                 train   2n   0.0% | oos   1n   0.0% | avgW +0.00% avgL -0.19% | prob_bot 48% | PRIOR
+  ORB_SHORT                train   1n 100.0% | oos   6n  83.3% | avgW +0.26% avgL -0.34% | prob_bot 55% | PRIOR
+  SQUEEZE_BREAK_LONG       train   3n  33.3% | oos   0n   0.0% | avgW +0.32% avgL -0.31% | prob_bot 53% | PRIOR
+  SQUEEZE_BREAK_SHORT      train   0n   0.0% | oos   2n   0.0% | avgW +0.00% avgL -0.19% | prob_bot 56% | PRIOR
+  TLINE_BREAK_LONG         train   9n  33.3% | oos   1n   0.0% | avgW +0.07% avgL -0.19% | prob_bot 48% | PRIOR
+  TLINE_BREAK_SHORT        train   3n   0.0% | oos   1n 100.0% | avgW +0.18% avgL -0.14% | prob_bot 48% | PRIOR
+  TREND_PULLBACK_LONG      train   3n  33.3% | oos   1n   0.0% | avgW +0.19% avgL -0.10% | prob_bot 58% | PRIOR
+  TREND_PULLBACK_SHORT     train   1n 100.0% | oos   0n   0.0% | avgW +0.41% avgL +0.00% | prob_bot 64% | PRIOR
+  TREND_REVERSAL_LONG      train   5n  40.0% | oos   2n  50.0% | avgW +0.15% avgL -0.24% | prob_bot 52% | PRIOR
+  TREND_REVERSAL_SHORT     train   9n  44.4% | oos   4n  50.0% | avgW +0.24% avgL -0.27% | prob_bot 52% | PRIOR
+  VWAP_LOSS_SHORT          train   3n  33.3% | oos   0n   0.0% | avgW +0.19% avgL -0.19% | prob_bot 57% | PRIOR
+GLD: 30 sesiones 2026-05-28..2026-07-10 | 68 trades WR 51% (train 43 / oos 25) | WARN set señales difiere entre pasadas
+  ORB_LONG                 train   4n  25.0% | oos   2n  50.0% | avgW +0.05% avgL -0.05% | prob_bot 48% | PRIOR
+  ORB_SHORT                train   4n  75.0% | oos   6n  66.7% | avgW +0.05% avgL -0.05% | prob_bot 57% | PRIOR
+  SQUEEZE_BREAK_LONG       train   1n 100.0% | oos   1n   0.0% | avgW +0.13% avgL -0.05% | prob_bot 58% | PRIOR
+  SQUEEZE_BREAK_SHORT      train   0n   0.0% | oos   2n  50.0% | avgW +0.02% avgL -0.02% | prob_bot 56% | PRIOR
+  TLINE_BREAK_LONG         train   6n  16.7% | oos   3n  33.3% | avgW +0.04% avgL -0.03% | prob_bot 46% | PRIOR
+  TLINE_BREAK_SHORT        train   6n  66.7% | oos   0n   0.0% | avgW +0.05% avgL -0.05% | prob_bot 58% | PRIOR
+  TREND_PULLBACK_LONG      train   2n 100.0% | oos   0n   0.0% | avgW +0.04% avgL +0.00% | prob_bot 65% | PRIOR
+  TREND_PULLBACK_SHORT     train   1n   0.0% | oos   0n   0.0% | avgW +0.00% avgL -0.03% | prob_bot 59% | PRIOR
+  TREND_REVERSAL_LONG      train   4n  50.0% | oos   6n  33.3% | avgW +0.06% avgL -0.07% | prob_bot 50% | DEGRADADA
+  TREND_REVERSAL_SHORT     train  11n  54.5% | oos   5n  60.0% | avgW +0.04% avgL -0.06% | prob_bot 55% | PRIOR
+  VWAP_LOSS_SHORT          train   4n  75.0% | oos   0n   0.0% | avgW +0.03% avgL -0.03% | prob_bot 62% | PRIOR
+INTC: 30 sesiones 2026-05-28..2026-07-10 | 67 trades WR 37% (train 39 / oos 28)
+  ORB_LONG                 train   3n  33.3% | oos   1n   0.0% | avgW +0.40% avgL -0.33% | prob_bot 50% | PRIOR
+  ORB_SHORT                train   1n   0.0% | oos   6n  50.0% | avgW +0.29% avgL -0.30% | prob_bot 50% | DEGRADADA
+  TLINE_BREAK_LONG         train   7n  42.9% | oos   4n   0.0% | avgW +0.13% avgL -0.20% | prob_bot 52% | PRIOR
+  TLINE_BREAK_SHORT        train   6n  50.0% | oos   2n 100.0% | avgW +0.22% avgL -0.21% | prob_bot 54% | PRIOR
+  TREND_PULLBACK_LONG      train   1n 100.0% | oos   0n   0.0% | avgW +0.16% avgL +0.00% | prob_bot 64% | PRIOR
+  TREND_PULLBACK_SHORT     train   4n  75.0% | oos   3n  33.3% | avgW +0.23% avgL -0.23% | prob_bot 64% | PRIOR
+  TREND_REVERSAL_LONG      train   7n  28.6% | oos   1n   0.0% | avgW +0.31% avgL -0.28% | prob_bot 48% | PRIOR
+  TREND_REVERSAL_SHORT     train   8n  37.5% | oos  11n  27.3% | avgW +0.41% avgL -0.31% | prob_bot 44% | DEGRADADA
+  VWAP_LOSS_SHORT          train   1n   0.0% | oos   0n   0.0% | avgW +0.00% avgL -0.38% | prob_bot 57% | PRIOR
+  VWAP_RECLAIM_LONG        train   1n   0.0% | oos   0n   0.0% | avgW +0.00% avgL -0.21% | prob_bot 57% | PRIOR
+NOK: 30 sesiones 2026-05-28..2026-07-10 | 76 trades WR 49% (train 45 / oos 31) | WARN set señales difiere entre pasadas
+  ORB_LONG                 train   3n  66.7% | oos   1n 100.0% | avgW +0.22% avgL -0.12% | prob_bot 55% | PRIOR
+  ORB_SHORT                train   8n  50.0% | oos   8n  75.0% | avgW +0.20% avgL -0.22% | prob_bot 52% | PRIOR
+  SQUEEZE_BREAK_LONG       train   2n  50.0% | oos   2n   0.0% | avgW +0.14% avgL -0.15% | prob_bot 55% | PRIOR
+  SQUEEZE_BREAK_SHORT      train   2n   0.0% | oos   1n   0.0% | avgW +0.00% avgL -0.23% | prob_bot 51% | PRIOR
+  TLINE_BREAK_LONG         train   3n  33.3% | oos   3n  33.3% | avgW +0.11% avgL -0.17% | prob_bot 52% | PRIOR
+  TLINE_BREAK_SHORT        train   8n  50.0% | oos   2n  50.0% | avgW +0.20% avgL -0.18% | prob_bot 54% | PRIOR
+  TREND_PULLBACK_LONG      train   4n  75.0% | oos   0n   0.0% | avgW +0.16% avgL -0.05% | prob_bot 64% | PRIOR
+  TREND_PULLBACK_SHORT     train   2n   0.0% | oos   0n   0.0% | avgW +0.00% avgL -0.24% | prob_bot 56% | PRIOR
+  TREND_REVERSAL_LONG      train   5n  40.0% | oos   1n   0.0% | avgW +0.18% avgL -0.24% | prob_bot 52% | PRIOR
+  TREND_REVERSAL_SHORT     train   8n  50.0% | oos   9n  55.6% | avgW +0.18% avgL -0.20% | prob_bot 54% | PRIOR
+  VWAP_LOSS_SHORT          train   0n   0.0% | oos   4n  50.0% | avgW +0.05% avgL -0.16% | prob_bot 60% | PRIOR
+NVDA: 30 sesiones 2026-05-28..2026-07-10 | 63 trades WR 44% (train 36 / oos 27)
+  ORB_LONG                 train   3n   0.0% | oos   3n   0.0% | avgW +0.00% avgL -0.13% | prob_bot 46% | PRIOR
+  ORB_SHORT                train   4n  50.0% | oos   4n  75.0% | avgW +0.14% avgL -0.13% | prob_bot 52% | PRIOR
+  SQUEEZE_BREAK_LONG       train   0n   0.0% | oos   1n   0.0% | avgW +0.00% avgL -0.19% | prob_bot 56% | PRIOR
+  TLINE_BREAK_LONG         train   4n  50.0% | oos   2n   0.0% | avgW +0.14% avgL -0.08% | prob_bot 54% | PRIOR
+  TLINE_BREAK_SHORT        train   6n  50.0% | oos   3n  66.7% | avgW +0.12% avgL -0.15% | prob_bot 54% | PRIOR
+  TREND_PULLBACK_LONG      train   1n 100.0% | oos   1n 100.0% | avgW +0.09% avgL +0.00% | prob_bot 64% | PRIOR
+  TREND_PULLBACK_SHORT     train   1n   0.0% | oos   1n   0.0% | avgW +0.00% avgL -0.10% | prob_bot 59% | PRIOR
+  TREND_REVERSAL_LONG      train   6n  50.0% | oos   2n  50.0% | avgW +0.21% avgL -0.17% | prob_bot 54% | PRIOR
+  TREND_REVERSAL_SHORT     train  10n  40.0% | oos   8n  37.5% | avgW +0.15% avgL -0.17% | prob_bot 47% | DEGRADADA
+  VWAP_LOSS_SHORT          train   1n 100.0% | oos   2n 100.0% | avgW +0.15% avgL +0.00% | prob_bot 62% | PRIOR
+QQQ: 30 sesiones 2026-05-28..2026-07-10 | 72 trades WR 44% (train 44 / oos 28) | WARN set señales difiere entre pasadas
+  ORB_LONG                 train   6n  33.3% | oos   1n   0.0% | avgW +0.06% avgL -0.06% | prob_bot 48% | PRIOR
+  ORB_SHORT                train   3n  33.3% | oos   6n  66.7% | avgW +0.07% avgL -0.08% | prob_bot 50% | PRIOR
+  SQUEEZE_BREAK_LONG       train   0n   0.0% | oos   2n  50.0% | avgW +0.03% avgL -0.08% | prob_bot 56% | PRIOR
+  SQUEEZE_BREAK_SHORT      train   0n   0.0% | oos   1n   0.0% | avgW +0.00% avgL -0.10% | prob_bot 56% | PRIOR
+  TLINE_BREAK_LONG         train   5n  60.0% | oos   3n   0.0% | avgW +0.03% avgL -0.06% | prob_bot 56% | PRIOR
+  TLINE_BREAK_SHORT        train   6n  66.7% | oos   2n  50.0% | avgW +0.09% avgL -0.04% | prob_bot 58% | PRIOR
+  TREND_PULLBACK_LONG      train   1n   0.0% | oos   0n   0.0% | avgW +0.00% avgL -0.02% | prob_bot 59% | PRIOR
+  TREND_REVERSAL_LONG      train  10n  50.0% | oos   7n  14.3% | avgW +0.07% avgL -0.08% | prob_bot 46% | DEGRADADA
+  TREND_REVERSAL_SHORT     train  11n  36.4% | oos   4n  75.0% | avgW +0.08% avgL -0.09% | prob_bot 48% | PRIOR
+  VWAP_LOSS_SHORT          train   2n 100.0% | oos   2n  50.0% | avgW +0.07% avgL -0.06% | prob_bot 64% | PRIOR
+SLV: 30 sesiones 2026-05-28..2026-07-10 | 75 trades WR 48% (train 45 / oos 30)
+  MTF_BB_REV_LONG          train   0n   0.0% | oos   1n   0.0% | avgW +0.00% avgL -0.06% | prob_bot 55% | PRIOR
+  ORB_LONG                 train   2n  50.0% | oos   4n  50.0% | avgW +0.15% avgL -0.11% | prob_bot 53% | PRIOR
+  ORB_SHORT                train   6n  50.0% | oos   5n  20.0% | avgW +0.11% avgL -0.12% | prob_bot 47% | DEGRADADA
+  SQUEEZE_BREAK_SHORT      train   2n  50.0% | oos   0n   0.0% | avgW +0.26% avgL -0.05% | prob_bot 55% | PRIOR
+  TLINE_BREAK_LONG         train   5n  80.0% | oos   5n  20.0% | avgW +0.15% avgL -0.08% | prob_bot 53% | DEGRADADA
+  TLINE_BREAK_SHORT        train   5n  60.0% | oos   4n 100.0% | avgW +0.08% avgL -0.08% | prob_bot 56% | PRIOR
+  TREND_PULLBACK_SHORT     train   2n  50.0% | oos   1n   0.0% | avgW +0.10% avgL -0.04% | prob_bot 61% | PRIOR
+  TREND_REVERSAL_LONG      train   7n  57.1% | oos   4n 100.0% | avgW +0.09% avgL -0.12% | prob_bot 56% | PRIOR
+  TREND_REVERSAL_SHORT     train  13n  23.1% | oos   4n  25.0% | avgW +0.11% avgL -0.09% | prob_bot 42% | PRIOR
+  VWAP_LOSS_SHORT          train   3n  33.3% | oos   2n 100.0% | avgW +0.08% avgL -0.10% | prob_bot 57% | PRIOR
+SPCX: 19 sesiones 2026-06-12..2026-07-10 | 43 trades WR 53% (train 22 / oos 21) | WARN set señales difiere entre pasadas
+  ORB_LONG                 train   1n   0.0% | oos   2n 100.0% | avgW +0.28% avgL -0.32% | prob_bot 50% | PRIOR
+  ORB_SHORT                train   2n  50.0% | oos   6n  16.7% | avgW +0.26% avgL -0.21% | prob_bot 45% | DEGRADADA
+  TLINE_BREAK_LONG         train   5n  20.0% | oos   1n   0.0% | avgW +0.44% avgL -0.21% | prob_bot 48% | PRIOR
+  TLINE_BREAK_SHORT        train   4n  75.0% | oos   3n  66.7% | avgW +0.18% avgL -0.33% | prob_bot 58% | PRIOR
+  TREND_PULLBACK_LONG      train   0n   0.0% | oos   1n 100.0% | avgW +0.11% avgL +0.00% | prob_bot 62% | PRIOR
+  TREND_PULLBACK_SHORT     train   1n 100.0% | oos   3n  33.3% | avgW +0.25% avgL -0.14% | prob_bot 64% | PRIOR
+  TREND_REVERSAL_LONG      train   3n   0.0% | oos   0n   0.0% | avgW +0.00% avgL -0.20% | prob_bot 48% | PRIOR
+  TREND_REVERSAL_SHORT     train   4n 100.0% | oos   5n  80.0% | avgW +0.40% avgL -0.38% | prob_bot 62% | PRIOR
+  VWAP_LOSS_SHORT          train   2n 100.0% | oos   0n   0.0% | avgW +0.47% avgL +0.00% | prob_bot 64% | PRIOR
+TSLA: 30 sesiones 2026-05-28..2026-07-10 | 77 trades WR 51% (train 44 / oos 33) | WARN set señales difiere entre pasadas
+  ORB_LONG                 train   2n  50.0% | oos   6n  50.0% | avgW +0.17% avgL -0.14% | prob_bot 52% | DEGRADADA
+  ORB_SHORT                train   6n  33.3% | oos   2n   0.0% | avgW +0.10% avgL -0.13% | prob_bot 48% | PRIOR
+  SQUEEZE_BREAK_SHORT      train   0n   0.0% | oos   1n 100.0% | avgW +0.06% avgL +0.00% | prob_bot 56% | PRIOR
+  TLINE_BREAK_LONG         train   3n   0.0% | oos   3n  66.7% | avgW +0.13% avgL -0.06% | prob_bot 48% | PRIOR
+  TLINE_BREAK_SHORT        train   8n  75.0% | oos   7n  85.7% | avgW +0.11% avgL -0.10% | prob_bot 61% | PRIOR
+  TREND_PULLBACK_LONG      train   2n   0.0% | oos   3n   0.0% | avgW +0.00% avgL -0.09% | prob_bot 56% | PRIOR
+  TREND_PULLBACK_SHORT     train   2n   0.0% | oos   2n  50.0% | avgW +0.14% avgL -0.11% | prob_bot 56% | PRIOR
+  TREND_REVERSAL_LONG      train   6n  66.7% | oos   3n  33.3% | avgW +0.21% avgL -0.16% | prob_bot 58% | PRIOR
+  TREND_REVERSAL_SHORT     train   9n  44.4% | oos   3n  66.7% | avgW +0.20% avgL -0.14% | prob_bot 52% | PRIOR
+  VWAP_LOSS_SHORT          train   6n  66.7% | oos   3n  66.7% | avgW +0.21% avgL -0.13% | prob_bot 62% | PRIOR
+TSM: 30 sesiones 2026-05-28..2026-07-10 | 66 trades WR 58% (train 44 / oos 22)
+  ORB_LONG                 train   5n  40.0% | oos   3n  66.7% | avgW +0.13% avgL -0.16% | prob_bot 50% | PRIOR
+  ORB_SHORT                train   3n 100.0% | oos   3n  33.3% | avgW +0.12% avgL -0.13% | prob_bot 59% | PRIOR
+  TLINE_BREAK_LONG         train   4n  75.0% | oos   3n  33.3% | avgW +0.06% avgL -0.07% | prob_bot 58% | PRIOR
+  TLINE_BREAK_SHORT        train   7n  85.7% | oos   1n 100.0% | avgW +0.08% avgL -0.06% | prob_bot 63% | PRIOR
+  TREND_PULLBACK_LONG      train   4n   0.0% | oos   0n   0.0% | avgW +0.00% avgL -0.09% | prob_bot 52% | PRIOR
+  TREND_PULLBACK_SHORT     train   3n  66.7% | oos   3n  66.7% | avgW +0.10% avgL -0.08% | prob_bot 63% | PRIOR
+  TREND_REVERSAL_LONG      train   8n  75.0% | oos   1n 100.0% | avgW +0.22% avgL -0.19% | prob_bot 61% | PRIOR
+  TREND_REVERSAL_SHORT     train   8n  50.0% | oos   8n  37.5% | avgW +0.17% avgL -0.15% | prob_bot 50% | DEGRADADA
+  VWAP_LOSS_SHORT          train   2n  50.0% | oos   0n   0.0% | avgW +0.04% avgL -0.09% | prob_bot 59% | PRIOR
+TXN: 30 sesiones 2026-05-28..2026-07-10 | 69 trades WR 49% (train 47 / oos 22)
+  ORB_LONG                 train   5n  80.0% | oos   2n 100.0% | avgW +0.11% avgL -0.15% | prob_bot 58% | PRIOR
+  ORB_SHORT                train   5n   0.0% | oos   3n  33.3% | avgW +0.12% avgL -0.13% | prob_bot 42% | PRIOR
+  SQUEEZE_BREAK_LONG       train   1n 100.0% | oos   0n   0.0% | avgW +0.19% avgL +0.00% | prob_bot 58% | PRIOR
+  SQUEEZE_BREAK_SHORT      train   0n   0.0% | oos   1n 100.0% | avgW +0.06% avgL +0.00% | prob_bot 56% | PRIOR
+  TLINE_BREAK_LONG         train   4n  25.0% | oos   5n  60.0% | avgW +0.10% avgL -0.07% | prob_bot 50% | PRIOR
+  TLINE_BREAK_SHORT        train  11n  27.3% | oos   2n  50.0% | avgW +0.11% avgL -0.09% | prob_bot 45% | PRIOR
+  TREND_PULLBACK_LONG      train   3n  66.7% | oos   2n 100.0% | avgW +0.09% avgL -0.09% | prob_bot 63% | PRIOR
+  TREND_PULLBACK_SHORT     train   1n 100.0% | oos   1n   0.0% | avgW +0.14% avgL -0.08% | prob_bot 64% | PRIOR
+  TREND_REVERSAL_LONG      train   5n  60.0% | oos   1n   0.0% | avgW +0.20% avgL -0.19% | prob_bot 56% | PRIOR
+  TREND_REVERSAL_SHORT     train  10n  60.0% | oos   5n  40.0% | avgW +0.14% avgL -0.12% | prob_bot 54% | DEGRADADA
+  VWAP_LOSS_SHORT          train   2n  50.0% | oos   0n   0.0% | avgW +0.12% avgL -0.19% | prob_bot 59% | PRIOR
+USO: 30 sesiones 2026-05-28..2026-07-10 | 59 trades WR 44% (train 29 / oos 30) | WARN set señales difiere entre pasadas
+  ORB_LONG                 train   1n   0.0% | oos   6n  50.0% | avgW +0.10% avgL -0.11% | prob_bot 50% | DEGRADADA
+  ORB_SHORT                train   6n  50.0% | oos   6n  33.3% | avgW +0.12% avgL -0.08% | prob_bot 49% | DEGRADADA
+  SQUEEZE_BREAK_SHORT      train   0n   0.0% | oos   1n 100.0% | avgW +0.23% avgL +0.00% | prob_bot 56% | PRIOR
+  TLINE_BREAK_LONG         train   3n 100.0% | oos   4n  50.0% | avgW +0.10% avgL -0.09% | prob_bot 61% | PRIOR
+  TLINE_BREAK_SHORT        train   2n 100.0% | oos   1n   0.0% | avgW +0.16% avgL -0.08% | prob_bot 59% | PRIOR
+  TREND_PULLBACK_LONG      train   0n   0.0% | oos   1n 100.0% | avgW +0.09% avgL +0.00% | prob_bot 62% | PRIOR
+  TREND_PULLBACK_SHORT     train   2n  50.0% | oos   0n   0.0% | avgW +0.13% avgL -0.10% | prob_bot 61% | PRIOR
+  TREND_REVERSAL_LONG      train   7n  14.3% | oos   3n  66.7% | avgW +0.10% avgL -0.13% | prob_bot 44% | PRIOR
+  TREND_REVERSAL_SHORT     train   8n  12.5% | oos   8n  50.0% | avgW +0.10% avgL -0.14% | prob_bot 44% | DEGRADADA
+
+# RESUMEN FLOTA por clase (agregado 16 US)
+  MTF_BB_REV_LONG          train    1n   0.0% | oos    2n   0.0%
+  ORB_LONG                 train   49n  34.7% | oos   44n  56.8%
+  ORB_SHORT                train   67n  47.8% | oos   79n  48.1%
+  SQUEEZE_BREAK_LONG       train    9n  55.6% | oos    8n  25.0%
+  SQUEEZE_BREAK_SHORT      train    5n  40.0% | oos    9n  44.4%
+  TLINE_BREAK_LONG         train   73n  39.7% | oos   49n  32.7%
+  TLINE_BREAK_SHORT        train   96n  56.2% | oos   37n  70.3%
+  TREND_PULLBACK_LONG      train   26n  46.2% | oos   14n  57.1%
+  TREND_PULLBACK_SHORT     train   23n  52.2% | oos   17n  41.2%
+  TREND_REVERSAL_LONG      train   99n  47.5% | oos   45n  40.0%
+  TREND_REVERSAL_SHORT     train  140n  45.7% | oos   94n  45.7%
+  VWAP_LOSS_SHORT          train   38n  57.9% | oos   15n  73.3%
+  VWAP_RECLAIM_LONG        train    1n   0.0% | oos    0n   0.0%

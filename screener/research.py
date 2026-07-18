@@ -45,12 +45,15 @@ def _configure_llm_env():
     is present. langchain ChatOpenAI (provider 'openai') reads OPENAI_API_KEY."""
     _load_env_file("llm.env")
     _load_env_file("feeds.env")
+    # Orden Yunior 2026-07-16 (2a): "deepseek still has money, no nim, forbidden
+    # till i change my mind, too slow" — DeepSeek es EL motor; NIM PROHIBIDO
+    # (503 saturado + modelo razonador lento reventaba los timeouts). Sin clave
+    # DeepSeek se falla EN VOZ ALTA, jamas degradar a NIM.
     ds = os.environ.get("DEEPSEEK_API_KEY", "")
-    nv = os.environ.get("NVIDIA_API_KEY", "")
     if ds:
         os.environ["OPENAI_API_KEY"] = ds
-    elif nv:
-        os.environ["OPENAI_API_KEY"] = nv
+    else:
+        print("[research] SIN DEEPSEEK_API_KEY y NIM prohibido (orden 2026-07-16) — no hay LLM", file=sys.stderr)
     # FinnHub tool key (data layer)
     if os.environ.get("FINNHUB_KEY") and not os.environ.get("FINNHUB_API_KEY"):
         os.environ["FINNHUB_API_KEY"] = os.environ["FINNHUB_KEY"]

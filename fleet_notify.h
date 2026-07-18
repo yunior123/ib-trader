@@ -70,14 +70,26 @@ static void as_escape(const char* in, char* out, size_t n) {
 
 // URGENT Mac banner + sound, non-blocking: one posix_spawn, caller returns at once.
 static void fleet_notify_urgent(const char* title, const char* msg,
-                                const char* sound = "Glass") {
+                                // ProChord: tono AAC calidad iPhone (~/Library/Sounds,
+                                // eleccion Yunior 2026-07-18) para señales BUY/SELL.
+                                // Ballenas/muros pasan "ProAlert"; criticos "ProAlarm".
+                                const char* sound = "ProChord") {
     static bool init = [] { std::signal(SIGCHLD, SIG_IGN); return true; }();
     (void)init;
-    char t[256], m[768], script[1200];
+    char t[256], m[768], script[1300];
     as_escape(title, t, sizeof(t));
     as_escape(msg, m, sizeof(m));
+    // ANTI-DESCARTE (empirico 2026-07-18): macOS descarta banners que llegan en
+    // el MISMO instante desde la misma app (3 simultaneos → el de en medio se
+    // perdia siempre; separados 0.4s llegan los 3). El HIJO osascript duerme un
+    // jitter aleatorio 0–0.45s antes de publicar — el caller sigue volviendo en
+    // ~0.1ms (el delay vive en el hijo). El delay 0.6 final mantiene vivo al
+    // hijo hasta completar la entrega (proceso que muere al publicar pierde
+    // banners a veces).
     std::snprintf(script, sizeof(script),
-                  "display notification \"%s\" with title \"%s\" sound name \"%s\"",
+                  "delay (random number from 0.0 to 0.45)\n"
+                  "display notification \"%s\" with title \"%s\" sound name \"%s\"\n"
+                  "delay 0.6",
                   m, t, sound);
     const char* argv[] = {"/usr/bin/osascript", "-e", script, nullptr};
     pid_t pid;

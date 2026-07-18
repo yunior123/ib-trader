@@ -1,4 +1,5 @@
 #!/bin/zsh
+export SKHYNIX_KRX=1   # sesion KRX (open 9:00 KST) para motor v6
 cd "$(dirname "$0")/.."
 # SK Hynix (KRX 000660) — TERREMOTO / deteccion-only (creado 2026-07-12).
 # Datos: korea_bar_bridge.py (IBKR KRX realtime, sub Korea waived cubre la API;
