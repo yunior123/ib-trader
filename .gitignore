@@ -68,3 +68,7 @@ topgainer/
 
 # cuarentenas y pre-ediciones (la historia vive en git)
 backup/
+data/options_hunt_*.csv
+data/options_picks.txt
+data/.finviz_last_call
+data/fleet_sleep
