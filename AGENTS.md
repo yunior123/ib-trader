@@ -557,3 +557,15 @@ Donchian). Cero conexión con screener; cero acceso a órdenes IBKR.
 - `nok_signal_bot` (C++23) live 24/5: same detection suite as DRAM, voice "buy/sell Nokia now".
 - Data: **Alpaca IEX websocket tick-by-tick** (wss://stream.data.alpaca.markets/v2/iex, trades NOK) -> 1m bars emitted ~1s after minute close + every tick in nok_ticks; REST backfill/gap-fill each 60s; Yahoo fallback. Keys: alpaca.env (GITIGNORED — never commit).
 - Replay 30d NOK: 6 BUY/5 SELL signals, ~11 alerts/day.
+
+### Ley de sesión de trading en vivo (orden Yunior 2026-07-18)
+Durante horario de mercado, Claude Code es INFRAESTRUCTURA CRÍTICA de trading:
+- **Velocidad primero**: respuestas inmediatas, paralelismo máximo (tool calls,
+  subagentes, compilaciones xargs -P). La regla secuencial-8GB NO aplica aquí.
+- **Vigilancia continua**: siempre mirando tickers, flota, barras (data/bars_*,
+  data/nbbo_*) — liderar el análisis o dar soporte al humano que opera, sin que
+  lo pida. Trabajo en background (subagentes, Monitor, run_in_background) para
+  no bloquear la conversación.
+- **Herramientas de ritmo**: usar sleep/schedule/cron/wakeups para loops de
+  vigilancia (ej: revisar flota cada 1 min con prioridad al ticker en juego).
+- Siempre señal-solamente (ley #0): Claude guía, el humano ejecuta.
