@@ -600,3 +600,14 @@ Paridad Toronto portada 2026-07-19 (la ceguera del viernes 2026-07-17 — bridge
   skhynix/samsung/kospi o el tick de 5 min los mata.
 - **price_alarm** cubre Corea: línea `skhynix <precio>` (o samsung/kospi) en
   `~/Desktop/price-alerts.txt` — usa `data/nbbo_<name>.txt` del bridge.
+
+## LECCIONES NOCHE KRX (2026-07-19 — guía KORU/SOXS en vivo, sesión de reapertura post-feriado)
+
+Contexto: KOSPI -27% desde pico de junio, reabrió tras Día de Constitución con -4.7% y V. Yunior pidió guía tipo "día verde" para KORU. Cero trades ejecutados (disciplina); estas leyes nacieron:
+
+1. **BOLLINGER SIEMPRE** (ley [[bollinger-always-check]]): en CADA señal calcular BB(20,2) 1m+15m y %B antes de dar la orden. Un gatillo armado + banda reventada EN CONTRA = mala entrada. En vivo: read-through bajista armado (Hynix -2.4%) pero KODEX tocó banda inferior 1m+15m (%B 21%/13%) sobre 105,000 → rebote elástico. Comprar SOXS ahí = comprar el resorte estirado. La 2ª pierna (banda ya no estirada) es la entrada limpia.
+2. **SEÑAL MARGINAL vs DECISIVA**: un read-through que titila en la frontera (Hynix oscilando EXACTO en -2%) NO es lo mismo que uno comprometido (Hynix -2.4% firme). Esperar el compromiso. korea_watch lleva histéresis 0.5% en los gates read-through justo por esto (cazado en vivo: RTBEAR<->BAJ107 cada 5s = crying-wolf).
+3. **PRINT O NADA aplica a niveles de índice**: KODEX rebotó de 106,950/105,140 varias veces sin perder 105,000. El nivel binario manda; "está cerca" costó nada porque no se persiguió.
+4. **KORZ NO EXISTE** (Direxion lo liquidó). El bear de Corea en TFSA (no-short) = **EWY puts** (US hours) o **SOXS** (3x inverse semis, cotiza overnight). Bull = KORU / SOXL / SKHY calls. 3 rutas por lado en price-alerts + korea_watch.
+5. **DIVERGENCIA ADR**: SKHY ADR cotizaba +2.8% en afterhours con KRX Hynix plano = adelantado → setup de fade al abrir US. Vigilar ADR vs subyacente KRX.
+6. **Herramientas C++2c** (python too slow, orden Yunior): `./korea_tape` (veredicto instantáneo), `./korea_watch` (máquina de estados 5s, banner+voz posix_spawn, histéresis anti-flap). Reemplazaron el loop bash/awk.
