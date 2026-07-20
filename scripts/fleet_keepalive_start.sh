@@ -128,3 +128,11 @@ if ! pgrep -f "scripts/notify_relay.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/notify_relay.sh" >/dev/null 2>&1 &
   echo "$(date) fleet: notify_relay lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
 fi
+
+# vigia de BALLENAS de opciones (2026-07-20 "activa alarm fleet for whale puts
+# and calls"): flujo P/C ±3% ATM cada 5 min, expiry semanal auto, alerta
+# voz+banner en cruces (P/C>=2 puts / <=0.35 calls, ley #13). clientId 82.
+if ! pgrep -f "scripts/opt_whale_keepalive.sh" >/dev/null; then
+  nohup zsh "$ROOT/scripts/opt_whale_keepalive.sh" >/dev/null 2>&1 &
+  echo "$(date) fleet: opt_whale_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+fi
