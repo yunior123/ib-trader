@@ -34,7 +34,7 @@ static void speak(const char* prio, const char* msg) {
     posix_spawn(&pid, "/bin/bash", nullptr, nullptr, (char* const*)argv, environ);
 }
 
-enum St { BOOT, PRINT109, RECLAIM, NADIE, BAJ107, VROTA, VETO, RTBEAR, MUERTO };
+enum St { BOOT, PRINT109, RECLAIM, NADIE, BAJ107, VROTA, VETO, RTBEAR, RTBULL, MUERTO };
 
 int main() {
     constexpr double PCK = 109000, PCH = 1842000, PCS = 255000, PCU = 18.26;
@@ -47,6 +47,7 @@ int main() {
         else if (k.mid <= 103550) ns = VETO;
         else if (k.mid <= 105000) ns = VROTA;
         else if (hp <= -2.0 && sp <= -2.0) ns = RTBEAR;
+        else if (hp >= 2.0 && sp >= 2.0) ns = RTBULL;   // read-through alcista -> SOXL
         // histeresis 250 pts (2026-07-19: flap NADIE<->RECLAIM cada 5s en la
         // frontera exacta = voz repetida): entrar a un estado pide cruzar el
         // nivel; salir pide alejarse 250 del nivel.
@@ -80,6 +81,9 @@ int main() {
             case RTBEAR:   fleet_notify_urgent("🐻 READ-THROUGH: Hynix y Samsung -2% — SOXS", m, "ProAlarm");
                            speak("DANGER", "Read tru bajista. Hynix y Samsung menos dos por ciento. Soxs es el trade.");
                            std::printf("RTBEAR %s\n", m); break;
+            case RTBULL:   fleet_notify_urgent("🐂 READ-THROUGH: Hynix y Samsung +2% — SOXL / KORU", m, "ProAlarm");
+                           speak("DANGER", "Read tru alcista. Hynix y Samsung mas dos por ciento. Soxl o Koru es el trade.");
+                           std::printf("RTBULL %s\n", m); break;
             case MUERTO:   fleet_notify_urgent("⚠️ FEED COREA CONGELADO", m, "ProAlarm");
                            speak("DANGER", "Feed de Corea congelado.");
                            std::printf("MUERTO %s\n", m); break;

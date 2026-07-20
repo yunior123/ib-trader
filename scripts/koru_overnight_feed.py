@@ -10,7 +10,7 @@ import os
 os.chdir("/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader")
 from ib_insync import IB, Stock
 
-SYMS = ["KORU", "SOXS", "SQQQ"]
+SYMS = ["KORU", "SOXS", "SQQQ", "SOXL", "TQQQ"]
 
 while True:
     try:
