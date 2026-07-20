@@ -46,8 +46,13 @@ int main() {
         if (k.age > 120 || u.age > 120) ns = MUERTO;
         else if (k.mid <= 103550) ns = VETO;
         else if (k.mid <= 105000) ns = VROTA;
-        else if (hp <= -2.0 && sp <= -2.0) ns = RTBEAR;
-        else if (hp >= 2.0 && sp >= 2.0) ns = RTBULL;   // read-through alcista -> SOXL
+        // read-through con histeresis 0.5% (2026-07-19: Hynix oscilaba EXACTO
+        // en -2% -> RTBEAR<->BAJ107 cada 5s = voz repetida y crying-wolf).
+        // Entra al cruzar +/-2%; sale solo si una pata se recupera a +/-1.5%.
+        else if ((hp <= -2.0 && sp <= -2.0) ||
+                 (st == RTBEAR && hp <= -1.5 && sp <= -1.5)) ns = RTBEAR;
+        else if ((hp >= 2.0 && sp >= 2.0) ||
+                 (st == RTBULL && hp >= 1.5 && sp >= 1.5)) ns = RTBULL;   // alcista -> SOXL
         // histeresis 250 pts (2026-07-19: flap NADIE<->RECLAIM cada 5s en la
         // frontera exacta = voz repetida): entrar a un estado pide cruzar el
         // nivel; salir pide alejarse 250 del nivel.
