@@ -283,6 +283,7 @@ int main() {
     std::map<std::string, int> armed_state;      // raw line -> armed (cross)
     std::map<std::string, time_t> stale_log;     // sym -> ultimo log "sin dato"
     std::map<std::string, bool> bad_logged;      // raw line invalida -> ya logueada
+    std::map<std::string, time_t> pending;       // raw line -> 1a lectura hit (confirmacion)
     time_t last_mtime = 0;
 
     while (true) {
@@ -350,11 +351,22 @@ int main() {
                 hit = (r.armed < 0) ? px <= r.px : px >= r.px;
             }
             if (hit) {
+                // CONFIRMACION 2 LECTURAS >=1s (2026-07-20: un tick NBBO malo
+                // — NVDA 203.70 fantasma con px real 206.3 — disparo 2 alarmas
+                // en falso). El bridge escribe NBBO 1/s: la 2a lectura ve el
+                // tick siguiente ya sano. Print-o-nada, tambien en sirenas.
+                time_t now = time(nullptr);
+                auto pit = pending.find(r.raw);
+                if (pit == pending.end()) { pending[r.raw] = now; continue; }
+                if (now - pit->second < 1) continue;
+                pending.erase(pit);
                 fire(r, px);
                 if (!mark_fired(path, r))
                     logline("WARN: no pude marcar DISPARADA: '%s'", r.raw.c_str());
                 armed_state.erase(r.raw);
                 any_fired = true;
+            } else {
+                pending.erase(r.raw);   // dejo de cumplirse -> descartar
             }
         }
         if (any_fired) {
