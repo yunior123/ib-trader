@@ -25,7 +25,7 @@ fi
 # daemon IBKR de flota: SIP bars 1m + NBBO a data/*_ibkr.txt / nbbo_*.txt.
 # Solo lectura de mercado — cero ordenes. 17 syms (CON SKHY).
 if ! pgrep -f "ibkr_bar_bridge.py --daemon" >/dev/null; then
-  nohup "$ROOT/venv/bin/python" "$ROOT/scripts/"ibkr_bar_bridge.py --daemon NOK SPCX DRAM TSLA NVDA TXN TSM AMD INTC ASML AAPL GLD QQQ SLV CPER USO SKHY >>"$ROOT/bridge_ibkr_fleet.log" 2>&1 &
+  nohup "$ROOT/venv/bin/python" "$ROOT/scripts/"ibkr_bar_bridge.py --daemon NOK SPCX DRAM TSLA NVDA TXN TSM AMD INTC ASML AAPL GLD QQQ SLV CPER USO SKHY EWY >>"$ROOT/bridge_ibkr_fleet.log" 2>&1 &
   echo "$(date) fleet: ibkr fleet daemon lanzado (pid $!)" >>"$ROOT/fleet_autostart.log"
 fi
 

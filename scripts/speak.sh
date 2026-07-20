@@ -27,7 +27,7 @@ MSG="$(printf '%s' "$MSG" | sed -E \
   -e 's/[[:<:]]TSM[[:>:]]/Taiwán Semi/g' -e 's/[[:<:]]QCOM[[:>:]]/Qualcomm/g' \
   -e 's/[[:<:]]TXN[[:>:]]/Texas Instruments/g' -e 's/[[:<:]]SPCX[[:>:]]/Space X/g' \
   -e 's/[[:<:]]SKHY[[:>:]]/S K Hynix/g'  -e 's/[[:<:]]NOK[[:>:]]/Nokia/g' \
-  -e 's/[[:<:]]ASML[[:>:]]/A S M L/g'  -e 's/[[:<:]]SMH[[:>:]]/semis/g' \
+  -e 's/[[:<:]]ASML[[:>:]]/A S M L/g'  -e 's/[[:<:]]SMH[[:>:]]/semis/g' -e 's/[[:<:]]EWY[[:>:]]/Korea E T F/g' \
   -e 's/[[:<:]]QQQ[[:>:]]/Nasdaq/g'    -e 's/[[:<:]]XLK[[:>:]]/tecnología/g' \
   -e 's/[[:<:]]AMD[[:>:]]/A M D/g'     -e 's/[[:<:]]DRAM[[:>:]]/D RAM/g' \
   -e 's/[[:<:]]GLD[[:>:]]/oro/g'       -e 's/[[:<:]]SLV[[:>:]]/plata/g' \

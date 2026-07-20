@@ -26,7 +26,7 @@ if [[ -f "$ROOT/data/fleet_sleep" ]]; then
     pkill -f 'scripts/opt_sentinel.py' 2>/dev/null
     pkill -f 'scripts/options_enrich.py' 2>/dev/null
     pkill -f 'scripts/opt_chain_cache.py' 2>/dev/null
-    for b in dram nok spcx tsla nvda txn tsm amd intc asml aapl gld qqq slv cper uso skhy skhynix samsung kospi mu smh; do
+    for b in dram nok spcx tsla nvda txn tsm amd intc asml aapl gld qqq slv cper uso skhy skhynix samsung kospi mu smh ewy; do
       pkill -f "scripts/${b}_keepalive.sh" 2>/dev/null
       pkill -x "${b}_signal_bot" 2>/dev/null
     done
@@ -37,7 +37,7 @@ fi
 # si data/focus_ticker existe, solo los tickers listados ahi corren; el resto
 # se APAGA en cada tick de 5 min. Restaurar flota completa: rm data/focus_ticker
 FOCUS="$ROOT/data/focus_ticker"
-for b in dram nok spcx tsla nvda txn tsm amd intc asml aapl gld qqq slv cper uso skhy skhynix samsung kospi mu smh; do
+for b in dram nok spcx tsla nvda txn tsm amd intc asml aapl gld qqq slv cper uso skhy skhynix samsung kospi mu smh ewy; do
   if [[ -s "$FOCUS" ]] && ! grep -qix "$b" "$FOCUS"; then
     pkill -f "scripts/${b}_keepalive.sh" 2>/dev/null
     pkill -x "${b}_signal_bot" 2>/dev/null
@@ -62,7 +62,7 @@ fi
 # SIP warm-up historico + bars 1m + NBBO a data/*_ibkr.txt / nbbo_*.txt.
 # Reader C++ en modo IBKR-ONLY (sin alpaca; ALPACA_FALLBACK=1 revive dual).
 if ! pgrep -f "ibkr_bar_bridge.py --daemon" >/dev/null; then
-  nohup ./venv/bin/python scripts/ibkr_bar_bridge.py --daemon NOK SPCX DRAM TSLA NVDA TXN TSM AMD INTC ASML AAPL GLD QQQ SLV CPER USO SKHY MU SMH GOOGL QCOM MSFT AVGO AMZN META XLK >> bridge_ibkr_fleet.log 2>&1 &
+  nohup ./venv/bin/python scripts/ibkr_bar_bridge.py --daemon NOK SPCX DRAM TSLA NVDA TXN TSM AMD INTC ASML AAPL GLD QQQ SLV CPER USO SKHY MU SMH GOOGL QCOM MSFT AVGO AMZN META XLK EWY >> bridge_ibkr_fleet.log 2>&1 &
   echo "$(date) fleet: ibkr fleet daemon lanzado (pid $!)" >> fleet_autostart.log
 fi
 
