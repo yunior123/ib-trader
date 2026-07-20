@@ -121,33 +121,17 @@ static bool parse_rule(const std::string& line, Rule& r, bool* invalid) {
     return true;
 }
 
-// ---- pre-seed: crear archivo + garantizar "intc 100 down" activa ----
+// ---- seed: crear el archivo con header si no existe (SIN reglas fijas) ----
+// EXTIRPADO 2026-07-20: el pre-seed "garantizaba" intc 100 down (urgencia
+// 2026-07-16) resucitandola en cada recarga — 4 dias de re-disparos falsos
+// tras marcarla DISPARADA. Las urgencias van en el archivo, no en el binario.
 static void ensure_seed(const std::string& path) {
     FILE* f = std::fopen(path.c_str(), "r");
-    bool have_intc = false;
-    std::string content;
-    if (f) {
-        char buf[1024];
-        while (std::fgets(buf, sizeof(buf), f)) {
-            content += buf;
-            std::string line = buf;
-            if (!line.empty() && line.back() == '\n') line.pop_back();
-            Rule r;
-            bool bad;
-            if (parse_rule(line, r, &bad) && r.sym == "intc" &&
-                std::fabs(r.px - 100.0) < 1e-9 && r.mode == DOWN)
-                have_intc = true;
-        }
-        std::fclose(f);
-    }
-    if (f && have_intc) return;                       // idempotente
-    FILE* w = std::fopen(path.c_str(), f ? "a" : "w");
+    if (f) { std::fclose(f); return; }
+    FILE* w = std::fopen(path.c_str(), "w");
     if (!w) { logline("ERROR: no puedo escribir %s", path.c_str()); return; }
-    if (!f) std::fputs(HEADER, w);
-    else if (!content.empty() && content.back() != '\n') std::fputc('\n', w);
-    std::fputs("intc 100 down   # urgente (Yunior 2026-07-16)\n", w);
+    std::fputs(HEADER, w);
     std::fclose(w);
-    logline("pre-seed: alerta 'intc 100 down' garantizada en %s", path.c_str());
 }
 
 // ---- precios (solo lectura de archivos del bridge) ----
