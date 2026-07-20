@@ -30,7 +30,6 @@ export NVDA_SPREAD_MAX=0.3
 export NVDA_WHALE_USD=250000
 while true; do
   pkill -x nvda_signal_bot 2>/dev/null
-  pkill -f "alpaca_ws_bridge read NVDA" 2>/dev/null
   sleep 1
   ./nvda_signal_bot >> nvda_signals.log 2>&1
   echo "$(date) nvda_signal_bot salio; relanzando" >> nvda_signals.log

@@ -24,13 +24,12 @@ export TSM_SHORTS=1
 export TSM_S_BB_STD=3.0
 export TSM_S_TARGET=3.0
 export TSM_S_TRAIL=4
-# WFO v2 2026-07-11: 90d Alpaca, seleccion solo-train, OOS intacto, velas
+# WFO v2 2026-07-11: 90d , seleccion solo-train, OOS intacto, velas
 export TSM_S_MODE=mr
 export TSM_S_RSI_OS=30
 export TSM_S_VOL_MULT=1.0
 while true; do
   pkill -x tsm_signal_bot 2>/dev/null
-  pkill -f "alpaca_ws_bridge read TSM" 2>/dev/null
   sleep 1
   ./tsm_signal_bot >> tsm_signals.log 2>&1
   echo "$(date) tsm_signal_bot salio; relanzando" >> tsm_signals.log

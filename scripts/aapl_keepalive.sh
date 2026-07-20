@@ -21,7 +21,7 @@ export AAPL_SPREAD_MAX=0.3
 export AAPL_WHALE_USD=250000
 # re-tune FULL-PROFIT 2026-07-11 (coordinate sweep, train+OOS>0, WR>=70)
 export AAPL_CONFIRM_STRICT=1
-# WFO v2 2026-07-11: 90d Alpaca, seleccion solo-train, OOS intacto, velas
+# WFO v2 2026-07-11: 90d , seleccion solo-train, OOS intacto, velas
 export AAPL_SHORTS=1
 export AAPL_S_BB_STD=2.5
 export AAPL_S_MODE=mr
@@ -29,7 +29,6 @@ export AAPL_S_RSI_OS=35
 export AAPL_S_VOL_MULT=1.0
 while true; do
   pkill -x aapl_signal_bot 2>/dev/null
-  pkill -f "alpaca_ws_bridge read AAPL" 2>/dev/null
   sleep 1
   ./aapl_signal_bot >> aapl_signals.log 2>&1
   echo "$(date) aapl_signal_bot salio; relanzando" >> aapl_signals.log

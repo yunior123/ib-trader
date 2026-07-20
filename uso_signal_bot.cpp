@@ -10,7 +10,7 @@
 //         above the +1% floor, or 15:45 ET flatten -> VENDER (dram_sell.wav)
 //   Entries only 9:30-15:30 ET (RTH rule).
 //
-// Data: alpaca_ws_bridge (C++ ws daemon, 1 conexion Alpaca compartida) streams
+// Data: ibkr_bar_bridge (daemon IBKR, fuente unica) streams
 //       REAL 1m completed bars as "EPOCH OPEN HIGH LOW CLOSE VOLUME" lines.
 //
 // build: clang++ -std=c++17 -O2 -o uso_signal_bot uso_signal_bot.cpp
@@ -1364,10 +1364,10 @@ int main(int argc, char** argv) {
     bool use_stdin = (argc > 1 && !std::strcmp(argv[1], "--stdin"));
     FILE* in = stdin;
     if (!use_stdin) {
-        // LIVE por daemon alpaca (ws mas rapido medido 2026-07-11); IBKR RT API
+        // LIVE por daemon IBKR (fuente unica 2026-07-20); IBKR RT API
         // esta BLOQUEADO por subscripcion (error 420) — ibkr_bar_bridge.py corre
         // aparte (venue OVERNIGHT + upgrade path al activar el $10 SIP bundle)
-        in = popen("./alpaca_ws_bridge read USO 2>>bridge_uso.log", "r");
+        in = popen("tail -n +1 -F data/bars_uso_ibkr.txt 2>>bridge_uso.log", "r");
         if (!in) { std::fprintf(stderr, "no bridge\n"); return 1; }
         std::fprintf(stderr, "uso_signal_bot (C++): bridge USO 1m real iniciado\n");
     }

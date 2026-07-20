@@ -3,7 +3,7 @@ cd "$(dirname "$0")/.."
 # USO — TERREMOTO bot (orden Yunior 2026-07-11: "add new bots for uso ... a
 # terremoto bot ... should be 24/7"). Solo deteccion banner-grade AMBAS
 # direcciones; motor de entradas APAGADO hasta pasar WR-70 + OOS (regla ship).
-# Datos: daemon alpaca ws (RTH 9:30-16 = websockets, orden 2026-07-11) +
+# Datos: daemon ws (RTH 9:30-16 = websockets, orden 2026-07-11) +
 # poll overnight del daemon (Dom20->Vie04 ET). IBKR TWS: RT API bloqueado por
 # subscripcion (error 420 2026-07-11) — el bridge ibkr corre en modo
 # suplemento (venue OVERNIGHT best-effort; upgrade path al activar SIP $10).
@@ -16,7 +16,6 @@ export USO_QUAKE_MIN=0.02
 export USO_SCORE_MIN=9
 while true; do
   pkill -x uso_signal_bot 2>/dev/null
-  pkill -f "alpaca_ws_bridge read USO" 2>/dev/null
   sleep 1
   ./uso_signal_bot >> uso_signals.log 2>&1
   echo "$(date) uso_signal_bot salio; relanzando" >> uso_signals.log

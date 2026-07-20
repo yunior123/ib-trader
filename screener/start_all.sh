@@ -33,13 +33,6 @@ if ! pgrep -f "ibkr_bar_bridge.py --daemon" >/dev/null; then
   echo "$(date) fleet: ibkr fleet daemon lanzado (pid $!)" >>"$ROOT/fleet_autostart.log"
 fi
 
-# ALPACA RETIRADO (orden Yunior 2026-07-15 "no alpaca, only ibkr"): el daemon
-# ws IEX ya no se lanza — flota 100%% IBKR (ibkr_bar_bridge); screener_alert
-# usa Finnhub REST para quotes. Revivir: descomentar este bloque.
-if false && ! pgrep -f "alpaca_ws_bridge NOK" >/dev/null && [[ -x "$ROOT/alpaca_ws_bridge" ]]; then
-  nohup "$ROOT/alpaca_ws_bridge" NOK SPCX DRAM TSLA NVDA TXN TSM AMD INTC ASML AAPL GLD QQQ SLV CPER USO >>"$ROOT/ws_daemon.log" 2>&1 &
-  echo "alpaca ws daemon pid $!"
-fi
 
 nohup zsh "$ROOT/screener/heartbeat.sh" >/dev/null 2>&1 &
 echo "heartbeat pid $! (beeps every minute so you know it's alive)"

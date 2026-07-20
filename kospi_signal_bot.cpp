@@ -10,7 +10,7 @@
 //         above the +1% floor, or 15:45 ET flatten -> VENDER (dram_sell.wav)
 //   Entries only 9:30-15:30 ET (RTH rule).
 //
-// Data: alpaca_ws_bridge (C++ ws daemon, 1 conexion Alpaca compartida) streams
+// Data: ibkr_bar_bridge (daemon IBKR, fuente unica) streams
 //       REAL 1m completed bars as "EPOCH OPEN HIGH LOW CLOSE VOLUME" lines.
 //
 // build: clang++ -std=c++17 -O2 -o kospi_signal_bot kospi_signal_bot.cpp

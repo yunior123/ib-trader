@@ -13,7 +13,6 @@ export SKHY_QUAKE_MIN=0.02
 export SKHY_SCORE_MIN=9
 while true; do
   pkill -x skhy_signal_bot 2>/dev/null
-  pkill -f "alpaca_ws_bridge read SKHY" 2>/dev/null
   sleep 1
   ./skhy_signal_bot >> skhy_signals.log 2>&1
   echo "$(date) skhy_signal_bot salio; relanzando" >> skhy_signals.log

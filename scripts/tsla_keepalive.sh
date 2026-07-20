@@ -27,7 +27,7 @@ export TSLA_S_STOP=1.6
 export TSLA_S_TARGET=1.0
 export TSLA_S_TRAIL=3
 export TSLA_S_TSTOP=0
-# WFO v2 2026-07-11: 90d Alpaca, seleccion solo-train, OOS intacto, velas
+# WFO v2 2026-07-11: 90d , seleccion solo-train, OOS intacto, velas
 export TSLA_S_BB_STD=2.5
 export TSLA_S_CANDLE=0
 export TSLA_S_FLOOR=0.5
@@ -37,7 +37,6 @@ export TSLA_S_VOL_MULT=1.0
 export TSLA_TREND_VWAP=0
 while true; do
   pkill -x tsla_signal_bot 2>/dev/null
-  pkill -f "alpaca_ws_bridge read TSLA" 2>/dev/null
   sleep 1
   ./tsla_signal_bot >> tsla_signals.log 2>&1
   echo "$(date) tsla_signal_bot salio; relanzando" >> tsla_signals.log

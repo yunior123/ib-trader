@@ -19,7 +19,7 @@ export NOK_QUAKE_MIN=0.03
 # live: gate de spread NBBO + umbral whale (v3)
 export NOK_SPREAD_MAX=0.3
 export NOK_WHALE_USD=150000
-# WFO v2 2026-07-11: 90d Alpaca, seleccion solo-train, OOS intacto, velas
+# WFO v2 2026-07-11: 90d , seleccion solo-train, OOS intacto, velas
 export NOK_SHORTS=1
 export NOK_S_MODE=trend
 export NOK_S_TARGET=3.0
@@ -27,7 +27,6 @@ export NOK_S_TRAIL=3
 export NOK_S_TREND_CUSUM=0.005
 while true; do
   pkill -x nok_signal_bot 2>/dev/null
-  pkill -f "alpaca_ws_bridge read NOK" 2>/dev/null
   sleep 1
   ./nok_signal_bot >> nok_signals.log 2>&1
   echo "$(date) nok_signal_bot salio; relanzando" >> nok_signals.log

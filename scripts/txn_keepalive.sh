@@ -27,13 +27,12 @@ export TXN_QUAKE_MIN=0.02
 export TXN_SPREAD_MAX=0.3
 export TXN_WHALE_USD=250000
 export TXN_S_TREND_CUSUM=0.005
-# WFO v2 2026-07-11: 90d Alpaca, seleccion solo-train, OOS intacto, velas
+# WFO v2 2026-07-11: 90d , seleccion solo-train, OOS intacto, velas
 export TXN_CANDLE=1
 export TXN_S_MODE=trend
 export TXN_TREND_VWAP=0
 while true; do
   pkill -x txn_signal_bot 2>/dev/null
-  pkill -f "alpaca_ws_bridge read TXN" 2>/dev/null
   sleep 1
   ./txn_signal_bot >> txn_signals.log 2>&1
   echo "$(date) txn_signal_bot salio; relanzando" >> txn_signals.log

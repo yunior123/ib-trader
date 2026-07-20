@@ -28,7 +28,6 @@ export AMD_SPREAD_MAX=0.3
 export AMD_WHALE_USD=250000
 while true; do
   pkill -x amd_signal_bot 2>/dev/null
-  pkill -f "alpaca_ws_bridge read AMD" 2>/dev/null
   sleep 1
   ./amd_signal_bot >> amd_signals.log 2>&1
   echo "$(date) amd_signal_bot salio; relanzando" >> amd_signals.log

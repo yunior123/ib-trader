@@ -60,7 +60,7 @@ fi
 # daemon IBKR de flota — FUENTE UNICA desde 2026-07-15 ("connect to ibkr
 # only"; subs NA reales compradas: Cboe One + Network A/B/C, 10089 muerto).
 # SIP warm-up historico + bars 1m + NBBO a data/*_ibkr.txt / nbbo_*.txt.
-# Reader C++ en modo IBKR-ONLY (sin alpaca; ALPACA_FALLBACK=1 revive dual).
+# Bots leen data/bars_<sym>_ibkr.txt directo via tail -F (reader retirado 2026-07-20).
 if ! pgrep -f "ibkr_bar_bridge.py --daemon" >/dev/null; then
   nohup ./venv/bin/python scripts/ibkr_bar_bridge.py --daemon NOK SPCX DRAM TSLA NVDA TXN TSM AMD INTC ASML AAPL GLD QQQ SLV CPER USO SKHY MU SMH GOOGL QCOM MSFT AVGO AMZN META XLK EWY >> bridge_ibkr_fleet.log 2>&1 &
   echo "$(date) fleet: ibkr fleet daemon lanzado (pid $!)" >> fleet_autostart.log

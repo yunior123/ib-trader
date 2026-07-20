@@ -10,7 +10,6 @@ export CPER_QUAKE_MIN=0.01
 export CPER_SCORE_MIN=9
 while true; do
   pkill -x cper_signal_bot 2>/dev/null
-  pkill -f "alpaca_ws_bridge read CPER" 2>/dev/null
   sleep 1
   ./cper_signal_bot >> cper_signals.log 2>&1
   echo "$(date) cper_signal_bot salio; relanzando" >> cper_signals.log

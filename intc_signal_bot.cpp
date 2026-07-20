@@ -10,7 +10,7 @@
 //         above the +1% floor, or 15:45 ET flatten -> VENDER (dram_sell.wav)
 //   Entries only 9:30-15:30 ET (RTH rule).
 //
-// Data: alpaca_ws_bridge (C++ ws daemon, 1 conexion Alpaca compartida) streams
+// Data: ibkr_bar_bridge (daemon IBKR, fuente unica) streams
 //       REAL 1m completed bars as "EPOCH OPEN HIGH LOW CLOSE VOLUME" lines.
 //
 // build: clang++ -std=c++17 -O2 -o intc_signal_bot intc_signal_bot.cpp
@@ -1364,9 +1364,9 @@ int main(int argc, char** argv) {
     bool use_stdin = (argc > 1 && !std::strcmp(argv[1], "--stdin"));
     FILE* in = stdin;
     if (!use_stdin) {
-        // ws daemon compartido escribe data/bars_intc.txt; el reader lo sigue
-        // (Yunior 2026-07-10: websockets, no REST; C++, no python)
-        in = popen("./alpaca_ws_bridge read INTC 2>>bridge_intc.log", "r");
+        // daemon IBKR escribe data/bars_intc_ibkr.txt; tail -F lo sigue 
+        // (Yunior 2026-07-20: only ibkr — fuente unica)
+        in = popen("tail -n +1 -F data/bars_intc_ibkr.txt 2>>bridge_intc.log", "r");
         if (!in) { std::fprintf(stderr, "no bridge\n"); return 1; }
         std::fprintf(stderr, "intc_signal_bot (C++): bridge INTC 1m real iniciado\n");
     }

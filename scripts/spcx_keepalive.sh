@@ -28,12 +28,11 @@ export SPCX_SPREAD_MAX=0.3
 export SPCX_WHALE_USD=100000
 # re-tune FULL-PROFIT 2026-07-11 (coordinate sweep, train+OOS>0, WR>=70)
 export SPCX_S_TREND_CUSUM=0.005
-# WFO v2 2026-07-11: 90d Alpaca, seleccion solo-train, OOS intacto, velas
+# WFO v2 2026-07-11: 90d , seleccion solo-train, OOS intacto, velas
 export SPCX_S_CANDLE=1
 export SPCX_S_MODE=trend
 while true; do
   pkill -x spcx_signal_bot 2>/dev/null
-  pkill -f "alpaca_ws_bridge read SPCX" 2>/dev/null
   sleep 1
   ./spcx_signal_bot >> spcx_signals.log 2>&1
   echo "$(date) spcx_signal_bot salio; relanzando" >> spcx_signals.log

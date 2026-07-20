@@ -26,13 +26,12 @@ export QQQ_QUAKE_MIN=0.01
 # live: gate de spread NBBO + umbral whale (v3)
 export QQQ_SPREAD_MAX=0.3
 export QQQ_WHALE_USD=250000
-# WFO v2 2026-07-11: 90d Alpaca, seleccion solo-train, OOS intacto, velas
+# WFO v2 2026-07-11: 90d , seleccion solo-train, OOS intacto, velas
 export QQQ_S_CANDLE=1
 export QQQ_S_MODE=trend
 export QQQ_S_TREND_CUSUM=0.005
 while true; do
   pkill -x qqq_signal_bot 2>/dev/null
-  pkill -f "alpaca_ws_bridge read QQQ" 2>/dev/null
   sleep 1
   ./qqq_signal_bot >> qqq_signals.log 2>&1
   echo "$(date) qqq_signal_bot salio; relanzando" >> qqq_signals.log

@@ -55,26 +55,8 @@ def finnhub_quote(symbol: str):
 # yahoo_last BORRADO (Yunior 2026-07-10: yahoo/delayed prohibido)
 
 
-def _load_alpaca_keys():
-    """ALPACA_KEY/ALPACA_SECRET from alpaca.env at repo root (gitignored)."""
-    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    keys = {}
-    try:
-        for line in open(os.path.join(root, "alpaca.env")):
-            line = line.strip()
-            if line and not line.startswith("#") and "=" in line:
-                k, v = line.split("=", 1)
-                keys[k.strip()] = v.strip().strip('"')
-    except OSError:
-        pass
-    return keys.get("ALPACA_KEY"), keys.get("ALPACA_SECRET")
-
-
-def alpaca_spread(symbol: str):
-    """RETIRADO 2026-07-15 (orden 'no alpaca all over, just ibkr') —
-    usar ibkr_data.spread(). Se mantiene el nombre por compat de imports."""
-    import ibkr_data
-    return ibkr_data.spread(symbol)
+# alpaca BORRADO TOTAL 2026-07-20 (orden 'remove alpaca all over, no traces
+# left'): _load_alpaca_keys y alpaca_spread eliminados; spread via ibkr_data.
 
 
 def usdcad(default: float = 1.45) -> float:
