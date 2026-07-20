@@ -45,7 +45,7 @@ int main() {
         St ns;
         if (k.age > 120 || u.age > 120) ns = MUERTO;
         else if (k.mid <= 103550) ns = VETO;
-        else if (k.mid <= 105000) ns = VROTA;
+        else if (k.mid <= 105000 || (st == VROTA && k.mid < 105250)) ns = VROTA;  // histeresis 250: no flapear VROTA<->RTBEAR en el pin de 105000
         // read-through con histeresis 0.5% (2026-07-19: Hynix oscilaba EXACTO
         // en -2% -> RTBEAR<->BAJ107 cada 5s = voz repetida y crying-wolf).
         // Entra al cruzar +/-2%; sale solo si una pata se recupera a +/-1.5%.
