@@ -611,3 +611,10 @@ Contexto: KOSPI -27% desde pico de junio, reabrió tras Día de Constitución co
 4. **KORZ NO EXISTE** (Direxion lo liquidó). El bear de Corea en TFSA (no-short) = **EWY puts** (US hours) o **SOXS** (3x inverse semis, cotiza overnight). Bull = KORU / SOXL / SKHY calls. 3 rutas por lado en price-alerts + korea_watch.
 5. **DIVERGENCIA ADR**: SKHY ADR cotizaba +2.8% en afterhours con KRX Hynix plano = adelantado → setup de fade al abrir US. Vigilar ADR vs subyacente KRX.
 6. **Herramientas C++2c** (python too slow, orden Yunior): `./korea_tape` (veredicto instantáneo), `./korea_watch` (máquina de estados 5s, banner+voz posix_spawn, histéresis anti-flap). Reemplazaron el loop bash/awk.
+
+## ALPACA BORRADO TOTAL (2026-07-20 — orden "remove alpaca all over, no traces left")
+
+- **Causa inmediata:** el reader `alpaca_ws_bridge read <SYM>` (popen de cada bot NA) escribia quotes VIEJAS a `nbbo_<sym>.txt` peleando con el daemon IBKR → precio fantasma (NVDA 203.72 vs real 206.3) → 5 alarmas falsas el 2026-07-20.
+- **Nuevo camino de datos NA:** cada bot lee `data/bars_<sym>_ibkr.txt` DIRECTO via `popen("tail -n +1 -F ...")` — mismo patron que la flota korea. Fuente unica: `ibkr_bar_bridge.py` (bars+NBBO+whales). 20 bots recompilados c++2c.
+- **Archivado en `backup/alpaca_retired_2026-07-20/`:** alpaca_ws_bridge(.cpp), alpaca.env, alpaca_tape_bridge.py, scan_server(.cpp) (dependia del tape bridge), ws_daemon.log.
+- **PENDIENTE (no silencioso):** 5 scripts de backtest/calibracion (`v6_backtest.py`, `fleet_wfo.py`, `backtest_replay.py`, `fleet_backtest_audit.py`, `leveraged_backtest.py`) usaban historia Alpaca IEX y quedaron INERTES sin alpaca.env — migrar a `reqHistoricalData` de IBKR antes de la proxima recalibracion semanal v6. Menciones restantes en comentarios = documentacion de la ley, no codigo.
