@@ -47,9 +47,12 @@ int main() {
         else if (k.mid <= 103550) ns = VETO;
         else if (k.mid <= 105000) ns = VROTA;
         else if (hp <= -2.0 && sp <= -2.0) ns = RTBEAR;
-        else if (k.mid <= 107500) ns = BAJ107;
+        // histeresis 250 pts (2026-07-19: flap NADIE<->RECLAIM cada 5s en la
+        // frontera exacta = voz repetida): entrar a un estado pide cruzar el
+        // nivel; salir pide alejarse 250 del nivel.
+        else if (k.mid <= 107500 || (st == BAJ107 && k.mid < 107750)) ns = BAJ107;
         else if (k.mid >= 109000) { if (++above >= 2) ns = PRINT109; else ns = st; }
-        else if (k.mid >= 108400) ns = RECLAIM;
+        else if (k.mid >= 108400 || (st == RECLAIM && k.mid > 108150)) ns = RECLAIM;
         else ns = NADIE;
         if (k.mid < 109000) above = 0;
         if (ns != st) {
