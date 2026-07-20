@@ -187,8 +187,10 @@ static bool current_price(const std::string& sym, double* out) {
         char pb[256];
         std::snprintf(pb, sizeof(pb), "data/bars_%s_ibkr.txt", sym.c_str());
         double bar = 0;
+        // umbral 0.4% (2026-07-20 10:12: fantasma 203.72 vs bar 205.5 = 0.87%
+        // esquivo el 1% y disparo '204.7 tesis muerta' en falso)
         if (px_from_bars(pb, &bar) && bar > 0 &&
-            std::fabs(*out - bar) / bar > 0.01) {
+            std::fabs(*out - bar) / bar > 0.004) {
             *out = bar;
         }
         return true;

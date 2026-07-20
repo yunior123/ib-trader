@@ -96,6 +96,18 @@ def make_on_nbbo(st):
     def on_tick(t):
         now = time.time()
         if t.bid and t.ask and t.bid > 0 and t.ask > t.bid:
+            # GUARDA ANTI-FANTASMA (2026-07-20): quote cruzada/vieja del feed
+            # (NVDA 203.50/203.95 con px real 206.3, spread 0.22% vs 0.02%
+            # normal) disparo alarmas falsas. Rechazar ticks cuyo mid salte
+            # >0.5% vs el ultimo mid escrito Y vs el ultimo bar 1m — un salto
+            # real siempre aparece tambien en bars/el proximo tick coherente.
+            mid = (t.bid + t.ask) / 2.0
+            lastmid = getattr(st, "nbbo_mid", 0.0)
+            lastbar = st.agg[max(st.agg)][3] if getattr(st, "agg", None) else 0.0
+            if lastmid > 0 and abs(mid - lastmid) / lastmid > 0.005 and \
+               lastbar > 0 and abs(mid - lastbar) / lastbar > 0.005:
+                return                        # fantasma: no escribir
+            st.nbbo_mid = mid
             st.bid, st.ask = t.bid, t.ask     # siempre fresco para las ballenas
             if now - st.nbbo_last < 0.25:     # 4/s (era 1/s; orden 2026-07-15
                 return                        # "blazing fast" — spread gate fresco)
