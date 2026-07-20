@@ -569,3 +569,34 @@ Durante horario de mercado, Claude Code es INFRAESTRUCTURA CRÍTICA de trading:
 - **Herramientas de ritmo**: usar sleep/schedule/cron/wakeups para loops de
   vigilancia (ej: revisar flota cada 1 min con prioridad al ticker en juego).
 - Siempre señal-solamente (ley #0): Claude guía, el humano ejecuta.
+
+## FLOTA KOREA (2026-07-19 — "prepare the fleet for korea", paridad con la flota Toronto)
+
+KRX abre 09:00–15:30 KST = **20:00 ET (domingo–jueves) a 02:30 ET**. Los 3 bots
+(skhynix 000660 / samsung 005930 / kospi = KODEX200 069500) son detection-only
+(SCORE_MIN=9, señal-solamente), motor idéntico a la flota NA (v5/v6+v6.1
+retest-confirm), reloj KST, compilados `clang++ -std=c++2c -O3 -march=native`
+(cero warnings, Apple clang 21). Datos: `scripts/korea_bar_bridge.py`
+(clientId 86, sub Korea Equities waived = realtime GRATIS via API).
+
+Paridad Toronto portada 2026-07-19 (la ceguera del viernes 2026-07-17 — bridge
+"suscrito" sin bars desde el jueves 10:10 KST — no puede repetirse):
+- **korea_bar_bridge**: handler Error 1101 + stall-watchdog (5 min sin bars en
+  sesión KRX → resub + banner `🇰🇷 KRX BRIDGE CIEGO` ProAlarm + espejo Desktop),
+  cooldown 5 min anti-thrash pre-open (cazado en vivo; portado también al
+  daemon NA `ibkr_bar_bridge.py`).
+- **tws_watchdog**: ventana ahora incluye **domingo ≥19:45 ET** (la sesión KRX
+  del lunes abre domingo 20:00 ET — antes el domingo estaba excluido entero) y
+  excluye viernes ≥20:00 (KRX no abre sábado). El proxy de salud lee también
+  `bars_{skhynix,samsung,kospi}.txt`. FIX: la detección ZOMBIE (446360c) contaba
+  fallos pero jamás actuaba — ahora 3 zombies seguidos relanzan TWS (banner 🧟 +
+  voz), con gracia 15 min post-open (sin falsos positivos a las 04:00/20:00).
+- **Voz**: todo el camino usa la voz Siri del sistema via `scripts/speak.sh`
+  serializado (watchdog y heartbeat migrados; `-v Daniel` erradicado del código
+  activo). `speak.sh` pronuncia `skhynix`→"S K Hynix", `kospi`→"Kospi".
+- **fleet_sleep / focus_ticker**: si `data/fleet_sleep` tiene `wake:` debe ser
+  ANTES de 19:45 ET dom–jue o la flota duerme la sesión KRX (cazado 2026-07-19:
+  wake apuntaba al lunes 08:00). `data/focus_ticker` debe listar
+  skhynix/samsung/kospi o el tick de 5 min los mata.
+- **price_alarm** cubre Corea: línea `skhynix <precio>` (o samsung/kospi) en
+  `~/Desktop/price-alerts.txt` — usa `data/nbbo_<name>.txt` del bridge.

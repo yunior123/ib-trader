@@ -46,7 +46,8 @@ Los 3 KRX (kospi/samsung/skhynix) tienen sesión 20:00-02:30 ET.
 ## 6. Loop copiloto minuto-a-minuto
 Tick = leer NBBOs + última barra (`tail -1 data/bars_{sym}_ibkr.txt`), dar orden
 de UN número, y `sleep 60` con run_in_background como timer. Voz:
-`(say -v Paulina "mensaje" &)`. Doctrina completa: docs/PLAYBOOK-2026-07-16-el-mejor-dia.md
+`scripts/speak.sh SIGNAL "mensaje"` (voz serializada 2026-07-18 — nada de `say -v`
+directo, se pisaba). Doctrina completa: docs/PLAYBOOK-2026-07-16-el-mejor-dia.md
 
 ## Reglas fijas
 - clientIds TWS: 85-99 reservados a daemons; escaneos puntuales usar 40-49.

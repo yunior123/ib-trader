@@ -22,7 +22,7 @@ I/O-bound — la matematica de senal sigue en C++.
 
 Uso: korea_bar_bridge.py [--daemon]   (por defecto daemon)
 """
-import os, sys, time
+import os, subprocess, sys, time
 from datetime import timezone
 
 ROOT = "/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader"
@@ -95,6 +95,58 @@ def make_on_nbbo(st):
                 f.write(f"{now:.0f} {t.bid:.4f} {t.ask:.4f}\n")
     return on_tick
 
+def krx_market():
+    """Sesion KRX 09:00-15:30 KST (UTC+9, sin DST), lun-vie coreano.
+    Con 5 min de gracia a cada lado para el stall-watchdog."""
+    lt = time.gmtime(time.time() + 9 * 3600)
+    return lt.tm_wday < 5 and (8, 55) <= (lt.tm_hour, lt.tm_min) <= (15, 35)
+
+_last_banner = 0.0
+_last_resub = 0.0
+
+def loud(title, msg, sound="ProAlarm"):
+    """Fail LOUD (ley #2): banner Mac + espejo Desktop, throttle 10 min.
+    La flota korea no tiene reader C++ que grite por ella — el bridge grita."""
+    global _last_banner
+    print(f"{title}: {msg}", file=sys.stderr)
+    if time.time() - _last_banner < 600:
+        return
+    _last_banner = time.time()
+    esc = lambda s: s.replace("\\", "").replace('"', "'")
+    try:
+        subprocess.Popen(["/usr/bin/osascript", "-e",
+                          f'display notification "{esc(msg)}" with title '
+                          f'"{esc(title)}" sound name "{sound}"'],
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        lt = time.localtime()
+        d = os.path.expanduser("~/Desktop/trading-signals")
+        os.makedirs(d, exist_ok=True)
+        with open(f"{d}/{lt.tm_year:04d}-{lt.tm_mon:02d}-{lt.tm_mday:02d}.txt",
+                  "a") as f:
+            f.write(f"{lt.tm_hour:02d}:{lt.tm_min:02d}:{lt.tm_sec:02d} | "
+                    f"{title} | {msg}\n")
+    except Exception:
+        pass
+
+def resub_all(ib, why):
+    """Suelta TODO y fuerza resuscripcion (Error 1101 'data lost' / stall:
+    tras un flap, TWS reconecta pero las subs NO reviven solas — el daemon NA
+    lo cazo en vivo 2026-07-15 17:23; este bridge se quedo CIEGO igual el
+    2026-07-16 10:10 KST y perdio la sesion del viernes entera)."""
+    print(f"korea RESUB-ALL ({why}): soltando subs y resuscribiendo",
+          file=sys.stderr)
+    for st in STATES.values():
+        for sub in st.subs:
+            try:
+                if type(sub).__name__ == "RealTimeBarList":
+                    ib.cancelRealTimeBars(sub)
+                elif hasattr(sub, "contract"):
+                    ib.cancelMktData(sub.contract)
+            except Exception:
+                pass
+        st.subs = []
+        st.blocked_until = 0
+
 def warmup(ib, st):
     """historia 1 dia -> escribe el bars file (truncate, orden ascendente) para
     que el bot C++ prime BB/RSI al instante; live continua en append."""
@@ -151,13 +203,33 @@ def run():
     ib = IB()
     ib.connect(HOST, PORT, clientId=CLIENT_ID, readonly=True, timeout=20)
     ib.reqMarketDataType(1)                   # 1 = REALTIME. Delayed PROHIBIDO.
+    # Error 1101 (data lost tras flap) -> resub inmediato, igual que el daemon NA
+    ib.errorEvent += lambda r, c, m, ct=None, *a: (
+        c == 1101 and resub_all(ib, "Error 1101 data-lost"))
     print(f"korea bridge: TWS {HOST}:{PORT}, {len(KOREA)} KRX syms "
-          f"(SK Hynix + Samsung, bars 5s->1m + NBBO)", file=sys.stderr)
+          f"(SK Hynix + Samsung + KODEX200, bars 5s->1m + NBBO)", file=sys.stderr)
     for st in STATES.values():
         warmup(ib, st)
     while ib.isConnected():
         for st in STATES.values():
             subscribe_sym(ib, st)
+        # STALL WATCHDOG (paridad con daemon NA 2026-07-15): en sesion KRX,
+        # suscrito pero 5 min sin UN solo bar 1m de 3 nombres liquidos =
+        # subs muertas (caso 1100->reconexion sin 1101). Resub + GRITAR.
+        # cooldown 5 min entre resubs: sin bars el reloj del stall no avanza
+        # hasta el primer bar post-open — sin cooldown esto thrashea cada 15s
+        # (visto en vivo 2026-07-19 pre-open KST)
+        global _last_resub
+        newest = max((st.last_emitted for st in STATES.values()), default=0)
+        subscribed = any(st.subs for st in STATES.values())
+        if krx_market() and subscribed and newest > 0 \
+                and time.time() - newest > 300 \
+                and time.time() - _last_resub > 300:
+            _last_resub = time.time()
+            loud("🇰🇷 KRX BRIDGE CIEGO",
+                 f"{time.time() - newest:.0f}s sin bars KRX en sesion — "
+                 f"resuscribiendo (skhynix/samsung/kospi)")
+            resub_all(ib, f"stall {time.time() - newest:.0f}s sin bars")
         ib.sleep(15)
     raise ConnectionError("TWS desconectado")
 

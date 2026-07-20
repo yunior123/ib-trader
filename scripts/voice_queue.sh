@@ -10,7 +10,8 @@
 # Extras:
 #   - Descarte de STALE: voz de trading >25s vieja = ruido → se tira (no acumula).
 #   - Coalescing: en avalancha de misma prioridad, dice el más reciente + "y N más".
-#   - Prioridad DANGER > SIGNAL > INFO; voces distintas por tipo para distinción.
+#   - Prioridad DANGER > SIGNAL > INFO; UNA sola voz (la del sistema, ver abajo) —
+#     la distinción por tipo la da el contenido, no la voz (2026-07-19).
 #
 # Compatible con bash 3.2 (macOS) — SIN arrays asociativos.
 # Señal-solamente (ley #0): solo lee la cola y llama `say`. Cero red, cero órdenes.

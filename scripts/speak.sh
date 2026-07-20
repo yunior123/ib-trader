@@ -31,7 +31,12 @@ MSG="$(printf '%s' "$MSG" | sed -E \
   -e 's/[[:<:]]QQQ[[:>:]]/Nasdaq/g'    -e 's/[[:<:]]XLK[[:>:]]/tecnología/g' \
   -e 's/[[:<:]]AMD[[:>:]]/A M D/g'     -e 's/[[:<:]]DRAM[[:>:]]/D RAM/g' \
   -e 's/[[:<:]]GLD[[:>:]]/oro/g'       -e 's/[[:<:]]SLV[[:>:]]/plata/g' \
-  -e 's/[[:<:]]CPER[[:>:]]/cobre/g'    -e 's/[[:<:]]USO[[:>:]]/petróleo/g')"
+  -e 's/[[:<:]]CPER[[:>:]]/cobre/g'    -e 's/[[:<:]]USO[[:>:]]/petróleo/g' \
+  -e 's/[[:<:]][Ss][Kk][Hh][Yy][Nn][Ii][Xx][[:>:]]/S K Hynix/g' \
+  -e 's/[[:<:]][Kk][Oo][Ss][Pp][Ii][[:>:]]/Kospi/g')"
+# ^ Corea (2026-07-19, flota nocturna KRX): price-alerts.txt trae `skhynix`/`kospi`
+#   en minúscula → clases por letra = case-insensitive (sed BSD no tiene flag I).
+#   samsung ya se lee bien tal cual; los bots KRX ya hablan nombres humanos.
 
 # ¿daemon vivo?
 PIDFILE="$ROOT/data/voice_queue.pid"

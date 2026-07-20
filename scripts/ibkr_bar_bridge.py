@@ -303,6 +303,7 @@ def run_daemon():
           f"(bars 5s->1m + NBBO SIP + whales tick-by-tick + overnight)",
           file=sys.stderr)
     last_prune = 0.0
+    last_resub = 0.0
     while ib.isConnected():
         for st in STATES.values():
             subscribe_sym(ib, st)
@@ -314,11 +315,16 @@ def run_daemon():
         # STALL WATCHDOG: conectado + suscrito pero NINGUN bar en 5 min en
         # ventana de mercado (L-V 04:00-20:00 ET o KRX via US overnight) =
         # suscripciones muertas (caso 1100->reconexion sin 1101 explicito).
+        # Cooldown 5 min entre resubs (2026-07-19, cazado en el bridge korea):
+        # sin bars el reloj del stall no avanza hasta el primer bar post-open
+        # — sin cooldown esto thrashea resubs cada 15s en pre-open.
         lt = time.localtime()
         market = lt.tm_wday < 5 and 4 <= lt.tm_hour < 20
         newest = max((st.last_emitted for st in STATES.values()), default=0)
         subscribed = any(st.subs for st in STATES.values())
-        if market and subscribed and newest > 0 and time.time() - newest > 300:
+        if market and subscribed and newest > 0 and time.time() - newest > 300 \
+                and time.time() - last_resub > 300:
+            last_resub = time.time()
             _resub_all(ib, f"stall {time.time() - newest:.0f}s sin bars")
         ib.sleep(15)
     raise ConnectionError("TWS desconectado")

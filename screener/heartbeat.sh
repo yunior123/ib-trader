@@ -16,7 +16,9 @@ while true; do
   # foreground (autolimitado) — los & huerfanos saturaban coreaudiod (fix 2026-07-09)
   if [[ -n "$SYM" ]]; then
     pgrep -x afplay >/dev/null || afplay "$ALERT" >/dev/null 2>&1
-    pgrep -x say >/dev/null || say -v Daniel -r 180 "holding $SYM, watchdog active" >/dev/null 2>&1
+    # voz serializada (orden 2026-07-18): speak.sh encola, el daemon habla con la
+    # voz Siri del sistema — nada de say -v directo (se pisaba con otras alertas)
+    bash "$ROOT/scripts/speak.sh" INFO "holding $SYM, watchdog active" >/dev/null 2>&1
     echo "$(date +%T) heartbeat: POSITION OPEN ($SYM), watchdog managing" >> "$ROOT/screener/heartbeat.log"
   else
     pgrep -x afplay >/dev/null || afplay "$TICK" >/dev/null 2>&1
