@@ -194,7 +194,21 @@ static bool px_from_bars(const char* path, double* out) {
 }
 
 static bool current_price(const std::string& sym, double* out) {
-    if (px_from_nbbo(sym, out)) return true;
+    if (px_from_nbbo(sym, out)) {
+        // ANTI-FANTASMA (2026-07-20): nbbo_<sym>.txt tiene DOS escritores
+        // (daemon IBKR sano 1/s + reader alpaca_ws_bridge con quotes viejas
+        // — NVDA 203.725 fantasma vs real 206.3 disparo 5 alarmas falsas).
+        // Cross-check: si el nbbo diverge >1% del close del bar IBKR fresco
+        // (<180s), el bar manda (fuente unica confiable).
+        char pb[256];
+        std::snprintf(pb, sizeof(pb), "data/bars_%s_ibkr.txt", sym.c_str());
+        double bar = 0;
+        if (px_from_bars(pb, &bar) && bar > 0 &&
+            std::fabs(*out - bar) / bar > 0.01) {
+            *out = bar;
+        }
+        return true;
+    }
     char p[256];
     std::snprintf(p, sizeof(p), "data/bars_%s_ibkr.txt", sym.c_str());
     if (px_from_bars(p, out)) return true;
