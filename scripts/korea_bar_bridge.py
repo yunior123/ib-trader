@@ -93,6 +93,14 @@ def make_on_nbbo(st):
             st.nbbo_last = now
             with open(f"data/nbbo_{st.name}.txt", "w") as f:
                 f.write(f"{now:.0f} {t.bid:.4f} {t.ask:.4f}\n")
+        elif t.last and t.last > 0:
+            # KODEX 200 (kospi): IBKR da trades REALTIME (mdt=1) pero CERO book
+            # (bid/ask=-1 siempre — probado en vivo 2026-07-20 09:07 KST; las
+            # acciones samsung/skhynix si tienen BBO). Fallback honesto: last
+            # trade como bid=ask -> mid exacto, spread 0. NO es delayed.
+            st.nbbo_last = now
+            with open(f"data/nbbo_{st.name}.txt", "w") as f:
+                f.write(f"{now:.0f} {t.last:.4f} {t.last:.4f}\n")
     return on_tick
 
 def krx_market():
