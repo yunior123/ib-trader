@@ -3,3 +3,5 @@
 CLSK call 16 exp 20260724 ~0.46 | entrada: dip sostenido o reclaim cierre 7/21 | target premium 2x (~16.50) | stop -40% o <15.10 | tesis: complejo crypto (COIN/CIFR/CRCL) band-walk
 INTC call 106 exp 20260724 ~1.20 | entrada: dip 102.5-103 sostenido o >104.80 x2 | target 106.5-107 (muro 10k) | stop 101.90 | FUERA miercoles antes cierre (earnings 7/23 AMC)
 # Contexto: TXN reporta manana AMC->miercoles reaccion semis; KOSPI overnight decide sesgo (regla: KOSPI fuerte = no puts indices)
+# PATRON DIA-DESPUES-DE-COREA (Yunior 7/21): tras pump Corea, retroceso LEVE del complejo memoria probable manana
+# -> el dip de la manana es ESPERADO y es LA entrada; INTC puede abrir rojo (normal); no puts de indices igual
