@@ -38,7 +38,7 @@ FLEET = {
     "GOOGL":dict(style="weekly", fut="NQ=F", korea=False),
     "INTC": dict(style="weekly", fut="NQ=F", korea=False),
     "TSM":  dict(style="weekly", fut="NQ=F", korea=True),
-    "ASML": dict(style="weekly", fut="NQ=F", korea=True),
+    "ASML": dict(style="weekly", fut="NQ=F", korea=True, europe="ASML.AS"),
     "TXN":  dict(style="weekly", fut="NQ=F", korea=False),
     "QCOM": dict(style="weekly", fut="NQ=F", korea=False),
     "AVGO": dict(style="weekly", fut="NQ=F", korea=False),
@@ -261,6 +261,24 @@ def korea_read():
             pass
     return out
 
+def europe_read(syms):
+    """Momentum del listado europeo (lidera ~6h) para euro-tickers. ej ASML.AS Amsterdam.
+    + STOXX50 como termometro. Delayed pero adelanta la apertura US."""
+    out = {}
+    try:
+        import yfinance as yf
+        for eu in set(s for s in syms if s):
+            try:
+                h = yf.Ticker(eu).history(period="2d")
+                out[eu] = (float(h.Close.iloc[-1]) / float(h.Close.iloc[-2]) - 1) * 100
+            except Exception: pass
+        try:
+            h = yf.Ticker("^STOXX50E").history(period="2d")
+            out["STOXX50"] = (float(h.Close.iloc[-1]) / float(h.Close.iloc[-2]) - 1) * 100
+        except Exception: pass
+    except Exception: pass
+    return out
+
 def vx_term():
     """VIX spot + futuros VX (CBOE publico, delayed ~15m): contango/backwardation = regimen de vol."""
     try:
@@ -308,7 +326,7 @@ def gexa_snapshot(sym):
     except Exception:
         return None
 
-def plan_engine(sym, spot, cs, on, wb, ws, kor, fut, meta, vx=None):
+def plan_engine(sym, spot, cs, on, wb, ws, kor, fut, meta, vx=None, eur=None):
     reg = "NEGATIVO" if cs["net_gex"] < 0 else "POSITIVO"
     below_flip = cs["flip"] is not None and spot < cs["flip"]
     lines, score = [], 0
@@ -375,6 +393,14 @@ def plan_engine(sym, spot, cs, on, wb, ws, kor, fut, meta, vx=None):
         lean = "COMPRADOR" if wb > ws else "VENDEDOR"
         lines.append(f"BALLENAS (tape propia, ayer): {lean} — compras ${wb/1e6:.1f}M vs ventas ${ws/1e6:.1f}M")
         score += 1 if (lean == "COMPRADOR") == (on.get("gap_pct", 0) >= 0) else 0
+    if meta.get("europe") and eur:
+        e_sym = meta["europe"]; e_mv = eur.get(e_sym); e_sx = eur.get("STOXX50")
+        bits = []
+        if e_mv is not None: bits.append(f"{e_sym} {e_mv:+.1f}% (lider ~6h)")
+        if e_sx is not None: bits.append(f"STOXX50 {e_sx:+.1f}%")
+        if bits:
+            lines.append("EUROPA: " + " | ".join(bits) + " — el listado europeo adelanta la apertura US.")
+            if e_mv is not None and abs(e_mv) > 1: score += 1
     if meta.get("korea") and kor:
         ks = " | ".join(f"{k} {v:+.1f}%" for k, v in kor.items())
         lines.append(f"KOREA (memoria, sesion en vivo): {ks} — lider ~13h de MU/DRAM/semis.")
@@ -424,7 +450,7 @@ QUIPS = [
     "Primer toque rebota. El heroe del segundo toque paga la cena de los dealers.",
 ]
 
-def x_draft(sym, spot, cs, on, dip_p, reg):
+def x_draft(sym, spot, cs, on, dip_p, reg, kor=None, meta=None, eur=None):
     e = "🧲" if reg == "POSITIVO" else "⚡"
     above=[r for r in cs['cw'] if r[0]>spot] or cs['cw']
     below=[r for r in cs['pw'] if r[0]<spot] or cs['pw']
@@ -432,12 +458,39 @@ def x_draft(sym, spot, cs, on, dip_p, reg):
     atr=on.get("atr", spot*0.01)
     stop_b=techo-0.35*atr; tgt_b=min([w[0] for w in above if w[0]>techo]+[cs['pain'] if cs['pain']>techo else techo+atr])
     prob=55 if reg=="POSITIVO" else 50
-    return (f"{e} ${sym} plan premarket (prob ~{prob}%):\n"
-            f"ENTRADA: reclaim de {techo:g} con 2 lecturas, nunca 9:30-9:45.\n"
-            f"TARGET: {tgt_b:g} (iman). STOP MENTAL: {stop_b:.2f} — si el camino falla, fuera sin drama.\n"
-            f"Plan B abajo: piso {piso:g}; si rompe con print, target {cs['pain']:g}.\n"
-            f"Gap {on.get('gap_pct',0):+.1f}%: ~{dip_p:.0f}% prob de dip-trampa al abrir.\n"
-            f"{QUIPS[(int(time.strftime('%j')) + sum(map(ord, sym))) % len(QUIPS)]} No es consejo financiero.")
+    gap=on.get("gap_pct",0)
+    f=lambda x: f"{x:.0f}" if x>=50 else f"{x:.1f}"
+    tend="⬆️ALCISTA" if gap>0.25 else ("⬇️BAJISTA" if gap<-0.25 else "➡️plano")
+    kline=""
+    if meta and meta.get("europe") and eur:
+        e_mv=eur.get(meta["europe"])
+        if e_mv is not None:
+            ses="🟢alza" if e_mv>0.5 else ("🔴baja" if e_mv<-0.5 else "🟡plano")
+            if e_mv>0.5 and reg=="POSITIVO": prob=min(prob+5,68)
+            elif e_mv<-0.5: prob=max(prob-4,40)
+            kline+=f"🇪🇺{meta['europe'].split('.')[0]} {e_mv:+.1f}% (lider 6h) {ses}\n"
+            if e_mv>0.8: e="🚀"
+    if meta and meta.get("korea") and kor:
+        sam=kor.get("Samsung"); skh=kor.get("SK-Hynix"); ksp=kor.get("KOSPI")
+        avg=[x for x in (sam,skh,ksp) if x is not None]
+        if avg:
+            m=sum(avg)/len(avg)
+            sesgo="🟢ALZA semis" if m>0.4 else ("🔴BAJA semis" if m<-0.4 else "🟡mixto")
+            if m>0.4 and reg=="POSITIVO": prob=min(prob+7,68)
+            elif m<-0.4: prob=max(prob-5,40)
+            det=" ".join(x for x in [f"Sam{sam:+.0f}%" if sam is not None else "",
+                                     f"SKH{skh:+.0f}%" if skh is not None else ""] if x)
+            if m>0.4: e="🚀"
+            kline+=f"🇰🇷Corea 13h {det} {sesgo}\n"
+    q=QUIPS[(int(time.strftime("%j"))+sum(map(ord,sym)))%len(QUIPS)]
+    if len(q)>42: q="Print o nada."
+    # escalera visual: techo/iman/precio/piso/stop en una linea
+    return (f"{e} ${sym} 0DTE prob ~{prob}%\n"
+            f"{kline}"
+            f"🔴{f(techo)} 🎯{f(tgt_b)} 📍{f(spot)} 🟢{f(piso)}\n"
+            f"▶️reclaim {f(techo)} (2 lecturas, no 9:30-9:45)\n"
+            f"🛑{f(stop_b)} si falla · Gap {gap:+.1f}% {tend}\n"
+            f"{q} No consejo fin.")
 
 # ---------- PDF ----------
 def make_pdf(outdir, sym, spot, cs, on, plan_lines, series):
@@ -565,6 +618,7 @@ def main():
     os.makedirs(os.path.join(a.outdir, "x_drafts"), exist_ok=True)
     kor, fut = korea_read(), futures_read()
     vx = vx_term()
+    eur = europe_read([m.get("europe") for m in FLEET.values() if m.get("europe")])
     made, scored = [], []
     for sym in [s.strip().upper() for s in a.tickers.split(",") if s.strip()]:
         meta = FLEET.get(sym, dict(style="weekly", fut="ES=F", korea=False))
@@ -577,10 +631,10 @@ def main():
             on = overnight_stats(t, spot)
             wb, ws = whale_read(sym)
             series = prepost_series(t)
-            plan, dip_p, reg, score = plan_engine(sym, spot, cs, on, wb, ws, kor, fut, meta, vx)
+            plan, dip_p, reg, score = plan_engine(sym, spot, cs, on, wb, ws, kor, fut, meta, vx, eur)
             pdf = make_pdf(a.outdir, sym, spot, cs, on, plan, series)
             with open(os.path.join(a.outdir, "x_drafts", f"{sym}.txt"), "w") as f:
-                f.write(x_draft(sym, spot, cs, on, dip_p, reg))
+                f.write(x_draft(sym, spot, cs, on, dip_p, reg, kor, meta, eur))
             made.append(pdf); scored.append((score, sym, dip_p, reg))
             print(f"{sym}: OK dip~{dip_p:.0f}% {reg} score {score}")
         except Exception as e:
@@ -604,4 +658,5 @@ def main():
         json.dump([{"sym": s, "score": sc, "dip": d, "reg": r} for sc, s, d, r in scored], f)
     print(f"{len(made)} PDFs en {a.outdir}")
 
-main()
+if __name__ == "__main__":
+    main()
