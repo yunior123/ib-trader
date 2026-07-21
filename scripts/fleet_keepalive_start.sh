@@ -17,16 +17,17 @@ if [[ -f "$ROOT/data/fleet_sleep" ]]; then
     echo "$(date) fleet: AUTO-DESPERTAR (wake $WAKE alcanzado)" >> "$ROOT/fleet_autostart.log"
     osascript -e 'display notification "La flota amaneció sola: bots, sirenas y feeds armados. Buen OPEX." with title "🌅 FLOTA DESPIERTA" sound name "ProChord"' 2>/dev/null
   else
-    for p in price_alarm_keepalive.sh opt_sentinel_keepalive.sh options_enrich_keepalive.sh opt_chain_keepalive.sh bargain_keepalive.sh sox_keepalive.sh finviz_scout_keepalive.sh notify_relay.sh; do
+    for p in price_alarm_keepalive.sh opt_sentinel_keepalive.sh options_enrich_keepalive.sh opt_chain_keepalive.sh bargain_keepalive.sh sox_keepalive.sh finviz_scout_keepalive.sh notify_relay.sh x_signal_keepalive.sh; do
       pkill -f "scripts/$p" 2>/dev/null
     done
+    pkill -f 'scripts/x_signal_poster.py' 2>/dev/null
     pkill -f 'scripts/sox_index_feed.py' 2>/dev/null
     pkill -x finviz_scout 2>/dev/null
     pkill -x price_alarm 2>/dev/null
     pkill -f 'scripts/opt_sentinel.py' 2>/dev/null
     pkill -f 'scripts/options_enrich.py' 2>/dev/null
     pkill -f 'scripts/opt_chain_cache.py' 2>/dev/null
-    for b in dram nok spcx tsla nvda txn tsm amd intc asml aapl gld qqq slv cper uso skhy skhynix samsung kospi mu smh ewy; do
+    for b in dram nok spcx tsla nvda txn tsm amd intc asml aapl gld qqq spy slv cper uso skhy skhynix samsung kospi mu smh ewy; do
       pkill -f "scripts/${b}_keepalive.sh" 2>/dev/null
       pkill -x "${b}_signal_bot" 2>/dev/null
     done
@@ -37,7 +38,7 @@ fi
 # si data/focus_ticker existe, solo los tickers listados ahi corren; el resto
 # se APAGA en cada tick de 5 min. Restaurar flota completa: rm data/focus_ticker
 FOCUS="$ROOT/data/focus_ticker"
-for b in dram nok spcx tsla nvda txn tsm amd intc asml aapl gld qqq slv cper uso skhy skhynix samsung kospi mu smh ewy; do
+for b in dram nok spcx tsla nvda txn tsm amd intc asml aapl gld qqq spy slv cper uso skhy skhynix samsung kospi mu smh ewy; do
   if [[ -s "$FOCUS" ]] && ! grep -qix "$b" "$FOCUS"; then
     pkill -f "scripts/${b}_keepalive.sh" 2>/dev/null
     pkill -x "${b}_signal_bot" 2>/dev/null
@@ -62,7 +63,7 @@ fi
 # SIP warm-up historico + bars 1m + NBBO a data/*_ibkr.txt / nbbo_*.txt.
 # Bots leen data/bars_<sym>_ibkr.txt directo via tail -F (reader retirado 2026-07-20).
 if ! pgrep -f "ibkr_bar_bridge.py --daemon" >/dev/null; then
-  nohup ./venv/bin/python scripts/ibkr_bar_bridge.py --daemon NOK SPCX DRAM TSLA NVDA TXN TSM AMD INTC ASML AAPL GLD QQQ SLV CPER USO SKHY MU SMH GOOGL QCOM MSFT AVGO AMZN META XLK EWY >> bridge_ibkr_fleet.log 2>&1 &
+  nohup ./venv/bin/python scripts/ibkr_bar_bridge.py --daemon NOK SPCX DRAM TSLA NVDA TXN TSM AMD INTC ASML AAPL GLD QQQ SPY SLV CPER USO SKHY MU SMH GOOGL QCOM MSFT AVGO AMZN META XLK EWY NFLX >> bridge_ibkr_fleet.log 2>&1 &
   echo "$(date) fleet: ibkr fleet daemon lanzado (pid $!)" >> fleet_autostart.log
 fi
 
@@ -135,4 +136,13 @@ fi
 if ! pgrep -f "scripts/opt_whale_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/opt_whale_keepalive.sh" >/dev/null 2>&1 &
   echo "$(date) fleet: opt_whale_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+fi
+
+# x_signal_poster (2026-07-21): postea en X las señales FUERTES de la flota
+# (prob>=70, ballenas >=3:1, retest-ok/reclaim/ruptura) + combos multi-ticker
+# de data/x_combo_triggers.txt. SEÑAL-SOLAMENTE; ledger compartido
+# data/x_plan_budget.json (10 posts/dia, $4/mes) con x_plan_poster/postmortem.
+if ! pgrep -f "scripts/x_signal_keepalive.sh" >/dev/null; then
+  nohup zsh "$ROOT/scripts/x_signal_keepalive.sh" >/dev/null 2>&1 &
+  echo "$(date) fleet: x_signal_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
 fi

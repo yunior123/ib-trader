@@ -618,3 +618,31 @@ Contexto: KOSPI -27% desde pico de junio, reabrió tras Día de Constitución co
 - **Nuevo camino de datos NA:** cada bot lee `data/bars_<sym>_ibkr.txt` DIRECTO via `popen("tail -n +1 -F ...")` — mismo patron que la flota korea. Fuente unica: `ibkr_bar_bridge.py` (bars+NBBO+whales). 20 bots recompilados c++2c.
 - **Archivado en `backup/alpaca_retired_2026-07-20/`:** alpaca_ws_bridge(.cpp), alpaca.env, alpaca_tape_bridge.py, scan_server(.cpp) (dependia del tape bridge), ws_daemon.log.
 - **PENDIENTE (no silencioso):** 5 scripts de backtest/calibracion (`v6_backtest.py`, `fleet_wfo.py`, `backtest_replay.py`, `fleet_backtest_audit.py`, `leveraged_backtest.py`) usaban historia Alpaca IEX y quedaron INERTES sin alpaca.env — migrar a `reqHistoricalData` de IBKR antes de la proxima recalibracion semanal v6. Menciones restantes en comentarios = documentacion de la ley, no codigo.
+
+## Post-mortem imanes 2026-07-20 — "el mapa acertó, el vehículo perdió"
+
+**Diagnóstico:** el mapa de imanes/muros funcionó como física casi todo el día (650 rechazó META 4x, 250 pineó AMZN, 400 imantó MSFT, NVDA respetó pisos 205/200, AAPL rebotó 2x en 325). Los trades ganadores fueron los que cabalgaron HACIA un imán desde el lado cercano con nivel impreso: QQQ 699P en la 2ª ruptura del 700 (+), NVDA 202.5P hacia la fortaleza 200 (+15-30%), MSFT 400C de 396 → vendido en el toque de 400 (+). El dinero se perdió en CÓMO se operó:
+
+1. **Comprar 0DTE OTM DETRÁS de muros conocidos (~12:35)** — META 660C tras el muro 650, MSFT 405C tras el pin 400, AMZN 255C tras el pin 250: las 3 apuestas exigían cruzar un muro para llegar al imán; las 3 murieron OTM ($0.13/$0.23/$0.01). La pérdida grande del día. "La pérdida grande no la causaron los muros — la causó comprar tres 0DTE OTM detrás de muros conocidos" (13:56).
+2. **Premiums fantasma por expiry equivocado** — el vigía cotizó contratos del vie 24-jul ($9-10 en META 660C) cuando el 0DTE real valía $0.32 → la orden de venta llegó horas tarde.
+3. **El reclaim que violó la regla de 3** — QQQ 700 ya roto 3 veces (muro exhausto); a las 14:14 un print de 701 se leyó como reclaim y se compró QQQ 702C sobre el muro muerto → stop en 10 min; era la pérdida #4 (la regla de 3-y-fuera ya se había invocado a las 13:56).
+4. **Call-spike comprado como gasolina** — NVDA 210C en apertura (P/C 0.33, volumen masivo de calls); Ley 13: call-spike de apertura = techo local. NVDA hizo top minutos después. −50%.
+
+**Reglas destiladas (en `~/.claude/LEARNED.md` + memoria `oi-magnets-protocol`):** operar HACIA imanes, jamás A TRAVÉS de muros; los muros decaen por toques (1º rebota ~70%, 3+ = muerto; ruptura confirmada con retest-rechazo INVIERTE el nivel); OI monstruo a ±1 del spot = zona de pin, prohibido 0DTE comprado ahí; call-spike de apertura = techo, no combustible; todo veredicto de muro con probabilidad; expiry verificado contra posiciones REALES del broker antes de cualquier monitor; 3 pérdidas = fin del día (sin excepciones por "reclaim bonito").
+
+## Sistema de planes diarios autónomo (2026-07-21)
+
+Pipeline autónomo **señal-solamente** que arma el mapa del día por ticker, se refresca hasta la apertura y se califica a sí mismo al cierre. Tres capas aditivas: `daily_fleet_plans.py` (generador: 26 tickers, muros OI + max pain + GEX/flip propio + griegas BS + gap-fill histórico + Bollinger + ballenas + Korea + futuros + VX CBOE + Finviz + árbol de escenarios → PDF de 3 páginas en `~/Desktop/planes-<fecha>/` + email Resend + `ranking.json` + `x_drafts/`); `calibration_ledger.py` (mide la probabilidad real y reemplaza la adivinada); `pattern_detect.py` (figuras de chart con tasa empírica). Encima, 3 posters de X. **Manual completo: `docs/DAILY-SYSTEM.md`.**
+
+**Cronograma launchd** (`~/Library/LaunchAgents/`):
+- `com.ibtrader.dailyplans` → `scripts/dailyplans_run.sh` a las **04:00** (FULL: planes + email + X + patrones + calib.record + gexa verify), **08:30** (REFRESH), **09:12** (APERTURA, 10 tickers). El modo lo decide el script por `$HM`.
+- `com.ibtrader.postmortem` → `scripts/postmortem_run.sh` a las **16:20** (EOD: `calibration_ledger eod` + `x_postmortem`).
+- `x_signal_poster.py` es un daemon aparte (no launchd), ventana 8:00-16:05.
+- `launchctl list | grep ibtrader` para verificar; `launchctl start com.ibtrader.dailyplans` para forzar.
+
+**Principios clave:**
+- **Calibración empírica por SETUP, no por ticker** — el bucket es `(setup_type × régimen)`, Wilson CI, `MIN_N=20`, decaimiento 120d. El generador solo sustituye la heurística con el **CI-low medido** cuando hay confianza. Datos: `data/calib_log.jsonl` → `data/calibration.json`.
+- **Patrones medidos = contexto, no gatillo** — operables solo si `confidence≥0.5 Y n≥8`; las tasas reales son flojas (mayoría <50%) y se reportan sin maquillar.
+- **SEÑAL-SOLAMENTE** — jamás ejecuta órdenes; todo post cierra "No es consejo financiero".
+- **Presupuesto X compartido** — `data/x_plan_budget.json`, $0.015/post, caps 10/día y $4/mes entre los 3 posters (`x_post_common.py`).
+- **Degradación limpia** — si falta `calibration.json`/`patterns.json`/`gexa_snapshot.json`, el generador sigue con heurísticas; gexa verify grita en el log si no conectó. `notify_relay.sh` debe estar vivo para que lleguen las alertas.

@@ -47,6 +47,19 @@ newest_bar_epoch() {
   echo $newest
 }
 
+tws_alive() { pgrep -f "Trader Workstation.app" >/dev/null }
+
+launch_tws() {
+  # open puede fallar en silencio (cazado 2026-07-20 14:44: relanzo, a los
+  # 5 min cero procesos TWS) -> verificar que el proceso EXISTA y reintentar
+  open -a "$TWS_APP" 2>/dev/null
+  sleep 10
+  tws_alive && return 0
+  open -a "$TWS_APP" 2>/dev/null
+  sleep 10
+  tws_alive
+}
+
 session_open_epoch() {
   # apertura de la ventana ACTUAL: 04:00 ET (dia US) o 20:00 ET (noche KRX).
   # Da la gracia anti-falso-positivo: al abrir sesion los bars de ayer son
@@ -87,7 +100,7 @@ while true; do
           last_action=$(date +%s)
           pkill -f "Trader Workstation" 2>/dev/null
           sleep 5
-          open -a "$TWS_APP" 2>/dev/null
+          launch_tws
           osascript -e 'display notification "TWS ZOMBIE (puerto vivo, 0 bars 13 min) — relanzado, LOGIN + 2FA requerido" with title "🧟 TWS WATCHDOG" sound name "ProAlarm"' 2>/dev/null
           bash scripts/speak.sh DANGER "T W S is a zombie. Restarted. Login required." >/dev/null 2>&1
           mkdir -p "$MIRROR_DIR"
@@ -101,9 +114,19 @@ while true; do
     else
       fails=$((fails+1))
       if [[ $awaiting_login -eq 1 ]]; then
-        # TWS ya relanzado y esperando login humano: solo recordatorio suave
-        # cada 15 min, JAMAS pkill (el puerto abre despues del login)
-        if [[ $(( $(date +%s) - last_action )) -ge 900 ]]; then
+        # TWS ya relanzado y esperando login humano: recordatorio suave cada
+        # 15 min, JAMAS pkill (el puerto abre despues del login). PERO si el
+        # proceso MURIO esperando login (cazado 2026-07-20: relanzo 14:44 y a
+        # las 14:49 cero procesos -> TWS quedo muerto el resto de la sesion
+        # porque esta rama jamas relanzaba) -> relanzar otra vez, cooldown 3 min.
+        if ! tws_alive && [[ $(( $(date +%s) - last_action )) -ge 180 ]]; then
+          last_action=$(date +%s)
+          launch_tws
+          osascript -e 'display notification "TWS murio esperando login — relanzado OTRA VEZ, LOGIN + 2FA requerido" with title "🚨 TWS WATCHDOG" sound name "ProAlarm"' 2>/dev/null
+          bash scripts/speak.sh DANGER "T W S died again. Restarted. Login required." >/dev/null 2>&1
+          mkdir -p "$MIRROR_DIR"
+          echo "$(date '+%H:%M:%S') | 🚨 TWS WATCHDOG | proceso TWS murio esperando login — relanzado de nuevo" >> "$MIRROR_DIR/$(date +%Y-%m-%d).txt"
+        elif tws_alive && [[ $(( $(date +%s) - last_action )) -ge 900 ]]; then
           last_action=$(date +%s)
           osascript -e 'display notification "TWS sigue esperando tu LOGIN + 2FA" with title "🔑 LOGIN TWS PENDIENTE" sound name "ProChord"' 2>/dev/null
         fi
@@ -113,7 +136,7 @@ while true; do
         # launcher colgado (visto 2026-07-15: 0% CPU, sin ventana) -> matar
         pkill -f "Trader Workstation" 2>/dev/null
         sleep 5
-        open -a "$TWS_APP" 2>/dev/null
+        launch_tws
         osascript -e 'display notification "TWS caido — relanzado, LOGIN + 2FA requerido" with title "🚨 TWS WATCHDOG" sound name "ProAlarm"' 2>/dev/null
         # voz via cola serializada (Siri del sistema, orden 2026-07-18) — jamas -v Daniel
         bash scripts/speak.sh DANGER "T W S is down. Login required." >/dev/null 2>&1

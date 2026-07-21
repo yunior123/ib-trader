@@ -1,0 +1,607 @@
+#!/usr/bin/env python
+"""daily_fleet_plans.py — plan picaro diario por ticker (PDF + email Resend + drafts X).
+
+Por ticker: precio overnight/premarket, expansion vs ATR (dip de liquidez en apertura),
+muros OI + max pain + GEX propio (flip estimado, regimen), griegas BS de strikes clave,
+Bollinger diario/15m, ballenas (tape propia), Korea (memoria) y futuros US.
+Salida: ~/Desktop/planes-YYYY-MM-DD/<SYM>_plan.pdf + email + out x_drafts/.
+
+Uso: ./venv/bin/python scripts/daily_fleet_plans.py [--tickers QQQ,NVDA] [--no-email]
+Programado por launchd com.ibtrader.dailyplans a las 04:00 ET.
+SEÑAL-SOLAMENTE: jamas ordena. 2026-07-21."""
+import argparse, base64, json, math, os, sys, time, warnings
+warnings.filterwarnings("ignore")
+import numpy as np
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
+import requests
+import yfinance as yf
+
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+os.chdir(REPO)
+
+# ---------- flota: metadata por ticker ----------
+FLEET = {
+    "QQQ":  dict(style="0dte", fut="NQ=F", korea=False),
+    "SPY":  dict(style="0dte", fut="ES=F", korea=False),
+    "NVDA": dict(style="weekly", fut="NQ=F", korea=True),
+    "TSLA": dict(style="weekly", fut="NQ=F", korea=False),
+    "MU":   dict(style="weekly", fut="NQ=F", korea=True),
+    "SMH":  dict(style="weekly", fut="NQ=F", korea=True),
+    "AMD":  dict(style="weekly", fut="NQ=F", korea=False),
+    "AAPL": dict(style="weekly", fut="NQ=F", korea=False),
+    "MSFT": dict(style="weekly", fut="NQ=F", korea=False),
+    "META": dict(style="weekly", fut="NQ=F", korea=False),
+    "AMZN": dict(style="weekly", fut="NQ=F", korea=False),
+    "GOOGL":dict(style="weekly", fut="NQ=F", korea=False),
+    "INTC": dict(style="weekly", fut="NQ=F", korea=False),
+    "TSM":  dict(style="weekly", fut="NQ=F", korea=True),
+    "ASML": dict(style="weekly", fut="NQ=F", korea=True),
+    "TXN":  dict(style="weekly", fut="NQ=F", korea=False),
+    "QCOM": dict(style="weekly", fut="NQ=F", korea=False),
+    "AVGO": dict(style="weekly", fut="NQ=F", korea=False),
+    "NFLX": dict(style="weekly", fut="NQ=F", korea=False),
+    "NOK":  dict(style="weekly", fut="ES=F", korea=False, no_gexa=True),
+    "GLD":  dict(style="weekly", fut="ES=F", korea=False),
+    "XLK":  dict(style="weekly", fut="NQ=F", korea=False),
+    "EWY":  dict(style="weekly", fut="ES=F", korea=True),
+    "DRAM": dict(style="weekly", fut="NQ=F", korea=True),
+    "SPCX": dict(style="weekly", fut="NQ=F", korea=False),
+    "SKHY": dict(style="weekly", fut="NQ=F", korea=True),
+}
+
+def env_load():
+    d = {}
+    for f in ("feeds.env", "x.env"):
+        try:
+            for ln in open(os.path.join(REPO, f)):
+                ln = ln.strip()
+                if "=" in ln and not ln.startswith("#"):
+                    k, v = ln.split("=", 1)
+                    d[k.strip()] = v.strip().strip('"').strip("'")
+        except FileNotFoundError:
+            pass
+    return d
+ENV = env_load()
+
+def load_calibration():
+    try: return json.load(open("data/calibration.json"))
+    except Exception: return {}
+CALIB = load_calibration()
+
+def load_breadth():
+    try: return json.load(open("data/breadth.json"))
+    except Exception: return {}
+BREADTH = load_breadth()
+
+def load_patterns():
+    try: return json.load(open("data/patterns.json"))
+    except Exception: return {}
+PATTERNS = load_patterns()
+
+def measured_prob(setup_type, regime, heuristic):
+    """Reemplaza la prob adivinada por la MEDIDA si el bucket tiene muestra suficiente.
+    Nada hardcoded: viene de calib_log real. Si no hay datos, devuelve la heuristica."""
+    b = CALIB.get(f"{setup_type}|{regime}")
+    if b and b.get("trust"):
+        return int(round(b["ci_low"] * 100)), f"MEDIDA n={b['n']} (CI-low, honesta)"
+    if b:
+        return heuristic, f"heuristica (medida provisional n={b['n']}, aun no fiable)"
+    return heuristic, "heuristica (sin muestra aun)"
+
+# ---------- matematicas ----------
+def bs_greeks(S, K, T, iv, cp, r=0.045):
+    if T <= 0 or iv <= 0 or S <= 0: return {}
+    sq = iv * math.sqrt(T)
+    d1 = (math.log(S / K) + (r + iv * iv / 2) * T) / sq
+    d2 = d1 - sq
+    N = lambda x: 0.5 * math.erfc(-x / math.sqrt(2))
+    pdf = math.exp(-d1 * d1 / 2) / math.sqrt(2 * math.pi)
+    delta = N(d1) if cp == "C" else N(d1) - 1
+    gamma = pdf / (S * sq)
+    theta = (-(S * pdf * iv) / (2 * math.sqrt(T)) - (r * K * math.exp(-r * T) * (N(d2) if cp == "C" else N(-d2)) * (1 if cp == "C" else -1))) / 365
+    vega = S * pdf * math.sqrt(T) / 100
+    return dict(delta=delta, gamma=gamma, theta=theta, vega=vega)
+
+def pick_expiry(t, style):
+    opts = t.options
+    if not opts: return None
+    today = time.strftime("%Y-%m-%d")
+    if style == "0dte":
+        for e in opts:
+            if e >= today: return e
+    for e in opts:  # primer viernes >= hoy
+        if e >= today and time.strptime(e, "%Y-%m-%d").tm_wday == 4: return e
+    return opts[0]
+
+def chain_stats(t, exp, spot):
+    ch = t.option_chain(exp)
+    c, p = ch.calls.fillna(0), ch.puts.fillna(0)
+    lo, hi = spot * 0.965, spot * 1.035
+    c = c[(c.strike >= lo) & (c.strike <= hi)]
+    p = p[(p.strike >= lo) & (p.strike <= hi)]
+    ks = sorted(set(c.strike) | set(p.strike))
+    coi = dict(zip(c.strike, c.openInterest)); poi = dict(zip(p.strike, p.openInterest))
+    pain = min(ks, key=lambda s: sum(max(0, s - k) * coi.get(k, 0) for k in ks)
+                               + sum(max(0, k - s) * poi.get(k, 0) for k in ks)) if ks else spot
+    # GEX propio: gamma_BS * OI * 100 * S ; calls + / puts - (convencion dealer-long-calls)
+    T = max((time.mktime(time.strptime(exp, "%Y-%m-%d")) + 16 * 3600 - time.time()) / (365 * 86400), 1e-4)
+    gex = {}
+    for df, sign, right in ((c, +1, "C"), (p, -1, "P")):
+        for _, r_ in df.iterrows():
+            g = bs_greeks(spot, float(r_.strike), T, float(r_.impliedVolatility) or 0.3, right)
+            if g: gex[r_.strike] = gex.get(r_.strike, 0) + sign * g["gamma"] * float(r_.openInterest) * 100 * spot
+    net_gex = sum(gex.values())
+    # flip: strike donde el GEX acumulado (desde abajo) cruza 0
+    flip = None
+    if gex:
+        cum, last_k = 0, None
+        for k in sorted(gex):
+            prev = cum; cum += gex[k]
+            if prev < 0 <= cum or prev > 0 >= cum: flip = k
+            last_k = k
+        if flip is None: flip = last_k if net_gex < 0 else min(gex)
+    cw = c.nlargest(4, "openInterest")[["strike", "openInterest", "volume", "bid", "ask", "impliedVolatility"]].values.tolist()
+    pw = p.nlargest(4, "openInterest")[["strike", "openInterest", "volume", "bid", "ask", "impliedVolatility"]].values.tolist()
+    atm = min(ks, key=lambda k: abs(k - spot)) if ks else spot
+    ca = c[c.strike == atm]; pa = p[p.strike == atm]
+    straddle = (float(ca.ask.iloc[0]) if len(ca) else 0) + (float(pa.ask.iloc[0]) if len(pa) else 0)
+    iv_atm = float(ca.impliedVolatility.iloc[0]) if len(ca) else 0
+    pcv = p.volume.sum() / max(c.volume.sum(), 1)
+    pco = p.openInterest.sum() / max(c.openInterest.sum(), 1)
+    greeks_atm = bs_greeks(spot, atm, T, iv_atm or 0.3, "C")
+    return dict(pain=pain, gex=gex, net_gex=net_gex, flip=flip, cw=cw, pw=pw, atm=atm,
+                straddle=straddle, imove=straddle / spot * 100 if spot else 0, iv=iv_atm,
+                pcv=pcv, pco=pco, T=T, greeks=greeks_atm, exp=exp)
+
+def ibkr_chain_stats(sym, spot):
+    """Cadena real IBKR del cache opt_chain_<sym>.txt (opt_chain_cache.py, TWS vivo).
+    Devuelve mismo shape que chain_stats o None si el cache falta/esta viejo (>45min)."""
+    pth = f"data/opt_chain_{sym.lower()}.txt"
+    try:
+        if time.time() - os.path.getmtime(pth) > 45 * 60: return None
+        rows = []
+        exps = set()
+        for ln in open(pth):
+            if ln.startswith("#"): continue
+            f = ln.split()
+            if len(f) < 10: continue
+            k, right, exp, bid, ask, vol, oi, iv, delta, gamma = f[:10]
+            rows.append((float(k), right, exp, float(bid), float(ask), int(float(vol)),
+                         int(float(oi)), float(iv), float(delta), float(gamma)))
+            exps.add(exp)
+        if not rows: return None
+        exp = sorted(exps)[0]
+        rows = [r for r in rows if r[2] == exp and spot * 0.965 <= r[0] <= spot * 1.035]
+        if not rows: return None
+        c = [r for r in rows if r[1] == "C"]; pz = [r for r in rows if r[1] == "P"]
+        ks = sorted({r[0] for r in rows})
+        coi = {r[0]: r[6] for r in c}; poi = {r[0]: r[6] for r in pz}
+        pain = min(ks, key=lambda st: sum(max(0, st - k) * coi.get(k, 0) for k in ks)
+                                    + sum(max(0, k - st) * poi.get(k, 0) for k in ks))
+        gex = {}
+        for r in rows:
+            g = r[9] if r[9] > 0 else 0
+            gex[r[0]] = gex.get(r[0], 0) + (1 if r[1] == "C" else -1) * g * r[6] * 100 * spot
+        net = sum(gex.values())
+        flip = None; cum = 0
+        for k in sorted(gex):
+            prev = cum; cum += gex[k]
+            if prev < 0 <= cum or prev > 0 >= cum: flip = k
+        cw = sorted(c, key=lambda r: -r[6])[:4]; pw = sorted(pz, key=lambda r: -r[6])[:4]
+        fmt = lambda r: [r[0], r[6], r[5], r[3], r[4], r[7]]
+        atm = min(ks, key=lambda k: abs(k - spot))
+        ca = [r for r in c if r[0] == atm]; pa = [r for r in pz if r[0] == atm]
+        str_ = (ca[0][4] if ca and ca[0][4] > 0 else 0) + (pa[0][4] if pa and pa[0][4] > 0 else 0)
+        iv_atm = ca[0][7] if ca and ca[0][7] > 0 else 0
+        pcv = sum(r[5] for r in pz) / max(sum(r[5] for r in c), 1)
+        pco = sum(r[6] for r in pz) / max(sum(r[6] for r in c), 1)
+        T = max((time.mktime(time.strptime(exp, "%Y%m%d")) + 16 * 3600 - time.time()) / (365 * 86400), 1e-4)
+        gk = dict(delta=ca[0][8], gamma=ca[0][9], theta=0, vega=0) if ca and ca[0][8] > -1 else bs_greeks(spot, atm, T, iv_atm or .3, "C")
+        return dict(pain=pain, gex=gex, net_gex=net, flip=flip, cw=[fmt(r) for r in cw],
+                    pw=[fmt(r) for r in pw], atm=atm, straddle=str_, imove=str_/spot*100,
+                    iv=iv_atm, pcv=pcv, pco=pco, T=T, greeks=gk, exp=f"{exp} IBKR✓")
+    except Exception:
+        return None
+
+def overnight_stats(t, spot_now):
+    d = t.history(period="3mo", interval="1d")
+    if len(d) < 25: return {}
+    closes, opens_, highs, lows = d.Close.values, d.Open.values, d.High.values, d.Low.values
+    atr = float(np.mean(np.maximum(highs[-15:] - lows[-15:],
+                 np.maximum(abs(highs[-15:] - closes[-16:-1]), abs(lows[-15:] - closes[-16:-1])))))
+    prev_close = float(closes[-1])
+    gap_pct = (spot_now - prev_close) / prev_close * 100
+    ext_atr = (spot_now - prev_close) / atr if atr else 0
+    # historico: gaps >0.3% en la misma direccion — ¿cuantos hicieron dip que toco el cierre previo (fill)?
+    fills = tot = 0
+    for i in range(1, len(d)):
+        g = (opens_[i] - closes[i - 1]) / closes[i - 1] * 100
+        if (gap_pct >= 0 and g > 0.3) or (gap_pct < 0 and g < -0.3):
+            tot += 1
+            if (gap_pct >= 0 and lows[i] <= closes[i - 1]) or (gap_pct < 0 and highs[i] >= closes[i - 1]):
+                fills += 1
+    fill_rate = fills / tot * 100 if tot else 50
+    # BB diario
+    ma, sd = float(np.mean(closes[-20:])), float(np.std(closes[-20:], ddof=1))
+    pb = (spot_now - (ma - 2 * sd)) / (4 * sd) if sd else 0.5
+    return dict(prev_close=prev_close, atr=atr, gap_pct=gap_pct, ext_atr=ext_atr,
+                fill_rate=fill_rate, n_gaps=tot, bb_lo=ma - 2 * sd, bb_hi=ma + 2 * sd, pb=pb)
+
+def prepost_series(t):
+    try:
+        h = t.history(period="2d", interval="5m", prepost=True)
+        return h.Close
+    except Exception:
+        return None
+
+def whale_read(sym):
+    buys = sells = 0.0
+    try:
+        for ln in open(f"data/whale_{sym.lower()}.txt"):
+            f = ln.split()
+            if len(f) < 4: continue
+            lt = time.localtime(float(f[0]))
+            if lt.tm_hour * 100 + lt.tm_min >= 1558: continue
+            if int(f[3]) > 0: buys += float(f[2])
+            else: sells += float(f[2])
+    except Exception:
+        pass
+    return buys, sells
+
+def korea_read():
+    out = {}
+    for sym, tk in (("KOSPI", "^KS11"), ("Samsung", "005930.KS"), ("SK-Hynix", "000660.KS")):
+        try:
+            h = yf.Ticker(tk).history(period="2d")
+            out[sym] = (float(h.Close.iloc[-1]) / float(h.Close.iloc[-2]) - 1) * 100
+        except Exception:
+            pass
+    return out
+
+def vx_term():
+    """VIX spot + futuros VX (CBOE publico, delayed ~15m): contango/backwardation = regimen de vol."""
+    try:
+        H = {"User-Agent": "Mozilla/5.0"}
+        vix = requests.get("https://cdn.cboe.com/api/global/delayed_quotes/quotes/_VIX.json",
+                           headers=H, timeout=10).json()["data"]["current_price"]
+        fut = requests.get("https://www-api.cboe.com/us/futures/api/data/?symbol=VX",
+                           headers=H, timeout=10).json()
+        rows = sorted([(f.get("expiration", ""), float(f.get("last_price") or f.get("settlement") or 0))
+                       for f in fut.get("data", []) if (f.get("last_price") or f.get("settlement"))],)[:3]
+        if not rows or not vix: return {}
+        vx1 = rows[0][1]; vx2 = rows[1][1] if len(rows) > 1 else vx1
+        b1 = (vx1 - vix) / vix * 100; b2 = (vx2 - vx1) / vx1 * 100 if vx1 else 0
+        if b1 < -1: reg = "BACKWARDATION — MIEDO AHORA: dia de vol, tamaño mitad, respetar aceleradores"
+        elif b1 < 1.5: reg = "FLAT — tension: la calma cuesta poco, vigilar"
+        else: reg = "CONTANGO — calma pagada: prima de miedo normal, pin plays viables"
+        return dict(vix=vix, vx1=vx1, vx2=vx2, b1=b1, b2=b2, reg=reg)
+    except Exception:
+        return {}
+
+def futures_read():
+    out = {}
+    for lab, tk in (("NQ", "NQ=F"), ("ES", "ES=F")):
+        try:
+            h = yf.Ticker(tk).history(period="2d", interval="1d")
+            out[lab] = (float(h.Close.iloc[-1]) / float(h.Close.iloc[-2]) - 1) * 100
+        except Exception:
+            pass
+    return out
+
+# ---------- motor del plan picaro ----------
+def finviz_read(sym):
+    try:
+        d = dict(ln.strip().split("=", 1) for ln in open(f"data/finviz_{sym.lower()}.txt") if "=" in ln)
+        if time.time() - float(d.get("ts", 0)) > 36 * 3600: return {}
+        return d
+    except Exception:
+        return {}
+
+def gexa_snapshot(sym):
+    try:
+        pth = "data/gexa_snapshot.json"
+        if time.time() - os.path.getmtime(pth) > 12 * 3600: return None
+        return json.load(open(pth)).get(sym)
+    except Exception:
+        return None
+
+def plan_engine(sym, spot, cs, on, wb, ws, kor, fut, meta, vx=None):
+    reg = "NEGATIVO" if cs["net_gex"] < 0 else "POSITIVO"
+    below_flip = cs["flip"] is not None and spot < cs["flip"]
+    lines, score = [], 0
+    # apertura: dip de liquidez
+    dip_p = 50
+    if abs(on.get("ext_atr", 0)) > 0.35: dip_p += 15
+    if on.get("fill_rate", 50) > 60: dip_p += 10
+    if reg == "NEGATIVO": dip_p += 10
+    if abs(on.get("gap_pct", 0)) < 0.15: dip_p = 35
+    dip_p = min(dip_p, 90)
+    gd = "arriba" if on.get("gap_pct", 0) >= 0 else "abajo"
+    lines.append(f"APERTURA: gap {on.get('gap_pct',0):+.2f}% ({gd}), expansion {on.get('ext_atr',0):+.2f} ATRs.")
+    lines.append(f"  Historico {sym}: {on.get('fill_rate',50):.0f}% de gaps similares hicieron dip-de-liquidez")
+    lines.append(f"  hasta el cierre previo ({on.get('prev_close',0):.2f}) [n={on.get('n_gaps',0)}].")
+    lines.append(f"  PROB DIP APERTURA ~{dip_p:.0f}% -> PICARO: no perseguir el gap; esperar el flush")
+    lines.append(f"  9:30-9:45 y comprar/vender el RECLAIM del cierre previo con print (2 lecturas).")
+    if dip_p >= 65: score += 2
+    # regimen
+    fl = f"{cs['flip']:.0f}" if cs["flip"] else "n/d"
+    lines.append("")
+    gx = gexa_snapshot(sym)
+    if gx:
+        reg = "NEGATIVO" if float(gx.get("score", 0)) < 0 else "POSITIVO"
+        lines.append(f"REGIMEN GAMMA (GEXA verificado): flip {gx.get('flip','?')} | dealer {gx.get('score','?')}"
+                     f" | bias {gx.get('bias','?')} | POC {gx.get('poc','?')} -> {reg}")
+        lines.append(f"  (GEX propio de contraste: {cs['net_gex']/1e6:+.1f}M/pt flip est {fl})")
+    else:
+        lines.append(f"REGIMEN GAMMA (propio; gexa no disponible 4AM): net GEX {cs['net_gex']/1e6:+.1f}M/pt, flip est {fl} -> {reg}"
+                 + (" (precio DEBAJO del flip)" if below_flip else ""))
+    if reg == "NEGATIVO":
+        lines.append("  Dealers AMPLIFICAN: rebote 1er toque ~50-55%, breaks corren, POC = pelea no muro.")
+        lines.append("  Jugadas: breakout con print A FAVOR; strangle si coil; NO vender spreads pegados.")
+    else:
+        lines.append("  Dealers FIJAN: fade de bordes hacia iman/max-pain; vender muros en spreads.")
+    mp, msrc = measured_prob("reclaim_wall", reg, 55 if reg == "POSITIVO" else 50)
+    lines.append(f"  PROB reclaim_wall: {mp}% [{msrc}]")
+    pt = PATTERNS.get(sym, {}).get("active")
+    if pt:
+        emp = PATTERNS.get(sym, {}).get("empirical", {}).get(pt.get("pattern"), {})
+        emps = f" — cumple {emp['rate']*100:.0f}% histórico (n={emp['n']})" if emp.get("n", 0) >= 8 else " — SIN muestra suficiente, solo contexto"
+        lines.append(f"  PATRON detectado: {pt.get('pattern')} {pt.get('direction','')} trigger {pt.get('trigger_level','?')}{emps}")
+    # niveles
+    lines.append("")
+    lines.append(f"NIVELES ({cs['exp']}): max pain {cs['pain']:g} | ATM {cs['atm']:g} IV {cs['iv']*100:.0f}%"
+                 f" | implied move +/-{cs['imove']:.1f}% | P/C vol {cs['pcv']:.2f} OI {cs['pco']:.2f}")
+    for k, oi, v, b, a, iv in sorted(cs["cw"]): lines.append(f"  techo {k:g}C  OI {int(oi):>7,} vol {int(v):>7,}")
+    for k, oi, v, b, a, iv in sorted(cs["pw"], reverse=True): lines.append(f"  piso  {k:g}P  OI {int(oi):>7,} vol {int(v):>7,}")
+    # bollinger veto
+    lines.append("")
+    lines.append(f"BOLLINGER diario: %B {on.get('pb',0.5):.2f} [{on.get('bb_lo',0):.2f}-{on.get('bb_hi',0):.2f}]")
+    if on.get("pb", 0.5) < 0.12: lines.append("  ⚠ EN banda inferior: VETO a cortos frescos en apertura (rebote elastico).")
+    if on.get("pb", 0.5) > 0.88: lines.append("  ⚠ EN banda superior: VETO a largos frescos en apertura.")
+    # spreads sugeridos (picaro: vender el muro)
+    try:
+        cw0 = sorted(cs["cw"], key=lambda r: -r[1])[0]; pw0 = sorted(cs["pw"], key=lambda r: -r[1])[0]
+        lines.append("")
+        lines.append("BOLETOS (defined-risk, verificar spread<=5% OI>500 con opt_quick):")
+        lines.append(f"  BULL: call spread {cs['atm']:g}/{cw0[0]:g} — vendes el muro rey de calls.")
+        lines.append(f"  BEAR: put spread {cs['atm']:g}/{pw0[0]:g} — solo si el piso {pw0[0]:g} ROMPE con print.")
+    except Exception:
+        pass
+    # ballenas + korea + futuros
+    if wb or ws:
+        lean = "COMPRADOR" if wb > ws else "VENDEDOR"
+        lines.append(f"BALLENAS (tape propia, ayer): {lean} — compras ${wb/1e6:.1f}M vs ventas ${ws/1e6:.1f}M")
+        score += 1 if (lean == "COMPRADOR") == (on.get("gap_pct", 0) >= 0) else 0
+    if meta.get("korea") and kor:
+        ks = " | ".join(f"{k} {v:+.1f}%" for k, v in kor.items())
+        lines.append(f"KOREA (memoria, sesion en vivo): {ks} — lider ~13h de MU/DRAM/semis.")
+        if any(abs(v) > 1.5 for v in kor.values()): score += 1
+    if fut:
+        lines.append(f"FUTUROS: NQ {fut.get('NQ',0):+.2f}% | ES {fut.get('ES',0):+.2f}%")
+    if sym in ("QQQ", "SPY"):
+        b = BREADTH.get(sym)
+        if b:
+            lines.append(f"ENGRANAJE FLOTA (amplitud de componentes): {b['verdict']}")
+            if b.get("breakdowns"):
+                lines.append(f"  ⚠ RUPTURAS BAJISTAS en pesos: {', '.join(b['breakdowns'])} -> {sym} hereda presion abajo")
+            if b.get("breakouts"):
+                lines.append(f"  rupturas alcistas en pesos: {', '.join(b['breakouts'])} -> {sym} apoyo arriba")
+            lines.append(f"  regla: el engranaje CONFIRMA, no gatilla — alinear con muros/print, no operar solo por amplitud")
+    if vx:
+        lines.append(f"VOL (CBOE): VIX {vx['vix']:.1f} | VX1 {vx['vx1']:.1f} ({vx['b1']:+.1f}%) | VX2 {vx['vx2']:.1f}")
+        lines.append(f"  -> {vx['reg']}")
+    fv = finviz_read(sym)
+    if fv:
+        bits = []
+        if fv.get("earnings_date"): bits.append(f"EARNINGS {fv['earnings_date']} ⚠")
+        if fv.get("short_float"): bits.append(f"short float {fv['short_float']} (squeeze fuel si >10%)")
+        if fv.get("target_price"): bits.append(f"target analistas {fv['target_price']}")
+        if fv.get("relative_strength_index_14"): bits.append(f"RSI {fv['relative_strength_index_14']}")
+        if fv.get("relative_volume"): bits.append(f"rvol {fv['relative_volume']}")
+        if bits: lines.append("FINVIZ scout: " + " | ".join(bits))
+    if cs["iv"] == 0 or cs["straddle"] == 0:
+        lines.append("")
+        lines.append("⚠ DATOS PREMARKET INCOMPLETOS (OI/IV de yfinance aun no refresca):")
+        lines.append("  este mapa es provisional — re-correr tras 8:00 y muros REALES 9:40 via")
+        lines.append("  fetch_option_walls.py con TWS. No operar niveles de este PDF sin refresco.")
+    lines.append("")
+    lines.append("REGLAS: 9:30-9:45 JAMAS | print o nada | hacia el iman jamas a traves del muro |")
+    lines.append("3 perdidas = fin | presupuesto opciones SOLO 0DTE (semanales requieren excepcion).")
+    score += 2 if abs(on.get("gap_pct", 0)) > 0.4 else 0
+    return lines, dip_p, reg, score
+
+QUIPS = [
+    "Si persigues el gap, TU eres la liquidez.",
+    "El theta no duerme; tu cuenta tampoco deberia comprar 0DTE aburrida.",
+    "Los dealers no son tus amigos, pero hoy son predecibles.",
+    "El FOMO no paga la renta; el print si.",
+    "Stop mental: si, mental — tu cuenta no tiene psicologo.",
+    "El mercado abre a las 9:30; los errores tambien.",
+    "Paciencia de cocodrilo: un buen bocado > diez mordiscos.",
+    "Primer toque rebota. El heroe del segundo toque paga la cena de los dealers.",
+]
+
+def x_draft(sym, spot, cs, on, dip_p, reg):
+    e = "🧲" if reg == "POSITIVO" else "⚡"
+    above=[r for r in cs['cw'] if r[0]>spot] or cs['cw']
+    below=[r for r in cs['pw'] if r[0]<spot] or cs['pw']
+    techo=sorted(above,key=lambda r:-r[1])[0][0]; piso=sorted(below,key=lambda r:-r[1])[0][0]
+    atr=on.get("atr", spot*0.01)
+    stop_b=techo-0.35*atr; tgt_b=min([w[0] for w in above if w[0]>techo]+[cs['pain'] if cs['pain']>techo else techo+atr])
+    prob=55 if reg=="POSITIVO" else 50
+    return (f"{e} ${sym} plan premarket (prob ~{prob}%):\n"
+            f"ENTRADA: reclaim de {techo:g} con 2 lecturas, nunca 9:30-9:45.\n"
+            f"TARGET: {tgt_b:g} (iman). STOP MENTAL: {stop_b:.2f} — si el camino falla, fuera sin drama.\n"
+            f"Plan B abajo: piso {piso:g}; si rompe con print, target {cs['pain']:g}.\n"
+            f"Gap {on.get('gap_pct',0):+.1f}%: ~{dip_p:.0f}% prob de dip-trampa al abrir.\n"
+            f"{QUIPS[(int(time.strftime('%j')) + sum(map(ord, sym))) % len(QUIPS)]} No es consejo financiero.")
+
+# ---------- PDF ----------
+def make_pdf(outdir, sym, spot, cs, on, plan_lines, series):
+    path = os.path.join(outdir, f"{sym}_plan.pdf")
+    with PdfPages(path) as pdf:
+        fig = plt.figure(figsize=(11, 8.5))
+        fig.suptitle(f"{sym} ${spot:.2f} — PLAN {time.strftime('%Y-%m-%d')} (exp {cs['exp']} | max pain {cs['pain']:g} | "
+                     f"GEX {cs['net_gex']/1e6:+.0f}M flip~{cs['flip'] if cs['flip'] else 0:g})", fontsize=11, fontweight="bold")
+        ax = fig.add_axes([0.06, 0.08, 0.68, 0.82])
+        if series is not None and len(series) > 5:
+            ax.plot(range(len(series)), series.values, color="black", lw=1.0)
+        allw = [(k, oi, "C") for k, oi, *_ in cs["cw"]] + [(k, oi, "P") for k, oi, *_ in cs["pw"]]
+        mx = (max(w[1] for w in allw) if allw else 1) or 1
+        for k, oi, right in allw:
+            col = "#c62828" if right == "C" else "#2e7d32"
+            ax.axhline(k, color=col, lw=0.8 + 3 * oi / mx, alpha=0.6)
+            ax.annotate(f"{k:g}{right} {oi/1000:.1f}k", (len(series) * 1.004 if series is not None else 1, k),
+                        fontsize=7, color=col, va="center", annotation_clip=False)
+        ax.axhline(cs["pain"], color="#1565c0", ls="--", lw=1.2)
+        if cs["flip"]: ax.axhline(cs["flip"], color="#7b1fa2", ls="--", lw=1.4)
+        ax.axhline(on.get("prev_close", spot), color="#f9a825", ls=":", lw=1.4)
+        ax.annotate(f"cierre previo {on.get('prev_close',0):.2f} (iman del dip {'-liquidez' if True else ''})",
+                    (2, on.get("prev_close", spot)), fontsize=7, color="#f9a825", va="bottom")
+        ax.set_title("48h con overnight/premarket (5m) + muros | azul=max pain, purpura=flip GEX, amarillo=cierre previo",
+                     fontsize=8.5, loc="left")
+        ax.tick_params(labelsize=7); ax.grid(alpha=0.2); ax.set_xticks([])
+        g = cs.get("greeks", {})
+        side = (f"GRIEGAS ATM {cs['atm']:g} (BS):\n delta {g.get('delta',0):+.2f}\n gamma {g.get('gamma',0):.4f}\n"
+                f" theta {g.get('theta',0):+.2f}/dia\n vega {g.get('vega',0):+.2f}\n IV {cs['iv']*100:.0f}%\n"
+                f" straddle {cs['straddle']:.2f}\n move +/-{cs['imove']:.1f}%\n\nP/C vol {cs['pcv']:.2f}\nP/C OI  {cs['pco']:.2f}")
+        fig.text(0.76, 0.86, side, fontsize=9, family="monospace", va="top")
+        pdf.savefig(fig); plt.close(fig)
+        # ---- pagina 2: ARBOL DE ESCENARIOS (estilo p9, generado por reglas) ----
+        try:
+            reg = "NEGATIVO" if cs["net_gex"] < 0 else "POSITIVO"
+            pA, pB, pP = 33, 33, 34
+            if reg == "NEGATIVO": pB += 6
+            if cs["pcv"] > 1.5: pB += 5
+            if cs["pcv"] < 0.6: pA += 5
+            if on.get("pb", .5) < 0.12: pA += 6
+            if on.get("pb", .5) > 0.88: pB += 6
+            tot = pA + pB + pP; pA, pB, pP = round(pA*100/tot), round(pB*100/tot), 0
+            pP = 100 - pA - pB
+            above = sorted([w[0] for w in cs["cw"] if w[0] > spot]) or [spot * 1.01]
+            below = sorted([w[0] for w in cs["pw"] if w[0] < spot], reverse=True) or [spot * 0.99]
+            up1 = above[0]; up2 = above[1] if len(above) > 1 else up1 * 1.008
+            dn1 = below[0]; dn2 = below[1] if len(below) > 1 else dn1 * 0.992
+            fig, ax = plt.subplots(figsize=(11, 8.5))
+            fig.suptitle(f"{sym} ${spot:.2f} — ARBOL DE ESCENARIOS {time.strftime('%Y-%m-%d')} "
+                         f"(regimen {reg} | max pain {cs['pain']:g} | flip~{cs['flip'] if cs['flip'] else 0:g})",
+                         fontsize=11, fontweight="bold")
+            lo_y = min(dn2, on.get("bb_lo", spot*0.97)) * 0.998; hi_y = max(up2, cs["pain"]) * 1.004
+            ax.set_xlim(0, 10); ax.set_ylim(lo_y, hi_y); ax.set_ylabel("precio $"); ax.set_xticks([])
+            ax.grid(axis="y", alpha=0.15)
+            for k, oi, *_ in cs["cw"]:
+                ax.axhline(k, color="#c62828", lw=1.6, alpha=0.6)
+                ax.annotate(f"{k:g}C {oi/1000:.1f}k", (10.02, k), fontsize=7.5, color="#c62828", va="center", annotation_clip=False)
+            for k, oi, *_ in cs["pw"]:
+                ax.axhline(k, color="#2e7d32", lw=1.6, alpha=0.6)
+                ax.annotate(f"{k:g}P {oi/1000:.1f}k", (10.02, k), fontsize=7.5, color="#2e7d32", va="center", annotation_clip=False)
+            ax.axhline(cs["pain"], color="#1565c0", ls="--", lw=1.2)
+            ax.annotate(f"max pain {cs['pain']:g}", (0.2, cs["pain"]), fontsize=7.5, color="#1565c0", va="bottom")
+            if cs["flip"]:
+                ax.axhline(cs["flip"], color="#7b1fa2", ls="--", lw=1.4)
+                ax.annotate(f"flip GEX {cs['flip']:g}", (5.0, cs["flip"]), fontsize=7.5, color="#7b1fa2", va="bottom")
+            ax.axhline(on.get("prev_close", spot), color="#f9a825", ls=":", lw=1.3)
+            ax.plot(1.0, spot, "o", color="black", ms=9, zorder=5)
+            ax.annotate("APERTURA\n(esperar 9:45)", (0.42, spot), fontsize=8, fontweight="bold", ha="center", va="center")
+            def arw(x0, y0, x1, y1, c, lw=2.4, ls="-"):
+                ax.annotate("", (x1, y1), (x0, y0), arrowprops=dict(arrowstyle="-|>", color=c, lw=lw, ls=ls, shrinkA=2, shrinkB=2))
+            G, R, GY = "#1b7d2e", "#b71c1c", "#616161"
+            arw(1.0, spot, 2.5, up1, G); arw(2.5, up1, 3.1, spot + (up1-spot)*0.55, G, 1.7)
+            arw(3.1, spot + (up1-spot)*0.55, 4.1, up1*1.001, G); arw(4.1, up1*1.001, 5.6, up2, G, 2.0, "--")
+            ax.annotate(f"ALCISTA ~{pA}%: sube al muro {up1:g} -> 1er toque rechaza ->\n"
+                        f"retroceso 30-70% que aguanta = entrada -> reclaim -> {up2:g}",
+                        (2.2, hi_y - (hi_y-lo_y)*0.06), fontsize=8, color=G)
+            arw(1.0, spot, 3.4, spot + (cs['pain']-spot)*0.35, GY, 1.9)
+            arw(3.4, spot + (cs['pain']-spot)*0.35, 5.8, spot + (cs['pain']-spot)*0.55, GY, 1.9, "--")
+            ax.annotate(f"PIN ~{pP}%: imanta max pain {cs['pain']:g} — chop, theta gana;\nno comprar 0DTE dentro del pin",
+                        (6.0, spot + (cs['pain']-spot)*0.55), fontsize=8, color=GY, va="bottom")
+            arw(1.0, spot, 2.0, dn1*1.001, R); arw(2.0, dn1*1.001, 2.6, dn1*0.9985, R, 1.7)
+            arw(2.6, dn1*0.9985, 3.2, dn1*1.0015, G, 1.5); arw(3.2, dn1*1.0015, 4.2, dn1*0.997, R, 1.7)
+            arw(4.2, dn1*0.997, 5.6, dn2, R, 2.2, "--")
+            ax.annotate(f"BAJISTA ~{pB}%: print <{dn1:g} (piso) -> rebote 1er toque ->\n"
+                        f"RE-TEST decide -> {dn2:g}" + (" (regimen negativo: el break CORRE)" if reg == "NEGATIVO" else ""),
+                        (4.0, lo_y + (hi_y-lo_y)*0.10), fontsize=8, color=R)
+            ax.annotate(f"Reglas: 1er toque rebota (~{'50-55' if reg=='NEGATIVO' else '70'}%), 3+ toques = muro muerto, ruptura confirmada "
+                        f"(retest-rechazo) INVIERTE el nivel.\nDip-liquidez apertura: cierre previo {on.get('prev_close',0):.2f} (amarillo) es el iman del flush 9:30-9:45. "
+                        f"Print o nada | 3 perdidas = fin.",
+                        (0.2, lo_y + (hi_y-lo_y)*0.015), fontsize=8, fontweight="bold",
+                        bbox=dict(boxstyle="round,pad=0.4", fc="#fffde7", ec="#9e9e9e"))
+            pdf.savefig(fig); plt.close(fig)
+        except Exception:
+            plt.close("all")
+        fig = plt.figure(figsize=(8.5, 11))
+        fig.text(0.05, 0.97, f"{sym} — PLAN PICARO {time.strftime('%Y-%m-%d')}\n" + "=" * 60 + "\n" + "\n".join(plan_lines),
+                 fontsize=9, family="monospace", va="top")
+        pdf.savefig(fig); plt.close(fig)
+    return path
+
+# ---------- email ----------
+def send_email(paths, summary, tag=""):
+    key, to = ENV.get("RESEND_KEY"), ENV.get("RESEND_TO")
+    if not key or not to: return "sin RESEND_KEY/TO"
+    atts = []
+    for p in paths:
+        with open(p, "rb") as f:
+            atts.append({"filename": os.path.basename(p),
+                         "content": base64.b64encode(f.read()).decode()})
+    r = requests.post("https://api.resend.com/emails", timeout=30,
+        headers={"Authorization": f"Bearer {key}", "Content-Type": "application/json"},
+        json={"from": "onboarding@resend.dev", "to": [to],
+              "subject": f"📋 {tag+' ' if tag else ''}Planes flota {time.strftime('%Y-%m-%d')} ({len(paths)} tickers)",
+              "text": summary, "attachments": atts})
+    return f"{r.status_code} {r.text[:120]}"
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--tickers", default=",".join(FLEET))
+    ap.add_argument("--no-email", action="store_true")
+    ap.add_argument("--tag", default="")
+    ap.add_argument("--outdir", default=os.path.expanduser(f"~/Desktop/planes-{time.strftime('%Y-%m-%d')}"))
+    a = ap.parse_args()
+    os.makedirs(a.outdir, exist_ok=True)
+    os.makedirs(os.path.join(a.outdir, "x_drafts"), exist_ok=True)
+    kor, fut = korea_read(), futures_read()
+    vx = vx_term()
+    made, scored = [], []
+    for sym in [s.strip().upper() for s in a.tickers.split(",") if s.strip()]:
+        meta = FLEET.get(sym, dict(style="weekly", fut="ES=F", korea=False))
+        try:
+            t = yf.Ticker(sym)
+            spot = float(t.fast_info.last_price)
+            exp = pick_expiry(t, meta["style"])
+            if not exp: raise RuntimeError("sin opciones")
+            cs = ibkr_chain_stats(sym, spot) or chain_stats(t, exp, spot)
+            on = overnight_stats(t, spot)
+            wb, ws = whale_read(sym)
+            series = prepost_series(t)
+            plan, dip_p, reg, score = plan_engine(sym, spot, cs, on, wb, ws, kor, fut, meta, vx)
+            pdf = make_pdf(a.outdir, sym, spot, cs, on, plan, series)
+            with open(os.path.join(a.outdir, "x_drafts", f"{sym}.txt"), "w") as f:
+                f.write(x_draft(sym, spot, cs, on, dip_p, reg))
+            made.append(pdf); scored.append((score, sym, dip_p, reg))
+            print(f"{sym}: OK dip~{dip_p:.0f}% {reg} score {score}")
+        except Exception as e:
+            print(f"{sym}: FALLO {e}", file=sys.stderr)
+    scored.sort(reverse=True)
+    picks = []
+    try:
+        for ln in open("data/options_picks.txt"):
+            if ln.startswith("#"): continue
+            f = ln.split()
+            if len(f) >= 5: picks.append(f"{f[0]} {f[2]} @ {f[3]} (rvol {f[5] if len(f)>5 else '?'})")
+            if len(picks) >= 2: break
+    except Exception: pass
+    vxs = f"VOL: VIX {vx['vix']:.1f} VX1 {vx['vx1']:.1f} ({vx['b1']:+.1f}%) — {vx['reg']}\n\n" if vx else ""
+    summary = vxs + (("PICKS PICAROS FINVIZ: " + " | ".join(picks) + "\n\n") if picks else "") + ("Planes picaros del dia. TOP accionables: "
+               + ", ".join(f"{s} (dip {d:.0f}%, {r})" for _, s, d, r in scored[:5])
+               + f"\nGenerado {time.strftime('%H:%M ET')}. Señal-solamente; 3 perdidas = fin del dia.")
+    if made and not a.no_email:
+        print("email:", send_email(made, summary, a.tag))
+    with open(os.path.join(a.outdir, "ranking.json"), "w") as f:
+        json.dump([{"sym": s, "score": sc, "dip": d, "reg": r} for sc, s, d, r in scored], f)
+    print(f"{len(made)} PDFs en {a.outdir}")
+
+main()
