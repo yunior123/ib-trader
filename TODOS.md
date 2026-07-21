@@ -27,6 +27,10 @@
 - [x] TradingView: zoom inspección + zoom chart verificados; skill documentada
 
 ## 🔄 EN CURSO / PENDIENTE
+- [x] Magnets gexa dominados: find→scroll_to ref→read_page (estructurado, no screenshot); parser gexa_parse los captura
+- [x] X posts scheduled cada día verificado (4AM premarket + realtime daemon + 16:20 postmortem)
+- [x] Auto-mejora semanal (domingo 19:00): refresca patrones/formas 6m + recalibra + corre tests + reporta
+- [x] Conocimiento consolidado en LEARNED.md + skills + memoria; herramientas reutilizables xpost.py + gexa_parse.py
 - [x] **Europa para ASML**: momentum Ámsterdam (ASML.AS ~6h lead) + STOXX50 al plan+draft (prob bump, línea 🇪🇺)
 - [x] Tests C++23: 25/25 correctness pass + benchmark (Bollinger 9.46ns/op, resto inline, 0 bugs)
 - [ ] Verificar gexa headless conecta REALMENTE en el run de 4am (Chrome/extension sin sesión interactiva)
