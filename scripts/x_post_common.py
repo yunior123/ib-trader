@@ -191,13 +191,23 @@ def append_gexa(text, sym, gexa=None, max_chars=MAX_CHARS):
     return text[:keep].rstrip() + "…" + add
 
 
+def sanitize_cashtags(text):
+    """X rechaza (403) posts con 2+ cashtags $SYM — conservar solo el PRIMERO.
+    Error repetido 2x el 2026-07-21 → docs/ERRORES.md. Los demas pierden el $."""
+    import re
+    seen = [0]
+    def rep(m):
+        seen[0] += 1
+        return m.group(0) if seen[0] == 1 else m.group(0)[1:]
+    return re.sub(r"\$(?=[A-Za-z]{1,5}\b)", lambda m: "$" if seen.__setitem__(0, seen[0]+1) or seen[0] == 1 else "", text) if False else re.sub(r"\$([A-Za-z]{1,5}\b)", rep, text)
+
 def post_text(text, tag, log, dry_run=False, auth=None, media_path=None):
     """Publica un post respetando ledger compartido. True si se posteo
     (o dry-run lo habria hecho). `tag` identifica el post en el log.
     `media_path` (opcional): si se pasa y la subida v1.1 tiene exito, adjunta la
     imagen al post v2; si la subida falla, cae limpio a texto-solo (no crashea).
     El ledger cuenta un post con media igual que uno de texto (COST_PER_POST)."""
-    text = text.strip()
+    text = sanitize_cashtags(text.strip())
     if len(text) > MAX_CHARS:
         text = text[:MAX_CHARS]
     reason = budget_refusal()
