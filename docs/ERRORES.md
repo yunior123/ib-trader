@@ -7,6 +7,7 @@ tocar launchd, scrapear Yahoo, imprimir, dropdowns de gexa) — grep rápido de 
 
 | Fecha | Error | Causa raíz | Fix aplicado | Regla anti-repetición |
 |---|---|---|---|---|
+| 2026-07-21 | "Ballenas mudas" reportado 13:5x — falsa alarma | diseño anti-spam: solo suena al CAMBIAR estado; QQQ 0.86 / SPY 0.79 P/C = mid (umbral 2.0/0.35), sin cruce = sin sirena; MU sí sonó 12:45 y 13:54 | ninguno (silencio correcto; audio verificado end-to-end con "prueba ballenas") | Antes de declarar watcher muerto: ver ~/Desktop/trading-signals/HOY.txt + opt_flow.txt mtime; tide $ ≠ ratio P/C por volumen |
 | 2026-07-21 ×2 | X rechaza post (403/401 confuso) con 2+ cashtags | X limita a UN $SYMBOL por post | sanitizador en x_post_common (solo 1er $ se conserva) | Máx 1 cashtag; los demás tickers SIN $ |
 | 2026-07-21 | x_plan_poster/xpost con imagen fallan silencioso | upload v1.1 media falla (tier API) y el flujo moría | posts van texto-solo con fallback limpio | Media es opcional SIEMPRE; jamás bloquear el post por la imagen |
 | 2026-07-21 | 16/26 tickers FALLO "unexpected character" | ráfaga yfinance → Yahoo rate-limit devuelve HTML | reintentos espaciados 10s uno-a-uno | Nunca 26 tickers en ráfaga; IBKR cache primero; espaciar 4-10s |
@@ -19,3 +20,6 @@ tocar launchd, scrapear Yahoo, imprimir, dropdowns de gexa) — grep rápido de 
 | 2026-07-21 | Spam Error 200 QQQ strike 712.5 inexistente | pedir contratos sin security definition | pendiente (TODOS.md) | Cachear contratos inválidos y saltarlos |
 | 2026-07-20 | Impresora: jobs a cola ajena (Brother) | asumí impresora sin confirmar dueño | cola eliminada | Jamás imprimir a una cola no confirmada del usuario |
 | 2026-07-21 | gexa dropdown: primer resultado ≠ ticker (TOWN por TSM) | fuzzy match del buscador | verificar header post-carga | SIEMPRE screenshot del dropdown y verificar header |
+| 2026-07-21 | x_post_common post_text da 401 pero OAuth1 directo da 201 | auth interna del modulo mal construida (pendiente diagnosticar) | workaround: OAuth1 directo + ledger manual | arreglar auth() del modulo post-cierre |
+| 2026-07-21 | Ballenas de PREMIUM (-53M tide) sin sirena | watcher solo mide ratio de VOLUMEN (P/C 2.0), no dolares pagados | copiloto cubrio a mano via gexa | v2 con alarma de premium neto (TODOS.md) — dos metricas, dos sirenas |
+| 2026-07-21 | Media upload X fallaba silencioso todo el dia | flujo interno x_post_common; el endpoint correcto es upload.twitter.com/1.1 multipart directo | RESUELTO 15:32: media_id 200 + tweet con imagen 201 | usar multipart directo a upload.twitter.com; portar a x_post_common post-cierre |
