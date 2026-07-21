@@ -646,3 +646,12 @@ Pipeline autónomo **señal-solamente** que arma el mapa del día por ticker, se
 - **SEÑAL-SOLAMENTE** — jamás ejecuta órdenes; todo post cierra "No es consejo financiero".
 - **Presupuesto X compartido** — `data/x_plan_budget.json`, $0.015/post, caps 10/día y $4/mes entre los 3 posters (`x_post_common.py`).
 - **Degradación limpia** — si falta `calibration.json`/`patterns.json`/`gexa_snapshot.json`, el generador sigue con heurísticas; gexa verify grita en el log si no conectó. `notify_relay.sh` debe estar vivo para que lleguen las alertas.
+
+### Flota (26 tickers, fuente única `data/fleet.txt`)
+QQQ SPY NVDA TSLA MU SMH AMD AAPL MSFT META AMZN GOOGL INTC TSM ASML TXN QCOM AVGO NFLX NOK GLD XLK EWY DRAM SPCX SKHY.
+- **0DTE (presupuesto)**: QQQ, SPY. Resto = weekly (excepción explícita para operar premium).
+- **🇰🇷 Corea DIRECTO** (Samsung/SK-Hynix/KOSPI lideran ~13h, memoria/foundry → línea Corea en plan+tweet, sube prob si alza semis): MU SKHY DRAM SMH NVDA TSM ASML AMD INTC AVGO TXN QCOM EWY. **INDIRECTO** (índices tech, vía engranaje `index_breadth` que incluye NVDA): QQQ SPY XLK. **Nulo**: AAPL MSFT META AMZN GOOGL TSLA NFLX NOK GLD SPCX.
+- **🇪🇺 Europa** (Ámsterdam lidera ~6h, `europe_read` ASML.AS + STOXX50): ASML.
+- **Korea-linked leen** `data/bars_{kospi,samsung,skhynix}.txt` (bridge KRX en vivo) + skill `korea-memoria`.
+- **gexa** cubre large-caps US; **NO** NOK (muros TWS). ETFs temáticos (DRAM/SPCX/SKHY/EWY) opciones a veces ilíquidas — verificar OI antes de armar muros.
+- Cada ticker: skill `ticker-<sym>` con patrones auto 6m + forma intradía 60d (`skill_patterns_refresh.py`), vehículo apalancado para jaula (`posthours_cage.py` LEV map), y proxy de futuro (semis/tech→NQ=F, SPY/NOK/GLD/EWY→ES=F).
