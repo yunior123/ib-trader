@@ -1,0 +1,107 @@
+{
+ "NVDA": {
+  "flip": 203.0,
+  "score": 56,
+  "bias": "CALL",
+  "poc": null,
+  "magnets": null,
+  "regime": "POSITIVE",
+  "call_usd": 2722712,
+  "put_usd": 0,
+  "ts": 1784640893
+ },
+ "QQQ": {
+  "flip": 545.0,
+  "score": 64,
+  "bias": "CALL",
+  "poc": "305.6M",
+  "magnets": [
+   {
+    "strike": 705.0,
+    "type": "HIGH RESISTANCE",
+    "score": 90,
+    "sweeps": 4,
+    "flow": "3.4M"
+   },
+   {
+    "strike": 707.0,
+    "type": "HIGH RESISTANCE",
+    "score": 59,
+    "sweeps": 4,
+    "flow": "3.4M"
+   },
+   {
+    "strike": 706.0,
+    "type": "HIGH RESISTANCE",
+    "score": 59,
+    "sweeps": 4,
+    "flow": "3.4M"
+   },
+   {
+    "strike": 701.0,
+    "type": "HIGH SUPPORT",
+    "score": 57,
+    "sweeps": 8,
+    "flow": "3.7M"
+   },
+   {
+    "strike": 702.0,
+    "type": "HIGH SUPPORT",
+    "score": 56,
+    "sweeps": 8,
+    "flow": "3.7M"
+   }
+  ],
+  "regime": "POSITIVE",
+  "call_usd": 1188561,
+  "put_usd": 777852,
+  "ts": 1784640992
+ },
+ "SPY": {
+  "flip": 743.0,
+  "score": 60,
+  "bias": "BEARISH",
+  "poc": "419.8M",
+  "magnets": [
+   {
+    "strike": 747.0,
+    "type": "HIGH RESISTANCE",
+    "score": 79,
+    "sweeps": 6,
+    "flow": "3.4M"
+   },
+   {
+    "strike": 746.0,
+    "type": "HIGH SUPPORT",
+    "score": 72,
+    "sweeps": 6,
+    "flow": "3.4M"
+   },
+   {
+    "strike": 750.0,
+    "type": "HIGH RESISTANCE",
+    "score": 69,
+    "sweeps": null,
+    "flow": "0.1M"
+   },
+   {
+    "strike": 748.0,
+    "type": "HIGH RESISTANCE",
+    "score": 68,
+    "sweeps": null,
+    "flow": "0.1M"
+   },
+   {
+    "strike": 745.0,
+    "type": "HIGH SUPPORT",
+    "score": 67,
+    "sweeps": 6,
+    "flow": "3.4M"
+   }
+  ],
+  "regime": "NEAR THE FLIP",
+  "call_usd": 127445,
+  "put_usd": 1120824,
+  "ts": 1784641041
+ }
+}

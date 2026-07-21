@@ -41,7 +41,7 @@ def parse(text):
     if m: d["poc_gex"], d["poc_pct"], d["poc_side"] = m.group(1), int(m.group(2)), m.group(3)
     # IMANES del INSTITUTIONAL FOOTPRINT: "695 — HIGH MAGNET ... 95/100 · ... 7 sweeps · $4.1M flow"
     magnets = []
-    for mm in re.finditer(r"(\d+(?:\.\d+)?)\s*[—-]?\s*(HIGH MAGNET|HIGH SUPPORT|MAGNET|SUPPORT|RESISTANCE)\b[^\n]*?(\d+)/100(?:[^\n]*?(\d+)\s+sweeps)?(?:[^\n]*?\$?([\d.]+M)\s+flow)?", text):
+    for mm in re.finditer(r"(\d+(?:\.\d+)?)\s*[—-]?\s*(HIGH MAGNET|HIGH SUPPORT|HIGH RESISTANCE|MAGNET|SUPPORT|RESISTANCE)\b[^\n]*?(\d+)/100(?:[^\n]*?(\d+)\s+sweeps)?(?:[^\n]*?\$?([\d.]+M)\s+flow)?", text):
         magnets.append(dict(strike=float(mm.group(1)), type=mm.group(2), score=int(mm.group(3)),
                             sweeps=int(mm.group(4)) if mm.group(4) else None,
                             flow=mm.group(5) if mm.group(5) else None))

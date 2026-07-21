@@ -1,0 +1,150 @@
+{
+ "QQQ": {
+  "index": "QQQ",
+  "score": -0.075,
+  "verdict": "ENGRANAJE NEUTRO/MIXTO: componentes divididos \u2014 QQQ sin liderazgo claro",
+  "aligned_top": [],
+  "breakdowns": [],
+  "breakouts": [],
+  "components": {
+   "NVDA": {
+    "w": 9.0,
+    "lean": -0.19,
+    "tag": "rango",
+    "gap": 0.0
+   },
+   "MSFT": {
+    "w": 8.0,
+    "lean": 0.26,
+    "tag": "rango",
+    "gap": 0.0
+   },
+   "AAPL": {
+    "w": 7.5,
+    "lean": -0.13,
+    "tag": "rango",
+    "gap": 0.0
+   },
+   "AMZN": {
+    "w": 5.5,
+    "lean": -0.06,
+    "tag": "rango",
+    "gap": 0.0
+   },
+   "AVGO": {
+    "w": 5.0,
+    "lean": -0.13,
+    "tag": "rango",
+    "gap": 0.0
+   },
+   "META": {
+    "w": 4.5,
+    "lean": 0.04,
+    "tag": "rango",
+    "gap": 0.0
+   },
+   "GOOGL": {
+    "w": 5.0,
+    "lean": -0.2,
+    "tag": "rango",
+    "gap": 0.0
+   },
+   "TSLA": {
+    "w": 3.0,
+    "lean": -0.3,
+    "tag": "rango",
+    "gap": 0.0
+   },
+   "NFLX": {
+    "w": 3.0,
+    "lean": 0.02,
+    "tag": "rango",
+    "gap": 0.0
+   },
+   "AMD": {
+    "w": 2.0,
+    "lean": -0.26,
+    "tag": "rango",
+    "gap": 0.0
+   },
+   "QCOM": {
+    "w": 1.2,
+    "lean": -0.26,
+    "tag": "rango",
+    "gap": 0.0
+   }
+  },
+  "ts": 1784640238
+ },
+ "SPY": {
+  "index": "SPY",
+  "score": -0.064,
+  "verdict": "ENGRANAJE NEUTRO/MIXTO: componentes divididos \u2014 SPY sin liderazgo claro",
+  "aligned_top": [],
+  "breakdowns": [],
+  "breakouts": [],
+  "components": {
+   "NVDA": {
+    "w": 7.5,
+    "lean": -0.19,
+    "tag": "rango",
+    "gap": 0.0
+   },
+   "MSFT": {
+    "w": 7.0,
+    "lean": 0.26,
+    "tag": "rango",
+    "gap": 0.0
+   },
+   "AAPL": {
+    "w": 6.5,
+    "lean": -0.13,
+    "tag": "rango",
+    "gap": 0.0
+   },
+   "AMZN": {
+    "w": 4.0,
+    "lean": -0.06,
+    "tag": "rango",
+    "gap": 0.0
+   },
+   "META": {
+    "w": 3.0,
+    "lean": 0.04,
+    "tag": "rango",
+    "gap": 0.0
+   },
+   "GOOGL": {
+    "w": 4.0,
+    "lean": -0.2,
+    "tag": "rango",
+    "gap": 0.0
+   },
+   "AVGO": {
+    "w": 2.5,
+    "lean": -0.13,
+    "tag": "rango",
+    "gap": 0.0
+   },
+   "TSLA": {
+    "w": 2.0,
+    "lean": -0.3,
+    "tag": "rango",
+    "gap": 0.0
+   },
+   "AMD": {
+    "w": 1.2,
+    "lean": -0.26,
+    "tag": "rango",
+    "gap": 0.0
+   },
+   "NFLX": {
+    "w": 1.5,
+    "lean": 0.02,
+    "tag": "rango",
+    "gap": 0.0
+   }
+  },
+  "ts": 1784640240
+ }
+}

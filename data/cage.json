@@ -1,0 +1,17 @@
+{
+ "NVDA": {
+  "sym": "NVDA",
+  "setup": false,
+  "note": "sin sesion RTH"
+ },
+ "QQQ": {
+  "sym": "QQQ",
+  "setup": false,
+  "note": "sin sesion RTH"
+ },
+ "MU": {
+  "sym": "MU",
+  "setup": false,
+  "note": "sin sesion RTH"
+ }
+}

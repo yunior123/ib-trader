@@ -49,3 +49,7 @@
 - Señal-solamente (jamás ordena). Aditivo + degradación limpia. Respaldo en `backup/` antes de tocar el generador.
 - Presupuesto opciones = SOLO 0DTE (semanales requieren excepción explícita).
 - `notify_relay.sh` DEBE estar vivo (fue el fallo de notifs). Print o nada. 3 pérdidas = fin.
+
+## 2026-07-21 sesión viva
+- [ ] opt_whale_watch: filtrar strikes sin security definition (QQQ 712.5 20260724 spamea Error 200 en loop) — cachear contratos inválidos y saltarlos. Arreglar POST-CIERRE.
+- [ ] launchd exit 78 (fleet/scan/screener/fastscan/rescan/screener6am) + healthcheck exit 1 — cazar EX_CONFIG con calma post-cierre.

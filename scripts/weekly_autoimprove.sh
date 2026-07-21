@@ -10,6 +10,8 @@ echo "\n$(date) === AUTO-MEJORA SEMANAL ===" >> $LOG
 ./venv/bin/python scripts/skill_patterns_refresh.py >> $LOG 2>&1
 # 2) recalcular follow-through empírico de patrones (H&S/dobles/triángulos)
 ./venv/bin/python scripts/pattern_detect.py --fleet >> $LOG 2>&1
+# 2b) decaimiento de momentum re-medido (muestra fresca semanal)
+./venv/bin/python scripts/momentum_decay.py >> $LOG 2>&1
 # 3) recalibrar probabilidades con todo el histórico acumulado
 ./venv/bin/python scripts/calibration_ledger.py grade >> $LOG 2>&1
 ./venv/bin/python scripts/calibration_ledger.py calibrate >> $LOG 2>&1
