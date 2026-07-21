@@ -1,0 +1,5 @@
+# x_combo_triggers.txt — combos multi-ticker para posts X (señal-solamente)
+# Formato: COND & COND [& COND...] : mensaje del post
+# COND = SYM>=NUM | SYM<=NUM | SYM>NUM | SYM<NUM  (close 1m de data/bars_<sym>_ibkr.txt)
+# El combo dispara cuando TODAS las patas son ciertas a la vez; 1 post/dia por linea.
+#QQQ>=705 & MSFT>=403 : entramos largos tech, target QQQ 708

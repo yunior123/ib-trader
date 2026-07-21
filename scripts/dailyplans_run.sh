@@ -5,6 +5,7 @@ cd /Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader || exit 1
 command -v claude >/dev/null && timeout 300 claude -p "Usa la skill gexa-terminal (Chrome extension). Para QQQ,SPY,NVDA,TSLA,MU,SMH extrae flip (0DTE y ALL-EXP), dealer pressure score, bias y POC del header de gexa.ai/terminal, y escribe el resultado como JSON a /Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/data/gexa_snapshot.json con formato {\"SYM\":{\"flip\":n,\"flip_all\":n,\"score\":n,\"bias\":\"...\",\"poc\":\"...\"}}. Si la extension no conecta, escribe {} y termina. No hagas nada mas." >> dailyplans.log 2>&1
 ./venv/bin/python scripts/index_breadth.py >> dailyplans.log 2>&1
 ./venv/bin/python scripts/options_hunter.py 12 >> dailyplans.log 2>&1
+[[ $(date +%H%M) -lt 0500 ]] && ./venv/bin/python scripts/pattern_detect.py --fleet >> dailyplans.log 2>&1
 HM=$(date +%H%M)
 if [[ $HM -lt 0500 ]]; then MODE=FULL; ARGS=""
 elif [[ $HM -lt 0900 ]]; then MODE=REFRESH; ARGS="--tag REFRESH-8AM"
@@ -12,7 +13,6 @@ else MODE=APERTURA; ARGS="--tickers QQQ,SPY,NVDA,TSLA,MU,SMH,META,MSFT,AMD,NOK -
 fi
 echo "$(date) modo $MODE" >> dailyplans.log
 ./venv/bin/python scripts/daily_fleet_plans.py $ARGS >> dailyplans.log 2>&1
-[[ $MODE == FULL ]] && ./venv/bin/python scripts/pattern_detect.py --fleet >> dailyplans.log 2>&1
 [[ $MODE == FULL ]] && ./venv/bin/python scripts/calibration_ledger.py record >> dailyplans.log 2>&1
 # gexa verify: si el snapshot no se escribio o quedo vacio, gritar en el log
 if [[ $MODE == FULL ]]; then
