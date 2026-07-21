@@ -20,6 +20,11 @@ MAX_POSTS_PER_DAY = 10       # cap compartido entre TODOS los posters
 MAX_SPEND_PER_MONTH = 4.00
 MAX_CHARS = 275
 API_URL = "https://api.x.com/2/tweets"
+# v1.1 media upload (multipart). Los posts CON media pueden tener limites/costos
+# distintos a los de texto en algunos planes de la API; aqui contamos igual que un
+# post de texto (COST_PER_POST) porque no hay constante de costo con-media separada.
+UPLOAD_URL = "https://upload.twitter.com/1.1/media/upload.json"
+GEXA_FILE = os.path.join(ROOT, "data", "gexa_snapshot.json")
 
 # logs de todos los componentes que postean (mismo formato de linea que
 # x_plan_poster.py: "YYYY-MM-DD HH:MM:SS ... POSTED ...")
@@ -113,9 +118,85 @@ def make_auth(env):
                   env["X_ACCESS_TOKEN"], env["X_ACCESS_SECRET"])
 
 
-def post_text(text, tag, log, dry_run=False, auth=None):
+# ------------------------------------------------------------------ media
+def upload_media(image_path, auth, log=None):
+    """Sube una imagen via X API v1.1 (multipart 'media'), devuelve
+    media_id_string o None. ADITIVO: si algo falla devuelve None y el caller
+    cae limpio a texto-solo. Nota: los posts con media pueden costar/limitarse
+    distinto en la API v2; el ledger los cuenta como un post normal."""
+    if not image_path or not os.path.exists(image_path):
+        return None
+    if auth is None:
+        return None
+    try:
+        import requests
+        with open(image_path, "rb") as f:
+            r = requests.post(UPLOAD_URL, files={"media": f}, auth=auth,
+                              timeout=60)
+        if r.status_code in (200, 201):
+            mid = r.json().get("media_id_string")
+            if mid:
+                return mid
+        if log:
+            log(f"MEDIA-FAIL {r.status_code} {r.text[:80].replace(chr(10), ' ')}")
+    except Exception as e:
+        if log:
+            log(f"MEDIA-ERROR {str(e)[:80]}")
+    return None
+
+
+# ------------------------------------------------------------------ gexa
+def load_gexa(path=GEXA_FILE):
+    """dict {SYM: {flip, flip_all, score, bias, poc}} o {} si falta/roto."""
+    try:
+        with open(path) as f:
+            d = json.load(f)
+        return d if isinstance(d, dict) else {}
+    except Exception:
+        return {}
+
+
+def gexa_line(sym, gexa=None):
+    """Linea compacta de gamma para `sym`, o '' si no hay datos (degrade limpio).
+    Ej: '📊 gamma: flip 705 · dealer -1.2 · POC 702'."""
+    if gexa is None:
+        gexa = load_gexa()
+    d = gexa.get(sym) or gexa.get(sym.upper())
+    if not isinstance(d, dict):
+        return ""
+    parts = []
+    if d.get("flip") is not None:
+        parts.append(f"flip {d['flip']}")
+    if d.get("score") is not None:
+        parts.append(f"dealer {d['score']}")
+    if d.get("poc") is not None:
+        parts.append(f"POC {d['poc']}")
+    return "📊 gamma: " + " · ".join(parts) if parts else ""
+
+
+def append_gexa(text, sym, gexa=None, max_chars=MAX_CHARS):
+    """Agrega la linea de gamma a `text` manteniendo <=max_chars. Trunca la
+    COLA del texto (quip) si hace falta, jamas la linea de gamma; los niveles
+    viven al frente asi que se preservan. Sin datos gexa: devuelve text igual."""
+    line = gexa_line(sym, gexa)
+    if not line:
+        return text
+    text = text.rstrip()
+    add = "\n" + line
+    if len(text) + len(add) <= max_chars:
+        return text + add
+    keep = max_chars - len(add) - 1      # -1 por la elipsis
+    if keep < 0:
+        return text[:max_chars]
+    return text[:keep].rstrip() + "…" + add
+
+
+def post_text(text, tag, log, dry_run=False, auth=None, media_path=None):
     """Publica un post respetando ledger compartido. True si se posteo
-    (o dry-run lo habria hecho). `tag` identifica el post en el log."""
+    (o dry-run lo habria hecho). `tag` identifica el post en el log.
+    `media_path` (opcional): si se pasa y la subida v1.1 tiene exito, adjunta la
+    imagen al post v2; si la subida falla, cae limpio a texto-solo (no crashea).
+    El ledger cuenta un post con media igual que uno de texto (COST_PER_POST)."""
     text = text.strip()
     if len(text) > MAX_CHARS:
         text = text[:MAX_CHARS]
@@ -124,22 +205,32 @@ def post_text(text, tag, log, dry_run=False, auth=None):
         log(f"REFUSE {tag} {reason}")
         return False
     if dry_run:
-        log(f"DRY-RUN {tag} ({len(text)} chars):")
+        has_media = bool(media_path and os.path.exists(media_path))
+        note = f" +media {media_path}" if has_media else ""
+        log(f"DRY-RUN {tag} ({len(text)} chars){note}:")
         print(text, flush=True)
         print("-" * 40, flush=True)
         return True
     import requests
+    body = {"text": text}
+    if media_path:
+        media_id = upload_media(media_path, auth, log)
+        if media_id:
+            body["media"] = {"media_ids": [media_id]}
+        else:
+            log(f"MEDIA-SKIP {tag} subida fallo -> texto-solo")
     try:
-        r = requests.post(API_URL, json={"text": text}, auth=auth, timeout=30)
-        body = r.text.replace("\n", " ")[:100]
+        r = requests.post(API_URL, json=body, auth=auth, timeout=30)
+        resp = r.text.replace("\n", " ")[:100]
         if r.status_code == 201:
             b = load_budget()
             b["posts"] += 1
             b["spent"] = round(b["spent"] + COST_PER_POST, 4)
             save_budget(b)
-            log(f"POSTED {tag} 201 {body}")
+            media_tag = " +media" if "media" in body else ""
+            log(f"POSTED {tag}{media_tag} 201 {resp}")
             return True
-        log(f"FAIL {tag} {r.status_code} {body}")
+        log(f"FAIL {tag} {r.status_code} {resp}")
     except Exception as e:
         log(f"ERROR {tag} exc {str(e)[:100]}")
     return False

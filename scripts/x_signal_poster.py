@@ -223,6 +223,8 @@ def process_signals(st, now_et, dry_run, auth):
             continue
 
         text = build_post(sym, title, msg, entry, tgt, stp, prob)
+        # ADITIVO: linea de gamma gexa antes de postear (degrade limpio si falta)
+        text = xc.append_gexa(text, sym)
         if xc.post_text(text, f"señal {key} [{why}]", log, dry_run, auth):
             st["posts"] += 1
             if premarket:

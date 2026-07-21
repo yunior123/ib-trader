@@ -35,7 +35,7 @@
 - [ ] Documentar force/cage/healthcheck/breadth en `docs/DAILY-SYSTEM.md` (parcial)
 
 ## 💡 IDEAS / FUTURO (cuando se pidan)
-- [ ] Tweets con imagen adjunta (árbol PNG como media) — hoy es escalera de emojis en texto
+- [x] Tweets con imagen adjunta (árbol PNG en x_media/) + gexa gamma (flip/dealer/POC) en posts intradía
 - [ ] `opt_tick_watch` event-driven para el strike ACTIVO (tiempo real, no poll 5min) — filo de ejecución
 - [ ] Fuerza/agotamiento por-tick plegada en los signal bots C++ (si se quiere el filo en la decisión)
 - [ ] Calendario macro (CPI/FOMC/NFP) al PDF — "no operar el print"

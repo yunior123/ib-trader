@@ -13,6 +13,9 @@ Uso: x_plan_poster.py [--top 3] [--dry-run] [--dir /ruta/planes-...]
 """
 import argparse, json, os, sys, time
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import x_post_common as xc   # upload_media + append_gexa (aditivo, degrade limpio)
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BUDGET_FILE = os.path.join(ROOT, "data", "x_plan_budget.json")
 LOG_FILE = os.path.join(ROOT, "x_plan_poster.log")
@@ -138,9 +141,18 @@ def main():
             continue
         if len(text) > MAX_CHARS:
             text = text[:MAX_CHARS]
+        # ADITIVO: linea de gamma gexa (se salta sola si no hay snapshot/ticker)
+        text = xc.append_gexa(text, sym, max_chars=MAX_CHARS)
+
+        # ADITIVO: imagen del arbol de escenarios si el PDF la genero; si falta,
+        # se postea texto-solo (comportamiento previo intacto).
+        media_path = os.path.join(a.dir, "x_media", f"{sym}_tree.png")
+        if not os.path.exists(media_path):
+            media_path = None
 
         if a.dry_run:
-            log(f"DRY-RUN {sym} ({len(text)} chars):")
+            note = f" +media {media_path}" if media_path else " (texto-solo)"
+            log(f"DRY-RUN {sym} ({len(text)} chars){note}:")
             print(text)
             print("-" * 40)
             posted += 1
@@ -148,16 +160,24 @@ def main():
 
         import requests
         try:
-            r = requests.post(API_URL, json={"text": text}, auth=auth, timeout=30)
-            body = r.text.replace("\n", " ")[:100]
+            body = {"text": text}
+            if media_path:
+                media_id = xc.upload_media(media_path, auth, log)
+                if media_id:
+                    body["media"] = {"media_ids": [media_id]}
+                else:
+                    log(f"MEDIA-SKIP {sym} subida fallo -> texto-solo")
+            r = requests.post(API_URL, json=body, auth=auth, timeout=30)
+            resp = r.text.replace("\n", " ")[:100]
             if r.status_code == 201:
                 posted += 1
                 budget["posts"] += 1
                 budget["spent"] = round(budget["spent"] + COST_PER_POST, 4)
                 save_budget(budget)
-                log(f"POSTED {sym} 201 {body}")
+                media_tag = " +media" if "media" in body else ""
+                log(f"POSTED {sym}{media_tag} 201 {resp}")
             else:
-                log(f"FAIL {sym} {r.status_code} {body}")
+                log(f"FAIL {sym} {r.status_code} {resp}")
         except Exception as e:
             log(f"ERROR {sym} exc {str(e)[:100]}")
 

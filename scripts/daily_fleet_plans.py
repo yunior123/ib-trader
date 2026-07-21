@@ -30,18 +30,18 @@ FLEET = {
     "TSLA": dict(style="weekly", fut="NQ=F", korea=False),
     "MU":   dict(style="weekly", fut="NQ=F", korea=True),
     "SMH":  dict(style="weekly", fut="NQ=F", korea=True),
-    "AMD":  dict(style="weekly", fut="NQ=F", korea=False),
+    "AMD":  dict(style="weekly", fut="NQ=F", korea=True),
     "AAPL": dict(style="weekly", fut="NQ=F", korea=False),
     "MSFT": dict(style="weekly", fut="NQ=F", korea=False),
     "META": dict(style="weekly", fut="NQ=F", korea=False),
     "AMZN": dict(style="weekly", fut="NQ=F", korea=False),
     "GOOGL":dict(style="weekly", fut="NQ=F", korea=False),
-    "INTC": dict(style="weekly", fut="NQ=F", korea=False),
+    "INTC": dict(style="weekly", fut="NQ=F", korea=True),
     "TSM":  dict(style="weekly", fut="NQ=F", korea=True),
     "ASML": dict(style="weekly", fut="NQ=F", korea=True, europe="ASML.AS"),
-    "TXN":  dict(style="weekly", fut="NQ=F", korea=False),
-    "QCOM": dict(style="weekly", fut="NQ=F", korea=False),
-    "AVGO": dict(style="weekly", fut="NQ=F", korea=False),
+    "TXN":  dict(style="weekly", fut="NQ=F", korea=True),
+    "QCOM": dict(style="weekly", fut="NQ=F", korea=True),
+    "AVGO": dict(style="weekly", fut="NQ=F", korea=True),
     "NFLX": dict(style="weekly", fut="NQ=F", korea=False),
     "NOK":  dict(style="weekly", fut="ES=F", korea=False, no_gexa=True),
     "GLD":  dict(style="weekly", fut="ES=F", korea=False),
@@ -582,6 +582,15 @@ def make_pdf(outdir, sym, spot, cs, on, plan_lines, series):
                         f"Print o nada | 3 perdidas = fin.",
                         (0.2, lo_y + (hi_y-lo_y)*0.015), fontsize=8, fontweight="bold",
                         bbox=dict(boxstyle="round,pad=0.4", fc="#fffde7", ec="#9e9e9e"))
+            # ADITIVO: guardar la MISMA figura como PNG tweet-ready para el poster de X.
+            # Falla silenciosa: un error de PNG jamas rompe la generacion del PDF.
+            try:
+                media_dir = os.path.join(outdir, "x_media")
+                os.makedirs(media_dir, exist_ok=True)
+                fig.savefig(os.path.join(media_dir, f"{sym}_tree.png"),
+                            dpi=150, bbox_inches="tight")
+            except Exception:
+                pass
             pdf.savefig(fig); plt.close(fig)
         except Exception:
             plt.close("all")
