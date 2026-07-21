@@ -7,7 +7,9 @@ Uso: ./venv/bin/python scripts/finviz_scan.py [lane...]   (sin args = todas)"""
 import os, sys, time
 os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, "scripts")
-import options_hunter as oh   # auth(), fetch-style, parse(), num()
+_argv = sys.argv; sys.argv = [sys.argv[0]]  # options_hunter parsea argv al importar (bug apuntado)
+import options_hunter as oh
+sys.argv = _argv   # auth(), fetch-style, parse(), num()
 
 LANES = {
   "valles":     "cap_largeover,sh_opt_option,sh_avgvol_o2000,ta_perf_ddown",
