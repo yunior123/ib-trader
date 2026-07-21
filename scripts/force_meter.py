@@ -141,7 +141,13 @@ def run(syms, as_json=False):
               f"{' DIV' if m['rsi_div'] else ''}\n      -> {m['action']}")
     return out
 
-FLEET = ["QQQ","SPY","NVDA","TSLA","MU","SMH","AMD","AAPL","MSFT","META","AMZN","GOOGL","NOK"]
+def _load_fleet(default):
+    try:
+        w = open("data/fleet.txt").read().split()
+        return w if w else default
+    except Exception:
+        return default
+FLEET = _load_fleet(["QQQ","SPY","NVDA","TSLA","MU","SMH","AMD","AAPL","MSFT","META","AMZN","GOOGL","NOK"])
 
 def main():
     ap = argparse.ArgumentParser()

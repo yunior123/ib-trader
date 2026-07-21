@@ -17,7 +17,7 @@ REPO = os.path.join(HOME, "Documents/GitHub/ib-trader")
 os.chdir(REPO); sys.path.insert(0, REPO)
 from ib_insync import IB, Stock, Option
 
-FLEET = ["NVDA","AMD","MU","INTC","TSM","SMH","QQQ","SPY","AAPL","MSFT","META","AMZN","TSLA","AVGO","GOOGL"]
+FLEET = ["NVDA","AMD","MU","INTC","TSM","SMH","QQQ","SPY","AAPL","MSFT","META","AMZN","TSLA","AVGO","GOOGL","NOK","TXN","QCOM","NFLX","GLD","XLK"]
 VMIN = 3000          # volumen total minimo para que el ratio signifique algo
 PC_PUTS, PC_CALLS = 2.0, 0.35
 EXIT_PUTS, EXIT_CALLS = 1.5, 0.5   # histeresis

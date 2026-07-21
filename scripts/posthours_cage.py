@@ -99,7 +99,13 @@ def analyze(sym):
     except Exception as e:
         return dict(sym=sym, setup=False, note=f"error {e}")
 
-FLEET = ["QQQ","SPY","NVDA","MU","SMH","AMD","TSM","AVGO","DRAM","TSLA","META","AAPL"]
+def _load_fleet(default):
+    try:
+        w = open("data/fleet.txt").read().split()
+        return w if w else default
+    except Exception:
+        return default
+FLEET = _load_fleet(["QQQ","SPY","NVDA","MU","SMH","AMD","TSM","AVGO","DRAM","TSLA","META","AAPL"])
 
 def main():
     ap = argparse.ArgumentParser()
