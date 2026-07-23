@@ -1,0 +1,70 @@
+{
+ "sym": "TSM",
+ "spot": 418.98,
+ "asof": 1784815901,
+ "net_gex": 48548462.5,
+ "regime": "POS",
+ "flip": 409.41,
+ "flip_static": 409.41,
+ "call_wall": 425.0,
+ "put_wall": 410.0,
+ "abs_wall": 425.0,
+ "call_wall_gex": 14527620.0,
+ "put_wall_gex": 4486910.8,
+ "abs_wall_gex": 14527620.0,
+ "oi_call_wall": 425.0,
+ "oi_put_wall": 410.0,
+ "near_call_wall": false,
+ "near_put_wall": false,
+ "near_flip": false,
+ "profile": [
+  {
+   "strike": 405.0,
+   "gex": -2804003.3
+  },
+  {
+   "strike": 407.5,
+   "gex": -617143.3
+  },
+  {
+   "strike": 410.0,
+   "gex": 4486910.8
+  },
+  {
+   "strike": 412.5,
+   "gex": 5333630.9
+  },
+  {
+   "strike": 415.0,
+   "gex": 8086550.8
+  },
+  {
+   "strike": 417.5,
+   "gex": -641438.7
+  },
+  {
+   "strike": 420.0,
+   "gex": -2936293.4
+  },
+  {
+   "strike": 422.5,
+   "gex": 3214443.2
+  },
+  {
+   "strike": 425.0,
+   "gex": 14527620.0
+  },
+  {
+   "strike": 427.5,
+   "gex": 4178830.6
+  },
+  {
+   "strike": 430.0,
+   "gex": 11807895.6
+  },
+  {
+   "strike": 432.5,
+   "gex": 3911459.2
+  }
+ ]
+}

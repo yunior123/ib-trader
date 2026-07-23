@@ -1,0 +1,354 @@
+{
+ "engine": "yoel:rebote_sma20",
+ "spec": "docs/ENGINE-SCORING-SPEC.md",
+ "generated_utc": "2026-07-23T08:00:40Z",
+ "horizon_bars_5m": 24,
+ "signals_files": [
+  "/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/data/backtest/signals_yoel_rebote_sma20.csv"
+ ],
+ "skipped_sin_barras": 3,
+ "por_ticker": {
+  "AAPL": {
+   "n": 106,
+   "wins": 43,
+   "losses": 52,
+   "timeouts": 11,
+   "wr": 0.4526,
+   "wilson_lo": 0.3563,
+   "pnl_bps_median": 0.0,
+   "timeout_pnl_bps_median": 14.12,
+   "overnight_cross": 15
+  },
+  "AMD": {
+   "n": 80,
+   "wins": 41,
+   "losses": 39,
+   "timeouts": 0,
+   "wr": 0.5125,
+   "wilson_lo": 0.4049,
+   "pnl_bps_median": 13.96,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 0
+  },
+  "AMZN": {
+   "n": 74,
+   "wins": 35,
+   "losses": 38,
+   "timeouts": 1,
+   "wr": 0.4795,
+   "wilson_lo": 0.3688,
+   "pnl_bps_median": -16.65,
+   "timeout_pnl_bps_median": 13.44,
+   "overnight_cross": 2
+  },
+  "ASML": {
+   "n": 81,
+   "wins": 38,
+   "losses": 42,
+   "timeouts": 1,
+   "wr": 0.475,
+   "wilson_lo": 0.3692,
+   "pnl_bps_median": -29.76,
+   "timeout_pnl_bps_median": -20.24,
+   "overnight_cross": 2
+  },
+  "AVGO": {
+   "n": 73,
+   "wins": 37,
+   "losses": 36,
+   "timeouts": 0,
+   "wr": 0.5068,
+   "wilson_lo": 0.3947,
+   "pnl_bps_median": 30.16,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 1
+  },
+  "DRAM": {
+   "n": 54,
+   "wins": 23,
+   "losses": 31,
+   "timeouts": 0,
+   "wr": 0.4259,
+   "wilson_lo": 0.3033,
+   "pnl_bps_median": -32.18,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 3
+  },
+  "EWY": {
+   "n": 55,
+   "wins": 33,
+   "losses": 22,
+   "timeouts": 0,
+   "wr": 0.6,
+   "wilson_lo": 0.4681,
+   "pnl_bps_median": 33.34,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 1
+  },
+  "GLD": {
+   "n": 58,
+   "wins": 21,
+   "losses": 16,
+   "timeouts": 21,
+   "wr": 0.5676,
+   "wilson_lo": 0.4091,
+   "pnl_bps_median": 1.7,
+   "timeout_pnl_bps_median": -4.08,
+   "overnight_cross": 7
+  },
+  "GOOGL": {
+   "n": 69,
+   "wins": 36,
+   "losses": 30,
+   "timeouts": 3,
+   "wr": 0.5455,
+   "wilson_lo": 0.4262,
+   "pnl_bps_median": 33.88,
+   "timeout_pnl_bps_median": 7.03,
+   "overnight_cross": 5
+  },
+  "INTC": {
+   "n": 70,
+   "wins": 28,
+   "losses": 42,
+   "timeouts": 0,
+   "wr": 0.4,
+   "wilson_lo": 0.2933,
+   "pnl_bps_median": -33.15,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 1
+  },
+  "LRCX": {
+   "n": 72,
+   "wins": 28,
+   "losses": 44,
+   "timeouts": 0,
+   "wr": 0.3889,
+   "wilson_lo": 0.2847,
+   "pnl_bps_median": -29.7,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 2
+  },
+  "META": {
+   "n": 75,
+   "wins": 52,
+   "losses": 21,
+   "timeouts": 2,
+   "wr": 0.7123,
+   "wilson_lo": 0.5999,
+   "pnl_bps_median": 34.18,
+   "timeout_pnl_bps_median": 1.72,
+   "overnight_cross": 2
+  },
+  "MSFT": {
+   "n": 84,
+   "wins": 37,
+   "losses": 43,
+   "timeouts": 4,
+   "wr": 0.4625,
+   "wilson_lo": 0.3575,
+   "pnl_bps_median": -30.93,
+   "timeout_pnl_bps_median": -6.44,
+   "overnight_cross": 12
+  },
+  "MU": {
+   "n": 64,
+   "wins": 24,
+   "losses": 40,
+   "timeouts": 0,
+   "wr": 0.375,
+   "wilson_lo": 0.2667,
+   "pnl_bps_median": -33.08,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 0
+  },
+  "NFLX": {
+   "n": 88,
+   "wins": 49,
+   "losses": 36,
+   "timeouts": 3,
+   "wr": 0.5765,
+   "wilson_lo": 0.4704,
+   "pnl_bps_median": 33.66,
+   "timeout_pnl_bps_median": 25.96,
+   "overnight_cross": 7
+  },
+  "NOK": {
+   "n": 61,
+   "wins": 23,
+   "losses": 38,
+   "timeouts": 0,
+   "wr": 0.377,
+   "wilson_lo": 0.2661,
+   "pnl_bps_median": -34.97,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 0
+  },
+  "NVDA": {
+   "n": 77,
+   "wins": 32,
+   "losses": 44,
+   "timeouts": 1,
+   "wr": 0.4211,
+   "wilson_lo": 0.3165,
+   "pnl_bps_median": -33.68,
+   "timeout_pnl_bps_median": -11.83,
+   "overnight_cross": 0
+  },
+  "QCOM": {
+   "n": 71,
+   "wins": 36,
+   "losses": 35,
+   "timeouts": 0,
+   "wr": 0.507,
+   "wilson_lo": 0.3934,
+   "pnl_bps_median": 23.83,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 1
+  },
+  "QQQ": {
+   "n": 72,
+   "wins": 36,
+   "losses": 27,
+   "timeouts": 9,
+   "wr": 0.5714,
+   "wilson_lo": 0.4486,
+   "pnl_bps_median": 30.07,
+   "timeout_pnl_bps_median": 7.04,
+   "overnight_cross": 14
+  },
+  "SMH": {
+   "n": 74,
+   "wins": 39,
+   "losses": 33,
+   "timeouts": 2,
+   "wr": 0.5417,
+   "wilson_lo": 0.4274,
+   "pnl_bps_median": 33.01,
+   "timeout_pnl_bps_median": 13.82,
+   "overnight_cross": 4
+  },
+  "SNDK": {
+   "n": 55,
+   "wins": 29,
+   "losses": 26,
+   "timeouts": 0,
+   "wr": 0.5273,
+   "wilson_lo": 0.3979,
+   "pnl_bps_median": 28.37,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 0
+  },
+  "SPCX": {
+   "n": 23,
+   "wins": 8,
+   "losses": 15,
+   "timeouts": 0,
+   "wr": 0.3478,
+   "wilson_lo": 0.1881,
+   "pnl_bps_median": -34.34,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 0
+  },
+  "SPY": {
+   "n": 59,
+   "wins": 19,
+   "losses": 21,
+   "timeouts": 19,
+   "wr": 0.475,
+   "wilson_lo": 0.3294,
+   "pnl_bps_median": -2.66,
+   "timeout_pnl_bps_median": -2.13,
+   "overnight_cross": 6
+  },
+  "STX": {
+   "n": 82,
+   "wins": 49,
+   "losses": 33,
+   "timeouts": 0,
+   "wr": 0.5976,
+   "wilson_lo": 0.4894,
+   "pnl_bps_median": 28.6,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 1
+  },
+  "TSLA": {
+   "n": 77,
+   "wins": 40,
+   "losses": 37,
+   "timeouts": 0,
+   "wr": 0.5195,
+   "wilson_lo": 0.4096,
+   "pnl_bps_median": 33.29,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 1
+  },
+  "TSM": {
+   "n": 72,
+   "wins": 38,
+   "losses": 34,
+   "timeouts": 0,
+   "wr": 0.5278,
+   "wilson_lo": 0.414,
+   "pnl_bps_median": 32.31,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 2
+  },
+  "TXN": {
+   "n": 92,
+   "wins": 43,
+   "losses": 48,
+   "timeouts": 1,
+   "wr": 0.4725,
+   "wilson_lo": 0.3732,
+   "pnl_bps_median": -25.64,
+   "timeout_pnl_bps_median": -14.36,
+   "overnight_cross": 1
+  },
+  "WDC": {
+   "n": 76,
+   "wins": 34,
+   "losses": 42,
+   "timeouts": 0,
+   "wr": 0.4474,
+   "wilson_lo": 0.3408,
+   "pnl_bps_median": -28.96,
+   "timeout_pnl_bps_median": null,
+   "overnight_cross": 0
+  },
+  "XLK": {
+   "n": 82,
+   "wins": 42,
+   "losses": 36,
+   "timeouts": 4,
+   "wr": 0.5385,
+   "wilson_lo": 0.4286,
+   "pnl_bps_median": 31.18,
+   "timeout_pnl_bps_median": 3.02,
+   "overnight_cross": 8
+  }
+ },
+ "global": {
+  "n": 2076,
+  "wins": 993,
+  "losses": 1001,
+  "timeouts": 82,
+  "wr": 0.498,
+  "wilson_lo": 0.4761,
+  "pnl_bps_median": -0.0,
+  "timeout_pnl_bps_median": 1.7,
+  "overnight_cross": 98
+ },
+ "spread_impact_global": {
+  "2bps_side": {
+   "round_trip_bps": 4.0,
+   "pnl_bps_median_net": -4.0,
+   "wins_net_negative": 14
+  },
+  "5bps_side": {
+   "round_trip_bps": 10.0,
+   "pnl_bps_median_net": -10.0,
+   "wins_net_negative": 14
+  }
+ }
+}

@@ -1,0 +1,82 @@
+{
+ "sym": "AMZN",
+ "spot": 234.21,
+ "asof": 1784825369,
+ "exp": "20260724",
+ "dte": 1.13,
+ "scope": "0DTE",
+ "net_vex": 24291898.6,
+ "vex_peak": 240.0,
+ "vex_profile": [
+  {
+   "strike": 227.5,
+   "vex": 101605970.3
+  },
+  {
+   "strike": 230.0,
+   "vex": 112963795.2
+  },
+  {
+   "strike": 232.5,
+   "vex": 66956728.6
+  },
+  {
+   "strike": 235.0,
+   "vex": -46580855.9
+  },
+  {
+   "strike": 237.5,
+   "vex": -92748217.0
+  },
+  {
+   "strike": 240.0,
+   "vex": -117905522.6
+  }
+ ],
+ "pressure": -79,
+ "pressure_lab": "AMPLIFICA fuerte",
+ "iv_atm": 0.3992,
+ "em": 5.21,
+ "net_gex": -77248459.3,
+ "regime": "NEG",
+ "flip": 240.0,
+ "flip_static": 240.0,
+ "call_wall": 240.0,
+ "put_wall": 232.5,
+ "abs_wall": 235.0,
+ "poc_dom": "85%P",
+ "call_wall_gex": -8724410.2,
+ "put_wall_gex": -16219474.7,
+ "abs_wall_gex": -22950791.4,
+ "oi_call_wall": 240.0,
+ "oi_put_wall": 230.0,
+ "near_call_wall": false,
+ "near_put_wall": false,
+ "near_flip": false,
+ "profile": [
+  {
+   "strike": 227.5,
+   "gex": -6439414.9
+  },
+  {
+   "strike": 230.0,
+   "gex": -11388657.3
+  },
+  {
+   "strike": 232.5,
+   "gex": -16219474.7
+  },
+  {
+   "strike": 235.0,
+   "gex": -22950791.4
+  },
+  {
+   "strike": 237.5,
+   "gex": -11525710.8
+  },
+  {
+   "strike": 240.0,
+   "gex": -8724410.2
+  }
+ ]
+}

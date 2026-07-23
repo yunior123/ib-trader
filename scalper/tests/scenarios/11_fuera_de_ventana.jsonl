@@ -1,0 +1,9 @@
+# 11:31 = picadora cerrada -> skip; 14:01 = ventana 2 abierta -> arma
+{"t_ms":0,"ev":"hhmm","v":1131}
+{"t_ms":0,"ev":"chain","spot_c":70850,"iv":0.20,"spread_c":4,"exp":20260721}
+{"t_ms":0,"ev":"und","bid_c":70848,"ask_c":70852}
+{"t_ms":100,"ev":"alert","side":"CALLS","sym":"QQQ"}
+{"t_ms":200,"ev":"expect_state","v":"IDLE"}
+{"t_ms":300,"ev":"hhmm","v":1401}
+{"t_ms":400,"ev":"alert","side":"CALLS","sym":"MU"}
+{"t_ms":500,"ev":"expect_state","v":"ARMED_WAIT"}

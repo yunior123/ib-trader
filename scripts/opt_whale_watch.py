@@ -17,7 +17,7 @@ REPO = os.path.join(HOME, "Documents/GitHub/ib-trader")
 os.chdir(REPO); sys.path.insert(0, REPO)
 from ib_insync import IB, Stock, Option
 
-FLEET = ["NVDA","AMD","MU","INTC","TSM","SMH","QQQ","SPY","AAPL","MSFT","META","AMZN","TSLA","AVGO","GOOGL","NOK","TXN","QCOM","NFLX","GLD","XLK"]
+FLEET = ["NVDA","AMD","MU","INTC","TSM","SMH","QQQ","SPY","AAPL","MSFT","META","AMZN","TSLA","AVGO","GOOGL","NOK","TXN","QCOM","NFLX","GLD","XLK","LRCX","SNDK","WDC","STX"]
 VMIN = 3000          # volumen total minimo para que el ratio signifique algo
 PC_PUTS, PC_CALLS = 2.0, 0.35
 EXIT_PUTS, EXIT_CALLS = 1.5, 0.5   # histeresis
@@ -30,7 +30,7 @@ def loud(title, msg, sound="ProAlert"):
     subprocess.Popen(["/usr/bin/osascript","-e",
         f'display notification "{msg}" with title "{title}" sound name "{sound}"'],
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    subprocess.Popen(["/bin/bash","scripts/speak.sh","SIGNAL",msg],
+    subprocess.Popen(["/bin/bash","scripts/speak.sh","DANGER",msg],
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     lt=time.localtime()
     d=f"{HOME}/Desktop/trading-signals"; os.makedirs(d,exist_ok=True)
@@ -40,6 +40,15 @@ def loud(title, msg, sound="ProAlert"):
 def in_session():
     lt = time.localtime()
     return lt.tm_wday < 5 and (930 <= lt.tm_hour * 100 + lt.tm_min < 1600)
+
+def jappend(path, obj):
+    # historia para backtesting (scalper 2026-07-21): append-only JSONL,
+    # degradacion limpia — si falla, la alarma sigue viva igual.
+    try:
+        with open(path, "a") as f:
+            f.write(json.dumps(obj, separators=(",", ":")) + "\n")
+    except Exception:
+        pass
 
 STATE_F = "data/opt_whale_state.json"   # sobrevive reinicios: sin re-sirenas
 state = {}   # sym -> 'puts'|'calls'|'mid'
@@ -87,6 +96,11 @@ while True:
                     spot = tk.last if tk.last == tk.last and tk.last else tk.close
                     ib.cancelMktData(stks[s])
                     if not chains[s]: chains[s] = fetch_chain(s)   # reintento: no dejar ticker muerto toda la sesion
+                    # ANTI-NaN (2026-07-22 12:22/12:35): farm transitoria -> last
+                    # Y close NaN. NaN es truthy => pasaba el filtro, ks=[] (nan
+                    # rompe la comparacion), vc+vp=0 y caia al fallback clase con
+                    # spot=nan -> 7 sirenas BALLENA CRECE falsas (QQQ 48k->1.48M).
+                    if spot != spot: spot = None
                     if not spot or not chains[s]:
                         zeros[s] += 1
                         if zeros[s] == 2:
@@ -142,6 +156,10 @@ while True:
                             vc, vp, tag = cvol, pvol, " (clase)"
                     pc = vp / max(vc, 1); tot = vc + vp
                     lines.append(f"{s} volC {vc:,.0f} volP {vp:,.0f} P/C {pc:.2f}{tag}")
+                    jappend("data/whale_flow_hist.jsonl",
+                            {"ts": int(time.time()), "sym": s, "vc": int(vc), "vp": int(vp),
+                             "pc": round(pc, 3), "spot": round(float(spot), 4),
+                             "src": "clase" if tag else "strikes", "exp": exp})
                     if tot == 0:
                         zeros[s] += 1
                         if zeros[s] == 2:
@@ -156,8 +174,44 @@ while True:
                         elif pc <= PC_CALLS: cur = "calls"
                         elif prev == "puts" and pc < EXIT_PUTS: cur = "mid"
                         elif prev == "calls" and pc > EXIT_CALLS: cur = "mid"
+                    # ESCALADA (Yunior 12:20): dentro del MISMO estado, si el volumen
+                    # dominante se DUPLICA desde el ultimo canto -> re-sirena.
+                    # (cazado: NVDA 82k->248k calls sin re-alarma). Aditivo.
+                    try:
+                        vkey = f"{s}_v"
+                        vdom = vc if cur == "calls" else vp if cur == "puts" else 0
+                        vlast = state.get(vkey, 0)
+                        # tag => este scan uso volumen de CLASE entera: incomparable
+                        # con el baseline por-strikes -> jamas cantar ESCALADA ahi
+                        # (2026-07-22: NOK 4k strikes vs 122k clase = "DUPLICO" falso).
+                        # SEED (post-mortem 2026-07-22 12:22): con vlast=0 (feature
+                        # nueva o state sin vkey tras reinicio) "2*max(0,1)=2" hacia
+                        # que CUALQUIER volumen>VMIN cantara DUPLICO -> 7 sirenas
+                        # falsas en un scan. Primera observacion SIEMBRA el baseline,
+                        # jamas canta.
+                        if not tag and cur in ("calls", "puts") and vlast <= 0:
+                            state[vkey] = vdom
+                        elif not tag and cur in ("calls", "puts") and cur == prev and vlast > 0 and vdom >= 2 * vlast and vdom > VMIN:
+                            state[vkey] = vdom
+                            jappend("data/whale_alerts.jsonl",
+                                    {"ts": int(time.time()), "side": cur.upper(), "prev": "ESCALADA",
+                                     "sym": s, "pc": round(pc, 3), "vc": int(vc), "vp": int(vp),
+                                     "spot": round(float(spot), 4)})
+                            loud("🐋📈 BALLENA CRECE", f"{s}: el flujo de {cur} se DUPLICO — {vdom:,.0f} contratos (P C {pc:.2f}). La marea sigue entrando", "ProAlarm")
+                        elif cur != prev:
+                            # jamas sembrar baseline con volumen de CLASE entera
+                            # (AVGO_v=158k clase 12:36 dejo la escalada por-strikes
+                            # muda el resto del dia). tag => baseline 0 = re-siembra
+                            # limpia en el proximo scan por-strikes.
+                            state[vkey] = 0 if tag else vdom
+                    except Exception:
+                        pass
                     if cur != prev:
                         state[s] = cur
+                        jappend("data/whale_alerts.jsonl",
+                                {"ts": int(time.time()), "side": cur.upper(), "prev": prev.upper(),
+                                 "sym": s, "pc": round(pc, 3), "vc": int(vc), "vp": int(vp),
+                                 "spot": round(float(spot), 4)})
                         if cur == "puts":
                             loud("🐋 BALLENA PUTS", f"{s}: flujo puts {pc:.1f} a 1 ({vp:,.0f} puts vs {vc:,.0f} calls) — piso o tesis bajista", "ProAlarm")
                         elif cur == "calls":

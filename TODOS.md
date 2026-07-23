@@ -56,3 +56,19 @@
 - [ ] 7/22 8:30: confirmar fichas CLSK/INTC vs gaps overnight (data/fichas_2026-07-22.txt) + KOSPI check
 - [ ] x_post_common: sanitizar a MAX 1 cashtag por post (X rechaza 403 con 2+; el $4.7B tambien cuenta como cashtag si va pegado a letras — revisar regex)
 - [ ] opt_whale_watch v2: alarma por PREMIUM NETO en dolares (mid×vol por lado, umbral ±$20M o delta brusco/30min) ademas del ratio de volumen — el tide -53M del 7/21 no sono porque P/C volumen era 0.86. Las ballenas caras y silenciosas tambien deben sonar. POST-CIERRE.
+
+## 2026-07-23 — Chart cockpit GEX en vivo (charts/live.html + chart_bridge.py, estilo gexa)
+Hecho: lightweight-charts v5 + ib_async (TWS 7496 realtime) · combo_tl (Supertrend Buy/Sell + Madrid ribbon + BB/SMA/VWAP/MACD + trendlines) · selectores ticker/intervalo · GEX/flip/muros en tiempo real (levels_loop 15s, spot vivo) · escala $/1% = gexa (verificado 736: -371M vs gexa -369M) · imán(oro)/acelerador(morado) por signo, semi-transparente+blur · flip 0DTE estático + toggle 0DTE↔ALL-EXP (Vanna salta en ALL) · VEX/vanna/charm + chip Vanna · dealer-pressure score -100..100 · expected-move cone (spot·IV·√T) · nuestras señales (whale/flow/alarma) como marcadores · botones info ⓘ + Guía · dominancia POC %C/%P · régimen TRANSICIÓN · icono custom. Skill `gexa-framework`.
+- [ ] **VIX**: código LISTO (reqMarketDataType(1) realtime + chip). Falta suscripción IBKR **CBOE Global Indexes** (~$1.50/mes) → Yunior la activa. NO es crítico (ningún cálculo lo usa; EM/vanna usan IV por-contrato). Aparece solo al suscribir.
+- [ ] **Banda de fragilidad / true-flip ajustado por vanna** (gexa) — la ÚNICA feature que necesita VIX de verdad: mide cuánto movería el flip un shock de VIX (banda <5pt estable, >15pt frágil). Construir CUANDO haya VIX vivo.
+- [ ] **Migration-trail del flip** (polilínea del flip histórico: horizontal=estable / inclinada=deriva / dentada=régimen no fiable). Buildeable ya.
+- [ ] **Volume Profile (VPVR)** desde las barras — POC de volumen vs POC de gamma = confluencia (edge). Buildeable ya.
+- [ ] **Pin-risk score** (concentración de |gamma| × proximidad × 1/T; "fortress pin" si POC coincide con call wall). Buildeable ya.
+- [ ] **Charm al chart** (ya está bs_charm/build_exposure en gex_core; falta capa CHARM en el toggle junto a GEX/VEX) — drift/pin tardío.
+- [ ] Ampliar strikes del cache (`opt_chain_cache.py`) para clavar el flip 0DTE exacto de gexa (hoy near-ATM 730-749 lo deja a ~0.5%).
+- BLOQUEADAS (necesitan tape firmado + dark-pool licenciado que NO tenemos): True Dealer Book, Dark Pool Nodes, DIX, Market-Tide firmado, GEX direccional. Sustituto casero = nuestros daemons whale/flow.
+
+## 2026-07-23 EOD — gexa se va + fixes chart
+- [ ] URGENTE (antes de que gexa muera): AMPLIAR strikes del cache (opt_chain_cache.py band ±6%→±15%, MAX_STRIKES 20→~40) para igualar la cadena completa de gexa, y VALIDAR nuestros números vs gexa MIENTRAS SIGA VIVO (última oportunidad de calibrar contra la verdad).
+- [ ] Chart: barra de precios a la derecha muestra precios incorrectos AFTER CLOSE — probable autoscale jalado por las líneas de niveles (muros/EM/alarmas) lejos del último precio cuando las velas dejan de actualizar. Fix: constreñir autoscale a la serie de velas (autoscaleInfoProvider) o esconder líneas lejanas tras el cierre. Verificar al despertar.
+- [x] Fix tickMarkFormatter (hora Toronto solo en marcas de tiempo >=3, no en día del mes) — aplicado, se ve al despertar.

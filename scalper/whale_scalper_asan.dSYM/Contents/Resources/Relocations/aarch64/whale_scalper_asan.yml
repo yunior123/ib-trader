@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     'scalper/whale_scalper_asan'
+relocations:     []
+...

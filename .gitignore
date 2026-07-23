@@ -72,3 +72,10 @@ data/options_hunt_*.csv
 data/options_picks.txt
 data/.finviz_last_call
 data/fleet_sleep
+
+# whale scalper runtime
+scalper/ledger/
+scalper/HALT
+scalper/ARM_LIVE
+scalper/whale_scalper
+scalper/whale_scalper_asan

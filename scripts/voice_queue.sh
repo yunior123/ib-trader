@@ -42,36 +42,74 @@ trap cleanup INT TERM
 # CONTENIDO del mensaje (el veto ya dice "Veto...") y el ORDEN por prioridad.
 # Para cambiar de voz: cambiar la voz del sistema en Ajustes (no tocar código).
 
+# voice_log en trades.db: qué se HABLÓ / DESCARTÓ (para el backtest 4pm y para
+# verificar empíricamente "¿hubo voz?"). No bloquea la voz (corre en background).
+DBV="$ROOT/trades.db"
+log_voice() {  # $1=action(spoke|preempted|notify_only|coalesced|dropped_stale) $2=prio $3=msg
+  local e; e="${3//\'/\'\'}"
+  # busy_timeout: bajo escritores concurrentes en WAL, esperar el lock en vez de perder la fila.
+  ( sqlite3 "$DBV" "PRAGMA busy_timeout=5000; INSERT INTO voice_log(ts_epoch,action,priority,msg) VALUES(strftime('%s','now'),'$1','$2','$e')" 2>/dev/null ) &
+}
+
+# POLÍTICA (Yunior 2026-07-23 "voces a tiempo, jamás con retraso — retraso = dinero"):
+#  - DANGER (🐋 ballena / ⏰ price_alarm / 🚀 spike / 🩸 dip): voz INMEDIATA y COMPLETA, y
+#    PREEMPTA cualquier voz de menor prioridad en curso (la mata y habla YA). Nunca se retrasa.
+#  - SIGNAL: se habla (FIFO; coalesce solo en avalancha >FLOOD) PERO es preemptible por DANGER.
+#  - INFO (chatter BB muted, p<55): SOLO notificación Mac (el banner osascript ya lo disparó el
+#    emisor) — NO se vocaliza, para no congestionar la cola y retrasar lo importante.
+# Latencia de una DANGER = ~0 si nada habla, ~50ms si preempta una SIGNAL. Nunca espera a INFO.
+FLOOD=4
+
+danger_present() { set -- "$Q"/*_DANGER.msg; [ -e "${1:-}" ]; }
+
+# habla en background y CEDE si llega un DANGER (para prioridades < DANGER).
+# devuelve 0 si terminó de hablar, 1 si fue preemptida.
+say_preemptible() {  # $1=msg
+  say "$1" >/dev/null 2>&1 &
+  local spid=$!
+  while kill -0 "$spid" 2>/dev/null; do
+    if danger_present; then
+      kill "$spid" 2>/dev/null; wait "$spid" 2>/dev/null
+      return 1
+    fi
+    sleep 0.03
+  done
+  return 0
+}
+
 while true; do
   shopt -s nullglob
 
-  # 1) purgar stale
-  now=$(date +%s)
-  for f in "$Q"/*.msg; do
-    m=$(stat -f %m "$f" 2>/dev/null || echo "$now")
-    [ $(( now - m )) -gt "$STALE" ] && rm -f "$f"
-  done
+  # --- INFO: NO se vocaliza (solo notificación Mac, ya mostrada). Se descarta de la cola. ---
+  for f in "$Q"/*_INFO.msg; do log_voice notify_only INFO "$(cat "$f" 2>/dev/null)"; rm -f "$f"; done
 
-  # 2) elegir prioridad más alta presente
-  best_prio=""
-  for p in DANGER SIGNAL INFO; do
-    set -- "$Q"/*_"$p".msg
-    if [ -e "${1:-}" ]; then best_prio="$p"; break; fi
-  done
-  # poll 50ms: imperceptible (humano percibe latencia desde ~100ms) y ~40% menos
-  # CPU idle que 30ms (medido 2.8%→~1.7%). Un FIFO daría ~0ms pero es frágil en
-  # bash 3.2 sin ganancia perceptible.
-  if [ -z "$best_prio" ]; then sleep 0.05; continue; fi
+  # --- DANGER: INMEDIATA, completa, jamás preemptida (más vieja primero) ---
+  set -- "$Q"/*_DANGER.msg
+  if [ -e "${1:-}" ]; then
+    oldest=$(ls -tr "$Q"/*_DANGER.msg 2>/dev/null | head -1)
+    msg="$(cat "$oldest" 2>/dev/null)"; rm -f "$oldest"
+    log_voice spoke DANGER "$msg"
+    say "$msg" >/dev/null 2>&1        # DANGER se habla entera, sin ceder
+    continue
+  fi
 
-  # 3) de esa prioridad: el más reciente (ls -t) + conteo para coalescing
-  newest=$(ls -t "$Q"/*_"$best_prio".msg 2>/dev/null | head -1)
-  cnt=$(ls "$Q"/*_"$best_prio".msg 2>/dev/null | wc -l | tr -d ' ')
-  msg="$(cat "$newest" 2>/dev/null)"
-  rm -f "$Q"/*_"$best_prio".msg           # purga toda esa prioridad (coalesce)
-  extra=$(( cnt - 1 ))
-  [ "$extra" -gt 0 ] && msg="$msg, y $extra alertas más"
+  # --- SIGNAL: FIFO completa (coalesce solo en avalancha), PREEMPTIBLE por DANGER ---
+  set -- "$Q"/*_SIGNAL.msg
+  if [ -e "${1:-}" ]; then
+    cnt=$(ls "$Q"/*_SIGNAL.msg 2>/dev/null | wc -l | tr -d ' ')
+    if [ "$cnt" -le "$FLOOD" ]; then
+      oldest=$(ls -tr "$Q"/*_SIGNAL.msg 2>/dev/null | head -1)
+      msg="$(cat "$oldest" 2>/dev/null)"; rm -f "$oldest"
+    else
+      newest=$(ls -t "$Q"/*_SIGNAL.msg 2>/dev/null | head -1)
+      msg="$(cat "$newest" 2>/dev/null)"
+      for f in "$Q"/*_SIGNAL.msg; do [ "$f" = "$newest" ] || log_voice coalesced SIGNAL "$(cat "$f" 2>/dev/null)"; done
+      rm -f "$Q"/*_SIGNAL.msg
+      msg="$msg, y $(( cnt - 1 )) alertas más"
+    fi
+    if say_preemptible "$msg"; then log_voice spoke SIGNAL "$msg"; else log_voice preempted SIGNAL "$msg"; fi
+    continue
+  fi
 
-  # 4) hablar SERIALIZADO (sin &, sin killall) → no se pisa. SIN -v = voz Siri
-  #    del sistema (la hermosa). Sin -r override para naturalidad neuronal.
-  say "$msg" >/dev/null 2>&1
+  sleep 0.05
 done

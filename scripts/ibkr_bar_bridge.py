@@ -114,6 +114,15 @@ def make_on_nbbo(st):
             st.nbbo_last = now
             with open(f"data/nbbo_{st.sym.lower()}.txt", "w") as f:
                 f.write(f"{now:.0f} {t.bid:.4f} {t.ask:.4f}\n")
+            if st.sym == "QQQ":
+                # historia de ticks para el scalper de ballenas (2026-07-21):
+                # append-only, rotacion diaria, ~3MB/dia. Degradacion limpia.
+                try:
+                    day = time.strftime("%Y%m%d", time.localtime(now))
+                    with open(f"data/nbbo_hist_qqq_{day}.txt", "a") as f:
+                        f.write(f"{now:.3f} {t.bid:.4f} {t.ask:.4f}\n")
+                except Exception:
+                    pass
     return on_tick
 
 

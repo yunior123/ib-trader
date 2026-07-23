@@ -1,3 +1,6 @@
+## LEMA DE LA CASA (Yunior 2026-07-22)
+**"Nos especializamos en detectar y anticipar movimientos."** Toda alarma, bot, plan y señal existe para eso: anticipar ANTES del pico, con probabilidades medidas y honestas. No predecimos empresas; anticipamos MOVIMIENTOS.
+
 # AGENTS.md — ib-trader
 
 ## ORDENES PERMANENTES DE YUNIOR (no negociables)

@@ -1,0 +1,26 @@
+# generado: blowout+deriva
+{"t_ms":0,"ev":"hhmm","v":1005}
+{"t_ms":0,"ev":"chain","spot_c":70850,"iv":0.20,"spread_c":4,"exp":20260721}
+{"t_ms":0,"ev":"und","bid_c":70848,"ask_c":70852}
+{"t_ms":100,"ev":"alert","side":"CALLS","sym":"QQQ"}
+{"t_ms":4000,"ev":"expect_state","v":"HOLDING"}
+{"t_ms":8000,"ev":"chain","spot_c":70850,"iv":0.20,"spread_c":30,"exp":20260721}
+{"t_ms":62000,"ev":"und","bid_c":70852,"ask_c":70855}
+{"t_ms":62500,"ev":"und","bid_c":70857,"ask_c":70860}
+{"t_ms":63000,"ev":"und","bid_c":70862,"ask_c":70865}
+{"t_ms":63500,"ev":"und","bid_c":70867,"ask_c":70870}
+{"t_ms":64000,"ev":"und","bid_c":70872,"ask_c":70875}
+{"t_ms":64500,"ev":"und","bid_c":70877,"ask_c":70880}
+{"t_ms":65000,"ev":"und","bid_c":70882,"ask_c":70885}
+{"t_ms":65500,"ev":"und","bid_c":70887,"ask_c":70890}
+{"t_ms":66000,"ev":"und","bid_c":70892,"ask_c":70895}
+{"t_ms":66500,"ev":"und","bid_c":70897,"ask_c":70900}
+{"t_ms":67000,"ev":"und","bid_c":70902,"ask_c":70905}
+{"t_ms":67500,"ev":"und","bid_c":70907,"ask_c":70910}
+{"t_ms":68000,"ev":"und","bid_c":70912,"ask_c":70915}
+{"t_ms":68500,"ev":"und","bid_c":70917,"ask_c":70920}
+{"t_ms":69000,"ev":"und","bid_c":70922,"ask_c":70925}
+{"t_ms":69500,"ev":"und","bid_c":70927,"ask_c":70930}
+{"t_ms":70000,"ev":"und","bid_c":70932,"ask_c":70935}
+{"t_ms":80000,"ev":"expect_trades","v":1}
+{"t_ms":80000,"ev":"expect_state","v":"HALTED"}

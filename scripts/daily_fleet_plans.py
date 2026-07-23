@@ -50,6 +50,12 @@ FLEET = {
     "DRAM": dict(style="weekly", fut="NQ=F", korea=True),
     "SPCX": dict(style="weekly", fut="NQ=F", korea=False),
     "SKHY": dict(style="weekly", fut="NQ=F", korea=True),
+    # ampliacion 2026-07-22 (orden Yunior): storage/memoria + equipos, todos
+    # miembros QQQ verificados (LRCX 1.79%, SNDK 0.93%, WDC/STX <0.9%).
+    "LRCX": dict(style="weekly", fut="NQ=F", korea=True),
+    "SNDK": dict(style="weekly", fut="NQ=F", korea=True),
+    "WDC":  dict(style="weekly", fut="NQ=F", korea=True),
+    "STX":  dict(style="weekly", fut="NQ=F", korea=True),
 }
 
 def env_load():
@@ -303,8 +309,13 @@ def futures_read():
     out = {}
     for lab, tk in (("NQ", "NQ=F"), ("ES", "ES=F")):
         try:
-            h = yf.Ticker(tk).history(period="2d", interval="1d")
-            out[lab] = (float(h.Close.iloc[-1]) / float(h.Close.iloc[-2]) - 1) * 100
+            t = yf.Ticker(tk)
+            h = t.history(period="2d", interval="1d")
+            prev = float(h.Close.iloc[-2]) if len(h) >= 2 else float(h.Close.iloc[-1])
+            # last REALTIME del overnight (fast_info sigue el globex vivo), no
+            # el cierre diario — cazado 2026-07-22: % de futuros viejo en premarket
+            last = float(t.fast_info.last_price or h.Close.iloc[-1])
+            out[lab] = (last / prev - 1) * 100
         except Exception:
             pass
     return out
@@ -317,6 +328,19 @@ def finviz_read(sym):
         return d
     except Exception:
         return {}
+
+def live_spot(sym, max_age_s=180):
+    """Spot REALTIME del bridge IBKR (data/nbbo_<sym>.txt, SIP 4/s, incluye
+    premarket) — yfinance fast_info da el cierre de ayer en premarket (cazado
+    2026-07-22: PDFs con precios viejos). Fallback limpio: None -> yfinance."""
+    try:
+        ln = open(f"data/nbbo_{sym.lower()}.txt").read().split()
+        ep, bid, ask = float(ln[0]), float(ln[1]), float(ln[2])
+        if time.time() - ep <= max_age_s and 0 < bid < ask:
+            return (bid + ask) / 2.0
+    except Exception:
+        pass
+    return None
 
 def gexa_snapshot(sym):
     try:
@@ -605,6 +629,15 @@ def send_email(paths, summary, tag=""):
     key, to = ENV.get("RESEND_KEY"), ENV.get("RESEND_TO")
     if not key or not to: return "sin RESEND_KEY/TO"
     atts = []
+    if len(paths) > 10:
+        # >10 adjuntos: algunos clientes/Resend recortan la lista (cazado
+        # 2026-07-22: "only see 3 pdfs") -> UN zip con todo, infalible.
+        import zipfile
+        zp = os.path.join(os.path.dirname(paths[0]), f"planes_{time.strftime('%Y-%m-%d')}.zip")
+        with zipfile.ZipFile(zp, "w", zipfile.ZIP_DEFLATED) as z:
+            for p in paths:
+                z.write(p, os.path.basename(p))
+        paths = [zp]
     for p in paths:
         with open(p, "rb") as f:
             atts.append({"filename": os.path.basename(p),
@@ -628,12 +661,12 @@ def main():
     kor, fut = korea_read(), futures_read()
     vx = vx_term()
     eur = europe_read([m.get("europe") for m in FLEET.values() if m.get("europe")])
-    made, scored = [], []
+    made, scored, zerodte = [], [], {}
     for sym in [s.strip().upper() for s in a.tickers.split(",") if s.strip()]:
         meta = FLEET.get(sym, dict(style="weekly", fut="ES=F", korea=False))
         try:
             t = yf.Ticker(sym)
-            spot = float(t.fast_info.last_price)
+            spot = live_spot(sym) or float(t.fast_info.last_price)
             exp = pick_expiry(t, meta["style"])
             if not exp: raise RuntimeError("sin opciones")
             cs = ibkr_chain_stats(sym, spot) or chain_stats(t, exp, spot)
@@ -644,6 +677,8 @@ def main():
             pdf = make_pdf(a.outdir, sym, spot, cs, on, plan, series)
             with open(os.path.join(a.outdir, "x_drafts", f"{sym}.txt"), "w") as f:
                 f.write(x_draft(sym, spot, cs, on, dip_p, reg, kor, meta, eur))
+            if meta.get("style") == "0dte":
+                zerodte[sym] = dict(spot=spot, cs=cs, reg=reg, dip=dip_p)
             made.append(pdf); scored.append((score, sym, dip_p, reg))
             print(f"{sym}: OK dip~{dip_p:.0f}% {reg} score {score}")
         except Exception as e:
@@ -657,7 +692,74 @@ def main():
             if len(f) >= 5: picks.append(f"{f[0]} {f[2]} @ {f[3]} (rvol {f[5] if len(f)>5 else '?'})")
             if len(picks) >= 2: break
     except Exception: pass
-    vxs = f"VOL: VIX {vx['vix']:.1f} VX1 {vx['vx1']:.1f} ({vx['b1']:+.1f}%) — {vx['reg']}\n\n" if vx else ""
+    # 🎯 CANDIDATOS 0DTE del dia (orden Yunior 2026-07-22: en el email SIEMPRE)
+    zd = ""
+    for sym, z in zerodte.items():
+        try:
+            cs, spot = z["cs"], z["spot"]
+            gx = gexa_snapshot(sym) or {}
+            cw = cs.get("cw"); pw = cs.get("pw")
+            cwl = f"{cw[0][0]:g}({int(cw[0][1]/1000)}k)" if cw else "s/d"
+            pwl = f"{pw[0][0]:g}({int(pw[0][1]/1000)}k)" if pw else "s/d"
+            flip = gx.get("flip") or cs.get("flip")
+            lado = ("BAJO flip = dealers amplifican (movimiento)" if flip and spot < flip
+                    else "SOBRE flip = dealers amortiguan (pin)" if flip else "")
+            zd += (f"  {sym} {spot:.2f}: piso {pwl} techo {cwl} | max pain {cs.get('pain', 0):g}"
+                   f" | flip {flip or 's/d'} {lado} | dip {z['dip']:.0f}% {z['reg']}\n")
+        except Exception:
+            pass
+    # engranaje MAG7/componentes -> a donde apunta QQQ (index_breadth vivo)
+    try:
+        br = json.load(open("data/breadth.json"))
+        if time.time() - os.path.getmtime("data/breadth.json") < 3 * 3600:
+            for idx in ("QQQ", "SPY"):
+                v = br.get(idx, {}).get("verdict")
+                if v: zd += f"  ⚙️ {v}\n"
+    except Exception:
+        pass
+    # LEY ENMENDADA 2026-07-22: cualquier contrato de la flota <= $200 premium.
+    # Escaneo de asequibles: primer OTM del vencimiento mas cercano con quote
+    # viva, ask<=2.00, spread<=5% y OI>500, desde el cache IBKR.
+    afford = []
+    import glob as _glob
+    today8 = time.strftime("%Y%m%d")
+    for cp_ in _glob.glob("data/opt_chain_*.txt"):
+        try:
+            symc = os.path.basename(cp_)[10:-4].upper()
+            spot_c = None; best = None
+            for ln in open(cp_):
+                if ln.startswith("#"):
+                    if "spot " in ln:
+                        spot_c = float(ln.split("spot ")[1].split(" |")[0].split()[0])
+                    continue
+                f = ln.split()
+                if len(f) < 7 or not spot_c: continue
+                k, r, exp, bid, ask, vol, oi = float(f[0]), f[1], f[2], float(f[3]), float(f[4]), float(f[5]), float(f[6])
+                if bid <= 0 or ask <= 0 or ask > 2.00 or oi < 500: continue
+                if (ask - bid) > max(0.05 * ask, 0.03): continue
+                otm = k < spot_c if r == "P" else k > spot_c
+                if not otm: continue
+                dist = abs(k - spot_c) / spot_c
+                cand = (exp != today8, dist, symc, k, r, exp, ask, int(oi))
+                if best is None or cand < best: best = cand
+            if best:
+                afford.append((best[0], best[1], f"{best[2]} {best[3]:g}{best[4]} exp{best[5][-4:]} ask {best[6]:.2f} OI {best[7]:,}"))
+        except Exception:
+            pass
+    if afford:
+        afford.sort()
+        zd += "  💰 Asequibles <=$200 (primer OTM, spread/OI ok): " + " | ".join(x[2] for x in afford[:8]) + "\n"
+    zd = ("🎯 CANDIDATOS OPCIONES HOY (ley 2026-07-22: cualquier contrato <=$200):\n" + zd +
+          "  Regla: 9:30-9:45 jamas; 9:45-10:30 oro; print 2-lecturas o nada; earnings del ticker = no aguantar el print.\n\n") if zd else ""
+    vxs = zd + (f"VOL: VIX {vx['vix']:.1f} VX1 {vx['vx1']:.1f} ({vx['b1']:+.1f}%) — {vx['reg']}\n\n" if vx else "")
+    # MACRO arriba del email SIEMPRE (orden Yunior 2026-07-22: futuros + KOSPI visibles)
+    macro = ""
+    for etiqueta, d in (("FUTUROS", fut), ("🇰🇷 KOREA", kor), ("🇪🇺 EUROPA", eur)):
+        try:
+            if d: macro += etiqueta + ": " + "  ".join(f"{k} {float(v):+.2f}%" for k, v in d.items()) + "\n"
+        except Exception:
+            pass
+    vxs = (macro + "\n" if macro else "") + vxs
     summary = vxs + (("PICKS PICAROS FINVIZ: " + " | ".join(picks) + "\n\n") if picks else "") + ("Planes picaros del dia. TOP accionables: "
                + ", ".join(f"{s} (dip {d:.0f}%, {r})" for _, s, d, r in scored[:5])
                + f"\nGenerado {time.strftime('%H:%M ET')}. Señal-solamente; 3 perdidas = fin del dia.")

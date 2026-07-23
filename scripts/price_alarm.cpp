@@ -101,7 +101,7 @@ static bool parse_rule(const std::string& line, Rule& r, bool* invalid) {
     if (b == std::string::npos) return false;        // vacia
     size_t e = s.find_last_not_of(" \t\r");
     s = s.substr(b, e - b + 1);
-    if (s.rfind("[DISPARADA", 0) == 0 || s.rfind("FIRED", 0) == 0) return false;
+    if (s.rfind("[DISPARADA", 0) == 0 || s.rfind("[YA-CRUZADA", 0) == 0 || s.rfind("FIRED", 0) == 0) return false;
     char sym[32] = {0}, dir[32] = {0};
     double px = 0;
     int n = std::sscanf(s.c_str(), "%31s %lf %31s", sym, &px, dir);
@@ -203,6 +203,11 @@ static bool current_price(const std::string& sym, double* out) {
 }
 
 // ---- disparo: sirena x3 + voz + banner + mirror ----
+static bool mark_fired_tag(const std::string& path, const Rule& r, const char* tag);
+static bool mark_fired(const std::string& path, const Rule& r) {
+    return mark_fired_tag(path, r, "DISPARADA");
+}
+
 static void fire(const Rule& r, double px) {
     char SYM[32];
     std::snprintf(SYM, sizeof(SYM), "%s", r.sym.c_str());
@@ -237,7 +242,7 @@ static void fire(const Rule& r, double px) {
 }
 
 // (c) marcar la linea como [DISPARADA ...] — rewrite atomico tmp+rename
-static bool mark_fired(const std::string& path, const Rule& r) {
+static bool mark_fired_tag(const std::string& path, const Rule& r, const char* tag) {
     FILE* f = std::fopen(path.c_str(), "r");
     if (!f) return false;
     std::vector<std::string> lines;
@@ -260,7 +265,7 @@ static bool mark_fired(const std::string& path, const Rule& r) {
     struct tm lt;
     localtime_r(&now, &lt);
     char stamp[64];
-    std::snprintf(stamp, sizeof(stamp), "[DISPARADA %04d-%02d-%02d %02d:%02d] ",
+    std::snprintf(stamp, sizeof(stamp), "[%s %04d-%02d-%02d %02d:%02d] ", tag,
                   lt.tm_year + 1900, lt.tm_mon + 1, lt.tm_mday,
                   lt.tm_hour, lt.tm_min);
     lines[idx] = stamp + r.raw;
@@ -281,6 +286,10 @@ int main() {
 
     std::vector<Rule> rules;
     std::map<std::string, int> armed_state;      // raw line -> armed (cross)
+    std::map<std::string, bool> dir_armed;       // raw line -> UP/DOWN armada del lado seguro
+                                                 // (fix 2026-07-22: regla nacida YA CRUZADA
+                                                 // se neutraliza sin sirena — caso nvda 214.40
+                                                 // 13:06 + flood de arranque 08:16)
     std::map<std::string, time_t> stale_log;     // sym -> ultimo log "sin dato"
     std::map<std::string, bool> bad_logged;      // raw line invalida -> ya logueada
     std::map<std::string, time_t> pending;       // raw line -> 1a lectura hit (confirmacion)
@@ -338,8 +347,29 @@ int main() {
                 continue;
             }
             bool hit = false;
-            if (r.mode == DOWN)      hit = px <= r.px;
-            else if (r.mode == UP)   hit = px >= r.px;
+            if (r.mode == DOWN || r.mode == UP) {
+                bool cur = (r.mode == DOWN) ? px <= r.px : px >= r.px;
+                if (!dir_armed.count(r.raw)) {
+                    if (!cur) {
+                        dir_armed[r.raw] = true;   // armada del lado correcto
+                    } else {
+                        // nacida YA CRUZADA: banner suave UNA vez, sin sirena
+                        logline("REGLA YA CRUZADA al armar: '%s' px=%.4f — neutralizada",
+                                r.raw.c_str(), px);
+                        char nb[512];
+                        std::snprintf(nb, sizeof(nb),
+                            "display notification \"%s (px=%.2f ya del otro lado — re-armar con nivel valido)\" with title \"⚠️ ALARMA YA CRUZADA\"",
+                            r.raw.c_str(), px);
+                        std::string cmd = std::string("/usr/bin/osascript -e '") + nb + "' >/dev/null 2>&1 &";
+                        std::system(cmd.c_str());
+                        if (!mark_fired_tag(path, r, "YA-CRUZADA"))
+                            logline("WARN: no pude marcar YA-CRUZADA: '%s'", r.raw.c_str());
+                        any_fired = true;          // fuerza recarga limpia
+                        continue;
+                    }
+                }
+                hit = cur;
+            }
             else {                                  // CROSS: armar con 1er precio
                 if (!r.armed) {
                     r.armed = px > r.px ? -1 : +1;  // arriba => espera caida

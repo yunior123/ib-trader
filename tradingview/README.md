@@ -141,6 +141,24 @@ Variants kept: `combo5.pine` (62/64) = same but WITH the full 5-EMA group and
 WITHOUT trendlines; `trendlines_breaks.pine` = LuxAlgo standalone 1:1. Only
 cosmetic loss everywhere: SMA circles unjoined (v3 `join=` removed from Pine).
 
+## combo_yoel.pine (Pine v6 overlay — el sistema de Yoel Sardiñas, 30/64 plots)
+
+Variante COMBO-YOEL que refleja EXACTO las 4 únicas herramientas de Yoel (caps
+X-XII, pp.116-177; ni RSI/MACD/Supertrend ni stop-loss): ① Bollinger(SMA20,2σ)
+banda+media+relleno, ② medias simples **20/40/100/200** (el set de Yoel —
+reemplaza el grupo genérico RagingRocketBull y la cinta Madrid de combo_tl), ③
+Trendlines with Breaks [LuxAlgo] reusado 1:1 (est.1-2 dependen de la ruptura de
+trendline), ④ volumen vs MA50 como CONDICIÓN booleana `volume>ta.sma(volume,50)`
+que gatea el FILTRO TRANSVERSAL de Yoel para est.5-8 (Pine no plotea el panel de
+volumen en overlay). Las **8 estrategias** salen como plotshape + alertcondition:
+E1/E2 cambio de tendencia (call/put), E3/E4 rebote de punto medio (call/put),
+E5/E6 fuera-de-banda en apertura (put/call, ventana intradía), E7/E8 efecto imán
+(call/put de regreso a la SMA20). Single-TF a propósito (cero repintado/look-
+ahead): aplícalo en **1H** para est.1-4 y en **15m** para est.5-8, top-down como
+manda el libro. Budget 30/64 (BB 3 + SMA40/100/200 3 + 2 trendlines series-color
+×2 = 4 + 10 plotshapes + 10 alertconditions; SMA20 = base BB, no se duplica).
+Señal-solamente. Crédito LuxAlgo CC BY-NC-SA 4.0.
+
 ## backtest/bt.py
 
 ```

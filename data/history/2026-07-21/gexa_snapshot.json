@@ -1,0 +1,178 @@
+{
+ "NVDA": {
+  "flip": 203.0,
+  "score": 56,
+  "bias": "CALL",
+  "poc": null,
+  "magnets": null,
+  "regime": "POSITIVE",
+  "call_usd": 2722712,
+  "put_usd": 0,
+  "ts": 1784640893
+ },
+ "QQQ": {
+  "flip": 704.0,
+  "score": 49,
+  "bias": "NEUTRAL",
+  "poc": null,
+  "magnets": null,
+  "regime": null,
+  "call_usd": null,
+  "put_usd": null,
+  "ts": 1784723071
+ },
+ "SPY": {
+  "flip": 747.0,
+  "score": 100,
+  "bias": "NEUTRAL",
+  "poc": null,
+  "magnets": null,
+  "regime": null,
+  "call_usd": null,
+  "put_usd": null,
+  "ts": 1784723148
+ },
+ "MU": {
+  "flip": 842.0,
+  "score": 82,
+  "bias": "NEUTRAL",
+  "poc": null,
+  "magnets": null,
+  "regime": "POSITIVE",
+  "call_usd": null,
+  "put_usd": null,
+  "ts": 1784723219
+ },
+ "MSFT": {
+  "flip": 393.0,
+  "score": 95,
+  "bias": null,
+  "poc": null,
+  "magnets": null,
+  "regime": null,
+  "call_usd": null,
+  "put_usd": null,
+  "ts": 1784723239
+ },
+ "AAPL": {
+  "flip": 208.0,
+  "score": 100,
+  "bias": "NEUTRAL",
+  "poc": null,
+  "magnets": null,
+  "regime": null,
+  "call_usd": null,
+  "put_usd": null,
+  "ts": 1784723257
+ },
+ "META": {
+  "flip": 555.0,
+  "score": 52,
+  "bias": "NEUTRAL",
+  "poc": null,
+  "magnets": null,
+  "regime": null,
+  "call_usd": null,
+  "put_usd": null,
+  "ts": 1784723288
+ },
+ "TSLA": {
+  "flip": 368.0,
+  "score": 52,
+  "bias": "NEUTRAL",
+  "poc": null,
+  "magnets": null,
+  "regime": null,
+  "call_usd": null,
+  "put_usd": null,
+  "ts": 1784723304
+ },
+ "GOOGL": {
+  "flip": 335.0,
+  "score": 100,
+  "bias": "NEUTRAL",
+  "poc": null,
+  "magnets": null,
+  "regime": null,
+  "call_usd": null,
+  "put_usd": null,
+  "ts": 1784723320
+ },
+ "AMD": {
+  "flip": 515.0,
+  "score": 69,
+  "bias": "NEUTRAL",
+  "poc": null,
+  "magnets": null,
+  "regime": null,
+  "call_usd": null,
+  "put_usd": null,
+  "ts": 1784723335
+ },
+ "SMH": {
+  "flip": 571.0,
+  "score": 80,
+  "bias": "NEUTRAL",
+  "poc": null,
+  "magnets": null,
+  "regime": null,
+  "call_usd": null,
+  "put_usd": null,
+  "ts": 1784723352
+ },
+ "LRCX": {
+  "flip": 309.0,
+  "score": 59,
+  "bias": "NEUTRAL",
+  "poc": null,
+  "magnets": null,
+  "regime": null,
+  "call_usd": null,
+  "put_usd": null,
+  "ts": 1784723369
+ },
+ "SNDK": {
+  "flip": null,
+  "score": 99,
+  "bias": "NEUTRAL",
+  "poc": null,
+  "magnets": null,
+  "regime": null,
+  "call_usd": null,
+  "put_usd": null,
+  "ts": 1784723397
+ },
+ "WDC": {
+  "flip": null,
+  "score": 93,
+  "bias": "NEUTRAL",
+  "poc": null,
+  "magnets": null,
+  "regime": null,
+  "call_usd": null,
+  "put_usd": null,
+  "ts": 1784723412
+ },
+ "STX": {
+  "flip": null,
+  "score": 0,
+  "bias": "NEUTRAL",
+  "poc": null,
+  "magnets": null,
+  "regime": null,
+  "call_usd": null,
+  "put_usd": null,
+  "ts": 1784723427
+ },
+ "AVGO": {
+  "flip": 375.0,
+  "score": -49,
+  "bias": "NEUTRAL",
+  "poc": null,
+  "magnets": null,
+  "regime": null,
+  "call_usd": null,
+  "put_usd": null,
+  "ts": 1784723481
+ }
+}

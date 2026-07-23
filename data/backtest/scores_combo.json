@@ -1,0 +1,54 @@
+{
+ "engine": "combo (BB elastic 1m + flujo capitanes)",
+ "spec": "docs/ENGINE-SCORING-SPEC.md",
+ "generated_utc": "2026-07-23T07:19:57Z",
+ "horizon_bars_5m": 24,
+ "signals_files": [
+  "data/backtest/signals_combo_qqq.csv",
+  "data/backtest/signals_combo_nvda.csv",
+  "data/backtest/signals_combo_mu.csv"
+ ],
+ "skipped_sin_barras": 0,
+ "por_ticker": {
+  "MU": {
+   "n": 14,
+   "wins": 9,
+   "losses": 5,
+   "timeouts": 0,
+   "wr": 0.6429,
+   "wilson_lo": 0.3876,
+   "pnl_bps_median": -0.22,
+   "timeout_pnl_bps_median": null
+  },
+  "NVDA": {
+   "n": 12,
+   "wins": 7,
+   "losses": 5,
+   "timeouts": 0,
+   "wr": 0.5833,
+   "wilson_lo": 0.3195,
+   "pnl_bps_median": 11.92,
+   "timeout_pnl_bps_median": null
+  },
+  "QQQ": {
+   "n": 16,
+   "wins": 13,
+   "losses": 3,
+   "timeouts": 0,
+   "wr": 0.8125,
+   "wilson_lo": 0.5699,
+   "pnl_bps_median": 3.45,
+   "timeout_pnl_bps_median": null
+  }
+ },
+ "global": {
+  "n": 42,
+  "wins": 29,
+  "losses": 13,
+  "timeouts": 0,
+  "wr": 0.6905,
+  "wilson_lo": 0.5397,
+  "pnl_bps_median": 3.45,
+  "timeout_pnl_bps_median": null
+ }
+}

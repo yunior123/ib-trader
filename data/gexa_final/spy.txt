@@ -1,0 +1,5 @@
+# GEXA SNAPSHOT SPY — 2026-07-23 close (LIVE 16:32 ET) — última noche de gexa
+spot 739.52 | Exp 2026-07-24 | VIX 18.7
+flip 748 (-8.2pt) | regime NEGATIVE
+Vanna +7.7B | Drift +79.6B
+Pressure +25 BID | Bias BEARISH | Call$ 0.11M Put$ 1.35M

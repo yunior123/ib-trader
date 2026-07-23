@@ -7,8 +7,13 @@ source feeds.env 2>/dev/null
 F="$HOME/Desktop/trading-signals/$(date +%F).txt"
 touch "$F"; LAST=""; LASTSENT=0
 tail -n0 -F "$F" 2>/dev/null | while read -r line; do
-  # solo lineas de accion: sirenas, señales de bots, trampas, flujo fuerte
-  echo "$line" | grep -qE '🚨|ALARM|V6 (BUY|SELL)|COMPRAR|VENDER|FLUJO DE (PUTS|CALLS)|TRAMPA' || continue
+  # solo lineas de VALOR al telefono (alineado con la voz DANGER+SIGNAL, 2026-07-23):
+  # ballena/spike/dip/cusum/alarma/estructural/BB-rebote + legacy. Se EXCLUYE el chatter
+  # INFO (MUTED, p<55). Todo se guarda local igual (BD signals); ntfy = solo push del dia.
+  echo "$line" | grep -qE '🐋|🚀|🩸|🧲|🌋|⏰|🚨|BALLENA|SPIKE|DIP REAL|TERREMOTO|ESTRUCTURAL|ALARM|COMPRAR|VENDER|V6 (BUY|SELL)|FLUJO DE (PUTS|CALLS)|TRAMPA' || continue
+  # BB REBOTE (~136/dia) se EXCLUYE del telefono: es chatter INFO de baja conviccion
+  # (BB-solo pierde en backtest) -> inundaria. Se guarda local + se ve en el chart igual.
+  echo "$line" | grep -qE 'MUTED' && continue
   hh=$(echo "$line" | grep -oE '^[0-9]{2}:[0-9]{2}' | head -1)
   [[ -z "$hh" ]] && hh=$(date +%H:%M)
   now_s=$(date +%s); line_s=$(date -j -f '%Y-%m-%d %H:%M' "$(date +%F) $hh" +%s 2>/dev/null || echo $now_s)

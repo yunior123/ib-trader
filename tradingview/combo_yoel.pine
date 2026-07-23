@@ -1,0 +1,246 @@
+//@version=6
+// ═══════════════════════════════════════════════════════════════════════════════
+// COMBO-YOEL — el sistema de Yoel Sardiñas (caps X-XII, pp.116-177), en un overlay.
+//   Variante de combo_tl.pine para reflejar EXACTAMENTE las 4 herramientas de Yoel
+//   y sus 8 estrategias. Solo 4 herramientas (Yoel NO usa RSI/MACD/Supertrend ni
+//   stop-loss):
+//     ① Bollinger(SMA20, 2σ) — banda + media + relleno.
+//     ② Medias simples 20 / 40 / 100 / 200 (el SET de Yoel; reemplaza el grupo
+//        genérico RagingRocketBull y la cinta Madrid de combo_tl que Yoel no usa).
+//     ③ Trendlines with Breaks [LuxAlgo] — reusado 1:1 de combo_tl (est. 1-2
+//        dependen de la ruptura de trendline).
+//     ④ Volumen con media 50 — Pine no ploteca el panel de volumen en overlay, así
+//        que el FILTRO TRANSVERSAL de Yoel (est. 5-8: la vela gatillo solo vale si
+//        su volumen CRUZA por encima de la MA50) se computa como CONDICIÓN booleana
+//        `volume > ta.sma(volume,50)` que GATEA los marcadores/alertas.
+//
+// Las 8 estrategias salen como plotshape + alertcondition cuando el setup se cumple.
+// Proceso TOP-DOWN de Yoel (15m→1H→1D): este script computa las señales en la
+// TEMPORALIDAD DEL GRÁFICO — aplícalo en 1H para est.1-4 (cambio de tendencia /
+// rebote de punto medio) y en 15m para est.5-8 (fuera-de-banda de apertura /
+// efecto imán), tal como manda el libro. Single-TF a propósito: sin request.security
+// con lookahead → cero repintado, cero look-ahead. La tendencia (dirección de la
+// SMA20) y el cruce SMA20/SMA40 se leen en el propio gráfico.
+//
+// SEÑAL-SOLAMENTE: marcadores y alertas, jamás órdenes. Sizing/TP los pone Yunior
+// (Yoel: 8-12% por trade, TP +100%, sin stop — el riesgo es la prima).
+//
+// ── Budget: 30/64 plots ──────────────────────────────────────────────────────
+//   plots const-color : BB(3) + SMA40/100/200(3)                        =  6
+//   plots series-color: 2 trendlines LuxAlgo × 2 c/u                     =  4
+//   plotshapes        : 2 breaks TL + 8 estrategias                      = 10
+//   alertconditions   : 2 breaks TL + 8 estrategias                      = 10
+//   (fill y line.new NO cuentan). SMA20 = base de la BB (no se duplica).
+//   Cabe TODO: BB + 4 SMAs + trendlines + las 8 estrategias como alerta.
+//
+// CRÉDITOS — port/merge a Pine v6 de clásicos open-source:
+//   Trendlines with Breaks by LuxAlgo (v5, CC BY-NC-SA 4.0) — reusado de combo_tl.
+//   Bollinger / medias / volumen = ta.* nativo de Pine. Sistema y 8 estrategias:
+//   metodología de Yoel Sardiñas (didáctica). Toda la lógica de trading pertenece
+//   a sus autores; este script solo la unifica en un slot para la flota ib-trader.
+// ═══════════════════════════════════════════════════════════════════════════════
+indicator("COMBO-YOEL: Bollinger + SMA 20/40/100/200 + Trendlines + 8 estrategias", "COMBO-YOEL", overlay = true, format = format.price, precision = 2, max_lines_count = 500)
+
+// ┌─────────────────────────────────────────────────────────────────────────────┐
+// │ ① BOLLINGER (SMA20, 2σ) — la media central ES la SMA20 de Yoel               │
+// └─────────────────────────────────────────────────────────────────────────────┘
+GRP_BB = "① Bollinger (SMA20, 2σ)"
+bbShow   = input.bool(true, "Mostrar Bollinger", group = GRP_BB)
+bbSrc    = input.source(close, "Fuente", group = GRP_BB)
+bbLen    = input.int(20, "Longitud (SMA20)", minval = 1, group = GRP_BB)
+bbMult   = input.float(2.0, "Desviaciones σ", minval = 0.1, step = 0.1, group = GRP_BB)
+
+sma20    = ta.sma(bbSrc, bbLen)          // media central BB = SMA20 = tendencia de Yoel
+bbDev    = bbMult * ta.stdev(bbSrc, bbLen)
+bb_upper = sma20 + bbDev
+bb_lower = sma20 - bbDev
+
+bb_mid_color = color.new(#989898, 0)
+bb_bnd_color = color.new(#3D85C6, 40)
+
+plot_bb_up  = plot(bbShow ? bb_upper : na, "BB Superior", color = bb_bnd_color, linewidth = 1)
+plot_bb_dn  = plot(bbShow ? bb_lower : na, "BB Inferior", color = bb_bnd_color, linewidth = 1)
+plot(bbShow ? sma20 : na, "SMA20 (base BB)", color = bb_mid_color, linewidth = 1)
+fill(plot_bb_up, plot_bb_dn, color = color.new(#6D9EEB, 92), title = "Fondo BB")
+
+// ┌─────────────────────────────────────────────────────────────────────────────┐
+// │ ② MEDIAS SIMPLES 20 / 40 / 100 / 200 (el set de Yoel)                        │
+// └─────────────────────────────────────────────────────────────────────────────┘
+GRP_MA = "② Medias simples (Yoel 20/40/100/200)"
+maShow   = input.bool(true, "Mostrar medias", group = GRP_MA)
+maSrc    = input.source(close, "Fuente medias", group = GRP_MA)
+len20    = input.int(20,  "SMA 20 (= media BB)", minval = 1, group = GRP_MA)
+len40    = input.int(40,  "SMA 40", minval = 1, group = GRP_MA)
+len100   = input.int(100, "SMA 100", minval = 1, group = GRP_MA)
+len200   = input.int(200, "SMA 200", minval = 1, group = GRP_MA)
+
+// SMA20 ya está plateada como base de la BB (no se duplica el plot).
+sma40  = ta.sma(maSrc, len40)
+sma100 = ta.sma(maSrc, len100)
+sma200 = ta.sma(maSrc, len200)
+
+plot(maShow ? sma40  : na, "SMA40",  color = color.new(#CC0000, 20), linewidth = 1)
+plot(maShow ? sma100 : na, "SMA100", color = color.new(#FFD966, 20), linewidth = 2)
+plot(maShow ? sma200 : na, "SMA200", color = color.new(#1155CC, 20), linewidth = 2)
+
+// ┌─────────────────────────────────────────────────────────────────────────────┐
+// │ ③ TRENDLINES WITH BREAKS [LuxAlgo] — CC BY-NC-SA 4.0 (reusado de combo_tl)   │
+// └─────────────────────────────────────────────────────────────────────────────┘
+GRP_TL = "③ Trendlines with Breaks [LuxAlgo]"
+tlShow      = input.bool(true, "Mostrar trendlines", group = GRP_TL)
+tlLength    = input.int(14, "Swing Detection Lookback", group = GRP_TL)
+tlMult      = input.float(1.0, "Slope", minval = 0, step = 0.1, group = GRP_TL)
+tlCalc      = input.string("Atr", "Slope Calculation Method", options = ["Atr", "Stdev", "Linreg"], group = GRP_TL)
+tlBackpaint = input.bool(true, "Backpaint", tooltip = "Backpainting desplaza los elementos al pasado. Desactívalo para info en tiempo real.", group = GRP_TL)
+tlUpCss     = input.color(color.teal, "Color trendline alcista", group = GRP_TL)
+tlDnCss     = input.color(color.red, "Color trendline bajista", group = GRP_TL)
+tlShowExt   = input.bool(true, "Líneas extendidas", group = GRP_TL)
+
+var float tl_upper = 0.0
+var float tl_lower = 0.0
+var float tl_slope_ph = 0.0
+var float tl_slope_pl = 0.0
+tl_offset = tlBackpaint ? tlLength : 0
+
+tl_src = close
+tl_ph = ta.pivothigh(tlLength, tlLength)
+tl_pl = ta.pivotlow(tlLength, tlLength)
+
+tl_slope = switch tlCalc
+    "Atr"    => ta.atr(tlLength) / tlLength * tlMult
+    "Stdev"  => ta.stdev(tl_src, tlLength) / tlLength * tlMult
+    "Linreg" => math.abs(ta.sma(tl_src * bar_index, tlLength) - ta.sma(tl_src, tlLength) * ta.sma(bar_index, tlLength)) / ta.variance(bar_index, tlLength) / 2 * tlMult
+
+tl_slope_ph := not na(tl_ph) ? tl_slope : tl_slope_ph
+tl_slope_pl := not na(tl_pl) ? tl_slope : tl_slope_pl
+
+tl_upper := not na(tl_ph) ? tl_ph : tl_upper - tl_slope_ph
+tl_lower := not na(tl_pl) ? tl_pl : tl_lower + tl_slope_pl
+
+var int tl_upos = 0
+var int tl_dnos = 0
+tl_upos := not na(tl_ph) ? 0 : close > tl_upper - tl_slope_ph * tlLength ? 1 : tl_upos
+tl_dnos := not na(tl_pl) ? 0 : close < tl_lower + tl_slope_pl * tlLength ? 1 : tl_dnos
+
+var line tl_uptl = line.new(na, na, na, na, color = tlUpCss, style = line.style_dashed, extend = extend.right)
+var line tl_dntl = line.new(na, na, na, na, color = tlDnCss, style = line.style_dashed, extend = extend.right)
+
+if not na(tl_ph) and tlShowExt and tlShow
+    tl_uptl.set_xy1(bar_index - tl_offset, tlBackpaint ? tl_ph : tl_upper - tl_slope_ph * tlLength)
+    tl_uptl.set_xy2(bar_index - tl_offset + 1, tlBackpaint ? tl_ph - tl_slope : tl_upper - tl_slope_ph * (tlLength + 1))
+
+if not na(tl_pl) and tlShowExt and tlShow
+    tl_dntl.set_xy1(bar_index - tl_offset, tlBackpaint ? tl_pl : tl_lower + tl_slope_pl * tlLength)
+    tl_dntl.set_xy2(bar_index - tl_offset + 1, tlBackpaint ? tl_pl + tl_slope : tl_lower + tl_slope_pl * (tlLength + 1))
+
+plot(tlShow ? (tlBackpaint ? tl_upper : tl_upper - tl_slope_ph * tlLength) : na, "Trendline Superior", color = not na(tl_ph) ? color(na) : tlUpCss, offset = -tl_offset)
+plot(tlShow ? (tlBackpaint ? tl_lower : tl_lower + tl_slope_pl * tlLength) : na, "Trendline Inferior", color = not na(tl_pl) ? color(na) : tlDnCss, offset = -tl_offset)
+
+tlUpBreak = tl_upos > tl_upos[1]     // ruptura AL ALZA de la trendline bajista
+tlDnBreak = tl_dnos > tl_dnos[1]     // ruptura A LA BAJA de la trendline alcista
+
+plotshape(tlShow and tlUpBreak ? low : na, "Ruptura Superior", shape.labelup, location.absolute, tlUpCss, text = "B", textcolor = color.white, size = size.tiny)
+plotshape(tlShow and tlDnBreak ? high : na, "Ruptura Inferior", shape.labeldown, location.absolute, tlDnCss, text = "B", textcolor = color.white, size = size.tiny)
+
+alertcondition(tlUpBreak, "Ruptura trendline AL ALZA", "Precio rompió la trendline bajista hacia arriba")
+alertcondition(tlDnBreak, "Ruptura trendline A LA BAJA", "Precio rompió la trendline alcista hacia abajo")
+
+// ┌─────────────────────────────────────────────────────────────────────────────┐
+// │ ④ VOLUMEN vs MA50 + PRIMITIVAS DE TENDENCIA (dirección de la SMA20)          │
+// └─────────────────────────────────────────────────────────────────────────────┘
+GRP_STR = "⑤ Estrategias de Yoel (marcadores + alertas)"
+strShow    = input.bool(true, "Mostrar marcadores de estrategias", group = GRP_STR)
+useVolGate = input.bool(true, "Filtro volumen>MA50 (est.5-8, transversal Yoel)", tooltip = "La vela gatillo solo vale si su volumen cruza por encima de la media 50 del volumen.", group = GRP_STR)
+lateralPct = input.float(0.30, "Umbral 'lateral' (|pendiente SMA20 en 5 velas| %)", minval = 0.0, step = 0.05, group = GRP_STR)
+openBars   = input.int(3, "Ventana de apertura (nº velas tras open, est.5-6)", minval = 0, group = GRP_STR)
+brkRecent  = input.int(3, "Ruptura TL 'reciente' dentro de N velas (est.1-2)", minval = 0, group = GRP_STR)
+e1On = input.bool(true, "Est.1 Cambio tendencia AL ALZA (call)", group = GRP_STR)
+e2On = input.bool(true, "Est.2 Cambio tendencia A LA BAJA (put)", group = GRP_STR)
+e3On = input.bool(true, "Est.3 Rebote punto medio ALCISTA (call)", group = GRP_STR)
+e4On = input.bool(true, "Est.4 Rebote punto medio BAJISTA (put)", group = GRP_STR)
+e5On = input.bool(true, "Est.5 Fuera de banda AL ALZA en apertura (put)", group = GRP_STR)
+e6On = input.bool(true, "Est.6 Fuera de banda A LA BAJA en apertura (call)", group = GRP_STR)
+e7On = input.bool(true, "Est.7 Efecto imán BAJISTA (call rebote)", group = GRP_STR)
+e8On = input.bool(true, "Est.8 Efecto imán ALCISTA (put corrección)", group = GRP_STR)
+
+// Volumen y su media 50 (filtro transversal). Si no hay volumen (índices), el gate
+// degrada limpio: volCross=false → no dispara est.5-8 (que dependen del volumen).
+volMA50 = ta.sma(volume, 50)
+volCross = not useVolGate or (volume > volMA50)   // si el filtro se apaga, no gatea
+
+// Dirección de la SMA20 = definición de tendencia de Yoel; cruce SMA20/SMA40 confirma
+sma20Rising  = sma20 > sma20[1]
+sma20Falling = sma20 < sma20[1]
+upTrend   = close > sma20 and sma20 > sma40 and sma20Rising
+downTrend = close < sma20 and sma20 < sma40 and sma20Falling
+slopePct  = na(sma20[5]) or sma20[5] == 0 ? 0.0 : (sma20 - sma20[5]) / sma20[5] * 100.0
+lateral   = math.abs(slopePct) < lateralPct
+
+bull = close > open
+bear = close < open
+crossUp = ta.crossover(close, sma20)
+crossDn = ta.crossunder(close, sma20)
+
+upBreakRecent = ta.barssince(tlUpBreak) <= brkRecent
+dnBreakRecent = ta.barssince(tlDnBreak) <= brkRecent
+
+// Ventana de apertura (est.5-6): solo intradía, primeras N velas de la sesión regular
+openingWindow = timeframe.isintraday and (ta.barssince(session.isfirstbar_regular) <= openBars)
+
+// ── LAS 8 ESTRATEGIAS (condiciones booleanas) ────────────────────────────────
+// 1. Cambio de tendencia AL ALZA (1H, call): trendline bajista ROTA + precio cruza
+//    SMA20 al alza + SMA20 ascendente + vela alcista.
+est1 = e1On and upBreakRecent and crossUp and sma20Rising and bull
+
+// 2. Cambio de tendencia A LA BAJA (1H, put): trendline alcista ROTA + precio cruza
+//    SMA20 a la baja + SMA20 descendente + vela bajista.
+est2 = e2On and dnBreakRecent and crossDn and sma20Falling and bear
+
+// 3. Rebote punto medio ALCISTA (1D→1H, call): SMA20 sigue ascendente + precio TOCA
+//    la SMA20 y NO la cruza → rebota + vela alcista cierra por encima.
+est3 = e3On and sma20Rising and close[1] > sma20[1] and low <= sma20 and close > sma20 and bull
+
+// 4. Rebote punto medio BAJISTA (1D→1H, put): SMA20 descendente/lateral + precio sube,
+//    TOCA la SMA20 y rebota abajo + vela bajista cierra por debajo.
+est4 = e4On and (sma20Falling or lateral) and close[1] < sma20[1] and high >= sma20 and close < sma20 and bear
+
+// 5. Fuera de Bollinger AL ALZA en APERTURA (15m, PUT): lateral + apertura + precio
+//    TOTALMENTE fuera de banda superior (sobrecompra) + volumen cruza MA50.
+est5 = e5On and openingWindow and lateral and low > bb_upper and volCross
+
+// 6. Fuera de Bollinger A LA BAJA en APERTURA (15m, CALL): espejo de 5, precio
+//    TOTALMENTE fuera de banda inferior + volumen cruza MA50.
+est6 = e6On and openingWindow and lateral and high < bb_lower and volCross
+
+// 7. Efecto imán BAJISTA (call rebote): tendencia bajista + precio MUY alejado bajo
+//    la SMA20 (fuera de banda inferior) + la caída se debilita (vela verde) + volumen
+//    cruza MA50 → call que "vuela" de vuelta a la SMA20.
+est7 = e7On and downTrend and (low < bb_lower or close[1] < bb_lower[1]) and bull and volCross
+
+// 8. Efecto imán ALCISTA (put corrección): espejo de 7. Tendencia alcista + precio muy
+//    alejado sobre la SMA20 (fuera de banda superior) + fatiga (vela bajista) + volumen
+//    cruza MA50 → put de regreso a la SMA20/40.
+est8 = e8On and upTrend and (high > bb_upper or close[1] > bb_upper[1]) and bear and volCross
+
+// ── MARCADORES (calls abajo/labelup, puts arriba/labeldown) ──────────────────
+CALL_CSS = color.new(color.green, 0)
+PUT_CSS  = color.new(color.red, 0)
+
+plotshape(strShow and est1 ? low  : na, "E1 call (cambio↑)",  shape.labelup,   location.belowbar, CALL_CSS, text = "E1", textcolor = color.white, size = size.tiny)
+plotshape(strShow and est2 ? high : na, "E2 put (cambio↓)",   shape.labeldown, location.abovebar, PUT_CSS,  text = "E2", textcolor = color.white, size = size.tiny)
+plotshape(strShow and est3 ? low  : na, "E3 call (rebote↑)",  shape.labelup,   location.belowbar, CALL_CSS, text = "E3", textcolor = color.white, size = size.tiny)
+plotshape(strShow and est4 ? high : na, "E4 put (rebote↓)",   shape.labeldown, location.abovebar, PUT_CSS,  text = "E4", textcolor = color.white, size = size.tiny)
+plotshape(strShow and est5 ? high : na, "E5 put (aper.fuera↑)", shape.labeldown, location.abovebar, PUT_CSS,  text = "E5", textcolor = color.white, size = size.tiny)
+plotshape(strShow and est6 ? low  : na, "E6 call (aper.fuera↓)", shape.labelup,  location.belowbar, CALL_CSS, text = "E6", textcolor = color.white, size = size.tiny)
+plotshape(strShow and est7 ? low  : na, "E7 call (imán↓→SMA20)", shape.labelup,  location.belowbar, CALL_CSS, text = "E7", textcolor = color.white, size = size.tiny)
+plotshape(strShow and est8 ? high : na, "E8 put (imán↑→SMA20)",  shape.labeldown, location.abovebar, PUT_CSS,  text = "E8", textcolor = color.white, size = size.tiny)
+
+// ── ALERTAS (una por estrategia) ─────────────────────────────────────────────
+alertcondition(est1, "E1 Cambio tendencia AL ALZA (call)",  "YOEL E1: trendline bajista rota + cruce SMA20↑ + SMA20 asc → CALL")
+alertcondition(est2, "E2 Cambio tendencia A LA BAJA (put)",  "YOEL E2: trendline alcista rota + cruce SMA20↓ + SMA20 desc → PUT")
+alertcondition(est3, "E3 Rebote punto medio ALCISTA (call)", "YOEL E3: rebote en SMA20 ascendente → CALL")
+alertcondition(est4, "E4 Rebote punto medio BAJISTA (put)",  "YOEL E4: rechazo en SMA20 descendente → PUT")
+alertcondition(est5, "E5 Fuera de banda apertura AL ALZA (put)",  "YOEL E5: apertura fuera de banda superior + vol>MA50 → PUT")
+alertcondition(est6, "E6 Fuera de banda apertura A LA BAJA (call)", "YOEL E6: apertura fuera de banda inferior + vol>MA50 → CALL")
+alertcondition(est7, "E7 Efecto imán BAJISTA (call)", "YOEL E7: imán bajista, vela verde fuera de banda inf + vol>MA50 → CALL a SMA20")
+alertcondition(est8, "E8 Efecto imán ALCISTA (put)",  "YOEL E8: imán alcista, vela roja fuera de banda sup + vol>MA50 → PUT a SMA20")

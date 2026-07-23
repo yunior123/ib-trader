@@ -1,0 +1,159 @@
+{
+ "days": {
+  "2026-07-22": {
+   "SPIKE_CALLS|normal": {
+    "n": 10,
+    "ok": 6,
+    "mfe_ok": 5
+   },
+   "SPIKE_CALLS|muro": {
+    "n": 6,
+    "ok": 3,
+    "mfe_ok": 2
+   },
+   "SPIKE_PUTS|normal": {
+    "n": 8,
+    "ok": 7,
+    "mfe_ok": 7
+   },
+   "SPIKE_PUTS|muro": {
+    "n": 1,
+    "ok": 1,
+    "mfe_ok": 1
+   },
+   "SPIKE_CALLS|bandwalk": {
+    "n": 2,
+    "ok": 1,
+    "mfe_ok": 2
+   },
+   "CAPITAN_REVIERTE|baja": {
+    "n": 1,
+    "ok": 1,
+    "mfe_ok": 0
+   },
+   "SPIKE_PUTS|override": {
+    "n": 1,
+    "ok": 0,
+    "mfe_ok": 0
+   }
+  },
+  "2026-07-23": {
+   "SPIKE_CALLS|normal": {
+    "n": 19,
+    "ok": 13,
+    "mfe_ok": 12
+   },
+   "SPIKE_CALLS|bandwalk": {
+    "n": 3,
+    "ok": 3,
+    "mfe_ok": 3
+   },
+   "SPIKE_PUTS|muro": {
+    "n": 17,
+    "ok": 7,
+    "mfe_ok": 9
+   },
+   "SPIKE_PUTS|normal": {
+    "n": 7,
+    "ok": 4,
+    "mfe_ok": 3
+   },
+   "SPIKE_CALLS|muro": {
+    "n": 4,
+    "ok": 4,
+    "mfe_ok": 4
+   },
+   "CAPITAN_REVIERTE|alza": {
+    "n": 4,
+    "ok": 1,
+    "mfe_ok": 2
+   },
+   "SPIKE_CALLS|override": {
+    "n": 8,
+    "ok": 3,
+    "mfe_ok": 6
+   }
+  }
+ },
+ "SPIKE_CALLS|normal": {
+  "n": 29,
+  "ok": 19,
+  "mfe_ok": 17,
+  "raw_pct": 66,
+  "wilson_lo": 47,
+  "mfe_pct": 59,
+  "pct": 66
+ },
+ "SPIKE_CALLS|muro": {
+  "n": 10,
+  "ok": 7,
+  "mfe_ok": 6,
+  "raw_pct": 70,
+  "wilson_lo": 40,
+  "mfe_pct": 60,
+  "pct": 70
+ },
+ "SPIKE_PUTS|normal": {
+  "n": 15,
+  "ok": 11,
+  "mfe_ok": 10,
+  "raw_pct": 73,
+  "wilson_lo": 48,
+  "mfe_pct": 67,
+  "pct": 73
+ },
+ "SPIKE_PUTS|muro": {
+  "n": 18,
+  "ok": 8,
+  "mfe_ok": 10,
+  "raw_pct": 44,
+  "wilson_lo": 25,
+  "mfe_pct": 56,
+  "pct": 44
+ },
+ "SPIKE_CALLS|bandwalk": {
+  "n": 5,
+  "ok": 4,
+  "mfe_ok": 5,
+  "raw_pct": 80,
+  "wilson_lo": 38,
+  "mfe_pct": 100,
+  "pct": 80
+ },
+ "CAPITAN_REVIERTE|baja": {
+  "n": 1,
+  "ok": 1,
+  "mfe_ok": 0,
+  "raw_pct": 100,
+  "wilson_lo": 21,
+  "mfe_pct": 0,
+  "pct": 40
+ },
+ "SPIKE_PUTS|override": {
+  "n": 1,
+  "ok": 0,
+  "mfe_ok": 0,
+  "raw_pct": 0,
+  "wilson_lo": 0,
+  "mfe_pct": 0,
+  "pct": 56
+ },
+ "CAPITAN_REVIERTE|alza": {
+  "n": 4,
+  "ok": 1,
+  "mfe_ok": 2,
+  "raw_pct": 25,
+  "wilson_lo": 5,
+  "mfe_pct": 50,
+  "pct": 40
+ },
+ "SPIKE_CALLS|override": {
+  "n": 8,
+  "ok": 3,
+  "mfe_ok": 6,
+  "raw_pct": 38,
+  "wilson_lo": 14,
+  "mfe_pct": 75,
+  "pct": 38
+ }
+}

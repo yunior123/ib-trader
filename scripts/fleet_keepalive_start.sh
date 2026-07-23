@@ -63,7 +63,7 @@ fi
 # SIP warm-up historico + bars 1m + NBBO a data/*_ibkr.txt / nbbo_*.txt.
 # Bots leen data/bars_<sym>_ibkr.txt directo via tail -F (reader retirado 2026-07-20).
 if ! pgrep -f "ibkr_bar_bridge.py --daemon" >/dev/null; then
-  nohup ./venv/bin/python scripts/ibkr_bar_bridge.py --daemon NOK SPCX DRAM TSLA NVDA TXN TSM AMD INTC ASML AAPL GLD QQQ SPY SLV CPER USO SKHY MU SMH GOOGL QCOM MSFT AVGO AMZN META XLK EWY NFLX >> bridge_ibkr_fleet.log 2>&1 &
+  nohup ./venv/bin/python scripts/ibkr_bar_bridge.py --daemon NOK SPCX DRAM TSLA NVDA TXN TSM AMD INTC ASML AAPL GLD QQQ SPY SLV CPER USO SKHY MU SMH GOOGL QCOM MSFT AVGO AMZN META XLK EWY NFLX LRCX SNDK WDC STX >> bridge_ibkr_fleet.log 2>&1 &
   echo "$(date) fleet: ibkr fleet daemon lanzado (pid $!)" >> fleet_autostart.log
 fi
 
@@ -133,6 +133,28 @@ fi
 # vigia de BALLENAS de opciones (2026-07-20 "activa alarm fleet for whale puts
 # and calls"): flujo P/C ±3% ATM cada 5 min, expiry semanal auto, alerta
 # voz+banner en cruces (P/C>=2 puts / <=0.35 calls, ley #13). clientId 82.
+# patron de Yunior 2026-07-22: apertura fuera de banda 15m RTH -> re-entrada
+# (probs medidas en data/band_snap_stats.json). Corre solo 9:29-10:35 y muere.
+if ! pgrep -f "scripts/band_open_watch.py" >/dev/null; then
+  nohup ./venv/bin/python scripts/band_open_watch.py >> band_open_watch.log 2>&1 &
+  echo "$(date) fleet: band_open_watch lanzado (pid $!)" >> fleet_autostart.log
+fi
+
+# vigia Bollinger INTRADIA (Yunior 2026-07-22: "rectifica bollinger alarms"):
+# pierce+re-entrada = rebote elastico; 1m+5m mismo lado = band-walk (no fade).
+if ! pgrep -f "scripts/bollinger_alarm.py" >/dev/null; then
+  nohup ./venv/bin/python scripts/bollinger_alarm.py >> bollinger_alarm.log 2>&1 &
+  echo "$(date) fleet: bollinger_alarm lanzado (pid $!)" >> fleet_autostart.log
+fi
+
+# flow_pulse (2026-07-22, Yunior): vigia de flujo MENOS estricto en C++ —
+# P/C 0.50/1.40, giros de ratio y surges de volumen; tail 1s de
+# whale_flow_hist.jsonl. Complementa (no reemplaza) la ballena DANGER.
+if ! pgrep -x "flow_pulse" >/dev/null; then
+  nohup "$ROOT/flow_pulse" >> "$ROOT/flow_pulse.log" 2>&1 &
+  echo "$(date) fleet: flow_pulse lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+fi
+
 if ! pgrep -f "scripts/opt_whale_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/opt_whale_keepalive.sh" >/dev/null 2>&1 &
   echo "$(date) fleet: opt_whale_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
@@ -145,4 +167,14 @@ fi
 if ! pgrep -f "scripts/x_signal_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/x_signal_keepalive.sh" >/dev/null 2>&1 &
   echo "$(date) fleet: x_signal_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+fi
+
+# ---- dip alert (mision B5 2026-07-22): valuacion 1x/dia + vigia de dips RTH ----
+# finviz_valuation idempotente (<24h no re-baja). dip_alert muere solo 15:30.
+"$ROOT/venv/bin/python" "$ROOT/scripts/finviz_valuation.py" >> "$ROOT/dip_alert.log" 2>&1
+HHMM=$(date +%H%M); DOW=$(date +%u)
+if [ "$DOW" -le 5 ] && [ "$HHMM" -ge 0930 ] && [ "$HHMM" -lt 1530 ] \
+   && ! pgrep -f "scripts/dip_alert.py" >/dev/null; then
+  nohup "$ROOT/venv/bin/python" "$ROOT/scripts/dip_alert.py" >> "$ROOT/dip_alert.log" 2>&1 &
+  echo "$(date) fleet: dip_alert lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
 fi

@@ -1,0 +1,67 @@
+04:01:07 | 🛰 FINVIZ | INTC: earnings en 36h (7/23/2026 4:30:00 PM)
+04:01:07 | 🛰 FINVIZ | NOK: earnings en 28h (7/23/2026 8:30:00 AM)
+04:01:07 | 🛰 FINVIZ | NVDA: target price 313.74→314.29
+04:01:07 | 🛰 FINVIZ | SKHY: target price 234.03→234.13
+04:01:07 | 🛰 FINVIZ | TSLA: earnings en 12h (7/22/2026 4:30:00 PM)
+04:01:07 | 🛰 FINVIZ | TXN: earnings en 12h (7/22/2026 4:30:00 PM)
+08:04:11 | X POSTED | Whale scan live id=2079900311817212189
+08:15:41 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.85% px 53.39
+08:15:41 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.56% px 54.16
+08:15:41 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.54% px 54.84
+08:15:41 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.45% px 53.69
+08:15:41 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.62% px 54.10
+08:15:41 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.53% px 53.86
+08:15:41 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.69% px 53.29
+08:15:41 | WARMUP DRAM: SELL | VENDER DRAM @ 55.97 | trail 3xATR roto | entrada 54.71 | PnL +2.3%
+08:15:41 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.11% px 206.94
+08:15:41 | WARMUP TSLA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.07% px 378.10
+08:15:41 | WARMUP TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.07% px 407.56
+08:15:41 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.10% px 203.32
+08:15:41 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.02% px 401.43
+08:15:41 | WARMUP TSLA: SELL | TSLA @ 373.47 | prob 58% | rompe-TL-1m-abajo+vol-2.4x+ribbon15-bajista+bajo-VWAP+RVOL-2.4x+retest-ok | fase=UNKNOWN
+08:15:41 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.22% px 206.85
+08:15:41 | WARMUP TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.33% px 409.84
+08:15:41 | WARMUP TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.01% px 418.18
+08:15:41 | WARMUP TSLA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.07% px 370.37
+08:15:41 | WARMUP TSLA: SELL | VENDER TSLA @ 375.48 | supertrend flip DOWN | entrada 374.72 | PnL +0.2%
+08:15:41 | WARMUP NVDA: SELL | NVDA @ 205.22 | prob 59% | rebote-23%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=TREND_DOWN
+08:15:41 | WARMUP TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.01% px 422.61
+08:15:41 | WARMUP QQQ TERREMOTO ALZA | CUSUM: subiendo fuerte +1.04% px 703.55
+08:15:41 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.06% px 513.45
+08:15:41 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.03% px 509.20
+08:15:41 | WARMUP QQQ TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.00% px 698.45
+08:15:41 | WARMUP AMD: BUY | AMD @ 515.55 | prob 63% | pullback-18%+MACD1-gira+MACD15-verde+ST5-alineado+ribbon15-alcista | fase=UNKNOWN
+08:15:41 | WARMUP QQQ TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.01% px 696.73
+08:15:41 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.09% px 502.96
+08:15:41 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.23% px 518.46
+08:15:41 | WARMUP QQQ TERREMOTO ALZA | CUSUM: subiendo fuerte +1.25% px 702.86
+08:15:41 | WARMUP AMD: SELL | VENDER AMD @ 525.00 | trail 3xATR roto | entrada 517.24 | PnL +1.5%
+08:15:41 | WARMUP QQQ: SELL | VENDER QQQ @ 707.46 | supertrend flip DOWN | entrada 706.84 | PnL +0.1%
+08:15:42 | WARMUP ASML: SELL | VENDER ASML @ 1786.72 | trail 3xATR roto | entrada 1768.58 | PnL +1.0%
+08:15:42 | WARMUP AAPL: SELL | VENDER AAPL @ 333.34 | trail 3xATR roto | entrada 326.81 | PnL +2.0%
+08:16:01 | WARMUP TSM: BUY | TSM @ 421.65 | prob 61% | estructura-rota-arriba+MACD15-flip-arriba+MACD15-verde+ST5-alineado+ribbon15-alcista | fase=TREND_DOWN
+08:16:01 | WARMUP TSM: BUY | TSM @ 423.78 | prob 61% | estructura-rota-arriba+MACD15-flip-arriba+MACD15-verde+ST5-alineado+ribbon15-alcista | fase=TREND_DOWN
+08:16:01 | WARMUP TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +3.49% px 424.41
+08:16:01 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.57% px 415.39
+08:16:01 | WARMUP TSM: BUY | COMPRAR TSM @ 415.61 | trail ATR roto | entrada 419.85 | mov +1.0%
+08:16:47 | NOK ALARMA PRECIO | NOK toco 10.35 (regla: nok 10.35 down       STOP call NOK     se murio el band-walk, fuera (earnings miercoles )) px=10.3150
+08:16:48 | NOK ALARMA PRECIO | NOK toco 10.45 (regla: nok 10.45 down       AVISO TEMPRANO: perdio el soste del print     vende MITAD o aprieta a breakeven) px=10.3150
+08:16:49 | QCOM ALARMA PRECIO | QCOM toco 170.00 (regla: qcom 170 down        PUT: unico semi BAJO su flip 174, aire 50pts (gexa 10:22)     put 170    target 168/165    stop 171.60) px=169.7900
+08:16:50 | QQQ ALARMA PRECIO | QQQ toco 704.90 (regla: qqq 704.9 down       COMPRA PUT: box+muro 705 rotos (dark-pool 3:1 vendiendo, ballenas 10M en 700)     target 703.5/702    stop 705.90) px=702.2750
+08:16:51 | DRAM ALARMA PRECIO | DRAM toco 56.50 (regla: dram 56.5 down       STOP DRAM     fuera sin negociar) px=56.0300
+08:16:52 | QQQ ALARMA PRECIO | QQQ toco 707.20 (regla: qqq 707.2 down       STOP LOSS del 708C comprado en 708     cap roto falla como piso   FUERA sin negociar) px=702.2700
+08:16:52 | QQQ ALARMA PRECIO | QQQ toco 707.40 (regla: qqq 707.4 down       FICHA PUT (post-13:30): ancla 2.2B rota     put 707P    target 705.50    stop 708.30    verificar fuerza antes) px=702.2700
+08:16:53 | NVDA ALARMA PRECIO | NVDA toco 205.40 (regla: nvda 205.4 down      STOP del 207.5C     fuera sin negociar) px=204.7900
+08:16:54 | SPY ALARMA PRECIO | SPY toco 747.00 (regla: spy 747 down         SPY pierde su iman 747     el indice hermano confirma el cuchillo) px=745.6200
+08:16:55 | QQQ ALARMA PRECIO | QQQ toco 707.90 (regla: qqq 707.9 down       COMPRA CUCHILLO: rechazo del muro completado     put 708P/SQQQ    target 705.5/703    stop 708.90    entrada en retest) px=702.2700
+08:17:43 | QQQ ALARMA PRECIO | QQQ toco 702.00 (regla: qqq 702.0 down       AVISO: ballenas voltearon a PUT 14M en 705 (10:12)     si rompe 702, PREPARA put, ya no call) px=701.9600
+08:17:50 | NFLX ALARMA PRECIO | NFLX toco 69.00 (regla: nflx 69 up           TARDE-SOLO (post 14:00): 33k calls P/C 0.19 detectados 11:11     si imprime, candidato call 69C/70C    target 72    verificar flujo fresco) px=69.0100
+08:18:45 | INTC ALARMA PRECIO | INTC toco 101.20 (regla: intc 101.2 down      PUT rearmado: 2a ruptura del minimo (la honesta)     put 101    target 100    stop 102.40) px=101.2000
+08:19:01 | SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.57% px 123.01
+08:21:00 | SKHY TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.20% px 159.45
+08:33:00 | USO TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.16% px 131.93
+08:56:55 | QQQ ALARMA PRECIO | QQQ toco 701.00 (regla: qqq 701 down         2a confirmacion bajista     put 0DTE listo, esperando el 700) px=700.8500
+08:57:00 | TSLA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.08% px 374.98
+08:57:00 | INTC TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.12% px 100.82
+08:57:00 | TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.29% px 411.90
+08:57:00 | ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.82% px 1755.73

@@ -1,0 +1,27 @@
+{
+ "sym": "AMD",
+ "spot": 555.5,
+ "asof": 1784808430,
+ "net_gex": 153656.9,
+ "regime": "POS",
+ "flip": 555.98,
+ "flip_static": 555.98,
+ "call_wall": 557.5,
+ "put_wall": 555.0,
+ "abs_wall": 557.5,
+ "oi_call_wall": 557.5,
+ "oi_put_wall": 555.0,
+ "near_call_wall": true,
+ "near_put_wall": true,
+ "near_flip": true,
+ "profile": [
+  {
+   "strike": 555.0,
+   "gex": -98790.1
+  },
+  {
+   "strike": 557.5,
+   "gex": 252447.0
+  }
+ ]
+}

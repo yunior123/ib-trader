@@ -119,10 +119,18 @@ def main():
     # 4) frescura de salidas del dia
     today = time.strftime("%Y-%m-%d")
     pdir = os.path.expanduser(f"~/Desktop/planes-{today}")
-    npdf = len([f for f in os.listdir(pdir) if f.endswith(".pdf")]) if os.path.isdir(pdir) else 0
+    # TCC macOS puede vetar Desktop a launchd (PermissionError 2026-07-22):
+    # degradacion limpia — npdf=-1 = "no pude mirar", no un CRIT falso.
+    try:
+        npdf = len([f for f in os.listdir(pdir) if f.endswith(".pdf")]) if os.path.isdir(pdir) else 0
+    except PermissionError:
+        npdf = -1
     lt = time.localtime()
     if lt.tm_hour >= 5:  # tras el run FULL de 4am
-        (ok if npdf >= 20 else crit).append(f"planes de hoy: {npdf} PDFs {'(el run de 4am fallo?)' if npdf<20 else ''}")
+        if npdf < 0:
+            warn.append("planes de hoy: Desktop vetado por TCC (dar Full Disk Access al runner) — no pude contar PDFs")
+        else:
+            (ok if npdf >= 20 else crit).append(f"planes de hoy: {npdf} PDFs {'(el run de 4am fallo?)' if npdf<20 else ''}")
     for jf, age, lbl in [("data/patterns.json", 36*3600, "patrones"),
                          ("data/breadth.json", 24*3600, "engranaje"),
                          ("data/calibration.json", 30*24*3600, "calibracion")]:

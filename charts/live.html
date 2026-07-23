@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<title>ib-trader · GEX/combo_tl live</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #131722; color: #d1d4dc;
+         font: 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+
+  /* --- toolbar superior estilo TradingView --- */
+  #toolbar { display: flex; align-items: center; gap: 12px; height: 40px;
+             padding: 0 12px; background: #1e222d; border-bottom: 1px solid #2a2e39;
+             font-variant-numeric: tabular-nums; }
+  #toolbar strong { font-size: 16px; font-weight: 700; letter-spacing: .3px; }
+  #tfbar { display: flex; gap: 2px; }
+  .tfbtn { background: transparent; color: #b2b5be; border: none; border-radius: 4px;
+           padding: 5px 10px; font: inherit; font-weight: 600; cursor: pointer; }
+  .tfbtn:hover { background: #2a2e39; color: #d1d4dc; }
+  .tfbtn.active { background: #2962ff; color: #fff; }
+  #symsel { background: #2a2e39; color: #d1d4dc; border: 1px solid #363a45;
+            border-radius: 4px; padding: 4px 8px; font: inherit; font-size: 16px;
+            font-weight: 700; letter-spacing: .3px; cursor: pointer; }
+  #conn { margin-left: auto; font-size: 12px; }
+  #conn.on  { color: #26a69a; } #conn.off { color: #ef5350; }
+
+  /* --- segunda fila: OHLC + info GEX --- */
+  #infobar { display: flex; align-items: center; gap: 11px; height: 28px;
+             padding: 0 12px; background: #181b26; border-bottom: 1px solid #2a2e39;
+             font-size: 12px; flex-wrap: nowrap; overflow-x: auto; white-space: nowrap;
+             font-variant-numeric: tabular-nums; }
+  #infobar::-webkit-scrollbar { height: 0; }
+  #ohlc { display: flex; gap: 9px; }
+  #ohlc .lab { color: #787b86; }
+  #ohlc .val { font-weight: 600; }
+  .infosep { color: #363a45; }
+  #infobar .k { color: #787b86; }
+  #infobar .v { color: #d1d4dc; font-weight: 600; }
+  .pos { color: #26a69a; } .neg { color: #ef5350; } .trans { color: #ffb300; }
+  .tgl { background:#20242f; color:#8aa0c8; border:1px solid #333a48; padding:2px 8px;
+         font:inherit; font-weight:700; font-size:11px; cursor:pointer; }
+  .tgl:first-child { border-radius:4px 0 0 4px; } .tgl:last-child { border-radius:0 4px 4px 0; border-left:none; }
+  .tgl.active { background:#2962ff; color:#fff; border-color:#2962ff; }
+  /* botón info (ℹ) + overlay de ayuda */
+  .info { display:inline-flex; align-items:center; justify-content:center; width:14px; height:14px;
+          border:1px solid #3a4b6b; border-radius:50%; color:#6f8bbf; font-size:9px; font-weight:700;
+          cursor:help; margin-left:3px; user-select:none; }
+  .info:hover { background:#2962ff; color:#fff; border-color:#2962ff; }
+  #helpbtn { margin-left:8px; background:#2a2e39; color:#8aa0c8; border:1px solid #3a4b6b;
+             border-radius:4px; padding:4px 9px; font:inherit; font-weight:700; cursor:pointer; }
+  #helpbtn:hover { background:#2962ff; color:#fff; }
+  #alarmbtn { background:#2a2e39; color:#8aa0c8; border:1px solid #3a4b6b;
+              border-radius:4px; padding:4px 9px; font:inherit; font-weight:700; cursor:pointer; }
+  #alarmbtn:hover { background:#2f3646; color:#fff; }
+  #alarmbtn.arm { background:#8a5a00; color:#fff; border-color:#f4c430; }
+  #chart { position:relative; }
+  #structpill { position:absolute; top:8px; left:50%; transform:translateX(-50%); z-index:20;
+                background:rgba(20,24,31,.92); border:1px solid #f4c430; color:#f4c430;
+                border-radius:14px; padding:4px 14px; font-size:13px; font-weight:700;
+                box-shadow:0 2px 12px rgba(0,0,0,.5); pointer-events:none; white-space:nowrap; }
+  #structpill.hidden { display:none; }
+  #structpill.dn { border-color:#ef5350; color:#ef5350; }
+  #structpill.flat { border-color:#8aa0c8; color:#8aa0c8; }
+  #alarmpanel { position:absolute; top:8px; right:8px; z-index:20;
+                background:rgba(20,24,31,.92); border:1px solid #2a3550; border-radius:8px;
+                padding:5px 7px; font-size:12px; color:#c6d2ea; box-shadow:0 2px 12px rgba(0,0,0,.5); }
+  #alarmpanel.hidden { display:none; }
+  #alarmpanel .arow { display:flex; align-items:center; gap:8px; padding:2px 2px; white-space:nowrap; }
+  #alarmpanel .atrash { cursor:pointer; opacity:.65; }
+  #alarmpanel .atrash:hover { opacity:1; }
+  #alarmpanel .ahdr { font-size:10px; color:#6b7a99; text-transform:uppercase; letter-spacing:.5px; margin-bottom:2px; }
+  #narrbtn { background:#2a2e39; color:#8aa0c8; border:1px solid #3a4b6b;
+             border-radius:4px; padding:4px 9px; font:inherit; font-weight:700; cursor:pointer; }
+  #narrbtn:hover { background:#2f3646; color:#fff; }
+  #narrbtn.on { background:#1e6f4c; color:#fff; border-color:#2fae78; }
+  #narrbar { display:flex; align-items:center; gap:10px; min-height:30px; padding:4px 12px;
+             background:#12161f; border-bottom:1px solid #232a3a; font-size:12.5px; color:#c6d2ea;
+             line-height:1.45; }
+  #narrbar.hidden { display:none; }
+  #narr-src { font-size:15px; flex:0 0 auto; }
+  #narr-text { flex:1 1 auto; }
+  #narr-refresh { flex:0 0 auto; background:#20242f; color:#8aa0c8; border:1px solid #333a48;
+                  border-radius:4px; padding:3px 9px; font:inherit; font-weight:700; cursor:pointer; }
+  #narr-refresh:hover { background:#2962ff; color:#fff; }
+  #narr-refresh:disabled { opacity:.5; cursor:default; }
+  #help { position:absolute; top:70px; right:12px; width:min(460px,92vw); max-height:78vh; overflow:auto;
+          background:#161a24; border:1px solid #2a3550; border-radius:10px; padding:14px 16px;
+          box-shadow:0 10px 40px rgba(0,0,0,.6); z-index:50; display:none; font-size:12px; line-height:1.5; }
+  #help.on { display:block; }
+  #help h3 { margin:2px 0 8px; font-size:14px; color:#d1d4dc; }
+  #help h4 { margin:12px 0 4px; font-size:12px; color:#8aa0c8; text-transform:uppercase; letter-spacing:.4px; }
+  #help p { margin:3px 0; color:#b2b5be; }
+  #help b.gold { color:#ffb300; } #help b.pur { color:#ba68c8; } #help b.yel { color:#f4c430; }
+  #help .x { position:absolute; top:8px; right:12px; cursor:pointer; color:#6f8bbf; font-size:16px; }
+
+  #chart { position: absolute; top: 68px; bottom: 24px; left: 0; right: 0; }
+  footer { position: absolute; bottom: 0; height: 24px; left: 0; right: 0;
+           display: flex; align-items: center; gap: 12px; padding: 0 12px;
+           background: #1e222d; font-size: 11px; color: #787b86; overflow-x: auto;
+           white-space: nowrap; }
+  .dot { display: inline-block; width: 10px; height: 3px; border-radius: 2px;
+         margin-right: 4px; vertical-align: middle; }
+</style>
+</head>
+<body>
+<!-- fila 1: símbolo + selector de intervalo (TradingView-like) + conexión -->
+<div id="toolbar">
+  <select id="symsel" title="ticker (cambiar)"></select>
+  <div id="tfbar">
+    <button class="tfbtn" data-tf="1m">1m</button>
+    <button class="tfbtn" data-tf="5m">5m</button>
+    <button class="tfbtn" data-tf="15m">15m</button>
+    <button class="tfbtn" data-tf="1h">1H</button>
+    <button class="tfbtn" data-tf="1d">1D</button>
+  </div>
+  <span id="scopebar" title="0DTE = solo hoy (pin intradía) · ALL = toda la cadena (mapa multi-día). En ALL el flip apenas se mueve pero la Vanna salta.">
+    <button class="tgl active" data-scope="0DTE">0DTE</button><button class="tgl" data-scope="ALL">ALL</button>
+  </span>
+  <span id="layerbar" title="GEX = mapa de gamma (precio) · VEX = mapa de vanna (vol). Oro=imán, morado=acelerador en ambos.">
+    <button class="tgl active" data-layer="GEX">GEX</button><button class="tgl" data-layer="VEX">VEX</button>
+  </span>
+  <button id="alarmbtn" title="Alarma manual (estilo TradingView): clic aquí y luego clic en el precio del chart para poner una alarma. Suena sirena+voz al cruzar (price_alarm).">🔔 Alarma</button>
+  <button id="narrbtn" title="Narrador de mercado (como gexa): lectura breve del mapa GEX. Determinista gratis + DeepSeek bajo demanda (↻).">🗣 Narrador</button>
+  <button id="helpbtn" title="¿Qué es cada cosa? (guía)">ℹ Guía</button>
+  <span id="conn" class="off">● desconectado</span>
+</div>
+<!-- fila 2: lectura OHLC de la barra + info GEX -->
+<div id="infobar">
+  <div id="ohlc">
+    <span><span class="lab">O</span> <span class="val" id="o-o">—</span></span>
+    <span><span class="lab">H</span> <span class="val" id="o-h">—</span></span>
+    <span><span class="lab">L</span> <span class="val" id="o-l">—</span></span>
+    <span><span class="lab">C</span> <span class="val" id="o-c">—</span></span>
+  </div>
+  <span class="infosep">│</span>
+  <span><span class="k">VIX</span> <span class="v" id="h-vix" title="Índice de volatilidad (CBOE, vía TWS). CALM <16 · ELEVADO 16-24 · ALTO >24. Vol alta ensancha rangos y hace los días de gamma negativa más violentos.">—</span></span>
+  <span class="v" id="h-dte" title="Vencimiento del mapa GEX. 0DTE = solo hoy (batalla intradía, pin/rechazo). NDTE = vencimiento más cercano. Como gexa." style="color:#f4c430">—</span>
+  <span><span class="k">régimen</span> <span class="v" id="h-reg">—</span><span class="info" title="POSITIVO (arriba del flip): dealers amortiguan → rango, dips comprados. NEGATIVO (abajo): amplifican → tendencia, no fadear. TRANSICIÓN (±0.12% del flip): inestable, no operar direccional.">i</span></span>
+  <span><span class="k">net GEX</span> <span class="v" id="h-gex">—</span><span class="info" title="Gamma total del dealer en $/1%. Positivo = libro largo gamma (amortigua). Negativo = corto gamma (amplifica). Es la suma cuyo cruce por cero define el flip.">i</span></span>
+  <span><span class="k">flip</span> <span class="v" id="h-flip">—</span><span class="info" title="Gamma-flip: precio donde el libro del dealer cambia de signo. Arriba = régimen +Γ (amortigua), abajo = −Γ (amplifica). Nivel estructural: se recomputa ~15s, no salta por tick.">i</span></span>
+  <span><span class="k">CW</span> <span class="v" id="h-cw">—</span><span class="info" title="Call wall: strike de mayor gamma+ de calls arriba = techo (dealers venden acciones al acercarse). Junto con PW define el rango esperado.">i</span></span>
+  <span><span class="k">PW</span> <span class="v" id="h-pw">—</span><span class="info" title="Put wall: strike de mayor gamma de puts abajo = piso (dealers compran al acercarse). En régimen negativo puede ser un ACELERADOR (morado), no un soporte real.">i</span></span>
+  <span><span class="k">Vanna</span> <span class="v" id="h-vex">—</span><span class="info" title="Vanna exposure (VEX): cuánto delta ajustan los dealers por cada punto de IV. Combustible de vol: positivo = melt-up (compran al caer IV), negativo = caída. Salta en ALL-EXP (posicionamiento de vencimientos lejanos).">i</span></span>
+  <span><span class="k">Pressure</span> <span class="v" id="h-press">—</span><span class="info" title="Dealer Pressure −100..+100 (gamma 80% + vanna 20%). Positivo = dealers PINEAN (rango, dips comprados). Negativo = AMPLIFICAN (moves corren). Cerca del flip se degrada (inestable). Régimen, no dirección.">i</span></span>
+  <span><span class="k">EM</span> <span class="v" id="h-em" title="Expected move ±1σ = spot·IV·√T. Rango esperado hasta el vencimiento (líneas cian punteadas en el chart).">—</span></span>
+  <span class="k" id="h-asof"></span>
+</div>
+<!-- fila 3: narrador de mercado (colapsable) -->
+<div id="narrbar" class="hidden">
+  <span id="narr-src" title="⚡ = lectura determinista (gratis) · 🤖 = pulida por DeepSeek">⚡</span>
+  <span id="narr-text">Narrador apagado.</span>
+  <button id="narr-refresh" title="Pulir con DeepSeek ahora (usa ~1 llamada, breve)">↻ IA</button>
+</div>
+<div id="help">
+  <span class="x" id="helpx">✕</span>
+  <h3>Guía — leer la estructura de dealers</h3>
+  <p><b>Idea central:</b> los market makers no eligen — su gamma los OBLIGA a cubrirse. El mapa dibuja esos flujos forzados. Se opera CON la corriente, no contra ella.</p>
+  <h4>Código de color</h4>
+  <p><b class="gold">DORADO = IMÁN</b> (gamma+): el hedging FIJA el precio (pin). Oro debajo = colchón, dealers compran. Oro arriba = techo imantado. <b>Operar HACIA el oro.</b></p>
+  <p><b class="pur">MORADO = ACELERADOR</b> (gamma−): el hedging AMPLIFICA, el precio pasa rápido. Morado debajo = trampilla/aire. <b>Cuidado a través del morado.</b></p>
+  <h4>Régimen y flip</h4>
+  <p><b>POSITIVO</b> (arriba del flip): rango, mean-reversion, dips comprados → operar nodo-a-nodo entre muros.</p>
+  <p><b>NEGATIVO</b> (abajo): tendencia, gaps, selloffs aceleran → operar rupturas, NO fadear.</p>
+  <p><b class="trans" style="color:#ffb300">TRANSICIÓN</b> (±0.12% del flip): régimen inestable, un empujón lo voltea → no operar direccional.</p>
+  <p><b class="yel">Gamma-flip</b> (línea amarilla punteada): frontera donde el libro cambia de signo. Estructural: se recomputa, NO salta por tick. Lo que se mueve en vivo es el precio-vs-flip.</p>
+  <h4>Niveles</h4>
+  <p><b>POC</b> = strike de mayor |gamma| = máxima influencia. Oro (imán) → operar hacia él. Morado (acelerador) → bifurcación: ±10pt NO direccional, esperar 2 velas. <b>%C/%P</b> = dominancia call/put del nodo.</p>
+  <p><b>Call/Put wall</b> = techo/piso = rango esperado. Muros que ruedan = señal direccional (call wall baja = bajista; put wall sube = alcista).</p>
+  <p><b>Air pocket</b> = tramo sin imanes, nada frena la caída. <b>Gatekeeper</b> = acelerador morado que bloquea el camino: no operar a través.</p>
+  <h4>Ciclo del nodo</h4>
+  <p>Fresh (0 toques, máximo) → Tested (1) → Weakening (2) → Dead (3+, evitar). <b>1er toque &gt; retests.</b> Gamma creciendo = fortalece; cayendo = pierde fuerza.</p>
+  <h4>Combo_tl en el chart</h4>
+  <p><b>Madrid ribbon</b> = 18 EMAs coloreadas (rojo cae / verde sube). <b>Supertrend</b> = línea verde↑/rojo↓ con Buy/Sell. <b>BB(20,2)</b>, SMA20/40/100/200, VWAP, MACD abajo, trendlines automáticas.</p>
+  <p style="margin-top:10px;color:#6f8bbf">Cifras en $/1% como gexa. Nada es consejo financiero — es un mapa de flujos mecánicos. El print manda la entrada; la estructura da la paciencia. Doctrina completa: skill <b>gexa-framework</b>.</p>
+</div>
+<div id="chart">
+  <div id="structpill" class="hidden"></div>
+  <div id="alarmpanel" class="hidden"></div>
+</div>
+<footer>
+  <span><span class="dot" style="background:#2962ff"></span>BB(20,2)</span>
+  <span><span class="dot" style="background:#f4c430"></span>SMA20</span>
+  <span><span class="dot" style="background:#ff9800"></span>SMA40</span>
+  <span><span class="dot" style="background:#26c6da"></span>SMA100</span>
+  <span><span class="dot" style="background:#ab47bc"></span>SMA200</span>
+  <span><span class="dot" style="background:#e0e0e0"></span>VWAP</span>
+  <span><span class="dot" style="background:#26a69a"></span>Supertrend↑</span>
+  <span><span class="dot" style="background:#ef5350"></span>Supertrend↓</span>
+  <span><span class="dot" style="background:#26a69a"></span>trendline↑</span>
+  <span><span class="dot" style="background:#ef5350"></span>trendline↓</span>
+  <span><span class="dot" style="background:linear-gradient(90deg,#ff1744,#00e676)"></span>Madrid ribbon</span>
+  <span><span class="dot" style="background:#ffb300"></span>imán (gamma+ dorado)</span>
+  <span><span class="dot" style="background:#9c27b0"></span>acelerador (gamma− morado)</span>
+  <span><span class="dot" style="background:#f4c430"></span>gamma-flip</span>
+  <span style="margin-left:auto;color:#555">SEÑAL-SOLAMENTE · sin órdenes</span>
+</footer>
+
+<!-- v5.2.0 vendored local (Apache-2.0), sin CDN en runtime -->
+<script src="lightweight-charts-v5.js"></script>
+<script>
+"use strict";
+const LWC = window.LightweightCharts;
+const { CandlestickSeries, LineSeries, HistogramSeries, LineStyle } = LWC;
+
+// ---------------------------------------------------------------- chart / panes
+// hora de Toronto (America/Toronto, DST automático) — LWC renderiza en UTC por defecto
+const TZ = "America/Toronto";
+const _hm = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, hour: "2-digit", minute: "2-digit", hour12: false });
+const _md = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, month: "short", day: "numeric" });
+const _dt = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false });
+const torHM = (t) => _hm.format(new Date(t * 1000));      // "11:41"
+const torFull = (t) => _dt.format(new Date(t * 1000));    // "Jul 23, 11:41"
+const el = document.getElementById("chart");
+const chart = LWC.createChart(el, {
+  layout: { background: { color: "#131722" }, textColor: "#d1d4dc",
+            panes: { separatorColor: "#2a2e39", separatorHoverColor: "#363a45" } },
+  grid: { vertLines: { color: "#1a1e28" }, horzLines: { color: "#1a1e28" } },
+  timeScale: { timeVisible: true, secondsVisible: false, borderColor: "#2a2e39",
+    // ejes en hora de Toronto. tickMarkType: 0=Year 1=Month 2=DayOfMonth 3=Time 4=TimeWithSecs.
+    // HORA (HH:MM) solo en marcas de tiempo (>=3, intradía); fecha en día/mes/año (<=2).
+    tickMarkFormatter: (t, tickType) => tickType >= 3 ? torHM(t) : _md.format(new Date(t * 1000)) },
+  localization: { timeFormatter: (t) => torFull(t) },   // etiqueta del crosshair
+  rightPriceScale: { borderColor: "#2a2e39" },
+  crosshair: { mode: 0 },
+});
+
+// Madrid Ribbon (combo_tl ④): 18 EMAs (5..90) con COLOR POR PUNTO (LineData.color).
+// Se crean ANTES de las velas -> las velas dibujan ENCIMA (precio visible, como TV).
+const MMA_KEYS = [];
+for (let L = 5; L <= 90; L += 5) MMA_KEYS.push("ma" + String(L).padStart(2, "0"));
+const RIB = {};
+for (const k of MMA_KEYS) {
+  const w = (k === "ma05" || k === "ma90") ? 2 : 1;   // extremos más gruesos (como el pine)
+  RIB[k] = chart.addSeries(LineSeries, {
+    lineWidth: w, priceLineVisible: false, lastValueVisible: false,
+    crosshairMarkerVisible: false, color: "#5c6470",
+  }, 0);
+}
+function setRibbon(madrid) {           // history: {ma05:[{time,value,color}],...}
+  if (!madrid) return;
+  for (const k of MMA_KEYS) if (madrid[k]) RIB[k].setData(madrid[k]);
+}
+function updRibbon(madrid) {            // bar: {ma05:{time,value,color},...}
+  if (!madrid) return;
+  for (const k of MMA_KEYS) if (madrid[k]) RIB[k].update(madrid[k]);
+}
+
+// pane 0: velas + BB + SMAs + VWAP + Supertrend + trendlines
+const candle = chart.addSeries(CandlestickSeries, {
+  upColor: "#26a69a", downColor: "#ef5350", borderVisible: false,
+  wickUpColor: "#26a69a", wickDownColor: "#ef5350",
+  priceLineVisible: true, lastValueVisible: true,   // etiqueta de último precio (TV-like)
+});
+const mkLine = (color, w, dashed) => chart.addSeries(LineSeries, {
+  color, lineWidth: w, priceLineVisible: false, lastValueVisible: false,
+  crosshairMarkerVisible: false,
+  lineStyle: dashed ? LineStyle.Dotted : LineStyle.Solid,
+}, 0);
+const S = {
+  bbUpper: mkLine("#2962ff", 1, true),
+  bbLower: mkLine("#2962ff", 1, true),
+  bbMid:   mkLine("#f4c430", 1, false),   // = SMA20 (base BB de Yoel)
+  sma40:   mkLine("#ff9800", 1, false),
+  sma100:  mkLine("#26c6da", 1, false),
+  sma200:  mkLine("#ab47bc", 2, false),
+  vwap:    mkLine("#e0e0e0", 1, true),
+  // combo_tl: Supertrend (2 ramas, huecos = break) + trendlines (2 puntos + extensión)
+  stUp:    mkLine("#26a69a", 2, false),
+  stDn:    mkLine("#ef5350", 2, false),
+  tlUp:    mkLine("#26a69a", 1, false),
+  tlDn:    mkLine("#ef5350", 1, false),
+};
+// sma20 y bbMid son la MISMA línea (media central) -> una sola serie (bbMid).
+
+// marcadores Buy/Sell del Supertrend (v5: createSeriesMarkers)
+let stMarkersApi = null;
+try { stMarkersApi = LWC.createSeriesMarkers(candle, []); } catch (e) { stMarkersApi = null; }
+let curStMarkers = [], sigMarkers = [], engineOps = [];
+function applyMarkers() {
+  if (!stMarkersApi) return;
+  try {
+    const mk = [...curStMarkers, ...sigMarkers, ...engineOps].sort((a, b) => a.time - b.time);
+    stMarkersApi.setMarkers(mk);
+  } catch (e) {}
+}
+
+// pane 1: volumen (fino)
+const volS = chart.addSeries(HistogramSeries, {
+  priceFormat: { type: "volume" }, priceScaleId: "", lastValueVisible: false,
+}, 1);
+volS.priceScale().applyOptions({ scaleMargins: { top: 0.8, bottom: 0 } });
+
+// pane 2: MACD (línea + señal + histograma) — pequeño
+const macdHist = chart.addSeries(HistogramSeries, { priceFormat:{type:"price",precision:3,minMove:0.001}, lastValueVisible:false }, 2);
+const macdLine = chart.addSeries(LineSeries, { color:"#2962ff", lineWidth:1, priceLineVisible:false, lastValueVisible:false, crosshairMarkerVisible:false }, 2);
+const macdSig  = chart.addSeries(LineSeries, { color:"#ff9800", lineWidth:1, priceLineVisible:false, lastValueVisible:false, crosshairMarkerVisible:false }, 2);
+
+// proporción de panes: velas grande, volumen fino, MACD chico
+try { chart.panes()[1].setHeight(80); chart.panes()[2].setHeight(120); } catch (e) {}
+
+// ------------------------------------------------- price lines (muros / flip)
+// Muros GEX = VERDE (call-wall brillante, put-wall/abs tinte distinto); flip = AMARILLO.
+// Grosor ∝ intensidad |gex| del strike (normalizado por el máx del perfil).
+let priceLines = [];
+function wallIntensity(lv, price) {
+  const prof = (lv && lv.profile) || [];
+  if (!prof.length || price == null) return 0.5;
+  const maxAbs = Math.max(1, ...prof.map(p => Math.abs(p.gex)));
+  let best = null, bd = Infinity;
+  for (const p of prof) { const d = Math.abs(p.strike - price); if (d < bd) { bd = d; best = p; } }
+  return best ? Math.min(1, Math.abs(best.gex) / maxAbs) : 0.5;
+}
+const wallW = (inten) => Math.max(1, Math.min(4, 1 + Math.round(3 * inten)));  // 1..4
+function fmtM(g) {   // $ en millones/billones estilo gexa: "+296M", "-1.2B"
+  if (g == null) return "";
+  const a = Math.abs(g);
+  const s = a >= 1e9 ? (g/1e9).toFixed(1) + "B" : (g/1e6).toFixed(0) + "M";
+  return (g >= 0 ? "+" : "") + s;
+}
+function drawLevels(lv) {
+  priceLines.forEach(pl => { try { candle.removePriceLine(pl); } catch(e){} });
+  priceLines = [];
+  const add = (price, color, title, dashed) => {
+    if (price == null) return;
+    priceLines.push(candle.createPriceLine({
+      price, color, lineWidth: dashed ? 1 : wallW(wallIntensity(lv, price)),
+      lineStyle: dashed ? LineStyle.Dashed : LineStyle.Solid,
+      axisLabelVisible: true, title,
+    }));
+  };
+  // IMÁN (gamma+) = dorado / ACELERADOR (gamma-) = morado (como gexa). Semi-transparente.
+  const kind = (gex) => gex == null ? { c: "rgba(176,190,197,0.5)", t: "" }
+    : gex >= 0 ? { c: "rgba(255,179,0,0.62)", t: "imán " }      // dorado, translúcido
+                : { c: "rgba(156,39,176,0.55)", t: "acc " };     // morado, translúcido
+  const addW = (price, gex, name) => {
+    if (price == null) return;
+    const k = kind(gex);
+    add(price, k.c, name + " " + k.t + fmtM(gex), false);
+  };
+  addW(lv.call_wall, lv.call_wall_gex, "CW");
+  addW(lv.put_wall, lv.put_wall_gex, "PW");
+  if (lv.abs_wall && lv.abs_wall !== lv.call_wall && lv.abs_wall !== lv.put_wall)
+    addW(lv.abs_wall, lv.abs_wall_gex, "POC" + (lv.poc_dom ? " " + lv.poc_dom : ""));  // GPOC + %C/%P
+  // flip con etiqueta +Γ DAMPENING / −Γ AMPLIFYING (signo del libro), como gexa
+  const gsym = lv.net_gex == null ? "" : (lv.net_gex >= 0 ? " +Γ" : " −Γ");
+  add(lv.flip, "rgba(244,196,48,0.85)", "flip" + gsym, true);
+  // expected move ±1σ (rango esperado hasta el vencimiento) — cian punteado
+  if (lv.em && lv.spot) {
+    add(lv.spot + lv.em, "rgba(41,182,246,0.5)", "EM+", true);
+    add(lv.spot - lv.em, "rgba(41,182,246,0.5)", "EM−", true);
+  }
+}
+
+// ------------------------------------- GEX profile: custom ISeriesPrimitive
+// rectángulos VERDES por strike desde el borde DERECHO; opacidad ∝ intensidad y
+// un glow (shadowBlur) ∝ intensidad -> los strikes fuertes "revientan".
+class GexView {
+  constructor(src) { this._src = src; }
+  zOrder() { return "bottom"; }
+  renderer() {
+    const src = this._src;
+    return { draw: (target) => target.useBitmapCoordinateSpace((scope) => {
+      const prof = src._profile;
+      if (!prof || !prof.length) return;
+      const ctx = scope.context;
+      const W = scope.bitmapSize.width, H = scope.bitmapSize.height;
+      const vr = scope.verticalPixelRatio;
+      const maxW = W * 0.16;            // ancho máx = 16% del pane
+      const bh = 7 * vr;                // alto de cada barra de strike
+      ctx.save();
+      for (const p of prof) {
+        const y = src._series.priceToCoordinate(p.strike);
+        if (y == null) continue;
+        const yb = y * vr;
+        if (yb < 0 || yb > H) continue;
+        const inten = Math.min(1, Math.abs(p.val) / src._maxAbs);
+        const bw = maxW * inten;
+        // IMÁN (+) = DORADO · ACELERADOR (−) = MORADO (como gexa). GEX=gamma, VEX=vanna.
+        // Semi-transparente + blur suave para NO tapar las velas.
+        const mag = p.val >= 0;
+        ctx.fillStyle = mag
+          ? `rgba(255,193,7,${0.09 + 0.38 * inten})`     // imán dorado
+          : `rgba(156,39,176,${0.09 + 0.38 * inten})`;   // acelerador morado
+        ctx.shadowColor = mag ? "rgba(255,193,7,0.7)" : "rgba(156,39,176,0.7)";
+        ctx.shadowBlur = 22 * inten * vr;         // blur ∝ intensidad (difumina, no tapa)
+        ctx.fillRect(W - bw, yb - bh / 2, bw, bh);
+        // cifra $/1% del nodo (como gexa), solo los relevantes para no saturar
+        if (inten >= 0.22) {
+          ctx.shadowBlur = 0;
+          ctx.font = `${10 * vr}px -apple-system, sans-serif`;
+          ctx.textAlign = "right";
+          ctx.textBaseline = "middle";
+          ctx.fillStyle = mag ? "rgba(255,213,79,0.95)" : "rgba(206,147,216,0.95)";
+          ctx.fillText(fmtM(p.val), W - bw - 5 * vr, yb);
+        }
+      }
+      ctx.shadowBlur = 0;
+      ctx.restore();
+    }) };
+  }
+}
+class GexProfile {
+  constructor(series) { this._series = series; this._profile = []; this._maxAbs = 1;
+                        this._layer = "GEX"; this._lv = null; this._req = null; this._view = new GexView(this); }
+  attached(p) { this._req = p.requestUpdate; }
+  detached() { this._req = null; }
+  paneViews() { return [this._view]; }
+  _rebuild() {
+    const lv = this._lv || {};
+    const src = this._layer === "VEX" ? (lv.vex_profile || []) : (lv.profile || []);
+    const key = this._layer === "VEX" ? "vex" : "gex";
+    this._profile = src.map(p => ({ strike: p.strike, val: p[key] }));
+    this._maxAbs = Math.max(1, ...this._profile.map(p => Math.abs(p.val)));
+    if (this._req) this._req();
+  }
+  setLevels(lv) { this._lv = lv; this._rebuild(); }
+  setLayer(layer) { this._layer = layer; this._rebuild(); }
+}
+const gexPrim = new GexProfile(candle);
+candle.attachPrimitive(gexPrim);
+
+// ------------------------------------------- trendlines (2 pts + extensión der.)
+let lastBarTime = null;
+function drawTrendline(series, tl) {
+  if (!tl || !tl.p1 || !tl.p2) { series.setData([]); return; }
+  const p1 = { time: tl.p1.time, value: tl.p1.value };
+  const p2 = { time: tl.p2.time, value: tl.p2.value };
+  const pts = [p1, p2];
+  // extender hacia la derecha hasta la última barra visible (esencia LuxAlgo)
+  const dt = p2.time - p1.time;
+  if (lastBarTime != null && dt > 0 && lastBarTime > p2.time) {
+    const slope = (p2.value - p1.value) / dt;
+    pts.push({ time: lastBarTime, value: +(p1.value + slope * (lastBarTime - p1.time)).toFixed(4) });
+  }
+  series.setData(pts);
+}
+function drawTrendlines(tl) {
+  if (!tl) { S.tlUp.setData([]); S.tlDn.setData([]); return; }
+  drawTrendline(S.tlUp, tl.up);
+  drawTrendline(S.tlDn, tl.dn);
+}
+
+// ------------------------------------------------------- header render
+function fmtBig(n) {
+  if (n == null) return "—";
+  const a = Math.abs(n);
+  if (a >= 1e9) return (n/1e9).toFixed(2) + "B";
+  if (a >= 1e6) return (n/1e6).toFixed(1) + "M";
+  if (a >= 1e3) return (n/1e3).toFixed(0) + "k";
+  return n.toFixed(0);
+}
+function drawHeader(lv) {
+  if (!lv) return;
+  const vixEl = document.getElementById("h-vix");
+  if (vixEl && lv.vix != null) {
+    const tag = lv.vix < 16 ? "CALM" : lv.vix <= 24 ? "ELEVADO" : "ALTO";
+    vixEl.textContent = lv.vix.toFixed(2) + " " + tag;
+    vixEl.className = "v " + (lv.vix < 16 ? "pos" : lv.vix <= 24 ? "trans" : "neg");
+  }
+  const dteEl = document.getElementById("h-dte");   // 0DTE puro (como gexa)
+  if (lv.dte != null) {
+    dteEl.textContent = (lv.dte < 1 ? "0DTE" : Math.round(lv.dte) + "DTE") +
+      (lv.exp ? " " + lv.exp.slice(4, 6) + "-" + lv.exp.slice(6, 8) : "");
+  }
+  const reg = document.getElementById("h-reg");
+  const dflip = (lv.flip && lv.spot) ? (lv.flip - lv.spot) / lv.spot * 100 : null;
+  let rtxt = lv.regime || "—", rcls = lv.regime === "POS" ? "pos" : lv.regime === "NEG" ? "neg" : "";
+  if (dflip != null && Math.abs(dflip) < 0.12) { rtxt = "TRANSICIÓN"; rcls = "trans"; }
+  reg.textContent = rtxt; reg.className = "v " + rcls;
+  const gx = document.getElementById("h-gex");
+  gx.textContent = lv.net_gex != null ? fmtBig(lv.net_gex) : "—";
+  gx.className = "v " + (lv.net_gex >= 0 ? "pos" : "neg");
+  const vx = document.getElementById("h-vex");
+  if (vx) { vx.textContent = lv.net_vex != null ? fmtBig(lv.net_vex) : "—";
+            vx.className = "v " + (lv.net_vex >= 0 ? "pos" : "neg"); }
+  const pr = document.getElementById("h-press");
+  if (pr && lv.pressure != null) {
+    pr.textContent = (lv.pressure > 0 ? "+" : "") + lv.pressure + (lv.pressure_lab ? " " + lv.pressure_lab : "");
+    pr.className = "v " + (Math.abs(lv.pressure) < 20 ? "trans" : lv.pressure > 0 ? "pos" : "neg");
+  }
+  const em = document.getElementById("h-em");
+  if (em && lv.em != null && lv.spot) em.textContent = "±" + lv.em + " (" + (lv.spot - lv.em).toFixed(0) + "–" + (lv.spot + lv.em).toFixed(0) + ")";
+  document.getElementById("h-flip").textContent = lv.flip != null ? lv.flip : "—";
+  document.getElementById("h-cw").textContent = lv.call_wall != null ? lv.call_wall : "—";
+  document.getElementById("h-pw").textContent = lv.put_wall != null ? lv.put_wall : "—";
+  if (lv.asof) document.getElementById("h-asof").textContent =
+      "GEX " + torHM(lv.asof) + " ET";
+}
+
+// OHLC readout (colorea verde/rojo según close>=open) — TradingView-like
+function setOHLC(bar) {
+  if (!bar) return;
+  const up = bar.close >= bar.open;
+  const col = up ? "#26a69a" : "#ef5350";
+  const set = (id, v) => { const e = document.getElementById(id);
+    e.textContent = (v == null ? "—" : v.toFixed(2)); e.style.color = col; };
+  set("o-o", bar.open); set("o-h", bar.high); set("o-l", bar.low); set("o-c", bar.close);
+}
+
+// ------------------------------------------------------- zoom (velas legibles)
+const SHOW_BARS = 100;   // barras visibles por defecto en cualquier timeframe
+function zoomRecent(n) {
+  if (!n) return;
+  try {
+    chart.timeScale().setVisibleLogicalRange({ from: Math.max(0, n - SHOW_BARS), to: n + 4 });
+  } catch (e) {}
+}
+
+// ------------------------------------------------------- timeframe selector
+let curTf = null;
+function setActiveTf(tf) {
+  curTf = tf;
+  document.querySelectorAll(".tfbtn").forEach(b =>
+    b.classList.toggle("active", b.dataset.tf === tf));
+}
+document.querySelectorAll(".tfbtn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const tf = btn.dataset.tf;
+    setActiveTf(tf);
+    if (ws && ws.readyState === WebSocket.OPEN)
+      ws.send(JSON.stringify({ cmd: "tf", tf }));   // el server reenvía history al tf
+  });
+});
+
+// ------------------------------------------------------- ticker selector
+const FLEET = ["QQQ","SPY","NVDA","TSLA","MU","SMH","AMD","AAPL","MSFT","META",
+  "AMZN","GOOGL","INTC","TSM","ASML","TXN","QCOM","AVGO","NFLX","NOK","GLD","XLK",
+  "EWY","DRAM","SPCX","SKHY","LRCX","SNDK","WDC","STX"];
+const symsel = document.getElementById("symsel");
+for (const s of FLEET) { const o = document.createElement("option"); o.value = s; o.textContent = s; symsel.appendChild(o); }
+symsel.addEventListener("change", () => {
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify({ cmd: "sym", sym: symsel.value }));   // el server re-pide y reenvía history
+    ws.send(JSON.stringify({ cmd: "alarm", act: "list" }));       // alarmas del nuevo símbolo
+  }
+  structpill.classList.add("hidden");   // reset señal estructural
+});
+function syncSymSel(sym) { if (sym) { const u = sym.toUpperCase();
+  if ([...symsel.options].some(o => o.value === u)) symsel.value = u; } }
+
+// ---- narrador de mercado (tipo gexa) ----
+const narrbtn = document.getElementById("narrbtn");
+const narrbar = document.getElementById("narrbar");
+const narrText = document.getElementById("narr-text");
+const narrSrc = document.getElementById("narr-src");
+const narrRefresh = document.getElementById("narr-refresh");
+let narrOn = false;
+narrbtn.addEventListener("click", () => {
+  narrOn = !narrOn;
+  narrbtn.classList.toggle("on", narrOn);
+  narrbar.classList.toggle("hidden", !narrOn);
+  if (narrOn) { narrText.textContent = "Leyendo el mapa…"; narrSrc.textContent = "⚡"; }
+  if (ws && ws.readyState === WebSocket.OPEN)
+    ws.send(JSON.stringify({ cmd: "narrate", on: narrOn }));
+});
+narrRefresh.addEventListener("click", () => {
+  if (!narrOn || !ws || ws.readyState !== WebSocket.OPEN) return;
+  narrRefresh.disabled = true; narrText.textContent = "Consultando DeepSeek…";
+  ws.send(JSON.stringify({ cmd: "narrate", on: true, force: true }));
+  setTimeout(() => { narrRefresh.disabled = false; }, 10000);
+});
+function onNarrator(msg) {
+  narrOn = !!msg.on;
+  narrbtn.classList.toggle("on", narrOn);
+  narrbar.classList.toggle("hidden", !narrOn);
+  if (!narrOn) return;
+  narrText.textContent = msg.text || "—";
+  narrSrc.textContent = msg.src === "ai" ? "🤖" : "⚡";
+  narrSrc.title = msg.src === "ai" ? "Pulido por DeepSeek" : "Lectura determinista (gratis)";
+  narrRefresh.disabled = false;
+}
+
+// ---- señal ESTRUCTURAL (imán/flip) en píldora flotante ----
+const structpill = document.getElementById("structpill");
+function onStructural(msg) {
+  const s = msg.sig;
+  if (!s) { structpill.classList.add("hidden"); return; }
+  structpill.className = "";
+  structpill.classList.add(s.dir === "down" ? "dn" : (s.dir === "flat" ? "flat" : ""));
+  structpill.textContent = "🧲 " + s.text + (s.prob ? ` · ${s.prob}%` : "");
+  structpill.title = "Señal estructural (conviccion pressure+distancia+momentum, no WR medido)";
+}
+
+// ---- alarmas manuales estilo TradingView (clic para poner) ----
+const alarmbtn = document.getElementById("alarmbtn");
+let alarmArmed = false, alarmLines = [];
+alarmbtn.addEventListener("click", () => {
+  alarmArmed = !alarmArmed;
+  alarmbtn.classList.toggle("arm", alarmArmed);
+  el.style.cursor = alarmArmed ? "crosshair" : "";
+});
+// clic en el chart estando armado -> precio bajo el cursor -> crea alarma
+chart.subscribeClick((param) => {
+  if (!alarmArmed || !param || param.point == null) return;
+  let price = null;
+  try { price = candle.coordinateToPrice(param.point.y); } catch (e) {}
+  if (price == null) return;
+  price = Math.round(price * 100) / 100;
+  if (ws && ws.readyState === WebSocket.OPEN)
+    ws.send(JSON.stringify({ cmd: "alarm", act: "add", price }));
+  alarmArmed = false; alarmbtn.classList.remove("arm"); el.style.cursor = "";
+});
+const alarmpanel = document.getElementById("alarmpanel");
+function delAlarm(price) {
+  if (ws && ws.readyState === WebSocket.OPEN)
+    ws.send(JSON.stringify({ cmd: "alarm", act: "del", price }));
+}
+function onAlarms(msg) {
+  // líneas en el chart
+  alarmLines.forEach(l => { try { candle.removePriceLine(l); } catch (e) {} });
+  alarmLines = [];
+  const alarms = msg.alarms || [];
+  alarms.forEach(a => {
+    try {
+      alarmLines.push(candle.createPriceLine({
+        price: a.price, color: "#f4c430", lineWidth: 1, lineStyle: 2,
+        axisLabelVisible: true, title: `🔔 ${a.dir === "up" ? "▲" : "▼"} ${a.price}`,
+      }));
+    } catch (e) {}
+  });
+  // panel con 🗑 por alarma (borrar) — al lado de la campanita y el triángulo
+  if (!alarms.length) { alarmpanel.classList.add("hidden"); alarmpanel.innerHTML = ""; return; }
+  alarmpanel.classList.remove("hidden");
+  let html = '<div class="ahdr">🔔 Alarmas</div>';
+  alarms.forEach(a => {
+    html += `<div class="arow"><span>🔔 ${a.dir === "up" ? "▲" : "▼"} ${a.price}</span>` +
+            `<span class="atrash" data-price="${a.price}" title="Borrar esta alarma">🗑</span></div>`;
+  });
+  alarmpanel.innerHTML = html;
+  alarmpanel.querySelectorAll(".atrash").forEach(t =>
+    t.addEventListener("click", () => delAlarm(parseFloat(t.dataset.price))));
+}
+
+// toggle 0DTE <-> ALL-EXP (scope) — el server recomputa GEX/flip/VEX
+document.querySelectorAll("#scopebar .tgl").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("#scopebar .tgl").forEach(b => b.classList.toggle("active", b === btn));
+    if (ws && ws.readyState === WebSocket.OPEN)
+      ws.send(JSON.stringify({ cmd: "scope", scope: btn.dataset.scope }));
+  });
+});
+// toggle GEX <-> VEX (capa del perfil) — cliente-side, sin server
+document.querySelectorAll("#layerbar .tgl").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll("#layerbar .tgl").forEach(b => b.classList.toggle("active", b === btn));
+    gexPrim.setLayer(btn.dataset.layer);
+  });
+});
+
+// ------------------------------------------------------- WS pipeline
+let curLevels = null;
+let lastBar = null;
+function onHistory(msg) {
+  candle.setData(msg.bars);
+  const ind = msg.indicators;
+  S.bbUpper.setData(ind.bbUpper);
+  S.bbLower.setData(ind.bbLower);
+  S.bbMid.setData(ind.bbMid);       // SMA20 = media central
+  S.sma40.setData(ind.sma40);
+  S.sma100.setData(ind.sma100);
+  S.sma200.setData(ind.sma200);
+  S.vwap.setData(ind.vwap);
+  S.stUp.setData(ind.stUp || []);   // Supertrend rama alcista (con whitespace = break)
+  S.stDn.setData(ind.stDn || []);   // Supertrend rama bajista
+  setRibbon(ind.madrid);            // Madrid Ribbon (18 EMAs coloreadas)
+  volS.setData(ind.volume);
+  macdHist.setData(ind.hist);
+  macdLine.setData(ind.macd);
+  macdSig.setData(ind.signal);
+  lastBar = msg.bars.length ? msg.bars[msg.bars.length - 1] : null;
+  lastBarTime = lastBar ? lastBar.time : null;
+  drawTrendlines(ind.trendlines);
+  // marcadores = Supertrend Buy/Sell + NUESTRAS señales (whale/flow/bollinger/alarma/estructural)
+  curStMarkers = ind.stMarkers || [];
+  sigMarkers = msg.signals || [];
+  engineOps = msg.engineOps || [];
+  applyMarkers();
+  curLevels = msg.levels;
+  drawLevels(msg.levels);
+  gexPrim.setLevels(msg.levels);
+  drawHeader(msg.levels);
+  syncSymSel(msg.levels && msg.levels.sym);
+  setOHLC(lastBar);
+  if (msg.tf) setActiveTf(msg.tf);
+  zoomRecent(msg.bars.length);   // últimas ~100 barras (velas legibles en cada tf)
+}
+function upd(series, pt) { if (pt) series.update(pt); }
+function onBar(msg) {
+  candle.update(msg.bar);           // update(), NUNCA setData por tick
+  const ind = msg.indicators;
+  upd(S.bbUpper, ind.bbUpper); upd(S.bbLower, ind.bbLower); upd(S.bbMid, ind.bbMid);
+  upd(S.sma40, ind.sma40); upd(S.sma100, ind.sma100); upd(S.sma200, ind.sma200);
+  upd(S.vwap, ind.vwap);
+  upd(S.stUp, ind.stUp); upd(S.stDn, ind.stDn);
+  updRibbon(ind.madrid);
+  upd(volS, ind.volume);
+  upd(macdHist, ind.hist); upd(macdLine, ind.macd); upd(macdSig, ind.signal);
+  lastBar = msg.bar; lastBarTime = msg.bar.time;
+  if (ind.trendlines) drawTrendlines(ind.trendlines);
+  if (msg.levels && (!curLevels || msg.levels.asof !== curLevels.asof)) {
+    curLevels = msg.levels; drawLevels(msg.levels); gexPrim.setLevels(msg.levels);
+  }
+  drawHeader(curLevels || msg.levels);
+  setOHLC(lastBar);
+}
+
+// niveles en tiempo real (frame propio, sin esperar barra): redibuja muros/flip/GEX
+function onLevels(msg) {
+  if (!msg.levels) return;
+  curLevels = msg.levels;
+  drawLevels(msg.levels);
+  gexPrim.setLevels(msg.levels);
+  drawHeader(msg.levels);
+}
+
+// crosshair: OHLC de la barra bajo el cursor (o última si no hay hover)
+chart.subscribeCrosshairMove((param) => {
+  if (!param || !param.time || !param.seriesData) { setOHLC(lastBar); return; }
+  const d = param.seriesData.get(candle);
+  if (d && d.open != null) setOHLC(d); else setOHLC(lastBar);
+});
+
+// ------------------------------------------------------- reconnect loop
+let ws = null, retry = null;
+function connect() {
+  const conn = document.getElementById("conn");
+  const url = `ws://${location.host || "127.0.0.1:8080"}/stream`;
+  ws = new WebSocket(url);
+  ws.onopen = () => { conn.className = "on"; conn.textContent = "● en vivo";
+    try { ws.send(JSON.stringify({ cmd: "alarm", act: "list" })); } catch (e) {} };
+  ws.onmessage = (ev) => {
+    const msg = JSON.parse(ev.data);
+    if (msg.type === "history") onHistory(msg);
+    else if (msg.type === "bar") onBar(msg);
+    else if (msg.type === "levels") onLevels(msg);   // GEX/flip/muros en tiempo real
+    else if (msg.type === "narrator") onNarrator(msg);   // narrador de mercado
+    else if (msg.type === "signals") { sigMarkers = msg.signals || []; engineOps = msg.engineOps || []; applyMarkers(); }  // refresco marcadores + ops engine
+    else if (msg.type === "structural") onStructural(msg);   // señal imán/flip
+    else if (msg.type === "alarms") onAlarms(msg);   // alarmas manuales del símbolo
+  };
+  ws.onclose = () => {
+    conn.className = "off"; conn.textContent = "● reconectando…";
+    clearTimeout(retry);
+    retry = setTimeout(connect, 2000);   // reconecta -> el server reenvía history
+  };
+  ws.onerror = () => { try { ws.close(); } catch (e) {} };
+}
+// guía / botones de info
+const helpEl = document.getElementById("help");
+document.getElementById("helpbtn").addEventListener("click", () => helpEl.classList.toggle("on"));
+document.getElementById("helpx").addEventListener("click", () => helpEl.classList.remove("on"));
+
+connect();
+window.addEventListener("resize", () => {
+  try { zoomRecent(candle.data().length); } catch (e) {}
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+{
+ "method": "faithful-3TF-nostop-optionpayoff-BSsynthetic",
+ "TP": 1.0,
+ "strategies": {
+  "rebote_sma20": {
+   "con": {
+    "n": 448,
+    "p_win": 0.558,
+    "avg_ret": 0.135,
+    "wilson_lo": 0.512
+   },
+   "sin": {
+    "n": 1503,
+    "p_win": 0.494,
+    "avg_ret": -0.003,
+    "wilson_lo": 0.468
+   }
+  },
+  "iman": {
+   "con": {
+    "n": 2267,
+    "p_win": 0.444,
+    "avg_ret": -0.08,
+    "wilson_lo": 0.424
+   },
+   "sin": {
+    "n": 1158,
+    "p_win": 0.436,
+    "avg_ret": -0.102,
+    "wilson_lo": 0.408
+   }
+  }
+ }
+}

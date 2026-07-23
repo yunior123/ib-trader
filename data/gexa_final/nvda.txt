@@ -1,0 +1,9 @@
+# GEXA SNAPSHOT NVDA — 2026-07-23 close (as of Thu 4:04 PM ET) — última noche de gexa
+spot 209.25 | Exp 2026-07-24 | VIX 18.7
+flip 203 (+5.7pt) | regime POSITIVE
+Vanna +1.8B    <-- ESTA es la cifra de "billones" que Yunior veia (NO el net GEX)
+Pressure -19 FLAT (header) / +85 DEEP POSITIVE GAMMA (panel dealer)
+Drift +36.5B | Bias CALL FLOW | Call$ 3.92M Put$ 1.53M
+Market Tide NVDA +12.1M (bullish, flipped bullish 12:15 ET)
+NOTA CALIBRACION: gexa flip 203 vs nuestro ~206 -> gap de cobertura (near-ATM cache vs cadena completa). Cerrar ampliando strikes.
+NOTA CLAVE: gexa NO muestra un headline "net GEX en $"; muestra flip/Vanna/Pressure/Drift. La cifra grande = Vanna.

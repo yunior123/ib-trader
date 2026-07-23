@@ -1,0 +1,8 @@
+{
+  "estudio": "2026-07-22, 30d x flota, bandas 15m RTH ancladas al cierre previo",
+  "n_aperturas_fuera": 225,
+  "acerca_banda_30min_pct": 60,
+  "recorre_50pct_gap_30min_pct": 36,
+  "re_entrada": {"n": 87, "avanza_a_media_30min_pct": 56, "gap_abajo_pct": 58, "gap_arriba_pct": 55},
+  "nota": "CONTEXTO no gatillo; filtro squeeze NO mejora (54 vs 52); earnings del ticker anula"
+}

@@ -1,0 +1,10 @@
+# camino feliz: BALLENA CALLS -> PUT, QQQ cae $1, +5% neto, venta, IDLE verde
+{"t_ms":0,"ev":"hhmm","v":1005}
+{"t_ms":0,"ev":"chain","spot_c":70850,"iv":0.20,"spread_c":4,"exp":20260721}
+{"t_ms":0,"ev":"und","bid_c":70848,"ask_c":70852}
+{"t_ms":100,"ev":"alert","side":"CALLS","sym":"QQQ"}
+{"t_ms":200,"ev":"expect_state","v":"ARMED_WAIT"}
+{"t_ms":4000,"ev":"expect_state","v":"HOLDING"}
+{"t_ms":8000,"ev":"und","bid_c":70747,"ask_c":70750}
+{"t_ms":14000,"ev":"expect_state","v":"IDLE"}
+{"t_ms":14000,"ev":"expect_trades","v":1}

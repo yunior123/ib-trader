@@ -23,6 +23,7 @@ Uso:  ./venv/bin/python scripts/opt_chain_cache.py          # daemon (keepalive)
 import datetime as dt
 import math
 import os
+import shutil
 import sys
 import time
 
@@ -40,7 +41,7 @@ os.chdir(REPO)
 #   recortada a ±4% en los nuevos para mantener el ciclo <180s.
 FLEET = ["SMH", "TSM", "QQQ", "NVDA", "MU", "ASML", "INTC", "DRAM", "SKHY",
          "SPCX", "AMD", "TXN", "TSLA", "NOK", "AAPL", "GOOGL", "QCOM",
-         "MSFT", "AVGO", "AMZN", "META"]
+         "MSFT", "AVGO", "AMZN", "META", "LRCX", "SNDK", "WDC", "STX", "SPY"]
 
 PORT, CLIENT_ID = 7496, 48
 PCT_BAND = 0.06          # ±6% del spot
@@ -182,6 +183,19 @@ class ChainCache:
             f.write("# strike right exp bid ask vol oi iv delta gamma\n")
             f.write("\n".join(rows) + "\n")
         os.replace(tmp, path)
+        try:
+            # historia para backtesting (orden Yunior 2026-07-22; densificado 5min 07-23):
+            # 1 foto/5min/simbolo en data/history/YYYY-MM-DD/ (opt_chain_<sym>_HHMM.txt,
+            # MM redondeado a 5) — suficiente para backtestear evolucion GEX/muros intradia.
+            # Degradacion limpia (si falla, no rompe el cache).
+            hdir = f"data/history/{now:%Y-%m-%d}"
+            _bucket = (now.minute // 5) * 5
+            hpath = f"{hdir}/opt_chain_{sym.lower()}_{now:%H}{_bucket:02d}.txt"
+            if not os.path.exists(hpath):
+                os.makedirs(hdir, exist_ok=True)
+                shutil.copy2(path, hpath)
+        except Exception:
+            pass
         return len(rows)
 
     def run(self):

@@ -69,6 +69,12 @@ def main():
                      magnets=d.get("magnets"), regime=d.get("regime"),
                      call_usd=d.get("call_usd"), put_usd=d.get("put_usd"), ts=d["ts"])
     json.dump(snap, open("data/gexa_snapshot.json", "w"), indent=1)
+    try:
+        # historia intradia para backtesting (orden Yunior 2026-07-22)
+        with open("data/history/gexa_hist.jsonl", "a") as hf:
+            hf.write(json.dumps({"sym": sym, **snap[sym]}, separators=(",", ":")) + "\n")
+    except Exception:
+        pass
     print(f"{sym} -> gexa_snapshot.json:", json.dumps(snap[sym]))
 
 if __name__ == "__main__":

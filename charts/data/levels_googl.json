@@ -1,0 +1,106 @@
+{
+ "sym": "GOOGL",
+ "spot": 318.32,
+ "asof": 1784834682,
+ "exp": "20260724",
+ "dte": 1.02,
+ "scope": "0DTE",
+ "net_vex": -180390619.8,
+ "vex_peak": 325.0,
+ "vex_profile": [
+  {
+   "strike": 307.5,
+   "vex": 61286881.4
+  },
+  {
+   "strike": 310.0,
+   "vex": 207728400.0
+  },
+  {
+   "strike": 312.5,
+   "vex": 94400631.2
+  },
+  {
+   "strike": 315.0,
+   "vex": 146237813.7
+  },
+  {
+   "strike": 317.5,
+   "vex": 46407631.9
+  },
+  {
+   "strike": 320.0,
+   "vex": -173230302.2
+  },
+  {
+   "strike": 322.5,
+   "vex": -102710438.8
+  },
+  {
+   "strike": 325.0,
+   "vex": -342429576.5
+  },
+  {
+   "strike": 327.5,
+   "vex": -118081660.5
+  }
+ ],
+ "pressure": -83,
+ "pressure_lab": "AMPLIFICA fuerte",
+ "iv_atm": 0.4253,
+ "em": 7.17,
+ "net_gex": -147830100.7,
+ "regime": "NEG",
+ "flip": 327.5,
+ "flip_static": 327.5,
+ "call_wall": 320.0,
+ "put_wall": 317.5,
+ "abs_wall": 320.0,
+ "poc_dom": "99%P",
+ "call_wall_gex": -43466175.8,
+ "put_wall_gex": -25453579.8,
+ "abs_wall_gex": -43466175.8,
+ "oi_call_wall": 325.0,
+ "oi_put_wall": 317.5,
+ "near_call_wall": false,
+ "near_put_wall": true,
+ "near_flip": false,
+ "profile": [
+  {
+   "strike": 307.5,
+   "gex": -2468584.1
+  },
+  {
+   "strike": 310.0,
+   "gex": -10361509.3
+  },
+  {
+   "strike": 312.5,
+   "gex": -6879101.9
+  },
+  {
+   "strike": 315.0,
+   "gex": -18984763.6
+  },
+  {
+   "strike": 317.5,
+   "gex": -25453579.8
+  },
+  {
+   "strike": 320.0,
+   "gex": -43466175.8
+  },
+  {
+   "strike": 322.5,
+   "gex": -10755005.0
+  },
+  {
+   "strike": 325.0,
+   "gex": -23313104.7
+  },
+  {
+   "strike": 327.5,
+   "gex": -6148276.4
+  }
+ ]
+}

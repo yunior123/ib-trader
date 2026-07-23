@@ -1,0 +1,244 @@
+{
+ "AAPL": {
+  "enabled": true,
+  "med_fwd_max": 0.02,
+  "med_fwd_min": -0.0045,
+  "n": 11,
+  "p_continue_3d": 0.273,
+  "p_rebound_3d": 0.727
+ },
+ "AMD": {
+  "enabled": true,
+  "med_fwd_max": 0.075,
+  "med_fwd_min": -0.0486,
+  "n": 12,
+  "p_continue_3d": 0.667,
+  "p_rebound_3d": 0.833
+ },
+ "AMZN": {
+  "enabled": true,
+  "med_fwd_max": 0.0272,
+  "med_fwd_min": -0.0176,
+  "n": 16,
+  "p_continue_3d": 0.312,
+  "p_rebound_3d": 0.75
+ },
+ "ASML": {
+  "enabled": true,
+  "med_fwd_max": 0.0535,
+  "med_fwd_min": -0.022,
+  "n": 14,
+  "p_continue_3d": 0.5,
+  "p_rebound_3d": 0.857
+ },
+ "AVGO": {
+  "enabled": true,
+  "med_fwd_max": 0.0384,
+  "med_fwd_min": -0.0277,
+  "n": 14,
+  "p_continue_3d": 0.571,
+  "p_rebound_3d": 0.786
+ },
+ "DRAM": {
+  "enabled": true,
+  "med_fwd_max": 0.1124,
+  "med_fwd_min": -0.0534,
+  "n": 4,
+  "p_continue_3d": 0.75,
+  "p_rebound_3d": 0.75
+ },
+ "EWY": {
+  "enabled": true,
+  "med_fwd_max": 0.0364,
+  "med_fwd_min": -0.0404,
+  "n": 13,
+  "p_continue_3d": 0.692,
+  "p_rebound_3d": 0.846
+ },
+ "GLD": {
+  "enabled": false,
+  "med_fwd_max": 0.0138,
+  "med_fwd_min": -0.0181,
+  "n": 14,
+  "p_continue_3d": 0.429,
+  "p_rebound_3d": 0.429
+ },
+ "GOOGL": {
+  "enabled": true,
+  "med_fwd_max": 0.0315,
+  "med_fwd_min": -0.0145,
+  "n": 11,
+  "p_continue_3d": 0.364,
+  "p_rebound_3d": 0.636
+ },
+ "INTC": {
+  "enabled": true,
+  "med_fwd_max": 0.0948,
+  "med_fwd_min": -0.0432,
+  "n": 10,
+  "p_continue_3d": 0.7,
+  "p_rebound_3d": 0.9
+ },
+ "LRCX": {
+  "enabled": true,
+  "med_fwd_max": 0.0367,
+  "med_fwd_min": -0.0383,
+  "n": 11,
+  "p_continue_3d": 0.636,
+  "p_rebound_3d": 0.818
+ },
+ "META": {
+  "enabled": false,
+  "med_fwd_max": 0.0126,
+  "med_fwd_min": -0.0282,
+  "n": 17,
+  "p_continue_3d": 0.647,
+  "p_rebound_3d": 0.353
+ },
+ "MSFT": {
+  "enabled": true,
+  "med_fwd_max": 0.0153,
+  "med_fwd_min": -0.0327,
+  "n": 14,
+  "p_continue_3d": 0.571,
+  "p_rebound_3d": 0.5
+ },
+ "MU": {
+  "enabled": true,
+  "med_fwd_max": 0.0743,
+  "med_fwd_min": -0.0405,
+  "n": 11,
+  "p_continue_3d": 0.818,
+  "p_rebound_3d": 0.909
+ },
+ "NFLX": {
+  "enabled": true,
+  "med_fwd_max": 0.0166,
+  "med_fwd_min": -0.028,
+  "n": 17,
+  "p_continue_3d": 0.706,
+  "p_rebound_3d": 0.529
+ },
+ "NOK": {
+  "enabled": true,
+  "med_fwd_max": 0.0387,
+  "med_fwd_min": -0.0077,
+  "n": 11,
+  "p_continue_3d": 0.364,
+  "p_rebound_3d": 0.727
+ },
+ "NVDA": {
+  "enabled": true,
+  "med_fwd_max": 0.0344,
+  "med_fwd_min": -0.0256,
+  "n": 16,
+  "p_continue_3d": 0.562,
+  "p_rebound_3d": 0.938
+ },
+ "QCOM": {
+  "enabled": true,
+  "med_fwd_max": 0.0331,
+  "med_fwd_min": -0.0394,
+  "n": 16,
+  "p_continue_3d": 0.688,
+  "p_rebound_3d": 0.812
+ },
+ "QQQ": {
+  "enabled": true,
+  "med_fwd_max": 0.0215,
+  "med_fwd_min": -0.0175,
+  "n": 12,
+  "p_continue_3d": 0.417,
+  "p_rebound_3d": 0.667
+ },
+ "SKHY": {
+  "enabled": true,
+  "n": 0,
+  "note": "sin datos yfinance"
+ },
+ "SMH": {
+  "enabled": true,
+  "med_fwd_max": 0.0495,
+  "med_fwd_min": -0.0264,
+  "n": 15,
+  "p_continue_3d": 0.533,
+  "p_rebound_3d": 0.933
+ },
+ "SNDK": {
+  "enabled": true,
+  "med_fwd_max": 0.1626,
+  "med_fwd_min": -0.0544,
+  "n": 10,
+  "p_continue_3d": 0.6,
+  "p_rebound_3d": 1.0
+ },
+ "SPCX": {
+  "enabled": true,
+  "n": 0,
+  "note": "sin datos yfinance"
+ },
+ "SPY": {
+  "enabled": true,
+  "med_fwd_max": 0.0204,
+  "med_fwd_min": -0.0007,
+  "n": 12,
+  "p_continue_3d": 0.25,
+  "p_rebound_3d": 0.75
+ },
+ "STX": {
+  "enabled": true,
+  "med_fwd_max": 0.1096,
+  "med_fwd_min": -0.0306,
+  "n": 15,
+  "p_continue_3d": 0.6,
+  "p_rebound_3d": 0.933
+ },
+ "TSLA": {
+  "enabled": true,
+  "med_fwd_max": 0.0552,
+  "med_fwd_min": -0.026,
+  "n": 17,
+  "p_continue_3d": 0.529,
+  "p_rebound_3d": 0.941
+ },
+ "TSM": {
+  "enabled": true,
+  "med_fwd_max": 0.0545,
+  "med_fwd_min": -0.0233,
+  "n": 13,
+  "p_continue_3d": 0.615,
+  "p_rebound_3d": 0.769
+ },
+ "TXN": {
+  "enabled": true,
+  "med_fwd_max": 0.0266,
+  "med_fwd_min": -0.0338,
+  "n": 15,
+  "p_continue_3d": 0.667,
+  "p_rebound_3d": 0.667
+ },
+ "WDC": {
+  "enabled": true,
+  "med_fwd_max": 0.0876,
+  "med_fwd_min": -0.058,
+  "n": 10,
+  "p_continue_3d": 0.8,
+  "p_rebound_3d": 1.0
+ },
+ "XLK": {
+  "enabled": true,
+  "med_fwd_max": 0.0224,
+  "med_fwd_min": -0.0283,
+  "n": 14,
+  "p_continue_3d": 0.643,
+  "p_rebound_3d": 0.643
+ },
+ "_meta": {
+  "continue_def": "<=-2.0% en 3d (low)",
+  "disable_rule": "p_rebound<50% con n>=10",
+  "generated_epoch": 1784755982,
+  "period": "1y daily yfinance",
+  "rebound_def": ">=+1.5% en 3d (high)",
+  "signal": "drop>=max(2.0xATR14, 1.5% del high5d), episodio nuevo, entrada al cierre"
+ }
+}
