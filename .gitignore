@@ -79,3 +79,4 @@ scalper/HALT
 scalper/ARM_LIVE
 scalper/whale_scalper
 scalper/whale_scalper_asan
+venv-chart/
