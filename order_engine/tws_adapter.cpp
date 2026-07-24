@@ -206,6 +206,14 @@ void TwsAdapter::orderStatus(OrderId orderId, const std::string& status, Decimal
         // AUDIT-FIX: cancelado PERO con fill parcial -> tratar como FILL (proteger lo llenado).
         if (fill_qty > 0.0) push((int)orderId, ExecReport::FILL, px_c, "PartialThenCancel", fill_qty);
         else                push((int)orderId, ExecReport::CANCELED, 0, status);
+    } else if (fill_qty > 0.0) {
+        // FILL PARCIAL con la orden aún viva (típico en libros de opciones finos):
+        // antes caía al ACK de abajo, el FSM no pasaba a FILLED y la posición REAL
+        // quedaba SIN STOP hasta que TWS matara la DAY al cierre. Horas desnudo.
+        // Fix 2026-07-24: emitir FILL por lo llenado -> el motor arma stop para esa
+        // cantidad; si luego llenan más, el FSM lo detecta y re-arma por el total.
+        if (ledger_) ledger_->ack((int)orderId, status);
+        push((int)orderId, ExecReport::FILL, px_c, "Partial", fill_qty);
     } else {
         // PreSubmitted / Submitted / PendingSubmit -> ACK
         if (ledger_) ledger_->ack((int)orderId, status);

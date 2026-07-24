@@ -478,13 +478,29 @@ int main(int argc, char** argv) {
                 tws.reconcile();                              // cancela huérfanas OE: (incl. el stop viejo)
                 for (int i = 0; i < 80 && !tws.reconciled(); ++i) tws.pump();
                 reconnect_backoff = 1;
-                // re-armar stops de posiciones vivas: reconcile canceló el nativo viejo, lo re-colocamos
+                // Stops tras reconnect. OJO: reconcile NO cancela los STP — los ADOPTA
+                // (tws_adapter.cpp:224, protegen una posición real). Resetear a ciegas
+                // colocaba un SEGUNDO stop sobre la misma posición: al disparar vendía
+                // el doble y te dejaba CORTO en descubierto, con ambos GTC (sobreviven
+                // la noche). Fix 2026-07-24: adoptar el que ya existe; re-armar sólo si
+                // de verdad no quedó ninguno.
                 for (auto& [bsym, bmap] : book)
                     for (auto& [bk, bz] : bmap)
                         if (bz.st == ZoneRT::FILLED && bz.stop_on) {
-                            bz.stop_armed = false; bz.stop_confirmed = false; bz.stop_id = -1; bz.stop_wait = 0;
+                            int adopted = tws.adopted_stop_id("OE:" + bz.id + ":STOP");
+                            if (adopted >= 0) {
+                                bz.stop_id = adopted; bz.stop_armed = true;
+                                bz.stop_confirmed = true; bz.stop_wait = 0;
+                                ledger.note("stop nativo ADOPTADO tras reconnect id=" +
+                                            std::to_string(adopted) + " zona " + bz.id);
+                                std::fprintf(stderr, "[%s] stop nativo adoptado id=%d zona %s (no re-coloco)\n",
+                                             bsym.c_str(), adopted, bz.id.c_str());
+                            } else {
+                                bz.stop_armed = false; bz.stop_confirmed = false;
+                                bz.stop_id = -1; bz.stop_wait = 0;
+                            }
                         }
-                ledger.note("reconnect+reconcile ok -> re-armo stops de posiciones vivas");
+                ledger.note("reconnect+reconcile ok -> stops adoptados/re-armados");
             } else {
                 reconnect_backoff = std::min(reconnect_backoff * 2, 30);
             }
@@ -508,6 +524,19 @@ int main(int argc, char** argv) {
                     z.filled_qty = ev.qty > 0 ? ev.qty : (double)(z.qty > 0 ? z.qty : 1);   // proteger lo llenado
                     write_state(state_dir, sym, z, "\"fill_px\":" + std::to_string(z.fill_px));
                     std::fprintf(stderr, "[%s] zona %s FILLED @ %.2f\n", sym.c_str(), z.id.c_str(), z.fill_px);
+                } else if (ev.order_id == z.entry_id && z.st == ZoneRT::FILLED &&
+                           ev.qty > z.filled_qty + 1e-9) {
+                    // Llegó MÁS cantidad de la misma entrada (parcial que sigue llenando):
+                    // el stop vigente protege de menos. Re-armar por el total.
+                    const double antes = z.filled_qty;
+                    z.filled_qty = ev.qty;
+                    z.fill_px = ev.px_c / 100.0;          // avgFillPrice acumulado de TWS
+                    if (z.stop_id >= 0) { tws.cancel(z.stop_id); z.stop_id = -1; }
+                    z.stop_armed = false; z.stop_confirmed = false; z.stop_wait = 0;
+                    ledger.note("fill parcial crece " + std::to_string(antes) + " -> " +
+                                std::to_string(z.filled_qty) + " zona " + z.id + " -> re-armo stop");
+                    std::fprintf(stderr, "[%s] zona %s parcial %.0f -> %.0f, re-armo stop\n",
+                                 sym.c_str(), z.id.c_str(), antes, z.filled_qty);
                 } else if (ev.order_id == z.stop_id || ev.order_id == z.close_id) {
                     z.st = ZoneRT::STOP_HIT;
                     write_state(state_dir, sym, z, "\"close_px\":" + std::to_string(ev.px_c / 100.0));

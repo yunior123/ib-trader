@@ -96,6 +96,16 @@ public:
     bool reconciled() const { return reconciled_; }
     const std::string& account() const { return account_; }
 
+    // Stop nativo VIVO adoptado con este orderRef -> su orderId, o -1 si no hay.
+    // Tras un reconnect los STP huérfanos se ADOPTAN (siguen protegiendo la
+    // posición); el motor debe re-usarlos en vez de colocar un segundo stop.
+    int adopted_stop_id(const std::string& ref) const {
+        for (const auto& kv : orders_)
+            if (kv.second.ours && kv.second.live && kv.second.native_stop && kv.second.ref == ref)
+                return kv.first;
+        return -1;
+    }
+
     // orderId: se siembra con nextValidId y se incrementa localmente.
     int next_order_id() { return next_id_++; }
     bool have_ids() const { return next_id_ > 0; }
