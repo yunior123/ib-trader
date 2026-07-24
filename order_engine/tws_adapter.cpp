@@ -218,6 +218,23 @@ void TwsAdapter::openOrder(OrderId orderId, const Contract& c, const Order& o, c
     // Reconciliación: adoptar y CANCELAR las órdenes "OE:" de un run anterior.
     bool ours = starts_with(o.orderRef, OE_PREFIX);
     if (ours) {
+        // AUTO-CANCEL FIX (2026-07-24): TWS emite openOrder SIN PEDIRLO por cada orden que
+        // colocamos y en cada cambio de estado. Sin este guard, la orden recién enviada se
+        // veía como "huérfana OE:" y se cancelaba SOLA. Evidencia en ledger/orders.jsonl
+        // (id=33): intent + CINCO cancel que nadie pidió, en 150ms. Llenó de milagro por ser
+        // acción marketable; una opción 0DTE con libro fino se habría cancelado tras el print.
+        // Sólo es huérfana la que aparece ANTES de openOrderEnd() y que no colocamos nosotros.
+        {
+            auto it = orders_.find((int)orderId);
+            const bool mia_viva = (it != orders_.end() && it->second.ours && it->second.live);
+            if (reconciled_ || mia_viva) {
+                OpenOrd& r = orders_[(int)orderId];
+                r.c = c; r.o = o; r.ref = o.orderRef; r.ours = true;   // refrescar, NO cancelar
+                r.native_stop = (o.orderType == "STP" || o.orderType == "STP LMT");
+                if ((int)orderId >= next_id_) next_id_ = (int)orderId + 1;
+                return;
+            }
+        }
         OpenOrd& rec = orders_[(int)orderId];
         rec.c = c; rec.o = o; rec.ref = o.orderRef; rec.ours = true; rec.live = true;
         rec.native_stop = (o.orderType == "STP" || o.orderType == "STP LMT");

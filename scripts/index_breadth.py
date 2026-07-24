@@ -33,7 +33,11 @@ def latest_close(sym):
         if time.time() - os.path.getmtime(pth) < 600:
             last = None
             for ln in open(pth):
-                p = ln.split(",")
+                # Los bars_*.txt son "EPOCH O H L C V" separados por ESPACIO, no por coma.
+                # Con split(",") la condicion de abajo nunca se cumplia: last quedaba None,
+                # la guarda de frescura de 600s era codigo MUERTO y cada corrida caia en
+                # silencio a la cotizacion retrasada de yfinance. (fix 2026-07-24)
+                p = ln.split()
                 if len(p) >= 5:
                     try: last = float(p[4])
                     except Exception: pass

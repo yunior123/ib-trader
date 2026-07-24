@@ -288,7 +288,8 @@ struct Cfg {
     int port = 7497;               // PAPER default
     int client = 92;               // dedicado order_engine
     bool arm_flag = false;         // --arm-live
-    double budget = 200.0;         // prima máx por contrato de opción
+    double budget = 200.0;         // prima máx por CONTRATO de opción
+    double max_order = 0;          // desembolso máx por ORDEN (qty*prima); 0 = sigue a budget
     double stock_budget = 3000.0;  // notional máx por entrada de acciones
     std::vector<std::string> syms;
 };
@@ -328,6 +329,7 @@ int main(int argc, char** argv) {
         else if (a == "--arm-live") cfg.arm_flag = true;
         else if (a == "--sym") cfg.syms.push_back(next(""));
         else if (a == "--budget") cfg.budget = atof(next("200").c_str());
+        else if (a == "--max-order") cfg.max_order = atof(next("200").c_str());
         else if (a == "--stock-budget") cfg.stock_budget = atof(next("3000").c_str());
         else if (a == "--host") cfg.host = next("127.0.0.1");
         else if (a == "--client") cfg.client = atoi(next("92").c_str());
@@ -335,6 +337,9 @@ int main(int argc, char** argv) {
         else { std::fprintf(stderr, "flag desconocida: %s\n", a.c_str()); return 2; }
     }
     if (cfg.syms.empty()) { std::fprintf(stderr, "faltan --sym; ej: --sym QQQ --sym NVDA\n"); return 2; }
+    // Sin --max-order explícito, el tope por orden = el tope por contrato: qty>1 exige
+    // decisión consciente. Subirlo es un acto deliberado, no un descuido del chart.
+    if (cfg.max_order <= 0) cfg.max_order = cfg.budget;
 
     // Modo: --paper/--live, o data/ib_mode.txt (fuente única, igual que ib_mode.py).
     // Puerto: env IBKR_PORT gana; si no, AUTO-DETECTA gateway(4002/4001)/tws(7497/7496).
@@ -559,6 +564,14 @@ int main(int argc, char** argv) {
                             std::string csym = c.s("sym", ""), cright = c.s("right", ""), cexp = c.s("exp", ""), cside = c.s("side", "");
                             double cstrike = c.n("strike", 0);
                             int cqty = (int)c.n("qty", 0);
+                            // NUNCA asumir el lado de una orden de dinero: si falta o es basura,
+                            // se RECHAZA. El default silencioso 'S' duplicaba cortos (2026-07-24).
+                            if (cside != "buy" && cside != "sell") {
+                                ledger.note("cmd close RECHAZADO: side ausente o invalido ('" + cside + "') " + csym);
+                                std::fprintf(stderr, "[cmd] close RECHAZADO %s: side='%s' no es buy/sell\n",
+                                             csym.c_str(), cside.c_str());
+                                continue;
+                            }
                             char side = (cside == "buy") ? 'B' : 'S';
                             bool is_opt = (cstrike > 0 && (cright == "C" || cright == "P"));
                             if (csym.empty() || cqty <= 0) { ledger.note("cmd close inválido"); continue; }
@@ -724,6 +737,22 @@ int main(int argc, char** argv) {
                         continue;
                     }
                     int qty = z.qty > 0 ? z.qty : std::max(1, (int)(cfg.budget / g.premium));
+                    // TOPE POR ORDEN (fix 2026-07-24): run_gate() solo valida la prima de UN
+                    // contrato (:202). Con z.qty del JSON de zona (que viene de un <input> del
+                    // chart sin máximo) el desembolso real era qty*prima, múltiplos del tope.
+                    // Las acciones ya tenían este control (:626); las opciones no. Mismo patrón.
+                    double desembolso = qty * g.premium;
+                    if (desembolso > cfg.max_order) {
+                        z.st = ZoneRT::VETOED;
+                        char b[128];
+                        std::snprintf(b, sizeof b, "desembolso $%.0f (%dx $%.0f) > tope orden $%.0f",
+                                      desembolso, qty, g.premium, cfg.max_order);
+                        write_state(state_dir, sym, z, std::string("\"veto\":\"") + b + "\"");
+                        ledger.note(std::string("VETOED ") + sym + " " + z.id + ": " + b);
+                        std::fprintf(stderr, "[%s] zona %s VETOED opciones: %s\n",
+                                     sym.c_str(), z.id.c_str(), b);
+                        continue;
+                    }
                     Contract c = make_option(sym, g.exp, g.strike, right);
                     z.entry_c = c; z.entry_delta = g.delta; z.entry_side = side;
                     // DOBLE LLAVE re-evaluada al momento (borrar ARM_LIVE desarma ya).

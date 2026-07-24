@@ -1037,11 +1037,16 @@ def route_order_action(act):
     ejecuta con su doble llave (cancel siempre; modify/close-live requieren ARM_LIVE).
     El bridge JAMÁS coloca la orden él mismo (ley #0)."""
     import time as _t
+    # `side` y `secType` SE PASAN (fix 2026-07-24): se perdian aqui, y el motor caia a su
+    # default SELL (order_engine.cpp:559-562). Cerrar un CORTO manda "buy" desde el chart
+    # (live.html:888) -> con el default se vendia otra vez y se DUPLICABA el corto en vez
+    # de cerrarlo. Para largos coincidia por casualidad, asi que nunca se noto.
     cmd = {"ts": int(_t.time() * 1000), "act": act.get("act"),
            "orderId": act.get("orderId"), "limit": act.get("limit"),
            "conId": act.get("conId"), "qty": act.get("qty"),
            "sym": act.get("sym"), "exp": act.get("exp"),
-           "strike": act.get("strike"), "right": act.get("right")}
+           "strike": act.get("strike"), "right": act.get("right"),
+           "side": act.get("side"), "secType": act.get("secType")}
     try:
         os.makedirs(os.path.dirname(CMD_PATH), exist_ok=True)
         with open(CMD_PATH, "a") as f:
