@@ -1,376 +1,174 @@
-// math_test.cpp — correctness tests for core signal bot math functions
+// math_test.cpp — tests de correccion sobre el CODIGO REAL de la flota.
 // =====================================================================
-// Tests: Bollinger Bands, %B, RSI, ATR, VWAP, SMA, EMA, CUSUM
+// HISTORIA (2026-07-24): este archivo NO probaba nada del proyecto. Reimplementaba
+// EMA/SMA/RSI/ATR/BB/VWAP/CUSUM en copias PRIVADAS y testeaba a esas copias — sin
+// un solo #include del repo. El "25/25 correctness pass" que se reportaba en
+// TODOS.md no decia absolutamente nada sobre engines/ ni sobre los 24 bots.
+// Ademas las aserciones eran tautologicas ("atr >= 0", "rsi > 70"): pasaban con
+// casi cualquier implementacion, incluida una rota.
+//
+// Ahora incluye engines/bb_core.h y prueba las clases REALES, con VALORES DE
+// REFERENCIA exactos calculados a mano.
+//
+// ---------------------------------------------------------------------------
+// COBERTURA HONESTA — leer antes de confiar en un "ALL OK":
+//   CUBIERTO   : bbcore::BB, bbcore::BWPct, bbcore::ATR14  (engines/bb_core.h)
+//   NO CUBIERTO: las copias INLINE de los 24 *_signal_bot.cpp (V5BB :325,
+//                V6BBX :588, y el BB principal :1449). Viven dentro del .cpp
+//                del binario y no son incluibles. Quedaran cubiertas cuando se
+//                consoliden contra este header (fase de deduplicacion).
+//                Hasta entonces: un verde AQUI no es un verde para los bots.
+// ---------------------------------------------------------------------------
+// build:  clang++ -std=c++23 -O3 -mcpu=native -Wall -Wextra -I. \
+//                 -o /tmp/math_test tests/cpp/math_test.cpp && /tmp/math_test
+//         (desde la raiz del repo; ver tests/cpp/run.sh para el build ASan)
 
-#include <cstdio>
 #include <cmath>
-#include <cstdlib>
-#include <cstring>
-#include <vector>
-#include <deque>
+#include <cstdio>
 
-const double EPS = 1e-9;
+#include "engines/bb_core.h"
 
-struct TestResult { int pass = 0, fail = 0; };
-TestResult g_results;
+// ---- harness minimo (patron de la skill cpp23-testing) ----
+static int g_pass = 0, g_fail = 0;
 
-void test_assert(bool cond, const char* test_name) {
-    if (cond) {
-        g_results.pass++;
-        printf("  [PASS] %s\n", test_name);
-    } else {
-        g_results.fail++;
-        printf("  [FAIL] %s\n", test_name);
-    }
+static void check(bool cond, const char* name) {
+    if (cond) { ++g_pass; std::printf("  [PASS] %s\n", name); }
+    else      { ++g_fail; std::printf("  [FAIL] %s\n", name); }
+}
+static void near(double got, double want, double eps, const char* name) {
+    if (std::fabs(got - want) <= eps) { ++g_pass; std::printf("  [PASS] %s\n", name); }
+    else { ++g_fail; std::printf("  [FAIL] %s  (obtenido %.12f, esperado %.12f)\n",
+                                 name, got, want); }
 }
 
-// ---- EMA (Exponential Moving Average) ----
-struct EMA {
-    double v = 0; bool init = false;
-    double update(double x, int n) {
-        double k = 2.0 / (n + 1);
-        v = init ? x * k + v * (1 - k) : x;
-        init = true;
-        return v;
-    }
-};
+// ===========================================================================
+// bbcore::BB — BB(20,2) POBLACIONAL (/N)
+// ===========================================================================
+// Referencia: closes 1..20 -> mean = 10.5.
+// Varianza poblacional de 1..n = (n^2 - 1)/12 = (400-1)/12 = 33.25 EXACTO.
+static void test_bb_referencia() {
+    std::printf("bbcore::BB — valores de referencia\n");
+    bbcore::BB bb;
+    for (int i = 1; i <= 20; ++i) bb.update((double)i);
 
-// ---- SMA (Simple Moving Average) ----
-double sma(const std::vector<double>& data, int n) {
-    if ((int)data.size() < n) return 0;
-    double sum = 0;
-    for (int i = (int)data.size() - n; i < (int)data.size(); i++) {
-        sum += data[i];
-    }
-    return sum / n;
+    const double sd_ref = std::sqrt(33.25);
+    check(bb.ready(),                          "BB lista tras 20 barras");
+    near(bb.mid, 10.5,              1e-12,     "mid = 10.5");
+    near(bb.sd,  sd_ref,            1e-12,     "sd = sqrt(33.25) [POBLACIONAL /N]");
+    near(bb.up,  10.5 + 2 * sd_ref, 1e-12,     "up = mid + 2sd");
+    near(bb.dn,  10.5 - 2 * sd_ref, 1e-12,     "dn = mid - 2sd");
+
+    // Discriminador poblacional vs muestral: con /(N-1) la sd seria sqrt(35)
+    // = 5.9160798, que difiere en >0.14. Este test lo detecta.
+    check(std::fabs(bb.sd - std::sqrt(35.0)) > 0.1,
+          "sd NO es muestral (/N-1) — la doctrina exige poblacional");
+
+    near(bb.pctB(10.5),  0.5, 1e-12, "%B = 0.5 en la media");
+    near(bb.pctB(bb.up), 1.0, 1e-12, "%B = 1.0 en banda superior");
+    near(bb.pctB(bb.dn), 0.0, 1e-12, "%B = 0.0 en banda inferior");
+    near(bb.bandwidth(), (bb.up - bb.dn) / 10.5, 1e-12, "bandwidth = (up-dn)/|mid|");
 }
 
-// ---- RSI(14) Wilder ----
-struct RSI {
-    double ag = 0, al = 0, prev = 0, rsi = 50;
-    long n = 0;
-    
-    void add(double c) {
-        if (n > 0) {
-            double d = c - prev;
-            double g = d > 0 ? d : 0;
-            double L = d < 0 ? -d : 0;
-            ag = n <= 14 ? (ag * (n - 1) + g) / n : ag + (g - ag) / 14;
-            al = n <= 14 ? (al * (n - 1) + L) / n : al + (L - al) / 14;
-            rsi = al > 1e-12 ? 100.0 - 100.0 / (1.0 + ag / al) : 50.0;
-        }
-        prev = c;
-        n++;
-    }
-    
-    double get() const { return rsi; }
-};
+// La ventana rodante DEBE restar el saliente. Tras empujar 21 la ventana es
+// 2..21 -> mean 11.5 y la MISMA sd (una traslacion no cambia sigma). Este test
+// caza el bug clasico de sumas incrementales que acumulan sin restar.
+static void test_bb_ventana_rodante() {
+    std::printf("bbcore::BB — ventana rodante\n");
+    bbcore::BB bb;
+    for (int i = 1; i <= 21; ++i) bb.update((double)i);
+    near(bb.mid, 11.5,             1e-12, "mid = 11.5 tras rodar (ventana 2..21)");
+    near(bb.sd,  std::sqrt(33.25), 1e-12, "sd invariante a traslacion");
 
-// ---- ATR(14) Wilder ----
-struct ATR {
-    double atr = 0, prev_c = 0;
-    int n = 0;
-    int period = 14;
-    
-    void add(double h, double l, double c) {
-        double tr = h - l;
-        if (n > 0) {
-            double a = std::fabs(h - prev_c);
-            double d = std::fabs(l - prev_c);
-            if (a > tr) tr = a;
-            if (d > tr) tr = d;
-        }
-        atr = (n < period) ? (atr * n + tr) / (n + 1)
-                           : (atr * (period - 1) + tr) / period;
-        prev_c = c;
-        n++;
-    }
-    
-    double get() const { return atr; }
-};
+    bbcore::BB b2;
+    for (int i = 1; i <= 40; ++i) b2.update((double)i);
+    near(b2.mid, 30.5,             1e-12, "mid = 30.5 tras 40 barras (ventana 21..40)");
+    near(b2.sd,  std::sqrt(33.25), 1e-10, "sd estable tras 40 barras (sin deriva)");
+}
 
-// ---- Bollinger Bands(20, 2) ----
-struct BollingerBands {
-    double ring[20] = {0};
-    int n = 0;
-    double mid = 0, up = 0, dn = 0;
-    
-    void add(double c) {
-        ring[n % 20] = c;
-        n++;
-        int k = n < 20 ? n : 20;
-        double s = 0, s2 = 0;
-        for (int i = 0; i < k; i++) {
-            s += ring[i];
-            s2 += ring[i] * ring[i];
-        }
-        mid = s / k;
-        double var = s2 / k - mid * mid;
-        double sd = var > 0 ? std::sqrt(var) : 0;
-        up = mid + 2 * sd;
-        dn = mid - 2 * sd;
-    }
-    
-    double pctB(double c) const {
-        return (up > dn) ? (c - dn) / (up - dn) : 0.5;
-    }
-};
+static void test_bb_degenerada() {
+    std::printf("bbcore::BB — casos degenerados\n");
+    bbcore::BB bb;
+    for (int i = 0; i < 20; ++i) bb.update(100.0);
+    near(bb.sd, 0.0, 1e-12,          "sd = 0 en serie constante");
+    check(!std::isnan(bb.sd),        "sd no es NaN");
+    near(bb.up, 100.0, 1e-12,        "up = mid con sd=0");
+    near(bb.dn, 100.0, 1e-12,        "dn = mid con sd=0");
+    near(bb.pctB(100.0), 0.5, 1e-12, "%B = 0.5 con banda plana (no divide por cero)");
+    near(bb.bandwidth(), 0.0, 1e-12, "bandwidth = 0 con banda plana");
 
-// ---- VWAP (Volume Weighted Average Price) ----
-struct VWAP {
-    double pv = 0, v = 0;
-    
-    void add(double h, double l, double c, double vol) {
-        double tp = (h + l + c) / 3.0;
-        pv += tp * vol;
-        v += vol;
-    }
-    
-    double get() const {
-        return v > 0 ? pv / v : 0;
-    }
-};
+    bbcore::BB b0;
+    b0.update(0.0);
+    check(!b0.ready(),               "no lista con 1 barra");
+    near(b0.mid, 0.0, 1e-12,         "mid = 0 con un solo close 0");
+    near(b0.bandwidth(), 0.0, 1e-12, "bandwidth = 0 con mid=0 (no divide por cero)");
 
-// ---- CUSUM (Cumulative Sum Filter) ----
-struct CUSUM {
-    double cusum_up = 0, cusum_dn = 0;
-    double prev_c = 0;
-    double ret_var = 1e-6;
-    
-    void add(double c) {
-        if (prev_c > 0) {
-            double r = std::log(c / prev_c);
-            ret_var += (r * r - ret_var) / 50.0;  // EWMA variance
-            cusum_up = std::max(0.0, cusum_up + r);
-            cusum_dn = std::min(0.0, cusum_dn + r);
-        }
-        prev_c = c;
-    }
-    
-    double getUp() const { return cusum_up; }
-    double getDn() const { return cusum_dn; }
-};
+    // Precios reales de la flota (QQQ ~685): la varianza naive E[x^2]-E[x]^2
+    // sufre cancelacion catastrofica con magnitudes grandes. Debe aguantar.
+    bbcore::BB bq;
+    for (int i = 0; i < 20; ++i) bq.update(685.0 + (i % 2 ? 0.01 : -0.01));
+    near(bq.mid, 685.0, 1e-9, "mid estable a magnitud 685 (cancelacion catastrofica)");
+    near(bq.sd,  0.01,  1e-6, "sd = 0.01 a magnitud 685");
+}
 
-// ===================== TESTS =====================
+// ===========================================================================
+// bbcore::BWPct — percentil rodante de bandwidth
+// ===========================================================================
+static void test_bwpct() {
+    std::printf("bbcore::BWPct — percentil rodante\n");
+    bbcore::BWPct p;
+    check(!p.ready(),              "no lista vacia");
+    near(p.rank(1.0), 50.0, 1e-12, "rank = 50 sin datos (neutral, ni 0 ni 100)");
+
+    for (int i = 1; i <= 100; ++i) p.push((double)i);
+    check(!p.ready(),                 "no lista con 100 < W=125");
+    near(p.rank(50.0),  50.0, 1e-12,  "rank(50) = 50% sobre 1..100");
+    near(p.rank(100.0), 100.0, 1e-12, "rank(max) = 100%");
+    near(p.rank(0.5),   0.0,  1e-12,  "rank(bajo todo) = 0%");
+    near(p.rank(1.0),   1.0,  1e-12,  "rank(1) = 1% (comparacion <=, inclusiva)");
+
+    for (int i = 101; i <= 125; ++i) p.push((double)i);
+    check(p.ready(),                  "lista al llegar a W=125");
+}
+
+// ===========================================================================
+// bbcore::ATR14 — Wilder
+// ===========================================================================
+static void test_atr14() {
+    std::printf("bbcore::ATR14 — Wilder\n");
+    bbcore::ATR14 flat;
+    for (int i = 0; i < 20; ++i) flat.update({0, 100, 100, 100, 100, 0});
+    near(flat.value(), 0.0, 1e-12, "ATR = 0 en serie perfectamente plana");
+    check(flat.ready(),            "ATR lista tras 14 barras");
+
+    // OJO con el orden de los campos: Bar es {t, o, h, l, c, v} (bb_core.h:27).
+    bbcore::ATR14 c;
+    for (int i = 0; i < 50; ++i) c.update({0, 100, 101, 99, 100, 0});
+    near(c.value(), 2.0, 1e-9, "ATR converge a 2 con TR constante 2");
+
+    // Primera barra: sin cierre previo TR = h-l. Si usara prev_c_=0 daria un TR
+    // gigante (101) y contaminaria todo el suavizado.
+    bbcore::ATR14 f;
+    f.update({0, 100, 101, 99, 100, 0});
+    near(f.value(), 2.0, 1e-12, "primera barra: TR = h-l, sin prev_c fantasma");
+
+    // Gap: prev close 100, barra o=111 h=112 l=110 -> TR = |112-100| = 12.
+    // Wilder: (2*13 + 12)/14 = 38/14.
+    bbcore::ATR14 g;
+    g.update({0, 100, 101, 99, 100, 0});
+    g.update({0, 111, 112, 110, 111, 0});
+    near(g.value(), 38.0 / 14.0, 1e-12, "gap: ATR = (2*13 + 12)/14");
+    check(g.value() >= 0,               "ATR nunca negativo");
+}
 
 int main() {
-    printf("\n=== C++ Math Correctness Tests ===\n\n");
-    
-    // Test 1: EMA convergence
-    {
-        printf("TEST 1: EMA(12) converges toward recent values\n");
-        EMA ema;
-        double last_ema = 0;
-        for (int i = 1; i <= 30; i++) {
-            last_ema = ema.update(100.0 + i, 12);
-        }
-        test_assert(last_ema >= 124.0, "EMA approaches recent price level");
-    }
-    
-    // Test 2: SMA exact
-    {
-        printf("\nTEST 2: SMA(3) on [10, 20, 30]\n");
-        std::vector<double> data = {10, 20, 30};
-        double sma_val = sma(data, 3);
-        test_assert(std::fabs(sma_val - 20.0) < EPS, "SMA(3) = 20.0");
-    }
-    
-    // Test 3: RSI in overbought territory (with mixed up/down but biased up)
-    {
-        printf("\nTEST 3: RSI on uptrend with minor pullbacks\n");
-        RSI rsi;
-        // Create uptrend with occasional small pullbacks
-        double price = 1000.0;
-        for (int i = 0; i < 30; i++) {
-            if (i % 4 == 3) price -= 5.0;  // Small pullback
-            else price += 15.0;             // Larger up move
-            rsi.add(price);
-        }
-        double r = rsi.get();
-        test_assert(r > 70, "RSI > 70 on uptrend (overbought condition)");
-    }
-    
-    // Test 4: RSI in oversold territory
-    {
-        printf("\nTEST 4: RSI on downtrend with minor rebounds\n");
-        RSI rsi;
-        double price = 1000.0;
-        for (int i = 0; i < 30; i++) {
-            if (i % 4 == 3) price += 5.0;  // Small rebound
-            else price -= 15.0;             // Larger down move
-            rsi.add(price);
-        }
-        double r = rsi.get();
-        test_assert(r < 30, "RSI < 30 on downtrend (oversold condition)");
-    }
-    
-    // Test 5: ATR with zero range
-    {
-        printf("\nTEST 5: ATR on flat bars (h=l=c)\n");
-        ATR atr;
-        for (int i = 0; i < 20; i++) {
-            atr.add(100, 100, 100);
-        }
-        test_assert(atr.get() < 1e-9, "ATR → 0 on flat series");
-    }
-    
-    // Test 6: ATR with gap
-    {
-        printf("\nTEST 6: ATR captures gaps (prev_close to high/low)\n");
-        ATR atr;
-        atr.add(100, 100, 100);     // bar 1: TR = 0
-        atr.add(110, 105, 107);     // bar 2: gap from 100 to 110, TR = max(5, 10, 5) = 10
-        test_assert(atr.get() > 1.0, "ATR captures gap move");
-    }
-    
-    // Test 7: Bollinger Bands %B at exact levels
-    {
-        printf("\nTEST 7: Bollinger %%B at band edges\n");
-        BollingerBands bb;
-        std::vector<double> flat = {100, 100, 100, 100, 100, 100, 100, 100, 100, 100,
-                                     100, 100, 100, 100, 100, 100, 100, 100, 100, 100};
-        for (double c : flat) bb.add(c);
-        test_assert(std::fabs(bb.mid - 100.0) < EPS, "BB mid = 100 (flat)");
-        test_assert(bb.dn == bb.up, "BB upper = lower (stddev=0)");
-        double pct = bb.pctB(100.0);
-        test_assert(std::fabs(pct - 0.5) < EPS, "BB %%B = 0.5 at collapsed bands");
-    }
-    
-    // Test 8: Bollinger Bands %B rising series
-    {
-        printf("\nTEST 8: Bollinger %%B on rising series\n");
-        BollingerBands bb;
-        for (double i = 1; i <= 20; i++) {
-            bb.add(i * 10);
-        }
-        double pct_at_low = bb.pctB(bb.dn);
-        double pct_at_high = bb.pctB(bb.up);
-        test_assert(pct_at_low < 0.1, "%%B near 0 at lower band");
-        test_assert(pct_at_high > 0.9, "%%B near 1.0 at upper band");
-    }
-    
-    // Test 9: VWAP simple
-    {
-        printf("\nTEST 9: VWAP on uniform volume\n");
-        VWAP vwap;
-        for (int i = 0; i < 5; i++) {
-            vwap.add(100, 100, 100, 100);
-        }
-        test_assert(std::fabs(vwap.get() - 100.0) < EPS, "VWAP = 100 (flat)");
-    }
-    
-    // Test 10: VWAP weighted toward high-volume bar
-    {
-        printf("\nTEST 10: VWAP biased to high-volume bar\n");
-        VWAP vwap;
-        vwap.add(100, 100, 100, 1);        // TP=100, vol=1
-        vwap.add(102, 102, 102, 100);      // TP=102, vol=100 (dominates)
-        double v = vwap.get();
-        test_assert(v > 101.5 && v < 101.99, "VWAP pulled toward 102");
-    }
-    
-    // Test 11: CUSUM detects large price move
-    {
-        printf("\nTEST 11: CUSUM accumulates on consistent moves\n");
-        CUSUM cusum;
-        cusum.add(100.0);
-        for (int i = 0; i < 10; i++) {
-            cusum.add(100.0 * std::pow(1.05, i + 1));
-        }
-        test_assert(cusum.getUp() > 0.3, "CUSUM_UP accumulates on consistent rises");
-    }
-    
-    // Test 12: Bollinger std-dev edge case (single bar)
-    {
-        printf("\nTEST 12: Bollinger with single bar\n");
-        BollingerBands bb;
-        bb.add(50.5);
-        test_assert(std::fabs(bb.mid - 50.5) < EPS, "Single bar: mid = value");
-        test_assert(std::fabs(bb.dn - 50.5) < EPS, "Single bar: dn = mid (stddev=0)");
-        test_assert(std::fabs(bb.up - 50.5) < EPS, "Single bar: up = mid (stddev=0)");
-    }
-    
-    // Test 13: RSI neutral at equal gains/losses
-    {
-        printf("\nTEST 13: RSI oscillating (equal up/down)\n");
-        RSI rsi;
-        for (int i = 0; i < 40; i++) {
-            rsi.add(100.0 + ((i % 2) ? 1.0 : -1.0));
-        }
-        double r = rsi.get();
-        test_assert(r > 40 && r < 60, "RSI ≈ 50 on equal oscillation");
-    }
-    
-    // Test 14: ATR initialization (period 14)
-    {
-        printf("\nTEST 14: ATR period initialization\n");
-        ATR atr;
-        atr.period = 14;
-        for (int i = 0; i < 30; i++) {
-            atr.add(100 + i, 100 + i, 100 + i);
-        }
-        test_assert(atr.n == 30, "ATR.n counts all bars");
-        test_assert(atr.get() >= 0, "ATR never negative");
-    }
-    
-    // Test 15: Bollinger %B division by zero safety
-    {
-        printf("\nTEST 15: Bollinger %%B when bands collapse\n");
-        BollingerBands bb;
-        bb.mid = 0; bb.up = 0; bb.dn = 0;
-        double pct = bb.pctB(0);
-        test_assert(pct == 0.5, "%%B returns 0.5 when upper=lower");
-    }
-    
-    // Test 16: CUSUM down on consistent falls
-    {
-        printf("\nTEST 16: CUSUM_DN accumulates on consistent falls\n");
-        CUSUM cusum;
-        cusum.add(100.0);
-        for (int i = 0; i < 10; i++) {
-            cusum.add(100.0 * std::pow(0.95, i + 1));
-        }
-        test_assert(cusum.getDn() < -0.3, "CUSUM_DN accumulates on falls");
-    }
-    
-    // Test 17: %B never produces NaN
-    {
-        printf("\nTEST 17: %%B never produces NaN\n");
-        BollingerBands bb;
-        for (int i = 0; i < 20; i++) {
-            bb.add(100.0);
-        }
-        double pct = bb.pctB(100.0);
-        test_assert(!std::isnan(pct), "%%B is never NaN");
-    }
-    
-    // Test 18: RSI never NaN or Inf
-    {
-        printf("\nTEST 18: RSI never produces NaN/Inf\n");
-        RSI rsi;
-        for (int i = 0; i < 30; i++) {
-            rsi.add(100.0 + (i % 3) - 1.0);
-        }
-        double r = rsi.get();
-        test_assert(!std::isnan(r) && !std::isinf(r), "RSI is finite");
-    }
-    
-    // Test 19: BBands behavior on range-bound market
-    {
-        printf("\nTEST 19: BBands adapts to range-bound series\n");
-        BollingerBands bb;
-        for (int i = 0; i < 30; i++) {
-            double c = 100.0 + 2.0 * std::sin(i * 0.3);
-            bb.add(c);
-        }
-        test_assert(bb.up > bb.mid && bb.mid > bb.dn, "BBands expand on volatility");
-    }
-    
-    // Print summary
-    printf("\n=== Results ===\n");
-    printf("PASS: %d\n", g_results.pass);
-    printf("FAIL: %d\n", g_results.fail);
-    printf("Total: %d\n\n", g_results.pass + g_results.fail);
-    
-    return g_results.fail > 0 ? 1 : 0;
+    std::printf("=== tests sobre engines/bb_core.h (CODIGO REAL del repo) ===\n\n");
+    test_bb_referencia();
+    test_bb_ventana_rodante();
+    test_bb_degenerada();
+    test_bwpct();
+    test_atr14();
+    std::printf("\n%d pass, %d fail\n", g_pass, g_fail);
+    if (g_fail == 0)
+        std::printf("OK — recuerda: las copias inline de los 24 bots NO estan cubiertas.\n");
+    return g_fail ? 1 : 0;
 }
