@@ -85,7 +85,13 @@ void TwsAdapter::place_stop(Contract& c, char side, int qty, double stopPx,
     o.auxPrice = stopPx;           // precio de disparo (en términos de la OPCIÓN)
     o.tif = "GTC";                 // stop protectivo debe sobrevivir la sesión
     o.transmit = true;
-    o.outsideRth = false;
+    // DAY *Y* NIGHT (fix 2026-07-24): la entrada de acciones va con outsideRth=true
+    // (la flota opera 24/5), pero el stop iba con outsideRth=false — o sea que una
+    // posición abierta de noche quedaba SIN protección efectiva hasta las 9:30, y
+    // parte de esos STP los rechazaba IBKR sin emitir orderStatus (-> el watchdog
+    // los re-armaba en bucle infinito). Acciones: fuera-de-horario SÍ. Opciones: no
+    // cotizan de noche, así que se deja en RTH.
+    o.outsideRth = (c.secType == "STK");
     o.orderRef = orderRef;
     OpenOrd& rec = orders_[orderId];
     rec.c = c; rec.o = o; rec.ref = orderRef; rec.ours = starts_with(orderRef, OE_PREFIX);
@@ -325,6 +331,21 @@ void TwsAdapter::error(int id, int errorCode, const std::string& msg, const std:
         default:
             // 354 (sin market data) es esperado: usamos NBBO de archivos, no esta conexión.
             std::fprintf(stderr, "[tws] error id=%d code=%d: %s\n", id, errorCode, msg.c_str());
+            // RECHAZO NO-201 (fix 2026-07-24): IBKR rechaza con muchos códigos además del
+            // 201 (p.ej. 10349 "TIF was set to DAY based on order preset"). Antes sólo se
+            // imprimían: el FSM nunca se enteraba, un STOP rechazado parecía "aún sin
+            // confirmar" y el watchdog lo re-armaba en BUCLE INFINITO (medido: 24
+            // cancel/replace por stop en 80s). Cualquier error con orderId sobre una orden
+            // NUESTRA y viva que no sea informativo (2100-2199 son avisos) = rechazo.
+            if (id >= 0 && !(errorCode >= 2100 && errorCode <= 2199)) {
+                auto it = orders_.find(id);
+                if (it != orders_.end() && it->second.ours && it->second.live) {
+                    it->second.live = false;
+                    if (ledger_) ledger_->reject(id, errorCode, msg);
+                    push(id, ExecReport::REJECTED, 0, "Rejected");
+                    std::fprintf(stderr, "[tws] ^ era orden NUESTRA viva id=%d -> REJECTED al FSM\n", id);
+                }
+            }
             break;
     }
 }

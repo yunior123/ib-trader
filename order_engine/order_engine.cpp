@@ -244,6 +244,8 @@ struct ZoneRT {
     bool stop_armed = false; double placed_stop_px = 0;
     bool stop_confirmed = false;          // orderStatus Submitted/PreSubmitted visto (HIGH #1)
     int  stop_wait = 0;                   // ciclos esperando confirmación (watchdog)
+    int  stop_retries = 0;                // re-armes del watchdog; tope 3 -> watch-local
+    bool stop_degraded = false;           // stop nativo imposible -> watch-local PEGAJOSO
     bool s_have_prev = false; double s_prev = 0; int s_sign = 0; int s_cnt = 0;
 };
 
@@ -658,7 +660,10 @@ int main(int argc, char** argv) {
                         if (const JVal* st = o.child("stop")) {
                             z.stop_on = st->flag("on", false);
                             z.stop_px = st->n("px", z.stop_px);
-                            z.stop_native = st->flag("native", true);
+                            // La degradación a watch-local es PEGAJOSA: si el broker ya
+                            // rechazó el stop nativo 3 veces, la relectura del JSON no
+                            // debe devolverlo a "native" y reabrir el bucle de reintentos.
+                            if (!z.stop_degraded) z.stop_native = st->flag("native", true);
                         }
                     }
                 }
@@ -863,11 +868,28 @@ int main(int argc, char** argv) {
                 // ---- watchdog HIGH #1: stop nativo colocado pero SIN confirmar -> re-armar + alerta ----
                 if (z.st == ZoneRT::FILLED && z.stop_on && z.stop_native && z.stop_armed && !z.stop_confirmed) {
                     if (++z.stop_wait > 15) {   // ~30s (pump 2s)
-                        std::fprintf(stderr, "[%s] zona %s STOP NO CONFIRMADO tras %d ciclos -> POSICIÓN SIN PROTECCIÓN, re-armo\n",
-                                     sym.c_str(), z.id.c_str(), z.stop_wait);
-                        ledger.note("ALERTA stop no confirmado " + sym + " " + z.id + " — posicion sin proteccion, re-armo");
-                        if (z.stop_id >= 0) tws.cancel(z.stop_id);
-                        z.stop_armed = false; z.stop_id = -1; z.stop_wait = 0;   // re-arma próximo ciclo si !frozen
+                        // TOPE DE REINTENTOS (fix 2026-07-24): sin él, un STOP que el broker
+                        // rechaza sin emitir orderStatus hacía girar este watchdog para
+                        // siempre — medido en el soak: 24 cancel/replace por stop en 80s.
+                        // Eso es churn que viola el pacing de IBKR y, peor, deja la posición
+                        // desprotegida en cada hueco entre cancel y re-place.
+                        if (z.stop_retries >= 3) {
+                            z.stop_native = false; z.stop_degraded = true;   // watch-local PEGAJOSO
+                            z.stop_armed = false; z.stop_id = -1;  // el MOTOR pasa a ser la protección
+                            z.s_have_prev = false; z.stop_wait = 0;
+                            ledger.note("ALERTA stop nativo IMPOSIBLE tras 3 intentos " + sym + " " +
+                                        z.id + " — degradado a watch-local");
+                            std::fprintf(stderr, "[%s] zona %s STOP nativo RECHAZADO 3 veces -> paso a watch-local (el motor vigila)\n",
+                                         sym.c_str(), z.id.c_str());
+                        } else {
+                            ++z.stop_retries;
+                            std::fprintf(stderr, "[%s] zona %s STOP NO CONFIRMADO (intento %d/3) -> re-armo\n",
+                                         sym.c_str(), z.id.c_str(), z.stop_retries);
+                            ledger.note("ALERTA stop no confirmado " + sym + " " + z.id +
+                                        " — intento " + std::to_string(z.stop_retries) + "/3");
+                            if (z.stop_id >= 0) tws.cancel(z.stop_id);
+                            z.stop_armed = false; z.stop_id = -1; z.stop_wait = 0;
+                        }
                     }
                 }
 

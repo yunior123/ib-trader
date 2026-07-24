@@ -1,0 +1,94 @@
+#!/bin/zsh
+# fleet_up.sh — UN SOLO COMANDO para levantar TODO. Idempotente: si algo ya corre,
+# no lo duplica. Pensado para que Yunior lo use sin copiloto.
+#
+#   zsh scripts/fleet_up.sh              # levanta la flota (SEÑAL-SOLAMENTE)
+#   zsh scripts/fleet_up.sh --chart      # + cockpit del gráfico en el navegador
+#   zsh scripts/fleet_up.sh --status     # sólo informa qué está vivo, no toca nada
+#
+# PASAR A LIVE (lo único que hace un humano):
+#   1) IB Gateway/TWS: entrar con la cuenta LIVE (puerto 7496 TWS / 4001 Gateway)
+#   2) zsh scripts/ib_mode.sh live
+#   3) volver a lanzar este script
+# El motor de órdenes NO se arma solo: exige order_engine/arm.sh + --arm-live.
+
+set -uo pipefail
+cd "$(dirname "$0")/.." || exit 1
+ROOT="$(pwd)"
+MODE="$(cat data/ib_mode.txt 2>/dev/null || echo paper)"
+
+alive() { pgrep -f "$1" >/dev/null 2>&1; }
+ok()    { print -P "  %F{green}✓%f $1"; }
+bad()   { print -P "  %F{red}✗%f $1"; }
+warn()  { print -P "  %F{yellow}!%f $1"; }
+
+status() {
+  print -P "%F{cyan}=== estado de la flota ===%f  modo=$MODE"
+  local n=$(pgrep -f '_signal_bot$' | wc -l | tr -d ' ')
+  [[ $n -gt 0 ]] && ok "$n bots de señal" || bad "bots de señal: NINGUNO"
+  for p in ibkr_bar_bridge.py:"puente de barras IBKR" \
+           opt_chain_cache.py:"caché de cadenas de opciones" \
+           opt_whale_watch.py:"vigía de ballenas" \
+           notify_relay.sh:"relé de notificaciones" \
+           voice_queue.sh:"cola de voz" \
+           flow_pulse:"pulso de flujo" \
+           price_alarm:"alarma de precio" \
+           chart_bridge.py:"cockpit del gráfico"; do
+    alive "${p%%:*}" && ok "${p#*:}" || bad "${p#*:}"
+  done
+  # TWS/Gateway: puerto según modo
+  local port=4002; [[ "$MODE" == "live" ]] && port=4001
+  if nc -z 127.0.0.1 $port 2>/dev/null; then ok "IB Gateway vivo (puerto $port, $MODE)"
+  elif nc -z 127.0.0.1 7497 2>/dev/null; then ok "TWS vivo (7497, paper)"
+  elif nc -z 127.0.0.1 7496 2>/dev/null; then ok "TWS vivo (7496, LIVE)"
+  else bad "NO hay TWS ni Gateway escuchando — ábrelo y entra"; fi
+  [[ -f order_engine/ARM_LIVE ]] && warn "order_engine ARMADO ($(cat order_engine/ARM_LIVE))" \
+                                  || ok "order_engine desarmado (señal-solamente)"
+}
+
+if [[ "${1:-}" == "--status" ]]; then status; exit 0; fi
+
+print -P "%F{cyan}=== levantando la flota ===%f  modo=$MODE  $(date '+%F %H:%M')"
+
+# 0) TWS/Gateway tiene que estar arriba: sin él no hay datos ni órdenes.
+port=4002; [[ "$MODE" == "live" ]] && port=4001
+if ! nc -z 127.0.0.1 $port 2>/dev/null && ! nc -z 127.0.0.1 7497 2>/dev/null \
+   && ! nc -z 127.0.0.1 7496 2>/dev/null; then
+  bad "NO hay TWS/Gateway escuchando. Ábrelo, entra con la cuenta $MODE, y repite."
+  exit 1
+fi
+
+# 1) permisos de escritura: si falla, las señales se pierden EN SILENCIO (lección 2026-07-24)
+if ! touch data/trading-signals/.probe 2>/dev/null; then
+  bad "no puedo escribir en data/trading-signals — revisa permisos ANTES de operar"
+  exit 1
+fi
+rm -f data/trading-signals/.probe
+
+# 2) la flota entera (bots + puentes + alarmas + voz). El script ya es idempotente.
+if alive 'fleet_keepalive_start.sh'; then
+  ok "keepalive de la flota ya vivo — no lo duplico"
+else
+  nohup zsh scripts/fleet_keepalive_start.sh >/dev/null 2>&1 &
+  ok "keepalive de la flota lanzado"
+fi
+
+# 3) base de datos de señales (alimenta el backtest EOD)
+alive 'signals_db.py --daemon' && ok "signals_db ya vivo" || {
+  nohup python3 scripts/signals_db.py --daemon >/dev/null 2>&1 & ok "signals_db lanzado"; }
+
+# 4) cockpit del gráfico (opcional)
+if [[ "${1:-}" == "--chart" ]]; then
+  if alive 'chart_bridge.py'; then ok "cockpit ya vivo"
+  else nohup ./venv-chart/bin/python scripts/chart_bridge.py >/dev/null 2>&1 &
+       sleep 3; ok "cockpit lanzado"; fi
+  open "http://127.0.0.1:8765/live.html" 2>/dev/null || true
+fi
+
+sleep 8
+print ""
+status
+print ""
+print -P "%F{cyan}Recordatorio:%f la flota es SEÑAL-SOLAMENTE. Para ejecutar órdenes:"
+print "  order_engine/arm.sh && order_engine/run.sh --arm-live --sym QQQ"
+print "  desarmar: order_engine/disarm.sh"

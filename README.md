@@ -9,6 +9,46 @@ trading options; the executor autonomously trades leveraged ETFs on the same sig
 
 **Not financial advice. Live-money code — read the docs before touching anything.**
 
+
+## 🚀 UN SOLO COMANDO (levantar todo)
+
+```bash
+cd ~/Documents/GitHub/ib-trader && zsh scripts/fleet_up.sh
+```
+
+| Variante | Qué hace |
+|---|---|
+| `zsh scripts/fleet_up.sh` | Levanta la flota completa (24 bots + puentes + alarmas + voz). Idempotente: si algo ya corre, no lo duplica. |
+| `zsh scripts/fleet_up.sh --chart` | Igual + cockpit del gráfico y lo abre en el navegador. |
+| `zsh scripts/fleet_up.sh --status` | Sólo informa qué está vivo. No toca nada. |
+
+Antes de arrancar comprueba que TWS/Gateway está escuchando y que **se puede escribir en
+`data/trading-signals/`** — si no, aborta con un error en rojo (el 2026-07-24 se perdieron
+señales en silencio justo por eso).
+
+### Pasar a LIVE — lo único que hace un humano
+
+1. **IB Gateway/TWS**: entrar con la cuenta LIVE (TWS 7496 / Gateway 4001).
+2. `zsh scripts/ib_mode.sh live`
+3. `zsh scripts/fleet_up.sh`
+
+La flota es **SEÑAL-SOLAMENTE**: aunque esté en live, no manda órdenes. Ejecutar exige la
+**doble llave**, a propósito:
+
+```bash
+order_engine/arm.sh                              # llave 1: ARM_LIVE con la fecha de hoy
+order_engine/run.sh --arm-live --sym QQQ         # llave 2: la bandera
+order_engine/disarm.sh                           # desarmar
+```
+
+Si borras `ARM_LIVE` mientras corre, el motor se desarma en el acto: la doble llave se
+re-evalúa antes de **cada** envío.
+
+**Limpiar órdenes del motor**: IBKR sólo deja cancelar desde el **mismo clientId** que las
+colocó (el motor usa el 92). Un script con otro clientId falla con error 10147 justo cuando
+más falta hace.
+
+
 ## Documentation
 
 | Doc | What's in it |
