@@ -5,6 +5,20 @@
 # re-ejecuta cada 5 min (StartInterval) = watchdog de los watchdogs.
 cd "$(dirname "$0")/.." || exit 1
 ROOT="$(pwd)"
+# --- AUTO-CHEQUEO DE PERMISO (Yunior 2026-07-24 "los bots siempre con permiso") ---
+# Si el contexto de arranque (p.ej. launchd SIN Full Disk Access) no puede escribir el
+# HUD del Desktop, los bots correrian MUDOS y las señales se perderian en silencio.
+# Fallar RUIDOSO: voz + notificacion + bandera data/PERM_DENIED (la ve el healthcheck).
+SIGDIR="$ROOT/data/trading-signals"
+mkdir -p "$SIGDIR" 2>/dev/null
+if ! ( : > "$SIGDIR/.perm_check" ) 2>/dev/null; then
+  echo "$(date) fleet: SIN PERMISO de escritura en $SIGDIR (TCC/Full Disk Access)" >> "$ROOT/fleet_autostart.log"
+  touch "$ROOT/data/PERM_DENIED" 2>/dev/null
+  "$ROOT/scripts/speak.sh" DANGER "Atención: los bots no tienen permiso de escritura. Activar Full Disk Access. Las señales no se están guardando." 2>/dev/null
+  osascript -e 'display notification "Bots SIN permiso (TCC). Activa Full Disk Access al runner." with title "🔴 PERMISO DENEGADO" sound name "Sosumi"' 2>/dev/null
+else
+  rm -f "$SIGDIR/.perm_check" "$ROOT/data/PERM_DENIED" 2>/dev/null
+fi
 # MODO SUEÑO (orden Yunior 2026-07-16 noche "alertas dormidas tambien"):
 # si data/fleet_sleep existe, se APAGA todo salvo bridge de datos + tws_watchdog
 # y launchd no revive nada. Despertar: rm data/fleet_sleep (+ focus_ticker del dia).
@@ -78,7 +92,10 @@ fi
 # TWS watchdog (2026-07-15, tras 75 min de ceguera): vigila puerto 7496 en
 # ventanas de mercado, relanza TWS colgado y GRITA por el login (que siempre
 # es del humano). El eslabon debil del dia fue TWS, no las señales.
-if ! pgrep -f "scripts/tws_watchdog.sh" >/dev/null; then
+# DESACTIVADO 2026-07-24 (Yunior: "no tws anymore, gateway is better"). El order_engine
+# y los lectores usan IB GATEWAY (4002/4001) con auto-detección; ya NO relanzamos TWS.
+# Reactivar: quitar el 'false &&'. (Gateway trae su propio auto-restart en su config.)
+if false && ! pgrep -f "scripts/tws_watchdog.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/tws_watchdog.sh" >/dev/null 2>&1 &
   echo "$(date) fleet: tws_watchdog lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
 fi

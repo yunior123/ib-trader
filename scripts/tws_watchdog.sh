@@ -14,8 +14,12 @@
 # SI relanza TWS (2026-07-19: el contador subia pero la rama puerto-abierto
 # jamas actuaba — la deteccion de 446360c era ciega).
 cd "$(dirname "$0")/.." || exit 1
+# DESACTIVADO 2026-07-24 (Yunior: "no tws anymore, gateway is better"). Migrado a IB
+# Gateway (4002/4001, auto-detectado por ib_mode). Este watchdog YA NO relanza TWS.
+# Reactivar (si algún día se vuelve a TWS): borrar estas 2 líneas.
+echo "$(date) tws_watchdog DESACTIVADO — usamos IB Gateway, no TWS"; exit 0
 TWS_APP="/Users/yuniorrodriguezosorio/Applications/Trader Workstation/Trader Workstation.app"
-MIRROR_DIR="$HOME/Desktop/trading-signals"
+MIRROR_DIR="$(cd "$(dirname "$0")/.." && pwd)/data/trading-signals"
 fails=0
 last_action=0
 awaiting_login=0   # tras relanzar, NO volver a matar hasta ver el puerto vivo

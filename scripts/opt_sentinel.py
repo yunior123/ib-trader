@@ -23,7 +23,7 @@ from ib_insync import IB, Option, Stock
 HOME = os.path.expanduser("~")
 REPO = os.path.join(HOME, "Documents/GitHub/ib-trader")
 os.chdir(REPO)
-MIRROR = os.path.join(HOME, "Desktop/trading-signals")
+MIRROR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "trading-signals")
 SIREN = os.path.join(REPO, "sounds/fire_alarm.wav")
 
 # FLOTA COMPLETA (orden Yunior 2026-07-16: "las alarmas de opciones para toda
@@ -77,7 +77,7 @@ def read_nbbo(sym):
         return None
 
 ib = IB()
-ib.connect("127.0.0.1", 7496, clientId=85, timeout=15)
+ib.connect("127.0.0.1", int(__import__("os").environ.get("IBKR_PORT","4002")), clientId=85, timeout=15)
 mirror_line("opt_sentinel ARRANCADO (exit-advisor INTC 104C + flujo put/call flota)")
 
 # --- suscripcion streaming al 104C ---

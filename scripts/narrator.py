@@ -142,6 +142,23 @@ def structural_signal(lv, bars=None):
     if not spot or not flip:
         return None
     mom = _momentum(bars)
+
+    def _cond(base, dirstr):
+        """Condiciona la convicción estructural por hora×flota×inflación (medido).
+        Devuelve (prob_condicionada, nota_corta o None). Degrada limpio si falta el módulo."""
+        try:
+            import signal_conditioning as SC
+            r = SC.conditioned_prob("structural", sym, 1 if dirstr == "up" else -1, base)
+            note = None
+            if r["veto"]:
+                note = "flota en contra — rebajada"
+            elif r["prob"] < base - 4:
+                note = "rebajada (hora/flota/valuación)"
+            elif r["prob"] > base + 4:
+                note = "reforzada (flota a favor)"
+            return r["prob"], note
+        except Exception:
+            return base, None
     # 1) pérdida de flip inminente -> aviso de cambio de régimen (lo más accionable)
     dflip = (spot - flip) / flip * 100
     if abs(dflip) < 0.12:
@@ -156,15 +173,19 @@ def structural_signal(lv, bars=None):
     prob = int(max(52, min(85, round(50 + 0.30 * abs(press) - (dist / em) * 10))))
     # 3a) EN el imán (≤0.30%): pin — el precio ya llegó, dealers lo fijan
     if dist_pct <= 0.30:
+        d = "up" if spot <= magnet else "down"
+        cp, note = _cond(prob, d)
         return {"sym": sym, "text": f"{sym} en su imán {magnet} — pin",
-                "prob": prob, "dir": ("up" if spot <= magnet else "down"),
+                "prob": cp, "base_prob": prob, "note": note, "dir": d,
                 "kind": "pin", "price": magnet}
     # 3b) SE DIRIGE al imán: momentum (o pin fuerte) hacia él, dentro del rango
     toward = (magnet >= spot and mom >= 0) or (magnet <= spot and mom <= 0) or abs(press) >= 75
     if toward and dist <= 1.6 * em:
         arrow = "↑" if magnet >= spot else "↓"
+        d = "up" if magnet >= spot else "down"
+        cp, note = _cond(prob, d)
         return {"sym": sym, "text": f"{sym} se dirige a su imán {magnet} {arrow}",
-                "prob": prob, "dir": ("up" if magnet >= spot else "down"),
+                "prob": cp, "base_prob": prob, "note": note, "dir": d,
                 "kind": "magnet", "price": magnet}
     return None
 

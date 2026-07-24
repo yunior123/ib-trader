@@ -110,7 +110,7 @@ def main():
     report = {}
     ib = IB()
     try:
-        ib.connect("127.0.0.1", 7496, clientId=41, readonly=True, timeout=20)
+        ib.connect("127.0.0.1", int(__import__("os").environ.get("IBKR_PORT","4002")), clientId=41, readonly=True, timeout=20)
         print(f"Conectado TWS 7496 clientId 41 (readonly). Flota: {len(FLEET)}", flush=True)
         for sym in FLEET:
             print(f"== {sym} ==", flush=True)

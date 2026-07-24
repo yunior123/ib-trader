@@ -3,8 +3,8 @@
 # LEY ANTI-RUIDO (Yunior 2026-07-17): si la alerta no es FRESCA (<=45s) NO se
 # envia — una alerta vieja es desinformacion. Dedup + cap 1/5s.
 cd "$(dirname "$0")/.." || exit 1
-source feeds.env 2>/dev/null
-F="$HOME/Desktop/trading-signals/$(date +%F).txt"
+ROOT="$(pwd)"; source feeds.env 2>/dev/null
+F="$ROOT/data/trading-signals/$(date +%F).txt"
 touch "$F"; LAST=""; LASTSENT=0
 tail -n0 -F "$F" 2>/dev/null | while read -r line; do
   # solo lineas de VALOR al telefono (alineado con la voz DANGER+SIGNAL, 2026-07-23):

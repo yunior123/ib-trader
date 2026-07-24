@@ -17,7 +17,7 @@ from datetime import datetime
 ROOT = "/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader"
 os.chdir(ROOT)
 DAY = datetime.now().strftime("%Y-%m-%d")
-MIRROR = os.path.expanduser(f"~/Desktop/trading-signals/{DAY}.txt")
+MIRROR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "trading-signals", f"{DAY}.txt")
 CYCLES, PERIOD = 26, 300
 SYMS = ["nok", "spcx", "dram", "tsla", "nvda", "txn", "tsm", "amd", "intc",
         "asml", "aapl", "gld", "qqq", "slv", "cper", "uso", "skhy"]

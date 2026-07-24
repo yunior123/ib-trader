@@ -14,6 +14,9 @@ fi
 echo "$(date) modo $MODE" >> dailyplans.log
 ./venv/bin/python scripts/daily_fleet_plans.py $ARGS >> dailyplans.log 2>&1
 [[ $MODE == FULL ]] && ./venv/bin/python scripts/calibration_ledger.py record >> dailyplans.log 2>&1
+# 4AM: technicals de valuacion (Forward P/E/PEG...) + score de inflacion continuo (orden Yunior 2026-07-24)
+[[ $MODE == FULL ]] && FORCE_VALUATION=1 ./venv/bin/python scripts/finviz_valuation.py >> dailyplans.log 2>&1
+[[ $MODE == FULL ]] && ./venv/bin/python scripts/inflation_score.py --quiet >> dailyplans.log 2>&1
 # gexa verify: si el snapshot no se escribio o quedo vacio, gritar en el log
 if [[ $MODE == FULL ]]; then
   if [[ ! -s data/gexa_snapshot.json ]] || grep -q '^{}$' data/gexa_snapshot.json; then

@@ -33,7 +33,7 @@ def loud(title, msg, sound="ProAlert"):
     subprocess.Popen(["/bin/bash","scripts/speak.sh","DANGER",msg],
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     lt=time.localtime()
-    d=f"{HOME}/Desktop/trading-signals"; os.makedirs(d,exist_ok=True)
+    d=os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "trading-signals"); os.makedirs(d,exist_ok=True)
     with open(f"{d}/{lt.tm_year:04d}-{lt.tm_mon:02d}-{lt.tm_mday:02d}.txt","a") as f:
         f.write(f"{lt.tm_hour:02d}:{lt.tm_min:02d}:{lt.tm_sec:02d} | {title} | {msg}\n")
 
@@ -62,7 +62,7 @@ while True:
     try:
         if not in_session():
             time.sleep(120); continue
-        ib = IB(); ib.connect("127.0.0.1", 7496, clientId=82, readonly=True, timeout=15)
+        ib = IB(); ib.connect("127.0.0.1", int(__import__("os").environ.get("IBKR_PORT","4002")), clientId=82, readonly=True, timeout=15)
         exp = next_friday()
         print(f"whale watch: {len(FLEET)} syms, expiry {exp}", file=sys.stderr)
         stks = {s: Stock(s, "SMART", "USD") for s in FLEET}

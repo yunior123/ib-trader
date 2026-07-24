@@ -14,8 +14,10 @@ def main():
     if len(sys.argv) < 3:
         sys.exit(__doc__)
     exp = sys.argv[1]
+    import os as _o, sys as _s2; _s2.path.insert(0, _o.path.dirname(_o.path.abspath(__file__)))
+    import ib_mode
     ib = IB()
-    ib.connect('127.0.0.1', 7496, clientId=87, timeout=10)
+    ib.connect('127.0.0.1', int(_o.environ.get("IBKR_PORT") or ib_mode.get_port()), clientId=87, timeout=10)
     rows = []
     for spec in sys.argv[2:]:
         sym, lo, hi = spec.split(':')

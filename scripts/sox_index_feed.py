@@ -16,7 +16,7 @@ from ib_insync import IB, Index
 OUT = "data/nbbo_sox.txt"
 
 ib = IB()
-ib.connect("127.0.0.1", 7496, clientId=45, timeout=15)
+ib.connect("127.0.0.1", int(__import__("os").environ.get("IBKR_PORT","4002")), clientId=45, timeout=15)
 sox = Index("SOX", "NASDAQ", "USD")
 q = ib.qualifyContracts(sox)
 if not q or not q[0].conId:

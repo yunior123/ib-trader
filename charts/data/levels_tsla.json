@@ -1,98 +1,82 @@
 {
  "sym": "TSLA",
- "spot": 320.6,
- "asof": 1784834607,
+ "spot": 313.58,
+ "asof": 1784925273,
  "exp": "20260724",
- "dte": 1.03,
+ "dte": 0.0,
  "scope": "0DTE",
- "net_vex": -173134544.6,
- "vex_peak": 330.0,
+ "net_vex": -59720.3,
+ "vex_peak": 315.0,
  "vex_profile": [
   {
+   "strike": 305.0,
+   "vex": 0.0
+  },
+  {
    "strike": 310.0,
-   "vex": 184178732.0
+   "vex": 0.0
   },
   {
    "strike": 315.0,
-   "vex": 71908284.2
+   "vex": -59720.3
   },
   {
    "strike": 317.5,
-   "vex": 16333918.0
+   "vex": -0.0
   },
   {
    "strike": 320.0,
-   "vex": 32226581.0
+   "vex": -0.0
   },
   {
    "strike": 322.5,
-   "vex": -9598514.1
-  },
-  {
-   "strike": 325.0,
-   "vex": -175797808.2
-  },
-  {
-   "strike": 327.5,
-   "vex": -94628599.1
-  },
-  {
-   "strike": 330.0,
-   "vex": -197757138.4
+   "vex": -0.0
   }
  ],
- "pressure": -84,
+ "pressure": -100,
  "pressure_lab": "AMPLIFICA fuerte",
- "iv_atm": 0.6278,
- "em": 10.67,
- "net_gex": -119280078.0,
+ "iv_atm": 0.3,
+ "em": 0.3,
+ "net_gex": -12645.5,
  "regime": "NEG",
- "flip": 330.0,
- "flip_static": 330.0,
- "call_wall": 330.0,
- "put_wall": 320.0,
- "abs_wall": 320.0,
- "poc_dom": "99%P",
- "call_wall_gex": -14401301.7,
- "put_wall_gex": -43774543.3,
- "abs_wall_gex": -43774543.3,
- "oi_call_wall": 330.0,
- "oi_put_wall": 320.0,
+ "flip": 322.5,
+ "flip_static": 322.5,
+ "call_wall": 315.0,
+ "put_wall": 310.0,
+ "abs_wall": 315.0,
+ "poc_dom": "88%P",
+ "call_wall_gex": -12645.5,
+ "put_wall_gex": -0.0,
+ "abs_wall_gex": -12645.5,
+ "oi_call_wall": 320.0,
+ "oi_put_wall": 310.0,
  "near_call_wall": false,
- "near_put_wall": true,
+ "near_put_wall": false,
  "near_flip": false,
  "profile": [
   {
+   "strike": 305.0,
+   "gex": -0.0
+  },
+  {
    "strike": 310.0,
-   "gex": -11473232.2
+   "gex": -0.0
   },
   {
    "strike": 315.0,
-   "gex": -8273390.7
+   "gex": -12645.5
   },
   {
    "strike": 317.5,
-   "gex": -3420427.1
+   "gex": -0.0
   },
   {
    "strike": 320.0,
-   "gex": -43774543.3
+   "gex": -0.0
   },
   {
    "strike": 322.5,
-   "gex": -3024152.3
-  },
-  {
-   "strike": 325.0,
-   "gex": -25772397.1
-  },
-  {
-   "strike": 327.5,
-   "gex": -9140633.7
-  },
-  {
-   "strike": 330.0,
-   "gex": -14401301.7
+   "gex": -0.0
   }
  ]
 }

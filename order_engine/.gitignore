@@ -1,0 +1,6 @@
+# nunca commitear la llave de armado ni los datos de corrida
+ARM_LIVE
+ledger/
+state/
+order_engine
+*.o

@@ -24,7 +24,7 @@ import os, re, sys, time, glob, sqlite3, datetime as dt
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(REPO)
 DB = os.path.join(REPO, "trades.db")
-SIGDIR = os.path.expanduser("~/Desktop/trading-signals")
+SIGDIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "trading-signals")
 FLEET = open("data/fleet.txt").read().split() if os.path.exists("data/fleet.txt") else []
 FLEET_SET = set(FLEET)
 

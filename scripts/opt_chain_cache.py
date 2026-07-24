@@ -43,7 +43,9 @@ FLEET = ["SMH", "TSM", "QQQ", "NVDA", "MU", "ASML", "INTC", "DRAM", "SKHY",
          "SPCX", "AMD", "TXN", "TSLA", "NOK", "AAPL", "GOOGL", "QCOM",
          "MSFT", "AVGO", "AMZN", "META", "LRCX", "SNDK", "WDC", "STX", "SPY"]
 
-PORT, CLIENT_ID = 7496, 48
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from ib_mode import get_port                # fuente única: data/ib_mode.txt (paper/live)
+PORT, CLIENT_ID = get_port(), 48           # 7497 paper / 7496 live; env IBKR_PORT gana
 PCT_BAND = 0.06          # ±6% del spot
 # los 4 miembros QQQ van recortados (±4%, 12 strikes, 4s de ticks) para que el
 # ciclo de 21 syms siga <180s (medido 2026-07-16: ~157s con 17 syms a pleno)

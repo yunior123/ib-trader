@@ -8,17 +8,21 @@
 <style>
   :root { color-scheme: dark; }
   * { box-sizing: border-box; }
-  body { margin: 0; background: #131722; color: #d1d4dc;
+  html, body { height: 100%; }
+  body { margin: 0; overflow: hidden; background: #131722; color: #d1d4dc;
          font: 13px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
 
-  /* --- toolbar superior estilo TradingView --- */
-  #toolbar { display: flex; align-items: center; gap: 12px; height: 40px;
-             padding: 0 12px; background: #1e222d; border-bottom: 1px solid #2a2e39;
-             font-variant-numeric: tabular-nums; }
+  /* --- toolbar superior estilo TradingView (una fila, sin desbordar la página) --- */
+  #toolbar { display: flex; align-items: center; gap: 8px; height: 40px;
+             padding: 0 10px; background: #1e222d; border-bottom: 1px solid #2a2e39;
+             font-variant-numeric: tabular-nums; overflow: hidden; white-space: nowrap; }
+  #toolbar > * { flex: 0 0 auto; }
   #toolbar strong { font-size: 16px; font-weight: 700; letter-spacing: .3px; }
-  #tfbar { display: flex; gap: 2px; }
+  /* solo la barra de timeframes se encoge/scrollea; el resto (incl. EN VIVO) queda visible */
+  #tfbar { display: flex; gap: 1px; flex: 0 1 auto; min-width: 0; overflow-x: auto; }
+  #tfbar::-webkit-scrollbar { height: 0; }
   .tfbtn { background: transparent; color: #b2b5be; border: none; border-radius: 4px;
-           padding: 5px 10px; font: inherit; font-weight: 600; cursor: pointer; }
+           padding: 4px 7px; font: inherit; font-weight: 600; cursor: pointer; }
   .tfbtn:hover { background: #2a2e39; color: #d1d4dc; }
   .tfbtn.active { background: #2962ff; color: #fff; }
   #symsel { background: #2a2e39; color: #d1d4dc; border: 1px solid #363a45;
@@ -64,14 +68,6 @@
   #structpill.hidden { display:none; }
   #structpill.dn { border-color:#ef5350; color:#ef5350; }
   #structpill.flat { border-color:#8aa0c8; color:#8aa0c8; }
-  #alarmpanel { position:absolute; top:8px; right:8px; z-index:20;
-                background:rgba(20,24,31,.92); border:1px solid #2a3550; border-radius:8px;
-                padding:5px 7px; font-size:12px; color:#c6d2ea; box-shadow:0 2px 12px rgba(0,0,0,.5); }
-  #alarmpanel.hidden { display:none; }
-  #alarmpanel .arow { display:flex; align-items:center; gap:8px; padding:2px 2px; white-space:nowrap; }
-  #alarmpanel .atrash { cursor:pointer; opacity:.65; }
-  #alarmpanel .atrash:hover { opacity:1; }
-  #alarmpanel .ahdr { font-size:10px; color:#6b7a99; text-transform:uppercase; letter-spacing:.5px; margin-bottom:2px; }
   #narrbtn { background:#2a2e39; color:#8aa0c8; border:1px solid #3a4b6b;
              border-radius:4px; padding:4px 9px; font:inherit; font-weight:700; cursor:pointer; }
   #narrbtn:hover { background:#2f3646; color:#fff; }
@@ -96,6 +92,155 @@
   #help b.gold { color:#ffb300; } #help b.pur { color:#ba68c8; } #help b.yel { color:#f4c430; }
   #help .x { position:absolute; top:8px; right:12px; cursor:pointer; color:#6f8bbf; font-size:16px; }
 
+  /* --- botones extra en la toolbar (watchlist / zona) --- */
+  #wlbtn, #zonebtn { background:#2a2e39; color:#8aa0c8; border:1px solid #3a4b6b;
+              border-radius:4px; padding:4px 9px; font:inherit; font-weight:700; cursor:pointer; }
+  #wlbtn:hover, #zonebtn:hover { background:#2f3646; color:#fff; }
+  #zonebtn.arm { background:#0d5c3f; color:#fff; border-color:#26a69a; }
+  /* --- pills paper/live + instrumento + cuenta --- */
+  #modepill, #instpill, #acctbtn { background:#2a2e39; color:#8aa0c8; border:1px solid #3a4b6b;
+              border-radius:4px; padding:4px 9px; font:inherit; font-weight:700; cursor:pointer; }
+  #modepill:hover, #instpill:hover, #acctbtn:hover { background:#2f3646; color:#fff; }
+  #modepill { border-color:#2962ff; color:#7ea0ff; }            /* PAPER = azul */
+  #modepill.live { border-color:#ef5350; color:#ff8a87; background:#3a2020; }  /* LIVE = rojo (aviso) */
+  /* panel de cuenta (Account Manager, abajo) */
+  #acctpanel { position:absolute; z-index:46; left:0; right:0; bottom:24px; height:230px;
+              background:#12161f; border-top:2px solid #2a3550; display:none; flex-direction:column;
+              font-size:12px; box-shadow:0 -6px 20px rgba(0,0,0,.45); }
+  #acctpanel.on { display:flex; }
+  #accthdr { display:flex; align-items:center; gap:10px; padding:6px 10px; background:#161a24;
+              border-bottom:1px solid #232a3a; font-weight:700; color:#8aa0c8; }
+  #acctsum { flex:1; color:#6f8bbf; font-weight:400; }
+  #acctclose { cursor:pointer; opacity:.6; } #acctclose:hover { opacity:1; color:#ef5350; }
+  #acctbody { flex:1; overflow-y:auto; padding:4px 10px 10px; }
+  .acctsec { color:#6b7a99; text-transform:uppercase; font-size:10px; letter-spacing:.5px; margin:8px 0 4px; }
+  .acctrow { display:flex; align-items:center; gap:8px; padding:4px 6px; border-bottom:1px solid #1c2230; }
+  .acctrow .albl { flex:1; font-weight:700; color:#d1d4dc; }
+  .acctrow .aval { color:#9aa0ac; min-width:64px; text-align:right; }
+  .acctrow .pos { color:#26a69a; } .acctrow .neg { color:#ef5350; }
+  .acctrow button { border:none; border-radius:4px; padding:3px 8px; font:inherit; font-size:11px;
+              font-weight:700; cursor:pointer; color:#fff; }
+  .acctrow .bclose { background:#ef5350; } .acctrow .bcancel { background:#607d8b; }
+  .acctrow .bmod { background:#2962ff; }
+  #acctempty { color:#556; padding:6px; }
+
+  /* --- watchlist drawer (izquierda, colapsable, buscable) estilo TradingView --- */
+  #wldrawer { position:absolute; z-index:40; top:68px; bottom:24px; left:0; width:300px;
+              background:rgba(19,23,34,.975); border-right:1px solid #2a2e39;
+              box-shadow:4px 0 18px rgba(0,0,0,.5); display:none; flex-direction:column; }
+  #wldrawer.on { display:flex; }
+  #wlsearch { margin:8px; padding:6px 9px; background:#2a2e39; border:1px solid #363a45;
+              border-radius:5px; color:#d1d4dc; font:inherit; outline:none; }
+  #wlsearch:focus { border-color:#2962ff; }
+  #wllist { flex:1; overflow-y:auto; padding:0 6px 8px; }
+  #wllist .wlhdr { font-size:10px; color:#6b7a99; text-transform:uppercase; letter-spacing:.5px;
+                   margin:8px 4px 3px; }
+  #wllist .wlhdr:not(.sub) { display:grid; grid-template-columns:1fr 62px 60px 52px 16px;
+                   gap:6px; padding:0 8px; }
+  #wllist .wlhdr:not(.sub) span { text-align:right; } #wllist .wlhdr:not(.sub) span:first-child { text-align:left; }
+  #wllist .wlrow { display:grid; grid-template-columns:1fr 62px 60px 52px 16px; gap:6px;
+                   align-items:center; padding:5px 8px; border-radius:5px; cursor:pointer; }
+  #wllist .wlrow .wsym { font-weight:700; }
+  #wllist .wlrow .wlast, #wllist .wlrow .wchg, #wllist .wlrow .wvol {
+                   text-align:right; font-weight:600; font-size:12px; font-variant-numeric:tabular-nums; }
+  #wllist .wlrow .wvol { color:#8a8f9c; }
+  #wllist .wlrow:hover { background:#2a2e39; }
+  #wllist .wlrow.sel { background:#2962ff; color:#fff; }
+  #wllist .wlrow.sel .wvol, #wllist .wlrow.sel .wchg { color:#dbe4ff; }
+  #wllist .wlrow .wx { opacity:.45; cursor:pointer; font-weight:400; text-align:center; }
+  #wllist .wlrow .wx:hover { opacity:1; color:#ef5350; }
+
+  /* --- chips inline (alarmas + zonas) en la banda superior del chart --- */
+  #chipbar { position:absolute; top:6px; left:8px; max-width:52%; z-index:18;
+             display:flex; flex-wrap:wrap; gap:5px; pointer-events:none; }
+  #chipbar .chip { pointer-events:auto; display:inline-flex; align-items:center; gap:5px;
+             background:rgba(20,24,31,.9); border:1px solid #2a3550; border-radius:12px;
+             padding:2px 8px; font-size:11px; font-weight:700; color:#c6d2ea; white-space:nowrap;
+             font-variant-numeric:tabular-nums; }
+  #chipbar .chip .cx { cursor:pointer; opacity:.55; }
+  #chipbar .chip .cx:hover { opacity:1; }
+
+  /* --- countdown de barra (eje de precios derecho, estilo TradingView) --- */
+  #countdown { position:absolute; z-index:19; right:58px;
+               background:rgba(41,98,255,.92); color:#fff; font-size:11px; font-weight:700;
+               padding:1px 6px; border-radius:4px; pointer-events:none; display:none;
+               font-variant-numeric:tabular-nums; }
+
+  /* --- flecha direccional compuesta (overlay semitransparente, no bloquea clics) --- */
+  #dirarrow { position:absolute; z-index:16; right:13%; top:48%; transform:translateY(-50%);
+              pointer-events:none; text-align:center; user-select:none; display:none; opacity:.32; }
+  #dirarrow .glyph { font-size:120px; line-height:.9; font-weight:900; }
+  #dirarrow .pct { font-size:26px; font-weight:800; margin-top:-6px; }
+  #dirarrow .tgt { font-size:15px; font-weight:700; color:#e0c060; margin-top:2px; }
+  #dirarrow .cap { font-size:11px; font-weight:600; color:#b2b5be; max-width:190px;
+                   margin:3px auto 0; line-height:1.3; }
+
+  /* --- popup inline de zona (exp/qty/side/kind) — SIN alert/confirm/prompt --- */
+  #zonepop { position:absolute; z-index:60; background:#161a24; border:1px solid #2a3550;
+             border-radius:8px; padding:8px; box-shadow:0 8px 30px rgba(0,0,0,.6); display:none;
+             font-size:12px; width:230px; }
+  #zonepop.on { display:block; }
+  #zonepop .zph { color:#8aa0c8; font-size:11px; margin-bottom:6px; font-weight:700; }
+  #zonepop .zrow { display:flex; align-items:center; gap:6px; margin-bottom:6px; }
+  #zonepop .zrow label { color:#787b86; font-size:11px; font-weight:700; }
+  #zonepop #zone-exp { flex:1 1 auto; background:#2a2e39; color:#d1d4dc; border:1px solid #363a45;
+             border-radius:4px; padding:4px 6px; font:inherit; font-weight:600; cursor:pointer; }
+  #zonepop #zone-qty { width:46px; background:#2a2e39; color:#d1d4dc; border:1px solid #363a45;
+             border-radius:4px; padding:4px 5px; font:inherit; font-weight:600; }
+  #zonepop .zprev { background:#12161f; border:1px solid #232a3a; border-radius:5px; padding:5px 7px;
+             margin-bottom:7px; font-size:11px; color:#9fb0cc; font-variant-numeric:tabular-nums;
+             line-height:1.5; }
+  #zonepop .zbtns { display:grid; grid-template-columns:1fr 1fr; gap:5px; }
+  #zonepop button { border:none; border-radius:5px; padding:6px 7px; font:inherit;
+             font-weight:700; cursor:pointer; color:#fff; }
+  #zonepop .zcancel { grid-column:1/3; background:#2a2e39; color:#8aa0c8; }
+
+  /* --- sub-controles del chip de zona: exec (ficha/ARMADA) · stop · prob --- */
+  #chipbar .chip .zexec, #chipbar .chip .zstop, #chipbar .chip .zprob {
+             pointer-events:auto; cursor:pointer; border-radius:8px; padding:1px 6px;
+             font-size:10px; font-weight:800; border:1px solid transparent; }
+  #chipbar .chip .zexec { background:#20242f; color:#8aa0c8; border-color:#333a48; }
+  #chipbar .chip .zexec.on { background:#7a1f1f; color:#fff; border-color:#ef5350; }   /* ARMADA ⚡ */
+  #chipbar .chip .zstop { background:#20242f; color:#c98; border-color:#5a3a2a; }
+  #chipbar .chip .zstop.on { background:#3a1414; color:#ff9a9a; border-color:#ef5350; }
+  #chipbar .chip .zprob { background:#20242f; color:#8aa0c8; border-color:#333a48; }
+  #chipbar .chip .zprob.go { background:#0d3b28; color:#4fd39a; border-color:#26a69a; }
+  #chipbar .chip .zprob.caution { background:#3d3300; color:#f4c430; border-color:#8a6d00; }
+  #chipbar .chip .zprob.nogo { background:#3a1414; color:#ff8a8a; border-color:#ef5350; }
+
+  /* --- pill de estado del order_engine (para zonas ARMADAS) --- */
+  #enginepill { position:absolute; bottom:8px; left:8px; z-index:19;
+             background:rgba(20,24,31,.94); border:1px solid #3a4b6b; color:#9fb0cc;
+             border-radius:10px; padding:3px 10px; font-size:11px; font-weight:700;
+             white-space:nowrap; box-shadow:0 2px 12px rgba(0,0,0,.5); pointer-events:none;
+             font-variant-numeric:tabular-nums; }
+  #enginepill.hidden { display:none; }
+
+  /* --- tarjeta de FICHA 0DTE (centro, glanceable, la joya UX) --- */
+  #ticketcard { position:absolute; z-index:60; top:50%; left:50%; transform:translate(-50%,-50%);
+             width:min(430px,92%); background:#12161f; border:2px solid #2a3550; border-radius:12px;
+             box-shadow:0 12px 50px rgba(0,0,0,.7); display:none; overflow:hidden; }
+  #ticketcard.on { display:block; }
+  #ticketcard .tcbar { padding:10px 14px; font-size:16px; font-weight:800; color:#fff;
+             display:flex; align-items:center; gap:8px; }
+  #ticketcard.go   .tcbar { background:#1e6f4c; } #ticketcard.go   { border-color:#26a69a; }
+  #ticketcard.caution .tcbar { background:#8a6d00; } #ticketcard.caution { border-color:#f4c430; }
+  #ticketcard.nogo .tcbar { background:#7a1f1f; } #ticketcard.nogo { border-color:#ef5350; }
+  #ticketcard .tctrig { font-size:10px; background:#f4c430; color:#12161f; border-radius:3px;
+             padding:1px 5px; font-weight:800; }
+  #ticketcard .tcx { position:absolute; top:7px; right:12px; cursor:pointer; color:#fff;
+             font-size:18px; opacity:.85; }
+  #ticketcard .tcbody { padding:12px 14px; }
+  #ticketcard .tcaction { font-size:15px; font-weight:800; margin-bottom:9px; color:#e6ebf5; }
+  #ticketcard .tcgrid { display:flex; flex-wrap:wrap; gap:8px 16px; font-size:12.5px; margin-bottom:9px;
+             font-variant-numeric:tabular-nums; }
+  #ticketcard .tcgrid .k { color:#787b86; margin-right:4px; }
+  #ticketcard .tcgrid .v { font-weight:700; color:#d1d4dc; }
+  #ticketcard .tcwhy { font-size:11px; color:#9fb0cc; line-height:1.55; border-top:1px solid #232a3a;
+             padding-top:8px; }
+  #ticketcard .tcnote { margin-top:9px; font-size:12px; font-weight:800; color:#f4c430;
+             display:flex; align-items:center; gap:6px; }
+
   #chart { position: absolute; top: 68px; bottom: 24px; left: 0; right: 0; }
   footer { position: absolute; bottom: 0; height: 24px; left: 0; right: 0;
            display: flex; align-items: center; gap: 12px; padding: 0 12px;
@@ -108,13 +253,23 @@
 <body>
 <!-- fila 1: símbolo + selector de intervalo (TradingView-like) + conexión -->
 <div id="toolbar">
-  <select id="symsel" title="ticker (cambiar)"></select>
+  <button id="wlbtn" title="Ticker actual + lista buscable con volumen y %día (estilo TradingView). Clic para abrir/cerrar.">📋 — ▾</button>
+  <button id="modepill" title="Cuenta IBKR: PAPER (prueba) / LIVE (real). Clic para cambiar. Fuente única data/ib_mode.txt — el motor y los lectores siguen este modo.">● …</button>
+  <button id="instpill" title="Instrumento de las zonas NUEVAS: Opciones o Acciones (activos, tradean 24/5). Clic para cambiar.">📈 Opciones</button>
+  <button id="acctbtn" title="Cuenta: posiciones y órdenes de trabajo (cancelar / cerrar / modificar). Estilo TradingView Account Manager.">📊 Cuenta</button>
   <div id="tfbar">
     <button class="tfbtn" data-tf="1m">1m</button>
     <button class="tfbtn" data-tf="5m">5m</button>
     <button class="tfbtn" data-tf="15m">15m</button>
+    <button class="tfbtn" data-tf="20m">20m</button>
+    <button class="tfbtn" data-tf="30m">30m</button>
     <button class="tfbtn" data-tf="1h">1H</button>
+    <button class="tfbtn" data-tf="2h">2H</button>
+    <button class="tfbtn" data-tf="3h">3H</button>
+    <button class="tfbtn" data-tf="4h">4H</button>
     <button class="tfbtn" data-tf="1d">1D</button>
+    <button class="tfbtn" data-tf="1W">1W</button>
+    <button class="tfbtn" data-tf="1M">1M</button>
   </div>
   <span id="scopebar" title="0DTE = solo hoy (pin intradía) · ALL = toda la cadena (mapa multi-día). En ALL el flip apenas se mueve pero la Vanna salta.">
     <button class="tgl active" data-scope="0DTE">0DTE</button><button class="tgl" data-scope="ALL">ALL</button>
@@ -123,6 +278,7 @@
     <button class="tgl active" data-layer="GEX">GEX</button><button class="tgl" data-layer="VEX">VEX</button>
   </span>
   <button id="alarmbtn" title="Alarma manual (estilo TradingView): clic aquí y luego clic en el precio del chart para poner una alarma. Suena sirena+voz al cruzar (price_alarm).">🔔 Alarma</button>
+  <button id="zonebtn" title="Zona de ejecución: clic aquí y luego clic en el precio del chart; elige expiry, cantidad y comprar/vender call/put. Por defecto FICHA (señal-solamente); ARMA el chip ⚡ para que el order_engine la ejecute. Stop-loss arrastrable.">🎯 Zona</button>
   <button id="narrbtn" title="Narrador de mercado (como gexa): lectura breve del mapa GEX. Determinista gratis + DeepSeek bajo demanda (↻).">🗣 Narrador</button>
   <button id="helpbtn" title="¿Qué es cada cosa? (guía)">ℹ Guía</button>
   <span id="conn" class="off">● desconectado</span>
@@ -176,9 +332,56 @@
   <p><b>Madrid ribbon</b> = 18 EMAs coloreadas (rojo cae / verde sube). <b>Supertrend</b> = línea verde↑/rojo↓ con Buy/Sell. <b>BB(20,2)</b>, SMA20/40/100/200, VWAP, MACD abajo, trendlines automáticas.</p>
   <p style="margin-top:10px;color:#6f8bbf">Cifras en $/1% como gexa. Nada es consejo financiero — es un mapa de flujos mecánicos. El print manda la entrada; la estructura da la paciencia. Doctrina completa: skill <b>gexa-framework</b>.</p>
 </div>
+<div id="wldrawer">
+  <input id="wlsearch" type="text" placeholder="Buscar / añadir ticker… (Enter)" autocomplete="off" spellcheck="false">
+  <div id="wllist"></div>
+</div>
+<div id="acctpanel">
+  <div id="accthdr">
+    <span id="accttitle">Cuenta</span>
+    <span id="acctsum"></span>
+    <span id="acctclose" title="Cerrar">✕</span>
+  </div>
+  <div id="acctbody">
+    <div class="acctsec">Posiciones</div>
+    <div id="acctpos" class="accttbl"></div>
+    <div class="acctsec">Órdenes de trabajo</div>
+    <div id="acctord" class="accttbl"></div>
+  </div>
+</div>
 <div id="chart">
   <div id="structpill" class="hidden"></div>
-  <div id="alarmpanel" class="hidden"></div>
+  <div id="chipbar"></div>
+  <div id="dirarrow"><div class="glyph"></div><div class="pct"></div><div class="tgt"></div><div class="cap"></div></div>
+  <div id="countdown"></div>
+  <div id="zonepop">
+    <div class="zph">Zona @ <span id="zonepop-px">—</span> · <span id="zone-instlbl">acción</span></div>
+    <div class="zrow" id="zone-exprow"><label>Fecha</label><select id="zone-exp"></select></div>
+    <div class="zrow"><label>Qty</label><input id="zone-qty" type="number" min="1" value="1"></div>
+    <div class="zprev" id="zone-preview">—</div>
+    <div class="zbtns" id="zone-optbtns">
+      <button data-side="buy" data-kind="call" style="background:#1e6f4c">Compra CALL</button>
+      <button data-side="buy" data-kind="put" style="background:#7a1f1f">Compra PUT</button>
+      <button data-side="sell" data-kind="call" style="background:#8a6d00">Vende CALL</button>
+      <button data-side="sell" data-kind="put" style="background:#1a5e6e">Vende PUT</button>
+    </div>
+    <div class="zbtns" id="zone-stkbtns" style="display:none;grid-template-columns:1fr 1fr">
+      <button data-side="buy" data-kind="" style="background:#1e6f4c">🟢 Comprar</button>
+      <button data-side="sell" data-kind="" style="background:#b02a2a">🔴 Vender</button>
+    </div>
+    <button class="zcancel" style="width:100%;margin-top:5px">Cancelar</button>
+  </div>
+  <div id="enginepill" class="hidden"></div>
+  <div id="ticketcard">
+    <span class="tcx" id="tcx">✕</span>
+    <div class="tcbar"><span id="tc-verdict">—</span></div>
+    <div class="tcbody">
+      <div class="tcaction" id="tc-action">—</div>
+      <div class="tcgrid" id="tc-grid"></div>
+      <div class="tcwhy" id="tc-why"></div>
+      <div class="tcnote">⚠️ Ejecuta TÚ en IBKR — el sistema solo prepara la ficha (señal-solamente).</div>
+    </div>
+  </div>
 </div>
 <footer>
   <span><span class="dot" style="background:#2962ff"></span>BB(20,2)</span>
@@ -195,7 +398,7 @@
   <span><span class="dot" style="background:#ffb300"></span>imán (gamma+ dorado)</span>
   <span><span class="dot" style="background:#9c27b0"></span>acelerador (gamma− morado)</span>
   <span><span class="dot" style="background:#f4c430"></span>gamma-flip</span>
-  <span style="margin-left:auto;color:#555">SEÑAL-SOLAMENTE · sin órdenes</span>
+  <span style="margin-left:auto;color:#555">FICHA por defecto · el motor sólo ejecuta zonas ARMADAS ⚡</span>
 </footer>
 
 <!-- v5.2.0 vendored local (Apache-2.0), sin CDN en runtime -->
@@ -525,21 +728,185 @@ document.querySelectorAll(".tfbtn").forEach(btn => {
   });
 });
 
-// ------------------------------------------------------- ticker selector
-const FLEET = ["QQQ","SPY","NVDA","TSLA","MU","SMH","AMD","AAPL","MSFT","META",
+// ------------------------------------------------- ticker + watchlist (buscable)
+// FLEET/USERWL llegan del server ({type:"watchlist"}). Estos son solo el fallback
+// antes de recibirlo -> el dropdown nunca queda vacío al arrancar.
+let FLEET = ["QQQ","SPY","NVDA","TSLA","MU","SMH","AMD","AAPL","MSFT","META",
   "AMZN","GOOGL","INTC","TSM","ASML","TXN","QCOM","AVGO","NFLX","NOK","GLD","XLK",
   "EWY","DRAM","SPCX","SKHY","LRCX","SNDK","WDC","STX"];
-const symsel = document.getElementById("symsel");
-for (const s of FLEET) { const o = document.createElement("option"); o.value = s; o.textContent = s; symsel.appendChild(o); }
-symsel.addEventListener("change", () => {
+let USERWL = [];
+let QUOTES = {};   // {sym:{last,chg,vol}} para las columnas estilo TradingView
+let curSym = null;
+function fmtVol(v) {
+  if (v == null) return "";
+  if (v >= 1e9) return (v/1e9).toFixed(1) + "B";
+  if (v >= 1e6) return (v/1e6).toFixed(1) + "M";
+  if (v >= 1e3) return (v/1e3).toFixed(0) + "K";
+  return String(v);
+}
+// Selector UNIFICADO (orden Yunior 2026-07-24): un solo control — el botón #wlbtn
+// MUESTRA el ticker actual y abre la lista buscable (con volumen y %día). Ya no hay
+// <select> aparte (era redundante con el drawer).
+function setSelLabel(sym) { const b = document.getElementById("wlbtn"); if (b) b.textContent = "📋 " + (sym || "—") + " ▾"; }
+function rebuildSymSel() { setSelLabel(curSym); }
+rebuildSymSel();
+function switchSymbol(sym) {
+  if (!sym) return;
+  const u = sym.toUpperCase();
+  curSym = u;
   if (ws && ws.readyState === WebSocket.OPEN) {
-    ws.send(JSON.stringify({ cmd: "sym", sym: symsel.value }));   // el server re-pide y reenvía history
-    ws.send(JSON.stringify({ cmd: "alarm", act: "list" }));       // alarmas del nuevo símbolo
+    ws.send(JSON.stringify({ cmd: "sym", sym: u }));        // el server re-pide y reenvía history
+    ws.send(JSON.stringify({ cmd: "alarm", act: "list" })); // alarmas del nuevo símbolo
+    ws.send(JSON.stringify({ cmd: "zone", act: "list" }));  // zonas 0DTE del nuevo símbolo
   }
   structpill.classList.add("hidden");   // reset señal estructural
+  const d = document.getElementById("wldrawer"); if (d) d.classList.remove("on");  // cerrar lista al elegir
+  syncSymSel(u);
+}
+function syncSymSel(sym) {
+  if (!sym) return;
+  const u = sym.toUpperCase();
+  curSym = u;
+  setSelLabel(u);
+  renderWatchlist();
+}
+// ---- drawer de watchlist (izquierda, colapsable) ----
+const wlbtn = document.getElementById("wlbtn");
+const wldrawer = document.getElementById("wldrawer");
+const wlsearch = document.getElementById("wlsearch");
+const wllist = document.getElementById("wllist");
+wlbtn.addEventListener("click", () => {
+  wldrawer.classList.toggle("on");
+  if (wldrawer.classList.contains("on")) { renderWatchlist(); wlsearch.focus(); }
 });
-function syncSymSel(sym) { if (sym) { const u = sym.toUpperCase();
-  if ([...symsel.options].some(o => o.value === u)) symsel.value = u; } }
+function delFromWatchlist(sym) {
+  if (ws && ws.readyState === WebSocket.OPEN)
+    ws.send(JSON.stringify({ cmd: "watchlist", act: "del", sym }));
+}
+function renderWatchlist() {
+  const mk = (s) => {
+    const q = QUOTES[s] || {};
+    const chg = (q.chg != null) ? (q.chg > 0 ? "+" : "") + q.chg.toFixed(2) + "%" : "";
+    const chgCls = (q.chg == null) ? "" : (q.chg > 0 ? "pos" : q.chg < 0 ? "neg" : "");
+    const last = (q.last != null) ? q.last.toFixed(2) : "";
+    return `<div class="wlrow${s === curSym ? " sel" : ""}" data-sym="${s}">` +
+      `<span class="wsym">${s}</span>` +
+      `<span class="wlast">${last}</span>` +
+      `<span class="wchg ${chgCls}">${chg}</span>` +
+      `<span class="wvol">${fmtVol(q.vol)}</span>` +
+      (USERWL.includes(s) ? `<span class="wx" data-del="${s}" title="Quitar de mi lista">✕</span>` : `<span class="wx" style="visibility:hidden">✕</span>`) +
+      `</div>`;
+  };
+  let html = '<div class="wlhdr"><span>Símbolo</span><span>Último</span><span>%Día</span><span>Vol</span><span></span></div>';
+  html += '<div class="wlhdr sub">Flota</div>' + [...FLEET].sort().map(mk).join("");
+  if (USERWL.length) html += '<div class="wlhdr sub">Mías</div>' + [...USERWL].sort().map(mk).join("");
+  wllist.innerHTML = html;
+  wllist.querySelectorAll(".wlrow").forEach(r => r.addEventListener("click", (e) => {
+    if (e.target.dataset.del) return;   // el ✕ se maneja aparte
+    switchSymbol(r.dataset.sym);
+  }));
+  wllist.querySelectorAll(".wx").forEach(x => x.addEventListener("click", (e) => {
+    e.stopPropagation(); delFromWatchlist(x.dataset.del);
+  }));
+}
+wlsearch.addEventListener("keydown", (e) => {
+  if (e.key !== "Enter") return;
+  const s = wlsearch.value.trim().toUpperCase();
+  if (!s) return;
+  wlsearch.value = "";
+  if (ws && ws.readyState === WebSocket.OPEN)
+    ws.send(JSON.stringify({ cmd: "watchlist", act: "add", sym: s }));  // server cualifica + responde watchlist
+  switchSymbol(s);   // salta a él enseguida
+});
+function onWatchlist(msg) {
+  if (Array.isArray(msg.fleet)) FLEET = msg.fleet;
+  if (Array.isArray(msg.user)) USERWL = msg.user;
+  if (msg.quotes) QUOTES = msg.quotes;
+  rebuildSymSel();
+  renderWatchlist();
+}
+
+// ============ switcher PAPER/LIVE + selector Opciones/Acciones + panel Cuenta ============
+let curInstrument = "opt", curMode = null;
+const modepill = document.getElementById("modepill");
+const instpill = document.getElementById("instpill");
+const acctbtn = document.getElementById("acctbtn");
+const acctpanel = document.getElementById("acctpanel");
+function onIbMode(m) {
+  curMode = m.mode;
+  const up = m.mode === "live" ? m.live_up : m.paper_up;
+  modepill.textContent = (m.mode === "live" ? "● LIVE" : "● PAPER") + (up ? "" : " (TWS off)");
+  modepill.classList.toggle("live", m.mode === "live");
+  modepill.title = `Cuenta ${m.account} · puerto ${m.port} · paper ${m.paper_up ? "up" : "off"} / live ${m.live_up ? "up" : "off"}. Clic para cambiar.`;
+}
+modepill.addEventListener("click", () => {
+  if (!ws || ws.readyState !== WebSocket.OPEN || !curMode) return;
+  const next = curMode === "live" ? "paper" : "live";
+  ws.send(JSON.stringify({ cmd: "ibmode", act: "set", mode: next }));
+});
+function setInstLabel() { instpill.textContent = curInstrument === "stk" ? "📊 Acciones" : "📈 Opciones"; }
+instpill.addEventListener("click", () => { curInstrument = curInstrument === "stk" ? "opt" : "stk"; setInstLabel(); });
+setInstLabel();
+
+let acctTimer = null;
+function reqAccount() { if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ cmd: "account" })); }
+acctbtn.addEventListener("click", () => {
+  const on = acctpanel.classList.toggle("on");
+  if (on) { reqAccount(); acctTimer = setInterval(reqAccount, 4000); }
+  else if (acctTimer) { clearInterval(acctTimer); acctTimer = null; }
+});
+document.getElementById("acctclose").addEventListener("click", () => {
+  acctpanel.classList.remove("on"); if (acctTimer) { clearInterval(acctTimer); acctTimer = null; }
+});
+function onAccount(a) {
+  const s = a.summary || {};
+  document.getElementById("acctsum").textContent =
+    `${(a.mode || "").toUpperCase()} · NetLiq ${s.NetLiquidation || "—"} · Poder compra ${s.BuyingPower || "—"}` +
+    (a.err ? `  ⚠ ${a.err}` : "");
+  const pos = document.getElementById("acctpos"), ord = document.getElementById("acctord");
+  pos.innerHTML = (a.positions && a.positions.length) ? a.positions.map(p => {
+    const cls = p.upl == null ? "" : (p.upl > 0 ? "pos" : p.upl < 0 ? "neg" : "");
+    const meta = JSON.stringify({ conId: p.conId, sym: p.sym, exp: p.exp, strike: p.strike, right: p.right, qty: p.qty, secType: p.secType }).replace(/'/g, "&#39;");
+    return `<div class="acctrow"><span class="albl">${p.label}</span>` +
+      `<span class="aval">${p.qty > 0 ? "+" : ""}${p.qty}</span><span class="aval">@${p.avg}</span>` +
+      `<span class="aval ${cls}">${p.upl == null ? "" : (p.upl > 0 ? "+" : "") + p.upl}</span>` +
+      `<button class="bclose" data-close='${meta}'>Cerrar</button></div>`;
+  }).join("") : '<div id="acctempty">sin posiciones</div>';
+  ord.innerHTML = (a.orders && a.orders.length) ? a.orders.map(o =>
+    `<div class="acctrow"><span class="albl">${o.label}</span>` +
+    `<span class="aval">${o.action} ${o.qty}</span>` +
+    `<span class="aval">${o.type} ${o.limit || o.aux || ""}</span>` +
+    `<span class="aval">${o.status}</span>` +
+    `<button class="bcancel" data-cancel="${o.orderId}">Cancelar</button>` +
+    `<button class="bmod" data-mod="${o.orderId}" data-lim="${o.limit || ""}">Mod</button></div>`
+  ).join("") : '<div id="acctempty">sin órdenes de trabajo</div>';
+  bindAcctBtns();
+}
+function bindAcctBtns() {
+  document.querySelectorAll("#acctpos .bclose").forEach(b => b.onclick = () => {
+    const m = JSON.parse(b.dataset.close);
+    const side = m.qty > 0 ? "sell" : "buy";     // cerrar long = vender; short = comprar
+    sendAction({ act: "close", conId: m.conId, sym: m.sym, exp: m.exp, strike: m.strike,
+                 right: m.right, qty: Math.abs(m.qty), side, secType: m.secType });
+  });
+  document.querySelectorAll("#acctord .bcancel").forEach(b => b.onclick = () =>
+    sendAction({ act: "cancel", orderId: parseInt(b.dataset.cancel, 10) }));
+  document.querySelectorAll("#acctord .bmod").forEach(b => b.onclick = () => {
+    const row = b.closest(".acctrow"), oid = parseInt(b.dataset.mod, 10);
+    const inp = document.createElement("input");
+    inp.value = b.dataset.lim || ""; inp.style.width = "60px";
+    inp.onkeydown = (e) => { if (e.key === "Enter") { sendAction({ act: "modify", orderId: oid, limit: parseFloat(inp.value) }); } };
+    b.replaceWith(inp); inp.focus();
+  });
+}
+function sendAction(a) {
+  if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(Object.assign({ cmd: "order_action" }, a)));
+}
+function onOrderAction(r) {
+  const note = r.ok ? (r.note || "✓ encolado al motor") : ("⚠ " + (r.err || "falló"));
+  document.getElementById("acctsum").textContent = note;
+  setTimeout(reqAccount, 800);
+}
 
 // ---- narrador de mercado (tipo gexa) ----
 const narrbtn = document.getElementById("narrbtn");
@@ -581,39 +948,282 @@ function onStructural(msg) {
   structpill.className = "";
   structpill.classList.add(s.dir === "down" ? "dn" : (s.dir === "flat" ? "flat" : ""));
   structpill.textContent = "🧲 " + s.text + (s.prob ? ` · ${s.prob}%` : "");
-  structpill.title = "Señal estructural (conviccion pressure+distancia+momentum, no WR medido)";
+  if (s.note) {   // p.ej. "flota en contra — rebajada" (más pequeño/tenue)
+    const n = document.createElement("span");
+    n.textContent = " · " + s.note;
+    n.style.cssText = "font-size:11px;font-weight:600;opacity:.72;";
+    structpill.appendChild(n);
+  }
+  structpill.title = "Señal estructural (conviccion pressure+distancia+momentum, no WR medido)"
+    + (s.base_prob ? ` · base ${s.base_prob}%` : "");
 }
 
-// ---- alarmas manuales estilo TradingView (clic para poner) ----
+// ---- alarmas manuales + ZONAS 0DTE: chips inline en la banda del chart ----
 const alarmbtn = document.getElementById("alarmbtn");
-let alarmArmed = false, alarmLines = [];
+const zonebtn = document.getElementById("zonebtn");
+const zonepop = document.getElementById("zonepop");
+const chipbar = document.getElementById("chipbar");
+let alarmArmed = false, zoneArmed = false, alarmLines = [], zoneLines = [];
+let curAlarms = [], curZones = [], pendingZonePrice = null;
+let curExps = [], zoneProb = {}, stopLines = {}, dragStop = null;
+// expiry YYYYMMDD -> "MM-DD" (+ "0DTE" si es hoy en Toronto)
+const _todayTor = () => { const p = new Intl.DateTimeFormat("en-CA",{ timeZone: TZ, year:"numeric", month:"2-digit", day:"2-digit" }).formatToParts(new Date());
+  const g = (t) => (p.find(x => x.type === t) || {}).value; return `${g("year")}${g("month")}${g("day")}`; };
+function fmtExp(e) { if (!e || e.length < 8) return e || "0DTE";
+  return e.slice(4,6) + "-" + e.slice(6,8) + (e === _todayTor() ? " 0DTE" : ""); }
+function verdictCls(v) { v = (v||"").toUpperCase(); return v === "GO" ? "go" : v === "CAUTION" ? "caution" : v === "NO-GO" ? "nogo" : ""; }
+
 alarmbtn.addEventListener("click", () => {
   alarmArmed = !alarmArmed;
+  if (alarmArmed) { zoneArmed = false; zonebtn.classList.remove("arm"); hideZonePop(); }
   alarmbtn.classList.toggle("arm", alarmArmed);
   el.style.cursor = alarmArmed ? "crosshair" : "";
 });
-// clic en el chart estando armado -> precio bajo el cursor -> crea alarma
+zonebtn.addEventListener("click", () => {
+  zoneArmed = !zoneArmed;
+  if (zoneArmed) { alarmArmed = false; alarmbtn.classList.remove("arm"); }
+  else hideZonePop();
+  zonebtn.classList.toggle("arm", zoneArmed);
+  el.style.cursor = zoneArmed ? "crosshair" : "";
+});
+// clic en el chart: si ZONA armada -> popup side/kind; si ALARMA armada -> crea alarma
 chart.subscribeClick((param) => {
-  if (!alarmArmed || !param || param.point == null) return;
+  if (!param || param.point == null) return;
   let price = null;
   try { price = candle.coordinateToPrice(param.point.y); } catch (e) {}
   if (price == null) return;
   price = Math.round(price * 100) / 100;
-  if (ws && ws.readyState === WebSocket.OPEN)
-    ws.send(JSON.stringify({ cmd: "alarm", act: "add", price }));
-  alarmArmed = false; alarmbtn.classList.remove("arm"); el.style.cursor = "";
+  if (zoneArmed) { showZonePop(param.point.x, param.point.y, price); return; }
+  if (alarmArmed) {
+    if (ws && ws.readyState === WebSocket.OPEN)
+      ws.send(JSON.stringify({ cmd: "alarm", act: "add", price }));
+    alarmArmed = false; alarmbtn.classList.remove("arm"); el.style.cursor = "";
+  }
 });
-const alarmpanel = document.getElementById("alarmpanel");
-function delAlarm(price) {
+
+// --- STOP-LOSS ARRASTRABLE: mueve la línea del stop y persiste stop.px (WS zone/set) ---
+// Espeja la interacción de las alarmas (clic->precio) pero con drag. Al arrastrar deshabilita
+// el pan/zoom del chart para no mover el gráfico. Sólo escribe el contrato: SEÑAL-SOLAMENTE.
+function zoneStopAtY(y) {
+  for (const z of curZones) {
+    const st = z.stop || {};
+    if ((z.side || "buy") !== "buy" || !st.on || st.px == null) continue;
+    let sy = null; try { sy = candle.priceToCoordinate(st.px); } catch (e) {}
+    if (sy != null && Math.abs(sy - y) <= 6) return z;
+  }
+  return null;
+}
+el.addEventListener("mousedown", (e) => {
+  if (alarmArmed || zoneArmed) return;   // no interferir con el modo armar
+  const rect = el.getBoundingClientRect();
+  const z = zoneStopAtY(e.clientY - rect.top);
+  if (!z) return;
+  dragStop = { z, px: (z.stop || {}).px };
+  chart.applyOptions({ handleScroll: false, handleScale: false });
+  el.style.cursor = "ns-resize";
+  e.preventDefault(); e.stopPropagation();
+});
+window.addEventListener("mousemove", (e) => {
+  if (!dragStop) {
+    // feedback de cursor al pasar sobre un stop (sólo fuera de modo armar / drag)
+    if (!alarmArmed && !zoneArmed) {
+      const rect = el.getBoundingClientRect();
+      const y = e.clientY - rect.top, x = e.clientX - rect.left;
+      if (x >= 0 && y >= 0 && x <= el.clientWidth && y <= el.clientHeight)
+        el.style.cursor = zoneStopAtY(y) ? "ns-resize" : "";
+    }
+    return;
+  }
+  const rect = el.getBoundingClientRect();
+  let px = null; try { px = candle.coordinateToPrice(e.clientY - rect.top); } catch (e2) {}
+  if (px == null) return;
+  px = Math.round(px * 100) / 100;
+  dragStop.px = px;
+  moveStopLine(dragStop.z, px);
+});
+window.addEventListener("mouseup", () => {
+  if (!dragStop) return;
+  const z = dragStop.z, px = dragStop.px;
+  chart.applyOptions({ handleScroll: true, handleScale: true });
+  el.style.cursor = "";
+  if (z.stop) z.stop.px = px;   // optimista: refleja ya en el chip
+  renderChips();
+  if (px != null && ws && ws.readyState === WebSocket.OPEN)
+    ws.send(JSON.stringify({ cmd: "zone", act: "set", id: z.id, stop_px: px }));
+  dragStop = null;
+});
+
+// --- popup inline de zona (NO usa alert/confirm/prompt) ---
+const zoneExpSel = document.getElementById("zone-exp");
+const zoneQtyInp = document.getElementById("zone-qty");
+const zonePrevEl = document.getElementById("zone-preview");
+function hideZonePop() { zonepop.classList.remove("on"); pendingZonePrice = null; }
+function reqOptQuote() {
+  if (pendingZonePrice == null || !ws || ws.readyState !== WebSocket.OPEN) return;
+  ws.send(JSON.stringify({ cmd: "optquote", price: pendingZonePrice, exp: zoneExpSel.value || "" }));
+}
+function showZonePop(x, y, price) {
+  pendingZonePrice = price;
+  document.getElementById("zonepop-px").textContent = price;
+  const isStk = curInstrument === "stk";   // acciones = simple (comprar/vender); opciones = fecha+strike
+  document.getElementById("zone-instlbl").textContent = isStk ? "acción" : "opción";
+  document.getElementById("zone-exprow").style.display = isStk ? "none" : "";
+  document.getElementById("zone-preview").style.display = isStk ? "none" : "";
+  document.getElementById("zone-optbtns").style.display = isStk ? "none" : "grid";
+  document.getElementById("zone-stkbtns").style.display = isStk ? "grid" : "none";
+  if (!isStk) zoneExpSel.innerHTML = curExps.length
+    ? curExps.map(e => `<option value="${e}">${fmtExp(e)}</option>`).join("")
+    : `<option value="">0DTE</option>`;
+  zoneQtyInp.value = 1;
+  if (!isStk) zonePrevEl.textContent = "leyendo cadena…";
+  const cw = el.clientWidth, ch = el.clientHeight;
+  zonepop.style.left = Math.min(Math.max(4, x), cw - 238) + "px";
+  zonepop.style.top = Math.min(Math.max(4, y), ch - 210) + "px";
+  zonepop.classList.add("on");
+  reqOptQuote();
+}
+zoneExpSel.addEventListener("change", reqOptQuote);
+function onOptquote(msg) {
+  if (!zonepop.classList.contains("on")) return;
+  const fmt = (o, lab, col) => {
+    if (!o || o.bid == null) return `<b style="color:${col}">${lab}</b> —`;
+    const b = o.bid < 0 ? "—" : o.bid.toFixed(2), a = o.ask < 0 ? "—" : o.ask.toFixed(2);
+    return `<b style="color:${col}">${lab}</b> ${b}/${a}`;
+  };
+  const strike = msg.strike != null ? msg.strike : "—";
+  const oi = (msg.call && msg.call.oi != null) ? msg.call.oi : (msg.put && msg.put.oi != null ? msg.put.oi : null);
+  zonePrevEl.innerHTML = `strike <b style="color:#d1d4dc">${strike}</b> · ` +
+    fmt(msg.call, "C", "#26a69a") + " · " + fmt(msg.put, "P", "#ef5350") +
+    (oi != null ? ` · OI ${oi}` : "");
+}
+zonepop.querySelectorAll(".zbtns button[data-side]").forEach(b => b.addEventListener("click", () => {
+  if (pendingZonePrice == null) return;
+  const exp = zoneExpSel.value || null;
+  const qty = Math.max(1, parseInt(zoneQtyInp.value, 10) || 1);
   if (ws && ws.readyState === WebSocket.OPEN)
-    ws.send(JSON.stringify({ cmd: "alarm", act: "del", price }));
+    ws.send(JSON.stringify({ cmd: "zone", act: "add", price: pendingZonePrice,
+                            side: b.dataset.side, kind: b.dataset.kind, exp, qty,
+                            instrument: curInstrument }));
+  hideZonePop(); zoneArmed = false; zonebtn.classList.remove("arm"); el.style.cursor = "";
+}));
+zonepop.querySelector(".zcancel").addEventListener("click", () => {
+  hideZonePop(); zoneArmed = false; zonebtn.classList.remove("arm"); el.style.cursor = "";
+});
+
+// --- líneas + chips ---
+const ZONE_COL = { buycall: "#26a69a", buyput: "#ef5350", sellcall: "#ff9800", sellput: "#26c6da" };
+function zoneColor(z) { return ZONE_COL[(z.side || "buy") + (z.kind || "call")] || "#8aa0c8"; }
+function zoneLabel(z) { return "🎯 " + (z.side === "sell" ? "V" : "C") + (z.kind === "put" ? "put" : "call") + " " + z.price; }
+function delAlarm(price) {
+  if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ cmd: "alarm", act: "del", price }));
+}
+function delZone(id) {
+  if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ cmd: "zone", act: "del", id }));
+}
+function moveStopLine(z, px) {
+  try { if (stopLines[z.id]) candle.removePriceLine(stopLines[z.id]); } catch (e) {}
+  try {
+    stopLines[z.id] = candle.createPriceLine({
+      price: px, color: "#ef5350", lineWidth: 1, lineStyle: 2,
+      axisLabelVisible: true, title: "⛔ stop " + px,
+    });
+  } catch (e) {}
+}
+function drawZones() {
+  zoneLines.forEach(l => { try { candle.removePriceLine(l); } catch (e) {} });
+  zoneLines = [];
+  Object.values(stopLines).forEach(l => { try { candle.removePriceLine(l); } catch (e) {} });
+  stopLines = {};
+  curZones.forEach(z => {
+    try {
+      zoneLines.push(candle.createPriceLine({
+        price: z.price, color: zoneColor(z), lineWidth: 2, lineStyle: 0,
+        axisLabelVisible: true, title: zoneLabel(z),
+      }));
+    } catch (e) {}
+    // stop-loss arrastrable (buy + stop.on): línea roja punteada bajo/encima de la entrada
+    const st = z.stop || {};
+    if ((z.side || "buy") === "buy" && st.on && st.px != null) moveStopLine(z, st.px);
+  });
+}
+function renderChips() {
+  let html = "";
+  curAlarms.forEach(a => {
+    html += `<span class="chip" style="border-color:#f4c430"><span>🔔 ${a.dir === "up" ? "▲" : "▼"} ${a.price}</span>` +
+            `<span class="cx" data-atrash="${a.price}" title="Borrar alarma">🗑</span></span>`;
+  });
+  curZones.forEach(z => {
+    const isBuy = (z.side || "buy") === "buy";
+    const st = z.stop || {};
+    const isExec = !!z.exec;
+    const execTxt = isExec ? "ARMADA ⚡" : "ficha";
+    const execTip = isExec ? "El order_engine EJECUTA esta zona (doble llave). Clic: volver a ficha."
+                           : "Ficha-only (señal-solamente). Clic: ARMAR para que el motor ejecute.";
+    const stopHtml = isBuy
+      ? `<span class="zstop ${st.on ? "on" : ""}" data-zstop="${z.id}" title="Stop-loss (clic: on/off · arrastra la línea roja para moverlo)">${st.on ? ("⛔ " + (st.px != null ? st.px : "")) : "stop off"}</span>`
+      : "";
+    const pr = zoneProb[z.id];
+    const probHtml = isBuy
+      ? ((pr && pr.prob != null)
+          ? `<span class="zprob ${verdictCls(pr.verdict)}" data-zprob="${z.id}" title="${((pr.why || []).join(" · ") || "prob de profit").replace(/"/g, "'")}">${pr.prob}% ${pr.verdict || ""}</span>`
+          : `<span class="zprob" data-zprob="${z.id}" title="Calcular probabilidad de profit (order_engine)">${(pr && pr.why && pr.why.length) ? "prob n/d" : "prob?"}</span>`)
+      : "";
+    const meta = (z.exp ? " " + fmtExp(z.exp) : "") + (z.qty ? " ×" + z.qty : "");
+    html += `<span class="chip" style="border-color:${zoneColor(z)}">` +
+            `<span>${zoneLabel(z)}${meta}</span>` +
+            `<span class="zexec ${isExec ? "on" : ""}" data-zexec="${z.id}" title="${execTip}">${execTxt}</span>` +
+            stopHtml + probHtml +
+            `<span class="cx" data-ztrash="${z.id}" title="Borrar zona">🗑</span></span>`;
+  });
+  chipbar.innerHTML = html;
+  chipbar.querySelectorAll("[data-atrash]").forEach(t =>
+    t.addEventListener("click", () => delAlarm(parseFloat(t.dataset.atrash))));
+  chipbar.querySelectorAll("[data-ztrash]").forEach(t =>
+    t.addEventListener("click", () => delZone(t.dataset.ztrash)));
+  chipbar.querySelectorAll("[data-zexec]").forEach(t => t.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const z = curZones.find(z => z.id === t.dataset.zexec); if (!z) return;
+    if (ws && ws.readyState === WebSocket.OPEN)
+      ws.send(JSON.stringify({ cmd: "zone", act: "set", id: z.id, exec: !z.exec }));
+  }));
+  chipbar.querySelectorAll("[data-zstop]").forEach(t => t.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const z = curZones.find(z => z.id === t.dataset.zstop); if (!z) return;
+    const on = !(z.stop && z.stop.on);
+    if (ws && ws.readyState === WebSocket.OPEN)
+      ws.send(JSON.stringify({ cmd: "zone", act: "set", id: z.id, stop_on: on }));
+  }));
+  chipbar.querySelectorAll("[data-zprob]").forEach(t => t.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const z = curZones.find(z => z.id === t.dataset.zprob); if (!z) return;
+    t.textContent = "…"; reqProb(z);
+  }));
+}
+function reqProb(z) {
+  if (ws && ws.readyState === WebSocket.OPEN)
+    ws.send(JSON.stringify({ cmd: "prob", id: z.id, price: z.price,
+                            side: z.side, kind: z.kind, exp: z.exp }));
+}
+function onProb(msg) {
+  if (msg.id) zoneProb[msg.id] = msg;
+  renderChips();
+}
+function onEngine(msg) {
+  const pill = document.getElementById("enginepill");
+  const rows = msg.rows || [];
+  if (!rows.length) { pill.classList.add("hidden"); return; }
+  const last = rows[rows.length - 1];
+  const s = last.state || last.status || last.event || last.phase || "";
+  const zid = last.zone || last.id || "";
+  const px = last.price != null ? (" @" + last.price) : (last.limit != null ? (" @" + last.limit) : "");
+  pill.textContent = "⚙ motor: " + (last.raw ? last.raw : `${s}${zid ? (" " + zid) : ""}${px}`);
+  pill.classList.remove("hidden");
 }
 function onAlarms(msg) {
-  // líneas en el chart
   alarmLines.forEach(l => { try { candle.removePriceLine(l); } catch (e) {} });
   alarmLines = [];
-  const alarms = msg.alarms || [];
-  alarms.forEach(a => {
+  curAlarms = msg.alarms || [];
+  curAlarms.forEach(a => {
     try {
       alarmLines.push(candle.createPriceLine({
         price: a.price, color: "#f4c430", lineWidth: 1, lineStyle: 2,
@@ -621,18 +1231,105 @@ function onAlarms(msg) {
       }));
     } catch (e) {}
   });
-  // panel con 🗑 por alarma (borrar) — al lado de la campanita y el triángulo
-  if (!alarms.length) { alarmpanel.classList.add("hidden"); alarmpanel.innerHTML = ""; return; }
-  alarmpanel.classList.remove("hidden");
-  let html = '<div class="ahdr">🔔 Alarmas</div>';
-  alarms.forEach(a => {
-    html += `<div class="arow"><span>🔔 ${a.dir === "up" ? "▲" : "▼"} ${a.price}</span>` +
-            `<span class="atrash" data-price="${a.price}" title="Borrar esta alarma">🗑</span></div>`;
-  });
-  alarmpanel.innerHTML = html;
-  alarmpanel.querySelectorAll(".atrash").forEach(t =>
-    t.addEventListener("click", () => delAlarm(parseFloat(t.dataset.price))));
+  renderChips();
 }
+function onZones(msg) {
+  curZones = msg.zones || [];
+  if (Array.isArray(msg.exps)) curExps = msg.exps;
+  // limpia prob cacheada de zonas ya borradas
+  const live = new Set(curZones.map(z => z.id));
+  for (const id of Object.keys(zoneProb)) if (!live.has(id)) delete zoneProb[id];
+  drawZones();
+  renderChips();
+  // pide prob (order_engine) para zonas de compra que aún no la tengan
+  curZones.forEach(z => { if ((z.side || "buy") === "buy" && !zoneProb[z.id]) reqProb(z); });
+  // sin zonas ARMADAS -> oculta la pill de estado del motor (evita status obsoleto)
+  if (!curZones.some(z => z.exec)) document.getElementById("enginepill").classList.add("hidden");
+}
+
+// ---- FICHA 0DTE: tarjeta glanceable (order_ticket) ----
+const ticketcard = document.getElementById("ticketcard");
+document.getElementById("tcx").addEventListener("click", () => ticketcard.classList.remove("on"));
+function onTicket(msg) {
+  const t = msg.t; if (!t) return;
+  const v = (t.verdict || "NO-GO").toUpperCase();
+  ticketcard.className = "on " + (v === "GO" ? "go" : v === "CAUTION" ? "caution" : "nogo");
+  const emo = v === "GO" ? "🟢" : v === "CAUTION" ? "🟡" : "🔴";
+  document.getElementById("tc-verdict").innerHTML = `${emo} ${v}` +
+    (msg.triggered ? ` <span class="tctrig">ZONA CRUZADA</span>` : ``);
+  let action = t.ticket || "—";
+  if (t.ok && t.sym && t.strike != null) {
+    action = `${t.side === "sell" ? "VENDE" : "COMPRA"} ${t.size || ""}x ${t.sym} ${t.strike}${t.right || ""} 0DTE`;
+  }
+  document.getElementById("tc-action").textContent = action;
+  const cell = (k, val) => (val != null && val !== "") ? `<span><span class="k">${k}</span><span class="v">${val}</span></span>` : "";
+  document.getElementById("tc-grid").innerHTML = [
+    cell("límite", t.limit != null ? "$" + t.limit : null),
+    cell("prima", t.premium != null ? "$" + t.premium : null),
+    cell("spread", t.spread_pct != null ? t.spread_pct + "%" : null),
+    cell("OI", t.oi),
+    cell("prob", t.prob != null ? t.prob + "%" : null),
+    cell("Δ", t.delta != null ? t.delta : null),
+    cell("exp", t.exp),
+  ].join("");
+  document.getElementById("tc-why").innerHTML = (t.why || []).map(w => "· " + w).join("<br>");
+  ticketcard.classList.add("on");
+}
+
+// ---- flecha direccional compuesta (overlay semitransparente) ----
+const dirEl = document.getElementById("dirarrow");
+const dirGlyph = dirEl.querySelector(".glyph");
+const dirPct = dirEl.querySelector(".pct");
+const dirTgt = dirEl.querySelector(".tgt");
+const dirCap = dirEl.querySelector(".cap");
+function onDirection(msg) {
+  const d = msg.dir || "flat";
+  const prob = (msg.prob != null) ? msg.prob : "";
+  const col = d === "up" ? "#26a69a" : d === "down" ? "#ef5350" : "#8aa0c8";
+  dirGlyph.textContent = d === "up" ? "▲" : d === "down" ? "▼" : "▬";
+  dirGlyph.style.color = col; dirPct.style.color = col;
+  dirGlyph.style.fontSize = d === "flat" ? "64px" : "120px";
+  dirPct.textContent = (d === "up" ? "▲ " : d === "down" ? "▼ " : "") + (prob !== "" ? prob + "%" : "");
+  // próximo objetivo (imán / muro) en el sentido de la flecha
+  if (dirTgt) {
+    if (msg.target != null) {
+      const pct = (msg.target_pct != null) ? ` (${msg.target_pct > 0 ? "+" : ""}${msg.target_pct}%)` : "";
+      dirTgt.textContent = `→ ${msg.target_label || "objetivo"} ${msg.target}${pct}`;
+    } else { dirTgt.textContent = ""; }
+  }
+  dirEl.style.opacity = d === "flat" ? "0.24" : "0.33";
+  const why = (msg.why || []);
+  if (dirCap) dirCap.textContent = why.length ? why[0] : "";
+  dirEl.title = why.slice(0, 4).join(" · ") || "sesgo direccional compuesto";
+  dirEl.style.display = "block";
+}
+
+// ---- countdown de barra en el eje de precios derecho (estilo TradingView) ----
+const countdownEl = document.getElementById("countdown");
+function tfSeconds(tf) {
+  return ({ "1m":60,"5m":300,"15m":900,"20m":1200,"30m":1800,"1h":3600,"2h":7200,
+            "3h":10800,"4h":14400,"1d":86400,"1W":604800,"1M":2592000 })[tf] || 60;
+}
+function fmtCountdown(rem, sec) {
+  if (rem < 0) rem = 0;
+  const p2 = (x) => String(x).padStart(2, "0");
+  if (sec <= 3600) return p2(Math.floor(rem / 60)) + ":" + p2(Math.floor(rem % 60));            // mm:ss
+  if (sec < 86400) return Math.floor(rem/3600) + ":" + p2(Math.floor((rem%3600)/60)) + ":" + p2(Math.floor(rem%60));  // h:mm:ss
+  const d = Math.floor(rem/86400), h = Math.floor((rem%86400)/3600), m = Math.floor((rem%3600)/60);
+  return d > 0 ? (d + "d " + h + "h") : (h + "h " + m + "m");   // día/semana/mes: grueso
+}
+function tickCountdown() {
+  if (!lastBar || !curTf) { countdownEl.style.display = "none"; return; }
+  const sec = tfSeconds(curTf);
+  const rem = (lastBar.time + sec) - Math.floor(Date.now() / 1000);
+  let y = null;
+  try { y = candle.priceToCoordinate(lastBar.close); } catch (e) {}
+  if (y == null) { countdownEl.style.display = "none"; return; }
+  countdownEl.textContent = fmtCountdown(rem, sec);
+  countdownEl.style.top = (y + 12) + "px";   // debajo de la etiqueta de último precio, no encima
+  countdownEl.style.display = "block";
+}
+setInterval(tickCountdown, 1000);
 
 // toggle 0DTE <-> ALL-EXP (scope) — el server recomputa GEX/flip/VEX
 document.querySelectorAll("#scopebar .tgl").forEach(btn => {
@@ -688,6 +1385,12 @@ function onHistory(msg) {
   zoomRecent(msg.bars.length);   // últimas ~100 barras (velas legibles en cada tf)
 }
 function upd(series, pt) { if (pt) series.update(pt); }
+// precio vivo por tick: SOLO la vela (O(1), sin recomputar indicadores) -> blazing-fast
+function onTick(msg) {
+  candle.update(msg.bar);
+  lastBar = msg.bar; lastBarTime = msg.bar.time;
+  setOHLC(msg.bar);
+}
 function onBar(msg) {
   candle.update(msg.bar);           // update(), NUNCA setData por tick
   const ind = msg.indicators;
@@ -730,16 +1433,28 @@ function connect() {
   const url = `ws://${location.host || "127.0.0.1:8080"}/stream`;
   ws = new WebSocket(url);
   ws.onopen = () => { conn.className = "on"; conn.textContent = "● en vivo";
-    try { ws.send(JSON.stringify({ cmd: "alarm", act: "list" })); } catch (e) {} };
+    try { ws.send(JSON.stringify({ cmd: "alarm", act: "list" }));
+          ws.send(JSON.stringify({ cmd: "ibmode", act: "get" })); } catch (e) {} };
   ws.onmessage = (ev) => {
     const msg = JSON.parse(ev.data);
     if (msg.type === "history") onHistory(msg);
     else if (msg.type === "bar") onBar(msg);
+    else if (msg.type === "tick") onTick(msg);   // precio vivo sub-segundo (solo la vela)
     else if (msg.type === "levels") onLevels(msg);   // GEX/flip/muros en tiempo real
     else if (msg.type === "narrator") onNarrator(msg);   // narrador de mercado
     else if (msg.type === "signals") { sigMarkers = msg.signals || []; engineOps = msg.engineOps || []; applyMarkers(); }  // refresco marcadores + ops engine
     else if (msg.type === "structural") onStructural(msg);   // señal imán/flip
     else if (msg.type === "alarms") onAlarms(msg);   // alarmas manuales del símbolo
+    else if (msg.type === "watchlist") onWatchlist(msg);   // fleet + lista del usuario
+    else if (msg.type === "zones") onZones(msg);   // zonas de ejecución (buy/sell + exp/qty/exec/stop)
+    else if (msg.type === "optquote") onOptquote(msg);   // previsualización contrato (strike/bid/ask)
+    else if (msg.type === "prob") onProb(msg);   // prob de profit (order_engine) -> chip
+    else if (msg.type === "engine") onEngine(msg);   // estado del order_engine (zonas ARMADAS)
+    else if (msg.type === "ticket") onTicket(msg);   // ficha 0DTE (order_ticket)
+    else if (msg.type === "direction") onDirection(msg);   // flecha direccional compuesta
+    else if (msg.type === "ibmode") onIbMode(msg);   // switcher paper/live
+    else if (msg.type === "account") onAccount(msg);   // posiciones/órdenes/balance
+    else if (msg.type === "order_action") onOrderAction(msg);   // resultado cancel/sell/modify
   };
   ws.onclose = () => {
     conn.className = "off"; conn.textContent = "● reconectando…";

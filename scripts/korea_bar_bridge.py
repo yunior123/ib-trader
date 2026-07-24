@@ -30,7 +30,7 @@ sys.path.insert(0, ROOT)
 os.chdir(ROOT)
 from ib_insync import IB, Contract, util  # noqa: E402
 
-HOST, PORT = "127.0.0.1", 7496
+HOST, PORT = "127.0.0.1", int(__import__("os").environ.get("IBKR_PORT","4002"))
 CLIENT_ID = 86                               # unico vs fleet(84)/single(83)
 RETRY_ENTITLEMENT_S = 600
 NO_PERM_ERRORS = {420, 10089, 10090, 354}
@@ -127,7 +127,7 @@ def loud(title, msg, sound="ProAlarm"):
                           f'"{esc(title)}" sound name "{sound}"'],
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         lt = time.localtime()
-        d = os.path.expanduser("~/Desktop/trading-signals")
+        d = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "trading-signals")
         os.makedirs(d, exist_ok=True)
         with open(f"{d}/{lt.tm_year:04d}-{lt.tm_mon:02d}-{lt.tm_mday:02d}.txt",
                   "a") as f:

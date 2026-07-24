@@ -55,7 +55,9 @@ except Exception:  # Toronto == ET; fallback a hora local
     ET = None
 
 HOST = "127.0.0.1"
-PORT = int(os.environ.get("OPT_PORT", "7496"))
+import sys as _s2; _s2.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import ib_mode                                    # fuente única paper/live (sin hardcode)
+PORT = int(os.environ.get("OPT_PORT") or ib_mode.get_port())   # env OPT_PORT gana; si no, data/ib_mode.txt
 CLIENT_ID = int(os.environ.get("OPT_CLIENT_ID", "88"))
 SPREAD_MAX = float(os.environ.get("OPT_SPREAD_MAX", "3.0"))   # % sobre mid
 VOL_MIN = int(os.environ.get("OPT_VOL_MIN", "500"))
@@ -65,7 +67,7 @@ SLEEP_MKT = float(os.environ.get("OPT_SLEEP_MKT", "4.0"))
 MAX_STRIKES = int(os.environ.get("OPT_MAX_STRIKES", "16"))    # lineas mktdata
 
 LOG_PATH = os.path.join(ROOT, "data", "options_enrich.log")
-MIRROR_DIR = os.path.expanduser("~/Desktop/trading-signals")
+MIRROR_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "trading-signals")
 
 SYM_MAP = {"DRAM": "MU"}                                       # señal -> subyacente US
 SKIP = {"KOSPI", "SAMSUNG", "SKHYNIX", "SKHY"}                 # sin opciones US

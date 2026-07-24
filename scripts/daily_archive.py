@@ -142,7 +142,7 @@ def main():
     slice_jsonl_ts("data/whale_alerts.jsonl", os.path.join(hdir, "whale_alerts.jsonl"), t0, t1)
     slice_jsonl_ts("data/whale_flow_hist.jsonl", os.path.join(hdir, "whale_flow_hist.jsonl"), t0, t1)
     # señales del Desktop + ranking + mapa semanal
-    cp(os.path.expanduser(f"~/Desktop/trading-signals/{a.date}.txt"), hdir, warn=False)
+    cp(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "trading-signals", f"{a.date}.txt"), hdir, warn=False)
     cp(os.path.expanduser(f"~/Desktop/planes-{a.date}/ranking.json"), hdir, warn=False)
     cp(f"docs/WHALES-WEEK-{a.date}.md", hdir, warn=False)
 

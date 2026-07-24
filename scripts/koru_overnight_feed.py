@@ -14,7 +14,7 @@ SYMS = ["KORU", "SOXS", "SQQQ", "SOXL", "TQQQ"]
 
 while True:
     try:
-        ib = IB(); ib.connect("127.0.0.1", 7496, clientId=96, readonly=True, timeout=15)
+        ib = IB(); ib.connect("127.0.0.1", int(__import__("os").environ.get("IBKR_PORT","4002")), clientId=96, readonly=True, timeout=15)
         ib.reqMarketDataType(1)
         tickers = {}
         for sym in SYMS:

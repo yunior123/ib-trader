@@ -28,7 +28,7 @@ def live_spot(sym):
 
 def whale_alert_bias(sym):
     """ultimo estado 🐋 por simbolo en los logs del Desktop (3 sesiones)."""
-    d = os.path.expanduser("~/Desktop/trading-signals")
+    d = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "trading-signals")
     rx = re.compile(r"\| 🐋 BALLENA (CALLS|PUTS) \| " + sym + r":")
     last = None
     try:

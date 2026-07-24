@@ -1,0 +1,74 @@
+{
+ "sym": "QCOM",
+ "spot": 166.71,
+ "asof": 1784922734,
+ "exp": "20260724",
+ "dte": 0.01,
+ "scope": "0DTE",
+ "net_vex": -16809755.2,
+ "vex_peak": 167.5,
+ "vex_profile": [
+  {
+   "strike": 162.5,
+   "vex": 23497.1
+  },
+  {
+   "strike": 165.0,
+   "vex": 4780352.8
+  },
+  {
+   "strike": 167.5,
+   "vex": -21009962.3
+  },
+  {
+   "strike": 170.0,
+   "vex": -603649.6
+  },
+  {
+   "strike": 172.5,
+   "vex": 6.8
+  }
+ ],
+ "pressure": -93,
+ "pressure_lab": "AMPLIFICA fuerte",
+ "iv_atm": 1.524,
+ "em": 0.98,
+ "net_gex": -44458529.6,
+ "regime": "NEG",
+ "flip": 172.5,
+ "flip_static": 172.5,
+ "call_wall": 167.5,
+ "put_wall": 165.0,
+ "abs_wall": 167.5,
+ "poc_dom": "99%P",
+ "call_wall_gex": -37832720.9,
+ "put_wall_gex": -5958030.3,
+ "abs_wall_gex": -37832720.9,
+ "oi_call_wall": 170.0,
+ "oi_put_wall": 162.5,
+ "near_call_wall": false,
+ "near_put_wall": false,
+ "near_flip": false,
+ "profile": [
+  {
+   "strike": 162.5,
+   "gex": -111513.5
+  },
+  {
+   "strike": 165.0,
+   "gex": -5958030.3
+  },
+  {
+   "strike": 167.5,
+   "gex": -37832720.9
+  },
+  {
+   "strike": 170.0,
+   "gex": -556266.9
+  },
+  {
+   "strike": 172.5,
+   "gex": 2.0
+  }
+ ]
+}

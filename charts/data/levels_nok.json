@@ -1,42 +1,42 @@
 {
  "sym": "NOK",
- "spot": 9.93,
- "asof": 1784825426,
+ "spot": 9.09,
+ "asof": 1784924579,
  "exp": "20260724",
- "dte": 1.13,
+ "dte": 0.0,
  "scope": "0DTE",
- "net_vex": -133712.3,
- "vex_peak": 10.0,
+ "net_vex": 0.0,
+ "vex_peak": 9.0,
  "vex_profile": [
   {
-   "strike": 10.0,
-   "vex": -133712.3
+   "strike": 9.0,
+   "vex": 0.0
   }
  ],
- "pressure": -100,
+ "pressure": -60,
  "pressure_lab": "AMPLIFICA fuerte",
- "iv_atm": 0.9199,
- "em": 0.51,
- "net_gex": -1546282.6,
+ "iv_atm": 0.3,
+ "em": 0.01,
+ "net_gex": -0.0,
  "regime": "NEG",
- "flip": 10.0,
- "flip_static": 10.0,
- "call_wall": 10.0,
- "put_wall": null,
- "abs_wall": 10.0,
- "poc_dom": "82%P",
- "call_wall_gex": -1546282.6,
- "put_wall_gex": null,
- "abs_wall_gex": -1546282.6,
- "oi_call_wall": 10.0,
- "oi_put_wall": null,
+ "flip": 9.0,
+ "flip_static": 9.0,
+ "call_wall": null,
+ "put_wall": 9.0,
+ "abs_wall": 9.0,
+ "poc_dom": "88%P",
+ "call_wall_gex": null,
+ "put_wall_gex": -0.0,
+ "abs_wall_gex": -0.0,
+ "oi_call_wall": null,
+ "oi_put_wall": 9.0,
  "near_call_wall": false,
  "near_put_wall": false,
  "near_flip": false,
  "profile": [
   {
-   "strike": 10.0,
-   "gex": -1546282.6
+   "strike": 9.0,
+   "gex": -0.0
   }
  ]
 }

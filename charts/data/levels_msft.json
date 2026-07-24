@@ -1,114 +1,122 @@
 {
  "sym": "MSFT",
- "spot": 381.47,
- "asof": 1784832032,
- "exp": "20260724",
- "dte": 1.06,
- "scope": "0DTE",
- "net_vex": 1070481085.5,
- "vex_peak": 370.0,
+ "spot": 384.22,
+ "asof": 1784918711,
+ "exp": "ALL",
+ "dte": null,
+ "scope": "ALL",
+ "net_vex": 1201958787.5,
+ "vex_peak": 390.0,
  "vex_profile": [
   {
-   "strike": 370.0,
-   "vex": 316895033.6
-  },
-  {
    "strike": 372.5,
-   "vex": 87683079.1
+   "vex": 25021461.0
   },
   {
    "strike": 375.0,
-   "vex": 281834512.4
+   "vex": 89853041.5
   },
   {
    "strike": 377.5,
-   "vex": 95302407.0
+   "vex": 80459711.0
   },
   {
    "strike": 380.0,
-   "vex": 89060271.8
+   "vex": 141201117.8
   },
   {
    "strike": 382.5,
-   "vex": -34372466.1
+   "vex": 27314837.9
   },
   {
    "strike": 385.0,
-   "vex": -69012923.0
+   "vex": -69424369.1
   },
   {
    "strike": 387.5,
-   "vex": -51633410.8
+   "vex": 187666744.8
   },
   {
    "strike": 390.0,
-   "vex": 255809541.8
+   "vex": 349272894.5
   },
   {
    "strike": 392.5,
-   "vex": 98915039.7
+   "vex": 110329835.2
+  },
+  {
+   "strike": 395.0,
+   "vex": 181214774.9
+  },
+  {
+   "strike": 397.5,
+   "vex": 79048738.1
   }
  ],
- "pressure": -41,
- "pressure_lab": "amplifica",
- "iv_atm": 0.3808,
- "em": 7.81,
- "net_gex": -74945585.0,
+ "pressure": 6,
+ "pressure_lab": "FLAT",
+ "iv_atm": 0.4131,
+ "em": 1.89,
+ "net_gex": -20366966.2,
  "regime": "NEG",
- "flip": 392.5,
- "flip_static": 392.5,
- "call_wall": 390.0,
+ "flip": 397.5,
+ "flip_static": 397.5,
+ "call_wall": 385.0,
  "put_wall": 380.0,
- "abs_wall": 380.0,
- "poc_dom": "78%P",
- "call_wall_gex": 11811384.5,
- "put_wall_gex": -23967038.7,
- "abs_wall_gex": -23967038.7,
+ "abs_wall": 385.0,
+ "poc_dom": "59%P",
+ "call_wall_gex": -40035946.6,
+ "put_wall_gex": -15076218.7,
+ "abs_wall_gex": -40035946.6,
  "oi_call_wall": 390.0,
- "oi_put_wall": 370.0,
- "near_call_wall": false,
- "near_put_wall": true,
+ "oi_put_wall": 375.0,
+ "near_call_wall": true,
+ "near_put_wall": false,
  "near_flip": false,
  "profile": [
   {
-   "strike": 370.0,
-   "gex": -12179417.5
-  },
-  {
    "strike": 372.5,
-   "gex": -4054111.2
+   "gex": -1417657.7
   },
   {
    "strike": 375.0,
-   "gex": -17533002.1
+   "gex": -7522114.2
   },
   {
    "strike": 377.5,
-   "gex": -9488939.2
+   "gex": -6320328.5
   },
   {
    "strike": 380.0,
-   "gex": -23967038.7
+   "gex": -15076218.7
   },
   {
    "strike": 382.5,
-   "gex": -12402818.9
+   "gex": -9324246.5
   },
   {
    "strike": 385.0,
-   "gex": -7477032.1
+   "gex": -40035946.6
   },
   {
    "strike": 387.5,
-   "gex": -3329832.2
+   "gex": 24193435.9
   },
   {
    "strike": 390.0,
-   "gex": 11811384.5
+   "gex": 22602879.8
   },
   {
    "strike": 392.5,
-   "gex": 3675222.4
+   "gex": 5395812.2
+  },
+  {
+   "strike": 395.0,
+   "gex": 4966917.2
+  },
+  {
+   "strike": 397.5,
+   "gex": 2170501.0
   }
  ]
 }

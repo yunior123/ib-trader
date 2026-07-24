@@ -38,7 +38,7 @@ ROOT = xc.ROOT
 LOG_FILE = os.path.join(ROOT, "x_signal_poster.log")
 STATE_FILE = os.path.join(ROOT, "data", "x_signal_state.json")
 COMBO_FILE = os.path.join(ROOT, "data", "x_combo_triggers.txt")
-SIGNAL_DIR = os.path.expanduser("~/Desktop/trading-signals")
+SIGNAL_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "trading-signals")
 
 ET = ZoneInfo("America/New_York")
 LOOP_SEC = 60

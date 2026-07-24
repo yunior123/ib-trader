@@ -19,7 +19,7 @@ from datetime import datetime
 ROOT = "/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader"
 os.chdir(ROOT)
 DAY = datetime.now().strftime("%Y-%m-%d")
-MIRROR = os.path.expanduser(f"~/Desktop/trading-signals/{DAY}.txt")
+MIRROR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "trading-signals", f"{DAY}.txt")
 
 SYM_FILE = {s: f"data/bars_{s.lower()}_ibkr.txt" for s in
             ["NOK", "SPCX", "DRAM", "TSLA", "NVDA", "TXN", "TSM", "AMD",

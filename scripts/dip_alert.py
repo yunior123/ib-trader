@@ -67,7 +67,7 @@ def say(title, msg, voice=True, prio="SIGNAL", sound="ProAlert"):
                       f'display notification "{msg}" with title "{title}" sound name "{sound}"'],
                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     lt = time.localtime()
-    d = os.path.expanduser("~/Desktop/trading-signals")
+    d = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "trading-signals")
     os.makedirs(d, exist_ok=True)
     with open(f"{d}/{lt.tm_year:04d}-{lt.tm_mon:02d}-{lt.tm_mday:02d}.txt", "a") as f:
         f.write(f"{lt.tm_hour:02d}:{lt.tm_min:02d}:{lt.tm_sec:02d} | {title} | {msg}\n")

@@ -9,7 +9,10 @@ from ib_insync import IB, util
 
 ib = IB()
 try:
-    ib.connect("127.0.0.1", 7496, clientId=87, timeout=15)
+    import os as _o, sys as _s2; _s2.path.insert(0, _o.path.dirname(_o.path.abspath(__file__)))
+    import ib_mode
+    _p = int(_o.environ.get("IBKR_PORT") or ib_mode.get_port())
+    ib.connect("127.0.0.1", _p, clientId=87, timeout=15)
 except Exception as e:
     print(f"ERROR: no conecta a TWS 7496: {e}")
     sys.exit(1)
