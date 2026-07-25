@@ -62,10 +62,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate {
         statusItem.menu = m
 
         load()
-        // Primera ejecucion (sin cuenta configurada): abrir Configuracion en vez de
-        // dejar al usuario adivinando por que no funciona.
-        let c0 = Config.load()
-        if c0.accountPaper.isEmpty && c0.accountLive.isEmpty && c0.account.isEmpty { openSettings() }
+        // Primera ejecucion SIN cuenta por ningun lado: abrir Configuracion en vez de
+        // dejar al usuario adivinando por que no funciona. Ojo: se pregunta por la cadena
+        // COMPLETA (env -> config.json -> account.txt del panel -> data/account.txt del
+        // repo), no solo por config.json. Si el repo ya tiene la cuenta, el panel NO
+        // salta: Yunior no tiene nada que teclear (orden 2026-07-25).
+        let pf0 = Prefill(Config.load())
+        if CommandLine.arguments.contains("--settings")     // para verificar la precarga
+            || (pf0.account(live: false).value.isEmpty && pf0.account(live: true).value.isEmpty) {
+            openSettings()
+        }
         NSApp.setActivationPolicy(.regular)
         NSApp.activate(ignoringOtherApps: true)
     }
