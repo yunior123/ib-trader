@@ -14,7 +14,7 @@ Uso: x_plan_poster.py [--top 3] [--dry-run] [--dir /ruta/planes-...]
 import argparse, json, os, sys, time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import x_post_common as xc   # upload_media + append_gexa (aditivo, degrade limpio)
+import x_post_common as xc   # upload_media + append_gex (aditivo, degrade limpio)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BUDGET_FILE = os.path.join(ROOT, "data", "x_plan_budget.json")

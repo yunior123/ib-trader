@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 """xpost.py — herramienta REUTILIZABLE para postear a X on-demand, respetando el
-ledger compartido (10/dia $4/mes) y con imagen + gexa opcionales.
+ledger compartido (10/dia $4/mes) y con imagen + mapa gamma propio opcionales.
 
 Uso:
   ./venv/bin/python scripts/xpost.py "texto del tweet"
   ./venv/bin/python scripts/xpost.py "plan $NVDA..." --image ~/Desktop/planes-X/x_media/NVDA_tree.png
-  ./venv/bin/python scripts/xpost.py --draft NVDA          # postea el x_draft de hoy + su arbol PNG + gexa
-  ./venv/bin/python scripts/xpost.py "..." --sym QQQ       # añade linea gamma de gexa si hay snapshot
+  ./venv/bin/python scripts/xpost.py --draft NVDA          # postea el x_draft de hoy + su arbol PNG + gamma
+  ./venv/bin/python scripts/xpost.py "..." --sym QQQ       # añade la linea de gamma MEDIDA si hay mapa
   ...cualquiera + --dry-run para NO postear (solo mostrar)
 
 SEÑAL-SOLAMENTE. Reusa x_post_common (misma auth, mismo ledger, mismos caps)."""
@@ -22,8 +22,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("text", nargs="?", default="")
     ap.add_argument("--image", default=None)
-    ap.add_argument("--sym", default=None, help="añade linea gamma gexa de ese ticker")
-    ap.add_argument("--draft", default=None, help="postea el x_draft de hoy de ese ticker (texto+arbol+gexa)")
+    ap.add_argument("--sym", default=None, help="añade la linea de gamma MEDIDA de ese ticker (data/gex_snapshot.json)")
+    ap.add_argument("--draft", default=None, help="postea el x_draft de hoy de ese ticker (texto+arbol+gamma)")
     ap.add_argument("--dry-run", action="store_true")
     a = ap.parse_args()
 
