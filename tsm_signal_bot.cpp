@@ -913,6 +913,12 @@ static void v6_emit(bool isbuy, int cls, double prob, double score, const char* 
     std::snprintf(m, sizeof(m), "TSM @ %.2f | prob %.0f%% | %s | fase=%s",
                   b.c, prob, r, V6_PHASE_NAME[ph]);
     notify(isbuy ? "TSM: BUY" : "TSM: SELL", m, true);
+    // INSTRUMENTACION 2026-07-25: en TODO el historial hay 0 voces con la firma
+    // "probability" pese a 616 disparos V6 en los logs -> el speak() de V6 nunca
+    // suena, mientras el del camino clasico si. speak.sh probado a mano con la
+    // frase exacta: funciona. Dejamos rastro para cazarlo en vivo.
+    std::fprintf(stderr, "[v6] emit gate: bar_live=%d audio_gate=%d\n",
+                 (int)bar_is_live(), (int)audio_gate(false));
     if (audio_gate(true)) {
         if (isbuy) { play("sounds/dram_buy.wav", "Glass");
             char sp[120]; std::snprintf(sp, sizeof(sp),

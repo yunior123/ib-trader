@@ -18,10 +18,15 @@ SECS_TO_MIDNIGHT=$(( $(date -j -f "%Y-%m-%d %H:%M:%S" "$(date -v+1d +%F) 00:00:0
 [ "$SECS_TO_MIDNIGHT" -lt 60 ] && SECS_TO_MIDNIGHT=60
 echo "$(date +%H:%M:%S) relay siguiendo $F (rota en ${SECS_TO_MIDNIGHT}s)" >> notify_relay.log
 timeout "$SECS_TO_MIDNIGHT" tail -n0 -F "$F" 2>/dev/null | while read -r line; do
+  # FIX 2026-07-25: el patron decia `V6 (BUY|SELL)` pero los bots NUNCA escriben "V6"
+  # en el titulo — v6_emit() llama a notify("<SYM>: BUY"/"<SYM>: SELL"), asi que la
+  # linea real es "AAPL: BUY". Resultado medido el 24-jul: las 12 señales V6 vivas del
+  # dia (las de mayor conviccion del motor) no llegaron NI al telefono NI a la voz.
+  # Ahora el patron casa el formato que de verdad se emite.
   # solo lineas de VALOR al telefono (alineado con la voz DANGER+SIGNAL, 2026-07-23):
   # ballena/spike/dip/cusum/alarma/estructural/BB-rebote + legacy. Se EXCLUYE el chatter
   # INFO (MUTED, p<55). Todo se guarda local igual (BD signals); ntfy = solo push del dia.
-  echo "$line" | grep -qE '🐋|🚀|🩸|🧲|🌋|⏰|🚨|BALLENA|SPIKE|DIP REAL|TERREMOTO|ESTRUCTURAL|ALARM|COMPRAR|VENDER|V6 (BUY|SELL)|FLUJO DE (PUTS|CALLS)|TRAMPA' || continue
+  echo "$line" | grep -qE '🐋|🚀|🩸|🧲|🌋|⏰|🚨|BALLENA|SPIKE|DIP REAL|TERREMOTO|ESTRUCTURAL|ALARM|COMPRAR|VENDER|[A-Z]{2,6}: (BUY|SELL)|FLUJO DE (PUTS|CALLS)|TRAMPA' || continue
   # BB REBOTE (~136/dia) se EXCLUYE del telefono: es chatter INFO de baja conviccion
   # (BB-solo pierde en backtest) -> inundaria. Se guarda local + se ve en el chart igual.
   echo "$line" | grep -qE 'MUTED' && continue
