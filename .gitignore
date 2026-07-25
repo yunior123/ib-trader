@@ -86,3 +86,9 @@ macapp/*.app/
 
 # cuenta IBKR del usuario: NO se versiona (cada uno la suya)
 data/account.txt
+
+# brujula (2026-07-25): binarios y salida de runtime
+compass
+compass_asan
+compass_asan.dSYM/
+data/compass_*.json

@@ -116,10 +116,16 @@ static std::optional<double> jnum(std::string_view s, std::string_view key) {
     return out;
 }
 static std::optional<std::string> jstr(std::string_view s, std::string_view key) {
-    std::string pat = "\"" + std::string(key) + "\":\"";
+    // OJO: no se puede exigir la comilla pegada a los dos puntos. json.dump() de Python
+    // escribe ": " CON espacio, y asi salen charts/data/levels_<sym>.json y data/*.json que
+    // generan los scripts. Hay que saltar los blancos o el valor se lee como ausente.
+    std::string pat = "\"" + std::string(key) + "\":";
     auto p = s.find(pat);
     if (p == std::string_view::npos) return std::nullopt;
     p += pat.size();
+    while (p < s.size() && (s[p] == ' ' || s[p] == '\t' || s[p] == '\n')) ++p;
+    if (p >= s.size() || s[p] != '"') return std::nullopt;   // null / numero / objeto
+    ++p;
     auto e = s.find('"', p);
     if (e == std::string_view::npos) return std::nullopt;
     return std::string(s.substr(p, e - p));
@@ -227,12 +233,39 @@ static int prints_at(const std::vector<Bar>& bars, double level, double spot) {
     return n;
 }
 
-// El nivel que el precio esta PROBANDO: el del lado del que VIENE, no el geometricamente mas
-// cercano. Si cae, se prueba lo de ABAJO aunque haya un techo 0.4% arriba — "SPY esta tocando
-// el Muro put de 740" habla del suelo. Sin momentum, el mas cercano en valor absoluto.
+// El nivel que el precio esta PROBANDO AHORA. Tres reglas, en este orden:
+//
+//  1. Si un nivel se esta TOCANDO (dentro de NEAR y con lecturas), ESE manda, venga el precio
+//     de donde venga. Es lo que pidio Yunior 2026-07-25: "la flecha tambien se mueve si choca
+//     un call wall en rebote". Durante el rebote r6 (6 barras) SIGUE siendo negativo porque la
+//     ventana todavia incluye la caida, asi que filtrar por "el lado del que viene" se perderia
+//     el Muro call que acaba de chocar. El toque tiene prioridad sobre la procedencia.
+//  2. Si no se toca ninguno, el del lado hacia el que VA el precio (el que se aproxima).
+//  3. Sin momentum, el mas cercano en valor absoluto.
 static std::optional<Level> nearest_level(const Ev& ev) {
     if (!ev.spot || ev.levels.empty()) return std::nullopt;
     double spot = *ev.spot;
+    auto finish = [&](Level c) {
+        c.dist = std::fabs(c.price - spot) / spot;
+        c.above = c.price > spot ? 1 : -1;
+        c.prints = prints_at(ev.bars, c.price, spot);
+        c.printed = c.prints >= K::PRINT_MIN;
+        return c;
+    };
+    // (1) nivel EN CONTACTO: prioridad absoluta. Criterio ESTRICTO — dentro de NEAR_PCT y con
+    // el print completo. Con una zona ancha, un Muro que solo esta cerca (y que lo unico que
+    // hace es recortar el recorrido del rebote) se confundia con el nivel bajo prueba.
+    std::optional<Level> touching;
+    for (const auto& L : ev.levels) {
+        if (L.price == 0) continue;
+        if (std::fabs(L.price - spot) / spot > K::NEAR_PCT) continue;
+        Level c = finish(L);
+        if (!c.printed) continue;
+        if (!touching || c.prints > touching->prints ||
+            (c.prints == touching->prints && c.dist < touching->dist)) touching = c;
+    }
+    if (touching) return touching;
+    // (2)/(3) hacia donde va el precio; sin momentum, el mas cercano
     int side = sgn(ev.r6.value_or(0.0));
     auto pick = [&](bool filter) -> std::optional<Level> {
         std::optional<Level> best;
@@ -242,16 +275,13 @@ static std::optional<Level> nearest_level(const Ev& ev) {
                 int s = sgn(L.price - spot);
                 if (s != side && s != 0) continue;
             }
-            double d = std::fabs(L.price - spot) / spot;
-            if (!best || d < best->dist) { Level c = L; c.dist = d; c.above = L.price > spot ? 1 : -1; best = c; }
+            Level c = finish(L);
+            if (!best || c.dist < best->dist) best = c;
         }
         return best;
     };
     auto best = side != 0 ? pick(true) : std::nullopt;
     if (!best) best = pick(false);
-    if (!best) return std::nullopt;
-    best->prints = prints_at(ev.bars, best->price, spot);
-    best->printed = best->prints >= K::PRINT_MIN;
     return best;
 }
 
@@ -490,7 +520,8 @@ static Out classify(const Ev& ev, Hist* hist, const std::string& decay_json) {
             int move = sgn(ev.r6.value_or(0.0));
             if (move == 0 && ev.flip) move = spot >= *ev.flip ? 1 : -1;
             o.dir = move > 0 ? "up" : (move < 0 ? "down" : "flat");
-            why.emplace_back(o.vetoes[0] + ": NO fadear");
+            why.emplace_back(o.vetoes[0].find("NO fadear") == std::string::npos
+                                 ? o.vetoes[0] + ": NO fadear" : o.vetoes[0]);
             if (o.vetoes.size() > 1) why.emplace_back(o.vetoes[1]);
             if (!o.families_why.empty()) {
                 std::string s = "se ignoran " + std::to_string(o.families) + " familia(s) de giro: ";
