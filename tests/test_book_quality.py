@@ -206,3 +206,131 @@ def test_libros_finos_de_la_flota_quedan_muteados():
             continue          # si algun dia tiene libro de verdad, que no falle el test
         assert d[s]["book_label"] == "THIN", f"{s} con {n} strikes deberia estar THIN"
         assert d[s]["coef"] == 0.0
+
+
+# ============================================================================
+# SEGUNDA PIERNA DE FUENTE (2026-07-25)
+# ============================================================================
+# Estos tests existen porque la segunda pierna es, HOY, un camino que no se
+# recorre solo: medido el 2026-07-25 con la flota parada, los 30 simbolos
+# resuelven por `polygon_snapshot_v3` con 83-100% de griegas, asi que NINGUNO
+# baja del umbral y el respaldo nunca se dispara de forma natural. Sin estos
+# tests seria codigo muerto que nadie sabria si funciona el dia que haga falta.
+
+def test_usable_greeks_no_convierte_None_en_cero():
+    """`None` es "no se", y no se puede degradar a 0.0: un cero plausible es
+    justo lo que la casa prohibe en el camino de señal."""
+    assert BQ.usable_greeks(None) is False
+    assert BQ.usable_greeks(0.0) is False
+    assert BQ.usable_greeks(0.49) is False
+    assert BQ.usable_greeks(0.5) is True
+    assert BQ.usable_greeks(1.0) is True
+
+
+def test_prefer_fallback_no_cambia_una_fuente_buena():
+    """Dentro de RTH la primaria es el dato FRESCO y la cadena archivada es del
+    cierre anterior. Mas griegas no es razon para cambiar."""
+    usar, motivo = BQ.prefer_fallback(0.85, 1.0)
+    assert usar is False and motivo is None
+
+
+def test_prefer_fallback_cambia_solo_si_la_primaria_no_sirve():
+    usar, motivo = BQ.prefer_fallback(0.0, 0.96)
+    assert usar is True
+    assert "chain_full" in motivo and "MEDIDAS" in motivo
+
+
+def test_prefer_fallback_sin_ninguna_fuente_buena_no_inventa():
+    """Si ninguna llega al minimo NO hay respaldo que valga: THIN de verdad."""
+    usar, motivo = BQ.prefer_fallback(0.0, 0.10)
+    assert usar is False
+    assert "ninguna fuente" in motivo
+    usar2, motivo2 = BQ.prefer_fallback(None, None)
+    assert usar2 is False and "ninguna fuente" in motivo2
+
+
+def test_chain_full_map_sin_cadena_devuelve_None_no_dict_vacio():
+    """Prohibido `{}` o `0`: sin cadena no hay libro que medir."""
+    assert BQ.chain_full_map("NOEXISTE_XYZ") is None
+
+
+def test_chain_full_map_publica_su_procedencia():
+    """Si hay cadena archivada, el mapa tiene que venir FECHADO y con la fuente
+    dentro del dato. Se salta si hoy no hay archivo (no se inventa un pase)."""
+    m = BQ.chain_full_map("QQQ")
+    if m is None:
+        pytest.skip("sin chain_full_qqq.json archivado en la ventana de dias")
+    assert m["chain_src"] == "polygon_chain_full"
+    # `greeks_medidas` NO lo pone chain_full_map sino provenance(), al armar el
+    # registro: aqui solo se exige la fuente y la fecha.
+    assert isinstance(m["chain_date"], str) and len(m["chain_date"]) == 10
+    assert m["chain_age_days"] <= BQ.CHAIN_MAX_DAYS
+    assert 0.0 <= m["greeks_ok_pct"] <= 1.0
+    assert m["chain_scope"] == "todos_los_vencimientos_del_fichero"
+    assert m["spot"] and m["spot"] > 0
+
+
+def test_la_segunda_pierna_se_dispara_y_lo_DICE():
+    """El camino completo, forzado: una primaria con 0% de griegas (lo que da el
+    cache de TWS con el mercado cerrado) tiene que acabar en chain_full, y el
+    registro tiene que declarar el cambio y su motivo."""
+    if BQ.chain_full_map("QQQ") is None:
+        pytest.skip("sin chain_full_qqq.json archivado")
+    muerta = {"greeks_ok_pct": 0.0, "gross_gex": None, "net_gex": None,
+              "spot": None, "chain_src": "ibkr_tws", "flip_open": 601.0}
+    r = BQ.measure("QQQ", lv=muerta)
+    assert r is not None
+    assert r["chain_src"] == "polygon_chain_full"
+    assert r["src_fallback"] is True
+    assert "ibkr_tws" not in str(r["chain_src"])
+    assert r["greeks_medidas"] is True
+    assert r["greeks_ok_pct"] >= BQ.MIN_GREEKS_SRC
+    assert r["chain_date"] and r["chain_path"]
+    assert "griegas" in r["src_switch_reason"]
+    # el flip CONGELADO del dia es del simbolo, no de la fuente: se arrastra.
+    assert r["flip_open"] == 601.0
+
+
+def test_una_primaria_buena_NO_se_cambia_aunque_haya_chain_full():
+    buena = {"greeks_ok_pct": 0.85, "gross_gex": 1.0e9, "net_gex": 2.0e8,
+             "spot": 600.0, "chain_src": "polygon_snapshot_v3"}
+    r = BQ.measure("QQQ", lv=buena)
+    assert r["chain_src"] == "polygon_snapshot_v3"
+    assert r["src_fallback"] is False
+    assert r["src_switch_reason"] is None
+
+
+def test_NOK_sigue_THIN_con_la_segunda_pierna():
+    """REQUISITO DURO del encargo: si el respaldo hace que NOK deje de ser THIN,
+    es un bug. NOK son 2 strikes por vencimiento; ninguna fuente arregla eso —
+    el respaldo cambia de DONDE viene el libro, no cuantos strikes tiene."""
+    r = BQ.measure("NOK")
+    if r is None:
+        pytest.skip("sin mapa de NOK por ninguna de las dos piernas")
+    ev = BQ.evaluate(r["gross"], r["net"], None, r["n_strikes_populated"],
+                     r["greeks_ok_pct"], r["spot"],
+                     r["flip_open"] if r["flip_open"] is not None else r["flip_live"],
+                     abs_wall_regime=r["abs_wall_regime"])
+    assert ev["book_label"] == "THIN", (
+        "NOK dejo de ser THIN: el respaldo metio un bug " + json.dumps(r))
+    assert ev["coef"] == 0.0
+
+
+def test_el_percentil_no_mezcla_poblaciones():
+    """`gross` de un mapa 0DTE y de una cadena multi-vencimiento son magnitudes
+    distintas. Un percentil sobre las dos juntas seria inventado."""
+    import tempfile
+    with tempfile.NamedTemporaryFile("w", suffix=".jsonl", delete=False) as f:
+        f.write(json.dumps({"sym": "QQQ", "src": "polygon_chain_full",
+                            "gross": 1.0, "impact": 1.0}) + "\n")
+        f.write(json.dumps({"sym": "QQQ", "src": "polygon_snapshot_v3",
+                            "gross": 999.0, "impact": 999.0}) + "\n")
+        p = f.name
+    try:
+        todo = BQ.load_hist(p)
+        assert len(todo["QQQ"]["gross"]) == 2, "sin filtro deben venir las dos"
+        solo = BQ.load_hist(p, src="polygon_chain_full")
+        assert solo["QQQ"]["gross"] == [1.0], "el filtro por fuente no aisla la poblacion"
+        assert BQ.load_hist(p, src="no_existe") == {}
+    finally:
+        os.unlink(p)
