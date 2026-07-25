@@ -80,3 +80,6 @@ scalper/ARM_LIVE
 scalper/whale_scalper
 scalper/whale_scalper_asan
 venv-chart/
+
+# .app compilada (se reconstruye con: zsh macapp/build.sh)
+macapp/*.app/
