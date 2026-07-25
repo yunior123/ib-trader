@@ -277,6 +277,8 @@ def colinearity(date=None):
            "nota": "con n<10 no se concluye nada; el kill es |rho|>%.1f" % COLINEARITY_KILL}
     if n < 3:
         res["verdict"] = "DATOS_INSUFICIENTES"
+        res["nota"] = ("n=%d < 10: no se concluye nada (ni siquiera hay 3 puntos para una "
+                       "correlacion). El kill es |rho|>%.1f" % (n, COLINEARITY_KILL))
         return res
     mx, my = sum(xs) / n, sum(ys) / n
     sxy = sum((a - mx) * (b - my) for a, b in zip(xs, ys))
@@ -287,10 +289,21 @@ def colinearity(date=None):
         return res
     rho = sxy / (sxx * syy) ** 0.5
     res["rho"] = round(rho, 4)
+    # La nota se REESCRIBE segun la muestra que hay de verdad. Antes se quedaba clavada en
+    # "con n<10 no se concluye nada" incluso con n=30, contradiciendo al propio veredicto de
+    # la linea siguiente: un lector (o la sesion siguiente) veia APORTA_ALGO junto a "no se
+    # concluye nada" y no sabia a cual creer.
     if n < 10:
         res["verdict"] = "DATOS_INSUFICIENTES"
+        res["nota"] = ("n=%d < 10: no se concluye nada. El kill es |rho|>%.1f"
+                       % (n, COLINEARITY_KILL))
     else:
         res["verdict"] = "MUERE_ES_ABS_WALL" if abs(rho) > COLINEARITY_KILL else "APORTA_ALGO"
+        res["nota"] = ("n=%d simbolos, |rho|=%.4f vs kill %.1f -> %s. Mide COLINEALIDAD (si el "
+                       "max pain fuera un duplicado del abs_wall no aporta), NO edge: esta "
+                       "feature sigue sin probabilidad medida."
+                       % (n, abs(rho), COLINEARITY_KILL,
+                          "muere" if abs(rho) > COLINEARITY_KILL else "sobrevive"))
     return res
 
 

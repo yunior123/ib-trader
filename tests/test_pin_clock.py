@@ -200,6 +200,24 @@ def test_colinealidad_no_concluye_con_pocos_syms(pc, tmp_path):
     pc.levels_of = lambda s: {"spot": 100.0, "abs_wall": 100.0, "abs_wall_kind": "pin"}
     c = pc.colinearity()
     assert c["n"] == 1 and c["verdict"] == "DATOS_INSUFICIENTES" and c["rho"] is None
+    assert "n=1 < 10" in c["nota"], c["nota"]
+
+
+def test_nota_no_contradice_al_veredicto(pc, tmp_path):
+    """La nota se quedaba clavada en 'con n<10 no se concluye nada' incluso con n=30, junto a
+    un veredicto APORTA_ALGO. Un lector no sabia a cual creer."""
+    c = {"n": 30, "verdict": "APORTA_ALGO",
+         "nota": "n=30 simbolos, |rho|=0.2753 vs kill 0.9 -> sobrevive"}
+    # invariante: si hay veredicto concluyente, la nota NO puede negar la muestra
+    assert not ("n<10" in c["nota"] and c["verdict"] != "DATOS_INSUFICIENTES")
+    # y sobre el modulo real, con muestra suficiente la nota cita la n de verdad
+    pc.fleet = lambda: ["TEST"]
+    exp = int(pc.next_friday().strftime("%Y%m%d"))
+    _full_chain(pc, tmp_path, [(95, "C", exp, 3000), (100, "C", exp, 3000),
+                               (100, "P", exp, 3000), (105, "P", exp, 3000)])
+    pc.levels_of = lambda s: {"spot": 100.0, "abs_wall": 100.0, "abs_wall_kind": "pin"}
+    real = pc.colinearity()
+    assert str(real["n"]) in real["nota"], real["nota"]
 
 
 def test_escritura_atomica(pc, tmp_path, monkeypatch):
