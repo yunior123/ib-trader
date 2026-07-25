@@ -706,3 +706,38 @@ varianza colapsada a ~58% y una sirena que nadie escucha, los dos fallos SIN rem
 
 **Ley que aplica a las 30: SEÑAL-SOLAMENTE.** Ninguna ordena al broker; como máximo condicionan un
 ticket que el humano arma.
+
+## POC de VOLUMEN — `volume_profile` (2026-07-25, C++23, señal-solamente)
+Hasta hoy **todo** nuestro mapa de niveles salia de la CADENA DE OPCIONES (`poc`, `abs_wall`,
+`flip`, `magnets` de `gex_snapshot.json`). No habia nada derivado del PRECIO NEGOCIADO. Son dos
+cosas de naturaleza distinta, y ahi esta el valor del cruce:
+
+- **POC de GAMMA** = donde el DEALER esta OBLIGADO a cubrirse (mecanica de inventario).
+- **POC de VOLUMEN** = donde el MERCADO ACEPTO valor (subasta: ahi se cruzo mas papel).
+
+- `scripts/volume_profile.cpp` -> `./volume_profile` (build: `./scripts/build_volume_profile.sh`,
+  flags canonicos `-std=c++23 -O3 -mcpu=native -Wall -Wextra`, cero warnings; ASan/UBSan limpio).
+  Lee `poly_bars` de `trades.db` en **SQLITE_OPEN_READONLY** (no escribe una sola pagina: hay jobs
+  de etiquetado corriendo sobre esa base). Salida atomica a **`data/vpvr.json`**.
+- Por simbolo: `poc_volume`, area de valor `vah`/`val` (70% por defecto), `hvn`/`lvn`, `lo`/`hi`,
+  `bucket`, y el cruce con el mapa gamma: `poc_gamma`, `dist_pct`, `confluence`.
+- **DESCRIPTIVO Y SIN VOZ**: cero probabilidad, cero banner, cero sirena, no ordena nada.
+  `CONFLUENCE/NEAR/APART` son una **convencion de distancia DECLARADA** (0,15% / 0,50%), no un
+  veredicto estadistico — el propio JSON lleva `thresholds_are_convention_not_measured: true`.
+  **La confluencia POC-volumen / POC-gamma NO esta medida**: medirla exige el arnes de barrera
+  sobre >=N sesiones con AMBOS POC archivados (`levels_5m.jsonl` va por 1 sesion).
+- **Aproximacion declarada**: el volumen de cada barra 1m se reparte UNIFORMEMENTE entre los
+  buckets que cubre `[low,high]` — convencion estandar de VPVR, NO la distribucion intra-barra
+  real. Va escrita en `_meta.method`. Con pocas barras el sesgo no se promedia, y por eso hay
+  `--min-bars` (500): por debajo, el simbolo sale con `poc_volume: null` + `skip_reason`, **jamas
+  un POC de 0** (regla de `~/CLAUDE.md`: un cero plausible convierte "no se" en "se, y es cero").
+- Sesion = dia con corte UTC-5h: cae entre las 00:00 EST y la 01:00 EDT, fuera de RTH y de la
+  sesion extendida en AMBOS regimenes de horario -> no hace falta tzdb para no partir una sesion.
+- Uso: `./volume_profile` (flota -> `data/vpvr.json`) · `--sym QQQ --print` (tabla legible) ·
+  `--sessions 60 --bins 400` · `--stdin --out -` (arnes de test).
+- Tests: `tests/test_volume_profile.py` (22, pytest como arnes que conduce al binario por stdin;
+  cero computo en Python). Cazaron dos bugs propios antes del commit: una MESETA plana no producia
+  ningun HVN, y `max_element` empujaba el POC al borde IZQUIERDO del maximo (sesgo sistematico).
+- MEDIDO al estrenarlo (30 syms x 20 sesiones, 20 s): **LRCX POC-vol 319,92 vs POC-gamma 320,0 =
+  0,03% CONFLUENCE**; GLD 0,40% NEAR; 23 APART; 5 con `confluence: null` — exactamente los 5 sin
+  POC de gamma en el mapa (NVDA QCOM NFLX NOK SKHY): sin con que comparar se dice null, no APART.
