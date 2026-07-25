@@ -1,0 +1,2430 @@
+{
+ "_meta": {
+  "generated": 1785012959,
+  "k_on": 1.0,
+  "k_id": 4.0,
+  "island_mult": 3.0,
+  "src": "poly_bars (ts en ms) RTH 09:30-15:59 ET",
+  "probabilidad_de_relleno": "NO SE COMPUTA \u2014 ver docs/GAPS-KDE-2026-07-25.md",
+  "earnings_gap": "None en toda la flota: no hay fuente de fechas de earnings"
+ },
+ "QQQ": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 684.22,
+  "atr14": 14.1609,
+  "open_gaps": [
+   {
+    "date": "2025-05-12",
+    "lo": 488.05,
+    "hi": 506.99,
+    "far_edge": 488.05,
+    "size_atr": 1.549,
+    "dir": 1,
+    "age_days": 301,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-08",
+    "lo": 588.69,
+    "hi": 608.71,
+    "far_edge": 588.69,
+    "size_atr": 1.814,
+    "dir": 1,
+    "age_days": 74,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-06-23",
+    "lo": 715.74,
+    "hi": 738.001,
+    "far_edge": 738.001,
+    "size_atr": 1.436,
+    "dir": -1,
+    "age_days": 22,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [],
+  "proximity_atr": -2.226,
+  "nearest_edge": 715.74
+ },
+ "SPY": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 738.85,
+  "atr14": 8.1379,
+  "open_gaps": [
+   {
+    "date": "2025-05-12",
+    "lo": 564.29,
+    "hi": 581.47,
+    "far_edge": 564.29,
+    "size_atr": 1.438,
+    "dir": 1,
+    "age_days": 301,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-08",
+    "lo": 659.27,
+    "hi": 676.39,
+    "far_edge": 659.27,
+    "size_atr": 1.693,
+    "dir": 1,
+    "age_days": 74,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-07-17",
+    "lo": 742.08,
+    "hi": 750.76,
+    "far_edge": 750.76,
+    "size_atr": 1.038,
+    "dir": -1,
+    "age_days": 5,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-07-23",
+    "lo": 739.37,
+    "hi": 747.39,
+    "far_edge": 747.39,
+    "size_atr": 1.008,
+    "dir": -1,
+    "age_days": 1,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [],
+  "proximity_atr": -0.064,
+  "nearest_edge": 739.37
+ },
+ "NVDA": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 206.96,
+  "atr14": 7.2761,
+  "open_gaps": [
+   {
+    "date": "2025-05-12",
+    "lo": 116.61,
+    "hi": 121.97,
+    "far_edge": 116.61,
+    "size_atr": 1.028,
+    "dir": 1,
+    "age_days": 301,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-08",
+    "lo": 178.095,
+    "hi": 184.5,
+    "far_edge": 178.095,
+    "size_atr": 1.2,
+    "dir": 1,
+    "age_days": 74,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 124.8,
+    "hi": 142.6004,
+    "size_atr": 3.1,
+    "date": "2025-01-27"
+   }
+  ],
+  "proximity_atr": 3.087,
+  "nearest_edge": 184.5
+ },
+ "TSLA": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 313.0,
+  "atr14": 18.9398,
+  "open_gaps": [
+   {
+    "date": "2024-10-24",
+    "lo": 213.56,
+    "hi": 244.68,
+    "far_edge": 213.56,
+    "size_atr": 3.692,
+    "dir": 1,
+    "age_days": 436,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-07-23",
+    "lo": 341.0,
+    "hi": 374.051,
+    "far_edge": 374.051,
+    "size_atr": 2.058,
+    "dir": -1,
+    "age_days": 1,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 213.56,
+    "hi": 244.68,
+    "size_atr": 3.692,
+    "date": "2024-10-24"
+   },
+   {
+    "lo": 251.5,
+    "hi": 284.67,
+    "size_atr": 3.067,
+    "date": "2024-11-06"
+   }
+  ],
+  "proximity_atr": -1.478,
+  "nearest_edge": 341.0
+ },
+ "MU": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 920.16,
+  "atr14": 81.2345,
+  "open_gaps": [
+   {
+    "date": "2025-05-12",
+    "lo": 85.875,
+    "hi": 92.81,
+    "far_edge": 85.875,
+    "size_atr": 1.717,
+    "dir": 1,
+    "age_days": 301,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-08-07",
+    "lo": 108.8,
+    "hi": 114.14,
+    "far_edge": 108.8,
+    "size_atr": 1.408,
+    "dir": 1,
+    "age_days": 241,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-09-10",
+    "lo": 135.24,
+    "hi": 140.02,
+    "far_edge": 135.24,
+    "size_atr": 1.046,
+    "dir": 1,
+    "age_days": 218,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-09-11",
+    "lo": 140.03,
+    "hi": 147.72,
+    "far_edge": 140.03,
+    "size_atr": 1.622,
+    "dir": 1,
+    "age_days": 217,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-10-13",
+    "lo": 181.51,
+    "hi": 190.79,
+    "far_edge": 181.51,
+    "size_atr": 1.129,
+    "dir": 1,
+    "age_days": 195,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-12-18",
+    "lo": 225.64,
+    "hi": 256.53,
+    "far_edge": 225.64,
+    "size_atr": 2.255,
+    "dir": 1,
+    "age_days": 148,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-08",
+    "lo": 377.7,
+    "hi": 415.13,
+    "far_edge": 377.7,
+    "size_atr": 1.442,
+    "dir": 1,
+    "age_days": 74,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-05-05",
+    "lo": 576.36,
+    "hi": 609.775,
+    "far_edge": 576.36,
+    "size_atr": 1.125,
+    "dir": 1,
+    "age_days": 55,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-05-26",
+    "lo": 750.79,
+    "hi": 820.5,
+    "far_edge": 750.79,
+    "size_atr": 1.469,
+    "dir": 1,
+    "age_days": 41,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 95.83,
+    "hi": 113.1,
+    "size_atr": 4.471,
+    "date": "2024-09-26"
+   }
+  ],
+  "proximity_atr": 1.227,
+  "nearest_edge": 820.5
+ },
+ "SMH": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 561.125,
+  "atr14": 26.4292,
+  "open_gaps": [
+   {
+    "date": "2025-05-12",
+    "lo": 223.4,
+    "hi": 236.72,
+    "far_edge": 223.4,
+    "size_atr": 1.73,
+    "dir": 1,
+    "age_days": 301,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-09-18",
+    "lo": 305.29,
+    "hi": 313.55,
+    "far_edge": 305.29,
+    "size_atr": 1.636,
+    "dir": 1,
+    "age_days": 212,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-12-18",
+    "lo": 338.97,
+    "hi": 350.84,
+    "far_edge": 338.97,
+    "size_atr": 1.183,
+    "dir": 1,
+    "age_days": 148,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-08",
+    "lo": 399.77,
+    "hi": 423.16,
+    "far_edge": 399.77,
+    "size_atr": 1.867,
+    "dir": 1,
+    "age_days": 74,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-24",
+    "lo": 481.9,
+    "hi": 499.505,
+    "far_edge": 481.9,
+    "size_atr": 1.532,
+    "dir": 1,
+    "age_days": 62,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-05-06",
+    "lo": 523.0,
+    "hi": 537.77,
+    "far_edge": 523.0,
+    "size_atr": 1.128,
+    "dir": 1,
+    "age_days": 54,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-06-23",
+    "lo": 625.93,
+    "hi": 668.79,
+    "far_edge": 668.79,
+    "size_atr": 1.555,
+    "dir": -1,
+    "age_days": 22,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [],
+  "proximity_atr": 0.884,
+  "nearest_edge": 537.77
+ },
+ "AMD": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 522.03,
+  "atr14": 36.6545,
+  "open_gaps": [
+   {
+    "date": "2025-05-12",
+    "lo": 102.83,
+    "hi": 110.415,
+    "far_edge": 102.83,
+    "size_atr": 1.584,
+    "dir": 1,
+    "age_days": 301,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-07-15",
+    "lo": 146.23,
+    "hi": 153.75,
+    "far_edge": 146.23,
+    "size_atr": 1.49,
+    "dir": 1,
+    "age_days": 258,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-10-06",
+    "lo": 164.64,
+    "hi": 226.445,
+    "far_edge": 164.64,
+    "size_atr": 10.738,
+    "dir": 1,
+    "age_days": 200,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-08",
+    "lo": 221.43,
+    "hi": 232.12,
+    "far_edge": 221.43,
+    "size_atr": 1.05,
+    "dir": 1,
+    "age_days": 74,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-24",
+    "lo": 305.24,
+    "hi": 336.755,
+    "far_edge": 305.24,
+    "size_atr": 2.784,
+    "dir": 1,
+    "age_days": 62,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-05-06",
+    "lo": 355.32,
+    "hi": 409.49,
+    "far_edge": 355.32,
+    "size_atr": 3.306,
+    "dir": 1,
+    "age_days": 54,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 164.64,
+    "hi": 226.445,
+    "size_atr": 10.738,
+    "date": "2025-10-06"
+   },
+   {
+    "lo": 355.32,
+    "hi": 409.49,
+    "size_atr": 3.306,
+    "date": "2026-05-06"
+   }
+  ],
+  "proximity_atr": 3.07,
+  "nearest_edge": 409.49
+ },
+ "AAPL": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 333.07,
+  "atr14": 8.2917,
+  "open_gaps": [
+   {
+    "date": "2025-08-07",
+    "lo": 213.25,
+    "hi": 218.875,
+    "far_edge": 213.25,
+    "size_atr": 1.194,
+    "dir": 1,
+    "age_days": 241,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-05-01",
+    "lo": 271.205,
+    "hi": 278.855,
+    "far_edge": 271.205,
+    "size_atr": 1.299,
+    "dir": 1,
+    "age_days": 57,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 205.54,
+    "hi": 223.8,
+    "size_atr": 3.086,
+    "date": "2025-04-03"
+   }
+  ],
+  "proximity_atr": 6.538,
+  "nearest_edge": 278.855
+ },
+ "MSFT": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 381.74,
+  "atr14": 11.8632,
+  "open_gaps": [
+   {
+    "date": "2025-10-30",
+    "lo": 530.48,
+    "hi": 542.56,
+    "far_edge": 542.56,
+    "size_atr": 1.389,
+    "dir": -1,
+    "age_days": 182,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-11-18",
+    "lo": 495.365,
+    "hi": 507.49,
+    "far_edge": 507.49,
+    "size_atr": 1.221,
+    "dir": -1,
+    "age_days": 169,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-01-29",
+    "lo": 439.99,
+    "hi": 481.72,
+    "far_edge": 481.72,
+    "size_atr": 4.246,
+    "dir": -1,
+    "age_days": 121,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-06-02",
+    "lo": 446.88,
+    "hi": 460.49,
+    "far_edge": 460.49,
+    "size_atr": 1.126,
+    "dir": -1,
+    "age_days": 36,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 392.34,
+    "hi": 431.11,
+    "size_atr": 3.347,
+    "date": "2025-05-01"
+   },
+   {
+    "lo": 514.04,
+    "hi": 555.225,
+    "size_atr": 6.462,
+    "date": "2025-07-31"
+   },
+   {
+    "lo": 439.99,
+    "hi": 481.72,
+    "size_atr": 4.246,
+    "date": "2026-01-29"
+   }
+  ],
+  "proximity_atr": -4.91,
+  "nearest_edge": 439.99
+ },
+ "META": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 595.2,
+  "atr14": 24.5191,
+  "open_gaps": [
+   {
+    "date": "2025-10-30",
+    "lo": 669.15,
+    "hi": 752.0,
+    "far_edge": 752.0,
+    "size_atr": 5.294,
+    "dir": -1,
+    "age_days": 182,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-07-01",
+    "lo": 562.94,
+    "hi": 607.91,
+    "far_edge": 562.94,
+    "size_atr": 2.432,
+    "dir": 1,
+    "age_days": 16,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 695.63,
+    "hi": 775.2,
+    "size_atr": 5.582,
+    "date": "2025-07-31"
+   },
+   {
+    "lo": 669.15,
+    "hi": 752.0,
+    "size_atr": 5.294,
+    "date": "2025-10-30"
+   },
+   {
+    "lo": 668.86,
+    "hi": 737.43,
+    "size_atr": 4.183,
+    "date": "2026-01-29"
+   }
+  ],
+  "proximity_atr": -0.518,
+  "nearest_edge": 607.91
+ },
+ "AMZN": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 232.075,
+  "atr14": 7.2844,
+  "open_gaps": [
+   {
+    "date": "2025-04-23",
+    "lo": 173.13,
+    "hi": 183.45,
+    "far_edge": 173.13,
+    "size_atr": 1.102,
+    "dir": 1,
+    "age_days": 314,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-05-12",
+    "lo": 193.08,
+    "hi": 210.71,
+    "far_edge": 193.08,
+    "size_atr": 2.444,
+    "dir": 1,
+    "age_days": 301,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-08",
+    "lo": 213.78,
+    "hi": 223.79,
+    "far_edge": 213.78,
+    "size_atr": 1.737,
+    "dir": 1,
+    "age_days": 74,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-07-23",
+    "lo": 236.26,
+    "hi": 244.77,
+    "far_edge": 244.77,
+    "size_atr": 1.188,
+    "dir": -1,
+    "age_days": 1,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 186.125,
+    "hi": 199.0,
+    "size_atr": 3.131,
+    "date": "2024-11-01"
+   },
+   {
+    "lo": 217.21,
+    "hi": 234.11,
+    "size_atr": 4.289,
+    "date": "2025-08-01"
+   },
+   {
+    "lo": 222.855,
+    "hi": 250.1,
+    "size_atr": 5.195,
+    "date": "2025-10-31"
+   }
+  ],
+  "proximity_atr": -0.575,
+  "nearest_edge": 236.26
+ },
+ "GOOGL": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 319.725,
+  "atr14": 11.9178,
+  "open_gaps": [
+   {
+    "date": "2025-09-03",
+    "lo": 211.32,
+    "hi": 226.21,
+    "far_edge": 211.32,
+    "size_atr": 3.259,
+    "dir": 1,
+    "age_days": 223,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-08",
+    "lo": 305.45,
+    "hi": 320.445,
+    "far_edge": 305.45,
+    "size_atr": 1.819,
+    "dir": 1,
+    "age_days": 74,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-06-02",
+    "lo": 366.59,
+    "hi": 376.41,
+    "far_edge": 376.41,
+    "size_atr": 1.056,
+    "dir": -1,
+    "age_days": 36,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-07-23",
+    "lo": 321.13,
+    "hi": 342.065,
+    "far_edge": 342.065,
+    "size_atr": 1.877,
+    "dir": -1,
+    "age_days": 1,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 169.68,
+    "hi": 180.68,
+    "size_atr": 3.474,
+    "date": "2024-10-30"
+   },
+   {
+    "lo": 191.07,
+    "hi": 206.13,
+    "size_atr": 3.071,
+    "date": "2025-02-05"
+   },
+   {
+    "lo": 211.32,
+    "hi": 226.21,
+    "size_atr": 3.259,
+    "date": "2025-09-03"
+   }
+  ],
+  "proximity_atr": -0.06,
+  "nearest_edge": 320.445
+ },
+ "INTC": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 92.315,
+  "atr14": 8.6435,
+  "open_gaps": [
+   {
+    "date": "2025-09-18",
+    "lo": 24.89,
+    "hi": 31.78,
+    "far_edge": 24.89,
+    "size_atr": 7.886,
+    "dir": 1,
+    "age_days": 212,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-24",
+    "lo": 66.85,
+    "hi": 82.2,
+    "far_edge": 66.85,
+    "size_atr": 4.794,
+    "dir": 1,
+    "age_days": 62,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 24.89,
+    "hi": 31.78,
+    "size_atr": 7.886,
+    "date": "2025-09-18"
+   },
+   {
+    "lo": 66.85,
+    "hi": 82.2,
+    "size_atr": 4.794,
+    "date": "2026-04-24"
+   }
+  ],
+  "proximity_atr": 1.17,
+  "nearest_edge": 82.2
+ },
+ "TSM": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 403.63,
+  "atr14": 17.5077,
+  "open_gaps": [
+   {
+    "date": "2025-05-12",
+    "lo": 176.5,
+    "hi": 187.28,
+    "far_edge": 176.5,
+    "size_atr": 1.694,
+    "dir": 1,
+    "age_days": 301,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-09-10",
+    "lo": 250.92,
+    "hi": 258.87,
+    "far_edge": 250.92,
+    "size_atr": 1.328,
+    "dir": 1,
+    "age_days": 218,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-01-02",
+    "lo": 303.92,
+    "hi": 311.98,
+    "far_edge": 303.92,
+    "size_atr": 1.035,
+    "dir": 1,
+    "age_days": 139,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-08",
+    "lo": 345.21,
+    "hi": 370.29,
+    "far_edge": 345.21,
+    "size_atr": 2.033,
+    "dir": 1,
+    "age_days": 74,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-24",
+    "lo": 382.58,
+    "hi": 396.14,
+    "far_edge": 382.58,
+    "size_atr": 1.104,
+    "dir": 1,
+    "age_days": 62,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 197.04,
+    "hi": 221.78,
+    "size_atr": 3.45,
+    "date": "2025-01-27"
+   }
+  ],
+  "proximity_atr": 0.428,
+  "nearest_edge": 396.14
+ },
+ "ASML": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 1757.35,
+  "atr14": 80.0097,
+  "open_gaps": [
+   {
+    "date": "2025-08-07",
+    "lo": 690.93,
+    "hi": 714.02,
+    "far_edge": 690.93,
+    "size_atr": 1.332,
+    "dir": 1,
+    "age_days": 241,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-09-05",
+    "lo": 753.2,
+    "hi": 774.88,
+    "far_edge": 753.2,
+    "size_atr": 1.296,
+    "dir": 1,
+    "age_days": 221,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-09-15",
+    "lo": 813.87,
+    "hi": 834.925,
+    "far_edge": 813.87,
+    "size_atr": 1.249,
+    "dir": 1,
+    "age_days": 215,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-09-18",
+    "lo": 872.01,
+    "hi": 928.67,
+    "far_edge": 872.01,
+    "size_atr": 2.996,
+    "dir": 1,
+    "age_days": 212,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-09-22",
+    "lo": 932.2,
+    "hi": 960.92,
+    "far_edge": 932.2,
+    "size_atr": 1.328,
+    "dir": 1,
+    "age_days": 210,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-10-13",
+    "lo": 935.76,
+    "hi": 971.73,
+    "far_edge": 935.76,
+    "size_atr": 1.431,
+    "dir": 1,
+    "age_days": 195,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-11-26",
+    "lo": 1003.775,
+    "hi": 1040.67,
+    "far_edge": 1003.775,
+    "size_atr": 1.201,
+    "dir": 1,
+    "age_days": 163,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-01-02",
+    "lo": 1069.595,
+    "hi": 1133.76,
+    "far_edge": 1069.595,
+    "size_atr": 2.575,
+    "dir": 1,
+    "age_days": 139,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-01-05",
+    "lo": 1163.27,
+    "hi": 1211.22,
+    "far_edge": 1163.27,
+    "size_atr": 1.571,
+    "dir": 1,
+    "age_days": 138,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-01-09",
+    "lo": 1194.32,
+    "hi": 1232.85,
+    "far_edge": 1194.32,
+    "size_atr": 1.149,
+    "dir": 1,
+    "age_days": 134,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-08",
+    "lo": 1305.6,
+    "hi": 1421.0,
+    "far_edge": 1305.6,
+    "size_atr": 2.122,
+    "dir": 1,
+    "age_days": 74,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-06-08",
+    "lo": 1640.91,
+    "hi": 1732.79,
+    "far_edge": 1640.91,
+    "size_atr": 1.337,
+    "dir": 1,
+    "age_days": 32,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 754.36,
+    "hi": 822.28,
+    "size_atr": 3.91,
+    "date": "2025-07-16"
+   }
+  ],
+  "proximity_atr": 0.307,
+  "nearest_edge": 1732.79
+ },
+ "TXN": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 279.64,
+  "atr14": 13.9088,
+  "open_gaps": [
+   {
+    "date": "2025-04-24",
+    "lo": 152.01,
+    "hi": 164.63,
+    "far_edge": 152.01,
+    "size_atr": 1.481,
+    "dir": 1,
+    "age_days": 313,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-08",
+    "lo": 199.72,
+    "hi": 206.645,
+    "far_edge": 199.72,
+    "size_atr": 1.212,
+    "dir": 1,
+    "age_days": 74,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-23",
+    "lo": 236.4,
+    "hi": 260.31,
+    "far_edge": 236.4,
+    "size_atr": 4.004,
+    "dir": 1,
+    "age_days": 63,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-06-23",
+    "lo": 313.91,
+    "hi": 332.31,
+    "far_edge": 332.31,
+    "size_atr": 1.373,
+    "dir": -1,
+    "age_days": 22,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-07-23",
+    "lo": 277.3,
+    "hi": 293.78,
+    "far_edge": 293.78,
+    "size_atr": 1.189,
+    "dir": -1,
+    "age_days": 1,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 194.895,
+    "hi": 214.88,
+    "size_atr": 4.949,
+    "date": "2025-07-23"
+   },
+   {
+    "lo": 163.96,
+    "hi": 181.045,
+    "size_atr": 3.577,
+    "date": "2025-10-22"
+   },
+   {
+    "lo": 236.4,
+    "hi": 260.31,
+    "size_atr": 4.004,
+    "date": "2026-04-23"
+   }
+  ],
+  "proximity_atr": 0.168,
+  "nearest_edge": 277.3
+ },
+ "QCOM": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 166.97,
+  "atr14": 10.4407,
+  "open_gaps": [
+   {
+    "date": "2026-04-08",
+    "lo": 124.03,
+    "hi": 128.65,
+    "far_edge": 124.03,
+    "size_atr": 1.223,
+    "dir": 1,
+    "age_days": 74,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-24",
+    "lo": 133.94,
+    "hi": 145.61,
+    "far_edge": 133.94,
+    "size_atr": 3.431,
+    "dir": 1,
+    "age_days": 62,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-30",
+    "lo": 156.11,
+    "hi": 172.05,
+    "far_edge": 156.11,
+    "size_atr": 2.943,
+    "dir": 1,
+    "age_days": 58,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 132.92,
+    "hi": 148.83,
+    "size_atr": 3.573,
+    "date": "2026-02-05"
+   },
+   {
+    "lo": 133.94,
+    "hi": 145.61,
+    "size_atr": 3.431,
+    "date": "2026-04-24"
+   }
+  ],
+  "proximity_atr": -0.487,
+  "nearest_edge": 172.05
+ },
+ "AVGO": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 381.81,
+  "atr14": 16.2755,
+  "open_gaps": [
+   {
+    "date": "2025-05-12",
+    "lo": 208.11,
+    "hi": 219.49,
+    "far_edge": 208.11,
+    "size_atr": 1.356,
+    "dir": 1,
+    "age_days": 301,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-07",
+    "lo": 314.291,
+    "hi": 326.73,
+    "far_edge": 314.291,
+    "size_atr": 1.033,
+    "dir": 1,
+    "age_days": 75,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-08",
+    "lo": 333.85,
+    "hi": 351.75,
+    "far_edge": 333.85,
+    "size_atr": 1.421,
+    "dir": 1,
+    "age_days": 74,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-06-04",
+    "lo": 408.99,
+    "hi": 479.18,
+    "far_edge": 479.18,
+    "size_atr": 4.0,
+    "dir": -1,
+    "age_days": 34,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 180.91,
+    "hi": 213.9,
+    "size_atr": 5.259,
+    "date": "2024-12-13"
+   },
+   {
+    "lo": 213.4,
+    "hi": 244.435,
+    "size_atr": 3.539,
+    "date": "2025-01-27"
+   },
+   {
+    "lo": 305.92,
+    "hi": 355.78,
+    "size_atr": 5.368,
+    "date": "2025-09-05"
+   },
+   {
+    "lo": 408.99,
+    "hi": 479.18,
+    "size_atr": 4.0,
+    "date": "2026-06-04"
+   }
+  ],
+  "proximity_atr": -1.67,
+  "nearest_edge": 408.99
+ },
+ "NFLX": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 70.095,
+  "atr14": 2.6236,
+  "open_gaps": [
+   {
+    "date": "2025-07-18",
+    "lo": 124.196,
+    "hi": 127.562,
+    "far_edge": 127.562,
+    "size_atr": 1.186,
+    "dir": -1,
+    "age_days": 255,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-10-22",
+    "lo": 114.29,
+    "hi": 124.178,
+    "far_edge": 124.178,
+    "size_atr": 3.567,
+    "dir": -1,
+    "age_days": 188,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-17",
+    "lo": 96.37,
+    "hi": 107.65,
+    "far_edge": 107.65,
+    "size_atr": 4.08,
+    "dir": -1,
+    "age_days": 67,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-07-17",
+    "lo": 65.48,
+    "hi": 74.56,
+    "far_edge": 74.56,
+    "size_atr": 3.938,
+    "dir": -1,
+    "age_days": 5,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 68.759,
+    "hi": 73.764,
+    "size_atr": 3.307,
+    "date": "2024-10-18"
+   },
+   {
+    "lo": 87.174,
+    "hi": 99.8025,
+    "size_atr": 5.908,
+    "date": "2025-01-22"
+   },
+   {
+    "lo": 114.29,
+    "hi": 124.178,
+    "size_atr": 3.567,
+    "date": "2025-10-22"
+   },
+   {
+    "lo": 84.615,
+    "hi": 94.295,
+    "size_atr": 3.403,
+    "date": "2026-02-27"
+   },
+   {
+    "lo": 96.37,
+    "hi": 107.65,
+    "size_atr": 4.08,
+    "date": "2026-04-17"
+   },
+   {
+    "lo": 65.48,
+    "hi": 74.56,
+    "size_atr": 3.938,
+    "date": "2026-07-17"
+   }
+  ],
+  "proximity_atr": -1.702,
+  "nearest_edge": 74.56
+ },
+ "NOK": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 9.07,
+  "atr14": 0.7593,
+  "open_gaps": [
+   {
+    "date": "2025-09-03",
+    "lo": 4.235,
+    "hi": 4.395,
+    "far_edge": 4.235,
+    "size_atr": 2.078,
+    "dir": 1,
+    "age_days": 223,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-09-04",
+    "lo": 4.375,
+    "hi": 4.49,
+    "far_edge": 4.375,
+    "size_atr": 1.322,
+    "dir": 1,
+    "age_days": 222,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-10-10",
+    "lo": 5.18,
+    "hi": 5.3,
+    "far_edge": 5.18,
+    "size_atr": 1.156,
+    "dir": 1,
+    "age_days": 196,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-10-23",
+    "lo": 5.55,
+    "hi": 5.89,
+    "far_edge": 5.55,
+    "size_atr": 2.713,
+    "dir": 1,
+    "age_days": 187,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-06-04",
+    "lo": 15.785,
+    "hi": 16.72,
+    "far_edge": 16.72,
+    "size_atr": 1.005,
+    "dir": -1,
+    "age_days": 34,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-06-05",
+    "lo": 15.66,
+    "hi": 16.61,
+    "far_edge": 16.61,
+    "size_atr": 1.001,
+    "dir": -1,
+    "age_days": 33,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-06-23",
+    "lo": 13.46,
+    "hi": 14.445,
+    "far_edge": 14.445,
+    "size_atr": 1.014,
+    "dir": -1,
+    "age_days": 22,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 4.185,
+    "hi": 4.51,
+    "size_atr": 4.513,
+    "date": "2024-08-29"
+   },
+   {
+    "lo": 4.215,
+    "hi": 4.465,
+    "size_atr": 3.343,
+    "date": "2024-10-17"
+   },
+   {
+    "lo": 4.425,
+    "hi": 4.825,
+    "size_atr": 3.804,
+    "date": "2025-01-30"
+   }
+  ],
+  "proximity_atr": 4.188,
+  "nearest_edge": 5.89
+ },
+ "GLD": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 371.9,
+  "atr14": 7.0571,
+  "open_gaps": [
+   {
+    "date": "2024-08-16",
+    "lo": 226.92,
+    "hi": 229.99,
+    "far_edge": 226.92,
+    "size_atr": 1.018,
+    "dir": 1,
+    "age_days": 484,
+    "earnings_gap": null
+   },
+   {
+    "date": "2024-09-19",
+    "lo": 235.53,
+    "hi": 238.24,
+    "far_edge": 235.53,
+    "size_atr": 1.019,
+    "dir": 1,
+    "age_days": 461,
+    "earnings_gap": null
+   },
+   {
+    "date": "2024-11-18",
+    "lo": 236.61,
+    "hi": 240.46,
+    "far_edge": 236.61,
+    "size_atr": 1.299,
+    "dir": 1,
+    "age_days": 419,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-01-21",
+    "lo": 249.24,
+    "hi": 251.95,
+    "far_edge": 249.24,
+    "size_atr": 1.148,
+    "dir": 1,
+    "age_days": 378,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-01-30",
+    "lo": 254.25,
+    "hi": 257.2,
+    "far_edge": 254.25,
+    "size_atr": 1.202,
+    "dir": 1,
+    "age_days": 371,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-04-08",
+    "lo": 273.89,
+    "hi": 277.8665,
+    "far_edge": 273.89,
+    "size_atr": 1.052,
+    "dir": 1,
+    "age_days": 324,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-04-09",
+    "lo": 275.23,
+    "hi": 282.22,
+    "far_edge": 275.23,
+    "size_atr": 1.827,
+    "dir": 1,
+    "age_days": 323,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-08-01",
+    "lo": 302.96,
+    "hi": 308.61,
+    "far_edge": 302.96,
+    "size_atr": 1.551,
+    "dir": 1,
+    "age_days": 245,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-09-29",
+    "lo": 346.73,
+    "hi": 351.79,
+    "far_edge": 346.73,
+    "size_atr": 1.317,
+    "dir": 1,
+    "age_days": 205,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-10-06",
+    "lo": 357.63,
+    "hi": 362.16,
+    "far_edge": 357.63,
+    "size_atr": 1.104,
+    "dir": 1,
+    "age_days": 200,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-01-30",
+    "lo": 466.245,
+    "hi": 495.7353,
+    "far_edge": 495.7353,
+    "size_atr": 2.617,
+    "dir": -1,
+    "age_days": 120,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-03-03",
+    "lo": 472.83,
+    "hi": 490.05,
+    "far_edge": 490.05,
+    "size_atr": 1.427,
+    "dir": -1,
+    "age_days": 99,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-03-18",
+    "lo": 446.66,
+    "hi": 459.3,
+    "far_edge": 459.3,
+    "size_atr": 1.209,
+    "dir": -1,
+    "age_days": 88,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-05-15",
+    "lo": 417.64,
+    "hi": 427.22,
+    "far_edge": 427.22,
+    "size_atr": 1.24,
+    "dir": -1,
+    "age_days": 47,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 245.635,
+    "hi": 253.34,
+    "size_atr": 3.219,
+    "date": "2024-11-06"
+   }
+  ],
+  "proximity_atr": 1.38,
+  "nearest_edge": 362.16
+ },
+ "XLK": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 175.88,
+  "atr14": 5.0541,
+  "open_gaps": [
+   {
+    "date": "2025-05-12",
+    "lo": 108.835,
+    "hi": 113.415,
+    "far_edge": 108.835,
+    "size_atr": 1.524,
+    "dir": 1,
+    "age_days": 301,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-08",
+    "lo": 137.41,
+    "hi": 143.13,
+    "far_edge": 137.41,
+    "size_atr": 1.711,
+    "dir": 1,
+    "age_days": 74,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-06-04",
+    "lo": 191.52,
+    "hi": 196.25,
+    "far_edge": 196.25,
+    "size_atr": 1.197,
+    "dir": -1,
+    "age_days": 34,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-06-23",
+    "lo": 184.68,
+    "hi": 192.09,
+    "far_edge": 192.09,
+    "size_atr": 1.332,
+    "dir": -1,
+    "age_days": 22,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [],
+  "proximity_atr": -1.741,
+  "nearest_edge": 184.68
+ },
+ "EWY": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 162.96,
+  "atr14": 10.1827,
+  "open_gaps": [
+   {
+    "date": "2025-05-02",
+    "lo": 55.64,
+    "hi": 58.0,
+    "far_edge": 55.64,
+    "size_atr": 2.132,
+    "dir": 1,
+    "age_days": 307,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-05-14",
+    "lo": 58.04,
+    "hi": 59.15,
+    "far_edge": 58.04,
+    "size_atr": 1.078,
+    "dir": 1,
+    "age_days": 299,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-05-27",
+    "lo": 58.94,
+    "hi": 59.95,
+    "far_edge": 58.94,
+    "size_atr": 1.078,
+    "dir": 1,
+    "age_days": 291,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-06-04",
+    "lo": 61.93,
+    "hi": 63.59,
+    "far_edge": 61.93,
+    "size_atr": 1.72,
+    "dir": 1,
+    "age_days": 285,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-06-05",
+    "lo": 63.92,
+    "hi": 65.33,
+    "far_edge": 63.92,
+    "size_atr": 1.343,
+    "dir": 1,
+    "age_days": 284,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-06-16",
+    "lo": 66.44,
+    "hi": 68.19,
+    "far_edge": 66.44,
+    "size_atr": 1.674,
+    "dir": 1,
+    "age_days": 277,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-06-18",
+    "lo": 66.66,
+    "hi": 67.9,
+    "far_edge": 66.66,
+    "size_atr": 1.06,
+    "dir": 1,
+    "age_days": 275,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-06-20",
+    "lo": 67.85,
+    "hi": 69.62,
+    "far_edge": 67.85,
+    "size_atr": 1.475,
+    "dir": 1,
+    "age_days": 274,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-06-24",
+    "lo": 69.415,
+    "hi": 71.88,
+    "far_edge": 69.415,
+    "size_atr": 1.94,
+    "dir": 1,
+    "age_days": 272,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-07-08",
+    "lo": 70.09,
+    "hi": 72.0,
+    "far_edge": 70.09,
+    "size_atr": 1.442,
+    "dir": 1,
+    "age_days": 263,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-08-04",
+    "lo": 70.69,
+    "hi": 72.38,
+    "far_edge": 70.69,
+    "size_atr": 1.503,
+    "dir": 1,
+    "age_days": 244,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-08-22",
+    "lo": 71.22,
+    "hi": 72.56,
+    "far_edge": 71.22,
+    "size_atr": 1.447,
+    "dir": 1,
+    "age_days": 230,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-09-10",
+    "lo": 74.9,
+    "hi": 76.36,
+    "far_edge": 74.9,
+    "size_atr": 1.528,
+    "dir": 1,
+    "age_days": 218,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-09-29",
+    "lo": 78.89,
+    "hi": 80.17,
+    "far_edge": 78.89,
+    "size_atr": 1.153,
+    "dir": 1,
+    "age_days": 205,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-10-13",
+    "lo": 80.75,
+    "hi": 83.38,
+    "far_edge": 80.75,
+    "size_atr": 1.87,
+    "dir": 1,
+    "age_days": 195,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-10-15",
+    "lo": 82.68,
+    "hi": 84.8,
+    "far_edge": 82.68,
+    "size_atr": 1.354,
+    "dir": 1,
+    "age_days": 193,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-10-16",
+    "lo": 85.14,
+    "hi": 87.91,
+    "far_edge": 85.14,
+    "size_atr": 1.697,
+    "dir": 1,
+    "age_days": 192,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-12-29",
+    "lo": 95.85,
+    "hi": 97.95,
+    "far_edge": 95.85,
+    "size_atr": 1.1,
+    "dir": 1,
+    "age_days": 142,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-01-02",
+    "lo": 97.22,
+    "hi": 101.0,
+    "far_edge": 97.22,
+    "size_atr": 2.026,
+    "dir": 1,
+    "age_days": 139,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-01-05",
+    "lo": 102.12,
+    "hi": 104.98,
+    "far_edge": 102.12,
+    "size_atr": 1.362,
+    "dir": 1,
+    "age_days": 138,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-01-21",
+    "lo": 110.99,
+    "hi": 114.0,
+    "far_edge": 110.99,
+    "size_atr": 1.479,
+    "dir": 1,
+    "age_days": 127,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-08",
+    "lo": 127.27,
+    "hi": 140.28,
+    "far_edge": 127.27,
+    "size_atr": 1.996,
+    "dir": 1,
+    "age_days": 74,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-06-23",
+    "lo": 193.6,
+    "hi": 218.96,
+    "far_edge": 218.96,
+    "size_atr": 2.295,
+    "dir": -1,
+    "age_days": 22,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-07-01",
+    "lo": 189.7,
+    "hi": 201.83,
+    "far_edge": 201.83,
+    "size_atr": 1.073,
+    "dir": -1,
+    "age_days": 16,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-07-13",
+    "lo": 170.31,
+    "hi": 183.585,
+    "far_edge": 183.585,
+    "size_atr": 1.237,
+    "dir": -1,
+    "age_days": 9,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 130.04,
+    "hi": 147.545,
+    "size_atr": 3.87,
+    "date": "2026-03-03"
+   }
+  ],
+  "proximity_atr": -0.722,
+  "nearest_edge": 170.31
+ },
+ "DRAM": {
+  "n_sessions": 78,
+  "last_date": "2026-07-24",
+  "price": 53.3199,
+  "atr14": 5.0394,
+  "open_gaps": [
+   {
+    "date": "2026-05-05",
+    "lo": 42.5,
+    "hi": 44.4,
+    "far_edge": 42.5,
+    "size_atr": 1.08,
+    "dir": 1,
+    "age_days": 55,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-06-23",
+    "lo": 69.52,
+    "hi": 80.699,
+    "far_edge": 80.699,
+    "size_atr": 2.266,
+    "dir": -1,
+    "age_days": 22,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-07-01",
+    "lo": 67.66,
+    "hi": 73.7701,
+    "far_edge": 73.7701,
+    "size_atr": 1.121,
+    "dir": -1,
+    "age_days": 16,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-07-13",
+    "lo": 57.495,
+    "hi": 63.03,
+    "far_edge": 63.03,
+    "size_atr": 1.041,
+    "dir": -1,
+    "age_days": 9,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [],
+  "proximity_atr": -0.828,
+  "nearest_edge": 57.495
+ },
+ "SPCX": {
+  "n_sessions": 388,
+  "last_date": "2026-07-24",
+  "price": 115.0699,
+  "atr14": 10.238,
+  "open_gaps": [
+   {
+    "date": "2026-03-10",
+    "lo": 21.6701,
+    "hi": 22.0308,
+    "far_edge": 21.6701,
+    "size_atr": 1.316,
+    "dir": 1,
+    "age_days": 47,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-06",
+    "lo": 21.925,
+    "hi": 23.64,
+    "far_edge": 21.925,
+    "size_atr": 6.082,
+    "dir": 1,
+    "age_days": 29,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-06-12",
+    "lo": 22.0391,
+    "hi": 150.0,
+    "far_edge": 22.0391,
+    "size_atr": 332.947,
+    "dir": 1,
+    "age_days": 28,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 22.51,
+    "hi": 23.59,
+    "size_atr": 7.227,
+    "date": "2024-08-20"
+   },
+   {
+    "lo": 23.0,
+    "hi": 23.5,
+    "size_atr": 3.369,
+    "date": "2024-09-19"
+   },
+   {
+    "lo": 23.38,
+    "hi": 23.99,
+    "size_atr": 4.091,
+    "date": "2024-11-05"
+   },
+   {
+    "lo": 22.5,
+    "hi": 23.63,
+    "size_atr": 4.495,
+    "date": "2024-12-17"
+   },
+   {
+    "lo": 22.4,
+    "hi": 23.614,
+    "size_atr": 4.966,
+    "date": "2025-01-27"
+   },
+   {
+    "lo": 24.0701,
+    "hi": 24.99,
+    "size_atr": 4.437,
+    "date": "2025-03-31"
+   },
+   {
+    "lo": 22.7,
+    "hi": 23.89,
+    "size_atr": 4.697,
+    "date": "2025-04-02"
+   },
+   {
+    "lo": 23.77,
+    "hi": 24.51,
+    "size_atr": 3.263,
+    "date": "2025-09-11"
+   },
+   {
+    "lo": 24.63,
+    "hi": 25.4099,
+    "size_atr": 3.121,
+    "date": "2025-10-06"
+   },
+   {
+    "lo": 23.0,
+    "hi": 25.37,
+    "size_atr": 13.458,
+    "date": "2025-12-16"
+   },
+   {
+    "lo": 21.94,
+    "hi": 22.57,
+    "size_atr": 3.082,
+    "date": "2026-02-09"
+   },
+   {
+    "lo": 21.95,
+    "hi": 23.13,
+    "size_atr": 5.563,
+    "date": "2026-04-02"
+   },
+   {
+    "lo": 21.925,
+    "hi": 23.64,
+    "size_atr": 6.082,
+    "date": "2026-04-06"
+   },
+   {
+    "lo": 22.0391,
+    "hi": 150.0,
+    "size_atr": 332.947,
+    "date": "2026-06-12"
+   }
+  ],
+  "proximity_atr": -3.412,
+  "nearest_edge": 150.0
+ },
+ "SKHY": {
+  "open_gaps": null,
+  "island_cuts": null,
+  "proximity_atr": null,
+  "nearest_edge": null,
+  "n_sessions": 10,
+  "why": "historia insuficiente (<30 sesiones)"
+ },
+ "LRCX": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 305.4,
+  "atr14": 23.7566,
+  "open_gaps": [
+   {
+    "date": "2025-05-12",
+    "lo": 75.34,
+    "hi": 80.665,
+    "far_edge": 75.34,
+    "size_atr": 1.796,
+    "dir": 1,
+    "age_days": 301,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-09-18",
+    "lo": 121.9,
+    "hi": 126.55,
+    "far_edge": 121.9,
+    "size_atr": 1.436,
+    "dir": 1,
+    "age_days": 212,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-09-29",
+    "lo": 128.3,
+    "hi": 133.08,
+    "far_edge": 128.3,
+    "size_atr": 1.303,
+    "dir": 1,
+    "age_days": 205,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-10-13",
+    "lo": 131.32,
+    "hi": 138.09,
+    "far_edge": 131.32,
+    "size_atr": 1.315,
+    "dir": 1,
+    "age_days": 195,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-12-18",
+    "lo": 155.0,
+    "hi": 163.19,
+    "far_edge": 155.0,
+    "size_atr": 1.177,
+    "dir": 1,
+    "age_days": 148,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-01-02",
+    "lo": 171.08,
+    "hi": 177.85,
+    "far_edge": 171.08,
+    "size_atr": 1.147,
+    "dir": 1,
+    "age_days": 139,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-08",
+    "lo": 224.26,
+    "hi": 242.75,
+    "far_edge": 224.26,
+    "size_atr": 1.558,
+    "dir": 1,
+    "age_days": 74,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-07-01",
+    "lo": 404.97,
+    "hi": 433.26,
+    "far_edge": 433.26,
+    "size_atr": 1.113,
+    "dir": -1,
+    "age_days": 16,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 91.015,
+    "hi": 99.13,
+    "size_atr": 3.354,
+    "date": "2025-07-31"
+   }
+  ],
+  "proximity_atr": 2.637,
+  "nearest_edge": 242.75
+ },
+ "SNDK": {
+  "n_sessions": 356,
+  "last_date": "2026-07-24",
+  "price": 1434.87,
+  "atr14": 190.9377,
+  "open_gaps": [
+   {
+    "date": "2025-09-04",
+    "lo": 53.01,
+    "hi": 55.67,
+    "far_edge": 53.01,
+    "size_atr": 1.253,
+    "dir": 1,
+    "age_days": 222,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-09-05",
+    "lo": 62.51,
+    "hi": 65.52,
+    "far_edge": 62.51,
+    "size_atr": 1.132,
+    "dir": 1,
+    "age_days": 221,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-09-11",
+    "lo": 73.86,
+    "hi": 82.3,
+    "far_edge": 73.86,
+    "size_atr": 2.884,
+    "dir": 1,
+    "age_days": 217,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-09-29",
+    "lo": 97.15,
+    "hi": 104.25,
+    "far_edge": 97.15,
+    "size_atr": 1.321,
+    "dir": 1,
+    "age_days": 205,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-10-13",
+    "lo": 116.915,
+    "hi": 129.74,
+    "far_edge": 116.915,
+    "size_atr": 1.459,
+    "dir": 1,
+    "age_days": 195,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-08",
+    "lo": 710.7,
+    "hi": 784.0,
+    "far_edge": 710.7,
+    "size_atr": 1.286,
+    "dir": 1,
+    "age_days": 74,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-29",
+    "lo": 1002.83,
+    "hi": 1070.6,
+    "far_edge": 1002.83,
+    "size_atr": 1.062,
+    "dir": 1,
+    "age_days": 59,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 542.07,
+    "hi": 651.23,
+    "size_atr": 3.154,
+    "date": "2026-01-30"
+   }
+  ],
+  "proximity_atr": 1.908,
+  "nearest_edge": 1070.6
+ },
+ "WDC": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 519.8,
+  "atr14": 50.4992,
+  "open_gaps": [
+   {
+    "date": "2025-04-30",
+    "lo": 40.63,
+    "hi": 42.98,
+    "far_edge": 40.63,
+    "size_atr": 1.147,
+    "dir": 1,
+    "age_days": 309,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-05-12",
+    "lo": 44.08,
+    "hi": 46.88,
+    "far_edge": 44.08,
+    "size_atr": 1.557,
+    "dir": 1,
+    "age_days": 301,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-07-31",
+    "lo": 71.51,
+    "hi": 74.25,
+    "far_edge": 71.51,
+    "size_atr": 1.515,
+    "dir": 1,
+    "age_days": 246,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-09-15",
+    "lo": 97.66,
+    "hi": 100.445,
+    "far_edge": 97.66,
+    "size_atr": 1.082,
+    "dir": 1,
+    "age_days": 215,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-09-29",
+    "lo": 106.85,
+    "hi": 112.02,
+    "far_edge": 106.85,
+    "size_atr": 1.582,
+    "dir": 1,
+    "age_days": 205,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-08",
+    "lo": 311.97,
+    "hi": 335.0,
+    "far_edge": 311.97,
+    "size_atr": 1.065,
+    "dir": 1,
+    "age_days": 74,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-29",
+    "lo": 391.08,
+    "hi": 424.352,
+    "far_edge": 391.08,
+    "size_atr": 1.611,
+    "dir": 1,
+    "age_days": 59,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-06-23",
+    "lo": 665.21,
+    "hi": 732.61,
+    "far_edge": 732.61,
+    "size_atr": 1.429,
+    "dir": -1,
+    "age_days": 22,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 66.46,
+    "hi": 72.585,
+    "size_atr": 3.336,
+    "date": "2024-10-25"
+   },
+   {
+    "lo": 52.61,
+    "hi": 68.71,
+    "size_atr": 6.463,
+    "date": "2025-02-24"
+   }
+  ],
+  "proximity_atr": 1.89,
+  "nearest_edge": 424.352
+ },
+ "STX": {
+  "n_sessions": 501,
+  "last_date": "2026-07-24",
+  "price": 851.96,
+  "atr14": 74.6616,
+  "open_gaps": [
+   {
+    "date": "2025-04-30",
+    "lo": 81.7,
+    "hi": 87.135,
+    "far_edge": 81.7,
+    "size_atr": 1.414,
+    "dir": 1,
+    "age_days": 309,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-05-12",
+    "lo": 95.7,
+    "hi": 101.13,
+    "far_edge": 95.7,
+    "size_atr": 1.523,
+    "dir": 1,
+    "age_days": 301,
+    "earnings_gap": null
+   },
+   {
+    "date": "2025-10-29",
+    "lo": 222.94,
+    "hi": 240.515,
+    "far_edge": 222.94,
+    "size_atr": 1.521,
+    "dir": 1,
+    "age_days": 183,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-08",
+    "lo": 468.83,
+    "hi": 503.195,
+    "far_edge": 468.83,
+    "size_atr": 1.158,
+    "dir": 1,
+    "age_days": 74,
+    "earnings_gap": null
+   },
+   {
+    "date": "2026-04-29",
+    "lo": 578.981,
+    "hi": 667.98,
+    "far_edge": 578.981,
+    "size_atr": 3.105,
+    "dir": 1,
+    "age_days": 59,
+    "earnings_gap": null
+   }
+  ],
+  "island_cuts": [
+   {
+    "lo": 141.0,
+    "hi": 152.91,
+    "size_atr": 3.016,
+    "date": "2025-07-30"
+   },
+   {
+    "lo": 578.981,
+    "hi": 667.98,
+    "size_atr": 3.105,
+    "date": "2026-04-29"
+   }
+  ],
+  "proximity_atr": 2.464,
+  "nearest_edge": 667.98
+ }
+}
