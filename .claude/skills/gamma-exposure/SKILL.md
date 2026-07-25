@@ -1,6 +1,6 @@
 ---
 name: gamma-exposure
-description: Exposición gamma de dealers para la flota ib-trader — GEX por strike y neto, régimen positivo/negativo, gamma-flip (zero-gamma) recomputado, muros call/put (por gamma y por OI), muro absoluto, y cómo se fusiona con muros OI/gexa y la doctrina de imanes. Usar cuando se hable de GEX, gamma exposure, gamma flip, zero gamma, régimen gamma, call wall, put wall, muros de gamma, dealer positioning, o pin/imán por gamma. SEÑAL-SOLAMENTE — jamás órdenes al broker.
+description: Exposición gamma de dealers para la flota ib-trader — GEX por strike y neto, régimen positivo/negativo, gamma-flip (zero-gamma) recomputado, muros call/put (por gamma y por OI), muro absoluto, y cómo se fusiona con los muros OI y la doctrina de imanes. Usar cuando se hable de GEX, gamma exposure, gamma flip, zero gamma, régimen gamma, call wall, put wall, muros de gamma, dealer positioning, o pin/imán por gamma. SEÑAL-SOLAMENTE — jamás órdenes al broker.
 ---
 
 # gamma-exposure — el mapa de fuerzas de los dealers (2026-07-23)
@@ -10,7 +10,7 @@ engines y el chart; extraída de la lógica ya probada en `daily_fleet_plans.py`
 GEX/flip/walls son UN sistema: el flip y los muros se DERIVAN del perfil GEX. Es un
 **mapa de fuerzas, no un gatillo** — se cruza con el print, el flujo y Bollinger.
 Cross-links: [[oi-magnets-protocol]] · [[gamma-regime-walls]] · [[flow-captains]] ·
-[[bollinger-mastery]] · gexa via skill `gexa-terminal`.
+[[bollinger-mastery]] · [[gexa-framework]] (taxonomía de niveles).
 
 ## 1. GEX — Gamma Exposure (fórmula)
 Por strike, convención **dealer-long-calls** (calls +, puts −; limpia en índices/
@@ -76,8 +76,12 @@ Devuelve distancias en % a call_wall/put_wall/flip + flags `near_*` (≤0.4% = m
 ## 6. Fuentes de datos
 - **En vivo**: `data/opt_chain_<sym>.txt` (cache TWS de `opt_chain_cache.py`) → `gex_core.from_ibkr_cache`.
   Si iv/gamma = −1 (mercado cerrado/sin OPRA) usa BS con IV 0.3 de respaldo (aprox, sin skew → flip estático).
-- **gexa.ai** (skill `gexa-terminal`): flip 0DTE vs ALL-EXP, dealer pressure, magnets footprint —
-  contraste institucional. Cubre large-caps US; NO NOK ni temáticos.
+- **Mapa gamma propio del día**: `scripts/gex_snapshot.py` → `data/gex_snapshot.json` desde
+  `data/history/<fecha>/chain_full_<sym>.json` (griegas y OI MEDIDOS de Polygon) vía `gex_core.build_gex`.
+  Da `flip`/`flip_all`, `score` (net GEX M$/pt, su signo = régimen), `poc`, `magnets`,
+  `call_wall`/`put_wall`/`abs_wall` + `abs_wall_kind`. Cobertura 25/30 (umbral: ≥8 strikes poblados);
+  los omitidos van con motivo en `_meta.skipped`. Se lee con `gex_snapshot.load()`, que devuelve
+  `None` (nunca `{}`) si falta. Sustituye a gexa.ai, muerto el 2026-07-25.
 - **Chart en vivo**: `scripts/chart_levels.py` escribe `charts/data/levels_<sym>.json`; el visor
   `charts/live.html` dibuja walls/flip (createPriceLine) + perfil GEX.
 

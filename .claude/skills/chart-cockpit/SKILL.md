@@ -1,11 +1,11 @@
 ---
 name: chart-cockpit
-description: Manual de operación del cockpit de trading en vivo (charts/live.html + scripts/chart_bridge.py) — chart TradingView-like con GEX/flip/muros de gexa, combo_tl, narrador de mercado (DeepSeek), señales estructurales (imán/flip), marcadores de TODAS las señales/notificaciones, operaciones de los engines, y alarmas manuales estilo TradingView. Usar para arrancar/operar/extender el chart, entender los frames WS y comandos, o consultar la BD de señales para el backtest EOD. SEÑAL-SOLAMENTE.
+description: Manual de operación del cockpit de trading en vivo (charts/live.html + scripts/chart_bridge.py) — chart TradingView-like con GEX/flip/muros propios (gex_core), combo_tl, narrador de mercado (DeepSeek), señales estructurales (imán/flip), marcadores de TODAS las señales/notificaciones, operaciones de los engines, y alarmas manuales estilo TradingView. Usar para arrancar/operar/extender el chart, entender los frames WS y comandos, o consultar la BD de señales para el backtest EOD. SEÑAL-SOLAMENTE.
 ---
 
 # chart-cockpit — el cockpit de trading en vivo (2026-07-23)
 
-Chart web tipo TradingView conectado a IBKR TWS, con el mapa GEX de gexa + nuestras
+Chart web tipo TradingView conectado a IBKR TWS, con nuestro mapa GEX (gex_core) + nuestras
 señales. Doctrina del mapa: [[gexa-framework]]. Cómputo GEX: [[gamma-exposure]].
 
 ## Arranque
@@ -39,13 +39,13 @@ GOTCHAS: (1) el bridge SIRVE el .js de lightweight-charts (ruta estática) o que
 ## Capas del chart
 - **combo_tl**: Supertrend (ATR10×3 Wilder, Buy/Sell), Madrid Ribbon (18 EMAs coloreadas),
   BB(20,2), SMA20/40/100/200, VWAP, MACD, trendlines-con-breaks.
-- **GEX (gexa)**: muros call/put + flip + perfil GEX/VEX por strike, escala $/1% (=gexa).
+- **GEX (propio, `gex_core`/`chart_levels`)**: muros call/put + flip + perfil GEX/VEX por strike, escala $/1%.
   IMÁN oro (gamma+) / ACELERADOR morado (gamma−). Info: chips con ⓘ + botón "ℹ Guía".
 - **Marcadores** (todos desde `trades.db`, tooltip por evento):
   🐋P/🐋C ballena · 🚀 spike flujo · 🩸 dip · 🎈 bollinger · 🌋 cusum · ⏰ alarma · 🧲 estructural ·
   ⚙▲/⚙▼ operaciones de engines (verde BUY / rojo SELL) · Buy/Sell del Supertrend.
 - **Píldora estructural** (#structpill, oro/rojo): "🧲 NVDA se dirige a su imán 210 ↑ · 75%".
-- **Narrador** (🗣, barra inferior): lectura breve tipo gexa. ⚡ determinista (gratis) / 🤖 DeepSeek (↻).
+- **Narrador** (🗣, barra inferior): lectura breve de estructura de dealers. ⚡ determinista (gratis) / 🤖 DeepSeek (↻).
 - **Alarmas manuales** (🔔): botón → clic en el precio → línea dorada punteada con campana.
   Panel arriba-derecha lista cada alarma con 🗑 para borrarla.
 

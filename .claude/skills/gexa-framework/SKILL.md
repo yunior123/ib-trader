@@ -3,7 +3,11 @@ name: gexa-framework
 description: Marco de trading por estructura de dealers (destilado de los docs de gexa.ai) — taxonomía de niveles (POC, muros, imanes/aceleradores, rug-pull, gatekeepers), régimen/flip/fragilidad, ciclo de vida de nodos, tipo de entrega, los 11 setups de alta probabilidad, las 6 condiciones de NO-operar, bias, vanna/charm, amplificación 0DTE. Usar para leer un mapa GEX, clasificar niveles, decidir setup o sit-out, o interpretar régimen/flip. Complementa [[gamma-exposure]] (nuestro cómputo). SEÑAL-SOLAMENTE.
 ---
 
-# gexa-framework — leer la estructura de dealers como gexa (2026-07-23)
+# gexa-framework — leer la estructura de dealers (2026-07-23)
+
+> NOTA (2026-07-25): el nombre es historico — gexa.ai murio y ya no se consulta. Lo que sigue es
+> la DOCTRINA destilada de sus docs, que se aplica sobre NUESTRO mapa: `scripts/gex_snapshot.py`
+> -> `data/gex_snapshot.json` ([[gamma-exposure]] / `gex_core`, griegas Polygon MEDIDAS).
 
 **Idea central**: los market makers NO eligen comprar/vender en ciertos niveles — su gamma
 los OBLIGA a cubrirse mecánicamente. El mapa GEX dibuja esos flujos forzados. Se opera CON
