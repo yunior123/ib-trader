@@ -2,6 +2,60 @@
 
 > Vivo. Marcar [x] al cerrar. Manual completo: `docs/DAILY-SYSTEM.md`. Doctrina: skills `gamma-regime-walls`, `gexa-terminal`, `postmarket-cage-release`, `tradingview-terminal`.
 
+## 🔴 SESIÓN 2026-07-25 (madrugada) — peticiones de Yunior, apuntadas AL VUELO
+> Regla nueva (`~/CLAUDE.md`): cada petición se anota aquí EN EL MOMENTO, con las palabras de
+> Yunior, antes de seguir trabajando. Sin esto se pierden — pasó con las 30 features minadas.
+
+**HECHO y commiteado:**
+- [x] "remove biomcp from context, alpha fold too" → los 5 MCP fuera de `~/.claude/settings.json`
+      (+ pubchem, uniprot, elevenlabs, y desinstalados del disco). Backup con la ELEVENLABS_API_KEY
+      en `~/.claude/settings.json.bak-2026-07-25-mcp` (única copia).
+- [x] "la flecha debería ser como una brújula … ultraprecisa" → `scripts/compass.cpp` (C++23,
+      37 tests). Escenario SPY Muro put 740 + puts: ▲UP 76% en vez de ▼DOWN 61%. `aa7b91a`
+- [x] "puede revertir fuerte o solo un poco: calcúlalo y mueve la flecha" → amplitud
+      LATIGAZO/REBOTE/SCALP + `mag` que escala la flecha. `aa7b91a`
+- [x] "la flecha también se mueve si choca un call wall en rebote" → el nivel se elige por
+      TOQUE, no por procedencia (en el rebote r6 sigue negativo). `aa7b91a`
+- [x] "muro debería ser con mayúscula" → "Muro" en texto de usuario; claves de calibración
+      (`SPIKE_PUTS|muro`) intactas para no partir el histórico. `aa7b91a`
+- [x] "python solo para test, la computación en C++" → brújula entera en C++; `compass.py`
+      retirado a `backup/`. Regla grabada en `~/CLAUDE.md`. `aa7b91a`
+- [x] "imagina si la flecha apunta con retraso de 2 segundos" → ~2.1s → **~0.45s**. El chart
+      ya no calcula, solo lee (0.051 ms). `b1d1b0a`
+- [x] "manda scout … donde python es peligro" → auditoría; 2 bugs críticos arreglados:
+      Espada de Napoleón en crash-loop (`89c71f7`) y MANADA con denominador fabricado
+      (21/26=80.8% disparaba cuando 21/30=70% no debía) (`531feb7`).
+- [x] "en los etfs … las acciones que los llevan abajo o arriba con fuerza" → motores nombrados
+      en `compass.cpp` + `data/etf_weights.json` (los pesos hardcodeados estaban MAL: MSFT 8.0
+      en QQQ cuando el real es 4.34). `9d9568b`
+- [x] "asegura un solo branch main updated" → una sola rama, todo pusheado.
+- [x] "cada versión nueva compilada a app macOS en Desktop" + "verifica los cambios del otro
+      Claude Code" → `~/Desktop/ib-trader Cockpit.app` 159 MB, firma válida, abre. Auditoría:
+      señal-solamente intacta, cero secretos. `e78c903`
+- [x] "polygon da opciones data, graba en claude.md" + "trae las griegas directo" → medido:
+      `/v3/snapshot/options/` da greeks+IV+OI, pero **`?as_of=` es TRAMPA** (dice OK e ignora
+      la fecha). Grabado en `~/CLAUDE.md`.
+
+**DELEGADO a agentes (en curso):**
+- [ ] "make the walls look like in there … those look like nice gamma walls" (captura de
+      @BullflowIO, `GEX: Bubbles`) → burbujas GEX en `charts/live.html`, coloreando **pin vs
+      trampilla** (que Bullflow no muestra). *delegado*
+- [ ] "do we have spx in fleet? … make sure we use it to measure brújula" → verificar
+      entitlement de índice CBOE antes de añadirlo (un símbolo muerto encoge denominadores). *delegado*
+- [ ] "engine ibkr reemplazo local … con polygon, datos reales" → `replay.cpp` (simula el DISCO,
+      no el socket) + cadenas del archivo. El gateway socket se **canceló** por decisión de
+      Yunior ("si no hace falta websocket fake y es listo, mejor"). *delegado*
+- [ ] Backfill Polygon 2 años + archivador diario de cadenas con griegas REALES + reconstrucción
+      del pasado (21 días) con error medido contra IBKR. *delegado*
+- [ ] Las **30 features minadas** de SpotGamma/TrendSpider/MenthorQ + **13 skills** +
+      `docs/FEATURES-MINED-2026-07-25.md` + `docs/research/` (6 dossiers, 496 KB). *delegado*
+
+**PENDIENTE (no delegado aún):**
+- [ ] Conmutar los keepalives a los binarios C++ nuevos (`fleet_consensus`, `gate`) — lo decide Yunior.
+- [ ] Ola 1 de las 30 features: los 5 must-build son `barrier-labels`, `null-control`,
+      `book-quality gate` (su fix del signo del Muro YA está en `gex_core.py`),
+      `poly-aggs-backfill` (en curso) y `chain-honesty`.
+
 ## ✅ HECHO (2026-07-20/21)
 - [x] Post-mortem imanes 2026-07-20 (hacia el imán, jamás a través del muro; decay por toques)
 - [x] Investigación NOK (crash = Ericsson AI-cost read-through; 40% layoff = sin evidencia; earnings 23-jul BMO)
