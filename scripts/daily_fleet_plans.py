@@ -9,7 +9,7 @@ Salida: ~/Desktop/planes-YYYY-MM-DD/<SYM>_plan.pdf + email + out x_drafts/.
 Uso: ./venv/bin/python scripts/daily_fleet_plans.py [--tickers QQQ,NVDA] [--no-email]
 Programado por launchd com.ibtrader.dailyplans a las 04:00 ET.
 SEÑAL-SOLAMENTE: jamas ordena. 2026-07-21."""
-import argparse, base64, json, math, os, sys, time, warnings
+import argparse, base64, datetime as dt, json, math, os, sys, time, warnings
 warnings.filterwarnings("ignore")
 import numpy as np
 import matplotlib
@@ -21,6 +21,18 @@ import yfinance as yf
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(REPO)
+sys.path.insert(0, os.path.join(REPO, "scripts"))
+
+# Mapa gamma MEDIDO en casa (griegas REALES de Polygon sobre la cadena archivada). Sustituye
+# a gexa.ai, muerto el 2026-07-25. Si el modulo no se puede importar NO se inventa un regimen:
+# se grita en stderr y el plan lo DICE en su propio texto (ver gex_snapshot_for / plan_engine).
+GEX_SNAP_WHY = None
+try:
+    import gex_snapshot
+except Exception as _e:                      # repo a medias: se degrada, pero a la vista
+    gex_snapshot = None
+    GEX_SNAP_WHY = f"modulo gex_snapshot no importable: {_e}"
+    print(f"AVISO: {GEX_SNAP_WHY} -> los planes iran SIN regimen gamma medido", file=sys.stderr)
 
 # ---------- flota: metadata por ticker ----------
 FLEET = {
@@ -43,7 +55,9 @@ FLEET = {
     "QCOM": dict(style="weekly", fut="NQ=F", korea=True),
     "AVGO": dict(style="weekly", fut="NQ=F", korea=True),
     "NFLX": dict(style="weekly", fut="NQ=F", korea=False),
-    "NOK":  dict(style="weekly", fut="ES=F", korea=False, no_gexa=True),
+    # `no_gex_map`: sin mapa gamma de terceros ni propio fiable (gexa nunca cubrio NOK; y su
+    # cadena Polygon suele quedarse sin griegas usables) -> muros OI de TWS y nada mas.
+    "NOK":  dict(style="weekly", fut="ES=F", korea=False, no_gex_map=True),
     "GLD":  dict(style="weekly", fut="ES=F", korea=False),
     "XLK":  dict(style="weekly", fut="NQ=F", korea=False),
     "EWY":  dict(style="weekly", fut="ES=F", korea=True),
@@ -342,13 +356,37 @@ def live_spot(sym, max_age_s=180):
         pass
     return None
 
-def gexa_snapshot(sym):
-    try:
-        pth = "data/gexa_snapshot.json"
-        if time.time() - os.path.getmtime(pth) > 12 * 3600: return None
-        return json.load(open(pth)).get(sym)
-    except Exception:
+def gex_snapshot_for(sym):
+    """Mapa gamma MEDIDO de `sym`: data/gex_snapshot.json, calculado por scripts/gex_snapshot.py
+    con las griegas REALES de Polygon sobre data/history/<fecha>/chain_full_<sym>.json.
+    (Sustituye al difunto gexa.ai, 2026-07-25. La ruta la resuelve el propio modulo desde
+    __file__ — aqui no se hardcodea nada.)
+
+    CADUCIDAD: el mapa se construye sobre la cadena ARCHIVADA del dia, asi que la mtime del
+    fichero envejece sin que el mapa deje de ser vigente (el del viernes manda todo el fin de
+    semana). Por eso: 36h de fichero Y ADEMAS `chain_date` dentro de los ultimos 5 dias de
+    calendario — el mismo margen que gex_snapshot.latest_chain acepta al construirlo.
+
+    Devuelve el dict del simbolo o **None**. Nunca {} y nunca un cero: sin `score` no hay signo
+    y sin signo no hay regimen; afirmar "0" seria convertir "no se" en "se, y es cero"."""
+    if gex_snapshot is None:
         return None
+    snap = gex_snapshot.load(max_age_h=36)       # load() ya devuelve None (jamas {}) si falla
+    if not snap:
+        return None
+    g = snap.get(sym.upper())
+    if not isinstance(g, dict):
+        return None                              # simbolo omitido por el builder (sin cadena/griegas)
+    if not isinstance(g.get("score"), (int, float)) or g.get("flip") is None:
+        return None                              # sin score/flip no se afirma regimen
+    cd = g.get("chain_date")
+    try:
+        edad_d = (dt.date.today() - dt.date.fromisoformat(str(cd))).days
+    except (TypeError, ValueError):
+        return None                              # sin fecha de cadena no se puede fechar el mapa
+    if not 0 <= edad_d <= 5:
+        return None                              # cadena rancia (o del futuro): no se usa
+    return g
 
 def plan_engine(sym, spot, cs, on, wb, ws, kor, fut, meta, vx=None, eur=None):
     reg = "NEGATIVO" if cs["net_gex"] < 0 else "POSITIVO"
@@ -371,15 +409,33 @@ def plan_engine(sym, spot, cs, on, wb, ws, kor, fut, meta, vx=None, eur=None):
     # regimen
     fl = f"{cs['flip']:.0f}" if cs["flip"] else "n/d"
     lines.append("")
-    gx = gexa_snapshot(sym)
+    gx = gex_snapshot_for(sym)
+    # 2a foto (la de SIEMPRE en este generador): GEX del vencimiento mas cercano, ventana
+    # +/-3.5% del spot. Es propia tambien -> ya no hay "contraste con un tercero".
+    viva = ("griegas TWS reales" if "IBKR" in str(cs.get("exp", ""))
+            else "gamma Black-Scholes RECONSTRUIDA (IV yfinance)")
     if gx:
-        reg = "NEGATIVO" if float(gx.get("score", 0)) < 0 else "POSITIVO"
-        lines.append(f"REGIMEN GAMMA (GEXA verificado): flip {gx.get('flip','?')} | dealer {gx.get('score','?')}"
+        reg = "NEGATIVO" if float(gx["score"]) < 0 else "POSITIVO"
+        gok = gx.get("greeks_ok_pct")
+        goks = f"{gok*100:.0f}%" if isinstance(gok, (int, float)) else "n/d"
+        nc = gx.get("n_contracts")
+        ncs = f"{nc}" if isinstance(nc, int) else "n/d"
+        lines.append(f"REGIMEN GAMMA (MEDIDO, griegas Polygon): flip {gx['flip']} | net {gx['score']:+.1f}M/pt"
                      f" | bias {gx.get('bias','?')} | POC {gx.get('poc','?')} -> {reg}")
-        lines.append(f"  (GEX propio de contraste: {cs['net_gex']/1e6:+.1f}M/pt flip est {fl})")
+        lines.append(f"  Fuente: cadena archivada {gx.get('chain_date','?')} COMPLETA (todos los vencimientos),")
+        lines.append(f"          {ncs} contratos, griegas+OI usables {goks} — en casa, auditable strike a strike.")
+        lines.append(f"  2a foto (misma casa, NO un tercero): venc. {cs['exp']} +/-3.5% spot"
+                     f" {cs['net_gex']/1e6:+.1f}M/pt flip est {fl},")
+        lines.append(f"          {viva}; PARCIAL (1 venc.) -> manda el MEDIDO.")
     else:
-        lines.append(f"REGIMEN GAMMA (propio; gexa no disponible 4AM): net GEX {cs['net_gex']/1e6:+.1f}M/pt, flip est {fl} -> {reg}"
-                 + (" (precio DEBAJO del flip)" if below_flip else ""))
+        porque = (GEX_SNAP_WHY or "data/gex_snapshot.json ausente/caducado o cadena rancia")[:80]
+        lines.append(f"REGIMEN GAMMA NO MEDIDO HOY: {porque}.")
+        lines.append(f"  Solo heuristica propia: venc. {cs['exp']} +/-3.5% spot,"
+                     f" net GEX {cs['net_gex']/1e6:+.1f}M/pt, flip est {fl}")
+        lines.append(f"          -> sesgo ESTIMADO {reg}"
+                     + (" (precio DEBAJO del flip)" if below_flip else ""))
+        lines.append(f"          origen: {viva} — no es un regimen medido.")
+        lines.append("  Lo que sigue asume ese sesgo ESTIMADO: pesarlo menos.")
     if reg == "NEGATIVO":
         lines.append("  Dealers AMPLIFICAN: rebote 1er toque ~50-55%, breaks corren, POC = pelea no muro.")
         lines.append("  Jugadas: breakout con print A FAVOR; strangle si coil; NO vender spreads pegados.")
@@ -697,17 +753,26 @@ def main():
     for sym, z in zerodte.items():
         try:
             cs, spot = z["cs"], z["spot"]
-            gx = gexa_snapshot(sym) or {}
+            gx = gex_snapshot_for(sym)
             cw = cs.get("cw"); pw = cs.get("pw")
             cwl = f"{cw[0][0]:g}({int(cw[0][1]/1000)}k)" if cw else "s/d"
             pwl = f"{pw[0][0]:g}({int(pw[0][1]/1000)}k)" if pw else "s/d"
-            flip = gx.get("flip") or cs.get("flip")
+            # el flip MEDIDO (cadena archivada, griegas Polygon) manda; si no hay, el estimado
+            # del vencimiento cercano, y se dice cual es cual — nunca un numero sin origen.
+            if gx and gx.get("flip") is not None:
+                flip, fsrc = gx["flip"], "MEDIDO"
+            elif cs.get("flip"):
+                flip, fsrc = cs["flip"], "est"
+            else:
+                flip, fsrc = None, ""
             lado = ("BAJO flip = dealers amplifican (movimiento)" if flip and spot < flip
                     else "SOBRE flip = dealers amortiguan (pin)" if flip else "")
             zd += (f"  {sym} {spot:.2f}: piso {pwl} techo {cwl} | max pain {cs.get('pain', 0):g}"
-                   f" | flip {flip or 's/d'} {lado} | dip {z['dip']:.0f}% {z['reg']}\n")
-        except Exception:
-            pass
+                   f" | flip {f'{flip:g} ({fsrc})' if flip else 's/d'} {lado} | dip {z['dip']:.0f}% {z['reg']}\n")
+        except Exception as e:
+            # nunca `pass`: un simbolo que desaparece del bloque 0DTE en silencio es el
+            # mismo olor del denominador fabricado. Se dice cual y por que.
+            print(f"AVISO 0DTE {sym}: fuera del bloque ({type(e).__name__}: {e})", file=sys.stderr)
     # engranaje MAG7/componentes -> a donde apunta QQQ (index_breadth vivo)
     try:
         br = json.load(open("data/breadth.json"))
