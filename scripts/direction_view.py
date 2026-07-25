@@ -176,6 +176,23 @@ def compute(sym, lv=None):
         except Exception:
             pass
 
+    # 4d) AMORTIGUADOR cor-fleet (ficha 23): la regla 12 como VARIABLE DE ESTADO.
+    #     MULTIPLICATIVO sobre los pesos EXISTENTES fleet(1.4)/components(1.3) — jamás
+    #     una familia nueva (hay tope duro de familias). DESACTIVADO POR DEFECTO:
+    #     solo actúa con COR_FLEET_DAMPER=1 en el entorno. Su validación (re-calificar
+    #     las 972 señales por tercil de rho) sigue pendiente; hasta entonces no toca
+    #     ninguna flecha en producción. NINGUNA VOZ NUEVA.
+    if os.environ.get("COR_FLEET_DAMPER") == "1" and ("fleet" in weights or "components" in weights):
+        try:
+            from cor_fleet import captain_damper, apply_damper
+            cap_coef, _name_coef, cf_why = captain_damper()
+            if cap_coef != 1.0:
+                weights = apply_damper(weights, cap_coef)
+                if cf_why:
+                    why.append(cf_why)          # el coeficiente aplicado SIEMPRE impreso
+        except Exception:
+            pass                                # neutro: los pesos quedan como estaban
+
     # 4c) SPIKES de opciones de CAPITANES en tiempo real (SPY/QQQ/SMH) — Yunior 2026-07-24
     try:
         import signal_conditioning as SC
