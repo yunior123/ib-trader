@@ -101,6 +101,13 @@ def contracts_from(path):
     meta = d.get("meta") or {}
     spot = meta.get("spot")
     res = d.get("results") or []
+    # epoch de la FOTO: es el reloj contra el que se mide el plazo de cada contrato.
+    # Si falta, se usa el de ahora y queda dicho en el _meta del mapa.
+    ref_ts = meta.get("snapshot_epoch")
+    try:
+        ref_ts = float(ref_ts) if ref_ts is not None else None
+    except (TypeError, ValueError):
+        ref_ts = None
     cs = []
     for c in res:
         det = c.get("details") or {}
@@ -111,9 +118,21 @@ def contracts_from(path):
         exp = det.get("expiration_date")
         if g is None or not oi or k is None or not ct or not exp:
             continue
+        # `T` (años al vencimiento) es OBLIGATORIA, no opcional. Sin ella gex_core caia
+        # a un default de 0.02 = 7,3 dias PARA TODOS los vencimientos, 0DTE incluido, y
+        # el flip repreciado salia de ese plazo inventado. Como el flip decide
+        # abs_wall_kind (pin vs trampilla) y eso es VETO DURO sobre 0DTE comprado
+        # (compass.cpp:630, book_quality:317), el numero plausible llegaba hasta la voz.
+        # El reloj de referencia es el del SNAPSHOT, no el de ahora: si el mapa se
+        # recalcula al dia siguiente sobre la misma cadena, el plazo debe ser el que
+        # tenia cuando se tomo la foto.
+        exp_c = exp.replace("-", "")
+        T = gex_core._T_of(exp_c, ref_ts)
+        if T is None:
+            continue
         cs.append({"strike": float(k), "right": ct[0].upper(), "oi": int(oi),
                    "gamma": float(g), "iv": c.get("implied_volatility"),
-                   "exp": exp.replace("-", "")})
+                   "exp": exp_c, "T": T})
     return cs, spot, meta, len(res)
 
 

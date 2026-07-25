@@ -577,3 +577,45 @@ def test_respaldo_polygon_mira_atras_pero_no_indefinidamente(tmp_path, monkeypat
     assert CL.poly_chain_path("zz", lookback=1) is None       # nada de hoy
     assert CL.poly_chain_path("zz", day=hoy, lookback=4).endswith("2030.txt")
     assert CL.poly_chain_path("nohaycadena") is None
+
+
+# --------------------------------------------------------------------------
+# T = 0.02: el plazo inventado (bug medido 2026-07-25)
+# --------------------------------------------------------------------------
+
+def test_T_of_ilegible_devuelve_None_no_una_semana():
+    """Antes: `except: return 0.02` = 7,3 dias. Un plazo plausible desplaza el flip,
+    y del flip sale pin-vs-trampilla, que es VETO DURO sobre 0DTE comprado."""
+    assert G._T_of("no-es-una-fecha") is None
+    assert G._T_of("") is None
+
+
+def test_T_from_deriva_el_plazo_del_expiry_cuando_no_viene_T():
+    """gex_snapshot construia los contratos SIN `T`; ahora se deriva de `exp`."""
+    ts = 1785000000.0
+    c = {"strike": 100, "right": "C", "oi": 10, "exp": "20260801"}
+    t = G._T_from(c, now=ts)
+    assert t is not None and 0 < t < 0.05
+
+
+def test_T_from_sin_T_ni_exp_es_None():
+    assert G._T_from({"strike": 100, "right": "C", "oi": 10}) is None
+
+
+def test_T_from_prefiere_la_T_explicita():
+    c = {"strike": 100, "exp": "20260801", "T": 0.5}
+    assert G._T_from(c, now=1785000000.0) == 0.5
+
+
+def test_contrato_sin_plazo_no_entra_en_el_perfil_repreciado():
+    """_gex_at es de donde sale el flip: un contrato sin plazo se EXCLUYE, no se
+    reprecia con 7,3 dias fabricados."""
+    sin_t = [{"strike": 100, "right": "C", "oi": 1000, "iv": 0.3}]
+    tot, used = G._gex_at(sin_t, 100.0)
+    assert used == 0
+    assert tot == 0.0
+
+
+def test_dte_of_no_revienta_con_expiry_roto():
+    """Antes `round(_T_of(...) * 365, 2)` lanzaba TypeError al volver None."""
+    assert G._dte_of("basura") is None

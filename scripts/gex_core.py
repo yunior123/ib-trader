@@ -172,7 +172,39 @@ def _iv_of(c):
     return None
 
 
-def _gamma_of(c, spot):
+def _T_from(c, now=None):
+    """Años a vencimiento del contrato. `T` explicita si viene; si no, se DERIVA de
+    `exp`. **None** si no hay ninguna de las dos — el contrato queda fuera.
+
+    Por que existe (bug medido el 2026-07-25): `gex_snapshot.contracts_from` construye
+    los contratos SIN la clave `T`, y todos los usos hacian `c.get("T", 0.02)`. Como
+    `gex_snapshot` llama a `build_gex` directamente (sin pasar por `from_ibkr_cache`,
+    que si calcula `T` en :688), el flip de data/gex_snapshot.json se repreciaba
+    asumiendo **7,3 dias para TODOS los vencimientos, 0DTE incluido**. Los muros no
+    se veian afectados (usan la gamma medida de Polygon), pero el flip si — y del
+    flip sale `abs_wall_kind` (pin/trampilla), que es VETO DURO en compass.cpp:630
+    y en book_quality. Un numero plausible convertia "no se" en "sé, y es una semana".
+    """
+    t = c.get("T")
+    if t is not None:
+        try:
+            t = float(t)
+            if t > 0:
+                return t
+        except (TypeError, ValueError):
+            pass
+    exp = c.get("exp")
+    return _T_of(exp, now) if exp else None
+
+
+def _dte_of(exp, now=None):
+    """Dias al vencimiento, o None si `exp` es ilegible. Envoltorio de `_T_of` para que
+    un vencimiento roto no reviente el mapa entero (antes: None * 365 -> TypeError)."""
+    t = _T_of(exp, now)
+    return None if t is None else round(t * 365, 2)
+
+
+def _gamma_of(c, spot, now=None):
     """Gamma usable: la del proveedor si es >0, si no la BS desde una IV MEDIDA.
     None cuando no hay ninguna de las dos -> el contrato no entra en el perfil."""
     g = c.get("gamma")
@@ -185,7 +217,10 @@ def _gamma_of(c, spot):
     iv = _iv_of(c)
     if iv is None:
         return None
-    g = bs_gamma(spot, float(c["strike"]), float(c.get("T", 0.02)), iv)
+    T = _T_from(c, now)
+    if T is None:                     # sin plazo no hay gamma BS: se excluye, no se inventa
+        return None
+    g = bs_gamma(spot, float(c["strike"]), T, iv)
     return g if g > 0 else None
 
 
@@ -204,7 +239,9 @@ def build_exposure(contracts, spot, greek="vanna", scale="dollar1pct"):
         iv = _iv_of(c)                    # None si no hay IV medida/invertida: se EXCLUYE
         if iv is None:
             continue                      # antes: `or 0.3` -> perfil VEX inventado en silencio
-        T = float(c.get("T", 0.02))
+        T = _T_from(c)
+        if T is None:
+            continue                      # antes: 0.02 -> vanna/charm con plazo inventado
         g = fn(spot, K, T, iv) if greek == "vanna" else fn(spot, K, T, iv, right)
         sign = 1.0 if right == "C" else -1.0
         profile[K] = profile.get(K, 0.0) + sign * g * oi * 100 * mult
@@ -406,7 +443,10 @@ def _gex_at(contracts, S, r=R_FREE):
         iv = _iv_of(c)
         if iv is None:
             continue
-        g = bs_gamma(S, float(c["strike"]), float(c.get("T", 0.02)), iv, r)
+        T = _T_from(c)
+        if T is None:
+            continue          # sin plazo no se reprecia: es el flip lo que sale de aqui
+        g = bs_gamma(S, float(c["strike"]), T, iv, r)
         if g <= 0:
             continue
         used += 1
@@ -495,13 +535,19 @@ def wall_context(gexinfo, price):
 # ------------------------------ adaptadores de datos -------------------------
 def _T_of(exp, now=None):
     """Años al 16:00 ET del vencimiento YYYYMMDD (piso 1e-5). `now` (epoch) permite
-    replay/tests deterministas sin parchear el reloj del proceso."""
+    replay/tests deterministas sin parchear el reloj del proceso.
+
+    Devuelve **None** si el vencimiento es ilegible. Antes devolvia 0.02 (7,3 dias):
+    el patron "cero plausible" prohibido en ~/CLAUDE.md — convertia "no se cuando
+    vence" en "vence en una semana", y como T entra en bs_gamma, eso desplazaba el
+    flip; y del flip sale pin-vs-trampilla, que es VETO DURO sobre 0DTE comprado.
+    """
     import time as _t
     try:
         ref = _t.time() if now is None else float(now)
         return max((_t.mktime(_t.strptime(exp, "%Y%m%d")) + 16 * 3600 - ref) / (365 * 86400), 1e-5)
     except Exception:
-        return 0.02
+        return None
 
 
 def _now_parts(now=None):
@@ -771,7 +817,7 @@ def from_ibkr_cache(path, spot, band=0.035, scale="house", all_exp=False, now=No
         out["n_no_greeks"] = len(cands) - len(usable)
         out["n_gamma_ok"] = len(usable)
         out["exp"] = "ALL" if all_exp else exp0
-        out["dte"] = None if all_exp else round(_T_of(exp0, ts_now) * 365, 2)
+        out["dte"] = None if all_exp else _dte_of(exp0, ts_now)
         out["scope"] = "ALL" if all_exp else "0DTE"
         out["degraded_reason"] = (
             f"cadena rancia: {health['stale_reason']}"
@@ -803,14 +849,16 @@ def from_ibkr_cache(path, spot, band=0.035, scale="house", all_exp=False, now=No
         g["flip_src"] = "none"
         g["flip_why"] = "sin cruce de signo en el perfil"
     g["exp"] = "ALL" if all_exp else exp0
-    g["dte"] = None if all_exp else round(_T_of(exp0, ts_now) * 365, 2)
+    g["dte"] = None if all_exp else _dte_of(exp0, ts_now)
     g["scope"] = "ALL" if all_exp else "0DTE"
     # ATM IV + expected move (±1σ hasta el vencimiento) = spot·IV·√T. Sin IV medida en el ATM
     # no hay expected move: em=None (antes salia de un iv=0.3 inventado y se usaba de escala
     # para amplitudes y vetos).
     atmc = min(usable, key=lambda c: abs(c["strike"] - spot))
     iv_atm = _iv_of(atmc)
-    T_atm = float(atmc.get("T", 0.02))
+    T_atm = _T_from(atmc, ts_now)
+    if T_atm is None:            # sin plazo no hay expected move: None, jamas un +-2% fingido
+        em = None
     g["iv_atm"] = None if iv_atm is None else round(iv_atm, 4)
     g["em"] = None if iv_atm is None else round(spot * iv_atm * math.sqrt(T_atm), 2)
     # trampilla: la raiz mas cercana DEBAJO del spot dentro de 1x em (roots ya vienen de
