@@ -1,0 +1,1098 @@
+{
+ "days": {
+  "2026-07-21": {
+   "bundles": 0,
+   "bytes_dir": 1753571,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-07-22": {
+   "bundles": 0,
+   "bytes_dir": 4609794,
+   "full_chains": {},
+   "loose_files": 208,
+   "snapshots": 208,
+   "storage": "loose",
+   "syms": {
+    "AAPL": {
+     "bad_rows": 0,
+     "exps": [
+      "20260722",
+      "20260724"
+     ],
+     "first_ts": 1784725773,
+     "last_ts": 1784750607,
+     "rows": 500,
+     "rows_with_greeks": 376,
+     "rows_with_quotes": 327,
+     "snaps": 8
+    },
+    "AMD": {
+     "bad_rows": 0,
+     "exps": [
+      "20260722",
+      "20260724"
+     ],
+     "first_ts": 1784725737,
+     "last_ts": 1784750575,
+     "rows": 640,
+     "rows_with_greeks": 481,
+     "rows_with_quotes": 480,
+     "snaps": 8
+    },
+    "AMZN": {
+     "bad_rows": 0,
+     "exps": [
+      "20260722",
+      "20260724"
+     ],
+     "first_ts": 1784725813,
+     "last_ts": 1784750428,
+     "rows": 252,
+     "rows_with_greeks": 191,
+     "rows_with_quotes": 181,
+     "snaps": 8
+    },
+    "ASML": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784725692,
+     "last_ts": 1784750535,
+     "rows": 640,
+     "rows_with_greeks": 481,
+     "rows_with_quotes": 480,
+     "snaps": 8
+    },
+    "AVGO": {
+     "bad_rows": 0,
+     "exps": [
+      "20260722",
+      "20260724"
+     ],
+     "first_ts": 1784725806,
+     "last_ts": 1784750422,
+     "rows": 384,
+     "rows_with_greeks": 288,
+     "rows_with_quotes": 288,
+     "snaps": 8
+    },
+    "DRAM": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784725710,
+     "last_ts": 1784750552,
+     "rows": 444,
+     "rows_with_greeks": 337,
+     "rows_with_quotes": 364,
+     "snaps": 8
+    },
+    "GOOGL": {
+     "bad_rows": 0,
+     "exps": [
+      "20260722",
+      "20260724"
+     ],
+     "first_ts": 1784725783,
+     "last_ts": 1784750615,
+     "rows": 536,
+     "rows_with_greeks": 414,
+     "rows_with_quotes": 389,
+     "snaps": 8
+    },
+    "INTC": {
+     "bad_rows": 0,
+     "exps": [
+      "20260722",
+      "20260724"
+     ],
+     "first_ts": 1784725702,
+     "last_ts": 1784750543,
+     "rows": 392,
+     "rows_with_greeks": 299,
+     "rows_with_quotes": 289,
+     "snaps": 8
+    },
+    "LRCX": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784725829,
+     "last_ts": 1784750443,
+     "rows": 492,
+     "rows_with_greeks": 369,
+     "rows_with_quotes": 368,
+     "snaps": 8
+    },
+    "META": {
+     "bad_rows": 0,
+     "exps": [
+      "20260722",
+      "20260724"
+     ],
+     "first_ts": 1784725820,
+     "last_ts": 1784750435,
+     "rows": 384,
+     "rows_with_greeks": 290,
+     "rows_with_quotes": 288,
+     "snaps": 8
+    },
+    "MSFT": {
+     "bad_rows": 0,
+     "exps": [
+      "20260722",
+      "20260724"
+     ],
+     "first_ts": 1784725799,
+     "last_ts": 1784750415,
+     "rows": 384,
+     "rows_with_greeks": 290,
+     "rows_with_quotes": 285,
+     "snaps": 8
+    },
+    "MU": {
+     "bad_rows": 0,
+     "exps": [
+      "20260722",
+      "20260724"
+     ],
+     "first_ts": 1784725682,
+     "last_ts": 1784750526,
+     "rows": 556,
+     "rows_with_greeks": 423,
+     "rows_with_quotes": 416,
+     "snaps": 8
+    },
+    "NOK": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784725765,
+     "last_ts": 1784750600,
+     "rows": 84,
+     "rows_with_greeks": 67,
+     "rows_with_quotes": 64,
+     "snaps": 8
+    },
+    "NVDA": {
+     "bad_rows": 0,
+     "exps": [
+      "20260722",
+      "20260724"
+     ],
+     "first_ts": 1784725673,
+     "last_ts": 1784750517,
+     "rows": 300,
+     "rows_with_greeks": 226,
+     "rows_with_quotes": 214,
+     "snaps": 8
+    },
+    "QCOM": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784725792,
+     "last_ts": 1784750408,
+     "rows": 264,
+     "rows_with_greeks": 204,
+     "rows_with_quotes": 200,
+     "snaps": 8
+    },
+    "QQQ": {
+     "bad_rows": 0,
+     "exps": [
+      "20260722",
+      "20260723"
+     ],
+     "first_ts": 1784725663,
+     "last_ts": 1784750508,
+     "rows": 604,
+     "rows_with_greeks": 526,
+     "rows_with_quotes": 524,
+     "snaps": 8
+    },
+    "SKHY": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784725719,
+     "last_ts": 1784750559,
+     "rows": 252,
+     "rows_with_greeks": 192,
+     "rows_with_quotes": 192,
+     "snaps": 8
+    },
+    "SMH": {
+     "bad_rows": 0,
+     "exps": [
+      "20260722",
+      "20260724"
+     ],
+     "first_ts": 1784725613,
+     "last_ts": 1784750489,
+     "rows": 640,
+     "rows_with_greeks": 555,
+     "rows_with_quotes": 547,
+     "snaps": 8
+    },
+    "SNDK": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784725839,
+     "last_ts": 1784750452,
+     "rows": 640,
+     "rows_with_greeks": 480,
+     "rows_with_quotes": 480,
+     "snaps": 8
+    },
+    "SPCX": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784725727,
+     "last_ts": 1784750567,
+     "rows": 464,
+     "rows_with_greeks": 350,
+     "rows_with_quotes": 348,
+     "snaps": 8
+    },
+    "SPY": {
+     "bad_rows": 0,
+     "exps": [
+      "20260722",
+      "20260723"
+     ],
+     "first_ts": 1784725870,
+     "last_ts": 1784750480,
+     "rows": 640,
+     "rows_with_greeks": 560,
+     "rows_with_quotes": 547,
+     "snaps": 8
+    },
+    "STX": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784725859,
+     "last_ts": 1784750471,
+     "rows": 628,
+     "rows_with_greeks": 482,
+     "rows_with_quotes": 480,
+     "snaps": 8
+    },
+    "TSLA": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784725757,
+     "last_ts": 1784750592,
+     "rows": 580,
+     "rows_with_greeks": 436,
+     "rows_with_quotes": 436,
+     "snaps": 8
+    },
+    "TSM": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784725623,
+     "last_ts": 1784750499,
+     "rows": 640,
+     "rows_with_greeks": 483,
+     "rows_with_quotes": 480,
+     "snaps": 8
+    },
+    "TXN": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784725747,
+     "last_ts": 1784750584,
+     "rows": 444,
+     "rows_with_greeks": 334,
+     "rows_with_quotes": 332,
+     "snaps": 8
+    },
+    "WDC": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784725849,
+     "last_ts": 1784750461,
+     "rows": 640,
+     "rows_with_greeks": 525,
+     "rows_with_quotes": 480,
+     "snaps": 8
+    }
+   }
+  },
+  "2026-07-23": {
+   "bundles": 0,
+   "bytes_dir": 8719707,
+   "full_chains": {},
+   "loose_files": 1009,
+   "snapshots": 1009,
+   "storage": "loose",
+   "syms": {
+    "AAPL": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784811772,
+     "last_ts": 1784837500,
+     "rows": 2424,
+     "rows_with_greeks": 2173,
+     "rows_with_quotes": 2168,
+     "snaps": 39
+    },
+    "AMD": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784811734,
+     "last_ts": 1784837468,
+     "rows": 3120,
+     "rows_with_greeks": 2789,
+     "rows_with_quotes": 2800,
+     "snaps": 39
+    },
+    "AMZN": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784811813,
+     "last_ts": 1784837536,
+     "rows": 1232,
+     "rows_with_greeks": 1138,
+     "rows_with_quotes": 1104,
+     "snaps": 39
+    },
+    "ASML": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784811687,
+     "last_ts": 1784837428,
+     "rows": 2732,
+     "rows_with_greeks": 2471,
+     "rows_with_quotes": 2474,
+     "snaps": 39
+    },
+    "AVGO": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784811806,
+     "last_ts": 1784837529,
+     "rows": 1872,
+     "rows_with_greeks": 1683,
+     "rows_with_quotes": 1680,
+     "snaps": 39
+    },
+    "DRAM": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784811706,
+     "last_ts": 1784837445,
+     "rows": 2176,
+     "rows_with_greeks": 2004,
+     "rows_with_quotes": 2092,
+     "snaps": 39
+    },
+    "GOOGL": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784811782,
+     "last_ts": 1784837508,
+     "rows": 2144,
+     "rows_with_greeks": 1924,
+     "rows_with_quotes": 1926,
+     "snaps": 39
+    },
+    "INTC": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784811697,
+     "last_ts": 1784837437,
+     "rows": 1884,
+     "rows_with_greeks": 1686,
+     "rows_with_quotes": 1684,
+     "snaps": 39
+    },
+    "LRCX": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784811830,
+     "last_ts": 1784837550,
+     "rows": 2388,
+     "rows_with_greeks": 2148,
+     "rows_with_quotes": 2148,
+     "snaps": 39
+    },
+    "META": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784811821,
+     "last_ts": 1784837542,
+     "rows": 1872,
+     "rows_with_greeks": 1682,
+     "rows_with_quotes": 1680,
+     "snaps": 39
+    },
+    "MSFT": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784811798,
+     "last_ts": 1784837522,
+     "rows": 1872,
+     "rows_with_greeks": 1683,
+     "rows_with_quotes": 1680,
+     "snaps": 39
+    },
+    "MU": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784811677,
+     "last_ts": 1784837420,
+     "rows": 2110,
+     "rows_with_greeks": 1891,
+     "rows_with_quotes": 1886,
+     "snaps": 39
+    },
+    "NOK": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784811763,
+     "last_ts": 1784837492,
+     "rows": 332,
+     "rows_with_greeks": 296,
+     "rows_with_quotes": 296,
+     "snaps": 39
+    },
+    "NVDA": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784811668,
+     "last_ts": 1784837411,
+     "rows": 1552,
+     "rows_with_greeks": 1396,
+     "rows_with_quotes": 1392,
+     "snaps": 39
+    },
+    "QCOM": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784811791,
+     "last_ts": 1784837515,
+     "rows": 1264,
+     "rows_with_greeks": 1138,
+     "rows_with_quotes": 1132,
+     "snaps": 39
+    },
+    "QQQ": {
+     "bad_rows": 0,
+     "exps": [
+      "20260723",
+      "20260724"
+     ],
+     "first_ts": 1784811658,
+     "last_ts": 1784837402,
+     "rows": 3120,
+     "rows_with_greeks": 3043,
+     "rows_with_quotes": 2994,
+     "snaps": 39
+    },
+    "SKHY": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784811715,
+     "last_ts": 1784837452,
+     "rows": 1276,
+     "rows_with_greeks": 1149,
+     "rows_with_quotes": 1148,
+     "snaps": 39
+    },
+    "SMH": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784811637,
+     "last_ts": 1784837169,
+     "rows": 3040,
+     "rows_with_greeks": 2951,
+     "rows_with_quotes": 2959,
+     "snaps": 38
+    },
+    "SNDK": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784811841,
+     "last_ts": 1784837559,
+     "rows": 2730,
+     "rows_with_greeks": 2458,
+     "rows_with_quotes": 2465,
+     "snaps": 39
+    },
+    "SPCX": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784811724,
+     "last_ts": 1784837460,
+     "rows": 2180,
+     "rows_with_greeks": 1960,
+     "rows_with_quotes": 1956,
+     "snaps": 39
+    },
+    "SPY": {
+     "bad_rows": 0,
+     "exps": [
+      "20260723",
+      "20260724"
+     ],
+     "first_ts": 1784811872,
+     "last_ts": 1784837160,
+     "rows": 3040,
+     "rows_with_greeks": 2962,
+     "rows_with_quotes": 2882,
+     "snaps": 38
+    },
+    "STX": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784811861,
+     "last_ts": 1784837151,
+     "rows": 2660,
+     "rows_with_greeks": 2422,
+     "rows_with_quotes": 2470,
+     "snaps": 38
+    },
+    "TSLA": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784811754,
+     "last_ts": 1784837485,
+     "rows": 2064,
+     "rows_with_greeks": 1846,
+     "rows_with_quotes": 1846,
+     "snaps": 39
+    },
+    "TSM": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784811647,
+     "last_ts": 1784837179,
+     "rows": 3032,
+     "rows_with_greeks": 2730,
+     "rows_with_quotes": 2792,
+     "snaps": 38
+    },
+    "TXN": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784811744,
+     "last_ts": 1784837477,
+     "rows": 2132,
+     "rows_with_greeks": 1920,
+     "rows_with_quotes": 1916,
+     "snaps": 39
+    },
+    "WDC": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784811851,
+     "last_ts": 1784837141,
+     "rows": 3040,
+     "rows_with_greeks": 2792,
+     "rows_with_quotes": 2800,
+     "snaps": 38
+    }
+   }
+  },
+  "2026-07-24": {
+   "bundles": 0,
+   "bytes_dir": 10903488,
+   "full_chains": {},
+   "loose_files": 2105,
+   "snapshots": 2105,
+   "storage": "loose",
+   "syms": {
+    "AAPL": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784899276,
+     "last_ts": 1784924277,
+     "rows": 5156,
+     "rows_with_greeks": 4836,
+     "rows_with_quotes": 4171,
+     "snaps": 81
+    },
+    "AMD": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784899240,
+     "last_ts": 1784924246,
+     "rows": 6480,
+     "rows_with_greeks": 6080,
+     "rows_with_quotes": 5973,
+     "snaps": 81
+    },
+    "AMZN": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784899315,
+     "last_ts": 1784924100,
+     "rows": 2302,
+     "rows_with_greeks": 2161,
+     "rows_with_quotes": 2068,
+     "snaps": 81
+    },
+    "ASML": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784899194,
+     "last_ts": 1784924206,
+     "rows": 6202,
+     "rows_with_greeks": 5723,
+     "rows_with_quotes": 5443,
+     "snaps": 82
+    },
+    "AVGO": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784899308,
+     "last_ts": 1784924307,
+     "rows": 3888,
+     "rows_with_greeks": 3656,
+     "rows_with_quotes": 3541,
+     "snaps": 81
+    },
+    "DRAM": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784899213,
+     "last_ts": 1784924222,
+     "rows": 4188,
+     "rows_with_greeks": 3943,
+     "rows_with_quotes": 3929,
+     "snaps": 81
+    },
+    "GOOGL": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784899285,
+     "last_ts": 1784924286,
+     "rows": 4988,
+     "rows_with_greeks": 4684,
+     "rows_with_quotes": 4228,
+     "snaps": 81
+    },
+    "INTC": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784899204,
+     "last_ts": 1784924214,
+     "rows": 3688,
+     "rows_with_greeks": 3466,
+     "rows_with_quotes": 3349,
+     "snaps": 82
+    },
+    "LRCX": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784899331,
+     "last_ts": 1784924115,
+     "rows": 4764,
+     "rows_with_greeks": 4476,
+     "rows_with_quotes": 4235,
+     "snaps": 80
+    },
+    "META": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784899322,
+     "last_ts": 1784924106,
+     "rows": 3888,
+     "rows_with_greeks": 3644,
+     "rows_with_quotes": 3563,
+     "snaps": 81
+    },
+    "MSFT": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784899301,
+     "last_ts": 1784924300,
+     "rows": 3888,
+     "rows_with_greeks": 3649,
+     "rows_with_quotes": 3493,
+     "snaps": 81
+    },
+    "MU": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784899185,
+     "last_ts": 1784924197,
+     "rows": 5138,
+     "rows_with_greeks": 4769,
+     "rows_with_quotes": 4718,
+     "snaps": 82
+    },
+    "NOK": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784899267,
+     "last_ts": 1784924270,
+     "rows": 656,
+     "rows_with_greeks": 619,
+     "rows_with_quotes": 522,
+     "snaps": 81
+    },
+    "NVDA": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784899176,
+     "last_ts": 1784924188,
+     "rows": 3268,
+     "rows_with_greeks": 3029,
+     "rows_with_quotes": 2772,
+     "snaps": 82
+    },
+    "QCOM": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784899294,
+     "last_ts": 1784924293,
+     "rows": 2592,
+     "rows_with_greeks": 2433,
+     "rows_with_quotes": 2275,
+     "snaps": 81
+    },
+    "QQQ": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784899166,
+     "last_ts": 1784924179,
+     "rows": 6560,
+     "rows_with_greeks": 6282,
+     "rows_with_quotes": 6182,
+     "snaps": 82
+    },
+    "SKHY": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784899222,
+     "last_ts": 1784924230,
+     "rows": 2896,
+     "rows_with_greeks": 2692,
+     "rows_with_quotes": 2510,
+     "snaps": 81
+    },
+    "SMH": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784899123,
+     "last_ts": 1784924160,
+     "rows": 6480,
+     "rows_with_greeks": 6044,
+     "rows_with_quotes": 6082,
+     "snaps": 81
+    },
+    "SNDK": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784899341,
+     "last_ts": 1784924123,
+     "rows": 6366,
+     "rows_with_greeks": 5938,
+     "rows_with_quotes": 5907,
+     "snaps": 80
+    },
+    "SPCX": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784899231,
+     "last_ts": 1784924237,
+     "rows": 4424,
+     "rows_with_greeks": 4149,
+     "rows_with_quotes": 3805,
+     "snaps": 81
+    },
+    "SPY": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784899371,
+     "last_ts": 1784924151,
+     "rows": 6320,
+     "rows_with_greeks": 6155,
+     "rows_with_quotes": 6002,
+     "snaps": 79
+    },
+    "STX": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784899361,
+     "last_ts": 1784924142,
+     "rows": 5556,
+     "rows_with_greeks": 4959,
+     "rows_with_quotes": 4931,
+     "snaps": 80
+    },
+    "TSLA": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260727"
+     ],
+     "first_ts": 1784899259,
+     "last_ts": 1784924263,
+     "rows": 4624,
+     "rows_with_greeks": 4314,
+     "rows_with_quotes": 4153,
+     "snaps": 81
+    },
+    "TSM": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784899144,
+     "last_ts": 1784924170,
+     "rows": 6344,
+     "rows_with_greeks": 5838,
+     "rows_with_quotes": 5602,
+     "snaps": 81
+    },
+    "TXN": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784899250,
+     "last_ts": 1784924254,
+     "rows": 4320,
+     "rows_with_greeks": 3895,
+     "rows_with_quotes": 3728,
+     "snaps": 81
+    },
+    "WDC": {
+     "bad_rows": 0,
+     "exps": [
+      "20260724",
+      "20260731"
+     ],
+     "first_ts": 1784899351,
+     "last_ts": 1784924132,
+     "rows": 6400,
+     "rows_with_greeks": 6000,
+     "rows_with_quotes": 5673,
+     "snaps": 80
+    }
+   }
+  },
+  "2026-07-25": {
+   "bundles": 0,
+   "bytes_dir": 536601,
+   "full_chains": {
+    "DRAM": {
+     "bytes": 11877,
+     "contracts": 20,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-25/chain_full_dram.json",
+     "with_greeks": 20,
+     "with_quotes": 0
+    },
+    "NOK": {
+     "bytes": 2759,
+     "contracts": 4,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-25/chain_full_nok.json",
+     "with_greeks": 4,
+     "with_quotes": 0
+    },
+    "QQQ": {
+     "bytes": 467556,
+     "contracts": 854,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-25/chain_full_qqq.json",
+     "with_greeks": 816,
+     "with_quotes": 0
+    }
+   },
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  }
+ },
+ "totals": {
+  "days": 5,
+  "history_bytes": 26523441,
+  "rows": 191088,
+  "snapshots": 3322
+ },
+ "updated": 1784987307
+}
