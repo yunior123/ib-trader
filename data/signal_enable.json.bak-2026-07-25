@@ -1,0 +1,366 @@
+{
+ "cusum|AMD": {
+  "enabled": true,
+  "n": 113,
+  "wr": 44,
+  "ci_hi": 53,
+  "why": "viva"
+ },
+ "cusum|ASML": {
+  "enabled": true,
+  "n": 94,
+  "wr": 49,
+  "ci_hi": 59,
+  "why": "viva"
+ },
+ "cusum|NVDA": {
+  "enabled": true,
+  "n": 68,
+  "wr": 49,
+  "ci_hi": 60,
+  "why": "viva"
+ },
+ "cusum|QQQ": {
+  "enabled": true,
+  "n": 30,
+  "wr": 37,
+  "ci_hi": 54,
+  "why": "viva"
+ },
+ "bollinger|NFLX": {
+  "enabled": true,
+  "n": 27,
+  "wr": 48,
+  "ci_hi": 66,
+  "why": "viva"
+ },
+ "bollinger|AMD": {
+  "enabled": true,
+  "n": 26,
+  "wr": 58,
+  "ci_hi": 74,
+  "why": "viva"
+ },
+ "bollinger|QQQ": {
+  "enabled": true,
+  "n": 25,
+  "wr": 44,
+  "ci_hi": 63,
+  "why": "viva"
+ },
+ "bollinger|TXN": {
+  "enabled": true,
+  "n": 25,
+  "wr": 44,
+  "ci_hi": 63,
+  "why": "viva"
+ },
+ "bollinger|ASML": {
+  "enabled": true,
+  "n": 24,
+  "wr": 38,
+  "ci_hi": 57,
+  "why": "viva"
+ },
+ "bollinger|AAPL": {
+  "enabled": true,
+  "n": 24,
+  "wr": 67,
+  "ci_hi": 82,
+  "why": "viva"
+ },
+ "bollinger|TSLA": {
+  "enabled": false,
+  "n": 23,
+  "wr": 22,
+  "ci_hi": 42,
+  "why": "muerta: Wilson-hi 42%<45% n=23"
+ },
+ "bollinger|MU": {
+  "enabled": true,
+  "n": 23,
+  "wr": 48,
+  "ci_hi": 67,
+  "why": "viva"
+ },
+ "bollinger|AMZN": {
+  "enabled": true,
+  "n": 23,
+  "wr": 43,
+  "ci_hi": 63,
+  "why": "viva"
+ },
+ "bollinger|SPY": {
+  "enabled": true,
+  "n": 22,
+  "wr": 32,
+  "ci_hi": 53,
+  "why": "viva"
+ },
+ "bollinger|SMH": {
+  "enabled": true,
+  "n": 22,
+  "wr": 50,
+  "ci_hi": 69,
+  "why": "viva"
+ },
+ "bollinger|MSFT": {
+  "enabled": true,
+  "n": 22,
+  "wr": 50,
+  "ci_hi": 69,
+  "why": "viva"
+ },
+ "bollinger|QCOM": {
+  "enabled": false,
+  "n": 22,
+  "wr": 23,
+  "ci_hi": 43,
+  "why": "muerta: Wilson-hi 43%<45% n=22"
+ },
+ "bollinger|AVGO": {
+  "enabled": true,
+  "n": 22,
+  "wr": 36,
+  "ci_hi": 57,
+  "why": "viva"
+ },
+ "bollinger|NVDA": {
+  "enabled": true,
+  "n": 22,
+  "wr": 45,
+  "ci_hi": 65,
+  "why": "viva"
+ },
+ "bollinger|META": {
+  "enabled": true,
+  "n": 22,
+  "wr": 55,
+  "ci_hi": 73,
+  "why": "viva"
+ },
+ "cusum|TSLA": {
+  "enabled": true,
+  "n": 13,
+  "wr": 38,
+  "ci_hi": 64,
+  "why": "viva"
+ },
+ "cusum|MU": {
+  "enabled": true,
+  "n": 12,
+  "wr": 42,
+  "ci_hi": 68,
+  "why": "viva"
+ },
+ "whale|MU": {
+  "enabled": true,
+  "n": 9,
+  "wr": 44,
+  "ci_hi": 73,
+  "why": "viva"
+ },
+ "cusum|AAPL": {
+  "enabled": true,
+  "n": 8,
+  "wr": 12,
+  "ci_hi": 47,
+  "why": "viva"
+ },
+ "cusum|TXN": {
+  "enabled": true,
+  "n": 8,
+  "wr": 25,
+  "ci_hi": 59,
+  "why": "viva"
+ },
+ "whale|MSFT": {
+  "enabled": true,
+  "n": 8,
+  "wr": 38,
+  "ci_hi": 69,
+  "why": "viva"
+ },
+ "whale|SMH": {
+  "enabled": true,
+  "n": 8,
+  "wr": 38,
+  "ci_hi": 69,
+  "why": "viva"
+ },
+ "whale|AVGO": {
+  "enabled": true,
+  "n": 7,
+  "wr": 57,
+  "ci_hi": 84,
+  "why": "viva"
+ },
+ "whale|QCOM": {
+  "enabled": true,
+  "n": 6,
+  "wr": 50,
+  "ci_hi": 81,
+  "why": "viva"
+ },
+ "whale|NVDA": {
+  "enabled": true,
+  "n": 5,
+  "wr": 20,
+  "ci_hi": 62,
+  "why": "viva"
+ },
+ "whale|QQQ": {
+  "enabled": true,
+  "n": 5,
+  "wr": 40,
+  "ci_hi": 77,
+  "why": "viva"
+ },
+ "whale|NFLX": {
+  "enabled": true,
+  "n": 5,
+  "wr": 40,
+  "ci_hi": 77,
+  "why": "viva"
+ },
+ "whale|TSLA": {
+  "enabled": true,
+  "n": 5,
+  "wr": 0,
+  "ci_hi": 43,
+  "why": "viva"
+ },
+ "flow|AMD": {
+  "enabled": true,
+  "n": 5,
+  "wr": 80,
+  "ci_hi": 96,
+  "why": "viva"
+ },
+ "flow|MSFT": {
+  "enabled": true,
+  "n": 5,
+  "wr": 40,
+  "ci_hi": 77,
+  "why": "viva"
+ },
+ "structural|NVDA": {
+  "enabled": true,
+  "n": 5,
+  "wr": 80,
+  "ci_hi": 96,
+  "why": "viva"
+ },
+ "whale|AMD": {
+  "enabled": true,
+  "n": 4,
+  "wr": 25,
+  "ci_hi": 70,
+  "why": "viva"
+ },
+ "cusum|SMH": {
+  "enabled": true,
+  "n": 3,
+  "wr": 0,
+  "ci_hi": 56,
+  "why": "viva"
+ },
+ "whale|META": {
+  "enabled": true,
+  "n": 3,
+  "wr": 0,
+  "ci_hi": 56,
+  "why": "viva"
+ },
+ "flow|AMZN": {
+  "enabled": true,
+  "n": 3,
+  "wr": 33,
+  "ci_hi": 79,
+  "why": "viva"
+ },
+ "flow|MU": {
+  "enabled": true,
+  "n": 3,
+  "wr": 33,
+  "ci_hi": 79,
+  "why": "viva"
+ },
+ "flow|AAPL": {
+  "enabled": true,
+  "n": 3,
+  "wr": 0,
+  "ci_hi": 56,
+  "why": "viva"
+ },
+ "flow|AVGO": {
+  "enabled": true,
+  "n": 3,
+  "wr": 67,
+  "ci_hi": 94,
+  "why": "viva"
+ },
+ "flow|QQQ": {
+  "enabled": true,
+  "n": 3,
+  "wr": 33,
+  "ci_hi": 79,
+  "why": "viva"
+ },
+ "whale|AAPL": {
+  "enabled": true,
+  "n": 2,
+  "wr": 50,
+  "ci_hi": 91,
+  "why": "viva"
+ },
+ "whale|SPY": {
+  "enabled": true,
+  "n": 2,
+  "wr": 50,
+  "ci_hi": 91,
+  "why": "viva"
+ },
+ "whale|AMZN": {
+  "enabled": true,
+  "n": 1,
+  "wr": 0,
+  "ci_hi": 79,
+  "why": "viva"
+ },
+ "dip|MSFT": {
+  "enabled": true,
+  "n": 1,
+  "wr": 0,
+  "ci_hi": 79,
+  "why": "viva"
+ },
+ "dip|AMZN": {
+  "enabled": true,
+  "n": 1,
+  "wr": 100,
+  "ci_hi": 100,
+  "why": "viva"
+ },
+ "dip|TSLA": {
+  "enabled": true,
+  "n": 1,
+  "wr": 0,
+  "ci_hi": 79,
+  "why": "viva"
+ },
+ "flow|NFLX": {
+  "enabled": true,
+  "n": 1,
+  "wr": 100,
+  "ci_hi": 100,
+  "why": "viva"
+ },
+ "dip|AAPL": {
+  "enabled": true,
+  "n": 1,
+  "wr": 0,
+  "ci_hi": 79,
+  "why": "viva"
+ }
+}
