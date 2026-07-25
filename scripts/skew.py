@@ -186,7 +186,13 @@ def rr_history(sym):
 
 
 def zscore(x, sample):
-    """z frente a la muestra. None si no hay `n` suficiente o si la desviacion es 0."""
+    """z frente a la muestra. None si no hay `n` suficiente o si la serie es plana.
+
+    La guarda de la desviacion es RELATIVA a proposito. Una serie constante no da `var == 0`
+    en coma flotante: 60 copias de 0.02 suman 1.2000000000000002 y dejan una varianza residual
+    de ~1e-35, que con un `var <= 0` se cuela y produce un **z gigantesco a partir de ruido de
+    redondeo**. Un `z(drr) > 2` fabricado asi entraria como "refuerzo" de una decision de fade.
+    """
     n = len(sample)
     if x is None or n < MIN_HIST_FOR_Z:
         return None
@@ -194,7 +200,10 @@ def zscore(x, sample):
     var = sum((s - mu) ** 2 for s in sample) / (n - 1)
     if var <= 0:
         return None
-    return (x - mu) / (var ** 0.5)
+    sd = var ** 0.5
+    if sd <= max(1e-12, 1e-9 * abs(mu)):     # serie plana: no hay escala contra la que medir
+        return None
+    return (x - mu) / sd
 
 
 def main():
