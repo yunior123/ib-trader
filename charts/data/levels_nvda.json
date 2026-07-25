@@ -1,82 +1,82 @@
 {
  "sym": "NVDA",
  "spot": 207.03,
- "asof": 1784930460,
- "exp": "20260724",
- "dte": 0.0,
+ "asof": 1784961188,
+ "exp": "20260727",
+ "dte": 2.56,
  "scope": "0DTE",
- "net_vex": 158244146.0,
- "vex_peak": 207.5,
+ "net_vex": 1083548037.8,
+ "vex_peak": 200.0,
  "vex_profile": [
   {
    "strike": 200.0,
-   "vex": 0.0
+   "vex": 374505637.3
   },
   {
    "strike": 202.5,
-   "vex": 0.0
+   "vex": 296069214.4
   },
   {
    "strike": 205.0,
-   "vex": 0.0
+   "vex": 103838200.7
   },
   {
    "strike": 207.5,
-   "vex": 158244146.0
+   "vex": -3249290.5
   },
   {
    "strike": 210.0,
-   "vex": 0.0
+   "vex": 92799595.1
   },
   {
    "strike": 212.5,
-   "vex": 0.0
+   "vex": 219584680.9
   }
  ],
- "pressure": 100,
- "pressure_lab": "PIN fuerte",
+ "pressure": -13,
+ "pressure_lab": "FLAT",
  "iv_atm": 0.3,
- "em": 0.2,
- "net_gex": 101121511.4,
- "regime": "POS",
- "flip": 205.0,
- "flip_static": 205.0,
- "call_wall": 207.5,
- "put_wall": 205.0,
- "abs_wall": 207.5,
- "poc_dom": "70%C",
- "call_wall_gex": 101121511.4,
- "put_wall_gex": -0.0,
- "abs_wall_gex": 101121511.4,
+ "em": 5.2,
+ "net_gex": -30805118.7,
+ "regime": "NEG",
+ "flip": 212.5,
+ "flip_static": 212.5,
+ "call_wall": 210.0,
+ "put_wall": 202.5,
+ "abs_wall": 202.5,
+ "poc_dom": "96%P",
+ "call_wall_gex": 9440773.2,
+ "put_wall_gex": -19391930.0,
+ "abs_wall_gex": -19391930.0,
  "oi_call_wall": 210.0,
- "oi_put_wall": 205.0,
- "near_call_wall": true,
+ "oi_put_wall": 200.0,
+ "near_call_wall": false,
  "near_put_wall": false,
  "near_flip": false,
  "profile": [
   {
    "strike": 200.0,
-   "gex": -0.0
+   "gex": -15708844.5
   },
   {
    "strike": 202.5,
-   "gex": -0.0
+   "gex": -19391930.0
   },
   {
    "strike": 205.0,
-   "gex": -0.0
+   "gex": -15270189.2
   },
   {
    "strike": 207.5,
-   "gex": 101121511.4
+   "gex": -2076368.5
   },
   {
    "strike": 210.0,
-   "gex": 0.0
+   "gex": 9440773.2
   },
   {
    "strike": 212.5,
-   "gex": 0.0
+   "gex": 12201440.3
   }
  ]
 }

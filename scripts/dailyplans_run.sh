@@ -1,8 +1,8 @@
 #!/bin/zsh
 # dailyplans_run.sh — 4AM: genera planes flota (PDF + email) y postea TOP-3 en X.
-cd /Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader || exit 1
+cd /Users/yuniorrodriguezosorio/ib-trader || exit 1
 # gexa premarket via Claude headless (skill gexa-terminal); si Chrome no esta, sigue sin el
-command -v claude >/dev/null && timeout 300 claude -p "Usa la skill gexa-terminal (Chrome extension). Para QQQ,SPY,NVDA,TSLA,MU,SMH extrae flip (0DTE y ALL-EXP), dealer pressure score, bias y POC del header de gexa.ai/terminal, y escribe el resultado como JSON a /Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/data/gexa_snapshot.json con formato {\"SYM\":{\"flip\":n,\"flip_all\":n,\"score\":n,\"bias\":\"...\",\"poc\":\"...\"}}. Si la extension no conecta, escribe {} y termina. No hagas nada mas." >> dailyplans.log 2>&1
+command -v claude >/dev/null && timeout 300 claude -p "Usa la skill gexa-terminal (Chrome extension). Para QQQ,SPY,NVDA,TSLA,MU,SMH extrae flip (0DTE y ALL-EXP), dealer pressure score, bias y POC del header de gexa.ai/terminal, y escribe el resultado como JSON a /Users/yuniorrodriguezosorio/ib-trader/data/gexa_snapshot.json con formato {\"SYM\":{\"flip\":n,\"flip_all\":n,\"score\":n,\"bias\":\"...\",\"poc\":\"...\"}}. Si la extension no conecta, escribe {} y termina. No hagas nada mas." >> dailyplans.log 2>&1
 ./venv/bin/python scripts/index_breadth.py >> dailyplans.log 2>&1
 ./venv/bin/python scripts/options_hunter.py 12 >> dailyplans.log 2>&1
 [[ $(date +%H%M) -lt 0500 ]] && ./venv/bin/python scripts/pattern_detect.py --fleet >> dailyplans.log 2>&1

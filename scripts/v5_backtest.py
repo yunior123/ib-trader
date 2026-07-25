@@ -18,7 +18,7 @@ import re
 import subprocess
 import sys
 
-ROOT = "/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader"
+ROOT = "/Users/yuniorrodriguezosorio/ib-trader"
 os.chdir(ROOT)
 HORIZON = 3600          # 60 min
 ATR_N = 15              # ATR de 15 bars de 1m ~ rango de 15 min

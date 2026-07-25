@@ -6,11 +6,11 @@
     <string>com.ibtrader.postmortem</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/venv/bin/python</string>
-        <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/scripts/x_postmortem.py</string>
+        <string>/Users/yuniorrodriguezosorio/ib-trader/venv/bin/python</string>
+        <string>/Users/yuniorrodriguezosorio/ib-trader/scripts/x_postmortem.py</string>
     </array>
     <key>WorkingDirectory</key>
-    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader</string>
+    <string>/Users/yuniorrodriguezosorio/ib-trader</string>
     <key>StartCalendarInterval</key>
     <dict>
         <key>Hour</key>
@@ -23,8 +23,8 @@
     <!-- OJO: log separado del x_postmortem.log del script — el ledger cuenta
          " POSTED " por linea y un stdout duplicado inflaria el conteo -->
     <key>StandardOutPath</key>
-    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/x_postmortem_launchd.log</string>
+    <string>/Users/yuniorrodriguezosorio/ib-trader/x_postmortem_launchd.log</string>
     <key>StandardErrorPath</key>
-    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/x_postmortem_launchd.log</string>
+    <string>/Users/yuniorrodriguezosorio/ib-trader/x_postmortem_launchd.log</string>
 </dict>
 </plist>

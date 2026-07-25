@@ -4,10 +4,10 @@
   <key>Label</key><string>com.ibtrader.healthcheck</string>
   <key>ProgramArguments</key>
   <array>
-    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/venv/bin/python</string>
-    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/scripts/fleet_healthcheck.py</string>
+    <string>/Users/yuniorrodriguezosorio/ib-trader/venv/bin/python</string>
+    <string>/Users/yuniorrodriguezosorio/ib-trader/scripts/fleet_healthcheck.py</string>
   </array>
-  <key>WorkingDirectory</key><string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader</string>
+  <key>WorkingDirectory</key><string>/Users/yuniorrodriguezosorio/ib-trader</string>
   <key>StartCalendarInterval</key>
   <array>
     <dict><key>Hour</key><integer>8</integer><key>Minute</key><integer>55</integer></dict>
@@ -15,5 +15,5 @@
     <dict><key>Hour</key><integer>16</integer><key>Minute</key><integer>35</integer></dict>
   </array>
   <key>RunAtLoad</key><false/>
-  <key>StandardErrorPath</key><string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/healthcheck_err.log</string>
+  <key>StandardErrorPath</key><string>/Users/yuniorrodriguezosorio/ib-trader/healthcheck_err.log</string>
 </dict></plist>

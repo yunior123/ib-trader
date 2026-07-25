@@ -10,17 +10,17 @@
     <key>Label</key><string>com.ibtrader.scan</string>
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/scan_server</string>
+        <string>/Users/yuniorrodriguezosorio/ib-trader/scan_server</string>
         <string>NVDA</string>
         <string>8765</string>
     </array>
     <key>WorkingDirectory</key>
-    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader</string>
+    <string>/Users/yuniorrodriguezosorio/ib-trader</string>
     <key>RunAtLoad</key><true/>
     <key>KeepAlive</key><true/>
     <key>StandardOutPath</key>
-    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/scan_server.out</string>
+    <string>/Users/yuniorrodriguezosorio/ib-trader/scan_server.out</string>
     <key>StandardErrorPath</key>
-    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/scan_server.err</string>
+    <string>/Users/yuniorrodriguezosorio/ib-trader/scan_server.err</string>
 </dict>
 </plist>

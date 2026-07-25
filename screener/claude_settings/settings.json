@@ -22,8 +22,8 @@
       "Bash(venv/bin/python screener/exec_trade.py:*)",
       "Bash(venv/bin/python screener/state.py:*)",
       "Bash(venv/bin/python screener/price.py:*)",
-      "Read(//Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/data/screener/**)",
-      "Read(//Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/screener/**)"
+      "Read(//Users/yuniorrodriguezosorio/ib-trader/data/screener/**)",
+      "Read(//Users/yuniorrodriguezosorio/ib-trader/screener/**)"
     ],
     "deny": [
       "Bash(rm:*)",

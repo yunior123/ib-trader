@@ -3,8 +3,8 @@
 (quita el sesgo de volatilidad) contra la base del mismo simbolo/dia/horizonte."""
 import os, sys, json, math
 from collections import defaultdict
-sys.path.insert(0, "/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/scripts")
-os.chdir("/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader")
+sys.path.insert(0, "/Users/yuniorrodriguezosorio/ib-trader/scripts")
+os.chdir("/Users/yuniorrodriguezosorio/ib-trader")
 from full_history_backtest import wilson, cluster_score_test, bh_fdr, two_sided_p
 
 SP = "/tmp"

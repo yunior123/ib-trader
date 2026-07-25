@@ -12,7 +12,7 @@ import sys
 import time
 from pathlib import Path
 
-REPO = Path("/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader")
+REPO = Path("/Users/yuniorrodriguezosorio/ib-trader")
 OUT = REPO / "data" / "backtest"
 FLEET = (REPO / "data" / "fleet.txt").read_text().split()
 LIKELY_MISSING = {"SKHY", "DRAM", "SPCX"}  # ETFs que IBKR puede no servir

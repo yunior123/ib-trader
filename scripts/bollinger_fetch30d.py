@@ -7,7 +7,7 @@ import datetime as dt
 import os, sys, time, warnings
 
 warnings.filterwarnings("ignore")
-REPO = "/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader"
+REPO = "/Users/yuniorrodriguezosorio/ib-trader"
 OUT = os.path.join(REPO, "data", "backtest")
 os.makedirs(OUT, exist_ok=True)
 

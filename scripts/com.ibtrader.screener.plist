@@ -10,17 +10,17 @@
 	<array>
 		<string>/bin/zsh</string>
 		<string>-c</string>
-		<string>exec /bin/zsh /Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/screener/ensure_all.sh</string>
+		<string>exec /bin/zsh /Users/yuniorrodriguezosorio/ib-trader/screener/ensure_all.sh</string>
 	</array>
 	<key>RunAtLoad</key>
 	<true/>
 	<key>StandardErrorPath</key>
-	<string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/screener/autostart.err</string>
+	<string>/Users/yuniorrodriguezosorio/ib-trader/screener/autostart.err</string>
 	<key>StandardOutPath</key>
-	<string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/screener/autostart.out</string>
+	<string>/Users/yuniorrodriguezosorio/ib-trader/screener/autostart.out</string>
 	<key>StartInterval</key>
 	<integer>120</integer>
 	<key>WorkingDirectory</key>
-	<string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader</string>
+	<string>/Users/yuniorrodriguezosorio/ib-trader</string>
 </dict>
 </plist>

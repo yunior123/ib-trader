@@ -25,7 +25,7 @@ Uso: korea_bar_bridge.py [--daemon]   (por defecto daemon)
 import os, subprocess, sys, time
 from datetime import timezone
 
-ROOT = "/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader"
+ROOT = "/Users/yuniorrodriguezosorio/ib-trader"
 sys.path.insert(0, ROOT)
 os.chdir(ROOT)
 from ib_insync import IB, Contract, util  # noqa: E402

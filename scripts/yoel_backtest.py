@@ -57,7 +57,7 @@ import subprocess
 import sys
 from zoneinfo import ZoneInfo
 
-REPO = "/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader"
+REPO = "/Users/yuniorrodriguezosorio/ib-trader"
 CACHE = os.path.join(REPO, "data", "backtest")
 ET = ZoneInfo("America/New_York")
 

@@ -9,7 +9,7 @@
     <key>ProgramArguments</key>
     <array>
         <string>/bin/zsh</string>
-        <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/screener/run_6am_scan.sh</string>
+        <string>/Users/yuniorrodriguezosorio/ib-trader/screener/run_6am_scan.sh</string>
     </array>
     <key>StartCalendarInterval</key>
     <dict>
@@ -17,10 +17,10 @@
         <key>Minute</key><integer>0</integer>
     </dict>
     <key>WorkingDirectory</key>
-    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader</string>
+    <string>/Users/yuniorrodriguezosorio/ib-trader</string>
     <key>StandardOutPath</key>
-    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/screener/scan_6am.out</string>
+    <string>/Users/yuniorrodriguezosorio/ib-trader/screener/scan_6am.out</string>
     <key>StandardErrorPath</key>
-    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/screener/scan_6am.err</string>
+    <string>/Users/yuniorrodriguezosorio/ib-trader/screener/scan_6am.err</string>
 </dict>
 </plist>

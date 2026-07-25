@@ -305,7 +305,7 @@ operador se entera de que revise Chrome/extensión.
 ## 10. Troubleshooting — correr cada pieza a mano
 
 ```bash
-cd /Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader
+cd /Users/yuniorrodriguezosorio/ib-trader
 
 # Planes completos (sin email, solo QQQ+NVDA)
 ./venv/bin/python scripts/daily_fleet_plans.py --tickers QQQ,NVDA --no-email

@@ -187,3 +187,91 @@
 01:46:50 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.08% px 523.85
 01:46:50 | WARMUP AAPL: BUY | AAPL @ 329.75 | prob 59% | pullback-1%+MACD1-gira+MACD15-verde+ST5-alineado+ribbon15-alcista | fase=TREND_UP
 01:46:50 | WARMUP AAPL: SELL | VENDER AAPL @ 333.64 | target | entrada 320.81 | PnL +4.0%
+02:33:44 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+02:33:45 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+02:33:45 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+02:33:45 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+02:33:45 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.59% px 59.12
+02:33:45 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.74% px 58.53
+02:33:45 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.34% px 57.43
+02:33:45 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +3.03% px 58.60
+02:33:45 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.02% px 57.86
+02:33:45 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.17% px 58.62
+02:33:45 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.72% px 58.21
+02:33:45 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.77% px 58.79
+02:33:45 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.66% px 58.08
+02:33:45 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.19% px 56.10
+02:33:45 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.50% px 56.95
+02:33:45 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.88% px 55.94
+02:33:45 | WARMUP DRAM: SELL | DRAM @ 53.95 | prob 57% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+02:33:45 | WARMUP DRAM: SELL | DRAM @ 53.62 | prob 57% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+02:33:45 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.43% px 53.62
+02:33:45 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.07% px 54.57
+02:33:45 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.57% px 54.31
+02:33:45 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.53% px 53.66
+02:33:45 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.17% px 541.58
+02:33:45 | WARMUP AMD: SELL | AMD @ 538.10 | prob 56% | rompe-TL-1m-abajo+vol-2.0x+ST5-alineado+ribbon15-bajista+bajo-VWAP+retest-ok | fase=UNKNOWN
+02:33:45 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.09% px 533.50
+02:33:45 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.34% px 544.00
+02:33:45 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.10% px 541.80
+02:33:45 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.42% px 531.90
+02:33:45 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.31% px 536.42
+02:33:45 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.30% px 207.45
+02:33:45 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.02% px 210.28
+02:33:45 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.08% px 523.85
+02:33:45 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.05% px 206.02
+02:33:45 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.14% px 210.19
+02:33:45 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.03% px 207.49
+02:33:45 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.01% px 415.31
+02:33:45 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.26% px 411.30
+02:33:45 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.00% px 407.75
+02:33:45 | WARMUP TSM: SELL | TSM @ 405.36 | prob 63% | rebote-4%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=TREND_DOWN
+02:33:45 | WARMUP TSM: SELL | TSM @ 406.33 | prob 63% | rebote-23%+MACD1-gira-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=TREND_DOWN
+02:33:45 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.18% px 401.80
+02:33:45 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.74% px 10.89
+02:33:45 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.38% px 10.32
+02:33:45 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.90% px 10.46
+02:33:45 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.29% px 10.52
+02:33:45 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -6.48% px 9.86
+02:33:45 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.41% px 9.80
+02:33:45 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.04% px 9.73
+02:33:45 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.21% px 9.51
+02:33:45 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.04% px 9.70
+02:33:45 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.34% px 9.41
+02:33:45 | WARMUP NOK: SELL | NOK @ 9.29 | prob 60% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+02:33:45 | WARMUP NOK: SELL | NOK @ 9.25 | prob 60% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+02:33:45 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.01% px 9.15
+02:33:45 | WARMUP AAPL: SELL | AAPL @ 321.63 | prob 60% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=UNKNOWN
+02:33:45 | WARMUP AAPL TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.58% px 320.58
+02:33:45 | WARMUP AAPL: BUY | COMPRAR AAPL @ 320.81 | reversal a alza | entrada 333.53 | mov +4.0%
+02:33:45 | WARMUP AAPL: BUY | COMPRAR AAPL @ 320.81 | target 333.64 | floor 324.02 | capitulacion confirmada
+02:33:45 | WARMUP AAPL TERREMOTO ALZA | CUSUM: subiendo fuerte +1.51% px 324.24
+02:33:46 | WARMUP AAPL: BUY | AAPL @ 326.22 | prob 56% | estructura-rota-arriba+MACD15-flip-arriba+recupera-BB15mid+MACD15-verde+ST5-alineado | fase=UNKNOWN
+02:33:46 | WARMUP AAPL TERREMOTO ALZA | CUSUM: subiendo fuerte +1.63% px 329.22
+02:33:46 | WARMUP AAPL: BUY | AAPL @ 329.75 | prob 59% | pullback-1%+MACD1-gira+MACD15-verde+ST5-alineado+ribbon15-alcista | fase=TREND_UP
+02:33:46 | WARMUP AAPL: SELL | VENDER AAPL @ 333.64 | target | entrada 320.81 | PnL +4.0%
+02:33:46 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.22% px 1783.00
+02:33:46 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.05% px 1804.54
+02:33:46 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +3.32% px 1848.46
+02:33:46 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.46% px 1803.50
+02:33:46 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.54% px 1767.17
+02:33:46 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.13% px 1792.45
+02:33:46 | WARMUP ASML: SELL | ASML @ 1775.03 | prob 61% | rebote-10%+MACD1-gira-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=TREND_DOWN
+02:33:46 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.00% px 1761.77
+02:33:46 | WARMUP MU TERREMOTO ALZA | CUSUM: subiendo fuerte +5.32% px 1010.12
+02:33:46 | WARMUP EWY: SELL | EWY @ 171.37 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=UNKNOWN
+02:33:46 | WARMUP EWY: SELL | EWY @ 172.65 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=UNKNOWN
+02:33:46 | WARMUP MU TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.21% px 960.00
+02:33:46 | WARMUP EWY TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.84% px 167.47
+02:33:46 | WARMUP EWY: SELL | EWY @ 165.45 | prob 62% | rebote-23%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=TREND_DOWN
+02:33:46 | WARMUP MU TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.11% px 936.23
+02:33:46 | WARMUP EWY: SELL | EWY @ 164.83 | prob 62% | rebote-50%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=TREND_DOWN
+02:33:46 | WARMUP MU: SELL | MU @ 933.18 | prob 62% | rebote-5%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+02:33:46 | WARMUP EWY: SELL | EWY @ 165.63 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=TREND_DOWN
+02:33:46 | WARMUP MU: SELL | MU @ 928.60 | prob 60% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+02:33:46 | WARMUP MU: SELL | MU @ 922.59 | prob 60% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+02:34:04 | TEST | deploy /data ok
+02:40:01 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+02:40:01 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+02:40:01 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+02:40:01 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana

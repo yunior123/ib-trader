@@ -4,7 +4,7 @@
  "generated_utc": "2026-07-23T08:00:40Z",
  "horizon_bars_5m": 24,
  "signals_files": [
-  "/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/data/backtest/signals_yoel_rebote_sma20.csv"
+  "/Users/yuniorrodriguezosorio/ib-trader/data/backtest/signals_yoel_rebote_sma20.csv"
  ],
  "skipped_sin_barras": 3,
  "por_ticker": {

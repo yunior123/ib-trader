@@ -5,9 +5,9 @@ sesion KRX (dom-jue 20:00-02:30 ET). Creado 2026-07-19, KORZ añadido misma
 noche (orden "avisame para comprar koru o korz"). Señal-solamente.
 clientId 96. reqMarketDataType(1) — delayed PROHIBIDO."""
 import sys, time
-sys.path.insert(0, "/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader")
+sys.path.insert(0, "/Users/yuniorrodriguezosorio/ib-trader")
 import os
-os.chdir("/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader")
+os.chdir("/Users/yuniorrodriguezosorio/ib-trader")
 from ib_insync import IB, Stock
 
 SYMS = ["KORU", "SOXS", "SQQQ", "SOXL", "TQQQ"]

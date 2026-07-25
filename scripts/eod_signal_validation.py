@@ -16,7 +16,7 @@ import sys
 import time
 from datetime import datetime
 
-ROOT = "/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader"
+ROOT = "/Users/yuniorrodriguezosorio/ib-trader"
 os.chdir(ROOT)
 DAY = datetime.now().strftime("%Y-%m-%d")
 MIRROR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "trading-signals", f"{DAY}.txt")

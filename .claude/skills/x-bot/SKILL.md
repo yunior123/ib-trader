@@ -45,7 +45,7 @@ Finviz: same as fleet — `FINVIZ_AUTH3` in `feeds.env` (already gitignored).
 ## Binary
 
 ```bash
-cd /Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader
+cd /Users/yuniorrodriguezosorio/ib-trader
 OPENSSL=/opt/homebrew/opt/openssl@3
 clang++ -std=c++17 -O2 -I"$OPENSSL/include" -L"$OPENSSL/lib" \
   -o x_whale_bot scripts/x_whale_bot.cpp -lcurl -lcrypto

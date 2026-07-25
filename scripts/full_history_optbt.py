@@ -5,8 +5,8 @@ import os, sys, json, sqlite3, math, bisect, datetime as dt
 from collections import defaultdict
 os.environ.setdefault("TZ", "America/New_York")
 import time as _t; _t.tzset()
-sys.path.insert(0, "/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/scripts")
-os.chdir("/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader")
+sys.path.insert(0, "/Users/yuniorrodriguezosorio/ib-trader/scripts")
+os.chdir("/Users/yuniorrodriguezosorio/ib-trader")
 from full_history_backtest import wilson, cluster_score_test
 
 SP = "/tmp"

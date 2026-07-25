@@ -5,7 +5,7 @@ Idempotente: salta archivos que ya tienen 'MOTOR v5'."""
 import re
 import sys
 
-ROOT = "/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader"
+ROOT = "/Users/yuniorrodriguezosorio/ib-trader"
 BOTS = ["aapl", "amd", "asml", "cper", "dram", "gld", "intc", "kospi", "nok",
         "nvda", "qqq", "samsung", "skhy", "skhynix", "slv", "spcx", "tsla",
         "tsm", "txn", "uso"]

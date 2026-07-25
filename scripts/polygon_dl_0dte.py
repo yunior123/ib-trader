@@ -3,7 +3,7 @@
 Reusa polygon_dl.poly() + tabla poly_opt_bars."""
 import os, sys, time, sqlite3, datetime as dt
 os.environ['TZ'] = 'America/New_York'; time.tzset()
-REPO = "/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader"
+REPO = "/Users/yuniorrodriguezosorio/ib-trader"
 os.chdir(REPO); sys.path.insert(0, os.path.join(REPO, "scripts"))
 os.environ.setdefault("POLY_SLEEP", "0.6")
 import polygon_dl as P

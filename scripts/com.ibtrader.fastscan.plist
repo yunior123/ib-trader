@@ -13,16 +13,16 @@
     <array>
         <string>/bin/zsh</string>
         <string>-c</string>
-        <string>cd /Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader &amp;&amp; venv/bin/python screener/fastscan.py >> screener/fastscan.log 2>&amp;1</string>
+        <string>cd /Users/yuniorrodriguezosorio/ib-trader &amp;&amp; venv/bin/python screener/fastscan.py >> screener/fastscan.log 2>&amp;1</string>
     </array>
     <key>WorkingDirectory</key>
-    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader</string>
+    <string>/Users/yuniorrodriguezosorio/ib-trader</string>
     <key>RunAtLoad</key><true/>
     <key>StartInterval</key><integer>60</integer>
     <key>AbandonProcessGroup</key><true/>
     <key>StandardOutPath</key>
-    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/screener/fastscan_agent.out</string>
+    <string>/Users/yuniorrodriguezosorio/ib-trader/screener/fastscan_agent.out</string>
     <key>StandardErrorPath</key>
-    <string>/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/screener/fastscan_agent.err</string>
+    <string>/Users/yuniorrodriguezosorio/ib-trader/screener/fastscan_agent.err</string>
 </dict>
 </plist>

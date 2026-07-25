@@ -39,7 +39,7 @@ import time
 import math
 from datetime import datetime, date
 
-ROOT = "/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader"
+ROOT = "/Users/yuniorrodriguezosorio/ib-trader"
 sys.path.insert(0, ROOT)
 os.chdir(ROOT)
 

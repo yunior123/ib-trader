@@ -147,4 +147,4 @@ NOTE: returns are uncompounded sum of trade % (full-cash assumption each trade).
 NOTE: no commissions/slippage modeled in C++ signal PnL.
 NOTE: IEX tape = incomplete volume/gaps vs SIP — live fills worse.
 
-Wrote /Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/data/fleet_bt_summary.txt
+Wrote /Users/yuniorrodriguezosorio/ib-trader/data/fleet_bt_summary.txt

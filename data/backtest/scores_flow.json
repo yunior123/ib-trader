@@ -4,7 +4,7 @@
  "generated_utc": "2026-07-22T22:37:22Z",
  "horizon_bars_5m": 24,
  "signals_files": [
-  "/Users/yuniorrodriguezosorio/Documents/GitHub/ib-trader/data/backtest/flow_signals.csv"
+  "/Users/yuniorrodriguezosorio/ib-trader/data/backtest/flow_signals.csv"
  ],
  "skipped_sin_barras": 0,
  "por_ticker": {
