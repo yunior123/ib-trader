@@ -559,3 +559,21 @@ def test_strike_width_modal():
     assert VT.strike_width([100, 102.5, 105, 107.5]) == 2.5
     assert VT.strike_width([100.0]) is None
     assert VT.strike_width([]) is None
+
+
+def test_respaldo_polygon_mira_atras_pero_no_indefinidamente(tmp_path, monkeypatch):
+    """El OI no cambia con el mercado cerrado, asi que el snapshot del ultimo cierre es el
+    libro correcto para el mapa del premarket y de las 04:00 (con el fin de semana por medio).
+    Pero con un tope: mas alla de la ventana, mejor sin mapa que con un libro de otra semana."""
+    import chart_levels as CL
+    monkeypatch.chdir(tmp_path)
+    hoy = time.strftime("%Y-%m-%d")
+    hace3 = time.strftime("%Y-%m-%d", time.localtime(time.time() - 3 * 86400))
+    hace9 = time.strftime("%Y-%m-%d", time.localtime(time.time() - 9 * 86400))
+    for d, hhmm in ((hace9, "1558"), (hace3, "1558"), (hace3, "2030")):
+        os.makedirs(f"data/history/{d}", exist_ok=True)
+        open(f"data/history/{d}/poly_chain_zz_{hhmm}.txt", "w").write("# x\n")
+    assert CL.poly_chain_path("zz").endswith(f"{hace3}/poly_chain_zz_2030.txt")
+    assert CL.poly_chain_path("zz", lookback=1) is None       # nada de hoy
+    assert CL.poly_chain_path("zz", day=hoy, lookback=4).endswith("2030.txt")
+    assert CL.poly_chain_path("nohaycadena") is None

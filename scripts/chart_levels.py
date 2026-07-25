@@ -72,17 +72,32 @@ def spot_from_cache(path):
 FREEZE_MIN = 9 * 60 + 35     # 09:35 ET: el flip/VT del dia se congela aqui (features #6/#20)
 
 
-def poly_chain_path(sym, day=None):
-    """La cadena de Polygon MAS RECIENTE de hoy (griegas/IV/OI MEDIDOS), o None.
+POLY_LOOKBACK_DIAS = 4       # viernes 15:58 tiene que servir para el plan del lunes 04:00
+
+
+def poly_chain_path(sym, day=None, lookback=POLY_LOOKBACK_DIAS):
+    """La cadena de Polygon MAS RECIENTE (griegas/IV/OI MEDIDOS) de los ultimos `lookback`
+    dias de calendario, o None.
 
     Verificado 2026-07-25: el snapshot /v3/snapshot/options trae greeks+IV+OI reales
     (QQQ 816/854 contratos con griegas = 95.5%), mientras que el cache TWS a las 16:16
     trae iv=-1 delta=-1 gamma=-1 en el 100% de las filas. Fuera de RTH esta es la unica
-    fuente con griegas MEDIDAS; se prefiere solo cuando la de IBKR no sirve, para no
-    perder frescura durante la sesion."""
-    d = day or time.strftime("%Y-%m-%d")
-    cands = sorted(glob.glob(f"data/history/{d}/poly_chain_{sym.lower()}_*.txt"))
-    return cands[-1] if cands else None
+    fuente con griegas MEDIDAS; se prefiere solo cuando la de IBKR no sirve, para no perder
+    frescura durante la sesion.
+
+    Por que se mira ATRAS y no solo hoy: el OI NO cambia mientras el mercado esta cerrado, asi
+    que el libro del ultimo cierre ES el libro correcto para el mapa nocturno, del premarket y
+    de los planes de las 04:00 (que corren con el fin de semana por medio). La edad va publicada
+    en `chain_age_s` y el vencimiento muerto lo elimina `gex_core.exp_status`, asi que nada de
+    esto se puede colar como "de ahora". Y dentro de RTH este respaldo NO se acepta: alli una
+    cadena de mas de 45 min se marca rancia y la gamma se mutea."""
+    base = time.time() if day is None else time.mktime(time.strptime(day, "%Y-%m-%d"))
+    for i in range(max(1, lookback)):
+        d = time.strftime("%Y-%m-%d", time.localtime(base - i * 86400))
+        cands = sorted(glob.glob(f"data/history/{d}/poly_chain_{sym.lower()}_*.txt"))
+        if cands:
+            return cands[-1]
+    return None
 
 
 def _et_min(ts=None):
