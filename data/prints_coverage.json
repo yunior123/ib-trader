@@ -1,0 +1,160 @@
+{
+ "historia_previa": "no existe nada anterior a la primera corrida de este archivador",
+ "nota": "perfil de BALLENAS (>=50k USD), NO volume-by-price. DIR clasificado contra un NBBO cacheado en el bridge -> mala clasificacion por rancidez.",
+ "syms": {
+  "AAPL": {
+   "absorption_ready": false,
+   "days": {},
+   "gaps": 0,
+   "rows": 0,
+   "sessions": 0,
+   "zero_byte": true
+  },
+  "AMD": {
+   "absorption_ready": false,
+   "days": {},
+   "gaps": 0,
+   "rows": 0,
+   "sessions": 0,
+   "zero_byte": true
+  },
+  "ASML": {
+   "absorption_ready": false,
+   "days": {},
+   "gaps": 0,
+   "rows": 0,
+   "sessions": 0,
+   "zero_byte": true
+  },
+  "DRAM": {
+   "absorption_ready": false,
+   "days": {
+    "2026-07-24": {
+     "first_ts": 1784922507,
+     "last_ts": 1784924722,
+     "minutes_with_print": 29,
+     "pct_of_session_covered": 7.4,
+     "rows": 444
+    }
+   },
+   "gaps": 0,
+   "rows": 444,
+   "sessions": 1,
+   "zero_byte": false
+  },
+  "GLD": {
+   "absorption_ready": false,
+   "days": {},
+   "gaps": 0,
+   "rows": 0,
+   "sessions": 0,
+   "zero_byte": true
+  },
+  "INTC": {
+   "absorption_ready": false,
+   "days": {},
+   "gaps": 0,
+   "rows": 0,
+   "sessions": 0,
+   "zero_byte": true
+  },
+  "NOK": {
+   "absorption_ready": false,
+   "days": {
+    "2026-07-24": {
+     "first_ts": 1784899261,
+     "last_ts": 1784924543,
+     "minutes_with_print": 325,
+     "pct_of_session_covered": 83.3,
+     "rows": 2123
+    }
+   },
+   "gaps": 0,
+   "rows": 2123,
+   "sessions": 1,
+   "zero_byte": false
+  },
+  "NVDA": {
+   "absorption_ready": false,
+   "days": {
+    "2026-07-24": {
+     "first_ts": 1784923103,
+     "last_ts": 1784924775,
+     "minutes_with_print": 26,
+     "pct_of_session_covered": 6.7,
+     "rows": 1907
+    }
+   },
+   "gaps": 0,
+   "rows": 1907,
+   "sessions": 1,
+   "zero_byte": false
+  },
+  "QQQ": {
+   "absorption_ready": false,
+   "days": {},
+   "gaps": 0,
+   "rows": 0,
+   "sessions": 0,
+   "zero_byte": true
+  },
+  "SPCX": {
+   "absorption_ready": false,
+   "days": {
+    "2026-07-24": {
+     "first_ts": 1784921904,
+     "last_ts": 1784924777,
+     "minutes_with_print": 45,
+     "pct_of_session_covered": 11.5,
+     "rows": 1287
+    }
+   },
+   "gaps": 0,
+   "rows": 1287,
+   "sessions": 1,
+   "zero_byte": false
+  },
+  "SPY": {
+   "absorption_ready": false,
+   "days": {},
+   "gaps": 0,
+   "rows": 0,
+   "sessions": 0,
+   "zero_byte": true
+  },
+  "TSLA": {
+   "absorption_ready": false,
+   "days": {
+    "2026-07-24": {
+     "first_ts": 1784923103,
+     "last_ts": 1784924759,
+     "minutes_with_print": 28,
+     "pct_of_session_covered": 7.2,
+     "rows": 1716
+    }
+   },
+   "gaps": 0,
+   "rows": 1716,
+   "sessions": 1,
+   "zero_byte": false
+  },
+  "TSM": {
+   "absorption_ready": false,
+   "days": {},
+   "gaps": 0,
+   "rows": 0,
+   "sessions": 0,
+   "zero_byte": true
+  },
+  "TXN": {
+   "absorption_ready": false,
+   "days": {},
+   "gaps": 0,
+   "rows": 0,
+   "sessions": 0,
+   "zero_byte": true
+  }
+ },
+ "updated": 1784987711,
+ "whale_min_usd": 50000.0
+}

@@ -109,3 +109,9 @@ data/replay/
 # (la retencion las pliega al levels_5m.jsonl del dia y las borra). 26 syms x 78 slots =
 # 2028 ficheros/dia -> fuera de git; el jsonl del dia SI se versiona (1 fichero, ~4 MB).
 data/history/*/levels_*_[0-9][0-9][0-9][0-9].json
+
+# equity-prints archiver (feature #15): la cinta firmada cruda son ~5,6 MB/dia de sesion
+# (medido: 7477 prints = 216 KB en una ventana de 15 min x 5 syms). Vive en disco con
+# retencion de 180 dias y gzip desde el dia 2; en git solo su cobertura (prints_coverage.json).
+# Si Yunior prefiere que git haga de copia offsite, borrar esta linea (~1,7 GB/año de .git).
+data/prints/
