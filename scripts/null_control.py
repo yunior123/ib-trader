@@ -75,6 +75,7 @@ N_TRIALS_PER_SOURCE = len(BL.K_TP) * len(BL.K_SL) * len(BL.HORIZONS)
 OUT_JSON = os.path.join(REPO, "data", "null_control.json")
 OUT_PROPOSAL = os.path.join(REPO, "data", "signal_enable.PROPUESTO.json")
 REGIME_CACHE = os.path.join(REPO, "data", "session_regime.json")
+DOC_SUFFIX = ""                 # informe vivo: docs/NULL-CONTROL-<fecha>.md (sin sufijo)
 
 BUCKET_WINDOW = {name: (lo, hi) for name, lo, hi in BUCKETS}
 
@@ -87,6 +88,8 @@ def _retarget(name):
     if not name or name == "signals":
         return
     OUT_JSON = os.path.join(REPO, "data", "null_control.%s.json" % name)
+    global DOC_SUFFIX
+    DOC_SUFFIX = "." + name
     OUT_PROPOSAL = os.path.join(REPO, "data", "signal_enable.PROPUESTO.%s.json" % name)
     REGIME_CACHE = os.path.join(REPO, "data", "session_regime.%s.json" % name)
 
@@ -318,8 +321,19 @@ def real_entries(conn):
     return dict(out), st
 
 
+# ADITIVO 2026-07-25 (regeneracion de señales). Con `signals` (11 fechas) excluir la
+# FECHA entera era gratis. Con `signals_regen` (501 fechas) NO queda ni una sesion limpia:
+# `exclude_dates` vaciaba el pool y las 2000 tiradas salian `no_candidate_session` -> p_rand
+# None -> DATA-INSUFFICIENT por construccion, no por falta de datos. Medido: 2000/2000.
+# El emparejamiento del null es por (sym, bucket, regimen); lo que hay que evitar es meter
+# una entrada "aleatoria" donde ESE simbolo si tuvo señal. Excluir (sym,fecha) en vez de la
+# fecha entera hace exactamente eso y conserva el pool. Default = comportamiento de siempre.
+EXCLUDE_MODES = ("date", "sym-date")
+EXCLUDE_MODE = "date"
+
+
 def draw_random(real_by_source, regime, sessions, n_draws, seed,
-                exclude_dates):
+                exclude_dates, exclude_pairs=None, mode=None):
     """Null de entrada aleatoria EMPAREJADO. Por fuente se muestrea la joint
     empírica (sym, bucket, régimen, dirección) de sus señales reales y se coloca
     la entrada en un minuto uniforme dentro del MISMO bucket, en una sesión
@@ -332,8 +346,15 @@ def draw_random(real_by_source, regime, sessions, n_draws, seed,
     diag = {}
     # sesiones candidatas por (sym, régimen), sin las fechas de señales reales
     cand = defaultdict(list)
+    mode = mode or EXCLUDE_MODE
+    if mode not in EXCLUDE_MODES:
+        raise SystemExit("--null-exclude debe ser %s" % "|".join(EXCLUDE_MODES))
+    exclude_pairs = exclude_pairs or set()
     for (sym, d), v in regime.items():
-        if d in exclude_dates:
+        if mode == "date":
+            if d in exclude_dates:
+                continue
+        elif (sym, d) in exclude_pairs:
             continue
         cand[(sym, v["regime"])].append(d)
     for k in cand:
@@ -486,7 +507,9 @@ def run(n_draws=N_RANDOM, seed=7, verbose=True):
         real_obs[source], real_why[source] = label_batch(loader, ent)
     # --- rama sintética ---
     draws, draw_diag = draw_random(real, regime, sessions, n_draws, seed,
-                                   exclude_dates=set(sig_dates))
+                                   exclude_dates=set(sig_dates),
+                                   exclude_pairs={(r["sym"], r["date"])
+                                                  for rows in real.values() for r in rows})
     rnd_obs, rnd_why = {}, {}
     for source, ent in draws.items():
         rnd_obs[source], rnd_why[source] = label_batch(loader, ent)
@@ -767,7 +790,8 @@ def write_doc(res, fdr_cells):
              "vivo lo decide Yunior. Compromiso previo de la ficha: los veredictos "
              "UNPROVEN se aceptan; el test no se afloja nunca.")
     L.append("")
-    path = os.path.join(REPO, "docs", "NULL-CONTROL-%s.md" % time.strftime("%Y-%m-%d"))
+    path = os.path.join(REPO, "docs", "NULL-CONTROL-%s%s.md"
+                        % (time.strftime("%Y-%m-%d"), DOC_SUFFIX))
     BL.atomic_write(path, "\n".join(L) + "\n")
     return path
 
@@ -802,6 +826,9 @@ def main():
     # sobre las 501 sesiones de poly_bars, y sus salidas van a ficheros PARALELOS
     # (data/null_control.<tabla>.json) para no pisar la medicion viva.
     ap.add_argument("--signals-table", default="signals")
+    ap.add_argument("--null-exclude", default="date", choices=list(EXCLUDE_MODES),
+                    help="que se excluye del pool del null: la FECHA entera (default, "
+                         "conducta de siempre) o solo el par (simbolo,fecha) con señal")
     sub = ap.add_subparsers(dest="cmd")
     r = sub.add_parser("run")
     r.add_argument("--n", type=int, default=N_RANDOM)
@@ -809,6 +836,8 @@ def main():
     sub.add_parser("selftest")
     a = ap.parse_args()
     _retarget(a.signals_table)
+    global EXCLUDE_MODE
+    EXCLUDE_MODE = a.null_exclude
     if a.cmd == "selftest":
         raise SystemExit(0 if selftest() else 2)
     if a.cmd != "run":
