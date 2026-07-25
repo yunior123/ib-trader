@@ -20,6 +20,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate {
     var window: NSWindow!
     var web: WKWebView!
     var statusItem: NSStatusItem!
+    var settings: SettingsWindow?
 
     // El puerto se puede sobreescribir sin recompilar: COCKPIT_URL o --url.
     func targetURL() -> URL {
@@ -27,7 +28,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate {
            i + 1 < CommandLine.arguments.count,
            let u = URL(string: CommandLine.arguments[i + 1]) { return u }
         if let s = ProcessInfo.processInfo.environment["COCKPIT_URL"], let u = URL(string: s) { return u }
-        return URL(string: DEFAULT_URL)!
+        // el puerto sale de la config del usuario -> cada amigo el suyo, sin recompilar
+        let port = Config.load().cockpitPort
+        return URL(string: "http://127.0.0.1:\(port)/")!
     }
 
     func applicationDidFinishLaunching(_ n: Notification) {
@@ -52,12 +55,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate {
         let m = NSMenu()
         m.addItem(NSMenuItem(title: "Mostrar cockpit", action: #selector(show), keyEquivalent: "1"))
         m.addItem(NSMenuItem(title: "Recargar", action: #selector(reload), keyEquivalent: "r"))
+        m.addItem(NSMenuItem(title: "Configuración…", action: #selector(openSettings), keyEquivalent: ","))
         m.addItem(NSMenuItem.separator())
         m.addItem(NSMenuItem(title: "Salir", action: #selector(quit), keyEquivalent: "q"))
         m.items.forEach { $0.target = self }
         statusItem.menu = m
 
         load()
+        // Primera ejecucion (sin cuenta configurada): abrir Configuracion en vez de
+        // dejar al usuario adivinando por que no funciona.
+        if Config.load().account.isEmpty { openSettings() }
         NSApp.setActivationPolicy(.regular)
         NSApp.activate(ignoringOtherApps: true)
     }
@@ -66,6 +73,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate {
     @objc func show()   { window.makeKeyAndOrderFront(nil); NSApp.activate(ignoringOtherApps: true) }
     @objc func reload() { load() }
     @objc func quit()   { NSApp.terminate(nil) }
+    @objc func openSettings() {
+        if settings == nil { settings = SettingsWindow() }
+        settings?.showWindow(nil)
+        settings?.window?.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true)
+    }
 
     // Si el backend no esta arriba, decirlo CLARO en vez de una pagina en blanco:
     // el fallo silencioso es lo que costo señales dos veces (TCC, 2026-07-24).

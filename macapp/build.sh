@@ -11,7 +11,7 @@ rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 
 # arm64 nativo; -O porque no cuesta nada y el binario es diminuto igual
-swiftc -O -target arm64-apple-macos13 macapp/main.swift -o "$APP/Contents/MacOS/cockpit"
+swiftc -O -target arm64-apple-macos13 macapp/main.swift macapp/Settings.swift -o "$APP/Contents/MacOS/cockpit"
 
 cat > "$APP/Contents/Info.plist" <<'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
@@ -37,6 +37,21 @@ PLIST
 # hacer "Abrir de todos modos" la primera vez, o quitar la cuarentena con:
 #   xattr -dr com.apple.quarantine "ib-trader Cockpit.app"
 codesign --force --sign - "$APP" >/dev/null 2>&1 || echo "  (aviso: firma ad-hoc fallo, la app sigue funcionando en local)"
+
+# --- ENTREGA A DESKTOP (pipeline automatico) -------------------------------
+# Desktop esta bajo TCC: desde una shell interactiva se escribe bien, pero si esto
+# llegara a correr bajo launchd fallaria igual que el repo antes de la mudanza.
+# Por eso se comprueba y se AVISA en vez de fallar en silencio.
+DESK="$HOME/Desktop"
+if [ -w "$DESK" ]; then
+  rm -rf "$DESK/ib-trader Cockpit.app"
+  cp -R "$APP" "$DESK/"
+  # quitar cuarentena: si no, el amigo ve "no se puede abrir, desarrollador no identificado"
+  xattr -dr com.apple.quarantine "$DESK/ib-trader Cockpit.app" 2>/dev/null || true
+  echo "  -> entregada en Desktop: $DESK/ib-trader Cockpit.app"
+else
+  echo "  AVISO: no puedo escribir en $DESK (TCC?) — la .app queda solo en macapp/"
+fi
 
 echo "OK -> $APP  ($(du -sh "$APP" | cut -f1))"
 echo "   abrir:  open \"$APP\""
