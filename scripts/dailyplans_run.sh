@@ -7,20 +7,28 @@ command -v claude >/dev/null && timeout 300 claude -p "Usa la skill gexa-termina
 ./venv/bin/python scripts/options_hunter.py 12 >> dailyplans.log 2>&1
 [[ $(date +%H%M) -lt 0500 ]] && ./venv/bin/python scripts/pattern_detect.py --fleet >> dailyplans.log 2>&1
 HM=$(date +%H%M)
-if [[ $HM -lt 0500 ]]; then MODE=FULL; ARGS=""
-elif [[ $HM -lt 0900 ]]; then MODE=REFRESH; ARGS="--tag REFRESH-8AM"
-else MODE=APERTURA; ARGS="--tickers QQQ,SPY,NVDA,TSLA,MU,SMH,META,MSFT,AMD,NOK --tag APERTURA-912"
+# ARGS es un ARRAY (fix 2026-07-24): zsh NO hace word-splitting de un escalar, asi
+# que `$ARGS` sin comillas llegaba como UN SOLO argv ("--tag REFRESH-8AM") y las
+# corridas de 08:30 y 09:12 llevaban >=3 dias muriendo con "unrecognized arguments".
+if [[ $HM -lt 0500 ]]; then MODE=FULL; ARGS=()
+elif [[ $HM -lt 0900 ]]; then MODE=REFRESH; ARGS=(--tag REFRESH-8AM)
+else MODE=APERTURA; ARGS=(--tickers QQQ,SPY,NVDA,TSLA,MU,SMH,META,MSFT,AMD,NOK --tag APERTURA-912)
 fi
 echo "$(date) modo $MODE" >> dailyplans.log
-./venv/bin/python scripts/daily_fleet_plans.py $ARGS >> dailyplans.log 2>&1
+./venv/bin/python scripts/daily_fleet_plans.py "${ARGS[@]}" >> dailyplans.log 2>&1
 [[ $MODE == FULL ]] && ./venv/bin/python scripts/calibration_ledger.py record >> dailyplans.log 2>&1
 # 4AM: technicals de valuacion (Forward P/E/PEG...) + score de inflacion continuo (orden Yunior 2026-07-24)
 [[ $MODE == FULL ]] && FORCE_VALUATION=1 ./venv/bin/python scripts/finviz_valuation.py >> dailyplans.log 2>&1
 [[ $MODE == FULL ]] && ./venv/bin/python scripts/inflation_score.py --quiet >> dailyplans.log 2>&1
 # gexa verify: si el snapshot no se escribio o quedo vacio, gritar en el log
 if [[ $MODE == FULL ]]; then
-  if [[ ! -s data/gexa_snapshot.json ]] || grep -q '^{}$' data/gexa_snapshot.json; then
-    echo "$(date) ⚠ GEXA NO CONECTO — planes usan GEX estimado propio (revisar Chrome/extension)" >> dailyplans.log
+  # FRESCURA, no solo existencia (fix 2026-07-24): el snapshot llevaba RANCIO desde
+  # el 2026-07-22 y este verify nunca aviso porque el JSON no estaba vacio. Dos dias
+  # de planes sin gexa, en silencio.
+  GEXA_AGE=99999
+  [[ -f data/gexa_snapshot.json ]] && GEXA_AGE=$(( $(date +%s) - $(stat -f %m data/gexa_snapshot.json) ))
+  if [[ ! -s data/gexa_snapshot.json ]] || grep -q '^{}$' data/gexa_snapshot.json || (( GEXA_AGE > 43200 )); then
+    echo "$(date) ⚠ GEXA NO CONECTO o RANCIO (${GEXA_AGE}s) — planes usan GEX estimado propio" >> dailyplans.log
     osascript -e 'display notification "Gexa no conecto: planes con GEX estimado" with title "⚠ ib-trader 4AM"' 2>/dev/null
   fi
   ./venv/bin/python scripts/x_plan_poster.py --top 5 >> dailyplans.log 2>&1

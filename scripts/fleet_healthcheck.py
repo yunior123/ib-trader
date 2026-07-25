@@ -131,14 +131,34 @@ def main():
             warn.append("planes de hoy: Desktop vetado por TCC (dar Full Disk Access al runner) — no pude contar PDFs")
         else:
             (ok if npdf >= 20 else crit).append(f"planes de hoy: {npdf} PDFs {'(el run de 4am fallo?)' if npdf<20 else ''}")
+    # FRESCURA DE VERDAD (fix 2026-07-24): este bucle declaraba un umbral `age` por
+    # archivo y NO LO USABA — solo miraba os.path.exists, asi que un JSON de hace
+    # semanas salia "ok". Guarda muerta, el mismo olor que ya cazamos en
+    # index_breadth.py y en el verify de gexa de dailyplans_run.sh.
     for jf, age, lbl in [("data/patterns.json", 36*3600, "patrones"),
                          ("data/breadth.json", 24*3600, "engranaje"),
                          ("data/calibration.json", 30*24*3600, "calibracion")]:
-        (ok if os.path.exists(jf) else warn).append(f"{lbl}: {'ok' if os.path.exists(jf) else 'FALTA'}")
+        if not os.path.exists(jf):
+            warn.append(f"{lbl}: FALTA")
+            continue
+        edad = time.time() - os.path.getmtime(jf)
+        if edad > age:
+            warn.append(f"{lbl}: RANCIO {edad/3600:.0f}h (umbral {age/3600:.0f}h)")
+        else:
+            ok.append(f"{lbl}: ok ({edad/3600:.0f}h)")
 
-    # 5) gexa conecto?
-    gx = os.path.exists("data/gexa_snapshot.json") and os.path.getsize("data/gexa_snapshot.json") > 5
-    (ok if gx else warn).append(f"gexa snapshot: {'ok' if gx else 'no conecto (usa GEX estimado)'}")
+    # 5) gexa conecto Y esta fresco? (el 2026-07-24 llevaba 58h rancio y decia "ok":
+    # dos dias de planes con GEX estimado, en silencio, con el healthcheck en verde)
+    GEXA_MAX = 12*3600
+    gf = "data/gexa_snapshot.json"
+    if not (os.path.exists(gf) and os.path.getsize(gf) > 5):
+        warn.append("gexa snapshot: no conecto (usa GEX estimado)")
+    else:
+        gedad = time.time() - os.path.getmtime(gf)
+        if gedad > GEXA_MAX:
+            warn.append(f"gexa snapshot: RANCIO {gedad/3600:.0f}h — los planes usan GEX estimado")
+        else:
+            ok.append(f"gexa snapshot: ok ({gedad/3600:.0f}h)")
 
     # 6) cobertura: cada modulo cubre la flota canonica?
     canon = canonical_fleet()
