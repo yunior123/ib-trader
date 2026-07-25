@@ -345,8 +345,11 @@ Spec: `docs/FEATURES-MINED-2026-07-25.md` (#5 chain-honesty, #6 flip-honesty, #3
       justo el campo del que depende la doctrina `gamma-regime-walls`. Nosotros lo calculamos
       para los **30**. Lo unico que gexa aporta y no reproducimos es su score/bias propietario
       y el Market Narrator (prosa), que son SALIDA DE MODELO ajeno, no dato medido.
-      -> ACCION: decidir si se jubila el scraping de gexa (skill `gexa-terminal`) y se pasa el
-      mapa gamma de los planes a `gex_core` + cadenas Polygon, que es medido y cubre la flota.
+      -> **DECIDIDO POR LOS HECHOS el mismo dia: gexa.ai DESAPARECIO** ("gexa is gone now, we
+      are on our own"). Sustituto commiteado: `scripts/gex_snapshot.py` -> `data/gex_snapshot.json`,
+      cobertura medida **25/30** (gexa daba 16) con `regime` para los 25, griegas Polygon MEDIDAS.
+      Los 5 omitidos (NVDA QCOM NFLX NOK SKHY) tienen 2-7 strikes poblados: no aparecen, con el
+      motivo en `_meta.skipped`. Recableado de los 6 consumidores + cron: delegado.
 
 ## REGENERACION DE SEÑALES (agente regen, 2026-07-25)
 - [x] "usa los datos de polygon y reproduce, es sencillo... olvidate del websocket de IBKR,
