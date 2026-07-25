@@ -1,6 +1,7 @@
 #!/bin/zsh
-# fleet_keepalive_start.sh — arranca los 4 keepalives de los signal bots
-# (16 bots: dram/nok/spcx/tsla + nvda/txn/tsm/amd/intc/asml/aapl + gld/qqq + slv/cper/uso). Idempotente: si un keepalive ya corre, no lo duplica
+# fleet_keepalive_start.sh — UNICO punto de entrada de la flota (lo relanza
+# com.ibtrader.fleet cada 300 s, RunAtLoad). Arranca los keepalives de los signal
+# bots (21 syms en FLEET_SYMS) + infraestructura. Idempotente: si un keepalive ya corre, no lo duplica
 # (dos keepalives del mismo bot se matarian el bot mutuamente). launchd lo
 # re-ejecuta cada 5 min (StartInterval) = watchdog de los watchdogs.
 cd "$(dirname "$0")/.." || exit 1
@@ -9,6 +10,59 @@ ROOT="$(pwd)"
 # Si el contexto de arranque (p.ej. launchd SIN Full Disk Access) no puede escribir el
 # HUD del Desktop, los bots correrian MUDOS y las señales se perderian en silencio.
 # Fallar RUIDOSO: voz + notificacion + bandera data/PERM_DENIED (la ve el healthcheck).
+
+# --- LISTA UNICA DE APAGADO (extraida 2026-07-25) -----------------------------
+# Antes esta lista vivia SOLO dentro del MODO SUEÑO. Ahora la comparten el sueño
+# manual y el portero horario, porque dos listas divergentes = keepalives que
+# sobreviven al apagado (el bug de hoy: sabado con 30 keepalives arriba).
+# slv/cper/uso BORRADOS: no son de la flota de 30, ya se mataron sus huerfanos.
+FLEET_SYMS=(dram nok spcx tsla nvda txn tsm amd intc asml aapl gld qqq spy
+            skhy skhynix samsung kospi mu smh ewy)
+
+fleet_stop_all() {
+  # keepalives de infraestructura
+  for p in price_alarm_keepalive.sh opt_sentinel_keepalive.sh options_enrich_keepalive.sh \
+           opt_chain_keepalive.sh bargain_keepalive.sh sox_keepalive.sh \
+           finviz_scout_keepalive.sh notify_relay.sh x_signal_keepalive.sh \
+           opt_whale_keepalive.sh voice_queue_keepalive.sh compass_keepalive.sh; do
+    pkill -f "scripts/$p" 2>/dev/null
+  done
+  # daemons python de señal (el arnes ib_async/ib_insync)
+  for p in x_signal_poster.py sox_index_feed.py opt_sentinel.py options_enrich.py \
+           opt_chain_cache.py band_open_watch.py bollinger_alarm.py dip_alert.py; do
+    pkill -f "scripts/$p" 2>/dev/null
+  done
+  # binarios de señal C++
+  pkill -x finviz_scout 2>/dev/null
+  pkill -x price_alarm 2>/dev/null
+  pkill -x flow_pulse 2>/dev/null
+  pkill -x fleet_consensus 2>/dev/null
+  pkill -f 'ib-trader/compass --loop' 2>/dev/null
+  pkill -f 'scripts/voice_queue.sh' 2>/dev/null
+  # HUERFANOS: notify_relay lanza 'timeout N tail -n0 -F .../trading-signals/<hoy>.txt'.
+  # Al matar al padre el tail SOBREVIVE (medido 2026-07-25: quedaba vivo tras el
+  # apagado). Un hijo que sobrevive al apagado ES el bug que estamos arreglando.
+  pkill -f 'tail -n0 -F .*trading-signals' 2>/dev/null
+  pkill -f 'timeout .* tail -n0 -F' 2>/dev/null
+  # screener (lo arranca com.ibtrader.screener, pero fuera de ventana tambien calla)
+  pkill -f 'screener/heartbeat.sh' 2>/dev/null
+  pkill -x screener_alert 2>/dev/null
+  # bots de la flota + sus keepalives
+  for b in "${FLEET_SYMS[@]}"; do
+    pkill -f "scripts/${b}_keepalive.sh" 2>/dev/null
+    pkill -x "${b}_signal_bot" 2>/dev/null
+  done
+}
+
+# Los bridges de datos SOBREVIVEN al sueño manual (asi estaba diseñado: el sueño
+# calla las alertas pero conserva el tape). FUERA DE VENTANA no: el mercado esta
+# cerrado, no hay tape que puentear, y un bridge vivo mantiene TWS/Gateway ocupado.
+fleet_stop_bridges() {
+  pkill -f 'scripts/ibkr_bar_bridge.py' 2>/dev/null
+  pkill -f 'scripts/korea_bar_bridge.py' 2>/dev/null
+  pkill -f 'scripts/chart_bridge.py' 2>/dev/null
+}
+
 SIGDIR="$ROOT/data/trading-signals"
 mkdir -p "$SIGDIR" 2>/dev/null
 if ! ( : > "$SIGDIR/.perm_check" ) 2>/dev/null; then
@@ -19,6 +73,35 @@ if ! ( : > "$SIGDIR/.perm_check" ) 2>/dev/null; then
 else
   rm -f "$SIGDIR/.perm_check" "$ROOT/data/PERM_DENIED" 2>/dev/null
 fi
+# --- PORTERO HORARIO (orden Yunior 2026-07-25) --------------------------------
+# "los horarios de la flota son de domingo 8pm a viernes 8 pm hora de toronto,
+#  fuera de ese horario todo muerto, salvo para testing, backtesting, fixes."
+# El 2026-07-25 (sabado) la flota entera estaba arriba porque NADIE miraba el reloj.
+# El calculo vive en C++ (./fleet_hours): exit 0 = LIVE, exit 1 = DEAD.
+# Escape de testing: FLEET_FORCE=1 o data/FLEET_FORCE (el binario lo ANUNCIA).
+FLEET_HOURS="$ROOT/fleet_hours"
+if [[ ! -x "$FLEET_HOURS" ]]; then
+  # FAIL-LOUD: sin portero NO se arranca. Degradar a "pues arranco" es exactamente
+  # el fallo que estamos arreglando (un LIVE plausible sin haberlo comprobado).
+  echo "$(date) fleet: PORTERO AUSENTE ($FLEET_HOURS no existe o no es ejecutable) -> NO se arranca nada. Compila con ./scripts/build_fleet_hours.sh" >> "$ROOT/fleet_autostart.log"
+  if [[ ! -f "$ROOT/data/FLEET_HOURS_MISSING" ]]; then
+    touch "$ROOT/data/FLEET_HOURS_MISSING" 2>/dev/null
+    osascript -e 'display notification "Falta ./fleet_hours: la flota NO arranca. Corre scripts/build_fleet_hours.sh" with title "🔴 PORTERO AUSENTE" sound name "Sosumi"' 2>/dev/null
+  fi
+  fleet_stop_all
+  exit 0
+fi
+rm -f "$ROOT/data/FLEET_HOURS_MISSING" 2>/dev/null
+FH_OUT="$("$FLEET_HOURS" 2>&1)"; FH_RC=$?
+if [[ $FH_RC -ne 0 ]]; then
+  # FUERA DE VENTANA. Idempotente y SILENCIOSO: sin voz y sin notificacion, porque
+  # el fin de semana esto es lo NORMAL, no una alarma. Solo deja rastro en el log.
+  fleet_stop_all
+  fleet_stop_bridges
+  echo "$(date) fleet: fuera de ventana -> todo apagado | $FH_OUT" >> "$ROOT/fleet_autostart.log"
+  exit 0
+fi
+
 # MODO SUEÑO (orden Yunior 2026-07-16 noche "alertas dormidas tambien"):
 # si data/fleet_sleep existe, se APAGA todo salvo bridge de datos + tws_watchdog
 # y launchd no revive nada. Despertar: rm data/fleet_sleep (+ focus_ticker del dia).
@@ -31,20 +114,9 @@ if [[ -f "$ROOT/data/fleet_sleep" ]]; then
     echo "$(date) fleet: AUTO-DESPERTAR (wake $WAKE alcanzado)" >> "$ROOT/fleet_autostart.log"
     osascript -e 'display notification "La flota amaneció sola: bots, sirenas y feeds armados. Buen OPEX." with title "🌅 FLOTA DESPIERTA" sound name "ProChord"' 2>/dev/null
   else
-    for p in price_alarm_keepalive.sh opt_sentinel_keepalive.sh options_enrich_keepalive.sh opt_chain_keepalive.sh bargain_keepalive.sh sox_keepalive.sh finviz_scout_keepalive.sh notify_relay.sh x_signal_keepalive.sh; do
-      pkill -f "scripts/$p" 2>/dev/null
-    done
-    pkill -f 'scripts/x_signal_poster.py' 2>/dev/null
-    pkill -f 'scripts/sox_index_feed.py' 2>/dev/null
-    pkill -x finviz_scout 2>/dev/null
-    pkill -x price_alarm 2>/dev/null
-    pkill -f 'scripts/opt_sentinel.py' 2>/dev/null
-    pkill -f 'scripts/options_enrich.py' 2>/dev/null
-    pkill -f 'scripts/opt_chain_cache.py' 2>/dev/null
-    for b in dram nok spcx tsla nvda txn tsm amd intc asml aapl gld qqq spy slv cper uso skhy skhynix samsung kospi mu smh ewy; do
-      pkill -f "scripts/${b}_keepalive.sh" 2>/dev/null
-      pkill -x "${b}_signal_bot" 2>/dev/null
-    done
+    # MISMA lista que el portero horario (fleet_stop_all). Los bridges de datos
+    # sobreviven al sueño a proposito: el sueño calla alertas, no el tape.
+    fleet_stop_all
     exit 0
   fi
 fi
@@ -52,7 +124,7 @@ fi
 # si data/focus_ticker existe, solo los tickers listados ahi corren; el resto
 # se APAGA en cada tick de 5 min. Restaurar flota completa: rm data/focus_ticker
 FOCUS="$ROOT/data/focus_ticker"
-for b in dram nok spcx tsla nvda txn tsm amd intc asml aapl gld qqq spy slv cper uso skhy skhynix samsung kospi mu smh ewy; do
+for b in "${FLEET_SYMS[@]}"; do
   if [[ -s "$FOCUS" ]] && ! grep -qix "$b" "$FOCUS"; then
     pkill -f "scripts/${b}_keepalive.sh" 2>/dev/null
     pkill -x "${b}_signal_bot" 2>/dev/null
