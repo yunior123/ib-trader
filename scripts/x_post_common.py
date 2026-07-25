@@ -9,6 +9,7 @@ el cap de otro. SEÑAL-SOLAMENTE: esto solo publica texto, jamas ordena.
 """
 import json
 import os
+import re
 import sys
 import time
 
@@ -211,15 +212,49 @@ def append_gex(text, sym, gex=_UNSET, max_chars=MAX_CHARS):
     return text[:keep].rstrip() + "…" + add
 
 
+# Un "$" cuenta como cashtag para X cuando lo sigue un token que contiene al menos
+# una LETRA: `$NVDA` (puro) y tambien `$4.7B` / `$1.2M` (importe pegado a letras,
+# caso cazado en vivo el 2026-07-21 — docs/ERRORES.md). `$200` (solo digitos) NO.
+_CASHTAGISH = re.compile(r"\$([A-Za-z0-9][A-Za-z0-9.,]*)")
+_PURE_CASHTAG = re.compile(r"^[A-Za-z]{1,6}$")
+
+
+def count_cashtags(text):
+    """Cuantos cashtags veria X en este texto (para tests y guardas)."""
+    n = 0
+    for m in _CASHTAGISH.finditer(text):
+        tok = m.group(1).rstrip(".,")
+        if any(c.isalpha() for c in tok):
+            n += 1
+    return n
+
+
 def sanitize_cashtags(text):
-    """X rechaza (403) posts con 2+ cashtags $SYM — conservar solo el PRIMERO.
-    Error repetido 2x el 2026-07-21 → docs/ERRORES.md. Los demas pierden el $."""
-    import re
-    seen = [0]
+    """X rechaza (403) posts con 2+ cashtags — conservar solo el PRIMERO.
+
+    Error repetido 2x el 2026-07-21 → `docs/ERRORES.md`. Reglas:
+      - se conserva el `$` del PRIMER cashtag PURO (`$NVDA`);
+      - los demas cashtags de letras pierden el `$` (`$SPY` → `SPY`);
+      - los importes pegados a letras pierden el `$` y ganan ` USD` para no
+        perder el significado (`$4.7B` → `4.7B USD`);
+      - los importes de solo digitos (`$200`) se dejan intactos: X no los cuenta.
+    """
+    kept = [False]
+
     def rep(m):
-        seen[0] += 1
-        return m.group(0) if seen[0] == 1 else m.group(0)[1:]
-    return re.sub(r"\$(?=[A-Za-z]{1,5}\b)", lambda m: "$" if seen.__setitem__(0, seen[0]+1) or seen[0] == 1 else "", text) if False else re.sub(r"\$([A-Za-z]{1,5}\b)", rep, text)
+        raw = m.group(1)
+        tok = raw.rstrip(".,")
+        tail = raw[len(tok):]
+        if not any(c.isalpha() for c in tok):
+            return m.group(0)                       # `$200` — no es cashtag
+        if _PURE_CASHTAG.match(tok) and not kept[0]:
+            kept[0] = True
+            return m.group(0)                       # el unico $ que sobrevive
+        if tok[0].isdigit():
+            return tok + " USD" + tail              # `$4.7B` → `4.7B USD`
+        return tok + tail                           # `$SPY` → `SPY`
+
+    return _CASHTAGISH.sub(rep, text)
 
 def post_text(text, tag, log, dry_run=False, auth=None, media_path=None):
     """Publica un post respetando ledger compartido. True si se posteo
