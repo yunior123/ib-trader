@@ -58,10 +58,21 @@ CREATE TABLE IF NOT EXISTS iv_hist(
     iv        REAL,
     delta     REAL,
     iv_src    TEXT    NOT NULL,
+    spot_src  TEXT    NOT NULL,
     oi        INTEGER,          -- SIEMPRE NULL: no existe historia de OI en este plan
     PRIMARY KEY(sym, date, exp, strike, right)
 )
 """
+
+# `poly_opt_bars` mezcla DOS granularidades y hay que casarlas distinto, no forzar una regla:
+#   - barras de 5 minutos: su `ts` es un instante de RTH -> spot del minuto mas cercano.
+#   - barras DIARIAS (las del backfill): su `ts` es el INICIO del dia, asi que ningun bar de 1m
+#     cae dentro de la tolerancia. Su precio de cierre corresponde al CIERRE de la sesion, luego
+#     el spot correcto es el ultimo cierre de ese dia. Eso no es un apaño: es el emparejamiento
+#     correcto para esa granularidad — y por eso viaja marcado en `spot_src`, para que nadie
+#     mezcle despues las dos cosas creyendo que son la misma medicion.
+SPOT_SRC_INTRADAY = "intradia_5min"
+SPOT_SRC_CLOSE = "cierre_sesion"
 
 
 def norm_exp(e):
@@ -142,6 +153,11 @@ def main():
             spot_cache[key] = (idx, sorted(idx))
         idx, keys = spot_cache[key]
         spot = nearest_spot(idx, keys, int(ts))
+        spot_src = SPOT_SRC_INTRADAY
+        if spot is None and keys:
+            spot = idx[keys[-1]]          # barra diaria -> cierre de la sesion, y se MARCA
+            spot_src = SPOT_SRC_CLOSE
+            stats["spot_cierre"] = stats.get("spot_cierre", 0) + 1
         if spot is None:
             stats["sin_spot"] += 1
             continue
@@ -162,11 +178,11 @@ def main():
         dlt = bs_delta(float(spot), float(strike), T, iv, cp) if iv is not None else None
 
         out.append((sym, d, int(ts), e, float(strike), cp, float(close), float(spot),
-                    T, iv, dlt, "invertida_biseccion", None))
+                    T, iv, dlt, "invertida_biseccion", spot_src, None))
 
     con.executemany(
         "INSERT OR REPLACE INTO iv_hist(sym,date,ts,exp,strike,right,opt_close,spot,"
-        "t_years,iv,delta,iv_src,oi) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)", out)
+        "t_years,iv,delta,iv_src,spot_src,oi) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)", out)
     con.commit()
 
     per_sym = {}
