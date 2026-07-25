@@ -52,7 +52,7 @@
       (err 10190) se reparte **por orden de la lista**, así que se lo llevaron DRAM/NOK/NVDA/SPCX/
       TSLA. La regla 12 entera (capitanes) corre sin su input firmado. Arreglo: prioridad explícita
       QQQ→SPY→SMH antes del best-effort. **Es de `scripts/`: otro agente o sesión siguiente.**
-- [ ] Correr `scratchpad/hiro_probe_ibkr.py` en la próxima sesión viva (dom 20:00 / lun premarket):
+- [ ] Correr `docs/probes/hiro_probe_ibkr.py` en la próxima sesión viva (dom 20:00 / lun premarket):
       mide el cap REAL de tick-by-tick y si OPRA por contrato está permitido. Sin ese número el
       resto de HIRO es especulación.
 
