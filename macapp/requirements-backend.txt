@@ -1,0 +1,9 @@
+# Dependencias del cockpit, congeladas de venv-chart (que funciona en produccion).
+# Se instalan DENTRO del .app con el Python empotrado -> bundle autocontenido.
+ib_async==2.1.0
+numpy==2.5.1
+websockets==16.1.1
+uvicorn==0.51.0
+fastapi==0.139.2
+duckdb==1.5.5
+nest-asyncio==1.6.0

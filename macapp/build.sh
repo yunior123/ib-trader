@@ -38,6 +38,14 @@ PLIST
 #   xattr -dr com.apple.quarantine "ib-trader Cockpit.app"
 codesign --force --sign - "$APP" >/dev/null 2>&1 || echo "  (aviso: firma ad-hoc fallo, la app sigue funcionando en local)"
 
+# --- BACKEND EMPOTRADO (bundle unico y portable) ---
+# SKIP_BACKEND=1 para iterar rapido en la UI sin re-empaquetar los ~200 MB.
+if [ "${SKIP_BACKEND:-0}" != "1" ]; then
+  zsh macapp/bundle_backend.sh
+else
+  echo "  (SKIP_BACKEND=1 — bundle SIN backend, solo para iterar la UI)"
+fi
+
 # --- ENTREGA A DESKTOP (pipeline automatico) -------------------------------
 # Desktop esta bajo TCC: desde una shell interactiva se escribe bien, pero si esto
 # llegara a correr bajo launchd fallaria igual que el repo antes de la mudanza.
