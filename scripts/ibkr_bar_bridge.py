@@ -25,7 +25,11 @@ productor de archivos I/O-bound — bots, readers y matematica siguen en C++.
 import os, sys, time
 from datetime import timezone
 
-ROOT = "/Users/yuniorrodriguezosorio/ib-trader"
+# Ruta DERIVADA, nunca hardcodeada (2026-07-25): la mudanza del repo dejo tres scripts en
+# crash-loop durante horas — opt_whale_watch, opt_chain_cache y opt_sentinel — con el keepalive
+# relanzandolos en silencio y el panel diciendo "armado" sin una sola alarma de ballena.
+# Este fichero apuntaba a la ruta nueva ya corregida a mano, pero seguia siendo literal.
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 os.chdir(ROOT)
 from ib_insync import IB, Stock, util  # noqa: E402
@@ -38,6 +42,34 @@ DAEMON = "--daemon" in sys.argv
 LIVE_ONLY = "--live-only" in sys.argv
 SYMS = [a for a in sys.argv[1:] if not a.startswith("--")] or ["USO"]
 CLIENT_ID = 84 if DAEMON else 83
+
+# PRIORIDAD DE CINTA PARA LOS CAPITANES (fix 2026-07-25).
+#
+# IBKR capea las suscripciones tick-by-tick por cuenta (err 10190) y el reparto era
+# best-effort EN EL ORDEN DE LA LISTA. Diagnostico MEDIDO ese dia sobre el daemon vivo:
+#   lista viva (33 syms): NOK SPCX DRAM TSLA NVDA TXN TSM AMD INTC ASML AAPL GLD QQQ SPY ...
+#   con cinta (>0 bytes): NOK SPCX DRAM TSLA NVDA          <- exactamente los 5 PRIMEROS
+#   a 0 BYTES:            qqq spy aapl amd asml gld intc tsm txn
+#   -> el cap real es de ~5 suscripciones, y QQQ iba 13o, SPY 14o, SMH 20o.
+# Consecuencia: la REGLA 12 entera (jerarquia de capitanes SPY/QQQ/SMH, la que ANULA la
+# señal de un nombre cuando su capitan va en contra) corria SIN su input firmado — el veto
+# mas fuerte del sistema, ciego, sin que nada lo dijera.
+# Arreglo: los capitanes van PRIMERO en el orden de suscripcion; el resto conserva su orden
+# relativo. Sigue siendo best-effort — cambia QUIEN se queda fuera cuando el cap muerde, y
+# ya no puede ser un capitan.
+# Solo en --daemon: run_single() usa SYMS[0] como "el simbolo que se sondea", asi que
+# reordenar ahi cambiaria a cual apunta un `ibkr_bar_bridge.py NVDA MU` suelto.
+CAPTAINS_FIRST = ["QQQ", "SPY", "SMH"]
+
+
+def captains_first(syms):
+    """Capitanes al frente, el resto conserva su orden relativo."""
+    return ([s for s in CAPTAINS_FIRST if s in syms]
+            + [s for s in syms if s not in CAPTAINS_FIRST])
+
+
+if DAEMON:
+    SYMS = captains_first(SYMS)
 
 WHALE_MIN_USD = float(os.environ.get("WHALE_MIN_USD", "50000"))
 
@@ -370,12 +402,21 @@ def run_single():
         ib.sleep(15)
     raise ConnectionError("TWS desconectado")
 
-while True:
-    try:
-        run_daemon() if DAEMON else run_single()
-    except Exception as e:
-        print(f"ibkr bridge CAIDO: {e} — reintento en 15s (¿TWS en {PORT}?)",
-              file=sys.stderr)
-        for st in STATES.values():
-            st.subs = []; st.blocked_until = 0
-        time.sleep(15)
+def _main():
+    """Bucle de reintento. Con guarda __main__ (2026-07-25) para que el modulo se pueda
+    IMPORTAR en tests sin arrancar el daemon: antes un `import` intentaba conectar a TWS y
+    se colgaba 15s por vuelta. Nadie importa este modulo en produccion (verificado con grep),
+    y los lanzadores lo ejecutan siempre como script, asi que el comportamiento no cambia."""
+    while True:
+        try:
+            run_daemon() if DAEMON else run_single()
+        except Exception as e:
+            print(f"ibkr bridge CAIDO: {e} — reintento en 15s (¿TWS en {PORT}?)",
+                  file=sys.stderr)
+            for st in STATES.values():
+                st.subs = []; st.blocked_until = 0
+            time.sleep(15)
+
+
+if __name__ == "__main__":
+    _main()
