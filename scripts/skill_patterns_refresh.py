@@ -199,4 +199,8 @@ def main():
             print(sym, "FALLO", e)
     print(f"{done} skills actualizadas")
 
-main()
+# Guarda de importacion (2026-07-25): `main()` a pelo REESCRIBIA las 30 SKILL.md por el
+# simple hecho de importar el modulo — un test que solo queria probar gex_line() acababa
+# regenerando las skills del usuario. Ejecutado como script se comporta igual que antes.
+if __name__ == "__main__":
+    main()
