@@ -138,7 +138,14 @@
 - [x] Conocimiento consolidado en LEARNED.md + skills + memoria; herramientas reutilizables xpost.py + gexa_parse.py
 - [x] **Europa para ASML**: momentum Ámsterdam (ASML.AS ~6h lead) + STOXX50 al plan+draft (prob bump, línea 🇪🇺)
 - [x] Tests C++23: 25/25 correctness pass + benchmark (Bollinger 9.46ns/op, resto inline, 0 bugs)
-- [ ] Verificar gexa headless conecta REALMENTE en el run de 4am (Chrome/extension sin sesión interactiva)
+- [x] ~~Verificar gexa headless conecta REALMENTE en el run de 4am~~ **MUERTO 2026-07-25**: gexa.ai
+      desaparecio ("gexa is gone now, we are on our own"). Mapa gamma calculado EN CASA:
+      `scripts/gex_snapshot.py` -> `data/gex_snapshot.json` (griegas MEDIDAS de Polygon, 25-30 syms
+      vs los 16 que se scrapeaban). Consumidores recableados <commit 631f40b..>: daily_fleet_plans
+      (regimen con procedencia en el PDF), x_post_common + 3 posters X, whales_week_map,
+      skill_patterns_refresh, daily_archive (lee los archivos viejos igual), fleet_healthcheck
+      (ausencia del mapa = ROJO), dailyplans_run.sh (fuera el `claude -p` de scraping).
+      Skill `gexa-terminal` y `scripts/gexa_parse.py` marcados JUBILADOS.
 - [ ] Raíz del `com.ibtrader.fleet` exit=78 (EX_CONFIG) — hoy se sortea con el healthcheck que relanza; falta arreglar el porqué bajo entorno launchd
 - [ ] Primera cacería REAL de jaula-liberación (lunes al cierre, cuando el after-hours vive)
 - [ ] Documentar force/cage/healthcheck/breadth en `docs/DAILY-SYSTEM.md` (parcial)
