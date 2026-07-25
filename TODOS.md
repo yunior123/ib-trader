@@ -323,3 +323,27 @@ Spec: `docs/FEATURES-MINED-2026-07-25.md` (#5 chain-honesty, #6 flip-honesty, #3
       que `levels_5m.jsonl` tenga >=40 sesiones; hoy 1.
 - [ ] PENDIENTE (#14): el kill por colinealidad de `pin-clock` necesita n>=10 syms con
       `chain_full` (hoy 3) -> depende del job de launchd de `poly_chain_archive.py`.
+
+## 2026-07-25 — hallazgos al cablear book_quality (medidos, no sospechados)
+- [x] `book_quality` CABLEADO en `direction_view` como multiplicador de los pesos gamma
+      (flip/muros/iman) + badge `.bq` en `charts/live.html` — hecho b91de93/13c903d.
+- [ ] **EL "THIN" DE 25/26 SIMBOLOS ES UN ARTEFACTO DE LA FUENTE, NO UN HECHO DEL MERCADO.**
+      `book_quality.py` lee las cadenas de `ibkr_tws`, que fuera de RTH traen **0% de griegas**
+      (AAPL: 20 contratos, `greeks_ok_pct 0.0` -> THIN, coef 0). Pero `poly_chain_archive` dejo
+      HOY las 30 cadenas con griegas **REALES** de Polygon: AAPL 96 contratos / **94%** con
+      gamma+OI medidos, NVDA 56 / 98%, QQQ 854 / 96%, y 4-7 vencimientos cada una. Es decir:
+      el libro de AAPL NO es fino, es que no lo estabamos mirando donde hay datos.
+      -> ACCION: que `book_quality.py` prefiera `data/history/<fecha>/chain_full_<sym>.json`
+      cuando `ibkr_tws` de <50% de griegas, y marque `chain_src` en consecuencia. Mientras no
+      se haga, la flota entera opera con los niveles gamma apagados fuera de RTH.
+      (`book_quality.py` estaba en la lista de NO-TOCAR de esta sesion — de ahi que quede aqui.)
+- [ ] **gexa es hoy CASI REDUNDANTE, y en un caso esta MAL.** Comparado el snapshot (16 syms)
+      contra el flip/regimen calculado con `gex_core` sobre las cadenas Polygon del dia:
+      SPY gexa 747.0 vs nuestro 747.95 (+0.13%), NVDA 203.0 vs 210.43, MU 942 vs 965,
+      SMH 571 vs 585 — pero **AAPL gexa flip 208.0 con spot 333.47 (-37.6%)**, imposible para
+      un flip de gamma: scrape roto. Y el campo `regime` viene **null en 15 de los 16** syms,
+      justo el campo del que depende la doctrina `gamma-regime-walls`. Nosotros lo calculamos
+      para los **30**. Lo unico que gexa aporta y no reproducimos es su score/bias propietario
+      y el Market Narrator (prosa), que son SALIDA DE MODELO ajeno, no dato medido.
+      -> ACCION: decidir si se jubila el scraping de gexa (skill `gexa-terminal`) y se pasa el
+      mapa gamma de los planes a `gex_core` + cadenas Polygon, que es medido y cubre la flota.
