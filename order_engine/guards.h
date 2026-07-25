@@ -20,8 +20,13 @@
 // #     #8 accounts_match  -> order_engine.cpp (verificacion de cuenta al
 // #        conectar). Sustituye al find() por subcadena. El agujero (d) del
 // #        encargo esta CERRADO en codigo, pero solo VERIFICADO EN FRIO:
-// #        compila y sus 82 checks pasan; la ruta real necesita un Gateway
+// #        compila y sus checks pasan; la ruta real necesita un Gateway
 // #        logueado -> PENDIENTE DE PAPER EL DOMINGO.
+// #     #4 stops_orphaned_by_close -> accion "close" del panel: el stop nativo
+// #        se cancela ANTES de mandar el close. El agujero (a) — GTC HUERFANO,
+// #        la causa documentada del desastre que motivo la ley SEÑAL-SOLAMENTE —
+// #        esta CERRADO en codigo. VERIFICADO EN FRIO (compila + 94 checks);
+// #        la ruta real necesita fills -> PENDIENTE DE PAPER EL DOMINGO.
 // #
 // #   ESCRITAS Y PROBADAS PERO **NO CABLEADAS** (el motor sigue con su logica
 // #   vieja en linea; los agujeros siguen ABIERTOS en produccion):
@@ -32,13 +37,6 @@
 // #                                que GRITA. Agujero (c) del encargo: ABIERTO.
 // #     #6    safe_to_touch_orders- no tocar ordenes sin reconcile completo
 // #     #9    clamp_option_stop  - clamp simetrico del stop de opcion
-// #
-// #     #4    stops_orphaned_by_close -> CABLEADA el 2026-07-25 en la accion
-// #        "close" del panel: el stop nativo se cancela ANTES de mandar el
-// #        close. El agujero (a) — GTC HUERFANO, la causa documentada del
-// #        desastre que motivo la ley SEÑAL-SOLAMENTE — esta CERRADO en codigo.
-// #        VERIFICADO EN FRIO (compila + 94 checks); la ruta real necesita
-// #        fills -> PENDIENTE DE PAPER EL DOMINGO.
 // #
 // #   NI ESCRITA NI CABLEADA: ninguna.
 // #
