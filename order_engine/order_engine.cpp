@@ -35,6 +35,7 @@
 #include "tws_adapter.h"
 #include "safety.h"
 #include "account_cfg.h"
+#include "guards.h"        // decisiones de dinero PURAS y testeables (tests/test_guards.cpp)
 #include "ledger.h"
 
 using namespace oe;
@@ -416,7 +417,12 @@ int main(int argc, char** argv) {
             ledger.note(std::string("ABORT sin cuenta configurada modo=") + (live_port ? "live" : "paper"));
             tws.disconnect(); return 1;
         }
-        if (tws.account().find(expected) == std::string::npos) {
+        // `managedAccounts` llega como CSV ("DUR197573,U26942420"). El find() que habia
+        // aqui era coincidencia por SUBCADENA: "U2694242" pasaba el filtro contra un
+        // Gateway logueado en "U26942420", y al reves. Eso es apuntar dinero real a otra
+        // cuenta. oe::accounts_match tokeniza por coma y compara EXACTO (falla cerrado).
+        // Testigo del bug + fix en order_engine/tests/test_guards.cpp (#8).
+        if (!oe::accounts_match(tws.account(), expected)) {
             std::fprintf(stderr, "[SEGURIDAD] modo=%s espera cuenta %s pero el broker reporta '%s' — ABORTO\n",
                          live_port ? "LIVE" : "PAPER", expected.c_str(), tws.account().c_str());
             ledger.note(std::string("ABORT cuenta no coincide: modo=") + (live_port ? "live" : "paper") +
