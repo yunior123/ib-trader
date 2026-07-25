@@ -252,7 +252,60 @@
   #ticketcard .tcnote { margin-top:9px; font-size:12px; font-weight:800; color:#f4c430;
              display:flex; align-items:center; gap:6px; }
 
-  #chart { position: absolute; top: 68px; bottom: 24px; left: 0; right: 0; }
+  /* =================== WIDGETS ACOPLABLES (Yunior 2026-07-25) ===================
+     "3 more widgets: net premiums graph, options flow orders, net gamma exposure by
+      strike. expandable ones, and dragable, in areas when expanded that do not
+      interfere with the view of the graph or chart."
+     La ultima frase manda el diseño: EXPANDIR NO PUEDE TAPAR EL GRAFICO. Por eso el
+     dock es una COLUMNA que ENCOGE el chart (#chart right = --dockw), no un overlay.
+     Un widget se puede arrastrar FUERA (flotante) para colocarlo donde se quiera, pero
+     al EXPANDIRLO vuelve al dock: expandido y flotante taparia el precio. */
+  :root { --dockw: 0px; }
+  #wdock { position:absolute; z-index:44; top:68px; bottom:24px; right:0; width:var(--dockw);
+           background:#10141d; border-left:1px solid #2a3550; display:flex; flex-direction:column;
+           gap:6px; padding:6px; overflow-y:auto; overflow-x:hidden; }
+  #wdock:empty, #wdock.off { display:none; }
+  .wgt { background:#161a24; border:1px solid #2a3550; border-radius:6px; display:flex;
+         flex-direction:column; overflow:hidden; flex:0 0 auto; min-height:30px; }
+  .wgt.float { position:absolute; z-index:47; width:320px; box-shadow:0 10px 34px rgba(0,0,0,.62); }
+  .wgt.drag { opacity:.9; cursor:grabbing; }
+  .wghdr { display:flex; align-items:center; gap:6px; padding:5px 7px; background:#1b2130;
+           border-bottom:1px solid #232a3a; font-size:11px; font-weight:700; color:#8aa0c8;
+           cursor:grab; user-select:none; flex:0 0 auto; }
+  .wghdr .wgdrag { color:#4b5b7a; letter-spacing:-2px; }
+  .wghdr .wgname { white-space:nowrap; }
+  .wghdr .wgsub { flex:1; text-align:right; color:#6f8bbf; font-weight:600;
+                  font-variant-numeric:tabular-nums; overflow:hidden; text-overflow:ellipsis; }
+  .wgb { background:transparent; border:none; color:#6f8bbf; font:inherit; font-size:12px;
+         font-weight:700; cursor:pointer; padding:0 3px; line-height:1; }
+  .wgb:hover { color:#fff; }
+  .wgt.exp .wgexp { color:#f4c430; }
+  .wgbody { flex:1 1 auto; overflow:auto; min-height:0; position:relative; }
+  .wgt.min .wgbody, .wgt.min .wgrs { display:none; }
+  .wgrs { height:6px; flex:0 0 auto; cursor:ns-resize; background:
+          repeating-linear-gradient(90deg,#2a3550 0 12px,transparent 12px 24px); opacity:.45; }
+  .wgrs:hover { opacity:1; }
+  .wgt canvas { display:block; width:100%; height:100%; }
+  /* hueco ROTULADO de los widgets sin dato. JAMAS datos sinteticos: vacio y honesto. */
+  .wgempty { padding:9px 10px 11px; font-size:11px; line-height:1.5; color:#8b97ad; }
+  .wgempty .wgblock { display:inline-block; background:#3a2020; border:1px solid #ef5350;
+           color:#ff8a87; border-radius:4px; padding:1px 7px; font-weight:800; font-size:10px;
+           letter-spacing:.4px; margin-bottom:7px; }
+  .wgempty b { color:#d1d4dc; } .wgempty code { color:#7ea0ff; font-size:10.5px; }
+  .wgempty ul { margin:6px 0; padding-left:16px; } .wgempty li { margin-bottom:3px; }
+  .wgempty p { margin:5px 0; }
+  .wgempty .wgway { border-top:1px solid #232a3a; padding-top:6px; color:#9fb0cc; }
+  .wgempty .wgnever { color:#6b7a99; font-style:italic; }
+  #wgbtn.on { background:#2962ff; color:#fff; border-color:#2962ff; }
+  #wgmenu { position:absolute; z-index:62; background:#161a24; border:1px solid #2a3550;
+            border-radius:6px; padding:4px; display:none; box-shadow:0 8px 24px rgba(0,0,0,.6); }
+  #wgmenu.on { display:block; }
+  #wgmenu button { display:block; width:190px; text-align:left; background:transparent; border:none;
+            color:#d1d4dc; font:inherit; font-size:12px; padding:5px 8px; border-radius:4px; cursor:pointer; }
+  #wgmenu button:hover { background:#2a2e39; }
+  #wgmenu button .tick { color:#26a69a; margin-right:5px; }
+
+  #chart { position: absolute; top: 68px; bottom: 24px; left: 0; right: var(--dockw); }
   footer { position: absolute; bottom: 0; height: 24px; left: 0; right: 0;
            display: flex; align-items: center; gap: 12px; padding: 0 12px;
            background: #1e222d; font-size: 11px; color: #787b86; overflow-x: auto;
@@ -293,6 +346,7 @@
   </span>
   <button id="alarmbtn" title="Alarma manual (estilo TradingView): clic aquí y luego clic en el precio del chart para poner una alarma. Suena sirena+voz al cruzar (price_alarm).">🔔 Alarma</button>
   <button id="zonebtn" title="Zona de ejecución: clic aquí y luego clic en el precio del chart; elige expiry, cantidad y comprar/vender call/put. Por defecto FICHA (señal-solamente); ARMA el chip ⚡ para que el order_engine la ejecute. Stop-loss arrastrable.">🎯 Zona</button>
+  <button id="wgbtn" class="tgl" style="border-radius:4px;padding:4px 9px" title="Widgets acoplables: Net GEX por strike, Net Premiums, Options Flow. Se arrastran, se pliegan y se expanden — al expandirse el gráfico se ENCOGE, nunca queda tapado.">🧩 Widgets</button>
   <button id="narrbtn" title="Narrador de mercado (como gexa): lectura breve del mapa GEX. Determinista gratis + DeepSeek bajo demanda (↻).">🗣 Narrador</button>
   <button id="helpbtn" title="¿Qué es cada cosa? (guía)">ℹ Guía</button>
   <span id="conn" class="off">● desconectado</span>
@@ -404,6 +458,75 @@
     </div>
   </div>
 </div>
+<!-- ============ WIDGETS ACOPLABLES ============
+     Los tres que pidió Yunior. El de GEX lleva DATO MEDIDO (levels.profile, griegas de
+     Polygon vía chart_levels.py:229 — el mismo que ya alimenta las burbujas: cero red
+     nueva). Los otros dos están VACÍOS Y ROTULADOS: el dato que necesitan no existe
+     todavía. Rellenarlos con demo sería exactamente el fallo que llevamos todo el día
+     matando (el cero plausible), así que se quedan vacíos y dicen por qué. -->
+<div id="wgmenu"></div>
+<div id="wdock" class="off">
+
+  <div class="wgt" id="wgt-gex">
+    <div class="wghdr">
+      <span class="wgdrag">⠿⠿</span><span class="wgname">Net GEX por strike</span>
+      <span class="wgsub" id="wgex-sub">—</span>
+      <button class="wgb wgexp" title="Expandir / contraer. Al expandirse el dock se ensancha y el GRÁFICO SE ENCOGE: nunca queda tapado.">⤢</button>
+      <button class="wgb wgmin" title="Plegar">–</button>
+      <button class="wgb wgx" title="Cerrar">✕</button>
+    </div>
+    <div class="wgbody"><canvas id="wgex-cv"></canvas></div>
+    <div class="wgrs" title="Arrastra para cambiar la altura"></div>
+  </div>
+
+  <div class="wgt" id="wgt-prem">
+    <div class="wghdr">
+      <span class="wgdrag">⠿⠿</span><span class="wgname">Net Premiums</span>
+      <span class="wgsub">sin dato</span>
+      <button class="wgb wgexp" title="Expandir / contraer">⤢</button>
+      <button class="wgb wgmin" title="Plegar">–</button>
+      <button class="wgb wgx" title="Cerrar">✕</button>
+    </div>
+    <div class="wgbody wgempty">
+      <div class="wgblock">BLOQUEADO — FALTA EL DATO</div>
+      <p><b>Premium neto call vs put acumulado</b> exige <i>prints individuales de opciones</i>
+         con precio y tamaño, firmados por lado (quién fue el agresor). Hoy no los tenemos:</p>
+      <ul>
+        <li><code>opt_whale_watch</code> usa <code>reqMktData</code> = volumen <b>acumulado del día
+            cada 5 min</b>. Un contador no se des-suma en órdenes.</li>
+        <li><code>whale_*.txt</code> son prints de <b>acciones</b>, no de opciones.</li>
+        <li>Polygon <code>/v3/trades/O:</code> responde <b>403</b> con nuestra key.</li>
+      </ul>
+      <p class="wgway"><b>La vía es HIRO:</b> <code>ibkr_bar_bridge.py:250</code> ya corre
+         <code>reqTickByTickData("AllLast")</code> con firmado Lee-Ready — falta apuntarlo a
+         <b>contratos de opción</b>. Suscripción nueva: <b>ninguna</b> (OPRA ya se paga vía IBKR).</p>
+      <p class="wgnever">Vacío a propósito: aquí no se pintan datos sintéticos ni de demo.</p>
+    </div>
+    <div class="wgrs"></div>
+  </div>
+
+  <div class="wgt" id="wgt-flow">
+    <div class="wghdr">
+      <span class="wgdrag">⠿⠿</span><span class="wgname">Options Flow Orders</span>
+      <span class="wgsub">sin dato</span>
+      <button class="wgb wgexp" title="Expandir / contraer">⤢</button>
+      <button class="wgb wgmin" title="Plegar">–</button>
+      <button class="wgb wgx" title="Cerrar">✕</button>
+    </div>
+    <div class="wgbody wgempty">
+      <div class="wgblock">BLOQUEADO — FALTA EL DATO</div>
+      <p><b>La cinta de sweeps</b> (hora · contrato · tamaño · precio · lado · agresor) necesita
+         exactamente el mismo dato que Net Premiums, y está bloqueada por lo mismo:
+         no tenemos prints de opción firmados, solo contadores acumulados.</p>
+      <p class="wgway"><b>La vía es HIRO</b> (tick-by-tick AllLast sobre contratos de opción,
+         <code>ibkr_bar_bridge.py:250</code>). Cuando llegue, esta lista se llena sola.</p>
+      <p class="wgnever">Vacío a propósito: una cinta de órdenes inventada es peor que no tenerla.</p>
+    </div>
+    <div class="wgrs"></div>
+  </div>
+
+</div>
+
 <footer>
   <span><span class="dot" style="background:#2962ff"></span>BB(20,2)</span>
   <span><span class="dot" style="background:#f4c430"></span>SMA20</span>
@@ -1611,6 +1734,7 @@ function onHistory(msg) {
   curLevels = msg.levels;
   drawLevels(msg.levels);
   gexPrim.setLevels(msg.levels);
+  wgexDraw();          // widget Net GEX por strike (mismo profile, cero red nueva)
   drawHeader(msg.levels);
   syncSymSel(msg.levels && msg.levels.sym);
   setOHLC(lastBar);
@@ -1637,7 +1761,7 @@ function onBar(msg) {
   lastBar = msg.bar; lastBarTime = msg.bar.time;
   if (ind.trendlines) drawTrendlines(ind.trendlines);
   if (msg.levels && (!curLevels || msg.levels.asof !== curLevels.asof)) {
-    curLevels = msg.levels; drawLevels(msg.levels); gexPrim.setLevels(msg.levels);
+    curLevels = msg.levels; drawLevels(msg.levels); gexPrim.setLevels(msg.levels); wgexDraw();
   }
   drawHeader(curLevels || msg.levels);
   setOHLC(lastBar);
@@ -1649,6 +1773,7 @@ function onLevels(msg) {
   curLevels = msg.levels;
   drawLevels(msg.levels);
   gexPrim.setLevels(msg.levels);
+  wgexDraw();
   drawHeader(msg.levels);
 }
 
@@ -1658,6 +1783,264 @@ chart.subscribeCrosshairMove((param) => {
   const d = param.seriesData.get(candle);
   if (d && d.open != null) setOHLC(d); else setOHLC(lastBar);
 });
+
+// ============================ WIDGETS ACOPLABLES ============================
+// Marco UNA vez para los tres widgets (Yunior 2026-07-25). Reglas del pedido:
+//   · arrastrables  -> se agarran por la cabecera; salen del dock y flotan donde quieras.
+//   · expandibles   -> ⤢ ensancha. EXPANDIDO SIEMPRE VA ACOPLADO: el dock es una COLUMNA
+//                      que ENCOGE el chart (#chart right = --dockw), asi que por
+//                      construccion no puede taparlo. Expandir un flotante lo re-acopla.
+//   · persistentes  -> abierto/plegado/expandido/posicion/altura en localStorage.
+// Sin frameworks: la CSP del cockpit no admite CDN y el peso importa (Mac de 8 GB).
+const WGT_IDS = ["gex", "prem", "flow"];
+const WGT_NAME = { gex: "Net GEX por strike", prem: "Net Premiums", flow: "Options Flow Orders" };
+const WGT_EL = {};
+for (const k of WGT_IDS) WGT_EL[k] = document.getElementById("wgt-" + k);
+const wdockEl = document.getElementById("wdock");
+const wgMenuEl = document.getElementById("wgmenu");
+const WG_KEY = "cockpitWidgets.v1";
+const WG_W = 320, WG_W_EXP = 560;          // ancho del dock: normal / expandido
+
+const wgFresh = () => ({ open: { gex: true, prem: false, flow: false },
+                         float: {}, h: { gex: 320, prem: 300, flow: 300 }, min: {}, exp: {} });
+let WG = wgFresh();
+try {
+  const s = JSON.parse(localStorage.getItem(WG_KEY) || "null");
+  if (s && s.open) WG = Object.assign(wgFresh(), s);
+} catch (e) {}
+const wgSave = () => { try { localStorage.setItem(WG_KEY, JSON.stringify(WG)); } catch (e) {} };
+
+// El chart NO se auto-redimensiona al cambiar el ancho del dock: hay que decirselo.
+function wgFitChart() {
+  requestAnimationFrame(() => {
+    try { chart.resize(el.clientWidth, el.clientHeight); } catch (e) {}
+    wgexDraw();
+  });
+}
+
+function wgApply() {
+  let dockW = 0;
+  for (const id of WGT_IDS) {
+    const w = WGT_EL[id]; if (!w) continue;
+    const on = !!WG.open[id], flo = on && !!WG.float[id];
+    w.style.display = on ? "flex" : "none";
+    w.classList.toggle("float", flo);
+    w.classList.toggle("min", !!WG.min[id]);
+    w.classList.toggle("exp", !!WG.exp[id]);
+    const h = WG.min[id] ? "" : Math.max(90, WG.h[id] || 300) + "px";
+    if (flo) {
+      const f = WG.float[id];
+      w.style.left = Math.round(f.x) + "px"; w.style.top = Math.round(f.y) + "px";
+      w.style.width = WG_W + "px"; w.style.height = h;
+      if (w.parentNode !== el) el.appendChild(w);
+    } else {
+      w.style.left = w.style.top = w.style.width = ""; w.style.height = h;
+      if (on) dockW = Math.max(dockW, WG.exp[id] ? WG_W_EXP : WG_W);
+      if (w.parentNode !== wdockEl) wdockEl.appendChild(w);
+    }
+  }
+  document.documentElement.style.setProperty("--dockw", dockW + "px");
+  wdockEl.classList.toggle("off", dockW === 0);
+  const anyOpen = WGT_IDS.some(id => WG.open[id]);
+  document.getElementById("wgbtn").classList.toggle("on", anyOpen);
+  wgFitChart();
+}
+
+// ------- arrastre por la cabecera (docked -> flotante -> re-acople en el borde) -------
+function wgDrag(id, ev) {
+  if (ev.button !== 0) return;
+  const w = WGT_EL[id]; if (!w) return;
+  const r0 = w.getBoundingClientRect();
+  const ox = ev.clientX - r0.left, oy = ev.clientY - r0.top;
+  const x0 = ev.clientX, y0 = ev.clientY;
+  let moved = false;
+  const mv = (e) => {
+    if (!moved && Math.abs(e.clientX - x0) + Math.abs(e.clientY - y0) < 5) return;
+    if (!moved) { moved = true; w.classList.add("drag"); WG.exp[id] = false; }
+    const cr = el.getBoundingClientRect();
+    WG.float[id] = { x: Math.max(0, Math.min(cr.width - 90, e.clientX - cr.left - ox)),
+                     y: Math.max(0, Math.min(cr.height - 26, e.clientY - cr.top - oy)) };
+    wgApply();
+  };
+  const up = (e) => {
+    document.removeEventListener("mousemove", mv); document.removeEventListener("mouseup", up);
+    w.classList.remove("drag");
+    if (!moved) return;
+    // soltado pegado al borde derecho = re-acoplar (como TradingView)
+    const cr = el.getBoundingClientRect();
+    if (e.clientX > cr.right - 46) delete WG.float[id];
+    wgApply(); wgSave();
+  };
+  document.addEventListener("mousemove", mv); document.addEventListener("mouseup", up);
+  ev.preventDefault();
+}
+
+function wgResize(id, ev) {
+  const h0 = WG.h[id] || 300, y0 = ev.clientY;
+  const mv = (e) => { WG.h[id] = Math.max(90, Math.min(1400, h0 + (e.clientY - y0))); wgApply(); };
+  const up = () => { document.removeEventListener("mousemove", mv);
+                     document.removeEventListener("mouseup", up); wgSave(); };
+  document.addEventListener("mousemove", mv); document.addEventListener("mouseup", up);
+  ev.preventDefault();
+}
+
+for (const id of WGT_IDS) {
+  const w = WGT_EL[id]; if (!w) continue;
+  const hdr = w.querySelector(".wghdr");
+  hdr.addEventListener("mousedown", (e) => {
+    if (e.target.closest(".wgb")) return;      // los botones no arrastran
+    wgDrag(id, e);
+  });
+  hdr.addEventListener("dblclick", (e) => {
+    if (e.target.closest(".wgb")) return;
+    if (WG.float[id]) delete WG.float[id]; else WG.float[id] = { x: 40, y: 40 };
+    wgApply(); wgSave();
+  });
+  w.querySelector(".wgexp").addEventListener("click", () => {
+    WG.exp[id] = !WG.exp[id];
+    // EXPANDIDO NO FLOTA: un panel grande encima del precio es justo lo que Yunior
+    // prohibio ("do not interfere with the view of the chart"). Al expandir se acopla.
+    if (WG.exp[id]) { delete WG.float[id]; WG.min[id] = false; }
+    wgApply(); wgSave();
+  });
+  w.querySelector(".wgmin").addEventListener("click", () => {
+    WG.min[id] = !WG.min[id]; wgApply(); wgSave();
+  });
+  w.querySelector(".wgx").addEventListener("click", () => {
+    WG.open[id] = false; wgApply(); wgSave(); wgMenuBuild();
+  });
+  const rs = w.querySelector(".wgrs");
+  if (rs) rs.addEventListener("mousedown", (e) => wgResize(id, e));
+}
+
+function wgMenuBuild() {
+  wgMenuEl.innerHTML = "";
+  for (const id of WGT_IDS) {
+    const b = document.createElement("button");
+    b.innerHTML = `<span class="tick">${WG.open[id] ? "✓" : "&nbsp;"}</span>${WGT_NAME[id]}`;
+    b.addEventListener("click", () => {
+      WG.open[id] = !WG.open[id];
+      if (WG.open[id]) { WG.min[id] = false; }
+      wgApply(); wgSave(); wgMenuBuild();
+    });
+    wgMenuEl.appendChild(b);
+  }
+}
+document.getElementById("wgbtn").addEventListener("click", (e) => {
+  const r = e.currentTarget.getBoundingClientRect();
+  wgMenuEl.style.left = Math.round(r.left) + "px";
+  wgMenuEl.style.top = Math.round(r.bottom + 4) + "px";
+  wgMenuEl.classList.toggle("on");
+  wgMenuBuild();
+});
+document.addEventListener("click", (e) => {
+  if (!e.target.closest("#wgmenu") && !e.target.closest("#wgbtn")) wgMenuEl.classList.remove("on");
+});
+
+// ---------------------- WIDGET 1: Net GEX por strike (DATO MEDIDO) -------------------
+// Fuente: levels.profile [{strike, gex}] — chart_levels.py:229, griegas MEDIDAS de la
+// cadena archivada. Es el MISMO array que ya alimenta las burbujas de los muros:
+// CERO red nueva, cero cómputo nuevo. Barras horizontales verde(+)/rojo(−), línea del
+// spot, línea del flip, y el neto total en la cabecera.
+function wgexDraw() {
+  const cv = document.getElementById("wgex-cv");
+  if (!cv || !WG.open.gex || WG.min.gex) return;
+  const body = cv.parentNode;
+  const W = body.clientWidth, H = body.clientHeight;
+  if (W < 20 || H < 20) return;
+  const dpr = window.devicePixelRatio || 1;
+  if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) {
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+  }
+  const g = cv.getContext("2d");
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.clearRect(0, 0, W, H);
+  g.font = "10px -apple-system, BlinkMacSystemFont, sans-serif";
+  g.textBaseline = "middle";
+
+  const lv = curLevels || {};
+  let prof = (lv.profile || []).filter(p => p && p.strike != null && p.gex != null);
+  const sub = document.getElementById("wgex-sub");
+  if (!prof.length) {
+    g.fillStyle = "#6b7a99"; g.textAlign = "center";
+    g.fillText("sin perfil GEX todavía (esperando levels)", W / 2, H / 2);
+    if (sub) sub.textContent = "—";
+    return;
+  }
+  prof = prof.slice().sort((a, b) => b.strike - a.strike);       // strike alto arriba
+  const total = prof.length;
+
+  // Si no caben todos los strikes, se muestra la VENTANA alrededor del spot y se DICE.
+  const padT = 4, padB = 14, GUT = 46;
+  const avail = H - padT - padB;
+  const maxRows = Math.max(3, Math.floor(avail / 7));
+  let windowed = false;
+  if (prof.length > maxRows) {
+    const ref = lv.spot != null ? lv.spot : prof[Math.floor(prof.length / 2)].strike;
+    const byNear = prof.slice().sort((a, b) => Math.abs(a.strike - ref) - Math.abs(b.strike - ref));
+    prof = byNear.slice(0, maxRows).sort((a, b) => b.strike - a.strike);
+    windowed = true;
+  }
+  const n = prof.length;
+  const rowH = avail / n;
+  const barH = Math.max(2, Math.min(13, rowH - 2));
+  const cx = GUT + (W - GUT - 8) / 2;              // eje cero
+  const half = (W - GUT - 14) / 2;
+  const maxAbs = Math.max(1, ...prof.map(p => Math.abs(p.gex)));
+  const yOfRow = (i) => padT + rowH * (i + 0.5);
+  // precio -> y (interpolado entre strikes; fuera de rango se recorta)
+  const yOfPrice = (px) => {
+    if (px == null) return null;
+    if (px >= prof[0].strike) return padT;
+    if (px <= prof[n - 1].strike) return padT + avail;
+    for (let i = 0; i < n - 1; i++) {
+      const a = prof[i].strike, b = prof[i + 1].strike;
+      if (px <= a && px >= b) {
+        const f = (a - px) / Math.max(1e-9, a - b);
+        return yOfRow(i) + f * rowH;
+      }
+    }
+    return null;
+  };
+
+  g.strokeStyle = "#232a3a"; g.lineWidth = 1;      // eje cero
+  g.beginPath(); g.moveTo(cx + 0.5, padT); g.lineTo(cx + 0.5, padT + avail); g.stroke();
+
+  for (let i = 0; i < n; i++) {
+    const p = prof[i], y = yOfRow(i);
+    const wpx = (Math.abs(p.gex) / maxAbs) * half;
+    g.fillStyle = p.gex >= 0 ? "rgba(38,166,154,0.92)" : "rgba(239,83,80,0.92)";
+    if (p.gex >= 0) g.fillRect(cx + 1, y - barH / 2, Math.max(1, wpx), barH);
+    else            g.fillRect(cx - 1 - Math.max(1, wpx), y - barH / 2, Math.max(1, wpx), barH);
+    if (rowH >= 9) {                                // etiqueta de strike si hay sitio
+      g.fillStyle = "#6f8bbf"; g.textAlign = "right";
+      g.fillText(String(p.strike), GUT - 6, y);
+    }
+  }
+
+  const dash = (y, color, lab) => {
+    if (y == null) return;
+    g.save(); g.setLineDash([4, 3]); g.strokeStyle = color; g.lineWidth = 1;
+    g.beginPath(); g.moveTo(GUT, y + 0.5); g.lineTo(W - 4, y + 0.5); g.stroke(); g.restore();
+    g.fillStyle = color; g.textAlign = "left"; g.fillText(lab, GUT + 3, y - 6);
+  };
+  dash(yOfPrice(lv.flip), "rgba(244,196,48,0.9)", "flip " + (lv.flip != null ? lv.flip : ""));
+  dash(yOfPrice(lv.spot), "rgba(255,255,255,0.85)", "spot " + (lv.spot != null ? lv.spot : ""));
+
+  g.fillStyle = "#4b5b7a"; g.textAlign = "center";   // pie: escala real de las barras
+  g.fillText("← gamma −     |     gamma + →   (máx " + fmtBig(maxAbs) + ")", cx, H - 6);
+
+  if (sub) {
+    const net = lv.net_gex != null ? fmtBig(lv.net_gex) : "—";
+    sub.textContent = `${net} · ${lv.scope || ""} ${lv.dte != null ? (lv.dte < 1 ? "0DTE" : Math.round(lv.dte) + "DTE") : ""}`
+      + ` · ${windowed ? n + "/" + total + " strikes (ventana al spot)" : total + " strikes"}`;
+    sub.title = windowed
+      ? `Perfil completo: ${total} strikes. No caben todos, se muestran los ${n} más cercanos al spot. Expande (⤢) o agranda el widget para ver más.`
+      : `Perfil completo: ${total} strikes, todos visibles.`;
+  }
+}
+window.addEventListener("resize", () => wgFitChart());
+wgApply();
 
 // ------------------------------------------------------- reconnect loop
 let ws = null, retry = null;
