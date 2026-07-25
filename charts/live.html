@@ -173,6 +173,13 @@
   #dirarrow .pct { font-size:26px; font-weight:800; margin-top:-6px; }
   #dirarrow .tgt { font-size:15px; font-weight:700; color:#e0c060; margin-top:2px; }
   #dirarrow .st { font-size:11px; font-weight:800; letter-spacing:.4px; margin-top:2px; }
+  /* CALIDAD DEL LIBRO: si el libro es THIN los niveles gamma son decoracion y la flecha
+     ya no los pesa. El badge lo dice, para no operar un mapa que hoy no manda. */
+  #dirarrow .bq { font-size:10px; font-weight:800; letter-spacing:.4px; margin-top:2px;
+                  padding:1px 5px; border-radius:3px; display:none; }
+  #dirarrow .bq.thin { color:#ef5350; background:rgba(239,83,80,.14); }
+  #dirarrow .bq.weak { color:#e0c060; background:rgba(224,192,96,.12); }
+  #dirarrow .bq.full { color:#787b86; background:rgba(120,123,134,.10); }
   #dirarrow .cap { font-size:11px; font-weight:600; color:#b2b5be; max-width:240px;
                    margin:3px auto 0; line-height:1.3; }
   /* APROXIMANDO = flecha HUECA: se ve venir, no se afirma (PRINT O NADA) */
@@ -366,7 +373,7 @@
 <div id="chart">
   <div id="structpill" class="hidden"></div>
   <div id="chipbar"></div>
-  <div id="dirarrow"><div class="glyph"></div><div class="pct"></div><div class="tgt"></div><div class="st"></div><div class="cap"></div></div>
+  <div id="dirarrow"><div class="glyph"></div><div class="pct"></div><div class="tgt"></div><div class="st"></div><div class="bq"></div><div class="cap"></div></div>
   <div id="countdown"></div>
   <div id="zonepop">
     <div class="zph">Zona @ <span id="zonepop-px">—</span> · <span id="zone-instlbl">acción</span></div>
@@ -1456,6 +1463,7 @@ const dirPct = dirEl.querySelector(".pct");
 const dirTgt = dirEl.querySelector(".tgt");
 const dirCap = dirEl.querySelector(".cap");
 const dirSt = dirEl.querySelector(".st");
+const dirBq = dirEl.querySelector(".bq");
 function onDirection(msg) {
   const d = msg.dir || "flat";
   const prob = (msg.prob != null) ? msg.prob : "";
@@ -1483,6 +1491,24 @@ function onDirection(msg) {
                       : st.indexOf("REVERSION") === 0 ? "#e0c060"
                       : st.indexOf("CONTINUA") === 0 ? "#8aa0c8"
                       : st.indexOf("APROX") === 0 ? "#c9a227" : "#787b86";
+  }
+  // BADGE de calidad del libro: coef 0 = "los niveles gamma son decoracion hoy para este
+  // nombre" (los pesos flip/muros/iman ya van a 0 en direction_view). Sin medicion no se
+  // pinta nada: no se inventa un "libro OK" que nadie midio.
+  if (dirBq) {
+    const c = msg.book_coef, lab = msg.book_label || "";
+    dirBq.className = "bq";
+    if (c == null) { dirBq.style.display = "none"; dirBq.textContent = ""; }
+    else {
+      const pct = Math.round(c * 100);
+      dirBq.textContent = (c <= 0 ? `LIBRO ${lab || "THIN"} · gamma 0% (decoracion)`
+                                  : `LIBRO ${lab || "?"} · gamma ${pct}%`);
+      dirBq.classList.add(c <= 0 ? "thin" : c < 1 ? "weak" : "full");
+      dirBq.style.display = "block";
+      dirBq.title = c <= 0
+        ? "book_quality: libro THIN — flip/muros/iman pesan 0 en la flecha; operar precio / momentum / capitan"
+        : `book_quality ${lab}: los pesos gamma (flip 1.5, muros 1.0, iman 1.1) van al ${pct}%`;
+    }
   }
   dirEl.classList.toggle("pending", !!msg.pending_print);   // hueca hasta que IMPRIMA
   dirEl.classList.toggle("stale", !!msg.stale);

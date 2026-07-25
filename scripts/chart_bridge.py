@@ -1215,6 +1215,12 @@ async def broadcast_direction(state, lv=None):
              "target": dv.get("target"), "target_label": (dv.get("grade") or "objetivo"),
              "target_pct": (None if not dv.get("target") or not dv.get("level")
                             else round((dv["target"] / (dv["level"]["price"] or 1) - 1) * 100, 2))}
+    # CALIDAD DEL LIBRO: con coef 0 (THIN) los niveles gamma son decoracion hoy para este
+    # nombre y la flecha ya no los pesa (direction_view) ni la brujula da lectura (compass).
+    # El chart lo DICE en vez de dejar al operador creerse un mapa que no manda.
+    bq_coef, bq_label = direction_view.book_coef(state.sym)
+    frame["book_label"] = bq_label
+    frame["book_coef"] = bq_coef
     for ws in list(state.clients):
         try:
             await ws.send_json(frame)

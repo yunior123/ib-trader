@@ -61,6 +61,37 @@ def _pctb(closes, n=20, k=2.0):
     return (closes[-1] - lo) / (up - lo)
 
 
+def book_coef(sym):
+    """Coeficiente de CALIDAD DEL LIBRO de opciones para `sym`, medido por scripts/book_quality.py.
+
+    `coef` in [0,1] = cuanto se puede creer HOY a los niveles gamma de este nombre.
+    `coef == 0.0` (etiqueta THIN) significa literalmente "los niveles gamma son decoracion hoy
+    para este nombre: operar solo precio / momentum / capitan".
+
+    Devuelve (coef, label), o (None, None) si NO hay medicion. Jamas un numero plausible
+    inventado: sin medicion no se penaliza ni se premia — se declara que no se sabe y los
+    pesos gamma quedan como estaban (degradacion limpia, no silenciosa).
+    """
+    p = os.path.join(REPO, "data", "book_quality.json")
+    if not os.path.exists(p):
+        return None, None
+    try:
+        import json
+        with open(p) as f:
+            d = json.load(f)
+    except (OSError, ValueError):
+        return None, None
+    sec = d.get(sym.upper())
+    if not isinstance(sec, dict):
+        return None, None
+    lab = sec.get("book_label")
+    lab = lab if isinstance(lab, str) else None
+    c = sec.get("coef")
+    if not isinstance(c, (int, float)) or isinstance(c, bool):
+        return None, lab
+    return float(max(0.0, min(1.0, float(c)))), lab
+
+
 def compute(sym, lv=None):
     sym = sym.upper()
     try:
@@ -71,19 +102,31 @@ def compute(sym, lv=None):
         lv = lv or {}
     if not lv or not lv.get("spot") or not lv.get("flip"):
         return {"dir": "flat", "prob": 50, "score": 0.0, "factors": {},
-                "why": ["sin mapa GEX fresco"]}
+                "why": ["sin mapa GEX fresco"], "book_label": None, "book_coef": None}
     spot = lv["spot"]; flip = lv["flip"]; reg = lv.get("regime", "POS")
     em = lv.get("em") or spot * 0.02
     cw = lv.get("call_wall"); pw = lv.get("put_wall")
     press = lv.get("pressure") or 0
     factors = {}; why = []; weights = {}
 
+    # 0) CALIDAD DEL LIBRO como MULTIPLICADOR de los pesos gamma (flip / muros / iman).
+    # No es un factor mas: es cuanto valen los factores gamma hoy. Con coef 0 (THIN) esos tres
+    # pesos van a 0 y la media ponderada se RENORMALIZA sola con los factores no-gamma
+    # (flota, momentum, bollinger, inflacion), porque el denominador solo suma pesos presentes.
+    bq_coef, bq_label = book_coef(sym)
+    gmul = 1.0 if bq_coef is None else bq_coef
+    if bq_coef is not None and bq_coef < 1.0:
+        if bq_coef <= 0.0:
+            why.append(f"libro {bq_label or 'THIN'}: niveles gamma = decoracion (peso 0)")
+        else:
+            why.append(f"libro {bq_label or '?'} coef {bq_coef:.2f}: gamma con peso reducido")
+
     # 1) posición vs flip (régimen manda el signo del efecto)
     dflip = _clamp((spot - flip) / em)
     reg_pos = (reg == "POS")
     f_flip = dflip * (1.0 if reg_pos else 0.5)   # en NEG el flip es whippy -> menos peso
-    factors["flip"] = round(f_flip, 2); weights["flip"] = 1.5
-    if abs(dflip) > 0.15:
+    factors["flip"] = round(f_flip, 2); weights["flip"] = 1.5 * gmul
+    if abs(dflip) > 0.15 and gmul > 0:
         why.append(f"{'sobre' if dflip>0 else 'bajo'} el flip {flip} ({reg})")
 
     # 2) espacio muros: cerca del put wall con recorrido al call wall = sesgo arriba (y viceversa)
@@ -91,10 +134,10 @@ def compute(sym, lv=None):
     if cw and pw and cw > pw:
         pos = (spot - pw) / (cw - pw)            # 0=en put wall, 1=en call wall
         f_wall = _clamp((0.5 - pos) * 2)          # cerca del piso -> +; pegado al techo -> -
-        factors["walls"] = round(f_wall, 2); weights["walls"] = 1.0
-        if pos > 0.82:
+        factors["walls"] = round(f_wall, 2); weights["walls"] = 1.0 * gmul
+        if gmul > 0 and pos > 0.82:
             why.append(f"pegado al call wall {cw} (techo)")
-        elif pos < 0.18:
+        elif gmul > 0 and pos < 0.18:
             why.append(f"pegado al put wall {pw} (piso)")
 
     # 3) GEX net + pressure: pin (POS, pressure+) frena; NEG con pressure- acelera el movimiento
@@ -195,15 +238,25 @@ def compute(sym, lv=None):
         sig = narrator.structural_signal(lv)
         if sig and sig.get("dir") in ("up", "down"):
             f_str = 1.0 if sig["dir"] == "up" else -1.0
-            factors["magnet"] = f_str; weights["magnet"] = 1.1
-            why.append(sig["text"])
+            factors["magnet"] = f_str; weights["magnet"] = 1.1 * gmul
+            if gmul > 0:
+                why.append(sig["text"])
             mag_price = sig.get("price"); mag_kind = sig.get("kind")   # imán/pin
     except Exception:
         pass
 
     # combinar (media ponderada de los factores presentes)
     num = sum(factors[k] * weights.get(k, 1.0) for k in factors)
-    den = sum(weights.get(k, 1.0) for k in factors) or 1.0
+    den = sum(weights.get(k, 1.0) for k in factors)
+    if den <= 0:
+        # Todo lo presente pesa 0: o no hay factores, o los unicos que hay son gamma y el libro
+        # los anula. NO se fabrica un sesgo "plausible": se dice que no hay lectura.
+        msg = ("libro THIN y solo factores gamma: SIN LECTURA direccional" if factors
+               else "sin factores medibles")
+        return {"dir": "flat", "prob": 50, "score": 0.0, "target": None,
+                "target_label": None, "target_pct": None, "spot": round(spot, 2),
+                "factors": factors, "why": ([msg] + why)[:5], "sym": sym,
+                "book_label": bq_label, "book_coef": bq_coef}
     score = _clamp(num / den)
     if score > 0.15:
         d = "up"
@@ -238,7 +291,8 @@ def compute(sym, lv=None):
     return {"dir": d, "prob": prob, "score": round(score, 3),
             "target": round(target, 2) if target else None, "target_label": target_lab,
             "target_pct": tgt_pct, "spot": round(spot, 2),
-            "factors": factors, "why": why[:5], "sym": sym}
+            "factors": factors, "why": why[:5], "sym": sym,
+            "book_label": bq_label, "book_coef": bq_coef}
 
 
 def _cli():
