@@ -45,13 +45,13 @@ Dos jobs de launchd (usuario, en `~/Library/LaunchAgents/`):
 del job de planes lo decide `dailyplans_run.sh` según la hora (`$HM = date +%H%M`):
 
 ```zsh
-HM < 0500  → MODE=FULL      ARGS=""                              (planes completos + email + X + patrones + calib.record + gexa verify)
+HM < 0500  → MODE=FULL      ARGS=""                              (mapa gamma + planes completos + email + X + patrones + calib.record + verify del mapa)
 HM < 0900  → MODE=REFRESH   ARGS="--tag REFRESH-8AM"             (solo re-genera planes; NO re-postea ni recalibra)
 else       → MODE=APERTURA  ARGS="--tickers QQQ,SPY,NVDA,TSLA,MU,SMH,META,MSFT,AMD,NOK --tag APERTURA-912"
 ```
 
 Solo el modo **FULL** corre `pattern_detect.py --fleet`, `calibration_ledger.py record`,
-el **gexa verify** y `x_plan_poster.py`. REFRESH y APERTURA solo re-dibujan el mapa.
+el **verify del mapa gamma** y `x_plan_poster.py`. REFRESH y APERTURA solo re-dibujan el mapa.
 
 ### El daemon de señales en vivo
 
@@ -88,7 +88,7 @@ launchctl unload ~/Library/LaunchAgents/com.ibtrader.dailyplans.plist
 ASML, TXN, QCOM, AVGO, NFLX, NOK, GLD, XLK, EWY, DRAM, SPCX, SKHY`.
 
 Cada uno lleva metadata: `style` (`0dte` para QQQ/SPY, `weekly` el resto), `fut`
-(NQ=F o ES=F) y `korea` (bool — si tiene lead coreano). `NOK` está marcado `no_gexa`.
+(NQ=F o ES=F) y `korea` (bool — si tiene lead coreano). `NOK` está marcado `no_gex_map`.
 
 ### Fuentes de la cadena de opciones (en orden)
 
@@ -123,8 +123,12 @@ El PDF marca `exp` con `IBKR✓` cuando usó la fuente 1.
 - **Árbol de escenarios** — página 2 del PDF: probabilidades ALCISTA / PIN / BAJISTA
   derivadas por reglas (régimen + P/C + Bollinger) con flechas hacia muros/imán.
 - **Forma intradía** — serie 48h con pre/post-market (5m) dibujada bajo los muros.
-- **gexa snapshot** — si existe `data/gexa_snapshot.json` (<12h), el régimen gamma
-  usa el flip/score/bias/POC **verificado de gexa.ai** en vez del GEX propio estimado.
+- **mapa gamma MEDIDO** — si existe `data/gex_snapshot.json` (<36h **y** con `chain_date`
+  de los últimos 5 días), el régimen gamma usa su flip/score/bias/POC, calculado en casa
+  por `scripts/gex_snapshot.py` con las griegas REALES de Polygon sobre las cadenas
+  archivadas. El PDF imprime la procedencia (fecha de cadena, nº de contratos, % de
+  griegas usables). Sin mapa NO se afirma régimen: el plan lo marca ESTIMADO.
+  (gexa.ai desapareció el 2026-07-25; el scrape por Chrome ya no existe.)
 
 ### Probabilidad medida (no adivinada)
 
@@ -272,7 +276,7 @@ Dos caminos distintos:
 | `data/calib_log.jsonl` | `calibration_ledger record/grade` | registro append-only, 1 fila/setup | `wc -l`; borrar = reset del histórico |
 | `data/calibration.json` | `calibration_ledger calibrate` | tasas por bucket (lo LEE el generador) | `calibration_ledger.py report`; borrar → generador cae a heurísticas |
 | `data/patterns.json` | `pattern_detect.py` | patrón activo + tasas empíricas | `python -m json.tool`; borrar → sin capa de patrones |
-| `data/gexa_snapshot.json` | Claude headless (skill gexa-terminal) | flip/score/bias/POC de gexa.ai | `cat`; `{}` = no conectó |
+| `data/gex_snapshot.json` | `gex_snapshot.py` (4AM, tras archivar cadenas) | flip/regimen/muros/POC/net GEX MEDIDOS (griegas Polygon) + `_meta.cobertura` | `gex_snapshot.py --dry-run`; falta → healthcheck 🔴 |
 | `data/x_plan_budget.json` | los 3 posters de X | ledger `{month,posts,spent}` | `cat`; se autoresetea al cambiar de mes |
 | `data/x_signal_state.json` | `x_signal_poster` | estado diario (offset, posts, keys) | se autoresetea al cambiar de día |
 | `data/x_combo_triggers.txt` | operador (autocreado) | combos multi-ticker | editar a mano |
@@ -290,15 +294,17 @@ El sistema está diseñado para **nunca romperse por falta de un insumo**:
 
 - Sin `data/calibration.json` → el generador usa sus **heurísticas** (55%/50% base).
 - Sin `data/patterns.json` → simplemente no muestra la línea de patrón.
-- Sin `data/gexa_snapshot.json` (o `{}`) → el régimen gamma usa el **GEX propio
-  estimado** (calculado con BS a las 4AM); el PDF lo marca "gexa no disponible 4AM".
+- Sin `data/gex_snapshot.json` (o caducado) → el PDF NO afirma régimen: imprime
+  "REGIMEN GAMMA NO MEDIDO HOY: <motivo>" y sigue con su **GEX estimado** de un solo
+  vencimiento (gamma Black-Scholes de la IV de yfinance), marcado ESTIMADO y con menos peso.
 - Sin cache IBKR fresco → cae a **yfinance**.
 - Sin `RESEND_KEY/TO` → salta el email, sigue generando PDFs.
 
-**gexa verify:** en modo FULL, si `data/gexa_snapshot.json` no se escribió o quedó
-vacío (`{}`), `dailyplans_run.sh` **grita en el log** y lanza una notificación macOS
-(*"Gexa no conectó: planes con GEX estimado"*) — el pipeline continúa igual, pero el
-operador se entera de que revise Chrome/extensión.
+**verify del mapa gamma:** en modo FULL, si `data/gex_snapshot.json` no se escribió, pasa
+de 36h o pierde más de media flota, `dailyplans_run.sh` **grita en el log** y lanza una
+notificación macOS (*"Mapa gamma incompleto: planes sin régimen gamma"*) — el pipeline
+continúa igual, pero el operador se entera de que revise `poly_chain_archive`.
+`fleet_healthcheck.py` lo vigila también, y su ausencia es 🔴.
 
 ---
 
@@ -333,7 +339,7 @@ launchctl start com.ibtrader.postmortem
 
 | Log | Contenido |
 |-----|-----------|
-| `dailyplans.log` | toda la corrida 4AM/8:30/9:12 + EOD (gexa, patrones, calib, x_plan) |
+| `dailyplans.log` | toda la corrida 4AM/8:30/9:12 + EOD (mapa gamma, patrones, calib, x_plan) |
 | `x_signal_poster.log` | daemon realtime (SKIP/POSTED/COMBO) |
 | `x_postmortem.log` | calificación EOD y posts |
 | `x_plan_poster.log` | posts premarket |
