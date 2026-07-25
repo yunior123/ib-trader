@@ -265,6 +265,36 @@ def test_catalogo_se_cachea_y_no_repite_peticiones(tmp_path, monkeypatch):
     assert os.path.exists(os.path.join(str(tmp_path / "cc"), "QQQ_2026-05-15.json"))
 
 
+def test_expiry_mensual_esquiva_el_festivo():
+    """MEDIDO: el 3er viernes de junio-2026 es el 19 = Juneteenth. Polygon no lista
+    NINGUN contrato con esa fecha; el vencimiento real es el jueves 18. Pedir el 19
+    perdia un expiry entero de los siete."""
+    assert bf.third_friday(2026, 6) == dt.date(2026, 6, 18)
+    assert bf.third_friday(2026, 5) == dt.date(2026, 5, 15)     # viernes normal
+    assert bf.third_friday(2026, 9) == dt.date(2026, 9, 18)
+
+
+def test_filtro_expired_segun_la_fecha_del_expiry(tmp_path, monkeypatch):
+    """MEDIDO: `expired` no es 'incluye vencidos', es un FILTRO EXCLUYENTE. Con
+    expired=true un expiry FUTURO devuelve lista vacia, que se confunde con
+    'no existe'."""
+    monkeypatch.setattr(bf, "CONTRACT_CACHE", str(tmp_path / "cc"))
+    vistas = []
+
+    class P:
+        def paginate(self, url, max_pages=6):
+            vistas.append(url)
+            yield {"results": [{"ticker": "O:X", "strike_price": 1,
+                                "contract_type": "call"}]}
+
+    hoy = dt.date.today()
+    bf.contracts_for(P(), "QQQ", hoy - dt.timedelta(days=60))
+    bf.contracts_for(P(), "QQQ", hoy + dt.timedelta(days=60))
+    assert "expired=true" in vistas[0]
+    assert "expired=false" in vistas[1]
+    assert "as_of" not in vistas[0] and "as_of" not in vistas[1]   # se ignora: no se usa
+
+
 def test_pick_toma_el_otm_del_lado_correcto():
     cats = [{"ticker": f"O:X{k}{r[0].upper()}", "strike": float(k), "right": r}
             for k in (450, 475, 500, 525, 550) for r in ("call", "put")]

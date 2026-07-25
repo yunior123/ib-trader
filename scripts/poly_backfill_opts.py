@@ -168,11 +168,19 @@ def ref_spot(c, sym, exp):
 
 
 def third_friday(year, month):
+    """Vencimiento mensual: 3er viernes, ADELANTADO al jueves si es festivo de mercado.
+
+    MEDIDO 2026-07-25: el 3er viernes de junio-2026 es el 19, que es Juneteenth. Polygon
+    no lista NINGUN contrato con esa fecha porque el vencimiento real es el jueves 18.
+    Pedir el 19 devolvia catalogo vacio y se perdia un expiry entero."""
     d = dt.date(year, month, 1)
     fridays = [d + dt.timedelta(days=i) for i in range(31)
                if (d + dt.timedelta(days=i)).month == month
                and (d + dt.timedelta(days=i)).weekday() == 4]
-    return fridays[2]
+    e = fridays[2]
+    while not market_days(e, e):                  # festivo -> dia habil anterior
+        e -= dt.timedelta(days=1)
+    return e
 
 
 def expiries():
@@ -194,8 +202,12 @@ def contracts_for(poly, sym, exp):
     if os.path.exists(path):
         with open(path) as fh:
             return json.load(fh)
+    # MEDIDO 2026-07-25: `expired` NO es "incluye vencidos", es un FILTRO EXCLUYENTE.
+    # expired=true devuelve SOLO vencidos -> con un expiry futuro devolvia lista vacia,
+    # que es indistinguible de "no existe". Se elige el filtro segun la fecha.
+    expired = "true" if exp < dt.date.today() else "false"
     url = ("https://api.polygon.io/v3/reference/options/contracts"
-           f"?underlying_ticker={sym}&expired=true&expiration_date={exp:%Y-%m-%d}"
+           f"?underlying_ticker={sym}&expired={expired}&expiration_date={exp:%Y-%m-%d}"
            "&limit=1000")
     out = []
     for page in poly.paginate(url, max_pages=6):     # paginate LEVANTA si una falla
