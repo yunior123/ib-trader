@@ -39,19 +39,27 @@ def _pick_date():
     return rows[-2]
 
 
-def _signals_fingerprint():
-    """Huella del contenido de `signals`: si cambia una sola fila, cambia el hash."""
+def _signals_fingerprint(max_id=None):
+    """Huella de `signals` hasta max_id: si cambia UNA fila ya existente, cambia el hash.
+
+    Se topa por id a proposito: los 8 daemons vivos siguen APENDANDO señales de hoy
+    mientras corre el test, y contar eso como "la corrida toco signals" seria un falso
+    positivo. Lo que se prohibe es MODIFICAR o BORRAR lo que ya estaba (y cambiar el
+    esquema): eso es lo irreversible.
+    """
     c = sqlite3.connect("file:" + DB + "?mode=ro", uri=True, timeout=30)
     try:
-        n = c.execute("SELECT count(*) FROM signals").fetchone()[0]
+        if max_id is None:
+            max_id = c.execute("SELECT COALESCE(MAX(id),0) FROM signals").fetchone()[0]
+        n = c.execute("SELECT count(*) FROM signals WHERE id<=?", (max_id,)).fetchone()[0]
         h = hashlib.sha256()
         for row in c.execute("SELECT id,ts_epoch,ts_txt,date,kind,symbol,price,priority,"
-                             "source,msg,raw FROM signals ORDER BY id"):
+                             "source,msg,raw FROM signals WHERE id<=? ORDER BY id", (max_id,)):
             h.update(repr(row).encode())
         cols = tuple(r[1] for r in c.execute("PRAGMA table_info(signals)"))
     finally:
         c.close()
-    return n, h.hexdigest(), cols
+    return max_id, n, h.hexdigest(), cols
 
 
 # ---------------------------------------------------------------- 1. look-ahead
@@ -128,11 +136,12 @@ def test_bars_are_monotonic_prefix():
 def test_signals_table_untouched_by_a_run():
     date = _pick_date()
     before = _signals_fingerprint()
+    max_id = before[0]
     p = subprocess.run([PY, os.path.join(REPO, "scripts", "regen_signals.py"), "run",
                         "--dates", date, "--sources", "bots", "--run-id", TEST_RUN],
                        capture_output=True, text=True, cwd=REPO, timeout=900)
     assert p.returncode == 0, p.stderr[-1500:]
-    after = _signals_fingerprint()
+    after = _signals_fingerprint(max_id)
     assert before == after, "la corrida TOCO `signals` (n/hash/columnas cambiaron)"
     c = sqlite3.connect(DB, timeout=30)
     try:

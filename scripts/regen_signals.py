@@ -276,7 +276,10 @@ def _sandbox_guard(sb):
     for bad in _SB_BAD:
         if o == r + bad:
             raise SystemExit("sandbox invalido %s (contaminaria la flota viva)" % o)
-    if o in ("/", "/tmp", os.path.expanduser("~")):
+    # OJO macOS: realpath("/tmp") == "/private/tmp". Comparar sin normalizar dejaba
+    # pasar /tmp como sandbox (cazado por tests/test_regen_signals.py).
+    forbidden = {os.path.realpath(x) for x in ("/", "/tmp", "/var/tmp", os.path.expanduser("~"))}
+    if o in forbidden:
         raise SystemExit("sandbox invalido: %s" % o)
     if o.startswith(r + os.sep):
         raise SystemExit("el sandbox no puede vivir DENTRO del repo: %s" % o)

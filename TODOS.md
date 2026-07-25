@@ -347,3 +347,24 @@ Spec: `docs/FEATURES-MINED-2026-07-25.md` (#5 chain-honesty, #6 flip-honesty, #3
       y el Market Narrator (prosa), que son SALIDA DE MODELO ajeno, no dato medido.
       -> ACCION: decidir si se jubila el scraping de gexa (skill `gexa-terminal`) y se pasa el
       mapa gamma de los planes a `gex_core` + cadenas Polygon, que es medido y cubre la flota.
+
+## REGENERACION DE SEÑALES (agente regen, 2026-07-25)
+- [x] "usa los datos de polygon y reproduce, es sencillo... olvidate del websocket de IBKR,
+      reproduce local como si estuviera conectado a IBKR" (Yunior 2026-07-25) —
+      `scripts/regen_signals.py` + `scripts/regen_shim/`. hecho f11c6fb 09d0a80.
+      501 sesiones (2024-07-25 -> 2026-07-24). cusum 501/501 COMPLETO (n=12.780).
+- [ ] **CORRIENDO EN BACKGROUND**: `regen_signals.py run --run-id R1 --sources bollinger`
+      (log `/tmp/regen_R1_boll.log`). Va por 63/501 sesiones, ~21 s/sesion, ETA ~2,8 h.
+      Es REANUDABLE: si se corta, relanzar el MISMO comando y sigue donde iba.
+      Al terminar hay que rehacer la cadena:
+        ./venv/bin/python scripts/barrier_labels.py --signals-table signals_regen build
+        ./venv/bin/python scripts/null_control.py --signals-table signals_regen \
+            --null-exclude sym-date run --seed 7
+      Estado hoy (bollinger 57/501): n_eff 1388, edge -0.005 [-.025,+.016] UNPROVEN.
+- [ ] `cusum` sale **DEAD** con muestra suficiente (n_eff 1513, edge -0.034 CI
+      [-.060,-.005] TODO por debajo de cero): la alarma TERREMOTO es PEOR que entrar al
+      azar. Decision de Yunior: apagar la voz del CUSUM o dejarla solo como contexto.
+      Propuesta en `data/signal_enable.PROPUESTO.signals_regen.json` (el vivo NO se toco).
+- [ ] NO regenerable sin cadenas historicas: `whale`, `flow`, `structural` (4 dias de
+      cadenas en data/history/). Si se quiere medirlas hay que archivar cadenas a diario
+      y esperar ~40-60 sesiones, o backfillear opciones de Polygon (sin OI ni griegas).
