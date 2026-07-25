@@ -79,6 +79,18 @@ REGIME_CACHE = os.path.join(REPO, "data", "session_regime.json")
 BUCKET_WINDOW = {name: (lo, hi) for name, lo, hi in BUCKETS}
 
 
+def _retarget(name):
+    """Reapunta la fuente de señales (y por tanto la tabla de barrera de BL) y las
+    salidas. Sin argumento -> comportamiento por defecto BYTE-IDENTICO al de siempre."""
+    global OUT_JSON, OUT_PROPOSAL, REGIME_CACHE
+    BL.use_signals_table(name)
+    if not name or name == "signals":
+        return
+    OUT_JSON = os.path.join(REPO, "data", "null_control.%s.json" % name)
+    OUT_PROPOSAL = os.path.join(REPO, "data", "signal_enable.PROPUESTO.%s.json" % name)
+    REGIME_CACHE = os.path.join(REPO, "data", "session_regime.%s.json" % name)
+
+
 # ============================================================================
 # skill stats-trading-risk (BH-FDR / bootstrap / DSR / PSR / MinTRL)
 # ============================================================================
@@ -785,12 +797,18 @@ def selftest(seed=3, n=1200):
 
 def main():
     ap = argparse.ArgumentParser(description="null de entrada aleatoria (ficha #2)")
+    # ADITIVO 2026-07-25: por defecto identico a siempre (`signals`). Con
+    # `--signals-table signals_regen` la MISMA maquinaria mide las señales regeneradas
+    # sobre las 501 sesiones de poly_bars, y sus salidas van a ficheros PARALELOS
+    # (data/null_control.<tabla>.json) para no pisar la medicion viva.
+    ap.add_argument("--signals-table", default="signals")
     sub = ap.add_subparsers(dest="cmd")
     r = sub.add_parser("run")
     r.add_argument("--n", type=int, default=N_RANDOM)
     r.add_argument("--seed", type=int, default=7)
     sub.add_parser("selftest")
     a = ap.parse_args()
+    _retarget(a.signals_table)
     if a.cmd == "selftest":
         raise SystemExit(0 if selftest() else 2)
     if a.cmd != "run":

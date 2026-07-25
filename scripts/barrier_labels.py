@@ -48,6 +48,7 @@ import argparse
 import json
 import math
 import os
+import re
 import sqlite3
 import sys
 import time
@@ -61,6 +62,28 @@ if os.path.join(REPO, "scripts") not in sys.path:
 
 DB = os.path.join(REPO, "trades.db")
 DB_RO = "file:" + DB + "?mode=ro"
+
+# ---- TABLAS (aditivo 2026-07-25, ficha de regeneracion) ---------------------
+# Por defecto EXACTAMENTE lo de siempre: `signals` (ledger vivo) -> `barrier_outcomes`.
+# `--signals-table signals_regen` reapunta la MISMA maquinaria a las señales regeneradas
+# sobre las 501 sesiones de poly_bars, y su salida va a una tabla PARALELA
+# (`barrier_outcomes_regen`) para no pisar ni un byte de la medicion viva.
+SIG_TABLE = "signals"
+BO_TABLE = "barrier_outcomes"
+
+
+def use_signals_table(name):
+    """Reapunta entrada y salida a la vez. Sin esto, etiquetar regen sobreescribiria
+    barrier_outcomes (PRIMARY KEY por signal_id: los ids colisionan entre tablas)."""
+    global SIG_TABLE, BO_TABLE
+    if not name or name == "signals":
+        SIG_TABLE, BO_TABLE = "signals", "barrier_outcomes"
+        return
+    if not re.match(r"^[A-Za-z_][A-Za-z0-9_]*$", name):
+        raise SystemExit("nombre de tabla invalido: %r" % name)
+    SIG_TABLE = name
+    BO_TABLE = "barrier_outcomes_" + (name[len("signals_"):] if name.startswith("signals_")
+                                      else name)
 
 # ---- barrido de la ficha #1 -------------------------------------------------
 K_TP = (0.5, 0.75, 1.0, 1.5)
@@ -81,13 +104,17 @@ MIN_N_CELL = 50                # n RESUELTA mínima para publicar una prob (fich
 # Configuración de referencia para el titular del scoreboard.
 REF_K_TP, REF_K_SL = 1.0, 1.0
 
-SCHEMA = """CREATE TABLE IF NOT EXISTS barrier_outcomes(
+SCHEMA_TPL = """CREATE TABLE IF NOT EXISTS %s(
     signal_id INTEGER, sym TEXT, source TEXT, date TEXT, ts_epoch REAL,
     direction INTEGER, entry REAL, atr REAL,
     k_tp REAL, k_sl REAL, H INTEGER, mode TEXT,
     label INTEGER, mfe REAL, mae REAL, t_touch REAL, ambig INTEGER,
     run_ts REAL,
     PRIMARY KEY(signal_id, k_tp, k_sl, H, mode))"""
+
+
+def _schema():
+    return SCHEMA_TPL % BO_TABLE
 
 
 # ============================================================================
@@ -277,7 +304,7 @@ def load_signals(conn):
     E = _thesis_mod()
     cur = conn.execute(
         "SELECT id, ts_epoch, ts_txt, date, kind, source, symbol, msg "
-        "FROM signals WHERE ts_epoch IS NOT NULL ORDER BY ts_epoch")
+        "FROM %s WHERE ts_epoch IS NOT NULL ORDER BY ts_epoch" % SIG_TABLE)
     rows = []
     st = defaultdict(int)
     for sid, ep, ts_txt, date, kind, source, sym, msg in cur:
@@ -381,11 +408,11 @@ def connect_rw():
 def write_rows(conn, rows, run_ts, batch=4000):
     """Idempotente: PRIMARY KEY(signal_id,k_tp,k_sl,H,mode) + INSERT OR REPLACE.
     Dos corridas no duplican filas."""
-    conn.execute(SCHEMA)
-    conn.execute("CREATE INDEX IF NOT EXISTS ix_bo_src ON barrier_outcomes(source)")
-    conn.execute("CREATE INDEX IF NOT EXISTS ix_bo_cell ON barrier_outcomes(source,k_tp,k_sl,H)")
+    conn.execute(_schema())
+    conn.execute("CREATE INDEX IF NOT EXISTS ix_%s_src ON %s(source)" % (BO_TABLE, BO_TABLE))
+    conn.execute("CREATE INDEX IF NOT EXISTS ix_%s_cell ON %s(source,k_tp,k_sl,H)" % (BO_TABLE, BO_TABLE))
     conn.commit()
-    sql = ("INSERT OR REPLACE INTO barrier_outcomes(signal_id,sym,source,date,"
+    sql = ("INSERT OR REPLACE INTO " + BO_TABLE + "(signal_id,sym,source,date,"
            "ts_epoch,direction,entry,atr,k_tp,k_sl,H,mode,label,mfe,mae,"
            "t_touch,ambig,run_ts) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
     n = 0
@@ -433,7 +460,7 @@ def cell_stats(labels, k_tp, k_sl, n_eff=None):
 
 def load_barrier(conn, source=None):
     q = ("SELECT source,sym,date,ts_epoch,k_tp,k_sl,H,label,mfe,mae,t_touch,ambig "
-         "FROM barrier_outcomes")
+         "FROM %s" % BO_TABLE)
     args = ()
     if source:
         q += " WHERE source=?"
@@ -529,7 +556,7 @@ def matched_barrier_wr(conn, keys_by_h, k_tp=REF_K_TP, k_sl=REF_K_SL):
     re-etiquetado. Devuelve {(source,H): stats}."""
     sig = {}
     for sid, date, ts_txt, sym, src in conn.execute(
-            "SELECT id,date,ts_txt,symbol,source FROM signals"):
+            "SELECT id,date,ts_txt,symbol,source FROM %s" % SIG_TABLE):
         sig.setdefault((date, ts_txt, sym, src), []).append(sid)
     out = {}
     for H, keys in keys_by_h.items():
@@ -545,7 +572,7 @@ def matched_barrier_wr(conn, keys_by_h, k_tp=REF_K_TP, k_sl=REF_K_SL):
         for a in range(0, len(ids_l), 900):
             chunk = ids_l[a:a + 900]
             rows += conn.execute(
-                "SELECT source,label,ambig FROM barrier_outcomes WHERE H=? AND "
+                "SELECT source,label,ambig FROM " + BO_TABLE + " WHERE H=? AND "
                 "k_tp=? AND k_sl=? AND signal_id IN (%s)" % ",".join("?" * len(chunk)),
                 tuple([H, k_tp, k_sl] + chunk)).fetchall()
         by = defaultdict(list)
@@ -584,11 +611,11 @@ def confusion(conn, k_tp=REF_K_TP, k_sl=REF_K_SL):
         old[(date, ts_txt, sym, src, h)] = win or 0
     sigkey = {}
     for sid, date, ts_txt, sym, src in conn.execute(
-            "SELECT id,date,ts_txt,symbol,source FROM signals"):
+            "SELECT id,date,ts_txt,symbol,source FROM %s" % SIG_TABLE):
         sigkey[sid] = (date, ts_txt, sym, src)
     out = defaultdict(lambda: defaultdict(int))
     for sid, H, label in conn.execute(
-            "SELECT signal_id,H,label FROM barrier_outcomes WHERE k_tp=? AND k_sl=?",
+            "SELECT signal_id,H,label FROM " + BO_TABLE + " WHERE k_tp=? AND k_sl=?",
             (k_tp, k_sl)):
         k = sigkey.get(sid)
         if k is None:
@@ -616,7 +643,7 @@ def scoreboard(conn, out_path=None):
     run, old, keys = old_wr_by_source(conn)
     rows = load_barrier(conn)
     if not rows:
-        raise SystemExit("barrier_outcomes vacia — correr `build` primero")
+        raise SystemExit("%s vacia — correr `build` primero" % BO_TABLE)
     agg = aggregate(rows)
     new_matched = matched_barrier_wr(conn, keys) if keys else {}
     dates = sorted(set(r[2] for r in rows))
@@ -827,7 +854,7 @@ def cmd_build(args):
     rw = connect_rw()
     n = write_rows(rw, rows, time.time())
     rw.close()
-    print("  escritas ................... %d filas en trades.db barrier_outcomes" % n)
+    print("  escritas ................... %d filas en trades.db %s" % (n, BO_TABLE))
 
 
 def cmd_report(args):
@@ -835,7 +862,7 @@ def cmd_report(args):
     rows = load_barrier(ro)
     ro.close()
     if not rows:
-        raise SystemExit("barrier_outcomes vacia — correr `build` primero")
+        raise SystemExit("%s vacia — correr `build` primero" % BO_TABLE)
     agg = aggregate(rows)
     print("=== celdas de barrera (n = RESUELTAS; timeout no cuenta) ===")
     print("%-11s %5s %5s %4s %6s %8s %6s %16s %8s" %
@@ -876,7 +903,7 @@ def cmd_wf(args):
     rows = load_barrier(ro)
     ro.close()
     if not rows:
-        raise SystemExit("barrier_outcomes vacia — correr `build` primero")
+        raise SystemExit("%s vacia — correr `build` primero" % BO_TABLE)
     H = args.H
     obs = sorted(set((r[3], r[0]) for r in rows if r[6] == H))
     starts = [o[0] for o in obs]
@@ -895,12 +922,16 @@ def cmd_wf(args):
 
 def main():
     ap = argparse.ArgumentParser(description="etiquetado de triple barrera (ficha #1)")
+    ap.add_argument("--signals-table", default="signals",
+                    help="tabla de señales (default `signals`; `signals_regen` para la "
+                         "historia regenerada -> escribe en barrier_outcomes_regen)")
     sub = ap.add_subparsers(dest="cmd")
     b = sub.add_parser("build");      b.add_argument("--limit", type=int, default=0); b.add_argument("--dry-run", action="store_true")
     sub.add_parser("report")
     s = sub.add_parser("scoreboard"); s.add_argument("--out", default=None)
     w = sub.add_parser("wf");         w.add_argument("--H", type=int, default=30); w.add_argument("--folds", type=int, default=5)
     a = ap.parse_args()
+    use_signals_table(a.signals_table)
     if a.cmd == "build":
         cmd_build(a)
     elif a.cmd == "report":

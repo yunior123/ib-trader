@@ -177,6 +177,37 @@ def bots_available():
     return out
 
 
+# --------------------------------------------------------------------------
+# 2b. PARAMETROS DE PRODUCCION por ticker (scripts/<sym>_keepalive.sh)
+# --------------------------------------------------------------------------
+# MEDIDO 2026-07-25: sin esto la regeneracion emitia 544 `cusum` contra 149 vivos
+# (precision 15%). El motivo no era el arnes: `mu_keepalive.sh` exporta
+# MU_QUAKE_MIN=0.05 y el binario trae 0.02 por defecto -> el bot regenerado usaba un
+# umbral de terremoto 2.5x mas laxo que el de produccion. Los parametros del bot NO
+# son un detalle de arranque: son el bot. Se leen del mismo fichero que la flota viva.
+ENV_LINE = re.compile(r"^\s*export\s+([A-Z][A-Z0-9_]*)=([^\s#$`\'\"]+)\s*$")
+
+
+def keepalive_env(sym_up):
+    """{VAR: valor} exportadas por scripts/<sym>_keepalive.sh. Solo literales simples:
+    cualquier linea con $, comillas o backticks se IGNORA y se cuenta (jamas se
+    ejecuta el shell para averiguar un parametro)."""
+    p = os.path.join(REPO, "scripts", "%s_keepalive.sh" % sym_up.lower())
+    out, skipped = {}, 0
+    if not os.path.exists(p):
+        return out, 0
+    with open(p, errors="replace") as f:
+        for ln in f:
+            if not ln.lstrip().startswith("export "):
+                continue
+            m = ENV_LINE.match(ln)
+            if m:
+                out[m.group(1)] = m.group(2)
+            else:
+                skipped += 1
+    return out, skipped
+
+
 def load_bars(conn, sym_up, t0, t1):
     """Mismas reglas que replay.cpp db_bars(): ts en MILISEGUNDOS, alineado a 60s, c>0."""
     q = ("SELECT ts,o,h,l,c,v FROM poly_bars WHERE sym=? AND ts>=? AND ts<? ORDER BY ts")
@@ -318,6 +349,11 @@ def run_bots(sb, date, bars_by_sym, bots, timeout=300):
         feed = "".join("%d %.4f %.4f %.4f %.4f %.0f\n" % b for b in bars)
         env = dict(os.environ)
         env.pop("PYTHONPATH", None)
+        kenv, skipped = keepalive_env(sym_up)
+        env.update(kenv)
+        if skipped:
+            fails.append("%s %s: %d export(s) del keepalive no literales, IGNORADOS"
+                         % (date, sym_up, skipped))
         try:
             p = subprocess.run([exe, "--stdin"], input=feed, capture_output=True,
                                text=True, cwd=sb, timeout=timeout, env=env)
