@@ -1,0 +1,33 @@
+{
+ "_meta": {
+  "WARNING": "PROPUESTA \u2014 este fichero NO lo lee ningun daemon. El real es data/signal_enable.json y NO se ha tocado.",
+  "at": "2026-07-25 10:44:31",
+  "rule": "DEAD -> propone apagar. UNPROVEN -> banner solamente (jamas voz, jamas dimensiona). DATA-INSUFFICIENT -> se dice 'todavia no sabemos', en voz alta."
+ },
+ "bollinger": {
+  "ci": [
+   -0.0254,
+   0.0164
+  ],
+  "edge": -0.0048,
+  "n": 20286,
+  "n_eff": 1388.0,
+  "propose_enabled": true,
+  "propose_voice": false,
+  "verdict": "UNPROVEN",
+  "why": "el CI del edge cruza 0; no pasa BH-FDR q=0.10; DSR 0.000 <= 0.95"
+ },
+ "cusum": {
+  "ci": [
+   -0.0599,
+   -0.0047
+  ],
+  "edge": -0.0337,
+  "n": 12679,
+  "n_eff": 1512.7,
+  "propose_enabled": false,
+  "propose_voice": false,
+  "verdict": "DEAD",
+  "why": "CI del edge entero <= 0 (peor que entrada aleatoria)"
+ }
+}

@@ -1,0 +1,7 @@
+# opt_chain NOK | epoch 1785011113 | 2026-07-25 16:25:13 | spot 9.09 | exps 20260731
+# fuente polygon_snapshot_v3 | greeks polygon_directo | iv polygon_directo | oi polygon_directo | vol day.volume_polygon(-1 si no cotizo) | bid/ask NO_ENTITLED(-1) | spot ibkr_bridge edad 86352s
+# strike right exp bid ask vol oi iv delta gamma
+9.00 C 20260731 -1.00 -1.00 2509 747 0.7981 0.5169 0.438015
+9.50 C 20260731 -1.00 -1.00 12614 2412 0.7915 0.3148 0.387276
+9.00 P 20260731 -1.00 -1.00 4611 10234 0.7044 -0.4858 0.496653
+9.50 P 20260731 -1.00 -1.00 2519 1967 0.6759 -0.7206 0.431076

@@ -1,0 +1,1563 @@
+{
+ "date": "2026-07-25",
+ "ts": 1785010200,
+ "gex_source": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)",
+ "levels": {
+  "SMH": {
+   "spot": 561.5,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     575.0,
+     1537
+    ],
+    [
+     585.0,
+     1160
+    ],
+    [
+     580.0,
+     868
+    ]
+   ],
+   "put_walls": [
+    [
+     550.0,
+     67681
+    ],
+    [
+     565.0,
+     4812
+    ],
+    [
+     540.0,
+     3979
+    ]
+   ],
+   "max_pain": 572.5,
+   "pc_oi": 5.469,
+   "gex": {
+    "flip": 585.0,
+    "flip_all": 585.0,
+    "score": -21.803,
+    "bias": "PUT",
+    "poc": 540.0,
+    "magnets": [
+     540.0,
+     565.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 6840728,
+    "put_usd": -28644168,
+    "net_gex": -21803440,
+    "gross_gex": 22515926,
+    "call_wall": 565.0,
+    "put_wall": 540.0,
+    "abs_wall": 540.0,
+    "abs_wall_kind": "trampilla",
+    "spot": 561.99,
+    "ts": 1784991148,
+    "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
+    "chain_date": "2026-07-25",
+    "chain_snapshot_local": "2026-07-25 10:18:54",
+    "greeks_ok_pct": 0.975,
+    "n_contracts": 156,
+    "n_strikes_populated": 20
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "NVDA": {
+   "spot": 207.03,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     210.0,
+     83743
+    ],
+    [
+     215.0,
+     79262
+    ],
+    [
+     217.5,
+     61768
+    ]
+   ],
+   "put_walls": [
+    [
+     205.0,
+     31768
+    ],
+    [
+     200.0,
+     28093
+    ],
+    [
+     195.0,
+     22962
+    ]
+   ],
+   "max_pain": 210.0,
+   "pc_oi": 1.417,
+   "gex": null,
+   "gex_src": null
+  },
+  "MU": {
+   "spot": 923.75,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     900.0,
+     3002
+    ],
+    [
+     950.0,
+     2826
+    ],
+    [
+     915.0,
+     2201
+    ]
+   ],
+   "put_walls": [
+    [
+     900.0,
+     6234
+    ],
+    [
+     950.0,
+     4235
+    ],
+    [
+     940.0,
+     3642
+    ]
+   ],
+   "max_pain": 942.5,
+   "pc_oi": 2.381,
+   "gex": {
+    "flip": 965.0,
+    "flip_all": 965.0,
+    "score": -4.616,
+    "bias": "PUT",
+    "poc": 900.0,
+    "magnets": [
+     900.0,
+     955.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 4242718,
+    "put_usd": -8858419,
+    "net_gex": -4615701,
+    "gross_gex": 5653826,
+    "call_wall": 955.0,
+    "put_wall": 900.0,
+    "abs_wall": 900.0,
+    "abs_wall_kind": "trampilla",
+    "spot": 925.21,
+    "ts": 1784991148,
+    "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
+    "chain_date": "2026-07-25",
+    "chain_snapshot_local": "2026-07-25 10:18:54",
+    "greeks_ok_pct": 0.965,
+    "n_contracts": 139,
+    "n_strikes_populated": 21
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "MSFT": {
+   "spot": 381.61,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     390.0,
+     6356
+    ],
+    [
+     395.0,
+     4514
+    ],
+    [
+     392.5,
+     3481
+    ]
+   ],
+   "put_walls": [
+    [
+     370.0,
+     6410
+    ],
+    [
+     375.0,
+     6012
+    ],
+    [
+     385.0,
+     4607
+    ]
+   ],
+   "max_pain": 380.0,
+   "pc_oi": 0.569,
+   "gex": {
+    "flip": 358.27,
+    "flip_all": 358.27,
+    "score": 5.413,
+    "bias": "CALL",
+    "poc": 390.0,
+    "magnets": [
+     380.0,
+     390.0
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "call_usd": 20443867,
+    "put_usd": -15030971,
+    "net_gex": 5412897,
+    "gross_gex": 15789833,
+    "call_wall": 390.0,
+    "put_wall": 380.0,
+    "abs_wall": 390.0,
+    "abs_wall_kind": "pin",
+    "spot": 381.65,
+    "ts": 1784991148,
+    "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
+    "chain_date": "2026-07-25",
+    "chain_snapshot_local": "2026-07-25 10:18:54",
+    "greeks_ok_pct": 0.964,
+    "n_contracts": 81,
+    "n_strikes_populated": 14
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "SKHY": {
+   "spot": 155.42,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     160.0,
+     1663
+    ],
+    [
+     152.5,
+     1384
+    ],
+    [
+     157.5,
+     478
+    ]
+   ],
+   "put_walls": [
+    [
+     150.0,
+     5393
+    ],
+    [
+     160.0,
+     2547
+    ],
+    [
+     150.0,
+     2158
+    ]
+   ],
+   "max_pain": 157.5,
+   "pc_oi": 4.255,
+   "gex": null,
+   "gex_src": null
+  },
+  "AMZN": {
+   "spot": 232.17,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     240.0,
+     11099
+    ],
+    [
+     237.5,
+     8271
+    ],
+    [
+     235.0,
+     5995
+    ]
+   ],
+   "put_walls": [
+    [
+     232.5,
+     7855
+    ],
+    [
+     235.0,
+     7004
+    ],
+    [
+     230.0,
+     6334
+    ]
+   ],
+   "max_pain": 235.0,
+   "pc_oi": 2.061,
+   "gex": {
+    "flip": 234.42,
+    "flip_all": 234.42,
+    "score": -6.908,
+    "bias": "PUT",
+    "poc": 230.0,
+    "magnets": [
+     230.0,
+     235.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 15936328,
+    "put_usd": -22844612,
+    "net_gex": -6908284,
+    "gross_gex": 19153219,
+    "call_wall": 235.0,
+    "put_wall": 230.0,
+    "abs_wall": 230.0,
+    "abs_wall_kind": "trampilla",
+    "spot": 232.4,
+    "ts": 1784991148,
+    "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
+    "chain_date": "2026-07-25",
+    "chain_snapshot_local": "2026-07-25 10:18:54",
+    "greeks_ok_pct": 0.914,
+    "n_contracts": 64,
+    "n_strikes_populated": 9
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "INTC": {
+   "spot": 92.13,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     95.0,
+     3186
+    ],
+    [
+     90.0,
+     2707
+    ],
+    [
+     96.0,
+     2565
+    ]
+   ],
+   "put_walls": [
+    [
+     90.0,
+     12697
+    ],
+    [
+     95.0,
+     8876
+    ],
+    [
+     88.0,
+     4247
+    ]
+   ],
+   "max_pain": 95.0,
+   "pc_oi": 4.23,
+   "gex": {
+    "flip": 96.0,
+    "flip_all": 96.0,
+    "score": -6.48,
+    "bias": "PUT",
+    "poc": 90.0,
+    "magnets": [
+     90.0,
+     95.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 1153513,
+    "put_usd": -7633778,
+    "net_gex": -6480265,
+    "gross_gex": 6480265,
+    "call_wall": 95.0,
+    "put_wall": 90.0,
+    "abs_wall": 90.0,
+    "abs_wall_kind": "trampilla",
+    "spot": 92.53,
+    "ts": 1784991148,
+    "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
+    "chain_date": "2026-07-25",
+    "chain_snapshot_local": "2026-07-25 10:18:54",
+    "greeks_ok_pct": 0.938,
+    "n_contracts": 60,
+    "n_strikes_populated": 8
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "DRAM": {
+   "spot": 53.58,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     55.0,
+     3116
+    ],
+    [
+     56.0,
+     2143
+    ],
+    [
+     55.0,
+     1809
+    ]
+   ],
+   "put_walls": [
+    [
+     55.0,
+     25192
+    ],
+    [
+     55.0,
+     6496
+    ],
+    [
+     51.0,
+     6042
+    ]
+   ],
+   "max_pain": 55.0,
+   "pc_oi": 5.455,
+   "gex": {
+    "flip": 56.0,
+    "flip_all": 56.0,
+    "score": -10.154,
+    "bias": "PUT",
+    "poc": 55.0,
+    "magnets": [
+     52.5,
+     55.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 2193656,
+    "put_usd": -12348019,
+    "net_gex": -10154363,
+    "gross_gex": 10352132,
+    "call_wall": 55.0,
+    "put_wall": 52.5,
+    "abs_wall": 55.0,
+    "abs_wall_kind": "trampilla",
+    "spot": 53.63,
+    "ts": 1784991148,
+    "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
+    "chain_date": "2026-07-25",
+    "chain_snapshot_local": "2026-07-25 10:18:54",
+    "greeks_ok_pct": 1.0,
+    "n_contracts": 20,
+    "n_strikes_populated": 10
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "STX": {
+   "spot": 853.25,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     850.0,
+     1908
+    ],
+    [
+     855.0,
+     157
+    ],
+    [
+     850.0,
+     126
+    ]
+   ],
+   "put_walls": [
+    [
+     850.0,
+     2338
+    ],
+    [
+     860.0,
+     364
+    ],
+    [
+     822.5,
+     332
+    ]
+   ],
+   "max_pain": 840.0,
+   "pc_oi": 0.351,
+   "gex": {
+    "flip": 845.35,
+    "flip_all": 845.35,
+    "score": 0.385,
+    "bias": "CALL",
+    "poc": 850.0,
+    "magnets": [
+     850.0,
+     855.0
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "call_usd": 517901,
+    "put_usd": -132629,
+    "net_gex": 385272,
+    "gross_gex": 465986,
+    "call_wall": 855.0,
+    "put_wall": 850.0,
+    "abs_wall": 850.0,
+    "abs_wall_kind": "pin",
+    "spot": 851.0,
+    "ts": 1784991148,
+    "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
+    "chain_date": "2026-07-25",
+    "chain_snapshot_local": "2026-07-25 10:18:54",
+    "greeks_ok_pct": 1.0,
+    "n_contracts": 30,
+    "n_strikes_populated": 15
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "TSM": {
+   "spot": 402.86,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     400.0,
+     4584
+    ],
+    [
+     425.0,
+     4073
+    ],
+    [
+     410.0,
+     3230
+    ]
+   ],
+   "put_walls": [
+    [
+     420.0,
+     12272
+    ],
+    [
+     385.0,
+     9673
+    ],
+    [
+     380.0,
+     7419
+    ]
+   ],
+   "max_pain": 420.0,
+   "pc_oi": 2.868,
+   "gex": {
+    "flip": 420.0,
+    "flip_all": 420.0,
+    "score": -10.26,
+    "bias": "PUT",
+    "poc": 420.0,
+    "magnets": [
+     400.0,
+     410.0,
+     420.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 5485606,
+    "put_usd": -15745252,
+    "net_gex": -10259646,
+    "gross_gex": 13745135,
+    "call_wall": 410.0,
+    "put_wall": 400.0,
+    "abs_wall": 420.0,
+    "abs_wall_kind": "pin",
+    "spot": 402.63,
+    "ts": 1784991148,
+    "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
+    "chain_date": "2026-07-25",
+    "chain_snapshot_local": "2026-07-25 10:18:54",
+    "greeks_ok_pct": 1.0,
+    "n_contracts": 30,
+    "n_strikes_populated": 15
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "QQQ": {
+   "spot": 684.66,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     690.0,
+     7106
+    ],
+    [
+     694.0,
+     3766
+    ],
+    [
+     691.0,
+     3283
+    ]
+   ],
+   "put_walls": [
+    [
+     680.0,
+     31415
+    ],
+    [
+     685.0,
+     26591
+    ],
+    [
+     690.0,
+     20371
+    ]
+   ],
+   "max_pain": 690.0,
+   "pc_oi": 4.784,
+   "gex": {
+    "flip": 715.0,
+    "flip_all": 715.0,
+    "score": -481.11,
+    "bias": "PUT",
+    "poc": 695.0,
+    "magnets": [
+     680.0,
+     695.0,
+     700.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 108771906,
+    "put_usd": -589882219,
+    "net_gex": -481110313,
+    "gross_gex": 511128645,
+    "call_wall": 700.0,
+    "put_wall": 680.0,
+    "abs_wall": 695.0,
+    "abs_wall_kind": "trampilla",
+    "spot": 685.06,
+    "ts": 1784991147,
+    "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
+    "chain_date": "2026-07-25",
+    "chain_snapshot_local": "2026-07-25 10:18:54",
+    "greeks_ok_pct": 0.782,
+    "n_contracts": 668,
+    "n_strikes_populated": 61
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "TXN": {
+   "spot": 279.55,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     287.5,
+     1322
+    ],
+    [
+     292.5,
+     1236
+    ],
+    [
+     295.0,
+     680
+    ]
+   ],
+   "put_walls": [
+    [
+     270.0,
+     736
+    ],
+    [
+     265.0,
+     637
+    ],
+    [
+     267.5,
+     549
+    ]
+   ],
+   "max_pain": 280.0,
+   "pc_oi": 0.253,
+   "gex": {
+    "flip": 274.91,
+    "flip_all": 274.91,
+    "score": 0.818,
+    "bias": "CALL",
+    "poc": 287.5,
+    "magnets": [
+     270.0,
+     287.5
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "call_usd": 1167506,
+    "put_usd": -349942,
+    "net_gex": 817564,
+    "gross_gex": 1143775,
+    "call_wall": 287.5,
+    "put_wall": 270.0,
+    "abs_wall": 287.5,
+    "abs_wall_kind": "pin",
+    "spot": 279.0,
+    "ts": 1784991148,
+    "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
+    "chain_date": "2026-07-25",
+    "chain_snapshot_local": "2026-07-25 10:18:54",
+    "greeks_ok_pct": 1.0,
+    "n_contracts": 20,
+    "n_strikes_populated": 10
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "SPCX": {
+   "spot": 115.0,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     120.0,
+     11644
+    ],
+    [
+     115.0,
+     5332
+    ],
+    [
+     116.0,
+     3996
+    ]
+   ],
+   "put_walls": [
+    [
+     115.0,
+     16594
+    ],
+    [
+     110.0,
+     14433
+    ],
+    [
+     110.0,
+     13339
+    ]
+   ],
+   "max_pain": 120.0,
+   "pc_oi": 3.533,
+   "gex": {
+    "flip": 120.0,
+    "flip_all": 120.0,
+    "score": -14.737,
+    "bias": "PUT",
+    "poc": 115.0,
+    "magnets": [
+     115.0,
+     120.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 3519265,
+    "put_usd": -18256026,
+    "net_gex": -14736761,
+    "gross_gex": 14736761,
+    "call_wall": 120.0,
+    "put_wall": 115.0,
+    "abs_wall": 115.0,
+    "abs_wall_kind": "trampilla",
+    "spot": 115.02,
+    "ts": 1784991148,
+    "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
+    "chain_date": "2026-07-25",
+    "chain_snapshot_local": "2026-07-25 10:18:54",
+    "greeks_ok_pct": 1.0,
+    "n_contracts": 22,
+    "n_strikes_populated": 11
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "WDC": {
+   "spot": 519.81,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     525.0,
+     734
+    ],
+    [
+     520.0,
+     233
+    ],
+    [
+     500.0,
+     230
+    ]
+   ],
+   "put_walls": [
+    [
+     540.0,
+     2025
+    ],
+    [
+     500.0,
+     448
+    ],
+    [
+     500.0,
+     339
+    ]
+   ],
+   "max_pain": 540.0,
+   "pc_oi": 3.902,
+   "gex": {
+    "flip": 497.67,
+    "flip_all": 497.67,
+    "score": -0.799,
+    "bias": "PUT",
+    "poc": 540.0,
+    "magnets": [
+     500.0,
+     535.0,
+     540.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 213093,
+    "put_usd": -1011696,
+    "net_gex": -798603,
+    "gross_gex": 879529,
+    "call_wall": 535.0,
+    "put_wall": 500.0,
+    "abs_wall": 540.0,
+    "abs_wall_kind": "pin",
+    "spot": 519.83,
+    "ts": 1784991148,
+    "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
+    "chain_date": "2026-07-25",
+    "chain_snapshot_local": "2026-07-25 10:18:54",
+    "greeks_ok_pct": 0.974,
+    "n_contracts": 37,
+    "n_strikes_populated": 19
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "GOOGL": {
+   "spot": 319.58,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     330.0,
+     7342
+    ],
+    [
+     320.0,
+     4941
+    ],
+    [
+     325.0,
+     4858
+    ]
+   ],
+   "put_walls": [
+    [
+     317.5,
+     6006
+    ],
+    [
+     320.0,
+     5923
+    ],
+    [
+     310.0,
+     5845
+    ]
+   ],
+   "max_pain": 325.0,
+   "pc_oi": 0.84,
+   "gex": {
+    "flip": 323.21,
+    "flip_all": 323.21,
+    "score": -3.461,
+    "bias": "PUT",
+    "poc": 310.0,
+    "magnets": [
+     310.0,
+     320.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 20287879,
+    "put_usd": -23748883,
+    "net_gex": -3461004,
+    "gross_gex": 19461856,
+    "call_wall": 320.0,
+    "put_wall": 310.0,
+    "abs_wall": 310.0,
+    "abs_wall_kind": "trampilla",
+    "spot": 319.3,
+    "ts": 1784991148,
+    "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
+    "chain_date": "2026-07-25",
+    "chain_snapshot_local": "2026-07-25 10:18:54",
+    "greeks_ok_pct": 0.75,
+    "n_contracts": 72,
+    "n_strikes_populated": 10
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "AMD": {
+   "spot": 523.41,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     515.0,
+     4700
+    ],
+    [
+     532.5,
+     4613
+    ],
+    [
+     540.0,
+     2759
+    ]
+   ],
+   "put_walls": [
+    [
+     500.0,
+     4129
+    ],
+    [
+     505.0,
+     3191
+    ],
+    [
+     510.0,
+     2766
+    ]
+   ],
+   "max_pain": 530.0,
+   "pc_oi": 1.107,
+   "gex": {
+    "flip": 545.0,
+    "flip_all": 545.0,
+    "score": -2.24,
+    "bias": "PUT",
+    "poc": 500.0,
+    "magnets": [
+     500.0,
+     545.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 5519314,
+    "put_usd": -7759168,
+    "net_gex": -2239854,
+    "gross_gex": 4790306,
+    "call_wall": 545.0,
+    "put_wall": 500.0,
+    "abs_wall": 500.0,
+    "abs_wall_kind": "trampilla",
+    "spot": 523.0,
+    "ts": 1784991148,
+    "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
+    "chain_date": "2026-07-25",
+    "chain_snapshot_local": "2026-07-25 10:18:54",
+    "greeks_ok_pct": 0.974,
+    "n_contracts": 148,
+    "n_strikes_populated": 19
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "SNDK": {
+   "spot": 1440.88,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     1425.0,
+     719
+    ],
+    [
+     1450.0,
+     478
+    ],
+    [
+     1400.0,
+     409
+    ]
+   ],
+   "put_walls": [
+    [
+     1400.0,
+     3883
+    ],
+    [
+     1400.0,
+     1348
+    ],
+    [
+     1450.0,
+     883
+    ]
+   ],
+   "max_pain": 1450.0,
+   "pc_oi": 3.505,
+   "gex": {
+    "flip": 1510.0,
+    "flip_all": 1510.0,
+    "score": -3.136,
+    "bias": "PUT",
+    "poc": 1390.0,
+    "magnets": [
+     1390.0,
+     1500.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 481709,
+    "put_usd": -3617912,
+    "net_gex": -3136204,
+    "gross_gex": 3189375,
+    "call_wall": 1500.0,
+    "put_wall": 1390.0,
+    "abs_wall": 1390.0,
+    "abs_wall_kind": "trampilla",
+    "spot": 1445.46,
+    "ts": 1784991148,
+    "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
+    "chain_date": "2026-07-25",
+    "chain_snapshot_local": "2026-07-25 10:18:54",
+    "greeks_ok_pct": 1.0,
+    "n_contracts": 52,
+    "n_strikes_populated": 26
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "LRCX": {
+   "spot": 304.98,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     320.0,
+     2029
+    ],
+    [
+     300.0,
+     519
+    ],
+    [
+     320.0,
+     449
+    ]
+   ],
+   "put_walls": [
+    [
+     290.0,
+     3346
+    ],
+    [
+     310.0,
+     2436
+    ],
+    [
+     300.0,
+     976
+    ]
+   ],
+   "max_pain": 317.5,
+   "pc_oi": 2.313,
+   "gex": {
+    "flip": 299.5,
+    "flip_all": 299.5,
+    "score": 0.015,
+    "bias": "CALL",
+    "poc": 320.0,
+    "magnets": [
+     300.0,
+     320.0
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "call_usd": 650684,
+    "put_usd": -635812,
+    "net_gex": 14872,
+    "gross_gex": 845752,
+    "call_wall": 320.0,
+    "put_wall": 300.0,
+    "abs_wall": 320.0,
+    "abs_wall_kind": "pin",
+    "spot": 306.89,
+    "ts": 1784991148,
+    "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
+    "chain_date": "2026-07-25",
+    "chain_snapshot_local": "2026-07-25 10:18:54",
+    "greeks_ok_pct": 1.0,
+    "n_contracts": 22,
+    "n_strikes_populated": 11
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "ASML": {
+   "spot": 1756.51,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     1780.0,
+     168
+    ],
+    [
+     1767.5,
+     151
+    ],
+    [
+     1790.0,
+     124
+    ]
+   ],
+   "put_walls": [
+    [
+     1750.0,
+     280
+    ],
+    [
+     1750.0,
+     163
+    ],
+    [
+     1755.0,
+     161
+    ]
+   ],
+   "max_pain": 1755.0,
+   "pc_oi": 2.107,
+   "gex": {
+    "flip": 1835.0,
+    "flip_all": 1835.0,
+    "score": -0.221,
+    "bias": "PUT",
+    "poc": 1750.0,
+    "magnets": [
+     1750.0,
+     1800.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 392611,
+    "put_usd": -613935,
+    "net_gex": -221323,
+    "gross_gex": 522815,
+    "call_wall": 1800.0,
+    "put_wall": 1750.0,
+    "abs_wall": 1750.0,
+    "abs_wall_kind": "trampilla",
+    "spot": 1757.0,
+    "ts": 1784991148,
+    "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
+    "chain_date": "2026-07-25",
+    "chain_snapshot_local": "2026-07-25 10:18:54",
+    "greeks_ok_pct": 0.881,
+    "n_contracts": 74,
+    "n_strikes_populated": 40
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "AAPL": {
+   "spot": 333.48,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     332.5,
+     17595
+    ],
+    [
+     330.0,
+     17320
+    ],
+    [
+     335.0,
+     13719
+    ]
+   ],
+   "put_walls": [
+    [
+     320.0,
+     13555
+    ],
+    [
+     315.0,
+     8718
+    ],
+    [
+     327.5,
+     7366
+    ]
+   ],
+   "max_pain": 325.0,
+   "pc_oi": 0.836,
+   "gex": {
+    "flip": 320.0,
+    "flip_all": 320.0,
+    "score": 40.902,
+    "bias": "CALL",
+    "poc": 335.0,
+    "magnets": [
+     320.0,
+     335.0
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "call_usd": 64575682,
+    "put_usd": -23673398,
+    "net_gex": 40902284,
+    "gross_gex": 43938577,
+    "call_wall": 335.0,
+    "put_wall": 320.0,
+    "abs_wall": 335.0,
+    "abs_wall_kind": "pin",
+    "spot": 333.47,
+    "ts": 1784991148,
+    "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
+    "chain_date": "2026-07-25",
+    "chain_snapshot_local": "2026-07-25 10:18:54",
+    "greeks_ok_pct": 0.865,
+    "n_contracts": 83,
+    "n_strikes_populated": 12
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "SPY": {
+   "spot": 738.78,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     745.0,
+     19711
+    ],
+    [
+     746.0,
+     14334
+    ],
+    [
+     742.0,
+     13678
+    ]
+   ],
+   "put_walls": [
+    [
+     730.0,
+     25853
+    ],
+    [
+     740.0,
+     22235
+    ],
+    [
+     735.0,
+     19993
+    ]
+   ],
+   "max_pain": 741.0,
+   "pc_oi": 1.287,
+   "gex": {
+    "flip": 747.95,
+    "flip_all": 747.95,
+    "score": -651.551,
+    "bias": "PUT",
+    "poc": 740.0,
+    "magnets": [
+     720.0,
+     740.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 590250874,
+    "put_usd": -1241801838,
+    "net_gex": -651550964,
+    "gross_gex": 1008028574,
+    "call_wall": 740.0,
+    "put_wall": 720.0,
+    "abs_wall": 740.0,
+    "abs_wall_kind": "trampilla",
+    "spot": 738.84,
+    "ts": 1784991148,
+    "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
+    "chain_date": "2026-07-25",
+    "chain_snapshot_local": "2026-07-25 10:18:54",
+    "greeks_ok_pct": 0.835,
+    "n_contracts": 783,
+    "n_strikes_populated": 67
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "QCOM": {
+   "spot": 167.16,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     175.0,
+     1689
+    ],
+    [
+     175.0,
+     886
+    ],
+    [
+     170.0,
+     739
+    ]
+   ],
+   "put_walls": [
+    [
+     167.5,
+     4999
+    ],
+    [
+     160.0,
+     2737
+    ],
+    [
+     162.5,
+     2071
+    ]
+   ],
+   "max_pain": 172.5,
+   "pc_oi": 2.385,
+   "gex": null,
+   "gex_src": null
+  },
+  "AVGO": {
+   "spot": 381.69,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     390.0,
+     6388
+    ],
+    [
+     395.0,
+     2911
+    ],
+    [
+     380.0,
+     2171
+    ]
+   ],
+   "put_walls": [
+    [
+     380.0,
+     2455
+    ],
+    [
+     370.0,
+     2098
+    ],
+    [
+     390.0,
+     1632
+    ]
+   ],
+   "max_pain": 390.0,
+   "pc_oi": 1.185,
+   "gex": {
+    "flip": 388.86,
+    "flip_all": 388.86,
+    "score": -0.899,
+    "bias": "PUT",
+    "poc": 395.0,
+    "magnets": [
+     375.0,
+     390.0,
+     395.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 6632843,
+    "put_usd": -7532090,
+    "net_gex": -899247,
+    "gross_gex": 4778743,
+    "call_wall": 390.0,
+    "put_wall": 375.0,
+    "abs_wall": 395.0,
+    "abs_wall_kind": "pin",
+    "spot": 381.75,
+    "ts": 1784991148,
+    "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
+    "chain_date": "2026-07-25",
+    "chain_snapshot_local": "2026-07-25 10:18:54",
+    "greeks_ok_pct": 0.973,
+    "n_contracts": 109,
+    "n_strikes_populated": 14
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "META": {
+   "spot": 595.82,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     600.0,
+     7982
+    ],
+    [
+     610.0,
+     3824
+    ],
+    [
+     605.0,
+     1725
+    ]
+   ],
+   "put_walls": [
+    [
+     600.0,
+     3528
+    ],
+    [
+     610.0,
+     2468
+    ],
+    [
+     585.0,
+     2112
+    ]
+   ],
+   "max_pain": 600.0,
+   "pc_oi": 1.018,
+   "gex": {
+    "flip": 612.65,
+    "flip_all": 612.65,
+    "score": -3.934,
+    "bias": "PUT",
+    "poc": 580.0,
+    "magnets": [
+     580.0,
+     600.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 11068193,
+    "put_usd": -15001759,
+    "net_gex": -3933567,
+    "gross_gex": 13263080,
+    "call_wall": 600.0,
+    "put_wall": 580.0,
+    "abs_wall": 580.0,
+    "abs_wall_kind": "trampilla",
+    "spot": 595.96,
+    "ts": 1784991148,
+    "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
+    "chain_date": "2026-07-25",
+    "chain_snapshot_local": "2026-07-25 10:18:54",
+    "greeks_ok_pct": 0.898,
+    "n_contracts": 115,
+    "n_strikes_populated": 22
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "TSLA": {
+   "spot": 313.58,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     330.0,
+     19217
+    ],
+    [
+     325.0,
+     7750
+    ],
+    [
+     320.0,
+     6640
+    ]
+   ],
+   "put_walls": [
+    [
+     300.0,
+     15690
+    ],
+    [
+     320.0,
+     14677
+    ],
+    [
+     310.0,
+     11387
+    ]
+   ],
+   "max_pain": 322.5,
+   "pc_oi": 1.842,
+   "gex": {
+    "flip": 345.19,
+    "flip_all": 345.19,
+    "score": -16.144,
+    "bias": "PUT",
+    "poc": 310.0,
+    "magnets": [
+     310.0,
+     325.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 12256675,
+    "put_usd": -28400660,
+    "net_gex": -16143984,
+    "gross_gex": 25098212,
+    "call_wall": 325.0,
+    "put_wall": 310.0,
+    "abs_wall": 310.0,
+    "abs_wall_kind": "trampilla",
+    "spot": 313.33,
+    "ts": 1784991148,
+    "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
+    "chain_date": "2026-07-25",
+    "chain_snapshot_local": "2026-07-25 10:18:54",
+    "greeks_ok_pct": 0.909,
+    "n_contracts": 80,
+    "n_strikes_populated": 11
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "NOK": {
+   "spot": 9.09,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     9.5,
+     2412
+    ],
+    [
+     9.0,
+     1022
+    ],
+    [
+     9.5,
+     892
+    ]
+   ],
+   "put_walls": [
+    [
+     9.0,
+     10234
+    ],
+    [
+     9.5,
+     9487
+    ],
+    [
+     9.0,
+     7823
+    ]
+   ],
+   "max_pain": 9.5,
+   "pc_oi": 3.862,
+   "gex": null,
+   "gex_src": null
+  }
+ }
+}

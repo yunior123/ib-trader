@@ -1,53 +1,53 @@
 {
  "sym": "NVDA",
  "spot": 207.03,
- "asof": 1784990713,
+ "asof": 1785015597,
  "exp": "20260727",
- "dte": 2.22,
+ "dte": 1.93,
  "scope": "0DTE",
- "net_vex": 960709309.0,
+ "net_vex": 909262564.2,
  "vex_peak": 200.0,
  "vex_profile": [
   {
    "strike": 200.0,
-   "vex": 331019176.6
+   "vex": 311611879.7
   },
   {
    "strike": 202.5,
-   "vex": 251102293.9
+   "vex": 238961505.8
   },
   {
    "strike": 205.0,
-   "vex": 100409187.6
+   "vex": 96226977.3
   },
   {
    "strike": 207.5,
-   "vex": -4875802.0
+   "vex": -4797641.3
   },
   {
    "strike": 210.0,
-   "vex": 70270387.9
+   "vex": 66547340.5
   },
   {
    "strike": 212.5,
-   "vex": 212784065.0
+   "vex": 200712502.2
   }
  ],
  "pressure": -18,
  "pressure_lab": "FLAT",
- "iv_atm": 0.3148,
- "em": 5.08,
- "net_gex": -36523410.2,
+ "iv_atm": 0.333,
+ "em": 5.01,
+ "net_gex": -36612713.2,
  "regime": "NEG",
- "flip": 210.35,
+ "flip": 210.28,
  "flip_static": 212.5,
  "call_wall": 210.0,
  "put_wall": 202.5,
  "abs_wall": 202.5,
  "poc_dom": "96%P",
- "call_wall_gex": 8355930.8,
- "put_wall_gex": -19769230.5,
- "abs_wall_gex": -19769230.5,
+ "call_wall_gex": 8331295.2,
+ "put_wall_gex": -19784801.3,
+ "abs_wall_gex": -19784801.3,
  "oi_call_wall": 210.0,
  "oi_put_wall": 200.0,
  "near_call_wall": false,
@@ -56,43 +56,43 @@
  "profile": [
   {
    "strike": 200.0,
-   "gex": -18477189.5
+   "gex": -18488498.5
   },
   {
    "strike": 202.5,
-   "gex": -19769230.5
+   "gex": -19784801.3
   },
   {
    "strike": 205.0,
-   "gex": -15682995.6
+   "gex": -15704616.8
   },
   {
    "strike": 207.5,
-   "gex": -2667244.2
+   "gex": -2682618.5
   },
   {
    "strike": 210.0,
-   "gex": 8355930.8
+   "gex": 8331295.2
   },
   {
    "strike": 212.5,
-   "gex": 11717318.9
+   "gex": 11716526.8
   }
  ],
  "call_wall_kind": "trampilla",
  "call_wall_regime": "NEG",
- "call_wall_net": 8355930.8,
+ "call_wall_net": 8331295.2,
  "put_wall_kind": "trampilla",
  "put_wall_regime": "NEG",
- "put_wall_net": -19769230.5,
+ "put_wall_net": -19784801.3,
  "abs_wall_kind": "trampilla",
  "abs_wall_regime": "NEG",
- "abs_wall_net": -19769230.5,
+ "abs_wall_net": -19784801.3,
  "gamma_ok": true,
  "greeks_ok_pct": 1.0,
  "chain_src": "polygon_snapshot_v3",
- "chain_ts": 1784989198.0,
- "chain_age_s": 1515.9688,
+ "chain_ts": 1785010863.0,
+ "chain_age_s": 4734.3482,
  "stale": false,
  "stale_reason": null,
  "quotes_ok": false,
@@ -116,16 +116,16 @@
  "exp_rolled": false,
  "roll_reason": null,
  "degraded_reason": null,
- "gross_gex": 76669909.6032,
- "bifurcation": 2.0992,
+ "gross_gex": 76708357.1978,
+ "bifurcation": 2.0951,
  "hhi": 0.2029,
  "n_strikes_populated": 6,
- "chain_path": "data/history/2026-07-25/poly_chain_nvda_1018.txt",
- "flip_live": 210.35,
+ "chain_path": "data/history/2026-07-25/poly_chain_nvda_1620.txt",
+ "flip_live": 210.28,
  "flip_src": "repriced",
  "flip_why": "gamma recomputada a cada spot del barrido (definicion correcta)",
  "roots": [
-  210.35
+  210.28
  ],
  "trapdoor_root": null,
  "flip_open": null,

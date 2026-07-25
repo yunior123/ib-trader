@@ -9,6 +9,72 @@
 > **al final del fichero**. Estado por casilla: `pendiente` / `hecho <commit>` / `obsoleto: <motivo>`.
 > Cada afirmación va marcada **MEDIDO** (comprobado hoy con una orden) o **SOSPECHADO**.
 
+## 🔴 SESIÓN 2026-07-25 (noche) — peticiones de Yunior, apuntadas AL VUELO
+> Plan completo aprobado: `~/.claude/plans/create-plan-to-finish-glimmering-pascal.md`.
+> Orden acordado: FASE 0 higiene → 1 señales → 2 flecha → 2.5 TradingAgents → 3 muros
+> → 4 UI/UX → 4.5 X earnings → 5 los 9 bugs → 6 deploy → 7 seis ventanas + QA → 8 verif → 9 features minadas.
+
+- [x] **"new finviz api till next saturday"** → token nuevo `0c56…8625` puesto en **feeds.env
+      `FINVIZ_AUTH3`** (no solo en `llm.env`): MEDIDO que los 4 consumidores prueban `AUTH3`
+      ANTES que `AUTH` (`finviz_scout.cpp:91`, `x_whale_bot.cpp:366`, `options_hunter.py:34`,
+      y `finviz_valuation.py` **solo** lee AUTH3) → cambiar solo `FINVIZ_AUTH` no lo usaba nadie.
+      El anterior seguía dando 200 al sustituirlo; queda comentado. Caduca ~2026-08-01.
+- [ ] **[pendiente]** `scripts/finviz_auth_check.py`: GRITAR cuando el token caduque.
+      *Por qué importa*: hoy caduca **en silencio** y el scout/valuation/whale-bot se quedan mudos
+      sin que nadie se entere. Yunior lo renueva semanalmente.
+- [ ] **[pendiente] "make sure the walls are ok, no excuses, verify and try in depth… plus explore
+      and call polygon and others"** (Yunior 2026-07-25). MEDIDO hoy contra DOS referees
+      independientes que coinciden entre sí (CBOE CDN y Polygon sin filtrar): **los muros NO están
+      bien**. Dos defectos, los dos del patrón prohibido de `~/CLAUDE.md`:
+      **(1) `T = 0.02` inventado** — `gex_snapshot.py:114-116` no escribe `T`, `gex_core.py:188,207,
+      409,813` caen al default; `_T_of()` existe (`:496`) pero solo lo llama `from_ibkr_cache`
+      (`:688`) y `gex_snapshot.py:134` invoca `build_gex` directo → **el flip se reprecia con 7,3
+      días para TODOS los vencimientos, 0DTE incluido**, y de ese flip sale `pin`/`trampilla`, que
+      es VETO DURO (`compass.cpp:630-634`, `book_quality.py:317-326`). Hoy 15 trampilla / 10 pin.
+      **(2) cadena truncada** — `poly_chain_archive.py:46-47` `BAND=0.045 DTE_MAX=10`: QQQ archiva
+      854 contratos vs **12.430** reales; net GEX **−481 M** vs **−6,03 B**; call_wall **700** vs
+      **730**; NVDA 56 contratos / 7 strikes → **sin mapa gamma**. Prueba del delito: **14 de 25
+      flips caen entre 3,7% y 4,6% del spot con la banda a 4,5%** — es el borde de nuestro recorte,
+      no un nivel de mercado.
+- [ ] **[pendiente] "run ib-gateway simulation engine… show 6 ib-trader window like before, working
+      with different tickers, while the graph is moving, while we also see the walls. full qa
+      testing on those windows, test everysingle feature in there"** (Yunior 2026-07-25).
+      Va DESPUÉS de arreglar los muros: `replay.cpp:314-364` copia/sintetiza los `levels_<sym>.json`,
+      así que con muros truncados las 6 ventanas enseñarían la misma basura.
+- [ ] **[pendiente] "priority now goes to signals… test all signals with data, full backtesting,
+      arrow is super important too"** (Yunior 2026-07-25). Hallazgo nuevo: **la flecha NUNCA está
+      calibrada en producción** — `compass.cpp:751-770` da `prob_source="medido"` solo con
+      `calib_lo`/`calib_n`, y esos campos **solo se pueblan por `--ev-stdin`** (`:1034`);
+      `gather()` no los lee de ningún fichero. Se suma a `direction_view.py:284-285`
+      (`prob = 50 + |score|*40`).
+- [ ] **[pendiente] "calibramos la flecha con trading agents framework… pásale todo el arsenal,
+      y que tenga acceso a finviz technicals"** (Yunior 2026-07-25). MEDIDO: (a)
+      `TradingAgents/tradingagents/default_config.py:72` = **`"llm_provider": "nvidia"` = NIM,
+      PROHIBIDO** por la orden del 2026-07-16; (b) el puente está roto — `llm.env` define `TA_*`
+      pero **solo lo lee `scripts/narrator.py:23,37`**; el framework lee `TRADINGAGENTS_*`
+      (`default_config.py:13-16`) → **la config DeepSeek de ib-trader no gobierna el framework**;
+      (c) `dataflows/finviz.py:46` usa `v=111` (Overview) → **cero indicadores técnicos**.
+      *Objeción escrita*: un LLM NO produce probabilidad calibrada — propone, y la medición dispone
+      (barrera+null+BH-FDR, banner sin voz hasta tener n_eff, y entra con el tope duro desplazando
+      a otro factor).
+- [ ] **[pendiente] "create script to post x.com post of companies with earnings next week,
+      include technicals… use finviz… show people nice picaros data"** (Yunior 2026-07-25).
+      VERIFICADO hoy con el token nuevo: `f=earningsdate_nextweek` → **753 tickers**; `v=171` da
+      Beta/ATR/SMA20-50-200/52W/RSI(14)/Gap; `v=152&c=…` trae **`Earnings Date` con hora**
+      (8:30 AM = BMO, 4:30 PM = AMC).
+      🔴 **Hallazgo que vale más que el tweet**: **8 de los 30 de la flota reportan la semana que
+      viene — AAPL AMZN LRCX META MSFT QCOM SKHY STX**. La regla 4 prohíbe aguantar prima comprada
+      a través de un print → esto va a los PDFs y a los vetos, no solo a X.
+- [ ] **[pendiente] "terminar todo de trendspider, menthorq… make it nice, surprise me"**
+      (Yunior 2026-07-25). MEDIDO: de las 30 minadas, **8 siguen sin fichero** (#19 cube-widening,
+      #21 wall-decay, #22 chain-delta, #24 close-drift, #25 expiry-unwind, #26 gap-islands,
+      #29 peer-weights, #30 finviz-snap). *La sorpresa elegida*: **#21 wall-decay ledger** — medir
+      la constante de la casa ("1er toque rebota ~70%, 3+ exhausto") que **nunca se ha medido** y
+      que sin embargo veta de verdad en `compass.cpp:635-638` (`TOUCH_EXHAUST = 3`).
+- [ ] **[pendiente] "technicals de la company en tiempo real desde finviz en un widget nuevo;
+      solo el gráfico principal por defecto, los demás widgets bajo demanda; yfinance de fallback
+      si finviz se cae"** (Yunior 2026-07-25). Va con la FASE 4 de UI/UX.
+
 ## 🔴 SESIÓN 2026-07-25 (madrugada) — peticiones de Yunior, apuntadas AL VUELO
 > Regla (`~/CLAUDE.md`): cada petición se anota aquí EN EL MOMENTO, con las palabras de
 > Yunior, antes de seguir trabajando. Sin esto se pierden — pasó con las 30 features minadas.
@@ -196,11 +262,12 @@
       — leerlos como estado actual es lo que hace creer que el bug sigue vivo.
       *(Fusiona la casilla duplicada "launchd exit 78 (fleet/scan/screener/fastscan/rescan/screener6am)"
       del 2026-07-21. Del grupo queda un residuo distinto y menor, abajo: `com.ibtrader.scan`.)*
-- [ ] **[pendiente]** Residuo del grupo exit-78, **otra raíz distinta**: `com.ibtrader.scan` apunta a
-      un binario `scan_server` que **no existe** → launchd reintenta la nada. *Fichero*: el plist
-      `com.ibtrader.scan.plist`. *Por qué importa*: poco (nadie depende de él hoy), pero un job en
-      bucle de fallo ensucia el audit del healthcheck y esconde fallos reales. *Acción*: compilar
-      `scan_server` o **descargar el plist**. Decide Yunior (los plists son suyos).
+- [x] ~~Residuo del grupo exit-78: `com.ibtrader.scan` apunta a un binario `scan_server` que no
+      existe~~ — **obsoleto: el job ya está desinstalado.** MEDIDO hoy:
+      `~/Library/LaunchAgents/com.ibtrader.scan.plist` **no existe** y `launchctl print` responde
+      *"Could not find service com.ibtrader.scan"*. Yo mismo abrí esta casilla al auditar,
+      fiándome de un informe del 24-jul; al comprobarlo con `launchctl` resultó falsa. Queda
+      escrito como recordatorio de que **un informe de agente no es evidencia hasta que se mide**.
 - [ ] **[pendiente]** Primera cacería REAL de jaula-liberación (lunes al cierre, cuando el
       after-hours vive). *Qué es*: `scripts/posthours_cage.py` + `tests/test_posthours_cage.py`
       existen y pasan; falta EJECUTARLO una vez con mercado real. *Por qué importa*: es la única
@@ -390,14 +457,16 @@ significa que nadie pudo verificar. Los de abajo los confirmé A MANO uno por un
       `total_brutos: 87, refutados: 0, vivos: 87`, repartidos `dinero_real: 34 · señal_falsa: 37 ·
       operativo: 16`. Cada hallazgo trae `file, line, severity, blast, failure_scenario, evidence,
       fix_sketch` y `verdict_note: "sin veredicto"`.
-      *Estado real*: de los 5 primeros, **4 ya están arreglados** (son los `[x]` de arriba:
-      `order_engine/tws_adapter.cpp:233` auto-cancel, `scripts/chart_bridge.py:1040` side perdido,
-      `order_engine/order_engine.cpp:479` stop duplicado, `tws_adapter.cpp:199` fill parcial).
-      El 5º **sigue vivo y es de dinero**: `order_engine/order_engine.cpp:772` — el centinela
-      `-1.0000` del cache de cadena se usa como **delta REAL**, clavando el stop nativo a −5% de la
-      prima = stop-out instantáneo. Es exactamente el patrón "cero plausible" de `~/CLAUDE.md`.
-      *Acción*: **PRIMERO copiar el fichero al repo** antes de que `/tmp` se lo lleve; luego
-      re-correr los refutadores cuando haya presupuesto. NO tratarlos como bugs hasta refutarlos.
+      *Fichero RESCATADO* `hecho 0f7893c`: estaba a una limpieza de `/tmp` de perderse.
+      **CLASIFICADOS LOS 87 (2026-07-25), sin arreglar ninguno**: **63 VIVOS · 24 ARREGLADOS ·
+      0 no-aplica.** Método validado con 4 controles: los 4 bugs que Yunior confirmó a mano salen
+      ARREGLADO y con la huella del fix visible (`tws_adapter.cpp:244` `reconciled_||mia_viva`,
+      `chart_bridge.py:1049` side+secType, `order_engine.cpp:510` `adopted_stop_id`,
+      `tws_adapter.cpp:213-221` rama `fill_qty>0`).
+      Reparto de los 63 vivos: **4 critical · 22 high · 25 medium · 12 low**.
+      *Acción que queda*: los 63 siguen **SIN REFUTAR** por un segundo par de ojos — están
+      verificados como "el defecto está en el código", no como "el defecto hace daño". Antes de
+      tocar nada, refutar por severidad. Los 4 critical y los 5 de dinero están desglosados abajo.
 - [ ] 🥈 **[pendiente — LO DECIDE YUNIOR]** **DESPLIEGUE**: los arreglos del motor están compilados
       pero **la flota sigue corriendo los binarios viejos**. `zsh scripts/deploy_signals_to_data.sh`
       recompila 28 binarios (24 bots + price_alarm/flow_pulse/qqq_xray/korea/finviz) y **reinicia
@@ -449,8 +518,10 @@ significa que nadie pudo verificar. Los de abajo los confirmé A MANO uno por un
 - [ ] **[pendiente]** Panel `close` confía en `cqty` sin comparar contra la posición real →
       posible sobre-venta / flip a corto (**en TFSA no se shortea**: sería un rechazo o una
       posición ilegal).
-- [ ] **[pendiente]** `close` del panel no cancela el stop nativo de esa posición → **stop huérfano
-      server-side** tras cerrar. Exactamente la familia de fallo que causó el desastre del 07-16.
+- [x] ~~`close` del panel no cancela el stop nativo → stop GTC huérfano server-side~~ —
+      **hecho `53e12ec` + mapa `7a0ddaf`/`1bd17c1`.** Cancela ANTES del close; empareja por
+      identidad de contrato vía `z.entry_c` (no `z.price`). 94 checks, 0 fallos. Verificado en
+      frío; **ruta real con fills queda para paper el domingo** — no declarado verificado en vivo.
 - [ ] **[pendiente]** STOP nativo **rechazado** no se reporta como fallo de protección (REJECTED
       solo se maneja para la entrada) → te crees protegido y no lo estás. **Fallo silencioso.**
 - [ ] **[pendiente]** Reconnect re-arma stops sin verificar que `reconcile` terminó (el arranque sí
@@ -577,6 +648,66 @@ Spec: `docs/FEATURES-MINED-2026-07-25.md`.
       la mencionan en el CUERPO como nota histórica fechada, no en la `description`.
       Las skills DEL REPO se arreglaron en `a387e03`.
 
+## HUNT 2026-07-24 — los 87 clasificados (2026-07-25). NINGUNO ARREGLADO AQUÍ
+> Fichero completo: `docs/hunt/hunt-2026-07-24-w7i2a7lhe.json`. **63 vivos · 24 arreglados.**
+> "Vivo" = el defecto está en el código HOY. **No** = está demostrado que hace daño: eso es lo
+> que faltan los refutadores. No tratar como bug hasta refutar.
+
+### Los 4 CRITICAL vivos
+- [ ] **[pendiente]** `scripts/backtest_harness.py:72` — `ret=(r[0]-entry)/entry*100*th; win=ret>0.05`:
+      **sin coste, sin stop, sin path-dependence**. *Daño*: TODO el dimensionamiento de la flota
+      sale de un WR inflado (44% → **29,6%** al medirlo bien).
+- [ ] **[pendiente]** `scripts/bollinger_complements.py:394` — grid de **318 tests sin corrección
+      por multiplicidad**. *Daño*: **95 celdas de ruido aplicadas como VETO en vivo** en `bb_engine.cpp`.
+- [ ] **[pendiente]** `scripts/calibration_ledger.py:110` — `after = d[d.High >= entry]` es una
+      máscara booleana, no un corte temporal. *Daño*: **borra las barras donde vive el stop** →
+      pérdidas registradas como ganancias. Es el motor de calibración "empírica".
+- [ ] **[pendiente]** `scripts/fleet_healthcheck.py:248,314` — `Popen(["nohup","zsh",...])` sin
+      `start_new_session` y plist sin `AbandonProcessGroup`. *Daño*: **el auto-curado es un NO-OP**
+      y el informe canta "REVIVIDO" en falso. Creemos tener red de seguridad y no la hay.
+
+### Los 5 vivos más peligrosos por DINERO REAL
+1. `order_engine/order_engine.cpp:152,919` — **el centinela `-1.0000` del delta se usa como delta
+   REAL** (`ss >> iv >> r.delta` sin validar). MEDIDO: fuera de RTH el **100%** de las filas de
+   `data/opt_chain_*.txt` traen `-1.0000` (80 filas hoy en QQQ). El clamp de cordura lo aterriza en
+   `fill_px*0.95` → **todo stop nativo de opción nace a −5% de la prima**: stop-out instantáneo.
+   `bid`/`ask` sí validan el centinela; `delta` no. **Patrón "cero plausible" del `~/CLAUDE.md`.**
+2. `order_engine/order_engine.cpp:632` — el `close` del panel se precia con `nearest_row()`, que
+   **nunca exige strike igual**. La orden sale con el límite de OTRO contrato → no llena, y
+   `chart_bridge` ya respondió `{"ok":true}` sin esperar al motor. **Crees que estás plano y no lo estás.**
+3. `order_engine/order_engine.cpp:980-1002` — el cierre por stop watch-local es **de un solo tiro**:
+   `z.close_id` se fija una vez, sin re-precio ni reintento, con un límite que puede venir de una
+   cadena vieja. Y es justo el camino al que lleva el watchdog tras 3 rechazos.
+4. `nvda_signal_bot.cpp:1375,1423` — `tail -n +1 -F` **sin dedupe por epoch**. Cada warm-up del
+   bridge re-inyecta ~2 días de barras a los indicadores VIVOS de los 24 bots: ATR, RSI, BB, CUSUM
+   y VWAP envenenados, y hablan señales que luego se operan.
+5. `order_engine/order_engine.cpp:626` — `cmd close` pasa el `cqty` del panel **directo, sin
+   `budget` ni `stock_budget`**: es la única ruta de orden sin ningún gate de tamaño.
+
+### Otros vivos que contradicen doctrina escrita (muestra, no la lista entera)
+- [ ] `aapl_signal_bot.cpp:1738,1839` — el gate de spread **falla ABIERTO**: sin NBBO,
+      `sp = 0` y pasa todo. La orden #5 dice que un spread ancho NO es señalable.
+- [ ] `aapl_signal_bot.cpp:788,835` — `V6_PRIOR[]` literal y `return prior` sin tabla: **las
+      probabilidades habladas son inventadas** en los tickers sin calibración.
+- [ ] `scripts/signal_conditioning.py:267` — busca `enable[f"{source}|{symbol}"]` con
+      `source="order_engine"/"ticket"`, cuando las claves reales son `bollinger|AAPL`… →
+      **el condicionamiento NUNCA aplica justo donde se ordena.**
+- [ ] `order_engine/prob_profit.py:42,287` — `prob = 50 + composite*40` sobre pesos literales:
+      **el mismo patrón que `direction_view`**, un score heurístico presentado como probabilidad.
+- [ ] `scripts/index_breadth.py:58-62` — `pc = d.Close.iloc[-1]` es HOY, comparado contra `now`:
+      MEDIDO en `data/breadth.json` de hoy, **gap +0.00 en TODOS los componentes** → el
+      ENGRANAJE QQQ/SPY está mudo.
+- [ ] `scripts/deploy_signals_to_data.sh:49` — `pkill -f '_signal_bot$'` **sin guard de horario**:
+      mataría 24 bots + relay + BD con el mercado abierto. *(Relevante para la casilla de DEPLOY.)*
+- [ ] `scripts/opt_whale_watch.py:41` — `in_session()` solo mira lunes-viernes: **cero calendario
+      de feriados en todo el repo.**
+- [ ] `fleet_notify.h:54` — `write(fd, line, (size_t)n)` con el `n` de `snprintf`: un mensaje largo
+      = **lectura fuera de buffer** y línea corrupta.
+- [ ] `scripts/ibkr_bar_bridge.py:147` — `open(...,"w")` 4×/s **sin tmp+rename**: el lector puede
+      ver el fichero VACÍO. (La regla de frontera de `~/CLAUDE.md` pide escritura atómica.)
+- [ ] `scripts/fleet_keepalive_start.sh:257` + `scripts/nvda_keepalive.sh:31` — dedup por `pgrep`
+      contra un keepalive que hace `pkill -x`: dos arranques concurrentes = **bot asesinado cada 31 s**.
+
 ---
 
 # 📊 RESULTADO DE LA AUDITORÍA (2026-07-25)
@@ -639,11 +770,14 @@ son 14 de cashtags y 22 de VPVR).
    código y **no en lo que se ejecuta**. **Daño**: directo y en dólares, a la primera orden real.
    *(Lo decide Yunior; hoy la flota está fuera de ventana a propósito.)*
 
-3. 🥉 **84 hallazgos sin refutar, y su único fichero vive en `/tmp`.** 34 clasificados como
-   "dinero real". El 5º de la lista sigue vivo y es del patrón prohibido: un centinela `-1.0000`
-   usado como delta real (`order_engine.cpp:772`) que clava el stop a −5% de la prima. **Daño**:
-   doble — el bug, y que **una limpieza de `/tmp` borra la lista entera** y volvemos a pagar los
-   14 agentes. Copiarlo al repo cuesta un `cp`.
+3. 🥉 **63 de los 87 hallazgos del hunt siguen vivos, 4 de ellos critical.** El fichero ya está
+   rescatado (`0f7893c`) y los 87 clasificados (`63 vivos · 24 arreglados`, método validado con 4
+   controles). **Daño**: el peor es del patrón prohibido — el centinela `-1.0000` usado como delta
+   real (`order_engine.cpp:152,919`) hace que **todo stop nativo de opción nazca a −5% de la
+   prima**, y MEDIDO fuera de RTH el 100% de las filas de cadena traen ese centinela. Y tres de
+   los critical atacan la base numérica: el backtest sin costes ni stop (WR 44%→29,6%), las 95
+   celdas de ruido aplicadas como VETO en vivo, y el healthcheck cuyo auto-curado es un NO-OP que
+   canta "REVIVIDO" en falso. Siguen **sin refutar**: verificar antes de tocar.
 
 4. **Los 5 `.plist` de archivadores sin cargar bloquean 3 features y el reloj no corre.**
    `book_pctile` (20 sesiones), absorción (20), condicionar sobre gamma (40) — hoy van por 1.

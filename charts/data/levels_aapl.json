@@ -1,69 +1,69 @@
 {
  "sym": "AAPL",
  "spot": 333.48,
- "asof": 1784990714,
+ "asof": 1785016906,
  "exp": "20260727",
- "dte": 2.22,
+ "dte": 1.92,
  "scope": "0DTE",
- "net_vex": 1247362284.3,
+ "net_vex": 1164873584.5,
  "vex_peak": 340.0,
  "vex_profile": [
   {
    "strike": 322.5,
-   "vex": 257743072.7
+   "vex": 236156167.7
   },
   {
    "strike": 325.0,
-   "vex": 155677280.8
+   "vex": 145402636.3
   },
   {
    "strike": 327.5,
-   "vex": 112916485.3
+   "vex": 106980881.0
   },
   {
    "strike": 330.0,
-   "vex": -259897334.5
+   "vex": -242540777.5
   },
   {
    "strike": 332.5,
-   "vex": -44112067.9
+   "vex": -41715049.2
   },
   {
    "strike": 335.0,
-   "vex": 149080260.0
+   "vex": 143983775.1
   },
   {
    "strike": 337.5,
-   "vex": 93644526.0
+   "vex": 89095678.5
   },
   {
    "strike": 340.0,
-   "vex": 534675996.1
+   "vex": 500404841.5
   },
   {
    "strike": 342.5,
-   "vex": 224570318.8
+   "vex": 206308229.6
   },
   {
    "strike": 345.0,
-   "vex": 23063746.9
+   "vex": 20797201.5
   }
  ],
  "pressure": 62,
  "pressure_lab": "PIN fuerte",
- "iv_atm": 0.1685,
- "em": 4.38,
- "net_gex": 44937580.5,
+ "iv_atm": 0.1785,
+ "em": 4.31,
+ "net_gex": 44859118.1,
  "regime": "POS",
- "flip": 328.74,
+ "flip": 328.82,
  "flip_static": 332.87,
  "call_wall": 335.0,
  "put_wall": 330.0,
  "abs_wall": 340.0,
  "poc_dom": "100%C",
- "call_wall_gex": 18100283.5,
- "put_wall_gex": 6115216.1,
- "abs_wall_gex": 18205927.1,
+ "call_wall_gex": 18065633.5,
+ "put_wall_gex": 6141435.7,
+ "abs_wall_gex": 18182122.6,
  "oi_call_wall": 340.0,
  "oi_put_wall": 322.5,
  "near_call_wall": false,
@@ -72,59 +72,59 @@
  "profile": [
   {
    "strike": 322.5,
-   "gex": -5854287.7
+   "gex": -5858029.0
   },
   {
    "strike": 325.0,
-   "gex": -4399577.9
+   "gex": -4403036.8
   },
   {
    "strike": 327.5,
-   "gex": -4283161.6
+   "gex": -4287159.0
   },
   {
    "strike": 330.0,
-   "gex": 6115216.1
+   "gex": 6141435.7
   },
   {
    "strike": 332.5,
-   "gex": 5776212.4
+   "gex": 5755934.8
   },
   {
    "strike": 335.0,
-   "gex": 18100283.5
+   "gex": 18065633.5
   },
   {
    "strike": 337.5,
-   "gex": 4646027.6
+   "gex": 4638526.3
   },
   {
    "strike": 340.0,
-   "gex": 18205927.1
+   "gex": 18182122.6
   },
   {
    "strike": 342.5,
-   "gex": 6081788.8
+   "gex": 6075014.2
   },
   {
    "strike": 345.0,
-   "gex": 549152.3
+   "gex": 548675.8
   }
  ],
  "call_wall_kind": "pin",
  "call_wall_regime": "POS",
- "call_wall_net": 18100283.5,
+ "call_wall_net": 18065633.5,
  "put_wall_kind": "pin",
  "put_wall_regime": "POS",
- "put_wall_net": 6115216.1,
+ "put_wall_net": 6141435.7,
  "abs_wall_kind": "pin",
  "abs_wall_regime": "POS",
- "abs_wall_net": 18205927.1,
+ "abs_wall_net": 18182122.6,
  "gamma_ok": true,
  "greeks_ok_pct": 0.85,
  "chain_src": "polygon_snapshot_v3",
- "chain_ts": 1784989260.0,
- "chain_age_s": 1454.0067,
+ "chain_ts": 1785010926.0,
+ "chain_age_s": 5980.1532,
  "stale": false,
  "stale_reason": null,
  "quotes_ok": false,
@@ -148,16 +148,16 @@
  "exp_rolled": false,
  "roll_reason": null,
  "degraded_reason": null,
- "gross_gex": 74011634.8335,
- "bifurcation": 1.647,
- "hhi": 0.1571,
+ "gross_gex": 73955567.638,
+ "bifurcation": 1.6486,
+ "hhi": 0.157,
  "n_strikes_populated": 10,
- "chain_path": "data/history/2026-07-25/poly_chain_aapl_1018.txt",
- "flip_live": 328.74,
+ "chain_path": "data/history/2026-07-25/poly_chain_aapl_1620.txt",
+ "flip_live": 328.82,
  "flip_src": "repriced",
  "flip_why": "gamma recomputada a cada spot del barrido (definicion correcta)",
  "roots": [
-  328.74
+  328.82
  ],
  "trapdoor_root": null,
  "flip_open": null,

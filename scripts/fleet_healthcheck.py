@@ -140,6 +140,80 @@ def poly_chains_today():
     return len(glob.glob(os.path.join(d, "chain_full_*.json")))
 
 
+def finviz_health_is_stale(path=None, now=None, max_age_s=12 * 3600):
+    """PURA salvo el stat: True si hay que re-comprobar el token. Ausente o ilegible = True."""
+    import time as _time
+    p = path or os.path.join(REPO, "data", "finviz_auth_health.json")
+    now = _time.time() if now is None else now
+    try:
+        return (now - os.path.getmtime(p)) > max_age_s
+    except OSError:
+        return True
+
+
+def refresh_finviz_health(timeout=40):
+    """Re-corre scripts/finviz_auth_check.py si el registro esta rancio. Best-effort:
+    si falla, `finviz_token_status` lo vera rancio y avisara — jamas se finge frescura."""
+    if not finviz_health_is_stale():
+        return False
+    try:
+        subprocess.run(
+            [os.path.join(REPO, "venv", "bin", "python"),
+             os.path.join(REPO, "scripts", "finviz_auth_check.py"), "--quiet"],
+            cwd=REPO, timeout=timeout,
+            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False)
+        return True
+    except Exception:
+        return False
+
+
+def finviz_token_status(rec=None, path=None, now=None):
+    """Veredicto del TOKEN de Finviz: ("crit"|"warn"|"ok", mensaje). Funcion PURA si se
+    le pasa `rec` — por eso se puede testear sin red ni disco.
+
+    Lee data/finviz_auth_health.json, que escribe scripts/finviz_auth_check.py. Reglas:
+      - registro ausente o ilegible -> WARN "no se ha comprobado" (NO 'ok': no saber
+        no es estar sano; y NO 'crit': puede que el chequeo aun no se haya instalado).
+      - sano is False                -> CRIT (token caducado: la flota esta ciega).
+      - sano is None                 -> WARN (no se pudo comprobar: sin red).
+      - registro mas viejo de 48h    -> WARN (el chequeo dejo de correr).
+      - sano con pocos dias por delante -> WARN con los dias que quedan.
+    """
+    import json as _json
+    import time as _time
+    p = path or os.path.join(REPO, "data", "finviz_auth_health.json")
+    now = _time.time() if now is None else now
+    if rec is None:
+        try:
+            with open(p) as fh:
+                rec = _json.load(fh)
+        except Exception as e:
+            return "warn", (f"finviz token: SIN COMPROBAR ({e.__class__.__name__}) — "
+                            f"corre scripts/finviz_auth_check.py")
+    if not isinstance(rec, dict):
+        return "warn", "finviz token: registro ilegible — sin comprobar"
+
+    sano = rec.get("sano")
+    cola = rec.get("token_cola") or "????"
+    clave = rec.get("clave_efectiva") or "?"
+    if sano is False:
+        return "crit", (f"🔴 finviz token CADUCADO ({clave}, ...{cola}): "
+                        f"{rec.get('motivo')} — scout/valuation/x_bot CIEGOS, renovar")
+    if sano is None:
+        return "warn", f"finviz token: no se pudo comprobar ({rec.get('motivo')})"
+
+    ts = rec.get("ts")
+    if isinstance(ts, (int, float)) and now - ts > 48 * 3600:
+        edad_h = (now - ts) / 3600
+        return "warn", f"finviz token: el chequeo lleva {edad_h:.0f}h sin correr"
+
+    dias = rec.get("dias_restantes")
+    if isinstance(dias, int) and dias <= 2:
+        return "warn", f"🟡 finviz token sano pero caduca en {dias} dia(s) — pedir uno nuevo"
+    extra = f", caduca en {dias} dias" if isinstance(dias, int) else ""
+    return "ok", f"finviz token OK ({clave}, ...{cola}){extra}"
+
+
 def gex_map_status(path=None, canon_n=None, poly_n=None):
     """Veredicto del MAPA GAMMA PROPIO: ("crit"|"warn"|"ok", mensaje).
 
@@ -366,6 +440,15 @@ def main():
     # El reloj de pared miente en fin de semana: un mapa del cierre del viernes leido el
     # sabado son "60h" y no le falta NI UNA sesion. Se cuentan SESIONES DE MERCADO, no horas.
     nivel, msg = gex_map_status()
+    {"crit": crit, "warn": warn, "ok": ok}[nivel].append(msg)
+
+    # 5b) token de Finviz: caduca cada semana y Finviz NO devuelve 401 — devuelve 200
+    # con el cuerpo vacio. Sin esto el scout, finviz_valuation y el bot de X se quedan
+    # mudos sin que nadie se entere.
+    # El registro se refresca AQUI cuando esta rancio (una peticion, 3x/dia) en vez de
+    # crear otro plist: asi el chequeo no depende de que alguien se acuerde de lanzarlo.
+    refresh_finviz_health()
+    nivel, msg = finviz_token_status()
     {"crit": crit, "warn": warn, "ok": ok}[nivel].append(msg)
 
     # 6) cobertura: cada modulo cubre la flota canonica?

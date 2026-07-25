@@ -1,0 +1,83 @@
+{
+  "generated_at": "2026-07-25T18:08:13",
+  "syms": {
+    "QQQ": {
+      "contracts": 345,
+      "rows": 23915,
+      "sessions": 120,
+      "first_date": "2026-02-02",
+      "last_date": "2026-07-24"
+    },
+    "SPY": {
+      "contracts": 370,
+      "rows": 26216,
+      "sessions": 120,
+      "first_date": "2026-02-02",
+      "last_date": "2026-07-24"
+    },
+    "NVDA": {
+      "contracts": 112,
+      "rows": 39984,
+      "sessions": 106,
+      "first_date": "2026-02-23",
+      "last_date": "2026-07-24"
+    },
+    "MU": {
+      "contracts": 47,
+      "rows": 8445,
+      "sessions": 120,
+      "first_date": "2026-02-02",
+      "last_date": "2026-07-24"
+    },
+    "SMH": {
+      "contracts": 47,
+      "rows": 2246,
+      "sessions": 120,
+      "first_date": "2026-02-02",
+      "last_date": "2026-07-24"
+    },
+    "AMD": {
+      "contracts": 44,
+      "rows": 6677,
+      "sessions": 106,
+      "first_date": "2026-02-02",
+      "last_date": "2026-07-24"
+    },
+    "META": {
+      "contracts": 40,
+      "rows": 5502,
+      "sessions": 10,
+      "first_date": "2026-07-13",
+      "last_date": "2026-07-24"
+    },
+    "TSLA": {
+      "contracts": 40,
+      "rows": 6325,
+      "sessions": 10,
+      "first_date": "2026-07-13",
+      "last_date": "2026-07-24"
+    }
+  },
+  "span_real": {
+    "first_date": "2026-02-02",
+    "last_date": "2026-07-24",
+    "sessions_min": 10,
+    "sessions_max": 120,
+    "target_sessions": 60,
+    "target_met": false
+  },
+  "contract_states": {
+    "done": 109
+  },
+  "failed": [],
+  "notas": [
+    "MEDIDO: /v2/aggs/ticker/O:<c>/range/1/day devuelve la vida entera del contrato en una peticion. Da v vw o c h l t n.",
+    "MEDIDO: NO hay OI ni griegas historicas en este plan. La IV se reconstruye por biseccion desde el precio (gex_core.implied_vol); el OI historico NO existe y no se aproxima.",
+    "MEDIDO: as_of en /v3/reference/options/contracts se IGNORA (dos fechas distintas -> misma respuesta). Aqui se acota por expiration_date.",
+    "MEDIDO: /v2/aggs/grouped/.../market/options/{fecha} -> HTTP 400 (no existe).",
+    "MEDIDO: /v3/trades/O: y /v3/quotes/O: -> 403 NOT_AUTHORIZED.",
+    "Barras DIARIAS: ts a medianoche ET. Las barras de 5m preexistentes no colisionan (PK otk,ts) y siguen ahi: no se borro ni una fila.",
+    "Solo strikes OTM en rejilla de moneyness +/-15% sobre el spot mediano de la ventana de cada expiry, leido de poly_bars (0 peticiones).",
+    "'empty' = el contrato existe pero no cotizo en la ventana. NO es un fallo y no se cuenta como exito con 0 filas: es su propio estado."
+  ]
+}

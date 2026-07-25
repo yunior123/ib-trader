@@ -1384,6 +1384,86 @@ async def live_reapply(state, tf):
     print(f"[tf] LIVE {state.sym}: {bar_size} ({dur}) -> {len(state.bars)} barras")
 
 
+# ===================== REGISTRO DE ESTADOS: UNO POR SIMBOLO ==================
+# Yunior 2026-07-25: "when changing symbol in one graph the other graphs change too,
+# they should be independent entirely". Antes habia UN State global y TODAS las ventanas
+# lo compartian: la que cambiaba de ticker se lo cambiaba a las demas. Peor: las otras
+# conservaban sus velas viejas y recibian los NIVELES del ticker nuevo, asi que el chart
+# mezclaba velas de SPY (710) con muros de AAPL (330) y el autoscale estiraba la escala
+# de 328 a 743 — el sintoma "la barra de precios muestra precios incorrectos".
+#
+# Ahora: un State por SIMBOLO, creado bajo demanda y APAGADO cuando se queda sin
+# ventanas. Dos ventanas en el mismo ticker COMPARTEN estado (una sola suscripcion a
+# TWS, un solo levels_loop) — que es lo que hace barato tener seis.
+# LIMITACION CONOCIDA: el timeframe va por SIMBOLO, no por ventana. Dos ventanas del
+# MISMO ticker con tf distinto se pisan; con tickers distintos, cada una manda en el suyo.
+STATES = {}            # sym (minusculas) -> State
+STATE_CFG = {"mock": False, "port": None, "client_id": 60, "interval": 1.0}
+SHARED_IB = {"ib": None}   # conexion ib_async unica, compartida por todos los estados
+PRIMARY_SYM = {"sym": None}
+
+
+def get_state(sym):
+    """State del simbolo (lo crea y arranca sus bucles si no existia)."""
+    sym = (sym or "").strip().lower()
+    st = STATES.get(sym)
+    if st is not None:
+        return st
+    st = State(sym, mock=STATE_CFG["mock"])
+    st.levels = load_levels(sym)
+    STATES[sym] = st
+    asyncio.ensure_future(_spawn_state(st))
+    print(f"[multi] estado NUEVO {sym.upper()} (abiertos: {len(STATES)})")
+    return st
+
+
+async def _spawn_state(st):
+    """Arranca el feed y el levels_loop de un estado recien creado."""
+    try:
+        if st.mock:
+            st._tasks = [asyncio.ensure_future(mock_feed(st, interval=STATE_CFG["interval"]))]
+        else:
+            st._tasks = []
+            ib = SHARED_IB["ib"]
+            if ib is not None:
+                # se REUSA la conexion (un solo clientId): cada estado añade su propio
+                # contrato + tick stream. Nada de una conexion por ventana.
+                st._ib = ib
+                base = load_ibkr_bars(st.sym, tail=780)
+                if base:
+                    st.set_bars(base)
+                try:
+                    ib.pendingTickersEvent += _make_on_tick(st)
+                except Exception:
+                    pass
+                await _relive_symbol(st, st.sym, rebroadcast=not base)
+        st._tasks.append(asyncio.ensure_future(levels_loop(st)))
+    except Exception as e:
+        print(f"[multi] no pude arrancar {st.sym.upper()}: {e}")
+
+
+def reap_state(st):
+    """Apaga un estado SECUNDARIO que se quedo sin ventanas: cancela sus bucles y suelta
+    la suscripcion de TWS. El PRIMARIO nunca se apaga (es el que arranco el bridge)."""
+    if st is None or st.clients:
+        return
+    if st.sym == PRIMARY_SYM["sym"]:
+        return
+    for t in getattr(st, "_tasks", []):
+        try: t.cancel()
+        except Exception: pass
+    ib = st._ib
+    if ib is not None:
+        if st._live_sub is not None:
+            try: ib.cancelHistoricalData(st._live_sub)
+            except Exception: pass
+        if st._contract is not None:
+            try: ib.cancelMktData(st._contract)   # libera la data line (son limitadas)
+            except Exception: pass
+    STATES.pop(st.sym, None)
+    print(f"[multi] estado CERRADO {st.sym.upper()} (abiertos: {len(STATES)})")
+
+
 async def set_symbol(state, sym):
     """Cambia el TICKER. LIVE: re-cualifica el contrato y re-pide barras al tf actual.
     MOCK: recarga el CSV base del nuevo símbolo. En ambos: regenera niveles GEX.
@@ -1490,17 +1570,22 @@ def create_app(state):
     @app.websocket("/stream")
     async def stream(ws: WebSocket):
         await ws.accept()
-        state.clients.add(ws)
+        # CADA CONEXION VIVE EN SU PROPIO ESTADO (Yunior 2026-07-25: "when changing
+        # symbol in one graph the other graphs change too, they should be independent
+        # entirely"). `state` es solo el estado PRIMARIO = el simbolo con el que
+        # arranco el bridge; al cambiar de ticker esta conexion se MUEVE a otro State.
+        st = state
+        st.clients.add(ws)
         try:
             # frame de historia inmediato (setData once en el cliente), al tf actual
-            await ws.send_json(history_frame(agg_view_bars(state), state.levels, state.tf))
+            await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf))
             # watchlist (fleet + usuario), zonas 0DTE del símbolo y flecha direccional
             await ws.send_json(watchlist_payload())
-            await ws.send_json(zones_frame(state))
-            if any(z.get("exec") for z in state.zones):
-                await ws.send_json({"type": "engine", "sym": state.sym.upper(),
-                                    "rows": engine_state(state.sym)})
-            await broadcast_direction(state)
+            await ws.send_json(zones_frame(st))
+            if any(z.get("exec") for z in st.zones):
+                await ws.send_json({"type": "engine", "sym": st.sym.upper(),
+                                    "rows": engine_state(st.sym)})
+            await broadcast_direction(st)
             while True:
                 # drenamos pings/close + controles del cliente (cambio de timeframe)
                 txt = await ws.receive_text()
@@ -1509,44 +1594,54 @@ def create_app(state):
                 except Exception:
                     continue
                 if isinstance(ctl, dict) and ctl.get("cmd") == "tf":
-                    await set_timeframe(state, ctl.get("tf", state.tf))
+                    await set_timeframe(st, ctl.get("tf", st.tf))
                     # re-emite un frame de historia FRESCO al tf pedido
-                    await ws.send_json(history_frame(agg_view_bars(state), state.levels, state.tf))
+                    await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf))
                 elif isinstance(ctl, dict) and ctl.get("cmd") == "sym":
-                    await set_symbol(state, ctl.get("sym", state.sym))
-                    await ws.send_json(history_frame(agg_view_bars(state), state.levels, state.tf))
+                    # NO se muta el estado compartido: se MUEVE esta conexión al State del
+                    # nuevo símbolo (creándolo si no existe). Las demás ventanas ni se
+                    # enteran — que era justo el fallo: una cambiaba de ticker y las otras
+                    # se quedaban con sus velas y los niveles del ticker ajeno (escala de
+                    # precios reventada, medido con 6 ventanas el 2026-07-25).
+                    want = (ctl.get("sym") or st.sym).strip().lower()
+                    if want and want != st.sym:
+                        st.clients.discard(ws)
+                        reap_state(st)
+                        st = get_state(want)
+                        st.clients.add(ws)
+                    await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf))
                     # zonas del nuevo símbolo + flecha direccional (actualización inmediata)
-                    await ws.send_json(zones_frame(state))
-                    await broadcast_direction(state)
+                    await ws.send_json(zones_frame(st))
+                    await broadcast_direction(st)
                 elif isinstance(ctl, dict) and ctl.get("cmd") == "scope":
-                    state.all_exp = (ctl.get("scope") == "ALL")   # 0DTE <-> ALL-EXP
-                    sp = state.bars[-1][4] if state.bars else None
-                    state.levels = chart_levels.gen(state.sym, spot=sp, write=False, all_exp=state.all_exp) or state.levels
-                    await broadcast_levels(state)
+                    st.all_exp = (ctl.get("scope") == "ALL")   # 0DTE <-> ALL-EXP
+                    sp = st.bars[-1][4] if st.bars else None
+                    st.levels = chart_levels.gen(st.sym, spot=sp, write=False, all_exp=st.all_exp) or st.levels
+                    await broadcast_levels(st)
                 elif isinstance(ctl, dict) and ctl.get("cmd") == "narrate":
                     if "on" in ctl:
-                        state._narr_on = bool(ctl["on"])
+                        st._narr_on = bool(ctl["on"])
                     if ctl.get("force"):
-                        state._narr_force = True
-                    if state._narr_on:
+                        st._narr_force = True
+                    if st._narr_on:
                         # respuesta inmediata (determinista) + AI si se forzó
-                        await narrator_tick(state)
+                        await narrator_tick(st)
                     else:
-                        await broadcast_narr(state)   # confirma OFF al cliente
+                        await broadcast_narr(st)   # confirma OFF al cliente
                 elif isinstance(ctl, dict) and ctl.get("cmd") == "alarm":
                     # alarma manual estilo TradingView: la escribe en ~/Desktop/price-alerts.txt
                     # (price_alarm C++ la relee cada 1s -> sirena+voz+registro). SEÑAL-SOLAMENTE.
                     act = ctl.get("act", "add")
-                    sp = state.bars[-1][4] if state.bars else None
+                    sp = st.bars[-1][4] if st.bars else None
                     if act == "add":
                         price = ctl.get("price")
                         direction = ctl.get("dir") or ("up" if (sp and price and price >= sp) else "down")
                         if price:
-                            alarm_add(state.sym, float(price), direction)
+                            alarm_add(st.sym, float(price), direction)
                     elif act == "del":
-                        alarm_remove(state.sym, ctl.get("price"))
-                    await ws.send_json({"type": "alarms", "sym": state.sym.upper(),
-                                        "alarms": alarm_list(state.sym)})
+                        alarm_remove(st.sym, ctl.get("price"))
+                    await ws.send_json({"type": "alarms", "sym": st.sym.upper(),
+                                        "alarms": alarm_list(st.sym)})
                 elif isinstance(ctl, dict) and ctl.get("cmd") == "watchlist":
                     # watchlist buscable/expandible: add (cualifica en LIVE) / del / list.
                     act = ctl.get("act", "list")
@@ -1554,11 +1649,11 @@ def create_app(state):
                         s = (ctl.get("sym") or "").strip().upper()
                         if s:
                             ok = True
-                            if not state.mock and state._ib is not None:
+                            if not st.mock and st._ib is not None:
                                 # LIVE: cualifica el contrato antes de aceptar (símbolo real)
                                 try:
                                     from ib_async import Stock
-                                    await state._ib.qualifyContractsAsync(Stock(s, "SMART", "USD"))
+                                    await st._ib.qualifyContractsAsync(Stock(s, "SMART", "USD"))
                                 except Exception as e:
                                     ok = False
                                     print(f"[watchlist] no cualifica {s} ({e})")
@@ -1573,47 +1668,47 @@ def create_app(state):
                     # se coloca una orden. exec=false = ficha-only (señal). SEÑAL-SOLAMENTE.
                     act = ctl.get("act", "list")
                     if act == "add" and ctl.get("price") is not None:
-                        state.zones = zone_add(state.sym, ctl.get("price"),
+                        st.zones = zone_add(st.sym, ctl.get("price"),
                                                ctl.get("side"), ctl.get("kind"),
                                                exp=ctl.get("exp"), qty=ctl.get("qty") or 1,
                                                instrument=ctl.get("instrument") or "opt")
                     elif act == "del":
-                        state.zones = zone_del(state.sym, price=ctl.get("price"), zid=ctl.get("id"))
+                        st.zones = zone_del(st.sym, price=ctl.get("price"), zid=ctl.get("id"))
                     elif act == "set" and ctl.get("id"):
                         # set exp/qty/exec/price/stop en una zona existente (arrastre del stop,
                         # armado exec, cambio de expiry...) -> persiste el contrato del motor.
-                        state.zones = zone_update(
-                            state.sym, ctl.get("id"),
+                        st.zones = zone_update(
+                            st.sym, ctl.get("id"),
                             exp=ctl.get("exp"), qty=ctl.get("qty"), exec=ctl.get("exec"),
                             price=ctl.get("price"), stop_px=ctl.get("stop_px"),
                             stop_on=ctl.get("stop_on"), stop_native=ctl.get("stop_native"))
                     else:
-                        state.zones = zones_load(state.sym)
-                    await ws.send_json(zones_frame(state))
-                    if any(z.get("exec") for z in state.zones):
-                        await broadcast_engine(state)
+                        st.zones = zones_load(st.sym)
+                    await ws.send_json(zones_frame(st))
+                    if any(z.get("exec") for z in st.zones):
+                        await broadcast_engine(st)
                 elif isinstance(ctl, dict) and ctl.get("cmd") == "optquote":
                     # previsualización TradingView-like del contrato (strike + bid/ask C/P) al
                     # precio y expiry elegidos en el popup de zona. Sólo LECTURA del cache.
-                    q = chain_quote(state.sym, ctl.get("price"), ctl.get("exp"))
-                    q.update({"type": "optquote", "sym": state.sym.upper(),
+                    q = chain_quote(st.sym, ctl.get("price"), ctl.get("exp"))
+                    q.update({"type": "optquote", "sym": st.sym.upper(),
                               "price": ctl.get("price")})
                     await ws.send_json(q)
                 elif isinstance(ctl, dict) and ctl.get("cmd") == "prob":
                     # probabilidad de profit (order_engine/prob_profit.py, otro agente) -> chip.
                     # Sólo cómputo de probabilidad; NUNCA coloca órdenes. SEÑAL-SOLAMENTE.
-                    res = run_prob(state.sym, ctl.get("price") if ctl.get("price") is not None
+                    res = run_prob(st.sym, ctl.get("price") if ctl.get("price") is not None
                                    else ctl.get("level"),
                                    ctl.get("side") or "buy", ctl.get("kind") or "call",
                                    ctl.get("exp"))
-                    res.update({"type": "prob", "sym": state.sym.upper(), "id": ctl.get("id")})
+                    res.update({"type": "prob", "sym": st.sym.upper(), "id": ctl.get("id")})
                     await ws.send_json(res)
                 elif isinstance(ctl, dict) and ctl.get("cmd") == "ticket":
                     # ficha 0DTE bajo demanda (order_ticket.build) -> tarjeta en el chart.
                     # PREPARA la orden; el HUMANO la ejecuta en IBKR. SEÑAL-SOLAMENTE.
-                    t = build_ticket(ctl.get("sym") or state.sym, ctl.get("price"),
+                    t = build_ticket(ctl.get("sym") or st.sym, ctl.get("price"),
                                      ctl.get("side"), ctl.get("kind"))
-                    await ws.send_json({"type": "ticket", "sym": state.sym.upper(), "t": t})
+                    await ws.send_json({"type": "ticket", "sym": st.sym.upper(), "t": t})
                 elif isinstance(ctl, dict) and ctl.get("cmd") == "ibmode":
                     # switcher PAPER<->LIVE (fuente única data/ib_mode.txt). Solo cambia el
                     # modo; el motor y los lectores toman el puerto de ahí. NUNCA ordena aquí.
@@ -1638,7 +1733,8 @@ def create_app(state):
         except Exception:
             pass
         finally:
-            state.clients.discard(ws)
+            st.clients.discard(ws)
+            reap_state(st)   # estado secundario sin clientes -> se apaga y libera TWS
 
     return app
 
@@ -1984,6 +2080,7 @@ async def live_feed(state, port, client_id=60):
     contract = Stock(state.sym.upper(), "SMART", "USD")
     (contract,) = await ib.qualifyContractsAsync(contract)
     state._ib = ib
+    SHARED_IB["ib"] = ib      # los estados nuevos REUSAN esta conexion
     state._contract = contract
     ib.reqMarketDataType(1)   # REALTIME para TODO
     # TICK STREAM del precio (blazing-fast: la vela se mueve sub-segundo, no cada ~5s)
@@ -2028,6 +2125,12 @@ def build_state_and_feed(args):
     if not args.mock:
         # en modo live las barras iniciales las trae el feed; precarga vacía
         state.set_bars([])
+    # registro multi-símbolo: éste es el estado PRIMARIO (nunca se apaga). Los demás
+    # los crea get_state() cuando una ventana pide otro ticker.
+    STATES[sym] = state
+    PRIMARY_SYM["sym"] = sym
+    STATE_CFG.update(mock=bool(args.mock), interval=float(getattr(args, "interval", 1.0) or 1.0),
+                     client_id=int(getattr(args, "client_id", 60) or 60))
     return state
 
 
@@ -2051,6 +2154,11 @@ if HAVE_FASTAPI:
         sym = resolve_sym(os.environ.get("CHART_SYM"))
         state = State(sym, mock=bool(os.environ.get("CHART_MOCK")))
         state.levels = load_levels(sym)
+        # registro multi-simbolo: este es el estado PRIMARIO (nunca se apaga)
+        STATES[sym] = state
+        PRIMARY_SYM["sym"] = sym
+        STATE_CFG.update(mock=state.mock,
+                         interval=float(os.environ.get("CHART_INTERVAL", "1.0")))
         app = create_app(state)
         port = int(os.environ.get("CHART_TWS_PORT") or ib_mode.get_port())  # sin hardcode: sigue el modo
 

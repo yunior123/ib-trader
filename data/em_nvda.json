@@ -1,8 +1,13 @@
 {
- "asof": 1784988374,
+ "asof": 1785009361,
  "atm_strike": 205.0,
  "calendar_days": 3,
- "confluence": null,
+ "confluence": {
+  "gap_pct": 0.0653,
+  "level": 202.5,
+  "side": "down",
+  "wall": "put_wall"
+ },
  "coverage_hist": null,
  "earnings_checked": false,
  "earnings_src": null,

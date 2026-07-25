@@ -1,5 +1,5 @@
 {
- "asof": 1784988375,
+ "asof": 1785009361,
  "atm_strike": null,
  "calendar_days": null,
  "confluence": null,
@@ -14,12 +14,12 @@
  "em_straddle_pct": null,
  "exp": null,
  "exp_span_days": null,
- "invalid_reason": "sin_spot",
+ "invalid_reason": "sin_cadena",
  "nota": "coverage_hist=null: los percentiles condicionados piden ~250 sesiones y poly_bars tiene 21. No se publica probabilidad de contencion.",
  "scaled_from_exp": false,
  "snap_origin": null,
  "snap_ts": null,
  "span_days": null,
- "spot": null,
+ "spot": 176.23,
  "sym": "XLK"
 }
