@@ -197,7 +197,7 @@ static Gate run_gate(const Chain& ch, const std::string& right, const std::strin
     }
     g.limit = (side == 'B') ? r->ask : r->bid;
     g.premium = (g.limit > 0) ? g.limit * 100.0 : 0;
-    bool spread_ok = quote_ok && g.spread_pct > 0 && g.spread_pct <= MAX_SPREAD_PCT;
+    bool spread_ok = quote_ok && g.spread_pct >= 0 && g.spread_pct <= MAX_SPREAD_PCT;  // ==0 es el MEJOR spread
     bool oi_ok = r->oi > MIN_OI;                 // doctrina: OI > 500 (estricto)
     bool budget_ok = g.premium > 0 && g.premium <= budget;
     if (!fresh) g.why.push_back("cadena vieja " + std::to_string((int)age) + "s");
@@ -211,7 +211,7 @@ static Gate run_gate(const Chain& ch, const std::string& right, const std::strin
 
 // ======================================================= NBBO del subyacente
 // Último close del archivo de barras de la flota (space-delimited).
-static bool last_close(const std::string& path, double& out) {
+static bool last_close(const std::string& path, double& out, long long* out_ep = nullptr) {
     std::ifstream f(path);
     if (!f.is_open()) return false;
     std::string line, last;
@@ -220,7 +220,7 @@ static bool last_close(const std::string& path, double& out) {
     std::istringstream ss(last);
     long long ep; double o, h, l, c;
     if (!(ss >> ep >> o >> h >> l >> c)) return false;
-    out = c; return true;
+    out = c; if (out_ep) *out_ep = ep; return true;
 }
 
 // ======================================================= zona (estado runtime)
@@ -235,6 +235,7 @@ struct ZoneRT {
     bool present = true;                 // sigue en el archivo
     // detección de PRINT (entrada)
     bool have_prev = false; double prev_spot = 0; int approach_sign = 0; int cross_cnt = 0;
+    long long last_cross_ep = 0;   // epoch de la ultima BARRA contada (print-o-nada real)
     // ejecución
     int entry_id = -1; double fill_px = 0; double entry_delta = 0; Contract entry_c;
     double filled_qty = 0;               // cantidad REALMENTE llenada (proteger fills parciales)
@@ -688,8 +689,17 @@ int main(int argc, char** argv) {
             }
 
             // 2) NBBO del subyacente (archivo de la flota)
-            double spot = 0;
-            if (!last_close(cfg.repo + "/data/bars_" + lo + "_ibkr.txt", spot)) continue;
+            double spot = 0; long long spot_ep = 0;
+            if (!last_close(cfg.repo + "/data/bars_" + lo + "_ibkr.txt", spot, &spot_ep)) continue;
+            // FRESCURA DEL SPOT (fix 2026-07-24): antes se disparaban entradas con el
+            // ultimo precio conocido aunque el feed llevara horas muerto.
+            if (spot_ep > 0 && (double)(now_s - spot_ep) > MAX_AGE_S) {
+                static std::map<std::string,long long> warned;
+                if (warned[sym] != spot_ep) { warned[sym] = spot_ep;
+                    std::fprintf(stderr, "[%s] barras RANCIAS (%llds) — no disparo entradas\n",
+                                 sym.c_str(), (long long)(now_s - spot_ep)); }
+                continue;
+            }
 
             // 3) cadena para el gate / límite
             Chain ch = load_chain(cfg.repo + "/data/opt_chain_" + lo + ".txt");
@@ -701,7 +711,12 @@ int main(int argc, char** argv) {
                 if (z.st == ZoneRT::PLACED && z.exec) {
                     if (!z.have_prev) { z.have_prev = true; z.prev_spot = spot; z.approach_sign = sgn(spot - z.price); }
                     bool cr = crossed(z.approach_sign, spot, z.price);
-                    z.cross_cnt = cr ? z.cross_cnt + 1 : 0;
+                    // PRINT O NADA (fix 2026-07-24): antes esto contaba ITERACIONES del
+                    // bucle (~2s), no barras: un unico print sostenido disparaba a las dos
+                    // vueltas. Ahora solo cuenta cuando llega una BARRA NUEVA (epoch
+                    // distinto), que es lo que dice la doctrina: 2 lecturas cruzando.
+                    if (!cr) z.cross_cnt = 0;
+                    else if (spot_ep != z.last_cross_ep) { z.cross_cnt++; z.last_cross_ep = spot_ep; }
                     z.prev_spot = spot;
                     if (z.cross_cnt >= 2) {          // PRINT-O-NADA: 2 lecturas
                         z.st = ZoneRT::TRIGGERED;
@@ -714,6 +729,14 @@ int main(int argc, char** argv) {
                 // ---- gate + colocación (o DRY) ----
                 if (z.st == ZoneRT::TRIGGERED) {
                     if (frozen) { std::fprintf(stderr, "[%s] zona %s congelada (1100/desconexión) — espero\n", sym.c_str(), z.id.c_str()); continue; }
+                    if (!z.armed_date.empty() && z.armed_date != oe::today_date()) {
+                        z.st = ZoneRT::VETOED;
+                        write_state(state_dir, sym, z, "\"veto\":\"armed_date " + z.armed_date + " != hoy\"");
+                        ledger.note("VETOED " + sym + " " + z.id + ": armed_date " + z.armed_date + " caducado");
+                        std::fprintf(stderr, "[%s] zona %s VETOED: armed_date %s != hoy\n",
+                                     sym.c_str(), z.id.c_str(), z.armed_date.c_str());
+                        continue;
+                    }
                     char side = (z.side == "buy") ? 'B' : 'S';
 
                     // ===== ACCIONES (activos, 24/5 con horario extendido) =====
