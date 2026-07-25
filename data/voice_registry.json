@@ -1,0 +1,49 @@
+{
+ "danger_frozen_limit": 8,
+ "emitters": {
+  "compass_caida": {
+   "calib_cell": "salud",
+   "class": "DANGER",
+   "enabled": true,
+   "module": "scripts/compass_keepalive.sh:22,40"
+  },
+  "manada_cpp": {
+   "calib_cell": "consenso",
+   "class": "DANGER",
+   "enabled": true,
+   "module": "scripts/fleet_consensus.cpp:403"
+  },
+  "manada_py": {
+   "calib_cell": "consenso",
+   "class": "DANGER",
+   "enabled": true,
+   "module": "scripts/fleet_consensus.py:124"
+  },
+  "permisos_flota": {
+   "calib_cell": "salud",
+   "class": "DANGER",
+   "enabled": true,
+   "module": "scripts/fleet_keepalive_start.sh:17"
+  },
+  "price_alarm": {
+   "calib_cell": "nivel_impreso",
+   "class": "DANGER",
+   "enabled": true,
+   "module": "scripts/price_alarm.cpp:231"
+  },
+  "tws_zombie": {
+   "calib_cell": "salud",
+   "class": "DANGER",
+   "enabled": true,
+   "module": "scripts/tws_watchdog.sh:109,130,146"
+  },
+  "whale_espada": {
+   "calib_cell": "whale/flow",
+   "class": "DANGER",
+   "enabled": true,
+   "module": "scripts/opt_whale_watch.py:33"
+  }
+ },
+ "frozen_at": 1784988877,
+ "nota": "el conteo de emisores DANGER esta CONGELADO en el de hoy + 1: un DANGER nuevo debe DESPLAZAR a uno existente (regla del doc #12)."
+}

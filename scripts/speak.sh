@@ -10,7 +10,7 @@
 
 set -u
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
-Q="$ROOT/data/voice"; mkdir -p "$Q"
+Q="$ROOT/data/voice"; mkdir -p "$Q" "$ROOT/data/voice_spend"
 PRIO="${1:-INFO}"; MSG="${2:-}"
 [ -z "$MSG" ] && exit 0
 
@@ -37,6 +37,24 @@ MSG="$(printf '%s' "$MSG" | sed -E \
 # ^ Corea (2026-07-19, flota nocturna KRX): price-alerts.txt trae `skhynix`/`kospi`
 #   en minúscula → clases por letra = case-insensitive (sed BSD no tiene flag I).
 #   samsung ya se lee bien tal cual; los bots KRX ya hablan nombres humanos.
+
+# --- PRESUPUESTO DE VOZ (feature #12, ADITIVO Y REVERSIBLE) -------------------
+# DANGER NO pasa por aqui NUNCA (se comprueba antes de todo): es la unica voz que preempta
+# y es lo que Yunior oye para operar sin pantalla. INFO tampoco (voice_queue ya no lo
+# vocaliza). Solo SIGNAL se raciona, y solo si existe el interruptor:
+#     touch data/voice_budget_enable      (borrarlo lo desactiva: inerte en un gesto)
+# FAIL-OPEN: solo el codigo 42 silencia. Python roto, json corrupto, disco lleno o
+# cualquier otro final -> se habla igual. Un bug del presupuesto no puede volver muda la flota.
+if [ "$PRIO" != "DANGER" ] && [ -f "$ROOT/data/voice_budget_enable" ]; then
+  PY="$ROOT/venv/bin/python"
+  if [ -x "$PY" ]; then
+    "$PY" "$ROOT/scripts/voice_budget.py" --gate "$PRIO" --msg "$MSG" >/dev/null 2>&1
+    if [ "$?" = "42" ]; then
+      osascript -e "display notification \"$(printf '%s' "$MSG" | tr -d '"')\" with title \"🔇 presupuesto de voz\"" >/dev/null 2>&1 &
+      exit 0
+    fi
+  fi
+fi
 
 # ¿daemon vivo?
 PIDFILE="$ROOT/data/voice_queue.pid"
@@ -67,4 +85,10 @@ else
     say "$MSG" >/dev/null 2>&1   # candado atascado >4s: hablar igual
   ) &
 fi
+
+# Contabilidad del presupuesto: UNA linea por locucion encolada, SIEMPRE despues de encolar
+# (asi no puede retrasar ni bloquear una voz) y sin poder fallar el script. DANGER tambien
+# cuenta para el total — cuenta, pero jamas se recorta.
+{ printf '%s %s -\n' "$(date +%s)" "$PRIO" >> "$ROOT/data/voice_spend/$(date +%Y-%m-%d).txt"; } 2>/dev/null || true
+
 exit 0

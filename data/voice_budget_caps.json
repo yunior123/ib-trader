@@ -1,0 +1,9 @@
+{
+ "cooldown_sym_sec": 0,
+ "day_total_cap": 40,
+ "gated_classes": [
+  "SIGNAL"
+ ],
+ "hour_signal_cap": 12,
+ "nota": "DANGER cuenta para el total pero NUNCA se suprime. Cambiar aqui, no en el codigo."
+}
