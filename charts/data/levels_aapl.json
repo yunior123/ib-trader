@@ -1,77 +1,164 @@
 {
  "sym": "AAPL",
  "spot": 333.48,
- "asof": 1784987355,
+ "asof": 1784990714,
  "exp": "20260727",
- "dte": 2.26,
+ "dte": 2.22,
  "scope": "0DTE",
- "net_vex": null,
- "vex_peak": null,
- "vex_profile": [],
- "pressure": null,
- "pressure_lab": "sin griegas",
- "iv_atm": null,
- "em": null,
- "net_gex": null,
- "regime": null,
- "flip": null,
- "flip_static": null,
- "call_wall": null,
- "put_wall": null,
- "abs_wall": null,
- "poc_dom": null,
- "call_wall_gex": null,
- "put_wall_gex": null,
- "abs_wall_gex": null,
+ "net_vex": 1247362284.3,
+ "vex_peak": 340.0,
+ "vex_profile": [
+  {
+   "strike": 322.5,
+   "vex": 257743072.7
+  },
+  {
+   "strike": 325.0,
+   "vex": 155677280.8
+  },
+  {
+   "strike": 327.5,
+   "vex": 112916485.3
+  },
+  {
+   "strike": 330.0,
+   "vex": -259897334.5
+  },
+  {
+   "strike": 332.5,
+   "vex": -44112067.9
+  },
+  {
+   "strike": 335.0,
+   "vex": 149080260.0
+  },
+  {
+   "strike": 337.5,
+   "vex": 93644526.0
+  },
+  {
+   "strike": 340.0,
+   "vex": 534675996.1
+  },
+  {
+   "strike": 342.5,
+   "vex": 224570318.8
+  },
+  {
+   "strike": 345.0,
+   "vex": 23063746.9
+  }
+ ],
+ "pressure": 62,
+ "pressure_lab": "PIN fuerte",
+ "iv_atm": 0.1685,
+ "em": 4.38,
+ "net_gex": 44937580.5,
+ "regime": "POS",
+ "flip": 328.74,
+ "flip_static": 332.87,
+ "call_wall": 335.0,
+ "put_wall": 330.0,
+ "abs_wall": 340.0,
+ "poc_dom": "100%C",
+ "call_wall_gex": 18100283.5,
+ "put_wall_gex": 6115216.1,
+ "abs_wall_gex": 18205927.1,
  "oi_call_wall": 340.0,
  "oi_put_wall": 322.5,
  "near_call_wall": false,
  "near_put_wall": false,
  "near_flip": false,
- "profile": [],
- "call_wall_kind": null,
- "call_wall_regime": null,
- "call_wall_net": null,
- "put_wall_kind": null,
- "put_wall_regime": null,
- "put_wall_net": null,
- "abs_wall_kind": null,
- "abs_wall_regime": null,
- "abs_wall_net": null,
- "gamma_ok": false,
- "greeks_ok_pct": 0.0,
- "chain_src": "ibkr_tws",
- "chain_ts": 1784924277.0,
- "chain_age_s": 63078.9949,
+ "profile": [
+  {
+   "strike": 322.5,
+   "gex": -5854287.7
+  },
+  {
+   "strike": 325.0,
+   "gex": -4399577.9
+  },
+  {
+   "strike": 327.5,
+   "gex": -4283161.6
+  },
+  {
+   "strike": 330.0,
+   "gex": 6115216.1
+  },
+  {
+   "strike": 332.5,
+   "gex": 5776212.4
+  },
+  {
+   "strike": 335.0,
+   "gex": 18100283.5
+  },
+  {
+   "strike": 337.5,
+   "gex": 4646027.6
+  },
+  {
+   "strike": 340.0,
+   "gex": 18205927.1
+  },
+  {
+   "strike": 342.5,
+   "gex": 6081788.8
+  },
+  {
+   "strike": 345.0,
+   "gex": 549152.3
+  }
+ ],
+ "call_wall_kind": "pin",
+ "call_wall_regime": "POS",
+ "call_wall_net": 18100283.5,
+ "put_wall_kind": "pin",
+ "put_wall_regime": "POS",
+ "put_wall_net": 6115216.1,
+ "abs_wall_kind": "pin",
+ "abs_wall_regime": "POS",
+ "abs_wall_net": 18205927.1,
+ "gamma_ok": true,
+ "greeks_ok_pct": 0.85,
+ "chain_src": "polygon_snapshot_v3",
+ "chain_ts": 1784989260.0,
+ "chain_age_s": 1454.0067,
  "stale": false,
  "stale_reason": null,
  "quotes_ok": false,
  "session": "fuera_de_rth",
  "band_used": 0.035,
  "band_fetch": null,
- "n_expiries": 1,
+ "n_expiries": 4,
  "exps_en_fichero": [
-  "20260724",
-  "20260727"
+  "20260727",
+  "20260729",
+  "20260731",
+  "20260803"
  ],
- "rows_total": 64,
+ "rows_total": 96,
  "n_candidates": 20,
- "n_gamma_ok": 0,
- "n_no_greeks": 20,
- "n_iv_provider": 0,
+ "n_gamma_ok": 17,
+ "n_no_greeks": 3,
+ "n_iv_provider": 17,
  "n_iv_inverted": 0,
- "iv_source": "none",
- "exp_rolled": true,
- "roll_reason": "20260724 expirado -> mapa desde 20260727",
- "degraded_reason": "griegas usables 0% (<50%) sobre 20 contratos",
- "gross_gex": null,
- "bifurcation": null,
- "hhi": null,
- "n_strikes_populated": 0,
- "chain_path": "data/opt_chain_aapl.txt",
- "flip_live": null,
- "flip_src": "none",
- "roots": [],
+ "iv_source": "provider",
+ "exp_rolled": false,
+ "roll_reason": null,
+ "degraded_reason": null,
+ "gross_gex": 74011634.8335,
+ "bifurcation": 1.647,
+ "hhi": 0.1571,
+ "n_strikes_populated": 10,
+ "chain_path": "data/history/2026-07-25/poly_chain_aapl_1018.txt",
+ "flip_live": 328.74,
+ "flip_src": "repriced",
+ "flip_why": "gamma recomputada a cada spot del barrido (definicion correcta)",
+ "roots": [
+  328.74
+ ],
  "trapdoor_root": null,
  "flip_open": null,
  "frozen_at": null,

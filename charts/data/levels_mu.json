@@ -1,77 +1,189 @@
 {
  "sym": "MU",
  "spot": 923.75,
- "asof": 1784987355,
+ "asof": 1784990713,
  "exp": "20260727",
- "dte": 2.26,
+ "dte": 2.22,
  "scope": "0DTE",
- "net_vex": null,
- "vex_peak": null,
- "vex_profile": [],
- "pressure": null,
- "pressure_lab": "sin griegas",
- "iv_atm": null,
- "em": null,
- "net_gex": null,
- "regime": null,
- "flip": null,
- "flip_static": null,
- "call_wall": null,
- "put_wall": null,
- "abs_wall": null,
- "poc_dom": null,
- "call_wall_gex": null,
- "put_wall_gex": null,
- "abs_wall_gex": null,
+ "net_vex": 312435592.2,
+ "vex_peak": 900.0,
+ "vex_profile": [
+  {
+   "strike": 895.0,
+   "vex": 68111652.7
+  },
+  {
+   "strike": 900.0,
+   "vex": 215771638.7
+  },
+  {
+   "strike": 905.0,
+   "vex": 18070272.1
+  },
+  {
+   "strike": 910.0,
+   "vex": 76252629.5
+  },
+  {
+   "strike": 915.0,
+   "vex": 3583992.2
+  },
+  {
+   "strike": 920.0,
+   "vex": 4139286.4
+  },
+  {
+   "strike": 925.0,
+   "vex": 191528.5
+  },
+  {
+   "strike": 930.0,
+   "vex": -43415988.2
+  },
+  {
+   "strike": 935.0,
+   "vex": -14494277.4
+  },
+  {
+   "strike": 940.0,
+   "vex": -62467199.8
+  },
+  {
+   "strike": 945.0,
+   "vex": -10615596.6
+  },
+  {
+   "strike": 950.0,
+   "vex": 31457855.5
+  },
+  {
+   "strike": 955.0,
+   "vex": 25849798.7
+  }
+ ],
+ "pressure": -55,
+ "pressure_lab": "amplifica",
+ "iv_atm": 0.9358,
+ "em": 67.4,
+ "net_gex": -16187874.6,
+ "regime": "NEG",
+ "flip": 999.69,
+ "flip_static": 955.0,
+ "call_wall": 950.0,
+ "put_wall": 900.0,
+ "abs_wall": 900.0,
+ "poc_dom": "89%P",
+ "call_wall_gex": 887310.1,
+ "put_wall_gex": -6459374.1,
+ "abs_wall_gex": -6459374.1,
  "oi_call_wall": 950.0,
  "oi_put_wall": 900.0,
  "near_call_wall": false,
  "near_put_wall": false,
  "near_flip": false,
- "profile": [],
- "call_wall_kind": null,
- "call_wall_regime": null,
- "call_wall_net": null,
- "put_wall_kind": null,
- "put_wall_regime": null,
- "put_wall_net": null,
- "abs_wall_kind": null,
- "abs_wall_regime": null,
- "abs_wall_net": null,
- "gamma_ok": false,
- "greeks_ok_pct": 0.0,
- "chain_src": "ibkr_tws",
- "chain_ts": 1784924197.0,
- "chain_age_s": 63158.9468,
+ "profile": [
+  {
+   "strike": 895.0,
+   "gex": -1854684.1
+  },
+  {
+   "strike": 900.0,
+   "gex": -6459374.1
+  },
+  {
+   "strike": 905.0,
+   "gex": -427563.3
+  },
+  {
+   "strike": 910.0,
+   "gex": -3883915.3
+  },
+  {
+   "strike": 915.0,
+   "gex": -94519.0
+  },
+  {
+   "strike": 920.0,
+   "gex": -506706.4
+  },
+  {
+   "strike": 925.0,
+   "gex": 10011.1
+  },
+  {
+   "strike": 930.0,
+   "gex": -3113819.0
+  },
+  {
+   "strike": 935.0,
+   "gex": -420115.5
+  },
+  {
+   "strike": 940.0,
+   "gex": -1215719.1
+  },
+  {
+   "strike": 945.0,
+   "gex": 268409.9
+  },
+  {
+   "strike": 950.0,
+   "gex": 887310.1
+  },
+  {
+   "strike": 955.0,
+   "gex": 622810.0
+  }
+ ],
+ "call_wall_kind": "trampilla",
+ "call_wall_regime": "NEG",
+ "call_wall_net": 887310.1,
+ "put_wall_kind": "trampilla",
+ "put_wall_regime": "NEG",
+ "put_wall_net": -6459374.1,
+ "abs_wall_kind": "trampilla",
+ "abs_wall_regime": "NEG",
+ "abs_wall_net": -6459374.1,
+ "gamma_ok": true,
+ "greeks_ok_pct": 0.9231,
+ "chain_src": "polygon_snapshot_v3",
+ "chain_ts": 1784989260.0,
+ "chain_age_s": 1453.9794,
  "stale": false,
  "stale_reason": null,
  "quotes_ok": false,
  "session": "fuera_de_rth",
  "band_used": 0.035,
  "band_fetch": null,
- "n_expiries": 1,
+ "n_expiries": 4,
  "exps_en_fichero": [
-  "20260724",
-  "20260727"
+  "20260727",
+  "20260729",
+  "20260731",
+  "20260803"
  ],
- "rows_total": 66,
+ "rows_total": 144,
  "n_candidates": 26,
- "n_gamma_ok": 0,
- "n_no_greeks": 26,
- "n_iv_provider": 0,
+ "n_gamma_ok": 24,
+ "n_no_greeks": 2,
+ "n_iv_provider": 24,
  "n_iv_inverted": 0,
- "iv_source": "none",
- "exp_rolled": true,
- "roll_reason": "20260724 expirado -> mapa desde 20260727",
- "degraded_reason": "griegas usables 0% (<50%) sobre 26 contratos",
- "gross_gex": null,
- "bifurcation": null,
- "hhi": null,
- "n_strikes_populated": 0,
- "chain_path": "data/opt_chain_mu.txt",
- "flip_live": null,
- "flip_src": "none",
- "roots": [],
+ "iv_source": "provider",
+ "exp_rolled": false,
+ "roll_reason": null,
+ "degraded_reason": null,
+ "gross_gex": 19764956.9444,
+ "bifurcation": 1.221,
+ "hhi": 0.1876,
+ "n_strikes_populated": 13,
+ "chain_path": "data/history/2026-07-25/poly_chain_mu_1018.txt",
+ "flip_live": 999.69,
+ "flip_src": "repriced",
+ "flip_why": "gamma recomputada a cada spot del barrido (definicion correcta)",
+ "roots": [
+  999.69,
+  802.33
+ ],
  "trapdoor_root": null,
  "flip_open": null,
  "frozen_at": null,

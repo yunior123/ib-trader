@@ -1,76 +1,209 @@
 {
  "sym": "SMH",
  "spot": 561.5,
- "asof": 1784987355,
+ "asof": 1784990713,
  "exp": "20260727",
- "dte": 2.26,
+ "dte": 2.22,
  "scope": "0DTE",
- "net_vex": null,
- "vex_peak": null,
- "vex_profile": [],
- "pressure": null,
- "pressure_lab": "sin griegas",
- "iv_atm": null,
- "em": null,
- "net_gex": null,
- "regime": null,
- "flip": null,
- "flip_static": null,
- "call_wall": null,
- "put_wall": null,
- "abs_wall": null,
- "poc_dom": null,
- "call_wall_gex": null,
- "put_wall_gex": null,
- "abs_wall_gex": null,
+ "net_vex": 133347896.0,
+ "vex_peak": 557.5,
+ "vex_profile": [
+  {
+   "strike": 542.5,
+   "vex": 6861568.7
+  },
+  {
+   "strike": 545.0,
+   "vex": 27023733.9
+  },
+  {
+   "strike": 547.5,
+   "vex": 8921628.6
+  },
+  {
+   "strike": 550.0,
+   "vex": 19567433.9
+  },
+  {
+   "strike": 552.5,
+   "vex": 10378375.6
+  },
+  {
+   "strike": 555.0,
+   "vex": 20800991.3
+  },
+  {
+   "strike": 557.5,
+   "vex": 69082293.0
+  },
+  {
+   "strike": 560.0,
+   "vex": 1662994.6
+  },
+  {
+   "strike": 562.5,
+   "vex": -3217619.9
+  },
+  {
+   "strike": 565.0,
+   "vex": 846561.6
+  },
+  {
+   "strike": 567.5,
+   "vex": -4019891.1
+  },
+  {
+   "strike": 570.0,
+   "vex": -11544420.3
+  },
+  {
+   "strike": 572.5,
+   "vex": -15681722.1
+  },
+  {
+   "strike": 575.0,
+   "vex": -43547422.0
+  },
+  {
+   "strike": 577.5,
+   "vex": 53837905.0
+  },
+  {
+   "strike": 580.0,
+   "vex": -7624514.7
+  }
+ ],
+ "pressure": -59,
+ "pressure_lab": "amplifica",
+ "iv_atm": 0.4573,
+ "em": 20.02,
+ "net_gex": -16167443.6,
+ "regime": "NEG",
+ "flip": 580.0,
+ "flip_static": 580.0,
+ "call_wall": 577.5,
+ "put_wall": 557.5,
+ "abs_wall": 557.5,
+ "poc_dom": "98%P",
+ "call_wall_gex": 1402909.5,
+ "put_wall_gex": -8725721.9,
+ "abs_wall_gex": -8725721.9,
  "oi_call_wall": 577.5,
  "oi_put_wall": 557.5,
  "near_call_wall": false,
  "near_put_wall": false,
  "near_flip": false,
- "profile": [],
- "call_wall_kind": null,
- "call_wall_regime": null,
- "call_wall_net": null,
- "put_wall_kind": null,
- "put_wall_regime": null,
- "put_wall_net": null,
- "abs_wall_kind": null,
- "abs_wall_regime": null,
- "abs_wall_net": null,
- "gamma_ok": false,
- "greeks_ok_pct": 0.0,
- "chain_src": "ibkr_tws",
- "chain_ts": 1784924160.0,
- "chain_age_s": 63195.9408,
+ "profile": [
+  {
+   "strike": 542.5,
+   "gex": -204574.0
+  },
+  {
+   "strike": 545.0,
+   "gex": -905331.7
+  },
+  {
+   "strike": 547.5,
+   "gex": -339222.3
+  },
+  {
+   "strike": 550.0,
+   "gex": -780201.6
+  },
+  {
+   "strike": 552.5,
+   "gex": -586740.9
+  },
+  {
+   "strike": 555.0,
+   "gex": -1508369.6
+  },
+  {
+   "strike": 557.5,
+   "gex": -8725721.9
+  },
+  {
+   "strike": 560.0,
+   "gex": -522092.3
+  },
+  {
+   "strike": 562.5,
+   "gex": -1177681.4
+  },
+  {
+   "strike": 565.0,
+   "gex": 109882.8
+  },
+  {
+   "strike": 567.5,
+   "gex": -286894.2
+  },
+  {
+   "strike": 570.0,
+   "gex": -572101.1
+  },
+  {
+   "strike": 572.5,
+   "gex": -574918.8
+  },
+  {
+   "strike": 575.0,
+   "gex": -1336502.9
+  },
+  {
+   "strike": 577.5,
+   "gex": 1402909.5
+  },
+  {
+   "strike": 580.0,
+   "gex": -159883.4
+  }
+ ],
+ "call_wall_kind": "trampilla",
+ "call_wall_regime": "NEG",
+ "call_wall_net": 1402909.5,
+ "put_wall_kind": "trampilla",
+ "put_wall_regime": "NEG",
+ "put_wall_net": -8725721.9,
+ "abs_wall_kind": "trampilla",
+ "abs_wall_regime": "NEG",
+ "abs_wall_net": -8725721.9,
+ "gamma_ok": true,
+ "greeks_ok_pct": 1.0,
+ "chain_src": "polygon_snapshot_v3",
+ "chain_ts": 1784989260.0,
+ "chain_age_s": 1453.9875,
  "stale": false,
  "stale_reason": null,
  "quotes_ok": false,
  "session": "fuera_de_rth",
  "band_used": 0.035,
  "band_fetch": null,
- "n_expiries": 1,
+ "n_expiries": 4,
  "exps_en_fichero": [
-  "20260724",
-  "20260727"
+  "20260727",
+  "20260729",
+  "20260731",
+  "20260803"
  ],
- "rows_total": 80,
+ "rows_total": 160,
  "n_candidates": 32,
- "n_gamma_ok": 0,
- "n_no_greeks": 32,
- "n_iv_provider": 0,
+ "n_gamma_ok": 32,
+ "n_no_greeks": 0,
+ "n_iv_provider": 32,
  "n_iv_inverted": 0,
- "iv_source": "none",
- "exp_rolled": true,
- "roll_reason": "20260724 expirado -> mapa desde 20260727",
- "degraded_reason": "griegas usables 0% (<50%) sobre 32 contratos",
- "gross_gex": null,
- "bifurcation": null,
- "hhi": null,
- "n_strikes_populated": 0,
- "chain_path": "data/opt_chain_smh.txt",
- "flip_live": null,
- "flip_src": "none",
+ "iv_source": "provider",
+ "exp_rolled": false,
+ "roll_reason": null,
+ "degraded_reason": null,
+ "gross_gex": 19193028.2969,
+ "bifurcation": 1.1871,
+ "hhi": 0.2349,
+ "n_strikes_populated": 16,
+ "chain_path": "data/history/2026-07-25/poly_chain_smh_1018.txt",
+ "flip_live": 580.0,
+ "flip_src": "static_no_iv",
+ "flip_why": "menos de 3 IVs distintas en la banda: el barrido no es fiable, se usa el perfil estatico -> peso del factor flip x0.5",
  "roots": [],
  "trapdoor_root": null,
  "flip_open": null,

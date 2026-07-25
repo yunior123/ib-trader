@@ -1,0 +1,295 @@
+{
+ "sym": "GLD",
+ "spot": 371.95,
+ "asof": 1784990714,
+ "exp": "20260727",
+ "dte": 2.22,
+ "scope": "0DTE",
+ "net_vex": 526655468.2,
+ "vex_peak": 377.0,
+ "vex_profile": [
+  {
+   "strike": 359.0,
+   "vex": 14473389.2
+  },
+  {
+   "strike": 360.0,
+   "vex": 17643483.0
+  },
+  {
+   "strike": 361.0,
+   "vex": 11265853.6
+  },
+  {
+   "strike": 362.0,
+   "vex": 10616200.3
+  },
+  {
+   "strike": 363.0,
+   "vex": 11271929.0
+  },
+  {
+   "strike": 364.0,
+   "vex": 20518623.6
+  },
+  {
+   "strike": 365.0,
+   "vex": 41403513.6
+  },
+  {
+   "strike": 366.0,
+   "vex": -9057508.7
+  },
+  {
+   "strike": 367.0,
+   "vex": -28657533.2
+  },
+  {
+   "strike": 368.0,
+   "vex": -11940993.4
+  },
+  {
+   "strike": 369.0,
+   "vex": 13917124.4
+  },
+  {
+   "strike": 370.0,
+   "vex": -1271653.7
+  },
+  {
+   "strike": 371.0,
+   "vex": 16125342.4
+  },
+  {
+   "strike": 372.0,
+   "vex": -1741762.8
+  },
+  {
+   "strike": 373.0,
+   "vex": 3940025.1
+  },
+  {
+   "strike": 374.0,
+   "vex": 13400560.1
+  },
+  {
+   "strike": 375.0,
+   "vex": 5374986.5
+  },
+  {
+   "strike": 376.0,
+   "vex": 10734617.5
+  },
+  {
+   "strike": 377.0,
+   "vex": 258494377.1
+  },
+  {
+   "strike": 378.0,
+   "vex": -3760555.1
+  },
+  {
+   "strike": 379.0,
+   "vex": 24433211.0
+  },
+  {
+   "strike": 380.0,
+   "vex": 55951158.1
+  },
+  {
+   "strike": 381.0,
+   "vex": 14037440.7
+  },
+  {
+   "strike": 382.0,
+   "vex": 25633695.9
+  },
+  {
+   "strike": 383.0,
+   "vex": 9241427.6
+  },
+  {
+   "strike": 384.0,
+   "vex": 4608516.3
+  }
+ ],
+ "pressure": 58,
+ "pressure_lab": "amortigua",
+ "iv_atm": 0.1457,
+ "em": 4.23,
+ "net_gex": 15227149.9,
+ "regime": "POS",
+ "flip": 367.57,
+ "flip_static": 371.67,
+ "call_wall": 372.0,
+ "put_wall": 371.0,
+ "abs_wall": 377.0,
+ "poc_dom": "99%C",
+ "call_wall_gex": 7956885.7,
+ "put_wall_gex": -2692732.4,
+ "abs_wall_gex": 8214836.7,
+ "oi_call_wall": 377.0,
+ "oi_put_wall": 371.0,
+ "near_call_wall": true,
+ "near_put_wall": true,
+ "near_flip": false,
+ "profile": [
+  {
+   "strike": 359.0,
+   "gex": -273024.0
+  },
+  {
+   "strike": 360.0,
+   "gex": -380911.2
+  },
+  {
+   "strike": 361.0,
+   "gex": -248400.0
+  },
+  {
+   "strike": 362.0,
+   "gex": -242458.0
+  },
+  {
+   "strike": 363.0,
+   "gex": -270084.2
+  },
+  {
+   "strike": 364.0,
+   "gex": -527476.5
+  },
+  {
+   "strike": 365.0,
+   "gex": -1199372.1
+  },
+  {
+   "strike": 366.0,
+   "gex": 277506.4
+  },
+  {
+   "strike": 367.0,
+   "gex": 735596.0
+  },
+  {
+   "strike": 368.0,
+   "gex": 424076.9
+  },
+  {
+   "strike": 369.0,
+   "gex": -772935.3
+  },
+  {
+   "strike": 370.0,
+   "gex": -187270.0
+  },
+  {
+   "strike": 371.0,
+   "gex": -2692732.4
+  },
+  {
+   "strike": 372.0,
+   "gex": 7956885.7
+  },
+  {
+   "strike": 373.0,
+   "gex": 467350.4
+  },
+  {
+   "strike": 374.0,
+   "gex": 954132.2
+  },
+  {
+   "strike": 375.0,
+   "gex": 45756.7
+  },
+  {
+   "strike": 376.0,
+   "gex": 375243.0
+  },
+  {
+   "strike": 377.0,
+   "gex": 8214836.7
+  },
+  {
+   "strike": 378.0,
+   "gex": -133024.3
+  },
+  {
+   "strike": 379.0,
+   "gex": 573243.2
+  },
+  {
+   "strike": 380.0,
+   "gex": 1122337.9
+  },
+  {
+   "strike": 381.0,
+   "gex": 270476.6
+  },
+  {
+   "strike": 382.0,
+   "gex": 487429.4
+  },
+  {
+   "strike": 383.0,
+   "gex": 166354.1
+  },
+  {
+   "strike": 384.0,
+   "gex": 83612.7
+  }
+ ],
+ "call_wall_kind": "pin",
+ "call_wall_regime": "POS",
+ "call_wall_net": 7956885.7,
+ "put_wall_kind": "pin",
+ "put_wall_regime": "POS",
+ "put_wall_net": -2692732.4,
+ "abs_wall_kind": "pin",
+ "abs_wall_regime": "POS",
+ "abs_wall_net": 8214836.7,
+ "gamma_ok": true,
+ "greeks_ok_pct": 0.9423,
+ "chain_src": "polygon_snapshot_v3",
+ "chain_ts": 1784989448.0,
+ "chain_age_s": 1266.096,
+ "stale": false,
+ "stale_reason": null,
+ "quotes_ok": false,
+ "session": "fuera_de_rth",
+ "band_used": 0.035,
+ "band_fetch": null,
+ "n_expiries": 4,
+ "exps_en_fichero": [
+  "20260727",
+  "20260729",
+  "20260731",
+  "20260803"
+ ],
+ "rows_total": 264,
+ "n_candidates": 52,
+ "n_gamma_ok": 49,
+ "n_no_greeks": 3,
+ "n_iv_provider": 50,
+ "n_iv_inverted": 0,
+ "iv_source": "provider",
+ "exp_rolled": false,
+ "roll_reason": null,
+ "degraded_reason": null,
+ "gross_gex": 29082526.0496,
+ "bifurcation": 1.9099,
+ "hhi": 0.1712,
+ "n_strikes_populated": 26,
+ "chain_path": "data/history/2026-07-25/poly_chain_gld_1018.txt",
+ "flip_live": 367.57,
+ "flip_src": "repriced",
+ "flip_why": "gamma recomputada a cada spot del barrido (definicion correcta)",
+ "roots": [
+  367.57,
+  416.92
+ ],
+ "trapdoor_root": null,
+ "flip_open": null,
+ "frozen_at": null,
+ "frozen_day": null
+}

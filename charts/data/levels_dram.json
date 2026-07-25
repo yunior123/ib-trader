@@ -1,47 +1,47 @@
 {
  "sym": "DRAM",
  "spot": 53.58,
- "asof": 1784987397,
+ "asof": 1784990714,
  "exp": "20260731",
- "dte": 6.26,
+ "dte": 6.22,
  "scope": "0DTE",
- "net_vex": -6102955.9,
+ "net_vex": -5974758.3,
  "vex_peak": 55.0,
  "vex_profile": [
   {
    "strike": 52.0,
-   "vex": 699344.6
+   "vex": 665059.9
   },
   {
    "strike": 52.5,
-   "vex": 331993.0
+   "vex": 311985.7
   },
   {
    "strike": 53.0,
-   "vex": 26946.5
+   "vex": 22563.8
   },
   {
    "strike": 53.5,
-   "vex": -29179.9
+   "vex": -29415.7
   },
   {
    "strike": 54.0,
-   "vex": -146260.3
+   "vex": -143767.5
   },
   {
    "strike": 54.5,
-   "vex": -238200.1
+   "vex": -232551.2
   },
   {
    "strike": 55.0,
-   "vex": -6747599.7
+   "vex": -6568633.2
   }
  ],
  "pressure": -95,
  "pressure_lab": "AMPLIFICA fuerte",
- "iv_atm": 1.0785,
- "em": 7.57,
- "net_gex": -5469659.3,
+ "iv_atm": 1.1005,
+ "em": 7.7,
+ "net_gex": -5470838.3,
  "regime": "NEG",
  "flip": 55.0,
  "flip_static": 55.0,
@@ -49,9 +49,9 @@
  "put_wall": 52.5,
  "abs_wall": 55.0,
  "poc_dom": "94%P",
- "call_wall_gex": -3662266.0,
- "put_wall_gex": -532935.9,
- "abs_wall_gex": -3662266.0,
+ "call_wall_gex": -3662896.5,
+ "put_wall_gex": -533132.0,
+ "abs_wall_gex": -3662896.5,
  "oi_call_wall": 55.0,
  "oi_put_wall": 52.5,
  "near_call_wall": false,
@@ -60,47 +60,47 @@
  "profile": [
   {
    "strike": 52.0,
-   "gex": -624827.3
+   "gex": -624981.7
   },
   {
    "strike": 52.5,
-   "gex": -532935.9
+   "gex": -533132.0
   },
   {
    "strike": 53.0,
-   "gex": -218756.5
+   "gex": -218829.6
   },
   {
    "strike": 53.5,
-   "gex": -81251.5
+   "gex": -81275.7
   },
   {
    "strike": 54.0,
-   "gex": -172643.9
+   "gex": -172713.5
   },
   {
    "strike": 54.5,
-   "gex": -176978.4
+   "gex": -177009.4
   },
   {
    "strike": 55.0,
-   "gex": -3662266.0
+   "gex": -3662896.5
   }
  ],
  "call_wall_kind": "pin",
  "call_wall_regime": "POS",
- "call_wall_net": -3662266.0,
+ "call_wall_net": -3662896.5,
  "put_wall_kind": "trampilla",
  "put_wall_regime": "NEG",
- "put_wall_net": -532935.9,
+ "put_wall_net": -533132.0,
  "abs_wall_kind": "pin",
  "abs_wall_regime": "POS",
- "abs_wall_net": -3662266.0,
+ "abs_wall_net": -3662896.5,
  "gamma_ok": true,
  "greeks_ok_pct": 1.0,
  "chain_src": "polygon_snapshot_v3",
- "chain_ts": 1784966988.0,
- "chain_age_s": 20409.3426,
+ "chain_ts": 1784989510.0,
+ "chain_age_s": 1204.1248,
  "stale": false,
  "stale_reason": null,
  "quotes_ok": false,
@@ -121,11 +121,11 @@
  "exp_rolled": false,
  "roll_reason": null,
  "degraded_reason": null,
- "gross_gex": 5469659.3193,
+ "gross_gex": 5470838.2689,
  "bifurcation": 1.0,
  "hhi": 0.4747,
  "n_strikes_populated": 7,
- "chain_path": "data/history/2026-07-25/poly_chain_dram_0408.txt",
+ "chain_path": "data/history/2026-07-25/poly_chain_dram_1018.txt",
  "flip_live": 55.0,
  "flip_src": "static_no_iv",
  "flip_why": "menos de 3 IVs distintas en la banda: el barrido no es fiable, se usa el perfil estatico -> peso del factor flip x0.5",

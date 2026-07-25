@@ -1,48 +1,146 @@
 {
  "sym": "STX",
  "spot": 853.25,
- "asof": 1784987355,
+ "asof": 1784990714,
  "exp": "20260731",
- "dte": 6.26,
+ "dte": 6.22,
  "scope": "0DTE",
- "net_vex": null,
- "vex_peak": null,
- "vex_profile": [],
- "pressure": null,
- "pressure_lab": "sin griegas",
- "iv_atm": null,
- "em": null,
- "net_gex": null,
- "regime": null,
- "flip": null,
- "flip_static": null,
- "call_wall": null,
- "put_wall": null,
- "abs_wall": null,
- "poc_dom": null,
- "call_wall_gex": null,
- "put_wall_gex": null,
- "abs_wall_gex": null,
+ "net_vex": 32524401.3,
+ "vex_peak": 850.0,
+ "vex_profile": [
+  {
+   "strike": 825.0,
+   "vex": 832865.1
+  },
+  {
+   "strike": 830.0,
+   "vex": -13652.1
+  },
+  {
+   "strike": 835.0,
+   "vex": 227638.4
+  },
+  {
+   "strike": 840.0,
+   "vex": 341125.0
+  },
+  {
+   "strike": 845.0,
+   "vex": 158364.6
+  },
+  {
+   "strike": 850.0,
+   "vex": 26534077.5
+  },
+  {
+   "strike": 855.0,
+   "vex": 2719010.4
+  },
+  {
+   "strike": 860.0,
+   "vex": -286754.8
+  },
+  {
+   "strike": 865.0,
+   "vex": 10751.1
+  },
+  {
+   "strike": 870.0,
+   "vex": 1046810.9
+  },
+  {
+   "strike": 875.0,
+   "vex": 625974.4
+  },
+  {
+   "strike": 880.0,
+   "vex": 328190.9
+  }
+ ],
+ "pressure": 91,
+ "pressure_lab": "PIN fuerte",
+ "iv_atm": 1.4453,
+ "em": 160.97,
+ "net_gex": 3339277.1,
+ "regime": "POS",
+ "flip": 827.18,
+ "flip_static": 827.18,
+ "call_wall": 855.0,
+ "put_wall": 850.0,
+ "abs_wall": 850.0,
+ "poc_dom": "94%C",
+ "call_wall_gex": 238835.0,
+ "put_wall_gex": 3100169.1,
+ "abs_wall_gex": 3100169.1,
  "oi_call_wall": 855.0,
  "oi_put_wall": 850.0,
- "near_call_wall": false,
- "near_put_wall": false,
+ "near_call_wall": true,
+ "near_put_wall": true,
  "near_flip": false,
- "profile": [],
- "call_wall_kind": null,
- "call_wall_regime": null,
- "call_wall_net": null,
- "put_wall_kind": null,
- "put_wall_regime": null,
- "put_wall_net": null,
- "abs_wall_kind": null,
- "abs_wall_regime": null,
- "abs_wall_net": null,
- "gamma_ok": false,
- "greeks_ok_pct": 0.0,
- "chain_src": "ibkr_tws",
- "chain_ts": 1784924356.0,
- "chain_age_s": 62999.9569,
+ "profile": [
+  {
+   "strike": 825.0,
+   "gex": -45957.2
+  },
+  {
+   "strike": 830.0,
+   "gex": 105190.2
+  },
+  {
+   "strike": 835.0,
+   "gex": -5304.5
+  },
+  {
+   "strike": 840.0,
+   "gex": -75155.1
+  },
+  {
+   "strike": 845.0,
+   "gex": -48500.3
+  },
+  {
+   "strike": 850.0,
+   "gex": 3100169.1
+  },
+  {
+   "strike": 855.0,
+   "gex": 238835.0
+  },
+  {
+   "strike": 860.0,
+   "gex": -24916.3
+  },
+  {
+   "strike": 865.0,
+   "gex": 482.0
+  },
+  {
+   "strike": 870.0,
+   "gex": 49743.8
+  },
+  {
+   "strike": 875.0,
+   "gex": 26483.7
+  },
+  {
+   "strike": 880.0,
+   "gex": 18206.7
+  }
+ ],
+ "call_wall_kind": "pin",
+ "call_wall_regime": "POS",
+ "call_wall_net": 238835.0,
+ "put_wall_kind": "pin",
+ "put_wall_regime": "POS",
+ "put_wall_net": 3100169.1,
+ "abs_wall_kind": "pin",
+ "abs_wall_regime": "POS",
+ "abs_wall_net": 3100169.1,
+ "gamma_ok": true,
+ "greeks_ok_pct": 1.0,
+ "chain_src": "polygon_snapshot_v3",
+ "chain_ts": 1784989573.0,
+ "chain_age_s": 1141.1651,
  "stale": false,
  "stale_reason": null,
  "quotes_ok": false,
@@ -51,28 +149,32 @@
  "band_fetch": null,
  "n_expiries": 1,
  "exps_en_fichero": [
-  "20260724",
   "20260731"
  ],
- "rows_total": 68,
+ "rows_total": 30,
  "n_candidates": 24,
- "n_gamma_ok": 0,
- "n_no_greeks": 24,
- "n_iv_provider": 0,
+ "n_gamma_ok": 24,
+ "n_no_greeks": 0,
+ "n_iv_provider": 24,
  "n_iv_inverted": 0,
- "iv_source": "none",
- "exp_rolled": true,
- "roll_reason": "20260724 expirado -> mapa desde 20260731",
- "degraded_reason": "griegas usables 0% (<50%) sobre 24 contratos",
- "gross_gex": null,
- "bifurcation": null,
- "hhi": null,
- "n_strikes_populated": 0,
- "chain_path": "data/opt_chain_stx.txt",
- "flip_live": null,
- "flip_src": "none",
- "roots": [],
- "trapdoor_root": null,
+ "iv_source": "provider",
+ "exp_rolled": false,
+ "roll_reason": null,
+ "degraded_reason": null,
+ "gross_gex": 3738943.8449,
+ "bifurcation": 1.1197,
+ "hhi": 0.6934,
+ "n_strikes_populated": 12,
+ "chain_path": "data/history/2026-07-25/poly_chain_stx_1018.txt",
+ "flip_live": 827.18,
+ "flip_src": "static_no_iv",
+ "flip_why": "menos de 3 IVs distintas en la banda: el barrido no es fiable, se usa el perfil estatico -> peso del factor flip x0.5",
+ "roots": [
+  845.11,
+  838.59,
+  827.18
+ ],
+ "trapdoor_root": 845.11,
  "flip_open": null,
  "frozen_at": null,
  "frozen_day": null

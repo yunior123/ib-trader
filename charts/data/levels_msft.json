@@ -1,78 +1,165 @@
 {
  "sym": "MSFT",
  "spot": 381.61,
- "asof": 1784987355,
+ "asof": 1784990714,
  "exp": "20260727",
- "dte": 2.26,
+ "dte": 2.22,
  "scope": "0DTE",
- "net_vex": null,
- "vex_peak": null,
- "vex_profile": [],
- "pressure": null,
- "pressure_lab": "sin griegas",
- "iv_atm": null,
- "em": null,
- "net_gex": null,
- "regime": null,
- "flip": null,
- "flip_static": null,
- "call_wall": null,
- "put_wall": null,
- "abs_wall": null,
- "poc_dom": null,
- "call_wall_gex": null,
- "put_wall_gex": null,
- "abs_wall_gex": null,
+ "net_vex": 535443680.5,
+ "vex_peak": 390.0,
+ "vex_profile": [
+  {
+   "strike": 370.0,
+   "vex": 39561518.0
+  },
+  {
+   "strike": 372.5,
+   "vex": 13631603.7
+  },
+  {
+   "strike": 375.0,
+   "vex": 22618964.3
+  },
+  {
+   "strike": 377.5,
+   "vex": 21803836.7
+  },
+  {
+   "strike": 380.0,
+   "vex": 25616618.3
+  },
+  {
+   "strike": 382.5,
+   "vex": 5424043.5
+  },
+  {
+   "strike": 385.0,
+   "vex": 61612696.7
+  },
+  {
+   "strike": 387.5,
+   "vex": 48369087.9
+  },
+  {
+   "strike": 390.0,
+   "vex": 219973554.7
+  },
+  {
+   "strike": 392.5,
+   "vex": 76831756.7
+  }
+ ],
+ "pressure": 57,
+ "pressure_lab": "amortigua",
+ "iv_atm": 0.2687,
+ "em": 7.99,
+ "net_gex": 11140661.5,
+ "regime": "POS",
+ "flip": 375.43,
+ "flip_static": 384.99,
+ "call_wall": 390.0,
+ "put_wall": 380.0,
+ "abs_wall": 390.0,
+ "poc_dom": "89%C",
+ "call_wall_gex": 6804187.5,
+ "put_wall_gex": -3091413.8,
+ "abs_wall_gex": 6804187.5,
  "oi_call_wall": 390.0,
  "oi_put_wall": 380.0,
  "near_call_wall": false,
  "near_put_wall": false,
  "near_flip": false,
- "profile": [],
- "call_wall_kind": null,
- "call_wall_regime": null,
- "call_wall_net": null,
- "put_wall_kind": null,
- "put_wall_regime": null,
- "put_wall_net": null,
- "abs_wall_kind": null,
- "abs_wall_regime": null,
- "abs_wall_net": null,
- "gamma_ok": false,
- "greeks_ok_pct": 0.0,
- "chain_src": "ibkr_tws",
- "chain_ts": 1784924300.0,
- "chain_age_s": 63055.9481,
+ "profile": [
+  {
+   "strike": 370.0,
+   "gex": -870578.0
+  },
+  {
+   "strike": 372.5,
+   "gex": -436918.2
+  },
+  {
+   "strike": 375.0,
+   "gex": -856636.8
+  },
+  {
+   "strike": 377.5,
+   "gex": -1328834.6
+  },
+  {
+   "strike": 380.0,
+   "gex": -3091413.8
+  },
+  {
+   "strike": 382.5,
+   "gex": 1717585.2
+  },
+  {
+   "strike": 385.0,
+   "gex": 4884536.4
+  },
+  {
+   "strike": 387.5,
+   "gex": 2477788.6
+  },
+  {
+   "strike": 390.0,
+   "gex": 6804187.5
+  },
+  {
+   "strike": 392.5,
+   "gex": 1840945.2
+  }
+ ],
+ "call_wall_kind": "pin",
+ "call_wall_regime": "POS",
+ "call_wall_net": 6804187.5,
+ "put_wall_kind": "pin",
+ "put_wall_regime": "POS",
+ "put_wall_net": -3091413.8,
+ "abs_wall_kind": "pin",
+ "abs_wall_regime": "POS",
+ "abs_wall_net": 6804187.5,
+ "gamma_ok": true,
+ "greeks_ok_pct": 0.95,
+ "chain_src": "polygon_snapshot_v3",
+ "chain_ts": 1784989301.0,
+ "chain_age_s": 1413.015,
  "stale": false,
  "stale_reason": null,
  "quotes_ok": false,
  "session": "fuera_de_rth",
  "band_used": 0.035,
  "band_fetch": null,
- "n_expiries": 1,
+ "n_expiries": 3,
  "exps_en_fichero": [
-  "20260724",
-  "20260727"
+  "20260727",
+  "20260731",
+  "20260803"
  ],
- "rows_total": 48,
+ "rows_total": 84,
  "n_candidates": 20,
- "n_gamma_ok": 0,
- "n_no_greeks": 20,
- "n_iv_provider": 0,
+ "n_gamma_ok": 19,
+ "n_no_greeks": 1,
+ "n_iv_provider": 19,
  "n_iv_inverted": 0,
- "iv_source": "none",
- "exp_rolled": true,
- "roll_reason": "20260724 expirado -> mapa desde 20260727",
- "degraded_reason": "griegas usables 0% (<50%) sobre 20 contratos",
- "gross_gex": null,
- "bifurcation": null,
- "hhi": null,
- "n_strikes_populated": 0,
- "chain_path": "data/opt_chain_msft.txt",
- "flip_live": null,
- "flip_src": "none",
- "roots": [],
- "trapdoor_root": null,
+ "iv_source": "provider",
+ "exp_rolled": false,
+ "roll_reason": null,
+ "degraded_reason": null,
+ "gross_gex": 24309424.2264,
+ "bifurcation": 2.182,
+ "hhi": 0.1618,
+ "n_strikes_populated": 10,
+ "chain_path": "data/history/2026-07-25/poly_chain_msft_1018.txt",
+ "flip_live": 375.43,
+ "flip_src": "repriced",
+ "flip_why": "gamma recomputada a cada spot del barrido (definicion correcta)",
+ "roots": [
+  375.43,
+  351.53
+ ],
+ "trapdoor_root": 375.43,
  "flip_open": null,
  "frozen_at": null,
  "frozen_day": null
