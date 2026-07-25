@@ -2,7 +2,7 @@
  "QQQ": {
   "flip": 715.0,
   "flip_all": 715.0,
-  "score": -481.1,
+  "score": -481.11,
   "bias": "PUT",
   "poc": 695.0,
   "magnets": [
@@ -21,7 +21,7 @@
   "abs_wall": 695.0,
   "abs_wall_kind": "trampilla",
   "spot": 685.06,
-  "ts": 1784990917,
+  "ts": 1784991147,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -32,7 +32,7 @@
  "SPY": {
   "flip": 747.95,
   "flip_all": 747.95,
-  "score": -651.6,
+  "score": -651.551,
   "bias": "PUT",
   "poc": 740.0,
   "magnets": [
@@ -50,7 +50,7 @@
   "abs_wall": 740.0,
   "abs_wall_kind": "trampilla",
   "spot": 738.84,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -61,7 +61,7 @@
  "TSLA": {
   "flip": 345.19,
   "flip_all": 345.19,
-  "score": -16.1,
+  "score": -16.144,
   "bias": "PUT",
   "poc": 310.0,
   "magnets": [
@@ -79,7 +79,7 @@
   "abs_wall": 310.0,
   "abs_wall_kind": "trampilla",
   "spot": 313.33,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -90,7 +90,7 @@
  "MU": {
   "flip": 965.0,
   "flip_all": 965.0,
-  "score": -4.6,
+  "score": -4.616,
   "bias": "PUT",
   "poc": 900.0,
   "magnets": [
@@ -108,7 +108,7 @@
   "abs_wall": 900.0,
   "abs_wall_kind": "trampilla",
   "spot": 925.21,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -119,7 +119,7 @@
  "SMH": {
   "flip": 585.0,
   "flip_all": 585.0,
-  "score": -21.8,
+  "score": -21.803,
   "bias": "PUT",
   "poc": 540.0,
   "magnets": [
@@ -137,7 +137,7 @@
   "abs_wall": 540.0,
   "abs_wall_kind": "trampilla",
   "spot": 561.99,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -148,7 +148,7 @@
  "AMD": {
   "flip": 545.0,
   "flip_all": 545.0,
-  "score": -2.2,
+  "score": -2.24,
   "bias": "PUT",
   "poc": 500.0,
   "magnets": [
@@ -166,7 +166,7 @@
   "abs_wall": 500.0,
   "abs_wall_kind": "trampilla",
   "spot": 523.0,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -177,7 +177,7 @@
  "AAPL": {
   "flip": 320.0,
   "flip_all": 320.0,
-  "score": 40.9,
+  "score": 40.902,
   "bias": "CALL",
   "poc": 335.0,
   "magnets": [
@@ -195,7 +195,7 @@
   "abs_wall": 335.0,
   "abs_wall_kind": "pin",
   "spot": 333.47,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -206,7 +206,7 @@
  "MSFT": {
   "flip": 358.27,
   "flip_all": 358.27,
-  "score": 5.4,
+  "score": 5.413,
   "bias": "CALL",
   "poc": 390.0,
   "magnets": [
@@ -224,7 +224,7 @@
   "abs_wall": 390.0,
   "abs_wall_kind": "pin",
   "spot": 381.65,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -235,7 +235,7 @@
  "META": {
   "flip": 612.65,
   "flip_all": 612.65,
-  "score": -3.9,
+  "score": -3.934,
   "bias": "PUT",
   "poc": 580.0,
   "magnets": [
@@ -253,7 +253,7 @@
   "abs_wall": 580.0,
   "abs_wall_kind": "trampilla",
   "spot": 595.96,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -264,7 +264,7 @@
  "AMZN": {
   "flip": 234.42,
   "flip_all": 234.42,
-  "score": -6.9,
+  "score": -6.908,
   "bias": "PUT",
   "poc": 230.0,
   "magnets": [
@@ -282,7 +282,7 @@
   "abs_wall": 230.0,
   "abs_wall_kind": "trampilla",
   "spot": 232.4,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -293,7 +293,7 @@
  "GOOGL": {
   "flip": 323.21,
   "flip_all": 323.21,
-  "score": -3.5,
+  "score": -3.461,
   "bias": "PUT",
   "poc": 310.0,
   "magnets": [
@@ -311,7 +311,7 @@
   "abs_wall": 310.0,
   "abs_wall_kind": "trampilla",
   "spot": 319.3,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -322,7 +322,7 @@
  "INTC": {
   "flip": 96.0,
   "flip_all": 96.0,
-  "score": -6.5,
+  "score": -6.48,
   "bias": "PUT",
   "poc": 90.0,
   "magnets": [
@@ -340,7 +340,7 @@
   "abs_wall": 90.0,
   "abs_wall_kind": "trampilla",
   "spot": 92.53,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -351,7 +351,7 @@
  "TSM": {
   "flip": 420.0,
   "flip_all": 420.0,
-  "score": -10.3,
+  "score": -10.26,
   "bias": "PUT",
   "poc": 420.0,
   "magnets": [
@@ -370,7 +370,7 @@
   "abs_wall": 420.0,
   "abs_wall_kind": "pin",
   "spot": 402.63,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -381,7 +381,7 @@
  "ASML": {
   "flip": 1835.0,
   "flip_all": 1835.0,
-  "score": -0.2,
+  "score": -0.221,
   "bias": "PUT",
   "poc": 1750.0,
   "magnets": [
@@ -399,7 +399,7 @@
   "abs_wall": 1750.0,
   "abs_wall_kind": "trampilla",
   "spot": 1757.0,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -410,7 +410,7 @@
  "TXN": {
   "flip": 274.91,
   "flip_all": 274.91,
-  "score": 0.8,
+  "score": 0.818,
   "bias": "CALL",
   "poc": 287.5,
   "magnets": [
@@ -428,7 +428,7 @@
   "abs_wall": 287.5,
   "abs_wall_kind": "pin",
   "spot": 279.0,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -439,7 +439,7 @@
  "AVGO": {
   "flip": 388.86,
   "flip_all": 388.86,
-  "score": -0.9,
+  "score": -0.899,
   "bias": "PUT",
   "poc": 395.0,
   "magnets": [
@@ -458,7 +458,7 @@
   "abs_wall": 395.0,
   "abs_wall_kind": "pin",
   "spot": 381.75,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -469,7 +469,7 @@
  "GLD": {
   "flip": 368.8,
   "flip_all": 368.8,
-  "score": 6.5,
+  "score": 6.538,
   "bias": "CALL",
   "poc": 370.0,
   "magnets": [
@@ -487,7 +487,7 @@
   "abs_wall": 370.0,
   "abs_wall_kind": "pin",
   "spot": 371.95,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -498,7 +498,7 @@
  "XLK": {
   "flip": 184.32,
   "flip_all": 184.32,
-  "score": -1.5,
+  "score": -1.476,
   "bias": "PUT",
   "poc": 170.0,
   "magnets": [
@@ -516,7 +516,7 @@
   "abs_wall": 170.0,
   "abs_wall_kind": "trampilla",
   "spot": 176.23,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -527,7 +527,7 @@
  "EWY": {
   "flip": 170.0,
   "flip_all": 170.0,
-  "score": -3.7,
+  "score": -3.748,
   "bias": "PUT",
   "poc": 170.0,
   "magnets": [
@@ -545,7 +545,7 @@
   "abs_wall": 170.0,
   "abs_wall_kind": "pin",
   "spot": 163.49,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -556,7 +556,7 @@
  "DRAM": {
   "flip": 56.0,
   "flip_all": 56.0,
-  "score": -10.2,
+  "score": -10.154,
   "bias": "PUT",
   "poc": 55.0,
   "magnets": [
@@ -574,7 +574,7 @@
   "abs_wall": 55.0,
   "abs_wall_kind": "trampilla",
   "spot": 53.63,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -585,7 +585,7 @@
  "SPCX": {
   "flip": 120.0,
   "flip_all": 120.0,
-  "score": -14.7,
+  "score": -14.737,
   "bias": "PUT",
   "poc": 115.0,
   "magnets": [
@@ -603,7 +603,7 @@
   "abs_wall": 115.0,
   "abs_wall_kind": "trampilla",
   "spot": 115.02,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -614,7 +614,7 @@
  "LRCX": {
   "flip": 299.5,
   "flip_all": 299.5,
-  "score": 0.0,
+  "score": 0.015,
   "bias": "CALL",
   "poc": 320.0,
   "magnets": [
@@ -632,7 +632,7 @@
   "abs_wall": 320.0,
   "abs_wall_kind": "pin",
   "spot": 306.89,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -643,7 +643,7 @@
  "SNDK": {
   "flip": 1510.0,
   "flip_all": 1510.0,
-  "score": -3.1,
+  "score": -3.136,
   "bias": "PUT",
   "poc": 1390.0,
   "magnets": [
@@ -661,7 +661,7 @@
   "abs_wall": 1390.0,
   "abs_wall_kind": "trampilla",
   "spot": 1445.46,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -672,7 +672,7 @@
  "WDC": {
   "flip": 497.67,
   "flip_all": 497.67,
-  "score": -0.8,
+  "score": -0.799,
   "bias": "PUT",
   "poc": 540.0,
   "magnets": [
@@ -691,7 +691,7 @@
   "abs_wall": 540.0,
   "abs_wall_kind": "pin",
   "spot": 519.83,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -702,7 +702,7 @@
  "STX": {
   "flip": 845.35,
   "flip_all": 845.35,
-  "score": 0.4,
+  "score": 0.385,
   "bias": "CALL",
   "poc": 850.0,
   "magnets": [
@@ -720,7 +720,7 @@
   "abs_wall": 850.0,
   "abs_wall_kind": "pin",
   "spot": 851.0,
-  "ts": 1784990917,
+  "ts": 1784991148,
   "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
   "chain_date": "2026-07-25",
   "chain_snapshot_local": "2026-07-25 10:18:54",
@@ -730,8 +730,8 @@
  },
  "_meta": {
   "generado_por": "scripts/gex_snapshot.py",
-  "asof": 1784990917,
-  "asof_local": "2026-07-25 10:48:37",
+  "asof": 1784991148,
+  "asof_local": "2026-07-25 10:52:28",
   "fuente": "data/history/<fecha>/chain_full_<sym>.json (Polygon /v3/snapshot/options)",
   "griegas": "MEDIDAS (gamma y OI reales de Polygon) \u2014 nada reconstruido por Black-Scholes",
   "sustituye_a": "data/gexa_snapshot.json (gexa.ai jubilado el 2026-07-25)",

@@ -42,6 +42,23 @@ sys.path.insert(0, os.path.join(REPO, "scripts"))
 
 import gex_core  # noqa: E402  (fuente unica de flip/regimen/muros)
 
+
+def keep_sign(x, nd=0):
+    """Redondea `x` a `nd` decimales PERO nunca convierte un valor no nulo en cero.
+
+    round(-40000/1e6, 1) == -0.0, y en Python `-0.0 < 0` es False: un nombre pequeño en
+    regimen NEG se leeria como POSITIVO en los planes, porque los consumidores heredaron de
+    gexa la logica "el signo del score fija el regimen". El signo es la informacion; los
+    decimales son estetica. Si el redondeo se come el signo, se devuelve el valor sin tocar.
+    """
+    if not isinstance(x, (int, float)):
+        return None
+    r = round(float(x), nd) if nd else round(float(x))
+    if r == 0 and x != 0:
+        return x
+    return r
+
+
 MIN_GREEKS_PCT = 0.50    # por debajo de esto el libro no se puede leer: se omite el simbolo
 MIN_STRIKES = 8          # menos strikes poblados que esto y el perfil es ruido
 OUT = os.path.join(REPO, "data", "gex_snapshot.json")
@@ -126,7 +143,8 @@ def snapshot_sym(sym):
     put_usd = sum(v for v in (gi.get("put_gex") or {}).values())
     # `score` reproduce la SEMANTICA que consumian los planes de gexa (su signo fijaba el
     # regimen), pero con nuestra magnitud auditable: net GEX en millones de $ por punto.
-    score = round(net / 1e6, 1)
+    # keep_sign: el redondeo no puede comerse el signo (ver su docstring).
+    score = keep_sign(net / 1e6, 3)
     neg = gi.get("regime") == "NEG"
     magnets = sorted({x for x in (gi.get("abs_wall"), gi.get("call_wall"),
                                   gi.get("put_wall")) if x})
@@ -141,10 +159,10 @@ def snapshot_sym(sym):
         "magnets": magnets,
         "regime": "NEGATIVE" if neg else "POSITIVE",
         "regime_short": gi.get("regime"),
-        "call_usd": round(call_usd),
-        "put_usd": round(put_usd),
-        "net_gex": round(net),
-        "gross_gex": round(gi.get("gross_gex") or 0),
+        "call_usd": keep_sign(call_usd),
+        "put_usd": keep_sign(put_usd),
+        "net_gex": keep_sign(net),
+        "gross_gex": keep_sign(gi.get("gross_gex") or 0),
         "call_wall": gi.get("call_wall"),
         "put_wall": gi.get("put_wall"),
         "abs_wall": gi.get("abs_wall"),
