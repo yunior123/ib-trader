@@ -225,10 +225,19 @@ while True:
                         msge = (f"{sym.upper()} reventó la banda {lado} y re-entró en {c:.2f}. "
                                 f"Elastico: {rev} {mid:.2f} si imprime — chico y seguro.{pre}{ctx} {veh}")
                         if ene and ctx_ok:
+                            # DEGRADADA 2026-07-25 por MEDICION, no por corazonada.
+                            # Backtest del 2026-07-24 (docs/BACKTEST-SIGNALS-2026-07-24.md):
+                            # BB REBOTE ⭐ = 20% WR [8,42] con n=20 — la UNICA celda cuyo
+                            # Wilson SUPERIOR queda por debajo de 50%, y encima tenia voz
+                            # garantizada + prioridad SIGNAL. La ⭐ sin estrella (REBOTE
+                            # normal) dio 45% y la VETADA 53%: la "estrella" era la peor.
+                            # Se SIGUE emitiendo (n=20 es poco y hay que seguir midiendo),
+                            # pero pierde el privilegio de voz: pasa a INFO como el resto.
+                            # RE-PROMOVER solo si la calibracion medida la devuelve >55%.
                             estrella = "CELDA ESTRELLA" in ctx
-                            say("🎈 BB REBOTE" + (" ⭐" if estrella else ""), msge,
-                                voice=(sym in VOICE_CORE) or estrella,
-                                prio="SIGNAL" if estrella else "INFO")
+                            say("🎈 BB REBOTE" + (" ⭐[degradada]" if estrella else ""), msge,
+                                voice=(sym in VOICE_CORE),
+                                prio="INFO")
                         elif ene:
                             log_only("🎈 BB REBOTE [VETO medido]", msge)
                         else:

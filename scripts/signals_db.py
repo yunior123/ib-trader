@@ -109,6 +109,15 @@ def ingest_file(c, path):
             row = parse_line(line, date)
             if not row:
                 continue
+            # WARMUP = REPLAY, no evento vivo (fix 2026-07-25). Al arrancar, los bots
+            # re-procesan 2 dias de barras historicas y el CUSUM dispara sobre ellas; el
+            # log estampa time(nullptr) = HORA DE ARRANQUE, no la de la barra. Resultado
+            # medido el 24-jul: 64 señales con ts identico 09:18:23 -> basura que envenena
+            # todo backtest (no puedes medir "que paso despues" si el instante es falso).
+            # Se quedan en el archivo y en el banner (Yunior los compara con el grafico,
+            # orden 2026-07-15) pero NO entran a la BD de medicion.
+            if "WARMUP" in (row[3] or "") or "WARMUP" in (row[9] or ""):
+                continue
             try:
                 c.execute("""INSERT OR IGNORE INTO signals
                     (ts_epoch,ts_txt,date,kind,symbol,price,priority,source,msg,raw)
