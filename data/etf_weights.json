@@ -1,0 +1,98 @@
+{
+ "generated": "2026-07-25T03:47:11",
+ "source": "yfinance funds_data.top_holdings (top-10)",
+ "note": "cobertura parcial por diseno: yfinance solo expone el top-10. compass reporta `coverage`, no finge medir el indice completo.",
+ "indices": {
+  "QQQ": {
+   "asof": "2026-07-25",
+   "n_listed": 10,
+   "w_listed_sum": 44.917,
+   "n_in_fleet": 9,
+   "w_in_fleet_sum": 41.898,
+   "not_in_fleet": [
+    "GOOG"
+   ],
+   "weights": {
+    "NVDA": 7.5827,
+    "AAPL": 6.6552,
+    "MU": 5.6276,
+    "MSFT": 4.3392,
+    "AMD": 4.095,
+    "AMZN": 4.0149,
+    "TSLA": 3.2902,
+    "GOOGL": 3.2593,
+    "INTC": 3.0339,
+    "GOOG": 3.0188
+   }
+  },
+  "SPY": {
+   "asof": "2026-07-25",
+   "n_listed": 10,
+   "w_listed_sum": 36.332,
+   "n_in_fleet": 9,
+   "w_in_fleet_sum": 33.748,
+   "not_in_fleet": [
+    "GOOG"
+   ],
+   "weights": {
+    "NVDA": 7.4997,
+    "AAPL": 6.5769,
+    "MSFT": 4.2882,
+    "AMZN": 3.6106,
+    "GOOGL": 3.2429,
+    "AVGO": 2.7679,
+    "GOOG": 2.5845,
+    "MU": 2.0146,
+    "META": 1.9144,
+    "TSLA": 1.8326
+   }
+  },
+  "SMH": {
+   "asof": "2026-07-25",
+   "n_listed": 10,
+   "w_listed_sum": 69.913,
+   "n_in_fleet": 8,
+   "w_in_fleet_sum": 58.848,
+   "not_in_fleet": [
+    "AMAT",
+    "KLAC"
+   ],
+   "weights": {
+    "NVDA": 17.7539,
+    "TSM": 9.1904,
+    "MU": 5.8447,
+    "AMAT": 5.7252,
+    "AMD": 5.4277,
+    "AVGO": 5.4053,
+    "KLAC": 5.3398,
+    "LRCX": 5.2307,
+    "INTC": 5.0409,
+    "ASML": 4.9543
+   }
+  },
+  "XLK": {
+   "asof": "2026-07-25",
+   "n_listed": 10,
+   "w_listed_sum": 59.271,
+   "n_in_fleet": 8,
+   "w_in_fleet_sum": 52.659,
+   "not_in_fleet": [
+    "AMAT",
+    "CSCO"
+   ],
+   "weights": {
+    "NVDA": 12.6409,
+    "AAPL": 11.0854,
+    "MSFT": 7.2277,
+    "AMD": 4.7079,
+    "MU": 4.6756,
+    "AVGO": 4.6651,
+    "INTC": 4.2032,
+    "AMAT": 3.6559,
+    "LRCX": 3.4529,
+    "CSCO": 2.9562
+   }
+  }
+ },
+ "failed": []
+}

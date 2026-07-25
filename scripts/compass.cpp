@@ -171,6 +171,31 @@ static std::string slurp(const std::string& path) {
     std::ostringstream ss; ss << f.rdbuf();
     return ss.str();
 }
+static std::string json_section(const std::string& all, const std::string& key) {
+    // Devuelve el OBJETO {...} asociado a `key`, exigiendo que el valor sea un objeto
+    // INMEDIATAMENTE tras los dos puntos.
+    // BUG que esto arregla (2026-07-25): antes se buscaba el siguiente '{' desde la clave, asi
+    // que pedir "NVDA" en etf_weights.json encontraba su PESO dentro de QQQ ("NVDA": 7.58) y
+    // luego se enganchaba al siguiente objeto del fichero (el de SPY) -> NVDA se clasificaba
+    // como ETF y heredaba los componentes de SPY. Un ticker es clave de peso Y de seccion.
+    std::string pat = "\"" + key + "\":";
+    size_t from = 0;
+    while (true) {
+        auto p = all.find(pat, from);
+        if (p == std::string::npos) return {};
+        size_t q = p + pat.size();
+        while (q < all.size() && (all[q] == ' ' || all[q] == '\t' || all[q] == '\n')) ++q;
+        if (q >= all.size() || all[q] != '{') { from = p + pat.size(); continue; }
+        int depth = 0;
+        for (size_t i = q; i < all.size(); ++i) {
+            if (all[i] == '{') ++depth;
+            else if (all[i] == '}') { if (--depth == 0) return all.substr(q, i - q + 1); }
+        }
+        return {};
+    }
+}
+
+
 static std::string jesc(const std::string& s) {
     std::string o; o.reserve(s.size() + 8);
     for (char c : s) { if (c == '"' || c == '\\') o += '\\'; o += c; }
@@ -179,6 +204,18 @@ static std::string jesc(const std::string& s) {
 
 // ------------------------------- modelo -------------------------------------
 struct Bar { long t; double o, h, l, c, v; };
+
+static std::vector<Bar> load_bars(const std::string& sym) {
+    std::vector<Bar> b;
+    std::string p = "data/bars_" + sym + "_ibkr.txt";
+    FILE* f = fopen(p.c_str(), "r");
+    if (!f) return b;
+    Bar x{};
+    while (fscanf(f, "%ld %lf %lf %lf %lf %lf", &x.t, &x.o, &x.h, &x.l, &x.c, &x.v) == 6)
+        b.push_back(x);
+    fclose(f);
+    return b;
+}
 
 struct Level {
     double price = 0;
@@ -213,6 +250,223 @@ struct Amp {
     std::vector<std::pair<std::string, double>> constraints;
 };
 
+// ===================== MOTORES NOMBRADOS (quien la arrastra) =================
+// Orden Yunior (peticion original): "en los etfs como qqq, smh, spy [poner] las acciones que
+// los estan llevando abajo o arriba CON FUERZA, en una descripcion pequena. Lo mismo para una
+// accion suelta". Antes direction_view solo decia "componentes ↓ (-0.42)": un numero anonimo,
+// con los nombres ya calculados y TIRADOS aguas arriba.
+//
+// EL GATE DE FUERZA (nada inventado; cada umbral tiene su porque):
+//   a) contiguidad: >=41 barras y sin huecos (el feed tuvo un hueco real de 16 min el 07-24
+//      13:15->13:31; sin esto un movimiento de 22 min se etiqueta como "6 barras").
+//   b) |z6| >= 1.0 con z6 = r6/(sigma_1m*sqrt(6)): >=1 sigma del ruido MEDIDO DEL PROPIO
+//      simbolo. Es la unica forma honesta de comparar NVDA (sigma1~0.07%/min) con AMD
+//      (~0.23%/min). Sustituye el "/0.5" hardcodeado de direction_view.
+//   c) er10 >= 0.30 (Kaufman): docs/MOMENTUM-MATH.md §2 literal, "ER<0.3 = chop/trampa".
+//   d) sign(r6)==sign(r15) O |z6|>=2.0: persistencia, o impulso fresco de 2 sigma.
+// El VOLUMEN nunca es gate duro: fuera de RTH vexp~0.01 para todos y dejaria el panel en
+// blanco justo cuando mas se mira el chart.
+//
+// RANKING por |contrib| con contrib_i = w_i * r6_i, que es ATRIBUCION EXACTA: Sum(w*r)/Sum(w)
+// reconstruye el retorno del indice. Rankear por |z| degenera en "el orden de pesos del
+// indice" (NVDA, AAPL, MSFT... todos los dias, inutil).
+struct Drv {
+    std::string sym; double w = 0, r6 = 0, r15 = 0, z6 = 0, er10 = 0, contrib = 0;
+    bool named = false; std::string grade, skip;
+};
+
+struct Drivers {
+    bool ok = false;
+    std::string kind;                 // "etf" | "accion"
+    std::vector<Drv> parts;
+    std::vector<std::string> up, down;
+    double agg = 0, index_r6 = 0, resid = 0, coverage = 0, w_sum = 0;
+    bool diverge = false;
+    int n_named = 0;
+    std::string text, source, reason;
+};
+
+// metricas de un simbolo desde SUS barras locales (sin red, sin sqlite)
+struct Met { bool ok = false; double r6 = 0, r15 = 0, z6 = 0, er10 = 0; };
+static Met metrics_of(const std::string& sym_lo) {
+    Met m;
+    auto b = load_bars(sym_lo);
+    size_t n = b.size();
+    if (n < 41) return m;
+    // contiguidad (a)
+    if (b[n - 1].t - b[n - 7].t > 8 * 60 || b[n - 1].t - b[n - 16].t > 18 * 60) return m;
+    std::vector<double> c; c.reserve(n);
+    for (auto& x : b) c.push_back(x.c);
+    m.r6 = 100.0 * (c[n - 1] - c[n - 7]) / c[n - 7];
+    m.r15 = 100.0 * (c[n - 1] - c[n - 16]) / c[n - 16];
+    // z6 con sigma medida del propio simbolo, escalada por sqrt(6) (random walk)
+    size_t w0 = n >= 61 ? n - 60 : 1;
+    std::vector<double> r;
+    for (size_t i = w0; i < n; ++i) r.push_back((c[i] - c[i - 1]) / c[i - 1] * 100.0);
+    if (r.size() >= 20) {
+        double mu = 0; for (double x : r) mu += x; mu /= r.size();
+        double sd = 0; for (double x : r) sd += (x - mu) * (x - mu);
+        sd = std::sqrt(sd / r.size());
+        if (sd > 0) m.z6 = m.r6 / (sd * std::sqrt(6.0));
+    }
+    // er10 de Kaufman: recorrido neto / recorrido bruto
+    double net = std::fabs(c[n - 1] - c[n - 11]), gross = 0;
+    for (size_t i = n - 10; i < n; ++i) gross += std::fabs(c[i] - c[i - 1]);
+    m.er10 = gross > 0 ? net / gross : 0;
+    m.ok = true;
+    return m;
+}
+
+static bool strong_enough(const Met& m, std::string& why) {
+    if (!m.ok) { why = "s/d o hueco"; return false; }
+    if (std::fabs(m.z6) < 1.0) { why = "z" + std::to_string((int)(m.z6 * 10) / 10.0).substr(0, 4); return false; }
+    if (m.er10 < 0.30) { why = "chop"; return false; }
+    if (sgn(m.r6) != sgn(m.r15) && std::fabs(m.z6) < 2.0) { why = "sin persistencia"; return false; }
+    return true;
+}
+
+static std::string lower(std::string s) { for (auto& c : s) c = (char)tolower(c); return s; }
+
+// pesos de data/etf_weights.json (los escribe scripts/etf_weights_refresh.py, lote 4am)
+static std::vector<std::pair<std::string, double>> etf_weights(const std::string& SYM) {
+    std::vector<std::pair<std::string, double>> out;
+    std::string all = slurp("data/etf_weights.json");
+    if (all.empty()) return out;
+    std::string idx = json_section(all, "indices");
+    if (idx.empty()) return out;
+    std::string mine = json_section(idx, SYM);
+    if (mine.empty()) return out;
+    // OJO: json_section busca la clave en cualquier parte, y los tickers tambien son claves
+    // DENTRO de "weights". Sin esta comprobacion, pedir "NVDA" encontraba su peso dentro de
+    // QQQ y devolvia los componentes de QQQ -> NVDA se clasificaba como ETF y heredaba los
+    // motores del indice. Una entrada de indice de verdad tiene "weights" y "asof".
+    if (mine.find("\"weights\"") == std::string::npos ||
+        mine.find("\"asof\"") == std::string::npos) return out;
+    std::string w = json_section(mine, "weights");
+    if (w.empty()) return out;
+    // parseo plano de "TICKER": num
+    size_t i = 0;
+    while (true) {
+        auto q1 = w.find('"', i);
+        if (q1 == std::string::npos) break;
+        auto q2 = w.find('"', q1 + 1);
+        if (q2 == std::string::npos) break;
+        std::string tk = w.substr(q1 + 1, q2 - q1 - 1);
+        auto col = w.find(':', q2);
+        if (col == std::string::npos) break;
+        size_t p = col + 1;
+        while (p < w.size() && (w[p] == ' ' || w[p] == '\t')) ++p;
+        double v{};
+        auto [np, ec] = std::from_chars(w.data() + p, w.data() + w.size(), v);
+        if (ec == std::errc{} && !tk.empty() && v > 0) out.emplace_back(tk, v);
+        i = (ec == std::errc{}) ? (size_t)(np - w.data()) : q2 + 1;
+    }
+    return out;
+}
+
+static std::string fmt_pct(double v) {
+    char b[32]; snprintf(b, sizeof b, "%+.1f%%", v); return b;
+}
+
+static Drivers drivers_for(const Ev& ev) {
+    Drivers D;
+    auto W = etf_weights(ev.sym);
+    if (!W.empty()) {
+        D.kind = "etf"; D.source = "pesos de indice (top-10, cobertura parcial)";
+        double num = 0, den = 0;
+        for (auto& [tk, w] : W) {
+            Drv d; d.sym = tk; d.w = w;
+            Met m = metrics_of(lower(tk));
+            std::string why;
+            if (!m.ok) { d.skip = "sin barras"; D.parts.push_back(d); continue; }
+            d.r6 = m.r6; d.r15 = m.r15; d.z6 = m.z6; d.er10 = m.er10;
+            d.contrib = w * m.r6;
+            num += w * m.r6; den += w;
+            d.named = strong_enough(m, why);
+            if (!d.named) d.skip = why;
+            else d.grade = std::fabs(m.z6) >= 2.0 ? "fuerte" : "";
+            D.parts.push_back(d);
+        }
+        D.w_sum = den;
+        double listed = 0; for (auto& [tk, w] : W) listed += w;
+        D.coverage = listed > 0 ? den / listed : 0;
+        D.agg = den > 0 ? num / den : 0;
+        if (ev.r6) { D.index_r6 = *ev.r6; D.resid = *ev.r6 - D.agg; }
+        D.diverge = ev.r6 && sgn(D.agg) != 0 && sgn(*ev.r6) != 0 && sgn(D.agg) != sgn(*ev.r6)
+                    && std::fabs(D.agg) > 0.05 && std::fabs(*ev.r6) > 0.05;
+    } else {
+        // ACCION suelta: el capitan que la gobierna + pares del sector, equiponderados.
+        // Se declara `source` como NO medido: peer_weights solo tiene 1 target (NVDA, 19
+        // filas, todas con lead_min=0), asi que llamar a esto "medido" seria mentir.
+        static const char* SEMIS[] = {"NVDA","AMD","AVGO","ASML","TSM","TXN","QCOM","LRCX",
+                                      "INTC","MU","SKHY","SNDK","STX","WDC","DRAM","NOK"};
+        bool semi = false;
+        for (auto s : SEMIS) if (ev.sym == s) { semi = true; break; }
+        D.kind = "accion";
+        D.source = semi ? "sector semis equiponderado (NO medido)"
+                        : "capitanes de mercado (NO medido)";
+        std::vector<std::string> peers;
+        if (semi) { for (auto s : SEMIS) if (ev.sym != s) peers.emplace_back(s); peers.emplace_back("SMH"); }
+        else { peers = {"SPY", "QQQ"}; }
+        double num = 0, den = 0;
+        for (auto& tk : peers) {
+            Drv d; d.sym = tk; d.w = 1.0;
+            Met m = metrics_of(lower(tk));
+            std::string why;
+            if (!m.ok) { d.skip = "sin barras"; D.parts.push_back(d); continue; }
+            d.r6 = m.r6; d.r15 = m.r15; d.z6 = m.z6; d.er10 = m.er10; d.contrib = m.r6;
+            num += m.r6; den += 1;
+            d.named = strong_enough(m, why);
+            if (!d.named) d.skip = why; else d.grade = std::fabs(m.z6) >= 2.0 ? "fuerte" : "";
+            D.parts.push_back(d);
+        }
+        D.w_sum = den; D.coverage = den > 0 ? 1.0 : 0.0;
+        D.agg = den > 0 ? num / den : 0;
+        if (ev.r6) { D.index_r6 = *ev.r6; D.resid = *ev.r6 - D.agg; }
+    }
+
+    // ordenar por |contrib| y quedarse con los nombrados
+    std::vector<const Drv*> named;
+    for (auto& d : D.parts) if (d.named) named.push_back(&d);
+    std::sort(named.begin(), named.end(),
+              [](const Drv* a, const Drv* b) { return std::fabs(a->contrib) > std::fabs(b->contrib); });
+    D.n_named = (int)named.size();
+    for (auto* d : named) (d->r6 < 0 ? D.down : D.up).push_back(d->sym);
+
+    if (named.empty()) {
+        D.text = D.kind == "etf" ? "componentes sin fuerza: nadie pasa el filtro"
+                                 : "pares sin fuerza: nadie pasa el filtro";
+        D.reason = "no_strength";
+        D.ok = true;
+        return D;
+    }
+    // frase visible: 2 nombres (3 si cabe en 45 chars), verbo por sentido
+    int dirn = sgn(named[0]->contrib);
+    const char* verb = D.kind == "etf" ? (dirn < 0 ? "arrastran" : "empujan")
+                                       : (dirn < 0 ? "presionan" : "acompanan");
+    std::string t;
+    int used = 0;
+    for (auto* d : named) {
+        if (sgn(d->contrib) != dirn) continue;      // solo los del lado dominante
+        std::string add = d->sym + fmt_pct(d->r6) + " ";
+        if (used >= 2 && t.size() + add.size() + strlen(verb) > 45) break;
+        t += add; if (++used >= 3) break;
+    }
+    t += verb;
+    bool fuerte = std::fabs(named[0]->z6) >= 2.0;
+    if (fuerte && t.size() + 7 <= 45) t += " FUERTE";
+    if (D.diverge) {
+        char b[96];
+        snprintf(b, sizeof b, "%s%s pero pesos %s (divergencia)", ev.sym.c_str(),
+                 *ev.r6 > 0 ? "^" : "v", D.agg < 0 ? "v" : "^");
+        t = b;
+    }
+    D.text = t;
+    D.ok = true;
+    return D;
+}
+
+
 struct Out {
     std::string sym, state, state_pending, dir = "flat", prob_source = "doctrina";
     int prob = 50; bool pending_print = false;
@@ -220,6 +474,7 @@ struct Out {
     std::vector<std::string> families_why, vetoes, fading, state_why;
     bool has_level = false; Level level;
     Amp amp;
+    Drivers drv;
 };
 
 // --------------------------- PRINT O NADA ----------------------------------
@@ -344,18 +599,6 @@ static void vetoes_of(const Ev& ev, const Level& L, int rdir, std::vector<std::s
 // ------------------- retrocesos MEDIDOS (data/momentum_decay.json) ----------
 struct DecayCell { double n = 0, ext_med = 0, prob_ret50 = 0, med_min = 0; bool ok = false; std::string src; };
 
-static std::string json_section(const std::string& all, const std::string& key) {
-    auto p = all.find("\"" + key + "\"");
-    if (p == std::string::npos) return {};
-    p = all.find('{', p);
-    if (p == std::string::npos) return {};
-    int depth = 0;
-    for (size_t i = p; i < all.size(); ++i) {
-        if (all[i] == '{') ++depth;
-        else if (all[i] == '}') { if (--depth == 0) return all.substr(p, i - p + 1); }
-    }
-    return {};
-}
 
 static DecayCell decay_cell(const std::string& decay_json, const std::string& sym,
                             int move_dir, double now_min) {
@@ -586,6 +829,9 @@ static Out classify(const Ev& ev, Hist* hist, const std::string& decay_json) {
         if (!o.state_pending.empty() && (o.state == S_BOX || o.state == S_NONE)) o.dir = "flat";
     }
 
+    // MOTORES NOMBRADOS: quien la arrastra/empuja CON FUERZA (peticion original de Yunior)
+    o.drv = drivers_for(ev);
+
     // AMPLITUD: cuanto se espera que se mueva (y con ella se escala la flecha)
     if ((o.state == S_REV || o.state == S_APPR) && rdir != 0) {
         o.amp = amplitude(ev, rdir, decay_json);
@@ -670,6 +916,40 @@ static std::string to_json(const Out& o) {
     } else {
         s += "\"amplitude\":null,\"mag\":0.0,\"target\":null,\"grade\":null,";
     }
+    // --- MOTORES NOMBRADOS ---
+    if (o.drv.ok) {
+        snprintf(b, sizeof b,
+                 "\"drivers_text\":\"%s\",\"drivers_kind\":\"%s\",\"drivers_meta\":{"
+                 "\"coverage\":%.4f,\"agg\":%.4f,\"index_r6\":%.4f,\"resid\":%.4f,"
+                 "\"diverge\":%s,\"n_named\":%d,\"source\":\"%s\",\"reason\":%s},",
+                 jesc(o.drv.text).c_str(), o.drv.kind.c_str(), o.drv.coverage, o.drv.agg,
+                 o.drv.index_r6, o.drv.resid, o.drv.diverge ? "true" : "false", o.drv.n_named,
+                 jesc(o.drv.source).c_str(),
+                 o.drv.reason.empty() ? "null" : ("\"" + jesc(o.drv.reason) + "\"").c_str());
+        s += b;
+        s += "\"drivers\":[";
+        int k = 0;
+        for (const auto& d : o.drv.parts) {
+            if (!d.named) continue;
+            snprintf(b, sizeof b,
+                     "%s{\"sym\":\"%s\",\"w\":%.3f,\"r6\":%.3f,\"r15\":%.3f,\"z6\":%.2f,"
+                     "\"er10\":%.2f,\"contrib\":%.3f,\"grade\":\"%s\"}",
+                     k++ ? "," : "", d.sym.c_str(), d.w, d.r6, d.r15, d.z6, d.er10, d.contrib,
+                     d.grade.c_str());
+            s += b;
+        }
+        s += "],\"drivers_skipped\":{";
+        k = 0;
+        for (const auto& d : o.drv.parts) {
+            if (d.named || d.skip.empty()) continue;
+            snprintf(b, sizeof b, "%s\"%s\":\"%s\"", k++ ? "," : "", d.sym.c_str(),
+                     jesc(d.skip).c_str());
+            s += b;
+        }
+        s += "},";
+    } else {
+        s += "\"drivers_text\":null,\"drivers\":[],\"drivers_meta\":null,";
+    }
     snprintf(b, sizeof b, "\"ts\":%ld}", (long)time(nullptr));
     s += b;
     return s;
@@ -732,17 +1012,6 @@ static Ev ev_from_json(const std::string& j) {
 }
 
 // ------------------------- produccion: leer data/ ---------------------------
-static std::vector<Bar> load_bars(const std::string& sym) {
-    std::vector<Bar> b;
-    std::string p = "data/bars_" + sym + "_ibkr.txt";
-    FILE* f = fopen(p.c_str(), "r");
-    if (!f) return b;
-    Bar x{};
-    while (fscanf(f, "%ld %lf %lf %lf %lf %lf", &x.t, &x.o, &x.h, &x.l, &x.c, &x.v) == 6)
-        b.push_back(x);
-    fclose(f);
-    return b;
-}
 static double pctb_of(const std::vector<double>& c, int n, double k, double* mid_out) {
     if ((int)c.size() < n) return -1;
     double m = 0;
