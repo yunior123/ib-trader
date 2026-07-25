@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>Label</key>
+	<string>com.ibtrader.cubeindex</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/bin/zsh</string>
+		<string>-c</string>
+		<string>cd /Users/yuniorrodriguezosorio/ib-trader &amp;&amp; ./venv/bin/python scripts/chain_cube_archive.py --index &amp;&amp; ./venv/bin/python scripts/chain_cube_archive.py --retention &amp;&amp; ./venv/bin/python scripts/equity_prints_archiver.py --coverage &amp;&amp; ./venv/bin/python scripts/equity_prints_archiver.py --retention --apply &amp;&amp; ./venv/bin/python scripts/levels_5min_archive.py --retention --apply &amp;&amp; ./venv/bin/python scripts/voice_budget.py --flush &amp;&amp; ./venv/bin/python scripts/voice_budget.py --publish &amp;&amp; ./venv/bin/python scripts/truth_lock.py --prune</string>
+	</array>
+	<key>RunAtLoad</key>
+	<false/>
+	<key>StartCalendarInterval</key>
+	<dict>
+		<key>Hour</key>
+		<integer>16</integer>
+		<key>Minute</key>
+		<integer>25</integer>
+	</dict>
+	<key>StandardErrorPath</key>
+	<string>/Users/yuniorrodriguezosorio/ib-trader/cubeindex.log</string>
+	<key>StandardOutPath</key>
+	<string>/Users/yuniorrodriguezosorio/ib-trader/cubeindex.log</string>
+	<key>WorkingDirectory</key>
+	<string>/Users/yuniorrodriguezosorio/ib-trader</string>
+</dict>
+</plist>
