@@ -11,12 +11,19 @@ STD="-std=c++2c"
 ARCH="-mcpu=native"; [ "$(uname -m)" = "x86_64" ] && ARCH="-march=native"
 FAILED=0
 echo "=== recompilando C++ ($STD -O3 $ARCH) — secuencial 8GB ==="
-BOTS=$(ls *_signal_bot.cpp scripts/*_signal_bot.cpp 2>/dev/null)
-for src in scripts/flow_pulse.cpp scripts/qqq_xray.cpp scripts/price_alarm.cpp scripts/korea_watch.cpp scripts/finviz_scout.cpp $BOTS; do
+# ARRAY, no escalar (fix 2026-07-25): zsh NO hace word-splitting, asi que
+# `for src in $BOTS` recibia los 24 nombres como UNA sola cadena, [ -f ] fallaba
+# y los saltaba TODOS en silencio. Por eso los binarios seguian siendo del 20-jul
+# pese a haber "desplegado". Mismo bug que dailyplans_run.sh (word-splitting).
+BOTS=( *_signal_bot.cpp(N) scripts/*_signal_bot.cpp(N) )
+for src in scripts/flow_pulse.cpp scripts/qqq_xray.cpp scripts/price_alarm.cpp scripts/korea_watch.cpp scripts/finviz_scout.cpp "${BOTS[@]}"; do
   [ -f "$src" ] || continue
   out=$(basename "$src" .cpp)
   while [ -f /tmp/cc.lock ]; do sleep 1; done; touch /tmp/cc.lock
-  clang++ $STD -O3 $ARCH -o "$out" "$src" 2>/tmp/cc_err && echo "  ✅ $out" || { echo "  🔴 $out:"; head -5 /tmp/cc_err; FAILED=$((FAILED+1)); }
+  # -lcurl solo donde hace falta (finviz_scout/x_whale_bot hablan HTTP). Sin esto
+  # el enlace falla y —desde el fix de abort-on-fail— aborta TODO el despliegue.
+  LIBS=""; case "$out" in finviz_scout|x_whale_bot) LIBS="-lcurl";; esac
+  clang++ $STD -O3 $ARCH -o "$out" "$src" $LIBS 2>/tmp/cc_err && echo "  ✅ $out" || { echo "  🔴 $out:"; head -5 /tmp/cc_err; FAILED=$((FAILED+1)); }
   rm -f /tmp/cc.lock
 done
 # NO reiniciar con binarios a medias: antes seguia adelante y dejaba la flota con
