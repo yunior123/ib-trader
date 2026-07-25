@@ -87,14 +87,27 @@ EXPIRY_MONTHS = [(2026, 3), (2026, 4), (2026, 5), (2026, 6),
                  (2026, 7), (2026, 8), (2026, 9)]
 
 # Rondas de moneyness. Cada entrada: (moneyness, right). right None = OTM automatico
-# (put por debajo del spot, call por encima). La ronda 0 es la que mas rinde.
+# (put por debajo del spot, call por encima).
+#
+# EL ORDEN NO ES DECORATIVO — se reordeno el 2026-07-25 tras medir el consumidor.
+# La primera version pedia ATM-call, luego +/-5, +/-10, +/-15 y dejaba el ATM-put y los
+# +/-2,5% para el final. Resultado medido sobre `iv_hist`: 0 de 120 sesiones de QQQ
+# tenian el 0.25 delta ENCERRADO, porque no habia ala de puts y los +/-10/15% de un
+# indice estan muertos. La cuenta que lo explica: QQQ a 30 dias con IV~15% tiene
+# 1 sigma = 15%*sqrt(30/365) = 4,3%; o sea +10% son 2,3 sigmas -> delta ~0,02, un
+# contrato que no cotiza y no sirve para nada. Lo util en un indice vive en +/-2,5..5%.
+#
+#   ronda 0: ATM call                      delta ~0,50  (ala alta, >=0,25)
+#   ronda 1: ATM put + /-2,5% + /-5%       delta ~0,50 / ~0,28 / ~0,13 en AMBAS alas
+#            -> con la ronda 1 el 0,25 queda ENCERRADO por arriba y por abajo, que es
+#               la condicion exacta que necesita el risk reversal 25 delta.
+#   ronda 2: +/-7,5% y +/-10%              cola; util en los nombres de vol alta
+#   ronda 3: +/-12,5% y +/-15%             borde de la banda pedida
 ROUNDS = [
     [(0.00, "call")],
-    [(-0.05, None), (0.05, None)],
-    [(-0.10, None), (0.10, None)],
-    [(-0.15, None), (0.15, None)],
-    [(0.00, "put"), (-0.025, None), (0.025, None),
-     (-0.075, None), (0.075, None), (-0.125, None), (0.125, None)],
+    [(0.00, "put"), (-0.025, None), (0.025, None), (-0.05, None), (0.05, None)],
+    [(-0.075, None), (0.075, None), (-0.10, None), (0.10, None)],
+    [(-0.125, None), (0.125, None), (-0.15, None), (0.15, None)],
 ]
 
 PAGE = 50000
