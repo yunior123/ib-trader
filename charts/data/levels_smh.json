@@ -1,171 +1,79 @@
 {
  "sym": "SMH",
  "spot": 561.5,
- "asof": 1784966444,
+ "asof": 1784987355,
  "exp": "20260727",
- "dte": 2.5,
+ "dte": 2.26,
  "scope": "0DTE",
- "net_vex": 312416243.9,
- "vex_peak": 557.5,
- "vex_profile": [
-  {
-   "strike": 542.5,
-   "vex": 11594284.5
-  },
-  {
-   "strike": 545.0,
-   "vex": 52487532.5
-  },
-  {
-   "strike": 547.5,
-   "vex": 18833430.8
-  },
-  {
-   "strike": 550.0,
-   "vex": 35541996.8
-  },
-  {
-   "strike": 552.5,
-   "vex": 24108209.0
-  },
-  {
-   "strike": 555.0,
-   "vex": 45431782.6
-  },
-  {
-   "strike": 557.5,
-   "vex": 177061081.8
-  },
-  {
-   "strike": 560.0,
-   "vex": 3492914.5
-  },
-  {
-   "strike": 562.5,
-   "vex": -5583261.7
-  },
-  {
-   "strike": 565.0,
-   "vex": 2046191.1
-  },
-  {
-   "strike": 567.5,
-   "vex": -7943243.5
-  },
-  {
-   "strike": 570.0,
-   "vex": -21012256.2
-  },
-  {
-   "strike": 572.5,
-   "vex": -25100707.6
-  },
-  {
-   "strike": 575.0,
-   "vex": -67039434.3
-  },
-  {
-   "strike": 577.5,
-   "vex": 77656588.7
-  },
-  {
-   "strike": 580.0,
-   "vex": -9158865.3
-  }
- ],
- "pressure": -59,
- "pressure_lab": "amplifica",
- "iv_atm": 0.3,
- "em": 13.94,
- "net_gex": -22768193.2,
- "regime": "NEG",
- "flip": 580.0,
- "flip_static": 580.0,
- "call_wall": 577.5,
- "put_wall": 557.5,
- "abs_wall": 557.5,
- "poc_dom": "98%P",
- "call_wall_gex": 1476709.2,
- "put_wall_gex": -13232224.4,
- "abs_wall_gex": -13232224.4,
+ "net_vex": null,
+ "vex_peak": null,
+ "vex_profile": [],
+ "pressure": null,
+ "pressure_lab": "sin griegas",
+ "iv_atm": null,
+ "em": null,
+ "net_gex": null,
+ "regime": null,
+ "flip": null,
+ "flip_static": null,
+ "call_wall": null,
+ "put_wall": null,
+ "abs_wall": null,
+ "poc_dom": null,
+ "call_wall_gex": null,
+ "put_wall_gex": null,
+ "abs_wall_gex": null,
  "oi_call_wall": 577.5,
  "oi_put_wall": 557.5,
  "near_call_wall": false,
  "near_put_wall": false,
  "near_flip": false,
- "profile": [
-  {
-   "strike": 542.5,
-   "gex": -179952.6
-  },
-  {
-   "strike": 545.0,
-   "gex": -940227.5
-  },
-  {
-   "strike": 547.5,
-   "gex": -398521.2
-  },
-  {
-   "strike": 550.0,
-   "gex": -917655.0
-  },
-  {
-   "strike": 552.5,
-   "gex": -797149.3
-  },
-  {
-   "strike": 555.0,
-   "gex": -2084691.2
-  },
-  {
-   "strike": 557.5,
-   "gex": -13232224.4
-  },
-  {
-   "strike": 560.0,
-   "gex": -697649.4
-  },
-  {
-   "strike": 562.5,
-   "gex": -1676469.6
-  },
-  {
-   "strike": 565.0,
-   "gex": 175933.9
-  },
-  {
-   "strike": 567.5,
-   "gex": -399280.4
-  },
-  {
-   "strike": 570.0,
-   "gex": -747208.2
-  },
-  {
-   "strike": 572.5,
-   "gex": -691248.5
-  },
-  {
-   "strike": 575.0,
-   "gex": -1507603.3
-  },
-  {
-   "strike": 577.5,
-   "gex": 1476709.2
-  },
-  {
-   "strike": 580.0,
-   "gex": -150955.6
-  }
+ "profile": [],
+ "call_wall_kind": null,
+ "call_wall_regime": null,
+ "call_wall_net": null,
+ "put_wall_kind": null,
+ "put_wall_regime": null,
+ "put_wall_net": null,
+ "abs_wall_kind": null,
+ "abs_wall_regime": null,
+ "abs_wall_net": null,
+ "gamma_ok": false,
+ "greeks_ok_pct": 0.0,
+ "chain_src": "ibkr_tws",
+ "chain_ts": 1784924160.0,
+ "chain_age_s": 63195.9408,
+ "stale": false,
+ "stale_reason": null,
+ "quotes_ok": false,
+ "session": "fuera_de_rth",
+ "band_used": 0.035,
+ "band_fetch": null,
+ "n_expiries": 1,
+ "exps_en_fichero": [
+  "20260724",
+  "20260727"
  ],
- "call_wall_kind": "trampilla",
- "call_wall_regime": "NEG",
- "call_wall_net": 1476709.2,
- "put_wall_kind": "trampilla",
- "put_wall_regime": "NEG",
- "put_wall_net": -13232224.4,
- "abs_wall_kind": "trampilla",
- "abs_wall_regime": "NEG",
- "abs_wall_net": -13232224.4
+ "rows_total": 80,
+ "n_candidates": 32,
+ "n_gamma_ok": 0,
+ "n_no_greeks": 32,
+ "n_iv_provider": 0,
+ "n_iv_inverted": 0,
+ "iv_source": "none",
+ "exp_rolled": true,
+ "roll_reason": "20260724 expirado -> mapa desde 20260727",
+ "degraded_reason": "griegas usables 0% (<50%) sobre 32 contratos",
+ "gross_gex": null,
+ "bifurcation": null,
+ "hhi": null,
+ "n_strikes_populated": 0,
+ "chain_path": "data/opt_chain_smh.txt",
+ "flip_live": null,
+ "flip_src": "none",
+ "roots": [],
+ "trapdoor_root": null,
+ "flip_open": null,
+ "frozen_at": null,
+ "frozen_day": null
 }

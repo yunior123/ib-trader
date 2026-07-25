@@ -1,107 +1,79 @@
 {
  "sym": "GOOGL",
  "spot": 319.58,
- "asof": 1784966444,
+ "asof": 1784987355,
  "exp": "20260727",
- "dte": 2.5,
+ "dte": 2.26,
  "scope": "0DTE",
- "net_vex": 243832348.1,
- "vex_peak": 325.0,
- "vex_profile": [
-  {
-   "strike": 310.0,
-   "vex": 52014580.7
-  },
-  {
-   "strike": 315.0,
-   "vex": 45998535.6
-  },
-  {
-   "strike": 317.5,
-   "vex": 3564421.9
-  },
-  {
-   "strike": 320.0,
-   "vex": 222649.9
-  },
-  {
-   "strike": 322.5,
-   "vex": 19996419.3
-  },
-  {
-   "strike": 325.0,
-   "vex": 73540419.3
-  },
-  {
-   "strike": 327.5,
-   "vex": 19490646.4
-  },
-  {
-   "strike": 330.0,
-   "vex": 29004675.1
-  }
- ],
- "pressure": 37,
- "pressure_lab": "amortigua",
- "iv_atm": 0.3,
- "em": 7.93,
- "net_gex": 2815764.9,
- "regime": "POS",
- "flip": 324.26,
- "flip_static": 324.26,
- "call_wall": 325.0,
- "put_wall": 315.0,
- "abs_wall": 325.0,
- "poc_dom": "75%C",
- "call_wall_gex": 4104923.5,
- "put_wall_gex": -2991362.4,
- "abs_wall_gex": 4104923.5,
+ "net_vex": null,
+ "vex_peak": null,
+ "vex_profile": [],
+ "pressure": null,
+ "pressure_lab": "sin griegas",
+ "iv_atm": null,
+ "em": null,
+ "net_gex": null,
+ "regime": null,
+ "flip": null,
+ "flip_static": null,
+ "call_wall": null,
+ "put_wall": null,
+ "abs_wall": null,
+ "poc_dom": null,
+ "call_wall_gex": null,
+ "put_wall_gex": null,
+ "abs_wall_gex": null,
  "oi_call_wall": 325.0,
  "oi_put_wall": 315.0,
  "near_call_wall": false,
  "near_put_wall": false,
  "near_flip": false,
- "profile": [
-  {
-   "strike": 310.0,
-   "gex": -1604311.4
-  },
-  {
-   "strike": 315.0,
-   "gex": -2991362.4
-  },
-  {
-   "strike": 317.5,
-   "gex": -512424.5
-  },
-  {
-   "strike": 320.0,
-   "gex": 159140.1
-  },
-  {
-   "strike": 322.5,
-   "gex": 2063798.1
-  },
-  {
-   "strike": 325.0,
-   "gex": 4104923.5
-  },
-  {
-   "strike": 327.5,
-   "gex": 747393.0
-  },
-  {
-   "strike": 330.0,
-   "gex": 848608.4
-  }
+ "profile": [],
+ "call_wall_kind": null,
+ "call_wall_regime": null,
+ "call_wall_net": null,
+ "put_wall_kind": null,
+ "put_wall_regime": null,
+ "put_wall_net": null,
+ "abs_wall_kind": null,
+ "abs_wall_regime": null,
+ "abs_wall_net": null,
+ "gamma_ok": false,
+ "greeks_ok_pct": 0.0,
+ "chain_src": "ibkr_tws",
+ "chain_ts": 1784924286.0,
+ "chain_age_s": 63069.9875,
+ "stale": false,
+ "stale_reason": null,
+ "quotes_ok": false,
+ "session": "fuera_de_rth",
+ "band_used": 0.035,
+ "band_fetch": null,
+ "n_expiries": 1,
+ "exps_en_fichero": [
+  "20260724",
+  "20260727"
  ],
- "call_wall_kind": "pin",
- "call_wall_regime": "POS",
- "call_wall_net": 4104923.5,
- "put_wall_kind": "trampilla",
- "put_wall_regime": "NEG",
- "put_wall_net": -2991362.4,
- "abs_wall_kind": "pin",
- "abs_wall_regime": "POS",
- "abs_wall_net": 4104923.5
+ "rows_total": 60,
+ "n_candidates": 18,
+ "n_gamma_ok": 0,
+ "n_no_greeks": 18,
+ "n_iv_provider": 0,
+ "n_iv_inverted": 0,
+ "iv_source": "none",
+ "exp_rolled": true,
+ "roll_reason": "20260724 expirado -> mapa desde 20260727",
+ "degraded_reason": "griegas usables 0% (<50%) sobre 18 contratos",
+ "gross_gex": null,
+ "bifurcation": null,
+ "hhi": null,
+ "n_strikes_populated": 0,
+ "chain_path": "data/opt_chain_googl.txt",
+ "flip_live": null,
+ "flip_src": "none",
+ "roots": [],
+ "trapdoor_root": null,
+ "flip_open": null,
+ "frozen_at": null,
+ "frozen_day": null
 }

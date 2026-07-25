@@ -1,203 +1,79 @@
 {
  "sym": "SPY",
  "spot": 738.78,
- "asof": 1784966444,
+ "asof": 1784987355,
  "exp": "20260727",
- "dte": 2.5,
+ "dte": 2.26,
  "scope": "0DTE",
- "net_vex": 9489078693.7,
- "vex_peak": 730.0,
- "vex_profile": [
-  {
-   "strike": 729.0,
-   "vex": 611291479.1
-  },
-  {
-   "strike": 730.0,
-   "vex": 3564508786.6
-  },
-  {
-   "strike": 731.0,
-   "vex": 702229331.7
-  },
-  {
-   "strike": 732.0,
-   "vex": 438839825.5
-  },
-  {
-   "strike": 733.0,
-   "vex": 328654774.2
-  },
-  {
-   "strike": 734.0,
-   "vex": 248095436.4
-  },
-  {
-   "strike": 735.0,
-   "vex": 397871114.2
-  },
-  {
-   "strike": 736.0,
-   "vex": 147471172.1
-  },
-  {
-   "strike": 737.0,
-   "vex": 36331454.9
-  },
-  {
-   "strike": 738.0,
-   "vex": 31553069.7
-  },
-  {
-   "strike": 739.0,
-   "vex": 17094925.2
-  },
-  {
-   "strike": 740.0,
-   "vex": 54367274.5
-  },
-  {
-   "strike": 741.0,
-   "vex": -52914494.7
-  },
-  {
-   "strike": 742.0,
-   "vex": 149732867.8
-  },
-  {
-   "strike": 743.0,
-   "vex": 27559689.9
-  },
-  {
-   "strike": 744.0,
-   "vex": 149699217.1
-  },
-  {
-   "strike": 745.0,
-   "vex": 658906725.9
-  },
-  {
-   "strike": 746.0,
-   "vex": 524999685.1
-  },
-  {
-   "strike": 747.0,
-   "vex": 734566372.0
-  },
-  {
-   "strike": 748.0,
-   "vex": 718219986.4
-  }
- ],
- "pressure": -2,
- "pressure_lab": "FLAT",
- "iv_atm": 0.3,
- "em": 18.34,
- "net_gex": -125677326.2,
- "regime": "NEG",
- "flip": 748.0,
- "flip_static": 748.0,
- "call_wall": 740.0,
- "put_wall": 730.0,
- "abs_wall": 730.0,
- "poc_dom": "97%P",
- "call_wall_gex": 13380037.5,
- "put_wall_gex": -121068979.0,
- "abs_wall_gex": -121068979.0,
+ "net_vex": null,
+ "vex_peak": null,
+ "vex_profile": [],
+ "pressure": null,
+ "pressure_lab": "sin griegas",
+ "iv_atm": null,
+ "em": null,
+ "net_gex": null,
+ "regime": null,
+ "flip": null,
+ "flip_static": null,
+ "call_wall": null,
+ "put_wall": null,
+ "abs_wall": null,
+ "poc_dom": null,
+ "call_wall_gex": null,
+ "put_wall_gex": null,
+ "abs_wall_gex": null,
  "oi_call_wall": 740.0,
  "oi_put_wall": 730.0,
- "near_call_wall": true,
+ "near_call_wall": false,
  "near_put_wall": false,
  "near_flip": false,
- "profile": [
-  {
-   "strike": 729.0,
-   "gex": -18626881.6
-  },
-  {
-   "strike": 730.0,
-   "gex": -121068979.0
-  },
-  {
-   "strike": 731.0,
-   "gex": -26935421.4
-  },
-  {
-   "strike": 732.0,
-   "gex": -19328453.6
-  },
-  {
-   "strike": 733.0,
-   "gex": -16991389.7
-  },
-  {
-   "strike": 734.0,
-   "gex": -15520416.1
-  },
-  {
-   "strike": 735.0,
-   "gex": -31496220.8
-  },
-  {
-   "strike": 736.0,
-   "gex": -15884194.3
-  },
-  {
-   "strike": 737.0,
-   "gex": -6115899.3
-  },
-  {
-   "strike": 738.0,
-   "gex": -12129388.5
-  },
-  {
-   "strike": 739.0,
-   "gex": 23314732.4
-  },
-  {
-   "strike": 740.0,
-   "gex": 13380037.5
-  },
-  {
-   "strike": 741.0,
-   "gex": -7161345.6
-  },
-  {
-   "strike": 742.0,
-   "gex": 13980646.5
-  },
-  {
-   "strike": 743.0,
-   "gex": 1964810.0
-  },
-  {
-   "strike": 744.0,
-   "gex": 8633762.2
-  },
-  {
-   "strike": 745.0,
-   "gex": 31913663.0
-  },
-  {
-   "strike": 746.0,
-   "gex": 21920813.2
-  },
-  {
-   "strike": 747.0,
-   "gex": 26957861.1
-  },
-  {
-   "strike": 748.0,
-   "gex": 23514938.0
-  }
+ "profile": [],
+ "call_wall_kind": null,
+ "call_wall_regime": null,
+ "call_wall_net": null,
+ "put_wall_kind": null,
+ "put_wall_regime": null,
+ "put_wall_net": null,
+ "abs_wall_kind": null,
+ "abs_wall_regime": null,
+ "abs_wall_net": null,
+ "gamma_ok": false,
+ "greeks_ok_pct": 0.0,
+ "chain_src": "ibkr_tws",
+ "chain_ts": 1784924365.0,
+ "chain_age_s": 62990.9962,
+ "stale": false,
+ "stale_reason": null,
+ "quotes_ok": false,
+ "session": "fuera_de_rth",
+ "band_used": 0.035,
+ "band_fetch": null,
+ "n_expiries": 1,
+ "exps_en_fichero": [
+  "20260724",
+  "20260727"
  ],
- "call_wall_kind": "trampilla",
- "call_wall_regime": "NEG",
- "call_wall_net": 13380037.5,
- "put_wall_kind": "trampilla",
- "put_wall_regime": "NEG",
- "put_wall_net": -121068979.0,
- "abs_wall_kind": "trampilla",
- "abs_wall_regime": "NEG",
- "abs_wall_net": -121068979.0
+ "rows_total": 80,
+ "n_candidates": 40,
+ "n_gamma_ok": 0,
+ "n_no_greeks": 40,
+ "n_iv_provider": 0,
+ "n_iv_inverted": 0,
+ "iv_source": "none",
+ "exp_rolled": true,
+ "roll_reason": "20260724 expirado -> mapa desde 20260727",
+ "degraded_reason": "griegas usables 0% (<50%) sobre 40 contratos",
+ "gross_gex": null,
+ "bifurcation": null,
+ "hhi": null,
+ "n_strikes_populated": 0,
+ "chain_path": "data/opt_chain_spy.txt",
+ "flip_live": null,
+ "flip_src": "none",
+ "roots": [],
+ "trapdoor_root": null,
+ "flip_open": null,
+ "frozen_at": null,
+ "frozen_day": null
 }

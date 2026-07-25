@@ -1,0 +1,82 @@
+{
+ "_meta": {
+  "WARNING": "PROPUESTA \u2014 este fichero NO lo lee ningun daemon. El real es data/signal_enable.json y NO se ha tocado.",
+  "at": "2026-07-25 09:56:59",
+  "rule": "DEAD -> propone apagar. UNPROVEN -> banner solamente (jamas voz, jamas dimensiona). DATA-INSUFFICIENT -> se dice 'todavia no sabemos', en voz alta."
+ },
+ "bollinger": {
+  "ci": [
+   -0.1373,
+   -0.0096
+  ],
+  "edge": -0.0708,
+  "n": 1154,
+  "n_eff": 89.2,
+  "propose_enabled": false,
+  "propose_voice": false,
+  "verdict": "DEAD",
+  "why": "CI del edge entero <= 0 (peor que entrada aleatoria)"
+ },
+ "cusum": {
+  "ci": [
+   -0.0667,
+   0.1036
+  ],
+  "edge": 0.0196,
+  "n": 146,
+  "n_eff": 20.1,
+  "propose_enabled": true,
+  "propose_voice": false,
+  "verdict": "DATA-INSUFFICIENT",
+  "why": "n_eff 20.1 < 50"
+ },
+ "dip": {
+  "ci": null,
+  "edge": null,
+  "n": 5,
+  "n_eff": 3.0,
+  "propose_enabled": true,
+  "propose_voice": false,
+  "verdict": "DATA-INSUFFICIENT",
+  "why": "sin muestra suficiente para el bootstrap"
+ },
+ "flow": {
+  "ci": [
+   -0.0202,
+   0.1657
+  ],
+  "edge": 0.073,
+  "n": 89,
+  "n_eff": 14.5,
+  "propose_enabled": true,
+  "propose_voice": false,
+  "verdict": "DATA-INSUFFICIENT",
+  "why": "n_eff 14.5 < 50"
+ },
+ "structural": {
+  "ci": [
+   0.1648,
+   0.3532
+  ],
+  "edge": 0.2554,
+  "n": 81,
+  "n_eff": 4.0,
+  "propose_enabled": true,
+  "propose_voice": false,
+  "verdict": "DATA-INSUFFICIENT",
+  "why": "n_eff 4.0 < 50"
+ },
+ "whale": {
+  "ci": [
+   -0.0968,
+   0.1039
+  ],
+  "edge": 0.0036,
+  "n": 133,
+  "n_eff": 18.7,
+  "propose_enabled": true,
+  "propose_voice": false,
+  "verdict": "DATA-INSUFFICIENT",
+  "why": "n_eff 18.7 < 50"
+ }
+}

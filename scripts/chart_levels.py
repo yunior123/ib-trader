@@ -69,12 +69,67 @@ def spot_from_cache(path):
     return None
 
 
+FREEZE_MIN = 9 * 60 + 35     # 09:35 ET: el flip/VT del dia se congela aqui (features #6/#20)
+
+
+def poly_chain_path(sym, day=None):
+    """La cadena de Polygon MAS RECIENTE de hoy (griegas/IV/OI MEDIDOS), o None.
+
+    Verificado 2026-07-25: el snapshot /v3/snapshot/options trae greeks+IV+OI reales
+    (QQQ 816/854 contratos con griegas = 95.5%), mientras que el cache TWS a las 16:16
+    trae iv=-1 delta=-1 gamma=-1 en el 100% de las filas. Fuera de RTH esta es la unica
+    fuente con griegas MEDIDAS; se prefiere solo cuando la de IBKR no sirve, para no
+    perder frescura durante la sesion."""
+    d = day or time.strftime("%Y-%m-%d")
+    cands = sorted(glob.glob(f"data/history/{d}/poly_chain_{sym.lower()}_*.txt"))
+    return cands[-1] if cands else None
+
+
+def _et_min(ts=None):
+    """Minutos del dia del reloj del Mac (= ET, ley de la casa)."""
+    lt = time.localtime(ts if ts is not None else time.time())
+    return lt.tm_hour * 60 + lt.tm_min
+
+
+def freeze_decision(flip_live, prev_open, prev_day, today, now_min, is_market_day):
+    """Decide (flip_open, congelar_ahora). PURA a proposito: es la regla que evita el
+    crying-wolf y tiene que poder testearse sin reloj ni ficheros.
+
+    - ya congelado HOY -> se mantiene, pase lo que pase con el spot.
+    - dia de mercado y >= 09:35 -> congela el flip vivo.
+    - fin de semana / antes de 09:35 -> None (no hay apertura que congelar; inventar un
+      nivel "de apertura" fuera de sesion seria exactamente la clase de numero plausible
+      que la casa prohibe)."""
+    if prev_day == today and prev_open is not None:
+        return prev_open, False
+    if flip_live is not None and is_market_day and now_min >= FREEZE_MIN:
+        return flip_live, True
+    return None, False
+
+
+def _frozen_flip(sym):
+    """(flip_open, frozen_day, frozen_at) del levels_<sym>.json anterior, o (None,None,None).
+
+    Por que congelar (feature #6): el OI intradia es el del cierre ANTERIOR, congelado. Un
+    flip que se mueve con ese libro estatico no mide un cambio de regimen, mide el spot
+    moviendose bajo un libro quieto — y cada oscilacion cruzando el nivel era un crying-wolf.
+    Un nivel que no puede oscilar no puede dar falsas alarmas."""
+    try:
+        with open(f"{OUT}/levels_{sym.lower()}.json") as f:
+            prev = json.load(f)
+    except (OSError, ValueError):
+        return None, None, None
+    return prev.get("flip_open"), prev.get("frozen_day"), prev.get("frozen_at")
+
+
 def gen(sym, spot=None, write=True, all_exp=False):
     """spot=None -> usa el spot del header del cache (EOD/última actualización TWS).
     spot=<precio vivo> -> recalcula GEX/flip/walls al spot EN VIVO (real time; el OI
     del cache es lento pero el flip y los muros se desplazan con el precio).
     write=False -> no escribe el JSON (para el loop en vivo, evita churn de disco)."""
     path = f"data/opt_chain_{sym.lower()}.txt"
+    if not os.path.exists(path):
+        path = poly_chain_path(sym) or path
     if not os.path.exists(path):
         return None
     if _ASOF:
@@ -89,6 +144,15 @@ def gen(sym, spot=None, write=True, all_exp=False):
     if not spot:
         return None
     g = gex_core.from_ibkr_cache(path, spot, scale="dollar1pct", all_exp=all_exp)  # $/1% como gexa
+    # RESPALDO CON GRIEGAS MEDIDAS: si el cache TWS no tiene griegas usables (tipico fuera de
+    # RTH: iv=-1 en todas las filas) se reintenta con el snapshot de Polygon del dia, que SI
+    # las trae. Solo se acepta si resulta mejor: nunca se cambia una fuente buena por otra.
+    if (g is None or not g.get("gamma_ok")) and not path.startswith("data/history/"):
+        alt = poly_chain_path(sym)
+        if alt:
+            g2 = gex_core.from_ibkr_cache(alt, spot, scale="dollar1pct", all_exp=all_exp)
+            if g2 and g2.get("gamma_ok"):
+                g, path = g2, alt
     if not g:
         return None
     wc = gex_core.wall_context(g, spot)
@@ -98,22 +162,28 @@ def gen(sym, spot=None, write=True, all_exp=False):
     pmap = g["profile"]
     # DEALER PRESSURE score -100..+100 (composite gamma 80% + vanna 20%, normalizado
     # por el peso total del libro). Cerca del flip (±0.15%) se degrada (régimen inestable).
-    tot_g = sum(abs(v) for v in pmap.values()) or 1.0
-    tot_v = sum(abs(v) for v in g.get("vex_profile", {}).values()) or 1.0
-    gl = g["net_gex"] / tot_g
-    vl = g.get("net_vex", 0.0) / tot_v
-    press = 100.0 * (0.8 * gl + 0.2 * vl)
-    near_flip = g.get("flip") and abs((g["flip"] - spot) / spot * 100) < 0.15
-    if near_flip:
-        press *= 0.4
-    press = round(max(-100.0, min(100.0, press)))
-    if near_flip:
-        press_lab = "near flip"
-    elif press >= 60: press_lab = "PIN fuerte"
-    elif press >= 20: press_lab = "amortigua"
-    elif press <= -60: press_lab = "AMPLIFICA fuerte"
-    elif press <= -20: press_lab = "amplifica"
-    else: press_lab = "FLAT"
+    # SIN GRIEGAS NO HAY PRESION. Antes esto siempre daba un numero porque el perfil venia de
+    # una IV inventada; ahora, si gex_core degrado, la presion es None y la etiqueta lo dice.
+    gamma_ok = bool(g.get("gamma_ok"))
+    near_flip = bool(g.get("flip")) and abs((g["flip"] - spot) / spot * 100) < 0.15
+    if not gamma_ok or g.get("net_gex") is None:
+        press, press_lab = None, "sin griegas"
+    else:
+        tot_g = sum(abs(v) for v in pmap.values()) or 1.0
+        tot_v = sum(abs(v) for v in g.get("vex_profile", {}).values()) or 1.0
+        gl = g["net_gex"] / tot_g
+        vl = (g.get("net_vex") or 0.0) / tot_v
+        press = 100.0 * (0.8 * gl + 0.2 * vl)
+        if near_flip:
+            press *= 0.4
+        press = round(max(-100.0, min(100.0, press)))
+        if near_flip:
+            press_lab = "near flip"
+        elif press >= 60: press_lab = "PIN fuerte"
+        elif press >= 20: press_lab = "amortigua"
+        elif press <= -60: press_lab = "AMPLIFICA fuerte"
+        elif press <= -20: press_lab = "amplifica"
+        else: press_lab = "FLAT"
     # dominancia call/put del POC (abs_wall), estilo gexa "72%P"
     poc_dom = None
     aw = g.get("abs_wall")
@@ -124,11 +194,13 @@ def gen(sym, spot=None, write=True, all_exp=False):
     out = {
         "sym": sym.upper(), "spot": spot, "asof": int(time.time()),
         "exp": g.get("exp"), "dte": g.get("dte"), "scope": g.get("scope"),   # 0DTE / ALL
-        "net_vex": round(g.get("net_vex", 0), 1), "vex_peak": g.get("vex_peak"),
+        "net_vex": round(g["net_vex"], 1) if g.get("net_vex") is not None else None,
+        "vex_peak": g.get("vex_peak"),
         "vex_profile": vprof,
         "pressure": press, "pressure_lab": press_lab,
         "iv_atm": g.get("iv_atm"), "em": g.get("em"),
-        "net_gex": round(g["net_gex"], 1), "regime": g["regime"],
+        "net_gex": round(g["net_gex"], 1) if g.get("net_gex") is not None else None,
+        "regime": g.get("regime"),
         "flip": round(g["flip"], 2) if g["flip"] else None,
         "flip_static": round(g["flip_static"], 2) if g["flip_static"] else None,
         "call_wall": g["call_wall"], "put_wall": g["put_wall"], "abs_wall": g["abs_wall"],
@@ -151,9 +223,53 @@ def gen(sym, spot=None, write=True, all_exp=False):
         out[_key + "_regime"] = wc.get(_key + "_regime")
         _n = wc.get(_key + "_net")
         out[_key + "_net"] = round(_n, 1) if _n is not None else None
+
+    # ---- CABECERA DE HONESTIDAD (feature #5). Todo consumidor puede ver, sin adivinar, sobre
+    # que se calculo el mapa: cuantas filas tenian griegas, que banda uso el fetcher, cuantos
+    # vencimientos, la edad del snapshot y si el vencimiento rodo. `gamma_ok=false` significa
+    # "los numeros gamma de este fichero son null a proposito", no "falta el dato".
+    out["gamma_ok"] = gamma_ok
+    for k in ("greeks_ok_pct", "chain_src", "chain_ts", "chain_age_s", "stale", "stale_reason",
+              "quotes_ok", "session", "band_used", "band_fetch", "n_expiries",
+              "exps_en_fichero", "rows_total", "n_candidates", "n_gamma_ok", "n_no_greeks",
+              "n_iv_provider", "n_iv_inverted", "iv_source", "exp_rolled", "roll_reason",
+              "degraded_reason", "gross_gex", "bifurcation", "hhi", "n_strikes_populated"):
+        v = g.get(k)
+        out[k] = round(v, 4) if isinstance(v, float) and k not in ("chain_ts",) else v
+    out["chain_path"] = g.get("chain_path")
+
+    # ---- FLIP HONESTO + CONGELADO A LAS 09:35 (feature #6)
+    out["flip_live"] = out["flip"]
+    out["flip_src"] = g.get("flip_src")
+    out["flip_why"] = g.get("flip_why")
+    out["roots"] = [round(r, 2) for r in (g.get("roots") or [])]
+    out["trapdoor_root"] = (round(g["trapdoor_root"], 2)
+                           if g.get("trapdoor_root") is not None else None)
+    today = time.strftime("%Y-%m-%d")
+    prev_open, prev_day, fat = _frozen_flip(sym)
+    fo, nuevo = freeze_decision(out["flip_live"], prev_open, prev_day, today, _et_min(),
+                                time.localtime().tm_wday < 5)
+    if nuevo:
+        fat = int(time.time())
+    out["flip_open"] = fo
+    out["frozen_at"] = fat
+    out["frozen_day"] = today if fo is not None else None
+    # `flip` = el CONGELADO cuando existe: es la clave que leen ./compass, fleet_consensus,
+    # direction_view y narrator, y la regla de la feature dice que el regimen se lee del
+    # congelado. `flip_live` queda como diagnostico.
+    if fo is not None:
+        out["flip"] = fo
+
     if write:
         os.makedirs(OUT, exist_ok=True)
-        json.dump(out, open(f"{OUT}/levels_{sym.lower()}.json", "w"), indent=1)
+        # ESCRITURA ATOMICA (obligatoria): ./compass lee este fichero cada 0.25 s. Con el
+        # json.dump directo sobre el destino, un lector que caiga en medio del write ve un
+        # JSON TRUNCADO -> "SIN LECTURA" o, peor, niveles a medias.
+        dst = f"{OUT}/levels_{sym.lower()}.json"
+        tmp = dst + f".tmp{os.getpid()}"
+        with open(tmp, "w") as f:
+            json.dump(out, f, indent=1)
+        os.replace(tmp, dst)
     return out
 
 
@@ -175,11 +291,19 @@ def main():
                 print(f"{s.upper():6s} spot invalido '{px}' -> skip", file=sys.stderr)
                 continue
         r = gen(s, spot=spot)
-        if r:
+        if r and r.get("gamma_ok"):
             ok += 1
+            gp = r.get("greeks_ok_pct")
             print(f"{r['sym']:6s} spot {r['spot']:8.2f} | net_gex {r['net_gex']:>14.0f} {r['regime']} "
-                  f"| flip {r['flip']} (est {r['flip_static']}) | CW {r['call_wall']} PW {r['put_wall']} "
-                  f"| abs {r['abs_wall']}")
+                  f"| flip {r['flip']} (live {r['flip_live']} est {r['flip_static']} "
+                  f"src {r['flip_src']}) | CW {r['call_wall']} PW {r['put_wall']} "
+                  f"| abs {r['abs_wall']} | griegas {100 * gp:.0f}% {r.get('chain_src')}"
+                  f"{' ROLL' if r.get('exp_rolled') else ''}")
+        elif r:
+            # MUTEADO A PROPOSITO: se imprime el motivo, no un mapa con numeros inventados.
+            print(f"{r['sym']:6s} spot {r['spot']:8.2f} | GAMMA MUTEADA — {r.get('degraded_reason')}"
+                  f" | muros OI: C {r.get('oi_call_wall')} P {r.get('oi_put_wall')}"
+                  f" | exp {r.get('exp')}{' ROLL' if r.get('exp_rolled') else ''}")
         else:
             print(f"{s.upper():6s} sin cache/spot -> skip")
     print(f"\n-> {OUT}/levels_*.json  ({ok} generados)")

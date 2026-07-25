@@ -1,203 +1,474 @@
 {
  "sym": "QQQ",
  "spot": 684.66,
- "asof": 1784986477,
+ "asof": 1784987492,
  "exp": "20260727",
- "dte": 2.27,
+ "dte": 2.26,
  "scope": "0DTE",
- "net_vex": 1504544595.8,
- "vex_peak": 680.0,
+ "net_vex": 11755410172.4,
+ "vex_peak": 690.0,
  "vex_profile": [
   {
+   "strike": 661.0,
+   "vex": 77101407.2
+  },
+  {
+   "strike": 662.0,
+   "vex": 158091397.0
+  },
+  {
+   "strike": 663.0,
+   "vex": 101358127.5
+  },
+  {
+   "strike": 664.0,
+   "vex": 120060588.6
+  },
+  {
+   "strike": 665.0,
+   "vex": 1490368774.7
+  },
+  {
+   "strike": 666.0,
+   "vex": 174377644.6
+  },
+  {
+   "strike": 667.0,
+   "vex": 315184521.9
+  },
+  {
+   "strike": 668.0,
+   "vex": 107707793.9
+  },
+  {
+   "strike": 669.0,
+   "vex": 119494739.7
+  },
+  {
+   "strike": 670.0,
+   "vex": 2297358107.9
+  },
+  {
+   "strike": 671.0,
+   "vex": 1187173054.9
+  },
+  {
+   "strike": 672.0,
+   "vex": 990736232.2
+  },
+  {
+   "strike": 673.0,
+   "vex": 296293537.5
+  },
+  {
+   "strike": 674.0,
+   "vex": 827933448.9
+  },
+  {
    "strike": 675.0,
-   "vex": 848826261.9
+   "vex": 1456792369.7
   },
   {
    "strike": 676.0,
-   "vex": 91983660.3
+   "vex": 168700341.3
   },
   {
    "strike": 677.0,
-   "vex": 133266944.2
+   "vex": 261661677.1
   },
   {
    "strike": 678.0,
-   "vex": 117344209.4
+   "vex": 246147967.7
   },
   {
    "strike": 679.0,
-   "vex": 59568416.4
+   "vex": 131142683.0
   },
   {
    "strike": 680.0,
-   "vex": 1125140423.3
+   "vex": 2600144008.4
   },
   {
    "strike": 681.0,
-   "vex": 44643609.5
+   "vex": 111384473.0
   },
   {
    "strike": 682.0,
-   "vex": 68858035.3
+   "vex": 185279531.3
   },
   {
    "strike": 683.0,
-   "vex": 29139880.1
+   "vex": 84145227.7
   },
   {
    "strike": 684.0,
-   "vex": 10960736.7
+   "vex": 35857299.5
   },
   {
    "strike": 685.0,
-   "vex": -68227815.0
+   "vex": -127606362.4
   },
   {
    "strike": 686.0,
-   "vex": -17803419.6
+   "vex": -52187125.9
   },
   {
    "strike": 687.0,
-   "vex": -88400245.9
+   "vex": -266832709.3
   },
   {
    "strike": 688.0,
-   "vex": -74319613.9
+   "vex": -238827156.0
   },
   {
    "strike": 689.0,
-   "vex": -22801126.9
+   "vex": -108725349.1
   },
   {
    "strike": 690.0,
-   "vex": -842842012.6
+   "vex": -3034579775.9
   },
   {
    "strike": 691.0,
-   "vex": -33858098.5
+   "vex": -169521844.8
   },
   {
    "strike": 692.0,
-   "vex": 6158036.2
+   "vex": -67402668.7
   },
   {
    "strike": 693.0,
-   "vex": -107936570.5
+   "vex": -289421998.6
   },
   {
    "strike": 694.0,
-   "vex": 224843285.6
+   "vex": 467981347.0
+  },
+  {
+   "strike": 695.0,
+   "vex": -2687621934.9
+  },
+  {
+   "strike": 696.0,
+   "vex": 252886037.1
+  },
+  {
+   "strike": 697.0,
+   "vex": 414664246.1
+  },
+  {
+   "strike": 698.0,
+   "vex": 214073654.4
+  },
+  {
+   "strike": 699.0,
+   "vex": 173551626.0
+  },
+  {
+   "strike": 700.0,
+   "vex": 1769443428.0
+  },
+  {
+   "strike": 701.0,
+   "vex": 170485542.2
+  },
+  {
+   "strike": 702.0,
+   "vex": 260389109.7
+  },
+  {
+   "strike": 703.0,
+   "vex": 82597176.7
+  },
+  {
+   "strike": 704.0,
+   "vex": 156363954.2
+  },
+  {
+   "strike": 705.0,
+   "vex": 891796227.1
+  },
+  {
+   "strike": 706.0,
+   "vex": 122679152.1
+  },
+  {
+   "strike": 707.0,
+   "vex": 119084236.4
+  },
+  {
+   "strike": 708.0,
+   "vex": 157646405.7
   }
  ],
- "pressure": -68,
- "pressure_lab": "AMPLIFICA fuerte",
- "iv_atm": 0.3,
- "em": 16.19,
- "net_gex": -266120364.7,
+ "pressure": -56,
+ "pressure_lab": "amplifica",
+ "iv_atm": 0.1912,
+ "em": 10.29,
+ "net_gex": -523087249.9,
  "regime": "NEG",
- "flip": 694.0,
- "flip_static": 694.0,
+ "flip": 698.23,
+ "flip_static": 708.0,
  "call_wall": 690.0,
  "put_wall": 680.0,
  "abs_wall": 680.0,
  "poc_dom": "97%P",
- "call_wall_gex": -47535091.4,
- "put_wall_gex": -72187148.8,
- "abs_wall_gex": -72187148.8,
- "oi_call_wall": 690.0,
+ "call_wall_gex": -78283735.3,
+ "put_wall_gex": -103660588.9,
+ "abs_wall_gex": -103660588.9,
+ "oi_call_wall": 705.0,
  "oi_put_wall": 680.0,
  "near_call_wall": false,
  "near_put_wall": false,
  "near_flip": false,
  "profile": [
   {
+   "strike": 661.0,
+   "gex": -993804.4
+  },
+  {
+   "strike": 662.0,
+   "gex": -2068757.7
+  },
+  {
+   "strike": 663.0,
+   "gex": -1346690.2
+  },
+  {
+   "strike": 664.0,
+   "gex": -1615591.2
+  },
+  {
+   "strike": 665.0,
+   "gex": -20373718.0
+  },
+  {
+   "strike": 666.0,
+   "gex": -2465298.5
+  },
+  {
+   "strike": 667.0,
+   "gex": -4600667.8
+  },
+  {
+   "strike": 668.0,
+   "gex": -1624885.3
+  },
+  {
+   "strike": 669.0,
+   "gex": -1873488.5
+  },
+  {
+   "strike": 670.0,
+   "gex": -37238481.0
+  },
+  {
+   "strike": 671.0,
+   "gex": -20261795.2
+  },
+  {
+   "strike": 672.0,
+   "gex": -17705770.6
+  },
+  {
+   "strike": 673.0,
+   "gex": -5604611.5
+  },
+  {
+   "strike": 674.0,
+   "gex": -16836996.5
+  },
+  {
    "strike": 675.0,
-   "gex": -26174656.9
+   "gex": -32204856.3
   },
   {
    "strike": 676.0,
-   "gex": -3166305.8
+   "gex": -4011968.9
   },
   {
    "strike": 677.0,
-   "gex": -5190080.2
+   "gex": -6785340.3
   },
   {
    "strike": 678.0,
-   "gex": -5260024.7
+   "gex": -7118173.0
   },
   {
    "strike": 679.0,
-   "gex": -3144267.8
+   "gex": -4384863.7
   },
   {
    "strike": 680.0,
-   "gex": -72187148.8
+   "gex": -103660588.9
   },
   {
    "strike": 681.0,
-   "gex": -3649522.7
+   "gex": -5373672.1
   },
   {
    "strike": 682.0,
-   "gex": -7750848.2
+   "gex": -11735554.0
   },
   {
    "strike": 683.0,
-   "gex": -5259856.6
+   "gex": -8164873.7
   },
   {
    "strike": 684.0,
-   "gex": -4979751.3
+   "gex": -7892946.9
   },
   {
    "strike": 685.0,
-   "gex": -60215959.8
+   "gex": -97186710.1
   },
   {
    "strike": 686.0,
-   "gex": -3989739.4
+   "gex": -6664967.1
   },
   {
    "strike": 687.0,
-   "gex": -11352721.2
+   "gex": -18706654.3
   },
   {
    "strike": 688.0,
-   "gex": -6691683.7
+   "gex": -11099335.6
   },
   {
    "strike": 689.0,
-   "gex": -1581104.9
+   "gex": -3119561.4
   },
   {
    "strike": 690.0,
-   "gex": -47535091.4
+   "gex": -78283735.3
   },
   {
    "strike": 691.0,
-   "gex": -1609524.7
+   "gex": -2952649.3
   },
   {
    "strike": 692.0,
-   "gex": 253037.6
+   "gex": -160355.1
   },
   {
    "strike": 693.0,
-   "gex": -3906210.2
+   "gex": -5145840.1
   },
   {
    "strike": 694.0,
-   "gex": 7271096.0
+   "gex": 8696242.4
+  },
+  {
+   "strike": 695.0,
+   "gex": -31674970.7
+  },
+  {
+   "strike": 696.0,
+   "gex": 3394834.7
+  },
+  {
+   "strike": 697.0,
+   "gex": 5132646.8
+  },
+  {
+   "strike": 698.0,
+   "gex": 2477379.4
+  },
+  {
+   "strike": 699.0,
+   "gex": 1936252.1
+  },
+  {
+   "strike": 700.0,
+   "gex": 18399747.7
+  },
+  {
+   "strike": 701.0,
+   "gex": 1712753.7
+  },
+  {
+   "strike": 702.0,
+   "gex": 2511512.1
+  },
+  {
+   "strike": 703.0,
+   "gex": 777667.5
+  },
+  {
+   "strike": 704.0,
+   "gex": 1442931.2
+  },
+  {
+   "strike": 705.0,
+   "gex": 7981169.2
+  },
+  {
+   "strike": 706.0,
+   "gex": 1050527.1
+  },
+  {
+   "strike": 707.0,
+   "gex": 1001225.8
+  },
+  {
+   "strike": 708.0,
+   "gex": 1336033.4
   }
  ],
  "call_wall_kind": "trampilla",
  "call_wall_regime": "NEG",
- "call_wall_net": -47535091.4,
+ "call_wall_net": -78283735.3,
  "put_wall_kind": "trampilla",
  "put_wall_regime": "NEG",
- "put_wall_net": -72187148.8,
+ "put_wall_net": -103660588.9,
  "abs_wall_kind": "trampilla",
  "abs_wall_regime": "NEG",
- "abs_wall_net": -72187148.8
+ "abs_wall_net": -103660588.9,
+ "gamma_ok": true,
+ "greeks_ok_pct": 0.8958,
+ "chain_src": "polygon_snapshot_v3",
+ "chain_ts": 1784966926.0,
+ "chain_age_s": 20566.7949,
+ "stale": false,
+ "stale_reason": null,
+ "quotes_ok": false,
+ "session": "fuera_de_rth",
+ "band_used": 0.035,
+ "band_fetch": null,
+ "n_expiries": 7,
+ "exps_en_fichero": [
+  "20260727",
+  "20260728",
+  "20260729",
+  "20260730",
+  "20260731",
+  "20260803",
+  "20260804"
+ ],
+ "rows_total": 854,
+ "n_candidates": 96,
+ "n_gamma_ok": 78,
+ "n_no_greeks": 0,
+ "n_iv_provider": 86,
+ "n_iv_inverted": 0,
+ "iv_source": "provider",
+ "exp_rolled": false,
+ "roll_reason": null,
+ "degraded_reason": null,
+ "gross_gex": 638789096.1448,
+ "bifurcation": 1.2212,
+ "hhi": 0.0803,
+ "n_strikes_populated": 48,
+ "chain_path": "data/history/2026-07-25/poly_chain_qqq_0408.txt",
+ "flip_live": 698.23,
+ "flip_src": "repriced",
+ "flip_why": "gamma recomputada a cada spot del barrido (definicion correcta)",
+ "roots": [
+  698.23,
+  599.09
+ ],
+ "trapdoor_root": null,
+ "flip_open": null,
+ "frozen_at": null,
+ "frozen_day": null
 }

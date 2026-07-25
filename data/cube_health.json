@@ -1,0 +1,531 @@
+{
+ "actions": [
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 31189,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_aapl_2026-07-22.txt.gz",
+   "rows": 500,
+   "sym": "AAPL"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 39180,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_amd_2026-07-22.txt.gz",
+   "rows": 640,
+   "sym": "AMD"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 16275,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_amzn_2026-07-22.txt.gz",
+   "rows": 252,
+   "sym": "AMZN"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 38477,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_asml_2026-07-22.txt.gz",
+   "rows": 640,
+   "sym": "ASML"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 23788,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_avgo_2026-07-22.txt.gz",
+   "rows": 384,
+   "sym": "AVGO"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 26580,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_dram_2026-07-22.txt.gz",
+   "rows": 444,
+   "sym": "DRAM"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 32080,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_googl_2026-07-22.txt.gz",
+   "rows": 536,
+   "sym": "GOOGL"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 24420,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_intc_2026-07-22.txt.gz",
+   "rows": 392,
+   "sym": "INTC"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 29642,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_lrcx_2026-07-22.txt.gz",
+   "rows": 492,
+   "sym": "LRCX"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 23882,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_meta_2026-07-22.txt.gz",
+   "rows": 384,
+   "sym": "META"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 24062,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_msft_2026-07-22.txt.gz",
+   "rows": 384,
+   "sym": "MSFT"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 34595,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_mu_2026-07-22.txt.gz",
+   "rows": 556,
+   "sym": "MU"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 6114,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_nok_2026-07-22.txt.gz",
+   "rows": 84,
+   "sym": "NOK"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 19520,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_nvda_2026-07-22.txt.gz",
+   "rows": 300,
+   "sym": "NVDA"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 16541,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_qcom_2026-07-22.txt.gz",
+   "rows": 264,
+   "sym": "QCOM"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 37095,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_qqq_2026-07-22.txt.gz",
+   "rows": 604,
+   "sym": "QQQ"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 15964,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_skhy_2026-07-22.txt.gz",
+   "rows": 252,
+   "sym": "SKHY"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 38030,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_smh_2026-07-22.txt.gz",
+   "rows": 640,
+   "sym": "SMH"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 39807,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_sndk_2026-07-22.txt.gz",
+   "rows": 640,
+   "sym": "SNDK"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 28494,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_spcx_2026-07-22.txt.gz",
+   "rows": 464,
+   "sym": "SPCX"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 39501,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_spy_2026-07-22.txt.gz",
+   "rows": 640,
+   "sym": "SPY"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 37329,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_stx_2026-07-22.txt.gz",
+   "rows": 628,
+   "sym": "STX"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 35837,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_tsla_2026-07-22.txt.gz",
+   "rows": 580,
+   "sym": "TSLA"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 38631,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_tsm_2026-07-22.txt.gz",
+   "rows": 640,
+   "sym": "TSM"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 26790,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_txn_2026-07-22.txt.gz",
+   "rows": 444,
+   "sym": "TXN"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 37905,
+   "date": "2026-07-22",
+   "files": 8,
+   "out": "data/history/2026-07-22/chains_wdc_2026-07-22.txt.gz",
+   "rows": 640,
+   "sym": "WDC"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 149594,
+   "date": "2026-07-23",
+   "files": 39,
+   "out": "data/history/2026-07-23/chains_aapl_2026-07-23.txt.gz",
+   "rows": 2424,
+   "sym": "AAPL"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 189974,
+   "date": "2026-07-23",
+   "files": 39,
+   "out": "data/history/2026-07-23/chains_amd_2026-07-23.txt.gz",
+   "rows": 3120,
+   "sym": "AMD"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 78448,
+   "date": "2026-07-23",
+   "files": 39,
+   "out": "data/history/2026-07-23/chains_amzn_2026-07-23.txt.gz",
+   "rows": 1232,
+   "sym": "AMZN"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 164394,
+   "date": "2026-07-23",
+   "files": 39,
+   "out": "data/history/2026-07-23/chains_asml_2026-07-23.txt.gz",
+   "rows": 2732,
+   "sym": "ASML"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 114632,
+   "date": "2026-07-23",
+   "files": 39,
+   "out": "data/history/2026-07-23/chains_avgo_2026-07-23.txt.gz",
+   "rows": 1872,
+   "sym": "AVGO"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 129531,
+   "date": "2026-07-23",
+   "files": 39,
+   "out": "data/history/2026-07-23/chains_dram_2026-07-23.txt.gz",
+   "rows": 2176,
+   "sym": "DRAM"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 131703,
+   "date": "2026-07-23",
+   "files": 39,
+   "out": "data/history/2026-07-23/chains_googl_2026-07-23.txt.gz",
+   "rows": 2144,
+   "sym": "GOOGL"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 114467,
+   "date": "2026-07-23",
+   "files": 39,
+   "out": "data/history/2026-07-23/chains_intc_2026-07-23.txt.gz",
+   "rows": 1884,
+   "sym": "INTC"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 142697,
+   "date": "2026-07-23",
+   "files": 39,
+   "out": "data/history/2026-07-23/chains_lrcx_2026-07-23.txt.gz",
+   "rows": 2388,
+   "sym": "LRCX"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 115318,
+   "date": "2026-07-23",
+   "files": 39,
+   "out": "data/history/2026-07-23/chains_meta_2026-07-23.txt.gz",
+   "rows": 1872,
+   "sym": "META"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 116083,
+   "date": "2026-07-23",
+   "files": 39,
+   "out": "data/history/2026-07-23/chains_msft_2026-07-23.txt.gz",
+   "rows": 1872,
+   "sym": "MSFT"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 132984,
+   "date": "2026-07-23",
+   "files": 39,
+   "out": "data/history/2026-07-23/chains_mu_2026-07-23.txt.gz",
+   "rows": 2110,
+   "sym": "MU"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 25003,
+   "date": "2026-07-23",
+   "files": 39,
+   "out": "data/history/2026-07-23/chains_nok_2026-07-23.txt.gz",
+   "rows": 332,
+   "sym": "NOK"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 99818,
+   "date": "2026-07-23",
+   "files": 39,
+   "out": "data/history/2026-07-23/chains_nvda_2026-07-23.txt.gz",
+   "rows": 1552,
+   "sym": "NVDA"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 78791,
+   "date": "2026-07-23",
+   "files": 39,
+   "out": "data/history/2026-07-23/chains_qcom_2026-07-23.txt.gz",
+   "rows": 1264,
+   "sym": "QCOM"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 192320,
+   "date": "2026-07-23",
+   "files": 39,
+   "out": "data/history/2026-07-23/chains_qqq_2026-07-23.txt.gz",
+   "rows": 3120,
+   "sym": "QQQ"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 80402,
+   "date": "2026-07-23",
+   "files": 39,
+   "out": "data/history/2026-07-23/chains_skhy_2026-07-23.txt.gz",
+   "rows": 1276,
+   "sym": "SKHY"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 179928,
+   "date": "2026-07-23",
+   "files": 38,
+   "out": "data/history/2026-07-23/chains_smh_2026-07-23.txt.gz",
+   "rows": 3040,
+   "sym": "SMH"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 170441,
+   "date": "2026-07-23",
+   "files": 39,
+   "out": "data/history/2026-07-23/chains_sndk_2026-07-23.txt.gz",
+   "rows": 2730,
+   "sym": "SNDK"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 134810,
+   "date": "2026-07-23",
+   "files": 39,
+   "out": "data/history/2026-07-23/chains_spcx_2026-07-23.txt.gz",
+   "rows": 2180,
+   "sym": "SPCX"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 188446,
+   "date": "2026-07-23",
+   "files": 38,
+   "out": "data/history/2026-07-23/chains_spy_2026-07-23.txt.gz",
+   "rows": 3040,
+   "sym": "SPY"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 157467,
+   "date": "2026-07-23",
+   "files": 38,
+   "out": "data/history/2026-07-23/chains_stx_2026-07-23.txt.gz",
+   "rows": 2660,
+   "sym": "STX"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 128266,
+   "date": "2026-07-23",
+   "files": 39,
+   "out": "data/history/2026-07-23/chains_tsla_2026-07-23.txt.gz",
+   "rows": 2064,
+   "sym": "TSLA"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 182482,
+   "date": "2026-07-23",
+   "files": 38,
+   "out": "data/history/2026-07-23/chains_tsm_2026-07-23.txt.gz",
+   "rows": 3032,
+   "sym": "TSM"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 127495,
+   "date": "2026-07-23",
+   "files": 39,
+   "out": "data/history/2026-07-23/chains_txn_2026-07-23.txt.gz",
+   "rows": 2132,
+   "sym": "TXN"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 179242,
+   "date": "2026-07-23",
+   "files": 38,
+   "out": "data/history/2026-07-23/chains_wdc_2026-07-23.txt.gz",
+   "rows": 3040,
+   "sym": "WDC"
+  }
+ ],
+ "applied": false,
+ "budget_gb": 3.0,
+ "date": "2026-07-25",
+ "history_bytes": 26523441,
+ "history_gb": 0.0265,
+ "loose_days_kept": 2,
+ "updated": 1784987244
+}

@@ -178,10 +178,26 @@ class ChainCache:
         now = dt.datetime.now()
         path = f"data/opt_chain_{sym.lower()}.txt"
         tmp = path + ".tmp"
+        # CABECERA HONESTA (feature #5 chain-honesty, 2026-07-25). Todo el GEX de la casa corre
+        # sobre esta banda recortada y con las griegas que TWS quiera dar, y hasta hoy el
+        # fichero no decia ni la banda, ni el tope de strikes, ni cuantas filas traian griegas
+        # de verdad — asi que un consumidor no podia distinguir "±6% con griegas" de "±4% con
+        # 0 de 80". Medido ese dia: en RTH greeks_ok_pct=1.00; a las 16:16 = 0.00 en TODA la
+        # flota (bid/ask tambien a -1). Contrato en docs/CHAIN-HEADER.md.
+        # Va en su PROPIA linea '#': scripts/opt_quick.cpp parsea POSICIONALMENTE y busca
+        # "epoch "/"spot "/"exps " por substring, asi que la linea 1 se deja intacta y esta
+        # nueva no contiene ninguno de esos tokens.
+        n = len(rows)
+        g_ok = sum(1 for r in rows if float(r.split()[7]) > 0)
+        q_ok = sum(1 for r in rows if float(r.split()[3]) > 0 and float(r.split()[4]) > 0)
         with open(tmp, "w") as f:
             f.write(f"# opt_chain {sym} | epoch {int(time.time())} | "
                     f"{now:%Y-%m-%d %H:%M:%S} | spot {spot:.2f} | "
                     f"exps {' '.join(exps)}\n")
+            f.write(f"# fuente ibkr_tws | band {band:.4f} | max_strikes {max_ks} | "
+                    f"narrow {1 if narrow else 0} | vencimientos {len(exps)} | rows {n} | "
+                    f"greeks_ok_pct {(g_ok / n) if n else 0:.4f} | "
+                    f"bidask_ok_pct {(q_ok / n) if n else 0:.4f}\n")
             f.write("# strike right exp bid ask vol oi iv delta gamma\n")
             f.write("\n".join(rows) + "\n")
         os.replace(tmp, path)

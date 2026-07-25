@@ -228,3 +228,27 @@ significa que nadie pudo verificar. Los de abajo los confirmé A MANO uno por un
 - [ ] Chip de zona dice "Ccall" para acciones — label instrument-aware
 - [ ] Skills de QA engineer + suite de tests automatizada
 - [ ] Optimizar latencia de ráfaga (mediana 1.1s por serialización del pump 2s; min real 113ms)
+
+## OLA 1 features minadas — agente chain/flip/book/next-day (2026-07-25)
+Spec: `docs/FEATURES-MINED-2026-07-25.md` (#5 chain-honesty, #6 flip-honesty, #3 book-quality, #13 next-day-map roll-off).
+- [x] **#5 `chain-honesty` — matar las degradaciones silenciosas** — hecho: inversion de IV por
+      biseccion + forward por paridad en `gex_core`, `iv=0.3` BORRADO, cabecera honesta en
+      `opt_chain_cache.py`, contrato en `docs/CHAIN-HEADER.md`, `greeks_ok_pct<0.5` -> claves
+      gamma a `null` (jamas 0). Medido: RTH 100% griegas, 16:16 = 0% en toda la flota.
+- [x] **#6 `flip-honesty` + congelar a 09:35** — hecho: el repreciado GANA (antes se pagaba y se
+      tiraba), `flip_src`/`flip_why`, TODAS las raices con biseccion, `trapdoor_root`,
+      `flip_open` congelado / `flip_live` diagnostico.
+- [x] **#13 `next-day-map` roll-off (bug determinado)** — hecho: `exp_status()` rueda el
+      vencimiento EN EL CIERRE (16:00 ET), no a medianoche. Era la causa del salto de MANADA
+      de las 00:00:45.
+- [x] **#3 `book-quality gate` — coeficiente MULTIPLICATIVO** — `scripts/book_quality.py` ->
+      `data/book_quality.json`, etiquetas THIN/BIFURCATED/NEAR_FLIP/STABLE_PIN + coef.
+- [x] **`vol-trigger` (#20) congelado a 09:35** — `scripts/vol_trigger.py` -> `data/vt_<sym>.json`
+      (`./compass` ya lo lee: `vt_open`).
+- [ ] PENDIENTE (no entra en OLA 1): percentiles `book_pctile`/`impact_pctile` necesitan 20
+      sesiones de snapshot COMPLETO de Polygon (feature #7). Hoy salen `null` declarados y el
+      `coef` cae al suelo 0.35. Se acumulan en `data/book_quality_hist.jsonl`.
+- [ ] PENDIENTE: `poly_chain_archive.py` NO tiene job de launchd — hoy solo hay 3 simbolos
+      (qqq/dram/nok) archivados a mano. Sin el, fuera de RTH la flota entera queda MUTEADA.
+- [ ] PENDIENTE: cablear el `coef` de `book_quality` como MULTIPLICADOR en `direction_view`
+      (pesos flip 1.5 / walls 1.0 / magnet 1.1) y el badge en `charts/live.html`.
