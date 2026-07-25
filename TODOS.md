@@ -36,6 +36,26 @@
       `/v3/snapshot/options/` da greeks+IV+OI, pero **`?as_of=` es TRAMPA** (dice OK e ignora
       la fecha). Grabado en `~/CLAUDE.md`.
 
+**PEDIDO A MITAD DE SESIÓN (2026-07-25 09:55, apuntado al vuelo):**
+- [x] **"solve this HIRO NOT_AUTHORIZED)"** → RESUELTO EN DIAGNÓSTICO, pendiente de ejecución con TWS
+      vivo. Medido con la key real (sábado, mercado cerrado): el 403 **NO es de opciones** —
+      `/v3/trades/AAPL` y `/v3/quotes/AAPL` (acciones) y `/v3/snapshot/indices` dan el MISMO
+      `NOT_AUTHORIZED`. El plan no tiene carril de CINTA, ni acciones ni opciones. Arreglarlo con
+      Polygon = **gasto duplicado** ($199/mo Options Advanced) porque **ya pagamos IBKR por los
+      mismos prints de OPRA**. La vía real está PROBADA en nuestra propia cuenta:
+      `ibkr_bar_bridge.py:250` ya corre `reqTickByTickData(..., "AllLast", ...)` con firmado
+      Lee-Ready. HIRO = el mismo motor apuntado a contratos de OPCIÓN, ponderado por delta.
+      Spec completa: **`docs/HIRO-2026-07-25.md`**. Skill `dealer-flow-limits` §6 actualizada.
+- [ ] **BUG VIVO destapado por lo anterior (alta prioridad)**: `data/whale_qqq.txt` y
+      `data/whale_spy.txt` son **0 BYTES** — los DOS CAPITANES no tienen cinta firmada, y también
+      están vacíos aapl/amd/asml/gld/intc/tsm/txn (8 de 14). El cap de tick-by-tick de IBKR
+      (err 10190) se reparte **por orden de la lista**, así que se lo llevaron DRAM/NOK/NVDA/SPCX/
+      TSLA. La regla 12 entera (capitanes) corre sin su input firmado. Arreglo: prioridad explícita
+      QQQ→SPY→SMH antes del best-effort. **Es de `scripts/`: otro agente o sesión siguiente.**
+- [ ] Correr `scratchpad/hiro_probe_ibkr.py` en la próxima sesión viva (dom 20:00 / lun premarket):
+      mide el cap REAL de tick-by-tick y si OPRA por contrato está permitido. Sin ese número el
+      resto de HIRO es especulación.
+
 **DELEGADO a agentes (en curso):**
 - [ ] "make the walls look like in there … those look like nice gamma walls" (captura de
       @BullflowIO, `GEX: Bubbles`) → burbujas GEX en `charts/live.html`, coloreando **pin vs
@@ -51,10 +71,22 @@
       `docs/FEATURES-MINED-2026-07-25.md` + `docs/research/` (6 dossiers, 496 KB). *delegado*
 
 **OLA 1 — delegada entera (2026-07-25 ~04:15), 15 items en 4 agentes:**
-- [ ] #1 `barrier-labels` + #2 `null-control` → *agente*. Los dos únicos cuya salida es RESTAR.
-      Hoy las etiquetas son retorno-a-horizonte y **cuentan como ganada una señal stopeada en el
-      camino** (bollinger h=15: 0.436 con n=822 → se espera 0.38-0.41 real). Y `n_eff` corrige
-      Wilson 3-4× por correlación de semis.
+- [x] #1 `barrier-labels` **hecho 1a97611** + #2 `null-control` **hecho c1e3336**. Los dos únicos
+      cuya salida es RESTAR. `scripts/barrier_labels.py`, `scripts/null_control.py`,
+      `docs/EDGE-SCOREBOARD-2026-07-25.md`, `docs/NULL-CONTROL-2026-07-25.md`.
+      Medido: 13-27% de las señales que se cuentan GANADAS habrían sido STOPEADAS antes; el
+      re-etiquetado NO es una resta uniforme (bollinger +6.5pp, cusum -28.6pp) porque la barrera
+      SÍ ve el TP intra-camino. ρ̄ de la flota = **0.41** → bollinger `n=1154` queda en
+      `n_eff=89` (CI estrechados ×3.6) y sale **UNPROVEN**: no bate a entradas ALEATORIAS
+      emparejadas (0.482 vs 0.496). **0 de 131 celdas fuente×sym×bucket pasan BH-FDR q=0.10.**
+      Propuesta en `data/signal_enable.PROPUESTO.json` — `signal_enable.json` NO tocado.
+- [ ] PENDIENTE de #1/#2 (no bloqueante, apuntado 2026-07-25): (a) cablear
+      `data/calibration_barrier.json` + `null_control.json` a `direction_view`/PDF/compass para
+      que la prob cantada sea la de barrera y las celdas UNPROVEN pierdan voz — hoy solo se
+      MIDE, nadie lo consume; (b) `poly_bars` acaba el **2026-07-24 19:59 ET**: 197 señales del
+      07-25 quedaron sin etiquetar (`skip_entry_stale`); (c) el null de **16 niveles aleatorios**
+      (parte B de la ficha #2) espera a `level_react`/`level_events` de la feature #8;
+      (d) la ruta sub-minuto no existe → `ambig_pct` 2.1% es irreducible con `poly_bars`.
 - [ ] #3 `book-quality` + #5 `chain-honesty` + #6 `flip-honesty`+congelar 09:35 + #13 roll-off
       → *agente*. Medido: NVDA 0/40 filas con IV, SPY 1/80 → el GEX corre sobre griegas ausentes.
 - [ ] #9 `truth-lock` + #10 `em-envelope` + #12 `voice-budget` + #14 `pin-clock` +
