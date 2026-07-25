@@ -1004,21 +1004,28 @@ chart.subscribeClick((param) => {
 // --- STOP-LOSS ARRASTRABLE: mueve la línea del stop y persiste stop.px (WS zone/set) ---
 // Espeja la interacción de las alarmas (clic->precio) pero con drag. Al arrastrar deshabilita
 // el pan/zoom del chart para no mover el gráfico. Sólo escribe el contrato: SEÑAL-SOLAMENTE.
-function zoneStopAtY(y) {
+// AMPLIADO 2026-07-25: antes solo el stop de zonas BUY era arrastrable. Ahora
+// tambien la entrada (buy/sell), el stop del lado CORTO y las alarmas manuales.
+// Devuelve {kind, z|a, px} o null. Prioridad: stop > zona > alarma (el stop suele
+// quedar cerca de la entrada y es el que mas se ajusta).
+function hitAtY(y) {
+  const near = (px) => { let c = null; try { c = candle.priceToCoordinate(px); } catch (e) {}
+                         return c != null && Math.abs(c - y) <= 6; };
   for (const z of curZones) {
     const st = z.stop || {};
-    if ((z.side || "buy") !== "buy" || !st.on || st.px == null) continue;
-    let sy = null; try { sy = candle.priceToCoordinate(st.px); } catch (e) {}
-    if (sy != null && Math.abs(sy - y) <= 6) return z;
+    if (st.on && st.px != null && near(st.px)) return { kind: "stop", z, px: st.px };
   }
+  for (const z of curZones) if (z.price != null && near(z.price)) return { kind: "zone", z, px: z.price };
+  for (const a of curAlarms) if (a.price != null && near(a.price)) return { kind: "alarm", a, px: a.price };
   return null;
 }
+function zoneStopAtY(y) { const h = hitAtY(y); return h && h.kind === "stop" ? h.z : null; }
 el.addEventListener("mousedown", (e) => {
   if (alarmArmed || zoneArmed) return;   // no interferir con el modo armar
   const rect = el.getBoundingClientRect();
-  const z = zoneStopAtY(e.clientY - rect.top);
-  if (!z) return;
-  dragStop = { z, px: (z.stop || {}).px };
+  const h = hitAtY(e.clientY - rect.top);
+  if (!h) return;
+  dragStop = h;
   chart.applyOptions({ handleScroll: false, handleScale: false });
   el.style.cursor = "ns-resize";
   e.preventDefault(); e.stopPropagation();
@@ -1030,7 +1037,7 @@ window.addEventListener("mousemove", (e) => {
       const rect = el.getBoundingClientRect();
       const y = e.clientY - rect.top, x = e.clientX - rect.left;
       if (x >= 0 && y >= 0 && x <= el.clientWidth && y <= el.clientHeight)
-        el.style.cursor = zoneStopAtY(y) ? "ns-resize" : "";
+        el.style.cursor = hitAtY(y) ? "ns-resize" : "";
     }
     return;
   }
@@ -1039,18 +1046,34 @@ window.addEventListener("mousemove", (e) => {
   if (px == null) return;
   px = Math.round(px * 100) / 100;
   dragStop.px = px;
-  moveStopLine(dragStop.z, px);
+  if (dragStop.kind === "stop")      moveStopLine(dragStop.z, px);
+  else if (dragStop.kind === "zone") moveZoneLine(dragStop.z, px);
+  else                               moveAlarmLine(dragStop.a, px);
 });
 window.addEventListener("mouseup", () => {
   if (!dragStop) return;
-  const z = dragStop.z, px = dragStop.px;
+  const d = dragStop, px = d.px;
   chart.applyOptions({ handleScroll: true, handleScale: true });
   el.style.cursor = "";
-  if (z.stop) z.stop.px = px;   // optimista: refleja ya en el chip
-  renderChips();
-  if (px != null && ws && ws.readyState === WebSocket.OPEN)
-    ws.send(JSON.stringify({ cmd: "zone", act: "set", id: z.id, stop_px: px }));
   dragStop = null;
+  if (px == null || !ws || ws.readyState !== WebSocket.OPEN) return;
+  if (d.kind === "stop") {
+    if (d.z.stop) d.z.stop.px = px;                 // optimista: ya se ve en el chip
+    ws.send(JSON.stringify({ cmd: "zone", act: "set", id: d.z.id, stop_px: px }));
+  } else if (d.kind === "zone") {
+    const old = d.z.price; d.z.price = px;
+    ws.send(JSON.stringify({ cmd: "zone", act: "set", id: d.z.id, price: px }));
+    // el nivel cambio -> la ficha de opcion (strike/prima) ya no vale; el backend
+    // reemite zones_frame y el chip se redibuja con el contrato correcto.
+    if (old !== px) delete zoneProb[d.z.id];
+  } else {
+    // alarma: el backend no tiene "mover", asi que borra+añade (mismo efecto,
+    // y price_alarm C++ relee el fichero cada 1s).
+    ws.send(JSON.stringify({ cmd: "alarm", act: "del", price: d.a.price }));
+    ws.send(JSON.stringify({ cmd: "alarm", act: "add", price: px, dir: d.a.dir }));
+    d.a.price = px;
+  }
+  renderChips();
 });
 
 // --- popup inline de zona (NO usa alert/confirm/prompt) ---
@@ -1129,6 +1152,26 @@ function moveStopLine(z, px) {
     });
   } catch (e) {}
 }
+// Redibujo en vivo mientras se arrastra (mismo patron que moveStopLine).
+function moveZoneLine(z, px) {
+  if (z._line) { try { candle.removePriceLine(z._line); } catch (e) {} }
+  else { zoneLines.forEach(l => { try { candle.removePriceLine(l); } catch (e) {} }); zoneLines = []; }
+  try {
+    z._line = candle.createPriceLine({
+      price: px, color: zoneColor(z), lineWidth: 2, lineStyle: 0,
+      axisLabelVisible: true, title: zoneLabel({ ...z, price: px }),
+    });
+  } catch (e) {}
+}
+function moveAlarmLine(a, px) {
+  if (a._line) { try { candle.removePriceLine(a._line); } catch (e) {} }
+  try {
+    a._line = candle.createPriceLine({
+      price: px, color: "#f4c430", lineWidth: 1, lineStyle: 2,
+      axisLabelVisible: true, title: `🔔 ${a.dir === "up" ? "▲" : "▼"} ${px}`,
+    });
+  } catch (e) {}
+}
 function drawZones() {
   zoneLines.forEach(l => { try { candle.removePriceLine(l); } catch (e) {} });
   zoneLines = [];
@@ -1136,14 +1179,15 @@ function drawZones() {
   stopLines = {};
   curZones.forEach(z => {
     try {
-      zoneLines.push(candle.createPriceLine({
+      z._line = candle.createPriceLine({
         price: z.price, color: zoneColor(z), lineWidth: 2, lineStyle: 0,
         axisLabelVisible: true, title: zoneLabel(z),
-      }));
+      });
+      zoneLines.push(z._line);
     } catch (e) {}
     // stop-loss arrastrable (buy + stop.on): línea roja punteada bajo/encima de la entrada
     const st = z.stop || {};
-    if ((z.side || "buy") === "buy" && st.on && st.px != null) moveStopLine(z, st.px);
+    if (st.on && st.px != null) moveStopLine(z, st.px);   // ambos lados (2026-07-25)
   });
 }
 function renderChips() {
@@ -1225,10 +1269,11 @@ function onAlarms(msg) {
   curAlarms = msg.alarms || [];
   curAlarms.forEach(a => {
     try {
-      alarmLines.push(candle.createPriceLine({
+      a._line = candle.createPriceLine({
         price: a.price, color: "#f4c430", lineWidth: 1, lineStyle: 2,
         axisLabelVisible: true, title: `🔔 ${a.dir === "up" ? "▲" : "▼"} ${a.price}`,
-      }));
+      });
+      alarmLines.push(a._line);
     } catch (e) {}
   });
   renderChips();
