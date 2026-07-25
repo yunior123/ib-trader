@@ -16,6 +16,7 @@
 #include <cmath>
 #include <cstdio>
 #include <string>
+#include <vector>
 
 #include "../guards.h"
 
@@ -255,6 +256,71 @@ static void test_reconnect_gate() {
     CHECK(safe_to_touch_orders(true, true), "ambas verdades del broker -> se puede armar");
 }
 
+// ====================================== #4 el stop GTC HUERFANO
+// TESTIGO de la logica VIEJA: el `close` del panel (order_engine.cpp accion
+// "close") mandaba la orden opuesta y NO cancelaba nada. Se replica como una
+// funcion que siempre devuelve "no hay nada que cancelar".
+static int old_close_cancels_nothing() { return 0; }
+
+static void test_orphan_stop_on_close() {
+    section("#4 close deja el stop nativo huerfano (GTC residual)");
+
+    // Libro realista: dos zonas de QQQ con stop vivo en contratos DISTINTOS,
+    // una accion, y una zona sin stop.
+    std::vector<StopRef> libro = {
+        {"z1", "opt", "20260731", 700.0, 'C', 4001, 2.0},
+        {"z2", "opt", "20260731", 705.0, 'C', 4002, 1.0},
+        {"z3", "opt", "20260731", 700.0, 'C',   -1, 1.0},   // sin stop vivo
+        {"z4", "stk", "",           0.0,   0, 4004, 100.0},
+    };
+
+    // (a) cerrar QQQ 700C entero -> cancela SOLO el stop de z1
+    CloseReq c_total; c_total.is_opt = true; c_total.exp = "20260731";
+    c_total.strike = 700.0; c_total.right = 'C'; c_total.qty = 2;
+    auto r = stops_orphaned_by_close(c_total, libro);
+    CHECK(r.size() == 1, "close de 700C cancela exactamente un stop");
+    CHECK(r.size() == 1 && r[0].stop_id == 4001, "cancela el stop de SU contrato (z1)");
+    CHECK(r.size() == 1 && !r[0].partial, "close que cubre todo no es parcial");
+    // EL TESTIGO: la logica vieja no cancelaba NADA -> el 4001 quedaba GTC vivo.
+    CHECK(old_close_cancels_nothing() == 0 && r.size() > 0,
+          "TESTIGO: antes quedaba un stop GTC huerfano; ahora se cancela");
+
+    // (b) el stop del contrato VECINO no se toca: cancelarlo dejaria desnuda una
+    //     posicion que nadie pidio cerrar.
+    for (const auto& oc : r) CHECK(oc.stop_id != 4002, "no toca el stop de 705C");
+    for (const auto& oc : r) CHECK(oc.stop_id != 4004, "no toca el stop de la accion");
+
+    // (c) fill PARCIAL: se cancela igual (un stop por MAS cantidad de la que
+    //     quedara voltearia a corto al dispararse) y se marca para RE-ARMAR.
+    CloseReq c_parc = c_total; c_parc.qty = 1;      // hay 2, se cierra 1
+    auto rp = stops_orphaned_by_close(c_parc, libro);
+    CHECK(rp.size() == 1 && rp[0].partial,
+          "close parcial cancela Y marca que hay que re-armar el remanente");
+
+    // (d) una zona sin stop vivo no genera cancelacion fantasma
+    std::vector<StopRef> solo_sin_stop = {{"z3", "opt", "20260731", 700.0, 'C', -1, 1.0}};
+    CHECK(stops_orphaned_by_close(c_total, solo_sin_stop).empty(),
+          "sin stop vivo no se inventa una cancelacion");
+
+    // (e) opcion vs accion no se cruzan nunca
+    CloseReq c_stk; c_stk.is_opt = false; c_stk.qty = 100;
+    auto rs = stops_orphaned_by_close(c_stk, libro);
+    CHECK(rs.size() == 1 && rs[0].stop_id == 4004, "close de accion solo toca el stop de accion");
+
+    // (f) mismo strike, expiry distinta -> NO es el mismo contrato
+    CloseReq c_otra_exp = c_total; c_otra_exp.exp = "20260807";
+    CHECK(stops_orphaned_by_close(c_otra_exp, libro).empty(),
+          "misma cifra de strike con otra expiry no es el mismo contrato");
+
+    // (g) mismo strike y expiry, derecho contrario -> NO es el mismo contrato
+    CloseReq c_put = c_total; c_put.right = 'P';
+    CHECK(stops_orphaned_by_close(c_put, libro).empty(),
+          "un put no huerfana el stop de un call");
+
+    // (h) ningun mensaje es silencioso: todo lo que se cancela se puede narrar
+    for (const auto& oc : r) CHECK(!oc.msg.empty(), "toda cancelacion lleva su motivo");
+}
+
 int main() {
     std::printf("=== order_engine :: guardas de dinero ===\n");
     test_allowlist_substring();
@@ -263,6 +329,7 @@ int main() {
     test_option_stop_clamp_symmetry();
     test_naked_stop_shouts();
     test_reconnect_gate();
+    test_orphan_stop_on_close();
     std::printf("\n=== %d OK, %d FALLOS ===\n", g_pass, g_fail);
     return g_fail == 0 ? 0 : 1;
 }

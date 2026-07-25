@@ -276,4 +276,87 @@ inline bool safe_to_touch_orders(bool orders_reconciled, bool positions_ready) {
     return orders_reconciled && positions_ready;
 }
 
+// ===================================================================== #4
+// EL STOP HUERFANO — el agujero (a), el mas grave de los cuatro.
+//
+// El `close` del panel (order_engine.cpp, accion "close") manda una orden
+// opuesta marketable y se va. El stop NATIVO que protegia esa posicion se queda
+// VIVO en el servidor de IBKR. Al llenarse el close la posicion es 0, pero el
+// stop sigue ahi como GTC: cuando el precio lo toque, ABRE una posicion nueva
+// —y en el lado contrario— sin que nadie lo haya pedido.
+//
+// En la cuenta viva (TFSA U26942420) eso es peor que una perdida: la TFSA **no
+// shortea**, asi que un stop de venta huerfano sobre una posicion ya cerrada
+// intenta abrir un corto prohibido. Los GTC residuales son la causa DOCUMENTADA
+// del desastre que motivo la ley SEÑAL-SOLAMENTE (~/CLAUDE.md, memoria
+// ib-trader-signals-only-law).
+//
+// Esta funcion es pura y solo sabe DECIDIR. Cancelar es monotonicamente seguro:
+// una cancelacion jamas abre una posicion, solo puede quitar proteccion — por
+// eso el llamante debe, ademas de cancelar, dejar la zona lista para RE-ARMAR
+// el stop del remanente (ver la nota de fill parcial abajo).
+struct StopRef {
+    std::string zone_id;
+    std::string instrument = "opt";   // "opt" | "stk"
+    std::string exp;                  // vacio en acciones
+    double strike = 0;                // 0 en acciones
+    char right = 0;                   // 'C' | 'P' | 0 en acciones
+    int stop_id = -1;                 // orderId del stop nativo vivo
+    double filled_qty = 0;            // lo que realmente se lleno en la entrada
+};
+
+struct CloseReq {
+    bool is_opt = false;
+    std::string exp;
+    double strike = 0;
+    char right = 0;
+    int qty = 0;
+};
+
+struct OrphanCancel {
+    int stop_id = -1;
+    std::string zone_id;
+    bool partial = false;   // el close no cubre toda la posicion -> hay que re-armar
+    std::string msg;
+};
+
+// Empareja por IDENTIDAD DE CONTRATO. Un `close` de QQQ 700C no puede tocar el
+// stop de QQQ 705C: cancelar el stop equivocado deja desnuda una posicion que
+// nadie pidio cerrar. Por eso el emparejamiento es estricto y no "por simbolo".
+inline bool same_contract(const CloseReq& c, const StopRef& s) {
+    const bool s_is_opt = (s.instrument == "opt");
+    if (c.is_opt != s_is_opt) return false;
+    if (!c.is_opt) return true;              // acciones: el simbolo ya lo filtro el llamante
+    if (c.right != s.right) return false;
+    if (c.exp != s.exp) return false;
+    // strikes en double: comparacion por tolerancia, jamas ==. Los strikes reales
+    // van en pasos de 0.5/1.0, asi que 1e-6 distingue sin falsos positivos.
+    const double d = c.strike - s.strike;
+    return (d > -1e-6 && d < 1e-6);
+}
+
+// Fill PARCIAL: si el close cubre menos de lo que hay, el stop tampoco puede
+// quedarse (protege mas cantidad de la que quedara: al dispararse venderia de
+// mas y VOLTEARIA A CORTO, prohibido en TFSA). Se cancela igual y se marca
+// `partial` para que el motor RE-ARME un stop por el remanente. Cancelar sin
+// re-armar dejaria la posicion desnuda — por eso `partial` no es informativo,
+// es una obligacion del llamante.
+inline std::vector<OrphanCancel> stops_orphaned_by_close(
+        const CloseReq& c, const std::vector<StopRef>& stops) {
+    std::vector<OrphanCancel> out;
+    for (const StopRef& s : stops) {
+        if (s.stop_id < 0) continue;         // no hay stop vivo que huerfanar
+        if (!same_contract(c, s)) continue;
+        OrphanCancel oc;
+        oc.stop_id = s.stop_id;
+        oc.zone_id = s.zone_id;
+        oc.partial = (c.qty > 0 && s.filled_qty > 0 && (double)c.qty < s.filled_qty);
+        oc.msg = "stop huerfano id=" + std::to_string(s.stop_id) + " zona " + s.zone_id +
+                 (oc.partial ? " (close PARCIAL: cancelo y hay que RE-ARMAR el remanente)"
+                             : " (close total: cancelo)");
+        out.push_back(oc);
+    }
+    return out;
+}
+
 }  // namespace oe

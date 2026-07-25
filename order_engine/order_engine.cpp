@@ -639,6 +639,49 @@ int main(int argc, char** argv) {
                                 lim = (side == 'B') ? sp * 1.002 : sp * 0.998;
                                 lim = std::round(lim * 100.0) / 100.0;
                             }
+                            // --- STOP HUERFANO (guarda #4, la causa documentada del desastre) ---
+                            // ANTES de mandar el close: el stop NATIVO que protege esta posicion
+                            // vive en el servidor de IBKR. Si no se cancela, al llenarse el close
+                            // la posicion es 0 pero el stop sigue GTC: cuando el precio lo toque
+                            // ABRE una posicion nueva, del lado contrario, sin que nadie lo pida.
+                            // En la TFSA (no shortea) un stop de venta huerfano intenta abrir un
+                            // corto prohibido. Se cancela PRIMERO: cancelar solo puede quitar una
+                            // orden, jamas crearla, asi que el orden es el seguro.
+                            {
+                                oe::CloseReq creq;
+                                creq.is_opt = is_opt; creq.exp = cexp; creq.strike = cstrike;
+                                creq.right = cright.empty() ? 0 : cright[0]; creq.qty = cqty;
+                                std::vector<oe::StopRef> refs;
+                                std::map<std::string, ZoneRT>& zb = book[csym];
+                                for (auto& [zk, zz] : zb) {
+                                    // El emparejamiento va contra `entry_c`, el contrato REAL que
+                                    // se lleno y sobre el que se coloco el stop (place_stop(z.entry_c
+                                    // ...)). NO contra `z.price`: ese es el nivel de DISPARO de la
+                                    // zona (se compara con el spot en la deteccion de print), y el
+                                    // strike efectivo lo elige el gate (`g.strike`), que puede no
+                                    // coincidir. Emparejar por z.price cancelaria el stop equivocado.
+                                    oe::StopRef sr;
+                                    sr.zone_id = zk;
+                                    sr.instrument = (zz.entry_c.secType == "OPT") ? "opt" : "stk";
+                                    sr.exp = zz.entry_c.lastTradeDateOrContractMonth;
+                                    sr.strike = zz.entry_c.strike;
+                                    sr.right = zz.entry_c.right.empty() ? 0 : zz.entry_c.right[0];
+                                    sr.stop_id = zz.stop_id; sr.filled_qty = zz.filled_qty;
+                                    refs.push_back(sr);
+                                }
+                                for (const oe::OrphanCancel& oc : oe::stops_orphaned_by_close(creq, refs)) {
+                                    tws.cancel(oc.stop_id);
+                                    ZoneRT& zz = zb[oc.zone_id];
+                                    zz.stop_id = -1;
+                                    // stop_armed=false deja que el armador de stops (mas abajo)
+                                    // RE-ARME el remanente del fill parcial. Cancelar sin re-armar
+                                    // dejaria desnuda la parte que no se cierra.
+                                    zz.stop_armed = false;
+                                    zz.stop_confirmed = false;
+                                    ledger.note("cmd close: " + oc.msg);
+                                    std::fprintf(stderr, "[cmd] %s\n", oc.msg.c_str());
+                                }
+                            }
                             int oid = tws.next_order_id();
                             tws.place_limit(cc, side, cqty, lim, oid, "OE:CLOSE", outside);
                             ledger.note("cmd close " + csym + " " + cside + " " + std::to_string(cqty) + " @ " + std::to_string(lim));
