@@ -232,14 +232,13 @@ def fleet_window_live():
 
     None (portero ausente) NO se degrada a "pues estara vivo": se canta y NO se revive
     nada, igual que hace `fleet_keepalive_start.sh`. Ante la duda, callar, nunca arrancar.
+
+    El calculo vive en `fleet_hours.cpp` y el puente en `scripts/fleet_window.py`: aqui no
+    se reimplementa: era justo la duplicacion lo que causaba el bug.
     """
-    binario = os.path.join(REPO, "fleet_hours")
-    if not os.access(binario, os.X_OK):
-        return None
-    try:
-        return subprocess.run([binario], capture_output=True, timeout=5).returncode == 0
-    except Exception:
-        return None
+    sys.path.insert(0, os.path.join(REPO, "scripts"))
+    import fleet_window
+    return fleet_window.live()
 
 
 def heal(name, keepalive):
