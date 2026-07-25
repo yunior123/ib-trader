@@ -219,7 +219,7 @@ static void notify(const std::string &msg) {
     char day[16], hm[8];
     strftime(day, sizeof day, "%Y-%m-%d", &tmv);
     strftime(hm, sizeof hm, "%H:%M", &tmv);
-    std::string dir = std::string(home) + "/Desktop/trading-signals";
+    std::string dir = "data/trading-signals";
     system(("mkdir -p '" + dir + "'").c_str());
     std::ofstream f(dir + "/" + day + ".txt", std::ios::app);
     if (f) f << hm << " QQQ-XRAY | " << msg << "\n";

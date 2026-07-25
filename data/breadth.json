@@ -1,7 +1,7 @@
 {
  "QQQ": {
   "index": "QQQ",
-  "score": -0.048,
+  "score": -0.034,
   "verdict": "ENGRANAJE NEUTRO/MIXTO: componentes divididos \u2014 QQQ sin liderazgo claro",
   "aligned_top": [],
   "breakdowns": [],
@@ -9,43 +9,43 @@
   "components": {
    "NVDA": {
     "w": 9.0,
-    "lean": 0.15,
+    "lean": 0.04,
     "tag": "rango",
     "gap": 0.0
    },
    "MSFT": {
     "w": 8.0,
-    "lean": -0.16,
+    "lean": -0.13,
     "tag": "rango",
     "gap": 0.0
    },
    "AAPL": {
     "w": 7.5,
-    "lean": -0.03,
+    "lean": 0.05,
     "tag": "rango",
     "gap": 0.0
    },
    "AMZN": {
     "w": 5.5,
-    "lean": -0.06,
+    "lean": -0.15,
     "tag": "rango",
     "gap": 0.0
    },
    "AVGO": {
     "w": 5.0,
-    "lean": 0.24,
+    "lean": 0.01,
     "tag": "rango",
     "gap": 0.0
    },
    "META": {
     "w": 4.5,
-    "lean": -0.22,
+    "lean": 0.01,
     "tag": "rango",
     "gap": 0.0
    },
    "GOOGL": {
     "w": 5.0,
-    "lean": -0.27,
+    "lean": -0.13,
     "tag": "rango",
     "gap": 0.0
    },
@@ -57,28 +57,28 @@
    },
    "NFLX": {
     "w": 3.0,
-    "lean": -0.25,
+    "lean": 0.13,
     "tag": "rango",
     "gap": 0.0
    },
    "AMD": {
     "w": 2.0,
-    "lean": 0.14,
+    "lean": -0.02,
     "tag": "rango",
     "gap": 0.0
    },
    "QCOM": {
     "w": 1.2,
-    "lean": 0.07,
+    "lean": -0.0,
     "tag": "rango",
     "gap": 0.0
    }
   },
-  "ts": 1784812325
+  "ts": 1784898728
  },
  "SPY": {
   "index": "SPY",
-  "score": -0.055,
+  "score": -0.039,
   "verdict": "ENGRANAJE NEUTRO/MIXTO: componentes divididos \u2014 SPY sin liderazgo claro",
   "aligned_top": [],
   "breakdowns": [],
@@ -86,43 +86,43 @@
   "components": {
    "NVDA": {
     "w": 7.5,
-    "lean": 0.15,
+    "lean": 0.04,
     "tag": "rango",
     "gap": 0.0
    },
    "MSFT": {
     "w": 7.0,
-    "lean": -0.16,
+    "lean": -0.13,
     "tag": "rango",
     "gap": 0.0
    },
    "AAPL": {
     "w": 6.5,
-    "lean": -0.03,
+    "lean": 0.05,
     "tag": "rango",
     "gap": 0.0
    },
    "AMZN": {
     "w": 4.0,
-    "lean": -0.06,
+    "lean": -0.15,
     "tag": "rango",
     "gap": 0.0
    },
    "META": {
     "w": 3.0,
-    "lean": -0.22,
+    "lean": 0.01,
     "tag": "rango",
     "gap": 0.0
    },
    "GOOGL": {
     "w": 4.0,
-    "lean": -0.27,
+    "lean": -0.13,
     "tag": "rango",
     "gap": 0.0
    },
    "AVGO": {
     "w": 2.5,
-    "lean": 0.24,
+    "lean": 0.01,
     "tag": "rango",
     "gap": 0.0
    },
@@ -134,17 +134,17 @@
    },
    "AMD": {
     "w": 1.2,
-    "lean": 0.14,
+    "lean": -0.02,
     "tag": "rango",
     "gap": 0.0
    },
    "NFLX": {
     "w": 1.5,
-    "lean": -0.25,
+    "lean": 0.13,
     "tag": "rango",
     "gap": 0.0
    }
   },
-  "ts": 1784812327
+  "ts": 1784898730
  }
 }

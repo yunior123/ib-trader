@@ -1,0 +1,7 @@
+epoch,sym,side,kind,ref_px,target_px,stop_px
+1784899800,ASML,SHORT,cambio_tend,1793.72,,
+1784899800,DRAM,SHORT,cambio_tend,56.06,,
+1784899800,GOOGL,LONG,fuera_banda,319.74,,
+1784899800,TSLA,LONG,fuera_banda,322.02,,
+1784900700,LRCX,SHORT,cambio_tend,316.47,,
+1784901600,NVDA,LONG,cambio_tend,207.17,,

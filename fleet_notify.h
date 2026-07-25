@@ -42,7 +42,7 @@ static void fleet_notify_desktop_mirror(const char* title, const char* msg) {
     struct tm lt;
     localtime_r(&now, &lt);
     char dir[512], path[600], line[1200];
-    snprintf(dir, sizeof(dir), "%s/Desktop/trading-signals", home);
+    snprintf(dir, sizeof(dir), "data/trading-signals");  // repo (siempre escribible, sin TCC/Desktop). 2026-07-24
     mkdir(dir, 0755);  // idempotente
     snprintf(path, sizeof(path), "%s/%04d-%02d-%02d.txt", dir,
              lt.tm_year + 1900, lt.tm_mon + 1, lt.tm_mday);

@@ -1,0 +1,297 @@
+{
+ "_meta": {
+  "ts": 1784921811.56598,
+  "at": "2026-07-24 15:36:51",
+  "n_scored": 21,
+  "groups": {
+   "megacap": {
+    "mf": 21.34,
+    "sf": 4.33,
+    "mp": 1.06,
+    "sp": 0.31
+   },
+   "semis": {
+    "mf": 23.66,
+    "sf": 10.33,
+    "mp": 0.54,
+    "sp": 0.33
+   }
+  }
+ },
+ "AAPL": {
+  "score": 0.987,
+  "group": "megacap",
+  "fpe": 34.38,
+  "peg": 2.65,
+  "pfcf": 37.82,
+  "epsny": 10.43,
+  "inflada": true,
+  "barata": false,
+  "note": "INFLADA"
+ },
+ "AMD": {
+  "score": 0.026,
+  "group": "semis",
+  "fpe": 38.73,
+  "peg": 0.59,
+  "pfcf": 100.85,
+  "epsny": 82.46,
+  "inflada": false,
+  "barata": false,
+  "note": "neutra"
+ },
+ "AMZN": {
+  "score": 0.217,
+  "group": "megacap",
+  "fpe": 23.13,
+  "peg": 1.04,
+  "pfcf": null,
+  "epsny": 13.9,
+  "inflada": false,
+  "barata": false,
+  "note": "neutra"
+ },
+ "ASML": {
+  "score": 0.126,
+  "group": "semis",
+  "fpe": 29.73,
+  "peg": 0.8,
+  "pfcf": 60.19,
+  "epsny": 36.91,
+  "inflada": false,
+  "barata": false,
+  "note": "neutra"
+ },
+ "AVGO": {
+  "score": -0.653,
+  "group": "semis",
+  "fpe": 19.59,
+  "peg": 0.35,
+  "pfcf": 55.47,
+  "epsny": 68.26,
+  "inflada": false,
+  "barata": true,
+  "note": "BARATA/creciendo"
+ },
+ "DRAM": {
+  "score": null,
+  "group": "other",
+  "note": "sin fundamentals (ETF o dato inv\u00e1lido)"
+ },
+ "EWY": {
+  "score": null,
+  "group": "other",
+  "note": "sin fundamentals (ETF o dato inv\u00e1lido)"
+ },
+ "GLD": {
+  "score": null,
+  "group": "other",
+  "note": "sin fundamentals (ETF o dato inv\u00e1lido)"
+ },
+ "GOOGL": {
+  "score": 0.558,
+  "group": "megacap",
+  "fpe": 21.34,
+  "peg": 1.21,
+  "pfcf": 73.4,
+  "epsny": -23.06,
+  "inflada": true,
+  "barata": false,
+  "note": "INFLADA"
+ },
+ "INTC": {
+  "score": 0.5,
+  "group": "semis",
+  "fpe": 49.71,
+  "peg": 0.56,
+  "pfcf": 168.9,
+  "epsny": 38.2,
+  "inflada": true,
+  "barata": false,
+  "note": "INFLADA"
+ },
+ "LRCX": {
+  "score": 0.439,
+  "group": "semis",
+  "fpe": 37.55,
+  "peg": 1.07,
+  "pfcf": 64.3,
+  "epsny": 44.38,
+  "inflada": true,
+  "barata": false,
+  "note": "INFLADA"
+ },
+ "META": {
+  "score": -0.276,
+  "group": "megacap",
+  "fpe": 17.13,
+  "peg": 0.85,
+  "pfcf": 31.68,
+  "epsny": 6.79,
+  "inflada": false,
+  "barata": false,
+  "note": "neutra"
+ },
+ "MSFT": {
+  "score": -0.03,
+  "group": "megacap",
+  "fpe": 19.75,
+  "peg": 1.06,
+  "pfcf": 39.18,
+  "epsny": 14.53,
+  "inflada": false,
+  "barata": false,
+  "note": "neutra"
+ },
+ "MU": {
+  "score": -0.9,
+  "group": "semis",
+  "fpe": 5.97,
+  "peg": 0.03,
+  "pfcf": 39.82,
+  "epsny": 111.21,
+  "inflada": false,
+  "barata": true,
+  "note": "BARATA/creciendo"
+ },
+ "NFLX": {
+  "score": -0.169,
+  "group": "megacap",
+  "fpe": 18.42,
+  "peg": 0.85,
+  "pfcf": 26.21,
+  "epsny": 5.98,
+  "inflada": false,
+  "barata": false,
+  "note": "neutra"
+ },
+ "NOK": {
+  "score": 0.368,
+  "group": "semis",
+  "fpe": 19.45,
+  "peg": 1.2,
+  "pfcf": 31.35,
+  "epsny": 21.05,
+  "inflada": true,
+  "barata": false,
+  "note": "INFLADA"
+ },
+ "NVDA": {
+  "score": -0.631,
+  "group": "semis",
+  "fpe": 16.41,
+  "peg": 0.35,
+  "pfcf": 42.52,
+  "epsny": 41.68,
+  "inflada": false,
+  "barata": true,
+  "note": "BARATA/creciendo"
+ },
+ "QCOM": {
+  "score": 0.993,
+  "group": "semis",
+  "fpe": 15.38,
+  "peg": 3.98,
+  "pfcf": 14.14,
+  "epsny": 1.23,
+  "inflada": true,
+  "barata": false,
+  "note": "INFLADA"
+ },
+ "QQQ": {
+  "score": null,
+  "group": "other",
+  "note": "sin fundamentals (ETF o dato inv\u00e1lido)"
+ },
+ "SKHY": {
+  "score": -0.894,
+  "group": "semis",
+  "fpe": 4.95,
+  "peg": 0.05,
+  "pfcf": 38.9,
+  "epsny": 47.22,
+  "inflada": false,
+  "barata": true,
+  "note": "BARATA/creciendo"
+ },
+ "SMH": {
+  "score": null,
+  "group": "other",
+  "note": "sin fundamentals (ETF o dato inv\u00e1lido)"
+ },
+ "SNDK": {
+  "score": null,
+  "group": "semis",
+  "note": "sin fundamentals (ETF o dato inv\u00e1lido)"
+ },
+ "SPCX": {
+  "score": null,
+  "group": "other",
+  "note": "sin fundamentals (ETF o dato inv\u00e1lido)"
+ },
+ "SPY": {
+  "score": null,
+  "group": "other",
+  "note": "sin fundamentals (ETF o dato inv\u00e1lido)"
+ },
+ "STX": {
+  "score": -0.383,
+  "group": "semis",
+  "fpe": 30.34,
+  "peg": 0.39,
+  "pfcf": 80.5,
+  "epsny": 91.47,
+  "inflada": false,
+  "barata": true,
+  "note": "BARATA/creciendo"
+ },
+ "TSLA": {
+  "score": 1.0,
+  "group": "megacap",
+  "fpe": 132.4,
+  "peg": 5.51,
+  "pfcf": 201.1,
+  "epsny": 29.87,
+  "inflada": true,
+  "barata": false,
+  "note": "INFLADA"
+ },
+ "TSM": {
+  "score": -0.323,
+  "group": "semis",
+  "fpe": 18.96,
+  "peg": 0.51,
+  "pfcf": 52.92,
+  "epsny": 29.85,
+  "inflada": false,
+  "barata": false,
+  "note": "neutra"
+ },
+ "TXN": {
+  "score": 0.436,
+  "group": "semis",
+  "fpe": 27.72,
+  "peg": 0.96,
+  "pfcf": 47.9,
+  "epsny": 20.37,
+  "inflada": true,
+  "barata": false,
+  "note": "INFLADA"
+ },
+ "WDC": {
+  "score": -0.464,
+  "group": "semis",
+  "fpe": 28.27,
+  "peg": 0.35,
+  "pfcf": 62.06,
+  "epsny": 85.2,
+  "inflada": false,
+  "barata": true,
+  "note": "BARATA/creciendo"
+ },
+ "XLK": {
+  "score": null,
+  "group": "other",
+  "note": "sin fundamentals (ETF o dato inv\u00e1lido)"
+ }
+}

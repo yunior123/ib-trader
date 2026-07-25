@@ -1,0 +1,910 @@
+04:00:00 | AAPL: SIN DATOS IBKR | 33959 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+04:00:00 | ASML: SIN DATOS IBKR | 33959 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+04:10:00 | ASML: SIN DATOS IBKR | 34559 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+04:10:00 | AAPL: SIN DATOS IBKR | 34559 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+04:20:00 | ASML: SIN DATOS IBKR | 35159 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+04:20:00 | AAPL: SIN DATOS IBKR | 35159 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+04:30:00 | ASML: SIN DATOS IBKR | 35759 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+04:30:00 | AAPL: SIN DATOS IBKR | 35759 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+04:40:00 | ASML: SIN DATOS IBKR | 36359 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+04:40:00 | AAPL: SIN DATOS IBKR | 36359 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+04:50:00 | ASML: SIN DATOS IBKR | 36959 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+04:50:00 | AAPL: SIN DATOS IBKR | 36959 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+05:00:00 | ASML: SIN DATOS IBKR | 37559 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+05:00:00 | AAPL: SIN DATOS IBKR | 37559 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+05:10:00 | ASML: SIN DATOS IBKR | 38159 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+05:10:00 | AAPL: SIN DATOS IBKR | 38159 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+05:20:00 | ASML: SIN DATOS IBKR | 38759 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+05:20:00 | AAPL: SIN DATOS IBKR | 38759 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+05:30:00 | ASML: SIN DATOS IBKR | 39359 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+05:30:00 | AAPL: SIN DATOS IBKR | 39359 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+05:40:00 | ASML: SIN DATOS IBKR | 39959 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+05:40:00 | AAPL: SIN DATOS IBKR | 39959 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+05:50:00 | ASML: SIN DATOS IBKR | 40559 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+05:50:00 | AAPL: SIN DATOS IBKR | 40559 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+06:00:00 | ASML: SIN DATOS IBKR | 41159 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+06:00:00 | AAPL: SIN DATOS IBKR | 41159 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+06:10:00 | ASML: SIN DATOS IBKR | 41759 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+06:10:00 | AAPL: SIN DATOS IBKR | 41759 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+06:20:00 | ASML: SIN DATOS IBKR | 42359 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+06:20:00 | AAPL: SIN DATOS IBKR | 42359 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+06:30:00 | ASML: SIN DATOS IBKR | 42959 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+06:30:00 | AAPL: SIN DATOS IBKR | 42959 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+06:40:00 | ASML: SIN DATOS IBKR | 43559 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+06:40:00 | AAPL: SIN DATOS IBKR | 43559 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+06:50:00 | ASML: SIN DATOS IBKR | 44159 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+06:50:00 | AAPL: SIN DATOS IBKR | 44159 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+07:00:00 | ASML: SIN DATOS IBKR | 44759 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+07:00:00 | AAPL: SIN DATOS IBKR | 44759 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+07:04:01 | AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.89% px 512.00
+07:10:01 | SKHY TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.93% px 164.71
+07:17:00 | NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.08% px 10.80
+07:29:07 | INTC: SIN DATOS IBKR | 1562 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+07:29:08 | NVDA: SIN DATOS IBKR | 1563 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+07:29:09 | GLD: SIN DATOS IBKR | 1564 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+07:29:10 | USO: SIN DATOS IBKR | 1565 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+07:29:11 | CPER: SIN DATOS IBKR | 1566 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+07:29:12 | SLV: SIN DATOS IBKR | 1567 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+07:29:13 | DRAM: SIN DATOS IBKR | 1568 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+07:29:14 | ASML: SIN DATOS IBKR | 1569 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+07:29:14 | AAPL: SIN DATOS IBKR | 1569 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+07:29:14 | TSLA: SIN DATOS IBKR | 1569 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+07:29:14 | TXN: SIN DATOS IBKR | 614 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+07:29:14 | AMD: SIN DATOS IBKR | 254 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+07:32:00 | TXN TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.84% px 293.50
+07:32:00 | QQQ TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.03% px 711.38
+07:48:25 | INTC ALARMA PRECIO | INTC toco 100.00 (regla: intc 100 down     urgente (Yunior 2026-07-16)) px=99.9950
+[07:48] 🚨 ALARM INTC < 100 — px 99.96 (alerta urgente de Yunior 2026-07-16)
+07:48:58 | TEST ALARMA PRECIO | TEST toco 50.00 (regla: test 50 up) px=60.0000
+07:49:09 | TEST ALARMA PRECIO | TEST toco 55.00 (regla: test 55) px=54.9750
+08:12:32 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.09% px 208.50
+08:12:32 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.30% px 213.22
+08:12:32 | WARMUP NVDA: SELL | NVDA @ 210.49 | prob 55% | estructura-rota+MACD15-flip-abajo+pierde-BB15mid+MACD15-rojo+ST5-alineado | fase=TREND_DOWN
+08:12:32 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.00% px 209.12
+08:12:32 | WARMUP NVDA: SELL | NVDA @ 208.49 | prob 62% | rebote-9%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=TREND_DOWN
+08:12:32 | WARMUP TSLA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.36% px 403.49
+08:12:32 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.03% px 210.41
+08:12:32 | WARMUP TSLA: SELL | TSLA @ 398.43 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=SPIKE_FADE
+08:12:32 | WARMUP TSLA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.63% px 394.94
+08:12:32 | WARMUP TSLA: SELL | TSLA @ 396.90 | prob 60% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=SPIKE_FADE
+08:12:32 | WARMUP TSLA: SELL | TSLA @ 395.91 | prob 60% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=SPIKE_FADE
+08:12:32 | WARMUP TSLA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.03% px 399.04
+08:12:32 | WARMUP TSLA: SELL | TSLA @ 396.77 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+bajo-VWAP+fase-favorable | fase=SPIKE_FADE
+08:12:32 | WARMUP TSLA: SELL | VENDER TSLA @ 394.71 | time-stop (no revirtio) | entrada 398.30 | PnL -0.9%
+08:12:32 | WARMUP TSM: SELL | TSM @ 425.57 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=UNKNOWN
+08:12:32 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.10% px 423.99
+08:12:32 | WARMUP TSM: SELL | TSM @ 423.20 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=UNKNOWN
+08:12:32 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.42% px 559.60
+08:12:32 | WARMUP TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.20% px 428.45
+08:12:32 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.23% px 418.99
+08:12:32 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.02% px 412.46
+08:12:32 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.48% px 552.69
+08:12:32 | WARMUP TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.06% px 419.44
+08:12:32 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.21% px 566.65
+08:12:32 | WARMUP AMD: BUY | AMD @ 565.95 | prob 55% | estructura-rota-arriba+MACD15-flip-arriba+MACD15-verde+ST5-alineado+ribbon15-alcista | fase=UNKNOWN
+08:12:32 | WARMUP TSM: SELL | TSM @ 418.88 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=TREND_DOWN
+08:12:32 | WARMUP AMD: SELL | AMD @ 554.76 | prob 55% | rompe-TL-1m-abajo+vol-1.8x+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=UNKNOWN
+08:12:32 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.01% px 550.20
+08:12:32 | WARMUP TSM: SELL (STOP) | VENDER TSM @ 399.65 | HARD STOP | entrada 440.35 | PnL -9.2%
+08:12:32 | WARMUP AMD: SELL | AMD @ 547.12 | prob 55% | rompe-TL-1m-abajo+vol-2.4x+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=UNKNOWN
+08:12:32 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.28% px 541.83
+08:12:32 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.50% px 517.99
+08:12:32 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.01% px 525.89
+08:12:32 | WARMUP AMD: SELL | AMD @ 528.74 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=TREND_DOWN
+08:12:32 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.89% px 512.00
+08:20:19 | WARMUP AAPL: BUY | AAPL @ 315.31 | prob 56% | estructura-rota-arriba+MACD15-flip-arriba+MACD15-verde+ST5-alineado+ribbon15-alcista | fase=UNKNOWN
+08:20:19 | WARMUP AAPL: BUY | AAPL @ 314.93 | prob 59% | pullback-1%+MACD1-gira+MACD15-verde+ST5-alineado+ribbon15-alcista | fase=UNKNOWN
+08:20:19 | WARMUP AAPL: BUY | AAPL @ 315.13 | prob 59% | pullback-34%+MACD1-gira+MACD15-verde+ST5-alineado+ribbon15-alcista | fase=UNKNOWN
+08:20:19 | WARMUP AAPL TERREMOTO ALZA | CUSUM: subiendo fuerte +1.86% px 318.37
+08:20:19 | WARMUP AAPL TERREMOTO ALZA | CUSUM: subiendo fuerte +1.58% px 321.17
+08:20:19 | WARMUP AAPL TERREMOTO ALZA | CUSUM: subiendo fuerte +1.51% px 325.06
+08:20:49 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.42% px 559.60
+08:20:49 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.48% px 552.69
+08:20:49 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.21% px 566.65
+08:20:49 | WARMUP AMD: SELL | AMD @ 554.76 | prob 58% | rompe-TL-1m-abajo+vol-1.8x+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=UNKNOWN
+08:20:49 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.01% px 550.20
+08:20:49 | WARMUP AMD: SELL | AMD @ 547.12 | prob 58% | rompe-TL-1m-abajo+vol-2.4x+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=UNKNOWN
+08:20:49 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.28% px 541.83
+08:20:49 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.50% px 517.99
+08:20:49 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.01% px 525.89
+08:20:49 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.89% px 512.00
+08:20:49 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.62% px 59.15
+08:20:49 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.52% px 59.73
+08:20:49 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.09% px 208.50
+08:20:49 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.44% px 60.66
+08:20:49 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.86% px 60.09
+08:20:49 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.30% px 213.22
+08:20:49 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.97% px 60.42
+08:20:49 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.51% px 61.32
+08:20:49 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.00% px 209.12
+08:20:49 | WARMUP NVDA: SELL | NVDA @ 208.49 | prob 59% | rebote-9%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=TREND_DOWN
+08:20:49 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.52% px 60.67
+08:20:49 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.03% px 210.41
+08:20:49 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.70% px 61.70
+08:20:49 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.68% px 61.26
+08:20:49 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.51% px 60.34
+08:20:49 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.64% px 59.82
+08:20:49 | WARMUP DRAM: SELL | DRAM @ 58.34 | prob 55% | rompe-OR-abajo+vol-1.5x+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=TREND_DOWN
+08:20:49 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.49% px 56.74
+08:20:49 | WARMUP DRAM: SELL | DRAM @ 56.77 | prob 55% | rompe-OR-abajo+vol-1.6x+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=TREND_DOWN
+08:20:49 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.53% px 56.30
+08:20:49 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.73% px 55.98
+08:20:49 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.91% px 57.61
+08:20:49 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.53% px 56.90
+08:20:49 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.57% px 56.75
+08:20:49 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.49% px 54.26
+08:22:04 | NVDA ALARMA PRECIO | NVDA toco 250.00 (regla: nvda 250 down     prueba live 2026-07-16 (borrar tras disparo)) px=209.1400
+08:23:14 | NVDA: OPT | C 2026-07-17 ~210 | sin greeks live (opciones cerradas o falta sub OPRA) | - | NO-APTO (sin-greeks)
+08:24:01 | SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.30% px 134.50
+08:30:00 | CPER TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.64% px 38.14
+08:45:01 | GLD TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.00% px 367.16
+08:48:37 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.10% px 423.99
+08:48:37 | WARMUP TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.20% px 428.45
+08:48:37 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.23% px 418.99
+08:48:37 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.02% px 412.46
+08:48:37 | WARMUP TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.06% px 419.44
+08:48:37 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.50% px 400.00
+08:48:37 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.09% px 208.50
+08:48:37 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.30% px 213.22
+08:48:37 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.00% px 209.12
+08:48:37 | WARMUP NVDA: SELL | NVDA @ 208.49 | prob 59% | rebote-9%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=TREND_DOWN
+08:48:37 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.03% px 210.41
+08:48:37 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.62% px 59.15
+08:48:37 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.52% px 59.73
+08:48:37 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.44% px 60.66
+08:48:37 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.86% px 60.09
+08:48:37 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.97% px 60.42
+08:48:37 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.51% px 61.32
+08:48:37 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.52% px 60.67
+08:48:37 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.70% px 61.70
+08:48:37 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.68% px 61.26
+08:48:37 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.51% px 60.34
+08:48:37 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.64% px 59.82
+08:48:37 | WARMUP DRAM: SELL | DRAM @ 58.34 | prob 55% | rompe-OR-abajo+vol-1.5x+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=TREND_DOWN
+08:48:37 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.49% px 56.74
+08:48:37 | WARMUP DRAM: SELL | DRAM @ 56.77 | prob 55% | rompe-OR-abajo+vol-1.6x+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=TREND_DOWN
+08:48:37 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.53% px 56.30
+08:48:37 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.73% px 55.98
+08:48:38 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.91% px 57.61
+08:48:38 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.42% px 559.60
+08:48:38 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.48% px 552.69
+08:48:38 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.53% px 56.90
+08:48:38 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.57% px 56.75
+08:48:38 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.49% px 54.26
+08:48:38 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.21% px 566.65
+08:48:38 | WARMUP DRAM: SELL (STOP) | VENDER DRAM @ 53.48 | HARD STOP | entrada 56.95 | PnL -6.1%
+08:48:38 | WARMUP AMD: SELL | AMD @ 554.76 | prob 58% | rompe-TL-1m-abajo+vol-1.8x+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=UNKNOWN
+08:48:38 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.01% px 550.20
+08:48:38 | WARMUP AMD: SELL | AMD @ 547.12 | prob 58% | rompe-TL-1m-abajo+vol-2.4x+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=UNKNOWN
+08:48:38 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.28% px 541.83
+08:48:38 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.50% px 517.99
+08:48:38 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.01% px 525.89
+08:48:38 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.89% px 512.00
+08:52:46 | WARMUP AAPL: BUY | AAPL @ 315.31 | prob 56% | estructura-rota-arriba+MACD15-flip-arriba+MACD15-verde+ST5-alineado+ribbon15-alcista | fase=UNKNOWN
+08:52:46 | WARMUP AAPL: BUY | AAPL @ 314.93 | prob 59% | pullback-1%+MACD1-gira+MACD15-verde+ST5-alineado+ribbon15-alcista | fase=UNKNOWN
+08:52:46 | WARMUP AAPL: BUY | AAPL @ 315.13 | prob 59% | pullback-34%+MACD1-gira+MACD15-verde+ST5-alineado+ribbon15-alcista | fase=UNKNOWN
+08:52:46 | WARMUP AAPL TERREMOTO ALZA | CUSUM: subiendo fuerte +1.86% px 318.37
+08:52:46 | WARMUP AAPL TERREMOTO ALZA | CUSUM: subiendo fuerte +1.58% px 321.17
+08:52:46 | WARMUP AAPL TERREMOTO ALZA | CUSUM: subiendo fuerte +1.51% px 325.06
+
+========== MAPA DE BATALLA 2026-07-16 (Claude, 09:05 pre-open) ==========
+REGIMEN: gap bajista sectorial, puts cargados, records se venden. Edge v6: CORTOS
+(trendline-break 70% OOS, VWAP-loss 73%). No operar 9:30-9:45 (subasta) — operar su
+RESOLUCION: rebote que falla en VWAP = entrada put; reclaim con volumen = call.
+
+SEÑAL MADRE: SMH 570 (muro 8.2k puts). Encima=rebote real / Debajo=cascada sector.
+
+TICKER | MURO (sirena armada)          | PLAN OPCIONES (compra y vende same-day)
+MU     | 850P (7.3k, P/C 4.58)         | put al perder 850 confirmado; el mas cargado
+TSM    | 400 straddle 15k/15k          | put bajo 400 -> 390; call solo sobre 405
+INTC   | 100P roto (31k) gamma-negativa| put bajo 98 -> 95; call SOLO reclaim 100 15min -> 103.5-105 (max pain 105)
+AMD    | 500P (7k)                     | put bajo 500
+QQQ    | 709-711P escalera             | put bajo 709 = tech en fuga
+NVDA   | 215C iman / SIN hedge abajo   | call si rompe 215; put bajo 205 = bolson de aire
+REGLAS PRO: 0-2 DTE solo primeras 2h; spread <5% del premium; OI>500 en el strike;
+IV inflada hoy -> si el tape se pone lateral, el put sangra: inversos (SOXS/SQQQ/
+TSMZ/NVDD/AMDD) mas limpios, same-day, stop duro, JAMAS overnight. 3 perdidas = fin del dia.
+==========================================================================
+09:05:17 | INTC ALARMA PRECIO | INTC toco 100.00 (regla: intc 100 up       RECLAIM del muro 31k puts   squeeze de hedges hacia 103.5-105) px=100.1300
+09:24:01 | TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.08% px 406.16
+09:25:00 | SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.49% px 135.61
+09:25:01 | SKHY TERREMOTO ALZA | CUSUM: subiendo fuerte +2.32% px 166.00
+09:27:34 | opt_sentinel ARRANCADO (exit-advisor INTC 104C + flujo put/call flota)
+09:28:53 | opt_sentinel ARRANCADO (exit-advisor INTC 104C + flujo put/call flota)
+09:30:44 | opt_sentinel ARRANCADO (exit-advisor INTC 104C + flujo put/call flota)
+09:31:00 | TSLA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.74% px 388.44
+09:31:00 | ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.14% px 1808.28
+09:31:24 | FLUJO OPCIONES: INTC volC 161 volP 139 P/C 0.86 | MU volC 175 volP 258 P/C 1.47 | TSM volC 52 volP 41 P/C 0.79 | SMH volC 19 volP 27 P/C 1.42 | QQQ volC 0 volP 113 P/C 113.00 | NVDA volC 5,748 volP 3,274 P/C 0.57 | AMD volC 203 volP 111 P/C 0.55
+09:32:30 | 🚨 INTC 104C: VENDER YA — perdio 100 (px 99.93); reclaim fallido, 31k puts empujan | bid 1.06/ask 1.12 | valor 106 USD | P&L -150 USD (-59%)
+09:33:39 | opt_sentinel ARRANCADO (exit-advisor INTC 104C + flujo put/call flota)
+09:33:58 | 🔔 TSM: FLUJO DE CALLS fuerte hoy — volC 1,882 vs volP 705 (P/C 0.4)
+09:34:14 | 🔔 NVDA: FLUJO DE CALLS fuerte hoy — volC 21,867 vs volP 7,430 (P/C 0.3)
+09:34:19 | FLUJO OPCIONES: INTC volC 1,802 volP 1,225 P/C 0.68 | MU volC 912 volP 594 P/C 0.65 | TSM volC 1,882 volP 705 P/C 0.37 | SMH volC 64 volP 95 P/C 1.48 | QQQ volC 30 volP 801 P/C 26.70 | NVDA volC 21,867 volP 7,430 P/C 0.34 | AMD volC 1,312 volP 524 P/C 0.40
+09:39:13 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 2,273 vs volC 35 (P/C 64.9)
+09:39:23 | FLUJO OPCIONES: INTC volC 2,549 volP 3,305 P/C 1.30 | MU volC 1,947 volP 2,370 P/C 1.22 | TSM volC 1,132 volP 1,757 P/C 1.55 | SMH volC 36 volP 275 P/C 7.64 | QQQ volC 35 volP 2,273 P/C 64.94 | NVDA volC 26,147 volP 26,017 P/C 1.00 | AMD volC 1,694 volP 1,302 P/C 0.77
+09:40:00 | QQQ: SELL | QQQ @ 710.10 | prob 58% | rompe-TL-1m-abajo+vol-2.9x+ST5-alineado+ribbon15-bajista+bajo-VWAP | fase=UNKNOWN
+09:40:06 | QQQ: OPT | P 2026-07-16 711 | delta -0.56 gamma 0.056 theta -2.34 IV 36% | OI 0 vol 9876 spread 1.3% | NO-APTO (OI 0 < 100)
+09:42:00 | NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.05% px 208.21
+09:42:36 | QQQ ALARMA PRECIO | QQQ toco 709.00 (regla: qqq 709 down      escalera puts 711/710/709     debajo: tech en fuga) px=708.9850
+09:44:16 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 5,118 vs volC 35 (P/C 146.2)
+09:44:29 | FLUJO OPCIONES: INTC volC 3,682 volP 5,013 P/C 1.36 | MU volC 3,326 volP 3,888 P/C 1.17 | TSM volC 1,698 volP 2,196 P/C 1.29 | SMH volC 37 volP 402 P/C 10.86 | QQQ volC 35 volP 5,118 P/C 146.23 | NVDA volC 39,346 volP 39,500 P/C 1.00 | AMD volC 1,064 volP 1,923 P/C 1.81
+09:45:00 | AMD: SELL | AMD @ 508.84 | prob 58% | rompe-TL-1m-abajo+vol-1.7x+ST5-alineado+ribbon15-bajista+bajo-VWAP | fase=UNKNOWN
+09:45:06 | AMD: OPT | P 2026-07-17 515 | delta -0.56 gamma 0.013 theta -6.20 IV 99% | OI 2997 vol 356 spread 8.0% | NO-APTO (spread 8.0% > 3%) [IV-alta]
+09:45:40 | opt_sentinel ARRANCADO (exit-advisor INTC 104C + flujo put/call flota)
+09:45:43 | 🔔 INTC 104C: OPENING RANGE cerrado (9:45):  | bid 0.71/ask 0.79 | valor 71 USD | P&L -185 USD (-72%)
+09:46:00 | DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.98% px 53.61
+09:46:00 | SMH: SELL | SMH @ 571.13 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=UNKNOWN
+09:46:00 | NOK: SELL | VENDER NOK @ 10.63 | target 10.31 | floor 10.52 | senal de BAJADA (blow-off)
+09:46:07 | SMH: OPT | P 2026-07-17 575 | delta -0.55 gamma 0.017 theta -4.80 IV 68% | OI 3623 vol 59 spread 11.0% | NO-APTO (spread 11.0% > 3%)
+09:46:09 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 6,488 vs volC 34 (P/C 190.8)
+09:46:12 | NOK: OPT | P 2026-07-17 10.5 | delta -0.40 gamma 0.671 theta -0.12 IV 93% | OI 3440 vol 554 spread 5.7% | NO-APTO (spread 5.7% > 3%) [IV-alta]
+09:46:20 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 2,577 vs volC 907 (P/C 2.8)
+09:46:20 | FLUJO OPCIONES: INTC volC 2,564 volP 5,484 P/C 2.14 | MU volC 3,517 volP 4,639 P/C 1.32 | TSM volC 1,777 volP 3,348 P/C 1.88 | SMH volC 11 volP 528 P/C 48.00 | QQQ volC 34 volP 6,488 P/C 190.82 | NVDA volC 43,750 volP 49,141 P/C 1.12 | AMD volC 907 volP 2,577 P/C 2.84
+09:49:00 | INTC: SELL | VENDER INTC @ 98.88 | target 97.40 | floor 98.63 | senal de BAJADA (blow-off)
+09:49:09 | INTC: OPT | P 2026-07-17 100 | delta -0.58 gamma 0.066 theta -1.22 IV 102% | OI 31053 vol 3344 spread 1.6% | APTO same-day [IV-alta]
+09:49:30 | SMH ALARMA PRECIO | SMH toco 570.00 (regla: smh 570 down      muro 8.2k puts     LA se  al madre del sector  debajo: cascada a 565) px=569.9300
+09:50:48 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 11,519 vs volC 3,309 (P/C 3.5)
+09:50:53 | 🔔 MU: FLUJO DE PUTS fuerte hoy — volP 6,499 vs volC 2,500 (P/C 2.6)
+09:51:09 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 5,678 vs volC 35 (P/C 162.2)
+09:51:20 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 4,004 vs volC 1,509 (P/C 2.7)
+09:51:20 | FLUJO OPCIONES: INTC volC 3,309 volP 11,519 P/C 3.48 | MU volC 2,500 volP 6,499 P/C 2.60 | TSM volC 2,471 volP 3,800 P/C 1.54 | SMH volC 34 volP 630 P/C 18.53 | QQQ volC 35 volP 5,678 P/C 162.23 | NVDA volC 52,919 volP 63,101 P/C 1.19 | AMD volC 1,509 volP 4,004 P/C 2.65
+09:55:00 | TXN TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.25% px 289.91
+09:56:10 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 6,539 vs volC 38 (P/C 172.1)
+09:56:21 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 4,800 vs volC 1,396 (P/C 3.4)
+09:56:21 | FLUJO OPCIONES: INTC volC 4,328 volP 9,613 P/C 2.22 | MU volC 3,594 volP 8,374 P/C 2.33 | TSM volC 2,792 volP 4,061 P/C 1.45 | SMH volC 54 volP 784 P/C 14.52 | QQQ volC 38 volP 6,539 P/C 172.08 | NVDA volC 65,077 volP 69,231 P/C 1.06 | AMD volC 1,396 volP 4,800 P/C 3.44
+10:01:11 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 11,505 vs volC 59 (P/C 195.0)
+10:01:22 | FLUJO OPCIONES: INTC volC 8,656 volP 11,799 P/C 1.36 | MU volC 8,858 volP 10,059 P/C 1.14 | TSM volC 3,257 volP 4,504 P/C 1.38 | SMH volC 194 volP 1,047 P/C 5.40 | QQQ volC 59 volP 11,505 P/C 195.00 | NVDA volC 74,945 volP 73,996 P/C 0.99 | AMD volC 4,243 volP 6,090 P/C 1.44
+10:06:05 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 1,886 vs volC 242 (P/C 7.8)
+10:06:11 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 10,846 vs volC 64 (P/C 169.5)
+10:06:22 | FLUJO OPCIONES: INTC volC 8,672 volP 12,353 P/C 1.42 | MU volC 10,277 volP 11,605 P/C 1.13 | TSM volC 3,902 volP 4,735 P/C 1.21 | SMH volC 242 volP 1,886 P/C 7.79 | QQQ volC 64 volP 10,846 P/C 169.47 | NVDA volC 83,286 volP 78,233 P/C 0.94 | AMD volC 5,493 volP 6,422 P/C 1.17
+10:06:24 | 🚨 INTC 104C: QQQ PUT: STOP — recupero 711 (px 711.43), la ruptura de 709 fallo. Vende ya | bid 0.97/ask 1.01 | valor 97 USD | P&L -159 USD (-62%)
+10:11:11 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 12,533 vs volC 71 (P/C 176.5)
+10:11:22 | FLUJO OPCIONES: INTC volC 11,459 volP 11,006 P/C 0.96 | MU volC 11,386 volP 8,695 P/C 0.76 | TSM volC 7,441 volP 3,809 P/C 0.51 | SMH volC 432 volP 888 P/C 2.06 | QQQ volC 71 volP 12,533 P/C 176.52 | NVDA volC 96,674 volP 83,197 P/C 0.86 | AMD volC 6,622 volP 6,974 P/C 1.05
+10:12:14 | opt_sentinel ARRANCADO (exit-advisor INTC 104C + flujo put/call flota)
+10:12:16 | 🚨 INTC 104C: QQQ PUT: STOP — recupero 711 (px 711.71), la ruptura de 709 fallo. Vende ya | bid 0.96/ask 1.02 | valor 96 USD | P&L -160 USD (-62%)
+10:12:16 | 🔔 INTC 104C: OPENING RANGE cerrado (9:45):  | bid 0.96/ask 1.02 | valor 96 USD | P&L -160 USD (-62%)
+10:12:43 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 12,934 vs volC 72 (P/C 179.6)
+10:12:54 | FLUJO OPCIONES: INTC volC 12,106 volP 13,709 P/C 1.13 | MU volC 12,452 volP 12,940 P/C 1.04 | TSM volC 4,420 volP 5,960 P/C 1.35 | SMH volC 448 volP 970 P/C 2.17 | QQQ volC 72 volP 12,934 P/C 179.64 | NVDA volC 98,023 volP 84,209 P/C 0.86 | AMD volC 8,036 volP 4,708 P/C 0.59
+10:17:40 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 1,662 vs volC 468 (P/C 3.6)
+10:17:45 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 14,469 vs volC 73 (P/C 198.2)
+10:17:56 | FLUJO OPCIONES: INTC volC 12,738 volP 11,530 P/C 0.91 | MU volC 12,373 volP 9,766 P/C 0.79 | TSM volC 4,647 volP 6,340 P/C 1.36 | SMH volC 468 volP 1,662 P/C 3.55 | QQQ volC 73 volP 14,469 P/C 198.21 | NVDA volC 177,574 volP 77,923 P/C 0.44 | AMD volC 7,062 volP 7,257 P/C 1.03
+10:19:32 | opt_sentinel ARRANCADO (exit-advisor INTC 104C + flujo put/call flota)
+10:19:34 | 🚨 INTC 104C: QQQ PUT: STOP — recupero 711 (px 712.37), la ruptura de 709 fallo. Vende ya | bid 0.94/ask 1.01 | valor 94 USD | P&L -162 USD (-63%)
+10:19:34 | 🔔 INTC 104C: OPENING RANGE cerrado (9:45):  | bid 0.94/ask 1.01 | valor 94 USD | P&L -162 USD (-63%)
+10:20:12 | FLUJO OPCIONES: INTC volC 13,036 volP 14,405 P/C 1.11 | MU volC 12,764 volP 9,992 P/C 0.78 | TSM volC 9,407 volP 4,274 P/C 0.45 | SMH volC 611 volP 1,523 P/C 2.49 | QQQ volC 52,787 volP 39,147 P/C 0.74 | NVDA volC 184,526 volP 79,523 P/C 0.43 | AMD volC 9,272 volP 5,222 P/C 0.56
+10:21:57 | INTC ALARMA PRECIO | INTC toco 100.00 (regla: intc 100 down      STOP del call     vender ya) px=99.9550
+10:21:58 | 🚨 INTC 104C: INTC 101C: STOP — perdio 100 (px 99.96). VENDE YA | bid 0.85/ask 0.91 | valor 85 USD | P&L -171 USD (-67%)
+10:22:00 | NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.37% px 10.50
+10:24:58 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 1,567 vs volC 580 (P/C 2.7)
+10:25:14 | FLUJO OPCIONES: INTC volC 12,052 volP 14,978 P/C 1.24 | MU volC 13,439 volP 11,158 P/C 0.83 | TSM volC 9,081 volP 4,556 P/C 0.50 | SMH volC 580 volP 1,567 P/C 2.70 | QQQ volC 56,791 volP 45,103 P/C 0.79 | NVDA volC 140,804 volP 97,831 P/C 0.69 | AMD volC 7,964 volP 8,839 P/C 1.11
+10:27:00 | SKHY TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.12% px 162.16
+10:29:54 | 🔔 TSM: FLUJO DE CALLS fuerte hoy — volC 16,233 vs volP 5,477 (P/C 0.3)
+10:30:00 | TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.99% px 415.70
+10:30:16 | FLUJO OPCIONES: INTC volC 14,516 volP 15,795 P/C 1.09 | MU volC 14,790 volP 16,571 P/C 1.12 | TSM volC 16,233 volP 5,477 P/C 0.34 | SMH volC 662 volP 1,637 P/C 2.47 | QQQ volC 59,278 volP 46,895 P/C 0.79 | NVDA volC 213,166 volP 87,659 P/C 0.41 | AMD volC 10,136 volP 6,698 P/C 0.66
+10:35:02 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 1,872 vs volC 614 (P/C 3.0)
+10:35:12 | 🔔 NVDA: FLUJO DE CALLS fuerte hoy — volC 225,967 vs volP 89,334 (P/C 0.4)
+10:35:18 | FLUJO OPCIONES: INTC volC 15,489 volP 16,361 P/C 1.06 | MU volC 15,584 volP 17,410 P/C 1.12 | TSM volC 11,314 volP 6,709 P/C 0.59 | SMH volC 614 volP 1,872 P/C 3.05 | QQQ volC 60,753 volP 49,289 P/C 0.81 | NVDA volC 225,967 volP 89,334 P/C 0.40 | AMD volC 10,589 volP 7,121 P/C 0.67
+10:39:00 | SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.95% px 134.90
+10:40:02 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 1,942 vs volC 642 (P/C 3.0)
+10:40:18 | FLUJO OPCIONES: INTC volC 13,458 volP 16,416 P/C 1.22 | MU volC 16,179 volP 18,162 P/C 1.12 | TSM volC 11,700 volP 8,243 P/C 0.70 | SMH volC 642 volP 1,942 P/C 3.02 | QQQ volC 63,030 volP 51,279 P/C 0.81 | NVDA volC 167,574 volP 106,939 P/C 0.64 | AMD volC 11,025 volP 7,253 P/C 0.66
+10:45:04 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 1,980 vs volC 698 (P/C 2.8)
+10:45:20 | FLUJO OPCIONES: INTC volC 14,436 volP 16,994 P/C 1.18 | MU volC 16,726 volP 19,690 P/C 1.18 | TSM volC 11,929 volP 8,345 P/C 0.70 | SMH volC 698 volP 1,980 P/C 2.84 | QQQ volC 65,231 volP 53,301 P/C 0.82 | NVDA volC 176,245 volP 115,467 P/C 0.66 | AMD volC 11,195 volP 7,388 P/C 0.66
+10:46:00 | SPCX: SELL | SPCX @ 134.83 | prob 62% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=UNKNOWN
+10:46:06 | SPCX: OPT | P 2026-07-17 136 | delta -0.55 gamma 0.056 theta -1.60 IV 91% | OI 1579 vol 3816 spread 2.9% | APTO same-day [IV-alta]
+10:50:06 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 2,177 vs volC 620 (P/C 3.5)
+10:50:22 | FLUJO OPCIONES: INTC volC 14,823 volP 17,232 P/C 1.16 | MU volC 17,234 volP 20,456 P/C 1.19 | TSM volC 12,063 volP 8,392 P/C 0.70 | SMH volC 620 volP 2,177 P/C 3.51 | QQQ volC 55,535 volP 61,205 P/C 1.10 | NVDA volC 184,276 volP 119,147 P/C 0.65 | AMD volC 9,521 volP 11,169 P/C 1.17
+10:55:05 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 2,317 vs volC 632 (P/C 3.7)
+10:55:23 | FLUJO OPCIONES: INTC volC 12,426 volP 28,218 P/C 2.27 | MU volC 13,475 volP 25,083 P/C 1.86 | TSM volC 11,197 volP 8,673 P/C 0.77 | SMH volC 632 volP 2,317 P/C 3.67 | QQQ volC 53,823 volP 69,236 P/C 1.29 | NVDA volC 147,049 volP 131,273 P/C 0.89 | AMD volC 8,573 volP 11,998 P/C 1.40
+11:00:07 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 2,452 vs volC 663 (P/C 3.7)
+11:00:23 | FLUJO OPCIONES: INTC volC 16,617 volP 18,709 P/C 1.13 | MU volC 18,609 volP 25,852 P/C 1.39 | TSM volC 12,591 volP 8,549 P/C 0.68 | SMH volC 663 volP 2,452 P/C 3.70 | QQQ volC 72,533 volP 61,421 P/C 0.85 | NVDA volC 218,302 volP 145,786 P/C 0.67 | AMD volC 12,724 volP 8,486 P/C 0.67
+11:05:07 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 2,471 vs volC 690 (P/C 3.6)
+11:05:23 | FLUJO OPCIONES: INTC volC 17,527 volP 19,157 P/C 1.09 | MU volC 20,584 volP 25,002 P/C 1.21 | TSM volC 11,602 volP 8,801 P/C 0.76 | SMH volC 690 volP 2,471 P/C 3.58 | QQQ volC 58,132 volP 76,078 P/C 1.31 | NVDA volC 173,075 volP 177,513 P/C 1.03 | AMD volC 10,958 volP 12,824 P/C 1.17
+11:10:06 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 2,853 vs volC 696 (P/C 4.1)
+11:10:23 | FLUJO OPCIONES: INTC volC 14,095 volP 19,231 P/C 1.36 | MU volC 19,993 volP 27,563 P/C 1.38 | TSM volC 11,792 volP 8,898 P/C 0.75 | SMH volC 696 volP 2,853 P/C 4.10 | QQQ volC 59,336 volP 79,115 P/C 1.33 | NVDA volC 240,916 volP 160,127 P/C 0.66 | AMD volC 11,951 volP 13,093 P/C 1.10
+11:12:00 | MU: SELL | MU @ 858.00 | prob 55% | rompe-TL-1m-abajo+vol-1.8x+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=UNKNOWN
+11:12:06 | MU: OPT | P 2026-07-17 865 | delta -0.54 gamma 0.008 theta -11.66 IV 103% | OI 628 vol 2992 spread 3.1% | NO-APTO (spread 3.1% > 3%) [IV-alta]
+11:15:08 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 2,899 vs volC 691 (P/C 4.2)
+11:15:25 | FLUJO OPCIONES: INTC volC 14,630 volP 30,697 P/C 2.10 | MU volC 16,665 volP 29,325 P/C 1.76 | TSM volC 11,961 volP 9,047 P/C 0.76 | SMH volC 691 volP 2,899 P/C 4.20 | QQQ volC 61,296 volP 82,866 P/C 1.35 | NVDA volC 192,223 volP 196,637 P/C 1.02 | AMD volC 10,903 volP 13,585 P/C 1.25
+11:20:09 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 3,245 vs volC 742 (P/C 4.4)
+11:20:25 | FLUJO OPCIONES: INTC volC 14,958 volP 31,236 P/C 2.09 | MU volC 17,354 volP 30,565 P/C 1.76 | TSM volC 12,182 volP 9,076 P/C 0.75 | SMH volC 742 volP 3,245 P/C 4.37 | QQQ volC 67,700 volP 86,045 P/C 1.27 | NVDA volC 262,134 volP 170,757 P/C 0.65 | AMD volC 11,174 volP 13,797 P/C 1.23
+11:25:09 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 3,260 vs volC 774 (P/C 4.2)
+11:25:25 | FLUJO OPCIONES: INTC volC 15,585 volP 31,817 P/C 2.04 | MU volC 18,335 volP 31,355 P/C 1.71 | TSM volC 12,247 volP 9,133 P/C 0.75 | SMH volC 774 volP 3,260 P/C 4.21 | QQQ volC 69,520 volP 87,410 P/C 1.26 | NVDA volC 269,118 volP 174,505 P/C 0.65 | AMD volC 12,955 volP 13,857 P/C 1.07
+11:30:09 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 3,963 vs volC 768 (P/C 5.2)
+11:30:25 | FLUJO OPCIONES: INTC volC 16,709 volP 32,809 P/C 1.96 | MU volC 19,230 volP 32,181 P/C 1.67 | TSM volC 12,540 volP 9,333 P/C 0.74 | SMH volC 768 volP 3,963 P/C 5.16 | QQQ volC 73,249 volP 91,734 P/C 1.25 | NVDA volC 284,882 volP 179,766 P/C 0.63 | AMD volC 13,226 volP 14,141 P/C 1.07
+11:35:09 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 3,969 vs volC 824 (P/C 4.8)
+11:35:27 | FLUJO OPCIONES: INTC volC 21,550 volP 22,385 P/C 1.04 | MU volC 25,369 volP 33,058 P/C 1.30 | TSM volC 12,551 volP 9,361 P/C 0.75 | SMH volC 824 volP 3,969 P/C 4.82 | QQQ volC 81,794 volP 88,306 P/C 1.08 | NVDA volC 297,688 volP 183,676 P/C 0.62 | AMD volC 13,370 volP 14,278 P/C 1.07
+11:40:11 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 4,081 vs volC 841 (P/C 4.9)
+11:40:27 | FLUJO OPCIONES: INTC volC 21,957 volP 22,590 P/C 1.03 | MU volC 26,306 volP 33,758 P/C 1.28 | TSM volC 12,778 volP 9,395 P/C 0.74 | SMH volC 841 volP 4,081 P/C 4.85 | QQQ volC 101,160 volP 82,329 P/C 0.81 | NVDA volC 309,335 volP 187,007 P/C 0.60 | AMD volC 13,509 volP 14,412 P/C 1.07
+11:44:00 | INTC TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.03% px 98.46
+11:45:11 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 4,112 vs volC 899 (P/C 4.6)
+11:45:27 | FLUJO OPCIONES: INTC volC 18,169 volP 33,911 P/C 1.87 | MU volC 21,220 volP 34,900 P/C 1.64 | TSM volC 12,938 volP 9,464 P/C 0.73 | SMH volC 899 volP 4,112 P/C 4.57 | QQQ volC 81,154 volP 97,241 P/C 1.20 | NVDA volC 320,101 volP 190,304 P/C 0.59 | AMD volC 12,044 volP 14,614 P/C 1.21
+11:46:54 | MU ALARMA PRECIO | MU toco 850.00 (regla: mu 850 down       muro 7.3k puts     debajo acelera (P/C 4.58, el mas cargado)) px=848.7900
+11:50:12 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 4,418 vs volC 920 (P/C 4.8)
+11:50:29 | FLUJO OPCIONES: INTC volC 18,655 volP 34,489 P/C 1.85 | MU volC 17,716 volP 35,371 P/C 2.00 | TSM volC 13,203 volP 9,558 P/C 0.72 | SMH volC 920 volP 4,418 P/C 4.80 | QQQ volC 88,810 volP 93,356 P/C 1.05 | NVDA volC 327,269 volP 194,171 P/C 0.59 | AMD volC 12,324 volP 14,898 P/C 1.21
+11:55:12 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 4,433 vs volC 925 (P/C 4.8)
+11:55:29 | FLUJO OPCIONES: INTC volC 19,299 volP 34,747 P/C 1.80 | MU volC 18,432 volP 36,089 P/C 1.96 | TSM volC 8,185 volP 11,544 P/C 1.41 | SMH volC 925 volP 4,433 P/C 4.79 | QQQ volC 90,701 volP 94,823 P/C 1.05 | NVDA volC 337,656 volP 197,271 P/C 0.58 | AMD volC 14,117 volP 14,919 P/C 1.06
+12:00:07 | INTC ALARMA PRECIO | INTC toco 98.00 (regla: intc 98 down    gatillo put (Yunior)) px=97.9650
+12:00:13 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 4,585 vs volC 883 (P/C 5.2)
+12:00:29 | FLUJO OPCIONES: INTC volC 19,523 volP 35,076 P/C 1.80 | MU volC 19,377 volP 36,596 P/C 1.89 | TSM volC 8,292 volP 11,763 P/C 1.42 | SMH volC 883 volP 4,585 P/C 5.19 | QQQ volC 86,081 volP 102,532 P/C 1.19 | NVDA volC 341,424 volP 199,556 P/C 0.58 | AMD volC 12,650 volP 15,104 P/C 1.19
+12:04:00 | SKHY TERREMOTO ALZA | CUSUM: subiendo fuerte +2.09% px 163.05
+12:05:14 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 5,173 vs volC 892 (P/C 5.8)
+12:05:31 | FLUJO OPCIONES: INTC volC 17,490 volP 41,773 P/C 2.39 | MU volC 20,493 volP 37,402 P/C 1.83 | TSM volC 8,416 volP 11,894 P/C 1.41 | SMH volC 892 volP 5,173 P/C 5.80 | QQQ volC 83,189 volP 131,411 P/C 1.58 | NVDA volC 356,631 volP 203,166 P/C 0.57 | AMD volC 8,875 volP 15,024 P/C 1.69
+12:10:17 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 6,280 vs volC 620 (P/C 10.1)
+12:10:33 | FLUJO OPCIONES: INTC volC 18,284 volP 42,380 P/C 2.32 | MU volC 21,068 volP 38,939 P/C 1.85 | TSM volC 8,472 volP 11,987 P/C 1.41 | SMH volC 620 volP 6,280 P/C 10.13 | QQQ volC 87,178 volP 137,104 P/C 1.57 | NVDA volC 365,797 volP 209,399 P/C 0.57 | AMD volC 9,110 volP 15,278 P/C 1.68
+12:12:00 | TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.08% px 407.16
+12:15:19 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 6,392 vs volC 675 (P/C 9.5)
+12:15:35 | FLUJO OPCIONES: INTC volC 19,267 volP 42,921 P/C 2.23 | MU volC 17,746 volP 39,018 P/C 2.20 | TSM volC 7,635 volP 13,012 P/C 1.70 | SMH volC 675 volP 6,392 P/C 9.47 | QQQ volC 65,051 volP 130,866 P/C 2.01 | NVDA volC 374,633 volP 215,704 P/C 0.58 | AMD volC 7,632 volP 16,012 P/C 2.10
+12:16:21 | AMD ALARMA PRECIO | AMD toco 500.00 (regla: amd 500 down      linea 7k puts) px=499.8400
+12:20:19 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 6,472 vs volC 697 (P/C 9.3)
+12:20:35 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 16,254 vs volC 3,674 (P/C 4.4)
+12:20:35 | FLUJO OPCIONES: INTC volC 19,724 volP 43,258 P/C 2.19 | MU volC 18,455 volP 39,748 P/C 2.15 | TSM volC 7,782 volP 13,130 P/C 1.69 | SMH volC 697 volP 6,472 P/C 9.29 | QQQ volC 67,012 volP 134,368 P/C 2.01 | NVDA volC 381,761 volP 218,981 P/C 0.57 | AMD volC 3,674 volP 16,254 P/C 4.42
+12:25:19 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 6,531 vs volC 711 (P/C 9.2)
+12:25:35 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 16,954 vs volC 3,913 (P/C 4.3)
+12:25:35 | FLUJO OPCIONES: INTC volC 20,282 volP 43,708 P/C 2.16 | MU volC 22,993 volP 41,238 P/C 1.79 | TSM volC 7,976 volP 13,253 P/C 1.66 | SMH volC 711 volP 6,531 P/C 9.19 | QQQ volC 68,777 volP 138,678 P/C 2.02 | NVDA volC 386,244 volP 222,649 P/C 0.58 | AMD volC 3,913 volP 16,954 P/C 4.33
+12:30:21 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 6,583 vs volC 848 (P/C 7.8)
+12:30:38 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 17,445 vs volC 4,460 (P/C 3.9)
+12:30:38 | FLUJO OPCIONES: INTC volC 20,814 volP 44,412 P/C 2.13 | MU volC 23,742 volP 41,874 P/C 1.76 | TSM volC 8,059 volP 13,312 P/C 1.65 | SMH volC 848 volP 6,583 P/C 7.76 | QQQ volC 71,872 volP 143,275 P/C 1.99 | NVDA volC 393,014 volP 225,756 P/C 0.57 | AMD volC 4,460 volP 17,445 P/C 3.91
+12:35:20 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 6,971 vs volC 806 (P/C 8.6)
+12:35:36 | FLUJO OPCIONES: INTC volC 21,149 volP 44,607 P/C 2.11 | MU volC 24,561 volP 42,373 P/C 1.73 | TSM volC 8,120 volP 13,458 P/C 1.66 | SMH volC 806 volP 6,971 P/C 8.65 | QQQ volC 100,057 volP 156,683 P/C 1.57 | NVDA volC 405,355 volP 228,909 P/C 0.56 | AMD volC 9,547 volP 18,214 P/C 1.91
+12:40:20 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 6,953 vs volC 812 (P/C 8.6)
+12:40:36 | FLUJO OPCIONES: INTC volC 21,746 volP 44,879 P/C 2.06 | MU volC 24,995 volP 42,647 P/C 1.71 | TSM volC 8,255 volP 13,562 P/C 1.64 | SMH volC 812 volP 6,953 P/C 8.56 | QQQ volC 76,456 volP 154,979 P/C 2.03 | NVDA volC 411,654 volP 230,977 P/C 0.56 | AMD volC 9,865 volP 18,347 P/C 1.86
+12:42:40 | MU ALARMA PRECIO | MU toco 850.00 (regla: mu 850 down        16.6k puts     gatillo PUT MU target 840) px=848.8900
+12:45:06 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 37,918 vs volC 9,005 (P/C 4.2)
+12:45:22 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 6,978 vs volC 826 (P/C 8.4)
+12:45:38 | FLUJO OPCIONES: INTC volC 9,005 volP 37,918 P/C 4.21 | MU volC 21,888 volP 42,305 P/C 1.93 | TSM volC 8,364 volP 13,617 P/C 1.63 | SMH volC 826 volP 6,978 P/C 8.45 | QQQ volC 104,393 volP 166,373 P/C 1.59 | NVDA volC 413,357 volP 232,256 P/C 0.56 | AMD volC 10,135 volP 18,438 P/C 1.82
+12:47:05 | AMD ALARMA PRECIO | AMD toco 499.00 (regla: amd 499 down       confirma 2a pierna AMD target 495) px=498.8300
+12:48:14 | TSM ALARMA PRECIO | TSM toco 405.00 (regla: tsm 405 down       continuacion a 400) px=404.8950
+12:50:06 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 38,873 vs volC 9,767 (P/C 4.0)
+12:50:22 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 7,279 vs volC 837 (P/C 8.7)
+12:50:39 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 18,424 vs volC 5,575 (P/C 3.3)
+12:50:39 | FLUJO OPCIONES: INTC volC 9,767 volP 38,873 P/C 3.98 | MU volC 22,555 volP 42,870 P/C 1.90 | TSM volC 8,632 volP 14,032 P/C 1.63 | SMH volC 837 volP 7,279 P/C 8.70 | QQQ volC 80,285 volP 160,421 P/C 2.00 | NVDA volC 419,545 volP 235,095 P/C 0.56 | AMD volC 5,575 volP 18,424 P/C 3.30
+12:55:06 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 39,298 vs volC 10,345 (P/C 3.8)
+12:55:23 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 7,488 vs volC 1,151 (P/C 6.5)
+12:55:39 | FLUJO OPCIONES: INTC volC 10,345 volP 39,298 P/C 3.80 | MU volC 23,133 volP 43,293 P/C 1.87 | TSM volC 8,741 volP 14,085 P/C 1.61 | SMH volC 1,151 volP 7,488 P/C 6.51 | QQQ volC 102,798 volP 136,872 P/C 1.33 | NVDA volC 424,190 volP 236,477 P/C 0.56 | AMD volC 10,729 volP 19,578 P/C 1.82
+13:00:23 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 7,539 vs volC 1,201 (P/C 6.3)
+13:00:39 | FLUJO OPCIONES: INTC volC 25,488 volP 51,389 P/C 2.02 | MU volC 28,592 volP 44,344 P/C 1.55 | TSM volC 8,788 volP 14,127 P/C 1.61 | SMH volC 1,201 volP 7,539 P/C 6.28 | QQQ volC 113,375 volP 172,697 P/C 1.52 | NVDA volC 429,921 volP 238,398 P/C 0.55 | AMD volC 11,171 volP 19,684 P/C 1.76
+13:05:00 | SKHY TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.62% px 159.24
+13:05:08 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 37,717 vs volC 10,922 (P/C 3.5)
+13:05:24 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 7,594 vs volC 1,211 (P/C 6.3)
+13:05:41 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 19,213 vs volC 6,375 (P/C 3.0)
+13:05:41 | FLUJO OPCIONES: INTC volC 10,922 volP 37,717 P/C 3.45 | MU volC 24,765 volP 44,496 P/C 1.80 | TSM volC 8,876 volP 14,154 P/C 1.59 | SMH volC 1,211 volP 7,594 P/C 6.27 | QQQ volC 87,504 volP 166,248 P/C 1.90 | NVDA volC 436,054 volP 241,128 P/C 0.55 | AMD volC 6,375 volP 19,213 P/C 3.01
+13:10:26 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 7,608 vs volC 1,221 (P/C 6.2)
+13:10:43 | FLUJO OPCIONES: INTC volC 26,299 volP 51,907 P/C 1.97 | MU volC 30,449 volP 45,577 P/C 1.50 | TSM volC 9,002 volP 14,206 P/C 1.58 | SMH volC 1,221 volP 7,608 P/C 6.23 | QQQ volC 117,460 volP 176,047 P/C 1.50 | NVDA volC 440,684 volP 243,715 P/C 0.55 | AMD volC 11,543 volP 20,140 P/C 1.74
+13:15:13 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 40,436 vs volC 11,355 (P/C 3.6)
+13:15:29 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 7,619 vs volC 1,230 (P/C 6.2)
+13:15:45 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 19,715 vs volC 6,673 (P/C 3.0)
+13:15:45 | FLUJO OPCIONES: INTC volC 11,355 volP 40,436 P/C 3.56 | MU volC 25,706 volP 45,284 P/C 1.76 | TSM volC 9,046 volP 14,464 P/C 1.60 | SMH volC 1,230 volP 7,619 P/C 6.19 | QQQ volC 90,161 volP 168,990 P/C 1.87 | NVDA volC 446,467 volP 247,031 P/C 0.55 | AMD volC 6,673 volP 19,715 P/C 2.95
+13:20:13 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 40,793 vs volC 11,552 (P/C 3.5)
+13:20:29 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 7,668 vs volC 1,239 (P/C 6.2)
+13:20:46 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 17,905 vs volC 5,546 (P/C 3.2)
+13:20:46 | FLUJO OPCIONES: INTC volC 11,552 volP 40,793 P/C 3.53 | MU volC 26,489 volP 46,978 P/C 1.77 | TSM volC 9,287 volP 14,505 P/C 1.56 | SMH volC 1,239 volP 7,668 P/C 6.19 | QQQ volC 91,881 volP 171,451 P/C 1.87 | NVDA volC 449,786 volP 248,908 P/C 0.55 | AMD volC 5,546 volP 17,905 P/C 3.23
+13:25:13 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 41,325 vs volC 11,976 (P/C 3.5)
+13:25:29 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 7,836 vs volC 1,208 (P/C 6.5)
+13:25:46 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 18,194 vs volC 5,761 (P/C 3.2)
+13:25:46 | FLUJO OPCIONES: INTC volC 11,976 volP 41,325 P/C 3.45 | MU volC 23,516 volP 45,897 P/C 1.95 | TSM volC 9,314 volP 14,591 P/C 1.57 | SMH volC 1,208 volP 7,836 P/C 6.49 | QQQ volC 93,022 volP 173,926 P/C 1.87 | NVDA volC 451,221 volP 249,953 P/C 0.55 | AMD volC 5,761 volP 18,194 P/C 3.16
+13:30:15 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 41,847 vs volC 12,235 (P/C 3.4)
+13:30:31 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 7,710 vs volC 1,291 (P/C 6.0)
+13:30:48 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 20,718 vs volC 7,411 (P/C 2.8)
+13:30:48 | FLUJO OPCIONES: INTC volC 12,235 volP 41,847 P/C 3.42 | MU volC 33,660 volP 48,861 P/C 1.45 | TSM volC 9,340 volP 14,615 P/C 1.56 | SMH volC 1,291 volP 7,710 P/C 5.97 | QQQ volC 118,892 volP 148,070 P/C 1.25 | NVDA volC 453,417 volP 251,440 P/C 0.55 | AMD volC 7,411 volP 20,718 P/C 2.80
+13:35:15 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 42,193 vs volC 12,453 (P/C 3.4)
+13:35:31 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 7,873 vs volC 1,260 (P/C 6.2)
+13:35:48 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 17,582 vs volC 4,562 (P/C 3.9)
+13:35:48 | FLUJO OPCIONES: INTC volC 12,453 volP 42,193 P/C 3.39 | MU volC 28,961 volP 49,081 P/C 1.69 | TSM volC 9,366 volP 14,633 P/C 1.56 | SMH volC 1,260 volP 7,873 P/C 6.25 | QQQ volC 97,443 volP 183,199 P/C 1.88 | NVDA volC 456,956 volP 252,872 P/C 0.55 | AMD volC 4,562 volP 17,582 P/C 3.85
+13:40:15 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 33,893 vs volC 5,483 (P/C 6.2)
+13:40:16 | QQQ ALARMA PRECIO | QQQ toco 707.10 (regla: qqq 707.1 down     ruptura del doble suelo     QQQ put target 705) px=707.1000
+13:40:23 | INTC ALARMA PRECIO | INTC toco 96.00 (regla: intc 96 down       la torre de 13.3k puts gana) px=95.9700
+13:40:31 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 7,900 vs volC 1,266 (P/C 6.2)
+13:40:48 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 17,968 vs volC 4,783 (P/C 3.8)
+13:40:48 | FLUJO OPCIONES: INTC volC 5,483 volP 33,893 P/C 6.18 | MU volC 29,445 volP 49,454 P/C 1.68 | TSM volC 6,156 volP 13,710 P/C 2.23 | SMH volC 1,266 volP 7,900 P/C 6.24 | QQQ volC 78,405 volP 176,555 P/C 2.25 | NVDA volC 460,217 volP 255,310 P/C 0.55 | AMD volC 4,783 volP 17,968 P/C 3.76
+13:45:17 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 34,273 vs volC 5,658 (P/C 6.1)
+13:45:33 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 7,967 vs volC 884 (P/C 9.0)
+13:45:43 | NVDA ALARMA PRECIO | NVDA toco 206.00 (regla: nvda 206 down      gatillo PUT NVDA target 205 -  202.5) px=205.9800
+13:45:49 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 18,595 vs volC 4,638 (P/C 4.0)
+13:45:49 | FLUJO OPCIONES: INTC volC 5,658 volP 34,273 P/C 6.06 | MU volC 26,309 volP 48,514 P/C 1.84 | TSM volC 6,178 volP 13,865 P/C 2.24 | SMH volC 884 volP 7,967 P/C 9.01 | QQQ volC 81,407 volP 181,930 P/C 2.23 | NVDA volC 378,375 volP 311,702 P/C 0.82 | AMD volC 4,638 volP 18,595 P/C 4.01
+13:50:19 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 34,563 vs volC 5,965 (P/C 5.8)
+13:50:35 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 8,006 vs volC 1,360 (P/C 5.9)
+13:50:51 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 19,264 vs volC 5,770 (P/C 3.3)
+13:50:51 | FLUJO OPCIONES: INTC volC 5,965 volP 34,563 P/C 5.79 | MU volC 28,070 volP 49,158 P/C 1.75 | TSM volC 9,502 volP 14,917 P/C 1.57 | SMH volC 1,360 volP 8,006 P/C 5.89 | QQQ volC 84,193 volP 185,642 P/C 2.20 | NVDA volC 481,176 volP 265,762 P/C 0.55 | AMD volC 5,770 volP 19,264 P/C 3.34
+13:55:21 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 34,836 vs volC 6,461 (P/C 5.4)
+13:55:37 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 8,685 vs volC 907 (P/C 9.6)
+13:55:53 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 19,473 vs volC 5,888 (P/C 3.3)
+13:55:53 | FLUJO OPCIONES: INTC volC 6,461 volP 34,836 P/C 5.39 | MU volC 28,724 volP 49,545 P/C 1.72 | TSM volC 6,283 volP 14,004 P/C 2.23 | SMH volC 907 volP 8,685 P/C 9.58 | QQQ volC 86,771 volP 187,623 P/C 2.16 | NVDA volC 484,659 volP 268,448 P/C 0.55 | AMD volC 5,888 volP 19,473 P/C 3.31
+14:00:23 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 35,248 vs volC 6,656 (P/C 5.3)
+14:00:39 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 8,280 vs volC 1,396 (P/C 5.9)
+14:00:55 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 19,815 vs volC 6,106 (P/C 3.2)
+14:00:55 | FLUJO OPCIONES: INTC volC 6,656 volP 35,248 P/C 5.30 | MU volC 33,316 volP 51,766 P/C 1.55 | TSM volC 6,357 volP 14,304 P/C 2.25 | SMH volC 1,396 volP 8,280 P/C 5.93 | QQQ volC 88,840 volP 190,269 P/C 2.14 | NVDA volC 487,449 volP 270,091 P/C 0.55 | AMD volC 6,106 volP 19,815 P/C 3.25
+14:05:25 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 35,804 vs volC 6,883 (P/C 5.2)
+14:05:41 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 8,314 vs volC 1,513 (P/C 5.5)
+14:05:57 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 19,972 vs volC 6,412 (P/C 3.1)
+14:05:57 | FLUJO OPCIONES: INTC volC 6,883 volP 35,804 P/C 5.20 | MU volC 30,301 volP 50,680 P/C 1.67 | TSM volC 6,434 volP 14,362 P/C 2.23 | SMH volC 1,513 volP 8,314 P/C 5.50 | QQQ volC 90,320 volP 192,571 P/C 2.13 | NVDA volC 490,072 volP 272,150 P/C 0.56 | AMD volC 6,412 volP 19,972 P/C 3.11
+14:10:27 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 45,609 vs volC 15,232 (P/C 3.0)
+14:10:43 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 8,339 vs volC 1,527 (P/C 5.5)
+14:10:59 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 21,062 vs volC 8,248 (P/C 2.6)
+14:10:59 | FLUJO OPCIONES: INTC volC 15,232 volP 45,609 P/C 2.99 | MU volC 34,804 volP 52,510 P/C 1.51 | TSM volC 9,822 volP 15,519 P/C 1.58 | SMH volC 1,527 volP 8,339 P/C 5.46 | QQQ volC 115,222 volP 207,991 P/C 1.81 | NVDA volC 494,395 volP 274,863 P/C 0.56 | AMD volC 8,248 volP 21,062 P/C 2.55
+14:15:27 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 36,373 vs volC 7,524 (P/C 4.8)
+14:15:43 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 8,387 vs volC 1,601 (P/C 5.2)
+14:15:59 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 20,407 vs volC 6,953 (P/C 2.9)
+14:15:59 | FLUJO OPCIONES: INTC volC 7,524 volP 36,373 P/C 4.83 | MU volC 35,681 volP 53,094 P/C 1.49 | TSM volC 6,643 volP 14,739 P/C 2.22 | SMH volC 1,601 volP 8,387 P/C 5.24 | QQQ volC 97,635 volP 199,441 P/C 2.04 | NVDA volC 499,159 volP 277,489 P/C 0.56 | AMD volC 6,953 volP 20,407 P/C 2.93
+14:18:00 | SKHY TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.15% px 155.86
+14:20:28 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 46,157 vs volC 16,248 (P/C 2.8)
+14:20:45 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 8,775 vs volC 1,706 (P/C 5.1)
+14:21:00 | FLUJO OPCIONES: INTC volC 16,248 volP 46,157 P/C 2.84 | MU volC 52,050 volP 55,221 P/C 1.06 | TSM volC 9,980 volP 15,719 P/C 1.58 | SMH volC 1,706 volP 8,775 P/C 5.14 | QQQ volC 124,876 volP 215,242 P/C 1.72 | NVDA volC 502,332 volP 278,393 P/C 0.55 | AMD volC 9,194 volP 21,435 P/C 2.33
+14:25:30 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 46,658 vs volC 16,937 (P/C 2.8)
+14:25:46 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 8,913 vs volC 1,757 (P/C 5.1)
+14:26:03 | FLUJO OPCIONES: INTC volC 16,937 volP 46,658 P/C 2.75 | MU volC 60,794 volP 52,181 P/C 0.86 | TSM volC 10,105 volP 15,746 P/C 1.56 | SMH volC 1,757 volP 8,913 P/C 5.07 | QQQ volC 130,077 volP 217,197 P/C 1.67 | NVDA volC 512,761 volP 279,710 P/C 0.55 | AMD volC 11,448 volP 23,998 P/C 2.10
+14:30:30 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 46,795 vs volC 17,496 (P/C 2.7)
+14:30:46 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 8,999 vs volC 1,831 (P/C 4.9)
+14:31:02 | FLUJO OPCIONES: INTC volC 17,496 volP 46,795 P/C 2.67 | MU volC 49,028 volP 55,067 P/C 1.12 | TSM volC 10,153 volP 15,763 P/C 1.55 | SMH volC 1,831 volP 8,999 P/C 4.91 | QQQ volC 108,993 volP 207,899 P/C 1.91 | NVDA volC 521,042 volP 281,595 P/C 0.54 | AMD volC 9,806 volP 21,644 P/C 2.21
+14:35:32 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 46,911 vs volC 17,675 (P/C 2.7)
+14:35:48 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 9,532 vs volC 1,854 (P/C 5.1)
+14:36:04 | FLUJO OPCIONES: INTC volC 17,675 volP 46,911 P/C 2.65 | MU volC 41,360 volP 56,226 P/C 1.36 | TSM volC 6,867 volP 14,898 P/C 2.17 | SMH volC 1,854 volP 9,532 P/C 5.14 | QQQ volC 110,564 volP 211,362 P/C 1.91 | NVDA volC 523,973 volP 283,096 P/C 0.54 | AMD volC 9,957 volP 21,780 P/C 2.19
+14:40:34 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 47,103 vs volC 17,799 (P/C 2.6)
+14:40:50 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 9,601 vs volC 1,855 (P/C 5.2)
+14:40:56 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 178,472 vs volC 67,445 (P/C 2.6)
+14:41:07 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 21,112 vs volC 8,253 (P/C 2.6)
+14:41:07 | FLUJO OPCIONES: INTC volC 17,799 volP 47,103 P/C 2.65 | MU volC 42,463 volP 56,993 P/C 1.34 | TSM volC 6,888 volP 14,923 P/C 2.17 | SMH volC 1,855 volP 9,601 P/C 5.18 | QQQ volC 67,445 volP 178,472 P/C 2.65 | NVDA volC 527,001 volP 284,469 P/C 0.54 | AMD volC 8,253 volP 21,112 P/C 2.56
+14:45:34 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 47,225 vs volC 18,060 (P/C 2.6)
+14:45:51 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 9,611 vs volC 1,869 (P/C 5.1)
+14:46:10 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 21,214 vs volC 8,350 (P/C 2.5)
+14:46:10 | FLUJO OPCIONES: INTC volC 18,060 volP 47,225 P/C 2.61 | MU volC 43,356 volP 57,457 P/C 1.33 | TSM volC 10,264 volP 15,853 P/C 1.54 | SMH volC 1,869 volP 9,611 P/C 5.14 | QQQ volC 116,876 volP 217,427 P/C 1.86 | NVDA volC 530,084 volP 285,662 P/C 0.54 | AMD volC 8,350 volP 21,214 P/C 2.54
+14:50:36 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 47,473 vs volC 18,223 (P/C 2.6)
+14:50:53 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 9,492 vs volC 1,943 (P/C 4.9)
+14:51:09 | FLUJO OPCIONES: INTC volC 18,223 volP 47,473 P/C 2.61 | MU volC 43,669 volP 57,687 P/C 1.32 | TSM volC 10,281 volP 15,842 P/C 1.54 | SMH volC 1,943 volP 9,492 P/C 4.89 | QQQ volC 118,866 volP 218,865 P/C 1.84 | NVDA volC 535,074 volP 286,782 P/C 0.54 | AMD volC 10,325 volP 23,129 P/C 2.24
+14:55:53 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 9,668 vs volC 1,898 (P/C 5.1)
+14:55:58 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 186,257 vs volC 74,083 (P/C 2.5)
+14:56:09 | 🔔 AMD: FLUJO DE PUTS fuerte hoy — volP 22,388 vs volC 8,704 (P/C 2.6)
+14:56:09 | FLUJO OPCIONES: INTC volC 19,183 volP 47,736 P/C 2.49 | MU volC 39,406 volP 56,475 P/C 1.43 | TSM volC 10,293 volP 15,868 P/C 1.54 | SMH volC 1,898 volP 9,668 P/C 5.09 | QQQ volC 74,083 volP 186,257 P/C 2.51 | NVDA volC 538,344 volP 288,171 P/C 0.54 | AMD volC 8,704 volP 22,388 P/C 2.57
+15:00:55 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 9,729 vs volC 1,926 (P/C 5.1)
+15:01:11 | FLUJO OPCIONES: INTC volC 19,376 volP 47,823 P/C 2.47 | MU volC 44,541 volP 58,299 P/C 1.31 | TSM volC 10,300 volP 15,914 P/C 1.55 | SMH volC 1,926 volP 9,729 P/C 5.05 | QQQ volC 123,998 volP 224,584 P/C 1.81 | NVDA volC 541,091 volP 290,538 P/C 0.54 | AMD volC 10,662 volP 23,342 P/C 2.19
+15:02:46 | NVDA ALARMA PRECIO | NVDA toco 207.60 (regla: nvda 207.6 up      PRE-AVISO power hour: preparate, el 210C se compra en 208.3) px=207.6000
+15:05:55 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 10,313 vs volC 2,029 (P/C 5.1)
+15:06:11 | FLUJO OPCIONES: INTC volC 19,525 volP 47,947 P/C 2.46 | MU volC 45,244 volP 58,586 P/C 1.29 | TSM volC 11,982 volP 17,912 P/C 1.49 | SMH volC 2,029 volP 10,313 P/C 5.08 | QQQ volC 127,255 volP 227,554 P/C 1.79 | NVDA volC 548,240 volP 292,996 P/C 0.53 | AMD volC 10,804 volP 23,433 P/C 2.17
+15:07:39 | 🚨 INTC 104C: QQQ PUT: TOMA GANANCIA — target 705 alcanzado (px 705.23). Vende (o mitad si SMH/NVDA siguen cayendo: siguiente escalon 703) | bid 0.23/ask 0.25 | valor 23 USD | P&L -233 USD (-91%)
+15:10:41 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 50,181 vs volC 19,796 (P/C 2.5)
+15:10:57 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 10,511 vs volC 1,953 (P/C 5.4)
+15:11:13 | FLUJO OPCIONES: INTC volC 19,796 volP 50,181 P/C 2.53 | MU volC 45,514 volP 58,920 P/C 1.29 | TSM volC 10,436 volP 16,752 P/C 1.61 | SMH volC 1,953 volP 10,511 P/C 5.38 | QQQ volC 82,063 volP 196,307 P/C 2.39 | NVDA volC 553,638 volP 295,862 P/C 0.53 | AMD volC 11,125 volP 23,705 P/C 2.13
+15:15:42 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 50,338 vs volC 20,085 (P/C 2.5)
+15:15:59 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 10,217 vs volC 1,967 (P/C 5.2)
+15:16:04 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 186,428 vs volC 61,776 (P/C 3.0)
+15:16:15 | FLUJO OPCIONES: INTC volC 20,085 volP 50,338 P/C 2.51 | MU volC 45,907 volP 59,106 P/C 1.29 | TSM volC 10,474 volP 17,280 P/C 1.65 | SMH volC 1,967 volP 10,217 P/C 5.19 | QQQ volC 61,776 volP 186,428 P/C 3.02 | NVDA volC 558,526 volP 298,594 P/C 0.53 | AMD volC 11,271 volP 23,778 P/C 2.11
+15:21:01 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 10,537 vs volC 1,971 (P/C 5.3)
+15:21:06 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 191,914 vs volC 65,615 (P/C 2.9)
+15:21:17 | FLUJO OPCIONES: INTC volC 20,380 volP 50,447 P/C 2.48 | MU volC 46,223 volP 59,290 P/C 1.28 | TSM volC 10,571 volP 17,639 P/C 1.67 | SMH volC 1,971 volP 10,537 P/C 5.35 | QQQ volC 65,615 volP 191,914 P/C 2.92 | NVDA volC 561,674 volP 299,895 P/C 0.53 | AMD volC 11,369 volP 23,891 P/C 2.10
+15:25:43 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 41,070 vs volC 10,579 (P/C 3.9)
+15:25:59 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 10,694 vs volC 1,984 (P/C 5.4)
+15:26:04 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 194,964 vs volC 68,895 (P/C 2.8)
+15:26:15 | FLUJO OPCIONES: INTC volC 10,579 volP 41,070 P/C 3.88 | MU volC 41,835 volP 58,269 P/C 1.39 | TSM volC 10,588 volP 17,644 P/C 1.67 | SMH volC 1,984 volP 10,694 P/C 5.39 | QQQ volC 68,895 volP 194,964 P/C 2.83 | NVDA volC 567,945 volP 302,356 P/C 0.53 | AMD volC 9,785 volP 23,172 P/C 2.37
+15:30:01 | 🚨 INTC 104C: INTC 101C: 15:30 — cierra HOY (px 96.22); 1 DTE jamas overnight | bid 0.19/ask 0.24 | valor 19 USD | P&L -237 USD (-93%)
+15:30:01 | 🚨 INTC 104C: NVDA PUT: 15:30 — cierra la posicion HOY (px 206.45); jamas overnight con 1 DTE | bid 0.19/ask 0.24 | valor 19 USD | P&L -237 USD (-93%)
+15:30:01 | 🚨 INTC 104C: QQQ PUT: 15:30 — cierra HOY (px 704.18); jamas overnight | bid 0.19/ask 0.24 | valor 19 USD | P&L -237 USD (-93%)
+15:31:01 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 11,276 vs volC 2,106 (P/C 5.4)
+15:31:06 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 199,602 vs volC 74,834 (P/C 2.7)
+15:31:17 | FLUJO OPCIONES: INTC volC 21,048 volP 51,786 P/C 2.46 | MU volC 47,309 volP 60,137 P/C 1.27 | TSM volC 10,627 volP 17,736 P/C 1.67 | SMH volC 2,106 volP 11,276 P/C 5.35 | QQQ volC 74,834 volP 199,602 P/C 2.67 | NVDA volC 575,482 volP 304,908 P/C 0.53 | AMD volC 12,010 volP 24,222 P/C 2.02
+
+========== PLAN DE BATALLA VIERNES 17-JUL (OPEX DAY) — escaneo 15:30 ==========
+CONTEXTO: HOY es viernes de vencimiento del 17-jul. El pin de hoy se repite hasta
+~14:00 y se SUELTA en la ultima hora (dealers dejan de defender strikes muertos).
+Los muros de hoy (OI) son los campos de fuerza de manana... hasta que expiran.
+
+POSICIONAMIENTO (vol hoy -> OI manana):
+NVDA  | pin 205-210: 205P oi27k+143k vol / 210C oi93k+244k vol / 215C oi108k.
+      | 24-jul: P/C 0.28 MUY ALCISTA (215C 35k oi) — la semana que viene apuestan ARRIBA.
+QQQ   | LA BALLENA: 700P 87k vol/46k oi + 705P 59k. P/C 3.35. Apuesta a <=700 MANANA.
+      | 24-jul: P/C 1.06 neutro — la apuesta es puntual de OPEX, no estructural.
+SMH   | P/C 5.85: 560P 10k oi / 555P 9k / 570P 8.2k — escalera bajista completa.
+INTC  | 100P 31k oi (muerto, OTM) / 95P 15k oi vivo. 24-jul P/C 1.10 neutro pre-earnings 23.
+MU    | batalla 850 (straddle 25k+21k vol). 24-jul P/C 2.42 BAJISTA (850P 6.7k oi).
+AMD   | 500 el iman (7k+5k oi). TSM | 400 straddle gigante 15.2k/15.3k oi = pin en 400.
+
+EL PLAN:
+1) 9:30-9:45 NO operar (regla de siempre). Ver donde abre QQQ vs 705/700.
+2) ESCENARIO BAJISTA (la ballena cobra): QQQ abre <705 y SMH <565 -> puts en la
+   confirmacion del opening-range: QQQ target 700 (el iman de 46k), NVDA <205.8
+   target 202.5. Los 46k del 700P + gamma de OPEX aceleran HACIA 700.
+3) ESCENARIO PIN (mas probable si abre plano): QQQ oscila 703-707 hasta 14:00.
+   NO pagar theta en el pin — el 0DTE se compra DESPUES de las 14:00 cuando el
+   pin se suelta: la direccion de la ruptura de 14:00-15:00 es LA jugada del dia.
+4) ESCENARIO ALCISTA (sorpresa): NVDA >208.3 con QQQ >707 -> el 24-jul P/C 0.28
+   dice que el dinero grande espera rebote la semana proxima: calls 210 del 24-jul
+   (no del 0DTE) para no pelear contra el pin.
+5) INTC: NO tocar hasta el earnings 23-jul salvo ruptura de 95 (15k puts detras).
+6) MU: bajista estructural (24-jul P/C 2.42) — put del 24-jul si pierde 850 de nuevo.
+7) Tamano: 1-2 contratos, spreads <5%, 3 perdidas = fin. Acciones: mantener MU 851,
+   limites TSM 405 / ASML 1805 siguen para el tramo 2.
+=================================================================================
+15:36:01 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 11,919 vs volC 2,111 (P/C 5.6)
+15:36:07 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 256,283 vs volC 70,483 (P/C 3.6)
+15:36:18 | FLUJO OPCIONES: INTC volC 21,207 volP 52,139 P/C 2.46 | MU volC 47,633 volP 60,355 P/C 1.27 | TSM volC 10,638 volP 17,759 P/C 1.67 | SMH volC 2,111 volP 11,919 P/C 5.65 | QQQ volC 70,483 volP 256,283 P/C 3.64 | NVDA volC 579,817 volP 306,955 P/C 0.53 | AMD volC 12,398 volP 25,810 P/C 2.08
+15:40:45 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 42,494 vs volC 11,075 (P/C 3.8)
+15:41:02 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 12,306 vs volC 2,139 (P/C 5.8)
+15:41:18 | FLUJO OPCIONES: INTC volC 11,075 volP 42,494 P/C 3.84 | MU volC 48,112 volP 60,754 P/C 1.26 | TSM volC 10,706 volP 17,815 P/C 1.66 | SMH volC 2,139 volP 12,306 P/C 5.75 | QQQ volC 84,719 volP 209,032 P/C 2.47 | NVDA volC 470,299 volP 369,442 P/C 0.79 | AMD volC 14,708 volP 26,916 P/C 1.83
+15:45:47 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 42,597 vs volC 11,671 (P/C 3.6)
+15:46:03 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 13,024 vs volC 2,188 (P/C 6.0)
+
+========== CALENDARIO CATALIZADORES (verificado web 15:40) ==========
+ESTA NOCHE jue 16: NFLX earnings AMC (~16:05, mueve QQQ en AH) + ISRG. CERO semis.
+  Fed Jefferson habla 19:00 ET. NO comprar nada de la flota para el AH.
+MANANA vie 17: OPEX mensual (pin hasta ~14:00). Housing Starts 8:30, UMich 10:00.
+  Sin earnings relevantes. Plan de batalla arriba.
+SEMANA PROXIMA:
+  mar 21: 3M BMO, IBKR AMC.
+  MIE 22 = LA NOCHE DEL NASDAQ: GOOGL + TSLA + TXN + IBM, todos AMC.
+  JUE 23: INTC AMC (call 17:00 ET) — el binario del 18A.
+  vie 24: AXP/SLB BMO; Flash PMIs + New Home Sales (ultimos datos pre-FOMC 28-29).
+  Fed en BLACKOUT desde sab 18 (cero speakers toda la semana).
+  Riesgo titulares export-controls China (H200 minimos, lista compradores recortada).
+IMPLICACION OPCIONES: IV de GOOGL/TSLA/TXN infladas hasta el mie 22 AMC (comprar
+opcion seca = pagar el crush; debit spreads si se juega direccion). INTC idem
+hasta jue 23. TSLA pin 385-400 (113k C / 108k P) se resuelve con su earnings.
+=====================================================================
+15:46:09 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 268,764 vs volC 79,944 (P/C 3.4)
+15:46:19 | FLUJO OPCIONES: INTC volC 11,671 volP 42,597 P/C 3.65 | MU volC 48,657 volP 61,638 P/C 1.27 | TSM volC 11,840 volP 17,959 P/C 1.52 | SMH volC 2,188 volP 13,024 P/C 5.95 | QQQ volC 79,944 volP 268,764 P/C 3.36 | NVDA volC 474,435 volP 372,688 P/C 0.79 | AMD volC 12,740 volP 26,020 P/C 2.04
+15:46:35 | 🚨 INTC 104C: QQQ PUT: VENDE TODO — 703 cumplido (px 703.19) | bid 0.18/ask 0.22 | valor 18 USD | P&L -238 USD (-93%)
+15:49:01 | opt_sentinel ARRANCADO (exit-advisor INTC 104C + flujo put/call flota)
+15:49:06 | 🚨 INTC 104C: INTC 101C: STOP — perdio 100 (px 95.60). VENDE YA | bid 0.17/ask 0.20 | valor 17 USD | P&L -239 USD (-93%)
+15:49:06 | 🚨 INTC 104C: INTC 101C: 15:30 — cierra HOY (px 95.60); 1 DTE jamas overnight | bid 0.17/ask 0.20 | valor 17 USD | P&L -239 USD (-93%)
+15:49:06 | 🚨 INTC 104C: NVDA PUT: 15:30 — cierra la posicion HOY (px 206.08); jamas overnight con 1 DTE | bid 0.17/ask 0.20 | valor 17 USD | P&L -239 USD (-93%)
+15:49:06 | 🚨 INTC 104C: QQQ PUT: TOMA GANANCIA — target 705 alcanzado (px 702.88). Vende (o mitad si SMH/NVDA siguen cayendo: siguiente escalon 703) | bid 0.17/ask 0.20 | valor 17 USD | P&L -239 USD (-93%)
+15:49:06 | 🚨 INTC 104C: QQQ PUT: VENDE TODO — 703 cumplido (px 702.88) | bid 0.17/ask 0.20 | valor 17 USD | P&L -239 USD (-93%)
+15:49:06 | 🚨 INTC 104C: QQQ PUT: 15:30 — cierra HOY (px 702.88); jamas overnight | bid 0.17/ask 0.20 | valor 17 USD | P&L -239 USD (-93%)
+15:49:06 | 🔔 INTC 104C: OPENING RANGE cerrado (9:45):  | bid 0.17/ask 0.20 | valor 17 USD | P&L -239 USD (-93%)
+15:49:11 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 42,754 vs volC 11,629 (P/C 3.7)
+15:49:43 | 🔔 ASML: FLUJO DE PUTS fuerte hoy — volP 337 vs volC 119 (P/C 2.8)
+15:49:48 | 🔔 TXN: FLUJO DE CALLS fuerte hoy — volC 544 vs volP 178 (P/C 0.3)
+15:50:00 | ASML: SIN DATOS IBKR | 120 s sin bars IBKR (ibkr-only, sin fallback) — revisar TWS/daemon ibkr_bar_bridge
+15:50:09 | FLUJO OPCIONES: INTC volC 11,629 volP 42,754 P/C 3.68 | TSM volC 11,886 volP 17,986 P/C 1.51 | NVDA volC 476,234 volP 374,274 P/C 0.79 | AMD volC 12,860 volP 26,408 P/C 2.05 | TSLA volC 338,358 volP 442,635 P/C 1.31 | AAPL volC 551,953 volP 298,533 P/C 0.54 | ASML volC 119 volP 337 P/C 2.83 | TXN volC 544 volP 178 P/C 0.33 | NOK volC 4,902 volP 2,489 P/C 0.51 | DRAM volC 8,579 volP 17,990 P/C 2.10 | SKHY volC 10,680 volP 13,585 P/C 1.27 | SPCX volC 33,094 volP 57,045 P/C 1.72
+15:54:13 | 🔔 INTC: FLUJO DE PUTS fuerte hoy — volP 42,993 vs volC 12,055 (P/C 3.6)
+15:54:29 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 15,142 vs volC 2,411 (P/C 6.3)
+15:55:06 | 🔔 QCOM: FLUJO DE PUTS fuerte hoy — volP 4,361 vs volC 1,714 (P/C 2.5)
+15:55:12 | 🔔 ASML: FLUJO DE PUTS fuerte hoy — volP 342 vs volC 116 (P/C 2.9)
+15:55:17 | 🔔 TXN: FLUJO DE CALLS fuerte hoy — volC 671 vs volP 183 (P/C 0.3)
+15:55:33 | 🔔 SKHY: FLUJO DE PUTS fuerte hoy — volP 16,048 vs volC 3,534 (P/C 4.5)
+15:55:38 | FLUJO OPCIONES: INTC volC 12,055 volP 42,993 P/C 3.57 | MU volC 60,755 volP 61,821 P/C 1.02 | TSM volC 19,770 volP 18,942 P/C 0.96 | SMH volC 2,411 volP 15,142 P/C 6.28 | QQQ volC 104,417 volP 222,940 P/C 2.14 | NVDA volC 603,282 volP 316,784 P/C 0.53 | AMD volC 15,236 volP 27,576 P/C 1.81 | TSLA volC 435,032 volP 397,806 P/C 0.91 | AAPL volC 572,205 volP 273,003 P/C 0.48 | GOOGL volC 18,226 volP 18,087 P/C 0.99 | QCOM volC 1,714 volP 4,361 P/C 2.54 | ASML volC 116 volP 342 P/C 2.95 | TXN volC 671 volP 183 P/C 0.27 | NOK volC 5,094 volP 2,489 P/C 0.49 | DRAM volC 13,635 volP 19,055 P/C 1.40 | SKHY volC 3,534 volP 16,048 P/C 4.54 | SPCX volC 34,990 volP 57,688 P/C 1.65
+15:56:00 | SKHY TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.61% px 152.00
+15:59:30 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 16,329 vs volC 2,681 (P/C 6.1)
+16:00:18 | 🔔 TXN: FLUJO DE CALLS fuerte hoy — volC 543 vs volP 186 (P/C 0.3)
+16:00:32 | 🔔 SKHY: FLUJO DE PUTS fuerte hoy — volP 16,870 vs volC 3,687 (P/C 4.6)
+16:00:38 | FLUJO OPCIONES: INTC volC 50,621 volP 65,281 P/C 1.29 | MU volC 61,658 volP 62,203 P/C 1.01 | TSM volC 20,127 volP 19,139 P/C 0.95 | SMH volC 2,681 volP 16,329 P/C 6.09 | QQQ volC 201,412 volP 268,912 P/C 1.34 | NVDA volC 627,589 volP 320,252 P/C 0.51 | AMD volC 21,996 volP 28,488 P/C 1.30 | TSLA volC 440,845 volP 401,438 P/C 0.91 | AAPL volC 581,553 volP 279,809 P/C 0.48 | GOOGL volC 18,552 volP 18,179 P/C 0.98 | QCOM volC 1,687 volP 3,733 P/C 2.21 | ASML volC 446 volP 619 P/C 1.39 | TXN volC 543 volP 186 P/C 0.34 | NOK volC 5,114 volP 2,519 P/C 0.49 | DRAM volC 9,480 volP 17,946 P/C 1.89 | SKHY volC 3,687 volP 16,870 P/C 4.58 | SPCX volC 32,599 volP 58,216 P/C 1.79
+16:04:31 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 16,393 vs volC 2,759 (P/C 5.9)
+16:05:14 | 🔔 ASML: FLUJO DE PUTS fuerte hoy — volP 348 vs volC 120 (P/C 2.9)
+16:05:20 | 🔔 TXN: FLUJO DE CALLS fuerte hoy — volC 545 vs volP 193 (P/C 0.4)
+16:05:35 | 🔔 SKHY: FLUJO DE PUTS fuerte hoy — volP 16,872 vs volC 3,686 (P/C 4.6)
+16:05:41 | FLUJO OPCIONES: INTC volC 23,432 volP 49,657 P/C 2.12 | MU volC 51,100 volP 62,845 P/C 1.23 | TSM volC 21,144 volP 19,347 P/C 0.92 | SMH volC 2,759 volP 16,393 P/C 5.94 | QQQ volC 144,844 volP 241,968 P/C 1.67 | NVDA volC 631,442 volP 321,748 P/C 0.51 | AMD volC 22,117 volP 28,511 P/C 1.29 | TSLA volC 441,775 volP 401,924 P/C 0.91 | AAPL volC 581,824 volP 280,215 P/C 0.48 | GOOGL volC 18,659 volP 18,199 P/C 0.98 | QCOM volC 1,687 volP 3,734 P/C 2.21 | ASML volC 120 volP 348 P/C 2.90 | TXN volC 545 volP 193 P/C 0.35 | NOK volC 5,118 volP 2,536 P/C 0.50 | DRAM volC 9,481 volP 17,941 P/C 1.89 | SKHY volC 3,686 volP 16,872 P/C 4.58 | SPCX volC 17,520 volP 43,700 P/C 2.49
+16:09:32 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 16,397 vs volC 2,763 (P/C 5.9)
+16:10:15 | 🔔 ASML: FLUJO DE PUTS fuerte hoy — volP 352 vs volC 117 (P/C 3.0)
+16:10:20 | 🔔 TXN: FLUJO DE CALLS fuerte hoy — volC 547 vs volP 197 (P/C 0.4)
+16:10:36 | 🔔 SKHY: FLUJO DE PUTS fuerte hoy — volP 16,870 vs volC 3,687 (P/C 4.6)
+16:10:41 | 🔔 SPCX: FLUJO DE PUTS fuerte hoy — volP 43,707 vs volC 17,382 (P/C 2.5)
+16:10:41 | FLUJO OPCIONES: INTC volC 23,433 volP 49,657 P/C 2.12 | MU volC 61,808 volP 62,368 P/C 1.01 | TSM volC 21,144 volP 19,354 P/C 0.92 | SMH volC 2,763 volP 16,397 P/C 5.93 | QQQ volC 146,341 volP 243,575 P/C 1.66 | NVDA volC 631,441 volP 321,745 P/C 0.51 | AMD volC 22,117 volP 28,513 P/C 1.29 | TSLA volC 441,761 volP 401,929 P/C 0.91 | AAPL volC 581,827 volP 280,178 P/C 0.48 | GOOGL volC 18,659 volP 18,199 P/C 0.98 | QCOM volC 1,688 volP 3,733 P/C 2.21 | ASML volC 117 volP 352 P/C 3.01 | TXN volC 547 volP 197 P/C 0.36 | NOK volC 5,116 volP 2,519 P/C 0.49 | DRAM volC 9,480 volP 17,945 P/C 1.89 | SKHY volC 3,687 volP 16,870 P/C 4.58 | SPCX volC 17,382 volP 43,707 P/C 2.51
+16:14:33 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 16,417 vs volC 2,763 (P/C 5.9)
+16:15:16 | 🔔 ASML: FLUJO DE PUTS fuerte hoy — volP 351 vs volC 118 (P/C 3.0)
+16:15:21 | 🔔 TXN: FLUJO DE CALLS fuerte hoy — volC 544 vs volP 199 (P/C 0.4)
+16:15:37 | 🔔 SKHY: FLUJO DE PUTS fuerte hoy — volP 16,872 vs volC 3,685 (P/C 4.6)
+16:15:42 | FLUJO OPCIONES: INTC volC 23,675 volP 53,417 P/C 2.26 | MU volC 51,101 volP 62,868 P/C 1.23 | TSM volC 21,149 volP 19,354 P/C 0.92 | SMH volC 2,763 volP 16,417 P/C 5.94 | QQQ volC 120,144 volP 236,023 P/C 1.96 | NVDA volC 631,448 volP 321,749 P/C 0.51 | AMD volC 22,116 volP 28,510 P/C 1.29 | TSLA volC 441,768 volP 401,924 P/C 0.91 | AAPL volC 581,822 volP 280,199 P/C 0.48 | GOOGL volC 18,660 volP 18,199 P/C 0.98 | QCOM volC 1,690 volP 3,734 P/C 2.21 | ASML volC 118 volP 351 P/C 2.97 | TXN volC 544 volP 199 P/C 0.37 | NOK volC 5,116 volP 2,536 P/C 0.50 | DRAM volC 9,985 volP 17,940 P/C 1.80 | SKHY volC 3,685 volP 16,872 P/C 4.58 | SPCX volC 17,153 volP 42,039 P/C 2.45
+16:17:34 | opt_sentinel ARRANCADO (exit-advisor INTC 104C + flujo put/call flota)
+16:17:37 | 🚨 INTC 104C: INTC 101C: STOP — perdio 100 (px 96.50). VENDE YA | premium n/d
+16:17:37 | 🚨 INTC 104C: QQQ PUT: TOMA GANANCIA — target 705 alcanzado (px 705.03). Vende (o mitad si SMH/NVDA siguen cayendo: siguiente escalon 703) | premium n/d
+16:17:37 | 🔔 INTC 104C: OPENING RANGE cerrado (9:45):  | premium n/d
+16:17:59 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 16,705 vs volC 2,674 (P/C 6.2)
+16:18:42 | 🔔 ASML: FLUJO DE PUTS fuerte hoy — volP 349 vs volC 118 (P/C 3.0)
+16:18:48 | 🔔 TXN: FLUJO DE CALLS fuerte hoy — volC 545 vs volP 186 (P/C 0.3)
+16:19:04 | 🔔 SKHY: FLUJO DE PUTS fuerte hoy — volP 16,872 vs volC 3,686 (P/C 4.6)
+16:19:09 | FLUJO OPCIONES: INTC volC 23,681 volP 53,416 P/C 2.26 | MU volC 51,102 volP 62,867 P/C 1.23 | TSM volC 21,148 volP 19,346 P/C 0.91 | SMH volC 2,674 volP 16,705 P/C 6.25 | QQQ volC 148,993 volP 245,362 P/C 1.65 | NVDA volC 631,444 volP 321,750 P/C 0.51 | AMD volC 22,115 volP 28,512 P/C 1.29 | TSLA volC 441,774 volP 401,948 P/C 0.91 | AAPL volC 581,821 volP 280,216 P/C 0.48 | GOOGL volC 18,659 volP 18,199 P/C 0.98 | QCOM volC 1,689 volP 3,735 P/C 2.21 | ASML volC 118 volP 349 P/C 2.96 | TXN volC 545 volP 186 P/C 0.34 | NOK volC 5,118 volP 2,536 P/C 0.50 | DRAM volC 9,986 volP 17,934 P/C 1.80 | SKHY volC 3,686 volP 16,872 P/C 4.58 | SPCX volC 32,743 volP 58,218 P/C 1.78
+16:23:01 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 16,423 vs volC 2,762 (P/C 5.9)
+16:23:43 | 🔔 ASML: FLUJO DE PUTS fuerte hoy — volP 348 vs volC 120 (P/C 2.9)
+16:23:48 | 🔔 TXN: FLUJO DE CALLS fuerte hoy — volC 547 vs volP 188 (P/C 0.3)
+16:24:04 | 🔔 SKHY: FLUJO DE PUTS fuerte hoy — volP 16,872 vs volC 3,684 (P/C 4.6)
+16:24:09 | FLUJO OPCIONES: INTC volC 23,683 volP 53,417 P/C 2.26 | MU volC 51,099 volP 62,868 P/C 1.23 | TSM volC 21,143 volP 19,363 P/C 0.92 | SMH volC 2,762 volP 16,423 P/C 5.95 | QQQ volC 148,989 volP 245,354 P/C 1.65 | NVDA volC 631,441 volP 321,745 P/C 0.51 | AMD volC 22,117 volP 28,501 P/C 1.29 | TSLA volC 441,766 volP 401,928 P/C 0.91 | AAPL volC 581,821 volP 280,216 P/C 0.48 | GOOGL volC 18,660 volP 18,200 P/C 0.98 | QCOM volC 1,686 volP 3,732 P/C 2.21 | ASML volC 120 volP 348 P/C 2.90 | TXN volC 547 volP 188 P/C 0.34 | NOK volC 5,116 volP 2,519 P/C 0.49 | DRAM volC 9,985 volP 17,940 P/C 1.80 | SKHY volC 3,684 volP 16,872 P/C 4.58 | SPCX volC 32,590 volP 58,213 P/C 1.79
+16:26:35 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.62% px 59.15
+16:26:35 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.42% px 559.60
+16:26:35 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.74% px 1792.95
+16:26:35 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.48% px 552.69
+16:26:35 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.52% px 59.73
+16:26:35 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.28% px 1752.49
+16:26:35 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.44% px 60.66
+16:26:35 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.21% px 566.65
+16:26:35 | WARMUP AMD: SELL | AMD @ 554.39 | prob 56% | rompe-TL-1m-abajo+vol-1.8x+MACD15-rojo+ST5-alineado+bajo-VWAP+retest-ok | fase=UNKNOWN
+16:26:35 | WARMUP ASML: BUY | COMPRAR ASML @ 1760.13 | reversal a alza | entrada 1790.19 | mov +1.7%
+16:26:35 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.86% px 60.09
+16:26:35 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.97% px 60.42
+16:26:35 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.01% px 550.20
+16:26:35 | WARMUP ASML: BUY | COMPRAR ASML @ 1760.13 | target 1900.94 | floor 1777.73 | capitulacion confirmada
+16:26:35 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.51% px 61.32
+16:26:35 | WARMUP AMD: SELL | AMD @ 547.01 | prob 56% | rompe-TL-1m-abajo+vol-2.4x+MACD15-rojo+ST5-alineado+bajo-VWAP+retest-ok | fase=UNKNOWN
+16:26:35 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.52% px 60.67
+16:26:35 | WARMUP ASML: SELL | VENDER ASML @ 1778.00 | trail 3xATR roto | entrada 1760.13 | PnL +1.0%
+16:26:35 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.28% px 541.83
+16:26:35 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.50% px 517.99
+16:26:35 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.70% px 61.70
+16:26:35 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.01% px 525.89
+16:26:35 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.68% px 61.26
+16:26:35 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.89% px 512.00
+16:26:35 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.51% px 60.34
+16:26:35 | WARMUP AMD: SELL | AMD @ 507.11 | prob 56% | rompe-TL-1m-abajo+vol-1.7x+ST5-alineado+ribbon15-bajista+bajo-VWAP+retest-ok | fase=UNKNOWN
+16:26:35 | WARMUP AMD: SELL | AMD @ 508.73 | prob 64% | rebote-49%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=UNKNOWN
+16:26:35 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.64% px 59.82
+16:26:35 | WARMUP AMD: SELL | AMD @ 504.34 | prob 56% | rompe-TL-1m-abajo+vol-3.2x+MACD15-rojo+ST5-alineado+ribbon15-bajista+retest-ok | fase=UNKNOWN
+16:26:35 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.49% px 56.74
+16:26:35 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.04% px 501.91
+16:26:35 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.53% px 56.30
+16:26:35 | WARMUP AMD: SELL | AMD @ 496.50 | prob 64% | rebote-8%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=UNKNOWN
+16:26:35 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.73% px 55.98
+16:26:35 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.91% px 57.61
+16:26:35 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.53% px 56.90
+16:26:35 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.57% px 56.75
+16:26:35 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.49% px 54.26
+16:26:35 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.93% px 53.34
+16:26:35 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.98% px 53.61
+16:26:35 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.80% px 53.41
+16:26:35 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.63% px 52.91
+16:26:35 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.56% px 52.16
+16:26:35 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.56% px 52.00
+16:26:36 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.09% px 208.50
+16:26:36 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.30% px 213.22
+16:26:36 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.00% px 209.12
+16:26:36 | WARMUP NVDA: SELL | NVDA @ 208.49 | prob 59% | rebote-9%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=TREND_DOWN
+16:26:36 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.03% px 210.41
+16:26:36 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.20% px 12.08
+16:26:36 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.10% px 423.99
+16:26:36 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.11% px 11.71
+16:26:36 | WARMUP NOK: BUY | COMPRAR NOK @ 11.72 | reversal a alza | entrada 10.63 | mov -9.3%
+16:26:36 | WARMUP NOK: BUY | COMPRAR NOK @ 11.72 | target 12.66 | floor 11.84 | capitulacion confirmada
+16:26:36 | WARMUP TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.20% px 428.45
+16:26:36 | WARMUP NOK: SELL | VENDER NOK @ 11.56 | time-stop (no revirtio) | entrada 11.72 | PnL -1.4%
+16:26:36 | WARMUP TSLA: BUY | COMPRAR TSLA @ 400.54 | reversal a alza | entrada 387.36 | mov -3.3%
+16:26:36 | WARMUP TSLA: BUY | COMPRAR TSLA @ 400.54 | target 412.56 | floor 400.94 | capitulacion confirmada
+16:26:36 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.23% px 418.99
+16:26:36 | WARMUP TSLA: SELL (STOP) | VENDER TSLA @ 395.48 | HARD STOP | entrada 400.54 | PnL -1.3%
+16:26:36 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.05% px 208.21
+16:26:36 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.02% px 412.46
+16:26:36 | WARMUP TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.06% px 419.44
+16:26:36 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.50% px 400.00
+16:26:36 | WARMUP TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.08% px 406.16
+16:26:36 | WARMUP TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.99% px 415.70
+16:26:36 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.08% px 407.16
+16:28:01 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 16,415 vs volC 2,760 (P/C 5.9)
+16:28:44 | 🔔 ASML: FLUJO DE PUTS fuerte hoy — volP 348 vs volC 117 (P/C 3.0)
+16:28:59 | 🔔 SKHY: FLUJO DE PUTS fuerte hoy — volP 16,872 vs volC 3,687 (P/C 4.6)
+16:29:05 | FLUJO OPCIONES: INTC volC 23,679 volP 53,416 P/C 2.26 | MU volC 61,809 volP 62,370 P/C 1.01 | TSM volC 21,148 volP 19,356 P/C 0.92 | SMH volC 2,760 volP 16,415 P/C 5.95 | QQQ volC 148,981 volP 245,348 P/C 1.65 | NVDA volC 631,451 volP 321,746 P/C 0.51 | AMD volC 22,116 volP 28,499 P/C 1.29 | TSLA volC 441,774 volP 401,928 P/C 0.91 | AAPL volC 581,821 volP 280,216 P/C 0.48 | GOOGL volC 18,659 volP 18,200 P/C 0.98 | QCOM volC 1,686 volP 3,732 P/C 2.21 | ASML volC 117 volP 348 P/C 2.97 | NOK volC 5,116 volP 2,519 P/C 0.49 | DRAM volC 9,487 volP 17,939 P/C 1.89 | SKHY volC 3,687 volP 16,872 P/C 4.58 | SPCX volC 32,600 volP 58,201 P/C 1.79
+16:32:39 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.62% px 59.15
+16:32:39 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.42% px 559.60
+16:32:39 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.52% px 59.73
+16:32:39 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.48% px 552.69
+16:32:39 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.21% px 566.65
+16:32:39 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.44% px 60.66
+16:32:39 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.86% px 60.09
+16:32:39 | WARMUP AMD: SELL | AMD @ 554.39 | prob 56% | rompe-TL-1m-abajo+vol-1.8x+MACD15-rojo+ST5-alineado+bajo-VWAP+retest-ok | fase=UNKNOWN
+16:32:39 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.01% px 550.20
+16:32:39 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.97% px 60.42
+16:32:39 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.51% px 61.32
+16:32:39 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.52% px 60.67
+16:32:39 | WARMUP AMD: SELL | AMD @ 547.01 | prob 56% | rompe-TL-1m-abajo+vol-2.4x+MACD15-rojo+ST5-alineado+bajo-VWAP+retest-ok | fase=UNKNOWN
+16:32:39 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.28% px 541.83
+16:32:39 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.50% px 517.99
+16:32:39 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.70% px 61.70
+16:32:39 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.01% px 525.89
+16:32:39 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.68% px 61.26
+16:32:39 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.89% px 512.00
+16:32:39 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.51% px 60.34
+16:32:39 | WARMUP AMD: SELL | AMD @ 507.11 | prob 56% | rompe-TL-1m-abajo+vol-1.7x+ST5-alineado+ribbon15-bajista+bajo-VWAP+retest-ok | fase=UNKNOWN
+16:32:39 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.64% px 59.82
+16:32:39 | WARMUP AMD: SELL | AMD @ 508.73 | prob 64% | rebote-49%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=UNKNOWN
+16:32:39 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.49% px 56.74
+16:32:39 | WARMUP AMD: SELL | AMD @ 504.34 | prob 56% | rompe-TL-1m-abajo+vol-3.2x+MACD15-rojo+ST5-alineado+ribbon15-bajista+retest-ok | fase=UNKNOWN
+16:32:39 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.04% px 501.91
+16:32:39 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.53% px 56.30
+16:32:39 | WARMUP AMD: SELL | AMD @ 496.50 | prob 64% | rebote-8%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=UNKNOWN
+16:32:39 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.73% px 55.98
+16:32:39 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.91% px 57.61
+16:32:39 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.53% px 56.90
+16:32:39 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.57% px 56.75
+16:32:39 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.49% px 54.26
+16:32:39 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.93% px 53.34
+16:32:39 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.98% px 53.61
+16:32:39 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.80% px 53.41
+16:32:39 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.63% px 52.91
+16:32:39 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.56% px 52.16
+16:32:39 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.56% px 52.00
+16:32:39 | WARMUP TSLA: BUY | COMPRAR TSLA @ 400.54 | reversal a alza | entrada 387.56 | mov -3.2%
+16:32:39 | WARMUP QQQ TERREMOTO ALZA | CUSUM: subiendo fuerte +1.16% px 722.34
+16:32:39 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.10% px 423.99
+16:32:39 | WARMUP TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.20% px 428.45
+16:32:39 | WARMUP TSLA: BUY | COMPRAR TSLA @ 400.54 | target 412.56 | floor 400.94 | capitulacion confirmada
+16:32:39 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.09% px 208.50
+16:32:39 | WARMUP TSLA: SELL (STOP) | VENDER TSLA @ 395.48 | HARD STOP | entrada 400.54 | PnL -1.3%
+16:32:39 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.23% px 418.99
+16:32:39 | WARMUP QQQ TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.01% px 715.25
+16:32:39 | WARMUP QQQ: BUY | QQQ @ 721.76 | prob 56% | rompe-OR-arriba+vol-1.6x+MACD15-verde+ST5-alineado+ribbon15-alcista+breakaway | fase=UNKNOWN
+16:32:39 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.02% px 412.46
+16:32:39 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.30% px 213.22
+16:32:39 | WARMUP TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.06% px 419.44
+16:32:39 | WARMUP QQQ: BUY | QQQ @ 720.70 | prob 55% | BB-2TF-abajo+RSI-39-sube+ST5-alineado+ribbon15-alcista+sobre-VWAP | fase=UNKNOWN
+16:32:39 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.00% px 209.12
+16:32:39 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.50% px 400.00
+16:32:39 | WARMUP QQQ TERREMOTO ALZA | CUSUM: subiendo fuerte +1.41% px 725.25
+16:32:39 | WARMUP NVDA: SELL | NVDA @ 208.49 | prob 59% | rebote-9%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=TREND_DOWN
+16:32:39 | WARMUP QQQ TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.05% px 717.70
+16:32:39 | WARMUP TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.08% px 406.16
+16:32:39 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.03% px 210.41
+16:32:39 | WARMUP QQQ TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.02% px 710.90
+16:32:39 | WARMUP TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.99% px 415.70
+16:32:39 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.08% px 407.16
+16:32:39 | WARMUP QQQ: BUY | COMPRAR QQQ @ 715.76 | reversal a alza | entrada 704.12 | mov -1.6%
+16:32:39 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.05% px 208.21
+16:32:39 | WARMUP QQQ: BUY | COMPRAR QQQ @ 715.76 | target 719.34 | floor 716.48 | capitulacion confirmada
+16:32:39 | WARMUP QQQ TERREMOTO ALZA | CUSUM: subiendo fuerte +1.01% px 717.63
+16:32:39 | WARMUP QQQ: SELL | VENDER QQQ @ 717.41 | trail 3xATR roto | entrada 715.76 | PnL +0.2%
+16:33:02 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 16,411 vs volC 2,782 (P/C 5.9)
+16:33:45 | 🔔 ASML: FLUJO DE PUTS fuerte hoy — volP 349 vs volC 121 (P/C 2.9)
+16:34:00 | 🔔 SKHY: FLUJO DE PUTS fuerte hoy — volP 16,872 vs volC 3,685 (P/C 4.6)
+16:34:06 | FLUJO OPCIONES: INTC volC 23,680 volP 53,418 P/C 2.26 | MU volC 51,100 volP 62,869 P/C 1.23 | TSM volC 21,142 volP 19,361 P/C 0.92 | SMH volC 2,782 volP 16,411 P/C 5.90 | QQQ volC 120,961 volP 236,328 P/C 1.95 | NVDA volC 631,447 volP 321,742 P/C 0.51 | AMD volC 22,116 volP 28,511 P/C 1.29 | TSLA volC 441,768 volP 401,947 P/C 0.91 | AAPL volC 581,821 volP 280,216 P/C 0.48 | GOOGL volC 18,660 volP 18,199 P/C 0.98 | QCOM volC 1,685 volP 3,734 P/C 2.22 | ASML volC 121 volP 349 P/C 2.88 | NOK volC 5,118 volP 2,519 P/C 0.49 | DRAM volC 9,988 volP 17,945 P/C 1.80 | SKHY volC 3,685 volP 16,872 P/C 4.58 | SPCX volC 32,738 volP 58,200 P/C 1.78
+16:38:04 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 16,420 vs volC 2,759 (P/C 6.0)
+16:38:46 | 🔔 ASML: FLUJO DE PUTS fuerte hoy — volP 351 vs volC 117 (P/C 3.0)
+16:38:52 | 🔔 TXN: FLUJO DE CALLS fuerte hoy — volC 546 vs volP 193 (P/C 0.4)
+16:39:07 | 🔔 SKHY: FLUJO DE PUTS fuerte hoy — volP 16,874 vs volC 3,685 (P/C 4.6)
+16:39:13 | FLUJO OPCIONES: INTC volC 23,683 volP 53,416 P/C 2.26 | MU volC 61,810 volP 62,373 P/C 1.01 | TSM volC 21,142 volP 19,359 P/C 0.92 | SMH volC 2,759 volP 16,420 P/C 5.95 | QQQ volC 148,995 volP 245,357 P/C 1.65 | NVDA volC 631,441 volP 321,742 P/C 0.51 | AMD volC 22,117 volP 28,509 P/C 1.29 | TSLA volC 441,785 volP 401,928 P/C 0.91 | AAPL volC 581,821 volP 280,216 P/C 0.48 | GOOGL volC 18,660 volP 18,199 P/C 0.98 | QCOM volC 1,688 volP 3,735 P/C 2.21 | ASML volC 117 volP 351 P/C 3.00 | TXN volC 546 volP 193 P/C 0.35 | NOK volC 5,116 volP 2,536 P/C 0.50 | DRAM volC 9,479 volP 17,941 P/C 1.89 | SKHY volC 3,685 volP 16,874 P/C 4.58 | SPCX volC 32,602 volP 58,208 P/C 1.79
+16:43:04 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 16,417 vs volC 2,786 (P/C 5.9)
+16:43:57 | 🔔 SKHY: FLUJO DE PUTS fuerte hoy — volP 16,872 vs volC 3,684 (P/C 4.6)
+16:44:02 | FLUJO OPCIONES: INTC volC 23,682 volP 53,416 P/C 2.26 | MU volC 61,807 volP 62,373 P/C 1.01 | TSM volC 21,147 volP 19,353 P/C 0.92 | SMH volC 2,786 volP 16,417 P/C 5.89 | QQQ volC 148,990 volP 245,355 P/C 1.65 | NVDA volC 631,444 volP 321,745 P/C 0.51 | AMD volC 22,115 volP 28,503 P/C 1.29 | TSLA volC 441,775 volP 401,946 P/C 0.91 | AAPL volC 581,821 volP 280,216 P/C 0.48 | GOOGL volC 18,660 volP 18,199 P/C 0.98 | QCOM volC 1,688 volP 3,733 P/C 2.21 | NOK volC 5,118 volP 2,536 P/C 0.50 | DRAM volC 9,984 volP 17,939 P/C 1.80 | SKHY volC 3,684 volP 16,872 P/C 4.58 | SPCX volC 32,593 volP 58,207 P/C 1.79
+16:48:06 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 16,419 vs volC 2,784 (P/C 5.9)
+16:48:49 | 🔔 ASML: FLUJO DE PUTS fuerte hoy — volP 348 vs volC 118 (P/C 2.9)
+16:48:54 | 🔔 TXN: FLUJO DE CALLS fuerte hoy — volC 670 vs volP 196 (P/C 0.3)
+16:49:10 | 🔔 SKHY: FLUJO DE PUTS fuerte hoy — volP 16,870 vs volC 3,685 (P/C 4.6)
+16:49:15 | FLUJO OPCIONES: INTC volC 23,681 volP 53,417 P/C 2.26 | MU volC 61,809 volP 62,362 P/C 1.01 | TSM volC 21,149 volP 19,353 P/C 0.92 | SMH volC 2,784 volP 16,419 P/C 5.90 | QQQ volC 120,966 volP 236,313 P/C 1.95 | NVDA volC 631,449 volP 321,744 P/C 0.51 | AMD volC 22,120 volP 28,499 P/C 1.29 | TSLA volC 441,757 volP 401,924 P/C 0.91 | AAPL volC 581,821 volP 280,216 P/C 0.48 | GOOGL volC 18,660 volP 18,199 P/C 0.98 | QCOM volC 1,689 volP 3,733 P/C 2.21 | ASML volC 118 volP 348 P/C 2.95 | TXN volC 670 volP 196 P/C 0.29 | NOK volC 5,116 volP 2,519 P/C 0.49 | DRAM volC 14,397 volP 19,192 P/C 1.33 | SKHY volC 3,685 volP 16,870 P/C 4.58 | SPCX volC 32,600 volP 58,218 P/C 1.79
+16:53:07 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 16,416 vs volC 2,793 (P/C 5.9)
+16:53:50 | 🔔 ASML: FLUJO DE PUTS fuerte hoy — volP 351 vs volC 118 (P/C 3.0)
+16:54:10 | FLUJO OPCIONES: INTC volC 23,674 volP 53,418 P/C 2.26 | MU volC 61,811 volP 62,361 P/C 1.01 | TSM volC 21,149 volP 19,356 P/C 0.92 | SMH volC 2,793 volP 16,416 P/C 5.88 | QQQ volC 120,963 volP 236,326 P/C 1.95 | NVDA volC 631,451 volP 321,745 P/C 0.51 | AMD volC 22,115 volP 28,501 P/C 1.29 | TSLA volC 441,761 volP 401,945 P/C 0.91 | AAPL volC 581,822 volP 280,203 P/C 0.48 | GOOGL volC 18,659 volP 18,200 P/C 0.98 | QCOM volC 1,688 volP 3,733 P/C 2.21 | ASML volC 118 volP 351 P/C 2.97 | NOK volC 5,118 volP 2,519 P/C 0.49 | DRAM volC 14,890 volP 19,184 P/C 1.29 | SKHY volC 3,331 volP 7,589 P/C 2.28 | SPCX volC 32,602 volP 58,209 P/C 1.79
+16:58:01 | SKHY TERREMOTO ALZA | CUSUM: subiendo fuerte +2.05% px 154.72
+16:58:08 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 16,415 vs volC 2,790 (P/C 5.9)
+16:58:51 | 🔔 TXN: FLUJO DE CALLS fuerte hoy — volC 546 vs volP 188 (P/C 0.3)
+16:59:06 | 🔔 SKHY: FLUJO DE PUTS fuerte hoy — volP 16,870 vs volC 3,685 (P/C 4.6)
+16:59:12 | FLUJO OPCIONES: INTC volC 23,679 volP 53,418 P/C 2.26 | MU volC 69,684 volP 63,285 P/C 0.91 | TSM volC 20,158 volP 19,123 P/C 0.95 | SMH volC 2,790 volP 16,415 P/C 5.88 | QQQ volC 120,969 volP 236,320 P/C 1.95 | NVDA volC 631,452 volP 321,747 P/C 0.51 | AMD volC 22,119 volP 28,499 P/C 1.29 | TSLA volC 441,778 volP 401,924 P/C 0.91 | AAPL volC 581,826 volP 280,183 P/C 0.48 | GOOGL volC 18,660 volP 18,199 P/C 0.98 | QCOM volC 1,690 volP 3,734 P/C 2.21 | TXN volC 546 volP 188 P/C 0.34 | NOK volC 5,118 volP 2,536 P/C 0.50 | DRAM volC 13,322 volP 18,055 P/C 1.36 | SKHY volC 3,685 volP 16,870 P/C 4.58 | SPCX volC 32,586 volP 58,198 P/C 1.79
+17:03:09 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 16,410 vs volC 2,772 (P/C 5.9)
+17:03:52 | 🔔 TXN: FLUJO DE CALLS fuerte hoy — volC 547 vs volP 193 (P/C 0.4)
+17:04:08 | 🔔 SKHY: FLUJO DE PUTS fuerte hoy — volP 16,872 vs volC 3,686 (P/C 4.6)
+17:04:13 | FLUJO OPCIONES: INTC volC 23,681 volP 53,419 P/C 2.26 | MU volC 61,813 volP 62,370 P/C 1.01 | TSM volC 20,154 volP 19,126 P/C 0.95 | SMH volC 2,772 volP 16,410 P/C 5.92 | QQQ volC 148,988 volP 245,358 P/C 1.65 | NVDA volC 631,441 volP 321,750 P/C 0.51 | AMD volC 22,117 volP 28,500 P/C 1.29 | TSLA volC 441,758 volP 401,946 P/C 0.91 | AAPL volC 581,819 volP 280,215 P/C 0.48 | GOOGL volC 18,660 volP 18,199 P/C 0.98 | QCOM volC 1,690 volP 3,732 P/C 2.21 | TXN volC 547 volP 193 P/C 0.35 | NOK volC 5,118 volP 2,536 P/C 0.50 | DRAM volC 13,818 volP 18,053 P/C 1.31 | SKHY volC 3,686 volP 16,872 P/C 4.58 | SPCX volC 32,592 volP 58,213 P/C 1.79
+17:08:11 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 16,410 vs volC 2,773 (P/C 5.9)
+17:08:53 | 🔔 ASML: FLUJO DE PUTS fuerte hoy — volP 351 vs volC 120 (P/C 2.9)
+17:09:08 | 🔔 SKHY: FLUJO DE PUTS fuerte hoy — volP 16,872 vs volC 3,685 (P/C 4.6)
+17:09:14 | FLUJO OPCIONES: INTC volC 23,678 volP 53,417 P/C 2.26 | MU volC 61,808 volP 62,373 P/C 1.01 | TSM volC 20,162 volP 19,134 P/C 0.95 | SMH volC 2,773 volP 16,410 P/C 5.92 | QQQ volC 120,968 volP 236,332 P/C 1.95 | NVDA volC 631,441 volP 321,750 P/C 0.51 | AMD volC 16,006 volP 27,929 P/C 1.74 | TSLA volC 441,777 volP 401,947 P/C 0.91 | AAPL volC 581,820 volP 280,217 P/C 0.48 | GOOGL volC 18,660 volP 18,199 P/C 0.98 | QCOM volC 1,687 volP 3,732 P/C 2.21 | ASML volC 120 volP 351 P/C 2.92 | NOK volC 5,116 volP 2,519 P/C 0.49 | DRAM volC 13,814 volP 18,056 P/C 1.31 | SKHY volC 3,685 volP 16,872 P/C 4.58 | SPCX volC 32,588 volP 58,214 P/C 1.79
+17:13:11 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 16,420 vs volC 2,772 (P/C 5.9)
+17:13:54 | 🔔 ASML: FLUJO DE PUTS fuerte hoy — volP 351 vs volC 117 (P/C 3.0)
+17:13:59 | 🔔 TXN: FLUJO DE CALLS fuerte hoy — volC 548 vs volP 194 (P/C 0.4)
+17:14:20 | FLUJO OPCIONES: INTC volC 23,681 volP 53,417 P/C 2.26 | MU volC 69,685 volP 63,285 P/C 0.91 | TSM volC 20,159 volP 19,123 P/C 0.95 | SMH volC 2,772 volP 16,420 P/C 5.92 | QQQ volC 120,961 volP 236,327 P/C 1.95 | NVDA volC 631,441 volP 321,750 P/C 0.51 | AMD volC 16,008 volP 27,941 P/C 1.75 | TSLA volC 441,771 volP 401,945 P/C 0.91 | AAPL volC 581,829 volP 280,201 P/C 0.48 | GOOGL volC 18,660 volP 18,199 P/C 0.98 | QCOM volC 1,688 volP 3,734 P/C 2.21 | ASML volC 117 volP 351 P/C 3.00 | TXN volC 548 volP 194 P/C 0.35 | NOK volC 5,116 volP 2,536 P/C 0.50 | DRAM volC 14,389 volP 19,191 P/C 1.33 | SKHY volC 3,331 volP 7,591 P/C 2.28 | SPCX volC 32,742 volP 58,209 P/C 1.78
+17:18:12 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 16,410 vs volC 2,762 (P/C 5.9)
+17:18:55 | 🔔 ASML: FLUJO DE PUTS fuerte hoy — volP 348 vs volC 121 (P/C 2.9)
+17:19:00 | 🔔 TXN: FLUJO DE CALLS fuerte hoy — volC 545 vs volP 178 (P/C 0.3)
+17:19:21 | FLUJO OPCIONES: INTC volC 23,676 volP 53,419 P/C 2.26 | MU volC 69,684 volP 63,309 P/C 0.91 | TSM volC 20,158 volP 19,130 P/C 0.95 | SMH volC 2,762 volP 16,410 P/C 5.94 | QQQ volC 148,988 volP 245,371 P/C 1.65 | NVDA volC 631,441 volP 321,750 P/C 0.51 | AMD volC 16,009 volP 27,930 P/C 1.74 | TSLA volC 441,749 volP 401,946 P/C 0.91 | AAPL volC 581,824 volP 280,195 P/C 0.48 | GOOGL volC 18,660 volP 18,199 P/C 0.98 | QCOM volC 1,688 volP 3,734 P/C 2.21 | ASML volC 121 volP 348 P/C 2.88 | TXN volC 545 volP 178 P/C 0.33 | NOK volC 5,118 volP 2,519 P/C 0.49 | DRAM volC 14,398 volP 19,192 P/C 1.33 | SKHY volC 3,331 volP 7,589 P/C 2.28 | SPCX volC 32,740 volP 58,217 P/C 1.78
+17:23:13 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 16,411 vs volC 2,761 (P/C 5.9)
+17:23:56 | 🔔 ASML: FLUJO DE PUTS fuerte hoy — volP 348 vs volC 118 (P/C 2.9)
+17:24:16 | FLUJO OPCIONES: INTC volC 23,675 volP 53,417 P/C 2.26 | MU volC 61,809 volP 62,374 P/C 1.01 | TSM volC 20,161 volP 19,126 P/C 0.95 | SMH volC 2,761 volP 16,411 P/C 5.94 | QQQ volC 148,989 volP 245,367 P/C 1.65 | NVDA volC 631,441 volP 321,750 P/C 0.51 | AMD volC 16,009 volP 27,942 P/C 1.75 | TSLA volC 441,765 volP 401,945 P/C 0.91 | AAPL volC 581,825 volP 280,183 P/C 0.48 | GOOGL volC 18,660 volP 18,199 P/C 0.98 | QCOM volC 1,684 volP 3,735 P/C 2.22 | ASML volC 118 volP 348 P/C 2.95 | NOK volC 5,118 volP 2,519 P/C 0.49 | DRAM volC 14,398 volP 19,190 P/C 1.33 | SKHY volC 12,828 volP 13,765 P/C 1.07 | SPCX volC 32,590 volP 58,218 P/C 1.79
+17:28:14 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 16,424 vs volC 2,793 (P/C 5.9)
+17:28:56 | 🔔 ASML: FLUJO DE PUTS fuerte hoy — volP 352 vs volC 121 (P/C 2.9)
+17:29:02 | 🔔 TXN: FLUJO DE CALLS fuerte hoy — volC 544 vs volP 193 (P/C 0.4)
+17:29:23 | FLUJO OPCIONES: INTC volC 23,675 volP 53,419 P/C 2.26 | MU volC 69,683 volP 63,310 P/C 0.91 | TSM volC 20,154 volP 19,126 P/C 0.95 | SMH volC 2,793 volP 16,424 P/C 5.88 | QQQ volC 148,994 volP 245,361 P/C 1.65 | NVDA volC 631,441 volP 321,750 P/C 0.51 | AMD volC 22,115 volP 28,499 P/C 1.29 | TSLA volC 441,760 volP 401,947 P/C 0.91 | AAPL volC 581,827 volP 280,195 P/C 0.48 | GOOGL volC 18,660 volP 18,199 P/C 0.98 | QCOM volC 1,686 volP 3,732 P/C 2.21 | ASML volC 121 volP 352 P/C 2.91 | TXN volC 544 volP 193 P/C 0.35 | NOK volC 5,116 volP 2,536 P/C 0.50 | DRAM volC 13,812 volP 18,061 P/C 1.31 | SKHY volC 12,704 volP 13,766 P/C 1.08 | SPCX volC 32,599 volP 58,201 P/C 1.79
+17:33:14 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 16,419 vs volC 2,792 (P/C 5.9)
+17:33:57 | 🔔 ASML: FLUJO DE PUTS fuerte hoy — volP 348 vs volC 121 (P/C 2.9)
+17:34:00 | DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.53% px 52.75
+17:34:17 | FLUJO OPCIONES: INTC volC 23,681 volP 53,417 P/C 2.26 | MU volC 69,682 volP 63,285 P/C 0.91 | TSM volC 20,157 volP 19,126 P/C 0.95 | SMH volC 2,792 volP 16,419 P/C 5.88 | QQQ volC 148,995 volP 245,368 P/C 1.65 | NVDA volC 631,441 volP 321,750 P/C 0.51 | AMD volC 22,114 volP 28,512 P/C 1.29 | TSLA volC 441,766 volP 401,944 P/C 0.91 | AAPL volC 581,820 volP 280,212 P/C 0.48 | GOOGL volC 18,660 volP 18,199 P/C 0.98 | QCOM volC 1,686 volP 3,732 P/C 2.21 | ASML volC 121 volP 348 P/C 2.88 | NOK volC 5,118 volP 2,536 P/C 0.50 | DRAM volC 13,313 volP 18,058 P/C 1.36 | SKHY volC 12,704 volP 13,767 P/C 1.08 | SPCX volC 32,603 volP 58,208 P/C 1.79
+17:38:15 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 13,516 vs volC 3,532 (P/C 3.8)
+17:38:58 | 🔔 TXN: FLUJO DE CALLS fuerte hoy — volC 672 vs volP 180 (P/C 0.3)
+17:39:19 | FLUJO OPCIONES: INTC volC 23,680 volP 53,415 P/C 2.26 | MU volC 69,681 volP 63,289 P/C 0.91 | TSM volC 20,156 volP 19,129 P/C 0.95 | SMH volC 3,532 volP 13,516 P/C 3.83 | QQQ volC 148,982 volP 245,369 P/C 1.65 | NVDA volC 631,441 volP 321,750 P/C 0.51 | AMD volC 22,118 volP 28,502 P/C 1.29 | TSLA volC 441,766 volP 401,945 P/C 0.91 | AAPL volC 581,820 volP 280,195 P/C 0.48 | GOOGL volC 18,659 volP 18,200 P/C 0.98 | QCOM volC 1,687 volP 3,735 P/C 2.21 | TXN volC 672 volP 180 P/C 0.27 | NOK volC 5,116 volP 2,536 P/C 0.50 | DRAM volC 13,321 volP 18,055 P/C 1.36 | SKHY volC 12,827 volP 13,764 P/C 1.07 | SPCX volC 37,662 volP 58,702 P/C 1.56
+17:43:17 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 16,416 vs volC 2,772 (P/C 5.9)
+17:44:14 | FLUJO OPCIONES: INTC volC 23,674 volP 53,417 P/C 2.26 | MU volC 69,684 volP 63,285 P/C 0.91 | TSM volC 21,144 volP 19,354 P/C 0.92 | SMH volC 2,772 volP 16,416 P/C 5.92 | QQQ volC 148,988 volP 245,369 P/C 1.65 | NVDA volC 631,441 volP 321,750 P/C 0.51 | AMD volC 22,118 volP 28,512 P/C 1.29 | TSLA volC 441,773 volP 401,945 P/C 0.91 | AAPL volC 581,822 volP 280,195 P/C 0.48 | GOOGL volC 18,659 volP 18,200 P/C 0.98 | QCOM volC 1,686 volP 3,732 P/C 2.21 | NOK volC 5,118 volP 2,519 P/C 0.49 | DRAM volC 13,811 volP 18,054 P/C 1.31 | SKHY volC 12,704 volP 13,765 P/C 1.08 | SPCX volC 37,653 volP 58,686 P/C 1.56
+17:48:18 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 16,418 vs volC 2,781 (P/C 5.9)
+17:49:01 | SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.32% px 132.37
+17:49:01 | 🔔 ASML: FLUJO DE PUTS fuerte hoy — volP 352 vs volC 121 (P/C 2.9)
+17:49:21 | FLUJO OPCIONES: INTC volC 23,677 volP 53,419 P/C 2.26 | MU volC 69,684 volP 63,295 P/C 0.91 | TSM volC 21,141 volP 19,357 P/C 0.92 | SMH volC 2,781 volP 16,418 P/C 5.90 | QQQ volC 148,996 volP 245,350 P/C 1.65 | NVDA volC 631,441 volP 321,750 P/C 0.51 | AMD volC 22,115 volP 28,499 P/C 1.29 | TSLA volC 441,775 volP 401,943 P/C 0.91 | AAPL volC 581,822 volP 280,193 P/C 0.48 | GOOGL volC 18,659 volP 18,199 P/C 0.98 | QCOM volC 1,686 volP 3,733 P/C 2.21 | ASML volC 121 volP 352 P/C 2.91 | NOK volC 5,116 volP 2,519 P/C 0.49 | DRAM volC 13,312 volP 18,054 P/C 1.36 | SKHY volC 12,827 volP 13,766 P/C 1.07 | SPCX volC 37,803 volP 58,700 P/C 1.55
+17:53:19 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 16,419 vs volC 2,794 (P/C 5.9)
+17:54:02 | 🔔 ASML: FLUJO DE PUTS fuerte hoy — volP 349 vs volC 120 (P/C 2.9)
+17:54:22 | FLUJO OPCIONES: INTC volC 23,678 volP 53,417 P/C 2.26 | MU volC 69,685 volP 63,285 P/C 0.91 | TSM volC 20,160 volP 19,129 P/C 0.95 | SMH volC 2,794 volP 16,419 P/C 5.88 | QQQ volC 148,987 volP 245,373 P/C 1.65 | NVDA volC 631,441 volP 321,750 P/C 0.51 | AMD volC 22,118 volP 28,502 P/C 1.29 | TSLA volC 441,777 volP 401,945 P/C 0.91 | AAPL volC 581,822 volP 280,196 P/C 0.48 | GOOGL volC 18,659 volP 18,200 P/C 0.98 | QCOM volC 1,687 volP 3,735 P/C 2.21 | ASML volC 120 volP 349 P/C 2.91 | NOK volC 5,118 volP 2,519 P/C 0.49 | DRAM volC 13,315 volP 18,061 P/C 1.36 | SKHY volC 12,828 volP 13,765 P/C 1.07 | SPCX volC 37,667 volP 58,697 P/C 1.56
+17:58:57 | 🔔 ASML: FLUJO DE PUTS fuerte hoy — volP 348 vs volC 121 (P/C 2.9)
+17:59:17 | FLUJO OPCIONES: INTC volC 23,676 volP 53,417 P/C 2.26 | MU volC 69,681 volP 63,286 P/C 0.91 | TSM volC 21,148 volP 19,354 P/C 0.92 | QQQ volC 148,981 volP 245,366 P/C 1.65 | NVDA volC 631,441 volP 321,750 P/C 0.51 | AMD volC 22,116 volP 28,505 P/C 1.29 | TSLA volC 441,772 volP 401,949 P/C 0.91 | AAPL volC 581,820 volP 280,191 P/C 0.48 | GOOGL volC 18,660 volP 18,200 P/C 0.98 | QCOM volC 1,687 volP 3,735 P/C 2.21 | ASML volC 121 volP 348 P/C 2.88 | NOK volC 5,116 volP 2,536 P/C 0.50 | DRAM volC 13,812 volP 18,057 P/C 1.31 | SKHY volC 12,828 volP 13,767 P/C 1.07 | SPCX volC 37,671 volP 58,691 P/C 1.56
+18:00:12 | WARMUP INTC: BUY | INTC @ 107.00 | prob 58% | rompe-TL-1m+vol-1.7x+MACD15-verde+ST5-alineado+sobre-VWAP+retest-ok | fase=UNKNOWN
+18:00:14 | WARMUP INTC TERREMOTO ALZA | CUSUM: subiendo fuerte +5.10% px 109.11
+18:00:14 | WARMUP INTC TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.16% px 107.11
+18:00:14 | WARMUP INTC TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.70% px 101.53
+18:00:14 | WARMUP INTC: SELL | INTC @ 101.46 | prob 64% | rebote-25%+MACD1-gira-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=TREND_DOWN
+18:00:14 | WARMUP INTC TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.03% px 98.46
+18:00:14 | WARMUP INTC: BUY | COMPRAR INTC @ 98.65 | time-stop (no cayo) | entrada 98.88 | mov +0.2%
+18:03:21 | 🔔 SMH: FLUJO DE PUTS fuerte hoy — volP 13,525 vs volC 3,540 (P/C 3.8)
+18:04:09 | 🔔 TXN: FLUJO DE CALLS fuerte hoy — volC 670 vs volP 195 (P/C 0.3)
+18:04:30 | FLUJO OPCIONES: INTC volC 23,681 volP 53,415 P/C 2.26 | MU volC 69,684 volP 63,292 P/C 0.91 | TSM volC 21,148 volP 19,349 P/C 0.91 | SMH volC 3,540 volP 13,525 P/C 3.82 | QQQ volC 148,994 volP 245,371 P/C 1.65 | NVDA volC 631,441 volP 321,750 P/C 0.51 | AMD volC 22,115 volP 28,510 P/C 1.29 | TSLA volC 441,748 volP 401,948 P/C 0.91 | AAPL volC 581,823 volP 280,196 P/C 0.48 | GOOGL volC 18,660 volP 18,199 P/C 0.98 | QCOM volC 1,687 volP 3,732 P/C 2.21 | ASML volC 450 volP 620 P/C 1.38 | TXN volC 670 volP 195 P/C 0.29 | NOK volC 5,118 volP 2,536 P/C 0.50 | DRAM volC 13,821 volP 18,062 P/C 1.31 | SKHY volC 12,704 volP 13,764 P/C 1.08 | SPCX volC 37,812 volP 58,701 P/C 1.55
+
+========== PLAN SESION COREA 20:00 ET (jue noche) ==========
+Los 3 bots KRX (kospi/samsung/skhynix) VIVOS con v6.1b (retest-confirm + prob%).
+Bridge KRX corriendo; datos arrancan ~20:00 ET (09:00 KST), sesion hasta 02:30 ET.
+POR QUE IMPORTA: Corea lidera la memoria ~13h antes que EE.UU. — lo que haga
+SK Hynix esta noche es el mapa de MU/DRAM/SKHY manana en el OPEX.
+ESCENARIOS:
+ A) GAP-DOWN + capitulacion (eco del -11% del ADR): esperar la CONFIRMACION del
+    motor (vela verde que recupera el maximo del panico — regla de la flota,
+    jamas el cuchillo). Sirena en skhynix 1,750,000.
+ B) GAP-DOWN + recuperacion en V: señal alcista para memoria US manana ->
+    refuerza el plan "dip post-OPEX de NVDA/MU se compra".
+ C) Plano/verde (ya descontado): neutral, el OPEX manda manana.
+Señales de los bots -> banner Mac + voz + este archivo, como en la manana.
+=============================================================
+18:08:43 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+18:09:30 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 908 volP 1,840 P/C 2.03 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 0 P/C 0.00 | NVDA volC 631,441 volP 321,750 P/C 0.51 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | TXN volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+18:13:43 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+18:14:25 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 0 P/C 0.00 | NVDA volC 631,441 volP 321,750 P/C 0.51 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+18:18:44 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+18:19:26 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 0 P/C 0.00 | NVDA volC 631,441 volP 321,750 P/C 0.51 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+18:23:45 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+18:24:32 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 0 P/C 0.00 | NVDA volC 498,580 volP 312,777 P/C 0.63 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | TXN volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+18:28:46 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+18:29:33 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 0 P/C 0.00 | NVDA volC 631,441 volP 321,750 P/C 0.51 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | TXN volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+18:33:46 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+18:34:27 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 0 P/C 0.00 | NVDA volC 631,441 volP 321,750 P/C 0.51 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+18:38:47 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+18:39:34 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 0 P/C 0.00 | NVDA volC 631,441 volP 321,750 P/C 0.51 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | TXN volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+18:42:00 | DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.68% px 52.03
+18:43:47 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+18:44:35 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 0 P/C 0.00 | NVDA volC 498,580 volP 312,777 P/C 0.63 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | TXN volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+18:48:48 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+18:49:00 | SKHY TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.42% px 153.19
+18:49:29 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 0 P/C 0.00 | NVDA volC 498,580 volP 312,777 P/C 0.63 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+18:50:00 | SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.17% px 125.87
+18:52:00 | MU TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.15% px 838.50
+18:53:32 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 113,062 vs volC 0 (P/C 113062.0)
+18:53:48 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+18:54:31 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 113,062 P/C 113062.00 | NVDA volC 498,580 volP 312,777 P/C 0.63 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | TXN volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+[18:54] 🚀 SPCX -5.5% AH = ABORTO Starship Flight 13 en T-0 (18:45 ET, sin explosion, reintento NET 17-jul). Panico puntual sobre accion fragil (bajo IPO 135, lockup cerca). MAÑANA ES BINARIO: lanzamiento OK = rebota / fallo real = se hunde. No apostar el binario.
+18:58:50 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+18:59:27 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 0 P/C 0.00 | NVDA volC 631,441 volP 321,750 P/C 0.51 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+19:03:50 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+19:04:37 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 0 P/C 0.00 | NVDA volC 631,441 volP 321,750 P/C 0.51 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | TXN volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+19:08:34 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 113,062 vs volC 0 (P/C 113062.0)
+19:08:51 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+19:09:38 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 113,062 P/C 113062.00 | NVDA volC 498,580 volP 312,777 P/C 0.63 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | TXN volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+19:13:36 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 113,062 vs volC 0 (P/C 113062.0)
+19:13:52 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+19:14:34 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 113,062 P/C 113062.00 | NVDA volC 498,580 volP 312,777 P/C 0.63 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+19:18:37 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 113,062 vs volC 0 (P/C 113062.0)
+19:18:53 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+19:19:40 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 113,062 P/C 113062.00 | NVDA volC 498,580 volP 312,777 P/C 0.63 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | TXN volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+19:22:09 | 🚨 INTC 104C: QQQ PUT: VENDE TODO — 703 cumplido (px 703.19) | premium n/d
+19:23:38 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 113,062 vs volC 0 (P/C 113062.0)
+19:23:54 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+19:24:41 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 113,062 P/C 113062.00 | NVDA volC 508,880 volP 386,646 P/C 0.76 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | TXN volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+19:26:00 | NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.09% px 10.20
+19:26:16 | NVDA ALARMA PRECIO | NVDA toco 205.80 (regla: nvda 205.8 down    ENTRADA 205P retest (Yunior espera esta se  al)) px=205.7850
+19:28:38 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 113,062 vs volC 0 (P/C 113062.0)
+19:28:54 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+19:29:42 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 113,062 P/C 113062.00 | NVDA volC 508,880 volP 386,646 P/C 0.76 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | TXN volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+19:33:39 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 113,062 vs volC 0 (P/C 113062.0)
+19:33:56 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+19:34:43 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 113,062 P/C 113062.00 | NVDA volC 508,880 volP 386,646 P/C 0.76 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | TXN volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+19:35:29 | 🚨 INTC 104C: NVDA PUT: TOMA GANANCIA — llego al muro 205 (px 205.28). Vende (o mitad si QQQ<709 sigue cayendo: debajo de 205 hay aire hasta 202) | premium n/d
+19:37:00 | ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.10% px 1765.04
+19:38:41 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 113,062 vs volC 0 (P/C 113062.0)
+19:38:57 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+19:39:44 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 113,062 P/C 113062.00 | NVDA volC 508,880 volP 386,646 P/C 0.76 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | TXN volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+19:43:41 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 113,062 vs volC 0 (P/C 113062.0)
+19:43:57 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+19:44:45 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 113,062 P/C 113062.00 | NVDA volC 508,880 volP 386,646 P/C 0.76 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | TXN volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+19:48:42 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 113,062 vs volC 0 (P/C 113062.0)
+19:48:58 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+19:49:46 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 113,062 P/C 113062.00 | NVDA volC 508,880 volP 386,646 P/C 0.76 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | TXN volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+19:53:43 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 113,062 vs volC 0 (P/C 113062.0)
+19:53:59 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+19:54:41 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 113,062 P/C 113062.00 | NVDA volC 508,880 volP 386,646 P/C 0.76 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+19:58:45 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 113,062 vs volC 0 (P/C 113062.0)
+19:59:01 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+19:59:48 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 113,062 P/C 113062.00 | NVDA volC 508,880 volP 386,646 P/C 0.76 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | TXN volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+20:03:45 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 113,062 vs volC 0 (P/C 113062.0)
+20:04:00 | SKHY TERREMOTO ALZA | CUSUM: subiendo fuerte +2.26% px 154.98
+20:04:02 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+20:04:52 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 113,062 P/C 113062.00 | NVDA volC 631,441 volP 321,750 P/C 0.51 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | TXN volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+[20:07] 🇰🇷 ATENCION: barras Corea con 308s a las 20:05 — revisar bridge_korea.log / TWS.
+20:08:47 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 113,062 vs volC 0 (P/C 113062.0)
+20:09:03 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+20:09:51 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 113,062 P/C 113062.00 | NVDA volC 508,880 volP 386,646 P/C 0.76 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | TXN volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+[20:10] 🇰🇷 KRX CERRADA hoy (Jeheonjeol, feriado legal desde 2026). Bots coreanos DORMIDOS hasta domingo noche. Dato brutal de ayer: KOSPI -6.4% con SIDECAR activado, SK Hynix -11.5%, Samsung -8.8%, y el BOK SUBIO TASAS a 2.75% (primera alza en 3 años). Sin lectura coreana esta noche: la memoria US abre MAÑANA a ciegas, y Corea reabre el lunes = el gap del domingo-noche sera evento.
+[20:12] 😴 FLOTA DORMIDA (orden Yunior: 'tomorrow is another day'). Bots de señales apagados; quedan de guardia: bridge de datos, sirenas de precio, centinela de opciones y watchdog de TWS. Para despertar: restaurar data/focus_ticker con los tickers del dia y correr scripts/fleet_keepalive_start.sh (5 min antes del pre-market).
+20:13:48 | 🔔 QQQ: FLUJO DE PUTS fuerte hoy — volP 113,062 vs volC 0 (P/C 113062.0)
+20:14:04 | 🔔 TSLA: FLUJO DE PUTS fuerte hoy — volP 145,943 vs volC 0 (P/C 145943.0)
+20:14:51 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 113,062 P/C 113062.00 | NVDA volC 508,880 volP 386,646 P/C 0.76 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 145,943 P/C 145943.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | TXN volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+[20:15] 🔕 Alertas dormidas tambien (orden Yunior). Todo apagado salvo bridge de datos + tws_watchdog. NOTA: launchd relanza los keepalives via fleet_keepalive_start cada 5 min — verificar si revive algo.
+20:17:36 | 🚨 TWS WATCHDOG | puerto 7496 caido 3 min — TWS relanzado, login requerido

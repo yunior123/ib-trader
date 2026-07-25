@@ -1,0 +1,26 @@
+# CHECKLIST 2026-07-17 09:00 ET — verificación en vivo (construido anoche con TWS apagado)
+# La flota auto-despierta a las 9:00 vía data/fleet_sleep. Marcar cada línea con [OK].
+
+[ ] 1. TWS RELOGUEADO (7496 live) — anoche estaba caído. Verificar: nc -z 127.0.0.1 7496
+[ ] 2. SOX feed califica (scripts/sox_index_feed.py, clientId 45 — TWS caído anoche, sin probar):
+       data/nbbo_sox.txt fresco (<30s) y nivel razonable (~12,000). Si el contrato IND no
+       califica, probar exchange NASDAQ/CBOE en el script.
+[ ] 3. Bridge streamea los 4 miembros QQQ nuevos (MSFT AVGO AMZN META, añadidos ayer):
+       for s in msft avgo amzn meta; do tail -1 data/bars_${s}_ibkr.txt; done
+       (epoch de hoy y avanzando; nbbo_${s}.txt también)
+[ ] 4. opt_chain_cache 21 syms con bid/ask REALES (anoche cerrado → todo -1.00):
+       head -3 data/opt_chain_msft.txt   # bid/ask > 0, epoch fresco
+       grep "ciclo completo" opt_chain_cache.log | tail -3   # DEBE ser <180s;
+       si >180s: bajar NARROW_MAX_STRIKES (12→10) o NARROW_SLEEP (4→3) en scripts/opt_chain_cache.py
+[ ] 5. ./qqq_xray con los 10 miembros fluyendo: sin "s/d" salvo COST/NFLX (sin feed, esperado);
+       P/C poblado en MSFT/AVGO/AMZN/META tras el 1er ciclo del cache (~9:03);
+       DIQUE/LASTRE/VEREDICTO coherentes con la cinta.
+[ ] 6. ./qqq_xray --watch corriendo en una terminal para la apertura (avisa banner+Paulina
+       SOLO al cambiar dique/veredicto; línea queda en ~/Desktop/trading-signals/$(date +%F).txt).
+[ ] 7. clientIds: 45 (sox) y 48 (opt_chain) sin colisión; escaneos manuales usar 40-44.
+[ ] 8. finviz_scout corriendo tras el auto-despertar, primer snapshot premarket ~4:00 o al
+       despertar (hoy: despertar 9:00). Verificar: pgrep -x finviz_scout &&
+       head -3 data/finviz_msft.txt (ts fresco); tail finviz_scout.log sin "FINVIZ ROTO".
+
+# Recordatorio del día: viernes OPEX — ballena QQQ 700P muere hoy 16:00; NVDA dip post-OPEX
+# (205/202) es COMPRA según posicionamiento (playbook 2026-07-16).

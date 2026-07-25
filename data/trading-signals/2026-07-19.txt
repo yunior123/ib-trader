@@ -1,0 +1,195 @@
+19:58:46 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.62% px 59.15
+19:58:46 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.20% px 12.08
+19:58:46 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.52% px 59.73
+19:58:46 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.44% px 60.66
+19:58:46 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.11% px 11.71
+19:58:46 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.86% px 60.09
+19:58:46 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.97% px 60.42
+19:58:46 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.42% px 11.89
+19:58:46 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.51% px 61.32
+19:58:46 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.36% px 11.69
+19:58:46 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.55% px 11.17
+19:58:46 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.52% px 60.67
+19:58:46 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.70% px 61.70
+19:58:46 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.68% px 61.26
+19:58:46 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.17% px 10.85
+19:58:46 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.17% px 11.20
+19:58:46 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.51% px 60.34
+19:58:46 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.64% px 59.82
+19:58:46 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.08% px 10.80
+19:58:46 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.49% px 56.74
+19:58:46 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.53% px 56.30
+19:58:46 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.37% px 10.50
+19:58:46 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.73% px 55.98
+19:58:46 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.91% px 57.61
+19:58:46 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.09% px 10.20
+19:58:46 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.53% px 56.90
+19:58:46 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.47% px 9.91
+19:58:46 | WARMUP NOK: BUY | NOK @ 10.08 | prob 57% | rompe-TL-1m+vol-2.0x+MACD15-verde+ST5-alineado+sobre-VWAP+retest-ok | fase=UNKNOWN
+19:58:46 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.57% px 56.75
+19:58:46 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.37% px 140.23
+19:58:46 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.10% px 10.15
+19:58:46 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.49% px 54.26
+19:58:46 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.93% px 53.34
+19:58:46 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.79% px 142.42
+19:58:46 | WARMUP NOK: SELL | VENDER NOK @ 10.11 | time-stop (no revirtio) | entrada 10.25 | PnL -1.4%
+19:58:46 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.60% px 142.76
+19:58:46 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.98% px 53.61
+19:58:46 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.62% px 140.89
+19:58:46 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.80% px 53.41
+19:58:46 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.72% px 138.59
+19:58:46 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.35% px 137.14
+19:58:46 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.63% px 52.91
+19:58:46 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.34% px 137.85
+19:58:46 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.56% px 52.16
+19:58:46 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.56% px 52.00
+19:58:46 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.73% px 139.01
+19:58:46 | WARMUP SPCX: SELL | SPCX @ 136.84 | prob 62% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=UNKNOWN
+19:58:46 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.53% px 52.75
+19:58:46 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.01% px 136.53
+19:58:46 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.68% px 52.03
+19:58:46 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.45% px 135.19
+19:58:46 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.41% px 50.86
+19:58:46 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.01% px 49.85
+19:58:46 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.81% px 134.75
+19:58:46 | WARMUP SPCX: BUY | COMPRAR SPCX @ 135.36 | reversal a alza | entrada 123.47 | mov -8.8%
+19:58:46 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +8.31% px 52.94
+19:58:46 | WARMUP SPCX: BUY | COMPRAR SPCX @ 135.36 | target 139.42 | floor 135.50 | capitulacion confirmada
+19:58:46 | WARMUP DRAM: BUY | DRAM @ 52.41 | prob 58% | pullback-16%+MACD1-gira+MACD15-verde+ST5-alineado+sobre-VWAP | fase=UNKNOWN
+19:58:46 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.51% px 136.41
+19:58:46 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +3.23% px 53.45
+19:58:46 | WARMUP SPCX: SELL | SPCX @ 134.91 | prob 62% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=UNKNOWN
+19:58:46 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.14% px 54.37
+19:58:46 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.86% px 54.34
+19:58:46 | WARMUP SPCX: SELL (STOP) | VENDER SPCX @ 134.33 | HARD STOP | entrada 135.36 | PnL -0.8%
+19:58:46 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.56% px 53.56
+19:58:46 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.49% px 52.38
+19:58:47 | WARMUP INTC: BUY | INTC @ 107.00 | prob 58% | rompe-TL-1m+vol-1.7x+MACD15-verde+ST5-alineado+sobre-VWAP+retest-ok | fase=UNKNOWN
+19:58:47 | WARMUP INTC TERREMOTO ALZA | CUSUM: subiendo fuerte +5.10% px 109.11
+19:58:47 | WARMUP INTC TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.16% px 107.11
+19:58:47 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.09% px 208.50
+19:58:47 | WARMUP INTC TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.70% px 101.53
+19:58:47 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.30% px 213.22
+19:58:47 | WARMUP INTC: SELL | INTC @ 101.46 | prob 64% | rebote-25%+MACD1-gira-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=TREND_DOWN
+19:58:47 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.42% px 559.60
+19:58:47 | WARMUP INTC TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.03% px 98.46
+19:58:47 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.00% px 209.12
+19:58:47 | WARMUP NVDA: SELL | NVDA @ 208.49 | prob 59% | rebote-9%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=TREND_DOWN
+19:58:47 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.74% px 1792.95
+19:58:47 | WARMUP MU: SELL | MU @ 958.20 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=UNKNOWN
+19:58:47 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.28% px 1752.49
+19:58:47 | WARMUP MU TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.11% px 949.25
+19:58:47 | WARMUP SMH TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.05% px 583.44
+19:58:47 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.48% px 552.69
+19:58:47 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.21% px 566.65
+19:58:47 | WARMUP SMH: SELL | SMH @ 584.88 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=UNKNOWN
+19:58:47 | WARMUP AMD: SELL | AMD @ 554.39 | prob 56% | rompe-TL-1m-abajo+vol-1.8x+MACD15-rojo+ST5-alineado+bajo-VWAP+retest-ok | fase=UNKNOWN
+19:58:47 | WARMUP MU TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.14% px 909.17
+19:58:47 | WARMUP SMH: SELL | SMH @ 571.13 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=UNKNOWN
+19:58:47 | WARMUP INTC TERREMOTO CAIDA | CUSUM: cayendo fuerte -6.18% px 92.79
+19:58:47 | WARMUP MU: SELL | MU @ 898.30 | prob 55% | rompe-TL-1m-abajo+vol-1.7x+ST5-alineado+ribbon15-bajista+bajo-VWAP+retest-ok | fase=UNKNOWN
+19:58:47 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.03% px 210.41
+19:58:47 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.01% px 550.20
+19:58:47 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.05% px 208.21
+19:58:47 | WARMUP INTC: BUY | COMPRAR INTC @ 92.77 | reversal a alza | entrada 95.08 | mov +2.5%
+19:58:47 | WARMUP SMH: SELL | SMH @ 573.02 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=UNKNOWN
+19:58:47 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.02% px 1788.20
+19:58:47 | WARMUP MU: BUY | COMPRAR MU @ 891.84 | reversal a alza | entrada 867.79 | mov -2.7%
+19:58:47 | WARMUP AMD: SELL | AMD @ 547.01 | prob 56% | rompe-TL-1m-abajo+vol-2.4x+MACD15-rojo+ST5-alineado+bajo-VWAP+retest-ok | fase=UNKNOWN
+19:58:47 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.28% px 541.83
+19:58:47 | WARMUP MU: BUY | COMPRAR MU @ 891.84 | target 927.51 | floor 900.76 | capitulacion confirmada
+19:58:47 | WARMUP INTC: BUY | COMPRAR INTC @ 92.77 | target 100.19 | floor 93.70 | capitulacion confirmada
+19:58:47 | WARMUP SMH TERREMOTO CAIDA | CUSUM: cayendo fuerte -7.69% px 548.18
+19:58:47 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.01% px 1804.99
+19:58:47 | WARMUP INTC TERREMOTO ALZA | CUSUM: subiendo fuerte +5.33% px 94.73
+19:58:47 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.50% px 517.99
+19:58:47 | WARMUP SMH: BUY | COMPRAR SMH @ 545.77 | reversal a alza | entrada 556.50 | mov +2.0%
+19:58:47 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +4.56% px 1885.00
+19:58:47 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.12% px 1845.42
+19:58:47 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.01% px 525.89
+19:58:47 | WARMUP INTC: SELL | VENDER INTC @ 93.73 | trail 3xATR roto | entrada 92.77 | PnL +1.0%
+19:58:47 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.10% px 1809.09
+19:58:47 | WARMUP SMH: BUY | COMPRAR SMH @ 545.77 | target 567.60 | floor 551.23 | capitulacion confirmada
+19:58:47 | WARMUP MU: SELL | VENDER MU @ 905.98 | trail 3xATR roto | entrada 891.84 | PnL +1.6%
+19:58:47 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.70% px 1785.49
+19:58:47 | WARMUP ASML: SELL | ASML @ 1775.01 | prob 61% | rebote-13%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=TREND_DOWN
+19:58:47 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.44% px 202.10
+19:58:47 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.02% px 1751.00
+19:58:47 | WARMUP SMH: SELL | VENDER SMH @ 554.38 | trail 3xATR roto | entrada 545.77 | PnL +1.6%
+19:58:47 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +3.08% px 204.27
+19:58:47 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.89% px 512.00
+19:58:47 | WARMUP AMD: SELL | AMD @ 507.11 | prob 56% | rompe-TL-1m-abajo+vol-1.7x+ST5-alineado+ribbon15-bajista+bajo-VWAP+retest-ok | fase=UNKNOWN
+19:58:47 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.17% px 202.14
+19:58:47 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.43% px 1779.76
+19:58:48 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.03% px 1810.00
+19:58:48 | WARMUP AMD: SELL | AMD @ 508.73 | prob 64% | rebote-49%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=UNKNOWN
+19:58:48 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.62% px 1781.67
+19:58:48 | WARMUP AMD: SELL | AMD @ 504.34 | prob 56% | rompe-TL-1m-abajo+vol-3.2x+MACD15-rojo+ST5-alineado+ribbon15-bajista+retest-ok | fase=UNKNOWN
+19:58:48 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.14% px 1808.28
+19:58:48 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.04% px 501.91
+19:58:48 | WARMUP ASML: BUY | ASML @ 1829.79 | prob 59% | pullback-25%+MACD1-gira+MACD15-verde+ST5-alineado+ribbon15-alcista | fase=TREND_UP
+19:58:48 | WARMUP AMD: SELL | AMD @ 496.50 | prob 64% | rebote-8%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=UNKNOWN
+19:58:48 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.19% px 1829.79
+19:58:48 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.08% px 1792.05
+19:58:48 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.54% px 480.29
+19:58:48 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +6.79% px 492.96
+19:58:48 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.10% px 1765.04
+19:58:48 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.14% px 498.19
+19:58:48 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.14% px 1739.44
+19:58:48 | WARMUP ASML: SELL | ASML @ 1705.81 | prob 56% | squeeze-p43+cierre-bajo-BB15+MACD15-rojo+ST5-alineado+ribbon15-bajista+breakaway | fase=UNKNOWN
+19:58:48 | WARMUP AMD: BUY | AMD @ 503.36 | prob 63% | pullback-3%+MACD1-gira+MACD15-verde+ST5-alineado+sobre-VWAP | fase=UNKNOWN
+19:58:48 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.58% px 1749.29
+19:58:48 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.40% px 1778.16
+19:58:49 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.07% px 1752.50
+19:58:57 | 🇰🇷 KRX BRIDGE CIEGO | 322197s sin bars KRX en sesion — resuscribiendo (skhynix/samsung/kospi)
+19:59:06 | 🇰🇷 KOREA OPEN | KRX abre 20:00 ET — TWS caido, login requerido; flota korea despierta
+20:00:08 | 🇰🇷 KRX BRIDGE CIEGO | 322268s sin bars KRX en sesion — resuscribiendo (skhynix/samsung/kospi)
+20:01:00 | KOSPI TERREMOTO CAIDA | CUSUM: cayendo fuerte -6.53% px 103935.00
+20:01:00 | SKHYNIX TERREMOTO CAIDA | CUSUM: cayendo fuerte -8.31% px 1742000.00
+20:03:00 | SKHY TERREMOTO ALZA | CUSUM: subiendo fuerte +2.98% px 157.21
+20:03:00 | DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.46% px 53.00
+20:06:00 | AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.00% px 507.00
+20:08:00 | TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.17% px 403.00
+20:13:36 | INTC ALARMA PRECIO | INTC toco 100.00 (regla: intc 100 down     urgente (Yunior 2026-07-16)) px=96.1500
+20:15:00 | MU TERREMOTO ALZA | CUSUM: subiendo fuerte +5.06% px 879.93
+20:17:29 | SKHYNIX ALARMA PRECIO | SKHYNIX toco 1885000.00 (regla: skhynix 1885000 up     lider memoria rompe al alza -  confirma) px=1886000.0000
+20:23:00 | ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.20% px 1780.00
+20:28:26 | 🇰🇷 COPILOTO | copiloto Corea en línea. Kodex 108280.0000, tierra de nadie. Ojo: Koru cotiza con prima de 9.8 puntos sobre el tres equis, sobrecalentado
+20:30:50 | KOSPI ALARMA PRECIO | KOSPI toco 107500.00 (regla: kospi 107500 down      rechazo profundo del gap-fill -  tesis bajista armandose (EWY puts 09:30)) px=107450.0000
+20:30:50 | 🇰🇷 COPILOTO | Kodex perdió ciento siete mil quinientos, tesis bajista, vehículo E W Y puts en apertura de Nueva York
+20:31:00 | SKHYNIX: BUY | SKHYNIX @ 1853000.00 | prob 55% | estructura-rota-arriba+MACD15-flip-arriba+MACD15-verde+ST5-alineado+sobre-VWAP | fase=TREND_UP
+20:32:21 | 🇰🇷 COPILOTO | Kodex perdió ciento siete mil quinientos, tesis bajista, vehículo E W Y puts en apertura de Nueva York
+20:35:21 | 🇰🇷 COPILOTO | Kodex recuperó ciento siete mil quinientos
+20:37:10 | 🟡 KODEX reclaim 108400 | KODEX 108415 (-0.54%) Hynix +1.93% Samsung +0.10% KORU $19.84
+20:37:20 | 🟡 KODEX reclaim 108400 | KODEX 108420 (-0.53%) Hynix +1.87% Samsung +0.10% KORU $19.82
+20:38:39 | 🟡 KODEX reclaim 108400 | KODEX 108560 (-0.40%) Hynix +2.14% Samsung +0.10% KORU $19.84
+20:45:14 | 🔻 KODEX <107500 — bajista | KODEX 107385 (-1.48%) Hynix +1.06% Samsung -1.08% KORU $19.42
+20:47:29 | 🔻 KODEX <107500 — bajista | KODEX 107475 (-1.40%) Hynix +1.00% Samsung -1.08% KORU $19.51
+20:50:29 | 🔻 KODEX <107500 — bajista | KODEX 107460 (-1.41%) Hynix +0.71% Samsung -0.88% KORU $19.43
+21:02:35 | SAMSUNG ALARMA PRECIO | SAMSUNG toco 249900.00 (regla: samsung 249900 down     Samsung -2%   segunda confirmacion read-through) px=249750.0000
+21:04:00 | SKHY TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.62% px 157.52
+21:09:21 | 🔻 KODEX <107500 — bajista | KODEX 107250 (-1.61%) Hynix +0.41% Samsung -1.47% KORU $19.48
+21:11:01 | DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.96% px 53.99
+21:26:00 | KOSPI TERREMOTO ALZA | CUSUM: subiendo fuerte +3.42% px 107415.00
+21:31:29 | DRAM ALARMA PRECIO | DRAM toco 53.20 (regla: dram 53.2 down      pullback memoria     RAM/53C si aguanta) px=53.2000
+21:31:32 | KORU ALARMA PRECIO | KORU toco 18.90 (regla: koru 18.90 down        pullback a zona de entrada (con KODEX   107500)) px=18.8800
+21:32:00 | SAMSUNG TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.36% px 247000.00
+21:32:00 | SKHYNIX ALARMA PRECIO | SKHYNIX toco 1805200.00 (regla: skhynix 1805200 down    Hynix -2%   read-through bear (doctrina AGENTS.md) -  SOXS) px=1803500.0000
+21:32:07 | 🐻 READ-THROUGH: Hynix y Samsung -2% — SOXS | KODEX 105495 (-3.22%) Hynix -2.04% Samsung -3.04% KORU $18.75
+21:32:17 | 🔻 KODEX <107500 — bajista | KODEX 105460 (-3.25%) Hynix -1.98% Samsung -3.04% KORU $18.76
+21:32:22 | 🐻 READ-THROUGH: Hynix y Samsung -2% — SOXS | KODEX 105430 (-3.28%) Hynix -2.04% Samsung -3.24% KORU $18.73
+21:32:27 | 🔻 KODEX <107500 — bajista | KODEX 105500 (-3.21%) Hynix -1.93% Samsung -3.24% KORU $18.73
+21:33:16 | 🔻 KODEX <107500 — bajista | KODEX 105550 (-3.17%) Hynix -1.82% Samsung -3.04% KORU $18.76
+21:33:21 | 🐻 READ-THROUGH: Hynix y Samsung -2% — SOXS | KODEX 105400 (-3.30%) Hynix -2.14% Samsung -3.04% KORU $18.71
+21:43:26 | KOSPI ALARMA PRECIO | KOSPI toco 105000.00 (regla: kospi 105000 down      V rota -  NO comprar / salir) px=105000.0000
+21:46:52 | 🔻🔻 V ROTA <105000 — EWY puts | KODEX 105000 (-3.67%) Hynix -3.28% Samsung -3.43% KORU $18.54
+21:47:02 | 🐻 READ-THROUGH: Hynix y Samsung -2% — SOXS | KODEX 105045 (-3.63%) Hynix -3.18% Samsung -3.43% KORU $18.53
+21:47:22 | 🔻🔻 V ROTA <105000 — EWY puts | KODEX 104992 (-3.68%) Hynix -3.12% Samsung -3.43% KORU $18.54
+21:48:37 | 🐻 READ-THROUGH: Hynix y Samsung -2% — SOXS | KODEX 105020 (-3.65%) Hynix -2.96% Samsung -3.43% KORU $18.51
+21:48:42 | 🔻🔻 V ROTA <105000 — EWY puts | KODEX 104935 (-3.73%) Hynix -3.07% Samsung -3.43% KORU $18.52
+21:48:47 | 🐻 READ-THROUGH: Hynix y Samsung -2% — SOXS | KODEX 105010 (-3.66%) Hynix -2.96% Samsung -3.43% KORU $18.53
+21:48:52 | 🔻🔻 V ROTA <105000 — EWY puts | KODEX 104995 (-3.67%) Hynix -2.96% Samsung -3.43% KORU $18.54
+21:49:08 | 🐻 READ-THROUGH: Hynix y Samsung -2% — SOXS | KODEX 105075 (-3.60%) Hynix -2.90% Samsung -3.43% KORU $18.55
+21:49:18 | 🔻🔻 V ROTA <105000 — EWY puts | KODEX 104975 (-3.69%) Hynix -2.90% Samsung -3.43% KORU $18.52
+21:53:21 | SKHY ALARMA PRECIO | SKHY toco 154.00 (regla: skhy 154 down        unwind total del pump afterhours   bajista confirmado -  SKHY puts) px=154.0000
+22:30:07 | 🇰🇷 KRX BRIDGE CIEGO | 1087s sin bars KRX en sesion — resuscribiendo (skhynix/samsung/kospi)

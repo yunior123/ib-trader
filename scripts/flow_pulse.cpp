@@ -272,8 +272,8 @@ static void sing(const std::string& title, const std::string& msg, bool voice,
     time_t t = time(nullptr);
     tm lt{}; localtime_r(&t, &lt);
     char path[256], line[640];
-    snprintf(path, sizeof path, "%s/Desktop/trading-signals/%04d-%02d-%02d.txt",
-             getenv("HOME"), lt.tm_year + 1900, lt.tm_mon + 1, lt.tm_mday);
+    snprintf(path, sizeof path, "data/trading-signals/%04d-%02d-%02d.txt",
+             lt.tm_year + 1900, lt.tm_mon + 1, lt.tm_mday);
     snprintf(line, sizeof line, "%02d:%02d:%02d | %s | %s\n",
              lt.tm_hour, lt.tm_min, lt.tm_sec, title.c_str(), msg.c_str());
     if (FILE* f = fopen(path, "a")) { fputs(line, f); fclose(f); }
