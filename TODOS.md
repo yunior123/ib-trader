@@ -284,3 +284,42 @@ Spec: `docs/FEATURES-MINED-2026-07-25.md` (#5 chain-honesty, #6 flip-honesty, #3
       (qqq/dram/nok) archivados a mano. Sin el, fuera de RTH la flota entera queda MUTEADA.
 - [ ] PENDIENTE: cablear el `coef` de `book_quality` como MULTIPLICADOR en `direction_view`
       (pesos flip 1.5 / walls 1.0 / magnet 1.1) y el badge en `charts/live.html`.
+
+## OLA 1 — archivadores, guardas de integridad y presupuesto de voz (agente, 2026-07-25)
+> 7 features, 7 commits, 101 tests nuevos. Suite completa: 311/311 en verde.
+
+- [x] **#16 `chain-cube archive` + retencion** — `scripts/chain_cube_archive.py`: lector UNICO
+      de los dos formatos (texto IBKR con el `-1.00` intacto + `chain_full` de Polygon), indice
+      de cobertura honesta (`data/chain_cube_index.json`: 2984 fotos, 171.216 filas) y
+      retencion medida (7,40 MB/dia -> 2,2 MB/dia agrupado). `6bae616`
+      **`--apply` SIN activar**: `local_option_scorer.py`, `option_vehicle_backtest.py` y
+      `replay.cpp` leen las fotos SUELTAS por glob. Migrarlos al lector antes de agrupar.
+- [x] **#18 `levels-5min archive`** — `scripts/levels_5min_archive.py`: copia cada 5 min sin
+      tocar el generador (proceso aparte, 0 MB RSS en `chart_bridge`), con `age_s`/`stale` para
+      que copiar un fichero atascado 78 veces no parezca densidad. ~4,7 MB/dia. `c91c375`
+- [x] **#15 `equity-prints archiver`** — `scripts/equity_prints_archiver.py`: salva la cinta
+      firmada ANTES del trim de 900 s SIN tocar `ibkr_bar_bridge.py` (poll 120 s = margen 7,5x).
+      Primera corrida: 7477 prints salvados. ~5,6 MB/dia, retencion 180 dias. `b0c1b8a`
+- [x] **#9 `truth-lock`** — `scripts/truth_lock.py`: huella SHA-1 de 120 barras cerradas por
+      sym; inyeccion sobre el `bars_nvda_ibkr.txt` REAL detectada (close +0,05). Banner + tabla
+      propia, SIN voz. `--audit` da el % de señales sobre datos sucios (hoy `null`, no 0%).
+      `ea26bc5`
+- [x] **#10 `em-envelope`** — `data/em_<sym>.json`, 26/30 vallas. Dos bugs cazados con datos
+      reales: vallaba el lunes con el straddle 0DTE del viernes (em 0,11%) y la sesion objetivo
+      la fijaba el snapshot. `176caea`
+- [x] **#14 `pin-clock`** — `data/pin_<sym>.json` descriptivo, `p_pin` SIEMPRE null. Medido: max
+      pain de QQQ 702 con cadena completa vs 691 con la banda de IBKR (sesgo demostrado).
+      DRAM PIN_DAY 55,0. Colinealidad n=3 rho=-0,52 -> DATOS_INSUFICIENTES. `d21f2eb`
+- [x] **#12 `voice-budget governor`** — `scripts/voice_budget.py` + 12 lineas en `speak.sh`.
+      DANGER ni pasa por el gate, interruptor `data/voice_budget_enable` AUSENTE (inerte),
+      fail-open (solo el codigo 42 silencia). Verificado en vivo con el daemon: DANGER habla con
+      el presupuesto agotado, SIGNAL sale como `budget_suppressed`. `daf90de`
+- [ ] PENDIENTE: **cargar los 5 `.plist`** (`scripts/com.ibtrader.{prints,levels5m,truthlock,
+      cubeindex,fence}.plist`, `plutil -lint` OK, sin cargar a proposito) — decide Yunior.
+- [ ] PENDIENTE: **encender el presupuesto de voz** con `touch data/voice_budget_enable` cuando
+      Yunior quiera. Hasta entonces es codigo muerto (por diseño).
+- [ ] PENDIENTE (#15): ningun motor de absorcion hasta >=20 sesiones archivadas por sym; hoy 1.
+- [ ] PENDIENTE (#18): ninguna feature puede condicionar sobre gamma a tiempo de etiqueta hasta
+      que `levels_5m.jsonl` tenga >=40 sesiones; hoy 1.
+- [ ] PENDIENTE (#14): el kill por colinealidad de `pin-clock` necesita n>=10 syms con
+      `chain_full` (hoy 3) -> depende del job de launchd de `poly_chain_archive.py`.
