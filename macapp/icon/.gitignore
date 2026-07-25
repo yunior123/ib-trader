@@ -1,0 +1,3 @@
+# intermedio de make_icon.py: los 10 PNG que come iconutil. Se regenera solo,
+# lo que se versiona es appicon_1024.png (fuente) y AppIcon.icns (producto).
+AppIcon.iconset/

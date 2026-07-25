@@ -31,6 +31,8 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
   <key>CFBundleDisplayName</key><string>ib-trader Cockpit</string>
   <key>CFBundleIdentifier</key><string>com.ibtrader.cockpit</string>
   <key>CFBundleExecutable</key><string>cockpit</string>
+  <!-- SIN extension: Finder busca Resources/AppIcon.icns -->
+  <key>CFBundleIconFile</key><string>AppIcon</string>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleShortVersionString</key><string>1.0</string>
   <key>CFBundleVersion</key><string>1</string>
@@ -42,6 +44,18 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
   </dict>
 </dict></plist>
 PLIST
+
+# --- ICONO (brujula) — SIEMPRE ANTES DE FIRMAR ------------------------------
+# El .icns va versionado en git (macapp/icon/AppIcon.icns). Se regenera con:
+#   venv/bin/python macapp/icon/make_icon.py
+# Ojo al ORDEN, misma trampa que el backend: si el icono entra DESPUES de
+# codesign, el sello queda roto ("a sealed resource is missing or invalid").
+if [ -f macapp/icon/AppIcon.icns ]; then
+  cp macapp/icon/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
+  echo "  icono: AppIcon.icns empotrado"
+else
+  echo "  🔴 AVISO: falta macapp/icon/AppIcon.icns — la .app saldra con el icono generico"
+fi
 
 # --- BACKEND EMPOTRADO (bundle unico y portable) ---
 # SKIP_BACKEND=1 para iterar rapido en la UI sin re-empaquetar los ~200 MB.
