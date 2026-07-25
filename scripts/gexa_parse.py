@@ -51,6 +51,16 @@ def parse(text):
     return d
 
 def main():
+    # ⚰️ JUBILADO 2026-07-25: gexa.ai desaparecio, asi que no puede volver a existir un
+    # page-text que parsear NI un data/gexa_snapshot.json que alimente a nadie (ya no lo lee
+    # ningun consumidor). Se niega a correr en vez de escribir un fichero que nadie usa:
+    # un JSON huerfano con pinta de fresco es peor que no tener fichero.
+    # El mapa gamma se calcula en casa: scripts/gex_snapshot.py -> data/gex_snapshot.json
+    # (griegas y OI MEDIDOS de Polygon, gex_core.build_gex). El parser se conserva como
+    # registro de como se leia esa UI.
+    sys.exit("gexa_parse.py JUBILADO: gexa.ai ya no existe. El mapa gamma lo calcula "
+             "scripts/gex_snapshot.py desde las cadenas archivadas (griegas Polygon MEDIDAS) "
+             "-> data/gex_snapshot.json. Nada lee ya data/gexa_snapshot.json.")
     if len(sys.argv) < 2:
         sys.exit("uso: gexa_parse.py <archivo_pagetext.txt|-> [SYM]  (- = stdin)")
     src = sys.argv[1]
