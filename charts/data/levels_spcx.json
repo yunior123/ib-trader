@@ -1,0 +1,115 @@
+{
+ "sym": "SPCX",
+ "spot": 115.0,
+ "asof": 1784966444,
+ "exp": "20260731",
+ "dte": 6.5,
+ "scope": "0DTE",
+ "net_vex": 22098917.2,
+ "vex_peak": 111.0,
+ "vex_profile": [
+  {
+   "strike": 111.0,
+   "vex": 19772868.5
+  },
+  {
+   "strike": 112.0,
+   "vex": 13048909.0
+  },
+  {
+   "strike": 113.0,
+   "vex": 15721686.9
+  },
+  {
+   "strike": 114.0,
+   "vex": 3488341.1
+  },
+  {
+   "strike": 115.0,
+   "vex": 0.0
+  },
+  {
+   "strike": 116.0,
+   "vex": -4153148.2
+  },
+  {
+   "strike": 117.0,
+   "vex": -6042488.6
+  },
+  {
+   "strike": 118.0,
+   "vex": -3442380.6
+  },
+  {
+   "strike": 119.0,
+   "vex": -16294871.0
+  }
+ ],
+ "pressure": -75,
+ "pressure_lab": "AMPLIFICA fuerte",
+ "iv_atm": 0.3,
+ "em": 4.6,
+ "net_gex": -22778170.0,
+ "regime": "NEG",
+ "flip": 119.0,
+ "flip_static": 119.0,
+ "call_wall": 115.0,
+ "put_wall": 115.0,
+ "abs_wall": 115.0,
+ "poc_dom": "76%P",
+ "call_wall_gex": -12896176.7,
+ "put_wall_gex": -12896176.7,
+ "abs_wall_gex": -12896176.7,
+ "oi_call_wall": 115.0,
+ "oi_put_wall": 115.0,
+ "near_call_wall": true,
+ "near_put_wall": true,
+ "near_flip": false,
+ "profile": [
+  {
+   "strike": 111.0,
+   "gex": -1457022.3
+  },
+  {
+   "strike": 112.0,
+   "gex": -1287795.6
+  },
+  {
+   "strike": 113.0,
+   "gex": -2337686.5
+  },
+  {
+   "strike": 114.0,
+   "gex": -1041945.7
+  },
+  {
+   "strike": 115.0,
+   "gex": -12896176.7
+  },
+  {
+   "strike": 116.0,
+   "gex": -1251353.8
+  },
+  {
+   "strike": 117.0,
+   "gex": -914232.1
+  },
+  {
+   "strike": 118.0,
+   "gex": -348708.8
+  },
+  {
+   "strike": 119.0,
+   "gex": -1243248.4
+  }
+ ],
+ "call_wall_kind": "trampilla",
+ "call_wall_regime": "NEG",
+ "call_wall_net": -12896176.7,
+ "put_wall_kind": "trampilla",
+ "put_wall_regime": "NEG",
+ "put_wall_net": -12896176.7,
+ "abs_wall_kind": "trampilla",
+ "abs_wall_regime": "NEG",
+ "abs_wall_net": -12896176.7
+}

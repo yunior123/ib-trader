@@ -1,162 +1,171 @@
 {
  "sym": "SMH",
- "spot": 568.38,
- "asof": 1784903031,
- "exp": "20260724",
- "dte": 0.23,
+ "spot": 561.5,
+ "asof": 1784966444,
+ "exp": "20260727",
+ "dte": 2.5,
  "scope": "0DTE",
- "net_vex": 5344399170.6,
- "vex_peak": 550.0,
+ "net_vex": 312416243.9,
+ "vex_peak": 557.5,
  "vex_profile": [
   {
+   "strike": 542.5,
+   "vex": 11594284.5
+  },
+  {
+   "strike": 545.0,
+   "vex": 52487532.5
+  },
+  {
+   "strike": 547.5,
+   "vex": 18833430.8
+  },
+  {
    "strike": 550.0,
-   "vex": 4736088198.7
+   "vex": 35541996.8
   },
   {
    "strike": 552.5,
-   "vex": 77907770.4
+   "vex": 24108209.0
   },
   {
    "strike": 555.0,
-   "vex": 133950799.1
+   "vex": 45431782.6
   },
   {
    "strike": 557.5,
-   "vex": 100439290.5
+   "vex": 177061081.8
   },
   {
    "strike": 560.0,
-   "vex": 162063705.4
+   "vex": 3492914.5
   },
   {
    "strike": 562.5,
-   "vex": 58849471.0
+   "vex": -5583261.7
   },
   {
    "strike": 565.0,
-   "vex": 243421663.4
+   "vex": 2046191.1
   },
   {
    "strike": 567.5,
-   "vex": 7709924.5
+   "vex": -7943243.5
   },
   {
    "strike": 570.0,
-   "vex": -18793312.4
+   "vex": -21012256.2
   },
   {
    "strike": 572.5,
-   "vex": -77819471.5
+   "vex": -25100707.6
   },
   {
    "strike": 575.0,
-   "vex": -68401197.0
+   "vex": -67039434.3
   },
   {
    "strike": 577.5,
-   "vex": 7420390.6
+   "vex": 77656588.7
   },
   {
    "strike": 580.0,
-   "vex": 12943842.7
-  },
-  {
-   "strike": 582.5,
-   "vex": -1693113.5
-  },
-  {
-   "strike": 585.0,
-   "vex": -26274657.1
-  },
-  {
-   "strike": 587.5,
-   "vex": -3414134.1
+   "vex": -9158865.3
   }
  ],
- "pressure": -61,
- "pressure_lab": "AMPLIFICA fuerte",
- "iv_atm": 0.6982,
- "em": 10.04,
- "net_gex": -369545269.7,
+ "pressure": -59,
+ "pressure_lab": "amplifica",
+ "iv_atm": 0.3,
+ "em": 13.94,
+ "net_gex": -22768193.2,
  "regime": "NEG",
- "flip": 587.5,
- "flip_static": 587.5,
- "call_wall": 575.0,
- "put_wall": 550.0,
- "abs_wall": 550.0,
- "poc_dom": "99%P",
- "call_wall_gex": -6636083.5,
- "put_wall_gex": -241379009.5,
- "abs_wall_gex": -241379009.5,
- "oi_call_wall": 575.0,
- "oi_put_wall": 550.0,
+ "flip": 580.0,
+ "flip_static": 580.0,
+ "call_wall": 577.5,
+ "put_wall": 557.5,
+ "abs_wall": 557.5,
+ "poc_dom": "98%P",
+ "call_wall_gex": 1476709.2,
+ "put_wall_gex": -13232224.4,
+ "abs_wall_gex": -13232224.4,
+ "oi_call_wall": 577.5,
+ "oi_put_wall": 557.5,
  "near_call_wall": false,
  "near_put_wall": false,
  "near_flip": false,
  "profile": [
   {
+   "strike": 542.5,
+   "gex": -179952.6
+  },
+  {
+   "strike": 545.0,
+   "gex": -940227.5
+  },
+  {
+   "strike": 547.5,
+   "gex": -398521.2
+  },
+  {
    "strike": 550.0,
-   "gex": -241379009.5
+   "gex": -917655.0
   },
   {
    "strike": 552.5,
-   "gex": -4178016.4
+   "gex": -797149.3
   },
   {
    "strike": 555.0,
-   "gex": -8228328.8
+   "gex": -2084691.2
   },
   {
    "strike": 557.5,
-   "gex": -7384248.5
+   "gex": -13232224.4
   },
   {
    "strike": 560.0,
-   "gex": -15028880.0
+   "gex": -697649.4
   },
   {
    "strike": 562.5,
-   "gex": -7632387.7
+   "gex": -1676469.6
   },
   {
    "strike": 565.0,
-   "gex": -52801213.1
+   "gex": 175933.9
   },
   {
    "strike": 567.5,
-   "gex": -6547340.1
+   "gex": -399280.4
   },
   {
    "strike": 570.0,
-   "gex": -7395717.0
+   "gex": -747208.2
   },
   {
    "strike": 572.5,
-   "gex": -12202206.2
+   "gex": -691248.5
   },
   {
    "strike": 575.0,
-   "gex": -6636083.5
+   "gex": -1507603.3
   },
   {
    "strike": 577.5,
-   "gex": 547095.0
+   "gex": 1476709.2
   },
   {
    "strike": 580.0,
-   "gex": 726940.2
-  },
-  {
-   "strike": 582.5,
-   "gex": -81280.8
-  },
-  {
-   "strike": 585.0,
-   "gex": -1194402.0
-  },
-  {
-   "strike": 587.5,
-   "gex": -130191.5
+   "gex": -150955.6
   }
- ]
+ ],
+ "call_wall_kind": "trampilla",
+ "call_wall_regime": "NEG",
+ "call_wall_net": 1476709.2,
+ "put_wall_kind": "trampilla",
+ "put_wall_regime": "NEG",
+ "put_wall_net": -13232224.4,
+ "abs_wall_kind": "trampilla",
+ "abs_wall_regime": "NEG",
+ "abs_wall_net": -13232224.4
 }

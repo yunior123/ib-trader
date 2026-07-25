@@ -1,90 +1,99 @@
 {
  "sym": "INTC",
- "spot": 94.09,
- "asof": 1784918683,
- "exp": "ALL",
- "dte": null,
- "scope": "ALL",
- "net_vex": -2538223.6,
- "vex_peak": 95.0,
+ "spot": 92.13,
+ "asof": 1784966444,
+ "exp": "20260727",
+ "dte": 2.5,
+ "scope": "0DTE",
+ "net_vex": 2784762.3,
+ "vex_peak": 90.0,
  "vex_profile": [
   {
+   "strike": 89.0,
+   "vex": 270609.3
+  },
+  {
+   "strike": 90.0,
+   "vex": 6636376.4
+  },
+  {
    "strike": 91.0,
-   "vex": 1261787.1
+   "vex": 1454274.6
   },
   {
    "strike": 92.0,
-   "vex": 3397704.3
+   "vex": 57588.0
   },
   {
    "strike": 93.0,
-   "vex": 2460209.2
+   "vex": -313100.7
   },
   {
    "strike": 94.0,
-   "vex": 155279.6
+   "vex": -3277251.2
   },
   {
    "strike": 95.0,
-   "vex": -7605918.2
-  },
-  {
-   "strike": 96.0,
-   "vex": -107613.8
-  },
-  {
-   "strike": 97.0,
-   "vex": -2099671.7
+   "vex": -2043734.1
   }
  ],
- "pressure": -81,
+ "pressure": -76,
  "pressure_lab": "AMPLIFICA fuerte",
- "iv_atm": 1.4344,
- "em": 1.62,
- "net_gex": -22663761.5,
+ "iv_atm": 0.3,
+ "em": 2.29,
+ "net_gex": -2322363.5,
  "regime": "NEG",
- "flip": 97.0,
- "flip_static": 97.0,
+ "flip": 95.0,
+ "flip_static": 95.0,
  "call_wall": 95.0,
- "put_wall": 94.0,
- "abs_wall": 95.0,
- "poc_dom": "73%P",
- "call_wall_gex": -11454111.4,
- "put_wall_gex": -3654764.9,
- "abs_wall_gex": -11454111.4,
+ "put_wall": 90.0,
+ "abs_wall": 90.0,
+ "poc_dom": "93%P",
+ "call_wall_gex": -216941.2,
+ "put_wall_gex": -923853.9,
+ "abs_wall_gex": -923853.9,
  "oi_call_wall": 95.0,
- "oi_put_wall": 92.0,
+ "oi_put_wall": 90.0,
  "near_call_wall": false,
- "near_put_wall": true,
+ "near_put_wall": false,
  "near_flip": false,
  "profile": [
   {
+   "strike": 89.0,
+   "gex": -25493.9
+  },
+  {
+   "strike": 90.0,
+   "gex": -923853.9
+  },
+  {
    "strike": 91.0,
-   "gex": -550888.5
+   "gex": -383718.0
   },
   {
    "strike": 92.0,
-   "gex": -2756684.1
+   "gex": -132801.7
   },
   {
    "strike": 93.0,
-   "gex": -3459234.7
+   "gex": -108474.7
   },
   {
    "strike": 94.0,
-   "gex": -3654764.9
+   "gex": -531080.2
   },
   {
    "strike": 95.0,
-   "gex": -11454111.4
-  },
-  {
-   "strike": 96.0,
-   "gex": 310316.4
-  },
-  {
-   "strike": 97.0,
-   "gex": -1098394.3
+   "gex": -216941.2
   }
- ]
+ ],
+ "call_wall_kind": "pin",
+ "call_wall_regime": "POS",
+ "call_wall_net": -216941.2,
+ "put_wall_kind": "trampilla",
+ "put_wall_regime": "NEG",
+ "put_wall_net": -923853.9,
+ "abs_wall_kind": "trampilla",
+ "abs_wall_regime": "NEG",
+ "abs_wall_net": -923853.9
 }

@@ -1,54 +1,58 @@
 {
  "sym": "TSLA",
  "spot": 313.58,
- "asof": 1784925273,
- "exp": "20260724",
- "dte": 0.0,
+ "asof": 1784966444,
+ "exp": "20260727",
+ "dte": 2.5,
  "scope": "0DTE",
- "net_vex": -59720.3,
- "vex_peak": 315.0,
+ "net_vex": 227721815.7,
+ "vex_peak": 310.0,
  "vex_profile": [
   {
    "strike": 305.0,
-   "vex": 0.0
+   "vex": 34700873.6
   },
   {
    "strike": 310.0,
-   "vex": 0.0
+   "vex": 151671100.0
+  },
+  {
+   "strike": 312.5,
+   "vex": 7476864.9
   },
   {
    "strike": 315.0,
-   "vex": -59720.3
+   "vex": -6323126.4
   },
   {
    "strike": 317.5,
-   "vex": -0.0
+   "vex": -25830184.5
   },
   {
    "strike": 320.0,
-   "vex": -0.0
+   "vex": -56891174.7
   },
   {
    "strike": 322.5,
-   "vex": -0.0
+   "vex": 122917462.8
   }
  ],
- "pressure": -100,
- "pressure_lab": "AMPLIFICA fuerte",
+ "pressure": -43,
+ "pressure_lab": "amplifica",
  "iv_atm": 0.3,
- "em": 0.3,
- "net_gex": -12645.5,
+ "em": 7.78,
+ "net_gex": -17728242.6,
  "regime": "NEG",
  "flip": 322.5,
  "flip_static": 322.5,
- "call_wall": 315.0,
+ "call_wall": 322.5,
  "put_wall": 310.0,
- "abs_wall": 315.0,
- "poc_dom": "88%P",
- "call_wall_gex": -12645.5,
- "put_wall_gex": -0.0,
- "abs_wall_gex": -12645.5,
- "oi_call_wall": 320.0,
+ "abs_wall": 310.0,
+ "poc_dom": "93%P",
+ "call_wall_gex": 4192517.7,
+ "put_wall_gex": -12637178.5,
+ "abs_wall_gex": -12637178.5,
+ "oi_call_wall": 322.5,
  "oi_put_wall": 310.0,
  "near_call_wall": false,
  "near_put_wall": false,
@@ -56,27 +60,40 @@
  "profile": [
   {
    "strike": 305.0,
-   "gex": -0.0
+   "gex": -1196641.5
   },
   {
    "strike": 310.0,
-   "gex": -0.0
+   "gex": -12637178.5
+  },
+  {
+   "strike": 312.5,
+   "gex": -2073328.3
   },
   {
    "strike": 315.0,
-   "gex": -12645.5
+   "gex": -1338894.1
   },
   {
    "strike": 317.5,
-   "gex": -0.0
+   "gex": -1989130.0
   },
   {
    "strike": 320.0,
-   "gex": -0.0
+   "gex": -2685587.9
   },
   {
    "strike": 322.5,
-   "gex": -0.0
+   "gex": 4192517.7
   }
- ]
+ ],
+ "call_wall_kind": "pin",
+ "call_wall_regime": "POS",
+ "call_wall_net": 4192517.7,
+ "put_wall_kind": "trampilla",
+ "put_wall_regime": "NEG",
+ "put_wall_net": -12637178.5,
+ "abs_wall_kind": "trampilla",
+ "abs_wall_regime": "NEG",
+ "abs_wall_net": -12637178.5
 }

@@ -1,0 +1,139 @@
+{
+ "sym": "STX",
+ "spot": 853.25,
+ "asof": 1784966444,
+ "exp": "20260731",
+ "dte": 6.5,
+ "scope": "0DTE",
+ "net_vex": -141023156.9,
+ "vex_peak": 850.0,
+ "vex_profile": [
+  {
+   "strike": 825.0,
+   "vex": 10494048.8
+  },
+  {
+   "strike": 830.0,
+   "vex": -36337468.6
+  },
+  {
+   "strike": 835.0,
+   "vex": -883798.2
+  },
+  {
+   "strike": 840.0,
+   "vex": 10347798.4
+  },
+  {
+   "strike": 845.0,
+   "vex": 3386457.1
+  },
+  {
+   "strike": 850.0,
+   "vex": -165981765.5
+  },
+  {
+   "strike": 855.0,
+   "vex": 6688835.3
+  },
+  {
+   "strike": 860.0,
+   "vex": -1129417.6
+  },
+  {
+   "strike": 865.0,
+   "vex": 632108.3
+  },
+  {
+   "strike": 870.0,
+   "vex": 12771573.8
+  },
+  {
+   "strike": 875.0,
+   "vex": 8701937.7
+  },
+  {
+   "strike": 880.0,
+   "vex": 10286533.6
+  }
+ ],
+ "pressure": 65,
+ "pressure_lab": "PIN fuerte",
+ "iv_atm": 0.3,
+ "em": 34.16,
+ "net_gex": 16887804.5,
+ "regime": "POS",
+ "flip": 826.18,
+ "flip_static": 826.18,
+ "call_wall": 855.0,
+ "put_wall": 850.0,
+ "abs_wall": 850.0,
+ "poc_dom": "95%C",
+ "call_wall_gex": 1147833.0,
+ "put_wall_gex": 15292195.8,
+ "abs_wall_gex": 15292195.8,
+ "oi_call_wall": 855.0,
+ "oi_put_wall": 850.0,
+ "near_call_wall": true,
+ "near_put_wall": true,
+ "near_flip": false,
+ "profile": [
+  {
+   "strike": 825.0,
+   "gex": -109586.0
+  },
+  {
+   "strike": 830.0,
+   "gex": 462453.1
+  },
+  {
+   "strike": 835.0,
+   "gex": 14372.3
+  },
+  {
+   "strike": 840.0,
+   "gex": -232465.9
+  },
+  {
+   "strike": 845.0,
+   "gex": -122547.6
+  },
+  {
+   "strike": 850.0,
+   "gex": 15292195.8
+  },
+  {
+   "strike": 855.0,
+   "gex": 1147833.0
+  },
+  {
+   "strike": 860.0,
+   "gex": -50394.6
+  },
+  {
+   "strike": 865.0,
+   "gex": 16249.8
+  },
+  {
+   "strike": 870.0,
+   "gex": 230982.6
+  },
+  {
+   "strike": 875.0,
+   "gex": 121550.1
+  },
+  {
+   "strike": 880.0,
+   "gex": 117162.0
+  }
+ ],
+ "call_wall_kind": "pin",
+ "call_wall_regime": "POS",
+ "call_wall_net": 1147833.0,
+ "put_wall_kind": "pin",
+ "put_wall_regime": "POS",
+ "put_wall_net": 15292195.8,
+ "abs_wall_kind": "pin",
+ "abs_wall_regime": "POS",
+ "abs_wall_net": 15292195.8
+}

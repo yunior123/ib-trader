@@ -13,8 +13,45 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import gex_core
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-os.chdir(REPO)
+# SANDBOX DE REPLAY (2026-07-25, aditivo): scripts/replay.cpp publica las cadenas historicas
+# en un directorio APARTE (nunca sobre data/ real, que la flota viva esta leyendo). Sin poder
+# redirigir este chdir no habria forma de generar los levels_<sym>.json del sandbox.
+# Sin la variable de entorno el comportamiento es IDENTICO al de siempre.
+ROOT = os.environ.get("IBT_ROOT") or REPO
+os.chdir(ROOT)
 OUT = "charts/data"
+
+# RELOJ VIRTUAL para gex_core (IBT_ASOF="auto" | epoch). gex_core decide el 0DTE con la fecha
+# de PARED (`time.strftime("%Y%m%d")`) y el DTE con `time.time()`. Con una cadena de hace dos
+# dias eso descarta TODOS los contratos por expirados y devuelve None: el replay se quedaria
+# sin niveles y la brujula en "SIN LECTURA". Aqui se congela el reloj del PROCESO (no se toca
+# gex_core, que esta vetado). El arreglo de verdad es un parametro `as_of` en gex_core: lo
+# decide Yunior. Sin IBT_ASOF nada de esto se activa.
+_ASOF = os.environ.get("IBT_ASOF") or ""
+_real_time, _real_strftime, _real_localtime = time.time, time.strftime, time.localtime
+
+
+def _freeze_clock(epoch):
+    """Congela time.time()/time.strftime() del proceso en `epoch` (segundos)."""
+    ep = float(epoch)
+    time.time = lambda: ep
+    time.strftime = lambda fmt, t=None: _real_strftime(fmt, t if t is not None
+                                                       else _real_localtime(ep))
+
+
+def _asof_of(path):
+    """Epoch as-of: 'auto' -> el `epoch` de la cabecera del snapshot; si no, el valor dado."""
+    if _ASOF != "auto":
+        try:
+            return float(_ASOF)
+        except ValueError:
+            return None
+    try:
+        with open(path) as f:
+            parts = f.readline().split()
+        return float(parts[parts.index("epoch") + 1])
+    except Exception:
+        return None       # fail-loud por ausencia: sin as-of no se congela nada
 
 
 def spot_from_cache(path):
@@ -40,6 +77,13 @@ def gen(sym, spot=None, write=True, all_exp=False):
     path = f"data/opt_chain_{sym.lower()}.txt"
     if not os.path.exists(path):
         return None
+    if _ASOF:
+        ep = _asof_of(path)
+        if ep is None:
+            print(f"[chart_levels] IBT_ASOF sin epoch utilizable para {sym}: no congelo reloj",
+                  file=sys.stderr)
+        else:
+            _freeze_clock(ep)
     if spot is None:
         spot = spot_from_cache(path)
     if not spot:
@@ -97,6 +141,16 @@ def gen(sym, spot=None, write=True, all_exp=False):
         "near_flip": wc["near_flip"],
         "profile": prof,
     }
+    # PIN vs TRAMPILLA por muro (2026-07-25). gex_core.build_gex ya los calcula y
+    # wall_context los reexporta, pero este `out` era explicito y los TIRABA, asi que el
+    # chart no podia distinguir un nivel que AGUANTA de uno que el precio ATRAVIESA
+    # acelerando — justo el fade que la doctrina prohibe. Aditivo: si gex_core no los trae
+    # (version vieja) el valor queda None y el chart pinta "?" en gris, nunca un pin falso.
+    for _key in ("call_wall", "put_wall", "abs_wall"):
+        out[_key + "_kind"] = wc.get(_key + "_kind")
+        out[_key + "_regime"] = wc.get(_key + "_regime")
+        _n = wc.get(_key + "_net")
+        out[_key + "_net"] = round(_n, 1) if _n is not None else None
     if write:
         os.makedirs(OUT, exist_ok=True)
         json.dump(out, open(f"{OUT}/levels_{sym.lower()}.json", "w"), indent=1)
@@ -109,7 +163,18 @@ def main():
         syms = [os.path.basename(p)[10:-4] for p in glob.glob("data/opt_chain_*.txt")]
     ok = 0
     for s in syms:
-        r = gen(s)
+        # forma "sym@precio": recalcula GEX/flip/muros al spot dado (lo que hace el loop en
+        # vivo pasando spot=). El replay lo usa para que el mapa NO herede el spot rancio de
+        # la cabecera del snapshot (hasta 5 min de retraso = flecha con retraso fabricado).
+        spot = None
+        if "@" in s:
+            s, _, px = s.partition("@")
+            try:
+                spot = float(px)
+            except ValueError:
+                print(f"{s.upper():6s} spot invalido '{px}' -> skip", file=sys.stderr)
+                continue
+        r = gen(s, spot=spot)
         if r:
             ok += 1
             print(f"{r['sym']:6s} spot {r['spot']:8.2f} | net_gex {r['net_gex']:>14.0f} {r['regime']} "

@@ -1,53 +1,53 @@
 {
  "sym": "NVDA",
  "spot": 207.03,
- "asof": 1784961188,
+ "asof": 1784986477,
  "exp": "20260727",
- "dte": 2.56,
+ "dte": 2.27,
  "scope": "0DTE",
- "net_vex": 1083548037.8,
+ "net_vex": 1071552055.3,
  "vex_peak": 200.0,
  "vex_profile": [
   {
    "strike": 200.0,
-   "vex": 374505637.3
+   "vex": 352248668.9
   },
   {
    "strike": 202.5,
-   "vex": 296069214.4
+   "vex": 299253808.3
   },
   {
    "strike": 205.0,
-   "vex": 103838200.7
+   "vex": 109250602.3
   },
   {
    "strike": 207.5,
-   "vex": -3249290.5
+   "vex": -3450942.9
   },
   {
    "strike": 210.0,
-   "vex": 92799595.1
+   "vex": 96586384.1
   },
   {
    "strike": 212.5,
-   "vex": 219584680.9
+   "vex": 217663534.7
   }
  ],
  "pressure": -13,
  "pressure_lab": "FLAT",
  "iv_atm": 0.3,
- "em": 5.2,
- "net_gex": -30805118.7,
+ "em": 4.9,
+ "net_gex": -30726426.4,
  "regime": "NEG",
  "flip": 212.5,
  "flip_static": 212.5,
  "call_wall": 210.0,
- "put_wall": 202.5,
+ "put_wall": 205.0,
  "abs_wall": 202.5,
  "poc_dom": "96%P",
- "call_wall_gex": 9440773.2,
- "put_wall_gex": -19391930.0,
- "abs_wall_gex": -19391930.0,
+ "call_wall_gex": 9826014.3,
+ "put_wall_gex": -16066123.6,
+ "abs_wall_gex": -19600514.4,
  "oi_call_wall": 210.0,
  "oi_put_wall": 200.0,
  "near_call_wall": false,
@@ -56,27 +56,36 @@
  "profile": [
   {
    "strike": 200.0,
-   "gex": -15708844.5
+   "gex": -14775263.8
   },
   {
    "strike": 202.5,
-   "gex": -19391930.0
+   "gex": -19600514.4
   },
   {
    "strike": 205.0,
-   "gex": -15270189.2
+   "gex": -16066123.6
   },
   {
    "strike": 207.5,
-   "gex": -2076368.5
+   "gex": -2205228.9
   },
   {
    "strike": 210.0,
-   "gex": 9440773.2
+   "gex": 9826014.3
   },
   {
    "strike": 212.5,
-   "gex": 12201440.3
+   "gex": 12094689.9
   }
- ]
+ ],
+ "call_wall_kind": "trampilla",
+ "call_wall_regime": "NEG",
+ "call_wall_net": 9826014.3,
+ "put_wall_kind": "trampilla",
+ "put_wall_regime": "NEG",
+ "put_wall_net": -16066123.6,
+ "abs_wall_kind": "trampilla",
+ "abs_wall_regime": "NEG",
+ "abs_wall_net": -19600514.4
 }

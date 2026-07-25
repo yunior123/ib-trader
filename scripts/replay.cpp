@@ -47,7 +47,9 @@
 //     ./replay --date 2026-07-23 --syms qqq --out /tmp/rp --probe qqq --speed 5
 #include <sqlite3.h>
 
+#include <dirent.h>
 #include <algorithm>
+#include <cctype>
 #include <cerrno>
 #include <cmath>
 #include <cstdint>
@@ -319,6 +321,30 @@ static bool levels_copy(const std::string& repo, const std::string& out, const s
     write_atomic(out + "/charts/data/levels_" + lo + ".json", j);
     return true;
 }
+// SPOT del mapa == spot replayado. En produccion chart_bridge recalcula levels_<sym>.json con
+// el spot EN VIVO en cada frame; en el replay el mapa solo se regenera cuando llega un snapshot
+// de cadena (cada ~5 min). Si no se refresca el spot, la brujula lee un precio de hasta 5 min
+// de antigüedad (jnum(lv,"spot") MANDA sobre el cierre de la barra, compass.cpp:1080) y el
+// retraso medido de la flecha seria un ARTEFACTO del arnes. Parche numerico barato: muros,
+// flip y regimen siguen siendo los del snapshot (solo cambian con la cadena); el spot, fresco.
+static void patch_levels_spot(const std::string& out, const std::string& lo, double px) {
+    const std::string p = out + "/charts/data/levels_" + lo + ".json";
+    std::string j = slurp(p);
+    if (j.empty()) return;
+    const std::string key = "\"spot\":";
+    auto a = j.find(key);
+    if (a == std::string::npos) return;
+    size_t b = a + key.size();
+    while (b < j.size() && (j[b] == ' ' || j[b] == '\t')) ++b;
+    size_t e = b;
+    while (e < j.size() && (isdigit((unsigned char)j[e]) || j[e] == '.' || j[e] == '-' ||
+                            j[e] == 'e' || j[e] == '+')) ++e;
+    if (e == b) return;                       // "spot": null -> no se toca (fail-quiet honesto)
+    char num[32];
+    snprintf(num, sizeof num, "%.4f", px);
+    write_atomic(p, j.substr(0, b) + num + j.substr(e));
+}
+
 // niveles SINTETICOS de la sesion ANTERIOR (cero look-ahead: solo pasado). Permite medir el
 // retraso de la flecha en CUALQUIER dia historico, no solo en aquellos con mapa GEX guardado.
 static bool levels_synth(const std::string& out, const std::string& lo,
@@ -339,6 +365,59 @@ static bool levels_synth(const std::string& out, const std::string& lo,
     return true;
 }
 
+// ------------------------- CADENAS DE OPCIONES -------------------------------
+// El gateway TWS falso a nivel socket se CANCELO (Yunior 2026-07-25): un simulador de protocolo
+// que se desvie del real da CONFIANZA FALSA, y simular el DISCO basta. Pero la mitad del valor
+// de la flota son los muros/GEX, que salen de data/opt_chain_<sym>.txt (lo produce
+// opt_chain_cache.py hablando con TWS). Sin cadenas no hay levels_<sym>.json y la brujula sale
+// "SIN LECTURA": no habria nada que medir.
+//
+// LA FUENTE YA EXISTE EN DISCO: data/history/<fecha>/opt_chain_<sym>[_HHMM].txt, con el
+// `epoch` en la cabecera. Se publica el snapshot MAS RECIENTE con epoch <= reloj virtual.
+//
+// EL NOMBRE DEL FICHERO NO MANDA, MANDA EL EPOCH: en data/history conviven TRES convenciones
+// (opt_chain_qqq_09.txt horario, opt_chain_qqq_1325.txt de 5 min, y opt_chain_qqq.txt sin
+// sufijo). Ordenar por nombre daria "1325" < "14" y publicaria fuera de orden. Se parsea la
+// cabecera de cada fichero y se ordena por epoch: asi el invariante anti-look-ahead no depende
+// de una convencion de nombres que ya cambio dos veces.
+//
+// LOS -1.00 SE PASAN TAL CUAL: fuera de RTH los snapshots traen bid/ask/iv/delta/gamma a -1.00.
+// Eso NO es corrupcion, es la realidad del feed. Si un consumidor no distingue "sin dato" de
+// "dato malo", ese bug queremos VERLO, no taparlo con una interpolacion.
+struct Snap { long epoch = 0; std::string path; };
+
+static std::vector<Snap> scan_chains(const std::string& dir, const std::string& lo) {
+    std::vector<Snap> v;
+    DIR* d = opendir(dir.c_str());
+    if (!d) return v;
+    const std::string pre = "opt_chain_" + lo;
+    while (struct dirent* e = readdir(d)) {
+        std::string n = e->d_name;
+        if (n.rfind(pre, 0) != 0) continue;
+        if (n.size() <= pre.size()) continue;
+        // tras el prefijo solo vale '_' (sufijo horario) o '.' (sin sufijo): asi "mu" no
+        // captura "msft"/"mus..." ni "wdc" a otro simbolo con el mismo comienzo.
+        if (n[pre.size()] != '_' && n[pre.size()] != '.') continue;
+        if (n.size() < 4 || n.compare(n.size() - 4, 4, ".txt") != 0) continue;
+        std::string p = dir + "/" + n;
+        std::ifstream f(p);
+        std::string h;
+        if (!std::getline(f, h)) continue;
+        auto q = h.find("epoch ");
+        if (q == std::string::npos) continue;                 // sin cabecera valida -> se ignora
+        long ep = atol(h.c_str() + (long)q + 6);
+        if (ep <= 0) continue;
+        v.push_back({ep, p});
+    }
+    closedir(d);
+    std::sort(v.begin(), v.end(), [](const Snap& a, const Snap& b) { return a.epoch < b.epoch; });
+    // opt_chain_<sym>.txt suele ser copia del ultimo snapshot -> mismo epoch, se deduplica
+    v.erase(std::unique(v.begin(), v.end(),
+                        [](const Snap& a, const Snap& b) { return a.epoch == b.epoch; }),
+            v.end());
+    return v;
+}
+
 // --------------------------------- feed -------------------------------------
 struct Feed {
     std::string lo, up;
@@ -347,10 +426,16 @@ struct Feed {
     size_t cur = (size_t)-1;       // indice de la barra EN CURSO (para la ruta intra-minuto)
     std::vector<double> path;
     double last_px = 0, half_spread = 0.01;
+    double last_close = 0;         // cierre de la ULTIMA barra publicada = spot del replay
     Rng rng{1};
-    std::string bars_path, nbbo_path, tick_log;
+    std::string bars_path, nbbo_path, tick_log, chain_path, chain_log;
     double pending_ns = 0;         // instante real del append de la barra pendiente (probe)
     long pending_bar = 0;
+    double first_write = 0;        // 1er mtime del JSON de la brujula tras el append
+    bool newbar = false;           // se publico barra nueva en este instante virtual
+    std::vector<Snap> snaps;       // cadenas del dia ordenadas por epoch
+    size_t si = 0;                 // primera cadena AUN no publicada
+    long pub_epoch = 0;            // epoch de la cadena publicada ahora mismo (0 = ninguna)
 };
 
 // append de UNA barra ya CERRADA, formato exacto de ibkr_bar_bridge::emit
@@ -361,6 +446,29 @@ static void append_bar(Feed& f, const Bar& b) {
     if (!fp) die("append " + f.bars_path);
     fputs(line, fp);
     fclose(fp);
+    f.last_close = b.c;
+}
+
+// publica la cadena mas reciente con epoch <= v. Devuelve el epoch publicado, o 0 si no hay
+// cadena nueva. NUNCA mira snaps[i].epoch > v: ahi esta el invariante.
+static long publish_chain(Feed& f, double v) {
+    size_t best = (size_t)-1;
+    while (f.si < f.snaps.size() && (double)f.snaps[f.si].epoch <= v) { best = f.si; ++f.si; }
+    if (best == (size_t)-1) return 0;
+    std::string body = slurp(f.snaps[best].path);
+    if (body.empty()) {
+        fprintf(stderr, "[replay] AVISO: snapshot vacio %s (se ignora)\n",
+                f.snaps[best].path.c_str());
+        return 0;
+    }
+    write_atomic(f.chain_path, body);          // tmp+rename: el consumidor jamas ve media cadena
+    f.pub_epoch = f.snaps[best].epoch;
+    char b[512];
+    snprintf(b, sizeof b, "{\"clock\":%.3f,\"chain_epoch\":%ld,\"src\":\"%s\"}\n", v,
+             f.pub_epoch, jesc(f.snaps[best].path).c_str());
+    FILE* g = fopen(f.chain_log.c_str(), "a");   // rastro auditable: el test lo verifica
+    if (g) { fputs(b, g); fclose(g); }
+    return f.pub_epoch;
 }
 
 // ------------------------- analisis del retraso -----------------------------
@@ -404,6 +512,7 @@ static double pctile(std::vector<double> v, double q) {
 int main(int argc, char** argv) {
     std::string date, out, syms_arg, probe, walk, repo = ".", regime_synth, compass = "./compass";
     std::string start = "09:30", end = "16:00";
+    std::string chains = "auto", levels = "auto", python, history;
     double speed = 1.0, tick = K::TICK_S;
     long warm = K::WARM_BARS, seed = 7;
     bool fleet = false, no_ticks = false, synth = false, quiet = false;
@@ -427,6 +536,10 @@ int main(int argc, char** argv) {
         else if (a == "--probe") probe = lower(need("--probe"));
         else if (a == "--walk") walk = lower(need("--walk"));
         else if (a == "--compass") compass = need("--compass");
+        else if (a == "--chains") chains = lower(need("--chains"));
+        else if (a == "--levels") levels = lower(need("--levels"));
+        else if (a == "--python") python = need("--python");
+        else if (a == "--history") history = need("--history");
         else if (a == "--synth-levels") { synth = true; regime_synth = upper(need("--synth-levels")); }
         else if (a == "--no-ticks") no_ticks = true;
         else if (a == "--quiet") quiet = true;
@@ -437,7 +550,12 @@ int main(int argc, char** argv) {
             printf("uso: replay --date YYYY-MM-DD (--syms a,b|--fleet) --out DIR\n"
                    "     [--start HH:MM] [--end HH:MM] [--warm N] [--speed N|max] [--tick S]\n"
                    "     [--seed N] [--no-ticks] [--probe SYM] [--walk SYM]\n"
-                   "     [--synth-levels POS|NEG] [--repo DIR] [--compass PATH] [--quiet]\n");
+                   "     [--chains on|off] [--levels auto|chain|copy|synth|off]\n"
+                   "     [--synth-levels POS|NEG] [--history DIR] [--python PATH]\n"
+                   "     [--repo DIR] [--compass PATH] [--quiet]\n"
+                   "\n  cadenas: data/history/<fecha>/opt_chain_<sym>[_HHMM].txt, publicadas por\n"
+                   "  EPOCH de cabecera (<= reloj virtual). --levels chain regenera los\n"
+                   "  charts/data/levels_<sym>.json del sandbox con scripts/chart_levels.py.\n");
             return 0;
         } else die("argumento desconocido: " + a);
     }
@@ -449,6 +567,34 @@ int main(int argc, char** argv) {
                         "(sim_feed.py); solo para tests del invariante\n", speed, K::SPEED_HONEST);
     if (synth && regime_synth != "POS" && regime_synth != "NEG")
         die("--synth-levels exige el regimen explicito: POS o NEG (no se fabrica)");
+    if (chains != "on" && chains != "off" && chains != "auto")
+        die("--chains solo admite on|off (o auto)");
+    if (levels != "auto" && levels != "chain" && levels != "copy" && levels != "synth" &&
+        levels != "off")
+        die("--levels solo admite auto|chain|copy|synth|off");
+    if (synth && levels == "auto") levels = "synth";
+    if (levels == "synth" && !synth)
+        die("--levels synth exige --synth-levels POS|NEG (el regimen no se fabrica)");
+    { char buf[4096];                       // repo ABSOLUTO: los hijos corren con cwd = sandbox
+      if (!realpath(repo.c_str(), buf)) die("--repo no existe: " + repo);
+      repo = buf; }
+    if (history.empty()) history = repo + "/data/history/" + date;
+    if (python.empty()) python = repo + "/venv/bin/python";
+
+    // La brujula se EJECUTA con cwd = sandbox (usa rutas relativas), asi que su ruta tiene que
+    // ser ABSOLUTA o "./compass" apuntaria dentro del sandbox y no existiria. Fallo real.
+    {
+        char buf[4096];
+        bool ok = !compass.empty() && realpath(compass.c_str(), buf) != nullptr;
+        if (!ok && !compass.empty()) {
+            std::string cand = repo + "/" + compass;
+            ok = realpath(cand.c_str(), buf) != nullptr;
+        }
+        if (ok) compass = buf;
+        else if (!walk.empty())            // solo --walk EJECUTA la brujula; sin ella no hay medida
+            die("no encuentro el binario de la brujula (" + compass +
+                "); compila compass o pasa --compass RUTA_ABSOLUTA");
+    }
 
     // simbolos
     std::vector<std::string> syms;
@@ -496,21 +642,66 @@ int main(int argc, char** argv) {
         f.bars_path = out + "/data/bars_" + lo + "_ibkr.txt";
         f.nbbo_path = out + "/data/nbbo_" + lo + ".txt";
         f.tick_log  = out + "/data/nbbo_hist_" + lo + "_" + date + ".txt";
-        truncate(f.bars_path.c_str(), 0);
-        { FILE* z = fopen(f.bars_path.c_str(), "w"); if (z) fclose(z); }
+        f.chain_path = out + "/data/opt_chain_" + lo + ".txt";
+        f.chain_log  = out + "/chains_" + lo + ".jsonl";
+        if (chains != "off") f.snaps = scan_chains(history, lo);
+        { FILE* z = fopen(f.bars_path.c_str(), "w"); if (z) fclose(z); }   // trunca / crea
         { FILE* z = fopen(f.tick_log.c_str(), "w"); if (z) fclose(z); }
+        { FILE* z = fopen(f.chain_log.c_str(), "w"); if (z) fclose(z); }
+        unlink(f.chain_path.c_str());       // sin cadena hasta que el reloj alcance un snapshot
         total_bars += (long)f.bars.size();
         feeds.push_back(std::move(f));
     }
-    if (total_bars == 0)
-        die("rango VACIO: poly_bars no tiene barras de {" + syms_arg + "} en " + date +
+    if (total_bars == 0) {
+        std::string lst;
+        for (const auto& f : feeds) { if (!lst.empty()) lst += ","; lst += f.up; }
+        die("rango VACIO: poly_bars no tiene barras de {" + lst + "} en " + date +
             " " + start + "-" + end + " (¿simbolo inexistente o dia sin datos?)");
+    }
     for (auto& f : feeds)
         if (f.bars.empty())
             fprintf(stderr, "[replay] AVISO: %s sin barras en el rango (queda vacio)\n", f.up.c_str());
 
+    // ------------------- COBERTURA DE CADENAS (limite honesto) ------------------
+    // Solo hay historia de cadenas de 3 dias (2026-07-22/23/24) y con granularidad DESIGUAL:
+    // el 22 y el 23 antes de las 13:25 son snapshots HORARIOS; de 13:25 en adelante y todo el
+    // 24 son de 5 min. Ademas poly_bars termina el 23 -> la interseccion barras+cadenas es
+    // 07-22 y 07-23. Esto se DECLARA, no se disimula.
+    long snap_total = 0, syms_with = 0;
+    for (const auto& f : feeds) { snap_total += (long)f.snaps.size(); if (!f.snaps.empty()) ++syms_with; }
+    if (chains == "on" && snap_total == 0)
+        die("--chains on pero no hay snapshots en " + history +
+            " (solo existen data/history/2026-07-22|23|24)");
+    if (chains != "off" && !quiet)
+        printf("[replay] cadenas: %ld snapshots en %zu/%zu simbolos (%s)\n", snap_total,
+               (size_t)syms_with, feeds.size(), history.c_str());
+    if (chains != "off")
+        for (const auto& f : feeds)
+            if (f.snaps.empty())
+                fprintf(stderr, "[replay] AVISO: %s SIN cadenas historicas ese dia -> sin muros "
+                                "GEX (la brujula dira 'sin mapa GEX fresco')\n", f.up.c_str());
+    const bool has_chains = snap_total > 0 && chains != "off";
+    if (levels == "auto") levels = has_chains ? "chain" : "copy";
+    if (levels == "chain" && !has_chains)
+        die("--levels chain exige cadenas historicas y no hay ninguna en " + history);
+
+    // regenera charts/data/levels_<sym>.json del SANDBOX desde la cadena ya publicada.
+    // El spot se pasa EXPLICITO (cierre de la ultima barra publicada): si se dejara el de la
+    // cabecera del snapshot, la brujula miraria un spot de hasta 5 min de antigüedad y el
+    // retraso medido de la flecha seria un artefacto del arnes, no del sistema.
+    auto regen_levels = [&](Feed& f) {
+        char px[32] = "";
+        if (f.last_close > 0) snprintf(px, sizeof px, "@%.4f", f.last_close);
+        std::string cmd = "cd '" + out + "' && IBT_ROOT='" + out + "' IBT_ASOF=auto '" + python +
+                          "' '" + repo + "/scripts/chart_levels.py' " + f.lo + px +
+                          " >/dev/null 2>&1";
+        if (system(cmd.c_str()) != 0)
+            fprintf(stderr, "[replay] AVISO: chart_levels fallo para %s (sin niveles nuevos)\n",
+                    f.up.c_str());
+    };
+
     // mapa de niveles del sandbox
-    for (auto& f : feeds) {
+    if (levels == "copy" || levels == "synth") for (auto& f : feeds) {
         bool ok;
         if (synth) {
             // sesion anterior = barras del dia natural previo con datos, DENTRO del warm-up
@@ -526,9 +717,16 @@ int main(int argc, char** argv) {
             fprintf(stderr, "[replay] AVISO: sin niveles para %s -> la brujula dira "
                             "'sin mapa GEX fresco' (SIN LECTURA)\n", f.up.c_str());
     }
-    // momentum_decay.json: retrocesos MEDIDOS que usa la amplitud de la brujula
-    { std::string d = slurp(repo + "/data/momentum_decay.json");
-      if (!d.empty()) write_atomic(out + "/data/momentum_decay.json", d); }
+    // CONFIG (no precios) que la brujula lee y que sin ella degradaria a otra cosa distinta de
+    // produccion. Se copia solo lo que NO es una cotizacion:
+    //   momentum_decay.json -> retrocesos MEDIDOS (amplitud), etf_weights.json -> engranaje
+    //   QQQ/SPY, book_quality.json -> etiqueta THIN.
+    // data/force.json NO se copia a proposito: es fuerza VIVA de hoy y la brujula la descarta
+    // por antigüedad (FORCE_MAX_AGE); copiarla seria inyectar el presente en el pasado.
+    for (const char* n : {"momentum_decay.json", "etf_weights.json", "book_quality.json"}) {
+        std::string d = slurp(repo + "/data/" + n);
+        if (!d.empty()) write_atomic(out + "/data/" + n, d);
+    }
 
     const std::string clock_root = out + "/clock.txt";        // reloj virtual (raiz)
     const std::string clock_data = out + "/data/clock.txt";    // idem para --data DIR (scalper)
@@ -555,9 +753,15 @@ int main(int argc, char** argv) {
         long n_sess = 0;
         for (size_t i = 0; i < f.bars.size(); ++i) {
             const Bar& b = f.bars[i];
-            append_bar(f, b);
             double v = (double)(b.t + K::BAR_S);
             write_clock(v);
+            append_bar(f, b);
+            // cadena del instante virtual (epoch <= v) + niveles recalculados al spot replayado
+            long pub = publish_chain(f, v);
+            if (levels == "chain") {
+                if (pub) regen_levels(f);                        // cadena nueva: mapa completo
+                else patch_levels_spot(out, f.lo, f.last_close); // solo el spot, como el chart
+            }
             if (b.t < t_start) continue;    // warm-up: contexto, no se evalua
             ++n_sess;
             double w0 = now_real();
@@ -584,19 +788,24 @@ int main(int argc, char** argv) {
         // --- retraso ESTRUCTURAL: extremo real vs vela del giro -------------
         std::vector<std::string> st, dr;
         apply_hyst(raw, st, dr);
-        std::vector<double> lag, mae, mfe;
-        std::string ev_json = "[";
-        int late = 0;
-        for (size_t i = 1; i < raw.size(); ++i) {
-            if (st[i] != S_REV || st[i - 1] == S_REV) continue;
-            int d = dr[i] == "up" ? 1 : (dr[i] == "down" ? -1 : 0);
-            if (d == 0) continue;
+
+        // Dos poblaciones de "giro", y la primera es LA QUE PREGUNTO YUNIOR:
+        //  FLIP  = la FLECHA cambia de sentido (dir up<->down). Es lo que se ve en la UI y lo
+        //          que hace comprar; ocurre decenas de veces al dia.
+        //  REV   = el ESTADO entra en "REVERSION EN EXTREMO" (el gatillo de fade). En regimen
+        //          NEG puede no ocurrir NI UNA VEZ en todo el dia (veto de doctrina), asi que
+        //          medir solo esto daba n=0 y la falsa impresion de "nada que medir".
+        struct Stat { std::vector<double> lag, mae, mfe; int late = 0; std::string ev = "["; };
+        Stat FL, RV;
+        auto measure = [&](Stat& S, size_t i, int d) {
+            // extremo real de cierres en [i-LAG_WIN, i+LAG_WIN]: el suelo si la flecha apunta
+            // arriba, el techo si apunta abajo. lag>0 = la flecha giro DESPUES del extremo.
             size_t a = (i >= (size_t)K::LAG_WIN) ? i - K::LAG_WIN : 0;
             size_t z = std::min(raw.size() - 1, i + K::LAG_WIN);
             size_t m = a;
             for (size_t k = a; k <= z; ++k)
                 if (d > 0 ? raw[k].close < raw[m].close : raw[k].close > raw[m].close) m = k;
-            double lg = (double)i - (double)m;       // >0 = la flecha giro DESPUES del extremo
+            double lg = (double)i - (double)m;
             size_t hz = std::min(raw.size() - 1, i + K::MFE_H);
             double worst = raw[i].close, best = raw[i].close;
             for (size_t k = i; k <= hz; ++k) {
@@ -605,43 +814,65 @@ int main(int argc, char** argv) {
             }
             double mae_p = d * (worst - raw[i].close) / raw[i].close * 100.0;
             double mfe_p = d * (best - raw[i].close) / raw[i].close * 100.0;
-            lag.push_back(lg); mae.push_back(mae_p); mfe.push_back(mfe_p);
-            if (lg > 0) ++late;
+            S.lag.push_back(lg); S.mae.push_back(mae_p); S.mfe.push_back(mfe_p);
+            if (lg > 0) ++S.late;
             char b[320];
-            snprintf(b, sizeof b, "%s{\"bar_ts\":%ld,\"dir\":\"%s\",\"prob\":%d,"
+            snprintf(b, sizeof b, "%s{\"bar_ts\":%ld,\"dir\":\"%s\",\"state\":\"%s\",\"prob\":%d,"
                      "\"lag_bars\":%.0f,\"mae_pct\":%.4f,\"mfe_pct\":%.4f}",
-                     lag.size() > 1 ? "," : "", raw[i].ts, dr[i].c_str(), raw[i].prob,
-                     lg, mae_p, mfe_p);
-            ev_json += b;
+                     S.lag.size() > 1 ? "," : "", raw[i].ts, dr[i].c_str(),
+                     jesc(st[i]).c_str(), raw[i].prob, lg, mae_p, mfe_p);
+            S.ev += b;
+        };
+        std::string last_dir = "flat";
+        for (size_t i = 1; i < raw.size(); ++i) {
+            int d = dr[i] == "up" ? 1 : (dr[i] == "down" ? -1 : 0);
+            if (d != 0 && dr[i] != last_dir && last_dir != "flat") measure(FL, i, d);
+            if (d != 0) last_dir = dr[i];
+            if (d != 0 && st[i] == S_REV && st[i - 1] != S_REV) measure(RV, i, d);
         }
-        ev_json += "]";
+        FL.ev += "]"; RV.ev += "]";
         std::vector<double> cus;
         for (const auto& r : raw) cus.push_back(r.us);
-        char rep[1400];
-        snprintf(rep, sizeof rep,
+
+        auto blk = [](const char* name, Stat& S) {
+            char b[600];
+            snprintf(b, sizeof b,
+                     " \"%s\": {\"n\": %zu, \"lag_bars_median\": %.1f, \"lag_bars_p90\": %.1f,\n"
+                     "   \"pct_late\": %.1f, \"mae_pct_median\": %.4f, \"mfe_pct_median\": %.4f,\n"
+                     "   \"events\": %s},\n",
+                     name, S.lag.size(), median(S.lag), pctile(S.lag, 0.9),
+                     S.lag.empty() ? 0.0 : 100.0 * S.late / (double)S.lag.size(),
+                     median(S.mae), median(S.mfe), S.ev.c_str());
+            return std::string(b);
+        };
+        char hdr[900];
+        snprintf(hdr, sizeof hdr,
                  "{\n \"sym\": \"%s\",\n \"date\": \"%s\",\n \"bars_evaluated\": %ld,\n"
-                 " \"turn_events\": %zu,\n \"lag_bars_median\": %.1f,\n \"lag_bars_p90\": %.1f,\n"
-                 " \"pct_late\": %.1f,\n \"mae_pct_median\": %.4f,\n \"mfe_pct_median\": %.4f,\n"
                  " \"compass_us_median\": %.0f,\n \"compass_us_p90\": %.0f,\n"
-                 " \"levels_src\": \"%s\",\n \"hysteresis_n\": %d,\n \"lag_window_bars\": %d,\n"
-                 " \"events\": %s\n}\n",
-                 f.up.c_str(), date.c_str(), n_sess, lag.size(), median(lag), pctile(lag, 0.9),
-                 lag.empty() ? 0.0 : 100.0 * late / (double)lag.size(),
-                 median(mae), median(mfe), median(cus), pctile(cus, 0.9),
-                 synth ? "sesion anterior (synth)" : "copia del mapa vivo",
-                 K::HYST_N, K::LAG_WIN, ev_json.c_str());
+                 " \"levels_src\": \"%s\",\n \"chain_snapshots\": %zu,\n"
+                 " \"hysteresis_n\": %d,\n \"lag_window_bars\": %d,\n \"mfe_horizon_bars\": %d,\n",
+                 f.up.c_str(), date.c_str(), n_sess, median(cus), pctile(cus, 0.9),
+                 levels.c_str(), f.snaps.size(), K::HYST_N, K::LAG_WIN, K::MFE_H);
+        std::string rep = hdr;
+        rep += blk("arrow_flip", FL);
+        rep += blk("reversion_entry", RV);
+        rep.erase(rep.size() - 2);              // la ultima coma
+        rep += "\n}\n";
         write_atomic(out + "/lag_report_" + f.lo + ".json", rep);
         if (!quiet) {
             printf("== WALK %s %s — %ld barras de sesion evaluadas ==\n", f.up.c_str(),
                    date.c_str(), n_sess);
-            printf("  giros a %s: %zu\n", S_REV, lag.size());
-            if (!lag.empty()) {
-                printf("  retraso ESTRUCTURAL (velas tras el extremo real): mediana %.1f, "
-                       "p90 %.1f, tarde %.0f%%\n", median(lag), pctile(lag, 0.9),
-                       100.0 * late / (double)lag.size());
-                printf("  tras el giro (+%d velas): MAE mediana %+.3f%%, MFE mediana %+.3f%%\n",
-                       K::MFE_H, median(mae), median(mfe));
-            }
+            auto show = [&](const char* t, Stat& S) {
+                printf("  %s: n=%zu", t, S.lag.size());
+                if (S.lag.empty()) { printf(" (no ocurrio ese dia)\n"); return; }
+                printf(" | retraso mediana %.1f velas, p90 %.1f, tarde %.0f%% | "
+                       "MAE %+.3f%% MFE %+.3f%% (+%d velas)\n",
+                       median(S.lag), pctile(S.lag, 0.9),
+                       100.0 * S.late / (double)S.lag.size(), median(S.mae), median(S.mfe),
+                       K::MFE_H);
+            };
+            show("GIRO DE FLECHA (dir up<->down)", FL);
+            show("entrada en REVERSION EN EXTREMO ", RV);
             printf("  ciclo de la brujula (incluye spawn del proceso): mediana %.0f us, "
                    "p90 %.0f us\n", median(cus), pctile(cus, 0.9));
             printf("  informe: %s/lag_report_%s.json\n", out.c_str(), f.lo.c_str());
@@ -655,29 +886,36 @@ int main(int argc, char** argv) {
     double v = (double)t_start;
     std::string probe_jl;
     long probe_n = 0;
-    std::vector<double> probe_lag;
+    std::vector<double> probe_lag, probe_safe;
     const std::string probe_json = out + "/data/compass_" + probe + ".json";
 
     if (!quiet) {
         printf("[replay] %s %s-%s | %zu simbolos | %ld barras | speed %s | tick %.2fs | seed %ld\n",
                date.c_str(), start.c_str(), end.c_str(), syms.size(), total_bars,
                speed == 0 ? "max" : std::to_string((int)speed).c_str(), tick, seed);
-        printf("[replay] sandbox: %s   (compass: cd %s && %s --loop 0.25 %s)\n",
-               out.c_str(), out.c_str(), compass.c_str(),
+        printf("[replay] niveles: %s | sandbox: %s\n", levels.c_str(), out.c_str());
+        printf("[replay] brujula: (cd %s && %s --loop 0.25 %s)\n", out.c_str(), compass.c_str(),
                probe.empty() ? syms[0].c_str() : probe.c_str());
         fflush(stdout);
     }
 
     write_clock(v);
     while (v <= (double)t_end) {
+        // ORDEN QUE IMPORTA: el reloj se publica ANTES de las barras de este instante. Al revés
+        // (como estaba) un lector externo podia ver clock=v y a la vez una barra de v+tick ya
+        // apendada, o sea un look-ahead APARENTE de una iteracion. Reloj primero => cualquier
+        // lector que lea barras-y-despues-reloj ve siempre ts+60 <= clock. Invariante duro.
+        write_clock(v);
         for (auto& f : feeds) {
             // 1) publicar TODA barra ya cerrada (t+60 <= v). NUNCA la que se esta formando:
             //    ese es el invariante anti-look-ahead.
             while (f.pi < f.bars.size() && (double)(f.bars[f.pi].t + K::BAR_S) <= v) {
                 append_bar(f, f.bars[f.pi]);
+                f.newbar = true;
                 if (f.lo == probe && f.bars[f.pi].t >= t_start) {
                     f.pending_ns = now_real();
                     f.pending_bar = f.bars[f.pi].t;
+                    f.first_write = 0;
                 }
                 ++f.pi;
             }
@@ -703,25 +941,44 @@ int main(int argc, char** argv) {
             FILE* g = fopen(f.tick_log.c_str(), "a");            // traza completa (determinismo)
             if (g) { fputs(b, g); fclose(g); }
         }
-        write_clock(v);
+        // 2b) CADENAS: el snapshot mas reciente con epoch <= v (jamas uno futuro). Se hace tras
+        //     las barras para que un chart_levels lento no retrase la publicacion de la vela.
+        for (auto& f : feeds) {
+            long pub = publish_chain(f, v);
+            if (levels == "chain") {
+                if (pub) regen_levels(f);
+                else if (f.newbar) patch_levels_spot(out, f.lo, f.last_close);
+            }
+            f.newbar = false;
+        }
 
-        // 3) PROBE: retraso MECANICO = del append de la barra al JSON de la brujula en disco.
-        //    Un ciclo de ./compass son ~1.1 ms, asi que el mtime del JSON acota el instante en
-        //    que leyo el fichero de barras dentro de un par de ms. Cota superior HONESTA.
+        // 3) PROBE: retraso MECANICO END-TO-END = del append de la barra al JSON de la brujula
+        //    ya en disco. La brujula reescribe su JSON CADA ciclo aunque nada cambie, asi que el
+        //    PRIMER mtime posterior al append podria venir de un ciclo que leyo el fichero justo
+        //    ANTES (ventana = su computo, ~1.1 ms de 250 ms). Por eso se miden DOS cotas y el
+        //    valor real esta entre ellas:
+        //      lag_ms      = 1er escritura posterior al append  -> cota INFERIOR
+        //      lag_ms_safe = 2a escritura posterior al append   -> cota SUPERIOR (garantiza que
+        //                    el ciclo empezo despues del append, o sea que VIO la barra)
         if (!probe.empty()) {
             for (auto& f : feeds) {
                 if (f.lo != probe || f.pending_ns == 0) continue;
                 auto mt = mtime_of(probe_json);
-                if (mt && *mt > f.pending_ns) {
-                    double lag_ms = (*mt - f.pending_ns) * 1000.0;
-                    probe_lag.push_back(lag_ms);
-                    char b[256];
-                    snprintf(b, sizeof b, "{\"bar_ts\":%ld,\"appended\":%.6f,\"compass_mtime\":%.6f,"
-                             "\"lag_ms\":%.2f}\n", f.pending_bar, f.pending_ns, *mt, lag_ms);
-                    probe_jl += b;
-                    ++probe_n;
-                    f.pending_ns = 0;
-                }
+                if (!mt || *mt <= f.pending_ns) continue;
+                if (f.first_write == 0) { f.first_write = *mt; continue; }
+                if (*mt <= f.first_write) continue;
+                double lag_ms = (f.first_write - f.pending_ns) * 1000.0;
+                double safe_ms = (*mt - f.pending_ns) * 1000.0;
+                probe_lag.push_back(lag_ms);
+                probe_safe.push_back(safe_ms);
+                char b[320];
+                snprintf(b, sizeof b, "{\"bar_ts\":%ld,\"appended\":%.6f,\"compass_mtime\":%.6f,"
+                         "\"lag_ms\":%.2f,\"lag_ms_safe\":%.2f}\n", f.pending_bar, f.pending_ns,
+                         f.first_write, lag_ms, safe_ms);
+                probe_jl += b;
+                ++probe_n;
+                f.pending_ns = 0;
+                f.first_write = 0;
             }
         }
 
@@ -742,10 +999,15 @@ int main(int argc, char** argv) {
             if (probe_n == 0)
                 printf("[probe] 0 muestras: ¿esta corriendo la brujula? "
                        "(cd %s && %s --loop 0.25 %s)\n", out.c_str(), compass.c_str(), probe.c_str());
-            else
-                printf("[probe] %s: n=%ld | retraso MECANICO barra->JSON: mediana %.0f ms, "
-                       "p90 %.0f ms, max %.0f ms\n", upper(probe).c_str(), probe_n,
+            else {
+                printf("[probe] %s: n=%ld | retraso MECANICO END-TO-END barra->JSON de la "
+                       "brujula\n", upper(probe).c_str(), probe_n);
+                printf("  cota INFERIOR (1a escritura): mediana %.0f ms, p90 %.0f ms, max %.0f ms\n",
                        median(probe_lag), pctile(probe_lag, 0.9), pctile(probe_lag, 1.0));
+                printf("  cota SUPERIOR (2a escritura, garantiza que vio la barra): mediana "
+                       "%.0f ms, p90 %.0f ms, max %.0f ms\n", median(probe_safe),
+                       pctile(probe_safe, 0.9), pctile(probe_safe, 1.0));
+            }
         }
     }
     if (!quiet) printf("[replay] fin: reloj virtual %s\n", hhmm_str((long)v).c_str());

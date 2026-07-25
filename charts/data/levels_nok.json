@@ -1,33 +1,33 @@
 {
  "sym": "NOK",
  "spot": 9.09,
- "asof": 1784924579,
- "exp": "20260724",
- "dte": 0.0,
+ "asof": 1784966444,
+ "exp": "20260731",
+ "dte": 6.5,
  "scope": "0DTE",
- "net_vex": 0.0,
+ "net_vex": 248532.9,
  "vex_peak": 9.0,
  "vex_profile": [
   {
    "strike": 9.0,
-   "vex": 0.0
+   "vex": 248532.9
   }
  ],
  "pressure": -60,
  "pressure_lab": "AMPLIFICA fuerte",
  "iv_atm": 0.3,
- "em": 0.01,
- "net_gex": -0.0,
+ "em": 0.36,
+ "net_gex": -824335.0,
  "regime": "NEG",
  "flip": 9.0,
  "flip_static": 9.0,
  "call_wall": null,
  "put_wall": 9.0,
  "abs_wall": 9.0,
- "poc_dom": "88%P",
+ "poc_dom": "93%P",
  "call_wall_gex": null,
- "put_wall_gex": -0.0,
- "abs_wall_gex": -0.0,
+ "put_wall_gex": -824335.0,
+ "abs_wall_gex": -824335.0,
  "oi_call_wall": null,
  "oi_put_wall": 9.0,
  "near_call_wall": false,
@@ -36,7 +36,16 @@
  "profile": [
   {
    "strike": 9.0,
-   "gex": -0.0
+   "gex": -824335.0
   }
- ]
+ ],
+ "call_wall_kind": null,
+ "call_wall_regime": null,
+ "call_wall_net": null,
+ "put_wall_kind": "pin",
+ "put_wall_regime": "POS",
+ "put_wall_net": -824335.0,
+ "abs_wall_kind": "pin",
+ "abs_wall_regime": "POS",
+ "abs_wall_net": -824335.0
 }

@@ -1,0 +1,195 @@
+{
+ "sym": "ASML",
+ "spot": 1756.51,
+ "asof": 1784966444,
+ "exp": "20260731",
+ "dte": 6.5,
+ "scope": "0DTE",
+ "net_vex": 251716737.9,
+ "vex_peak": 1750.0,
+ "vex_profile": [
+  {
+   "strike": 1725.0,
+   "vex": 64099488.5
+  },
+  {
+   "strike": 1730.0,
+   "vex": -28541351.6
+  },
+  {
+   "strike": 1735.0,
+   "vex": 17830337.3
+  },
+  {
+   "strike": 1740.0,
+   "vex": 42859335.0
+  },
+  {
+   "strike": 1745.0,
+   "vex": -17156982.5
+  },
+  {
+   "strike": 1750.0,
+   "vex": 96943002.7
+  },
+  {
+   "strike": 1755.0,
+   "vex": 9325514.7
+  },
+  {
+   "strike": 1760.0,
+   "vex": 610268.2
+  },
+  {
+   "strike": 1765.0,
+   "vex": -8373942.4
+  },
+  {
+   "strike": 1767.5,
+   "vex": -3809854.8
+  },
+  {
+   "strike": 1770.0,
+   "vex": -0.0
+  },
+  {
+   "strike": 1775.0,
+   "vex": 3141590.1
+  },
+  {
+   "strike": 1777.5,
+   "vex": 1178003.3
+  },
+  {
+   "strike": 1780.0,
+   "vex": 6523784.1
+  },
+  {
+   "strike": 1782.5,
+   "vex": 2854088.2
+  },
+  {
+   "strike": 1785.0,
+   "vex": -3088960.7
+  },
+  {
+   "strike": 1787.5,
+   "vex": -1656711.2
+  },
+  {
+   "strike": 1790.0,
+   "vex": -0.0
+  },
+  {
+   "strike": 1792.5,
+   "vex": 68979129.0
+  }
+ ],
+ "pressure": -41,
+ "pressure_lab": "amplifica",
+ "iv_atm": 0.3,
+ "em": 70.32,
+ "net_gex": -6803194.0,
+ "regime": "NEG",
+ "flip": 1792.5,
+ "flip_static": 1792.5,
+ "call_wall": 1790.0,
+ "put_wall": 1750.0,
+ "abs_wall": 1750.0,
+ "poc_dom": "92%P",
+ "call_wall_gex": -0.0,
+ "put_wall_gex": -4459135.8,
+ "abs_wall_gex": -4459135.8,
+ "oi_call_wall": 1790.0,
+ "oi_put_wall": 1750.0,
+ "near_call_wall": false,
+ "near_put_wall": true,
+ "near_flip": false,
+ "profile": [
+  {
+   "strike": 1725.0,
+   "gex": -604787.2
+  },
+  {
+   "strike": 1730.0,
+   "gex": 320544.2
+  },
+  {
+   "strike": 1735.0,
+   "gex": -247154.0
+  },
+  {
+   "strike": 1740.0,
+   "gex": -775122.8
+  },
+  {
+   "strike": 1745.0,
+   "gex": 445717.8
+  },
+  {
+   "strike": 1750.0,
+   "gex": -4459135.8
+  },
+  {
+   "strike": 1755.0,
+   "gex": -1851954.8
+  },
+  {
+   "strike": 1760.0,
+   "gex": 52510.7
+  },
+  {
+   "strike": 1765.0,
+   "gex": -296613.6
+  },
+  {
+   "strike": 1767.5,
+   "gex": -104324.7
+  },
+  {
+   "strike": 1770.0,
+   "gex": -0.0
+  },
+  {
+   "strike": 1775.0,
+   "gex": 51240.1
+  },
+  {
+   "strike": 1777.5,
+   "gex": 16937.0
+  },
+  {
+   "strike": 1780.0,
+   "gex": 83873.7
+  },
+  {
+   "strike": 1782.5,
+   "gex": 33187.6
+  },
+  {
+   "strike": 1785.0,
+   "gex": -32789.9
+  },
+  {
+   "strike": 1787.5,
+   "gex": -16178.9
+  },
+  {
+   "strike": 1790.0,
+   "gex": -0.0
+  },
+  {
+   "strike": 1792.5,
+   "gex": 580856.5
+  }
+ ],
+ "call_wall_kind": "trampilla",
+ "call_wall_regime": "NEG",
+ "call_wall_net": -0.0,
+ "put_wall_kind": "trampilla",
+ "put_wall_regime": "NEG",
+ "put_wall_net": -4459135.8,
+ "abs_wall_kind": "trampilla",
+ "abs_wall_regime": "NEG",
+ "abs_wall_net": -4459135.8
+}

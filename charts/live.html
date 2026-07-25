@@ -281,6 +281,9 @@
   <span id="layerbar" title="GEX = mapa de gamma (precio) · VEX = mapa de vanna (vol). Oro=imán, morado=acelerador en ambos.">
     <button class="tgl active" data-layer="GEX">GEX</button><button class="tgl" data-layer="VEX">VEX</button>
   </span>
+  <span id="bubblebar" title="Muros GEX como hileras de BURBUJAS (además de las líneas). Tamaño+densidad+longitud de la hilera ∝ |gamma| del strike. Color: verde-azulado = PIN (el nivel AGUANTA) · rojo = TRAMPILLA (el precio la ATRAVIESA acelerando — no fadear ahí) · gris ? = sin dato. Anillo = muro absoluto (POC).">
+    <button class="tgl active" id="bubbtn">⚬ Burbujas</button>
+  </span>
   <button id="alarmbtn" title="Alarma manual (estilo TradingView): clic aquí y luego clic en el precio del chart para poner una alarma. Suena sirena+voz al cruzar (price_alarm).">🔔 Alarma</button>
   <button id="zonebtn" title="Zona de ejecución: clic aquí y luego clic en el precio del chart; elige expiry, cantidad y comprar/vender call/put. Por defecto FICHA (señal-solamente); ARMA el chip ⚡ para que el order_engine la ejecute. Stop-loss arrastrable.">🎯 Zona</button>
   <button id="narrbtn" title="Narrador de mercado (como gexa): lectura breve del mapa GEX. Determinista gratis + DeepSeek bajo demanda (↻).">🗣 Narrador</button>
@@ -330,6 +333,13 @@
   <p><b>POC</b> = strike de mayor |gamma| = máxima influencia. Oro (imán) → operar hacia él. Morado (acelerador) → bifurcación: ±10pt NO direccional, esperar 2 velas. <b>%C/%P</b> = dominancia call/put del nodo.</p>
   <p><b>Call/Put wall</b> = techo/piso = rango esperado. Muros que ruedan = señal direccional (call wall baja = bajista; put wall sube = alcista).</p>
   <p><b>Air pocket</b> = tramo sin imanes, nada frena la caída. <b>Gatekeeper</b> = acelerador morado que bloquea el camino: no operar a través.</p>
+  <h4>Burbujas — PIN vs TRAMPILLA (chip <b>⚬ Burbujas</b>)</h4>
+  <p>Cada muro se pinta también como una <b>hilera de círculos</b> (además de su línea). Es un modo de VISUALIZACIÓN de los muros que ya calculamos, no un indicador nuevo — cero cómputo extra.</p>
+  <p><b>Tamaño · densidad · longitud</b> de la hilera ∝ <b>|gamma| del strike</b> normalizado al máximo del perfil. Bolas grandes, tupidas y una fila que cruza el pane = muro gordo. Bolas chicas y sueltas = muro flojo.</p>
+  <p><b style="color:#26d0b0">VERDE-AZULADO = PIN</b>: el nivel cae del lado <b>+Γ</b> del flip → dealers amortiguan, el muro <b>AGUANTA</b>. Ahí el fade tiene sentido: operar hacia el nivel y esperar el rechazo impreso.</p>
+  <p><b style="color:#ff5252">ROJO = TRAMPILLA</b>: el nivel cae del lado <b>−Γ</b> → dealers amplifican, el precio lo <b>ATRAVIESA acelerando</b>. <b>Prohibido fadear contra una trampilla</b> — es el error que la doctrina veta (whipsaw de gamma negativa). Se opera la ruptura, no el rebote.</p>
+  <p><b style="color:#90a4ae">GRIS "?"</b>: el dato de tipo no llegó (mapa viejo o sin flip). No se inventa un pin: se admite que no se sabe.</p>
+  <p><b>Anillo</b> alrededor de las bolas = <b>muro absoluto (POC)</b>, el nodo de máxima influencia. Amarillo = gamma-flip.</p>
   <h4>Ciclo del nodo</h4>
   <p>Fresh (0 toques, máximo) → Tested (1) → Weakening (2) → Dead (3+, evitar). <b>1er toque &gt; retests.</b> Gamma creciendo = fortalece; cayendo = pierde fuerza.</p>
   <h4>Combo_tl en el chart</h4>
@@ -402,6 +412,8 @@
   <span><span class="dot" style="background:#ffb300"></span>imán (gamma+ dorado)</span>
   <span><span class="dot" style="background:#9c27b0"></span>acelerador (gamma− morado)</span>
   <span><span class="dot" style="background:#f4c430"></span>gamma-flip</span>
+  <span><span class="dot" style="background:#26d0b0;border-radius:50%"></span>burbujas PIN (aguanta)</span>
+  <span><span class="dot" style="background:#ff5252;border-radius:50%"></span>burbujas TRAMPILLA (se atraviesa)</span>
   <span style="margin-left:auto;color:#555">FICHA por defecto · el motor sólo ejecuta zonas ARMADAS ⚡</span>
 </footer>
 
@@ -542,15 +554,18 @@ function drawLevels(lv) {
   const kind = (gex) => gex == null ? { c: "rgba(176,190,197,0.5)", t: "" }
     : gex >= 0 ? { c: "rgba(255,179,0,0.62)", t: "imán " }      // dorado, translúcido
                 : { c: "rgba(156,39,176,0.55)", t: "acc " };     // morado, translúcido
-  const addW = (price, gex, name) => {
+  // PIN aguanta / TRAMPILLA se atraviesa acelerando -> sufijo en la etiqueta del eje.
+  // null (gex_core viejo o sin flip) = "?" — nunca se inventa un pin.
+  const kindTag = (wk) => wk === "pin" ? " ·PIN" : wk === "trampilla" ? " ·TRAMP" : wk ? " ·" + wk : "";
+  const addW = (price, gex, name, wkind) => {
     if (price == null) return;
     const k = kind(gex);
-    add(price, k.c, name + " " + k.t + fmtM(gex), false);
+    add(price, k.c, name + " " + k.t + fmtM(gex) + kindTag(wkind), false);
   };
-  addW(lv.call_wall, lv.call_wall_gex, "CW");
-  addW(lv.put_wall, lv.put_wall_gex, "PW");
+  addW(lv.call_wall, lv.call_wall_gex, "CW", lv.call_wall_kind);
+  addW(lv.put_wall, lv.put_wall_gex, "PW", lv.put_wall_kind);
   if (lv.abs_wall && lv.abs_wall !== lv.call_wall && lv.abs_wall !== lv.put_wall)
-    addW(lv.abs_wall, lv.abs_wall_gex, "POC" + (lv.poc_dom ? " " + lv.poc_dom : ""));  // GPOC + %C/%P
+    addW(lv.abs_wall, lv.abs_wall_gex, "POC" + (lv.poc_dom ? " " + lv.poc_dom : ""), lv.abs_wall_kind);  // GPOC + %C/%P
   // flip con etiqueta +Γ DAMPENING / −Γ AMPLIFYING (signo del libro), como gexa
   const gsym = lv.net_gex == null ? "" : (lv.net_gex >= 0 ? " +Γ" : " −Γ");
   add(lv.flip, "rgba(244,196,48,0.85)", "flip" + gsym, true);
@@ -559,7 +574,110 @@ function drawLevels(lv) {
     add(lv.spot + lv.em, "rgba(41,182,246,0.5)", "EM+", true);
     add(lv.spot - lv.em, "rgba(41,182,246,0.5)", "EM−", true);
   }
+  wallBub.setLevels(lv);   // capa BURBUJAS (aditiva, se dibuja además de estas líneas)
 }
+
+// ------------------------------- muros como BURBUJAS (estilo @BullflowIO) ----
+// Hilera horizontal de círculos por muro, en vez de una línea plana. Codifica lo que
+// TENEMOS medido, no lo del tuit:
+//   · TAMAÑO + DENSIDAD + LONGITUD de la hilera ∝ |gamma| del strike (normalizado al
+//     máx del perfil) -> un muro gordo es una fila larga y tupida de bolas grandes.
+//   · COLOR = PIN vs TRAMPILLA (call_wall_kind / put_wall_kind / abs_wall_kind, del
+//     régimen acumulado en el nivel). Verde-azulado = AGUANTA. Rojo = el precio la
+//     ATRAVIESA acelerando. Gris "?" = el dato no vino (jamás se pinta un pin falso).
+//   · El muro ABSOLUTO (POC) va más grande y con anillo.
+// Es un modo de VISUALIZACIÓN de los muros que ya calculamos — cero cómputo nuevo.
+const BUB = {
+  pin:        { rgb: "38,208,176",   lab: "PIN" },        // verde-azulado: aguanta
+  trampilla:  { rgb: "255,82,82",    lab: "TRAMPILLA" },  // rojo: se atraviesa
+  desconocido:{ rgb: "144,164,174",  lab: "?" },          // gris: sin dato
+  flip:       { rgb: "244,196,48",   lab: "" },           // amarillo: frontera
+};
+function wallInten(lv, price, net) {
+  const prof = (lv && lv.profile) || [];
+  if (!prof.length) return 0.5;
+  const maxAbs = Math.max(1, ...prof.map(p => Math.abs(p.gex)));
+  if (net != null) return Math.min(1, Math.abs(net) / maxAbs);   // gamma exacta del strike
+  return wallIntensity(lv, price);                               // fallback: strike vecino
+}
+function bubbleRows(lv) {
+  if (!lv) return [];
+  const rows = [];
+  const push = (price, wkind, name, gex, net, big) => {
+    if (price == null) return;
+    rows.push({ price, kind: BUB[wkind] ? wkind : "desconocido", name, gex,
+                inten: wallInten(lv, price, net), big: !!big });
+  };
+  // el flip va PRIMERO: cuando un muro cae EXACTAMENTE en el flip, el color que debe
+  // ganar es el del muro (PIN/TRAMPILLA = lo operable), no el amarillo de la frontera.
+  if (lv.flip != null)
+    rows.push({ price: lv.flip, kind: "flip", name: "flip", gex: lv.net_gex, inten: 0.42, big: false });
+  push(lv.call_wall, lv.call_wall_kind, "CW", lv.call_wall_gex, lv.call_wall_net, false);
+  push(lv.put_wall,  lv.put_wall_kind,  "PW", lv.put_wall_gex,  lv.put_wall_net,  false);
+  if (lv.abs_wall != null && lv.abs_wall !== lv.call_wall && lv.abs_wall !== lv.put_wall)
+    push(lv.abs_wall, lv.abs_wall_kind, "POC" + (lv.poc_dom ? " " + lv.poc_dom : ""),
+         lv.abs_wall_gex, lv.abs_wall_net, true);
+  return rows;
+}
+class BubbleView {
+  constructor(src) { this._src = src; }
+  zOrder() { return "top"; }   // encima de las velas pero translúcido: no las tapa
+  renderer() {
+    const src = this._src;
+    return { draw: (target) => target.useBitmapCoordinateSpace((scope) => {
+      if (!src._on || !src._rows.length) return;
+      const ctx = scope.context;
+      const W = scope.bitmapSize.width, H = scope.bitmapSize.height;
+      const hr = scope.horizontalPixelRatio, vr = scope.verticalPixelRatio;
+      const x0 = W * 0.82;   // arranca a la izq. del histograma GEX (que ocupa el 16% dcho.)
+      ctx.save();
+      for (const r of src._rows) {
+        const y = src._series.priceToCoordinate(r.price);
+        if (y == null) continue;
+        const yb = y * vr;
+        if (yb < -20 || yb > H + 20) continue;
+        const inten = Math.max(0.10, Math.min(1, r.inten));
+        const pal = BUB[r.kind] || BUB.desconocido;
+        const rad = (r.big ? 3.9 : 3.0) * (0.5 + 0.9 * inten) * vr;   // tamaño ∝ |gamma|
+        const gap = (14 - 6 * inten) * hr;                            // densidad ∝ |gamma|
+        const xEnd = Math.max(2 * hr, x0 - x0 * (0.22 + 0.76 * inten)); // longitud ∝ |gamma|
+        const step = gap + 2 * rad;
+        ctx.fillStyle = `rgba(${pal.rgb},${(0.26 + 0.5 * inten).toFixed(3)})`;
+        ctx.shadowColor = `rgba(${pal.rgb},0.75)`;
+        ctx.shadowBlur = 7 * inten * vr;
+        for (let x = x0; x > xEnd; x -= step) {
+          ctx.beginPath(); ctx.arc(x, yb, rad, 0, 6.283185); ctx.fill();
+        }
+        ctx.shadowBlur = 0;
+        if (r.big) {   // muro absoluto: anillo para que cante que es el nodo dominante
+          ctx.strokeStyle = `rgba(${pal.rgb},0.9)`;
+          ctx.lineWidth = Math.max(1, 1.2 * vr);
+          for (let x = x0; x > xEnd; x -= step) {
+            ctx.beginPath(); ctx.arc(x, yb, rad + 1.8 * vr, 0, 6.283185); ctx.stroke();
+          }
+        }
+        // etiqueta al extremo izq. de la hilera: qué muro, a qué precio, y PIN/TRAMPILLA
+        const txt = [r.name, r.price, pal.lab].filter(v => v !== "" && v != null).join(" ");
+        ctx.font = `${(r.big ? 11 : 10) * vr}px -apple-system, sans-serif`;
+        ctx.textAlign = "left"; ctx.textBaseline = "bottom";
+        ctx.fillStyle = `rgba(${pal.rgb},0.95)`;
+        ctx.fillText(txt, xEnd, yb - rad - 3 * vr);
+      }
+      ctx.restore();
+    }) };
+  }
+}
+class WallBubbles {
+  constructor(series) { this._series = series; this._rows = []; this._on = true;
+                        this._req = null; this._view = new BubbleView(this); }
+  attached(p) { this._req = p.requestUpdate; }
+  detached() { this._req = null; }
+  paneViews() { return [this._view]; }
+  setLevels(lv) { this._rows = bubbleRows(lv); if (this._req) this._req(); }
+  setOn(on) { this._on = !!on; if (this._req) this._req(); }
+}
+const wallBub = new WallBubbles(candle);
+candle.attachPrimitive(wallBub);
 
 // ------------------------------------- GEX profile: custom ISeriesPrimitive
 // rectángulos VERDES por strike desde el borde DERECHO; opacidad ∝ intensidad y
@@ -691,8 +809,14 @@ function drawHeader(lv) {
   const em = document.getElementById("h-em");
   if (em && lv.em != null && lv.spot) em.textContent = "±" + lv.em + " (" + (lv.spot - lv.em).toFixed(0) + "–" + (lv.spot + lv.em).toFixed(0) + ")";
   document.getElementById("h-flip").textContent = lv.flip != null ? lv.flip : "—";
-  document.getElementById("h-cw").textContent = lv.call_wall != null ? lv.call_wall : "—";
-  document.getElementById("h-pw").textContent = lv.put_wall != null ? lv.put_wall : "—";
+  // CW/PW con su tipo: PIN aguanta (fade OK) · TRAMP se atraviesa (prohibido fadear)
+  const kt = (wk) => wk === "pin" ? " PIN" : wk === "trampilla" ? " TRAMP" : "";
+  const kc = (wk) => wk === "pin" ? "pos" : wk === "trampilla" ? "neg" : "";
+  const cwEl = document.getElementById("h-cw"), pwEl = document.getElementById("h-pw");
+  cwEl.textContent = lv.call_wall != null ? lv.call_wall + kt(lv.call_wall_kind) : "—";
+  cwEl.className = "v " + kc(lv.call_wall_kind);
+  pwEl.textContent = lv.put_wall != null ? lv.put_wall + kt(lv.put_wall_kind) : "—";
+  pwEl.className = "v " + kc(lv.put_wall_kind);
   if (lv.asof) document.getElementById("h-asof").textContent =
       "GEX " + torHM(lv.asof) + " ET";
 }
@@ -1419,6 +1543,16 @@ document.querySelectorAll("#layerbar .tgl").forEach(btn => {
     gexPrim.setLayer(btn.dataset.layer);
   });
 });
+// toggle BURBUJAS on/off (aditivo: las líneas de muro siguen ahí). Recuerda la elección.
+const bubBtn = document.getElementById("bubbtn");
+function setBubbles(on) {
+  bubBtn.classList.toggle("active", on);
+  wallBub.setOn(on);
+  try { localStorage.setItem("gexBubbles", on ? "1" : "0"); } catch (e) {}
+}
+bubBtn.addEventListener("click", () => setBubbles(!bubBtn.classList.contains("active")));
+setBubbles((() => { try { const v = localStorage.getItem("gexBubbles"); return v === null ? true : v === "1"; }
+                    catch (e) { return true; } })());
 
 // ------------------------------------------------------- WS pipeline
 let curLevels = null;
