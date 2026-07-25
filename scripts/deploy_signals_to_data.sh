@@ -9,8 +9,13 @@ cd "$(dirname "$0")/.." || exit 1
 # que mas corre (order_engine y scalper ya usaban -O3 nativo).
 STD="-std=c++2c"
 ARCH="-mcpu=native"; [ "$(uname -m)" = "x86_64" ] && ARCH="-march=native"
+# -Wall -Wextra: la ley de la casa pide CERO warnings. Se avisan pero NO se
+# convierten en error (-Werror) porque un aviso nuevo de una version de clang no
+# puede dejar a la flota sin binarios; el conteo se canta al final del deploy.
+WARN="-Wall -Wextra"
 FAILED=0
-echo "=== recompilando C++ ($STD -O3 $ARCH) — secuencial 8GB ==="
+WARNED=0
+echo "=== recompilando C++ ($STD -O3 $ARCH $WARN) — secuencial 8GB ==="
 # ARRAY, no escalar (fix 2026-07-25): zsh NO hace word-splitting, asi que
 # `for src in $BOTS` recibia los 24 nombres como UNA sola cadena, [ -f ] fallaba
 # y los saltaba TODOS en silencio. Por eso los binarios seguian siendo del 20-jul
@@ -23,7 +28,13 @@ for src in scripts/flow_pulse.cpp scripts/qqq_xray.cpp scripts/price_alarm.cpp s
   # -lcurl solo donde hace falta (finviz_scout/x_whale_bot hablan HTTP). Sin esto
   # el enlace falla y —desde el fix de abort-on-fail— aborta TODO el despliegue.
   LIBS=""; case "$out" in finviz_scout|x_whale_bot) LIBS="-lcurl";; esac
-  clang++ $STD -O3 $ARCH -o "$out" "$src" $LIBS 2>/tmp/cc_err && echo "  ✅ $out" || { echo "  🔴 $out:"; head -5 /tmp/cc_err; FAILED=$((FAILED+1)); }
+  if clang++ $STD -O3 $ARCH $WARN -o "$out" "$src" $LIBS 2>/tmp/cc_err; then
+    nw=$(grep -c "warning:" /tmp/cc_err)
+    if [ "$nw" -gt 0 ]; then echo "  ⚠️  $out ($nw warnings)"; head -3 /tmp/cc_err; WARNED=$((WARNED+1));
+    else echo "  ✅ $out"; fi
+  else
+    echo "  🔴 $out:"; head -5 /tmp/cc_err; FAILED=$((FAILED+1))
+  fi
   rm -f /tmp/cc.lock
 done
 # NO reiniciar con binarios a medias: antes seguia adelante y dejaba la flota con
@@ -33,6 +44,7 @@ if [ "$FAILED" -gt 0 ]; then
   echo "   Arregla y repite. La flota sigue corriendo los binarios anteriores."
   exit 1
 fi
+[ "$WARNED" -gt 0 ] && echo "⚠️  $WARNED binario(s) con warnings — la ley de la casa pide CERO. Revisar."
 echo "=== reiniciando la flota (keepalive relanza con binarios+codigo nuevos) ==="
 pkill -f '_signal_bot$'; pkill -f 'opt_chain_cache|opt_whale_watch|flow_pulse|bollinger_alarm|band_open|signals_db|notify_relay'
 sleep 3
