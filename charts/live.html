@@ -274,8 +274,9 @@
            cursor:grab; user-select:none; flex:0 0 auto; }
   .wghdr .wgdrag { color:#4b5b7a; letter-spacing:-2px; }
   .wghdr .wgname { white-space:nowrap; }
-  .wghdr .wgsub { flex:1; text-align:right; color:#6f8bbf; font-weight:600;
-                  font-variant-numeric:tabular-nums; overflow:hidden; text-overflow:ellipsis; }
+  .wghdr .wgsub { flex:1 1 0; min-width:0; text-align:right; color:#6f8bbf; font-weight:600;
+                  font-variant-numeric:tabular-nums; white-space:nowrap; overflow:hidden;
+                  text-overflow:ellipsis; }
   .wgb { background:transparent; border:none; color:#6f8bbf; font:inherit; font-size:12px;
          font-weight:700; cursor:pointer; padding:0 3px; line-height:1; }
   .wgb:hover { color:#fff; }
@@ -1827,7 +1828,9 @@ function wgApply() {
     w.classList.toggle("float", flo);
     w.classList.toggle("min", !!WG.min[id]);
     w.classList.toggle("exp", !!WG.exp[id]);
-    const h = WG.min[id] ? "" : Math.max(90, WG.h[id] || 300) + "px";
+    // expandido crece TAMBIEN en alto: mas strikes legibles de un vistazo
+    const hpx = WG.exp[id] ? Math.max(WG.h[id] || 300, 560) : Math.max(90, WG.h[id] || 300);
+    const h = WG.min[id] ? "" : hpx + "px";
     if (flo) {
       const f = WG.float[id];
       w.style.left = Math.round(f.x) + "px"; w.style.top = Math.round(f.y) + "px";
@@ -1987,12 +1990,14 @@ function wgexDraw() {
   const cx = GUT + (W - GUT - 8) / 2;              // eje cero
   const half = (W - GUT - 14) / 2;
   const maxAbs = Math.max(1, ...prof.map(p => Math.abs(p.gex)));
+  const lblEvery = Math.max(1, Math.ceil(11 / rowH));   // 1 de cada k etiquetas
   const yOfRow = (i) => padT + rowH * (i + 0.5);
-  // precio -> y (interpolado entre strikes; fuera de rango se recorta)
+  // precio -> y (interpolado entre strikes). FUERA DEL RANGO -> null: la linea NO se
+  // dibuja. Recortarla al borde pintaria el flip pegado al strike de arriba y el ojo
+  // leeria "el flip esta aqui" cuando esta a 20 puntos. Mejor no decir nada.
   const yOfPrice = (px) => {
     if (px == null) return null;
-    if (px >= prof[0].strike) return padT;
-    if (px <= prof[n - 1].strike) return padT + avail;
+    if (px > prof[0].strike || px < prof[n - 1].strike) return null;
     for (let i = 0; i < n - 1; i++) {
       const a = prof[i].strike, b = prof[i + 1].strike;
       if (px <= a && px >= b) {
@@ -2012,7 +2017,9 @@ function wgexDraw() {
     g.fillStyle = p.gex >= 0 ? "rgba(38,166,154,0.92)" : "rgba(239,83,80,0.92)";
     if (p.gex >= 0) g.fillRect(cx + 1, y - barH / 2, Math.max(1, wpx), barH);
     else            g.fillRect(cx - 1 - Math.max(1, wpx), y - barH / 2, Math.max(1, wpx), barH);
-    if (rowH >= 9) {                                // etiqueta de strike si hay sitio
+    // Etiqueta de strike: si las filas son finas se rotula 1 de cada k para que nunca
+    // se pisen — pero NUNCA se quedan todas sin rotular (el eje sin numeros no sirve).
+    if (i % lblEvery === 0) {
       g.fillStyle = "#6f8bbf"; g.textAlign = "right";
       g.fillText(String(p.strike), GUT - 6, y);
     }
@@ -2032,7 +2039,8 @@ function wgexDraw() {
 
   if (sub) {
     const net = lv.net_gex != null ? fmtBig(lv.net_gex) : "—";
-    sub.textContent = `${net} · ${lv.scope || ""} ${lv.dte != null ? (lv.dte < 1 ? "0DTE" : Math.round(lv.dte) + "DTE") : ""}`
+    const vto = lv.dte != null ? (lv.dte < 1 ? "0DTE" : Math.round(lv.dte) + "DTE") : "—";
+    sub.textContent = `${net} · alcance ${lv.scope || "—"} · vto ${vto}`
       + ` · ${windowed ? n + "/" + total + " strikes (ventana al spot)" : total + " strikes"}`;
     sub.title = windowed
       ? `Perfil completo: ${total} strikes. No caben todos, se muestran los ${n} más cercanos al spot. Expande (⤢) o agranda el widget para ver más.`
