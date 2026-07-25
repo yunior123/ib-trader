@@ -60,7 +60,7 @@ cat > "$RES/backend/run.sh" <<'RUNSH'
 HERE="$(cd "$(dirname "$0")" && pwd)"
 RES="$(dirname "$HERE")"
 SUPPORT="$HOME/Library/Application Support/ib-trader"
-mkdir -p "$SUPPORT/data" "$SUPPORT/charts"
+mkdir -p "$SUPPORT/data" "$SUPPORT/charts/data" "$SUPPORT/order_engine"
 # el backend escribe en Application Support (SIEMPRE escribible, sin TCC),
 # nunca dentro del .app (que puede estar en /Applications, de solo lectura)
 cp -n "$HERE/data/"* "$SUPPORT/data/" 2>/dev/null || true
@@ -68,7 +68,47 @@ cd "$SUPPORT"
 ln -sfn "$HERE/charts" "$SUPPORT/charts_bundled" 2>/dev/null || true
 export IBTRADER_CHARTS="$HERE/charts"
 export PYTHONPATH="$HERE/scripts"
-exec "$RES/python/bin/python3.12" "$HERE/scripts/chart_bridge.py" "$@"
+
+# --- POR QUE SE LANZA POR UN SYMLINK Y NO DIRECTO DESDE EL BUNDLE ------------
+# Todos los modulos del backend deducen su raiz asi:
+#   REPO = dirname(dirname(abspath(__file__)))     (chart_bridge.py:48 y 7 mas)
+# Lanzandolo como "$HERE/scripts/chart_bridge.py", REPO caia DENTRO del .app
+# (…/Resources/backend) — o sea el backend escribia exec_zones_*.json,
+# commands.jsonl y data/ dentro del bundle: rompe la firma ad-hoc y falla en seco
+# si la .app vive en /Applications (solo lectura). Justo lo contrario de lo que
+# prometia el commit 824ffc5. Bug detectado y arreglado el 2026-07-25.
+# os.path.abspath NO resuelve symlinks (realpath si), asi que lanzandolo por
+# "$SUPPORT/scripts/…" el REPO deducido es $SUPPORT — escribible — mientras el
+# CODIGO sigue siendo el del bundle. Cero cambios en el Python.
+ln -sfn "$HERE/scripts" "$SUPPORT/scripts"
+
+# --- BRUJULA: la flecha la calcula C++, no el Python -------------------------
+# chart_bridge.py solo LEE data/compass_<sym>.json (0.051 ms) — el calculo es
+# ./compass (1.09 ms/simbolo). Si nadie la corre, la flecha sale gris/rancia.
+# compass lee y escribe RELATIVO al cwd, y el cwd aqui ya es $SUPPORT.
+#
+# SE LANZA POR RUTA ABSOLUTA A PROPOSITO: scripts/compass_keepalive.sh del repo
+# hace `pkill -f "\./compass --loop"`. Si aqui se lanzara como "./compass --loop"
+# los dos se matarian mutuamente (bundle vs repo). Con la ruta absoluta el patron
+# "\./compass" NO casa, asi que conviven.
+#
+# HONESTIDAD: la brujula necesita data/bars_<sym>_ibkr.txt, que los produce
+# ibkr_bar_bridge.py — ese puente NO va en el bundle (necesita el Gateway y la
+# flota). Con la flota del repo arriba la flecha es fresca; con la .app sola, el
+# cockpit la marcara RANCIA en gris, que es el fallo ruidoso que queremos.
+COMPASS="$RES/engine/compass"
+if [ -x "$COMPASS" ]; then
+  FLEET=$(cat "$SUPPORT/data/fleet.txt" 2>/dev/null || echo "QQQ SPY")
+  "$COMPASS" --loop "${COMPASS_LOOP:-0.25}" ${=FLEET} >> "$SUPPORT/compass.log" 2>&1 &
+  COMPASS_PID=$!
+  # que no quede huerfana cuando el cockpit se cierre
+  trap 'kill $COMPASS_PID 2>/dev/null' EXIT INT TERM
+else
+  echo "AVISO: sin ./compass en el bundle — el cockpit ira sin flecha" >&2
+fi
+
+# sin exec: hay que conservar el trap que mata la brujula al salir
+"$RES/python/bin/python3.12" "$SUPPORT/scripts/chart_bridge.py" "$@"
 RUNSH
 chmod +x "$RES/backend/run.sh"
 
@@ -77,15 +117,28 @@ chmod +x "$RES/backend/run.sh"
 # vive intacta: doble llave + verificacion de cuenta que FALLA CERRADO.
 mkdir -p "$RES/engine"
 [ -f order_engine/order_engine ] && cp order_engine/order_engine "$RES/engine/"
-for f in arm.sh disarm.sh; do [ -f "order_engine/$f" ] && cp "order_engine/$f" "$RES/engine/"; done
+# la BRUJULA (C++): sin ella el cockpit empaquetado no tiene flecha
+[ -x compass ] && cp compass "$RES/engine/" && echo "  brujula empotrada: $(du -h compass | cut -f1)"
+# disarm.sh SI va (borra ARM_LIVE + SIGTERM al motor: funciona desde cualquier sitio,
+# es la palanca de emergencia y siempre debe estar a mano).
+# arm.sh NO va: deduce el repo de su propia ruta, asi que desde dentro del .app
+# escribia en <Resources>/order_engine/ARM_LIVE — carpeta inexistente -> fallaba con
+# un error de shell crudo (verificado 2026-07-25: exit 1, sin crear nada). Fallaba
+# CERRADO, que es lo correcto, pero era un artefacto roto y engañoso. Armar live se
+# hace desde el repo, a conciencia, no desde una .app que se arrastra por ahi.
+for f in disarm.sh; do [ -f "order_engine/$f" ] && cp "order_engine/$f" "$RES/engine/"; done
 cat > "$RES/engine/LEEME.txt" <<'ENG'
 order_engine — coloca ordenes REALES en TWS/IB Gateway.
 
 DOBLE LLAVE, a proposito:
-  1) crear el fichero ARM_LIVE con la fecha de hoy   (engine/arm.sh)
+  1) crear el fichero ARM_LIVE con la fecha de hoy   (repo: order_engine/arm.sh)
   2) lanzarlo con --arm-live
 Sin AMBAS solo registra lo que colocaria ("DRY colocaria ..."). Borrar ARM_LIVE
 lo desarma en el acto: la llave se re-evalua antes de CADA envio.
+
+ARMAR SOLO DESDE EL REPO: arm.sh a proposito NO viene en el .app. Aqui va
+disarm.sh, que es la palanca de EMERGENCIA (borra la llave y manda SIGTERM ->
+el motor cancela sus ordenes OE: y sale).
 
 CUENTA: sale de tu configuracion (menu de la app -> Configuracion), NO del codigo.
 Si no hay cuenta configurada el motor NO opera. Si el broker reporta otra cuenta

@@ -13,6 +13,16 @@ mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 # arm64 nativo; -O porque no cuesta nada y el binario es diminuto igual
 swiftc -O -target arm64-apple-macos13 macapp/main.swift macapp/Settings.swift -o "$APP/Contents/MacOS/cockpit"
 
+# --- BRUJULA (C++): la flecha del cockpit ------------------------------------
+# chart_bridge.py ya NO computa la direccion, solo LEE data/compass_<sym>.json. Si
+# la .app no lleva ./compass, el cockpit empaquetado sale sin flecha (o gris/rancia).
+# SECUENCIAL a proposito (Mac 8GB): un solo clang++ a la vez, nunca en paralelo.
+if [ ! -x ./compass ] || [ scripts/compass.cpp -nt ./compass ]; then
+  echo "  compilando la BRUJULA (secuencial, un solo clang++)…"
+  clang++ -std=c++23 -O3 -march=native -Wall -Wextra -o compass scripts/compass.cpp \
+    || echo "  🔴 AVISO: la BRUJULA no compila — la .app ira SIN flecha"
+fi
+
 cat > "$APP/Contents/Info.plist" <<'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -33,17 +43,25 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
 </dict></plist>
 PLIST
 
-# Firma ad-hoc: suficiente para uso propio y para pasarla a un amigo (el tendra que
-# hacer "Abrir de todos modos" la primera vez, o quitar la cuarentena con:
-#   xattr -dr com.apple.quarantine "ib-trader Cockpit.app"
-codesign --force --sign - "$APP" >/dev/null 2>&1 || echo "  (aviso: firma ad-hoc fallo, la app sigue funcionando en local)"
-
 # --- BACKEND EMPOTRADO (bundle unico y portable) ---
 # SKIP_BACKEND=1 para iterar rapido en la UI sin re-empaquetar los ~200 MB.
 if [ "${SKIP_BACKEND:-0}" != "1" ]; then
   zsh macapp/bundle_backend.sh
 else
   echo "  (SKIP_BACKEND=1 — bundle SIN backend, solo para iterar la UI)"
+fi
+
+# --- FIRMA AD-HOC — SIEMPRE AL FINAL -----------------------------------------
+# Ojo al ORDEN: firmar ANTES de empotrar el backend deja el sello ROTO ("a sealed
+# resource is missing or invalid"), porque los ~150 MB de python/ + backend/ +
+# engine/ entran DESPUES de sellar. Bug real detectado el 2026-07-25 en la .app
+# entregada: `codesign --verify` listaba 5000 "file added". En local arranca igual,
+# pero al pasarla a otro Mac Gatekeeper la mata. Por eso: empotrar -> firmar.
+codesign --force --deep --sign - "$APP" >/dev/null 2>&1 || echo "  (aviso: firma ad-hoc fallo, la app sigue funcionando en local)"
+if codesign --verify "$APP" >/dev/null 2>&1; then
+  echo "  firma ad-hoc: sello VALIDO"
+else
+  echo "  🔴 AVISO: el sello de la firma NO valida — revisar antes de pasarla a otro Mac"
 fi
 
 # --- ENTREGA A DESKTOP (pipeline automatico) -------------------------------
