@@ -64,7 +64,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate {
         load()
         // Primera ejecucion (sin cuenta configurada): abrir Configuracion en vez de
         // dejar al usuario adivinando por que no funciona.
-        if Config.load().account.isEmpty { openSettings() }
+        let c0 = Config.load()
+        if c0.accountPaper.isEmpty && c0.accountLive.isEmpty && c0.account.isEmpty { openSettings() }
         NSApp.setActivationPolicy(.regular)
         NSApp.activate(ignoringOtherApps: true)
     }

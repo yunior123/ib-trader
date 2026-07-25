@@ -32,7 +32,10 @@ def _acct(live):
     if os.environ.get(k): return os.environ[k].strip()
     cfg = os.path.expanduser("~/Library/Application Support/ib-trader/config.json")
     try:
-        a = (json.load(open(cfg)).get("account") or "").strip()
+        j = json.load(open(cfg))
+        sep = (j.get("accountLive" if live else "accountPaper") or "").strip()
+        if sep: return sep
+        a = (j.get("account") or "").strip()          # config vieja de una sola cuenta
         if a and (a.startswith("DU") != live): return a
     except Exception:
         pass

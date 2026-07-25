@@ -8,7 +8,9 @@
 import Cocoa
 
 struct Config: Codable {
-    var account   = ""          // U... (live) o DU... (paper) — el motor ABORTA si no coincide
+    var accountPaper = ""       // DU... — cuenta de PAPEL
+    var accountLive  = ""       // U...  — cuenta REAL. El motor ABORTA si no coincide.
+    var account      = ""       // legado: se mantiene por compatibilidad con configs viejas
     var paperPort = 4002
     var livePort  = 4001
     var cockpitPort = 8080
@@ -44,6 +46,12 @@ struct Config: Codable {
         if !resendKey.isEmpty  { env += "RESEND_KEY=\(resendKey)\n" }
         if !resendTo.isEmpty   { env += "RESEND_TO=\(resendTo)\n" }
         if !ntfyTopic.isEmpty  { env += "NTFY_TOPIC=\(ntfyTopic)\n" }
+        // espejo a account.txt (mismo formato que lee el motor y los scripts)
+        var acct = "# generado por el panel de la app — no editar a mano\n"
+        if !accountPaper.isEmpty { acct += "paper=\(accountPaper)\n" }
+        if !accountLive.isEmpty  { acct += "live=\(accountLive)\n" }
+        try? acct.write(to: Config.dir.appendingPathComponent("account.txt"),
+                        atomically: true, encoding: .utf8)
         let envURL = Config.dir.appendingPathComponent("feeds.env")
         try? env.write(to: envURL, atomically: true, encoding: .utf8)
         try? FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: envURL.path)
@@ -87,7 +95,10 @@ final class SettingsWindow: NSWindowController, NSWindowDelegate {
 
         var y: CGFloat = 470
         let rows: [(String, String, String, String, Bool)] = [
-            ("account",     "Cuenta IBKR:",   cfg.account,               "U1234567 (live) o DU1234567 (paper)", false),
+            ("accountPaper", "Cuenta PAPER:", cfg.accountPaper.isEmpty && cfg.account.hasPrefix("DU") ? cfg.account : cfg.accountPaper,
+                                                                        "DU1234567 — empieza SIEMPRE aquí", false),
+            ("accountLive",  "Cuenta LIVE:",  cfg.accountLive.isEmpty && cfg.account.hasPrefix("U") ? cfg.account : cfg.accountLive,
+                                                                        "U1234567 — dinero real", false),
             ("paperPort",   "Puerto paper:",  String(cfg.paperPort),     "4002 gateway · 7497 TWS", false),
             ("livePort",    "Puerto live:",   String(cfg.livePort),      "4001 gateway · 7496 TWS", false),
             ("cockpitPort", "Puerto cockpit:", String(cfg.cockpitPort),  "8080", false),
@@ -106,7 +117,7 @@ final class SettingsWindow: NSWindowController, NSWindowDelegate {
         note.frame = NSRect(x: 20, y: 60, width: 480, height: 40)
         note.textColor = .secondaryLabelColor
         note.maximumNumberOfLines = 2
-        note.stringValue = "Las claves son opcionales: sin ellas el sistema funciona con IBKR solo.\nLa cuenta SÍ es obligatoria — el motor aborta si no coincide con la del broker."
+        note.stringValue = "Las claves son opcionales: sin ellas el sistema funciona con IBKR solo.\nLa cuenta SÍ es obligatoria — sin ella el motor NO opera, y aborta si el broker reporta otra."
         cv.addSubview(note)
 
         let save = NSButton(title: "Guardar", target: self, action: #selector(saveCfg))
@@ -120,7 +131,9 @@ final class SettingsWindow: NSWindowController, NSWindowDelegate {
     }
 
     @objc private func saveCfg() {
-        cfg.account     = fields["account"]!.stringValue.trimmingCharacters(in: .whitespaces).uppercased()
+        cfg.accountPaper = fields["accountPaper"]!.stringValue.trimmingCharacters(in: .whitespaces).uppercased()
+        cfg.accountLive  = fields["accountLive"]!.stringValue.trimmingCharacters(in: .whitespaces).uppercased()
+        cfg.account      = cfg.accountPaper.isEmpty ? cfg.accountLive : cfg.accountPaper
         cfg.paperPort   = Int(fields["paperPort"]!.stringValue)   ?? 4002
         cfg.livePort    = Int(fields["livePort"]!.stringValue)    ?? 4001
         cfg.cockpitPort = Int(fields["cockpitPort"]!.stringValue) ?? 8080

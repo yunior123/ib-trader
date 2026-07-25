@@ -49,16 +49,26 @@ inline std::string expected_account(bool live, const std::string& repo) {
         if (f) {
             const std::string blob((std::istreambuf_iterator<char>(f)),
                                     std::istreambuf_iterator<char>());
-            // El panel guarda UNA cuenta; el prefijo dice si es live (U) o paper (DU).
+            // El panel guarda las DOS cuentas por separado (accountPaper/accountLive).
+            const std::string sep = cfg_trim(json_str_field(blob, live ? "accountLive" : "accountPaper"));
+            if (!sep.empty()) return sep;
+            // Compatibilidad con configs viejas de UNA sola cuenta: el prefijo dice
+            // si es live (U...) o paper (DU...).
             const std::string acct = cfg_trim(json_str_field(blob, "account"));
             if (!acct.empty()) {
                 const bool is_paper = acct.rfind("DU", 0) == 0;
-                if (live != is_paper) return acct;   // coincide con el modo pedido
+                if (live != is_paper) return acct;
             }
         }
     }
 
-    std::ifstream f(repo + "/data/account.txt");
+    // account.txt: primero el que escribe el panel, luego el del repo
+    for (const std::string& cand : {
+             (std::getenv("HOME") ? std::string(std::getenv("HOME")) +
+                 "/Library/Application Support/ib-trader/account.txt" : std::string()),
+             repo + "/data/account.txt" }) {
+    if (cand.empty()) continue;
+    std::ifstream f(cand);
     if (f) {
         std::string line;
         const std::string want = live ? "live=" : "paper=";
@@ -67,6 +77,7 @@ inline std::string expected_account(bool live, const std::string& repo) {
             if (line.empty() || line[0] == '#') continue;
             if (line.rfind(want, 0) == 0) return cfg_trim(line.substr(want.size()));
         }
+    }
     }
     return "";
 }
