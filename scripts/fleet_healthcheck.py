@@ -218,6 +218,30 @@ def premarket_or_session():
     lt = time.localtime()
     return lt.tm_wday < 5 and 400 <= lt.tm_hour*100+lt.tm_min < 1600
 
+def fleet_window_live():
+    """True/False segun el PORTERO (./fleet_hours), None si no se puede saber.
+
+    UNA SOLA VERDAD. Este fichero tenia su propia idea del horario (`market_hours()`,
+    lun-vie 09:30-16:00) que NO es la ventana de la flota (domingo 20:00 -> viernes 20:00
+    hora de Toronto, orden de Yunior 2026-07-25). Dos definiciones divergentes = el
+    healthcheck REVIVIENDO lo que el portero acaba de apagar, cada 5 minutos.
+
+    Medido hoy sabado 16:42 con el mercado cerrado: el healthcheck revivia notify_relay y
+    x_signal_poster y acto seguido los cantaba 🔴 CRITICOS por estar muertos — que fuera de
+    ventana es justo lo correcto. Deshacia el apagado y ademas mentia sobre su gravedad.
+
+    None (portero ausente) NO se degrada a "pues estara vivo": se canta y NO se revive
+    nada, igual que hace `fleet_keepalive_start.sh`. Ante la duda, callar, nunca arrancar.
+    """
+    binario = os.path.join(REPO, "fleet_hours")
+    if not os.access(binario, os.X_OK):
+        return None
+    try:
+        return subprocess.run([binario], capture_output=True, timeout=5).returncode == 0
+    except Exception:
+        return None
+
+
 def heal(name, keepalive):
     """Revive un daemon via su keepalive si esta muerto. Idempotente."""
     if not proc_alive(keepalive):
@@ -262,9 +286,20 @@ def main():
         ("notify_relay (notificaciones)", "scripts/notify_relay.sh", "notify_relay.sh", True),
         ("x_signal_poster (X realtime)", "scripts/x_signal_poster.py", "x_signal_keepalive.sh", True),
     ]
+    ventana = fleet_window_live()
+    if ventana is None:
+        warn.append("portero horario AUSENTE (./fleet_hours): no revivo daemons a ciegas — "
+                    "compila con scripts/build_fleet_hours.sh")
     for name, pat, ka, critical in checks:
         if proc_alive(pat):
-            ok.append(f"{name}: vivo")
+            # Vivo FUERA de ventana no es "ok": es algo que el apagado no alcanzo.
+            (ok if ventana is not False else warn).append(
+                f"{name}: vivo" if ventana is not False
+                else f"{name}: VIVO fuera de ventana (el apagado no lo alcanzo)")
+        elif ventana is False:
+            ok.append(f"{name}: muerto (fuera de ventana, correcto)")
+        elif ventana is None:
+            warn.append(f"{name}: muerto y sin portero para saber si toca — no lo revivo")
         else:
             (crit if critical else warn).append(f"{name}: MUERTO")
             if not a.no_heal:

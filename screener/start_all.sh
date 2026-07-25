@@ -12,6 +12,21 @@ ROOT="$(pwd)"
 
 echo "== top-gainer system (SEÑAL-SOLAMENTE, ley 2026-07-16) =="
 
+# --- PORTERO HORARIO (Yunior 2026-07-25) ---
+# Ventana de la flota: domingo 20:00 -> viernes 20:00 hora de Toronto. Fuera de ahi, muerto.
+# Este arranque es MANUAL, asi que el escape de testing es explicito y se anuncia solo:
+#   FLEET_FORCE=1 zsh screener/start_all.sh
+if [[ -x "$ROOT/fleet_hours" ]]; then
+  if ! "$ROOT/fleet_hours" >/dev/null 2>&1; then
+    "$ROOT/fleet_hours" --why 2>&1 | head -3
+    echo "NO arranco nada. Para probar fuera de horario: FLEET_FORCE=1 zsh screener/start_all.sh"
+    exit 0
+  fi
+else
+  echo "🔴 PORTERO AUSENTE ($ROOT/fleet_hours). Compila con scripts/build_fleet_hours.sh — no arranco nada."
+  exit 1
+fi
+
 pkill -f "screener/alert_bot.py" 2>/dev/null
 pkill -x screener_alert 2>/dev/null
 pkill -f "screener/heartbeat.sh" 2>/dev/null
@@ -27,10 +42,17 @@ fi
 echo "alert_bot pid $!"
 
 # daemon IBKR de flota: SIP bars 1m + NBBO a data/*_ibkr.txt / nbbo_*.txt.
-# Solo lectura de mercado — cero ordenes. 17 syms (CON SKHY).
+# Solo lectura de mercado — cero ordenes.
+# SIMBOLOS DE data/fleet.txt (fuente unica). Aqui habia la MISMA lista escrita a mano de 18
+# simbolos que en ensure_all.sh — sin SPY, sin SMH, sin MU, y con SLV/CPER/USO retirados.
 if ! pgrep -f "ibkr_bar_bridge.py --daemon" >/dev/null; then
-  nohup "$ROOT/venv/bin/python" "$ROOT/scripts/"ibkr_bar_bridge.py --daemon NOK SPCX DRAM TSLA NVDA TXN TSM AMD INTC ASML AAPL GLD QQQ SLV CPER USO SKHY EWY >>"$ROOT/bridge_ibkr_fleet.log" 2>&1 &
-  echo "$(date) fleet: ibkr fleet daemon lanzado (pid $!)" >>"$ROOT/fleet_autostart.log"
+  FLEET_SYMS="$(cat "$ROOT/data/fleet.txt" 2>/dev/null)"
+  if [[ -z "$FLEET_SYMS" ]]; then
+    echo "🔴 data/fleet.txt vacio o ilegible -> NO lanzo el bridge"
+  else
+    nohup "$ROOT/venv/bin/python" "$ROOT/scripts/"ibkr_bar_bridge.py --daemon ${=FLEET_SYMS} >>"$ROOT/bridge_ibkr_fleet.log" 2>&1 &
+    echo "$(date) fleet: ibkr fleet daemon lanzado por start_all (pid $!) con $(echo $FLEET_SYMS | wc -w | tr -d ' ') simbolos de data/fleet.txt" >>"$ROOT/fleet_autostart.log"
+  fi
 fi
 
 

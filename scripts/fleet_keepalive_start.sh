@@ -148,9 +148,19 @@ fi
 # only"; subs NA reales compradas: Cboe One + Network A/B/C, 10089 muerto).
 # SIP warm-up historico + bars 1m + NBBO a data/*_ibkr.txt / nbbo_*.txt.
 # Bots leen data/bars_<sym>_ibkr.txt directo via tail -F (reader retirado 2026-07-20).
+# SIMBOLOS: de data/fleet.txt, la FUENTE UNICA (Yunior). La lista iba escrita a mano aqui
+# y habia DERIVADO: pedia 33 simbolos = los 30 de la flota + SLV, CPER y USO, tres retirados
+# cuyos keepalives se mataron el 2026-07-25. Tres suscripciones tick-by-tick gastadas en
+# nombres que ya nadie mira, y IBKR capea esas suscripciones por cuenta (err 10190).
+# `${=...}` es la division en palabras de zsh: sin el `=` la flota entera va como UN argumento.
 if ! pgrep -f "ibkr_bar_bridge.py --daemon" >/dev/null; then
-  nohup ./venv/bin/python scripts/ibkr_bar_bridge.py --daemon NOK SPCX DRAM TSLA NVDA TXN TSM AMD INTC ASML AAPL GLD QQQ SPY SLV CPER USO SKHY MU SMH GOOGL QCOM MSFT AVGO AMZN META XLK EWY NFLX LRCX SNDK WDC STX >> bridge_ibkr_fleet.log 2>&1 &
-  echo "$(date) fleet: ibkr fleet daemon lanzado (pid $!)" >> fleet_autostart.log
+  FLEET_SYMS="$(cat "$ROOT/data/fleet.txt" 2>/dev/null)"
+  if [[ -z "$FLEET_SYMS" ]]; then
+    echo "$(date) fleet: data/fleet.txt vacio o ilegible -> NO lanzo el bridge (sin flota no hay feed que valga)" >> fleet_autostart.log
+  else
+    nohup ./venv/bin/python scripts/ibkr_bar_bridge.py --daemon ${=FLEET_SYMS} >> bridge_ibkr_fleet.log 2>&1 &
+    echo "$(date) fleet: ibkr fleet daemon lanzado (pid $!) con $(echo $FLEET_SYMS | wc -w | tr -d ' ') simbolos de data/fleet.txt" >> fleet_autostart.log
+  fi
 fi
 
 # bridge KRX realtime (SK Hynix + Samsung) — sub Korea waived cubre la API
