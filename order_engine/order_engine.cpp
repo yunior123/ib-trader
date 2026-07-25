@@ -34,6 +34,7 @@
 
 #include "tws_adapter.h"
 #include "safety.h"
+#include "account_cfg.h"
 #include "ledger.h"
 
 using namespace oe;
@@ -397,7 +398,24 @@ int main(int argc, char** argv) {
     // con dinero real creyendo que es simulado. La cuenta del BROKER manda, no el modo.
     {
         for (int i = 0; i < 30 && tws.account().empty(); ++i) tws.pump();
-        const std::string expected = live_port ? "U26942420" : "DUR197573";
+        // La cuenta esperada ya NO esta en el codigo: sale de la config del usuario
+        // (env / config.json de la .app / data/account.txt). FALLA CERRADO: sin cuenta
+        // configurada el motor NO opera — si nadie declaro que cuenta espera, no hay
+        // forma de saber que el Gateway esta logueado donde crees.
+        const std::string expected = oe::expected_account(live_port, cfg.repo);
+        if (expected.empty()) {
+            std::fprintf(stderr,
+                "[SEGURIDAD] no hay cuenta %s configurada — ABORTO.\n"
+                "  Configurala de UNA de estas formas:\n"
+                "   - la app: menu 📈 -> Configuracion -> Cuenta IBKR\n"
+                "   - fichero: %s/data/account.txt  con  %s=%s\n"
+                "   - entorno: export IBTRADER_ACCOUNT_%s=...\n",
+                live_port ? "LIVE" : "PAPER", cfg.repo.c_str(),
+                live_port ? "live" : "paper", live_port ? "U1234567" : "DU1234567",
+                live_port ? "LIVE" : "PAPER");
+            ledger.note(std::string("ABORT sin cuenta configurada modo=") + (live_port ? "live" : "paper"));
+            tws.disconnect(); return 1;
+        }
         if (tws.account().find(expected) == std::string::npos) {
             std::fprintf(stderr, "[SEGURIDAD] modo=%s espera cuenta %s pero el broker reporta '%s' — ABORTO\n",
                          live_port ? "LIVE" : "PAPER", expected.c_str(), tws.account().c_str());
@@ -408,15 +426,8 @@ int main(int argc, char** argv) {
         std::fprintf(stderr, "[SEGURIDAD] cuenta verificada: %s (modo %s)\n",
                      tws.account().c_str(), live_port ? "LIVE" : "PAPER");
     }
-    if (false) {
-        if (tws.account().find("U26942420") == std::string::npos) {
-            std::fprintf(stderr, "[SEGURIDAD] cuenta conectada '%s' NO es la TFSA live U26942420 — ABORTO\n",
-                         tws.account().c_str());
-            ledger.note("ABORT live account mismatch: '" + tws.account() + "'");
-            tws.disconnect(); return 1;
-        }
-        std::fprintf(stderr, "[SEGURIDAD] cuenta live verificada: %s\n", tws.account().c_str());
-    }
+    // (eliminado 2026-07-25: bloque muerto `if (false)` con la cuenta a fuego;
+    //  la verificacion real y configurable es la de arriba)
 
     // Reconciliar: cancelar huérfanas OE: de un run anterior. NO operar sin esto (MEDIUM #5).
     tws.reconcile();

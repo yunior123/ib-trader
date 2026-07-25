@@ -2,7 +2,7 @@
 """smoke_paper.py — prueba que la cuenta PAPER permite place/cancel de OPCIONES vía API.
 
 Independiente del motor C++: usa ib_insync para (1) conectar a 7497, (2) verificar
-que es la cuenta paper DUR197573, (3) cualificar una opción líquida, (4) colocar un
+que es la cuenta paper configurada, (3) cualificar una opción líquida, (4) colocar un
 LÍMITE lejos-del-dinero a $0.01 (JAMÁS llena), (5) confirmar que aparece, (6)
 CANCELARLO, (7) confirmar cancelado. Si todo pasa -> la vía de órdenes de opciones
 funciona en paper y el order_engine C++ puede operar igual.
@@ -17,7 +17,22 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(
 from ib_insync import IB, Option, Stock, LimitOrder  # noqa: E402
 import ib_mode                        # fuente única: puerto del modo (gateway/tws auto)
 
-PAPER_ACCT = "DUR197573"
+# cuenta del usuario, no del codigo (2026-07-25)
+def _paper_acct():
+    import json
+    if os.environ.get("IBTRADER_ACCOUNT_PAPER"): return os.environ["IBTRADER_ACCOUNT_PAPER"].strip()
+    try:
+        a = (json.load(open(os.path.expanduser(
+            "~/Library/Application Support/ib-trader/config.json"))).get("account") or "").strip()
+        if a.startswith("DU"): return a
+    except Exception: pass
+    try:
+        for ln in open(os.path.join(os.path.dirname(os.path.dirname(
+                os.path.abspath(__file__))), "data", "account.txt")):
+            if ln.strip().startswith("paper="): return ln.split("=",1)[1].strip()
+    except Exception: pass
+    return ""
+PAPER_ACCT = _paper_acct()
 CLIENT_ID = 96                      # dedicado al smoke (no choca con 92 del motor)
 
 

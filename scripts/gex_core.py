@@ -150,6 +150,30 @@ def build_gex(contracts, spot, scale="house"):
     out["call_wall"] = max(cw, key=lambda x: x[1])[0] if cw else None
     out["put_wall"] = min(pw, key=lambda x: x[1])[0] if pw else None
     out["abs_wall"] = max(profile.items(), key=lambda x: abs(x[1]))[0] if profile else None
+    # PIN vs TRAMPILLA por muro (fix 2026-07-25). Antes se tomaba solo el strike con
+    # max(...)[0] y todo lo demas del muro se tiraba, asi que un nivel que AGUANTA y uno que
+    # el precio ATRAVIESA acelerando eran el mismo dato para todos los consumidores. La
+    # brujula necesita distinguirlos: fadear contra una trampilla es el error que la doctrina
+    # prohibe explicitamente (memoria negative-gamma-whipsaw).
+    #
+    # El discriminador NO es el signo crudo del perfil en el strike: con la convencion naive
+    # (calls +, puts -) un put wall tiene gamma neta negativa POR CONSTRUCCION, asi que
+    # "signo<0 = trampilla" etiquetaria TODO put wall como trampilla y el veto se disparia
+    # siempre. El discriminador correcto es el REGIMEN acumulado en ese nivel — de que lado
+    # del gamma-flip cae: POS = dealers amortiguan (el nivel aguanta, pin) / NEG = dealers
+    # amplifican (el precio lo atraviesa, trampilla).
+    _flip_lvl = out.get("flip")
+    for _key in ("call_wall", "put_wall", "abs_wall"):
+        _k = out.get(_key)
+        _v = profile.get(_k) if _k is not None else None
+        out[_key + "_net"] = _v                      # gamma NETA en el strike (fuerza del muro)
+        if _k is None or _flip_lvl is None:
+            out[_key + "_regime"] = None
+            out[_key + "_kind"] = None
+        else:
+            _reg = "POS" if _k >= _flip_lvl else "NEG"
+            out[_key + "_regime"] = _reg
+            out[_key + "_kind"] = "pin" if _reg == "POS" else "trampilla"
     # muros clasicos por OI (resistencia calls arriba, soporte puts abajo)
     co = [(k, v) for k, v in call_oi.items() if k >= spot]
     po = [(k, v) for k, v in put_oi.items() if k <= spot]
@@ -231,7 +255,7 @@ def wall_context(gexinfo, price):
     cw, pw, flip = gexinfo.get("call_wall"), gexinfo.get("put_wall"), gexinfo.get("flip")
     dc, dp, df = dpct(cw), dpct(pw), dpct(flip)
     NEAR = 0.4
-    return {
+    out = {
         "call_wall": cw, "put_wall": pw, "flip": flip, "abs_wall": gexinfo.get("abs_wall"),
         "d_call_wall": dc, "d_put_wall": dp, "d_flip": df,
         "near_call_wall": dc is not None and abs(dc) <= NEAR,
@@ -239,6 +263,11 @@ def wall_context(gexinfo, price):
         "near_flip": df is not None and abs(df) <= NEAR,
         "regime": regime_at(gexinfo, price)[0],
     }
+    # pin vs trampilla por muro — lo consume la brujula para VETAR el fade
+    for _key in ("call_wall", "put_wall", "abs_wall"):
+        for _suf in ("_net", "_regime", "_kind"):
+            out[_key + _suf] = gexinfo.get(_key + _suf)
+    return out
 
 
 # ------------------------------ adaptadores de datos -------------------------

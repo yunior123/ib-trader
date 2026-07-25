@@ -6,7 +6,7 @@ Yunior 2026-07-24: "make it easy to switch from one to the other and no bugs" +
 manda: `data/ib_mode.txt` = "paper" | "live". Todo lector de TWS (opt_chain_cache,
 el order_engine, cualquier bot) resuelve puerto/cuenta desde AQUÍ, sin hardcodear.
 
-Mapa:  paper -> puerto 7497, cuenta DUR197573   |   live -> 7496, U26942420
+Mapa:  paper -> puerto 7497   |   live -> 7496.  La CUENTA sale de la config del
 Override puntual: env IBKR_PORT (gana sobre el archivo) para pruebas.
 
 CLI:  python3 scripts/ib_mode.py            -> imprime modo/puerto/cuenta
@@ -24,7 +24,28 @@ MODE_FILE = os.path.join(REPO, "data", "ib_mode.txt")
 PAPER_PORTS = [4002, 7497]
 LIVE_PORTS = [4001, 7496]
 PAPER_PORT, LIVE_PORT = PAPER_PORTS[0], LIVE_PORTS[0]   # primario (gateway) para display
-PAPER_ACCT, LIVE_ACCT = "DUR197573", "U26942420"
+# Cuenta del USUARIO, no del codigo (2026-07-25). Mismo orden que account_cfg.h:
+# env -> config.json de la .app -> data/account.txt. Vacio = sin configurar.
+def _acct(live):
+    import json
+    k = "IBTRADER_ACCOUNT_LIVE" if live else "IBTRADER_ACCOUNT_PAPER"
+    if os.environ.get(k): return os.environ[k].strip()
+    cfg = os.path.expanduser("~/Library/Application Support/ib-trader/config.json")
+    try:
+        a = (json.load(open(cfg)).get("account") or "").strip()
+        if a and (a.startswith("DU") != live): return a
+    except Exception:
+        pass
+    try:
+        want = "live=" if live else "paper="
+        for ln in open(os.path.join(REPO, "data", "account.txt")):
+            ln = ln.strip()
+            if ln.startswith(want): return ln[len(want):].strip()
+    except Exception:
+        pass
+    return ""
+
+PAPER_ACCT, LIVE_ACCT = _acct(False), _acct(True)
 
 
 def _listening(port):

@@ -72,4 +72,27 @@ exec "$RES/python/bin/python3.12" "$HERE/scripts/chart_bridge.py" "$@"
 RUNSH
 chmod +x "$RES/backend/run.sh"
 
+# --- 5. motor de ordenes (C++), ya generico: la cuenta sale de la config ---
+# Enlazado estatico (libTwsSocketClient + libbid), asi que va solo. La proteccion
+# vive intacta: doble llave + verificacion de cuenta que FALLA CERRADO.
+mkdir -p "$RES/engine"
+[ -f order_engine/order_engine ] && cp order_engine/order_engine "$RES/engine/"
+for f in arm.sh disarm.sh; do [ -f "order_engine/$f" ] && cp "order_engine/$f" "$RES/engine/"; done
+cat > "$RES/engine/LEEME.txt" <<'ENG'
+order_engine — coloca ordenes REALES en TWS/IB Gateway.
+
+DOBLE LLAVE, a proposito:
+  1) crear el fichero ARM_LIVE con la fecha de hoy   (engine/arm.sh)
+  2) lanzarlo con --arm-live
+Sin AMBAS solo registra lo que colocaria ("DRY colocaria ..."). Borrar ARM_LIVE
+lo desarma en el acto: la llave se re-evalua antes de CADA envio.
+
+CUENTA: sale de tu configuracion (menu de la app -> Configuracion), NO del codigo.
+Si no hay cuenta configurada el motor NO opera. Si el broker reporta otra cuenta
+distinta a la que declaraste, ABORTA. Es lo que evita ordenar con dinero real
+creyendo que es paper.
+
+Empieza SIEMPRE en paper.
+ENG
+
 echo "  backend empotrado: $(du -sh "$RES" | cut -f1)"
