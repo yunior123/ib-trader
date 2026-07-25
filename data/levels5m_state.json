@@ -1,0 +1,33 @@
+{
+ "date": "2026-07-25",
+ "slots": {
+  "1784987400": [
+   "AAPL",
+   "AMD",
+   "AMZN",
+   "ASML",
+   "AVGO",
+   "DRAM",
+   "GOOGL",
+   "INTC",
+   "LRCX",
+   "META",
+   "MSFT",
+   "MU",
+   "NOK",
+   "NVDA",
+   "QCOM",
+   "QQQ",
+   "SKHY",
+   "SMH",
+   "SNDK",
+   "SPCX",
+   "SPY",
+   "STX",
+   "TSLA",
+   "TSM",
+   "TXN",
+   "WDC"
+  ]
+ }
+}

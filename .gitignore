@@ -104,3 +104,8 @@ replay_asan
 replay_asan.dSYM/
 data/gate_*.json
 data/replay/
+
+# levels-5min archive (feature #18): las COPIAS sueltas de cada slot son transitorias
+# (la retencion las pliega al levels_5m.jsonl del dia y las borra). 26 syms x 78 slots =
+# 2028 ficheros/dia -> fuera de git; el jsonl del dia SI se versiona (1 fichero, ~4 MB).
+data/history/*/levels_*_[0-9][0-9][0-9][0-9].json
