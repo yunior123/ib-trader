@@ -12,9 +12,10 @@ Antes salia 1 con cualquier aviso: launchd lo grababa como job FALLIDO y la corr
 siguiente leia su propio LastExitStatus=1, lo cantaba como aviso nuevo y se
 realimentaba — nunca podia volver a verde. Ademas se EXCLUYE del audit de exit codes
 de launchd (self_label() lo lee del plist, no hardcodeado)."""
-import argparse, json, os, plistlib, subprocess, time, warnings
+import argparse, json, os, plistlib, subprocess, sys, time, warnings
 warnings.filterwarnings("ignore")
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(REPO, "scripts"))   # em_envelope: tabla de festivos real
 SELF_PATH = os.path.abspath(__file__)
 LAUNCHAGENTS = os.path.expanduser("~/Library/LaunchAgents")
 CRITICAL_JOBS = ("com.ibtrader.dailyplans", "com.ibtrader.postmortem")
@@ -98,6 +99,46 @@ def exit_code(crit, warn):
     Un healthcheck que informa de avisos no ha fallado; uno que ve un 🔴 si."""
     del warn  # deliberadamente IGNORADO: un aviso 🟡 no es un fallo del job
     return 2 if crit else 0
+
+def sessions_since(epoch):
+    """Cuantas SESIONES DE MERCADO han abierto desde `epoch` (dias de mercado estrictamente
+    posteriores a la fecha de la captura y no posteriores a hoy).
+
+    Un snapshot del cierre del viernes leido el sabado devuelve 0: no le falta ninguna
+    sesion, aunque el reloj de pared diga 60h. Reutiliza la tabla de festivos real de
+    em_envelope.is_market_day, que LEVANTA si se le pide una fecha fuera de tabla — asi que
+    aqui se traduce a None ("no se puede contar") y quien llama lo canta. Nunca 0 fingido.
+    """
+    import datetime as dt
+    try:
+        import em_envelope
+    except ImportError:
+        return None
+    d0 = dt.datetime.fromtimestamp(epoch).date()
+    hoy = dt.date.today()
+    n = 0
+    d = d0 + dt.timedelta(days=1)
+    while d <= hoy:
+        try:
+            if em_envelope.is_market_day(d):
+                n += 1
+        except Exception:
+            return None
+        d += dt.timedelta(days=1)
+    return n
+
+
+def poly_chains_today():
+    """Cuantas cadenas de Polygon con griegas REALES se han archivado HOY (poly_chain_archive).
+    Es la alternativa MEDIDA a gexa: gamma + OI de verdad, de los que gex_core saca
+    flip/regimen/muros sin depender de scraping. Devuelve un entero (0 si no hay carpeta)."""
+    import datetime as dt
+    import glob
+    d = os.path.join(REPO, "data", "history", dt.date.today().isoformat())
+    if not os.path.isdir(d):
+        return 0
+    return len(glob.glob(os.path.join(d, "chain_full_*.json")))
+
 
 def market_hours():
     lt = time.localtime()
@@ -212,16 +253,34 @@ def main():
 
     # 5) gexa conecto Y esta fresco? (el 2026-07-24 llevaba 58h rancio y decia "ok":
     # dos dias de planes con GEX estimado, en silencio, con el healthcheck en verde)
-    GEXA_MAX = 12*3600
+    #
+    # PERO el reloj de pared miente en fin de semana: un snapshot del cierre del viernes
+    # leido el sabado son "60h rancio" y no le falta NI UNA sesion. Lo que importa no son
+    # las horas, son las SESIONES DE MERCADO que han abierto desde la captura (2026-07-25).
     gf = "data/gexa_snapshot.json"
     if not (os.path.exists(gf) and os.path.getsize(gf) > 5):
         warn.append("gexa snapshot: no conecto (usa GEX estimado)")
     else:
         gedad = time.time() - os.path.getmtime(gf)
-        if gedad > GEXA_MAX:
-            warn.append(f"gexa snapshot: RANCIO {gedad/3600:.0f}h — los planes usan GEX estimado")
+        faltan = sessions_since(os.path.getmtime(gf))
+        # Y el coste de un gexa viejo depende de si hay ALTERNATIVA MEDIDA: desde que
+        # poly_chain_archive guarda las cadenas con griegas REALES de Polygon, el fallback
+        # ya no es "GEX estimado" — se calcula con gex_core sobre gamma+OI de verdad.
+        poly_n = poly_chains_today()
+        alt = (f"cadenas Polygon con griegas REALES hoy: {poly_n}/{len(canonical_fleet() or [])}"
+               if poly_n else "sin cadenas Polygon hoy: los planes usan GEX estimado")
+        if faltan is None:
+            warn.append(f"gexa snapshot: {gedad/3600:.0f}h y no se pueden contar sesiones "
+                        f"(tabla de festivos agotada) — {alt}")
+        elif faltan == 0:
+            ok.append(f"gexa snapshot: ok ({gedad/3600:.0f}h, 0 sesiones perdidas — "
+                      f"mercado cerrado desde la captura)")
+        elif poly_n:
+            # informativo: le faltan sesiones, pero el mapa gamma no depende de gexa
+            ok.append(f"gexa snapshot: {faltan} sesion(es) por detras ({gedad/3600:.0f}h) — "
+                      f"NO bloquea: {alt}")
         else:
-            ok.append(f"gexa snapshot: ok ({gedad/3600:.0f}h)")
+            warn.append(f"gexa snapshot: RANCIO {faltan} sesion(es) ({gedad/3600:.0f}h) — {alt}")
 
     # 6) cobertura: cada modulo cubre la flota canonica?
     canon = canonical_fleet()

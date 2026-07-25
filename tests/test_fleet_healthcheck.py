@@ -133,3 +133,70 @@ def test_canonical_fleet_real_tiene_la_flota(hc):
 
 def test_env_none_sin_clave(hc):
     assert hc.env("CLAVE_QUE_NO_EXISTE_JAMAS") is None
+
+
+# --- gexa: el reloj de pared miente en fin de semana ------------------------------
+# Un snapshot del cierre del viernes leido el sabado son "60h rancio" y NO le falta ni
+# una sesion. El aviso se mide en SESIONES DE MERCADO abiertas desde la captura, no en
+# horas, para que el healthcheck no grite por un mercado que estaba cerrado.
+
+def _ts(y, m, d, hh=16, mm=0):
+    import datetime as dt
+    return dt.datetime(y, m, d, hh, mm).timestamp()
+
+
+def test_sessions_since_no_cuenta_el_fin_de_semana(hc, monkeypatch):
+    """Viernes 2026-07-24 al cierre, leido el sabado 25: 0 sesiones perdidas."""
+    import datetime as dt
+
+    class _Sab(dt.date):
+        @classmethod
+        def today(cls):
+            return dt.date(2026, 7, 25)
+
+    monkeypatch.setattr(dt, "date", _Sab)
+    assert hc.sessions_since(_ts(2026, 7, 24)) == 0
+
+
+def test_sessions_since_cuenta_las_sesiones_realmente_perdidas(hc, monkeypatch):
+    """Miercoles 22 leido el sabado 25: faltan jueves 23 y viernes 24 = 2 sesiones.
+    Son 72h de reloj, pero lo que importa son las 2 sesiones — el caso real de hoy."""
+    import datetime as dt
+
+    class _Sab(dt.date):
+        @classmethod
+        def today(cls):
+            return dt.date(2026, 7, 25)
+
+    monkeypatch.setattr(dt, "date", _Sab)
+    assert hc.sessions_since(_ts(2026, 7, 22, 10, 44)) == 2
+
+
+def test_sessions_since_devuelve_None_si_no_puede_contar(hc, monkeypatch):
+    """La tabla de festivos de em_envelope LEVANTA fuera de rango. Eso no puede volverse
+    un 0 plausible ('esta fresco') — se devuelve None y quien llama lo canta."""
+    import em_envelope
+
+    def _boom(_d):
+        raise RuntimeError("tabla de festivos agotada")
+
+    monkeypatch.setattr(em_envelope, "is_market_day", _boom)
+    assert hc.sessions_since(_ts(2026, 7, 20)) is None
+
+
+def test_poly_chains_today_cuenta_cadenas_con_griegas_reales(hc, tmp_path, monkeypatch):
+    """La alternativa MEDIDA a gexa: si poly_chain_archive dejo cadenas hoy, el mapa gamma
+    no depende del scraping y el aviso baja a informativo."""
+    import datetime as dt
+    monkeypatch.setattr(hc, "REPO", str(tmp_path))
+    d = tmp_path / "data" / "history" / dt.date.today().isoformat()
+    d.mkdir(parents=True)
+    for s in ("qqq", "spy", "nvda"):
+        (d / f"chain_full_{s}.json").write_text("{}")
+    (d / "poly_chain_qqq_1018.txt").write_text("no es una cadena json")
+    assert hc.poly_chains_today() == 3
+
+
+def test_poly_chains_today_sin_carpeta_es_cero_no_una_excepcion(hc, tmp_path, monkeypatch):
+    monkeypatch.setattr(hc, "REPO", str(tmp_path))
+    assert hc.poly_chains_today() == 0
