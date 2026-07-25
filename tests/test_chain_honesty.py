@@ -477,3 +477,85 @@ def test_gamma_muteada_nunca_publica_un_cero_en_levels():
         for k in ("net_gex", "flip", "call_wall", "put_wall", "abs_wall", "pressure",
                   "em", "iv_atm", "gross_gex", "hhi", "bifurcation"):
             assert d.get(k) is None, f"levels_{sym}.json muteado pero {k}={d.get(k)!r}"
+
+
+# ========== VOL-TRIGGER congelado a las 09:35 (feature #20, hermano de #6)
+def test_vt_es_la_ultima_ESTANTERIA_densa_no_el_cruce_por_cero():
+    """`VT = max{K<=spot : gex(K)>0 y gex(K)>=5% de Σ|gex| y los dos vecinos poblados}`.
+    NO es el gamma-cero: es la ultima estanteria DENSA de gamma positiva debajo del spot."""
+    import vol_trigger as VT
+    # rejilla de 1.0 con dos estantes de gamma+ debajo del spot (95 y 98) y uno flojo (91)
+    prof = {90.0: -300.0, 91.0: 20.0, 92.0: -400.0, 93.0: -500.0, 94.0: -600.0,
+            95.0: 900.0, 96.0: -200.0, 97.0: -150.0, 98.0: 800.0, 99.0: -100.0,
+            100.0: -50.0, 101.0: 700.0}
+    vt, shelf, src, why = VT.vt_from_profile(prof, spot=99.5, zero_gamma=97.0)
+    assert vt == 98.0, f"deberia ganar el estante MAS ALTO por debajo del spot, salio {vt}"
+    assert src == "estante_denso"
+    assert why is None
+    assert 0 < shelf < 1
+    # 101 esta por ENCIMA del spot: no puede ser el VT
+    assert vt < 99.5
+
+
+def test_vt_exige_vecinos_poblados_y_peso_minimo():
+    import vol_trigger as VT
+    # estante gordo pero SIN vecino izquierdo poblado -> no cuenta (rejilla de 1.0)
+    prof = {95.0: 900.0, 96.0: -100.0, 97.0: -100.0, 98.0: -100.0, 99.0: -100.0}
+    vt, _s, src, _w = VT.vt_from_profile(prof, spot=99.5, zero_gamma=None)
+    assert vt is None or src == "respaldo_strike_junto_a_gamma_cero"
+    # estante por debajo del 5% del libro -> no cuenta
+    prof2 = {94.0: -1000.0, 95.0: 1.0, 96.0: -1000.0, 97.0: -1000.0}
+    vt2, _s2, _src2, why2 = VT.vt_from_profile(prof2, spot=98.0, zero_gamma=None)
+    assert vt2 is None and why2
+
+
+def test_vt_sin_estante_ni_respaldo_devuelve_None_con_motivo():
+    import vol_trigger as VT
+    for args in (({}, 100.0, None), ({100.0: 0.0}, 100.0, None)):
+        vt, shelf, src, why = VT.vt_from_profile(*args)
+        assert vt is None and shelf is None and src is None and why
+
+
+def test_vt_puerta_de_40_strikes(tmp_path, monkeypatch):
+    """Kill-risk de la spec: con cadena escasa el nivel congelado es arbitrario y la regla de
+    prohibir-fadear hace daño real. Por debajo de 40 strikes: sin VT, y se dice por que."""
+    import vol_trigger as VT
+    lv = {"spot": 100.0, "em": 2.0, "gamma_ok": True, "n_strikes_populated": 12,
+          "flip_live": 99.0, "chain_src": "polygon_snapshot_v3",
+          "profile": [{"strike": 99.0, "gex": 500.0}, {"strike": 100.0, "gex": -500.0}]}
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("data", exist_ok=True)
+    out = VT.gen("zz", lv=lv, write=False)
+    assert out["vt_live"] is None
+    assert out["vt_open"] is None
+    assert "40" in out["why"]
+    assert out["regime_vt"] is None
+    assert out["dist_vt_em"] is None
+
+
+def test_vt_gamma_muteada_no_publica_nivel(monkeypatch, tmp_path):
+    import vol_trigger as VT
+    lv = {"spot": 100.0, "em": 2.0, "gamma_ok": False, "n_strikes_populated": 0,
+          "degraded_reason": "griegas usables 0% (<50%) sobre 40 contratos",
+          "profile": [], "chain_src": "ibkr_tws"}
+    monkeypatch.chdir(tmp_path)
+    out = VT.gen("zz", lv=lv, write=False)
+    assert out["vt_live"] is None and out["vt_open"] is None
+    assert "muteada" in out["why"]
+
+
+def test_vt_open_congelado_igual_que_el_flip():
+    import vol_trigger as VT
+    hoy = "2026-07-27"
+    assert VT.freeze_decision(105.0, 100.0, hoy, hoy, 15 * 60, True) == (100.0, False)
+    assert VT.freeze_decision(105.0, None, None, hoy, VT.FREEZE_MIN - 1, True) == (None, False)
+    assert VT.freeze_decision(105.0, None, None, hoy, VT.FREEZE_MIN, True) == (105.0, True)
+    assert VT.freeze_decision(105.0, None, None, hoy, 12 * 60, False) == (None, False)
+
+
+def test_strike_width_modal():
+    import vol_trigger as VT
+    assert VT.strike_width([90, 91, 92, 93, 95]) == 1.0        # el paso modal, no el hueco
+    assert VT.strike_width([100, 102.5, 105, 107.5]) == 2.5
+    assert VT.strike_width([100.0]) is None
+    assert VT.strike_width([]) is None
