@@ -1,0 +1,36 @@
+{
+ "sym": "SKHY",
+ "lock_ts": 1785013469,
+ "src": "poly_bars 1m (ts en ms)",
+ "n_bars_1m": 7300,
+ "window_bars": 365,
+ "cap": 5,
+ "atr14_diario": null,
+ "tfs": {
+  "1m": {
+   "tf": "1m",
+   "atr14": 0.2933,
+   "kde": [
+    154.9098
+   ],
+   "why": null
+  },
+  "5m": {
+   "tf": "5m",
+   "atr14": 0.6319,
+   "kde": [
+    155.402,
+    170.7291
+   ],
+   "why": null
+  },
+  "15m": {
+   "tf": "15m",
+   "atr14": 1.0836,
+   "kde": [
+    168.6323
+   ],
+   "why": null
+  }
+ }
+}

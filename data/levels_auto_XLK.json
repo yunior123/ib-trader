@@ -1,0 +1,36 @@
+{
+ "sym": "XLK",
+ "lock_ts": 1785013469,
+ "src": "poly_bars 1m (ts en ms)",
+ "n_bars_1m": 7300,
+ "window_bars": 365,
+ "cap": 5,
+ "atr14_diario": 5.0541,
+ "tfs": {
+  "1m": {
+   "tf": "1m",
+   "atr14": 0.1083,
+   "kde": [
+    175.8627,
+    177.682
+   ],
+   "why": null
+  },
+  "5m": {
+   "tf": "5m",
+   "atr14": 0.3524,
+   "kde": [
+    178.3352
+   ],
+   "why": null
+  },
+  "15m": {
+   "tf": "15m",
+   "atr14": 0.7205,
+   "kde": [
+    178.52
+   ],
+   "why": null
+  }
+ }
+}

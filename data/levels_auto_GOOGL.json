@@ -1,0 +1,36 @@
+{
+ "sym": "GOOGL",
+ "lock_ts": 1785013469,
+ "src": "poly_bars 1m (ts en ms)",
+ "n_bars_1m": 7300,
+ "window_bars": 365,
+ "cap": 5,
+ "atr14_diario": 11.9178,
+ "tfs": {
+  "1m": {
+   "tf": "1m",
+   "atr14": 0.1138,
+   "kde": [
+    319.6941
+   ],
+   "why": null
+  },
+  "5m": {
+   "tf": "5m",
+   "atr14": 0.2983,
+   "kde": [
+    319.5811
+   ],
+   "why": null
+  },
+  "15m": {
+   "tf": "15m",
+   "atr14": 0.8084,
+   "kde": [
+    319.5687,
+    348.34
+   ],
+   "why": null
+  }
+ }
+}
