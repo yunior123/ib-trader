@@ -1720,6 +1720,19 @@ def _log_structural(state, sig):
              f"🧲 ESTRUCTURAL {sig.get('kind','')}", sig["sym"].upper(), sig.get("price"),
              "SIGNAL", "structural", msg, msg))
         c.commit(); c.close()
+        # AL ARCHIVO TAMBIEN (fix 2026-07-24): antes esto SOLO tocaba la BD, asi que
+        # las ~77 señales estructurales del dia no llegaban a NINGUN canal — ni voz,
+        # ni telefono. notify_relay.sh ya filtra por 🧲, pero nunca las veia porque
+        # nadie las escribia en data/trading-signals/<fecha>.txt.
+        try:
+            d = time.strftime("%Y-%m-%d")
+            path = os.path.join(REPO, "data", "trading-signals", f"{d}.txt")
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, "a") as f:
+                f.write(f"{time.strftime('%H:%M:%S')} | 🧲 ESTRUCTURAL {sig.get('kind','')} "
+                        f"{sig['sym'].upper()} | {msg}\n")
+        except Exception as e2:
+            print(f"[struct] signals-file falló ({e2})")
     except Exception as e:
         print(f"[struct] log falló ({e})")
 

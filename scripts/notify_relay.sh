@@ -4,9 +4,20 @@
 # envia — una alerta vieja es desinformacion. Dedup + cap 1/5s.
 cd "$(dirname "$0")/.." || exit 1
 ROOT="$(pwd)"; source feeds.env 2>/dev/null
+# ROTACION DE MEDIANOCHE (fix 2026-07-24): antes `F` se calculaba UNA VEZ al
+# arrancar y `tail -F` seguia ese archivo para siempre. Si el relay sobrevivia a
+# medianoche quedaba vigilando el archivo de AYER -> CERO pushes en todo el dia,
+# y el keepalive no lo detectaba porque el proceso seguia VIVO (pgrep no sabe que
+# esta mirando el fichero equivocado). Ahora el tail muere en el cambio de dia y
+# el bucle exterior lo re-abre sobre el archivo nuevo.
+LAST=""; LASTSENT=0
+while true; do
 F="$ROOT/data/trading-signals/$(date +%F).txt"
-touch "$F"; LAST=""; LASTSENT=0
-tail -n0 -F "$F" 2>/dev/null | while read -r line; do
+touch "$F"
+SECS_TO_MIDNIGHT=$(( $(date -j -f "%Y-%m-%d %H:%M:%S" "$(date -v+1d +%F) 00:00:05" +%s) - $(date +%s) ))
+[ "$SECS_TO_MIDNIGHT" -lt 60 ] && SECS_TO_MIDNIGHT=60
+echo "$(date +%H:%M:%S) relay siguiendo $F (rota en ${SECS_TO_MIDNIGHT}s)" >> notify_relay.log
+timeout "$SECS_TO_MIDNIGHT" tail -n0 -F "$F" 2>/dev/null | while read -r line; do
   # solo lineas de VALOR al telefono (alineado con la voz DANGER+SIGNAL, 2026-07-23):
   # ballena/spike/dip/cusum/alarma/estructural/BB-rebote + legacy. Se EXCLUYE el chatter
   # INFO (MUTED, p<55). Todo se guarda local igual (BD signals); ntfy = solo push del dia.
@@ -33,3 +44,4 @@ tail -n0 -F "$F" 2>/dev/null | while read -r line; do
   fi
   echo "$(date +%H:%M:%S) ENVIADA: ${msg:0:60}" >> notify_relay.log
 done
+done   # fin del bucle exterior: re-abre el tail sobre el archivo del dia nuevo
