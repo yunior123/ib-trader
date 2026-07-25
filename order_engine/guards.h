@@ -33,10 +33,14 @@
 // #     #6    safe_to_touch_orders- no tocar ordenes sin reconcile completo
 // #     #9    clamp_option_stop  - clamp simetrico del stop de opcion
 // #
-// #   NI ESCRITA NI CABLEADA:
-// #     el agujero (a) del encargo — `close` no cancela el stop nativo, que
-// #     queda GTC HUERFANO. Es la causa documentada del desastre que motivo la
-// #     ley SEÑAL-SOLAMENTE, y es el mas grave de los cuatro. Sigue ABIERTO.
+// #     #4    stops_orphaned_by_close -> CABLEADA el 2026-07-25 en la accion
+// #        "close" del panel: el stop nativo se cancela ANTES de mandar el
+// #        close. El agujero (a) — GTC HUERFANO, la causa documentada del
+// #        desastre que motivo la ley SEÑAL-SOLAMENTE — esta CERRADO en codigo.
+// #        VERIFICADO EN FRIO (compila + 94 checks); la ruta real necesita
+// #        fills -> PENDIENTE DE PAPER EL DOMINGO.
+// #
+// #   NI ESCRITA NI CABLEADA: ninguna.
 // #
 // # No se cablearon las demas a proposito: tocan el camino de orden de un
 // # motor de ~970 lineas y no hay forma de validarlas sin fills, con TWS
