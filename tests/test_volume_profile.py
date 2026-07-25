@@ -232,3 +232,14 @@ def test_bad_bins_fails_loud():
 def test_bad_va_fails_loud():
     err = run("", "--va", "1.5", expect_rc=2)
     assert "--va" in err
+
+
+def test_meta_carries_a_timestamp():
+    """Sin marca de tiempo nadie puede juzgar si el fichero esta rancio, y en esta casa TODO
+    dato se juzga por frescura. `generated_utc` (cuando se calculo) y `last_session` (hasta
+    donde llegan los datos) NO son lo mismo: van los dos."""
+    d = run(bars([(105.05, 104.95, 1000, 300)]))
+    m = d["_meta"]
+    assert m["generated_utc"].endswith("Z") and len(m["generated_utc"]) == 20, m["generated_utc"]
+    assert isinstance(m["generated_epoch"], int) and m["generated_epoch"] > 1_700_000_000
+    assert "last_session" in d["TST"]

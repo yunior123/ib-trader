@@ -489,8 +489,22 @@ int main(int argc, char** argv) {
     auto gamma = load_gamma(gex_path, gex_note);
 
     // -------------------------------------------------------------- render
+    // Marca de tiempo: sin ella nadie puede juzgar si este fichero esta rancio, y en esta casa
+    // TODO dato se juzga por frescura (`age_s`/`stale` en los archivadores). `generated_utc` es
+    // cuando se calculo; `last_session` por simbolo dice hasta donde llegan los datos — no son
+    // lo mismo y por eso van los dos.
+    char stamp[32] = "?";
+    {
+        std::time_t now = std::time(nullptr);
+        std::tm g{};
+        gmtime_r(&now, &g);
+        std::strftime(stamp, sizeof stamp, "%Y-%m-%dT%H:%M:%SZ", &g);
+    }
+
     std::string j = "{\n";
     j += "  \"_meta\": {\n";
+    j += "    \"generated_utc\": \"" + std::string(stamp) + "\",\n";
+    j += "    \"generated_epoch\": " + std::to_string(static_cast<long long>(std::time(nullptr))) + ",\n";
     j += "    \"what\": \"POC de VOLUMEN (donde el mercado acepto valor) desde barras 1m, y su "
          "distancia al POC de GAMMA (donde el dealer debe cubrirse). Son dos cosas distintas: "
          "ahi esta el valor del cruce.\",\n";

@@ -1,5 +1,7 @@
 {
   "_meta": {
+    "generated_utc": "2026-07-25T22:06:39Z",
+    "generated_epoch": 1785017199,
     "what": "POC de VOLUMEN (donde el mercado acepto valor) desde barras 1m, y su distancia al POC de GAMMA (donde el dealer debe cubrirse). Son dos cosas distintas: ahi esta el valor del cruce.",
     "source_bars": "poly_bars (trades.db, SQLITE_OPEN_READONLY)",
     "source_gamma": "data/gex_snapshot.json",
