@@ -669,3 +669,40 @@ QQQ SPY NVDA TSLA MU SMH AMD AAPL MSFT META AMZN GOOGL INTC TSM ASML TXN QCOM AV
 ## REGLA GRÁFICO-PRIMERO (2026-07-21, orden Yunior)
 NUNCA dar veredicto de un ticker sin verificar EN EL MOMENTO: NBBO fresco + gráfico TradingView 1/5/15m (fuerza = últimas 6-8 velas + %B 1m/15m) + gexa si cubre. Caso DRAM 11:30: se recomendó "mantener a 60" sin ver que %B 1m había caído 0.98→0.26 (fuerza muerta) — Yunior lo vio en el gráfico antes que el copiloto. Verificación antes de opinión, cada vez. Complemento: entrar con antelación (human behaviour + momentum + math), no perseguir; estudio de decaimiento de momentum en scripts/momentum_decay.py (medido, no asumido).
 **Calculador de momentum (C++2b, 2026-07-21)**: `./momentum_calc sym1 sym2...` — M(EMA h/l 4min), edad vs med/p75 MEDIDOS (momentum_decay), Kaufman ER, z-VWAP (⛰️>2.5=cima-no-comprar / 🟢<-1.5+VWAP↑=dip-del-día), score TRAMPA 0-100. Ecuaciones: docs/MOMENTUM-MATH.md. El copiloto lo corre ANTES de cada veredicto de ticker (parte de la regla gráfico-primero). Umbrales data/momentum_thresholds.txt (refresh semanal via auto-mejora).
+
+## MINADO SpotGamma × MenthorQ × TrendSpider (2026-07-25) — el roadmap y su evidencia
+
+Minado sistemático de las tres plataformas de pago buscando lo implementable con los datos que ya
+pagamos. 13 agentes, ~1.6M tokens. **Resultado: 30 features vivas, 16 muertas con refutación
+numérica, 13 skills nuevas.**
+
+- **`docs/FEATURES-MINED-2026-07-25.md`** — la fuente de verdad. Las 30 fichas (matemática en pasos,
+  inputs exactos del repo, output, decision rule, validación con umbral keep/kill, effort, lenguaje,
+  fichero destino, kill-risk, ola), los 16 muertos con su cifra, las 3 olas y el TOP 5 must-build.
+- **`docs/research/`** — los 9 dossiers crudos (~450 KB): 6 de fuente (docs + arqueología de código
+  de las tres plataformas) y 3 de diseño (los 41 candidatos **pre-auditoría**). Índice y conclusión
+  en `docs/research/README.md`. **Si un `designs-*.md` contradice al doc de features, manda el doc de
+  features.**
+
+**Conclusión**: los NIVELES de las tres plataformas son **matemática de commodity** — reproducibles
+desde un snapshot de cadena con OI + griegas (repos fieles: `billyribeiro-ux/spot-gamma`,
+`maxkru92/mk-quant-monitor-cboe-gex`, `rxsinx/gex-analyzer`, `aaguiar10/gflows`, y `joemccann/radon`
+que filtra la API privada de MenthorQ). Lo único caro es **HIRO**, y está fuera de alcance verificado
+(`/v3/trades/O:` y `/v3/quotes/O:` → `NOT_AUTHORIZED`).
+
+**Las dos condiciones transversales, no negociables** (sin ellas 30 features = una flecha con
+varianza colapsada a ~58% y una sirena que nadie escucha, los dos fallos SIN remedio posterior):
+1. **Tope duro de factores con inserción SOLO multiplicativa** — 14 factores en `direction_view.py`
+   y `FAMILIES_MAX=6`/`VETOES_MAX=8` en `scripts/compass.cpp` (`COMPASS_AUDIT=1` audita cuánto
+   dispara cada uno). **Una feature nueva DESPLAZA a otra, no se suma.**
+2. **Presupuesto de voz con el conteo de DANGER congelado** — toda feature embarca MUDA y gana voz
+   una celda calibrada a la vez.
+
+**Las 13 skills** (`~/.claude/skills/<slug>/` globales · `.claude/skills/<slug>/` del repo):
+`measured-probability`, `chain-data-contract`, `print-o-nada-levels`, `book-quality-veto`,
+`flip-and-vol-trigger`, `pin-and-expiry-mechanics`, `expected-move-envelope`, `dealer-flow-limits`,
+`sample-integrity`, `direction-view-architecture`, `alert-budget`, `peer-captain-evidence`,
+`anti-overfit-killlist`.
+
+**Ley que aplica a las 30: SEÑAL-SOLAMENTE.** Ninguna ordena al broker; como máximo condicionan un
+ticket que el humano arma.
