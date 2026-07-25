@@ -205,11 +205,12 @@
       after-hours vive). *Qué es*: `scripts/posthours_cage.py` + `tests/test_posthours_cage.py`
       existen y pasan; falta EJECUTARLO una vez con mercado real. *Por qué importa*: es la única
       picardía del repo que aún no se ha visto disparar en vivo — hasta entonces es teoría.
-- [ ] **[pendiente]** Documentar force/cage/healthcheck/breadth en `docs/DAILY-SYSTEM.md`.
-      MEDIDO (auditoría 2026-07-24): **0 menciones** de `force_meter`/`posthours_cage`/
-      `fleet_healthcheck`/`index_breadth` en el manual. *Por qué importa*: `DAILY-SYSTEM.md` es lo
-      que lee la sesión siguiente; 4 daemons vivos que no aparecen en el manual son 4 daemons que
-      la próxima sesión no sabrá reiniciar ni diagnosticar.
+- [x] ~~Documentar force/cage/healthcheck/breadth en `docs/DAILY-SYSTEM.md`~~ — **hecho `7875b32`**.
+      Eran **0 menciones** de las cuatro en el manual, con las cuatro en producción. Nueva §11 con
+      qué hace cada una, cómo correrla a mano, y el bug histórico que explica por qué vigilarla
+      (el exit 1 del healthcheck que se auditaba a sí mismo en bucle; el `index_breadth` que caía
+      en silencio a yfinance). Dos estados honestos escritos como tales: `force_meter` vive FUERA
+      de los bots C++ y `posthours_cage` nunca se ha visto disparar en vivo.
 
 ## 💡 IDEAS / FUTURO (cuando se pidan)
 - [x] Tweets con imagen adjunta (árbol PNG en x_media/) + gamma (flip/dealer/POC) en posts intradía
@@ -534,10 +535,14 @@ Spec: `docs/FEATURES-MINED-2026-07-25.md`.
       de etiqueta hasta que `levels_5m.jsonl` tenga ≥40 sesiones; hoy 1. *Depende de*: plist `levels5m`.
       *Por qué importa*: es lo que bloquea el **migration-trail del flip** y cualquier feature que
       quiera saber en qué régimen gamma estaba el mercado cuando se etiquetó una señal.
-- [ ] **[pendiente — DESBLOQUEADO HOY]** (#14) el kill por colinealidad de `pin-clock` necesitaba
-      **n≥10 símbolos** con `chain_full`; entonces había 3. **MEDIDO hoy: hay 30.** Ya se puede
-      correr — es la casilla más barata del fichero: una corrida y `pin-clock` vive o muere con su
-      propio número (colinealidad n=3 daba rho=−0,52 → DATOS_INSUFICIENTES).
+- [x] ~~(#14) el kill por colinealidad de `pin-clock` necesita n≥10 syms con `chain_full` (hoy 3)~~
+      — **hecho `6f4fc62`: corrido, y `pin-clock` SOBREVIVE su propia vara.**
+      MEDIDO hoy con la muestra completa: **n=30 símbolos, rho=−0,2753**, kill `|rho|>0,9` →
+      `APORTA_ALGO`. El max pain **no** es un duplicado del `abs_wall`, así que la feature se queda.
+      Sigue **SIN probabilidad medida**: esto mide colinealidad, no edge, y ahora la nota lo dice.
+      De paso se arregló un defecto de honestidad: la nota se quedaba clavada en "con n<10 no se
+      concluye nada" incluso con n=30, al lado de un veredicto concluyente — un lector no sabía a
+      cuál creer. Hay test que prohíbe que la nota niegue la muestra.
 
 ## REGENERACIÓN DE SEÑALES (agente regen, 2026-07-25)
 - [x] "usa los datos de polygon y reproduce, es sencillo... olvidate del websocket de IBKR,
@@ -589,15 +594,24 @@ Spec: `docs/FEATURES-MINED-2026-07-25.md`.
 **Casi la mitad de lo "pendiente" ya estaba hecho** (30 de 73 cerradas). La sospecha era correcta:
 el fichero llevaba días midiendo trabajo que ya existía, y eso hace que lo urgente de verdad no se vea.
 
-El fichero tiene hoy **45** casillas abiertas, no 43: son las 43 vivas **+ 2 nuevas** que salieron
-al auditar y no estaban antes — el residuo `com.ibtrader.scan` (plist apuntando a un binario
-inexistente, separado de la casilla del exit 78 porque es OTRA raíz) y el centinela `-1.0000`
-usado como delta real en `order_engine.cpp:772`, que venía dentro del montón de los 84 sin refutar.
+De esas 43 vivas, **2 se cerraron en esta misma tanda** (`pin-clock` con n=30 y la documentación
+de los 4 daemons), así que quedan **41** de las originales. El fichero cuenta hoy **43** casillas
+abiertas: esas 41 **+ 2 nuevas** que salieron al auditar y no estaban antes — el residuo
+`com.ibtrader.scan` (plist apuntando a un binario inexistente; se separa de la casilla del exit 78
+porque es OTRA raíz distinta) y el centinela `-1.0000` usado como delta real en
+`order_engine.cpp:772`, que venía enterrado en el montón de los 84 sin refutar.
 
 **Cerradas de verdad HOY en esta tanda** (no solo tachadas — código nuevo + tests):
 - `39bd147` — cashtags de X: `$4.7B` también cuenta. 14 tests. *(era la casilla ~169)*
 - `c122128` — `-Wall -Wextra` en el deploy de los 28 binarios; MEDIDO 0 warnings. *(era la ~228)*
 - `bc670c6` — **VPVR**: POC de volumen en C++23 + confluencia con el POC de gamma. 22 tests. *(era la ~177)*
+- `6f4fc62` — `pin-clock` corrido con n=30: **sobrevive** (rho −0,2753 vs kill 0,9), y la nota deja
+  de contradecir al veredicto. *(era la ~331)*
+- `7875b32` — los 4 daemons que el manual no mencionaba, documentados. *(era la ~151)*
+- `0f7893c` — los 87 hallazgos del hunt **rescatados de `/tmp`** al repo antes de perderse. *(parte de la ~223)*
+
+**Suite completa tras la tanda: `581 passed`, 0 fallos** (la referencia eran 412+; los 36 nuevos
+son 14 de cashtags y 22 de VPVR).
 
 **Las 5 obsoletas y por qué** (ninguna se borró en silencio):
 1. Calibrar el flip contra gexa "MIENTRAS SIGA VIVA" (~184) — **gexa.ai desapareció el 2026-07-25**.
