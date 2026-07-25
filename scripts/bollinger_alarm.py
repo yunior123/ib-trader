@@ -17,7 +17,9 @@ import json, os, subprocess, sys, time
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(REPO)
 sys.path.insert(0, os.path.join(REPO, "scripts"))
-from optgate import opt_vehicle, opt_spread_pct, MAX_SPREAD_PCT  # gate de spread
+# gate de spread: la cuenta vive en ./gate (gate_core.hpp). Alias porque la variable local
+# de mas abajo ya se llama opt_veto.
+from optgate import opt_vehicle, opt_veto as opt_veto_of
 COOLDOWN_S = 1800
 
 # Probabilidades MEDIDAS por backtest (docs/BACKTEST-BOLLINGER-2026-07.md).
@@ -225,8 +227,9 @@ while True:
                     # entera un lunes antes del primer refresco, o si muere el daemon de
                     # cadenas. Solo callamos cuando SABEMOS que el spread es malo; ante
                     # ignorancia, la señal grita (fail-open, no fail-silent).
-                    _sp = opt_spread_pct(sym)
-                    opt_veto = (_sp is not None and _sp > MAX_SPREAD_PCT)
+                    # el umbral NO se compara aqui: optgate.opt_veto() devuelve el veredicto
+                    # del binario ./gate (gate_core.hpp), unica frontera del 5% del sistema.
+                    opt_veto = opt_veto_of(sym)
                     if walk:
                         enw, prw = prob_info(sym, "bandwalk")
                         msgw = (f"{sym.upper()} camina la banda {lado} tambien en 5 minutos "

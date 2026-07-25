@@ -93,3 +93,14 @@ compass_asan
 compass_asan.dSYM/
 data/compass_*.json
 compass.log
+fleet_consensus
+fleet_consensus_asan
+fleet_consensus_asan.dSYM/
+gate
+gate_asan
+gate_asan.dSYM/
+replay
+replay_asan
+replay_asan.dSYM/
+data/gate_*.json
+data/replay/
