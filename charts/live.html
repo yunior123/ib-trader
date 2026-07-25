@@ -172,8 +172,12 @@
   #dirarrow .glyph { font-size:120px; line-height:.9; font-weight:900; }
   #dirarrow .pct { font-size:26px; font-weight:800; margin-top:-6px; }
   #dirarrow .tgt { font-size:15px; font-weight:700; color:#e0c060; margin-top:2px; }
-  #dirarrow .cap { font-size:11px; font-weight:600; color:#b2b5be; max-width:190px;
+  #dirarrow .st { font-size:11px; font-weight:800; letter-spacing:.4px; margin-top:2px; }
+  #dirarrow .cap { font-size:11px; font-weight:600; color:#b2b5be; max-width:240px;
                    margin:3px auto 0; line-height:1.3; }
+  /* APROXIMANDO = flecha HUECA: se ve venir, no se afirma (PRINT O NADA) */
+  #dirarrow.pending .glyph { -webkit-text-stroke:2px currentColor; color:transparent !important; }
+  #dirarrow.stale { filter:grayscale(1); }
 
   /* --- popup inline de zona (exp/qty/side/kind) — SIN alert/confirm/prompt --- */
   #zonepop { position:absolute; z-index:60; background:#161a24; border:1px solid #2a3550;
@@ -352,7 +356,7 @@
 <div id="chart">
   <div id="structpill" class="hidden"></div>
   <div id="chipbar"></div>
-  <div id="dirarrow"><div class="glyph"></div><div class="pct"></div><div class="tgt"></div><div class="cap"></div></div>
+  <div id="dirarrow"><div class="glyph"></div><div class="pct"></div><div class="tgt"></div><div class="st"></div><div class="cap"></div></div>
   <div id="countdown"></div>
   <div id="zonepop">
     <div class="zph">Zona @ <span id="zonepop-px">—</span> · <span id="zone-instlbl">acción</span></div>
@@ -1327,25 +1331,49 @@ const dirGlyph = dirEl.querySelector(".glyph");
 const dirPct = dirEl.querySelector(".pct");
 const dirTgt = dirEl.querySelector(".tgt");
 const dirCap = dirEl.querySelector(".cap");
+const dirSt = dirEl.querySelector(".st");
 function onDirection(msg) {
   const d = msg.dir || "flat";
   const prob = (msg.prob != null) ? msg.prob : "";
   const col = d === "up" ? "#26a69a" : d === "down" ? "#ef5350" : "#8aa0c8";
   dirGlyph.textContent = d === "up" ? "▲" : d === "down" ? "▼" : "▬";
   dirGlyph.style.color = col; dirPct.style.color = col;
-  dirGlyph.style.fontSize = d === "flat" ? "64px" : "120px";
-  dirPct.textContent = (d === "up" ? "▲ " : d === "down" ? "▼ " : "") + (prob !== "" ? prob + "%" : "");
-  // próximo objetivo (imán / muro) en el sentido de la flecha
+  // LA FLECHA ESCALA CON LA AMPLITUD: mag 0..1 de la brujula (LATIGAZO grande, SCALP chica).
+  // "puede revertir fuerte o solo un poco: calculalo y mueve la flecha en consecuencia".
+  const mag = (msg.mag != null) ? Math.max(0, Math.min(1, msg.mag)) : 0;
+  dirGlyph.style.fontSize = d === "flat" ? "64px" : (70 + Math.round(mag * 80)) + "px";
+  dirPct.textContent = (d === "up" ? "▲ " : d === "down" ? "▼ " : "") + (prob !== "" ? prob + "%" : "")
+                     + (msg.prob_source === "doctrina" ? "*" : "");
+  // objetivo del rebote calculado (no un muro generico): grado + precio + %
   if (dirTgt) {
     if (msg.target != null) {
       const pct = (msg.target_pct != null) ? ` (${msg.target_pct > 0 ? "+" : ""}${msg.target_pct}%)` : "";
-      dirTgt.textContent = `→ ${msg.target_label || "objetivo"} ${msg.target}${pct}`;
+      dirTgt.textContent = `→ ${msg.grade || msg.target_label || "objetivo"} ${msg.target}${pct}`;
     } else { dirTgt.textContent = ""; }
   }
-  dirEl.style.opacity = d === "flat" ? "0.24" : "0.33";
+  // ESTADO de la brujula, con su color: la reversion y la continuacion no se leen igual
+  if (dirSt) {
+    const st = msg.state || "";
+    dirSt.textContent = msg.stale ? `RANCIA ${msg.stale_age}s` : st + (msg.state_pending ? " →?" : "");
+    dirSt.style.color = msg.stale ? "#ef5350"
+                      : st.indexOf("REVERSION") === 0 ? "#e0c060"
+                      : st.indexOf("CONTINUA") === 0 ? "#8aa0c8"
+                      : st.indexOf("APROX") === 0 ? "#c9a227" : "#787b86";
+  }
+  dirEl.classList.toggle("pending", !!msg.pending_print);   // hueca hasta que IMPRIMA
+  dirEl.classList.toggle("stale", !!msg.stale);
+  dirEl.style.opacity = msg.stale ? "0.18" : (d === "flat" ? "0.24" : (0.30 + mag * 0.22).toFixed(2));
   const why = (msg.why || []);
   if (dirCap) dirCap.textContent = why.length ? why[0] : "";
-  dirEl.title = why.slice(0, 4).join(" · ") || "sesgo direccional compuesto";
+  // el tooltip lleva TODO: motivos, lo que se esta fadeando, los vetos y el nivel
+  const tip = [];
+  if (msg.state) tip.push("ESTADO: " + msg.state + (msg.prob_source ? "  (prob " + msg.prob_source + ")" : ""));
+  why.forEach(w => tip.push("· " + w));
+  (msg.fading || []).forEach(f => tip.push("fadeando: " + f));
+  (msg.vetoes || []).forEach(v => tip.push("VETO: " + v));
+  if (msg.level) tip.push(`nivel: ${msg.level.kind} ${msg.level.price} (${msg.level.printed ? msg.level.prints + " lecturas" : "sin print"}${msg.level.wall_kind ? ", " + msg.level.wall_kind : ""})`);
+  if (msg.amplitude) tip.push(`amplitud ${msg.amplitude.grade} ${msg.amplitude.amp_pct}% (ata: ${msg.amplitude.binding || "—"})`);
+  dirEl.title = tip.join("\n") || "brujula direccional";
   dirEl.style.display = "block";
 }
 

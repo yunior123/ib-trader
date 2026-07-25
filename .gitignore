@@ -92,3 +92,4 @@ compass
 compass_asan
 compass_asan.dSYM/
 data/compass_*.json
+compass.log

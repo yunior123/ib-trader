@@ -885,12 +885,17 @@ static double captain_flow(const std::string& SYM) {
 
 int main(int argc, char** argv) {
     std::vector<std::string> syms;
-    int loop_s = 0; bool ev_stdin = false, to_stdout = false;
+    // RETRASO = DINERO (Yunior 2026-07-25): "si la flecha apunta con retraso de 2 segundos y
+    // compramos call en el retroceso cuando esta en su punto maximo, no bueno". El throttle
+    // del chart era de 2.0 s con el computo en Python (100-180 ms POR SIMBOLO). Un ciclo de
+    // esta brujula son 1.09 ms por simbolo (32.7 ms los 30, medido, incluyendo el spawn), asi
+    // que el bucle admite SUB-SEGUNDO: --loop 0.25 deja el retraso en <=250 ms.
+    double loop_s = 0; bool ev_stdin = false, to_stdout = false;
     for (int i = 1; i < argc; ++i) {
         std::string a = argv[i];
         if (a == "--ev-stdin") ev_stdin = true;
         else if (a == "--json") to_stdout = true;
-        else if (a == "--loop" && i + 1 < argc) loop_s = atoi(argv[++i]);
+        else if (a == "--loop" && i + 1 < argc) loop_s = atof(argv[++i]);
         else if (a.rfind("--", 0) == 0) { /* ignorar desconocidos */ }
         else { for (auto& ch : a) ch = (char)tolower(ch); syms.push_back(a); }
     }
@@ -943,7 +948,10 @@ int main(int argc, char** argv) {
                 for (const auto& w : o.state_why) printf("    - %s\n", w.c_str());
             }
         }
-        if (loop_s > 0) { struct timespec ts{loop_s, 0}; nanosleep(&ts, nullptr); }
+        if (loop_s > 0) {
+            struct timespec ts{(time_t)loop_s, (long)((loop_s - (double)(time_t)loop_s) * 1e9)};
+            nanosleep(&ts, nullptr);
+        }
     } while (loop_s > 0);
     return 0;
 }

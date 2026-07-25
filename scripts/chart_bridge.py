@@ -1159,21 +1159,62 @@ async def check_zone_crossings(state, spot):
                 state.clients.discard(ws)
 
 
+COMPASS_MAX_AGE = float(os.environ.get("COMPASS_MAX_AGE", "8"))   # s; mas viejo = flecha RANCIA
+DIR_BCAST_S = float(os.environ.get("DIR_BCAST_S", "0.2"))         # s entre frames de flecha
+
+
+def read_compass(sym):
+    """LEE data/compass_<sym>.json (lo escribe ./compass, C++). CERO computo aqui.
+
+    Arquitectura (Yunior 2026-07-25): "python solo para test, la computacion en C++" +
+    "si la flecha apunta con retraso de 2 segundos y compramos call en el retroceso cuando
+    esta en su punto maximo, no bueno". Antes este callback llamaba a direction_view.compute()
+    (100-180 ms POR SIMBOLO, throttle de 2.0 s). Ahora la brujula corre en su propio bucle C++
+    (1.09 ms/simbolo) y aqui solo se lee un JSON: microsegundos.
+
+    Si el JSON esta RANCIO se devuelve marcado como tal — NUNCA se recalcula en Python por
+    detras: eso seria degradacion silenciosa (una flecha vieja disfrazada de fresca).
+    """
+    p = os.path.join(REPO, "data", f"compass_{sym.lower()}.json")
+    try:
+        age = time.time() - os.path.getmtime(p)
+        with open(p) as f:
+            d = json.load(f)
+    except Exception as e:
+        return None, f"sin brujula ({type(e).__name__})"
+    if age > COMPASS_MAX_AGE:
+        d["stale"] = True
+        d["stale_age"] = round(age, 1)
+        return d, f"brujula RANCIA ({age:.0f}s) — arranca ./compass --loop 0.25"
+    d["stale"] = False
+    d["stale_age"] = round(age, 2)
+    return d, None
+
+
 async def broadcast_direction(state, lv=None):
-    """Flecha direccional compuesta (direction_view) -> overlay del chart. Degrada limpio."""
+    """Flecha-BRUJULA -> overlay del chart. Solo LEE el JSON del binario C++."""
     if not state.clients:
         return
-    try:
-        dv = direction_view.compute(state.sym, lv=lv if lv is not None else (state.levels or {}))
-    except Exception as e:
-        print(f"[dir] compute falló ({e})")
-        return
+    dv, warn = read_compass(state.sym)
+    if warn:
+        # fail-loud: se avisa por consola, y si no hay nada que pintar no se pinta
+        if getattr(state, "_compass_warn", None) != warn:
+            print(f"[dir] {warn}")
+            state._compass_warn = warn
     if not dv:
         return
     frame = {"type": "direction", "sym": state.sym.upper(), "dir": dv.get("dir", "flat"),
-             "prob": dv.get("prob"), "score": dv.get("score"), "why": dv.get("why", []),
-             "target": dv.get("target"), "target_label": dv.get("target_label"),
-             "target_pct": dv.get("target_pct")}
+             "prob": dv.get("prob"), "why": dv.get("state_why", []),
+             "state": dv.get("state"), "state_pending": dv.get("state_pending"),
+             "prob_source": dv.get("prob_source"), "pending_print": dv.get("pending_print"),
+             "families": dv.get("families"), "fading": dv.get("fading", []),
+             "vetoes": dv.get("vetoes", []), "level": dv.get("level"),
+             "amplitude": dv.get("amplitude"), "mag": dv.get("mag", 0.0),
+             "grade": dv.get("grade"), "stale": dv.get("stale"),
+             "stale_age": dv.get("stale_age"),
+             "target": dv.get("target"), "target_label": (dv.get("grade") or "objetivo"),
+             "target_pct": (None if not dv.get("target") or not dv.get("level")
+                            else round((dv["target"] / (dv["level"]["price"] or 1) - 1) * 100, 2))}
     for ws in list(state.clients):
         try:
             await ws.send_json(frame)
@@ -1633,8 +1674,12 @@ def _make_on_tick(state):
             return
         state._last_tick_bcast = now
         asyncio.ensure_future(broadcast_tick(state))
-        # flecha direccional en TIEMPO REAL (throttle 2s; compute ~7ms, usa niveles cacheados)
-        if now - getattr(state, "_last_dir_bcast", 0) >= 2.0:
+        # flecha-BRUJULA en TIEMPO REAL. El throttle era de 2.0 s cuando esto CALCULABA en
+        # Python (100-180 ms/simbolo). Ahora solo LEE data/compass_<sym>.json (microsegundos),
+        # asi que baja a 0.2 s: el retraso de la flecha lo fija el bucle de ./compass, no esto.
+        # "Si la flecha apunta con retraso de 2 segundos y compramos call en el retroceso
+        # cuando esta en su punto maximo, no bueno" (Yunior 2026-07-25).
+        if now - getattr(state, "_last_dir_bcast", 0) >= DIR_BCAST_S:
             state._last_dir_bcast = now
             asyncio.ensure_future(broadcast_direction(state))
     return on_pending
