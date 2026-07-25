@@ -21,6 +21,8 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(REPO)
 LOG = "data/calib_log.jsonl"
 OUT = "data/calibration.json"
+BARRIER_OUT = "data/calibration_barrier.json"   # ficha #1 (aditivo, fichero aparte)
+BARRIER_MIN_N = 50  # n RESUELTA minima para publicar una celda de barrera
 MIN_N = 20          # muestra minima para confiar en una tasa medida
 DECAY_DAYS = 120    # las filas mas viejas pesan menos (mercado cambia)
 
@@ -150,6 +152,77 @@ def calibrate():
     json.dump(out, open(OUT, "w"), indent=1)
     return out
 
+# ---------- barrera (ficha #1, ADITIVO — no toca calibrate() ni OUT) ----------
+def wilson_lb_expectancy(wins, n, k_tp, k_sl, z=1.96):
+    """Expectancia en unidades de ATR y su CI, derivados del Wilson del win rate.
+        E = p*k_tp - (1-p)*k_sl
+    La ficha #1 manda elegir (k_tp,k_sl,H) por el LIMITE INFERIOR de la
+    EXPECTANCIA, no por el win rate: un 0.60 con k_tp=0.5 y k_sl=1.0 pierde.
+    Devuelve None si n==0 (no hay expectancia plausible que inventar)."""
+    if n <= 0:
+        return None
+    p, lo, hi = wilson(wins, n, z)
+    exp = lambda q: q * k_tp - (1 - q) * k_sl
+    return dict(p=p, exp=exp(p), exp_lo=exp(lo), exp_hi=exp(hi),
+                wr_ci=(lo, hi), n=n, wins=wins, k_tp=k_tp, k_sl=k_sl)
+
+
+def calibrate_barrier(db=None, min_n=BARRIER_MIN_N, out=BARRIER_OUT):
+    """Agrega trades.db barrier_outcomes por (source, k_tp, k_sl, H).
+    El TIMEOUT no entra en el denominador (es NULL, no una victoria) — se cuenta
+    aparte como `timeouts`. Escribe BARRIER_OUT (fichero PROPIO: no contamina
+    data/calibration.json, que sigue siendo la calibracion por setup x regimen).
+    Devuelve {} si la tabla no existe: el consumidor degrada, pero NUNCA recibe
+    una probabilidad inventada."""
+    import sqlite3
+    db = db or os.path.join(REPO, "trades.db")
+    c = sqlite3.connect("file:%s?mode=ro" % db, uri=True, timeout=30)
+    try:
+        have = c.execute("SELECT name FROM sqlite_master WHERE type='table' AND "
+                         "name='barrier_outcomes'").fetchone()
+        if not have:
+            return {}
+        rows = c.execute("SELECT source,k_tp,k_sl,H,label,ambig FROM barrier_outcomes").fetchall()
+    finally:
+        c.close()
+    cells = {}
+    for source, k_tp, k_sl, H, label, ambig in rows:
+        b = cells.setdefault((source, k_tp, k_sl, H),
+                             dict(n=0, wins=0, timeouts=0, ambig=0))
+        b["ambig"] += ambig or 0
+        if label is None:
+            b["timeouts"] += 1
+        else:
+            b["n"] += 1
+            b["wins"] += label
+    res = {}
+    for (source, k_tp, k_sl, H), b in cells.items():
+        e = wilson_lb_expectancy(b["wins"], b["n"], k_tp, k_sl)
+        key = "barrier:%s|%s/%s/%s" % (source, k_tp, k_sl, H)
+        if e is None:
+            res[key] = dict(source=source, k_tp=k_tp, k_sl=k_sl, H=H, n=0,
+                            timeouts=b["timeouts"], rate=None,
+                            verdict="DATA-INSUFFICIENT")
+            continue
+        res[key] = dict(source=source, k_tp=k_tp, k_sl=k_sl, H=H,
+                        n=b["n"], wins=b["wins"], timeouts=b["timeouts"],
+                        rate=round(e["p"], 4),
+                        ci_low=round(e["wr_ci"][0], 4), ci_high=round(e["wr_ci"][1], 4),
+                        expectancy=round(e["exp"], 4),
+                        exp_ci=[round(e["exp_lo"], 4), round(e["exp_hi"], 4)],
+                        ambig=b["ambig"],
+                        ambig_pct=round(b["ambig"] / b["n"], 4),
+                        trust=b["n"] >= min_n,
+                        verdict=("APTA" if e["exp_lo"] > 0 else
+                                 "NO-TRADE" if e["exp_hi"] >= 0 else "NEGATIVA")
+                                if b["n"] >= min_n else "DATA-INSUFFICIENT")
+    tmp = out + ".tmp"
+    with open(tmp, "w") as f:
+        json.dump(res, f, indent=1, sort_keys=True)
+    os.replace(tmp, out)
+    return res
+
+
 def report():
     if not os.path.exists(OUT):
         print("sin calibracion aun — correr grade+calibrate tras algunos dias"); return
@@ -160,7 +233,8 @@ def report():
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=["record", "grade", "calibrate", "report", "eod"])
+    ap.add_argument("cmd", choices=["record", "grade", "calibrate", "report", "eod",
+                                    "barrier"])
     ap.add_argument("--dir", default=os.path.expanduser(f"~/Desktop/planes-{time.strftime('%Y-%m-%d')}"))
     a = ap.parse_args()
     if a.cmd == "record":
@@ -171,6 +245,15 @@ def main():
         c = calibrate(); print(json.dumps(c, indent=1))
     elif a.cmd == "report":
         report()
+    elif a.cmd == "barrier":
+        b = calibrate_barrier()
+        if not b:
+            print("sin barrier_outcomes — correr scripts/barrier_labels.py build")
+        else:
+            print(f"{len(b)} celdas de barrera -> {BARRIER_OUT}")
+            for k, v in sorted(b.items(), key=lambda x: -(x[1].get("n") or 0))[:15]:
+                print(f"  {k:38} n={v.get('n')} WR={v.get('rate')} "
+                      f"exp={v.get('expectancy')} {v.get('verdict')}")
     elif a.cmd == "eod":  # cierre: califica ayer + recalibra
         print("calificadas", grade(), "| buckets", len(calibrate()))
         report()
