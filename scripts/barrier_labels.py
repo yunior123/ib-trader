@@ -767,7 +767,10 @@ def scoreboard(conn, out_path=None):
                 100.0 * (len(rows) - res_all) / max(1, len(rows))))
     L.append("- **Muestra efectiva**: los Wilson de esta tabla usan `n` CRUDA. La "
              "corrección por correlación (`n_eff`) y el multiple testing viven en "
-             "`scripts/null_control.py` → `data/null_control.json`. **Leer los dos.**")
+             "`scripts/null_control.py` → `data/null_control.json` + "
+             "`docs/NULL-CONTROL-%s.md`. **Leer los dos**: medido allí, ρ̄≈0.41 en la "
+             "flota deja el `n=1154` de bollinger en `n_eff≈89` (los CI de arriba "
+             "están estrechados ×3.6)." % time.strftime("%Y-%m-%d"))
     L.append("- **SEÑAL-SOLAMENTE**: nada de esto ordena al broker.")
     L.append("")
     text = "\n".join(L) + "\n"

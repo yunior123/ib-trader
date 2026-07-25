@@ -1,4 +1,4 @@
-# EDGE SCOREBOARD — 2026-07-25 09:50
+# EDGE SCOREBOARD — 2026-07-25 09:59
 
 Etiquetado de **triple barrera** (ficha #1) contra el etiquetado por **retorno a horizonte** que la flota usa hoy. El timeout es `NULL`, no una victoria. Barra que contiene TP y SL: **SL primero** (conservador), y la tasa se publica como `ambig_pct`.
 
@@ -436,6 +436,6 @@ Regla de la ficha: se elige por expectancia, no por win rate. Si el CI de expect
 
 - **Ambigüedad sub-minuto**: 2030 de 96132 observaciones resueltas (2.1%) se resolvieron en una barra que tocaba TP **y** SL. No existe ruta sub-minuto en `poly_bars`, así que se resolvieron **SL primero**. El WR real está entre el publicado y el publicado + 2.1 pp.
 - **Timeouts**: 420 de 96552 observaciones (0.4%) no tocaron ninguna barrera. Salen del denominador (antes contaban como victoria si el retorno era >0.05%).
-- **Muestra efectiva**: los Wilson de esta tabla usan `n` CRUDA. La corrección por correlación (`n_eff`) y el multiple testing viven en `scripts/null_control.py` → `data/null_control.json`. **Leer los dos.**
+- **Muestra efectiva**: los Wilson de esta tabla usan `n` CRUDA. La corrección por correlación (`n_eff`) y el multiple testing viven en `scripts/null_control.py` → `data/null_control.json` + `docs/NULL-CONTROL-2026-07-25.md`. **Leer los dos**: medido allí, ρ̄≈0.41 en la flota deja el `n=1154` de bollinger en `n_eff≈89` (los CI de arriba están estrechados ×3.6).
 - **SEÑAL-SOLAMENTE**: nada de esto ordena al broker.
 

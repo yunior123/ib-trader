@@ -115,3 +115,4 @@ data/history/*/levels_*_[0-9][0-9][0-9][0-9].json
 # retencion de 180 dias y gzip desde el dia 2; en git solo su cobertura (prints_coverage.json).
 # Si Yunior prefiere que git haga de copia offsite, borrar esta linea (~1,7 GB/año de .git).
 data/prints/
+data/session_regime.json

@@ -1,28 +1,28 @@
 {
  "_meta": {
   "WARNING": "PROPUESTA \u2014 este fichero NO lo lee ningun daemon. El real es data/signal_enable.json y NO se ha tocado.",
-  "at": "2026-07-25 09:56:59",
+  "at": "2026-07-25 09:58:10",
   "rule": "DEAD -> propone apagar. UNPROVEN -> banner solamente (jamas voz, jamas dimensiona). DATA-INSUFFICIENT -> se dice 'todavia no sabemos', en voz alta."
  },
  "bollinger": {
   "ci": [
-   -0.1373,
-   -0.0096
+   -0.048,
+   0.0187
   ],
-  "edge": -0.0708,
+  "edge": -0.0141,
   "n": 1154,
   "n_eff": 89.2,
-  "propose_enabled": false,
+  "propose_enabled": true,
   "propose_voice": false,
-  "verdict": "DEAD",
-  "why": "CI del edge entero <= 0 (peor que entrada aleatoria)"
+  "verdict": "UNPROVEN",
+  "why": "el CI del edge cruza 0; no pasa BH-FDR q=0.10; DSR 0.003 <= 0.95"
  },
  "cusum": {
   "ci": [
    -0.0667,
-   0.1036
+   0.0432
   ],
-  "edge": 0.0196,
+  "edge": -0.0112,
   "n": 146,
   "n_eff": 20.1,
   "propose_enabled": true,
@@ -42,10 +42,10 @@
  },
  "flow": {
   "ci": [
-   -0.0202,
-   0.1657
+   0.0009,
+   0.1577
   ],
-  "edge": 0.073,
+  "edge": 0.0836,
   "n": 89,
   "n_eff": 14.5,
   "propose_enabled": true,
@@ -55,10 +55,10 @@
  },
  "structural": {
   "ci": [
-   0.1648,
-   0.3532
+   0.0629,
+   0.22
   ],
-  "edge": 0.2554,
+  "edge": 0.1386,
   "n": 81,
   "n_eff": 4.0,
   "propose_enabled": true,
@@ -68,10 +68,10 @@
  },
  "whale": {
   "ci": [
-   -0.0968,
-   0.1039
+   -0.0329,
+   0.1512
   ],
-  "edge": 0.0036,
+  "edge": 0.0609,
   "n": 133,
   "n_eff": 18.7,
   "propose_enabled": true,
