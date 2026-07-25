@@ -319,7 +319,9 @@ def run(syms, rounds, max_req):
                     print(f"  ! catalogo {sym} {exp}: {e}", flush=True)
                     continue
                 if not cached:
-                    tot_req += 1
+                    # el catalogo puede haber costado VARIAS paginas: el techo se lleva
+                    # con el contador del cliente, no con una estimacion optimista
+                    tot_req = poly.stats["requests"]
                 d0 = WINDOW_START
                 d1 = min(exp, WINDOW_END)
                 for mny, right in ROUNDS[rnd]:
@@ -329,7 +331,7 @@ def run(syms, rounds, max_req):
                     already.add(m["ticker"])
                     ins, state, err = download_contract(poly, c, sym, exp, m, rnd,
                                                         d0, d1)
-                    tot_req += 1
+                    tot_req = poly.stats["requests"]
                     tot_new += ins
                     if state == "failed":
                         fails.append((m["ticker"], err))
