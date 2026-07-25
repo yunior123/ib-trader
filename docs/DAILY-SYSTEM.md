@@ -349,3 +349,80 @@ launchctl start com.ibtrader.postmortem
 Chequeos rápidos: `launchctl list | grep ibtrader` (jobs cargados),
 `pgrep -f x_signal_poster` y `pgrep -f notify_relay` (daemons vivos),
 `tail -f dailyplans.log` (seguir una corrida).
+
+---
+
+## 11. Las cuatro piezas vivas que faltaban en este manual
+
+*Añadido 2026-07-25. Auditoría: este manual tenía **0 menciones** de las cuatro, pese a estar
+todas en producción. Un daemon que no aparece en el manual es un daemon que la sesión
+siguiente no sabe reiniciar ni diagnosticar — y en esta casa el manual es la memoria.*
+
+Las cuatro son **señal-solamente**: ninguna coloca, modifica ni cancela una orden.
+
+### 11.1 `fleet_healthcheck.py` — el auditor que se cura solo
+Corre **3×/día** por launchd (`com.ibtrader.healthcheck`). Revisa que los daemons estén vivos,
+que los ficheros de datos estén frescos y que el mapa gamma exista, y **relanza** lo que se haya
+caído. Su ausencia del mapa gamma se marca 🔴.
+
+Códigos de salida (importan, y fueron un bug de verdad):
+- **0** = todo bien, o **solo avisos 🟡**.
+- **2** = hay al menos un 🔴.
+
+> **Por qué el 0 con avisos**: antes salía `1` con cualquier aviso 🟡, launchd lo grababa como job
+> fallido, y la corrida siguiente auditaba su propio `LastExitStatus=1` y lo cantaba como aviso
+> nuevo — un bucle que se alimentaba de sí mismo. Además, el job propio (label leído del plist)
+> queda **fuera** de su propia auditoría. Arreglado 2026-07-25 (`2370d20`).
+
+```bash
+./venv/bin/python scripts/fleet_healthcheck.py          # a mano
+launchctl kickstart -k gui/$UID/com.ibtrader.healthcheck
+```
+
+### 11.2 `index_breadth.py` — el engranaje QQQ/SPY
+Calcula la **amplitud PONDERADA** de los componentes del índice: si MSFT+NVDA+AAPL rompen abajo,
+SPY/QQQ heredan la presión. Es lo que permite decir *"el índice va a seguir a sus motores"* en vez
+de mirar solo su propia vela. Alimenta el PDF y la brújula.
+
+> **Bug histórico que explica por qué hay que vigilarlo**: partía por `,` unos ficheros separados
+> por **espacios**, así que la guarda de frescura de 600 s era **código muerto** y cada corrida caía
+> en silencio a yfinance retrasado — con Yahoo prohibido por orden permanente #6. Arreglado en la
+> cacería del 2026-07-24. Si vuelve a aparecer un dato viejo aquí, ese es el primer sitio a mirar.
+
+```bash
+./venv/bin/python scripts/index_breadth.py QQQ
+```
+
+### 11.3 `force_meter.py` — fuerza y agotamiento en vivo
+Mide la **fuerza** del movimiento en curso y la clasifica en 4 fases, cada una con su acción de
+stop asociada. Es la pieza que da cuerpo a la **regla 9** (*jamás responder sobre un ticker sin
+mirar la fuerza de las últimas 6-8 velas y el %B*): la fuerza es parte del veredicto SIEMPRE.
+
+> **Pendiente conocido** (`TODOS.md`): vive **fuera** de los signal bots C++. Los bots deciden hoy
+> sin ella. Plegarla por-tick dentro del bot es una casilla abierta.
+
+```bash
+./venv/bin/python scripts/force_meter.py NVDA
+```
+
+### 11.4 `posthours_cage.py` — la picardía de la jaula
+Detecta el patrón **JAULA → LIBERACIÓN**: cuando las ballenas 0DTE mantienen el precio enjaulado
+todo el día y, al expirar esos contratos, el after-hours se libera hacia las ballenas **semanales**
+(no-0DTE). Análisis post-market para un posible producto apalancado unas horas.
+Doctrina completa en la skill `postmarket-cage-release`.
+
+> **Estado honesto**: el código y sus tests pasan, pero **nunca se ha visto disparar en vivo**.
+> Hasta la primera cacería real (lunes al cierre) es teoría, y así debe tratarse.
+
+```bash
+./venv/bin/python scripts/posthours_cage.py
+```
+
+### Chequeo rápido de las cuatro
+
+```bash
+launchctl print gui/$UID/com.ibtrader.healthcheck | grep "last exit code"   # 0 o 2, nunca 1
+./venv/bin/python scripts/index_breadth.py QQQ      # que NO diga fuente yfinance
+./venv/bin/python scripts/force_meter.py QQQ
+./venv/bin/python scripts/posthours_cage.py
+```
