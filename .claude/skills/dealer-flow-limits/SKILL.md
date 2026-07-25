@@ -15,11 +15,19 @@ Fichas 22 y 28 + los muertos #1 y #16 de `docs/FEATURES-MINED-2026-07-25.md`.
 | Endpoint | Estado |
 |---|---|
 `/v3/snapshot/options/{SYM}` | **200** — greeks + IV + OI + `day.volume` por strike/expiry |
-`/v3/trades/O:<contrato>` | **NOT_AUTHORIZED** |
-`/v3/quotes/O:<contrato>` | **NOT_AUTHORIZED** |
+`/v3/snapshot?ticker=O:<contrato>` | 200 — greeks/IV/OI/session, **sin bid/ask ni last_trade** |
+`/v3/trades/O:<contrato>` · `/v3/quotes/O:<contrato>` | **403 NOT_AUTHORIZED** |
+`/v2/last/trade/O:` · `/v2/last/nbbo/O:` | **403** |
+**`/v3/trades/AAPL` · `/v3/quotes/AAPL`** (acciones) | **403 — el MISMO error** |
+`/v3/snapshot/indices?ticker=I:SPX` | **403** |
 `/v2/aggs/ticker/O:<contrato>` | 200 pero **sin OI y sin griegas** |
 
-> **Sin `/v3/trades/O:` no hay lado agresor. Sin lado agresor no hay flujo FIRMADO. Punto.**
+> **El 403 NO es de opciones** (medido 2026-07-25): las acciones y los índices dan el mismo
+> `NOT_AUTHORIZED`. El plan **no tiene carril de CINTA en absoluto** — es agregados + snapshots.
+> No hay endpoint escondido ni variante delayed. Sin cinta no hay lado agresor, y sin lado agresor
+> **no hay flujo FIRMADO por Polygon**. Punto.
+
+**Pero eso NO cierra HIRO** — ver §6: la cinta firmada ya la pagamos en IBKR.
 
 ## 2. PROHIBIDO: la palabra "firmado" / "signed"
 
@@ -116,11 +124,61 @@ spread de Cremers-Weinbaum) es **TRANSVERSAL a horizontes SEMANALES**, no un lea
 minutos. Veredicto HOY: **DATA-INSUFFICIENT, y la feature lo dice en voz alta.** Revisita en 2027
 con un año de `iv_hist`.
 
-## 6. HIRO: diferido, no muerto
+## 6. HIRO: NO es un problema de autorizacion (resuelto en diagnostico 2026-07-25)
 
-La unica via real es IBKR `reqTickByTickData("AllLast")` sobre ±10 strikes de QQQ 0DTE. Es un
-**spike P1**, y las lineas deben salir **DE LAS ~90 que el bridge YA sostiene**, no encima — las
-lineas de market-data son el unico recurso genuinamente escaso del stack.
+Spec completa: **`docs/HIRO-2026-07-25.md`**. Resumen operativo:
+
+**El 403 se RODEA, no se arregla.** Subir a Options Advanced (~$199/mes) es **gasto duplicado**:
+ya pagamos IBKR por los mismos prints de OPRA, y REST paginado seria **mas lento** que el socket
+local de TWS que ya esta conectado (retraso = dinero).
+
+**La cinta firmada YA CORRE en esta cuenta, para acciones** — `scripts/ibkr_bar_bridge.py:250`:
+```python
+tbt = ib.reqTickByTickData(smart, "AllLast", 0, False)   # y make_on_whale() la firma:
+#   px >= ask -> +1 (cliente compra) | px <= bid -> -1 (cliente vende) | en medio -> 0, descartado
+```
+`ib_insync` acepta `'Last'|'AllLast'|'BidAsk'|'MidPoint'` sobre **cualquier `Contract`**, incluido
+`Option`. **HIRO = ese motor apuntado a contratos de opcion, ponderado por delta.**
+Nota: `opt_whale_watch.py` **no** hace esto — lee VOLUMEN acumulado con `reqMktData` (ratio P/C,
+agregado bilateral). Tick-by-tick sobre opciones **nunca se ha intentado aqui**.
+
+### Del print firmado al flujo de cobertura
+```
+hedge_flow = aggr · leg · |delta| · size · 100 · spot        aggr=±1   leg=+1 CALL / −1 PUT
+```
+| Print del cliente | Dealer queda | Cubre | Signo |
+|---|---|---|---|
+compra CALL | corto call | **COMPRA** subyacente | **+** |
+vende PUT | largo put | **COMPRA** | **+** |
+vende CALL / compra PUT | — | VENDE | **−** |
+
+Delta **al print**: `bs_delta` con nuestra IV + el spot vivo de `nbbo_<sym>.txt` (4/s), **jamas** el
+delta de la cadena de hace 180 s.
+
+### El recurso escaso es el CAP, y hoy esta MAL REPARTIDO (bug vivo)
+IBKR capea las suscripciones tick-by-tick (**err 10190**) y el bridge las reparte *por orden de la
+lista*. Medido en `data/whale_*.txt`: **`whale_qqq.txt` y `whale_spy.txt` son 0 BYTES** — los dos
+capitanes sin cinta firmada, junto a aapl/amd/asml/gld/intc/tsm/txn (**8 de 14 vacios**), mientras
+DRAM y SPCX si la tienen. **La regla 12 corre sin su input firmado.** Arreglo: prioridad
+QQQ→SPY→SMH + cobertura publicada. HIRO competiria por **ese mismo cap**.
+
+### Las tres pre-puertas duras (cualquiera mata la feature antes de escribir C++)
+1. `unsigned_pct > 35%` → son prints de **combo** (verticales/condores/rollos se reportan por patas
+   dentro del NBBO y no son direccionales). **KILL.**
+2. Cap medido **< 10** contratos simultaneos → la banda es demasiado fina para ser un indice. **KILL.**
+3. `|ρ| > 0.9` con el `dvol` ponderado por gamma **sin signo** de §4 → la cinta no añade nada sobre
+   el volumen. **KILL** (colinealidad primero, no edge — [[anti-overfit-killlist]]).
+
+### Lo que sigue prohibido decir aunque funcione
+- **Apertura vs cierre es invisible** → se afirma *"flujo agresor ponderado por delta"*, **nunca
+  "posicionamiento de dealers"**. SpotGamma tiene el mismo agujero.
+- Con ±5 strikes de un expiry el agregado **no es** el HIRO del ticker: es `hiro_band`, con la banda
+  en la cabecera, y **jamas se compara entre dias con bandas distintas**.
+- Embarca **mudo, `weight=0`, banner** (ver [[alert-budget]]).
+
+**Siguiente paso bloqueante**: correr el probe con TWS vivo y mercado abierto (mide si `AllLast`
+sobre opcion esta permitido, **el cap real**, prints/min y el coste del `BidAsk`).
+Sin ese numero, todo lo demas es especulacion.
 
 ## 7. Que se puede decir en voz alta hoy
 
