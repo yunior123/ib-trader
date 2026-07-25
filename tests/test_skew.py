@@ -111,6 +111,37 @@ def test_cadena_ausente_devuelve_None():
 
 
 # ---------------------------------------------------------------------------------------
+# El z: la puerta de las 60 sesiones no se cruza "casi"
+# ---------------------------------------------------------------------------------------
+
+def test_z_es_None_por_debajo_de_60_sesiones():
+    """59 sesiones siguen siendo DATA-INSUFFICIENT. La puerta es dura o no es puerta."""
+    muestra = [0.02 + 0.001 * i for i in range(skew.MIN_HIST_FOR_Z - 1)]
+    assert skew.zscore(0.05, muestra) is None
+
+
+def test_z_se_calcula_al_llegar_a_60():
+    muestra = [0.02 + 0.001 * (i % 7) for i in range(skew.MIN_HIST_FOR_Z)]
+    z = skew.zscore(0.05, muestra)
+    assert z is not None and z > 0
+
+
+def test_z_es_None_si_la_muestra_no_tiene_varianza():
+    """Una serie constante daria una division por cero disfrazada de z enorme."""
+    assert skew.zscore(0.05, [0.02] * skew.MIN_HIST_FOR_Z) is None
+
+
+def test_z_es_None_sin_rr():
+    assert skew.zscore(None, [0.02 + 0.001 * i for i in range(skew.MIN_HIST_FOR_Z)]) is None
+
+
+def test_rr_history_devuelve_lista_vacia_sin_tabla(monkeypatch):
+    """Sin `iv_hist` la serie es VACIA, jamas una serie sintetica."""
+    monkeypatch.setattr(skew, "DB", os.path.join(REPO, "no_existe_esta_bd.db"))
+    assert skew.rr_history("QQQ") == []
+
+
+# ---------------------------------------------------------------------------------------
 # El artefacto publicado dice DATA-INSUFFICIENT y no habla
 # ---------------------------------------------------------------------------------------
 

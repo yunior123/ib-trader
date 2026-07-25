@@ -1,0 +1,52 @@
+{
+ "generated_at": 1785014943.141546,
+ "fuente": "poly_opt_bars (precio) + poly_bars (spot); IV invertida por biseccion",
+ "iv_src": "invertida_biseccion",
+ "oi": null,
+ "oi_por_que": "no existe historia de OI a ningun precio en este plan; el as_of del snapshot de Polygon devuelve OK e IGNORA la fecha. Muros, max-pain y GEX historico siguen BLOQUEADOS y no se aproximan",
+ "sesiones_distintas": 22,
+ "sesiones_necesarias_para_z": 60,
+ "desbloqueado": false,
+ "por_sym": {
+  "AMD": {
+   "filas": 335,
+   "sesiones": 10
+  },
+  "META": {
+   "filas": 264,
+   "sesiones": 10
+  },
+  "MU": {
+   "filas": 375,
+   "sesiones": 10
+  },
+  "NVDA": {
+   "filas": 704,
+   "sesiones": 22
+  },
+  "QQQ": {
+   "filas": 121,
+   "sesiones": 10
+  },
+  "SMH": {
+   "filas": 316,
+   "sesiones": 10
+  },
+  "SPY": {
+   "filas": 127,
+   "sesiones": 10
+  },
+  "TSLA": {
+   "filas": 201,
+   "sesiones": 10
+  }
+ },
+ "conteos": {
+  "filas_entrada": 3099,
+  "iv_ok": 2443,
+  "iv_none": 60,
+  "sin_spot": 0,
+  "exp_malo": 0,
+  "t_no_positivo": 596
+ }
+}

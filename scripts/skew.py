@@ -30,11 +30,13 @@ Python legitimo: lote fuera de sesion. SEÑAL-SOLAMENTE.
 import glob
 import json
 import os
+import sqlite3
 import sys
 import time
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # NUNCA hardcodear rutas
 HIST = os.path.join(REPO, "data", "history")
+DB = os.path.join(REPO, "trades.db")
 OUT = os.path.join(REPO, "data", "skew.json")
 
 TARGET_DELTA = 0.25
@@ -138,6 +140,63 @@ def rr_for(chain):
     }
 
 
+def rr_history(sym):
+    """Serie historica de RR 25 delta desde `trades.db iv_hist` (IV INVERTIDA POR BISECCION).
+
+    Esta es la mitad que convierte el DATA-INSUFFICIENT en un numero: la IV del pasado no es
+    irrecuperable, se reconstruye del precio del contrato (`scripts/iv_hist_build.py`).
+
+    Devuelve `[(date, rr), ...]` ordenada. Lista VACIA si no hay tabla — nunca una serie
+    inventada. **La IV invertida no se mezcla jamas con la del proveedor**: esta funcion lee
+    solo filas con `iv_src='invertida_biseccion'`, y el RR de hoy (que viene del snapshot) se
+    compara contra ella declarando ambas fuentes.
+    """
+    if not os.path.exists(DB):
+        return []
+    try:
+        con = sqlite3.connect("file:%s?mode=ro" % DB, uri=True)
+    except sqlite3.Error:
+        return []
+    try:
+        rows = con.execute(
+            "SELECT date, exp, right, delta, iv FROM iv_hist "
+            "WHERE sym=? AND iv IS NOT NULL AND delta IS NOT NULL "
+            "AND iv_src='invertida_biseccion' ORDER BY date, exp", (sym,)).fetchall()
+    except sqlite3.Error:
+        return []                      # tabla ausente: serie vacia, no un cero plausible
+    finally:
+        con.close()
+
+    by_day = {}
+    for date, exp, right, delta, iv in rows:
+        by_day.setdefault(date, {}).setdefault(exp, {"call": [], "put": []})
+        side = "call" if str(right).upper().startswith("C") else "put"
+        by_day[date][exp][side].append((abs(delta), iv))
+
+    series = []
+    for date in sorted(by_day):
+        exp = sorted(by_day[date])[0]            # el vencimiento frontal de esa sesion
+        wings = by_day[date][exp]
+        iv_c, ext_c = interp_iv_at_delta(wings["call"], TARGET_DELTA)
+        iv_p, ext_p = interp_iv_at_delta(wings["put"], TARGET_DELTA)
+        if iv_c is None or iv_p is None or ext_c or ext_p:
+            continue                             # sesion sin el 25 delta en banda: se OMITE
+        series.append((date, iv_p - iv_c))
+    return series
+
+
+def zscore(x, sample):
+    """z frente a la muestra. None si no hay `n` suficiente o si la desviacion es 0."""
+    n = len(sample)
+    if x is None or n < MIN_HIST_FOR_Z:
+        return None
+    mu = sum(sample) / n
+    var = sum((s - mu) ** 2 for s in sample) / (n - 1)
+    if var <= 0:
+        return None
+    return (x - mu) / (var ** 0.5)
+
+
 def main():
     dates = latest_dates()
     if not dates:
@@ -151,12 +210,24 @@ def main():
     for p in sorted(glob.glob(os.path.join(HIST, date, "chain_full_*.json"))):
         syms.append(os.path.basename(p)[len("chain_full_"):-len(".json")].upper())
 
-    out, n_ok, n_supr = {}, 0, 0
+    out, n_ok, n_supr, n_con_z, max_hist = {}, 0, 0, 0, 0
     for sym in syms:
         row = rr_for(load_chain(date, sym))
         if row is None:
             continue
-        row["n_hist"] = n_hist
+
+        # --- historia reconstruida (IV invertida por biseccion) --------------------------
+        hist = rr_history(sym)
+        vals = [v for _, v in hist]
+        row["n_hist"] = len(hist)
+        row["hist_src"] = "iv_hist/invertida_biseccion" if hist else "ninguna"
+        max_hist = max(max_hist, len(hist))
+        if len(hist) >= 2 and row["rr"] is not None:
+            row["drr_1d"] = row["rr"] - vals[-1]
+        row["z"] = zscore(row["rr"], vals)
+        if row["z"] is not None:
+            n_con_z += 1
+
         if row["rr"] is None:
             n_supr += 1
         else:
@@ -166,14 +237,23 @@ def main():
     rep = {
         "generated_at": time.time(),
         "date": date,
-        "n_hist_sessions": n_hist,
+        "n_hist_chain_dates": n_hist,
+        "n_hist_sessions": max_hist,
         "min_hist_for_z": MIN_HIST_FOR_Z,
-        "veredicto": "DATA-INSUFFICIENT",
+        "hist_src": "trades.db iv_hist (IV invertida por biseccion desde poly_opt_bars)",
+        "veredicto": ("DATA-INSUFFICIENT" if n_con_z == 0 else "PARCIAL"),
         "por_que": (
-            "z exige %d sesiones de superficie y hay %d; la tabla iv_hist no existe. "
-            "El z se publica como None y NO se rellena." % (MIN_HIST_FOR_Z, n_hist)),
+            "z exige %d sesiones de superficie; la mejor serie reconstruida tiene %d. "
+            "La IV del pasado SI se recupera (biseccion sobre el precio del contrato), lo que "
+            "falta es MATERIA PRIMA: mas barras en poly_opt_bars. El z se publica como None "
+            "mientras tanto y NO se rellena." % (MIN_HIST_FOR_Z, max_hist)),
         "syms_con_rr": n_ok,
+        "syms_con_z": n_con_z,
         "syms_suprimidos": n_supr,
+        "oi_historico": None,
+        "oi_por_que": ("IMPOSIBLE en este plan a cualquier precio: el as_of del snapshot "
+                       "devuelve OK e IGNORA la fecha. Muros/max-pain/GEX historico siguen "
+                       "bloqueados y no se aproximan"),
         "voz": "OFF",
         "factor_en_direction_view": "NINGUNO",
         "skew": out,

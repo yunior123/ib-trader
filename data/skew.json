@@ -1,12 +1,17 @@
 {
- "generated_at": 1785014718.229353,
+ "generated_at": 1785014991.842658,
  "date": "2026-07-25",
- "n_hist_sessions": 1,
+ "n_hist_chain_dates": 1,
+ "n_hist_sessions": 5,
  "min_hist_for_z": 60,
+ "hist_src": "trades.db iv_hist (IV invertida por biseccion desde poly_opt_bars)",
  "veredicto": "DATA-INSUFFICIENT",
- "por_que": "z exige 60 sesiones de superficie y hay 1; la tabla iv_hist no existe. El z se publica como None y NO se rellena.",
+ "por_que": "z exige 60 sesiones de superficie; la mejor serie reconstruida tiene 5. La IV del pasado SI se recupera (biseccion sobre el precio del contrato), lo que falta es MATERIA PRIMA: mas barras en poly_opt_bars. El z se publica como None mientras tanto y NO se rellena.",
  "syms_con_rr": 15,
+ "syms_con_z": 0,
  "syms_suprimidos": 15,
+ "oi_historico": null,
+ "oi_por_que": "IMPOSIBLE en este plan a cualquier precio: el as_of del snapshot devuelve OK e IGNORA la fecha. Muros/max-pain/GEX historico siguen bloqueados y no se aproximan",
  "voz": "OFF",
  "factor_en_direction_view": "NINGUNO",
  "skew": {
@@ -18,9 +23,10 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 0,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-27",
-   "suprimido_por": null
+   "suprimido_por": null,
+   "hist_src": "ninguna"
   },
   "AMD": {
    "rr": 0.04440515327047323,
@@ -30,9 +36,10 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 0,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-27",
-   "suprimido_por": null
+   "suprimido_por": null,
+   "hist_src": "ninguna"
   },
   "AMZN": {
    "rr": -0.03258017820865511,
@@ -42,9 +49,10 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 0,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-27",
-   "suprimido_por": null
+   "suprimido_por": null,
+   "hist_src": "ninguna"
   },
   "ASML": {
    "rr": null,
@@ -54,9 +62,10 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 1,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-31",
-   "suprimido_por": "0.25 delta fuera de la banda traida"
+   "suprimido_por": "0.25 delta fuera de la banda traida",
+   "hist_src": "ninguna"
   },
   "AVGO": {
    "rr": 0.006104737432742702,
@@ -66,9 +75,10 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 0,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-27",
-   "suprimido_por": null
+   "suprimido_por": null,
+   "hist_src": "ninguna"
   },
   "DRAM": {
    "rr": null,
@@ -78,9 +88,10 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 1,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-31",
-   "suprimido_por": "0.25 delta fuera de la banda traida"
+   "suprimido_por": "0.25 delta fuera de la banda traida",
+   "hist_src": "ninguna"
   },
   "EWY": {
    "rr": null,
@@ -90,9 +101,10 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 1,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-31",
-   "suprimido_por": "0.25 delta fuera de la banda traida"
+   "suprimido_por": "0.25 delta fuera de la banda traida",
+   "hist_src": "ninguna"
   },
   "GLD": {
    "rr": 0.021289594741202594,
@@ -102,9 +114,10 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 0,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-27",
-   "suprimido_por": null
+   "suprimido_por": null,
+   "hist_src": "ninguna"
   },
   "GOOGL": {
    "rr": -0.055970226559706376,
@@ -114,9 +127,10 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 0,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-27",
-   "suprimido_por": null
+   "suprimido_por": null,
+   "hist_src": "ninguna"
   },
   "INTC": {
    "rr": null,
@@ -126,9 +140,10 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 1,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-27",
-   "suprimido_por": "0.25 delta fuera de la banda traida"
+   "suprimido_por": "0.25 delta fuera de la banda traida",
+   "hist_src": "ninguna"
   },
   "LRCX": {
    "rr": null,
@@ -138,21 +153,23 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 1,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-31",
-   "suprimido_por": "0.25 delta fuera de la banda traida"
+   "suprimido_por": "0.25 delta fuera de la banda traida",
+   "hist_src": "ninguna"
   },
   "META": {
    "rr": -0.014739102488614209,
-   "drr_1d": null,
+   "drr_1d": -0.03858849154931593,
    "z": null,
    "smile_slope": -0.10128782402356562,
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 0,
-   "n_hist": 1,
+   "n_hist": 2,
    "exp": "2026-07-27",
-   "suprimido_por": null
+   "suprimido_por": null,
+   "hist_src": "iv_hist/invertida_biseccion"
   },
   "MSFT": {
    "rr": 0.009367936338342653,
@@ -162,9 +179,10 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 0,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-27",
-   "suprimido_por": null
+   "suprimido_por": null,
+   "hist_src": "ninguna"
   },
   "MU": {
    "rr": null,
@@ -174,9 +192,10 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 1,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-27",
-   "suprimido_por": "0.25 delta fuera de la banda traida"
+   "suprimido_por": "0.25 delta fuera de la banda traida",
+   "hist_src": "ninguna"
   },
   "NFLX": {
    "rr": 0.0016719930898291269,
@@ -186,9 +205,10 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 0,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-31",
-   "suprimido_por": null
+   "suprimido_por": null,
+   "hist_src": "ninguna"
   },
   "NOK": {
    "rr": null,
@@ -198,21 +218,23 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 1,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-31",
-   "suprimido_por": "0.25 delta fuera de la banda traida"
+   "suprimido_por": "0.25 delta fuera de la banda traida",
+   "hist_src": "ninguna"
   },
   "NVDA": {
    "rr": 0.040652708406477334,
-   "drr_1d": null,
+   "drr_1d": 0.08082995098959656,
    "z": null,
    "smile_slope": -0.0723319561974415,
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 0,
-   "n_hist": 1,
+   "n_hist": 5,
    "exp": "2026-07-27",
-   "suprimido_por": null
+   "suprimido_por": null,
+   "hist_src": "iv_hist/invertida_biseccion"
   },
   "QCOM": {
    "rr": null,
@@ -222,9 +244,10 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 1,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-31",
-   "suprimido_por": "0.25 delta fuera de la banda traida"
+   "suprimido_por": "0.25 delta fuera de la banda traida",
+   "hist_src": "ninguna"
   },
   "QQQ": {
    "rr": 0.034499893858470854,
@@ -234,9 +257,10 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 0,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-27",
-   "suprimido_por": null
+   "suprimido_por": null,
+   "hist_src": "ninguna"
   },
   "SKHY": {
    "rr": null,
@@ -246,21 +270,23 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 1,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-31",
-   "suprimido_por": "0.25 delta fuera de la banda traida"
+   "suprimido_por": "0.25 delta fuera de la banda traida",
+   "hist_src": "ninguna"
   },
   "SMH": {
    "rr": 0.12164169568213618,
-   "drr_1d": null,
+   "drr_1d": 0.039958909750809346,
    "z": null,
    "smile_slope": -0.1250550563239697,
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 0,
-   "n_hist": 1,
+   "n_hist": 3,
    "exp": "2026-07-27",
-   "suprimido_por": null
+   "suprimido_por": null,
+   "hist_src": "iv_hist/invertida_biseccion"
   },
   "SNDK": {
    "rr": null,
@@ -270,9 +296,10 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 1,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-31",
-   "suprimido_por": "0.25 delta fuera de la banda traida"
+   "suprimido_por": "0.25 delta fuera de la banda traida",
+   "hist_src": "ninguna"
   },
   "SPCX": {
    "rr": null,
@@ -282,9 +309,10 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 1,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-31",
-   "suprimido_por": "0.25 delta fuera de la banda traida"
+   "suprimido_por": "0.25 delta fuera de la banda traida",
+   "hist_src": "ninguna"
   },
   "SPY": {
    "rr": 0.03884748352693858,
@@ -294,9 +322,10 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 0,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-27",
-   "suprimido_por": null
+   "suprimido_por": null,
+   "hist_src": "ninguna"
   },
   "STX": {
    "rr": null,
@@ -306,21 +335,23 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 1,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-31",
-   "suprimido_por": "0.25 delta fuera de la banda traida"
+   "suprimido_por": "0.25 delta fuera de la banda traida",
+   "hist_src": "ninguna"
   },
   "TSLA": {
    "rr": -0.10194542426355113,
-   "drr_1d": null,
+   "drr_1d": -0.0729535855172812,
    "z": null,
    "smile_slope": -0.25406079263726256,
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 0,
-   "n_hist": 1,
+   "n_hist": 2,
    "exp": "2026-07-27",
-   "suprimido_por": null
+   "suprimido_por": null,
+   "hist_src": "iv_hist/invertida_biseccion"
   },
   "TSM": {
    "rr": null,
@@ -330,9 +361,10 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 1,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-31",
-   "suprimido_por": "0.25 delta fuera de la banda traida"
+   "suprimido_por": "0.25 delta fuera de la banda traida",
+   "hist_src": "ninguna"
   },
   "TXN": {
    "rr": null,
@@ -342,9 +374,10 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 1,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-31",
-   "suprimido_por": "0.25 delta fuera de la banda traida"
+   "suprimido_por": "0.25 delta fuera de la banda traida",
+   "hist_src": "ninguna"
   },
   "WDC": {
    "rr": null,
@@ -354,9 +387,10 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 1,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-31",
-   "suprimido_por": "0.25 delta fuera de la banda traida"
+   "suprimido_por": "0.25 delta fuera de la banda traida",
+   "hist_src": "ninguna"
   },
   "XLK": {
    "rr": 0.07170331491462245,
@@ -366,9 +400,10 @@
    "term": null,
    "iv_src": "polygon_directo",
    "extrapolated": 0,
-   "n_hist": 1,
+   "n_hist": 0,
    "exp": "2026-07-31",
-   "suprimido_por": null
+   "suprimido_por": null,
+   "hist_src": "ninguna"
   }
  }
 }
