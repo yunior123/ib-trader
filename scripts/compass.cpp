@@ -546,54 +546,98 @@ static int rebound_dir(const Level& L, const Ev& ev) {
     return ev.r6.value_or(0.0) < 0 ? 1 : -1;
 }
 
-// familias INDEPENDIENTES que confirman el giro hacia rdir
+// ===================== TOPE DURO DE FAMILIAS Y VETOS =========================
+// De la mineria de SpotGamma/TrendSpider/MenthorQ salieron 30 features, y **8 de ellas quieren
+// entrar en la flecha** (book-quality, flip-honesty, em-envelope, chain-delta, cor-fleet,
+// close-drift, skew-lead...). La feature #11 del roster pedia un "tope de 14 factores", pero eso
+// se diseño para la MEDIA PONDERADA de direction_view. La brujula es una maquina de estados, asi
+// que el modo de colapso es OTRO — y peor:
+//
+//   · Si las FAMILIAS crecen sin limite, "≥2 familias" se vuelve trivial (2 de 12 se cumplen
+//     casi siempre) -> TODO es reversion, y la brujula deja de discriminar.
+//   · Si los VETOS crecen sin limite, casi siempre hay uno activo -> NADA revierte jamas, y la
+//     brujula se vuelve un "no operar" permanente disfrazado de analisis.
+//
+// Por eso: (1) tope duro en ambos; (2) una familia por CATEGORIA — dos sabores de lo mismo no
+// cuentan como confirmacion independiente, que es justo lo que hace creer que hay consenso
+// cuando solo hay una medida repetida; (3) auditoria de cuanto dispara cada uno, para poder
+// retirar el que no aporta. Una feature nueva DESPLAZA a otra, no se suma.
+namespace CAP {
+constexpr size_t FAMILIES_MAX = 6;   // 4 en uso; margen para 2, y hay que justificarlas
+constexpr size_t VETOES_MAX   = 8;   // 6 en uso. Un veto que dispara siempre no es veto: es un
+                                     // interruptor de apagado, y hay que verlo en la auditoria.
+}
+// categorias de familia: una sola por categoria. Anadir una feature a una categoria ya ocupada
+// exige SUSTITUIR la que estaba, y decirlo.
+enum class FamCat { FLUJO, ESTIRAMIENTO, AGOTAMIENTO, PATRON, _N };
+
+// contadores de auditoria (COMPASS_AUDIT=1 los vuelca al JSON)
+static std::unordered_map<std::string, long> g_fam_hits, g_veto_hits;
+static long g_calls = 0;
+
+// familias INDEPENDIENTES que confirman el giro hacia rdir (una por categoria, tope duro)
 static void families(const Ev& ev, int rdir, std::vector<std::string>& fam) {
     char buf[160];
+    bool used[(size_t)FamCat::_N] = {false, false, false, false};
+    auto add = [&](FamCat cat, const std::string& txt, const char* key) {
+        if (used[(size_t)cat]) return;                  // ya hay una de esta categoria
+        if (fam.size() >= CAP::FAMILIES_MAX) return;    // tope duro
+        used[(size_t)cat] = true;
+        fam.push_back(txt);
+        ++g_fam_hits[key];
+    };
     if (ev.flow && std::fabs(*ev.flow) >= K::FLOW_MIN && sgn(*ev.flow) == rdir) {
         snprintf(buf, sizeof buf, "flujo capitan %s (%+.2f)",
                  rdir > 0 ? "puts=piso" : "calls=techo", *ev.flow);
-        fam.emplace_back(buf);
+        add(FamCat::FLUJO, buf, "flujo");
     }
     if (ev.pctb_1m && ev.pctb_15m) {
         if (rdir > 0 && *ev.pctb_1m <= K::PCTB_LO && *ev.pctb_15m <= K::PCTB_LO) {
             snprintf(buf, sizeof buf, "%%B 1m %.2f y 15m %.2f extremo bajo", *ev.pctb_1m, *ev.pctb_15m);
-            fam.emplace_back(buf);
+            add(FamCat::ESTIRAMIENTO, buf, "pctb");
         } else if (rdir < 0 && *ev.pctb_1m >= K::PCTB_HI && *ev.pctb_15m >= K::PCTB_HI) {
             snprintf(buf, sizeof buf, "%%B 1m %.2f y 15m %.2f extremo alto", *ev.pctb_1m, *ev.pctb_15m);
-            fam.emplace_back(buf);
+            add(FamCat::ESTIRAMIENTO, buf, "pctb");
         }
     }
     if (ev.force_phase == "AGOTAMIENTO" || ev.force_phase == "GIRO")
-        fam.emplace_back("fuerza en " + ev.force_phase);
+        add(FamCat::AGOTAMIENTO, "fuerza en " + ev.force_phase, "fuerza");
     if (ev.candle_bias != 0 && sgn((double)ev.candle_bias) == rdir)
-        fam.emplace_back("vela de reversion");
+        add(FamCat::PATRON, "vela de reversion", "vela");
 }
 
 static void vetoes_of(const Ev& ev, const Level& L, int rdir, std::vector<std::string>& v) {
     char buf[200];
     int move = sgn(ev.r6.value_or(0.0));
+    // tope duro + auditoria: un veto que dispara SIEMPRE no es un veto, es un interruptor de
+    // apagado, y solo se ve contandolos. Ver namespace CAP.
+    auto veto = [&](const std::string& txt, const char* key) {
+        if (v.size() >= CAP::VETOES_MAX) return;
+        v.push_back(txt);
+        ++g_veto_hits[key];
+    };
     if (ev.bandwalk_tf >= K::BANDWALK_TF_MIN && ev.bandwalk_dir != 0 &&
         sgn((double)ev.bandwalk_dir) == move && move == -rdir) {
         snprintf(buf, sizeof buf, "band-walk en %d TF a favor: continuacion, NO fadear", ev.bandwalk_tf);
-        v.emplace_back(buf);
+        veto(buf, "bandwalk");
     }
     if (ev.regime == "NEG" && L.wall_kind != "pin")
-        v.emplace_back("regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire");
+        veto("regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire", "neg");
     if (ev.vt && ev.spot && *ev.spot < *ev.vt) {
         snprintf(buf, sizeof buf, "bajo el VT %.2f congelado: fadear prohibido", *ev.vt);
-        v.emplace_back(buf);
+        veto(buf, "vt");
     }
     if (L.wall_kind == "trampilla") {
         snprintf(buf, sizeof buf, "%s es TRAMPILLA (gamma NEG), no piso",
                  L.kind.empty() ? "el nivel" : L.kind.c_str());
-        v.emplace_back(buf);
+        veto(buf, "trampilla");
     }
     if (L.touch_idx >= K::TOUCH_EXHAUST) {
         snprintf(buf, sizeof buf, "%dº toque: muro exhausto -> lado de la ruptura", L.touch_idx);
-        v.emplace_back(buf);
+        veto(buf, "toques");
     }
     if (ev.leader_catalyst)
-        v.emplace_back("catalizador del lider: la ballena puede ser continuacion");
+        veto("catalizador del lider: la ballena puede ser continuacion", "catalizador");
 }
 
 // ------------------- retrocesos MEDIDOS (data/momentum_decay.json) ----------
@@ -732,6 +776,7 @@ static std::unordered_map<std::string, Hist> g_hist;
 // ------------------------------- classify -----------------------------------
 static Out classify(const Ev& ev, Hist* hist, const std::string& decay_json) {
     Out o; o.sym = ev.sym;
+    ++g_calls;   // denominador de la auditoria de familias/vetos
     auto lvl = nearest_level(ev);
     int rdir = 0;
     std::vector<std::string>& why = o.state_why;
@@ -949,6 +994,25 @@ static std::string to_json(const Out& o) {
         s += "},";
     } else {
         s += "\"drivers_text\":null,\"drivers\":[],\"drivers_meta\":null,";
+    }
+    // AUDITORIA (COMPASS_AUDIT=1): que porcentaje de las veces dispara cada familia y cada
+    // veto. Es lo que permite RETIRAR el que no aporta en vez de acumular para siempre, y
+    // detectar el veto que en realidad es un interruptor de apagado permanente.
+    if (getenv("COMPASS_AUDIT") && g_calls > 0) {
+        s += "\"audit\":{\"calls\":" + std::to_string(g_calls) + ",\"families\":{";
+        int k = 0;
+        for (const auto& [key, n] : g_fam_hits) {
+            snprintf(b, sizeof b, "%s\"%s\":%.3f", k++ ? "," : "", key.c_str(), (double)n / g_calls);
+            s += b;
+        }
+        s += "},\"vetoes\":{";
+        k = 0;
+        for (const auto& [key, n] : g_veto_hits) {
+            snprintf(b, sizeof b, "%s\"%s\":%.3f", k++ ? "," : "", key.c_str(), (double)n / g_calls);
+            s += b;
+        }
+        snprintf(b, sizeof b, "},\"fam_cap\":%zu,\"veto_cap\":%zu},", CAP::FAMILIES_MAX, CAP::VETOES_MAX);
+        s += b;
     }
     snprintf(b, sizeof b, "\"ts\":%ld}", (long)time(nullptr));
     s += b;

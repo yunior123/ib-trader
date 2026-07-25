@@ -50,11 +50,30 @@
 - [ ] Las **30 features minadas** de SpotGamma/TrendSpider/MenthorQ + **13 skills** +
       `docs/FEATURES-MINED-2026-07-25.md` + `docs/research/` (6 dossiers, 496 KB). *delegado*
 
+**OLA 1 — delegada entera (2026-07-25 ~04:15), 15 items en 4 agentes:**
+- [ ] #1 `barrier-labels` + #2 `null-control` → *agente*. Los dos únicos cuya salida es RESTAR.
+      Hoy las etiquetas son retorno-a-horizonte y **cuentan como ganada una señal stopeada en el
+      camino** (bollinger h=15: 0.436 con n=822 → se espera 0.38-0.41 real). Y `n_eff` corrige
+      Wilson 3-4× por correlación de semis.
+- [ ] #3 `book-quality` + #5 `chain-honesty` + #6 `flip-honesty`+congelar 09:35 + #13 roll-off
+      → *agente*. Medido: NVDA 0/40 filas con IV, SPY 1/80 → el GEX corre sobre griegas ausentes.
+- [ ] #9 `truth-lock` + #10 `em-envelope` + #12 `voice-budget` + #14 `pin-clock` +
+      #15 `equity-prints` + #16 `chain-cube` + #18 `levels-5min` → *agente*.
+- [ ] #4 `poly-aggs-backfill` → *agente* (2 años × 30 syms; hoy solo 21 días).
+- [ ] #11 `features-fanout` + **tope duro de 14 factores** → **ME LO QUEDO YO** (toca `compass.cpp`).
+      Sin esto, 30 features = una flecha cuya varianza de prob colapsa a ~58% constante.
+
 **PENDIENTE (no delegado aún):**
-- [ ] Conmutar los keepalives a los binarios C++ nuevos (`fleet_consensus`, `gate`) — lo decide Yunior.
-- [ ] Ola 1 de las 30 features: los 5 must-build son `barrier-labels`, `null-control`,
-      `book-quality gate` (su fix del signo del Muro YA está en `gex_core.py`),
-      `poly-aggs-backfill` (en curso) y `chain-honesty`.
+- [ ] "el app ib-trader Cockpit should have a nice icon" (Yunior 2026-07-25) → `AppIcon.icns`
+      propio en `macapp/`, generado con todos los tamaños (16→1024, @2x) vía `iconutil`, y
+      referenciado en el `Info.plist` (`CFBundleIconFile`). Hoy usa el icono genérico. Que el
+      `macapp/build.sh` lo empotre en cada build.
+- [ ] Conmutar los keepalives a los binarios C++ nuevos (`fleet_consensus`, `gate`) — **lo decide
+      Yunior**. Mi recomendación: modo SOMBRA primero (el C++ escribe a fichero aparte y NO habla,
+      se compara una sesión con el Python, y solo entonces se conmuta la voz).
+- [ ] **Orden de Yunior 2026-07-25**: "después de ola uno testea todo, then todas las olas.
+      Testea con Claude in Chrome as needed." → tras ola 1: suite completa + verificación en
+      Chrome del chart (burbujas GEX, flecha escalando, tooltip), y luego olas 2 y 3.
 
 ## ✅ HECHO (2026-07-20/21)
 - [x] Post-mortem imanes 2026-07-20 (hacia el imán, jamás a través del muro; decay por toques)
