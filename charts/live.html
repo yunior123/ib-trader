@@ -1800,7 +1800,14 @@ for (const k of WGT_IDS) WGT_EL[k] = document.getElementById("wgt-" + k);
 const wdockEl = document.getElementById("wdock");
 const wgMenuEl = document.getElementById("wgmenu");
 const WG_KEY = "cockpitWidgets.v1";
-const WG_W = 320, WG_W_EXP = 560;          // ancho del dock: normal / expandido
+// Ancho del dock: normal / expandido. RESPONSIVO — con 6 cockpits repartidos en
+// rejilla (Yunior 2026-07-25) cada ventana mide ~480 px y un dock fijo de 320 se comia
+// la mitad del precio. El dock nunca pasa del 42% (72% expandido) del ancho util.
+const wgDockW = (exp) => {
+  const W = document.documentElement.clientWidth || 1440;
+  return exp ? Math.round(Math.min(560, Math.max(300, W * 0.72)))
+             : Math.round(Math.min(320, Math.max(210, W * 0.42)));
+};
 
 const wgFresh = () => ({ open: { gex: true, prem: false, flow: false },
                          float: {}, h: { gex: 320, prem: 300, flow: 300 }, min: {}, exp: {} });
@@ -1834,11 +1841,11 @@ function wgApply() {
     if (flo) {
       const f = WG.float[id];
       w.style.left = Math.round(f.x) + "px"; w.style.top = Math.round(f.y) + "px";
-      w.style.width = WG_W + "px"; w.style.height = h;
+      w.style.width = wgDockW(false) + "px"; w.style.height = h;
       if (w.parentNode !== el) el.appendChild(w);
     } else {
       w.style.left = w.style.top = w.style.width = ""; w.style.height = h;
-      if (on) dockW = Math.max(dockW, WG.exp[id] ? WG_W_EXP : WG_W);
+      if (on) dockW = Math.max(dockW, wgDockW(!!WG.exp[id]));
       if (w.parentNode !== wdockEl) wdockEl.appendChild(w);
     }
   }
@@ -2047,7 +2054,9 @@ function wgexDraw() {
       : `Perfil completo: ${total} strikes, todos visibles.`;
   }
 }
-window.addEventListener("resize", () => wgFitChart());
+// al redimensionar hay que RECALCULAR el ancho del dock (es responsivo), no solo
+// reajustar el chart: por eso wgApply() y no wgFitChart().
+window.addEventListener("resize", () => wgApply());
 wgApply();
 
 // ------------------------------------------------------- reconnect loop
