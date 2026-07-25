@@ -33,7 +33,7 @@ except ImportError:
     from ib_async import IB, Option, Stock
 
 HOME = os.path.expanduser("~")
-REPO = os.path.join(HOME, "Documents/GitHub/ib-trader")
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # NUNCA hardcodear: el repo se movio a ~/ib-trader (TCC/launchd, 2026-07-25)
 os.chdir(REPO)
 
 # los 17 de la flota con opciones US (orden Yunior 2026-07-16 noche)

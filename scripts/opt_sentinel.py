@@ -21,7 +21,7 @@ import time
 from ib_insync import IB, Option, Stock
 
 HOME = os.path.expanduser("~")
-REPO = os.path.join(HOME, "Documents/GitHub/ib-trader")
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # NUNCA hardcodear: el repo se movio a ~/ib-trader (TCC/launchd, 2026-07-25)
 os.chdir(REPO)
 MIRROR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "trading-signals")
 SIREN = os.path.join(REPO, "sounds/fire_alarm.wav")

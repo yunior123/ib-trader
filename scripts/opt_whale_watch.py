@@ -13,7 +13,7 @@ del 16-jul (fosil: exit-advisor de un call vencido; archivado en git)."""
 import json, os, subprocess, sys, time
 from datetime import date, timedelta
 HOME = os.path.expanduser("~")
-REPO = os.path.join(HOME, "Documents/GitHub/ib-trader")
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # NUNCA hardcodear: el repo se movio a ~/ib-trader (TCC/launchd, 2026-07-25)
 os.chdir(REPO); sys.path.insert(0, REPO)
 from ib_insync import IB, Stock, Option
 
