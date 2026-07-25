@@ -5,19 +5,31 @@ la flota (que nadie quede atras), y presupuesto X. Reporta por email + notificac
 GRITA si algo critico esta caido, y se AUTO-CURA (revive relay/x_signal si mueren).
 
 Uso: ./venv/bin/python scripts/fleet_healthcheck.py [--no-email] [--no-heal]
-Programado por launchd com.ibtrader.healthcheck (diario). SEÑAL-SOLAMENTE."""
-import argparse, base64, json, os, subprocess, time, warnings
+Programado por launchd com.ibtrader.healthcheck (diario). SEÑAL-SOLAMENTE.
+
+CONTRATO DE SALIDA: exit 0 si no hay 🔴 (aunque haya avisos 🟡), exit 2 si hay 🔴.
+Antes salia 1 con cualquier aviso: launchd lo grababa como job FALLIDO y la corrida
+siguiente leia su propio LastExitStatus=1, lo cantaba como aviso nuevo y se
+realimentaba — nunca podia volver a verde. Ademas se EXCLUYE del audit de exit codes
+de launchd (self_label() lo lee del plist, no hardcodeado)."""
+import argparse, json, os, plistlib, subprocess, time, warnings
 warnings.filterwarnings("ignore")
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SELF_PATH = os.path.abspath(__file__)
+LAUNCHAGENTS = os.path.expanduser("~/Library/LaunchAgents")
+CRITICAL_JOBS = ("com.ibtrader.dailyplans", "com.ibtrader.postmortem")
 os.chdir(REPO)
 
 def env(k):
-    for f in ("feeds.env",):
-        try:
-            for ln in open(f):
-                if ln.startswith(k + "="):
-                    return ln.split("=", 1)[1].strip().strip('"').strip("'")
-        except Exception: pass
+    """Valor de `k` en feeds.env, o None si no existe la clave o el fichero.
+    Cualquier otro error de E/S LEVANTA: 'ilegible' no se disfraza de 'sin clave'."""
+    p = os.path.join(REPO, "feeds.env")
+    if not os.path.exists(p):
+        return None
+    with open(p) as fh:
+        for ln in fh:
+            if ln.startswith(k + "="):
+                return ln.split("=", 1)[1].strip().strip('"').strip("'")
     return None
 
 def proc_alive(pat):
@@ -36,9 +48,56 @@ def launchd_state():
             if len(p) >= 3: out[p[2]] = p[1]  # label -> last exit
     return out
 
-def fresh(path, max_age_s):
-    try: return (time.time() - os.path.getmtime(path)) < max_age_s
-    except Exception: return False
+def self_label(agents_dir=LAUNCHAGENTS, me=SELF_PATH):
+    """Label launchd de ESTE script, LEIDO del plist que lo invoca (jamas hardcodeado:
+    si se renombra el job, esto lo sigue). None si no aparece en ningun plist —
+    nunca una cadena inventada, que excluiria del audit al job de otro."""
+    if not os.path.isdir(agents_dir):
+        return None
+    for fn in sorted(os.listdir(agents_dir)):
+        if not fn.endswith(".plist"):
+            continue
+        path = os.path.join(agents_dir, fn)
+        try:
+            with open(path, "rb") as fh:
+                pl = plistlib.load(fh)
+        except (OSError, ValueError, plistlib.InvalidFileException) as e:
+            print(f"aviso: plist ilegible {fn}: {e}")  # fail-loud, nunca silencio
+            continue
+        args = [x for x in (pl.get("ProgramArguments") or []) if isinstance(x, str)]
+        if any(os.path.abspath(x) == me for x in args):
+            lbl = pl.get("Label")
+            if isinstance(lbl, str) and lbl:
+                return lbl
+    return None
+
+def audit_launchd(ld, me_label):
+    """Clasifica los exit codes de launchd -> (ok, warn, crit).
+    `me_label` (nuestro propio job) se EXCLUYE: un healthcheck no puede auditar su
+    propia corrida — solo ve el LastExitStatus de la ANTERIOR, se lo canta como aviso
+    nuevo y se realimenta. Ese era el bucle del 2026-07-25."""
+    ok, warn, crit = [], [], []
+    for job in CRITICAL_JOBS:
+        if job in ld:
+            (ok if ld[job] in ("0", "-") else warn).append(f"launchd {job}: exit {ld[job]}")
+        else:
+            crit.append(f"launchd {job}: NO CARGADO")
+    # resto de jobs de la flota con exit!=0 (aviso, no critico — pre-existente)
+    for job, ex in sorted(ld.items()):
+        if job in CRITICAL_JOBS or (me_label is not None and job == me_label):
+            continue
+        if ex not in ("0", "-"):
+            warn.append(f"launchd {job}: exit {ex} (revisar config)")
+    return ok, warn, crit
+
+def exit_code(crit, warn):
+    """CONTRATO DE SALIDA (fix 2026-07-25): non-zero SOLO con 🔴 real.
+    Los avisos 🟡 salen 0: launchd trata cualquier non-zero como job FALLIDO, lo graba
+    en LastExitStatus (y puede throttlear), y este mismo script lo leia en la corrida
+    siguiente y lo reportaba como aviso nuevo — nunca podia volver a verde.
+    Un healthcheck que informa de avisos no ha fallado; uno que ve un 🔴 si."""
+    del warn  # deliberadamente IGNORADO: un aviso 🟡 no es un fallo del job
+    return 2 if crit else 0
 
 def market_hours():
     lt = time.localtime()
@@ -60,8 +119,15 @@ def heal(name, keepalive):
     return None
 
 def canonical_fleet():
-    try: return set(open("data/fleet.txt").read().split())
-    except Exception: return set()
+    """Flota canonica de data/fleet.txt, o None si no se puede leer.
+    None != set() a proposito: un conjunto vacio saltaba los checks de cobertura en
+    silencio (guarda muerta). None obliga a cantarlo."""
+    p = os.path.join(REPO, "data", "fleet.txt")
+    if not os.path.exists(p):
+        return None
+    with open(p) as fh:
+        syms = set(fh.read().split())
+    return syms or None
 
 def main():
     ap = argparse.ArgumentParser()
@@ -71,17 +137,14 @@ def main():
     ok, warn, crit, healed = [], [], [], []
     now = time.strftime("%Y-%m-%d %H:%M ET")
 
-    # 1) launchd jobs criticos
+    # 1) launchd jobs criticos (excluyendo nuestro propio job: ver audit_launchd)
     ld = launchd_state()
-    for job in ("com.ibtrader.dailyplans", "com.ibtrader.postmortem"):
-        if job in ld:
-            (ok if ld[job] in ("0", "-") else warn).append(f"launchd {job}: exit {ld[job]}")
-        else:
-            crit.append(f"launchd {job}: NO CARGADO")
-    # jobs de flota con exit!=0 (aviso, no critico — pre-existente)
-    for job, ex in ld.items():
-        if job not in ("com.ibtrader.dailyplans", "com.ibtrader.postmortem") and ex not in ("0", "-"):
-            warn.append(f"launchd {job}: exit {ex} (revisar config)")
+    me_label = self_label()
+    if me_label is None:
+        warn.append("launchd: no encuentro mi propio plist en ~/Library/LaunchAgents "
+                    "(no puedo excluirme del audit de exit codes)")
+    lok, lwarn, lcrit = audit_launchd(ld, me_label)
+    ok += lok; warn += lwarn; crit += lcrit
 
     # 2) daemons criticos (con auto-cura)
     checks = [
@@ -162,14 +225,22 @@ def main():
 
     # 6) cobertura: cada modulo cubre la flota canonica?
     canon = canonical_fleet()
-    if canon:
-        gen = set()
+    if canon is None:
+        crit.append("data/fleet.txt: ILEGIBLE o VACIA — sin flota canonica no hay cobertura que medir")
+    else:
+        gen = None
+        gpath = os.path.join(REPO, "scripts", "daily_fleet_plans.py")
         try:
             import re
-            gen = set(re.findall(r'"([A-Z]+)":\s*dict', open("scripts/daily_fleet_plans.py").read()))
-        except Exception: pass
-        missing = canon - gen
-        (ok if not missing else warn).append(f"cobertura generador: {len(gen)}/{len(canon)}" + (f" FALTAN {missing}" if missing else ""))
+            with open(gpath) as fh:
+                gen = set(re.findall(r'"([A-Z]+)":\s*dict', fh.read()))
+        except OSError as e:
+            # jamas gen=set(): eso fabricaba "cobertura 0/30 FALTAN <toda la flota>",
+            # un 🟡 inventado que tapaba el fallo real (no pude leer el generador).
+            warn.append(f"cobertura generador: NO PUDE LEER {gpath} ({e})")
+        if gen is not None:
+            missing = canon - gen
+            (ok if not missing else warn).append(f"cobertura generador: {len(gen)}/{len(canon)}" + (f" FALTAN {missing}" if missing else ""))
         # skills
         sk = set(x.replace("ticker-", "").upper() for x in os.listdir(os.path.expanduser("~/.claude/skills")) if x.startswith("ticker-"))
         smiss = canon - sk
@@ -177,10 +248,13 @@ def main():
 
     # 7) presupuesto X
     try:
-        b = json.load(open("data/x_plan_budget.json"))
-        ok.append(f"X ledger: {b.get('posts','?')} posts, ${b.get('spent',0):.2f} gastados este mes")
-    except Exception:
-        warn.append("X ledger: no leible")
+        with open(os.path.join(REPO, "data", "x_plan_budget.json")) as fh:
+            b = json.load(fh)
+        spent = b.get("spent")  # sin clave -> "?" ; jamas $0.00 inventado
+        ok.append(f"X ledger: {b.get('posts','?')} posts, "
+                  f"{'$%.2f' % spent if isinstance(spent, (int, float)) else '$?'} gastados este mes")
+    except (OSError, ValueError) as e:
+        warn.append(f"X ledger: no leible ({e})")
 
     # 8) email/Resend configurado
     (ok if env("RESEND_KEY") and env("RESEND_TO") else crit).append(
@@ -193,9 +267,13 @@ def main():
     if crit: lines += ["CRITICO:"] + [f"  🔴 {c}" for c in crit]
     if warn: lines += ["AVISOS:"] + [f"  🟡 {w}" for w in warn]
     lines += ["OK:"] + [f"  🟢 {o}" for o in ok]
+    rc = exit_code(crit, warn)
+    lines += [f"SALIDA: exit {rc} ({'FALLO DURO' if rc else 'job OK'}) — "
+              f"{len(crit)} crit / {len(warn)} avisos"
+              + ("" if me_label is None else f" | mi label launchd: {me_label} (excluido del audit)")]
     report = "\n".join(lines)
     print(report)
-    with open("healthcheck.log", "a") as f:
+    with open(os.path.join(REPO, "healthcheck.log"), "a") as f:
         f.write(f"\n{report}\n")
 
     # notificacion Mac (siempre) + email (si critico o avisos, o diario)
@@ -212,7 +290,7 @@ def main():
                       "subject": subj, "text": report})
         except Exception as e:
             print("email fallo:", e)
-    return 2 if crit else (1 if warn else 0)
+    return rc
 
 if __name__ == "__main__":
     import sys; sys.exit(main())

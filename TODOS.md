@@ -157,7 +157,7 @@
 
 ## 2026-07-21 sesión viva
 - [ ] opt_whale_watch: filtrar strikes sin security definition (QQQ 712.5 20260724 spamea Error 200 en loop) — cachear contratos inválidos y saltarlos. Arreglar POST-CIERRE.
-- [ ] launchd exit 78 (fleet/scan/screener/fastscan/rescan/screener6am) + healthcheck exit 1 — cazar EX_CONFIG con calma post-cierre.
+- [ ] launchd exit 78 (fleet/scan/screener/fastscan/rescan/screener6am) — cazar EX_CONFIG con calma post-cierre. **El `healthcheck exit 1` YA está hecho (2026-07-25)**: salía 1 con cualquier aviso 🟡, launchd lo grababa como job fallido y la corrida siguiente auditaba su propio `LastExitStatus=1` y lo cantaba como aviso nuevo (bucle). Ahora exit 0 con solo avisos, exit 2 solo con 🔴, y el job propio (label leído del plist) queda fuera del audit. Verificado: `launchctl kickstart` → LastExitStatus 1 → 0.
 - [ ] 7/22 8:30: confirmar fichas CLSK/INTC vs gaps overnight (data/fichas_2026-07-22.txt) + KOSPI check
 - [ ] x_post_common: sanitizar a MAX 1 cashtag por post (X rechaza 403 con 2+; el $4.7B tambien cuenta como cashtag si va pegado a letras — revisar regex)
 - [ ] opt_whale_watch v2: alarma por PREMIUM NETO en dolares (mid×vol por lado, umbral ±$20M o delta brusco/30min) ademas del ratio de volumen — el tide -53M del 7/21 no sono porque P/C volumen era 0.86. Las ballenas caras y silenciosas tambien deben sonar. POST-CIERRE.
