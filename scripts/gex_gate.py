@@ -42,8 +42,31 @@ def gate(sym, side, price=None):
     if price is None:
         price = spot
     g = gex_core.from_ibkr_cache(path, spot)
+    # MISMO respaldo que chart_levels: si el cache TWS no tiene griegas usables (tipico fuera de
+    # RTH, donde iv=-1 en el 100% de las filas) se reintenta con el snapshot de Polygon, que
+    # las trae MEDIDAS. Solo se acepta si sale mejor.
+    if g is None or not g.get("gamma_ok"):
+        import chart_levels                      # import perezoso: hace os.chdir(REPO)
+        alt = chart_levels.poly_chain_path(sym)
+        if alt:
+            sp = spot or gex_core.parse_chain_header(alt).get("spot")
+            g2 = gex_core.from_ibkr_cache(alt, sp) if sp else None
+            if g2 and g2.get("gamma_ok"):
+                g, spot = g2, sp
+                if price is None:
+                    price = sp
     if not g:
         return {"sym": sym.upper(), "verdict": "SIN-DATOS", "reason": "cache sin griegas/OI útiles"}
+    # HONESTIDAD DE CADENA (feature #5, 2026-07-25): si gex_core degrado, TODAS las claves
+    # gamma valen None y este overlay no tiene nada que decir. Antes esta puerta daba APTO o
+    # VETO sobre un mapa calculado con una IV de 0.3 inventada — una puerta que aprueba sobre
+    # un dato fabricado es peor que no tener puerta.
+    if not g.get("gamma_ok"):
+        return {"sym": sym.upper(), "side": side, "verdict": "SIN-DATOS",
+                "reason": f"sin voz gamma: {g.get('degraded_reason')} "
+                          f"(griegas {g.get('greeks_ok_pct')}, fuente {g.get('chain_src')})",
+                "greeks_ok_pct": g.get("greeks_ok_pct"),
+                "oi_call_wall": g.get("oi_call_wall"), "oi_put_wall": g.get("oi_put_wall")}
     wc = gex_core.wall_context(g, price)
     regime = wc["regime"]
     verdict = "APTO"
