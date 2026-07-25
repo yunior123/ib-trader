@@ -1096,9 +1096,18 @@ async def broadcast_engine(state):
             state.clients.discard(ws)
 
 
+MOCK = False   # lo fija main() desde --mock; ver la guarda de integridad de _log_structural
+
+
 def _signals_file_line(sym, text):
     """Escribe la ficha en data/trading-signals/<fecha>.txt para que el relay de voz/teléfono
-    la dispare (mismo canal que el resto de señales). SEÑAL-SOLAMENTE (solo texto)."""
+    la dispare (mismo canal que el resto de señales). SEÑAL-SOLAMENTE (solo texto).
+
+    En `--mock` NO escribe: el feed sintético cruza zonas y dispararía fichas por el canal de
+    voz/teléfono de produccion. Misma guarda que `_log_structural` (2026-07-25)."""
+    if MOCK:
+        print(f"[zone] MOCK: NO se registra en produccion -> {sym.upper()} {text}")
+        return
     try:
         d = time.strftime("%Y-%m-%d")
         path = os.path.join(REPO, "data", "trading-signals", f"{d}.txt")
@@ -1757,7 +1766,27 @@ async def broadcast_signals(state):
 
 def _log_structural(state, sig):
     """Guarda la señal estructural en trades.db (source='structural') para el backtest EOD.
-    Dedup por firma. SEÑAL-SOLAMENTE."""
+    Dedup por firma. SEÑAL-SOLAMENTE.
+
+    GUARDA DE INTEGRIDAD DE MUESTRA (2026-07-25). Esta funcion escribe a DOS destinos de
+    PRODUCCION: la tabla `signals` (poblacion del backtest) y `data/trading-signals/<fecha>.txt`
+    (canal de voz/telefono via notify_relay.sh). Lo hacia SIN mirar si el bridge corria en
+    modo de pruebas.
+
+    Medido hoy: de las 89 filas `source='structural'` de la BD, **7 eran de un sabado con el
+    mercado CERRADO** — 4 de QQQ con el precio congelado en 694.0 repetido, y 3 de NVDA
+    girando ↑34% -> pin -> ↓67% en 30 segundos. Un 8% de la poblacion entera, y `structural`
+    es precisamente la fuente que medimos con WR alto sobre n=5. Un backtest no puede
+    etiquetar una señal emitida con el mercado cerrado: no hay retorno futuro que medir, asi
+    que la etiqueta que salga es ficcion.
+
+    En `--mock` no se escribe NADA a produccion: se imprime y se sale. Probar la UI es
+    obligatorio (asi se verifica el chart sin TWS) y no puede costar contaminar la muestra
+    ni hacer sonar el telefono."""
+    if getattr(state, "mock", False):
+        print(f"[struct] MOCK: NO se registra en produccion -> {sig.get('kind','')} "
+              f"{sig.get('sym','')} {sig.get('text','')}")
+        return
     try:
         import sqlite3
         prob = f" · prob {sig['prob']}% (estructural, no WR medido)" if sig.get("prob") else ""
@@ -1991,6 +2020,8 @@ async def live_feed(state, port, client_id=60):
 
 # =============================== arranque servidor ===========================
 def build_state_and_feed(args):
+    global MOCK
+    MOCK = bool(args.mock)   # guarda de integridad: en pruebas no se escribe a produccion
     sym = resolve_sym(args.sym)
     state = State(sym, mock=args.mock)
     state.levels = load_levels(sym)
