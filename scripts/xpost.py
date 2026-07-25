@@ -39,10 +39,13 @@ def main():
     if not text:
         print("nada que postear (dar texto o --draft SYM)"); return 1
 
-    # añadir gamma de gexa si hay ticker y snapshot (append_gexa recorta a <=275)
-    if sym and hasattr(xc, "append_gexa"):
-        try: text = xc.append_gexa(text, sym)
-        except Exception: pass
+    # añadir la linea del mapa gamma PROPIO si hay ticker (append_gex recorta a <=275).
+    # gexa jubilado el 2026-07-25 -> scripts/gex_snapshot.py (griegas medidas de Polygon).
+    if sym:
+        try:
+            text = xc.append_gex(text, sym)
+        except Exception as e:      # nunca `pass`: si el mapa falla se DICE y se postea sin gamma
+            print(f"⚠ sin linea gamma ({type(e).__name__}: {e}) — el post no afirma regimen")
 
     print(f"--- {'DRY-RUN' if a.dry_run else 'POSTEAR'} ({len(text)} chars){' +imagen' if image else ''} ---")
     print(text)

@@ -141,8 +141,10 @@ def main():
             continue
         if len(text) > MAX_CHARS:
             text = text[:MAX_CHARS]
-        # ADITIVO: linea de gamma gexa (se salta sola si no hay snapshot/ticker)
-        text = xc.append_gexa(text, sym, max_chars=MAX_CHARS)
+        # ADITIVO: linea del mapa gamma PROPIO (griegas medidas de Polygon; gexa jubilado
+        # el 2026-07-25). Se salta sola si no hay snapshot/ticker: el post calla el regimen
+        # antes que afirmar uno que no medimos.
+        text = xc.append_gex(text, sym, max_chars=MAX_CHARS)
 
         # ADITIVO: imagen del arbol de escenarios si el PDF la genero; si falta,
         # se postea texto-solo (comportamiento previo intacto).

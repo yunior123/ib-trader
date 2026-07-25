@@ -9,9 +9,14 @@ el cap de otro. SEÑAL-SOLAMENTE: esto solo publica texto, jamas ordena.
 """
 import json
 import os
+import sys
 import time
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# scripts/ en sys.path derivado de __file__ (jamas hardcodeado): asi `import gex_snapshot`
+# funciona tambien cuando a x_post_common lo importa un test o un cwd ajeno.
+if os.path.join(ROOT, "scripts") not in sys.path:
+    sys.path.insert(0, os.path.join(ROOT, "scripts"))
 BUDGET_FILE = os.path.join(ROOT, "data", "x_plan_budget.json")
 ENV_FILE = os.path.join(ROOT, "x.env")
 
@@ -24,7 +29,10 @@ API_URL = "https://api.x.com/2/tweets"
 # distintos a los de texto en algunos planes de la API; aqui contamos igual que un
 # post de texto (COST_PER_POST) porque no hay constante de costo con-media separada.
 UPLOAD_URL = "https://upload.twitter.com/1.1/media/upload.json"
-GEXA_FILE = os.path.join(ROOT, "data", "gexa_snapshot.json")
+# Mapa gamma: gexa.ai murio el 2026-07-25 y lo sustituye el nuestro, calculado en casa
+# desde las cadenas archivadas con griegas MEDIDAS de Polygon (scripts/gex_snapshot.py).
+GEX_FILE = os.path.join(ROOT, "data", "gex_snapshot.json")
+GEX_MAX_AGE_H = 36           # el mapa es de la cadena del dia; el del viernes vale el finde
 
 # logs de todos los componentes que postean (mismo formato de linea que
 # x_plan_poster.py: "YYYY-MM-DD HH:MM:SS ... POSTED ...")
@@ -145,40 +153,52 @@ def upload_media(image_path, auth, log=None):
     return None
 
 
-# ------------------------------------------------------------------ gexa
-def load_gexa(path=GEXA_FILE):
-    """dict {SYM: {flip, flip_all, score, bias, poc}} o {} si falta/roto."""
-    try:
-        with open(path) as f:
-            d = json.load(f)
-        return d if isinstance(d, dict) else {}
-    except Exception:
-        return {}
+# ------------------------------------------------------- mapa gamma (propio)
+def load_gex(path=GEX_FILE, max_age_h=GEX_MAX_AGE_H):
+    """dict {SYM: {flip, score, poc, regime, ...}} o **None** si falta/roto/rancio.
+
+    DECISION 2026-07-25 (el `{}` de la vieja load_gexa): aunque esto solo DECORA un
+    tweet y no arma una orden, `{}` era el patron prohibido de la casa — un dict vacio
+    se lee igual que "hoy no hay gamma" y ya nos costo un denominador fabricado. Aqui
+    devuelve None y `gex_line` emite '' → el post simplemente **no menciona gamma**.
+    Un tweet sin la linea es correcto; un tweet afirmando un regimen que no medimos, no.
+    Delega en gex_snapshot.load(), que ya filtra la clave `_meta` y aplica la edad."""
+    import gex_snapshot                       # mismo dir (scripts/), ya en sys.path por ROOT
+    return gex_snapshot.load(path=path, max_age_h=max_age_h)
 
 
-def gexa_line(sym, gexa=None):
+_UNSET = object()      # distingue "no me pasaste mapa" de "el mapa no existe" (None).
+                       # Con `gex=None` el viejo codigo RECARGABA del disco y se saltaba
+                       # el veredicto del llamador: quien ya midio "hoy no hay mapa" tenia
+                       # su None convertido en datos. Ahora None = sin mapa, y se calla.
+
+
+def gex_line(sym, gex=_UNSET):
     """Linea compacta de gamma para `sym`, o '' si no hay datos (degrade limpio).
-    Ej: '📊 gamma: flip 705 · dealer -1.2 · POC 702'."""
-    if gexa is None:
-        gexa = load_gexa()
-    d = gexa.get(sym) or gexa.get(sym.upper())
+    Ej: '📊 gamma medida: flip 705 · netGEX -1.2M/pt · POC 702'.
+    Dice "medida" porque sale de las griegas reales de Polygon, no de un modelo ajeno."""
+    if gex is _UNSET:
+        gex = load_gex()
+    if not isinstance(gex, dict):             # None → sin mapa: no se afirma regimen
+        return ""
+    d = gex.get(sym) or gex.get(sym.upper())
     if not isinstance(d, dict):
         return ""
     parts = []
     if d.get("flip") is not None:
         parts.append(f"flip {d['flip']}")
-    if d.get("score") is not None:
-        parts.append(f"dealer {d['score']}")
+    if isinstance(d.get("score"), (int, float)):
+        parts.append(f"netGEX {d['score']:+.1f}M/pt")
     if d.get("poc") is not None:
         parts.append(f"POC {d['poc']}")
-    return "📊 gamma: " + " · ".join(parts) if parts else ""
+    return "📊 gamma medida: " + " · ".join(parts) if parts else ""
 
 
-def append_gexa(text, sym, gexa=None, max_chars=MAX_CHARS):
+def append_gex(text, sym, gex=_UNSET, max_chars=MAX_CHARS):
     """Agrega la linea de gamma a `text` manteniendo <=max_chars. Trunca la
     COLA del texto (quip) si hace falta, jamas la linea de gamma; los niveles
-    viven al frente asi que se preservan. Sin datos gexa: devuelve text igual."""
-    line = gexa_line(sym, gexa)
+    viven al frente asi que se preservan. Sin mapa gamma: devuelve text igual."""
+    line = gex_line(sym, gex)
     if not line:
         return text
     text = text.rstrip()
