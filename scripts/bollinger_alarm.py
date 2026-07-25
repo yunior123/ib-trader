@@ -17,7 +17,7 @@ import json, os, subprocess, sys, time
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(REPO)
 sys.path.insert(0, os.path.join(REPO, "scripts"))
-from optgate import opt_vehicle    # gate de spread: verificar SIEMPRE antes de sugerir opciones
+from optgate import opt_vehicle, opt_spread_pct, MAX_SPREAD_PCT  # gate de spread
 COOLDOWN_S = 1800
 
 # Probabilidades MEDIDAS por backtest (docs/BACKTEST-BOLLINGER-2026-07.md).
@@ -210,12 +210,30 @@ while True:
                     st[side] = None
                     lado = "ARRIBA" if side == "up" else "ABAJO"
                     veh = opt_vehicle(sym)
+                    # GATE DE VERDAD, no anotacion (fix 2026-07-25). opt_vehicle() solo
+                    # PEGABA un texto al mensaje: la señal sonaba igual con "OPCIONES
+                    # VETADAS" enterrado dentro. Medido el 24-jul (docs/SIGNALS-REAL-OPTION):
+                    # el 75% de las señales apuntaban a contratos INOPERABLES (spread mediano
+                    # 9.1%, tope doctrinal 5%), y las que NO pasan el gate rindieron -19.6%
+                    # con -9.8%/trade en la opcion real. Seis simbolos no tienen NI UN
+                    # contrato operable (ASML 115.8% de spread mediano, SMH 34.5%, LRCX,
+                    # WDC, TXN, STX). Si el vehiculo esta vetado, la señal NO grita: baja a
+                    # INFO. Sigue emitiendose —vale para acciones/ETF, que es lo que dice el
+                    # propio texto— pero deja de competir por la voz con las operables.
+                    # TRES ESTADOS, no dos: opt_ok() devuelve False tanto si el spread es
+                    # malo como si NO HAY CADENA — usarlo tal cual silenciaria la flota
+                    # entera un lunes antes del primer refresco, o si muere el daemon de
+                    # cadenas. Solo callamos cuando SABEMOS que el spread es malo; ante
+                    # ignorancia, la señal grita (fail-open, no fail-silent).
+                    _sp = opt_spread_pct(sym)
+                    opt_veto = (_sp is not None and _sp > MAX_SPREAD_PCT)
                     if walk:
                         enw, prw = prob_info(sym, "bandwalk")
                         msgw = (f"{sym.upper()} camina la banda {lado} tambien en 5 minutos "
                                 f"({c:.2f}). Continuacion probable — NO hacer fade.{prw} {veh}")
                         if enw:
-                            say("🎈 BB BAND-WALK", msgw, "ProChord", voice=True, prio="SIGNAL")
+                            say("🎈 BB BAND-WALK" + (" [opt-vetada]" if opt_veto else ""), msgw,
+                                "ProChord", voice=not opt_veto, prio="INFO" if opt_veto else "SIGNAL")
                         else:
                             log_only("🎈 BB BAND-WALK [MUTED p<55]", msgw)
                     else:

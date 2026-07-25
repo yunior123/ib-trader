@@ -32,10 +32,13 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(REPO)
 
 # ------------------------------------------------------------------ carga/agg
+# plantilla de barras 5m: override por env para backtestear otras ventanas
+BARS5M = os.environ.get("BARS5M_TMPL", "data/backtest/bars3mo5m_{sym}.csv")
+
 def load(sym):
     R = []
     try:
-        for r in csv.reader(open(f"data/backtest/bars3mo5m_{sym}.csv")):
+        for r in csv.reader(open(BARS5M.format(sym=sym))):
             try:
                 R.append((int(r[0]), float(r[1]), float(r[2]), float(r[3]), float(r[4]), float(r[5])))
             except Exception:

@@ -29,9 +29,11 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(REPO)
 
 # ----------------------------- carga / agregacion -----------------------------
+BARS5M = os.environ.get("BARS5M_TMPL", "data/backtest/bars3mo5m_{sym}.csv")
+
 def load5m(sym):
     rows = []
-    p = f"data/backtest/bars3mo5m_{sym}.csv"
+    p = BARS5M.format(sym=sym)
     if not os.path.exists(p):
         return rows
     for r in csv.reader(open(p)):
