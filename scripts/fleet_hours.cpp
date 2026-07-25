@@ -197,6 +197,12 @@ std::string json_escape(const std::string& s) {
 
 int main(int argc, char** argv) {
   bool want_why = false, want_json = false;
+  // OJO: `at_given` es imprescindible. Con `--at ""` la cadena queda vacia y un
+  // `at.empty()` la confundiria con "no me pasaron --at" -> el binario usaria el reloj
+  // real y devolveria un veredicto EN SILENCIO sobre un instante que no es el pedido.
+  // Eso es exactamente el "valor plausible" que esta casa prohibe: quien pregunta por un
+  // instante ilegible tiene que oir un FALLO, no una respuesta creible de otro instante.
+  bool at_given = false;
   std::string at;
 
   for (int i = 1; i < argc; ++i) {
@@ -206,8 +212,10 @@ int main(int argc, char** argv) {
     else if (a == "--at") {
       if (i + 1 >= argc) { std::fprintf(stderr, "fleet_hours: --at necesita argumento\n"); return 2; }
       at = argv[++i];
+      at_given = true;
     } else if (a.starts_with("--at=")) {
       at = std::string(a.substr(5));
+      at_given = true;
     } else if (a == "-h" || a == "--help") { usage(argv[0]); return 2; }
     else { std::fprintf(stderr, "fleet_hours: flag desconocida '%s'\n", argv[i]); usage(argv[0]); return 2; }
   }
@@ -215,7 +223,9 @@ int main(int argc, char** argv) {
   pin_zone_or_die();
 
   Local now;
-  if (!at.empty()) {
+  if (at_given) {
+    // Cualquier --at ilegible (vacio, blanco o basura) muere aqui GRITANDO. Nunca cae
+    // al reloj real: un DEAD callado de sabado parece correcto y esconde el fallo.
     now = parse_at_or_die(at);
   } else {
     const std::time_t t = std::time(nullptr);

@@ -121,3 +121,7 @@ data/session_regime.json
 data/voice_spend/
 data/voice_suppressed.jsonl*
 data/voice_budget_enable
+
+# portero de la ventana dom20:00-vie20:00 (build: scripts/build_fleet_hours.sh)
+fleet_hours
+fleet_hours.dSYM/
