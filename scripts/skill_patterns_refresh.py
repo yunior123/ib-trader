@@ -1,25 +1,31 @@
 #!/usr/bin/env python
-"""skill_patterns_refresh.py — inyecta patrones de 3-6 meses + muros + backtest WR
-en las skills ticker-<sym> de Claude. Re-correr mensualmente o tras regime change.
+"""skill_patterns_refresh.py — inyecta patrones de 3-6 meses + muros + backtest WR + el
+mapa gamma MEDIDO en casa (gex_snapshot: griegas reales de Polygon; gexa.ai jubilado el
+2026-07-25) en las skills ticker-<sym> de Claude. Sin mapa gamma la skill sale sin esa
+linea — jamas con un flip o regimen inventado.
+Re-correr mensualmente o tras regime change.
 Uso: ./venv/bin/python scripts/skill_patterns_refresh.py [--tickers QQQ,...]"""
-import argparse, glob, json, os, re, time, warnings
+import argparse, glob, os, re, sys, time, warnings
 warnings.filterwarnings("ignore")
 import numpy as np
 import yfinance as yf
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(REPO)
+sys.path.insert(0, os.path.join(REPO, "scripts"))
+import gex_snapshot  # noqa: E402  (mapa gamma MEDIDO en casa; gexa.ai jubilado 2026-07-25)
 SKILLS = os.path.expanduser("~/.claude/skills")
+GEX_MAX_AGE_H = 36   # mas viejo que esto no describe el libro de hoy: mejor sin linea gamma
 MARK_A, MARK_B = "<!-- AUTO-PATRONES -->", "<!-- /AUTO-PATRONES -->"
 DOW = ["lunes", "martes", "miercoles", "jueves", "viernes"]
 
 def backtest_line(sym):
-    try:
-        for ln in open(f"scripts/{sym.lower()}_keepalive.sh"):
-            if "WR" in ln and ("backtest" in ln.lower() or "FULL26" in ln or "T " in ln):
-                return ln.strip("# \n")
-    except Exception:
-        pass
+    p = os.path.join(REPO, "scripts", f"{sym.lower()}_keepalive.sh")
+    if not os.path.exists(p):
+        return None      # sin bot para ese simbolo: la seccion sale sin linea de backtest
+    for ln in open(p):
+        if "WR" in ln and ("backtest" in ln.lower() or "FULL26" in ln or "T " in ln):
+            return ln.strip("# \n")
     return None
 
 def stats(sym):
@@ -100,7 +106,8 @@ def intraday_shape(sym):
                 f"whip final verde {whip/n*100:.0f}% | arquetipo dominante: {dom} ({arch[dom]/n*100:.0f}% de {n}d)")
         detail = " ".join(f"{k}:{v/n*100:.0f}%" for k, v in arch.items())
         return line, detail
-    except Exception:
+    except Exception as e:
+        print(f"{sym}: forma intradia no disponible ({type(e).__name__}: {e})", file=sys.stderr)
         return None, None
 
 def walls_today(sym):
@@ -109,7 +116,7 @@ def walls_today(sym):
         t = yf.Ticker(sym); spot = float(t.fast_info.last_price)
         opts = t.options
         exp = next((e for e in opts if e >= time.strftime("%Y-%m-%d")), None)
-        if not exp: return ""
+        if not exp: return None
         ch = t.option_chain(exp)
         c = ch.calls.fillna(0); p = ch.puts.fillna(0)
         c = c[(c.strike >= spot*.96) & (c.strike <= spot*1.04)]
@@ -117,16 +124,25 @@ def walls_today(sym):
         cw = c.nlargest(2, "openInterest").strike.tolist()
         pw = p.nlargest(2, "openInterest").strike.tolist()
         return f"techos {'/'.join(f'{k:g}' for k in cw)} | pisos {'/'.join(f'{k:g}' for k in pw)} (exp {exp}, snapshot al refresh)"
-    except Exception:
-        return ""
+    except Exception as e:
+        print(f"{sym}: muros yfinance no disponibles ({type(e).__name__}: {e})", file=sys.stderr)
+        return None   # sin muros: la seccion sale sin la linea, nunca con niveles fingidos
 
-def gexa_line(sym):
-    try:
-        g = json.load(open("data/gexa_snapshot.json")).get(sym)
-        if g: return f"flip {g.get('flip','?')} | dealer {g.get('score','?')} | bias {g.get('bias','?')}"
-    except Exception:
-        pass
-    return None
+def gex_line(sym, gmap):
+    """Linea del mapa gamma MEDIDO en casa (griegas reales de Polygon via gex_core).
+    `gmap` es lo que devuelve gex_snapshot.load(): dict o None. Sin dato -> None, y la skill
+    sale SIN linea gamma: jamas se afirma un flip ni un regimen que no se midio."""
+    g = (gmap or {}).get(sym)
+    if not g or g.get("flip") is None:
+        return None
+    parts = [f"flip {g['flip']:g}"]
+    if g.get("regime"): parts.append(f"regimen {g['regime']}")
+    if g.get("score") is not None: parts.append(f"net GEX {g['score']:+g}M$/pt")
+    if g.get("bias"): parts.append(f"bias {g['bias']}")
+    if g.get("abs_wall") is not None: parts.append(f"POC {g['abs_wall']:g}")
+    if g.get("chain_date"): parts.append(f"cadena {g['chain_date']}")
+    if g.get("greeks_ok_pct") is not None: parts.append(f"griegas {g['greeks_ok_pct']*100:.0f}%")
+    return " | ".join(parts)
 
 def section(sym, st, bt, wl, gx):
     dw = " ".join(f"{k} {v:+.2f}%" for k, v in st["dowm"].items())
@@ -144,7 +160,7 @@ def section(sym, st, bt, wl, gx):
         L.append(f"  apertura se VENDE (no se compra), el dip de media tarde es la entrada, el latigazo final paga")
     if bt: L.append(f"- Backtest bot ({sym.lower()}_keepalive): {bt[:150]}")
     if wl: L.append(f"- Muros snapshot: {wl}")
-    if gx: L.append(f"- Gexa snapshot: {gx}")
+    if gx: L.append(f"- Mapa gamma MEDIDO (griegas reales de Polygon, calculado en casa): {gx}")
     L.append(f"- Refresh: `./venv/bin/python scripts/skill_patterns_refresh.py --tickers {sym}`")
     L.append(MARK_B)
     return "\n".join(L)
@@ -154,6 +170,11 @@ def main():
     a = ap.parse_args()
     dirs = sorted(glob.glob(os.path.join(SKILLS, "ticker-*")))
     want = [s.strip().upper() for s in a.tickers.split(",") if s.strip()]
+    # mapa gamma una sola vez: load() devuelve dict o None (jamas {})
+    gmap = gex_snapshot.load(max_age_h=GEX_MAX_AGE_H)
+    print(f"mapa gamma: {len(gmap)} simbolos MEDIDOS (griegas Polygon)" if gmap else
+          f"mapa gamma: SIN DATO (data/gex_snapshot.json ausente, roto o >{GEX_MAX_AGE_H} h) "
+          f"-> skills sin linea gamma, no se inventa regimen")
     done = 0
     for d in dirs:
         sym = os.path.basename(d).replace("ticker-", "").upper()
@@ -163,14 +184,17 @@ def main():
         try:
             st = stats(sym)
             if not st: print(sym, "sin datos"); continue
-            sec = section(sym, st, backtest_line(sym), walls_today(sym), gexa_line(sym))
+            sec = section(sym, st, backtest_line(sym), walls_today(sym), gex_line(sym, gmap))
             body = open(f).read()
             if MARK_A in body:
                 body = re.sub(re.escape(MARK_A) + ".*?" + re.escape(MARK_B), sec, body, flags=re.S)
             else:
                 body = body.rstrip() + "\n\n" + sec + "\n"
-            open(f, "w").write(body); done += 1; print(sym, "ok")
-            if shp := section.__defaults__ if False else None: pass
+            tmp = f + ".tmp"                      # escritura ATOMICA: la skill nunca a medias
+            with open(tmp, "w") as fh:
+                fh.write(body)
+            os.replace(tmp, f)
+            done += 1; print(sym, "ok")
         except Exception as e:
             print(sym, "FALLO", e)
     print(f"{done} skills actualizadas")
