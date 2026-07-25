@@ -378,3 +378,8 @@ Spec: `docs/FEATURES-MINED-2026-07-25.md` (#5 chain-honesty, #6 flip-honesty, #3
 - [ ] NO regenerable sin cadenas historicas: `whale`, `flow`, `structural` (4 dias de
       cadenas en data/history/). Si se quiere medirlas hay que archivar cadenas a diario
       y esperar ~40-60 sesiones, o backfillear opciones de Polygon (sin OI ni griegas).
+- [ ] **Las 30 skills `ticker-*` + `gamma-regime-walls` siguen diciendo "gexa gamma"** en su
+      `description`/doctrina, y gexa.ai murio el 2026-07-25. No es operativo (nadie ejecuta la
+      description) pero SI engaña a la proxima sesion, que leera "usa gexa" y no existe.
+      Sustituir por "mapa gamma propio (`scripts/gex_snapshot.py`, griegas Polygon medidas)".
+      Quedo fuera porque las skills estaban en la lista de NO-TOCAR de la sesion.
