@@ -188,17 +188,24 @@ def expiries():
 
 
 # ---------------------------------------------------- catalogo de contratos (cache)
-def contracts_for(poly, sym, exp):
-    """Contratos que EXISTEN para (sym, expiry), cacheados en disco.
+CATALOG_BAND = 0.30      # se pide +/-30% de strikes: el doble de la banda que se usa
+MAX_PAGES = 12
 
-    Se acota por expiration_date exacto y expired=true. NO se usa `as_of`: esta MEDIDO
-    que Polygon lo ignora (dos as_of distintos -> misma respuesta), y un parametro que
-    parece funcionar y no funciona es peor que uno que da 403.
+
+def contracts_for(poly, sym, exp, spot):
+    """Contratos que EXISTEN para (sym, expiry) dentro de +/-30% del spot, cacheados.
+
+    Se acota por `expiration_date` exacto y por `strike_price.gte/lte`. NO se usa
+    `as_of`: esta MEDIDO que Polygon lo ignora (dos as_of distintos -> la misma
+    respuesta), y un parametro que parece funcionar y no funciona es peor que un 403.
+    La banda de strikes es el DOBLE de la que se llega a pedir (+/-15%), asi que no
+    puede recortar nada que se vaya a usar, y evita paginar la cadena entera de SPY.
 
     Devuelve lista de dicts {ticker, strike, right}. Levanta si la peticion falla:
     devolver [] convertiria "no pude preguntar" en "no existen contratos"."""
     os.makedirs(CONTRACT_CACHE, exist_ok=True)
-    path = os.path.join(CONTRACT_CACHE, f"{sym}_{exp:%Y-%m-%d}.json")
+    path = os.path.join(CONTRACT_CACHE,
+                        f"{sym}_{exp:%Y-%m-%d}_b{int(CATALOG_BAND * 100)}.json")
     if os.path.exists(path):
         with open(path) as fh:
             return json.load(fh)
@@ -206,16 +213,25 @@ def contracts_for(poly, sym, exp):
     # expired=true devuelve SOLO vencidos -> con un expiry futuro devolvia lista vacia,
     # que es indistinguible de "no existe". Se elige el filtro segun la fecha.
     expired = "true" if exp < dt.date.today() else "false"
+    lo, hi = spot * (1 - CATALOG_BAND), spot * (1 + CATALOG_BAND)
     url = ("https://api.polygon.io/v3/reference/options/contracts"
            f"?underlying_ticker={sym}&expired={expired}&expiration_date={exp:%Y-%m-%d}"
-           "&limit=1000")
+           f"&strike_price.gte={lo:.2f}&strike_price.lte={hi:.2f}&limit=1000")
     out = []
-    for page in poly.paginate(url, max_pages=6):     # paginate LEVANTA si una falla
+    truncado = False
+    for page in poly.paginate(url, max_pages=MAX_PAGES):   # paginate LEVANTA si falla
         for r in page.get("results") or []:
             t, k, ct = r.get("ticker"), r.get("strike_price"), r.get("contract_type")
             if not t or k is None or ct not in ("call", "put"):
                 raise PolygonError(f"contrato malformado de Polygon en {sym} {exp}: {r!r}")
             out.append({"ticker": t, "strike": float(k), "right": ct})
+        truncado = bool(page.get("next_url"))
+    if truncado:
+        # se acabaron las paginas y AUN habia next_url. Un catalogo truncado en
+        # silencio se ordena por ticker (calls antes que puts): guardarlo perderia
+        # todos los puts sin que nadie lo note. Se levanta.
+        raise PolygonError(f"catalogo de {sym} {exp} TRUNCADO en {MAX_PAGES} paginas "
+                           f"({len(out)} contratos y seguia habiendo next_url)")
     if not out:
         raise PolygonError(f"Polygon no lista NINGUN contrato para {sym} {exp} "
                            f"(no se asume que no existan: se reporta)")
@@ -322,10 +338,11 @@ def run(syms, rounds, max_req):
                     fails.append((f"{sym} {exp}", str(e)))
                     print(f"  ! {sym} {exp}: {e}", flush=True)
                     continue
-                cached = os.path.exists(
-                    os.path.join(CONTRACT_CACHE, f"{sym}_{exp:%Y-%m-%d}.json"))
+                cached = os.path.exists(os.path.join(
+                    CONTRACT_CACHE,
+                    f"{sym}_{exp:%Y-%m-%d}_b{int(CATALOG_BAND * 100)}.json"))
                 try:
-                    cats = contracts_for(poly, sym, exp)
+                    cats = contracts_for(poly, sym, exp, spot)
                 except PolygonError as e:
                     fails.append((f"{sym} {exp} catalogo", str(e)))
                     print(f"  ! catalogo {sym} {exp}: {e}", flush=True)

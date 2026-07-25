@@ -246,7 +246,7 @@ def test_catalogo_vacio_levanta_no_devuelve_lista_vacia(tmp_path, monkeypatch):
             yield {"results": []}
 
     with pytest.raises(PolygonError):
-        bf.contracts_for(P(), "QQQ", EXP)
+        bf.contracts_for(P(), "QQQ", EXP, 500.0)
 
 
 def test_catalogo_se_cachea_y_no_repite_peticiones(tmp_path, monkeypatch):
@@ -259,10 +259,48 @@ def test_catalogo_se_cachea_y_no_repite_peticiones(tmp_path, monkeypatch):
             yield {"results": [{"ticker": "O:QQQ260515C00500000",
                                 "strike_price": 500, "contract_type": "call"}]}
 
-    a = bf.contracts_for(P(), "QQQ", EXP)
-    b = bf.contracts_for(P(), "QQQ", EXP)
+    a = bf.contracts_for(P(), "QQQ", EXP, 500.0)
+    b = bf.contracts_for(P(), "QQQ", EXP, 500.0)
     assert a == b and llamadas["n"] == 1
-    assert os.path.exists(os.path.join(str(tmp_path / "cc"), "QQQ_2026-05-15.json"))
+    assert os.path.exists(os.path.join(str(tmp_path / "cc"), "QQQ_2026-05-15_b30.json"))
+
+
+def test_catalogo_truncado_levanta_no_se_guarda_a_medias(tmp_path, monkeypatch):
+    """El catalogo viene ordenado por ticker: los calls (C) antes que los puts (P).
+    Truncarlo en silencio perderia TODOS los puts y nadie lo notaria. Debe levantar."""
+    monkeypatch.setattr(bf, "CONTRACT_CACHE", str(tmp_path / "cc"))
+    monkeypatch.setattr(bf, "MAX_PAGES", 2)
+
+    class P:
+        def paginate(self, url, max_pages=2):
+            for _ in range(max_pages):
+                yield {"results": [{"ticker": "O:X", "strike_price": 1,
+                                    "contract_type": "call"}],
+                       "next_url": "https://hay-mas"}      # SIEMPRE queda mas
+
+    with pytest.raises(PolygonError, match="TRUNCADO"):
+        bf.contracts_for(P(), "QQQ", EXP, 500.0)
+    assert not os.path.exists(os.path.join(str(tmp_path / "cc"),
+                                           "QQQ_2026-05-15_b30.json"))
+
+
+def test_catalogo_pide_banda_de_strikes_mas_ancha_que_la_que_usa(tmp_path, monkeypatch):
+    """La banda del catalogo (+/-30%) debe ser mayor que la mayor moneyness pedida
+    (+/-15%): si no, recortaria strikes que luego se van a buscar."""
+    monkeypatch.setattr(bf, "CONTRACT_CACHE", str(tmp_path / "cc"))
+    peor = max(abs(m) for r in bf.ROUNDS for m, _ in r)
+    assert bf.CATALOG_BAND > peor
+    vistas = []
+
+    class P:
+        def paginate(self, url, max_pages=12):
+            vistas.append(url)
+            yield {"results": [{"ticker": "O:X", "strike_price": 500,
+                                "contract_type": "call"}]}
+
+    bf.contracts_for(P(), "QQQ", EXP, 500.0)
+    assert "strike_price.gte=350.00" in vistas[0]
+    assert "strike_price.lte=650.00" in vistas[0]
 
 
 def test_expiry_mensual_esquiva_el_festivo():
@@ -288,8 +326,8 @@ def test_filtro_expired_segun_la_fecha_del_expiry(tmp_path, monkeypatch):
                                 "contract_type": "call"}]}
 
     hoy = dt.date.today()
-    bf.contracts_for(P(), "QQQ", hoy - dt.timedelta(days=60))
-    bf.contracts_for(P(), "QQQ", hoy + dt.timedelta(days=60))
+    bf.contracts_for(P(), "QQQ", hoy - dt.timedelta(days=60), 500.0)
+    bf.contracts_for(P(), "QQQ", hoy + dt.timedelta(days=60), 500.0)
     assert "expired=true" in vistas[0]
     assert "expired=false" in vistas[1]
     assert "as_of" not in vistas[0] and "as_of" not in vistas[1]   # se ignora: no se usa
