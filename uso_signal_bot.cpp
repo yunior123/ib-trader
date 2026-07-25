@@ -1624,7 +1624,13 @@ int main(int argc, char** argv) {
             bool sold = false; const char* why = "";
             double exit_px = b.c;   // fill realista: target = limit en target_px
             double stop_px = entry * (1 - STOP_PCT / 100.0);
-            if (b.c <= stop_px) { sold = true; why = "HARD STOP"; }
+            // INTRABAR (fix 2026-07-24): antes solo miraba el CIERRE, asi que una
+            // barra que BARRIA el stop por el minimo y cerraba encima dejaba la
+            // alarma MUDA — justo en una caida rapida. Ahora dispara con el low, y
+            // el fill es pesimista (stop o open si abrio por debajo), igual que la
+            // rama del bar ambiguo de abajo (que asi queda cubierta por esta).
+            if (b.l <= stop_px) { sold = true; why = "HARD STOP";
+                                  exit_px = std::min(b.o, stop_px); }
             // bar ambiguo (toco stop Y target en el mismo bar): manda el STOP.
             // Un limit en target no se asume lleno cuando el bar barrio el
             // stop; fill pesimista al stop (o al open si abrio por debajo).
@@ -1740,7 +1746,10 @@ int main(int argc, char** argv) {
                 if (b.l < s_trough) { s_trough = b.l; save_spos(s_entry, s_trough, s_floor, s_target, spos_epoch); }
                 bool cov = false; const char* why = ""; double exit_px = b.c;
                 double s_stop_px = s_entry * (1 + S_STOP / 100.0);
-                if (b.c >= s_stop_px) { cov = true; why = "HARD STOP"; }
+                // INTRABAR (fix 2026-07-24): espejo corto — el HIGH barre el stop
+                // aunque el cierre quede debajo. Fill pesimista al stop/open.
+                if (b.h >= s_stop_px) { cov = true; why = "HARD STOP";
+                                        exit_px = std::max(b.o, s_stop_px); }
                 // espejo corto del bar ambiguo: si el bar toco cover-stop Y
                 // target, manda el STOP (fill al stop o al open si abrio arriba)
                 else if (b.l <= s_target && b.h >= s_stop_px) {
