@@ -140,6 +140,76 @@ def poly_chains_today():
     return len(glob.glob(os.path.join(d, "chain_full_*.json")))
 
 
+def gex_map_status(path=None, canon_n=None, poly_n=None):
+    """Veredicto del MAPA GAMMA PROPIO: ("crit"|"warn"|"ok", mensaje).
+
+    gexa.ai murio el 2026-07-25 y con el el scraping por Chrome: ya no hay nada que
+    "conectar". Lo que se vigila es data/gex_snapshot.json, que gex_snapshot.py calcula
+    desde las cadenas archivadas con griegas MEDIDAS de Polygon. Si ese fichero no esta,
+    los planes se quedan SIN regimen gamma -> 🔴, no un aviso: fue exactamente el fallo
+    que el 2026-07-24 estuvo dos dias en verde mientras los planes iban ciegos.
+    Tambien 🔴 si la cobertura baja de la MITAD de la flota; 🟡 si solo le faltan simbolos
+    o si esta rancio. Nunca se rellena un hueco con un numero plausible.
+
+    El reloj de pared miente en fin de semana: un mapa del cierre del viernes leido el
+    sabado son "60h" y no le falta NI UNA sesion, asi que la frescura se mide en SESIONES
+    DE MERCADO (sessions_since), no en horas.
+    Parametrizado para poder testearlo sin tocar el repo real."""
+    if path is None:
+        path = os.path.join(REPO, "data", "gex_snapshot.json")
+    if canon_n is None:
+        canon_n = len(canonical_fleet() or [])
+    if not (os.path.exists(path) and os.path.getsize(path) > 5):
+        return "crit", (f"mapa gamma ({os.path.basename(path)}): NO EXISTE — los planes se "
+                        "quedan sin regimen gamma. Corre scripts/gex_snapshot.py DESPUES de "
+                        "archivar las cadenas (poly_chain_archive.py)")
+    import gex_snapshot              # fuente unica del contrato: filtra `_meta` y la edad
+    gsyms = gex_snapshot.load(path=path)            # None si falta/roto, JAMAS {}
+    meta, meta_roto = {}, None
+    try:
+        with open(path) as fh:
+            meta = (json.load(fh) or {}).get("_meta") or {}
+    except (OSError, ValueError) as e:
+        meta_roto = f"`_meta` ilegible ({type(e).__name__})"
+    n_ok = len(gsyms) if gsyms else 0
+    if poly_n is None:
+        poly_n = poly_chains_today()
+    # Diagnostico de POR QUE cae la cobertura: sin cadenas archivadas no hay mapa.
+    why = (f"cadenas Polygon con griegas REALES hoy: {poly_n}/{canon_n}" if poly_n
+           else "sin cadenas Polygon archivadas hoy (poly_chain_archive no corrio?)")
+    if n_ok == 0:
+        return "crit", f"mapa gamma: 0 simbolos usables ({path} roto o vacio) — {why}"
+    if canon_n and n_ok * 2 < canon_n:
+        return "crit", (f"mapa gamma: cobertura {n_ok}/{canon_n}, por debajo de la MITAD de "
+                        f"la flota — {why}")
+    # frescura desde `_meta.asof`; si el mapa no lo trae se usa el mtime y se DICE cual de
+    # los dos se midio (no se finge que la marca venia dentro del dato).
+    asof, asof_src = meta.get("asof"), "_meta.asof"
+    if not isinstance(asof, (int, float)):
+        asof, asof_src = os.path.getmtime(path), "mtime (el mapa no trae _meta.asof)"
+    gedad = time.time() - asof
+    faltan = sessions_since(asof)
+    cobertura = meta.get("cobertura") or f"{n_ok}/{canon_n or '?'}"
+    edad = (f"{gedad/3600:.0f}h por {asof_src}, "
+            + ("0 sesiones perdidas" if faltan == 0 else
+               "sesiones NO contables" if faltan is None else
+               f"{faltan} sesion(es) por detras"))
+    if meta_roto:
+        return "warn", f"mapa gamma: cobertura {n_ok}/{canon_n or '?'} pero {meta_roto} — {why}"
+    if faltan is None:
+        return "warn", (f"mapa gamma: cobertura {cobertura} pero {edad} (tabla de festivos "
+                        f"agotada) — {why}")
+    if faltan >= 1:
+        return "warn", (f"mapa gamma: RANCIO ({edad}) con cobertura {cobertura} — reejecuta "
+                        f"scripts/gex_snapshot.py. {why}")
+    if canon_n and n_ok < canon_n:
+        sk = meta.get("skipped") or {}
+        faltantes = ",".join(sorted(sk)[:8]) if sk else "?"
+        return "warn", (f"mapa gamma: cobertura {cobertura} ({edad}) — sin mapa: "
+                        f"{faltantes}{' ...' if len(sk) > 8 else ''} | {why}")
+    return "ok", f"mapa gamma: ok, cobertura {cobertura} MEDIDA ({edad})"
+
+
 def market_hours():
     lt = time.localtime()
     return lt.tm_wday < 5 and 930 <= lt.tm_hour*100+lt.tm_min < 1600
@@ -251,36 +321,18 @@ def main():
         else:
             ok.append(f"{lbl}: ok ({edad/3600:.0f}h)")
 
-    # 5) gexa conecto Y esta fresco? (el 2026-07-24 llevaba 58h rancio y decia "ok":
-    # dos dias de planes con GEX estimado, en silencio, con el healthcheck en verde)
+    # 5) el mapa gamma PROPIO: escrito, con cobertura y del dia de mercado vigente?
     #
-    # PERO el reloj de pared miente en fin de semana: un snapshot del cierre del viernes
-    # leido el sabado son "60h rancio" y no le falta NI UNA sesion. Lo que importa no son
-    # las horas, son las SESIONES DE MERCADO que han abierto desde la captura (2026-07-25).
-    gf = "data/gexa_snapshot.json"
-    if not (os.path.exists(gf) and os.path.getsize(gf) > 5):
-        warn.append("gexa snapshot: no conecto (usa GEX estimado)")
-    else:
-        gedad = time.time() - os.path.getmtime(gf)
-        faltan = sessions_since(os.path.getmtime(gf))
-        # Y el coste de un gexa viejo depende de si hay ALTERNATIVA MEDIDA: desde que
-        # poly_chain_archive guarda las cadenas con griegas REALES de Polygon, el fallback
-        # ya no es "GEX estimado" — se calcula con gex_core sobre gamma+OI de verdad.
-        poly_n = poly_chains_today()
-        alt = (f"cadenas Polygon con griegas REALES hoy: {poly_n}/{len(canonical_fleet() or [])}"
-               if poly_n else "sin cadenas Polygon hoy: los planes usan GEX estimado")
-        if faltan is None:
-            warn.append(f"gexa snapshot: {gedad/3600:.0f}h y no se pueden contar sesiones "
-                        f"(tabla de festivos agotada) — {alt}")
-        elif faltan == 0:
-            ok.append(f"gexa snapshot: ok ({gedad/3600:.0f}h, 0 sesiones perdidas — "
-                      f"mercado cerrado desde la captura)")
-        elif poly_n:
-            # informativo: le faltan sesiones, pero el mapa gamma no depende de gexa
-            ok.append(f"gexa snapshot: {faltan} sesion(es) por detras ({gedad/3600:.0f}h) — "
-                      f"NO bloquea: {alt}")
-        else:
-            warn.append(f"gexa snapshot: RANCIO {faltan} sesion(es) ({gedad/3600:.0f}h) — {alt}")
+    # gexa.ai murio el 2026-07-25 y con el el scraping por Chrome: ya no hay nada que
+    # "conectar". Lo que se vigila ahora es data/gex_snapshot.json, que gex_snapshot.py
+    # calcula desde las cadenas archivadas con griegas MEDIDAS de Polygon. Si ese fichero
+    # no esta, los planes se quedan SIN regimen gamma -> es 🔴, no un aviso: era justo el
+    # fallo que el 2026-07-24 estuvo dos dias en verde mientras los planes iban ciegos.
+    #
+    # El reloj de pared miente en fin de semana: un mapa del cierre del viernes leido el
+    # sabado son "60h" y no le falta NI UNA sesion. Se cuentan SESIONES DE MERCADO, no horas.
+    nivel, msg = gex_map_status()
+    {"crit": crit, "warn": warn, "ok": ok}[nivel].append(msg)
 
     # 6) cobertura: cada modulo cubre la flota canonica?
     canon = canonical_fleet()

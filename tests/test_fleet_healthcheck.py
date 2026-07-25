@@ -200,3 +200,98 @@ def test_poly_chains_today_cuenta_cadenas_con_griegas_reales(hc, tmp_path, monke
 def test_poly_chains_today_sin_carpeta_es_cero_no_una_excepcion(hc, tmp_path, monkeypatch):
     monkeypatch.setattr(hc, "REPO", str(tmp_path))
     assert hc.poly_chains_today() == 0
+
+
+# --- el mapa gamma PROPIO (gexa jubilado el 2026-07-25) ---------------------------
+# gexa.ai desaparecio: ya no hay nada que "conectar". Lo que se vigila es
+# data/gex_snapshot.json, calculado en casa con las griegas MEDIDAS de Polygon. Su
+# AUSENCIA es 🔴 (los planes se quedan sin regimen gamma, y ese fallo estuvo dos dias
+# en verde el 2026-07-24); su cobertura a medias es 🟡. Nunca se rellena con un cero.
+
+def _mapa(tmp_path, syms, meta=None, asof=None):
+    """Escribe un data/gex_snapshot.json de juguete y devuelve su ruta."""
+    import json
+    import time
+    d = {s: {"flip": 100.0, "score": -1.2, "poc": 99.0, "regime": "NEGATIVE"} for s in syms}
+    m = {"cobertura": f"{len(syms)}/30", "asof": asof if asof is not None else int(time.time())}
+    m.update(meta or {})
+    d["_meta"] = m
+    p = tmp_path / "gex_snapshot.json"
+    p.write_text(json.dumps(d))
+    return str(p)
+
+
+def test_mapa_gamma_ausente_es_ROJO(hc, tmp_path):
+    """Sin mapa los planes van ciegos: 🔴, no un aviso informativo."""
+    nivel, msg = hc.gex_map_status(path=str(tmp_path / "no_existe.json"), canon_n=30, poly_n=0)
+    assert nivel == "crit"
+    assert "NO EXISTE" in msg
+    assert hc.exit_code([msg], []) != 0          # y el contrato de salida lo propaga
+
+
+def test_mapa_gamma_roto_es_ROJO_no_cero_simbolos_en_silencio(hc, tmp_path):
+    p = tmp_path / "gex_snapshot.json"
+    p.write_text("{esto no es json valido")
+    nivel, msg = hc.gex_map_status(path=str(p), canon_n=30, poly_n=25)
+    assert nivel == "crit"
+    assert "0 simbolos usables" in msg
+
+
+def test_mapa_gamma_bajo_media_flota_es_ROJO(hc, tmp_path):
+    """14/30 no es "casi": es media flota sin regimen gamma."""
+    p = _mapa(tmp_path, [f"S{i}" for i in range(14)])
+    nivel, msg = hc.gex_map_status(path=p, canon_n=30, poly_n=14)
+    assert nivel == "crit"
+    assert "MITAD" in msg
+
+
+def test_mapa_gamma_le_faltan_simbolos_es_AMARILLO_y_sale_cero(hc, tmp_path):
+    """25/30 avisa y NOMBRA a los que faltan, pero no es un fallo del job."""
+    p = _mapa(tmp_path, [f"S{i}" for i in range(25)],
+              meta={"cobertura": "25/30", "skipped": {"NOK": "sin cadena", "QCOM": "sin cadena"}})
+    nivel, msg = hc.gex_map_status(path=p, canon_n=30, poly_n=25)
+    assert nivel == "warn"
+    assert "NOK" in msg and "QCOM" in msg
+    assert hc.exit_code([], [msg]) == 0
+
+
+def test_mapa_gamma_completo_y_fresco_es_VERDE_y_dice_que_es_medido(hc, tmp_path):
+    p = _mapa(tmp_path, [f"S{i}" for i in range(30)], meta={"cobertura": "30/30"})
+    nivel, msg = hc.gex_map_status(path=p, canon_n=30, poly_n=30)
+    assert nivel == "ok"
+    assert "MEDIDA" in msg          # procedencia en el propio aviso, no "GEXA verificado"
+
+
+def test_mapa_gamma_rancio_por_SESIONES_no_por_horas(hc, tmp_path, monkeypatch):
+    """3 sesiones por detras = 🟡 RANCIO aunque la cobertura sea perfecta."""
+    monkeypatch.setattr(hc, "sessions_since", lambda _ts: 3)
+    p = _mapa(tmp_path, [f"S{i}" for i in range(30)], meta={"cobertura": "30/30"})
+    nivel, msg = hc.gex_map_status(path=p, canon_n=30, poly_n=30)
+    assert nivel == "warn"
+    assert "RANCIO" in msg and "3 sesion" in msg
+
+
+def test_mapa_gamma_sin_asof_usa_mtime_y_LO_DICE(hc, tmp_path):
+    """Si el mapa no trae _meta.asof se mide por mtime, pero se confiesa cual de los dos
+    se uso: no se finge que la marca de tiempo venia dentro del dato."""
+    import json
+    p = tmp_path / "gex_snapshot.json"
+    p.write_text(json.dumps({f"S{i}": {"flip": 1.0} for i in range(30)}))
+    nivel, msg = hc.gex_map_status(path=str(p), canon_n=30, poly_n=30)
+    assert nivel == "ok"
+    assert "mtime" in msg
+
+
+def test_mapa_gamma_sesiones_no_contables_avisa_sin_inventar_frescura(hc, tmp_path, monkeypatch):
+    monkeypatch.setattr(hc, "sessions_since", lambda _ts: None)
+    p = _mapa(tmp_path, [f"S{i}" for i in range(30)], meta={"cobertura": "30/30"})
+    nivel, msg = hc.gex_map_status(path=p, canon_n=30, poly_n=30)
+    assert nivel == "warn"
+    assert "NO contables" in msg
+
+
+def test_mapa_gamma_dice_por_que_falta_cobertura(hc, tmp_path):
+    """Sin cadenas archivadas hoy, el aviso apunta al culpable (poly_chain_archive)."""
+    p = _mapa(tmp_path, [f"S{i}" for i in range(25)], meta={"cobertura": "25/30"})
+    _, msg = hc.gex_map_status(path=p, canon_n=30, poly_n=0)
+    assert "poly_chain_archive" in msg
