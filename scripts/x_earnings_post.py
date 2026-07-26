@@ -3,8 +3,14 @@
 
 Fuente unica Finviz Elite export (f=earningsdate_nextweek):
   v=171                        -> Beta ATR SMA20/50/200 52W-hi/lo RSI(14) Gap Price Change Volume
-  v=152&c=1,30,64,65,68        -> Short Float, Relative Volume, Price, `Earnings Date` CON HORA
+  v=152&c=1,6,30,64,65,68      -> Market Cap, Short Float, Vol relativo, Price, `Earnings Date`
 Hora -> sesion: 8:30:00 AM = BMO, 4:30:00 PM = AMC (los dos unicos buckets que sirve Finviz).
+
+DOS ORDENES DISTINTOS, a proposito:
+  REJILLA = calendario de "quien reporta" -> **market cap descendente** (flota primero). Ordenarla
+    por picardia la llenaba de micro-caps: gap/ATR%/RSI/short float/relvol los maximizan los
+    nombres que nadie reconoce, y las grandes caian detras del tile "+N".
+  FRANJA de abajo = nuestro EDGE -> score() picaro. Esa si va por picardia.
 
 La rejilla va en la IMAGEN (los tickers dentro del PNG NO cuentan como cashtags) y el texto del
 tweet lleva UN cashtag como maximo. La flota de data/fleet.txt sale DESTACADA, y los 3 nombres
@@ -36,7 +42,7 @@ FLEET_FILE = os.path.join(REPO, "data", "fleet.txt")
 DEFAULT_PNG = os.path.join(REPO, "data", "x_media", "earnings_week.png")
 MAX_AGE_S = 6 * 3600
 MIN_ROWS = 50                 # 753 tickers el 2026-07-25; <50 = feed roto, no pisar cache
-COLS_152 = "1,30,64,65,68"
+COLS_152 = "1,6,30,64,65,68"    # c=6 es Market Cap: ordena la REJILLA (quien reporta)
 MAX_HORIZON_D = 14            # una fecha mas lejana no es "la semana que viene"
 BAND_ATR = 2.0                # anclas mas lejas que 2 ATR no son niveles operables
 TILES_PER_ROW = 3

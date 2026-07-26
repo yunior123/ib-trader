@@ -30,6 +30,7 @@ importar y auto-testear en 3.9 con `--selftest`.
 Uso:
   python -m uvicorn scripts.chart_bridge:app                # live 7496, sym focus/nvda
   python scripts/chart_bridge.py --mock --sym nvda          # demo offline (necesita fastapi)
+  python scripts/chart_bridge.py --mock --mock-dir /tmp/rp --sym qqq   # sandbox de ./replay
   python3 scripts/chart_bridge.py --selftest --sym nvda     # sin fastapi: valida frames
   python scripts/chart_bridge.py --sym mu --port 7497       # live paper
 """
@@ -63,6 +64,27 @@ os.chdir(REPO)
 LEVELS_DIR = os.path.join(REPO, "charts", "data")
 LIVE_HTML = os.path.join(REPO, "charts", "live.html")
 DEFAULT_SYM = "nvda"
+
+# SANDBOX DE REPLAY (--mock-dir): barras y cadena del MISMO instante. El CSV de backtest
+# arranca en 2026-04-23 y su spot cae fuera de la banda de strikes de cualquier cadena de
+# hoy -> perfil vacío y muros None: con ese arnés no se puede QA-ear un muro.
+MOCK_DIR = None
+MOCK_DIR_MARKER = ".replay-sandbox"
+
+
+def set_mock_dir(path):
+    """Fija el sandbox de ./replay como fuente del modo mock (exige su marcador: sin él
+    podríamos estar apuntando a producción y el mock jamás lee producción)."""
+    global MOCK_DIR
+    if not path:
+        return None
+    p = os.path.abspath(os.path.expanduser(path))
+    if not os.path.isfile(os.path.join(p, MOCK_DIR_MARKER)):
+        sys.exit(f"--mock-dir {p} no es un sandbox de replay (falta {MOCK_DIR_MARKER})")
+    if os.path.realpath(p) == os.path.realpath(REPO):
+        sys.exit("--mock-dir no puede ser el repo (el mock nunca lee producción)")
+    MOCK_DIR = p
+    return p
 
 # --- timeframes (TradingView-like) ---------------------------------------
 # MOCK: la base del CSV es 5m; agregamos hacia arriba. "1m" no tiene fuente
@@ -146,16 +168,12 @@ def load_csv_bars(sym, tail=None):
     return rows
 
 
-def load_ibkr_bars(sym, tail=780):
-    """Barras 1m VIVAS de data/bars_<sym>_ibkr.txt (el fleet bar_bridge las mantiene para
-    los 33 símbolos). Archivo OS-page-cacheado -> lectura a velocidad RAM. Se usa para
-    mostrar el chart AL INSTANTE al cambiar de símbolo (sin esperar el round-trip a TWS);
-    la suscripción viva se re-ata en background. [ts,o,h,l,c,v]."""
-    p = os.path.join(REPO, "data", f"bars_{sym.lower()}_ibkr.txt")
+def _bars_from_txt(path, tail):
+    """`ts o h l c v` por línea (formato de ibkr_bar_bridge::emit y del sandbox de replay)."""
     rows = []
-    if not os.path.exists(p):
+    if not os.path.exists(path):
         return rows
-    for ln in open(p):
+    for ln in open(path):
         f = ln.split()
         if len(f) >= 5:
             try:
@@ -166,10 +184,41 @@ def load_ibkr_bars(sym, tail=780):
     return rows[-tail:] if tail else rows
 
 
+def load_ibkr_bars(sym, tail=780):
+    """Barras 1m VIVAS de data/bars_<sym>_ibkr.txt (el fleet bar_bridge las mantiene para
+    los 33 símbolos). Archivo OS-page-cacheado -> lectura a velocidad RAM. Se usa para
+    mostrar el chart AL INSTANTE al cambiar de símbolo (sin esperar el round-trip a TWS);
+    la suscripción viva se re-ata en background. [ts,o,h,l,c,v]."""
+    return _bars_from_txt(os.path.join(REPO, "data", f"bars_{sym.lower()}_ibkr.txt"), tail)
+
+
+def load_sandbox_bars(sym, tail=780):
+    """Barras 1m del sandbox de ./replay: las MISMAS que lee compass, y del mismo instante
+    que la cadena que el replay publica ahí -> el spot cae DENTRO del libro."""
+    if not MOCK_DIR:
+        return []
+    return _bars_from_txt(os.path.join(MOCK_DIR, "data", f"bars_{sym.lower()}_ibkr.txt"), tail)
+
+
+def load_sandbox_levels(sym):
+    """Mapa del sandbox tal cual lo dejó ./replay (chart_levels con el reloj congelado en el
+    as-of de la cadena). NO se regenera aquí: la cadena es histórica y el reloj de este
+    proceso es el de hoy -> gen() la daría por expirada. None = no hay mapa (no {})."""
+    if not MOCK_DIR:
+        return None
+    try:
+        with open(os.path.join(MOCK_DIR, "charts", "data", f"levels_{sym.lower()}.json")) as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return None
+
+
 def load_levels(sym, max_age_s=2700, all_exp=False):
     """Lee charts/data/levels_<sym>.json. Si falta/está viejo intenta regenerar via
     chart_levels.gen (que lee el cache TWS opt_chain). Degradacion limpia: si no hay
     cache ni json, devuelve {} y el chart sigue sin overlays GEX."""
+    if MOCK_DIR:
+        return load_sandbox_levels(sym)
     p = os.path.join(LEVELS_DIR, f"levels_{sym}.json")
     fresh = os.path.exists(p) and (time.time() - os.path.getmtime(p) < max_age_s)
     if not fresh:
@@ -185,6 +234,50 @@ def load_levels(sym, max_age_s=2700, all_exp=False):
         except Exception:
             return {}
     return {}
+
+
+WALL_KEYS = ("call_wall", "put_wall", "flip")
+
+
+def chain_strike_range(lv):
+    """(min,max) de strikes de la cadena con la que se calculó el mapa; None si no se puede
+    leer — sin cadena no se afirma por qué faltan los muros."""
+    p = (lv or {}).get("chain_path")
+    if not p:
+        return None
+    if not os.path.isabs(p):
+        p = os.path.join(MOCK_DIR or REPO, p)
+    lo = hi = None
+    try:
+        with open(p) as f:
+            for ln in f:
+                if ln.startswith("#"):
+                    continue
+                try:
+                    k = float(ln.split()[0])
+                except (IndexError, ValueError):
+                    continue
+                lo = k if lo is None or k < lo else lo
+                hi = k if hi is None or k > hi else hi
+    except OSError:
+        return None
+    return (lo, hi) if lo is not None else None
+
+
+def walls_status(lv, spot):
+    """None si los muros traen NUMEROS; si no, la razón. Un muro fabricado es peor que
+    ningún muro: el chart publicaba `None` mudo y el QA no distinguía 'no hay libro' de
+    'el cálculo falló'."""
+    if not lv:
+        return "sin mapa GEX"
+    if all(lv.get(k) is not None for k in WALL_KEYS):
+        return None
+    rng = chain_strike_range(lv)
+    if rng and spot is not None and not (rng[0] <= spot <= rng[1]):
+        return "spot fuera del libro"
+    if not (lv.get("profile") or []):
+        return "perfil GEX vacío"
+    return "muros sin calcular"
 
 
 # =============================== indicadores =================================
@@ -1292,10 +1385,12 @@ class State:
     def __init__(self, sym, mock=False):
         self.sym = sym
         self.mock = mock
-        self.bars = []          # feed crudo: 5m (mock) / barSize nativo (live)
+        self.bars = []          # feed crudo: 5m (mock CSV) / 1m (mock sandbox) / nativo (live)
         self.levels = {}
         self.clients = set()    # WebSocket
-        self.tf = DEFAULT_TF_MOCK if mock else DEFAULT_TF_LIVE
+        self.base_min = 5 if (mock and not MOCK_DIR) else 1
+        self.tf = DEFAULT_TF_MOCK if (mock and not MOCK_DIR) else DEFAULT_TF_LIVE
+        self.walls_why = None   # razón por la que los muros vienen a None (o None si vienen)
         self.all_exp = False    # scope GEX: False=0DTE, True=ALL-EXP
         self._vix = None        # último VIX (índice CBOE via ib_async)
         self._vix_ticker = None
@@ -1331,15 +1426,25 @@ class State:
             self.bars.append(bar)
 
 
+def tf_minutes(state):
+    """Minutos del tf pedido. TF_MIN mapea '1m'->5 porque la base del mock-CSV es 5m; con
+    --mock-dir la base SI es 1m (barras del sandbox de replay)."""
+    base = getattr(state, "base_min", 5)
+    if state.tf == "1m":
+        return base
+    return TF_MIN.get(state.tf, base)
+
+
 def agg_view_bars(state):
     """Barras que VE el chart al tf actual.
-    MOCK: base 5m -> se agrega hacia arriba (ce.aggregate, paridad con el engine).
-          '1m' no tiene fuente offline -> 5m. LIVE: state.bars ya viene al barSize
-          nativo pedido en live_reapply, así que se devuelve tal cual."""
+    MOCK: base 5m (CSV) o 1m (--mock-dir) -> se agrega hacia arriba (ce.aggregate, paridad
+          con el engine). LIVE: state.bars ya viene al barSize nativo pedido en
+          live_reapply, así que se devuelve tal cual."""
     if not state.mock:
         return state.bars
-    mins = TF_MIN.get(state.tf, 5)
-    if mins <= 5:
+    base = getattr(state, "base_min", 5)
+    mins = tf_minutes(state)
+    if mins <= base:
         return state.bars
     return ce.aggregate(state.bars, mins)
 
@@ -1351,7 +1456,7 @@ async def set_timeframe(state, tf):
         return
     state.tf = tf
     if state.mock:
-        if tf == "1m":
+        if tf == "1m" and getattr(state, "base_min", 5) > 1:
             print("[tf] '1m' sin fuente offline en --mock -> uso 5m")
         return
     if state._ib is not None:
@@ -1410,7 +1515,7 @@ def get_state(sym):
     if st is not None:
         return st
     st = State(sym, mock=STATE_CFG["mock"])
-    st.levels = load_levels(sym)
+    st.levels = load_levels(sym) or {}
     STATES[sym] = st
     asyncio.ensure_future(_spawn_state(st))
     print(f"[multi] estado NUEVO {sym.upper()} (abiertos: {len(STATES)})")
@@ -1564,8 +1669,20 @@ def create_app(state):
 
     @app.get("/health")
     async def health():
-        return {"sym": state.sym, "mock": state.mock, "bars": len(state.bars),
-                "clients": len(state.clients), "signal_only": True}
+        def _one(st):
+            lv = st.levels or {}
+            spot = st.bars[-1][4] if st.bars else None
+            rng = chain_strike_range(lv)
+            return {"sym": st.sym, "bars": len(st.bars), "clients": len(st.clients),
+                    "tf": st.tf, "spot": spot,
+                    "call_wall": lv.get("call_wall"), "put_wall": lv.get("put_wall"),
+                    "flip": lv.get("flip"), "profile_strikes": len(lv.get("profile") or []),
+                    "chain_strikes": list(rng) if rng else None,
+                    "walls_unavailable": walls_status(lv, spot)}
+        out = _one(state)
+        out.update(mock=state.mock, mock_dir=MOCK_DIR, signal_only=True,
+                   states={s: _one(st) for s, st in STATES.items()})
+        return out
 
     @app.websocket("/stream")
     async def stream(ws: WebSocket):
@@ -1973,7 +2090,15 @@ async def levels_loop(state):
             spot = state.bars[-1][4] if state.bars else None
             if not spot:
                 continue
-            lv = chart_levels.gen(state.sym, spot=spot, write=False, all_exp=state.all_exp)
+            # --mock-dir: el mapa lo regenera ./replay al avanzar su reloj virtual; aquí solo
+            # se re-lee (gen() con el reloj de hoy daría la cadena histórica por expirada).
+            lv = (load_sandbox_levels(state.sym) if MOCK_DIR else
+                  chart_levels.gen(state.sym, spot=spot, write=False, all_exp=state.all_exp))
+            why = walls_status(lv, spot)
+            if why != state.walls_why:
+                state.walls_why = why
+                print(f"[levels] {state.sym.upper()} muros: "
+                      + (f"NO DISPONIBLES ({why}) spot={spot}" if why else "con números"))
             if lv:
                 lv["asof"] = int(time.time())   # asof fresco -> el cliente redibuja
                 if state._vix_ticker is not None:
@@ -2004,11 +2129,21 @@ async def mock_feed(state, interval=1.0, warm=260):
     """Carga barras 5m del CSV: las primeras `warm` como historia, el resto se emiten
     una a una cada `interval`s (simula el tick de barra nueva). Prueba TODO el pipe
     sin TWS. Al agotarse, hace loop reiniciando el reloj (para demo continua)."""
-    all_bars = load_csv_bars(state.sym)
-    if not all_bars:
-        print(f"[mock] sin CSV para {state.sym}; genero barras sintéticas")
-        all_bars = _synthetic_bars(state.sym, 400)
-    warm = min(warm, max(1, len(all_bars) - 20))
+    if MOCK_DIR:
+        all_bars = load_sandbox_bars(state.sym)
+        if not all_bars:
+            print(f"[mock] FATAL: sandbox sin barras para {state.sym.upper()} "
+                  f"({MOCK_DIR}/data/bars_{state.sym}_ibkr.txt)")
+            return
+        # el sandbox se reproduce por el FINAL: la cadena que publicó el replay es la del
+        # último instante, así que un warm corto dejaría el spot lejos del libro otra vez.
+        warm = max(1, len(all_bars) - 20)
+    else:
+        all_bars = load_csv_bars(state.sym)
+        if not all_bars:
+            print(f"[mock] sin CSV para {state.sym}; genero barras sintéticas")
+            all_bars = _synthetic_bars(state.sym, 400)
+        warm = min(warm, max(1, len(all_bars) - 20))
     state.set_bars(all_bars[:warm])
     print(f"[mock] {state.sym}: historia={warm} barras, streaming {len(all_bars)-warm} restantes @ {interval}s")
     idx = warm
@@ -2119,14 +2254,16 @@ async def live_feed(state, port, client_id=60):
 def build_state_and_feed(args):
     global MOCK
     MOCK = bool(args.mock)   # guarda de integridad: en pruebas no se escribe a produccion
+    set_mock_dir(getattr(args, "mock_dir", None))
     sym = resolve_sym(args.sym)
     state = State(sym, mock=args.mock)
-    state.levels = load_levels(sym)
+    state.levels = load_levels(sym) or {}
     if not args.mock:
         # en modo live las barras iniciales las trae el feed; precarga vacía
         state.set_bars([])
     # registro multi-símbolo: éste es el estado PRIMARIO (nunca se apaga). Los demás
     # los crea get_state() cuando una ventana pide otro ticker.
+    STATES.clear()   # el `app` de módulo se construye al importar y deja un estado fantasma
     STATES[sym] = state
     PRIMARY_SYM["sym"] = sym
     STATE_CFG.update(mock=bool(args.mock), interval=float(getattr(args, "interval", 1.0) or 1.0),
@@ -2137,6 +2274,9 @@ def build_state_and_feed(args):
 async def _serve(args):
     import uvicorn
     state = build_state_and_feed(args)
+    if MOCK_DIR and not load_sandbox_bars(state.sym):
+        sys.exit(f"--mock-dir {MOCK_DIR} sin barras para {state.sym.upper()}: "
+                 f"lanza ./replay con ese --out y ese símbolo")
     app = create_app(state)
     if args.mock:
         asyncio.ensure_future(mock_feed(state, interval=args.interval))
@@ -2151,9 +2291,10 @@ async def _serve(args):
 # módulo-nivel `app` para `uvicorn scripts.chart_bridge:app` (live, defaults de env)
 if HAVE_FASTAPI:
     def _app_factory():
+        set_mock_dir(os.environ.get("CHART_MOCK_DIR"))
         sym = resolve_sym(os.environ.get("CHART_SYM"))
         state = State(sym, mock=bool(os.environ.get("CHART_MOCK")))
-        state.levels = load_levels(sym)
+        state.levels = load_levels(sym) or {}
         # registro multi-simbolo: este es el estado PRIMARIO (nunca se apaga)
         STATES[sym] = state
         PRIMARY_SYM["sym"] = sym
@@ -2183,11 +2324,12 @@ def selftest(args):
     assert_signal_only()
     sym = resolve_sym(args.sym)
     print(f"[selftest] sym={sym}")
-    bars = load_csv_bars(sym, tail=320)
+    bars = load_sandbox_bars(sym, tail=320) if MOCK_DIR else load_csv_bars(sym, tail=320)
     if not bars:
         print("[selftest] sin CSV -> sintéticas")
         bars = _synthetic_bars(sym, 320)
-    levels = load_levels(sym)
+    levels = load_levels(sym) or {}
+    print(f"[selftest] muros: {walls_status(levels, bars[-1][4] if bars else None) or 'con números'}")
     print(f"[selftest] barras={len(bars)}  niveles={'sí' if levels else 'no'}"
           + (f" (spot {levels.get('spot')}, regime {levels.get('regime')}, "
              f"CW {levels.get('call_wall')} PW {levels.get('put_wall')} flip {levels.get('flip')})" if levels else ""))
@@ -2268,8 +2410,14 @@ def main():
     ap.add_argument("--client-id", type=int, default=60, help="clientId IBKR (60 libre)")
     ap.add_argument("--interval", type=float, default=1.0, help="seg entre barras en --mock")
     ap.add_argument("--mock", action="store_true", help="feed offline desde CSV (sin TWS)")
+    ap.add_argument("--mock-dir", default=None,
+                    help="sandbox de ./replay (--out): barras 1m + cadena + niveles COHERENTES")
     ap.add_argument("--selftest", action="store_true", help="valida frames sin fastapi/TWS")
     args = ap.parse_args()
+
+    set_mock_dir(args.mock_dir)
+    if args.mock_dir and not (args.mock or args.selftest):
+        sys.exit("--mock-dir exige --mock (es la fuente del feed offline)")
 
     assert_signal_only()
 

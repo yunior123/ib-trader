@@ -599,10 +599,34 @@ function updRibbon(madrid) {            // bar: {ma05:{time,value,color},...}
 }
 
 // pane 0: velas + BB + SMAs + VWAP + Supertrend + trendlines
+// EL AUTOSCALE LO FIJAN LAS VELAS. El default de lightweight-charts mete las price lines
+// (6 sitios las crean: muros/flip/zonas/stops/alarmas) en el rango del eje; con el mercado
+// cerrado no llegan velas nuevas y un muro o una alarma lejana estiraba la escala de precios.
+// Los niveles siguen DIBUJANDOSE: solo dejan de mandar en la escala.
+let candleData = [];
+function candleAutoscale(original) {
+  const orig = original();
+  if (!candleData.length) return orig;
+  let a = 0, b = candleData.length - 1;
+  const vr = chart.timeScale().getVisibleLogicalRange();
+  if (vr) { a = Math.max(0, Math.floor(vr.from)); b = Math.min(b, Math.ceil(vr.to)); }
+  let lo = Infinity, hi = -Infinity;
+  for (let i = a; i <= b; i++) {
+    const d = candleData[i];
+    if (!d || d.low == null || d.high == null) continue;
+    if (d.low < lo) lo = d.low;
+    if (d.high > hi) hi = d.high;
+  }
+  if (!isFinite(lo) || !isFinite(hi)) return orig;
+  const pad = (hi - lo) * 0.05 || Math.max(0.01, hi * 0.0005);
+  return { priceRange: { minValue: lo - pad, maxValue: hi + pad },
+           margins: orig ? orig.margins : undefined };
+}
 const candle = chart.addSeries(CandlestickSeries, {
   upColor: "#26a69a", downColor: "#ef5350", borderVisible: false,
   wickUpColor: "#26a69a", wickDownColor: "#ef5350",
   priceLineVisible: true, lastValueVisible: true,   // etiqueta de último precio (TV-like)
+  autoscaleInfoProvider: candleAutoscale,
 });
 const mkLine = (color, w, dashed) => chart.addSeries(LineSeries, {
   color, lineWidth: w, priceLineVisible: false, lastValueVisible: false,
@@ -1709,6 +1733,7 @@ let curLevels = null;
 let lastBar = null;
 function onHistory(msg) {
   candle.setData(msg.bars);
+  candleData = msg.bars || [];      // espejo para candleAutoscale (el eje lo fijan las velas)
   const ind = msg.indicators;
   S.bbUpper.setData(ind.bbUpper);
   S.bbLower.setData(ind.bbLower);
@@ -1743,14 +1768,22 @@ function onHistory(msg) {
   zoomRecent(msg.bars.length);   // últimas ~100 barras (velas legibles en cada tf)
 }
 function upd(series, pt) { if (pt) series.update(pt); }
+function mirrorBar(bar) {           // upsert en el espejo: misma regla que series.update()
+  if (!bar) return;
+  const n = candleData.length;
+  if (n && candleData[n - 1].time === bar.time) candleData[n - 1] = bar;
+  else candleData.push(bar);
+}
 // precio vivo por tick: SOLO la vela (O(1), sin recomputar indicadores) -> blazing-fast
 function onTick(msg) {
   candle.update(msg.bar);
+  mirrorBar(msg.bar);
   lastBar = msg.bar; lastBarTime = msg.bar.time;
   setOHLC(msg.bar);
 }
 function onBar(msg) {
   candle.update(msg.bar);           // update(), NUNCA setData por tick
+  mirrorBar(msg.bar);
   const ind = msg.indicators;
   upd(S.bbUpper, ind.bbUpper); upd(S.bbLower, ind.bbLower); upd(S.bbMid, ind.bbMid);
   upd(S.sma40, ind.sma40); upd(S.sma100, ind.sma100); upd(S.sma200, ind.sma200);
