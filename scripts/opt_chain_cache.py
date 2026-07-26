@@ -164,7 +164,7 @@ class ChainCache:
         if not cons:
             log(f"{sym}: 0 strikes en ±{band*100:.0f}% — skip")
             return 0
-        cons = [c for c in self.ib.qualifyContracts(*cons) if c.conId]
+        cons = [c for c in self.ib.qualifyContracts(*cons) if c and c.conId]
         tks = [self.ib.reqMktData(c, "100,101,106", False, False) for c in cons]
         self.ib.sleep(NARROW_SLEEP if narrow else SLEEP_TICKS)
         rows = []

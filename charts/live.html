@@ -73,6 +73,11 @@
                   border-radius:8px; padding:10px 18px; font-size:14px; font-weight:700;
                   box-shadow:0 2px 12px rgba(0,0,0,.5); pointer-events:none; text-align:center; }
   #nodataBanner.hidden { display:none; }
+  #replaybadge { background:#5c1a00; color:#ffb74d; border:2px solid #ff6d00;
+                 border-radius:4px; padding:4px 10px; font-weight:800; font-size:12.5px;
+                 letter-spacing:.02em; animation:replayblink 1.4s ease-in-out infinite; }
+  #replaybadge.hidden { display:none; }
+  @keyframes replayblink { 0%,100% { opacity:1; } 50% { opacity:.55; } }
   #narrbtn { background:#2a2e39; color:#8aa0c8; border:1px solid #3a4b6b;
              border-radius:4px; padding:4px 9px; font:inherit; font-weight:700; cursor:pointer; }
   #narrbtn:hover { background:#2f3646; color:#fff; }
@@ -332,6 +337,7 @@
 <body>
 <!-- fila 1: símbolo + selector de intervalo (TradingView-like) + conexión -->
 <div id="toolbar">
+  <span id="replaybadge" class="hidden" title="Este puente corre --mock: barras de un REPLAY archivado, no el mercado real. Nunca confundir con precio en vivo.">⏪ REPLAY —</span>
   <button id="wlbtn" title="Ticker actual + lista buscable con volumen y %día (estilo TradingView). Clic para abrir/cerrar.">📋 — ▾</button>
   <button id="modepill" title="Cuenta IBKR: PAPER (prueba) / LIVE (real). Clic para cambiar. Fuente única data/ib_mode.txt — el motor y los lectores siguen este modo.">● …</button>
   <button id="instpill" title="Instrumento de las zonas NUEVAS: Opciones o Acciones (activos, tradean 24/5). Clic para cambiar.">📈 Opciones</button>
@@ -1785,7 +1791,20 @@ function onNoData(reason) {
   if (reason) { b.textContent = "⚠ " + reason; b.classList.remove("hidden"); }
   else b.classList.add("hidden");
 }
+// gritar SIEMPRE que el puente corre --mock: un precio de replay disfrazado de precio
+// real es exactamente el "cero plausible" que la casa prohíbe, pero en la UI.
+function setReplayBadge(isMock, lastBarEpoch) {
+  const b = document.getElementById("replaybadge");
+  if (!b) return;
+  if (!isMock) { b.classList.add("hidden"); return; }
+  const when = lastBarEpoch
+    ? new Date(lastBarEpoch * 1000).toLocaleString("es-CA", { dateStyle: "medium", timeStyle: "short" })
+    : "fecha desconocida";
+  b.textContent = "⏪ REPLAY " + when;
+  b.classList.remove("hidden");
+}
 function onHistory(msg) {
+  setReplayBadge(msg.mock, msg.bars && msg.bars.length ? msg.bars[msg.bars.length - 1].time : null);
   onNoData(msg.nodata || null);
   candle.setData(msg.bars);
   candleData = msg.bars || [];      // espejo para candleAutoscale (el eje lo fijan las velas)

@@ -1330,7 +1330,7 @@ async def broadcast_direction(state, lv=None):
             state.clients.discard(ws)
 
 
-def history_frame(bars, levels, tf=None, nodata=None):
+def history_frame(bars, levels, tf=None, nodata=None, mock=False):
     ind = compute_indicators(bars)
     return {
         "type": "history",
@@ -1341,6 +1341,9 @@ def history_frame(bars, levels, tf=None, nodata=None):
         "signals": load_signal_markers((levels or {}).get("sym", ""), bars),
         "engineOps": load_engine_ops((levels or {}).get("sym", ""), bars),
         "nodata": nodata if not bars else None,
+        # REPLAY: cero "premium disfrazado de real" en la UI (Yunior 2026-07-26). El
+        # header debe gritarlo; la fecha la deriva el cliente de bars[-1].time.
+        "mock": bool(mock),
     }
 
 
@@ -1648,7 +1651,7 @@ async def _relive_symbol(state, sym, rebroadcast=False):
     except Exception: pass
     await live_reapply(state, state.tf)
     if rebroadcast:   # solo si no hubo carga instantánea (símbolo fuera de la flota)
-        frame = history_frame(agg_view_bars(state), state.levels, state.tf, nodata=state._nodata_reason)
+        frame = history_frame(agg_view_bars(state), state.levels, state.tf, nodata=state._nodata_reason, mock=state.mock)
         for ws in list(state.clients):
             try: await ws.send_json(frame)
             except Exception: state.clients.discard(ws)
@@ -1731,7 +1734,7 @@ def create_app(state):
         st.clients.add(ws)
         try:
             # frame de historia inmediato (setData once en el cliente), al tf actual
-            await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason))
+            await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason, mock=st.mock))
             # watchlist (fleet + usuario), zonas 0DTE del símbolo y flecha direccional
             await ws.send_json(watchlist_payload())
             await ws.send_json(zones_frame(st))
@@ -1749,7 +1752,7 @@ def create_app(state):
                 if isinstance(ctl, dict) and ctl.get("cmd") == "tf":
                     await set_timeframe(st, ctl.get("tf", st.tf))
                     # re-emite un frame de historia FRESCO al tf pedido
-                    await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason))
+                    await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason, mock=st.mock))
                 elif isinstance(ctl, dict) and ctl.get("cmd") == "sym":
                     # NO se muta el estado compartido: se MUEVE esta conexión al State del
                     # nuevo símbolo (creándolo si no existe). Las demás ventanas ni se
@@ -1762,7 +1765,7 @@ def create_app(state):
                         reap_state(st)
                         st = get_state(want)
                         st.clients.add(ws)
-                    await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason))
+                    await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason, mock=st.mock))
                     # zonas del nuevo símbolo + flecha direccional (actualización inmediata)
                     await ws.send_json(zones_frame(st))
                     await broadcast_direction(st)
@@ -2445,7 +2448,7 @@ def selftest(args):
     # --- tf-switch: simula {cmd:"tf","tf":"15m"} en --mock (agrega 5m -> 15m) ---
     st.tf = "15m"
     view15 = agg_view_bars(st)
-    hf15 = history_frame(view15, st.levels, st.tf)
+    hf15 = history_frame(view15, st.levels, st.tf, mock=st.mock)
     json.dumps(hf15)  # valida
     print(f"\n[selftest] TF-SWITCH 5m->15m: base(5m)={len(st.bars)} barras -> "
           f"view(15m)={len(hf15['bars'])} barras  (tf={hf15['tf']})")

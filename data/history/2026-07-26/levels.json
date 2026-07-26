@@ -1,0 +1,2018 @@
+{
+ "date": "2026-07-26",
+ "ts": 1785096601,
+ "gex_source": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)",
+ "levels": {
+  "SMH": {
+   "spot": 561.5,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     575.0,
+     1537
+    ],
+    [
+     585.0,
+     1160
+    ],
+    [
+     580.0,
+     868
+    ]
+   ],
+   "put_walls": [
+    [
+     550.0,
+     67681
+    ],
+    [
+     565.0,
+     4812
+    ],
+    [
+     540.0,
+     3979
+    ]
+   ],
+   "max_pain": 572.5,
+   "pc_oi": 5.469,
+   "gex": {
+    "flip": 644.58,
+    "flip_all": 644.58,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 14.7,
+    "score": -147.472,
+    "bias": "PUT",
+    "poc": 520.0,
+    "magnets": [
+     520.0,
+     600.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 33177974,
+    "put_usd": -180649562,
+    "net_gex": -147471588,
+    "net_gex_dollar1pct": -828775578,
+    "gross_gex": 172736556,
+    "call_wall": 600.0,
+    "put_wall": 520.0,
+    "abs_wall": 520.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -8035247515,
+    "net_dex_shares": -14297848,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 520.0,
+    "delta_ok_pct": 1.0,
+    "spot": 561.99,
+    "ts": 1785077933,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.405,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.977,
+    "n_contracts": 1263,
+    "n_strikes_populated": 149
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "NVDA": {
+   "spot": 207.03,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     210.0,
+     83743
+    ],
+    [
+     215.0,
+     79262
+    ],
+    [
+     217.5,
+     61768
+    ]
+   ],
+   "put_walls": [
+    [
+     205.0,
+     31768
+    ],
+    [
+     200.0,
+     28093
+    ],
+    [
+     195.0,
+     22962
+    ]
+   ],
+   "max_pain": 210.0,
+   "pc_oi": 1.417,
+   "gex": {
+    "flip": 202.31,
+    "flip_all": 202.31,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": -2.19,
+    "score": 86.145,
+    "bias": "CALL",
+    "poc": 220.0,
+    "magnets": [
+     200.0,
+     210.0,
+     220.0
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "call_usd": 315878692,
+    "put_usd": -229734126,
+    "net_gex": 86144565,
+    "net_gex_dollar1pct": 178190034,
+    "gross_gex": 285313320,
+    "call_wall": 210.0,
+    "put_wall": 200.0,
+    "abs_wall": 220.0,
+    "abs_wall_kind": "pin",
+    "net_dex": 2249631141,
+    "net_dex_shares": 10875664,
+    "dex_sentiment": "alcista",
+    "dex_flow_impact": "mm_compra",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 220.0,
+    "delta_ok_pct": 1.0,
+    "spot": 206.85,
+    "ts": 1785077932,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.405,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.892,
+    "n_contracts": 523,
+    "n_strikes_populated": 50
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "MU": {
+   "spot": 923.75,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     900.0,
+     3002
+    ],
+    [
+     950.0,
+     2826
+    ],
+    [
+     915.0,
+     2201
+    ]
+   ],
+   "put_walls": [
+    [
+     900.0,
+     6234
+    ],
+    [
+     950.0,
+     4235
+    ],
+    [
+     940.0,
+     3642
+    ]
+   ],
+   "max_pain": 942.5,
+   "pc_oi": 2.381,
+   "gex": {
+    "flip": 991.5,
+    "flip_all": 991.5,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 7.17,
+    "score": -21.981,
+    "bias": "PUT",
+    "poc": 850.0,
+    "magnets": [
+     800.0,
+     850.0,
+     1000.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 30356495,
+    "put_usd": -52337525,
+    "net_gex": -21981030,
+    "net_gex_dollar1pct": -203370687,
+    "gross_gex": 48147781,
+    "call_wall": 1000.0,
+    "put_wall": 800.0,
+    "abs_wall": 850.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -2383058399,
+    "net_dex_shares": -2575695,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 1190.0,
+    "delta_ok_pct": 1.0,
+    "spot": 925.21,
+    "ts": 1785077933,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.6,
+    "chain_band_convergida": false,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.917,
+    "n_contracts": 2138,
+    "n_strikes_populated": 245
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "MSFT": {
+   "spot": 381.61,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     390.0,
+     6356
+    ],
+    [
+     395.0,
+     4514
+    ],
+    [
+     392.5,
+     3481
+    ]
+   ],
+   "put_walls": [
+    [
+     370.0,
+     6410
+    ],
+    [
+     375.0,
+     6012
+    ],
+    [
+     385.0,
+     4607
+    ]
+   ],
+   "max_pain": 380.0,
+   "pc_oi": 0.569,
+   "gex": {
+    "flip": 356.02,
+    "flip_all": 356.02,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": -6.72,
+    "score": 60.845,
+    "bias": "CALL",
+    "poc": 390.0,
+    "magnets": [
+     380.0,
+     390.0
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "call_usd": 128102033,
+    "put_usd": -67256776,
+    "net_gex": 60845257,
+    "net_gex_dollar1pct": 232215923,
+    "gross_gex": 118212565,
+    "call_wall": 390.0,
+    "put_wall": 380.0,
+    "abs_wall": 390.0,
+    "abs_wall_kind": "pin",
+    "net_dex": 1103538772,
+    "net_dex_shares": 2891494,
+    "dex_sentiment": "alcista",
+    "dex_flow_impact": "mm_compra",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 390.0,
+    "delta_ok_pct": 1.0,
+    "spot": 381.65,
+    "ts": 1785077934,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.6,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.959,
+    "n_contracts": 795,
+    "n_strikes_populated": 118
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "SKHY": {
+   "spot": 155.42,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     160.0,
+     1663
+    ],
+    [
+     152.5,
+     1384
+    ],
+    [
+     157.5,
+     478
+    ]
+   ],
+   "put_walls": [
+    [
+     150.0,
+     5393
+    ],
+    [
+     160.0,
+     2547
+    ],
+    [
+     150.0,
+     2158
+    ]
+   ],
+   "max_pain": 157.5,
+   "pc_oi": 4.255,
+   "gex": {
+    "flip": 189.29,
+    "flip_all": 189.29,
+    "flip_src": "recompute_0.60_1.50",
+    "flip_dist_pct": 21.75,
+    "score": -8.967,
+    "bias": "PUT",
+    "poc": 135.0,
+    "magnets": [
+     135.0,
+     200.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 6524685,
+    "put_usd": -15491744,
+    "net_gex": -8967059,
+    "net_gex_dollar1pct": -13941984,
+    "gross_gex": 17605386,
+    "call_wall": 200.0,
+    "put_wall": 135.0,
+    "abs_wall": 135.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -161899057,
+    "net_dex_shares": -1041285,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 125.0,
+    "delta_ok_pct": 1.0,
+    "spot": 155.48,
+    "ts": 1785077936,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.6,
+    "chain_band_convergida": false,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 1.0,
+    "n_contracts": 391,
+    "n_strikes_populated": 87
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "AMZN": {
+   "spot": 232.17,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     240.0,
+     11099
+    ],
+    [
+     237.5,
+     8271
+    ],
+    [
+     235.0,
+     5995
+    ]
+   ],
+   "put_walls": [
+    [
+     232.5,
+     7855
+    ],
+    [
+     235.0,
+     7004
+    ],
+    [
+     230.0,
+     6334
+    ]
+   ],
+   "max_pain": 235.0,
+   "pc_oi": 2.061,
+   "gex": {
+    "flip": 224.23,
+    "flip_all": 224.23,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": -3.52,
+    "score": 28.965,
+    "bias": "CALL",
+    "poc": 230.0,
+    "magnets": [
+     230.0,
+     250.0
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "call_usd": 115461030,
+    "put_usd": -86495784,
+    "net_gex": 28965246,
+    "net_gex_dollar1pct": 67315232,
+    "gross_gex": 124005545,
+    "call_wall": 250.0,
+    "put_wall": 230.0,
+    "abs_wall": 230.0,
+    "abs_wall_kind": "pin",
+    "net_dex": 47520836,
+    "net_dex_shares": 204479,
+    "dex_sentiment": "alcista",
+    "dex_flow_impact": "mm_compra",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 230.0,
+    "delta_ok_pct": 1.0,
+    "spot": 232.4,
+    "ts": 1785077934,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.405,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.933,
+    "n_contracts": 572,
+    "n_strikes_populated": 61
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "INTC": {
+   "spot": 92.13,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     95.0,
+     3186
+    ],
+    [
+     90.0,
+     2707
+    ],
+    [
+     96.0,
+     2565
+    ]
+   ],
+   "put_walls": [
+    [
+     90.0,
+     12697
+    ],
+    [
+     95.0,
+     8876
+    ],
+    [
+     88.0,
+     4247
+    ]
+   ],
+   "max_pain": 95.0,
+   "pc_oi": 4.23,
+   "gex": {
+    "flip": 95.24,
+    "flip_all": 95.24,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 2.93,
+    "score": -8.029,
+    "bias": "PUT",
+    "poc": 120.0,
+    "magnets": [
+     90.0,
+     110.0,
+     120.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 40466342,
+    "put_usd": -48495270,
+    "net_gex": -8028929,
+    "net_gex_dollar1pct": -7429168,
+    "gross_gex": 47907767,
+    "call_wall": 110.0,
+    "put_wall": 90.0,
+    "abs_wall": 120.0,
+    "abs_wall_kind": "pin",
+    "net_dex": -207338994,
+    "net_dex_shares": -2240776,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 100.0,
+    "delta_ok_pct": 1.0,
+    "spot": 92.53,
+    "ts": 1785077934,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.6,
+    "chain_band_convergida": false,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.833,
+    "n_contracts": 853,
+    "n_strikes_populated": 111
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "DRAM": {
+   "spot": 53.58,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     55.0,
+     3116
+    ],
+    [
+     56.0,
+     2143
+    ],
+    [
+     55.0,
+     1809
+    ]
+   ],
+   "put_walls": [
+    [
+     55.0,
+     25192
+    ],
+    [
+     55.0,
+     6496
+    ],
+    [
+     51.0,
+     6042
+    ]
+   ],
+   "max_pain": 55.0,
+   "pc_oi": 5.455,
+   "gex": {
+    "flip": 56.12,
+    "flip_all": 56.12,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 4.64,
+    "score": -16.449,
+    "bias": "PUT",
+    "poc": 50.0,
+    "magnets": [
+     50.0,
+     60.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 53735713,
+    "put_usd": -70184896,
+    "net_gex": -16449183,
+    "net_gex_dollar1pct": -8821697,
+    "gross_gex": 84104863,
+    "call_wall": 60.0,
+    "put_wall": 50.0,
+    "abs_wall": 50.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -508517974,
+    "net_dex_shares": -9481969,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 50.0,
+    "delta_ok_pct": 1.0,
+    "spot": 53.63,
+    "ts": 1785077936,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.6,
+    "chain_band_convergida": false,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.995,
+    "n_contracts": 580,
+    "n_strikes_populated": 101
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "STX": {
+   "spot": 853.25,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     850.0,
+     1908
+    ],
+    [
+     855.0,
+     157
+    ],
+    [
+     850.0,
+     126
+    ]
+   ],
+   "put_walls": [
+    [
+     850.0,
+     2338
+    ],
+    [
+     860.0,
+     364
+    ],
+    [
+     822.5,
+     332
+    ]
+   ],
+   "max_pain": 840.0,
+   "pc_oi": 0.351,
+   "gex": {
+    "flip": 750.33,
+    "flip_all": 750.33,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": -11.83,
+    "score": 1.445,
+    "bias": "CALL",
+    "poc": 850.0,
+    "magnets": [
+     750.0,
+     850.0,
+     950.0
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "call_usd": 3682282,
+    "put_usd": -2237349,
+    "net_gex": 1444933,
+    "net_gex_dollar1pct": 12296377,
+    "gross_gex": 3969958,
+    "call_wall": 950.0,
+    "put_wall": 750.0,
+    "abs_wall": 850.0,
+    "abs_wall_kind": "pin",
+    "net_dex": 427899502,
+    "net_dex_shares": 502820,
+    "dex_sentiment": "alcista",
+    "dex_flow_impact": "mm_compra",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 850.0,
+    "delta_ok_pct": 1.0,
+    "spot": 851.0,
+    "ts": 1785077937,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.6,
+    "chain_band_convergida": false,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.956,
+    "n_contracts": 1053,
+    "n_strikes_populated": 211
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "TSM": {
+   "spot": 402.86,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     400.0,
+     4584
+    ],
+    [
+     425.0,
+     4073
+    ],
+    [
+     410.0,
+     3230
+    ]
+   ],
+   "put_walls": [
+    [
+     420.0,
+     12272
+    ],
+    [
+     385.0,
+     9673
+    ],
+    [
+     380.0,
+     7419
+    ]
+   ],
+   "max_pain": 420.0,
+   "pc_oi": 2.868,
+   "gex": {
+    "flip": 417.55,
+    "flip_all": 417.55,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 3.71,
+    "score": -14.891,
+    "bias": "PUT",
+    "poc": 380.0,
+    "magnets": [
+     380.0,
+     400.0,
+     450.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 42992832,
+    "put_usd": -57884085,
+    "net_gex": -14891253,
+    "net_gex_dollar1pct": -59956651,
+    "gross_gex": 54553195,
+    "call_wall": 450.0,
+    "put_wall": 400.0,
+    "abs_wall": 380.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -695237169,
+    "net_dex_shares": -1726740,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 420.0,
+    "delta_ok_pct": 1.0,
+    "spot": 402.63,
+    "ts": 1785077935,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.405,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.91,
+    "n_contracts": 473,
+    "n_strikes_populated": 97
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "QQQ": {
+   "spot": 684.66,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     690.0,
+     7106
+    ],
+    [
+     694.0,
+     3766
+    ],
+    [
+     691.0,
+     3283
+    ]
+   ],
+   "put_walls": [
+    [
+     680.0,
+     31415
+    ],
+    [
+     685.0,
+     26591
+    ],
+    [
+     690.0,
+     20371
+    ]
+   ],
+   "max_pain": 690.0,
+   "pc_oi": 4.784,
+   "gex": {
+    "flip": 709.97,
+    "flip_all": 709.97,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 3.64,
+    "score": -761.916,
+    "bias": "PUT",
+    "poc": 690.0,
+    "magnets": [
+     680.0,
+     690.0,
+     700.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 305345218,
+    "put_usd": -1067261136,
+    "net_gex": -761915918,
+    "net_gex_dollar1pct": -5219581188,
+    "gross_gex": 975969652,
+    "call_wall": 700.0,
+    "put_wall": 680.0,
+    "abs_wall": 690.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -36323662472,
+    "net_dex_shares": -53022600,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 700.0,
+    "delta_ok_pct": 1.0,
+    "spot": 685.06,
+    "ts": 1785077932,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.18,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.947,
+    "n_contracts": 2180,
+    "n_strikes_populated": 184
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "TXN": {
+   "spot": 279.55,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     287.5,
+     1322
+    ],
+    [
+     292.5,
+     1236
+    ],
+    [
+     295.0,
+     680
+    ]
+   ],
+   "put_walls": [
+    [
+     270.0,
+     736
+    ],
+    [
+     265.0,
+     637
+    ],
+    [
+     267.5,
+     549
+    ]
+   ],
+   "max_pain": 280.0,
+   "pc_oi": 0.253,
+   "gex": {
+    "flip": 267.63,
+    "flip_all": 267.63,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": -4.08,
+    "score": 2.178,
+    "bias": "CALL",
+    "poc": 260.0,
+    "magnets": [
+     260.0,
+     287.5
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "call_usd": 6946346,
+    "put_usd": -4768099,
+    "net_gex": 2178247,
+    "net_gex_dollar1pct": 6077309,
+    "gross_gex": 7889291,
+    "call_wall": 287.5,
+    "put_wall": 260.0,
+    "abs_wall": 260.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": 23809058,
+    "net_dex_shares": 85337,
+    "dex_sentiment": "alcista",
+    "dex_flow_impact": "mm_compra",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 285.0,
+    "delta_ok_pct": 1.0,
+    "spot": 279.0,
+    "ts": 1785077935,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.6,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.934,
+    "n_contracts": 425,
+    "n_strikes_populated": 91
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "SPCX": {
+   "spot": 115.0,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     120.0,
+     11644
+    ],
+    [
+     115.0,
+     5332
+    ],
+    [
+     116.0,
+     3996
+    ]
+   ],
+   "put_walls": [
+    [
+     115.0,
+     16594
+    ],
+    [
+     110.0,
+     14433
+    ],
+    [
+     110.0,
+     13339
+    ]
+   ],
+   "max_pain": 120.0,
+   "pc_oi": 3.533,
+   "gex": {
+    "flip": 152.12,
+    "flip_all": 152.12,
+    "flip_src": "recompute_0.60_1.50",
+    "flip_dist_pct": 32.25,
+    "score": -44.419,
+    "bias": "PUT",
+    "poc": 110.0,
+    "magnets": [
+     110.0,
+     130.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 34497228,
+    "put_usd": -78916057,
+    "net_gex": -44418829,
+    "net_gex_dollar1pct": -51090537,
+    "gross_gex": 59833746,
+    "call_wall": 130.0,
+    "put_wall": 110.0,
+    "abs_wall": 110.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -2200285038,
+    "net_dex_shares": -19129586,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 125.0,
+    "delta_ok_pct": 1.0,
+    "spot": 115.02,
+    "ts": 1785077936,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.6,
+    "chain_band_convergida": false,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.952,
+    "n_contracts": 557,
+    "n_strikes_populated": 102
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "WDC": {
+   "spot": 519.81,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     525.0,
+     734
+    ],
+    [
+     520.0,
+     233
+    ],
+    [
+     500.0,
+     230
+    ]
+   ],
+   "put_walls": [
+    [
+     540.0,
+     2025
+    ],
+    [
+     500.0,
+     448
+    ],
+    [
+     500.0,
+     339
+    ]
+   ],
+   "max_pain": 540.0,
+   "pc_oi": 3.902,
+   "gex": {
+    "flip": 533.2,
+    "flip_all": 533.2,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 2.57,
+    "score": -1.071,
+    "bias": "PUT",
+    "poc": 540.0,
+    "magnets": [
+     470.0,
+     540.0,
+     600.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 4514878,
+    "put_usd": -5586288,
+    "net_gex": -1071410,
+    "net_gex_dollar1pct": -5569512,
+    "gross_gex": 6602103,
+    "call_wall": 600.0,
+    "put_wall": 470.0,
+    "abs_wall": 540.0,
+    "abs_wall_kind": "pin",
+    "net_dex": -79807741,
+    "net_dex_shares": -153527,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 540.0,
+    "delta_ok_pct": 1.0,
+    "spot": 519.83,
+    "ts": 1785077937,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.6,
+    "chain_band_convergida": false,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.93,
+    "n_contracts": 778,
+    "n_strikes_populated": 186
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "GOOGL": {
+   "spot": 319.58,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     330.0,
+     7342
+    ],
+    [
+     320.0,
+     4941
+    ],
+    [
+     325.0,
+     4858
+    ]
+   ],
+   "put_walls": [
+    [
+     317.5,
+     6006
+    ],
+    [
+     320.0,
+     5923
+    ],
+    [
+     310.0,
+     5845
+    ]
+   ],
+   "max_pain": 325.0,
+   "pc_oi": 0.84,
+   "gex": {
+    "flip": 319.34,
+    "flip_all": 319.34,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 0.01,
+    "score": -3.56,
+    "bias": "PUT",
+    "poc": 310.0,
+    "magnets": [
+     310.0,
+     320.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 68871188,
+    "put_usd": -72431588,
+    "net_gex": -3560400,
+    "net_gex_dollar1pct": -11368356,
+    "gross_gex": 68879055,
+    "call_wall": 320.0,
+    "put_wall": 310.0,
+    "abs_wall": 310.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -712861731,
+    "net_dex_shares": -2232577,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 350.0,
+    "delta_ok_pct": 1.0,
+    "spot": 319.3,
+    "ts": 1785077934,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.405,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.851,
+    "n_contracts": 630,
+    "n_strikes_populated": 68
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "AMD": {
+   "spot": 523.41,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     515.0,
+     4700
+    ],
+    [
+     532.5,
+     4613
+    ],
+    [
+     540.0,
+     2759
+    ]
+   ],
+   "put_walls": [
+    [
+     500.0,
+     4129
+    ],
+    [
+     505.0,
+     3191
+    ],
+    [
+     510.0,
+     2766
+    ]
+   ],
+   "max_pain": 530.0,
+   "pc_oi": 1.107,
+   "gex": {
+    "flip": 506.62,
+    "flip_all": 506.62,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": -3.13,
+    "score": 6.84,
+    "bias": "CALL",
+    "poc": 600.0,
+    "magnets": [
+     500.0,
+     600.0
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "call_usd": 33019953,
+    "put_usd": -26179813,
+    "net_gex": 6840140,
+    "net_gex_dollar1pct": 35773932,
+    "gross_gex": 31474635,
+    "call_wall": 600.0,
+    "put_wall": 500.0,
+    "abs_wall": 600.0,
+    "abs_wall_kind": "pin",
+    "net_dex": 3266373021,
+    "net_dex_shares": 6245455,
+    "dex_sentiment": "alcista",
+    "dex_flow_impact": "mm_compra",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 300.0,
+    "delta_ok_pct": 1.0,
+    "spot": 523.0,
+    "ts": 1785077934,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.6,
+    "chain_band_convergida": false,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.983,
+    "n_contracts": 1648,
+    "n_strikes_populated": 187
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "SNDK": {
+   "spot": 1440.88,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     1425.0,
+     719
+    ],
+    [
+     1450.0,
+     478
+    ],
+    [
+     1400.0,
+     409
+    ]
+   ],
+   "put_walls": [
+    [
+     1400.0,
+     3883
+    ],
+    [
+     1400.0,
+     1348
+    ],
+    [
+     1450.0,
+     883
+    ]
+   ],
+   "max_pain": 1450.0,
+   "pc_oi": 3.505,
+   "gex": {
+    "flip": 1748.0,
+    "flip_all": 1748.0,
+    "flip_src": "recompute_0.60_1.50",
+    "flip_dist_pct": 20.93,
+    "score": -6.491,
+    "bias": "PUT",
+    "poc": 1390.0,
+    "magnets": [
+     1390.0,
+     1600.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 6593636,
+    "put_usd": -13084989,
+    "net_gex": -6491353,
+    "net_gex_dollar1pct": -93829910,
+    "gross_gex": 10760277,
+    "call_wall": 1600.0,
+    "put_wall": 1390.0,
+    "abs_wall": 1390.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -2469080224,
+    "net_dex_shares": -1708162,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 1390.0,
+    "delta_ok_pct": 1.0,
+    "spot": 1445.46,
+    "ts": 1785077937,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.6,
+    "chain_band_convergida": false,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.977,
+    "n_contracts": 1833,
+    "n_strikes_populated": 312
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "LRCX": {
+   "spot": 304.98,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     320.0,
+     2029
+    ],
+    [
+     300.0,
+     519
+    ],
+    [
+     320.0,
+     449
+    ]
+   ],
+   "put_walls": [
+    [
+     290.0,
+     3346
+    ],
+    [
+     310.0,
+     2436
+    ],
+    [
+     300.0,
+     976
+    ]
+   ],
+   "max_pain": 317.5,
+   "pc_oi": 2.313,
+   "gex": {
+    "flip": 330.45,
+    "flip_all": 330.45,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 7.68,
+    "score": -2.687,
+    "bias": "PUT",
+    "poc": 240.0,
+    "magnets": [
+     240.0,
+     310.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 7986143,
+    "put_usd": -10673605,
+    "net_gex": -2687462,
+    "net_gex_dollar1pct": -8247552,
+    "gross_gex": 11187412,
+    "call_wall": 310.0,
+    "put_wall": 240.0,
+    "abs_wall": 240.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -313231142,
+    "net_dex_shares": -1020663,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 360.0,
+    "delta_ok_pct": 1.0,
+    "spot": 306.89,
+    "ts": 1785077936,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.6,
+    "chain_band_convergida": false,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.993,
+    "n_contracts": 531,
+    "n_strikes_populated": 114
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "ASML": {
+   "spot": 1756.51,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     1780.0,
+     168
+    ],
+    [
+     1767.5,
+     151
+    ],
+    [
+     1790.0,
+     124
+    ]
+   ],
+   "put_walls": [
+    [
+     1750.0,
+     280
+    ],
+    [
+     1750.0,
+     163
+    ],
+    [
+     1755.0,
+     161
+    ]
+   ],
+   "max_pain": 1755.0,
+   "pc_oi": 2.107,
+   "gex": {
+    "flip": 1783.09,
+    "flip_all": 1783.09,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 1.49,
+    "score": -0.358,
+    "bias": "PUT",
+    "poc": 1900.0,
+    "magnets": [
+     1700.0,
+     1900.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 3476910,
+    "put_usd": -3835267,
+    "net_gex": -358357,
+    "net_gex_dollar1pct": -6296341,
+    "gross_gex": 3744940,
+    "call_wall": 1900.0,
+    "put_wall": 1700.0,
+    "abs_wall": 1900.0,
+    "abs_wall_kind": "pin",
+    "net_dex": 141922744,
+    "net_dex_shares": 80776,
+    "dex_sentiment": "alcista",
+    "dex_flow_impact": "mm_compra",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 1850.0,
+    "delta_ok_pct": 1.0,
+    "spot": 1757.0,
+    "ts": 1785077935,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.405,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.99,
+    "n_contracts": 1148,
+    "n_strikes_populated": 245
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "AAPL": {
+   "spot": 333.48,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     332.5,
+     17595
+    ],
+    [
+     330.0,
+     17320
+    ],
+    [
+     335.0,
+     13719
+    ]
+   ],
+   "put_walls": [
+    [
+     320.0,
+     13555
+    ],
+    [
+     315.0,
+     8718
+    ],
+    [
+     327.5,
+     7366
+    ]
+   ],
+   "max_pain": 325.0,
+   "pc_oi": 0.836,
+   "gex": {
+    "flip": 304.69,
+    "flip_all": 304.69,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": -8.63,
+    "score": 139.46,
+    "bias": "CALL",
+    "poc": 345.0,
+    "magnets": [
+     315.0,
+     345.0
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "call_usd": 216275122,
+    "put_usd": -76814824,
+    "net_gex": 139460297,
+    "net_gex_dollar1pct": 465058253,
+    "gross_gex": 191314151,
+    "call_wall": 345.0,
+    "put_wall": 315.0,
+    "abs_wall": 345.0,
+    "abs_wall_kind": "pin",
+    "net_dex": 7657123292,
+    "net_dex_shares": 22961955,
+    "dex_sentiment": "alcista",
+    "dex_flow_impact": "mm_compra",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 310.0,
+    "delta_ok_pct": 1.0,
+    "spot": 333.47,
+    "ts": 1785077934,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.27,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.844,
+    "n_contracts": 487,
+    "n_strikes_populated": 56
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "SPY": {
+   "spot": 738.78,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     745.0,
+     19711
+    ],
+    [
+     746.0,
+     14334
+    ],
+    [
+     742.0,
+     13678
+    ]
+   ],
+   "put_walls": [
+    [
+     730.0,
+     25853
+    ],
+    [
+     740.0,
+     22235
+    ],
+    [
+     735.0,
+     19993
+    ]
+   ],
+   "max_pain": 741.0,
+   "pc_oi": 1.287,
+   "gex": {
+    "flip": 750.16,
+    "flip_all": 750.16,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 1.53,
+    "score": -1256.434,
+    "bias": "PUT",
+    "poc": 740.0,
+    "magnets": [
+     730.0,
+     740.0,
+     750.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 985822927,
+    "put_usd": -2242256729,
+    "net_gex": -1256433802,
+    "net_gex_dollar1pct": -9283035505,
+    "gross_gex": 1895786123,
+    "call_wall": 750.0,
+    "put_wall": 730.0,
+    "abs_wall": 740.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -31642729728,
+    "net_dex_shares": -42827581,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 740.0,
+    "delta_ok_pct": 1.0,
+    "spot": 738.84,
+    "ts": 1785077932,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.18,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.985,
+    "n_contracts": 2250,
+    "n_strikes_populated": 197
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "QCOM": {
+   "spot": 167.16,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     175.0,
+     1689
+    ],
+    [
+     175.0,
+     886
+    ],
+    [
+     170.0,
+     739
+    ]
+   ],
+   "put_walls": [
+    [
+     167.5,
+     4999
+    ],
+    [
+     160.0,
+     2737
+    ],
+    [
+     162.5,
+     2071
+    ]
+   ],
+   "max_pain": 172.5,
+   "pc_oi": 2.385,
+   "gex": {
+    "flip": 170.53,
+    "flip_all": 170.53,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 2.3,
+    "score": -1.368,
+    "bias": "PUT",
+    "poc": 160.0,
+    "magnets": [
+     160.0,
+     200.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 12408515,
+    "put_usd": -13776262,
+    "net_gex": -1367747,
+    "net_gex_dollar1pct": -2280035,
+    "gross_gex": 9217480,
+    "call_wall": 200.0,
+    "put_wall": 160.0,
+    "abs_wall": 160.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -379460239,
+    "net_dex_shares": -2276306,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 200.0,
+    "delta_ok_pct": 1.0,
+    "spot": 166.7,
+    "ts": 1785077935,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.6,
+    "chain_band_convergida": false,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.974,
+    "n_contracts": 338,
+    "n_strikes_populated": 79
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "AVGO": {
+   "spot": 381.69,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     390.0,
+     6388
+    ],
+    [
+     395.0,
+     2911
+    ],
+    [
+     380.0,
+     2171
+    ]
+   ],
+   "put_walls": [
+    [
+     380.0,
+     2455
+    ],
+    [
+     370.0,
+     2098
+    ],
+    [
+     390.0,
+     1632
+    ]
+   ],
+   "max_pain": 390.0,
+   "pc_oi": 1.185,
+   "gex": {
+    "flip": 378.64,
+    "flip_all": 378.64,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": -0.82,
+    "score": 2.788,
+    "bias": "CALL",
+    "poc": 410.0,
+    "magnets": [
+     380.0,
+     410.0
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "call_usd": 36064662,
+    "put_usd": -33277014,
+    "net_gex": 2787648,
+    "net_gex_dollar1pct": 10641846,
+    "gross_gex": 38661196,
+    "call_wall": 410.0,
+    "put_wall": 380.0,
+    "abs_wall": 410.0,
+    "abs_wall_kind": "pin",
+    "net_dex": 159977561,
+    "net_dex_shares": 419064,
+    "dex_sentiment": "alcista",
+    "dex_flow_impact": "mm_compra",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 300.0,
+    "delta_ok_pct": 1.0,
+    "spot": 381.75,
+    "ts": 1785077935,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.6,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.955,
+    "n_contracts": 890,
+    "n_strikes_populated": 119
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "META": {
+   "spot": 595.82,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     600.0,
+     7982
+    ],
+    [
+     610.0,
+     3824
+    ],
+    [
+     605.0,
+     1725
+    ]
+   ],
+   "put_walls": [
+    [
+     600.0,
+     3528
+    ],
+    [
+     610.0,
+     2468
+    ],
+    [
+     585.0,
+     2112
+    ]
+   ],
+   "max_pain": 600.0,
+   "pc_oi": 1.018,
+   "gex": {
+    "flip": 580.3,
+    "flip_all": 580.3,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": -2.63,
+    "score": 14.907,
+    "bias": "CALL",
+    "poc": 700.0,
+    "magnets": [
+     580.0,
+     600.0,
+     700.0
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "call_usd": 62939806,
+    "put_usd": -48032322,
+    "net_gex": 14907485,
+    "net_gex_dollar1pct": 88842647,
+    "gross_gex": 65138990,
+    "call_wall": 600.0,
+    "put_wall": 580.0,
+    "abs_wall": 700.0,
+    "abs_wall_kind": "pin",
+    "net_dex": 265093217,
+    "net_dex_shares": 444817,
+    "dex_sentiment": "alcista",
+    "dex_flow_impact": "mm_compra",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 700.0,
+    "delta_ok_pct": 1.0,
+    "spot": 595.96,
+    "ts": 1785077934,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.6,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.953,
+    "n_contracts": 1274,
+    "n_strikes_populated": 176
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "TSLA": {
+   "spot": 313.58,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     330.0,
+     19217
+    ],
+    [
+     325.0,
+     7750
+    ],
+    [
+     320.0,
+     6640
+    ]
+   ],
+   "put_walls": [
+    [
+     300.0,
+     15690
+    ],
+    [
+     320.0,
+     14677
+    ],
+    [
+     310.0,
+     11387
+    ]
+   ],
+   "max_pain": 322.5,
+   "pc_oi": 1.842,
+   "gex": {
+    "flip": 311.86,
+    "flip_all": 311.86,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": -0.47,
+    "score": -1.822,
+    "bias": "PUT",
+    "poc": 300.0,
+    "magnets": [
+     300.0,
+     350.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 63642651,
+    "put_usd": -65464914,
+    "net_gex": -1822263,
+    "net_gex_dollar1pct": -5709696,
+    "gross_gex": 76874526,
+    "call_wall": 350.0,
+    "put_wall": 300.0,
+    "abs_wall": 300.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -1507246710,
+    "net_dex_shares": -4810413,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 320.0,
+    "delta_ok_pct": 1.0,
+    "spot": 313.33,
+    "ts": 1785077933,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.6,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.788,
+    "n_contracts": 897,
+    "n_strikes_populated": 116
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "NOK": {
+   "spot": 9.09,
+   "exp": "20260724",
+   "call_walls": [
+    [
+     9.5,
+     2412
+    ],
+    [
+     9.0,
+     1022
+    ],
+    [
+     9.5,
+     892
+    ]
+   ],
+   "put_walls": [
+    [
+     9.0,
+     10234
+    ],
+    [
+     9.5,
+     9487
+    ],
+    [
+     9.0,
+     7823
+    ]
+   ],
+   "max_pain": 9.5,
+   "pc_oi": 3.862,
+   "gex": {
+    "flip": 9.21,
+    "flip_all": 9.21,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 1.34,
+    "score": -3.709,
+    "bias": "PUT",
+    "poc": 9.0,
+    "magnets": [
+     9.0,
+     10.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "call_usd": 27547900,
+    "put_usd": -31256634,
+    "net_gex": -3708734,
+    "net_gex_dollar1pct": -337124,
+    "gross_gex": 32954509,
+    "call_wall": 10.0,
+    "put_wall": 9.0,
+    "abs_wall": 9.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -73440996,
+    "net_dex_shares": -8079318,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 12.0,
+    "delta_ok_pct": 1.0,
+    "spot": 9.09,
+    "ts": 1785077935,
+    "src": "gex_core + chain_full (griegas MEDIDAS: polygon_directo)",
+    "chain_date": "2026-07-26",
+    "chain_snapshot_local": "2026-07-26 10:01:04",
+    "chain_band": 0.6,
+    "chain_band_convergida": false,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.842,
+    "n_contracts": 117,
+    "n_strikes_populated": 18
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  }
+ }
+}
