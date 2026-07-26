@@ -9,7 +9,14 @@ viernes) para la flota liquida. Alerta voz+banner cuando el flujo se dispara:
     = techo local probable / iman — esperar pullback, no perseguir)
 Anti-spam: alerta solo al CRUZAR umbral (histeresis 1.5/0.5) por simbolo.
 Escribe data/opt_flow.txt. clientId 82. Jamas ordena. Reemplaza al opt_sentinel
-del 16-jul (fosil: exit-advisor de un call vencido; archivado en git)."""
+del 16-jul (fosil: exit-advisor de un call vencido; archivado en git).
+
+v2 (2026-07-26): el ratio de VOLUMEN (`pc`) no distingue comprador de
+vendedor -> cuenta igual puts comprados (bajista) que puts vendidos
+(alcista). Overlay de premium NETO por lado via Unusual Whales
+`net-prem-ticks` (agresor YA firmado por UW, ask-side menos bid-side) en
+`uw_premium.py`: banner SIN VOZ (sin latencia medida ni n_eff, ~/CLAUDE.md) —
+solo lectura, solo historial para calibrar."""
 import json, os, subprocess, sys, time
 from datetime import date, timedelta
 HOME = os.path.expanduser("~")
@@ -17,11 +24,13 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # NUNCA har
 os.chdir(REPO); sys.path.insert(0, REPO); sys.path.insert(0, os.path.join(REPO, "scripts"))
 from ib_insync import IB, Stock, Option
 import em_envelope   # tabla de festivos real (misma fuente que fleet_healthcheck.sessions_since)
+import uw_premium
 
 FLEET = ["NVDA","AMD","MU","INTC","TSM","SMH","QQQ","SPY","AAPL","MSFT","META","AMZN","TSLA","AVGO","GOOGL","NOK","TXN","QCOM","NFLX","GLD","XLK","LRCX","SNDK","WDC","STX"]
 VMIN = 3000          # volumen total minimo para que el ratio signifique algo
 PC_PUTS, PC_CALLS = 2.0, 0.35
 EXIT_PUTS, EXIT_CALLS = 1.5, 0.5   # histeresis
+UW_POLL_S = 900   # 15min: conservador con el cupo del trial, 25 syms x 78 rondas/dia seria abuso
 
 def next_friday():
     d = date.today()
@@ -64,6 +73,12 @@ try:
         state = st_raw.get("state", {})
 except Exception:
     pass
+
+UW_TOK = uw_premium.token()   # vacio -> overlay se salta entero, degradacion limpia
+uw_last = {}   # sym -> epoch del ultimo poll UW (persiste entre reconexiones IB)
+if not UW_TOK:
+    print("whale watch: sin UW_TOKEN, overlay de premium neto DESACTIVADO", file=sys.stderr)
+
 while True:
     try:
         if not in_session():
@@ -161,7 +176,25 @@ while True:
                         if cvol or pvol:
                             vc, vp, tag = cvol, pvol, " (clase)"
                     pc = vp / max(vc, 1); tot = vc + vp
-                    lines.append(f"{s} volC {vc:,.0f} volP {vp:,.0f} P/C {pc:.2f}{tag}")
+                    uw_suffix = ""
+                    if UW_TOK and time.time() - uw_last.get(s, 0) >= UW_POLL_S:
+                        uw_last[s] = time.time()
+                        try:
+                            uw_rows = uw_premium.fetch_net_prem_ticks(s, UW_TOK)
+                            uw_age, uw_ts = uw_premium.latest_feed_age_s(uw_rows)
+                            uw_prem = uw_premium.signed_premium(uw_rows, window_min=15)
+                            if uw_prem is not None:
+                                rec = {"ts": int(time.time()), "sym": s, "src": "unusual_whales_trial",
+                                       "feed_ts": uw_ts, "feed_age_s": None if uw_age is None else round(uw_age, 1),
+                                       **uw_prem}
+                                jappend("data/uw_premium_flow_hist.jsonl", rec)
+                                lado = "BULLISH" if uw_prem["signed_premium"] > 0 else "BEARISH"
+                                uw_suffix = (f" | UW prem neto ${uw_prem['signed_premium']:,.0f} {lado}"
+                                             f" (call ${uw_prem['net_call_premium']:,.0f} put ${uw_prem['net_put_premium']:,.0f})"
+                                             f" age {rec['feed_age_s']}s [banner sin voz: latencia sin medir en sesion]")
+                        except Exception as e:
+                            print(f"{s}: UW premium fallo ({e})", file=sys.stderr)
+                    lines.append(f"{s} volC {vc:,.0f} volP {vp:,.0f} P/C {pc:.2f}{tag}{uw_suffix}")
                     jappend("data/whale_flow_hist.jsonl",
                             {"ts": int(time.time()), "sym": s, "vc": int(vc), "vp": int(vp),
                              "pc": round(pc, 3), "spot": round(float(spot), 4),

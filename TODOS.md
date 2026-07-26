@@ -578,11 +578,35 @@ cinco NEGATIVOS** (coincide con nuestro 19/25 en NEG y con su propio recap "Deal
       token con al menos una letra; `$200` (solo dígitos) se deja intacto porque X no lo cuenta;
       los importes pierden el `$` y ganan ` USD` para no perder el significado. `count_cashtags()`
       expuesto y **14 tests** con posts reales de la flota.
-- [ ] **[pendiente]** opt_whale_watch v2: alarma por PREMIUM NETO en dolares (mid×vol por lado,
-      umbral ±$20M o delta brusco/30min) ademas del ratio de volumen. *Por qué importa*: el
-      **tide -53M del 7/21 no sonó** porque el P/C de volumen era 0.86 — las ballenas caras y
-      silenciosas también deben sonar, y hoy son invisibles. MEDIDO: `scripts/opt_whale_watch.py`
-      tiene **0 refs** a `premium`/`notional`/`mid`; la única métrica es `pc = vp/max(vc,1)` (`:157`).
+- [x] ~~opt_whale_watch v2: alarma por PREMIUM NETO en dolares ademas del ratio de volumen~~ —
+      **hecho 2026-07-26** (Yunior: "unusual whales conectado ya vale!, almenos donde hace falta
+      si de verdad hace falta"). Conectado SOLO `/api/stock/{sym}/net-prem-ticks` (nuevo
+      `scripts/uw_premium.py`): trae `net_call_premium`/`net_put_premium` YA firmados
+      ask-side−bid-side por UW (el agresor de TradingFlow: PUT vendido = alcista, CALL vendido =
+      bajista) — no hizo falta reconstruir NBBO con IBKR. `opt_whale_watch.py` hace overlay cada
+      15 min/símbolo (`UW_POLL_S=900`, cupo del trial), banner **SIN VOZ** (ninguna sirena nueva:
+      latencia sin medir en sesión viva + sin `n_eff` para calibrar = "banner sin voz" por regla
+      de la casa) + historial `data/uw_premium_flow_hist.jsonl` para la futura calibración.
+      **Antes/después con el cierre real del 24-jul** (`data/history/2026-07-26/uw_net_prem_ticks_{spy,qqq}.json`,
+      405-406 cubos de 1 min sumados el día completo): SPY volC 5,90M volP 7,43M → P/C **1,26**
+      (mid, MUDO); QQQ volC 4,09M volP 4,84M → P/C **1,18** (mid, MUDO). Premium neto del mismo
+      día: SPY **-$34,7M**, QQQ **-$37,0M**, ambos BEARISH — exactamente la clase de ballena
+      silenciosa que el −53M del 7/21 ya había expuesto y que el ratio de volumen se comía.
+      **Descartado por redundante/fuera de alcance** (no conectados a opt_whale_watch): `flow-alerts`
+      (mismo bid/ask split pero por alerta suelta, ya cubierto por `net-prem-ticks` continuo —
+      duplicaría llamadas sin dato nuevo); `market-tide` (global, no por símbolo — candidato para
+      `fleet_consensus`/dashboard de manada, NO para un vigía por-ticker, fuera de mi alcance hoy);
+      `greek-exposure*`/`spot-exposures*`/`max-pain`/`vol-term-structure`/`oi-change` (mapa
+      GEX/delta — territorio de `gex_core.py`, en el NO-TOCAR de hoy; quedan archivados por
+      `uw_archive.py`, sin consumidor nuevo).
+      **Latencia SIN MEDIR** (hoy domingo, mercado cerrado — MEDIDO que no se puede fingir: una
+      llamada real en vivo a `net-prem-ticks` ahora mismo devolvió el último cubo del viernes
+      24-jul a **157.828 s** (43,8 h) de antigüedad, que es exactamente lo esperado un fin de
+      semana y CERO evidencia de latencia intra-sesión). Probe listo para el lunes:
+      `./venv/bin/python scripts/uw_latency_probe.py` (falla honesto fuera de horas — ver
+      `data/uw_latency_probe.jsonl`); umbral candidato a "tiempo real" puesto en el probe: <60s
+      de edad en el cubo más reciente. **Hasta que ese probe corra en sesión viva y haya `n_eff`
+      suficiente, UW no dispara ninguna sirena** — solo banner + historial.
 
 ## 2026-07-23 — Chart cockpit GEX en vivo (charts/live.html + chart_bridge.py)
 Hecho: lightweight-charts v5 + ib_async (TWS 7496 realtime) · combo_tl (Supertrend Buy/Sell + Madrid ribbon + BB/SMA/VWAP/MACD + trendlines) · selectores ticker/intervalo · GEX/flip/muros en tiempo real (levels_loop 15s, spot vivo) · escala $/1% verificada · imán(oro)/acelerador(morado) por signo · flip 0DTE estático + toggle 0DTE↔ALL-EXP · VEX/vanna/charm + chip Vanna · dealer-pressure score -100..100 · expected-move cone · nuestras señales (whale/flow/alarma) como marcadores · botones info ⓘ + Guía · dominancia POC %C/%P · régimen TRANSICIÓN · icono custom · burbujas GEX pin/trampilla · badge `.bq` de book-quality. Skill `gexa-framework`.
