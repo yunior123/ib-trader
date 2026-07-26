@@ -71,6 +71,57 @@
       #29 peer-weights, #30 finviz-snap). *La sorpresa elegida*: **#21 wall-decay ledger** — medir
       la constante de la casa ("1er toque rebota ~70%, 3+ exhausto") que **nunca se ha medido** y
       que sin embargo veta de verdad en `compass.cpp:635-638` (`TOUCH_EXHAUST = 3`).
+- [ ] 🥇 **[pendiente — RELOJ DE 7 DÍAS] Unusual Whales** (Yunior 2026-07-25: "save, lets see how
+      to use that one"). Token en `feeds.env` `UW_TOKEN`, **trial caduca ~2026-08-01**.
+      MEDIDO hoy, los 6 endpoints responden 200 y traen **justo lo que la skill
+      `anti-overfit-killlist` daba por IMPOSIBLE** ("necesitan tape firmado + dark-pool
+      licenciado que NO tenemos"):
+      · `/api/market/market-tide` → `net_call_premium`, `net_put_premium`, **`net_volume` FIRMADO**
+        en cubos de 5 min (81 filas/día). Es EXACTAMENTE el panel "Net Call/Put Premium" de la
+        captura de Bullflow, y el que habría hecho sonar **el tide de −53 M del 7/21** que el P/C
+        de volumen (0,86) se comió.
+      · `/api/stock/<SYM>/greek-exposure` → **250 filas = 1 AÑO** de call/put gamma·delta·charm·vanna
+        diarios. Rompe el cuello de botella del roadmap: teníamos "whale/flow/structural NO
+        regenerables, esperar 40-60 sesiones" y esto es historia YA.
+      · `/api/stock/<SYM>/spot-exposures` → gamma/vanna/charm por 1% de movimiento **intradía**
+        (491 filas) con precio: el equivalente a HIRO. *(Ojo: los campos `_dir` y `_vol` vinieron a
+        0 en la muestra; solo `_oi` poblado — verificar si es de tier superior o solo en RTH.)*
+      · `/api/market/oi-change` (100) · `/api/stock/<SYM>/flow-alerts` (100, los sweeps de la
+        captura) · `/api/darkpool/<SYM>` (500).
+      **REGLA DURA antes de cablear nada**: es de PAGO y con reloj. Una fuente que se apaga en 7
+      días NO puede ser dependencia de una señal — es la lección de gexa.ai, que murió y se llevó
+      8 consumidores. *Acción correcta en los 7 días*: **ARCHIVAR** todo lo histórico que da
+      (1 año de greek-exposure × 30 símbolos, market-tide, darkpool) para quedarnos el DATO
+      aunque no se renueve, y **medirlo** contra nuestro `gex_snapshot` antes de pagar.
+      MCP disponible en `https://api.unusualwhales.com/api/mcp`.
+- [ ] **[pendiente] Minar 4 vendedores más** como se hizo con TrendSpider/MenthorQ/SpotGamma
+      (Yunior 2026-07-25): tradytics.com/options-market · app.tradingflow.com/app/option-trades/live
+      · optioncharts.io/trending/most-active-stock-options · quantedoptions.com.
+      Destino: `docs/research/designs-<vendor>.md` con features rankeadas y las RECHAZADAS
+      razonadas, mismo formato que `designs-trendspider.md`.
+      **Marco doctrinal que Yunior fija**: *"los market makers son los elefantes en la habitación"*
+      + resumen del vídeo de Brent Kochuba (SpotGamma). Lo aprovechable y que NO tenemos:
+      **HIRO** (línea en vivo de si el MM debe comprar o vender), **Trace Map** (mapa de calor que
+      PRONOSTICA la respuesta de cobertura: azul/morado = soporte con compradores debajo, rojo =
+      zona de alta volatilidad donde el precio se persigue), **strikes en percentil 99 como
+      objetivos de liquidez** ("quieren que el precio vaya a las zonas de liquidez", y el flujo se
+      APAGA al llegar), **Captain Condor** (posición 0DTE recurrente que fabrica soporte/resistencia),
+      y el **mapa de charm** de la tarde. El Vol Trigger ya lo tenemos (`vol_trigger.py`).
+- [ ] 🔴 **[pendiente] BB multi-TF: el código CONTRADICE la doctrina escrita** (respuesta a
+      "with BB, are we making sure it breaks in 1 min and 15 min? to avoid noise?", Yunior 2026-07-25).
+      **NO se exige 1m Y 15m.** `qqq_signal_bot.cpp:458-459` cuenta **2 de 3**:
+      `bb_dn_tfs = (v5_bb1_dn_ago<=3) + (v5_bb5_dn_ago<=2) + (v5_bb15_dn_ago<=1)` y dispara con
+      `>=2` (`:466`, `:1250`). Es decir **1m+5m basta y el 15m puede no romper nunca**.
+      Y el 5m **no es independiente**: `V5TF` (`:337`) es "agregador 5m/15m desde bars de 1m" — un
+      único tramo brusco de 3 minutos rompe los dos. La confluencia multi-TF es, en la práctica,
+      un timeframe rápido contado dos veces. Justo el ruido que Yunior sospecha.
+      **MEDIDO** sobre las 501 sesiones regeneradas (`signals_regen`): **148 señales `BB-2TF` vs
+      4 `BB-3TF`** → el 15m participa en el **2,6%** de los casos.
+      La memoria `bollinger-always-check` dice "revisar BB 1m+15m en CADA señal"; el código dice
+      otra cosa. *Y encaja con que `bollinger` saliera UNPROVEN* (0,482 vs 0,496 aleatorio).
+      *Acción*: NO cambiarlo a mano — es una hipótesis que se MIDE (barrier_labels + null_control):
+      ¿exigir el 15m mejora el edge, o solo recorta la muestra? Si mejora, la regla pasa a
+      `1m AND 15m`; si no, se dice y se deja.
 - [ ] **[pendiente] "technicals de la company en tiempo real desde finviz en un widget nuevo;
       solo el gráfico principal por defecto, los demás widgets bajo demanda; yfinance de fallback
       si finviz se cae"** (Yunior 2026-07-25). Va con la FASE 4 de UI/UX.
