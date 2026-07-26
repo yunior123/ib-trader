@@ -14,6 +14,12 @@
 > Orden acordado: FASE 0 higiene → 1 señales → 2 flecha → 2.5 TradingAgents → 3 muros
 > → 4 UI/UX → 4.5 X earnings → 5 los 9 bugs → 6 deploy → 7 seis ventanas + QA → 8 verif → 9 features minadas.
 
+- [ ] 🔴 **"the chart should load data on demand when scrolling to pass, priority to live data
+  please"** (Yunior 2026-07-26). pendiente — lazy-load de historia al hacer pan/scroll hacia
+  atrás (estilo TradingView, `subscribeVisibleLogicalRangeChange`), pedir más barras al
+  bridge solo cuando se acerca al borde izquierdo cargado; el backfill NUNCA bloquea ni
+  retrasa el borde vivo (derecho) — la actualización en vivo manda siempre.
+
 - [x] **"new finviz api till next saturday"** → token nuevo `0c56…8625` puesto en **feeds.env
       `FINVIZ_AUTH3`** (no solo en `llm.env`): MEDIDO que los 4 consumidores prueban `AUTH3`
       ANTES que `AUTH` (`finviz_scout.cpp:91`, `x_whale_bot.cpp:366`, `options_hunter.py:34`,
@@ -59,6 +65,13 @@
   `~/Desktop/planes-{date}/ranking.json` y su `cp` es `warn=False` -> con la carpeta movida
   falla EN SILENCIO y deja de archivar. Ese silencio es el peligro real, no el desorden.
 
+- [ ] **[pendiente] "the chart should load data on demand when scrolling to pass, priority to
+  live data please"** (Yunior 2026-07-26). El chart carga un payload fijo al conectar; al
+  desplazarse hacia atras no pide mas historia. Hace falta paginacion bajo demanda
+  (lightweight-charts `subscribeVisibleLogicalRangeChange` -> pedir el tramo anterior por WS y
+  `setData` con el prefijo). **La prioridad es el DATO VIVO**: la carga de historia va en
+  segundo plano y JAMAS bloquea el tick ni el frame de la barra en curso (retraso = dinero).
+
 - [ ] **[pendiente] "make sure u already printed the plan, try to save ink, so no black
   background. review the task for the printer"** (Yunior 2026-07-26). El plan de apertura
   (`data/trees/plan-apertura.html`) y los 5 arboles (`cinco-arboles.html`) tienen FONDO OSCURO:
@@ -91,9 +104,12 @@
   fnfErr`, `iconDict` VACÍO → Finder pintaba el **badge prohibitorio** (círculo blanco con
   barra). Purgado con `lsregister -u` + `-f -R -trusted` → icono correcto (captura antes/después).
   `build.sh` lo purga y re-registra en CADA build, así que sobrevive al rebuild.
+  **2026-07-26 escritorio limpio:** la app vive en `~/Desktop/ib-trader/ib-trader Cockpit.app`;
+  `build.sh` entrega ahí, borra la copia suelta de la raíz y purga también los registros de la
+  Papelera — dos copias del mismo bundle id es lo que resucita el fantasma.
 
 - [x] **"in macos i should be able to open the software and manually have as many windows as
-  wanted right? how?"** (Yunior 2026-07-26). **CÓMO:** `open "~/Desktop/ib-trader Cockpit.app"
+  wanted right? how?"** (Yunior 2026-07-26). **CÓMO:** `open ~/Desktop/ib-trader/"ib-trader Cockpit.app"
   --args --windows 6` abre 6 ventanas en los puertos **8080..8085** (una por bridge = un
   símbolo cada una); a mano, **⌘N** = siguiente puerto libre y **⇧⌘N** = pregunta el puerto;
   **⌘D** reparte en rejilla. Puertos sueltos: `--ports 8080,8083,8085`. Un puerto = un símbolo
