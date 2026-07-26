@@ -30,3 +30,23 @@ de fiar; el resto de columnas sí cuadran.
 
 ## Verificación cruzada que SÍ cuadra
 SPX spot 7408,30 el 24-jul contra nuestro SPY 738,31 del mismo día → ratio 10,03. Consistente.
+
+## Serie de régimen: 17 sesiones fechadas (`data/history/tradingflow_regime_hist.jsonl`)
+Su recap público da el régimen gamma por índice con fecha desde el 26-jun. Es el único
+referee histórico de régimen que tenemos: nuestro `gexa_hist.jsonl` tiene **2 filas**, y en
+`data/history/<fecha>/levels.json` el campo `gexa.regime` viene **null** para SPY y QQQ (solo
+NVDA lo trae). Por eso el régimen histórico propio hay que derivarlo de `spot vs flip`.
+
+**Cruce medido (solo donde TF da el veredicto DEL MISMO símbolo, sin sustituir por el de SPX):**
+
+| fecha | sym | spot | flip | dist | nuestro | TF |
+|---|---|---:|---:|---:|---|---|
+| 22-jul | SPY | 747,49 | 747,00 | **+0,07%** | POS | NEG |
+
+**n=1: no se concluye nada.** Y el único caso cae a 0,07% del flip — la frontera, donde un flip
+diario congelado no puede resolver el signo. Con `spot vs flip` sobre las 4 sesiones en que TF
+solo habla de SPX, coincidiríamos en 4 de 7, pero comparar QQQ contra un veredicto de SPX no es
+un cruce, es una suposición.
+
+Para que esto sirva de verdad hacen falta dos cosas: (1) poblar `gexa.regime` para SPY/QQQ en el
+archivo diario, no dejarlo null; (2) acumular sesiones. El reloj corre.

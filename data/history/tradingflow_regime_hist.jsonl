@@ -1,0 +1,17 @@
+{"date":"2026-07-24","spx":"NEG","nota":"Index gamma stayed negative after Thursday's AI-capex selloff","lideres":["MU","TSLA","SNDK"],"premium_top":"MU ~$2B"}
+{"date":"2026-07-23","spx":"NEG","evento":"SPX flips short gamma","nota":"puts reclaimed majority of premium; session premium $23B","lideres":["TSLA","GOOGL"]}
+{"date":"2026-07-22","spx":"POS","spy":"NEG","evento":"SPY flips short gamma","nota":"dealer gamma SPLIT: still-positive SPX vs newly short SPY","lideres":["NVDA"]}
+{"date":"2026-07-21","spx":"POS","spy":"POS","evento":"SPX flips positive gamma","lideres":["MU","SNDK"],"premium_top":"MU $3.9B"}
+{"date":"2026-07-20","spx":"NEG","ndx":"POS","nota":"SPX net GEX rebounded sharply from Friday's deep negative; NDX flipped back positive","premium_sesion":"$16.4B"}
+{"date":"2026-07-17","spx":"NEG","nota":"deeply short gamma across major indexes; chip-led selloff","lideres":["MU","SNDK"]}
+{"date":"2026-07-16","spy":"NEG","nota":"gamma flipped sharply more fragile across ETF complex","premium_sesion":"$28B","lideres":["MU","SNDK"]}
+{"date":"2026-07-15","qqq":"NEG","spx":"POS","spy":"POS","evento":"QQQ flips short gamma","premium_sesion":"$20.5B"}
+{"date":"2026-07-14","spy":"POS","qqq":"POS","evento":"SPY y QQQ vuelven a positiva","premium_sesion":"$16.9B"}
+{"date":"2026-07-13","spy":"NEG","qqq":"NEG","nota":"put-heavy memory flow","premium_sesion":"$17.7B"}
+{"date":"2026-07-08","nota":"dealers split","premium_sesion":"$16.1B","lideres":["MU","NVDA","TSLA"]}
+{"date":"2026-07-06","premium_sesion":"$19.6B","nota":"below-average, call-heavy","lideres":["MU","SNDK","AMD"]}
+{"date":"2026-07-02","spx":"POS","qqq":"NEG","nota":"bearish premium por encima del bullish pese a 60% call share","premium_sesion":"$25.3B"}
+{"date":"2026-07-01","nota":"65% calls pero neutral+bearish superan al bullish","premium_sesion":"$22.7B"}
+{"date":"2026-06-30","nota":"index gamma mostly positive; TSLA mayor Net DEX y mayor Net DEI","premium_sesion":"$19.6B"}
+{"date":"2026-06-29","spx":"NEG","premium_sesion":"$16.4B","nota":"reconstitucion Russell + MU post-earnings"}
+{"date":"2026-06-26","spx":"NEG","nota":"negative gamma across major indexes: amplifica el movimiento intradia en vez de amortiguarlo"}
