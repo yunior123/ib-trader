@@ -359,14 +359,13 @@ cinco NEGATIVOS** (coincide con nuestro 19/25 en NEG y con su propio recap "Deal
 > docs públicos `/learn/*`. **Falta la pasada visual** para minar la pantalla como se hizo con
 > TrendSpider, y para capturar datos suyos con los que verificar los nuestros.
 
-- [ ] 🥇 **[nice-to-have, ALTO VALOR] DEX de ESTRUCTURA** (`Δ · OI · 100 · S`) en `gex_core`.
-      *Qué es*: el mapa de delta. Hoy `gex_core.py` tiene **CERO delta** — ni `bs_delta` ni DEX.
-      *Por qué importa*: desbloquea las dos minadas nunca construidas, `close-drift` (#24) y
-      `expiry-unwind` (#25). El dato YA existe: cadenas archivadas + UW `/greek-exposure/strike`
-      (530 filas por strike con `call_delta`/`put_delta`).
-      *Trampa obligatoria*: DEX positivo = cliente alcista **pero** el creador VENDE subyacente
-      para quedar neutral → **dos campos, `dex_sentiment` y `dex_flow_impact`, jamás uno**.
-      TradingFlow **no menciona esta trampa**, lo cual es en sí un aviso sobre su lectura.
+- [x] 🥇 **[HECHO 2026-07-26] DEX de ESTRUCTURA** (`Δ · OI · 100 · S`) en `gex_core`.
+      `bs_delta` + `_delta_of` + `build_dex` + `check_dex_signs` (levanta si se publica un solo
+      campo de signo) + `dex_by_exp` (la cuota de delta que pedía `expiry-unwind`). Publicado en
+      `gex_snapshot.json` y en `from_ibkr_cache` (también en degradado: el DEX no necesita gamma).
+      Convención OI-larga, la de UW. Referee UW por PATA: corr +0.52…+0.93 en 5 símbolos; el NETO
+      no es comparable (`chain_full` es `dte_max=10`, UW es el libro entero — en MU el neto hasta
+      cambia de signo). Tests: `tests/test_dex.py` (12).
 - [ ] 🥈 **[nice-to-have] La distinción DEX-de-FLUJO vs DEX-de-ESTRUCTURA**, que no tenemos ni
       nombrada. Suyo, textual: *"DEX describe la DIRECCIÓN DEL FLUJO en la cinta (intradía);
       GEX representa la ESTRUCTURA del mercado"*. Su fórmula de flujo es `delta × size` **por

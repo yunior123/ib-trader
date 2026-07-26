@@ -116,6 +116,22 @@ def forward_from_parity(call_mid, put_mid, K, T, r=R_FREE):
     return K + (call_mid - put_mid) * math.exp(r * T)
 
 
+def bs_delta(S, K, T, iv, cp="C", r=R_FREE):
+    """Delta BS (fallback cuando el proveedor no lo trae). **None**, jamas 0.0, si los
+    argumentos no dan un delta: un 0.0 aqui significa "OTM lejano", no "no se". (bs_gamma si
+    devuelve 0.0 porque una gamma nula es inocua en la suma; un delta nulo borra el strike
+    del DEX y mueve el neto — y del signo del neto sale la voz.)"""
+    if S is None or K is None or T is None or iv is None:
+        return None
+    if S <= 0 or K <= 0 or iv <= 0:
+        return None
+    T = max(T, T_FLOOR)
+    sq = iv * math.sqrt(T)
+    d1 = (math.log(S / K) + (r + iv * iv / 2.0) * T) / sq
+    nd1 = _ncdf(d1)
+    return nd1 if str(cp).upper().startswith("C") else nd1 - 1.0
+
+
 def bs_gamma(S, K, T, iv, r=0.045):
     """Gamma Black-Scholes (fallback cuando no hay gamma del proveedor).
     Piso de T a ~5min: cerca de expiry la gamma ATM tiende a infinito (1/sqrt(T)) y
@@ -222,6 +238,31 @@ def _gamma_of(c, spot, now=None):
         return None
     g = bs_gamma(spot, float(c["strike"]), T, iv)
     return g if g > 0 else None
+
+
+def _delta_of(c, spot, now=None):
+    """Delta usable de un contrato, o None. El del proveedor si es un delta LEGAL
+    (0 < |d| <= 1), si no el BS desde una IV medida y `_T_from`.
+
+    El signo lo fija el TIPO de contrato, no el fichero: Polygon manda el delta de put en
+    negativo, IBKR lo escribe en positivo en algunas builds, y `-1.00` es su centinela de
+    "sin dato" (que es tambien un delta de put perfectamente legal). Por eso el centinela se
+    filtra en el parser, donde se ve la fila entera, y aqui solo se normaliza el signo."""
+    d = c.get("delta")
+    try:
+        d = None if d is None else float(d)
+    except (TypeError, ValueError):
+        d = None
+    right = str(c.get("right", "C")).upper()[:1]
+    if d is not None and 0 < abs(d) <= 1:
+        return abs(d) if right == "C" else -abs(d)
+    iv = _iv_of(c)
+    if iv is None:
+        return None
+    T = _T_from(c, now)
+    if T is None:
+        return None
+    return bs_delta(spot, float(c["strike"]), T, iv, right)
 
 
 def build_exposure(contracts, spot, greek="vanna", scale="dollar1pct"):
@@ -372,6 +413,81 @@ def build_gex(contracts, spot, scale="house"):
     out["oi_call_wall"] = max(co, key=lambda x: x[1])[0] if co else None
     out["oi_put_wall"] = max(po, key=lambda x: x[1])[0] if po else None
     return out
+
+
+# ------------------------------------------------------------------ DEX (delta exposure)
+DEX_SIGN_FIELDS = ("dex_sentiment", "dex_flow_impact")
+DEX_CONVENTION = ("OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que "
+                  "publica Unusual Whales. NO es la dealer-long-calls del GEX.")
+
+
+def check_dex_signs(d):
+    """Devuelve `d` o levanta: PROHIBIDO publicar DEX con UN SOLO campo de signo
+    (designs-menthorq.md:224). DEX positivo = cliente alcista Y creador comprando subyacente
+    para quedar neutral: son dos hechos opuestos en el mismo numero, asi que quien lea un
+    unico campo lee el contrario la mitad de las veces. Los dos, o ninguno."""
+    falta = [k for k in DEX_SIGN_FIELDS if d.get(k) is None]
+    if falta and len(falta) < len(DEX_SIGN_FIELDS):
+        raise ValueError("DEX con un solo campo de signo: falta " + ", ".join(falta))
+    return d
+
+
+def build_dex(contracts, spot, scale="house"):
+    """Perfil DEX por strike: DEX_k = Δ_k · OI_k · 100 · S  (`scale='shares'` quita el ·S y
+    deja acciones equivalentes, que es lo comparable con el ADV).
+
+    Contratos sin delta medido ni IV para reconstruirlo se EXCLUYEN y se CUENTAN; con cero
+    strikes usables `net_dex` es None, no 0.0.
+    """
+    mult = 1.0 if scale == "shares" else spot
+    profile, call_dex, put_dex, by_exp = {}, {}, {}, {}
+    n_oi = n_ok = n_no = 0
+    for c in contracts:
+        K = float(c["strike"])
+        oi = float(c.get("oi", 0) or 0)
+        if oi <= 0:
+            continue
+        n_oi += 1
+        dl = _delta_of(c, spot)
+        if dl is None:
+            n_no += 1
+            continue
+        n_ok += 1
+        side = "call" if str(c["right"]).upper()[:1] == "C" else "put"
+        dx = dl * oi * 100 * mult
+        profile[K] = profile.get(K, 0.0) + dx
+        tgt = call_dex if side == "call" else put_dex
+        tgt[K] = tgt.get(K, 0.0) + dx
+        e = by_exp.setdefault(str(c.get("exp")), {"net": 0.0, "gross": 0.0, "call": 0.0, "put": 0.0})
+        e["net"] += dx
+        e["gross"] += abs(dx)
+        e[side] += dx
+    net = sum(profile.values()) if profile else None
+    gross = sum(abs(v) for v in profile.values()) if profile else None
+    net_sh = None if net is None else net / (1.0 if scale == "shares" else spot)
+    out = {
+        "dex_profile": profile, "call_dex": call_dex, "put_dex": put_dex,
+        "net_dex": net, "gross_dex": gross,
+        # acciones equivalentes: el cliente esta largo net_sh delta, asi que el creador esta
+        # CORTO ese delta y para quedar neutral tiene +net_sh acciones compradas.
+        "net_dex_shares": net_sh,
+        "dex_sentiment": None if not net else ("alcista" if net > 0 else "bajista"),
+        "dex_flow_impact": None if not net else ("mm_compra" if net > 0 else "mm_vende"),
+        "dex_convention": DEX_CONVENTION,
+        "abs_dex_wall": max(profile.items(), key=lambda x: abs(x[1]))[0] if profile else None,
+        "dex_by_exp": by_exp,
+        "n_contracts_oi": n_oi, "n_oi_delta_ok": n_ok, "n_oi_no_delta": n_no,
+        "delta_ok_pct_oi": (n_ok / n_oi) if n_oi else None,
+        "spot": spot, "dex_scale": scale,
+    }
+    return check_dex_signs(out)
+
+
+def _dex_fields(contracts, spot, scale="house"):
+    """Campos DEX listos para fusionar en la salida gamma, sin las claves homonimas de
+    `build_gex` (`n_contracts_oi`, `spot`), que llevan otro denominador."""
+    dx = build_dex(contracts, spot, scale=scale)
+    return {k: v for k, v in dx.items() if k not in ("n_contracts_oi", "spot")}
 
 
 def _flip(profile):
@@ -685,6 +801,11 @@ def _health_shell(spot, scale, hdr, health):
         "oi_call_wall": None, "oi_put_wall": None,
         "iv_atm": None, "em": None,
         "vex_profile": {}, "net_vex": None, "vex_peak": None,
+        "dex_profile": {}, "call_dex": {}, "put_dex": {},
+        "net_dex": None, "gross_dex": None, "net_dex_shares": None,
+        "dex_sentiment": None, "dex_flow_impact": None, "dex_convention": DEX_CONVENTION,
+        "abs_dex_wall": None, "dex_by_exp": {}, "n_oi_delta_ok": 0, "n_oi_no_delta": 0,
+        "delta_ok_pct_oi": None,
         "exp": None, "dte": None, "scope": None,
     }
     for k in ("call_wall", "put_wall", "abs_wall"):
@@ -726,11 +847,15 @@ def from_ibkr_cache(path, spot, band=0.035, scale="house", all_exp=False, now=No
             try:
                 k, right, exp = float(f[0]), f[1], f[2]
                 bid, ask = float(f[3]), float(f[4])
-                oi, iv, gamma = float(f[6]), float(f[7]), float(f[9])
+                oi, iv, delta, gamma = float(f[6]), float(f[7]), float(f[8]), float(f[9])
             except ValueError:
                 continue
+            # el `-1.00` de delta es el centinela de "sin dato" de IBKR y es TAMBIEN un delta
+            # de put legal: solo se distingue mirando la fila entera (a las 16:16 viene iv=-1
+            # en todas). Por eso el filtro vive aqui y no en `_delta_of`.
             rows.append({"strike": k, "right": right, "exp": exp, "bid": bid, "ask": ask,
                          "oi": oi, "iv": iv if iv > 0 else None,
+                         "delta": delta if (iv > 0 and 0 < abs(delta) <= 1) else None,
                          "gamma": gamma if gamma > 0 else None, "T": _T_of(exp, ts_now)})
             exps.add(exp)
     age = None if not hdr["epoch"] else max(ts_now - hdr["epoch"], 0.0)
@@ -811,6 +936,9 @@ def from_ibkr_cache(path, spot, band=0.035, scale="house", all_exp=False, now=No
         # (el OI es dato real y no necesita griegas) — es lo unico que NOK/DRAM tienen.
         oi_only = build_gex([{**c, "gamma": None, "iv": None} for c in cands], spot, scale=scale)
         out = _health_shell(spot, scale, hdr, health)
+        # el DEX SI se publica en degradado: solo necesita delta+OI, no gamma ni flip, y un
+        # libro sin griegas de gamma puede tener delta perfectamente medido.
+        out.update(_dex_fields(cands, spot))
         out["oi_call_wall"] = oi_only["oi_call_wall"]
         out["oi_put_wall"] = oi_only["oi_put_wall"]
         out["n_contracts_oi"] = oi_only["n_contracts_oi"]
@@ -869,6 +997,7 @@ def from_ibkr_cache(path, spot, band=0.035, scale="house", all_exp=False, now=No
     g["vex_profile"] = vx["profile"]
     g["net_vex"] = vx["net"]
     g["vex_peak"] = vx["peak"]
+    g.update(_dex_fields(cands, spot))   # DEX sobre TODOS los candidatos: no depende de gamma
     return g
 
 
