@@ -49,9 +49,12 @@ static void fleet_notify_desktop_mirror(const char* title, const char* msg) {
     int n = snprintf(line, sizeof(line), "%02d:%02d:%02d | %s | %s\n",
                      lt.tm_hour, lt.tm_min, lt.tm_sec, title, msg);
     if (n <= 0) return;
+    // snprintf devuelve la longitud que HABRIA escrito si truncase; acotar a lo
+    // realmente presente en el buffer o write() lee fuera de "line".
+    size_t len = (size_t)n < sizeof(line) ? (size_t)n : sizeof(line) - 1;
     int fd = open(path, O_WRONLY | O_APPEND | O_CREAT, 0644);
     if (fd >= 0) {
-        write(fd, line, (size_t)n);
+        write(fd, line, len);
         close(fd);
     }
 }

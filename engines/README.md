@@ -54,7 +54,7 @@ rm -f /tmp/cc.lock
 
 - `data/bollinger_probs.json` → `elastic/bandwalk.enabled` (disabled = no emite).
 - `data/bollinger_plus.json` → `veto_filters` implementables solo-BB:
-  `F5_squeeze`, `F6_0945/1030/1130/1400` (ventanas ET), `F7_15m_in`.
+  `F5_squeeze`, `F6_0945/1030/1130/1400` (ventanas ET), `F7_15m_in` — un veto SOLO se aplica con `fdr_ok:true` (BH-FDR, ver bb_engine.cpp).
   F1/F2/F3/F4/F8 (RVOL/RSI/depth/zVWAP/ADX) se IGNORAN con aviso por stderr.
 - Sin .json → elastic basico con defaults. Nada crashea por archivo ausente.
 

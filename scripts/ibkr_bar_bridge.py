@@ -144,8 +144,13 @@ def make_on_nbbo(st):
             if now - st.nbbo_last < 0.25:     # 4/s (era 1/s; orden 2026-07-15
                 return                        # "blazing fast" — spread gate fresco)
             st.nbbo_last = now
-            with open(f"data/nbbo_{st.sym.lower()}.txt", "w") as f:
+            # ESCRITURA ATOMICA (patron chart_levels.py): 4/s directo sobre el destino
+            # dejaba al lector C++ ver un fichero a medias.
+            dst = f"data/nbbo_{st.sym.lower()}.txt"
+            tmp = dst + f".tmp{os.getpid()}"
+            with open(tmp, "w") as f:
                 f.write(f"{now:.0f} {t.bid:.4f} {t.ask:.4f}\n")
+            os.replace(tmp, dst)
             if st.sym == "QQQ":
                 # historia de ticks para el scalper de ballenas (2026-07-21):
                 # append-only, rotacion diaria, ~3MB/dia. Degradacion limpia.

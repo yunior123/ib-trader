@@ -14,8 +14,9 @@ import json, os, subprocess, sys, time
 from datetime import date, timedelta
 HOME = os.path.expanduser("~")
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # NUNCA hardcodear: el repo se movio a ~/ib-trader (TCC/launchd, 2026-07-25)
-os.chdir(REPO); sys.path.insert(0, REPO)
+os.chdir(REPO); sys.path.insert(0, REPO); sys.path.insert(0, os.path.join(REPO, "scripts"))
 from ib_insync import IB, Stock, Option
+import em_envelope   # tabla de festivos real (misma fuente que fleet_healthcheck.sessions_since)
 
 FLEET = ["NVDA","AMD","MU","INTC","TSM","SMH","QQQ","SPY","AAPL","MSFT","META","AMZN","TSLA","AVGO","GOOGL","NOK","TXN","QCOM","NFLX","GLD","XLK","LRCX","SNDK","WDC","STX"]
 VMIN = 3000          # volumen total minimo para que el ratio signifique algo
@@ -38,8 +39,13 @@ def loud(title, msg, sound="ProAlert"):
         f.write(f"{lt.tm_hour:02d}:{lt.tm_min:02d}:{lt.tm_sec:02d} | {title} | {msg}\n")
 
 def in_session():
+    """lun-vie 09:30-16:00 Y dia de mercado real (sin festivos hardcodeados a mano:
+    reutiliza em_envelope.is_market_day, la misma tabla que fleet_healthcheck)."""
     lt = time.localtime()
-    return lt.tm_wday < 5 and (930 <= lt.tm_hour * 100 + lt.tm_min < 1600)
+    if lt.tm_wday >= 5 or not (930 <= lt.tm_hour * 100 + lt.tm_min < 1600):
+        return False
+    import datetime as dt
+    return em_envelope.is_market_day(dt.date(lt.tm_year, lt.tm_mon, lt.tm_mday))
 
 def jappend(path, obj):
     # historia para backtesting (scalper 2026-07-21): append-only JSONL,

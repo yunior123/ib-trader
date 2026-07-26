@@ -4,6 +4,20 @@
 # nuevo (Python ya editado). Elimina la dependencia TCC/Desktop de raiz. 2026-07-24.
 # Uso: zsh scripts/deploy_signals_to_data.sh   (SOLO con mercado cerrado)
 cd "$(dirname "$0")/.." || exit 1
+FORCE=0
+for a in "$@"; do [ "$a" = "--force" ] && FORCE=1; done
+# Portero horario (orden Yunior 2026-07-26): pkill sin guarda mataba la flota EN
+# SESION VIVA. ./fleet_hours exit 0 = LIVE -> abortar salvo --force.
+if [ -x ./fleet_hours ]; then
+  if ./fleet_hours >/dev/null 2>&1 && [ "$FORCE" -ne 1 ]; then
+    echo "🔴 ventana LIVE ($(./fleet_hours --why)) — deploy ABORTADO, no se mata la flota."
+    echo "   Forzar con: zsh scripts/deploy_signals_to_data.sh --force"
+    exit 1
+  fi
+else
+  echo "🔴 ./fleet_hours no existe/ejecutable — no se puede verificar la ventana. Compila con scripts/build_fleet_hours.sh"
+  exit 1
+fi
 # Doctrina cpp-latest: SIEMPRE el C++ mas nuevo + arquitectura nativa. Antes iba
 # con c++20 -O2 SIN -mcpu=native, que es lo mas flojo del repo justo en el codigo
 # que mas corre (order_engine y scalper ya usaban -O3 nativo).

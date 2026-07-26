@@ -53,10 +53,12 @@ def component_lean(sym):
     """Direccion CALCULADA de un componente en [-1,+1] con etiqueta.
     Combina: gap vs cierre previo, posicion en el rango de ayer, ruptura de nivel."""
     try:
-        d = yf.Ticker(sym).history(period="6d", interval="1d")
-        if len(d) < 3: return 0.0, "s/d", 0.0
-        pc = float(d.Close.iloc[-1]); pl = float(d.Low.iloc[-1]); ph = float(d.High.iloc[-1])
-        atr = float(np.mean(d.High.values[-3:] - d.Low.values[-3:]))
+        d = yf.Ticker(sym).history(period="8d", interval="1d")
+        if len(d) < 4: return 0.0, "s/d", 0.0
+        # iloc[-1] es la vela de HOY (parcial, en vivo): comparar contra ella daba
+        # gap~0 siempre. El cierre/rango de referencia es el de AYER, iloc[-2].
+        pc = float(d.Close.iloc[-2]); pl = float(d.Low.iloc[-2]); ph = float(d.High.iloc[-2])
+        atr = float(np.mean(d.High.values[-4:-1] - d.Low.values[-4:-1]))
         now = latest_close(sym)
         if not now or not atr: return 0.0, "s/d", 0.0
         gap = (now - pc) / pc * 100

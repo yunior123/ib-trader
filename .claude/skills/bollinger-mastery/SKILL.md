@@ -177,7 +177,7 @@ Mision B6: la señal **elastic-1m** del alarm (pierce BB(20,2) 1m + re-entrada,
 gate band-walk 5m, cooldown 30min) medida en 4,619 señales / 30 tickers / 17
 sesiones RTH. Outcome: P(toca la media BB20-1m en 30min). Grid completo y
 metodologia: `docs/BOLLINGER-COMPLEMENTS-2026-07.md`; JSON operable:
-`data/bollinger_plus.json` (n>=15, |uplift|>=5pts).
+`data/bollinger_plus.json` (n>=15, |uplift|>=5pts; vigente: veto solo se aplica con `fdr_ok:true`, bb_engine.cpp).
 
 **Flota base: 65.8% [64.4, 67.1]** — pero MFE30 (0.455%) < MAE30 (0.478%):
 sin filtro ni gestion la expectativa es ≈0. El elastico se cobra EN la media,
