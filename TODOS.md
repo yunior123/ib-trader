@@ -19,6 +19,11 @@
       ANTES que `AUTH` (`finviz_scout.cpp:91`, `x_whale_bot.cpp:366`, `options_hunter.py:34`,
       y `finviz_valuation.py` **solo** lee AUTH3) → cambiar solo `FINVIZ_AUTH` no lo usaba nadie.
       El anterior seguía dando 200 al sustituirlo; queda comentado. Caduca ~2026-08-01.
+- [ ] **[pendiente] "chrome claude is connected now, u can use tradingflow, plus test all too"**
+  (Yunior 2026-07-26). Chrome conectado por fin tras 5 intentos fallidos. Dos cosas:
+  (a) minar TradingFlow con la cuenta de Yunior; (b) **probar TODO** en el navegador
+  (chart vivo, muros, flecha, burbujas, panel GEX).
+
 - [ ] **[pendiente]** `scripts/finviz_auth_check.py`: GRITAR cuando el token caduque.
       *Por qué importa*: hoy caduca **en silencio** y el scout/valuation/whale-bot se quedan mudos
       sin que nadie se entere. Yunior lo renueva semanalmente.
