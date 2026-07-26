@@ -3,7 +3,7 @@
 
 SEÑAL-SOLAMENTE: jamas ejecuta ordenes; solo publica texto educativo.
 
-Lee en vivo ~/Desktop/trading-signals/YYYY-MM-DD.txt (lineas
+Lee en vivo ~/ib-trader/data/trading-signals/YYYY-MM-DD.txt (lineas
 "HH:MM:SS | TITULO | mensaje"). Una señal califica SOLO si:
   - contiene "prob" con numero >= 70, o
   - titulo BALLENA con ratio >= 3:1 (puts "N a 1" o calls "P C <=0.33"), o

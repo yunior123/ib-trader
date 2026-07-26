@@ -6,7 +6,7 @@ conecta a TWS con readonly=True y JAMAS coloca/modifica/cancela ordenes.
 Cero colocacion de ordenes. Solo lee: chain, greeks, OI, volumen, spread.
 
 Que hace:
-  - tail -F del mirror del dia ~/Desktop/trading-signals/YYYY-MM-DD.txt
+  - tail -F del mirror del dia ~/ib-trader/data/trading-signals/YYYY-MM-DD.txt
     (rota a medianoche). Trigger: linea cuyo titulo (campo 2, split ' | ')
     sea EXACTAMENTE "<SYM>: BUY" o "<SYM>: SELL".
   - por señal: chain SMART -> expiry mas cercano (DTE 0-2, si no el minimo

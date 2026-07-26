@@ -2,7 +2,7 @@
 """signals_db.py — captura TODAS las señales/alarmas/notificaciones en trades.db
 para el backtest del software completo (orden Yunior 2026-07-23).
 
-Fuente: los archivos planos ~/Desktop/trading-signals/YYYY-MM-DD.txt donde TODOS los
+Fuente: los archivos planos ~/ib-trader/data/trading-signals/YYYY-MM-DD.txt donde TODOS los
 emisores (signal bots, opt_whale_watch, price_alarm, bollinger/band, flow, dip) ya
 escriben cada evento como  `HH:MM:SS | <tipo> | <mensaje>`.
 

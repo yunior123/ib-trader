@@ -56,7 +56,7 @@ def is_armed() -> bool:
 def notify_mac(title: str, msg: str, sound: str = "Glass") -> None:
     """Banner Mac + espejo Desktop (Yunior 2026-07-15 "make sure that we see
     the notifications in desktop notes files as well"): mismo formato que
-    fleet_notify.h — ~/Desktop/trading-signals/YYYY-MM-DD.txt, una linea
+    fleet_notify.h — ~/ib-trader/data/trading-signals/YYYY-MM-DD.txt, una linea
     'HH:MM:SS | titulo | msg' para comparar hora-de-notificacion vs grafico."""
     import subprocess
     t = title.replace('"', "'")
@@ -70,7 +70,7 @@ def notify_mac(title: str, msg: str, sound: str = "Glass") -> None:
         pass
     try:
         now = datetime.now().astimezone()
-        d = os.path.expanduser("~/Desktop/trading-signals")
+        d = os.path.expanduser("~/ib-trader/data/trading-signals")
         os.makedirs(d, exist_ok=True)
         with open(os.path.join(d, now.strftime("%Y-%m-%d") + ".txt"), "a") as f:
             f.write(f"{now.strftime('%H:%M:%S')} | {title} | {msg}\n")

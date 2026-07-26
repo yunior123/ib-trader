@@ -30,7 +30,7 @@ extern char** environ;
 
 // ---- espejo Desktop (orden Yunior 2026-07-15: "make sure that we see the
 // notifications in desktop notes files as well") — cada banner se APPENDEA a
-// ~/Desktop/trading-signals/YYYY-MM-DD.txt con timestamp de pared al segundo,
+// ~/ib-trader/data/trading-signals/YYYY-MM-DD.txt con timestamp de pared al segundo,
 // para que el humano compare hora-de-notificacion vs grafico real.
 // open(O_APPEND)+write+close directo: sin shell, sin buffers compartidos,
 // append atomico (<PIPE_BUF). Si Desktop no es escribible, falla en silencio

@@ -14,7 +14,7 @@
 //   ./qqq_xray                  radiografía única (lee data/)
 //   ./qqq_xray --watch          loop 60s; en CAMBIO de estado del dique o del
 //                               veredicto: banner Mac + voz Paulina + línea en
-//                               ~/Desktop/trading-signals/YYYY-MM-DD.txt
+//                               ~/ib-trader/data/trading-signals/YYYY-MM-DD.txt
 //                               (anti-spam: solo en cambio, jamás cada tick)
 //   ./qqq_xray --data DIR       usar otro directorio de datos (tests sintéticos)
 //

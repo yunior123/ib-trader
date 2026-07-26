@@ -3,7 +3,7 @@
 (orden Yunior 2026-07-15: "we are gonna validate the signals today at the
 end of the day, so u store all signals, even earthquake signals").
 
-Lee ~/Desktop/trading-signals/YYYY-MM-DD.txt (espejo = lo que el humano VIO
+Lee ~/ib-trader/data/trading-signals/YYYY-MM-DD.txt (espejo = lo que el humano VIO
 y cuando), cruza cada señal con data/bars_<sym>_ibkr.txt y mide:
   - px del banner vs close del bar que lo disparo (exactitud)
   - TERREMOTO: precision oficial = el movimiento NO retrocede >50% en 30 min

@@ -5,7 +5,8 @@
 //
 // Loop 4 Hz (2026-07-18 "high velocity": alarma dispara <=250ms tras el dato,
 // antes hasta 1s; stat+fscanf de 2 archivos chicos = coste trivial):
-//   1) relee ~/Desktop/price-alerts.txt si cambio (stat mtime). Formato:
+//   1) relee $IBT_DESKTOP_HOY/price-alerts.txt (default ~/Desktop/ib-trader/hoy,
+//      repunto 2026-07-26) si cambio (stat mtime). Formato:
 //        ticker precio [up|down|cross]     (case-insensitive; # = comentario)
 //      sin direccion => modo cruce: se arma con el primer precio leido
 //      (precio arriba del nivel => espera caida; abajo => espera subida).
@@ -21,8 +22,8 @@
 // Pre-seed: crea el archivo con cabecera de instrucciones si no existe y
 // garantiza (idempotente) la alerta activa "intc 100 down" (urgente, Yunior).
 //
-// Compilar desde el root del repo (canonico, spec §1):
-//   clang++ -std=c++17 -O2 -o price_alarm scripts/price_alarm.cpp
+// Compilar desde el root del repo (canonico, cpp23-fleet):
+//   clang++ -std=c++2c -O3 -mcpu=native -Wall -Wextra -o price_alarm scripts/price_alarm.cpp
 #include "../fleet_notify.h"   // banner + espejo Desktop (root del repo)
 
 #include <sys/stat.h>
@@ -74,10 +75,14 @@ struct Rule {
     size_t line_idx = 0;
 };
 
+// ruta derivada: IBT_DESKTOP_HOY con default ~/Desktop/ib-trader/hoy (mismo
+// nombre que print_mon_plans.sh y daily_archive.py). mkdir -p idempotente.
 static std::string alerts_path() {
     const char* home = getenv("HOME");
-    std::string p = home ? home : "";
-    return p + "/Desktop/price-alerts.txt";
+    const char* ov = getenv("IBT_DESKTOP_HOY");
+    std::string dir = ov && *ov ? ov : (std::string(home ? home : "") + "/Desktop/ib-trader/hoy");
+    mkdir(dir.c_str(), 0755);
+    return dir + "/price-alerts.txt";
 }
 
 static const char* HEADER =
@@ -231,7 +236,7 @@ static void fire(const Rule& r, double px) {
                   "scripts/speak.sh DANGER '%s' >/dev/null 2>&1 &", sp);
     std::system(cmd);
 
-    // (b) banner urgente + linea en el espejo ~/Desktop/trading-signals/
+    // (b) banner urgente + linea en el espejo ~/ib-trader/data/trading-signals/
     char title[64], msg[320], raw_s[160];
     sh_sanitize(r.raw.c_str(), raw_s, sizeof(raw_s));
     std::snprintf(title, sizeof(title), "%s ALARMA PRECIO", SYM);

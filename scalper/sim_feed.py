@@ -32,8 +32,8 @@ def load_bars(sym, date):
     return out
 
 def load_alerts(date):
-    """~/Desktop/trading-signals/DATE.txt -> [(epoch, side, sym, linea_jsonl)]"""
-    path = os.path.expanduser(f"~/Desktop/trading-signals/{date}.txt")
+    """~/ib-trader/data/trading-signals/DATE.txt -> [(epoch, side, sym, linea_jsonl)]"""
+    path = os.path.expanduser(f"~/ib-trader/data/trading-signals/{date}.txt")
     day_start = int(time.mktime(time.strptime(date, "%Y-%m-%d")))
     out = []
     if not os.path.exists(path):

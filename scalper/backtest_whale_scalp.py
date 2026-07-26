@@ -59,7 +59,7 @@ def load_bars():
 def load_alerts():
     rx = re.compile(r"^(\d\d):(\d\d):(\d\d) \| 🐋 BALLENA (CALLS|PUTS) \| ([A-Z]+):")
     out = []
-    d = os.path.expanduser("~/Desktop/trading-signals")
+    d = os.path.expanduser("~/ib-trader/data/trading-signals")
     for fn in sorted(os.listdir(d)):
         m = re.match(r"(\d{4})-(\d{2})-(\d{2})\.txt$", fn)
         if not m:

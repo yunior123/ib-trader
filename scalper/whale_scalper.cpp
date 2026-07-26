@@ -241,7 +241,7 @@ static int run_sim(const std::string& data, Cfg& cfg, const std::string& led_dir
     Fsm fsm(cfg, clk);
     const std::string halt_path = "scalper/HALT";
     Tail alerts{data + "/whale_alerts.jsonl"};
-    Tail desktop{std::string(getenv("HOME") ? getenv("HOME") : "") + "/Desktop/trading-signals/" + today_str() + ".txt"};
+    Tail desktop{std::string(getenv("HOME") ? getenv("HOME") : "") + "/ib-trader/data/trading-signals/" + today_str() + ".txt"};
     std::deque<Alert> alert_q;
     std::vector<Action> acts;
 
