@@ -90,15 +90,29 @@ def set_mock_dir(path):
 # MOCK: la base del CSV es 5m; agregamos hacia arriba. "1m" no tiene fuente
 # offline -> cae a 5m (con nota en consola). LIVE: se re-pide reqHistoricalData
 # con el barSize nativo (ver live_reapply).
-# IBKR barSizes VALIDOS: 1/5/10/15/20/30 min · 1/2/3/4/8 hour · 1 day/week/month.
-# 45m NO existe en IBKR -> se OMITE (usariamos 15m nativo agregado, complica). Se añade
-# 20m que SI es nativo. Todos los nuevos tienen barSize nativo -> LIVE limpio; en MOCK
-# se agregan desde la base 5m (ce.aggregate, cualquier multiplo).
-TF_LIST = ("1m", "5m", "15m", "20m", "30m", "1h", "2h", "3h", "4h", "1d", "1W", "1M")
+# IBKR barSizes VALIDOS: 1/5/10/15/30 secs · 1/5/10/15/20/30 min · 1/2/3/4/8 hour ·
+# 1 day/week/month. 45m NO existe en IBKR -> se OMITE. Se añade 20m que SI es nativo.
+# Todos los de minutos/horas tienen barSize nativo -> LIVE limpio; en MOCK se agregan
+# desde la base 5m (ce.aggregate, cualquier multiplo).
+#
+# SEGUNDOS (Yunior 2026-07-26, orden vieja recuperada de TODOS.md): 5s/15s/30s son
+# NATIVOS de reqHistoricalData; 45s NO existe en IBKR -> se AGREGA de 15s x3 por
+# epoch (agg_epoch, ver AGG_TF). MOCK no tiene fuente sub-minuto (CSV 5m / sandbox
+# 1m) -> set_timeframe degrada con nodata en vez de fingir. Profundidad MEDIDA contra
+# el Gateway LIVE (4001, QQQ, 2026-07-26 domingo RTH cerrado): "1 secs" tope duro
+# 1800 S (invalid step con 3600 S+); "5 secs" OK hasta 1 D (11520 barras); "15 secs"
+# OK hasta 2 D; "30 secs" OK hasta 5 D. Duraciones abajo son subconjuntos seguros de
+# lo medido (payload inicial liviano, ~200-700 barras) — nunca superan el techo.
+SEC_TF = frozenset({"5s", "15s", "30s", "45s"})
+AGG_TF = {"45s": ("15s", 45)}   # tf derivado -> (tf base nativo, bucket en segundos)
+TF_LIST = ("5s", "15s", "30s", "45s",
+           "1m", "5m", "15m", "20m", "30m", "1h", "2h", "3h", "4h", "1d", "1W", "1M")
 TF_MIN = {"1m": 5, "5m": 5, "15m": 15, "20m": 20, "30m": 30, "1h": 60,
           "2h": 120, "3h": 180, "4h": 240, "1d": 1440,
           "1W": 10080, "1M": 43200}   # minutos por bucket (mock, agregacion 5m)
+ALL_TF = frozenset(TF_MIN) | SEC_TF   # tf validos para {cmd:"tf"} (set_timeframe)
 LIVE_BAR = {  # (barSizeSetting, durationStr) para reqHistoricalData en LIVE
+    "5s": ("5 secs", "3600 S"), "15s": ("15 secs", "7200 S"), "30s": ("30 secs", "14400 S"),
     "1m": ("1 min", "2 D"), "5m": ("5 mins", "5 D"), "15m": ("15 mins", "10 D"),
     "20m": ("20 mins", "10 D"), "30m": ("30 mins", "20 D"),
     "1h": ("1 hour", "30 D"), "2h": ("2 hours", "60 D"),
@@ -184,11 +198,19 @@ def _bars_from_txt(path, tail):
     return rows[-tail:] if tail else rows
 
 
+# korea_bar_bridge.py escribe realtime IBKR (mdt=1, sub waived) SIN el sufijo _ibkr:
+# data/bars_<stem>.txt. Nombre de display = stem en mayúsculas -> sym.lower() == stem,
+# no hace falta tabla de mapeo. Proceso propio (clientId 86), no el contrato de este bridge.
+KOREA_SYMS = {"SAMSUNG", "SKHYNIX", "KOSPI"}
+
+
 def load_ibkr_bars(sym, tail=780):
     """Barras 1m VIVAS de data/bars_<sym>_ibkr.txt (el fleet bar_bridge las mantiene para
     los 33 símbolos). Archivo OS-page-cacheado -> lectura a velocidad RAM. Se usa para
     mostrar el chart AL INSTANTE al cambiar de símbolo (sin esperar el round-trip a TWS);
     la suscripción viva se re-ata en background. [ts,o,h,l,c,v]."""
+    if sym.upper() in KOREA_SYMS:
+        return _bars_from_txt(os.path.join(REPO, "data", f"bars_{sym.lower()}.txt"), tail)
     return _bars_from_txt(os.path.join(REPO, "data", f"bars_{sym.lower()}_ibkr.txt"), tail)
 
 
@@ -660,9 +682,11 @@ def load_engine_ops(sym, bars):
     return out
 
 
-# ---- alarmas manuales estilo TradingView (escriben ~/Desktop/price-alerts.txt) ----
+# ---- alarmas manuales estilo TradingView (repunto 2026-07-26, ruta derivada) ----
 def _alarm_path():
-    return os.path.expanduser("~/Desktop/price-alerts.txt")
+    d = os.environ.get("IBT_DESKTOP_HOY", os.path.expanduser("~/Desktop/ib-trader/hoy"))
+    os.makedirs(d, exist_ok=True)
+    return os.path.join(d, "price-alerts.txt")
 
 
 def alarm_list(sym):
@@ -740,8 +764,10 @@ def load_user_watchlist():
 
 def watchlist_quote(sym):
     """Último precio, %cambio del día y volumen del día (estilo TradingView) desde los bars
-    locales (data/bars_<sym>_ibkr.txt: epoch o h l c v). Degrada a None. SEÑAL-SOLAMENTE."""
-    p = os.path.join(REPO, f"data/bars_{sym.lower()}_ibkr.txt")
+    locales (data/bars_<sym>_ibkr.txt, o data/bars_<stem>.txt para KOREA_SYMS: epoch o h l c
+    v). Degrada a None. SEÑAL-SOLAMENTE."""
+    fname = f"bars_{sym.lower()}.txt" if sym.upper() in KOREA_SYMS else f"bars_{sym.lower()}_ibkr.txt"
+    p = os.path.join(REPO, "data", fname)
     try:
         rows = [ln.split() for ln in open(p) if ln.strip()]
         c = [(int(r[0]), float(r[4]), float(r[5])) for r in rows if len(r) >= 6]
@@ -773,9 +799,30 @@ def load_watchlist_stats():
     return d if isinstance(d, dict) else {}
 
 
+def load_perp_stocks():
+    """Perpetuos Bybit 24/7 de data/perp_stocks.json (scripts/perp_stock_fetch.py, fuente
+    única). feed_age_s del fichero queda CONGELADO al valor de escritura (siempre 0.0) ->
+    se recalcula aquí desde feed_ts, nunca se confía en el campo guardado. Degrada a {}.
+    STX/GLD nunca aparecen (excluidos aguas arriba: colisión STXUSDT=Stacks / sin perp)."""
+    p = os.path.join(REPO, "data", "perp_stocks.json")
+    try:
+        d = json.load(open(p))
+    except Exception:
+        return {}
+    if not isinstance(d, dict):
+        return {}
+    now = time.time()
+    for s, v in d.items():
+        if isinstance(v, dict) and isinstance(v.get("feed_ts"), (int, float)):
+            v["feed_age_s"] = round(now - v["feed_ts"], 1)
+    return d
+
+
 def watchlist_payload():
     fleet = load_fleet(); user = load_user_watchlist()
     quotes = {s: watchlist_quote(s) for s in dict.fromkeys(fleet + user)}
+    korea = sorted(KOREA_SYMS)
+    quotes.update({s: watchlist_quote(s) for s in korea})
     stats = load_watchlist_stats()   # feed opcional -> sobreescribe vol/chg/last si viene
     for s, q in quotes.items():
         st = stats.get(s) or stats.get(s.upper()) or stats.get(s.lower())
@@ -788,7 +835,8 @@ def watchlist_payload():
                 if v is not None:
                     q[dst] = v
                     break
-    return {"type": "watchlist", "fleet": fleet, "user": user, "quotes": quotes}
+    return {"type": "watchlist", "fleet": fleet, "user": user, "korea": korea,
+            "quotes": quotes, "perp": load_perp_stocks()}
 
 
 async def broadcast_watchlist(state):
@@ -1419,6 +1467,8 @@ class State:
         self._ib = None
         self._contract = None
         self._live_sub = None
+        self._agg_step = None   # tf agregado (45s -> 45); None = barSize nativo directo
+        self._agg_raw = []      # buffer del barSize base cuando _agg_step está activo
 
     def set_bars(self, bars):
         self.bars = bars
@@ -1429,6 +1479,20 @@ class State:
             self.bars[-1] = bar
         else:
             self.bars.append(bar)
+
+
+def agg_epoch(bars, step_s):
+    """Bars -> buckets de `step_s` segundos, fijados por EPOCH (no indice): una barra
+    que falta no corre el reloj. Mismo patron que opening_plan.py::agg (en minutos)."""
+    out = []
+    for b in bars:
+        k = b[0] - (b[0] % step_s)
+        if out and out[-1][0] == k:
+            c = out[-1]
+            c[2] = max(c[2], b[2]); c[3] = min(c[3], b[3]); c[4] = b[4]; c[5] += b[5]
+        else:
+            out.append([k, b[1], b[2], b[3], b[4], b[5]])
+    return out
 
 
 def tf_minutes(state):
@@ -1443,10 +1507,13 @@ def tf_minutes(state):
 def agg_view_bars(state):
     """Barras que VE el chart al tf actual.
     MOCK: base 5m (CSV) o 1m (--mock-dir) -> se agrega hacia arriba (ce.aggregate, paridad
-          con el engine). LIVE: state.bars ya viene al barSize nativo pedido en
-          live_reapply, así que se devuelve tal cual."""
+          con el engine); SEC_TF no tiene fuente sub-minuto -> [] (nunca finge, y NUNCA
+          destruye state.bars: el CSV base sigue intacto para el siguiente tf). LIVE:
+          state.bars ya viene al barSize nativo pedido en live_reapply, tal cual."""
     if not state.mock:
         return state.bars
+    if state.tf in SEC_TF:
+        return []
     base = getattr(state, "base_min", 5)
     mins = tf_minutes(state)
     if mins <= base:
@@ -1455,14 +1522,20 @@ def agg_view_bars(state):
 
 
 async def set_timeframe(state, tf):
-    """Cambia el tf global. MOCK: solo marca tf (la agregación hace el resto).
-    LIVE: re-pide reqHistoricalData con el barSize nativo (cancela el anterior)."""
-    if tf not in TF_MIN:
+    """Cambia el tf global. MOCK: solo marca tf (agg_view_bars agrega o declara vacío para
+    SEC_TF, state.bars NUNCA se toca). LIVE: re-pide reqHistoricalData con el barSize
+    nativo (cancela el anterior)."""
+    if tf not in ALL_TF:
         return
     state.tf = tf
     if state.mock:
-        if tf == "1m" and getattr(state, "base_min", 5) > 1:
-            print("[tf] '1m' sin fuente offline en --mock -> uso 5m")
+        if tf in SEC_TF:
+            state._nodata_reason = (f"{tf}: sin fuente offline en --mock "
+                                     f"(base ≥1m) — prueba con el Gateway LIVE")
+        else:
+            state._nodata_reason = None
+            if tf == "1m" and getattr(state, "base_min", 5) > 1:
+                print("[tf] '1m' sin fuente offline en --mock -> uso 5m")
         return
     if state._ib is not None:
         try:
@@ -1473,7 +1546,9 @@ async def set_timeframe(state, tf):
 
 async def live_reapply(state, tf):
     """LIVE: cancela la suscripción de barras vigente y re-pide al barSize nativo
-    del tf, re-atando keepUpToDate. SEÑAL-SOLAMENTE: solo reqHistoricalData."""
+    del tf, re-atando keepUpToDate. tf en AGG_TF (45s): pide el nativo base (15s) y
+    agrega por epoch (agg_epoch) — 45s no existe en IBKR. SEÑAL-SOLAMENTE: solo
+    reqHistoricalData."""
     ib = state._ib
     if ib is None or state._contract is None:
         return
@@ -1482,17 +1557,30 @@ async def live_reapply(state, tf):
             ib.cancelHistoricalData(state._live_sub)
         except Exception:
             pass
-    bar_size, dur = LIVE_BAR.get(tf, ("1 min", "2 D"))
+    if tf in AGG_TF:
+        base_tf, step_s = AGG_TF[tf]
+        bar_size, dur = LIVE_BAR[base_tf]
+        state._agg_step = step_s
+    else:
+        bar_size, dur = LIVE_BAR.get(tf, ("1 min", "2 D"))
+        state._agg_step = None
+        state._agg_raw = []
     bars = await ib.reqHistoricalDataAsync(   # async (ver live_feed)
         state._contract, endDateTime="", durationStr=dur, barSizeSetting=bar_size,
         whatToShow="TRADES", useRTH=False, keepUpToDate=True,
     )
-    state.set_bars([[int(b.date.timestamp()), b.open, b.high, b.low, b.close, float(b.volume)]
-                    for b in bars])
-    state._nodata_reason = None if state.bars else f"TWS sin barras para {state.sym.upper()} ({bar_size})"
+    raw = [[int(b.date.timestamp()), b.open, b.high, b.low, b.close, float(b.volume)]
+           for b in bars]
+    if state._agg_step:
+        state._agg_raw = raw
+        state.set_bars(agg_epoch(raw, state._agg_step))
+    else:
+        state.set_bars(raw)
+    tag = f"{bar_size} agregado a {tf}" if state._agg_step else bar_size
+    state._nodata_reason = None if state.bars else f"TWS sin barras para {state.sym.upper()} ({tag})"
     bars.updateEvent += _make_on_bar(state)
     state._live_sub = bars
-    print(f"[tf] LIVE {state.sym}: {bar_size} ({dur}) -> {len(state.bars)} barras")
+    print(f"[tf] LIVE {state.sym}: {tag} -> {len(state.bars)} barras")
 
 
 # ===================== REGISTRO DE ESTADOS: UNO POR SIMBOLO ==================
@@ -1532,8 +1620,13 @@ def _prime_bars(st):
         if bars:
             st.set_bars(bars)
         else:
-            st._nodata_reason = (f"sin barras 1m locales para {st.sym.upper()} "
-                                  f"(data/bars_{st.sym}_ibkr.txt) — esperando TWS")
+            reason = (f"sin barras 1m locales para {st.sym.upper()} "
+                      f"(data/bars_{st.sym}_ibkr.txt) — esperando TWS")
+            perp = load_perp_stocks().get(st.sym.upper())
+            if perp:
+                reason += (f" | PERP bybit {perp['px']:g} (edad {perp['feed_age_s']:.0f}s, "
+                           f"NO es precio de la acción)")
+            st._nodata_reason = reason
 
 
 def get_state(sym):
@@ -1551,11 +1644,29 @@ def get_state(sym):
     return st
 
 
+async def korea_poll_feed(st, interval=5.0):
+    """KOREA_SYMS no tienen contrato propio en este bridge: el realtime (mdt=1, IBKR) lo
+    escribe korea_bar_bridge.py (clientId 86) a data/bars_<stem>.txt. Aquí solo se TAIL-ea
+    ese archivo — sin qualify, sin reqHistoricalData duplicado."""
+    while True:
+        await asyncio.sleep(interval)
+        bars = load_ibkr_bars(st.sym, tail=780)
+        if bars and (not st.bars or bars[-1] != st.bars[-1]):
+            st.set_bars(bars)
+            st._nodata_reason = None
+            asyncio.ensure_future(broadcast(st))
+        elif not bars and st.bars is not None and not st._nodata_reason:
+            st._nodata_reason = (f"sin barras KRX para {st.sym.upper()} "
+                                  f"(data/bars_{st.sym}.txt) — korea_bar_bridge.py caído?")
+
+
 async def _spawn_state(st):
     """Arranca el feed y el levels_loop de un estado recien creado."""
     try:
         if st.mock:
             st._tasks = [asyncio.ensure_future(mock_feed(st, interval=STATE_CFG["interval"]))]
+        elif st.sym.upper() in KOREA_SYMS:
+            st._tasks = [asyncio.ensure_future(korea_poll_feed(st))]
         else:
             st._tasks = []
             ib = SHARED_IB["ib"]
@@ -1620,8 +1731,20 @@ async def set_symbol(state, sym):
     instant = load_ibkr_bars(sym, tail=780)
     if instant:
         state.set_bars(instant)
+        state._nodata_reason = None
         print(f"[sym] {sym.upper()}: {len(instant)} barras instantáneas (archivo, sin esperar TWS)")
-    if state._ib is not None:
+    else:
+        reason = f"sin barras 1m locales para {sym.upper()} — esperando TWS"
+        perp = load_perp_stocks().get(sym.upper())
+        if perp:
+            reason += (f" | PERP bybit {perp['px']:g} (edad {perp['feed_age_s']:.0f}s, "
+                       f"NO es precio de la acción)")
+        state._nodata_reason = reason
+    if sym.upper() in KOREA_SYMS:
+        # sin contrato propio aquí -> nada que re-cualificar en TWS; korea_poll_feed
+        # (ya vivo desde _spawn_state) sigue tail-eando el archivo del bridge KRX.
+        pass
+    elif state._ib is not None:
         # re-broadcast del history solo si NO hubo carga instantánea (símbolo fuera de la
         # flota) -> evita el DOBLE LOAD: con archivo, los updates incrementales bastan.
         asyncio.ensure_future(_relive_symbol(state, sym, rebroadcast=not instant))
@@ -1645,7 +1768,15 @@ async def _relive_symbol(state, sym, rebroadcast=False):
     try:
         (contract,) = await ib.qualifyContractsAsync(contract)
     except Exception as e:
-        print(f"[sym] no cualifica {sym.upper()} ({e})"); return
+        print(f"[sym] no cualifica {sym.upper()} ({e})")
+        if not state.bars:   # sin archivo instantáneo Y sin contrato -> decirlo, no callar
+            state._nodata_reason = f"IBKR no reconoce el símbolo {sym.upper()} ({e})"
+            frame = history_frame(agg_view_bars(state), state.levels, state.tf,
+                                   nodata=state._nodata_reason, mock=state.mock)
+            for ws in list(state.clients):
+                try: await ws.send_json(frame)
+                except Exception: state.clients.discard(ws)
+        return
     state._contract = contract
     try: state._px_ticker = ib.reqMktData(contract, "", False, False)   # tick stream nuevo
     except Exception: pass
@@ -2239,11 +2370,27 @@ def _synthetic_bars(sym, n):
 # ============================== feed LIVE (ib_async) =========================
 def _make_on_bar(state):
     """Callback updateEvent: upsert de la última barra + broadcast. Se re-usa al
-    cambiar de timeframe (live_reapply lo re-ata a la nueva suscripción)."""
+    cambiar de timeframe (live_reapply lo re-ata a la nueva suscripción).
+    Si state._agg_step está activo (tf derivado, ej. 45s) el bar nativo entra al
+    buffer crudo y se re-agrega por epoch antes del upsert -> el chart ve 45s, no
+    el 15s que llegó de TWS."""
     def on_bar(bars_, has_new):
         b = bars_[-1]
-        state.upsert_bar([int(b.date.timestamp()), b.open, b.high, b.low,
-                          b.close, float(b.volume)])
+        raw = [int(b.date.timestamp()), b.open, b.high, b.low, b.close, float(b.volume)]
+        step = state._agg_step
+        if step:
+            buf = state._agg_raw
+            if buf and buf[-1][0] == raw[0]:
+                buf[-1] = raw
+            else:
+                buf.append(raw)
+                if len(buf) > 6000:
+                    del buf[:-6000]
+            agg = agg_epoch(buf, step)
+            if agg:
+                state.upsert_bar(agg[-1])
+        else:
+            state.upsert_bar(raw)
         asyncio.ensure_future(broadcast(state))
     return on_bar
 

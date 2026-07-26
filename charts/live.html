@@ -84,6 +84,11 @@
                  border-radius:4px; padding:4px 10px; font-weight:800; font-size:12.5px;
                  letter-spacing:.02em; }
   #sourcebadge.hidden { display:none; }
+  /* 45s no es nativo IBKR (se agrega 15s×3) — el chart lo dice, nunca lo finge. */
+  #aggbadge { background:#1a2a4a; color:#8ab4ff; border:2px solid #2962ff;
+              border-radius:4px; padding:4px 10px; font-weight:800; font-size:12.5px;
+              letter-spacing:.02em; }
+  #aggbadge.hidden { display:none; }
   #narrbtn { background:#2a2e39; color:#8aa0c8; border:1px solid #3a4b6b;
              border-radius:4px; padding:4px 9px; font:inherit; font-weight:700; cursor:pointer; }
   #narrbtn:hover { background:#2f3646; color:#fff; }
@@ -141,7 +146,7 @@
   #acctempty { color:#556; padding:6px; }
 
   /* --- watchlist drawer (izquierda, colapsable, buscable) estilo TradingView --- */
-  #wldrawer { position:absolute; z-index:40; top:68px; bottom:24px; left:0; width:300px;
+  #wldrawer { position:absolute; z-index:40; top:68px; bottom:24px; left:0; width:360px;
               background:rgba(19,23,34,.975); border-right:1px solid #2a2e39;
               box-shadow:4px 0 18px rgba(0,0,0,.5); display:none; flex-direction:column; }
   #wldrawer.on { display:flex; }
@@ -151,15 +156,18 @@
   #wllist { flex:1; overflow-y:auto; padding:0 6px 8px; }
   #wllist .wlhdr { font-size:10px; color:#6b7a99; text-transform:uppercase; letter-spacing:.5px;
                    margin:8px 4px 3px; }
-  #wllist .wlhdr:not(.sub) { display:grid; grid-template-columns:1fr 62px 60px 52px 16px;
+  #wllist .wlhdr:not(.sub) { display:grid; grid-template-columns:1fr 60px 56px 46px 56px 16px;
                    gap:6px; padding:0 8px; }
   #wllist .wlhdr:not(.sub) span { text-align:right; } #wllist .wlhdr:not(.sub) span:first-child { text-align:left; }
-  #wllist .wlrow { display:grid; grid-template-columns:1fr 62px 60px 52px 16px; gap:6px;
+  #wllist .wlrow { display:grid; grid-template-columns:1fr 60px 56px 46px 56px 16px; gap:6px;
                    align-items:center; padding:5px 8px; border-radius:5px; cursor:pointer; }
   #wllist .wlrow .wsym { font-weight:700; }
   #wllist .wlrow .wlast, #wllist .wlrow .wchg, #wllist .wlrow .wvol {
                    text-align:right; font-weight:600; font-size:12px; font-variant-numeric:tabular-nums; }
   #wllist .wlrow .wvol { color:#8a8f9c; }
+  #wllist .wlrow .wperp { text-align:right; font-weight:700; font-size:10px; color:#8ab4ff;
+                   font-variant-numeric:tabular-nums; overflow:hidden; text-overflow:ellipsis;
+                   white-space:nowrap; }
   #wllist .wlempty { padding:14px 8px; color:#6b7a99; font-size:12px; }
   #wllist .wlrow:hover { background:#2a2e39; }
   #wllist .wlrow.sel { background:#2962ff; color:#fff; }
@@ -345,11 +353,16 @@
 <div id="toolbar">
   <span id="replaybadge" class="hidden" title="Este puente corre --mock: barras de un REPLAY archivado, no el mercado real. Nunca confundir con precio en vivo.">⏪ REPLAY —</span>
   <span id="sourcebadge" class="hidden" title="Cadena de opciones (GEX/muros/flip) NO viene de IBKR en vivo: es Polygon (15min delayed) u otro respaldo. Orden de fuentes: 1) IBKR 2) Polygon/Unusual Whales delayed 3) sandbox.">⚠ CADENA —</span>
+  <span id="aggbadge" class="hidden" title="45s no existe en IBKR: son barras 15s nativas agregadas de a 3 por epoch (bucket fijo, no por índice).">Σ 45s = 15s×3</span>
   <button id="wlbtn" title="Ticker actual + lista buscable con volumen y %día (estilo TradingView). Clic para abrir/cerrar.">📋 — ▾</button>
   <button id="modepill" title="Cuenta IBKR: PAPER (prueba) / LIVE (real). Clic para cambiar. Fuente única data/ib_mode.txt — el motor y los lectores siguen este modo.">● …</button>
   <button id="instpill" title="Instrumento de las zonas NUEVAS: Opciones o Acciones (activos, tradean 24/5). Clic para cambiar.">📈 Opciones</button>
   <button id="acctbtn" title="Cuenta: posiciones y órdenes de trabajo (cancelar / cerrar / modificar). Estilo TradingView Account Manager.">📊 Cuenta</button>
   <div id="tfbar">
+    <button class="tfbtn" data-tf="5s" title="5s nativo IBKR (reqHistoricalData 5 secs)">5s</button>
+    <button class="tfbtn" data-tf="15s" title="15s nativo IBKR (reqHistoricalData 15 secs)">15s</button>
+    <button class="tfbtn" data-tf="30s" title="30s nativo IBKR (reqHistoricalData 30 secs)">30s</button>
+    <button class="tfbtn" data-tf="45s" title="45s NO es nativo IBKR: agregado de 15s×3 por epoch">45s</button>
     <button class="tfbtn" data-tf="1m">1m</button>
     <button class="tfbtn" data-tf="5m">5m</button>
     <button class="tfbtn" data-tf="15m">15m</button>
@@ -1058,6 +1071,8 @@ function setActiveTf(tf) {
   curTf = tf;
   document.querySelectorAll(".tfbtn").forEach(b =>
     b.classList.toggle("active", b.dataset.tf === tf));
+  const ab = document.getElementById("aggbadge");
+  if (ab) ab.classList.toggle("hidden", tf !== "45s");
 }
 document.querySelectorAll(".tfbtn").forEach(btn => {
   btn.addEventListener("click", () => {
@@ -1075,6 +1090,8 @@ let FLEET = ["QQQ","SPY","NVDA","TSLA","MU","SMH","AMD","AAPL","MSFT","META",
   "AMZN","GOOGL","INTC","TSM","ASML","TXN","QCOM","AVGO","NFLX","NOK","GLD","XLK",
   "EWY","DRAM","SPCX","SKHY","LRCX","SNDK","WDC","STX"];
 let USERWL = [];
+let KOREA = [];
+let PERP = {};      // {sym:{px,src,feed_age_s,...}} — Bybit 24/7, JAMÁS el precio de IBKR
 let QUOTES = {};   // {sym:{last,chg,vol}} para las columnas estilo TradingView
 let curSym = null;
 function fmtVol(v) {
@@ -1131,21 +1148,27 @@ function renderWatchlist() {
     const chg = (q.chg != null) ? (q.chg > 0 ? "+" : "") + q.chg.toFixed(2) + "%" : "";
     const chgCls = (q.chg == null) ? "" : (q.chg > 0 ? "pos" : q.chg < 0 ? "neg" : "");
     const last = (q.last != null) ? q.last.toFixed(2) : "";
+    const p = PERP[s];
+    const perpBadge = p ?
+      `<span class="wperp" title="PERP Bybit — precio con PRIMA propia, NO es el precio de la acción (IBKR). Fuente ${p.src}, edad ${p.feed_age_s == null ? "?" : Math.round(p.feed_age_s)}s.">⛓${p.px}</span>` :
+      `<span class="wperp"></span>`;
     return `<div class="wlrow${s === curSym ? " sel" : ""}" data-sym="${s}">` +
       `<span class="wsym">${s}</span>` +
       `<span class="wlast">${last}</span>` +
       `<span class="wchg ${chgCls}">${chg}</span>` +
       `<span class="wvol">${fmtVol(q.vol)}</span>` +
+      perpBadge +
       (USERWL.includes(s) ? `<span class="wx" data-del="${s}" title="Quitar de mi lista">✕</span>` : `<span class="wx" style="visibility:hidden">✕</span>`) +
       `</div>`;
   };
   const flt = (arr) => wlFilter ? arr.filter(s => s.includes(wlFilter)) : arr;
-  const fleetV = flt([...FLEET].sort()), userV = flt([...USERWL].sort());
-  let html = '<div class="wlhdr"><span>Símbolo</span><span>Último</span><span>%Día</span><span>Vol</span><span></span></div>';
+  const fleetV = flt([...FLEET].sort()), userV = flt([...USERWL].sort()), koreaV = flt([...KOREA].sort());
+  let html = '<div class="wlhdr"><span>Símbolo</span><span>Último</span><span>%Día</span><span>Vol</span><span>Perp</span><span></span></div>';
   if (fleetV.length) html += '<div class="wlhdr sub">Flota</div>' + fleetV.map(mk).join("");
   if (userV.length) html += '<div class="wlhdr sub">Mías</div>' + userV.map(mk).join("");
-  if (wlFilter && !fleetV.length && !userV.length)
-    html += `<div class="wlempty">sin coincidencias para "${wlFilter}" — Enter para añadirlo</div>`;
+  if (koreaV.length) html += '<div class="wlhdr sub">🇰🇷 Corea (KRX realtime)</div>' + koreaV.map(mk).join("");
+  if (wlFilter && !fleetV.length && !userV.length && !koreaV.length)
+    html += `<div class="wlempty">sin coincidencias para "${wlFilter}" — Enter para añadirlo (se cualifica contra IBKR)</div>`;
   const prevScroll = wllist.scrollTop;   // no perder posición al re-render (15s watchlist tick)
   wllist.innerHTML = html;
   wllist.scrollTop = prevScroll;
@@ -1174,7 +1197,9 @@ wlsearch.addEventListener("keydown", (e) => {
 function onWatchlist(msg) {
   if (Array.isArray(msg.fleet)) FLEET = msg.fleet;
   if (Array.isArray(msg.user)) USERWL = msg.user;
+  if (Array.isArray(msg.korea)) KOREA = msg.korea;
   if (msg.quotes) QUOTES = msg.quotes;
+  if (msg.perp) PERP = msg.perp;
   rebuildSymSel();
   renderWatchlist();
 }
@@ -1748,7 +1773,8 @@ function onDirection(msg) {
 // ---- countdown de barra en el eje de precios derecho (estilo TradingView) ----
 const countdownEl = document.getElementById("countdown");
 function tfSeconds(tf) {
-  return ({ "1m":60,"5m":300,"15m":900,"20m":1200,"30m":1800,"1h":3600,"2h":7200,
+  return ({ "5s":5,"15s":15,"30s":30,"45s":45,
+            "1m":60,"5m":300,"15m":900,"20m":1200,"30m":1800,"1h":3600,"2h":7200,
             "3h":10800,"4h":14400,"1d":86400,"1W":604800,"1M":2592000 })[tf] || 60;
 }
 function fmtCountdown(rem, sec) {
