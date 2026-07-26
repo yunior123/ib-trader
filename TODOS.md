@@ -94,9 +94,32 @@
       (1 año de greek-exposure × 30 símbolos, market-tide, darkpool) para quedarnos el DATO
       aunque no se renueve, y **medirlo** contra nuestro `gex_snapshot` antes de pagar.
       MCP disponible en `https://api.unusualwhales.com/api/mcp`.
+- [ ] **[pendiente] CONECTAR Unusual Whales esta semana** (Yunior 2026-07-26: "esta semana podemos
+      conectar unusual whales, si es bueno extendemos trial"). Plan: **archivar primero, medir
+      después, cablear al final** — nunca al revés, por la lección gexa.
+      Endpoints medidos que dan mapa de DELTA, que NOSOTROS NO TENEMOS:
+      `/api/stock/<SYM>/greek-exposure/strike` → **530 filas POR STRIKE** con `call_delta`,
+      `put_delta`, `call_gex`, `put_gex`, `call_charm`, `put_charm`, `call_vanna`, `put_vanna`.
+      `/api/stock/<SYM>/greek-exposure` → **250 días (1 año)** de agregados diarios; net DEX de
+      QQQ el 24-jul = **−51,0 M**. `/api/stock/<SYM>/greeks` → 237 filas por contrato.
+      `/api/stock/<SYM>/option-chains` → 12.904 contratos.
+      *Por qué importa*: `scripts/gex_core.py` tiene **CERO delta** (ni `bs_delta`, ni DEX). El DEX
+      está diseñado dos veces y nunca construido (`designs-menthorq.md:219` #9 close-drift,
+      `designs-spotgamma.md:182` expiry-unwind: *"DEX… currently missing from our stack"*), y son
+      dos de las 8 minadas sin fichero. **Trampa de signo ya documentada**
+      (`designs-menthorq.md:224`): DEX positivo = cliente alcista **pero** el creador VENDE
+      subyacente para quedar neutral → dos campos, `dex_sentiment` y `dex_flow_impact`, jamás uno.
 - [ ] **[pendiente] Minar 4 vendedores más** como se hizo con TrendSpider/MenthorQ/SpotGamma
       (Yunior 2026-07-25): tradytics.com/options-market · app.tradingflow.com/app/option-trades/live
       · optioncharts.io/trending/most-active-stock-options · quantedoptions.com.
+      **TradingFlow — MEDIDO 2026-07-26: NO TIENE API.** Un solo plan, **$59/mes** (o $504/año);
+      la página de precios no menciona API, acceso programático ni descarga CSV/JSON, y el
+      **roadmap tampoco** (sus planes son Option Chain, watchlist, filtros, Surge Attribution,
+      resúmenes con IA). Es UI-only → para nosotros solo sirve como **fuente de IDEAS a minar**,
+      no como feed. Tiene página propia de `/learn/delta-exposure-dex/`, que confirma que el DEX
+      es estándar en el sector y un hueco nuestro. La extensión de Chrome no estaba conectada, así
+      que esto se midió por HTTP, no navegando: **queda pendiente mirar la UI en vivo** para minar
+      las features como se hizo con TrendSpider.
       Destino: `docs/research/designs-<vendor>.md` con features rankeadas y las RECHAZADAS
       razonadas, mismo formato que `designs-trendspider.md`.
       **Marco doctrinal que Yunior fija**: *"los market makers son los elefantes en la habitación"*
