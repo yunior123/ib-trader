@@ -1845,7 +1845,9 @@ function setReplayBadge(isMock, lastBarEpoch) {
   b.textContent = "⏪ REPLAY " + when;
   b.classList.remove("hidden");
 }
+let fetchingMore = false, backfillExhausted = false;
 function onHistory(msg) {
+  fetchingMore = false; backfillExhausted = false;   // dataset nuevo (tf/sym) -> reintenta pan
   setReplayBadge(msg.mock, msg.bars && msg.bars.length ? msg.bars[msg.bars.length - 1].time : null);
   onNoData(msg.nodata || null);
   candle.setData(msg.bars);
@@ -1883,6 +1885,50 @@ function onHistory(msg) {
   if (msg.tf) setActiveTf(msg.tf);
   zoomRecent(msg.bars.length);   // últimas ~100 barras (velas legibles en cada tf)
 }
+// pan-scroll hacia atrás (Yunior 2026-07-26 "load data on demand when scrolling, priority
+// to live data"): PREPEND, no reset — la vista y el borde vivo no se mueven.
+function announceBackfillDone(reason) {
+  // "la UI lo DICE una vez": banner del borde-de-historia, se retira solo (no bloquea el pan).
+  onNoData(reason || "fin del historial disponible en IBKR para este timeframe");
+  clearTimeout(announceBackfillDone._t);
+  announceBackfillDone._t = setTimeout(() => onNoData(null), 4000);
+}
+function onBackfill(msg) {
+  fetchingMore = false;
+  const newBars = msg.bars || [];
+  const delta = newBars.length - candleData.length;
+  if (msg.exhausted || delta <= 0) {
+    backfillExhausted = true;
+    announceBackfillDone(msg.reason);
+    return;
+  }
+  const vr = chart.timeScale().getVisibleLogicalRange();
+  candle.setData(newBars);
+  candleData = newBars;
+  const ind = msg.indicators;
+  S.bbUpper.setData(ind.bbUpper); S.bbLower.setData(ind.bbLower); S.bbMid.setData(ind.bbMid);
+  S.sma40.setData(ind.sma40); S.sma100.setData(ind.sma100); S.sma200.setData(ind.sma200);
+  S.vwap.setData(ind.vwap);
+  S.stUp.setData(ind.stUp || []); S.stDn.setData(ind.stDn || []);
+  setRibbon(ind.madrid);
+  volS.setData(ind.volume);
+  macdHist.setData(ind.hist); macdLine.setData(ind.macd); macdSig.setData(ind.signal);
+  curStMarkers = ind.stMarkers || [];
+  sigMarkers = msg.signals || [];
+  engineOps = msg.engineOps || [];
+  applyMarkers();
+  drawTrendlines(ind.trendlines);
+  if (vr) chart.timeScale().setVisibleLogicalRange({ from: vr.from + delta, to: vr.to + delta });
+}
+// cerca del borde izquierdo cargado -> pide más historia. Un solo vuelo a la vez;
+// backfillExhausted corta el spam una vez TWS ya no tiene más barras que dar.
+chart.timeScale().subscribeVisibleLogicalRangeChange((range) => {
+  if (!range || fetchingMore || backfillExhausted || !candleData.length) return;
+  if (range.from < 20) {
+    fetchingMore = true;
+    ws.send(JSON.stringify({ cmd: "more", before: candleData[0].time }));
+  }
+});
 function upd(series, pt) { if (pt) series.update(pt); }
 function mirrorBar(bar) {           // upsert en el espejo: misma regla que series.update()
   if (!bar) return;
@@ -2293,6 +2339,7 @@ function connect() {
   ws.onmessage = (ev) => {
     const msg = JSON.parse(ev.data);
     if (msg.type === "history") onHistory(msg);
+    else if (msg.type === "backfill") onBackfill(msg);   // pan-scroll: prepend, no reset de vista
     else if (msg.type === "bar") onBar(msg);
     else if (msg.type === "tick") onTick(msg);   // precio vivo sub-segundo (solo la vela)
     else if (msg.type === "levels") onLevels(msg);   // GEX/flip/muros en tiempo real

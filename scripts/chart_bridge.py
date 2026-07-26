@@ -45,6 +45,7 @@ import re
 import subprocess
 import sys
 import time
+from datetime import datetime, timezone
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCRIPTS = os.path.join(REPO, "scripts")
@@ -1378,10 +1379,11 @@ async def broadcast_direction(state, lv=None):
             state.clients.discard(ws)
 
 
-def history_frame(bars, levels, tf=None, nodata=None, mock=False):
+def history_frame(bars, levels, tf=None, nodata=None, mock=False, kind="history",
+                   exhausted=None, exhausted_reason=None):
     ind = compute_indicators(bars)
-    return {
-        "type": "history",
+    frame = {
+        "type": kind,
         "tf": tf,
         "bars": _candle_points(bars),
         "indicators": indicators_series(bars, ind),
@@ -1393,6 +1395,10 @@ def history_frame(bars, levels, tf=None, nodata=None, mock=False):
         # header debe gritarlo; la fecha la deriva el cliente de bars[-1].time.
         "mock": bool(mock),
     }
+    if exhausted is not None:
+        frame["exhausted"] = exhausted   # backfill: True = no hay más historia atrás
+        frame["reason"] = exhausted_reason if exhausted else None   # la UI lo dice UNA vez
+    return frame
 
 
 def _last_point(pts):
@@ -1469,6 +1475,8 @@ class State:
         self._live_sub = None
         self._agg_step = None   # tf agregado (45s -> 45); None = barSize nativo directo
         self._agg_raw = []      # buffer del barSize base cuando _agg_step está activo
+        self._backfilling = False   # un solo "more" a la vez por symbol/State compartido
+        self._backfill_reason = None   # por qué el ultimo backfill dijo exhausted (UI lo dice UNA vez)
 
     def set_bars(self, bars):
         self.bars = bars
@@ -1581,6 +1589,63 @@ async def live_reapply(state, tf):
     bars.updateEvent += _make_on_bar(state)
     state._live_sub = bars
     print(f"[tf] LIVE {state.sym}: {tag} -> {len(state.bars)} barras")
+
+
+async def fetch_more_history(state, before_epoch):
+    """Pan-scroll hacia atrás (Yunior 2026-07-26 "load data on demand when scrolling,
+    priority to live data"): UN request de más barras viejas, keepUpToDate=False -> nunca
+    toca ni compite con la suscripción viva (state._live_sub sigue intacta, el tick sigue
+    empujando en su propia corrutina). MOCK: el CSV entero ya está en memoria desde el
+    arranque -> no hay más que traer, se declara agotado. False = sin barras nuevas
+    (agotado o error de TWS); nunca se finge continuidad."""
+    if not before_epoch:
+        state._backfill_reason = "sin ancla (before) del cliente"
+        return False
+    if state.mock:
+        state._backfill_reason = "modo mock: toda la historia ya esta en memoria desde el arranque"
+        return False
+    if state._ib is None or state._contract is None:
+        state._backfill_reason = "conexion TWS no lista todavia — reintenta al hacer scroll de nuevo"
+        return False
+    if state._backfilling:
+        return False   # ya hay una peticion en vuelo (misma State) -> se ignora, sin pisar la reason previa
+    state._backfilling = True
+    try:
+        base_tf = AGG_TF[state.tf][0] if state.tf in AGG_TF else state.tf
+        bar_size, dur = LIVE_BAR.get(base_tf, ("1 min", "2 D"))
+        end = datetime.fromtimestamp(float(before_epoch), timezone.utc)
+        try:
+            bars = await state._ib.reqHistoricalDataAsync(
+                state._contract, endDateTime=end, durationStr=dur, barSizeSetting=bar_size,
+                whatToShow="TRADES", useRTH=False, keepUpToDate=False,
+            )
+        except Exception as e:
+            print(f"[more] {state.sym} {base_tf} antes de {end}: fallo ({e})")
+            state._backfill_reason = f"IBKR rechazo la peticion ({base_tf}): {e}"
+            return False
+        raw = [[int(b.date.timestamp()), b.open, b.high, b.low, b.close, float(b.volume)]
+               for b in bars if b.date.timestamp() < before_epoch]
+        if not raw:
+            state._backfill_reason = (f"IBKR sin mas historia de {state.sym.upper()} "
+                                       f"({base_tf}) antes de {end:%Y-%m-%d %H:%M} UTC "
+                                       f"— tope de profundidad de este barSize")
+            return False
+        state._backfill_reason = None
+        base = state._agg_raw if state._agg_step else state.bars
+        merged = {r[0]: r for r in raw}
+        for r in base:
+            merged[r[0]] = r
+        ordered = [merged[k] for k in sorted(merged)]
+        if state._agg_step:
+            state._agg_raw = ordered
+            state.set_bars(agg_epoch(ordered, state._agg_step))
+        else:
+            state.set_bars(ordered)
+        print(f"[more] {state.sym} {state.tf}: +{len(raw)} barras antes de {end} "
+              f"-> {len(state.bars)} totales")
+        return True
+    finally:
+        state._backfilling = False
 
 
 # ===================== REGISTRO DE ESTADOS: UNO POR SIMBOLO ==================
@@ -1734,6 +1799,11 @@ async def set_symbol(state, sym):
         state._nodata_reason = None
         print(f"[sym] {sym.upper()}: {len(instant)} barras instantáneas (archivo, sin esperar TWS)")
     else:
+        # SIN archivo para el nuevo símbolo: JAMÁS dejar las velas del símbolo VIEJO en
+        # pantalla con la etiqueta nueva puesta encima (precio de X mostrado como si fuera
+        # de Y — el "cero plausible" prohibido, versión gráfico). Vacío hasta que llegue algo
+        # real (instante o TWS).
+        state.set_bars([])
         reason = f"sin barras 1m locales para {sym.upper()} — esperando TWS"
         perp = load_perp_stocks().get(sym.upper())
         if perp:
@@ -1884,6 +1954,14 @@ def create_app(state):
                     await set_timeframe(st, ctl.get("tf", st.tf))
                     # re-emite un frame de historia FRESCO al tf pedido
                     await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason, mock=st.mock))
+                elif isinstance(ctl, dict) and ctl.get("cmd") == "more":
+                    # pan-scroll hacia atrás: request aparte, keepUpToDate=False, nunca
+                    # bloquea el tick vivo (corre en su propia corrutina de broadcast).
+                    got = await fetch_more_history(st, ctl.get("before"))
+                    await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf,
+                                        nodata=st._nodata_reason, mock=st.mock,
+                                        kind="backfill", exhausted=not got,
+                                        exhausted_reason=st._backfill_reason))
                 elif isinstance(ctl, dict) and ctl.get("cmd") == "sym":
                     # NO se muta el estado compartido: se MUEVE esta conexión al State del
                     # nuevo símbolo (creándolo si no existe). Las demás ventanas ni se
