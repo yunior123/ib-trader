@@ -30,10 +30,26 @@
   0 descartes registrados en todos los logs. **Lección**: un solo `clang++` a la vez no es una
   recomendación, es la diferencia entre que el cockpit responda o no.
 
-- [ ] **[pendiente] "the filter did not work when changing symbols: no reactive to search and
-  no data on symbol when selected after scrolling"** (Yunior 2026-07-26). El buscador de la
-  watchlist del chart no reacciona al teclear, y al elegir un símbolo tras hacer scroll no
-  carga datos.
+- [x] **[hecho e94cf04] "the filter did not work when changing symbols: no reactive to search and
+  no data on symbol when selected after scrolling"** (Yunior 2026-07-26). DOS bugs reales,
+  distintos, ambos MEDIDOS con websocket propio + Claude-in-Chrome contra los 6 puentes QA
+  (`--mock --mock-dir /tmp/qa6`):
+  (1) `wlsearch` (`live.html:1130` antes) solo escuchaba `keydown` Enter — CERO listener de
+  `input` — tipear no hacía nada. Añadido filtro en vivo sobre Flota/Mías.
+  (2) CARRERA en `cmd:"sym"` (`chart_bridge.py` stream handler): `get_state()` creaba el
+  `State` nuevo con `bars=[]` y agendaba `_spawn_state` con `asyncio.ensure_future` (no
+  esperado) mientras el handler mandaba `history_frame` en la siguiente línea — el frame
+  salía con `bars=0` el 100% de las veces en el primer switch a un símbolo nuevo (medido:
+  t0 bars=0, t0+1.5s bars=762). `_prime_bars()` nueva: carga la historia SÍNCRONA antes de
+  devolver el `State`, sin carrera. Verificado en vivo (Claude-in-Chrome, ws_probe.py):
+  GLD (con barras) 761 al instante; AAPL (fuera del sandbox de 6 símbolos) sigue en 0 pero
+  ahora con `history_frame.nodata="sandbox sin barras para AAPL (...)"` y el chart pinta un
+  banner en vez de quedar mudo — regla dura de "None o levanta, nunca silencio" respetada.
+  Commit toca solo `scripts/chart_bridge.py` + `charts/live.html`. 6/6 tests
+  `chart|mock|isolation` OK, selftest OK. Puentes QA reiniciados y dejados VIVOS
+  (8080–8085). No probado en modo LIVE real (puerto 4001) — el fix del lado servidor es
+  simétrico mock/live por inspección de código (`_prime_bars` cubre ambos), pero no se
+  levantó un 7º puente contra TWS para no arriesgar el Mac de 8 GB.
 
 - [ ] **[pendiente] "make sure executable in desktop for software has icon too"** (Yunior
   2026-07-26). El ejecutable del escritorio a veces se queda sin icono.
