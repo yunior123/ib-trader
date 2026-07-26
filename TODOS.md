@@ -319,6 +319,35 @@
 > y la trazabilidad ES el producto cuando se audita un fichero de dinero. Corolario de la regla
 > "repartir por FICHERO": el reparto también aplica al `git add`. Usar rutas explícitas.
 
+## 🔴 PEDIDO 2026-07-26 (tarde) — apuntado al vuelo
+- [x] "arregla esas 4 lineas tambien" → hecho MEJOR que las 4: el default estaba en
+      `gex_core.from_ibkr_cache(band=0.035)`. Ahora `band=None` → lee la banda de la CABECERA
+      del fichero (`parse_chain_header` ya la traía). QQQ pasa de **48 a 184 strikes** y
+      `chart_levels` publica `band_used: 0.18`. Una línea en el sitio correcto en vez de cuatro
+      repetidas en dos ficheros.
+- [x] "usa init para que cada session de claude code reads claude.md" → creado `CLAUDE.md` en el
+      repo (el harness lo lee solo al abrir sesión aquí). CONCISO por la regla de no gastar
+      tokens: punteros a `AGENTS.md`/`docs/`, más las 6 reglas que más rompen cosas.
+- [ ] **[pendiente] QA de las 6 ventanas** sobre `replay` (tarea que sigue).
+- [ ] **[pendiente] Capturar más datos de TradingFlow y Unusual Whales por Chrome/Safari**
+      (Yunior: "use trading flow in chrome para capturar mas datos, y otros como unusualwhales").
+      Vía que SÍ funciona: **Safari + osascript** (la extensión de Chrome no conecta). Ya probada
+      hoy: `osascript -e 'tell application "Safari" to do JavaScript ...'` con la sesión de Yunior.
+- [ ] **[pendiente] LOS 5 ÁRBOLES** (Yunior 2026-07-26, después de terminar todo el testing):
+      *"imprime tree, solo tree para estos tickers: spy, qqq, aapl, smh, nvda, based on walls that
+      still remain from last week, plus the ones for this starting week till friday, search the
+      calls, puts expiring upcoming friday, create graph, chart, based on that too. 5 sheets total,
+      one per ticker."*
+      Es decir, por ticker: (a) muros que **sobreviven** de la semana pasada, (b) muros de la
+      semana que empieza hasta el viernes, (c) calls y puts que **expiran el viernes próximo**
+      (2026-07-31), (d) gráfico. **5 hojas, una por ticker.**
+      *Ya tenemos con qué*: `daily_fleet_plans.py` hace árboles de escenarios en PDF; las cadenas
+      archivadas con banda ancha traen 12 vencimientos hasta el 2026-08-21; y el histórico de
+      muros por sesión está en `data/history/<fecha>/`.
+      *Ojo*: los muros de "la semana pasada" hay que leerlos de las cadenas archivadas de esos
+      días, que tenían banda ±4,5% — comparar con los nuevos de banda ancha mezcla dos ventanas
+      distintas y hay que declararlo.
+
 ## 🆕 ÍNDICES A LA FLOTA + VERIFICACIÓN CRUZADA CON TRADINGFLOW (2026-07-26)
 > Yunior: *"SPX/SPXW/XSP… feel free to add them to fleet"* + captura suya de la tabla de índices
 > de TradingFlow (sesión 24-jul) con DIA/NDX/IWM/SPY/QQQ → *"put them on later todo"*.

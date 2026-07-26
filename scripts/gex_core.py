@@ -817,7 +817,7 @@ def _health_shell(spot, scale, hdr, health):
     return out
 
 
-def from_ibkr_cache(path, spot, band=0.035, scale="house", all_exp=False, now=None):
+def from_ibkr_cache(path, spot, band=None, scale="house", all_exp=False, now=None):
     """Lee data/opt_chain_<sym>.txt. scale='dollar1pct' -> $/1% (estándar gexa).
     all_exp=False (default) -> 0DTE puro (vencimiento VIVO más cercano).
     all_exp=True -> TODA la cadena viva mezclada, cada contrato con su T (mapa multi-día).
@@ -835,6 +835,10 @@ def from_ibkr_cache(path, spot, band=0.035, scale="house", all_exp=False, now=No
     if not os.path.exists(path):
         return None
     hdr = parse_chain_header(path)
+    # band=None -> la del fichero. El default fijo de 0.035 recortaba a +-3,5% cadenas
+    # archivadas con banda adaptativa mucho mas ancha (QQQ: 48 strikes de 184).
+    if band is None:
+        band = hdr.get("band") or 0.035
     ts_now, today, _ = _now_parts(now)
     rows, exps = [], set()
     with open(path) as fh:

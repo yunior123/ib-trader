@@ -311,9 +311,20 @@ def test_NOK_sigue_THIN_con_la_segunda_pierna():
                      r["greeks_ok_pct"], r["spot"],
                      r["flip_open"] if r["flip_open"] is not None else r["flip_live"],
                      abs_wall_regime=r["abs_wall_regime"])
-    assert ev["book_label"] == "THIN", (
-        "NOK dejo de ser THIN: el respaldo metio un bug " + json.dumps(r))
-    assert ev["coef"] == 0.0
+    # La etiqueta sale de los NUMEROS del libro, nunca del nombre del ticker.
+    # Hasta el 2026-07-26 NOK era THIN inevitable: la banda fija de +-4,5% le daba 2
+    # strikes. Con banda adaptativa trae 18 y 75% de griegas, asi que THIN seria ahora
+    # un FALSO negativo. Lo que se prueba es la coherencia etiqueta-vs-libro.
+    fino = (r["n_strikes_populated"] < BQ.THIN_STRIKES
+            or not BQ.usable_greeks(r["greeks_ok_pct"]))
+    if fino:
+        assert ev["book_label"] == "THIN", "libro fino que no sale THIN: " + json.dumps(r)
+        assert ev["coef"] == 0.0
+    else:
+        assert ev["book_label"] != "THIN", (
+            "libro con %d strikes y %.0f%% de griegas etiquetado THIN: %s"
+            % (r["n_strikes_populated"], (r["greeks_ok_pct"] or 0) * 100, json.dumps(r)))
+        assert ev["coef"] > 0.0
 
 
 def test_el_percentil_no_mezcla_poblaciones():
