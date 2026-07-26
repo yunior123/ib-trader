@@ -61,10 +61,14 @@ P = _stub(lv=None, sig=None,
 sys.modules["direction_view"].compute = lambda *a, **k: (_ for _ in ()).throw(RuntimeError())
 sys.modules["signal_conditioning"].conditioned_prob = lambda *a, **k: (_ for _ in ()).throw(RuntimeError())
 r = P.prob_profit("ZZZZ", 100, "buy", "call")
-for key in ("prob", "verdict", "why", "regime", "magnet", "walls", "components"):
+for key in ("prob", "prob_source", "calib_context", "doctrine_score", "verdict", "why",
+            "regime", "magnet", "walls", "components"):
     check(f"clave presente: {key}", key in r)
 check("verdict válido", r["verdict"] in ("GO", "CAUTION", "NO-GO"))
-check("prob en [0,100]", 0 <= r["prob"] <= 100)
+check("sin bucket medido -> prob es None, NUNCA un plausible", r["prob"] is None)
+check("prob_source = sin_medir", r["prob_source"] == "sin_medir")
+check("doctrine_score en [0,100] (es CONTEXTO, no probabilidad)",
+      0 <= r["doctrine_score"] <= 100)
 check("missing_core = 3 (todo ausente)", r["flags"]["missing_core"] == 3)
 check("componentes núcleo None", r["components"]["gamma"] is None
       and r["components"]["flow"] is None and r["components"]["technical"] is None)
@@ -107,13 +111,44 @@ P = _stub(lv=lv_pos, sig=sig_up,
 r = P.prob_profit("NVDA", 200, "buy", "call")
 check("imán oro a favor detectado", r["magnet"] and r["magnet"]["dir"] == "up")
 check("magnet_toward flag", r["flags"]["magnet_toward"] is True)
-check("prob alta (>60)", r["prob"] > 60)
+check("doctrine_score alta (>60) — sigue sin ser probabilidad", r["doctrine_score"] > 60)
+check("sin calibration.json con bucket order_engine -> prob None también en el limpio",
+      r["prob"] is None)
 check("veredicto GO", r["verdict"] == "GO")
 
 # --- 5b) mismo imán pero trade BAJISTA (put) -> imán en contra -> no GO ---
 r = P.prob_profit("NVDA", 200, "buy", "put")
 check("imán en contra para put", r["flags"]["magnet_against"] is True)
 check("put contra imán -> no GO", r["verdict"] in ("CAUTION", "NO-GO"))
+
+# --- 6) probabilidad MEDIDA: bucket order_engine|POS con muestra suficiente en
+# data/calibration.json -> prob deja de ser None y se etiqueta "medido" ---
+import tempfile, json as _json
+tmpdir = tempfile.mkdtemp()
+calib_path = os.path.join(tmpdir, "calibration.json")
+with open(calib_path, "w") as f:
+    _json.dump({"order_engine|POS": {"rate": 0.71, "n": 40, "wins": 28, "trust": True}}, f)
+P._orig_calib_path = P.CALIB_PATH
+P.CALIB_PATH = calib_path
+try:
+    r = P.prob_profit("NVDA", 200, "buy", "call")
+    check("bucket medido -> prob NO es None", r["prob"] is not None)
+    check("bucket medido -> prob = round(71%)", r["prob"] == 71)
+    check("prob_source = medido", r["prob_source"] == "medido")
+    check("calib_context describe el bucket", r["calib_context"] and "order_engine|POS" in r["calib_context"])
+finally:
+    P.CALIB_PATH = P._orig_calib_path
+
+# --- 6b) bucket existe pero sin muestra suficiente (trust=False) -> sigue sin cantar ---
+with open(calib_path, "w") as f:
+    _json.dump({"order_engine|POS": {"rate": 0.90, "n": 3, "wins": 3, "trust": False}}, f)
+P.CALIB_PATH = calib_path
+try:
+    r = P.prob_profit("NVDA", 200, "buy", "call")
+    check("bucket sin trust (n chica) -> prob sigue None, no se inventa con n=3", r["prob"] is None)
+    check("prob_source sigue sin_medir", r["prob_source"] == "sin_medir")
+finally:
+    P.CALIB_PATH = P._orig_calib_path
 
 print()
 if FAILS:

@@ -38,11 +38,15 @@ import os, sys, json, time
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "scripts"))
 
-# pesos de composición (estructura manda; agentes/crítico son contexto)
+# pesos de composición (estructura manda; agentes/crítico son contexto). OJO: esto puntúa
+# un DOCTRINE SCORE (-1..1, GO/CAUTION/NO-GO), NUNCA una probabilidad — ~/CLAUDE.md #3 prohibe
+# un except/fallback devolviendo un plausible; ver `prob` más abajo, que es optional<->None.
 W = {"gamma": 1.6, "flow": 1.2, "technical": 1.1, "agents": 0.7, "critic": 0.4}
 CORE = ("gamma", "flow", "technical")            # insumos cuya ausencia baja la confianza
 AGENTS_TTL = int(os.environ.get("PROB_AGENTS_TTL", "21600"))   # 6h: cache de agentes válido
 GO_MIN = float(os.environ.get("PROB_GO_MIN", "62"))
+CALIB_PATH = os.path.join(REPO, "data", "calibration.json")     # calibration_ledger.calibrate()
+CALIB_MIN_N = 20                                                # mismo umbral que MIN_N ahi
 CAUTION_MIN = float(os.environ.get("PROB_CAUTION_MIN", "52"))
 
 
@@ -65,6 +69,23 @@ def _days_to_exp(exp):
         return max(0, int((t - time.time()) // 86400) + 1)
     except Exception:
         return 0
+
+
+def _measured_prob(regime):
+    """Bucket "order_engine|<regime>" en data/calibration.json (calibration_ledger.calibrate(),
+    doctrina measured-probability). Devuelve (prob:int|None, bucket:dict|None). None si el
+    fichero no existe, el bucket no existe, o no pasa el gate de muestra (`trust`) — JAMAS
+    un prior inventado (~/CLAUDE.md #3): sin tabla medida, sin número, punto."""
+    if not regime:
+        return None, None
+    try:
+        cal = json.load(open(CALIB_PATH))
+    except Exception:
+        return None, None
+    b = cal.get(f"order_engine|{regime}")
+    if not b or not b.get("trust") or b.get("n", 0) < CALIB_MIN_N:
+        return None, None
+    return int(round(max(1, min(99, b["rate"] * 100)))), b
 
 
 # ------------------------------ 1) ESTRUCTURA GAMMA ------------------------------
@@ -276,7 +297,7 @@ def prob_profit(sym, level, side, kind, exp=None):
     if band_walk:
         why.append("band-walk NEG a favor del flujo — continuación, no whipsaw ciego")
 
-    # --- media ponderada de los componentes presentes ---
+    # --- media ponderada de los componentes presentes: DOCTRINE SCORE, no probabilidad ---
     num = den = 0.0
     for name, c in comps.items():
         s = c.get("score")
@@ -284,21 +305,33 @@ def prob_profit(sym, level, side, kind, exp=None):
             continue
         num += s * W[name]; den += W[name]
     composite = _clamp(num / den) if den else 0.0
-    prob = 50 + composite * 40
+    doctrine_score = 50 + composite * 40
 
-    # --- degradación de confianza por insumos CORE ausentes ---
+    # --- degradación de confianza por insumos CORE ausentes (sobre el doctrine score) ---
     missing_core = sum(1 for k in CORE if comps[k].get("missing"))
     if missing_core:
-        prob = 50 + (prob - 50) * (1 - 0.15 * missing_core)      # acerca a 50 (menos convicción)
+        doctrine_score = 50 + (doctrine_score - 50) * (1 - 0.15 * missing_core)   # acerca a 50
         why.append(f"confianza ↓: {missing_core} insumo(s) núcleo ausente(s)")
-    prob = max(5, min(92 - 8 * missing_core, prob))
-    prob = int(round(max(5, prob)))
+    doctrine_score = max(5, min(92 - 8 * missing_core, doctrine_score))
+    doctrine_score = int(round(max(5, doctrine_score)))
 
-    # --- veredicto (doctrina + prob) ---
+    # --- probabilidad MEDIDA (calibration_ledger, bucket order_engine|<régimen>) o nada.
+    # Sin tabla medida que consultar la salida honesta es SIN NUMERO, no un prior inventado
+    # (~/CLAUDE.md #3; patrón exacto de scripts/compass.cpp prob_of()/calib_context). ---
+    regime = g.get("regime")
+    prob, calib_bucket = _measured_prob(regime)
+    prob_source = "medido" if prob is not None else "sin_medir"
+    if prob is None:
+        why.append(f"probabilidad SIN MEDIR (sin bucket \"order_engine|{regime}\" con muestra "
+                   f"suficiente en data/calibration.json) — doctrine_score es CONTEXTO, no prob")
+    calib_context = (f"order_engine|{regime}: n={calib_bucket['n']} rate={calib_bucket['rate']:.0%}"
+                     if calib_bucket else None)
+
+    # --- veredicto (doctrina: composite/doctrine_score + vetos, NUNCA la prob medida) ---
     clean_side = magnet_toward or band_walk or (flow_fav is not None and flow_fav >= 0.35 and not whipsaw)
     hard_nogo = (veto or transition or magnet_against
                  or (whipsaw and not band_walk)         # NEG sin lado ni band-walk = honesto NO-GO
-                 or prob < 45)
+                 or doctrine_score < 45)
     if veto:
         why.insert(0, "⛔ capitán EN CONTRA — veto de voz (regla #12)")
     if transition and "transición" not in " ".join(why[:1]):
@@ -306,9 +339,9 @@ def prob_profit(sym, level, side, kind, exp=None):
 
     if hard_nogo:
         verdict = "NO-GO"
-    elif prob >= GO_MIN and clean_side and missing_core == 0:
+    elif doctrine_score >= GO_MIN and clean_side and missing_core == 0:
         verdict = "GO"
-    elif prob >= CAUTION_MIN:
+    elif doctrine_score >= CAUTION_MIN:
         verdict = "CAUTION"
     else:
         verdict = "NO-GO"
@@ -319,7 +352,8 @@ def prob_profit(sym, level, side, kind, exp=None):
 
     return {
         "sym": sym, "level": level, "side": side, "kind": kind, "exp": exp,
-        "prob": prob, "verdict": verdict, "headline": head,
+        "prob": prob, "prob_source": prob_source, "calib_context": calib_context,
+        "doctrine_score": doctrine_score, "verdict": verdict, "headline": head,
         "regime": g.get("regime"), "magnet": magnet, "walls": g.get("walls", {"call": None, "put": None}),
         "components": {k: comps[k].get("score") for k in ("gamma", "flow", "technical", "agents", "critic")},
         "flags": {"veto": veto, "transition": transition, "whipsaw": whipsaw,
@@ -340,8 +374,9 @@ def _cli():
     icon = {"GO": "🟢", "CAUTION": "🟡", "NO-GO": "🔴"}[r["verdict"]]
     mg = r["magnet"]
     mgs = f"  imán {mg['price']} {mg['kind']} {mg['dir']}" if mg else ""
+    pr = f"{r['prob']}% ({r['prob_source']})" if r["prob"] is not None else "SIN MEDIR"
     print(f"{icon} {r['sym']} {r['kind']}@{r['level']} ({r['side']}) exp {r['exp'] or '0DTE'}: "
-          f"P(profit) {r['prob']}%  {r['verdict']} — {r['headline']}  "
+          f"P(profit) {pr}  doctrine_score {r['doctrine_score']}  {r['verdict']} — {r['headline']}  "
           f"[{r['regime']}{mgs}  muros C{r['walls'].get('call')}/P{r['walls'].get('put')}]")
     print(f"    componentes: {json.dumps(r['components'])}")
     for w in r["why"]:

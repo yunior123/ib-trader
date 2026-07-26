@@ -153,13 +153,18 @@ def finviz_health_is_stale(path=None, now=None, max_age_s=12 * 3600):
 
 def refresh_finviz_health(timeout=40):
     """Re-corre scripts/finviz_auth_check.py si el registro esta rancio. Best-effort:
-    si falla, `finviz_token_status` lo vera rancio y avisara — jamas se finge frescura."""
+    si falla, `finviz_token_status` lo vera rancio y avisara — jamas se finge frescura.
+
+    SIN --quiet a proposito (bug real, TODOS.md "GRITAR cuando el token caduque"): ese
+    flag es "para tests" (finviz_auth_check.py:38) y este es el UNICO caller automatico
+    en produccion (cron 3x/dia). Pasarlo aqui silenciaba para siempre la voz DANGER/SIGNAL
+    del propio script — la flota se quedaba ciega sin que sonara nada."""
     if not finviz_health_is_stale():
         return False
     try:
         subprocess.run(
             [os.path.join(REPO, "venv", "bin", "python"),
-             os.path.join(REPO, "scripts", "finviz_auth_check.py"), "--quiet"],
+             os.path.join(REPO, "scripts", "finviz_auth_check.py")],
             cwd=REPO, timeout=timeout,
             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False)
         return True

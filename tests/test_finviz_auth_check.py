@@ -14,7 +14,9 @@ efecto en nadie. Hay un test que lo fija para que no se vuelva a repetir.
 """
 import datetime as dt
 import os
+import subprocess
 import sys
+import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts"))
 import finviz_auth_check as fac  # noqa: E402
@@ -202,3 +204,28 @@ def test_registro_de_hace_un_dia_se_recomprueba(tmp_path):
     viejo = _os.path.getmtime(str(p)) - 24 * 3600
     _os.utime(str(p), (viejo, viejo))
     assert fh.finviz_health_is_stale(path=str(p)) is True
+
+
+# ---------- el bug real: --quiet mataba la VOZ en el UNICO caller de produccion ----------
+# finviz_auth_check.py:38 dice "--quiet ... sin voz (para tests)": es para tests, no para
+# el cron. refresh_finviz_health() lo pasaba SIEMPRE -> DANGER/SIGNAL de finviz_auth_check.py
+# jamas sonaba en produccion (fleet_healthcheck corre 3x/dia y es el UNICO caller automatico).
+
+def test_refresh_finviz_health_ya_NO_pasa_quiet(monkeypatch, tmp_path):
+    """El caller de produccion no puede silenciar la voz de finviz_auth_check.py."""
+    stale = tmp_path / "stale.json"
+    stale.write_text("{}")
+    old = time.time() - 999999
+    os.utime(stale, (old, old))
+    monkeypatch.setattr(fh, "finviz_health_is_stale", lambda: True)
+    captured = {}
+
+    def fake_run(cmd, **kw):
+        captured["cmd"] = cmd
+        class R: returncode = 0
+        return R()
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    fh.refresh_finviz_health()
+    assert "--quiet" not in captured["cmd"], (
+        "refresh_finviz_health no debe silenciar el unico caller automatico "
+        "(el bug: la voz de finviz_auth_check.py nunca sonaba en produccion)")

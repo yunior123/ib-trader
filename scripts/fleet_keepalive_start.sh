@@ -6,6 +6,29 @@
 # re-ejecuta cada 5 min (StartInterval) = watchdog de los watchdogs.
 cd "$(dirname "$0")/.." || exit 1
 ROOT="$(pwd)"
+
+# --- MUTEX contra arranques concurrentes (2026-07-26) -------------------------
+# El dedup de abajo es "pgrep ¿ya corre? -> si no, lanza": entre el pgrep y el nohup
+# hay una ventana. Si DOS instancias de este script corren a la vez (launchd cada
+# 300s solapado con un run manual, o esta corrida tardando por el finviz_valuation.py
+# sincrono) ambas pueden pasar el pgrep antes de que ninguna haya lanzado nada ->
+# DOS nvda_keepalive.sh para el mismo simbolo, cada uno con `pkill -x` en su loop ->
+# se matan el bot mutuamente cada ciclo (TODOS.md: "bot asesinado cada 31 s").
+# mkdir es atomico (macOS no trae flock, patron ya usado en speak.sh). Si el lock
+# esta viejo (>120s, instancia anterior murio a medias) se roba.
+LOCKDIR="$ROOT/data/.fleet_keepalive_start.lockd"
+if ! mkdir "$LOCKDIR" 2>/dev/null; then
+  AGE=$(( $(date +%s) - $(stat -f %m "$LOCKDIR" 2>/dev/null || echo 0) ))
+  if [ "$AGE" -lt 120 ]; then
+    echo "$(date) fleet: OTRA instancia activa (lock ${AGE}s) -> salgo sin tocar nada (evita doble keepalive)" >> "$ROOT/fleet_autostart.log"
+    exit 0
+  fi
+  echo "$(date) fleet: lock viejo (${AGE}s) -> instancia anterior murio a medias, lo tomo" >> "$ROOT/fleet_autostart.log"
+  rmdir "$LOCKDIR" 2>/dev/null
+  mkdir "$LOCKDIR" 2>/dev/null
+fi
+trap 'rmdir "$LOCKDIR" 2>/dev/null' EXIT
+
 # --- AUTO-CHEQUEO DE PERMISO (Yunior 2026-07-24 "los bots siempre con permiso") ---
 # Si el contexto de arranque (p.ej. launchd SIN Full Disk Access) no puede escribir el
 # HUD del Desktop, los bots correrian MUDOS y las señales se perderian en silencio.

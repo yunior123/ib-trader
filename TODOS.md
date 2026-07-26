@@ -43,9 +43,15 @@
   (a) minar TradingFlow con la cuenta de Yunior; (b) **probar TODO** en el navegador
   (chart vivo, muros, flecha, burbujas, panel GEX).
 
-- [ ] **[pendiente]** `scripts/finviz_auth_check.py`: GRITAR cuando el token caduque.
-      *Por qué importa*: hoy caduca **en silencio** y el scout/valuation/whale-bot se quedan mudos
-      sin que nadie se entere. Yunior lo renueva semanalmente.
+- [x] **[hecho 2026-07-26]** `scripts/finviz_auth_check.py`: GRITAR cuando el token caduque.
+      Confirmado el bug, pero no donde parecía: el script YA tenía `say("DANGER"/"SIGNAL", ...)`
+      bien escrito (líneas 191,219,223) — el problema era que su ÚNICO caller automático en
+      producción, `fleet_healthcheck.py:refresh_finviz_health()` (cron 3x/día), le pasaba
+      `--quiet` SIEMPRE, y ese flag es "para tests" según el propio docstring del script
+      (línea 38). Resultado: la voz nunca sonaba en producción, solo quedaba el JSON +
+      notificación/email del healthcheck. Arreglado quitando `--quiet` de esa llamada
+      (`scripts/fleet_healthcheck.py:162`). Test de cableado (no de audio):
+      `tests/test_finviz_auth_check.py::test_refresh_finviz_health_ya_NO_pasa_quiet`.
 - [ ] **[pendiente] "make sure the walls are ok, no excuses, verify and try in depth… plus explore
       and call polygon and others"** (Yunior 2026-07-25). MEDIDO hoy contra DOS referees
       independientes que coinciden entre sí (CBOE CDN y Polygon sin filtrar): **los muros NO están
@@ -1106,13 +1112,32 @@ Spec: `docs/FEATURES-MINED-2026-07-25.md`.
 ### Otros vivos que contradicen doctrina escrita (muestra, no la lista entera)
 - [ ] `aapl_signal_bot.cpp:1738,1839` — el gate de spread **falla ABIERTO**: sin NBBO,
       `sp = 0` y pasa todo. La orden #5 dice que un spread ancho NO es señalable.
-- [ ] `aapl_signal_bot.cpp:788,835` — `V6_PRIOR[]` literal y `return prior` sin tabla: **las
-      probabilidades habladas son inventadas** en los tickers sin calibración.
+- [x] **[refutado 2026-07-26]** `aapl_signal_bot.cpp:788,835` — `V6_PRIOR[]` literal: **NO se
+      canta suelto**. `V6Prob::prob()` (:831-835) solo lo usa como prior de shrinkage bayesiano
+      (k=20) mezclado con filas REALES de `data/prob_table_aapl.txt` (`maybe_reload` en :1053);
+      sin fila para la clase devuelve `-1` y `consider()` (:1145-1146) hace `if (p<0) return;`
+      — "no se canta prior inventado", literal en el código. Comprobado en los 24 bots: los
+      otros 23 (ej. `nvda_signal_bot.cpp:1144-1148`) NO tienen ese `if (p<0) return;`, pero es
+      **inerte**: `V6_PROB_MIN` (`nvda_signal_bot.cpp:537`) default 55, la fórmula de shrinkage
+      siempre da ≥0, así que un `-1` sin medir JAMÁS gana la comparación `p > best.prob` contra
+      un candidato real ni pasa `cb.prob >= V6_PROB_MIN` (:1315,1318) — nunca dispara ni se
+      anuncia (el único print con `-1` es de depuración, tras `V6_DEBUG>0`, default 0). Hardening
+      de una línea (`if (p<0) return;`) en los 23 restantes es zero-riesgo pero NO urgente —
+      pendiente si Yunior quiere el barrido completo (23 recompilaciones secuenciales, 8GB).
 - [ ] `scripts/signal_conditioning.py:267` — busca `enable[f"{source}|{symbol}"]` con
       `source="order_engine"/"ticket"`, cuando las claves reales son `bollinger|AAPL`… →
       **el condicionamiento NUNCA aplica justo donde se ordena.**
-- [ ] `order_engine/prob_profit.py:42,287` — `prob = 50 + composite*40` sobre pesos literales:
-      **el mismo patrón que `direction_view`**, un score heurístico presentado como probabilidad.
+- [x] **[hecho 2026-07-26]** `order_engine/prob_profit.py:42,287` — `prob = 50 + composite*40`
+      sobre pesos literales: confirmado, mismo patrón prohibido. Arreglado con el patrón exacto
+      de `scripts/compass.cpp` (`prob_of`/`calib_context`): el score de composición pasa a
+      llamarse `doctrine_score` (nunca "prob"), y `prob` es ahora `Optional[int]` — se llena
+      SOLO si existe bucket `"order_engine|<régimen>"` con `trust` en `data/calibration.json`
+      (`_measured_prob()`, nuevo), si no `None` + `prob_source="sin_medir"`. Hoy ese bucket no
+      existe → `prob` sale `null` siempre (honesto), y el verdict GO/CAUTION/NO-GO sigue
+      calculándose con `doctrine_score`, no con un número inventado. `chart_bridge.py` (agregado
+      ajeno, no tocado) ya usaba `{"prob": None, ...}` como default antes de este fix — cero
+      riesgo de romperlo. Tests: `order_engine/prob_profit_test.py` (nuevos casos 1,5,6,6b) +
+      `bash order_engine/tests/run_tests.sh` sigue en 499 OK (C++ intacto).
 - [ ] `scripts/index_breadth.py:58-62` — `pc = d.Close.iloc[-1]` es HOY, comparado contra `now`:
       MEDIDO en `data/breadth.json` de hoy, **gap +0.00 en TODOS los componentes** → el
       ENGRANAJE QQQ/SPY está mudo.
@@ -1124,8 +1149,16 @@ Spec: `docs/FEATURES-MINED-2026-07-25.md`.
       = **lectura fuera de buffer** y línea corrupta.
 - [ ] `scripts/ibkr_bar_bridge.py:147` — `open(...,"w")` 4×/s **sin tmp+rename**: el lector puede
       ver el fichero VACÍO. (La regla de frontera de `~/CLAUDE.md` pide escritura atómica.)
-- [ ] `scripts/fleet_keepalive_start.sh:257` + `scripts/nvda_keepalive.sh:31` — dedup por `pgrep`
-      contra un keepalive que hace `pkill -x`: dos arranques concurrentes = **bot asesinado cada 31 s**.
+- [x] **[hecho 2026-07-26]** `scripts/fleet_keepalive_start.sh:257` + `scripts/nvda_keepalive.sh:31`
+      — confirmado: el dedup `pgrep`-luego-`nohup` tiene ventana TOCTOU entre dos instancias
+      concurrentes de `fleet_keepalive_start.sh` (cron 300s solapado con una corrida manual, o
+      con el `finviz_valuation.py` síncrono alargando una corrida) → doble `nvda_keepalive.sh`
+      (o cualquier símbolo) peleándose con `pkill -x` cada ~31s. Arreglado con mutex `mkdir`
+      (atómico, mismo patrón que `speak.sh`) alrededor de TODO el cuerpo del script, con robo de
+      lock viejo (>120s) para no dejar la flota apagada si una instancia murió a medias. Test:
+      `tests/test_fleet_keepalive_lock.py` (3 casos: dos instancias concurrentes, secuenciales
+      normales, lock huérfano) — reproduce la carrera de verdad con `subprocess` y un
+      `fleet_hours` stub, sin tocar bots reales.
 
 ---
 
