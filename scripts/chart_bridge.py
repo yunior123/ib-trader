@@ -1330,7 +1330,7 @@ async def broadcast_direction(state, lv=None):
             state.clients.discard(ws)
 
 
-def history_frame(bars, levels, tf=None):
+def history_frame(bars, levels, tf=None, nodata=None):
     ind = compute_indicators(bars)
     return {
         "type": "history",
@@ -1340,6 +1340,7 @@ def history_frame(bars, levels, tf=None):
         "levels": levels or {},
         "signals": load_signal_markers((levels or {}).get("sym", ""), bars),
         "engineOps": load_engine_ops((levels or {}).get("sym", ""), bars),
+        "nodata": nodata if not bars else None,
     }
 
 
@@ -1386,6 +1387,7 @@ class State:
         self.sym = sym
         self.mock = mock
         self.bars = []          # feed crudo: 5m (mock CSV) / 1m (mock sandbox) / nativo (live)
+        self._nodata_reason = None   # por qué self.bars sigue [] (None = aun no se sabe / hay datos)
         self.levels = {}
         self.clients = set()    # WebSocket
         self.base_min = 5 if (mock and not MOCK_DIR) else 1
@@ -1484,6 +1486,7 @@ async def live_reapply(state, tf):
     )
     state.set_bars([[int(b.date.timestamp()), b.open, b.high, b.low, b.close, float(b.volume)]
                     for b in bars])
+    state._nodata_reason = None if state.bars else f"TWS sin barras para {state.sym.upper()} ({bar_size})"
     bars.updateEvent += _make_on_bar(state)
     state._live_sub = bars
     print(f"[tf] LIVE {state.sym}: {bar_size} ({dur}) -> {len(state.bars)} barras")
@@ -1508,6 +1511,28 @@ SHARED_IB = {"ib": None}   # conexion ib_async unica, compartida por todos los e
 PRIMARY_SYM = {"sym": None}
 
 
+def _prime_bars(st):
+    """Carga SINCRONA de las barras de arranque, ANTES de que el State se devuelva a nadie.
+    Medido 2026-07-26 (ws_probe2): sin esto, el primer history_frame tras {cmd:"sym"} salia
+    con bars=0 el 100% de las veces (get_state agendaba _spawn_state con ensure_future y el
+    handler mandaba el frame antes de que corriera) -> ventana muda tras elegir un simbolo
+    nuevo en la watchlist. Si de verdad no hay dato (sandbox sin ese simbolo, o sin archivo
+    de barras 1m) se deja constancia en st._nodata_reason en vez de quedar en silencio."""
+    if st.mock:
+        all_bars, warm, reason = _mock_load(st.sym)
+        if reason:
+            st._nodata_reason = reason
+        elif all_bars:
+            st.set_bars(all_bars[:warm])
+    else:
+        bars = load_ibkr_bars(st.sym, tail=780)
+        if bars:
+            st.set_bars(bars)
+        else:
+            st._nodata_reason = (f"sin barras 1m locales para {st.sym.upper()} "
+                                  f"(data/bars_{st.sym}_ibkr.txt) — esperando TWS")
+
+
 def get_state(sym):
     """State del simbolo (lo crea y arranca sus bucles si no existia)."""
     sym = (sym or "").strip().lower()
@@ -1516,6 +1541,7 @@ def get_state(sym):
         return st
     st = State(sym, mock=STATE_CFG["mock"])
     st.levels = load_levels(sym) or {}
+    _prime_bars(st)
     STATES[sym] = st
     asyncio.ensure_future(_spawn_state(st))
     print(f"[multi] estado NUEVO {sym.upper()} (abiertos: {len(STATES)})")
@@ -1534,9 +1560,7 @@ async def _spawn_state(st):
                 # se REUSA la conexion (un solo clientId): cada estado añade su propio
                 # contrato + tick stream. Nada de una conexion por ventana.
                 st._ib = ib
-                base = load_ibkr_bars(st.sym, tail=780)
-                if base:
-                    st.set_bars(base)
+                base = st.bars   # _prime_bars ya la cargo sincrono (sin carrera)
                 try:
                     ib.pendingTickersEvent += _make_on_tick(st)
                 except Exception:
@@ -1624,7 +1648,7 @@ async def _relive_symbol(state, sym, rebroadcast=False):
     except Exception: pass
     await live_reapply(state, state.tf)
     if rebroadcast:   # solo si no hubo carga instantánea (símbolo fuera de la flota)
-        frame = history_frame(agg_view_bars(state), state.levels, state.tf)
+        frame = history_frame(agg_view_bars(state), state.levels, state.tf, nodata=state._nodata_reason)
         for ws in list(state.clients):
             try: await ws.send_json(frame)
             except Exception: state.clients.discard(ws)
@@ -1707,7 +1731,7 @@ def create_app(state):
         st.clients.add(ws)
         try:
             # frame de historia inmediato (setData once en el cliente), al tf actual
-            await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf))
+            await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason))
             # watchlist (fleet + usuario), zonas 0DTE del símbolo y flecha direccional
             await ws.send_json(watchlist_payload())
             await ws.send_json(zones_frame(st))
@@ -1725,7 +1749,7 @@ def create_app(state):
                 if isinstance(ctl, dict) and ctl.get("cmd") == "tf":
                     await set_timeframe(st, ctl.get("tf", st.tf))
                     # re-emite un frame de historia FRESCO al tf pedido
-                    await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf))
+                    await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason))
                 elif isinstance(ctl, dict) and ctl.get("cmd") == "sym":
                     # NO se muta el estado compartido: se MUEVE esta conexión al State del
                     # nuevo símbolo (creándolo si no existe). Las demás ventanas ni se
@@ -1738,7 +1762,7 @@ def create_app(state):
                         reap_state(st)
                         st = get_state(want)
                         st.clients.add(ws)
-                    await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf))
+                    await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason))
                     # zonas del nuevo símbolo + flecha direccional (actualización inmediata)
                     await ws.send_json(zones_frame(st))
                     await broadcast_direction(st)
@@ -2146,26 +2170,39 @@ async def levels_loop(state):
 
 
 # ============================== feed MOCK (offline) ==========================
-async def mock_feed(state, interval=1.0, warm=260):
-    """Carga barras 5m del CSV: las primeras `warm` como historia, el resto se emiten
-    una a una cada `interval`s (simula el tick de barra nueva). Prueba TODO el pipe
-    sin TWS. Al agotarse, hace loop reiniciando el reloj (para demo continua)."""
+def _mock_load(sym, warm_default=260):
+    """Carga SINCRONA (archivo local, sin TWS) de la historia mock de un simbolo: sandbox de
+    replay si hay --mock-dir, si no el CSV bars3mo5m. Devuelve (all_bars, warm, reason) donde
+    reason != None solo cuando NO hay dato real disponible (sandbox sin barras para ese sym).
+    Compartida por get_state (carga instantanea, sin carrera con el primer history_frame) y
+    mock_feed (arranque + streaming)."""
     if MOCK_DIR:
-        all_bars = load_sandbox_bars(state.sym)
+        all_bars = load_sandbox_bars(sym)
         if not all_bars:
-            print(f"[mock] FATAL: sandbox sin barras para {state.sym.upper()} "
-                  f"({MOCK_DIR}/data/bars_{state.sym}_ibkr.txt)")
-            return
+            return [], 0, (f"sandbox sin barras para {sym.upper()} "
+                            f"({MOCK_DIR}/data/bars_{sym}_ibkr.txt)")
         # el sandbox se reproduce por el FINAL: la cadena que publicó el replay es la del
         # último instante, así que un warm corto dejaría el spot lejos del libro otra vez.
         warm = max(1, len(all_bars) - 20)
-    else:
-        all_bars = load_csv_bars(state.sym)
-        if not all_bars:
-            print(f"[mock] sin CSV para {state.sym}; genero barras sintéticas")
-            all_bars = _synthetic_bars(state.sym, 400)
-        warm = min(warm, max(1, len(all_bars) - 20))
-    state.set_bars(all_bars[:warm])
+        return all_bars, warm, None
+    all_bars = load_csv_bars(sym)
+    if not all_bars:
+        all_bars = _synthetic_bars(sym, 400)
+    warm = min(warm_default, max(1, len(all_bars) - 20))
+    return all_bars, warm, None
+
+
+async def mock_feed(state, interval=1.0, warm=260):
+    """Prueba TODO el pipe sin TWS: la historia ya la puso _prime_bars (sincrono, sin carrera);
+    aqui solo streamea el resto una a una cada `interval`s (simula el tick de barra nueva)."""
+    all_bars, warm, reason = _mock_load(state.sym, warm_default=warm)
+    if reason:
+        state._nodata_reason = reason
+        print(f"[mock] FATAL: {reason}")
+        return
+    if not state.bars:   # _prime_bars ya pudo haberla cargado; no pisar/duplicar log
+        state.set_bars(all_bars[:warm])
+    state._nodata_reason = None
     print(f"[mock] {state.sym}: historia={warm} barras, streaming {len(all_bars)-warm} restantes @ {interval}s")
     idx = warm
     while True:

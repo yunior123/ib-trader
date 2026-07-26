@@ -68,6 +68,11 @@
   #structpill.hidden { display:none; }
   #structpill.dn { border-color:#ef5350; color:#ef5350; }
   #structpill.flat { border-color:#8aa0c8; color:#8aa0c8; }
+  #nodataBanner { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:25;
+                  background:rgba(20,24,31,.96); border:1px solid #ef5350; color:#ef5350;
+                  border-radius:8px; padding:10px 18px; font-size:14px; font-weight:700;
+                  box-shadow:0 2px 12px rgba(0,0,0,.5); pointer-events:none; text-align:center; }
+  #nodataBanner.hidden { display:none; }
   #narrbtn { background:#2a2e39; color:#8aa0c8; border:1px solid #3a4b6b;
              border-radius:4px; padding:4px 9px; font:inherit; font-weight:700; cursor:pointer; }
   #narrbtn:hover { background:#2f3646; color:#fff; }
@@ -144,6 +149,7 @@
   #wllist .wlrow .wlast, #wllist .wlrow .wchg, #wllist .wlrow .wvol {
                    text-align:right; font-weight:600; font-size:12px; font-variant-numeric:tabular-nums; }
   #wllist .wlrow .wvol { color:#8a8f9c; }
+  #wllist .wlempty { padding:14px 8px; color:#6b7a99; font-size:12px; }
   #wllist .wlrow:hover { background:#2a2e39; }
   #wllist .wlrow.sel { background:#2962ff; color:#fff; }
   #wllist .wlrow.sel .wvol, #wllist .wlrow.sel .wchg { color:#dbe4ff; }
@@ -435,6 +441,7 @@
 </div>
 <div id="chart">
   <div id="structpill" class="hidden"></div>
+  <div id="nodataBanner" class="hidden"></div>
   <div id="chipbar"></div>
   <div id="dirarrow"><div class="glyph"></div><div class="pct"></div><div class="tgt"></div><div class="st"></div><div class="bq"></div><div class="cap"></div></div>
   <div id="countdown"></div>
@@ -1095,6 +1102,7 @@ function delFromWatchlist(sym) {
   if (ws && ws.readyState === WebSocket.OPEN)
     ws.send(JSON.stringify({ cmd: "watchlist", act: "del", sym }));
 }
+let wlFilter = "";   // texto del buscador, EN VIVO (bug 2026-07-26: no filtraba al teclear)
 function renderWatchlist() {
   const mk = (s) => {
     const q = QUOTES[s] || {};
@@ -1109,23 +1117,34 @@ function renderWatchlist() {
       (USERWL.includes(s) ? `<span class="wx" data-del="${s}" title="Quitar de mi lista">✕</span>` : `<span class="wx" style="visibility:hidden">✕</span>`) +
       `</div>`;
   };
+  const flt = (arr) => wlFilter ? arr.filter(s => s.includes(wlFilter)) : arr;
+  const fleetV = flt([...FLEET].sort()), userV = flt([...USERWL].sort());
   let html = '<div class="wlhdr"><span>Símbolo</span><span>Último</span><span>%Día</span><span>Vol</span><span></span></div>';
-  html += '<div class="wlhdr sub">Flota</div>' + [...FLEET].sort().map(mk).join("");
-  if (USERWL.length) html += '<div class="wlhdr sub">Mías</div>' + [...USERWL].sort().map(mk).join("");
+  if (fleetV.length) html += '<div class="wlhdr sub">Flota</div>' + fleetV.map(mk).join("");
+  if (userV.length) html += '<div class="wlhdr sub">Mías</div>' + userV.map(mk).join("");
+  if (wlFilter && !fleetV.length && !userV.length)
+    html += `<div class="wlempty">sin coincidencias para "${wlFilter}" — Enter para añadirlo</div>`;
+  const prevScroll = wllist.scrollTop;   // no perder posición al re-render (15s watchlist tick)
   wllist.innerHTML = html;
+  wllist.scrollTop = prevScroll;
   wllist.querySelectorAll(".wlrow").forEach(r => r.addEventListener("click", (e) => {
     if (e.target.dataset.del) return;   // el ✕ se maneja aparte
+    wlsearch.value = ""; wlFilter = "";
     switchSymbol(r.dataset.sym);
   }));
   wllist.querySelectorAll(".wx").forEach(x => x.addEventListener("click", (e) => {
     e.stopPropagation(); delFromWatchlist(x.dataset.del);
   }));
 }
+wlsearch.addEventListener("input", () => {
+  wlFilter = wlsearch.value.trim().toUpperCase();
+  renderWatchlist();
+});
 wlsearch.addEventListener("keydown", (e) => {
   if (e.key !== "Enter") return;
   const s = wlsearch.value.trim().toUpperCase();
   if (!s) return;
-  wlsearch.value = "";
+  wlsearch.value = ""; wlFilter = "";
   if (ws && ws.readyState === WebSocket.OPEN)
     ws.send(JSON.stringify({ cmd: "watchlist", act: "add", sym: s }));  // server cualifica + responde watchlist
   switchSymbol(s);   // salta a él enseguida
@@ -1760,7 +1779,14 @@ setBubbles((() => { try { const v = localStorage.getItem("gexBubbles"); return v
 // ------------------------------------------------------- WS pipeline
 let curLevels = null;
 let lastBar = null;
+function onNoData(reason) {
+  const b = document.getElementById("nodataBanner");
+  if (!b) return;
+  if (reason) { b.textContent = "⚠ " + reason; b.classList.remove("hidden"); }
+  else b.classList.add("hidden");
+}
 function onHistory(msg) {
+  onNoData(msg.nodata || null);
   candle.setData(msg.bars);
   candleData = msg.bars || [];      // espejo para candleAutoscale (el eje lo fijan las velas)
   const ind = msg.indicators;
