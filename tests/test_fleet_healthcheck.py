@@ -462,3 +462,57 @@ def test_el_plist_del_healthcheck_abandona_el_grupo():
         with open(vivo, "rb") as fh:
             assert plistlib.load(fh).get("AbandonProcessGroup") is True, (
                 f"{vivo}: instalado sin AbandonProcessGroup (recargalo tras el fix)")
+
+
+def test_el_informe_no_pone_palomita_a_una_cura_fallida(hc, tmp_path, monkeypatch, capsys):
+    """Un intento de cura FALLIDO no puede salir con ✅ ni contar como 'curado':
+    esa palomita era la que hacia creer que habia red de seguridad."""
+    monkeypatch.setattr(hc, "proc_alive", lambda _p: False)
+    monkeypatch.setattr(hc, "fleet_window_live", lambda: True)
+    monkeypatch.setattr(hc, "premarket_or_session", lambda: False)
+    monkeypatch.setattr(hc, "spawn_keepalive", lambda _p: _MuertoAlInstante())
+    monkeypatch.setattr(hc.sys, "argv", ["fleet_healthcheck.py", "--no-email"])
+    monkeypatch.setattr(hc.subprocess, "Popen", _PopenMudo)   # sin banner osascript
+    try:
+        hc.main()
+    except SystemExit:
+        pass
+    out = capsys.readouterr().out
+    assert "AUTO-CURADO:" in out, out
+    for ln in out.splitlines():
+        if "NO revivido" in ln:
+            assert "✅" not in ln, ln
+            break
+    else:
+        raise AssertionError("no aparecio ninguna cura fallida en el informe:\n" + out)
+
+
+class _MuertoAlInstante:
+    pid = 1
+
+    def poll(self):
+        return 127
+
+
+class _PopenMudo:
+    """Popen inerte: silencia el banner de osascript sin romper subprocess.run."""
+
+    def __init__(self, *a, **k):
+        self.returncode = 0
+        self.pid = 1
+        self.args = a[0] if a else []
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *a):
+        return False
+
+    def communicate(self, *a, **k):
+        return ("", "")
+
+    def poll(self):
+        return 0
+
+    def wait(self, *a, **k):
+        return 0

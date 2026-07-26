@@ -421,7 +421,9 @@ def main():
                 # job en cuanto el healthcheck termina (ver spawn_keepalive).
                 spawn_keepalive(os.path.join(REPO, "scripts", "fleet_keepalive_start.sh"))
                 time.sleep(4); bridge = proc_alive("ibkr_bar_bridge.py"); bots = count_proc("signal_bot")
-                healed.append(f"flota: relanzada (bridge {'vivo' if bridge else 'aun no'}, {bots} bots)")
+                healed.append(f"flota: REVIVIDA (verificado: bridge vivo, {bots} bots)" if bridge
+                              else f"flota: NO revivida — el bridge sigue sin aparecer 4s despues "
+                                   f"del relanzado ({bots} bots)")
             except Exception as e:
                 crit.append(f"flota: fallo relanzar ({e})")
         (ok if bridge else crit).append(f"bar_bridge (feed IBKR): {'vivo' if bridge else 'MUERTO en horario activo'}")
@@ -524,7 +526,11 @@ def main():
     # --- reporte ---
     status = "🔴 CRITICO" if crit else ("🟡 AVISOS" if warn else "🟢 TODO OK")
     lines = [f"HEALTHCHECK ib-trader {now} — {status}", "="*50]
-    if healed: lines += ["AUTO-CURADO:"] + [f"  ✅ {h}" for h in healed]
+    # Un intento de cura FALLIDO no lleva ✅ ni cuenta como "curado": era justo esa
+    # palomita la que hacia creer que habia red de seguridad (ver spawn_keepalive).
+    curados = [h for h in healed if "REVIVID" in h]
+    if healed:
+        lines += ["AUTO-CURADO:"] + [f"  {'✅' if h in curados else '🔴'} {h}" for h in healed]
     if crit: lines += ["CRITICO:"] + [f"  🔴 {c}" for c in crit]
     if warn: lines += ["AVISOS:"] + [f"  🟡 {w}" for w in warn]
     lines += ["OK:"] + [f"  🟢 {o}" for o in ok]
@@ -539,7 +545,8 @@ def main():
 
     # notificacion Mac (siempre) + email (si critico o avisos, o diario)
     subprocess.Popen(["osascript", "-e",
-        f'display notification "{status}: {len(crit)} crit, {len(warn)} avisos, {len(healed)} curados" with title "🩺 ib-trader healthcheck"'],
+        f'display notification "{status}: {len(crit)} crit, {len(warn)} avisos, '
+        f'{len(curados)}/{len(healed)} curados" with title "🩺 ib-trader healthcheck"'],
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     if not a.no_email and env("RESEND_KEY"):
         try:
