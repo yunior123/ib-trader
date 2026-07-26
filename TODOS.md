@@ -30,6 +30,33 @@
   0 descartes registrados en todos los logs. **Lección**: un solo `clang++` a la vez no es una
   recomendación, es la diferencia entre que el cockpit responda o no.
 
+- [ ] **[pendiente] "the filter did not work when changing symbols: no reactive to search and
+  no data on symbol when selected after scrolling"** (Yunior 2026-07-26). El buscador de la
+  watchlist del chart no reacciona al teclear, y al elegir un símbolo tras hacer scroll no
+  carga datos.
+
+- [ ] **[pendiente] "make sure executable in desktop for software has icon too"** (Yunior
+  2026-07-26). El ejecutable del escritorio a veces se queda sin icono.
+
+- [ ] **[pendiente] "in macos i should be able to open the software and manually have as many
+  windows as wanted right? how?"** (Yunior 2026-07-26). Abrir la app y crear N ventanas a mano.
+
+- [ ] **[pendiente] "make sure that pipeline has the bundle ready packaged in pipeline after
+  commit, backend and frontend in same macos bundle so that its portable to any other mac as i
+  said before, make sure the pipeline generate the icon included too, sometimes disappear the
+  one in desktop"** (Yunior 2026-07-26). CI que empaqueta backend+frontend en un solo .app
+  portable, con icono, en cada commit.
+
+- [ ] **[pendiente] "print me qqq, nvda, smh, mu, aapl, msft trees and charts with upcoming week
+  walls, gex, gamma flip, use the 15 min timeframe... planned strategy with updated data... for
+  each graph u should predict at least the first 30 minutes or 15 of opening based on puts and
+  calls and future accumulation, we repeat again tomorrow"** (Yunior 2026-07-26). **SE REPITE
+  CADA DÍA.** 6 tickers, marco 15m, muros de la semana que viene, GEX, gamma-flip, estrategia
+  planeada y predicción de los primeros 15-30 min de la apertura.
+
+- [ ] **[pendiente] "make sure every new session reads those on start only once"** (Yunior
+  2026-07-26): CLAUDE.md + TODOS.md al abrir sesión, UNA sola vez.
+
 - [ ] **[pendiente] SKHY es el ÚNICO de la flota con el gate de spread APAGADO** (medido
   2026-07-26). Los otros 23 `*_signal_bot` llevan `export <SYM>_SPREAD_MAX` en su keepalive
   (0,3 casi todos, DRAM 0,5); `scripts/skhy_keepalive.sh` no define `SKHY_SPREAD_MAX`, y el
@@ -138,13 +165,32 @@
       Patrón a copiar: `source_verdict` de `compass.cpp` — publica un veredicto medido como CONTEXTO
       sin convertirlo en probabilidad. Recordatorio: `data/calibration_barrier.json` mide la señal
       CRUDA (n=1154, pool de bollinger), **no** el setup de la brújula → no vale como prob de la flecha.
-- [ ] **[pendiente — deuda menor]** dos implementaciones de técnicos Finviz `v=171` en paralelo:
-      `ib-trader/scripts/finviz_technicals.py` (con fallback a yfinance) y
-      `TradingAgents/tradingagents/dataflows/finviz.py`. Consolidar cuando toque.
-- [ ] **[pendiente — ajeno]** `TradingAgents/tests/test_finviz.py` (SIN TRACKEAR) tiene **5 fallos
-      propios**, no míos: 3 por un bug del propio test (`_SAMPLE_ROWS` mete `Sector` pero el
-      `DictWriter` no lo declara) y 2 por categorías de vendor obsoletas (`broad_data`/
-      `financial_metrics` en vez de `core_stock_apis`/`fundamental_data`). No lo toqué.
+- [x] **[cerrado — duplicación documentada, no consolidada]** dos implementaciones de técnicos
+      Finviz `v=171`. Verificado viable el import cruzado (`ib-trader` py3.9 stdlib puro,
+      `TradingAgents` py3.12: `sys.path.insert(...); import finviz_technicals` funciona sin
+      error bajo `venv/bin/python` de TradingAgents). NO se fusionó: los contratos ya
+      COMMITEADOS y testeados de cada lado son incompatibles sin reescritura mayor —
+      `ib-trader/scripts/finviz_technicals.py` devuelve dict NORMALIZADO (niveles calculados,
+      cache disco por símbolo en `ib-trader/data/`, fallback yfinance, excepción
+      `TechnicalsUnavailable`); `TradingAgents/tradingagents/dataflows/finviz.py` devuelve la
+      fila CSV cruda (para el prompt del LLM), cache en memoria por filtro, excepciones
+      `NoMarketDataError`/`VendorNotConfiguredError`/`requests.HTTPError` compartidas con el
+      resto de vendors del paquete. `tests/test_ibtrader.py` (10+ tests, ya trackeado) mockea
+      esos tipos y formas exactas — cambiar la fuente rompe esos tests y acopla escritura de
+      un proceso LLM batch al `data/` de un repo señal-solamente en vivo. Deuda menor real,
+      documentada con motivo medido; no cuando toque, sino a propósito.
+- [x] **[hecho]** `TradingAgents/tests/test_finviz.py` (5 fallos) arreglado y trackeado.
+      3 `_SAMPLE_ROWS`/`DictWriter`: añadido `"Sector"` a `fieldnames` en los 3 mocks CSV.
+      2 categorías: `broad_data`→`core_stock_apis`, `financial_metrics`→`fundamental_data`
+      (nombres reales en `interface.py:TOOLS_CATEGORIES`). Arreglo expuso un TERCER bug
+      oculto tras el de categoría: los tests de routing mockeaban `finviz.get_finviz_stock_data`
+      pero `interface.VENDOR_METHODS` guarda la referencia de función al importar — el mock no
+      llegaba nunca y con la categoría ya correcta el test golpeaba la RED de verdad (401 real).
+      Arreglado con `mock.patch.dict(interface.VENDOR_METHODS[...], {"finviz": mock_get})`.
+      `./venv/bin/python -m pytest tests/test_finviz.py -q` → 11 passed (antes 5 failed/6 passed).
+      Suite completa TradingAgents: 463 passed (antes ~450), 3 failed preexistentes ajenos
+      (`test_ollama_base_url.py`, `test_temperature_config.py` x2 — no tocados, no relacionados
+      con finviz).
 - [x] **[hecho] "create script to post x.com post of companies with earnings next week,
       include technicals… use finviz… show people nice picaros data"** (Yunior 2026-07-25).
       VERIFICADO hoy con el token nuevo: `f=earningsdate_nextweek` → **753 tickers**; `v=171` da
