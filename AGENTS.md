@@ -5,6 +5,43 @@
 
 ## ORDENES PERMANENTES DE YUNIOR (no negociables)
 
+### ⏱️ TIEMPO REAL ES PRIORIDAD — quién es delayed y quién no (Yunior 2026-07-26)
+> *"verifica cual data is delayed y cual no, con evidencia… realtime is priority"*.
+> Evidencia completa: `docs/LATENCIA-FUENTES.md`. **Ningún agente debe volver a suponerlo.**
+
+| fuente | latencia | evidencia MEDIDA | uso ÚNICO |
+|---|---|---|---|
+| **IBKR / TWS** | 🟢 **TIEMPO REAL** | `reqMarketDataType(1)` en los 4 puentes; `ibkr_bar_bridge.py:352` "Delayed PROHIBIDO" | **DISPARO**: spot, NBBO, cinta, gate de spread, el PRINT |
+| **Polygon** | 🔴 **15 MIN** | `/v3/trades` y `/v3/quotes` → **401 NOT_AUTHORIZED**; tarifa Starter $29 = 15-min, Advanced $199 = realtime | **HISTORIA**: barras 1m de 2 años, archivo de cadenas |
+| **CBOE CDN** | 🔴 **delayed y DESIGUAL** | el endpoint se llama `delayed_quotes`; a la vez: QQQ 1,8 h · SPX 4,2 h · **SPY y SMH 21,5 h** | **ESTRUCTURA**: cadena completa, SPX/XSP/NDX, bid/ask |
+| **Unusual Whales** | 🟠 **SIN MEDIR** | sin suscripción 15 min y solo JPM/INTC/IWM/XSP; con suscripción "live" + WebSocket (`/api/socket` = 200). **No verificado en vivo** | historia de griegas. **Medir el lunes ANTES de fiarse** |
+
+**REGLA DURA: ningún nivel que dispare una orden puede venir de fuente delayed.** El nivel se
+CALCULA con CBOE (vale porque el flip se congela a las 09:35 y describe el mismo libro), pero el
+**PRINT que lo confirma es de IBKR**. Polygon jamás dispara — mide el pasado.
+
+Polygon **no adultera, solo llega tarde**: misma barra QQQ 24-jul → IBKR 685,09/687,72/685,06 vs
+Polygon 685,09/687,7263/685,06, idénticos.
+⚠️ La latencia SOLO se mide en sesión. En fin de semana "33 h de antigüedad" no significa nada.
+
+**Yunior YA TIENE la suscripción IBKR CBOE Global Indexes (~$1,50/mes)** → SPX y VIX en vivo deben
+funcionar por TWS. **Verificar en la primera sesión viva.** Si va, SPX deja de ser "solo mapa" y el
+VIX desbloquea la banda de fragilidad (`charts/live.html:295` ya tiene el chip escrito).
+
+### 🗂️ LOS DOS UNIVERSOS — confundirlos rompe MANADA (2026-07-26)
+- **`data/fleet.txt`** (30) = flota de SEÑALES. **La leen 36 ficheros**; uno es
+  `fleet_consensus.py:23`, el **denominador de MANADA**. Entrar exige **barras 1m**: sin barras no
+  hay bot, ni brújula, ni voto. *Precedente*: un símbolo mudo produjo 21/26 = 80,8% y disparó voz
+  DANGER cuando 21/30 = 70% no debía.
+- **`data/universe_gamma.txt`** (35) = universo del MAPA = los 30 + **SPX XSP NDX DIA IWM**. Solo
+  exige cadena con griegas y OI. **No vota, no habla, no dispara.** Entran en modo observación.
+- **`SPXW` NO es un símbolo**: `_SPX` ya lo contiene (9.626 raíz SPX + 19.158 raíz SPXW, mismo
+  subyacente). **`XSP` = SPX/10 EXACTO** → jamás en `fleet.txt`: voto duplicado, viola la regla 4.
+- **XSP es el ÚNICO vehículo de índice que cabe en $200**: ATM 27-jul → SPX call $4.280 / put
+  $1.710 (no caben); XSP call $396 / **put $187** (cabe). **SPX para el MAPA, XSP para OPERAR.**
+- SPX y SPY **divergen el mismo día** (recap TradingFlow 22-jul: *"a still-positive SPX and a newly
+  short SPY"*): el índice NO es redundante con su ETF, y ése es el motivo de añadirlo.
+
 ### Claude Way (2026-07-17) — cómo deben operar todos los agentes
 Doctrina completa: `~/Documents/Obsidian Vault/AI Brain/The Claude Way.md` + skill **`claude-way`**
 (`.claude/skills/claude-way/`, también en `~/.grok/skills/claude-way/` y `~/.claude/skills/claude-way/`).

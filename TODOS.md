@@ -234,6 +234,11 @@
       hay carril — `/v3/snapshot/indices?ticker=I:SPX` da **403 NOT_AUTHORIZED**
       (`docs/HIRO-2026-07-25.md:33`). La única vía es la suscripción IBKR **CBOE Global Indexes**,
       **la misma que falta para el VIX** (ver más abajo) → los dos se desbloquean con un solo pago.
+      🟢 **ACTUALIZACIÓN 2026-07-26: Yunior YA TIENE esa suscripción.** Y además Polygon SÍ da la
+      CADENA de `I:SPX` (250 contratos, 248 con gamma) aunque niegue sus BARRAS — así que el mapa
+      gamma de SPX se puede construir HOY sin depender de IBKR. Lo que falta verificar en vivo son
+      las BARRAS por TWS, que es lo que decidiría si SPX entra en `fleet.txt` o se queda en
+      `data/universe_gamma.txt` (ver `docs/UNIVERSOS.md`).
       *Por qué importa*: la brújula mide el índice con QQQ/SPY (ETFs). SPX es el subyacente donde
       vive el grueso del OI de índice; sin él, el mapa gamma del índice se lee por su proxy.
       *Riesgo declarado*: **un símbolo muerto encoge denominadores** — no añadirlo hasta que el
@@ -515,10 +520,14 @@ cinco NEGATIVOS** (coincide con nuestro 19/25 en NEG y con su propio recap "Deal
 
 ## 2026-07-23 — Chart cockpit GEX en vivo (charts/live.html + chart_bridge.py)
 Hecho: lightweight-charts v5 + ib_async (TWS 7496 realtime) · combo_tl (Supertrend Buy/Sell + Madrid ribbon + BB/SMA/VWAP/MACD + trendlines) · selectores ticker/intervalo · GEX/flip/muros en tiempo real (levels_loop 15s, spot vivo) · escala $/1% verificada · imán(oro)/acelerador(morado) por signo · flip 0DTE estático + toggle 0DTE↔ALL-EXP · VEX/vanna/charm + chip Vanna · dealer-pressure score -100..100 · expected-move cone · nuestras señales (whale/flow/alarma) como marcadores · botones info ⓘ + Guía · dominancia POC %C/%P · régimen TRANSICIÓN · icono custom · burbujas GEX pin/trampilla · badge `.bq` de book-quality. Skill `gexa-framework`.
-- [ ] **[pendiente — PAGO DE YUNIOR, desbloquea 2 casillas]** **VIX**: código LISTO
+- [ ] **[pendiente — YA PAGADO, solo falta VERIFICAR EN VIVO]** **VIX**: código LISTO
       (`scripts/chart_bridge.py:1903-1906`, `reqMarketDataType(1)` realtime + chip en
-      `charts/live.html:295`, con degradación limpia). Falta la suscripción IBKR **CBOE Global
-      Indexes** (~$1.50/mes). *Por qué importa*: es **la misma suscripción que hace falta para
+      `charts/live.html:295`, con degradación limpia).
+      🟢 **Yunior CONFIRMA el 2026-07-26 que YA TIENE la suscripción IBKR CBOE Global Indexes**
+      (~$1,50/mes) → deja de ser una casilla de pago y pasa a ser de VERIFICACIÓN: comprobar en la
+      primera sesión viva (dom 20:00) que TWS entrega VIX y SPX. Si entrega, esto cierra **y**
+      desbloquea la banda de fragilidad **y** las barras de SPX (que Polygon niega con
+      `NOT_AUTHORIZED`), con lo que SPX pasaría de "solo mapa" a candidato de `fleet.txt`. *Por qué importa*: es **la misma suscripción que hace falta para
       SPX**; con un solo pago caen las dos. Ningún cálculo actual lo usa (EM/vanna van por IV
       por-contrato), así que no es crítico — pero sin él, la banda de fragilidad no se puede construir.
 - [ ] **[pendiente, BLOQUEADA por el VIX]** Banda de fragilidad / true-flip ajustado por vanna — la
