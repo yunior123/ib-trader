@@ -125,3 +125,8 @@ data/voice_budget_enable
 # portero de la ventana dom20:00-vie20:00 (build: scripts/build_fleet_hours.sh)
 fleet_hours
 fleet_hours.dSYM/
+
+# cadenas crudas: la banda adaptativa (2026-07-26) las llevo de 2 MB a 27 MB/dia.
+# Se quedan en disco (gex_snapshot las lee) pero fuera de git: 35 MB/dia de
+# crecimiento permanente. La retencion la hace chain_cube_archive (bundle .gz dia>=2).
+data/history/*/chain_full_*.json
