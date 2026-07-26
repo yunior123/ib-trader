@@ -94,3 +94,22 @@ el desacuerdo ES la información: el posicionamiento del viernes iba corto y el 
 DRAM = **Roundhill Memory ETF** (confirmado con `reqContractDetails`), no una cripto. INTC 95,51
 vs Intel 92,32 descarta colisión. **STX no está listado** en Bybit para Seagate — `STXUSDT` es
 Stacks (0,146 $).
+
+## Corea confirma, en subasta de preapertura (2026-07-26 19:42 ET = lun 08:42 KST)
+KRX abre 09:00 KST; la subasta de preapertura (08:30-09:00) ya publica precio indicativo:
+
+| | subasta | cierre vie | | volumen |
+|---|---:|---:|---:|---:|
+| SK Hynix (000660) | 1.809.000 | 1.759.000 | **+2,84%** | 539.618 |
+| Samsung (005930) | 256.500 | 250.000 | **+2,60%** | 2.344.296 |
+| KODEX 200 (proxy KOSPI) | 106.365 | 106.300 | +0,06% | 3 |
+
+**Dos fuentes independientes dicen lo mismo**: los perpetuos de Bybit (DRAM +5,32%, INTC +3,56%,
+MU +3,31%) y la subasta coreana (SK Hynix +2,84%, Samsung +2,60%). En las dos, **la memoria
+lidera y el índice apenas se mueve** — KODEX200 +0,06% con volumen 3 (ninguna convicción en el
+índice), QQQ perp +1,14%.
+
+Eso es lo que hace creíble la lectura: no es un símbolo suelto disparado, es el complejo de
+memoria moviéndose junto en dos mercados que no se hablan entre sí.
+
+Y las dos contradicen el flujo firmado del viernes (MU −140,1 M, QQQ −37,0 M, SMH −22,4 M).
