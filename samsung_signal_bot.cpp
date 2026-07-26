@@ -1421,9 +1421,28 @@ int main(int argc, char** argv) {
     }
 
     char line[512]; Bar b; Bar pb{}; bool has_pb = false;
+    // Dedupe por epoch (2026-07-26): estado del ultimo bar ACEPTADO.
+    double last_bar_ep = 0; long ndup = 0;
     while (std::fgets(line, sizeof(line), in)) {
         if (std::sscanf(line, "%lf %lf %lf %lf %lf %lf",
                         &b.t, &b.o, &b.h, &b.l, &b.c, &b.v) != 6) continue;
+        // ---- DEDUPE POR EPOCH: solo cuenta la barra ESTRICTAMENTE NUEVA ----
+        // El bridge REESCRIBE data/bars_<sym>_ibkr.txt entero en cada warm-up
+        // (ibkr_bar_bridge.warmup_sym: open(path,"w") con 2 dias de 1m) y el
+        // `tail -n +1 -F` que nos alimenta reemite el fichero COMPLETO al detectar
+        // el truncado — probado: 5 lineas reescritas => 10 emitidas. Con el fichero
+        // real (1691 barras) eso son hasta 1691 barras reinyectadas en indicadores
+        // VIVOS. ATR/RSI/BB/CUSUM/VWAP son ACUMULADORES: contar dos veces la misma
+        // barra los envenena y el bot habla de un movimiento que no ocurrio (medido
+        // en NVDA: dos TRAMPA-EVITADA y un CUSUM "CAYENDO -2.04%" inventados, y el
+        // CUSUM real perdido). Mismo patron que order_engine: epoch nuevo o nada.
+        if (b.t <= last_bar_ep) {
+            if (++ndup == 1 || ndup % 500 == 0)
+                std::fprintf(stderr, "dedupe: barra repetida epoch %.0f ignorada "
+                             "(%ld en total; warm-up del bridge)\n", b.t, ndup);
+            continue;
+        }
+        last_bar_ep = b.t;
         nbars++;
         g_bar_epoch = b.t;
 
