@@ -2,7 +2,7 @@
  "AAPL": {
   "gaps": 0,
   "last_ep": 0,
-  "last_run": 1785039788,
+  "last_run": 1785040028,
   "n_at_last_ep": 0,
   "rows": 0,
   "zero_byte": true
@@ -10,7 +10,7 @@
  "AMD": {
   "gaps": 0,
   "last_ep": 0,
-  "last_run": 1785039788,
+  "last_run": 1785040028,
   "n_at_last_ep": 0,
   "rows": 0,
   "zero_byte": true
@@ -18,7 +18,7 @@
  "ASML": {
   "gaps": 0,
   "last_ep": 0,
-  "last_run": 1785039788,
+  "last_run": 1785040028,
   "n_at_last_ep": 0,
   "rows": 0,
   "zero_byte": true
@@ -26,7 +26,7 @@
  "DRAM": {
   "gaps": 0,
   "last_ep": 1784924722,
-  "last_run": 1785039788,
+  "last_run": 1785040028,
   "n_at_last_ep": 2,
   "rows": 444,
   "zero_byte": false
@@ -34,7 +34,7 @@
  "GLD": {
   "gaps": 0,
   "last_ep": 0,
-  "last_run": 1785039788,
+  "last_run": 1785040028,
   "n_at_last_ep": 0,
   "rows": 0,
   "zero_byte": true
@@ -42,7 +42,7 @@
  "INTC": {
   "gaps": 0,
   "last_ep": 0,
-  "last_run": 1785039788,
+  "last_run": 1785040028,
   "n_at_last_ep": 0,
   "rows": 0,
   "zero_byte": true
@@ -50,7 +50,7 @@
  "NOK": {
   "gaps": 0,
   "last_ep": 1784924543,
-  "last_run": 1785039788,
+  "last_run": 1785040028,
   "n_at_last_ep": 2,
   "rows": 2123,
   "zero_byte": false
@@ -58,7 +58,7 @@
  "NVDA": {
   "gaps": 0,
   "last_ep": 1784924775,
-  "last_run": 1785039788,
+  "last_run": 1785040028,
   "n_at_last_ep": 1,
   "rows": 1907,
   "zero_byte": false
@@ -66,7 +66,7 @@
  "QQQ": {
   "gaps": 0,
   "last_ep": 0,
-  "last_run": 1785039788,
+  "last_run": 1785040028,
   "n_at_last_ep": 0,
   "rows": 0,
   "zero_byte": true
@@ -74,7 +74,7 @@
  "SPCX": {
   "gaps": 0,
   "last_ep": 1784924777,
-  "last_run": 1785039788,
+  "last_run": 1785040028,
   "n_at_last_ep": 1,
   "rows": 1287,
   "zero_byte": false
@@ -82,7 +82,7 @@
  "SPY": {
   "gaps": 0,
   "last_ep": 0,
-  "last_run": 1785039788,
+  "last_run": 1785040028,
   "n_at_last_ep": 0,
   "rows": 0,
   "zero_byte": true
@@ -90,7 +90,7 @@
  "TSLA": {
   "gaps": 0,
   "last_ep": 1784924759,
-  "last_run": 1785039788,
+  "last_run": 1785040028,
   "n_at_last_ep": 2,
   "rows": 1716,
   "zero_byte": false
@@ -98,7 +98,7 @@
  "TSM": {
   "gaps": 0,
   "last_ep": 0,
-  "last_run": 1785039788,
+  "last_run": 1785040028,
   "n_at_last_ep": 0,
   "rows": 0,
   "zero_byte": true
@@ -106,7 +106,7 @@
  "TXN": {
   "gaps": 0,
   "last_ep": 0,
-  "last_run": 1785039788,
+  "last_run": 1785040028,
   "n_at_last_ep": 0,
   "rows": 0,
   "zero_byte": true

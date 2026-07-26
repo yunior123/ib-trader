@@ -101,13 +101,26 @@ def grade():
         # solo barras del propio dia
         d = h[h.index.strftime("%Y-%m-%d") == s["date"]]
         if len(d) < 3: continue
-        hi = float(d.High.max()); lo = float(d.Low.min())
         bull = s["direction"] == "bull"
-        entered = (hi >= s["entry"]) if bull else (lo <= s["entry"])
-        if not entered:
+        # ¿imprimio la entrada en algun momento del dia?
+        printed = (d.High >= s["entry"]) if bull else (d.Low <= s["entry"])
+        if not printed.any():
             s["result"] = "no_entry"; graded += 1; continue
-        # tras entrar: ¿toco target o stop primero? (recorrido secuencial)
-        after = d[d.High >= s["entry"]] if bull else d[d.Low <= s["entry"]]
+        # CORTE TEMPORAL desde la barra que IMPRIME la entrada, no una mascara.
+        #
+        # Aqui vivia el defecto A (hunt 2026-07-24): `after = d[d.High >= entry]`
+        # seleccionaba "las barras cuyo High supera la entrada", no "las barras
+        # posteriores a la entrada". Las barras del retroceso —donde vive el
+        # STOP— tienen el High por debajo de la entrada, asi que la mascara las
+        # BORRABA y el recorrido secuencial nunca veia el stop: la perdida se
+        # registraba como GANANCIA. Simetrico en bear con el rebote.
+        # Medido sobre el ledger vivo del 2026-07-21 replayado contra poly_bars:
+        # ver docs/ + el mensaje del commit.
+        i0 = int(printed.values.argmax())      # primera barra que imprime
+        after = d.iloc[i0:]                    # todo lo que pasa DESPUES, en orden
+        # Nota de honestidad: en la barra de entrada no hay ruta sub-barra, asi
+        # que si esa misma barra toca el stop se resuelve STOP PRIMERO
+        # (conservador). Es la misma regla que barrier_labels.triple_barrier.
         res = "open"
         for _, bar in after.iterrows():
             if bull:

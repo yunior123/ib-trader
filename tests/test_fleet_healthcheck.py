@@ -10,6 +10,10 @@ si mismo: nunca podia volver a verde. Dos arreglos, ambos fijados aqui:
 import importlib.util
 import os
 import plistlib
+import signal
+import subprocess
+import sys
+import time
 
 import pytest
 
