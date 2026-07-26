@@ -19,16 +19,16 @@
       ANTES que `AUTH` (`finviz_scout.cpp:91`, `x_whale_bot.cpp:366`, `options_hunter.py:34`,
       y `finviz_valuation.py` **solo** lee AUTH3) → cambiar solo `FINVIZ_AUTH` no lo usaba nadie.
       El anterior seguía dando 200 al sustituirlo; queda comentado. Caduca ~2026-08-01.
-- [ ] **[pendiente] `/health` del chart no responde mientras hay un cliente WebSocket**
-  (medido 2026-07-26, reproducible al 100%). Con Chrome conectado: `curl /health` -> HTTP 000
-  a los 6s; el MISMO puente sin navegador -> HTTP 200 en 3ms. No es de un símbolo: probado
-  cruzado (QQQ con Chrome cuelga, DRAM sin Chrome responde). **El chart sigue funcionando
-  perfectamente** (velas, muros, panel GEX, flecha) — lo único que queda sin atender es la
-  ruta HTTP. Impacto HOY = nulo en producción: los 3 consumidores de `/health` son del
-  script de QA, ningún keepalive lo usa. Riesgo si alguien cablea un watchdog a `/health`:
-  mataría puentes sanos. Descartado que sea el `send_json` sin timeout (se le puso uno de 5s
-  en `broadcast()` y hubo **0 descartes**, así que el bloqueo está en otro punto — mirar el
-  handler `stream()` y el frame de historia de ~2 MB).
+- [x] **[CERRADA — era CONTENCIÓN DE RECURSOS, no un bug del chart]** `/health` del chart
+  "no respondía con un cliente WebSocket". **Diagnóstico corregido el 2026-07-26 tras aislarlo**:
+  un cliente WebSocket propio (Python) deja `/health` en **4-77 ms incluso sin drenar 20 s**, y
+  8080 con Chrome conectado responde ahora en **2,7 ms**. El servidor está sano. Lo que había
+  cuando "fallaba": **2 `clang++` a la vez** + 6 puentes + Chrome en un Mac de 8 GB, con el
+  renderer de Chrome congelado (CDP dio timeout dos veces) y 121.958 pageouts. Era la máquina
+  paginando, no el código. `history_frame` cuesta 32 ms y 1,94 MB — no bloquea nada.
+  El `SEND_TIMEOUT_S=5` de `broadcast()` se queda (defensivo, correcto), pero **no era la cura**:
+  0 descartes registrados en todos los logs. **Lección**: un solo `clang++` a la vez no es una
+  recomendación, es la diferencia entre que el cockpit responda o no.
 
 - [ ] **[pendiente] SKHY es el ÚNICO de la flota con el gate de spread APAGADO** (medido
   2026-07-26). Los otros 23 `*_signal_bot` llevan `export <SYM>_SPREAD_MAX` en su keepalive
@@ -74,14 +74,15 @@
       (`net_gex` ×spot vs `net_gex_dollar1pct` ×spot²/100), **Polygon no da griegas de índice**
       (SPX 8.512 contratos, 0 con gamma → CBOE), y la **cuota de 5 req/60s ya no existe** (219
       seguidas sin un 429). Detalle en `AGENTS.md` § *EL ARCHIVO DE CADENAS*.
-- [ ] **[pendiente] los CONSUMIDORES VIVOS siguen recortando a ±3,5%** (2026-07-26). El archivo ya
-      es ancho, pero `chart_levels.py:161,166` y `gex_gate.py:44,53` llaman a
-      `gex_core.from_ibkr_cache(path, spot)` **sin pasar `band`**, y el default de esa función es
-      `0.035`: sobre el `poly_chain_qqq` nuevo (12 vencimientos, ±18%) devuelve **48 strikes** y un
-      flip estático de 709,0 en vez de los 184 strikes / 709,97 medidos. Arreglo: pasar
-      `band=gex_core.parse_chain_header(path).get("band")` (el fichero ya publica el token `band`).
-      Es el MISMO defecto una capa más abajo — no se tocó aquí para no cambiar el camino vivo del
-      chart sin sesión abierta con qué verificarlo.
+- [x] **[hecho 425afe3 — duplicado, ya cerrado; verificado de nuevo 2026-07-26]** los CONSUMIDORES
+      VIVOS siguen recortando a ±3,5%. Esta casilla quedó huérfana: el fix real está en
+      `gex_core.from_ibkr_cache` (`scripts/gex_core.py:826`, default `band=None` desde 425afe3), no
+      en los 4 call-sites — `chart_levels.py:161,166` y `gex_gate.py:44,53` NUNCA pasan `band`, así
+      que heredan `None` → header. Reverificado en vivo hoy con
+      `data/history/2026-07-26/poly_chain_qqq_1620.txt` (header `band 0.1800`): `band=None` →
+      **138 strikes, flip 696,20, band_used 0.18**; forzando el viejo `band=0.035` → 48 strikes,
+      flip 698,02 (el número truncado). `chart_levels.gen('qqq')` end-to-end da `band_used 0.18`;
+      `gex_gate.gate('qqq','BUY')` → APTO sin tocar el default. Nada que arreglar en este lote.
 - [x] **[hecho 7b01bb5 — 6 ventanas 8080-8085 con muros reales vía --mock-dir del sandbox de replay]** **[pendiente] "run ib-gateway simulation engine… show 6 ib-trader window like before, working
       with different tickers, while the graph is moving, while we also see the walls. full qa
       testing on those windows, test everysingle feature in there"** (Yunior 2026-07-25).
