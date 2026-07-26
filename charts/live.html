@@ -78,6 +78,12 @@
                  letter-spacing:.02em; animation:replayblink 1.4s ease-in-out infinite; }
   #replaybadge.hidden { display:none; }
   @keyframes replayblink { 0%,100% { opacity:1; } 50% { opacity:.55; } }
+  /* Cadena GEX/muros NO-IBKR (Polygon 15min / CBOE delayed): amarillo, menos grave que
+     REPLAY pero igual de imposible de ignorar (orden Yunior 2026-07-26). */
+  #sourcebadge { background:#4a3a00; color:#ffd54f; border:2px solid #ffb300;
+                 border-radius:4px; padding:4px 10px; font-weight:800; font-size:12.5px;
+                 letter-spacing:.02em; }
+  #sourcebadge.hidden { display:none; }
   #narrbtn { background:#2a2e39; color:#8aa0c8; border:1px solid #3a4b6b;
              border-radius:4px; padding:4px 9px; font:inherit; font-weight:700; cursor:pointer; }
   #narrbtn:hover { background:#2f3646; color:#fff; }
@@ -338,6 +344,7 @@
 <!-- fila 1: símbolo + selector de intervalo (TradingView-like) + conexión -->
 <div id="toolbar">
   <span id="replaybadge" class="hidden" title="Este puente corre --mock: barras de un REPLAY archivado, no el mercado real. Nunca confundir con precio en vivo.">⏪ REPLAY —</span>
+  <span id="sourcebadge" class="hidden" title="Cadena de opciones (GEX/muros/flip) NO viene de IBKR en vivo: es Polygon (15min delayed) u otro respaldo. Orden de fuentes: 1) IBKR 2) Polygon/Unusual Whales delayed 3) sandbox.">⚠ CADENA —</span>
   <button id="wlbtn" title="Ticker actual + lista buscable con volumen y %día (estilo TradingView). Clic para abrir/cerrar.">📋 — ▾</button>
   <button id="modepill" title="Cuenta IBKR: PAPER (prueba) / LIVE (real). Clic para cambiar. Fuente única data/ib_mode.txt — el motor y los lectores siguen este modo.">● …</button>
   <button id="instpill" title="Instrumento de las zonas NUEVAS: Opciones o Acciones (activos, tradean 24/5). Clic para cambiar.">📈 Opciones</button>
@@ -965,8 +972,17 @@ function fmtBig(n) {
   if (a >= 1e3) return (n/1e3).toFixed(0) + "k";
   return n.toFixed(0);
 }
+const SOURCE_LABEL = { polygon_snapshot_v3: "Polygon 15min", cboe_delayed: "CBOE delayed" };
+function setSourceBadge(chainSrc) {
+  const b = document.getElementById("sourcebadge");
+  if (!b) return;
+  if (!chainSrc || chainSrc === "ibkr_tws") { b.classList.add("hidden"); return; }
+  b.textContent = "⚠ CADENA " + (SOURCE_LABEL[chainSrc] || chainSrc);
+  b.classList.remove("hidden");
+}
 function drawHeader(lv) {
   if (!lv) return;
+  setSourceBadge(lv.chain_src);
   const vixEl = document.getElementById("h-vix");
   if (vixEl && lv.vix != null) {
     const tag = lv.vix < 16 ? "CALM" : lv.vix <= 24 ? "ELEVADO" : "ALTO";
