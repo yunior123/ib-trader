@@ -1,0 +1,1 @@
+{"_meta":{"fuente":"unusual_whales_trial","endpoint":"/api/stock/ASML/spot-exposures/strike","sym":"ASML","descargado_epoch":1785041836.3945642,"descargado_local":"2026-07-26T00:57:16","n_filas":0,"aviso":"trial con reloj: token emitido 2026-07-25, caduca ~2026-08-01. Griegas de UW, NO mezclar con las de Polygon sin declararlo."},"payload":{"data":[]}}
