@@ -291,6 +291,13 @@
       verificación **en Chrome** del chart (burbujas GEX, flecha escalando, tooltip). Olas 2 y 3:
       viabilidad ya medida en `0a9be1f` (5 construibles, 7 bloqueadas).
 
+> ⚠️ **LECCIÓN DE PROCESO (2026-07-26, error del lead)**: con agentes trabajando EN PARALELO,
+> **jamás `git add -A`**. Mi commit `75a3442` (una skill) arrastró dentro
+> `scripts/calibration_ledger.py` y `tests/test_calibration_ledger.py` de otro agente, que estaban
+> a medias en el árbol. No se perdió código, pero el mensaje del commit no describe lo que lleva —
+> y la trazabilidad ES el producto cuando se audita un fichero de dinero. Corolario de la regla
+> "repartir por FICHERO": el reparto también aplica al `git add`. Usar rutas explícitas.
+
 ## 🆕 MINADO DE TRADINGFLOW (2026-07-26) — dossier `docs/research/designs-tradingflow.md`
 > Yunior: *"i really like this one too… take a look in chrome, it offers a lot of data, do they
 > have api?"*. **Respuesta medida: NO tienen API** (`/api/*`, `/openapi.json`, `/docs` → 404 o
