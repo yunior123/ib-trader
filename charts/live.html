@@ -2019,7 +2019,10 @@ function wgexDraw() {
   const maxRows = Math.max(3, Math.floor(avail / 7));
   let windowed = false;
   if (prof.length > maxRows) {
-    const ref = lv.spot != null ? lv.spot : prof[Math.floor(prof.length / 2)].strike;
+    // se centra en el precio VIVO: con el spot del mapa la ventana recorta alrededor de
+    // donde el precio ESTABA, y los strikes que importan ahora se quedan fuera.
+    const ref = (lastBar && lastBar.close != null) ? lastBar.close
+              : (lv.spot != null ? lv.spot : prof[Math.floor(prof.length / 2)].strike);
     const byNear = prof.slice().sort((a, b) => Math.abs(a.strike - ref) - Math.abs(b.strike - ref));
     prof = byNear.slice(0, maxRows).sort((a, b) => b.strike - a.strike);
     windowed = true;
@@ -2072,7 +2075,18 @@ function wgexDraw() {
     g.fillStyle = color; g.textAlign = "left"; g.fillText(lab, GUT + 3, y - 6);
   };
   dash(yOfPrice(lv.flip), "rgba(244,196,48,0.9)", "flip " + (lv.flip != null ? lv.flip : ""));
-  dash(yOfPrice(lv.spot), "rgba(255,255,255,0.85)", "spot " + (lv.spot != null ? lv.spot : ""));
+  // El precio VIVO manda dónde cae el spot en el perfil. lv.spot es el de cuando se calculó
+  // la cadena (los muros se congelan a las 09:35 a propósito), así que pintarlo como "spot"
+  // situaba el precio en el sitio equivocado del mapa: medido QQQ 684,66 en el panel con las
+  // velas ya en 690,08, o sea al otro lado del muro de calls 690.
+  const vivo = lastBar && lastBar.close != null ? lastBar.close : null;
+  if (vivo != null) {
+    dash(yOfPrice(vivo), "rgba(255,255,255,0.85)", "precio " + vivo.toFixed(2));
+    if (lv.spot != null && Math.abs(vivo - lv.spot) >= 0.01)
+      dash(yOfPrice(lv.spot), "rgba(255,255,255,0.32)", "spot del mapa " + lv.spot);
+  } else {
+    dash(yOfPrice(lv.spot), "rgba(255,255,255,0.85)", "spot " + (lv.spot != null ? lv.spot : ""));
+  }
 
   g.fillStyle = "#4b5b7a"; g.textAlign = "center";   // pie: escala real de las barras
   g.fillText("← gamma −     |     gamma + →   (máx " + fmtBig(maxAbs) + ")", cx, H - 6);
