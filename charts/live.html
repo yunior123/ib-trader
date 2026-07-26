@@ -946,8 +946,16 @@ function drawHeader(lv) {
       (lv.exp ? " " + lv.exp.slice(4, 6) + "-" + lv.exp.slice(6, 8) : "");
   }
   const reg = document.getElementById("h-reg");
-  const dflip = (lv.flip && lv.spot) ? (lv.flip - lv.spot) / lv.spot * 100 : null;
+  // El flip se congela (es del mapa), pero DE QUÉ LADO cae el precio no: eso se recalcula
+  // con el precio VIVO. Con lv.spot (el de cuando se calculó la cadena) DRAM publicaba
+  // "régimen NEG" con flip 55 y el precio ya en 58,40 — o sea, al otro lado.
+  const pxReg = (lastBar && lastBar.close != null) ? lastBar.close : lv.spot;
+  const dflip = (lv.flip && pxReg) ? (lv.flip - pxReg) / pxReg * 100 : null;
   let rtxt = lv.regime || "—", rcls = lv.regime === "POS" ? "pos" : lv.regime === "NEG" ? "neg" : "";
+  if (lv.flip != null && pxReg != null) {
+    const vivo = pxReg >= lv.flip ? "POS" : "NEG";
+    rtxt = vivo; rcls = vivo === "POS" ? "pos" : "neg";
+  }
   if (dflip != null && Math.abs(dflip) < 0.12) { rtxt = "TRANSICIÓN"; rcls = "trans"; }
   reg.textContent = rtxt; reg.className = "v " + rcls;
   const gx = document.getElementById("h-gex");
