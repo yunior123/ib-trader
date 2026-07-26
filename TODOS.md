@@ -36,6 +36,22 @@
       **730**; NVDA 56 contratos / 7 strikes → **sin mapa gamma**. Prueba del delito: **14 de 25
       flips caen entre 3,7% y 4,6% del spot con la banda a 4,5%** — es el borde de nuestro recorte,
       no un nivel de mercado.
+      → **(1) hecho `cf0baaf`** (T real por contrato). **(2) hecho `5a6a34e`**: banda ADAPTATIVA por
+      gamma marginal (suelo 10% / techo 60%, calibración en `data/gamma_band.json`) + vencimientos
+      hasta el mensual. **35/35 con flip MEDIDO, el más justo a 12,5 pp del borde**; QQQ −5,22 B
+      $/1% (referees −5,3/−6,0). Medido antes de fijar parámetros con las 35 cadenas COMPLETAS de
+      CBOE. Ojo a los tres hallazgos que cambian el diagnóstico: la mitad del "13×" era **escala**
+      (`net_gex` ×spot vs `net_gex_dollar1pct` ×spot²/100), **Polygon no da griegas de índice**
+      (SPX 8.512 contratos, 0 con gamma → CBOE), y la **cuota de 5 req/60s ya no existe** (219
+      seguidas sin un 429). Detalle en `AGENTS.md` § *EL ARCHIVO DE CADENAS*.
+- [ ] **[pendiente] los CONSUMIDORES VIVOS siguen recortando a ±3,5%** (2026-07-26). El archivo ya
+      es ancho, pero `chart_levels.py:161,166` y `gex_gate.py:44,53` llaman a
+      `gex_core.from_ibkr_cache(path, spot)` **sin pasar `band`**, y el default de esa función es
+      `0.035`: sobre el `poly_chain_qqq` nuevo (12 vencimientos, ±18%) devuelve **48 strikes** y un
+      flip estático de 709,0 en vez de los 184 strikes / 709,97 medidos. Arreglo: pasar
+      `band=gex_core.parse_chain_header(path).get("band")` (el fichero ya publica el token `band`).
+      Es el MISMO defecto una capa más abajo — no se tocó aquí para no cambiar el camino vivo del
+      chart sin sesión abierta con qué verificarlo.
 - [ ] **[pendiente] "run ib-gateway simulation engine… show 6 ib-trader window like before, working
       with different tickers, while the graph is moving, while we also see the walls. full qa
       testing on those windows, test everysingle feature in there"** (Yunior 2026-07-25).
