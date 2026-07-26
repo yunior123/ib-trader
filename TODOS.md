@@ -51,6 +51,14 @@
   simétrico mock/live por inspección de código (`_prime_bars` cubre ambos), pero no se
   levantó un 7º puente contra TWS para no arriesgar el Mac de 8 GB.
 
+- [ ] **[pendiente — DECIDIDO POR YUNIOR 2026-07-26: "si"] Repuntar los 3 escritores del
+  escritorio a `~/Desktop/ib-trader/hoy/`**: (1) `scripts/print_mon_plans.sh:8` (cron
+  `com.ibtrader.printplans`, lunes 09:25) escribe `$HOME/Desktop/planes-$DAY` en la RAIZ;
+  (2) `price_alarm.cpp:80` y `scripts/chart_bridge.py:665` hardcodean
+  `~/Desktop/price-alerts.txt`; (3) `scripts/daily_archive.py:195` LEE
+  `~/Desktop/planes-{date}/ranking.json` y su `cp` es `warn=False` -> con la carpeta movida
+  falla EN SILENCIO y deja de archivar. Ese silencio es el peligro real, no el desorden.
+
 - [ ] 🔴 **[pendiente — ORDEN VIEJA QUE SE PERDIO, nunca se anoto] Timeframes de SEGUNDOS en el
   chart, estilo TradingView** (Yunior 2026-07-26: *"why i still dont see timeframes for seconds?
   like 30 seconds, 15, 45, similar to trading view, i gave u an order long time ago about it"*).
@@ -62,17 +70,30 @@
   historica) y `reqRealTimeBars` solo da 5s. **45s NO es nativo**: sale de agregar 15s x3 o 5s x9.
   Fallo de proceso: la orden es vieja y JAMAS entro en TODOS.md.
 
-- [ ] **[pendiente] "make sure executable in desktop for software has icon too"** (Yunior
-  2026-07-26). El ejecutable del escritorio a veces se queda sin icono.
+- [x] **"make sure executable in desktop for software has icon too" + "ib trader software now
+  has circle white on top of icon in desktop"** (Yunior 2026-07-26). **NO era el `.icns`**
+  (10/10 tamaños, `CFBundleIconFile` correcto, sin alias al binario). Era **LaunchServices**:
+  MEDIDO 4 registros del mismo `com.ibtrader.cockpit`, y el que resolvía era un FANTASMA en
+  `/private/tmp/apptest/ib-trader Cockpit.app` — borrado, `Bundle node not found on disk:
+  fnfErr`, `iconDict` VACÍO → Finder pintaba el **badge prohibitorio** (círculo blanco con
+  barra). Purgado con `lsregister -u` + `-f -R -trusted` → icono correcto (captura antes/después).
+  `build.sh` lo purga y re-registra en CADA build, así que sobrevive al rebuild.
 
-- [ ] **[pendiente] "in macos i should be able to open the software and manually have as many
-  windows as wanted right? how?"** (Yunior 2026-07-26). Abrir la app y crear N ventanas a mano.
+- [x] **"in macos i should be able to open the software and manually have as many windows as
+  wanted right? how?"** (Yunior 2026-07-26). **CÓMO:** `open "~/Desktop/ib-trader Cockpit.app"
+  --args --windows 6` abre 6 ventanas en los puertos **8080..8085** (una por bridge = un
+  símbolo cada una); a mano, **⌘N** = siguiente puerto libre y **⇧⌘N** = pregunta el puerto;
+  **⌘D** reparte en rejilla. Puertos sueltos: `--ports 8080,8083,8085`. Un puerto = un símbolo
+  porque `chart_bridge.py` tiene un solo `state.sym` por proceso.
 
-- [ ] **[pendiente] "make sure that pipeline has the bundle ready packaged in pipeline after
-  commit, backend and frontend in same macos bundle so that its portable to any other mac as i
-  said before, make sure the pipeline generate the icon included too, sometimes disappear the
-  one in desktop"** (Yunior 2026-07-26). CI que empaqueta backend+frontend en un solo .app
-  portable, con icono, en cada commit.
+- [x] **"make sure that pipeline has the bundle ready packaged in pipeline after commit,
+  backend and frontend in same macos bundle so that its portable to any other mac…"** (Yunior
+  2026-07-26). `.github/workflows/macapp.yml` (macos-15) genera el icono, construye el bundle y
+  **falla** si aparece una ruta absoluta dentro; sube el `.zip`. Local: `zsh
+  macapp/install_hooks.sh` instala `post-commit` (rebuild en background) + `pre-push` (entrega a
+  Desktop). Arreglados los 6 shebangs de pip que llevaban la ruta del Mac de Yunior.
+  **No hay firma Developer ID ni notarización en CI** (GitHub no tiene el certificado): sale con
+  firma ad-hoc → en el Mac de destino, primer arranque con clic derecho > Abrir.
 
 - [ ] **[pendiente] "print me qqq, nvda, smh, mu, aapl, msft trees and charts with upcoming week
   walls, gex, gamma flip, use the 15 min timeframe... planned strategy with updated data... for
