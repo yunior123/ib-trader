@@ -44,6 +44,10 @@ rm -f /tmp/cc.lock
   (cierre de vuelta dentro). LONG: target = media BB, stop = min del pierce − 0.5·ATR14(5m).
   SHORT espejo. TF base: 1m si hay (`--csv1m` / live), 5m si no (declarado por stderr).
   Veto doctrina: band-walk EN CONTRA en 5m+15m (banda reventada 2-3 TF a favor = continuacion, no rebote).
+  Por eso `elastic_signal` NO exige que el 15m tambien rompa para disparar: MEDIDO
+  (`scripts/bollinger_complements.py --tf15`, `data/backtest/bcomp_tf15.json`, 30 tickers×30d)
+  que exigirlo empeora monotonamente (67.2%→49.4%→43.0% de 1TF a 3TF) y no llega a p<0.05 —
+  UNPROVEN. El 15m entra solo como VETO de continuacion, nunca como requisito de confirmacion.
 - **SQZ_BRK** — bandwidth 5m en pctile ≤20 (ventana 125) y cierre rompe banda:
   target 2·ATR, stop 1·ATR.
 - **BWALK** — racha ≥3 cierres 5m fuera + burst 15m mismo lado (solo si `enabled` en probs).

@@ -1,6 +1,6 @@
 ---
 name: bollinger-mastery
-description: Bollinger Bands mastery for the ib-trader signal fleet — math (20,2 vs 20,3, population std), %B, bandwidth/squeeze percentile, band-walk vs mean-reversion regimes, W-bottoms/M-tops, the fleet's multi-TF burst rules (1m/5m/15m, 2TF fuerte / 3TF muy fuerte), the confirmed-capitulation engine, and interactions with MACD/Supertrend/trendlines/VWAP/ADX. Use when the user asks about Bollinger Bands, BB squeeze, %B, band bursts, capitulation entries, band-walking, or why a BB touch alone is only a coin flip.
+description: Bollinger Bands mastery for the ib-trader signal fleet — math (20,2 vs 20,3, population std), %B, bandwidth/squeeze percentile, band-walk vs mean-reversion regimes, W-bottoms/M-tops, the fleet's multi-TF burst rules (1m/5m/15m — measured 2026-07-26: requiring 15m confirmation does NOT improve edge, monotonic decrease, UNPROVEN), the confirmed-capitulation engine, and interactions with MACD/Supertrend/trendlines/VWAP/ADX. Use when the user asks about Bollinger Bands, BB squeeze, %B, band bursts, capitulation entries, band-walking, or why a BB touch alone is only a coin flip.
 ---
 
 # Bollinger Mastery — la especializacion BB de la flota
@@ -112,8 +112,16 @@ burst reciente:  1m si hace <=3 bars | 5m si <=2 bars 5m | 15m si <=1 bar 15m
 bb_dn_tfs = (# de TFs con banda INFERIOR reventada recientemente)
 ```
 
-- **2 TF reventadas = señal FUERTE** (+2 score v5, razon `BB-2TF-abajo`).
-- **3 TF reventadas = MUY FUERTE** (`BB-3TF-abajo`).
+- **2 TF reventadas** = mismo +2 score v5 que 3 TF, solo cambia el label
+  (`BB-2TF-abajo`); **3 TF reventadas** = mismo +2, label `BB-3TF-abajo`.
+- **REFUTADO 2026-07-26** (`e2c59f0`, `scripts/bollinger_complements.py --tf15`,
+  `data/backtest/bcomp_tf15.json`, 30 tickers×30d): el label "MUY FUERTE" del
+  3TF es al reves de lo medido. P(toca la media BB20-1m en 30min): **67.2% solo
+  1m (n=4031) > 49.4% BB-2TF (n=409) > 43.0% BB-3TF (n=200)** — monotona a la
+  BAJA. Mas TF rotos a la vez = band-walk (continuacion), no capitulacion.
+  Contraste 15m-roto-vs-no p=0.36, 3TF-vs-2TF p=0.58 (n_eff~40) → **UNPROVEN**.
+  Exigir el 15m (regla `1m AND 15m` que sugeria la doctrina vieja) recortaria
+  el 92% de la muestra y empeoraria la tasa. **NO exigirlo.**
 - Siempre con bar de confirmacion: burst abajo exige bar verde (`c > o`);
   burst arriba exige bar rojo. El burst solo — otra vez — es el 50% base;
   la coincidencia multi-TF + confirmacion es lo que lo sube a ~55% (prior
