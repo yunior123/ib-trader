@@ -40,9 +40,7 @@ def _load_env_file(name):
 
 
 def _configure_llm_env():
-    """Point TradingAgents at the research LLM (OpenAI-compatible). MANDATORY layer.
-    Prefers DeepSeek (Yunior's choice), falls back to NVIDIA NIM if only that key
-    is present. langchain ChatOpenAI (provider 'openai') reads OPENAI_API_KEY."""
+    """DeepSeek es el unico motor (NIM prohibido); OPENAI_API_KEY = DEEPSEEK_API_KEY."""
     _load_env_file("llm.env")
     _load_env_file("feeds.env")
     # Orden Yunior 2026-07-16 (2a): "deepseek still has money, no nim, forbidden
@@ -62,18 +60,16 @@ def _configure_llm_env():
 # ---- subprocess entrypoint: `python research.py _run SYM DATE` ----
 def _run(sym, date_str):
     _configure_llm_env()
+    sys.path.insert(0, os.path.join(REPO_ROOT, "scripts"))
+    from ta_llm_bridge import apply as apply_ta_bridge
+    apply_ta_bridge()
     sys.path.insert(0, TA_REPO)
     from tradingagents.graph.trading_graph import TradingAgentsGraph
     from tradingagents.default_config import DEFAULT_CONFIG as C
     cfg = dict(C)
-    cfg["llm_provider"] = os.getenv("TA_LLM_PROVIDER", "openai")
-    cfg["backend_url"] = os.getenv("TA_BACKEND_URL", "https://integrate.api.nvidia.com/v1")
-    cfg["deep_think_llm"] = os.getenv("TA_DEEP_MODEL", "meta/llama-3.3-70b-instruct")
-    cfg["quick_think_llm"] = os.getenv("TA_QUICK_MODEL", "meta/llama-3.1-8b-instruct")
     cfg["max_debate_rounds"] = int(os.getenv("TA_DEBATE_ROUNDS", "1"))
     cfg["max_risk_discuss_rounds"] = int(os.getenv("TA_RISK_ROUNDS", "1"))
     cfg["online_tools"] = True
-    # trim analysts to keep the 6 AM run tractable on 8GB / NIM latency
     analysts = os.getenv("TA_ANALYSTS", "market,news").split(",")
     ta = TradingAgentsGraph(selected_analysts=[a.strip() for a in analysts if a.strip()],
                             debug=False, config=cfg)
