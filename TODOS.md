@@ -87,16 +87,42 @@
       `calib_lo`/`calib_n`, y esos campos **solo se pueblan por `--ev-stdin`** (`:1034`);
       `gather()` no los lee de ningún fichero. Se suma a `direction_view.py:284-285`
       (`prob = 50 + |score|*40`).
-- [ ] **[pendiente] "calibramos la flecha con trading agents framework… pásale todo el arsenal,
-      y que tenga acceso a finviz technicals"** (Yunior 2026-07-25). MEDIDO: (a)
-      `TradingAgents/tradingagents/default_config.py:72` = **`"llm_provider": "nvidia"` = NIM,
-      PROHIBIDO** por la orden del 2026-07-16; (b) el puente está roto — `llm.env` define `TA_*`
-      pero **solo lo lee `scripts/narrator.py:23,37`**; el framework lee `TRADINGAGENTS_*`
-      (`default_config.py:13-16`) → **la config DeepSeek de ib-trader no gobierna el framework**;
-      (c) `dataflows/finviz.py:46` usa `v=111` (Overview) → **cero indicadores técnicos**.
-      *Objeción escrita*: un LLM NO produce probabilidad calibrada — propone, y la medición dispone
-      (barrera+null+BH-FDR, banner sin voz hasta tener n_eff, y entra con el tope duro desplazando
-      a otro factor).
+- [x] **[hecho — ENTRADA del framework] "calibramos la flecha con trading agents framework… pásale
+      todo el arsenal, y que tenga acceso a finviz technicals"** (Yunior 2026-07-25).
+      Commits: ib-trader `a6090ad` + `e61832e`, TradingAgents `575664b` + `577bef6`.
+      (a) **NIM fuera**: `default_config.py:69-71` = `deepseek`/`deepseek-chat`. Guarda
+      `test_default_provider_is_never_nim` (`tests/test_env_overrides.py:31`) — **verificada por
+      mutación**: al reponer `nvidia`/`kimi` el test FALLA; restaurado, 17 passed.
+      (b) **Puente vivo**: `scripts/ta_llm_bridge.py` mapea `TA_*`→`TRADINGAGENTS_*` antes del
+      import (`screener/research.py:63-68`). Test end-to-end en `tests/test_ta_llm_bridge.py:49`
+      corre `ta_venv` (py3.12) con el entorno limpio y comprueba el DEFAULT_CONFIG REAL:
+      `backend_url=https://api.deepseek.com/v1`, `deep/quick=deepseek-chat`.
+      (c) **Finviz `v=171` → HTTP 200** (2098 filas con `cap_midover`; token `FINVIZ_AUTH3`
+      de `feeds.env`, caduca 2026-08-01). Dos bugs cazados y arreglados: el `.env` de
+      TradingAgents inyecta un `FINVIZ_API_KEY` CADUCO que ganaba por `os.environ` (**401**) →
+      el token se pasa ahora explícito; y `cap_midover` **excluye ETFs** → QQQ/SPY/GLD/XLK/SMH/EWY
+      se quedaban sin técnicos → filtro vacío (acciones+ETFs) → cobertura **0 → 30/30** de `fleet.txt`.
+      (d) **Arsenal servido**: `tradingagents/dataflows/ibtrader.py` (solo lectura, cada sección
+      con `_source`). Cobertura medida sobre los 30: gex / expected_move / pin / truth_lock /
+      wall_decay / finviz_technicals **30/30**, flow_hist 25/30, breadth_component 11/30,
+      breadth 2/30, book_quality 1/30. **`data/uw_premium_flow_hist.jsonl` NO EXISTE** — el
+      historial real de flujo por ticker es `data/whale_flow_hist.jsonl` (opt_whale_watch).
+- [ ] **[pendiente — SALIDA del framework, lo que de verdad calibra la flecha]** lo commiteado es
+      la ENTRADA (contexto→LLM). Falta el lazo de medición: veredicto **discreto** + razones (jamás
+      un número del LLM), registrado en `signals` con `run_id` como cualquier otra fuente, medido con
+      `barrier_labels` + `null_control` + BH-FDR, **banner sin voz** hasta tener `n_eff`. Solo si
+      sobrevive entra en la flecha como coeficiente que **DESPLAZA** a otro factor (topes duros
+      `FAMILIES_MAX=6`/`VETOES_MAX=8`, `scripts/compass.cpp:565-569`; 14 factores en `direction_view`).
+      Patrón a copiar: `source_verdict` de `compass.cpp` — publica un veredicto medido como CONTEXTO
+      sin convertirlo en probabilidad. Recordatorio: `data/calibration_barrier.json` mide la señal
+      CRUDA (n=1154, pool de bollinger), **no** el setup de la brújula → no vale como prob de la flecha.
+- [ ] **[pendiente — deuda menor]** dos implementaciones de técnicos Finviz `v=171` en paralelo:
+      `ib-trader/scripts/finviz_technicals.py` (con fallback a yfinance) y
+      `TradingAgents/tradingagents/dataflows/finviz.py`. Consolidar cuando toque.
+- [ ] **[pendiente — ajeno]** `TradingAgents/tests/test_finviz.py` (SIN TRACKEAR) tiene **5 fallos
+      propios**, no míos: 3 por un bug del propio test (`_SAMPLE_ROWS` mete `Sector` pero el
+      `DictWriter` no lo declara) y 2 por categorías de vendor obsoletas (`broad_data`/
+      `financial_metrics` en vez de `core_stock_apis`/`fundamental_data`). No lo toqué.
 - [x] **[hecho] "create script to post x.com post of companies with earnings next week,
       include technicals… use finviz… show people nice picaros data"** (Yunior 2026-07-25).
       VERIFICADO hoy con el token nuevo: `f=earningsdate_nextweek` → **753 tickers**; `v=171` da
@@ -205,24 +231,39 @@
       objetivos de liquidez** ("quieren que el precio vaya a las zonas de liquidez", y el flujo se
       APAGA al llegar), **Captain Condor** (posición 0DTE recurrente que fabrica soporte/resistencia),
       y el **mapa de charm** de la tarde. El Vol Trigger ya lo tenemos (`vol_trigger.py`).
-- [ ] 🔴 **[pendiente] BB multi-TF: el código CONTRADICE la doctrina escrita** (respuesta a
-      "with BB, are we making sure it breaks in 1 min and 15 min? to avoid noise?", Yunior 2026-07-25).
-      **NO se exige 1m Y 15m.** `qqq_signal_bot.cpp:458-459` cuenta **2 de 3**:
-      `bb_dn_tfs = (v5_bb1_dn_ago<=3) + (v5_bb5_dn_ago<=2) + (v5_bb15_dn_ago<=1)` y dispara con
-      `>=2` (`:466`, `:1250`). Es decir **1m+5m basta y el 15m puede no romper nunca**.
-      Y el 5m **no es independiente**: `V5TF` (`:337`) es "agregador 5m/15m desde bars de 1m" — un
-      único tramo brusco de 3 minutos rompe los dos. La confluencia multi-TF es, en la práctica,
-      un timeframe rápido contado dos veces. Justo el ruido que Yunior sospecha.
-      **MEDIDO** sobre las 501 sesiones regeneradas (`signals_regen`): **148 señales `BB-2TF` vs
-      4 `BB-3TF`** → el 15m participa en el **2,6%** de los casos.
-      La memoria `bollinger-always-check` dice "revisar BB 1m+15m en CADA señal"; el código dice
-      otra cosa. *Y encaja con que `bollinger` saliera UNPROVEN* (0,482 vs 0,496 aleatorio).
-      *Acción*: NO cambiarlo a mano — es una hipótesis que se MIDE (barrier_labels + null_control):
-      ¿exigir el 15m mejora el edge, o solo recorta la muestra? Si mejora, la regla pasa a
-      `1m AND 15m`; si no, se dice y se deja.
-- [ ] **[pendiente] "technicals de la company en tiempo real desde finviz en un widget nuevo;
-      solo el gráfico principal por defecto, los demás widgets bajo demanda; yfinance de fallback
-      si finviz se cae"** (Yunior 2026-07-25). Va con la FASE 4 de UI/UX.
+- [x] 🔴 **[cerrado — re-auditado 2026-07-26] BB multi-TF: el código CONTRADICE la doctrina
+      escrita** (respuesta a "with BB, are we making sure it breaks in 1 min and 15 min? to avoid
+      noise?", Yunior 2026-07-25). El diagnóstico (`qqq_signal_bot.cpp:458-459/466`, 2-de-3 con
+      5m derivado de 1m via `V5TF`, 148 `BB-2TF` vs 4 `BB-3TF`) ya estaba bien. La MEDICIÓN pedida
+      (barrier_labels + null_control) **ya se hizo y ya se commiteó** (`e2c59f0`, hoy 01:20,
+      `scripts/bollinger_complements.py::analizar_tf15` + `data/backtest/bcomp_tf15.json`), solo
+      faltaba cerrar la casilla y alinear los skills/docs — hecho ahora.
+      **Resultado, 30 tickers × 30 días, P(toca la media BB20-1m en 30min)**:
+      67.2% solo 1m roto (n=4031) > 49.4% BB-2TF 1m+5m (n=409) > 43.0% BB-3TF 1m+5m+15m (n=200).
+      **Monótona a la BAJA**: exigir el 15m no confirma, recorta el 92% de la muestra y empeora.
+      Contraste 15m-roto-vs-no p=0.36 (n_eff~40) y 3TF-vs-2TF p=0.58 → **UNPROVEN, ninguno
+      significativo**. *No se cambia* — exigir `1m AND 15m` sería peor, no mejor. Re-verificado
+      hoy contra el JSON en disco (números idénticos, reproducible). Docs alineados: SKILL
+      `bollinger-mastery` §6 y `engines/README.md`. Nada tocado en `qqq_signal_bot.cpp` ni en los
+      demás `*_signal_bot.cpp` (otro agente los tiene abiertos).
+- [ ] **[pendiente — datos hechos, falta cablear frontend] "technicals de la company en tiempo
+      real desde finviz en un widget nuevo; solo el gráfico principal por defecto, los demás
+      widgets bajo demanda; yfinance de fallback si finviz se cae"** (Yunior 2026-07-25). Va con
+      la FASE 4 de UI/UX. **Capa de datos lista y probada**: `scripts/finviz_technicals.py` —
+      `get_technicals(sym, ttl_s=60, data_dir=...)`: Finviz Elite `v=171` (Beta/ATR14/SMA20-50-200
+      /52W-hi-lo/RSI14/Gap/ChangeFromOpen/Price/Volume, niveles absolutos derivados de las
+      distancias % que da Finviz) → cae a yfinance si Finviz falla (403/red/CSV roto, se loguea
+      y sigue) → si los dos fallan sirve el cache viejo marcado `stale:true` → si no hay NADA
+      levanta `TechnicalsUnavailable` (nunca fabrica 0/None). Cache por símbolo
+      `data/finviz_tech_<sym>.json`, TTL 60s, escritura atómica, `src`+`feed_ts` en el dato y
+      `feed_age_s` recalculado en cada lectura (nunca congelado). 15 tests en
+      `tests/test_finviz_technicals.py`, todos verdes, sin red (monkeypatch).
+      **Falta cablear (NO tocado — de `charts/live.html` y `scripts/chart_bridge.py` se encarga
+      otro agente ahora)**: (1) un endpoint/ruta en `chart_bridge.py` que llame
+      `finviz_technicals.get_technicals(sym_activo)` SOLO para el símbolo del gráfico principal
+      por defecto (nunca la flota entera en loop); (2) los demás widgets (si los hay) piden bajo
+      demanda al abrirse, mismo `get_technicals`; (3) pintar en `live.html` los campos con su
+      `src`/`feed_age_s` visibles (Finviz no es tiempo real — regla 4) y el flag `stale` si aplica.
 
 ## 🔴 SESIÓN 2026-07-25 (madrugada) — peticiones de Yunior, apuntadas AL VUELO
 > Regla (`~/CLAUDE.md`): cada petición se anota aquí EN EL MOMENTO, con las palabras de
