@@ -162,6 +162,12 @@ void TwsAdapter::reconcile() {
     std::fprintf(stderr, "[tws] reqAllOpenOrders — reconciliando huérfanas OE:\n");
 }
 
+void TwsAdapter::reqPositions() {
+    positions_.begin();             // known()=false hasta positionEnd(): decide_close_qty
+    client_->reqPositions();        // rechaza cierres mientras el refresco esta en vuelo.
+    std::fprintf(stderr, "[tws] reqPositions — pidiendo posiciones reales (#3/#7)\n");
+}
+
 int TwsAdapter::live_own_count() const {
     int n = 0;
     for (auto& [id, rec] : orders_) if (rec.ours && rec.live) ++n;
@@ -272,6 +278,20 @@ void TwsAdapter::openOrder(OrderId orderId, const Contract& c, const Order& o, c
 void TwsAdapter::openOrderEnd() {
     reconciled_ = true;
     std::fprintf(stderr, "[tws] openOrderEnd — reconciliación completa\n");
+}
+
+void TwsAdapter::position(const std::string& account, const Contract& c, Decimal pos, double) {
+    (void)account;   // una sola cuenta esperada (verificada en managedAccounts/accounts_match)
+    double q = DecimalFunctions::decimalToDouble(pos);
+    PosKey k = (c.secType == "OPT")
+        ? pos_key_option(c.symbol, c.lastTradeDateOrContractMonth, c.strike, c.right)
+        : pos_key_stock(c.symbol);
+    positions_.set(k, q);
+}
+
+void TwsAdapter::positionEnd() {
+    positions_.end();
+    std::fprintf(stderr, "[tws] positionEnd — %zu posicion(es) conocida(s)\n", positions_.qty.size());
 }
 
 void TwsAdapter::execDetails(int, const Contract& contract, const Execution& e) {

@@ -11,39 +11,48 @@
 // un 0/0.5 que el llamante confunda con "adelante".
 //
 // ############################################################################
-// # ESTADO DE CABLEADO (2026-07-25) — LEER ANTES DE DAR NADA POR CERRADO
+// # ESTADO DE CABLEADO (actualizado 2026-07-26, encargo de los 4 defectos)
 // #
 // # Que una guarda VIVA aqui y tenga test NO significa que el motor la use.
-// # Ahora mismo order_engine.cpp solo llama a UNA:
 // #
-// #   CABLEADA Y COMPILANDO:
-// #     #8 accounts_match  -> order_engine.cpp (verificacion de cuenta al
-// #        conectar). Sustituye al find() por subcadena. El agujero (d) del
-// #        encargo esta CERRADO en codigo, pero solo VERIFICADO EN FRIO:
-// #        compila y sus checks pasan; la ruta real necesita un Gateway
-// #        logueado -> PENDIENTE DE PAPER EL DOMINGO.
-// #     #4 stops_orphaned_by_close -> accion "close" del panel: el stop nativo
-// #        se cancela ANTES de mandar el close. El agujero (a) — GTC HUERFANO,
-// #        la causa documentada del desastre que motivo la ley SEÑAL-SOLAMENTE —
-// #        esta CERRADO en codigo. VERIFICADO EN FRIO (compila + 94 checks);
-// #        la ruta real necesita fills -> PENDIENTE DE PAPER EL DOMINGO.
+// #   CABLEADA Y COMPILANDO (release + ASan/UBSan, order_engine/build.sh):
+// #     #8 accounts_match  -> verificacion de cuenta al conectar.
+// #     #4 stops_orphaned_by_close -> accion "close" del panel: el stop
+// #        nativo se cancela ANTES de mandar el close.
+// #     #9 clamp_option_stop -> vive DENTRO de option_stop_trigger (#10) que
+// #        el motor llama al armar el stop tras un FILL (order_engine.cpp,
+// #        bloque "tras FILL: armar stop").
+// #     #10 option_greeks_known/option_stop_trigger -> defecto 1 del encargo
+// #        2026-07-25 (el centinela -1.0000 usado como delta real). Cablea
+// #        AL MISMO SITIO que #9. ZoneRT guarda entry_iv junto a entry_delta
+// #        para que el motor sepa distinguir "no se" de "delta real" en el
+// #        momento de calcular el stop.
+// #     #11 advance_cross_counter -> defecto 4 del encargo 2026-07-25 (el
+// #        stop watch-local contaba iteraciones del bucle, no barras). Se usa
+// #        en LAS DOS ramas de print-o-nada (entrada Y stop-local).
+// #     #3/#7 decide_close_qty/PositionBook -> defecto 3 del encargo
+// #        2026-07-25 ("close" sin gate de tamaño). PositionBook se llena
+// #        desde tws.reqPositions()/position()/positionEnd() (tws_adapter.h),
+// #        NUNCA desde el estado local en RAM. decide_close_qty gatea "cmd
+// #        close" ANTES de tocar armed_live/precio.
+// #
+// #   VERIFICADO EN FRIO (compila 0 warnings + ASan/UBSan limpio + tests
+// #   unitarios pasan); la ruta REAL (fills, posiciones reportadas por un
+// #   Gateway logueado) sigue PENDIENTE DE PAPER — no hay forma de probarla
+// #   sin TWS delante. Cada guarda de arriba necesita su pasada de paper
+// #   antes de considerarse viva en produccion.
 // #
 // #   ESCRITAS Y PROBADAS PERO **NO CABLEADAS** (el motor sigue con su logica
 // #   vieja en linea; los agujeros siguen ABIERTOS en produccion):
 // #     #1/#2 ExposureBook       - tope AGREGADO por cuenta
-// #     #3/#7 decide_close_qty   - close contra la posicion REAL (no voltear
-// #                                a corto). Agujero (b) del encargo: ABIERTO.
 // #     #5    decide_stop_failure- stop nativo rechazado = fallo de proteccion
-// #                                que GRITA. Agujero (c) del encargo: ABIERTO.
+// #                                que GRITA. Agujero (c) de un encargo previo: ABIERTO.
 // #     #6    safe_to_touch_orders- no tocar ordenes sin reconcile completo
-// #     #9    clamp_option_stop  - clamp simetrico del stop de opcion
 // #
-// #   NI ESCRITA NI CABLEADA: ninguna.
-// #
-// # No se cablearon las demas a proposito: tocan el camino de orden de un
-// # motor de ~970 lineas y no hay forma de validarlas sin fills, con TWS
-// # apagado un sabado. Cablearlas a ciegas es exactamente como se pierde
-// # dinero. Cada una necesita su pasada de paper antes de considerarse viva.
+// # No se cablearon a proposito: tocan el camino de orden de un motor de
+// # ~1000 lineas y no hay forma de validarlas sin fills, con TWS apagado un
+// # sabado. Cablearlas a ciegas es exactamente como se pierde dinero. Cada
+// # una necesita su pasada de paper antes de considerarse viva.
 // ############################################################################
 #pragma once
 #include <algorithm>
@@ -276,6 +285,62 @@ inline NakedDecision decide_stop_failure(int retries, int max_retries, bool loca
 // Nada que toque ordenes puede correr sin AMBAS verdades del broker.
 inline bool safe_to_touch_orders(bool orders_reconciled, bool positions_ready) {
     return orders_reconciled && positions_ready;
+}
+
+// ===================================================================== #10
+// CENTINELA -1.0000 USADO COMO DELTA REAL — el mas grave de los 4 defectos
+// del encargo 2026-07-25. scripts/opt_chain_cache.py escribe `nz(v, d=-1.0)`
+// para iv Y delta cuando Ticker.modelGreeks es None (tipico FUERA de RTH).
+// MEDIDO 2026-07-25: 100% de las filas de data/opt_chain_qqq.txt y
+// opt_chain_nvda.txt, 1.475/1.500 (98,3%) agregado de la flota.
+//
+// order_engine.cpp (linea 918-919, version vieja) solo descartaba el 0
+// EXACTO: `if (std::fabs(z.entry_delta) > 1e-6) opt_stop = fill + delta*...`.
+// -1.0000 tiene magnitud 1.0 > 1e-6, asi que PASABA como delta real de un put
+// profundo ITM -> invertia el signo del mapeo subyacente->prima. Los clamps
+// de cordura de clamp_option_stop (#9, arriba) limitaban el daño pero no lo
+// evitaban: con delta=-1 y un stop tipico por debajo del entry, el termino
+// `delta*(stop_und-level_und)` se vuelve POSITIVO y grande -> clamp_option_stop
+// lo topa al TECHO (fill*0.95 en largo) = stop nativo nace a -5% de la prima,
+// stop-out casi instantaneo. El fallback honesto (fill*0.60) nunca se alcanza
+// porque el guard `fabs(delta) > 1e-6` NO distingue "no se" de "se, y es -1".
+//
+// iv y delta salen del MISMO tk.modelGreeks en el escritor: si modelGreeks es
+// None, AMBOS son el centinela. Por eso basta con mirar iv (siempre > 0 para
+// un IV real -- nunca 0 ni negativo) para saber si el delta que lo acompaña
+// es de fiar. Patron de la casa (~/CLAUDE.md): un `except`/valor-por-defecto
+// SOLO puede devolver "no se" o levantar, jamas un numero plausible.
+inline bool option_greeks_known(double iv) { return iv > 0.0; }
+
+// Combina la deteccion del centinela con el clamp #9: delta desconocido -> se
+// pasa 0.0 a clamp_option_stop, que YA sabe caer al fallback DECLARADO
+// (0.60*fill largo / 1.40*fill corto via el `else` de clamp_option_stop),
+// nunca al numero inventado del centinela.
+inline double option_stop_trigger(double fill_px, double iv, double delta,
+                                  double stop_und, double level_und, char close_side) {
+    const double d = option_greeks_known(iv) ? delta : 0.0;
+    return clamp_option_stop(fill_px, d, stop_und, level_und, close_side);
+}
+
+// ===================================================================== #11
+// PRINT-O-NADA DEL STOP: BARRAS NUEVAS, NO ITERACIONES DEL BUCLE. El fix
+// 2026-07-24 se aplico a la ENTRADA (order_engine.cpp:779, cross_cnt) pero NO
+// a la rama del stop watch-local (:983): `z.s_cnt = cr ? z.s_cnt + 1 : 0`
+// cuenta cada vuelta del bucle (~2s), asi que con el mismo epoch de barra
+// repetido el stop-local disparaba un cierre marketable en ~4s -- la doctrina
+// pide 2 LECTURAS CRUZANDO (2 barras nuevas), no 2 vueltas de pump().
+// Funcion unica para ambas ramas (entrada y stop): epoch repetido no avanza
+// el contador; epoch nuevo con `crossed`=false lo resetea a 0 igual que antes.
+inline void advance_cross_counter(int& count, long long& last_epoch,
+                                  bool crossed, long long bar_epoch) {
+    if (!crossed) { count = 0; return; }
+    if (bar_epoch != last_epoch) { ++count; last_epoch = bar_epoch; }
+}
+
+// Testigo de la logica VIEJA (order_engine.cpp:983 antes del fix): contaba
+// iteraciones del bucle, ignorando el epoch de la barra por completo.
+inline int old_advance_cross_counter_iterations(int prev_count, bool crossed) {
+    return crossed ? prev_count + 1 : 0;
 }
 
 // ===================================================================== #4

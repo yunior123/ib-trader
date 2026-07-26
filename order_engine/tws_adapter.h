@@ -27,6 +27,7 @@
 #include "OrderState.h"
 #include "Decimal.h"
 
+#include "guards.h"        // PositionBook/PosKey -- fuente de verdad de posiciones (#3/#7)
 #include "ledger.h"
 
 namespace oe {
@@ -96,6 +97,16 @@ public:
     bool reconciled() const { return reconciled_; }
     const std::string& account() const { return account_; }
 
+    // --- posiciones REALES (#3/#7) -----------------------------------------
+    // Fuente de verdad para "close": el estado local en RAM (book[]) NUNCA
+    // decrementa filled_qty cuando un close se llena (el orderId de close ni
+    // siquiera entra en oid2zone), asi que confiar en book[] para el gate de
+    // TAMAÑO seria tan plausible-e-inventado como el centinela del defecto 1.
+    // reqPositions()/position()/positionEnd() son el reqPositions real de
+    // IBKR: PositionBook.known() solo es true tras ver positionEnd().
+    void reqPositions();
+    const PositionBook& positions() const { return positions_; }
+
     // Stop nativo VIVO adoptado con este orderRef -> su orderId, o -1 si no hay.
     // Tras un reconnect los STP huérfanos se ADOPTAN (siguen protegiendo la
     // posición); el motor debe re-usarlos en vez de colocar un segundo stop.
@@ -143,6 +154,9 @@ public:
                      double mktCapPrice) override;
     void openOrder(OrderId orderId, const Contract&, const Order&, const OrderState&) override;
     void openOrderEnd() override;
+    void position(const std::string& account, const Contract& contract, Decimal position,
+                 double avgCost) override;
+    void positionEnd() override;
     void execDetails(int reqId, const Contract& contract, const Execution& execution) override;
     void commissionReport(const CommissionReport& cr) override;
     void error(int id, int errorCode, const std::string& errorString,
@@ -176,6 +190,7 @@ private:
     bool frozen_ = false;
     bool reconciled_ = false;
     std::string account_;
+    PositionBook positions_;
 };
 
 } // namespace oe

@@ -256,6 +256,75 @@ static void test_reconnect_gate() {
     CHECK(safe_to_touch_orders(true, true), "ambas verdades del broker -> se puede armar");
 }
 
+// ============================ #10 centinela -1.0000 usado como delta REAL
+static void test_option_greeks_known_and_stop_trigger() {
+    section("#10 centinela -1.0000: iv decide si el delta es de fiar");
+
+    CHECK(!option_greeks_known(-1.0), "el centinela exacto -1.0 -> NO conocido");
+    CHECK(!option_greeks_known(0.0), "iv 0 (imposible en la realidad) -> NO conocido");
+    CHECK(!option_greeks_known(-0.5), "iv negativo (basura) -> NO conocido");
+    CHECK(option_greeks_known(0.0001), "iv minimo positivo -> conocido");
+    CHECK(option_greeks_known(0.22), "iv tipico -> conocido");
+
+    const double fill = 2.05, stop_und = 695.0, level_und = 700.0;
+    // Centinela: delta=-1.0 acompañado de iv=-1.0 -> DEBE ignorarse el delta
+    // y caer al fallback declarado de clamp_option_stop (0.60*fill largo),
+    // NUNCA al numero que sale de usar -1.0 como delta real.
+    double con_centinela = option_stop_trigger(fill, /*iv*/ -1.0, /*delta*/ -1.0, stop_und, level_und, 'S');
+    CHECK(std::fabs(con_centinela - fill * 0.60) < 1e-9,
+          "centinela -> fallback 0.60*fill, no el delta invertido");
+
+    // Mismo delta=-1.0 pero con iv REAL (deep-ITM put extremo, caso teorico
+    // legitimo): aqui SI se usa, porque iv>0 dice que el par es de fiar.
+    double con_iv_real = option_stop_trigger(fill, /*iv*/ 0.35, /*delta*/ -1.0, stop_und, level_und, 'S');
+    double manual = clamp_option_stop(fill, -1.0, stop_und, level_und, 'S');
+    CHECK(std::fabs(con_iv_real - manual) < 1e-9, "iv real: se usa el delta tal cual, igual que clamp_option_stop directo");
+
+    // Delta real normal, iv real: coincide con clamp_option_stop directo.
+    double normal = option_stop_trigger(fill, 0.22, 0.48, stop_und, level_und, 'S');
+    CHECK(std::fabs(normal - clamp_option_stop(fill, 0.48, stop_und, level_und, 'S')) < 1e-9,
+          "delta e iv reales: option_stop_trigger == clamp_option_stop(delta real)");
+
+    // Lado corto tambien respeta el fallback del centinela.
+    double corto_centinela = option_stop_trigger(fill, -1.0, -1.0, stop_und, level_und, 'B');
+    CHECK(std::fabs(corto_centinela - fill * 1.40) < 1e-9, "centinela en corto -> fallback 1.40*fill");
+}
+
+// ================================== #11 print-o-nada del stop: barras, no iteraciones
+static void test_advance_cross_counter() {
+    section("#11 stop-local: contar BARRAS nuevas, no iteraciones del bucle");
+
+    // TESTIGO: la logica vieja de order_engine.cpp:983 alcanzaba 2 con solo
+    // dos VUELTAS DEL BUCLE (~4s), aunque fuera la MISMA barra repetida.
+    int viejo = 0;
+    viejo = old_advance_cross_counter_iterations(viejo, true);
+    viejo = old_advance_cross_counter_iterations(viejo, true);
+    CHECK(viejo >= 2, "testigo: la logica vieja dispara en 2 iteraciones con el MISMO epoch (bug vivo)");
+
+    // fix: epoch repetido (misma barra, otra vuelta de pump()) NO avanza.
+    int cnt = 0; long long last_ep = 0;
+    const long long bar = 1'700'000'000;
+    advance_cross_counter(cnt, last_ep, true, bar);
+    CHECK(cnt == 1, "1a lectura de la barra: cuenta 1");
+    advance_cross_counter(cnt, last_ep, true, bar);
+    CHECK(cnt == 1, "fix: MISMO epoch repetido (otra vuelta del bucle ~2s) NO avanza -- se queda en 1");
+    advance_cross_counter(cnt, last_ep, true, bar);
+    advance_cross_counter(cnt, last_ep, true, bar);
+    CHECK(cnt == 1, "fix: 100 vueltas con la misma barra siguen sin disparar print-o-nada (aun en 1)");
+
+    // Llega una barra NUEVA (bar15m despues) -> AHORA si avanza a 2 -> dispara.
+    advance_cross_counter(cnt, last_ep, true, bar + 900);
+    CHECK(cnt == 2, "2a barra REAL (epoch distinto) -> cuenta 2 -> print-o-nada cumplido");
+
+    // Si en el medio deja de estar cruzado, resetea a 0 (igual que antes).
+    int cnt2 = 0; long long last_ep2 = 0;
+    advance_cross_counter(cnt2, last_ep2, true, bar);
+    advance_cross_counter(cnt2, last_ep2, false, bar + 900);   // se aleja del nivel
+    CHECK(cnt2 == 0, "cruce perdido -> reset a 0");
+    advance_cross_counter(cnt2, last_ep2, true, bar + 1800);
+    CHECK(cnt2 == 1, "vuelve a cruzar en una barra nueva -> arranca de nuevo en 1");
+}
+
 // ====================================== #4 el stop GTC HUERFANO
 // TESTIGO de la logica VIEJA: el `close` del panel (order_engine.cpp accion
 // "close") mandaba la orden opuesta y NO cancelaba nada. Se replica como una
@@ -327,6 +396,8 @@ int main() {
     test_aggregate_cap();
     test_close_against_real_position();
     test_option_stop_clamp_symmetry();
+    test_option_greeks_known_and_stop_trigger();
+    test_advance_cross_counter();
     test_naked_stop_shouts();
     test_reconnect_gate();
     test_orphan_stop_on_close();

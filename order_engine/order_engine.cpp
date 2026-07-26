@@ -36,6 +36,7 @@
 #include "safety.h"
 #include "account_cfg.h"
 #include "guards.h"        // decisiones de dinero PURAS y testeables (tests/test_guards.cpp)
+#include "chain.h"         // cadena de opciones + gate, PURAS y testeables (tests/test_chain.cpp)
 #include "ledger.h"
 
 using namespace oe;
@@ -129,87 +130,8 @@ struct JParser {
     }
 };
 
-// ======================================================= cadena de opciones
-struct ChainRow { double strike = 0; std::string right, exp; double bid = -1, ask = -1; long oi = 0; double delta = 0; };
-struct Chain { double spot = 0; long long epoch = 0; std::vector<ChainRow> rows; bool ok = false; };
-
-static Chain load_chain(const std::string& path) {
-    Chain ch;
-    std::ifstream f(path);
-    if (!f.is_open()) return ch;
-    std::string line;
-    while (std::getline(f, line)) {
-        if (line.empty()) continue;
-        if (line[0] == '#') {
-            auto ep = line.find("epoch ");
-            if (ep != std::string::npos) ch.epoch = atoll(line.c_str() + ep + 6);
-            auto sp = line.find("spot ");
-            if (sp != std::string::npos) ch.spot = atof(line.c_str() + sp + 5);
-            continue;
-        }
-        std::istringstream ss(line);
-        ChainRow r; std::string exp; long vol = 0; double iv = 0;
-        if (!(ss >> r.strike >> r.right >> r.exp >> r.bid >> r.ask >> vol >> r.oi)) continue;
-        ss >> iv >> r.delta;   // opcionales
-        ch.rows.push_back(r);
-    }
-    ch.ok = !ch.rows.empty();
-    return ch;
-}
-
-// Fila con strike más cercano al nivel, para el right+exp pedidos.
-static const ChainRow* nearest_row(const Chain& ch, const std::string& right,
-                                   const std::string& exp, double level) {
-    const ChainRow* best = nullptr; double bd = 1e18;
-    for (auto& r : ch.rows) {
-        if (r.right != right) continue;
-        if (!exp.empty() && r.exp != exp) continue;
-        double d = std::fabs(r.strike - level);
-        if (d < bd) { bd = d; best = &r; }
-    }
-    return best;
-}
-
-// ======================================================= gate (mirror order_ticket.py)
-static const double MAX_SPREAD_PCT = 5.0;
-static const long   MIN_OI = 500;
-static const double MAX_AGE_S = 900;
-
-struct Gate {
-    bool go = false;
-    double limit = 0, premium = 0, spread_pct = 0, delta = 0;
-    long oi = 0; double strike = 0; std::string exp, right;
-    std::vector<std::string> why;
-};
-
-// side: 'B' (comprar -> paga ask) | 'S' (vender -> cobra bid).
-static Gate run_gate(const Chain& ch, const std::string& right, const std::string& exp,
-                     double level, char side, double budget, long long now_s) {
-    Gate g; g.right = right;
-    if (!ch.ok) { g.why.push_back("sin cadena fresca"); return g; }
-    const ChainRow* r = nearest_row(ch, right, exp, level);
-    if (!r) { g.why.push_back("sin contrato para right/exp"); return g; }
-    g.strike = r->strike; g.exp = r->exp; g.oi = r->oi; g.delta = r->delta;
-    double age = (double)(now_s - ch.epoch);
-    bool fresh = age <= MAX_AGE_S;
-    bool quote_ok = r->bid > 0 && r->ask > 0 && r->ask >= r->bid;
-    if (quote_ok) {
-        double mid = (r->bid + r->ask) / 2.0;
-        g.spread_pct = (r->ask - r->bid) / mid * 100.0;
-    }
-    g.limit = (side == 'B') ? r->ask : r->bid;
-    g.premium = (g.limit > 0) ? g.limit * 100.0 : 0;
-    bool spread_ok = quote_ok && g.spread_pct >= 0 && g.spread_pct <= MAX_SPREAD_PCT;  // ==0 es el MEJOR spread
-    bool oi_ok = r->oi > MIN_OI;                 // doctrina: OI > 500 (estricto)
-    bool budget_ok = g.premium > 0 && g.premium <= budget;
-    if (!fresh) g.why.push_back("cadena vieja " + std::to_string((int)age) + "s");
-    if (!quote_ok) g.why.push_back("sin bid/ask valido (iliquido)");
-    else { char b[48]; std::snprintf(b, sizeof b, "spread %.1f%% %s", g.spread_pct, spread_ok ? "OK" : ">5% NO"); g.why.push_back(b); }
-    if (!oi_ok) g.why.push_back("OI " + std::to_string(r->oi) + " < 500");
-    if (!budget_ok) { char b[64]; std::snprintf(b, sizeof b, "prima $%.0f > $%.0f", g.premium, budget); g.why.push_back(b); }
-    g.go = fresh && quote_ok && spread_ok && oi_ok && budget_ok;
-    return g;
-}
+// cadena de opciones + Gate/run_gate/nearest_row/exact_row: movidos a chain.h
+// (funciones puras, testeables sin TWS -- ver order_engine/tests/test_chain.cpp).
 
 // ======================================================= NBBO del subyacente
 // Último close del archivo de barras de la flota (space-delimited).
@@ -240,6 +162,11 @@ struct ZoneRT {
     long long last_cross_ep = 0;   // epoch de la ultima BARRA contada (print-o-nada real)
     // ejecución
     int entry_id = -1; double fill_px = 0; double entry_delta = 0; Contract entry_c;
+    // iv del contrato AL LLENAR: entry_delta por si sola no dice si es de fiar
+    // (el centinela -1.0000 tiene magnitud > 1e-6, ver guards.h #10). Guardar
+    // el iv que la acompañaba es lo único que permite distinguir "delta real"
+    // de "modelGreeks ausente" en el momento de calcular el stop.
+    double entry_iv = -1.0;
     double filled_qty = 0;               // cantidad REALMENTE llenada (proteger fills parciales)
     char entry_side = 'B';
     // stop
@@ -250,6 +177,7 @@ struct ZoneRT {
     int  stop_retries = 0;                // re-armes del watchdog; tope 3 -> watch-local
     bool stop_degraded = false;           // stop nativo imposible -> watch-local PEGAJOSO
     bool s_have_prev = false; double s_prev = 0; int s_sign = 0; int s_cnt = 0;
+    long long s_last_cross_ep = 0;        // epoch de la ultima BARRA contada en el stop-local (defecto 4)
 };
 
 static const char* st_name(ZoneRT::St s) {
@@ -444,6 +372,21 @@ int main(int argc, char** argv) {
         tws.disconnect(); return 1;
     }
 
+    // Posiciones REALES (#3/#7, defecto 3 del encargo 2026-07-25): "cmd close"
+    // del panel debe validar cqty contra lo que el broker de verdad tiene
+    // abierto, NUNCA contra el estado local en RAM (book[] no decrementa
+    // filled_qty cuando un close se llena -- su orderId ni entra en oid2zone).
+    // decide_close_qty() (guards.h) ya falla CERRADO mientras positions() no
+    // este known(), asi que esto no aborta el arranque -- solo avisa. reqPositions
+    // puede tardar mas que reconcile; el loop principal sigue pumpeando y
+    // positionEnd() puede llegar mas tarde igual.
+    tws.reqPositions();
+    for (int i = 0; i < 80 && !tws.positions().known(); ++i) tws.pump();
+    if (!tws.positions().known())
+        std::fprintf(stderr, "[SEGURIDAD] posiciones aun no confirmadas (positionEnd pendiente) — 'close' se rechazara hasta entonces\n");
+    else
+        std::fprintf(stderr, "[SEGURIDAD] posiciones confirmadas\n");
+
     // Disarm-on-exit: instalar DESPUÉS de connect+ids+reconcile (evita que atexit corra
     // sobre objetos ya destruidos en un early-return, MEDIUM #4) y ANTES del loop de órdenes.
     Guard::install([&tws, &ledger]() {
@@ -497,6 +440,7 @@ int main(int argc, char** argv) {
                 for (int i = 0; i < 50 && !tws.have_ids(); ++i) tws.pump();
                 tws.reconcile();                              // cancela huérfanas OE: (incl. el stop viejo)
                 for (int i = 0; i < 80 && !tws.reconciled(); ++i) tws.pump();
+                tws.reqPositions();                           // refresca posiciones tras reconnect (#3/#7)
                 reconnect_backoff = 1;
                 // Stops tras reconnect. OJO: reconcile NO cancela los STP — los ADOPTA
                 // (tws_adapter.cpp:224, protegen una posición real). Resetear a ciegas
@@ -624,14 +568,52 @@ int main(int argc, char** argv) {
                             char side = (cside == "buy") ? 'B' : 'S';
                             bool is_opt = (cstrike > 0 && (cright == "C" || cright == "P"));
                             if (csym.empty() || cqty <= 0) { ledger.note("cmd close inválido"); continue; }
+
+                            // --- DEFECTO 3 (2026-07-25): GATE DE TAMAÑO -----------------------
+                            // "close" era la UNICA ruta de orden sin gate de tamaño: validaba
+                            // side (arriba, fix 24-jul) pero nunca cqty contra lo que el broker
+                            // de verdad tiene abierto. decide_close_qty (guards.h #3/#7) es la
+                            // guarda ya escrita y testeada (test_guards.cpp) que faltaba cablear.
+                            // La fuente es tws.positions() = reqPositions() REAL, nunca book[]
+                            // local (que no decrementa filled_qty en un close, ver tws_adapter.h)
+                            // -- eso habria sido otro numero plausible como el centinela del
+                            // defecto 1. Se corre ANTES de tocar armed_live/precio: si el tamaño
+                            // no cuadra, ni se molesta en preciar.
+                            oe::PosKey cpk = is_opt ? oe::pos_key_option(csym, cexp, cstrike, cright)
+                                                    : oe::pos_key_stock(csym);
+                            oe::CloseDecision cdec = oe::decide_close_qty(tws.positions(), cpk, cqty, side);
+                            if (!cdec.ok) {
+                                ledger.note("cmd close RECHAZADO " + csym + ": " + cdec.reason);
+                                std::fprintf(stderr, "[cmd] close RECHAZADO %s: %s\n", csym.c_str(), cdec.reason.c_str());
+                                continue;
+                            }
+                            if (cdec.clamped) {
+                                ledger.note("cmd close CLAMP " + csym + ": " + cdec.reason);
+                                std::fprintf(stderr, "[cmd] close CLAMP %s: %s\n", csym.c_str(), cdec.reason.c_str());
+                            }
+                            cqty = cdec.qty;   // jamas mas de lo que el broker reporta abierto
+
                             if (!armed_live(cfg.arm_flag, arm_file)) { ledger.note("cmd close DRY (sin doble llave) " + csym); continue; }
                             Contract cc; double lim = 0; bool outside = false;
                             if (is_opt) {
                                 cc = make_option(csym, cexp, cstrike, cright);
                                 Chain ch2 = load_chain(cfg.repo + "/data/opt_chain_" + lower(csym) + ".txt");
-                                const ChainRow* r = nearest_row(ch2, cright, cexp, cstrike);
-                                if (r && r->bid > 0 && r->ask > 0) lim = (side == 'B') ? r->ask : r->bid;
-                                if (lim <= 0) { ledger.note("cmd close opt sin precio de cadena " + csym); continue; }
+                                // DEFECTO 3 (a) + DEFECTO 2: nearest_row() sin tope de distancia
+                                // podia preciar sobre un contrato VECINO (la orden sale, no llena,
+                                // y el panel ya respondio {"ok":true} -- "crees que estas plano y
+                                // no lo estas"). run_gate(..., require_exact_strike=true) exige
+                                // right+exp+strike EXACTOS (exact_row) y de paso aporta la
+                                // frescura/spread/OI que este camino jamas tuvo, igual que ya hace
+                                // el stop watch-local en :988 con presupuesto infinito (cerrar no
+                                // se veta por dinero, pero si por cadena podrida o contrato erroneo).
+                                Gate g = run_gate(ch2, cright, cexp, cstrike, side, 1e9, now_s, /*require_exact_strike=*/true);
+                                if (!g.go) {
+                                    std::string w; for (auto& s : g.why) { if (!w.empty()) w += "; "; w += s; }
+                                    ledger.note("cmd close opt VETADO " + csym + ": " + w);
+                                    std::fprintf(stderr, "[cmd] close VETADO %s: %s\n", csym.c_str(), w.c_str());
+                                    continue;
+                                }
+                                lim = g.limit;
                             } else {
                                 cc = make_stock(csym); outside = true;
                                 double sp = 0;
@@ -775,8 +757,9 @@ int main(int argc, char** argv) {
                     // bucle (~2s), no barras: un unico print sostenido disparaba a las dos
                     // vueltas. Ahora solo cuenta cuando llega una BARRA NUEVA (epoch
                     // distinto), que es lo que dice la doctrina: 2 lecturas cruzando.
-                    if (!cr) z.cross_cnt = 0;
-                    else if (spot_ep != z.last_cross_ep) { z.cross_cnt++; z.last_cross_ep = spot_ep; }
+                    // advance_cross_counter (guards.h #11) es la MISMA funcion que usa la
+                    // rama del stop watch-local mas abajo -- una sola definicion probada.
+                    advance_cross_counter(z.cross_cnt, z.last_cross_ep, cr, spot_ep);
                     z.prev_spot = spot;
                     if (z.cross_cnt >= 2) {          // PRINT-O-NADA: 2 lecturas
                         z.st = ZoneRT::TRIGGERED;
@@ -871,7 +854,7 @@ int main(int argc, char** argv) {
                         continue;
                     }
                     Contract c = make_option(sym, g.exp, g.strike, right);
-                    z.entry_c = c; z.entry_delta = g.delta; z.entry_side = side;
+                    z.entry_c = c; z.entry_delta = g.delta; z.entry_iv = g.iv; z.entry_side = side;
                     // DOBLE LLAVE re-evaluada al momento (borrar ARM_LIVE desarma ya).
                     bool armed = armed_live(cfg.arm_flag, arm_file);
                     if (!armed) {
@@ -912,23 +895,19 @@ int main(int argc, char** argv) {
                             // acciones: el stop del subyacente ES el precio de la acción (directo).
                             stop_trigger = z.stop_px;
                         } else {
-                            // opciones: mapear el nivel del SUBYACENTE a precio de la OPCIÓN vía delta.
-                            // Aproximación honesta: opt_stop ≈ fill + delta*(stop_und - trigger_und).
-                            double opt_stop;
-                            if (std::fabs(z.entry_delta) > 1e-6)
-                                opt_stop = z.fill_px + z.entry_delta * (z.stop_px - z.price);
-                            else
-                                opt_stop = z.fill_px * 0.6;   // fallback: stop -40% de la prima
-                            // clamp de cordura (LOW): un delta malo no debe poner el STP donde
-                            // dispara al instante o nunca. long(close=S): bajo el fill; short: sobre.
-                            if (close_side == 'S') {
-                                opt_stop = std::min(opt_stop, z.fill_px * 0.95);
-                                opt_stop = std::max(opt_stop, std::max(0.01, z.fill_px * 0.10));
-                            } else {
-                                opt_stop = std::max(opt_stop, z.fill_px * 1.05);
-                            }
-                            if (opt_stop < 0.01) opt_stop = 0.01;
-                            stop_trigger = opt_stop;
+                            // opciones: mapear el nivel del SUBYACENTE a precio de la OPCIÓN vía
+                            // delta. option_stop_trigger (guards.h #10) es la version CORREGIDA:
+                            // antes `fabs(z.entry_delta) > 1e-6` no distinguia "no se" (iv/delta
+                            // en -1.0, el centinela que escribe opt_chain_cache.py fuera de RTH,
+                            // medido 100% de las filas 2026-07-25) de "delta real". -1.0000 tiene
+                            // magnitud > 1e-6 y pasaba como delta de un put profundo ITM,
+                            // invirtiendo el mapeo. option_stop_trigger mira z.entry_iv (SIEMPRE
+                            // acompaña a un delta real) y descarta el par entero si es el
+                            // centinela, cayendo al fallback declarado -- nunca al numero
+                            // inventado. clamp_option_stop (#9) sigue aplicando el clamp
+                            // simetrico de cordura en ambos lados.
+                            stop_trigger = option_stop_trigger(z.fill_px, z.entry_iv, z.entry_delta,
+                                                               z.stop_px, z.price, close_side);
                         }
                         int oid = tws.next_order_id();
                         // stop_armed=true pero stop_confirmed=false: NO cuenta como protección
@@ -980,12 +959,24 @@ int main(int argc, char** argv) {
                 if (z.st == ZoneRT::FILLED && z.stop_on && !z.stop_native && z.close_id < 0) {
                     if (!z.s_have_prev) { z.s_have_prev = true; z.s_prev = spot; z.s_sign = sgn(spot - z.stop_px); }
                     bool cr = crossed(z.s_sign, spot, z.stop_px);
-                    z.s_cnt = cr ? z.s_cnt + 1 : 0;
+                    // DEFECTO 4 (2026-07-25): esta rama contaba ITERACIONES del bucle
+                    // (~2s cada una), no barras nuevas -- el fix de :779 para la ENTRADA
+                    // (2026-07-24) nunca se copio aqui. Con `cr` sostenido por la MISMA
+                    // barra, `z.s_cnt = cr ? z.s_cnt+1 : 0` llegaba a 2 en ~4s y disparaba
+                    // un cierre marketable con UNA sola lectura real, no las 2 que exige
+                    // print-o-nada. advance_cross_counter (guards.h #11) es la misma
+                    // funcion ya usada en la entrada: solo avanza con epoch de barra nuevo.
+                    advance_cross_counter(z.s_cnt, z.s_last_cross_ep, cr, spot_ep);
                     z.s_prev = spot;
                     if (z.s_cnt >= 2 && !frozen) {
                         char close_side = (z.entry_side == 'B') ? 'S' : 'B';
                         std::string right = z.entry_c.right;
-                        Gate g = run_gate(ch, right, z.entry_c.lastTradeDateOrContractMonth, z.entry_c.strike, close_side, 1e9, now_s);
+                        // require_exact_strike=true (defecto 2): el contrato ya se conoce
+                        // con certeza (z.entry_c es el que de verdad se lleno) -- nearest_row
+                        // sin tope de distancia podia preciar sobre un contrato VECINO si el
+                        // exacto faltaba en la cadena. exact_row exige right+exp+strike
+                        // identicos o el gate falla limpio (espera cadena, no adivina).
+                        Gate g = run_gate(ch, right, z.entry_c.lastTradeDateOrContractMonth, z.entry_c.strike, close_side, 1e9, now_s, /*require_exact_strike=*/true);
                         // AUDIT-FIX: cerrar SOLO lo realmente llenado (z.qty sobre-vendería
                         // en un fill parcial -> corto no deseado). Sin precio de cadena NO
                         // rematamos a 0.01 (regalo): esperamos cadena fresca.
