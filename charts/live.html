@@ -298,6 +298,14 @@
   .wgempty .wgway { border-top:1px solid #232a3a; padding-top:6px; color:#9fb0cc; }
   .wgempty .wgnever { color:#6b7a99; font-style:italic; }
   #wgbtn.on { background:#2962ff; color:#fff; border-color:#2962ff; }
+  .techrow { display:flex; justify-content:space-between; align-items:baseline; gap:8px;
+           padding:3px 2px; border-bottom:1px solid #1b2233; font-size:11.5px; }
+  .techrow:last-of-type { border-bottom:none; }
+  .techk { color:#8fa0bf; } .techv { color:#d1d4dc; font-variant-numeric:tabular-nums; }
+  .techv.tpos { color:#26a69a; } .techv.tneg { color:#ef5350; }
+  .wgsub.tstale { color:#ffb300; }
+  .technote { color:#6b7a99; font-style:italic; font-size:10.5px; margin:7px 0 0; }
+  #wgt-tech .wgbody { padding:6px 9px; overflow-y:auto; }
   #wgmenu { position:absolute; z-index:62; background:#161a24; border:1px solid #2a3550;
             border-radius:6px; padding:4px; display:none; box-shadow:0 8px 24px rgba(0,0,0,.6); }
   #wgmenu.on { display:block; }
@@ -523,6 +531,18 @@
          <code>ibkr_bar_bridge.py:250</code>). Cuando llegue, esta lista se llena sola.</p>
       <p class="wgnever">Vacío a propósito: una cinta de órdenes inventada es peor que no tenerla.</p>
     </div>
+    <div class="wgrs"></div>
+  </div>
+
+  <div class="wgt" id="wgt-tech">
+    <div class="wghdr">
+      <span class="wgdrag">⠿⠿</span><span class="wgname">Technicals</span>
+      <span class="wgsub" id="techsub">sin dato</span>
+      <button class="wgb wgexp" title="Expandir / contraer">⤢</button>
+      <button class="wgb wgmin" title="Plegar">–</button>
+      <button class="wgb wgx" title="Cerrar">✕</button>
+    </div>
+    <div class="wgbody" id="techbody"></div>
     <div class="wgrs"></div>
   </div>
 
@@ -1045,6 +1065,7 @@ function switchSymbol(sym) {
   if (!sym) return;
   const u = sym.toUpperCase();
   curSym = u;
+  techDraw(true);
   if (ws && ws.readyState === WebSocket.OPEN) {
     ws.send(JSON.stringify({ cmd: "sym", sym: u }));        // el server re-pide y reenvía history
     ws.send(JSON.stringify({ cmd: "alarm", act: "list" })); // alarmas del nuevo símbolo
@@ -1834,12 +1855,70 @@ chart.subscribeCrosshairMove((param) => {
 //                      construccion no puede taparlo. Expandir un flotante lo re-acopla.
 //   · persistentes  -> abierto/plegado/expandido/posicion/altura en localStorage.
 // Sin frameworks: la CSP del cockpit no admite CDN y el peso importa (Mac de 8 GB).
-const WGT_IDS = ["gex", "prem", "flow"];
+const WGT_IDS = ["gex", "prem", "flow", "tech"];
 const WGT_NAME = { gex: "Net GEX por strike", prem: "Net Premiums", flow: "Options Flow Orders" };
 const WGT_EL = {};
 for (const k of WGT_IDS) WGT_EL[k] = document.getElementById("wgt-" + k);
 const wdockEl = document.getElementById("wdock");
 const wgMenuEl = document.getElementById("wgmenu");
+// ---- widget Technicals (Finviz v=171). DELAYED a proposito: se ensena la edad y la
+// fuente, y jamas dispara nada — regla 4, ningun nivel de fuente delayed opera.
+let techTimer = null, techLastSym = null;
+function techRow(k, v, cls) {
+  return `<div class="techrow"><span class="techk">${k}</span>` +
+         `<span class="techv ${cls || ""}">${v}</span></div>`;
+}
+function techFmt(n, nd) { return n == null ? "—" : (+n).toFixed(nd == null ? 2 : nd); }
+function techPct(n) { return n == null ? "—" : (n > 0 ? "+" : "") + (+n).toFixed(2) + "%"; }
+function techCls(n, inv) { if (n == null) return ""; const p = inv ? -n : n;
+  return p > 0 ? "tpos" : p < 0 ? "tneg" : ""; }
+
+async function techDraw(force) {
+  const body = document.getElementById("techbody"), sub = document.getElementById("techsub");
+  if (!body || !WG.open.tech) return;
+  const s = (curSym || "").toUpperCase();
+  if (!force && s === techLastSym && body.dataset.filled === "1") return;
+  techLastSym = s;
+  try {
+    const r = await fetch("/technicals?sym=" + encodeURIComponent(s));
+    const d = await r.json();
+    if (!r.ok || d.error) {
+      sub.textContent = "sin dato";
+      body.innerHTML = `<div class="wgblock">SIN TÉCNICOS</div><p>${d.error || r.status}</p>`;
+      body.dataset.filled = "0"; return;
+    }
+    const age = d.feed_age_s == null ? null : Math.round(d.feed_age_s);
+    sub.textContent = `${d.src || "?"} · ${age == null ? "edad ?" : age + "s"}`;
+    sub.className = "wgsub" + (age != null && age > 900 ? " tstale" : "");
+    // RSI: solo se colorea en extremo; en medio no dice nada y pintarlo engaña
+    const rsiCls = d.rsi14 == null ? "" : d.rsi14 >= 70 ? "tneg" : d.rsi14 <= 30 ? "tpos" : "";
+    body.innerHTML =
+      techRow("precio", techFmt(d.price)) +
+      techRow("cambio", techPct(d.change_pct), techCls(d.change_pct)) +
+      techRow("desde apertura", techPct(d.change_from_open_pct), techCls(d.change_from_open_pct)) +
+      techRow("gap", techPct(d.gap_pct), techCls(d.gap_pct)) +
+      techRow("RSI(14)", techFmt(d.rsi14, 1), rsiCls) +
+      techRow("ATR(14)", techFmt(d.atr14)) +
+      techRow("beta", techFmt(d.beta)) +
+      techRow("vs SMA20", techPct(d.sma20_pct) + (d.sma20 ? ` (${techFmt(d.sma20)})` : ""), techCls(d.sma20_pct)) +
+      techRow("vs SMA50", techPct(d.sma50_pct) + (d.sma50 ? ` (${techFmt(d.sma50)})` : ""), techCls(d.sma50_pct)) +
+      techRow("vs SMA200", techPct(d.sma200_pct) + (d.sma200 ? ` (${techFmt(d.sma200)})` : ""), techCls(d.sma200_pct)) +
+      techRow("52s máx", techPct(d.wk52_hi_pct) + (d.wk52_hi ? ` (${techFmt(d.wk52_hi)})` : "")) +
+      techRow("52s mín", techPct(d.wk52_lo_pct) + (d.wk52_lo ? ` (${techFmt(d.wk52_lo)})` : "")) +
+      techRow("volumen", d.volume == null ? "—" : (+d.volume).toLocaleString("es")) +
+      `<p class="technote">Finviz, retardado. Contexto — no dispara nada.</p>`;
+    body.dataset.filled = "1";
+  } catch (e) {
+    sub.textContent = "sin dato";
+    body.innerHTML = `<div class="wgblock">SIN TÉCNICOS</div><p>${e}</p>`;
+    body.dataset.filled = "0";
+  }
+}
+function techSchedule() {
+  if (techTimer) { clearInterval(techTimer); techTimer = null; }
+  if (WG.open.tech) { techDraw(true); techTimer = setInterval(() => techDraw(true), 60000); }
+}
+
 const WG_KEY = "cockpitWidgets.v1";
 // Ancho del dock: normal / expandido. RESPONSIVO — con 6 cockpits repartidos en
 // rejilla (Yunior 2026-07-25) cada ventana mide ~480 px y un dock fijo de 320 se comia
@@ -1850,8 +1929,9 @@ const wgDockW = (exp) => {
              : Math.round(Math.min(320, Math.max(210, W * 0.42)));
 };
 
-const wgFresh = () => ({ open: { gex: true, prem: false, flow: false },
-                         float: {}, h: { gex: 320, prem: 300, flow: 300 }, min: {}, exp: {} });
+const wgFresh = () => ({ open: { gex: true, prem: false, flow: false, tech: false },
+                         float: {}, h: { gex: 320, prem: 300, flow: 300, tech: 300 },
+                         min: {}, exp: {} });
 let WG = wgFresh();
 try {
   const s = JSON.parse(localStorage.getItem(WG_KEY) || "null");
@@ -1920,7 +2000,7 @@ function wgDrag(id, ev) {
     // soltado pegado al borde derecho = re-acoplar (como TradingView)
     const cr = el.getBoundingClientRect();
     if (e.clientX > cr.right - 46) delete WG.float[id];
-    wgApply(); wgSave();
+    wgApply(); wgSave(); techSchedule();
   };
   document.addEventListener("mousemove", mv); document.addEventListener("mouseup", up);
   ev.preventDefault();
@@ -1945,20 +2025,20 @@ for (const id of WGT_IDS) {
   hdr.addEventListener("dblclick", (e) => {
     if (e.target.closest(".wgb")) return;
     if (WG.float[id]) delete WG.float[id]; else WG.float[id] = { x: 40, y: 40 };
-    wgApply(); wgSave();
+    wgApply(); wgSave(); techSchedule();
   });
   w.querySelector(".wgexp").addEventListener("click", () => {
     WG.exp[id] = !WG.exp[id];
     // EXPANDIDO NO FLOTA: un panel grande encima del precio es justo lo que Yunior
     // prohibio ("do not interfere with the view of the chart"). Al expandir se acopla.
     if (WG.exp[id]) { delete WG.float[id]; WG.min[id] = false; }
-    wgApply(); wgSave();
+    wgApply(); wgSave(); techSchedule();
   });
   w.querySelector(".wgmin").addEventListener("click", () => {
-    WG.min[id] = !WG.min[id]; wgApply(); wgSave();
+    WG.min[id] = !WG.min[id]; wgApply(); wgSave(); techSchedule();
   });
   w.querySelector(".wgx").addEventListener("click", () => {
-    WG.open[id] = false; wgApply(); wgSave(); wgMenuBuild();
+    WG.open[id] = false; wgApply(); wgSave(); techSchedule(); wgMenuBuild();
   });
   const rs = w.querySelector(".wgrs");
   if (rs) rs.addEventListener("mousedown", (e) => wgResize(id, e));
@@ -1972,7 +2052,7 @@ function wgMenuBuild() {
     b.addEventListener("click", () => {
       WG.open[id] = !WG.open[id];
       if (WG.open[id]) { WG.min[id] = false; }
-      wgApply(); wgSave(); wgMenuBuild();
+      wgApply(); wgSave(); techSchedule(); wgMenuBuild();
     });
     wgMenuEl.appendChild(b);
   }

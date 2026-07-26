@@ -1667,6 +1667,18 @@ def create_app(state):
             return FileResponse(p, media_type="image/svg+xml")
         return JSONResponse({"error": "favicon.svg no encontrado"}, status_code=404)
 
+    @app.get("/technicals")
+    async def technicals(sym: str = ""):
+        # Finviz NO es tiempo real: se sirve con procedencia y edad, y el frontend las
+        # ensena. Fuera de alcance -> 503 con el motivo, nunca un dict a medias.
+        s = (sym or state.sym).upper()
+        try:
+            import finviz_technicals as ft
+            return JSONResponse(await asyncio.to_thread(ft.get_technicals, s))
+        except Exception as e:
+            return JSONResponse({"sym": s, "error": f"{type(e).__name__}: {e}"},
+                                status_code=503)
+
     @app.get("/health")
     async def health():
         def _one(st):
