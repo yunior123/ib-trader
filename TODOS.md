@@ -252,7 +252,7 @@
       hoy contra el JSON en disco (números idénticos, reproducible). Docs alineados: SKILL
       `bollinger-mastery` §6 y `engines/README.md`. Nada tocado en `qqq_signal_bot.cpp` ni en los
       demás `*_signal_bot.cpp` (otro agente los tiene abiertos).
-- [ ] **[pendiente — datos hechos, falta cablear frontend] "technicals de la company en tiempo
+- [x] **[hecho 8586347 — ruta /technicals + 4º widget del dock, procedencia y edad visibles]**  ~~ "technicals de la company en tiempo
       real desde finviz en un widget nuevo; solo el gráfico principal por defecto, los demás
       widgets bajo demanda; yfinance de fallback si finviz se cae"** (Yunior 2026-07-25). Va con
       la FASE 4 de UI/UX. **Capa de datos lista y probada**: `scripts/finviz_technicals.py` —
