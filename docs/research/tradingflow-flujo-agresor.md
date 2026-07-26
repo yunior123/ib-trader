@@ -50,3 +50,23 @@ un cruce, es una suposición.
 
 Para que esto sirva de verdad hacen falta dos cosas: (1) poblar `gexa.regime` para SPY/QQQ en el
 archivo diario, no dejarlo null; (2) acumular sesiones. El reloj corre.
+
+## Cruce independiente con Unusual Whales (24-jul) — las dos fuentes coinciden en el signo
+UW `net-prem-ticks` firma el agresor por su cuenta (ask-side − bid-side). Sobre el mismo día:
+
+| | net_call_premium | net_put_premium | neto firmado |
+|---|---:|---:|---:|
+| SPY | **−82,2 M** (venta de calls = bajista) | **−47,5 M** (venta de puts = alcista) | **−34,7 M** |
+| QQQ | −2,4 M | **+34,5 M** (compra de puts = bajista) | **−37,0 M** |
+
+**Lo que confirma el cruce**: TradingFlow enseñaba SPXW **PUT BBid** (venta agresiva de puts) el
+viernes por la tarde; UW da `net_put_premium` **negativo** en SPY el mismo día. Dos fuentes
+independientes, mismo signo en el componente de puts. No se contradicen: en SPY la venta de
+calls (−82,2 M) es mayor que la de puts (−47,5 M), y por eso el neto sale bajista.
+
+**Lo que el ratio de volumen se comía**: SPY P/C 1,26 y QQQ 1,18 — los dos en zona muda. El
+premium firmado dice −34,7 M y −37,0 M. Es la misma clase de ballena silenciosa que el tide de
+−53 M del 21-jul.
+
+⚠️ **La latencia de UW sigue SIN MEDIR en sesión** (domingo, mercado cerrado; el último bucket
+venía con 43,8 h). Por eso el overlay es **banner sin voz**: no dispara nada hasta medirla el lunes.
