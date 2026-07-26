@@ -19,6 +19,17 @@
       ANTES que `AUTH` (`finviz_scout.cpp:91`, `x_whale_bot.cpp:366`, `options_hunter.py:34`,
       y `finviz_valuation.py` **solo** lee AUTH3) → cambiar solo `FINVIZ_AUTH` no lo usaba nadie.
       El anterior seguía dando 200 al sustituirlo; queda comentado. Caduca ~2026-08-01.
+- [ ] **[pendiente] `/health` del chart no responde mientras hay un cliente WebSocket**
+  (medido 2026-07-26, reproducible al 100%). Con Chrome conectado: `curl /health` -> HTTP 000
+  a los 6s; el MISMO puente sin navegador -> HTTP 200 en 3ms. No es de un símbolo: probado
+  cruzado (QQQ con Chrome cuelga, DRAM sin Chrome responde). **El chart sigue funcionando
+  perfectamente** (velas, muros, panel GEX, flecha) — lo único que queda sin atender es la
+  ruta HTTP. Impacto HOY = nulo en producción: los 3 consumidores de `/health` son del
+  script de QA, ningún keepalive lo usa. Riesgo si alguien cablea un watchdog a `/health`:
+  mataría puentes sanos. Descartado que sea el `send_json` sin timeout (se le puso uno de 5s
+  en `broadcast()` y hubo **0 descartes**, así que el bloqueo está en otro punto — mirar el
+  handler `stream()` y el frame de historia de ~2 MB).
+
 - [ ] **[pendiente] SKHY es el ÚNICO de la flota con el gate de spread APAGADO** (medido
   2026-07-26). Los otros 23 `*_signal_bot` llevan `export <SYM>_SPREAD_MAX` en su keepalive
   (0,3 casi todos, DRAM 0,5); `scripts/skhy_keepalive.sh` no define `SKHY_SPREAD_MAX`, y el

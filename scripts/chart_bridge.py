@@ -1913,6 +1913,9 @@ def _make_on_tick(state):
     return on_pending
 
 
+SEND_TIMEOUT_S = 5.0    # un cliente que no lee NO puede parar el puente
+
+
 async def broadcast(state):
     """Empuja el frame incremental a todos los clientes WS conectados."""
     if not state.clients:
@@ -1924,7 +1927,13 @@ async def broadcast(state):
     dead = []
     for ws in list(state.clients):
         try:
-            await ws.send_json(frame)
+            # con timeout: un navegador que deja de leer aplica backpressure y `send_json`
+            # se queda esperando para siempre. Medido: una pestaña de Chrome abierta dejaba
+            # el puente sin responder ni a /health, y al cerrarla revivia.
+            await asyncio.wait_for(ws.send_json(frame), timeout=SEND_TIMEOUT_S)
+        except asyncio.TimeoutError:
+            print(f"[ws] cliente lento en {state.sym}: se descarta (>{SEND_TIMEOUT_S}s)")
+            dead.append(ws)
         except Exception:
             dead.append(ws)
     for ws in dead:
