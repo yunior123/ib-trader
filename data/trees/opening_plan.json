@@ -1,7 +1,7 @@
 {
  "QQQ": {
   "sym": "QQQ",
-  "generado": "2026-07-26T18:55:11",
+  "generado": "2026-07-26T19:00:18",
   "tf_min": 15,
   "px_ultimo": 685.06,
   "px_ts": 1784924100,
@@ -742,6 +742,23 @@
    "signed_premium": -36952209.0,
    "n_buckets": 406,
    "fecha": "2026-07-26"
+  },
+  "perp": {
+   "ask": 693.49,
+   "bid": 693.48,
+   "feed_age_s": 0.0,
+   "feed_ts": 1785106659.749354,
+   "funding_rate": 2.71e-06,
+   "index_px": 693.2,
+   "mark_px": 693.49,
+   "oi_usd": 6859115.41,
+   "px": 693.5,
+   "spread_pct": 0.0014,
+   "src": "bybit",
+   "sym": "QQQ",
+   "vol24h_usd": 1323236.0614,
+   "gap_pct": 1.2320088751350378,
+   "ref_cierre": 685.06
   },
   "arbol": {
    "sym": "QQQ",
@@ -1857,6 +1874,11 @@
     "invalida": "es posicionamiento del viernes, no del lunes: lo mata el print de apertura"
    },
    {
+    "gatillo": "perp 24/7 en 693.50 \u2192 gap +1.23% sobre el cierre del viernes",
+    "lee": "el MISMO nombre cotizando con US cerrado (Bybit, vol 24h 1,323,236 $, OI 6,859,115 $, spread 0.001%). Es el \u00fanico descubrimiento de precio que hay ahora mismo, y apunta ARRIBA.",
+    "invalida": "el perp cotiza con prima propia y libro fino de fin de semana: un gap sin volumen es premio, no pron\u00f3stico. Lo confirma o lo mata la apertura de IBKR"
+   },
+   {
     "gatillo": "%B de 15m = 0.32 (banda 681.50\u2013692.69)",
     "lee": "en la caja de la banda: sin extremo que fadear.",
     "invalida": "en r\u00e9gimen NEG la banda se camina (band-walk); el extremo no basta solo"
@@ -1869,7 +1891,7 @@
  },
  "NVDA": {
   "sym": "NVDA",
-  "generado": "2026-07-26T18:55:11",
+  "generado": "2026-07-26T19:00:18",
   "tf_min": 15,
   "px_ultimo": 206.85,
   "px_ts": 1784924100,
@@ -2611,6 +2633,23 @@
    "n_buckets": 390,
    "fecha": "2026-07-26"
   },
+  "perp": {
+   "ask": 209.25,
+   "bid": 209.24,
+   "feed_age_s": 0.0,
+   "feed_ts": 1785106660.459162,
+   "funding_rate": 0.0,
+   "index_px": 209.18,
+   "mark_px": 209.22,
+   "oi_usd": 3902404.92,
+   "px": 209.22,
+   "spread_pct": 0.0048,
+   "src": "bybit",
+   "sym": "NVDA",
+   "vol24h_usd": 15600610.9699,
+   "gap_pct": 1.1457577955039877,
+   "ref_cierre": 206.85
+  },
   "arbol": {
    "sym": "NVDA",
    "generado": "2026-07-26T18:55:08",
@@ -3289,6 +3328,11 @@
     "invalida": "es posicionamiento del viernes, no del lunes: lo mata el print de apertura"
    },
    {
+    "gatillo": "perp 24/7 en 209.22 \u2192 gap +1.15% sobre el cierre del viernes",
+    "lee": "el MISMO nombre cotizando con US cerrado (Bybit, vol 24h 15,600,611 $, OI 3,902,405 $, spread 0.005%). Es el \u00fanico descubrimiento de precio que hay ahora mismo, y apunta ARRIBA.",
+    "invalida": "el perp cotiza con prima propia y libro fino de fin de semana: un gap sin volumen es premio, no pron\u00f3stico. Lo confirma o lo mata la apertura de IBKR"
+   },
+   {
     "gatillo": "%B de 15m = 0.30 (banda 204.57\u2013212.18)",
     "lee": "en la caja de la banda: sin extremo que fadear.",
     "invalida": "en r\u00e9gimen NEG la banda se camina (band-walk); el extremo no basta solo"
@@ -3301,7 +3345,7 @@
  },
  "SMH": {
   "sym": "SMH",
-  "generado": "2026-07-26T18:55:11",
+  "generado": "2026-07-26T19:00:18",
   "tf_min": 15,
   "px_ultimo": 561.99,
   "px_ts": 1784924100,
@@ -4042,6 +4086,23 @@
    "signed_premium": -22386301.0,
    "n_buckets": 405,
    "fecha": "2026-07-26"
+  },
+  "perp": {
+   "ask": 571.26,
+   "bid": 570.76,
+   "feed_age_s": 0.0,
+   "feed_ts": 1785106661.4793541,
+   "funding_rate": 0.0,
+   "index_px": 571.45,
+   "mark_px": 571.26,
+   "oi_usd": 209926.62,
+   "px": 571.26,
+   "spread_pct": 0.0876,
+   "src": "bybit",
+   "sym": "SMH",
+   "vol24h_usd": 2742307.6843,
+   "gap_pct": 1.649495542625301,
+   "ref_cierre": 561.99
   },
   "arbol": {
    "sym": "SMH",
@@ -5148,6 +5209,11 @@
     "invalida": "es posicionamiento del viernes, no del lunes: lo mata el print de apertura"
    },
    {
+    "gatillo": "perp 24/7 en 571.26 \u2192 gap +1.65% sobre el cierre del viernes",
+    "lee": "el MISMO nombre cotizando con US cerrado (Bybit, vol 24h 2,742,308 $, OI 209,927 $, spread 0.088%). Es el \u00fanico descubrimiento de precio que hay ahora mismo, y apunta ARRIBA.",
+    "invalida": "el perp cotiza con prima propia y libro fino de fin de semana: un gap sin volumen es premio, no pron\u00f3stico. Lo confirma o lo mata la apertura de IBKR"
+   },
+   {
     "gatillo": "%B de 15m = 0.31 (banda 556.11\u2013574.99)",
     "lee": "en la caja de la banda: sin extremo que fadear.",
     "invalida": "en r\u00e9gimen NEG la banda se camina (band-walk); el extremo no basta solo"
@@ -5160,7 +5226,7 @@
  },
  "MU": {
   "sym": "MU",
-  "generado": "2026-07-26T18:55:11",
+  "generado": "2026-07-26T19:00:18",
   "tf_min": 15,
   "px_ultimo": 925.21,
   "px_ts": 1784924100,
@@ -5901,6 +5967,23 @@
    "signed_premium": -140131825.0,
    "n_buckets": 390,
    "fecha": "2026-07-26"
+  },
+  "perp": {
+   "ask": 947.88,
+   "bid": 947.8,
+   "feed_age_s": 0.0,
+   "feed_ts": 1785106661.135372,
+   "funding_rate": 0.0,
+   "index_px": 947.77,
+   "mark_px": 948.01,
+   "oi_usd": 14908689.66,
+   "px": 948.24,
+   "spread_pct": 0.0084,
+   "src": "bybit",
+   "sym": "MU",
+   "vol24h_usd": 5671619.5725,
+   "gap_pct": 2.4891646220857933,
+   "ref_cierre": 925.21
   },
   "arbol": {
    "sym": "MU",
@@ -7257,6 +7340,11 @@
     "invalida": "es posicionamiento del viernes, no del lunes: lo mata el print de apertura"
    },
    {
+    "gatillo": "perp 24/7 en 948.24 \u2192 gap +2.49% sobre el cierre del viernes",
+    "lee": "el MISMO nombre cotizando con US cerrado (Bybit, vol 24h 5,671,620 $, OI 14,908,690 $, spread 0.008%). Es el \u00fanico descubrimiento de precio que hay ahora mismo, y apunta ARRIBA.",
+    "invalida": "el perp cotiza con prima propia y libro fino de fin de semana: un gap sin volumen es premio, no pron\u00f3stico. Lo confirma o lo mata la apertura de IBKR"
+   },
+   {
     "gatillo": "%B de 15m = 0.47 (banda 903.98\u2013949.26)",
     "lee": "en la caja de la banda: sin extremo que fadear.",
     "invalida": "en r\u00e9gimen NEG la banda se camina (band-walk); el extremo no basta solo"
@@ -7269,7 +7357,7 @@
  },
  "AAPL": {
   "sym": "AAPL",
-  "generado": "2026-07-26T18:55:11",
+  "generado": "2026-07-26T19:00:18",
   "tf_min": 15,
   "px_ultimo": 333.47,
   "px_ts": 1784924100,
@@ -8011,6 +8099,23 @@
    "n_buckets": 390,
    "fecha": "2026-07-26"
   },
+  "perp": {
+   "ask": 333.51,
+   "bid": 333.5,
+   "feed_age_s": 0.0,
+   "feed_ts": 1785106662.161299,
+   "funding_rate": 0.0,
+   "index_px": 333.73,
+   "mark_px": 333.47,
+   "oi_usd": 1739759.68,
+   "px": 333.24,
+   "spread_pct": 0.003,
+   "src": "bybit",
+   "sym": "AAPL",
+   "vol24h_usd": 4759542.775,
+   "gap_pct": -0.06897172159414655,
+   "ref_cierre": 333.47
+  },
   "arbol": {
    "sym": "AAPL",
    "generado": "2026-07-26T18:55:08",
@@ -8564,6 +8669,11 @@
     "invalida": "es posicionamiento del viernes, no del lunes: lo mata el print de apertura"
    },
    {
+    "gatillo": "perp 24/7 en 333.24 \u2192 gap -0.07% sobre el cierre del viernes",
+    "lee": "el MISMO nombre cotizando con US cerrado (Bybit, vol 24h 4,759,543 $, OI 1,739,760 $, spread 0.003%). Es el \u00fanico descubrimiento de precio que hay ahora mismo, y apunta ABAJO.",
+    "invalida": "el perp cotiza con prima propia y libro fino de fin de semana: un gap sin volumen es premio, no pron\u00f3stico. Lo confirma o lo mata la apertura de IBKR"
+   },
+   {
     "gatillo": "%B de 15m = 0.84 (banda 332.05\u2013333.75)",
     "lee": "en la caja de la banda: sin extremo que fadear.",
     "invalida": "en r\u00e9gimen NEG la banda se camina (band-walk); el extremo no basta solo"
@@ -8576,7 +8686,7 @@
  },
  "MSFT": {
   "sym": "MSFT",
-  "generado": "2026-07-26T18:55:11",
+  "generado": "2026-07-26T19:00:18",
   "tf_min": 15,
   "px_ultimo": 381.65,
   "px_ts": 1784924100,
@@ -9317,6 +9427,23 @@
    "signed_premium": 12997676.0,
    "n_buckets": 390,
    "fecha": "2026-07-26"
+  },
+  "perp": {
+   "ask": 385.01,
+   "bid": 385.0,
+   "feed_age_s": 0.0,
+   "feed_ts": 1785106662.503426,
+   "funding_rate": 0.0,
+   "index_px": 384.69,
+   "mark_px": 384.95,
+   "oi_usd": 1698953.73,
+   "px": 385.0,
+   "spread_pct": 0.0026,
+   "src": "bybit",
+   "sym": "MSFT",
+   "vol24h_usd": 186764.3766,
+   "gap_pct": 0.8777675881042946,
+   "ref_cierre": 381.65
   },
   "arbol": {
    "sym": "MSFT",
@@ -10061,6 +10188,11 @@
     "gatillo": "flujo firmado del viernes: +12,997,676 $ (ALCISTA)",
     "lee": "calls COMPRADAS (+7,251,263) y puts VENDIDAS (-5,746,413). El signo lo da el AGRESOR (ask menos bid), no el tipo de contrato: puts VENDIDAS son alcistas.",
     "invalida": "es posicionamiento del viernes, no del lunes: lo mata el print de apertura"
+   },
+   {
+    "gatillo": "perp 24/7 en 385.00 \u2192 gap +0.88% sobre el cierre del viernes",
+    "lee": "el MISMO nombre cotizando con US cerrado (Bybit, vol 24h 186,764 $, OI 1,698,954 $, spread 0.003%). Es el \u00fanico descubrimiento de precio que hay ahora mismo, y apunta ARRIBA.",
+    "invalida": "el perp cotiza con prima propia y libro fino de fin de semana: un gap sin volumen es premio, no pron\u00f3stico. Lo confirma o lo mata la apertura de IBKR"
    },
    {
     "gatillo": "%B de 15m = -0.05 (banda 381.85\u2013385.86)",

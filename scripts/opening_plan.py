@@ -80,7 +80,24 @@ def flow(sym):
     return None
 
 
-def ramas(t, f, px, b15):
+def perp(sym, px_ref):
+    """Perp 24/7 del MISMO nombre (Bybit). Es lo unico que cotiza con US cerrado."""
+    p = os.path.join(ROOT, "data", "perp_stocks.json")
+    if not os.path.exists(p):
+        return None
+    try:
+        d = json.load(open(p)).get(sym.upper())
+    except (json.JSONDecodeError, OSError):
+        return None
+    if not d or not d.get("px") or not px_ref:
+        return None
+    d = dict(d)
+    d["gap_pct"] = 100.0 * (d["px"] / px_ref - 1)
+    d["ref_cierre"] = px_ref
+    return d
+
+
+def ramas(t, f, px, b15, pp=None):
     """Ramas CONDICIONALES con su gatillo. Cada una dice que la confirma y que la mata."""
     out = []
     cw, pw, flip, reg = t.get("call_wall"), t.get("put_wall"), t.get("flip"), t.get("regime")
@@ -125,6 +142,18 @@ def ramas(t, f, px, b15):
                     f"(ask menos bid), no el tipo de contrato: puts VENDIDAS son alcistas."),
             "invalida": "es posicionamiento del viernes, no del lunes: lo mata el print de apertura",
         })
+    if pp:
+        g = pp["gap_pct"]
+        out.append({
+            "gatillo": f"perp 24/7 en {pp['px']:,.2f} → gap {g:+.2f}% sobre el cierre del viernes",
+            "lee": (f"el MISMO nombre cotizando con US cerrado (Bybit, vol 24h "
+                    f"{pp['vol24h_usd']:,.0f} $, OI {pp['oi_usd']:,.0f} $, spread "
+                    f"{pp['spread_pct']:.3f}%). Es el único descubrimiento de precio que hay "
+                    f"ahora mismo, y apunta " + ("ARRIBA." if g > 0 else "ABAJO.")),
+            "invalida": ("el perp cotiza con prima propia y libro fino de fin de semana: "
+                         "un gap sin volumen es premio, no pronóstico. Lo confirma o lo mata "
+                         "la apertura de IBKR"),
+        })
     if b15:
         out.append({
             "gatillo": f"%B de {TF_MIN}m = {b15['pctb']:.2f} (banda {b15['lo']:,.2f}–{b15['up']:,.2f})",
@@ -149,6 +178,7 @@ def build(sym):
     px = closes[-1] if closes else t.get("spot")
     f = flow(sym)
     a = atr(b15)
+    pp = perp(sym, t.get("spot"))
     return {
         "sym": sym,
         "generado": dt.datetime.now().isoformat(timespec="seconds"),
@@ -162,8 +192,9 @@ def build(sym):
         "bars15": [[b[0], round(b[1], 2), round(b[2], 2), round(b[3], 2), round(b[4], 2), b[5]]
                    for b in b15[-90:]],
         "flujo": f,
+        "perp": pp,
         "arbol": t,
-        "ramas": ramas(t, f, px, bb(closes)),
+        "ramas": ramas(t, f, px, bb(closes), pp),
         "apertura_medida": {
             "veredicto": "SIN EDGE MEDIDO en la ventana de apertura",
             "detalle": ("data/timeofday_factors.json: las 5 celdas que existen para "

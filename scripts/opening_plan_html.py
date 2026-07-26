@@ -90,6 +90,9 @@ def sheet(d, i):
          "viernes · agresor (ask−bid)"),
         ("P/C del viernes", n(t.get("viernes_pc_oi")),
          f'{oi(t.get("viernes_puts_oi"))}p / {oi(t.get("viernes_calls_oi"))}c'),
+        ("perp 24/7", "—" if not d.get("perp") else n(d["perp"]["px"]),
+         "sin perp" if not d.get("perp") else
+         f'gap {d["perp"]["gap_pct"]:+.2f}% · vol {d["perp"]["vol24h_usd"]/1e6:.1f}M'),
     ]
     cards = "".join(f'<div class="st"><span class="sl">{html.escape(l)}</span>'
                     f'<span class="sv">{v}</span><span class="sn">{html.escape(str(x))}</span></div>'

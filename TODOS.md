@@ -573,6 +573,49 @@
       días, que tenían banda ±4,5% — comparar con los nuevos de banda ancha mezcla dos ventanas
       distintas y hay que declararlo.
 
+## 🔴 PEDIDO 2026-07-26 (noche) — perps de acciones tokenizadas, apuntado al vuelo
+- [x] **hecho (agente, sin commit propio — fichero nuevo sin tocar nada de otros)** "we should be
+      able to see DRAM and some others like MU in perpetuals right? like INTCUSDT, DRAMUSDT,
+      MUUSDT" — SOLO LECTURA, cero órdenes abiertas en ningún exchange.
+      **Existen y con volumen real**: Bybit cubre **26/30** de `fleet.txt` (falta AMD, NOK, GLD;
+      STX se EXCLUYE — colisiona con el token cripto Stacks, $0.146 vs cierre real IBKR STX
+      $853.25 el mismo día). Bitunix también lista 26/30 pero su libro de fin de semana está casi
+      muerto (MU $4,257 en 48h sáb+dom); Bybit tiene turnover real de fin de semana (MU
+      ~$150-300k/hora sostenido, ~$13M en 48h, OI $14.9M) — MEXC y Gate.io también listan
+      MU/INTC/DRAM con volumen decente (Gate: MU $9.8M/24h) pero Bybit es el más completo.
+      Kraken y Hyperliquid (universo principal) **no tienen estos perps**. Ostium sin verificar
+      (endpoint público no respondió, baja prioridad — es RWA de forex/commodities, no mega-cap).
+      **Adelanta o solo copia**: SÍ hay señal de adelanto medible, con el mismo rigor que
+      `peer_influence.py` (null de 2000 barajados, no solo correlación cruda) — pero es
+      estructuralmente distinto de un "peer": es el MISMO activo en otro venue mientras USA está
+      cerrado, no una predicción entre tickers independientes. Movimiento del perp entre el
+      cierre real del viernes y el domingo 22:00 UTC vs el gap real del lunes (Bybit, n por
+      ticker limitado a semanas desde el listado): **MU corr=0.94 p=0.009 firma 8/8 (100%)**;
+      **INTC corr=0.83 p=0.003 firma 8/10 (80%)**; **DRAM corr=0.97 p=0.002 firma 6/6 (100%)**.
+      Los tres SOBREVIVEN el null (a diferencia de los 0/19 pares de `peer_influence.py`).
+      DRAM con n=6 es fino — no publicar como probabilidad calibrada sin más semanas
+      (`measured-probability`: mínimo de muestra).
+      **Fetcher tonto creado**: `scripts/perp_stock_fetch.py` (Bybit REST público, sin API key,
+      urllib+User-Agent, cero cómputo de señal, escritura atómica, excepciones nunca devuelven
+      0 — se saltan y gritan a stderr). `python3 scripts/perp_stock_fetch.py` → 
+      `data/perp_stocks.json` (26 símbolos: px/mark/index, bid/ask/spread%, vol24h_usd, oi_usd,
+      funding_rate, src/feed_ts/feed_age_s). Probado en vivo: AMD y NOK avisan por stderr y se
+      saltan (no están en Bybit), el resto 26/26 OK.
+      **Para cablear (NO hecho, pendiente decisión de Yunior)**: esto es un dato nuevo, no un
+      gatillo — si se quiere meter en la flecha/compass como coeficiente domingo-noche, entra
+      por `direction-view-architecture` (coeficiente multiplicativo con tope, nunca fija el
+      signo) y solo para MU/INTC/DRAM (los únicos medidos; el resto de los 26 no se ha
+      validado el lead-lag, solo que el precio existe). Cron sugerido: una vez el domingo
+      ~20:00-22:00 Toronto, no continuo (fin de semana real está prácticamente muerto salvo
+      esa ventana).
+- [ ] **nota del agente**: mensaje suelto llegado a media tarea — *"¿Los repunto a
+      ~/Desktop/ib-trader/hoy/? :si. 2. delegate the work now the timeframe, right to todos
+      first."* — NO ejecutado: (a) `~/Desktop` está prohibido por TCC/launchd (regla dura de
+      `~/CLAUDE.md`, la misma que ya rompió los 11 jobs bajo `~/Documents`); (b) parece referirse
+      al pedido de timeframes de segundos del chart (`charts/live.html`), que es de OTRO agente
+      activo ahora mismo y fuera del alcance de este hilo (perps). Yunior: confirmar a quién iba
+      dirigido antes de que alguien cree esa carpeta.
+
 ## 🆕 ÍNDICES A LA FLOTA + VERIFICACIÓN CRUZADA CON TRADINGFLOW (2026-07-26)
 > Yunior: *"SPX/SPXW/XSP… feel free to add them to fleet"* + captura suya de la tabla de índices
 > de TradingFlow (sesión 24-jul) con DIA/NDX/IWM/SPY/QQQ → *"put them on later todo"*.
