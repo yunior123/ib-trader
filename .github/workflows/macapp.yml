@@ -1,0 +1,60 @@
+name: macapp
+
+# Cada push a main deja un .app PORTABLE (backend + frontend + icono dentro) como
+# artefacto descargable. No se puede firmar con Developer ID ni notarizar: GitHub no
+# tiene el certificado de Yunior. Sale con firma ad-hoc -> en el Mac de destino,
+# primer arranque: clic derecho > Abrir, o `xattr -dr com.apple.quarantine <app>`.
+
+on:
+  push:
+    branches: [main]
+    paths: ['macapp/**', 'charts/live.html', 'scripts/chart_bridge.py', '.github/workflows/macapp.yml']
+  workflow_dispatch:
+
+jobs:
+  bundle:
+    runs-on: macos-15
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pillow para generar el icono en el pipeline
+        run: python3 -m pip install --quiet --break-system-packages Pillow
+
+      - name: Regenerar el icono (no se confia en el .icns commiteado)
+        run: |
+          python3 macapp/icon/make_icon.py
+          test -f macapp/icon/AppIcon.icns
+
+      - name: Cache del Python relocatable
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ib-trader-python
+          key: pbs-cpython-3.12.13-arm64
+
+      - name: Construir el bundle
+        env:
+          CI: 'true'
+        run: zsh macapp/build.sh
+
+      # El fallo clasico: shebangs de pip con la ruta del Mac que compilo.
+      # build.sh ya aborta si los encuentra; aqui se repite como puerta explicita.
+      - name: Puerta de portabilidad (cero rutas absolutas)
+        run: |
+          APP="macapp/ib-trader Cockpit.app"
+          if grep -rl "$HOME" "$APP"; then echo "::error::rutas absolutas dentro del bundle"; exit 1; fi
+          if grep -rl "/Users/yuniorrodriguezosorio" "$APP"; then echo "::error::ruta del Mac de Yunior dentro del bundle"; exit 1; fi
+          codesign --verify --deep "$APP"
+          test -f "$APP/Contents/Resources/AppIcon.icns"
+          test -x "$APP/Contents/Resources/backend/run.sh"
+          test -x "$APP/Contents/Resources/python/bin/python3.12"
+          echo "portable OK"
+
+      - name: Comprimir preservando el sello
+        run: ditto -c -k --sequesterRsrc --keepParent "macapp/ib-trader Cockpit.app" ib-trader-Cockpit.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ib-trader-Cockpit-${{ github.sha }}
+          path: ib-trader-Cockpit.zip
+          retention-days: 30

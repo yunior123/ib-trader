@@ -46,16 +46,32 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
 PLIST
 
 # --- ICONO (brujula) — SIEMPRE ANTES DE FIRMAR ------------------------------
-# El .icns va versionado en git (macapp/icon/AppIcon.icns). Se regenera con:
-#   venv/bin/python macapp/icon/make_icon.py
+# Lo GENERA el pipeline: si falta el .icns o el arte fuente es mas nuevo, se
+# re-dibuja aqui. Solo si no hay Python con PIL se cae al .icns versionado.
 # Ojo al ORDEN, misma trampa que el backend: si el icono entra DESPUES de
 # codesign, el sello queda roto ("a sealed resource is missing or invalid").
-if [ -f macapp/icon/AppIcon.icns ]; then
-  cp macapp/icon/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
-  echo "  icono: AppIcon.icns empotrado"
-else
-  echo "  🔴 AVISO: falta macapp/icon/AppIcon.icns — la .app saldra con el icono generico"
+if [ ! -f macapp/icon/AppIcon.icns ] || [ macapp/icon/make_icon.py -nt macapp/icon/AppIcon.icns ]; then
+  for PY in ./venv/bin/python ./venv-chart/bin/python python3; do
+    command -v "$PY" >/dev/null 2>&1 || [ -x "$PY" ] || continue
+    "$PY" -c 'import PIL' 2>/dev/null || continue
+    echo "  regenerando el icono con $PY…"
+    "$PY" macapp/icon/make_icon.py >/dev/null && break
+  done
 fi
+[ -f macapp/icon/AppIcon.icns ] || { echo "🔴 sin macapp/icon/AppIcon.icns y sin PIL para generarlo"; exit 1; }
+cp macapp/icon/AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
+# Un .icns al que le falte un tamaño da el placeholder de Finder: se exigen los 10.
+ICN_N=$(python3 - "$APP/Contents/Resources/AppIcon.icns" <<'PY'
+import struct,sys
+d=open(sys.argv[1],'rb').read(); o=8; t=[]
+while o<len(d):
+    k=d[o:o+4].decode('latin1'); l=struct.unpack('>I',d[o+4:o+8])[0]; t.append(k); o+=l
+need={'ic04','ic05','ic07','ic08','ic09','ic10','ic11','ic12','ic13','ic14'}
+print(len(need & set(t)))
+PY
+)
+[ "$ICN_N" = "10" ] || { echo "🔴 AppIcon.icns incompleto ($ICN_N/10 tamaños) — Finder pintaria el placeholder"; exit 1; }
+echo "  icono: AppIcon.icns empotrado (10/10 tamaños)"
 
 # --- BACKEND EMPOTRADO (bundle unico y portable) ---
 # SKIP_BACKEND=1 para iterar rapido en la UI sin re-empaquetar los ~200 MB.
@@ -78,21 +94,63 @@ else
   echo "  🔴 AVISO: el sello de la firma NO valida — revisar antes de pasarla a otro Mac"
 fi
 
+# --- PORTABILIDAD: cero rutas absolutas de esta maquina ----------------------
+# El fallo clasico: los wrappers que pip escribe en Resources/python/bin llevan el
+# shebang con la ruta del .app en ESTE Mac -> en otro Mac no arrancan.
+if BAD=$(grep -rl "$HOME" "$APP" 2>/dev/null); then
+  echo "🔴 PORTABILIDAD ROTA — estos ficheros del bundle llevan la ruta de este Mac:"
+  echo "$BAD" | sed 's/^/     /'
+  exit 1
+fi
+echo "  portabilidad: 0 rutas absolutas de este Mac dentro del bundle"
+
 # --- ENTREGA A DESKTOP (pipeline automatico) -------------------------------
 # Desktop esta bajo TCC: desde una shell interactiva se escribe bien, pero si esto
 # llegara a correr bajo launchd fallaria igual que el repo antes de la mudanza.
-# Por eso se comprueba y se AVISA en vez de fallar en silencio.
+# CI=1 (GitHub Actions) no tiene Desktop de nadie: se salta la entrega.
 DESK="$HOME/Desktop"
-if [ -w "$DESK" ]; then
+if [ "${CI:-}" = "true" ] || [ "${CI:-0}" = "1" ]; then
+  echo "  (CI — sin entrega a Desktop)"
+elif [ -w "$DESK" ]; then
+  # ditto (no cp -R): preserva xattrs, ACLs y el sello. Y se entrega por STAGING +
+  # swap: entre el rm y el cp habia una ventana en la que el Desktop se quedaba sin
+  # app — si el cp fallaba (disco, Ctrl-C) desaparecia y no volvia. Eso es lo que
+  # Yunior veia como "sometimes disappear the one in desktop".
+  STAGE="$DESK/.ib-trader Cockpit.app.new"
+  rm -rf "$STAGE"
+  ditto "$APP" "$STAGE"
+  xattr -dr com.apple.quarantine "$STAGE" 2>/dev/null || true
   rm -rf "$DESK/ib-trader Cockpit.app"
-  cp -R "$APP" "$DESK/"
-  # quitar cuarentena: si no, el amigo ve "no se puede abrir, desarrollador no identificado"
-  xattr -dr com.apple.quarantine "$DESK/ib-trader Cockpit.app" 2>/dev/null || true
+  mv "$STAGE" "$DESK/ib-trader Cockpit.app"
   echo "  -> entregada en Desktop: $DESK/ib-trader Cockpit.app"
 else
   echo "  AVISO: no puedo escribir en $DESK (TCC?) — la .app queda solo en macapp/"
 fi
 
+# --- LAUNCHSERVICES: la causa REAL del icono roto ----------------------------
+# MEDIDO 2026-07-26: habia 4 registros del MISMO CFBundleIdentifier
+# com.ibtrader.cockpit. El que resolvia LaunchServices era un FANTASMA en
+# /private/tmp/apptest/ib-trader Cockpit.app, borrado hace dias
+# ("Bundle node not found on disk: fnfErr") y con iconDict VACIO. Resultado en el
+# escritorio: el badge prohibitorio (circulo blanco con barra) encima del icono.
+# Sobrevive a los rebuilds porque vive en la base de datos de LS, no en el bundle.
+# Por eso cada build purga los registros cuyo path ya no existe y re-registra los
+# vivos. Sin esto, el icono se vuelve a romper al siguiente experimento.
+LSR=/System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework/Support/lsregister
+if [ -x "$LSR" ]; then
+  BID=$(/usr/libexec/PlistBuddy -c "Print :CFBundleIdentifier" "$APP/Contents/Info.plist")
+  "$LSR" -dump 2>/dev/null \
+    | awk -v bid="$BID" '$1=="path:"       {p=""; for(i=2;i<=NF;i++){if($i ~ /^\(0x/)break; p=(p==""?$i:p" "$i)}}
+                         $1=="identifier:" && $2==bid && p!="" {print p; p=""}' \
+    | while IFS= read -r ghost; do
+        [ -n "$ghost" ] && [ ! -d "$ghost" ] && { "$LSR" -u "$ghost" 2>/dev/null; echo "  LS: purgado fantasma $ghost"; }
+      done
+  "$LSR" -f -R -trusted "$APP" 2>/dev/null || true
+  [ -d "$DESK/ib-trader Cockpit.app" ] && { "$LSR" -f -R -trusted "$DESK/ib-trader Cockpit.app" 2>/dev/null || true; touch "$DESK/ib-trader Cockpit.app"; }
+  echo "  LS: bundles re-registrados ($BID)"
+fi
+
 echo "OK -> $APP  ($(du -sh "$APP" | cut -f1))"
-echo "   abrir:  open \"$APP\""
-echo "   otro puerto: COCKPIT_URL=http://127.0.0.1:9000/ open -a \"$PWD/$APP\""
+echo "   1 ventana:  open \"$APP\""
+echo "   6 simbolos: open \"$APP\" --args --windows 6      (puertos 8080..8085, uno por bridge)"
+echo "   a la carta: open \"$APP\" --args --ports 8080,8083,8085"

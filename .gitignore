@@ -83,6 +83,7 @@ venv-chart/
 
 # .app compilada (se reconstruye con: zsh macapp/build.sh)
 macapp/*.app/
+macapp/build.log
 
 # cuenta IBKR del usuario: NO se versiona (cada uno la suya)
 data/account.txt

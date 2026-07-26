@@ -43,6 +43,20 @@ echo "  instalando dependencias del cockpit…"
 "$PY" -m pip install --quiet --upgrade pip >/dev/null 2>&1 || true
 "$PY" -m pip install --quiet --no-compile -r macapp/requirements-backend.txt
 
+# pip escribe los console-scripts (uvicorn, fastapi, f2py…) con el shebang APUNTANDO
+# A ESTE MAC: "…/Users/<yo>/ib-trader/macapp/…/python3.12". En otro Mac no arrancan.
+# Se reescriben al mismo truco relativo que ya usa el propio `pip` del tarball.
+for f in "$RES/python/bin/"*; do
+  [ -f "$f" ] || continue
+  grep -q "^'''exec' \"/" "$f" 2>/dev/null || continue
+  perl -0pi -e "s{^'''exec' \"/[^\"]*/python3\.12\"}{'''exec' \"\\\$(dirname -- \"\\\$(realpath -- \"\\\$0\")\")/python3.12\"}m" "$f"
+done
+
+# Los .pyc que deja el propio pip al importar la stdlib llevan el co_filename
+# absoluto de ESTE Mac. No rompen (solo salen en tracebacks) pero ensucian la
+# puerta de portabilidad y pesan ~15 MB. Se borran: se regeneran al vuelo.
+find "$RES/python" -name __pycache__ -type d -prune -exec rm -rf {} + 2>/dev/null || true
+
 # --- 3. codigo del backend (cierre de dependencias, no el repo entero) ---
 rm -rf "$RES/backend"
 mkdir -p "$RES/backend/scripts" "$RES/backend/charts" "$RES/backend/data"

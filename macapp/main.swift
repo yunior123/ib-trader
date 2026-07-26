@@ -9,24 +9,20 @@
 // con TWS. Esta ventana solo consume el WebSocket del cockpit. Si se congela, los bots
 // siguen operando.
 //
-// MULTI-VENTANA (Yunior 2026-07-25: "we should be able to have multiple instances of
-// the software open in our mac, up to 6 ... equally distributed"):
-// hasta 6 cockpits a la vez, repartidos en rejilla sobre la pantalla. Van como VENTANAS
-// DE UN SOLO PROCESO, no como 6 procesos: 6 procesos serian 6 WKWebView independientes
-// (~84 MB cada uno + su propio WebKit) y en 8 GB eso es swap. En un proceso comparten el
-// process pool y el data store de WebKit. `open -n` (instancias de verdad) sigue
-// funcionando: cada instancia usa su propio nombre de autoguardado para no pelearse por
-// el marco de ventana.
+// MULTI-VENTANA: N ventanas en UN proceso, cada una en SU puerto -> SU simbolo.
+// chart_bridge.py tiene un solo `state.sym` por proceso (scripts/chart_bridge.py:1735):
+// dos ventanas en el mismo puerto se pisan el simbolo. Por eso una ventana = un puerto.
 //
 // build: zsh macapp/build.sh
-//   1 ventana:   open "macapp/ib-trader Cockpit.app"
-//   6 repartidas: open -n "…app" --args --windows 6
+//   1 ventana:    open "macapp/ib-trader Cockpit.app"
+//   6 simbolos:   open "…app" --args --windows 6          (puertos 8080..8085)
+//   a la carta:   open "…app" --args --ports 8080,8083,8085
 
 import Cocoa
 import WebKit
 
 let DEFAULT_URL = "http://127.0.0.1:8080/"
-let MAX_WINDOWS = 6          // tope pedido por Yunior
+let MAX_WINDOWS = 12
 
 /// Una ventana de cockpit = un WKWebView. Todas comparten configuracion (y por tanto
 /// el process pool de WebKit), que es lo que hace barato tener seis.
@@ -34,7 +30,7 @@ final class CockpitWindow: NSObject, NSWindowDelegate, WKNavigationDelegate {
     let window: NSWindow
     let web: WKWebView
     let idx: Int
-    private let url: URL
+    let url: URL
     weak var owner: AppDelegate?
 
     init(idx: Int, url: URL, cfg: WKWebViewConfiguration, owner: AppDelegate) {
@@ -49,16 +45,29 @@ final class CockpitWindow: NSObject, NSWindowDelegate, WKNavigationDelegate {
         web.autoresizingMask = [.width, .height]
         web.navigationDelegate = self
         window.contentView!.addSubview(web)
-        window.title = idx == 0 ? "ib-trader cockpit" : "ib-trader cockpit \(idx + 1)"
-        // Nombre de autoguardado DISTINTO por ventana: con el mismo nombre las seis se
-        // pisaban el marco guardado y arrancaban una encima de otra.
-        window.setFrameAutosaveName("cockpit-\(idx)")
+        window.title = "cockpit :\(url.port ?? 80)"
+        // Autoguardado por PUERTO, no por indice: con "cockpit-<idx>" seis procesos
+        // distintos usaban todos "cockpit-0" y restauraban el MISMO marco -> apiladas.
+        window.setFrameAutosaveName("cockpit-p\(url.port ?? 80)")
         window.delegate = self
         window.makeKeyAndOrderFront(nil)
         load()
+        refreshTitle()
     }
 
     func load() { web.load(URLRequest(url: url)) }
+
+    /// El titulo dice QUE SIMBOLO hay en esa ventana: /health del bridge devuelve `sym`.
+    func refreshTitle() {
+        guard let h = URL(string: "health", relativeTo: url) else { return }
+        URLSession.shared.dataTask(with: URLRequest(url: h, timeoutInterval: 3)) { d, _, _ in
+            guard let d, let j = try? JSONSerialization.jsonObject(with: d) as? [String: Any],
+                  let s = j["sym"] as? String, !s.isEmpty else { return }
+            DispatchQueue.main.async { self.window.title = "\(s.uppercased()) · :\(self.url.port ?? 80)" }
+        }.resume()
+    }
+
+    func webView(_ w: WKWebView, didFinish nav: WKNavigation!) { refreshTitle() }
 
     func windowWillClose(_ n: Notification) { owner?.forget(self) }
 
@@ -101,14 +110,42 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return URL(string: "http://127.0.0.1:\(port)/")!
     }
 
-    /// Cuantas ventanas al arrancar: `--windows N` (1..6).
-    func startupWindows() -> Int {
-        if let i = CommandLine.arguments.firstIndex(of: "--windows"),
-           i + 1 < CommandLine.arguments.count,
-           let n = Int(CommandLine.arguments[i + 1]) {
-            return max(1, min(MAX_WINDOWS, n))
+    func arg(_ name: String) -> String? {
+        guard let i = CommandLine.arguments.firstIndex(of: name),
+              i + 1 < CommandLine.arguments.count else { return nil }
+        return CommandLine.arguments[i + 1]
+    }
+
+    /// URL de un puerto, conservando el host de la URL base.
+    func url(port: Int) -> URL {
+        var c = URLComponents(url: targetURL(), resolvingAgainstBaseURL: false)!
+        c.port = port
+        return c.url!
+    }
+
+    /// Que ventanas al arrancar. Una ventana = un puerto = un simbolo.
+    ///   --ports 8080,8083   -> esos puertos
+    ///   --windows N         -> N puertos CONSECUTIVOS desde el base (8080..8080+N-1)
+    ///   --windows N --same-url -> N ventanas del mismo puerto (comportamiento viejo)
+    func startupURLs() -> [URL] {
+        if let s = arg("--ports") {
+            let ps = s.split(separator: ",").compactMap { Int($0.trimmingCharacters(in: .whitespaces)) }
+            if !ps.isEmpty { return ps.prefix(MAX_WINDOWS).map { url(port: $0) } }
         }
-        return 1
+        let base = targetURL()
+        guard let s = arg("--windows"), let n = Int(s) else { return [base] }
+        let want = max(1, min(MAX_WINDOWS, n))
+        if CommandLine.arguments.contains("--same-url") { return Array(repeating: base, count: want) }
+        let p0 = base.port ?? 8080
+        return (0..<want).map { url(port: p0 + $0) }
+    }
+
+    /// Siguiente puerto libre a partir del base: lo que usa ⌘N.
+    func nextFreeURL() -> URL {
+        let used = Set(cockpits.compactMap { $0.url.port })
+        var p = targetURL().port ?? 8080
+        while used.contains(p) { p += 1 }
+        return url(port: p)
     }
 
     func applicationDidFinishLaunching(_ n: Notification) {
@@ -116,7 +153,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem.button?.title = "📈"
         let m = NSMenu()
         m.addItem(NSMenuItem(title: "Mostrar cockpit", action: #selector(show), keyEquivalent: "1"))
-        m.addItem(NSMenuItem(title: "Nueva ventana", action: #selector(newWindow), keyEquivalent: "n"))
+        m.addItem(NSMenuItem(title: "Nueva ventana (siguiente puerto)", action: #selector(newWindow), keyEquivalent: "n"))
+        m.addItem(NSMenuItem(title: "Nueva ventana en puerto…", action: #selector(newWindowAsk), keyEquivalent: "N"))
         m.addItem(NSMenuItem(title: "Repartir en rejilla", action: #selector(tileWindows), keyEquivalent: "d"))
         m.addItem(NSMenuItem(title: "Recargar", action: #selector(reload), keyEquivalent: "r"))
         m.addItem(NSMenuItem(title: "Configuración…", action: #selector(openSettings), keyEquivalent: ","))
@@ -124,10 +162,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         m.addItem(NSMenuItem(title: "Salir", action: #selector(quit), keyEquivalent: "q"))
         m.items.forEach { $0.target = self }
         statusItem.menu = m
+        installMainMenu()   // sin barra de menus reales, ⌘N/⌘W no llegaban con la app al frente
 
-        let want = startupWindows()
-        for _ in 0..<want { _ = openWindow(tile: false) }
-        if want > 1 { tile() } else { cockpits.first?.window.center() }
+        let urls = startupURLs()
+        for u in urls { _ = openWindow(url: u, tile: false) }
+        if urls.count > 1 { tile() } else { cockpits.first?.window.center() }
 
         // Primera ejecucion SIN cuenta por ningun lado: abrir Configuracion en vez de
         // dejar al usuario adivinando por que no funciona. Ojo: se pregunta por la cadena
@@ -144,8 +183,33 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     // ------------------------------------------------------------- ventanas
+    func installMainMenu() {
+        let bar = NSMenu()
+        let appItem = NSMenuItem(); bar.addItem(appItem)
+        let appMenu = NSMenu()
+        appMenu.addItem(withTitle: "Configuración…", action: #selector(openSettings), keyEquivalent: ",")
+        appMenu.addItem(NSMenuItem.separator())
+        appMenu.addItem(withTitle: "Salir", action: #selector(quit), keyEquivalent: "q")
+        appMenu.items.forEach { $0.target = self }
+        appItem.submenu = appMenu
+
+        let winItem = NSMenuItem(title: "Ventana", action: nil, keyEquivalent: ""); bar.addItem(winItem)
+        let winMenu = NSMenu(title: "Ventana")
+        winMenu.addItem(withTitle: "Nueva ventana", action: #selector(newWindow), keyEquivalent: "n")
+        winMenu.addItem(withTitle: "Nueva ventana en puerto…", action: #selector(newWindowAsk), keyEquivalent: "N")
+        winMenu.addItem(withTitle: "Repartir en rejilla", action: #selector(tileWindows), keyEquivalent: "d")
+        winMenu.addItem(withTitle: "Recargar", action: #selector(reload), keyEquivalent: "r")
+        winMenu.items.forEach { $0.target = self }
+        winMenu.addItem(NSMenuItem.separator())
+        winMenu.addItem(withTitle: "Cerrar ventana", action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w")
+        winMenu.addItem(withTitle: "Minimizar", action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m")
+        winItem.submenu = winMenu
+        NSApp.mainMenu = bar
+        NSApp.windowsMenu = winMenu
+    }
+
     @discardableResult
-    func openWindow(tile doTile: Bool = true) -> CockpitWindow? {
+    func openWindow(url u: URL? = nil, tile doTile: Bool = true) -> CockpitWindow? {
         guard cockpits.count < MAX_WINDOWS else {
             NSSound.beep()
             statusItem.button?.title = "📈\(MAX_WINDOWS)"
@@ -155,7 +219,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         var idx = 0
         let used = Set(cockpits.map { $0.idx })
         while used.contains(idx) { idx += 1 }
-        let c = CockpitWindow(idx: idx, url: targetURL(), cfg: webCfg, owner: self)
+        let c = CockpitWindow(idx: idx, url: u ?? nextFreeURL(), cfg: webCfg, owner: self)
         cockpits.append(c)
         if doTile && cockpits.count > 1 { tile() }
         return c
@@ -165,14 +229,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     /// Reparte las ventanas abiertas en una rejilla que cubre la pantalla, sin solapes
     /// y con celdas del MISMO tamaño (lo que Yunior llamo "equally distributed").
-    ///   1 -> 1x1 · 2 -> 2x1 · 3 -> 3x1 · 4 -> 2x2 · 5,6 -> 3x2
+    ///   1 -> 1x1 · 2 -> 2x1 · 3 -> 3x1 · 4 -> 2x2 · 5,6 -> 3x2 · >6 -> rejilla cuadrada
     func tile() {
         let wins = cockpits.sorted { $0.idx < $1.idx }
         let n = wins.count
         guard n > 0, let screen = NSScreen.main else { return }
         let f = screen.visibleFrame          // excluye barra de menu y Dock
-        let cols = n <= 3 ? n : (n + 1) / 2
-        let rows = n <= 3 ? 1 : 2
+        let cols = n <= 3 ? n : (n <= 6 ? (n + 1) / 2 : Int(ceil(Double(n).squareRoot())))
+        let rows = n <= 3 ? 1 : Int(ceil(Double(n) / Double(cols)))
         let w = floor(f.width / CGFloat(cols))
         let h = floor(f.height / CGFloat(rows))
         for (i, c) in wins.enumerated() {
@@ -186,6 +250,22 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc func newWindow()   { openWindow() }
     @objc func tileWindows() { tile() }
+
+    /// ⇧⌘N: ventana en el puerto que se teclee -> el simbolo de ESE bridge.
+    @objc func newWindowAsk() {
+        let a = NSAlert()
+        a.messageText = "Nueva ventana del cockpit"
+        a.informativeText = "Puerto del bridge (un puerto = un símbolo).\nArráncalo antes con:  scripts/chart_bridge.py --sym nvda --http-port 8082"
+        let tf = NSTextField(frame: NSRect(x: 0, y: 0, width: 220, height: 24))
+        tf.stringValue = String(nextFreeURL().port ?? 8080)
+        a.accessoryView = tf
+        a.addButton(withTitle: "Abrir"); a.addButton(withTitle: "Cancelar")
+        NSApp.activate(ignoringOtherApps: true)
+        guard a.runModal() == .alertFirstButtonReturn, let p = Int(tf.stringValue.trimmingCharacters(in: .whitespaces)),
+              p > 0, p < 65536 else { return }
+        openWindow(url: url(port: p))
+    }
+
     @objc func show() {
         if cockpits.isEmpty { openWindow(tile: false) }
         cockpits.forEach { $0.window.makeKeyAndOrderFront(nil) }
