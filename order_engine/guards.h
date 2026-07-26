@@ -42,17 +42,31 @@
 // #   sin TWS delante. Cada guarda de arriba necesita su pasada de paper
 // #   antes de considerarse viva en produccion.
 // #
-// #   ESCRITAS Y PROBADAS PERO **NO CABLEADAS** (el motor sigue con su logica
-// #   vieja en linea; los agujeros siguen ABIERTOS en produccion):
-// #     #1/#2 ExposureBook       - tope AGREGADO por cuenta
-// #     #5    decide_stop_failure- stop nativo rechazado = fallo de proteccion
-// #                                que GRITA. Agujero (c) de un encargo previo: ABIERTO.
-// #     #6    safe_to_touch_orders- no tocar ordenes sin reconcile completo
+// #     #1/#2 ExposureBook -> tope AGREGADO por cuenta (--account-cap, default
+// #        $3000). Se RESERVA el desembolso real antes de colocar (las dos
+// #        ramas: opciones y acciones) y se LIBERA en cada rama terminal sin
+// #        posicion (REJECTED/CANCELED/STOP_HIT/DRY/zona borrada sin llenar).
+// #        Nota: un `cmd close` del panel NO libera (su orderId no entra en
+// #        oid2zone) -> la reserva sobrevive al cierre. Es un sesgo
+// #        CONSERVADOR a proposito: sobra-reservar veta de mas, nunca de menos.
+// #     #5 decide_stop_failure -> watchdog del stop no confirmado. Los TRES
+// #        desenlaces gritan (stderr + ledger + state/NAKED_STOP.jsonl); el
+// #        tercero (sin stop nativo Y sin spot para vigilar local) CIERRA la
+// #        posicion en vez de dejarla desnuda en silencio.
+// #     #6 safe_to_touch_orders -> gatea el bloque de adopcion/re-arme de stops
+// #        del RECONNECT. El arranque ya abortaba sin reconcile; el reconnect
+// #        pasaba directo y podia colocar un SEGUNDO stop sobre la misma
+// #        posicion. Ahora exige openOrderEnd Y positionEnd o no toca nada.
+// #     #12 decide_stock_entry -> rama de ACCIONES del TRIGGERED (sizing +
+// #        limite marketable). Cierra el limite redondeado a 0.00 y mide el
+// #        notional al LIMITE que se paga, no al spot.
 // #
-// # No se cablearon a proposito: tocan el camino de orden de un motor de
-// # ~1000 lineas y no hay forma de validarlas sin fills, con TWS apagado un
-// # sabado. Cablearlas a ciegas es exactamente como se pierde dinero. Cada
-// # una necesita su pasada de paper antes de considerarse viva.
+// #   ESCRITAS Y PROBADAS PERO **NO CABLEADAS**: ninguna. (2026-07-26)
+// #
+// # AVISO QUE SIGUE EN PIE: todo lo de arriba esta verificado EN FRIO. Ninguna
+// # de estas guardas ha visto un fill real todavia -- no hubo Gateway levantado
+// # (4001/4002/7496/7497 cerrados el 2026-07-26). La pasada de PAPER sigue
+// # siendo obligatoria antes de considerarlas vivas en produccion.
 // ############################################################################
 #pragma once
 #include <algorithm>
@@ -140,6 +154,53 @@ struct ExposureBook {
         return it == committed.end() ? 0.0 : it->second;
     }
 };
+
+// Clave estable de una zona en el libro de exposicion. sym+zona: dos zonas del
+// mismo simbolo son dos desembolsos distintos, la misma zona re-armada es uno.
+inline std::string exposure_key(const std::string& sym, const std::string& zone_id) {
+    return sym + "|" + zone_id;
+}
+
+// ===================================================================== #12
+// ENTRADA DE ACCIONES. Vivia EN LINEA en order_engine.cpp (el bloque "ACCIONES"
+// del TRIGGERED) y por eso el unico camino de orden de ACCIONES no tenia ni un
+// test, pese a que las acciones son las que SI llenan 24/5 y por tanto las que
+// mas se ejercitan en paper. Dos agujeros que cierra al hacerse pura:
+//
+//  (a) LIMITE REDONDEADO A CERO. `lim = round(spot*1.001*100)/100` con un spot
+//      sub-centavo (SPCX/DRAM han cotizado por debajo de $0.01 en premarket)
+//      da 0.00 y la orden sale a precio CERO. El gate viejo solo miraba
+//      `spot <= 0`, no el limite ya redondeado.
+//  (b) NOTIONAL MEDIDO AL SPOT, NO AL LIMITE. Se comprometia `qty*spot` pero se
+//      paga `qty*limit` (limit = spot*1.001 en la compra). Con el notional justo
+//      en el tope se rebasaba el presupuesto por la diferencia. El desembolso
+//      que se reserva debe ser el que de verdad se paga.
+struct StockEntry {
+    bool ok = false;
+    double limit = 0;        // marketable, ya redondeado al centavo
+    double notional = 0;     // desembolso REAL = qty * limit
+    std::string reason;
+};
+
+inline StockEntry decide_stock_entry(double spot, int qty, double budget, char side) {
+    StockEntry d;
+    if (!(spot > 0))            { d.reason = "spot desconocido o <= 0: no se inventa un precio"; return d; }
+    if (qty <= 0)               { d.reason = "qty <= 0"; return d; }
+    if (side != 'B' && side != 'S') { d.reason = "side invalido"; return d; }
+    if (!(budget > 0))          { d.reason = "sin presupuesto de acciones configurado (falla cerrado)"; return d; }
+    double lim = (side == 'B') ? spot * 1.001 : spot * 0.999;
+    lim = std::round(lim * 100.0) / 100.0;
+    if (!(lim > 0)) { d.reason = "limite redondeado a 0.00 (spot sub-centavo): NO se manda a precio cero"; return d; }
+    const double notional = (double)qty * lim;
+    if (notional > budget + 1e-9) {
+        char b[128];
+        std::snprintf(b, sizeof b, "notional $%.2f (%d x $%.2f) > budget $%.2f", notional, qty, lim, budget);
+        d.reason = b;
+        return d;
+    }
+    d.ok = true; d.limit = lim; d.notional = notional; d.reason = "ok";
+    return d;
+}
 
 // ===================================================================== #3/#7
 // Fuente de verdad de POSICIONES = la cuenta IBKR remota (reqPositions), no el

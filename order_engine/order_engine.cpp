@@ -214,6 +214,16 @@ static void write_state(const std::string& dir, const std::string& sym, const Zo
     out << "}\n";
 }
 
+// Bandera en disco de POSICIÓN DESNUDA (guarda #5). stderr se lo lleva el log y
+// nadie lo mira; un fichero con mtime de hoy lo ve el healthcheck y el panel.
+static void shout_naked_stop(const std::string& dir, const std::string& sym,
+                             const std::string& zone, const std::string& msg) {
+    std::ofstream f(dir + "/NAKED_STOP.jsonl", std::ios::app);
+    if (!f.is_open()) return;
+    f << "{\"ts\":" << now_ms() << ",\"sym\":\"" << json_escape(sym) << "\",\"zone\":\""
+      << json_escape(zone) << "\",\"msg\":\"" << json_escape(msg) << "\"}\n";
+}
+
 // ======================================================= config CLI
 struct Cfg {
     std::string repo = ".";
@@ -224,6 +234,11 @@ struct Cfg {
     double budget = 200.0;         // prima máx por CONTRATO de opción
     double max_order = 0;          // desembolso máx por ORDEN (qty*prima); 0 = sigue a budget
     double stock_budget = 3000.0;  // notional máx por entrada de acciones
+    // Tope AGREGADO por cuenta (guarda #1/#2). Los otros topes son POR ZONA y POR
+    // ORDEN: N zonas armadas multiplicaban el desembolso sin techo global (20 zonas
+    // de $200 = $4.000 comprometidos sin que ninguna guarda dijera nada). Este es el
+    // único que mira la SUMA. Falla cerrado: 0 -> no se opera.
+    double account_cap = 3000.0;
     std::vector<std::string> syms;
 };
 
@@ -264,6 +279,7 @@ int main(int argc, char** argv) {
         else if (a == "--budget") cfg.budget = atof(next("200").c_str());
         else if (a == "--max-order") cfg.max_order = atof(next("200").c_str());
         else if (a == "--stock-budget") cfg.stock_budget = atof(next("3000").c_str());
+        else if (a == "--account-cap") cfg.account_cap = atof(next("3000").c_str());
         else if (a == "--host") cfg.host = next("127.0.0.1");
         else if (a == "--client") cfg.client = atoi(next("92").c_str());
         else if (a == "--repo") cfg.repo = next(".");
@@ -397,6 +413,13 @@ int main(int argc, char** argv) {
 
     std::string today = today_date();
     std::map<std::string, std::map<std::string, ZoneRT>> book;   // sym -> (zoneId -> ZoneRT)
+    // Libro de exposicion AGREGADA (guarda #1/#2, guards.h). Se reserva el
+    // desembolso REAL justo antes de colocar y se libera cuando la zona muere sin
+    // posicion. Es el unico tope que ve la SUMA de todas las zonas de todos los
+    // simbolos; los demas (budget/max_order/stock_budget) son por contrato/orden.
+    ExposureBook expo; expo.cap = cfg.account_cap;
+    if (!(expo.cap > 0))
+        std::fprintf(stderr, "[SEGURIDAD] --account-cap %.0f: sin tope agregado NO se coloca nada (falla cerrado)\n", cfg.account_cap);
 
     // AUDIT-FIX (crítico): IDEMPOTENCIA ENTRE REINICIOS. El estado runtime vive en RAM,
     // pero exec_zones_<sym>.json persiste con exec:true -> al reiniciar, una zona QUE YA
@@ -441,6 +464,23 @@ int main(int argc, char** argv) {
                 tws.reconcile();                              // cancela huérfanas OE: (incl. el stop viejo)
                 for (int i = 0; i < 80 && !tws.reconciled(); ++i) tws.pump();
                 tws.reqPositions();                           // refresca posiciones tras reconnect (#3/#7)
+                for (int i = 0; i < 80 && !tws.positions().known(); ++i) tws.pump();
+                // GUARDA #6 (safe_to_touch_orders): el ARRANQUE aborta si reconcile no
+                // completa, el RECONNECT no lo comprobaba y pasaba directo a re-armar
+                // stops. Sin openOrderEnd el motor no sabe qué stop sobrevivió ->
+                // adopted_stop_id() devuelve -1 sobre un mapa a medio llenar y coloca
+                // un SEGUNDO stop sobre la misma posición: al disparar vende el doble
+                // y deja CORTO en descubierto, con ambos GTC. Si falta cualquiera de
+                // las dos verdades del broker, no se toca NADA y se reintenta.
+                if (!oe::safe_to_touch_orders(tws.reconciled(), tws.positions().known())) {
+                    std::fprintf(stderr, "[SEGURIDAD] reconnect a medias (reconcile=%d posiciones=%d) — NO toco stops, reintento\n",
+                                 (int)tws.reconciled(), (int)tws.positions().known());
+                    ledger.note("reconnect a medias -> no se tocan ordenes (reconcile=" +
+                                std::to_string((int)tws.reconciled()) + " positions=" +
+                                std::to_string((int)tws.positions().known()) + ")");
+                    reconnect_backoff = std::min(reconnect_backoff * 2, 30);
+                    continue;
+                }
                 reconnect_backoff = 1;
                 // Stops tras reconnect. OJO: reconcile NO cancela los STP — los ADOPTA
                 // (tws_adapter.cpp:224, protegen una posición real). Resetear a ciegas
@@ -503,12 +543,22 @@ int main(int argc, char** argv) {
                                  sym.c_str(), z.id.c_str(), antes, z.filled_qty);
                 } else if (ev.order_id == z.stop_id || ev.order_id == z.close_id) {
                     z.st = ZoneRT::STOP_HIT;
+                    // posicion cerrada -> el dinero vuelve al bolsillo agregado
+                    expo.release(oe::exposure_key(sym, z.id));
                     write_state(state_dir, sym, z, "\"close_px\":" + std::to_string(ev.px_c / 100.0));
                 }
             } else if (ev.kind == ExecReport::REJECTED) {
-                if (ev.order_id == z.entry_id) { z.st = ZoneRT::REJECTED; write_state(state_dir, sym, z, "\"note\":\"reject\""); }
+                if (ev.order_id == z.entry_id) {
+                    z.st = ZoneRT::REJECTED;
+                    expo.release(oe::exposure_key(sym, z.id));   // nunca se gasto
+                    write_state(state_dir, sym, z, "\"note\":\"reject\"");
+                }
             } else if (ev.kind == ExecReport::CANCELED) {
-                if (ev.order_id == z.entry_id && z.st == ZoneRT::SENT) { z.st = ZoneRT::CANCELED; write_state(state_dir, sym, z, "\"note\":\"canceled\""); }
+                if (ev.order_id == z.entry_id && z.st == ZoneRT::SENT) {
+                    z.st = ZoneRT::CANCELED;
+                    expo.release(oe::exposure_key(sym, z.id));   // nunca se gasto
+                    write_state(state_dir, sym, z, "\"note\":\"canceled\"");
+                }
             } else if (ev.kind == ExecReport::ACK) {
                 // HIGH #1: el stop nativo sólo cuenta como PROTECCIÓN cuando el servidor
                 // lo acepta (Submitted/PreSubmitted). Hasta entonces stop_confirmed=false.
@@ -716,7 +766,14 @@ int main(int argc, char** argv) {
                 if (!z.present && (z.entry_id >= 0 || z.stop_id >= 0) &&
                     z.st != ZoneRT::DONE) {
                     // Cancelar la ENTRADA en vuelo siempre (no debe quedar residual).
-                    if (z.entry_id >= 0 && z.st != ZoneRT::FILLED) tws.cancel(z.entry_id);
+                    // Zona borrada SIN llenar: la entrada se cancela -> el desembolso
+                    // reservado nunca ocurrio, se devuelve al bolsillo agregado. Si SI
+                    // se lleno, la posicion sigue abierta y el dinero sigue comprometido:
+                    // ahi NO se libera (liberar dejaria sitio para gastar dos veces).
+                    if (z.entry_id >= 0 && z.st != ZoneRT::FILLED) {
+                        tws.cancel(z.entry_id);
+                        expo.release(oe::exposure_key(sym, z.id));
+                    }
                     // AUDIT-FIX: si la zona estaba LLENA, la posición sigue abierta ->
                     // NO cancelar su stop (la dejaría desnuda). Se avisa en voz alta.
                     if (z.stop_id >= 0 && z.st == ZoneRT::FILLED) {
@@ -785,28 +842,48 @@ int main(int argc, char** argv) {
                     // ===== ACCIONES (activos, 24/5 con horario extendido) =====
                     if (z.instrument == "stk") {
                         int qty = z.qty > 0 ? z.qty : 1;
-                        if (spot <= 0) { write_state(state_dir, sym, z, "\"wait\":\"spot 0\""); continue; }
-                        double notional = qty * spot;
-                        if (notional > cfg.stock_budget) {
+                        // decide_stock_entry (guards.h #12): mismo veto de notional de
+                        // siempre, pero medido al LIMITE que de verdad se paga (no al
+                        // spot) y rechazando el limite que se redondea a 0.00.
+                        oe::StockEntry se = oe::decide_stock_entry(spot, qty, cfg.stock_budget, side);
+                        if (!se.ok) {
+                            // spot ausente es TRANSITORIO (el bridge refresca): esperar, no
+                            // latchear VETOED. El resto son veredictos firmes.
+                            if (se.reason.rfind("spot", 0) == 0) {
+                                write_state(state_dir, sym, z, "\"wait\":\"" + json_escape(se.reason) + "\"");
+                                continue;
+                            }
                             z.st = ZoneRT::VETOED;
-                            char b[96]; std::snprintf(b, sizeof b, "notional $%.0f > budget $%.0f", notional, cfg.stock_budget);
+                            write_state(state_dir, sym, z, "\"veto\":\"" + json_escape(se.reason) + "\"");
+                            ledger.note("VETOED " + sym + " " + z.id + ": " + se.reason);
+                            std::fprintf(stderr, "[%s] zona %s VETOED acciones: %s\n", sym.c_str(), z.id.c_str(), se.reason.c_str());
+                            continue;
+                        }
+                        const double lim = se.limit;
+                        // TOPE AGREGADO (#1/#2): la suma de TODAS las zonas vivas. Se
+                        // reserva ANTES de colocar; si no cabe, la zona se VETA aqui —
+                        // no al ejecutar, cuando ya seria dinero fuera.
+                        if (!expo.reserve(oe::exposure_key(sym, z.id), se.notional)) {
+                            z.st = ZoneRT::VETOED;
+                            char b[160];
+                            std::snprintf(b, sizeof b, "tope AGREGADO: $%.0f + $%.0f > cap cuenta $%.0f",
+                                          expo.total(), se.notional, expo.cap);
                             write_state(state_dir, sym, z, std::string("\"veto\":\"") + b + "\"");
                             ledger.note(std::string("VETOED ") + sym + " " + z.id + ": " + b);
                             std::fprintf(stderr, "[%s] zona %s VETOED acciones: %s\n", sym.c_str(), z.id.c_str(), b);
                             continue;
                         }
-                        double lim = (side == 'B') ? spot * 1.001 : spot * 0.999;   // marketable ext-hours
-                        lim = std::round(lim * 100.0) / 100.0;
                         Contract c = make_stock(sym);
                         z.entry_c = c; z.entry_delta = 0; z.entry_side = side;
                         bool armed = armed_live(cfg.arm_flag, arm_file);
                         if (!armed) {
                             char b[224];
                             std::snprintf(b, sizeof b, "DRY colocaría %c %d acc %s @ %.2f (notional $%.0f)",
-                                          side, qty, sym.c_str(), lim, notional);
+                                          side, qty, sym.c_str(), lim, se.notional);
                             ledger.note(std::string(b));
                             write_state(state_dir, sym, z, std::string("\"dry\":\"") + json_escape(b) + "\"");
                             std::fprintf(stderr, "[%s] zona %s %s  (sin doble llave)\n", sym.c_str(), z.id.c_str(), b);
+                            expo.release(oe::exposure_key(sym, z.id));   // DRY no gasta: devolver el sitio
                             z.st = ZoneRT::DONE; continue;
                         }
                         int oid = tws.next_order_id();
@@ -853,6 +930,20 @@ int main(int argc, char** argv) {
                                      sym.c_str(), z.id.c_str(), b);
                         continue;
                     }
+                    // TOPE AGREGADO (#1/#2): el tope de arriba es POR ORDEN; este mira la
+                    // SUMA de todas las zonas vivas de todos los simbolos. Se reserva
+                    // ANTES de colocar y se libera si la zona muere sin posicion.
+                    if (!expo.reserve(oe::exposure_key(sym, z.id), desembolso)) {
+                        z.st = ZoneRT::VETOED;
+                        char b[160];
+                        std::snprintf(b, sizeof b, "tope AGREGADO: $%.0f + $%.0f > cap cuenta $%.0f",
+                                      expo.total(), desembolso, expo.cap);
+                        write_state(state_dir, sym, z, std::string("\"veto\":\"") + b + "\"");
+                        ledger.note(std::string("VETOED ") + sym + " " + z.id + ": " + b);
+                        std::fprintf(stderr, "[%s] zona %s VETOED opciones: %s\n",
+                                     sym.c_str(), z.id.c_str(), b);
+                        continue;
+                    }
                     Contract c = make_option(sym, g.exp, g.strike, right);
                     z.entry_c = c; z.entry_delta = g.delta; z.entry_iv = g.iv; z.entry_side = side;
                     // DOBLE LLAVE re-evaluada al momento (borrar ARM_LIVE desarma ya).
@@ -865,6 +956,7 @@ int main(int argc, char** argv) {
                         ledger.note(std::string(b));
                         write_state(state_dir, sym, z, std::string("\"dry\":\"") + json_escape(b) + "\"");
                         std::fprintf(stderr, "[%s] zona %s %s  (sin doble llave)\n", sym.c_str(), z.id.c_str(), b);
+                        expo.release(oe::exposure_key(sym, z.id));   // DRY no gasta: devolver el sitio
                         z.st = ZoneRT::DONE;    // DRY: no re-disparar en bucle
                         continue;
                     }
@@ -930,27 +1022,56 @@ int main(int argc, char** argv) {
                 // ---- watchdog HIGH #1: stop nativo colocado pero SIN confirmar -> re-armar + alerta ----
                 if (z.st == ZoneRT::FILLED && z.stop_on && z.stop_native && z.stop_armed && !z.stop_confirmed) {
                     if (++z.stop_wait > 15) {   // ~30s (pump 2s)
-                        // TOPE DE REINTENTOS (fix 2026-07-24): sin él, un STOP que el broker
-                        // rechaza sin emitir orderStatus hacía girar este watchdog para
-                        // siempre — medido en el soak: 24 cancel/replace por stop en 80s.
-                        // Eso es churn que viola el pacing de IBKR y, peor, deja la posición
-                        // desprotegida en cada hueco entre cancel y re-place.
-                        if (z.stop_retries >= 3) {
-                            z.stop_native = false; z.stop_degraded = true;   // watch-local PEGAJOSO
-                            z.stop_armed = false; z.stop_id = -1;  // el MOTOR pasa a ser la protección
-                            z.s_have_prev = false; z.stop_wait = 0;
-                            ledger.note("ALERTA stop nativo IMPOSIBLE tras 3 intentos " + sym + " " +
-                                        z.id + " — degradado a watch-local");
-                            std::fprintf(stderr, "[%s] zona %s STOP nativo RECHAZADO 3 veces -> paso a watch-local (el motor vigila)\n",
-                                         sym.c_str(), z.id.c_str());
-                        } else {
+                        // GUARDA #5 (decide_stop_failure): un STOP nativo que el broker no
+                        // confirma es una posición DESNUDA. Antes esto degradaba a
+                        // watch-local en silencio, y si tampoco había dato del subyacente
+                        // para vigilar local nadie protegía nada — te crees protegido y no
+                        // lo estás. Ahora los tres desenlaces GRITAN, y el tercero CIERRA.
+                        // El tope de 3 re-armes se conserva: sin él, un STOP rechazado sin
+                        // orderStatus hacía girar el watchdog para siempre (medido en el
+                        // soak: 24 cancel/replace por stop en 80s), churn que viola el
+                        // pacing y deja un hueco desprotegido en cada cancel/re-place.
+                        const bool local_ok = (spot > 0 && spot_ep > 0);
+                        const oe::NakedDecision nd = oe::decide_stop_failure(z.stop_retries, 3, local_ok);
+                        if (nd.shout) {
+                            ledger.note("PROTECCION CAIDA " + sym + " " + z.id + ": " + nd.msg);
+                            std::fprintf(stderr, "[%s] ⚠ DANGER zona %s: %s\n", sym.c_str(), z.id.c_str(), nd.msg.c_str());
+                            shout_naked_stop(state_dir, sym, z.id, nd.msg);
+                        }
+                        if (nd.action == oe::NakedAction::RETRY) {
                             ++z.stop_retries;
-                            std::fprintf(stderr, "[%s] zona %s STOP NO CONFIRMADO (intento %d/3) -> re-armo\n",
-                                         sym.c_str(), z.id.c_str(), z.stop_retries);
-                            ledger.note("ALERTA stop no confirmado " + sym + " " + z.id +
-                                        " — intento " + std::to_string(z.stop_retries) + "/3");
                             if (z.stop_id >= 0) tws.cancel(z.stop_id);
                             z.stop_armed = false; z.stop_id = -1; z.stop_wait = 0;
+                        } else if (nd.action == oe::NakedAction::DEGRADE_LOCAL) {
+                            z.stop_native = false; z.stop_degraded = true;   // watch-local PEGAJOSO
+                            z.stop_armed = false; z.stop_id = -1;            // el MOTOR es la protección
+                            z.s_have_prev = false; z.stop_wait = 0;
+                        } else {   // EMERGENCY_CLOSE: sin stop nativo Y sin dato para vigilar
+                            z.stop_native = false; z.stop_degraded = true;
+                            z.stop_armed = false; z.stop_id = -1; z.stop_wait = 0;
+                            if (z.close_id < 0 && !frozen) {
+                                char close_side = (z.entry_side == 'B') ? 'S' : 'B';
+                                int cq = z.filled_qty > 0 ? (int)z.filled_qty : (z.qty > 0 ? z.qty : 1);
+                                double lim = 0;
+                                if (z.entry_c.secType == "OPT") {
+                                    Gate gx = run_gate(ch, z.entry_c.right, z.entry_c.lastTradeDateOrContractMonth,
+                                                       z.entry_c.strike, close_side, 1e9, now_s, true);
+                                    lim = gx.limit;
+                                }
+                                // Sin precio de cadena NO se remata a 0.01 (regalo): se
+                                // queda gritando cada ciclo hasta poder cerrar de verdad.
+                                if (lim > 0) {
+                                    int oid = tws.next_order_id();
+                                    z.close_id = oid; oid2zone[oid] = {sym, z.id};
+                                    tws.place_limit(z.entry_c, close_side, cq, lim, oid, "OE:" + z.id + ":EMERG");
+                                    ledger.note("CIERRE DE EMERGENCIA " + sym + " " + z.id + " @ " + std::to_string(lim));
+                                    std::fprintf(stderr, "[%s] zona %s CIERRE DE EMERGENCIA @ %.2f\n", sym.c_str(), z.id.c_str(), lim);
+                                } else {
+                                    ledger.note("CIERRE DE EMERGENCIA IMPOSIBLE (sin precio) " + sym + " " + z.id);
+                                    std::fprintf(stderr, "[%s] ⚠ zona %s: cierre de emergencia SIN PRECIO — sigo gritando\n",
+                                                 sym.c_str(), z.id.c_str());
+                                }
+                            }
                         }
                     }
                 }

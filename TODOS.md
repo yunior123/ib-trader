@@ -769,31 +769,65 @@ significa que nadie pudo verificar. Los de abajo los confirmé A MANO uno por un
 ### ⬜ PENDIENTES (17 quedaron sin verificar por límite de sesión; estos 9 sí están razonados)
 > **Por qué importan, en una línea**: son los que quedan entre el motor y una pérdida real; los
 > tres primeros son de TAMAÑO (cuánto se gasta) y los demás de PROTECCIÓN (qué pasa si algo falla).
-- [ ] **[pendiente]** Sin tope de exposición AGREGADA por cuenta — hoy es por zona ($200 opción /
-      $3000 acción); **N zonas multiplican el gasto sin techo global**. Es el que más dinero puede
-      mover de golpe.
-- [ ] **[pendiente]** Sin reconciliación contra `reqPositions` — la fuente de verdad debe ser la
-      cuenta IBKR REMOTA, no el estado local. Es la lección de 2026-07-16: matar PIDs locales no basta.
-- [ ] **[pendiente]** Presupuesto de opciones es **por contrato**, no por zona: `qty>1` multiplica
-      el gasto sin cap total. *(Relacionado con el primero; se arreglan juntos.)*
-- [ ] **[pendiente]** Panel `close` confía en `cqty` sin comparar contra la posición real →
-      posible sobre-venta / flip a corto (**en TFSA no se shortea**: sería un rechazo o una
-      posición ilegal).
+> **CERRADOS LOS 9 el 2026-07-26** (encargo "buy, sell options and shares, full testing for those").
+> ⚠️ **Todos verificados EN FRÍO**: compila 0 warnings + ASan/UBSan limpio + 648 checks en 3 suites
+> (`order_engine/tests/run_tests.sh`). **Ninguno ha visto un fill real**: los 4 puertos
+> (4001/4002/7496/7497) estaban cerrados el 2026-07-26 — no había Gateway. **La pasada de PAPER
+> sigue siendo obligatoria** antes de darlos por vivos en producción.
+- [x] ~~Sin tope de exposición AGREGADA por cuenta~~ — **hecho.** `ExposureBook` cableado:
+      `order_engine.cpp:420` (`--account-cap`, default $3000, **falla cerrado** si es 0), reserva
+      antes de colocar en las DOS ramas (`:866` acciones, `:936` opciones) y libera en cada rama
+      terminal sin posición (`:547` STOP_HIT, `:553` REJECTED, `:559` CANCELED, `:775` zona
+      borrada sin llenar, `:886`/`:959` DRY). *Sesgo conservador consciente*: un `cmd close` del
+      panel NO libera (su orderId no entra en `oid2zone`) → sobra-reserva, veta de más, nunca de menos.
+- [x] ~~Sin reconciliación contra `reqPositions`~~ — **ya estaba hecho, verificado.**
+      `order_engine.cpp:399` pide posiciones al arrancar y `:634` gatea el close contra ellas;
+      `decide_close_qty` falla cerrado mientras `positionEnd()` no haya llegado.
+- [x] ~~Presupuesto de opciones por contrato, no por zona (`qty>1` multiplica)~~ — **hecho.**
+      El tope por ORDEN (`qty*prima`) ya estaba en `:905`; le faltaba el techo global, que es el
+      `ExposureBook` de arriba. Los dos juntos cierran el agujero.
+- [x] ~~Panel `close` confía en `cqty` sin comparar contra la posición real~~ — **ya estaba hecho,
+      verificado.** `order_engine.cpp:634` `decide_close_qty(tws.positions(), ...)`: clampa a la
+      posición REAL del broker y **rechaza** si vendería en descubierto (TFSA no shortea).
 - [x] ~~`close` del panel no cancela el stop nativo → stop GTC huérfano server-side~~ —
       **hecho `53e12ec` + mapa `7a0ddaf`/`1bd17c1`.** Cancela ANTES del close; empareja por
       identidad de contrato vía `z.entry_c` (no `z.price`). 94 checks, 0 fallos. Verificado en
       frío; **ruta real con fills queda para paper el domingo** — no declarado verificado en vivo.
-- [ ] **[pendiente]** STOP nativo **rechazado** no se reporta como fallo de protección (REJECTED
-      solo se maneja para la entrada) → te crees protegido y no lo estás. **Fallo silencioso.**
-- [ ] **[pendiente]** Reconnect re-arma stops sin verificar que `reconcile` terminó (el arranque sí
-      aborta, el reconnect no) → la puerta de vuelta al bug del stop duplicado.
-- [ ] **[pendiente]** Allowlist live usa `find()` sobre la lista completa de `managedAccounts`
-      (substring, no exacto) → una cuenta cuyo id CONTENGA al permitido pasaría el filtro.
-- [ ] **[pendiente]** Clamp asimétrico del stop de opción (caso corto sin cota superior).
-- [ ] **[pendiente, del hunt sin refutar]** `order_engine.cpp:772`: el centinela `-1.0000` del
-      cache de cadena se usa como **delta REAL** → stop nativo clavado a −5% de la prima
-      (stop-out instantáneo). **Patrón "cero plausible"** — verificar y, si se confirma, es de los
-      graves. *(Ver la casilla de los 84 hallazgos.)*
+- [x] ~~STOP nativo **rechazado** no se reporta como fallo de protección~~ — **hecho.**
+      `decide_stop_failure` cableado en el watchdog (`order_engine.cpp:1035`). Los **tres**
+      desenlaces GRITAN (stderr + `ledger.note` + `state/NAKED_STOP.jsonl`, `:1039` — stderr solo
+      se lo come el log y nadie lo mira). El tercero (sin stop nativo **y** sin spot para vigilar
+      local) **CIERRA la posición** en vez de dejarla desnuda en silencio. Se conserva el tope de
+      3 re-armes (sin él el watchdog giraba para siempre: 24 cancel/replace por stop en 80s).
+- [x] ~~Reconnect re-arma stops sin verificar que `reconcile` terminó~~ — **hecho.**
+      `safe_to_touch_orders` cableado en `order_engine.cpp:475`: tras un reconnect se espera
+      `openOrderEnd` **y** `positionEnd`; si falta cualquiera de las dos verdades del broker no se
+      toca NADA y se reintenta con backoff. Antes pasaba directo a adoptar/re-armar sobre un mapa
+      a medio llenar → segundo stop sobre la misma posición.
+- [x] ~~Allowlist live usa `find()` (substring)~~ — **ya estaba hecho, verificado.**
+      `order_engine.cpp:369` `accounts_match()`: tokeniza el CSV de `managedAccounts` por coma y
+      compara EXACTO; falla cerrado con lista o cuenta esperada vacías.
+- [x] ~~Clamp asimétrico del stop de opción (caso corto sin cota superior)~~ — **ya estaba hecho,
+      verificado.** `guards.h clamp_option_stop`: largo `[max(0.01, 0.10*fill), 0.95*fill]`,
+      corto `[1.05*fill, 2.50*fill]`. Test de barrido: los 201 deltas de −1.00 a +1.00 caen
+      dentro de la banda en ambos lados.
+- [x] ~~`order_engine.cpp:772`: el centinela `-1.0000` usado como **delta REAL**~~ —
+      **CONFIRMADO** (no era falso positivo) **y arreglado, verificado.** `option_stop_trigger`
+      cableado en `:1001`: mira `entry_iv` (siempre acompaña a un delta real, nunca ≤0 salvo el
+      centinela) y descarta el par entero si es el centinela, cayendo al fallback DECLARADO
+      (0.60·fill largo / 1.40·fill corto). Antes `fabs(delta) > 1e-6` no distinguía "no sé" de
+      "sé, y es −1" → el clamp lo topaba en `0.95*fill` = **stop-out instantáneo**. Es exactamente
+      el patrón "cero plausible" del `~/CLAUDE.md`.
+
+### ⬜ order_engine — LO QUE QUEDA (2026-07-26)
+- [ ] **[pendiente, BLOQUEANTE para armar live]** **Pasada de PAPER del ciclo completo.** Nada de
+      lo cerrado arriba ha visto un fill: el 2026-07-26 los 4 puertos estaban cerrados (sin
+      Gateway). Falta: **acciones** (24/5, sí llenan) BUY→FILL→SELL→FILL→FLAT + `close` por
+      comando; **opciones** place+cancel (fuera de RTH no llenan, es normal). Hasta eso, las
+      guardas están verificadas EN FRÍO, no vivas.
+- [ ] **[pendiente]** El `cmd close` del panel no libera la reserva del `ExposureBook` (su
+      `orderId` no entra en `oid2zone`). Hoy es un sesgo conservador **a propósito** (veta de más).
+      Para arreglarlo bien hay que mapear el close del panel a su zona, no parchear el libro.
 
 ### ⬜ UI / DATOS
 - [ ] **[pendiente]** **Live market data** (diferido): suscripción IBKR para API en paper, o cablear
@@ -947,22 +981,25 @@ Spec: `docs/FEATURES-MINED-2026-07-25.md`.
       y el informe canta "REVIVIDO" en falso. Creemos tener red de seguridad y no la hay.
 
 ### Los 5 vivos más peligrosos por DINERO REAL
-1. `order_engine/order_engine.cpp:152,919` — **el centinela `-1.0000` del delta se usa como delta
-   REAL** (`ss >> iv >> r.delta` sin validar). MEDIDO: fuera de RTH el **100%** de las filas de
-   `data/opt_chain_*.txt` traen `-1.0000` (80 filas hoy en QQQ). El clamp de cordura lo aterriza en
-   `fill_px*0.95` → **todo stop nativo de opción nace a −5% de la prima**: stop-out instantáneo.
-   `bid`/`ask` sí validan el centinela; `delta` no. **Patrón "cero plausible" del `~/CLAUDE.md`.**
-2. `order_engine/order_engine.cpp:632` — el `close` del panel se precia con `nearest_row()`, que
-   **nunca exige strike igual**. La orden sale con el límite de OTRO contrato → no llena, y
-   `chart_bridge` ya respondió `{"ok":true}` sin esperar al motor. **Crees que estás plano y no lo estás.**
-3. `order_engine/order_engine.cpp:980-1002` — el cierre por stop watch-local es **de un solo tiro**:
-   `z.close_id` se fija una vez, sin re-precio ni reintento, con un límite que puede venir de una
-   cadena vieja. Y es justo el camino al que lleva el watchdog tras 3 rechazos.
+1. ~~`order_engine.cpp:152,919` — **el centinela `-1.0000` del delta usado como delta REAL**~~
+   **CERRADO 2026-07-26** (`option_stop_trigger` en `:1001`). Ver la casilla de order_engine.
+   Confirmado que era real: fuera de RTH el **100%** de las filas de `data/opt_chain_*.txt`
+   traían `-1.0000`, y el clamp lo aterrizaba en `fill_px*0.95` = stop-out instantáneo.
+2. ~~`order_engine.cpp:632` — el `close` se precia con `nearest_row()`, que nunca exige strike
+   igual~~ **CERRADO** (`run_gate(..., require_exact_strike=true)` en `:654`/`:1095`; `exact_row`
+   exige right+exp+strike o falla limpio). Test con testigo: sin el 705 en la cadena,
+   `nearest_row` entregaba el 700C con bid 6.00 vs 3.00 — el DOBLE de precio.
+3. `order_engine/order_engine.cpp:1095-1110` — **SIGUE ABIERTO.** El cierre por stop watch-local
+   es de un solo tiro: `z.close_id` se fija una vez, sin re-precio ni reintento si no llena.
+   *(Mitigado en parte: si no hay precio de cadena ya NO remata a 0.01, espera. Pero una vez
+   mandado, nadie lo revisa.)* Y es justo el camino al que lleva el watchdog tras 3 rechazos.
 4. `nvda_signal_bot.cpp:1375,1423` — `tail -n +1 -F` **sin dedupe por epoch**. Cada warm-up del
    bridge re-inyecta ~2 días de barras a los indicadores VIVOS de los 24 bots: ATR, RSI, BB, CUSUM
    y VWAP envenenados, y hablan señales que luego se operan.
-5. `order_engine/order_engine.cpp:626` — `cmd close` pasa el `cqty` del panel **directo, sin
-   `budget` ni `stock_budget`**: es la única ruta de orden sin ningún gate de tamaño.
+5. ~~`order_engine.cpp:626` — `cmd close` pasa el `cqty` del panel directo, sin gate de tamaño~~
+   **CERRADO** (`decide_close_qty` contra `reqPositions` en `:634`, más el gate de cadena en
+   `:654`). Cerrar sigue sin vetarse por dinero (presupuesto infinito, correcto: salir nunca se
+   veta por caro) pero sí por tamaño, contrato erróneo y cadena podrida.
 
 ### Otros vivos que contradicen doctrina escrita (muestra, no la lista entera)
 - [ ] `aapl_signal_bot.cpp:1738,1839` — el gate de spread **falla ABIERTO**: sin NBBO,
