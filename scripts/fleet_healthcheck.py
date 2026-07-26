@@ -315,16 +315,48 @@ def fleet_window_live():
     return fleet_window.live()
 
 
-def heal(name, keepalive):
-    """Revive un daemon via su keepalive si esta muerto. Idempotente."""
-    if not proc_alive(keepalive):
-        try:
-            subprocess.Popen(["nohup", "zsh", f"scripts/{keepalive}"],
-                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            return f"{name}: REVIVIDO"
-        except Exception as e:
-            return f"{name}: fallo revivir ({e})"
-    return None
+def spawn_keepalive(path):
+    """Lanza un keepalive DESPEGADO de este proceso: sesion propia => grupo propio.
+
+    Sin `start_new_session=True` el hijo hereda el process group del healthcheck, y
+    launchd.plist(5) es explicito: "When a job dies, launchd kills any remaining
+    processes with the same process group ID as the job". El healthcheck termina
+    segundos despues de curar, launchd barre el grupo y se lleva por delante al
+    keepalive recien nacido. `nohup` NO protegia: solo ignora SIGHUP, no el
+    SIGTERM/SIGKILL al grupo. Resultado medido: auto-curado NO-OP que cantaba
+    "REVIVIDO" — peor que no tener red de seguridad, porque nadie mira.
+
+    Ruta ABSOLUTA y cwd explicito: con "scripts/<x>.sh" relativo, un cwd distinto
+    hacia que zsh muriera con 127 sin que Popen levantara nada (otro REVIVIDO falso)."""
+    return subprocess.Popen(["zsh", path],
+                            stdin=subprocess.DEVNULL,
+                            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                            cwd=REPO, start_new_session=True)
+
+def heal(name, keepalive, verify_s=6.0):
+    """Revive un daemon via su keepalive si esta muerto. Idempotente.
+
+    Solo se canta REVIVIDO si se VERIFICA que el keepalive esta corriendo: lanzar un
+    proceso no es revivirlo. Si no aparece, se dice lo que paso (murio al instante,
+    falta el script, sigue sin aparecer) — jamas un exito plausible."""
+    if proc_alive(keepalive):
+        return None
+    path = os.path.join(REPO, "scripts", keepalive)
+    if not os.path.exists(path):
+        return f"{name}: NO revivido — falta el keepalive {path}"
+    try:
+        p = spawn_keepalive(path)
+    except OSError as e:
+        return f"{name}: fallo revivir ({e})"
+    deadline = time.time() + verify_s
+    while time.time() < deadline:
+        time.sleep(0.3)
+        if proc_alive(keepalive):
+            return f"{name}: REVIVIDO (verificado, pid {p.pid})"
+        rc = p.poll()
+        if rc is not None:
+            return f"{name}: NO revivido — el keepalive murio al instante (exit {rc})"
+    return f"{name}: NO revivido — sigue sin aparecer {verify_s:.0f}s despues del lanzamiento"
 
 def canonical_fleet():
     """Flota canonica de data/fleet.txt, o None si no se puede leer.
@@ -385,8 +417,9 @@ def main():
     if premarket_or_session():
         if not bridge and not a.no_heal:
             try:
-                subprocess.Popen(["nohup", "zsh", "scripts/fleet_keepalive_start.sh"],
-                                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                # start_new_session: si no, launchd barre este arranque con el grupo del
+                # job en cuanto el healthcheck termina (ver spawn_keepalive).
+                spawn_keepalive(os.path.join(REPO, "scripts", "fleet_keepalive_start.sh"))
                 time.sleep(4); bridge = proc_alive("ibkr_bar_bridge.py"); bots = count_proc("signal_bot")
                 healed.append(f"flota: relanzada (bridge {'vivo' if bridge else 'aun no'}, {bots} bots)")
             except Exception as e:

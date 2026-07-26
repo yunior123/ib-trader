@@ -299,3 +299,166 @@ def test_mapa_gamma_dice_por_que_falta_cobertura(hc, tmp_path):
     p = _mapa(tmp_path, [f"S{i}" for i in range(25)], meta={"cobertura": "25/30"})
     _, msg = hc.gex_map_status(path=p, canon_n=30, poly_n=0)
     assert "poly_chain_archive" in msg
+
+
+
+# --- (c) el auto-curado: "REVIVIDO" tiene que ser VERDAD --------------------------
+# Defecto cazado el 2026-07-26. heal() revivia el keepalive con
+#     subprocess.Popen(["nohup", "zsh", f"scripts/{keepalive}"])   # sin start_new_session
+# y el plist com.ibtrader.healthcheck no llevaba AbandonProcessGroup. Lo dice la propia
+# launchd.plist(5) de macOS: "When a job dies, launchd kills any remaining processes with
+# the same process group ID as the job." El healthcheck termina segundos despues de curar
+# -> launchd barre el grupo -> el keepalive recien nacido muere con el. Y el informe ya
+# habia cantado "REVIVIDO". `nohup` no salva de nada: solo ignora SIGHUP, no el SIGTERM
+# al grupo. Creer que hay red de seguridad y no tenerla es peor que no tenerla.
+
+_LATIDO = """#!/bin/zsh
+while :; do print tick >> "{hb}"; sleep 0.1; done
+"""
+
+_PADRE_LEGACY = """
+import subprocess
+p = subprocess.Popen(["nohup", "zsh", "{ka}"],
+                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+print(p.pid)
+"""
+
+_PADRE_FIX = """
+import importlib.util
+spec = importlib.util.spec_from_file_location("hc", "{mod}")
+hc = importlib.util.module_from_spec(spec); spec.loader.exec_module(hc)
+print(hc.spawn_keepalive("{ka}").pid)
+"""
+
+
+def _cura_y_muere(tmp_path, plantilla, mod_path):
+    """Reproduce una corrida de launchd: un 'healthcheck' de juguete, lider de SU PROPIO
+    grupo de procesos, revive un keepalive que late en un fichero y muere acto seguido;
+    entonces cae la escoba de launchd sobre el grupo del job.
+    Devuelve (el keepalive sigue latiendo?, quedaba alguien en el grupo del job?)."""
+    hb = tmp_path / "latido.txt"
+    hb.write_text("")
+    ka = tmp_path / "keepalive_juguete.sh"
+    ka.write_text(_LATIDO.format(hb=hb))
+    padre_py = tmp_path / "padre.py"
+    padre_py.write_text(plantilla.format(ka=ka, mod=mod_path))
+
+    # start_new_session: el padre es lider de grupo, su pid ES el pgid del "job".
+    padre = subprocess.Popen([sys.executable, str(padre_py)], stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE, text=True, start_new_session=True)
+    out, err = padre.communicate(timeout=60)
+    assert padre.returncode == 0, err
+    hijo = int(out.split()[0])
+    time.sleep(0.5)                       # que late un poco antes de la escoba
+
+    en_el_grupo = True
+    try:
+        os.killpg(padre.pid, signal.SIGTERM)      # <- exactamente lo que hace launchd
+    except ProcessLookupError:
+        en_el_grupo = False                       # no quedaba nadie: el hijo escapo
+
+    antes = len(hb.read_bytes())
+    time.sleep(0.6)
+    sigue_latiendo = len(hb.read_bytes()) > antes
+    if sigue_latiendo:                            # limpieza del superviviente
+        try:
+            os.killpg(os.getpgid(hijo), signal.SIGKILL)
+        except (ProcessLookupError, PermissionError):
+            pass
+    return sigue_latiendo, en_el_grupo
+
+
+def test_el_popen_legacy_muere_con_el_healthcheck(tmp_path):
+    """EL DAÑO, medido: el keepalive lanzado como lo hacia heal() comparte grupo con el
+    job y la escoba de launchd se lo lleva. Nada revivio; el correo decia que si."""
+    sigue_latiendo, en_el_grupo = _cura_y_muere(tmp_path, _PADRE_LEGACY, "")
+    assert en_el_grupo, "el hijo legacy deberia seguir en el grupo del job (por eso muere)"
+    assert not sigue_latiendo, "sin start_new_session el keepalive NO puede sobrevivir"
+
+
+def test_spawn_keepalive_sobrevive_a_la_escoba_de_launchd(hc, tmp_path):
+    """El arreglo: sesion propia -> pgid propio -> la escoba de launchd no lo alcanza."""
+    sigue_latiendo, en_el_grupo = _cura_y_muere(tmp_path, _PADRE_FIX, hc.SELF_PATH)
+    assert not en_el_grupo, "el keepalive tiene que haber SALIDO del grupo del job"
+    assert sigue_latiendo, "el keepalive revivido debe seguir vivo tras morir el healthcheck"
+
+
+def test_spawn_keepalive_pone_sesion_propia(hc, monkeypatch):
+    """Blindaje contra regresiones silenciosas: el flag es el arreglo entero."""
+    visto = {}
+
+    class _Fake:
+        pid = 4242
+
+    def _popen(cmd, **kw):
+        visto["cmd"] = cmd
+        visto["kw"] = kw
+        return _Fake()
+
+    monkeypatch.setattr(hc.subprocess, "Popen", _popen)
+    assert hc.spawn_keepalive("/x/y.sh").pid == 4242
+    assert visto["kw"].get("start_new_session") is True
+    assert visto["kw"].get("cwd") == hc.REPO      # ruta absoluta + cwd fijo, no relativa
+    assert "/x/y.sh" in visto["cmd"]
+
+
+# --- heal(): "REVIVIDO" solo si se VERIFICA que revivio ---------------------------
+
+def test_heal_no_canta_revivido_si_el_keepalive_no_aparece(hc, monkeypatch):
+    """Popen puede tener exito y el keepalive morir al instante (script movido, zsh 127).
+    El informe NO puede decir REVIVIDO por el mero hecho de haber lanzado algo."""
+    class _Muerto:
+        pid = 1
+        returncode = 127
+
+        def poll(self):
+            return 127
+
+    monkeypatch.setattr(hc, "proc_alive", lambda _p: False)
+    monkeypatch.setattr(hc, "spawn_keepalive", lambda _p: _Muerto())
+    monkeypatch.setattr(hc.os.path, "exists", lambda _p: True)
+    msg = hc.heal("relay", "notify_relay.sh", verify_s=1.0)
+    assert "REVIVIDO" not in msg, msg
+    assert "127" in msg
+
+
+def test_heal_falta_el_script_lo_dice_y_no_miente(hc, monkeypatch):
+    monkeypatch.setattr(hc, "proc_alive", lambda _p: False)
+    msg = hc.heal("relay", "keepalive_que_no_existe.sh", verify_s=1.0)
+    assert "REVIVIDO" not in msg, msg
+    assert "keepalive_que_no_existe.sh" in msg
+
+
+def test_heal_verificado_canta_revivido(hc, monkeypatch):
+    """Cuando de verdad aparece, se dice — y se dice que esta VERIFICADO."""
+    estados = iter([False, True, True, True])
+
+    class _Vivo:
+        pid = 777
+
+        def poll(self):
+            return None
+
+    monkeypatch.setattr(hc, "proc_alive", lambda _p: next(estados, True))
+    monkeypatch.setattr(hc, "spawn_keepalive", lambda _p: _Vivo())
+    monkeypatch.setattr(hc.os.path, "exists", lambda _p: True)
+    msg = hc.heal("relay", "notify_relay.sh", verify_s=3.0)
+    assert "REVIVIDO" in msg and "777" in msg
+
+
+def test_heal_no_toca_lo_que_ya_esta_vivo(hc, monkeypatch):
+    monkeypatch.setattr(hc, "proc_alive", lambda _p: True)
+    assert hc.heal("relay", "notify_relay.sh") is None
+
+
+def test_el_plist_del_healthcheck_abandona_el_grupo():
+    """Cinturon y tirantes: aunque el hijo ya salga del grupo, el job declara que no
+    quiere que launchd barra su grupo al terminar."""
+    fuente = os.path.join(REPO, "scripts", "com.ibtrader.healthcheck.plist")
+    with open(fuente, "rb") as fh:
+        assert plistlib.load(fh).get("AbandonProcessGroup") is True, fuente
+    vivo = os.path.expanduser("~/Library/LaunchAgents/com.ibtrader.healthcheck.plist")
+    if os.path.exists(vivo):
+        with open(vivo, "rb") as fh:
+            assert plistlib.load(fh).get("AbandonProcessGroup") is True, (
+                f"{vivo}: instalado sin AbandonProcessGroup (recargalo tras el fix)")
