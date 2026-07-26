@@ -5,11 +5,13 @@ cd /Users/yuniorrodriguezosorio/ib-trader || exit 1
 
 LOG=printplans.log
 DAY=$(date +%Y-%m-%d)
-DEST=$HOME/Desktop/planes-$DAY
+HOY=${IBT_DESKTOP_HOY:-$HOME/Desktop/ib-trader/hoy}   # ruta derivada, ver daily_archive.py
+mkdir -p "$HOY"
+DEST=$HOY/planes-$DAY
 PRINTER=HP_OfficeJet_Pro_9120e_Series
 
 echo "$(date) === print_mon_plans QQQ,DRAM,SPY ===" >> $LOG
-./venv/bin/python scripts/daily_fleet_plans.py --tickers QQQ,DRAM,SPY --no-email >> $LOG 2>&1
+./venv/bin/python scripts/daily_fleet_plans.py --tickers QQQ,DRAM,SPY --no-email --outdir "$DEST" >> $LOG 2>&1
 
 for SYM in QQQ DRAM SPY; do
   PDF=$DEST/${SYM}_plan.pdf

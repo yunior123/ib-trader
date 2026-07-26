@@ -28,6 +28,42 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(REPO)
 DATA = os.path.join(REPO, "data")
 
+# ruta derivada (repunto 2026-07-26): mismo nombre que print_mon_plans.sh /
+# price_alarm.cpp / chart_bridge.py. Candidatos por orden: carpeta nueva,
+# raiz vieja del Desktop (pre-repunto), archivo/ (carpetas ya movidas).
+IBT_DESKTOP_HOY = os.environ.get("IBT_DESKTOP_HOY", os.path.expanduser("~/Desktop/ib-trader/hoy"))
+
+
+def ranking_json_candidates(date):
+    return [
+        os.path.join(IBT_DESKTOP_HOY, f"planes-{date}", "ranking.json"),
+        os.path.expanduser(f"~/Desktop/planes-{date}/ranking.json"),
+        os.path.expanduser(f"~/Desktop/ib-trader/archivo/planes-{date}/ranking.json"),
+    ]
+
+
+def find_ranking_json(date):
+    """Primer candidato que exista y no este vacio. None si ninguno (nunca revienta)."""
+    for p in ranking_json_candidates(date):
+        try:
+            if os.path.exists(p) and os.path.getsize(p) > 0:
+                return p
+        except OSError:
+            continue
+    return None
+
+
+def archive_ranking(hdir, date):
+    """cp del ranking.json del dia; si no aparece en ningun candidato, GRITA
+    (CRITICAL a stderr) en vez de callar (orden Yunior 2026-07-26)."""
+    rk = find_ranking_json(date)
+    if rk:
+        return cp(rk, hdir)
+    print(f"CRITICAL: ranking.json NO ENCONTRADO para {date} en ninguna ruta "
+          f"({', '.join(ranking_json_candidates(date))}) — archivo del dia SIN ranking",
+          file=sys.stderr)
+    return False
+
 # mapa gamma del dia: primero el nuestro (MEDIDO), y para los dias ya archivados antes del
 # 2026-07-25 se admite el fichero de gexa.ai. La PROCEDENCIA viaja con el dato.
 GEX_FILES = (
@@ -192,7 +228,7 @@ def main():
     slice_jsonl_ts("data/whale_flow_hist.jsonl", os.path.join(hdir, "whale_flow_hist.jsonl"), t0, t1)
     # señales del Desktop + ranking + mapa semanal
     cp(os.path.join(DATA, "trading-signals", f"{a.date}.txt"), hdir, warn=False)
-    cp(os.path.expanduser(f"~/Desktop/planes-{a.date}/ranking.json"), hdir, warn=False)
+    archive_ranking(hdir, a.date)
     cp(os.path.join(REPO, "docs", f"WHALES-WEEK-{a.date}.md"), hdir, warn=False)
 
     # calibracion de flow_pulse (aditivo, degradacion limpia pero NUNCA muda)
