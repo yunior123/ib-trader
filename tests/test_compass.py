@@ -377,3 +377,28 @@ def test_contract_keys_always_present():
             assert k in r, "falta la clave {} en estado {}".format(k, r.get("state"))
         assert r["dir"] in ("up", "down", "flat")
         assert 50 <= r["prob"] <= 90
+
+
+# --------------------------------------------------------- calibracion: contexto, no prob
+def test_calib_context_no_se_convierte_en_probabilidad():
+    """null_control mide la senal CRUDA (n=1154 = pool de bollinger), no ESTE setup
+    (nivel impreso + >=2 familias + sin vetos). Su veredicto se publica como contexto y
+    la prob sigue siendo doctrinal: usarlo de probabilidad es la misma falacia que el
+    codigo ya rechaza con prob_retroceso_50."""
+    r = run(ev_put_wall(calib_source="bollinger"))
+    assert r["prob_source"] == "doctrina", "una fuente sin calibrar NO puede decir 'medido'"
+    assert r["prob"] is not None and 50 <= r["prob"] <= 90
+    if r.get("calib_context"):
+        assert "fdr_ok=0" in r["calib_context"], "bollinger no pasa BH-FDR: hay que decirlo"
+
+
+def test_calib_context_ausente_si_la_fuente_no_esta_medida():
+    r = run(ev_put_wall(calib_source="fuente_que_no_existe"))
+    assert r.get("calib_context") is None, "lo que no se ha medido no se anuncia"
+
+
+def test_prob_medida_solo_con_calibracion_del_propio_setup():
+    """La unica via a 'medido' es la celda del propio setup, inyectada por --ev-stdin."""
+    r = run(ev_put_wall(calib_lo=0.71, calib_n=140))
+    assert r["prob_source"] == "medido"
+    assert r["prob"] == 71, "la prob medida es el limite inferior de Wilson, no un prior"

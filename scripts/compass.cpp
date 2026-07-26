@@ -239,6 +239,8 @@ struct Ev {
     std::vector<Bar> bars;
     // celda de calibracion propia (calibration_ledger): lo unico que puede decir "medido"
     std::optional<double> calib_lo; std::optional<double> calib_n;
+    // hint de fuente medida (barrier_labels/null_control) + dir override para tests
+    std::string calib_source, calib_dir;
 };
 
 struct Amp {
@@ -468,8 +470,8 @@ static Drivers drivers_for(const Ev& ev) {
 
 
 struct Out {
-    std::string sym, state, state_pending, dir = "flat", prob_source = "doctrina";
-    int prob = 50; bool pending_print = false;
+    std::string sym, state, state_pending, dir = "flat", prob_source = "doctrina", calib_context;
+    std::optional<int> prob; bool pending_print = false;
     int families = 0;
     std::vector<std::string> families_why, vetoes, fading, state_why;
     bool has_level = false; Level level;
@@ -743,15 +745,46 @@ static Amp amplitude(const Ev& ev, int rdir, const std::string& decay_json) {
     return a;
 }
 
+// ---------------- veredicto medido de la fuente cruda (null_control) --------
+// Contexto para el operador, NUNCA probabilidad: null_control mide la senal suelta, no este
+// setup. "" si esa fuente no esta medida — lo que no se ha medido no se anuncia.
+static std::string source_verdict(const std::string& source, const std::string& dir) {
+    std::string nc = slurp(dir + "/null_control.json");
+    if (nc.empty()) return "";
+    std::string sec = json_section(nc, source);
+    if (sec.empty()) return "";
+    auto v = jstr(sec, "verdict");
+    if (!v) return "";
+    auto ne = jnum(sec, "n_eff");
+    auto fdr = jnum(sec, "fdr_cells_passed");
+    char b[128];
+    snprintf(b, sizeof b, "%s:%s n_eff=%.0f fdr_ok=%d", source.c_str(), v->c_str(),
+             ne.value_or(0.0), (int)(fdr.value_or(0.0) > 0));
+    return b;
+}
+
+// familia disparada -> fuente medida mas cercana (mismo concepto, 3 de las 6 fuentes de
+// barrier_labels tienen analogo en compass; cusum/dip/whale y "vela" no tienen hoy).
+static std::string calib_source_from_families(const std::vector<std::string>& fam) {
+    for (auto& f : fam) if (f.find("flujo capitan") != std::string::npos) return "flow";
+    for (auto& f : fam) if (f.find("%B") != std::string::npos) return "bollinger";
+    for (auto& f : fam) if (f.find("fuerza en") != std::string::npos) return "structural";
+    return "";
+}
+
 // ------------------------------ probabilidad --------------------------------
-// Orden: (1) celda propia de calibration_ledger n>=30 -> "medido"; (2) prior DOCTRINAL topado.
+// Orden: (1) celda propia n_eff>=min -> "medido"; (2) se intento medir y no paso el gate ->
+// "sin_medir", SIN NUMERO (regla ~/CLAUDE.md #3: prohibido devolver un plausible en el
+// fallback); (3) no hay fuente medida aplicable a este estado -> prior DOCTRINAL topado.
 // NO se usa prob_retroceso_50 aqui: condiciona en "hubo un impulso", no en "hubo NUESTRO
 // setup (nivel impreso + >=2 familias + sin vetos)". Son poblaciones distintas; usarla
 // inflaria la flecha al 90% con una n que no es de este setup. Va en amplitude.retrace_prob.
-static std::pair<int, std::string> prob_of(const std::string& state, int nfam, const Ev& ev,
-                                          const Amp& amp) {
-    if (ev.calib_n && *ev.calib_n >= K::CALIB_MIN_N && ev.calib_lo)
-        return {(int)std::lround(clampd(*ev.calib_lo * 100.0, 50, 90)), "medido"};
+static std::pair<std::optional<int>, std::string> prob_of(const std::string& state, int nfam,
+        std::optional<double> calib_lo, std::optional<double> calib_n, bool calib_attempted,
+        const Ev& ev, const Amp& amp) {
+    if (calib_n && *calib_n >= K::CALIB_MIN_N && calib_lo)
+        return {(int)std::lround(clampd(*calib_lo * 100.0, 50, 90)), "medido"};
+    if (calib_attempted) return {std::nullopt, "sin_medir"};
     double base;
     if (state == S_REV) {
         base = nfam >= 4 ? 72 : (nfam == 3 ? 68 : 62);
@@ -895,7 +928,19 @@ static Out classify(const Ev& ev, Hist* hist, const std::string& decay_json) {
         }
     }
 
-    auto [p, src] = prob_of(o.state, o.families, ev, o.amp);
+    // Calibracion: solo cuenta la celda del PROPIO setup (nivel impreso + >=2 familias + sin
+    // vetos), que llega por --ev-stdin. calibration_barrier.json mide la senal CRUDA (n=1154 =
+    // el pool de bollinger de null_control), poblacion distinta: usarla aqui es la misma
+    // falacia que ya se rechaza arriba con prob_retroceso_50. Se LEE para publicar el
+    // veredicto como contexto, y jamas como probabilidad.
+    std::optional<double> calib_lo = ev.calib_lo, calib_n = ev.calib_n;
+    if (o.state == S_REV && !(calib_lo && calib_n)) {
+        std::string src0 = !ev.calib_source.empty() ? ev.calib_source
+                                                    : calib_source_from_families(o.families_why);
+        if (!src0.empty())
+            o.calib_context = source_verdict(src0, ev.calib_dir.empty() ? "data" : ev.calib_dir);
+    }
+    auto [p, src] = prob_of(o.state, o.families, calib_lo, calib_n, false, ev, o.amp);
     o.prob = p; o.prob_source = src;
     o.pending_print = (o.state == S_APPR);
     if (o.state == S_BOX || o.state == S_NONE) { o.prob = 50; o.dir = "flat"; o.amp = Amp{}; }
@@ -918,9 +963,15 @@ static std::string to_json(const Out& o) {
     s += "\"state_pending\":" + (o.state_pending.empty() ? std::string("null")
                                  : "\"" + jesc(o.state_pending) + "\"") + ",";
     s += "\"dir\":\"" + o.dir + "\",";
-    snprintf(b, sizeof b, "\"prob\":%d,\"prob_source\":\"%s\",\"pending_print\":%s,\"families\":%d,",
-             o.prob, o.prob_source.c_str(), o.pending_print ? "true" : "false", o.families);
+    if (o.prob)
+        snprintf(b, sizeof b, "\"prob\":%d,\"prob_source\":\"%s\",\"pending_print\":%s,\"families\":%d,",
+                 *o.prob, o.prob_source.c_str(), o.pending_print ? "true" : "false", o.families);
+    else
+        snprintf(b, sizeof b, "\"prob\":null,\"prob_source\":\"%s\",\"pending_print\":%s,\"families\":%d,",
+                 o.prob_source.c_str(), o.pending_print ? "true" : "false", o.families);
     s += b;
+    s += "\"calib_context\":" + (o.calib_context.empty() ? std::string("null")
+                                 : "\"" + jesc(o.calib_context) + "\"") + ",";
     arr_out(s, "families_why", o.families_why);
     arr_out(s, "vetoes", o.vetoes);
     arr_out(s, "fading", o.fading);
@@ -1032,6 +1083,8 @@ static Ev ev_from_json(const std::string& j) {
     e.exhaustion = opt("exhaustion"); e.now_min = opt("now_min");
     e.book_coef = opt("book_coef");
     e.calib_lo = opt("calib_lo"); e.calib_n = opt("calib_n");
+    if (auto s = jstr(j, "calib_source")) e.calib_source = *s;
+    if (auto s = jstr(j, "calib_dir")) e.calib_dir = *s;
     if (auto s = jstr(j, "regime")) e.regime = *s;
     if (auto s = jstr(j, "force_phase")) e.force_phase = *s;
     if (auto s = jstr(j, "book_label")) e.book_label = *s;
@@ -1275,7 +1328,10 @@ int main(int argc, char** argv) {
             }
             if (to_stdout || loop_s == 0) {
                 const char* g = o.dir == "up" ? "^" : (o.dir == "down" ? "v" : "-");
-                printf("%s %-5s %-4s %d%% [%s] %s%s\n", g, SYM.c_str(), o.dir.c_str(), o.prob,
+                char probc[16];
+                if (o.prob) snprintf(probc, sizeof probc, "%d%%", *o.prob);
+                else snprintf(probc, sizeof probc, "sin_medir");
+                printf("%s %-5s %-4s %s [%s] %s%s\n", g, SYM.c_str(), o.dir.c_str(), probc,
                        o.state.c_str(), o.amp.ok ? o.amp.grade.c_str() : "",
                        o.pending_print ? " (esperando print)" : "");
                 for (const auto& w : o.state_why) printf("    - %s\n", w.c_str());
