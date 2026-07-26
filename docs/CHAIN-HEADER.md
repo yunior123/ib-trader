@@ -35,8 +35,10 @@ rompa rompe `scripts/opt_quick.cpp` (el lector mas rapido de la flota, parseo PO
 
 | campo | significado |
 |---|---|
-| `fuente` | `ibkr_tws` \| `polygon_snapshot_v3` — de donde salieron las griegas |
-| `band` | banda de strikes REAL usada por el fetcher (±fraccion del spot) |
+| `fuente` | `ibkr_tws` \| `polygon_snapshot_v3` \| `cboe_delayed` — de donde salieron las griegas |
+| `band` | banda de strikes REAL usada por el fetcher (±fraccion del spot). En `poly_chain_archive` es **adaptativa por simbolo** desde el 2026-07-26 (0,10–0,60): leerla del fichero, jamas asumirla |
+| `exp_hasta` | ultimo vencimiento incluido (`poly_chain_archive`: el mensual siguiente) |
+| `spot_src` / `spot_edad_s` | de donde salio el spot y su edad. **NO se llama `spot`**: `opt_quick.cpp:92` hace `strstr("spot ")+atof` en cualquier linea `#`, y `spot ibkr_bridge` le daba `spot=0` (regla 2) |
 | `max_strikes` | tope de strikes por vencimiento |
 | `narrow` | 1 si el simbolo va en modo recortado (`NARROW` = MSFT, AVGO, AMZN, META) |
 | `vencimientos` | cuantos vencimientos trae el fichero |

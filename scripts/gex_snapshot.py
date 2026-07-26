@@ -92,7 +92,13 @@ def latest_chain(sym, max_days=5):
 
 def contracts_from(path):
     """Traduce la cadena de Polygon al dict que espera gex_core, quedandose SOLO con contratos
-    que tengan gamma medida y OI real. Devuelve (contratos, spot, meta, n_total)."""
+    que tengan gamma medida y OI real. Devuelve (contratos, spot, meta, n_candidatos).
+
+    `n_candidatos` = contratos con OI>0, NO el total de filas. Es el unico denominador
+    honesto para "% de griegas usables": con la banda adaptativa (2026-07-26) el fichero
+    trae strikes a +-60%, donde la mitad de los contratos tiene OI=0 y por tanto no puede
+    entrar nunca en el perfil. Con el total, ensanchar la banda hundia el porcentaje y el
+    simbolo se omitia por "libro ilegible" cuando el libro estaba perfecto."""
     with open(path) as f:
         d = json.load(f)
     meta = d.get("meta") or {}
@@ -106,6 +112,7 @@ def contracts_from(path):
     except (TypeError, ValueError):
         ref_ts = None
     cs = []
+    n_cand = 0
     for c in res:
         det = c.get("details") or {}
         g = (c.get("greeks") or {}).get("gamma")
@@ -113,6 +120,8 @@ def contracts_from(path):
         k = det.get("strike_price")
         ct = det.get("contract_type")
         exp = det.get("expiration_date")
+        if oi and k is not None and ct and exp:
+            n_cand += 1
         if g is None or not oi or k is None or not ct or not exp:
             continue
         # `T` (años al vencimiento) es OBLIGATORIA, no opcional. Sin ella gex_core caia
@@ -131,7 +140,38 @@ def contracts_from(path):
         cs.append({"strike": float(k), "right": ct[0].upper(), "oi": int(oi),
                    "gamma": float(g), "delta": dl, "iv": c.get("implied_volatility"),
                    "exp": exp_c, "T": T})
-    return cs, spot, meta, len(res)
+    return cs, spot, meta, n_cand
+
+
+FLIP_GRID = (0.6, 1.5, 240)   # el barrido por defecto de gex_core es solo +-15% del spot
+
+
+def honest_flip(cs, spot, gi):
+    """(flip, procedencia). Solo se publica un flip que sea RAIZ MEDIDA del barrido.
+
+    `gex_core._flip` cae al EXTREMO del rango de strikes cuando el perfil acumulado no
+    cambia de signo, y ese extremo LO FIJA LA BANDA DEL FICHERO: medido el 2026-07-26,
+    SKHY daba "flip" 207,5 / 230 / 270 / 305 / 390 segun donde se cortase la cadena. Eso
+    no es un nivel de mercado, es el borde del recorte — y de ahi salen pin-vs-trampilla
+    y el veto de 0DTE. Si no hay cruce ni en +-15% ni en el barrido ancho: None."""
+    rc = gi.get("flip_recompute")
+    if rc is not None:
+        return rc, "recompute_15pct"
+    lo, hi, steps = FLIP_GRID
+    roots = gex_core.flip_recompute(cs, spot, lo=lo, hi=hi, steps=steps, all_roots=True)
+    if roots:
+        return roots[0], f"recompute_{lo:.2f}_{hi:.2f}"
+    return None, "sin_cruce_de_signo_en_la_banda"
+
+
+def wall_kind(gi, flip, key):
+    """pin (POS, el nivel aguanta) o trampilla (NEG, el precio lo atraviesa) para el muro
+    `key`, recalculado con el flip HONESTO — el de `build_gex` puede venir del borde."""
+    k = gi.get(key)
+    if k is None or flip is None:
+        return None
+    reg = gex_core.regime_at(dict(gi, flip=flip), k)[0]
+    return None if reg is None else ("pin" if reg == "POS" else "trampilla")
 
 
 def snapshot_sym(sym):
@@ -146,15 +186,18 @@ def snapshot_sym(sym):
         return None, f"cadena {fecha} vacia"
     pct = len(cs) / n_total
     if pct < MIN_GREEKS_PCT:
-        return None, (f"griegas+OI usables {pct*100:.0f}% (<{MIN_GREEKS_PCT*100:.0f}%) "
-                      f"sobre {n_total} contratos")
+        return None, (f"griegas usables {pct*100:.0f}% (<{MIN_GREEKS_PCT*100:.0f}%) "
+                      f"sobre {n_total} contratos con OI>0")
     gi = gex_core.build_gex(cs, spot)
     if gi.get("n_strikes_populated", 0) < MIN_STRIKES:
         return None, (f"{gi.get('n_strikes_populated', 0)} strikes poblados "
                       f"(<{MIN_STRIKES}): perfil sin lectura")
     net = gi.get("net_gex")
-    if net is None or gi.get("flip") is None:
-        return None, f"gex_core no dio flip/net_gex sobre la cadena {fecha}"
+    if net is None:
+        return None, f"gex_core no dio net_gex sobre la cadena {fecha}"
+    # Un libro sin cruce de signo SIGUE teniendo muros, POC, regimen y net medidos: se
+    # publica con flip=None (y el motivo), no se tira el simbolo entero.
+    flip, flip_src = honest_flip(cs, spot, gi)
 
     call_usd = sum(v for v in (gi.get("call_gex") or {}).values())
     put_usd = sum(v for v in (gi.get("put_gex") or {}).values())
@@ -169,8 +212,10 @@ def snapshot_sym(sym):
         return round(float(x), n) if isinstance(x, (int, float)) else None
     dx = gex_core.build_dex(cs, spot)
     return {
-        "flip": _r(gi.get("flip")),
-        "flip_all": _r(gi.get("flip")),      # calculamos sobre TODOS los vencimientos de la cadena
+        "flip": _r(flip),
+        "flip_all": _r(flip),            # se calcula sobre TODOS los vencimientos del fichero
+        "flip_src": flip_src,
+        "flip_dist_pct": _r((flip - spot) / spot * 100) if flip else None,
         "score": score,
         "bias": "PUT" if abs(put_usd) > abs(call_usd) else "CALL",
         "poc": gi.get("abs_wall"),
@@ -180,11 +225,16 @@ def snapshot_sym(sym):
         "call_usd": keep_sign(call_usd),
         "put_usd": keep_sign(put_usd),
         "net_gex": keep_sign(net),
+        # el mundo (CBOE, TradingFlow, SpotGamma) cita el GEX en $ por 1% de movimiento;
+        # `net_gex` va en la escala de la casa (x spot). Son la MISMA medida a distinta
+        # escala (factor spot/100) y sin este campo la comparacion con un referee sale
+        # ~7x corta: eso fue la mitad del "13x por debajo" del 2026-07-26.
+        "net_gex_dollar1pct": keep_sign(net * spot * 0.01),
         "gross_gex": keep_sign(gi.get("gross_gex") or 0),
         "call_wall": gi.get("call_wall"),
         "put_wall": gi.get("put_wall"),
         "abs_wall": gi.get("abs_wall"),
-        "abs_wall_kind": gi.get("abs_wall_kind"),
+        "abs_wall_kind": wall_kind(gi, flip, "abs_wall"),
         # DEX: DOS campos de signo, jamas uno. `dex_sentiment` es el CLIENTE (dueño del OI),
         # `dex_flow_impact` es lo que el CREADOR hizo en el subyacente para quedar neutral —
         # son opuestos, y publicar solo uno invierte la lectura la mitad de las veces.
@@ -198,9 +248,12 @@ def snapshot_sym(sym):
         "spot": _r(spot),
         "ts": int(time.time()),
         # --- procedencia: MEDIDO vs reconstruido, dicho en el propio dato ---
-        "src": "gex_core + chain_full (griegas Polygon MEDIDAS)",
+        "src": f"gex_core + chain_full (griegas MEDIDAS: {meta.get('greeks', 'n/d')})",
         "chain_date": fecha,
         "chain_snapshot_local": meta.get("snapshot_local"),
+        "chain_band": meta.get("band"),
+        "chain_band_convergida": meta.get("band_convergida"),
+        "chain_exp_hasta": meta.get("exp_hasta"),
         "greeks_ok_pct": round(pct, 3),
         "n_contracts": len(cs),
         "n_strikes_populated": gi.get("n_strikes_populated"),
@@ -225,7 +278,10 @@ def build():
         "asof": int(time.time()),
         "asof_local": time.strftime("%Y-%m-%d %H:%M:%S"),
         "fuente": "data/history/<fecha>/chain_full_<sym>.json (Polygon /v3/snapshot/options)",
-        "griegas": "MEDIDAS (gamma y OI reales de Polygon) — nada reconstruido por Black-Scholes",
+        # la fuente de las griegas va por SIMBOLO en `src` (Polygon no sirve griegas de
+        # opciones de indice: SPX/XSP/NDX vienen de CBOE, y eso no se dice en global)
+        "griegas": "MEDIDAS por el proveedor de cada cadena (ver `src` de cada simbolo) "
+                   "— nada reconstruido por Black-Scholes",
         "sustituye_a": "data/gexa_snapshot.json (gexa.ai jubilado el 2026-07-25)",
         "cobertura": f"{len(out)}/{len(syms)}",
         "skipped": skipped,
@@ -273,8 +329,10 @@ def _cli():
     for s, v in d.items():
         if s == "_meta" or (ap_sym and s not in ap_sym):
             continue
-        print(f"  {s:6s} flip {v['flip']:>9.2f} {v['regime_short']:>3s}  net {v['score']:+9.1f}M/pt "
-              f"bias {v['bias']:4s} POC {str(v['poc']):>9s}  "
+        fl = f"{v['flip']:9.2f}" if v["flip"] is not None else "  SIN FLIP"
+        print(f"  {s:6s} flip {fl} {v['regime_short']:>3s}  net {v['score']:+9.1f}M/pt "
+              f"({(v['net_gex_dollar1pct'] or 0)/1e9:+6.2f}B $/1%) bias {v['bias']:4s} "
+              f"POC {str(v['poc']):>9s}  banda +-{(v['chain_band'] or 0)*100:.0f}% "
               f"({v['n_contracts']} contratos, griegas {v['greeks_ok_pct']*100:.0f}%, "
               f"cadena {v['chain_date']})")
     if m["skipped"]:

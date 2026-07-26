@@ -9,7 +9,8 @@
        — justo la foto que leen los 26 PDFs de las 04:00 y todo el fin de semana.
        16:20 captura el OI de cierre del dia (lo que necesitan los planes de las 04:00);
        08:45 recoge la actualizacion de OI de la noche antes de la apertura.
-       ~31 min por corrida (5 peticiones/60s medidas, ~150 peticiones). -->
+       ~1,5 min por corrida (2026-07-26: 35 simbolos, ~400 paginas; la ventana de
+       5 peticiones/60s era de la key anterior, remedido 219 seguidas sin un 429). -->
   <key>ProgramArguments</key>
   <array>
     <string>/bin/zsh</string><string>-lc</string>

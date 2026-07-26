@@ -42,6 +42,29 @@ VIX desbloquea la banda de fragilidad (`charts/live.html:295` ya tiene el chip e
 - SPX y SPY **divergen el mismo día** (recap TradingFlow 22-jul: *"a still-positive SPX and a newly
   short SPY"*): el índice NO es redundante con su ETF, y ése es el motivo de añadirlo.
 
+### 🧮 EL ARCHIVO DE CADENAS: banda ADAPTATIVA + mensual (2026-07-26, MEDIDO)
+- **`BAND=0.045` + `DTE_MAX=10` capturaban el 28% de la gamma** (mediana flota, MU 7,7%) y dejaban
+  **14 de 25 flips clavados en el borde del recorte**. Ahora `poly_chain_archive.py` ensancha por
+  coronas hasta que la gamma marginal cae bajo el 2%, suelo 10% / techo 60%, y guarda la banda que
+  convergió en `data/gamma_band.json`. Vencimientos **hasta el mensual siguiente**.
+  Resultado: 35/35 con flip MEDIDO, el más justo a 12,5 pp del borde; QQQ **−5,22 B $/1%** contra
+  los −5,3/−6,0 B de los referees (antes −3,29 B). 404 páginas, **1,5 min** por corrida.
+- **La mitad del "13× por debajo" era ESCALA, no datos**: `net_gex` va en la escala de la casa
+  (×spot) y el mundo cita **$/1% (×spot²/100)** — factor spot/100 ≈ 6,8× en QQQ. `gex_snapshot`
+  publica ya **`net_gex_dollar1pct`**: comparar con un referee usando el otro campo es un error.
+- **Polygon NO sirve griegas de opciones de índice** (medido: SPX 8.512 contratos y **0 con gamma**;
+  XSP 5.446 y 0; sólo OI). SPX/XSP/NDX salen de la **cadena completa de CBOE** (gratis, 1 petición,
+  con IV+griegas+OI), marcado `greeks: cboe_delayed` en el fichero y en `src` de cada símbolo.
+  El spot de SPX/XSP también es de CBOE: `/v3/snapshot/indices` y los aggs de `I:SPX` dan **403**.
+- **La ventana de 5 peticiones/60s de `poly_client` es de la key ANTERIOR**: remedido el 2026-07-26,
+  **219 peticiones seguidas (hasta 7/s) sin un solo 429**. El archivador usa su propio fichero de
+  ritmo (`data/poly_rate_state_chains.json`, 120/60s) para no vaciarle la cuota a nadie.
+- **Un flip sólo se publica si es RAÍZ MEDIDA del barrido.** `gex_core._flip` devuelve el EXTREMO
+  del rango cuando el perfil no cambia de signo, y ese extremo LO FIJA LA BANDA: SKHY daba
+  207,5 / 230 / 270 / 305 / 390 según dónde se cortara la cadena. Si no hay cruce → `flip: null` +
+  `flip_src: sin_cruce_de_signo_en_la_banda`, y `abs_wall_kind` queda `null` (sin flip no se afirma
+  pin ni trampilla). El símbolo se publica igual: muros, POC, régimen y net SÍ están medidos.
+
 ### Claude Way (2026-07-17) — cómo deben operar todos los agentes
 Doctrina completa: `~/Documents/Obsidian Vault/AI Brain/The Claude Way.md` + skill **`claude-way`**
 (`.claude/skills/claude-way/`, también en `~/.grok/skills/claude-way/` y `~/.claude/skills/claude-way/`).

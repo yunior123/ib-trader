@@ -201,16 +201,19 @@ def chain_full_map(sym, max_days=CHAIN_MAX_DAYS):
     dict a medias y jamas un cero: sin cadena no hay libro que medir.
 
     Ojo con el ALCANCE: este mapa se construye sobre TODOS los vencimientos del fichero (banda
-    +-4.5%, DTE<=10 por defecto del archivador), mientras que el de `chart_levels` es 0DTE
-    puro. Son poblaciones distintas y por eso `chain_scope` va publicado en la salida — y por
-    eso el ledger de percentiles no las mezcla."""
+    ADAPTATIVA por gamma marginal y vencimientos hasta el mensual siguiente desde 2026-07-26;
+    la banda real va en `chain_band`), mientras que el de `chart_levels` es 0DTE puro. Son
+    poblaciones distintas y por eso `chain_scope` va publicado en la salida — y por eso el
+    ledger de percentiles no las mezcla."""
     path, fecha = gex_snapshot.latest_chain(sym, max_days=max_days)
     if not path:
         return None
-    cs, spot, meta, n_total = gex_snapshot.contracts_from(path)
-    if not spot or not n_total or not cs:
+    # n_cand = contratos con OI>0 (los unicos que pueden entrar en el perfil): es el
+    # denominador que no se hunde al ensanchar la banda del archivo.
+    cs, spot, meta, n_cand = gex_snapshot.contracts_from(path)
+    if not spot or not n_cand or not cs:
         return None
-    pct = len(cs) / n_total
+    pct = len(cs) / n_cand
     gi = gex_core.build_gex(cs, spot)
     if not gi:
         return None
@@ -231,7 +234,7 @@ def chain_full_map(sym, max_days=CHAIN_MAX_DAYS):
         "chain_date": fecha,
         "chain_age_days": round(edad_d, 2),
         "chain_n_contracts": len(cs),
-        "chain_n_rows": n_total,
+        "chain_n_oi": n_cand,
         "chain_band": meta.get("band"),
         "chain_dte_max": meta.get("dte_max"),
         "chain_snapshot_local": meta.get("snapshot_local"),

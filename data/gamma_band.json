@@ -1,0 +1,25 @@
+{
+ "generado_por": "scripts/poly_chain_archive.py",
+ "asof": "2026-07-26 09:57:45",
+ "criterio": "ensanchar x1.5 hasta que la corona nueva aporte <2% de la gamma bruta; suelo 10%, techo 60%",
+ "syms": {
+  "QQQ": {
+   "band": 0.18,
+   "convergido": true,
+   "ring_share": 0.00931,
+   "n": 3552,
+   "pages": 15,
+   "spot": 685.06,
+   "asof": "2026-07-26 09:57:45"
+  },
+  "MU": {
+   "band": 0.6,
+   "convergido": false,
+   "ring_share": 0.02794,
+   "n": 2906,
+   "pages": 13,
+   "spot": 925.21,
+   "asof": "2026-07-26 09:57:45"
+  }
+ }
+}
