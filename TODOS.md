@@ -122,12 +122,30 @@
       = prohibida (doctrina "en día de earnings del ticker jamás aguantar el print con premium
       comprado"); (c) todos AMC ⇒ el veto muerde en el **cierre** del día del print, no en la
       apertura; (d) la fecha se re-verifica el mismo día: Finviz mueve fechas.
-- [ ] **[pendiente] "terminar todo de trendspider, menthorq… make it nice, surprise me"**
-      (Yunior 2026-07-25). MEDIDO: de las 30 minadas, **8 siguen sin fichero** (#19 cube-widening,
-      #21 wall-decay, #22 chain-delta, #24 close-drift, #25 expiry-unwind, #26 gap-islands,
-      #29 peer-weights, #30 finviz-snap). *La sorpresa elegida*: **#21 wall-decay ledger** — medir
-      la constante de la casa ("1er toque rebota ~70%, 3+ exhausto") que **nunca se ha medido** y
-      que sin embargo veta de verdad en `compass.cpp:635-638` (`TOUCH_EXHAUST = 3`).
+- [x] **[cerrado — re-auditado 2026-07-26] "terminar todo de trendspider, menthorq… make it nice,
+      surprise me"** (Yunior 2026-07-25). La nota anterior ("8 sin fichero") estaba OBSOLETA:
+      #26 gap-islands (`ab43fba`), #29 peer-weights hardening (`ebae728`, 0/19 pares sobreviven
+      el null) y #21 wall-decay ya estaban construidos. Quedan **5 sin fichero, las 5 BLOQUEADAS
+      por dato, no por código** (`docs/WAVE2-3-VIABILITY-2026-07-25.md`, re-verificado HOY):
+      - **#19 cube-widening**: exige TWS vivo + flota corriendo. `./fleet_hours --why` →
+        **DEAD**, faltan 3h35m para la ventana (dom 20:00 Toronto); 0 procesos TWS/bridge vivos.
+      - **#22 chain-delta engine**: pide pares de snapshot cada 5 min en tabla `gex_cube` —
+        **no existe** (`sqlite_master`); lo archivado hoy son 7 timestamps sueltos
+        (`0845 0944 0946 0947 0957 1001 1620`), no una cadencia de 5 min.
+      - **#24 close-drift**: pide cadena a las **13:30** en ≥120 sym-sesiones. Cero: los
+        horarios archivados en TODA la historia son `0408 0845 0944 0947 0957 1001 1018 1620`.
+      - **#25 expiry-unwind**: pide `chain_full_snap` sin tope de DTE + ~50 expiries. Hay
+        **2 fechas** (25 y 26-jul), ambas con `dte_max=10`.
+      - **#30 finviz-snap**: pide historia de short-float archivada. **0 ficheros**
+        (`find data -iname "*short_float*"` vacío) — falta credencial Elite + job nocturno,
+        luego ~40 días.
+      Del lado `designs-trendspider.md` (13 candidatos): #2/#3/#4/#6/#7 ya viven en el master
+      de 30; #8 sobrevive solo como KDE (`kde_levels.py`); **#1 gex-drift, #9 avwap-anchors,
+      #10 ratio-tape, #11 expansion-clock, #13 fleet-rank MUERTOS con refutación numérica**
+      (skill `anti-overfit-killlist`, items 16/9/10/14/13) — no se reabren.
+      **#5 tape-absorb sigue DIFERIDA**: necesita 20 sesiones de `trades.db equity_prints`;
+      la tabla **no existe** (`equity_prints_archiver.py` está escrito pero no ha corrido con
+      la flota viva) → 0/20. Ninguna de las 6 publica `null`/`0`/`{}` disfrazado de medición.
 - [ ] 🥇 **[pendiente — RELOJ DE 7 DÍAS] Unusual Whales** (Yunior 2026-07-25: "save, lets see how
       to use that one"). Token en `feeds.env` `UW_TOKEN`, **trial caduca ~2026-08-01**.
       MEDIDO hoy, los 6 endpoints responden 200 y traen **justo lo que la skill
