@@ -136,25 +136,36 @@ def test_ninguna_celda_real_sobrevive_por_ticker(BC, reales):
 # --------------------------------------------------------------------------
 # 3-4. Higiene del dato publicado
 # --------------------------------------------------------------------------
-def test_la_propuesta_no_pisa_el_fichero_vivo(BC, reales, tmp_path):
+@pytest.fixture
+def propuesta(BC, reales, tmp_path, monkeypatch):
+    """Corre write_outputs con REPO redirigido a un tmp: el test no escribe en
+    data/ del repo (una salida de test jamas debe pasar por dato de produccion).
+    """
+    os.makedirs(tmp_path / "data")
+    monkeypatch.setattr(BC, "REPO", str(tmp_path))
+    grid, fleet, _pooled = BC.analyze(reales)
+    return BC.write_outputs(grid, fleet), tmp_path
+
+
+def test_la_propuesta_no_pisa_el_fichero_vivo(propuesta):
     """Cambiar lo que la flota VETA hoy lo decide el lead. El script escribe
     `bollinger_plus.PROPUESTO.json` y deja intacto `bollinger_plus.json`."""
+    plus, raiz = propuesta
     vivo = os.path.join(REPO, "data", "bollinger_plus.json")
     antes = open(vivo, "rb").read() if os.path.exists(vivo) else None
-    grid, fleet, _pooled = BC.analyze(reales)
-    plus = BC.write_outputs(grid, fleet)
+    assert os.path.exists(raiz / "data" / "bollinger_plus.PROPUESTO.json")
+    assert not os.path.exists(raiz / "data" / "bollinger_plus.json"), (
+        "write_outputs jamas escribe el fichero VIVO")
     despues = open(vivo, "rb").read() if os.path.exists(vivo) else None
-    assert antes == despues, "el fichero VIVO no se toca desde este script"
-    assert os.path.exists(os.path.join(REPO, "data", "bollinger_plus.PROPUESTO.json"))
+    assert antes == despues
     assert plus["_meta"]["antes_despues"]["veto_viejo"] == 70
     assert plus["_meta"]["antes_despues"]["veto_nuevo"] == 0
 
 
-def test_toda_celda_publicada_lleva_fdr_ok_y_why(BC, reales):
+def test_toda_celda_publicada_lleva_fdr_ok_y_why(propuesta):
     """Patron de data/signal_enable.json: el porqué viaja DENTRO del dato. Y una
     celda descartada explica en su `why` que no pasa BH-FDR."""
-    grid, fleet, _pooled = BC.analyze(reales)
-    plus = BC.write_outputs(grid, fleet)
+    plus, _raiz = propuesta
     n_desc = 0
     for sym, g in plus.items():
         if sym.startswith("_"):
