@@ -22,6 +22,21 @@
 //       stderr) — necesitan datos fuera del nucleo BB. Fallback total: elastic
 //       basico con todos los defaults.
 //
+// MULTIPLICIDAD (2026-07-26) — un veto SOLO se aplica si trae "fdr_ok": true.
+//   Los veto_filters salian de un grid de ~400 pruebas seleccionadas con
+//   `n>=15 y |uplift|>=5pts`: sin p-valor, sin correccion por multiplicidad y
+//   sobre la n CRUDA. Medido: ese criterio produce ~113 celdas sobre RUIDO PURO
+//   (etiqueta barajada) y CERO de las 401 celdas testeables sobrevive BH-FDR
+//   q=0.10 sobre muestra efectiva (rho=0.41). Un veto no es una opinion: APAGA
+//   la señal y no deja rastro auditable. Dejar de aplicarlos desbloquea 1717
+//   señales de 7582 (+29%) en 30 tickers x 30 dias.
+//   Por eso: veto sin `fdr_ok:true` = veto que NO se aplica. Si el JSON trae
+//   vetos y NINGUNO lleva el campo (fichero anterior a la correccion), se
+//   GRITA por stderr y no se aplica ninguno — degradacion limpia: la celda deja
+//   de vetar, jamas pasa a vetar al reves.
+//   `--legacy-vetos` restaura el comportamiento viejo (aplicar todo) SOLO para
+//   reproducir el antes/despues en backtest. Nunca en vivo.
+//
 // clang++ -std=c++23 -O3 -march=native -Wall -Wextra -o bb_engine bb_engine.cpp
 // ============================================================================
 #include "bb_core.h"
@@ -84,7 +99,8 @@ static bool json_bool(const std::string& obj, const char* key, bool dflt) {
 }
 
 // -------------------------- config por ticker -------------------------------
-static Config load_config(const std::string& data_dir, const std::string& sym, bool quiet) {
+static Config load_config(const std::string& data_dir, const std::string& sym, bool quiet,
+                          bool legacy_vetos = false) {
     Config cfg;  // defaults = elastic basico
     const std::string probs = slurp(data_dir + "/bollinger_probs.json");
     if (!probs.empty()) {
@@ -101,22 +117,47 @@ static Config load_config(const std::string& data_dir, const std::string& sym, b
         const std::string tk = json_obj(plus, sym);
         const std::string vetos = tk.empty() ? "" : json_obj(tk, "veto_filters");
         size_t p = 0;
+        size_t n_items = 0, n_con_flag = 0, n_ruido = 0, n_aplicados = 0;
         while ((p = vetos.find("\"filtro\"", p)) != std::string::npos) {
             const size_t a = vetos.find('"', vetos.find(':', p) + 1);
             const size_t b = a == std::string::npos ? a : vetos.find('"', a + 1);
             if (b == std::string::npos) break;
             const std::string f = vetos.substr(a + 1, b - a - 1);
-            if      (f == "F5_squeeze") cfg.veto_f5_squeeze = true;
-            else if (f == "F7_15m_in")  cfg.veto_f7_15m_in = true;
-            else if (f == "F6_0945")    cfg.veto_win[0] = true;
-            else if (f == "F6_1030")    cfg.veto_win[1] = true;
-            else if (f == "F6_1130")    cfg.veto_win[2] = true;
-            else if (f == "F6_1400")    cfg.veto_win[3] = true;
+            ++n_items;
+            // El item va de aqui al siguiente "filtro" (o al final del array).
+            const size_t nxt = vetos.find("\"filtro\"", b);
+            const std::string item = vetos.substr(b, (nxt == std::string::npos ? vetos.size() : nxt) - b);
+            const bool tiene_flag = item.find("\"fdr_ok\"") != std::string::npos;
+            if (tiene_flag) ++n_con_flag;
+            // Un veto solo manda si la celda sobrevivio a la correccion por
+            // multiplicidad. Sin el campo -> no manda (salvo --legacy-vetos).
+            const bool vale = legacy_vetos || (tiene_flag && json_bool(item, "fdr_ok", false));
+            if (!vale) {
+                ++n_ruido;
+                p = b;
+                continue;
+            }
+            if      (f == "F5_squeeze") { cfg.veto_f5_squeeze = true; ++n_aplicados; }
+            else if (f == "F7_15m_in")  { cfg.veto_f7_15m_in = true;  ++n_aplicados; }
+            else if (f == "F6_0945")    { cfg.veto_win[0] = true;     ++n_aplicados; }
+            else if (f == "F6_1030")    { cfg.veto_win[1] = true;     ++n_aplicados; }
+            else if (f == "F6_1130")    { cfg.veto_win[2] = true;     ++n_aplicados; }
+            else if (f == "F6_1400")    { cfg.veto_win[3] = true;     ++n_aplicados; }
             else if (!quiet)
                 std::fprintf(stderr, "[bb_engine] %s: veto %s NO implementable solo-BB -> ignorado (degradacion limpia)\n",
                              sym.c_str(), f.c_str());
             p = b;
         }
+        if (n_items > 0 && n_con_flag == 0 && !legacy_vetos)
+            std::fprintf(stderr,
+                         "[bb_engine] %s: bollinger_plus.json trae %zu vetos SIN campo \"fdr_ok\" "
+                         "(fichero anterior a la correccion por multiplicidad) -> NINGUNO se aplica. "
+                         "Regenerar con scripts/bollinger_complements.py --analyze.\n",
+                         sym.c_str(), n_items);
+        else if (!quiet && n_items > 0)
+            std::fprintf(stderr, "[bb_engine] %s: vetos %zu leidos, %zu aplicados, %zu descartados%s\n",
+                         sym.c_str(), n_items, n_aplicados, n_ruido,
+                         legacy_vetos ? " [LEGACY: fdr_ok ignorado]" : " (no pasan BH-FDR)");
     }
     if (!quiet)
         std::fprintf(stderr,
@@ -148,7 +189,7 @@ static std::vector<Bar> load_bars(const std::string& path, size_t* bad = nullptr
 // ------------------------------ backtest ------------------------------------
 static int run_backtest(const std::string& csv5m, const std::string& csv1m,
                         const std::string& sym, const std::string& out_path,
-                        const std::string& data_dir) {
+                        const std::string& data_dir, bool legacy_vetos) {
     const bool use1m = !csv1m.empty();
     const std::string src = use1m ? csv1m : csv5m;
     size_t bad = 0;
@@ -160,7 +201,7 @@ static int run_backtest(const std::string& csv5m, const std::string& csv1m,
     std::fprintf(stderr, "[bb_engine] %s backtest: %zu barras %s (%zu lineas malformadas saltadas)%s\n",
                  sym.c_str(), bars.size(), use1m ? "1m" : "5m", bad,
                  use1m ? " [elastic en 1m]" : " [SIN --csv1m: elastic corre en 5m — declarado]");
-    Engine eng(sym, load_config(data_dir, sym, false), use1m ? 60 : 300, hm_et);
+    Engine eng(sym, load_config(data_dir, sym, false, legacy_vetos), use1m ? 60 : 300, hm_et);
     FILE* out = out_path.empty() ? stdout : std::fopen(out_path.c_str(), "w");
     if (!out) { std::fprintf(stderr, "[bb_engine] no puedo abrir %s\n", out_path.c_str()); return 1; }
     std::fprintf(out, "epoch,sym,side,kind,ref_px,target_px,stop_px\n");
@@ -183,9 +224,10 @@ static int run_backtest(const std::string& csv5m, const std::string& csv1m,
 // escribe señales FRESCAS (barra <= 10 min de antiguedad) a JSONL.
 // SIN voz, SIN broker. --once = una pasada (test); si no, loop con sleep.
 static int run_live(const std::string& sym, const std::string& data_dir,
-                    const std::string& out_path, bool once, int interval_s) {
+                    const std::string& out_path, bool once, int interval_s,
+                    bool legacy_vetos) {
     const std::string bars_path = data_dir + "/bars_" + lower(sym) + "_ibkr.txt";
-    Engine eng(sym, load_config(data_dir, sym, false), 60, hm_et);
+    Engine eng(sym, load_config(data_dir, sym, false, legacy_vetos), 60, hm_et);
     double last_seen = 0;
     std::fprintf(stderr, "[bb_engine] live %s <- %s -> %s (%s)\n", sym.c_str(),
                  bars_path.c_str(), out_path.c_str(), once ? "once" : "loop");
@@ -221,7 +263,7 @@ int main(int argc, char** argv) {
     setenv("TZ", "America/New_York", 1);  // ventanas horarias en ET, DST-correcto
     tzset();
     std::string mode, csv5m, csv1m, sym, out_path, data_dir = "data";
-    bool once = false;
+    bool once = false, legacy_vetos = false;
     int interval_s = 5;
     for (int i = 1; i < argc; ++i) {
         const std::string a = argv[i];
@@ -236,22 +278,24 @@ int main(int argc, char** argv) {
         else if (a == "--out")      out_path = next("--out");
         else if (a == "--data-dir") data_dir = next("--data-dir");
         else if (a == "--once")     once = true;
+        else if (a == "--legacy-vetos") legacy_vetos = true;  // solo backtest comparativo
         else if (a == "--interval-s") interval_s = std::atoi(next("--interval-s").c_str());
         else {
             std::fprintf(stderr,
                 "uso: bb_engine --backtest <5m.csv> --sym SYM [--csv1m <1m.csv>] [--out f.csv] [--data-dir data]\n"
-                "     bb_engine --live SYM [--once] [--data-dir data] [--out data/engine_signals_bb.jsonl]\n");
+                "     bb_engine --live SYM [--once] [--data-dir data] [--out data/engine_signals_bb.jsonl]\n"
+                "opciones: --legacy-vetos = aplicar vetos SIN mirar fdr_ok (solo para el antes/despues)\n");
             return 2;
         }
     }
     for (auto& ch : sym) ch = (char)std::toupper((unsigned char)ch);
     if (mode == "backtest") {
         if (sym.empty()) { std::fprintf(stderr, "--sym obligatorio en backtest\n"); return 2; }
-        return run_backtest(csv5m, csv1m, sym, out_path, data_dir);
+        return run_backtest(csv5m, csv1m, sym, out_path, data_dir, legacy_vetos);
     }
     if (mode == "live") {
         if (out_path.empty()) out_path = data_dir + "/engine_signals_bb.jsonl";
-        return run_live(sym, data_dir, out_path, once, interval_s);
+        return run_live(sym, data_dir, out_path, once, interval_s, legacy_vetos);
     }
     std::fprintf(stderr, "modo obligatorio: --backtest o --live\n");
     return 2;

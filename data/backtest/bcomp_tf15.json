@@ -1,0 +1,105 @@
+{
+ "variantes": [
+  {
+   "variante": "TODAS (regla actual: 1m rompe)",
+   "n": 4383,
+   "n_eff": 41.2,
+   "p_toque": 66.4,
+   "wilson_toque": [
+    51.1,
+    78.8
+   ],
+   "n_barrera": 4326,
+   "n_eff_barrera": 41.1,
+   "sin_resolver": 57,
+   "p_barrera": 33.3,
+   "exp_barrera_crudo": -0.0007,
+   "exp_lb_n_eff": -0.1766,
+   "ambiguas_pct": 5.6
+  },
+  {
+   "variante": "1m Y 15m rotos (mismo lado)",
+   "n": 352,
+   "n_eff": 36.6,
+   "p_toque": 57.1,
+   "wilson_toque": [
+    41.2,
+    71.7
+   ],
+   "n_barrera": 343,
+   "n_eff_barrera": 35.7,
+   "sin_resolver": 9,
+   "p_barrera": 30.9,
+   "exp_barrera_crudo": -0.0364,
+   "exp_lb_n_eff": -0.2299,
+   "ambiguas_pct": 2.3
+  },
+  {
+   "variante": "1m roto, 15m NO roto",
+   "n": 4031,
+   "n_eff": 41.1,
+   "p_toque": 67.2,
+   "wilson_toque": [
+    51.9,
+    79.5
+   ],
+   "n_barrera": 3983,
+   "n_eff_barrera": 41.1,
+   "sin_resolver": 48,
+   "p_barrera": 33.5,
+   "exp_barrera_crudo": 0.0024,
+   "exp_lb_n_eff": -0.1766,
+   "ambiguas_pct": 5.9
+  },
+  {
+   "variante": "BB-2TF bot (1m+5m rotos, 15m NO)",
+   "n": 409,
+   "n_eff": 37.7,
+   "p_toque": 49.4,
+   "wilson_toque": [
+    34.2,
+    64.6
+   ],
+   "n_barrera": 391,
+   "n_eff_barrera": 39.0,
+   "sin_resolver": 18,
+   "p_barrera": 29.9,
+   "exp_barrera_crudo": -0.0512,
+   "exp_lb_n_eff": -0.2215,
+   "ambiguas_pct": 0.3
+  },
+  {
+   "variante": "BB-3TF bot (1m+5m+15m rotos)",
+   "n": 200,
+   "n_eff": 36.3,
+   "p_toque": 43.0,
+   "wilson_toque": [
+    28.3,
+    59.0
+   ],
+   "n_barrera": 188,
+   "n_eff_barrera": 34.1,
+   "sin_resolver": 12,
+   "p_barrera": 28.2,
+   "exp_barrera_crudo": -0.0771,
+   "exp_lb_n_eff": -0.2475,
+   "ambiguas_pct": 0.0
+  }
+ ],
+ "contraste_15m_roto_vs_no": {
+  "pval_toque": 0.35992944982381214,
+  "pval_barrera": 0.8088226099834828
+ },
+ "contraste_bot_3TF_vs_2TF": {
+  "pval_toque": 0.5815443017117974,
+  "n_2tf": 409,
+  "n_3tf": 200
+ },
+ "cobertura_15m": {
+  "n_total": 4619,
+  "n_con_15m_conocido": 4383,
+  "n_15m_roto": 352,
+  "pct_15m_roto": 8.0
+ },
+ "nota": "Barrera: TP=media BB congelada, SL=medio gap en contra, primer toque manda, barra ambigua -> SL, timeout=NULL (no es victoria). NO se ha corrido el null de entrada aleatoria de scripts/null_control.py sobre estas variantes: esto es un CONTRASTE CONDICIONADO, no un veredicto PROVEN."
+}
