@@ -1161,7 +1161,15 @@ function renderWatchlist() {
       (USERWL.includes(s) ? `<span class="wx" data-del="${s}" title="Quitar de mi lista">✕</span>` : `<span class="wx" style="visibility:hidden">✕</span>`) +
       `</div>`;
   };
-  const flt = (arr) => wlFilter ? arr.filter(s => s.includes(wlFilter)) : arr;
+  // Un símbolo, DOS formas de escribirlo: "MU" y "MUUSDT" (el nombre nativo del perp en
+  // Bybit) deben encontrar la misma fila. Antes MUUSDT no casaba con nada y parecía que el
+  // perp no existía.
+  const flt = (arr) => {
+    if (!wlFilter) return arr;
+    const base = wlFilter.endsWith("USDT") ? wlFilter.slice(0, -4) : wlFilter;
+    return arr.filter(s => s.includes(wlFilter) ||
+                           (PERP[s] && (s.includes(base) || (s + "USDT").includes(wlFilter))));
+  };
   const fleetV = flt([...FLEET].sort()), userV = flt([...USERWL].sort()), koreaV = flt([...KOREA].sort());
   let html = '<div class="wlhdr"><span>Símbolo</span><span>Último</span><span>%Día</span><span>Vol</span><span>Perp</span><span></span></div>';
   if (fleetV.length) html += '<div class="wlhdr sub">Flota</div>' + fleetV.map(mk).join("");
@@ -1187,8 +1195,11 @@ wlsearch.addEventListener("input", () => {
 });
 wlsearch.addEventListener("keydown", (e) => {
   if (e.key !== "Enter") return;
-  const s = wlsearch.value.trim().toUpperCase();
+  let s = wlsearch.value.trim().toUpperCase();
   if (!s) return;
+  // "MUUSDT" es el nombre del PERP; el subyacente en IBKR es "MU". Sin esto se intentaba
+  // cualificar MUUSDT contra IBKR y fallaba.
+  if (s.endsWith("USDT") && PERP[s.slice(0, -4)]) s = s.slice(0, -4);
   wlsearch.value = ""; wlFilter = "";
   if (ws && ws.readyState === WebSocket.OPEN)
     ws.send(JSON.stringify({ cmd: "watchlist", act: "add", sym: s }));  // server cualifica + responde watchlist
