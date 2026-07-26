@@ -166,14 +166,14 @@ static double whale_score(double now, int want_dir = 1) {
     return sc > 1.0 ? 1.0 : sc;
 }
 // spread % del NBBO vivo del daemon; 0 si no hay dato fresco (<=10s)
-static double nbbo_spread_pct() {
+static double nbbo_spread_pct() {  // <0 = sin NBBO vivo (fail-closed, nunca 0 disfrazado)
     FILE* f = fopen(NBBO_FILE, "r");
-    if (!f) return 0;
+    if (!f) return -1;
     double ep = 0, bid = 0, ask = 0;
     int n = fscanf(f, "%lf %lf %lf", &ep, &bid, &ask);
     fclose(f);
-    if (n != 3 || bid <= 0 || ask <= bid) return 0;
-    if (time(nullptr) - (time_t)ep > 10) return 0;
+    if (n != 3 || bid <= 0 || ask <= bid) return -1;
+    if (time(nullptr) - (time_t)ep > 10) return -1;
     return (ask - bid) / ((ask + bid) / 2) * 100.0;
 }
 // posicion virtual PERSISTIDA (fix 2026-07-10: un restart perdia la posicion
@@ -1754,10 +1754,11 @@ int main(int argc, char** argv) {
                      && (CANDLE == 0 || (has_pb && candle_bull(pb, b)))
                      && (CONFIRM_STRICT == 0 ||
                          (b.v >= vol_ma && b.c >= b.l + 0.5 * (b.h - b.l)))) {
-                double sp = (SPREAD_MAX > 0 && bar_is_live()) ? nbbo_spread_pct() : 0;
-                if (sp > SPREAD_MAX && SPREAD_MAX > 0) {
-                    std::printf("[%02d:%02d] confirm BLOQUEADO: spread %.2f%% > %.2f%%\n",
-                                H, M, sp, SPREAD_MAX);
+                bool sp_gate = SPREAD_MAX > 0 && bar_is_live();
+                double sp = sp_gate ? nbbo_spread_pct() : 0;
+                if (sp_gate && (sp < 0 || sp > SPREAD_MAX)) {  // fail-closed: sin NBBO no pasa
+                    std::printf("[%02d:%02d] confirm BLOQUEADO: spread %.2f%% (max %.2f%%%s)\n",
+                                H, M, sp, SPREAD_MAX, sp < 0 ? " sin-NBBO" : "");
                     std::fflush(stdout);
                 } else { pending_buy = true; armed = false; }
             }
@@ -1855,8 +1856,9 @@ int main(int argc, char** argv) {
                          && (S_CANDLE == 0 || (has_pb && candle_bear(pb, b)))
                          && (CONFIRM_STRICT == 0 ||
                              (b.v >= vol_ma && b.c <= b.h - 0.5 * (b.h - b.l)))) {
-                    double sp = (SPREAD_MAX > 0 && bar_is_live()) ? nbbo_spread_pct() : 0;
-                    if (!(sp > SPREAD_MAX && SPREAD_MAX > 0)) { pending_short = true; armed_s = false; }
+                    bool sp_gate = SPREAD_MAX > 0 && bar_is_live();
+                    double sp = sp_gate ? nbbo_spread_pct() : 0;
+                    if (!(sp_gate && (sp < 0 || sp > SPREAD_MAX))) { pending_short = true; armed_s = false; }
                 }
                 if (armed_s && nbars - armed_bar_s > CONFIRM_WINDOW) armed_s = false;
             }

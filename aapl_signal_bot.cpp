@@ -166,14 +166,14 @@ static double whale_score(double now, int want_dir = 1) {
     return sc > 1.0 ? 1.0 : sc;
 }
 // spread % del NBBO vivo del daemon; 0 si no hay dato fresco (<=10s)
-static double nbbo_spread_pct() {
+static double nbbo_spread_pct() {  // <0 = sin NBBO vivo (fail-closed, nunca 0 disfrazado)
     FILE* f = fopen(NBBO_FILE, "r");
-    if (!f) return 0;
+    if (!f) return -1;
     double ep = 0, bid = 0, ask = 0;
     int n = fscanf(f, "%lf %lf %lf", &ep, &bid, &ask);
     fclose(f);
-    if (n != 3 || bid <= 0 || ask <= bid) return 0;
-    if (time(nullptr) - (time_t)ep > 10) return 0;
+    if (n != 3 || bid <= 0 || ask <= bid) return -1;
+    if (time(nullptr) - (time_t)ep > 10) return -1;
     return (ask - bid) / ((ask + bid) / 2) * 100.0;
 }
 // posicion virtual PERSISTIDA (fix 2026-07-10: un restart perdia la posicion
@@ -828,11 +828,11 @@ struct V6Prob {
             if (sscanf(line, "%39s %d %d %lf", r.cls, &r.n, &r.w, &wr) >= 3 && r.n > 0)
                 rows[nrows++] = r; }
         fclose(f); }
-    double prob(const char* cls, double prior) const {
+    double prob(const char* cls, double prior) const {   // <0 = sin medicion, no se inventa
         for (int i = 0; i < nrows; i++)
             if (!strcmp(rows[i].cls, cls))
                 return 100.0 * ((rows[i].w + (prior / 100.0) * 20.0) / (rows[i].n + 20.0));
-        return prior; } };
+        return -1; } };
 
 // ---- estado global v6 ----
 static V6ATR   v6_atr1;                 // ATR14 1m propio (cero acoplamiento al clasico)
@@ -1143,6 +1143,7 @@ static void v6_on_bar(const Bar& b, bool alert_hours, int H, int M) {
     V6Cand cb, cs;
     auto consider = [&](V6Cand& best, int cls, double sc, const char* r) {
         double p = v6_prob.prob(V6_CLS[cls], V6_PRIOR[cls]);
+        if (p < 0) return;   // sin tabla medida (v6_backtest.py): no se canta prior inventado
         if (best.cls < 0 || p > best.prob + 1e-9 ||
             (std::fabs(p - best.prob) < 1e-9 && sc > best.score)) {
             best.cls = cls; best.score = sc; best.prob = p;
@@ -1364,6 +1365,26 @@ static void on_term(int) {
 }
 
 int main(int argc, char** argv) {
+    // hook de test (tests/test_aapl_spread_gate.py): reproduce el gate exacto de
+    // spread de las lineas 1758-1761 sin la maquina de barras/RTH completa.
+    if (argc > 1 && !std::strcmp(argv[1], "--test-nbbo-spread")) {
+        bool sp_gate = SPREAD_MAX > 0;
+        double sp = sp_gate ? nbbo_spread_pct() : 0;
+        bool blocked = sp_gate && (sp < 0 || sp > SPREAD_MAX);
+        std::printf("sp=%.6f blocked=%d\n", sp, (int)blocked);
+        return 0;
+    }
+    // hook de test (tests/test_aapl_v6_prob.py): v6_prob.prob() real contra
+    // data/prob_table_aapl.txt del cwd, sin numero inventado si la clase no se midio.
+    if (argc > 2 && !std::strcmp(argv[1], "--test-v6-prob")) {
+        v6_prob.maybe_reload("data/prob_table_aapl.txt", (double)time(nullptr));
+        int cls = -1;
+        for (int i = 0; i < V6_N_CLASSES; i++)
+            if (!std::strcmp(V6_CLS[i], argv[2])) { cls = i; break; }
+        if (cls < 0) { std::printf("prob=ERR\n"); return 1; }
+        std::printf("prob=%.6f\n", v6_prob.prob(V6_CLS[cls], V6_PRIOR[cls]));
+        return 0;
+    }
     setpgid(0, 0);                    // grupo propio: el killpg no toca al keepalive
     std::signal(SIGINT, on_term);  std::signal(SIGTERM, on_term);
     std::signal(SIGHUP, on_term);  std::signal(SIGPIPE, SIG_IGN);
@@ -1754,10 +1775,11 @@ int main(int argc, char** argv) {
                      && (CANDLE == 0 || (has_pb && candle_bull(pb, b)))
                      && (CONFIRM_STRICT == 0 ||
                          (b.v >= vol_ma && b.c >= b.l + 0.5 * (b.h - b.l)))) {
-                double sp = (SPREAD_MAX > 0 && bar_is_live()) ? nbbo_spread_pct() : 0;
-                if (sp > SPREAD_MAX && SPREAD_MAX > 0) {
-                    std::printf("[%02d:%02d] confirm BLOQUEADO: spread %.2f%% > %.2f%%\n",
-                                H, M, sp, SPREAD_MAX);
+                bool sp_gate = SPREAD_MAX > 0 && bar_is_live();
+                double sp = sp_gate ? nbbo_spread_pct() : 0;
+                if (sp_gate && (sp < 0 || sp > SPREAD_MAX)) {  // fail-closed: sin NBBO no pasa
+                    std::printf("[%02d:%02d] confirm BLOQUEADO: spread %.2f%% (max %.2f%%%s)\n",
+                                H, M, sp, SPREAD_MAX, sp < 0 ? " sin-NBBO" : "");
                     std::fflush(stdout);
                 } else { pending_buy = true; armed = false; }
             }
@@ -1855,8 +1877,9 @@ int main(int argc, char** argv) {
                          && (S_CANDLE == 0 || (has_pb && candle_bear(pb, b)))
                          && (CONFIRM_STRICT == 0 ||
                              (b.v >= vol_ma && b.c <= b.h - 0.5 * (b.h - b.l)))) {
-                    double sp = (SPREAD_MAX > 0 && bar_is_live()) ? nbbo_spread_pct() : 0;
-                    if (!(sp > SPREAD_MAX && SPREAD_MAX > 0)) { pending_short = true; armed_s = false; }
+                    bool sp_gate = SPREAD_MAX > 0 && bar_is_live();
+                    double sp = sp_gate ? nbbo_spread_pct() : 0;
+                    if (!(sp_gate && (sp < 0 || sp > SPREAD_MAX))) { pending_short = true; armed_s = false; }
                 }
                 if (armed_s && nbars - armed_bar_s > CONFIRM_WINDOW) armed_s = false;
             }

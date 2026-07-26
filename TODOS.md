@@ -19,6 +19,14 @@
       ANTES que `AUTH` (`finviz_scout.cpp:91`, `x_whale_bot.cpp:366`, `options_hunter.py:34`,
       y `finviz_valuation.py` **solo** lee AUTH3) → cambiar solo `FINVIZ_AUTH` no lo usaba nadie.
       El anterior seguía dando 200 al sustituirlo; queda comentado. Caduca ~2026-08-01.
+- [ ] **[pendiente] SKHY es el ÚNICO de la flota con el gate de spread APAGADO** (medido
+  2026-07-26). Los otros 23 `*_signal_bot` llevan `export <SYM>_SPREAD_MAX` en su keepalive
+  (0,3 casi todos, DRAM 0,5); `scripts/skhy_keepalive.sh` no define `SKHY_SPREAD_MAX`, y el
+  default es `envd(...,0)` = **feature OFF**, así que en SKHY el gate no aplica AUNQUE el
+  fail-closed esté puesto. Decidir el umbral (SKHY es ADR coreano, spread naturalmente más
+  ancho — 0,5 como DRAM, o medirlo antes de fijarlo). Los otros 6 sin gate (cper kospi
+  samsung skhynix slv uso) están FUERA de `fleet.txt`: no urge.
+
 - [ ] **[pendiente] "chrome claude is connected now, u can use tradingflow, plus test all too"**
   (Yunior 2026-07-26). Chrome conectado por fin tras 5 intentos fallidos. Dos cosas:
   (a) minar TradingFlow con la cuenta de Yunior; (b) **probar TODO** en el navegador
