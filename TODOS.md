@@ -51,6 +51,17 @@
   simétrico mock/live por inspección de código (`_prime_bars` cubre ambos), pero no se
   levantó un 7º puente contra TWS para no arriesgar el Mac de 8 GB.
 
+- [ ] 🔴 **[pendiente — ORDEN VIEJA QUE SE PERDIO, nunca se anoto] Timeframes de SEGUNDOS en el
+  chart, estilo TradingView** (Yunior 2026-07-26: *"why i still dont see timeframes for seconds?
+  like 30 seconds, 15, 45, similar to trading view, i gave u an order long time ago about it"*).
+  **MEDIDO hoy**: `charts/live.html:346-357` solo tiene 1m..1M; el mas pequeno es **1m**.
+  `chart_bridge.LIVE_BAR:101` no tiene ninguna entrada sub-minuto, y `agg()` solo agrega HACIA
+  ARRIBA desde 1m — de 1m no se puede bajar a 30s, hace falta pedir barras de segundos o
+  construirlas del tick stream (que YA existe: `reqMktData`/`pendingTickersEvent`).
+  IBKR sirve nativo `1/5/10/15/30 secs` por `reqHistoricalData` (con poca profundidad
+  historica) y `reqRealTimeBars` solo da 5s. **45s NO es nativo**: sale de agregar 15s x3 o 5s x9.
+  Fallo de proceso: la orden es vieja y JAMAS entro en TODOS.md.
+
 - [ ] **[pendiente] "make sure executable in desktop for software has icon too"** (Yunior
   2026-07-26). El ejecutable del escritorio a veces se queda sin icono.
 
@@ -1399,3 +1410,25 @@ son 14 de cashtags y 22 de VPVR).
       `*_signal_bot.cpp` cuentan `bb_dn_tfs>=2` como CONFIRMACIÓN, que es el signo contrario.
       Números en `data/backtest/bcomp_tf15.json`. Ninguno de los contrastes llega a p<0,05 con
       n_eff → **UNPROVEN**, banner-solamente. Cambio de regla en los bots: lo coordina el lead.
+- [ ] **"clean my desktop... only keep updated info, just in one folder"** (Yunior 2026-07-26)
+      → **hecho** (agente limpieza escritorio, sin borrar nada, solo `mv`): `~/Desktop/ib-trader/hoy/`
+      (planes-2026-07-26 + price-alerts.txt) y `~/Desktop/ib-trader/archivo/` (planes-07-21..25,
+      imanes-07-21/22, price-alerts-archivo-20260720.txt, QQQ_plan_caida_BN.pdf/png renombrados
+      con fecha, `.trading-signals.bak`). Escritorio raíz quedó con: `ib-trader Cockpit.app`
+      (sin tocar, otro agente arreglando su icono), enlace `trading-signals` (sin tocar — 11
+      ficheros vivos lo leen/escriben: `price_alarm.cpp`, `whale_scalper.cpp`, `chart_bridge.py`,
+      `screener/state.py`, etc.), `ib-trader/` nueva, y **hallazgo**: lo que la petición llamaba
+      "10.48.app 79B, alias roto" **NO es basura** — es `IB Gateway 10.48`, symlink real y
+      funcional a `~/Applications/IB Gateway 10.48/IB Gateway 10.48.app`. Lo dejé en el escritorio
+      intacto, no encaja en el reorg de ib-trader.
+      **PENDIENTE DE DECISIÓN — 2 jobs escriben directo a la raíz del Desktop con ruta
+      hardcodeada (no a `ib-trader/hoy/`), van a repoblar el escritorio mañana**:
+      1. `com.ibtrader.printplans` (lunes 09:25) → `print_mon_plans.sh:8` `DEST=$HOME/Desktop/planes-$DAY`.
+      2. `price_alarm.cpp:80` (vía `com.ibtrader.fleet`/`fleet_keepalive_start.sh`, cuando la
+         flota despierte hoy 20:00 Toronto) y `chart_bridge.py:665` — ambos hardcodean
+         `~/Desktop/price-alerts.txt`, van a recrear el fichero en la raíz en cuanto haya nueva
+         alarma. `daily_archive.py:195` también lee `~/Desktop/planes-{date}/ranking.json`
+         hardcodeado (hoy ya corrió a las 16:10, sin impacto; mañana si el folder está en
+         `hoy/` en vez de la raíz, el `cp` con `warn=False` fallará en silencio y no archivará).
+      No toqué estos 3 scripts (fuera de mi encargo). Si Yunior quiere que el reorg se mantenga
+      solo, hay que repuntar esas 3 rutas a `~/Desktop/ib-trader/hoy/`.
