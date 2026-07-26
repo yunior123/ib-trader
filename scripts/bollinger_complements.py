@@ -22,40 +22,13 @@ Filtros F1-F8 (grid completo, sin cherry-picking) + combos de a 2.
 Resultados incrementales: data/backtest/bcomp_results.json (no se pierde nada
 si muere a mitad). Analisis: --analyze -> data/bollinger_plus.PROPUESTO.json + grid md.
 
-MULTIPLICIDAD (corregido 2026-07-26) — el defecto y su medida
--------------------------------------------------------------
-El criterio original de seleccion era `n>=15 y |uplift|>=5pts`: un umbral de
-TAMAÑO DE EFECTO, sin p-valor, sin correccion por multiplicidad y sobre la n
-CRUDA. El grid hace ~400 pruebas. Medido el 2026-07-26 con las mismas señales:
-
-  - criterio viejo sobre los datos REALES ......... 150 celdas (70 veto + 80 best)
-  - criterio viejo sobre RUIDO PURO (etiqueta
-    barajada dentro de cada ticker, 10 semillas) .. 112.9 celdas de media
-  - celdas ticker x filtro con p<0.05 ............ 14 de 387 (por azar: 19.4)
-  - BH-FDR q=0.10 sobre n_eff .................... 0 de 401 sobreviven
-  - señales que bb_engine desbloquea al dejar de
-    aplicar esos vetos (30 tickers x 30 dias) ..... 5865 -> 7582 (+1717, +29%)
-
-O sea: ~3 de cada 4 "hallazgos" del criterio viejo los reproduce el azar, y el
-grid entero contiene MENOS señal que una moneda. Un veto no es una opinion:
-APAGA la señal y no deja rastro auditable, asi que publicar ruido como veto es
-daño invisible.
-
-Procedimiento nuevo (skill `measured-probability`):
-  1. p-valor por celda = z-test de dos proporciones celda vs SU COMPLEMENTO
-     dentro del mismo ticker (grupos independientes; el `uplift` contra la base
-     es anidado y no es testeable asi).
-  2. muestra EFECTIVA antes de testear: `n_eff = n / (1 + (m̄-1)·ρ̄)` topado por
-     el numero de clusters (sym,fecha), con ρ̄ = 0.41 MEDIDA en la flota y
-     m̄ = señales por sesion de la celda. Misma funcion que null_control.py:214.
-  3. BH-FDR q=0.10 sobre TODA la familia de pruebas del grid (por-ticker +
-     flota + combos), no sobre una celda suelta.
-  4. se publica una celda solo si pasa BH-FDR **y** n_eff >= 30 (el minimo de
-     'medido' de la casa, K::CALIB_MIN_N).
-
-La salida va a `data/bollinger_plus.PROPUESTO.json`: cambiar lo que la flota
-VETA hoy es decision del lead, no de este script. `bollinger_plus.json` NO se
-toca. Cada celda lleva su `why` DENTRO del dato (patron signal_enable.json).
+MULTIPLICIDAD (2026-07-26): el criterio viejo era `n>=15 y |uplift|>=5pts` —
+umbral de efecto, sin p-valor, sin correccion y sobre n CRUDA, en un grid de
+~400 pruebas. Publicaba 150 celdas sobre datos reales y 112.9 de media sobre
+RUIDO PURO (etiqueta barajada). Ahora: p-valor celda vs SU COMPLEMENTO sobre
+muestra EFECTIVA (Kish, ρ̄=0.41 medida, cluster=sesion) + BH-FDR q=0.10 sobre
+las 401 pruebas + n_eff>=30. Sobreviven 0. Salida a
+`data/bollinger_plus.PROPUESTO.json`: el fichero VIVO lo conmuta el lead.
 
 SEÑAL-SOLAMENTE. Aditivo. Sin daemons.
 """
@@ -92,30 +65,16 @@ def _mt():
 
 
 def clusters(sigs):
-    """Clusters de informacion independiente: la SESION.
-
-    ρ̄=0.41 es la correlacion media por pares MEDIDA ENTRE SIMBOLOS de la flota,
-    asi que las 30 señales de un dia en que todo cae junto NO son 30
-    observaciones. Agrupar por (sym,fecha) dejaria esa correlacion fuera justo
-    en las celdas agregadas de flota, que son las que mas se benefician de
-    ella. Para una celda de un solo ticker (sym,fecha) y fecha coinciden."""
+    """La SESION es el cluster: ρ̄=0.41 esta medida ENTRE simbolos, asi que un dia
+    en que la flota cae junta no son 30 observaciones."""
     return {s["date"] for s in sigs}
 
 
 def n_efectiva(sigs, tope_clusters=False):
-    """n_eff de una celda por el design effect de Kish sobre clusters
-    (sym,fecha): `n_eff = n / (1 + (m̄-1)·ρ̄)` con ρ̄ = RHO_FLOTA MEDIDA y
-    m̄ = señales por cluster. Devuelve None si la celda esta vacia (jamas un
-    numero plausible).
-
-    `effective_n` trunca su `k` a entero, asi que m̄ se redondea HACIA ARRIBA:
-    ante la duda la muestra efectiva sale mas pequeña, nunca mas grande.
-
-    `tope_clusters=True` aplica ademas el techo `n_eff <= n_clusters` de
-    null_control.effective_n. OJO: ese techo equivale a ρ=1 y con ρ̄=0.41 muerde
-    SIEMPRE que m̄>1 (n/(1+(m̄-1)ρ) >= n/m̄ para todo ρ<=1), dejando n_eff
-    identico al numero de clusters y tirando a la basura la ρ̄ medida. Por eso
-    aqui es una SENSIBILIDAD que se reporta, no el criterio."""
+    """Kish: n_eff = n/(1+(m̄-1)·ρ̄). None si la celda esta vacia.
+    m̄ se redondea HACIA ARRIBA (ante la duda, muestra mas pequeña).
+    tope_clusters equivale a ρ=1 y muerde siempre -> es sensibilidad, no
+    criterio."""
     if not sigs:
         return None
     effective_n, _, _ = _mt()
@@ -438,8 +397,7 @@ def fdefs():
 
 
 def cell(sigs, key="hit_mid30"):
-    """Celda con su Wilson sobre la muestra EFECTIVA. El Wilson crudo es
-    anticonservador ~3-4x cuando las observaciones comparten sesion."""
+    """Wilson sobre muestra EFECTIVA (el crudo es anticonservador ~3-4x)."""
     n = len(sigs)
     k = sum(1 for s in sigs if s[key])
     ne = n_efectiva(sigs)
@@ -455,9 +413,8 @@ def cell(sigs, key="hit_mid30"):
 
 
 def prueba(sub, comp, key="hit_mid30"):
-    """p-valor de la celda: z-test de dos proporciones celda vs SU COMPLEMENTO
-    (grupos disjuntos) sobre las muestras EFECTIVAS. None = no testeable (algun
-    grupo vacio) -> esa celda no puede publicarse jamas."""
+    """z-test de dos proporciones celda vs su COMPLEMENTO sobre n_eff.
+    None = no testeable -> jamas publicable."""
     if not sub or not comp:
         return None
     _, two_prop_p, _ = _mt()
@@ -468,10 +425,8 @@ def prueba(sub, comp, key="hit_mid30"):
 
 
 def aplicar_fdr(familia, q=FDR_Q):
-    """BH-FDR q sobre TODA la familia de pruebas del grid. `familia` es una
-    lista de dicts-celda con 'pval'; se anota 'fdr_reject' y 'fdr_q' EN el dict.
-    Las celdas sin pval quedan marcadas como no testeables (jamas se publican).
-    Devuelve (n_pruebas, n_sobreviven)."""
+    """BH-FDR sobre TODA la familia del grid; anota fdr_reject/fdr_q en cada
+    celda. Devuelve (n_pruebas, n_sobreviven)."""
     _, _, bh = _mt()
     testeables = [c for c in familia if c.get("pval") is not None]
     for c in familia:
@@ -574,8 +529,7 @@ def analyze(results):
 
 
 def sobrevive(c):
-    """¿La celda puede publicarse? BH-FDR + n_eff minima. Devuelve (bool, why).
-    El `why` viaja DENTRO del dato (patron data/signal_enable.json)."""
+    """(bool, why) — BH-FDR + n_eff minima. El why viaja DENTRO del dato."""
     if c.get("pval") is None:
         return False, ("no testeable: el complemento del filtro esta vacio dentro "
                        "del ticker -> no hay contraste posible")
@@ -593,8 +547,7 @@ def sobrevive(c):
 
 
 def write_outputs(grid, fleet):
-    """Escribe la PROPUESTA. `bollinger_plus.json` NO se toca: cambiar lo que la
-    flota veta hoy lo decide el lead (regla de la casa)."""
+    """Escribe la PROPUESTA; el fichero VIVO no se toca (lo conmuta el lead)."""
     plus = {}
     viejo_best = viejo_veto = nuevo_best = nuevo_veto = 0
     caidas = []
@@ -657,29 +610,16 @@ def write_outputs(grid, fleet):
 
 # ------------------------------------------------ hipotesis multi-TF (1m Y 15m)
 def analizar_tf15(results):
-    """¿Exigir que el 15m TAMBIEN rompa mejora el edge, o solo recorta muestra?
+    """¿Exigir que el 15m TAMBIEN rompa mejora el edge o solo recorta muestra?
+    (Yunior 2026-07-25: "are we making sure it breaks in 1 min and 15 min?")
 
-    Pregunta de Yunior (2026-07-25): "with BB, are we making sure it breaks in
-    1 min and 15 min? to avoid noise?". La regla viva en los signal bots cuenta
-    2-de-3 TF (1m+5m+15m) y el 5m se agrega DESDE las mismas barras de 1m, asi
-    que 1m+5m basta y el 15m puede no romper nunca (medido por el lead:
-    148 señales BB-2TF vs 4 BB-3TF en 501 sesiones -> el 15m participa 2.6%).
-
-    Aqui se mide sobre la deteccion elastic con DOS outcomes:
-      - toque: P(toca la media BB20-1m en 30 min)  [el de siempre]
-      - barrera: triple barrera TP=media / SL=medio gap en contra, timeout=NULL
-    Variantes: TODAS (regla actual) vs 15m TAMBIEN ROTO vs 15m DENTRO, mas el
-    brazo band-walk 5m separado en BB-2TF (1m+5m) y BB-3TF (1m+5m+15m), que es
-    el 2-de-3 REAL de los bots.
-
-    RESULTADO MEDIDO 2026-07-26 (30 tickers x 30 dias) — P(toque):
-        67.2%  solo el 1m roto        (n=4031)
-        49.4%  BB-2TF  1m+5m rotos    (n= 409)
-        43.0%  BB-3TF  1m+5m+15m      (n= 200)
-    Monotona a la BAJA: cuantos MAS timeframes rotos, PEOR va la reversion —
-    porque romper en varios TF es band-walk (continuacion), no capitulacion.
-    Exigir el 15m no quita ruido: recorta el 92% de la muestra y empeora. Con
-    n_eff ~40 ningun contraste llega a p<0.05 -> UNPROVEN, banner-solamente.
+    MEDIDO 2026-07-26, 30 tickers x 30 dias, P(toca la media BB20-1m en 30 min):
+        67.2%  solo el 1m roto     (n=4031)
+        49.4%  BB-2TF  1m+5m       (n= 409)
+        43.0%  BB-3TF  1m+5m+15m   (n= 200)
+    Monotona a la BAJA: mas TF rotos = band-walk, no capitulacion. Exigir el 15m
+    recorta el 92% y empeora. Ningun contraste llega a p<0.05 con n_eff ~40 ->
+    UNPROVEN. Brazo band-walk 5m = el 2-de-3 real de los signal bots.
     """
     sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
     from calibration_ledger import wilson_lb_expectancy
