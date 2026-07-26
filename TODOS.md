@@ -728,14 +728,33 @@ Spec: `docs/FEATURES-MINED-2026-07-25.md`.
 > que faltan los refutadores. No tratar como bug hasta refutar.
 
 ### Los 4 CRITICAL vivos
-- [ ] **[pendiente]** `scripts/backtest_harness.py:72` — `ret=(r[0]-entry)/entry*100*th; win=ret>0.05`:
-      **sin coste, sin stop, sin path-dependence**. *Daño*: TODO el dimensionamiento de la flota
-      sale de un WR inflado (44% → **29,6%** al medirlo bien).
+- [x] ~~`scripts/backtest_harness.py:72` — `ret=(r[0]-entry)/entry*100*th; win=ret>0.05`~~ —
+      **CONFIRMADO Y ARREGLADO `85bec77`**. Ya no tiene definición propia de "win": delega en
+      `barrier_labels` (triple barrera) y añade el COSTE declarado (`FRICTION_PCT`: acción
+      0,040% / opción ATM 0,069% / opción OTM 0,340% del subyacente). MEDIDO en la celda
+      pre-comprometida k_tp=k_sl=1,0 H=30: WR viejo TOTAL 47,8% → barrera sin coste **50,0%**
+      (que es la moneda al aire analítica `k_sl/(k_tp+k_sl)`) → **42,7% neto** de opción ATM y
+      **5,4%** de opción OTM. La expectancia TOTAL pasa de +0,000 ATR a **−0,355 / −0,613 /
+      −3,021 ATR**: negativa en TODAS las celdas en cuanto entra cualquier coste. Sobre las 501
+      sesiones (`barrier_outcomes_regen`, n=213.656) bollinger va de 50,0% bruto a **37,0% neto**.
+      Propuesta en `data/backtest_harness.PROPUESTO.json`: 93 celdas, **0 APTA**. `baseline`
+      conserva el etiquetado viejo solo para el scoreboard, con
+      `label_def='horizon_return_DEPRECATED'` estampado en la fila. 19 tests.
 - [ ] **[pendiente]** `scripts/bollinger_complements.py:394` — grid de **318 tests sin corrección
       por multiplicidad**. *Daño*: **95 celdas de ruido aplicadas como VETO en vivo** en `bb_engine.cpp`.
-- [ ] **[pendiente]** `scripts/calibration_ledger.py:110` — `after = d[d.High >= entry]` es una
-      máscara booleana, no un corte temporal. *Daño*: **borra las barras donde vive el stop** →
-      pérdidas registradas como ganancias. Es el motor de calibración "empírica".
+- [x] ~~`scripts/calibration_ledger.py:110` — `after = d[d.High >= entry]` es una máscara
+      booleana, no un corte temporal~~ — **CONFIRMADO Y ARREGLADO** (diff en `75a3442`, barrido
+      por el `commit -a` de otro agente; medición en `d77a7a4`). Ahora es corte temporal
+      `d.iloc[i0:]` desde la barra que imprime la entrada, con la barra de entrada ambigua
+      resuelta STOP-PRIMERO igual que `barrier_labels.triple_barrier`. Los dos tests que fallaban
+      lo hacían con `'win' == 'loss'`: el daño literal. MEDIDO: sobre el ledger vivo (56 filas,
+      2026-07-21) el replay reproduce exacto el 88,9% publicado y **no cambia ni una fila** →
+      `data/calibration.json` intacto, nada que conmutar. Sobre 13.365 sesiones reales de
+      `poly_bars` con la geometría del propio ledger: 63,2% → **62,8%** (−0,4 pp), y el sesgo
+      tiene SIEMPRE el mismo signo en las 14 geometrías barridas (la máscara nunca es
+      conservadora). **La mina**: el daño escala con la resolución de barra — −0,5 pp a 15m
+      (lo que `grade()` baja hoy), −2,7 pp a 5m, **−6,6 pp a 1m**. Quien "mejorase" `grade()`
+      afinando el `interval` se comía 6,6 pp de mentira sin tocar el bucle.
 - [ ] **[pendiente]** `scripts/fleet_healthcheck.py:248,314` — `Popen(["nohup","zsh",...])` sin
       `start_new_session` y plist sin `AbandonProcessGroup`. *Daño*: **el auto-curado es un NO-OP**
       y el informe canta "REVIVIDO" en falso. Creemos tener red de seguridad y no la hay.
