@@ -298,6 +298,53 @@
 > y la trazabilidad ES el producto cuando se audita un fichero de dinero. Corolario de la regla
 > "repartir por FICHERO": el reparto también aplica al `git add`. Usar rutas explícitas.
 
+## 🆕 ÍNDICES A LA FLOTA + VERIFICACIÓN CRUZADA CON TRADINGFLOW (2026-07-26)
+> Yunior: *"SPX/SPXW/XSP… feel free to add them to fleet"* + captura suya de la tabla de índices
+> de TradingFlow (sesión 24-jul) con DIA/NDX/IWM/SPY/QQQ → *"put them on later todo"*.
+
+### 🔬 La captura de Yunior como TERCER REFEREE — y lo que revela
+Sus columnas son `sym | spot | netGEX | régimen | put_support | gamma_magnet | call_resistance`:
+`DIA 519 −0,1B` · `NDX 28.111 −2,5B` · `IWM 291 −3,0B` · `SPY 739 −5,1B` · `QQQ 685 −5,6B`, **los
+cinco NEGATIVOS** (coincide con nuestro 19/25 en NEG y con su propio recap "Dealers Stay Short Gamma").
+
+| net GEX | TradingFlow | CBOE (mío) | Polygon (mío) | **NUESTRO** |
+|---|---:|---:|---:|---:|
+| QQQ | −5,60 B | −6,03 B | −5,34 B | **−0,48 B** |
+| SPY | −5,10 B | −11,79 B | −10,95 B | **−0,65 B** |
+
+- **QQQ: los tres referees coinciden** (−5,3 a −6,0 B) y **nosotros estamos 13× por debajo**.
+- **SPY: TradingFlow discrepa de CBOE/Polygon por ~2,3×** — dos vendedores serios pueden no
+  coincidir, así que un solo referee externo nunca basta. Nosotros, 18× por debajo de CBOE.
+- **Confirma que el defecto 2 (banda ±4,5%) es real y grande.** No es teoría: es 13-18×.
+- Sus niveles de QQQ (684/685/685) están **pegados al spot** = son 0DTE puro; los nuestros
+  (680/695/700) abarcan más. Comparar sin igualar el scope de vencimientos es comparar otra cosa.
+
+### Símbolos — lo MEDIDO antes de tocar `data/fleet.txt`
+- **`SPXW` NO es un símbolo aparte**: la cadena `_SPX` de CBOE trae 28.784 contratos = **9.626 raíz
+  `SPX`** (mensuales AM-settled) **+ 19.158 raíz `SPXW`** (weeklies PM-settled). Mismo subyacente,
+  mismo spot. Añadirlo por separado = contar el índice dos veces.
+- **`XSP` = SPX/10 EXACTO** (741,20 vs 7.411,98). Mismo subyacente a un décimo.
+- 🔑 **Y aquí está el motivo REAL para tener XSP**, que no es el que se supuso: contrato ATM del
+  vencimiento vivo 27-jul → **SPX call $4.280 / put $1.710 (NO caben en $200)**; **XSP call $396 /
+  put $187 → el put SÍ cabe**. **XSP es el único vehículo de índice operable con el presupuesto
+  de la casa.** SPX sirve para el MAPA; XSP para OPERAR.
+- **NDX** es al QQQ lo que SPX al SPY (índice vs ETF). Su propio recap prueba que **divergen**:
+  *"a still-positive SPX and a newly short SPY"* (22-jul) y *"QQQ flips short gamma while SPX and
+  SPY stayed long"* (15-jul). **No son redundantes.**
+- **DIA** (Dow) e **IWM** (Russell 2000) sí son subyacentes NUEVOS — amplitud de mercado que hoy
+  no miramos.
+
+- [ ] **[pendiente] Añadir índices, con DOS LISTAS separadas** (esto es lo delicado):
+      **(a) `data/fleet.txt`** — la que usan MANADA, `fleet_consensus` y breadth: entran **SPX,
+      NDX, IWM, DIA**. **NO entra XSP ni SPXW**: serían votos duplicados del mismo subyacente
+      inflando el denominador — exactamente lo que rompió MANADA el 25-jul (21/26 = 80,8% disparó
+      voz DANGER cuando 21/30 = 70% no debía). Regla 4: *una tesis = un boleto*.
+      **(b) Universo OPERABLE** (mapa gamma + fichas + presupuesto): **SPX, XSP, NDX, IWM, DIA**.
+      *Riesgo declarado*: un símbolo muerto encoge denominadores → entran en **modo observación**
+      (mapa sí, voz no) hasta tener una semana de datos y `book_quality` medido.
+      *Verificar antes*: que IBKR dé cadena de SPX/NDX (entitlement CBOE Global Indexes) o que
+      valga el CDN de CBOE, que sí responde 200 hoy para `_SPX` y `_XSP`.
+
 ## 🆕 MINADO DE TRADINGFLOW (2026-07-26) — dossier `docs/research/designs-tradingflow.md`
 > Yunior: *"i really like this one too… take a look in chrome, it offers a lot of data, do they
 > have api?"*. **Respuesta medida: NO tienen API** (`/api/*`, `/openapi.json`, `/docs` → 404 o
@@ -953,3 +1000,27 @@ son 14 de cashtags y 22 de VPVR).
 > está parada un sábado— queda dicho como **sin observar**, no como hecho. Dos afirmaciones del
 > fichero anterior resultaron FALSAS al medirlas: el exit 78 (hoy `last exit code = 0`) y el regen
 > de bollinger ("63/501" cuando en realidad cubre las 501 fechas).
+
+## VETO DE BOLLINGER — multiplicidad (agente bollinger, 2026-07-26)
+- [x] **Grid de ~400 pruebas sin corrección por multiplicidad** (`bollinger_complements.py:394`,
+      criterio `n>=15 y |uplift|>=5pts`). **CONFIRMADO Y ARREGLADO**: BH-FDR q=0.10 sobre
+      muestra EFECTIVA (ρ̄=0.41 medida) → **0 de 401 celdas sobreviven**; caen las **150**
+      publicadas (**70 veto** + 80 best). Sobre RUIDO PURO (etiqueta barajada, 10 semillas) el
+      criterio viejo publicaba **112,9 celdas de media**; el nuevo, **0**. `bb_engine` ya no
+      aplica un veto sin `fdr_ok:true`: **+1717 señales desbloqueadas** (5865 → 7582, +29%) en
+      30 tickers × 30 días. Propuesta en `data/bollinger_plus.PROPUESTO.json`
+      (`bollinger_plus.json` VIVO sin tocar — la conmutación la decide el lead).
+- [ ] **[pendiente — lead]** conmutar `bollinger_plus.json` a la propuesta (deja los 30 tickers
+      con `veto_filters: []`). Consumidores a revisar: `bollinger_alarm.py:81`,
+      `yoel_adapted_engine.py:37`, `regen_signals.py:290`.
+- [ ] **[pendiente — doc]** `.claude/skills/bollinger-mastery/SKILL.md:180` y `engines/README.md:56`
+      siguen documentando el criterio viejo `n>=15, |uplift|>=5`. No los toqué (fuera de mi zona).
+- [x] **"with BB, are we making sure it breaks in 1 min and 15 min? to avoid noise?"** (Yunior
+      2026-07-25) → **MEDIDO, y la respuesta es NO exigirlo**: P(toque de la media en 30 min)
+      baja monótonamente cuantos MÁS timeframes estén rotos — **67,2% (solo 1m) > 49,4% (BB-2TF
+      1m+5m) > 43,0% (BB-3TF)**, n = 4031 / 409 / 200. Exigir el 15m recorta el 92% de la muestra
+      y empeora. Romper en más TF no confirma la reversión: es band-walk. `bb_engine` ya hace lo
+      correcto (veta el elástico si los TF mayores caminan, `bb_core.h:300-302`); los
+      `*_signal_bot.cpp` cuentan `bb_dn_tfs>=2` como CONFIRMACIÓN, que es el signo contrario.
+      Números en `data/backtest/bcomp_tf15.json`. Ninguno de los contrastes llega a p<0,05 con
+      n_eff → **UNPROVEN**, banner-solamente. Cambio de regla en los bots: lo coordina el lead.
