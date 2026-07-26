@@ -88,12 +88,27 @@
       testing on those windows, test everysingle feature in there"** (Yunior 2026-07-25).
       Va DESPUÉS de arreglar los muros: `replay.cpp:314-364` copia/sintetiza los `levels_<sym>.json`,
       así que con muros truncados las 6 ventanas enseñarían la misma basura.
-- [ ] **[pendiente] "priority now goes to signals… test all signals with data, full backtesting,
-      arrow is super important too"** (Yunior 2026-07-25). Hallazgo nuevo: **la flecha NUNCA está
-      calibrada en producción** — `compass.cpp:751-770` da `prob_source="medido"` solo con
-      `calib_lo`/`calib_n`, y esos campos **solo se pueblan por `--ev-stdin`** (`:1034`);
-      `gather()` no los lee de ningún fichero. Se suma a `direction_view.py:284-285`
-      (`prob = 50 + |score|*40`).
+- [ ] **[pendiente — parcial, revisado 2026-07-26]** "priority now goes to signals… test all
+      signals with data, full backtesting, arrow is super important too" (Yunior 2026-07-25).
+      Estado por pieza:
+      **(1) direction_view.py — CERRADO hoy** (ver casilla ~389): `prob = 50 + |score|*40` ya no
+      canta; patrón `compass.cpp` copiado, `prob` Optional solo con bucket calibrado propio.
+      **(2) compass.cpp — SIGUE ABIERTO, fuera de mi zona (solo lectura)**: `gather()` no puebla
+      `calib_lo`/`calib_n` de ningún fichero, solo los recibe por `--ev-stdin` (modo TEST). En
+      vivo `prob_of()` cae SIEMPRE a `"doctrina"` — la brújula tampoco está calibrada en
+      producción hoy. Haría falta un harness que corra compass en modo backtest (`--ev-stdin`
+      en bucle contra barras históricas) para construir la población del ESTADO `S_REV` (nivel
+      impreso + ≥2 familias + sin vetos) y calibrarla — no existe.
+      **(3) "test all signals with data" — 6/7 fuentes YA corridas** vía `null_control.py` (ver
+      `data/null_control.json`): bollinger UNPROVEN (n=1154, n_eff=89), cusum DATA-INSUFFICIENT
+      (n_eff=20, y además apagado en `signal_enable.json` por el regen separado de 501
+      sesiones), dip/flow/structural DATA-INSUFFICIENT (n_eff 3-14.5), whale DATA-INSUFFICIENT
+      (n_eff=18.7). **0/6 con `fdr_cells_passed>0`.** La 7ª fuente, `source='signal'`
+      (2085 filas, la MÁS GRANDE de `trades.db`), es **estructuralmente no-etiquetable**:
+      `barrier_labels.py:833` — es un relé heterogéneo sin tesis derivable
+      (`eod_backtest.thesis()` no la clasifica), no un olvido.
+      **(4) "full backtesting" del propio `backtest_harness.py`** ya está hecho (ver los 4
+      CRITICAL más abajo, `85bec77`): 0/93 celdas APTA con coste real.
 - [x] **[hecho — ENTRADA del framework] "calibramos la flecha con trading agents framework… pásale
       todo el arsenal, y que tenga acceso a finviz technicals"** (Yunior 2026-07-25).
       Commits: ib-trader `a6090ad` + `e61832e`, TradingAgents `575664b` + `577bef6`.
@@ -352,20 +367,19 @@
 - [x] Las **30 features minadas** de SpotGamma/TrendSpider/MenthorQ + **13 skills** +
       `docs/FEATURES-MINED-2026-07-25.md` + `docs/research/` (10 dossiers). `7dadf7a`
       `100d3a1` `145766c` `4f9d64d` `71b14cb` `ec6815e` `86d0c4c`
-- [ ] **[pendiente] "do we have spx in fleet? … make sure we use it to measure brújula"**
-      (Yunior 2026-07-25). *Estado MEDIDO*: SPX **no está** en `data/fleet.txt`, y por Polygon no
-      hay carril — `/v3/snapshot/indices?ticker=I:SPX` da **403 NOT_AUTHORIZED**
-      (`docs/HIRO-2026-07-25.md:33`). La única vía es la suscripción IBKR **CBOE Global Indexes**,
-      **la misma que falta para el VIX** (ver más abajo) → los dos se desbloquean con un solo pago.
-      🟢 **ACTUALIZACIÓN 2026-07-26: Yunior YA TIENE esa suscripción.** Y además Polygon SÍ da la
-      CADENA de `I:SPX` (250 contratos, 248 con gamma) aunque niegue sus BARRAS — así que el mapa
-      gamma de SPX se puede construir HOY sin depender de IBKR. Lo que falta verificar en vivo son
-      las BARRAS por TWS, que es lo que decidiría si SPX entra en `fleet.txt` o se queda en
-      `data/universe_gamma.txt` (ver `docs/UNIVERSOS.md`).
-      *Por qué importa*: la brújula mide el índice con QQQ/SPY (ETFs). SPX es el subyacente donde
-      vive el grueso del OI de índice; sin él, el mapa gamma del índice se lee por su proxy.
-      *Riesgo declarado*: **un símbolo muerto encoge denominadores** — no añadirlo hasta que el
-      entitlement esté confirmado en vivo.
+- [x] **[hecho d16c0b4/309c4c6, mapa; reverificado 2026-07-26]** "do we have spx in fleet? …
+      make sure we use it to measure brújula". Lo que SÍ estaba en mi alcance: SPX (+XSP/NDX/DIA/
+      IWM) **tienen mapa gamma completo hoy**, no solo cadena. Reverificado en vivo:
+      `data/gex_snapshot.json` publica los 5 con `regime`/`flip` (SPX 7484,68 NEG, XSP 760,97 NEG,
+      NDX 28767,66 NEG, DIA 517,27 POS, IWM 303,55 NEG — 36 claves incl. `_meta`); `chart_levels.gen`
+      corre para los 5 (`data/history/2026-07-26/chain_full_spx.json` etc. presentes,
+      `poly_chain_archive` los archiva a diario). SPX sigue **fuera de `data/fleet.txt`** (30,
+      sin cambios) — correcto, es la decisión escrita en `docs/UNIVERSOS.md` (sin BARRAS 1m no
+      vota). Lo que queda genuinamente pendiente y NO se puede cerrar sin sesión de mercado viva:
+      (a) probar BARRAS de SPX por TWS con la suscripción CBOE Global Indexes que Yunior ya tiene
+      (decide fleet.txt vs solo-mapa); (b) el consumo de este mapa por la brújula es
+      `scripts/compass.cpp`/`direction_view.py`, **fuera de mi alcance en este lote** (otro agente
+      los tiene ahora) — la data ya está lista para cuando los toquen.
 
 **OLA 1 — CERRADA (2026-07-25). 15 items en 4 agentes:**
 - [x] #1 `barrier-labels` **hecho 1a97611** + #2 `null-control` **hecho c1e3336**. Los dos únicos
@@ -387,21 +401,31 @@
 - [x] #11 `features-fanout` + **tope duro de 14 factores** — `hecho 785b29e` ("TOPE DURO de
       familias y vetos en la brujula"). Sin esto, 30 features = una flecha cuya varianza de prob
       colapsa a ~58% constante.
-- [ ] 🥇 **[pendiente] CABLEAR lo que ya se mide: nadie consume la calibración de barrera.**
-      *Qué es*: (a) `data/calibration_barrier.json` (123 KB, de hoy) y `data/null_control.json`
-      (5,6 KB, de hoy) existen y están llenos, pero **`scripts/direction_view.py` no los lee**.
-      MEDIDO: `grep -n "barrier\|null_control\|calibration" scripts/direction_view.py` = **0 hits**
-      en 329 líneas. La prob que canta sale de una fórmula fija, `direction_view.py:284-285`:
-      `prob = int(round(50 + abs(score)*40))` acotado a [50,90].
-      *Por qué importa*: **es el hueco más caro del repo hoy.** Se pagó una ola entera de trabajo
-      para medir que 0 de 131 celdas baten al azar, y la flota sigue cantando una probabilidad
-      INVENTADA por una fórmula lineal. Cada `prob NN%` que ve Yunior hoy es un número decorativo.
-      Cerrar esto es lo que convierte la medición en dinero.
-      *Ficheros*: `scripts/direction_view.py` (consumidor), + el PDF y `compass` como consumidores 2 y 3.
+- [x] **[hecho 2026-07-26 — agente signals]** 🥇 CABLEAR lo que ya se mide: nadie consume la
+      calibración de barrera. `scripts/direction_view.py` no leía `barrier`/`null_control`/
+      `calibration` (0 hits medido); `prob = int(round(50 + abs(score)*40))` cantaba un
+      plausible. **NO se cableó `calibration_barrier.json` a la flecha** (n=1154 = el pool
+      CRUDO de bollinger de `null_control.json`, población distinta de "nuestro setup" — misma
+      falacia que el código ya rechaza con `prob_retroceso_50`). Se copió el patrón EXACTO de
+      `scripts/compass.cpp` `source_verdict()`/`prob_of()`, ya aplicado antes en
+      `order_engine/prob_profit.py._measured_prob()`: la vieja media ponderada pasa a llamarse
+      `doctrine_score` (CONTEXTO, nunca prob); `prob` es `Optional[int]`, solo se llena con
+      bucket `"direction_view|<regimen>"` en `data/calibration.json` (trust + n>=20) →
+      `prob_source` "medido"/"sin_medir"/"doctrina" (flat); nuevo `calib_context` lee el
+      veredicto CRUDO de `null_control.json` para la familia activa con más peso
+      (magnet→structural, captain_flow→whale, bollinger→bollinger, confirmado 1:1 contra
+      `trades.db` `signals.source`) y se publica como texto, jamás como número. Hoy no existe
+      ningún bucket `direction_view|*` en `calibration.json` → `prob` sale `null` siempre
+      (honesto). 7 tests nuevos `tests/test_direction_view_calib.py`. `chart_bridge.py` no se
+      tocó (ya lee `compass_<sym>.json` del binario C++, no llama a `direction_view.compute()`
+      desde 2026-07-25); `order_engine/prob_profit.py` (off-limits) usa `r.get("score")` para
+      la decisión y `r.get("prob")` solo en un string cosmético — con `prob=None` imprimirá
+      "None%" ahí, cosmético, fuera de mi zona, no toqué order_engine/.
       *(b)* `poly_bars` acaba el **2026-07-24 19:59 ET**: 197 señales del 07-25 quedaron sin
       etiquetar (`skip_entry_stale`). *(c)* el null de **16 niveles aleatorios** (parte B de la
       ficha #2) ya NO está bloqueado: `level_react` existe (`53b3f3c`). *(d)* la ruta sub-minuto no
-      existe → `ambig_pct` 2.1% es irreducible con `poly_bars`.
+      existe → `ambig_pct` 2.1% es irreducible con `poly_bars`. Estas 3 (b/c/d) siguen pendientes,
+      no eran mi zona hoy.
 
 **PENDIENTE (no delegado aún):**
 - [ ] **[pendiente — LO DECIDE YUNIOR]** Conmutar los keepalives a los binarios C++ nuevos
@@ -491,16 +515,21 @@ cinco NEGATIVOS** (coincide con nuestro 19/25 en NEG y con su propio recap "Deal
 - **DIA** (Dow) e **IWM** (Russell 2000) sí son subyacentes NUEVOS — amplitud de mercado que hoy
   no miramos.
 
-- [ ] **[pendiente] Añadir índices, con DOS LISTAS separadas** (esto es lo delicado):
-      **(a) `data/fleet.txt`** — la que usan MANADA, `fleet_consensus` y breadth: entran **SPX,
-      NDX, IWM, DIA**. **NO entra XSP ni SPXW**: serían votos duplicados del mismo subyacente
-      inflando el denominador — exactamente lo que rompió MANADA el 25-jul (21/26 = 80,8% disparó
-      voz DANGER cuando 21/30 = 70% no debía). Regla 4: *una tesis = un boleto*.
-      **(b) Universo OPERABLE** (mapa gamma + fichas + presupuesto): **SPX, XSP, NDX, IWM, DIA**.
-      *Riesgo declarado*: un símbolo muerto encoge denominadores → entran en **modo observación**
-      (mapa sí, voz no) hasta tener una semana de datos y `book_quality` medido.
-      *Verificar antes*: que IBKR dé cadena de SPX/NDX (entitlement CBOE Global Indexes) o que
-      valga el CDN de CBOE, que sí responde 200 hoy para `_SPX` y `_XSP`.
+- [x] **[hecho d16c0b4/309c4c6 — plan (a) revisado por `docs/UNIVERSOS.md`, más cauto que el
+      propuesto aquí; reverificado 2026-07-26]** Añadir índices, con DOS LISTAS separadas.
+      **Lo que quedó, y por qué NO es lo que dice (a) arriba**: `data/fleet.txt` (30, denominador
+      de MANADA) **sin tocar** — ni SPX ni NDX/IWM/DIA entraron todavía, porque ninguno tiene bot/
+      keepalive/`book_quality` de una semana medido, no solo por XSP/SPXW duplicando voto (eso
+      también es cierto). `data/universe_gamma.txt` (35 = fleet + **SPX XSP NDX DIA IWM**) SÍ está
+      hecho — verificado con `wc -w` y `universe.gamma_universe()`. Wiring confirmado end-to-end
+      hoy: `gex_snapshot.json` publica los 5 con regime/flip, `chart_levels.gen()` corre para los 5,
+      **`book_quality.run(['SPX','XSP','NDX','DIA','IWM'])` calcula labels reales** (SPX STABLE_PIN
+      coef 0.35 212 strikes 93% griegas, XSP STABLE_PIN 109 strikes, NDX STABLE_PIN 267 strikes,
+      DIA NEAR_FLIP 76 strikes, IWM STABLE_PIN 61 strikes) — el gate de "book_quality medido" antes
+      de promover a `fleet.txt` YA FUNCIONA, solo falta que pase el calendario (una semana de
+      datos, no código). `tests/test_fleet_consensus.py::test_universo_mapa_no_se_cuela_en_el_
+      denominador_de_manada` + `test_gex_snapshot.py::test_universo_es_independiente_de_fleet_txt`
+      siguen verdes — MANADA intacta en 30.
 
 ## 🆕 MINADO DE TRADINGFLOW (2026-07-26) — dossier `docs/research/designs-tradingflow.md`
 > Yunior: *"i really like this one too… take a look in chrome, it offers a lot of data, do they
@@ -709,11 +738,20 @@ Hecho: lightweight-charts v5 + ib_async (TWS 7496 realtime) · combo_tl (Supertr
       ÚNICA feature que necesita VIX de verdad: mide cuánto movería el flip un shock de VIX
       (banda <5pt estable, >15pt frágil). *Por qué importa*: distingue un flip que aguanta de uno
       que se mueve solo porque cambió la vol — hoy tratamos todos los flips como igual de sólidos.
-- [ ] **[pendiente, buildeable ya]** **Migration-trail del flip**: polilínea del flip histórico
-      (horizontal=estable / inclinada=deriva / dentada=régimen no fiable). MEDIDO: 0 hits de
-      `migration`/`flip_trail` en `scripts/` y `charts/`. *Por qué importa*: un flip DENTADO
-      significa que el régimen que estamos cantando no es fiable, y hoy no hay forma de verlo.
-      *Dato ya disponible*: `levels_5m.jsonl` (archivador #18, `c91c375`) guarda el flip cada 5 min.
+- [x] **[hecho 2026-07-26]** **Migration-trail del flip**: `gex_core.flip_migration_trail`
+      (`scripts/gex_core.py`, tras `wall_context`) + `gex_snapshot.flip_history` (lee
+      `levels_5m.jsonl` de hasta 10 días atrás, filtra `stale`/`flip=None`) → campo
+      `flip_migration` en cada símbolo de `data/gex_snapshot.json` (polilínea `trail`,
+      `drift_pct`, `reversal_rate`, `shape` horizontal/inclinada/dentada, umbrales declarados
+      como CONVENCIÓN no medida, igual que VPVR). **`<3` puntos válidos → `status
+      insuficiente_datos` y `shape: None`, NUNCA una forma fabricada** — verificado con datos
+      reales: QQQ/SPY/NVDA hoy solo tienen 0-1 puntos archivados (el cron de
+      `levels_5min_archive.py` casi no corrió el 25/26-jul), así que en producción **hoy**
+      todo sale `insuficiente_datos`, honestamente. Clasificación probada con series
+      sintéticas (`tests/test_flip_migration.py`, 11 tests): horizontal/inclinada/dentada
+      correctas, orden por ts aunque llegue desordenado, fichero corrupto/ausente no revienta.
+      *Pendiente real, no de código*: que el cron de 5 min acumule más de 1-2 puntos/día para
+      que el campo tenga contenido en vivo.
 - [x] ~~**Volume Profile (VPVR)** desde las barras — POC de volumen vs POC de gamma = confluencia~~
       — **hecho `bc670c6`**. `scripts/volume_profile.cpp` (C++23, `-O3 -mcpu=native -Wall -Wextra`,
       cero warnings) + `scripts/build_volume_profile.sh` + `tests/test_volume_profile.py` (22 tests,
@@ -724,24 +762,41 @@ Hecho: lightweight-charts v5 + ib_async (TWS 7496 realtime) · combo_tl (Supertr
       null, no "APART". **DESCRIPTIVO Y SIN VOZ**: cero probabilidad; las etiquetas
       CONFLUENCE/NEAR/APART son convención de distancia declarada, y el propio JSON lleva
       `thresholds_are_convention_not_measured: true`. La confluencia **NO está medida** todavía.
-- [ ] **[pendiente, buildeable ya]** **Pin-risk score** (concentración de |gamma| × proximidad ×
-      1/T; "fortress pin" si el POC coincide con el call wall). MEDIDO: 0 hits de
-      `pin_risk`/`fortress`. *Por qué importa*: la doctrina prohíbe 0DTE comprado en zona de pin
-      (protocolo imanes OI) y hoy esa zona se juzga a ojo. *Nota*: `pin-clock` (`d21f2eb`) ya da
-      el max-pain estructural — esto es la otra mitad, la concentración.
+- [x] **[hecho 2026-07-26]** **Pin-risk score**: `gex_core.pin_risk_score` (junto a
+      `wall_context`) = `hhi (concentración |gamma|, ya existía en build_gex) × proximidad al
+      POC (1 - |POC-spot|/spot) × 1/T_min` (piso `PIN_T_FLOOR`=1h/año para que no se dispare a
+      infinito al cierre 0DTE); `fortress_pin=True` si `abs_wall == call_wall` (comparación
+      exacta, no cercanía). Cableado en `gex_snapshot.snapshot_sym` → campo `pin_risk` en cada
+      símbolo de `data/gex_snapshot.json`, **`None` si falta HHI, POC o ningún contrato trae
+      `T`** (nunca un score fabricado). Verificado en vivo hoy con datos reales: QQQ score
+      18,09 (poc 690 vs call_wall 700, no fortress), SPY 13,28, NVDA 20,63, SPX 6,50 — los 4
+      con `fortress_pin: False` porque hoy el POC no coincide con el call_wall en ninguno.
+      **DESCRIPTIVO Y SIN VOZ** (`convention` en el propio dato: "no es probabilidad, es un
+      ranking descriptivo"), igual que VPVR/migration-trail. `tests/test_pin_risk.py` (10
+      tests): los 4 `None`-guards, piso de T, orden score-por-concentración y
+      score-por-proximidad, fortress exacto.
 - [ ] **[pendiente, buildeable ya]** **Charm al chart**: la matemática YA existe
       (`scripts/gex_core.py:145` `bs_charm`, `build_exposure` con vanna/charm) pero MEDIDO
       `grep -in "charm" charts/live.html` = **0 hits** → falta la capa CHARM en el toggle junto a
       GEX/VEX. *Por qué importa*: el charm es el drift/pin de la TARDE, justo la ventana
       13:30-15:45 que la skill `pin-and-expiry-mechanics` marca como decisiva.
-- [ ] **[pendiente]** Ampliar strikes del cache (`scripts/opt_chain_cache.py`). MEDIDO hoy,
-      `:49-54`: `PCT_BAND = 0.06` (±6%) y `MAX_STRIKES = 20`. *Por qué importa AHORA*: el motivo
-      original ("clavar el flip exacto de gexa") **murió con gexa**, pero el hueco real sigue: con
-      ±6% el flip 0DTE queda a ~0.5% y **`book_quality` juzga libros truncados**. *Ojo — puede que
-      ya no haga falta*: `poly_chain_archive` trae hoy la cadena COMPLETA con griegas medidas
-      (30 cadenas, QQQ 854 contratos), así que antes de ampliar la banda de IBKR conviene decidir
-      si el cache de TWS sigue siendo la fuente del flip o pasa a serlo Polygon. **Decisión antes
-      que código.** *(Fusiona la casilla duplicada del 2026-07-23 EOD.)*
+- [x] **[hecho 2026-07-26]** Ampliar strikes del cache (`scripts/opt_chain_cache.py:49-55`).
+      **Decisión**: TWS sigue siendo la fuente PRIMARIA del chart/brújula (IBKR=tiempo real,
+      regla #4); Polygon (`poly_chain_archive.py`) sigue siendo el archivo/histórico con su
+      banda-corona propia, no sustituye al bridge vivo. El bridge se queda TONTO (mueve bytes,
+      cero cómputo de banda adaptativa) — solo se ensancha la constante fija.
+      MEDIDO contra las 35 cadenas completas (`chain_full_<sym>.json` de hoy, nearest expiry,
+      strikes únicos dentro de la banda, tope 20/12 como en producción): con `PCT_BAND=0.06` la
+      banda —no `MAX_STRIKES`— era el cuello de botella en 15/26 símbolos (NOK 2, QCOM 8, SKHY 9,
+      NVDA/AMZN 10, INTC 12, DRAM/SPCX 13, TXN 14, TSLA/LRCX/GOOGL 15, AAPL 16, MSFT/AVGO 18,
+      TSM 19 — todos por debajo del cap de 20). A `PCT_BAND=0.15` los 26 llegan al cap de 20
+      **salvo NOK** (máx 5 incluso a 15%; estructuralmente fino — el propio `band_trace` de
+      Polygon para NOK no converge ni al techo duro 0.60, `ring_share` 0.064 > `RING_EPS` 0.02).
+      `NARROW_BAND` (MSFT/AVGO/AMZN/META) 0.04→0.08: solo AMZN estaba truncado (7 de 12 a 0.04,
+      14 a 0.08). **Costo en líneas TWS: CERO** — el conteo de contratos pedidos sigue capado
+      por `MAX_STRIKES`/`NARROW_MAX_STRIKES` (mismo `[:max_ks]` de siempre), la banda más ancha
+      solo cambia CUÁLES strikes entran antes del corte, no cuántos. Ciclo `<180s` intacto.
+      *(Fusiona la casilla duplicada del 2026-07-23 EOD.)*
 - BLOQUEADAS (necesitan tape firmado + dark-pool licenciado que NO tenemos): True Dealer Book,
   Dark Pool Nodes, DIX, Market-Tide firmado, GEX direccional. Sustituto casero = daemons whale/flow.
   (Ver skill `anti-overfit-killlist`: no se construyen, y está razonado por qué.)
@@ -1212,11 +1267,12 @@ son 14 de cashtags y 22 de VPVR).
 
 ## 🎯 LAS 5 VIVAS MÁS IMPORTANTES, por DAÑO si no se hacen
 
-1. 🥇 **Nadie consume la calibración de barrera.** `data/calibration_barrier.json` y
-   `null_control.json` están llenos y frescos, y `direction_view.py` **no los lee** (0 hits, medido).
-   La prob que canta la flota sale de `prob = 50 + |score|*40`. **Daño**: se pagó una ola entera
-   para medir que 0 de 131 celdas baten al azar, y seguimos publicando un número inventado a un
-   humano que opera con >$30.000. Es medición tirada a la basura y, peor, confianza mal puesta.
+1. ~~🥇 **Nadie consume la calibración de barrera.**~~ **CERRADO 2026-07-26.** `direction_view.py`
+   ya no canta `prob = 50 + |score|*40`: patrón `compass.cpp` copiado (`doctrine_score` = CONTEXTO,
+   `prob` Optional solo con bucket `direction_view|<regimen>` medido, `calib_context` lee
+   `null_control.json`). `calibration_barrier.json` sigue SIN usarse aquí a propósito (n=1154 es
+   pool crudo de bollinger, población distinta del setup compuesto — no se cablea lo que no mide
+   lo mismo). Ver casilla ~389.
 
 2. 🥈 **El DEPLOY no se ha hecho: la flota corre binarios viejos.** Los tres bugs críticos de
    dinero (auto-cancelación, side perdido → corto duplicado, stop duplicado) están arreglados en el
@@ -1258,9 +1314,18 @@ son 14 de cashtags y 22 de VPVR).
       aplica un veto sin `fdr_ok:true`: **+1717 señales desbloqueadas** (5865 → 7582, +29%) en
       30 tickers × 30 días. Propuesta en `data/bollinger_plus.PROPUESTO.json`
       (`bollinger_plus.json` VIVO sin tocar — la conmutación la decide el lead).
-- [ ] **[pendiente — lead]** conmutar `bollinger_plus.json` a la propuesta (deja los 30 tickers
-      con `veto_filters: []`). Consumidores a revisar: `bollinger_alarm.py:81`,
-      `yoel_adapted_engine.py:37`, `regen_signals.py:290`.
+- [x] **[hecho 2026-07-26 — agente signals, orden explícita de Yunior]** conmutado
+      `bollinger_plus.json` a la propuesta. Backup `data/bollinger_plus.json.bak-2026-07-26`
+      (fichero viejo intacto). Verificado los 3 consumidores ANTES de conmutar: `bollinger_alarm.py`
+      solo MENCIONA el fichero en un comentario (no lo lee); `yoel_adapted_engine.py:37` solo usa
+      `base.p`/`base.wilson` por ticker (test single, no forma parte del grid de 401 celdas) —
+      valor `p` sin cambios, cero impacto; `regen_signals.py:290` solo lista el nombre del fichero
+      como dependencia de refresco. El consumidor real de `veto_filters` es `engines/bb_engine.cpp`
+      (ya trae el gate `fdr_ok` desde el fix de arriba) — con la lista ahora vacía de verdad
+      (antes vacía "por fallback silencioso" al faltar `fdr_ok`) el comportamiento en vivo no
+      cambia (0 vetos aplicados en ambos casos) pero desaparece el `stderr` de aviso y el dato
+      deja de mentir sobre lo que contiene. `test_bollinger_multiplicidad.py::test_la_propuesta_no_pisa_el_fichero_vivo`
+      sigue verde (usa `tmp_path` con `REPO` monkeypatcheado, no toca el fichero real).
 - [x] **[hecho 6ebcbca — alineadas con la medición (3TF NO es más fuerte)]** **[pendiente — doc]** `.claude/skills/bollinger-mastery/SKILL.md:180` y `engines/README.md:56`
       siguen documentando el criterio viejo `n>=15, |uplift|>=5`. No los toqué (fuera de mi zona).
 - [x] **"with BB, are we making sure it breaks in 1 min and 15 min? to avoid noise?"** (Yunior

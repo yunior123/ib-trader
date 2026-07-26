@@ -13,14 +13,62 @@ Combina, en tiempo real y TODO MEDIDO/derivado (nada inventado):
   · valuación/inflación (inflation_score) como viento de cola/frente
   · imán estructural (narrator.structural_signal) si hay nodo oro dominante
 
-Devuelve {dir: 'up'|'down'|'flat', prob: int%, score: float[-1..1], factors:{...}, why:[...]}
-Es un SESGO compuesto (estilo 'bias' de gexa), honesto: NO es un win-rate medido, es la
-resultante de las fuerzas del mapa. SEÑAL-SOLAMENTE.
+Devuelve {dir, score: float[-1..1], doctrine_score: int% (contexto, NUNCA prob), prob:
+int%|None (solo "medido", bucket propio en calibration.json), prob_source, calib_context,
+factors:{...}, why:[...]}.
+doctrine_score es la vieja media ponderada (bias, no win-rate). prob es Optional a
+propósito (~/CLAUDE.md #3): patrón exacto de scripts/compass.cpp prob_of()/calib_context,
+ya aplicado en order_engine/prob_profit.py._measured_prob. SEÑAL-SOLAMENTE.
 """
 import os, sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "scripts"))
+
+CALIB_PATH = os.path.join(REPO, "data", "calibration.json")   # calibration_ledger.calibrate()
+CALIB_MIN_N = 20                                              # mismo umbral que MIN_N ahi
+NC_PATH = os.path.join(REPO, "data", "null_control.json")
+_NC_SOURCE_FOR_FACTOR = {"magnet": "structural", "captain_flow": "whale", "bollinger": "bollinger"}
+
+
+def _measured_prob(regime):
+    """Bucket "direction_view|<regime>" en data/calibration.json. None si no hay celda con
+    trust y n>=CALIB_MIN_N -- jamas un prior inventado."""
+    if not regime:
+        return None, None
+    try:
+        import json
+        cal = json.load(open(CALIB_PATH))
+    except Exception:
+        return None, None
+    b = cal.get(f"direction_view|{regime}")
+    if not b or not b.get("trust") or b.get("n", 0) < CALIB_MIN_N:
+        return None, None
+    return int(round(max(1, min(99, b["rate"] * 100)))), b
+
+
+def _calib_context(factors, weights):
+    """Veredicto MEDIDO (null_control.json) de la fuente cruda con mas peso en este computo,
+    publicado como CONTEXTO -- jamas como probabilidad (source_verdict de compass.cpp)."""
+    best_f, best_w = None, 0.0
+    for f, nc_src in _NC_SOURCE_FOR_FACTOR.items():
+        if f not in factors:
+            continue
+        w = abs(factors[f]) * weights.get(f, 1.0)
+        if w > best_w:
+            best_w, best_f = w, nc_src
+    if not best_f:
+        return None
+    try:
+        import json
+        nc = json.load(open(NC_PATH))
+    except Exception:
+        return None
+    sec = nc.get(best_f)
+    if not isinstance(sec, dict) or "verdict" not in sec:
+        return None
+    return (f"{best_f}:{sec['verdict']} n_eff={sec.get('n_eff', 0):.0f} "
+            f"fdr_ok={int(bool(sec.get('fdr_cells_passed', 0)))}")
 
 
 def _clamp(x, lo=-1.0, hi=1.0):
@@ -101,7 +149,8 @@ def compute(sym, lv=None):
     except Exception:
         lv = lv or {}
     if not lv or not lv.get("spot") or not lv.get("flip"):
-        return {"dir": "flat", "prob": 50, "score": 0.0, "factors": {},
+        return {"dir": "flat", "prob": 50, "prob_source": "doctrina", "calib_context": None,
+                "doctrine_score": 50, "score": 0.0, "factors": {},
                 "why": ["sin mapa GEX fresco"], "book_label": None, "book_coef": None}
     spot = lv["spot"]; flip = lv["flip"]; reg = lv.get("regime", "POS")
     em = lv.get("em") or spot * 0.02
@@ -270,7 +319,8 @@ def compute(sym, lv=None):
         # los anula. NO se fabrica un sesgo "plausible": se dice que no hay lectura.
         msg = ("libro THIN y solo factores gamma: SIN LECTURA direccional" if factors
                else "sin factores medibles")
-        return {"dir": "flat", "prob": 50, "score": 0.0, "target": None,
+        return {"dir": "flat", "prob": 50, "prob_source": "doctrina", "calib_context": None,
+                "doctrine_score": 50, "score": 0.0, "target": None,
                 "target_label": None, "target_pct": None, "spot": round(spot, 2),
                 "factors": factors, "why": ([msg] + why)[:5], "sym": sym,
                 "book_label": bq_label, "book_coef": bq_coef}
@@ -281,8 +331,20 @@ def compute(sym, lv=None):
         d = "down"
     else:
         d = "flat"
-    prob = int(round(50 + abs(score) * 40)) if d != "flat" else 50
-    prob = max(50, min(90, prob))
+    # doctrine_score = vieja media ponderada, ahora CONTEXTO (nunca "prob"): source_verdict/
+    # prob_of de scripts/compass.cpp, ya aplicado en order_engine/prob_profit.py._measured_prob.
+    # calibration_barrier.json (n=1154) mide la señal CRUDA de bollinger, no este setup
+    # compuesto -> no se usa aqui (misma falacia que compass rechaza con prob_retroceso_50).
+    doctrine_score = int(round(50 + abs(score) * 40)) if d != "flat" else 50
+    doctrine_score = max(50, min(90, doctrine_score))
+    calib_context = _calib_context(factors, weights)
+    prob, _bucket = _measured_prob(reg) if d != "flat" else (None, None)
+    prob_source = "medido" if prob is not None else "doctrina" if d == "flat" else "sin_medir"
+    if prob_source == "sin_medir":
+        why.append(f'prob SIN MEDIR (bucket "direction_view|{reg}" sin trust/n>={CALIB_MIN_N} '
+                    "en data/calibration.json) — doctrine_score es CONTEXTO, no probabilidad")
+    if prob is None and d == "flat":
+        prob = 50
 
     # PRÓXIMO OBJETIVO en el sentido de la flecha: imán estructural si va hacia él, si no
     # el muro/nodo más cercano en esa dirección (call wall arriba / put wall abajo / POC).
@@ -305,7 +367,8 @@ def compute(sym, lv=None):
             target = min(near, key=lambda x: abs(x - spot)); target_lab = "borde"
     tgt_pct = round((target - spot) / spot * 100, 2) if target else None
 
-    return {"dir": d, "prob": prob, "score": round(score, 3),
+    return {"dir": d, "prob": prob, "prob_source": prob_source, "calib_context": calib_context,
+            "doctrine_score": doctrine_score, "score": round(score, 3),
             "target": round(target, 2) if target else None, "target_label": target_lab,
             "target_pct": tgt_pct, "spot": round(spot, 2),
             "factors": factors, "why": why[:5], "sym": sym,
@@ -319,7 +382,11 @@ def _cli():
     arrow = "▲" if r["dir"] == "up" else "▼" if r["dir"] == "down" else "▬"
     tgt = (f"  → {r['target_label']} {r['target']} ({r['target_pct']:+.2f}%)"
            if r.get("target") else "")
-    print(f"{arrow} {sym}: {r['dir'].upper()} {r['prob']}%  (score {r['score']:+.2f}){tgt}")
+    pr = f"{r['prob']}% ({r['prob_source']})" if r["prob"] is not None else "SIN MEDIR"
+    print(f"{arrow} {sym}: {r['dir'].upper()} P(profit) {pr}  doctrine_score "
+          f"{r['doctrine_score']} (score {r['score']:+.2f}){tgt}")
+    if r.get("calib_context"):
+        print(f"    calib_context: {r['calib_context']}")
     for w in r["why"]:
         print(f"    · {w}")
     print("    factores:", json.dumps(r["factors"]))
