@@ -446,6 +446,43 @@ h3:first-child{margin-top:0}
 .foot p{font-family:var(--mono);font-size:11.5px;color:var(--ink3);margin:0;max-width:76ch}
 code{font-family:var(--mono);font-size:.92em;color:var(--ink)}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{
+ :root{--ground:#fff;--panel:#fff;--panel2:#fff;--line:#999;--ink:#000;--ink2:#333;
+   --ink3:#555;--gold:#000;--violet:#000;--call:#000;--put:#000;--warn:#000;}
+ body{background:#fff;color:#000;font-size:8pt}
+ .wrap{max-width:100%;padding:0}
+ .nav,.stamp{display:none}
+ h1{font-size:20pt}.lede{font-size:9pt}
+ .sheet{border:1pt solid #000;padding:6pt;margin:0 0 5pt;background:#fff}
+h2{font-size:12pt}h3{font-size:8.5pt;color:#000;border-bottom:.5pt solid #999}
+ .stats{grid-template-columns:repeat(4,1fr);gap:0;border:.5pt solid #999}
+ .stat{background:#fff;border-right:.5pt solid #999;border-bottom:.5pt solid #999;padding:4pt 6pt}
+.sv{font-size:10pt}.sl,.sn{font-size:7pt}
+ .reg.neg,.reg.pos{color:#000;font-weight:700}
+ .prof{background:#fff;border:.5pt solid #999;height:80mm;width:100%}
+ .two{grid-template-columns:1fr 1fr;gap:8pt}
+ .tree .why{font-size:7pt}.tree li{padding:2pt 0}
+ .ladder{font-size:7pt}.ladder .row{padding:2pt 5pt}
+ .cav{display:none}
+ .prof .pos{fill:#fff;stroke:#000;stroke-width:.5}.prof .neg{fill:#000}
+ .prof .klab,.prof .axlab,.prof .lvab{fill:#000}
+ .prof .spotl,.prof .flipl,.prof .ax{stroke:#000}
+ .prof .spotlt,.prof .fliplt{fill:#000}
+ .chip{border-color:#000;color:#000}
+ .ladder .row.spot{background:#eee;border-left:1pt solid #000}
+ .tree .node{background:#eee;border-left:1pt solid #000}
+ .tree li,.ladder .row{break-inside:avoid;page-break-inside:avoid}
+ .verdict{background:#fff;border-left:1pt solid #000;font-size:8pt}
+ .scroll{overflow:visible;border:.5pt solid #999}
+ .tbl{font-size:7.5pt}.tbl th{background:#eee;color:#000}
+ .tbl .c,.tbl .p{color:#000}.tbl .c{font-weight:700}
+ .st.ok,.st.warn,.st.bad{color:#000;border-color:#000}
+ .cav{break-inside:avoid}.cav ul{font-size:8pt}
+ .cbar div{background:#000}
+ .foot p{font-size:7.5pt;color:#000}
+ @page{margin:12mm 10mm}
+}
+
 </style>
 '''
 

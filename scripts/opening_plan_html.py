@@ -229,6 +229,44 @@ tr:last-child td{border-bottom:none}
 footer{border-top:1px solid var(--ln);margin-top:30px;padding-top:15px}
 footer p{font-family:var(--mo);font-size:11.5px;color:var(--ink3);margin:0;max-width:74ch}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media print{
+ :root{--bg:#fff;--pn:#fff;--pn2:#fff;--ln:#999;--ink:#000;--ink2:#333;--ink3:#555;
+   --au:#000;--vi:#000;--up:#000;--dn:#000;--wr:#000;}
+ body{background:#fff;color:#000;font-size:7.6pt;line-height:1.35}
+ .wrap{max-width:100%;padding:0}
+ nav,.stamp{display:none}
+ .top{border-bottom:1.5pt solid #000;padding-bottom:6pt;margin-bottom:8pt;break-after:avoid}
+ h1{font-size:20pt;margin:0 0 4pt}.lede{font-size:9pt;color:#333;margin:0}
+ .sh{border:1pt solid #000;padding:5pt;margin:0 0 4pt;background:#fff}
+h2{font-size:12pt;margin:0 0 1pt}.sub{font-size:8pt;color:#333}
+h3{font-size:7.6pt;color:#000;margin:6pt 0 3pt;border-bottom:.5pt solid #999}
+ .stats{grid-template-columns:repeat(5,1fr);gap:0;border:.5pt solid #999;margin-bottom:8pt}
+ .st{background:#fff;border-right:.5pt solid #999;border-bottom:.5pt solid #999;padding:4pt 6pt}
+.sv{font-size:10.5pt;color:#000}.sl,.sn{font-size:7pt;color:#333}
+ .rg.neg,.rg.pos{color:#000;font-weight:700}
+ .chart{border:.5pt solid #999;background:#fff;overflow:hidden;height:46mm}
+ .cnd{height:46mm;width:100%}
+ .cnd{min-width:0;width:100%}
+ /* las velas en tinta: relleno solo las bajistas, las alcistas huecas (convencion de papel) */
+ .cnd .cu{fill:#fff;stroke:#000}.cnd .cd{fill:#000;stroke:#000}
+ .cnd .wk{stroke:#000}.cnd .bd{stroke:#000;stroke-width:.7}
+ .cnd .bbl,.cnd .bbm{stroke:#777}
+ .cnd .lvc,.cnd .lvp,.cnd .lvf,.cnd .lva,.cnd .pxl{stroke:#000}
+ .cnd .lvt,.cnd .ax{fill:#000}
+ .two{grid-template-columns:1fr 1fr;gap:10pt}
+ .ram li{border-left:1pt solid #000;padding:2pt 0 2pt 5pt;margin-bottom:3pt;
+   break-inside:avoid;page-break-inside:avoid}
+ .ram b{font-size:7.6pt}.ram .lee{font-size:7.2pt;color:#000}.ram .inv{font-size:6.6pt;color:#444}
+ .warn{background:#fff;border-left:1pt solid #000;font-size:7pt;padding:4pt 6pt}
+ .sc{overflow:visible;border:.5pt solid #999}
+table{font-size:6.8pt}th{background:#eee;color:#000;padding:2pt 4pt;border-bottom:.5pt solid #999}
+ td{padding:2pt 4pt;border-bottom:.25pt solid #ccc}
+ .c,.p{color:#000}.c{font-weight:700}
+ footer{border-top:1pt solid #000;margin-top:8pt;padding-top:5pt}
+ footer p{font-size:7.5pt;color:#000}
+ @page{margin:12mm 10mm}
+}
+
 </style>
 '''
 
