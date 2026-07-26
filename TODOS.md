@@ -59,6 +59,19 @@
   `~/Desktop/planes-{date}/ranking.json` y su `cp` es `warn=False` -> con la carpeta movida
   falla EN SILENCIO y deja de archivar. Ese silencio es el peligro real, no el desorden.
 
+- [ ] **[pendiente] "make sure u already printed the plan, try to save ink, so no black
+  background. review the task for the printer"** (Yunior 2026-07-26). El plan de apertura
+  (`data/trees/plan-apertura.html`) y los 5 arboles (`cinco-arboles.html`) tienen FONDO OSCURO:
+  imprimirlos gasta un cartucho. Hace falta `@media print` con fondo blanco, tinta negra y
+  saltos de pagina por hoja. Revisar tambien el generador de PDFs diarios por si tiene el mismo
+  problema.
+
+- [ ] **[pendiente] "make sure tickers search work as expected. test with perpetuals plus
+  korean tickers"** (Yunior 2026-07-26). El buscador se arreglo hoy (e94cf04: listener `input`
+  + `_prime_bars` sincrono), pero NO se probo con: (a) los perpetuos 24/7 nuevos
+  (`data/perp_stocks.json`, 26 simbolos Bybit), (b) los tickers coreanos (Samsung/SK Hynix/
+  KOSPI, que van por `korea_bar_bridge`). Probar los dos casos.
+
 - [ ] 🔴 **[pendiente — ORDEN VIEJA QUE SE PERDIO, nunca se anoto] Timeframes de SEGUNDOS en el
   chart, estilo TradingView** (Yunior 2026-07-26: *"why i still dont see timeframes for seconds?
   like 30 seconds, 15, 45, similar to trading view, i gave u an order long time ago about it"*).
