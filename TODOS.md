@@ -291,6 +291,64 @@
       verificación **en Chrome** del chart (burbujas GEX, flecha escalando, tooltip). Olas 2 y 3:
       viabilidad ya medida en `0a9be1f` (5 construibles, 7 bloqueadas).
 
+## 🆕 MINADO DE TRADINGFLOW (2026-07-26) — dossier `docs/research/designs-tradingflow.md`
+> Yunior: *"i really like this one too… take a look in chrome, it offers a lot of data, do they
+> have api?"*. **Respuesta medida: NO tienen API** (`/api/*`, `/openapi.json`, `/docs` → 404 o
+> shell del SPA; backend tras Clerk; un plan de **$59/mes**; el roadmap tampoco la menciona).
+> → Es **fuente de IDEAS, no de DATOS**: jamás puede ser dependencia de una señal.
+> ⚠️ La UI en vivo **NO se ha visto** (la extensión de Chrome no conecta) — todo esto sale de sus
+> docs públicos `/learn/*`. **Falta la pasada visual** para minar la pantalla como se hizo con
+> TrendSpider, y para capturar datos suyos con los que verificar los nuestros.
+
+- [ ] 🥇 **[nice-to-have, ALTO VALOR] DEX de ESTRUCTURA** (`Δ · OI · 100 · S`) en `gex_core`.
+      *Qué es*: el mapa de delta. Hoy `gex_core.py` tiene **CERO delta** — ni `bs_delta` ni DEX.
+      *Por qué importa*: desbloquea las dos minadas nunca construidas, `close-drift` (#24) y
+      `expiry-unwind` (#25). El dato YA existe: cadenas archivadas + UW `/greek-exposure/strike`
+      (530 filas por strike con `call_delta`/`put_delta`).
+      *Trampa obligatoria*: DEX positivo = cliente alcista **pero** el creador VENDE subyacente
+      para quedar neutral → **dos campos, `dex_sentiment` y `dex_flow_impact`, jamás uno**.
+      TradingFlow **no menciona esta trampa**, lo cual es en sí un aviso sobre su lectura.
+- [ ] 🥈 **[nice-to-have] La distinción DEX-de-FLUJO vs DEX-de-ESTRUCTURA**, que no tenemos ni
+      nombrada. Suyo, textual: *"DEX describe la DIRECCIÓN DEL FLUJO en la cinta (intradía);
+      GEX representa la ESTRUCTURA del mercado"*. Su fórmula de flujo es `delta × size` **por
+      operación** (tamaño de la operación, no OI) → requiere cinta de opciones firmada, que es
+      justo lo que da UW `/market-tide`.
+- [ ] 🥉 **[nice-to-have] DEI — normalizar el impacto por la liquidez del nombre**.
+      *Suyo*: *"DEX escalado por el volumen típico de la acción: ¿es esta exposición GRANDE para
+      este nombre?"*. *Por qué importa*: hoy nuestros umbrales de ballena son ABSOLUTOS, y por eso
+      NOK (precio 8,99) y MU (910) no se pueden rankear juntos. `impact_pctile` ya existe como
+      campo en `book_quality.json` y está **`null` en 30/30**.
+- [ ] **[nice-to-have] Escalera de agresor de 5 peldaños** (Above Ask / At Ask / **Mid** / At Bid /
+      Below Bid) en `opt_whale_watch`. *Por qué importa*: hoy clasificamos con un solo ratio
+      (`pc = vp/max(vc,1)`, `:157`) que fuerza cada operación a un bando; **"Mid" debería ser su
+      propia categoría, no repartirse**. El motor ya existe: `ibkr_bar_bridge.py:250` corre
+      `reqTickByTickData(..., "AllLast", ...)` con firmado Lee-Ready → es el HIRO casero de
+      `docs/HIRO-2026-07-25.md`.
+- [ ] **[nice-to-have, BARATO] ΔOI = detector de APERTURA vs CIERRE.** Regla suya:
+      `volumen ≈ +ΔOI` → posición NUEVA; `volumen ≈ −ΔOI` → **salida**; `volumen >> ΔOI` → churn.
+      *Por qué importa*: confirma al día siguiente si la ballena de ayer ABRÍA o CERRABA — y eso es
+      el punto de Kochuba (*un movimiento brusco suele ser un cambio de posición, no una noticia*).
+      Ya archivamos cadenas a diario desde el 2026-07-25, así que el coste es casi cero.
+      ⚠️ **Y corrige una lectura equivocada nuestra**: *"el OI NO es en tiempo real; durante la
+      sesión el OI que ves es el cierre de AYER"*.
+- [ ] **[nice-to-have] "Inusual" como CONJUNCIÓN, no como umbral suelto**: premium grande + Vol/OI
+      alto + lado agresivo + sentimiento claro (no mid) + strike OTM, **todos a la vez**. Más su
+      lectura de tamaño: pocas operaciones grandes = convicción institucional; muchas diminutas =
+      retail o creador, menos señal. *Por qué importa*: una conjunción es mucho más difícil de
+      sobreajustar que un umbral único, y el umbral único es justo por lo que **el tide de −53 M
+      del 7/21 no sonó**.
+- [ ] **[pendiente] Pasada VISUAL a TradingFlow con la cuenta de Yunior** (Chrome): minar la
+      pantalla (no solo los docs) y **capturar datos suyos para verificar los nuestros** —
+      su GEX/muros/flip contra `data/gex_snapshot.json`, igual que se hizo con CBOE y Polygon.
+      *Bloqueado por*: la extensión de Claude no conecta con Chrome (instalada en 4 perfiles,
+      Chrome vivo) → **hace falta reiniciar Chrome**.
+
+> **Lo que NO hay que copiarles** (razonado en el dossier): sus Call/Put Wall son **solo por OI**
+> ("el strike con más OI de calls por encima del precio") — el nuestro es por **|gamma|·OI** y
+> además publica los de OI puro aparte. Y su GEX/flip **no disclosan fórmula**
+> (*"implementation details remain proprietary"*); el nuestro sí, con bisección de 40 iteraciones
+> y tests. Su ventaja no es el cálculo: es la UI y la cinta de opciones que ellos tienen.
+
 ## ✅ HECHO (2026-07-20/21)
 - [x] Post-mortem imanes 2026-07-20 (hacia el imán, jamás a través del muro; decay por toques)
 - [x] Investigación NOK (crash = Ericsson AI-cost read-through; 40% layoff = sin evidencia; earnings 23-jul BMO)
