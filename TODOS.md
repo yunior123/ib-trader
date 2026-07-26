@@ -1084,7 +1084,7 @@ Spec: `docs/FEATURES-MINED-2026-07-25.md`.
       conservadora). **La mina**: el daño escala con la resolución de barra — −0,5 pp a 15m
       (lo que `grade()` baja hoy), −2,7 pp a 5m, **−6,6 pp a 1m**. Quien "mejorase" `grade()`
       afinando el `interval` se comía 6,6 pp de mentira sin tocar el bucle.
-- [ ] **[pendiente]** `scripts/fleet_healthcheck.py:248,314` — `Popen(["nohup","zsh",...])` sin
+- [x] **[hecho — start_new_session + AbandonProcessGroup]** **[pendiente]** `scripts/fleet_healthcheck.py:248,314` — `Popen(["nohup","zsh",...])` sin
       `start_new_session` y plist sin `AbandonProcessGroup`. *Daño*: **el auto-curado es un NO-OP**
       y el informe canta "REVIVIDO" en falso. Creemos tener red de seguridad y no la hay.
 
@@ -1110,7 +1110,7 @@ Spec: `docs/FEATURES-MINED-2026-07-25.md`.
    veta por caro) pero sí por tamaño, contrato erróneo y cadena podrida.
 
 ### Otros vivos que contradicen doctrina escrita (muestra, no la lista entera)
-- [ ] `aapl_signal_bot.cpp:1738,1839` — el gate de spread **falla ABIERTO**: sin NBBO,
+- [x] **[hecho fae191c — fail-closed en los 24, verificado en el BINARIO]** `aapl_signal_bot.cpp:1738,1839` — el gate de spread **falla ABIERTO**: sin NBBO,
       `sp = 0` y pasa todo. La orden #5 dice que un spread ancho NO es señalable.
 - [x] **[refutado 2026-07-26]** `aapl_signal_bot.cpp:788,835` — `V6_PRIOR[]` literal: **NO se
       canta suelto**. `V6Prob::prob()` (:831-835) solo lo usa como prior de shrinkage bayesiano
@@ -1124,7 +1124,7 @@ Spec: `docs/FEATURES-MINED-2026-07-25.md`.
       anuncia (el único print con `-1` es de depuración, tras `V6_DEBUG>0`, default 0). Hardening
       de una línea (`if (p<0) return;`) en los 23 restantes es zero-riesgo pero NO urgente —
       pendiente si Yunior quiere el barrido completo (23 recompilaciones secuenciales, 8GB).
-- [ ] `scripts/signal_conditioning.py:267` — busca `enable[f"{source}|{symbol}"]` con
+- [x] **[FALSO POSITIVO 8cfdb7a — la clave SÍ coincide, probado QCOM/qcom/Qcom]** `scripts/signal_conditioning.py:267` — busca `enable[f"{source}|{symbol}"]` con
       `source="order_engine"/"ticket"`, cuando las claves reales son `bollinger|AAPL`… →
       **el condicionamiento NUNCA aplica justo donde se ordena.**
 - [x] **[hecho 2026-07-26]** `order_engine/prob_profit.py:42,287` — `prob = 50 + composite*40`
@@ -1138,16 +1138,16 @@ Spec: `docs/FEATURES-MINED-2026-07-25.md`.
       ajeno, no tocado) ya usaba `{"prob": None, ...}` como default antes de este fix — cero
       riesgo de romperlo. Tests: `order_engine/prob_profit_test.py` (nuevos casos 1,5,6,6b) +
       `bash order_engine/tests/run_tests.sh` sigue en 499 OK (C++ intacto).
-- [ ] `scripts/index_breadth.py:58-62` — `pc = d.Close.iloc[-1]` es HOY, comparado contra `now`:
+- [x] **[hecho 8cfdb7a — compara contra el cierre anterior]** `scripts/index_breadth.py:58-62` — `pc = d.Close.iloc[-1]` es HOY, comparado contra `now`:
       MEDIDO en `data/breadth.json` de hoy, **gap +0.00 en TODOS los componentes** → el
       ENGRANAJE QQQ/SPY está mudo.
-- [ ] `scripts/deploy_signals_to_data.sh:49` — `pkill -f '_signal_bot$'` **sin guard de horario**:
+- [x] **[hecho 8cfdb7a — portero ./fleet_hours, aborta en sesión viva]** `scripts/deploy_signals_to_data.sh:49` — `pkill -f '_signal_bot$'` **sin guard de horario**:
       mataría 24 bots + relay + BD con el mercado abierto. *(Relevante para la casilla de DEPLOY.)*
-- [ ] `scripts/opt_whale_watch.py:41` — `in_session()` solo mira lunes-viernes: **cero calendario
+- [x] **[hecho 8cfdb7a — calendario de festivos del repo]** `scripts/opt_whale_watch.py:41` — `in_session()` solo mira lunes-viernes: **cero calendario
       de feriados en todo el repo.**
-- [ ] `fleet_notify.h:54` — `write(fd, line, (size_t)n)` con el `n` de `snprintf`: un mensaje largo
+- [x] **[hecho 8cfdb7a — acotado a la capacidad; overflow reproducido con ASan]** `fleet_notify.h:54` — `write(fd, line, (size_t)n)` con el `n` de `snprintf`: un mensaje largo
       = **lectura fuera de buffer** y línea corrupta.
-- [ ] `scripts/ibkr_bar_bridge.py:147` — `open(...,"w")` 4×/s **sin tmp+rename**: el lector puede
+- [x] **[hecho 8cfdb7a — escritura atómica tmp+os.replace]** `scripts/ibkr_bar_bridge.py:147` — `open(...,"w")` 4×/s **sin tmp+rename**: el lector puede
       ver el fichero VACÍO. (La regla de frontera de `~/CLAUDE.md` pide escritura atómica.)
 - [x] **[hecho 2026-07-26]** `scripts/fleet_keepalive_start.sh:257` + `scripts/nvda_keepalive.sh:31`
       — confirmado: el dedup `pgrep`-luego-`nohup` tiene ventana TOCTOU entre dos instancias
@@ -1260,7 +1260,7 @@ son 14 de cashtags y 22 de VPVR).
 - [ ] **[pendiente — lead]** conmutar `bollinger_plus.json` a la propuesta (deja los 30 tickers
       con `veto_filters: []`). Consumidores a revisar: `bollinger_alarm.py:81`,
       `yoel_adapted_engine.py:37`, `regen_signals.py:290`.
-- [ ] **[pendiente — doc]** `.claude/skills/bollinger-mastery/SKILL.md:180` y `engines/README.md:56`
+- [x] **[hecho 6ebcbca — alineadas con la medición (3TF NO es más fuerte)]** **[pendiente — doc]** `.claude/skills/bollinger-mastery/SKILL.md:180` y `engines/README.md:56`
       siguen documentando el criterio viejo `n>=15, |uplift|>=5`. No los toqué (fuera de mi zona).
 - [x] **"with BB, are we making sure it breaks in 1 min and 15 min? to avoid noise?"** (Yunior
       2026-07-25) → **MEDIDO, y la respuesta es NO exigirlo**: P(toque de la media en 30 min)
