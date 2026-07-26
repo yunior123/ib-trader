@@ -41,6 +41,7 @@ os.chdir(ROOT)
 import chart_levels                        # noqa: E402  (gen() -> el mapa GEX del simbolo)
 import gex_core                            # noqa: E402  (build_gex sobre la cadena archivada)
 import gex_snapshot                        # noqa: E402  (latest_chain/contracts_from: chain_full)
+import universe                            # noqa: E402  (universo del mapa vs flota de señales)
 
 OUT_JSON = "data/book_quality.json"
 HIST = "data/book_quality_hist.jsonl"
@@ -462,8 +463,12 @@ def run(syms, hist=None):
 
 def main():
     args = [a for a in sys.argv[1:] if not a.startswith("--")]
-    syms = args or sorted({os.path.basename(p)[7:-5]
-                           for p in glob.glob("charts/data/levels_*.json")})
+    # sin argumentos: primero los charts ya abiertos (sesion activa); si no hay ninguno,
+    # el universo del MAPA (35, `data/universe_gamma.txt`) — nunca una lista vacia silenciosa
+    # que dejaria book_quality.json sin escribir sin que nadie se entere.
+    syms = (args or sorted({os.path.basename(p)[7:-5]
+                            for p in glob.glob("charts/data/levels_*.json")})
+            or universe.gamma_universe())
     res = run(syms)
     if "--json" in sys.argv:
         print(json.dumps(res, indent=1))

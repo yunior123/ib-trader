@@ -46,32 +46,46 @@ def _chain(tmp_path, sym, contratos, spot=100.0, fecha=None):
     return p
 
 
-# --- la flota se lee de la fuente unica, en el formato REAL del fichero -------------
+# --- el universo del mapa se lee de la fuente unica, en el formato REAL del fichero -----
+# NOTA: gex_snapshot.universo() delega en scripts/universe.py (helper compartido), asi que
+# el REPO a parchear es el del modulo `universe`, no el de `gs`.
 
-def test_fleet_lee_una_sola_linea_separada_por_espacios(gs, tmp_path, monkeypatch):
-    """data/fleet.txt es UNA linea con los 30 simbolos separados por espacios. Leerlo como
-    'un simbolo por linea' daba cobertura 0/1 y omitia la flota entera (cazado al construirlo)."""
-    monkeypatch.setattr(gs, "REPO", str(tmp_path))
+def test_universo_lee_una_sola_linea_separada_por_espacios(gs, tmp_path, monkeypatch):
+    """data/universe_gamma.txt es UNA linea de simbolos separados por espacios. Leerlo como
+    'un simbolo por linea' daba cobertura 0/1 y omitia el universo entero (cazado al
+    construir el fleet.txt original con el mismo formato)."""
+    monkeypatch.setattr(gs.universe, "REPO", str(tmp_path))
     (tmp_path / "data").mkdir()
-    (tmp_path / "data" / "fleet.txt").write_text("QQQ SPY NVDA MU\n")
-    assert gs.fleet() == ["QQQ", "SPY", "NVDA", "MU"]
+    (tmp_path / "data" / "universe_gamma.txt").write_text("QQQ SPY NVDA MU\n")
+    assert gs.universo() == ["QQQ", "SPY", "NVDA", "MU"]
 
 
-def test_fleet_admite_tambien_uno_por_linea(gs, tmp_path, monkeypatch):
-    monkeypatch.setattr(gs, "REPO", str(tmp_path))
+def test_universo_admite_tambien_uno_por_linea(gs, tmp_path, monkeypatch):
+    monkeypatch.setattr(gs.universe, "REPO", str(tmp_path))
     (tmp_path / "data").mkdir()
-    (tmp_path / "data" / "fleet.txt").write_text("QQQ\nSPY\n# comentario\nMU\n")
-    assert gs.fleet() == ["QQQ", "SPY", "MU"]
+    (tmp_path / "data" / "universe_gamma.txt").write_text("QQQ\nSPY\n# comentario\nMU\n")
+    assert gs.universo() == ["QQQ", "SPY", "MU"]
 
 
-def test_fleet_vacia_LEVANTA_no_devuelve_lista_vacia(gs, tmp_path, monkeypatch):
-    """Sin flota canonica no hay mapa que construir. Una lista vacia se veria como
+def test_universo_vacio_LEVANTA_no_devuelve_lista_vacia(gs, tmp_path, monkeypatch):
+    """Sin universo no hay mapa que construir. Una lista vacia se veria como
     'cobertura 0/0 = todo bien' — silencio, justo lo que no queremos."""
-    monkeypatch.setattr(gs, "REPO", str(tmp_path))
+    monkeypatch.setattr(gs.universe, "REPO", str(tmp_path))
     (tmp_path / "data").mkdir()
-    (tmp_path / "data" / "fleet.txt").write_text("\n#solo comentarios\n")
+    (tmp_path / "data" / "universe_gamma.txt").write_text("\n#solo comentarios\n")
     with pytest.raises(RuntimeError):
-        gs.fleet()
+        gs.universo()
+
+
+def test_universo_es_independiente_de_fleet_txt(gs, tmp_path, monkeypatch):
+    """gex_snapshot es un productor de MAPA: no puede depender de data/fleet.txt (la flota de
+    señales) ni verse afectado por su ausencia. Confundir las dos listas fue el bug del
+    denominador fabricado que rompio MANADA el 2026-07-25 (docs/UNIVERSOS.md)."""
+    monkeypatch.setattr(gs.universe, "REPO", str(tmp_path))
+    (tmp_path / "data").mkdir()
+    (tmp_path / "data" / "universe_gamma.txt").write_text("QQQ SPY SPX XSP NDX DIA IWM\n")
+    assert not (tmp_path / "data" / "fleet.txt").exists()
+    assert gs.universo() == ["QQQ", "SPY", "SPX", "XSP", "NDX", "DIA", "IWM"]
 
 
 # --- omitir es la respuesta correcta: nunca un cero plausible ----------------------
@@ -110,8 +124,9 @@ def test_griegas_insuficientes_se_omite(gs, tmp_path, monkeypatch):
 
 def test_un_simbolo_roto_no_tumba_el_mapa_y_queda_en_skipped(gs, tmp_path, monkeypatch):
     monkeypatch.setattr(gs, "REPO", str(tmp_path))
+    monkeypatch.setattr(gs.universe, "REPO", str(tmp_path))
     (tmp_path / "data").mkdir(exist_ok=True)
-    (tmp_path / "data" / "fleet.txt").write_text("QQQ NOK\n")
+    (tmp_path / "data" / "universe_gamma.txt").write_text("QQQ NOK\n")
     _chain(tmp_path, "NOK", [_contract(100, "call")], spot=100.0)
     d = gs.build()
     assert "NOK" in d["_meta"]["skipped"]

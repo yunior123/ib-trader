@@ -255,6 +255,39 @@ def test_produccion_lee_ficheros_y_dispara(tmp_path):
     assert len(cuerpo.encode()) < 512, "la linea debe caber en PIPE_BUF (append atomico)"
 
 
+def test_universo_mapa_no_se_cuela_en_el_denominador_de_manada(tmp_path):
+    """El bug del 25-jul fue un denominador FABRICADO (21/26 en vez de 21/30). El riesgo
+    gemelo, ahora que existe `data/universe_gamma.txt` (35 = flota + SPX/XSP/NDX/DIA/IWM,
+    docs/UNIVERSOS.md), es que ese fichero se cuele como fuente del denominador de MANADA y
+    lo INFLE al reves: 3/8 en vez de 3/3. `load_fleet` de fleet_consensus.cpp solo conoce
+    `data/fleet.txt` — este test lo deja escrito: los 5 simbolos del universo-mapa (con
+    barras y mapa GEX propios, para que SI pudieran votar si se colasen) jamas aparecen en
+    la flota, el denominador ni los votos."""
+    import time
+    (tmp_path / "data").mkdir()
+    (tmp_path / "charts" / "data").mkdir(parents=True)
+    (tmp_path / "data" / "fleet.txt").write_text("SPY QQQ SMH\n")
+    (tmp_path / "data" / "universe_gamma.txt").write_text(
+        "SPY QQQ SMH SPX XSP NDX DIA IWM\n")
+    t0 = int(time.time()) - 600
+    solo_mapa = ("spx", "xsp", "ndx", "dia", "iwm")
+    for s in ("spy", "qqq", "smh") + solo_mapa:
+        rows = ["{} 100 100 100 {:.2f} 1000".format(t0 + i * 60, 100.0 - i * 0.1) for i in range(8)]
+        (tmp_path / "data" / "bars_{}_ibkr.txt".format(s)).write_text("\n".join(rows) + "\n")
+        (tmp_path / "charts" / "data" / "levels_{}.json".format(s)).write_text(
+            '{\n "sym": "%s",\n "spot": 100.0,\n "flip": 101.0\n}' % s.upper())
+    p = subprocess.run([BIN, "--once"], cwd=str(tmp_path), capture_output=True, text=True,
+                       env=dict(os.environ, FLEET_CONS_DRY="1",
+                                FLEET_CONS_WIN_OPEN="0", FLEET_CONS_WIN_CLOSE="1440"),
+                       timeout=20)
+    assert p.returncode == 0, p.stderr
+    assert "flota 0↑/3↓ de 3" in p.stdout, p.stdout
+    assert "consenso=DN [3/3 = 100%]" in p.stdout, p.stdout
+    for sym in ("SPX", "XSP", "NDX", "DIA", "IWM"):
+        assert sym not in p.stdout, (
+            f"{sym} (universo del mapa) se colo en el veredicto de MANADA:\n{p.stdout}")
+
+
 def test_produccion_mapa_gex_rancio_no_vota(tmp_path):
     """Mapa GEX viejo = flip calculado a otro spot -> ese simbolo no vota (gate (b))."""
     import os as _os

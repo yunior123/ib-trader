@@ -11,6 +11,11 @@ perder nada, porque la materia prima ya la tenemos mejor:
   · `gex_core.build_gex` saca de ahi flip, regimen, muros, POC y net GEX — la misma fuente
     unica que ya usan el chart, ./compass y los gates.
 
+CUBRE EL UNIVERSO DEL MAPA (`data/universe_gamma.txt`, 35 = la flota + SPX/XSP/NDX/DIA/IWM),
+NO la flota de señales (`data/fleet.txt`, 30). Este script solo MAPEA: no vota, no habla, no
+dispara — mezclar las dos listas fue el bug del denominador fabricado que rompio MANADA el
+2026-07-25 (doctrina completa en docs/UNIVERSOS.md).
+
 Ventaja sobre lo que se jubila, medido el 2026-07-25 comparando ambos:
   · cobertura: 30 simbolos (la flota entera) frente a los 16 que scrapeabamos.
   · el campo `regime` venia NULL en 15 de los 16 del snapshot de gexa — justo el campo del
@@ -41,6 +46,7 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "scripts"))
 
 import gex_core  # noqa: E402  (fuente unica de flip/regimen/muros)
+import universe  # noqa: E402  (universo del mapa vs flota de señales, docs/UNIVERSOS.md)
 
 
 def keep_sign(x, nd=0):
@@ -64,20 +70,11 @@ MIN_STRIKES = 8          # menos strikes poblados que esto y el perfil es ruido
 OUT = os.path.join(REPO, "data", "gex_snapshot.json")
 
 
-def fleet():
-    """La flota canonica, fuente unica data/fleet.txt. Levanta si no se puede leer: sin flota
-    no hay mapa que construir, y un fallback silencioso ocultaria simbolos enteros."""
-    p = os.path.join(REPO, "data", "fleet.txt")
-    syms = []
-    with open(p) as f:
-        for ln in f:                      # el fichero es una sola linea separada por espacios,
-            ln = ln.strip()               # pero se admite tambien uno por linea
-            if not ln or ln.startswith("#"):
-                continue
-            syms.extend(t.upper() for t in ln.split())
-    if not syms:
-        raise RuntimeError(f"{p} vacia: sin flota canonica no hay mapa gamma")
-    return syms
+def universo():
+    """El universo del MAPA gamma (35), fuente unica data/universe_gamma.txt via
+    scripts/universe.py. NO es la flota de señales (data/fleet.txt) — ese denominador lo
+    lee fleet_consensus aparte y no se toca aqui."""
+    return universe.gamma_universe()
 
 
 def latest_chain(sym, max_days=5):
@@ -130,8 +127,9 @@ def contracts_from(path):
         T = gex_core._T_of(exp_c, ref_ts)
         if T is None:
             continue
+        dl = (c.get("greeks") or {}).get("delta")
         cs.append({"strike": float(k), "right": ct[0].upper(), "oi": int(oi),
-                   "gamma": float(g), "iv": c.get("implied_volatility"),
+                   "gamma": float(g), "delta": dl, "iv": c.get("implied_volatility"),
                    "exp": exp_c, "T": T})
     return cs, spot, meta, len(res)
 
@@ -169,6 +167,7 @@ def snapshot_sym(sym):
                                   gi.get("put_wall")) if x})
     def _r(x, n=2):
         return round(float(x), n) if isinstance(x, (int, float)) else None
+    dx = gex_core.build_dex(cs, spot)
     return {
         "flip": _r(gi.get("flip")),
         "flip_all": _r(gi.get("flip")),      # calculamos sobre TODOS los vencimientos de la cadena
@@ -186,6 +185,16 @@ def snapshot_sym(sym):
         "put_wall": gi.get("put_wall"),
         "abs_wall": gi.get("abs_wall"),
         "abs_wall_kind": gi.get("abs_wall_kind"),
+        # DEX: DOS campos de signo, jamas uno. `dex_sentiment` es el CLIENTE (dueño del OI),
+        # `dex_flow_impact` es lo que el CREADOR hizo en el subyacente para quedar neutral —
+        # son opuestos, y publicar solo uno invierte la lectura la mitad de las veces.
+        "net_dex": keep_sign(dx["net_dex"]),
+        "net_dex_shares": keep_sign(dx["net_dex_shares"]),
+        "dex_sentiment": dx["dex_sentiment"],
+        "dex_flow_impact": dx["dex_flow_impact"],
+        "dex_convention": dx["dex_convention"],
+        "abs_dex_wall": dx["abs_dex_wall"],
+        "delta_ok_pct": _r(dx["delta_ok_pct_oi"], 3),
         "spot": _r(spot),
         "ts": int(time.time()),
         # --- procedencia: MEDIDO vs reconstruido, dicho en el propio dato ---
@@ -199,7 +208,7 @@ def snapshot_sym(sym):
 
 
 def build():
-    syms = fleet()
+    syms = universo()
     out = {}
     skipped = {}
     for s in syms:
