@@ -585,7 +585,13 @@ def flip_recompute(contracts, spot, lo=0.85, hi=1.15, steps=120, all_roots=False
     contracts = [c for c in contracts if _iv_of(c) is not None]   # sin IV medida no se barre
     if not contracts:
         return [] if all_roots else None
-    grid = [spot * (lo + (hi - lo) * i / (steps - 1)) for i in range(steps)]
+    # el barrido no sale del libro: fuera de los strikes el cruce de signo es artefacto
+    ks = [float(c["strike"]) for c in contracts if c.get("strike") is not None]
+    k_lo, k_hi = (min(ks), max(ks)) if ks else (spot * lo, spot * hi)
+    g_lo, g_hi = max(spot * lo, k_lo), min(spot * hi, k_hi)
+    if g_hi <= g_lo:                       # libro degenerado: no se inventa un rango
+        return [] if all_roots else None
+    grid = [g_lo + (g_hi - g_lo) * i / (steps - 1) for i in range(steps)]
     tol = max(spot * tol_frac, 1e-9)
     roots = []
     prev_S = prev_g = None
