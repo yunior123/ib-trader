@@ -41,6 +41,7 @@ POSTER_LOGS = [
     os.path.join(ROOT, "x_plan_poster.log"),
     os.path.join(ROOT, "x_signal_poster.log"),
     os.path.join(ROOT, "x_postmortem.log"),
+    os.path.join(ROOT, "x_earnings_post.log"),
 ]
 
 

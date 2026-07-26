@@ -73,14 +73,31 @@
       *Objeción escrita*: un LLM NO produce probabilidad calibrada — propone, y la medición dispone
       (barrera+null+BH-FDR, banner sin voz hasta tener n_eff, y entra con el tope duro desplazando
       a otro factor).
-- [ ] **[pendiente] "create script to post x.com post of companies with earnings next week,
+- [x] **[hecho] "create script to post x.com post of companies with earnings next week,
       include technicals… use finviz… show people nice picaros data"** (Yunior 2026-07-25).
       VERIFICADO hoy con el token nuevo: `f=earningsdate_nextweek` → **753 tickers**; `v=171` da
       Beta/ATR/SMA20-50-200/52W/RSI(14)/Gap; `v=152&c=…` trae **`Earnings Date` con hora**
       (8:30 AM = BMO, 4:30 PM = AMC).
+      ENTREGADO: `scripts/x_earnings_post.py` — **rejilla PNG** (5 columnas lun-vie × ☀️antes de
+      abrir / 🌙tras el cierre, tiles de 3 en fila, `+N` de resto, flota con borde verde) + franja
+      de escaleras 🔴🎯📍🟢🛑 con niveles medidos (precio±ATR, SMA20/50/200 a ≤2 ATR) + **1 línea**
+      de tweet con **1 cashtag**. `--dry-run` es el default; publica solo con `--post`.
+      Tests: `tests/test_x_earnings_post.py` (34). Media por `x_post_common.upload_media` (v1.1).
+      · Cruce contra la referencia @StockOptionCole: **cuadran los 7** (mar28 STX · mié29 MSFT META
+      QCOM LRCX · jue30 AAPL AMZN) y el 8º, **SKHY, Finviz lo pone mar 28 AMC**. Ojo: el ADR llega
+      **sin RSI ni Beta** → sale en la rejilla pero **sin escalera** (nunca un 0 relleno).
       🔴 **Hallazgo que vale más que el tweet**: **8 de los 30 de la flota reportan la semana que
-      viene — AAPL AMZN LRCX META MSFT QCOM SKHY STX**. La regla 4 prohíbe aguantar prima comprada
+      viene — AAPL AMZN LRCX META MSFT QCOM SKHY STX**, y **los 8 son AMC** (mar 28: SKHY STX ·
+      mié 29: MSFT META QCOM LRCX · jue 30: AAPL AMZN). La regla 4 prohíbe aguantar prima comprada
       a través de un print → esto va a los PDFs y a los vetos, no solo a X.
+- [ ] **[pendiente — deriva del anterior] meter los 8 de earnings en los PDFs diarios y en el veto
+      de prima comprada** (no tocado a propósito: el generador de PDFs es de otro agente).
+      (a) `daily_fleet_plans.py`: marcar en el plan de AAPL AMZN LRCX META MSFT QCOM SKHY STX la
+      fecha+sesión de earnings (fuente `data/finviz_earn_nextweek_152.csv`, ya la deja
+      `x_earnings_post.py`); (b) **veto duro**: prima comprada que cruce el print del propio ticker
+      = prohibida (doctrina "en día de earnings del ticker jamás aguantar el print con premium
+      comprado"); (c) todos AMC ⇒ el veto muerde en el **cierre** del día del print, no en la
+      apertura; (d) la fecha se re-verifica el mismo día: Finviz mueve fechas.
 - [ ] **[pendiente] "terminar todo de trendspider, menthorq… make it nice, surprise me"**
       (Yunior 2026-07-25). MEDIDO: de las 30 minadas, **8 siguen sin fichero** (#19 cube-widening,
       #21 wall-decay, #22 chain-delta, #24 close-drift, #25 expiry-unwind, #26 gap-islands,
