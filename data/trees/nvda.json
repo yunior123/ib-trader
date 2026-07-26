@@ -1,0 +1,656 @@
+{
+ "sym": "NVDA",
+ "generado": "2026-07-26T11:18:28",
+ "viernes": "2026-07-31",
+ "chain_dir": "2026-07-26",
+ "spot": 206.85,
+ "spot_source": "ibkr_bridge",
+ "spot_age_s": 149771.8,
+ "band": 0.405,
+ "exp_hasta_fichero": "2026-08-21",
+ "greeks_src": "polygon_directo",
+ "oi_src": "polygon_directo",
+ "bid_ask": "NO_ENTITLED",
+ "n_contratos_cadena": 523,
+ "n_hasta_viernes": 192,
+ "n_solo_viernes": 69,
+ "regime": "POS",
+ "net_gex": 38112015.39417343,
+ "flip": 204.13672334558822,
+ "flip_src": "recompute_15pct",
+ "call_wall": 210.0,
+ "call_wall_kind": "pin",
+ "put_wall": 205.0,
+ "put_wall_kind": "pin",
+ "abs_wall": 210.0,
+ "abs_wall_kind": "pin",
+ "oi_call_wall": 220.0,
+ "oi_put_wall": 170.0,
+ "profile": [
+  {
+   "strike": 125.0,
+   "gex": -5294.889400743269
+  },
+  {
+   "strike": 130.0,
+   "gex": -6355.9572638901045
+  },
+  {
+   "strike": 135.0,
+   "gex": -6137.5834195294865
+  },
+  {
+   "strike": 140.0,
+   "gex": -8492.32491112958
+  },
+  {
+   "strike": 145.0,
+   "gex": -5434.881460813052
+  },
+  {
+   "strike": 150.0,
+   "gex": -16509.300731588643
+  },
+  {
+   "strike": 155.0,
+   "gex": -24149.961586435613
+  },
+  {
+   "strike": 160.0,
+   "gex": -41785.61609527886
+  },
+  {
+   "strike": 165.0,
+   "gex": -79415.1079616851
+  },
+  {
+   "strike": 167.5,
+   "gex": -836.0993074166149
+  },
+  {
+   "strike": 170.0,
+   "gex": -3310386.6711194026
+  },
+  {
+   "strike": 172.5,
+   "gex": -32649.795433554063
+  },
+  {
+   "strike": 175.0,
+   "gex": -356679.40589063277
+  },
+  {
+   "strike": 177.5,
+   "gex": -128750.77695444526
+  },
+  {
+   "strike": 180.0,
+   "gex": -725466.8345046269
+  },
+  {
+   "strike": 182.5,
+   "gex": -233369.54149143776
+  },
+  {
+   "strike": 185.0,
+   "gex": -2159497.7757857703
+  },
+  {
+   "strike": 187.5,
+   "gex": -573508.7869899258
+  },
+  {
+   "strike": 190.0,
+   "gex": -3632112.9122910933
+  },
+  {
+   "strike": 192.5,
+   "gex": -2127867.7872631503
+  },
+  {
+   "strike": 195.0,
+   "gex": -3858083.575863117
+  },
+  {
+   "strike": 197.5,
+   "gex": -2468179.209213592
+  },
+  {
+   "strike": 200.0,
+   "gex": -5032238.229190915
+  },
+  {
+   "strike": 202.5,
+   "gex": -10901756.220536662
+  },
+  {
+   "strike": 205.0,
+   "gex": -11374790.294103708
+  },
+  {
+   "strike": 207.5,
+   "gex": 3156244.5397806894
+  },
+  {
+   "strike": 210.0,
+   "gex": 21088392.927676912
+  },
+  {
+   "strike": 212.5,
+   "gex": 10245691.778192433
+  },
+  {
+   "strike": 215.0,
+   "gex": 15179962.203245215
+  },
+  {
+   "strike": 217.5,
+   "gex": 6709606.445761122
+  },
+  {
+   "strike": 220.0,
+   "gex": 14867327.91432097
+  },
+  {
+   "strike": 222.5,
+   "gex": 3342921.9441568363
+  },
+  {
+   "strike": 225.0,
+   "gex": 5125598.543085252
+  },
+  {
+   "strike": 227.5,
+   "gex": 1662906.1791199297
+  },
+  {
+   "strike": 230.0,
+   "gex": 2035796.5614638776
+  },
+  {
+   "strike": 232.5,
+   "gex": 164449.21525721048
+  },
+  {
+   "strike": 235.0,
+   "gex": 658987.5045695512
+  },
+  {
+   "strike": 237.5,
+   "gex": 53284.38871101336
+  },
+  {
+   "strike": 240.0,
+   "gex": 595434.1527573966
+  },
+  {
+   "strike": 242.5,
+   "gex": 2457.148796390663
+  },
+  {
+   "strike": 245.0,
+   "gex": 62838.948966506854
+  },
+  {
+   "strike": 250.0,
+   "gex": 116690.25728691004
+  },
+  {
+   "strike": 255.0,
+   "gex": 9705.652951041306
+  },
+  {
+   "strike": 260.0,
+   "gex": 15995.031708289238
+  },
+  {
+   "strike": 265.0,
+   "gex": 28050.62060076296
+  },
+  {
+   "strike": 270.0,
+   "gex": 12124.894016145652
+  },
+  {
+   "strike": 275.0,
+   "gex": 10989.828447894497
+  },
+  {
+   "strike": 280.0,
+   "gex": 73111.84173260826
+  },
+  {
+   "strike": 285.0,
+   "gex": 1644.9078582576497
+  },
+  {
+   "strike": 290.0,
+   "gex": 1551.5024807694576
+  }
+ ],
+ "viernes_call_wall": 220.0,
+ "viernes_put_wall": 170.0,
+ "viernes_calls_oi": 263396,
+ "viernes_puts_oi": 193777,
+ "viernes_pc_oi": 0.736,
+ "viernes_top_calls": [
+  {
+   "strike": 220.0,
+   "oi": 33167
+  },
+  {
+   "strike": 210.0,
+   "oi": 29194
+  },
+  {
+   "strike": 200.0,
+   "oi": 23807
+  },
+  {
+   "strike": 225.0,
+   "oi": 22781
+  },
+  {
+   "strike": 215.0,
+   "oi": 20688
+  },
+  {
+   "strike": 230.0,
+   "oi": 15661
+  }
+ ],
+ "viernes_top_puts": [
+  {
+   "strike": 170.0,
+   "oi": 74641
+  },
+  {
+   "strike": 190.0,
+   "oi": 14836
+  },
+  {
+   "strike": 205.0,
+   "oi": 13659
+  },
+  {
+   "strike": 200.0,
+   "oi": 10401
+  },
+  {
+   "strike": 195.0,
+   "oi": 9995
+  },
+  {
+   "strike": 185.0,
+   "oi": 9520
+  }
+ ],
+ "supervivientes": [
+  {
+   "lado": "C",
+   "strike": 210.0,
+   "dias_semana_pasada": 4,
+   "oi_entonces": 83743.0,
+   "oi_ahora": 43225,
+   "rank_ahora": 2,
+   "ratio_oi": 51.6,
+   "estado": "SOBREVIVE",
+   "exp_entonces": "20260722",
+   "oi_viernes": 29194
+  },
+  {
+   "lado": "C",
+   "strike": 215.0,
+   "dias_semana_pasada": 4,
+   "oi_entonces": 79262.0,
+   "oi_ahora": 32251,
+   "rank_ahora": 3,
+   "ratio_oi": 40.7,
+   "estado": "SOBREVIVE",
+   "exp_entonces": "20260722",
+   "oi_viernes": 20688
+  },
+  {
+   "lado": "C",
+   "strike": 217.5,
+   "dias_semana_pasada": 4,
+   "oi_entonces": 61768.0,
+   "oi_ahora": 15852,
+   "rank_ahora": 9,
+   "ratio_oi": 25.7,
+   "estado": "DECAIDO",
+   "exp_entonces": "20260722",
+   "oi_viernes": 10716
+  },
+  {
+   "lado": "P",
+   "strike": 205.0,
+   "dias_semana_pasada": 4,
+   "oi_entonces": 31768.0,
+   "oi_ahora": 25554,
+   "rank_ahora": 3,
+   "ratio_oi": 80.4,
+   "estado": "SOBREVIVE",
+   "exp_entonces": "20260722",
+   "oi_viernes": 13659
+  },
+  {
+   "lado": "P",
+   "strike": 200.0,
+   "dias_semana_pasada": 3,
+   "oi_entonces": 28093.0,
+   "oi_ahora": 28809,
+   "rank_ahora": 2,
+   "ratio_oi": 102.5,
+   "estado": "SOBREVIVE",
+   "exp_entonces": "20260722",
+   "oi_viernes": 10401
+  },
+  {
+   "lado": "P",
+   "strike": 195.0,
+   "dias_semana_pasada": 2,
+   "oi_entonces": 23393.0,
+   "oi_ahora": 19985,
+   "rank_ahora": 5,
+   "ratio_oi": 85.4,
+   "estado": "SOBREVIVE",
+   "exp_entonces": "20260722",
+   "oi_viernes": 9995
+  },
+  {
+   "lado": "P",
+   "strike": 207.5,
+   "dias_semana_pasada": 2,
+   "oi_entonces": 16164.0,
+   "oi_ahora": 6199,
+   "rank_ahora": 12,
+   "ratio_oi": 38.4,
+   "estado": "DECAIDO",
+   "exp_entonces": "20260722",
+   "oi_viernes": 2611
+  }
+ ],
+ "toques": [
+  {
+   "toque": 0,
+   "n": 3,
+   "aguanta": 2,
+   "rompe": 1,
+   "pct_aguanta": 66.7
+  },
+  {
+   "toque": 1,
+   "n": 7,
+   "aguanta": 6,
+   "rompe": 1,
+   "pct_aguanta": 85.7
+  },
+  {
+   "toque": 2,
+   "n": 4,
+   "aguanta": 4,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 3,
+   "n": 4,
+   "aguanta": 4,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 4,
+   "n": 9,
+   "aguanta": 7,
+   "rompe": 2,
+   "pct_aguanta": 77.8
+  },
+  {
+   "toque": 5,
+   "n": 8,
+   "aguanta": 8,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 6,
+   "n": 11,
+   "aguanta": 9,
+   "rompe": 2,
+   "pct_aguanta": 81.8
+  },
+  {
+   "toque": 7,
+   "n": 5,
+   "aguanta": 4,
+   "rompe": 1,
+   "pct_aguanta": 80.0
+  },
+  {
+   "toque": 8,
+   "n": 10,
+   "aguanta": 7,
+   "rompe": 3,
+   "pct_aguanta": 70.0
+  },
+  {
+   "toque": 9,
+   "n": 5,
+   "aguanta": 4,
+   "rompe": 1,
+   "pct_aguanta": 80.0
+  },
+  {
+   "toque": 10,
+   "n": 7,
+   "aguanta": 7,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 11,
+   "n": 3,
+   "aguanta": 3,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 12,
+   "n": 3,
+   "aguanta": 2,
+   "rompe": 1,
+   "pct_aguanta": 66.7
+  },
+  {
+   "toque": 13,
+   "n": 2,
+   "aguanta": 2,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 14,
+   "n": 4,
+   "aguanta": 4,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 15,
+   "n": 6,
+   "aguanta": 4,
+   "rompe": 2,
+   "pct_aguanta": 66.7
+  },
+  {
+   "toque": 16,
+   "n": 4,
+   "aguanta": 4,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 17,
+   "n": 10,
+   "aguanta": 8,
+   "rompe": 2,
+   "pct_aguanta": 80.0
+  },
+  {
+   "toque": 18,
+   "n": 3,
+   "aguanta": 2,
+   "rompe": 1,
+   "pct_aguanta": 66.7
+  },
+  {
+   "toque": 19,
+   "n": 3,
+   "aguanta": 3,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 20,
+   "n": 8,
+   "aguanta": 7,
+   "rompe": 1,
+   "pct_aguanta": 87.5
+  },
+  {
+   "toque": 21,
+   "n": 5,
+   "aguanta": 4,
+   "rompe": 1,
+   "pct_aguanta": 80.0
+  },
+  {
+   "toque": 22,
+   "n": 2,
+   "aguanta": 2,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 23,
+   "n": 3,
+   "aguanta": 2,
+   "rompe": 1,
+   "pct_aguanta": 66.7
+  },
+  {
+   "toque": 24,
+   "n": 3,
+   "aguanta": 3,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 25,
+   "n": 4,
+   "aguanta": 4,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 26,
+   "n": 7,
+   "aguanta": 7,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 27,
+   "n": 2,
+   "aguanta": 2,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 28,
+   "n": 5,
+   "aguanta": 5,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 29,
+   "n": 3,
+   "aguanta": 3,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 30,
+   "n": 3,
+   "aguanta": 3,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 31,
+   "n": 4,
+   "aguanta": 4,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 32,
+   "n": 5,
+   "aguanta": 5,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 33,
+   "n": 7,
+   "aguanta": 6,
+   "rompe": 1,
+   "pct_aguanta": 85.7
+  },
+  {
+   "toque": 34,
+   "n": 2,
+   "aguanta": 2,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 35,
+   "n": 7,
+   "aguanta": 6,
+   "rompe": 1,
+   "pct_aguanta": 85.7
+  },
+  {
+   "toque": 36,
+   "n": 9,
+   "aguanta": 9,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 37,
+   "n": 1,
+   "aguanta": 1,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  }
+ ],
+ "semana_pasada_fechas": [
+  "2026-07-20",
+  "2026-07-21",
+  "2026-07-22",
+  "2026-07-23",
+  "2026-07-24"
+ ],
+ "caveats": [
+  "OI de la semana pasada = contratos YA EXPIRADOS (exp 07-22/23/24): el cociente de OI NO es like-for-like. La supervivencia se decide por RANGO del strike en el libro de hoy.",
+  "Muros de la semana pasada: cadena IBKR/TWS del vencimiento MAS CERCANO de cada dia. Muros de hoy: cadena Polygon con banda adaptativa, todos los vencimientos hasta el viernes.",
+  "spot 206.85 con edad 149771s = cierre del viernes (mercado cerrado).",
+  "Polygon = 15 min de retraso (HISTORIA/ESTRUCTURA). Ningun nivel de aqui dispara una orden: el PRINT que confirma es de IBKR en tiempo real.",
+  "bid/ask NO_ENTITLED en este plan de Polygon: no hay gate de spread en esta hoja."
+ ]
+}

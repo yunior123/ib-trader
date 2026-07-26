@@ -1,0 +1,1083 @@
+{
+ "sym": "SMH",
+ "generado": "2026-07-26T11:18:28",
+ "viernes": "2026-07-31",
+ "chain_dir": "2026-07-26",
+ "spot": 561.99,
+ "spot_source": "ibkr_bridge",
+ "spot_age_s": 149778.9,
+ "band": 0.405,
+ "exp_hasta_fichero": "2026-08-21",
+ "greeks_src": "polygon_directo",
+ "oi_src": "polygon_directo",
+ "bid_ask": "NO_ENTITLED",
+ "n_contratos_cadena": 1263,
+ "n_hasta_viernes": 529,
+ "n_solo_viernes": 228,
+ "regime": "NEG",
+ "net_gex": -111448388.77125974,
+ "flip": 638.9168086922269,
+ "flip_src": "recompute_15pct",
+ "call_wall": 565.0,
+ "call_wall_kind": "trampilla",
+ "put_wall": 520.0,
+ "put_wall_kind": "trampilla",
+ "abs_wall": 520.0,
+ "abs_wall_kind": "trampilla",
+ "oi_call_wall": 720.0,
+ "oi_put_wall": 520.0,
+ "profile": [
+  {
+   "strike": 335.0,
+   "gex": -787.8579887630258
+  },
+  {
+   "strike": 340.0,
+   "gex": -941.0569679115052
+  },
+  {
+   "strike": 345.0,
+   "gex": -637.7714739056344
+  },
+  {
+   "strike": 350.0,
+   "gex": -411.40743237807897
+  },
+  {
+   "strike": 355.0,
+   "gex": -81.44629346579998
+  },
+  {
+   "strike": 360.0,
+   "gex": -4215.883353130627
+  },
+  {
+   "strike": 365.0,
+   "gex": -1497.1700814966734
+  },
+  {
+   "strike": 370.0,
+   "gex": -7204.627089295947
+  },
+  {
+   "strike": 375.0,
+   "gex": -737.0493157813239
+  },
+  {
+   "strike": 380.0,
+   "gex": -5768.986374153238
+  },
+  {
+   "strike": 385.0,
+   "gex": -3028.505377972844
+  },
+  {
+   "strike": 390.0,
+   "gex": -20956.824343913428
+  },
+  {
+   "strike": 395.0,
+   "gex": -2281.6788538659403
+  },
+  {
+   "strike": 400.0,
+   "gex": -41432.29329285592
+  },
+  {
+   "strike": 405.0,
+   "gex": -8493.511161625258
+  },
+  {
+   "strike": 410.0,
+   "gex": -10835.92832775756
+  },
+  {
+   "strike": 415.0,
+   "gex": -13397.650292734035
+  },
+  {
+   "strike": 420.0,
+   "gex": -20215.35643598866
+  },
+  {
+   "strike": 422.5,
+   "gex": -293.94328257950724
+  },
+  {
+   "strike": 425.0,
+   "gex": -2179.4878715081086
+  },
+  {
+   "strike": 427.5,
+   "gex": -31.896146301487384
+  },
+  {
+   "strike": 430.0,
+   "gex": -11803.373620646234
+  },
+  {
+   "strike": 432.5,
+   "gex": -78.70258280751918
+  },
+  {
+   "strike": 435.0,
+   "gex": -4342.946340443807
+  },
+  {
+   "strike": 437.5,
+   "gex": -11174.228866838288
+  },
+  {
+   "strike": 440.0,
+   "gex": -18463.886474055373
+  },
+  {
+   "strike": 442.5,
+   "gex": -68415.28569521906
+  },
+  {
+   "strike": 445.0,
+   "gex": -224379.94088785653
+  },
+  {
+   "strike": 447.5,
+   "gex": -2244.770690993603
+  },
+  {
+   "strike": 450.0,
+   "gex": -249657.9484762496
+  },
+  {
+   "strike": 452.5,
+   "gex": -2278.8299766768682
+  },
+  {
+   "strike": 455.0,
+   "gex": -18628.291766579587
+  },
+  {
+   "strike": 457.5,
+   "gex": -4751.79684747471
+  },
+  {
+   "strike": 460.0,
+   "gex": -27087.468245917295
+  },
+  {
+   "strike": 462.5,
+   "gex": -9502.589976562587
+  },
+  {
+   "strike": 465.0,
+   "gex": -44947.55344256738
+  },
+  {
+   "strike": 467.5,
+   "gex": -16019.49987851616
+  },
+  {
+   "strike": 470.0,
+   "gex": -48765.42363523078
+  },
+  {
+   "strike": 472.5,
+   "gex": -14453.663635739409
+  },
+  {
+   "strike": 475.0,
+   "gex": -162700.51548500842
+  },
+  {
+   "strike": 477.5,
+   "gex": -8277.419565513806
+  },
+  {
+   "strike": 480.0,
+   "gex": -201760.3610045605
+  },
+  {
+   "strike": 482.5,
+   "gex": -14457.271627552836
+  },
+  {
+   "strike": 485.0,
+   "gex": -91703.2381709075
+  },
+  {
+   "strike": 487.5,
+   "gex": -32373.59339481612
+  },
+  {
+   "strike": 490.0,
+   "gex": -269804.28008213354
+  },
+  {
+   "strike": 492.5,
+   "gex": -35566.10375190616
+  },
+  {
+   "strike": 495.0,
+   "gex": -178269.1268231013
+  },
+  {
+   "strike": 497.5,
+   "gex": -128093.12681926787
+  },
+  {
+   "strike": 500.0,
+   "gex": -18454062.676004127
+  },
+  {
+   "strike": 502.5,
+   "gex": -150691.52622185845
+  },
+  {
+   "strike": 505.0,
+   "gex": -507261.4639136249
+  },
+  {
+   "strike": 507.5,
+   "gex": -135924.6205610031
+  },
+  {
+   "strike": 510.0,
+   "gex": -538598.544194563
+  },
+  {
+   "strike": 512.5,
+   "gex": -191377.5521879231
+  },
+  {
+   "strike": 515.0,
+   "gex": -265243.5763532398
+  },
+  {
+   "strike": 517.5,
+   "gex": -8515546.456193881
+  },
+  {
+   "strike": 520.0,
+   "gex": -30115631.59958641
+  },
+  {
+   "strike": 522.5,
+   "gex": -10391538.293471998
+  },
+  {
+   "strike": 525.0,
+   "gex": -546277.8331458839
+  },
+  {
+   "strike": 527.5,
+   "gex": -5586180.332694658
+  },
+  {
+   "strike": 530.0,
+   "gex": -4830810.901597233
+  },
+  {
+   "strike": 532.5,
+   "gex": -6174455.8492061645
+  },
+  {
+   "strike": 535.0,
+   "gex": -2554972.881891667
+  },
+  {
+   "strike": 537.5,
+   "gex": -120464.7877032574
+  },
+  {
+   "strike": 540.0,
+   "gex": -4808636.375493166
+  },
+  {
+   "strike": 542.5,
+   "gex": -375896.5334329702
+  },
+  {
+   "strike": 545.0,
+   "gex": -3784811.344069098
+  },
+  {
+   "strike": 547.5,
+   "gex": -228947.44857761858
+  },
+  {
+   "strike": 550.0,
+   "gex": -1697742.1734238956
+  },
+  {
+   "strike": 552.5,
+   "gex": -781648.1893753558
+  },
+  {
+   "strike": 555.0,
+   "gex": -3567977.3370962744
+  },
+  {
+   "strike": 557.5,
+   "gex": -1800768.571005568
+  },
+  {
+   "strike": 560.0,
+   "gex": -432905.68622704013
+  },
+  {
+   "strike": 562.5,
+   "gex": -163936.78628280328
+  },
+  {
+   "strike": 565.0,
+   "gex": -553916.4366984648
+  },
+  {
+   "strike": 567.5,
+   "gex": -95405.3217113131
+  },
+  {
+   "strike": 570.0,
+   "gex": -1039135.5274571496
+  },
+  {
+   "strike": 572.5,
+   "gex": 1361.8908757323807
+  },
+  {
+   "strike": 575.0,
+   "gex": -867012.4378871543
+  },
+  {
+   "strike": 577.5,
+   "gex": 155579.91859612046
+  },
+  {
+   "strike": 580.0,
+   "gex": -1170473.130978201
+  },
+  {
+   "strike": 582.5,
+   "gex": 172009.8386529054
+  },
+  {
+   "strike": 585.0,
+   "gex": -678984.6588928401
+  },
+  {
+   "strike": 587.5,
+   "gex": 11146.73541904868
+  },
+  {
+   "strike": 590.0,
+   "gex": -3011910.262553711
+  },
+  {
+   "strike": 592.5,
+   "gex": 37799.500420477285
+  },
+  {
+   "strike": 595.0,
+   "gex": -13256.622974956612
+  },
+  {
+   "strike": 597.5,
+   "gex": 53943.609505924156
+  },
+  {
+   "strike": 600.0,
+   "gex": 191454.22293426818
+  },
+  {
+   "strike": 602.5,
+   "gex": 82794.25244439699
+  },
+  {
+   "strike": 605.0,
+   "gex": -178771.336029515
+  },
+  {
+   "strike": 607.5,
+   "gex": 284176.4234087056
+  },
+  {
+   "strike": 610.0,
+   "gex": 418747.0854889321
+  },
+  {
+   "strike": 612.5,
+   "gex": 88103.53147248375
+  },
+  {
+   "strike": 615.0,
+   "gex": 45345.010118420396
+  },
+  {
+   "strike": 617.5,
+   "gex": 75573.69834424296
+  },
+  {
+   "strike": 620.0,
+   "gex": 149403.9005846662
+  },
+  {
+   "strike": 622.5,
+   "gex": 85042.32699530388
+  },
+  {
+   "strike": 625.0,
+   "gex": 102287.8483725956
+  },
+  {
+   "strike": 627.5,
+   "gex": 190182.2322480023
+  },
+  {
+   "strike": 630.0,
+   "gex": 77004.46097003385
+  },
+  {
+   "strike": 632.5,
+   "gex": 32417.217193642624
+  },
+  {
+   "strike": 635.0,
+   "gex": 671904.3853576478
+  },
+  {
+   "strike": 637.5,
+   "gex": 38775.80933246461
+  },
+  {
+   "strike": 640.0,
+   "gex": 347012.41660805565
+  },
+  {
+   "strike": 642.5,
+   "gex": 22777.97192686365
+  },
+  {
+   "strike": 645.0,
+   "gex": 17939.146758426617
+  },
+  {
+   "strike": 647.5,
+   "gex": 76481.46066684046
+  },
+  {
+   "strike": 650.0,
+   "gex": 431750.47564259765
+  },
+  {
+   "strike": 652.5,
+   "gex": 306956.9423092961
+  },
+  {
+   "strike": 655.0,
+   "gex": 29883.83675029813
+  },
+  {
+   "strike": 657.5,
+   "gex": 5255.996875900898
+  },
+  {
+   "strike": 660.0,
+   "gex": 73945.53301585438
+  },
+  {
+   "strike": 662.5,
+   "gex": 11831.532814379816
+  },
+  {
+   "strike": 665.0,
+   "gex": 24315.951648187296
+  },
+  {
+   "strike": 667.5,
+   "gex": 11085.51177032702
+  },
+  {
+   "strike": 670.0,
+   "gex": 13114.425776847382
+  },
+  {
+   "strike": 672.5,
+   "gex": 10404.389573368704
+  },
+  {
+   "strike": 675.0,
+   "gex": 95717.72788251097
+  },
+  {
+   "strike": 677.5,
+   "gex": 3207.513192200445
+  },
+  {
+   "strike": 680.0,
+   "gex": 186973.66693988902
+  },
+  {
+   "strike": 682.5,
+   "gex": 2448.919259183888
+  },
+  {
+   "strike": 685.0,
+   "gex": 9457.423518483884
+  },
+  {
+   "strike": 687.5,
+   "gex": 1857.5043257598002
+  },
+  {
+   "strike": 690.0,
+   "gex": 10216.301379891422
+  },
+  {
+   "strike": 692.5,
+   "gex": 3494.9849526217326
+  },
+  {
+   "strike": 695.0,
+   "gex": 8348.054571195928
+  },
+  {
+   "strike": 700.0,
+   "gex": 38716.9313288206
+  },
+  {
+   "strike": 702.5,
+   "gex": 72.85834593080976
+  },
+  {
+   "strike": 705.0,
+   "gex": 10184.876771897629
+  },
+  {
+   "strike": 707.5,
+   "gex": 2171.971702655862
+  },
+  {
+   "strike": 710.0,
+   "gex": 11876.143779579439
+  },
+  {
+   "strike": 715.0,
+   "gex": 9313.958380872897
+  },
+  {
+   "strike": 720.0,
+   "gex": 110379.6759824812
+  },
+  {
+   "strike": 725.0,
+   "gex": 10944.22681972844
+  },
+  {
+   "strike": 730.0,
+   "gex": 20613.07613930825
+  },
+  {
+   "strike": 735.0,
+   "gex": 1373.0263116541462
+  },
+  {
+   "strike": 740.0,
+   "gex": 28332.473637080722
+  },
+  {
+   "strike": 745.0,
+   "gex": 1179.5935143189658
+  },
+  {
+   "strike": 750.0,
+   "gex": 6402.770228272735
+  },
+  {
+   "strike": 755.0,
+   "gex": 421.38384460406735
+  },
+  {
+   "strike": 760.0,
+   "gex": 1337.9924666605539
+  },
+  {
+   "strike": 765.0,
+   "gex": 2533.8112178826273
+  },
+  {
+   "strike": 770.0,
+   "gex": 1286.60407595811
+  },
+  {
+   "strike": 775.0,
+   "gex": 464.0510832216133
+  },
+  {
+   "strike": 780.0,
+   "gex": 966.9203619069378
+  },
+  {
+   "strike": 785.0,
+   "gex": 113.94046964200302
+  }
+ ],
+ "viernes_call_wall": 635.0,
+ "viernes_put_wall": 520.0,
+ "viernes_calls_oi": 45090,
+ "viernes_puts_oi": 399361,
+ "viernes_pc_oi": 8.857,
+ "viernes_top_calls": [
+  {
+   "strike": 635.0,
+   "oi": 4374
+  },
+  {
+   "strike": 560.0,
+   "oi": 4286
+  },
+  {
+   "strike": 650.0,
+   "oi": 4263
+  },
+  {
+   "strike": 720.0,
+   "oi": 4021
+  },
+  {
+   "strike": 680.0,
+   "oi": 3213
+  },
+  {
+   "strike": 600.0,
+   "oi": 1942
+  }
+ ],
+ "viernes_top_puts": [
+  {
+   "strike": 520.0,
+   "oi": 101240
+  },
+  {
+   "strike": 500.0,
+   "oi": 93227
+  },
+  {
+   "strike": 522.5,
+   "oi": 33372
+  },
+  {
+   "strike": 517.5,
+   "oi": 30074
+  },
+  {
+   "strike": 532.5,
+   "oi": 16648
+  },
+  {
+   "strike": 527.5,
+   "oi": 16172
+  }
+ ],
+ "supervivientes": [
+  {
+   "lado": "P",
+   "strike": 550.0,
+   "dias_semana_pasada": 2,
+   "oi_entonces": 67966.0,
+   "oi_ahora": 4618,
+   "rank_ahora": 16,
+   "ratio_oi": 6.8,
+   "estado": "SIN RASTRO",
+   "exp_entonces": "20260722",
+   "oi_viernes": 4232
+  },
+  {
+   "lado": "C",
+   "strike": 600.0,
+   "dias_semana_pasada": 2,
+   "oi_entonces": 5548.0,
+   "oi_ahora": 2591,
+   "rank_ahora": 7,
+   "ratio_oi": 46.7,
+   "estado": "DECAIDO",
+   "exp_entonces": "20260722",
+   "oi_viernes": 1942
+  },
+  {
+   "lado": "P",
+   "strike": 565.0,
+   "dias_semana_pasada": 4,
+   "oi_entonces": 4812.0,
+   "oi_ahora": 2974,
+   "rank_ahora": 18,
+   "ratio_oi": 61.8,
+   "estado": "SIN RASTRO",
+   "exp_entonces": "20260722",
+   "oi_viernes": 2893
+  },
+  {
+   "lado": "P",
+   "strike": 540.0,
+   "dias_semana_pasada": 1,
+   "oi_entonces": 3979.0,
+   "oi_ahora": 9945,
+   "rank_ahora": 9,
+   "ratio_oi": 249.9,
+   "estado": "DECAIDO",
+   "exp_entonces": "20260724",
+   "oi_viernes": 5840
+  },
+  {
+   "lado": "P",
+   "strike": 572.5,
+   "dias_semana_pasada": 1,
+   "oi_entonces": 3197.0,
+   "oi_ahora": 282,
+   "rank_ahora": 62,
+   "ratio_oi": 8.8,
+   "estado": "SIN RASTRO",
+   "exp_entonces": "20260724",
+   "oi_viernes": 99
+  },
+  {
+   "lado": "C",
+   "strike": 610.0,
+   "dias_semana_pasada": 2,
+   "oi_entonces": 3051.0,
+   "oi_ahora": 1644,
+   "rank_ahora": 12,
+   "ratio_oi": 53.9,
+   "estado": "DECAIDO",
+   "exp_entonces": "20260722",
+   "oi_viernes": 1220
+  },
+  {
+   "lado": "C",
+   "strike": 590.0,
+   "dias_semana_pasada": 3,
+   "oi_entonces": 2623.0,
+   "oi_ahora": 582,
+   "rank_ahora": 28,
+   "ratio_oi": 22.2,
+   "estado": "SIN RASTRO",
+   "exp_entonces": "20260722",
+   "oi_viernes": 414
+  },
+  {
+   "lado": "P",
+   "strike": 585.0,
+   "dias_semana_pasada": 1,
+   "oi_entonces": 2338.0,
+   "oi_ahora": 2412,
+   "rank_ahora": 21,
+   "ratio_oi": 103.2,
+   "estado": "SIN RASTRO",
+   "exp_entonces": "20260724",
+   "oi_viernes": 2336
+  },
+  {
+   "lado": "P",
+   "strike": 555.0,
+   "dias_semana_pasada": 1,
+   "oi_entonces": 2106.0,
+   "oi_ahora": 7370,
+   "rank_ahora": 12,
+   "ratio_oi": 350.0,
+   "estado": "DECAIDO",
+   "exp_entonces": "20260722",
+   "oi_viernes": 6985
+  },
+  {
+   "lado": "P",
+   "strike": 610.0,
+   "dias_semana_pasada": 1,
+   "oi_entonces": 1717.0,
+   "oi_ahora": 54,
+   "rank_ahora": 92,
+   "ratio_oi": 3.1,
+   "estado": "SIN RASTRO",
+   "exp_entonces": "20260722",
+   "oi_viernes": 38
+  },
+  {
+   "lado": "C",
+   "strike": 575.0,
+   "dias_semana_pasada": 2,
+   "oi_entonces": 1674.0,
+   "oi_ahora": 1617,
+   "rank_ahora": 13,
+   "ratio_oi": 96.6,
+   "estado": "DECAIDO",
+   "exp_entonces": "20260722",
+   "oi_viernes": 1563
+  },
+  {
+   "lado": "P",
+   "strike": 600.0,
+   "dias_semana_pasada": 1,
+   "oi_entonces": 1517.0,
+   "oi_ahora": 1908,
+   "rank_ahora": 26,
+   "ratio_oi": 125.8,
+   "estado": "SIN RASTRO",
+   "exp_entonces": "20260722",
+   "oi_viernes": 1892
+  },
+  {
+   "lado": "C",
+   "strike": 585.0,
+   "dias_semana_pasada": 1,
+   "oi_entonces": 1160.0,
+   "oi_ahora": 837,
+   "rank_ahora": 22,
+   "ratio_oi": 72.2,
+   "estado": "SIN RASTRO",
+   "exp_entonces": "20260724",
+   "oi_viernes": 264
+  },
+  {
+   "lado": "C",
+   "strike": 580.0,
+   "dias_semana_pasada": 1,
+   "oi_entonces": 868.0,
+   "oi_ahora": 443,
+   "rank_ahora": 32,
+   "ratio_oi": 51.0,
+   "estado": "SIN RASTRO",
+   "exp_entonces": "20260724",
+   "oi_viernes": 393
+  }
+ ],
+ "toques": [
+  {
+   "toque": 0,
+   "n": 7,
+   "aguanta": 6,
+   "rompe": 1,
+   "pct_aguanta": 85.7
+  },
+  {
+   "toque": 1,
+   "n": 9,
+   "aguanta": 8,
+   "rompe": 1,
+   "pct_aguanta": 88.9
+  },
+  {
+   "toque": 2,
+   "n": 19,
+   "aguanta": 17,
+   "rompe": 2,
+   "pct_aguanta": 89.5
+  },
+  {
+   "toque": 3,
+   "n": 25,
+   "aguanta": 21,
+   "rompe": 4,
+   "pct_aguanta": 84.0
+  },
+  {
+   "toque": 4,
+   "n": 8,
+   "aguanta": 7,
+   "rompe": 1,
+   "pct_aguanta": 87.5
+  },
+  {
+   "toque": 5,
+   "n": 10,
+   "aguanta": 8,
+   "rompe": 2,
+   "pct_aguanta": 80.0
+  },
+  {
+   "toque": 6,
+   "n": 10,
+   "aguanta": 9,
+   "rompe": 1,
+   "pct_aguanta": 90.0
+  },
+  {
+   "toque": 7,
+   "n": 10,
+   "aguanta": 6,
+   "rompe": 4,
+   "pct_aguanta": 60.0
+  },
+  {
+   "toque": 8,
+   "n": 5,
+   "aguanta": 5,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 9,
+   "n": 3,
+   "aguanta": 3,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 10,
+   "n": 2,
+   "aguanta": 2,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 11,
+   "n": 6,
+   "aguanta": 4,
+   "rompe": 2,
+   "pct_aguanta": 66.7
+  },
+  {
+   "toque": 12,
+   "n": 4,
+   "aguanta": 3,
+   "rompe": 1,
+   "pct_aguanta": 75.0
+  },
+  {
+   "toque": 13,
+   "n": 3,
+   "aguanta": 3,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 14,
+   "n": 7,
+   "aguanta": 6,
+   "rompe": 1,
+   "pct_aguanta": 85.7
+  },
+  {
+   "toque": 15,
+   "n": 2,
+   "aguanta": 2,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 16,
+   "n": 3,
+   "aguanta": 3,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 17,
+   "n": 3,
+   "aguanta": 2,
+   "rompe": 1,
+   "pct_aguanta": 66.7
+  },
+  {
+   "toque": 18,
+   "n": 4,
+   "aguanta": 4,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 19,
+   "n": 4,
+   "aguanta": 4,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 20,
+   "n": 5,
+   "aguanta": 5,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 21,
+   "n": 3,
+   "aguanta": 3,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 22,
+   "n": 3,
+   "aguanta": 3,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 23,
+   "n": 10,
+   "aguanta": 7,
+   "rompe": 3,
+   "pct_aguanta": 70.0
+  },
+  {
+   "toque": 24,
+   "n": 2,
+   "aguanta": 1,
+   "rompe": 1,
+   "pct_aguanta": 50.0
+  },
+  {
+   "toque": 25,
+   "n": 7,
+   "aguanta": 6,
+   "rompe": 1,
+   "pct_aguanta": 85.7
+  },
+  {
+   "toque": 26,
+   "n": 4,
+   "aguanta": 4,
+   "rompe": 0,
+   "pct_aguanta": 100.0
+  },
+  {
+   "toque": 27,
+   "n": 5,
+   "aguanta": 4,
+   "rompe": 1,
+   "pct_aguanta": 80.0
+  },
+  {
+   "toque": 28,
+   "n": 12,
+   "aguanta": 7,
+   "rompe": 5,
+   "pct_aguanta": 58.3
+  },
+  {
+   "toque": 29,
+   "n": 2,
+   "aguanta": 1,
+   "rompe": 1,
+   "pct_aguanta": 50.0
+  },
+  {
+   "toque": 30,
+   "n": 4,
+   "aguanta": 3,
+   "rompe": 1,
+   "pct_aguanta": 75.0
+  }
+ ],
+ "semana_pasada_fechas": [
+  "2026-07-20",
+  "2026-07-21",
+  "2026-07-22",
+  "2026-07-23",
+  "2026-07-24"
+ ],
+ "caveats": [
+  "OI de la semana pasada = contratos YA EXPIRADOS (exp 07-22/23/24): el cociente de OI NO es like-for-like. La supervivencia se decide por RANGO del strike en el libro de hoy.",
+  "Muros de la semana pasada: cadena IBKR/TWS del vencimiento MAS CERCANO de cada dia. Muros de hoy: cadena Polygon con banda adaptativa, todos los vencimientos hasta el viernes.",
+  "spot 561.99 con edad 149778s = cierre del viernes (mercado cerrado).",
+  "Polygon = 15 min de retraso (HISTORIA/ESTRUCTURA). Ningun nivel de aqui dispara una orden: el PRINT que confirma es de IBKR en tiempo real.",
+  "bid/ask NO_ENTITLED en este plan de Polygon: no hay gate de spread en esta hoja."
+ ]
+}
