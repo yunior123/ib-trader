@@ -57,13 +57,23 @@
   simétrico mock/live por inspección de código (`_prime_bars` cubre ambos), pero no se
   levantó un 7º puente contra TWS para no arriesgar el Mac de 8 GB.
 
-- [ ] **[pendiente — DECIDIDO POR YUNIOR 2026-07-26: "si"] Repuntar los 3 escritores del
-  escritorio a `~/Desktop/ib-trader/hoy/`**: (1) `scripts/print_mon_plans.sh:8` (cron
-  `com.ibtrader.printplans`, lunes 09:25) escribe `$HOME/Desktop/planes-$DAY` en la RAIZ;
-  (2) `price_alarm.cpp:80` y `scripts/chart_bridge.py:665` hardcodean
-  `~/Desktop/price-alerts.txt`; (3) `scripts/daily_archive.py:195` LEE
-  `~/Desktop/planes-{date}/ranking.json` y su `cp` es `warn=False` -> con la carpeta movida
-  falla EN SILENCIO y deja de archivar. Ese silencio es el peligro real, no el desorden.
+- [x] **[hecho 36a2de8, mismo dia 496e8f9] Repuntar los 3 escritores del escritorio a
+  `~/Desktop/ib-trader/hoy/`**. Los 3 apuntan a `IBT_DESKTOP_HOY` (env var, default
+  `~/Desktop/ib-trader/hoy`, mkdir -p): `price_alarm.cpp`/`chart_bridge.py:_alarm_path`
+  (496e8f9, commit de otro agente concurrente), `print_mon_plans.sh` + `daily_archive.py`
+  (36a2de8). HALLAZGO no previsto: `daily_archive.py` (cron 16:10) fallaba con
+  `Errno1 Operation not permitted` leyendo Desktop 5 dias seguidos (07-22 a 07-26),
+  DESDE ANTES del repunto — su plist invocaba `venv/bin/python` DIRECTO sin wrapper zsh,
+  y TCC solo concede FDA a `/bin/zsh` (medido con `launchctl submit`: zsh via launchd
+  lee/escribe Desktop OK; python directo via launchd puede CREAR pero no LEER existentes).
+  `print_mon_plans.sh` SI puede (corre via zsh) — no necesito el symlink-fuera-de-Desktop
+  que Yunior anticipo para ese caso. Fix real: `scripts/daily_archive_run.sh` (wrapper zsh,
+  mismo patron que `dailyplans_run.sh`) + plist recargado. `find_ranking_json()` prueba
+  hoy/ -> raiz vieja -> archivo/ y GRITA CRITICAL si no aparece en ninguna (antes
+  `warn=False` silencioso). Verificado con `launchctl start` real: sin FALLO/CRITICAL,
+  `ranking.json` de hoy archivado por primera vez desde el 07-22. Tests:
+  `tests/test_daily_archive_ranking.py` (5 casos). Suite completa 837 passed, 1 fallo
+  preexistente ajeno (`test_voice_budget.py`).
 
 - [ ] **[pendiente] "the chart should load data on demand when scrolling to pass, priority to
   live data please"** (Yunior 2026-07-26). El chart carga un payload fijo al conectar; al

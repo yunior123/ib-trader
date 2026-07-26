@@ -108,10 +108,14 @@ echo "  portabilidad: 0 rutas absolutas de este Mac dentro del bundle"
 # Desktop esta bajo TCC: desde una shell interactiva se escribe bien, pero si esto
 # llegara a correr bajo launchd fallaria igual que el repo antes de la mudanza.
 # CI=1 (GitHub Actions) no tiene Desktop de nadie: se salta la entrega.
-DESK="$HOME/Desktop"
+# Yunior 2026-07-26: el escritorio va LIMPIO, una sola carpeta ~/Desktop/ib-trader.
+DESK="$HOME/Desktop/ib-trader"
+DESK_APP="$DESK/ib-trader Cockpit.app"
 if [ "${CI:-}" = "true" ] || [ "${CI:-0}" = "1" ]; then
   echo "  (CI — sin entrega a Desktop)"
-elif [ -w "$DESK" ]; then
+elif mkdir -p "$DESK" 2>/dev/null && [ -w "$DESK" ]; then
+  # una copia suelta en la raiz = 2 registros del mismo bundle id = el fantasma vuelve
+  rm -rf "$HOME/Desktop/ib-trader Cockpit.app"
   # ditto (no cp -R): preserva xattrs, ACLs y el sello. Y se entrega por STAGING +
   # swap: entre el rm y el cp habia una ventana en la que el Desktop se quedaba sin
   # app — si el cp fallaba (disco, Ctrl-C) desaparecia y no volvia. Eso es lo que
@@ -120,9 +124,9 @@ elif [ -w "$DESK" ]; then
   rm -rf "$STAGE"
   ditto "$APP" "$STAGE"
   xattr -dr com.apple.quarantine "$STAGE" 2>/dev/null || true
-  rm -rf "$DESK/ib-trader Cockpit.app"
-  mv "$STAGE" "$DESK/ib-trader Cockpit.app"
-  echo "  -> entregada en Desktop: $DESK/ib-trader Cockpit.app"
+  rm -rf "$DESK_APP"
+  mv "$STAGE" "$DESK_APP"
+  echo "  -> entregada en Desktop: $DESK_APP"
 else
   echo "  AVISO: no puedo escribir en $DESK (TCC?) — la .app queda solo en macapp/"
 fi
@@ -143,10 +147,14 @@ if [ -x "$LSR" ]; then
     | awk -v bid="$BID" '$1=="path:"       {p=""; for(i=2;i<=NF;i++){if($i ~ /^\(0x/)break; p=(p==""?$i:p" "$i)}}
                          $1=="identifier:" && $2==bid && p!="" {print p; p=""}' \
     | while IFS= read -r ghost; do
+        # fantasma = path muerto; la Papelera existe en disco pero compite por el mismo bundle id
+        case "$ghost" in
+          "$HOME/.Trash/"*) "$LSR" -u "$ghost" 2>/dev/null; echo "  LS: purgado de la Papelera $ghost"; continue;;
+        esac
         [ -n "$ghost" ] && [ ! -d "$ghost" ] && { "$LSR" -u "$ghost" 2>/dev/null; echo "  LS: purgado fantasma $ghost"; }
       done
   "$LSR" -f -R -trusted "$APP" 2>/dev/null || true
-  [ -d "$DESK/ib-trader Cockpit.app" ] && { "$LSR" -f -R -trusted "$DESK/ib-trader Cockpit.app" 2>/dev/null || true; touch "$DESK/ib-trader Cockpit.app"; }
+  [ -d "$DESK_APP" ] && { "$LSR" -f -R -trusted "$DESK_APP" 2>/dev/null || true; touch "$DESK_APP"; }
   echo "  LS: bundles re-registrados ($BID)"
 fi
 
