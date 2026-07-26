@@ -38,7 +38,7 @@
   ancho — 0,5 como DRAM, o medirlo antes de fijarlo). Los otros 6 sin gate (cper kospi
   samsung skhynix slv uso) están FUERA de `fleet.txt`: no urge.
 
-- [ ] **[pendiente] "chrome claude is connected now, u can use tradingflow, plus test all too"**
+- [x] **[hecho 7b4de2b + 7b01bb5 — TradingFlow minado y las 6 ventanas probadas en Chrome]** **[pendiente] "chrome claude is connected now, u can use tradingflow, plus test all too"**
   (Yunior 2026-07-26). Chrome conectado por fin tras 5 intentos fallidos. Dos cosas:
   (a) minar TradingFlow con la cuenta de Yunior; (b) **probar TODO** en el navegador
   (chart vivo, muros, flecha, burbujas, panel GEX).
@@ -76,7 +76,7 @@
       `band=gex_core.parse_chain_header(path).get("band")` (el fichero ya publica el token `band`).
       Es el MISMO defecto una capa más abajo — no se tocó aquí para no cambiar el camino vivo del
       chart sin sesión abierta con qué verificarlo.
-- [ ] **[pendiente] "run ib-gateway simulation engine… show 6 ib-trader window like before, working
+- [x] **[hecho 7b01bb5 — 6 ventanas 8080-8085 con muros reales vía --mock-dir del sandbox de replay]** **[pendiente] "run ib-gateway simulation engine… show 6 ib-trader window like before, working
       with different tickers, while the graph is moving, while we also see the walls. full qa
       testing on those windows, test everysingle feature in there"** (Yunior 2026-07-25).
       Va DESPUÉS de arreglar los muros: `replay.cpp:314-364` copia/sintetiza los `levels_<sym>.json`,
@@ -369,12 +369,12 @@
 - [x] "usa init para que cada session de claude code reads claude.md" → creado `CLAUDE.md` en el
       repo (el harness lo lee solo al abrir sesión aquí). CONCISO por la regla de no gastar
       tokens: punteros a `AGENTS.md`/`docs/`, más las 6 reglas que más rompen cosas.
-- [ ] **[pendiente] QA de las 6 ventanas** sobre `replay` (tarea que sigue).
+- [x] **[hecho 7b01bb5 — chart_qa_windows.sh (launchd, supervisión por ventana); cazó 3 bugs: flip extrapolado 58c7b50, panel GEX con spot del mapa b2e1106, régimen con spot del mapa fc53ca0]** **[pendiente] QA de las 6 ventanas** sobre `replay` (tarea que sigue).
 - [ ] **[pendiente] Capturar más datos de TradingFlow y Unusual Whales por Chrome/Safari**
       (Yunior: "use trading flow in chrome para capturar mas datos, y otros como unusualwhales").
       Vía que SÍ funciona: **Safari + osascript** (la extensión de Chrome no conecta). Ya probada
       hoy: `osascript -e 'tell application "Safari" to do JavaScript ...'` con la sesión de Yunior.
-- [ ] **[pendiente] LOS 5 ÁRBOLES** (Yunior 2026-07-26, después de terminar todo el testing):
+- [x] **[hecho 5a0d0f3 — data/trees/*.json + cinco-arboles.html; supervivencia por RANGO del strike (el cociente de OI compara vencimientos ya expirados)]** **[pendiente] LOS 5 ÁRBOLES** (Yunior 2026-07-26, después de terminar todo el testing):
       *"imprime tree, solo tree para estos tickers: spy, qqq, aapl, smh, nvda, based on walls that
       still remain from last week, plus the ones for this starting week till friday, search the
       calls, puts expiring upcoming friday, create graph, chart, based on that too. 5 sheets total,
@@ -481,7 +481,7 @@ cinco NEGATIVOS** (coincide con nuestro 19/25 en NEG y con su propio recap "Deal
       retail o creador, menos señal. *Por qué importa*: una conjunción es mucho más difícil de
       sobreajustar que un umbral único, y el umbral único es justo por lo que **el tide de −53 M
       del 7/21 no sonó**.
-- [ ] **[pendiente] Pasada VISUAL a TradingFlow con la cuenta de Yunior** (Chrome): minar la
+- [x] **[hecho 7b4de2b — docs/research/tradingflow-flujo-agresor.md: escalera de agresor de 5 peldaños + 17 sesiones de régimen + cruce con UW]** **[pendiente] Pasada VISUAL a TradingFlow con la cuenta de Yunior** (Chrome): minar la
       pantalla (no solo los docs) y **capturar datos suyos para verificar los nuestros** —
       su GEX/muros/flip contra `data/gex_snapshot.json`, igual que se hizo con CBOE y Polygon.
       *Bloqueado por*: la extensión de Claude no conecta con Chrome (instalada en 4 perfiles,
