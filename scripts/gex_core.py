@@ -654,6 +654,67 @@ def wall_context(gexinfo, price):
     return out
 
 
+PIN_T_FLOOR = 1 / (252 * 24)   # 1 hora en años: piso para 1/T, sin esto T->0 al cierre da infinito
+
+
+def pin_risk_score(gexinfo, contracts, spot):
+    """concentracion(|gamma|) x proximidad(spot,POC) x 1/T (protocolo oi-magnets-protocol).
+    DESCRIPTIVO, no probabilidad: convencion declarada, no calibrada con historico (como
+    VPVR). None si falta HHI, POC o ningun contrato trae T -- nunca un score fabricado."""
+    hhi = gexinfo.get("hhi")
+    poc = gexinfo.get("abs_wall")
+    if hhi is None or poc is None or not spot or spot <= 0:
+        return None
+    Ts = [float(c["T"]) for c in contracts if c.get("T") and float(c["T"]) > 0]
+    if not Ts:
+        return None
+    t_min = max(min(Ts), PIN_T_FLOOR)
+    proximity = max(0.0, 1 - abs(poc - spot) / spot)
+    call_wall = gexinfo.get("call_wall")
+    return {
+        "score": hhi * proximity / t_min,
+        "hhi": hhi, "proximity_to_poc": proximity, "t_min_years": t_min,
+        "poc": poc, "call_wall": call_wall,
+        "fortress_pin": call_wall is not None and poc == call_wall,
+        "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); "
+                      "no es probabilidad, es un ranking descriptivo",
+    }
+
+
+def flip_migration_trail(points):
+    """points: iterable de (ts, flip) del flip archivado cada 5min (levels_5m.jsonl).
+    Polilinea + forma (horizontal/inclinada/dentada) para juzgar si el regimen del dia es
+    fiable o es ruido de banda. Umbrales CONVENCION, no medidos con historico (como VPVR
+    confluence): declarados en el propio dato. <3 puntos validos -> insuficiente, sin forma."""
+    pts = sorted((float(t), float(f)) for t, f in points if f is not None)
+    n = len(pts)
+    if n < 3:
+        return {"n": n, "trail": pts, "shape": None, "status": "insuficiente_datos"}
+    flips = [f for _, f in pts]
+    first, last, mean = flips[0], flips[-1], sum(flips) / n
+    span = max(flips) - min(flips)
+    drift_pct = (last - first) / first * 100 if first else None
+    range_pct = (span / mean * 100) if mean else None
+    deltas = [b - a for a, b in zip(flips, flips[1:])]
+    signs = [1 if d > 0 else (-1 if d < 0 else 0) for d in deltas if d != 0]
+    reversals = sum(1 for a, b in zip(signs, signs[1:]) if a != b)
+    reversal_rate = reversals / max(1, len(signs) - 1) if len(signs) >= 2 else 0.0
+    HORIZ_RANGE_PCT, DENTADA_REVERSAL_RATE = 0.15, 0.5     # convencion, no medida
+    if range_pct is not None and range_pct <= HORIZ_RANGE_PCT:
+        shape = "horizontal"
+    elif reversal_rate > DENTADA_REVERSAL_RATE:
+        shape = "dentada"
+    else:
+        shape = "inclinada"
+    return {
+        "n": n, "trail": pts, "first": first, "last": last, "range_pct": range_pct,
+        "drift_pct": drift_pct, "reversals": reversals, "reversal_rate": round(reversal_rate, 3),
+        "shape": shape, "status": "ok",
+        "convention": f"horizontal<={HORIZ_RANGE_PCT}% rango, dentada>{DENTADA_REVERSAL_RATE} "
+                      "tasa de reversion -- umbrales convencion, no medidos",
+    }
+
+
 # ------------------------------ adaptadores de datos -------------------------
 def _T_of(exp, now=None):
     """Años al 16:00 ET del vencimiento YYYYMMDD (piso 1e-5). `now` (epoch) permite

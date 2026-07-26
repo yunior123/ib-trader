@@ -184,7 +184,9 @@ def _flow_component(sym, dfav):
         fav = _clamp(s * dfav)                            # >0 = flecha a favor del trade
         out.update(score=round(fav, 3), dir=r.get("dir"), prob=r.get("prob"),
                    raw_score=round(s, 3), missing=False)
-        out["why"].append(f"flecha {str(r.get('dir','?')).upper()} {r.get('prob','?')}% "
+        pr = r.get("prob")
+        pr_txt = f"{pr}%" if pr is not None else "sin prob medida"
+        out["why"].append(f"flecha {str(r.get('dir','?')).upper()} {pr_txt} "
                           f"(score {s:+.2f}) {'a favor' if fav >= 0 else 'EN CONTRA'} del trade")
     except Exception:
         out["why"].append("direction_view no disponible (flujo neutral, confianza ↓)")

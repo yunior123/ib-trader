@@ -90,6 +90,32 @@ def latest_chain(sym, max_days=5):
     return None, None
 
 
+def flip_history(sym, max_days=10):
+    """(ts, flip) archivados por levels_5min_archive.py para `sym`, ultimos `max_days`.
+    Lista vacia si no hay historia -- flip_migration_trail ya declara 'insuficiente_datos'."""
+    sym = sym.upper()
+    hoy = dt.date.today()
+    out = []
+    for k in range(max_days, -1, -1):
+        d = (hoy - dt.timedelta(days=k)).isoformat()
+        p = os.path.join(REPO, "data", "history", d, "levels_5m.jsonl")
+        if not os.path.exists(p):
+            continue
+        with open(p) as f:
+            for ln in f:
+                try:
+                    row = json.loads(ln)
+                except ValueError:
+                    continue
+                if row.get("sym") != sym or row.get("stale"):
+                    continue
+                fl = (row.get("levels") or {}).get("flip")
+                ts = row.get("ts")
+                if fl is not None and ts is not None:
+                    out.append((ts, fl))
+    return out
+
+
 def contracts_from(path):
     """Traduce la cadena de Polygon al dict que espera gex_core, quedandose SOLO con contratos
     que tengan gamma medida y OI real. Devuelve (contratos, spot, meta, n_candidatos).
@@ -211,6 +237,8 @@ def snapshot_sym(sym):
     def _r(x, n=2):
         return round(float(x), n) if isinstance(x, (int, float)) else None
     dx = gex_core.build_dex(cs, spot)
+    pin_risk = gex_core.pin_risk_score(gi, cs, spot)
+    flip_trail = gex_core.flip_migration_trail(flip_history(sym))
     return {
         "flip": _r(flip),
         "flip_all": _r(flip),            # se calcula sobre TODOS los vencimientos del fichero
@@ -257,6 +285,8 @@ def snapshot_sym(sym):
         "greeks_ok_pct": round(pct, 3),
         "n_contracts": len(cs),
         "n_strikes_populated": gi.get("n_strikes_populated"),
+        "pin_risk": pin_risk,          # None si falta HHI/POC/T -- protocolo oi-magnets-protocol
+        "flip_migration": flip_trail,  # forma del flip 5min (horizontal/inclinada/dentada)
     }, None
 
 

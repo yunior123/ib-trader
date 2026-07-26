@@ -56,3 +56,8 @@ def cage():
 @pytest.fixture(scope="session")
 def fleet():
     return _load("daily_fleet_plans")
+
+
+@pytest.fixture(scope="session")
+def macro_cal():
+    return _load("macro_calendar")

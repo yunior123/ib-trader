@@ -335,6 +335,49 @@ def futures_read():
     return out
 
 # ---------- motor del plan picaro ----------
+def load_earnings_calendar():
+    """Calendario earnings 'semana que viene' via x_earnings_post (mismo CSV v=152,
+    misma re-verificacion: fetch_csv re-fetcha Finviz si el cache pasa de 6h, porque
+    Finviz mueve fechas). {SYM: (fecha,'BMO'|'AMC',datetime)}. None si el feed esta
+    roto o el modulo no importa — jamas {} fabricado."""
+    try:
+        import x_earnings_post as xep
+    except Exception as e:
+        print(f"AVISO earnings: x_earnings_post no importable ({e})", file=sys.stderr)
+        return None
+    body = xep.fetch_csv("152", xep.CACHE_152, xep.token(), cols=xep.COLS_152)
+    rows = xep.parse_csv(body)
+    if not rows:
+        return None
+    out = {}
+    for row in rows:
+        sym = row.get("Ticker", "").strip().upper()
+        parsed = xep.parse_earn(row.get("Earnings Date"))
+        if sym and parsed:
+            out[sym] = parsed
+    return out or None
+
+def earnings_veto_lines(sym, earn, today=None):
+    """Texto de calendario+veto duro (regla 4: jamas aguantar prima comprada a traves
+    del print). AMC bite al cierre del propio dia del print; BMO bite al cierre del dia
+    ANTERIOR (el print ya salio antes de esa apertura). `earn` = (fecha,sesion,datetime)
+    de load_earnings_calendar() o None (sin earnings la semana que viene -> []) ."""
+    if not earn:
+        return []
+    edate, esess, edt = earn
+    veto_date = edate if esess == "AMC" else (edt - dt.timedelta(days=1)).strftime("%Y-%m-%d")
+    hoy = today or time.strftime("%Y-%m-%d")
+    sesion_txt = "tras el cierre (AMC)" if esess == "AMC" else "antes de abrir (BMO)"
+    out = [f"📅 EARNINGS {edate} {sesion_txt}."]
+    if hoy == veto_date:
+        out.append(f"  🚫 VETO HOY: prima comprada de {sym} FUERA antes del cierre —")
+        out.append("  regla 4: jamas aguantar prima comprada a traves del print.")
+    elif hoy < veto_date:
+        out.append(f"  Veto de prima comprada entra en vigor al cierre de {veto_date}.")
+    else:
+        out.append(f"  Print ya paso ({edate}); veto ya no aplica.")
+    return out
+
 def finviz_read(sym):
     try:
         d = dict(ln.strip().split("=", 1) for ln in open(f"data/finviz_{sym.lower()}.txt") if "=" in ln)
@@ -388,7 +431,17 @@ def gex_snapshot_for(sym):
         return None                              # cadena rancia (o del futuro): no se usa
     return g
 
-def plan_engine(sym, spot, cs, on, wb, ws, kor, fut, meta, vx=None, eur=None):
+def load_macro_events():
+    """CPI/FOMC/NFP confirmados cerca de hoy (macro_calendar.py). None si el modulo
+    no importa o el calendario no cubre el año — jamas [] disfrazado de 'sin eventos'."""
+    try:
+        import macro_calendar as mc
+    except Exception as e:
+        print(f"AVISO macro_calendar no importable ({e})", file=sys.stderr)
+        return None
+    return mc.macro_events_near(dt.date.today())
+
+def plan_engine(sym, spot, cs, on, wb, ws, kor, fut, meta, vx=None, eur=None, earn=None, macro=None):
     reg = "NEGATIVO" if cs["net_gex"] < 0 else "POSITIVO"
     below_flip = cs["flip"] is not None and spot < cs["flip"]
     lines, score = [], 0
@@ -499,6 +552,18 @@ def plan_engine(sym, spot, cs, on, wb, ws, kor, fut, meta, vx=None, eur=None):
     if vx:
         lines.append(f"VOL (CBOE): VIX {vx['vix']:.1f} | VX1 {vx['vx1']:.1f} ({vx['b1']:+.1f}%) | VX2 {vx['vx2']:.1f}")
         lines.append(f"  -> {vx['reg']}")
+    earn_lines = earnings_veto_lines(sym, earn)
+    if earn_lines:
+        lines.append("")
+        lines.extend(earn_lines)
+    if macro:
+        lines.append("")
+        for ev in macro:
+            cuando = ("HOY" if ev["days_away"] == 0 else
+                      f"en {ev['days_away']}d" if ev["days_away"] > 0 else
+                      f"hace {-ev['days_away']}d")
+            veto = "  🚫 NO OPERAR EL PRINT (ventana +/-15min)" if ev["days_away"] == 0 else ""
+            lines.append(f"🗞 MACRO {ev['kind']} {ev['date']} {ev['hora']} [{cuando}]{veto}")
     fv = finviz_read(sym)
     if fv:
         bits = []
@@ -717,6 +782,8 @@ def main():
     kor, fut = korea_read(), futures_read()
     vx = vx_term()
     eur = europe_read([m.get("europe") for m in FLEET.values() if m.get("europe")])
+    earn_cal = load_earnings_calendar() or {}
+    macro_ev = load_macro_events() or []
     made, scored, zerodte = [], [], {}
     for sym in [s.strip().upper() for s in a.tickers.split(",") if s.strip()]:
         meta = FLEET.get(sym, dict(style="weekly", fut="ES=F", korea=False))
@@ -729,7 +796,8 @@ def main():
             on = overnight_stats(t, spot)
             wb, ws = whale_read(sym)
             series = prepost_series(t)
-            plan, dip_p, reg, score = plan_engine(sym, spot, cs, on, wb, ws, kor, fut, meta, vx, eur)
+            plan, dip_p, reg, score = plan_engine(sym, spot, cs, on, wb, ws, kor, fut, meta, vx, eur,
+                                                    earn_cal.get(sym), macro_ev)
             pdf = make_pdf(a.outdir, sym, spot, cs, on, plan, series)
             with open(os.path.join(a.outdir, "x_drafts", f"{sym}.txt"), "w") as f:
                 f.write(x_draft(sym, spot, cs, on, dip_p, reg, kor, meta, eur))
@@ -824,6 +892,11 @@ def main():
             if d: macro += etiqueta + ": " + "  ".join(f"{k} {float(v):+.2f}%" for k, v in d.items()) + "\n"
         except Exception:
             pass
+    if macro_ev:
+        for ev in macro_ev:
+            cuando = ("HOY 🚫 no operar el print" if ev["days_away"] == 0 else
+                      f"en {ev['days_away']}d" if ev["days_away"] > 0 else f"hace {-ev['days_away']}d")
+            macro += f"🗞 MACRO {ev['kind']} {ev['date']} {ev['hora']} [{cuando}]\n"
     vxs = (macro + "\n" if macro else "") + vxs
     summary = vxs + (("PICKS PICAROS FINVIZ: " + " | ".join(picks) + "\n\n") if picks else "") + ("Planes picaros del dia. TOP accionables: "
                + ", ".join(f"{s} (dip {d:.0f}%, {r})" for _, s, d, r in scored[:5])

@@ -1,5 +1,7 @@
 """daily_fleet_plans.py — bs_greeks() (money path), measured_prob, load_* guards."""
+import datetime
 import math
+import sys
 
 import pytest
 
@@ -119,3 +121,68 @@ def test_load_patterns_corrupt_json_returns_empty(fleet, tmp_path, monkeypatch):
     (tmp_path / "data" / "patterns.json").write_text("{ this is not json ")
     monkeypatch.chdir(tmp_path)
     assert fleet.load_patterns() == {}  # broad except -> graceful {}
+
+
+# ---------- earnings veto (regla 4: jamas aguantar prima comprada a traves del print) ----------
+def test_earnings_veto_lines_no_earn_returns_empty(fleet):
+    assert fleet.earnings_veto_lines("NVDA", None) == []
+
+
+def test_earnings_veto_lines_amc_vetoes_on_report_day(fleet):
+    earn = ("2026-07-28", "AMC", datetime.datetime(2026, 7, 28, 16, 30))
+    lines = fleet.earnings_veto_lines("STX", earn, today="2026-07-28")
+    assert any("VETO HOY" in ln for ln in lines)
+
+
+def test_earnings_veto_lines_amc_pending_before_report_day(fleet):
+    earn = ("2026-07-28", "AMC", datetime.datetime(2026, 7, 28, 16, 30))
+    lines = fleet.earnings_veto_lines("STX", earn, today="2026-07-25")
+    assert not any("VETO HOY" in ln for ln in lines)
+    assert any("entra en vigor al cierre de 2026-07-28" in ln for ln in lines)
+
+
+def test_earnings_veto_lines_bmo_vetoes_day_before(fleet):
+    # BMO: el print sale antes de abrir -> el veto muerde al cierre del dia ANTERIOR.
+    earn = ("2026-07-30", "BMO", datetime.datetime(2026, 7, 30, 8, 30))
+    lines = fleet.earnings_veto_lines("AAPL", earn, today="2026-07-29")
+    assert any("VETO HOY" in ln for ln in lines)
+
+
+def test_earnings_veto_lines_bmo_report_day_already_passed(fleet):
+    earn = ("2026-07-30", "BMO", datetime.datetime(2026, 7, 30, 8, 30))
+    lines = fleet.earnings_veto_lines("AAPL", earn, today="2026-07-30")
+    assert any("veto ya no aplica" in ln for ln in lines)
+
+
+# ---------- load_earnings_calendar: re-verificado via x_earnings_post, nunca {} fabricado ----------
+def test_load_earnings_calendar_missing_module_returns_none(fleet, monkeypatch):
+    monkeypatch.setitem(sys.modules, "x_earnings_post", None)
+    assert fleet.load_earnings_calendar() is None
+
+
+def test_load_earnings_calendar_broken_feed_returns_none(fleet, monkeypatch):
+    class FakeXep:
+        CACHE_152 = "irrelevant"
+        COLS_152 = "irrelevant"
+        token = staticmethod(lambda: "tok")
+        fetch_csv = staticmethod(lambda *a, **k: None)
+        parse_csv = staticmethod(lambda body: None)
+        parse_earn = staticmethod(lambda s: None)
+
+    monkeypatch.setitem(sys.modules, "x_earnings_post", FakeXep)
+    assert fleet.load_earnings_calendar() is None
+
+
+def test_load_earnings_calendar_parses_rows_into_dict(fleet, monkeypatch):
+    parsed = ("2026-07-28", "AMC", datetime.datetime(2026, 7, 28, 16, 30))
+
+    class FakeXep:
+        CACHE_152 = "irrelevant"
+        COLS_152 = "irrelevant"
+        token = staticmethod(lambda: "tok")
+        fetch_csv = staticmethod(lambda *a, **k: "csv-body")
+        parse_csv = staticmethod(lambda body: [{"Ticker": "STX", "Earnings Date": "7/28/2026 4:30:00 PM"}])
+        parse_earn = staticmethod(lambda s: parsed)
+
+    monkeypatch.setitem(sys.modules, "x_earnings_post", FakeXep)
+    assert fleet.load_earnings_calendar() == {"STX": parsed}

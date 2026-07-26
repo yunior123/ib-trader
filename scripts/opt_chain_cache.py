@@ -7,9 +7,9 @@ ordenes de ningun tipo. Python permitido: ib_insync lo exige (regla #4).
 ClientId 48 (rango 40-49; 83-99 ocupados por daemons).
 
 Cada ~3 min durante 9:00-16:15 ET (reloj del Mac = ET) vuelca a
-`data/opt_chain_<sym>.txt` la cadena ±6% ATM del vencimiento mas cercano +
+`data/opt_chain_<sym>.txt` la cadena ±15% ATM del vencimiento mas cercano +
 el siguiente semanal, para los 17 de la flota + 4 miembros QQQ (MSFT/AVGO/
-AMZN/META, banda ±4%) que alimentan el P/C de `./qqq_xray`. Escritura
+AMZN/META, banda ±8%) que alimentan el P/C de `./qqq_xray`. Escritura
 atomica (tmp+rename).
 
 FORMATO (contrato con scripts/opt_quick.cpp — NO desviarse):
@@ -38,7 +38,7 @@ os.chdir(REPO)
 
 # los 17 de la flota con opciones US (orden Yunior 2026-07-16 noche)
 # + 4 miembros QQQ para el P/C de qqq_xray (2026-07-16 noche, 17->21): banda
-#   recortada a ±4% en los nuevos para mantener el ciclo <180s.
+#   recortada en los nuevos para mantener el ciclo <180s.
 FLEET = ["SMH", "TSM", "QQQ", "NVDA", "MU", "ASML", "INTC", "DRAM", "SKHY",
          "SPCX", "AMD", "TXN", "TSLA", "NOK", "AAPL", "GOOGL", "QCOM",
          "MSFT", "AVGO", "AMZN", "META", "LRCX", "SNDK", "WDC", "STX", "SPY"]
@@ -46,11 +46,15 @@ FLEET = ["SMH", "TSM", "QQQ", "NVDA", "MU", "ASML", "INTC", "DRAM", "SKHY",
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from ib_mode import get_port                # fuente única: data/ib_mode.txt (paper/live)
 PORT, CLIENT_ID = get_port(), 48           # 7497 paper / 7496 live; env IBKR_PORT gana
-PCT_BAND = 0.06          # ±6% del spot
-# los 4 miembros QQQ van recortados (±4%, 12 strikes, 4s de ticks) para que el
-# ciclo de 21 syms siga <180s (medido 2026-07-16: ~157s con 17 syms a pleno)
+# banda ampliada 2026-07-26: MEDIDO contra las 35 cadenas completas (chain_full_<sym>.json)
+# que ±6%/±4% truncaban ANTES del cap de MAX_STRIKES en 15/26 simbolos (NOK 2, QCOM 8,
+# SKHY 9, NVDA/AMZN 10...) -- el request TWS no crece (sigue capado en MAX_STRIKES/
+# NARROW_MAX_STRIKES, solo cambia CUALES strikes entran), asi que ampliar es gratis en
+# lineas/ciclo. A ±15%/±8% los 26 llegan al cap salvo NOK (estructuralmente fino: ni
+# el 60% de Polygon converge, ver poly_chain_archive.py band_trace).
+PCT_BAND = 0.15          # ±15% del spot
 NARROW = {"MSFT", "AVGO", "AMZN", "META"}
-NARROW_BAND, NARROW_MAX_STRIKES, NARROW_SLEEP = 0.04, 12, 4
+NARROW_BAND, NARROW_MAX_STRIKES, NARROW_SLEEP = 0.08, 12, 4
 MAX_STRIKES = 20         # cap por vencimiento (2 exps x 20 strikes x 2 rights = 80 lineas TWS max)
 CYCLE_S = 180            # cada 3 min
 SLEEP_TICKS = 5          # s de espera para que lleguen ticks/greeks por simbolo

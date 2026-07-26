@@ -149,7 +149,7 @@ def compute(sym, lv=None):
     except Exception:
         lv = lv or {}
     if not lv or not lv.get("spot") or not lv.get("flip"):
-        return {"dir": "flat", "prob": 50, "prob_source": "doctrina", "calib_context": None,
+        return {"dir": "flat", "prob": None, "prob_source": "sin_lectura", "calib_context": None,
                 "doctrine_score": 50, "score": 0.0, "factors": {},
                 "why": ["sin mapa GEX fresco"], "book_label": None, "book_coef": None}
     spot = lv["spot"]; flip = lv["flip"]; reg = lv.get("regime", "POS")
@@ -319,7 +319,7 @@ def compute(sym, lv=None):
         # los anula. NO se fabrica un sesgo "plausible": se dice que no hay lectura.
         msg = ("libro THIN y solo factores gamma: SIN LECTURA direccional" if factors
                else "sin factores medibles")
-        return {"dir": "flat", "prob": 50, "prob_source": "doctrina", "calib_context": None,
+        return {"dir": "flat", "prob": None, "prob_source": "sin_lectura", "calib_context": None,
                 "doctrine_score": 50, "score": 0.0, "target": None,
                 "target_label": None, "target_pct": None, "spot": round(spot, 2),
                 "factors": factors, "why": ([msg] + why)[:5], "sym": sym,
