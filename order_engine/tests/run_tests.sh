@@ -3,7 +3,8 @@
 # Mac 8GB: SECUENCIAL a proposito (un clang++ a la vez).
 # Uso: order_engine/tests/run_tests.sh [--fast]     (--fast salta los sanitizers)
 set -euo pipefail
-REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+SELF="${BASH_SOURCE[0]:-${(%):-%x}}"   # zsh no tiene BASH_SOURCE y el shell de la casa es zsh
+REPO="$(cd "$(dirname "$SELF")/../.." && pwd)"
 cd "$REPO/order_engine"
 OUT="$(mktemp -d)"; trap 'rm -rf "$OUT"' EXIT
 
