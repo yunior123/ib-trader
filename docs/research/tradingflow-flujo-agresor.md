@@ -70,3 +70,27 @@ premium firmado dice −34,7 M y −37,0 M. Es la misma clase de ballena silenci
 
 ⚠️ **La latencia de UW sigue SIN MEDIR en sesión** (domingo, mercado cerrado; el último bucket
 venía con 43,8 h). Por eso el overlay es **banner sin voz**: no dispara nada hasta medirla el lunes.
+
+## Perpetuos 24/7: el fin de semana SÍ se mueve (medido 2026-07-26 ~23:50 ET)
+Verificación decisiva antes de fiarse del gap — **la prima al cierre del viernes es cero**, así
+que lo que se ve ahora es movimiento real, no premio estructural de los tokenizados:
+
+| perp | @cierre vie | real IBKR | prima | ahora | movimiento del finde |
+|---|---:|---:|---:|---:|---:|
+| DRAM | 53,23 | 53,20 | +0,06% | 56,06 | **+5,32%** |
+| INTC | 92,05 | 92,32 | −0,29% | 95,33 | **+3,56%** |
+| MU | 919,44 | 920,95 | −0,16% | 949,84 | **+3,31%** |
+| NVDA | 206,88 | 206,84 | +0,02% | 209,29 | +1,16% |
+| QQQ | 685,53 | 684,23 | +0,19% | 693,32 | +1,14% |
+
+**El orden es coherente y eso es lo que le da peso**: memoria pura (DRAM +5,3%) > semis
+individuales (INTC +3,6%, MU +3,3%) > índice (QQQ +1,1%). No es ruido de un símbolo suelto: es
+el complejo de memoria liderando, exactamente el engranaje que la doctrina ya describe con Corea.
+
+**Contradice al flujo firmado del viernes**, que era bajista en MU (−140,1 M), QQQ (−37,0 M) y
+SMH (−22,4 M). Las dos lecturas se publican; no se promedian. Cuando dos fuentes buenas discrepan,
+el desacuerdo ES la información: el posicionamiento del viernes iba corto y el fin de semana subió.
+
+DRAM = **Roundhill Memory ETF** (confirmado con `reqContractDetails`), no una cripto. INTC 95,51
+vs Intel 92,32 descarta colisión. **STX no está listado** en Bybit para Seagate — `STXUSDT` es
+Stacks (0,146 $).
