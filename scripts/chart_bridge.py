@@ -1470,6 +1470,7 @@ class State:
         self.walls_why = None   # razón por la que los muros vienen a None (o None si vienen)
         self.all_exp = False    # scope GEX: False=0DTE, True=ALL-EXP
         self._vix = None        # último VIX (índice CBOE via ib_async)
+        self._vix_live = False  # False = es el cierre anterior, no un tick vivo
         self._vix_ticker = None
         self._px_ticker = None      # reqMktData del stock -> ticks sub-segundo (precio VIVO)
         self._last_tick_bcast = 0.0 # throttle del broadcast de ticks (~8/s)
@@ -2422,13 +2423,21 @@ async def levels_loop(state):
                 lv["asof"] = int(time.time())   # asof fresco -> el cliente redibuja
                 if state._vix_ticker is not None:
                     try:
-                        v = state._vix_ticker.marketPrice()
+                        t = state._vix_ticker
+                        v = t.marketPrice()
                         if v and v == v and v > 0:
-                            state._vix = round(v, 2)
+                            state._vix, state._vix_live = round(v, 2), True
+                        else:
+                            # premarket: un indice NO cotiza hasta 09:30 y marketPrice() es nan.
+                            # El cierre anterior SI llega -> se sirve marcado, no se calla.
+                            c = getattr(t, "close", None)
+                            if c and c == c and c > 0:
+                                state._vix, state._vix_live = round(c, 2), False
                     except Exception:
                         pass
                 if state._vix is not None:
                     lv["vix"] = state._vix
+                    lv["vix_live"] = state._vix_live
                 state.levels = lv
                 await broadcast_levels(state)
                 await narrator_tick(state)
