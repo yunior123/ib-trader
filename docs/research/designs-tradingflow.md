@@ -155,3 +155,25 @@ cinta de opciones a la que tienen acceso y nosotros no.
 Todo pasa por [[measured-probability]] antes de tener voz: triple barrera, Wilson sobre muestra
 efectiva (ρ̄ = 0,41), null de entrada aleatoria y BH-FDR. Y por [[anti-overfit-killlist]]: que la
 idea venga de un vendedor no la hace medida.
+
+---
+
+## 5. PASADA HTTP (2026-07-27) — la visual sigue BLOQUEADA, y se dice
+
+Yunior pidió la pasada **visual** de `app.tradingflow.com/app/option-trades/live`. **No se pudo**: la
+extensión de Chrome no conecta y el JS por AppleScript está desactivado. Así que se hizo por HTTP, y
+esto es lo que se midió:
+
+| URL sondeada | Código | Tamaño | Lectura |
+|---|---|---|---|
+| `/app/option-trades/live` | 200 | 34.684 b | el **shell del SPA**, sin datos |
+| `/openapi.json` | **200** | **34.684 b** | **el MISMO shell byte a byte** ⇒ no es un OpenAPI, es el catch-all de Next.js. Un 200 aquí engaña si solo se mira el código |
+| `/_next/data` | 200 | 34.684 b | idem shell |
+| `/api/trpc/optionTrades.live` | 404 | 36.168 b | página 404 |
+| `/api/health` | 404 | 36.168 b | página 404 |
+| `tradingflow.com/roadmap/` | 200 | 45.854 b | público, ya minado en §1 |
+
+**Confirma el veredicto de §0 y lo endurece**: no hay API, y el `200` de `/openapi.json` es un falso
+positivo del enrutado del SPA — se detecta comparando el **tamaño** con el del shell, no el código.
+La pasada visual queda **pendiente** de que la extensión de Chrome vuelva a conectar; no cambia nada
+operativo, porque sin API TradingFlow no puede ser fuente de datos en ningún caso.
