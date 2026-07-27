@@ -19,8 +19,9 @@ Los satelites NO estan en data/fleet.txt: no votan MANADA ni tienen bot.
 reqMarketDataType(1) fijo — delayed PROHIBIDO (orden #6). Si KRX pierde permiso
 (no deberia: sub waived) se marca y reintenta cada 10 min, gritando a stderr.
 
-Puerto RESUELTO, no adivinado (2026-07-26): resolve_port() sondea env IBKR_PORT,
-los puertos del modo (ib_mode) y el resto de candidatos, y registra cual eligio.
+Puerto RESUELTO, no adivinado (2026-07-26): resolve_port() sondea env IBKR_PORT y
+los puertos de IB GATEWAY (4001 live / 4002 paper), y registra cual eligio. TWS
+(7496/7497) queda FUERA del sondeo por orden de Yunior 2026-07-27 "only ib gateway".
 Ningun puerto vivo o barras rancias con KRX abierto = voz DANGER, nunca silencio.
 
 Python (ib_insync) solo porque el SDK C++ de IB no esta instalado; productor
@@ -38,7 +39,7 @@ import ib_mode  # noqa: E402
 from ib_insync import IB, Contract, util  # noqa: E402
 
 HOST = "127.0.0.1"
-CANDIDATE_PORTS = [4001, 4002, 7496, 7497]   # gateway live/paper, tws live/paper
+CANDIDATE_PORTS = [4001, 4002]   # SOLO IB Gateway (orden Yunior 2026-07-27); TWS 7496/7497 fuera
 CLIENT_ID = 86                               # unico vs fleet(84)/single(83)
 RETRY_ENTITLEMENT_S = 600
 RETRY_S = 15
@@ -173,15 +174,15 @@ def resolve_port():
     puerto 'plausible' que solo sirve para volver a fallar."""
     env = os.environ.get("IBKR_PORT") or os.environ.get("IB_PORT")
     env_p = int(env) if env and env.isdigit() else None
+    modo = [p for p in ib_mode._ports_for(ib_mode.get_mode()) if p in CANDIDATE_PORTS]
     cands = []
-    for p in ([env_p] if env_p else []) + ib_mode._ports_for(ib_mode.get_mode()) + CANDIDATE_PORTS:
+    for p in ([env_p] if env_p else []) + modo + CANDIDATE_PORTS:
         if p not in cands:
             cands.append(p)
     for p in cands:
         if ib_mode._listening(p):
             por = "IBKR_PORT explicito" if p == env_p else \
-                  ("puerto del modo " + ib_mode.get_mode() if p in ib_mode._ports_for(ib_mode.get_mode())
-                   else "sondeo de candidatos")
+                  ("gateway del modo " + ib_mode.get_mode() if p in modo else "sondeo de candidatos")
             print(f"korea bridge: puerto {p} ELEGIDO ({por}); probados {cands}",
                   file=sys.stderr)
             return p

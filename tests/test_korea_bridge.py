@@ -46,10 +46,25 @@ def test_autodeteccion_elige_4001_cuando_4002_rechaza(monkeypatch):
 
 
 def test_ibkr_port_explicito_gana_si_acepta(monkeypatch):
+    """4002 gana a 4001 aunque el modo sea live, porque el env es explicito."""
     mod = _load()
-    monkeypatch.setenv("IBKR_PORT", "7497")
-    _fake_net(mod, monkeypatch, abiertos={4001, 7497}, modo="live")
-    assert mod.resolve_port() == 7497
+    monkeypatch.setenv("IBKR_PORT", "4002")
+    _fake_net(mod, monkeypatch, abiertos={4001, 4002}, modo="live")
+    assert mod.resolve_port() == 4002
+
+
+def test_solo_gateway_nunca_sondea_tws(monkeypatch):
+    """Orden Yunior 2026-07-27 "only ib gateway": con SOLO TWS escuchando (7496/7497)
+    el puente NO se engancha — grita y devuelve None. El modo live lista 7496 en
+    ib_mode, asi que este test es el que impide que vuelva a colarse."""
+    mod = _load()
+    monkeypatch.delenv("IBKR_PORT", raising=False)
+    monkeypatch.delenv("IB_PORT", raising=False)
+    _fake_net(mod, monkeypatch, abiertos={7496, 7497}, modo="live")
+    gritos = _capture_loud(mod, monkeypatch)
+    assert mod.resolve_port() is None
+    assert gritos
+    assert mod.CANDIDATE_PORTS == [4001, 4002]
 
 
 def test_ningun_puerto_acepta_grita_y_devuelve_none(monkeypatch):
