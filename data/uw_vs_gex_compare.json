@@ -1,0 +1,1225 @@
+{
+ "_meta": {
+  "fecha": "2026-07-26",
+  "generado": "2026-07-26T23:57:30",
+  "fuente_a": "gex propio (chain_full, griegas medidas polygon_directo)",
+  "fuente_b": "unusual_whales_trial /api/stock/{sym}/greek-exposure/strike",
+  "aviso": "SOLO por pata. El neto de los dos NO es comparable: distinto scope."
+ },
+ "syms": {
+  "QQQ": {
+   "sym": "QQQ",
+   "estado": "ok",
+   "n_strikes_comunes": 184,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.3472,
+   "scope_nuestro": {
+    "spot": 685.06,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.18,
+    "n_contratos": 3552,
+    "n_sin_griegas": 367,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 530,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.9379495675290401,
+    "pearson": 0.935670332132624,
+    "n": 184
+   },
+   "put_gex": {
+    "spearman": 0.8763811967156859,
+    "pearson": 0.9739209520701972,
+    "n": 184
+   },
+   "call_dex": {
+    "spearman": 0.9215541985321031,
+    "pearson": 0.8101893835674325,
+    "n": 184
+   },
+   "put_dex": {
+    "spearman": -0.7670575551531673,
+    "pearson": -0.8981019352031658,
+    "n": 184
+   }
+  },
+  "SPY": {
+   "sym": "SPY",
+   "estado": "ok",
+   "n_strikes_comunes": 197,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.4096,
+   "scope_nuestro": {
+    "spot": 738.84,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.18,
+    "n_contratos": 3326,
+    "n_sin_griegas": 114,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 481,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.9001911793789966,
+    "pearson": 0.9269618765173988,
+    "n": 197
+   },
+   "put_gex": {
+    "spearman": 0.9343938091522809,
+    "pearson": 0.9792985867151686,
+    "n": 197
+   },
+   "call_dex": {
+    "spearman": 0.6664280848472292,
+    "pearson": 0.8362072314928478,
+    "n": 197
+   },
+   "put_dex": {
+    "spearman": -0.8253086401858006,
+    "pearson": -0.9357892070219485,
+    "n": 197
+   }
+  },
+  "NVDA": {
+   "sym": "NVDA",
+   "estado": "ok",
+   "n_strikes_comunes": 50,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.1852,
+   "scope_nuestro": {
+    "spot": 206.85,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.405,
+    "n_contratos": 726,
+    "n_sin_griegas": 132,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 270,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.8833345340969654,
+    "pearson": 0.9111691340816155,
+    "n": 50
+   },
+   "put_gex": {
+    "spearman": 0.8869018043499602,
+    "pearson": 0.9440500336588187,
+    "n": 50
+   },
+   "call_dex": {
+    "spearman": 0.778554107165757,
+    "pearson": 0.7984849081254266,
+    "n": 50
+   },
+   "put_dex": {
+    "spearman": -0.7618444155964041,
+    "pearson": -0.8863510613275613,
+    "n": 50
+   }
+  },
+  "TSLA": {
+   "sym": "TSLA",
+   "estado": "ERROR",
+   "motivo": "TypeError: float() argument must be a string or a number, not 'NoneType'"
+  },
+  "MU": {
+   "sym": "MU",
+   "estado": "ok",
+   "n_strikes_comunes": 245,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.5493,
+   "scope_nuestro": {
+    "spot": 925.21,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.6,
+    "n_contratos": 2906,
+    "n_sin_griegas": 351,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 446,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.9694116960022284,
+    "pearson": 0.9075918649085184,
+    "n": 245
+   },
+   "put_gex": {
+    "spearman": 0.868131203239619,
+    "pearson": 0.8853528680903027,
+    "n": 245
+   },
+   "call_dex": {
+    "spearman": 0.9296932705127127,
+    "pearson": 0.826969645905012,
+    "n": 245
+   },
+   "put_dex": {
+    "spearman": -0.77555859188736,
+    "pearson": -0.9054780423725661,
+    "n": 245
+   }
+  },
+  "SMH": {
+   "sym": "SMH",
+   "estado": "ok",
+   "n_strikes_comunes": 149,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.5984,
+   "scope_nuestro": {
+    "spot": 561.99,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.405,
+    "n_contratos": 1836,
+    "n_sin_griegas": 190,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 249,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.926999996236529,
+    "pearson": 0.9077105502142674,
+    "n": 149
+   },
+   "put_gex": {
+    "spearman": 0.9485235326484744,
+    "pearson": 0.7752744407323796,
+    "n": 149
+   },
+   "call_dex": {
+    "spearman": 0.8735161916533327,
+    "pearson": 0.6453343436973363,
+    "n": 149
+   },
+   "put_dex": {
+    "spearman": -0.9054639883920043,
+    "pearson": -0.9169394413294296,
+    "n": 149
+   }
+  },
+  "AMD": {
+   "sym": "AMD",
+   "estado": "ok",
+   "n_strikes_comunes": 187,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.7004,
+   "scope_nuestro": {
+    "spot": 523.0,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.6,
+    "n_contratos": 2278,
+    "n_sin_griegas": 146,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 267,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.964084471051165,
+    "pearson": 0.9227653253528125,
+    "n": 187
+   },
+   "put_gex": {
+    "spearman": 0.9360756720256826,
+    "pearson": 0.9209123887577502,
+    "n": 187
+   },
+   "call_dex": {
+    "spearman": 0.9561770690850345,
+    "pearson": 0.8625167617352882,
+    "n": 187
+   },
+   "put_dex": {
+    "spearman": -0.895981472913666,
+    "pearson": -0.8448873778953586,
+    "n": 187
+   }
+  },
+  "AAPL": {
+   "sym": "AAPL",
+   "estado": "ok",
+   "n_strikes_comunes": 56,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.448,
+   "scope_nuestro": {
+    "spot": 333.47,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.27,
+    "n_contratos": 744,
+    "n_sin_griegas": 127,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 125,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.7474116101115501,
+    "pearson": 0.7894602821937371,
+    "n": 56
+   },
+   "put_gex": {
+    "spearman": 0.9237271297463422,
+    "pearson": 0.8537447528387843,
+    "n": 56
+   },
+   "call_dex": {
+    "spearman": 0.7370563505146737,
+    "pearson": 0.7791531801308116,
+    "n": 56
+   },
+   "put_dex": {
+    "spearman": -0.8908914364304538,
+    "pearson": -0.8002306280036604,
+    "n": 56
+   }
+  },
+  "MSFT": {
+   "sym": "MSFT",
+   "estado": "ok",
+   "n_strikes_comunes": 118,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.7329,
+   "scope_nuestro": {
+    "spot": 381.65,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.6,
+    "n_contratos": 1070,
+    "n_sin_griegas": 187,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 161,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.8370894642081083,
+    "pearson": 0.9640359157101372,
+    "n": 118
+   },
+   "put_gex": {
+    "spearman": 0.7939939814216685,
+    "pearson": 0.9575142413339495,
+    "n": 118
+   },
+   "call_dex": {
+    "spearman": 0.7191502415829435,
+    "pearson": 0.8689427789107093,
+    "n": 118
+   },
+   "put_dex": {
+    "spearman": -0.5920062892771913,
+    "pearson": -0.8840799505806785,
+    "n": 118
+   }
+  },
+  "META": {
+   "sym": "META",
+   "estado": "ok",
+   "n_strikes_comunes": 176,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.6111,
+   "scope_nuestro": {
+    "spot": 595.96,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.6,
+    "n_contratos": 1860,
+    "n_sin_griegas": 310,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 288,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.8836247172966575,
+    "pearson": 0.7742748276810878,
+    "n": 176
+   },
+   "put_gex": {
+    "spearman": 0.873691217977948,
+    "pearson": 0.8866293815260445,
+    "n": 176
+   },
+   "call_dex": {
+    "spearman": 0.7609595034206318,
+    "pearson": 0.5803756969028091,
+    "n": 176
+   },
+   "put_dex": {
+    "spearman": -0.7365385231506234,
+    "pearson": -0.9000326349503238,
+    "n": 176
+   }
+  },
+  "AMZN": {
+   "sym": "AMZN",
+   "estado": "ok",
+   "n_strikes_comunes": 61,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.7093,
+   "scope_nuestro": {
+    "spot": 232.4,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.405,
+    "n_contratos": 790,
+    "n_sin_griegas": 157,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 86,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.9542570068746695,
+    "pearson": 0.9213368481146338,
+    "n": 61
+   },
+   "put_gex": {
+    "spearman": 0.8699272493391798,
+    "pearson": 0.8663420682681537,
+    "n": 61
+   },
+   "call_dex": {
+    "spearman": 0.8920676890534109,
+    "pearson": 0.854133192528763,
+    "n": 61
+   },
+   "put_dex": {
+    "spearman": -0.7364807423695927,
+    "pearson": -0.8838709149438368,
+    "n": 61
+   }
+  },
+  "GOOGL": {
+   "sym": "GOOGL",
+   "estado": "ERROR",
+   "motivo": "TypeError: float() argument must be a string or a number, not 'NoneType'"
+  },
+  "INTC": {
+   "sym": "INTC",
+   "estado": "ok",
+   "n_strikes_comunes": 111,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.7351,
+   "scope_nuestro": {
+    "spot": 92.53,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.6,
+    "n_contratos": 1348,
+    "n_sin_griegas": 307,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 151,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.9126029146277546,
+    "pearson": 0.9237254050146785,
+    "n": 111
+   },
+   "put_gex": {
+    "spearman": 0.8419812826965613,
+    "pearson": 0.9678912493799644,
+    "n": 111
+   },
+   "call_dex": {
+    "spearman": 0.9379188704806495,
+    "pearson": 0.6904896116107475,
+    "n": 111
+   },
+   "put_dex": {
+    "spearman": -0.6377576890296942,
+    "pearson": -0.9166979568831154,
+    "n": 111
+   }
+  },
+  "TSM": {
+   "sym": "TSM",
+   "estado": "ok",
+   "n_strikes_comunes": 97,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.6025,
+   "scope_nuestro": {
+    "spot": 402.63,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.405,
+    "n_contratos": 582,
+    "n_sin_griegas": 73,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 161,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.9164937520419393,
+    "pearson": 0.9273376902032414,
+    "n": 97
+   },
+   "put_gex": {
+    "spearman": 0.8916930962688622,
+    "pearson": 0.9270612364150752,
+    "n": 97
+   },
+   "call_dex": {
+    "spearman": 0.8812480404384775,
+    "pearson": 0.8334760434413692,
+    "n": 97
+   },
+   "put_dex": {
+    "spearman": -0.7320779492925473,
+    "pearson": -0.9146497767138021,
+    "n": 97
+   }
+  },
+  "ASML": {
+   "sym": "ASML",
+   "estado": "ok",
+   "n_strikes_comunes": 247,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.688,
+   "scope_nuestro": {
+    "spot": 1757.0,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.405,
+    "n_contratos": 1684,
+    "n_sin_griegas": 36,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 359,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.904385981946292,
+    "pearson": 0.7042700444226038,
+    "n": 247
+   },
+   "put_gex": {
+    "spearman": 0.907223565656229,
+    "pearson": 0.7900402250743895,
+    "n": 247
+   },
+   "call_dex": {
+    "spearman": 0.8393784916150849,
+    "pearson": 0.7825024102695308,
+    "n": 247
+   },
+   "put_dex": {
+    "spearman": -0.8761018042069014,
+    "pearson": -0.8161520317970381,
+    "n": 247
+   }
+  },
+  "TXN": {
+   "sym": "TXN",
+   "estado": "ok",
+   "n_strikes_comunes": 96,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.7619,
+   "scope_nuestro": {
+    "spot": 279.0,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.6,
+    "n_contratos": 568,
+    "n_sin_griegas": 62,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 126,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.9034558567378198,
+    "pearson": 0.8585034108727765,
+    "n": 96
+   },
+   "put_gex": {
+    "spearman": 0.9349140222319438,
+    "pearson": 0.8715068039938669,
+    "n": 96
+   },
+   "call_dex": {
+    "spearman": 0.853662903838526,
+    "pearson": 0.5421913353163791,
+    "n": 96
+   },
+   "put_dex": {
+    "spearman": -0.8567261517143252,
+    "pearson": -0.8885855146225783,
+    "n": 96
+   }
+  },
+  "QCOM": {
+   "sym": "QCOM",
+   "estado": "ok",
+   "n_strikes_comunes": 79,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.7822,
+   "scope_nuestro": {
+    "spot": 166.7,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.6,
+    "n_contratos": 400,
+    "n_sin_griegas": 27,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 101,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.9478171255871092,
+    "pearson": 0.9350911608427014,
+    "n": 79
+   },
+   "put_gex": {
+    "spearman": 0.8788557516737675,
+    "pearson": 0.7525445447528316,
+    "n": 79
+   },
+   "call_dex": {
+    "spearman": 0.9097573971827968,
+    "pearson": 0.8914687444885283,
+    "n": 79
+   },
+   "put_dex": {
+    "spearman": -0.8816598304175581,
+    "pearson": -0.9435447409803842,
+    "n": 79
+   }
+  },
+  "AVGO": {
+   "sym": "AVGO",
+   "estado": "ok",
+   "n_strikes_comunes": 122,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.5782,
+   "scope_nuestro": {
+    "spot": 381.75,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.6,
+    "n_contratos": 1436,
+    "n_sin_griegas": 273,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 211,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.8746676454615531,
+    "pearson": 0.9237839510812063,
+    "n": 122
+   },
+   "put_gex": {
+    "spearman": 0.8524356723933563,
+    "pearson": 0.9366000753819607,
+    "n": 122
+   },
+   "call_dex": {
+    "spearman": 0.8103134594427762,
+    "pearson": 0.8764259294392908,
+    "n": 122
+   },
+   "put_dex": {
+    "spearman": -0.6850597808659294,
+    "pearson": -0.8835050213717297,
+    "n": 122
+   }
+  },
+  "NFLX": {
+   "sym": "NFLX",
+   "estado": "ok",
+   "n_strikes_comunes": 46,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.1756,
+   "scope_nuestro": {
+    "spot": 70.25,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.405,
+    "n_contratos": 314,
+    "n_sin_griegas": 39,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 262,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.9214210888585999,
+    "pearson": 0.8909235695489057,
+    "n": 46
+   },
+   "put_gex": {
+    "spearman": 0.8617477892651363,
+    "pearson": 0.8372013239608267,
+    "n": 46
+   },
+   "call_dex": {
+    "spearman": 0.7695676367687764,
+    "pearson": 0.7289337497536329,
+    "n": 46
+   },
+   "put_dex": {
+    "spearman": -0.6241287353693252,
+    "pearson": -0.6741450854067967,
+    "n": 46
+   }
+  },
+  "NOK": {
+   "sym": "NOK",
+   "estado": "ok",
+   "n_strikes_comunes": 18,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.3273,
+   "scope_nuestro": {
+    "spot": 9.09,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.6,
+    "n_contratos": 144,
+    "n_sin_griegas": 24,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 55,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.8513931888544891,
+    "pearson": 0.9895287295387118,
+    "n": 18
+   },
+   "put_gex": {
+    "spearman": 0.8534571723426213,
+    "pearson": 0.7779110815131601,
+    "n": 18
+   },
+   "call_dex": {
+    "spearman": 0.5294117647058824,
+    "pearson": 0.896758042026625,
+    "n": 18
+   },
+   "put_dex": {
+    "spearman": -0.7915376676986584,
+    "pearson": -0.8371326677291573,
+    "n": 18
+   }
+  },
+  "GLD": {
+   "sym": "GLD",
+   "estado": "ok",
+   "n_strikes_comunes": 111,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.3092,
+   "scope_nuestro": {
+    "spot": 371.95,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.27,
+    "n_contratos": 1632,
+    "n_sin_griegas": 194,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 359,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.7980431730431731,
+    "pearson": 0.8280199059980482,
+    "n": 111
+   },
+   "put_gex": {
+    "spearman": 0.7699762525532912,
+    "pearson": 0.8883155506001217,
+    "n": 111
+   },
+   "call_dex": {
+    "spearman": 0.5932783432783433,
+    "pearson": 0.5915704976379016,
+    "n": 111
+   },
+   "put_dex": {
+    "spearman": -0.55331813221702,
+    "pearson": -0.6842791497913473,
+    "n": 111
+   }
+  },
+  "XLK": {
+   "sym": "XLK",
+   "estado": "ok",
+   "n_strikes_comunes": 97,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.5915,
+   "scope_nuestro": {
+    "spot": 176.23,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.405,
+    "n_contratos": 588,
+    "n_sin_griegas": 53,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 164,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.6934269618648778,
+    "pearson": 0.7120997316545395,
+    "n": 97
+   },
+   "put_gex": {
+    "spearman": 0.7982607172719502,
+    "pearson": 0.7499716268790505,
+    "n": 97
+   },
+   "call_dex": {
+    "spearman": 0.4914491984429786,
+    "pearson": 0.28654330318782756,
+    "n": 97
+   },
+   "put_dex": {
+    "spearman": -0.6847322182290702,
+    "pearson": -0.7730664019927386,
+    "n": 97
+   }
+  },
+  "EWY": {
+   "sym": "EWY",
+   "estado": "ok",
+   "n_strikes_comunes": 120,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.7186,
+   "scope_nuestro": {
+    "spot": 163.49,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.6,
+    "n_contratos": 688,
+    "n_sin_griegas": 51,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 167,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.8818966701709424,
+    "pearson": 0.9527128467755595,
+    "n": 120
+   },
+   "put_gex": {
+    "spearman": 0.7272791871271885,
+    "pearson": 0.9590139942052934,
+    "n": 120
+   },
+   "call_dex": {
+    "spearman": 0.6174663783809706,
+    "pearson": 0.8833789658970702,
+    "n": 120
+   },
+   "put_dex": {
+    "spearman": -0.6246717645926181,
+    "pearson": -0.9391022520292843,
+    "n": 120
+   }
+  },
+  "DRAM": {
+   "sym": "DRAM",
+   "estado": "ok",
+   "n_strikes_comunes": 101,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.7829,
+   "scope_nuestro": {
+    "spot": 53.63,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.6,
+    "n_contratos": 642,
+    "n_sin_griegas": 12,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 129,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.9097498333176277,
+    "pearson": 0.9449583348407005,
+    "n": 101
+   },
+   "put_gex": {
+    "spearman": 0.9336400698893419,
+    "pearson": 0.9588785453358559,
+    "n": 101
+   },
+   "call_dex": {
+    "spearman": 0.7865910831310271,
+    "pearson": 0.8176023002977169,
+    "n": 101
+   },
+   "put_dex": {
+    "spearman": -0.9039720442632498,
+    "pearson": -0.9754273294903821,
+    "n": 101
+   }
+  },
+  "SPCX": {
+   "sym": "SPCX",
+   "estado": "ok",
+   "n_strikes_comunes": 102,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.5397,
+   "scope_nuestro": {
+    "spot": 115.02,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.6,
+    "n_contratos": 646,
+    "n_sin_griegas": 30,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 189,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.9695361636069715,
+    "pearson": 0.8601042135442277,
+    "n": 102
+   },
+   "put_gex": {
+    "spearman": 0.9722138975747946,
+    "pearson": 0.9445711795350787,
+    "n": 102
+   },
+   "call_dex": {
+    "spearman": 0.9469713717244017,
+    "pearson": 0.9516532244574492,
+    "n": 102
+   },
+   "put_dex": {
+    "spearman": -0.9714675065450578,
+    "pearson": -0.8956888655733938,
+    "n": 102
+   }
+  },
+  "SKHY": {
+   "sym": "SKHY",
+   "estado": "ok",
+   "n_strikes_comunes": 87,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.6541,
+   "scope_nuestro": {
+    "spot": 155.48,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.6,
+    "n_contratos": 538,
+    "n_sin_griegas": 7,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 133,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.9565202955352998,
+    "pearson": 0.8379784688500552,
+    "n": 87
+   },
+   "put_gex": {
+    "spearman": 0.94096202879495,
+    "pearson": 0.7513783301221424,
+    "n": 87
+   },
+   "call_dex": {
+    "spearman": 0.9132227768542667,
+    "pearson": 0.639783565014162,
+    "n": 87
+   },
+   "put_dex": {
+    "spearman": -0.946951527059931,
+    "pearson": -0.8845124868953598,
+    "n": 87
+   }
+  },
+  "LRCX": {
+   "sym": "LRCX",
+   "estado": "ok",
+   "n_strikes_comunes": 116,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.5202,
+   "scope_nuestro": {
+    "spot": 306.89,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.6,
+    "n_contratos": 608,
+    "n_sin_griegas": 5,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 223,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.8854892313471593,
+    "pearson": 0.8718033777582035,
+    "n": 116
+   },
+   "put_gex": {
+    "spearman": 0.9074099734079613,
+    "pearson": 0.7854134804185638,
+    "n": 116
+   },
+   "call_dex": {
+    "spearman": 0.842409130559064,
+    "pearson": 0.7868122139543917,
+    "n": 116
+   },
+   "put_dex": {
+    "spearman": -0.8468241901932861,
+    "pearson": -0.8003651115154047,
+    "n": 116
+   }
+  },
+  "SNDK": {
+   "sym": "SNDK",
+   "estado": "ok",
+   "n_strikes_comunes": 313,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.6149,
+   "scope_nuestro": {
+    "spot": 1445.46,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.6,
+    "n_contratos": 2008,
+    "n_sin_griegas": 43,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 509,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.8632769138795613,
+    "pearson": 0.912858051503064,
+    "n": 313
+   },
+   "put_gex": {
+    "spearman": 0.869494010756403,
+    "pearson": 0.8101193342820306,
+    "n": 313
+   },
+   "call_dex": {
+    "spearman": 0.8221469765683367,
+    "pearson": 0.5813376472354361,
+    "n": 313
+   },
+   "put_dex": {
+    "spearman": -0.8618836463848201,
+    "pearson": -0.855870971956284,
+    "n": 313
+   }
+  },
+  "WDC": {
+   "sym": "WDC",
+   "estado": "ok",
+   "n_strikes_comunes": 195,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.6866,
+   "scope_nuestro": {
+    "spot": 519.83,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.6,
+    "n_contratos": 1002,
+    "n_sin_griegas": 112,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 284,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.9153206888570016,
+    "pearson": 0.8513846241874763,
+    "n": 195
+   },
+   "put_gex": {
+    "spearman": 0.9061678586879643,
+    "pearson": 0.9311968188254036,
+    "n": 195
+   },
+   "call_dex": {
+    "spearman": 0.8217398271310579,
+    "pearson": 0.6858238528306829,
+    "n": 195
+   },
+   "put_dex": {
+    "spearman": -0.8332850875312531,
+    "pearson": -0.907538446842878,
+    "n": 195
+   }
+  },
+  "STX": {
+   "sym": "STX",
+   "estado": "ok",
+   "n_strikes_comunes": 224,
+   "cobertura_strikes_nuestros": 1.0,
+   "cobertura_strikes_uw": 0.6829,
+   "scope_nuestro": {
+    "spot": 851.0,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.6,
+    "n_contratos": 1336,
+    "n_sin_griegas": 106,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 328,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.9263068802362933,
+    "pearson": 0.8571564665761624,
+    "n": 224
+   },
+   "put_gex": {
+    "spearman": 0.907774076859054,
+    "pearson": 0.4324385752102665,
+    "n": 224
+   },
+   "call_dex": {
+    "spearman": 0.8681663911288792,
+    "pearson": 0.783597999883282,
+    "n": 224
+   },
+   "put_dex": {
+    "spearman": -0.8325465828519797,
+    "pearson": -0.7374242744301435,
+    "n": 224
+   }
+  }
+ }
+}

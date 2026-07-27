@@ -1,0 +1,20 @@
+# Rutas del repo que ACABAN DENTRO del .app. Fuente unica: la lee bundle_backend.sh
+# (que copia) y rebuild_hook.sh (que decide si hay que reconstruir). Cuando las dos
+# listas eran distintas el hook ignoro 21 commits seguidos y la .app quedo rancia.
+# Una ruta por linea. Terminada en "/" = prefijo.
+macapp/
+charts/live.html
+charts/lightweight-charts-v5.js
+charts/lightweight-charts.js
+data/fleet.txt
+scripts/compass.cpp
+scripts/chart_bridge.py
+scripts/chart_levels.py
+scripts/confluence_engine.py
+scripts/direction_view.py
+scripts/ib_mode.py
+scripts/narrator.py
+scripts/order_ticket.py
+scripts/gex_core.py
+scripts/optgate.py
+order_engine/
