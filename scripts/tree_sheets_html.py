@@ -321,7 +321,8 @@ no predice el precio. Sin print de IBKR no hay entrada.</p></footer>
     print(dest, f"({os.path.getsize(dest)/1024:.0f} KB, {len(ds)} hojas)")
 
 
-HEAD = '''<title>Los cinco árboles — SPY · QQQ · AAPL · SMH · NVDA</title>
+HEAD = '''<meta charset="utf-8">
+<title>Los cinco árboles — SPY · QQQ · AAPL · SMH · NVDA</title>
 <style>
 :root{
  --ground:#0d1014; --panel:#141920; --panel2:#1b212a; --line:#28303b;
@@ -455,7 +456,7 @@ code{font-family:var(--mono);font-size:.92em;color:var(--ink)}
  h1{font-size:20pt}.lede{font-size:9pt}
  .sheet{border:1pt solid #000;padding:6pt;margin:0 0 5pt;background:#fff}
 h2{font-size:12pt}h3{font-size:8.5pt;color:#000;border-bottom:.5pt solid #999}
- .stats{grid-template-columns:repeat(4,1fr);gap:0;border:.5pt solid #999}
+ .stats{grid-template-columns:repeat(4,1fr);gap:0;border:.5pt solid #999;background:#fff}
  .stat{background:#fff;border-right:.5pt solid #999;border-bottom:.5pt solid #999;padding:4pt 6pt}
 .sv{font-size:10pt}.sl,.sn{font-size:7pt}
  .reg.neg,.reg.pos{color:#000;font-weight:700}

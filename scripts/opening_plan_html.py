@@ -155,7 +155,8 @@ Sin print de IBKR no hay entrada.</p></footer></div>'''
     print(dest, f"({os.path.getsize(dest)/1024:.0f} KB, {len(ds)} hojas)")
 
 
-HEAD = '''<title>Plan de apertura — QQQ · NVDA · SMH · MU · AAPL · MSFT</title>
+HEAD = '''<meta charset="utf-8">
+<title>Plan de apertura — QQQ · NVDA · SMH · MU · AAPL · MSFT</title>
 <style>
 :root{--bg:#0b0e13;--pn:#121720;--pn2:#182030;--ln:#26303f;--ink:#e6e8ec;--ink2:#9aa5b8;
  --ink3:#657085;--au:#d9a441;--vi:#8d76ff;--up:#3fa87a;--dn:#cf5346;--wr:#d98b2b;
@@ -240,7 +241,7 @@ footer p{font-family:var(--mo);font-size:11.5px;color:var(--ink3);margin:0;max-w
  .sh{border:1pt solid #000;padding:5pt;margin:0 0 4pt;background:#fff}
 h2{font-size:12pt;margin:0 0 1pt}.sub{font-size:8pt;color:#333}
 h3{font-size:7.6pt;color:#000;margin:6pt 0 3pt;border-bottom:.5pt solid #999}
- .stats{grid-template-columns:repeat(5,1fr);gap:0;border:.5pt solid #999;margin-bottom:8pt}
+ .stats{grid-template-columns:repeat(5,1fr);gap:0;border:.5pt solid #999;margin-bottom:8pt;background:#fff}
  .st{background:#fff;border-right:.5pt solid #999;border-bottom:.5pt solid #999;padding:4pt 6pt}
 .sv{font-size:10.5pt;color:#000}.sl,.sn{font-size:7pt;color:#333}
  .rg.neg,.rg.pos{color:#000;font-weight:700}
