@@ -102,6 +102,11 @@ def ramas(t, f, px, b15, pp=None):
     out = []
     cw, pw, flip, reg = t.get("call_wall"), t.get("put_wall"), t.get("flip"), t.get("regime")
     ck, pk = t.get("call_wall_kind"), t.get("put_wall_kind")
+    # El texto de TRAMPILLA afirmaba "en NEG" siempre: con QQQ en POS contradecia a su propia
+    # cabecera. La trampilla es del STRIKE (gamma local), el regimen es del libro.
+    en_neg = (reg or "").upper().startswith("NEG")
+    tramp_por_que = ("y el libro esta en NEG, que lo empeora" if en_neg
+                     else f"aunque el libro esta en {reg or 'sin regimen'}: es gamma del STRIKE, no del libro")
     if flip is not None and px is not None:
         lado = "POS" if px >= flip else "NEG"
         d = 100 * (flip / px - 1)
@@ -118,8 +123,8 @@ def ramas(t, f, px, b15, pp=None):
             "gatillo": f"muro de calls {cw:,.2f} ({100*(cw/px-1):+.2f}%)",
             "lee": ("PIN: los dealers lo defienden — se cobra AL llegar, no se persigue a través."
                     if ck == "pin" else
-                    "TRAMPILLA: en NEG el precio lo ATRAVIESA. Prohibido fadear en el aire; "
-                    "hace falta toque + rechazo IMPRESO (2 lecturas) de IBKR."),
+                    f"TRAMPILLA: el precio lo ATRAVIESA ({tramp_por_que}). Prohibido fadear en "
+                    "el aire; hace falta toque + rechazo IMPRESO (2 lecturas) de IBKR."),
             "invalida": "romperlo y RETESTARLO desde arriba lo convierte en suelo",
         })
     if pw is not None and px:
@@ -127,7 +132,8 @@ def ramas(t, f, px, b15, pp=None):
             "gatillo": f"muro de puts {pw:,.2f} ({100*(pw/px-1):+.2f}%)",
             "lee": ("PIN: suelo defendido, el rebote es la rama probable."
                     if pk == "pin" else
-                    "TRAMPILLA: NO es piso. En NEG el nivel acelera la caída al perderse."),
+                    f"TRAMPILLA: NO es piso — el nivel ACELERA la caída al perderse "
+                    f"({tramp_por_que})."),
             "invalida": "perderlo con volumen abre el siguiente strike de OI hacia abajo",
         })
     if f:

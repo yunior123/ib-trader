@@ -177,6 +177,12 @@
 
 - [ ] **[pendiente] organizar el proyecto, ahora mismo hay muchos archivos regados como tsm_signal_bot.cpp, y otros en el mismo nivel, muchos. separate logs to logs folder.
 
+- [ ] **[pendiente] "put refresh button in macos app, also version number of software in top of
+      window, right to symbol"** (Yunior 2026-07-27 08:28). El titulo de ventana hoy es
+      "QQQ · :8080" (`macapp/main.swift`); el sello del commit ya esta en `Info.plist`
+      (`IBTCommit`, hoy 3491c73) pero **no se VE**. Dos cosas: (a) boton de refresco visible
+      —hoy solo hay ⌘R, que no se descubre—, (b) version a la derecha del simbolo, arriba.
+
 - [ ] **[pendiente] make the arrow compass nicer, with glowing liquid colors, fast movements, nice to see, test the calibration now with the realtime VIX.
 ## 🌙 QQQ DÍA Y NOCHE (Yunior 2026-07-27: "we should be able to monitor and see charts for qqq
 ## day and night") — MEDIDO, y el hallazgo es que la noche NO se puede recuperar
