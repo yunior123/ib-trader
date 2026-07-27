@@ -73,9 +73,15 @@ TIMEOUT_S = 45
 # 403 tanto para "no autorizado" como para "vas demasiado rapido", asi que la primera
 # version de este script aborto gritando "TOKEN MUERTO" con el token perfectamente
 # vivo. Un fallo transitorio jamas debe presentarse como permanente.
-PAUSE_S = 0.6
+# RE-MEDIDO el 2026-07-27 03:51 UTC con el UA ya puesto: 60 peticiones seguidas SIN pausa
+# a 7,1 req/s -> 60x HTTP 200, cero 403. Las cabeceras lo confirman:
+# x-uw-req-per-minute-remaining=1000000 (sin limite por minuto real) y
+# x-uw-token-req-limit=30000 con x-uw-daily-req-count como contador. El unico cupo que
+# importa es el DIARIO, y la flota entera son 30x11+3 = 333 llamadas.
+PAUSE_S = 0.25
 RETRIES = 4
 BACKOFF_403_S = (5, 15, 40)   # si el 403 sobrevive a esto, entonces si es el token
+QUOTA = {"usado": None, "limite": None}   # ultimo x-uw-daily-req-count / x-uw-token-req-limit
 
 # endpoint -> plantilla. {sym} se sustituye; los que no lo llevan son globales.
 ENDPOINTS = {
@@ -87,6 +93,9 @@ ENDPOINTS = {
     "vol_term_structure":    "/api/stock/{sym}/volatility/term-structure",
     "oi_change":             "/api/stock/{sym}/oi-change",
     "flow_alerts":           "/api/stock/{sym}/flow-alerts",
+    "greeks":                "/api/stock/{sym}/greeks",
+    "option_chains":         "/api/stock/{sym}/option-chains",
+    "darkpool":              "/api/darkpool/{sym}",
 }
 GLOBAL_ENDPOINTS = {
     "market_tide":  "/api/market/market-tide",
@@ -121,6 +130,20 @@ def fleet():
     return [s.upper() for s in syms]
 
 
+def _note_quota(headers):
+    """Cupo REAL leido de la respuesta. Ausente = None, jamas un 0 que parezca 'sin gastar'."""
+    if not headers:
+        return
+    for k, dest in (("x-uw-daily-req-count", "usado"), ("x-uw-token-req-limit", "limite")):
+        v = headers.get(k)
+        if v is None:
+            continue
+        try:
+            QUOTA[dest] = int(str(v).strip())
+        except ValueError:
+            pass
+
+
 def fetch(path, tok):
     """(payload, error). payload None + error != None si no se pudo. Nunca [] fingido."""
     # El User-Agent NO es cosmetico: MEDIDO el 2026-07-26, UW devuelve 403 al
@@ -137,8 +160,10 @@ def fetch(path, tok):
     for attempt in range(RETRIES):
         try:
             with urllib.request.urlopen(req, timeout=TIMEOUT_S) as r:
+                _note_quota(r.headers)
                 return json.loads(r.read().decode("utf-8", "replace")), None
         except urllib.error.HTTPError as e:
+            _note_quota(getattr(e, "headers", None))
             if e.code == 401:
                 return None, "HTTP 401 NO AUTORIZADO (token caducado)"
             if e.code in (403, 429):
@@ -170,6 +195,29 @@ def rows_of(payload):
     return -1
 
 
+TS_FIELDS = ("tape_time", "executed_at", "timestamp", "start_time", "date", "last_updated")
+
+
+def latest_feed_ts(payload):
+    """Marca de tiempo mas reciente DENTRO del dato (no la de descarga): con ella se sabe
+    dentro de 3 meses si el fichero traia dato vivo o el cierre de la vispera.
+    None si el endpoint no expone ninguna — nunca se inventa."""
+    rows = payload.get("data") if isinstance(payload, dict) else payload
+    if not isinstance(rows, list):
+        return None
+    best = None
+    for r in rows:
+        if not isinstance(r, dict):
+            continue
+        for k in TS_FIELDS:
+            v = r.get(k)
+            if isinstance(v, str) and v:
+                if best is None or v > best:
+                    best = v
+                break
+    return best
+
+
 def write_atomic(path, obj):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     tmp = path + ".tmp"
@@ -194,13 +242,17 @@ def archive_one(name, path, tok, outdir, sym=None, force=False, dry=False):
         # 0 filas puede ser legitimo (fin de semana, sin alertas). Se archiva DICIENDOLO,
         # nunca se descarta: un hueco silencioso luego parece "no habia dato".
         pass
+    now = time.time()
     write_atomic(dest, {
         "_meta": {
             "fuente": "unusual_whales_trial",
+            "_source": "unusual_whales_trial",
             "endpoint": path,
             "sym": sym,
-            "descargado_epoch": time.time(),
+            "descargado_epoch": now,
             "descargado_local": dt.datetime.now().isoformat(timespec="seconds"),
+            "fetched_at": dt.datetime.fromtimestamp(now, dt.timezone.utc).isoformat(timespec="seconds"),
+            "feed_ts": latest_feed_ts(payload),
             "n_filas": n,
             "aviso": ("trial con reloj: token emitido 2026-07-25, caduca ~2026-08-01. "
                       "Griegas de UW, NO mezclar con las de Polygon sin declararlo."),
@@ -271,6 +323,9 @@ def main():
         print(f"  [{i:2d}/{len(syms)}] {sym:6s} {' '.join(got) if got else '(todo saltado)'}")
 
     print(f"-> {ok} ficheros nuevos, {skip} ya estaban, {total_rows:,} filas totales")
+    if QUOTA["usado"] is not None:
+        print(f"-> cupo UW: {QUOTA['usado']}/{QUOTA['limite'] if QUOTA['limite'] is not None else '?'} "
+              f"peticiones del dia (cabeceras x-uw-daily-req-count / x-uw-token-req-limit)")
     if fallos:
         print(f"-> {len(fallos)} FALLOS:", file=sys.stderr)
         for name, sym, why in fallos[:12]:
