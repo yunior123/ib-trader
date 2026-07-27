@@ -81,7 +81,7 @@ def flow(sym):
 
 
 def perp(sym, px_ref):
-    """Perp 24/7 del MISMO nombre (Bybit). Es lo unico que cotiza con US cerrado."""
+    """Perp 24/7 del MISMO nombre (OKX, fallback Bybit por simbolo -- ver src). Es lo unico que cotiza con US cerrado."""
     p = os.path.join(ROOT, "data", "perp_stocks.json")
     if not os.path.exists(p):
         return None
@@ -144,10 +144,11 @@ def ramas(t, f, px, b15, pp=None):
         })
     if pp:
         g = pp["gap_pct"]
+        oi_txt = f"{pp['oi_usd']:,.0f} $" if pp.get("oi_usd") is not None else "sin medir"
         out.append({
             "gatillo": f"perp 24/7 en {pp['px']:,.2f} → gap {g:+.2f}% sobre el cierre del viernes",
-            "lee": (f"el MISMO nombre cotizando con US cerrado (Bybit, vol 24h "
-                    f"{pp['vol24h_usd']:,.0f} $, OI {pp['oi_usd']:,.0f} $, spread "
+            "lee": (f"el MISMO nombre cotizando con US cerrado ({pp.get('src', '?').upper()}, "
+                    f"vol 24h {pp['vol24h_usd']:,.0f} $, OI {oi_txt}, spread "
                     f"{pp['spread_pct']:.3f}%). Es el único descubrimiento de precio que hay "
                     f"ahora mismo, y apunta " + ("ARRIBA." if g > 0 else "ABAJO.")),
             "invalida": ("el perp cotiza con prima propia y libro fino de fin de semana: "
