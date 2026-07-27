@@ -47,9 +47,11 @@ fleet_stop_all() {
   for p in price_alarm_keepalive.sh opt_sentinel_keepalive.sh options_enrich_keepalive.sh \
            opt_chain_keepalive.sh bargain_keepalive.sh sox_keepalive.sh \
            finviz_scout_keepalive.sh notify_relay.sh x_signal_keepalive.sh \
-           opt_whale_keepalive.sh voice_queue_keepalive.sh compass_keepalive.sh; do
+           opt_whale_keepalive.sh voice_queue_keepalive.sh compass_keepalive.sh \
+           perp_stock_keepalive.sh perp_nbbo_bridge_keepalive.sh; do
     pkill -f "scripts/$p" 2>/dev/null
   done
+  pkill -f 'scripts/perp_nbbo_bridge.py' 2>/dev/null
   # daemons python de señal (el arnes ib_async/ib_insync)
   for p in x_signal_poster.py sox_index_feed.py opt_sentinel.py options_enrich.py \
            opt_chain_cache.py band_open_watch.py bollinger_alarm.py dip_alert.py; do
@@ -287,6 +289,17 @@ fi
 if ! pgrep -f "scripts/price_alarm_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/price_alarm_keepalive.sh" >/dev/null 2>&1 &
   echo "$(date) fleet: price_alarm_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+fi
+
+# Perpetuos: perp_stock_fetch.py era one-shot y su JSON llego a 5h46m rancio; el
+# puente vuelca data/perp_stocks.json -> data/nbbo_<sym>usdt.txt para price_alarm.
+if ! pgrep -f "scripts/perp_stock_keepalive.sh" >/dev/null; then
+  nohup zsh "$ROOT/scripts/perp_stock_keepalive.sh" >/dev/null 2>&1 &
+  echo "$(date) fleet: perp_stock_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+fi
+if ! pgrep -f "scripts/perp_nbbo_bridge_keepalive.sh" >/dev/null; then
+  nohup zsh "$ROOT/scripts/perp_nbbo_bridge_keepalive.sh" >/dev/null 2>&1 &
+  echo "$(date) fleet: perp_nbbo_bridge_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
 fi
 
 # x_signal_poster (2026-07-21): postea en X las señales FUERTES de la flota
