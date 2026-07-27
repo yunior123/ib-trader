@@ -89,6 +89,9 @@
               border-radius:4px; padding:4px 10px; font-weight:800; font-size:12.5px;
               letter-spacing:.02em; }
   #aggbadge.hidden { display:none; }
+  #charmwhy { background:#3a2410; color:#ffb300; border:1px solid #7a4a10;
+              border-radius:4px; padding:4px 9px; font-weight:700; font-size:12px; }
+  #charmwhy.hidden { display:none; }
   #narrbtn { background:#2a2e39; color:#8aa0c8; border:1px solid #3a4b6b;
              border-radius:4px; padding:4px 9px; font:inherit; font-weight:700; cursor:pointer; }
   #narrbtn:hover { background:#2f3646; color:#fff; }
@@ -379,9 +382,10 @@
   <span id="scopebar" title="0DTE = solo hoy (pin intradía) · ALL = toda la cadena (mapa multi-día). En ALL el flip apenas se mueve pero la Vanna salta.">
     <button class="tgl active" data-scope="0DTE">0DTE</button><button class="tgl" data-scope="ALL">ALL</button>
   </span>
-  <span id="layerbar" title="GEX = mapa de gamma (precio) · VEX = mapa de vanna (vol). Oro=imán, morado=acelerador en ambos.">
-    <button class="tgl active" data-layer="GEX">GEX</button><button class="tgl" data-layer="VEX">VEX</button>
+  <span id="layerbar" title="GEX = mapa de gamma (precio) · VEX = mapa de vanna (vol) · CHARM = decaimiento del delta por DÍA, el motor del drift/pin de la TARDE (13:30-15:45). Oro=imán, morado=acelerador en las tres.">
+    <button class="tgl active" data-layer="GEX">GEX</button><button class="tgl" data-layer="VEX">VEX</button><button class="tgl" data-layer="CHARM">CHARM</button>
   </span>
+  <span id="charmwhy" class="hidden" title="El charm no se pudo calcular sobre este libro: se dice el motivo en vez de pintar un perfil plano."></span>
   <span id="bubblebar" title="Muros GEX como hileras de BURBUJAS (además de las líneas). Tamaño+densidad+longitud de la hilera ∝ |gamma| del strike. Color: verde-azulado = PIN (el nivel AGUANTA) · rojo = TRAMPILLA (el precio la ATRAVIESA acelerando — no fadear ahí) · gris ? = sin dato. Anillo = muro absoluto (POC).">
     <button class="tgl active" id="bubbtn">⚬ Burbujas</button>
   </span>
@@ -409,6 +413,7 @@
   <span><span class="k">CW</span> <span class="v" id="h-cw">—</span><span class="info" title="Call wall: strike de mayor gamma+ de calls arriba = techo (dealers venden acciones al acercarse). Junto con PW define el rango esperado.">i</span></span>
   <span><span class="k">PW</span> <span class="v" id="h-pw">—</span><span class="info" title="Put wall: strike de mayor gamma de puts abajo = piso (dealers compran al acercarse). En régimen negativo puede ser un ACELERADOR (morado), no un soporte real.">i</span></span>
   <span><span class="k">Vanna</span> <span class="v" id="h-vex">—</span><span class="info" title="Vanna exposure (VEX): cuánto delta ajustan los dealers por cada punto de IV. Combustible de vol: positivo = melt-up (compran al caer IV), negativo = caída. Salta en ALL-EXP (posicionamiento de vencimientos lejanos).">i</span></span>
+  <span><span class="k">Charm/d</span> <span class="v" id="h-charm">—</span><span class="info" title="Charm exposure por DÍA (∂delta/∂t · OI, escala $/1%): cuánto delta tienen que recomprar/vender los dealers solo por el paso del tiempo. Es el motor del DRIFT y del PIN de la tarde (13:30-15:45). Positivo = arrastre al alza hacia el strike; negativo = arrastre a la baja. A 0DTE explota: por eso se lee por día, no por año.">i</span></span>
   <span><span class="k">Pressure</span> <span class="v" id="h-press">—</span><span class="info" title="Dealer Pressure −100..+100 (gamma 80% + vanna 20%). Positivo = dealers PINEAN (rango, dips comprados). Negativo = AMPLIFICAN (moves corren). Cerca del flip se degrada (inestable). Régimen, no dirección.">i</span></span>
   <span><span class="k">EM</span> <span class="v" id="h-em" title="Expected move ±1σ = spot·IV·√T. Rango esperado hasta el vencimiento (líneas cian punteadas en el chart).">—</span></span>
   <span class="k" id="h-asof"></span>
@@ -943,10 +948,21 @@ class GexProfile {
   paneViews() { return [this._view]; }
   _rebuild() {
     const lv = this._lv || {};
-    const src = this._layer === "VEX" ? (lv.vex_profile || []) : (lv.profile || []);
-    const key = this._layer === "VEX" ? "vex" : "gex";
-    this._profile = src.map(p => ({ strike: p.strike, val: p[key] }));
+    const L = { GEX: ["profile", "gex"], VEX: ["vex_profile", "vex"], CHARM: ["charm_profile", "charm"] };
+    const [field, key] = L[this._layer] || L.GEX;
+    const src = lv[field] || [];
+    this._profile = src.map(p => ({ strike: p.strike, val: p[key] })).filter(p => p.val != null);
     this._maxAbs = Math.max(1, ...this._profile.map(p => Math.abs(p.val)));
+    // banner honesto: si la capa pedida no tiene datos se dice POR QUÉ, nunca se deja el
+    // pane vacío haciendo creer que el perfil es plano.
+    const wEl = document.getElementById("charmwhy");
+    if (wEl) {
+      const bad = !this._profile.length;
+      wEl.classList.toggle("hidden", !bad);
+      if (bad) wEl.textContent = "⚠ " + this._layer + ": " +
+        (this._layer === "CHARM" ? (lv.charm_why || "sin perfil en este libro")
+                                 : "sin perfil en este libro");
+    }
     if (this._req) this._req();
   }
   setLevels(lv) { this._lv = lv; this._rebuild(); }
@@ -1026,6 +1042,10 @@ function drawHeader(lv) {
   const vx = document.getElementById("h-vex");
   if (vx) { vx.textContent = lv.net_vex != null ? fmtBig(lv.net_vex) : "—";
             vx.className = "v " + (lv.net_vex >= 0 ? "pos" : "neg"); }
+  const ch = document.getElementById("h-charm");
+  if (ch) { ch.textContent = lv.net_charm != null ? fmtBig(lv.net_charm) : "—";
+            ch.className = "v " + (lv.net_charm == null ? "" : lv.net_charm >= 0 ? "pos" : "neg");
+            ch.title = lv.net_charm == null ? (lv.charm_why || "sin charm") : ""; }
   const pr = document.getElementById("h-press");
   if (pr && lv.pressure != null) {
     pr.textContent = (lv.pressure > 0 ? "+" : "") + lv.pressure + (lv.pressure_lab ? " " + lv.pressure_lab : "");
