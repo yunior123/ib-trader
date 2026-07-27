@@ -202,9 +202,25 @@ def _bars_from_txt(path, tail):
 # korea_bar_bridge.py escribe realtime IBKR (mdt=1, sub waived) SIN el sufijo _ibkr:
 # data/bars_<stem>.txt. Nombre de display = stem en mayúsculas -> sym.lower() == stem,
 # no hace falta tabla de mapeo. Proceso propio (clientId 86), no el contrato de este bridge.
-# +7 satelites HBM (2026-07-27): mismo bridge, mismo formato de fichero, ya escribiendo.
-KOREA_SYMS = {"SAMSUNG", "SKHYNIX", "KOSPI",
-              "HANMI", "WONIKIPS", "HPSP", "DBHITEK", "LEENO", "SOLBRAIN", "ISC"}
+# Fuente unica del set (orden Yunior 2026-07-27 "avoid hardcoded shit"): korea_bar_bridge.py
+# escribe data/korea_syms.txt con sus KOREA.keys() vigentes; aqui solo se LEE, cacheado.
+_KOREA_SYMS_PATH = os.path.join(REPO, "data", "korea_syms.txt")
+_korea_syms_cache = {"t": 0.0, "syms": frozenset()}
+
+
+def KOREA_SYMS():
+    """frozenset de simbolos KRX vigentes. Vacio (no crashea) si el puente aun no escribio
+    el fichero -> sin Korea en la watchlist hasta que exista, nunca una lista adivinada."""
+    now = time.time()
+    if now - _korea_syms_cache["t"] > 30:
+        try:
+            with open(_KOREA_SYMS_PATH) as f:
+                _korea_syms_cache["syms"] = frozenset(
+                    ln.strip().upper() for ln in f if ln.strip())
+        except OSError:
+            pass
+        _korea_syms_cache["t"] = now
+    return _korea_syms_cache["syms"]
 
 
 def load_ibkr_bars(sym, tail=780):
@@ -212,7 +228,7 @@ def load_ibkr_bars(sym, tail=780):
     los 33 símbolos). Archivo OS-page-cacheado -> lectura a velocidad RAM. Se usa para
     mostrar el chart AL INSTANTE al cambiar de símbolo (sin esperar el round-trip a TWS);
     la suscripción viva se re-ata en background. [ts,o,h,l,c,v]."""
-    if sym.upper() in KOREA_SYMS:
+    if sym.upper() in KOREA_SYMS():
         return _bars_from_txt(os.path.join(REPO, "data", f"bars_{sym.lower()}.txt"), tail)
     return _bars_from_txt(os.path.join(REPO, "data", f"bars_{sym.lower()}_ibkr.txt"), tail)
 
@@ -769,7 +785,7 @@ def watchlist_quote(sym):
     """Último precio, %cambio del día y volumen del día (estilo TradingView) desde los bars
     locales (data/bars_<sym>_ibkr.txt, o data/bars_<stem>.txt para KOREA_SYMS: epoch o h l c
     v). Degrada a None. SEÑAL-SOLAMENTE."""
-    fname = f"bars_{sym.lower()}.txt" if sym.upper() in KOREA_SYMS else f"bars_{sym.lower()}_ibkr.txt"
+    fname = f"bars_{sym.lower()}.txt" if sym.upper() in KOREA_SYMS() else f"bars_{sym.lower()}_ibkr.txt"
     p = os.path.join(REPO, "data", fname)
     try:
         rows = [ln.split() for ln in open(p) if ln.strip()]
@@ -824,7 +840,7 @@ def load_perp_stocks():
 def watchlist_payload():
     fleet = load_fleet(); user = load_user_watchlist()
     quotes = {s: watchlist_quote(s) for s in dict.fromkeys(fleet + user)}
-    korea = sorted(KOREA_SYMS)
+    korea = sorted(KOREA_SYMS())
     quotes.update({s: watchlist_quote(s) for s in korea})
     stats = load_watchlist_stats()   # feed opcional -> sobreescribe vol/chg/last si viene
     for s, q in quotes.items():
@@ -1606,8 +1622,14 @@ async def fetch_more_history(state, before_epoch):
     if state.mock:
         state._backfill_reason = "modo mock: toda la historia ya esta en memoria desde el arranque"
         return False
-    if state._ib is None or state._contract is None:
-        state._backfill_reason = "conexion TWS no lista todavia — reintenta al hacer scroll de nuevo"
+    if state._ib is None:
+        state._backfill_reason = "este bridge no esta conectado a IBKR — sin historia que pedir"
+        return False
+    if state._contract is None:
+        # Antes decia "conexion TWS no lista": mentira en el caso coreano, donde la conexion
+        # esta perfecta y lo que falta es el contrato KRX. Se dice cual de las dos es.
+        state._backfill_reason = (f"{state.sym.upper()}: contrato aun sin cualificar en IBKR "
+                                  f"— reintenta al hacer scroll de nuevo")
         return False
     if state._backfilling:
         return False   # ya hay una peticion en vuelo (misma State) -> se ignora, sin pisar la reason previa
@@ -1732,7 +1754,7 @@ async def _spawn_state(st):
     try:
         if st.mock:
             st._tasks = [asyncio.ensure_future(mock_feed(st, interval=STATE_CFG["interval"]))]
-        elif st.sym.upper() in KOREA_SYMS:
+        elif st.sym.upper() in KOREA_SYMS():
             st._tasks = [asyncio.ensure_future(korea_poll_feed(st))]
         else:
             st._tasks = []
@@ -1812,14 +1834,52 @@ async def set_symbol(state, sym):
             reason += (f" | PERP bybit {perp['px']:g} (edad {perp['feed_age_s']:.0f}s, "
                        f"NO es precio de la acción)")
         state._nodata_reason = reason
-    if sym.upper() in KOREA_SYMS:
-        # sin contrato propio aquí -> nada que re-cualificar en TWS; korea_poll_feed
-        # (ya vivo desde _spawn_state) sigue tail-eando el archivo del bridge KRX.
-        pass
+    if sym.upper() in KOREA_SYMS():
+        # El vivo lo tail-ea korea_poll_feed, pero el contrato del simbolo VIEJO se quedaba
+        # aqui: fetch_more_history lo daba por bueno y rellenaba el chart coreano con barras
+        # de QQQ. Se limpia YA y se cualifica el KRX de verdad para que el scroll funcione.
+        state._contract = None
+        if state._ib is not None:
+            asyncio.ensure_future(_relive_korea(state, sym))
     elif state._ib is not None:
         # re-broadcast del history solo si NO hubo carga instantánea (símbolo fuera de la
         # flota) -> evita el DOBLE LOAD: con archivo, los updates incrementales bastan.
         asyncio.ensure_future(_relive_symbol(state, sym, rebroadcast=not instant))
+
+
+def _krx_conid(sym):
+    """conId KRX de data/korea_contracts.txt (lo escribe korea_bar_bridge, fuente unica).
+    None si no esta -> el caller lo dice, no adivina un contrato."""
+    try:
+        with open(os.path.join(REPO, "data", "korea_contracts.txt")) as f:
+            for ln in f:
+                p = ln.split()
+                if len(p) >= 2 and p[0].upper() == sym.upper():
+                    return int(p[1])
+    except (OSError, ValueError):
+        pass
+    return None
+
+
+async def _relive_korea(state, sym):
+    """Cualifica el contrato KRX para que el scroll hacia atras traiga historia REAL del
+    simbolo coreano. El vivo sigue viniendo del archivo (korea_poll_feed); esto es solo
+    para reqHistoricalData. SEÑAL-SOLAMENTE."""
+    ib = state._ib
+    cid = _krx_conid(sym)
+    if ib is None or cid is None:
+        state._backfill_reason = (f"{sym.upper()}: sin conId KRX en data/korea_contracts.txt "
+                                  f"— el scroll no puede pedir historia a IBKR")
+        return
+    from ib_async import Contract
+    try:
+        (c,) = await ib.qualifyContractsAsync(Contract(conId=cid, exchange="KRX"))
+    except Exception as e:
+        state._backfill_reason = f"{sym.upper()}: IBKR no cualifica el KRX conId {cid} ({e})"
+        print(f"[sym] KRX no cualifica {sym.upper()} conId {cid} ({e})")
+        return
+    state._contract = c
+    print(f"[sym] {sym.upper()}: contrato KRX {c.localSymbol} listo (scroll con historia real)")
 
 
 async def _relive_symbol(state, sym, rebroadcast=False):
@@ -2500,12 +2560,27 @@ async def live_feed(state, port, client_id=60):
 
     ib.disconnectedEvent += on_disconnect
 
-    contract = Stock(state.sym.upper(), "SMART", "USD")
-    (contract,) = await ib.qualifyContractsAsync(contract)
+    # El arranque pedia SIEMPRE Stock(SMART,USD): con --sym samsung eso es "Unknown contract"
+    # y la tarea moria con AttributeError -> _ib nunca se asignaba y el chart decia "conexion
+    # TWS no lista" con la conexion perfecta. Los KRX van por conId.
     state._ib = ib
     SHARED_IB["ib"] = ib      # los estados nuevos REUSAN esta conexion
-    state._contract = contract
     ib.reqMarketDataType(1)   # REALTIME para TODO
+    contract = None
+    if state.sym.upper() in KOREA_SYMS():
+        await _relive_korea(state, state.sym)
+        contract = state._contract
+        if contract is None:
+            print(f"[live] {state.sym.upper()}: sin contrato KRX; el vivo sigue por archivo")
+    else:
+        try:
+            (contract,) = await ib.qualifyContractsAsync(
+                Stock(state.sym.upper(), "SMART", "USD"))
+        except Exception as e:
+            print(f"[live] {state.sym.upper()} no cualifica ({e})")
+        state._contract = contract
+    if contract is None:
+        return   # sin contrato no hay suscripcion viva; el archivo/korea_poll_feed cubre
     # TICK STREAM del precio (blazing-fast: la vela se mueve sub-segundo, no cada ~5s)
     try:
         ib.pendingTickersEvent += _make_on_tick(state)
