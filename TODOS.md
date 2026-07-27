@@ -235,3 +235,27 @@
       no existe el fichero) pero **no captura el fallo de apertura**, así que un lock momentáneo
       mata la generación del árbol completa. Envolver el `connect`/`execute` y devolver `None`
       (que es la degradación ya diseñada), nunca un cero.
+
+## ✅ VERIFICADO EN SESIÓN VIVA (lun 2026-07-27, mercado ABIERTO)
+- [x] **[CERRADA — el fix de los CAPITANES funciona] Verificar EN VIVO que los DOS CAPITANES
+      reciben cinta firmada.** Llevaba semanas sin poder cerrarse porque solo se puede observar con
+      el mercado abierto. MEDIDO hoy 09:09: `data/whale_qqq.txt` **59.061 B**, `whale_spy.txt`
+      **43.868 B**, `whale_smh.txt` **15.584 B**, los tres con mtime del minuto en curso. El sábado
+      estaban a **0 bytes**. `CAPTAINS_FIRST` (`ibkr_bar_bridge.py:62`) hace su trabajo: los
+      capitanes se suscriben PRIMERO y por eso son los que tienen cinta. La **regla 12** ya no se
+      alimenta de un input vacío.
+- [ ] 🔴 **[pendiente — HALLAZGO NUEVO de la misma medición] 7 de los 30 de la flota NO tienen
+      cinta de ballenas, y es el CAP de IBKR, no un bug nuestro.** Vacíos a las 09:09 con el
+      mercado abierto: **AAPL AMD ASML GLD INTC TSM TXN** — los 7 son de `data/fleet.txt`
+      (comprobado bien: `fleet.txt` es UNA línea de 30 palabras separadas por espacios; leerlo por
+      líneas da un solo token y hace creer que no están en la flota).
+      Causa MEDIDA: `bridge_ibkr_fleet.log` tiene **1.103** `Error 10190 "Le nombre maximum de
+      demandes tick-by-tick a été atteint"`; los denegados que se ven al final son SPCX SKHY LRCX
+      SNDK WDC STX — el orden de suscripción decide quién se queda sin cinta, y `CAPTAINS_FIRST`
+      solo garantiza los 3 primeros.
+      *Por qué importa*: la escalera de agresor, el HIRO casero y `opt_whale_watch` se alimentan de
+      esa cinta. Un ticker sin cinta no es "sin ballenas": es CIEGO, y hoy no lo dice nadie.
+      *Qué hace falta decidir*: (a) cuántas líneas tick-by-tick da realmente la cuenta (el probe
+      `docs/probes/hiro_probe_ibkr.py` existe para eso y hoy SÍ se puede correr), (b) a qué 8-10
+      símbolos se les asigna la cinta a propósito en vez de por orden de arranque, y (c) que un
+      símbolo sin cinta salga DECLARADO como ciego en lugar de aparentar silencio de flujo.

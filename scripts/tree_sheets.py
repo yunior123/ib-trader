@@ -77,9 +77,20 @@ def touch_stats(sym):
         return None
     q = ("select touch_ord, event, count(*) from level_events where sym=? "
          "and event in ('BOUNCE','BREAK','WICK_REJECT','RETEST_REJECT') group by touch_ord,event")
-    con = sqlite3.connect(f"file:{db}?mode=ro", uri=True)
+    # Con la flota escribiendo, `mode=ro` falla de forma TRANSITORIA (medido: "unable to open
+    # database file (14)" y 5 min despues el mismo comando devuelve 5.457 filas) y tumbaba la
+    # generacion ENTERA del arbol. La curva de toques es un ADORNO: si no se puede leer se
+    # devuelve None (la degradacion que ya estaba disenada), nunca un cero que parezca medido.
+    try:
+        con = sqlite3.connect(f"file:{db}?mode=ro", uri=True, timeout=5.0)
+    except sqlite3.Error as e:
+        print(f"touch_stats({sym}): BD no legible ({e}) -> sin curva de toques", file=sys.stderr)
+        return None
     try:
         rows = con.execute(q, (sym,)).fetchall()
+    except sqlite3.Error as e:
+        print(f"touch_stats({sym}): consulta fallida ({e}) -> sin curva de toques", file=sys.stderr)
+        return None
     finally:
         con.close()
     if not rows:
