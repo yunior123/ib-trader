@@ -282,6 +282,13 @@ if ! pgrep -f "scripts/opt_whale_keepalive.sh" >/dev/null; then
   echo "$(date) fleet: opt_whale_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
 fi
 
+# price_alarm estaba en la lista de APAGADO (linea 47 y 60) pero NUNCA en la de
+# arranque: el watcher de alarmas de precio no lo levantaba nadie (medido 2026-07-27).
+if ! pgrep -f "scripts/price_alarm_keepalive.sh" >/dev/null; then
+  nohup zsh "$ROOT/scripts/price_alarm_keepalive.sh" >/dev/null 2>&1 &
+  echo "$(date) fleet: price_alarm_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+fi
+
 # x_signal_poster (2026-07-21): postea en X las señales FUERTES de la flota
 # (prob>=70, ballenas >=3:1, retest-ok/reclaim/ruptura) + combos multi-ticker
 # de data/x_combo_triggers.txt. SEÑAL-SOLAMENTE; ledger compartido
