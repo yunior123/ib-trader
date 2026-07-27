@@ -4,7 +4,7 @@ import json, os, sys, sqlite3, html, datetime as dt
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TREES = os.path.join(ROOT, "data", "trees")
-SYMS = ["SPY", "QQQ", "AAPL", "SMH", "NVDA"]
+SYMS = ["QQQ", "NVDA", "SMH", "MU", "AAPL", "MSFT"]
 WIN = 0.055          # ventana del perfil alrededor del spot
 
 
@@ -218,7 +218,7 @@ def friday_table(d):
             '</tr></thead><tbody>' + "".join(tr) + "</tbody></table></div>")
 
 
-def sheet(d, i):
+def sheet(d, i, ntot):
     spot, flip = d["spot"], d.get("flip")
     fd = pct_from(spot, flip)
     reg = d.get("regime")
@@ -242,7 +242,7 @@ def sheet(d, i):
     cav = "".join(f"<li>{html.escape(c)}</li>" for c in d.get("caveats") or [])
     return f'''<section class="sheet" id="{d['sym'].lower()}">
 <header class="sh">
- <span class="ord">hoja {i} de 5</span>
+ <span class="ord">hoja {i} de {ntot}</span>
  <h2>{d['sym']}</h2>
  <p class="sub">{d['n_solo_viernes']} contratos al viernes {d['viernes']} · {d['n_hasta_viernes']} hasta esa fecha · banda {d.get('band')} · griegas {html.escape(str(d.get('greeks_src')))}</p>
 </header>
@@ -262,6 +262,11 @@ def sheet(d, i):
  </div>
 </div>
 <h3>Muros de la semana pasada ({d['semana_pasada_fechas'][0]} → {d['semana_pasada_fechas'][-1]})</h3>
+<p class="declara"><b>Dos ventanas distintas, no se comparan a ciegas:</b> los muros de la semana
+pasada salen de cadenas IBKR/TWS archivadas con banda <b>±4,5%</b> y del vencimiento más cercano
+de cada día — contratos <b>ya expirados</b>. El libro de hoy es Polygon con banda adaptativa
+<b>{d.get('band')}</b> y todos los vencimientos hasta el viernes. Por eso la supervivencia se
+decide por <b>RANGO del strike</b> en el libro de hoy, nunca por el cociente de OI.</p>
 {surv_table(d)}
 <details class="cav"><summary>Lo que este mapa NO dice ({len(d.get('caveats') or [])})</summary><ul>{cav}</ul></details>
 </section>'''
@@ -298,14 +303,15 @@ def main():
     if not ds:
         raise RuntimeError("no hay ninguna hoja en data/trees/")
     nav = "".join(f'<a href="#{d["sym"].lower()}">{d["sym"]}</a>' for d in ds)
-    body = "".join(sheet(d, i + 1) for i, d in enumerate(ds))
+    body = "".join(sheet(d, i + 1, len(ds)) for i, d in enumerate(ds))
     gen = dt.datetime.now().strftime("%Y-%m-%d %H:%M")
-    out = HEAD + f'''<div class="wrap">
+    titulo = NOMBRE.get(len(ds), f"Los {len(ds)} árboles")
+    out = HEAD.replace("@@TITULO@@", f"{titulo} — " + " · ".join(d["sym"] for d in ds)) + f'''<div class="wrap">
 <header class="top">
  <p class="kicker">ib-trader · mapa de posicionamiento · señal-solamente</p>
- <h1>Los cinco árboles</h1>
+ <h1>{titulo}</h1>
  <p class="lede">Qué muros de la semana pasada siguen en pie, qué libro hay hasta el viernes
- {ds[0]['viernes']}, y qué expira ese día. Cinco hojas, una por ticker.</p>
+ {ds[0]['viernes']}, y qué expira ese día. Una hoja de papel por ticker.</p>
  <nav class="nav">{nav}<a href="#decay">doctrina</a></nav>
  <p class="stamp">generado {gen} · cadena {ds[0]['chain_dir']} · Polygon (15 min de retraso) para la estructura ·
  el disparo es de IBKR en tiempo real, nunca de aquí</p>
@@ -315,14 +321,17 @@ def main():
 <footer class="foot"><p>Nada de esto es una orden ni un consejo financiero. Describe el libro de opciones;
 no predice el precio. Sin print de IBKR no hay entrada.</p></footer>
 </div>'''
-    dest = os.path.join(ROOT, "data", "trees", "cinco-arboles.html")
+    dest = os.path.join(ROOT, "data", "trees", "arboles.html")
     with open(dest, "w") as f:
         f.write(out)
     print(dest, f"({os.path.getsize(dest)/1024:.0f} KB, {len(ds)} hojas)")
 
 
+NOMBRE = {4: "Los cuatro árboles", 5: "Los cinco árboles", 6: "Los seis árboles",
+          7: "Los siete árboles"}
+
 HEAD = '''<meta charset="utf-8">
-<title>Los cinco árboles — SPY · QQQ · AAPL · SMH · NVDA</title>
+<title>@@TITULO@@</title>
 <style>
 :root{
  --ground:#0d1014; --panel:#141920; --panel2:#1b212a; --line:#28303b;
@@ -429,6 +438,9 @@ h3:first-child{margin-top:0}
 .verdict.warn{border-color:var(--warn)}
 .verdict b{color:var(--ink)}
 .void{color:var(--ink3);font-family:var(--mono);font-size:12px;margin:6px 0}
+.declara{font-size:12px;line-height:1.5;color:var(--ink2);margin:0 0 9px;max-width:96ch;
+ border-left:2px solid var(--warn);padding:7px 11px;background:var(--panel2)}
+.declara b{color:var(--ink)}
 .cav{margin-top:22px;border-top:1px solid var(--line);padding-top:12px}
 .cav summary{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
  color:var(--ink3);cursor:pointer}
@@ -448,40 +460,71 @@ h3:first-child{margin-top:0}
 code{font-family:var(--mono);font-size:.92em;color:var(--ink)}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media print{
- :root{--ground:#fff;--panel:#fff;--panel2:#fff;--line:#999;--ink:#000;--ink2:#333;
-   --ink3:#555;--gold:#000;--violet:#000;--call:#000;--put:#000;--warn:#000;}
- body{background:#fff;color:#000;font-size:8pt}
+ :root{--ground:#fff;--panel:#fff;--panel2:#fff;--line:#999;--ink:#000;--ink2:#000;
+   --ink3:#333;--gold:#000;--violet:#000;--call:#000;--put:#000;--warn:#000;}
+ body{background:#fff;color:#000;font-size:6.9pt;line-height:1.28}
  .wrap{max-width:100%;padding:0}
- .nav,.stamp{display:none}
- h1{font-size:20pt}.lede{font-size:9pt}
- .sheet{border:1pt solid #000;padding:6pt;margin:0 0 5pt;background:#fff}
-h2{font-size:12pt}h3{font-size:8.5pt;color:#000;border-bottom:.5pt solid #999}
- .stats{grid-template-columns:repeat(4,1fr);gap:0;border:.5pt solid #999;background:#fff}
- .stat{background:#fff;border-right:.5pt solid #999;border-bottom:.5pt solid #999;padding:4pt 6pt}
-.sv{font-size:10pt}.sl,.sn{font-size:7pt}
+ .nav,.stamp,.cav,.foot{display:none}
+ .top{border-bottom:1pt solid #000;padding-bottom:2.5pt;margin-bottom:4pt}
+ .kicker{font-size:6.4pt;margin:0;color:#000;display:inline}
+ h1{font-size:12pt;margin:0;display:inline;margin-left:6pt}
+ .lede{font-size:6.6pt;margin:1pt 0 0;max-width:none;color:#000}
+ /* una hoja de papel por ticker: el arbol jamas se parte */
+ .sheet{border:.75pt solid #000;padding:4pt;margin:0;background:#fff;
+   break-inside:avoid;page-break-inside:avoid}
+ .sheet+.sheet{break-before:page;page-break-before:always}
+ .sh{padding-bottom:2pt;margin-bottom:4pt;border-bottom:.5pt solid #999}
+ .ord{font-size:6.2pt;color:#333}
+h2{font-size:11.5pt;margin:0 0 1pt}.sub{font-size:6.4pt;color:#000}
+h3{font-size:6.8pt;color:#000;border-bottom:.5pt solid #999;margin:4.5pt 0 2.5pt;padding-bottom:1pt}
+ .hint{color:#333}
+ .stats{grid-template-columns:repeat(4,1fr);gap:0;border:.5pt solid #999;background:#fff;margin-bottom:3pt}
+ .stat{background:#fff;border-right:.5pt solid #999;border-bottom:.5pt solid #999;padding:1.8pt 4pt;gap:0}
+.sv{font-size:8.6pt}.sl,.sn{font-size:6.1pt;color:#333}
  .reg.neg,.reg.pos{color:#000;font-weight:700}
- .prof{background:#fff;border:.5pt solid #999;height:80mm;width:100%}
- .two{grid-template-columns:1fr 1fr;gap:8pt}
- .tree .why{font-size:7pt}.tree li{padding:2pt 0}
- .ladder{font-size:7pt}.ladder .row{padding:2pt 5pt}
- .cav{display:none}
- .prof .pos{fill:#fff;stroke:#000;stroke-width:.5}.prof .neg{fill:#000}
- .prof .klab,.prof .axlab,.prof .lvab{fill:#000}
- .prof .spotl,.prof .flipl,.prof .ax{stroke:#000}
- .prof .spotlt,.prof .fliplt{fill:#000}
- .chip{border-color:#000;color:#000}
+ .two{grid-template-columns:1fr 1fr;gap:6pt;margin-top:2pt}
+ .tree{font-size:6.7pt}
+ .tree .why{font-size:6.3pt;color:#000}.tree li{padding:1.1pt 0}
+ .tree li{grid-template-columns:13px 50px 42px 1fr}
+ .tree b{font-size:7.6pt}.tree .dd{font-size:6.1pt}
+ .ladder{font-size:6.5pt}.ladder .row{padding:1.1pt 4pt;gap:5px}
+ .ladder .k{min-width:52px}.ladder .lab{min-width:78px}
+ .chip{border-color:#000;color:#000;font-size:6pt;padding:0 3pt}
  .ladder .row.spot{background:#eee;border-left:1pt solid #000}
- .tree .node{background:#eee;border-left:1pt solid #000}
+ .tree .node{background:#eee;border-left:1pt solid #000;margin:2pt -5pt;padding:3pt 5pt}
  .tree li,.ladder .row{break-inside:avoid;page-break-inside:avoid}
- .verdict{background:#fff;border-left:1pt solid #000;font-size:8pt}
- .scroll{overflow:visible;border:.5pt solid #999}
- .tbl{font-size:7.5pt}.tbl th{background:#eee;color:#000}
+ /* el perfil escala POR ANCHO: con height fija el viewBox se encoge a una tira ilegible */
+ .prof{background:#fff;border:.5pt solid #999;width:100%;height:auto;max-height:82mm}
+ /* gris = nada: calls HUECAS, puts MACIZAS. La forma distingue, no el color */
+ .prof .pos{fill:#fff;stroke:#000;stroke-width:.6}.prof .neg{fill:#000;stroke:none}
+ /* el viewBox mide 560u en ~88mm: 8.5u seria 3.8pt en papel, ilegible */
+ .prof .klab{font-size:12px}.prof .axlab{font-size:11px}.prof .lvlab{font-size:12px}
+ .prof .klab,.prof .axlab,.prof .lvlab{fill:#000}
+ .prof .ax{stroke:#000}
+ .prof .spotl{stroke:#000;stroke-dasharray:5 2}
+ .prof .flipl{stroke:#000;stroke-dasharray:1 2}
+ .prof .spotlt,.prof .fliplt{fill:#000}
+ .verdict{background:#fff;border-left:1pt solid #000;font-size:6.4pt;padding:2.5pt 4pt;margin:3pt 0 0;
+   max-width:none;break-inside:avoid}
+ .void{font-size:6.3pt;color:#333}
+ .declara{font-size:6pt;background:#fff;border-left:1pt solid #000;padding:2pt 4pt;
+   margin:0 0 2.5pt;max-width:none;color:#000;break-inside:avoid}
+ .scroll{overflow:visible;border:.5pt solid #999;break-inside:avoid}
+ .tbl{font-size:6.3pt}
+ .tbl th{background:#eee;color:#000;padding:1.4pt 4pt;font-size:5.8pt}
+ .tbl td{padding:1.1pt 4pt;border-bottom:.25pt solid #ccc}
+ /* CALL/PUT se leen por la ETIQUETA de texto y el grosor, jamas por el color */
  .tbl .c,.tbl .p{color:#000}.tbl .c{font-weight:700}
+ .st{font-size:5.8pt;padding:0 3pt}
  .st.ok,.st.warn,.st.bad{color:#000;border-color:#000}
- .cav{break-inside:avoid}.cav ul{font-size:8pt}
- .cbar div{background:#000}
- .foot p{font-size:7.5pt;color:#000}
- @page{margin:12mm 10mm}
+ .st.ok{font-weight:700}.st.bad{border-style:dotted}
+ .doct{break-before:page;page-break-before:always}
+ .doct h2{font-size:12pt}
+ /* trama en vez de macizo: la barra se lee igual y gasta un tercio de tinta */
+ .cbar{border:.5pt solid #999;height:9pt}
+ .cbar div{background:repeating-linear-gradient(90deg,#000 0 .5pt,#fff .5pt 2.5pt);opacity:1}
+ .curve{font-size:6.8pt}
+ @page{margin:11mm 9mm}
 }
 
 </style>

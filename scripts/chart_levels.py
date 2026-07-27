@@ -137,6 +137,32 @@ def _frozen_flip(sym):
     return prev.get("flip_open"), prev.get("frozen_day"), prev.get("frozen_at")
 
 
+def _from_cache_capturing(path, spot, all_exp):
+    """gex_core.from_ibkr_cache + los contratos `usable` que uso, para poder calcular el
+    CHARM sin duplicar su filtrado (banda, vencimiento vivo, IV invertida del mid).
+    gex_core esta vetado (ver cabecera): se envuelve build_gex en el proceso, como el
+    reloj de _freeze_clock. Devuelve (g, contratos) — contratos [] si no se pudo casar."""
+    orig = gex_core.build_gex
+    box = []
+
+    def cap(contracts, spot_, scale="house"):
+        cs = list(contracts)
+        box.append(cs)
+        return orig(cs, spot_, scale=scale)
+
+    gex_core.build_gex = cap
+    try:
+        g = gex_core.from_ibkr_cache(path, spot, scale="dollar1pct", all_exp=all_exp)
+    finally:
+        gex_core.build_gex = orig
+    if not g or not box:
+        return g, []
+    # el ultimo build_gex de una llamada buena es el de `usable`; se exige que cuadre con
+    # n_gamma_ok antes de fiarse. Si no cuadra -> [] y el charm sale None con motivo.
+    cs = box[-1]
+    return g, (cs if len(cs) == g.get("n_gamma_ok") else [])
+
+
 def gen(sym, spot=None, write=True, all_exp=False):
     """spot=None -> usa el spot del header del cache (EOD/última actualización TWS).
     spot=<precio vivo> -> recalcula GEX/flip/walls al spot EN VIVO (real time; el OI
@@ -158,22 +184,37 @@ def gen(sym, spot=None, write=True, all_exp=False):
         spot = spot_from_cache(path)
     if not spot:
         return None
-    g = gex_core.from_ibkr_cache(path, spot, scale="dollar1pct", all_exp=all_exp)  # $/1% como gexa
+    g, cs_used = _from_cache_capturing(path, spot, all_exp)  # $/1% como gexa
     # RESPALDO CON GRIEGAS MEDIDAS: si el cache TWS no tiene griegas usables (tipico fuera de
     # RTH: iv=-1 en todas las filas) se reintenta con el snapshot de Polygon del dia, que SI
     # las trae. Solo se acepta si resulta mejor: nunca se cambia una fuente buena por otra.
     if (g is None or not g.get("gamma_ok")) and not path.startswith("data/history/"):
         alt = poly_chain_path(sym)
         if alt:
-            g2 = gex_core.from_ibkr_cache(alt, spot, scale="dollar1pct", all_exp=all_exp)
+            g2, cs2 = _from_cache_capturing(alt, spot, all_exp)
             if g2 and g2.get("gamma_ok"):
-                g, path = g2, alt
+                g, path, cs_used = g2, alt, cs2
     if not g:
         return None
     wc = gex_core.wall_context(g, spot)
     # perfil ordenado por strike (para el histograma horizontal)
     prof = [{"strike": k, "gex": round(v, 1)} for k, v in sorted(g["profile"].items())]
     vprof = [{"strike": k, "vex": round(v, 1)} for k, v in sorted(g.get("vex_profile", {}).items())]
+    # CHARM (dolar-delta por dia de decaimiento) = motor del drift/pin de la TARDE
+    # (13:30-15:45, skill pin-and-expiry-mechanics). gex_core lo sabe calcular pero no lo
+    # publica; se calcula aqui sobre los MISMOS contratos que el GEX. Sin contratos casados
+    # -> None + motivo, jamas un perfil vacio que el chart pintaria como "charm plano".
+    cprof, net_charm, charm_peak, charm_why = [], None, None, None
+    if not g.get("gamma_ok"):
+        charm_why = g.get("degraded_reason") or "sin griegas usables"
+    elif not cs_used:
+        charm_why = "no se pudieron casar los contratos de gex_core (n_gamma_ok != capturados)"
+    else:
+        # bs_charm es por AÑO: a 0DTE (T~1/365) eso da cifras de 1e11 que no dicen nada.
+        # Se publica por DIA, que es como se lee el drift de la tarde.
+        cx = gex_core.build_exposure(cs_used, spot, greek="charm", scale="dollar1pct")
+        cprof = [{"strike": k, "charm": round(v / 365.0, 1)} for k, v in sorted(cx["profile"].items())]
+        net_charm, charm_peak = cx["net"] / 365.0, cx["peak"]
     pmap = g["profile"]
     # DEALER PRESSURE score -100..+100 (composite gamma 80% + vanna 20%, normalizado
     # por el peso total del libro). Cerca del flip (±0.15%) se degrada (régimen inestable).
@@ -212,6 +253,10 @@ def gen(sym, spot=None, write=True, all_exp=False):
         "net_vex": round(g["net_vex"], 1) if g.get("net_vex") is not None else None,
         "vex_peak": g.get("vex_peak"),
         "vex_profile": vprof,
+        "net_charm": round(net_charm, 1) if net_charm is not None else None,
+        "charm_peak": charm_peak,
+        "charm_profile": cprof,
+        "charm_why": charm_why,
         "pressure": press, "pressure_lab": press_lab,
         "iv_atm": g.get("iv_atm"), "em": g.get("em"),
         "net_gex": round(g["net_gex"], 1) if g.get("net_gex") is not None else None,
