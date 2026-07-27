@@ -67,6 +67,28 @@ KOREA = {
 }
 CORE = ("skhynix", "samsung", "kospi")       # los que priman si IBKR raciona lineas
 
+
+def _publish_korea_syms():
+    """Fuente unica para chart_bridge.py (orden Yunior 2026-07-27, prohibido hardcodear):
+    escribe data/korea_syms.txt con las claves de KOREA. tmp+os.replace, atomico."""
+    dst = os.path.join(ROOT, "data", "korea_syms.txt")
+    tmp = dst + ".tmp"
+    with open(tmp, "w") as f:
+        f.write("\n".join(sorted(n.upper() for n in KOREA)) + "\n")
+    os.replace(tmp, dst)
+    # ...y los conId, para que el scroll del chart pida historia del KRX correcto
+    dst = os.path.join(ROOT, "data", "korea_contracts.txt")
+    tmp = dst + ".tmp"
+    with open(tmp, "w") as f:
+        for n in sorted(KOREA):
+            cid, krx = KOREA[n]
+            f.write(f"{n.upper()} {cid} {krx}\n")
+    os.replace(tmp, dst)
+
+
+_publish_korea_syms()
+
+
 class SymState:
     def __init__(self, name):
         self.name = name
