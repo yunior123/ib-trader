@@ -1659,3 +1659,20 @@ son 14 de cashtags y 22 de VPVR).
       watch-local es de **un solo tiro** (`order_engine.cpp:1095-1110`, `z.close_id` sin re-precio
       ni reintento). Y la **pasada de PAPER sigue bloqueante**: hoy solo había Gateway **live**
       (4001), no paper — prohibido probar contra la cuenta real.
+
+- [ ] 🔴 **[pendiente — HALLAZGO del QA de technicals, 2026-07-27] `feed_age_s` mide cuándo
+      PREGUNTAMOS, no la edad del DATO.** `scripts/finviz_technicals.py:313,316`: un fetch fresco
+      escribe `feed_ts = now` y devuelve `feed_age_s = 0.0`. MEDIDO ahora (domingo, US cerrado):
+      `data/finviz_tech_qqq.json` trae `price 684.23`, que es el **cierre del VIERNES**, y una
+      re-lectura lo publicaría con **edad 0 s**. Es el patrón prohibido de `~/CLAUDE.md` aplicado al
+      TIEMPO: convierte "la cotización tiene 2 días" en "la cotización tiene 0 segundos".
+      *Por qué importa*: la regla 4 dice que **ningún nivel que dispare puede venir de fuente
+      delayed**, y esto hace que el dato delayed PAREZCA vivo justo en el widget que Yunior lee.
+      *Ojo al arreglarlo*: Finviz **no publica timestamp de la cotización**, así que no se puede
+      inventar la edad real. Las dos salidas honestas son (a) renombrar el campo a lo que de verdad
+      mide (`fetched_age_s`) y añadir `market_open: false` cuando el mercado está cerrado, o
+      (b) declarar `quote_age_s: None` — nunca 0.
+      *Lo que SÍ está bien y no hay que tocar*: `feed_age_s` se recalcula en cada lectura y no se
+      congela (`:277`), `stale: True` + grito a stderr al servir cache viejo (`:303-304`), y los
+      niveles derivados son aritméticamente correctos (verificado: QQQ 684,23/711,70 = −3,86% y
+      /643,19 = +6,38%, cuadran con lo que publica Finviz).
