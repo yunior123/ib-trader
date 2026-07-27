@@ -166,8 +166,11 @@
   CADA DÍA.** 6 tickers, marco 15m, muros de la semana que viene, GEX, gamma-flip, estrategia
   planeada y predicción de los primeros 15-30 min de la apertura.
 
-- [ ] **[pendiente] "make sure every new session reads those on start only once"** (Yunior
-  2026-07-26): CLAUDE.md + TODOS.md al abrir sesión, UNA sola vez.
+- [x] **[hecho — verificado 2026-07-26 en esta misma sesión]** "make sure every new session reads
+  those on start only once". `CLAUDE.md` del repo existe (31 líneas, índice de punteros) y el
+  harness lo carga SOLO al abrir sesión aquí, una vez. Verificado: llegó en el contexto de arranque
+  de esta sesión sin pedirlo. `TODOS.md` se lee a mano al empezar, que es lo correcto — meterlo en
+  la carga automática son 1.557 líneas en cada sesión.
 
 - [ ] **[pendiente] SKHY es el ÚNICO de la flota con el gate de spread APAGADO** (medido
   2026-07-26). Los otros 23 `*_signal_bot` llevan `export <SYM>_SPREAD_MAX` en su keepalive
@@ -925,7 +928,24 @@ cinco NEGATIVOS** (coincide con nuestro 19/25 en NEG y con su propio recap "Deal
 
 ## 2026-07-23 — Chart cockpit GEX en vivo (charts/live.html + chart_bridge.py)
 Hecho: lightweight-charts v5 + ib_async (TWS 7496 realtime) · combo_tl (Supertrend Buy/Sell + Madrid ribbon + BB/SMA/VWAP/MACD + trendlines) · selectores ticker/intervalo · GEX/flip/muros en tiempo real (levels_loop 15s, spot vivo) · escala $/1% verificada · imán(oro)/acelerador(morado) por signo · flip 0DTE estático + toggle 0DTE↔ALL-EXP · VEX/vanna/charm + chip Vanna · dealer-pressure score -100..100 · expected-move cone · nuestras señales (whale/flow/alarma) como marcadores · botones info ⓘ + Guía · dominancia POC %C/%P · régimen TRANSICIÓN · icono custom · burbujas GEX pin/trampilla · badge `.bq` de book-quality. Skill `gexa-framework`.
-- [ ] **[pendiente — YA PAGADO, solo falta VERIFICAR EN VIVO]** **VIX**: código LISTO
+- [ ] 🔴 **[pendiente — VERIFICADO EN VIVO 2026-07-26 23:5x: LA SUSCRIPCIÓN **NO** ENTREGA]** **VIX**:
+      MEDIDO contra el Gateway **4001** en ventana viva, `reqMarketDataType(1)`, cuentas gestionadas
+      `['U26642820','U26942420']`:
+      · **streaming VIX → `Error 354: Requested market data is not subscribed`** (idem SPX).
+        La suscripción CBOE Global Indexes que Yunior da por pagada **NO está activa en este
+        Gateway**. El chip del chart usa `reqMktData` → hoy NO puede funcionar.
+        👉 **ACCIÓN DE YUNIOR**: revisar en Account Management a cuál de las DOS cuentas está
+        asociada la suscripción (la viva es `U26942420`) y si está propagada.
+      · 🟢 **HALLAZGO que cambia el plan: el HISTÓRICO SÍ LLEGA SIN SUSCRIPCIÓN.**
+        `reqHistoricalData(..., "1 min", "TRADES")` → **VIX 810 barras** (última 2026-07-24 15:59,
+        close **18,58**) y **SPX 390 barras** (última 14:59, close **7412,88**). `MIDPOINT` da 0 en
+        ambos: hay que pedir **TRADES**.
+      · Consecuencias: (a) la **banda de fragilidad** ya no está totalmente bloqueada — una primera
+        versión se puede construir con VIX histórico diario, aunque el shock en vivo siga sin
+        fuente; (b) **SPX sí tiene barras 1m**, que era el requisito de `docs/UNIVERSOS.md` para
+        entrar en `data/fleet.txt` — pero sin spot en streaming seguiría medio ciego, así que la
+        promoción sigue en suspenso y ahora se sabe POR QUÉ.
+      Código LISTO
       (`scripts/chart_bridge.py:1903-1906`, `reqMarketDataType(1)` realtime + chip en
       `charts/live.html:295`, con degradación limpia).
       🟢 **Yunior CONFIRMA el 2026-07-26 que YA TIENE la suscripción IBKR CBOE Global Indexes**
@@ -1326,8 +1346,12 @@ Spec: `docs/FEATURES-MINED-2026-07-25.md`.
       Propuesta en `data/backtest_harness.PROPUESTO.json`: 93 celdas, **0 APTA**. `baseline`
       conserva el etiquetado viejo solo para el scoreboard, con
       `label_def='horizon_return_DEPRECATED'` estampado en la fila. 19 tests.
-- [ ] **[pendiente]** `scripts/bollinger_complements.py:394` — grid de **318 tests sin corrección
-      por multiplicidad**. *Daño*: **95 celdas de ruido aplicadas como VETO en vivo** en `bb_engine.cpp`.
+- [x] **[DUPLICADA — ya cerrada más abajo, verificado 2026-07-26]** `scripts/bollinger_complements.py:394`,
+      grid sin corrección por multiplicidad. Está CONFIRMADA Y ARREGLADA en la sección "VETO DE
+      BOLLINGER — multiplicidad": BH-FDR q=0,10 sobre muestra EFECTIVA (ρ̄=0,41) → **0 de 401 celdas
+      sobreviven**, caen las 150 publicadas (70 veto + 80 best); sobre RUIDO PURO el criterio viejo
+      publicaba 112,9 celdas de media y el nuevo 0; `bollinger_plus.json` ya conmutado con backup.
+      Esta casilla es el mismo hallazgo contado dos veces desde el hunt.
 - [x] ~~`scripts/calibration_ledger.py:110` — `after = d[d.High >= entry]` es una máscara
       booleana, no un corte temporal~~ — **CONFIRMADO Y ARREGLADO** (diff en `75a3442`, barrido
       por el `commit -a` de otro agente; medición en `d77a7a4`). Ahora es corte temporal
@@ -1560,3 +1584,78 @@ son 14 de cashtags y 22 de VPVR).
          `hoy/` en vez de la raíz, el `cp` con `warn=False` fallará en silencio y no archivará).
       No toqué estos 3 scripts (fuera de mi encargo). Si Yunior quiere que el reorg se mantenga
       solo, hay que repuntar esas 3 rutas a `~/Desktop/ib-trader/hoy/`.
+
+## 🔴 SESIÓN 2026-07-26 (domingo noche, ventana VIVA) — peticiones al vuelo
+- [ ] **[pendiente] "la impresora ya imprimio, no imprimas de nuevo vale. a menos q te diga"**
+      (Yunior 2026-07-26 23:5x). Regla operativa: generar HTML/PDF SÍ, **mandar a la impresora NO**
+      salvo orden explícita. Revisar `print_mon_plans.sh` y el cron `com.ibtrader.printplans`
+      (lunes 09:25) — hoy imprime solo.
+- [ ] **[pendiente] "review technicals of companies displaying in software"** (Yunior 2026-07-26).
+      Revisar los technicals que el cockpit MUESTRA: ruta `/technicals` + 4º widget del dock
+      (commit 8586347), `scripts/finviz_technicals.py`, procedencia `src`/`feed_age_s`/`stale`
+      visibles. Verificar con los ojos en el navegador, no por grep.
+- [ ] **[pendiente] "review the macos app always updated"** (Yunior 2026-07-26). Que el bundle
+      `~/Desktop/ib-trader/ib-trader Cockpit.app` refleje SIEMPRE el último commit: hooks
+      `macapp/install_hooks.sh` (post-commit rebuild + pre-push entrega), `.github/workflows/macapp.yml`.
+      Verificar que el hook está instalado y que el bundle vivo no está rancio.
+
+---
+## 📋 SESIÓN 2026-07-27 (madrugada) — 9 agentes, límite de sesión a las 04:40 ET
+> 8 de 9 agentes murieron por límite de sesión a media tarea. **Su trabajo se verificó antes de
+> commitearlo** (regla de la casa): sintaxis, tests y build reales. Nada se commiteó a ciegas.
+
+**CERRADO Y VERIFICADO:**
+- [x] **korea_bar_bridge** `f99acf4` — puerto **RESUELTO** no adivinado (`resolve_port()`,
+      reutiliza `ib_mode._ports_for`/`_listening` en vez de un sondeo nuevo). Estaba en crash-loop
+      contra 4002 con el Gateway en **4001** y las barras **3h24m rancias con KRX abierto**, en
+      silencio. Ahora avanzan cada minuto (20:20 → 23:52 → 00:37). Grita a los ~60 s de mutismo
+      (`speak.sh`, canal existente) y hay guardián de frescura que **reutiliza `krx_market()`** —
+      no se creó la 5ª definición del horario. **Los 7 satélites HBM cualificaron los 7** en vivo
+      (Hanmi 200.500, Wonik IPS 102.100, HPSP 36.950, DB HiTek 96.500, Leeno 69.400, Solbrain
+      274.000, ISC 130.700). Entran como satélites: `data/fleet.txt` SIN tocar, no votan MANADA,
+      y su silencio no dispara el guardián (solo el de CORE). 9 tests.
+- [x] **UW archivado** `faf24b5` + datos — **333 ficheros / 24 MB** antes de que caduque el trial
+      (~2026-08-01), con procedencia dentro. `greek_exposure` trae **250 filas = 1 AÑO** por
+      símbolo → rompe el cuello de "whale/flow/structural no regenerables, esperar 40-60 sesiones".
+      Cupo RE-MEDIDO: 60 req seguidas a 7,1 req/s → 60× HTTP 200, cero 403; el único cupo real es
+      el DIARIO (30.000), y la flota son 333 llamadas.
+- [x] **CHARM al chart** `8207db7` — la capa que faltaba junto a GEX/VEX (la matemática ya existía
+      en `gex_core`, el chart tenía 0 hits). Chip con el MOTIVO si no se puede calcular, jamás un
+      perfil plano.
+- [x] **Impresión sin gastar cartucho** `8b88421` — `@media print` fondo blanco/tinta negra +
+      saltos de página por hoja en árboles y plan de apertura. Diseñado para ESCALA DE GRISES a
+      propósito (la HP 9120e está bloqueada por tinta de color).
+- [x] **Earnings + macro como VETO** `896c9a8` — los 8 de la flota que reportan son TODOS **AMC**,
+      así que el veto muerde en el **CIERRE** del día del print, no en la apertura (lo contrario
+      dejaría pasar justo la operación peligrosa). FOMC 7/29 dentro de la semana. Fecha leída del
+      CSV de Finviz, que MUEVE fechas: dato rancio se declara `stale`, jamás veta a ciegas. 38 tests.
+- [x] **macapp al día** `0d99b70` — el bundle lleva su commit dentro y el hook post-commit lo
+      reconstruye. Verificado que compila y se entrega: firma válida, 0 rutas absolutas dentro,
+      LaunchServices re-registrado. Los 7 errores de SourceKit en `main.swift` eran **falsa alarma
+      de indexación** — `swiftc` compila la unidad completa sin queja.
+- [x] **Los 5 `.plist` de archivadores YA estaban cargados** (la casilla decía "sin cargar a
+      propósito"): `launchctl list` los muestra y salen `exit 0`. **Pero ver el 🔴 de abajo.**
+
+- [ ] 🔴 **[pendiente — HALLAZGO NUEVO, el más grave de la sesión] Los 5 archivadores salen
+      `exit=0` y son NO-OP.** MEDIDO: la tabla **`equity_prints` NO EXISTE** en `trades.db`
+      (nunca escribió); `data/history/*/levels_5m.jsonl` existe **solo del 25-jul con 26 líneas**;
+      `cubeindex` y `fence` dan `lastexitcode = (neverexited)`. Es el mismo patrón del auto-curado
+      del healthcheck que cantaba "REVIVIDO" siendo un NO-OP: **exit 0 no significa que funcione.**
+      *Daño*: son el RELOJ de 3 features — `book_pctile` (20 sesiones), absorción (20), condicionar
+      sobre gamma (40). Hoy van por 0-1. Mientras tanto el coef de `book_quality` está clavado en su
+      suelo **0,35** y frena la gamma de TODOS los símbolos, sanos incluidos. Cada día que pasa NO
+      se acumula y no se recupera. El agente que lo iba a arreglar murió antes de tocarlo.
+- [ ] 🔴 **[pendiente — VIX/SPX: la suscripción NO entrega]** ver la casilla del VIX arriba, ya
+      reescrita con la medición. Resumen: streaming → `Error 354 not subscribed` en las dos cuentas;
+      **el HISTÓRICO sí llega sin suscripción** (VIX 810 barras close 18,58 · SPX 390 close 7412,88,
+      con `TRADES`, nunca `MIDPOINT`). **Acción de Yunior**: revisar a qué cuenta está asociada la
+      suscripción CBOE Global Indexes (la viva es `U26942420`).
+- [ ] **[pendiente] Refutar los 63 hallazgos vivos del hunt** — el agente murió al empezar. Sigue
+      siendo "el defecto está en el código", NO "el defecto hace daño". Los 2 que más interesan:
+      `nvda_signal_bot.cpp:1375,1423` (`tail -F` sin dedupe por epoch envenenando ATR/RSI/BB/CUSUM/
+      VWAP de los 24 bots) y confirmar que `bollinger_complements.py:394` es duplicado ya cerrado.
+- [ ] **[pendiente] order_engine**: baseline confirmado (648 checks, 0 fallos, ASan/UBSan limpio)
+      pero el agente murió sin tocar sus 5 tareas. Sigue abierto el de DINERO: el cierre por stop
+      watch-local es de **un solo tiro** (`order_engine.cpp:1095-1110`, `z.close_id` sin re-precio
+      ni reintento). Y la **pasada de PAPER sigue bloqueante**: hoy solo había Gateway **live**
+      (4001), no paper — prohibido probar contra la cuenta real.
