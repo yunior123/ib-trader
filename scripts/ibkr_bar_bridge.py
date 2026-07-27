@@ -33,8 +33,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 os.chdir(ROOT)
 from ib_insync import IB, Stock, util  # noqa: E402
+from ib_mode import get_port  # fuente unica: data/ib_mode.txt (paper/live), no 4002 a ciegas
 
-HOST, PORT = "127.0.0.1", int(__import__("os").environ.get("IBKR_PORT","4002"))
+HOST, PORT = "127.0.0.1", get_port()
 RETRY_ENTITLEMENT_S = 600
 NO_PERM_ERRORS = {420, 10089, 10090, 354}   # variantes "necesita subscripcion"
 

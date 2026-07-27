@@ -76,8 +76,9 @@ def read_nbbo(sym):
     except Exception:
         return None
 
+from ib_mode import get_port  # fuente unica: data/ib_mode.txt (paper/live), no 4002 a ciegas
 ib = IB()
-ib.connect("127.0.0.1", int(__import__("os").environ.get("IBKR_PORT","4002")), clientId=85, timeout=15)
+ib.connect("127.0.0.1", get_port(), clientId=85, timeout=15)
 mirror_line("opt_sentinel ARRANCADO (exit-advisor INTC 104C + flujo put/call flota)")
 
 # --- suscripcion streaming al 104C ---
