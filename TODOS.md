@@ -14,11 +14,22 @@
 > Orden acordado: FASE 0 higiene → 1 señales → 2 flecha → 2.5 TradingAgents → 3 muros
 > → 4 UI/UX → 4.5 X earnings → 5 los 9 bugs → 6 deploy → 7 seis ventanas + QA → 8 verif → 9 features minadas.
 
-- [ ] 🔴 **"the chart should load data on demand when scrolling to pass, priority to live data
-  please"** (Yunior 2026-07-26). pendiente — lazy-load de historia al hacer pan/scroll hacia
-  atrás (estilo TradingView, `subscribeVisibleLogicalRangeChange`), pedir más barras al
-  bridge solo cuando se acerca al borde izquierdo cargado; el backfill NUNCA bloquea ni
-  retrasa el borde vivo (derecho) — la actualización en vivo manda siempre.
+- [x] **[hecho d598b73 — commit mezclado con "buscador", verificado aparte hoy] "the chart
+  should load data on demand when scrolling to pass, priority to live data please"** (Yunior
+  2026-07-26). `charts/live.html`: `subscribeVisibleLogicalRangeChange` pide `{cmd:"more",
+  before:candleData[0].time}` cuando `range.from<20`; `onBackfill` hace PREPEND (`setData` con
+  el merge completo) y desplaza `setVisibleLogicalRange` por el delta — la posición de scroll
+  no salta. `scripts/chart_bridge.py`: `fetch_more_history` pide `reqHistoricalDataAsync`
+  aparte (`keepUpToDate=False`, nunca toca `state._live_sub`), UN vuelo a la vez
+  (`state._backfilling`), dedupe por epoch contra `state.bars`/`state._agg_raw`. Añadido hoy:
+  `state._backfill_reason` con motivo honesto (mock/TWS-no-listo/error IBKR/sin-más-historia)
+  propagado al frame `backfill.reason`, y `announceBackfillDone()` en el cliente que muestra
+  el banner UNA vez con `setTimeout` a 4s (antes quedaba mudo). VERIFICADO en vivo contra el
+  Gateway 4001 (bridge nvda :8081): `more` 1920→3840→5760 barras, RTT 0,49–0,79s; el heartbeat
+  de `levels_loop` (cada 15s, corrutina independiente) siguió en 15,18s/15,20s con el backfill
+  en medio — CERO retraso medible al borde vivo. 6/6 tests `chart|mock|isolation` OK, selftest
+  OK. Puentes QA dejados VIVOS (uno, qqq :8080, tuvo un reconnect TWS transitorio SIN relación
+  con este cambio — el resto sano).
 
 - [x] **"new finviz api till next saturday"** → token nuevo `0c56…8625` puesto en **feeds.env
       `FINVIZ_AUTH3`** (no solo en `llm.env`): MEDIDO que los 4 consumidores prueban `AUTH3`
@@ -75,12 +86,8 @@
   `tests/test_daily_archive_ranking.py` (5 casos). Suite completa 837 passed, 1 fallo
   preexistente ajeno (`test_voice_budget.py`).
 
-- [ ] **[pendiente] "the chart should load data on demand when scrolling to pass, priority to
-  live data please"** (Yunior 2026-07-26). El chart carga un payload fijo al conectar; al
-  desplazarse hacia atras no pide mas historia. Hace falta paginacion bajo demanda
-  (lightweight-charts `subscribeVisibleLogicalRangeChange` -> pedir el tramo anterior por WS y
-  `setData` con el prefijo). **La prioridad es el DATO VIVO**: la carga de historia va en
-  segundo plano y JAMAS bloquea el tick ni el frame de la barra en curso (retraso = dinero).
+- [x] **[duplicado — ver casilla cerrada arriba, hecho d598b73]** "the chart should load data
+  on demand when scrolling to pass, priority to live data please".
 
 - [ ] **[pendiente] "make sure u already printed the plan, try to save ink, so no black
   background. review the task for the printer"** (Yunior 2026-07-26). El plan de apertura
