@@ -18,11 +18,17 @@ import sys
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODE_FILE = os.path.join(REPO, "data", "ib_mode.txt")
 
-# Puertos por modo. IB GATEWAY primero (headless, poca RAM — recomendado para el bot),
-# TWS como fallback. Auto-detección: se usa el que esté ESCUCHANDO. Gateway: 4002 paper /
-# 4001 live. TWS: 7497 paper / 7496 live.
-PAPER_PORTS = [4002, 7497]
-LIVE_PORTS = [4001, 7496]
+# Puertos por modo. SOLO IB GATEWAY (orden Yunior 2026-07-27 "only ib gateway"):
+# 4002 paper / 4001 live. TWS (7497/7496) queda FUERA del sondeo a proposito.
+# Configurable sin tocar codigo: IBT_PAPER_PORTS / IBT_LIVE_PORTS = "4002,7497".
+def _ports_env(key, default):
+    got = [int(x) for x in os.environ.get(key, "").replace(";", ",").split(",")
+           if x.strip().isdigit()]
+    return got or default
+
+
+PAPER_PORTS = _ports_env("IBT_PAPER_PORTS", [4002])
+LIVE_PORTS = _ports_env("IBT_LIVE_PORTS", [4001])
 PAPER_PORT, LIVE_PORT = PAPER_PORTS[0], LIVE_PORTS[0]   # primario (gateway) para display
 # Cuenta del USUARIO, no del codigo (2026-07-25). Mismo orden que account_cfg.h:
 # env -> config.json de la .app -> data/account.txt. Vacio = sin configurar.

@@ -15,6 +15,24 @@
 5. **Dos universos, no uno.** `data/fleet.txt` (30, exige barras 1m, **denominador de MANADA**, 36 lectores) vs `data/universe_gamma.txt` (35, solo exige cadena, no vota). Mezclarlos rompió MANADA. → `docs/UNIVERSOS.md`
 6. **Una sola rama: `main`.** Commit directo, sin feature branches. Verifica con `git branch -a`.
 
+## 7. NADA HARDCODEADO (Yunior 2026-07-27: "evita poner hardcoded shit, it should be dynamic")
+Un valor clavado en el código es un bug esperando su turno. Medido ese día: `IBKR_PORT` con
+default `"4002"` copiado en 4 daemons mientras el Gateway estaba en 4001 → `ibkr_bar_bridge`
+(los 30 símbolos) y `korea_bar_bridge` **100% desconectados en crash-loop**, y `opt_sentinel` +
+`sox_index_feed` reventando cada 20-30 s. Cuatro copias del mismo número, cuatro averías.
+- **Puertos/cuentas/modo** → `scripts/ib_mode.py` y NADA más. Gateway-only por orden; lista
+  configurable por env (`IBT_PAPER_PORTS`/`IBT_LIVE_PORTS`), jamás reescrita en el consumidor.
+- **Rutas** → derivadas de `__file__`. Cero rutas absolutas (la mudanza a `~/ib-trader` mató 3 scripts).
+- **Universos** → `data/fleet.txt` (30, vota MANADA) y `data/universe_gamma.txt` (35, mapa). Jamás
+  una lista de símbolos copiada dentro de un script.
+- **Horarios** → el portero (`./fleet_hours`, `scripts/fleet_window.py`); para KRX, `krx_market()`.
+  Llegó a haber 4 definiciones del horario peleándose. No crees la 5ª.
+- **Cierres previos / niveles de referencia** → SE CALCULAN del dato. Precedente vivo:
+  `scripts/korea_watch.cpp:39` lleva `PCH/PCS/PCK` clavados de hace una semana → calcula Hynix
+  −3,56% y Samsung −1,47% falsos y está a 1350 KRW de cantar un `READTHRU_BEAR` inventado.
+- Si de verdad hace falta una constante: **una sola definición**, con el porqué en 1 línea, y el
+  consumidor la IMPORTA. Duplicarla es el bug.
+
 ## Mac de 8 GB
 Un solo `clang++` a la vez: `ps aux | grep -c "[c]lang++"` antes de compilar. Los bots/alarmas ligeros sí van en paralelo.
 

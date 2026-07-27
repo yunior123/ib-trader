@@ -16,7 +16,10 @@ Uso: ./venv/bin/python order_engine/paper_soak.py [--port 4002] [--n 32]
 import argparse, json, os, subprocess, sys, time
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PAPER_PORTS = {4002, 7497}
+sys.path.insert(0, os.path.join(REPO, "scripts"))
+import ib_mode  # noqa: E402
+
+PAPER_PORTS = set(ib_mode.PAPER_PORTS)   # fuente unica; era {4002, 7497} clavado aqui
 
 
 def die(msg):
