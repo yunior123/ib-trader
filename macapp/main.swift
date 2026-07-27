@@ -24,6 +24,15 @@ import WebKit
 let DEFAULT_URL = "http://127.0.0.1:8080/"
 let MAX_WINDOWS = 12
 
+/// Sello del build LEIDO DEL BUNDLE (build.sh lo escribe en Info.plist). Nunca `git` en
+/// runtime: la .app tiene que arrancar en un Mac sin el repo.
+let BUILD_SHA: String = {
+    let i = Bundle.main.infoDictionary ?? [:]
+    if let s = i["IBTCommit"] as? String, !s.isEmpty { return s }
+    if let s = i["CFBundleShortVersionString"] as? String, !s.isEmpty { return s }
+    return "sin sello"
+}()
+
 /// Una ventana de cockpit = un WKWebView. Todas comparten configuracion (y por tanto
 /// el process pool de WebKit), que es lo que hace barato tener seis.
 final class CockpitWindow: NSObject, NSWindowDelegate, WKNavigationDelegate {
@@ -45,7 +54,8 @@ final class CockpitWindow: NSObject, NSWindowDelegate, WKNavigationDelegate {
         web.autoresizingMask = [.width, .height]
         web.navigationDelegate = self
         window.contentView!.addSubview(web)
-        window.title = "cockpit :\(url.port ?? 80)"
+        window.title = title(sym: nil)
+        installRefreshButton()
         // Autoguardado por PUERTO, no por indice: con "cockpit-<idx>" seis procesos
         // distintos usaban todos "cockpit-0" y restauraban el MISMO marco -> apiladas.
         window.setFrameAutosaveName("cockpit-p\(url.port ?? 80)")
@@ -57,13 +67,40 @@ final class CockpitWindow: NSObject, NSWindowDelegate, WKNavigationDelegate {
 
     func load() { web.load(URLRequest(url: url)) }
 
+    /// SIMBOLO · puerto · sello del build, en ese orden (la version a la derecha del simbolo).
+    func title(sym: String?) -> String {
+        let p = url.port ?? 80
+        let head = (sym?.isEmpty == false) ? "\(sym!.uppercased()) · :\(p)" : "cockpit :\(p)"
+        return "\(head) · \(BUILD_SHA)"
+    }
+
+    /// Boton de recarga en la barra de titulo: ⌘R no se descubre mirando.
+    func installRefreshButton() {
+        let b = NSButton(frame: NSRect(x: 2, y: 2, width: 30, height: 22))
+        b.bezelStyle = .texturedRounded
+        b.image = NSImage(systemSymbolName: "arrow.clockwise", accessibilityDescription: "Recargar")
+        b.imagePosition = .imageOnly
+        b.toolTip = "Recargar esta ventana (⌘R)"
+        b.target = self
+        b.action = #selector(reloadThisWindow)
+        let host = NSView(frame: NSRect(x: 0, y: 0, width: 40, height: 26))
+        host.addSubview(b)
+        let acc = NSTitlebarAccessoryViewController()
+        acc.view = host
+        acc.layoutAttribute = .right
+        window.addTitlebarAccessoryViewController(acc)
+    }
+
+    /// Recarga SOLO esta ventana: con 6 abiertas, recargar las seis tira 6 WebSockets.
+    @objc func reloadThisWindow() { load() }
+
     /// El titulo dice QUE SIMBOLO hay en esa ventana: /health del bridge devuelve `sym`.
     func refreshTitle() {
         guard let h = URL(string: "health", relativeTo: url) else { return }
         URLSession.shared.dataTask(with: URLRequest(url: h, timeoutInterval: 3)) { d, _, _ in
             guard let d, let j = try? JSONSerialization.jsonObject(with: d) as? [String: Any],
                   let s = j["sym"] as? String, !s.isEmpty else { return }
-            DispatchQueue.main.async { self.window.title = "\(s.uppercased()) · :\(self.url.port ?? 80)" }
+            DispatchQueue.main.async { self.window.title = self.title(sym: s) }
         }.resume()
     }
 
@@ -84,7 +121,7 @@ final class CockpitWindow: NSObject, NSWindowDelegate, WKNavigationDelegate {
         <p style="color:#787b86">No hay nadie escuchando en <code>\(u)</code>.</p>
         <p style="text-align:left;background:#1e222d;padding:14px;border-radius:8px">
         Arráncalo con:<br><code>cd ~/ib-trader &amp;&amp; zsh scripts/fleet_up.sh --chart</code></p>
-        <p style="color:#787b86;font-size:12px">Menú 📈 → Recargar cuando esté arriba.</p>
+        <p style="color:#787b86;font-size:12px">Pulsa ↻ (arriba a la derecha) o ⌘R cuando esté arriba.</p>
         </div></body></html>
         """
         w.loadHTMLString(html, baseURL: nil)
@@ -156,7 +193,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         m.addItem(NSMenuItem(title: "Nueva ventana (siguiente puerto)", action: #selector(newWindow), keyEquivalent: "n"))
         m.addItem(NSMenuItem(title: "Nueva ventana en puerto…", action: #selector(newWindowAsk), keyEquivalent: "N"))
         m.addItem(NSMenuItem(title: "Repartir en rejilla", action: #selector(tileWindows), keyEquivalent: "d"))
-        m.addItem(NSMenuItem(title: "Recargar", action: #selector(reload), keyEquivalent: "r"))
+        m.addItem(NSMenuItem(title: "Recargar (ventana activa)", action: #selector(reloadKey), keyEquivalent: "r"))
+        m.addItem(NSMenuItem(title: "Recargar TODAS", action: #selector(reload), keyEquivalent: "R"))
         m.addItem(NSMenuItem(title: "Configuración…", action: #selector(openSettings), keyEquivalent: ","))
         m.addItem(NSMenuItem.separator())
         m.addItem(NSMenuItem(title: "Salir", action: #selector(quit), keyEquivalent: "q"))
@@ -206,7 +244,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         winMenu.addItem(withTitle: "Nueva ventana", action: #selector(newWindow), keyEquivalent: "n")
         winMenu.addItem(withTitle: "Nueva ventana en puerto…", action: #selector(newWindowAsk), keyEquivalent: "N")
         winMenu.addItem(withTitle: "Repartir en rejilla", action: #selector(tileWindows), keyEquivalent: "d")
-        winMenu.addItem(withTitle: "Recargar", action: #selector(reload), keyEquivalent: "r")
+        winMenu.addItem(withTitle: "Recargar", action: #selector(reloadKey), keyEquivalent: "r")
+        winMenu.addItem(withTitle: "Recargar TODAS", action: #selector(reload), keyEquivalent: "R")
         winMenu.items.forEach { $0.target = self }
         winMenu.addItem(NSMenuItem.separator())
         winMenu.addItem(withTitle: "Cerrar ventana", action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w")
@@ -280,6 +319,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         NSApp.activate(ignoringOtherApps: true)
     }
     @objc func reload() { cockpits.forEach { $0.load() } }
+    /// ⌘R = la ventana que se esta mirando; ⇧⌘R = las seis.
+    @objc func reloadKey() {
+        if let w = NSApp.keyWindow, let c = cockpits.first(where: { $0.window === w }) { c.load() }
+        else { reload() }
+    }
     @objc func quit()   { NSApp.terminate(nil) }
     @objc func openSettings() {
         if settings == nil { settings = SettingsWindow() }
