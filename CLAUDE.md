@@ -4,7 +4,7 @@
 
 ## Lee esto antes de tocar nada
 - **`AGENTS.md`** — órdenes permanentes. Empieza por "ORDENES PERMANENTES DE YUNIOR".
-- **`TODOS.md`** — lo que queda. **Apunta cada petición nueva AL MOMENTO**, con las palabras de Yunior.
+- **`TODOS.md`** — lo que queda. **Apunta cada petición nueva AL MOMENTO**, con las palabras de Yunior. Lo CERRADO se mueve a `Done.md`.
 - **`~/CLAUDE.md`** — reglas globales (ya cargado por el harness).
 
 ## Las 6 que más rompen cosas
@@ -43,7 +43,7 @@ Un solo `clang++` a la vez: `ps aux | grep -c "[c]lang++"` antes de compilar. Lo
 Lo que devuelve un agente se comprueba con fichero:línea. Un informe no es evidencia hasta que se mide. `trades.db` siempre en solo lectura: `sqlite3 "file:trades.db?mode=ro"`.
 
 ## Ventana horaria
-Portero: `./fleet_hours --why`. Flota viva dom 20:00 → vie 20:00 Toronto. Fuera de ahí, muerta a propósito.
+Portero: `./fleet_hours --why`. Flota viva dom 20:00 → vie 20:00 Toronto. Fuera de ahí, muerta a propósito, salvo los perpetuos 24/7 y sus notificaciones/alarmas.
 
 ## Tests
 `./venv/bin/python -m pytest tests/ -q` (~4 min). Referencia actual: **~690 passed**, 1 fallo preexistente y ajeno en `test_voice_budget.py::test_gate_devuelve_42_solo_al_suprimir`.

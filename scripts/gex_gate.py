@@ -79,10 +79,17 @@ def gate(sym, side, price=None):
         verdict = "VETO"; reasons.append(f"SHORT pegado al put wall {g['put_wall']} (rebote ~70%)")
 
     # 2) régimen: POS favorece reversión/pin, NEG favorece continuación
+    # El `else` pelado convertía `regime=None` en la afirmación "régimen NEGATIVO", que es la
+    # licencia contraria: sin flip medido (o sin signo firme por paridad) NO se afirma un lado.
     if regime == "POS":
         reasons.append("régimen POSITIVO: amortigua → favorece fades/pin, castiga rupturas")
-    else:
+    elif regime == "NEG":
         reasons.append("régimen NEGATIVO: amplifica → favorece continuación/band-walk, castiga fades")
+    else:
+        if verdict != "VETO":
+            verdict = "DEGRADAR"
+        reasons.append("régimen SIN DETERMINAR (sin flip medido o sin signo firme por paridad): "
+                       "no se afirma ni amortiguación ni amplificación")
 
     # 3) cerca del flip = zona inestable
     if wc["near_flip"]:

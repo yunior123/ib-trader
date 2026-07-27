@@ -196,6 +196,19 @@ def gen(sym, spot=None, write=True, all_exp=False):
                 g, path, cs_used = g2, alt, cs2
     if not g:
         return None
+    # REGIMEN: si el 0DTE no determina el signo por paridad, lo firma el LIBRO ENTERO de la MISMA
+    # cadena (misma fuente, mismo metodo, scope declarado). Un solo vencimiento puede no tener
+    # signo firme sin que el libro deje de tenerlo: hoy pasaba en 5 de 30, y `compass.cpp:824`
+    # trata el regimen vacio como S_NONE, o sea que perdia tambien el flip y los muros, que SI
+    # estan medidos. El 2o pase solo se paga cuando hace falta.
+    regime_scope = g.get("scope")
+    if g.get("regime") is None and not all_exp:
+        g_all = gex_core.from_ibkr_cache(path, spot, scale="dollar1pct", all_exp=True)
+        if g_all and g_all.get("regime"):
+            g["regime"] = g_all["regime"]
+            regime_scope = "ALL"
+            g["regime_why"] = (f"0DTE sin signo firme por paridad; regimen del LIBRO ENTERO "
+                               f"de la misma cadena ({g_all.get('parity_ok_pct')} pares ok)")
     wc = gex_core.wall_context(g, spot)
     # perfil ordenado por strike (para el histograma horizontal)
     prof = [{"strike": k, "gex": round(v, 1)} for k, v in sorted(g["profile"].items())]
@@ -289,6 +302,7 @@ def gen(sym, spot=None, write=True, all_exp=False):
     # vencimientos, la edad del snapshot y si el vencimiento rodo. `gamma_ok=false` significa
     # "los numeros gamma de este fichero son null a proposito", no "falta el dato".
     out["gamma_ok"] = gamma_ok
+    out["regime_scope"] = regime_scope
     for k in ("greeks_ok_pct", "chain_src", "chain_ts", "chain_age_s", "stale", "stale_reason",
               "regime_raw", "regime_why", "parity_ok_pct",
               "net_gex_parity_lo", "net_gex_parity_hi",

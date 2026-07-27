@@ -219,3 +219,40 @@
       `docs/probes/hiro_probe_ibkr.py` existe para eso y hoy SÍ se puede correr), (b) a qué 8-10
       símbolos se les asigna la cinta a propósito en vez de por orden de arranque, y (c) que un
       símbolo sin cinta salga DECLARADO como ciego en lugar de aparentar silencio de flujo.
+
+## 🔴 SESIÓN 2026-07-27 (RTH, mercado abierto) — peticiones al vuelo
+- [ ] **[pendiente — mismo bug del RTH 930] "the blue timer for the bars stops at 15:30"**
+      (Yunior 2026-07-27). El contador azul 00:00 de la vela (cuenta atrás al cierre de barra) se
+      congela a las 15:30 en `charts/live.html` — mismo `930` en vez de `960`. Va con el fix de RTH.
+- [ ] 🔴 **[URGENTE — DINERO EN VIVO] El RTH es 9:30→16:00, NO 9:30→15:30: la flota se apaga con
+      30 min de sobra** (Yunior 2026-07-27). MEDIDO: los 24 `*_signal_bot.cpp` cortan las entradas
+      TREND en `mins < 930` (930 = 15:30; `aapl_signal_bot.cpp:1636,1652` y los 24), y
+      `scripts/dip_alert.py` MUERE solo a las 15:30 (`:28`). Fin de RTH correcto = **960** (16:00).
+      La última media hora es de las más operativas (imanes de cierre, charm de la tarde). Guardado
+      en memoria `market-hours-intraday`. ⚠️ Recompilar 24 bots es secuencial en 8GB y JAMÁS con el
+      mercado abierto: compilar cuando sea, **DESPLEGAR al cierre**. Buscar TODOS los 930 de cierre,
+      no solo los bots (dip_alert, bollinger `1400_1530`, cualquier otro proceso que muera a 15:30).
+- [ ] 🔴 **[pendiente] "some old voices from a long time are still running, replace them properly,
+      same with alarms"** (Yunior 2026-07-27). Hay voces/locuciones y alarmas de hace tiempo aún
+      corriendo (procesos viejos, cron viejo, o binarios no redeployados). Identificarlas
+      (`ps`, `voice_log`, launchctl) y reemplazarlas por las versiones vigentes, sin dejar dos
+      hablando a la vez.
+- [ ] 🔴 **[pendiente — HOY NO DISPARARON] "today whale options alarmas were not working"** (Yunior
+      2026-07-27). Las alarmas de ballenas de opciones no funcionaron hoy. Diagnosticar por qué:
+      `opt_whale_watch` vivo? cinta de whale a 0 bytes en 7 símbolos (cap 10190, ya medido)? voz
+      suprimida por presupuesto? UW banner-sin-voz? Medir la cadena entera de la alarma.
+- [ ] **[pendiente] "the search list does not update the data realtime, its fixed. fix that"**
+      (Yunior 2026-07-27). La lista del buscador (watchlist con precio/%día) muestra datos FIJOS,
+      no se refresca en vivo. Está en `charts/live.html`. Que el precio/%día se actualicen con el
+      stream, no una foto congelada al abrir.
+- [ ] **[pendiente — hallazgo del agente muros, VERIFICAR] `gex_gate` convierte régimen None en
+      "régimen NEGATIVO"** (`scripts/gex_gate.py:82-87`). Un `else` pelado afirmaba NEGATIVO cuando
+      el régimen es None (no-sé) — el patrón prohibido. El agente ya lo tocó; verificar el fix.
+
+- [ ] **[REPORTE a Yunior] CLAUDE.md del repo llegó CONTAMINADO** con una plantilla genérica de
+      "Core Architecture & Mission" (React/TypeScript/pydantic/mypy/TDD) que **borró la regla 1
+      SEÑAL-SOLAMENTE** y describe una arquitectura FALSA (este repo es HTML vanilla + Python 3.9
+      stdlib + C++ + Swift, cero React, cero pydantic). Restaurado CLAUDE.md bueno + reaplicadas las
+      2 notas legítimas de Yunior (Done.md, perpetuos). La plantilla se guardó en
+      `scratchpad/claudemd_contaminado.diff` por si Yunior la pegó a propósito — decidir si algo de
+      ahí vale, pero NO a costa de SEÑAL-SOLAMENTE.

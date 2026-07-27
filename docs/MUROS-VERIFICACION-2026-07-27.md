@@ -126,6 +126,13 @@ dato: `chain_src` + `source_why`.
 caminos y el scope declarado (`gex_snapshot` publica ahora `scope: "ALL"`), **30/30 de la flota
 coinciden a scope igualado**. Sin igualar el scope discrepan 6, y es correcto que discrepen.
 
+Efecto secundario que había que atajar: `compass.cpp:824` trata el régimen vacío como `S_NONE`, o
+sea que con el 0DTE sin signo firme perdía **también el flip y los muros, que sí están medidos**
+(QQQ salía `[SIN LECTURA] sin mapa GEX fresco`). Ahora, si el 0DTE no firma el signo, lo firma el
+**LIBRO ENTERO de la misma cadena** — misma fuente, mismo método — y va declarado en
+`regime_scope`. Queda 1 símbolo de 30 sin régimen (WDC), no 5, y los que caen a `ALL` coinciden
+con `gex_snapshot` en el 100%.
+
 ## Lo que sigue abierto
 
 - `opt_chain_cache.py` estrecho (§5) — es de otro agente.

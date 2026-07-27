@@ -406,3 +406,42 @@ def test_el_signo_lo_fija_UNA_definicion_para_los_dos_caminos(tmp_path):
         [{"strike": k, "right": r, "oi": oi, "gamma": gm, "iv": iv, "exp": "20260821", "T": 0.07}
          for k, r, oi, iv, gm in filas], spot, "POS")
     assert reg == "NEG" and par["parity_ok_pct"] == 0.0
+
+
+def test_si_el_0DTE_no_firma_el_signo_lo_firma_el_LIBRO_ENTERO(tmp_path, monkeypatch):
+    """Un solo vencimiento puede no tener signo firme sin que el libro deje de tenerlo, y
+    `compass.cpp:824` trata el regimen vacio como S_NONE — o sea que perdia tambien el flip y
+    los muros, que SI estan medidos. Hoy pasaba en QQQ, SPY e INTC (3 de 30)."""
+    import chart_levels as CL
+    exp0 = (dt.date.today() + dt.timedelta(days=1)).strftime("%Y%m%d")
+    exp1 = (dt.date.today() + dt.timedelta(days=30)).strftime("%Y%m%d")
+    spot, band = 100.0, 0.6
+    ln = [f"# opt_chain ZZ | epoch {__import__('time').time():.0f} | spot {spot:.2f} | "
+          f"exps {exp0} {exp1}",
+          f"# fuente polygon_snapshot_v3 | band {band:.4f} vencimientos 2"]
+    # 0DTE: OI simetrico -> reparar la paridad anula el neto -> signo NO firme
+    for i in range(12):
+        k = 94.0 + i
+        for r in ("C", "P"):
+            g = (0.02 + 0.001 * i) * (4.0 if r == "C" else 1.0)
+            ln.append(f"{k:.2f} {r} {exp0} -1.00 -1.00 -1 1000 {0.3 + 0.01 * i:.4f} 0.50 {g:.6f}")
+    # el vencimiento largo mete puts pesados: el LIBRO ENTERO si tiene signo
+    for i in range(12):
+        k = 94.0 + i
+        ln.append(f"{k:.2f} C {exp1} -1.00 -1.00 -1 100 {0.3 + 0.01 * i:.4f} 0.50 0.020000")
+        ln.append(f"{k:.2f} P {exp1} -1.00 -1.00 -1 9000 {0.31 + 0.01 * i:.4f} -0.50 0.020000")
+    p = tmp_path / "opt_chain_zz.txt"
+    p.write_text("\n".join(ln) + "\n")
+    g0 = G.from_ibkr_cache(str(p), spot, scale="dollar1pct")
+    assert g0["regime"] is None, "el fixture del 0DTE deberia salir sin signo firme"
+    assert g0["call_wall"] is not None, "los muros SI estan medidos: eso es lo que no se pierde"
+
+    monkeypatch.setattr(CL, "OUT", str(tmp_path / "out"))
+    monkeypatch.setattr(CL, "poly_chain_path", lambda *a, **k: None)
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "data").mkdir(exist_ok=True)
+    os.replace(str(p), str(tmp_path / "data" / "opt_chain_zz.txt"))
+    out = CL.gen("ZZ", write=False)
+    assert out["regime"] is not None and out["regime_scope"] == "ALL"
+    assert "LIBRO ENTERO" in out["regime_why"]
+    assert out["call_wall"] is not None and out["put_wall"] is not None
