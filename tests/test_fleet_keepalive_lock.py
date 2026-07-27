@@ -19,7 +19,25 @@ import pytest
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCRIPT = os.path.join(REPO, "scripts", "fleet_keepalive_start.sh")
 
-pytestmark = pytest.mark.skipif(shutil.which("zsh") is None, reason="zsh no disponible")
+
+def _fleet_esta_viva():
+    """Mismo guardian que tests/test_fleet_hours.py:197 — el sandbox no acota `pkill`."""
+    p = subprocess.run(["pgrep", "-f", "ib-trader/scripts/.*_keepalive.sh"],
+                       capture_output=True, text=True)
+    return p.returncode == 0
+
+
+pytestmark = [
+    pytest.mark.skipif(shutil.which("zsh") is None, reason="zsh no disponible"),
+    # El stub `fleet_hours` dice "fuera de ventana" -> el script corre fleet_stop_all()/
+    # fleet_stop_bridges() (scripts/fleet_keepalive_start.sh:46-88), y sus `pkill` son
+    # GLOBALES: matan la flota VIVA del Mac, no la del sandbox. Medido 2026-07-27 00:37
+    # y 00:44: la flota cayo de 67 procesos a 8 dos veces por correr este fichero.
+    pytest.mark.skipif(_fleet_esta_viva(),
+                       reason="la flota esta VIVA: este fichero ejecuta fleet_stop_all "
+                              "(pkill GLOBAL) y no vamos a matar una flota en marcha "
+                              "desde un test"),
+]
 
 
 def _sandbox(tmp_path, stub_sleep=0):
