@@ -48,10 +48,12 @@ fleet_stop_all() {
            opt_chain_keepalive.sh bargain_keepalive.sh sox_keepalive.sh \
            finviz_scout_keepalive.sh notify_relay.sh x_signal_keepalive.sh \
            opt_whale_keepalive.sh voice_queue_keepalive.sh compass_keepalive.sh \
-           perp_stock_keepalive.sh perp_nbbo_bridge_keepalive.sh; do
+           perp_stock_keepalive.sh perp_nbbo_bridge_keepalive.sh \
+           fleet_consensus_keepalive.sh; do
     pkill -f "scripts/$p" 2>/dev/null
   done
   pkill -f 'scripts/perp_nbbo_bridge.py' 2>/dev/null
+  pkill -f 'scripts/fleet_consensus.py --daemon' 2>/dev/null
   # daemons python de señal (el arnes ib_async/ib_insync)
   for p in x_signal_poster.py sox_index_feed.py opt_sentinel.py options_enrich.py \
            opt_chain_cache.py band_open_watch.py bollinger_alarm.py dip_alert.py; do
@@ -300,6 +302,12 @@ fi
 if ! pgrep -f "scripts/perp_nbbo_bridge_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/perp_nbbo_bridge_keepalive.sh" >/dev/null 2>&1 &
   echo "$(date) fleet: perp_nbbo_bridge_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+fi
+
+# MANADA: era el unico daemon de senal sin keepalive (el denominador de la flota).
+if ! pgrep -f "scripts/fleet_consensus_keepalive.sh" >/dev/null; then
+  nohup bash "$ROOT/scripts/fleet_consensus_keepalive.sh" >/dev/null 2>&1 &
+  echo "$(date) fleet: fleet_consensus_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
 fi
 
 # x_signal_poster (2026-07-21): postea en X las señales FUERTES de la flota
