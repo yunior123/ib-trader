@@ -343,8 +343,8 @@ def compute(sym, lv=None):
     if prob_source == "sin_medir":
         why.append(f'prob SIN MEDIR (bucket "direction_view|{reg}" sin trust/n>={CALIB_MIN_N} '
                     "en data/calibration.json) — doctrine_score es CONTEXTO, no probabilidad")
-    if prob is None and d == "flat":
-        prob = 50
+    # 50 esta en la lista de numeros PROHIBIDOS: "flat sin bucket medido" es no-se, no
+    # moneda-al-aire medida. prob se queda None y el porque lo dice prob_source.
 
     # PRÓXIMO OBJETIVO en el sentido de la flecha: imán estructural si va hacia él, si no
     # el muro/nodo más cercano en esa dirección (call wall arriba / put wall abajo / POC).

@@ -231,7 +231,24 @@ def snapshot_sym(sym):
     # regimen), pero con nuestra magnitud auditable: net GEX en millones de $ por punto.
     # keep_sign: el redondeo no puede comerse el signo (ver su docstring).
     score = keep_sign(net / 1e6, 3)
-    neg = gi.get("regime") == "NEG"
+    # REGIMEN POR PARIDAD (2026-07-27): el signo crudo puede venir de griegas que violan la
+    # identidad gamma_call==gamma_put (Polygon en premercado: SPY cumplia el 2% y publicaba
+    # POSITIVE cuando las dos lecturas legales y CBOE decian NEGATIVE). Cuando la paridad
+    # determina el signo, MANDA la paridad; si no lo determina, no hay regimen.
+    par = gex_core.parity_audit(cs, spot)
+    reg_short = gi.get("regime")
+    reg_why = None
+    if par is not None and par["regime_parity"] is not None:
+        if par["regime_parity"] != reg_short:
+            reg_why = (f"signo crudo {reg_short} CONTRADICHO por la paridad put-call "
+                       f"(pares coherentes {par['parity_ok_pct']*100:.0f}%; lecturas legales "
+                       f"{par['net_parity_lo']/1e9:+.2f}..{par['net_parity_hi']/1e9:+.2f} B $/1%)")
+        reg_short = par["regime_parity"]
+    elif par is not None:
+        reg_why = (f"signo NO determinado: las dos lecturas de paridad discrepan "
+                   f"({par['net_parity_lo']/1e9:+.2f} vs {par['net_parity_hi']/1e9:+.2f} B $/1%)")
+        reg_short = None
+    neg = reg_short == "NEG"
     magnets = sorted({x for x in (gi.get("abs_wall"), gi.get("call_wall"),
                                   gi.get("put_wall")) if x})
     def _r(x, n=2):
@@ -245,11 +262,21 @@ def snapshot_sym(sym):
         "flip_src": flip_src,
         "flip_dist_pct": _r((flip - spot) / spot * 100) if flip else None,
         "score": score,
-        "bias": "PUT" if abs(put_usd) > abs(call_usd) else "CALL",
+        # bias con las patas REPARADAS por paridad cuando existen: con las crudas SPY salia
+        # "NEG / bias CALL" (regimen y sesgo contradiciendose en la misma linea).
+        "bias": (("PUT" if abs(par["put_gex_parity"]) > abs(par["call_gex_parity"]) else "CALL")
+                 if par is not None else
+                 ("PUT" if abs(put_usd) > abs(call_usd) else "CALL")),
         "poc": gi.get("abs_wall"),
         "magnets": magnets,
-        "regime": "NEGATIVE" if neg else "POSITIVE",
-        "regime_short": gi.get("regime"),
+        "regime": None if reg_short is None else ("NEGATIVE" if neg else "POSITIVE"),
+        "regime_short": reg_short,
+        "regime_raw": gi.get("regime"),      # el del signo crudo, para poder auditar el cambio
+        "regime_why": reg_why,
+        "parity": par,                       # None si el libro no tiene ni un par C/P
+        "net_gex_parity_lo": keep_sign(None if par is None else par["net_parity_lo"]),
+        "net_gex_parity_hi": keep_sign(None if par is None else par["net_parity_hi"]),
+        "parity_ok_pct": None if par is None else par["parity_ok_pct"],
         "call_usd": keep_sign(call_usd),
         "put_usd": keep_sign(put_usd),
         "net_gex": keep_sign(net),
@@ -360,8 +387,10 @@ def _cli():
         if s == "_meta" or (ap_sym and s not in ap_sym):
             continue
         fl = f"{v['flip']:9.2f}" if v["flip"] is not None else "  SIN FLIP"
-        print(f"  {s:6s} flip {fl} {v['regime_short']:>3s}  net {v['score']:+9.1f}M/pt "
-              f"({(v['net_gex_dollar1pct'] or 0)/1e9:+6.2f}B $/1%) bias {v['bias']:4s} "
+        rg = v["regime_short"] or "n/d"
+        print(f"  {s:6s} flip {fl} {rg:>3s}  net {v['score']:+9.1f}M/pt "
+              f"({(v['net_gex_dollar1pct'] or 0)/1e9:+6.2f}B $/1%) par{(v['parity_ok_pct'] or 0)*100:3.0f}% "
+              f"bias {v['bias']:4s} "
               f"POC {str(v['poc']):>9s}  banda +-{(v['chain_band'] or 0)*100:.0f}% "
               f"({v['n_contracts']} contratos, griegas {v['greeks_ok_pct']*100:.0f}%, "
               f"cadena {v['chain_date']})")

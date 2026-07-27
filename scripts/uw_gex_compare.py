@@ -100,15 +100,31 @@ def uw_legs(uw_path):
         blob = json.load(f)
     rows = blob["payload"]["data"] if isinstance(blob.get("payload"), dict) else blob["payload"]
     per = {}
+    n_patas_nulas = 0
     for r in rows:
         try:
             k = float(r["strike"])
         except (KeyError, TypeError, ValueError):
             continue
-        per[k] = {"call_gex": float(r["call_gex"]), "put_gex": float(r["put_gex"]),
-                  "call_dex": float(r["call_delta"]), "put_dex": float(r["put_delta"])}
+        # UW manda `null` en la pata que no existe en ese strike (medido 2026-07-27: TSLA 8
+        # filas, GOOGL 2 -> el float(None) tumbaba los dos simbolos enteros). Se cae LA PATA,
+        # no el simbolo, y jamas se rellena con 0.0: un cero es una exposicion medida de cero.
+        e = {}
+        for dst, src in (("call_gex", "call_gex"), ("put_gex", "put_gex"),
+                         ("call_dex", "call_delta"), ("put_dex", "put_delta")):
+            v = r.get(src)
+            if v is None:
+                n_patas_nulas += 1
+                continue
+            try:
+                e[dst] = float(v)
+            except (TypeError, ValueError):
+                n_patas_nulas += 1
+        if e:
+            per[k] = e
     return per, {"fecha_dato": (rows[0].get("date") if rows else None),
-                 "n_strikes": len(per), "scope": "libro entero, sin columna de expiry -> NO filtrable"}
+                 "n_strikes": len(per), "n_patas_nulas": n_patas_nulas,
+                 "scope": "libro entero, sin columna de expiry -> NO filtrable"}
 
 
 def compare_sym(sym, fecha):
@@ -130,9 +146,15 @@ def compare_sym(sym, fecha):
         res["estado"] = "MUESTRA CORTA"
         return res
     for pata in ("call_gex", "put_gex", "call_dex", "put_dex"):
-        xs = [ours[k][pata] for k in common]
-        ys = [theirs[k][pata] for k in common]
-        res[pata] = {"spearman": spearman(xs, ys), "pearson": _pearson(xs, ys), "n": len(common)}
+        # solo los strikes donde LOS DOS tienen esa pata medida; `n` va por pata porque puede
+        # diferir (UW deja `null` la pata inexistente) y una n global mentiria.
+        ks = [k for k in common if pata in ours[k] and pata in theirs[k]]
+        xs = [ours[k][pata] for k in ks]
+        ys = [theirs[k][pata] for k in ks]
+        res[pata] = ({"spearman": None, "pearson": None, "n": len(ks),
+                      "why": f"solo {len(ks)} strikes con la pata en las dos fuentes (<{MIN_STRIKES})"}
+                     if len(ks) < MIN_STRIKES else
+                     {"spearman": spearman(xs, ys), "pearson": _pearson(xs, ys), "n": len(ks)})
     return res
 
 

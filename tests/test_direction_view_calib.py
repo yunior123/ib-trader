@@ -83,14 +83,18 @@ def test_bucket_sin_trust_sigue_sin_medir(DV, tmp_path, monkeypatch):
     assert r["prob_source"] == "sin_medir"
 
 
-def test_estado_flat_prob_50_doctrina_no_sin_medir(DV, tmp_path, monkeypatch):
+def test_estado_flat_NO_publica_el_50_prohibido(DV, tmp_path, monkeypatch):
+    """flat sin bucket medido es NO-SE, no moneda-al-aire medida. 50 esta en la lista de
+    numeros prohibidos de ~/CLAUDE.md junto a 0/0.0/0.5/{}: un numero plausible convierte
+    "no se" en "se, y es 50". El doctrine_score (CONTEXTO) puede valer 50; prob no."""
     monkeypatch.setattr(DV, "CALIB_PATH", str(tmp_path / "no_existe.json"))
     lv_flat = {"spot": 100.0, "flip": 100.0, "regime": "POS",
                "em": 2.0, "call_wall": None, "put_wall": None, "pressure": 0}
     r = DV.compute("ZZZFAKE", lv=lv_flat)
     assert r["dir"] == "flat"
-    assert r["prob"] == 50
+    assert r["prob"] is None
     assert r["prob_source"] == "doctrina"
+    assert r["doctrine_score"] == 50
 
 
 def test_calib_context_lee_null_control_como_contexto(DV, tmp_path, monkeypatch):

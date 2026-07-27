@@ -415,6 +415,86 @@ def build_gex(contracts, spot, scale="house"):
     return out
 
 
+# -------------------------------------------------- COHERENCIA DE PARIDAD (gamma C == gamma P)
+PARITY_TOL = 0.05          # 5% = la resolucion practica de una gamma servida a 4 decimales
+
+
+def parity_pairs(contracts):
+    """{(exp, strike): {'C': (gamma, oi), 'P': (gamma, oi)}} con solo gamma MEDIDA > 0."""
+    m = {}
+    for c in contracts:
+        g = c.get("gamma")
+        oi = c.get("oi")
+        try:
+            g, oi = (None if g is None else float(g)), float(oi or 0)
+        except (TypeError, ValueError):
+            continue
+        if not g or g <= 0 or oi <= 0:
+            continue
+        m.setdefault((str(c.get("exp")), float(c["strike"])), {})[
+            str(c.get("right", "C")).upper()[:1]] = (g, oi)
+    return m
+
+
+def parity_audit(contracts, spot, tol=PARITY_TOL):
+    """La gamma de una call y la de una put del MISMO (strike, vencimiento) son IGUALES por
+    paridad put-call: es una identidad, no una convencion. Este audit la mide y devuelve las
+    DOS lecturas legales del neto ($/1%), o None si el libro no tiene ni un par.
+
+    Por que existe (medido 2026-07-27 08:30, premercado): la cadena Polygon de SPY cumplia la
+    paridad en el **2%** de sus 927 pares (mediana gamma_C/gamma_P = 0,243: una call con 4x
+    MENOS gamma que su put al mismo strike es imposible), y con eso `gex_snapshot` publicaba
+    SPY **net +2,29 B / regimen POSITIVE**. Las dos lecturas reparadas dan -6,84 y -4,36 B y
+    CBOE -10,0 B: el signo crudo era el UNICO positivo. CBOE cumple la paridad en el 72-78%
+    de sus pares, y en los libros coherentes (Polygon al cierre, CBOE) reparar no mueve el
+    neto ni un 3% -> el arreglo es inocuo donde el dato esta bien y salva el signo donde no.
+    POS vs NEG es el interruptor de doctrina: POS licencia el fade, NEG lo PROHIBE.
+    """
+    m = parity_pairs(contracts)
+    both = [v for v in m.values() if "C" in v and "P" in v]
+    if not both:
+        return None
+    ok = sum(1 for v in both if abs(v["C"][0] / v["P"][0] - 1.0) <= tol)
+    mult = spot * spot * 0.01
+
+    def read(src):
+        """(neto, calls, puts) forzando la gamma del par al valor de la pata `src`."""
+        cc = pp = 0.0
+        for v in m.values():
+            g_src = v[src][0] if src in v else None
+            for right in ("C", "P"):
+                if right not in v:
+                    continue
+                g = g_src if g_src is not None else v[right][0]
+                x = g * v[right][1] * 100 * mult
+                if right == "C":
+                    cc += x
+                else:
+                    pp += x
+        return cc - pp, cc, pp
+
+    (lo_c, cc_c, pp_c), (lo_p, cc_p, pp_p) = read("C"), read("P")
+    lo, hi = min(lo_c, lo_p), max(lo_c, lo_p)
+    # CERO NO ES UN SIGNO: `(lo>0)==(hi>0)` daba firme=True y regimen NEG con lo==hi==0 (pasa
+    # con OI simetrico, donde reparar la paridad anula el neto exactamente). El signo es firme
+    # solo si las dos lecturas caen del MISMO lado y ninguna es cero.
+    firm = (lo > 0 and hi > 0) or (lo < 0 and hi < 0)
+    return {
+        "n_pares": len(both), "n_pares_ok": ok, "parity_ok_pct": round(ok / len(both), 4),
+        "net_from_calls": lo_c, "net_from_puts": lo_p,
+        "net_parity_lo": lo, "net_parity_hi": hi,
+        "call_gex_parity": 0.5 * (cc_c + cc_p), "put_gex_parity": 0.5 * (pp_c + pp_p),
+        "signo_firme": firm,
+        # el menor en valor absoluto de las dos lecturas legales: no se sobreestima la
+        # exposicion, y va etiquetado para que nadie lo confunda con una medicion unica.
+        "net_parity_conservador": (min((lo, hi), key=abs) if firm else None),
+        "regime_parity": (None if not firm else ("POS" if lo > 0 else "NEG")),
+        "tol": tol,
+        "convention": ("gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; "
+                       "las dos lecturas fuerzan el par al valor de una pata u otra"),
+    }
+
+
 # ------------------------------------------------------------------ DEX (delta exposure)
 DEX_SIGN_FIELDS = ("dex_sentiment", "dex_flow_impact")
 DEX_CONVENTION = ("OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que "
@@ -493,7 +573,8 @@ def _dex_fields(contracts, spot, scale="house"):
 def _flip(profile):
     """Precio de gamma-cero: donde el GEX ACUMULADO (de abajo hacia arriba) cruza 0,
     interpolado linealmente entre los dos strikes que lo encierran. Mas fino que
-    'el primer strike que cruza'. None si el perfil nunca cambia de signo."""
+    'el primer strike que cruza'. **None** si el perfil nunca cambia de signo: un libro de
+    un solo signo no tiene flip, y el extremo del recorte no es un nivel de mercado."""
     if not profile:
         return None
     ks = sorted(profile)
@@ -511,8 +592,12 @@ def _flip(profile):
             frac = -prev_cum / span
             return prev_k + frac * (k - prev_k)
         prev_k = k
-    # sin cruce: todo un signo. flip fuera del rango -> el extremo mas cercano a cero.
-    return ks[-1] if cum < 0 else ks[0]
+    # SIN CRUCE = SIN FLIP -> None. Antes se devolvia el EXTREMO del rango de strikes, que lo
+    # fija la banda del fichero, no el mercado: medido el 2026-07-27 en el camino vivo, EWY
+    # publicaba flip 260,0 con spot 163,49 (a 0,97 pp del borde de la banda 0,6) y SNDK 2300,0
+    # con spot 1440,88 (0,38 pp) -> los tres muros etiquetados "trampilla", que es VETO DURO.
+    # gex_snapshot.honest_flip ya lo hacia bien por su cuenta; aqui estaba el original.
+    return None
 
 
 def _flip_roots(profile, spot=None):

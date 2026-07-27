@@ -15,10 +15,13 @@ import datetime as dt
 import importlib.util
 import json
 import os
+import sys
 
 import pytest
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(REPO, "scripts"))
+import gex_core as G  # noqa: E402
 
 
 def _load(name):
@@ -181,6 +184,57 @@ def test_libro_sin_cruce_publica_flip_None_no_el_borde(gs, tmp_path, monkeypatch
     assert snap["abs_wall_kind"] is None       # sin flip no se afirma pin ni trampilla
 
 
+def _chain_txt(tmp_path, sym, filas, spot, band):
+    """Cadena en formato de PRODUCCION (el que lee gex_core.from_ibkr_cache / chart_levels)."""
+    import time
+    exp = (dt.date.today() + dt.timedelta(days=4)).strftime("%Y%m%d")
+    p = tmp_path / f"opt_chain_{sym.lower()}.txt"
+    ln = [f"# opt_chain {sym.upper()} | epoch {time.time():.0f} | spot {spot:.2f} | exps {exp}",
+          f"# fuente polygon_snapshot_v3 | band {band:.4f} vencimientos 1"]
+    for k, right, oi, iv, gamma in filas:
+        ln.append(f"{k:.2f} {right} {exp} -1.00 -1.00 -1 {oi} {iv:.4f} 0.50 {gamma:.6f}")
+    p.write_text("\n".join(ln) + "\n")
+    return str(p)
+
+
+def test_camino_VIVO_libro_sin_cruce_publica_flip_None_no_el_borde(tmp_path):
+    """El MISMO defecto que `honest_flip` arregla en el lote, pero en el camino que leen el
+    chart y ./compass: `from_ibkr_cache` -> `build_gex` -> `_flip`.
+
+    Medido el 2026-07-27 sobre las cadenas archivadas del 26: EWY publicaba flip 260,0 con
+    spot 163,49 (banda 0,6 -> borde 261,58: a 0,97 pp) y SNDK 2300,0 con spot 1440,88
+    (borde 2305,41: 0,38 pp). Los dos son el techo del recorte, no un nivel; y de ahi salen
+    los tres `*_kind` = trampilla, que es VETO DURO (compass.cpp:630, book_quality:317)."""
+    spot, band = 100.0, 0.6
+    # todo puts con IV DISPERSA: el barrido se ejecuta (>=3 IVs) y no encuentra raiz,
+    # asi que la decision recae en el estatico -- que es donde vivia el borde.
+    filas = [(60.0 + 2 * i, "P", 900, 0.30 + 0.01 * i, 0.02) for i in range(40)]
+    g = G.from_ibkr_cache(_chain_txt(tmp_path, "EWY", filas, spot, band), spot)
+    assert g["gamma_ok"] is True and g["net_gex"] < 0
+    ks = sorted(g["profile"])
+    assert g["flip_static"] is None, "el estatico volvio a devolver el extremo del rango"
+    assert g["flip"] is None and g["flip_src"] == "none"
+    assert g["flip"] not in (ks[0], ks[-1])
+    assert g["roots"] == []
+    for key in ("call_wall", "put_wall", "abs_wall"):
+        assert g[key + "_kind"] is None, f"{key}: pin/trampilla afirmado sin flip"
+    # el resto del libro SIGUE medido: no se tira el simbolo por no tener flip
+    assert g["put_wall"] is not None and g["oi_put_wall"] is not None
+
+
+def test_camino_VIVO_con_cruce_real_el_flip_sigue_saliendo(tmp_path):
+    """El fix no puede comerse el flip de un libro normal."""
+    spot, band = 100.0, 0.6
+    filas = []
+    for i in range(30):
+        k = 85.0 + i
+        filas.append((k, "C", 1500 if k > 100 else 150, 0.30 + 0.005 * i, 0.02))
+        filas.append((k, "P", 1500 if k < 100 else 150, 0.31 + 0.005 * i, 0.02))
+    g = G.from_ibkr_cache(_chain_txt(tmp_path, "QQQ", filas, spot, band), spot)
+    assert g["flip"] is not None and g["flip_src"] == "repriced"
+    assert g["abs_wall_kind"] in ("pin", "trampilla")
+
+
 def test_flip_medido_se_publica_con_su_procedencia(gs, tmp_path, monkeypatch):
     monkeypatch.setattr(gs, "REPO", str(tmp_path))
     cs = []
@@ -223,3 +277,81 @@ def test_denominador_de_griegas_son_los_candidatos_con_OI(gs, tmp_path, monkeypa
     snap, why = gs.snapshot_sym("MU")
     assert why is None, why
     assert snap["greeks_ok_pct"] == 1.0
+
+
+# ------------------- coherencia de PARIDAD: gamma_call == gamma_put al mismo (K,exp)
+def _pc(k, right, gamma, oi=1000, exp="20260821"):
+    return {"strike": k, "right": right, "gamma": gamma, "oi": oi, "exp": exp, "iv": 0.3,
+            "T": 0.07}
+
+
+def test_paridad_no_toca_un_libro_COHERENTE():
+    """Con gamma_C == gamma_P las dos lecturas legales son la misma: reparar es un no-op.
+    Medido: CBOE cumple la paridad en el 72-78% de sus pares y el neto se mueve <3%."""
+    cs = []
+    for i in range(12):
+        k = 90.0 + i
+        g = 0.02 + 0.001 * i
+        cs += [_pc(k, "C", g, oi=1500 if k > 100 else 200), _pc(k, "P", g, oi=1500 if k < 100 else 200)]
+    p = G.parity_audit(cs, 100.0)
+    assert p["parity_ok_pct"] == 1.0
+    assert p["net_parity_lo"] == pytest.approx(p["net_parity_hi"])
+    assert p["signo_firme"] is True and p["regime_parity"] in ("POS", "NEG")
+
+
+def test_paridad_CORRIGE_el_signo_cuando_las_griegas_la_violan():
+    """El caso REAL de SPY el 2026-07-27 08:30: Polygon premercado cumplia la paridad en el
+    2% de 927 pares (mediana gamma_C/gamma_P = 0,243) y el neto crudo salia POSITIVO cuando
+    las dos lecturas legales y CBOE decian NEGATIVO. POS licencia el fade, NEG lo PROHIBE."""
+    cs = []
+    for i in range(12):
+        k = 90.0 + i
+        g = 0.02 + 0.001 * i
+        # calls con gamma INFLADA x4 y puts con la real: el crudo se va a POS.
+        # OI ASIMETRICO (mas puts) para que las lecturas legales sean NEG de verdad: con OI
+        # simetrico reparar la paridad anula el neto y 0 NO es un signo.
+        cs += [_pc(k, "C", g * 4.0, oi=600), _pc(k, "P", g, oi=1400)]
+    crudo = G.build_gex(cs, 100.0, scale="dollar1pct")
+    p = G.parity_audit(cs, 100.0)
+    assert crudo["regime"] == "POS"                      # lo que publicabamos
+    assert p["parity_ok_pct"] == 0.0
+    assert p["signo_firme"] is True and p["regime_parity"] == "NEG"
+    assert p["net_parity_lo"] < 0 and p["net_parity_hi"] < 0
+
+
+def test_paridad_declara_INDETERMINADO_en_vez_de_elegir():
+    """Si las dos lecturas legales discrepan en signo, el dato NO determina el regimen:
+    None y el motivo, jamas la que quede mas bonita."""
+    # Las dos lecturas legales tienen que salir con signo OPUESTO: donde el OI se carga en
+    # calls la gamma alta esta en la pata call, y donde se carga en puts esta en la put ->
+    # forzar el par a una pata u otra invierte el neto.
+    cs = [_pc(100.0, "C", 0.05, oi=1000), _pc(100.0, "P", 0.001, oi=200),
+          _pc(105.0, "C", 0.001, oi=200), _pc(105.0, "P", 0.05, oi=1000)]
+    p = G.parity_audit(cs, 100.0)
+    assert (p["net_parity_lo"] > 0) != (p["net_parity_hi"] > 0)
+    assert p["signo_firme"] is False
+    assert p["regime_parity"] is None and p["net_parity_conservador"] is None
+
+
+def test_paridad_sin_un_solo_par_devuelve_None_no_un_cero():
+    assert G.parity_audit([_pc(100.0, "C", 0.05)], 100.0) is None
+    assert G.parity_audit([], 100.0) is None
+
+
+def test_snapshot_publica_el_regimen_de_la_PARIDAD_y_dice_que_lo_cambio(gs, tmp_path, monkeypatch):
+    monkeypatch.setattr(gs, "REPO", str(tmp_path))
+    cs = []
+    for i in range(12):
+        k = 90.0 + i
+        g = 0.02 + 0.001 * i
+        cs.append(_call(k, oi=600, gamma=g * 4.0, iv=0.30 + 0.01 * i))
+        cs.append(_put(k, oi=1400, gamma=g, iv=0.31 + 0.01 * i))
+    _chain(tmp_path, "SPY", cs, spot=100.0)
+    snap, why = gs.snapshot_sym("SPY")
+    assert why is None, why
+    assert snap["regime_raw"] == "POS" and snap["regime_short"] == "NEG"
+    assert snap["regime"] == "NEGATIVE"
+    assert "CONTRADICHO por la paridad" in snap["regime_why"]
+    assert snap["parity_ok_pct"] == 0.0
+    assert snap["net_gex_parity_lo"] < 0 and snap["net_gex_parity_hi"] < 0
+    assert snap["bias"] == "PUT"          # el sesgo tambien sale de las patas reparadas
