@@ -38,6 +38,7 @@ let BUILD_SHA: String = {
 final class CockpitWindow: NSObject, NSWindowDelegate, WKNavigationDelegate {
     let window: NSWindow
     let web: WKWebView
+    let zoomLabel = NSTextField()
     let idx: Int
     let url: URL
     weak var owner: AppDelegate?
@@ -52,6 +53,7 @@ final class CockpitWindow: NSObject, NSWindowDelegate, WKNavigationDelegate {
         web = WKWebView(frame: window.contentView!.bounds, configuration: cfg)
         super.init()
         web.autoresizingMask = [.width, .height]
+        web.pageZoom = AppDelegate.savedZoom()
         web.navigationDelegate = self
         window.contentView!.addSubview(web)
         window.title = title(sym: nil)
@@ -83,8 +85,31 @@ final class CockpitWindow: NSObject, NSWindowDelegate, WKNavigationDelegate {
         b.toolTip = "Recargar esta ventana (⌘R)"
         b.target = self
         b.action = #selector(reloadThisWindow)
-        let host = NSView(frame: NSRect(x: 0, y: 0, width: 40, height: 26))
-        host.addSubview(b)
+        // Ajustador de zoom VISIBLE (Yunior 2026-07-27 "put zoom adjuster too"): los atajos
+        // ⌘+/⌘−/⌘0 tampoco se descubren mirando. Aplica a las 6 ventanas, como el menu.
+        let zOut = NSButton(frame: NSRect(x: 34, y: 2, width: 26, height: 22))
+        let zIn  = NSButton(frame: NSRect(x: 60, y: 2, width: 26, height: 22))
+        for (btn, sym, tip, sel) in [
+            (zOut, "minus.magnifyingglass", "Reducir zoom (⌘−)", #selector(zoomOutHere)),
+            (zIn,  "plus.magnifyingglass",  "Ampliar zoom (⌘+)", #selector(zoomInHere)),
+        ] {
+            btn.bezelStyle = .texturedRounded
+            btn.image = NSImage(systemSymbolName: sym, accessibilityDescription: tip)
+            btn.imagePosition = .imageOnly
+            btn.toolTip = tip
+            btn.target = self
+            btn.action = sel
+        }
+        zoomLabel.frame = NSRect(x: 88, y: 3, width: 40, height: 20)
+        zoomLabel.isBezeled = false; zoomLabel.drawsBackground = false
+        zoomLabel.isEditable = false; zoomLabel.isSelectable = false
+        zoomLabel.alignment = .center
+        zoomLabel.font = .monospacedDigitSystemFont(ofSize: 11, weight: .semibold)
+        zoomLabel.textColor = .secondaryLabelColor
+        zoomLabel.toolTip = "Zoom actual. ⌘0 lo vuelve a 100%."
+        syncZoomLabel()
+        let host = NSView(frame: NSRect(x: 0, y: 0, width: 132, height: 26))
+        host.addSubview(b); host.addSubview(zOut); host.addSubview(zIn); host.addSubview(zoomLabel)
         let acc = NSTitlebarAccessoryViewController()
         acc.view = host
         acc.layoutAttribute = .right
@@ -93,6 +118,12 @@ final class CockpitWindow: NSObject, NSWindowDelegate, WKNavigationDelegate {
 
     /// Recarga SOLO esta ventana: con 6 abiertas, recargar las seis tira 6 WebSockets.
     @objc func reloadThisWindow() { load() }
+
+    @objc func zoomInHere()  { owner?.zoomIn() }
+    @objc func zoomOutHere() { owner?.zoomOut() }
+    func syncZoomLabel() {
+        zoomLabel.stringValue = "\(Int((AppDelegate.savedZoom() * 100).rounded()))%"
+    }
 
     /// El titulo dice QUE SIMBOLO hay en esa ventana: /health del bridge devuelve `sym`.
     func refreshTitle() {
@@ -195,6 +226,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         m.addItem(NSMenuItem(title: "Repartir en rejilla", action: #selector(tileWindows), keyEquivalent: "d"))
         m.addItem(NSMenuItem(title: "Recargar (ventana activa)", action: #selector(reloadKey), keyEquivalent: "r"))
         m.addItem(NSMenuItem(title: "Recargar TODAS", action: #selector(reload), keyEquivalent: "R"))
+        m.addItem(NSMenuItem(title: "Zoom +", action: #selector(zoomIn), keyEquivalent: "+"))
+        m.addItem(NSMenuItem(title: "Zoom −", action: #selector(zoomOut), keyEquivalent: "-"))
+        m.addItem(NSMenuItem(title: "Zoom 100%", action: #selector(zoomReset), keyEquivalent: "0"))
         m.addItem(NSMenuItem(title: "Configuración…", action: #selector(openSettings), keyEquivalent: ","))
         m.addItem(NSMenuItem.separator())
         m.addItem(NSMenuItem(title: "Salir", action: #selector(quit), keyEquivalent: "q"))
@@ -213,6 +247,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let urls = startupURLs()
         for u in urls { _ = openWindow(url: u, tile: false) }
         if urls.count > 1 { tile() } else { cockpits.first?.window.center() }
+        // En rejilla de >=4 cada ventana es una fraccion de pantalla: se sube el zoom la
+        // PRIMERA vez (si el usuario ya lo ajusto, manda el suyo).
+        if urls.count >= 4 && UserDefaults.standard.double(forKey: AppDelegate.ZOOM_KEY) == 0 {
+            setZoom(AppDelegate.ZOOM_TILED)
+        }
 
         // Primera ejecucion SIN cuenta por ningun lado: abrir Configuracion en vez de
         // dejar al usuario adivinando por que no funciona. Ojo: se pregunta por la cadena
@@ -273,6 +312,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func forget(_ c: CockpitWindow) { cockpits.removeAll { $0 === c } }
+
+    // ZOOM (Yunior 2026-07-27: "increase zoom for tiny 6 windows"). En rejilla de 6 cada
+    // ventana es 1/6 de pantalla y el texto se lee pequeno. Se persiste para que sobreviva al
+    // rebuild, y es ajustable en vivo: la temporalidad correcta depende de la pantalla.
+    static let ZOOM_KEY = "cockpitPageZoom"
+    static let ZOOM_TILED = 1.25          // default cuando se abren >=4 ventanas a la vez
+    static func savedZoom() -> CGFloat {
+        let v = UserDefaults.standard.double(forKey: ZOOM_KEY)
+        return v > 0 ? CGFloat(v) : 1.0
+    }
+    func setZoom(_ z: CGFloat) {
+        let c = min(max(z, 0.6), 2.5)      // topado: por debajo no se lee, por encima no cabe nada
+        UserDefaults.standard.set(Double(c), forKey: AppDelegate.ZOOM_KEY)
+        cockpits.forEach { $0.web.pageZoom = c; $0.syncZoomLabel() }
+    }
+    @objc func zoomIn()    { setZoom(AppDelegate.savedZoom() + 0.1) }
+    @objc func zoomOut()   { setZoom(AppDelegate.savedZoom() - 0.1) }
+    @objc func zoomReset() { setZoom(1.0) }
 
     /// Reparte las ventanas abiertas en una rejilla que cubre la pantalla, sin solapes
     /// y con celdas del MISMO tamaño (lo que Yunior llamo "equally distributed").
