@@ -89,6 +89,19 @@
 - [x] **[duplicado — ver casilla cerrada arriba, hecho d598b73]** "the chart should load data
   on demand when scrolling to pass, priority to live data please".
 
+- [ ] **[pendiente] korea_bar_bridge resuelve a 4002 (paper) con el Gateway en 4001 (live)**
+  (medido 2026-07-26 20:20). Arrancado a mano con `IBKR_PORT=4001` funciona y escribe barras
+  cada minuto, pero en cada arranque limpio vuelve a fallar: `ConnectionRefused 4002`. Ademas
+  necesita `ib_insync` (esta en `venv`, NO en `venv-chart`). Estuvo CAIDO y las barras coreanas
+  llevaban 65 h rancias sin que nada lo dijera — la flota se quedo sin el adelanto de 13 h de
+  memoria y nadie se entero. Arreglar el puerto y que GRITE si el puente muere.
+
+- [ ] **[nice-to-have] 7 tickers coreanos mas, verificados con precio en vivo** (2026-07-26,
+  exchange **KRX**, no KSE): Hanmi Semi 042700 conId 44631844 (bonders de HBM: se mueve ANTES
+  que SK Hynix/Samsung en el ciclo de memoria), Wonik IPS 240810, HPSP 403870, DB HiTek 000990,
+  Leeno 058470, Solbrain 357780, ISC 095340. Anadirlos al puente si se quiere la cadena de
+  suministro completa.
+
 - [ ] **[pendiente] "make sure u already printed the plan, try to save ink, so no black
   background. review the task for the printer"** (Yunior 2026-07-26). El plan de apertura
   (`data/trees/plan-apertura.html`) y los 5 arboles (`cinco-arboles.html`) tienen FONDO OSCURO:
