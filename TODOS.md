@@ -177,6 +177,23 @@
 
 - [ ] **[pendiente] organizar el proyecto, ahora mismo hay muchos archivos regados como tsm_signal_bot.cpp, y otros en el mismo nivel, muchos. separate logs to logs folder.
 
+- [ ] **[pendiente — CIERRE DE SESION, "cuando todo listo"] "dejas las 6 windows listas y
+      actualizadas para macos, kill chorme pid y restart as well. increase zoom for tiny 6 windows.
+      make sure we can see timeframe selector in those 6 windows, right now we cannot"**
+      (Yunior 2026-07-27 08:35). Cuatro cosas, y OJO que dos se PELEAN entre si:
+      (a) las 6 ventanas reconstruidas con el ultimo commit y datos frescos;
+      (b) matar el PID de Chrome y relanzarlo (de paso puede arreglar que la extension de Claude
+          NO conecta — TODOS.md ya decia que hace falta reiniciar Chrome);
+      (c) **subir el zoom** de las 6 ventanas (son 1/6 de pantalla y se leen pequenas);
+      (d) **el selector de TIMEFRAME no se ve** en esas 6 ventanas.
+      ⚠️ (c) EMPEORA (d): a 1/6 de pantalla la barra ya desborda —en la captura de las 08:24 solo
+      caben "⚠ CADENA Polygon 15min · 📋 QQQ ▾ · ● LIVE · 📈 Opciones" y el selector queda FUERA—
+      asi que mas zoom recorta mas. La barra tiene que ser RESPONSIVE (envolver o colapsar lo
+      accesorio) antes de tocar el zoom, o el selector seguira invisible.
+      Relacionado: la casilla vieja "Selector de timeframe compacto estilo TradingView" y los
+      timeframes de SEGUNDOS (5s/15s/30s/45s, commit 132dd28) — si no se ve el selector, esos
+      timeframes nuevos son inalcanzables con el raton.
+
 - [ ] **[pendiente] "put refresh button in macos app, also version number of software in top of
       window, right to symbol"** (Yunior 2026-07-27 08:28). El titulo de ventana hoy es
       "QQQ · :8080" (`macapp/main.swift`); el sello del commit ya esta en `Info.plist`
