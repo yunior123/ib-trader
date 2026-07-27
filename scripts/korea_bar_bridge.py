@@ -12,10 +12,16 @@ Escribe, en el MISMO formato que la flota (para que un bot C++ lo consuma tal
 cual el resto):
   data/bars_<name>.txt   "EPOCH O H L C V"   (5s reqRealTimeBars -> agg 1m)
   data/nbbo_<name>.txt    "EPOCH BID ASK"     (throttle 1/s)
-names: skhynix, samsung.
+names CORE: skhynix, samsung, kospi. Satelites HBM (2026-07-27, cualificados con
+precio mdt=1 en vivo): hanmi, wonikips, hpsp, dbhitek, leeno, solbrain, isc.
+Los satelites NO estan en data/fleet.txt: no votan MANADA ni tienen bot.
 
 reqMarketDataType(1) fijo — delayed PROHIBIDO (orden #6). Si KRX pierde permiso
 (no deberia: sub waived) se marca y reintenta cada 10 min, gritando a stderr.
+
+Puerto RESUELTO, no adivinado (2026-07-26): resolve_port() sondea env IBKR_PORT,
+los puertos del modo (ib_mode) y el resto de candidatos, y registra cual eligio.
+Ningun puerto vivo o barras rancias con KRX abierto = voz DANGER, nunca silencio.
 
 Python (ib_insync) solo porque el SDK C++ de IB no esta instalado; productor
 I/O-bound — la matematica de senal sigue en C++.
@@ -25,15 +31,20 @@ Uso: korea_bar_bridge.py [--daemon]   (por defecto daemon)
 import os, subprocess, sys, time
 from datetime import timezone
 
-ROOT = "/Users/yuniorrodriguezosorio/ib-trader"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
-os.chdir(ROOT)
+sys.path.insert(0, os.path.join(ROOT, "scripts"))
+import ib_mode  # noqa: E402
 from ib_insync import IB, Contract, util  # noqa: E402
 
-HOST, PORT = "127.0.0.1", int(__import__("os").environ.get("IBKR_PORT","4002"))
+HOST = "127.0.0.1"
+CANDIDATE_PORTS = [4001, 4002, 7496, 7497]   # gateway live/paper, tws live/paper
 CLIENT_ID = 86                               # unico vs fleet(84)/single(83)
 RETRY_ENTITLEMENT_S = 600
-NO_PERM_ERRORS = {420, 10089, 10090, 354}
+RETRY_S = 15
+FAILS_LOUD = 4                               # 4 x RETRY_S = ~60s mudo como techo
+STALE_MAX_S = 300                            # mismo umbral que el stall-watchdog de run()
+NO_PERM_ERRORS = {101, 420, 10089, 10090, 354}   # 101 = max tickers: retrocede, no revienta
 
 # name -> (conId, symbol legible). Contratos KRX verificados en vivo 2026-07-12.
 # El indice KOSPI directo (K200) NO tiene sub API (error 354); usamos KODEX 200
@@ -42,7 +53,18 @@ KOREA = {
     "skhynix": (17382246, "000660"),         # SK Hynix
     "samsung": (17382528, "005930"),         # Samsung Electronics
     "kospi":   (76006841, "069500"),         # KODEX 200 ETF = proxy KOSPI200
+    # Cadena de suministro HBM/memoria, conIds cualificados con precio mdt=1 en vivo
+    # 2026-07-27 12:5x KST. Hanmi (bonders HBM) se mueve ANTES que Hynix/Samsung.
+    # NO entran en data/fleet.txt: no votan MANADA, no tienen bot ni keepalive.
+    "hanmi":    (44631844,  "042700"),       # Hanmi Semiconductor
+    "wonikips": (353068652, "240810"),       # Wonik IPS
+    "hpsp":     (616507112, "403870"),       # HPSP
+    "dbhitek":  (17382279,  "000990"),       # DB HiTek
+    "leeno":    (371878942, "058470"),       # Leeno Industrial
+    "solbrain": (489366191, "357780"),       # Solbrain
+    "isc":      (611160155, "095340"),       # ISC
 }
+CORE = ("skhynix", "samsung", "kospi")       # los que priman si IBKR raciona lineas
 
 class SymState:
     def __init__(self, name):
@@ -55,12 +77,18 @@ class SymState:
 
 STATES = {n: SymState(n) for n in KOREA}
 
+def bars_path(name):
+    return os.path.join(ROOT, "data", f"bars_{name}.txt")
+
+def nbbo_path(name):
+    return os.path.join(ROOT, "data", f"nbbo_{name}.txt")
+
 def emit(st, ep, o, h, l, c, v):
     if ep <= st.last_emitted or c <= 0:
         return
     st.last_emitted = ep
     line = f"{ep:.0f} {o:.4f} {h:.4f} {l:.4f} {c:.4f} {v:.0f}\n"
-    with open(f"data/bars_{st.name}.txt", "a") as f:
+    with open(bars_path(st.name), "a") as f:
         f.write(line)
 
 def make_on_bar5(st):
@@ -91,7 +119,7 @@ def make_on_nbbo(st):
             return
         if t.bid and t.ask and t.bid > 0 and t.ask > t.bid:
             st.nbbo_last = now
-            with open(f"data/nbbo_{st.name}.txt", "w") as f:
+            with open(nbbo_path(st.name), "w") as f:
                 f.write(f"{now:.0f} {t.bid:.4f} {t.ask:.4f}\n")
         elif t.last and t.last > 0:
             # KODEX 200 (kospi): IBKR da trades REALTIME (mdt=1) pero CERO book
@@ -99,7 +127,7 @@ def make_on_nbbo(st):
             # acciones samsung/skhynix si tienen BBO). Fallback honesto: last
             # trade como bid=ask -> mid exacto, spread 0. NO es delayed.
             st.nbbo_last = now
-            with open(f"data/nbbo_{st.name}.txt", "w") as f:
+            with open(nbbo_path(st.name), "w") as f:
                 f.write(f"{now:.0f} {t.last:.4f} {t.last:.4f}\n")
     return on_tick
 
@@ -112,8 +140,8 @@ def krx_market():
 _last_banner = 0.0
 _last_resub = 0.0
 
-def loud(title, msg, sound="ProAlarm"):
-    """Fail LOUD (ley #2): banner Mac + espejo Desktop, throttle 10 min.
+def loud(title, msg, sound="ProAlarm", prio="DANGER", voz=None):
+    """Fail LOUD (ley #2): voz speak.sh + banner Mac + espejo Desktop, throttle 10 min.
     La flota korea no tiene reader C++ que grite por ella — el bridge grita."""
     global _last_banner
     print(f"{title}: {msg}", file=sys.stderr)
@@ -122,12 +150,15 @@ def loud(title, msg, sound="ProAlarm"):
     _last_banner = time.time()
     esc = lambda s: s.replace("\\", "").replace('"', "'")
     try:
+        subprocess.Popen(["/bin/bash", os.path.join(ROOT, "scripts", "speak.sh"),
+                          prio, voz or msg], cwd=ROOT,
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         subprocess.Popen(["/usr/bin/osascript", "-e",
                           f'display notification "{esc(msg)}" with title '
                           f'"{esc(title)}" sound name "{sound}"'],
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         lt = time.localtime()
-        d = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "trading-signals")
+        d = os.path.join(ROOT, "data", "trading-signals")
         os.makedirs(d, exist_ok=True)
         with open(f"{d}/{lt.tm_year:04d}-{lt.tm_mon:02d}-{lt.tm_mday:02d}.txt",
                   "a") as f:
@@ -135,6 +166,60 @@ def loud(title, msg, sound="ProAlarm"):
                     f"{title} | {msg}\n")
     except Exception:
         pass
+
+def resolve_port():
+    """Primer puerto que ACEPTA TCP. Orden: env IBKR_PORT, los del modo
+    (data/ib_mode.txt), y el resto de candidatos. None si ninguno — jamas un
+    puerto 'plausible' que solo sirve para volver a fallar."""
+    env = os.environ.get("IBKR_PORT") or os.environ.get("IB_PORT")
+    env_p = int(env) if env and env.isdigit() else None
+    cands = []
+    for p in ([env_p] if env_p else []) + ib_mode._ports_for(ib_mode.get_mode()) + CANDIDATE_PORTS:
+        if p not in cands:
+            cands.append(p)
+    for p in cands:
+        if ib_mode._listening(p):
+            por = "IBKR_PORT explicito" if p == env_p else \
+                  ("puerto del modo " + ib_mode.get_mode() if p in ib_mode._ports_for(ib_mode.get_mode())
+                   else "sondeo de candidatos")
+            print(f"korea bridge: puerto {p} ELEGIDO ({por}); probados {cands}",
+                  file=sys.stderr)
+            return p
+    loud("🇰🇷 KRX BRIDGE SIN GATEWAY",
+         f"ningun puerto IBKR acepta conexion {cands} — Gateway/TWS caido",
+         voz="Puente de Corea sin Gateway. Ningun puerto de IBKR responde.")
+    return None
+
+def newest_bar_epoch(names=CORE):
+    """Epoch del bar mas reciente entre los ficheros KRX. None si ninguno legible.
+    Por defecto solo CORE: los satelites son ilíquidos y su silencio no es averia."""
+    best = None
+    for name in names:
+        try:
+            with open(bars_path(name), "rb") as f:
+                f.seek(0, os.SEEK_END)
+                f.seek(-min(4096, f.tell()), os.SEEK_END)
+                lines = f.read().decode("utf-8", "replace").strip().splitlines()
+            ep = float(lines[-1].split()[0])
+        except Exception:
+            continue
+        if best is None or ep > best:
+            best = ep
+    return best
+
+def freshness_guard(now=None):
+    """GRITA si KRX esta abierto y el ultimo bar pasa de STALE_MAX_S. True si grito."""
+    if not krx_market():
+        return False
+    now = time.time() if now is None else now
+    ep = newest_bar_epoch()
+    if ep is not None and now - ep <= STALE_MAX_S:
+        return False
+    cuanto = "sin ninguna barra" if ep is None else f"{(now - ep) / 60:.0f} min rancias"
+    loud("🇰🇷 BARRAS COREA RANCIAS",
+         f"KRX abierto y las barras estan {cuanto} — el puente no escribe",
+         voz="Barras de Corea rancias con el mercado abierto. El puente no escribe.")
+    return True
 
 def resub_all(ib, why):
     """Suelta TODO y fuerza resuscripcion (Error 1101 'data lost' / stall:
@@ -166,7 +251,7 @@ def warmup(ib, st):
     except Exception as e:
         print(f"{st.name}: warmup fallo ({e})", file=sys.stderr); return
     n = 0
-    with open(f"data/bars_{st.name}.txt", "w") as f:
+    with open(bars_path(st.name), "w") as f:
         for b in hist:
             if not (b.close and b.close > 0):
                 continue
@@ -208,14 +293,20 @@ def subscribe_sym(ib, st):
         ib.errorEvent -= on_err
 
 def run():
+    global _fails
+    port = resolve_port()
+    if port is None:
+        raise ConnectionError("ningun puerto IBKR escucha")
     ib = IB()
-    ib.connect(HOST, PORT, clientId=CLIENT_ID, readonly=True, timeout=20)
+    ib.connect(HOST, port, clientId=CLIENT_ID, readonly=True, timeout=20)
+    _fails = 0
     ib.reqMarketDataType(1)                   # 1 = REALTIME. Delayed PROHIBIDO.
     # Error 1101 (data lost tras flap) -> resub inmediato, igual que el daemon NA
     ib.errorEvent += lambda r, c, m, ct=None, *a: (
         c == 1101 and resub_all(ib, "Error 1101 data-lost"))
-    print(f"korea bridge: TWS {HOST}:{PORT}, {len(KOREA)} KRX syms "
-          f"(SK Hynix + Samsung + KODEX200, bars 5s->1m + NBBO)", file=sys.stderr)
+    print(f"korea bridge: TWS {HOST}:{port}, {len(KOREA)} KRX syms "
+          f"(core {'+'.join(CORE)} + {len(KOREA)-len(CORE)} satelites HBM, "
+          f"bars 5s->1m + NBBO)", file=sys.stderr)
     for st in STATES.values():
         warmup(ib, st)
     while ib.isConnected():
@@ -238,15 +329,30 @@ def run():
                  f"{time.time() - newest:.0f}s sin bars KRX en sesion — "
                  f"resuscribiendo (skhynix/samsung/kospi)")
             resub_all(ib, f"stall {time.time() - newest:.0f}s sin bars")
-        ib.sleep(15)
+        freshness_guard()   # cubre el hueco del stall-watchdog: conectado y SIN suscribir
+        ib.sleep(RETRY_S)
     raise ConnectionError("TWS desconectado")
 
-while True:
-    try:
-        run()
-    except Exception as e:
-        print(f"korea bridge CAIDO: {e} — reintento en 15s (¿TWS en {PORT}?)",
-              file=sys.stderr)
-        for st in STATES.values():
-            st.subs = []; st.blocked_until = 0
-        time.sleep(15)
+_fails = 0
+
+def main():
+    global _fails
+    os.chdir(ROOT)
+    while True:
+        try:
+            run()
+        except Exception as e:
+            _fails += 1
+            print(f"korea bridge CAIDO ({_fails}): {e} — reintento en {RETRY_S}s",
+                  file=sys.stderr)
+            if _fails >= FAILS_LOUD:
+                loud("🇰🇷 KRX BRIDGE CAIDO",
+                     f"{_fails} intentos fallidos seguidos ({_fails * RETRY_S}s): {e}",
+                     voz="Puente de Corea caido. La flota se queda sin la memoria coreana.")
+            for st in STATES.values():
+                st.subs = []; st.blocked_until = 0
+        freshness_guard()
+        time.sleep(RETRY_S)
+
+if __name__ == "__main__":
+    main()
