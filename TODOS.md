@@ -46,6 +46,32 @@
       (`net_gex` ×spot vs `net_gex_dollar1pct` ×spot²/100), **Polygon no da griegas de índice**
       (SPX 8.512 contratos, 0 con gamma → CBOE), y la **cuota de 5 req/60s ya no existe** (219
       seguidas sin un 429). Detalle en `AGENTS.md` § *EL ARCHIVO DE CADENAS*.
+      → **CERRADO `6a83885`** (2026-07-27). Verificado en el DATO, no en el código, con TRES
+      referees y el scope IGUALADO — informe completo en `docs/MUROS-VERIFICACION-2026-07-27.md`.
+      **Los MUROS sí**: call_wall idéntico al referee en 7/9, put_wall en 5/9, el resto a UN
+      strike; la corona fuera de la banda aporta 0,03–3,6% de la gamma bruta (el "13×" murió).
+      Histograma flip→borde, 35 símbolos: **CERO por debajo de 10 pp**, mín 13,76, mediana 39,08.
+      UW por PATA: **30/30**, ρ(call_gex) +0,69…+0,97. Las magnitudes que discrepan son **AS-OF**:
+      con la cadena de HOY reproducimos el fetch crudo de Polygon a 3 decimales.
+      **El NETO/RÉGIMEN NO lo estaba**, y eran dos defectos nuevos: (a) `gex_core._flip` devolvía
+      el EXTREMO del recorte sin cruce de signo (EWY flip 260 con spot 163,49 a 0,97 pp del borde,
+      SNDK 2300 con spot 1440,88 a 0,38 pp) → los tres `*_kind` = trampilla = VETO DURO; ahora
+      `None`. (b) el guardián de paridad de `44f830a` estaba solo en el lote → `gex_snapshot` decía
+      QQQ NEGATIVE y `chart_levels` POS; extraído `gex_core.regime_by_parity` (UNA definición).
+      La "contradicción de fuentes" era de **SCOPE** (0DTE vs libro entero): a scope igualado
+      **30/30 coinciden**.
+
+- [ ] **[pendiente — el bloqueante de "IBKR primario"] ensanchar `opt_chain_cache.py`** (medido
+      2026-07-27, es de otro agente). Orden de Yunior: *"elige ibkr real, polygon only fallback for
+      realtime market"*. El gate ya existe y declara la procedencia en el dato
+      (`gex_snapshot.pick_source`, `chain_src`/`source_why`), con las dos constantes YA medidas del
+      repo: griegas ≥ `book_quality.MIN_GREEKS_SRC` (0,50) **y** ancho ≥
+      `poly_chain_archive.BAND_FLOOR` (0,10). Pero **IBKR gana 0/26 hoy**: su cache es de
+      **±1,3%–7,1% de ancho, 20 strikes y 2 vencimientos**, donde la gamma necesita ±18%–60%.
+      Aunque sus griegas llegasen al 100% no puede llevar el régimen sin reabrir el bug del
+      recorte (`5a6a34e`). Hasta que `max_strikes 20` cubra la banda adaptativa, "IBKR primario"
+      es correcto en el código y **inalcanzable en el dato**, y el régimen lo sigue firmando
+      Polygon/CBOE con su procedencia dicha.
 
 - [ ] **[pendiente — parcial, revisado 2026-07-26]** "priority now goes to signals… test all
       signals with data, full backtesting, arrow is super important too" (Yunior 2026-07-25).
