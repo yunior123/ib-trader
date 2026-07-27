@@ -89,18 +89,23 @@
 - [x] **[duplicado — ver casilla cerrada arriba, hecho d598b73]** "the chart should load data
   on demand when scrolling to pass, priority to live data please".
 
-- [ ] **[pendiente] korea_bar_bridge resuelve a 4002 (paper) con el Gateway en 4001 (live)**
-  (medido 2026-07-26 20:20). Arrancado a mano con `IBKR_PORT=4001` funciona y escribe barras
-  cada minuto, pero en cada arranque limpio vuelve a fallar: `ConnectionRefused 4002`. Ademas
-  necesita `ib_insync` (esta en `venv`, NO en `venv-chart`). Estuvo CAIDO y las barras coreanas
-  llevaban 65 h rancias sin que nada lo dijera — la flota se quedo sin el adelanto de 13 h de
-  memoria y nadie se entero. Arreglar el puerto y que GRITE si el puente muere.
+- [x] **[hecho] korea_bar_bridge resuelve a 4002 (paper) con el Gateway en 4001 (live)**
+  (medido 2026-07-26 20:20; arreglado 23:5x con KRX abierto). `resolve_port()` sondea
+  env IBKR_PORT -> puertos del modo (`ib_mode`) -> resto de candidatos, y REGISTRA cual
+  eligio: "puerto 4001 ELEGIDO (puerto del modo live); probados [4001, 7496, 4002, 7497]".
+  Sin ningun puerto vivo devuelve `None` (nunca 4002 "plausible") y GRITA. Dos guardianes
+  nuevos: 4 reintentos fallidos seguidos (~60 s) = voz DANGER, y barras rancias >5 min con
+  KRX abierto = voz DANGER (fuera de sesion CALLA, sin falso positivo de fin de semana).
+  Verificado en vivo: barras congeladas 20:20 -> escribiendo cada minuto. 9 tests en
+  `tests/test_korea_bridge.py`.
 
-- [ ] **[nice-to-have] 7 tickers coreanos mas, verificados con precio en vivo** (2026-07-26,
-  exchange **KRX**, no KSE): Hanmi Semi 042700 conId 44631844 (bonders de HBM: se mueve ANTES
-  que SK Hynix/Samsung en el ciclo de memoria), Wonik IPS 240810, HPSP 403870, DB HiTek 000990,
-  Leeno 058470, Solbrain 357780, ISC 095340. Anadirlos al puente si se quiere la cadena de
-  suministro completa.
+- [x] **[hecho] 7 tickers coreanos mas, verificados con precio en vivo** (2026-07-27 KST,
+  exchange **KRX**): los 7 cualificaron con `marketDataType=1` y bid/ask reales — Hanmi
+  042700/44631844, Wonik IPS 240810/353068652, HPSP 403870/616507112, DB HiTek
+  000990/17382279, Leeno 058470/371878942, Solbrain 357780/489366191, ISC 095340/611160155.
+  En `korea_bar_bridge.KOREA` como SATELITES: escriben `data/bars_<n>.txt` + `nbbo_<n>.txt`
+  pero NO estan en `data/fleet.txt` (no votan MANADA, sin bot ni keepalive) y su silencio NO
+  dispara el guardian de frescura (solo CORE skhynix/samsung/kospi lo hace).
 
 - [ ] **[pendiente] "make sure u already printed the plan, try to save ink, so no black
   background. review the task for the printer"** (Yunior 2026-07-26). El plan de apertura
