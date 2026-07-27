@@ -355,3 +355,54 @@ def test_snapshot_publica_el_regimen_de_la_PARIDAD_y_dice_que_lo_cambio(gs, tmp_
     assert snap["parity_ok_pct"] == 0.0
     assert snap["net_gex_parity_lo"] < 0 and snap["net_gex_parity_hi"] < 0
     assert snap["bias"] == "PUT"          # el sesgo tambien sale de las patas reparadas
+
+
+# ------------------ fuente: IBKR PRIMARIO, Polygon RESPALDO (orden Yunior 2026-07-27)
+def test_ibkr_primario_solo_si_su_libro_DA_LA_TALLA(gs):
+    """"IBKR primario" NO puede ser "IBKR aunque venga vacio": fuera de RTH su cadena trae 0%
+    de griegas y eso apagaria la gamma de la flota entera (bug que este repo ya se comio).
+    Las dos piernas del gate son constantes YA medidas del repo, no nuevas."""
+    import book_quality
+    assert gs.BAND_FLOOR == 0.10                       # poly_chain_archive, medido en 5a6a34e
+    assert book_quality.MIN_GREEKS_SRC == 0.5          # == gex_core.MIN_GREEKS_OK
+    assert book_quality.usable_greeks(0.0) is False    # el caso real de premercado
+    assert book_quality.usable_greeks(None) is False   # n/d no es aprobado
+    assert book_quality.usable_greeks(0.94) is True
+
+
+def test_la_procedencia_del_regimen_va_DENTRO_del_dato(gs, tmp_path, monkeypatch):
+    monkeypatch.setattr(gs, "REPO", str(tmp_path))
+    cs = []
+    for i in range(12):
+        k = 90.0 + i
+        cs.append(_call(k, oi=1500 if k > 100 else 200, iv=0.30 + 0.01 * i))
+        cs.append(_put(k, oi=1500 if k < 100 else 200, iv=0.31 + 0.01 * i))
+    _chain(tmp_path, "QQQ", cs, spot=100.0)
+    snap, why = gs.snapshot_sym("QQQ")               # sin cache TWS en tmp_path -> respaldo
+    assert why is None, why
+    assert snap["chain_src"] and "RESPALDO" in snap["source_why"]
+    assert "sin cache TWS" in snap["source_why"]
+    assert snap["scope"] == "ALL"                     # el scope, declarado
+
+
+def test_el_signo_lo_fija_UNA_definicion_para_los_dos_caminos(tmp_path):
+    """`gex_snapshot` (lote) y `from_ibkr_cache` (vivo) publicaban regimenes OPUESTOS del mismo
+    libro (QQQ NEGATIVE vs POS) porque solo el lote tenia el guardian de paridad."""
+    spot, band = 100.0, 0.6
+    filas = []
+    for i in range(12):
+        k = 90.0 + i
+        g = 0.02 + 0.001 * i
+        filas.append((k, "C", 1000, 0.30 + 0.01 * i, g * 4.0))   # calls con gamma inflada
+        filas.append((k, "P", 1400, 0.31 + 0.01 * i, g))
+    g = G.from_ibkr_cache(_chain_txt(tmp_path, "QQQ", filas, spot, band), spot,
+                          scale="dollar1pct", all_exp=True)
+    assert g["gamma_ok"] is True
+    assert g["regime_raw"] == "POS" and g["regime"] == "NEG"
+    assert "CONTRADICHO por la paridad" in g["regime_why"]
+    assert g["parity_ok_pct"] == 0.0
+    # y es la MISMA funcion que usa el lote
+    reg, why, par = G.regime_by_parity(
+        [{"strike": k, "right": r, "oi": oi, "gamma": gm, "iv": iv, "exp": "20260821", "T": 0.07}
+         for k, r, oi, iv, gm in filas], spot, "POS")
+    assert reg == "NEG" and par["parity_ok_pct"] == 0.0

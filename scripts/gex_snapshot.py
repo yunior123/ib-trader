@@ -45,7 +45,9 @@ import time
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "scripts"))
 
+import book_quality  # noqa: E402  (usable_greeks/MIN_GREEKS_SRC: la regla de la 2a pierna)
 import gex_core  # noqa: E402  (fuente unica de flip/regimen/muros)
+from poly_chain_archive import BAND_FLOOR  # noqa: E402  (ancho minimo MEDIDO: 5a6a34e)
 import universe  # noqa: E402  (universo del mapa vs flota de señales, docs/UNIVERSOS.md)
 
 
@@ -200,12 +202,90 @@ def wall_kind(gi, flip, key):
     return None if reg is None else ("pin" if reg == "POS" else "trampilla")
 
 
-def snapshot_sym(sym):
-    """El mapa gamma de un simbolo, o (None, motivo). Jamas un dict a medias."""
+def contracts_from_tws(sym):
+    """(contratos, spot, meta, n_candidatos) del cache TWS `data/opt_chain_<sym>.txt`, o
+    (None, ...) si no existe. MISMA forma que `contracts_from` para que el gate elija fuente
+    sin que el resto del mapa sepa de donde vino."""
+    p = os.path.join(REPO, "data", f"opt_chain_{sym.lower()}.txt")
+    if not os.path.exists(p):
+        return None, None, None, 0
+    hdr = gex_core.parse_chain_header(p)
+    spot = hdr.get("spot")
+    cs, ks, n_cand = [], [], 0
+    with open(p) as fh:
+        for ln in fh:
+            if ln.startswith("#"):
+                continue
+            f = ln.split()
+            if len(f) < 10:
+                continue
+            try:
+                k, right, exp = float(f[0]), f[1], f[2]
+                oi, iv, dl, gm = float(f[6]), float(f[7]), float(f[8]), float(f[9])
+            except ValueError:
+                continue
+            if oi <= 0 or gex_core.exp_status(exp) != "vivo":
+                continue
+            n_cand += 1
+            ks.append(k)
+            if gm <= 0:
+                continue
+            T = gex_core._T_of(exp, hdr.get("epoch"))
+            if T is None:
+                continue
+            cs.append({"strike": k, "right": right[0].upper(), "oi": int(oi), "gamma": gm,
+                       "delta": (dl if (iv > 0 and 0 < abs(dl) <= 1) else None),
+                       "iv": (iv if iv > 0 else None), "exp": exp, "T": T})
+    meta = {"spot": spot, "band": (((max(ks) - min(ks)) / 2 / spot) if (ks and spot) else None),
+            "exp_hasta": (max(c["exp"] for c in cs) if cs else None),
+            "greeks": "ibkr_tws", "fuente": "ibkr_tws",
+            "snapshot_local": None, "chain_age_s": hdr.get("epoch")}
+    return cs, spot, meta, n_cand
+
+
+def pick_source(sym):
+    """(cs, spot, meta, n_cand, fecha, chain_src, why) — IBKR PRIMARIO, Polygon RESPALDO
+    (orden Yunior 2026-07-27: "elige ibkr real, polygon only fallback for realtime market",
+    y regla 4 de la casa: IBKR = tiempo real = el disparo).
+
+    IBKR gana solo si su libro DA LA TALLA en las dos cosas que el mapa necesita, con los
+    umbrales que ya existen medidos en el repo (no se crea un quinto):
+      · griegas usables >= `book_quality.MIN_GREEKS_SRC` (0.5, == gex_core.MIN_GREEKS_OK);
+      · ancho de strikes >= `poly_chain_archive.BAND_FLOOR` (0.10), por debajo del cual esta
+        MEDIDO que el flip lo fija el recorte y no el mercado (commit 5a6a34e).
+    "IBKR primario" NO puede significar "IBKR aunque venga vacio": fuera de RTH su cadena trae
+    0% de griegas y eso apagaria la gamma de la flota entera. La procedencia va DENTRO del dato.
+    """
+    cs, spot, meta, n_cand = contracts_from_tws(sym)
+    pct = (len(cs) / n_cand) if (cs is not None and n_cand) else None
+    span = (meta or {}).get("band")
+    if cs is not None and spot:
+        ancho_ok = span is not None and span >= BAND_FLOOR
+        if book_quality.usable_greeks(pct) and ancho_ok:
+            return (cs, spot, meta, n_cand, "vivo", "ibkr_tws",
+                    f"IBKR PRIMARIO: griegas {pct:.0%}, ancho ±{span:.1%} (>=±{BAND_FLOOR:.0%})")
+        if not book_quality.usable_greeks(pct):
+            why = (f"griegas {'n/d' if pct is None else f'{pct:.0%}'} "
+                   f"(<{book_quality.MIN_GREEKS_SRC:.0%})")
+        else:
+            why = (f"ancho ±{'n/d' if span is None else f'{span:.1%}'} "
+                   f"(<±{BAND_FLOOR:.0%}): el recorte fijaria el flip")
+    else:
+        why = "sin cache TWS"
     path, fecha = latest_chain(sym)
     if not path:
-        return None, "sin cadena chain_full archivada (<=5 dias)"
-    cs, spot, meta, n_total = contracts_from(path)
+        return (None, None, None, 0, None, None,
+                f"IBKR no sirve ({why}) y sin cadena chain_full archivada (<=5 dias)")
+    cs, spot, meta, n_cand = contracts_from(path)
+    return (cs, spot, meta, n_cand, fecha, (meta or {}).get("greeks") or "polygon",
+            f"RESPALDO Polygon/CBOE: IBKR descartado — {why}")
+
+
+def snapshot_sym(sym):
+    """El mapa gamma de un simbolo, o (None, motivo). Jamas un dict a medias."""
+    cs, spot, meta, n_total, fecha, chain_src, src_why = pick_source(sym)
+    if cs is None:
+        return None, src_why
     if not spot:
         return None, f"cadena {fecha} sin spot en meta"
     if not n_total:
@@ -235,19 +315,7 @@ def snapshot_sym(sym):
     # identidad gamma_call==gamma_put (Polygon en premercado: SPY cumplia el 2% y publicaba
     # POSITIVE cuando las dos lecturas legales y CBOE decian NEGATIVE). Cuando la paridad
     # determina el signo, MANDA la paridad; si no lo determina, no hay regimen.
-    par = gex_core.parity_audit(cs, spot)
-    reg_short = gi.get("regime")
-    reg_why = None
-    if par is not None and par["regime_parity"] is not None:
-        if par["regime_parity"] != reg_short:
-            reg_why = (f"signo crudo {reg_short} CONTRADICHO por la paridad put-call "
-                       f"(pares coherentes {par['parity_ok_pct']*100:.0f}%; lecturas legales "
-                       f"{par['net_parity_lo']/1e9:+.2f}..{par['net_parity_hi']/1e9:+.2f} B $/1%)")
-        reg_short = par["regime_parity"]
-    elif par is not None:
-        reg_why = (f"signo NO determinado: las dos lecturas de paridad discrepan "
-                   f"({par['net_parity_lo']/1e9:+.2f} vs {par['net_parity_hi']/1e9:+.2f} B $/1%)")
-        reg_short = None
+    reg_short, reg_why, par = gex_core.regime_by_parity(cs, spot, gi.get("regime"))
     neg = reg_short == "NEG"
     magnets = sorted({x for x in (gi.get("abs_wall"), gi.get("call_wall"),
                                   gi.get("put_wall")) if x})
@@ -303,7 +371,15 @@ def snapshot_sym(sym):
         "spot": _r(spot),
         "ts": int(time.time()),
         # --- procedencia: MEDIDO vs reconstruido, dicho en el propio dato ---
-        "src": f"gex_core + chain_full (griegas MEDIDAS: {meta.get('greeks', 'n/d')})",
+        "src": f"gex_core + {chain_src} (griegas MEDIDAS: {meta.get('greeks', 'n/d')})",
+        "chain_src": chain_src,
+        "source_why": src_why,
+        # SCOPE explicito: este mapa es TODOS los vencimientos del fichero. chart_levels
+        # publica por defecto solo el 0DTE, y comparar los dos "regime" sin mirar el scope fue
+        # justo lo que parecia una contradiccion de fuentes el 2026-07-27 (0DTE None vs libro
+        # NEG en QQQ/SPY). Con el scope declarado, 30/30 coinciden.
+        "scope": "ALL",
+        "scope_why": f"todos los vencimientos vivos del fichero, hasta {meta.get('exp_hasta')}",
         "chain_date": fecha,
         "chain_snapshot_local": meta.get("snapshot_local"),
         "chain_band": meta.get("band"),

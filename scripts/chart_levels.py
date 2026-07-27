@@ -290,6 +290,8 @@ def gen(sym, spot=None, write=True, all_exp=False):
     # "los numeros gamma de este fichero son null a proposito", no "falta el dato".
     out["gamma_ok"] = gamma_ok
     for k in ("greeks_ok_pct", "chain_src", "chain_ts", "chain_age_s", "stale", "stale_reason",
+              "regime_raw", "regime_why", "parity_ok_pct",
+              "net_gex_parity_lo", "net_gex_parity_hi",
               "quotes_ok", "session", "band_used", "band_fetch", "n_expiries",
               "exps_en_fichero", "rows_total", "n_candidates", "n_gamma_ok", "n_no_greeks",
               "n_iv_provider", "n_iv_inverted", "iv_source", "exp_rolled", "roll_reason",

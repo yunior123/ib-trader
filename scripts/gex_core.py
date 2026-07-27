@@ -495,6 +495,28 @@ def parity_audit(contracts, spot, tol=PARITY_TOL):
     }
 
 
+def regime_by_parity(contracts, spot, regime_raw, tol=PARITY_TOL):
+    """(regime, why, audit). UNA sola definicion de "quien fija el signo" para los DOS caminos
+    (gex_snapshot en lote y from_ibkr_cache en vivo) — duplicarla es el bug (CLAUDE.md #7).
+
+    El 2026-07-27 09:00 estaban peleadas: `gex_snapshot` publicaba QQQ NEGATIVE (ya con el
+    guardian de paridad) y `chart_levels.gen('qqq')` POS (signo crudo de la MISMA cadena
+    Polygon), y el regimen es VETO DURO. Dos fuentes, dos regimenes, una de las dos miente."""
+    par = parity_audit(contracts, spot, tol)
+    if par is None:
+        return regime_raw, None, None
+    if par["regime_parity"] is None:
+        return None, (f"signo NO determinado: las dos lecturas de paridad discrepan "
+                      f"({par['net_parity_lo']/1e9:+.2f} vs {par['net_parity_hi']/1e9:+.2f} "
+                      f"B $/1%)"), par
+    why = None
+    if par["regime_parity"] != regime_raw:
+        why = (f"signo crudo {regime_raw} CONTRADICHO por la paridad put-call "
+               f"(pares coherentes {par['parity_ok_pct']*100:.0f}%; lecturas legales "
+               f"{par['net_parity_lo']/1e9:+.2f}..{par['net_parity_hi']/1e9:+.2f} B $/1%)")
+    return par["regime_parity"], why, par
+
+
 # ------------------------------------------------------------------ DEX (delta exposure)
 DEX_SIGN_FIELDS = ("dex_sentiment", "dex_flow_impact")
 DEX_CONVENTION = ("OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que "
@@ -1111,6 +1133,16 @@ def from_ibkr_cache(path, spot, band=None, scale="house", all_exp=False, now=Non
         return out
 
     g = build_gex(usable, spot, scale=scale)
+    # GUARDIAN DE PARIDAD tambien en el camino VIVO: sin esto `gex_snapshot` publicaba QQQ
+    # NEGATIVE y `chart_levels.gen('qqq')` POS sobre la MISMA cadena Polygon, y el regimen es
+    # VETO DURO. Una sola definicion del signo para los dos (regime_by_parity).
+    _reg, _why, _par = regime_by_parity(usable, spot, g.get("regime"))
+    g["regime_raw"] = g.get("regime")
+    g["regime"] = _reg
+    g["regime_why"] = _why
+    g["parity_ok_pct"] = None if _par is None else _par["parity_ok_pct"]
+    g["net_gex_parity_lo"] = None if _par is None else _par["net_parity_lo"]
+    g["net_gex_parity_hi"] = None if _par is None else _par["net_parity_hi"]
     g.update(health)
     g["n_gamma_ok"] = len(usable)
     g["n_no_greeks"] = len(cands) - len(usable)
