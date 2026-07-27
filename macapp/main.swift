@@ -161,6 +161,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         m.addItem(NSMenuItem.separator())
         m.addItem(NSMenuItem(title: "Salir", action: #selector(quit), keyEquivalent: "q"))
         m.items.forEach { $0.target = self }
+        // sello de build: de un vistazo se ve QUE commit lleva esta .app
+        let info = Bundle.main.infoDictionary ?? [:]
+        let sha = info["IBTCommit"] as? String ?? "sin sello"
+        let built = info["IBTBuildDate"] as? String ?? "?"
+        m.addItem(NSMenuItem.separator())
+        let stamp = NSMenuItem(title: "build \(sha) · \(built)", action: nil, keyEquivalent: "")
+        stamp.isEnabled = false
+        m.addItem(stamp)
         statusItem.menu = m
         installMainMenu()   // sin barra de menus reales, ⌘N/⌘W no llegaban con la app al frente
 

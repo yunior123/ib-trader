@@ -60,12 +60,18 @@ find "$RES/python" -name __pycache__ -type d -prune -exec rm -rf {} + 2>/dev/nul
 # --- 3. codigo del backend (cierre de dependencias, no el repo entero) ---
 rm -rf "$RES/backend"
 mkdir -p "$RES/backend/scripts" "$RES/backend/charts" "$RES/backend/data"
-for m in chart_bridge chart_levels confluence_engine direction_view ib_mode \
-         narrator order_ticket gex_core optgate; do
-  [ -f "scripts/$m.py" ] && cp "scripts/$m.py" "$RES/backend/scripts/"
+# la lista vive en macapp/bundled_paths.txt — la MISMA que usa el hook para decidir
+# si hay que reconstruir. Dos listas separadas fue lo que dejo la .app rancia.
+sed 's/#.*//' macapp/bundled_paths.txt | tr -d ' ' | grep -v '^$' | while IFS= read -r p; do
+  case "$p" in
+    scripts/*.py) [ -f "$p" ] && cp "$p" "$RES/backend/scripts/";;
+    charts/*)     [ -f "$p" ] && cp "$p" "$RES/backend/charts/";;
+    data/*)       [ -f "$p" ] && cp "$p" "$RES/backend/data/";;
+  esac
 done
-cp charts/live.html charts/*.js "$RES/backend/charts/" 2>/dev/null || true
-cp data/fleet.txt "$RES/backend/data/" 2>/dev/null || true
+for need in chart_bridge.py live.html; do
+  find "$RES/backend" -name "$need" | grep -q . || { echo "🔴 falta $need en el bundle"; exit 1; }
+done
 
 # --- 4. arranque: usa la config del usuario (Application Support), no la del repo ---
 cat > "$RES/backend/run.sh" <<'RUNSH'

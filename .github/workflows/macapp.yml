@@ -8,7 +8,26 @@ name: macapp
 on:
   push:
     branches: [main]
-    paths: ['macapp/**', 'charts/live.html', 'scripts/chart_bridge.py', '.github/workflows/macapp.yml']
+    # espejo de macapp/bundled_paths.txt (fuente unica de lo que va DENTRO del .app).
+    # Si añades una ruta alli, añadela aqui: la puerta de abajo lo verifica.
+    paths:
+      - 'macapp/**'
+      - 'charts/live.html'
+      - 'charts/lightweight-charts-v5.js'
+      - 'charts/lightweight-charts.js'
+      - 'data/fleet.txt'
+      - 'scripts/compass.cpp'
+      - 'scripts/chart_bridge.py'
+      - 'scripts/chart_levels.py'
+      - 'scripts/confluence_engine.py'
+      - 'scripts/direction_view.py'
+      - 'scripts/ib_mode.py'
+      - 'scripts/narrator.py'
+      - 'scripts/order_ticket.py'
+      - 'scripts/gex_core.py'
+      - 'scripts/optgate.py'
+      - 'order_engine/**'
+      - '.github/workflows/macapp.yml'
   workflow_dispatch:
 
 jobs:
@@ -48,7 +67,20 @@ jobs:
           test -f "$APP/Contents/Resources/AppIcon.icns"
           test -x "$APP/Contents/Resources/backend/run.sh"
           test -x "$APP/Contents/Resources/python/bin/python3.12"
+          /usr/libexec/PlistBuddy -c "Print :IBTCommit" "$APP/Contents/Info.plist"
           echo "portable OK"
+
+      # el disparador de arriba tiene que cubrir TODO lo que el bundle empotra;
+      # si se desincroniza, la .app se queda rancia sin que nadie se entere
+      - name: El disparador cubre todo lo empotrado
+        run: |
+          miss=0
+          while IFS= read -r p; do
+            case "$p" in ""|"#"*) continue;; esac
+            key="${p%/}"
+            grep -q -- "- '$key" .github/workflows/macapp.yml || { echo "::error::$p no esta en paths del workflow"; miss=1; }
+          done < <(sed 's/#.*//' macapp/bundled_paths.txt | tr -d ' ')
+          exit $miss
 
       - name: Comprimir preservando el sello
         run: ditto -c -k --sequesterRsrc --keepParent "macapp/ib-trader Cockpit.app" ib-trader-Cockpit.zip

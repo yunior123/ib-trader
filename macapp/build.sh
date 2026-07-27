@@ -7,6 +7,25 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 APP="macapp/ib-trader Cockpit.app"
+
+# --- MUTEX: un solo build a la vez -------------------------------------------
+# Sin esto, dos builds solapados (post-commit de dos agentes, o post-commit +
+# pre-push) se pisan: el segundo hace `rm -rf "$APP"` sobre lo que el primero esta
+# escribiendo y en Desktop queda un bundle a medias o firmado roto.
+# mkdir es atomico (macOS no trae flock) — mismo patron que fleet_keepalive_start.sh.
+LOCKDIR="macapp/.build.lockd"
+if ! mkdir "$LOCKDIR" 2>/dev/null; then
+  AGE=$(( $(date +%s) - $(stat -f %m "$LOCKDIR" 2>/dev/null || echo 0) ))
+  if [ "$AGE" -lt 1800 ]; then
+    echo "🔒 otro build activo (lock ${AGE}s) — salgo sin tocar el bundle"
+    exit 0
+  fi
+  echo "🔒 lock viejo (${AGE}s) — build anterior murio a medias, lo tomo"
+  rmdir "$LOCKDIR" 2>/dev/null || true
+  mkdir "$LOCKDIR"
+fi
+trap 'rmdir "$LOCKDIR" 2>/dev/null' EXIT INT TERM
+
 rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 
@@ -18,6 +37,11 @@ swiftc -O -target arm64-apple-macos13 macapp/main.swift macapp/Settings.swift -o
 # la .app no lleva ./compass, el cockpit empaquetado sale sin flecha (o gris/rancia).
 # SECUENCIAL a proposito (Mac 8GB): un solo clang++ a la vez, nunca en paralelo.
 if [ ! -x ./compass ] || [ scripts/compass.cpp -nt ./compass ]; then
+  # esperar a que no haya OTRO clang++ vivo: en el Mac de 8 GB dos a la vez = swap
+  for _ in $(seq 1 120); do
+    [ "$(ps aux | grep -c '[c]lang++')" -eq 0 ] && break
+    sleep 5
+  done
   echo "  compilando la BRUJULA (secuencial, un solo clang++)…"
   clang++ -std=c++23 -O3 -march=native -Wall -Wextra -o compass scripts/compass.cpp \
     || echo "  🔴 AVISO: la BRUJULA no compila — la .app ira SIN flecha"
@@ -44,6 +68,21 @@ cat > "$APP/Contents/Info.plist" <<'PLIST'
   </dict>
 </dict></plist>
 PLIST
+
+# --- SELLO DE BUILD — que commit lleva dentro, VISIBLE ----------------------
+# Sin esto no habia forma de saber si la .app del escritorio era la del ultimo
+# commit: se miraba el mtime, que miente (un rebuild sin cambios lo refresca).
+# Va ANTES de codesign; despues romperia el sello.
+PL="$APP/Contents/Info.plist"
+GIT_SHA=$(git rev-parse --short HEAD 2>/dev/null || echo "sin-git")
+GIT_DATE=$(git log -1 --format=%cd --date=format:'%Y-%m-%d %H:%M' 2>/dev/null || echo "?")
+DIRTY=""
+git diff --quiet -- $(sed 's/#.*//' macapp/bundled_paths.txt | tr -d ' ' | grep -v '^$' | tr '\n' ' ') 2>/dev/null || DIRTY="+sucio"
+/usr/libexec/PlistBuddy -c "Add :IBTCommit string $GIT_SHA$DIRTY" "$PL" >/dev/null
+/usr/libexec/PlistBuddy -c "Add :IBTCommitDate string $GIT_DATE" "$PL" >/dev/null
+/usr/libexec/PlistBuddy -c "Add :IBTBuildDate string $(date '+%Y-%m-%d %H:%M:%S')" "$PL" >/dev/null
+/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $GIT_SHA$DIRTY" "$PL" >/dev/null
+echo "  sello: commit $GIT_SHA$DIRTY ($GIT_DATE)"
 
 # --- ICONO (brujula) — SIEMPRE ANTES DE FIRMAR ------------------------------
 # Lo GENERA el pipeline: si falta el .icns o el arte fuente es mas nuevo, se
