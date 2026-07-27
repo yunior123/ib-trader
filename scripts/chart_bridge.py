@@ -202,7 +202,9 @@ def _bars_from_txt(path, tail):
 # korea_bar_bridge.py escribe realtime IBKR (mdt=1, sub waived) SIN el sufijo _ibkr:
 # data/bars_<stem>.txt. Nombre de display = stem en mayúsculas -> sym.lower() == stem,
 # no hace falta tabla de mapeo. Proceso propio (clientId 86), no el contrato de este bridge.
-KOREA_SYMS = {"SAMSUNG", "SKHYNIX", "KOSPI"}
+# +7 satelites HBM (2026-07-27): mismo bridge, mismo formato de fichero, ya escribiendo.
+KOREA_SYMS = {"SAMSUNG", "SKHYNIX", "KOSPI",
+              "HANMI", "WONIKIPS", "HPSP", "DBHITEK", "LEENO", "SOLBRAIN", "ISC"}
 
 
 def load_ibkr_bars(sym, tail=780):
