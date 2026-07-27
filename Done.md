@@ -216,3 +216,19 @@
       `ibkr_bar_bridge.py:250` ya corre `reqTickByTickData(..., "AllLast", ...)` con firmado
       Lee-Ready. HIRO = el mismo motor apuntado a contratos de OPCIÓN, ponderado por delta.
       Spec completa: **`docs/HIRO-2026-07-25.md`**. Skill `dealer-flow-limits` §6 actualizada.——
+
+## ✅ Cerradas el 2026-07-27 (sesion con el mercado abierto)
+- [x] **hecho `8b88421` + impreso 2026-07-27** — `@media print` con fondo blanco, tinta negra y saltos de pagina por hoja en arboles y plan de apertura, disenado para ESCALA DE GRISES (la 9120e esta bloqueada por tinta de color). Impreso de verdad en la 9120e en monocromo (jobs 200/201, cola vaciada).
+      *Peticion original*: **[pendiente] "make sure u already printed the plan, try to save ink, so no black
+- [x] **hecho `132dd28` + `3f49cb5`** — 5s/15s/30s/45s (45s = agregado de 15s x3, NO es nativo IBKR). Y lo que faltaba: el selector era INVISIBLE en 1/6 de pantalla, asi que esos timeframes eran inalcanzables con el raton; ahora hay desplegable compacto que va PRIMERO en la barra.
+      *Peticion original*: 🔴 **[pendiente — ORDEN VIEJA QUE SE PERDIO, nunca se anoto] Timeframes de SEGUNDOS en el
+- [x] **hecho — se repite a diario**. Los 6 en `4ed5497`; QQQ y MU regenerados e impresos el 2026-07-27 08:29 con cadena archivada de HOY (`21da34e`). Orden para repetirlo: `./venv/bin/python scripts/poly_chain_archive.py QQQ MU && ./venv/bin/python scripts/tree_sheets.py QQQ MU && ./venv/bin/python scripts/opening_plan.py QQQ MU && ./venv/bin/python scripts/tree_sheets_html.py QQQ MU && ./venv/bin/python scripts/opening_plan_html.py QQQ MU`.
+      *Peticion original*: **[pendiente] "print me qqq, nvda, smh, mu, aapl, msft trees and charts with upcoming week
+- [x] **hecho `896c9a8`** — los 8 de la flota que reportan son TODOS AMC, asi que el veto muerde en el CIERRE del dia del print, no en la apertura (lo contrario dejaria pasar justo la operacion peligrosa). Fecha leida del CSV de Finviz, que MUEVE fechas: dato rancio se declara `stale`, jamas veta a ciegas. FOMC 7/29 dentro de la semana. 38 tests.
+      *Peticion original*: **[pendiente — deriva del anterior] meter los 8 de earnings en los PDFs diarios y en el veto
+- [x] **hecho `3f49cb5`** — las 4 cosas: (a) 6 ventanas con el build sellado en el titulo; (b) Chrome matado (los 8 PIDs) y relanzado con 3 pestanas; (c) zoom de UI ajustable y visible, default 1,25 en rejilla; (d) selector de timeframe VISIBLE (iba detras de 5 botones fijos en una barra `overflow:hidden`). Extra que salio de la misma queja: la barra ya SCROLLEA (lo recortado era inalcanzable) y hay zoom de VELAS separado del de interfaz.
+      *Peticion original*: **[pendiente — CIERRE DE SESION, "cuando todo listo"] "dejas las 6 windows listas y
+- [x] **hecho `13a256b` + `3f49cb5`** — boton de recarga por ventana (recarga solo la suya: con 6 abiertas recargar todas tira 6 WebSockets) y el sello del commit a la derecha del simbolo en el titulo, leido del `Info.plist` del bundle, no recalculado con git en runtime.
+      *Peticion original*: **[pendiente] "put refresh button in macos app, also version number of software in top of
+- [x] **hecho `5a59c35`** — `touch_stats` ya no tumba la generacion entera del arbol: la curva de toques es un adorno, asi que devuelve `None` (la degradacion ya disenada) y grita a stderr, nunca un cero que parezca medido.
+      *Peticion original*: **[nota] `trades.db` en `mode=ro` falla de forma TRANSITORIA con la flota escribiendo.**

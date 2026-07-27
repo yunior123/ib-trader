@@ -10,36 +10,11 @@
 > Orden acordado: FASE 0 higiene → 1 señales → 2 flecha → 2.5 TradingAgents → 3 muros
 > → 4 UI/UX → 4.5 X earnings → 5 los 9 bugs → 6 deploy → 7 seis ventanas + QA → 8 verif → 9 features minadas.
 
-- [ ] **[pendiente] "make sure u already printed the plan, try to save ink, so no black
-  background. review the task for the printer"** (Yunior 2026-07-26). El plan de apertura
-  (`data/trees/plan-apertura.html`) y los 5 arboles (`cinco-arboles.html`) tienen FONDO OSCURO:
-  imprimirlos gasta un cartucho. Hace falta `@media print` con fondo blanco, tinta negra y
-  saltos de pagina por hoja. Revisar tambien el generador de PDFs diarios por si tiene el mismo
-  problema.
-
 - [ ] **[pendiente] "make sure tickers search work as expected. test with perpetuals plus
   korean tickers"** (Yunior 2026-07-26). El buscador se arreglo hoy (e94cf04: listener `input`
   + `_prime_bars` sincrono), pero NO se probo con: (a) los perpetuos 24/7 nuevos
   (`data/perp_stocks.json`, 26 simbolos Bybit), (b) los tickers coreanos (Samsung/SK Hynix/
   KOSPI, que van por `korea_bar_bridge`). Probar los dos casos.
-
-- [ ] 🔴 **[pendiente — ORDEN VIEJA QUE SE PERDIO, nunca se anoto] Timeframes de SEGUNDOS en el
-  chart, estilo TradingView** (Yunior 2026-07-26: *"why i still dont see timeframes for seconds?
-  like 30 seconds, 15, 45, similar to trading view, i gave u an order long time ago about it"*).
-  **MEDIDO hoy**: `charts/live.html:346-357` solo tiene 1m..1M; el mas pequeno es **1m**.
-  `chart_bridge.LIVE_BAR:101` no tiene ninguna entrada sub-minuto, y `agg()` solo agrega HACIA
-  ARRIBA desde 1m — de 1m no se puede bajar a 30s, hace falta pedir barras de segundos o
-  construirlas del tick stream (que YA existe: `reqMktData`/`pendingTickersEvent`).
-  IBKR sirve nativo `1/5/10/15/30 secs` por `reqHistoricalData` (con poca profundidad
-  historica) y `reqRealTimeBars` solo da 5s. **45s NO es nativo**: sale de agregar 15s x3 o 5s x9.
-  Fallo de proceso: la orden es vieja y JAMAS entro en TODOS.md.
-
-- [ ] **[pendiente] "print me qqq, nvda, smh, mu, aapl, msft trees and charts with upcoming week
-  walls, gex, gamma flip, use the 15 min timeframe... planned strategy with updated data... for
-  each graph u should predict at least the first 30 minutes or 15 of opening based on puts and
-  calls and future accumulation, we repeat again tomorrow"** (Yunior 2026-07-26). **SE REPITE
-  CADA DÍA.** 6 tickers, marco 15m, muros de la semana que viene, GEX, gamma-flip, estrategia
-  planeada y predicción de los primeros 15-30 min de la apertura.
 
 - [ ] **[pendiente] SKHY es el ÚNICO de la flota con el gate de spread APAGADO** (medido
   2026-07-26). Los otros 23 `*_signal_bot` llevan `export <SYM>_SPREAD_MAX` en su keepalive
@@ -103,15 +78,6 @@
       Patrón a copiar: `source_verdict` de `compass.cpp` — publica un veredicto medido como CONTEXTO
       sin convertirlo en probabilidad. Recordatorio: `data/calibration_barrier.json` mide la señal
       CRUDA (n=1154, pool de bollinger), **no** el setup de la brújula → no vale como prob de la flecha.
-
-- [ ] **[pendiente — deriva del anterior] meter los 8 de earnings en los PDFs diarios y en el veto
-      de prima comprada** (no tocado a propósito: el generador de PDFs es de otro agente).
-      (a) `daily_fleet_plans.py`: marcar en el plan de AAPL AMZN LRCX META MSFT QCOM SKHY STX la
-      fecha+sesión de earnings (fuente `data/finviz_earn_nextweek_152.csv`, ya la deja
-      `x_earnings_post.py`); (b) **veto duro**: prima comprada que cruce el print del propio ticker
-      = prohibida (doctrina "en día de earnings del ticker jamás aguantar el print con premium
-      comprado"); (c) todos AMC ⇒ el veto muerde en el **cierre** del día del print, no en la
-      apertura; (d) la fecha se re-verifica el mismo día: Finviz mueve fechas.
 
 - [ ] 🥇 **[pendiente — RELOJ DE 7 DÍAS] Unusual Whales** (Yunior 2026-07-25: "save, lets see how
       to use that one"). Token en `feeds.env` `UW_TOKEN`, **trial caduca ~2026-08-01**.
@@ -177,29 +143,6 @@
 
 - [ ] **[pendiente] organizar el proyecto, ahora mismo hay muchos archivos regados como tsm_signal_bot.cpp, y otros en el mismo nivel, muchos. separate logs to logs folder.
 
-- [ ] **[pendiente — CIERRE DE SESION, "cuando todo listo"] "dejas las 6 windows listas y
-      actualizadas para macos, kill chorme pid y restart as well. increase zoom for tiny 6 windows.
-      make sure we can see timeframe selector in those 6 windows, right now we cannot"**
-      (Yunior 2026-07-27 08:35). Cuatro cosas, y OJO que dos se PELEAN entre si:
-      (a) las 6 ventanas reconstruidas con el ultimo commit y datos frescos;
-      (b) matar el PID de Chrome y relanzarlo (de paso puede arreglar que la extension de Claude
-          NO conecta — TODOS.md ya decia que hace falta reiniciar Chrome);
-      (c) **subir el zoom** de las 6 ventanas (son 1/6 de pantalla y se leen pequenas);
-      (d) **el selector de TIMEFRAME no se ve** en esas 6 ventanas.
-      ⚠️ (c) EMPEORA (d): a 1/6 de pantalla la barra ya desborda —en la captura de las 08:24 solo
-      caben "⚠ CADENA Polygon 15min · 📋 QQQ ▾ · ● LIVE · 📈 Opciones" y el selector queda FUERA—
-      asi que mas zoom recorta mas. La barra tiene que ser RESPONSIVE (envolver o colapsar lo
-      accesorio) antes de tocar el zoom, o el selector seguira invisible.
-      Relacionado: la casilla vieja "Selector de timeframe compacto estilo TradingView" y los
-      timeframes de SEGUNDOS (5s/15s/30s/45s, commit 132dd28) — si no se ve el selector, esos
-      timeframes nuevos son inalcanzables con el raton.
-
-- [ ] **[pendiente] "put refresh button in macos app, also version number of software in top of
-      window, right to symbol"** (Yunior 2026-07-27 08:28). El titulo de ventana hoy es
-      "QQQ · :8080" (`macapp/main.swift`); el sello del commit ya esta en `Info.plist`
-      (`IBTCommit`, hoy 3491c73) pero **no se VE**. Dos cosas: (a) boton de refresco visible
-      —hoy solo hay ⌘R, que no se descubre—, (b) version a la derecha del simbolo, arriba.
-
 - [ ] **[pendiente] make the arrow compass nicer, with glowing liquid colors, fast movements, nice to see, test the calibration now with the realtime VIX.
 ## 🌙 QQQ DÍA Y NOCHE (Yunior 2026-07-27: "we should be able to monitor and see charts for qqq
 ## day and night") — MEDIDO, y el hallazgo es que la noche NO se puede recuperar
@@ -228,15 +171,6 @@
       patrón de frescura que se acaba de poner en `korea_bar_bridge.freshness_guard` (`:210-224`).
       **NO lo he tocado a 74 min de la apertura**: `fleet_keepalive_start.sh` es de quien depende
       la flota entera y romperlo en premarket cuesta la sesión. Es un cambio de después del cierre.
-- [ ] **[nota] `trades.db` en `mode=ro` falla de forma TRANSITORIA con la flota escribiendo.**
-      Medido hoy: `sqlite3 "file:trades.db?mode=ro"` dio `unable to open database file (14)` y
-      5 minutos después el MISMO comando devolvió 5.457 filas. Tumbó `tree_sheets.py:82`
-      (`touch_stats`) con la traza entera. `touch_stats` ya tiene degradación (`return None` si
-      no existe el fichero) pero **no captura el fallo de apertura**, así que un lock momentáneo
-      mata la generación del árbol completa. Envolver el `connect`/`execute` y devolver `None`
-      (que es la degradación ya diseñada), nunca un cero.
-
-## ✅ VERIFICADO EN SESIÓN VIVA (lun 2026-07-27, mercado ABIERTO)
 - [x] **[CERRADA — el fix de los CAPITANES funciona] Verificar EN VIVO que los DOS CAPITANES
       reciben cinta firmada.** Llevaba semanas sin poder cerrarse porque solo se puede observar con
       el mercado abierto. MEDIDO hoy 09:09: `data/whale_qqq.txt` **59.061 B**, `whale_spy.txt`
