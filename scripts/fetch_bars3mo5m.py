@@ -12,12 +12,15 @@ import sys
 import time
 from pathlib import Path
 
-REPO = Path("/Users/yuniorrodriguezosorio/ib-trader")
+REPO = Path(__file__).resolve().parent.parent
 OUT = REPO / "data" / "backtest"
 FLEET = (REPO / "data" / "fleet.txt").read_text().split()
 LIKELY_MISSING = {"SKHY", "DRAM", "SPCX"}  # ETFs que IBKR puede no servir
 
-from ib_insync import IB, Stock, util  # noqa: E402
+import os as _o, sys as _s
+_s.path.insert(0, _o.path.join(_o.path.dirname(_o.path.dirname(_o.path.abspath(__file__))), 'scripts'))
+from ib_insync import IB, Stock, util
+from ib_mode import get_port  # fuente unica: scripts/ib_mode.py (CLAUDE.md #7)  # noqa: E402
 
 
 def bars_to_rows(bars):
@@ -110,7 +113,7 @@ def main():
     report = {}
     ib = IB()
     try:
-        ib.connect("127.0.0.1", int(__import__("os").environ.get("IBKR_PORT","4002")), clientId=41, readonly=True, timeout=20)
+        ib.connect("127.0.0.1", get_port(), clientId=41, readonly=True, timeout=20)
         print(f"Conectado TWS 7496 clientId 41 (readonly). Flota: {len(FLEET)}", flush=True)
         for sym in FLEET:
             print(f"== {sym} ==", flush=True)

@@ -22,6 +22,7 @@ from datetime import date, timedelta
 HOME = os.path.expanduser("~")
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # NUNCA hardcodear: el repo se movio a ~/ib-trader (TCC/launchd, 2026-07-25)
 os.chdir(REPO); sys.path.insert(0, REPO); sys.path.insert(0, os.path.join(REPO, "scripts"))
+from ib_mode import get_port  # fuente unica: scripts/ib_mode.py (CLAUDE.md #7)
 from ib_insync import IB, Stock, Option
 import em_envelope   # tabla de festivos real (misma fuente que fleet_healthcheck.sessions_since)
 import uw_premium
@@ -83,7 +84,7 @@ while True:
     try:
         if not in_session():
             time.sleep(120); continue
-        ib = IB(); ib.connect("127.0.0.1", int(__import__("os").environ.get("IBKR_PORT","4002")), clientId=82, readonly=True, timeout=15)
+        ib = IB(); ib.connect("127.0.0.1", get_port(), clientId=82, readonly=True, timeout=15)
         exp = next_friday()
         print(f"whale watch: {len(FLEET)} syms, expiry {exp}", file=sys.stderr)
         stks = {s: Stock(s, "SMART", "USD") for s in FLEET}

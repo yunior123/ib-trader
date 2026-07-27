@@ -15,6 +15,7 @@ import os, sys, time, math, sqlite3, statistics as st
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(REPO); sys.path.insert(0, os.path.join(REPO, "scripts"))
+from ib_mode import get_port  # fuente unica: scripts/ib_mode.py (CLAUDE.md #7)
 DB = os.path.join(REPO, "trades.db")
 SYM = "NVDA"
 
@@ -201,7 +202,7 @@ def shadow(client_id=62):
         ts_open REAL, ts_close REAL, side TEXT, strike REAL, exp TEXT, u_entry REAL, u_exit REAL,
         opt_entry REAL, opt_exit REAL, opt_pnl_pct REAL, u_pnl_pct REAL, reason TEXT, mag REAL, peer REAL)""")
     c.commit()
-    ib=IB(); ib.connect("127.0.0.1",int(__import__("os").environ.get("IBKR_PORT","4002")),clientId=client_id,readonly=True,timeout=15)
+    ib=IB(); ib.connect("127.0.0.1",get_port(),clientId=client_id,readonly=True,timeout=15)
     print(f"[shadow] TWS conectado clientId {client_id} — PAPEL, sin operar")
     stk=Stock("NVDA","SMART","USD"); ib.qualifyContracts(stk); tk=ib.reqMktData(stk,"",False,False)
     W={w["peer"]:w["weight"] for w in peer_influence.load_weights("NVDA")}

@@ -5,16 +5,18 @@ sesion KRX (dom-jue 20:00-02:30 ET). Creado 2026-07-19, KORZ añadido misma
 noche (orden "avisame para comprar koru o korz"). Señal-solamente.
 clientId 96. reqMarketDataType(1) — delayed PROHIBIDO."""
 import sys, time
-sys.path.insert(0, "/Users/yuniorrodriguezosorio/ib-trader")
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, REPO); sys.path.insert(0, os.path.join(REPO, "scripts"))
+from ib_mode import get_port  # fuente unica: scripts/ib_mode.py (CLAUDE.md #7)
 import os
-os.chdir("/Users/yuniorrodriguezosorio/ib-trader")
+os.chdir(REPO)
 from ib_insync import IB, Stock
 
 SYMS = ["KORU", "SOXS", "SQQQ", "SOXL", "TQQQ"]
 
 while True:
     try:
-        ib = IB(); ib.connect("127.0.0.1", int(__import__("os").environ.get("IBKR_PORT","4002")), clientId=96, readonly=True, timeout=15)
+        ib = IB(); ib.connect("127.0.0.1", get_port(), clientId=96, readonly=True, timeout=15)
         ib.reqMarketDataType(1)
         tickers = {}
         for sym in SYMS:
