@@ -21,10 +21,14 @@ Que responde, con numeros:
 """
 import os, sys, time, collections
 from datetime import date, timedelta
-sys.path.insert(0, "/Users/yuniorrodriguezosorio/ib-trader")
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(0, ROOT)
+sys.path.insert(0, os.path.join(ROOT, "scripts"))
 from ib_insync import IB, Stock, Option
+from ib_mode import get_port
 
-PORT = int(os.environ.get("IBKR_PORT", "7496"))
+PORT = int(os.environ.get("IBKR_PORT") or get_port())
+MODE = os.environ.get("HIRO_MODE", "opt")   # opt | stk (stk = el recurso que pelea el bar bridge)
 SYM = os.environ.get("HIRO_SYM", "QQQ")
 N_STRIKES = int(os.environ.get("HIRO_STRIKES", "10"))   # +-N/2 alrededor del spot
 DWELL = float(os.environ.get("HIRO_DWELL", "60"))       # segundos de escucha
@@ -38,9 +42,42 @@ def next_friday():
     return (d + timedelta(days=(4 - d.weekday()) % 7)).strftime("%Y%m%d")
 
 
+def probe_cap(ib, cons, dwell=20.0):
+    """Pide AllLast en TODOS los contratos y mide por TICKS RECIBIDOS quien fue
+    aceptado. El break-on-10190 no vale: el error de la peticion k puede llegar
+    dentro de la ventana de k+1 y desplaza la cuenta (medido 2026-07-27)."""
+    tks = []
+    for c in cons:
+        tks.append((c, ib.reqTickByTickData(c, "AllLast", 0, False)))
+        ib.sleep(0.3)
+    got = collections.Counter()
+    t0 = time.time()
+    while time.time() - t0 < dwell:
+        ib.sleep(1.0)
+        for c, tk in tks:
+            n = len(tk.tickByTicks or [])
+            if n:
+                got[c.symbol] += n
+                tk.tickByTicks.clear()
+    print(f"  pedidas {len(tks)}  err10190={ERRS[10190]}  CON TICKS={len(got)}: "
+          f"{', '.join(f'{s}:{n}' for s, n in got.most_common())}")
+    for c, _ in tks:
+        try: ib.cancelTickByTickData(c, "AllLast")
+        except Exception: pass
+    ib.sleep(1.0)
+    return len(got)
+
+
+def fleet_syms():
+    # fleet.txt es UNA linea de 30 palabras: leer por lineas da 1 token (error medido 2026-07-27)
+    with open(os.path.join(ROOT, "data", "fleet.txt")) as f:
+        return f.read().split()
+
+
 def main():
     ib = IB()
-    ib.connect("127.0.0.1", PORT, clientId=91, readonly=True, timeout=15)
+    ib.connect("127.0.0.1", PORT, clientId=int(os.environ.get("HIRO_CID", "91")),
+               readonly=True, timeout=15)
     print(f"conectado {PORT}  server={ib.client.serverVersion()}  "
           f"cuentas={ib.managedAccounts()}")
 
@@ -50,6 +87,15 @@ def main():
         if code in (10190, 354, 10197, 322, 102, 420, 200):
             print(f"  ERR {code} [{tk}] {msg[:90]}")
     ib.errorEvent += on_err
+
+    if MODE == "stk":
+        cons = [Stock(s, "SMART", "USD") for s in fleet_syms()]
+        ib.qualifyContracts(*cons)
+        cons = [c for c in cons if c.conId]
+        print(f"MODE=stk  contratos de ACCION cualificados: {len(cons)}")
+        probe_cap(ib, cons)
+        ib.disconnect()
+        return
 
     # --- spot del subyacente ---
     stk = Stock(SYM, "SMART", "USD")

@@ -22,7 +22,7 @@ Modo legacy (un simbolo, stdout): ibkr_bar_bridge.py SYM [--live-only]
 Python (ib_insync) solo porque el SDK C++ de IB no esta instalado; es un
 productor de archivos I/O-bound — bots, readers y matematica siguen en C++.
 """
-import os, sys, time
+import os, subprocess, sys, time
 from datetime import timezone
 
 # Ruta DERIVADA, nunca hardcodeada (2026-07-25): la mudanza del repo dejo tres scripts en
@@ -44,22 +44,21 @@ LIVE_ONLY = "--live-only" in sys.argv
 SYMS = [a for a in sys.argv[1:] if not a.startswith("--")] or ["USO"]
 CLIENT_ID = 84 if DAEMON else 83
 
-# PRIORIDAD DE CINTA PARA LOS CAPITANES (fix 2026-07-25).
-#
-# IBKR capea las suscripciones tick-by-tick por cuenta (err 10190) y el reparto era
-# best-effort EN EL ORDEN DE LA LISTA. Diagnostico MEDIDO ese dia sobre el daemon vivo:
-#   lista viva (33 syms): NOK SPCX DRAM TSLA NVDA TXN TSM AMD INTC ASML AAPL GLD QQQ SPY ...
-#   con cinta (>0 bytes): NOK SPCX DRAM TSLA NVDA          <- exactamente los 5 PRIMEROS
-#   a 0 BYTES:            qqq spy aapl amd asml gld intc tsm txn
-#   -> el cap real es de ~5 suscripciones, y QQQ iba 13o, SPY 14o, SMH 20o.
-# Consecuencia: la REGLA 12 entera (jerarquia de capitanes SPY/QQQ/SMH, la que ANULA la
-# señal de un nombre cuando su capitan va en contra) corria SIN su input firmado — el veto
-# mas fuerte del sistema, ciego, sin que nada lo dijera.
-# Arreglo: los capitanes van PRIMERO en el orden de suscripcion; el resto conserva su orden
-# relativo. Sigue siendo best-effort — cambia QUIEN se queda fuera cuando el cap muerde, y
-# ya no puede ser un capitan.
-# Solo en --daemon: run_single() usa SYMS[0] como "el simbolo que se sondea", asi que
-# reordenar ahi cambiaria a cual apunta un `ibkr_bar_bridge.py NVDA MU` suelto.
+# CAP DE CINTA MEDIDO 2026-07-27 con docs/probes/hiro_probe_ibkr.py (HIRO_MODE=stk), mercado
+# abierto y la flota viva: 5 contratos DISTINTOS tick-by-tick por CUENTA. El 6o contrato nuevo
+# da 10190 SIEMPRE, venga de la conexion que venga — 25 pedidos desde 5 conexiones extra
+# (clientId 120-124) dieron 25 denegaciones y CERO ficheros escritos.
+# TRAMPA que costo dos vueltas: un contrato YA suscrito por otro cliente se concede GRATIS (no
+# consume cupo). Por eso 3 clientes simultaneos "recibian 5 cada uno": eran los mismos QQQ SPY
+# NVDA TSLA SMH del daemon, duplicados. Mas conexiones NO compran cinta; el cupo es un
+# ENTITLEMENT (se sube con Quote Booster packs, no con codigo).
+TAPE_MAX = int(os.environ.get("TAPE_MAX", "5"))
+BLIND_F = "data/tape_blind.txt"
+TAPE = {"granted": set()}
+
+# PRIORIDAD DE CINTA PARA LOS CAPITANES (fix 2026-07-25). Con cupo 5 y 30 simbolos el reparto
+# no puede ser justo: se ELIGE. Capitanes primero (regla 12) y el resto por USD/min MEDIDO, no
+# por orden de arranque — el 2026-07-25 QQQ iba 13o y SPY 14o y la regla 12 corria ciega.
 CAPTAINS_FIRST = ["QQQ", "SPY", "SMH"]
 
 
@@ -245,6 +244,121 @@ def warmup_sym(ib, st):
         print(f"{st.sym}: warm-up fallo ({e}) — reintento proximo ciclo",
               file=sys.stderr)
 
+def dollar_vol_per_min(sym, nbars=120):
+    """USD/min MEDIANO de data/bars_<sym>_ibkr.txt. None si no se puede medir — jamas 0.0:
+    un cero plausible manda al simbolo al fondo del reparto como si no cotizara."""
+    p = bars_path(sym)
+    try:
+        size = os.path.getsize(p)
+        if size <= 0:
+            return None
+        with open(p, "rb") as f:
+            f.seek(max(0, size - 96 * nbars))
+            rows = f.read().decode(errors="ignore").strip().splitlines()[-nbars:]
+        v = []
+        for r in rows:
+            t = r.split()
+            if len(t) >= 6:
+                v.append(float(t[4]) * float(t[5]))
+        if not v:
+            return None
+        v.sort()
+        return v[len(v) // 2]
+    except Exception:
+        return None
+
+
+def tape_order(syms):
+    """Reparto DELIBERADO: capitanes primero (regla 12), luego por USD/min MEDIDO de los bars.
+    Antes lo decidia el ORDEN DE ARRANQUE — el 2026-07-25 QQQ iba 13o y SPY 14o."""
+    dv = {s: dollar_vol_per_min(s) for s in syms}
+    rest = [s for s in syms if s not in CAPTAINS_FIRST]
+    rest.sort(key=lambda s: (dv[s] is None, -(dv[s] or 0.0), s))
+    return [s for s in CAPTAINS_FIRST if s in syms] + rest, dv
+
+
+_blind_said = {}   # sym -> dia ya cantado
+
+
+def declare_blind(syms, why):
+    """Un simbolo sin cinta SALE DECLARADO: data/tape_blind.txt + voz + banner + log.
+    Un whale_<sym>.txt de 0 bytes es indistinguible de 'no hay ballenas' — el patron
+    prohibido de la casa (convertir 'no se' en 'no hay') aplicado al flujo."""
+    now = time.time()
+    tmp = BLIND_F + f".tmp{os.getpid()}"
+    with open(tmp, "w") as f:
+        f.write(f"# EPOCH SYM MOTIVO — cinta tick-by-tick AUSENTE "
+                f"(cupo IBKR medido: {TAPE_MAX} contratos por CUENTA)\n")
+        for s in sorted(syms):
+            f.write(f"{now:.0f} {s} {why}\n")
+    os.replace(tmp, BLIND_F)
+    day = time.strftime("%Y%m%d")
+    fresh = sorted(s for s in syms if _blind_said.get(s) != day)
+    if not fresh:
+        return
+    for s in fresh:
+        _blind_said[s] = day
+    msg = (f"CINTA CIEGA: {len(fresh)} de la flota sin tape tick-by-tick "
+           f"({' '.join(fresh)}) — sus ballenas NO se ven, no es que no haya")
+    print(msg, file=sys.stderr)
+    subprocess.Popen(["/usr/bin/osascript", "-e",
+                      f'display notification "{msg}" with title "🕳 CINTA CIEGA" '
+                      f'sound name "ProAlarm"'],
+                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.Popen(["/bin/bash", "scripts/speak.sh", "DANGER", msg],
+                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    lt = time.localtime()
+    d = os.path.join(ROOT, "data", "trading-signals")
+    os.makedirs(d, exist_ok=True)
+    with open(f"{d}/{lt.tm_year:04d}-{lt.tm_mon:02d}-{lt.tm_mday:02d}.txt", "a") as f:
+        f.write(f"{lt.tm_hour:02d}:{lt.tm_min:02d}:{lt.tm_sec:02d} | 🕳 CINTA CIEGA | {msg}\n")
+
+
+def tape_subscribe(ib, syms, dwell=6.0):
+    """Suscribe la cinta de <syms> en UNA conexion; devuelve {sym: Ticker} de los concedidos.
+    La denegacion se atribuye por el CONTRATO del error, no por ventana de tiempo: el 10190 de
+    la peticion k aterriza dentro de la ventana de k+1 y cancelaba suscripciones SANAS
+    (medido 2026-07-27: la ventana daba 6 falsos ON de 25, con CERO bytes escritos)."""
+    denied = {}
+    def on_err(reqId, code, msg, contract):
+        if code in (10190, 322, 102, 200, 354, 420) and contract is not None:
+            sym = getattr(contract, "symbol", "")
+            if sym:
+                denied[sym] = code
+    ib.errorEvent += on_err
+    asked = {}
+    try:
+        for s in syms:
+            try:
+                c = Stock(s, "SMART", "USD")
+                ib.qualifyContracts(c)
+                if not c.conId:
+                    print(f"{s}: sin conId (contrato inexistente) — SIN CINTA", file=sys.stderr)
+                    continue
+                tbt = ib.reqTickByTickData(c, "AllLast", 0, False)
+                tbt.updateEvent += make_on_whale(STATES[s])
+                asked[s] = (c, tbt)
+                ib.sleep(0.4)
+            except Exception as e:
+                print(f"{s}: whales sub fallo ({e})", file=sys.stderr)
+        ib.sleep(dwell)                  # deja aterrizar los 10190 antes de juzgar
+    finally:
+        ib.errorEvent -= on_err
+    granted = {}
+    for s, (c, tbt) in asked.items():
+        if s in denied:
+            try: ib.cancelTickByTickData(c, "AllLast")
+            except Exception: pass
+            print(f"{s}: whales tick-by-tick DENEGADO (err {denied[s]} — cap "
+                  f"cupo {TAPE_MAX} por CUENTA)", file=sys.stderr)
+        else:
+            STATES[s].whales_on = True
+            TAPE["granted"].add(s)
+            granted[s] = tbt
+            print(f"{s}: whales tick-by-tick ON (>= {WHALE_MIN_USD:.0f} USD)", file=sys.stderr)
+    return granted
+
+
 def subscribe_sym(ib, st):
     """(re)intenta suscribir un simbolo; deja backoff si no hay permisos."""
     if time.time() < st.blocked_until or st.subs:
@@ -275,31 +389,8 @@ def subscribe_sym(ib, st):
             return
         st.subs = [rtb, tkr]
         print(f"{st.sym}: SIP bars+NBBO suscritos (premium activo)", file=sys.stderr)
-        # ballenas tick-by-tick (2026-07-15, reemplaza el feed alpaca): IBKR
-        # capea las suscripciones tick-by-tick por cuenta — best-effort en el
-        # orden de la lista de simbolos; sin ballenas el bot solo pierde el 5%
-        # del score (gate degradado, no roto). Error tipico al topar: 10190.
-        try:
-            tbt_err = []
-            def on_tbt_err(reqId, code, msg, contract):
-                if code in (10190, 322, 102):
-                    tbt_err.append(code)
-            ib.errorEvent += on_tbt_err
-            tbt = ib.reqTickByTickData(smart, "AllLast", 0, False)
-            tbt.updateEvent += make_on_whale(st)
-            ib.sleep(1)
-            ib.errorEvent -= on_tbt_err
-            if tbt_err:
-                ib.cancelTickByTickData(smart, "AllLast")
-                print(f"{st.sym}: whales tick-by-tick DENEGADO (err {tbt_err[0]}"
-                      f" — cap de suscripciones)", file=sys.stderr)
-            else:
-                st.subs.append(tbt)
-                st.whales_on = True
-                print(f"{st.sym}: whales tick-by-tick ON (>= "
-                      f"{WHALE_MIN_USD:.0f} USD)", file=sys.stderr)
-        except Exception as e:
-            print(f"{st.sym}: whales sub fallo ({e})", file=sys.stderr)
+        # la cinta ya no se pide aqui: va en bloque (tape_subscribe) cuando estan todos
+        # los bars/NBBO arriba, para poder atribuir los 10190 por contrato.
         try:                                  # venue overnight best-effort
             onc = Stock(st.sym, "OVERNIGHT", "USD")
             ib.qualifyContracts(onc)
@@ -350,6 +441,7 @@ def _resub_all(ib, why):
         st.subs = []
         st.blocked_until = 0
         st.whales_on = False
+    TAPE["granted"] = set()
 
 
 def run_daemon():
@@ -358,14 +450,23 @@ def run_daemon():
     ib.reqMarketDataType(1)                  # 1 = REALTIME. Delayed PROHIBIDO.
     ib.errorEvent += lambda r, c, m, ct=None, *a: (
         c == 1101 and _resub_all(ib, "Error 1101 data-lost"))
+    order, dv = tape_order(SYMS)
     print(f"ibkr fleet daemon: TWS {HOST}:{PORT}, {len(SYMS)} syms "
           f"(bars 5s->1m + NBBO SIP + whales tick-by-tick + overnight)",
           file=sys.stderr)
+    print("cinta por USD/min medido: " + "  ".join(
+        f"{s}={'sin-medir' if dv[s] is None else format(dv[s], '.0f')}" for s in order),
+        file=sys.stderr)
     last_prune = 0.0
     last_resub = 0.0
     while ib.isConnected():
         for st in STATES.values():
             subscribe_sym(ib, st)
+        if not TAPE["granted"] and all(st.subs or st.blocked_until for st in STATES.values()):
+            for s_, tbt_ in tape_subscribe(ib, order[:TAPE_MAX]).items():
+                STATES[s_].subs.append(tbt_)
+            declare_blind([s for s in SYMS if s not in TAPE["granted"]],
+                          f"cupo_cuenta_{TAPE_MAX}_contratos")
         if time.time() - last_prune > 600:
             last_prune = time.time()
             for st in STATES.values():
@@ -405,6 +506,8 @@ def run_single():
         print(f"{st.sym}: warm-up {len(hist)} bars", file=sys.stderr)
     while ib.isConnected():
         subscribe_sym(ib, st)
+        if st.subs and not TAPE["granted"]:
+            tape_subscribe(ib, [st.sym])
         ib.sleep(15)
     raise ConnectionError("TWS desconectado")
 
@@ -416,11 +519,14 @@ def _main():
     while True:
         try:
             run_daemon() if DAEMON else run_single()
+        except SystemExit:
+            raise
         except Exception as e:
             print(f"ibkr bridge CAIDO: {e} — reintento en 15s (¿TWS en {PORT}?)",
                   file=sys.stderr)
             for st in STATES.values():
-                st.subs = []; st.blocked_until = 0
+                st.subs = []; st.blocked_until = 0; st.whales_on = False
+            TAPE["granted"] = set()
             time.sleep(15)
 
 
