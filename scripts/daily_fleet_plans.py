@@ -335,47 +335,76 @@ def futures_read():
     return out
 
 # ---------- motor del plan picaro ----------
-def load_earnings_calendar():
-    """Calendario earnings 'semana que viene' via x_earnings_post (mismo CSV v=152,
-    misma re-verificacion: fetch_csv re-fetcha Finviz si el cache pasa de 6h, porque
-    Finviz mueve fechas). {SYM: (fecha,'BMO'|'AMC',datetime)}. None si el feed esta
-    roto o el modulo no importa — jamas {} fabricado."""
+STALE_EARN_H = 6.0   # mismo ciclo que x_earnings_post.MAX_AGE_S: pasarlo = Finviz no re-verifico
+
+def earnings_calendar_dated():
+    """({SYM:(fecha,'BMO'|'AMC',datetime)}, edad_horas_del_CSV) via x_earnings_post (v=152).
+    fetch_csv RE-VERIFICA contra Finviz si el cache pasa de 6h porque Finviz MUEVE fechas.
+    Si la re-verificacion falla se sirve el CSV rancio **con su edad** y el plan lo dice:
+    callar un print que viene es peor que un dato viejo etiquetado.
+    (None, edad|None) si no hay ni cache legible — jamas {} fabricado."""
     try:
         import x_earnings_post as xep
     except Exception as e:
         print(f"AVISO earnings: x_earnings_post no importable ({e})", file=sys.stderr)
-        return None
+        return None, None
     body = xep.fetch_csv("152", xep.CACHE_152, xep.token(), cols=xep.COLS_152)
+    if body is None:
+        try:
+            body = open(xep.CACHE_152).read()
+            print("AVISO earnings: Finviz no re-verifico; se usa el CSV RANCIO, etiquetado",
+                  file=sys.stderr)
+        except OSError as e:
+            print(f"AVISO earnings: sin CSV de earnings ({e})", file=sys.stderr)
+            return None, None
+    try:
+        age_h = (time.time() - os.path.getmtime(xep.CACHE_152)) / 3600.0
+    except OSError:
+        age_h = None
     rows = xep.parse_csv(body)
     if not rows:
-        return None
+        return None, age_h
     out = {}
     for row in rows:
-        sym = row.get("Ticker", "").strip().upper()
+        sym = (row.get("Ticker") or "").strip().upper()
         parsed = xep.parse_earn(row.get("Earnings Date"))
         if sym and parsed:
             out[sym] = parsed
-    return out or None
+    return (out or None), age_h
 
-def earnings_veto_lines(sym, earn, today=None):
+def load_earnings_calendar():
+    """Solo el dict (o None). La edad del CSV la sirve earnings_calendar_dated()."""
+    return earnings_calendar_dated()[0]
+
+def earnings_veto_lines(sym, earn, today=None, age_h=None, cal_ok=True):
     """Texto de calendario+veto duro (regla 4: jamas aguantar prima comprada a traves
     del print). AMC bite al cierre del propio dia del print; BMO bite al cierre del dia
     ANTERIOR (el print ya salio antes de esa apertura). `earn` = (fecha,sesion,datetime)
-    de load_earnings_calendar() o None (sin earnings la semana que viene -> []) ."""
+    o None. Sin earnings y con calendario sano -> []; calendario CAIDO -> aviso, nunca
+    silencio; CSV rancio -> se dice la edad y el veto se marca como no re-verificado."""
+    hoy = today or time.strftime("%Y-%m-%d")
     if not earn:
-        return []
+        if cal_ok:
+            return []
+        return ["📅 EARNINGS: calendario NO verificado hoy (feed Finviz caido) —",
+                f"  confirmar a mano la fecha de {sym} antes de aguantar prima comprada."]
     edate, esess, edt = earn
     veto_date = edate if esess == "AMC" else (edt - dt.timedelta(days=1)).strftime("%Y-%m-%d")
-    hoy = today or time.strftime("%Y-%m-%d")
     sesion_txt = "tras el cierre (AMC)" if esess == "AMC" else "antes de abrir (BMO)"
-    out = [f"📅 EARNINGS {edate} {sesion_txt}."]
+    rancio = age_h is not None and age_h > STALE_EARN_H
+    out = [f"📅 EARNINGS {edate} {sesion_txt}."
+           + (f" ⚠ dato RANCIO ({age_h:.0f}h sin re-verificar; Finviz mueve fechas)" if rancio else "")]
     if hoy == veto_date:
         out.append(f"  🚫 VETO HOY: prima comprada de {sym} FUERA antes del cierre —")
         out.append("  regla 4: jamas aguantar prima comprada a traves del print.")
+        if rancio:
+            out.append("  fecha sin re-verificar hoy: confirmarla antes de fiarse del veto.")
     elif hoy < veto_date:
         out.append(f"  Veto de prima comprada entra en vigor al cierre de {veto_date}.")
     else:
         out.append(f"  Print ya paso ({edate}); veto ya no aplica.")
+        if rancio:
+            out.append("  dato rancio: si Finviz movio la fecha el print puede seguir pendiente.")
     return out
 
 def finviz_read(sym):
@@ -431,17 +460,25 @@ def gex_snapshot_for(sym):
         return None                              # cadena rancia (o del futuro): no se usa
     return g
 
+MACRO_AHEAD_D = 7        # el print de toda la semana entra en el plan (FOMC del miercoles se ve el domingo)
+MACRO_BACK_D = 1         # hacia atras solo la resaca del dia anterior
+
 def load_macro_events():
-    """CPI/FOMC/NFP confirmados cerca de hoy (macro_calendar.py). None si el modulo
-    no importa o el calendario no cubre el año — jamas [] disfrazado de 'sin eventos'."""
+    """CPI/FOMC/NFP confirmados de los proximos MACRO_AHEAD_D dias (macro_calendar.py).
+    None si el modulo no importa o el calendario no cubre el año — jamas [] disfrazado
+    de 'sin eventos'; [] solo cuando el año SI esta cubierto y no hay nada cerca."""
     try:
         import macro_calendar as mc
     except Exception as e:
         print(f"AVISO macro_calendar no importable ({e})", file=sys.stderr)
         return None
-    return mc.macro_events_near(dt.date.today())
+    evs = mc.macro_events_near(dt.date.today(), window_days=MACRO_AHEAD_D)
+    if evs is None:
+        return None
+    return [e for e in evs if e["days_away"] >= -MACRO_BACK_D]
 
-def plan_engine(sym, spot, cs, on, wb, ws, kor, fut, meta, vx=None, eur=None, earn=None, macro=None):
+def plan_engine(sym, spot, cs, on, wb, ws, kor, fut, meta, vx=None, eur=None, earn=None, macro=None,
+                earn_age_h=None, earn_cal_ok=True):
     reg = "NEGATIVO" if cs["net_gex"] < 0 else "POSITIVO"
     below_flip = cs["flip"] is not None and spot < cs["flip"]
     lines, score = [], 0
@@ -552,11 +589,15 @@ def plan_engine(sym, spot, cs, on, wb, ws, kor, fut, meta, vx=None, eur=None, ea
     if vx:
         lines.append(f"VOL (CBOE): VIX {vx['vix']:.1f} | VX1 {vx['vx1']:.1f} ({vx['b1']:+.1f}%) | VX2 {vx['vx2']:.1f}")
         lines.append(f"  -> {vx['reg']}")
-    earn_lines = earnings_veto_lines(sym, earn)
+    earn_lines = earnings_veto_lines(sym, earn, age_h=earn_age_h, cal_ok=earn_cal_ok)
     if earn_lines:
         lines.append("")
         lines.extend(earn_lines)
-    if macro:
+    if macro is None:
+        lines.append("")
+        lines.append(f"🗞 MACRO: SIN calendario CPI/FOMC/NFP para {dt.date.today().year} —"
+                     " refrescar data/macro_calendar_2026.json (caducado, no vacio).")
+    elif macro:
         lines.append("")
         for ev in macro:
             cuando = ("HOY" if ev["days_away"] == 0 else
@@ -782,8 +823,10 @@ def main():
     kor, fut = korea_read(), futures_read()
     vx = vx_term()
     eur = europe_read([m.get("europe") for m in FLEET.values() if m.get("europe")])
-    earn_cal = load_earnings_calendar() or {}
-    macro_ev = load_macro_events() or []
+    earn_cal, earn_age_h = earnings_calendar_dated()
+    earn_cal_ok = earn_cal is not None
+    earn_cal = earn_cal or {}
+    macro_ev = load_macro_events()          # None = calendario caducado; [] = medido y sin eventos
     made, scored, zerodte = [], [], {}
     for sym in [s.strip().upper() for s in a.tickers.split(",") if s.strip()]:
         meta = FLEET.get(sym, dict(style="weekly", fut="ES=F", korea=False))
@@ -797,7 +840,8 @@ def main():
             wb, ws = whale_read(sym)
             series = prepost_series(t)
             plan, dip_p, reg, score = plan_engine(sym, spot, cs, on, wb, ws, kor, fut, meta, vx, eur,
-                                                    earn_cal.get(sym), macro_ev)
+                                                    earn_cal.get(sym), macro_ev,
+                                                    earn_age_h=earn_age_h, earn_cal_ok=earn_cal_ok)
             pdf = make_pdf(a.outdir, sym, spot, cs, on, plan, series)
             with open(os.path.join(a.outdir, "x_drafts", f"{sym}.txt"), "w") as f:
                 f.write(x_draft(sym, spot, cs, on, dip_p, reg, kor, meta, eur))
@@ -892,11 +936,22 @@ def main():
             if d: macro += etiqueta + ": " + "  ".join(f"{k} {float(v):+.2f}%" for k, v in d.items()) + "\n"
         except Exception:
             pass
-    if macro_ev:
-        for ev in macro_ev:
-            cuando = ("HOY 🚫 no operar el print" if ev["days_away"] == 0 else
-                      f"en {ev['days_away']}d" if ev["days_away"] > 0 else f"hace {-ev['days_away']}d")
-            macro += f"🗞 MACRO {ev['kind']} {ev['date']} {ev['hora']} [{cuando}]\n"
+    if macro_ev is None:
+        macro += f"🗞 MACRO: SIN calendario CPI/FOMC/NFP para {dt.date.today().year} — refrescar\n"
+    for ev in (macro_ev or []):
+        cuando = ("HOY 🚫 no operar el print" if ev["days_away"] == 0 else
+                  f"en {ev['days_away']}d" if ev["days_away"] > 0 else f"hace {-ev['days_away']}d")
+        macro += f"🗞 MACRO {ev['kind']} {ev['date']} {ev['hora']} [{cuando}]\n"
+    if not earn_cal_ok:
+        macro += "📅 EARNINGS: calendario Finviz NO verificado hoy — fechas sin confirmar\n"
+    elif earn_age_h is not None and earn_age_h > STALE_EARN_H:
+        macro += f"📅 EARNINGS: CSV rancio ({earn_age_h:.0f}h) — Finviz mueve fechas, confirmar\n"
+    else:
+        fl_earn = sorted(s for s in earn_cal if s in FLEET)
+        if fl_earn:
+            macro += ("📅 EARNINGS flota: "
+                      + " | ".join(f"{s} {earn_cal[s][0]} {earn_cal[s][1]}" for s in fl_earn)
+                      + "\n")
     vxs = (macro + "\n" if macro else "") + vxs
     summary = vxs + (("PICKS PICAROS FINVIZ: " + " | ".join(picks) + "\n\n") if picks else "") + ("Planes picaros del dia. TOP accionables: "
                + ", ".join(f"{s} (dip {d:.0f}%, {r})" for _, s, d, r in scored[:5])
