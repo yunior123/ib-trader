@@ -161,3 +161,8 @@
 ## Ráfaga Yunior 2026-07-28 00:50
 
 
+
+- [ ] **"take a look at tradingflow, i have the window open in chrome, do it at 9:31, be
+      picaro"** (Yunior 2026-07-28 07:36) — leer la ventana TradingFlow viva a las 9:31 vía
+      Chrome, lectura pícara de flujo (formato: expiry/side/aggressor/premium/volOI/IV/sentiment).
+      `programado 9:31 (timer armado)`
