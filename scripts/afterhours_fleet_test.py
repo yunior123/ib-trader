@@ -14,7 +14,7 @@ import subprocess
 import time
 from datetime import datetime
 
-ROOT = "/Users/yuniorrodriguezosorio/ib-trader"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # regla 7: jamas ruta absoluta
 os.chdir(ROOT)
 DAY = datetime.now().strftime("%Y-%m-%d")
 MIRROR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "trading-signals", f"{DAY}.txt")

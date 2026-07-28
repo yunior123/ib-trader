@@ -7,7 +7,7 @@ import datetime as dt
 import os, sys, time, warnings
 
 warnings.filterwarnings("ignore")
-REPO = "/Users/yuniorrodriguezosorio/ib-trader"
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # regla 7: jamas ruta absoluta
 OUT = os.path.join(REPO, "data", "backtest")
 os.makedirs(OUT, exist_ok=True)
 

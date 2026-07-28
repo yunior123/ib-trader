@@ -129,7 +129,10 @@ def measure(sym):
 
 def run(syms, as_json=False):
     out = {s.upper(): measure(s.upper()) for s in syms}
-    json.dump(out, open("data/force.json", "w"), indent=1)
+    tmp = "data/force.json.tmp"
+    with open(tmp, "w") as f:
+        json.dump(out, f, indent=1)
+    os.replace(tmp, "data/force.json")   # compass.cpp lo lee en vivo
     if as_json:
         print(json.dumps(out, indent=1)); return out
     for s, m in out.items():

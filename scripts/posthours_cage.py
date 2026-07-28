@@ -115,7 +115,9 @@ def main():
     a = ap.parse_args()
     syms = FLEET if a.fleet else (a.syms or FLEET)
     out = {s.upper(): analyze(s.upper()) for s in syms}
-    json.dump(out, open("data/cage.json", "w"), indent=1)
+    tmp = "data/cage.json.tmp"
+    json.dump(out, open(tmp, "w"), indent=1)
+    os.replace(tmp, "data/cage.json")
     setups = [m for m in out.values() if m.get("setup")]
     if a.json:
         print(json.dumps(out, indent=1)); return

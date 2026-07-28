@@ -162,7 +162,10 @@ def calibrate():
         eff = b["wsum"] / b["nsum"] if b["nsum"] else p
         out[k] = dict(rate=round(eff, 3), ci_low=round(lo, 3), ci_high=round(hi, 3),
                       n=b["raw_n"], wins=b["raw_w"], trust=b["raw_n"] >= MIN_N)
-    json.dump(out, open(OUT, "w"), indent=1)
+    tmp = OUT + ".tmp"
+    with open(tmp, "w") as f:
+        json.dump(out, f, indent=1)
+    os.replace(tmp, OUT)   # order_engine/direction_view/daily_fleet_plans lo leen en vivo
     return out
 
 # ---------- barrera (ficha #1, ADITIVO — no toca calibrate() ni OUT) ----------

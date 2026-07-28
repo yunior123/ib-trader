@@ -1,154 +1,174 @@
 {
  "QQQ": {
   "index": "QQQ",
-  "score": -0.088,
+  "score": 0.149,
   "verdict": "ENGRANAJE NEUTRO/MIXTO: componentes divididos \u2014 QQQ sin liderazgo claro",
   "aligned_top": [
-   "MSFT"
+   "MSFT",
+   "AAPL"
   ],
-  "breakdowns": [],
-  "breakouts": [],
+  "breakdowns": [
+   "NVDA",
+   "AVGO",
+   "AMD"
+  ],
+  "breakouts": [
+   "MSFT",
+   "AAPL",
+   "GOOGL",
+   "NFLX"
+  ],
   "components": {
    "NVDA": {
     "w": 9.0,
-    "lean": -0.13,
-    "tag": "rango",
-    "gap": 0.0
+    "lean": -1.0,
+    "tag": "RUPTURA BAJISTA",
+    "gap": -5.21
    },
    "MSFT": {
     "w": 8.0,
-    "lean": -0.22,
-    "tag": "rango",
-    "gap": 0.0
+    "lean": 1.0,
+    "tag": "ruptura alcista",
+    "gap": 3.48
    },
    "AAPL": {
     "w": 7.5,
-    "lean": 0.24,
-    "tag": "rango",
-    "gap": 0.0
+    "lean": 1.0,
+    "tag": "ruptura alcista",
+    "gap": 1.91
    },
    "AMZN": {
     "w": 5.5,
-    "lean": -0.17,
+    "lean": 0.27,
     "tag": "rango",
-    "gap": 0.0
+    "gap": 0.36
    },
    "AVGO": {
     "w": 5.0,
-    "lean": -0.12,
-    "tag": "rango",
-    "gap": 0.0
+    "lean": -0.95,
+    "tag": "RUPTURA BAJISTA",
+    "gap": -1.42
    },
    "META": {
     "w": 4.5,
-    "lean": -0.27,
+    "lean": 0.38,
     "tag": "rango",
-    "gap": 0.0
+    "gap": 0.64
    },
    "GOOGL": {
     "w": 5.0,
-    "lean": -0.09,
-    "tag": "rango",
-    "gap": 0.0
+    "lean": 1.0,
+    "tag": "ruptura alcista",
+    "gap": 2.31
    },
    "TSLA": {
     "w": 3.0,
-    "lean": -0.06,
+    "lean": -0.77,
     "tag": "rango",
-    "gap": 0.0
+    "gap": -1.85
    },
    "NFLX": {
     "w": 3.0,
-    "lean": 0.17,
-    "tag": "rango",
-    "gap": 0.0
+    "lean": 1.0,
+    "tag": "ruptura alcista",
+    "gap": 2.5
    },
    "AMD": {
     "w": 2.0,
-    "lean": -0.22,
-    "tag": "rango",
-    "gap": 0.0
+    "lean": -1.0,
+    "tag": "RUPTURA BAJISTA",
+    "gap": -8.92
    },
    "QCOM": {
     "w": 1.2,
-    "lean": -0.16,
+    "lean": -0.5,
     "tag": "rango",
-    "gap": 0.0
+    "gap": -0.32
    }
   },
-  "ts": 1784985124
+  "ts": 1785244341
  },
  "SPY": {
   "index": "SPY",
-  "score": -0.084,
-  "verdict": "ENGRANAJE NEUTRO/MIXTO: componentes divididos \u2014 SPY sin liderazgo claro",
+  "score": 0.219,
+  "verdict": "ENGRANAJE DEBIL (+0.22): sesgo sin confluencia \u2014 no confirma",
   "aligned_top": [
-   "MSFT"
+   "MSFT",
+   "AAPL"
   ],
-  "breakdowns": [],
-  "breakouts": [],
+  "breakdowns": [
+   "NVDA",
+   "AVGO",
+   "AMD"
+  ],
+  "breakouts": [
+   "MSFT",
+   "AAPL",
+   "GOOGL",
+   "NFLX"
+  ],
   "components": {
    "NVDA": {
     "w": 7.5,
-    "lean": -0.13,
-    "tag": "rango",
-    "gap": 0.0
+    "lean": -1.0,
+    "tag": "RUPTURA BAJISTA",
+    "gap": -5.21
    },
    "MSFT": {
     "w": 7.0,
-    "lean": -0.22,
-    "tag": "rango",
-    "gap": 0.0
+    "lean": 1.0,
+    "tag": "ruptura alcista",
+    "gap": 3.48
    },
    "AAPL": {
     "w": 6.5,
-    "lean": 0.24,
-    "tag": "rango",
-    "gap": 0.0
+    "lean": 1.0,
+    "tag": "ruptura alcista",
+    "gap": 1.91
    },
    "AMZN": {
     "w": 4.0,
-    "lean": -0.17,
+    "lean": 0.27,
     "tag": "rango",
-    "gap": 0.0
+    "gap": 0.36
    },
    "META": {
     "w": 3.0,
-    "lean": -0.27,
+    "lean": 0.38,
     "tag": "rango",
-    "gap": 0.0
+    "gap": 0.64
    },
    "GOOGL": {
     "w": 4.0,
-    "lean": -0.09,
-    "tag": "rango",
-    "gap": 0.0
+    "lean": 1.0,
+    "tag": "ruptura alcista",
+    "gap": 2.31
    },
    "AVGO": {
     "w": 2.5,
-    "lean": -0.12,
-    "tag": "rango",
-    "gap": 0.0
+    "lean": -0.95,
+    "tag": "RUPTURA BAJISTA",
+    "gap": -1.42
    },
    "TSLA": {
     "w": 2.0,
-    "lean": -0.06,
+    "lean": -0.77,
     "tag": "rango",
-    "gap": 0.0
+    "gap": -1.85
    },
    "AMD": {
     "w": 1.2,
-    "lean": -0.22,
-    "tag": "rango",
-    "gap": 0.0
+    "lean": -1.0,
+    "tag": "RUPTURA BAJISTA",
+    "gap": -8.92
    },
    "NFLX": {
     "w": 1.5,
-    "lean": 0.17,
-    "tag": "rango",
-    "gap": 0.0
+    "lean": 1.0,
+    "tag": "ruptura alcista",
+    "gap": 2.5
    }
   },
-  "ts": 1784985126
+  "ts": 1785244341
  }
 }

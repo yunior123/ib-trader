@@ -27,6 +27,21 @@ DB = os.path.join(REPO, "trades.db")
 
 import regen_signals as RS                                          # noqa: E402
 
+
+def _rth_now():
+    import time as _time
+    lt = _time.localtime()
+    return lt.tm_wday < 5 and 930 <= lt.tm_hour * 100 + lt.tm_min < 1600
+
+
+# Cazado 2026-07-28: con el mercado ABIERTO el subprocess de regen_signals escribe en trades.db
+# MIENTRAS los 8 daemons vivos escriben `signals` en el mismo fichero -> lock de SQLite y la
+# suite entera se atasca (~73-88%) sin fallar jamas. Estos tests validan contra la BD de
+# PRODUCCION a proposito (test #2 = "signals intacta byte a byte"), asi que no se pueden
+# apuntar a una copia: se corren fuera de RTH (cron 4am / tarde-noche), que es su contexto real.
+pytestmark = pytest.mark.skipif(
+    _rth_now(), reason="mercado abierto: trades.db en uso por la flota viva (lock SQLite)")
+
 TEST_RUN = "PYTEST"
 
 

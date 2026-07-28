@@ -946,9 +946,14 @@ def zones_load(sym):
 
 
 def zones_save(sym, zones):
+    # bug cazado en caza de bugs 2026-07-28: escritura directa sin tmp+rename — order_engine.cpp
+    # relee este fichero CADA CICLO en caliente; una escritura a mitad podia entregarle un JSON
+    # con kind/side ausentes, y order_engine defaulteaba silenciosamente a "buy"/"call".
     try:
-        with open(zones_path(sym), "w") as f:
+        tmp = zones_path(sym) + f".{os.getpid()}.tmp"
+        with open(tmp, "w") as f:
             json.dump(zones, f)
+        os.replace(tmp, zones_path(sym))
     except Exception as e:
         print(f"[zone] save falló ({e})")
 
@@ -979,6 +984,39 @@ def persist_vix(vix, vix_live):
         except OSError:
             pass
         print(f"[vix] persist falló ({e})")
+
+
+_WHALE_PRIORITY_F = os.path.join(REPO, "data", "whale_priority.txt")
+_WHALE_FILTER_F = os.path.join(REPO, "data", "whale_alert_filter.txt")
+
+
+def _atomic_write(path, text):
+    tmp = f"{path}.{os.getpid()}.tmp"
+    try:
+        with open(tmp, "w") as f:
+            f.write(text)
+        os.replace(tmp, path)
+    except Exception as e:
+        print(f"[whale_cfg] escritura fallo ({path}: {e})")
+
+
+def whale_cfg_status():
+    """Panel de ballenas (Yunior 2026-07-28 'ajustar desde el macos o chrome app'): lee
+    data/whale_priority.txt + data/whale_alert_filter.txt tal como los lee
+    opt_whale_watch.py — mismo patron, ausente/vacio -> lista/dict vacio, nunca inventado."""
+    try:
+        priority = open(_WHALE_PRIORITY_F).read().split()
+    except Exception:
+        priority = []
+    filters = {}
+    try:
+        for line in open(_WHALE_FILTER_F):
+            parts = line.split()
+            if len(parts) >= 2 and parts[1].upper() in ("CALLS", "PUTS", "BOTH"):
+                filters[parts[0].upper()] = parts[1].upper()
+    except Exception:
+        pass
+    return {"type": "whale_cfg", "priority": priority, "filters": filters, "priority_max": 5}
 
 
 def chain_exps(sym):
@@ -2019,7 +2057,10 @@ async def _relive_korea(state, sym):
         return
     from ib_async import Contract
     try:
-        (c,) = await ib.qualifyContractsAsync(Contract(conId=cid, exchange="KRX"))
+        # wait_for obligatorio: RequestTimeout NO cubre las llamadas *Async (solo el camino
+        # sincrono via util.run) — sin esto, TWS mudo congela esta task para siempre (caza 2026-07-28)
+        (c,) = await asyncio.wait_for(
+            ib.qualifyContractsAsync(Contract(conId=cid, exchange="KRX")), 15)
     except Exception as e:
         state._backfill_reason = f"{sym.upper()}: IBKR no cualifica el KRX conId {cid} ({e})"
         print(f"[sym] KRX no cualifica {sym.upper()} conId {cid} ({e})")
@@ -2044,7 +2085,7 @@ async def _relive_symbol(state, sym, rebroadcast=False):
     from ib_async import Stock
     contract = Stock(sym.upper(), "SMART", "USD")
     try:
-        (contract,) = await ib.qualifyContractsAsync(contract)
+        (contract,) = await asyncio.wait_for(ib.qualifyContractsAsync(contract), 15)
     except Exception as e:
         print(f"[sym] no cualifica {sym.upper()} ({e})")
         if not state.bars:   # sin archivo instantáneo Y sin contrato -> decirlo, no callar
@@ -2239,7 +2280,8 @@ def create_app(state):
                                 # LIVE: cualifica el contrato antes de aceptar (símbolo real)
                                 try:
                                     from ib_async import Stock
-                                    await st._ib.qualifyContractsAsync(Stock(s, "SMART", "USD"))
+                                    await asyncio.wait_for(
+                                        st._ib.qualifyContractsAsync(Stock(s, "SMART", "USD")), 15)
                                 except Exception as e:
                                     ok = False
                                     print(f"[watchlist] no cualifica {s} ({e})")
@@ -2307,6 +2349,19 @@ def create_app(state):
                         except Exception:
                             pass
                     await ws.send_json(ib_mode_status())
+                elif isinstance(ctl, dict) and ctl.get("cmd") == "whale_cfg":
+                    # panel de ballenas: carril rapido (<=5 tickers) + filtro CALLS/PUTS/BOTH por
+                    # ticker. opt_whale_watch.py relee data/whale_priority.txt y
+                    # data/whale_alert_filter.txt cada ciclo (~5min), sin reiniciar el proceso.
+                    if ctl.get("act") == "set":
+                        pr = [s.strip().upper() for s in (ctl.get("priority") or [])
+                              if isinstance(s, str) and s.strip()][:5]
+                        _atomic_write(_WHALE_PRIORITY_F, " ".join(pr))
+                        filt = ctl.get("filters") or {}
+                        filt_lines = [f"{str(k).upper()} {str(v).upper()}" for k, v in filt.items()
+                                      if isinstance(v, str) and v.upper() in ("CALLS", "PUTS", "BOTH")]
+                        _atomic_write(_WHALE_FILTER_F, "\n".join(filt_lines))
+                    await ws.send_json(whale_cfg_status())
                 elif isinstance(ctl, dict) and ctl.get("cmd") == "account":
                     # posiciones + órdenes + balance del MODO actual (readonly).
                     await ws.send_json(await account_snapshot())
@@ -2825,8 +2880,8 @@ async def live_feed(state, port, client_id=60):
             print(f"[live] {state.sym.upper()}: sin contrato KRX; el vivo sigue por archivo")
     else:
         try:
-            (contract,) = await ib.qualifyContractsAsync(
-                Stock(state.sym.upper(), "SMART", "USD"))
+            (contract,) = await asyncio.wait_for(ib.qualifyContractsAsync(
+                Stock(state.sym.upper(), "SMART", "USD")), 15)
         except Exception as e:
             print(f"[live] {state.sym.upper()} no cualifica ({e})")
         state._contract = contract
@@ -2843,7 +2898,7 @@ async def live_feed(state, port, client_id=60):
     try:
         from ib_async import Index
         vx = Index("VIX", "CBOE")
-        await ib.qualifyContractsAsync(vx)
+        await asyncio.wait_for(ib.qualifyContractsAsync(vx), 15)
         state._vix_ticker = ib.reqMktData(vx, "", False, False)  # solo llena si hay sub CBOE realtime
     except Exception as e:
         print(f"[vix] no disponible ({e})")

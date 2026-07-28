@@ -2,10 +2,11 @@
 """Aplica el motor v5 + renombres BUY/SELL a los 20 *_signal_bot.cpp.
 Sym-aware (no regenera desde el master: los bots KRX tienen logica KST propia).
 Idempotente: salta archivos que ya tienen 'MOTOR v5'."""
+import os
 import re
 import sys
 
-ROOT = "/Users/yuniorrodriguezosorio/ib-trader"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # regla 7: jamas ruta absoluta
 BOTS = ["aapl", "amd", "asml", "cper", "dram", "gld", "intc", "kospi", "nok",
         "nvda", "qqq", "samsung", "skhy", "skhynix", "slv", "spcx", "tsla",
         "tsm", "txn", "uso"]

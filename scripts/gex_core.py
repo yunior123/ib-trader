@@ -363,6 +363,12 @@ def build_gex(contracts, spot, scale="house"):
     gross = sum(abs(v) for v in profile.values()) if profile else None
     out["gross_gex"] = gross
     out["n_strikes_populated"] = len(profile)
+    # ANCHO REAL de strikes con gamma (no la banda PEDIDA): el cache TWS pide ±15% pero su cap de
+    # 20 strikes lo recorta a ±1,4% en QQQ, y sobre esa ventana estrecha el flip es el borde y el
+    # regimen sale al reves (NVDA/TSLA/AMD/INTC NEG cuando el libro ancho dice POS, medido en RTH
+    # 2026-07-27). Este es el numero que decide si una fuente SIRVE PARA EL MAPA (>= BAND_FLOOR).
+    out["strike_span_pct"] = (((max(profile) - min(profile)) / 2 / spot)
+                              if (profile and spot) else None)
     out["bifurcation"] = (gross / abs(net)) if (gross and net not in (None, 0)) else None
     out["hhi"] = (sum((abs(v) / gross) ** 2 for v in profile.values())
                   if gross else None)
@@ -968,7 +974,8 @@ def _health_shell(spot, scale, hdr, health):
         "flip_static": None, "flip_recompute": None, "flip_src": "none",
         "roots": [], "trapdoor_root": None,
         "spot": spot, "scale": scale,
-        "gross_gex": None, "n_strikes_populated": 0, "bifurcation": None, "hhi": None,
+        "gross_gex": None, "n_strikes_populated": 0, "strike_span_pct": None,
+        "bifurcation": None, "hhi": None,
         "n_contracts_oi": 0, "n_oi_gamma_ok": 0, "n_oi_no_greeks": 0,
         "greeks_ok_pct_oi": None, "n_gamma_ok": 0, "n_no_greeks": 0, "greeks_ok_pct": None,
         "call_wall": None, "put_wall": None, "abs_wall": None,

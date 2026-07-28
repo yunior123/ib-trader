@@ -57,7 +57,7 @@ import subprocess
 import sys
 from zoneinfo import ZoneInfo
 
-REPO = "/Users/yuniorrodriguezosorio/ib-trader"
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # regla 7: jamas ruta absoluta
 CACHE = os.path.join(REPO, "data", "backtest")
 ET = ZoneInfo("America/New_York")
 

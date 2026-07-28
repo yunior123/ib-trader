@@ -707,7 +707,10 @@ def make_pdf(outdir, sym, spot, cs, on, plan_lines, series):
             ax.annotate(f"{k:g}{right} {oi/1000:.1f}k", (len(series) * 1.004 if series is not None else 1, k),
                         fontsize=7, color=col, va="center", annotation_clip=False)
         ax.axhline(cs["pain"], color="#1565c0", ls="--", lw=1.2)
-        if cs["flip"]: ax.axhline(cs["flip"], color="#7b1fa2", ls="--", lw=1.4)
+        ax.annotate(f"max pain {cs['pain']:g}", (2, cs["pain"]), fontsize=7, color="#1565c0", va="bottom")
+        if cs["flip"]:
+            ax.axhline(cs["flip"], color="#7b1fa2", ls="--", lw=1.4)
+            ax.annotate(f"flip {cs['flip']:g}", (2, cs["flip"]), fontsize=7, color="#7b1fa2", va="bottom")
         ax.axhline(on.get("prev_close", spot), color="#f9a825", ls=":", lw=1.4)
         ax.annotate(f"cierre previo {on.get('prev_close',0):.2f} (iman del dip {'-liquidez' if True else ''})",
                     (2, on.get("prev_close", spot)), fontsize=7, color="#f9a825", va="bottom")

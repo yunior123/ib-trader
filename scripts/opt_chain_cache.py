@@ -105,6 +105,7 @@ class ChainCache:
             try:
                 self.ib.connect("127.0.0.1", PORT, clientId=CLIENT_ID,
                                 timeout=15, readonly=True)
+                self.ib.RequestTimeout = 15   # causa raiz 2026-07-28 (opt_whale_watch.py): sin esto, qualifyContracts cuelga para siempre si TWS no responde
                 self.ib.reqMarketDataType(1)              # realtime SIEMPRE (ley #6)
                 log(f"conectado TWS {PORT} clientId {CLIENT_ID} (readonly)")
             except Exception as e:

@@ -770,7 +770,10 @@ def main():
         except Exception as e:
             res = {"error": str(e), "signals": []}
         results[sym] = res
-        json.dump(results, open(RESULTS, "w"))
+        tmp = RESULTS + ".tmp"
+        with open(tmp, "w") as f:
+            json.dump(results, f)
+        os.replace(tmp, RESULTS)   # checkpoint: no perder lo ya calculado si muere a mitad
         ns = len(res.get("signals", []))
         print(f"{sym}: {ns} señales elastic | {res.get('band_walks_5m', '?')} band-walks | "
               f"{res.get('n_days', '?')} dias | {res.get('error', '')}")

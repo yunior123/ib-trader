@@ -3,7 +3,7 @@
 > Vivo. Marcar [x] al cerrar. Manual completo: `docs/DAILY-SYSTEM.md`.
 
 ## 🔴 SESIÓN 2026-07-28 (tarde) — ballenas: mensajes, filtro marginal, carril rápido
-- [ ] **"las alertas de ballenas deberian decir: alerta ballena first, then the message" +
+- [x] **"las alertas de ballenas deberian decir: alerta ballena first, then the message" +
       "verifica que esa [EWY] no es ballenas y que no fue un fallo de calculo" + "IBKR limita a
       5 tickers... tick a tick, verifica" + "kill the schedule to watch whales in claude code" +
       "explore full codebase for bugs, backtest whole software, hunt bugs" + "las alertas...
@@ -118,6 +118,51 @@
             - **Suite completa post-Fase-3** (`pytest tests/ -q --ignore=tests/test_regen_signals.py`,
               24.6s): **967 passed, 4 skipped, 1 failed** — idéntico a Fase 1+2, mismo único fallo
               preexistente, CERO regresiones en los 18 ficheros adicionales tocados.
+      - [x] **"arregla todo, no dejes nada pendiente" (Yunior 2026-07-28 ~16:00) — pasada de
+            cierre, CERO pendientes**:
+            1. `order_engine.cpp`: default silencioso `"buy"/"call"` al releer `exec_zones_<sym>.json`
+               con `side`/`kind` ausentes → ahora RECHAZA la zona ese ciclo (mismo patrón que
+               `cmd close`); reutiliza el camino probado de "zona desaparecida". Compilado con
+               `order_engine/build.sh` (cero warnings) + **suite 648/648 OK + ASan/UBSan limpio**.
+               Lado escritor cerrado también: `zones_save()` en `chart_bridge.py` ahora es
+               atómico (tmp+`os.replace`) — la vía real del JSON parcial.
+            2. `scalper/whale_scalper.cpp`: recovery con ledger corrupto (`strike_c=0`) ahora
+               aborta con grito en vez de gestionar un contrato inválido a ciegas
+               (`OptContract::valid()` cableado). Recompilado (release+ASan, cero warnings) +
+               **13/13 escenarios de tests OK**.
+            3. `chart_bridge.py`: los 5 `await ib.qualifyContractsAsync(...)` desnudos envueltos
+               en `asyncio.wait_for(..., 15)` — `ib.RequestTimeout` NO cubre el camino async
+               (verificado en el código de ib_insync: solo `_run()` síncrono lo aplica).
+            4. `options_hunter.py`: `num()` ya no fabrica `0.0` (regla #3) — `None` + descarte de
+               fila sin precio/volumen/rvol/change, `bias=SINDATO` si falta Change-from-Open,
+               RSI ausente ya no etiqueta "sobrevendido". Probado funcionalmente con filas
+               malformadas.
+            5. `test_chart_bridge_mock_isolation.py`: el único fallo preexistente de la suite
+               ERA DEL ARNÉS (a `_FakeState` le faltaba `.sym` tras el gate `_session_open` de
+               esta mañana) — arreglado, **6/6 en verde**.
+            6. `test_regen_signals.py`: `skipif` durante RTH con el porqué documentado (valida
+               contra la BD de producción a propósito; en sesión viva la flota tiene el lock).
+               Corrido entero fuera de RTH: **7 passed en 4:56** — diagnóstico de contención
+               confirmado en ambas direcciones.
+            7. Rutas absolutas `/Users/...` (regla 7) eliminadas de los 11 ficheros que quedaban:
+               `apply_v5/v6`, `afterhours_fleet_test`, `bollinger_backtest/fetch30d`,
+               `eod_signal_validation`, `full_history_report/optbt`, `polygon_dl_0dte`,
+               `v5_backtest`, `yoel_backtest`, `docs/probes/hiro_probe_polygon` — todas derivadas
+               de `__file__`; `py_compile` limpio en los 11. **Cero rutas absolutas restantes**
+               en Python del repo.
+            8. `posthours_cage.py`: escritura de `data/cage.json` ahora atómica.
+            9. **Panel 🐋 probado end-to-end en vivo**: `cmd:"whale_cfg"` por el WebSocket real
+               escribió `whale_priority.txt`/`whale_alert_filter.txt` correctamente (ficheros de
+               prueba borrados después — la config la elige Yunior desde el panel).
+            10. **Redeploy completo**: 6 ventanas de `chart_bridge` relanzadas (health 200 + panel
+                ballenas servido en las 6), `ibkr_bar_bridge`/`korea_bar_bridge`/`opt_chain_cache`/
+                `options_enrich`/`opt_whale_watch` relanzados con el código nuevo (venv canónico;
+                el duplicado de enrich por clientId 88 matado), y **Cockpit.app reconstruida**
+                (`macapp/build.sh`, 151M, firma válida, entregada al Desktop).
+            Notas de auditoría que NO son bugs (decisiones de diseño documentadas, se dejan):
+            la asimetría de gating en rutas puramente protectoras de order_engine (cubiertas por
+            `FILLED`-gating) y la ventana cancelar-stop→mandar-close de `cmd close` (invertir el
+            orden crearía el riesgo peor de dos órdenes vivas; el propio código lo documenta).
       Plan completo: `~/.claude/plans/analyze-that-also-explore-peaceful-hennessy.md`.
 
 ## 🔴 SESIÓN 2026-07-28 (mañana) — apuntadas AL VUELO

@@ -1,14 +1,135 @@
 {
- "bytes_today": 100225,
- "date": "2026-07-25",
- "projected_mb_day": 7.82,
- "rows_today": 26,
+ "bytes_today": 53336106,
+ "date": "2026-07-28",
+ "projected_mb_day": 51.36,
+ "rows_today": 2430,
  "skipped_already_done": [],
- "slot": "0950",
- "slots_today": 1,
- "stale": [],
- "syms_expected": 26,
- "ts": 1784987458,
+ "slot": "1605",
+ "slots_today": 81,
+ "stale": [
+  {
+   "age_s": 1466,
+   "sym": "AAPL"
+  },
+  {
+   "age_s": 110292,
+   "sym": "AMD"
+  },
+  {
+   "age_s": 110293,
+   "sym": "AMZN"
+  },
+  {
+   "age_s": 110292,
+   "sym": "ASML"
+  },
+  {
+   "age_s": 110291,
+   "sym": "AVGO"
+  },
+  {
+   "age_s": 67609,
+   "sym": "DRAM"
+  },
+  {
+   "age_s": 110291,
+   "sym": "EWY"
+  },
+  {
+   "age_s": 88276,
+   "sym": "GLD"
+  },
+  {
+   "age_s": 14134,
+   "sym": "GOOGL"
+  },
+  {
+   "age_s": 6929,
+   "sym": "INTC"
+  },
+  {
+   "age_s": 110292,
+   "sym": "LRCX"
+  },
+  {
+   "age_s": 110291,
+   "sym": "META"
+  },
+  {
+   "age_s": 22956,
+   "sym": "MSFT"
+  },
+  {
+   "age_s": 7095,
+   "sym": "MU"
+  },
+  {
+   "age_s": 110291,
+   "sym": "NFLX"
+  },
+  {
+   "age_s": 110291,
+   "sym": "NOK"
+  },
+  {
+   "age_s": 13508,
+   "sym": "NVDA"
+  },
+  {
+   "age_s": 110291,
+   "sym": "QCOM"
+  },
+  {
+   "age_s": 22956,
+   "sym": "QQQ"
+  },
+  {
+   "age_s": 15809,
+   "sym": "SKHY"
+  },
+  {
+   "age_s": 5640,
+   "sym": "SMH"
+  },
+  {
+   "age_s": 110292,
+   "sym": "SNDK"
+  },
+  {
+   "age_s": 110292,
+   "sym": "SPCX"
+  },
+  {
+   "age_s": 2153,
+   "sym": "SPY"
+  },
+  {
+   "age_s": 110293,
+   "sym": "STX"
+  },
+  {
+   "age_s": 110291,
+   "sym": "TSLA"
+  },
+  {
+   "age_s": 110293,
+   "sym": "TSM"
+  },
+  {
+   "age_s": 110292,
+   "sym": "TXN"
+  },
+  {
+   "age_s": 110292,
+   "sym": "WDC"
+  },
+  {
+   "age_s": 110291,
+   "sym": "XLK"
+  }
+ ],
+ "syms_expected": 30,
+ "ts": 1785269281,
  "unreadable": [],
  "written": [
   "AAPL",
@@ -17,12 +138,15 @@
   "ASML",
   "AVGO",
   "DRAM",
+  "EWY",
+  "GLD",
   "GOOGL",
   "INTC",
   "LRCX",
   "META",
   "MSFT",
   "MU",
+  "NFLX",
   "NOK",
   "NVDA",
   "QCOM",
@@ -36,6 +160,7 @@
   "TSLA",
   "TSM",
   "TXN",
-  "WDC"
+  "WDC",
+  "XLK"
  ]
 }

@@ -58,6 +58,22 @@
    "sessions": 0,
    "zero_byte": true
   },
+  "MU": {
+   "absorption_ready": false,
+   "days": {
+    "2026-07-28": {
+     "first_ts": 1785253766,
+     "last_ts": 1785270902,
+     "minutes_with_print": 283,
+     "pct_of_session_covered": 72.6,
+     "rows": 83582
+    }
+   },
+   "gaps": 0,
+   "rows": 83582,
+   "sessions": 1,
+   "zero_byte": false
+  },
   "NOK": {
    "absorption_ready": false,
    "days": {
@@ -83,20 +99,88 @@
      "minutes_with_print": 26,
      "pct_of_session_covered": 6.7,
      "rows": 1907
+    },
+    "2026-07-27": {
+     "first_ts": 1785139200,
+     "last_ts": 1785196788,
+     "minutes_with_print": 862,
+     "pct_of_session_covered": 221.0,
+     "rows": 143166
+    },
+    "2026-07-28": {
+     "first_ts": 1785225600,
+     "last_ts": 1785270488,
+     "minutes_with_print": 647,
+     "pct_of_session_covered": 165.9,
+     "rows": 87291
     }
    },
    "gaps": 0,
-   "rows": 1907,
-   "sessions": 1,
+   "rows": 232364,
+   "sessions": 3,
    "zero_byte": false
   },
   "QQQ": {
    "absorption_ready": false,
-   "days": {},
+   "days": {
+    "2026-07-27": {
+     "first_ts": 1785139200,
+     "last_ts": 1785196797,
+     "minutes_with_print": 921,
+     "pct_of_session_covered": 236.2,
+     "rows": 271479
+    },
+    "2026-07-28": {
+     "first_ts": 1785225600,
+     "last_ts": 1785270902,
+     "minutes_with_print": 736,
+     "pct_of_session_covered": 188.7,
+     "rows": 252330
+    }
+   },
    "gaps": 0,
-   "rows": 0,
-   "sessions": 0,
-   "zero_byte": true
+   "rows": 523809,
+   "sessions": 2,
+   "zero_byte": false
+  },
+  "SMH": {
+   "absorption_ready": false,
+   "days": {
+    "2026-07-27": {
+     "first_ts": 1785139200,
+     "last_ts": 1785196790,
+     "minutes_with_print": 572,
+     "pct_of_session_covered": 146.7,
+     "rows": 78011
+    },
+    "2026-07-28": {
+     "first_ts": 1785225600,
+     "last_ts": 1785270826,
+     "minutes_with_print": 547,
+     "pct_of_session_covered": 140.3,
+     "rows": 66659
+    }
+   },
+   "gaps": 0,
+   "rows": 144670,
+   "sessions": 2,
+   "zero_byte": false
+  },
+  "SNDK": {
+   "absorption_ready": false,
+   "days": {
+    "2026-07-28": {
+     "first_ts": 1785253766,
+     "last_ts": 1785270897,
+     "minutes_with_print": 42,
+     "pct_of_session_covered": 10.8,
+     "rows": 8243
+    }
+   },
+   "gaps": 0,
+   "rows": 8243,
+   "sessions": 1,
+   "zero_byte": false
   },
   "SPCX": {
    "absorption_ready": false,
@@ -116,11 +200,26 @@
   },
   "SPY": {
    "absorption_ready": false,
-   "days": {},
+   "days": {
+    "2026-07-27": {
+     "first_ts": 1785139200,
+     "last_ts": 1785196788,
+     "minutes_with_print": 822,
+     "pct_of_session_covered": 210.8,
+     "rows": 297801
+    },
+    "2026-07-28": {
+     "first_ts": 1785225600,
+     "last_ts": 1785270901,
+     "minutes_with_print": 680,
+     "pct_of_session_covered": 174.4,
+     "rows": 206440
+    }
+   },
    "gaps": 0,
-   "rows": 0,
-   "sessions": 0,
-   "zero_byte": true
+   "rows": 504241,
+   "sessions": 2,
+   "zero_byte": false
   },
   "TSLA": {
    "absorption_ready": false,
@@ -131,11 +230,25 @@
      "minutes_with_print": 28,
      "pct_of_session_covered": 7.2,
      "rows": 1716
+    },
+    "2026-07-27": {
+     "first_ts": 1785139200,
+     "last_ts": 1785196799,
+     "minutes_with_print": 793,
+     "pct_of_session_covered": 203.3,
+     "rows": 76575
+    },
+    "2026-07-28": {
+     "first_ts": 1785225600,
+     "last_ts": 1785253676,
+     "minutes_with_print": 358,
+     "pct_of_session_covered": 91.8,
+     "rows": 36433
     }
    },
    "gaps": 0,
-   "rows": 1716,
-   "sessions": 1,
+   "rows": 114724,
+   "sessions": 3,
    "zero_byte": false
   },
   "TSM": {
@@ -155,6 +268,6 @@
    "zero_byte": true
   }
  },
- "updated": 1785040028,
+ "updated": 1785270903,
  "whale_min_usd": 50000.0
 }

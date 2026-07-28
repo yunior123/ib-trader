@@ -2,7 +2,7 @@
 """Probe EMPIRICO del entitlement de Polygon para HIRO. Read-only. No toca el repo."""
 import json, os, sys, time, urllib.request, urllib.error, datetime
 
-ENV = "/Users/yuniorrodriguezosorio/ib-trader/feeds.env"
+ENV = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), "feeds.env")   # regla 7
 KEY = None
 for ln in open(ENV):
     if ln.startswith("POLYGON_KEY="):

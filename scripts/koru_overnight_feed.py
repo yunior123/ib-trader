@@ -17,6 +17,7 @@ SYMS = ["KORU", "SOXS", "SQQQ", "SOXL", "TQQQ"]
 while True:
     try:
         ib = IB(); ib.connect("127.0.0.1", get_port(), clientId=96, readonly=True, timeout=15)
+        ib.RequestTimeout = 15   # causa raiz 2026-07-28 (opt_whale_watch.py): sin esto, qualifyContracts cuelga para siempre si TWS no responde
         ib.reqMarketDataType(1)
         tickers = {}
         for sym in SYMS:

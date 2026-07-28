@@ -247,6 +247,17 @@ static int run_sim(const std::string& data, Cfg& cfg, const std::string& led_dir
 
     // recovery: posicion viva en el ledger de hoy
     if (auto open = led.find_open_position()) {
+        // caza de bugs 2026-07-28: un ledger corrupto (strike_c/exp ausentes en la linea FILL)
+        // hacia que num() devolviera 0 en silencio -> recover_holding() arrancaba el FSM en
+        // HOLDING gestionando un contrato invalido. OptContract::valid() ya existia pero nadie
+        // la llamaba aqui. Sin contrato valido no hay nada seguro que gestionar: grita y sale
+        // sin recovery (mejor una posicion sin gestionar automatica que una gestionada a ciegas).
+        if (!open->con.valid()) {
+            std::fprintf(stderr, "RECOVERY ABORTADO: contrato invalido en el ledger "
+                         "(strike_c=%lld right=%c) — revisar %s a mano, NO se gestiona a ciegas\n",
+                         (long long)open->con.strike_c, open->con.right ? open->con.right : '?',
+                         led.path().c_str());
+        } else {
         if (feed_clock) fclk.refresh();
         // edad REAL desde el tw del FILL (el ledger escribe CLOCK_REALTIME en us);
         // 0 (dato raro) = gestionar la ventana entera, que es lo conservador-activo
@@ -257,6 +268,7 @@ static int run_sim(const std::string& data, Cfg& cfg, const std::string& led_dir
         run_actions(acts, fsm, ex, led, clk, halt_path, live_banners);
         std::fprintf(stderr, "RECOVERY: posicion %lld%c del ledger, edad %llds — gestion inmediata\n",
                      (long long)open->con.strike_c, open->con.right, (long long)(age_ms / 1000));
+        }
     }
     // recovery de contadores del dia: kill -9 tras un cierre no borra la ley
     // (trades/dia, one-loss halt, cooldown). Sin esto un restart re-opera un dia rojo.

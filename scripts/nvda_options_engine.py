@@ -203,6 +203,7 @@ def shadow(client_id=62):
         opt_entry REAL, opt_exit REAL, opt_pnl_pct REAL, u_pnl_pct REAL, reason TEXT, mag REAL, peer REAL)""")
     c.commit()
     ib=IB(); ib.connect("127.0.0.1",get_port(),clientId=client_id,readonly=True,timeout=15)
+    ib.RequestTimeout = 15   # causa raiz 2026-07-28 (opt_whale_watch.py): sin esto, qualifyContracts cuelga para siempre si TWS no responde
     print(f"[shadow] TWS conectado clientId {client_id} — PAPEL, sin operar")
     stk=Stock("NVDA","SMART","USD"); ib.qualifyContracts(stk); tk=ib.reqMktData(stk,"",False,False)
     W={w["peer"]:w["weight"] for w in peer_influence.load_weights("NVDA")}

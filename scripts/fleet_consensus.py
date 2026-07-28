@@ -14,7 +14,7 @@ en la TRANSICIÓN a consenso, y persiste 2 ciclos (anti-flicker). SEÑAL-SOLAMEN
 Uso: python3 scripts/fleet_consensus.py --once | --daemon
 Umbral: env FLEET_CONS_PCT (default 78).
 """
-import os, sys, time, subprocess, statistics as st, datetime as dt
+import json, os, sys, time, subprocess, statistics as st, datetime as dt
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(REPO); sys.path.insert(0, os.path.join(REPO, "scripts"))
@@ -122,7 +122,7 @@ def fire(cdir, up, dn, n, mom_up, mom_dn, skipped=None):
     # voz DANGER
     try:
         subprocess.Popen(["/bin/bash", "scripts/speak.sh", "DANGER",
-                          f"Manada {'alcista' if cdir=='UP' else 'bajista'}: la flota se puso de acuerdo. Comprar {veh.lower()}."],
+                          f"Manada {'alcista' if cdir=='UP' else 'bajista'}. Comprar {veh.lower()}."],
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except Exception:
         pass
@@ -133,12 +133,23 @@ def fire(cdir, up, dn, n, mom_up, mom_dn, skipped=None):
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except Exception:
         pass
-    # señal al archivo (BD + teléfono via notify_relay)
+    # señal al archivo (BD; el telefono via ntfy usa notify_short, no este texto largo)
     try:
         os.makedirs(SIGDIR, exist_ok=True)
         ts = time.strftime("%H:%M:%S")
         with open(f"{SIGDIR}/{dt.date.today():%Y-%m-%d}.txt", "a") as f:
             f.write(f"{ts} | 🐘 MANADA {'ALCISTA' if cdir=='UP' else 'BAJISTA'} | {msg}\n")
+        import notify_short
+        notify_short.push(f"🐘 MANADA {'ALCISTA' if cdir=='UP' else 'BAJISTA'}",
+                           f"{aligned}/{nf} alineados. Comprar {veh.lower()}.")
+    except Exception:
+        pass
+    # JSONL estructurado (Yunior 2026-07-28: alarma de capitulacion QQQ lee esto,
+    # no el texto humano de arriba -- fecha 2026-07-28)
+    try:
+        with open(os.path.join(REPO, "data", "consensus_signals.jsonl"), "a") as f:
+            f.write(json.dumps({"ts": int(time.time()), "dir": cdir, "aligned": aligned,
+                                 "n_fleet": nf, "momentum": mom}) + "\n")
     except Exception:
         pass
     print(f"[consensus] DISPARADA {cdir}: {aligned}/{nf} (n={n}, sin voto {len(skipped or {})})")

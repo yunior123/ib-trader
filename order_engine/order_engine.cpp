@@ -741,10 +741,31 @@ int main(int argc, char** argv) {
                         std::string id = o.s("id", "");
                         if (id.empty()) continue;
                         ZoneRT& z = zmap[id];
+                        // caza de bugs 2026-07-28: side/kind ausentes en AMBOS (JSON entrante y
+                        // estado previo) defaulteaban en silencio a "buy"/"call" -- un JSON parcial
+                        // (escritura no atomica del chart, ya arreglada en zones_save(), o un bug
+                        // futuro de UI) podia comprar una CALL sin que nadie la pidiera. Mismo
+                        // patron que "cmd close" (linea 610-617): sin dato real, se RECHAZA -- se
+                        // trata la zona como ausente este ciclo (reutiliza el camino ya probado de
+                        // "zona desaparecida", linea 764+: si no estaba viva no hace nada; si SI
+                        // estaba viva, cancela lo que corresponda sin dejar nada huerfano).
+                        std::string in_side = o.s("side", ""), in_kind = o.s("kind", "");
+                        if ((in_side.empty() && z.side.empty()) || (in_kind.empty() && z.kind.empty())) {
+                            // z.present = false a proposito (el default del struct es true para
+                            // una entrada NUEVA en zmap): fuerza el MISMO camino ya probado que
+                            // "zona desaparecida" (linea 764+): si nunca llego a colocar nada, no
+                            // hace nada; si YA tenia una posicion real abierta, protege sin dejarla
+                            // huerfana. Nunca queda a medio inicializar con side/kind vacios.
+                            z.present = false;
+                            std::fprintf(stderr, "[%s] zona %s SIN side/kind (JSON incompleto) -- rechazada este ciclo\n",
+                                         sym.c_str(), id.c_str());
+                            ledger.note("zona rechazada sin side/kind: " + sym + " " + id);
+                            continue;
+                        }
                         z.id = id; z.present = true;
                         z.price = o.n("price", z.price);
-                        z.side = o.s("side", z.side.empty() ? "buy" : z.side);
-                        z.kind = o.s("kind", z.kind.empty() ? "call" : z.kind);
+                        z.side = in_side.empty() ? z.side : in_side;
+                        z.kind = in_kind.empty() ? z.kind : in_kind;
                         z.exp = o.s("exp", z.exp);
                         z.instrument = o.s("instrument", z.instrument.empty() ? "opt" : z.instrument);
                         z.qty = (int)o.n("qty", z.qty ? z.qty : 1);

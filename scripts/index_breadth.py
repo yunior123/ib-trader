@@ -113,7 +113,10 @@ def main():
     out = {}
     for idx in (a.indices or ["QQQ", "SPY"]):
         out[idx] = breadth(idx.upper())
-    json.dump(out, open("data/breadth.json", "w"), indent=1)
+    tmp = "data/breadth.json.tmp"
+    with open(tmp, "w") as f:
+        json.dump(out, f, indent=1)
+    os.replace(tmp, "data/breadth.json")   # daily_fleet_plans.py lo lee en vivo
     if a.json:
         print(json.dumps(out, indent=1)); return
     for idx, b in out.items():

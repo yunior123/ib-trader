@@ -39,6 +39,7 @@ class _FakeState:
     """Lo minimo que tocan las dos funciones."""
     def __init__(self, mock):
         self.mock = mock
+        self.sym = "nvda"   # _log_structural gatea por _session_open(state.sym) desde 2026-07-28
 
 
 SIG = {"kind": "magnet", "sym": "nvda", "price": 212.5, "prob": 67,
@@ -89,6 +90,7 @@ def test_vivo_si_escribe_ambos_destinos(cb, tmp_path, monkeypatch):
 
     Sin este control el test de arriba pasaria con una funcion que no escribe NUNCA."""
     db = _sandbox(cb, tmp_path, monkeypatch)
+    monkeypatch.setattr(cb, "_session_open", lambda sym: True)   # el control no depende de la hora del reloj
     cb._log_structural(_FakeState(mock=False), SIG)
     assert _rows(db) == 1, "el camino vivo dejo de registrar en la BD"
     lines = _sigfile_lines(tmp_path)

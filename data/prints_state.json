@@ -2,7 +2,7 @@
  "AAPL": {
   "gaps": 0,
   "last_ep": 0,
-  "last_run": 1785040028,
+  "last_run": 1785270902,
   "n_at_last_ep": 0,
   "rows": 0,
   "zero_byte": true
@@ -10,7 +10,7 @@
  "AMD": {
   "gaps": 0,
   "last_ep": 0,
-  "last_run": 1785040028,
+  "last_run": 1785270902,
   "n_at_last_ep": 0,
   "rows": 0,
   "zero_byte": true
@@ -18,7 +18,7 @@
  "ASML": {
   "gaps": 0,
   "last_ep": 0,
-  "last_run": 1785040028,
+  "last_run": 1785270902,
   "n_at_last_ep": 0,
   "rows": 0,
   "zero_byte": true
@@ -26,7 +26,7 @@
  "DRAM": {
   "gaps": 0,
   "last_ep": 1784924722,
-  "last_run": 1785040028,
+  "last_run": 1785270902,
   "n_at_last_ep": 2,
   "rows": 444,
   "zero_byte": false
@@ -34,7 +34,7 @@
  "GLD": {
   "gaps": 0,
   "last_ep": 0,
-  "last_run": 1785040028,
+  "last_run": 1785270902,
   "n_at_last_ep": 0,
   "rows": 0,
   "zero_byte": true
@@ -42,63 +42,87 @@
  "INTC": {
   "gaps": 0,
   "last_ep": 0,
-  "last_run": 1785040028,
+  "last_run": 1785270902,
   "n_at_last_ep": 0,
   "rows": 0,
   "zero_byte": true
  },
+ "MU": {
+  "gaps": 0,
+  "last_ep": 1785270902,
+  "last_run": 1785270902,
+  "n_at_last_ep": 1,
+  "rows": 83582,
+  "zero_byte": false
+ },
  "NOK": {
   "gaps": 0,
   "last_ep": 1784924543,
-  "last_run": 1785040028,
+  "last_run": 1785270902,
   "n_at_last_ep": 2,
   "rows": 2123,
   "zero_byte": false
  },
  "NVDA": {
   "gaps": 0,
-  "last_ep": 1784924775,
-  "last_run": 1785040028,
+  "last_ep": 1785270488,
+  "last_run": 1785270902,
   "n_at_last_ep": 1,
-  "rows": 1907,
+  "rows": 232364,
   "zero_byte": false
  },
  "QQQ": {
   "gaps": 0,
-  "last_ep": 0,
-  "last_run": 1785040028,
-  "n_at_last_ep": 0,
-  "rows": 0,
-  "zero_byte": true
+  "last_ep": 1785270902,
+  "last_run": 1785270902,
+  "n_at_last_ep": 1,
+  "rows": 523809,
+  "zero_byte": false
+ },
+ "SMH": {
+  "gaps": 0,
+  "last_ep": 1785270826,
+  "last_run": 1785270902,
+  "n_at_last_ep": 1,
+  "rows": 144670,
+  "zero_byte": false
+ },
+ "SNDK": {
+  "gaps": 0,
+  "last_ep": 1785270897,
+  "last_run": 1785270902,
+  "n_at_last_ep": 1,
+  "rows": 8243,
+  "zero_byte": false
  },
  "SPCX": {
   "gaps": 0,
   "last_ep": 1784924777,
-  "last_run": 1785040028,
+  "last_run": 1785270902,
   "n_at_last_ep": 1,
   "rows": 1287,
   "zero_byte": false
  },
  "SPY": {
   "gaps": 0,
-  "last_ep": 0,
-  "last_run": 1785040028,
-  "n_at_last_ep": 0,
-  "rows": 0,
-  "zero_byte": true
+  "last_ep": 1785270901,
+  "last_run": 1785270902,
+  "n_at_last_ep": 1,
+  "rows": 504241,
+  "zero_byte": false
  },
  "TSLA": {
   "gaps": 0,
-  "last_ep": 1784924759,
-  "last_run": 1785040028,
-  "n_at_last_ep": 2,
-  "rows": 1716,
+  "last_ep": 1785253676,
+  "last_run": 1785270902,
+  "n_at_last_ep": 10,
+  "rows": 114724,
   "zero_byte": false
  },
  "TSM": {
   "gaps": 0,
   "last_ep": 0,
-  "last_run": 1785040028,
+  "last_run": 1785270902,
   "n_at_last_ep": 0,
   "rows": 0,
   "zero_byte": true
@@ -106,7 +130,7 @@
  "TXN": {
   "gaps": 0,
   "last_ep": 0,
-  "last_run": 1785040028,
+  "last_run": 1785270902,
   "n_at_last_ep": 0,
   "rows": 0,
   "zero_byte": true

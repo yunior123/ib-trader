@@ -167,6 +167,26 @@
   .acctrow .pos { color:#26a69a; } .acctrow .neg { color:#ef5350; }
   .acctrow button { border:none; border-radius:4px; padding:3px 8px; font:inherit; font-size:11px;
               font-weight:700; cursor:pointer; color:#fff; }
+  /* panel de config de ballenas: carril rapido (<=5) + filtro calls/puts por ticker */
+  #whalebtn { background:#2a2e39; color:#8aa0c8; border:1px solid #3a4b6b; border-radius:4px;
+              padding:4px 9px; font:inherit; font-weight:700; cursor:pointer; }
+  #whalebtn:hover { background:#2f3646; color:#fff; }
+  #whalepanel { position:absolute; z-index:46; left:0; right:0; bottom:24px; height:280px;
+              background:#12161f; border-top:2px solid #2a3550; display:none; flex-direction:column;
+              font-size:12px; box-shadow:0 -6px 20px rgba(0,0,0,.45); }
+  #whalepanel.on { display:flex; }
+  #whalehdr { display:flex; align-items:center; gap:10px; padding:6px 10px; background:#161a24;
+              border-bottom:1px solid #232a3a; font-weight:700; color:#8aa0c8; }
+  #whalesum { flex:1; color:#6f8bbf; font-weight:400; }
+  #whaleclose { cursor:pointer; opacity:.6; } #whaleclose:hover { opacity:1; color:#ef5350; }
+  #whalebody { flex:1; overflow-y:auto; padding:4px 10px 10px; }
+  .whalerow { display:flex; align-items:center; gap:8px; padding:3px 6px; border-bottom:1px solid #1c2230; }
+  .whalerow .wlbl { flex:1; font-weight:700; color:#d1d4dc; }
+  .whalerow select { background:#1a1f2b; color:#c8d0e0; border:1px solid #2a3550; border-radius:3px;
+              font:inherit; font-size:11px; padding:2px 4px; }
+  #whalesave { border:none; border-radius:4px; padding:5px 12px; font:inherit; font-weight:700;
+              cursor:pointer; color:#fff; background:#0d5c3f; margin-top:8px; }
+  #whalesave:hover { background:#12744f; }
   .acctrow .bclose { background:#ef5350; } .acctrow .bcancel { background:#607d8b; }
   .acctrow .bmod { background:#2962ff; }
   #acctempty { color:#556; padding:6px; }
@@ -447,6 +467,7 @@
   <button id="modepill" title="Cuenta IBKR: PAPER (prueba) / LIVE (real). Clic para cambiar. Fuente única data/ib_mode.txt — el motor y los lectores siguen este modo.">● …</button>
   <button id="instpill" title="Instrumento de las zonas NUEVAS: Opciones o Acciones (activos, tradean 24/5). Clic para cambiar.">📈 Opciones</button>
   <button id="acctbtn" title="Cuenta: posiciones y órdenes de trabajo (cancelar / cerrar / modificar). Estilo TradingView Account Manager.">📊 Cuenta</button>
+  <button id="whalebtn" title="Config de alertas de ballenas: hasta 5 tickers para el carril rápido de re-escaneo + filtro calls/puts por ticker.">🐋 Config</button>
   <div id="tfbar">
     <button class="tfbtn" data-tf="5s" title="5s nativo IBKR (reqHistoricalData 5 secs)">5s</button>
     <button class="tfbtn" data-tf="15s" title="15s nativo IBKR (reqHistoricalData 15 secs)">15s</button>
@@ -560,6 +581,17 @@
     <div id="acctpos" class="accttbl"></div>
     <div class="acctsec">Órdenes de trabajo</div>
     <div id="acctord" class="accttbl"></div>
+  </div>
+</div>
+<div id="whalepanel">
+  <div id="whalehdr">
+    <span>🐋 Config ballenas</span>
+    <span id="whalesum">carril rápido ≤5 · filtro calls/puts por ticker</span>
+    <span id="whaleclose" title="Cerrar">✕</span>
+  </div>
+  <div id="whalebody">
+    <div id="whalerows"></div>
+    <button id="whalesave">Guardar</button>
   </div>
 </div>
 <div id="chart">
@@ -1513,6 +1545,57 @@ acctbtn.addEventListener("click", () => {
 document.getElementById("acctclose").addEventListener("click", () => {
   acctpanel.classList.remove("on"); if (acctTimer) { clearInterval(acctTimer); acctTimer = null; }
 });
+
+// ============ panel config ballenas: carril rápido (<=5) + filtro calls/puts por ticker ============
+const whalebtn = document.getElementById("whalebtn");
+const whalepanel = document.getElementById("whalepanel");
+const WHALE_MAX = 5;
+let whaleCfg = { priority: [], filters: {} };
+
+function renderWhaleRows() {
+  const rows = document.getElementById("whalerows");
+  rows.innerHTML = [...FLEET].sort().map(sym => {
+    const checked = whaleCfg.priority.includes(sym) ? "checked" : "";
+    const filt = whaleCfg.filters[sym] || "BOTH";
+    return `<div class="whalerow">
+      <input type="checkbox" data-sym="${sym}" class="whalepr" ${checked}>
+      <span class="wlbl">${sym}</span>
+      <select data-sym="${sym}" class="whalefilt">
+        <option value="BOTH" ${filt === "BOTH" ? "selected" : ""}>Ambos</option>
+        <option value="CALLS" ${filt === "CALLS" ? "selected" : ""}>Solo calls</option>
+        <option value="PUTS" ${filt === "PUTS" ? "selected" : ""}>Solo puts</option>
+      </select>
+    </div>`;
+  }).join("");
+  rows.querySelectorAll(".whalepr").forEach(cb => cb.addEventListener("change", () => {
+    const checkedNow = [...rows.querySelectorAll(".whalepr:checked")];
+    if (checkedNow.length > WHALE_MAX) {
+      cb.checked = false;   // tope duro de 5 (cupo tick-by-tick medido en ibkr_bar_bridge.py)
+      alert(`Máximo ${WHALE_MAX} tickers en el carril rápido.`);
+    }
+  }));
+}
+function onWhaleCfg(msg) {
+  whaleCfg = { priority: msg.priority || [], filters: msg.filters || {} };
+  renderWhaleRows();
+  document.getElementById("whalesum").textContent =
+    `carril rápido ${whaleCfg.priority.length}/${WHALE_MAX} · filtro calls/puts por ticker`;
+}
+function reqWhaleCfg() { if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify({ cmd: "whale_cfg" })); }
+whalebtn.addEventListener("click", () => {
+  const on = whalepanel.classList.toggle("on");
+  if (on) reqWhaleCfg();
+});
+document.getElementById("whaleclose").addEventListener("click", () => whalepanel.classList.remove("on"));
+document.getElementById("whalesave").addEventListener("click", () => {
+  const rows = document.getElementById("whalerows");
+  const priority = [...rows.querySelectorAll(".whalepr:checked")].map(cb => cb.dataset.sym);
+  const filters = {};
+  rows.querySelectorAll(".whalefilt").forEach(sel => { if (sel.value !== "BOTH") filters[sel.dataset.sym] = sel.value; });
+  if (!ws || ws.readyState !== WebSocket.OPEN) return;
+  ws.send(JSON.stringify({ cmd: "whale_cfg", act: "set", priority, filters }));
+});
+
 function onAccount(a) {
   const s = a.summary || {};
   document.getElementById("acctsum").textContent =
@@ -2748,6 +2831,7 @@ function connect() {
     else if (msg.type === "direction") onDirection(msg);   // flecha direccional compuesta
     else if (msg.type === "ibmode") onIbMode(msg);   // switcher paper/live
     else if (msg.type === "account") onAccount(msg);   // posiciones/órdenes/balance
+    else if (msg.type === "whale_cfg") onWhaleCfg(msg);   // config alertas de ballenas
     else if (msg.type === "order_action") onOrderAction(msg);   // resultado cancel/sell/modify
   };
   ws.onclose = () => {

@@ -17,12 +17,15 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(REPO)
 COMPS = ["mu", "sndk", "wdc", "stx", "skhy", "lrcx"]
 
-def say(title, msg):
-    subprocess.Popen(["/bin/bash", "scripts/speak.sh", "SIGNAL", msg],
+def say(title, msg, voice_msg=None):
+    """voice_msg: version corta (Yunior 2026-07-28 "voces muy largas, resume")."""
+    corto = voice_msg or msg
+    subprocess.Popen(["/bin/bash", "scripts/speak.sh", "SIGNAL", corto],
                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     subprocess.Popen(["/usr/bin/osascript", "-e",
-                      f'display notification "{msg}" with title "{title}" sound name "ProAlert"'],
+                      f'display notification "{corto}" with title "{title}" sound name "ProAlert"'],
                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    import notify_short; notify_short.push(title, corto)
     lt = time.localtime()
     d = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "trading-signals")
     os.makedirs(d, exist_ok=True)
@@ -62,13 +65,16 @@ while True:
             lider = max(vivos, key=lambda s: abs(vivos[s]))
             if nuevo == "VERDE":
                 say("🟢 MEMORIA CONFLUENCIA", f"{up} de {len(vivos)} componentes suben, lider {lider.upper()} "
-                    f"{vivos[lider]:+.1f}. DRAM {d:+.1f} — viento a favor del sector")
+                    f"{vivos[lider]:+.1f}. DRAM {d:+.1f} — viento a favor del sector",
+                    voice_msg="Memoria subiendo. DRAM a favor.")
             else:
                 say("🔴 MEMORIA CONFLUENCIA", f"{dn} de {len(vivos)} componentes caen, lider {lider.upper()} "
-                    f"{vivos[lider]:+.1f}. Viento en contra — proteger largos del sector")
+                    f"{vivos[lider]:+.1f}. Viento en contra — proteger largos del sector",
+                    voice_msg="Memoria bajando. Cuidado con DRAM.")
             state = nuevo
         if abs(d) >= 0.8 and time.time() - last_move_ts > 300:
             say("⚡ DRAM MOVIDA", f"DRAM {d:+.1f} por ciento en 5 minutos. "
-                f"{'Hacia el techo 58' if d > 0 else 'Hacia el piso 55 — no cuchillos sin retest'}")
+                f"{'Hacia el techo 58' if d > 0 else 'Hacia el piso 55 — no cuchillos sin retest'}",
+                voice_msg=f"DRAM se movió {'para arriba' if d > 0 else 'para abajo'}.")
             last_move_ts = time.time()
     time.sleep(45)

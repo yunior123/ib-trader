@@ -11,34 +11,75 @@
  "danger": {
   "frozen_limit": 8,
   "never_suppressed": true,
-  "registered": 7
+  "registered": 8
  },
- "date": "2026-07-25",
+ "date": "2026-07-28",
  "enabled": false,
  "nota": "spent = locuciones ENCOLADAS por speak.sh; voice_log_today = lo que el daemon hablo de verdad. La diferencia es informacion, no un error.",
  "per_hour": {
+  "00": {
+   "INFO": 2
+  },
+  "02": {
+   "DANGER": 1
+  },
+  "09": {
+   "DANGER": 32,
+   "INFO": 1,
+   "SIGNAL": 41
+  },
   "10": {
-   "DANGER": 1,
-   "INFO": 8
+   "DANGER": 16,
+   "INFO": 4,
+   "SIGNAL": 19
+  },
+  "11": {
+   "DANGER": 24,
+   "INFO": 1,
+   "SIGNAL": 10
+  },
+  "12": {
+   "DANGER": 21,
+   "INFO": 8,
+   "SIGNAL": 9
+  },
+  "13": {
+   "DANGER": 8,
+   "INFO": 6,
+   "SIGNAL": 9
+  },
+  "14": {
+   "DANGER": 6,
+   "INFO": 10,
+   "SIGNAL": 12
+  },
+  "15": {
+   "DANGER": 9,
+   "INFO": 11,
+   "SIGNAL": 14
+  },
+  "16": {
+   "INFO": 10,
+   "SIGNAL": 1
   }
  },
- "signal_this_hour": 0,
+ "signal_this_hour": 1,
  "spent": {
-  "DANGER": 1,
-  "INFO": 8
+  "DANGER": 117,
+  "INFO": 53,
+  "SIGNAL": 115
  },
- "spent_total": 9,
+ "spent_total": 285,
  "suppressed": {
-  "by_reason": {
-   "day_cap 40": 1
-  },
-  "total": 1
+  "by_reason": {},
+  "total": 0
  },
- "updated": 1785011102,
+ "updated": 1785270494,
  "voice_log_today": {
-  "budget_suppressed/SIGNAL": 1,
-  "notify_only/INFO": 197,
-  "spoke/DANGER": 3,
-  "spoke/SIGNAL": 1
+  "coalesced/SIGNAL": 21,
+  "notify_only/INFO": 53,
+  "preempted/SIGNAL": 8,
+  "spoke/DANGER": 117,
+  "spoke/SIGNAL": 86
  }
 }

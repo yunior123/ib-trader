@@ -5,8 +5,9 @@ import os, sys, json, sqlite3, math, bisect, datetime as dt
 from collections import defaultdict
 os.environ.setdefault("TZ", "America/New_York")
 import time as _t; _t.tzset()
-sys.path.insert(0, "/Users/yuniorrodriguezosorio/ib-trader/scripts")
-os.chdir("/Users/yuniorrodriguezosorio/ib-trader")
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # regla 7: jamas ruta absoluta (la mudanza a ~/ib-trader mato 3 scripts)
+sys.path.insert(0, os.path.join(REPO, "scripts"))
+os.chdir(REPO)
 from full_history_backtest import wilson, cluster_score_test
 
 SP = "/tmp"

@@ -271,6 +271,7 @@ def connect_retry(ib):
     while not ib.isConnected():
         try:
             ib.connect(HOST, PORT, clientId=CLIENT_ID, readonly=True, timeout=10)
+            ib.RequestTimeout = 15   # causa raiz 2026-07-28 (opt_whale_watch.py): sin esto, qualifyContracts cuelga para siempre si TWS no responde
             ib.reqMarketDataType(1)   # LIVE — jamas delayed (ley)
             log("conectado TWS %s:%d clientId=%d readonly=True" % (HOST, PORT, CLIENT_ID))
         except Exception as e:

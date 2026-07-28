@@ -31,6 +31,7 @@ def say(msg):
     p = os.path.join(REPO, "data", "trading-signals", f"{dt.date.today():%Y-%m-%d}.txt")
     with open(p, "a") as f:
         f.write(f"{dt.datetime.now():%H:%M:%S} | ⏰ EXPIRA HOY | {msg}\n")
+    import notify_short; notify_short.push("⏰ EXPIRA HOY", msg)
 
 
 def load_marks():
@@ -87,8 +88,7 @@ def main():
                        ("1400" if hhmm >= 1400 and "1400" not in marks else
                         ("1530" if hhmm >= 1530 and "1530" not in marks else None))
                 if slot:
-                    say(f"Posición {', '.join(pos)} expira HOY. Jamás aguantar el print "
-                        f"con premium comprado: cerrar antes de las 15:50.")
+                    say(f"Tu opción de {', '.join(pos)} vence hoy. Véndela antes de las 3:50.")
                     marks[slot] = f"{n:%H:%M}"
                     save_marks(marks)
             ib.sleep(120)

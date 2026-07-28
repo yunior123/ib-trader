@@ -1,8 +1,8 @@
 {
  "caduca_declarado": "2026-08-01",
  "clave_efectiva": "FINVIZ_AUTH3",
- "dias_restantes": 7,
- "fecha": "2026-07-25",
+ "dias_restantes": 4,
+ "fecha": "2026-07-28",
  "http": 200,
  "motivo": "3 filas",
  "orden_de_busqueda": [
@@ -12,6 +12,6 @@
  "origen": "fichero",
  "sano": true,
  "token_cola": "8625",
- "ts": 1785021623,
+ "ts": 1785239586,
  "veredicto": "SANO"
 }

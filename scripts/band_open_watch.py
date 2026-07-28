@@ -26,12 +26,16 @@ def fleet():
     except Exception:
         return ["qqq", "spy", "nvda", "mu", "smh", "dram"]
 
-def say(title, msg, sound="ProAlert"):
-    subprocess.Popen(["/bin/bash", "scripts/speak.sh", "SIGNAL", msg],
+def say(title, msg, sound="ProAlert", voice_msg=None):
+    """voice_msg: version corta para la voz (Yunior 2026-07-28 "sencillo, que un niño
+    pequeño pueda entender"); el banner/log se quedan con el `msg` completo."""
+    corto = voice_msg or msg
+    subprocess.Popen(["/bin/bash", "scripts/speak.sh", "SIGNAL", corto],
                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     subprocess.Popen(["/usr/bin/osascript", "-e",
-                      f'display notification "{msg}" with title "{title}" sound name "{sound}"'],
+                      f'display notification "{corto}" with title "{title}" sound name "{sound}"'],
                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    import notify_short; notify_short.push(title, corto)
     lt = time.localtime()
     d = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "trading-signals")
     os.makedirs(d, exist_ok=True)
@@ -116,7 +120,8 @@ def main():
                         say("🎯 APERTURA FUERA DE BANDA",
                             f"{sym.upper()} abrio {o930:.2f} {out} de la banda 15m ({band:.2f}). "
                             f"Patron medido: 60 por ciento se acerca en 30 minutos. "
-                            f"Esperar la re-entrada impresa, no perseguir")
+                            f"Esperar la re-entrada impresa, no perseguir",
+                            voice_msg=f"{sym} abrió fuera de rango.")
                     continue
                 st = state[sym]
                 if st.get("out") and not st.get("done"):
@@ -129,7 +134,7 @@ def main():
                             f"{sym.upper()} imprimio re-entrada en {last_close:.2f}. "
                             f"Target la media {st['mid']:.2f}, prob medida 56 por ciento."
                             f"{vtxt} Contexto, no gatillo: pedir confluencia. {opt_vehicle(sym)}",
-                            "ProChord")
+                            "ProChord", voice_msg=f"{sym} volvió a su rango.")
                         st["done"] = True
         time.sleep(20)
 

@@ -97,7 +97,7 @@ def component_bias(index, n=6, max_age=20):
         mom = (c[-1] - c[-1 - n]) / c[-1 - n] * 100
         num += max(-1.0, min(1.0, mom / 0.5)) * w
         den += w
-    score = round(num / den, 3) if den else 0.0
+    score = round(num / den, 3) if den else None   # sin componentes con bars: no se sabe, no es 0
     _CACHE[key] = score; _CACHE[key + "_ts"] = time.time()
     return score
 
@@ -225,8 +225,8 @@ def conditioned_prob(source, symbol, direction, base_prob, now_min=None):
             why.append(f"⛔ capitán {gov_name or gov_key} EN CONTRA -> VETO voz (×0.55)")
     # QQQ/SPY: cubrir vía sus componentes pesados (MSFT/AMZN/TSLA...) — LOCAL rápido, sin red
     if symbol in ("QQQ", "SPY"):
-        comp = component_bias(symbol)                                # -1..+1
-        if abs(comp) > 0.08:
+        comp = component_bias(symbol)                                # -1..+1, None = sin bars
+        if comp is not None and abs(comp) > 0.08:
             agree = (comp > 0) == (direction > 0)
             f_comp = 1.10 if agree else 0.72
             f_fleet *= f_comp

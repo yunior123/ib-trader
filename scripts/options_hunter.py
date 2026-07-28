@@ -67,34 +67,46 @@ def fetch(lane, filt):
     return body
 
 def num(s):
+    # caza de bugs 2026-07-28: devolvia 0.0 en cualquier fallo de parseo, indistinguible de
+    # "el campo real es 0" -- un RSI ilegible pasaba como "0 = sobrevendido" (falso positivo) y
+    # un Change/Change-from-Open ilegible forzaba bias MIXTO en vez de "sin dato" (regla #3).
     try:
         return float(str(s).replace("%", "").replace(",", ""))
-    except ValueError:
-        return 0.0
+    except (ValueError, TypeError):
+        return None
 
 def parse(lane, body):
     rows = []
     for r in csv.DictReader(io.StringIO(body)):
         px, chg = num(r.get("Price")), num(r.get("Change"))
         rvol, vol = num(r.get("Relative Volume")), num(r.get("Volume"))
+        # sin precio/volumen/rvol/change fiables no hay score ni gate de $ que calcular de
+        # verdad -- se descarta la fila entera en vez de fabricar un 0.0 que parezca dato real.
+        if px is None or vol is None or rvol is None or chg is None:
+            continue
         dollar = px * vol
         if dollar < 30e6:                      # $30M negociados hoy mínimo
             continue
         score = rvol * max(abs(chg), 0.3) * math.log10(max(dollar, 10))
         chg_open = num(r.get("Change from Open"))
         rsi = num(r.get("Relative Strength Index (14)"))
-        if chg > 0 and chg_open > 0:
+        if chg_open is None:
+            bias = "SINDATO"                   # no se sabe si confirma -- distinto de MIXTO (si se sabe y discrepa)
+        elif chg > 0 and chg_open > 0:
             bias = "CALL"
         elif chg < 0 and chg_open < 0:
             bias = "PUT"
         else:
             bias = "MIXTO"
-        if rsi >= 75:
-            bias += "!sobrecomprado"           # ley flujo: techo local probable
-        elif rsi <= 25:
-            bias += "!sobrevendido"
+        if rsi is not None:
+            if rsi >= 75:
+                bias += "!sobrecomprado"       # ley flujo: techo local probable
+            elif rsi <= 25:
+                bias += "!sobrevendido"
+        perfw = num(r.get("Performance (Week)"))
         rows.append({"sym": r["Ticker"], "lane": lane, "px": px, "chg": chg,
-                     "rvol": rvol, "rsi": rsi, "perfw": num(r.get("Performance (Week)")),
+                     "rvol": rvol, "rsi": rsi if rsi is not None else float("nan"),
+                     "perfw": perfw if perfw is not None else float("nan"),
                      "dollar_m": dollar / 1e6, "earn": r.get("Earnings Date", ""),
                      "score": score, "bias": bias})
     return rows

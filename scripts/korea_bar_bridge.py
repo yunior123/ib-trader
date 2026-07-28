@@ -172,12 +172,13 @@ def loud(title, msg, sound="ProAlarm", prio="DANGER", voz=None):
         return
     _last_banner = time.time()
     esc = lambda s: s.replace("\\", "").replace('"', "'")
+    corto = voz or msg
     try:
         subprocess.Popen(["/bin/bash", os.path.join(ROOT, "scripts", "speak.sh"),
-                          prio, voz or msg], cwd=ROOT,
+                          prio, corto], cwd=ROOT,
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         subprocess.Popen(["/usr/bin/osascript", "-e",
-                          f'display notification "{esc(msg)}" with title '
+                          f'display notification "{esc(corto)}" with title '
                           f'"{esc(title)}" sound name "{sound}"'],
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         lt = time.localtime()
@@ -187,6 +188,7 @@ def loud(title, msg, sound="ProAlarm", prio="DANGER", voz=None):
                   "a") as f:
             f.write(f"{lt.tm_hour:02d}:{lt.tm_min:02d}:{lt.tm_sec:02d} | "
                     f"{title} | {msg}\n")
+        import notify_short; notify_short.push(title, corto)
     except Exception:
         pass
 
@@ -210,7 +212,7 @@ def resolve_port():
             return p
     loud("🇰🇷 KRX BRIDGE SIN GATEWAY",
          f"ningun puerto IBKR acepta conexion {cands} — Gateway/TWS caido",
-         voz="Puente de Corea sin Gateway. Ningun puerto de IBKR responde.")
+         voz="Puente de Corea sin Gateway.")
     return None
 
 def newest_bar_epoch(names=CORE):
@@ -241,7 +243,7 @@ def freshness_guard(now=None):
     cuanto = "sin ninguna barra" if ep is None else f"{(now - ep) / 60:.0f} min rancias"
     loud("🇰🇷 BARRAS COREA RANCIAS",
          f"KRX abierto y las barras estan {cuanto} — el puente no escribe",
-         voz="Barras de Corea rancias con el mercado abierto. El puente no escribe.")
+         voz="Barras de Corea rancias.")
     return True
 
 def resub_all(ib, why):
@@ -322,6 +324,7 @@ def run():
         raise ConnectionError("ningun puerto IBKR escucha")
     ib = IB()
     ib.connect(HOST, port, clientId=CLIENT_ID, readonly=True, timeout=20)
+    ib.RequestTimeout = 20   # causa raiz 2026-07-28 (opt_whale_watch.py): sin esto, qualifyContracts cuelga para siempre si TWS no responde
     _fails = 0
     ib.reqMarketDataType(1)                   # 1 = REALTIME. Delayed PROHIBIDO.
     # Error 1101 (data lost tras flap) -> resub inmediato, igual que el daemon NA
@@ -350,7 +353,8 @@ def run():
             _last_resub = time.time()
             loud("🇰🇷 KRX BRIDGE CIEGO",
                  f"{time.time() - newest:.0f}s sin bars KRX en sesion — "
-                 f"resuscribiendo (skhynix/samsung/kospi)")
+                 f"resuscribiendo (skhynix/samsung/kospi)",
+                 voz="Corea sin datos. Reconectando.")
             resub_all(ib, f"stall {time.time() - newest:.0f}s sin bars")
         freshness_guard()   # cubre el hueco del stall-watchdog: conectado y SIN suscribir
         ib.sleep(RETRY_S)
@@ -371,7 +375,7 @@ def main():
             if _fails >= FAILS_LOUD:
                 loud("🇰🇷 KRX BRIDGE CAIDO",
                      f"{_fails} intentos fallidos seguidos ({_fails * RETRY_S}s): {e}",
-                     voz="Puente de Corea caido. La flota se queda sin la memoria coreana.")
+                     voz="Puente de Corea caído.")
             for st in STATES.values():
                 st.subs = []; st.blocked_until = 0
         freshness_guard()

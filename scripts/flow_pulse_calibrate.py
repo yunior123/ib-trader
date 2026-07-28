@@ -212,7 +212,10 @@ def main():
             tt = type_tot[t]
             a["pct"] = round(tt["ok"] / tt["n"] * 100) if tt["n"] else a["raw_pct"]
         store[b] = a
-    json.dump(store, open(PROBS_PATH, "w"), indent=1)
+    tmp = PROBS_PATH + ".tmp"
+    with open(tmp, "w") as f:
+        json.dump(store, f, indent=1)
+    os.replace(tmp, PROBS_PATH)   # flow_pulse.cpp lo lee en vivo
     print(f"{DATE}: {len(sigs)} señales | buckets acumulados:")
     for b, a in sorted(agg.items()):
         print(f"  {b:22s} n={a['n']:3d} canta={a['pct']}% raw={a['raw_pct']}% wilson_lo={a['wilson_lo']}% mfe={a['mfe_pct']}%")

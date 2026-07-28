@@ -90,6 +90,7 @@ def read_nbbo(sym):
 from ib_mode import get_port  # fuente unica: data/ib_mode.txt (paper/live), no 4002 a ciegas
 ib = IB()
 ib.connect("127.0.0.1", get_port(), clientId=85, timeout=15)
+ib.RequestTimeout = 15   # causa raiz 2026-07-28 (opt_whale_watch.py): sin esto, qualifyContracts cuelga para siempre si TWS no responde
 mirror_line("opt_sentinel ARRANCADO (exit-advisor INTC 104C + flujo put/call flota)")
 
 # --- suscripcion streaming al 104C ---

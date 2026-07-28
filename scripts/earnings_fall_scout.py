@@ -66,15 +66,18 @@ def num(v):
         return None
 
 
-def say(title, msg, voice, prio="SIGNAL", sound="ProAlert"):
+def say(title, msg, voice, prio="SIGNAL", sound="ProAlert", voice_msg=None):
+    """voice_msg: version corta (Yunior 2026-07-28 "voces muy largas, resume")."""
     if TEST:
         print(f"[EF_TEST {'VOZ' if voice else 'banner'}] {title} | {msg}")
         return
+    corto = voice_msg or msg
     if voice:
-        subprocess.Popen(["/bin/bash", os.path.join(SCRIPTS, "speak.sh"), prio, msg],
+        subprocess.Popen(["/bin/bash", os.path.join(SCRIPTS, "speak.sh"), prio, corto],
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        import notify_short; notify_short.push(title, corto)
     subprocess.Popen(["/usr/bin/osascript", "-e",
-                      f'display notification "{msg}" with title "{title}" sound name "{sound}"'],
+                      f'display notification "{corto}" with title "{title}" sound name "{sound}"'],
                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     lt = time.localtime()
     d = os.path.join(REPO, "data", "trading-signals")
@@ -210,6 +213,7 @@ def opt_check(syms):
         from ib_mode import get_port
         ib = IB()
         ib.connect("127.0.0.1", get_port(), clientId=47, timeout=12, readonly=True)
+        ib.RequestTimeout = 15   # causa raiz 2026-07-28 (opt_whale_watch.py): sin esto, qualifyContracts cuelga para siempre si TWS no responde
         ib.reqMarketDataType(1)
     except Exception as e:
         print(f"earnings_fall_scout: IBKR no disponible ({str(e)[:70]})", file=sys.stderr)
@@ -344,7 +348,8 @@ def run_pass(label, auth):
         msg = (f"Caida post earnings en {c['sym']}: {abs(c['drop_pct']):.1f} por ciento, "
                f"{c['drop_atr'] or '?'} ATRs. Score {c['score']}. {c.get('opciones_txt') or 'opciones sin dato'}. "
                f"TradingAgents {c['ta']}.")
-        say(line.split(" (")[0], msg if voice else line, voice=voice)
+        say(line.split(" (")[0], msg if voice else line, voice=voice,
+            voice_msg=f"{c['sym']} cayó fuerte tras resultados. {c['ta']}.")
         if not TEST:
             with open(alerted_path(), "a") as f:
                 f.write(c["sym"] + "\n")

@@ -22,7 +22,7 @@ Modo legacy (un simbolo, stdout): ibkr_bar_bridge.py SYM [--live-only]
 Python (ib_insync) solo porque el SDK C++ de IB no esta instalado; es un
 productor de archivos I/O-bound — bots, readers y matematica siguen en C++.
 """
-import os, subprocess, sys, time
+import json, os, subprocess, sys, time
 from datetime import timezone
 
 # Ruta DERIVADA, nunca hardcodeada (2026-07-25): la mudanza del repo dejo tres scripts en
@@ -277,7 +277,34 @@ def tape_order(syms):
     return [s for s in CAPTAINS_FIRST if s in syms] + rest, dv
 
 
-_blind_said = {}   # sym -> dia ya cantado
+_BLIND_SAID_F = "data/tape_blind_said.json"
+
+
+def _load_blind_said():
+    """Persistido en disco (Yunior 2026-07-28: "dice que no ve ballenas, fix eso" — el
+    dict en memoria se reiniciaba con CADA relanzamiento del puente y re-anunciaba las
+    mismas 25/30 simbolos ciegas cada vez, aunque el limite (cupo IBKR, no cambia en el
+    dia) ya se hubiera anunciado antes). Solo el DIA importa, no el proceso."""
+    try:
+        d = json.load(open(_BLIND_SAID_F))
+        if d.get("day") == time.strftime("%Y%m%d"):
+            return d.get("said", {})
+    except Exception:
+        pass
+    return {}
+
+
+def _save_blind_said(said):
+    try:
+        tmp = _BLIND_SAID_F + f".tmp{os.getpid()}"
+        with open(tmp, "w") as f:
+            json.dump({"day": time.strftime("%Y%m%d"), "said": said}, f)
+        os.replace(tmp, _BLIND_SAID_F)
+    except Exception:
+        pass
+
+
+_blind_said = _load_blind_said()   # sym -> dia ya cantado
 
 
 def declare_blind(syms, why):
@@ -298,15 +325,18 @@ def declare_blind(syms, why):
         return
     for s in fresh:
         _blind_said[s] = day
+    _save_blind_said(_blind_said)
     msg = (f"CINTA CIEGA: {len(fresh)} de la flota sin tape tick-by-tick "
            f"({' '.join(fresh)}) — sus ballenas NO se ven, no es que no haya")
+    voz = f"No veo las ballenas de {len(fresh)} acciones."
     print(msg, file=sys.stderr)
     subprocess.Popen(["/usr/bin/osascript", "-e",
-                      f'display notification "{msg}" with title "🕳 CINTA CIEGA" '
+                      f'display notification "{voz}" with title "🕳 CINTA CIEGA" '
                       f'sound name "ProAlarm"'],
                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    subprocess.Popen(["/bin/bash", "scripts/speak.sh", "DANGER", msg],
+    subprocess.Popen(["/bin/bash", "scripts/speak.sh", "DANGER", voz],
                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    import notify_short; notify_short.push("🕳 CINTA CIEGA", voz)
     lt = time.localtime()
     d = os.path.join(ROOT, "data", "trading-signals")
     os.makedirs(d, exist_ok=True)
@@ -447,6 +477,8 @@ def _resub_all(ib, why):
 def run_daemon():
     ib = IB()
     ib.connect(HOST, PORT, clientId=CLIENT_ID, readonly=True, timeout=20)
+    ib.RequestTimeout = 20   # causa raiz confirmada en caza de bugs 2026-07-28 (opt_whale_watch.py):
+                              # RequestTimeout=0 por defecto cuelga qualifyContracts para siempre si TWS no responde
     ib.reqMarketDataType(1)                  # 1 = REALTIME. Delayed PROHIBIDO.
     ib.errorEvent += lambda r, c, m, ct=None, *a: (
         c == 1101 and _resub_all(ib, "Error 1101 data-lost"))
@@ -492,6 +524,7 @@ def run_daemon():
 def run_single():
     ib = IB()
     ib.connect(HOST, PORT, clientId=CLIENT_ID, readonly=True, timeout=20)
+    ib.RequestTimeout = 20   # ver run_daemon() — causa raiz confirmada en caza de bugs 2026-07-28
     ib.reqMarketDataType(1)
     st = STATES[SYMS[0]]
     if not LIVE_ONLY:

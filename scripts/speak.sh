@@ -32,6 +32,9 @@ MSG="$(printf '%s' "$MSG" | sed -E \
   -e 's/[[:<:]]AMD[[:>:]]/A M D/g'     -e 's/[[:<:]]DRAM[[:>:]]/D RAM/g' \
   -e 's/[[:<:]]GLD[[:>:]]/oro/g'       -e 's/[[:<:]]SLV[[:>:]]/plata/g' \
   -e 's/[[:<:]]CPER[[:>:]]/cobre/g'    -e 's/[[:<:]]USO[[:>:]]/petróleo/g' \
+  -e 's/[[:<:]]SPY[[:>:]]/S P quinientos/g' -e 's/[[:<:]]NFLX[[:>:]]/Netflix/g' \
+  -e 's/[[:<:]]LRCX[[:>:]]/Lam Research/g'  -e 's/[[:<:]]SNDK[[:>:]]/Sandisk/g' \
+  -e 's/[[:<:]]WDC[[:>:]]/Western Digital/g' -e 's/[[:<:]]STX[[:>:]]/Seagate/g' \
   -e 's/[[:<:]][Ss][Kk][Hh][Yy][Nn][Ii][Xx][[:>:]]/S K Hynix/g' \
   -e 's/[[:<:]][Kk][Oo][Ss][Pp][Ii][[:>:]]/Kospi/g')"
 # ^ Corea (2026-07-19, flota nocturna KRX): price-alerts.txt trae `skhynix`/`kospi`

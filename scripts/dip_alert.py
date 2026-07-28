@@ -55,22 +55,27 @@ def fleet():
     except Exception:
         return ["QQQ", "SPY", "NVDA", "MU", "SMH", "DRAM"]
 
-def say(title, msg, voice=True, prio="SIGNAL", sound="ProAlert"):
-    """Patron bollinger_alarm.say(): voz speak.sh + banner osascript + log Desktop."""
+def say(title, msg, voice=True, prio="SIGNAL", sound="ProAlert", voice_msg=None):
+    """Patron bollinger_alarm.say(): voz speak.sh + banner osascript + log Desktop.
+    voice_msg: version corta para la voz (Yunior 2026-07-28 "sencillo, que un niño
+    pequeño pueda entender"); el banner y el log se quedan con el `msg` completo."""
     if TEST:
         print(f"[DIP_TEST {'VOZ' if voice else 'banner'}] {title} | {msg}")
         return
+    corto = voice_msg or msg
     if voice:
-        subprocess.Popen(["/bin/bash", "scripts/speak.sh", prio, msg],
+        subprocess.Popen(["/bin/bash", "scripts/speak.sh", prio, corto],
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     subprocess.Popen(["/usr/bin/osascript", "-e",
-                      f'display notification "{msg}" with title "{title}" sound name "{sound}"'],
+                      f'display notification "{corto}" with title "{title}" sound name "{sound}"'],
                      stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     lt = time.localtime()
     d = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "trading-signals")
     os.makedirs(d, exist_ok=True)
     with open(f"{d}/{lt.tm_year:04d}-{lt.tm_mon:02d}-{lt.tm_mday:02d}.txt", "a") as f:
         f.write(f"{lt.tm_hour:02d}:{lt.tm_min:02d}:{lt.tm_sec:02d} | {title} | {msg}\n")
+    if voice:
+        import notify_short; notify_short.push(title, corto)
 
 # ------------------- fuentes de datos (todas con fallback) ------------------
 def load_valuation():
@@ -279,7 +284,8 @@ def main():
                     f"5 dias, estabilizado. "
                     f"{'Valuacion sana: ' + vtxt if inflada is False else vtxt}.{ptxt} "
                     f"Zona de compra tecnica {zona:.2f}. {opt_vehicle(sym)}",
-                    voice=True, prio="SIGNAL")
+                    voice=True, prio="SIGNAL",
+                    voice_msg=f"{sym} bajó y se calmó. Buen momento para comprar.")
             alerted.add(sym); mark_alerted(sym)
         if TEST:
             print("[DIP_TEST] pasada unica completa — salgo.")

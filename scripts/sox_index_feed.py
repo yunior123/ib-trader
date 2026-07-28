@@ -18,6 +18,7 @@ OUT = "data/nbbo_sox.txt"
 
 ib = IB()
 ib.connect("127.0.0.1", get_port(), clientId=45, timeout=15)
+ib.RequestTimeout = 15   # causa raiz 2026-07-28 (opt_whale_watch.py): sin esto, qualifyContracts cuelga para siempre si TWS no responde
 sox = Index("SOX", "NASDAQ", "USD")
 q = ib.qualifyContracts(sox)
 if not q or not q[0].conId:

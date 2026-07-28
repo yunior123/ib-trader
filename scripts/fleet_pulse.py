@@ -31,5 +31,7 @@ for s in fleet:
     st.setdefault("hi", {})[s] = hi
     st.setdefault("lo", {})[s] = lo
 st["px"] = now; st["ts"] = int(time.time())
-json.dump(st, open(ST, "w"))
+tmp = ST + ".tmp"
+json.dump(st, open(tmp, "w"))
+os.replace(tmp, ST)
 print("\n".join(out) if out else "flota quieta")

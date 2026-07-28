@@ -218,10 +218,11 @@ def compute(sym, lv=None):
         try:
             import signal_conditioning as SC
             comp = SC.component_bias(sym)
-            f_comp = _clamp(comp * 1.5)
-            factors["components"] = round(f_comp, 2); weights["components"] = 1.3
-            if abs(f_comp) > 0.1:
-                why.append(f"componentes {'↓' if f_comp < 0 else '↑'} ({comp:+.2f})")
+            if comp is not None:                  # None = sin bars de componentes, no diluye con 0
+                f_comp = _clamp(comp * 1.5)
+                factors["components"] = round(f_comp, 2); weights["components"] = 1.3
+                if abs(f_comp) > 0.1:
+                    why.append(f"componentes {'↓' if f_comp < 0 else '↑'} ({comp:+.2f})")
         except Exception:
             pass
 

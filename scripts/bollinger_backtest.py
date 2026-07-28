@@ -32,7 +32,7 @@ data/bollinger_probs.json. SEÑAL-SOLAMENTE: esto solo mide, jamas ordena.
 import json, math, os, statistics, sys
 from zoneinfo import ZoneInfo
 
-REPO = "/Users/yuniorrodriguezosorio/ib-trader"
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # regla 7: jamas ruta absoluta
 CACHE = os.path.join(REPO, "data", "backtest")
 ET = ZoneInfo("America/New_York")
 FWD = 30          # barras 1m forward requeridas

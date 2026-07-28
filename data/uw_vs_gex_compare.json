@@ -1,7 +1,7 @@
 {
  "_meta": {
   "fecha": "2026-07-26",
-  "generado": "2026-07-26T23:57:30",
+  "generado": "2026-07-27T08:30:15",
   "fuente_a": "gex propio (chain_full, griegas medidas polygon_directo)",
   "fuente_b": "unusual_whales_trial /api/stock/{sym}/greek-exposure/strike",
   "aviso": "SOLO por pata. El neto de los dos NO es comparable: distinto scope."
@@ -26,6 +26,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 530,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -69,6 +70,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 481,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -112,6 +114,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 270,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -138,8 +141,47 @@
   },
   "TSLA": {
    "sym": "TSLA",
-   "estado": "ERROR",
-   "motivo": "TypeError: float() argument must be a string or a number, not 'NoneType'"
+   "estado": "ok",
+   "n_strikes_comunes": 124,
+   "cobertura_strikes_nuestros": 0.9841,
+   "cobertura_strikes_uw": 0.5586,
+   "scope_nuestro": {
+    "spot": 313.33,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.6,
+    "n_contratos": 1510,
+    "n_sin_griegas": 409,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 222,
+    "n_patas_nulas": 16,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.9048706416022758,
+    "pearson": 0.9371235305957818,
+    "n": 116
+   },
+   "put_gex": {
+    "spearman": 0.7128210729812722,
+    "pearson": 0.9239992645637082,
+    "n": 124
+   },
+   "call_dex": {
+    "spearman": 0.8173297966401415,
+    "pearson": 0.6151571616575584,
+    "n": 116
+   },
+   "put_dex": {
+    "spearman": -0.46266090477873556,
+    "pearson": -0.6784049438329738,
+    "n": 124
+   }
   },
   "MU": {
    "sym": "MU",
@@ -160,6 +202,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 446,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -203,6 +246,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 249,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -246,6 +290,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 267,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -289,6 +334,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 125,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -332,6 +378,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 161,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -375,6 +422,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 288,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -418,6 +466,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 86,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -444,8 +493,47 @@
   },
   "GOOGL": {
    "sym": "GOOGL",
-   "estado": "ERROR",
-   "motivo": "TypeError: float() argument must be a string or a number, not 'NoneType'"
+   "estado": "ok",
+   "n_strikes_comunes": 75,
+   "cobertura_strikes_nuestros": 0.9615,
+   "cobertura_strikes_uw": 0.4438,
+   "scope_nuestro": {
+    "spot": 319.3,
+    "dte_max": 26,
+    "exp_hasta": "2026-08-21",
+    "banda": 0.405,
+    "n_contratos": 984,
+    "n_sin_griegas": 236,
+    "greeks": "polygon_directo",
+    "snapshot_local": "2026-07-26 16:20:00"
+   },
+   "scope_uw": {
+    "fecha_dato": "2026-07-24",
+    "n_strikes": 169,
+    "n_patas_nulas": 4,
+    "scope": "libro entero, sin columna de expiry -> NO filtrable"
+   },
+   "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
+   "call_gex": {
+    "spearman": 0.9056685391839321,
+    "pearson": 0.9166777521473402,
+    "n": 73
+   },
+   "put_gex": {
+    "spearman": 0.7958721885588254,
+    "pearson": 0.9378055129526772,
+    "n": 75
+   },
+   "call_dex": {
+    "spearman": 0.7518128888816804,
+    "pearson": 0.6108271616236566,
+    "n": 73
+   },
+   "put_dex": {
+    "spearman": -0.6144404595455834,
+    "pearson": -0.8552378950485962,
+    "n": 75
+   }
   },
   "INTC": {
    "sym": "INTC",
@@ -466,6 +554,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 151,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -509,6 +598,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 161,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -552,6 +642,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 359,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -595,6 +686,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 126,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -638,6 +730,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 101,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -681,6 +774,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 211,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -724,6 +818,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 262,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -767,6 +862,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 55,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -810,6 +906,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 359,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -853,6 +950,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 164,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -896,6 +994,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 167,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -939,6 +1038,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 129,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -982,6 +1082,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 189,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -1025,6 +1126,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 133,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -1068,6 +1170,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 223,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -1111,6 +1214,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 509,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -1154,6 +1258,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 284,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",
@@ -1197,6 +1302,7 @@
    "scope_uw": {
     "fecha_dato": "2026-07-24",
     "n_strikes": 328,
+    "n_patas_nulas": 0,
     "scope": "libro entero, sin columna de expiry -> NO filtrable"
    },
    "neto": "NO COMPARABLE: scopes distintos (ventana vs libro entero, UW sin expiry)",

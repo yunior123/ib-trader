@@ -3,8 +3,9 @@
 (quita el sesgo de volatilidad) contra la base del mismo simbolo/dia/horizonte."""
 import os, sys, json, math
 from collections import defaultdict
-sys.path.insert(0, "/Users/yuniorrodriguezosorio/ib-trader/scripts")
-os.chdir("/Users/yuniorrodriguezosorio/ib-trader")
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # regla 7: jamas ruta absoluta
+sys.path.insert(0, os.path.join(REPO, "scripts"))
+os.chdir(REPO)
 from full_history_backtest import wilson, cluster_score_test, bh_fdr, two_sided_p
 
 SP = "/tmp"

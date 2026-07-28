@@ -166,8 +166,11 @@ def main():
     h = int(a[a.index("--h") + 1]) if "--h" in a else 15
     quiet = "--quiet" in a
     factors, enable, src_tot, src_bkt, src_sym, run = calibrate(h)
-    json.dump(factors, open("data/timeofday_factors.json", "w"), indent=1)
-    json.dump(enable, open("data/signal_enable.json", "w"), indent=1)
+    for path, obj in (("data/timeofday_factors.json", factors), ("data/signal_enable.json", enable)):
+        tmp = path + ".tmp"
+        with open(tmp, "w") as f:
+            json.dump(obj, f, indent=1)
+        os.replace(tmp, path)   # signal_conditioning.py lo lee en vivo
     doc = write_report(factors, enable, src_tot, src_bkt, src_sym)
     ndead = sum(1 for v in enable.values() if not v["enabled"])
     print(f"timeofday_calib OK: {len(src_tot)} fuentes, {ndead} celdas apagadas -> "

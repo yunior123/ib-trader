@@ -264,10 +264,18 @@ static std::string q(const std::string& s) {
     return o + "'";
 }
 static void sing(const std::string& title, const std::string& msg, bool voice,
-                 const char* prio = "SIGNAL") {
+                 const char* prio = "SIGNAL", const std::string& voice_msg = "") {
+    // voice_msg: version corta para la voz (Yunior 2026-07-28 "voces muy largas, resume,
+    // claro como el agua para ballenas o flujos masivos"); banner/log conservan `msg` completo.
+    std::string corto = voice_msg.empty() ? msg : voice_msg;
     if (getenv("FP_TEST")) { printf("[%s] ", voice ? prio : "MUTE"); }   // harness: prio visible
-    if (voice) shell_bg(std::string("scripts/speak.sh ") + prio + " " + q(msg));
-    shell_bg("/usr/bin/osascript -e " + q("display notification \"" + msg +
+    if (voice) {
+        shell_bg(std::string("scripts/speak.sh ") + prio + " " + q(corto));
+        // ntfy/telefono: version corta (Yunior 2026-07-28 "cortos y precisos, en ntfy, macos,
+        // all over"), no el log completo -- notify_relay.sh sigue data/notify_push.txt.
+        shell_bg("./venv/bin/python scripts/notify_short.py " + q(title) + " " + q(corto));
+    }
+    shell_bg("/usr/bin/osascript -e " + q("display notification \"" + corto +
              "\" with title \"" + title + "\" sound name \"ProAlert\""));
     time_t t = time(nullptr);
     tm lt{}; localtime_r(&t, &lt);
@@ -321,11 +329,15 @@ int main() {
             std::string lista;
             for (auto& [s, one] : uniq) lista += s + " ";
             char m[512];
+            bool up = std::string(dir) == "PUTS";
             snprintf(m, sizeof m, "MANADA A %s: %d tickers en 12 minutos — %s. Extremo de "
                      "mercado, rebote del indice %s probable. QQQ %.2f",
                      dir, (int)uniq.size(), lista.c_str(),
-                     std::string(dir) == "PUTS" ? "al alza" : "a la baja", qqq_spot());
-            sing(std::string("🐺 MANADA A ") + dir, m, true, "DANGER");
+                     up ? "al alza" : "a la baja", qqq_spot());
+            char vm[96];
+            snprintf(vm, sizeof vm, "Manada de %s. Rebote %s.",
+                     up ? "puts" : "calls", up ? "al alza" : "a la baja");
+            sing(std::string("🐺 MANADA A ") + dir, m, true, "DANGER", vm);
         }
     };
 
@@ -381,7 +393,11 @@ int main() {
                      "reversion %s probable: techo local, fade a la baja. Los nombres "
                      "obedecen al capitan.", r.sym.c_str(), lista.c_str(),
                      market ? "de mercado" : "del sector memoria");
-        sing("🎖 CAPITAN REVIERTE " + r.sym, m, true, market ? "DANGER" : "SIGNAL");
+        char vm[96];
+        snprintf(vm, sizeof vm, "Alto volumen de %s en %s. %s.",
+                 cap_dir == 'P' ? "puts" : "calls", r.sym.c_str(),
+                 cap_dir == 'P' ? "Rebote al alza" : "Techo, baja probable");
+        sing("🎖 CAPITAN REVIERTE " + r.sym, m, true, market ? "DANGER" : "SIGNAL", vm);
     };
 
     const char* path = "data/whale_flow_hist.jsonl";
@@ -461,7 +477,8 @@ int main() {
                                     // queda ANULADO (banner sin voz; la voz es del capitan)
                                     sing(std::string(!ovr.empty() ? "🔇🚀 SPIKE CALLS (capitan opuesto) "
                                          : ci.wall > 0 ? "🧱🚀 SPIKE CALLS " : "🚀 SPIKE CALLS ")
-                                         + r->sym, msg, ovr.empty());
+                                         + r->sym, msg, ovr.empty(), "SIGNAL",
+                                         "Alto volumen de calls en " + r->sym + ".");
                                     capitan_revierte(*r, 'C');   // capitan-calls tras puts de tropa
                                 }
                                 note_spike(r->sym, 'C');         // v4: jerarquia (vetado o no)
@@ -500,7 +517,8 @@ int main() {
                                     // regla 12: capitan opuesto vigente = anulado sin voz
                                     sing(std::string(!ovr.empty() ? "🔇🚀 SPIKE PUTS (capitan opuesto) "
                                          : ci.wall > 0 ? "🧱🚀 SPIKE PUTS " : "🚀 SPIKE PUTS ")
-                                         + r->sym, msg, ovr.empty());
+                                         + r->sym, msg, ovr.empty(), "SIGNAL",
+                                         "Alto volumen de puts en " + r->sym + ".");
                                     capitan_revierte(*r, 'P');   // EL caso del dia (SPY tras NVDA)
                                 }
                                 note_spike(r->sym, 'P');         // v4: jerarquia (vetado o no)

@@ -11,6 +11,7 @@ Uso: python3 scripts/chart_levels.py [SYM ...]   (default: flota con cache dispo
 import json, os, sys, glob, time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import gex_core
+from poly_chain_archive import BAND_FLOOR   # ancho minimo MEDIDO para el mapa (5a6a34e), UNA definicion
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SANDBOX DE REPLAY (2026-07-25, aditivo): scripts/replay.cpp publica las cadenas historicas
@@ -137,11 +138,15 @@ def _frozen_flip(sym):
     return prev.get("flip_open"), prev.get("frozen_day"), prev.get("frozen_at")
 
 
-def _from_cache_capturing(path, spot, all_exp):
+def _from_cache_capturing(path, spot, all_exp, now=None):
     """gex_core.from_ibkr_cache + los contratos `usable` que uso, para poder calcular el
     CHARM sin duplicar su filtrado (banda, vencimiento vivo, IV invertida del mid).
     gex_core esta vetado (ver cabecera): se envuelve build_gex en el proceso, como el
-    reloj de _freeze_clock. Devuelve (g, contratos) — contratos [] si no se pudo casar."""
+    reloj de _freeze_clock. Devuelve (g, contratos) — contratos [] si no se pudo casar.
+
+    `now` (epoch): al leer un snapshot Polygon del MAPA se pasa su propio epoch para que
+    from_ibkr_cache NO lo marque rancio en RTH. El mapa es ESTRUCTURA (OI estable el dia),
+    igual que gex_snapshot.contracts_from, que lee chain_full sin gate de rancidez."""
     orig = gex_core.build_gex
     box = []
 
@@ -152,7 +157,7 @@ def _from_cache_capturing(path, spot, all_exp):
 
     gex_core.build_gex = cap
     try:
-        g = gex_core.from_ibkr_cache(path, spot, scale="dollar1pct", all_exp=all_exp)
+        g = gex_core.from_ibkr_cache(path, spot, scale="dollar1pct", all_exp=all_exp, now=now)
     finally:
         gex_core.build_gex = orig
     if not g or not box:
@@ -185,15 +190,30 @@ def gen(sym, spot=None, write=True, all_exp=False):
     if not spot:
         return None
     g, cs_used = _from_cache_capturing(path, spot, all_exp)  # $/1% como gexa
-    # RESPALDO CON GRIEGAS MEDIDAS: si el cache TWS no tiene griegas usables (tipico fuera de
-    # RTH: iv=-1 en todas las filas) se reintenta con el snapshot de Polygon del dia, que SI
-    # las trae. Solo se acepta si resulta mejor: nunca se cambia una fuente buena por otra.
-    if (g is None or not g.get("gamma_ok")) and not path.startswith("data/history/"):
+    # RESPALDO PARA EL MAPA (misma regla que gex_snapshot.pick_source): IBKR es PRIMARIO para el
+    # DISPARO, pero para la ESTRUCTURA hace falta COBERTURA. El cache TWS trae griegas al 100% en
+    # RTH pero su ancho de strikes es ±1,4%-8% (cap de 20 strikes), y sobre esa ventana el flip es
+    # el borde y el regimen sale al reves (NVDA/TSLA/AMD/INTC NEG cuando el libro ancho dice POS,
+    # medido en RTH 2026-07-27). Se cae a Polygon cuando el cache no tiene griegas usables O su
+    # ancho no llega a BAND_FLOOR — misma fuente y umbral que el lote, para que los dos coincidan.
+    def _map_insuficiente(gg):
+        if gg is None or not gg.get("gamma_ok"):
+            return True
+        sp = gg.get("strike_span_pct")
+        return sp is None or sp < BAND_FLOOR
+    if _map_insuficiente(g) and not path.startswith("data/history/"):
         alt = poly_chain_path(sym)
         if alt:
-            g2, cs2 = _from_cache_capturing(alt, spot, all_exp)
-            if g2 and g2.get("gamma_ok"):
+            # el snapshot Polygon se lee AS-OF su propio epoch (no rancio en RTH): es el mismo
+            # libro que gex_snapshot usa para el mapa, asi los dos consumidores coinciden.
+            alt_epoch = _asof_of(alt) if _ASOF else gex_core.parse_chain_header(alt).get("epoch")
+            g2, cs2 = _from_cache_capturing(alt, spot, all_exp, now=alt_epoch)
+            # se acepta el respaldo si es usable y su cobertura es MEJOR (mas ancho): nunca se
+            # cambia una fuente buena por una peor, pero una estrecha SI cede ante una ancha.
+            if g2 and g2.get("gamma_ok") and not _map_insuficiente(g2):
                 g, path, cs_used = g2, alt, cs2
+            elif g is None and g2 and g2.get("gamma_ok"):
+                g, path, cs_used = g2, alt, cs2      # no habia nada: cualquier cosa medible gana
     if not g:
         return None
     # REGIMEN: si el 0DTE no determina el signo por paridad, lo firma el LIBRO ENTERO de la MISMA

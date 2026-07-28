@@ -28,3 +28,6 @@
 {"sym": "TXN", "date": "2026-07-25", "src": "polygon_snapshot_v3", "gross": 2467287.7, "impact": 0.0014295797, "n_strikes": 8}
 {"sym": "WDC", "date": "2026-07-25", "src": "polygon_snapshot_v3", "gross": 1053195.33, "impact": 0.0002939043, "n_strikes": 15}
 {"sym": "XLK", "date": "2026-07-25", "src": "polygon_snapshot_v3", "gross": 4400342.1, "impact": 0.0028283494, "n_strikes": 14}
+{"sym": "QQQ", "date": "2026-07-26", "src": "polygon_snapshot_v3", "gross": 638330904.07, "impact": 0.0253092145, "n_strikes": 48}
+{"sym": "DIA", "date": "2026-07-26", "src": "polygon_snapshot_v3", "gross": 103478440.0, "impact": null, "n_strikes": 76}
+{"sym": "IWM", "date": "2026-07-26", "src": "polygon_snapshot_v3", "gross": 358382604.99, "impact": null, "n_strikes": 61}

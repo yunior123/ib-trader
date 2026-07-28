@@ -18,7 +18,7 @@ import re
 import subprocess
 import sys
 
-ROOT = "/Users/yuniorrodriguezosorio/ib-trader"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # regla 7: jamas ruta absoluta
 os.chdir(ROOT)
 HORIZON = 3600          # 60 min
 ATR_N = 15              # ATR de 15 bars de 1m ~ rango de 15 min
