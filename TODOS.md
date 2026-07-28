@@ -24,43 +24,6 @@
   ancho — 0,5 como DRAM, o medirlo antes de fijarlo). Los otros 6 sin gate (cper kospi
   samsung skhynix slv uso) están FUERA de `fleet.txt`: no urge.
 
-- [ ] **[pendiente] "make sure the walls are ok, no excuses, verify and try in depth… plus explore
-      and call polygon and others"** (Yunior 2026-07-25). MEDIDO hoy contra DOS referees
-      independientes que coinciden entre sí (CBOE CDN y Polygon sin filtrar): **los muros NO están
-      bien**. Dos defectos, los dos del patrón prohibido de `~/CLAUDE.md`:
-      **(1) `T = 0.02` inventado** — `gex_snapshot.py:114-116` no escribe `T`, `gex_core.py:188,207,
-      409,813` caen al default; `_T_of()` existe (`:496`) pero solo lo llama `from_ibkr_cache`
-      (`:688`) y `gex_snapshot.py:134` invoca `build_gex` directo → **el flip se reprecia con 7,3
-      días para TODOS los vencimientos, 0DTE incluido**, y de ese flip sale `pin`/`trampilla`, que
-      es VETO DURO (`compass.cpp:630-634`, `book_quality.py:317-326`). Hoy 15 trampilla / 10 pin.
-      **(2) cadena truncada** — `poly_chain_archive.py:46-47` `BAND=0.045 DTE_MAX=10`: QQQ archiva
-      854 contratos vs **12.430** reales; net GEX **−481 M** vs **−6,03 B**; call_wall **700** vs
-      **730**; NVDA 56 contratos / 7 strikes → **sin mapa gamma**. Prueba del delito: **14 de 25
-      flips caen entre 3,7% y 4,6% del spot con la banda a 4,5%** — es el borde de nuestro recorte,
-      no un nivel de mercado.
-      → **(1) hecho `cf0baaf`** (T real por contrato). **(2) hecho `5a6a34e`**: banda ADAPTATIVA por
-      gamma marginal (suelo 10% / techo 60%, calibración en `data/gamma_band.json`) + vencimientos
-      hasta el mensual. **35/35 con flip MEDIDO, el más justo a 12,5 pp del borde**; QQQ −5,22 B
-      $/1% (referees −5,3/−6,0). Medido antes de fijar parámetros con las 35 cadenas COMPLETAS de
-      CBOE. Ojo a los tres hallazgos que cambian el diagnóstico: la mitad del "13×" era **escala**
-      (`net_gex` ×spot vs `net_gex_dollar1pct` ×spot²/100), **Polygon no da griegas de índice**
-      (SPX 8.512 contratos, 0 con gamma → CBOE), y la **cuota de 5 req/60s ya no existe** (219
-      seguidas sin un 429). Detalle en `AGENTS.md` § *EL ARCHIVO DE CADENAS*.
-      → **CERRADO `6a83885`** (2026-07-27). Verificado en el DATO, no en el código, con TRES
-      referees y el scope IGUALADO — informe completo en `docs/MUROS-VERIFICACION-2026-07-27.md`.
-      **Los MUROS sí**: call_wall idéntico al referee en 7/9, put_wall en 5/9, el resto a UN
-      strike; la corona fuera de la banda aporta 0,03–3,6% de la gamma bruta (el "13×" murió).
-      Histograma flip→borde, 35 símbolos: **CERO por debajo de 10 pp**, mín 13,76, mediana 39,08.
-      UW por PATA: **30/30**, ρ(call_gex) +0,69…+0,97. Las magnitudes que discrepan son **AS-OF**:
-      con la cadena de HOY reproducimos el fetch crudo de Polygon a 3 decimales.
-      **El NETO/RÉGIMEN NO lo estaba**, y eran dos defectos nuevos: (a) `gex_core._flip` devolvía
-      el EXTREMO del recorte sin cruce de signo (EWY flip 260 con spot 163,49 a 0,97 pp del borde,
-      SNDK 2300 con spot 1440,88 a 0,38 pp) → los tres `*_kind` = trampilla = VETO DURO; ahora
-      `None`. (b) el guardián de paridad de `44f830a` estaba solo en el lote → `gex_snapshot` decía
-      QQQ NEGATIVE y `chart_levels` POS; extraído `gex_core.regime_by_parity` (UNA definición).
-      La "contradicción de fuentes" era de **SCOPE** (0DTE vs libro entero): a scope igualado
-      **30/30 coinciden**.
-
 - [ ] **[pendiente — el bloqueante de "IBKR primario"] ensanchar `opt_chain_cache.py`** (medido
       2026-07-27, es de otro agente). Orden de Yunior: *"elige ibkr real, polygon only fallback for
       realtime market"*. El gate ya existe y declara la procedencia en el dato
@@ -237,19 +200,6 @@
       corriendo (procesos viejos, cron viejo, o binarios no redeployados). Identificarlas
       (`ps`, `voice_log`, launchctl) y reemplazarlas por las versiones vigentes, sin dejar dos
       hablando a la vez.
-- [ ] **[pendiente — hallazgo del agente muros, VERIFICAR] `gex_gate` convierte régimen None en
-      "régimen NEGATIVO"** (`scripts/gex_gate.py:82-87`). Un `else` pelado afirmaba NEGATIVO cuando
-      el régimen es None (no-sé) — el patrón prohibido. El agente ya lo tocó; verificar el fix.
-
-- [ ] **[REPORTE a Yunior] CLAUDE.md del repo llegó CONTAMINADO** con una plantilla genérica de
-      "Core Architecture & Mission" (React/TypeScript/pydantic/mypy/TDD) que **borró la regla 1
-      SEÑAL-SOLAMENTE** y describe una arquitectura FALSA (este repo es HTML vanilla + Python 3.9
-      stdlib + C++ + Swift, cero React, cero pydantic). Restaurado CLAUDE.md bueno + reaplicadas las
-      2 notas legítimas de Yunior (Done.md, perpetuos). La plantilla se guardó en
-      `scratchpad/claudemd_contaminado.diff` por si Yunior la pegó a propósito — decidir si algo de
-      ahí vale, pero NO a costa de SEÑAL-SOLAMENTE.
-
-## 🔴 SESIÓN 2026-07-27 (tarde/noche) — peticiones al vuelo
 - [ ] **[pendiente] Ventana: buscar info igual desde dom 20:00 (o antes, premarket Corea ~19:00) y
       chart con PRECIO REAL día Y noche hasta vie 20:00** (Yunior 2026-07-27). "from 8pm on sundays
       or before in korea premarket at around 7, search info anyway. till friday at 8pm we see the

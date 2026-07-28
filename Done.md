@@ -240,3 +240,9 @@
       *(era)* **[pendiente] "the search list does not update the data realtime, its fixed. fix that"**
 - [x] **CAUSA hallada + proceso reiniciado (agente UW/B)** — `opt_whale_watch` corría versión vieja en puerto 4002; reiniciado a 4001, único proceso vivo verificado. Falta VERIFICAR que dispara mañana en RTH (por eso no se cierra del todo, pero la causa y el fix están).
       *(era)* 🔴 **[pendiente — HOY NO DISPARARON] "today whale options alarmas were not working"** (Yunior
+- [x] **hecho `148abf3`** — el `else` pelado convertia regime=None en 'NEGATIVO'; ahora DEGRADAR. Verificado: gex_gate.py sale DEGRADAR con None, no afirma un lado sin signo firme.
+      *(era)* **[pendiente — hallazgo del agente muros, VERIFICAR] `gex_gate` convierte régimen None en
+- [x] **hecho `6a83885`+`8d0ebfb` (IBKR primario)** — el flip ya no es el borde del recorte; el regimen sale de UNA definicion. VERIFICADO hoy: gex_snapshot y chart_levels COINCIDEN en QQQ/SPY/NVDA (antes discrepaban POS vs NEG). Tablas vs CBOE/Polygon/UW en el commit.
+      *(era)* **[pendiente] "make sure the walls are ok, no excuses, verify and try in depth… plus explore
+- [x] **hecho `148abf3` — REPORTE + fix.** CLAUDE.md restaurado (regla 1 SEÑAL-SOLAMENTE recuperada), plantilla React/pydantic ajena guardada en scratchpad/claudemd_contaminado.diff por si algo vale. Yunior: decide si querias algo de esa plantilla.
+      *(era)* **[REPORTE a Yunior] CLAUDE.md del repo llegó CONTAMINADO** con una plantilla genérica de
