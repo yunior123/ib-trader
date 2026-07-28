@@ -445,3 +445,23 @@ def test_si_el_0DTE_no_firma_el_signo_lo_firma_el_LIBRO_ENTERO(tmp_path, monkeyp
     assert out["regime"] is not None and out["regime_scope"] == "ALL"
     assert "LIBRO ENTERO" in out["regime_why"]
     assert out["call_wall"] is not None and out["put_wall"] is not None
+
+
+def test_gex_gate_no_convierte_un_regimen_None_en_NEGATIVO():
+    """El `else` pelado afirmaba "régimen NEGATIVO" cuando no había régimen — la licencia
+    CONTRARIA (NEG prohíbe el fade, POS lo permite) sacada de un None."""
+    gate = _load("gex_gate")
+    g = {"regime": None, "flip": None, "call_wall": 110.0, "put_wall": 90.0, "abs_wall": 110.0,
+         "net_gex": -1.0, "gamma_ok": True}
+    for k in ("call_wall", "put_wall", "abs_wall"):
+        g[k + "_net"] = g[k + "_regime"] = g[k + "_kind"] = None
+    wc = G.wall_context(g, 100.0)
+    assert wc["regime"] is None
+    import unittest.mock as m
+    with m.patch.object(gate.gex_core, "from_ibkr_cache", lambda *a, **k: g), \
+         m.patch.object(gate.os.path, "exists", lambda p: True), \
+         m.patch.object(gate, "spot_from_cache", lambda p: 100.0):
+        r = gate.gate("ZZ", "LONG", 100.0)
+    assert "SIN DETERMINAR" in r["reason"]
+    assert "NEGATIVO" not in r["reason"] and "POSITIVO" not in r["reason"]
+    assert r["verdict"] == "DEGRADAR"

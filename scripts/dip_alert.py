@@ -25,7 +25,7 @@ Probabilidades MEDIDAS: data/dip_probs.json (dip_backtest.py, 1 año diario).
 Ticker "enabled": false (P(rebote)<50% con n>=10) -> la alerta LO SALTA.
 
 Anti-ruido: max 1 alerta/ticker/dia (persistido, sobrevive restart);
-nada 9:30-9:45; RTH 9:45-15:30, loop 60s, muere 15:30.
+nada 9:30-9:45; RTH 9:45-16:00, loop 60s, muere 16:00.
 DIP_TEST=1 -> una pasada sin voz/banner/log, imprime que haria, sale.
 SEÑAL-SOLAMENTE (jamas ordenes). Degradacion limpia por dato faltante.
 """
@@ -222,7 +222,7 @@ def main():
         lt = time.localtime()
         hm = lt.tm_hour * 100 + lt.tm_min
         if not TEST:
-            if hm >= 1530 or lt.tm_wday >= 5:
+            if hm >= 1600 or lt.tm_wday >= 5:
                 break
             if hm < 945:                       # jamas 9:30-9:45 (subasta)
                 time.sleep(30); continue
@@ -285,7 +285,7 @@ def main():
             print("[DIP_TEST] pasada unica completa — salgo.")
             return 0
         time.sleep(LOOP_S)
-    say("🩸 DIP VIGIA", "15:30 — vigia de dips fuera hasta mañana", voice=False)
+    say("🩸 DIP VIGIA", "16:00 — vigia de dips fuera hasta mañana", voice=False)
     return 0
 
 if __name__ == "__main__":

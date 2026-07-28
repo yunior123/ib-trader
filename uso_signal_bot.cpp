@@ -8,7 +8,7 @@
 //         within 60 bars confirms -> COMPRAR alert (dram_buy.wav)
 //   SELL: on the virtual position — target +4% touched, trail 3xATR broken
 //         above the +1% floor, or 15:45 ET flatten -> VENDER (dram_sell.wav)
-//   Entries only 9:30-15:30 ET (RTH rule).
+//   Entries only 9:30-16:00 ET (RTH rule).
 //
 // Data: ibkr_bar_bridge (daemon IBKR, fuente unica) streams
 //       REAL 1m completed bars as "EPOCH OPEN HIGH LOW CLOSE VOLUME" lines.
@@ -1483,7 +1483,7 @@ int main(int argc, char** argv) {
 
         int H, M; et_hm(b.t, H, M);
         int mins = H * 60 + M;
-        bool rth_entry = mins >= 570 + (int)SKIP_OPEN && mins < 930;
+        bool rth_entry = mins >= 570 + (int)SKIP_OPEN && mins < 960;
         // 24/7 (orden Yunior 2026-07-11 'uso bot should be 24/7'): sin gate
         // horario — alerta siempre que IBKR imprima un bar (RTH+ext+overnight)
         bool alert_hours = true;
@@ -1610,7 +1610,7 @@ int main(int argc, char** argv) {
         static long tday = 0; static double tday_hi = 0, tday_lo = 0;
         if ((long)(b.t / 86400) != tday) { tday = (long)(b.t / 86400); tday_hi = 0; tday_lo = 0; }
         if (TREND_MODE && !in_pos && !pending_buy && nbars > 30) {
-            bool trend_rth = mins >= 570 + (int)SKIP_OPEN && mins < 930;
+            bool trend_rth = mins >= 570 + (int)SKIP_OPEN && mins < 960;
             bool flip_up = st_prev_trend <= 0 && st_trend > 0;
             bool don_break = tday_hi > 0 && b.c > tday_hi;
             bool vwap_ok = TREND_VWAP == 0 ||
@@ -1626,7 +1626,7 @@ int main(int argc, char** argv) {
         }
         if (S_MODE_TREND && SHORTS > 0 && !in_pos && !in_short && !pending_short &&
             !pending_buy && nbars > 30) {
-            bool trend_rth = mins >= 570 + (int)SKIP_OPEN && mins < 930;
+            bool trend_rth = mins >= 570 + (int)SKIP_OPEN && mins < 960;
             bool flip_dn = st_prev_trend >= 0 && st_trend < 0;
             bool don_break_dn = tday_lo > 0 && b.c < tday_lo;
             if (trend_rth && (flip_dn || don_break_dn) && cusum_dn <= -S_TCUSUM
