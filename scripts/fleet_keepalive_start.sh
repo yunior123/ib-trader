@@ -284,6 +284,14 @@ if (( FP_DOW <= 5 && FP_HM >= 930 && FP_HM < 1556 )) && ! pgrep -x "flow_pulse" 
   echo "$(date) fleet: flow_pulse lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
 fi
 
+# aviso hablado "posicion expira HOY" (hueco del opt_sentinel retirado; posiciones REALES, readonly)
+if (( FP_DOW <= 5 && FP_HM >= 930 && FP_HM < 1600 )) \
+   && ! pgrep -f "scripts/position_close_reminder.py" >/dev/null; then
+  mkdir -p "$ROOT/logs"
+  nohup "$ROOT/venv/bin/python" -u "$ROOT/scripts/position_close_reminder.py" >> "$ROOT/logs/position_close_reminder.log" 2>&1 &
+  echo "$(date) fleet: position_close_reminder lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+fi
+
 if ! pgrep -f "scripts/opt_whale_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/opt_whale_keepalive.sh" >/dev/null 2>&1 &
   echo "$(date) fleet: opt_whale_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
