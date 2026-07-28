@@ -22,17 +22,6 @@
   (`data/perp_stocks.json`, 26 simbolos Bybit), (b) los tickers coreanos (Samsung/SK Hynix/
   KOSPI, que van por `korea_bar_bridge`). Probar los dos casos.
 
-- [ ] **[pendiente — el bloqueante de "IBKR primario"] ensanchar `opt_chain_cache.py`** (medido
-      2026-07-27, es de otro agente). Orden de Yunior: *"elige ibkr real, polygon only fallback for
-      realtime market"*. El gate ya existe y declara la procedencia en el dato
-      (`gex_snapshot.pick_source`, `chain_src`/`source_why`), con las dos constantes YA medidas del
-      repo: griegas ≥ `book_quality.MIN_GREEKS_SRC` (0,50) **y** ancho ≥
-      `poly_chain_archive.BAND_FLOOR` (0,10). Pero **IBKR gana 0/26 hoy**: su cache es de
-      **±1,3%–7,1% de ancho, 20 strikes y 2 vencimientos**, donde la gamma necesita ±18%–60%.
-      Aunque sus griegas llegasen al 100% no puede llevar el régimen sin reabrir el bug del
-      recorte (`5a6a34e`). Hasta que `max_strikes 20` cubra la banda adaptativa, "IBKR primario"
-      es correcto en el código y **inalcanzable en el dato**, y el régimen lo sigue firmando
-      Polygon/CBOE con su procedencia dicha.
 
 - [ ] **[pendiente — parcial, revisado 2026-07-26]** "priority now goes to signals… test all
       signals with data, full backtesting, arrow is super important too" (Yunior 2026-07-25).
@@ -165,12 +154,6 @@
       corriendo (procesos viejos, cron viejo, o binarios no redeployados). Identificarlas
       (`ps`, `voice_log`, launchctl) y reemplazarlas por las versiones vigentes, sin dejar dos
       hablando a la vez.
-- [ ] **[pendiente] Ventana: buscar info igual desde dom 20:00 (o antes, premarket Corea ~19:00) y
-      chart con PRECIO REAL día Y noche hasta vie 20:00** (Yunior 2026-07-27). "from 8pm on sundays
-      or before in korea premarket at around 7, search info anyway. till friday at 8pm we see the
-      chart with the real price, whether day or night." → el chart debe mostrar precio real 24h en
-      la ventana viva (perpetuos 24/7 + Corea de noche + US de día), no quedarse mudo por la noche.
-      Relacionado con la cinta nocturna irrecuperable (solo se captura en vivo) y con `fleet_hours`.
 - [x] **[hecho 514a38a/516d3e9 — agente UW] UW latencia MEDIDA en sesión viva: 5,5 s → candidato a
       tiempo-real** (09:31 EDT, primera medición intradía; el sábado 43,8 h = fin de semana, cero
       evidencia). SIGUE SIN VOZ (caduca ~2026-08-01, regla gexa: archivar→medir→cablear). +
@@ -184,76 +167,31 @@
       (conecta a 4001 limpio). VERIFICAR que quedó vivo y disparando.
 
 
-- [ ] 🔴 **[RAÍZ de "no veo los gráficos moverse" + "5s no se mueve" + "chart día y noche"] El chart
-      usa `reqHistoricalData keepUpToDate` que SE CONGELA a las 20:00 ET (fin del after-hours),
-      mientras el `ibkr_bar_bridge` SÍ tiene datos frescos overnight.** MEDIDO 2026-07-27 21:19:
-      reqHistoricalData de QQQ (5s Y 1m) da última barra 19:59, hace 76 min; `bars_qqq_ibkr.txt`
-      tiene última barra 21:19 (hace 1 min, close moviéndose 677,58→677,67→677,57). Dos cosas:
-      (a) el chart US debe CAER al fichero del bar_bridge overnight (como ya hace Corea con
-      `korea_poll_feed`) cuando reqHistoricalData deja de avanzar → arregla 1m+ de noche;
-      (b) a 5s NO hay fuente de segundos fuera de sesión (IBKR histórico de 5s para a las 20:00 y el
-      bar_bridge solo produce 1m) → o se construyen barras de 5s del tick stream, o a 5s fuera de
-      sesión el chart dice "sin datos de 5s fuera de RTH" en vez de mostrar barras de las 19:59
-      como si fueran vivas. Fichero: `scripts/chart_bridge.py` + `charts/live.html`.
-      → `hecho` 2026-07-28: `us_stale_feed` (watchdog sub>120s muda → tail del fichero 1m,
-      patrón korea_poll_feed) + velas desde tick stream cuando sub congelada + banner honesto
-      sub-minuto sin ticks. MEDIDO antes/después: QQQ 8080 last 07-27 19:45 (age 4,8h) →
-      07-28 00:36 (age 37s). Ver commit.
 
-- [ ] **"take a look at the widgets of ib trader, make sure they show the right data for each
-      session, a bit crazy"** (Yunior 2026-07-28) — widgets macOS/chips del cockpit muestran datos
-      de sesión equivocada (RTH vs overnight vs Corea). `hecho` 2026-07-28: VIX ya no se marca
-      vivo sin tick fresco (<10min); h-asof grita "mapa de AYER HH:MM" con chain_ts viejo; chip
-      ⏱ edad de vela >2min (KRX-aware); watchlist atenúa quotes >15min con edad; flecha compass
-      etiqueta prob por prob_source (medido % / doctrina / sin medir). opt_flow.txt NO lo lee el
-      cockpit (widget Flow sigue BLOQUEADO a propósito). Ver commit.
 
-- [ ] **[hallazgo backtest 7/27] la BD `signals` solo ingiere structural desde el 25-jul** —
-      bollinger/whale/flow/cusum del 27 solo viven en el feed txt + voice_log; sin BD no hay
-      backtest continuo de esas fuentes. Cablear la ingesta completa. `pendiente`
-- [ ] **[hallazgo backtest 7/27] structural_magnet WR30 27% (n=67)** — las flechas a imán
-      fueron la peor fuente en día de selloff; revisar si el magnet debe callar en gamma NEG
-      todo-acelerador (doctrina ya lo dice) o condicionar por régimen. `pendiente`
 
 ## Ráfaga Yunior 2026-07-28 00:40
-- [ ] **"in chrome the prices for MU are not the real ones overnight... so many crazy things with
-      the chart, please debug all that shit, including rendering of bars"** — `delegado` (agente
-      widgets/overnight ya trabaja chart_bridge+live.html); verificar YO en Chrome con MU al terminar.
 - [ ] **"verifica todo"** (Yunior) — verificación final de todo lo cerrado hoy. `pendiente`
-- [ ] **"do alarmas have expiration? so that we dont have crazy ones from one or 2 weeks ago?
-      maybe it should be editable?"** — auditar TTL de TODAS las fuentes de alarma (manuales del
-      chart, watchers, planes); default de caducidad + editable. `pendiente`
 - [ ] **"did u organize the proyect already?"** — logs a logs/, limpieza raíz (solo con flota
       parada con seguridad). `pendiente`
-- [ ] **"update claude.md, agents.md and memo with latest proyect specs using low token agent
-      like sonnet"** — `pendiente (agente sonnet)`
 - [ ] **"priority to signal system, the core signal system plus whales and notifications, those
       are the full main core of us. make sure no bugs, no logic errors, go in depth, send scouts
       to help, analyze every single peace of it, backtest the whole things"** — auditoría profunda
       multi-scout del núcleo señales+ballenas+notificaciones + backtest completo. `pendiente`
-- [ ] **"check if the arrow can be working properly at night too, search the web... maybe the
-      arrow can operate without options? if too complex or not needed we can skip it"** —
-      investigar flecha nocturna (sin cadena de opciones viva). `pendiente`
 - [ ] **"at the end todos.md cannot have pending todos, if u need something from me let me know
       by email in bullet points"** — cierre total + email Resend con lo que dependa de Yunior. `pendiente`
 
-- [ ] **TTL alarmas, parte 2**: `alarm_add()` de chart_bridge.py debe escribir `exp=` por
-      defecto (ej +5 días hábiles) en las alarmas manuales del chart, y la UI permitir
-      editarlo. Esperar a que el agente de widgets suelte chart_bridge/live.html. `pendiente`
 
 
 ## Ráfaga Yunior 2026-07-28 00:50
-- [ ] **"do we have options queued data like similar to tradingflow? if not what do u need?
-      can it help prevent terremotos?"** — responder con hechos (UW trial/WebSocket, Polygon
-      Advanced $199 realtime trades, cap IBKR 5 tick-by-tick) + medir si el flujo ANTICIPA
-      los terremotos CUSUM. `pendiente`
 - [ ] **"verify all terremoto, pulse alarms and whales"** — verificación una a una. `delegado a scouts`
 - [ ] **"verify logs, make sure the whole system is logging then test that the signals or
       events are all real, one by one"** — auditoría de logging completo + realidad de cada
       señal/evento. `delegado a scouts`
 
-- [ ] **"print graph and strategy for the spy, qqq, mu. similar to yesterday or better. use only
-      3 sheets max. the tree as well, what to do when up or down the levels. analyze them
-      premarket with trading agents, probabilities of dip based on options chain, sentiment,
-      data, news"** (Yunior 2026-07-28 07:35) — `en curso` (cadenas premarket frescas → planes →
-      análisis DeepSeek/TA → imprimir 3 hojas, duplex+2up).
+
+- [ ] **"asegura planes y otros archivos van inside ib-trader in desktop, review that, i thought
+      it was solved from root. make sure u organize the mess of files in our repo, put them in
+      right folders if not already"** (Yunior 2026-07-28 07:35) — `en curso`: (1) defaults de
+      Desktop raíz → ib-trader/hoy YA; (2) reorganización del repo: lo inerte ya, logs/binarios
+      vivos tras el cierre 16:00 (moverlos con la flota viva rompe rutas de keepalives).
