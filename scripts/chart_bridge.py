@@ -1838,22 +1838,25 @@ async def us_stale_feed(st, interval=5.0):
                 continue
             if step > 60:
                 fresh = agg_epoch(fresh, step)
-            appended, changed = 0, False
-            n0 = max(0, len(st.bars) - 30)
-            idx = {b[0]: i for i, b in enumerate(st.bars[n0:], start=n0)}
+            # merge COMPLETO por epoch: si un tick abrio ya el bucket de ahora, "solo
+            # despues de la ultima" tiraba TODO el backfill 20:00->ahora (hueco medido:
+            # 1921 barras en vez de ~2200). Fichero manda en barras CERRADAS (volumen);
+            # el bucket en formacion se queda con los ticks (sin flicker hacia atras).
+            cur = {b[0]: b for b in st.bars}
+            form = int(now) - int(now) % step
+            appended = changed = 0
             for b in fresh:
-                i = idx.get(b[0])
-                if i is not None:
-                    if st.bars[i] != b:
-                        st.bars[i] = b   # el fichero manda sobre la vela tick-built (trae volumen)
-                        changed = True
-                elif not st.bars or b[0] > st.bars[-1][0]:
-                    st.bars.append(b)
+                old = cur.get(b[0])
+                if old is None:
+                    cur[b[0]] = b
                     appended += 1
-            if len(st.bars) > 6000:
-                del st.bars[:-6000]
+                elif old != b and b[0] < form:
+                    cur[b[0]] = b
+                    changed += 1
             if not (appended or changed):
                 continue
+            bars = [cur[k] for k in sorted(cur)]
+            st.set_bars(bars[-6000:] if len(bars) > 6000 else bars)
             st._nodata_reason = None
             if appended > 1:   # catch-up con hueco -> history completo, no un update suelto
                 frame = history_frame(agg_view_bars(st), st.levels, st.tf,
