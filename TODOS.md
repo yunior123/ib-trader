@@ -2,7 +2,6 @@
 
 > Vivo. Marcar [x] al cerrar. Manual completo: `docs/DAILY-SYSTEM.md`.
 
-- [ ] **[pendiente — HOY 09:31] "take a look at tradingflow, i have the window open in chrome,
   do it at 9:31, be picaro"** (Yunior 2026-07-28 07:36). La ventana TradingFlow está abierta en
   su Chrome; leerla a las 09:31 vía extensión (la sesión del agente auditor NO tenía la extensión
   conectada — hacerlo desde la sesión principal). Referencia: flujo MU del cierre 27-jul pegado
@@ -65,8 +64,6 @@
 
 
 ## Ráfaga Yunior 2026-07-28 00:40
-- [ ] **"did u organize the proyect already?"** — logs a logs/, limpieza raíz (solo con flota
-      parada con seguridad). `pendiente`
 
 
 
