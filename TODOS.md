@@ -80,3 +80,7 @@
       calibracion y backtest con real data"** — distribución de probs en RTH + calibrate con
       ledger real de hoy + backtest. `en curso (medición durante la mañana)`
 
+
+- [ ] **"so puede bajar mas aun el mercado? create big plan and show me what there is per symbol
+      of the fleet. also, did u add perpetuals? at least one like MUUSDT in okx?"** (Yunior
+      2026-07-28 08:25) — `en curso (yo)`
