@@ -26,6 +26,8 @@ echo "$(date) modo $MODE" >> dailyplans.log
 # 4AM: technicals de valuacion (Forward P/E/PEG...) + score de inflacion continuo (orden Yunior 2026-07-24)
 [[ $MODE == FULL ]] && FORCE_VALUATION=1 ./venv/bin/python scripts/finviz_valuation.py >> dailyplans.log 2>&1
 [[ $MODE == FULL ]] && ./venv/bin/python scripts/inflation_score.py --quiet >> dailyplans.log 2>&1
+# 4AM: calibrar la brujula con el ledger de ayer (celdas Wilson -> compass_calib.json)
+[[ $MODE == FULL ]] && ./venv/bin/python scripts/compass_calibrate.py >> dailyplans.log 2>&1
 # verify del mapa gamma: si no se escribio, quedo rancio o perdio media flota, gritar
 if [[ $MODE == FULL ]]; then
   # FRESCURA Y COBERTURA, no solo existencia (fix 2026-07-24, ampliado 2026-07-25): el

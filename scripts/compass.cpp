@@ -64,6 +64,7 @@
 #include <cstdio>
 #include <cstring>
 #include <ctime>
+#include <sys/stat.h>
 #include <fstream>
 #include <iostream>
 #include <optional>
@@ -783,6 +784,34 @@ static std::string calib_source_from_families(const std::vector<std::string>& fa
     return "";
 }
 
+// -------------------- calibracion MEDIDA (compass_calibrate.py) -------------
+// data/compass_calib.json: celda "ESTADO|fN|REGIMEN" -> {n, lo (Wilson)}; la escribe el
+// batch nocturno midiendo el ledger de transiciones contra las barras reales. Solo en
+// produccion (g_use_calib_table); el modo TEST inyecta calib_lo por --ev-stdin.
+static bool g_use_calib_table = false;
+static std::string g_calib_json; static time_t g_calib_mtime = 0, g_calib_check = 0;
+static void calib_refresh() {
+    time_t now = time(nullptr);
+    if (now - g_calib_check < 30) return;
+    g_calib_check = now;
+    struct stat st{};
+    if (stat("data/compass_calib.json", &st) != 0) { g_calib_json.clear(); return; }
+    if (st.st_mtime == g_calib_mtime && !g_calib_json.empty()) return;
+    g_calib_json = slurp("data/compass_calib.json");
+    g_calib_mtime = st.st_mtime;
+}
+static void calib_cell(const std::string& state, int nfam, const std::string& regime,
+                       std::optional<double>& lo, std::optional<double>& n) {
+    calib_refresh();
+    if (g_calib_json.empty()) return;
+    std::string key = state + "|f" + std::to_string(std::min(std::max(nfam, 0), 4)) + "|" +
+                      (regime.empty() ? "SIN" : regime);
+    std::string sec = json_section(g_calib_json, key);
+    if (sec.empty()) return;
+    auto cn = jnum(sec, "n"); auto cl = jnum(sec, "lo");
+    if (cn && cl && *cn > 0) { n = cn; lo = cl; }
+}
+
 // ------------------------------ probabilidad --------------------------------
 // Orden: (1) celda propia n_eff>=min -> "medido"; (2) se intento medir y no paso el gate ->
 // "sin_medir", SIN NUMERO (regla ~/CLAUDE.md #3: prohibido devolver un plausible en el
@@ -945,6 +974,8 @@ static Out classify(const Ev& ev, Hist* hist, const std::string& decay_json) {
     // falacia que ya se rechaza arriba con prob_retroceso_50. Se LEE para publicar el
     // veredicto como contexto, y jamas como probabilidad.
     std::optional<double> calib_lo = ev.calib_lo, calib_n = ev.calib_n;
+    if (g_use_calib_table && !(calib_lo && calib_n))
+        calib_cell(o.state, o.families, ev.regime, calib_lo, calib_n);
     if (o.state == S_REV && !(calib_lo && calib_n)) {
         std::string src0 = !ev.calib_source.empty() ? ev.calib_source
                                                     : calib_source_from_families(o.families_why);
@@ -1209,12 +1240,18 @@ static Ev gather(const std::string& sym_lo) {
     e.now_min = tmv.tm_hour * 60 + tmv.tm_min;
 
     // niveles + regimen del mapa GEX (charts/data/levels_<sym>.json, de chart_levels.py)
-    std::string lv = slurp("charts/data/levels_" + sym_lo + ".json");
+    std::string lv_path = "charts/data/levels_" + sym_lo + ".json";
+    std::string lv = slurp(lv_path);
     if (!lv.empty()) {
         if (auto s = jstr(lv, "regime")) e.regime = *s;
         if (auto v = jnum(lv, "flip")) e.flip = *v;
         if (auto v = jnum(lv, "em")) e.em = *v;
-        if (auto v = jnum(lv, "spot")) e.spot = *v;      // el spot del mapa manda si existe
+        // el spot del mapa manda SOLO si el mapa es fresco: overnight el mapa es del cierre
+        // y pisaba el precio real de las barras (cazado 2026-07-28: mapa 682.02 vs bar 677.9)
+        struct stat lst{};
+        bool lv_fresh = stat(lv_path.c_str(), &lst) == 0 &&
+                        time(nullptr) - lst.st_mtime <= 600;
+        if (lv_fresh) if (auto v = jnum(lv, "spot")) e.spot = *v;
         struct WSpec { const char* key; const char* kind; };
         for (auto ws : {WSpec{"put_wall", "Muro put"}, WSpec{"call_wall", "Muro call"},
                         WSpec{"abs_wall", "Muro absoluto"}, WSpec{"poc_dom", "POC"}}) {
@@ -1343,6 +1380,8 @@ int main(int argc, char** argv) {
     }
 
     if (syms.empty()) { fprintf(stderr, "uso: compass [--loop S] [--json] SYM...\n"); return 2; }
+    g_use_calib_table = true;
+    std::unordered_map<std::string, std::string> led_last;   // sym -> "estado|dir" ya anotado
     do {
         for (const auto& s : syms) {
             Ev e = gather(s);
@@ -1360,6 +1399,26 @@ int main(int argc, char** argv) {
                 rename(tmp.c_str(), ("data/compass_" + s + ".json").c_str());
             } else {
                 fprintf(stderr, "[compass] no puedo escribir %s\n", tmp.c_str());
+            }
+            // ledger de transiciones: 1 linea por cambio de estado/dir -> lo mide
+            // compass_calibrate.py contra las barras y alimenta compass_calib.json
+            if (e.spot && o.state != S_NONE) {
+                std::string sig = o.state + "|" + o.dir;
+                auto& last = led_last[SYM];
+                if (last != sig) {
+                    if (FILE* lf = fopen("data/compass_ledger.jsonl", "a")) {
+                        fprintf(lf,
+                            "{\"ts\":%ld,\"sym\":\"%s\",\"state\":\"%s\",\"dir\":\"%s\","
+                            "\"prob\":%s,\"prob_source\":\"%s\",\"fam\":%d,\"regime\":\"%s\","
+                            "\"spot\":%.4f}\n",
+                            (long)time(nullptr), jesc(SYM).c_str(), jesc(o.state).c_str(),
+                            o.dir.c_str(),
+                            o.prob ? std::to_string(*o.prob).c_str() : "null",
+                            o.prob_source.c_str(), o.families, jesc(e.regime).c_str(), *e.spot);
+                        fclose(lf);
+                    }
+                    last = sig;
+                }
             }
             if (to_stdout || loop_s == 0) {
                 const char* g = o.dir == "up" ? "^" : (o.dir == "down" ? "v" : "-");
