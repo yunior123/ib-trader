@@ -83,6 +83,6 @@
 
 
 
-- [ ] **"create finviz bots that detects falls after earnings reports of companies, based on news
+- [x] **"create finviz bots that detects falls after earnings reports of companies, based on news
       or technicals, with help of trading agents, liquid for options, be creative, send agent"**
-      (Yunior 2026-07-28 08:40) — `delegado a agente`
+      (Yunior 2026-07-28 08:40) — `hecho fc46c64` (scripts/earnings_fall_scout.py + keepalive 815-1300)

@@ -56,7 +56,8 @@ fleet_stop_all() {
   pkill -f 'scripts/fleet_consensus.py --daemon' 2>/dev/null
   # daemons python de señal (el arnes ib_async/ib_insync)
   for p in x_signal_poster.py sox_index_feed.py opt_sentinel.py options_enrich.py \
-           opt_chain_cache.py band_open_watch.py bollinger_alarm.py dip_alert.py; do
+           opt_chain_cache.py band_open_watch.py bollinger_alarm.py dip_alert.py \
+           earnings_fall_scout.py; do
     pkill -f "scripts/$p" 2>/dev/null
   done
   # binarios de señal C++
@@ -290,6 +291,14 @@ if (( FP_DOW <= 5 && FP_HM >= 930 && FP_HM < 1600 )) \
   mkdir -p "$ROOT/logs"
   nohup "$ROOT/venv/bin/python" -u "$ROOT/scripts/position_close_reminder.py" >> "$ROOT/logs/position_close_reminder.log" 2>&1 &
   echo "$(date) fleet: position_close_reminder lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+fi
+
+# scout de caidas post-earnings (2026-07-28): pasadas 8:20/9:50/12:30, muere 13:00
+if (( FP_DOW <= 5 && FP_HM >= 815 && FP_HM < 1300 )) \
+   && ! pgrep -f "scripts/earnings_fall_scout.py" >/dev/null; then
+  mkdir -p "$ROOT/logs"
+  nohup "$ROOT/venv/bin/python" -u "$ROOT/scripts/earnings_fall_scout.py" >> "$ROOT/logs/earnings_fall_scout.log" 2>&1 &
+  echo "$(date) fleet: earnings_fall_scout lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
 fi
 
 if ! pgrep -f "scripts/opt_whale_keepalive.sh" >/dev/null; then
