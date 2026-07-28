@@ -924,6 +924,34 @@ def zones_save(sym, zones):
         print(f"[zone] save falló ({e})")
 
 
+# VIX del mercado ENTERO -> un solo fichero compartido que compass.cpp lee. Cualquier bridge
+# con VIX lo escribe (last-writer-wins es correcto: el VIX no es por símbolo). Atómico tmp+replace.
+_VIX_JSON = os.path.join(REPO, "data", "vix.json")
+_vix_last_written = None
+
+
+def persist_vix(vix, vix_live):
+    global _vix_last_written
+    if vix is None:
+        return
+    key = (vix, bool(vix_live))
+    if key == _vix_last_written:
+        return
+    tmp = _VIX_JSON + f".{os.getpid()}.tmp"
+    try:
+        with open(tmp, "w") as f:
+            # vix_live como 0/1: compass.cpp lo lee con jnum (from_chars), un boolean no parsea
+            json.dump({"vix": vix, "vix_live": 1 if vix_live else 0, "ts": int(time.time())}, f)
+        os.replace(tmp, _VIX_JSON)
+        _vix_last_written = key
+    except Exception as e:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        print(f"[vix] persist falló ({e})")
+
+
 def chain_exps(sym):
     """Expiries del cache opt_chain (línea header '# ... exps YYYYMMDD YYYYMMDD ...').
     Degradación limpia -> []. Sólo LECTURA."""
@@ -2438,6 +2466,7 @@ async def levels_loop(state):
                 if state._vix is not None:
                     lv["vix"] = state._vix
                     lv["vix_live"] = state._vix_live
+                    persist_vix(state._vix, state._vix_live)   # -> data/vix.json para compass.cpp
                 state.levels = lv
                 await broadcast_levels(state)
                 await narrator_tick(state)

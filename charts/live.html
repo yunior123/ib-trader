@@ -70,6 +70,8 @@
   #infobar .k { color: #787b86; }
   #infobar .v { color: #d1d4dc; font-weight: 600; }
   .pos { color: #26a69a; } .neg { color: #ef5350; } .trans { color: #ffb300; }
+  /* dato del cierre anterior, no un tick: gris y en cursiva, se distingue tambien sin color */
+  #infobar .v.vstale { color:#787b86; font-style:italic; font-weight:600; }
   .tgl { background:#20242f; color:#8aa0c8; border:1px solid #333a48; padding:2px 8px;
          font:inherit; font-weight:700; font-size:11px; cursor:pointer; }
   .tgl:first-child { border-radius:4px 0 0 4px; } .tgl:last-child { border-radius:0 4px 4px 0; border-left:none; }
@@ -215,9 +217,12 @@
   #chipbar .chip .cx:hover { opacity:1; }
 
   /* --- countdown de barra (eje de precios derecho, estilo TradingView) --- */
+  /* semi-transparente: el contador TAPABA el precio/nivel de debajo (Yunior 2026-07-27). Fondo a
+     baja alpha + text-shadow para que los digitos sigan legibles y se vea a traves. */
   #countdown { position:absolute; z-index:19; right:58px;
-               background:rgba(41,98,255,.92); color:#fff; font-size:11px; font-weight:700;
+               background:rgba(41,98,255,.34); color:#fff; font-size:11px; font-weight:700;
                padding:1px 6px; border-radius:4px; pointer-events:none; display:none;
+               text-shadow:0 0 3px rgba(0,0,0,.9),0 1px 2px rgba(0,0,0,.9);
                font-variant-numeric:tabular-nums; }
 
   /* --- flecha direccional compuesta (overlay semitransparente, no bloquea clics) --- */
@@ -234,14 +239,19 @@
   #dirarrow .glyph { position:relative; z-index:1; font-size:120px; line-height:.9;
               font-weight:900; color:transparent;
               transition:font-size .26s cubic-bezier(.2,.9,.2,1); }
+  /* el brillo va en text-shadow, NO en filter: un `filter` en el padre obliga a re-filtrar
+     cada frame del shimmer (medido: 19% de un nucleo -> 5%) */
   #dirarrow .glyph::before, #dirarrow .glyph::after {
               content:attr(data-g); position:absolute; left:0; right:0; top:0;
               -webkit-background-clip:text; background-clip:text; color:transparent;
-              filter:drop-shadow(0 0 var(--glow) var(--c2)); will-change:opacity; }
+              text-shadow:0 0 var(--glow) var(--c2); will-change:opacity; }
   #dirarrow .glyph::before { background-image:linear-gradient(155deg,var(--c1) 0%,var(--c2) 34%,
                              var(--hl) 50%,var(--c2) 66%,var(--c1) 100%); }
   #dirarrow .glyph::after  { background-image:linear-gradient(25deg,var(--c2) 0%,var(--hl) 46%,var(--c1) 100%); opacity:.15; }
-  #dirarrow.live .halo { animation:dirbreathe var(--breathe) ease-in-out infinite; }
+  /* el halo que respira SOLO en los estados que se operan (reversion / aproximando): es el
+     4x del coste de CPU de la flecha, y ademas asi "respirar" significa algo */
+  #dirarrow.live .halo { opacity:.13; }                       /* halo quieto en continuacion */
+  #dirarrow.live.act .halo { opacity:0; animation:dirbreathe var(--breathe) ease-in-out infinite; }
   #dirarrow.live .glyph::before { animation:dirliq var(--liq) ease-in-out infinite alternate; }
   #dirarrow.live .glyph::after  { animation:dirliq var(--liq) ease-in-out infinite alternate-reverse; }
   @keyframes dirliq { from { opacity:1; } to { opacity:.14; } }
@@ -267,6 +277,9 @@
               opacity:.30; transition:opacity .2s ease, background .2s ease; }
   #dirarrow .ampbar i.on { opacity:1; }
   #dirarrow .pct { font-size:26px; font-weight:800; margin-top:2px; }
+  /* SESGO doctrinal, no probabilidad: gris, chico, en cursiva -> no se lee como win-rate */
+  #dirarrow .pct.bias { font-size:14px; font-weight:700; font-style:italic; color:#8a8f9c;
+              letter-spacing:.3px; }
   #dirarrow .tgt { font-size:15px; font-weight:700; color:#e0c060; margin-top:2px; }
   /* ESTADO EN GRIS: el borde distingue reversion (discontinuo) de continuacion (solido) */
   #dirarrow .st { font-size:11px; font-weight:800; letter-spacing:.4px; margin:3px auto 0;
@@ -790,10 +803,49 @@ const S = {
 let stMarkersApi = null;
 try { stMarkersApi = LWC.createSeriesMarkers(candle, []); } catch (e) { stMarkersApi = null; }
 let curStMarkers = [], sigMarkers = [], engineOps = [];
+// RACIMOS: en NVDA/MU las señales del día se apilan en bolas que TAPAN LAS VELAS. Se agrupan
+// por barra+lado (y las rachas de <=2 barras se juntan) en UN marcador con contador; el
+// tooltip mantiene el detalle. No se descarta ninguna señal: se cuentan.
+const MK_RUN_GAP = 2;              // barras de hueco que aun cuentan como el mismo racimo
+function barIndexFor(t) {          // busqueda binaria: a que vela cae este segundo
+  const b = candleData;
+  if (!b || !b.length) return null;
+  let lo = 0, hi = b.length - 1;
+  if (t <= b[0].time) return 0;
+  if (t >= b[hi].time) return hi;
+  while (lo + 1 < hi) { const m = (lo + hi) >> 1; if (b[m].time <= t) lo = m; else hi = m; }
+  return (t - b[lo].time <= b[hi].time - t) ? lo : hi;
+}
+function clusterSignals(mk) {
+  if (!candleData || !candleData.length || mk.length < 2) return mk;
+  const runs = new Map();          // lado -> [{i0,i1,items:[]}]
+  for (const m of [...mk].sort((a, b) => a.time - b.time)) {
+    const i = barIndexFor(m.time);
+    if (i == null) return mk;
+    const pos = m.position || "aboveBar";
+    const arr = runs.get(pos) || (runs.set(pos, []), runs.get(pos));
+    const last = arr[arr.length - 1];
+    if (last && i - last.i1 <= MK_RUN_GAP) { last.i1 = i; last.items.push(m); }
+    else arr.push({ i0: i, i1: i, items: [m] });
+  }
+  const out = [];
+  for (const arr of runs.values()) for (const r of arr) {
+    if (r.items.length === 1) { out.push(r.items[0]); continue; }
+    const tally = new Map();       // el emoji dominante representa al racimo
+    for (const it of r.items) tally.set(it.text, (tally.get(it.text) || 0) + 1);
+    let top = r.items[0];
+    let best = 0;
+    for (const [txt, n] of tally) if (n > best) { best = n; top = r.items.find(x => x.text === txt); }
+    out.push({ ...top, time: candleData[r.i1].time, text: top.text + "×" + r.items.length,
+               tip: r.items.map(x => (x.tip || x.text || "")).join(" · ") });
+  }
+  return out.sort((a, b) => a.time - b.time);
+}
 function applyMarkers() {
   if (!stMarkersApi) return;
   try {
-    const mk = [...curStMarkers, ...sigMarkers, ...engineOps].sort((a, b) => a.time - b.time);
+    const mk = [...curStMarkers, ...clusterSignals(sigMarkers), ...engineOps]
+               .sort((a, b) => a.time - b.time);
     stMarkersApi.setMarkers(mk);
   } catch (e) {}
 }
@@ -1091,11 +1143,17 @@ function setSourceBadge(chainSrc) {
 function drawHeader(lv) {
   if (!lv) return;
   setSourceBadge(lv.chain_src);
+  // vix_live=false es el CIERRE ANTERIOR, no un tick: se marca, no se hace pasar por vivo
   const vixEl = document.getElementById("h-vix");
   if (vixEl && lv.vix != null) {
     const tag = lv.vix < 16 ? "CALM" : lv.vix <= 24 ? "ELEVADO" : "ALTO";
-    vixEl.textContent = lv.vix.toFixed(2) + " " + tag;
-    vixEl.className = "v " + (lv.vix < 16 ? "pos" : lv.vix <= 24 ? "trans" : "neg");
+    const live = lv.vix_live !== false;
+    vixEl.textContent = lv.vix.toFixed(2) + " " + tag + (live ? "" : " ·CIERRE");
+    vixEl.className = "v " + (!live ? "vstale" : lv.vix < 16 ? "pos" : lv.vix <= 24 ? "trans" : "neg");
+    vixEl.title = live
+      ? "VIX EN VIVO (tick CBOE via TWS). CALM <16 · ELEVADO 16-24 · ALTO >24."
+      : "VIX del CIERRE ANTERIOR: el indice no ha tickeado todavia (no cotiza hasta 09:30). "
+        + "No es el VIX de ahora — no dispares nada con este numero.";
   }
   const dteEl = document.getElementById("h-dte");   // 0DTE puro (como gexa)
   if (lv.dte != null) {
@@ -1245,6 +1303,7 @@ let USERWL = [];
 let KOREA = [];
 let PERP = {};      // {sym:{px,src,feed_age_s,...}} — Bybit 24/7, JAMÁS el precio de IBKR
 let QUOTES = {};   // {sym:{last,chg,vol}} para las columnas estilo TradingView
+let PREVCLOSE = {};// {sym: cierre previo implícito} -> %día vivo del símbolo en pantalla
 let curSym = null;
 function fmtVol(v) {
   if (v == null) return "";
@@ -1363,8 +1422,34 @@ function onWatchlist(msg) {
   if (Array.isArray(msg.korea)) KOREA = msg.korea;
   if (msg.quotes) QUOTES = msg.quotes;
   if (msg.perp) PERP = msg.perp;
+  // cierre previo implícito por símbolo -> el %día del ticker en pantalla se recalcula VIVO
+  // con cada tick (el server solo reenvía quotes cada 15s; el precio del que MIRAS es sub-seg)
+  for (const s in QUOTES) {
+    const q = QUOTES[s];
+    if (q && q.last != null && q.chg != null && q.chg !== 0)
+      PREVCLOSE[s] = q.last / (1 + q.chg / 100);
+  }
   rebuildSymSel();
   renderWatchlist();
+}
+// tick vivo del símbolo en pantalla -> parcheo su fila (precio + %día) sin re-render de la
+// lista entera (que corre a ~8/s taparia todo). "la lista no se actualizaba: era una foto."
+function liveQuoteTick(price) {
+  if (price == null || !curSym) return;
+  const q = QUOTES[curSym] || (QUOTES[curSym] = { last: null, chg: null, vol: null });
+  q.last = price;
+  const pc = PREVCLOSE[curSym];
+  if (pc) q.chg = +(((price - pc) / pc) * 100).toFixed(2);
+  if (!wldrawer.classList.contains("on")) return;      // drawer cerrado: nada que pintar
+  const row = wllist.querySelector(`.wlrow[data-sym="${curSym}"]`);
+  if (!row) return;
+  const lastEl = row.querySelector(".wlast");
+  if (lastEl) lastEl.textContent = price.toFixed(2);
+  const chgEl = row.querySelector(".wchg");
+  if (chgEl && q.chg != null) {
+    chgEl.textContent = (q.chg > 0 ? "+" : "") + q.chg.toFixed(2) + "%";
+    chgEl.className = "wchg " + (q.chg > 0 ? "pos" : q.chg < 0 ? "neg" : "");
+  }
 }
 
 // ============ switcher PAPER/LIVE + selector Opciones/Acciones + panel Cuenta ============
@@ -1874,10 +1959,12 @@ const dirAmp = dirEl.querySelector(".ampbar");
 const dirAmpTicks = dirAmp ? [...dirAmp.querySelectorAll("i")] : [];
 // paleta liquida: c1 = fondo del gradiente, c2 = cresta (tambien halo y glow), hl = brillo.
 // El ESTADO cambia la cresta: reversion dorada, continuacion del color de la direccion.
-const DIR_INK = { up:   { c1:"#12897c", c2:"#3ff0c8", flat:"#26a69a" },
-                  down: { c1:"#b83636", c2:"#ff8b8b", flat:"#ef5350" },
-                  flat: { c1:"#4c576c", c2:"#9fb0cc", flat:"#8aa0c8" } };
-const REV_INK = { c1:"#c98a10", c2:"#ffd66b", hl:"#fff6d8" };   // reversion: oro, no mezcla turbia
+// hl es un TINTE de c2, no blanco: con blanco la cresta lavaba la flecha y en mitad del
+// ciclo ya no se veia si apuntaba arriba o abajo (visto renderizado en QQQ vivo)
+const DIR_INK = { up:   { c1:"#12897c", c2:"#3ff0c8", hl:"#b6fff0", flat:"#26a69a" },
+                  down: { c1:"#b83636", c2:"#ff8b8b", hl:"#ffd2d2", flat:"#ef5350" },
+                  flat: { c1:"#4c576c", c2:"#9fb0cc", hl:"#dde6f2", flat:"#8aa0c8" } };
+const REV_INK = { c1:"#c98a10", c2:"#ffd66b", hl:"#fff0bd" };   // reversion: oro, no mezcla turbia
 const DIR_TEMPO = { LATIGAZO:[".55s","1.0s"], REBOTE:[".95s","1.7s"], SCALP:["1.5s","2.6s"] };
 let dirPrevKey = "", dirPunchAlt = false;
 // escribir una custom property invalida el estilo; se escribe solo si CAMBIA (retraso = dinero)
@@ -1894,7 +1981,8 @@ function onDirection(msg) {
   const col = ink.flat;
   const glyph = d === "up" ? "▲" : d === "down" ? "▼" : "▬";
   if (dirGlyph.dataset.g !== glyph) { dirGlyph.dataset.g = glyph; dirGlyph.textContent = glyph; }
-  dirPct.style.color = col;
+  // color del número SOLO cuando es medido; el sesgo lo pone gris la clase .bias
+  dirPct.style.color = (msg.prob_source === "medido") ? col : "";
   // LA FLECHA ESCALA CON LA AMPLITUD: mag 0..1 de la brujula (LATIGAZO grande, SCALP chica).
   // "puede revertir fuerte o solo un poco: calculalo y mueve la flecha en consecuencia".
   const mag = (msg.mag != null) ? Math.max(0, Math.min(1, msg.mag)) : 0;
@@ -1906,7 +1994,7 @@ function onDirection(msg) {
   const isRev = st.indexOf("REVERSION") === 0;
   dirVar("--c1", isRev ? REV_INK.c1 : ink.c1);
   dirVar("--c2", isRev ? REV_INK.c2 : ink.c2);
-  dirVar("--hl", isRev ? REV_INK.hl : "#ffffff");
+  dirVar("--hl", isRev ? REV_INK.hl : ink.hl);
   dirVar("--glow", (5 + Math.round(vis * 17)) + "px");        // amplitud => cuanto brilla
   dirVar("--halow", Math.round(px * 1.55) + "px");
   dirVar("--halotop", Math.round(px * 0.45) + "px");
@@ -1919,6 +2007,9 @@ function onDirection(msg) {
     dirAmp.style.display = on ? "flex" : "none";
   }
   dirEl.classList.toggle("live", d !== "flat" && !msg.stale);
+  // halo que respira solo en lo que se opera (reversion/aproximando) -> el 4x de CPU no corre
+  // en CONTINUACION, que es el estado mas frecuente
+  dirEl.classList.toggle("act", (isRev || st.indexOf("APROX") === 0) && !msg.stale);
   dirEl.classList.toggle("paused", document.hidden);
   // el cambio de direccion/estado/grado ENTRA con un golpe corto, no aparece de golpe
   const key = d + "|" + st + "|" + grade;
@@ -1927,8 +2018,23 @@ function onDirection(msg) {
     dirEl.classList.toggle("punch-a", dirPunchAlt);
     dirEl.classList.toggle("punch-b", !dirPunchAlt);
   }
-  dirPct.textContent = (d === "up" ? "▲ " : d === "down" ? "▼ " : "") + (prob !== "" ? prob + "%" : "")
-                     + (msg.prob_source === "doctrina" ? "*" : "");
+  // "siempre dice 60%, no está calibrada" (Yunior): TIENE razón. El número doctrinal es un
+  // SESGO (50+|score|*40 topado 50-90), no un win-rate. Solo se pinta como "%" cuando
+  // prob_source=='medido' (bucket propio con n). Si no, se marca como "sesgo", nunca "%".
+  const measured = msg.prob_source === "medido";
+  if (measured && prob !== "") {
+    dirPct.textContent = (d === "up" ? "▲ " : d === "down" ? "▼ " : "") + prob + "%";
+    dirPct.className = "pct";
+  } else if (prob !== "" && d !== "flat") {
+    dirPct.textContent = "sesgo " + prob;              // el número doctrinal, SIN "%"
+    dirPct.className = "pct bias";
+    dirPct.title = "SESGO doctrinal (50+|score|·40, topado 50-90) — NO es probabilidad. "
+      + "La brújula no está calibrada en producción: no hay bucket medido con n para este "
+      + "estado, así que no se publica un win-rate. Manda el ESTADO y la amplitud.";
+  } else {
+    dirPct.textContent = "";
+    dirPct.className = "pct";
+  }
   // objetivo del rebote calculado (no un muro generico): grado + precio + %
   if (dirTgt) {
     if (msg.target != null) {
@@ -2001,6 +2107,11 @@ function tickCountdown() {
   if (!lastBar || !curTf) { countdownEl.style.display = "none"; return; }
   const sec = tfSeconds(curTf);
   const rem = (lastBar.time + sec) - Math.floor(Date.now() / 1000);
+  // FEED PARADO != cuenta atrás. El bug "el timer se queda en 00:00 a las 15:30" era esto:
+  // si dejan de llegar barras, rem se vuelve negativo, se topaba a 0 y el 00:00 se quedaba
+  // clavado como si fuera vivo. Si la barra actual ya venció hace más de una vela (nadie
+  // abrió la siguiente = feed frío), se OCULTA, no se miente con un 00:00 fijo.
+  if (rem < -sec) { countdownEl.style.display = "none"; return; }
   let y = null;
   try { y = candle.priceToCoordinate(lastBar.close); } catch (e) {}
   if (y == null) { countdownEl.style.display = "none"; return; }
@@ -2154,6 +2265,7 @@ function onTick(msg) {
   mirrorBar(msg.bar);
   lastBar = msg.bar; lastBarTime = msg.bar.time;
   setOHLC(msg.bar);
+  liveQuoteTick(msg.bar.close);   // fila del ticker en pantalla: precio/%día VIVOS
 }
 function onBar(msg) {
   candle.update(msg.bar);           // update(), NUNCA setData por tick
@@ -2167,6 +2279,7 @@ function onBar(msg) {
   upd(volS, ind.volume);
   upd(macdHist, ind.hist); upd(macdLine, ind.macd); upd(macdSig, ind.signal);
   lastBar = msg.bar; lastBarTime = msg.bar.time;
+  liveQuoteTick(msg.bar.close);   // cierre de vela -> fila del ticker en pantalla
   if (ind.trendlines) drawTrendlines(ind.trendlines);
   if (msg.levels && (!curLevels || msg.levels.asof !== curLevels.asof)) {
     curLevels = msg.levels; drawLevels(msg.levels); gexPrim.setLevels(msg.levels); wgexDraw();
