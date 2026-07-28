@@ -833,6 +833,9 @@ static std::pair<std::optional<int>, std::string> prob_of(const std::string& sta
         base += clampd(std::fabs(z) / K::FUEL_SAT, 0.0, 1.0) * K::FUEL_MAX;
     } else if (state == S_CONT) {
         base = ev.bandwalk_tf >= K::BANDWALK_TF_MIN ? 65 : 60;
+        // combustible de continuacion: fuerza MEDIDA del tramo que se continua
+        double zc = ev.z6 ? *ev.z6 : (ev.r6 ? *ev.r6 / 0.5 : 0.0);
+        base += clampd(std::fabs(zc) / K::FUEL_SAT, 0.0, 1.0) * (K::FUEL_MAX * 0.75);
     } else if (state == S_APPR) {
         base = (nfam >= 4 ? 72 : (nfam == 3 ? 68 : 62)) - 8;   // aun no ha impreso
     } else {
@@ -1229,6 +1232,19 @@ static Ev gather(const std::string& sym_lo) {
     std::vector<double> c15;
     for (size_t i = (n >= 15 * 21 ? n - 15 * 21 : 0); i + 15 <= n; i += 15) c15.push_back(c[i + 14]);
     if (c15.size() >= 20) { double b15 = pctb_of(c15, 20, 2.0, nullptr); if (b15 >= 0) e.pctb_15m = b15; }
+    // band-walk MEDIDO en produccion (cazado 2026-07-28: solo llegaba por --ev-stdin ->
+    // CONT clavado en 60 y el veto band-walk mudo en vivo): banda reventada 1m/5m/15m
+    {
+        std::vector<double> c5;
+        for (size_t i = (n >= 5 * 21 ? n - 5 * 21 : 0); i + 5 <= n; i += 5) c5.push_back(c[i + 4]);
+        int up = 0, dn = 0;
+        auto tally = [&](double b) { if (b >= 1.0) ++up; else if (b <= 0.0) ++dn; };
+        if (e.pctb_1m) tally(*e.pctb_1m);
+        if (c5.size() >= 20) { double b5 = pctb_of(c5, 20, 2.0, nullptr); if (b5 >= 0) tally(b5); }
+        if (e.pctb_15m) tally(*e.pctb_15m);
+        if (up > 0 && dn == 0) { e.bandwalk_tf = up; e.bandwalk_dir = +1; }
+        else if (dn > 0 && up == 0) { e.bandwalk_tf = dn; e.bandwalk_dir = -1; }
+    }
     // pata actual: recorrido desde el extremo local de las ultimas 30 barras
     if (n >= 30) {
         double hi = c[n - 30], lo = c[n - 30];
