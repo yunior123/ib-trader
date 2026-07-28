@@ -209,3 +209,27 @@
 - [ ] **[hallazgo backtest 7/27] structural_magnet WR30 27% (n=67)** — las flechas a imán
       fueron la peor fuente en día de selloff; revisar si el magnet debe callar en gamma NEG
       todo-acelerador (doctrina ya lo dice) o condicionar por régimen. `pendiente`
+
+## Ráfaga Yunior 2026-07-28 00:40
+- [ ] **"in chrome the prices for MU are not the real ones overnight... so many crazy things with
+      the chart, please debug all that shit, including rendering of bars"** — `delegado` (agente
+      widgets/overnight ya trabaja chart_bridge+live.html); verificar YO en Chrome con MU al terminar.
+- [ ] **"verifica todo"** (Yunior) — verificación final de todo lo cerrado hoy. `pendiente`
+- [ ] **"do alarmas have expiration? so that we dont have crazy ones from one or 2 weeks ago?
+      maybe it should be editable?"** — auditar TTL de TODAS las fuentes de alarma (manuales del
+      chart, watchers, planes); default de caducidad + editable. `pendiente`
+- [ ] **"did u organize the proyect already?"** — logs a logs/, limpieza raíz (solo con flota
+      parada con seguridad). `pendiente`
+- [ ] **"update claude.md, agents.md and memo with latest proyect specs using low token agent
+      like sonnet"** — `pendiente (agente sonnet)`
+- [ ] **"priority to signal system, the core signal system plus whales and notifications, those
+      are the full main core of us. make sure no bugs, no logic errors, go in depth, send scouts
+      to help, analyze every single peace of it, backtest the whole things"** — auditoría profunda
+      multi-scout del núcleo señales+ballenas+notificaciones + backtest completo. `pendiente`
+- [ ] **"check if the arrow can be working properly at night too, search the web... maybe the
+      arrow can operate without options? if too complex or not needed we can skip it"** —
+      investigar flecha nocturna (sin cadena de opciones viva). `pendiente`
+- [ ] **"at the end todos.md cannot have pending todos, if u need something from me let me know
+      by email in bullet points"** — cierre total + email Resend con lo que dependa de Yunior. `pendiente`
+- [ ] flow_pulse boot-loop: diagnóstico hecho (rth_open 935-1555, banner+exit fuera de horario,
+      launcher relanza cada 5 min) — fix en curso por mí. `en curso`
