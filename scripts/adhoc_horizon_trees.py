@@ -19,7 +19,7 @@ os.chdir(REPO)
 sys.path.insert(0, os.path.join(REPO, "scripts"))
 import tree_sheets as ts
 
-SYMS = ["QQQ", "SPY", "MU", "DRAM", "SKHY"]
+SYMS = [s.strip().upper() for s in os.environ.get("ADHOC_SYMS", "QQQ,SPY,MU,DRAM,SKHY").split(",") if s.strip()]
 today = dt.date.today()
 HORIZONS = [
     ("manana", (today + dt.timedelta(days=1)).isoformat()),
