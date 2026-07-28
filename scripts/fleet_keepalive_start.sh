@@ -262,14 +262,14 @@ fi
 # patron de Yunior 2026-07-22: apertura fuera de banda 15m RTH -> re-entrada
 # (probs medidas en data/band_snap_stats.json). Corre solo 9:29-10:35 y muere.
 if ! pgrep -f "scripts/band_open_watch.py" >/dev/null; then
-  nohup ./venv/bin/python scripts/band_open_watch.py >> band_open_watch.log 2>&1 &
+  nohup ./venv/bin/python -u scripts/band_open_watch.py >> band_open_watch.log 2>&1 &
   echo "$(date) fleet: band_open_watch lanzado (pid $!)" >> fleet_autostart.log
 fi
 
 # vigia Bollinger INTRADIA (Yunior 2026-07-22: "rectifica bollinger alarms"):
 # pierce+re-entrada = rebote elastico; 1m+5m mismo lado = band-walk (no fade).
 if ! pgrep -f "scripts/bollinger_alarm.py" >/dev/null; then
-  nohup ./venv/bin/python scripts/bollinger_alarm.py >> bollinger_alarm.log 2>&1 &
+  nohup ./venv/bin/python -u scripts/bollinger_alarm.py >> bollinger_alarm.log 2>&1 &
   echo "$(date) fleet: bollinger_alarm lanzado (pid $!)" >> fleet_autostart.log
 fi
 
@@ -328,6 +328,6 @@ fi
 HHMM=$(date +%H%M); DOW=$(date +%u)
 if [ "$DOW" -le 5 ] && [ "$HHMM" -ge 0930 ] && [ "$HHMM" -lt 1530 ] \
    && ! pgrep -f "scripts/dip_alert.py" >/dev/null; then
-  nohup "$ROOT/venv/bin/python" "$ROOT/scripts/dip_alert.py" >> "$ROOT/dip_alert.log" 2>&1 &
+  nohup "$ROOT/venv/bin/python" -u "$ROOT/scripts/dip_alert.py" >> "$ROOT/dip_alert.log" 2>&1 &
   echo "$(date) fleet: dip_alert lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
 fi
