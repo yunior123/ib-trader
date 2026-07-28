@@ -65,7 +65,8 @@
   #infobar .v { color: #d1d4dc; font-weight: 600; }
   .pos { color: #26a69a; } .neg { color: #ef5350; } .trans { color: #ffb300; }
   /* dato del cierre anterior, no un tick: gris y en cursiva, se distingue tambien sin color */
-  #infobar .v.vstale { color:#787b86; font-style:italic; font-weight:600; }
+  #infobar .v.vstale, #infobar .k.vstale { color:#787b86; font-style:italic; font-weight:600; }
+  #infobar .v.vold { color:#e0b13c; font-style:italic; }   /* dato con edad: se dice, no se disfraza */
   .tgl { background:#20242f; color:#8aa0c8; border:1px solid #333a48; padding:2px 8px;
          font:inherit; font-weight:700; font-size:11px; cursor:pointer; }
   .tgl:first-child { border-radius:4px 0 0 4px; } .tgl:last-child { border-radius:0 4px 4px 0; border-left:none; }
@@ -179,6 +180,7 @@
               border-radius:5px; color:#d1d4dc; font:inherit; outline:none; }
   #wlsearch:focus { border-color:#2962ff; }
   #wllist { flex:1; overflow-y:auto; padding:0 6px 8px; }
+  #wllist .wold { opacity:.5; font-style:italic; }   /* quote con edad >15min: atenuado, no "vivo" */
   #wllist .wlhdr { font-size:10px; color:#6b7a99; text-transform:uppercase; letter-spacing:.5px;
                    margin:8px 4px 3px; }
   #wllist .wlhdr:not(.sub) { display:grid; grid-template-columns:1fr 60px 56px 46px 56px 16px;
@@ -503,6 +505,7 @@
   <span><span class="k">Pressure</span> <span class="v" id="h-press">—</span><span class="info" title="Dealer Pressure −100..+100 (gamma 80% + vanna 20%). Positivo = dealers PINEAN (rango, dips comprados). Negativo = AMPLIFICAN (moves corren). Cerca del flip se degrada (inestable). Régimen, no dirección.">i</span></span>
   <span><span class="k">EM</span> <span class="v" id="h-em" title="Expected move ±1σ = spot·IV·√T. Rango esperado hasta el vencimiento (líneas cian punteadas en el chart).">—</span></span>
   <span class="k" id="h-asof"></span>
+  <span class="v" id="h-age" title="Edad de la última vela recibida: si supera 2 min, el precio en pantalla NO es actual."></span>
 </div>
 <!-- fila 3: narrador de mercado (colapsable) -->
 <div id="narrbar" class="hidden">
@@ -707,6 +710,9 @@ const _md = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, month: "short", day
 const _dt = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, month: "short", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false });
 const torHM = (t) => _hm.format(new Date(t * 1000));      // "11:41"
 const torFull = (t) => _dt.format(new Date(t * 1000));    // "Jul 23, 11:41"
+const _ymd = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit" });
+const torDay = (t) => _ymd.format(new Date(t * 1000));    // "2026-07-28" (¿mismo día ET?)
+const fmtAge = (s) => s >= 5400 ? Math.round(s / 3600) + "h" : s >= 90 ? Math.round(s / 60) + "m" : Math.round(s) + "s";
 const el = document.getElementById("chart");
 const chart = LWC.createChart(el, {
   layout: { background: { color: "#131722" }, textColor: "#d1d4dc",
@@ -1196,8 +1202,27 @@ function drawHeader(lv) {
   cwEl.className = "v " + kc(lv.call_wall_kind);
   pwEl.textContent = lv.put_wall != null ? lv.put_wall + kt(lv.put_wall_kind) : "—";
   pwEl.className = "v " + kc(lv.put_wall_kind);
-  if (lv.asof) document.getElementById("h-asof").textContent =
-      "GEX " + torHM(lv.asof) + " ET";
+  if (lv.asof) {
+    // asof se refresca cada 15s aunque la CADENA sea de ayer (2026-07-27: mapa de las 9:22
+    // enseñado todo el día como fresco). La edad honesta es la de chain_ts, no la de asof.
+    const asofEl = document.getElementById("h-asof");
+    const now = Math.floor(Date.now() / 1000);
+    let txt = "GEX " + torHM(lv.asof) + " ET", old = false;
+    if (lv.chain_ts) {
+      if (torDay(lv.chain_ts) !== torDay(now)) {
+        txt = "mapa de AYER " + torHM(lv.chain_ts) + " ET";
+        old = true;
+      } else if (now - lv.chain_ts > 2700) {
+        txt += " · cadena " + torHM(lv.chain_ts) + " (hace " + fmtAge(now - lv.chain_ts) + ")";
+        old = true;
+      }
+    }
+    if (now - lv.asof > 300) { txt += " · SIN REFRESCO " + fmtAge(now - lv.asof); old = true; }
+    asofEl.textContent = txt;
+    asofEl.className = "k" + (old ? " vstale" : "");
+    asofEl.title = old ? "El mapa GEX/muros/flip NO es de esta sesión: describe el libro de cuando "
+      + "se capturó la cadena. Niveles orientativos — el print manda, no este mapa." : "";
+  }
 }
 
 // OHLC readout (colorea verde/rojo según close>=open) — TradingView-like
@@ -1353,16 +1378,20 @@ let wlFilter = "";   // texto del buscador, EN VIVO (bug 2026-07-26: no filtraba
 function renderWatchlist() {
   const mk = (s) => {
     const q = QUOTES[s] || {};
+    // fila con dato viejo (>15 min desde su última barra) se atenúa y lo dice — un último
+    // precio del viernes pintado igual que uno vivo es el "cero plausible" en la watchlist
+    const oldQ = q.age_s != null && q.age_s > 900;
     const chg = (q.chg != null) ? (q.chg > 0 ? "+" : "") + q.chg.toFixed(2) + "%" : "";
-    const chgCls = (q.chg == null) ? "" : (q.chg > 0 ? "pos" : q.chg < 0 ? "neg" : "");
+    const chgCls = ((q.chg == null) ? "" : (q.chg > 0 ? "pos" : q.chg < 0 ? "neg" : "")) + (oldQ ? " wold" : "");
     const last = (q.last != null) ? q.last.toFixed(2) : "";
     const p = PERP[s];
     const perpBadge = p ?
       `<span class="wperp" title="PERP Bybit — precio con PRIMA propia, NO es el precio de la acción (IBKR). Fuente ${p.src}, edad ${p.feed_age_s == null ? "?" : Math.round(p.feed_age_s)}s.">⛓${p.px}</span>` :
       `<span class="wperp"></span>`;
-    return `<div class="wlrow${s === curSym ? " sel" : ""}" data-sym="${s}">` +
+    return `<div class="wlrow${s === curSym ? " sel" : ""}" data-sym="${s}"` +
+      (oldQ ? ` title="dato de hace ${fmtAge(q.age_s)} (última barra ${torHM(Date.now() / 1000 - q.age_s)} ET) — NO es el precio de ahora"` : "") + ">" +
       `<span class="wsym">${s}</span>` +
-      `<span class="wlast">${last}</span>` +
+      `<span class="wlast${oldQ ? " wold" : ""}">${last}${oldQ ? "·" + fmtAge(q.age_s) : ""}</span>` +
       `<span class="wchg ${chgCls}">${chg}</span>` +
       `<span class="wvol">${fmtVol(q.vol)}</span>` +
       perpBadge +
@@ -2018,16 +2047,24 @@ function onDirection(msg) {
   // "siempre dice 60%, no está calibrada" (Yunior): TIENE razón. El número doctrinal es un
   // SESGO (50+|score|*40 topado 50-90), no un win-rate. Solo se pinta como "%" cuando
   // prob_source=='medido' (bucket propio con n). Si no, se marca como "sesgo", nunca "%".
-  const measured = msg.prob_source === "medido";
+  const src = msg.prob_source || "";
+  const measured = src === "medido";
   if (measured && prob !== "") {
-    dirPct.textContent = (d === "up" ? "▲ " : d === "down" ? "▼ " : "") + prob + "%";
+    // solo lo MEDIDO se pinta como "%" (con n si el compass lo publica)
+    dirPct.textContent = (d === "up" ? "▲ " : d === "down" ? "▼ " : "") + prob + "%"
+      + (msg.prob_n != null ? " n" + msg.prob_n : "");
     dirPct.className = "pct";
   } else if (prob !== "" && d !== "flat") {
-    dirPct.textContent = "sesgo " + prob;              // el número doctrinal, SIN "%"
+    // la FUENTE va pegada al número: "60 doctrina" no se lee como win-rate medido
+    dirPct.textContent = prob + " " + (src === "doctrina" ? "doctrina" : src === "sin_medir" ? "sin medir" : "sesgo");
     dirPct.className = "pct bias";
     dirPct.title = "SESGO doctrinal (50+|score|·40, topado 50-90) — NO es probabilidad. "
       + "La brújula no está calibrada en producción: no hay bucket medido con n para este "
       + "estado, así que no se publica un win-rate. Manda el ESTADO y la amplitud.";
+  } else if (d !== "flat") {
+    dirPct.textContent = "sin medir";                  // prob null: se dice, no se calla
+    dirPct.className = "pct bias";
+    dirPct.title = "Sin probabilidad publicada para este estado (ni medida ni doctrinal).";
   } else {
     dirPct.textContent = "";
     dirPct.className = "pct";
@@ -2116,7 +2153,23 @@ function tickCountdown() {
   countdownEl.style.top = (y + 12) + "px";   // debajo de la etiqueta de último precio, no encima
   countdownEl.style.display = "block";
 }
-setInterval(tickCountdown, 1000);
+// edad de la última vela (chip #h-age): >2 min desde que debió cerrar = dato viejo, se DICE.
+// Corea opera en horario KRX (dom-jue 20:00→02:30 ET): la marca es de EDAD, no de "cerrado",
+// así vale para ambas sesiones sin mentir en ninguna.
+function tickPriceAge() {
+  const el2 = document.getElementById("h-age");
+  if (!el2) return;
+  if (!lastBar || !curTf) { el2.textContent = ""; el2.className = "v"; return; }
+  const sec = tfSeconds(curTf);
+  const age = Math.floor(Date.now() / 1000) - (lastBar.time + sec);   // desde el cierre teórico
+  if (age <= 120) { el2.textContent = ""; el2.className = "v"; return; }
+  const krx = KOREA.includes(curSym);
+  el2.textContent = "⏱ " + (krx ? "KRX " : "") + "vela " + torHM(lastBar.time)
+    + (torDay(lastBar.time) !== torDay(Date.now() / 1000) ? " (" + torDay(lastBar.time).slice(5) + ")" : "")
+    + " ET · hace " + fmtAge(age);
+  el2.className = "v vold";
+}
+setInterval(() => { tickCountdown(); tickPriceAge(); }, 1000);
 
 // toggle 0DTE <-> ALL-EXP (scope) — el server recomputa GEX/flip/VEX
 document.querySelectorAll("#scopebar .tgl").forEach(btn => {
@@ -2669,6 +2722,7 @@ function connect() {
     else if (msg.type === "signals") { sigMarkers = msg.signals || []; engineOps = msg.engineOps || []; applyMarkers(); }  // refresco marcadores + ops engine
     else if (msg.type === "structural") onStructural(msg);   // señal imán/flip
     else if (msg.type === "alarms") onAlarms(msg);   // alarmas manuales del símbolo
+    else if (msg.type === "stale") onNoData(msg.text || null);   // sub congelada sin fuente (sub-minuto overnight)
     else if (msg.type === "watchlist") onWatchlist(msg);   // fleet + lista del usuario
     else if (msg.type === "zones") onZones(msg);   // zonas de ejecución (buy/sell + exp/qty/exec/stop)
     else if (msg.type === "optquote") onOptquote(msg);   // previsualización contrato (strike/bid/ask)

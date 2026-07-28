@@ -57,6 +57,7 @@ import chart_levels              # gen(sym) -> charts/data/levels_<sym>.json
 import narrator                  # narrador de mercado: determinista (gratis) + DeepSeek
 import order_ticket              # ficha 0DTE lista para el HUMANO (build); SEÑAL-SOLAMENTE
 import direction_view            # sesgo direccional compuesto (flecha overlay); SEÑAL-SOLAMENTE
+import signal_conditioning       # SPEAK_MIN: umbral de voz único (regla should_speak)
 import ib_mode                   # fuente única paper/live (data/ib_mode.txt) — sin puertos hardcodeados
 
 # NOTA: importar confluence_engine hace os.chdir(REPO) (efecto de modulo). Reforzamos.
@@ -112,6 +113,10 @@ TF_MIN = {"1m": 5, "5m": 5, "15m": 15, "20m": 20, "30m": 30, "1h": 60,
           "2h": 120, "3h": 180, "4h": 240, "1d": 1440,
           "1W": 10080, "1M": 43200}   # minutos por bucket (mock, agregacion 5m)
 ALL_TF = frozenset(TF_MIN) | SEC_TF   # tf validos para {cmd:"tf"} (set_timeframe)
+# segundos por bucket de los tf intradia (1d+ fuera: su vela no se mueve overnight)
+TF_S = {"5s": 5, "15s": 15, "30s": 30, "45s": 45, "1m": 60, "5m": 300, "15m": 900,
+        "20m": 1200, "30m": 1800, "1h": 3600, "2h": 7200, "3h": 10800, "4h": 14400}
+STALE_SUB_S = 120   # sub keepUpToDate sin barra nueva en N s = congelada (medido: para a las 20:00 ET)
 LIVE_BAR = {  # (barSizeSetting, durationStr) para reqHistoricalData en LIVE
     "5s": ("5 secs", "3600 S"), "15s": ("15 secs", "7200 S"), "30s": ("30 secs", "14400 S"),
     "1m": ("1 min", "2 D"), "5m": ("5 mins", "5 D"), "15m": ("15 mins", "10 D"),
@@ -801,7 +806,9 @@ def watchlist_quote(sym):
     vol = sum(x[2] for x in today)
     prev_close = prev[-1][1] if prev else today[0][1]
     chg = round((last - prev_close) / prev_close * 100, 2) if prev_close else None
-    return {"last": round(last, 2), "chg": chg, "vol": int(vol)}
+    # age_s: edad de la ULTIMA barra — la UI atenua filas viejas (jamas viejo como actual)
+    return {"last": round(last, 2), "chg": chg, "vol": int(vol),
+            "age_s": int(time.time() - c[-1][0])}
 
 
 def load_watchlist_stats():
@@ -1403,7 +1410,8 @@ async def broadcast_direction(state, lv=None):
     frame = {"type": "direction", "sym": state.sym.upper(), "dir": dv.get("dir", "flat"),
              "prob": dv.get("prob"), "why": dv.get("state_why", []),
              "state": dv.get("state"), "state_pending": dv.get("state_pending"),
-             "prob_source": dv.get("prob_source"), "pending_print": dv.get("pending_print"),
+             "prob_source": dv.get("prob_source"), "prob_n": dv.get("prob_n"),
+             "pending_print": dv.get("pending_print"),
              "families": dv.get("families"), "fading": dv.get("fading", []),
              "vetoes": dv.get("vetoes", []), "level": dv.get("level"),
              "amplitude": dv.get("amplitude"), "mag": dv.get("mag", 0.0),
@@ -1524,6 +1532,9 @@ class State:
         self._agg_raw = []      # buffer del barSize base cuando _agg_step está activo
         self._backfilling = False   # un solo "more" a la vez por symbol/State compartido
         self._backfill_reason = None   # por qué el ultimo backfill dijo exhausted (UI lo dice UNA vez)
+        self._last_sub_ts = 0.0     # ultimo update de la sub keepUpToDate (0 = nunca llego)
+        self._last_tick_ts = 0.0    # ultimo tick valido de reqMktData
+        self._stale_note = None     # banner "sin fuente sub-minuto" vigente (None = sin banner)
 
     def set_bars(self, bars):
         self.bars = bars
@@ -1633,6 +1644,7 @@ async def live_reapply(state, tf):
         state.set_bars(raw)
     tag = f"{bar_size} agregado a {tf}" if state._agg_step else bar_size
     state._nodata_reason = None if state.bars else f"TWS sin barras para {state.sym.upper()} ({tag})"
+    state._last_sub_ts = time.time()
     bars.updateEvent += _make_on_bar(state)
     state._live_sub = bars
     print(f"[tf] LIVE {state.sym}: {tag} -> {len(state.bars)} barras")
@@ -1778,6 +1790,86 @@ async def korea_poll_feed(st, interval=5.0):
                                   f"(data/bars_{st.sym}.txt) — korea_bar_bridge.py caído?")
 
 
+async def send_stale_note(st, text):
+    """Banner de staleness al chart (text=None lo retira). No toca nodata (eso es bars=[])."""
+    st._stale_note = text
+    frame = {"type": "stale", "sym": st.sym.upper(), "text": text}
+    for ws in list(st.clients):
+        try:
+            await ws.send_json(frame)
+        except Exception:
+            st.clients.discard(ws)
+
+
+def _hm_et(epoch):
+    return datetime.fromtimestamp(epoch).strftime("%H:%M")
+
+
+async def us_stale_feed(st, interval=5.0):
+    """La sub keepUpToDate US se CONGELA a las 20:00 ET (medido: ultima barra 19:59 con
+    data/bars_<sym>_ibkr.txt fresco toda la noche). Mismo patron que korea_poll_feed: sub
+    muda >STALE_SUB_S -> tail del fichero 1m del bar_bridge (agregado al tf si hace falta);
+    cuando la sub vuelve a empujar, recupera el mando sola. SEÑAL-SOLAMENTE."""
+    while True:
+        await asyncio.sleep(interval)
+        try:
+            if st.mock or st.sym.upper() in KOREA_SYMS():
+                continue
+            now = time.time()
+            if now - st._last_sub_ts < STALE_SUB_S:
+                if st._stale_note:
+                    await send_stale_note(st, None)
+                continue
+            if st.tf in SEC_TF:
+                # bar_bridge es 1m: sin fuente sub-minuto. Si hay ticks, _make_on_tick ya
+                # construye las velas; si no, se dice — jamas se ensena 19:59 como viva.
+                if now - st._last_tick_ts > STALE_SUB_S:
+                    hm = _hm_et(st.bars[-1][0]) + " ET" if st.bars else "—"
+                    await send_stale_note(st, f"sin datos sub-minuto fuera de sesión — usa 1m+ "
+                                              f"(última vela {hm})")
+                elif st._stale_note:
+                    await send_stale_note(st, None)
+                continue
+            step = TF_S.get(st.tf)
+            if step is None:
+                continue   # 1d/1W/1M: la vela del dia no se mueve overnight
+            fresh = load_ibkr_bars(st.sym, tail=780)
+            if not fresh:
+                continue
+            if step > 60:
+                fresh = agg_epoch(fresh, step)
+            appended, changed = 0, False
+            n0 = max(0, len(st.bars) - 30)
+            idx = {b[0]: i for i, b in enumerate(st.bars[n0:], start=n0)}
+            for b in fresh:
+                i = idx.get(b[0])
+                if i is not None:
+                    if st.bars[i] != b:
+                        st.bars[i] = b   # el fichero manda sobre la vela tick-built (trae volumen)
+                        changed = True
+                elif not st.bars or b[0] > st.bars[-1][0]:
+                    st.bars.append(b)
+                    appended += 1
+            if len(st.bars) > 6000:
+                del st.bars[:-6000]
+            if not (appended or changed):
+                continue
+            st._nodata_reason = None
+            if appended > 1:   # catch-up con hueco -> history completo, no un update suelto
+                frame = history_frame(agg_view_bars(st), st.levels, st.tf,
+                                       nodata=None, mock=st.mock)
+                for ws in list(st.clients):
+                    try:
+                        await ws.send_json(frame)
+                    except Exception:
+                        st.clients.discard(ws)
+                print(f"[stale] {st.sym.upper()}: sub congelada, +{appended} barras del fichero (tf={st.tf})")
+            else:
+                await broadcast(st)
+        except Exception as e:
+            print(f"[stale] {st.sym} watchdog falló ({e})")
+
+
 async def _spawn_state(st):
     """Arranca el feed y el levels_loop de un estado recien creado."""
     try:
@@ -1786,7 +1878,7 @@ async def _spawn_state(st):
         elif st.sym.upper() in KOREA_SYMS():
             st._tasks = [asyncio.ensure_future(korea_poll_feed(st))]
         else:
-            st._tasks = []
+            st._tasks = [asyncio.ensure_future(us_stale_feed(st))]
             ib = SHARED_IB["ib"]
             if ib is not None:
                 # se REUSA la conexion (un solo clientId): cada estado añade su propio
@@ -2230,13 +2322,21 @@ def _make_on_tick(state):
         px = tk.last if (tk.last is not None and tk.last == tk.last and tk.last > 0) else tk.marketPrice()
         if not px or px != px or px <= 0:
             return
+        now = time.time()
+        state._last_tick_ts = now
+        # sub congelada (20:00 ET) pero ticks vivos -> las velas nuevas se abren desde el
+        # tick (unica fuente sub-minuto overnight; sin volumen). En sesion no interviene.
+        step = state._agg_step or TF_S.get(state.tf)
+        if step and now - state._last_sub_ts > STALE_SUB_S:
+            bucket = int(now) - int(now) % step
+            if bucket > state.bars[-1][0]:
+                state.bars.append([bucket, px, px, px, px, 0.0])
         b = state.bars[-1]
         b[4] = px
         if px > b[2]:
             b[2] = px
         if px < b[3]:
             b[3] = px
-        now = time.time()
         if now - state._last_tick_bcast < 0.12:
             return
         state._last_tick_bcast = now
@@ -2325,7 +2425,48 @@ async def broadcast_signals(state):
             state.clients.discard(ws)
 
 
-def _log_structural(state, sig):
+def _session_open(sym):
+    """Sesion del simbolo ABIERTA. Espejos de krx_market (korea_bar_bridge.py:157, no
+    importable aqui: trae ib_insync) y de RTH US 9:30-16:00 ET (Toronto == ET)."""
+    if sym.upper() in KOREA_SYMS():
+        lt = time.gmtime(time.time() + 9 * 3600)
+        return lt.tm_wday < 5 and (9, 0) <= (lt.tm_hour, lt.tm_min) <= (15, 30)
+    lt = time.localtime()
+    hm = lt.tm_hour * 100 + lt.tm_min
+    return lt.tm_wday < 5 and 930 <= hm < 1600
+
+
+_STRUCT_LAST = os.path.join(REPO, "data", "struct_last.json")
+
+
+def _struct_already(sym, key, ttl=14400):
+    """El cooldown vivia solo en memoria: reiniciar los bridges RE-CANTABA el ultimo iman
+    (AAPL/MSFT 00:37 despertaron a Yunior). Persistido en disco, el restart calla."""
+    try:
+        e = json.load(open(_STRUCT_LAST)).get(sym.upper())
+        return bool(e) and e.get("key") == key and time.time() - e.get("ts", 0) < ttl
+    except Exception:
+        return False
+
+
+def _struct_remember(sym, key):
+    try:
+        d = json.load(open(_STRUCT_LAST))
+        if not isinstance(d, dict):
+            d = {}
+    except Exception:
+        d = {}
+    d[sym.upper()] = {"key": key, "ts": time.time()}
+    try:
+        tmp = _STRUCT_LAST + ".tmp"
+        with open(tmp, "w") as f:
+            json.dump(d, f)
+        os.replace(tmp, _STRUCT_LAST)
+    except Exception as e:
+        print(f"[struct] persist cooldown falló ({e})")
+
+
+def _log_structural(state, sig, key=None):
     """Guarda la señal estructural en trades.db (source='structural') para el backtest EOD.
     Dedup por firma. SEÑAL-SOLAMENTE.
 
@@ -2348,6 +2489,14 @@ def _log_structural(state, sig):
         print(f"[struct] MOCK: NO se registra en produccion -> {sig.get('kind','')} "
               f"{sig.get('sym','')} {sig.get('text','')}")
         return
+    # FUERA DE SESION (RTH US / KRX Corea) NO se registra ni canta: el mapa GEX es del
+    # cierre y la etiqueta del backtest seria ficcion (2026-07-28 00:37: AAPL/MSFT iman
+    # nocturno con voz — WR30 27% n=67, la peor fuente, y encima con mercado cerrado).
+    if not _session_open(state.sym):
+        print(f"[struct] fuera de sesión {state.sym.upper()}: banner sin registro -> {sig.get('text','')}")
+        return
+    if key and _struct_already(state.sym, key):
+        return
     try:
         import sqlite3
         prob = f" · prob {sig['prob']}% (estructural, no WR medido)" if sig.get("prob") else ""
@@ -2365,15 +2514,22 @@ def _log_structural(state, sig):
         # las ~77 señales estructurales del dia no llegaban a NINGUN canal — ni voz,
         # ni telefono. notify_relay.sh ya filtra por 🧲, pero nunca las veia porque
         # nadie las escribia en data/trading-signals/<fecha>.txt.
-        try:
-            d = time.strftime("%Y-%m-%d")
-            path = os.path.join(REPO, "data", "trading-signals", f"{d}.txt")
-            os.makedirs(os.path.dirname(path), exist_ok=True)
-            with open(path, "a") as f:
-                f.write(f"{time.strftime('%H:%M:%S')} | 🧲 ESTRUCTURAL {sig.get('kind','')} "
-                        f"{sig['sym'].upper()} | {msg}\n")
-        except Exception as e2:
-            print(f"[struct] signals-file falló ({e2})")
+        # prob < SPEAK_MIN (regla should_speak): BD si (poblacion del backtest), voz NO.
+        p = sig.get("prob")
+        if p is not None and p >= signal_conditioning.SPEAK_MIN:
+            try:
+                d = time.strftime("%Y-%m-%d")
+                path = os.path.join(REPO, "data", "trading-signals", f"{d}.txt")
+                os.makedirs(os.path.dirname(path), exist_ok=True)
+                with open(path, "a") as f:
+                    f.write(f"{time.strftime('%H:%M:%S')} | 🧲 ESTRUCTURAL {sig.get('kind','')} "
+                            f"{sig['sym'].upper()} | {msg}\n")
+            except Exception as e2:
+                print(f"[struct] signals-file falló ({e2})")
+        else:
+            print(f"[struct] prob {p} < {signal_conditioning.SPEAK_MIN:g}: BD sin voz -> {sig.get('text','')}")
+        if key:
+            _struct_remember(state.sym, key)
     except Exception as e:
         print(f"[struct] log falló ({e})")
 
@@ -2384,6 +2540,15 @@ async def structural_tick(state):
     if not lv:
         return
     sig = narrator.structural_signal(lv, state.bars)
+    # SANITY: iman a mas de ~1 EM del spot = nivel viejo/basura (MSFT 390 con iman 430 =
+    # 10%!). Ni se pinta ni se canta: None limpia el pill.
+    if sig and sig.get("price") is not None and state.bars:
+        spot = state.bars[-1][4]
+        lim = lv.get("em") or (spot * 0.02 if spot else None)
+        if spot and lim and abs(sig["price"] - spot) > lim:
+            print(f"[struct] iman {sig['price']} a {abs(sig['price']-spot):.1f} del spot "
+                  f"{spot:.1f} (> EM {lim:.1f}): descartado")
+            sig = None
     state._struct = sig
     frame = {"type": "structural", "sym": state.sym.upper(), "sig": sig}
     for ws in list(state.clients):
@@ -2395,7 +2560,7 @@ async def structural_tick(state):
         key = f"{sig['sym']}|{sig['kind']}|{sig.get('price')}|{sig['dir']}"
         if key != state._struct_key:
             state._struct_key = key
-            _log_structural(state, sig)
+            _log_structural(state, sig, key)
 
 
 async def narrator_tick(state):
@@ -2453,12 +2618,16 @@ async def levels_loop(state):
                     try:
                         t = state._vix_ticker
                         v = t.marketPrice()
-                        if v and v == v and v > 0:
+                        # marketPrice() retiene el ULTIMO tick: fuera de sesion el VIX no
+                        # tickea y ese numero es de las 16:15 — sin mirar la EDAD del tick
+                        # se marcaba vivo toda la noche. Vivo = tick de <10 min.
+                        tt = getattr(t, "time", None)
+                        tick_fresh = tt is not None and (time.time() - tt.timestamp()) < 600
+                        if v and v == v and v > 0 and tick_fresh:
                             state._vix, state._vix_live = round(v, 2), True
                         else:
-                            # premarket: un indice NO cotiza hasta 09:30 y marketPrice() es nan.
-                            # El cierre anterior SI llega -> se sirve marcado, no se calla.
-                            c = getattr(t, "close", None)
+                            # premarket/overnight: sin tick fresco todo es CIERRE (marcado).
+                            c = v if (v and v == v and v > 0) else getattr(t, "close", None)
                             if c and c == c and c > 0:
                                 state._vix, state._vix_live = round(c, 2), False
                     except Exception:
@@ -2553,6 +2722,7 @@ def _make_on_bar(state):
     buffer crudo y se re-agrega por epoch antes del upsert -> el chart ve 45s, no
     el 15s que llegó de TWS."""
     def on_bar(bars_, has_new):
+        state._last_sub_ts = time.time()   # la sub sigue viva (el watchdog de stale lo mira)
         b = bars_[-1]
         raw = [int(b.date.timestamp()), b.open, b.high, b.low, b.close, float(b.volume)]
         step = state._agg_step
@@ -2642,6 +2812,7 @@ async def live_feed(state, port, client_id=60):
     )
     state.set_bars([[int(b.date.timestamp()), b.open, b.high, b.low, b.close, float(b.volume)]
                     for b in bars])
+    state._last_sub_ts = time.time()
     print(f"[live] {state.sym}: {len(state.bars)} barras {bar_size} iniciales (tf={state.tf})")
 
     bars.updateEvent += _make_on_bar(state)
@@ -2683,6 +2854,7 @@ async def _serve(args):
         asyncio.ensure_future(mock_feed(state, interval=args.interval))
     else:
         asyncio.ensure_future(live_feed(state, args.port, args.client_id))
+        asyncio.ensure_future(us_stale_feed(state))   # anti-congelada 20:00 ET (skip mock/korea)
     asyncio.ensure_future(levels_loop(state))   # GEX/flip/muros en tiempo real
     config = uvicorn.Config(app, host=args.host, port=args.http_port, log_level="info")
     server = uvicorn.Server(config)
