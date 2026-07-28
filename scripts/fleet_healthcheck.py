@@ -440,7 +440,10 @@ def main():
 
     # 4) frescura de salidas del dia
     today = time.strftime("%Y-%m-%d")
-    pdir = os.path.expanduser(f"~/Desktop/planes-{today}")
+    _hoy = os.environ.get("IBT_DESKTOP_HOY", os.path.expanduser("~/Desktop/ib-trader/hoy"))
+    pdir = os.path.join(_hoy, f"planes-{today}")
+    if not os.path.isdir(pdir):   # legado pre-repunto (Desktop raiz)
+        pdir = os.path.expanduser(f"~/Desktop/planes-{today}")
     # TCC macOS puede vetar Desktop a launchd (PermissionError 2026-07-22):
     # degradacion limpia — npdf=-1 = "no pude mirar", no un CRIT falso.
     try:

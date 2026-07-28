@@ -248,7 +248,13 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("cmd", choices=["record", "grade", "calibrate", "report", "eod",
                                     "barrier"])
-    ap.add_argument("--dir", default=os.path.expanduser(f"~/Desktop/planes-{time.strftime('%Y-%m-%d')}"))
+    _hoy = os.environ.get("IBT_DESKTOP_HOY", os.path.expanduser("~/Desktop/ib-trader/hoy"))
+    _pd = os.path.join(_hoy, f"planes-{time.strftime('%Y-%m-%d')}")
+    if not os.path.isdir(_pd):   # legado pre-repunto (Desktop raiz)
+        _old = os.path.expanduser(f"~/Desktop/planes-{time.strftime('%Y-%m-%d')}")
+        if os.path.isdir(_old):
+            _pd = _old
+    ap.add_argument("--dir", default=_pd)
     a = ap.parse_args()
     if a.cmd == "record":
         print("registradas", record_from_ranking(a.dir), "filas")
