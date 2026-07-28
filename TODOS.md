@@ -197,10 +197,3 @@
       dinámico es `658cc52` (01:03), POSTERIOR. Nunca conectaba → cinta ciega → las 2 voces de hoy
       fueron "DANGER CINTA CIEGA", jamás una ballena real.** El agente B ya reinició el proceso
       (conecta a 4001 limpio). VERIFICAR que quedó vivo y disparando.
-
-- [ ] 🔴 **[REABIERTA — Yunior sigue sin verla en Chrome] El selector de timeframe NO se ve en
-      Chrome real.** El agente la verificó en headless a **640px** (donde SÍ sale el desplegable
-      `#tfsel`), pero el breakpoint es `<1100px`: en una ventana ANCHA de Chrome (escritorio,
-      >1100px) se muestra la FILA DE BOTONES `#tfbar` (16 botones tras 5 fijos) que se recorta, NO
-      el desplegable. Fix robusto: el desplegable compacto SIEMPRE visible como primer control en
-      TODOS los anchos, no solo <1100px. Verificar a **1280px** (ancho de escritorio real), no 640.
