@@ -237,14 +237,6 @@
       corriendo (procesos viejos, cron viejo, o binarios no redeployados). Identificarlas
       (`ps`, `voice_log`, launchctl) y reemplazarlas por las versiones vigentes, sin dejar dos
       hablando a la vez.
-- [ ] 🔴 **[pendiente — HOY NO DISPARARON] "today whale options alarmas were not working"** (Yunior
-      2026-07-27). Las alarmas de ballenas de opciones no funcionaron hoy. Diagnosticar por qué:
-      `opt_whale_watch` vivo? cinta de whale a 0 bytes en 7 símbolos (cap 10190, ya medido)? voz
-      suprimida por presupuesto? UW banner-sin-voz? Medir la cadena entera de la alarma.
-- [ ] **[pendiente] "the search list does not update the data realtime, its fixed. fix that"**
-      (Yunior 2026-07-27). La lista del buscador (watchlist con precio/%día) muestra datos FIJOS,
-      no se refresca en vivo. Está en `charts/live.html`. Que el precio/%día se actualicen con el
-      stream, no una foto congelada al abrir.
 - [ ] **[pendiente — hallazgo del agente muros, VERIFICAR] `gex_gate` convierte régimen None en
       "régimen NEGATIVO"** (`scripts/gex_gate.py:82-87`). Un `else` pelado afirmaba NEGATIVO cuando
       el régimen es None (no-sé) — el patrón prohibido. El agente ya lo tocó; verificar el fix.
@@ -271,12 +263,6 @@
       launchd debe ir por wrapper zsh.
 - [ ] **[pendiente] Posts de X en INGLÉS de ahora en adelante** (Yunior 2026-07-27). `x_earnings_post.py`,
       `x_whale_bot.cpp` y demás generadores de tweets: texto en inglés.
-- [ ] **[pendiente] El timer azul de las velas TAPA lo de debajo: hacerlo transparente** (Yunior
-      2026-07-27). En `charts/live.html` el contador 00:00 del cierre de vela oculta precio/nivel
-      detrás. Transparencia u otra colocación para ver a través.
-- [ ] **[pendiente] Asegurar que se VEN los timeframes** (Yunior 2026-07-27, repetido). El selector
-      de temporalidad se puso `<1100px` como desplegable, pero sigue sin verse bien — revisar en las
-      6 ventanas reales que el selector es visible y usable.
 - [x] **[hecho 514a38a/516d3e9 — agente UW] UW latencia MEDIDA en sesión viva: 5,5 s → candidato a
       tiempo-real** (09:31 EDT, primera medición intradía; el sábado 43,8 h = fin de semana, cero
       evidencia). SIGUE SIN VOZ (caduca ~2026-08-01, regla gexa: archivar→medir→cablear). +
@@ -288,3 +274,10 @@
       dinámico es `658cc52` (01:03), POSTERIOR. Nunca conectaba → cinta ciega → las 2 voces de hoy
       fueron "DANGER CINTA CIEGA", jamás una ballena real.** El agente B ya reinició el proceso
       (conecta a 4001 limpio). VERIFICAR que quedó vivo y disparando.
+
+- [ ] 🔴 **[REABIERTA — Yunior sigue sin verla en Chrome] El selector de timeframe NO se ve en
+      Chrome real.** El agente la verificó en headless a **640px** (donde SÍ sale el desplegable
+      `#tfsel`), pero el breakpoint es `<1100px`: en una ventana ANCHA de Chrome (escritorio,
+      >1100px) se muestra la FILA DE BOTONES `#tfbar` (16 botones tras 5 fijos) que se recorta, NO
+      el desplegable. Fix robusto: el desplegable compacto SIEMPRE visible como primer control en
+      TODOS los anchos, no solo <1100px. Verificar a **1280px** (ancho de escritorio real), no 640.

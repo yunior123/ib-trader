@@ -232,3 +232,11 @@
       *Peticion original*: **[pendiente] "put refresh button in macos app, also version number of software in top of
 - [x] **hecho `5a59c35`** — `touch_stats` ya no tumba la generacion entera del arbol: la curva de toques es un adorno, asi que devuelve `None` (la degradacion ya disenada) y grita a stderr, nunca un cero que parezca medido.
       *Peticion original*: **[nota] `trades.db` en `mode=ro` falla de forma TRANSITORIA con la flota escribiendo.**
+
+## ✅ Cerradas 2026-07-27 (noche) — UI + whale
+- [x] **hecho `74ace7a`** — `#countdown` de fondo opaco a `rgba(41,98,255,.34)` + text-shadow: se ve a través. Verificado con captura (timer_harness.png).
+      *(era)* **[pendiente] El timer azul de las velas TAPA lo de debajo: hacerlo transparente** (Yunior
+- [x] **hecho `74ace7a`** — `liveQuoteTick()` parchea precio+%día de la fila en cada tick; el resto se refresca por ciclo `broadcast_watchlist` con `watchlist_quote()` que devuelve None si faltan barras (cero fabricado). Ya no es foto congelada.
+      *(era)* **[pendiente] "the search list does not update the data realtime, its fixed. fix that"**
+- [x] **CAUSA hallada + proceso reiniciado (agente UW/B)** — `opt_whale_watch` corría versión vieja en puerto 4002; reiniciado a 4001, único proceso vivo verificado. Falta VERIFICAR que dispara mañana en RTH (por eso no se cierra del todo, pero la causa y el fix están).
+      *(era)* 🔴 **[pendiente — HOY NO DISPARARON] "today whale options alarmas were not working"** (Yunior
