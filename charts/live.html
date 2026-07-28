@@ -26,27 +26,21 @@
   #toolbar::-webkit-scrollbar-track { background: transparent; }
   #toolbar > * { flex: 0 0 auto; }
   #toolbar strong { font-size: 16px; font-weight: 700; letter-spacing: .3px; }
-  /* solo la barra de timeframes se encoge/scrollea; el resto (incl. EN VIVO) queda visible */
-  #tfbar { display: flex; gap: 1px; flex: 0 1 auto; min-width: 0; overflow-x: auto; }
-  #tfbar::-webkit-scrollbar { height: 0; }
-  /* En 1/6 de pantalla los botones fijos de delante se comian el ancho y #tfbar quedaba a 0,
-     recortado por el overflow:hidden del toolbar: el selector era INVISIBLE (Yunior 2026-07-27).
-     Por debajo de 1100px se cambia la fila de botones por un desplegable compacto. */
-  #czbar { display: inline-flex; align-items: center; gap: 2px; flex: 0 0 auto; }
+  /* TEMPORALIDAD = desplegable compacto SIEMPRE visible y PRIMERO, a CUALQUIER ancho. La fila de
+     16 botones se recortaba tanto en ventana estrecha COMO en la ancha de escritorio (>1100px se
+     apretaba/scrolleaba dentro del toolbar) -> el control quedaba invisible (Yunior lo pidio 3
+     veces). Un <select> no se recorta. Los .tfbtn siguen en el DOM SOLO como fuente de las
+     opciones del <select> (y sus handlers); su fila no se muestra. */
+  #tfbar { display: none; }
+  #tfsel { display: inline-block; order: -1; background: #2a2e39; color: #d1d4dc;
+           border: 1px solid #363a45; border-radius: 4px; padding: 4px 6px; font: inherit;
+           font-weight: 700; cursor: pointer; flex: 0 0 auto; }
+  #czbar { display: inline-flex; align-items: center; gap: 2px; flex: 0 0 auto; order: -1; }
   #cz { color: #b2b5be; font-weight: 700; font-size: 11.5px; min-width: 58px; text-align: center; }
-  #tfsel { display: none; background: #2a2e39; color: #d1d4dc; border: 1px solid #363a45;
-           border-radius: 4px; padding: 4px 6px; font: inherit; font-weight: 700;
-           cursor: pointer; flex: 0 0 auto; }
-  @media (max-width: 1100px) {
-    #tfbar { display: none; }
-    #tfsel { display: inline-block; order: -1; }   /* PRIMERO: es lo que mas se toca */
-    #czbar { order: -1; }                          /* el zoom de velas, justo detras */
-    /* Ocultar #tfbar liberaba hueco pero el selector seguia recortado porque va DETRAS de la
-       insignia de cadena, que es la mas ancha y la menos urgente: se manda al final (el color
-       sigue avisando) y se le pone tope de ancho. */
-    #sourcebadge { order: 90; max-width: 92px; overflow: hidden; text-overflow: ellipsis; }
-    #acctbtn, #instpill { order: 91; }
-  }
+  /* la insignia de cadena es la mas ancha y la menos urgente: al final y con tope, para que nunca
+     empuje al selector fuera de vista */
+  #sourcebadge { order: 90; max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
+  #acctbtn, #instpill { order: 91; }
   .tfbtn { background: transparent; color: #b2b5be; border: none; border-radius: 4px;
            padding: 4px 7px; font: inherit; font-weight: 600; cursor: pointer; }
   .tfbtn:hover { background: #2a2e39; color: #d1d4dc; }
@@ -778,9 +772,12 @@ const candle = chart.addSeries(CandlestickSeries, {
   priceLineVisible: true, lastValueVisible: true,   // etiqueta de último precio (TV-like)
   autoscaleInfoProvider: candleAutoscale,
 });
+// autoscaleInfoProvider:()=>null -> los indicadores NO expanden el eje. La escala de precio la
+// FIJAN SOLO LAS VELAS (candleAutoscale). Sin esto, de noche SMA200/BB/VWAP/Supertrend, lejanos
+// del precio plano, jalaban el eje a 5+ puntos y la vela se veia PLANA aunque se movia 0,08.
 const mkLine = (color, w, dashed) => chart.addSeries(LineSeries, {
   color, lineWidth: w, priceLineVisible: false, lastValueVisible: false,
-  crosshairMarkerVisible: false,
+  crosshairMarkerVisible: false, autoscaleInfoProvider: () => null,
   lineStyle: dashed ? LineStyle.Dotted : LineStyle.Solid,
 }, 0);
 const S = {
