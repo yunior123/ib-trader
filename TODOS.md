@@ -2,6 +2,12 @@
 
 > Vivo. Marcar [x] al cerrar. Manual completo: `docs/DAILY-SYSTEM.md`.
 
+- [ ] **[pendiente — HOY 09:31] "take a look at tradingflow, i have the window open in chrome,
+  do it at 9:31, be picaro"** (Yunior 2026-07-28 07:36). La ventana TradingFlow está abierta en
+  su Chrome; leerla a las 09:31 vía extensión (la sesión del agente auditor NO tenía la extensión
+  conectada — hacerlo desde la sesión principal). Referencia: flujo MU del cierre 27-jul pegado
+  por Yunior (spot ~900,4; calls 925/940/950 31-jul, puts 850/860, 0DTE 890/895 vol/OI 268-507x).
+
 - [ ] **[pendiente] archivar barras Corea por sesión** (auditoría señales 2026-07-28):
   `korea_bar_bridge` trunca `bars_samsung/skhynix/kospi.txt` en cada sesión y
   `daily_archive` solo guarda los 30 US → los TERREMOTO Corea de la sesión anterior
@@ -23,27 +29,6 @@
   KOSPI, que van por `korea_bar_bridge`). Probar los dos casos.
 
 
-- [ ] **[pendiente — parcial, revisado 2026-07-26]** "priority now goes to signals… test all
-      signals with data, full backtesting, arrow is super important too" (Yunior 2026-07-25).
-      Estado por pieza:
-      **(1) direction_view.py — CERRADO hoy** (ver casilla ~389): `prob = 50 + |score|*40` ya no
-      canta; patrón `compass.cpp` copiado, `prob` Optional solo con bucket calibrado propio.
-      **(2) compass.cpp — SIGUE ABIERTO, fuera de mi zona (solo lectura)**: `gather()` no puebla
-      `calib_lo`/`calib_n` de ningún fichero, solo los recibe por `--ev-stdin` (modo TEST). En
-      vivo `prob_of()` cae SIEMPRE a `"doctrina"` — la brújula tampoco está calibrada en
-      producción hoy. Haría falta un harness que corra compass en modo backtest (`--ev-stdin`
-      en bucle contra barras históricas) para construir la población del ESTADO `S_REV` (nivel
-      impreso + ≥2 familias + sin vetos) y calibrarla — no existe.
-      **(3) "test all signals with data" — 6/7 fuentes YA corridas** vía `null_control.py` (ver
-      `data/null_control.json`): bollinger UNPROVEN (n=1154, n_eff=89), cusum DATA-INSUFFICIENT
-      (n_eff=20, y además apagado en `signal_enable.json` por el regen separado de 501
-      sesiones), dip/flow/structural DATA-INSUFFICIENT (n_eff 3-14.5), whale DATA-INSUFFICIENT
-      (n_eff=18.7). **0/6 con `fdr_cells_passed>0`.** La 7ª fuente, `source='signal'`
-      (2085 filas, la MÁS GRANDE de `trades.db`), es **estructuralmente no-etiquetable**:
-      `barrier_labels.py:833` — es un relé heterogéneo sin tesis derivable
-      (`eod_backtest.thesis()` no la clasifica), no un olvido.
-      **(4) "full backtesting" del propio `backtest_harness.py`** ya está hecho (ver los 4
-      CRITICAL más abajo, `85bec77`): 0/93 celdas APTA con coste real.
 
 - [ ] **[pendiente — SALIDA del framework, lo que de verdad calibra la flecha]** lo commiteado es
       la ENTRADA (contexto→LLM). Falta el lazo de medición: veredicto **discreto** + razones (jamás
@@ -149,11 +134,6 @@
       símbolo sin cinta salga DECLARADO como ciego en lugar de aparentar silencio de flujo.
 
 ## 🔴 SESIÓN 2026-07-27 (RTH, mercado abierto) — peticiones al vuelo
-- [ ] 🔴 **[pendiente] "some old voices from a long time are still running, replace them properly,
-      same with alarms"** (Yunior 2026-07-27). Hay voces/locuciones y alarmas de hace tiempo aún
-      corriendo (procesos viejos, cron viejo, o binarios no redeployados). Identificarlas
-      (`ps`, `voice_log`, launchctl) y reemplazarlas por las versiones vigentes, sin dejar dos
-      hablando a la vez.
 - [x] **[hecho 514a38a/516d3e9 — agente UW] UW latencia MEDIDA en sesión viva: 5,5 s → candidato a
       tiempo-real** (09:31 EDT, primera medición intradía; el sábado 43,8 h = fin de semana, cero
       evidencia). SIGUE SIN VOZ (caduca ~2026-08-01, regla gexa: archivar→medir→cablear). +
@@ -171,27 +151,13 @@
 
 
 ## Ráfaga Yunior 2026-07-28 00:40
-- [ ] **"verifica todo"** (Yunior) — verificación final de todo lo cerrado hoy. `pendiente`
 - [ ] **"did u organize the proyect already?"** — logs a logs/, limpieza raíz (solo con flota
       parada con seguridad). `pendiente`
-- [ ] **"priority to signal system, the core signal system plus whales and notifications, those
-      are the full main core of us. make sure no bugs, no logic errors, go in depth, send scouts
-      to help, analyze every single peace of it, backtest the whole things"** — auditoría profunda
-      multi-scout del núcleo señales+ballenas+notificaciones + backtest completo. `pendiente`
 - [ ] **"at the end todos.md cannot have pending todos, if u need something from me let me know
       by email in bullet points"** — cierre total + email Resend con lo que dependa de Yunior. `pendiente`
 
 
 
 ## Ráfaga Yunior 2026-07-28 00:50
-- [ ] **"verify all terremoto, pulse alarms and whales"** — verificación una a una. `delegado a scouts`
-- [ ] **"verify logs, make sure the whole system is logging then test that the signals or
-      events are all real, one by one"** — auditoría de logging completo + realidad de cada
-      señal/evento. `delegado a scouts`
 
 
-- [ ] **"asegura planes y otros archivos van inside ib-trader in desktop, review that, i thought
-      it was solved from root. make sure u organize the mess of files in our repo, put them in
-      right folders if not already"** (Yunior 2026-07-28 07:35) — `en curso`: (1) defaults de
-      Desktop raíz → ib-trader/hoy YA; (2) reorganización del repo: lo inerte ya, logs/binarios
-      vivos tras el cierre 16:00 (moverlos con la flota viva rompe rutas de keepalives).
