@@ -68,9 +68,16 @@
             Verificado: sintaxis limpia en los 3 ficheros Python + JS embebido de `live.html`,
             selftest 30/30, loaders/`wall_near()`/`dominant_strike()` probados unitariamente sin
             TWS, 9/9 tests de `test_whale_tape.py`+`test_ibkr_bar_bridge_atomic_write.py` y 5/5 de
-            `test_opt_whale_watch_holiday.py` en verde. `test_chart_bridge_mock_isolation.py` tiene
-            1 fallo preexistente (`_FakeState sin .sym`, línea 2584) — confirmado NO relacionado
-            con este trabajo (mi diff a `chart_bridge.py` es 100% aditivo, no toca esa zona).
+            `test_opt_whale_watch_holiday.py` en verde. **Suite completa** (`pytest tests/ -q
+            --ignore=tests/test_regen_signals.py`, corrida limpia en 26s): **967 passed, 4
+            skipped, 1 failed** — el único fallo es el mismo `_FakeState sin .sym` preexistente
+            de `test_chart_bridge_mock_isolation.py` (confirmado NO relacionado, mi diff a
+            `chart_bridge.py` es 100% aditivo). `test_regen_signals.py` excluido a propósito:
+            colgó 4 veces seguidas en distintos tests del fichero (`--collect-only` sin excluir
+            se atasca ~73-88%) — su subprocess escribe a `trades.db` con `timeout=30` MIENTRAS
+            la flota vive escribe ahí mismo en sesión real (mercado abierto) → contención de
+            lock, no bug de este trabajo. Pendiente para sesión futura: correr ese test fuera
+            de horario de mercado o darle su propia BD de test.
       - [ ] Fase 3 (después de 1+2, "ultracode" autorizado): auditoría completa del repo (267
             scripts + 21 binarios C++) vía Workflow multi-agente — pendiente.
       Plan completo: `~/.claude/plans/analyze-that-also-explore-peaceful-hennessy.md`.
@@ -267,4 +274,4 @@
       (Yunior 2026-07-28 08:40) — `hecho fc46c64` (scripts/earnings_fall_scout.py + keepalive 815-1300)
 - [ ] 2026-07-28 (Yunior): "create tree for qqq, spy, mu, dram, skhy para mañana. crea estrategia con estrangle con el mas barato, tal vez con leverage como tqqq o sqqq... ten en cuenta earnings report de skhynix mañana, 29 en corea. usa finviz, trading agents" + "presupuesto 150, lo hacemos con tqqq y sqqq" + "investigate where the market will be moving based on options chain. priority to qqq and spy" — en curso: ticket TQQQ 65C + SQQQ 50C 31jul ~$162, árboles 5 tickers, Finviz earnings semana, TradingAgents SKHY, vigilar 000660.KS esta noche 20:00 ET
 - [ ] 2026-07-28: recargar saldo DeepSeek (platform.deepseek.com, ~$2) — las 2 keys dan 402: TradingAgents SKHY sin panel Y el narrador del chart cockpit muerto (misma key llm.env). Tras recargar, relanzar runner SKHY. Fix hecho: TradingAgents/.env provider nvidia→deepseek (NIM prohibido). pendiente
-- [ ] 2026-07-28 (Yunior): "do it for aapl too, include the tree graph with forecast for all fleet, only send to email, send to pdf smh too, and the whole fleet. no printing. use trading agents with deepseek and finviz. ask deepseek to tell u best candidates for tomorrow and which strategy. send the whole to my email after decision. send to trading agents the calls and puts data for tomorrow expiration" — en curso
+- [ ] 2026-07-28 (Yunior): "do it for aapl too, include the tree graph with forecast for all fleet, only send to email, send to pdf smh too, and the whole fleet. no printing. use trading agents with deepseek and finviz. ask deepseek to tell u best candidates for tomorrow and which strategy..." — hecho: 30 planes + AAPL/SMH, panel DeepSeek (~$0.01), email DECISION-29JUL enviado
