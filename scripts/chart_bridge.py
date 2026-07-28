@@ -870,8 +870,14 @@ def watchlist_payload():
         st = stats.get(s) or stats.get(s.upper()) or stats.get(s.lower())
         if not isinstance(st, dict):
             continue
+        # STALE JAMAS PISA FRESCO (cazado 2026-07-28: stats del 24-jul pintaba MU 920.95
+        # "edad 93s" con MU real en 832): sin ts o ts viejo -> no sobreescribe precio/chg
+        st_ts = st.get("ts")
+        st_fresh = isinstance(st_ts, (int, float)) and time.time() - st_ts < 600
         # el feed usa {vol, pct|chg, price|last}; sólo sobreescribe cuando trae valor real
         for dst, keys in (("vol", ("vol",)), ("chg", ("chg", "pct")), ("last", ("last", "price"))):
+            if dst in ("last", "chg") and not st_fresh:
+                continue
             for k in keys:
                 v = st.get(k)
                 if v is not None:
