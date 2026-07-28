@@ -8,7 +8,6 @@
   conectada — hacerlo desde la sesión principal). Referencia: flujo MU del cierre 27-jul pegado
   por Yunior (spot ~900,4; calls 925/940/950 31-jul, puts 850/860, 0DTE 890/895 vol/OI 268-507x).
 
-- [ ] **[pendiente] archivar barras Corea por sesión** (auditoría señales 2026-07-28):
   `korea_bar_bridge` trunca `bars_samsung/skhynix/kospi.txt` en cada sesión y
   `daily_archive` solo guarda los 30 US → los TERREMOTO Corea de la sesión anterior
   quedan inverificables (5 del 27-jul sin barra). Copiar el patrón de
@@ -22,7 +21,6 @@
 > Orden acordado: FASE 0 higiene → 1 señales → 2 flecha → 2.5 TradingAgents → 3 muros
 > → 4 UI/UX → 4.5 X earnings → 5 los 9 bugs → 6 deploy → 7 seis ventanas + QA → 8 verif → 9 features minadas.
 
-- [ ] **[pendiente] "make sure tickers search work as expected. test with perpetuals plus
   korean tickers"** (Yunior 2026-07-26). El buscador se arreglo hoy (e94cf04: listener `input`
   + `_prime_bars` sincrono), pero NO se probo con: (a) los perpetuos 24/7 nuevos
   (`data/perp_stocks.json`, 26 simbolos Bybit), (b) los tickers coreanos (Samsung/SK Hynix/
@@ -30,59 +28,10 @@
 
 
 
-- [ ] **[pendiente — SALIDA del framework, lo que de verdad calibra la flecha]** lo commiteado es
-      la ENTRADA (contexto→LLM). Falta el lazo de medición: veredicto **discreto** + razones (jamás
-      un número del LLM), registrado en `signals` con `run_id` como cualquier otra fuente, medido con
-      `barrier_labels` + `null_control` + BH-FDR, **banner sin voz** hasta tener `n_eff`. Solo si
-      sobrevive entra en la flecha como coeficiente que **DESPLAZA** a otro factor (topes duros
-      `FAMILIES_MAX=6`/`VETOES_MAX=8`, `scripts/compass.cpp:565-569`; 14 factores en `direction_view`).
-      Patrón a copiar: `source_verdict` de `compass.cpp` — publica un veredicto medido como CONTEXTO
-      sin convertirlo en probabilidad. Recordatorio: `data/calibration_barrier.json` mide la señal
-      CRUDA (n=1154, pool de bollinger), **no** el setup de la brújula → no vale como prob de la flecha.
 
-- [ ] 🥇 **[pendiente — RELOJ DE 7 DÍAS] Unusual Whales** (Yunior 2026-07-25: "save, lets see how
-      to use that one"). Token en `feeds.env` `UW_TOKEN`, **trial caduca ~2026-08-01**.
-      MEDIDO hoy, los 6 endpoints responden 200 y traen **justo lo que la skill
-      `anti-overfit-killlist` daba por IMPOSIBLE** ("necesitan tape firmado + dark-pool
-      licenciado que NO tenemos"):
-      · `/api/market/market-tide` → `net_call_premium`, `net_put_premium`, **`net_volume` FIRMADO**
-        en cubos de 5 min (81 filas/día). Es EXACTAMENTE el panel "Net Call/Put Premium" de la
-        captura de Bullflow, y el que habría hecho sonar **el tide de −53 M del 7/21** que el P/C
-        de volumen (0,86) se comió.
-      · `/api/stock/<SYM>/greek-exposure` → **250 filas = 1 AÑO** de call/put gamma·delta·charm·vanna
-        diarios. Rompe el cuello de botella del roadmap: teníamos "whale/flow/structural NO
-        regenerables, esperar 40-60 sesiones" y esto es historia YA.
-      · `/api/stock/<SYM>/spot-exposures` → gamma/vanna/charm por 1% de movimiento **intradía**
-        (491 filas) con precio: el equivalente a HIRO. *(Ojo: los campos `_dir` y `_vol` vinieron a
-        0 en la muestra; solo `_oi` poblado — verificar si es de tier superior o solo en RTH.)*
-      · `/api/market/oi-change` (100) · `/api/stock/<SYM>/flow-alerts` (100, los sweeps de la
-        captura) · `/api/darkpool/<SYM>` (500).
-      **REGLA DURA antes de cablear nada**: es de PAGO y con reloj. Una fuente que se apaga en 7
-      días NO puede ser dependencia de una señal — es la lección de gexa.ai, que murió y se llevó
-      8 consumidores. *Acción correcta en los 7 días*: **ARCHIVAR** todo lo histórico que da
-      (1 año de greek-exposure × 30 símbolos, market-tide, darkpool) para quedarnos el DATO
-      aunque no se renueve, y **medirlo** contra nuestro `gex_snapshot` antes de pagar.
-      MCP disponible en `https://api.unusualwhales.com/api/mcp`.
 
-- [ ] **[pendiente] CONECTAR Unusual Whales esta semana** (Yunior 2026-07-26: "esta semana podemos
-      conectar unusual whales, si es bueno extendemos trial"). Plan: **archivar primero, medir
-      después, cablear al final** — nunca al revés, por la lección gexa.
-      Endpoints medidos que dan mapa de DELTA, que NOSOTROS NO TENEMOS:
-      `/api/stock/<SYM>/greek-exposure/strike` → **530 filas POR STRIKE** con `call_delta`,
-      `put_delta`, `call_gex`, `put_gex`, `call_charm`, `put_charm`, `call_vanna`, `put_vanna`.
-      `/api/stock/<SYM>/greek-exposure` → **250 días (1 año)** de agregados diarios; net DEX de
-      QQQ el 24-jul = **−51,0 M**. `/api/stock/<SYM>/greeks` → 237 filas por contrato.
-      `/api/stock/<SYM>/option-chains` → 12.904 contratos.
-      *Por qué importa*: `scripts/gex_core.py` tiene **CERO delta** (ni `bs_delta`, ni DEX). El DEX
-      está diseñado dos veces y nunca construido (`designs-menthorq.md:219` #9 close-drift,
-      `designs-spotgamma.md:182` expiry-unwind: *"DEX… currently missing from our stack"*), y son
-      dos de las 8 minadas sin fichero. **Trampa de signo ya documentada**
-      (`designs-menthorq.md:224`): DEX positivo = cliente alcista **pero** el creador VENDE
-      subyacente para quedar neutral → dos campos, `dex_sentiment` y `dex_flow_impact`, jamás uno.
 
-- [ ] **[pendiente] organizar el proyecto, ahora mismo hay muchos archivos regados como tsm_signal_bot.cpp, y otros en el mismo nivel, muchos. separate logs to logs folder.
 
-- [ ] **[pendiente] make the arrow compass nicer, with glowing liquid colors, fast movements, nice to see, test the calibration now with the realtime VIX.
 ## 🌙 QQQ DÍA Y NOCHE (Yunior 2026-07-27: "we should be able to monitor and see charts for qqq
 ## day and night") — MEDIDO, y el hallazgo es que la noche NO se puede recuperar
 - [x] **Día y premarket: FUNCIONA hoy.** Verificado lun 08:09 con la flota viva: bridge QQQ
@@ -90,26 +39,6 @@
       137 strikes, `walls_unavailable: null`. `useRTH=False` en las 3 rutas de `chart_bridge.py`
       (`:1596`, `:1644`, `:2603`) → premarket y after-hours entran. Barras de HOY: 60/hora
       continuas de 01:00 a 08:09.
-- [ ] 🔴 **[pendiente — DATO IRRECUPERABLE, lo decide Yunior] La cinta nocturna solo existe si la
-      capturamos EN VIVO.** MEDIDO pidiendo a IBKR 2 días de QQQ 1m con `useRTH=False`:
-      **IBKR sirve solo Fri 04:00-19:00 y Mon 04:00-08:00. Sábado y domingo: CERO. La franja
-      20:00-04:00 NO la devuelve por histórico.** En cambio nuestro
-      `data/bars_qqq_ibkr.txt` **sí** tiene lun 00:00-03:00 — esas barras existen ÚNICAMENTE porque
-      el stream vivo las guardó. Traducción: **cada hora de noche con el puente caído se pierde
-      para siempre**, no hay backfill que la recupere.
-      *Y ya se perdió una*: la ventana de flota abre **dom 20:00** pero el primer arranque
-      registrado en `fleet_autostart.log` es **lun 00:02:08** (`ibkr_bar_bridge` a las 00:48).
-      El log salta de "fuera de ventana" a las **dom 19:57:39** directamente a las 00:02 — casi
-      **4 h con la ventana ABIERTA y la flota sin arrancar**. `com.ibtrader.fleet` es
-      `StartInterval 300` + `RunAtLoad` y marca `runs=142 / last exit code=0`, así que el job no
-      falló: simplemente no corrió en esa franja (hubo sueño del Mac ~19:57-20:22 —
-      `MAGICWAKE creat=26/7/26 20:22`— pero eso NO explica 20:22→00:02, y no lo voy a suponer).
-      *Lo que hace falta*: (a) que la flota esté viva EN EL MINUTO en que abre la ventana el
-      domingo (wake programado con `pmset repeat` a las 19:55, o `caffeinate` en la franja), y
-      (b) un guardián que GRITE si la ventana está abierta y el bar bridge no escribe — el mismo
-      patrón de frescura que se acaba de poner en `korea_bar_bridge.freshness_guard` (`:210-224`).
-      **NO lo he tocado a 74 min de la apertura**: `fleet_keepalive_start.sh` es de quien depende
-      la flota entera y romperlo en premarket cuesta la sesión. Es un cambio de después del cierre.
 - [x] **[CERRADA — el fix de los CAPITANES funciona] Verificar EN VIVO que los DOS CAPITANES
       reciben cinta firmada.** Llevaba semanas sin poder cerrarse porque solo se puede observar con
       el mercado abierto. MEDIDO hoy 09:09: `data/whale_qqq.txt` **59.061 B**, `whale_spy.txt`
@@ -117,21 +46,6 @@
       estaban a **0 bytes**. `CAPTAINS_FIRST` (`ibkr_bar_bridge.py:62`) hace su trabajo: los
       capitanes se suscriben PRIMERO y por eso son los que tienen cinta. La **regla 12** ya no se
       alimenta de un input vacío.
-- [ ] 🔴 **[pendiente — HALLAZGO NUEVO de la misma medición] 7 de los 30 de la flota NO tienen
-      cinta de ballenas, y es el CAP de IBKR, no un bug nuestro.** Vacíos a las 09:09 con el
-      mercado abierto: **AAPL AMD ASML GLD INTC TSM TXN** — los 7 son de `data/fleet.txt`
-      (comprobado bien: `fleet.txt` es UNA línea de 30 palabras separadas por espacios; leerlo por
-      líneas da un solo token y hace creer que no están en la flota).
-      Causa MEDIDA: `bridge_ibkr_fleet.log` tiene **1.103** `Error 10190 "Le nombre maximum de
-      demandes tick-by-tick a été atteint"`; los denegados que se ven al final son SPCX SKHY LRCX
-      SNDK WDC STX — el orden de suscripción decide quién se queda sin cinta, y `CAPTAINS_FIRST`
-      solo garantiza los 3 primeros.
-      *Por qué importa*: la escalera de agresor, el HIRO casero y `opt_whale_watch` se alimentan de
-      esa cinta. Un ticker sin cinta no es "sin ballenas": es CIEGO, y hoy no lo dice nadie.
-      *Qué hace falta decidir*: (a) cuántas líneas tick-by-tick da realmente la cuenta (el probe
-      `docs/probes/hiro_probe_ibkr.py` existe para eso y hoy SÍ se puede correr), (b) a qué 8-10
-      símbolos se les asigna la cinta a propósito en vez de por orden de arranque, y (c) que un
-      símbolo sin cinta salga DECLARADO como ciego en lugar de aparentar silencio de flujo.
 
 ## 🔴 SESIÓN 2026-07-27 (RTH, mercado abierto) — peticiones al vuelo
 - [x] **[hecho 514a38a/516d3e9 — agente UW] UW latencia MEDIDA en sesión viva: 5,5 s → candidato a
@@ -153,8 +67,6 @@
 ## Ráfaga Yunior 2026-07-28 00:40
 - [ ] **"did u organize the proyect already?"** — logs a logs/, limpieza raíz (solo con flota
       parada con seguridad). `pendiente`
-- [ ] **"at the end todos.md cannot have pending todos, if u need something from me let me know
-      by email in bullet points"** — cierre total + email Resend con lo que dependa de Yunior. `pendiente`
 
 
 
