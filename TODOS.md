@@ -196,10 +196,18 @@
       bar_bridge solo produce 1m) → o se construyen barras de 5s del tick stream, o a 5s fuera de
       sesión el chart dice "sin datos de 5s fuera de RTH" en vez de mostrar barras de las 19:59
       como si fueran vivas. Fichero: `scripts/chart_bridge.py` + `charts/live.html`.
+      → `hecho` 2026-07-28: `us_stale_feed` (watchdog sub>120s muda → tail del fichero 1m,
+      patrón korea_poll_feed) + velas desde tick stream cuando sub congelada + banner honesto
+      sub-minuto sin ticks. MEDIDO antes/después: QQQ 8080 last 07-27 19:45 (age 4,8h) →
+      07-28 00:36 (age 37s). Ver commit.
 
 - [ ] **"take a look at the widgets of ib trader, make sure they show the right data for each
       session, a bit crazy"** (Yunior 2026-07-28) — widgets macOS/chips del cockpit muestran datos
-      de sesión equivocada (RTH vs overnight vs Corea). `pendiente`
+      de sesión equivocada (RTH vs overnight vs Corea). `hecho` 2026-07-28: VIX ya no se marca
+      vivo sin tick fresco (<10min); h-asof grita "mapa de AYER HH:MM" con chain_ts viejo; chip
+      ⏱ edad de vela >2min (KRX-aware); watchlist atenúa quotes >15min con edad; flecha compass
+      etiqueta prob por prob_source (medido % / doctrina / sin medir). opt_flow.txt NO lo lee el
+      cockpit (widget Flow sigue BLOQUEADO a propósito). Ver commit.
 
 - [ ] **[hallazgo backtest 7/27] flow_pulse en boot-loop 16:00–24:00 del lunes** — investigar
       por qué y arreglar (ver docs/BACKTEST-ALARMAS-2026-07-27.md). `pendiente`
@@ -233,3 +241,7 @@
       by email in bullet points"** — cierre total + email Resend con lo que dependa de Yunior. `pendiente`
 - [ ] flow_pulse boot-loop: diagnóstico hecho (rth_open 935-1555, banner+exit fuera de horario,
       launcher relanza cada 5 min) — fix en curso por mí. `en curso`
+
+- [ ] **TTL alarmas, parte 2**: `alarm_add()` de chart_bridge.py debe escribir `exp=` por
+      defecto (ej +5 días hábiles) en las alarmas manuales del chart, y la UI permitir
+      editarlo. Esperar a que el agente de widgets suelte chart_bridge/live.html. `pendiente`
