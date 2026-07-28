@@ -2089,6 +2089,19 @@ def create_app(state):
             return FileResponse(LIVE_HTML)
         return JSONResponse({"error": "charts/live.html no encontrado"}, status_code=404)
 
+    try:  # version = commit servido, leida UNA vez al arrancar (el deploy reinicia el puente)
+        _ver = {"version": subprocess.check_output(
+                    ["git", "-C", REPO, "rev-parse", "--short", "HEAD"], text=True).strip(),
+                "commit_date": subprocess.check_output(
+                    ["git", "-C", REPO, "show", "-s", "--format=%cd",
+                     "--date=format:%Y-%m-%d %H:%M", "HEAD"], text=True).strip()}
+    except Exception:
+        _ver = {"version": None, "commit_date": None}
+
+    @app.get("/version")
+    async def version():
+        return JSONResponse(_ver)
+
     @app.get("/lightweight-charts-v5.js")
     async def lib():
         p = os.path.join(os.path.dirname(LIVE_HTML), "lightweight-charts-v5.js")

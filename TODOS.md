@@ -2,6 +2,25 @@
 
 > Vivo. Marcar [x] al cerrar. Manual completo: `docs/DAILY-SYSTEM.md`.
 
+## 🔴 SESIÓN 2026-07-28 (mañana) — apuntadas AL VUELO
+- [x] **"create alert if there is large bulliesh options trade in the top 10 nasdaq stocks, same
+      for bearish"** + al ver los paneles BLOQUEADOS: **"i thoght it was done already. what the
+      hell."** (Yunior 2026-07-28 ~08:55) — `hecho` (sin commit aún). El P/C agregado ya existía;
+      lo nuevo es una alarma INDEPENDIENTE por magnitud de premium neto firmado UW (top-10
+      Nasdaq, umbral $2M SIN CALIBRAR, histéresis $1M, voz+banner) en `scripts/opt_whale_watch.py`.
+      Verificado en vivo: MSFT disparó BULL a las 09:38 (signed_premium $5.51M) en
+      `data/whale_alerts.jsonl`. Latencia UW medida hoy: 60-200s en sesión, no 15min — memoria
+      `data-source-latency.md` actualizada. Nota: Net Premiums/cinta de sweeps de `charts/live.html`
+      (prints individuales HIRO) siguen BLOQUEADOS, es un dato distinto (tick-by-tick por contrato,
+      no premium agregado) — no confundir los dos.
+- [x] **"also, show version of software in visible ui part"** (Yunior 2026-07-28 ~09:00) —
+      `hecho`. `charts/live.html` toolbar + `/version` en `chart_bridge.py` (git rev-parse
+      --short HEAD, leído una vez al arrancar el puente).
+- [x] **"monitor qqq, micron mu, spy, and tell me probability of going up or down."**
+      (Yunior 2026-07-28 ~09:05) — `hecho` (respuesta puntual, sin código). Compass + BB %B en
+      vivo: los tres giraron up→down en ~12 min (66/65/66% doctrina), SPY pegado al muro call 740
+      sin veto, QQQ/MU en régimen NEG (trampilla, no piso).
+
   do it at 9:31, be picaro"** (Yunior 2026-07-28 07:36). La ventana TradingFlow está abierta en
   su Chrome; leerla a las 09:31 vía extensión (la sesión del agente auditor NO tenía la extensión
   conectada — hacerlo desde la sesión principal). Referencia: flujo MU del cierre 27-jul pegado

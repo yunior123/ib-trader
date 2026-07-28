@@ -41,6 +41,12 @@ VMIN = 3000          # volumen total minimo para que el ratio signifique algo
 PC_PUTS, PC_CALLS = 2.0, 0.35
 EXIT_PUTS, EXIT_CALLS = 1.5, 0.5   # histeresis
 UW_POLL_S = 900   # 15min: conservador con el cupo del trial, 25 syms x 78 rondas/dia seria abuso
+# top-10 Nasdaq (pesos QQQ, playbook data/qqq_weights.txt) presentes en la flota;
+# COST no esta en fleet.txt (fuente unica CLAUDE.md #5) -> sin cobertura, no se inventa.
+NASDAQ10 = [s for s in ("NVDA", "MSFT", "AAPL", "AMZN", "GOOGL", "AVGO", "META", "TSLA", "NFLX") if s in FLEET]
+UW_PREM_BULL, UW_PREM_BEAR = 2_000_000, -2_000_000   # umbral SIN CALIBRAR (doctrina: etiquetado, no medido)
+UW_PREM_EXIT = 1_000_000                             # histeresis, mismo patron que PC_PUTS/PC_CALLS
+UW_MAX_AGE_S = 600   # feed mas viejo que esto no es "large trade AHORA": se ignora, no se alarma con dato muerto
 RECENTER_PCT = 0.015   # spot >1.5% del centro usado -> parrilla nueva (selloff 27-jul)
 CHAIN_F = "data/opt_whale_chains.json"   # cache diaria secdef: no re-pedir cada arranque
 
@@ -288,7 +294,37 @@ while True:
                                 lado = "BULLISH" if uw_prem["signed_premium"] > 0 else "BEARISH"
                                 uw_suffix = (f" | UW prem neto ${uw_prem['signed_premium']:,.0f} {lado}"
                                              f" (call ${uw_prem['net_call_premium']:,.0f} put ${uw_prem['net_put_premium']:,.0f})"
-                                             f" age {rec['feed_age_s']}s [banner sin voz: latencia sin medir en sesion]")
+                                             f" age {rec['feed_age_s']}s")
+                                # alarma top-10 Nasdaq (Yunior 2026-07-28: "large bullish/bearish
+                                # options trade in top 10 nasdaq"), INDEPENDIENTE del gate P/C:
+                                # dispara solo por MAGNITUD de premium neto firmado. Antes esto
+                                # era un banner sin voz "latencia sin medir" — medido HOY en
+                                # sesion viva (age_s 60-200 en 9/10 nombres), se activa la voz.
+                                if s in NASDAQ10 and rec["feed_age_s"] is not None and rec["feed_age_s"] <= UW_MAX_AGE_S:
+                                    sp = uw_prem["signed_premium"]
+                                    pkey = f"{s}_uwprem"
+                                    pprev = state.get(pkey, "mid")
+                                    pcur = pprev
+                                    if sp >= UW_PREM_BULL: pcur = "bull"
+                                    elif sp <= UW_PREM_BEAR: pcur = "bear"
+                                    elif pprev == "bull" and sp < UW_PREM_EXIT: pcur = "mid"
+                                    elif pprev == "bear" and sp > -UW_PREM_EXIT: pcur = "mid"
+                                    if pcur != pprev:
+                                        state[pkey] = pcur
+                                        if pcur in ("bull", "bear"):
+                                            jappend("data/whale_alerts.jsonl",
+                                                    {"ts": int(time.time()), "side": pcur.upper(),
+                                                     "prev": "UW_PREMIUM", "sym": s,
+                                                     "signed_premium": round(sp, 0),
+                                                     "call": round(uw_prem["net_call_premium"], 0),
+                                                     "put": round(uw_prem["net_put_premium"], 0)})
+                                            emoji = "🟢📈" if pcur == "bull" else "🔴📉"
+                                            tag2 = "BULLISH" if pcur == "bull" else "BEARISH"
+                                            loud(f"{emoji} PREMIUM {tag2} {s}",
+                                                 f"{s}: trade grande de opciones {tag2} — premium neto "
+                                                 f"${sp:,.0f} (call ${uw_prem['net_call_premium']:,.0f} "
+                                                 f"put ${uw_prem['net_put_premium']:,.0f}), umbral SIN CALIBRAR",
+                                                 "ProAlert")
                         except Exception as e:
                             print(f"{s}: UW premium fallo ({e})", file=sys.stderr)
                     lines.append(f"{s} volC {vc:,.0f} volP {vp:,.0f} P/C {pc:.2f}{tag} exp {exp}{uw_suffix}")

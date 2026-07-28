@@ -485,6 +485,7 @@
   <button id="narrbtn" title="Narrador de mercado (como gexa): lectura breve del mapa GEX. Determinista gratis + DeepSeek bajo demanda (↻).">🗣 Narrador</button>
   <button id="helpbtn" title="¿Qué es cada cosa? (guía)">ℹ Guía</button>
   <span id="conn" class="off">● desconectado</span>
+  <span id="swver" title="Versión del software: commit de main que sirve este puente (git, no hardcodeada)" style="color:#6b7a99;font-size:10px;margin-left:6px">v?</span>
 </div>
 <!-- fila 2: lectura OHLC de la barra + info GEX -->
 <div id="infobar">
@@ -2765,6 +2766,13 @@ connect();
 window.addEventListener("resize", () => {
   try { zoomRecent(candle.data().length); } catch (e) {}
 });
+</script>
+<script>
+fetch('/version').then(r => r.json()).then(v => {
+  const el = document.getElementById('swver');
+  el.textContent = v.version ? 'v ' + v.version : 'v ?';
+  if (v.commit_date) el.title += ' — ' + v.commit_date;
+}).catch(() => {});
 </script>
 </body>
 </html>
