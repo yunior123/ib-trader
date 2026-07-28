@@ -75,3 +75,13 @@
       picaro"** (Yunior 2026-07-28 07:36) — leer la ventana TradingFlow viva a las 9:31 vía
       Chrome, lectura pícara de flujo (formato: expiry/side/aggressor/premium/volOI/IV/sentiment).
       `programado 9:31 (timer armado)`
+
+- [ ] **"revisa el repo, explora, crea un repo map, con clases y top level functions, send minor
+      agent for it"** (Yunior 2026-07-28 ~09:05) — `delegado a agente sonnet`
+- [ ] **"review the whole fleet is awake and nobody stayed asleep"** — `en curso (yo)`
+- [ ] **"finish Operativa, nada para despues, regla de la casa"** — aviso de cierre de posición
+      hablado HOY, organizar fase 2 HOY 16:02 (timer armado), TradingAgents framework arrancado
+      hoy en background. `en curso`
+- [ ] **"prueba que el compass no tiene 60 percent o sesgo fijo todo el tiempo, prueba la
+      calibracion y backtest con real data"** — distribución de probs en RTH + calibrate con
+      ledger real de hoy + backtest. `en curso (medición durante la mañana)`
