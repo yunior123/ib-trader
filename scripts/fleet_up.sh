@@ -73,9 +73,9 @@ else
   ok "keepalive de la flota lanzado"
 fi
 
-# 3) base de datos de señales (alimenta el backtest EOD)
-alive 'signals_db.py --daemon' && ok "signals_db ya vivo" || {
-  nohup python3 scripts/signals_db.py --daemon >/dev/null 2>&1 & ok "signals_db lanzado"; }
+# 3) base de datos de señales (alimenta el backtest EOD) — via keepalive + log (2026-07-28)
+alive 'signals_db_keepalive.sh' && ok "signals_db keepalive ya vivo" || {
+  nohup bash scripts/signals_db_keepalive.sh >/dev/null 2>&1 & ok "signals_db keepalive lanzado"; }
 
 # 4) cockpit del gráfico (opcional)
 if [[ "${1:-}" == "--chart" ]]; then

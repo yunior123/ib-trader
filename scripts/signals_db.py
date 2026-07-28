@@ -33,17 +33,17 @@ def classify(kind, msg):
     k = (kind or "").upper()
     blob = (kind or "") + " " + (msg or "")
     pr = "SIGNAL"
-    if any(t in blob for t in ("🐋", "BALLENA", "🚀", "SPIKE", "🩸", "DIP REAL", "TERREMOTO", "DISPARADA", "⏰", "SIRENA")):
+    if any(t in blob for t in ("🐋", "BALLENA", "🚀", "SPIKE", "🩸", "DIP REAL", "TERREMOTO", "DISPARADA", "⏰", "SIRENA", "ALARMA PRECIO")):
         pr = "DANGER"
     elif any(t in k for t in ("MUTED", "VETO", "INFO", "NOTA")):
         pr = "INFO"
     src = "signal"
     if "🐋" in blob or "BALLENA" in blob: src = "whale"
-    elif "SPIKE" in blob: src = "flow"
-    elif "BB " in blob or "BANDA" in blob or "REBOTE" in blob: src = "bollinger"
+    elif "SPIKE" in blob or "🌊" in blob or "FLOW PULSE" in k: src = "flow"
+    elif "BB " in blob or "BANDA" in blob or "REBOTE" in blob or "🎈" in blob: src = "bollinger"
     elif "DIP" in blob: src = "dip"
     elif "TERREMOTO" in blob or "CUSUM" in blob: src = "cusum"
-    elif "DISPARADA" in blob or "⏰" in blob: src = "price_alarm"
+    elif "DISPARADA" in blob or "⏰" in blob or "ALARMA PRECIO" in blob: src = "price_alarm"
     return pr, src
 
 def extract_symbol(kind, msg):
@@ -94,6 +94,14 @@ def parse_line(line, date):
         ts_txt, kind, msg = m.group(1), "", m.group(2)
     if not re.match(r"^\d{2}:\d{2}:\d{2}$", ts_txt):
         return None
+    # WARMUP = replay con timestamp de arranque, no evento vivo (fix 2026-07-25; ahora
+    # tambien cubre --daemon, que antes NO filtraba y metia basura en vivo).
+    if "WARMUP" in line:
+        return None
+    # 🧲 ESTRUCTURAL: chart_bridge ya inserta directo en la BD (source=structural);
+    # re-ingerir la linea del feed duplicaba la señal cuando el strftime difiere 1s.
+    if kind.startswith("🧲 ESTRUCTURAL"):
+        return None
     try:
         ep = dt.datetime.strptime(f"{date} {ts_txt}", "%Y-%m-%d %H:%M:%S").timestamp()
     except Exception:
@@ -109,23 +117,13 @@ def ingest_file(c, path):
             row = parse_line(line, date)
             if not row:
                 continue
-            # WARMUP = REPLAY, no evento vivo (fix 2026-07-25). Al arrancar, los bots
-            # re-procesan 2 dias de barras historicas y el CUSUM dispara sobre ellas; el
-            # log estampa time(nullptr) = HORA DE ARRANQUE, no la de la barra. Resultado
-            # medido el 24-jul: 64 señales con ts identico 09:18:23 -> basura que envenena
-            # todo backtest (no puedes medir "que paso despues" si el instante es falso).
-            # Se quedan en el archivo y en el banner (Yunior los compara con el grafico,
-            # orden 2026-07-15) pero NO entran a la BD de medicion.
-            if "WARMUP" in (row[3] or "") or "WARMUP" in (row[9] or ""):
-                continue
             try:
-                c.execute("""INSERT OR IGNORE INTO signals
+                cur = c.execute("""INSERT OR IGNORE INTO signals
                     (ts_epoch,ts_txt,date,kind,symbol,price,priority,source,msg,raw)
                     VALUES (?,?,?,?,?,?,?,?,?,?)""", row)
-                if c.total_changes:
-                    n += c.execute("SELECT changes()").fetchone()[0]
-            except Exception:
-                pass
+                n += max(cur.rowcount, 0)
+            except Exception as e:
+                print(f"[signals_db] INSERT FALLO ({e}): {line.strip()[:120]}", file=sys.stderr)
     c.commit()
     return n
 
@@ -152,19 +150,23 @@ def daemon(c):
             if sz < off:   # archivo rotado/reescrito
                 off = 0
             if sz > off:
+                k = 0
                 with open(path, errors="replace") as f:
                     f.seek(off)
                     for line in f:
                         row = parse_line(line, date)
                         if row:
                             try:
-                                c.execute("""INSERT OR IGNORE INTO signals
+                                cur = c.execute("""INSERT OR IGNORE INTO signals
                                     (ts_epoch,ts_txt,date,kind,symbol,price,priority,source,msg,raw)
                                     VALUES (?,?,?,?,?,?,?,?,?,?)""", row)
-                            except Exception:
-                                pass
+                                k += max(cur.rowcount, 0)
+                            except Exception as e:
+                                print(f"[signals_db] INSERT FALLO ({e}): {line.strip()[:120]}", file=sys.stderr, flush=True)
                     offsets[path] = f.tell()
                 c.commit()
+                if k:
+                    print(f"[signals_db] {time.strftime('%H:%M:%S')} +{k} señales", flush=True)
         time.sleep(2)
 
 def stats(c):
@@ -185,8 +187,28 @@ def stats(c):
         for a, n in c.execute("SELECT action,COUNT(*) FROM voice_log GROUP BY action"):
             print(f"  voz {a}: {n}")
 
+def dry_run(paths):
+    from collections import Counter
+    for p in paths:
+        date = os.path.basename(p)[:10]
+        cnt, skipped = Counter(), 0
+        with open(p, errors="replace") as f:
+            for line in f:
+                row = parse_line(line, date)
+                if row is None:
+                    skipped += 1
+                else:
+                    cnt[row[7]] += 1
+        print(f"{os.path.basename(p)}: {sum(cnt.values())} ingeribles, {skipped} filtradas (WARMUP/estructural/no-parse)")
+        for s, n in cnt.most_common():
+            print(f"  {s}: {n}")
+
 def main():
     args = set(sys.argv[1:])
+    if "--dry-run" in args:
+        files = [a for a in sys.argv[1:] if a != "--dry-run"] or sorted(glob.glob(f"{SIGDIR}/*.txt"))[-1:]
+        dry_run(files)
+        return
     c = connect(); init(c)
     if "--daemon" in args:
         daemon(c)
