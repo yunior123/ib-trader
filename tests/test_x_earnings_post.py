@@ -218,9 +218,19 @@ def test_texto_dentro_del_limite_de_x():
 
 def test_texto_lleva_el_aviso_y_no_recomienda_comprar():
     text = M.build_tweet_text(_merged(), FLEET, quip_seed=1).lower()
-    assert "no es consejo financiero" in text
-    for prohibido in ("compra ", "comprar ahora", "vende ", "garantiz"):
+    assert "not financial advice" in text
+    for prohibido in ("buy now", "sell now", "guaranteed", "compra", "comprar", "vende"):
         assert prohibido not in text
+
+
+# Yunior 2026-07-27 "x.com posts in english from now on": el texto va en ingles.
+def test_texto_en_ingles():
+    for seed in range(len(M.QUIPS) * 3):
+        text = M.build_tweet_text(_merged(), FLEET, quip_seed=seed).lower()
+        assert "not financial advice" in text
+        for es in ("empresas", "son de la flota", "reportan", "semana", "consejo",
+                   "escalera", "valla", "píc", "imán"):
+            assert es not in text, (seed, es, text)
 
 
 def test_texto_sin_urls():
@@ -231,8 +241,8 @@ def test_texto_sin_urls():
 def test_texto_cuenta_lo_medido():
     m = _merged()
     text = M.build_tweet_text(m, FLEET, quip_seed=4)
-    assert f"{len(m)} empresas" in text
-    assert f"{len([s for s in m if s in FLEET])} son de la flota" in text
+    assert f"{len(m)} companies" in text
+    assert f"{len([s for s in m if s in FLEET])} are fleet names" in text
 
 
 # --- (e) y (f) el PNG ---------------------------------------------------------

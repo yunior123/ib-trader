@@ -51,16 +51,16 @@ LADDER_ROWS = 4               # cuantos nombres llevan escalera en la franja de 
 
 log = xc.make_logger(LOG_FILE)
 
-DOW = ("lun", "mar", "mié", "jue", "vie", "sáb", "dom")
-MON = ("", "ene", "feb", "mar", "abr", "may", "jun",
-       "jul", "ago", "sep", "oct", "nov", "dic")
+DOW = ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+MON = ("", "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+       "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 
 QUIPS = [
-    "El print del reporte no negocia con tu theta.",
-    "La sorpresa la da la empresa; la factura, tu prima.",
-    "Aguantar prima comprada a través de un print es donar.",
-    "La valla ATR ya te dijo cuánto piensan moverlo.",
-    "Los dealers cobran la incertidumbre por adelantado.",
+    "The earnings print doesn't negotiate with your theta.",
+    "The company brings the surprise; your premium pays the bill.",
+    "Holding bought premium through a print is a donation.",
+    "The ATR envelope already told you how far they plan to move it.",
+    "Dealers charge for uncertainty up front.",
 ]
 
 # paleta oscura (fondo #0d1117); la flota se distingue por BORDE verde + texto verde
@@ -270,22 +270,22 @@ def picaro_bits(r):
         return []
     bits = []
     if r["rsi"] >= 70:
-        bits.append(f"RSI {r['rsi']:.0f} recalentado")
+        bits.append(f"RSI {r['rsi']:.0f} overheated")
     elif r["rsi"] <= 30:
-        bits.append(f"RSI {r['rsi']:.0f} en el suelo")
+        bits.append(f"RSI {r['rsi']:.0f} at the floor")
     if abs(r["gap"]) >= 1.5:
         bits.append(f"gap {r['gap']:+.1f}%")
     if r["relvol"] is not None and r["relvol"] >= 1.5:
-        bits.append(f"vol rel {r['relvol']:.1f}x")
+        bits.append(f"rel vol {r['relvol']:.1f}x")
     if r["short_float"] is not None and r["short_float"] >= 8:
-        bits.append(f"short {r['short_float']:.0f}% de leña")
+        bits.append(f"short {r['short_float']:.0f}% of fuel")
     if abs(r["d20"]) >= 5:
         bits.append(f"{r['d20']:+.0f}% vs SMA20")
     if r["w52h"] is not None and abs(r["w52h"]) <= 2:
-        bits.append("pegado al máximo 52s")
+        bits.append("glued to 52w high")
     if r["w52l"] is not None and r["w52l"] <= 10:
-        bits.append("raspando el mínimo 52s")
-    bits.append(f"valla ATR ±{r['atr_pct']:.1f}%")
+        bits.append("scraping 52w low")
+    bits.append(f"ATR envelope ±{r['atr_pct']:.1f}%")
     return bits
 
 
@@ -415,10 +415,10 @@ def render_calendar(merged, fleet, out_path=DEFAULT_PNG):
     ax.axis("off"); ax.set_facecolor(C_BG)
 
     n_fleet = len([s for s in merged if s in fleet])
-    ax.text(2.5, 95.6, "EARNINGS · SEMANA QUE VIENE", fontsize=21, fontweight="bold",
+    ax.text(2.5, 95.6, "EARNINGS · NEXT WEEK", fontsize=21, fontweight="bold",
             color="#f0f6fc", va="center")
-    ax.text(2.5, 91.6, f"{len(merged)} empresas · {n_fleet} de los {len(fleet)} de la flota "
-            f"(borde verde) · niveles medidos: precio±ATR y SMA20/50/200",
+    ax.text(2.5, 91.6, f"{len(merged)} companies · {n_fleet} of the {len(fleet)} fleet names "
+            f"(green border) · measured levels: price±ATR and SMA20/50/200",
             fontsize=10.5, color=C_MUTED, va="center")
     ax.text(97.5, 94.5, "ib-trader", fontsize=12, color=C_HEAD, ha="right",
             va="center", fontweight="bold")
@@ -437,7 +437,7 @@ def render_calendar(merged, fleet, out_path=DEFAULT_PNG):
         ax.text(x0 + (col_w - 1.2) / 2, 83.2, f"{DOW[d.weekday()]} {d.day}",
                 ha="center", va="center", fontsize=14, fontweight="bold",
                 color="#f0f6fc", zorder=5)
-        for sess, label in (("BMO", "Antes de abrir"), ("AMC", "Tras el cierre")):
+        for sess, label in (("BMO", "Before open"), ("AMC", "After close")):
             top = sec_top[sess]
             (_sun if sess == "BMO" else _moon)(ax, x0 + 2.2, top + 2.4)
             rows = grid.get((d, sess), [])
@@ -460,19 +460,19 @@ def render_calendar(merged, fleet, out_path=DEFAULT_PNG):
                                 boxstyle="round,pad=0,rounding_size=0.8",
                                 facecolor=C_PANEL, edgecolor="#21262d",
                                 linewidth=1.0, zorder=1))
-    ax.text(3.5, 31.4, "LOS MÁS PÍCAROS DE LA FLOTA  ·  techo · imán · spot · piso · stop "
-            "(solo los niveles que existen)",
+    ax.text(3.5, 31.4, "CHEEKIEST FLEET NAMES  ·  ceiling · magnet · spot · floor · stop "
+            "(only the levels that exist)",
             fontsize=10.5, fontweight="bold", color=C_HEAD, va="center", zorder=5)
     for i, r in enumerate(ranked[:LADDER_ROWS]):
         _ladder_row(ax, 3.5, 27.0 - i * 4.4, r, fleet)
     # decirlo en la imagen, no callarlo: quien no tiene tecnicos no tiene niveles
     no_tech = sorted(s for s, r in merged.items() if s in fleet and not r["tech"])
     if no_tech:
-        ax.text(3.5, 10.6, f"sin niveles ({', '.join(no_tech)}): Finviz sirve la fila "
-                f"incompleta — salen en la rejilla, no se les inventa escalera",
+        ax.text(3.5, 10.6, f"no levels ({', '.join(no_tech)}): Finviz serves an incomplete "
+                f"row — they show in the grid, no ladder is invented",
                 fontsize=8.8, color=C_MUTED, va="center", zorder=5)
-    ax.text(3.5, 5.0, "Señal-solamente · niveles Finviz Elite (ATR/SMA/RSI medidos) · "
-            "prima comprada NO cruza un print · No es consejo financiero",
+    ax.text(3.5, 5.0, "Signal-only · Finviz Elite levels (measured ATR/SMA/RSI) · "
+            "bought premium does NOT cross a print · Not financial advice",
             fontsize=9, color=C_MUTED, va="center")
 
     os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
@@ -496,14 +496,14 @@ def build_tweet_text(merged, fleet, quip_seed=None):
     seed = quip_seed if quip_seed is not None else int(time.strftime("%j"))
     quip = QUIPS[(seed + sum(map(ord, star["sym"]))) % len(QUIPS)]
     n_fleet = len(in_fleet)
-    hook = (f"🔥 Semana de earnings bestial: {len(merged)} empresas reportan y "
-            f"{n_fleet} son de la flota." if n_fleet else
-            f"🔥 Semana de earnings bestial: {len(merged)} empresas reportan.")
-    mid = (f"El más pícaro: ${star['sym']} {when(star)}, "
-           f"valla ATR ±{star['atr_pct']:.1f}%.")
-    img = "Rejilla completa + escaleras en la imagen 👇"
+    hook = (f"🔥 Huge earnings week: {len(merged)} companies report and "
+            f"{n_fleet} are fleet names." if n_fleet else
+            f"🔥 Huge earnings week: {len(merged)} companies report.")
+    mid = (f"Cheekiest: ${star['sym']} {when(star)}, "
+           f"ATR envelope ±{star['atr_pct']:.1f}%.")
+    img = "Full grid + level ladders in the image 👇"
     for parts in ((hook, mid, img, quip), (hook, mid, img), (hook, mid)):
-        text = " ".join(parts) + " No es consejo financiero."
+        text = " ".join(parts) + " Not financial advice."
         if len(text) <= xc.MAX_CHARS and xc.count_cashtags(text) <= 1:
             return text
     return None

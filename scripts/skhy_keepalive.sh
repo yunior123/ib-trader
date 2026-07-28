@@ -11,6 +11,8 @@ export SKHY_QUAKE_BANNER=1
 export SKHY_QUAKE_MIN=0.02
 # entradas OFF: score imposible (max real 1.0) => nunca arma compra; shorts 0
 export SKHY_SCORE_MIN=9
+# gate spread NBBO del subyacente: p95 medido 0.17% (n=30 after-hours); 0.4 deja margen RTH + ADR fino
+export SKHY_SPREAD_MAX=0.4
 while true; do
   pkill -x skhy_signal_bot 2>/dev/null
   sleep 1
