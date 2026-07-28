@@ -29,7 +29,8 @@ timeout "$SECS_TO_MIDNIGHT" tail -n0 -F "$F" 2>/dev/null | while read -r line; d
   echo "$line" | grep -qE '🐋|🚀|🩸|🧲|🌋|⏰|🚨|BALLENA|SPIKE|DIP REAL|TERREMOTO|ESTRUCTURAL|ALARM|COMPRAR|VENDER|[A-Z]{2,6}: (BUY|SELL)|FLUJO DE (PUTS|CALLS)|TRAMPA' || continue
   # BB REBOTE (~136/dia) se EXCLUYE del telefono: es chatter INFO de baja conviccion
   # (BB-solo pierde en backtest) -> inundaria. Se guarda local + se ve en el chart igual.
-  echo "$line" | grep -qE 'MUTED' && continue
+  # WARMUP = replay premarket, no señal viva (236 pasaron el filtro el 27-jul y 9 llegaron al telefono)
+  echo "$line" | grep -qE 'MUTED|WARMUP' && continue
   hh=$(echo "$line" | grep -oE '^[0-9]{2}:[0-9]{2}' | head -1)
   [[ -z "$hh" ]] && hh=$(date +%H:%M)
   now_s=$(date +%s); line_s=$(date -j -f '%Y-%m-%d %H:%M' "$(date +%F) $hh" +%s 2>/dev/null || echo $now_s)
@@ -38,7 +39,14 @@ timeout "$SECS_TO_MIDNIGHT" tail -n0 -F "$F" 2>/dev/null | while read -r line; d
     echo "$(date +%H:%M:%S) DESCARTADA (${age}s vieja): ${line:0:60}" >> notify_relay.log; continue
   fi
   [[ "$line" == "$LAST" ]] && continue
-  (( now_s - LASTSENT < 5 )) && { echo "$(date +%H:%M:%S) CAP 1/5s: ${line:0:50}" >> notify_relay.log; continue; }
+  # PRIORIDAD (2026-07-28): SELL/STOP/TERREMOTO/DANGER/🌋 saltan el cap — el CAP 1/5s mato SMH: SELL 09:31 e INTC: SELL 09:56 el 27-jul, las 2 mejores del dia
+  if (( now_s - LASTSENT < 5 )); then
+    if echo "$line" | grep -qE 'SELL|STOP|TERREMOTO|DANGER|🌋'; then
+      echo "$(date +%H:%M:%S) PRIORIDAD salta cap: ${line:0:50}" >> notify_relay.log
+    else
+      echo "$(date +%H:%M:%S) CAP 1/5s: ${line:0:50}" >> notify_relay.log; continue
+    fi
+  fi
   LAST="$line"; LASTSENT=$now_s
   msg="${line:0:180}"
   curl -s --max-time 5 -d "$msg" -H "Title: 🔔 flota" "https://ntfy.sh/$NTFY_TOPIC" >/dev/null &
