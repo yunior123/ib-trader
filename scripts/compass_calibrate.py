@@ -98,10 +98,13 @@ def main():
             sgn = 1 if r["dir"] == "up" else -1
             fam = min(max(int(r.get("fam", 0)), 0), 4)
             key = f"{r['state']}|f{fam}|{r.get('regime') or 'SIN'}"
-            c = cells.setdefault(key, {"n": 0, "w15": 0, "w30": 0})
-            c["n"] += 1
-            c["w15"] += 1 if sgn * (c15 - spot) > 0 else 0
-            c["w30"] += 1 if sgn * (c30 - spot) > 0 else 0
+            # celda exacta + celda POOL por estado (toda la flota): la exacta tarda dias en
+            # llegar a n>=30; el pool lo alcanza en horas y es la primera medicion honesta
+            for k in (key, f"{r['state']}|pool"):
+                c = cells.setdefault(k, {"n": 0, "w15": 0, "w30": 0})
+                c["n"] += 1
+                c["w15"] += 1 if sgn * (c15 - spot) > 0 else 0
+                c["w30"] += 1 if sgn * (c30 - spot) > 0 else 0
             rows += 1
     out = {}
     for k, c in cells.items():

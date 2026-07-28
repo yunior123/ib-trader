@@ -800,16 +800,24 @@ static void calib_refresh() {
     g_calib_json = slurp("data/compass_calib.json");
     g_calib_mtime = st.st_mtime;
 }
-static void calib_cell(const std::string& state, int nfam, const std::string& regime,
+static bool calib_cell(const std::string& state, int nfam, const std::string& regime,
                        std::optional<double>& lo, std::optional<double>& n) {
     calib_refresh();
-    if (g_calib_json.empty()) return;
+    if (g_calib_json.empty()) return false;
     std::string key = state + "|f" + std::to_string(std::min(std::max(nfam, 0), 4)) + "|" +
                       (regime.empty() ? "SIN" : regime);
     std::string sec = json_section(g_calib_json, key);
-    if (sec.empty()) return;
-    auto cn = jnum(sec, "n"); auto cl = jnum(sec, "lo");
-    if (cn && cl && *cn > 0) { n = cn; lo = cl; }
+    if (!sec.empty()) {
+        auto cn = jnum(sec, "n"); auto cl = jnum(sec, "lo");
+        if (cn && cl && *cn >= K::CALIB_MIN_N) { n = cn; lo = cl; return false; }
+    }
+    // fallback POOL por estado (flota entera): primera medicion honesta en horas, etiquetada
+    sec = json_section(g_calib_json, state + "|pool");
+    if (!sec.empty()) {
+        auto cn = jnum(sec, "n"); auto cl = jnum(sec, "lo");
+        if (cn && cl && *cn >= K::CALIB_MIN_N) { n = cn; lo = cl; return true; }
+    }
+    return false;
 }
 
 // ------------------------------ probabilidad --------------------------------
@@ -977,8 +985,9 @@ static Out classify(const Ev& ev, Hist* hist, const std::string& decay_json) {
     // falacia que ya se rechaza arriba con prob_retroceso_50. Se LEE para publicar el
     // veredicto como contexto, y jamas como probabilidad.
     std::optional<double> calib_lo = ev.calib_lo, calib_n = ev.calib_n;
+    bool calib_pooled = false;
     if (g_use_calib_table && !(calib_lo && calib_n))
-        calib_cell(o.state, o.families, ev.regime, calib_lo, calib_n);
+        calib_pooled = calib_cell(o.state, o.families, ev.regime, calib_lo, calib_n);
     if (o.state == S_REV && !(calib_lo && calib_n)) {
         std::string src0 = !ev.calib_source.empty() ? ev.calib_source
                                                     : calib_source_from_families(o.families_why);
@@ -986,7 +995,7 @@ static Out classify(const Ev& ev, Hist* hist, const std::string& decay_json) {
             o.calib_context = source_verdict(src0, ev.calib_dir.empty() ? "data" : ev.calib_dir);
     }
     auto [p, src] = prob_of(o.state, o.families, calib_lo, calib_n, false, ev, o.amp);
-    o.prob = p; o.prob_source = src;
+    o.prob = p; o.prob_source = (src == "medido" && calib_pooled) ? "medido_pool" : src;
     o.pending_print = (o.state == S_APPR);
     if (o.state == S_BOX || o.state == S_NONE) { o.prob = 50; o.dir = "flat"; o.amp = Amp{}; }
     if (why.size() > 6) why.resize(6);
