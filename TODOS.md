@@ -177,13 +177,6 @@
       fueron "DANGER CINTA CIEGA", jamás una ballena real.** El agente B ya reinició el proceso
       (conecta a 4001 limpio). VERIFICAR que quedó vivo y disparando.
 
-- [ ] **[ACCIÓN DIFERIDA con hora — tras cierre KRX ~02:30 ET, o mañana antes de US open]
-      Desplegar los binarios coreanos + skhy** (agente RTH, ). Los 3 coreanos siguen con
-      binario viejo (su horario 930 KST es correcto, no urgente) y skhy tiene el  staged +
-      SKHY_SPREAD_MAX ya en el keepalive. Comando exacto:
-      
-      
-      No se automatizó a propósito (un pkill sin supervisión a las 02:35 rompe la flota si algo falla).
 
 - [ ] 🔴 **[RAÍZ de "no veo los gráficos moverse" + "5s no se mueve" + "chart día y noche"] El chart
       usa `reqHistoricalData keepUpToDate` que SE CONGELA a las 20:00 ET (fin del after-hours),
@@ -209,8 +202,6 @@
       etiqueta prob por prob_source (medido % / doctrina / sin medir). opt_flow.txt NO lo lee el
       cockpit (widget Flow sigue BLOQUEADO a propósito). Ver commit.
 
-- [ ] **[hallazgo backtest 7/27] flow_pulse en boot-loop 16:00–24:00 del lunes** — investigar
-      por qué y arreglar (ver docs/BACKTEST-ALARMAS-2026-07-27.md). `pendiente`
 - [ ] **[hallazgo backtest 7/27] la BD `signals` solo ingiere structural desde el 25-jul** —
       bollinger/whale/flow/cusum del 27 solo viven en el feed txt + voice_log; sin BD no hay
       backtest continuo de esas fuentes. Cablear la ingesta completa. `pendiente`
@@ -239,17 +230,11 @@
       investigar flecha nocturna (sin cadena de opciones viva). `pendiente`
 - [ ] **"at the end todos.md cannot have pending todos, if u need something from me let me know
       by email in bullet points"** — cierre total + email Resend con lo que dependa de Yunior. `pendiente`
-- [ ] flow_pulse boot-loop: diagnóstico hecho (rth_open 935-1555, banner+exit fuera de horario,
-      launcher relanza cada 5 min) — fix en curso por mí. `en curso`
 
 - [ ] **TTL alarmas, parte 2**: `alarm_add()` de chart_bridge.py debe escribir `exp=` por
       defecto (ej +5 días hábiles) en las alarmas manuales del chart, y la UI permitir
       editarlo. Esperar a que el agente de widgets suelte chart_bridge/live.html. `pendiente`
 
-- [ ] **"i just got alarms for aapl and msft, weird, are they real?"** (Yunior 2026-07-28 00:40)
-      — diagnosticado: 🧲 estructural magnet 00:37 con prob 31/33%, overnight, mapa stale,
-      MSFT imán 430 a 10% del spot. Gate pedido al agente de chart (mudo fuera RTH, sin voz
-      <55, sanity 1×EM, cooldown persistido). `delegado a agente`
 
 ## Ráfaga Yunior 2026-07-28 00:50
 - [ ] **"do we have options queued data like similar to tradingflow? if not what do u need?
@@ -260,5 +245,3 @@
 - [ ] **"verify logs, make sure the whole system is logging then test that the signals or
       events are all real, one by one"** — auditoría de logging completo + realidad de cada
       señal/evento. `delegado a scouts`
-- [ ] test suite completa: 980 passed, 4 skipped, **1 FAILED** test_voice_budget.py::
-      test_gate_devuelve_42_solo_al_suprimir — investigar y arreglar. `pendiente`
