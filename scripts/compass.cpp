@@ -90,6 +90,14 @@ constexpr double DOCTRINE_CAP   = 78.0;    // tope de prob cuando la fuente es d
 constexpr int    HYST_N         = 2;       // computos consecutivos para cambiar de estado
 constexpr int    CALIB_MIN_N    = 30;      // n minima para llamar a algo "medido"
 constexpr double FORCE_MAX_AGE  = 120.0;   // force.json solo si es de hace <2min
+constexpr double VIX_MAX_AGE    = 90.0;    // vix.json solo si es de hace <90s (si no, viejo)
+}
+
+// banda de VIX (contexto). CBOE: CALM <16 / ELEVADO 16-24 / ALTO >24. Es lo que Yunior mira
+// para el temperamento del dia; la banda de fragilidad (cuanto movera un shock al flip) exige
+// vanna medida y NO se afirma aqui.
+static const char* vix_band(double v) {
+    return v < 16.0 ? "CALM" : v <= 24.0 ? "ELEVADO" : "ALTO";
 }
 
 static const char* S_REV  = "REVERSION EN EXTREMO";
@@ -241,6 +249,8 @@ struct Ev {
     std::optional<double> calib_lo; std::optional<double> calib_n;
     // hint de fuente medida (barrier_labels/null_control) + dir override para tests
     std::string calib_source, calib_dir;
+    // VIX en vivo (IBKR CBOE): CONTEXTO, no dispara. vix_live=false => cierre anterior.
+    std::optional<double> vix; std::optional<bool> vix_live;
 };
 
 struct Amp {
@@ -477,6 +487,7 @@ struct Out {
     bool has_level = false; Level level;
     Amp amp;
     Drivers drv;
+    std::optional<double> vix; std::optional<bool> vix_live;   // CONTEXTO, no dispara
 };
 
 // --------------------------- PRINT O NADA ----------------------------------
@@ -946,6 +957,7 @@ static Out classify(const Ev& ev, Hist* hist, const std::string& decay_json) {
     if (o.state == S_BOX || o.state == S_NONE) { o.prob = 50; o.dir = "flat"; o.amp = Amp{}; }
     if (why.size() > 6) why.resize(6);
     if (lvl) { o.has_level = true; o.level = *lvl; }
+    o.vix = ev.vix; o.vix_live = ev.vix_live;   // CONTEXTO: pasa al JSON, no toca dir/amp/prob
     return o;
 }
 
@@ -1065,6 +1077,14 @@ static std::string to_json(const Out& o) {
         snprintf(b, sizeof b, "},\"fam_cap\":%zu,\"veto_cap\":%zu},", CAP::FAMILIES_MAX, CAP::VETOES_MAX);
         s += b;
     }
+    // VIX como CONTEXTO (no dispara): banda + si es vivo. La flecha lo MUESTRA, no lo obedece;
+    // para que module amplitud/regimen hace falta medirlo (barrier_labels+null_control+BH-FDR).
+    if (o.vix) {
+        snprintf(b, sizeof b, "\"vix_context\":{\"vix\":%.2f,\"band\":\"%s\",\"live\":%s},",
+                 *o.vix, vix_band(*o.vix),
+                 o.vix_live ? (*o.vix_live ? "true" : "false") : "null");
+        s += b;
+    } else s += "\"vix_context\":null,";
     snprintf(b, sizeof b, "\"ts\":%ld}", (long)time(nullptr));
     s += b;
     return s;
@@ -1202,6 +1222,21 @@ static Ev gather(const std::string& sym_lo) {
                 Level L; L.price = *p; L.kind = ws.kind;
                 if (auto k = jstr(lv, std::string(ws.key) + "_kind")) L.wall_kind = *k;
                 e.levels.push_back(L);
+            }
+        }
+    }
+    // VIX en vivo (IBKR CBOE realtime, Yunior 2026-07-27 "market makers move the market based
+    // on vix"). CONTEXTO: NO fija el signo ni cambia amplitud hasta estar MEDIDO (barrier_labels
+    // + null_control + BH-FDR sobre buckets por banda). Fuente unica data/vix.json (compartida,
+    // la persiste el puente); si no existe -> sin VIX, degrada limpio. En levels_<sym>.json el
+    // VIX va solo por WebSocket, no al fichero, por eso NO se lee de ahi.
+    std::string vj = slurp("data/vix.json");
+    if (!vj.empty()) {
+        if (auto v = jnum(vj, "vix")) {
+            auto ts = jnum(vj, "ts");
+            if (!ts || std::fabs((double)time(nullptr) - *ts) <= K::VIX_MAX_AGE) {
+                e.vix = *v;
+                if (auto lv2 = jnum(vj, "vix_live")) e.vix_live = (*lv2 != 0.0);
             }
         }
     }
