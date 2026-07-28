@@ -1410,7 +1410,7 @@ function renderWatchlist() {
                            (PERP[s] && (s.includes(base) || (s + "USDT").includes(wlFilter))));
   };
   const fleetV = flt([...FLEET].sort()), userV = flt([...USERWL].sort()), koreaV = flt([...KOREA].sort());
-  let html = '<div class="wlhdr"><span>Símbolo</span><span>Último</span><span>%Día</span><span>Vol</span><span>Perp</span><span></span></div>';
+  let html = '<div class="wlhdr"><span>Símbolo</span><span>Último</span><span>%Día</span><span>Vol</span><span title="⛓ = PERPETUO cripto 24/7 (OKX/Bybit). Cotiza SIEMPRE, con prima propia — NO es el precio de la acción en IBKR.">⛓Perp 24/7</span><span></span></div>';
   if (fleetV.length) html += '<div class="wlhdr sub">Flota</div>' + fleetV.map(mk).join("");
   if (userV.length) html += '<div class="wlhdr sub">Mías</div>' + userV.map(mk).join("");
   if (koreaV.length) html += '<div class="wlhdr sub">🇰🇷 Corea (KRX realtime)</div>' + koreaV.map(mk).join("");
@@ -2059,12 +2059,16 @@ function onDirection(msg) {
   // SESGO (50+|score|*40 topado 50-90), no un win-rate. Solo se pinta como "%" cuando
   // prob_source=='medido' (bucket propio con n). Si no, se marca como "sesgo", nunca "%".
   const src = msg.prob_source || "";
-  const measured = src === "medido";
+  const measured = src === "medido" || src === "medido_pool";
   if (measured && prob !== "") {
-    // solo lo MEDIDO se pinta como "%" (con n si el compass lo publica)
+    // solo lo MEDIDO se pinta como "%" (pool = flota agrupada por estado, tambien medido)
     dirPct.textContent = (d === "up" ? "▲ " : d === "down" ? "▼ " : "") + prob + "%"
+      + (src === "medido_pool" ? " pool" : "")
       + (msg.prob_n != null ? " n" + msg.prob_n : "");
     dirPct.className = "pct";
+    if (src === "medido_pool")
+      dirPct.title = "MEDIDO agrupado: win-rate real del ESTADO en toda la flota (Wilson lo). "
+        + "La celda exacta simbolo×familias×regimen toma el mando cuando junte n≥30.";
   } else if (prob !== "" && d !== "flat") {
     // la FUENTE va pegada al número: "60 doctrina" no se lee como win-rate medido
     dirPct.textContent = prob + " " + (src === "doctrina" ? "doctrina" : src === "sin_medir" ? "sin medir" : "sesgo");

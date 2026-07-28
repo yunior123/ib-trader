@@ -84,3 +84,7 @@
 - [ ] **"so puede bajar mas aun el mercado? create big plan and show me what there is per symbol
       of the fleet. also, did u add perpetuals? at least one like MUUSDT in okx?"** (Yunior
       2026-07-28 08:25) — `en curso (yo)`
+
+- [ ] **"asegura de diferenciar en lista los perpetuals de los reales"** (Yunior 2026-07-28
+      08:35) — hecho en sesión: columna cabecera "⛓Perp 24/7" con tooltip + badge ⛓ ya
+      existente por fila; commit junto al medido_pool. `hecho`
