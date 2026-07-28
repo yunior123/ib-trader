@@ -245,3 +245,9 @@
 - [ ] **"verify logs, make sure the whole system is logging then test that the signals or
       events are all real, one by one"** — auditoría de logging completo + realidad de cada
       señal/evento. `delegado a scouts`
+
+- [ ] **"print graph and strategy for the spy, qqq, mu. similar to yesterday or better. use only
+      3 sheets max. the tree as well, what to do when up or down the levels. analyze them
+      premarket with trading agents, probabilities of dip based on options chain, sentiment,
+      data, news"** (Yunior 2026-07-28 07:35) — `en curso` (cadenas premarket frescas → planes →
+      análisis DeepSeek/TA → imprimir 3 hojas, duplex+2up).
