@@ -1,6 +1,13 @@
 {
  "danger_frozen_limit": 8,
  "emitters": {
+  "cinta_ciega": {
+   "calib_cell": "salud",
+   "class": "DANGER",
+   "enabled": true,
+   "module": "scripts/ibkr_bar_bridge.py:308",
+   "nota": "1 vez/dia por sym; registrado 2026-07-28, ocupa la plaza 8 de 8 \u2014 el proximo DANGER desplaza"
+  },
   "compass_caida": {
    "calib_cell": "salud",
    "class": "DANGER",
