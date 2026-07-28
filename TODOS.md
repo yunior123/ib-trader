@@ -250,3 +250,15 @@
       — diagnosticado: 🧲 estructural magnet 00:37 con prob 31/33%, overnight, mapa stale,
       MSFT imán 430 a 10% del spot. Gate pedido al agente de chart (mudo fuera RTH, sin voz
       <55, sanity 1×EM, cooldown persistido). `delegado a agente`
+
+## Ráfaga Yunior 2026-07-28 00:50
+- [ ] **"do we have options queued data like similar to tradingflow? if not what do u need?
+      can it help prevent terremotos?"** — responder con hechos (UW trial/WebSocket, Polygon
+      Advanced $199 realtime trades, cap IBKR 5 tick-by-tick) + medir si el flujo ANTICIPA
+      los terremotos CUSUM. `pendiente`
+- [ ] **"verify all terremoto, pulse alarms and whales"** — verificación una a una. `delegado a scouts`
+- [ ] **"verify logs, make sure the whole system is logging then test that the signals or
+      events are all real, one by one"** — auditoría de logging completo + realidad de cada
+      señal/evento. `delegado a scouts`
+- [ ] test suite completa: 980 passed, 4 skipped, **1 FAILED** test_voice_budget.py::
+      test_gate_devuelve_42_solo_al_suprimir — investigar y arreglar. `pendiente`
