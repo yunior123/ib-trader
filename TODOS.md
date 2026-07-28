@@ -78,8 +78,46 @@
             la flota vive escribe ahí mismo en sesión real (mercado abierto) → contención de
             lock, no bug de este trabajo. Pendiente para sesión futura: correr ese test fuera
             de horario de mercado o darle su propia BD de test.
-      - [ ] Fase 3 (después de 1+2, "ultracode" autorizado): auditoría completa del repo (267
-            scripts + 21 binarios C++) vía Workflow multi-agente — pendiente.
+      - [x] **Fase 3 — auditoría completa (Workflow 8 agentes: mecánico + alto-riesgo +
+            silent-zero + verificación adversarial, ~658K tokens, 14.4 min)**:
+            - **18/18 fixes mecánicos verificados correctos** (0 con problemas):
+              - `ib.RequestTimeout` añadido a 8 daemons más con el mismo bug de RequestTimeout=0
+                que causaba el cuelgue de GLD: `korea_bar_bridge.py`, `koru_overnight_feed.py`,
+                `opt_sentinel.py`, `sox_index_feed.py`, `nvda_options_engine.py`,
+                `opt_chain_cache.py`, `options_enrich.py`, `earnings_fall_scout.py`. 6 scripts de
+                un solo uso (no daemon, riesgo menor) dejados sin tocar a propósito.
+              - Escritura atómica (tmp+os.replace) en 7 ficheros que otro proceso EN VIVO lee en
+                caliente: `calibration_ledger.py` (→ `order_engine/prob_profit.py`,
+                `direction_view.py`), `flow_pulse_calibrate.py` (→ `flow_pulse.cpp`),
+                `force_meter.py` (→ `compass.cpp`), `index_breadth.py` (→
+                `daily_fleet_plans.py`), `timeofday_calib.py` (→ `signal_conditioning.py`),
+                `bollinger_complements.py`, `fleet_pulse.py`.
+              - **Precedente del propio `~/CLAUDE.md` REENCONTRADO vivo**: `signal_conditioning.py:100`
+                `component_bias()` seguía devolviendo `0.0` plausible sin bars suficientes →
+                `direction_view.py` lo pesaba 1.3 en la flecha — el MISMO patrón de dilución
+                18.5% ya documentado como "peligro medido". Arreglado (`None` + guards en 2
+                consumidores), 111 tests de las suites relacionadas en verde.
+              - Reportado sin arreglar: `options_hunter.py:69-73` (`num()` devuelve 0.0
+                plausible en 7 call-sites con semánticas distintas — requiere cambio de interfaz,
+                no fix de 1 línea; mitigante: scanner manual, no dispara alertas automáticas).
+            - **`order_engine/*.cpp` auditado (solo lectura, dinero real) — SIN vulnerabilidad
+              crítica**: doble llave cubre TODA ruta que abre riesgo nuevo; disarm-on-exit es
+              idempotente y cubre las rutas normales/señal/crash. 3 hallazgos de severidad
+              baja/informativa para que Yunior decida: (1) asimetría documentada de gating en
+              rutas puramente protectoras (ya protegidas indirectamente por `FILLED`-gating), (2)
+              ventana angosta en `cmd close` entre cancelar el stop nativo y mandar la orden de
+              cierre — si el proceso muere justo ahí, la posición queda sin stop momentáneamente,
+              (3) `exec_zones_<sym>.json` con `kind`/`side` ausentes usa default plausible
+              (`"call"`/`"buy"`) en vez de vetar — a diferencia de `cmd close` que sí rechaza
+              explícito; candidato a endurecer, sin evidencia de haberse disparado en producción.
+            - **`scalper/*.cpp` auditado — SIN vulnerabilidad**: `--arm-live` confirmado
+              doblemente bloqueado (abort explícito + el código que llamaría a `TwsAdapter` real
+              ni siquiera existe en el binario). Único hallazgo menor: `ledger.h` fallback a
+              `strike_c=0` con un ledger corrupto en *recovery* tras crash (no en operación
+              normal) — baja probabilidad, señalado por completitud.
+            - **Suite completa post-Fase-3** (`pytest tests/ -q --ignore=tests/test_regen_signals.py`,
+              24.6s): **967 passed, 4 skipped, 1 failed** — idéntico a Fase 1+2, mismo único fallo
+              preexistente, CERO regresiones en los 18 ficheros adicionales tocados.
       Plan completo: `~/.claude/plans/analyze-that-also-explore-peaceful-hennessy.md`.
 
 ## 🔴 SESIÓN 2026-07-28 (mañana) — apuntadas AL VUELO
@@ -275,3 +313,5 @@
 - [ ] 2026-07-28 (Yunior): "create tree for qqq, spy, mu, dram, skhy para mañana. crea estrategia con estrangle con el mas barato, tal vez con leverage como tqqq o sqqq... ten en cuenta earnings report de skhynix mañana, 29 en corea. usa finviz, trading agents" + "presupuesto 150, lo hacemos con tqqq y sqqq" + "investigate where the market will be moving based on options chain. priority to qqq and spy" — en curso: ticket TQQQ 65C + SQQQ 50C 31jul ~$162, árboles 5 tickers, Finviz earnings semana, TradingAgents SKHY, vigilar 000660.KS esta noche 20:00 ET
 - [ ] 2026-07-28: recargar saldo DeepSeek (platform.deepseek.com, ~$2) — las 2 keys dan 402: TradingAgents SKHY sin panel Y el narrador del chart cockpit muerto (misma key llm.env). Tras recargar, relanzar runner SKHY. Fix hecho: TradingAgents/.env provider nvidia→deepseek (NIM prohibido). pendiente
 - [ ] 2026-07-28 (Yunior): "do it for aapl too, include the tree graph with forecast for all fleet, only send to email, send to pdf smh too, and the whole fleet. no printing. use trading agents with deepseek and finviz. ask deepseek to tell u best candidates for tomorrow and which strategy..." — hecho: 30 planes + AAPL/SMH, panel DeepSeek (~$0.01), email DECISION-29JUL enviado
+- [ ] 2026-07-28: alarma "barrida premium" (UW) solo cubre 9 nombres NASDAQ10 — SPY/QQQ/SMH fuera. Decidir si ampliar a ETFs/capitanes (verificar antes que UW trial da premium ticks para ETFs). pendiente
+- [x] 2026-07-28 (Yunior): "revisa las alarmas de ballenas para smh, spy... debug, hunt for bugs" — hecho: SPY mudo estructural (umbral P/C fijo inalcanzable) cazado y arreglado con percentil propio p97/p03 solo en lado inalcanzable (8 tickers), voz de barrida ahora con magnitud+lado, 15 tests whale OK, vigía reiniciado. commit en main
