@@ -108,28 +108,6 @@
       (`designs-menthorq.md:224`): DEX positivo = cliente alcista **pero** el creador VENDE
       subyacente para quedar neutral → dos campos, `dex_sentiment` y `dex_flow_impact`, jamás uno.
 
-- [ ] **[pendiente] Minar 4 vendedores más** como se hizo con TrendSpider/MenthorQ/SpotGamma
-      (Yunior 2026-07-25): tradytics.com/options-market · app.tradingflow.com/app/option-trades/live
-      · optioncharts.io/trending/most-active-stock-options · quantedoptions.com.
-      **TradingFlow — MEDIDO 2026-07-26: NO TIENE API.** Un solo plan, **$59/mes** (o $504/año);
-      la página de precios no menciona API, acceso programático ni descarga CSV/JSON, y el
-      **roadmap tampoco** (sus planes son Option Chain, watchlist, filtros, Surge Attribution,
-      resúmenes con IA). Es UI-only → para nosotros solo sirve como **fuente de IDEAS a minar**,
-      no como feed. Tiene página propia de `/learn/delta-exposure-dex/`, que confirma que el DEX
-      es estándar en el sector y un hueco nuestro. La extensión de Chrome no estaba conectada, así
-      que esto se midió por HTTP, no navegando: **queda pendiente mirar la UI en vivo** para minar
-      las features como se hizo con TrendSpider.
-      Destino: `docs/research/designs-<vendor>.md` con features rankeadas y las RECHAZADAS
-      razonadas, mismo formato que `designs-trendspider.md`.
-      **Marco doctrinal que Yunior fija**: *"los market makers son los elefantes en la habitación"*
-      + resumen del vídeo de Brent Kochuba (SpotGamma). Lo aprovechable y que NO tenemos:
-      **HIRO** (línea en vivo de si el MM debe comprar o vender), **Trace Map** (mapa de calor que
-      PRONOSTICA la respuesta de cobertura: azul/morado = soporte con compradores debajo, rojo =
-      zona de alta volatilidad donde el precio se persigue), **strikes en percentil 99 como
-      objetivos de liquidez** ("quieren que el precio vaya a las zonas de liquidez", y el flujo se
-      APAGA al llegar), **Captain Condor** (posición 0DTE recurrente que fabrica soporte/resistencia),
-      y el **mapa de charm** de la tarde. El Vol Trigger ya lo tenemos (`vol_trigger.py`).
-
 - [ ] **[pendiente] organizar el proyecto, ahora mismo hay muchos archivos regados como tsm_signal_bot.cpp, y otros en el mismo nivel, muchos. separate logs to logs folder.
 
 - [ ] **[pendiente] make the arrow compass nicer, with glowing liquid colors, fast movements, nice to see, test the calibration now with the realtime VIX.
@@ -206,11 +184,6 @@
       chart with the real price, whether day or night." → el chart debe mostrar precio real 24h en
       la ventana viva (perpetuos 24/7 + Corea de noche + US de día), no quedarse mudo por la noche.
       Relacionado con la cinta nocturna irrecuperable (solo se captura en vivo) y con `fleet_hours`.
-- [ ] **[pendiente] Los folder de planes van DENTRO de `~/Desktop/ib-trader/`, no en la raíz del
-      Desktop** (Yunior 2026-07-27: "we already talked about this"). Ya medido antes: `print_mon_plans.sh`
-      (`DEST=$HOME/Desktop/planes-$DAY`), `price_alarm.cpp`, `daily_archive.py` hardcodean la raíz.
-      Repuntar a `IBT_DESKTOP_HOY` (`~/Desktop/ib-trader/hoy`). ⚠️ TCC: lo que lea del Desktop bajo
-      launchd debe ir por wrapper zsh.
 - [ ] **[pendiente] Posts de X en INGLÉS de ahora en adelante** (Yunior 2026-07-27). `x_earnings_post.py`,
       `x_whale_bot.cpp` y demás generadores de tweets: texto en inglés.
 - [x] **[hecho 514a38a/516d3e9 — agente UW] UW latencia MEDIDA en sesión viva: 5,5 s → candidato a
