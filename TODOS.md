@@ -1,6 +1,12 @@
 # TODOS — ib-trader (sistema autónomo de planes + alarmas)
 
 > Vivo. Marcar [x] al cerrar. Manual completo: `docs/DAILY-SYSTEM.md`.
+
+- [ ] **[pendiente] archivar barras Corea por sesión** (auditoría señales 2026-07-28):
+  `korea_bar_bridge` trunca `bars_samsung/skhynix/kospi.txt` en cada sesión y
+  `daily_archive` solo guarda los 30 US → los TERREMOTO Corea de la sesión anterior
+  quedan inverificables (5 del 27-jul sin barra). Copiar el patrón de
+  `data/history/<fecha>/bars/` para los 3 KRX.
 > Doctrina: skills `gamma-regime-walls`, `postmarket-cage-release`, `tradingview-terminal`.
 # TODOS — ib-trader (sistema autónomo de planes + alarmas)
 
