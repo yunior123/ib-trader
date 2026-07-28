@@ -81,3 +81,7 @@
 - [ ] **"prueba que el compass no tiene 60 percent o sesgo fijo todo el tiempo, prueba la
       calibracion y backtest con real data"** — distribución de probs en RTH + calibrate con
       ledger real de hoy + backtest. `en curso (medición durante la mañana)`
+
+- [ ] **"make sure we have latest builds running when done. verify the walls and magnets in
+      symbols are ok, asegura de incluir probabilidad, no inventos"** (Yunior 2026-07-28 08:15)
+      — `en curso (yo)`
