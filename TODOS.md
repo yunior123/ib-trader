@@ -53,14 +53,24 @@
             8. `pc = vp/max(vc,1)` con `vc=0` imprimía un P/C sin sentido (ej. "3000.00") en
                logs — cosmético, la lógica de umbral no cambió. Fix: se muestra "inf".
             Selftest 30/30 y sintaxis limpia verificados tras cada tanda de fixes.
-      - [x] **Fase 2 — implementación**: mensajes distintos por detector ("Alerta ballena" vs
-            "Alerta premium", nunca el mismo texto) + strike dominante y cruce con muro medido
-            (`data/gex_snapshot.json`, freshness gate 1h) en el mensaje + filtro de 2 lecturas
-            consecutivas antes de sonar una entrada nueva a puts/calls + carril rápido opcional
-            `data/whale_priority.txt` (≤5, re-escaneo cada 45s, `reqMktData` no tick-by-tick) +
-            filtro por ticker opcional `data/whale_alert_filter.txt` (CALLS/PUTS/BOTH) — todo en
-            `opt_whale_watch.py` v4. Pendiente: panel de ajuste en `charts/live.html`/Cockpit.app,
-            `docs/REPO-MAP.md`, frase nueva en `~/CLAUDE.md`.
+      - [x] **Fase 2 — implementación completa**: mensajes distintos por detector ("Alerta
+            ballena" vs "Alerta premium", nunca el mismo texto) + strike dominante y cruce con
+            muro medido (`data/gex_snapshot.json`, freshness gate 1h) en el mensaje + filtro de
+            2 lecturas consecutivas antes de sonar una entrada nueva a puts/calls + carril rápido
+            opcional `data/whale_priority.txt` (≤5, re-escaneo cada 45s, `reqMktData` no
+            tick-by-tick) + filtro por ticker opcional `data/whale_alert_filter.txt`
+            (CALLS/PUTS/BOTH) — todo en `opt_whale_watch.py` v4. Panel 🐋 Config en
+            `charts/live.html` + `cmd:"whale_cfg"` en `chart_bridge.py` (patrón calcado de
+            `cmd:"ibmode"`) para ajustar ambos ficheros desde Chrome/Cockpit.app sin tocar texto
+            a mano. `docs/REPO-MAP.md` y `~/CLAUDE.md` (frase "Keep it simple") actualizados.
+            Nota: Cockpit.app empaqueta una COPIA del backend — hace falta `zsh macapp/build.sh`
+            para que el panel llegue ahí; Chrome lo ve al redeployar `chart_bridge.py`.
+            Verificado: sintaxis limpia en los 3 ficheros Python + JS embebido de `live.html`,
+            selftest 30/30, loaders/`wall_near()`/`dominant_strike()` probados unitariamente sin
+            TWS, 9/9 tests de `test_whale_tape.py`+`test_ibkr_bar_bridge_atomic_write.py` y 5/5 de
+            `test_opt_whale_watch_holiday.py` en verde. `test_chart_bridge_mock_isolation.py` tiene
+            1 fallo preexistente (`_FakeState sin .sym`, línea 2584) — confirmado NO relacionado
+            con este trabajo (mi diff a `chart_bridge.py` es 100% aditivo, no toca esa zona).
       - [ ] Fase 3 (después de 1+2, "ultracode" autorizado): auditoría completa del repo (267
             scripts + 21 binarios C++) vía Workflow multi-agente — pendiente.
       Plan completo: `~/.claude/plans/analyze-that-also-explore-peaceful-hennessy.md`.
@@ -256,3 +266,4 @@
       or technicals, with help of trading agents, liquid for options, be creative, send agent"**
       (Yunior 2026-07-28 08:40) — `hecho fc46c64` (scripts/earnings_fall_scout.py + keepalive 815-1300)
 - [ ] 2026-07-28 (Yunior): "create tree for qqq, spy, mu, dram, skhy para mañana. crea estrategia con estrangle con el mas barato, tal vez con leverage como tqqq o sqqq... ten en cuenta earnings report de skhynix mañana, 29 en corea. usa finviz, trading agents" + "presupuesto 150, lo hacemos con tqqq y sqqq" + "investigate where the market will be moving based on options chain. priority to qqq and spy" — en curso: ticket TQQQ 65C + SQQQ 50C 31jul ~$162, árboles 5 tickers, Finviz earnings semana, TradingAgents SKHY, vigilar 000660.KS esta noche 20:00 ET
+- [ ] 2026-07-28: recargar saldo DeepSeek (platform.deepseek.com, ~$2) — las 2 keys dan 402: TradingAgents SKHY sin panel Y el narrador del chart cockpit muerto (misma key llm.env). Tras recargar, relanzar runner SKHY. Fix hecho: TradingAgents/.env provider nvidia→deepseek (NIM prohibido). pendiente
