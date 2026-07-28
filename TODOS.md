@@ -196,3 +196,18 @@
       bar_bridge solo produce 1m) → o se construyen barras de 5s del tick stream, o a 5s fuera de
       sesión el chart dice "sin datos de 5s fuera de RTH" en vez de mostrar barras de las 19:59
       como si fueran vivas. Fichero: `scripts/chart_bridge.py` + `charts/live.html`.
+
+- [ ] **"run a quick analysis the options realtime so far and market with deep seek, and overnight
+      prices of Micron MU and semis in korean, and tell me: is the selloff over?"** (Yunior 2026-07-28
+      00:05) — hecho en sesión 2026-07-28 00:15: DeepSeek + números medidos, veredicto pausado/rebote
+      65-70%, niveles SPY 740 / QQQ 679-673 / MU 865-850 / DRAM 50. `hecho (en conversación)`
+- [ ] **"fix the issue with alarms with old data, super crazy. ex: intc., check the logs"** (Yunior
+      2026-07-28) — `delegado a agente` (diagnóstico + fix + freshness guard).
+- [ ] **"backtest todays alarms and investigate, also notifications, some were good, like maybe many,
+      just verify again"** (Yunior 2026-07-28) — backtest alarmas del lunes 7/27 vs bars reales,
+      medir aciertos/fallos, verificar notificaciones. `delegado a agente`
+- [ ] **"arrow needs calibration"** (Yunior 2026-07-28) — la flecha/compass sigue sin calibración
+      real (el 60% fijo ya se quitó; falta arnés de backtest por bucket S_REV). `pendiente`
+- [ ] **"take a look at the widgets of ib trader, make sure they show the right data for each
+      session, a bit crazy"** (Yunior 2026-07-28) — widgets macOS/chips del cockpit muestran datos
+      de sesión equivocada (RTH vs overnight vs Corea). `pendiente`
