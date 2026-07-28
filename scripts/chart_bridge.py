@@ -2327,10 +2327,15 @@ def _make_on_tick(state):
         # sub congelada (20:00 ET) pero ticks vivos -> las velas nuevas se abren desde el
         # tick (unica fuente sub-minuto overnight; sin volumen). En sesion no interviene.
         step = state._agg_step or TF_S.get(state.tf)
-        if step and now - state._last_sub_ts > STALE_SUB_S:
+        if step:
             bucket = int(now) - int(now) % step
             if bucket > state.bars[-1][0]:
-                state.bars.append([bucket, px, px, px, px, 0.0])
+                if now - state._last_sub_ts > STALE_SUB_S:
+                    state.bars.append([bucket, px, px, px, px, 0.0])
+                else:
+                    # tick de un bucket FUTURO con sub aun viva/en warmup: jamas ensuciar
+                    # una vela vieja con el precio de ahora (velon 19:59->overnight)
+                    return
         b = state.bars[-1]
         b[4] = px
         if px > b[2]:
