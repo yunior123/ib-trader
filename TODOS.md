@@ -256,3 +256,35 @@
       2 notas legítimas de Yunior (Done.md, perpetuos). La plantilla se guardó en
       `scratchpad/claudemd_contaminado.diff` por si Yunior la pegó a propósito — decidir si algo de
       ahí vale, pero NO a costa de SEÑAL-SOLAMENTE.
+
+## 🔴 SESIÓN 2026-07-27 (tarde/noche) — peticiones al vuelo
+- [ ] **[pendiente] Ventana: buscar info igual desde dom 20:00 (o antes, premarket Corea ~19:00) y
+      chart con PRECIO REAL día Y noche hasta vie 20:00** (Yunior 2026-07-27). "from 8pm on sundays
+      or before in korea premarket at around 7, search info anyway. till friday at 8pm we see the
+      chart with the real price, whether day or night." → el chart debe mostrar precio real 24h en
+      la ventana viva (perpetuos 24/7 + Corea de noche + US de día), no quedarse mudo por la noche.
+      Relacionado con la cinta nocturna irrecuperable (solo se captura en vivo) y con `fleet_hours`.
+- [ ] **[pendiente] Los folder de planes van DENTRO de `~/Desktop/ib-trader/`, no en la raíz del
+      Desktop** (Yunior 2026-07-27: "we already talked about this"). Ya medido antes: `print_mon_plans.sh`
+      (`DEST=$HOME/Desktop/planes-$DAY`), `price_alarm.cpp`, `daily_archive.py` hardcodean la raíz.
+      Repuntar a `IBT_DESKTOP_HOY` (`~/Desktop/ib-trader/hoy`). ⚠️ TCC: lo que lea del Desktop bajo
+      launchd debe ir por wrapper zsh.
+- [ ] **[pendiente] Posts de X en INGLÉS de ahora en adelante** (Yunior 2026-07-27). `x_earnings_post.py`,
+      `x_whale_bot.cpp` y demás generadores de tweets: texto en inglés.
+- [ ] **[pendiente] El timer azul de las velas TAPA lo de debajo: hacerlo transparente** (Yunior
+      2026-07-27). En `charts/live.html` el contador 00:00 del cierre de vela oculta precio/nivel
+      detrás. Transparencia u otra colocación para ver a través.
+- [ ] **[pendiente] Asegurar que se VEN los timeframes** (Yunior 2026-07-27, repetido). El selector
+      de temporalidad se puso `<1100px` como desplegable, pero sigue sin verse bien — revisar en las
+      6 ventanas reales que el selector es visible y usable.
+- [x] **[hecho 514a38a/516d3e9 — agente UW] UW latencia MEDIDA en sesión viva: 5,5 s → candidato a
+      tiempo-real** (09:31 EDT, primera medición intradía; el sábado 43,8 h = fin de semana, cero
+      evidencia). SIGUE SIN VOZ (caduca ~2026-08-01, regla gexa: archivar→medir→cablear). +
+      `uw_oi_delta.py` (ΔOI apertura/cierre, descriptivo sin voz) + 3 dossieres de vendedores
+      (tradytics/optioncharts/quanted, ninguno con API usable). Hallazgo: CBOE Open-Close Volume
+      Summary es la versión MEDIDA de ΔOI, 1 día EOD calibra sin suscribir.
+- [x] **[CAUSA RAÍZ hallada — agente UW] "whale options alarmas no funcionaban hoy": `opt_whale_watch`
+      corría una versión VIEJA (arrancada 00:46) que golpea el puerto 4002; el fix del puerto
+      dinámico es `658cc52` (01:03), POSTERIOR. Nunca conectaba → cinta ciega → las 2 voces de hoy
+      fueron "DANGER CINTA CIEGA", jamás una ballena real.** El agente B ya reinició el proceso
+      (conecta a 4001 limpio). VERIFICAR que quedó vivo y disparando.
