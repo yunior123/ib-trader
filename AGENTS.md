@@ -801,3 +801,64 @@ cosas de naturaleza distinta, y ahi esta el valor del cruce:
 - MEDIDO al estrenarlo (30 syms x 20 sesiones, 20 s): **LRCX POC-vol 319,92 vs POC-gamma 320,0 =
   0,03% CONFLUENCE**; GLD 0,40% NEAR; 23 APART; 5 con `confluence: null` — exactamente los 5 sin
   POC de gamma en el mapa (NVDA QCOM NFLX NOK SKHY): sin con que comparar se dice null, no APART.
+
+## RTH 9:30→16:00 (960 min), no 15:30 (2026-07-27, orden Yunior "market time is 9:30->16:00")
+Los 24 `*_signal_bot.cpp` cortaban entradas (`rth_entry`/`trend_rth`) en `mins < 930` (15:30) →
+ahora `mins < 960` (16:00): la ultima media hora es de las mas operativas (imanes de cierre,
+charm de la tarde). `dip_alert.py` idem. Los `kmin_gate <= 930` de kospi/samsung/skhynix se
+DEJARON intactos — son el cierre real del KRX (15:30 KST), no un limite US mal copiado.
+**Desplegado 2026-07-27**: 17 bots US recompilados+reinstalados (mercado US cerrado, sin riesgo).
+Los 3 coreanos (kospi/samsung/skhynix) quedaron con binario nuevo **STAGED en `.new`** — Corea
+operaba en vivo esa noche, no se reinicio en caliente. **PENDIENTE: promover los `.new` de Corea
+en la proxima ventana KRX cerrada.** Memoria: `market-hours-intraday`.
+
+## opt_sentinel RETIRADO — zombi con EXP hardcodeado (2026-07-28)
+Causa raiz de las alarmas con datos viejos del 27-jul (ej. INTC "101C: STOP perdio 100 VENDE YA"
+a las 00:54 con niveles de hace 11 dias): `opt_sentinel.py` era la foto del plan 2026-07-16
+(`EXP=20260717` clavado + posiciones INTC/NVDA/QQQ ya muertas hardcodeadas), y su keepalive
+reseteaba `fired` en cada relanzamiento → regritaba lo mismo indefinidamente, ademas de publicar
+174 veces `FLUJO OPCIONES volC 0 volP 0 P/C 0.00` fabricado por contratos expirados, pisando
+`data/opt_flow.txt`. Fix: guard de frescura al arranque (`EXP < hoy` → stderr + **exit 78**, no
+toca TWS) + keepalive que YA NO relanza en rc 78 (antes: loop eterno) + zombis matados.
+**opt_whale_watch queda como UNICO dueño de `data/opt_flow.txt`.** Cualquier alarma que consuma
+ese fichero debe verificar TTL/frescura del contrato antes de cantar — ver también
+`alarm-system-validated.md` en memoria.
+
+## Compass: calibracion MEDIDA (2026-07-28)
+El 60% de la flecha era doctrina sin medir: en `--loop` jamas se leia calibracion (`calib_lo`
+solo llegaba via `--ev-stdin` en tests). Ahora: (1) cada transicion `estado|direccion` se apunta
+en `data/compass_ledger.jsonl`; (2) `scripts/compass_calibrate.py` (4am FULL) la mide contra bars
+IBKR 1m a +15/+30m, solo RTH, entrada = barra impresa, huecos excluidos, Wilson lower bound →
+`data/compass_calib.json`; (3) `compass.cpp` lee la celda `ESTADO|fN|REGIMEN` y solo con **n≥30**
+pasa a "medido" — hasta entonces sigue siendo **doctrina etiquetada como tal**, nunca disfrazada
+de medicion. Bug cazado de paso: el spot del mapa (`levels_<sym>.json`, sellado a las 16:00)
+pisaba el precio real overnight (682.02 vs 677.9 real) → ahora el mapa **solo manda spot si es
+fresco <10min**, si no manda el spot vivo. 40 tests OK. Memoria nueva: `compass-calibration.md`.
+
+## flow_pulse mudo fuera de RTH (2026-07-28)
+Boot-loop nocturno cazado en el backtest del 27-jul: `flow_pulse` arrancaba/salia cada 5 min de
+16:00 a 24:00 (190 pares "arriba"/"fuera hasta manana" en el feed, puro spam sin señal). Fix:
+`flow_pulse.cpp` sale mudo fuera de RTH y `fleet_keepalive_start.sh` solo lo lanza en la ventana
+930-1556 — el keepalive ya no lo revive de madrugada.
+
+## print_mon_plans: no imprime por defecto (2026-07-27, orden Yunior "no imprimas de nuevo a menos q te diga")
+`scripts/print_mon_plans.sh` sigue generando los PDF siempre; manda a papel SOLO con
+`IBT_ALLOW_PRINT=1` o `--print`. El cron `com.ibtrader.printplans` (lunes 09:25) ya no imprime
+solo.
+
+## Backtest de alarmas 2026-07-27 (selloff, 570 señales RTH medidas)
+Detalle completo: `docs/BACKTEST-ALARMAS-2026-07-27.md`. Resumen que no se puede olvidar:
+- **Mejor fuente**: CUSUM terremoto de APERTURA (09:31-09:47) — AMD +7,33% a 60m, SKHY +9,05%,
+  DRAM +5,67%; las de despues de 10:30 ya no clavaron nada (0/4 al cierre). Es señal de apertura,
+  no de todo el dia.
+- **Peor fuente**: `structural_magnet` (WR30 27%, n=67) — flechas hacia imanes de arriba en pleno
+  selloff; el propio mensaje ya avisaba "no WR medido".
+- **El cap de notificacion tumbo las 2 mejores señales del dia**: `SMH: SELL` 09:31:00 e
+  `INTC: SELL` 09:56:00 cayeron en `CAP 1/5s` del relay y nunca llegaron al telefono (la voz si
+  las dijo). El cap de 1/5s mata justo la rafaga de apertura — revisar `notify_relay.sh`.
+- Opciones ciegas todo el dia (174 lineas `FLUJO OPCIONES volC 0 volP 0` — ver opt_sentinel arriba).
+
+## X posts en ingles (2026-07-27, orden Yunior "x.com posts in english from now on")
+`x_earnings_post.py` (texto del tweet + etiquetas del PNG), `x_whale_bot.cpp` (ya estaba en
+ingles) y sus tests: DOW/MON, quips, hooks, cabeceras, "Not financial advice". Cashtags/numeros
+intactos, ≤1 cashtag, presupuesto igual. Aplica a todo post nuevo de la flota a X.
