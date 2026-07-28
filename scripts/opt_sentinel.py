@@ -16,6 +16,7 @@ Python permitido: ib_insync lo exige (regla #4). ClientId 86. Jamas ordena.
 import datetime as dt
 import os
 import subprocess
+import sys
 import time
 
 from ib_insync import IB, Option, Stock
@@ -34,6 +35,16 @@ FLEET_OPT = ["INTC", "MU", "TSM", "SMH", "QQQ", "NVDA", "AMD",
 FLOW_MIN = {"ASML": 300, "GOOGL": 300, "TXN": 500, "NOK": 500,
             "DRAM": 800, "SKHY": 800, "SPCX": 800, "QCOM": 500}  # resto: 2000
 EXP = "20260717"
+
+# GUARD FRESCURA (2026-07-28): este centinela es la foto del plan 2026-07-16.
+# Con EXP vencido canto "VENDE YA" de posiciones muertas y "FLUJO OPCIONES volC 0
+# volP 0" fabricado 174 veces el 2026-07-27. Dato viejo NO se canta: fuera, a gritos.
+# opt_whale_watch.py lo reemplaza (mismo data/opt_flow.txt, expiries rodantes).
+if dt.date.today() > dt.datetime.strptime(EXP, "%Y%m%d").date():
+    sys.stderr.write(f"{dt.datetime.now():%F %T} opt_sentinel RETIRADO: EXP {EXP} "
+                     "vencido — plan 2026-07-16, no se canta con datos viejos. "
+                     "Vive opt_whale_watch.py\n")
+    sys.exit(78)  # EX_CONFIG: el keepalive lo ve y NO relanza
 
 def now():
     return dt.datetime.now()
@@ -260,6 +271,11 @@ while True:
                     cons.append(Option(s, EXP, k, r, "SMART", currency="USD", tradingClass=s))
             try:
                 cons = [c for c in ib.qualifyContracts(*cons) if c.conId]
+                if not cons:
+                    # cadena que no cualifica = NO SE, jamas "volumen 0"
+                    lines.append(f"{s} SIN-DATO (cadena {EXP} no cualifica)")
+                    flow_pc.pop(s, None)
+                    continue
                 tks = [ib.reqMktData(c, "", False, False) for c in cons]
                 ib.sleep(4)
                 vc = vp = 0
@@ -270,6 +286,11 @@ while True:
                     else:
                         vp += v
                     ib.cancelMktData(tk.contract)
+                if vc + vp == 0:
+                    # 0/0 no es P/C 0.00: es ausencia de dato
+                    lines.append(f"{s} SIN-DATO (vol 0 en {len(cons)} contratos)")
+                    flow_pc.pop(s, None)
+                    continue
                 pc = vp / max(vc, 1)
                 flow_pc[s] = pc
                 lines.append(f"{s} volC {vc:,.0f} volP {vp:,.0f} P/C {pc:.2f}")
