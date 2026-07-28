@@ -88,3 +88,8 @@
 - [ ] **"asegura de diferenciar en lista los perpetuals de los reales"** (Yunior 2026-07-28
       08:35) — hecho en sesión: columna cabecera "⛓Perp 24/7" con tooltip + badge ⛓ ya
       existente por fila; commit junto al medido_pool. `hecho`
+
+- [ ] **"whales for spy ready?"** (Yunior 2026-07-28 08:40) — `en curso (yo)`
+- [ ] **"create finviz bots that detects falls after earnings reports of companies, based on news
+      or technicals, with help of trading agents, liquid for options, be creative, send agent"**
+      (Yunior 2026-07-28 08:40) — `delegado a agente`
