@@ -276,7 +276,10 @@ fi
 # flow_pulse (2026-07-22, Yunior): vigia de flujo MENOS estricto en C++ —
 # P/C 0.50/1.40, giros de ratio y surges de volumen; tail 1s de
 # whale_flow_hist.jsonl. Complementa (no reemplaza) la ballena DANGER.
-if ! pgrep -x "flow_pulse" >/dev/null; then
+# solo en RTH (935-1555 como su rth_open): de noche entraba en boot-loop banner+exit cada 5 min
+FP_HM=$(( $(date +%-H) * 100 + $(date +%-M) ))
+FP_DOW=$(date +%u)
+if (( FP_DOW <= 5 && FP_HM >= 930 && FP_HM < 1556 )) && ! pgrep -x "flow_pulse" >/dev/null; then
   nohup "$ROOT/flow_pulse" >> "$ROOT/flow_pulse.log" 2>&1 &
   echo "$(date) fleet: flow_pulse lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
 fi

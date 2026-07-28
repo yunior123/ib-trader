@@ -296,6 +296,12 @@ static double qqq_spot() {
 }
 
 int main() {
+    // fuera de RTH: salir MUDO antes de cantar nada. Cazado 2026-07-28: el launcher relanzaba
+    // cada 5 min toda la noche -> banner "arriba" + "fuera hasta manana" en bucle (16:00-24:00).
+    if (!rth_open()) {
+        fprintf(stderr, "flow_pulse: fuera de RTH, salida silenciosa\n");
+        return 0;
+    }
     std::map<std::string, Hist> hist;
     std::map<std::string, long> cool;
     auto cooled = [&](const std::string& k, long cd = 0) {
