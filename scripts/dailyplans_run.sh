@@ -28,6 +28,12 @@ echo "$(date) modo $MODE" >> dailyplans.log
 [[ $MODE == FULL ]] && ./venv/bin/python scripts/inflation_score.py --quiet >> dailyplans.log 2>&1
 # 4AM: calibrar la brujula con el ledger de ayer (celdas Wilson -> compass_calib.json)
 [[ $MODE == FULL ]] && ./venv/bin/python scripts/compass_calibrate.py >> dailyplans.log 2>&1
+# 4AM: veredicto TradingAgents de los 5 capitanes (~3m18s c/u medido; lote nocturno, no en vivo)
+if [[ $MODE == FULL ]]; then
+  for s in QQQ SPY MU SMH NVDA; do
+    ./venv/bin/python scripts/ta_view.py "$s" >> dailyplans.log 2>&1
+  done
+fi
 # verify del mapa gamma: si no se escribio, quedo rancio o perdio media flota, gritar
 if [[ $MODE == FULL ]]; then
   # FRESCURA Y COBERTURA, no solo existencia (fix 2026-07-24, ampliado 2026-07-25): el
