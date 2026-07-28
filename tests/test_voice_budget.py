@@ -202,7 +202,7 @@ def test_gate_devuelve_42_solo_al_suprimir(vb):
     _enable(vb)
     r = _gate(vb, "SIGNAL")
     assert r.returncode == 0, r.stderr
-    _fill(vb, 100)
+    _fill(vb, 100, now=time.time())     # el gate corre con reloj REAL: gastar en T0 congelado no cuenta hoy
     r2 = _gate(vb, "SIGNAL")
     assert r2.returncode == 42
     r3 = _gate(vb, "DANGER")
