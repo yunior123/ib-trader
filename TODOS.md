@@ -76,12 +76,7 @@
       Chrome, lectura pícara de flujo (formato: expiry/side/aggressor/premium/volOI/IV/sentiment).
       `programado 9:31 (timer armado)`
 
-- [ ] **"revisa el repo, explora, crea un repo map, con clases y top level functions, send minor
-      agent for it"** (Yunior 2026-07-28 ~09:05) — `delegado a agente sonnet`
 - [ ] **"prueba que el compass no tiene 60 percent o sesgo fijo todo el tiempo, prueba la
       calibracion y backtest con real data"** — distribución de probs en RTH + calibrate con
       ledger real de hoy + backtest. `en curso (medición durante la mañana)`
 
-- [ ] **"make sure we have latest builds running when done. verify the walls and magnets in
-      symbols are ok, asegura de incluir probabilidad, no inventos"** (Yunior 2026-07-28 08:15)
-      — `en curso (yo)`
