@@ -162,9 +162,6 @@
       símbolo sin cinta salga DECLARADO como ciego en lugar de aparentar silencio de flujo.
 
 ## 🔴 SESIÓN 2026-07-27 (RTH, mercado abierto) — peticiones al vuelo
-- [ ] **[pendiente — mismo bug del RTH 930] "the blue timer for the bars stops at 15:30"**
-      (Yunior 2026-07-27). El contador azul 00:00 de la vela (cuenta atrás al cierre de barra) se
-      congela a las 15:30 en `charts/live.html` — mismo `930` en vez de `960`. Va con el fix de RTH.
 - [ ] 🔴 **[URGENTE — DINERO EN VIVO] El RTH es 9:30→16:00, NO 9:30→15:30: la flota se apaga con
       30 min de sobra** (Yunior 2026-07-27). MEDIDO: los 24 `*_signal_bot.cpp` cortan las entradas
       TREND en `mins < 930` (930 = 15:30; `aapl_signal_bot.cpp:1636,1652` y los 24), y
