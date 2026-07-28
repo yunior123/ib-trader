@@ -714,18 +714,20 @@ def _alarm_path():
 
 
 def alarm_list(sym):
-    """Alarmas ACTIVAS (no disparadas) del símbolo -> [{price, dir}]."""
+    """Alarmas ACTIVAS (no disparadas/caducadas) del símbolo -> [{price, dir, exp}]."""
     su = sym.upper()
     out = []
     try:
         for ln in open(_alarm_path(), errors="ignore"):
             s = ln.strip()
-            if not s or s.startswith("#") or s.startswith("[DISPARADA"):
+            if not s or s.startswith("#") or s.startswith("[DISPARADA") or s.startswith("[CADUCADA"):
                 continue
             p = s.split("#")[0].split()
             if len(p) >= 3 and p[0].upper() == su:
                 try:
-                    out.append({"price": float(p[1]), "dir": p[2].lower()})
+                    m = re.search(r"exp=(\d{4}-\d{2}-\d{2})", s)
+                    out.append({"price": float(p[1]), "dir": p[2].lower(),
+                                "exp": m.group(1) if m else None})
                 except Exception:
                     pass
     except Exception:
@@ -733,9 +735,23 @@ def alarm_list(sym):
     return out
 
 
-def alarm_add(sym, price, direction):
-    """Añade una alarma manual (price_alarm la relee cada 1s). SEÑAL-SOLAMENTE."""
-    line = f"{sym.lower()} {price:g} {('up' if direction=='up' else 'down')}        # manual chart {time.strftime('%H:%M')}\n"
+def _alarm_default_exp(bizdays=5):
+    """+N días hábiles — TTL por defecto: alarmas de hace 1-2 semanas cantaban con tesis muertas."""
+    t, n = time.time(), 0
+    while n < bizdays:
+        t += 86400
+        if time.localtime(t).tm_wday < 5:
+            n += 1
+    return time.strftime("%Y-%m-%d", time.localtime(t))
+
+
+def alarm_add(sym, price, direction, exp=None):
+    """Añade una alarma manual (price_alarm la relee cada 1s; entiende exp=YYYY-MM-DD y
+    la marca [CADUCADA] al vencer). SEÑAL-SOLAMENTE."""
+    if not (isinstance(exp, str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", exp)):
+        exp = _alarm_default_exp()
+    line = (f"{sym.lower()} {price:g} {('up' if direction=='up' else 'down')}        "
+            f"# manual chart {time.strftime('%H:%M')} exp={exp}\n")
     try:
         with open(_alarm_path(), "a") as f:
             f.write(line)
@@ -2188,7 +2204,7 @@ def create_app(state):
                         price = ctl.get("price")
                         direction = ctl.get("dir") or ("up" if (sp and price and price >= sp) else "down")
                         if price:
-                            alarm_add(st.sym, float(price), direction)
+                            alarm_add(st.sym, float(price), direction, exp=ctl.get("exp"))
                     elif act == "del":
                         alarm_remove(st.sym, ctl.get("price"))
                     await ws.send_json({"type": "alarms", "sym": st.sym.upper(),

@@ -210,6 +210,8 @@
              padding:2px 8px; font-size:11px; font-weight:700; color:#c6d2ea; white-space:nowrap;
              font-variant-numeric:tabular-nums; }
   #chipbar .chip .cx { cursor:pointer; opacity:.55; }
+  #chipbar .chip input.aexp { background:#20242f; color:#8aa0c8; border:1px solid #333a48;
+    border-radius:3px; font-size:10px; padding:0 2px; width:104px; color-scheme:dark; }
   #chipbar .chip .cx:hover { opacity:1; }
 
   /* --- countdown de barra (eje de precios derecho, estilo TradingView) --- */
@@ -1722,7 +1724,7 @@ window.addEventListener("mouseup", () => {
     // alarma: el backend no tiene "mover", asi que borra+añade (mismo efecto,
     // y price_alarm C++ relee el fichero cada 1s).
     ws.send(JSON.stringify({ cmd: "alarm", act: "del", price: d.a.price }));
-    ws.send(JSON.stringify({ cmd: "alarm", act: "add", price: px, dir: d.a.dir }));
+    ws.send(JSON.stringify({ cmd: "alarm", act: "add", price: px, dir: d.a.dir, exp: d.a.exp }));
     d.a.price = px;
   }
   renderChips();
@@ -1846,6 +1848,8 @@ function renderChips() {
   let html = "";
   curAlarms.forEach(a => {
     html += `<span class="chip" style="border-color:#f4c430"><span>🔔 ${a.dir === "up" ? "▲" : "▼"} ${a.price}</span>` +
+            `<input type="date" class="aexp" data-aexp="${a.price}" value="${a.exp || ""}" ` +
+            `title="Caducidad: al vencer, price_alarm la marca [CADUCADA] y calla (default +5 días hábiles)">` +
             `<span class="cx" data-atrash="${a.price}" title="Borrar alarma">🗑</span></span>`;
   });
   curZones.forEach(z => {
@@ -1874,6 +1878,13 @@ function renderChips() {
   chipbar.innerHTML = html;
   chipbar.querySelectorAll("[data-atrash]").forEach(t =>
     t.addEventListener("click", () => delAlarm(parseFloat(t.dataset.atrash))));
+  chipbar.querySelectorAll("[data-aexp]").forEach(t => t.addEventListener("change", () => {
+    const a = curAlarms.find(x => x.price === parseFloat(t.dataset.aexp));
+    if (!a || !t.value || !ws || ws.readyState !== WebSocket.OPEN) return;
+    // sin "edit" en el backend: del + add con la fecha nueva (price_alarm relee cada 1s)
+    ws.send(JSON.stringify({ cmd: "alarm", act: "del", price: a.price }));
+    ws.send(JSON.stringify({ cmd: "alarm", act: "add", price: a.price, dir: a.dir, exp: t.value }));
+  }));
   chipbar.querySelectorAll("[data-ztrash]").forEach(t =>
     t.addEventListener("click", () => delZone(t.dataset.ztrash)));
   chipbar.querySelectorAll("[data-zexec]").forEach(t => t.addEventListener("click", (e) => {
