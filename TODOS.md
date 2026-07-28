@@ -211,3 +211,12 @@
 - [ ] **"take a look at the widgets of ib trader, make sure they show the right data for each
       session, a bit crazy"** (Yunior 2026-07-28) — widgets macOS/chips del cockpit muestran datos
       de sesión equivocada (RTH vs overnight vs Corea). `pendiente`
+
+- [ ] **[hallazgo backtest 7/27] flow_pulse en boot-loop 16:00–24:00 del lunes** — investigar
+      por qué y arreglar (ver docs/BACKTEST-ALARMAS-2026-07-27.md). `pendiente`
+- [ ] **[hallazgo backtest 7/27] la BD `signals` solo ingiere structural desde el 25-jul** —
+      bollinger/whale/flow/cusum del 27 solo viven en el feed txt + voice_log; sin BD no hay
+      backtest continuo de esas fuentes. Cablear la ingesta completa. `pendiente`
+- [ ] **[hallazgo backtest 7/27] structural_magnet WR30 27% (n=67)** — las flechas a imán
+      fueron la peor fuente en día de selloff; revisar si el magnet debe callar en gamma NEG
+      todo-acelerador (doctrina ya lo dice) o condicionar por régimen. `pendiente`
