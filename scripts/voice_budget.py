@@ -75,19 +75,20 @@ DEFAULT_CAPS = {
     "nota": "DANGER cuenta para el total pero NUNCA se suprime. Cambiar aqui, no en el codigo.",
 }
 
-# Emisores DANGER verificados en el codigo el 2026-07-25 (fichero:linea comprobados)
+# Emisores DANGER re-verificados fichero:linea el 2026-07-28
 DANGER_EMITTERS = {
-    "whale_espada": {"module": "scripts/opt_whale_watch.py:33", "class": "DANGER",
+    "whale_espada": {"module": "scripts/opt_whale_watch.py:51", "class": "DANGER",
                      "calib_cell": "whale/flow", "enabled": True},
     "manada_py": {"module": "scripts/fleet_consensus.py:124", "class": "DANGER",
                   "calib_cell": "consenso", "enabled": True},
+    # WIP no desplegado: el daemon vivo es manada_py (fleet_consensus_keepalive.sh)
     "manada_cpp": {"module": "scripts/fleet_consensus.cpp:403", "class": "DANGER",
-                   "calib_cell": "consenso", "enabled": True},
-    "price_alarm": {"module": "scripts/price_alarm.cpp:231", "class": "DANGER",
+                   "calib_cell": "consenso", "enabled": False},
+    "price_alarm": {"module": "scripts/price_alarm.cpp:254", "class": "DANGER",
                     "calib_cell": "nivel_impreso", "enabled": True},
     "compass_caida": {"module": "scripts/compass_keepalive.sh:22,40", "class": "DANGER",
                       "calib_cell": "salud", "enabled": True},
-    "permisos_flota": {"module": "scripts/fleet_keepalive_start.sh:17", "class": "DANGER",
+    "permisos_flota": {"module": "scripts/fleet_keepalive_start.sh:98", "class": "DANGER",
                        "calib_cell": "salud", "enabled": True},
     "tws_zombie": {"module": "scripts/tws_watchdog.sh:109,130,146", "class": "DANGER",
                    "calib_cell": "salud", "enabled": True},

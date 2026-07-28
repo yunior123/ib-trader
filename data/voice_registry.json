@@ -10,8 +10,9 @@
   "manada_cpp": {
    "calib_cell": "consenso",
    "class": "DANGER",
-   "enabled": true,
-   "module": "scripts/fleet_consensus.cpp:403"
+   "enabled": false,
+   "module": "scripts/fleet_consensus.cpp:403",
+   "nota": "WIP no desplegado: el daemon vivo es manada_py"
   },
   "manada_py": {
    "calib_cell": "consenso",
@@ -23,13 +24,13 @@
    "calib_cell": "salud",
    "class": "DANGER",
    "enabled": true,
-   "module": "scripts/fleet_keepalive_start.sh:17"
+   "module": "scripts/fleet_keepalive_start.sh:98"
   },
   "price_alarm": {
    "calib_cell": "nivel_impreso",
    "class": "DANGER",
    "enabled": true,
-   "module": "scripts/price_alarm.cpp:231"
+   "module": "scripts/price_alarm.cpp:254"
   },
   "tws_zombie": {
    "calib_cell": "salud",
@@ -41,9 +42,10 @@
    "calib_cell": "whale/flow",
    "class": "DANGER",
    "enabled": true,
-   "module": "scripts/opt_whale_watch.py:33"
+   "module": "scripts/opt_whale_watch.py:51"
   }
  },
  "frozen_at": 1784988877,
- "nota": "el conteo de emisores DANGER esta CONGELADO en el de hoy + 1: un DANGER nuevo debe DESPLAZAR a uno existente (regla del doc #12)."
+ "nota": "el conteo de emisores DANGER esta CONGELADO en el de hoy + 1: un DANGER nuevo debe DESPLAZAR a uno existente (regla del doc #12).",
+ "nota_audit_2026_07_28": "lineas re-verificadas; manada_cpp compilado pero no desplegado"
 }
