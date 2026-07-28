@@ -221,6 +221,14 @@ def main():
     for p in glob.glob("data/bars_*_ibkr.txt"):
         sym = os.path.basename(p)[5:-9]
         nb += 1 if slice_epoch_file(p, os.path.join(hdir, "bars", f"{sym}.txt"), t0, t1) else 0
+    # barras Corea (el bridge trunca el fichero por sesion: sin esto los terremotos KRX del
+    # dia anterior quedan inverificables — auditoria 2026-07-28)
+    for p in glob.glob("data/bars_*.txt"):
+        base = os.path.basename(p)
+        if base.endswith("_ibkr.txt"):
+            continue
+        sym = base[5:-4]
+        nb += 1 if slice_epoch_file(p, os.path.join(hdir, "bars", f"{sym}_krx.txt"), t0, t1) else 0
     # ticks NBBO QQQ del dia
     for p in glob.glob(f"data/nbbo_hist_qqq_{a.date.replace('-','')}*.txt"): cp(p, hdir)
     # ballenas del dia
