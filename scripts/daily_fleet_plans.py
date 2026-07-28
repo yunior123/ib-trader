@@ -678,6 +678,17 @@ def x_draft(sym, spot, cs, on, dip_p, reg, kor=None, meta=None, eur=None):
             f"🛑{f(stop_b)} si falla · Gap {gap:+.1f}% {tend}\n"
             f"{q} No consejo fin.")
 
+def ta_view_line(sym):
+    """Veredicto TradingAgents (data/ta_view_<sym>.json de scripts/ta_view.py) si es fresco (<20h)."""
+    p = os.path.join(REPO, "data", f"ta_view_{sym.lower()}.json")
+    try:
+        d = json.load(open(p))
+    except Exception:
+        return None
+    if "veredicto" not in d or time.time() - d.get("ts", 0) > 20 * 3600:
+        return None
+    return f"TradingAgents: {d['veredicto'].upper()} ({d.get('rating', '?')}) — {d.get('tesis', '')[:170]}"
+
 # ---------- PDF ----------
 def make_pdf(outdir, sym, spot, cs, on, plan_lines, series):
     path = os.path.join(outdir, f"{sym}_plan.pdf")
@@ -768,6 +779,9 @@ def make_pdf(outdir, sym, spot, cs, on, plan_lines, series):
                         f"Print o nada | 3 perdidas = fin.",
                         (0.2, lo_y + (hi_y-lo_y)*0.015), fontsize=8, fontweight="bold",
                         bbox=dict(boxstyle="round,pad=0.4", fc="#fffde7", ec="#9e9e9e"))
+            tav = ta_view_line(sym)
+            if tav:
+                fig.text(0.06, 0.012, tav, fontsize=7.5, color="#37474f")
             # ADITIVO: guardar la MISMA figura como PNG tweet-ready para el poster de X.
             # Falla silenciosa: un error de PNG jamas rompe la generacion del PDF.
             try:
