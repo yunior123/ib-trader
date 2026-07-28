@@ -245,3 +245,8 @@
 - [ ] **TTL alarmas, parte 2**: `alarm_add()` de chart_bridge.py debe escribir `exp=` por
       defecto (ej +5 días hábiles) en las alarmas manuales del chart, y la UI permitir
       editarlo. Esperar a que el agente de widgets suelte chart_bridge/live.html. `pendiente`
+
+- [ ] **"i just got alarms for aapl and msft, weird, are they real?"** (Yunior 2026-07-28 00:40)
+      — diagnosticado: 🧲 estructural magnet 00:37 con prob 31/33%, overnight, mapa stale,
+      MSFT imán 430 a 10% del spot. Gate pedido al agente de chart (mudo fuera RTH, sin voz
+      <55, sanity 1×EM, cooldown persistido). `delegado a agente`
