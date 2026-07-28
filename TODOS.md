@@ -16,14 +16,6 @@
   (`data/perp_stocks.json`, 26 simbolos Bybit), (b) los tickers coreanos (Samsung/SK Hynix/
   KOSPI, que van por `korea_bar_bridge`). Probar los dos casos.
 
-- [ ] **[pendiente] SKHY es el ÚNICO de la flota con el gate de spread APAGADO** (medido
-  2026-07-26). Los otros 23 `*_signal_bot` llevan `export <SYM>_SPREAD_MAX` en su keepalive
-  (0,3 casi todos, DRAM 0,5); `scripts/skhy_keepalive.sh` no define `SKHY_SPREAD_MAX`, y el
-  default es `envd(...,0)` = **feature OFF**, así que en SKHY el gate no aplica AUNQUE el
-  fail-closed esté puesto. Decidir el umbral (SKHY es ADR coreano, spread naturalmente más
-  ancho — 0,5 como DRAM, o medirlo antes de fijarlo). Los otros 6 sin gate (cper kospi
-  samsung skhynix slv uso) están FUERA de `fleet.txt`: no urge.
-
 - [ ] **[pendiente — el bloqueante de "IBKR primario"] ensanchar `opt_chain_cache.py`** (medido
       2026-07-27, es de otro agente). Orden de Yunior: *"elige ibkr real, polygon only fallback for
       realtime market"*. El gate ya existe y declara la procedencia en el dato
@@ -162,14 +154,6 @@
       símbolo sin cinta salga DECLARADO como ciego en lugar de aparentar silencio de flujo.
 
 ## 🔴 SESIÓN 2026-07-27 (RTH, mercado abierto) — peticiones al vuelo
-- [ ] 🔴 **[URGENTE — DINERO EN VIVO] El RTH es 9:30→16:00, NO 9:30→15:30: la flota se apaga con
-      30 min de sobra** (Yunior 2026-07-27). MEDIDO: los 24 `*_signal_bot.cpp` cortan las entradas
-      TREND en `mins < 930` (930 = 15:30; `aapl_signal_bot.cpp:1636,1652` y los 24), y
-      `scripts/dip_alert.py` MUERE solo a las 15:30 (`:28`). Fin de RTH correcto = **960** (16:00).
-      La última media hora es de las más operativas (imanes de cierre, charm de la tarde). Guardado
-      en memoria `market-hours-intraday`. ⚠️ Recompilar 24 bots es secuencial en 8GB y JAMÁS con el
-      mercado abierto: compilar cuando sea, **DESPLEGAR al cierre**. Buscar TODOS los 930 de cierre,
-      no solo los bots (dip_alert, bollinger `1400_1530`, cualquier otro proceso que muera a 15:30).
 - [ ] 🔴 **[pendiente] "some old voices from a long time are still running, replace them properly,
       same with alarms"** (Yunior 2026-07-27). Hay voces/locuciones y alarmas de hace tiempo aún
       corriendo (procesos viejos, cron viejo, o binarios no redeployados). Identificarlas
@@ -181,8 +165,6 @@
       chart with the real price, whether day or night." → el chart debe mostrar precio real 24h en
       la ventana viva (perpetuos 24/7 + Corea de noche + US de día), no quedarse mudo por la noche.
       Relacionado con la cinta nocturna irrecuperable (solo se captura en vivo) y con `fleet_hours`.
-- [ ] **[pendiente] Posts de X en INGLÉS de ahora en adelante** (Yunior 2026-07-27). `x_earnings_post.py`,
-      `x_whale_bot.cpp` y demás generadores de tweets: texto en inglés.
 - [x] **[hecho 514a38a/516d3e9 — agente UW] UW latencia MEDIDA en sesión viva: 5,5 s → candidato a
       tiempo-real** (09:31 EDT, primera medición intradía; el sábado 43,8 h = fin de semana, cero
       evidencia). SIGUE SIN VOZ (caduca ~2026-08-01, regla gexa: archivar→medir→cablear). +
@@ -194,3 +176,11 @@
       dinámico es `658cc52` (01:03), POSTERIOR. Nunca conectaba → cinta ciega → las 2 voces de hoy
       fueron "DANGER CINTA CIEGA", jamás una ballena real.** El agente B ya reinició el proceso
       (conecta a 4001 limpio). VERIFICAR que quedó vivo y disparando.
+
+- [ ] **[ACCIÓN DIFERIDA con hora — tras cierre KRX ~02:30 ET, o mañana antes de US open]
+      Desplegar los binarios coreanos + skhy** (agente RTH, ). Los 3 coreanos siguen con
+      binario viejo (su horario 930 KST es correcto, no urgente) y skhy tiene el  staged +
+      SKHY_SPREAD_MAX ya en el keepalive. Comando exacto:
+      
+      
+      No se automatizó a propósito (un pkill sin supervisión a las 02:35 rompe la flota si algo falla).

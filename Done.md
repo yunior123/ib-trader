@@ -254,3 +254,6 @@
       *(era)* 🔴 **[REABIERTA — Yunior sigue sin verla en Chrome] El selector de timeframe NO se ve en
 - [x] **hecho `cef86ca`** (`live.html:2107-2114`). La causa: cuando el feed paraba, `rem` se volvia negativo, se topaba a 0 y el '00:00' se congelaba. Ahora si el feed muere (rem < -sec) el timer DESAPARECE; con datos vivos (overnight/Corea) cuenta normal. Verificado en codigo.
       *(era)* **[pendiente — mismo bug del RTH 930] "the blue timer for the bars stops at 15:30"**
+- [x] **hecho 9b4fd13 + desplegado 1774ab0** RTH de 930 a 960 en los 24 bots + dip_alert a 16:00. Desplegados 17 bots US con binario nuevo (Jul 27 21:10), estables; coreanos diferidos (operan de noche) con .new staged. Verificado 0 con mins<930, flota 22 viva. Memoria market-hours-intraday.
+- [x] **hecho 1774ab0** Posts de X en INGLES: x_earnings_post.py texto+PNG ('Not financial advice'); x_whale_bot.cpp ya estaba en ingles. 1 cashtag y presupuesto intactos. Tests + test_texto_en_ingles.
+- [x] **hecho 1774ab0** SKHY gate: medido el spread REAL del STOCK (NBBO n=30 p95 0.171%; lo ancho son las OPCIONES 8-15%). SKHY_SPREAD_MAX=0.4 en el keepalive (sobre p95 con margen). Entra en el proximo ciclo. Caveat: muestra after-hours.
