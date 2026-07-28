@@ -72,8 +72,15 @@ struct Rule {
     double px = 0;
     int mode = CROSS;
     int armed = 0;     // solo CROSS: -1 espera caida a px, +1 espera subida; 0 sin armar
+    long exp_ymd = 0;  // exp=YYYY-MM-DD en la linea (0 = sin caducidad); editable a mano
     size_t line_idx = 0;
 };
+
+static long today_ymd() {
+    time_t t = time(nullptr);
+    tm lt{}; localtime_r(&t, &lt);
+    return (lt.tm_year + 1900) * 10000L + (lt.tm_mon + 1) * 100L + lt.tm_mday;
+}
 
 // ruta derivada: IBT_DESKTOP_HOY con default ~/Desktop/ib-trader/hoy (mismo
 // nombre que print_mon_plans.sh y daily_archive.py). mkdir -p idempotente.
@@ -92,7 +99,9 @@ static const char* HEADER =
     "#   intc 100 down     -> dispara cuando el precio <= 100\n"
     "#   tsla 550 up       -> dispara cuando el precio >= 550\n"
     "# Al disparar, la linea queda: [DISPARADA 2026-07-16 10:33] intc 100 down\n"
-    "# Re-armar = borrar el prefijo [DISPARADA ...]. Lineas con # = comentario.\n";
+    "# Re-armar = borrar el prefijo [DISPARADA ...]. Lineas con # = comentario.\n"
+    "# Caducidad: anade exp=YYYY-MM-DD (donde sea de la linea); pasada la fecha se marca\n"
+    "# [CADUCADA] sin sirena. Editable a mano. Sin exp= la alarma no caduca.\n";
 
 // parsea "sym precio [up|down|cross]"; devuelve false si la linea no es regla
 // (comentario, vacia, disparada) o es invalida (*invalid=true en ese caso).
@@ -106,7 +115,15 @@ static bool parse_rule(const std::string& line, Rule& r, bool* invalid) {
     if (b == std::string::npos) return false;        // vacia
     size_t e = s.find_last_not_of(" \t\r");
     s = s.substr(b, e - b + 1);
-    if (s.rfind("[DISPARADA", 0) == 0 || s.rfind("[YA-CRUZADA", 0) == 0 || s.rfind("FIRED", 0) == 0) return false;
+    if (s.rfind("[DISPARADA", 0) == 0 || s.rfind("[YA-CRUZADA", 0) == 0 ||
+        s.rfind("[CADUCADA", 0) == 0 || s.rfind("FIRED", 0) == 0) return false;
+    // caducidad editable: "exp=YYYY-MM-DD" en cualquier parte de la linea (comentario incluido)
+    long exp_ymd = 0;
+    if (size_t xp = line.find("exp="); xp != std::string::npos) {
+        int y = 0, m = 0, d = 0;
+        if (std::sscanf(line.c_str() + xp + 4, "%4d-%2d-%2d", &y, &m, &d) == 3 && y > 2000)
+            exp_ymd = y * 10000L + m * 100L + d;
+    }
     char sym[32] = {0}, dir[32] = {0};
     double px = 0;
     int n = std::sscanf(s.c_str(), "%31s %lf %31s", sym, &px, dir);
@@ -123,6 +140,7 @@ static bool parse_rule(const std::string& line, Rule& r, bool* invalid) {
     else if (!std::strcmp(dir, "down"))      r.mode = DOWN;
     else { *invalid = true; return false; }
     r.raw = line;
+    r.exp_ymd = exp_ymd;
     return true;
 }
 
@@ -341,6 +359,16 @@ int main() {
 
         bool any_fired = false;
         for (auto& r : rules) {
+            // caducidad: pasada la fecha, la regla se retira MUDA (sin sirena) — respuesta a
+            // "do alarmas have expiration?" (Yunior 2026-07-28): las armadas de hace 1-2
+            // semanas cantaban con tesis muertas. Re-armar = quitar el prefijo y subir exp=.
+            if (r.exp_ymd != 0 && today_ymd() > r.exp_ymd) {
+                logline("CADUCADA (exp=%ld): '%s'", r.exp_ymd, r.raw.c_str());
+                if (!mark_fired_tag(path, r, "CADUCADA"))
+                    logline("WARN: no pude marcar CADUCADA: '%s'", r.raw.c_str());
+                any_fired = true;
+                continue;
+            }
             double px = 0;
             if (!current_price(r.sym, &px)) {
                 time_t now = time(nullptr);
