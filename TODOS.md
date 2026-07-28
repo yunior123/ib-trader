@@ -184,3 +184,15 @@
       
       
       No se automatizó a propósito (un pkill sin supervisión a las 02:35 rompe la flota si algo falla).
+
+- [ ] 🔴 **[RAÍZ de "no veo los gráficos moverse" + "5s no se mueve" + "chart día y noche"] El chart
+      usa `reqHistoricalData keepUpToDate` que SE CONGELA a las 20:00 ET (fin del after-hours),
+      mientras el `ibkr_bar_bridge` SÍ tiene datos frescos overnight.** MEDIDO 2026-07-27 21:19:
+      reqHistoricalData de QQQ (5s Y 1m) da última barra 19:59, hace 76 min; `bars_qqq_ibkr.txt`
+      tiene última barra 21:19 (hace 1 min, close moviéndose 677,58→677,67→677,57). Dos cosas:
+      (a) el chart US debe CAER al fichero del bar_bridge overnight (como ya hace Corea con
+      `korea_poll_feed`) cuando reqHistoricalData deja de avanzar → arregla 1m+ de noche;
+      (b) a 5s NO hay fuente de segundos fuera de sesión (IBKR histórico de 5s para a las 20:00 y el
+      bar_bridge solo produce 1m) → o se construyen barras de 5s del tick stream, o a 5s fuera de
+      sesión el chart dice "sin datos de 5s fuera de RTH" en vez de mostrar barras de las 19:59
+      como si fueran vivas. Fichero: `scripts/chart_bridge.py` + `charts/live.html`.
