@@ -55,6 +55,7 @@ PORT, CLIENT_ID = get_port(), 48           # 7497 paper / 7496 live; env IBKR_PO
 PCT_BAND = 0.15          # ±15% del spot
 NARROW = {"MSFT", "AVGO", "AMZN", "META"}
 NARROW_BAND, NARROW_MAX_STRIKES, NARROW_SLEEP = 0.08, 12, 4
+FAR_SLEEP = 4            # s de espera de la ola lejana (OI/vol pesan mas que griegas finas)
 MAX_STRIKES = 20         # cap por vencimiento (2 exps x 20 strikes x 2 rights = 80 lineas TWS max)
 CYCLE_S = 180            # cada 3 min
 SLEEP_TICKS = 5          # s de espera para que lleguen ticks/greeks por simbolo
@@ -152,33 +153,51 @@ class ChainCache:
         narrow = sym in NARROW
         band = NARROW_BAND if narrow else PCT_BAND
         max_ks = NARROW_MAX_STRIKES if narrow else MAX_STRIKES
-        cons = []
+        # 2 OLAS (2026-07-28): MAX_STRIKES pegados al ATM daban ±1.4% efectivo en SPY —
+        # el lunes el put wall de MU estaba a -14% y el cache no lo veia. Ola 1 = ATM denso
+        # (como siempre); ola 2 = resto de la banda muestreado a <=max_ks strikes (caza muros
+        # lejanos). Olas secuenciales para no pasar el limite de lineas de market data de TWS.
+        cons, far_cons = [], []
         for exp in exps:
-            ks = sorted((k for k in strikes_all
-                         if abs(k - spot) / spot <= band),
-                        key=lambda k: abs(k - spot))[:max_ks]
-            for k in ks:
+            in_band = sorted((k for k in strikes_all
+                              if abs(k - spot) / spot <= band),
+                             key=lambda k: abs(k - spot))
+            near = in_band[:max_ks]
+            rest = sorted(set(in_band[max_ks:]))
+            far = []
+            if rest and not narrow:
+                stride = max(1, math.ceil(len(rest) / max_ks))
+                far = rest[::stride][:max_ks]
+            for k in near:
                 for r in ("C", "P"):
                     cons.append(Option(sym, exp, k, r, "SMART",
                                        currency="USD", tradingClass=sym))
+            for k in far:
+                for r in ("C", "P"):
+                    far_cons.append(Option(sym, exp, k, r, "SMART",
+                                           currency="USD", tradingClass=sym))
         if not cons:
             log(f"{sym}: 0 strikes en ±{band*100:.0f}% — skip")
             return 0
-        cons = [c for c in self.ib.qualifyContracts(*cons) if c and c.conId]
-        tks = [self.ib.reqMktData(c, "100,101,106", False, False) for c in cons]
-        self.ib.sleep(NARROW_SLEEP if narrow else SLEEP_TICKS)
         rows = []
-        for tk in tks:
-            c = tk.contract
-            oi = tk.callOpenInterest if c.right == "C" else tk.putOpenInterest
-            g = tk.modelGreeks
-            rows.append(f"{c.strike:.2f} {c.right} {c.lastTradeDateOrContractMonth} "
-                        f"{nz(tk.bid):.2f} {nz(tk.ask):.2f} "
-                        f"{nz(tk.volume, 0):.0f} {nz(oi, 0):.0f} "
-                        f"{nz(g.impliedVol if g else None):.4f} "
-                        f"{nz(g.delta if g else None):.4f} "
-                        f"{nz(g.gamma if g else None):.4f}")
-            self.ib.cancelMktData(c)
+        for wave, wsleep in ((cons, NARROW_SLEEP if narrow else SLEEP_TICKS),
+                             (far_cons, FAR_SLEEP)):
+            if not wave:
+                continue
+            wave = [c for c in self.ib.qualifyContracts(*wave) if c and c.conId]
+            tks = [self.ib.reqMktData(c, "100,101,106", False, False) for c in wave]
+            self.ib.sleep(wsleep)
+            for tk in tks:
+                c = tk.contract
+                oi = tk.callOpenInterest if c.right == "C" else tk.putOpenInterest
+                g = tk.modelGreeks
+                rows.append(f"{c.strike:.2f} {c.right} {c.lastTradeDateOrContractMonth} "
+                            f"{nz(tk.bid):.2f} {nz(tk.ask):.2f} "
+                            f"{nz(tk.volume, 0):.0f} {nz(oi, 0):.0f} "
+                            f"{nz(g.impliedVol if g else None):.4f} "
+                            f"{nz(g.delta if g else None):.4f} "
+                            f"{nz(g.gamma if g else None):.4f}")
+                self.ib.cancelMktData(c)
         now = dt.datetime.now()
         path = f"data/opt_chain_{sym.lower()}.txt"
         tmp = path + ".tmp"
