@@ -28,6 +28,9 @@ echo "$(date) modo $MODE" >> dailyplans.log
 [[ $MODE == FULL ]] && ./venv/bin/python scripts/inflation_score.py --quiet >> dailyplans.log 2>&1
 # 4AM: calibrar la brujula con el ledger de ayer (celdas Wilson -> compass_calib.json)
 [[ $MODE == FULL ]] && ./venv/bin/python scripts/compass_calibrate.py >> dailyplans.log 2>&1
+# 4AM: zonas de liquidez (Yunior 2026-07-28) — vpvr.json + levels_auto_*.json; antes eran manuales y rancios
+[[ $MODE == FULL ]] && ./volume_profile >> dailyplans.log 2>&1
+[[ $MODE == FULL ]] && ./venv/bin/python scripts/kde_levels.py >> dailyplans.log 2>&1
 # 4AM: veredicto TradingAgents de los 5 capitanes (~3m18s c/u medido; lote nocturno, no en vivo)
 if [[ $MODE == FULL ]]; then
   for s in QQQ SPY MU SMH NVDA; do
