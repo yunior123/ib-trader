@@ -8,7 +8,7 @@ SINCE=$(date -v-${DAYS}d '+%Y-%m-%d')
 
 echo "== scorecard señales de dinero (desde $SINCE, sin WARMUP) =="
 for f in dram nok spcx tsla nvda txn tsm amd intc asml aapl gld qqq; do
-  L="${f}_operations.log"
+  L="logs/${f}_operations.log"
   [[ -f $L ]] || continue
   awk -v since="$SINCE" -v sym="${f:u}" '
     $1 >= since && !/WARMUP/ && /SELL NOW|SELL-STOP|COVER NOW|COVER-STOP|SELL PUT|BUY CALL|PUT-STOP|VENDER|CUBRIR/ {

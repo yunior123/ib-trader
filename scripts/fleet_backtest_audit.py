@@ -212,6 +212,7 @@ def run_one(sym: str) -> dict:
     t_run0 = time.time()
     with tempfile.TemporaryDirectory(prefix=f"bt_{sym.lower()}_") as tmp:
         os.makedirs(os.path.join(tmp, "data"), exist_ok=True)
+        os.makedirs(os.path.join(tmp, "logs"), exist_ok=True)
         with open(hist) as stdin_f:
             proc = subprocess.run(
                 [bin_path, "--stdin"],

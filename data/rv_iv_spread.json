@@ -1,0 +1,122 @@
+{
+ "QQQ": {
+  "rv": 0.42,
+  "iv": 34.94,
+  "spread_pct": 34.5,
+  "signal": "SHORT_VOL"
+ },
+ "SPY": {
+  "rv": 0.21,
+  "iv": 49.0,
+  "spread_pct": 48.8,
+  "signal": "SHORT_VOL"
+ },
+ "NVDA": {
+  "rv": 0.58,
+  "iv": 49.05,
+  "spread_pct": 48.5,
+  "signal": "SHORT_VOL"
+ },
+ "MU": {
+  "rv": 2.19,
+  "iv": 138.64,
+  "spread_pct": 136.4,
+  "signal": "SHORT_VOL"
+ },
+ "SMH": {
+  "rv": 1.05,
+  "iv": 73.41,
+  "spread_pct": 72.4,
+  "signal": "SHORT_VOL"
+ },
+ "AMD": {
+  "rv": 1.68,
+  "iv": 98.12,
+  "spread_pct": 96.4,
+  "signal": "SHORT_VOL"
+ },
+ "AAPL": {
+  "rv": 0.32,
+  "iv": 80.63,
+  "spread_pct": 80.3,
+  "signal": "SHORT_VOL"
+ },
+ "AMZN": {
+  "rv": 0.19,
+  "iv": 38.94,
+  "spread_pct": 38.8,
+  "signal": "SHORT_VOL"
+ },
+ "GOOGL": {
+  "rv": 0.44,
+  "iv": 62.39,
+  "spread_pct": 62.0,
+  "signal": "SHORT_VOL"
+ },
+ "TSM": {
+  "rv": 0.69,
+  "iv": 64.88,
+  "spread_pct": 64.2,
+  "signal": "SHORT_VOL"
+ },
+ "ASML": {
+  "rv": 3.67,
+  "iv": 78.95,
+  "spread_pct": 75.3,
+  "signal": "SHORT_VOL"
+ },
+ "TXN": {
+  "rv": 0.0,
+  "iv": 68.27,
+  "spread_pct": 68.3,
+  "signal": "SHORT_VOL"
+ },
+ "QCOM": {
+  "rv": 0.25,
+  "iv": 123.95,
+  "spread_pct": 123.7,
+  "signal": "SHORT_VOL"
+ },
+ "AVGO": {
+  "rv": 0.38,
+  "iv": 67.22,
+  "spread_pct": 66.8,
+  "signal": "SHORT_VOL"
+ },
+ "NOK": {
+  "rv": 2.29,
+  "iv": 89.38,
+  "spread_pct": 87.1,
+  "signal": "SHORT_VOL"
+ },
+ "DRAM": {
+  "rv": 2.26,
+  "iv": 140.28,
+  "spread_pct": 138.0,
+  "signal": "SHORT_VOL"
+ },
+ "SKHY": {
+  "rv": 2.66,
+  "iv": 168.74,
+  "spread_pct": 166.1,
+  "signal": "SHORT_VOL"
+ },
+ "SNDK": {
+  "rv": 3.16,
+  "iv": 182.28,
+  "spread_pct": 179.1,
+  "signal": "SHORT_VOL"
+ },
+ "WDC": {
+  "rv": 2.31,
+  "iv": 178.22,
+  "spread_pct": 175.9,
+  "signal": "SHORT_VOL"
+ },
+ "STX": {
+  "rv": 1.27,
+  "iv": 179.83,
+  "spread_pct": 178.6,
+  "signal": "SHORT_VOL"
+ }
+}

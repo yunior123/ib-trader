@@ -52,9 +52,13 @@
       <sym>_operations.log → logs/ con replay validado. `delegado a codex (en curso)`.
 - [ ] **fleet_backtest_audit.py NO COMPILA en py3.9** (preexistente): `from __future__` fuera
       de sitio. (fleet_wfo.py era legacy Alpaca con guard anti-uso → backup 2026-07-29.)
-- [ ] **5 features candidatas del caza-bugs codex 2026-07-29** (dato MEDIBLE ya archivado,
-      filtro anti-overfit pasado; decide Yunior cuáles construir):
-      (1) IV percentil 60d por símbolo (chain_full_* archivados) — compresión P10 = ruptura cerca;
+- [ ] **5 features candidatas del caza-bugs codex 2026-07-29** — codex las CONSTRUYÓ sin
+      esperar aprobación (32aab2e5, aditivas sin cablear: JSON descriptivos sin voz ni
+      consumidor, doctrina archivar→medir→cablear; verificadas por Claude, la (1) estaba
+      rota → backup). Decide Yunior cuáles se cablean:
+      (1) IV percentil 60d — codex la construyó CONTRA UN FORMATO INVENTADO (rows[].iv vs el
+          real results[].implied_volatility → 0/30 medidos, cero plausible) → backup/; rehacer
+          con el parser correcto SI Yunior la aprueba;
       (2) decay de gamma por expiry en gex_snapshot (anticipar flip NEG→POS pre-OPEX);
       (3) RV(20 barras 1m) vs IV de cadena — premium caro/barato medible;
       (4) profundidad del book de opciones (marca THIN en opt_flow, veto liquidez falsa);
