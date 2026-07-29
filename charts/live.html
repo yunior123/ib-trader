@@ -52,9 +52,9 @@
   #conn.on  { color: #26a69a; } #conn.off { color: #ef5350; }
 
   /* --- segunda fila: OHLC + info GEX --- */
-  #infobar { display: flex; align-items: center; gap: 11px; height: 28px;
-             padding: 0 12px; background: #181b26; border-bottom: 1px solid #2a2e39;
-             font-size: 12px; flex-wrap: nowrap; overflow-x: auto; white-space: nowrap;
+  #infobar { display: flex; align-items: center; gap: 8px; height: 28px;
+             padding: 0 10px; background: #181b26; border-bottom: 1px solid #2a2e39;
+             font-size: 11px; flex-wrap: nowrap; overflow-x: auto; white-space: nowrap;
              font-variant-numeric: tabular-nums; }
   #infobar::-webkit-scrollbar { height: 0; }
   #ohlc { display: flex; gap: 9px; }
@@ -451,8 +451,8 @@
 
   #chart { position: absolute; top: 68px; bottom: 24px; left: 0; right: var(--dockw); }
   footer { position: absolute; bottom: 0; height: 24px; left: 0; right: 0;
-           display: flex; align-items: center; gap: 12px; padding: 0 12px;
-           background: #1e222d; font-size: 11px; color: #787b86; overflow-x: auto;
+           display: flex; align-items: center; gap: 8px; padding: 0 10px;
+           background: #1e222d; font-size: 10px; color: #787b86; overflow-x: auto;
            white-space: nowrap; }
   .dot { display: inline-block; width: 10px; height: 3px; border-radius: 2px;
          margin-right: 4px; vertical-align: middle; }
@@ -1101,8 +1101,11 @@ class GexView {
           ctx.font = `${10 * vr}px -apple-system, sans-serif`;
           ctx.textAlign = "right";
           ctx.textBaseline = "middle";
+          const txt = fmtM(p.val), tw = ctx.measureText(txt).width;
+          ctx.fillStyle = "rgba(12,16,24,0.72)";   // chip: la cifra no se pierde sobre velas
+          ctx.fillRect(W - bw - 8 * vr - tw, yb - 7 * vr, tw + 6 * vr, 14 * vr);
           ctx.fillStyle = mag ? "rgba(255,213,79,0.95)" : "rgba(206,147,216,0.95)";
-          ctx.fillText(fmtM(p.val), W - bw - 5 * vr, yb);
+          ctx.fillText(txt, W - bw - 5 * vr, yb);
         }
       }
       ctx.shadowBlur = 0;
