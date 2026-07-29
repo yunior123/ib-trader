@@ -150,9 +150,9 @@ def fmt(x):
 
 def build_post(sym, title, msg, entry, tgt, stp, prob):
     que_paso = re.sub(r"\s+", " ", f"{title}: {msg}").strip()
-    base = ("🎯 ${sym} señal en vivo: {q}. ENTRADA: {e} (print, 2 lecturas). "
-            "TARGET: {t}. STOP MENTAL: {s} (si falla el camino, fuera). "
-            "Prob ~{p}%. No es consejo financiero.")
+    base = ("🎯 ${sym} live signal: {q}. ENTRY: {e} (printed level, 2 reads). "
+            "TARGET: {t}. MENTAL STOP: {s} (if the path fails, out). "
+            "Prob ~{p}%. Not financial advice.")
     fixed = base.format(sym=sym, q="", e=fmt(entry), t=fmt(tgt),
                         s=fmt(stp), p=prob)
     room = xc.MAX_CHARS - len(fixed)
@@ -240,7 +240,7 @@ COMBO_TEMPLATE = """# x_combo_triggers.txt — combos multi-ticker para posts X 
 # Formato: COND & COND [& COND...] : mensaje del post
 # COND = SYM>=NUM | SYM<=NUM | SYM>NUM | SYM<NUM  (close 1m de data/bars_<sym>_ibkr.txt)
 # El combo dispara cuando TODAS las patas son ciertas a la vez; 1 post/dia por linea.
-#QQQ>=705 & MSFT>=403 : entramos largos tech, target QQQ 708
+#QQQ>=705 & MSFT>=403 : going long tech, target QQQ 708
 """
 
 
@@ -301,8 +301,8 @@ def process_combos(st, dry_run, auth):
             legs_txt.append(f"{sym} {fmt(px)}")
         if not all_true:
             continue
-        text = (f"🎯 COMBO: {message.strip()}. En simultaneo: "
-                f"{', '.join(legs_txt)}. No es consejo financiero.")
+        text = (f"🎯 COMBO: {message.strip()}. Simultaneously: "
+                f"{', '.join(legs_txt)}. Not financial advice.")
         if xc.post_text(text, f"combo {cid}", log, dry_run, auth):
             st["combos"].append(cid)
             save_state(st)

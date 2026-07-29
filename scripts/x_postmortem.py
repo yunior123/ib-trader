@@ -87,34 +87,34 @@ def grade(plan, ohlc):
 
 
 LESSON = {
-    "GANADOR": ("el print del piso pago; paciencia > FOMO",
-                "mismo libreto, esperar el print"),
-    "STOP": ("piso roto = fuera sin negociar",
-             "no insistir si falla el retest"),
-    "NEUTRO": ("no todo print paga el mismo dia",
-               "vigilar si el nivel aguanta"),
-    "SIN-ENTRADA": ("sin print no hay trade",
-                    "re-armar niveles y esperar"),
+    "GANADOR": ("the floor print paid; patience > FOMO",
+                "same playbook, wait for the print"),
+    "STOP": ("floor broken = out, no negotiating",
+             "don't insist if the retest fails"),
+    "NEUTRO": ("not every print pays the same day",
+               "watch whether the level holds"),
+    "SIN-ENTRADA": ("no print, no trade",
+                    "re-arm levels and wait"),
 }
 
 
 def build_post(sym, plan, g):
     ok = g["verdict"] == "GANADOR"
-    z = {"GANADOR": f"Acierto: piso imprimio y techo {plan['techo']} tocado",
-         "STOP": f"Error: piso {plan['piso']} roto (low {g['lo']:.2f})",
-         "NEUTRO": "Ni target ni stop: dia lateral tras el print",
-         "SIN-ENTRADA": f"el piso {plan['piso']} nunca imprimio: cero trade"
+    z = {"GANADOR": f"Win: floor printed and ceiling {plan['techo']} tagged",
+         "STOP": f"Miss: floor {plan['piso']} broken (low {g['lo']:.2f})",
+         "NEUTRO": "Neither target nor stop: sideways day after the print",
+         "SIN-ENTRADA": f"floor {plan['piso']} never printed: zero trades"
          }[g["verdict"]]
     lesson, manana = LESSON[g["verdict"]]
-    text = (f"📚 ${sym} repaso del dia: plan era entrar en piso {plan['piso']}"
-            f", target techo {plan['techo']}. "
-            f"Paso: rango {g['lo']:.2f}-{g['hi']:.2f}, cierre {g['cl']:.2f} "
+    text = (f"📚 ${sym} daily review: plan was to enter at floor {plan['piso']}"
+            f", target ceiling {plan['techo']}. "
+            f"What happened: range {g['lo']:.2f}-{g['hi']:.2f}, close {g['cl']:.2f} "
             f"({g['pct']:+.1f}%). {z}. "
-            f"Leccion: {lesson}. Mañana: {manana}. No es consejo financiero.")
+            f"Lesson: {lesson}. Tomorrow: {manana}. Not financial advice.")
     if len(text) > xc.MAX_CHARS:   # compactar sin cortar a mitad de frase
-        text = (f"📚 ${sym} repaso: piso {plan['piso']} / techo {plan['techo']}"
-                f". Rango {g['lo']:.2f}-{g['hi']:.2f}, cierre {g['cl']:.2f}. "
-                f"{z}. Leccion: {lesson}. No es consejo financiero.")
+        text = (f"📚 ${sym} review: floor {plan['piso']} / ceiling {plan['techo']}"
+                f". Range {g['lo']:.2f}-{g['hi']:.2f}, close {g['cl']:.2f}. "
+                f"{z}. Lesson: {lesson}. Not financial advice.")
     return text[:xc.MAX_CHARS], ok
 
 

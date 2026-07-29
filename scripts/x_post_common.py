@@ -177,7 +177,7 @@ _UNSET = object()      # distingue "no me pasaste mapa" de "el mapa no existe" (
 
 def gex_line(sym, gex=_UNSET):
     """Linea compacta de gamma para `sym`, o '' si no hay datos (degrade limpio).
-    Ej: '📊 gamma medida: flip 705 · netGEX -1.2M/pt · POC 702'.
+    Ej: '📊 measured gamma: flip 705 · netGEX -1.2M/pt · POC 702'.
     Dice "medida" porque sale de las griegas reales de Polygon, no de un modelo ajeno."""
     if gex is _UNSET:
         gex = load_gex()
@@ -193,7 +193,7 @@ def gex_line(sym, gex=_UNSET):
         parts.append(f"netGEX {d['score']:+.1f}M/pt")
     if d.get("poc") is not None:
         parts.append(f"POC {d['poc']}")
-    return "📊 gamma medida: " + " · ".join(parts) if parts else ""
+    return "📊 measured gamma: " + " · ".join(parts) if parts else ""
 
 
 def append_gex(text, sym, gex=_UNSET, max_chars=MAX_CHARS):

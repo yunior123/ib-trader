@@ -626,14 +626,14 @@ def plan_engine(sym, spot, cs, on, wb, ws, kor, fut, meta, vx=None, eur=None, ea
     return lines, dip_p, reg, score
 
 QUIPS = [
-    "Si persigues el gap, TU eres la liquidez.",
-    "El theta no duerme; tu cuenta tampoco deberia comprar 0DTE aburrida.",
-    "Los dealers no son tus amigos, pero hoy son predecibles.",
-    "El FOMO no paga la renta; el print si.",
-    "Stop mental: si, mental — tu cuenta no tiene psicologo.",
-    "El mercado abre a las 9:30; los errores tambien.",
-    "Paciencia de cocodrilo: un buen bocado > diez mordiscos.",
-    "Primer toque rebota. El heroe del segundo toque paga la cena de los dealers.",
+    "Chase the gap and YOU are the liquidity.",
+    "Theta never sleeps; don't buy bored 0DTE.",
+    "Dealers aren't friends, just predictable.",
+    "FOMO doesn't pay rent; the print does.",
+    "Mental stop: your account has no shrink.",
+    "Market opens at 9:30; so do the mistakes.",
+    "Crocodile patience: one good bite > ten.",
+    "First touch bounces; heroes feed dealers.",
 ]
 
 def x_draft(sym, spot, cs, on, dip_p, reg, kor=None, meta=None, eur=None):
@@ -646,37 +646,37 @@ def x_draft(sym, spot, cs, on, dip_p, reg, kor=None, meta=None, eur=None):
     prob=55 if reg=="POSITIVO" else 50
     gap=on.get("gap_pct",0)
     f=lambda x: f"{x:.0f}" if x>=50 else f"{x:.1f}"
-    tend="⬆️ALCISTA" if gap>0.25 else ("⬇️BAJISTA" if gap<-0.25 else "➡️plano")
+    tend="⬆️BULLISH" if gap>0.25 else ("⬇️BEARISH" if gap<-0.25 else "➡️flat")
     kline=""
     if meta and meta.get("europe") and eur:
         e_mv=eur.get(meta["europe"])
         if e_mv is not None:
-            ses="🟢alza" if e_mv>0.5 else ("🔴baja" if e_mv<-0.5 else "🟡plano")
+            ses="🟢up" if e_mv>0.5 else ("🔴down" if e_mv<-0.5 else "🟡flat")
             if e_mv>0.5 and reg=="POSITIVO": prob=min(prob+5,68)
             elif e_mv<-0.5: prob=max(prob-4,40)
-            kline+=f"🇪🇺{meta['europe'].split('.')[0]} {e_mv:+.1f}% (lider 6h) {ses}\n"
+            kline+=f"🇪🇺{meta['europe'].split('.')[0]} {e_mv:+.1f}% (6h lead) {ses}\n"
             if e_mv>0.8: e="🚀"
     if meta and meta.get("korea") and kor:
         sam=kor.get("Samsung"); skh=kor.get("SK-Hynix"); ksp=kor.get("KOSPI")
         avg=[x for x in (sam,skh,ksp) if x is not None]
         if avg:
             m=sum(avg)/len(avg)
-            sesgo="🟢ALZA semis" if m>0.4 else ("🔴BAJA semis" if m<-0.4 else "🟡mixto")
+            sesgo="🟢SEMIS UP" if m>0.4 else ("🔴SEMIS DOWN" if m<-0.4 else "🟡mixed")
             if m>0.4 and reg=="POSITIVO": prob=min(prob+7,68)
             elif m<-0.4: prob=max(prob-5,40)
             det=" ".join(x for x in [f"Sam{sam:+.0f}%" if sam is not None else "",
                                      f"SKH{skh:+.0f}%" if skh is not None else ""] if x)
             if m>0.4: e="🚀"
-            kline+=f"🇰🇷Corea 13h {det} {sesgo}\n"
+            kline+=f"🇰🇷Korea 13h {det} {sesgo}\n"
     q=QUIPS[(int(time.strftime("%j"))+sum(map(ord,sym)))%len(QUIPS)]
-    if len(q)>42: q="Print o nada."
+    if len(q)>42: q="Print or nothing."
     # escalera visual: techo/iman/precio/piso/stop en una linea
     return (f"{e} ${sym} 0DTE prob ~{prob}%\n"
             f"{kline}"
             f"🔴{f(techo)} 🎯{f(tgt_b)} 📍{f(spot)} 🟢{f(piso)}\n"
-            f"▶️reclaim {f(techo)} (2 lecturas, no 9:30-9:45)\n"
-            f"🛑{f(stop_b)} si falla · Gap {gap:+.1f}% {tend}\n"
-            f"{q} No consejo fin.")
+            f"▶️reclaim {f(techo)} (2 reads, not 9:30-9:45)\n"
+            f"🛑{f(stop_b)} if it fails · Gap {gap:+.1f}% {tend}\n"
+            f"{q} Not financial advice.")
 
 def ta_view_line(sym):
     """Veredicto TradingAgents (data/ta_view_<sym>.json de scripts/ta_view.py) si es fresco (<20h)."""

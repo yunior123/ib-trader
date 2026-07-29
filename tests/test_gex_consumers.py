@@ -74,7 +74,7 @@ def test_gex_None_no_recarga_del_disco_a_espaldas_del_llamador(xc, tmp_path):
     assert xc.gex_line("QQQ", gex=None) == ""             # None = sin mapa: calla
     p = _fake_map(tmp_path)
     con_mapa = xc.gex_line("QQQ", gex=xc.load_gex(path=p))
-    assert "flip 715" in con_mapa and "medida" in con_mapa   # procedencia en la propia linea
+    assert "flip 715" in con_mapa and "measured" in con_mapa   # procedencia en la propia linea
 
 
 def test_simbolo_sin_mapa_no_hereda_el_de_otro(xc, tmp_path):
