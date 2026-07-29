@@ -514,6 +514,9 @@
   <span id="bubblebar" title="Muros GEX como hileras de BURBUJAS (además de las líneas). Tamaño+densidad+longitud de la hilera ∝ |gamma| del strike. Color: verde-azulado = PIN (el nivel AGUANTA) · rojo = TRAMPILLA (el precio la ATRAVIESA acelerando — no fadear ahí) · gris ? = sin dato. Anillo = muro absoluto (POC).">
     <button class="tgl active" id="bubbtn">⚬ Burbujas</button>
   </span>
+  <span id="liqbar" title="Capa de LIQUIDEZ: POC de VOLUMEN + VAH/VAL (VPVR 20 sesiones) y niveles KDE por TF. CONTEXTO, NO GATILLO — medido 37,3% vs 36,1% aleatorio (docs/LEVEL-REACT-2026-07-25). Sin voz.">
+    <button class="tgl" id="liqbtn">≡ Liquidez</button>
+  </span>
   <button id="alarmbtn" title="Alarma manual (estilo TradingView): clic aquí y luego clic en el precio del chart para poner una alarma. Suena sirena+voz al cruzar (price_alarm).">🔔 Alarma</button>
   <button id="zonebtn" title="Zona de ejecución: clic aquí y luego clic en el precio del chart; elige expiry, cantidad y comprar/vender call/put. Por defecto FICHA (señal-solamente); ARMA el chip ⚡ para que el order_engine la ejecute. Stop-loss arrastrable.">🎯 Zona</button>
   <button id="wgbtn" class="tgl" style="border-radius:4px;padding:4px 9px" title="Widgets acoplables: Net GEX por strike, Net Premiums, Options Flow. Se arrastran, se pliegan y se expanden — al expandirse el gráfico se ENCOGE, nunca queda tapado.">🧩 Widgets</button>
@@ -2309,6 +2312,32 @@ function setBubbles(on) {
 bubBtn.addEventListener("click", () => setBubbles(!bubBtn.classList.contains("active")));
 setBubbles((() => { try { const v = localStorage.getItem("gexBubbles"); return v === null ? true : v === "1"; }
                     catch (e) { return true; } })());
+// capa de LIQUIDEZ (frame liq_levels): VPVR POCv/VAH/VAL + KDE — CONTEXTO, no gatillo. Sin voz.
+const liqBtn = document.getElementById("liqbtn");
+let liqData = null, liqLines = [];
+function drawLiq() {
+  liqLines.forEach(l => { try { candle.removePriceLine(l); } catch (e) {} });
+  liqLines = [];
+  if (!liqData || !liqBtn.classList.contains("active")) return;
+  const add = (price, color, title, label) => {
+    if (price == null) return;
+    liqLines.push(candle.createPriceLine({ price, color, lineWidth: 1,
+      lineStyle: title ? LineStyle.Dashed : LineStyle.SparseDotted,
+      axisLabelVisible: label, title }));
+  };
+  add(liqData.poc_volume, "#5c7cba", "POCv " + (+liqData.poc_volume).toFixed(1), true);
+  add(liqData.vah, "rgba(92,124,186,0.4)", "VAH", true);
+  add(liqData.val, "rgba(92,124,186,0.4)", "VAL", true);
+  (liqData.kde || []).forEach(p => add(p, "#4a5568", "", false));
+}
+function onLiqLevels(msg) { liqData = msg; drawLiq(); }
+function setLiq(on) {
+  liqBtn.classList.toggle("active", on);
+  try { localStorage.setItem("liqLayer", on ? "1" : "0"); } catch (e) {}
+  drawLiq();
+}
+liqBtn.addEventListener("click", () => setLiq(!liqBtn.classList.contains("active")));
+setLiq((() => { try { return localStorage.getItem("liqLayer") === "1"; } catch (e) { return false; } })());
 
 // ------------------------------------------------------- WS pipeline
 let curLevels = null;
@@ -2901,6 +2930,7 @@ function connect() {
     else if (msg.type === "account") onAccount(msg);   // posiciones/órdenes/balance
     else if (msg.type === "whale_cfg") onWhaleCfg(msg);   // config alertas de ballenas
     else if (msg.type === "uw_tape") onUwTape(msg);   // cinta de ballenas UW (wgt-flow)
+    else if (msg.type === "liq_levels") onLiqLevels(msg);   // liquidez VPVR/KDE (contexto, no gatillo)
     else if (msg.type === "order_action") onOrderAction(msg);   // resultado cancel/sell/modify
   };
   ws.onclose = () => {
