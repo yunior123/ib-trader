@@ -97,6 +97,35 @@ NASDAQ10 = [s for s in ("NVDA", "MSFT", "AAPL", "AMZN", "GOOGL", "AVGO", "META",
 UW_PREM_BULL, UW_PREM_BEAR = 2_000_000, -2_000_000   # umbral SIN CALIBRAR (doctrina: etiquetado, no medido)
 UW_PREM_EXIT = 1_000_000                             # histeresis, mismo patron que PC_PUTS/PC_CALLS
 UW_MAX_AGE_S = 600   # feed mas viejo que esto no es "large trade AHORA": se ignora, no se alarma con dato muerto
+UW_CAPTAINS = [s for s in ("SPY", "QQQ", "SMH") if s in FLEET]   # capitanes (regla 12): solo alarman con umbral MEDIDO propio
+UW_PREM_MIN_N = 30   # bajo esto no hay percentil honesto (measured-probability)
+
+
+def uw_prem_thresholds():
+    """p97 de |premium neto| propio por simbolo (n>=30) — QQQ p50 ya es ~$3.6M, el $2M fijo seria crying-wolf en ETFs."""
+    per = {}
+    try:
+        with open(os.path.join(REPO, "data", "uw_premium_flow_hist.jsonl")) as f:
+            for ln in f:
+                try: d = json.loads(ln)
+                except json.JSONDecodeError: continue
+                sp = d.get("signed_premium")
+                if sp is not None:
+                    per.setdefault(d.get("sym"), []).append(abs(float(sp)))
+    except FileNotFoundError:
+        return {}
+    out = {}
+    for s, xs in per.items():
+        if len(xs) < UW_PREM_MIN_N: continue
+        xs.sort()
+        p97 = xs[min(len(xs)-1, int(0.97 * len(xs)))]
+        out[s] = {"bull": p97, "bear": -p97, "exit": p97 / 2.0, "n": len(xs)}   # exit al 50%, mismo ratio 2M/1M
+    return out
+
+UW_PTH = uw_prem_thresholds()
+if UW_PTH:
+    print("umbral UW premium propio (p97): " + "  ".join(
+        f"{s}:${t['bull']/1e6:.1f}M(n={t['n']})" for s, t in sorted(UW_PTH.items())), file=sys.stderr)
 RECENTER_PCT = 0.015   # spot >1.5% del centro usado -> parrilla nueva (selloff 27-jul)
 CHAIN_F = "data/opt_whale_chains.json"   # cache diaria secdef: no re-pedir cada arranque
 
@@ -328,6 +357,7 @@ fails = 0
 while True:
     try:
         if not in_session():
+            _progress["t"] = time.time()   # sin esto el watchdog mataba el proceso SANO cada 5min toda la noche (boot-loop, cazado 2026-07-29)
             time.sleep(120); continue
         ib = IB(); ib.connect("127.0.0.1", get_port(), clientId=82, readonly=True, timeout=15)
         # CAUSA RAIZ confirmada 2026-07-28 (caza de bugs) de los cuelgues cerca de GLD del mismo
@@ -469,15 +499,22 @@ while True:
                             # al de ratio put/call de abajo — mensaje propio ("Alerta premium"),
                             # jamas "alto volumen de calls/puts" que colisionaba con BALLENA y
                             # confundia (Yunior 2026-07-28: "el mensaje es el mismo... y confunde").
-                            if s in NASDAQ10 and rec["feed_age_s"] is not None and rec["feed_age_s"] <= UW_MAX_AGE_S:
+                            # capitanes (SPY/QQQ/SMH) SOLO con umbral p97 propio medido (n>=30);
+                            # single names sin historia siguen con el $2M etiquetado de siempre
+                            _t = UW_PTH.get(s)
+                            _armed = _t is not None or s in NASDAQ10
+                            _bull = _t["bull"] if _t else UW_PREM_BULL
+                            _bear = _t["bear"] if _t else UW_PREM_BEAR
+                            _exit = _t["exit"] if _t else UW_PREM_EXIT
+                            if s in (NASDAQ10 + UW_CAPTAINS) and _armed and rec["feed_age_s"] is not None and rec["feed_age_s"] <= UW_MAX_AGE_S:
                                 sp = uw_prem["signed_premium"]
                                 pkey = f"{s}_uwprem"
                                 pprev = state.get(pkey, "mid")
                                 pcur = pprev
-                                if sp >= UW_PREM_BULL: pcur = "bull"
-                                elif sp <= UW_PREM_BEAR: pcur = "bear"
-                                elif pprev == "bull" and sp < UW_PREM_EXIT: pcur = "mid"
-                                elif pprev == "bear" and sp > -UW_PREM_EXIT: pcur = "mid"
+                                if sp >= _bull: pcur = "bull"
+                                elif sp <= _bear: pcur = "bear"
+                                elif pprev == "bull" and sp < _exit: pcur = "mid"
+                                elif pprev == "bear" and sp > -_exit: pcur = "mid"
                                 if pcur != pprev:
                                     state[pkey] = pcur
                                     if pcur in ("bull", "bear"):

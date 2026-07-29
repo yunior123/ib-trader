@@ -33,18 +33,23 @@ def wilson_lo(w, n, z=1.96):
 
 
 def load_bars(sym):
-    path = os.path.join(ROOT, "data", f"bars_{sym.lower()}_ibkr.txt")
-    if not os.path.exists(path):
-        path = os.path.join(ROOT, "data", f"bars_{sym.lower()}.txt")
-        if not os.path.exists(path):
-            return None
+    # historico archivado PRIMERO (los vivos rotan ~2 dias y dejaban 916/2295 filas excluidas)
+    paths = sorted(__import__("glob").glob(
+        os.path.join(ROOT, "data", "history", "*", "bars", f"{sym.lower()}.txt")))
+    for p in (os.path.join(ROOT, "data", f"bars_{sym.lower()}_ibkr.txt"),
+              os.path.join(ROOT, "data", f"bars_{sym.lower()}.txt")):
+        if os.path.exists(p):
+            paths.append(p)   # el vivo al final: misma barra -> gana la lectura mas fresca
+    if not paths:
+        return None
     bars = {}
-    with open(path) as f:
-        for ln in f:
-            p = ln.split()
-            if len(p) >= 5:
-                bars[int(p[0])] = float(p[4])
-    return bars
+    for path in paths:
+        with open(path) as f:
+            for ln in f:
+                p = ln.split()
+                if len(p) >= 5:
+                    bars[int(p[0])] = float(p[4])
+    return bars or None
 
 
 def close_at(bars, ts):

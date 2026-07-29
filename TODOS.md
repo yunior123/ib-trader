@@ -2,6 +2,53 @@
 
 > Vivo. Marcar [x] al cerrar. Manual completo: `docs/DAILY-SYSTEM.md`.
 
+## 🔴 SESIÓN 2026-07-29 (madrugada) — retomar y cerrar todo
+- [ ] **"resume last two sessions, finish all pending. new: u can use codex now as helper and
+      extra hands, also for hard deficcult tasks, calculos, etc." + "there are also some features
+      another session was working on, make sure to complete those, delegate to codex as much as
+      possible"** (Yunior 2026-07-29 ~02:45) — plan aprobado
+      `~/.claude/plans/resume-last-two-sessions-sorted-penguin.md`. Estado: `en curso`.
+      Hallazgos al retomar: Mac reiniciado 02:39 (flota launchd viva, 6 bridges 200 con código
+      de anoche), relanzadores 09:31 MUERTOS por el reboot, DeepSeek RECARGADO ($1.65),
+      posts-en-inglés ya hecho (d51e34d), `overnight_feed.py` escrito sin cablear, las 2
+      sesiones de anoche murieron por session-limit a las 21:35 vigilando el short NQ/SQQQ.
+      Cerrado esta madrugada (verificado, tests en verde):
+      - [x] Relanzadores 09:31 REARMADOS (PIDs 18731 today_alarm5 / 18732 capitulacion_qqq).
+      - [x] Factor overnight NQ/Corea de la flecha (codex + verificación): `overnight_structure.py`
+            (NQ 0.6 + Corea 0.3 + sentimiento X 0.1, coef multiplicativo 1.25/1.0/0.75 patrón
+            peer_structure, solo fuera de RTH, ctx <5min, None jamás 0) cableado en
+            `direction_view.py` 4f, ENCENDIDO por defecto (OVERNIGHT_STRUCT=0 apaga);
+            `overnight_feed.py` + `overnight_feed_keepalive.sh` en fleet_keepalive_start
+            (arranque + apagado). 10 tests nuevos.
+      - [x] Compass "¿60% fijo?" MEDIDO (codex + verificación): NO es 60 fijo pero 71% de
+            emisiones en 60-61, 100% "doctrina" — y la CAUSA del calib vacío NO era bug:
+            el ledger nació 28-jul 00:28, ayer 4am no había filas RTH maduras. Calibrador
+            corrido hoy: 7 celdas, 1.379 filas — `CONTINUACION|f0|POS` n=270 wr30 57,4%
+            lo=0,514 (primera celda medida >50); pool n=1379 wr30 50,5% (la flecha sola es
+            moneda al aire — la selectividad sigue siendo el edge). Backtest codex +1min:
+            44% hit (ruido, no invertible). Fix real: `compass_calibrate.load_bars()` ahora
+            lee también `data/history/*/bars/` (los vivos rotan ~2 días; excluidas 916→365).
+      - [x] Barras KRX ya NO se pierden (codex + verificación): `korea_bar_bridge.warmup()`
+            archiva a `data/history/<fecha>/bars/<name>_krx.txt` ANTES de truncar (fecha
+            derivada de los timestamps, atómico, si falla NO trunca). 6 tests. Fix extra:
+            su test pisaba `sys.modules["ib_insync"]` y envenenaba la suite — stub condicional.
+      - [x] Alarma premium UW ampliada a capitanes SPY/QQQ/SMH (aprobado por Yunior):
+            probe confirmó que el trial DA net-prem-ticks para ETFs; umbral p97 PROPIO por
+            símbolo (n>=30, exit al 50%) porque QQQ p50 ya es $3,6M y el $2M fijo sería
+            crying-wolf; single names sin historia siguen en $2M etiquetado; capitanes NO
+            alarman hasta tener n>=30 (~1-2 sesiones de polls). 5 tests. Vigía relanzado.
+      - [x] TradingAgents SKHY corrido con DeepSeek recargado: **bear (Underweight)** en
+            211s → `data/ta_view_skhy.json` (post-earnings: récord 60,5T₩ pero miss).
+      - [x] X sentiment: decisión Yunior = solo bajo demanda (skill queda, sin recurrente).
+      Pendiente para RTH hoy (no se puede medir de noche): latencia cinta UW, cintas whale
+      capitanes con tick firmado, TradingFlow 9:31 (extensión Chrome), pasada visual Chrome,
+      ficha premarket SKHY + estrangle TQQQ/SQQQ, buscador chart (perpetuos+Corea).
+- [ ] **"claude is connected to chrome, u can check. 2. send codex to also finish the work with
+      the widgets in software plus making ui nicer, search pass session, its there the
+      explanation"** (Yunior 2026-07-29 ~03:40) — en curso: codex a rematar widgets del cockpit
+      (liq_map Bookmap-style + pasada UI expensive de la sesión de anoche) + pasada visual
+      con Chrome ya conectado.
+
 ## 🔴 SESIÓN 2026-07-28 (tarde) — ballenas: mensajes, filtro marginal, carril rápido
 - [x] **"do we have a widget to spot whales like tradingflow... todos los que puedas, usa UW"**
       (Yunior 2026-07-28) — cinta UW flow-alerts en el cockpit: hecho bf6b56a (poller
@@ -372,6 +419,7 @@
 - [x] 2026-07-28 (Yunior): "crea skills nuevos para capturar sentimiento. y monitorea korea" (~20:15) — `hecho 79f43af`: skill `.claude/skills/x-sentiment/` + `scripts/x_sentiment.py` (presets skhynix/samsung/kospi/ticker-US, crudo atómico en `data/x_sentiment/`, fail-loud, probado en vivo 2×). Monitor KRX armado esta sesión (Hynix/Samsung/KOSPI, bandas ±0.75% + cinta ciega; baseline 20:15: Hynix +3.2%, Samsung +5.5%, KOSPI +2.9% — rebote fuerte con short covering). El monitor muere con esta sesión de Claude Code; los bots KRX de la flota siguen siendo la alarma permanente.
 - [ ] 2026-07-28 (Yunior): "avisame cuando comprar o vender" + "ahora overnight, monitorea" (~20:30) — en curso esta sesión: monitor KRX con histéresis (gatillos Hynix 1.555M flat / 1.605M high), relanzador 09:31 de today_alarm5 (PID 99368, la voz compra/vende con print), monitor NQ=F overnight; ficha de UN número para SKHY en premarket tras cierre KRX + planes 4am
 - [ ] 2026-07-28 (Yunior): "predigo una caida brutal, asi que compro etf invertido, avisame." (~20:35) — en curso: el gatillo de entrada al inverso ES su propia alarma `capitulacion_qqq.py` (MANADA bajista + RETEST_REJECT QQQ + gamma NEG); estaba MUERTA (sale al cierre, sin keepalive) → relanzador 09:31 armado (PID 6635). Aviso overnight vía monitor NQ/ES. Contradicción con números registrada: al momento de la orden la cinta estaba VERDE (NQ +0.31%, ES +0.72%, Samsung +4%, Hynix verde post-miss) → no entrar al inverso sin el print; SQQQ es el vehículo (TFSA no shortea, presupuesto ~$150)
+- [ ] 2026-07-28 (Yunior): "make sure the night compass has as weight the NQ, plus all the analysis u are making. and any extras u may consider." (~21:45, con short SQQQ vivo) — en curso: factor overnight NQ/Corea en compass como coeficiente multiplicativo con tope (doctrina direction-view: una familia nueva DESPLAZA a otra), feed tonto para NQ, tests
 - [ ] 2026-07-28 (Yunior): "make sure the posts are in english in the future and not spanish" — `delegado a agente` (background): solo el CUERPO de los posts a inglés en x_signal_poster/x_postmortem/x_earnings_post/xpost + x_draft() de daily_fleet_plans; voz/logs/email siguen en español; x_whale_bot.cpp ya postea en inglés. Verificar py_compile + tests x_* al volver.
 - [ ] 2026-07-28 (Yunior): "todos los que puedas, usa UW" — (1) cinta ballenas UW flow-alerts en cockpit [delegado a agente], (2) cron volume_profile+kde_levels [en curso], (3) fix reparto cap tick-by-tick QQQ/SPY 0 bytes [en curso], (4) pintar KDE/VPVR como capa contexto en chart — hecho c842f7a+b485d7c+a6885d4 (frame liq_levels + toggle Liquidez default OFF, contexto-no-gatillo, 6 bridges relanzados 200), (5) hiro_pulse.cpp SUPERADO por cinta UW. Suite pytest RESUELTO: watchdog de opt_whale_watch armado dentro de pytest por el fixture (os._exit(1) a los 300s); fix en tests/, suite 990 passed exit 0
 - [x] 2026-07-28 (Yunior): "debug notifications... spanish, simple, real. claude code start should speak spanish. finish all improvements" — hecho: (a) zombi BOLLINGER VIGIA cazado (118 banners fantasma post-cierre, portero RTH en keepalive, commit); (b) arranque Claude Code traducido (echo hook + voz session-start + indice skills + 'Falló el comando'); (c) voz del dia 0 frases en ingles, price_alarm 0 alertas viejas, korea_watch ya fail-loud; (d) capa liquidez en chart delegada a agente; (e) hiro_pulse SUPERADO por la cinta UW (tick opciones IBKR err 10189 = via muerta; UW flow-alerts ya da el flujo firmado)

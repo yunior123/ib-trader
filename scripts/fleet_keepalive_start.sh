@@ -47,7 +47,7 @@ fleet_stop_all() {
   for p in price_alarm_keepalive.sh opt_sentinel_keepalive.sh options_enrich_keepalive.sh \
            opt_chain_keepalive.sh bargain_keepalive.sh sox_keepalive.sh \
            finviz_scout_keepalive.sh notify_relay.sh x_signal_keepalive.sh \
-           opt_whale_keepalive.sh uw_flow_tape_keepalive.sh voice_queue_keepalive.sh compass_keepalive.sh \
+           opt_whale_keepalive.sh uw_flow_tape_keepalive.sh overnight_feed_keepalive.sh voice_queue_keepalive.sh compass_keepalive.sh \
            perp_stock_keepalive.sh perp_nbbo_bridge_keepalive.sh \
            fleet_consensus_keepalive.sh; do
     pkill -f "scripts/$p" 2>/dev/null
@@ -314,6 +314,13 @@ fi
 if ! pgrep -f "scripts/uw_flow_tape_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/uw_flow_tape_keepalive.sh" >/dev/null 2>&1 &
   echo "$(date) fleet: uw_flow_tape_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+fi
+
+# factor overnight de la flecha (2026-07-28 "night compass has as weight the NQ"): NQ/ES +
+# Corea + sentimiento X -> data/overnight_ctx.json (overnight_structure en direction_view).
+if ! pgrep -f "scripts/overnight_feed_keepalive.sh" >/dev/null; then
+  nohup zsh "$ROOT/scripts/overnight_feed_keepalive.sh" >/dev/null 2>&1 &
+  echo "$(date) fleet: overnight_feed_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
 fi
 
 # price_alarm estaba en la lista de APAGADO (linea 47 y 60) pero NUNCA en la de

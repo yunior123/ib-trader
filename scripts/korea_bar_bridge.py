@@ -232,6 +232,38 @@ def newest_bar_epoch(names=CORE):
             best = ep
     return best
 
+def archive_bars_before_warmup(name):
+    """Archivar a history/<date>/bars/ antes de truncar. Fecha derivada de timestamps.
+    Atomicidad: tmp+os.replace. Retorna False si falla (warmup NO trunca entonces)."""
+    path = bars_path(name)
+    if not os.path.exists(path):
+        return True
+    try:
+        with open(path, "r") as f:
+            lines = f.readlines()
+        if not lines:
+            return True
+        try:
+            first_epoch = float(lines[0].split()[0])
+            session_date = time.strftime("%Y-%m-%d", time.localtime(first_epoch))
+        except (IndexError, ValueError):
+            print(f"{name}: archive — no puedo extraer epoch, saltando",
+                  file=sys.stderr)
+            return False
+        hist_dir = os.path.join(ROOT, "data", "history", session_date, "bars")
+        os.makedirs(hist_dir, exist_ok=True)
+        dst = os.path.join(hist_dir, f"{name}_krx.txt")
+        tmp = dst + ".tmp"
+        with open(tmp, "w") as o:
+            o.writelines(lines)
+        os.replace(tmp, dst)
+        print(f"{name}: {len(lines)} barras archivadas a {session_date}/bars/{name}_krx.txt",
+              file=sys.stderr)
+        return True
+    except Exception as e:
+        print(f"{name}: archive FALLO — {e} — NO truncando", file=sys.stderr)
+        return False
+
 def freshness_guard(now=None):
     """GRITA si KRX esta abierto y el ultimo bar pasa de STALE_MAX_S. True si grito."""
     if not krx_market():
@@ -266,9 +298,11 @@ def resub_all(ib, why):
         st.blocked_until = 0
 
 def warmup(ib, st):
-    """historia 1 dia -> escribe el bars file (truncate, orden ascendente) para
-    que el bot C++ prime BB/RSI al instante; live continua en append."""
+    """Archivar barras existentes antes de truncar; luego cargar histórico 1 día."""
     conId, sym = KOREA[st.name]
+    if not archive_bars_before_warmup(st.name):
+        print(f"{st.name}: saltando warmup por fallo en archivado", file=sys.stderr)
+        return
     try:
         c = Contract(conId=conId, exchange="KRX"); ib.qualifyContracts(c)
         hist = ib.reqHistoricalData(c, "", "1 D", "1 min", "TRADES",

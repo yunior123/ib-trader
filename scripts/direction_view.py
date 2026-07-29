@@ -271,6 +271,22 @@ def compute(sym, lv=None):
         except Exception:
             pass
 
+    # 4f) OVERNIGHT: NQ + Corea FUERA de RTH US (Yunior 2026-07-28).
+    #     MULTIPLICATIVO sobre fleet/components via apply_overnight (mismo patrón que peer).
+    #     OVERNIGHT_STRUCT=0 apaga. Solo aplica FUERA de RTH.
+    if os.environ.get("OVERNIGHT_STRUCT") != "0" and ("fleet" in weights or "components" in weights):
+        try:
+            import gex_core
+            if not gex_core.in_rth():
+                from overnight_structure import overnight_coef, apply_overnight
+                local_dir = factors.get("components") or factors.get("fleet") or 0.0
+                og_coef, og_why = overnight_coef(sym, local_dir)
+                if og_coef != 1.0:
+                    weights = apply_overnight(weights, og_coef)
+                    why.append(og_why)          # el coeficiente aplicado SIEMPRE impreso
+        except Exception:
+            pass
+
     # 5) momentum reciente
     mom = _bars_mom(sym)
     if mom is not None:
