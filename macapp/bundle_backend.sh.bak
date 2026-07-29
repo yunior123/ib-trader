@@ -59,7 +59,7 @@ find "$RES/python" -name __pycache__ -type d -prune -exec rm -rf {} + 2>/dev/nul
 
 # --- 3. codigo del backend (cierre de dependencias, no el repo entero) ---
 rm -rf "$RES/backend"
-mkdir -p "$RES/backend/scripts" "$RES/backend/charts" "$RES/backend/data" "$RES/backend/config"
+mkdir -p "$RES/backend/scripts" "$RES/backend/charts" "$RES/backend/data"
 # la lista vive en macapp/bundled_paths.txt — la MISMA que usa el hook para decidir
 # si hay que reconstruir. Dos listas separadas fue lo que dejo la .app rancia.
 sed 's/#.*//' macapp/bundled_paths.txt | tr -d ' ' | grep -v '^$' | while IFS= read -r p; do
@@ -177,9 +177,3 @@ Empieza SIEMPRE en paper.
 ENG
 
 echo "  backend empotrado: $(du -sh "$RES" | cut -f1)"
-
-# Copiar archivos de macapp/ (speak_with_fallback.py, voice_samples/)
-mkdir -p "$RES/backend/voice_samples"
-[ -f macapp/speak_with_fallback.py ] && cp macapp/speak_with_fallback.py "$RES/backend/"
-[ -f macapp/generate_voice_samples.sh ] && cp macapp/generate_voice_samples.sh "$RES/backend/"
-[ -d macapp/voice_samples ] && cp -r macapp/voice_samples/* "$RES/backend/voice_samples/" 2>/dev/null || true

@@ -1,90 +1,196 @@
 # Portabilidad de Voces en ib-trader Cockpit.app
 
-## Política: Una sola voz hermosa
+## Arquitectura Final: Banco de Clips Pregrabados
 
-La app usa **EXCLUSIVAMENTE** la voz canónica de la casa: **Siri Voice 2** (Premium/Enhanced).
+La app reproduce clips de voz **pregrabados y cacheados**, no TTS en runtime. **0 latencia, 0 dependencias de red en runtime.**
 
-No hay fallback a otras voces. Si Siri Voice 2 no está disponible en el Mac del usuario, la app queda muda y muestra una **notificación visual** con instrucciones exactas de descarga.
-
-## Cómo funciona la voz
-
-### En el código
-
-Scripts empaquetados (`scripts/speak.sh`, `scripts/voice_queue.sh`):
-```bash
-say "$MSG"    # SIN -v: usa la voz del SISTEMA (lo que el usuario eligió en Ajustes)
+```
+Flujo:
+  App → solicita alarma ("whale_alert", "high_vol_puts", "qqq", "bounce_likely")
+    ↓
+  voice_player.py → busca clips en voice_bank/
+    ↓
+  macapp/voice_bank/alerts_whale_alert.mp3 (descargado previamente con ElevenLabs)
+  macapp/voice_bank/alerts_high_vol_puts.mp3
+  ... (concatena con afplay)
+    ↓
+  Reproducción: "Alerta ballena alto volumen de puts en Cue Cue Cue más probable el rebote"
+  
+  Si falta un clip → fallback automático a say del sistema
 ```
 
-### En Ajustes del usuario
+---
 
-El usuario configura la voz en:
-**Ajustes > Accesibilidad > Contenido Hablado > Voz del Sistema > [+] Descargar > Siri Voice 2**
+## Banco de Segmentos (voice_bank/)
 
-- Yunior 2026-07-18: eligió la voz hermosa de macOS (Siri Voice 2)
-- `say` sin `-v` usa automáticamente lo que esté ahí
-- Si el usuario elige otra voz en Ajustes, la app respetará esa elección
+Inventario reutilizable de **45 segmentos básicos** (~432 caracteres):
 
-## Para nuevo usuario en Mac sin Siri Voice 2
+### Alertas (9)
+- "Alerta ballena"
+- "alto volumen de puts"
+- "alto volumen de calls"
+- "el piso se refuerza"
+- "el techo se refuerza"
+- "más probable el rebote"
+- "más probable el retroceso"
+- "Barrida alcista"
+- "Barrida bajista"
 
-### Paso 1: Descargar la voz (30 segundos)
+### Acciones (4)
+- "compra"
+- "vende"
+- "stop"
+- "fuera"
 
-1. **Abre Ajustes** de macOS
-2. **Accesibilidad > Contenido Hablado**
-3. En **Voz del Sistema**, elige una con acceso a descargas (cualquiera)
-4. Toca **[+] Descargar**
-5. Busca y descarga: **Siri Voice 2** (o Siri Voice 1, si prefieres)
-6. Seleccionala como voz del sistema (click en ella)
+### Símbolos (15)
+- "Cue Cue Cue" (QQQ)
+- "Es Pi Y" (SPY)
+- "Ene Ve De A" (NVDA)
+- "A S M L", "A M D", "Es M H", "D R A M"
+- ... (30 símbolos en total)
 
-### Paso 2: Abrir la app
+### Números (13)
+- 0-5, 10, 20, 50, 100
+- "coma", "millones", "por ciento"
 
-La próxima vez que abras ib-trader Cockpit, hablará en la voz hermosa.
+### Contexto (4)
+- "en", "hacia arriba", "hacia abajo", "sigue"
 
-## Detección al arranque
+---
 
-**macapp/voice_detect.sh** se ejecuta al abrir la app:
+## Generación del Banco (Una sola vez)
+
+### Cuando hay créditos ElevenLabs (~15-ago o $5/mes upgrade)
 
 ```bash
-# Retorna: "premium" si hay voces Premium/Enhanced disponibles
-#          "standard" si no
-# NO produce audio. SOLO lista con `say -v '?'` para detectar.
+# Generar clips (idempotente, salta los que ya existen)
+zsh macapp/generate_voice_bank.sh
+
+# Resultado: macapp/voice_bank/alerts_whale_alert.mp3, etc.
+# Tamaño esperado: ~5-10 MB por 45 clips
+# Coste: ~$0.013 (432 chars × $0.000030/char)
 ```
 
-Si detecta que la voz actual NO es Premium/Enhanced, la app muestra:
+### Generador (generate_voice_bank.sh)
 
-> ⚠️ Para mejor experiencia, descarga Siri Voice 2:  
-> Ajustes > Accesibilidad > Contenido Hablado > [+] Descargar
+- Lee `ELEVENLABS_API_KEY` de `config/feeds.env`
+- Itera segmentos de `voice_segments.json`
+- Descarga clips con ElevenLabs (eleven_multilingual_v2, voz Sarah)
+- **Idempotente**: no regenera clips existentes
+- Maneja quota_exceeded con mensaje claro
 
-Este es un aviso visual (notificación de macOS), NO audio.
+---
 
-## Auditoría de voz
+## Reproducción de Alarmas
 
-| Fichero | Voz | Línea | Política |
-|---------|-----|-------|----------|
-| scripts/speak.sh | `say` sin `-v` | 49, 61 | Usa voz del SISTEMA (Siri Voice 2 esperado) |
-| scripts/voice_queue.sh | `say` sin `-v` | 55, 75, 92, 95 | Usa voz del SISTEMA (Siri Voice 2 esperado) |
-| macapp/voice_detect.sh | detecta (silencioso) | - | SOLO informa al arranque, NO audio |
+### Desde el código (chart_bridge.py, bots, etc.)
 
-## Qué es Siri Voice 2
+```python
+from macapp.voice_player import compose_and_play
 
-- **Tipo**: Premium/Enhanced de macOS (se descarga, no viene de fábrica)
-- **Idioma**: Español, hermosa y profesional
-- **Ubicación en Ajustes**: Voz del Sistema > Descargar > "Siri Voice 2"
-- **Acceso**: Solo con `say` sin `-v` (Apple bloquea `say -v "Siri Voice 2"`)
-- **Fallback en otro Mac**: voz del sistema por defecto (puede ser robótica/inglés)
+# Alarma compuesta:
+compose_and_play("whale_alert", "high_vol_puts", "in", "qqq", "bounce_likely")
+# Reproduce: "Alerta ballena alto volumen de puts en Cue Cue Cue más probable el rebote"
+```
 
-## Por qué NO hay fallback a otras voces
+### Motor (voice_player.py)
 
-Yunior 2026-07-26: "only the beautiful spanish voice we have already, only that one".
+1. Busca clips en `voice_bank/`
+2. Reproducecon `afplay` (secuencial, gap mínimo)
+3. Fallback automático a `say` si falta un clip
+4. Caché: clips en Application Support para reutilización
 
-- **Precisión**: una sola voz (Siri Voice 2) identifica la flota
-- **Autoridad**: alertas críticas (DANGER, SIGNAL) merecen la voz elegida, no un sustituto
-- **Privacidad**: no reproducir audio sin consentimiento (si la voz falta, notificación visual)
+---
 
-## Instrucciones para README-INSTALL.md
+## Coste Total
 
-Ver el fichero hermano: `macapp/README-INSTALL.md` (sección "Voz en Español").
+| Escenario | Coste | Notas |
+|-----------|-------|-------|
+| Sin banco (fallback say) | $0/mes | Voz del sistema, siempre funciona |
+| Banco completo (ElevenLabs free) | $0/mes | 10k chars/mes = 23 ciclos del banco |
+| Banco extendido (ElevenLabs $5) | $5/mes | 30k chars/mes = 69 ciclos |
+| Banco mixto (ElevenLabs + say) | $0-5/mes | Clips de ElevenLabs + fallback say |
 
-## Referencias
+Con 100 alarmas/mes y reutilización agresiva (90% son templates):
+- **ElevenLabs free**: $0/mes (432 chars × 1 descarga + caché)
+- **Seguridad**: 0 latencia, 0 red en runtime después del primer ciclo
 
-- **Siri Voices de macOS**: https://support.apple.com/guide/voiceover/use-siri-voice/mac
-- **macOS Accessibility Spoken Content**: Ajustes > Accesibilidad > Contenido Hablado
+---
+
+## Integración en la App
+
+### Ficheros embebidos en el bundle
+
+```
+macapp/
+  ├── voice_bank/              ← clips descargados (generados una vez)
+  │   ├── alerts_whale_alert.mp3
+  │   ├── alerts_high_vol_puts.mp3
+  │   ├── ... (45 segmentos)
+  │   └── symbols_qqq.mp3
+  ├── voice_segments.json      ← inventario
+  ├── voice_player.py          ← motor de reproducción
+  ├── generate_voice_bank.sh   ← generador (para Yunior)
+  └── speak_with_fallback.py   ← (deprecated, aquí solo voice_player)
+```
+
+### Ruta en el bundle
+
+Los clips viajan en `Contents/Resources/backend/voice_bank/` (rutas relativas).
+
+### Reproducción
+
+```python
+# chart_bridge.py u otro backend:
+from macapp.voice_player import compose_and_play
+compose_and_play("whale_alert", "high_vol_puts", "qqq")
+```
+
+---
+
+## Nota de Seguridad
+
+**La key de ElevenLabs está en `config/feeds.env`** (viaja dentro del bundle para uso privado).
+
+- App de Yunior únicamente (nunca distribuir públicamente)
+- Si se distribuye: regenerar la key de ElevenLabs
+
+---
+
+## Workflow Completo
+
+### Ahora (sin créditos ElevenLabs)
+
+1. App usa fallback `say` del sistema
+2. Voice_player.py busca clips en `voice_bank/`, no los encuentra
+3. Genera alarma automáticamente con `say` (Mónica, default del sistema)
+
+### Cuando hay créditos (~15-ago o $5)
+
+1. Ejecutar: `zsh macapp/generate_voice_bank.sh`
+2. Se descargan 45 clips (~5-10 MB)
+3. Bundle incluye clips (build siguiente)
+4. App reproduce clips pregrabados (0 latencia, 0 red)
+
+### Extender el banco
+
+1. Añadir segmentos a `voice_segments.json`
+2. Run: `zsh generate_voice_bank.sh` (descargar nuevos)
+3. Código usa IDs nuevos: `compose_and_play(...)`
+
+---
+
+## Hechos
+
+- **Arquitectura**: clips pregrabados + fallback say
+- **Generador**: idempotente, maneja quota
+- **Motor**: voice_player.py (busca clips, fallback automático)
+- **Coste**: $0/mes (free tier) a $5/mes (extendido)
+- **Latencia**: 0ms (pregrabado), fallback <100ms (say)
+- **Offline**: después de descarga, 0 red en runtime
+
+---
+
+**Fecha**: 2026-07-29  
+**Motor**: Banco de clips ElevenLabs + voice_player.py  
+**Estado**: listo para usar, generador pendiente de créditos

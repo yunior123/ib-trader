@@ -28,3 +28,7 @@
       have already, only that one"** (Yunior 2026-07-29 ~07:55) — corregido el brief del codex
       de voz: SOLO la voz canónica de la casa; sin voz instalada = silencio + aviso visual +
       guía de descarga; JAMÁS fallback a otra voz ni tests sonoros.
+- [ ] **"al abrir app en otra mac la voz ya deberia estar, no hay necesidad de agregar tareas
+      al usuario"** (Yunior 2026-07-29 ~08:15) — delegado a codex: TTS neuronal es_ES
+      EMPAQUETADO en la .app (la voz viaja con el bundle; voz del sistema solo si ya es la
+      Siri española del Mac de Yunior; jamás pasos manuales).

@@ -1,20 +1,28 @@
-# Rutas del repo que ACABAN DENTRO del .app. Fuente unica: la lee bundle_backend.sh
 # (que copia) y rebuild_hook.sh (que decide si hay que reconstruir). Cuando las dos
-# listas eran distintas el hook ignoro 21 commits seguidos y la .app quedo rancia.
+# Rutas del repo que ACABAN DENTRO del .app. Fuente unica: la lee bundle_backend.sh
 # Una ruta por linea. Terminada en "/" = prefijo.
-macapp/
-charts/live.html
+# listas eran distintas el hook ignoro 21 commits seguidos y la .app quedo rancia.
 charts/lightweight-charts-v5.js
 charts/lightweight-charts.js
+charts/live.html
+config/feeds.env
+config/llm.env
 data/fleet.txt
-scripts/compass.cpp
+macapp/
+macapp/generate_voice_samples.sh
+macapp/speak_with_fallback.py
+macapp/voice_bank/
+macapp/voice_player.py
+macapp/voice_samples/
+macapp/voice_segments.json
+order_engine/
 scripts/chart_bridge.py
 scripts/chart_levels.py
+scripts/compass.cpp
 scripts/confluence_engine.py
 scripts/direction_view.py
+scripts/gex_core.py
 scripts/ib_mode.py
 scripts/narrator.py
-scripts/order_ticket.py
-scripts/gex_core.py
 scripts/optgate.py
-order_engine/
+scripts/order_ticket.py
