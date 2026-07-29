@@ -139,3 +139,5 @@ bots/*_signal_bot
 logs/
 *.out
 *.err
+macapp/.rebuild-pending
+macapp/.rebuild-waiting
