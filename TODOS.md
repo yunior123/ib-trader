@@ -41,3 +41,4 @@
       no lo ve. Implementar overnight_coef en compass.cpp + recompilar
       (`scripts/build_compass.sh`). (2026-07-29, pendiente — decisión de Yunior si va al C++)
 - [ ] "relanza todo, build macos new version" (Yunior 2026-07-29, en curso — rebuild .app Cockpit en macOS 26.5.1 + relanzar flota)
+- [ ] "send agent to review finviz failure" (Yunior 2026-07-29, delegado a agente)

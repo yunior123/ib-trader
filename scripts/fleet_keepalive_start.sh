@@ -320,6 +320,13 @@ if ! pgrep -f "scripts/uw_flow_tape_keepalive.sh" >/dev/null; then
   echo "$(date) fleet: uw_flow_tape_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi
 
+# BRUJULA (compass C++): escribe data/compass_<sym>.json que lee el cockpit. Estaba en
+# fleet_stop_all pero NADIE la lanzaba (cazado 2026-07-29: flecha rancia 9h con flota "arriba").
+if ! pgrep -f "scripts/compass_keepalive.sh" >/dev/null; then
+  nohup zsh "$ROOT/scripts/compass_keepalive.sh" >/dev/null 2>&1 &
+  echo "$(date) fleet: compass_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
+fi
+
 # factor overnight de la flecha (2026-07-28 "night compass has as weight the NQ"): NQ/ES +
 # Corea + sentimiento X -> data/overnight_ctx.json (overnight_structure en direction_view).
 if ! pgrep -f "scripts/overnight_feed_keepalive.sh" >/dev/null; then
