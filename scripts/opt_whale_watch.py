@@ -41,6 +41,7 @@ import em_envelope   # tabla de festivos real (misma fuente que fleet_healthchec
 import uw_premium
 import uw_premium_alert
 import notify_short
+from flow_bb_correlator import DEFAULT as FLOW_BB, prior_bb_suffix
 
 
 def load_fleet():
@@ -604,8 +605,17 @@ while True:
                         # ley 13 (espada-ballena): PUTS = piso, se refuerza -> rebote mas
                         # probable; CALLS = techo, se refuerza -> retroceso mas probable.
                         explica = "rebote probable" if cur == "puts" else "bajada probable"
-                        loud("🐋📈 ALERTA BALLENA CRECE", f"Sigue entrando volumen de {cur} en {s}, {explica}.", "ProAlarm",
-                             voice_msg=f"Alerta ballena, sigue entrando {cur} en {s}, {explica}.")
+                        strike = dominant_strike(per, "P" if cur == "puts" else "C")
+                        match = FLOW_BB.record_flow(
+                            ts=time.time(), sym=s, side=cur, source="opt_whale_watch:escalada",
+                            volume_scope="aggregate_strikes", aggregate_volume=vdom,
+                            dominant_strike=strike)
+                        suffix = prior_bb_suffix(match) if match else ""
+                        loud("🐋📈 ALERTA BALLENA CRECE",
+                             f"Sigue entrando volumen agregado de {cur} en {s}, {explica}.{suffix}",
+                             "ProAlarm",
+                             voice_msg=f"Alerta ballena, sigue entrando volumen agregado de {cur} en {s}, {explica}."
+                                       + (" Bollinger ya es compatible." if match else ""))
                     elif cur != prev:
                         # jamas sembrar baseline con volumen de CLASE entera
                         # (AVGO_v=158k clase 12:36 dejo la escalada por-strikes
@@ -629,12 +639,20 @@ while True:
                             right = "P" if cur == "puts" else "C"
                             strike = dominant_strike(per, right) if not tag else None
                             wall = wall_near(s, strike, right) if strike is not None else None
-                            nivel = f", strike {strike:g}" if strike is not None else ""
+                            nivel = f"; strike dominante {strike:g}" if strike is not None else ""
                             if wall is not None:
                                 nivel += f" — cerca del muro de {lado_txt.lower()} medido en ${wall:g}"
-                            detalle = f"alto volumen de {cur} en {s}{nivel}"
-                            loud(f"🐋 ALERTA BALLENA {lado_txt}", f"Alerta ballena: {detalle}", "ProAlarm",
-                                 voice_msg=f"Alerta ballena, {detalle}.")
+                            scope = "aggregate_class" if tag else "aggregate_strikes"
+                            match = FLOW_BB.record_flow(
+                                ts=time.time(), sym=s, side=cur, source="opt_whale_watch",
+                                volume_scope=scope, aggregate_volume=vdom,
+                                dominant_strike=None if tag else strike)
+                            suffix = prior_bb_suffix(match) if match else ""
+                            detalle = f"alto volumen agregado de {cur} en {s}{nivel}"
+                            loud(f"🐋 ALERTA BALLENA {lado_txt}",
+                                 f"Alerta ballena: {detalle}.{suffix}", "ProAlarm",
+                                 voice_msg=f"Alerta ballena, {detalle}."
+                                           + (" Bollinger ya es compatible." if match else ""))
             except Exception as e:
                 # bug cazado 2026-07-28: este except lo cubria TODO (qualify/measure/get_spot)
                 # sin tocar zeros[s] ni lines[] -> un simbolo que empieza a fallar (timeout tras

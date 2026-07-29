@@ -20,6 +20,7 @@ sys.path.insert(0, os.path.join(REPO, "scripts"))
 # gate de spread: la cuenta vive en ./gate (gate_core.hpp). Alias porque la variable local
 # de mas abajo ya se llama opt_veto.
 from optgate import opt_vehicle, opt_veto as opt_veto_of
+from flow_bb_correlator import DEFAULT as FLOW_BB, linked_update
 COOLDOWN_S = 1800
 
 # Probabilidades MEDIDAS por backtest (docs/BACKTEST-BOLLINGER-2026-07.md).
@@ -53,7 +54,7 @@ def fleet():
 
 VOICE_CORE = {"qqq", "spy", "nvda", "smh", "mu"}   # solo estos hablan; el resto banner+log
 
-def say(title, msg, sound="ProAlert", voice=True, prio="INFO", voice_msg=None):
+def say(title, msg, sound="ProAlert", voice=True, prio="INFO", voice_msg=None, push=None):
     # LECCION 12:29 (cola atascada 27 min, 155 mensajes): los elasticos NO
     # pueden inundar la cola de voz — hablan solo los core (prio INFO, ceden
     # el turno a DANGER/SIGNAL de ballenas y price_alarm) o los band-walks.
@@ -63,6 +64,9 @@ def say(title, msg, sound="ProAlert", voice=True, prio="INFO", voice_msg=None):
     if voice:
         subprocess.Popen(["/bin/bash", "scripts/speak.sh", prio, corto],
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    if push is None:
+        push = voice
+    if push:
         import notify_short; notify_short.push(title, corto)
     subprocess.Popen(["/usr/bin/osascript", "-e",
                       f'display notification "{corto}" with title "{title}" sound name "{sound}"'],
@@ -193,8 +197,16 @@ while True:
                                  f"y re-entró en {c15:.2f} — elastico mayor, digestion probable.{pr15} {opt_vehicle(sym)}")
                         vlado = "bajar un poco" if side15 == "up15" else "subir un poco"
                         if en15:
-                            say("🎈 BB 15m RE-ENTRADA", msg15, voice=sym in VOICE_CORE, prio="SIGNAL",
-                                voice_msg=f"{sym} puede {vlado}.")
+                            match = FLOW_BB.record_bb(
+                                ts=now, sym=sym, direction="DOWN" if side15 == "up15" else "UP",
+                                timeframe="15m", price=c15, target=mid15)
+                            if match:
+                                update = linked_update(match)
+                                say(update["title"], update["full"], voice=sym in VOICE_CORE,
+                                    prio="SIGNAL", voice_msg=update["short"], push=True)
+                            else:
+                                say("🎈 BB 15m RE-ENTRADA", msg15, voice=sym in VOICE_CORE,
+                                    prio="SIGNAL", voice_msg=f"{sym} puede {vlado}.")
                         else:
                             log_only("🎈 BB 15m RE-ENTRADA [MUTED p<55]", msg15)
                 elif st.get(side15) and (now - st[side15]) > 2700:
@@ -265,10 +277,18 @@ while True:
                             # pero pierde el privilegio de voz: pasa a INFO como el resto.
                             # RE-PROMOVER solo si la calibracion medida la devuelve >55%.
                             estrella = "CELDA ESTRELLA" in ctx
-                            say("🎈 BB REBOTE" + (" ⭐[degradada]" if estrella else ""), msge,
-                                voice=(sym in VOICE_CORE),
-                                prio="INFO",
-                                voice_msg=f"{sym} puede {vrebote}.")
+                            match = FLOW_BB.record_bb(
+                                ts=now, sym=sym, direction="DOWN" if side == "up" else "UP",
+                                timeframe="1m", price=c, target=mid)
+                            if match:
+                                update = linked_update(match)
+                                say(update["title"], update["full"], voice=(sym in VOICE_CORE),
+                                    prio="INFO", voice_msg=update["short"], push=True)
+                            else:
+                                say("🎈 BB REBOTE" + (" ⭐[degradada]" if estrella else ""), msge,
+                                    voice=(sym in VOICE_CORE),
+                                    prio="INFO",
+                                    voice_msg=f"{sym} puede {vrebote}.")
                         elif ene:
                             log_only("🎈 BB REBOTE [VETO medido]", msge)
                         else:

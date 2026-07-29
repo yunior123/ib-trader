@@ -6,6 +6,15 @@
 
 ## ✅ SESIÓN 2026-07-29
 
+- [x] **Netflix: flujo PUTS + confirmación BB correlacionados sin fabricar anticipación.**
+      Cronología real: SPIKE PUTS 11:37:18, voz terminada 11:37:24, reentrada BB nacida
+      11:38:30 con la barra siguiente; no hubo cola tardía. El mensaje corto había perdido
+      “rebote probable” y BB llegó aislada. Ahora flujo dice `rebote/retroceso probable;
+      Bollinger aún no confirma`; una BB compatible dentro de 180 s genera una sola
+      actualización `FLUJO + BB`, también para NFLX por push sin promover voz. Simétrico
+      PUTS↔UP/CALLS↔DOWN, stale/futuro/incompatible fuera, dedup con lock, capitán/vetos
+      no resucitan. Agente fresco + revisión principal; 973 tests verdes.
+
 - [x] **AAPL/GOOGL: premium agregado ya respeta pin/imán/muro.**
       La antigua “ALERTA PREMIUM ALCISTA/BAJISTA” confundía dirección del agresor con
       continuación y fabricaba una lectura de calls/puts sin contrato identificable. Ahora

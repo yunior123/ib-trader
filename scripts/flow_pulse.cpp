@@ -39,9 +39,11 @@
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <ctime>
 #include <deque>
 #include <fstream>
+#include <fcntl.h>
 #include <map>
 #include <optional>
 #include <sstream>
@@ -71,6 +73,7 @@ static const long   MANADA_W   = (long)envd("FP_MANADA_W", 720);   // ventana 12
 static const long   MANADA_CD  = (long)envd("FP_MANADA_CD", 1800);
 static const long   CAPT_W     = (long)envd("FP_CAPT_W", 1200);    // vigencia capitan 20 min
 static const long   CAPREV_CD  = (long)envd("FP_CAPREV_CD", 1800);
+static const long   FLOW_BB_W  = (long)envd("FLOW_BB_WINDOW_S", 180);
 
 // ---- v4: jerarquia de capitanes ----
 static bool is_market_captain(const std::string& s) { return s == "SPY" || s == "QQQ"; }
@@ -131,6 +134,69 @@ static std::optional<Rec> parse(std::string_view line) {
 static std::string lower(std::string s) {
     for (auto& c : s) c = (char)tolower(c);
     return s;
+}
+
+// ---- vínculo flujo <-> BB -------------------------------------------------
+// El fichero sólo contiene flujos que AÚN NO tenían BB compatible. Si BB ya existe fresca,
+// el primer canto se enriquece y no se deja pendiente (así no puede producir actualización
+// duplicada). bollinger_alarm.py consume los pendientes cuando la reentrada nace después.
+static std::string flow_bb_prior_or_record(const Rec& r, char side, double aggregate_delta) {
+    long now = time(nullptr);
+    std::ifstream bf("data/flow_bb_latest.json");
+    if (bf) {
+        std::string all((std::istreambuf_iterator<char>(bf)), {});
+        auto p = all.find("\"" + r.sym + "\":{");
+        if (p != std::string::npos) {
+            auto e = all.find('}', p);
+            std::string_view obj(all.data() + p, (e == std::string::npos ? all.size() : e + 1) - p);
+            auto ts = jnum(obj, "ts");
+            auto dir = jstr(obj, "direction");
+            auto tf = jstr(obj, "timeframe");
+            bool compat = dir && ((side == 'P' && *dir == "UP") ||
+                                  (side == 'C' && *dir == "DOWN"));
+            if (ts && compat && now >= (long)*ts && now - (long)*ts <= FLOW_BB_W) {
+                char out[240];
+                snprintf(out, sizeof out,
+                         " BB fresca ya existente (%s, hace %lds): %s. "
+                         "Compatibilidad tecnica; no prueba causalidad.",
+                         tf ? tf->c_str() : "TF s/d", now - (long)*ts,
+                         side == 'P' ? "rebote BB al alza" : "retroceso BB a la baja");
+                return out;
+            }
+        }
+    }
+    char line[640];
+    snprintf(line, sizeof line,
+             "{\"aggregate_volume\":%.0f,\"dominant_strike\":null,"
+             "\"id\":\"flow_pulse:%s:%s:%ld\",\"premium\":null,"
+             "\"side\":\"%s\",\"source\":\"flow_pulse\","
+             "\"sym\":\"%s\",\"ts\":%ld,\"volume_scope\":\"aggregate_delta\"}\n",
+             aggregate_delta, r.sym.c_str(), side == 'P' ? "PUTS" : "CALLS", now,
+             side == 'P' ? "PUTS" : "CALLS", r.sym.c_str(), now);
+    int fd = open("data/flow_bb_events.jsonl", O_WRONLY | O_CREAT | O_APPEND, 0644);
+    if (fd >= 0) {
+        (void)write(fd, line, strlen(line));  // una sola escritura O_APPEND
+        close(fd);
+    }
+    return "";
+}
+
+static std::string flow_short(const std::string& sym, char side, bool bb_compatible,
+                              bool captain_override = false) {
+    std::string out = "Alto volumen agregado de ";
+    out += side == 'P' ? "puts" : "calls";
+    out += " en " + sym + ". ";
+    if (captain_override) {
+        out += "Capitan opuesto vigente: esta lectura queda anulada.";
+        return out;
+    }
+    if (side == 'P')
+        out += bb_compatible ? "Rebote y Bollinger ya son compatibles."
+                             : "Rebote probable por flujo; Bollinger aun no confirma.";
+    else
+        out += bb_compatible ? "Retroceso y Bollinger ya son compatibles."
+                             : "Retroceso probable por flujo; Bollinger aun no confirma.";
+    return out;
 }
 
 // ---- probabilidades auto-calibradas (data/flow_pulse_probs.json) ----
@@ -304,6 +370,18 @@ static double qqq_spot() {
 }
 
 int main() {
+    // Arnés determinista: sólo ejercita el mismo registro/enriquecimiento usado en producción.
+    // No llama sing(), no voz, no banner, no red y sale inmediatamente.
+    if (getenv("FP_TEST_FLOW_BB")) {
+        const char* side_env = getenv("FP_TEST_FLOW_SIDE");
+        char side = side_env && (*side_env == 'C' || *side_env == 'c') ? 'C' : 'P';
+        bool overridden = getenv("FP_TEST_FLOW_OVERRIDE");
+        Rec r{time(nullptr), "NFLX", 0, 0, 0, 72.24};
+        std::string bbctx = overridden ? "" : flow_bb_prior_or_record(r, side, 4000);
+        printf("%s%s\n",
+               flow_short(r.sym, side, !bbctx.empty(), overridden).c_str(), bbctx.c_str());
+        return 0;
+    }
     // fuera de RTH: salir MUDO antes de cantar nada. Cazado 2026-07-28: el launcher relanzaba
     // cada 5 min toda la noche -> banner "arriba" + "fuera hasta manana" en bucle (16:00-24:00).
     if (!rth_open()) {
@@ -472,13 +550,17 @@ int main() {
                                                  "— rebote a la baja, probabilidad %d. %s",
                                                  r->sym.c_str(), dc / 1000, rc / h.ema_c, pr,
                                                  ci.veh.c_str());
-                                    std::string msg = std::string(m) + ovr;
+                                    // Un capitan opuesto ANULA este spike: no dejarlo pendiente,
+                                    // porque una BB posterior lo resucitaria como push vinculada.
+                                    std::string bbctx = ovr.empty()
+                                        ? flow_bb_prior_or_record(*r, 'C', dc) : "";
+                                    std::string msg = std::string(m) + ovr + bbctx;
                                     // regla 12: capitan opuesto vigente = el nombre
                                     // queda ANULADO (banner sin voz; la voz es del capitan)
                                     sing(std::string(!ovr.empty() ? "🔇🚀 SPIKE CALLS (capitan opuesto) "
                                          : ci.wall > 0 ? "🧱🚀 SPIKE CALLS " : "🚀 SPIKE CALLS ")
                                          + r->sym, msg, ovr.empty(), "SIGNAL",
-                                         "Alto volumen de calls en " + r->sym + ".");
+                                         flow_short(r->sym, 'C', !bbctx.empty(), !ovr.empty()));
                                     capitan_revierte(*r, 'C');   // capitan-calls tras puts de tropa
                                 }
                                 note_spike(r->sym, 'C');         // v4: jerarquia (vetado o no)
@@ -513,12 +595,14 @@ int main() {
                                                  "rebote al alza, probabilidad %d. %s",
                                                  r->sym.c_str(), dp / 1000, rp / h.ema_p, pr,
                                                  ci.veh.c_str());
-                                    std::string msg = std::string(m) + ovr;
+                                    std::string bbctx = ovr.empty()
+                                        ? flow_bb_prior_or_record(*r, 'P', dp) : "";
+                                    std::string msg = std::string(m) + ovr + bbctx;
                                     // regla 12: capitan opuesto vigente = anulado sin voz
                                     sing(std::string(!ovr.empty() ? "🔇🚀 SPIKE PUTS (capitan opuesto) "
                                          : ci.wall > 0 ? "🧱🚀 SPIKE PUTS " : "🚀 SPIKE PUTS ")
                                          + r->sym, msg, ovr.empty(), "SIGNAL",
-                                         "Alto volumen de puts en " + r->sym + ".");
+                                         flow_short(r->sym, 'P', !bbctx.empty(), !ovr.empty()));
                                     capitan_revierte(*r, 'P');   // EL caso del dia (SPY tras NVDA)
                                 }
                                 note_spike(r->sym, 'P');         // v4: jerarquia (vetado o no)
