@@ -2351,46 +2351,6 @@ def create_app(state):
             return JSONResponse({"sym": s, "error": f"{type(e).__name__}: {e}"},
                                 status_code=503)
 
-
-    @app.get("/api/book_quality")
-    async def book_quality(sym: str = ""):
-        s = (sym or state.sym).upper()
-        try:
-            import opt_book_quality as obq
-            result = obq.assess_book(s)
-            if not result:
-                return JSONResponse({"sym": s, "error": "sin libro"}, status_code=404)
-            return JSONResponse({"sym": s, **result})
-        except Exception as e:
-            return JSONResponse({"sym": s, "error": str(e)}, status_code=500)
-
-    @app.get("/api/gamma_decay")
-    async def gamma_decay(sym: str = ""):
-        s = (sym or state.sym).upper()
-        try:
-            import json, os, gex_core
-            # Leer opt_chain fresco y calcular gamma_by_expiry
-            with open(f"data/opt_chain_{s.lower()}.txt") as f:
-                rows, spot = [], None
-                for ln in f:
-                    if ln.startswith("#"):
-                        if "spot" in ln:
-                            try: spot = float(ln.split("spot ")[1].split()[0])
-                            except: pass
-                        continue
-                    p = ln.split()
-                    if len(p) >= 7:
-                        try:
-                            rows.append({"strike": float(p[0]), "right": p[1], "exp": p[2],
-                                         "oi": float(p[6]), "gamma": float(p[-1]) if len(p)>9 else 0})
-                        except: pass
-            if not rows or not spot:
-                return JSONResponse({"sym": s, "error": "sin chain"}, status_code=404)
-            decay = gex_core.gamma_by_expiry(rows, spot)
-            return JSONResponse({"sym": s, "decay_by_dte": decay})
-        except Exception as e:
-            return JSONResponse({"sym": s, "error": str(e)}, status_code=500)
-
     @app.get("/health")
     async def health():
         def _one(st):

@@ -55,7 +55,8 @@
 - [ ] **5 features candidatas del caza-bugs codex 2026-07-29** — codex las CONSTRUYÓ sin
       esperar aprobación (32aab2e5, aditivas sin cablear: JSON descriptivos sin voz ni
       consumidor, doctrina archivar→medir→cablear; verificadas por Claude, la (1) estaba
-      rota → backup). Decide Yunior cuáles se cablean:
+      rota → backup; su 3ª escalada — 191 líneas de widgets UI sin verificar con endpoint
+      al módulo roto — REVERTIDA en 623688f3). Decide Yunior cuáles se cablean:
       (1) IV percentil 60d — codex la construyó CONTRA UN FORMATO INVENTADO (rows[].iv vs el
           real results[].implied_volatility → 0/30 medidos, cero plausible) → backup/; rehacer
           con el parser correcto SI Yunior la aprueba;
