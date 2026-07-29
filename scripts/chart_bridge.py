@@ -1433,7 +1433,7 @@ async def account_snapshot():
            "positions": [], "orders": [], "summary": {}, "err": None}
     try:
         ib = await _acct_conn()
-        await ib.reqAllOpenOrdersAsync()
+        await asyncio.wait_for(ib.reqAllOpenOrdersAsync(), 15)  # RequestTimeout no cubre *Async
         pnl = {}
         try:
             for pi in ib.portfolio():
@@ -1459,7 +1459,7 @@ async def account_snapshot():
                 "qty": float(o.totalQuantity), "limit": o.lmtPrice, "aux": o.auxPrice,
                 "status": st.status, "ours": str(o.orderRef or "").startswith("OE:")})
         try:
-            summ = await ib.accountSummaryAsync()
+            summ = await asyncio.wait_for(ib.accountSummaryAsync(), 15)
             keep = {"NetLiquidation", "BuyingPower", "AvailableFunds", "UnrealizedPnL", "RealizedPnL"}
             out["summary"] = {v.tag: v.value for v in summ if v.tag in keep}
         except Exception:
@@ -1873,10 +1873,10 @@ async def live_reapply(state, tf):
         bar_size, dur = LIVE_BAR.get(tf, ("1 min", "2 D"))
         state._agg_step = None
         state._agg_raw = []
-    bars = await ib.reqHistoricalDataAsync(   # async (ver live_feed)
+    bars = await asyncio.wait_for(ib.reqHistoricalDataAsync(   # async (ver live_feed)
         state._contract, endDateTime="", durationStr=dur, barSizeSetting=bar_size,
         whatToShow="TRADES", useRTH=False, keepUpToDate=True,
-    )
+    ), 20)
     raw = [[int(b.date.timestamp()), b.open, b.high, b.low, b.close, float(b.volume)]
            for b in bars]
     if state._agg_step:
@@ -3041,7 +3041,7 @@ async def live_feed(state, port, client_id=60):
     async def connect():
         while not ib.isConnected():
             try:
-                await ib.connectAsync("127.0.0.1", port, clientId=client_id)
+                await asyncio.wait_for(ib.connectAsync("127.0.0.1", port, clientId=client_id), 15)
                 print(f"[live] conectado TWS 127.0.0.1:{port} clientId={client_id}")
             except Exception as e:
                 print(f"[live] reconnect en 5s ({e})")

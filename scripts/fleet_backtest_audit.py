@@ -13,6 +13,7 @@ Usage:
   venv/bin/python scripts/fleet_backtest_audit.py run
   venv/bin/python scripts/fleet_backtest_audit.py all 180
 """
+from __future__ import annotations
 
 # ==== GUARDIA NO-ALPACA (orden Yunior 2026-07-15 "no alpaca all over") ====
 # Este script de backtest aun trae historia via Alpaca REST. Migracion a
@@ -24,8 +25,6 @@ if _os.environ.get("ALPACA_LEGACY") != "1":
                      "Migrar a IBKR hist o correr con ALPACA_LEGACY=1.")
 # ==========================================================================
 
-from __future__ import annotations
-
 import os
 import re
 import shutil
@@ -35,6 +34,9 @@ import tempfile
 import time
 from collections import defaultdict
 from datetime import datetime, timezone
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(ROOT, "screener"))
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "screener"))
