@@ -6,6 +6,15 @@
 
 ## ✅ SESIÓN 2026-07-29
 
+- [x] **Cockpit: seis ventanas visibles con gráficos y recuperación automática del backend.**
+      Los seis bridges estaban vivos, pero la app quedó detrás; al relanzarla desde cero,
+      WebKit abrió antes que los puertos y conservó para siempre “backend no responde”.
+      Restauradas y traídas al frente QQQ/NVDA/SMH/MU/AAPL/MSFT, verificadas visualmente
+      con charts LIVE. `CockpitWindow` ahora sondea `/health` cada segundo tras un fallo,
+      recarga sola al aparecer el bridge, actualiza el símbolo y cancela el timer al cerrar.
+      Reproducción real: MSFT 8085 apagado al abrir → keepalive lo levantó → chart recuperado
+      sin click. Bundle completo 155 MB, firma válida, 6 ventanas relanzadas.
+
 - [x] **Compass predictivo: eliminado el UP/DOWN 50 sin ventaja, sin apagar los pullbacks.**
       Era sistémico: CONTINUACIÓN elegía dirección sólo con `sign(r6)`, la histéresis
       ignoraba DIR y repetía la misma barra cada 250 ms, y Wilson 46.48% se maquillaba a

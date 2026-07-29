@@ -42,6 +42,7 @@ final class CockpitWindow: NSObject, NSWindowDelegate, WKNavigationDelegate {
     let idx: Int
     let url: URL
     weak var owner: AppDelegate?
+    private var backendRetry: Timer?
 
     init(idx: Int, url: URL, cfg: WKWebViewConfiguration, owner: AppDelegate) {
         self.idx = idx
@@ -68,6 +69,37 @@ final class CockpitWindow: NSObject, NSWindowDelegate, WKNavigationDelegate {
     }
 
     func load() { web.load(URLRequest(url: url)) }
+
+    /// La app y los seis bridges arrancan en procesos distintos. En un relanzamiento limpio,
+    /// WebKit puede intentar cargar 8080..8085 unos segundos antes de que fleet_keepalive los
+    /// ponga a escuchar. Antes mostraba el error para siempre aunque el backend ya estuviera
+    /// sano. Se sondea /health y se recarga SOLA cuando aparece; una sola tarea por ventana.
+    func retryWhenBackendAppears() {
+        guard backendRetry == nil else { return }
+        backendRetry = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) {
+            [weak self] _ in self?.probeBackend()
+        }
+        probeBackend()
+    }
+
+    func probeBackend() {
+        guard let h = URL(string: "health", relativeTo: url) else { return }
+        URLSession.shared.dataTask(with: URLRequest(url: h, timeoutInterval: 0.8)) {
+            [weak self] data, response, _ in
+            guard let self,
+                  let http = response as? HTTPURLResponse,
+                  (200..<300).contains(http.statusCode) else { return }
+            let sym = data.flatMap {
+                (try? JSONSerialization.jsonObject(with: $0) as? [String: Any])?["sym"] as? String
+            }
+            DispatchQueue.main.async {
+                self.backendRetry?.invalidate()
+                self.backendRetry = nil
+                if let sym, !sym.isEmpty { self.window.title = self.title(sym: sym) }
+                self.load()
+            }
+        }.resume()
+    }
 
     /// SIMBOLO · puerto · sello del build, en ese orden (la version a la derecha del simbolo).
     func title(sym: String?) -> String {
@@ -135,9 +167,21 @@ final class CockpitWindow: NSObject, NSWindowDelegate, WKNavigationDelegate {
         }.resume()
     }
 
-    func webView(_ w: WKWebView, didFinish nav: WKNavigation!) { refreshTitle() }
+    func webView(_ w: WKWebView, didFinish nav: WKNavigation!) {
+        // `loadHTMLString` del error tiene URL about:blank; sólo una navegación HTTP real
+        // demuestra que el backend respondió y permite cancelar el retry.
+        if w.url?.host == url.host && w.url?.port == url.port {
+            backendRetry?.invalidate()
+            backendRetry = nil
+        }
+        refreshTitle()
+    }
 
-    func windowWillClose(_ n: Notification) { owner?.forget(self) }
+    func windowWillClose(_ n: Notification) {
+        backendRetry?.invalidate()
+        backendRetry = nil
+        owner?.forget(self)
+    }
 
     // Si el backend no esta arriba, decirlo CLARO en vez de una pagina en blanco:
     // el fallo silencioso es lo que costo señales dos veces (TCC, 2026-07-24).
@@ -152,10 +196,11 @@ final class CockpitWindow: NSObject, NSWindowDelegate, WKNavigationDelegate {
         <p style="color:#787b86">No hay nadie escuchando en <code>\(u)</code>.</p>
         <p style="text-align:left;background:#1e222d;padding:14px;border-radius:8px">
         Arráncalo con:<br><code>cd ~/ib-trader &amp;&amp; zsh scripts/fleet_up.sh --chart</code></p>
-        <p style="color:#787b86;font-size:12px">Pulsa ↻ (arriba a la derecha) o ⌘R cuando esté arriba.</p>
+        <p style="color:#787b86;font-size:12px">Reconectando automáticamente… También puedes pulsar ↻ o ⌘R.</p>
         </div></body></html>
         """
         w.loadHTMLString(html, baseURL: nil)
+        retryWhenBackendAppears()
     }
 }
 
