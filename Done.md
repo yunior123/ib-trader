@@ -728,3 +728,8 @@
       informe anterior; cerrado el hueco de frescura de niveles (60 s + fail-streak real).
 - [x] `"relanza todo, build macos new version"` y `"review all, finish all"` cerrados con
       959 tests verdes, builds C++ sin warnings y rebuild/relanzamiento final de la app.
+- [x] `"small tiny bug visual: in the windows the name is fixed at the top"` +
+      `"for the versions lets use terminology like v1, v2, ..."` — título enlazado al
+      símbolo privado de cada WebSocket mediante `document.title` observado por WKWebView;
+      versión pública secuencial `v1` desde `macapp/VERSION`, hash reservado al diagnóstico
+      interno. Seis bridges y seis ventanas relanzados; firma válida y 9 tests verdes.

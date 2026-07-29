@@ -1549,6 +1549,7 @@ function syncSymSel(sym) {
   if (!sym) return;
   const u = sym.toUpperCase();
   curSym = u;
+  document.title = "IBT:" + u;  // la app nativa observa esto y actualiza SU ventana
   setSelLabel(u);
   renderWatchlist();
 }
@@ -3385,7 +3386,7 @@ document.addEventListener("DOMContentLoaded", () => {
 <script>
 fetch('/version').then(r => r.json()).then(v => {
   const el = document.getElementById('swver');
-  el.textContent = v.version ? 'v ' + v.version : 'v ?';
+  el.textContent = v.version ? 'v' + String(v.version).replace(/^v/, '') : 'v?';
   if (v.commit_date) el.title += ' — ' + v.commit_date;
 }).catch(() => {});
 

@@ -7,6 +7,11 @@
 set -euo pipefail
 cd "$(dirname "$0")/.."
 APP="macapp/ib-trader Cockpit.app"
+PUBLIC_VERSION=$(tr -d '[:space:]' < macapp/VERSION)
+[[ "$PUBLIC_VERSION" == <-> ]] || {
+  echo "🔴 macapp/VERSION debe contener un entero (1, 2, 3...)"
+  exit 1
+}
 
 # --- MUTEX: un solo build a la vez -------------------------------------------
 # Sin esto, dos builds solapados (post-commit de dos agentes, o post-commit +
@@ -81,8 +86,10 @@ git diff --quiet -- $(sed 's/#.*//' macapp/bundled_paths.txt | tr -d ' ' | grep 
 /usr/libexec/PlistBuddy -c "Add :IBTCommit string $GIT_SHA$DIRTY" "$PL" >/dev/null
 /usr/libexec/PlistBuddy -c "Add :IBTCommitDate string $GIT_DATE" "$PL" >/dev/null
 /usr/libexec/PlistBuddy -c "Add :IBTBuildDate string $(date '+%Y-%m-%d %H:%M:%S')" "$PL" >/dev/null
-/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $GIT_SHA$DIRTY" "$PL" >/dev/null
-echo "  sello: commit $GIT_SHA$DIRTY ($GIT_DATE)"
+/usr/libexec/PlistBuddy -c "Add :IBTVersion string $PUBLIC_VERSION" "$PL" >/dev/null
+/usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $PUBLIC_VERSION" "$PL" >/dev/null
+/usr/libexec/PlistBuddy -c "Set :CFBundleVersion $PUBLIC_VERSION" "$PL" >/dev/null
+echo "  version publica: v$PUBLIC_VERSION (diagnostico interno: $GIT_SHA$DIRTY)"
 
 # --- ICONO (brujula) — SIEMPRE ANTES DE FIRMAR ------------------------------
 # Lo GENERA el pipeline: si falta el .icns o el arte fuente es mas nuevo, se

@@ -26,11 +26,12 @@ let MAX_WINDOWS = 12
 
 /// Sello del build LEIDO DEL BUNDLE (build.sh lo escribe en Info.plist). Nunca `git` en
 /// runtime: la .app tiene que arrancar en un Mac sin el repo.
-let BUILD_SHA: String = {
+let BUILD_VERSION: String = {
     let i = Bundle.main.infoDictionary ?? [:]
-    if let s = i["IBTCommit"] as? String, !s.isEmpty { return s }
-    if let s = i["CFBundleShortVersionString"] as? String, !s.isEmpty { return s }
-    return "sin sello"
+    let raw = (i["IBTVersion"] as? String)
+        ?? (i["CFBundleShortVersionString"] as? String)
+        ?? "?"
+    return raw.hasPrefix("v") ? raw : "v\(raw)"
 }()
 
 /// Una ventana de cockpit = un WKWebView. Todas comparten configuracion (y por tanto
@@ -43,6 +44,7 @@ final class CockpitWindow: NSObject, NSWindowDelegate, WKNavigationDelegate {
     let url: URL
     weak var owner: AppDelegate?
     private var backendRetry: Timer?
+    private var pageTitleObservation: NSKeyValueObservation?
 
     init(idx: Int, url: URL, cfg: WKWebViewConfiguration, owner: AppDelegate) {
         self.idx = idx
@@ -56,6 +58,14 @@ final class CockpitWindow: NSObject, NSWindowDelegate, WKNavigationDelegate {
         web.autoresizingMask = [.width, .height]
         web.pageZoom = AppDelegate.savedZoom()
         web.navigationDelegate = self
+        pageTitleObservation = web.observe(\.title, options: [.new]) {
+            [weak self] _, change in
+            guard let self, let pageTitle = change.newValue ?? nil,
+                  pageTitle.hasPrefix("IBT:") else { return }
+            let sym = String(pageTitle.dropFirst(4))
+            guard !sym.isEmpty else { return }
+            self.window.title = self.title(sym: sym)
+        }
         window.contentView!.addSubview(web)
         window.title = title(sym: nil)
         installRefreshButton()
@@ -101,11 +111,11 @@ final class CockpitWindow: NSObject, NSWindowDelegate, WKNavigationDelegate {
         }.resume()
     }
 
-    /// SIMBOLO · puerto · sello del build, en ese orden (la version a la derecha del simbolo).
+    /// SIMBOLO · puerto · version publica, en ese orden.
     func title(sym: String?) -> String {
         let p = url.port ?? 80
         let head = (sym?.isEmpty == false) ? "\(sym!.uppercased()) · :\(p)" : "cockpit :\(p)"
-        return "\(head) · \(BUILD_SHA)"
+        return "\(head) · \(BUILD_VERSION)"
     }
 
     /// Boton de recarga en la barra de titulo: ⌘R no se descubre mirando.
@@ -180,6 +190,8 @@ final class CockpitWindow: NSObject, NSWindowDelegate, WKNavigationDelegate {
     func windowWillClose(_ n: Notification) {
         backendRetry?.invalidate()
         backendRetry = nil
+        pageTitleObservation?.invalidate()
+        pageTitleObservation = nil
         owner?.forget(self)
     }
 
@@ -278,12 +290,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         m.addItem(NSMenuItem.separator())
         m.addItem(NSMenuItem(title: "Salir", action: #selector(quit), keyEquivalent: "q"))
         m.items.forEach { $0.target = self }
-        // sello de build: de un vistazo se ve QUE commit lleva esta .app
+        // Version publica secuencial; el commit queda interno en Info.plist para diagnostico.
         let info = Bundle.main.infoDictionary ?? [:]
-        let sha = info["IBTCommit"] as? String ?? "sin sello"
+        let rawVersion = info["IBTVersion"] as? String ?? "?"
+        let version = rawVersion.hasPrefix("v") ? rawVersion : "v\(rawVersion)"
         let built = info["IBTBuildDate"] as? String ?? "?"
         m.addItem(NSMenuItem.separator())
-        let stamp = NSMenuItem(title: "build \(sha) · \(built)", action: nil, keyEquivalent: "")
+        let stamp = NSMenuItem(title: "\(version) · \(built)", action: nil, keyEquivalent: "")
         stamp.isEnabled = false
         m.addItem(stamp)
         statusItem.menu = m

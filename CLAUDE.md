@@ -144,6 +144,12 @@ Cada nueva petición durante sesión → `TODOS.md` al momento con sus palabras 
 ```
 Al cerrar: TODOS.md es la única fuente de lo que queda; lo CERRADO se mueve a `Done.md`.
 
+## Versiones de la app macOS
+
+- La versión visible es secuencial: `v1`, `v2`, ...; jamás se muestra el hash de git al usuario.
+- Fuente única: `macapp/VERSION` (entero). Subirla exactamente una vez por release visible antes
+  del rebuild final. El commit permanece en `Info.plist` solo para diagnóstico interno.
+
 ## NUNCA revertir trabajo de codex ni de Yunior (orden 2026-07-29)
 Yunior manda tareas a codex directamente en paralelo: lo que parezca "trabajo no pedido" puede
 ser orden suya. Si algo rompe consumidores: ADAPTAR hacia delante o reportar con números —

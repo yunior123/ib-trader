@@ -2317,9 +2317,12 @@ def create_app(state):
             return FileResponse(LIVE_HTML)
         return JSONResponse({"error": "charts/live.html no encontrado"}, status_code=404)
 
-    try:  # version = commit servido, leida UNA vez al arrancar (el deploy reinicia el puente)
-        _ver = {"version": subprocess.check_output(
-                    ["git", "-C", REPO, "rev-parse", "--short", "HEAD"], text=True).strip(),
+    try:  # version publica secuencial; el hash queda solo como diagnostico interno
+        with open(os.path.join(REPO, "macapp", "VERSION"), encoding="utf-8") as f:
+            public_version = f.read().strip()
+        if not public_version.isdigit():
+            raise ValueError("macapp/VERSION debe ser un entero")
+        _ver = {"version": public_version,
                 "commit_date": subprocess.check_output(
                     ["git", "-C", REPO, "show", "-s", "--format=%cd",
                      "--date=format:%Y-%m-%d %H:%M", "HEAD"], text=True).strip()}
