@@ -454,6 +454,15 @@
             color:#8fa0bf; justify-self:end; }
   .flchip.bull { color:#26a69a; border-color:#26a69a; }
   .flchip.bear { color:#ef5350; border-color:#ef5350; }
+  /* mapa de liquidez (wgt-liqmap): heatmap canvas + tooltip */
+  #liqmap-body { background:#0a0c12; }
+  #liqmap-cv { cursor:crosshair; }
+  .lqtip { position:absolute; z-index:5; pointer-events:none; background:rgba(13,17,26,.94);
+           border:1px solid #2a3550; border-radius:6px; padding:6px 9px; font-size:10.5px;
+           line-height:1.55; color:#d1d4dc; font-variant-numeric:tabular-nums;
+           box-shadow:0 6px 18px rgba(0,0,0,.5); max-width:190px; }
+  .lqtip .k { color:#8fa0bf; margin-right:5px; }
+  .lqtip.hidden { display:none; }
   #wgmenu { position:absolute; z-index:62; background:#161a24; border:1px solid #2a3550;
             border-radius:6px; padding:4px; display:none; box-shadow:0 8px 24px rgba(0,0,0,.6); }
   #wgmenu.on { display:block; }
@@ -708,6 +717,21 @@
       <p class="wgnever">Vacío a propósito: una cinta de órdenes inventada es peor que no tenerla.</p>
     </div>
     <div class="wgrs"></div>
+  </div>
+
+  <div class="wgt" id="wgt-liqmap">
+    <div class="wghdr">
+      <span class="wgdrag">⠿⠿</span><span class="wgname">Mapa de liquidez</span>
+      <span class="wgsub" id="liqmap-sub">—</span>
+      <button class="wgb wgexp" title="Expandir / contraer">⤢</button>
+      <button class="wgb wgmin" title="Plegar">–</button>
+      <button class="wgb wgx" title="Cerrar">✕</button>
+    </div>
+    <div class="wgbody" id="liqmap-body">
+      <canvas id="liqmap-cv"></canvas>
+      <div id="liqmap-tip" class="lqtip hidden"></div>
+    </div>
+    <div class="wgrs" title="Arrastra para cambiar la altura"></div>
   </div>
 
   <div class="wgt" id="wgt-tech">
@@ -2505,8 +2529,9 @@ chart.subscribeCrosshairMove((param) => {
 //                      construccion no puede taparlo. Expandir un flotante lo re-acopla.
 //   · persistentes  -> abierto/plegado/expandido/posicion/altura en localStorage.
 // Sin frameworks: la CSP del cockpit no admite CDN y el peso importa (Mac de 8 GB).
-const WGT_IDS = ["gex", "prem", "flow", "tech"];
-const WGT_NAME = { gex: "Net GEX por strike", prem: "Net Premiums", flow: "Options Flow Orders" };
+const WGT_IDS = ["gex", "liqmap", "prem", "flow", "tech"];
+const WGT_NAME = { gex: "Net GEX por strike", liqmap: "Mapa de liquidez",
+                   prem: "Net Premiums", flow: "Options Flow Orders", tech: "Technicals" };
 const WGT_EL = {};
 for (const k of WGT_IDS) WGT_EL[k] = document.getElementById("wgt-" + k);
 const wdockEl = document.getElementById("wdock");
@@ -2633,13 +2658,17 @@ const wgDockW = (exp) => {
              : Math.round(Math.min(320, Math.max(210, W * 0.42)));
 };
 
-const wgFresh = () => ({ open: { gex: true, prem: false, flow: false, tech: false },
-                         float: {}, h: { gex: 320, prem: 300, flow: 300, tech: 300 },
+const wgFresh = () => ({ open: { gex: true, liqmap: true, prem: false, flow: false, tech: false },
+                         float: {}, h: { gex: 320, liqmap: 340, prem: 300, flow: 300, tech: 300 },
                          min: {}, exp: {} });
 let WG = wgFresh();
 try {
   const s = JSON.parse(localStorage.getItem(WG_KEY) || "null");
-  if (s && s.open) WG = Object.assign(wgFresh(), s);
+  if (s && s.open) {
+    WG = Object.assign(wgFresh(), s);
+    // estados guardados de antes del mapa: se abre una vez para que se descubra
+    if (s.open.liqmap === undefined) { WG.open.liqmap = true; WG.h.liqmap = WG.h.liqmap || 340; }
+  }
 } catch (e) {}
 const wgSave = () => { try { localStorage.setItem(WG_KEY, JSON.stringify(WG)); } catch (e) {} };
 
@@ -2648,6 +2677,7 @@ function wgFitChart() {
   requestAnimationFrame(() => {
     try { chart.resize(el.clientWidth, el.clientHeight); } catch (e) {}
     wgexDraw();
+    liqmapDraw();
   });
 }
 
@@ -2771,6 +2801,210 @@ document.getElementById("wgbtn").addEventListener("click", (e) => {
 document.addEventListener("click", (e) => {
   if (!e.target.closest("#wgmenu") && !e.target.closest("#wgbtn")) wgMenuEl.classList.remove("on");
 });
+
+// ---------------- WIDGET: Mapa de liquidez (cubo 5-min + prints + VPVR) ----------------
+// Heat = volumen de opciones C+P por strike×foto (dato archivado hoy). Burbujas = whale
+// prints de acciones. Anillos = sweeps UW. Bandas = área de valor VPVR. Nada sintético.
+let liqMap = null, liqHover = null;
+const LQ_ET = (() => {
+  const f = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", hour12: false,
+    hour: "2-digit", minute: "2-digit", second: "2-digit" });
+  return (epoch) => { const p = f.formatToParts(new Date(epoch * 1000));
+    const g = (t) => +(p.find(x => x.type === t) || {}).value;
+    return g("hour") * 60 + g("minute") + g("second") / 60; };
+})();
+// colormap tipo inferno (negro→granate→rojo→ámbar→amarillo), t∈[0,1]
+const LQ_RAMP = [[0,0,4],[27,12,65],[74,12,107],[120,28,109],[165,44,96],[207,68,70],[237,105,37],[251,155,6],[247,208,60]];
+function lqColor(t) {
+  const x = Math.max(0, Math.min(1, t)) * (LQ_RAMP.length - 1);
+  const i = Math.min(LQ_RAMP.length - 2, Math.floor(x)), f = x - i;
+  const a = LQ_RAMP[i], b = LQ_RAMP[i + 1];
+  return `rgb(${Math.round(a[0]+(b[0]-a[0])*f)},${Math.round(a[1]+(b[1]-a[1])*f)},${Math.round(a[2]+(b[2]-a[2])*f)})`;
+}
+function onLiqMap(msg) {
+  liqMap = msg;
+  const sub = document.getElementById("liqmap-sub");
+  if (sub) sub.textContent = msg.why ? "sin dato"
+    : `${msg.sym} · ${msg.cols.length} fotos · ${msg.whales.length} prints · ${msg.sweeps.length} sweeps`;
+  liqmapDraw();
+}
+function liqmapDraw() {
+  const cv = document.getElementById("liqmap-cv");
+  if (!cv || !WG.open.liqmap || WG.min.liqmap) return;
+  const body = cv.parentNode;
+  const W = body.clientWidth, H = body.clientHeight;
+  if (W < 40 || H < 40) return;
+  const dpr = window.devicePixelRatio || 1;
+  if (cv.width !== Math.round(W * dpr) || cv.height !== Math.round(H * dpr)) {
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+  }
+  const g = cv.getContext("2d");
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.fillStyle = "#0a0c12"; g.fillRect(0, 0, W, H);
+  g.font = "9px -apple-system, BlinkMacSystemFont, sans-serif";
+  const m = liqMap;
+  if (!m || m.why || !m.strikes.length) {
+    g.fillStyle = "#6b7a99"; g.textAlign = "center"; g.textBaseline = "middle";
+    g.font = "10.5px -apple-system, BlinkMacSystemFont, sans-serif";
+    g.fillText(m && m.why ? "Sin fotos de cadena hoy" : "Esperando el mapa…", W / 2, H / 2);
+    return;
+  }
+  const GUT = 38, padT = 6, padB = 15, padR = 6;
+  const pw = W - GUT - padR, ph = H - padT - padB;
+  const T0 = 570, T1 = 960;                                // 09:30 → 16:00 ET
+  const xOf = (min) => GUT + ((min - T0) / (T1 - T0)) * pw;
+  const kLo = m.strikes[0], kHi = m.strikes[m.strikes.length - 1];
+  const yOf = (px) => padT + (1 - (px - kLo) / Math.max(1e-9, kHi - kLo)) * ph;
+  const colMin = m.cols.map(c => (+c.slice(0, 2)) * 60 + (+c.slice(2)));
+  const cw = Math.max(1.5, pw / ((T1 - T0) / 5));          // ancho de una foto de 5 min
+  const steps = []; for (let i = 1; i < m.strikes.length; i++) steps.push(m.strikes[i] - m.strikes[i - 1]);
+  steps.sort((a, b) => a - b);
+  const kStep = steps.length ? steps[Math.floor(steps.length / 2)] : 1;
+  const chh = Math.max(1.5, Math.abs(yOf(kLo) - yOf(kLo + kStep)) - 0.6);
+  let vMax = 1;
+  for (const row of m.heat) for (const v of row) if (v > vMax) vMax = v;
+  const lgMax = Math.log1p(vMax);
+  // 1) heat con glow suave en los nodos calientes
+  for (let r = 0; r < m.strikes.length; r++) {
+    const y = yOf(m.strikes[r]) - chh / 2;
+    const row = m.heat[r];
+    for (let c = 0; c < row.length; c++) {
+      const v = row[c]; if (!v) continue;
+      const t = Math.log1p(v) / lgMax;
+      g.fillStyle = lqColor(t);
+      if (t > 0.72) { g.shadowColor = g.fillStyle; g.shadowBlur = 7; }
+      g.fillRect(xOf(colMin[c]) - cw / 2, y, cw, chh);
+      g.shadowBlur = 0;
+    }
+  }
+  // 2) bandas VPVR: área de valor + HVN (translúcidas, debajo de burbujas)
+  if (m.vah != null && m.val != null) {
+    const y1 = yOf(m.vah), y2 = yOf(m.val);
+    g.fillStyle = "rgba(92,124,186,0.07)"; g.fillRect(GUT, y1, pw, y2 - y1);
+    g.strokeStyle = "rgba(92,124,186,0.38)"; g.lineWidth = 1;
+    g.beginPath(); g.moveTo(GUT, y1 + .5); g.lineTo(GUT + pw, y1 + .5);
+    g.moveTo(GUT, y2 + .5); g.lineTo(GUT + pw, y2 + .5); g.stroke();
+  }
+  for (const h of (m.hvn || [])) {
+    const y = yOf(h);
+    if (y < padT || y > padT + ph) continue;
+    g.fillStyle = "rgba(92,124,186,0.14)"; g.fillRect(GUT, y - 1.2, pw, 2.4);
+  }
+  // 3) línea de precio (velas 1m de hoy)
+  const rth = (candleData || []).map(b => [LQ_ET(b.time), b.close])
+    .filter(p => p[0] >= T0 && p[0] <= T1);
+  if (rth.length > 1) {
+    g.strokeStyle = "rgba(255,255,255,0.85)"; g.lineWidth = 1.1;
+    g.beginPath();
+    for (let i = 0; i < rth.length; i++) {
+      const x = xOf(rth[i][0]), y = yOf(rth[i][1]);
+      if (i === 0) g.moveTo(x, y); else g.lineTo(x, y);
+    }
+    g.stroke();
+  }
+  // 4) burbujas de liquidez: whale prints (radio ∝ √USD, verde compra / rojo venta)
+  for (const w of (m.whales || [])) {
+    const min = LQ_ET(w[0]); if (min < T0 || min > T1) continue;
+    const x = xOf(min), y = yOf(w[1]);
+    if (y < padT - 6 || y > padT + ph + 6) continue;
+    const r = Math.min(12, 1.2 + Math.sqrt(w[2]) / 300);
+    const cc = w[3] > 0 ? "38,166,154" : "239,83,80";
+    if (r > 5) { g.shadowColor = `rgba(${cc},0.9)`; g.shadowBlur = 9; }
+    g.fillStyle = `rgba(${cc},0.32)`;
+    g.beginPath(); g.arc(x, y, r, 0, 6.2832); g.fill();
+    g.shadowBlur = 0;
+    g.strokeStyle = `rgba(${cc},0.85)`; g.lineWidth = 1;
+    g.beginPath(); g.arc(x, y, r, 0, 6.2832); g.stroke();
+  }
+  // 5) sweeps UW: anillo discontinuo en su strike (C verde / P rojo)
+  g.setLineDash([3, 2.5]);
+  for (const s of (m.sweeps || [])) {
+    const min = LQ_ET(s[0]); if (min < T0 || min > T1) continue;
+    const x = xOf(min), y = yOf(s[1]);
+    if (y < padT - 8 || y > padT + ph + 8) continue;
+    const r = Math.min(13, 4 + s[2] / 3.5e5);
+    g.strokeStyle = s[3] > 0 ? "rgba(38,166,154,0.95)" : "rgba(239,83,80,0.95)";
+    g.lineWidth = 1.5;
+    g.beginPath(); g.arc(x, y, r, 0, 6.2832); g.stroke();
+  }
+  g.setLineDash([]);
+  // ejes: horas abajo, strikes a la izquierda
+  g.fillStyle = "#6f8bbf"; g.textAlign = "center"; g.textBaseline = "top";
+  for (let hh = 600; hh <= T1; hh += 60)
+    g.fillText(`${Math.floor(hh / 60)}:00`, xOf(hh), padT + ph + 3);
+  g.textAlign = "right"; g.textBaseline = "middle";
+  const kTicks = Math.max(2, Math.floor(ph / 34));
+  for (let i = 0; i <= kTicks; i++) {
+    const k = kLo + (kHi - kLo) * (i / kTicks);
+    g.fillText(k >= 1000 ? k.toFixed(0) : k.toFixed(k >= 100 ? 0 : 1), GUT - 4, yOf(k));
+  }
+  // leyenda mínima
+  const ly = padT + 8;
+  const grad = g.createLinearGradient(GUT + 6, 0, GUT + 58, 0);
+  for (let i = 0; i <= 4; i++) grad.addColorStop(i / 4, lqColor(i / 4));
+  g.fillStyle = grad; g.fillRect(GUT + 6, ly - 3, 52, 5);
+  g.fillStyle = "#8fa0bf"; g.textAlign = "left";
+  g.fillText("vol. opciones", GUT + 62, ly);
+  g.fillStyle = "rgba(38,166,154,0.75)";
+  g.beginPath(); g.arc(GUT + 134, ly, 3.4, 0, 6.2832); g.fill();
+  g.fillStyle = "rgba(239,83,80,0.75)";
+  g.beginPath(); g.arc(GUT + 143, ly, 3.4, 0, 6.2832); g.fill();
+  g.fillStyle = "#8fa0bf"; g.fillText("prints", GUT + 150, ly);
+  g.strokeStyle = "rgba(38,166,154,0.9)"; g.setLineDash([2.5, 2]);
+  g.beginPath(); g.arc(GUT + 188, ly, 4, 0, 6.2832); g.stroke(); g.setLineDash([]);
+  g.fillText("sweep UW", GUT + 196, ly);
+  // crosshair + hairlines (solo con el ratón encima)
+  if (liqHover) {
+    const { mx, my } = liqHover;
+    if (mx >= GUT && mx <= GUT + pw && my >= padT && my <= padT + ph) {
+      g.strokeStyle = "rgba(255,255,255,0.22)"; g.lineWidth = 1;
+      g.beginPath(); g.moveTo(mx + .5, padT); g.lineTo(mx + .5, padT + ph);
+      g.moveTo(GUT, my + .5); g.lineTo(GUT + pw, my + .5); g.stroke();
+    }
+  }
+  // geometría para el tooltip
+  liqmapDraw._geom = { GUT, padT, pw, ph, T0, T1, kLo, kHi, colMin, xOf, yOf };
+}
+function liqmapTip(ev) {
+  const cv = document.getElementById("liqmap-cv"), tip = document.getElementById("liqmap-tip");
+  const geo = liqmapDraw._geom;
+  if (!cv || !tip || !geo || !liqMap || liqMap.why) return;
+  const r = cv.getBoundingClientRect();
+  const mx = ev.clientX - r.left, my = ev.clientY - r.top;
+  liqHover = { mx, my }; liqmapDraw();
+  const { GUT, padT, pw, ph, T0, T1, kLo, kHi, colMin } = geo;
+  if (mx < GUT || mx > GUT + pw || my < padT || my > padT + ph) { liqmapLeave(); return; }
+  const min = T0 + ((mx - GUT) / pw) * (T1 - T0);
+  const px = kLo + (1 - (my - padT) / ph) * (kHi - kLo);
+  let ci = 0, cd = 1e9;
+  colMin.forEach((cm, i) => { const d = Math.abs(cm - min); if (d < cd) { cd = d; ci = i; } });
+  let ki = 0, kd = 1e9;
+  liqMap.strikes.forEach((k, i) => { const d = Math.abs(k - px); if (d < kd) { kd = d; ki = i; } });
+  const vol = (liqMap.heat[ki] || [])[ci] || 0;
+  const near = (liqMap.whales || []).filter(w =>
+    Math.abs(LQ_ET(w[0]) - min) < 6 && Math.abs(w[1] - px) < (kHi - kLo) * 0.02);
+  const big = near.length ? near.reduce((a, b) => (b[2] > a[2] ? b : a)) : null;
+  const hh = `${String(Math.floor(min / 60)).padStart(2, "0")}:${String(Math.round(min) % 60).padStart(2, "0")}`;
+  tip.innerHTML =
+    `<div><span class="k">strike</span>${liqMap.strikes[ki]}</div>` +
+    `<div><span class="k">hora</span>${hh} ET</div>` +
+    `<div><span class="k">vol C+P</span>${vol.toLocaleString("es")}</div>` +
+    (near.length ? `<div><span class="k">prints</span>${near.length} · máx $${Math.round(big[2] / 1000)}K</div>` : "");
+  tip.classList.remove("hidden");
+  const bw = tip.offsetWidth, bh = tip.offsetHeight;
+  tip.style.left = Math.min(mx + 12, r.width - bw - 4) + "px";
+  tip.style.top = Math.max(2, Math.min(my - bh - 8, r.height - bh - 4)) + "px";
+}
+function liqmapLeave() {
+  liqHover = null;
+  const tip = document.getElementById("liqmap-tip");
+  if (tip) tip.classList.add("hidden");
+  liqmapDraw();
+}
+(() => {
+  const cv = document.getElementById("liqmap-cv");
+  if (cv) { cv.addEventListener("mousemove", liqmapTip); cv.addEventListener("mouseleave", liqmapLeave); }
+})();
 
 // ---------------------- WIDGET 1: Net GEX por strike (DATO MEDIDO) -------------------
 // Fuente: levels.profile [{strike, gex}] — chart_levels.py:229, griegas MEDIDAS de la
@@ -2931,6 +3165,7 @@ function connect() {
     else if (msg.type === "whale_cfg") onWhaleCfg(msg);   // config alertas de ballenas
     else if (msg.type === "uw_tape") onUwTape(msg);   // cinta de ballenas UW (wgt-flow)
     else if (msg.type === "liq_levels") onLiqLevels(msg);   // liquidez VPVR/KDE (contexto, no gatillo)
+    else if (msg.type === "liq_map") onLiqMap(msg);   // mapa de liquidez (widget)
     else if (msg.type === "order_action") onOrderAction(msg);   // resultado cancel/sell/modify
   };
   ws.onclose = () => {
