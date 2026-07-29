@@ -42,3 +42,4 @@
       (`scripts/build_compass.sh`). (2026-07-29, pendiente — decisión de Yunior si va al C++)
 - [ ] "relanza todo, build macos new version" (Yunior 2026-07-29, en curso — rebuild .app Cockpit en macOS 26.5.1 + relanzar flota)
 - [ ] "send agent to review finviz failure" (Yunior 2026-07-29, delegado a agente)
+- [ ] Mudanza feeds.env->config/ dejada A MEDIAS: 17 consumidores leen la raiz (finviz_scout.cpp:92, x_whale_bot.cpp:365, notify_relay.sh:14, picaro.sh, weekly_autoimprove.sh, daily_fleet_plans.py:77, options_hunter.py, polygon_dl.py, poly_client.py, ta_view.py, real_option_scorer.py, reconstruct_flow*.py x3, finviz_auth_check.py, earnings_fall_scout.py, yoel_real_options_backtest.py). PARCHE ya puesto: symlink raiz feeds.env->config/feeds.env (gitignored, no viaja). Falta el barrido durable a config/feeds.env + recompilar los 2 .cpp. (2026-07-29, hallazgo del agente finviz, pendiente)
