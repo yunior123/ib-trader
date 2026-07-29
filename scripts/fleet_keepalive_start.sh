@@ -269,7 +269,10 @@ fi
 
 # vigia Bollinger INTRADIA (Yunior 2026-07-22: "rectifica bollinger alarms"):
 # pierce+re-entrada = rebote elastico; 1m+5m mismo lado = band-walk (no fade).
-if ! pgrep -f "scripts/bollinger_alarm.py" >/dev/null; then
+# portero RTH (fix 2026-07-28): de noche entraba en boot-loop banner "arriba/fuera" cada 5 min
+BA_HM=$(( $(date +%-H) * 100 + $(date +%-M) ))
+BA_DOW=$(date +%u)
+if (( BA_DOW <= 5 && BA_HM >= 930 && BA_HM < 1556 )) && ! pgrep -f "scripts/bollinger_alarm.py" >/dev/null; then
   nohup ./venv/bin/python -u scripts/bollinger_alarm.py >> bollinger_alarm.log 2>&1 &
   echo "$(date) fleet: bollinger_alarm lanzado (pid $!)" >> fleet_autostart.log
 fi
