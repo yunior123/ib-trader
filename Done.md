@@ -4,6 +4,43 @@
 > done move them to Done.md"). **`TODOS.md` queda como unica fuente de lo que FALTA.**
 > Nada se borra: si algo se reabre, vuelve a `TODOS.md` con el motivo escrito.
 
+## ✅ SESIÓN 2026-07-29
+
+- [x] **AAPL/GOOGL: premium agregado ya respeta pin/imán/muro.**
+      La antigua “ALERTA PREMIUM ALCISTA/BAJISTA” confundía dirección del agresor con
+      continuación y fabricaba una lectura de calls/puts sin contrato identificable. Ahora
+      dice `FLUJO AGRESOR`, declara `strike no disponible (flujo agregado)`, usa spot IBKR
+      y mapa estructural fresco; en pin niega continuación confirmada y hacia un muro lo
+      llama objetivo que requiere aceptación/retest, nunca ruptura asumida. Espejo bajista
+      y degradación limpia sin mapa. Agente fresco + revisión principal; 960 tests verdes.
+
+- [x] **SPCX: segunda voz defectuosa localizada y endurecida.**
+      Los dos casos fueron BAND-WALK con la misma normalización `SPCX → Space X`; la `X`
+      aislada era ambigua para la voz española. Cambiada a `Space equis`, con preview
+      silencioso probado. Cazado además que `voice_queue` auditaba contra `trades.db`
+      vacío en vez de `data/trades.db` y descartaba errores de `say`: ruta canónica y
+      estados `failed`/log persistente reparados. Cola relanzada y prueba INFO sin audio
+      registrada correctamente.
+
+- [x] **Revalidación inmediata: “todo viene abajo”.**
+      Confirmado ~10:28 ET: QQQ perdió 668, SPY perdió 735 y MU perdió 800/790;
+      régimen de continuación bajista con gamma negativa y VIX elevado. Primas OPRA
+      refrescadas; TSLA 302.5P dejó de ser barata y se sustituyó por 300P. Sin órdenes.
+
+- [x] **Suelo/dip QQQ-SPY-MU + tres PUT adicionales.**
+      Revalidado con gráfico, compass, GEX y OPRA vivo ~10:18 ET: SPY 735 es el
+      intento de suelo local más limpio, pero los tres siguen sin suelo confirmado bajo
+      gamma negativa. PUT candidatos condicionales: NVDA 190P, AMZN 227.5P y TSLA
+      302.5P, todos 2026-07-29 y con spread <5%, OI >500 y prima <2 dólares.
+      CRWV/SMCI/APLD fueron descartados por spread. Sin órdenes ni alertas.
+
+- [x] **Finviz Pícaro: mejor PUT barato + mejor CALL barato de hoy.**
+      Barrido delegado y revalidado independientemente en IBKR/OPRA durante RTH:
+      SOFI 2026-07-31 15P (libro líquido, continuación bajista condicional bajo 15.03)
+      y F 2026-07-31 16.5C (libro líquido pero dinámico, continuación alcista
+      condicional sobre 16.13). VRT/NBIS y el resto fueron descartados por liquidez;
+      AAPL quedó como suplente 0DTE, no ganador. Solo señal: sin órdenes ni alertas.
+
 ## 🔴 SESIÓN 2026-07-25 (madrugada) — peticiones de Yunior, apuntadas AL VUELO
 > Regla (`~/CLAUDE.md`): cada petición se anota aquí EN EL MOMENTO, con las palabras de
 > Yunior, antes de seguir trabajando. Sin esto se pierden — pasó con las 30 features minadas.

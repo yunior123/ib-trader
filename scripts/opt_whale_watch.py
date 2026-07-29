@@ -27,7 +27,9 @@ a puts/calls (señal marginal != decisiva, evita cruces de un solo tick como EWY
 por ticker opcional data/whale_alert_filter.txt (CALLS|PUTS|BOTH); carril rapido opcional
 data/whale_priority.txt (max 5, reqMktData mas frecuente — HIRO confirmo en vivo que tick-by-tick
 real-time no existe para opciones, docs/HIRO-2026-07-25.md). Todo ajustable desde el panel de
-chart_bridge sin reiniciar el proceso."""
+chart_bridge sin reiniciar el proceso.
+v5 (2026-07-29): UW agregado se llama FLUJO AGRESOR, nunca fabrica strike, y pin/muro fresco
+con spot IBKR domina la voz: objetivo no equivale a ruptura."""
 import json, os, subprocess, sys, threading, time
 from datetime import date
 HOME = os.path.expanduser("~")
@@ -37,6 +39,7 @@ from ib_mode import get_port  # fuente unica: scripts/ib_mode.py (CLAUDE.md #7)
 from ib_insync import IB, Stock, Option
 import em_envelope   # tabla de festivos real (misma fuente que fleet_healthcheck.sessions_since)
 import uw_premium
+import uw_premium_alert
 import notify_short
 
 
@@ -524,18 +527,13 @@ while True:
                                                  "signed_premium": round(sp, 0),
                                                  "call": round(uw_prem["net_call_premium"], 0),
                                                  "put": round(uw_prem["net_put_premium"], 0)})
-                                        emoji = "🟢📈" if pcur == "bull" else "🔴📉"
-                                        tag2 = "ALCISTA" if pcur == "bull" else "BAJISTA"
-                                        # cual lado domina el premium (calls o puts), no solo el neto firmado:
-                                        lado_op = "calls" if abs(uw_prem["net_call_premium"]) >= abs(uw_prem["net_put_premium"]) else "puts"
-                                        mm = abs(sp) / 1e6
-                                        loud(f"{emoji} ALERTA PREMIUM {tag2} {s}",
-                                             f"Alerta premium: barrida de opciones {tag2.lower()} en {s} — neto "
-                                             f"${sp:,.0f} (call ${uw_prem['net_call_premium']:,.0f} "
-                                             f"put ${uw_prem['net_put_premium']:,.0f}), umbral SIN CALIBRAR",
+                                        structure = uw_premium_alert.load_structural_context(
+                                            REPO, s, spot, time.time())
+                                        alert = uw_premium_alert.build_alert(s, uw_prem, structure)
+                                        loud(alert["title"],
+                                             f"{alert['message']} Umbral SIN CALIBRAR.",
                                              "ProAlert",
-                                             voice_msg=f"Barrida {tag2.lower()} en {s}: {mm:.1f} millones "
-                                                       f"netos comprados en {lado_op} en quince minutos.")
+                                             voice_msg=alert["voice"])
                     except Exception as e:
                         print(f"{s}: UW premium fallo ({e})", file=sys.stderr)
                 lines.append(f"{s} volC {vc:,.0f} volP {vp:,.0f} P/C {pc_txt}{tag} exp {exp}{uw_suffix}")

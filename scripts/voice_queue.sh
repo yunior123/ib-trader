@@ -44,11 +44,17 @@ trap cleanup INT TERM
 
 # voice_log en trades.db: qué se HABLÓ / DESCARTÓ (para el backtest 4pm y para
 # verificar empíricamente "¿hubo voz?"). No bloquea la voz (corre en background).
-DBV="$ROOT/trades.db"
+DBV="$ROOT/data/trades.db"
+ERRLOG="$ROOT/logs/voice_queue.log"
+mkdir -p "$ROOT/logs"
 log_voice() {  # $1=action(spoke|preempted|notify_only|coalesced|dropped_stale) $2=prio $3=msg
   local e; e="${3//\'/\'\'}"
   # busy_timeout: bajo escritores concurrentes en WAL, esperar el lock en vez de perder la fila.
-  ( sqlite3 "$DBV" "PRAGMA busy_timeout=5000; INSERT INTO voice_log(ts_epoch,action,priority,msg) VALUES(strftime('%s','now'),'$1','$2','$e')" 2>/dev/null ) &
+  (
+    if ! sqlite3 "$DBV" "PRAGMA busy_timeout=5000; INSERT INTO voice_log(ts_epoch,action,priority,msg) VALUES(strftime('%s','now'),'$1','$2','$e')" 2>>"$ERRLOG"; then
+      printf '%s voice_log_failed action=%s priority=%s\n' "$(date '+%F %T')" "$1" "$2" >>"$ERRLOG"
+    fi
+  ) &
 }
 
 # POLÍTICA (Yunior 2026-07-23 "voces a tiempo, jamás con retraso — retraso = dinero"):
@@ -74,7 +80,10 @@ say_preemptible() {  # $1=msg
     fi
     sleep 0.03
   done
-  return 0
+  wait "$spid"
+  local rc=$?
+  [ "$rc" -eq 0 ] && return 0
+  return 2
 }
 
 while true; do
@@ -88,8 +97,15 @@ while true; do
   if [ -e "${1:-}" ]; then
     oldest=$(ls -tr "$Q"/*_DANGER.msg 2>/dev/null | head -1)
     msg="$(cat "$oldest" 2>/dev/null)"; rm -f "$oldest"
-    log_voice spoke DANGER "$msg"
-    say "$msg" >/dev/null 2>&1        # DANGER se habla entera, sin ceder
+    # DANGER se habla entera, sin ceder. `spoke` solo significa éxito real.
+    if say "$msg" >>"$ERRLOG" 2>&1; then
+      log_voice spoke DANGER "$msg"
+    else
+      rc=$?
+      log_voice failed DANGER "$msg"
+      printf '%s say_failed rc=%s priority=DANGER msg=%s\n' \
+        "$(date '+%F %T')" "$rc" "$msg" >>"$ERRLOG"
+    fi
     continue
   fi
 
@@ -107,7 +123,18 @@ while true; do
       rm -f "$Q"/*_SIGNAL.msg
       msg="$msg, y $(( cnt - 1 )) alertas más"
     fi
-    if say_preemptible "$msg"; then log_voice spoke SIGNAL "$msg"; else log_voice preempted SIGNAL "$msg"; fi
+    if say_preemptible "$msg"; then
+      log_voice spoke SIGNAL "$msg"
+    else
+      rc=$?
+      if [ "$rc" -eq 1 ]; then
+        log_voice preempted SIGNAL "$msg"
+      else
+        log_voice failed SIGNAL "$msg"
+        printf '%s say_failed rc=%s priority=SIGNAL msg=%s\n' \
+          "$(date '+%F %T')" "$rc" "$msg" >>"$ERRLOG"
+      fi
+    fi
     continue
   fi
 

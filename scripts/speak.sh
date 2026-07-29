@@ -25,7 +25,7 @@ MSG="$(printf '%s' "$MSG" | sed -E \
   -e 's/[[:<:]]MSFT[[:>:]]/Microsoft/g' -e 's/[[:<:]]META[[:>:]]/Meta/g' \
   -e 's/[[:<:]]AMZN[[:>:]]/Amazon/g'  -e 's/[[:<:]]AVGO[[:>:]]/Broadcom/g' \
   -e 's/[[:<:]]TSM[[:>:]]/Taiwán Semi/g' -e 's/[[:<:]]QCOM[[:>:]]/Qualcomm/g' \
-  -e 's/[[:<:]]TXN[[:>:]]/Texas Instruments/g' -e 's/[[:<:]]SPCX[[:>:]]/Space X/g' \
+  -e 's/[[:<:]]TXN[[:>:]]/Texas Instruments/g' -e 's/[[:<:]]SPCX[[:>:]]/Space equis/g' \
   -e 's/[[:<:]]SKHY[[:>:]]/S K Hynix/g'  -e 's/[[:<:]]NOK[[:>:]]/Nokia/g' \
   -e 's/[[:<:]]ASML[[:>:]]/A S M L/g'  -e 's/[[:<:]]SMH[[:>:]]/semis/g' -e 's/[[:<:]]EWY[[:>:]]/Korea E T F/g' \
   -e 's/[[:<:]]QQQ[[:>:]]/Nasdaq/g'    -e 's/[[:<:]]XLK[[:>:]]/tecnología/g' \
@@ -40,6 +40,13 @@ MSG="$(printf '%s' "$MSG" | sed -E \
 # ^ Corea (2026-07-19, flota nocturna KRX): price-alerts.txt trae `skhynix`/`kospi`
 #   en minúscula → clases por letra = case-insensitive (sed BSD no tiene flag I).
 #   samsung ya se lee bien tal cual; los bots KRX ya hablan nombres humanos.
+
+# Preview silencioso para pruebas/diagnóstico: devuelve exactamente lo que recibiría
+# `say`, sin presupuestar, encolar, notificar ni producir audio.
+if [ "${SPEAK_PREVIEW:-0}" = "1" ]; then
+  printf '%s\n' "$MSG"
+  exit 0
+fi
 
 # --- PRESUPUESTO DE VOZ (feature #12, ADITIVO Y REVERSIBLE) -------------------
 # DANGER NO pasa por aqui NUNCA (se comprueba antes de todo): es la unica voz que preempta
