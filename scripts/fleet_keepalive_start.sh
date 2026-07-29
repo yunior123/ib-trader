@@ -108,7 +108,9 @@ fi
 # El 2026-07-25 (sabado) la flota entera estaba arriba porque NADIE miraba el reloj.
 # El calculo vive en C++ (./fleet_hours): exit 0 = LIVE, exit 1 = DEAD.
 # Escape de testing: FLEET_FORCE=1 o data/FLEET_FORCE (el binario lo ANUNCIA).
-FLEET_HOURS="$ROOT/fleet_hours"
+# bin/ primero (mudanza de binarios 2026-07-29); raiz como fallback legado
+FLEET_HOURS="$ROOT/bin/fleet_hours"
+[[ -x "$FLEET_HOURS" ]] || FLEET_HOURS="$ROOT/fleet_hours"
 if [[ ! -x "$FLEET_HOURS" ]]; then
   # FAIL-LOUD: sin portero NO se arranca. Degradar a "pues arranco" es exactamente
   # el fallo que estamos arreglando (un LIVE plausible sin haberlo comprobado).
@@ -246,7 +248,7 @@ fi
 # premarket / 180s RTH; banners SOLO en cambios de estado. Señal-solamente,
 # token en feeds.env, un request por ciclo. Compilar si falta el binario:
 # clang++ -std=c++17 -O2 -o finviz_scout scripts/finviz_scout.cpp -lcurl
-if [ -x "$ROOT/finviz_scout" ] && ! pgrep -f "scripts/finviz_scout_keepalive.sh" >/dev/null; then
+if { [ -x "$ROOT/bin/finviz_scout" ] || [ -x "$ROOT/finviz_scout" ]; } && ! pgrep -f "scripts/finviz_scout_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/finviz_scout_keepalive.sh" >/dev/null 2>&1 &
   echo "$(date) fleet: finviz_scout_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi
@@ -285,7 +287,8 @@ fi
 FP_HM=$(( $(date +%-H) * 100 + $(date +%-M) ))
 FP_DOW=$(date +%u)
 if (( FP_DOW <= 5 && FP_HM >= 930 && FP_HM < 1556 )) && ! pgrep -x "flow_pulse" >/dev/null; then
-  nohup "$ROOT/flow_pulse" >> "$ROOT/logs/flow_pulse.log" 2>&1 &
+  FP_BIN="$ROOT/bin/flow_pulse"; [ -x "$FP_BIN" ] || FP_BIN="$ROOT/flow_pulse"
+  nohup "$FP_BIN" >> "$ROOT/logs/flow_pulse.log" 2>&1 &
   echo "$(date) fleet: flow_pulse lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi
 

@@ -283,9 +283,10 @@ def compute(sym, lv=None):
                 og_coef, og_why = overnight_coef(sym, local_dir)
                 if og_coef != 1.0:
                     weights = apply_overnight(weights, og_coef)
-                    why.append(og_why)          # el coeficiente aplicado SIEMPRE impreso
-        except Exception:
-            pass
+                    why.insert(0, og_why)          # overnight SIEMPRE priorizado en output
+        except Exception as e:
+            import sys
+            sys.stderr.write(f"[OVERNIGHT] {type(e).__name__}: {e}\n")
 
     # 5) momentum reciente
     mom = _bars_mom(sym)

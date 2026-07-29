@@ -32,3 +32,12 @@
       al usuario"** (Yunior 2026-07-29 ~08:15) — delegado a codex: TTS neuronal es_ES
       EMPAQUETADO en la .app (la voz viaja con el bundle; voz del sistema solo si ya es la
       Siri española del Mac de Yunior; jamás pasos manuales).
+- [x] **"send codex to debug compass overnight, dont think its working"** (Yunior 2026-07-29
+      ~06:00) — hecho (codex): causa raíz = `why[:5]` cortaba la línea overnight en QQQ +
+      `except: pass` silencioso. Fix en `scripts/direction_view.py:274-290` (fail-loud +
+      `why.insert(0, og_why)`); 15 tests verdes, verificado por Claude 2026-07-29.
+- [ ] PENDIENTE derivado: la FLECHA del cockpit sale de `compass.cpp` (C++), que NO lee
+      `data/overnight_ctx.json` — direction_view aplica overnight pero la flecha del chart
+      no lo ve. Implementar overnight_coef en compass.cpp + recompilar
+      (`scripts/build_compass.sh`). (2026-07-29, pendiente — decisión de Yunior si va al C++)
+- [ ] "relanza todo, build macos new version" (Yunior 2026-07-29, en curso — rebuild .app Cockpit en macOS 26.5.1 + relanzar flota)
