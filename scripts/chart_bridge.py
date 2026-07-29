@@ -1057,6 +1057,60 @@ async def uw_tape_loop():
             print(f"[uw_tape] {e}")
 
 
+_VPVR_F = os.path.join(REPO, "data", "vpvr.json")
+
+
+def liq_frame(sym):
+    """(frame, mtimes) liquidez VPVR (POCv/VAH/VAL) + KDE — CONTEXTO, no gatillo
+    (docs/LEVEL-REACT-2026-07-25: 37,3% vs 36,1% azar). Solo LECTURA; campos ausentes -> null."""
+    s = sym.upper()
+    poc = vah = val = None
+    kde, mts = [], []
+    try:
+        mts.append(os.path.getmtime(_VPVR_F))
+        with open(_VPVR_F) as f:
+            v = (json.load(f) or {}).get(s) or {}
+        poc, vah, val = v.get("poc_volume"), v.get("vah"), v.get("val")
+    except Exception:
+        pass
+    p = os.path.join(REPO, "data", f"levels_auto_{s}.json")
+    try:
+        mts.append(os.path.getmtime(p))
+        with open(p) as f:
+            tfs = (json.load(f) or {}).get("tfs") or {}
+        seen = set()
+        for tf in tfs.values():
+            for x in (tf.get("kde") or []):
+                r = round(float(x), 2)
+                if r not in seen:
+                    seen.add(r)
+                    kde.append(r)
+    except Exception:
+        pass
+    return ({"type": "liq_levels", "sym": s, "poc_volume": poc, "vah": vah,
+             "val": val, "kde": sorted(kde)}, tuple(mts) or None)
+
+
+async def liq_loop():
+    """Reempuja liq_levels por símbolo si vpvr.json o levels_auto_<SYM>.json cambian (mtime)."""
+    last = {}
+    while True:
+        await asyncio.sleep(30)
+        try:
+            for st in list(STATES.values()):
+                frame, mts = liq_frame(st.sym)
+                if mts is None or last.get(st.sym) == mts:
+                    continue
+                last[st.sym] = mts
+                for ws in list(st.clients):
+                    try:
+                        await ws.send_json(frame)
+                    except Exception:
+                        st.clients.discard(ws)
+        except Exception as e:
+            print(f"[liq] {e}")
+
+
 def chain_exps(sym):
     """Expiries del cache opt_chain (línea header '# ... exps YYYYMMDD YYYYMMDD ...').
     Degradación limpia -> []. Sólo LECTURA."""
@@ -2246,6 +2300,7 @@ def create_app(state):
             uw0, _ = uw_tape_frame()
             if uw0:
                 await ws.send_json(uw0)
+            await ws.send_json(liq_frame(st.sym)[0])   # liquidez VPVR/KDE (contexto, no gatillo)
             while True:
                 # drenamos pings/close + controles del cliente (cambio de timeframe)
                 txt = await ws.receive_text()
@@ -2280,6 +2335,7 @@ def create_app(state):
                     await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason, mock=st.mock))
                     # zonas del nuevo símbolo + flecha direccional (actualización inmediata)
                     await ws.send_json(zones_frame(st))
+                    await ws.send_json(liq_frame(st.sym)[0])   # liquidez del nuevo símbolo
                     await broadcast_direction(st)
                 elif isinstance(ctl, dict) and ctl.get("cmd") == "scope":
                     st.all_exp = (ctl.get("scope") == "ALL")   # 0DTE <-> ALL-EXP
@@ -2996,6 +3052,7 @@ async def _serve(args):
         asyncio.ensure_future(us_stale_feed(state))   # anti-congelada 20:00 ET (skip mock/korea)
     asyncio.ensure_future(levels_loop(state))   # GEX/flip/muros en tiempo real
     asyncio.ensure_future(uw_tape_loop())   # cinta de ballenas UW -> wgt-flow
+    asyncio.ensure_future(liq_loop())       # liquidez VPVR/KDE -> pricelines (contexto)
     config = uvicorn.Config(app, host=args.host, port=args.http_port, log_level="info")
     server = uvicorn.Server(config)
     await server.serve()
@@ -3024,6 +3081,7 @@ if HAVE_FASTAPI:
                 asyncio.ensure_future(live_feed(state, port, int(os.environ.get("CHART_CLIENT_ID", "60"))))
             asyncio.ensure_future(levels_loop(state))   # GEX/flip/muros en tiempo real
             asyncio.ensure_future(uw_tape_loop())   # cinta de ballenas UW -> wgt-flow
+            asyncio.ensure_future(liq_loop())       # liquidez VPVR/KDE -> pricelines (contexto)
         return app
 
     app = _app_factory()
