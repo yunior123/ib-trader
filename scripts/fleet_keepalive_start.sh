@@ -50,7 +50,7 @@ fleet_stop_all() {
            finviz_scout_keepalive.sh notify_relay.sh x_signal_keepalive.sh \
            opt_whale_keepalive.sh uw_flow_tape_keepalive.sh overnight_feed_keepalive.sh voice_queue_keepalive.sh compass_keepalive.sh \
            perp_stock_keepalive.sh perp_nbbo_bridge_keepalive.sh \
-           fleet_consensus_keepalive.sh; do
+           fleet_consensus_keepalive.sh levels_refresh_keepalive.sh; do
     pkill -f "scripts/$p" 2>/dev/null
   done
   pkill -f 'scripts/perp_nbbo_bridge.py' 2>/dev/null
@@ -322,6 +322,13 @@ fi
 if ! pgrep -f "scripts/overnight_feed_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/overnight_feed_keepalive.sh" >/dev/null 2>&1 &
   echo "$(date) fleet: overnight_feed_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
+
+# refresca levels_<sym>.json para los 24+ simbolos sin chart_bridge vivo.
+# SECUENCIAL (Mac 8GB): ciclo completo ~120s en RTH, duerme 300s fuera de RTH.
+if ! pgrep -f "scripts/levels_refresh_keepalive.sh" >/dev/null; then
+  nohup zsh "$ROOT/scripts/levels_refresh_keepalive.sh" >/dev/null 2>&1 &
+  echo "$(date) fleet: levels_refresh_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
+fi
 fi
 
 # price_alarm estaba en la lista de APAGADO (linea 47 y 60) pero NUNCA en la de

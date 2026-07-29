@@ -6,7 +6,13 @@
 <title>ib-trader · GEX/combo_tl live</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
-  :root { color-scheme: dark; }
+
+  :root {
+    --shadow-sm: 0 2px 4px rgba(0,0,0,.3);
+    --shadow-md: 0 4px 12px rgba(0,0,0,.5);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,.7);
+    color-scheme: dark;
+  }
   * { box-sizing: border-box; }
   html, body { height: 100%; }
   body { margin: 0; overflow: hidden; background: #131722; color: #d1d4dc;
@@ -49,7 +55,7 @@
             border-radius: 4px; padding: 4px 8px; font: inherit; font-size: 16px;
             font-weight: 700; letter-spacing: .3px; cursor: pointer; }
   #conn { margin-left: auto; font-size: 12px; }
-  #conn.on  { color: #26a69a; } #conn.off { color: #ef5350; }
+  #conn.on  { color: #26a69a; } #conn.off { color: #f23645; }
 
   /* --- segunda fila: OHLC + info GEX --- */
   #infobar { display: flex; align-items: center; gap: 8px; height: 28px;
@@ -58,16 +64,16 @@
              font-variant-numeric: tabular-nums; }
   #infobar::-webkit-scrollbar { height: 0; }
   #ohlc { display: flex; gap: 9px; }
-  #ohlc .lab { color: #787b86; }
+  #ohlc .lab { color: #9aa5b8; }
   #ohlc .val { font-weight: 600; }
   .infosep { color: #363a45; }
-  #infobar .k { color: #787b86; }
+  #infobar .k { color: #9aa5b8; }
   #infobar .v { color: #d1d4dc; font-weight: 600; }
-  .pos { color: #26a69a; } .neg { color: #ef5350; } .trans { color: #ffb300; }
+  .pos { color: #26a69a; } .neg { color: #f23645; } .trans { color: #ffb300; }
   /* dato del cierre anterior, no un tick: gris y en cursiva, se distingue tambien sin color */
-  #infobar .v.vstale, #infobar .k.vstale { color:#787b86; font-style:italic; font-weight:600; }
+  #infobar .v.vstale, #infobar .k.vstale { color:#9aa5b8; font-style:italic; font-weight:600; }
   #infobar .v.vold { color:#e0b13c; font-style:italic; }   /* dato con edad: se dice, no se disfraza */
-  .tgl { background:#20242f; color:#8aa0c8; border:1px solid #333a48; padding:2px 8px;
+  .tgl { background:#20242f; color:#8aa0c8; border:1px solid #333a48; padding: 4px 8px;
          font:inherit; font-weight:700; font-size:11px; cursor:pointer; }
   .tgl:first-child { border-radius:4px 0 0 4px; } .tgl:last-child { border-radius:0 4px 4px 0; border-left:none; }
   .tgl.active { background:#2962ff; color:#fff; border-color:#2962ff; }
@@ -90,7 +96,7 @@
   #helpbtn:hover { background:#2962ff; color:#fff; }
   #alarmbtn { background:#2a2e39; color:#8aa0c8; border:1px solid #3a4b6b;
               border-radius:4px; padding:4px 9px; font:inherit; font-weight:700; cursor:pointer; }
-  #alarmbtn:hover { background:#2f3646; color:#fff; }
+  #alarmbtn:hover { background:#252a3a; color:#fff; }
   #alarmbtn.arm { background:#8a5a00; color:#fff; border-color:#f4c430; }
   #chart { position:relative; }
   #structpill { position:absolute; top:8px; left:50%; transform:translateX(-50%); z-index:20;
@@ -98,10 +104,10 @@
                 border-radius:14px; padding:4px 14px; font-size:13px; font-weight:700;
                 box-shadow:0 2px 12px rgba(0,0,0,.5); pointer-events:none; white-space:nowrap; }
   #structpill.hidden { display:none; }
-  #structpill.dn { border-color:#ef5350; color:#ef5350; }
+  #structpill.dn { border-color:#f23645; color:#f23645; }
   #structpill.flat { border-color:#8aa0c8; color:#8aa0c8; }
   #nodataBanner { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:25;
-                  background:rgba(20,24,31,.96); border:1px solid #ef5350; color:#ef5350;
+                  background:rgba(20,24,31,.96); border:1px solid #f23645; color:#f23645;
                   border-radius:8px; padding:10px 18px; font-size:14px; font-weight:700;
                   box-shadow:0 2px 12px rgba(0,0,0,.5); pointer-events:none; text-align:center; }
   #nodataBanner.hidden { display:none; }
@@ -126,7 +132,7 @@
   #charmwhy.hidden { display:none; }
   #narrbtn { background:#2a2e39; color:#8aa0c8; border:1px solid #3a4b6b;
              border-radius:4px; padding:4px 9px; font:inherit; font-weight:700; cursor:pointer; }
-  #narrbtn:hover { background:#2f3646; color:#fff; }
+  #narrbtn:hover { background:#252a3a; color:#fff; }
   #narrbtn.on { background:#1e6f4c; color:#fff; border-color:#2fae78; }
   #narrbar { display:flex; align-items:center; gap:10px; min-height:30px; padding:4px 12px;
              background:#12161f; border-bottom:1px solid #232a3a; font-size:12.5px; color:#c6d2ea;
@@ -151,14 +157,14 @@
   /* --- botones extra en la toolbar (watchlist / zona) --- */
   #wlbtn, #zonebtn { background:#2a2e39; color:#8aa0c8; border:1px solid #3a4b6b;
               border-radius:4px; padding:4px 9px; font:inherit; font-weight:700; cursor:pointer; }
-  #wlbtn:hover, #zonebtn:hover { background:#2f3646; color:#fff; }
+  #wlbtn:hover, #zonebtn:hover { background:#252a3a; color:#fff; }
   #zonebtn.arm { background:#0d5c3f; color:#fff; border-color:#26a69a; }
   /* --- pills paper/live + instrumento + cuenta --- */
   #modepill, #instpill, #acctbtn { background:#2a2e39; color:#8aa0c8; border:1px solid #3a4b6b;
               border-radius:4px; padding:4px 9px; font:inherit; font-weight:700; cursor:pointer; }
-  #modepill:hover, #instpill:hover, #acctbtn:hover { background:#2f3646; color:#fff; }
+  #modepill:hover, #instpill:hover, #acctbtn:hover { background:#252a3a; color:#fff; }
   #modepill { border-color:#2962ff; color:#7ea0ff; }            /* PAPER = azul */
-  #modepill.live { border-color:#ef5350; color:#ff8a87; background:#3a2020; }  /* LIVE = rojo (aviso) */
+  #modepill.live { border-color:#f23645; color:#ff8a87; background:#3a2020; }  /* LIVE = rojo (aviso) */
   /* panel de cuenta (Account Manager, abajo) */
   #acctpanel { position:absolute; z-index:46; left:0; right:0; bottom:24px; height:230px;
               background:#12161f; border-top:2px solid #2a3550; display:none; flex-direction:column;
@@ -167,19 +173,19 @@
   #accthdr { display:flex; align-items:center; gap:10px; padding:6px 10px; background:#161a24;
               border-bottom:1px solid #232a3a; font-weight:700; color:#8aa0c8; }
   #acctsum { flex:1; color:#6f8bbf; font-weight:400; }
-  #acctclose { cursor:pointer; opacity:.6; } #acctclose:hover { opacity:1; color:#ef5350; }
+  #acctclose { cursor:pointer; opacity:.6; } #acctclose:hover { opacity:1; color:#f23645; }
   #acctbody { flex:1; overflow-y:auto; padding:4px 10px 10px; }
   .acctsec { color:#6b7a99; text-transform:uppercase; font-size:10px; letter-spacing:.5px; margin:8px 0 4px; }
   .acctrow { display:flex; align-items:center; gap:8px; padding:4px 6px; border-bottom:1px solid #1c2230; }
   .acctrow .albl { flex:1; font-weight:700; color:#d1d4dc; }
   .acctrow .aval { color:#9aa0ac; min-width:64px; text-align:right; }
-  .acctrow .pos { color:#26a69a; } .acctrow .neg { color:#ef5350; }
+  .acctrow .pos { color:#26a69a; } .acctrow .neg { color:#f23645; }
   .acctrow button { border:none; border-radius:4px; padding:3px 8px; font:inherit; font-size:11px;
               font-weight:700; cursor:pointer; color:#fff; }
   /* panel de config de ballenas: carril rapido (<=5) + filtro calls/puts por ticker */
   #whalebtn { background:#2a2e39; color:#8aa0c8; border:1px solid #3a4b6b; border-radius:4px;
               padding:4px 9px; font:inherit; font-weight:700; cursor:pointer; }
-  #whalebtn:hover { background:#2f3646; color:#fff; }
+  #whalebtn:hover { background:#252a3a; color:#fff; }
   #whalepanel { position:absolute; z-index:46; left:0; right:0; bottom:24px; height:280px;
               background:#12161f; border-top:2px solid #2a3550; display:none; flex-direction:column;
               font-size:12px; box-shadow:0 -6px 20px rgba(0,0,0,.45); }
@@ -187,7 +193,7 @@
   #whalehdr { display:flex; align-items:center; gap:10px; padding:6px 10px; background:#161a24;
               border-bottom:1px solid #232a3a; font-weight:700; color:#8aa0c8; }
   #whalesum { flex:1; color:#6f8bbf; font-weight:400; }
-  #whaleclose { cursor:pointer; opacity:.6; } #whaleclose:hover { opacity:1; color:#ef5350; }
+  #whaleclose { cursor:pointer; opacity:.6; } #whaleclose:hover { opacity:1; color:#f23645; }
   #whalebody { flex:1; overflow-y:auto; padding:4px 10px 10px; }
   .whalerow { display:flex; align-items:center; gap:8px; padding:3px 6px; border-bottom:1px solid #1c2230; }
   .whalerow .wlbl { flex:1; font-weight:700; color:#d1d4dc; }
@@ -196,7 +202,7 @@
   #whalesave { border:none; border-radius:4px; padding:5px 12px; font:inherit; font-weight:700;
               cursor:pointer; color:#fff; background:#0d5c3f; margin-top:8px; }
   #whalesave:hover { background:#12744f; }
-  .acctrow .bclose { background:#ef5350; } .acctrow .bcancel { background:#607d8b; }
+  .acctrow .bclose { background:#f23645; } .acctrow .bcancel { background:#607d8b; }
   .acctrow .bmod { background:#2962ff; }
   #acctempty { color:#556; padding:6px; }
 
@@ -229,14 +235,14 @@
   #wllist .wlrow.sel { background:#2962ff; color:#fff; }
   #wllist .wlrow.sel .wvol, #wllist .wlrow.sel .wchg { color:#dbe4ff; }
   #wllist .wlrow .wx { opacity:.45; cursor:pointer; font-weight:400; text-align:center; }
-  #wllist .wlrow .wx:hover { opacity:1; color:#ef5350; }
+  #wllist .wlrow .wx:hover { opacity:1; color:#f23645; }
 
   /* --- chips inline (alarmas + zonas) en la banda superior del chart --- */
   #chipbar { position:absolute; top:6px; left:8px; max-width:52%; z-index:18;
              display:flex; flex-wrap:wrap; gap:5px; pointer-events:none; }
   #chipbar .chip { pointer-events:auto; display:inline-flex; align-items:center; gap:5px;
              background:rgba(20,24,31,.9); border:1px solid #2a3550; border-radius:12px;
-             padding:2px 8px; font-size:11px; font-weight:700; color:#c6d2ea; white-space:nowrap;
+             padding: 4px 8px; font-size:11px; font-weight:700; color:#c6d2ea; white-space:nowrap;
              font-variant-numeric:tabular-nums; }
   #chipbar .chip .cx { cursor:pointer; opacity:.55; }
   #chipbar .chip input.aexp { background:#20242f; color:#8aa0c8; border:1px solid #333a48;
@@ -319,9 +325,9 @@
      ya no los pesa. El badge lo dice, para no operar un mapa que hoy no manda. */
   #dirarrow .bq { font-size:10px; font-weight:800; letter-spacing:.4px; margin-top:2px;
                   padding:1px 5px; border-radius:3px; display:none; }
-  #dirarrow .bq.thin { color:#ef5350; background:rgba(239,83,80,.14); }
+  #dirarrow .bq.thin { color:#f23645; background:rgba(239,83,80,.14); }
   #dirarrow .bq.weak { color:#e0c060; background:rgba(224,192,96,.12); }
-  #dirarrow .bq.full { color:#787b86; background:rgba(120,123,134,.10); }
+  #dirarrow .bq.full { color:#9aa5b8; background:rgba(120,123,134,.10); }
   #dirarrow .cap { font-size:11px; font-weight:600; color:#b2b5be; max-width:240px;
                    margin:3px auto 0; line-height:1.3;
                    background:rgba(10,14,22,.82); padding:2px 7px; border-radius:4px; }
@@ -337,7 +343,7 @@
   #zonepop.on { display:block; }
   #zonepop .zph { color:#8aa0c8; font-size:11px; margin-bottom:6px; font-weight:700; }
   #zonepop .zrow { display:flex; align-items:center; gap:6px; margin-bottom:6px; }
-  #zonepop .zrow label { color:#787b86; font-size:11px; font-weight:700; }
+  #zonepop .zrow label { color:#9aa5b8; font-size:11px; font-weight:700; }
   #zonepop #zone-exp { flex:1 1 auto; background:#2a2e39; color:#d1d4dc; border:1px solid #363a45;
              border-radius:4px; padding:4px 6px; font:inherit; font-weight:600; cursor:pointer; }
   #zonepop #zone-qty { width:46px; background:#2a2e39; color:#d1d4dc; border:1px solid #363a45;
@@ -355,13 +361,13 @@
              pointer-events:auto; cursor:pointer; border-radius:8px; padding:1px 6px;
              font-size:10px; font-weight:800; border:1px solid transparent; }
   #chipbar .chip .zexec { background:#20242f; color:#8aa0c8; border-color:#333a48; }
-  #chipbar .chip .zexec.on { background:#7a1f1f; color:#fff; border-color:#ef5350; }   /* ARMADA ⚡ */
+  #chipbar .chip .zexec.on { background:#7a1f1f; color:#fff; border-color:#f23645; }   /* ARMADA ⚡ */
   #chipbar .chip .zstop { background:#20242f; color:#c98; border-color:#5a3a2a; }
-  #chipbar .chip .zstop.on { background:#3a1414; color:#ff9a9a; border-color:#ef5350; }
+  #chipbar .chip .zstop.on { background:#3a1414; color:#ff9a9a; border-color:#f23645; }
   #chipbar .chip .zprob { background:#20242f; color:#8aa0c8; border-color:#333a48; }
   #chipbar .chip .zprob.go { background:#0d3b28; color:#4fd39a; border-color:#26a69a; }
   #chipbar .chip .zprob.caution { background:#3d3300; color:#f4c430; border-color:#8a6d00; }
-  #chipbar .chip .zprob.nogo { background:#3a1414; color:#ff8a8a; border-color:#ef5350; }
+  #chipbar .chip .zprob.nogo { background:#3a1414; color:#ff8a8a; border-color:#f23645; }
 
   /* --- pill de estado del order_engine (para zonas ARMADAS) --- */
   #enginepill { position:absolute; bottom:8px; left:8px; z-index:19;
@@ -380,7 +386,7 @@
              display:flex; align-items:center; gap:8px; }
   #ticketcard.go   .tcbar { background:#1e6f4c; } #ticketcard.go   { border-color:#26a69a; }
   #ticketcard.caution .tcbar { background:#8a6d00; } #ticketcard.caution { border-color:#f4c430; }
-  #ticketcard.nogo .tcbar { background:#7a1f1f; } #ticketcard.nogo { border-color:#ef5350; }
+  #ticketcard.nogo .tcbar { background:#7a1f1f; } #ticketcard.nogo { border-color:#f23645; }
   #ticketcard .tctrig { font-size:10px; background:#f4c430; color:#12161f; border-radius:3px;
              padding:1px 5px; font-weight:800; }
   #ticketcard .tcx { position:absolute; top:7px; right:12px; cursor:pointer; color:#fff;
@@ -389,7 +395,7 @@
   #ticketcard .tcaction { font-size:15px; font-weight:800; margin-bottom:9px; color:#e6ebf5; }
   #ticketcard .tcgrid { display:flex; flex-wrap:wrap; gap:8px 16px; font-size:12.5px; margin-bottom:9px;
              font-variant-numeric:tabular-nums; }
-  #ticketcard .tcgrid .k { color:#787b86; margin-right:4px; }
+  #ticketcard .tcgrid .k { color:#9aa5b8; margin-right:4px; }
   #ticketcard .tcgrid .v { font-weight:700; color:#d1d4dc; }
   #ticketcard .tcwhy { font-size:11px; color:#9fb0cc; line-height:1.55; border-top:1px solid #232a3a;
              padding-top:8px; }
@@ -454,7 +460,7 @@
            padding:3px 2px; border-bottom:1px solid #1b2233; font-size:11.5px; }
   .techrow:last-of-type { border-bottom:none; }
   .techk { color:#8fa0bf; } .techv { color:#d1d4dc; font-variant-numeric:tabular-nums; }
-  .techv.tpos { color:#26a69a; } .techv.tneg { color:#ef5350; }
+  .techv.tpos { color:#26a69a; } .techv.tneg { color:#f23645; }
   .wgsub.tstale { color:#ffb300; }
   .technote { color:#6b7a99; font-style:italic; font-size:10.5px; margin:7px 0 0; }
   #wgt-tech .wgbody { padding:6px 9px; overflow-y:auto; }
@@ -465,12 +471,12 @@
            gap:4px; padding:2px 6px; border-bottom:1px solid #1b2233; align-items:baseline;
            font-variant-numeric:tabular-nums; color:#d1d4dc; white-space:nowrap; }
   .flrow.flhdr { position:sticky; top:0; background:#161a24; color:#8fa0bf; z-index:1; }
-  .flc { color:#26a69a; font-weight:700; } .flp { color:#ef5350; font-weight:700; }
+  .flc { color:#26a69a; font-weight:700; } .flp { color:#f23645; font-weight:700; }
   .flmut { color:#8fa0bf; }
   .flchip { font-size:9px; border:1px solid #2a3550; border-radius:3px; padding:0 3px;
             color:#8fa0bf; justify-self:end; }
   .flchip.bull { color:#26a69a; border-color:#26a69a; }
-  .flchip.bear { color:#ef5350; border-color:#ef5350; }
+  .flchip.bear { color:#f23645; border-color:#f23645; }
   /* mapa de liquidez (wgt-liqmap): heatmap canvas + tooltip */
   #liqmap-body { background:#0a0c12; }
   #liqmap-cv { cursor:crosshair; }
@@ -491,7 +497,7 @@
   #chart { position: absolute; top: 68px; bottom: 24px; left: 0; right: var(--dockw); }
   footer { position: absolute; bottom: 0; height: 24px; left: 0; right: 0;
            display: flex; align-items: center; gap: 8px; padding: 0 10px;
-           background: #1e222d; font-size: 10px; color: #787b86; overflow-x: auto;
+           background: #1e222d; font-size: 10px; color: #9aa5b8; overflow-x: auto;
            white-space: nowrap; }
   .dot { display: inline-block; width: 10px; height: 3px; border-radius: 2px;
          margin-right: 4px; vertical-align: middle; }
@@ -839,9 +845,9 @@
   <span><span class="dot" style="background:#ab47bc"></span>SMA200</span>
   <span><span class="dot" style="background:#e0e0e0"></span>VWAP</span>
   <span><span class="dot" style="background:#26a69a"></span>Supertrend↑</span>
-  <span><span class="dot" style="background:#ef5350"></span>Supertrend↓</span>
+  <span><span class="dot" style="background:#f23645"></span>Supertrend↓</span>
   <span><span class="dot" style="background:#26a69a"></span>trendline↑</span>
-  <span><span class="dot" style="background:#ef5350"></span>trendline↓</span>
+  <span><span class="dot" style="background:#f23645"></span>trendline↓</span>
   <span><span class="dot" style="background:linear-gradient(90deg,#ff1744,#00e676)"></span>Madrid ribbon</span>
   <span><span class="dot" style="background:#ffb300"></span>imán (gamma+ dorado)</span>
   <span><span class="dot" style="background:#9c27b0"></span>acelerador (gamma− morado)</span>
@@ -929,8 +935,8 @@ function candleAutoscale(original) {
            margins: orig ? orig.margins : undefined };
 }
 const candle = chart.addSeries(CandlestickSeries, {
-  upColor: "#26a69a", downColor: "#ef5350", borderVisible: false,
-  wickUpColor: "#26a69a", wickDownColor: "#ef5350",
+  upColor: "#26a69a", downColor: "#f23645", borderVisible: false,
+  wickUpColor: "#26a69a", wickDownColor: "#f23645",
   priceLineVisible: true, lastValueVisible: true,   // etiqueta de último precio (TV-like)
   autoscaleInfoProvider: candleAutoscale,
 });
@@ -952,9 +958,9 @@ const S = {
   vwap:    mkLine("#e0e0e0", 1, true),
   // combo_tl: Supertrend (2 ramas, huecos = break) + trendlines (2 puntos + extensión)
   stUp:    mkLine("#26a69a", 2, false),
-  stDn:    mkLine("#ef5350", 2, false),
+  stDn:    mkLine("#f23645", 2, false),
   tlUp:    mkLine("#26a69a", 1, false),
-  tlDn:    mkLine("#ef5350", 1, false),
+  tlDn:    mkLine("#f23645", 1, false),
 };
 // sma20 y bbMid son la MISMA línea (media central) -> una sola serie (bbMid).
 
@@ -1388,7 +1394,7 @@ function drawHeader(lv) {
 function setOHLC(bar) {
   if (!bar) return;
   const up = bar.close >= bar.open;
-  const col = up ? "#26a69a" : "#ef5350";
+  const col = up ? "#26a69a" : "#f23645";
   const set = (id, v) => { const e = document.getElementById(id);
     e.textContent = (v == null ? "—" : v.toFixed(2)); e.style.color = col; };
   set("o-o", bar.open); set("o-h", bar.high); set("o-l", bar.low); set("o-c", bar.close);
@@ -1978,7 +1984,7 @@ function onOptquote(msg) {
   const strike = msg.strike != null ? msg.strike : "—";
   const oi = (msg.call && msg.call.oi != null) ? msg.call.oi : (msg.put && msg.put.oi != null ? msg.put.oi : null);
   zonePrevEl.innerHTML = `strike <b style="color:#d1d4dc">${strike}</b> · ` +
-    fmt(msg.call, "C", "#26a69a") + " · " + fmt(msg.put, "P", "#ef5350") +
+    fmt(msg.call, "C", "#26a69a") + " · " + fmt(msg.put, "P", "#f23645") +
     (oi != null ? ` · OI ${oi}` : "");
 }
 zonepop.querySelectorAll(".zbtns button[data-side]").forEach(b => b.addEventListener("click", () => {
@@ -1996,7 +2002,7 @@ zonepop.querySelector(".zcancel").addEventListener("click", () => {
 });
 
 // --- líneas + chips ---
-const ZONE_COL = { buycall: "#26a69a", buyput: "#ef5350", sellcall: "#ff9800", sellput: "#26c6da" };
+const ZONE_COL = { buycall: "#26a69a", buyput: "#f23645", sellcall: "#ff9800", sellput: "#26c6da" };
 function zoneColor(z) { return ZONE_COL[(z.side || "buy") + (z.kind || "call")] || "#8aa0c8"; }
 function zoneLabel(z) { return "🎯 " + (z.side === "sell" ? "V" : "C") + (z.kind === "put" ? "put" : "call") + " " + z.price; }
 function delAlarm(price) {
@@ -2009,7 +2015,7 @@ function moveStopLine(z, px) {
   try { if (stopLines[z.id]) candle.removePriceLine(stopLines[z.id]); } catch (e) {}
   try {
     stopLines[z.id] = candle.createPriceLine({
-      price: px, color: "#ef5350", lineWidth: 1, lineStyle: 2,
+      price: px, color: "#f23645", lineWidth: 1, lineStyle: 2,
       axisLabelVisible: true, title: "⛔ stop " + px,
     });
   } catch (e) {}
@@ -2207,7 +2213,7 @@ const dirAmpTicks = dirAmp ? [...dirAmp.querySelectorAll("i")] : [];
 // hl es un TINTE de c2, no blanco: con blanco la cresta lavaba la flecha y en mitad del
 // ciclo ya no se veia si apuntaba arriba o abajo (visto renderizado en QQQ vivo)
 const DIR_INK = { up:   { c1:"#12897c", c2:"#3ff0c8", hl:"#b6fff0", flat:"#26a69a" },
-                  down: { c1:"#b83636", c2:"#ff8b8b", hl:"#ffd2d2", flat:"#ef5350" },
+                  down: { c1:"#b83636", c2:"#ff8b8b", hl:"#ffd2d2", flat:"#f23645" },
                   flat: { c1:"#4c576c", c2:"#9fb0cc", hl:"#dde6f2", flat:"#8aa0c8" } };
 const REV_INK = { c1:"#c98a10", c2:"#ffd66b", hl:"#fff0bd" };   // reversion: oro, no mezcla turbia
 const DIR_TEMPO = { LATIGAZO:[".55s","1.0s"], REBOTE:[".95s","1.7s"], SCALP:["1.5s","2.6s"] };
@@ -2302,10 +2308,10 @@ function onDirection(msg) {
   // ESTADO de la brujula: color + estilo de borde (el borde sobrevive al gris)
   if (dirSt) {
     dirSt.textContent = msg.stale ? `RANCIA ${msg.stale_age>=3600?Math.floor(msg.stale_age/3600)+"h "+Math.round(msg.stale_age%3600/60)+"m":msg.stale_age>=60?Math.round(msg.stale_age/60)+"m":Math.round(msg.stale_age)+"s"}` : st + (msg.state_pending ? " →?" : "");
-    const c = msg.stale ? "#ef5350"
+    const c = msg.stale ? "#f23645"
             : isRev ? "#e0c060"
             : st.indexOf("CONTINUA") === 0 ? "#8aa0c8"
-            : st.indexOf("APROX") === 0 ? "#c9a227" : "#787b86";
+            : st.indexOf("APROX") === 0 ? "#c9a227" : "#9aa5b8";
     dirSt.style.color = c; dirSt.style.borderColor = c;
     dirSt.className = "st " + (isRev ? "s-rev" : st.indexOf("CONTINUA") === 0 ? "s-cont"
                              : st.indexOf("APROX") === 0 ? "s-appr" : "");
@@ -3221,6 +3227,37 @@ wgApply();
 
 // ------------------------------------------------------- reconnect loop
 let ws = null, retry = null;
+
+// Keyboard shortcuts (Ctrl+T, Ctrl+S, Ctrl+A)
+window.addEventListener("keydown", (e) => {
+  if (!e.ctrlKey && !e.metaKey) return;  // Solo Ctrl/Cmd
+  
+  if (e.code === "KeyT") {  // Ctrl+T: toggle timeframe
+    e.preventDefault();
+    const sel = document.getElementById("tfsel");
+    if (sel) {
+      const opts = Array.from(sel.options);
+      const curr = opts.findIndex(o => o.selected);
+      const next = (curr + 1) % opts.length;
+      sel.selectedIndex = next;
+      sel.dispatchEvent(new Event("change"));
+    }
+  }
+  
+  if (e.code === "KeyS") {  // Ctrl+S: symbol selector focus
+    e.preventDefault();
+    const sel = document.getElementById("symsel");
+    if (sel) sel.focus();
+  }
+  
+  if (e.code === "KeyA") {  // Ctrl+A: toggle alarms
+    e.preventDefault();
+    const btn = document.getElementById("alarmbtn");
+    if (btn) btn.click();
+  }
+});
+
+
 function connect() {
   const conn = document.getElementById("conn");
   const url = `ws://${location.host || "127.0.0.1:8080"}/stream`;
@@ -3338,9 +3375,15 @@ async function hmapDraw(force) {
     }
     sub.textContent = "Concentración por decil";
     let html = '<div style="padding:8px;font-size:11px;font-family:mono">';
-    for (const [label, data] of Object.entries(d)) {
+    const deciles = Object.entries(d).slice(0, 10);
+    const maxVol = Math.max(...deciles.map(([_, data]) => data.total));
+    for (const [label, data] of deciles) {
+      const intensity = data.total / maxVol;
+      const bgColor = data.dominance === "CALLS" ? `rgba(38, 166, 154, ${intensity * 0.8})` :
+                      data.dominance === "PUTS" ? `rgba(242, 54, 69, ${intensity * 0.8})` : 
+                      `rgba(138, 160, 200, ${intensity * 0.5})`;
       const dom = data.dominance === "CALLS" ? "📞" : data.dominance === "PUTS" ? "📍" : "↔";
-      html += `<div>${label}: ${dom} ${data.total} (C:${data.calls_vol} P:${data.puts_vol})</div>`;
+      html += `<div style="padding:6px;margin:2px;background:${bgColor};border:1px solid #3a4b6b;border-radius:4px;text-align:center"><div style="font-weight:700;color:#d1d4dc">${label}</div><div style="font-size:10px;color:#9aa5b8">${dom} ${data.total}</div><div style="font-size:9px;color:#787b86">C:${data.calls_vol} P:${data.puts_vol}</div></div>`;
     }
     html += '</div>';
     body.innerHTML = html;
@@ -3384,8 +3427,22 @@ async function gdecayDraw(force) {
     }
     sub.textContent = `${d.length} expiries`;
     let html = '<div style="padding:8px;font-size:11px;font-family:mono">';
-    d.slice(0, 5).forEach(row => {
-      html += `<div>T+${row.dte}d: ${row.gamma.toFixed(0)} γ</div>`;
+    
+    // Mini chart: altura basada en gamma max
+    const maxGamma = Math.max(...d.slice(0, 8).map(row => row.gamma));
+    const chartH = 80;
+    html += '<div style="display:flex;align-items:flex-end;gap:2px;height:' + chartH + 'px;margin:4px 0;border-bottom:1px solid #3a4b6b">';
+    d.slice(0, 8).forEach(row => {
+      const barH = Math.max(2, (row.gamma / maxGamma) * chartH);
+      const col = row.dte <= 1 ? '#f23645' : row.dte <= 7 ? '#ffa000' : '#26a69a';
+      html += `<div title="T+${row.dte}d: ${row.gamma.toFixed(1)} γ" style="flex:1;height:${barH}px;background:${col};border-radius:2px;opacity:0.8" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.8'"></div>`;
+    });
+    html += '</div>';
+    
+    // Lista bajo el chart
+    d.slice(0, 8).forEach(row => {
+      const col = row.dte <= 1 ? '#f23645' : row.dte <= 7 ? '#ffa000' : '#26a69a';
+      html += `<div style="color:${col};font-weight:600">T+${row.dte}d: ${row.gamma.toFixed(1)} γ</div>`;
     });
     html += '</div>';
     body.innerHTML = html;
