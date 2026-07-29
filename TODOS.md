@@ -18,3 +18,13 @@
       tras aprobar.
 - [ ] **"do we need to enable level 2 data in ibkr?"** — respondido: no imprescindible hoy;
       SÍ si queremos el liq_map con profundidad de libro real (Bookmap de verdad). Decide Yunior.
+- [ ] **"make sure that even the beautiful spanish voice we have is portable in macos app, all
+      portable, send codex agent to inspect that, tell it to create skill for macos app
+      creation, tell it to search github for skills"** (Yunior 2026-07-29 ~07:45) — delegado
+      a codex: portabilidad de la voz española en la .app + skill macos-app-creation.
+- [ ] **"tiny info buttons for widgets explaining the features"** (Yunior 2026-07-29 ~07:55)
+      — delegado a codex (live.html).
+- [ ] **"i heard a test voice now, i dont like that one, only the beautiful spanish voice we
+      have already, only that one"** (Yunior 2026-07-29 ~07:55) — corregido el brief del codex
+      de voz: SOLO la voz canónica de la casa; sin voz instalada = silencio + aviso visual +
+      guía de descarga; JAMÁS fallback a otra voz ni tests sonoros.

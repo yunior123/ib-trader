@@ -501,29 +501,6 @@
            white-space: nowrap; }
   .dot { display: inline-block; width: 10px; height: 3px; border-radius: 2px;
          margin-right: 4px; vertical-align: middle; }
-  /* ===== Widget info buttons (ⓘ popover) =====  */
-  .wginfo { display:inline-flex; align-items:center; justify-content:center; width:14px; height:14px;
-            border:1px solid #3a4b6b; border-radius:50%; background:transparent; color:#6f8bbf;
-            font-size:9px; font-weight:700; cursor:help; margin-left:3px; padding:0;
-            user-select:none; flex-shrink:0; position:relative; }
-  .wginfo:hover { background:#2962ff; color:#fff; border-color:#2962ff; }
-  .wginfo:focus { outline:1px solid #2962ff; outline-offset:2px; }
-  .popover-box { position:absolute; top:calc(100% + 4px); right:0; z-index:1000;
-                 width:240px; background:rgba(19,23,34,.96); border:1px solid #2962ff;
-                 border-radius:6px; padding:10px; color:#d1d4dc; font-size:11px;
-                 line-height:1.5; box-shadow:0 4px 14px rgba(0,0,0,.6);
-                 pointer-events:auto; display:none; }
-  .popover-box.show { display:block; animation:popSlide 0.2s ease-out; }
-  @keyframes popSlide { from { opacity:0; transform:translateY(-2px); } to { opacity:1; transform:translateY(0); } }
-  @media (prefers-reduced-motion: reduce) { .popover-box { animation:none; } }
-  .popover-box strong { color:#2962ff; font-weight:700; }
-  .popover-box code { background:#1b2130; padding:2px 4px; border-radius:2px;
-                      color:#8aa0c8; font-family:monospace; font-size:10px; }
-  .popover-title { font-weight:700; margin-bottom:4px; color:#2962ff; }
-  .popover-source { font-size:10px; color:#9fb0cc; margin-top:5px; }
-  .popover-doctrine { font-size:10px; color:#b4c0d8; margin-top:5px; font-style:italic; }
-  @media (max-width:480px) { .popover-box { width:220px; right:-20px; } }
-
 </style>
 </head>
 <body>
@@ -712,7 +689,7 @@
 
   <div class="wgt" id="wgt-gex">
     <div class="wghdr">
-      <span class="wgdrag">⠿⠿</span><span class="wgname">Net GEX por strike</span><button class="wginfo" title="Info" data-widget="gex" aria-label="Información sobre Net GEX por strike">ⓘ</button><div class="popover-box" data-widget="gex"><div class="popover-title">Net GEX por strike</div><p><strong>Qué mide:</strong> Gamma agregada por cada strike de precio. Arriba del flip = dealers amparan (rango). Abajo = amplían (tienden).</p><div class="popover-source"><strong>Fuente:</strong> Snapshot Polygon (cadena completa de opciones, 15min delayed si TWS no disponible).</div><div class="popover-doctrine"><strong>Doctrina:</strong> Muros = imanes (campos de fuerza). Flip = nivel de pivote estructural. Sin dato = confiar en NBBO.</div></div>
+      <span class="wgdrag">⠿⠿</span><span class="wgname">Net GEX por strike</span>
       <span class="wgsub" id="wgex-sub">—</span>
       <button class="wgb wgexp" title="Expandir / contraer. Al expandirse el dock se ensancha y el GRÁFICO SE ENCOGE: nunca queda tapado.">⤢</button>
       <button class="wgb wgmin" title="Plegar">–</button>
@@ -724,7 +701,7 @@
 
   <div class="wgt" id="wgt-prem">
     <div class="wghdr">
-      <span class="wgdrag">⠿⠿</span><span class="wgname">Net Premiums</span><button class="wginfo" title="Info" data-widget="prem" aria-label="Información sobre Net Premiums">ⓘ</button><div class="popover-box" data-widget="prem"><div class="popover-title">Net Premiums</div><p><strong>Qué mide:</strong> Diferencia premium call−put en pesos. (+) = mercado bullish (calls caro). (−) = bearish (puts caro).</p><div class="popover-source"><strong>Fuente:</strong> Prints firmados (UW flow-alerts); hoy requiere tick-by-tick opciones IBKR (err 10189, no disponible aún).</div><div class="popover-doctrine"><strong>Doctrina:</strong> Contexto de sesgo, no gatillo. Próximo: OPRA vía TWS.</div></div>
+      <span class="wgdrag">⠿⠿</span><span class="wgname">Net Premiums</span>
       <span class="wgsub">sin dato</span>
       <button class="wgb wgexp" title="Expandir / contraer">⤢</button>
       <button class="wgb wgmin" title="Plegar">–</button>
@@ -751,7 +728,7 @@
 
   <div class="wgt" id="wgt-flow">
     <div class="wghdr">
-      <span class="wgdrag">⠿⠿</span><span class="wgname">Options Flow Orders</span><button class="wginfo" title="Info" data-widget="flow" aria-label="Información sobre Options Flow Orders">ⓘ</button><div class="popover-box" data-widget="flow"><div class="popover-title">Options Flow Orders</div><p><strong>Qué mide:</strong> Volumen agresivo de órdenes opciones (ballenas). Calls masivas = techo local. Puts masivos = piso local.</p><div class="popover-source"><strong>Fuente:</strong> UW flow-alerts (90s por símbolo, acumulado 5min, sin tick).</div><div class="popover-doctrine"><strong>Doctrina:</strong> Táctica espada-ballena: ballenas marcan EXTREMOS → operar reversión chica con scalp. Stop apretado. Conflicto con capitán prevalece (SPY/QQQ mandan sobre sí).</div></div>
+      <span class="wgdrag">⠿⠿</span><span class="wgname">Options Flow Orders</span>
       <span class="wgsub" id="flowsub">sin dato</span>
       <button class="wgb wgexp" title="Expandir / contraer">⤢</button>
       <button class="wgb wgmin" title="Plegar">–</button>
@@ -772,7 +749,7 @@
 
   <div class="wgt" id="wgt-liqmap">
     <div class="wghdr">
-      <span class="wgdrag">⠿⠿</span><span class="wgname">Mapa de liquidez</span><button class="wginfo" title="Info" data-widget="liqmap" aria-label="Información sobre Mapa de liquidez">ⓘ</button><div class="popover-box" data-widget="liqmap"><div class="popover-title">Mapa de liquidez</div><p><strong>Qué mide:</strong> POC (pico volumen) + VAH/VAL (20 sesiones VPVR) + KDE por TF. Niveles aguantados = soporte/resistencia real.</p><div class="popover-source"><strong>Fuente:</strong> Barras 1m agregadas; VPVR histórico.</div><div class="popover-doctrine"><strong>Doctrina:</strong> Contexto, no gatillo (medido 37.3% vs 36.1% aleatorio). Ruptura sin retest = aceleración. Retest-rechazo = imán.</div></div>
+      <span class="wgdrag">⠿⠿</span><span class="wgname">Mapa de liquidez</span>
       <span class="wgsub" id="liqmap-sub">—</span>
       <button class="wgb wgexp" title="Expandir / contraer">⤢</button>
       <button class="wgb wgmin" title="Plegar">–</button>
@@ -787,7 +764,7 @@
 
   <div class="wgt" id="wgt-tech">
     <div class="wghdr">
-      <span class="wgdrag">⠿⠿</span><span class="wgname">Technicals</span><button class="wginfo" title="Info" data-widget="tech" aria-label="Información sobre Technicals">ⓘ</button><div class="popover-box" data-widget="tech"><div class="popover-title">Technicals</div><p><strong>Qué mide:</strong> Fuerza precio, RSI, MACD, bandas (Finviz, ~30min delayed). Edad se dice siempre.</p><div class="popover-source"><strong>Fuente:</strong> Finviz delayed (se reporta antigüedad).</div><div class="popover-doctrine"><strong>Doctrina:</strong> NO disparan solas; validan setup. Día pin (gamma +) = trampas. Band-walk (acelerador) = oro. Verificar gráfico ANTES, siempre.</div></div>
+      <span class="wgdrag">⠿⠿</span><span class="wgname">Technicals</span>
       <span class="wgsub" id="techsub">sin dato</span>
       <button class="wgb wgexp" title="Expandir / contraer">⤢</button>
       <button class="wgb wgmin" title="Plegar">–</button>
@@ -798,7 +775,7 @@
   <!-- 5 NEW FEATURES WIDGETS (2026-07-29) -->
   <div class="wgt" id="wgt-ivreg">
     <div class="wghdr">
-      <span class="wgdrag">⠿⠿</span><span class="wgname">IV Regime</span><button class="wginfo" title="Info" data-widget="ivreg" aria-label="Información sobre IV Regime">ⓘ</button><div class="popover-box" data-widget="ivreg"><div class="popover-title">IV Regime</div><p><strong>Qué mide:</strong> Percentil IV histórico (252 días). P10=compresión, P50=normal, P90=inflado.</p><div class="popover-source"><strong>Fuente:</strong> Snapshot Polygon + IV implícito (Black-Scholes inverso).</div><div class="popover-doctrine"><strong>Doctrina:</strong> P10 → ruptura próxima. P90 → vender premium. A 0DTE domina gamma sobre vol (pin). No es gatillo: contexto de prima.</div></div>
+      <span class="wgdrag">⠿⠿</span><span class="wgname">IV Regime</span>
       <span class="wgsub" id="ivreg-sub">—</span>
       <button class="wgb wgexp" title="Expandir">⤢</button>
       <button class="wgb wgmin" title="Plegar">–</button>
@@ -810,7 +787,7 @@
 
   <div class="wgt" id="wgt-rviv">
     <div class="wghdr">
-      <span class="wgdrag">⠿⠿</span><span class="wgname">RV vs IV</span><button class="wginfo" title="Info" data-widget="rviv" aria-label="Información sobre RV vs IV">ⓘ</button><div class="popover-box" data-widget="rviv"><div class="popover-title">RV vs IV</div><p><strong>Qué mide:</strong> Volatilidad Realizada (252d) vs Implied (cadena). Convergencia al vencimiento.</p><div class="popover-source"><strong>Fuente:</strong> RV de barras 1m, IV de opciones snapshot.</div><div class="popover-doctrine"><strong>Doctrina:</strong> RV>>IV=comprado barato (comprar). IV>>RV=vendido caro (vender). Contexto de prima, no gatillo.</div></div>
+      <span class="wgdrag">⠿⠿</span><span class="wgname">RV vs IV</span>
       <span class="wgsub" id="rviv-sub">—</span>
       <button class="wgb wgexp" title="Expandir">⤢</button>
       <button class="wgb wgmin" title="Plegar">–</button>
@@ -822,7 +799,7 @@
 
   <div class="wgt" id="wgt-hmap">
     <div class="wghdr">
-      <span class="wgdrag">⠿⠿</span><span class="wgname">Strike Heat Map</span><button class="wginfo" title="Info" data-widget="hmap" aria-label="Información sobre Strike Heat Map">ⓘ</button><div class="popover-box" data-widget="hmap"><div class="popover-title">Strike Heat Map</div><p><strong>Qué mide:</strong> Concentración relativa de gamma/OI por strike. Rojo/naranja=imán (amparan). Azul=acelerador (amplían).</p><div class="popover-source"><strong>Fuente:</strong> Snapshot Polygon (cadena completa).</div><div class="popover-doctrine"><strong>Doctrina:</strong> Múltiples strikes=caja. Un strike destaca=pin. Retest-rechazo en imán=ruptura. Jamás a través del muro: hacia el imán sí.</div></div>
+      <span class="wgdrag">⠿⠿</span><span class="wgname">Strike Heat Map</span>
       <span class="wgsub" id="hmap-sub">—</span>
       <button class="wgb wgexp" title="Expandir">⤢</button>
       <button class="wgb wgmin" title="Plegar">–</button>
@@ -834,7 +811,7 @@
 
   <div class="wgt" id="wgt-book">
     <div class="wghdr">
-      <span class="wgdrag">⠿⠿</span><span class="wgname">Book Quality</span><button class="wginfo" title="Info" data-widget="book" aria-label="Información sobre Book Quality">ⓘ</button><div class="popover-box" data-widget="book"><div class="popover-title">Book Quality</div><p><strong>Qué mide:</strong> Strikes ilíquidos de la cadena (bid=0/ask=0). THIN >30% = veto de liquidez, el spread te come el premium.</p><div class="popover-source"><strong>Fuente:</strong> Cadena de opciones IBKR (opt_chain cache TWS).</div><div class="popover-doctrine"><strong>Doctrina:</strong> Verificar ANTES de entrar. Spread aceitado=buen ambiente. Gatillo bloqueado si THIN.</div></div>
+      <span class="wgdrag">⠿⠿</span><span class="wgname">Book Quality</span>
       <span class="wgsub" id="book-sub">—</span>
       <button class="wgb wgexp" title="Expandir">⤢</button>
       <button class="wgb wgmin" title="Plegar">–</button>
@@ -846,7 +823,7 @@
 
   <div class="wgt" id="wgt-gdecay">
     <div class="wghdr">
-      <span class="wgdrag">⠿⠿</span><span class="wgname">Gamma Decay</span><button class="wginfo" title="Info" data-widget="gdecay" aria-label="Información sobre Gamma Decay">ⓘ</button><div class="popover-box" data-widget="gdecay"><div class="popover-title">Gamma Decay</div><p><strong>Qué mide:</strong> Cambio de delta por DÍA (∂delta/∂t·OI en $/1%). Motor del DRIFT y PIN (13:30-15:45). +Γ=arrastre alza, −Γ=baja.</p><div class="popover-source"><strong>Fuente:</strong> Opciones vencimiento actual (snapshot).</div><div class="popover-doctrine"><strong>Doctrina:</strong> A 0DTE explota (mecha intradía). No es gatillo de reversal: es DINÁMICA. Contexto del pin, no dirección.</div></div>
+      <span class="wgdrag">⠿⠿</span><span class="wgname">Gamma Decay</span>
       <span class="wgsub" id="gdecay-sub">—</span>
       <button class="wgb wgexp" title="Expandir">⤢</button>
       <button class="wgb wgmin" title="Plegar">–</button>
@@ -3331,30 +3308,6 @@ connect();
 window.addEventListener("resize", () => {
   try { zoomRecent(candle.data().length); } catch (e) {}
 });
-// ===== Widget info popovers =====
-document.addEventListener("DOMContentLoaded", () => {
-  const infoButtons = document.querySelectorAll(".wginfo");
-  function closeAllPopovers() {
-    document.querySelectorAll(".popover-box").forEach(box => box.classList.remove("show"));
-  }
-  infoButtons.forEach(btn => {
-    const popover = btn.nextElementSibling;
-    if (popover && popover.classList.contains("popover-box")) {
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const isOpen = popover.classList.contains("show");
-        closeAllPopovers();
-        if (!isOpen) popover.classList.add("show");
-      });
-      popover.addEventListener("click", (e) => { e.stopPropagation(); });
-    }
-  });
-  document.addEventListener("click", closeAllPopovers);
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeAllPopovers();
-  });
-});
-
 </script>
 <script>
 fetch('/version').then(r => r.json()).then(v => {
@@ -3507,30 +3460,6 @@ window.wgRedraw = function() {
 };
 setTimeout(() => window.wgRedraw(), 1500);      // primer pintado; nadie llamaba a wgRedraw (cargando eterno)
 setInterval(() => window.wgRedraw(), 60000);
-
-// ===== Widget info popovers =====
-document.addEventListener("DOMContentLoaded", () => {
-  const infoButtons = document.querySelectorAll(".wginfo");
-  function closeAllPopovers() {
-    document.querySelectorAll(".popover-box").forEach(box => box.classList.remove("show"));
-  }
-  infoButtons.forEach(btn => {
-    const popover = btn.nextElementSibling;
-    if (popover && popover.classList.contains("popover-box")) {
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const isOpen = popover.classList.contains("show");
-        closeAllPopovers();
-        if (!isOpen) popover.classList.add("show");
-      });
-      popover.addEventListener("click", (e) => { e.stopPropagation(); });
-    }
-  });
-  document.addEventListener("click", closeAllPopovers);
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeAllPopovers();
-  });
-});
 
 </script>
 </body>
