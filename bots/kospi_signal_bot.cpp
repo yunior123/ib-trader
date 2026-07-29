@@ -269,7 +269,7 @@ static void notify(const char* title, const char* msg, bool urgent) {
         }
     }
     // 3) structured operations log
-    FILE* f = std::fopen("kospi_operations.log", "a");
+    FILE* f = std::fopen("logs/kospi_operations.log", "a");
     if (f) {
         time_t now = time(nullptr) + 9*3600; struct tm lt; gmtime_r(&now, &lt);  // KST: log en hora de Corea
         std::fprintf(f, "%04d-%02d-%02d %02d:%02d:%02d | %s%s | %s\n",
@@ -530,6 +530,7 @@ static void v5_on_bar(const Bar& b, bool alert_hours, int H, int M) {
 // restaura el disparo inmediato v6.0.
 #include <sys/stat.h>
 #include <algorithm>
+#include <filesystem>
 
 static const double V6_ON       = envd("KOSPI_V6", 1);           // 1 = activo
 static const double V6_MIN      = envd("KOSPI_V6_MIN", 6.0);     // score minimo (de 10)
@@ -1367,12 +1368,14 @@ int main(int argc, char** argv) {
     setpgid(0, 0);                    // grupo propio: el killpg no toca al keepalive
     std::signal(SIGINT, on_term);  std::signal(SIGTERM, on_term);
     std::signal(SIGHUP, on_term);  std::signal(SIGPIPE, SIG_IGN);
+    std::error_code ec;
+    std::filesystem::create_directories("logs", ec);
     bool use_stdin = (argc > 1 && !std::strcmp(argv[1], "--stdin"));
     FILE* in = stdin;
     if (!use_stdin) {
         // ws daemon compartido escribe data/bars_kospi.txt; el reader lo sigue
         // (Yunior 2026-07-10: websockets, no REST; C++, no python)
-        in = popen("tail -n +1 -F data/bars_kospi.txt 2>>bridge_kospi.log", "r");
+        in = popen("tail -n +1 -F data/bars_kospi.txt 2>>logs/bridge_kospi.log", "r");
         if (!in) { std::fprintf(stderr, "no bridge\n"); return 1; }
         std::fprintf(stderr, "kospi_signal_bot (C++): bridge KOSPI 1m real iniciado\n");
     }

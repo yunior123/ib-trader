@@ -269,7 +269,7 @@ static void notify(const char* title, const char* msg, bool urgent) {
         }
     }
     // 3) structured operations log
-    FILE* f = std::fopen("nok_operations.log", "a");
+    FILE* f = std::fopen("logs/nok_operations.log", "a");
     if (f) {
         time_t now = time(nullptr); struct tm lt; localtime_r(&now, &lt);
         std::fprintf(f, "%04d-%02d-%02d %02d:%02d:%02d | %s%s | %s\n",
@@ -530,6 +530,7 @@ static void v5_on_bar(const Bar& b, bool alert_hours, int H, int M) {
 // restaura el disparo inmediato v6.0.
 #include <sys/stat.h>
 #include <algorithm>
+#include <filesystem>
 
 static const double V6_ON       = envd("NOK_V6", 1);           // 1 = activo
 static const double V6_MIN      = envd("NOK_V6_MIN", 6.0);     // score minimo (de 10)
@@ -1367,12 +1368,14 @@ int main(int argc, char** argv) {
     setpgid(0, 0);                    // grupo propio: el killpg no toca al keepalive
     std::signal(SIGINT, on_term);  std::signal(SIGTERM, on_term);
     std::signal(SIGHUP, on_term);  std::signal(SIGPIPE, SIG_IGN);
+    std::error_code ec;
+    std::filesystem::create_directories("logs", ec);
     bool use_stdin = (argc > 1 && !std::strcmp(argv[1], "--stdin"));
     FILE* in = stdin;
     if (!use_stdin) {
         // daemon IBKR escribe data/bars_nok_ibkr.txt; tail -F lo sigue 
         // (Yunior 2026-07-20: only ibkr — fuente unica)
-        in = popen("tail -n +1 -F data/bars_nok_ibkr.txt 2>>bridge_nok.log", "r");
+        in = popen("tail -n +1 -F data/bars_nok_ibkr.txt 2>>logs/bridge_nok.log", "r");
         if (!in) { std::fprintf(stderr, "no bridge\n"); return 1; }
         std::fprintf(stderr, "nok_signal_bot (C++): bridge NOK 1m real iniciado\n");
     }

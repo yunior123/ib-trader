@@ -334,9 +334,15 @@ def reset_sandbox_session(sb):
     fr = os.path.join(sb, "_regen")
     for fn in os.listdir(fr):
         os.unlink(os.path.join(fr, fn))
+    # Limpiar logs en la raíz (legacy) y en logs/ (nuevo)
     for fn in os.listdir(sb):
         if fn.endswith("_operations.log") or fn == "clock.txt":
             os.unlink(os.path.join(sb, fn))
+    logs_dir = os.path.join(sb, "logs")
+    if os.path.isdir(logs_dir):
+        for fn in os.listdir(logs_dir):
+            if fn.endswith("_operations.log"):
+                os.unlink(os.path.join(logs_dir, fn))
 
 
 # --------------------------------------------------------------------------
