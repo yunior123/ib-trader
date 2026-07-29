@@ -71,6 +71,15 @@
          font:inherit; font-weight:700; font-size:11px; cursor:pointer; }
   .tgl:first-child { border-radius:4px 0 0 4px; } .tgl:last-child { border-radius:0 4px 4px 0; border-left:none; }
   .tgl.active { background:#2962ff; color:#fff; border-color:#2962ff; }
+  .tgl:hover:not(.active) { background:#2a3040; color:#c9d6f2; }
+  /* micro-interaccion sobria: solo color/opacidad, 200 ms, nada continuo */
+  button, .tgl, .tfbtn, .wgb, summary { transition:background-color .2s, color .2s,
+           border-color .2s, opacity .2s; }
+  :focus-visible { outline:1px solid #2962ff; outline-offset:1px; border-radius:3px; }
+  #wdock::-webkit-scrollbar, .wgbody::-webkit-scrollbar { width:5px; height:5px; }
+  #wdock::-webkit-scrollbar-thumb, .wgbody::-webkit-scrollbar-thumb {
+           background:#3a4b6b; border-radius:3px; }
+  #wdock::-webkit-scrollbar-track, .wgbody::-webkit-scrollbar-track { background:transparent; }
   /* botón info (ℹ) + overlay de ayuda */
   .info { display:inline-flex; align-items:center; justify-content:center; width:14px; height:14px;
           border:1px solid #3a4b6b; border-radius:50%; color:#6f8bbf; font-size:9px; font-weight:700;
@@ -422,16 +431,24 @@
           repeating-linear-gradient(90deg,#2a3550 0 12px,transparent 12px 24px); opacity:.45; }
   .wgrs:hover { opacity:1; }
   .wgt canvas { display:block; width:100%; height:100%; }
-  /* hueco ROTULADO de los widgets sin dato. JAMAS datos sinteticos: vacio y honesto. */
-  .wgempty { padding:9px 10px 11px; font-size:11px; line-height:1.5; color:#8b97ad; }
-  .wgempty .wgblock { display:inline-block; background:#3a2020; border:1px solid #ef5350;
-           color:#ff8a87; border-radius:4px; padding:1px 7px; font-weight:800; font-size:10px;
-           letter-spacing:.4px; margin-bottom:7px; }
+  /* estado vacio de widget: icono + una frase; el detalle tecnico va plegado.
+     JAMAS datos sinteticos: vacio y honesto. */
+  .wgempty { display:flex; flex-direction:column; align-items:center; justify-content:center;
+           text-align:center; gap:5px; padding:16px 14px; font-size:11px; line-height:1.5;
+           color:#8b97ad; }
+  .wgeico { font-size:19px; line-height:1; color:#4b5b7a; }
+  .wgemsg { color:#aeb9cd; font-weight:600; }
+  .wgempty p { margin:0; max-width:250px; }
+  .wgempty details { margin-top:5px; max-width:250px; text-align:left; color:#77839c;
+           font-size:10.5px; }
+  .wgempty summary { cursor:pointer; color:#6f8bbf; text-align:center; list-style:none;
+           transition:color .2s; }
+  .wgempty summary::-webkit-details-marker { display:none; }
+  .wgempty summary::after { content:" ▾"; font-size:9px; }
+  .wgempty summary:hover { color:#9db4e0; }
   .wgempty b { color:#d1d4dc; } .wgempty code { color:#7ea0ff; font-size:10.5px; }
   .wgempty ul { margin:6px 0; padding-left:16px; } .wgempty li { margin-bottom:3px; }
-  .wgempty p { margin:5px 0; }
-  .wgempty .wgway { border-top:1px solid #232a3a; padding-top:6px; color:#9fb0cc; }
-  .wgempty .wgnever { color:#6b7a99; font-style:italic; }
+  .wgempty details p { margin:5px 0; }
   #wgbtn.on { background:#2962ff; color:#fff; border-color:#2962ff; }
   .techrow { display:flex; justify-content:space-between; align-items:baseline; gap:8px;
            padding:3px 2px; border-bottom:1px solid #1b2233; font-size:11.5px; }
@@ -685,19 +702,20 @@
       <button class="wgb wgx" title="Cerrar">✕</button>
     </div>
     <div class="wgbody wgempty">
-      <div class="wgblock">BLOQUEADO — FALTA EL DATO</div>
-      <p><b>Premium neto call vs put acumulado</b> exige <i>prints individuales de opciones</i>
-         con precio y tamaño, firmados por lado (quién fue el agresor). Hoy no los tenemos:</p>
-      <ul>
-        <li><code>opt_whale_watch</code> usa <code>reqMktData</code> = volumen <b>acumulado del día
-            cada 5 min</b>. Un contador no se des-suma en órdenes.</li>
-        <li><code>whale_*.txt</code> son prints de <b>acciones</b>, no de opciones.</li>
-        <li>Polygon <code>/v3/trades/O:</code> responde <b>403</b> con nuestra key.</li>
-      </ul>
-      <p class="wgway"><b>La vía es HIRO:</b> <code>ibkr_bar_bridge.py:250</code> ya corre
-         <code>reqTickByTickData("AllLast")</code> con firmado Lee-Ready — falta apuntarlo a
-         <b>contratos de opción</b>. Suscripción nueva: <b>ninguna</b> (OPRA ya se paga vía IBKR).</p>
-      <p class="wgnever">Vacío a propósito: aquí no se pintan datos sintéticos ni de demo.</p>
+      <div class="wgeico">◍</div>
+      <div class="wgemsg">Sin prints de opciones firmados</div>
+      <p>Este panel exige prints individuales con lado agresor y hoy la fuente no los da.
+         Aquí no se pintan datos sintéticos.</p>
+      <details>
+        <summary>Detalle técnico</summary>
+        <ul>
+          <li><code>opt_whale_watch</code> entrega volumen acumulado cada 5 min, sin lado.</li>
+          <li><code>whale_*.txt</code> son prints de acciones, no de opciones.</li>
+          <li>Polygon <code>/v3/trades/O:</code> responde 403 con la key actual.</li>
+        </ul>
+        <p>Vía prevista: tick-by-tick de contratos de opción con firmado Lee-Ready
+           (<code>ibkr_bar_bridge.py:250</code>; OPRA ya incluido vía IBKR).</p>
+      </details>
     </div>
     <div class="wgrs"></div>
   </div>
@@ -711,10 +729,14 @@
       <button class="wgb wgx" title="Cerrar">✕</button>
     </div>
     <div class="wgbody wgempty" id="flowbody">
-      <div class="wgblock">BLOQUEADO — sin uw_flow_tape.json</div>
-      <p>La cinta la llena <code>uw_flow_tape.py</code> (UW flow-alerts, 90 s por símbolo,
-         capitanes + foco) vía frame <code>uw_tape</code> del bridge.</p>
-      <p class="wgnever">Vacío a propósito: una cinta de órdenes inventada es peor que no tenerla.</p>
+      <div class="wgeico">⋮⋮</div>
+      <div class="wgemsg">Cinta sin datos</div>
+      <p>Esperando flujo real. Una cinta inventada es peor que no tenerla.</p>
+      <details>
+        <summary>Cómo se llena</summary>
+        <p>La alimenta <code>uw_flow_tape.py</code> (UW flow-alerts, 90 s por símbolo)
+           vía el frame <code>uw_tape</code> del bridge.</p>
+      </details>
     </div>
     <div class="wgrs"></div>
   </div>
@@ -2559,7 +2581,7 @@ async function techDraw(force) {
     const d = await r.json();
     if (!r.ok || d.error) {
       sub.textContent = "sin dato";
-      body.innerHTML = `<div class="wgblock">SIN TÉCNICOS</div><p>${d.error || r.status}</p>`;
+      body.innerHTML = `<div class="wgempty"><div class="wgeico">◌</div><div class="wgemsg">Técnicos no disponibles</div><p>${d.error || r.status}</p></div>`;
       body.dataset.filled = "0"; return;
     }
     const age = d.feed_age_s == null ? null : Math.round(d.feed_age_s);
@@ -2585,7 +2607,7 @@ async function techDraw(force) {
     body.dataset.filled = "1";
   } catch (e) {
     sub.textContent = "sin dato";
-    body.innerHTML = `<div class="wgblock">SIN TÉCNICOS</div><p>${e}</p>`;
+    body.innerHTML = `<div class="wgempty"><div class="wgeico">◌</div><div class="wgemsg">Técnicos no disponibles</div><p>${e}</p></div>`;
     body.dataset.filled = "0";
   }
 }
@@ -2608,8 +2630,10 @@ function uwFmtPrem(p) { return p >= 1e6 ? "$" + (p / 1e6).toFixed(1) + "M" : "$"
 function uwBlocked(body, sub, why) {
   sub.textContent = "sin dato"; sub.className = "wgsub";
   body.classList.add("wgempty"); body.classList.remove("fltape");
-  body.innerHTML = `<div class="wgblock">BLOQUEADO — ${why}</div>` +
-    `<p class="wgnever">La cinta la llena uw_flow_tape.py (UW flow-alerts). Sin dato real no se pinta nada.</p>`;
+  body.innerHTML = `<div class="wgeico">⋮⋮</div><div class="wgemsg">Cinta sin datos</div>` +
+    `<p>${why}. Sin dato real no se pinta nada.</p>` +
+    `<details><summary>Cómo se llena</summary><p>La alimenta <code>uw_flow_tape.py</code> ` +
+    `(UW flow-alerts, 90 s por símbolo) vía el frame <code>uw_tape</code> del bridge.</p></details>`;
 }
 function uwTapeDraw() {
   const body = document.getElementById("flowbody"), sub = document.getElementById("flowsub");
@@ -3032,7 +3056,7 @@ function wgexDraw() {
   const sub = document.getElementById("wgex-sub");
   if (!prof.length) {
     g.fillStyle = "#6b7a99"; g.textAlign = "center";
-    g.fillText("sin perfil GEX todavía (esperando levels)", W / 2, H / 2);
+    g.fillText("Sin perfil GEX todavía", W / 2, H / 2);
     if (sub) sub.textContent = "—";
     return;
   }
