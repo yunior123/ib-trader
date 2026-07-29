@@ -1,0 +1,1 @@
+{"detail":{"type":"payment_required","code":"paid_plan_required","message":"Free users cannot use library voices via the API. Please upgrade your subscription to use this voice.","status":"payment_required","request_id":"098b6b79d5a62d6f3f9667633dc886c4"}}

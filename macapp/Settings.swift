@@ -124,6 +124,7 @@ struct Config: Codable {
     var resendKey  = ""
     var resendTo   = ""
     var ntfyTopic  = ""
+    var elevenlabsKey = ""
 
     static var dir: URL {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
@@ -156,6 +157,7 @@ struct Config: Codable {
         if !resendKey.isEmpty  { env += "RESEND_KEY=\(resendKey)\n" }
         if !resendTo.isEmpty   { env += "RESEND_TO=\(resendTo)\n" }
         if !ntfyTopic.isEmpty  { env += "NTFY_TOPIC=\(ntfyTopic)\n" }
+        if !elevenlabsKey.isEmpty { env += "ELEVENLABS_API_KEY=\(elevenlabsKey)\n" }
         // espejo a account.txt (mismo formato que lee el motor y los scripts)
         var acct = "# generado por el panel de la app — no editar a mano\n"
         if !accountPaper.isEmpty { acct += "paper=\(accountPaper)\n" }
@@ -233,6 +235,7 @@ struct Prefill {
         case "finnhubKey": saved = cfg.finnhubKey
         case "resendKey":  saved = cfg.resendKey
         case "ntfyTopic":  saved = cfg.ntfyTopic
+        case "elevenlabsKey": saved = cfg.elevenlabsKey
         case "resendTo":   saved = cfg.resendTo
         default:           saved = ""
         }
@@ -349,6 +352,8 @@ final class SettingsWindow: NSWindowController, NSWindowDelegate {
                                                                        "opcional", false),
             ("ntfyTopic",    "ntfy topic:",   pf.secret("ntfyTopic", envKeys: ["NTFY_TOPIC"]),
                                                                        "opcional — push al móvil", false),
+            ("elevenlabsKey", "ElevenLabs key:", pf.secret("elevenlabsKey", envKeys: ["ELEVENLABS_API_KEY"]),
+                                                                       "opcional: para regenerar el banco de voz", true),
         ]
         for (k, l, r, h, sec) in rows {
             row(y, k, l, r, h, secure: sec).forEach { cv.addSubview($0) }
@@ -411,6 +416,7 @@ final class SettingsWindow: NSWindowController, NSWindowDelegate {
         cfg.resendKey   = text("resendKey")
         cfg.resendTo    = text("resendTo")
         cfg.ntfyTopic   = text("ntfyTopic")
+        cfg.elevenlabsKey = text("elevenlabsKey")
         do {
             try cfg.save()
             note.stringValue = "✅ Guardado en ~/Library/Application Support/ib-trader/ — las claves de feeds.env siguen donde estaban."

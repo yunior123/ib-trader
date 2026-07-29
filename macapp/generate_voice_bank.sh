@@ -3,8 +3,36 @@
 # Idempotente: no regenera clips existentes. Uso: generate_voice_bank.sh [--dry-run] [--voice VOICE_ID]
 cd "$(dirname "$0")"
 ROOT="$(cd .. && pwd)"
-KEY=$(grep '^ELEVENLABS_API_KEY=' "$ROOT/config/feeds.env" | cut -d= -f2)
-[ -z "$KEY" ] && { echo "sin ELEVENLABS_API_KEY en config/feeds.env"; exit 1; }
+
+# Resolución de la API key con precedencia: Application Support > config/feeds.env
+KEY=""
+SUPPORT_DIR="$HOME/Library/Application Support/ib-trader"
+CONFIG_JSON="$SUPPORT_DIR/config.json"
+
+# 1. Intentar leer de config.json (guardado en el panel)
+if [ -f "$CONFIG_JSON" ]; then
+  KEY=$(python3 -c "import json; c=json.load(open('$CONFIG_JSON')); print(c.get('elevenlabsKey',''))" 2>/dev/null)
+fi
+
+# 2. Fallback: leer de config/feeds.env (repo o Application Support)
+if [ -z "$KEY" ]; then
+  if [ -f "$SUPPORT_DIR/config/feeds.env" ]; then
+    KEY=$(grep '^ELEVENLABS_API_KEY=' "$SUPPORT_DIR/config/feeds.env" | cut -d= -f2)
+  fi
+fi
+
+# 3. Fallback: leer de repo feeds.env
+if [ -z "$KEY" ]; then
+  if [ -f "$ROOT/config/feeds.env" ]; then
+    KEY=$(grep '^ELEVENLABS_API_KEY=' "$ROOT/config/feeds.env" | cut -d= -f2)
+  fi
+fi
+
+if [ -z "$KEY" ]; then
+  echo "sin ELEVENLABS_API_KEY en Application Support/config.json, feeds.env o repo"
+  exit 1
+fi
+
 VOICE="EXAVITQu4vr4xnSDxMaL"   # Sarah multilingual; cambiar con --voice tras elegir Yunior
 DRY=0
 [ "$1" = "--dry-run" ] && DRY=1
