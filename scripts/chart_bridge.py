@@ -1091,22 +1091,112 @@ def liq_frame(sym):
              "val": val, "kde": sorted(kde)}, tuple(mts) or None)
 
 
+def liq_map_frame(sym):
+    """(frame, fingerprint) mapa liquidez estilo Bookmap con datos REALES: cubo de fotos
+    5-min de hoy (heat=vol opciones C+P por strike), whale prints de acciones, sweeps UW
+    y bandas VPVR. Nada inventado; sin dato -> listas vacías con 'why'."""
+    s = sym.upper()
+    day = datetime.now().strftime("%Y-%m-%d")
+    hdir = os.path.join(REPO, "data", "history", day)
+    cols, per_col = [], []
+    spot = None
+    try:
+        snaps = sorted(f for f in os.listdir(hdir)
+                       if f.startswith(f"opt_chain_{s.lower()}_") and f.endswith(".txt"))
+    except Exception:
+        snaps = []
+    for fn in snaps:
+        hhmm = fn.rsplit("_", 1)[1][:4]
+        vols = {}
+        try:
+            with open(os.path.join(hdir, fn)) as f:
+                for ln in f:
+                    if ln.startswith("#"):
+                        if " spot " in ln:
+                            try:
+                                spot = float(ln.split(" spot ")[1].split()[0])
+                            except Exception:
+                                pass
+                        continue
+                    p = ln.split()
+                    if len(p) < 6:
+                        continue
+                    try:
+                        k, v = float(p[0]), int(float(p[5]))
+                    except Exception:
+                        continue
+                    vols[k] = vols.get(k, 0) + max(0, v)
+        except Exception:
+            continue
+        cols.append(hhmm)
+        per_col.append(vols)
+    strikes = []
+    if spot:
+        lo, hi = spot * 0.94, spot * 1.06
+        strikes = sorted({k for vols in per_col for k in vols if lo <= k <= hi})
+    heat = [[vols.get(k, 0) for vols in per_col] for k in strikes]
+    whales = []
+    try:
+        with open(os.path.join(REPO, "data", f"whale_{s.lower()}.txt")) as f:
+            for ln in f:
+                p = ln.split()
+                if len(p) >= 4:
+                    try:
+                        whales.append([int(float(p[0])), float(p[1]), int(float(p[2])), int(p[3])])
+                    except Exception:
+                        continue
+    except Exception:
+        pass
+    if len(whales) > 600:   # tope de payload: se quedan los prints más gordos
+        whales = sorted(whales, key=lambda w: -w[2])[:600]
+        whales.sort(key=lambda w: w[0])
+    sweeps = []
+    try:
+        with open(_UW_TAPE_F) as f:
+            for r in (json.load(f).get("rows") or []):
+                if r.get("sym") == s and r.get("strike") is not None:
+                    sweeps.append([round(float(r["ts"])), float(r["strike"]),
+                                   int(r.get("premium") or 0), 1 if r.get("type") == "C" else -1,
+                                   1 if r.get("sweep") else 0])
+    except Exception:
+        pass
+    vah = val = None
+    hvn = []
+    try:
+        with open(_VPVR_F) as f:
+            v = (json.load(f) or {}).get(s) or {}
+        vah, val, hvn = v.get("vah"), v.get("val"), v.get("hvn") or []
+    except Exception:
+        pass
+    frame = {"type": "liq_map", "sym": s, "spot": spot, "cols": cols, "strikes": strikes,
+             "heat": heat, "whales": whales, "sweeps": sweeps,
+             "vah": vah, "val": val, "hvn": hvn,
+             "why": None if cols else f"sin fotos de cadena hoy en data/history/{day}"}
+    return frame, (len(snaps), len(whales), len(sweeps))
+
+
 async def liq_loop():
-    """Reempuja liq_levels por símbolo si vpvr.json o levels_auto_<SYM>.json cambian (mtime)."""
-    last = {}
+    """Reempuja liq_levels y liq_map por símbolo cuando su fuente cambia (mtime/huella)."""
+    last, last_map = {}, {}
     while True:
         await asyncio.sleep(30)
         try:
             for st in list(STATES.values()):
+                out = []
                 frame, mts = liq_frame(st.sym)
-                if mts is None or last.get(st.sym) == mts:
-                    continue
-                last[st.sym] = mts
-                for ws in list(st.clients):
-                    try:
-                        await ws.send_json(frame)
-                    except Exception:
-                        st.clients.discard(ws)
+                if mts is not None and last.get(st.sym) != mts:
+                    last[st.sym] = mts
+                    out.append(frame)
+                mframe, fp = liq_map_frame(st.sym)
+                if last_map.get(st.sym) != fp:
+                    last_map[st.sym] = fp
+                    out.append(mframe)
+                for f in out:
+                    for ws in list(st.clients):
+                        try:
+                            await ws.send_json(f)
+                        except Exception:
+                            st.clients.discard(ws)
         except Exception as e:
             print(f"[liq] {e}")
 
@@ -2301,6 +2391,7 @@ def create_app(state):
             if uw0:
                 await ws.send_json(uw0)
             await ws.send_json(liq_frame(st.sym)[0])   # liquidez VPVR/KDE (contexto, no gatillo)
+            await ws.send_json(liq_map_frame(st.sym)[0])   # mapa liquidez (widget)
             while True:
                 # drenamos pings/close + controles del cliente (cambio de timeframe)
                 txt = await ws.receive_text()
@@ -2336,6 +2427,7 @@ def create_app(state):
                     # zonas del nuevo símbolo + flecha direccional (actualización inmediata)
                     await ws.send_json(zones_frame(st))
                     await ws.send_json(liq_frame(st.sym)[0])   # liquidez del nuevo símbolo
+                    await ws.send_json(liq_map_frame(st.sym)[0])
                     await broadcast_direction(st)
                 elif isinstance(ctl, dict) and ctl.get("cmd") == "scope":
                     st.all_exp = (ctl.get("scope") == "ALL")   # 0DTE <-> ALL-EXP
