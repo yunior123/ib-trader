@@ -766,6 +766,67 @@
     </div>
     <div class="wgbody" id="techbody"></div>
     <div class="wgrs"></div>
+  <!-- 5 NEW FEATURES WIDGETS (2026-07-29) -->
+  <div class="wgt" id="wgt-ivreg">
+    <div class="wghdr">
+      <span class="wgdrag">⠿⠿</span><span class="wgname">IV Regime</span>
+      <span class="wgsub" id="ivreg-sub">—</span>
+      <button class="wgb wgexp" title="Expandir">⤢</button>
+      <button class="wgb wgmin" title="Plegar">–</button>
+      <button class="wgb wgx" title="Cerrar">✕</button>
+    </div>
+    <div class="wgbody" id="ivreg-body"><div class="wgempty"><div class="wgeico">◌</div><div class="wgemsg">IV histórico cargando...</div></div></div>
+    <div class="wgrs"></div>
+  </div>
+
+  <div class="wgt" id="wgt-rviv">
+    <div class="wghdr">
+      <span class="wgdrag">⠿⠿</span><span class="wgname">RV vs IV</span>
+      <span class="wgsub" id="rviv-sub">—</span>
+      <button class="wgb wgexp" title="Expandir">⤢</button>
+      <button class="wgb wgmin" title="Plegar">–</button>
+      <button class="wgb wgx" title="Cerrar">✕</button>
+    </div>
+    <div class="wgbody" id="rviv-body"><div class="wgempty"><div class="wgeico">◌</div><div class="wgemsg">Realized vs Implied cargando...</div></div></div>
+    <div class="wgrs"></div>
+  </div>
+
+  <div class="wgt" id="wgt-hmap">
+    <div class="wghdr">
+      <span class="wgdrag">⠿⠿</span><span class="wgname">Strike Heat Map</span>
+      <span class="wgsub" id="hmap-sub">—</span>
+      <button class="wgb wgexp" title="Expandir">⤢</button>
+      <button class="wgb wgmin" title="Plegar">–</button>
+      <button class="wgb wgx" title="Cerrar">✕</button>
+    </div>
+    <div class="wgbody" id="hmap-body"><div class="wgempty"><div class="wgeico">◌</div><div class="wgemsg">Heat map cargando...</div></div></div>
+    <div class="wgrs"></div>
+  </div>
+
+  <div class="wgt" id="wgt-book">
+    <div class="wghdr">
+      <span class="wgdrag">⠿⠿</span><span class="wgname">Book Quality</span>
+      <span class="wgsub" id="book-sub">—</span>
+      <button class="wgb wgexp" title="Expandir">⤢</button>
+      <button class="wgb wgmin" title="Plegar">–</button>
+      <button class="wgb wgx" title="Cerrar">✕</button>
+    </div>
+    <div class="wgbody" id="book-body"><div class="wgempty"><div class="wgeico">◌</div><div class="wgemsg">Liquidez del libro cargando...</div></div></div>
+    <div class="wgrs"></div>
+  </div>
+
+  <div class="wgt" id="wgt-gdecay">
+    <div class="wghdr">
+      <span class="wgdrag">⠿⠿</span><span class="wgname">Gamma Decay</span>
+      <span class="wgsub" id="gdecay-sub">—</span>
+      <button class="wgb wgexp" title="Expandir">⤢</button>
+      <button class="wgb wgmin" title="Plegar">–</button>
+      <button class="wgb wgx" title="Cerrar">✕</button>
+    </div>
+    <div class="wgbody" id="gdecay-body"><div class="wgempty"><div class="wgeico">◌</div><div class="wgemsg">Gamma por expiry cargando...</div></div></div>
+    <div class="wgrs"></div>
+  </div>
+
   </div>
 
 </div>
@@ -2551,9 +2612,11 @@ chart.subscribeCrosshairMove((param) => {
 //                      construccion no puede taparlo. Expandir un flotante lo re-acopla.
 //   · persistentes  -> abierto/plegado/expandido/posicion/altura en localStorage.
 // Sin frameworks: la CSP del cockpit no admite CDN y el peso importa (Mac de 8 GB).
-const WGT_IDS = ["gex", "liqmap", "prem", "flow", "tech"];
+const WGT_IDS = ["gex", "liqmap", "prem", "flow", "tech", "ivreg", "rviv", "hmap", "book", "gdecay"];
 const WGT_NAME = { gex: "Net GEX por strike", liqmap: "Mapa de liquidez",
-                   prem: "Net Premiums", flow: "Options Flow Orders", tech: "Technicals" };
+                   prem: "Net Premiums", flow: "Options Flow Orders", tech: "Technicals",
+                   ivreg: "IV Regime", rviv: "RV vs IV", hmap: "Strike Heat Map",
+                   book: "Book Quality", gdecay: "Gamma Decay" };
 const WGT_EL = {};
 for (const k of WGT_IDS) WGT_EL[k] = document.getElementById("wgt-" + k);
 const wdockEl = document.getElementById("wdock");
@@ -3215,6 +3278,130 @@ fetch('/version').then(r => r.json()).then(v => {
   el.textContent = v.version ? 'v ' + v.version : 'v ?';
   if (v.commit_date) el.title += ' — ' + v.commit_date;
 }).catch(() => {});
+
+// === NEW FEATURE WIDGETS (2026-07-29) ===
+async function ivRegDraw(force) {
+  const body = document.getElementById("ivreg-body"), sub = document.getElementById("ivreg-sub");
+  if (!body || !WG.open.ivreg) return;
+  const s = (curSym || "").toUpperCase();
+  try {
+    const r = await fetch("/data/iv_regime.json");
+    const d = await r.json();
+    const entry = d[s];
+    if (!entry) {
+      body.innerHTML = `<div class="wgempty"><div class="wgeico">◌</div><div class="wgemsg">Sin histórico IV</div></div>`;
+      return;
+    }
+    sub.textContent = `${entry.percentile}% · ${entry.regime}`;
+    const pct = parseInt(entry.percentile);
+    const regColor = entry.regime === "COMPRESSED" ? "#2962ff" : entry.regime === "EXPANDED" ? "#d32f2f" : "#ffa000";
+    const arrow = entry.regime === "COMPRESSED" ? "📉" : entry.regime === "EXPANDED" ? "📈" : "➡";
+    body.innerHTML = `<div style="padding:8px;font-family:mono"><div>${arrow} ${entry.regime}</div><div>IV ahora: ${entry.iv_current}% (P50: ${entry.iv_p50}%)</div><div>P10: ${entry.iv_p10}% | P90: ${entry.iv_p90}%</div><div style="width:100%;height:3px;background:#ddd;margin:4px 0"><div style="height:100%;width:${pct}%;background:${regColor}"></div></div></div>`;
+    body.dataset.filled = "1";
+  } catch (e) {
+    body.innerHTML = `<div class="wgempty"><div class="wgeico">◌</div><div>${e.message}</div></div>`;
+  }
+}
+
+async function rvivDraw(force) {
+  const body = document.getElementById("rviv-body"), sub = document.getElementById("rviv-sub");
+  if (!body || !WG.open.rviv) return;
+  const s = (curSym || "").toUpperCase();
+  try {
+    const r = await fetch("/data/rv_iv_spread.json");
+    const d = await r.json();
+    const entry = d[s];
+    if (!entry) {
+      body.innerHTML = `<div class="wgempty"><div class="wgeico">◌</div><div class="wgemsg">Sin RV/IV</div></div>`;
+      return;
+    }
+    const sig = entry.signal === "SHORT_VOL" ? "📉 VENDER VOL" : entry.signal === "LONG_VOL" ? "📈 COMPRAR VOL" : "➡ FAIR";
+    const col = entry.signal === "SHORT_VOL" ? "#d32f2f" : entry.signal === "LONG_VOL" ? "#2962ff" : "#ffa000";
+    sub.textContent = sig;
+    body.innerHTML = `<div style="padding:8px;font-family:mono"><div>RV: ${entry.rv}% | IV: ${entry.iv}%</div><div>Spread: <span style="color:${col}">${entry.spread_pct > 0 ? "+" : ""}${entry.spread_pct}%</span></div><div style="font-size:11px;margin-top:4px">${sig}</div></div>`;
+    body.dataset.filled = "1";
+  } catch (e) {
+    body.innerHTML = `<div class="wgempty"><div class="wgeico">◌</div><div>${e.message}</div></div>`;
+  }
+}
+
+async function hmapDraw(force) {
+  const body = document.getElementById("hmap-body"), sub = document.getElementById("hmap-sub");
+  if (!body || !WG.open.hmap) return;
+  const s = (curSym || "").toUpperCase();
+  try {
+    const r = await fetch(`/data/strike_heatmap_${s.toLowerCase()}.json`);
+    const d = await r.json();
+    if (!d || Object.keys(d).length === 0) {
+      body.innerHTML = `<div class="wgempty"><div class="wgeico">◌</div><div class="wgemsg">Sin heatmap</div></div>`;
+      return;
+    }
+    sub.textContent = "Concentración por decil";
+    let html = '<div style="padding:8px;font-size:11px;font-family:mono">';
+    for (const [label, data] of Object.entries(d)) {
+      const dom = data.dominance === "CALLS" ? "📞" : data.dominance === "PUTS" ? "📍" : "↔";
+      html += `<div>${label}: ${dom} ${data.total} (C:${data.calls_vol} P:${data.puts_vol})</div>`;
+    }
+    html += '</div>';
+    body.innerHTML = html;
+    body.dataset.filled = "1";
+  } catch (e) {
+    body.innerHTML = `<div class="wgempty"><div class="wgeico">◌</div><div>${e.message}</div></div>`;
+  }
+}
+
+async function bookDraw(force) {
+  const body = document.getElementById("book-body"), sub = document.getElementById("book-sub");
+  if (!body || !WG.open.book) return;
+  const s = (curSym || "").toUpperCase();
+  try {
+    const r = await fetch(`/api/book_quality?sym=${s}`);
+    const d = await r.json();
+    if (!d) {
+      body.innerHTML = `<div class="wgempty"><div class="wgeico">◌</div><div class="wgemsg">Sin libro</div></div>`;
+      return;
+    }
+    const col = d.quality === "EXCELLENT" ? "#2962ff" : d.quality === "GOOD" ? "#7cb342" : d.quality === "WEAK" ? "#ffa000" : "#d32f2f";
+    sub.textContent = d.quality;
+    sub.style.color = col;
+    body.innerHTML = `<div style="padding:8px;font-family:mono"><div>Quality: <span style="color:${col};font-weight:bold">${d.quality}</span></div><div>Strikes: ${d.total_strikes}</div><div>Thin: ${d.iliquids} (${d.pct_thin}%)</div></div>`;
+    body.dataset.filled = "1";
+  } catch (e) {
+    body.innerHTML = `<div class="wgempty"><div class="wgeico">◌</div><div>${e.message}</div></div>`;
+  }
+}
+
+async function gdecayDraw(force) {
+  const body = document.getElementById("gdecay-body"), sub = document.getElementById("gdecay-sub");
+  if (!body || !WG.open.gdecay) return;
+  const s = (curSym || "").toUpperCase();
+  try {
+    const r = await fetch(`/api/gamma_decay?sym=${s}`);
+    const d = await r.json();
+    if (!d || d.length === 0) {
+      body.innerHTML = `<div class="wgempty"><div class="wgeico">◌</div><div class="wgemsg">Sin gamma</div></div>`;
+      return;
+    }
+    sub.textContent = `${d.length} expiries`;
+    let html = '<div style="padding:8px;font-size:11px;font-family:mono">';
+    d.slice(0, 5).forEach(row => {
+      html += `<div>T+${row.dte}d: ${row.gamma.toFixed(0)} γ</div>`;
+    });
+    html += '</div>';
+    body.innerHTML = html;
+    body.dataset.filled = "1";
+  } catch (e) {
+    body.innerHTML = `<div class="wgempty"><div class="wgeico">◌</div><div>${e.message}</div></div>`;
+  }
+}
+
+// Agregar a la llamada de redraw de widgets
+const origWidgetRedraw = window.wgRedraw || (() => {});
+window.wgRedraw = function() {
+  origWidgetRedraw();
+  ivRegDraw(); rvivDraw(); hmapDraw(); bookDraw(); gdecayDraw();
+};
+
 </script>
 </body>
 </html>
