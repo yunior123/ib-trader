@@ -1209,3 +1209,29 @@ if __name__ == "__main__":
     wc = wall_context(g, 100.0)
     print(f"wall_context@100: regime={wc['regime']} d_flip={wc['d_flip']:.1f}% "
           f"d_call_wall={wc['d_call_wall']:.1f}% d_put_wall={wc['d_put_wall']:.1f}%")
+
+def gamma_by_expiry(rows, spot, scale="house"):
+    """Gamma total por días a expiry. rows=[{strike, right, oi, gamma, ...}].
+    Devuelve {daysToExp: gamma_sum, ...} ordenado por proximidad a expiry."""
+    from datetime import datetime, timezone
+    now = datetime.now(timezone.utc).timestamp()
+    by_exp = {}
+    for r in rows:
+        try:
+            exp_str = str(r.get("exp", ""))
+            if len(exp_str) == 8:  # YYYYMMDD
+                exp_ts = int(exp_str[:4] + exp_str[4:6] + exp_str[6:8] + "160000", 16) if exp_str[6:8].isdigit() else 0
+                if not exp_ts:
+                    from datetime import datetime as dt
+                    exp_ts = int(dt.strptime(exp_str, "%Y%m%d").replace(hour=16).timestamp())
+            else:
+                continue
+            dte = max(0, int((exp_ts - now) / 86400))
+            gamma = float(r.get("gamma", 0))
+            oi = float(r.get("oi", 0))
+            if dte not in by_exp:
+                by_exp[dte] = 0.0
+            by_exp[dte] += gamma * oi / 100.0
+        except Exception:
+            pass
+    return by_exp
