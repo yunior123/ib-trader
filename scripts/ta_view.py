@@ -25,7 +25,7 @@ _RATING2VIEW = {"buy": "bull", "overweight": "bull", "hold": "neutral",
 
 
 def _load_env_file(name):
-    p = os.path.join(REPO, name)
+    p = os.path.join(REPO, "config", name)
     if not os.path.exists(p):
         return
     for line in open(p):

@@ -11,7 +11,7 @@
 # LEY ANTI-RUIDO (2026-07-17, sigue vigente): si la alerta no es FRESCA (<=45s) NO se
 # envia. Dedup + cap 1/5s con bypass de prioridad.
 cd "$(dirname "$0")/.." || exit 1
-ROOT="$(pwd)"; source feeds.env 2>/dev/null
+ROOT="$(pwd)"; source config/feeds.env 2>/dev/null
 F="$ROOT/data/notify_push.txt"
 touch "$F"
 LAST=""; LASTSENT=0

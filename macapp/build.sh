@@ -43,8 +43,8 @@ if [ ! -x bin/compass ] || [ scripts/compass.cpp -nt bin/compass ]; then
     sleep 5
   done
   echo "  compilando la BRUJULA (secuencial, un solo clang++)…"
-  clang++ -std=c++23 -O3 -march=native -Wall -Wextra -o compass scripts/compass.cpp \
-    || echo "  🔴 AVISO: la BRUJULA no compila — la .app ira SIN flecha"
+  clang++ -std=c++23 -O3 -march=native -Wall -Wextra -o bin/compass scripts/compass.cpp
+  cp bin/compass compass
 fi
 
 cat > "$APP/Contents/Info.plist" <<'PLIST'

@@ -4,7 +4,7 @@
 #      ./scripts/picaro.sh list
 # Señal-solamente: esto ENCUENTRA candidatos; el print de precio decide (playbook).
 cd "$(dirname "$0")/.." || exit 1
-source feeds.env 2>/dev/null
+source config/feeds.env 2>/dev/null
 AUTH="${FINVIZ_AUTH3:-$FINVIZ_AUTH}"
 [[ -z "$AUTH" ]] && { echo "SIN TOKEN (feeds.env)"; exit 1; }
 N="${2:-15}"

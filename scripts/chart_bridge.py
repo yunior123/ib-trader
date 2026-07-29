@@ -1657,6 +1657,8 @@ async def broadcast_direction(state, lv=None):
              "families": dv.get("families"), "fading": dv.get("fading", []),
              "vetoes": dv.get("vetoes", []), "level": dv.get("level"),
              "amplitude": dv.get("amplitude"), "mag": dv.get("mag", 0.0),
+             "overnight_context": dv.get("overnight_context"),
+             "drivers_text": dv.get("drivers_text"), "drivers": dv.get("drivers", []),
              "grade": dv.get("grade"), "stale": dv.get("stale"),
              "stale_age": dv.get("stale_age"),
              "target": dv.get("target"), "target_label": (dv.get("grade") or "objetivo"),

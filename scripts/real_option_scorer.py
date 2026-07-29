@@ -18,7 +18,7 @@ import csv, math, os, sys, time, json, urllib.request
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(REPO)
 K = None
-for ln in open("feeds.env"):
+for ln in open(os.path.join(REPO, "config", "feeds.env")):
     if ln.startswith("POLYGON_KEY"):
         K = ln.split("=", 1)[1].strip().strip('"')
 if not K:

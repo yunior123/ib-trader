@@ -47,7 +47,7 @@ def token():
     for k in ("FINVIZ_AUTH3", "FINVIZ_AUTH"):
         if os.environ.get(k, "").strip():
             return os.environ[k].strip()
-    for name in ("feeds.env", "llm.env"):
+    for name in ("config/feeds.env", "config/llm.env"):
         try:
             for ln in open(os.path.join(REPO, name)):
                 for k in ("FINVIZ_AUTH3=", "FINVIZ_AUTH="):

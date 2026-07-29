@@ -23,7 +23,7 @@ DB = os.path.join(REPO, "data", "trades.db")
 FLEET = open("data/fleet.txt").read().split() if os.path.exists("data/fleet.txt") else []
 
 def _key():
-    for src in ("feeds.env", "polygon.env"):
+    for src in ("config/feeds.env", "config/polygon.env"):
         p = os.path.join(REPO, src)
         if os.path.exists(p):
             for ln in open(p):

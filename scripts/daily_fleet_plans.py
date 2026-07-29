@@ -74,7 +74,7 @@ FLEET = {
 
 def env_load():
     d = {}
-    for f in ("feeds.env", "x.env"):
+    for f in ("config/feeds.env", "config/x.env"):
         try:
             for ln in open(os.path.join(REPO, f)):
                 ln = ln.strip()

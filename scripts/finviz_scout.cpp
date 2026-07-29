@@ -89,7 +89,7 @@ static std::map<std::string, std::string> read_env_file(const char* path) {
 
 static std::string get_token() {
     const char* keys[] = {"FINVIZ_AUTH3", "FINVIZ_AUTH"};
-    auto feeds = read_env_file("feeds.env");
+    auto feeds = read_env_file("config/feeds.env");
     for (const char* k : keys) {  // env primero (permite el test de token falso)
         const char* e = getenv(k);
         if (e && *e) return e;
@@ -289,7 +289,6 @@ int main(int argc, char** argv) {
     std::string token = get_token();
     if (token.empty()) {
         logln("FINVIZ ROTO: sin token (FINVIZ_AUTH3/FINVIZ_AUTH en feeds.env)");
-        fleet_notify_urgent("🛰 FINVIZ ROTO", "Sin token en feeds.env — scout muerto");
         return 1;
     }
     curl_global_init(CURL_GLOBAL_DEFAULT);

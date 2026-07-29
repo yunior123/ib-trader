@@ -28,7 +28,7 @@ osascript -e 'display notification "Patrones/formas refrescados, calibración re
 ./venv/bin/python - <<PYEOF >> $LOG 2>&1
 import os,requests
 def gv(k):
-    for ln in open("feeds.env"):
+    for ln in open("config/feeds.env"):
         if ln.startswith(k+"="): return ln.split("=",1)[1].strip().strip('"').strip("'")
 try:
     requests.post("https://api.resend.com/emails",timeout=20,

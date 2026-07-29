@@ -47,7 +47,7 @@ class PolygonError(RuntimeError):
 def api_key():
     """Key de feeds.env / polygon.env / entorno. Levanta si falta: sin key no hay
     'valor por defecto' posible."""
-    for src in ("feeds.env", "polygon.env"):
+    for src in ("config/feeds.env", "config/polygon.env"):
         p = os.path.join(REPO, src)
         if not os.path.exists(p):
             continue

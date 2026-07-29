@@ -22,12 +22,12 @@ def log_msg(s):
         f.write(msg + "\n")
 
 def is_served_fresh(sym):
-    """True si levels_<sym>.json tiene mtime <120s (chart_bridge activo)."""
+    """True si levels_<sym>.json tiene mtime <60s (margen ante el gate de 180s)."""
     path = os.path.join(LEVELS_DIR, f"levels_{sym.lower()}.json")
     if not os.path.exists(path):
         return False
     age = time.time() - os.path.getmtime(path)
-    return age < 120
+    return age < 60
 
 def refresh_one(sym):
     """Refresca levels_<sym>.json via chart_levels.gen(). Retorna True si ok, False si error."""
@@ -88,7 +88,7 @@ def main():
             continue
         
         worked, failed = cycle_once()
-        if worked == 0 and failed > 0:
+        if worked > 0 and failed == worked:
             fail_streak += 1
             if fail_streak > 5:
                 log_msg(f"ALERTA: {fail_streak} ciclos fallidos seguidos")
@@ -99,7 +99,7 @@ def main():
         if once:
             break
         
-        time.sleep(120)
+        time.sleep(60)
 
 if __name__ == "__main__":
     main()

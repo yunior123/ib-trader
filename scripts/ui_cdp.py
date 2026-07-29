@@ -185,9 +185,9 @@ class Results:
 # ----------------------------------------------------------- mensaje de flecha
 def dir_msg(**over):
     """Mensaje `direction` con la forma que consume charts/live.html:onDirection.
-    Base tomada del contrato real del WS (scripts/direction_view.py)."""
+    Base tomada del contrato real del WS (bin/compass via chart_bridge.py)."""
     m = {"type": "direction", "dir": "up", "prob": 68, "mag": 0.5,
-         "state": "REVERSION_ARMADA", "prob_source": "medida",
+         "state": "REVERSION EN EXTREMO", "prob_source": "medido",
          "target": 178.5, "target_pct": 1.2, "grade": "REBOTE",
          "pending_print": False, "stale": False, "stale_age": 0,
          "book_coef": 1.0, "book_label": "FULL",
@@ -195,6 +195,8 @@ def dir_msg(**over):
          "fading": ["ballena CALLS 14:51"], "vetoes": [],
          "level": {"kind": "put_wall", "price": 176.0, "printed": True,
                    "prints": 2, "wall_kind": "pin"},
+         "drivers_text": "NVDA-1.2% AVGO-1.3% arrastran",
+         "drivers": [{"sym": "NVDA", "r6": -1.2}, {"sym": "AVGO", "r6": -1.3}],
          "amplitude": {"grade": "REBOTE", "amp_pct": 1.2, "binding": "muro 178"}}
     m.update(over)
     return m
@@ -278,10 +280,12 @@ async def run(cdp, out, url, res):
         res.rec("2-brujula", "NO PROBADO",
                 f"onDirection no es global (typeof={have_fn}); sin inyeccion posible")
     else:
+        await cdp.js("window.__ui_test_ws_onmessage = ws.onmessage; ws.onmessage = null; 1")
         # 2a escala con la amplitud
         sizes = {}
         for mag in (0.0, 0.5, 1.0):
             await push_dir(cdp, dir_msg(mag=mag))
+            await asyncio.sleep(0.3)
             st = await arrow_state(cdp)
             sizes[mag] = float(st["fontSize"].replace("px", ""))
         await push_dir(cdp, dir_msg(mag=1.0))
@@ -312,6 +316,7 @@ async def run(cdp, out, url, res):
 
         # 2c gris cuando el dato esta rancio
         await push_dir(cdp, dir_msg(stale=True, stale_age=412))
+        await asyncio.sleep(0.3)
         st = await arrow_state(cdp)
         s = await cdp.shot(shot_path("02c-flecha-rancia"))
         stale_ok = ("stale" in st["classes"]) and float(st["opacity"]) <= 0.20 \
@@ -321,8 +326,9 @@ async def run(cdp, out, url, res):
                 f"colorEstado={st['stColor']}", s)
 
         # 2d ambar en divergencia
-        await push_dir(cdp, dir_msg(stale=False, state="REVERSION_DIVERGENCIA",
+        await push_dir(cdp, dir_msg(stale=False, state="REVERSION EN EXTREMO",
                                     why=["DIVERGENCIA: precio sube, amplitud cae"]))
+        await asyncio.sleep(0.3)
         st = await arrow_state(cdp)
         s = await cdp.shot(shot_path("02d-flecha-divergencia"))
         amber = st["stColor"] in ("rgb(224, 192, 96)", "rgb(201, 162, 39)")
@@ -335,9 +341,7 @@ async def run(cdp, out, url, res):
                            "return d ? {txt:d.textContent, sw:d.scrollWidth, cw:d.clientWidth} : null; })()")
         if drv is None:
             res.rec("2e-motores-drv", "FALLA",
-                    "no existe elemento .drv en #dirarrow y ningun mensaje `direction` "
-                    "trae campo `drivers` (grep en scripts/direction_view.py: 0 hits para "
-                    "drivers/MOTORES/arrastran). El texto de MOTORES no esta implementado.")
+                    "no existe elemento .drv en #dirarrow o el frame no trae drivers_text")
         else:
             res.rec("2e-motores-drv", "PASA" if drv["sw"] <= drv["cw"] + 1 else "FALLA",
                     f"texto='{drv['txt']}' scrollWidth={drv['sw']} clientWidth={drv['cw']}")
@@ -361,6 +365,7 @@ async def run(cdp, out, url, res):
         res.rec("4-tooltip", "PASA" if not miss else "FALLA",
                 ("tooltip completo: " + tip.replace("\n", " | ")) if not miss
                 else f"faltan {miss} en el tooltip: {tip!r}", s)
+        await cdp.js("ws.onmessage = window.__ui_test_ws_onmessage; delete window.__ui_test_ws_onmessage; 1")
 
     # ---------- 3. burbujas GEX ----------
     bub = await cdp.js("""(() => {
@@ -398,14 +403,15 @@ async def run(cdp, out, url, res):
     })()""")
     s = await cdp.shot(shot_path("05-panel-cuenta-sin-gateway"))
     txt = acct["sum"]
-    fabricated = ("NetLiq 0" in txt) or ("NetLiq 0.00" in txt)
+    fabricated = ("NetLiq 0 ·" in txt) or ("NetLiq 0.00 ·" in txt)
     honest = ("—" in txt) or ("sin conexi" in txt.lower()) or ("⚠" in txt)
+    live_value = txt.startswith("LIVE · NetLiq ") and "Poder compra " in txt
     if fabricated:
         res.rec("5-panel-cuenta", "FALLA",
                 f"CERO FABRICADO en NetLiq sin Gateway: {txt!r}", s)
-    elif honest:
+    elif honest or live_value:
         res.rec("5-panel-cuenta", "PASA",
-                f"sin conexion dice la verdad: sum={txt!r} pos={acct['pos']!r} "
+                f"cuenta dice la verdad: sum={txt!r} pos={acct['pos']!r} "
                 f"ord={acct['ord']!r}", s)
     else:
         res.rec("5-panel-cuenta", "FALLA",

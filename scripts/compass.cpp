@@ -92,6 +92,8 @@ constexpr int    HYST_N         = 2;       // computos consecutivos para cambiar
 constexpr int    CALIB_MIN_N    = 30;      // n minima para llamar a algo "medido"
 constexpr double FORCE_MAX_AGE  = 120.0;   // force.json solo si es de hace <2min
 constexpr double VIX_MAX_AGE    = 90.0;    // vix.json solo si es de hace <90s (si no, viejo)
+constexpr double OVERNIGHT_MAX_AGE = 300.0;
+constexpr double OVERNIGHT_STRONG  = 0.5;
 }
 
 // banda de VIX (contexto). CBOE: CALM <16 / ELEVADO 16-24 / ALTO >24. Es lo que Yunior mira
@@ -252,6 +254,7 @@ struct Ev {
     std::string calib_source, calib_dir;
     // VIX en vivo (IBKR CBOE): CONTEXTO, no dispara. vix_live=false => cierre anterior.
     std::optional<double> vix; std::optional<bool> vix_live;
+    std::optional<double> overnight_score, overnight_nq, overnight_korea;
 };
 
 struct Amp {
@@ -301,13 +304,17 @@ struct Drivers {
 
 // metricas de un simbolo desde SUS barras locales (sin red, sin sqlite)
 struct Met { bool ok = false; double r6 = 0, r15 = 0, z6 = 0, er10 = 0; };
+static std::unordered_map<std::string, Met> g_metrics_cache;
 static Met metrics_of(const std::string& sym_lo) {
+    auto hit = g_metrics_cache.find(sym_lo);
+    if (hit != g_metrics_cache.end()) return hit->second;
     Met m;
     auto b = load_bars(sym_lo);
     size_t n = b.size();
-    if (n < 41) return m;
+    if (n < 41) return g_metrics_cache[sym_lo] = m;
     // contiguidad (a)
-    if (b[n - 1].t - b[n - 7].t > 8 * 60 || b[n - 1].t - b[n - 16].t > 18 * 60) return m;
+    if (b[n - 1].t - b[n - 7].t > 8 * 60 || b[n - 1].t - b[n - 16].t > 18 * 60)
+        return g_metrics_cache[sym_lo] = m;
     std::vector<double> c; c.reserve(n);
     for (auto& x : b) c.push_back(x.c);
     m.r6 = 100.0 * (c[n - 1] - c[n - 7]) / c[n - 7];
@@ -327,7 +334,7 @@ static Met metrics_of(const std::string& sym_lo) {
     for (size_t i = n - 10; i < n; ++i) gross += std::fabs(c[i] - c[i - 1]);
     m.er10 = gross > 0 ? net / gross : 0;
     m.ok = true;
-    return m;
+    return g_metrics_cache[sym_lo] = m;
 }
 
 static bool strong_enough(const Met& m, std::string& why) {
@@ -489,6 +496,7 @@ struct Out {
     Amp amp;
     Drivers drv;
     std::optional<double> vix; std::optional<bool> vix_live;   // CONTEXTO, no dispara
+    std::optional<double> overnight_score, overnight_nq, overnight_korea, overnight_coef;
 };
 
 // --------------------------- PRINT O NADA ----------------------------------
@@ -853,6 +861,13 @@ static std::pair<std::optional<int>, std::string> prob_of(const std::string& sta
     return {(int)std::lround(clampd(base, 50, K::DOCTRINE_CAP)), "doctrina"};
 }
 
+static double overnight_coef(const Ev& ev, const std::string& dir) {
+    if (!ev.overnight_score || std::fabs(*ev.overnight_score) < K::OVERNIGHT_STRONG) return 1.0;
+    int local = dir == "up" ? 1 : (dir == "down" ? -1 : 0);
+    if (local == 0) return 1.0;
+    return sgn(*ev.overnight_score) == local ? 1.25 : 0.75;
+}
+
 // ------------------------------- histeresis ---------------------------------
 struct Hist { std::string state, cand; int n = 0; bool has = false; };
 static std::unordered_map<std::string, Hist> g_hist;
@@ -998,6 +1013,20 @@ static Out classify(const Ev& ev, Hist* hist, const std::string& decay_json) {
     o.prob = p; o.prob_source = (src == "medido" && calib_pooled) ? "medido_pool" : src;
     o.pending_print = (o.state == S_APPR);
     if (o.state == S_BOX || o.state == S_NONE) { o.prob = 50; o.dir = "flat"; o.amp = Amp{}; }
+    o.overnight_score = ev.overnight_score;
+    o.overnight_nq = ev.overnight_nq;
+    o.overnight_korea = ev.overnight_korea;
+    double og = overnight_coef(ev, o.dir);
+    if (og != 1.0) {
+        o.overnight_coef = og;
+        if (o.amp.ok) o.amp.mag = clampd(o.amp.mag * og, 0.0, 1.0);
+        if (o.prob && o.prob_source == "doctrina")
+            o.prob = (int)std::lround(clampd(50.0 + (*o.prob - 50.0) * og, 50.0, K::DOCTRINE_CAP));
+        char b[160];
+        snprintf(b, sizeof b, "overnight %+.2f x%.2f (%s)", *ev.overnight_score, og,
+                 og > 1.0 ? "confirma" : "desacuerdo");
+        why.insert(why.begin(), b);
+    }
     if (why.size() > 6) why.resize(6);
     if (lvl) { o.has_level = true; o.level = *lvl; }
     o.vix = ev.vix; o.vix_live = ev.vix_live;   // CONTEXTO: pasa al JSON, no toca dir/amp/prob
@@ -1120,6 +1149,15 @@ static std::string to_json(const Out& o) {
         snprintf(b, sizeof b, "},\"fam_cap\":%zu,\"veto_cap\":%zu},", CAP::FAMILIES_MAX, CAP::VETOES_MAX);
         s += b;
     }
+    if (o.overnight_score) {
+        snprintf(b, sizeof b,
+                 "\"overnight_context\":{\"score\":%.3f,\"nq\":%s,\"korea\":%s,\"coef\":%.2f},",
+                 *o.overnight_score,
+                 o.overnight_nq ? std::to_string(*o.overnight_nq).c_str() : "null",
+                 o.overnight_korea ? std::to_string(*o.overnight_korea).c_str() : "null",
+                 o.overnight_coef.value_or(1.0));
+        s += b;
+    } else s += "\"overnight_context\":null,";
     // VIX como CONTEXTO (no dispara): banda + si es vivo. La flecha lo MUESTRA, no lo obedece;
     // para que module amplitud/regimen hace falta medirlo (barrier_labels+null_control+BH-FDR).
     if (o.vix) {
@@ -1145,6 +1183,9 @@ static Ev ev_from_json(const std::string& j) {
     e.leg_pct = opt("leg_pct"); e.em_used_pct = opt("em_used_pct");
     e.exhaustion = opt("exhaustion"); e.now_min = opt("now_min");
     e.book_coef = opt("book_coef");
+    e.overnight_score = opt("overnight_score");
+    e.overnight_nq = opt("overnight_nq");
+    e.overnight_korea = opt("overnight_korea");
     e.calib_lo = opt("calib_lo"); e.calib_n = opt("calib_n");
     if (auto s = jstr(j, "calib_source")) e.calib_source = *s;
     if (auto s = jstr(j, "calib_dir")) e.calib_dir = *s;
@@ -1205,6 +1246,48 @@ static double pctb_of(const std::vector<double>& c, int n, double k, double* mid
     double up = m + k * sd, lo = m - k * sd;
     return (c.back() - lo) / (up - lo);
 }
+
+static bool overnight_symbol(const std::string& sym) {
+    static const char* LEAD[] = {"MU","SKHY","DRAM","SMH","NVDA","TSM","ASML","AMD","INTC",
+                                 "AVGO","TXN","QCOM","EWY","LRCX","SNDK","WDC","STX"};
+    for (auto s : LEAD) if (sym == s) return true;
+    return false;
+}
+
+static void load_overnight(Ev& e) {
+    if (getenv("OVERNIGHT_STRUCT") && std::string(getenv("OVERNIGHT_STRUCT")) == "0") return;
+    time_t now = time(nullptr); struct tm tmv{}; localtime_r(&now, &tmv);
+    int hm = tmv.tm_hour * 100 + tmv.tm_min;
+    if (tmv.tm_wday >= 1 && tmv.tm_wday <= 5 && hm >= 930 && hm < 1600) return;
+    std::string j = slurp("data/overnight_ctx.json");
+    auto ts = jnum(j, "ts");
+    if (j.empty() || !ts || (double)now - *ts > K::OVERNIGHT_MAX_AGE) return;
+    auto nq = jnum(j, "nq_pct");
+    std::optional<double> korea;
+    if (overnight_symbol(e.sym)) {
+        double num = 0, den = 0;
+        for (auto [key, w] : {std::pair{"hynix_pct", 0.40}, std::pair{"samsung_pct", 0.35},
+                              std::pair{"kospi_pct", 0.25}}) {
+            if (auto v = jnum(j, key)) { num += *v * w; den += w; }
+        }
+        if (den > 0) korea = num / den;
+    }
+    std::optional<double> sent;
+    std::string sj = json_section(j, "sent");
+    if (!sj.empty()) {
+        auto n = jnum(sj, "n"), pos = jnum(sj, "pos"), neg = jnum(sj, "neg");
+        if (n && *n > 0 && pos && neg && *pos + *neg > 0) sent = (*pos - *neg) / (*pos + *neg);
+    }
+    double num = 0, den = 0;
+    if (nq) { num += *nq * 0.60; den += 0.60; }
+    if (korea) { num += *korea * 0.30; den += 0.30; }
+    if (sent) { num += *sent * 0.10; den += 0.10; }
+    if (den <= 0) return;
+    e.overnight_score = num / den;
+    e.overnight_nq = nq;
+    e.overnight_korea = korea;
+}
+
 static Ev gather(const std::string& sym_lo) {
     Ev e;
     std::string SYM = sym_lo;
@@ -1326,6 +1409,7 @@ static Ev gather(const std::string& sym_lo) {
             if (auto v = jnum(sec, "coef")) e.book_coef = *v;
         }
     }
+    load_overnight(e);
     return e;
 }
 
@@ -1408,6 +1492,7 @@ int main(int argc, char** argv) {
     g_use_calib_table = true;
     std::unordered_map<std::string, std::string> led_last;   // sym -> "estado|dir" ya anotado
     do {
+        g_metrics_cache.clear();
         for (const auto& s : syms) {
             Ev e = gather(s);
             std::string SYM = e.sym;

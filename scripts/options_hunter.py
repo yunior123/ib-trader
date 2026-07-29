@@ -29,7 +29,7 @@ N = int(sys.argv[1]) if len(sys.argv) > 1 else 12
 CACHE_S = 900
 
 def auth():
-    for line in open("feeds.env"):
+    for line in open(os.path.join(ROOT, "config", "feeds.env")):
         line = line.strip()
         for k in ("FINVIZ_AUTH3", "FINVIZ_AUTH"):
             if line.startswith(k + "="):

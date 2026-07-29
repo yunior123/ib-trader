@@ -130,7 +130,7 @@ def test_el_orden_declarado_coincide_con_el_de_los_consumidores():
 
 
 def test_los_dos_ficheros_de_entorno_se_miran():
-    assert set(fac.ENV_FILES) == {"feeds.env", "llm.env"}
+    assert set(fac.ENV_FILES) == {"config/feeds.env", "config/llm.env"}
 
 
 # ---------- el veredicto que consume el healthcheck (funcion pura) ----------

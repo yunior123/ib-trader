@@ -6,6 +6,7 @@ cd "$(dirname "$0")/.."
 # anti-crash-loop (2026-07-29): 10 banners "sin token" en 5 min — muertes rapidas
 # consecutivas = GRITAR una vez y backoff 10 min, no un banner por relanzamiento
 FAILS=0
+INCIDENT="data/finviz_crash_notified"
 while true; do
   pkill -x finviz_scout 2>/dev/null
   sleep 1
@@ -16,13 +17,17 @@ while true; do
   if (( DUR < 60 )); then
     FAILS=$((FAILS+1))
     if (( FAILS >= 3 )); then
-      osascript -e 'display notification "finviz_scout muere al arrancar (3+ seguidas) — backoff 10 min. Revisar logs/finviz_scout.log" with title "🔴 FINVIZ CRASH-LOOP" sound name "Sosumi"' 2>/dev/null
+      if [ ! -e "$INCIDENT" ]; then
+        osascript -e 'display notification "finviz_scout muere al arrancar (3+ seguidas) — backoff 10 min. Revisar logs/finviz_scout.log" with title "🔴 FINVIZ CRASH-LOOP" sound name "Sosumi"' 2>/dev/null
+        : > "$INCIDENT"
+      fi
       sleep 600
       FAILS=0
       continue
     fi
   else
     FAILS=0
+    rm -f "$INCIDENT"
   fi
   sleep 30
 done

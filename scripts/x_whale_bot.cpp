@@ -362,7 +362,7 @@ static std::vector<std::string> csv_split(const std::string& line) {
 }
 
 static std::string finviz_token() {
-    auto feeds = read_env_file("feeds.env");
+    auto feeds = read_env_file("config/feeds.env");
     for (const char* k : {"FINVIZ_AUTH3", "FINVIZ_AUTH"}) {
         std::string v = env_or_file(k, feeds);
         if (!v.empty()) return v;
@@ -714,7 +714,7 @@ struct XAuth {
 };
 
 static XAuth load_xauth() {
-    auto xenv = read_env_file("x.env");
+    auto xenv = read_env_file("config/x.env");
     XAuth a;
     a.bearer = env_or_file("X_BEARER_TOKEN", xenv);
     // also accept unprefixed
@@ -814,11 +814,8 @@ static bool extract_tweet_id(const std::string& body, std::string& id_out) {
     // naive: "id":"123"
     size_t p = body.find("\"id\"");
     if (p == std::string::npos) return false;
-    p = body.find('"', p + 4);
-    if (p == std::string::npos) return false;
-    size_t q = body.find('"', p + 1);
     // might be "id": "123" with colon
-    p = body.find(':', body.find("\"id\""));
+    p = body.find(':', p + 4);
     if (p == std::string::npos) return false;
     while (p < body.size() && (body[p] == ':' || body[p] == ' ' || body[p] == '"'))
         p++;
@@ -1013,7 +1010,7 @@ int main(int argc, char** argv) {
         }
     }
 
-    auto xenv = read_env_file("x.env");
+    auto xenv = read_env_file("config/x.env");
     Budget budget = load_budget(xenv);
 
     if (budget_only) {

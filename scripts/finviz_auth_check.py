@@ -57,7 +57,7 @@ WARN_DAYS = 2          # avisa 2 dias antes de la fecha declarada de caducidad
 
 # El orden REAL que usan los consumidores. No tocar sin mirar los ficheros citados arriba.
 TOKEN_KEYS = ("FINVIZ_AUTH3", "FINVIZ_AUTH")
-ENV_FILES = ("feeds.env", "llm.env")
+ENV_FILES = ("config/feeds.env", "config/llm.env")
 
 
 def _env_files():

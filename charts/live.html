@@ -328,6 +328,9 @@
   #dirarrow .bq.thin { color:#f23645; background:rgba(239,83,80,.14); }
   #dirarrow .bq.weak { color:#e0c060; background:rgba(224,192,96,.12); }
   #dirarrow .bq.full { color:#9aa5b8; background:rgba(120,123,134,.10); }
+  #dirarrow .drv { font-size:11px; font-weight:750; color:#d6dae4; max-width:240px;
+                   margin:4px auto 0; white-space:nowrap; overflow:hidden;
+                   text-overflow:ellipsis; letter-spacing:.1px; }
   #dirarrow .cap { font-size:11px; font-weight:600; color:#b2b5be; max-width:240px;
                    margin:3px auto 0; line-height:1.3;
                    background:rgba(10,14,22,.82); padding:2px 7px; border-radius:4px; }
@@ -670,7 +673,7 @@
   <div id="structpill" class="hidden"></div>
   <div id="nodataBanner" class="hidden"></div>
   <div id="chipbar"></div>
-  <div id="dirarrow"><div class="halo"></div><div class="glyph"></div><div class="pct"></div><div class="ampbar"><i></i><i></i><i></i></div><div class="tgt"></div><div class="st"></div><div class="bq"></div><div class="cap"></div></div>
+  <div id="dirarrow"><div class="halo"></div><div class="glyph"></div><div class="pct"></div><div class="ampbar"><i></i><i></i><i></i></div><div class="tgt"></div><div class="st"></div><div class="bq"></div><div class="drv"></div><div class="cap"></div></div>
   <div id="countdown"></div>
   <div id="zonepop">
     <div class="zph">Zona @ <span id="zonepop-px">—</span> · <span id="zone-instlbl">acción</span></div>
@@ -2226,6 +2229,7 @@ const dirEl = document.getElementById("dirarrow");
 const dirGlyph = dirEl.querySelector(".glyph");
 const dirPct = dirEl.querySelector(".pct");
 const dirTgt = dirEl.querySelector(".tgt");
+const dirDrv = dirEl.querySelector(".drv");
 const dirCap = dirEl.querySelector(".cap");
 const dirSt = dirEl.querySelector(".st");
 const dirBq = dirEl.querySelector(".bq");
@@ -2361,6 +2365,10 @@ function onDirection(msg) {
   dirEl.classList.toggle("stale", !!msg.stale);
   dirEl.style.opacity = msg.stale ? "0.18" : (d === "flat" ? "0.24" : (0.38 + vis * 0.28).toFixed(2));
   const why = (msg.why || []);
+  if (dirDrv) {
+    dirDrv.textContent = msg.drivers_text || "";
+    dirDrv.style.display = msg.drivers_text ? "block" : "none";
+  }
   if (dirCap) dirCap.textContent = why.length ? why[0] : "";
   // Tooltip con motivos/vetos/nivel
   const tip = [];
@@ -2368,6 +2376,11 @@ function onDirection(msg) {
   why.forEach(w => tip.push("· " + w));
   (msg.fading || []).forEach(f => tip.push("fadeando: " + f));
   (msg.vetoes || []).forEach(v => tip.push("VETO: " + v));
+  if (msg.drivers_text) tip.push("motores: " + msg.drivers_text);
+  if (msg.overnight_context) {
+    const o = msg.overnight_context;
+    tip.push(`overnight: score ${Number(o.score).toFixed(2)} · coef ${Number(o.coef).toFixed(2)}`);
+  }
   if (msg.level) tip.push(`nivel: ${msg.level.kind} ${msg.level.price} (${msg.level.printed ? msg.level.prints + " lecturas" : "sin print"}${msg.level.wall_kind ? ", " + msg.level.wall_kind : ""})`);
   if (msg.amplitude) tip.push(`amplitud ${msg.amplitude.grade} ${msg.amplitude.amp_pct}% (ata: ${msg.amplitude.binding || "—"})`);
   dirEl.title = tip.join("\n") || "brujula direccional";

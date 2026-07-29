@@ -231,6 +231,25 @@ def test_momentum_is_fuel_not_a_vote():
     assert hard["prob"] > soft["prob"], "el latigazo es mas elastico cuanto mas fuerte cayo"
 
 
+def test_overnight_modulates_arrow_without_becoming_a_family():
+    base = run(ev_put_wall(leg_pct=-0.3, bb_mid=741.5, levels=L2))
+    agree = run(ev_put_wall(leg_pct=-0.3, bb_mid=741.5, levels=L2,
+                            overnight_score=0.8, overnight_nq=0.8))
+    disagree = run(ev_put_wall(leg_pct=-0.3, bb_mid=741.5, levels=L2,
+                               overnight_score=-0.8, overnight_nq=-0.8))
+    assert agree["families"] == disagree["families"] == base["families"]
+    assert agree["overnight_context"]["coef"] == 1.25
+    assert disagree["overnight_context"]["coef"] == 0.75
+    assert agree["mag"] > base["mag"] > disagree["mag"]
+    assert agree["prob"] > base["prob"] > disagree["prob"]
+
+
+def test_overnight_does_not_relabel_measured_probability():
+    r = run(ev_put_wall(calib_lo=0.61, calib_n=120, overnight_score=0.9))
+    assert r["prob_source"] == "medido"
+    assert r["prob"] == 61
+
+
 L2 = [{"price": 740.0, "kind": "Muro put", "wall_kind": "pin", "touch_idx": 1},
       {"price": 752.0, "kind": "Muro call", "wall_kind": "pin", "touch_idx": 0}]
 
@@ -375,6 +394,7 @@ def test_contract_keys_always_present():
                   "pending_print", "families", "families_why", "vetoes", "fading",
                   "state_why", "level", "amplitude", "mag", "target", "grade", "ts"):
             assert k in r, "falta la clave {} en estado {}".format(k, r.get("state"))
+        assert "overnight_context" in r
         assert r["dir"] in ("up", "down", "flat")
         assert 50 <= r["prob"] <= 90
 

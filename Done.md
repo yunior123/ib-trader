@@ -648,3 +648,17 @@
 - [x] 2026-07-28 (Yunior): "crea skills nuevos para capturar sentimiento. y monitorea korea" (~20:15) — `hecho 79f43af`: skill `.claude/skills/x-sentiment/` + `scripts/x_sentiment.py` (presets skhynix/samsung/kospi/ticker-US, crudo atómico en `data/x_sentiment/`, fail-loud, probado en vivo 2×). Monitor KRX armado esta sesión (Hynix/Samsung/KOSPI, bandas ±0.75% + cinta ciega; baseline 20:15: Hynix +3.2%, Samsung +5.5%, KOSPI +2.9% — rebote fuerte con short covering). El monitor muere con esta sesión de Claude Code; los bots KRX de la flota siguen siendo la alarma permanente.
 
 - [x] 2026-07-28 (Yunior): "debug notifications... spanish, simple, real. claude code start should speak spanish. finish all improvements" — hecho: (a) zombi BOLLINGER VIGIA cazado (118 banners fantasma post-cierre, portero RTH en keepalive, commit); (b) arranque Claude Code traducido (echo hook + voz session-start + indice skills + 'Falló el comando'); (c) voz del dia 0 frases en ingles, price_alarm 0 alertas viejas, korea_watch ya fail-loud; (d) capa liquidez en chart delegada a agente; (e) hiro_pulse SUPERADO por la cinta UW (tick opciones IBKR err 10189 = via muerta; UW flow-alerts ya da el flujo firmado)
+# Cierre 2026-07-29 — review all, finish all
+
+- [x] Overnight integrado en `compass.cpp` sin ocupar familia: coef 1.25/0.75 modula
+      amplitud y sesgo doctrinal; probabilidad medida intacta; contexto visible en el chart.
+- [x] Migración durable de 17 consumidores a `config/feeds.env` y `x_whale_bot` a
+      `config/x.env`; prueba sin symlink raíz: Finviz 6/6.
+- [x] Finviz anti-spam por incidente: el binario ya no banneriza cada arranque sin token y
+      el keepalive avisa una sola vez hasta recuperación.
+- [x] UI/UX refinada y verificada: tabla/heatmap/decay/ayudas previas revisadas; motores
+      nombrados del C++ visibles en la flecha; smoke visual completo.
+- [x] Lógica de señales revisada contra código real: descartadas afirmaciones obsoletas del
+      informe anterior; cerrado el hueco de frescura de niveles (60 s + fail-streak real).
+- [x] `"relanza todo, build macos new version"` y `"review all, finish all"` cerrados con
+      959 tests verdes, builds C++ sin warnings y rebuild/relanzamiento final de la app.
