@@ -33,7 +33,7 @@ if [ -z "$KEY" ]; then
   exit 1
 fi
 
-VOICE="EXAVITQu4vr4xnSDxMaL"   # Sarah multilingual; cambiar con --voice tras elegir Yunior
+VOICE="XrExE9yKIg1WjnnlVkGX"   # Matilda (eleccion Yunior 2026-07-29 "matilde por ahora")
 DRY=0
 [ "$1" = "--dry-run" ] && DRY=1
 [ "$1" = "--voice" ] && VOICE=$2
