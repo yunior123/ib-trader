@@ -16,10 +16,11 @@ def _load_opt_whale_watch():
     # opt_whale_watch.py corre un `while True:` a nivel de modulo (conecta a IB de
     # verdad) SIN guarda `if __name__ == "__main__":` — importarlo entero cuelga el
     # test. Se ejecuta solo el prefijo (imports + in_session + state) cortando ANTES
-    # de ese bucle; no se toca el fichero real, es solo el harness de test.
+    # del watchdog: su hilo daemon hacia os._exit(1) DENTRO de pytest a los 300s
+    # (mataba la suite entera sin resumen, cazado 2026-07-28).
     path = os.path.join(REPO, "scripts", "opt_whale_watch.py")
     src = open(path).read()
-    marker = "\nwhile True:"
+    marker = "\ndef _watchdog"
     idx = src.index(marker)
     prefix = src[:idx]
     ns = {"__name__": "ibt_opt_whale_watch", "__file__": path}
