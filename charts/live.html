@@ -441,6 +441,19 @@
   .wgsub.tstale { color:#ffb300; }
   .technote { color:#6b7a99; font-style:italic; font-size:10.5px; margin:7px 0 0; }
   #wgt-tech .wgbody { padding:6px 9px; overflow-y:auto; }
+  /* cinta de ballenas UW (wgt-flow) */
+  #flowbody { overflow:auto; }
+  #flowbody.fltape { padding:0; font:11px "SF Mono",Menlo,monospace; background:#12161f; }
+  .flrow { display:grid; grid-template-columns:34px 36px 12px 26px 42px 36px 46px 36px 32px 1fr;
+           gap:4px; padding:2px 6px; border-bottom:1px solid #1b2233; align-items:baseline;
+           font-variant-numeric:tabular-nums; color:#d1d4dc; white-space:nowrap; }
+  .flrow.flhdr { position:sticky; top:0; background:#161a24; color:#8fa0bf; z-index:1; }
+  .flc { color:#26a69a; font-weight:700; } .flp { color:#ef5350; font-weight:700; }
+  .flmut { color:#8fa0bf; }
+  .flchip { font-size:9px; border:1px solid #2a3550; border-radius:3px; padding:0 3px;
+            color:#8fa0bf; justify-self:end; }
+  .flchip.bull { color:#26a69a; border-color:#26a69a; }
+  .flchip.bear { color:#ef5350; border-color:#ef5350; }
   #wgmenu { position:absolute; z-index:62; background:#161a24; border:1px solid #2a3550;
             border-radius:6px; padding:4px; display:none; box-shadow:0 8px 24px rgba(0,0,0,.6); }
   #wgmenu.on { display:block; }
@@ -680,18 +693,15 @@
   <div class="wgt" id="wgt-flow">
     <div class="wghdr">
       <span class="wgdrag">⠿⠿</span><span class="wgname">Options Flow Orders</span>
-      <span class="wgsub">sin dato</span>
+      <span class="wgsub" id="flowsub">sin dato</span>
       <button class="wgb wgexp" title="Expandir / contraer">⤢</button>
       <button class="wgb wgmin" title="Plegar">–</button>
       <button class="wgb wgx" title="Cerrar">✕</button>
     </div>
-    <div class="wgbody wgempty">
-      <div class="wgblock">BLOQUEADO — FALTA EL DATO</div>
-      <p><b>La cinta de sweeps</b> (hora · contrato · tamaño · precio · lado · agresor) necesita
-         exactamente el mismo dato que Net Premiums, y está bloqueada por lo mismo:
-         no tenemos prints de opción firmados, solo contadores acumulados.</p>
-      <p class="wgway"><b>La vía es HIRO</b> (tick-by-tick AllLast sobre contratos de opción,
-         <code>ibkr_bar_bridge.py:250</code>). Cuando llegue, esta lista se llena sola.</p>
+    <div class="wgbody wgempty" id="flowbody">
+      <div class="wgblock">BLOQUEADO — sin uw_flow_tape.json</div>
+      <p>La cinta la llena <code>uw_flow_tape.py</code> (UW flow-alerts, 90 s por símbolo,
+         capitanes + foco) vía frame <code>uw_tape</code> del bridge.</p>
       <p class="wgnever">Vacío a propósito: una cinta de órdenes inventada es peor que no tenerla.</p>
     </div>
     <div class="wgrs"></div>
@@ -2530,6 +2540,60 @@ function techSchedule() {
   if (WG.open.tech) { techDraw(true); techTimer = setInterval(() => techDraw(true), 60000); }
 }
 
+// ---- cinta de ballenas UW (wgt-flow): frame uw_tape del bridge (uw_flow_tape.py) ----
+let uwTape = null;
+function onUwTape(msg) { uwTape = msg; uwTapeDraw(); }
+function uwInRTH() {
+  const p = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", hour12: false,
+    weekday: "short", hour: "2-digit", minute: "2-digit" }).formatToParts(new Date());
+  const g = (t) => (p.find(x => x.type === t) || {}).value || "";
+  const hm = (+g("hour")) * 100 + (+g("minute"));
+  return !["Sat", "Sun"].includes(g("weekday")) && hm >= 930 && hm < 1600;
+}
+function uwFmtPrem(p) { return p >= 1e6 ? "$" + (p / 1e6).toFixed(1) + "M" : "$" + Math.round(p / 1e3) + "K"; }
+function uwBlocked(body, sub, why) {
+  sub.textContent = "sin dato"; sub.className = "wgsub";
+  body.classList.add("wgempty"); body.classList.remove("fltape");
+  body.innerHTML = `<div class="wgblock">BLOQUEADO — ${why}</div>` +
+    `<p class="wgnever">La cinta la llena uw_flow_tape.py (UW flow-alerts). Sin dato real no se pinta nada.</p>`;
+}
+function uwTapeDraw() {
+  const body = document.getElementById("flowbody"), sub = document.getElementById("flowsub");
+  if (!body || !sub) return;
+  if (!uwTape) { uwBlocked(body, sub, "sin uw_flow_tape.json"); return; }
+  if (uwTape.error) { uwBlocked(body, sub, uwTape.error); return; }
+  const rows = uwTape.rows || [];
+  if (!rows.length) { uwBlocked(body, sub, "0 prints"); return; }
+  const ageS = Math.max(0, Math.round(Date.now() / 1000 - (uwTape.asof || 0)));
+  // rancio >5min EN RTH = bloqueado con motivo; fuera de sesión la última cinta se enseña con su edad
+  if (ageS > 300 && uwInRTH()) { uwBlocked(body, sub, `rancio ${Math.round(ageS / 60)}m`); return; }
+  const age = ageS < 90 ? ageS + "s" : Math.round(ageS / 60) + "m";
+  sub.textContent = `UW · 90s · ${rows.length} prints · ${age}`;
+  sub.className = "wgsub" + (ageS > 300 ? " tstale" : "");
+  body.classList.remove("wgempty"); body.classList.add("fltape");
+  const fmtT = new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", hour12: false,
+    hour: "2-digit", minute: "2-digit" });
+  body.innerHTML =
+    `<div class="flrow flhdr"><span>ET</span><span>sym</span><span></span><span>lado</span>` +
+    `<span>strike</span><span>exp</span><span>prem</span><span>size</span><span>v/OI</span><span></span></div>` +
+    rows.slice(0, 30).map(r => {
+      // chip: sentiment SOLO si UW lo trae; si no, sweep o siglas de la regla — jamás inventado
+      const chip = r.sentiment
+        ? `<span class="flchip ${r.sentiment === "bullish" ? "bull" : r.sentiment === "bearish" ? "bear" : ""}">${r.sentiment}</span>`
+        : r.sweep ? `<span class="flchip">sweep</span>`
+        : `<span class="flchip">${(r.rule || "").replace(/[a-z]/g, "") || "—"}</span>`;
+      return `<div class="flrow"><span class="flmut">${fmtT.format(new Date(r.ts * 1000))}</span>` +
+        `<span>${r.sym}</span>` +
+        `<span class="${r.type === "C" ? "flc" : "flp"}">${r.type}</span>` +
+        `<span class="flmut">${r.side || "—"}</span>` +
+        `<span>${r.strike}</span>` +
+        `<span class="flmut">${(r.expiry || "").slice(5)}</span>` +
+        `<span>${uwFmtPrem(r.premium)}</span><span>${r.size}</span>` +
+        `<span class="flmut">${r.vol_oi}</span>${chip}</div>`;
+    }).join("");
+}
+setInterval(uwTapeDraw, 30000);   // re-evalúa la edad aunque no llegue frame nuevo
+
 const WG_KEY = "cockpitWidgets.v1";
 // Ancho del dock: normal / expandido. RESPONSIVO — con 6 cockpits repartidos en
 // rejilla (Yunior 2026-07-25) cada ventana mide ~480 px y un dock fijo de 320 se comia
@@ -2836,6 +2900,7 @@ function connect() {
     else if (msg.type === "ibmode") onIbMode(msg);   // switcher paper/live
     else if (msg.type === "account") onAccount(msg);   // posiciones/órdenes/balance
     else if (msg.type === "whale_cfg") onWhaleCfg(msg);   // config alertas de ballenas
+    else if (msg.type === "uw_tape") onUwTape(msg);   // cinta de ballenas UW (wgt-flow)
     else if (msg.type === "order_action") onOrderAction(msg);   // resultado cancel/sell/modify
   };
   ws.onclose = () => {

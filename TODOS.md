@@ -3,6 +3,12 @@
 > Vivo. Marcar [x] al cerrar. Manual completo: `docs/DAILY-SYSTEM.md`.
 
 ## 🔴 SESIÓN 2026-07-28 (tarde) — ballenas: mensajes, filtro marginal, carril rápido
+- [x] **"do we have a widget to spot whales like tradingflow... todos los que puedas, usa UW"**
+      (Yunior 2026-07-28) — cinta UW flow-alerts en el cockpit: hecho bf6b56a (poller
+      `uw_flow_tape.py` + keepalive + tests) y commit bridge+html (frame `uw_tape` → wgt-flow).
+      Pendiente: (1) reiniciar los chart_bridge 8080-8085 para que sirvan el frame nuevo (lo hace
+      el orquestador, NO se reiniciaron aquí); (2) medir latencia UW en RTH mañana antes de
+      plantear voz (voz = calibración + latencia medida; hoy cero voz nueva).
 - [x] **"las alertas de ballenas deberian decir: alerta ballena first, then the message" +
       "verifica que esa [EWY] no es ballenas y que no fue un fallo de calculo" + "IBKR limita a
       5 tickers... tick a tick, verifica" + "kill the schedule to watch whales in claude code" +

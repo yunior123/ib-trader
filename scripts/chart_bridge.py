@@ -1019,6 +1019,44 @@ def whale_cfg_status():
     return {"type": "whale_cfg", "priority": priority, "filters": filters, "priority_max": 5}
 
 
+_UW_TAPE_F = os.path.join(REPO, "data", "uw_flow_tape.json")
+
+
+def uw_tape_frame():
+    """(frame, mtime) de data/uw_flow_tape.json (lo escribe uw_flow_tape.py), o (None, None).
+    El contenido va TAL CUAL (rows o error): el widget muestra el motivo, aqui no se maquilla."""
+    try:
+        mt = os.path.getmtime(_UW_TAPE_F)
+        with open(_UW_TAPE_F) as f:
+            d = json.load(f)
+    except Exception:
+        return None, None
+    if not isinstance(d, dict):
+        return None, None
+    d["type"] = "uw_tape"
+    return d, mt
+
+
+async def uw_tape_loop():
+    """Empuja la cinta UW a TODOS los clientes cada 30 s si el fichero cambio (mtime)."""
+    last_mt = None
+    while True:
+        await asyncio.sleep(30)
+        try:
+            frame, mt = uw_tape_frame()
+            if frame is None or mt == last_mt:
+                continue
+            last_mt = mt
+            for st in list(STATES.values()):
+                for ws in list(st.clients):
+                    try:
+                        await ws.send_json(frame)
+                    except Exception:
+                        st.clients.discard(ws)
+        except Exception as e:
+            print(f"[uw_tape] {e}")
+
+
 def chain_exps(sym):
     """Expiries del cache opt_chain (línea header '# ... exps YYYYMMDD YYYYMMDD ...').
     Degradación limpia -> []. Sólo LECTURA."""
@@ -2205,6 +2243,9 @@ def create_app(state):
                 await ws.send_json({"type": "engine", "sym": st.sym.upper(),
                                     "rows": engine_state(st.sym)})
             await broadcast_direction(st)
+            uw0, _ = uw_tape_frame()
+            if uw0:
+                await ws.send_json(uw0)
             while True:
                 # drenamos pings/close + controles del cliente (cambio de timeframe)
                 txt = await ws.receive_text()
@@ -2954,6 +2995,7 @@ async def _serve(args):
         asyncio.ensure_future(live_feed(state, args.port, args.client_id))
         asyncio.ensure_future(us_stale_feed(state))   # anti-congelada 20:00 ET (skip mock/korea)
     asyncio.ensure_future(levels_loop(state))   # GEX/flip/muros en tiempo real
+    asyncio.ensure_future(uw_tape_loop())   # cinta de ballenas UW -> wgt-flow
     config = uvicorn.Config(app, host=args.host, port=args.http_port, log_level="info")
     server = uvicorn.Server(config)
     await server.serve()
@@ -2981,6 +3023,7 @@ if HAVE_FASTAPI:
             else:
                 asyncio.ensure_future(live_feed(state, port, int(os.environ.get("CHART_CLIENT_ID", "60"))))
             asyncio.ensure_future(levels_loop(state))   # GEX/flip/muros en tiempo real
+            asyncio.ensure_future(uw_tape_loop())   # cinta de ballenas UW -> wgt-flow
         return app
 
     app = _app_factory()
