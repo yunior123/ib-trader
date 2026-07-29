@@ -655,8 +655,8 @@
       <button data-side="sell" data-kind="put" style="background:#1a5e6e">Vende PUT</button>
     </div>
     <div class="zbtns" id="zone-stkbtns" style="display:none;grid-template-columns:1fr 1fr">
-      <button data-side="buy" data-kind="" style="background:#1e6f4c">🟢 Comprar</button>
-      <button data-side="sell" data-kind="" style="background:#b02a2a">🔴 Vender</button>
+      <button data-side="buy" data-kind="" style="background:#1e6f4c">Compra</button>
+      <button data-side="sell" data-kind="" style="background:#b02a2a">Vende</button>
     </div>
     <button class="zcancel" style="width:100%;margin-top:5px">Cancelar</button>
   </div>
@@ -2240,7 +2240,7 @@ function onDirection(msg) {
   }
   // ESTADO de la brujula: color + estilo de borde (el borde sobrevive al gris)
   if (dirSt) {
-    dirSt.textContent = msg.stale ? `RANCIA ${msg.stale_age}s` : st + (msg.state_pending ? " →?" : "");
+    dirSt.textContent = msg.stale ? `RANCIA ${msg.stale_age>=3600?Math.floor(msg.stale_age/3600)+"h "+Math.round(msg.stale_age%3600/60)+"m":msg.stale_age>=60?Math.round(msg.stale_age/60)+"m":Math.round(msg.stale_age)+"s"}` : st + (msg.state_pending ? " →?" : "");
     const c = msg.stale ? "#ef5350"
             : isRev ? "#e0c060"
             : st.indexOf("CONTINUA") === 0 ? "#8aa0c8"
@@ -2272,7 +2272,7 @@ function onDirection(msg) {
   dirEl.style.opacity = msg.stale ? "0.18" : (d === "flat" ? "0.24" : (0.38 + vis * 0.28).toFixed(2));
   const why = (msg.why || []);
   if (dirCap) dirCap.textContent = why.length ? why[0] : "";
-  // el tooltip lleva TODO: motivos, lo que se esta fadeando, los vetos y el nivel
+  // Tooltip con motivos/vetos/nivel
   const tip = [];
   if (msg.state) tip.push("ESTADO: " + msg.state + (msg.prob_source ? "  (prob " + msg.prob_source + ")" : ""));
   why.forEach(w => tip.push("· " + w));

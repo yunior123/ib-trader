@@ -5,4 +5,4 @@
 # 5 dias seguidos, incluso ANTES del repunto de carpetas). zsh como shell
 # intermedio (mismo patron que dailyplans_run.sh) si hereda el FDA.
 cd /Users/yuniorrodriguezosorio/ib-trader || exit 1
-./venv/bin/python scripts/daily_archive.py "$@" >> daily_archive.log 2>&1
+./venv/bin/python scripts/daily_archive.py "$@" >> logs/daily_archive.log 2>&1

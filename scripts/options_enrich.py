@@ -261,7 +261,7 @@ def emit(body, to_mirror=True, sym=None):
         os.makedirs(MIRROR_DIR, exist_ok=True)
         append_atomic(mirror_path(), line)
     if sym:
-        slog = os.path.join(ROOT, "%s_signals.log" % sym.lower())
+        slog = os.path.join(ROOT, "logs", "%s_signals.log" % sym.lower())
         if os.path.exists(slog):
             append_atomic(slog, line)
 

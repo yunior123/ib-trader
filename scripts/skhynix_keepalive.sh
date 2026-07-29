@@ -14,7 +14,7 @@ export SKHYNIX_SCORE_MIN=9
 while true; do
   pkill -x skhynix_signal_bot 2>/dev/null
   sleep 1
-  ./skhynix_signal_bot >> skhynix_signals.log 2>&1
-  echo "$(date) skhynix_signal_bot salio; relanzando" >> skhynix_signals.log
+  bots/skhynix_signal_bot >> logs/skhynix_signals.log 2>&1
+  echo "$(date) skhynix_signal_bot salio; relanzando" >> logs/skhynix_signals.log
   sleep 30
 done

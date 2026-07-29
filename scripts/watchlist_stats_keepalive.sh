@@ -5,7 +5,7 @@ cd "$(dirname "$0")/.."
 # cockpit -> data/watchlist_stats.json. Fuentes realtime: Finnhub /quote +
 # barras IBKR de la flota (fallback Finviz Elite). Señal-solamente; jamás delayed.
 while true; do
-  python3 scripts/watchlist_stats.py --loop >> watchlist_stats.log 2>&1
-  echo "$(date) watchlist_stats salio; relanzando" >> watchlist_stats.log
+  python3 scripts/watchlist_stats.py --loop >> logs/watchlist_stats.log 2>&1
+  echo "$(date) watchlist_stats salio; relanzando" >> logs/watchlist_stats.log
   sleep 30
 done

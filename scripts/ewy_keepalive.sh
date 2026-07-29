@@ -20,7 +20,7 @@ export EWY_WHALE_USD=250000
 while true; do
   pkill -x ewy_signal_bot 2>/dev/null
   sleep 1
-  ./ewy_signal_bot >> ewy_signals.log 2>&1
-  echo "$(date) ewy_signal_bot salio; relanzando" >> ewy_signals.log
+  bots/ewy_signal_bot >> logs/ewy_signals.log 2>&1
+  echo "$(date) ewy_signal_bot salio; relanzando" >> logs/ewy_signals.log
   sleep 30
 done

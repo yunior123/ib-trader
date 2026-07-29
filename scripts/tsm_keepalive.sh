@@ -31,7 +31,7 @@ export TSM_S_VOL_MULT=1.0
 while true; do
   pkill -x tsm_signal_bot 2>/dev/null
   sleep 1
-  ./tsm_signal_bot >> tsm_signals.log 2>&1
-  echo "$(date) tsm_signal_bot salio; relanzando" >> tsm_signals.log
+  bots/tsm_signal_bot >> logs/tsm_signals.log 2>&1
+  echo "$(date) tsm_signal_bot salio; relanzando" >> logs/tsm_signals.log
   sleep 30
 done

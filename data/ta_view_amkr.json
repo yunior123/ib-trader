@@ -1,0 +1,5 @@
+{
+ "ts": 1785256260,
+ "sym": "AMKR",
+ "error": "rc=1 sin veredicto; stderr: a_venv/lib/python3.12/site-packages/openai/_base_client.py\", line 1105, in request\n    raise self._make_status_error_from_response(err.response) from None\nopenai.APIStatusError: Error code: 402 - {'error': {'message': 'Insufficient Balance', 'type': 'unknown_error', 'param': None, 'code': 'invalid_request_error'}}\nDuring task with name 'Market Analyst' and id '49bc8113-ba72-2eb6-2a00-a31b64752154'"
+}

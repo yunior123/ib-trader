@@ -6,7 +6,7 @@ cd "$(dirname "$0")/.."
 while true; do
   pkill -x finviz_scout 2>/dev/null
   sleep 1
-  ./finviz_scout >> finviz_scout.log 2>&1
-  echo "$(date) finviz_scout salio; relanzando" >> finviz_scout.log
+  ./finviz_scout >> logs/finviz_scout.log 2>&1
+  echo "$(date) finviz_scout salio; relanzando" >> logs/finviz_scout.log
   sleep 30
 done

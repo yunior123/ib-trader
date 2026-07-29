@@ -20,7 +20,7 @@ export SMH_WHALE_USD=250000
 while true; do
   pkill -x smh_signal_bot 2>/dev/null
   sleep 1
-  ./smh_signal_bot >> smh_signals.log 2>&1
-  echo "$(date) smh_signal_bot salio; relanzando" >> smh_signals.log
+  bots/smh_signal_bot >> logs/smh_signals.log 2>&1
+  echo "$(date) smh_signal_bot salio; relanzando" >> logs/smh_signals.log
   sleep 30
 done

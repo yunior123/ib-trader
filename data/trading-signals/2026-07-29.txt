@@ -1,0 +1,262 @@
+02:39:27 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.59% px 59.12
+02:39:27 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.74% px 58.53
+02:39:27 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.34% px 57.43
+02:39:27 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +3.03% px 58.60
+02:39:27 | WARMUP DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.02% px 57.86
+02:39:27 | WARMUP DRAM: BUY | COMPRAR DRAM @ 57.86 | reversal a alza | entrada 47.69 | mov -17.6%
+02:39:27 | WARMUP DRAM: BUY | COMPRAR DRAM @ 57.86 | target 63.07 | floor 58.44 | capitulacion confirmada
+02:39:27 | WARMUP DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.17% px 58.62
+02:39:27 | WARMUP DRAM: SELL | VENDER DRAM @ 58.94 | trail 3xATR roto | entrada 57.86 | PnL +1.9%
+02:39:28 | 🇰🇷 KRX BRIDGE SIN GATEWAY | ningun puerto IBKR acepta conexion [4001, 4002] — Gateway/TWS caido
+02:39:31 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.74% px 10.89
+02:39:31 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.38% px 10.32
+02:39:31 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.90% px 10.46
+02:39:31 | WARMUP NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.29% px 10.52
+02:39:31 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -6.48% px 9.86
+02:39:31 | WARMUP NOK: BUY | COMPRAR NOK @ 9.94 | reversal a alza | entrada 8.77 | mov -11.8%
+02:39:31 | WARMUP NOK: BUY | COMPRAR NOK @ 9.94 | target 10.74 | floor 10.04 | capitulacion confirmada
+02:39:31 | WARMUP NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.41% px 9.80
+02:39:31 | WARMUP NOK: SELL | VENDER NOK @ 9.82 | time-stop (no revirtio) | entrada 9.94 | PnL -1.2%
+02:39:31 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.32% px 115.26
+02:39:31 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.17% px 113.72
+02:39:31 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.46% px 111.39
+02:39:31 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +2.45% px 114.10
+02:39:31 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.72% px 115.92
+02:39:31 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.64% px 116.92
+02:39:31 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.35% px 115.88
+02:39:31 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.83% px 117.97
+02:39:31 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.37% px 116.37
+02:39:31 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.41% px 116.80
+02:39:31 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.57% px 116.18
+02:39:31 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.46% px 113.36
+02:39:31 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.61% px 113.34
+02:39:31 | WARMUP SPCX: SELL | SPCX @ 112.86 | prob 61% | rompe-TL-1m-abajo+vol-1.7x+ST5-alineado+ribbon15-bajista+bajo-VWAP+retest-ok | fase=TREND_DOWN
+02:39:31 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.44% px 111.95
+02:39:31 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.33% px 113.38
+02:39:31 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.38% px 114.95
+02:39:31 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.62% px 110.79
+02:39:31 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +2.37% px 113.45
+02:39:31 | WARMUP TSLA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.06% px 351.10
+02:39:31 | WARMUP TSLA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.13% px 345.01
+02:39:31 | WARMUP TSLA TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.84% px 326.14
+02:39:31 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.34% px 114.78
+02:39:31 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.42% px 115.73
+02:39:31 | WARMUP TSLA: SELL | TSLA @ 322.03 | prob 58% | rompe-TL-1m-abajo+vol-1.8x+ST5-alineado+ribbon15-bajista+bajo-VWAP+retest-ok | fase=UNKNOWN
+02:39:31 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.36% px 114.28
+02:39:31 | WARMUP TSLA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.00% px 321.97
+02:39:31 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.40% px 113.30
+02:39:31 | WARMUP TSLA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.07% px 319.51
+02:39:31 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.05% px 111.93
+02:39:31 | WARMUP TSLA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.15% px 322.81
+02:39:31 | WARMUP SPCX: SELL | SPCX @ 112.74 | prob 58% | squeeze-p46+cierre-bajo-BB15+ST5-alineado+ribbon15-bajista+bajo-VWAP+retest-ok | fase=UNKNOWN
+02:39:31 | WARMUP TSLA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.07% px 318.37
+02:39:31 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.55% px 109.40
+02:39:31 | WARMUP TSLA: SELL | TSLA @ 313.84 | prob 62% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+02:39:31 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.84% px 110.87
+02:39:31 | WARMUP SPCX: SELL | SPCX @ 111.22 | prob 62% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=TREND_DOWN
+02:39:31 | WARMUP TSLA TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.50% px 311.00
+02:39:31 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.52% px 110.66
+02:39:31 | WARMUP TSLA: SELL | TSLA @ 310.12 | prob 58% | rompe-TL-1m-abajo+vol-1.7x+ST5-alineado+ribbon15-bajista+bajo-VWAP+retest-ok | fase=SPIKE_FADE
+02:39:31 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.40% px 111.35
+02:39:31 | WARMUP TSLA: SELL | TSLA @ 306.89 | prob 62% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+02:39:31 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +1.66% px 113.07
+02:39:31 | WARMUP TSLA: BUY | COMPRAR TSLA @ 310.76 | reversal a alza | entrada 305.50 | mov -1.7%
+02:39:31 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.37% px 112.10
+02:39:31 | WARMUP TSLA: BUY | COMPRAR TSLA @ 310.76 | target 320.08 | floor 311.07 | capitulacion confirmada
+02:39:31 | WARMUP TSLA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.01% px 312.84
+02:39:31 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.52% px 110.75
+02:39:31 | WARMUP TSLA: SELL | VENDER TSLA @ 313.25 | trail 3xATR roto | entrada 310.76 | PnL +0.8%
+02:39:31 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.45% px 109.90
+02:39:31 | WARMUP SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.51% px 109.08
+02:39:31 | WARMUP SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +2.88% px 110.25
+02:39:31 | WARMUP SPCX: SELL | VENDER SPCX @ 114.54 | target | entrada 111.20 | PnL +3.0%
+02:39:31 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.30% px 207.45
+02:39:31 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.02% px 210.28
+02:39:31 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.05% px 206.02
+02:39:31 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.14% px 210.19
+02:39:31 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.03% px 207.49
+02:39:31 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.04% px 209.25
+02:39:31 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.12% px 205.35
+02:39:31 | WARMUP TXN TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.07% px 278.19
+02:39:31 | WARMUP TXN TERREMOTO ALZA | CUSUM: subiendo fuerte +2.08% px 284.00
+02:39:31 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.70% px 198.77
+02:39:31 | WARMUP TXN TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.20% px 279.07
+02:39:31 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.01% px 195.81
+02:39:31 | WARMUP TXN TERREMOTO ALZA | CUSUM: subiendo fuerte +2.72% px 284.64
+02:39:31 | WARMUP TXN TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.01% px 281.90
+02:39:31 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.02% px 194.00
+02:39:31 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.10% px 197.02
+02:39:32 | WARMUP TXN TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.33% px 278.70
+02:39:32 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.01% px 415.31
+02:39:32 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.26% px 411.30
+02:39:32 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.00% px 407.75
+02:39:32 | WARMUP TSM: SELL | TSM @ 405.36 | prob 63% | rebote-4%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=TREND_DOWN
+02:39:32 | WARMUP TSM: SELL | TSM @ 406.33 | prob 63% | rebote-23%+MACD1-gira-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=TREND_DOWN
+02:39:32 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.17% px 541.58
+02:39:32 | WARMUP TXN TERREMOTO ALZA | CUSUM: subiendo fuerte +2.02% px 282.06
+02:39:32 | WARMUP AMD: SELL | AMD @ 538.10 | prob 56% | rompe-TL-1m-abajo+vol-2.0x+ST5-alineado+ribbon15-bajista+bajo-VWAP+retest-ok | fase=UNKNOWN
+02:39:32 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.09% px 533.50
+02:39:32 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.34% px 544.00
+02:39:32 | WARMUP TXN TERREMOTO ALZA | CUSUM: subiendo fuerte +2.48% px 284.99
+02:39:32 | WARMUP INTC TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.25% px 100.23
+02:39:32 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.18% px 401.80
+02:39:32 | WARMUP TXN: BUY | TXN @ 284.07 | prob 56% | estructura-rota-arriba+recupera-BB15mid+MACD15-verde+ST5-alineado+ribbon15-alcista | fase=UNKNOWN
+02:39:32 | WARMUP TXN TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.01% px 280.12
+02:39:32 | WARMUP TXN TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.03% px 275.20
+02:39:32 | WARMUP TXN: SELL | TXN @ 274.24 | prob 64% | rebote-3%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=UNKNOWN
+02:39:32 | WARMUP TXN TERREMOTO ALZA | CUSUM: subiendo fuerte +2.00% px 279.63
+02:39:32 | WARMUP INTC TERREMOTO ALZA | CUSUM: subiendo fuerte +5.56% px 105.01
+02:39:32 | WARMUP INTC TERREMOTO ALZA | CUSUM: subiendo fuerte +5.71% px 110.97
+02:39:32 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.10% px 541.80
+02:39:32 | WARMUP TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.01% px 409.10
+02:39:32 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.42% px 531.90
+02:39:32 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.31% px 536.42
+02:39:32 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.08% px 523.85
+02:39:32 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.19% px 536.00
+02:39:32 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.22% px 1783.00
+02:39:32 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.10% px 522.55
+02:39:32 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.05% px 1804.54
+02:39:32 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +3.32% px 1848.46
+02:39:32 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.46% px 1803.50
+02:39:32 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -8.28% px 483.52
+02:39:32 | WARMUP INTC TERREMOTO CAIDA | CUSUM: cayendo fuerte -6.58% px 103.90
+02:39:32 | WARMUP INTC TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.78% px 100.75
+02:39:32 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.54% px 1767.17
+02:39:32 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.13% px 1792.45
+02:39:32 | WARMUP TXN TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.23% px 274.35
+02:39:32 | WARMUP INTC: BUY | COMPRAR INTC @ 101.21 | reversal a alza | entrada 86.11 | mov -14.9%
+02:39:32 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.13% px 403.47
+02:39:32 | WARMUP INTC: BUY | COMPRAR INTC @ 101.21 | target 109.31 | floor 102.22 | capitulacion confirmada
+02:39:32 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.09% px 401.40
+02:39:32 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.35% px 389.83
+02:39:32 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.01% px 491.90
+02:39:32 | WARMUP INTC: SELL | INTC @ 97.43 | prob 57% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+02:39:32 | WARMUP INTC TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.09% px 96.23
+02:39:32 | WARMUP TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.13% px 397.80
+02:39:32 | WARMUP ASML: SELL | ASML @ 1775.03 | prob 61% | rebote-10%+MACD1-gira-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=TREND_DOWN
+02:39:32 | WARMUP TXN TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.38% px 270.01
+02:39:32 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.23% px 480.25
+02:39:32 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.00% px 1761.77
+02:39:32 | WARMUP AAPL: SELL | AAPL @ 321.63 | prob 60% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=UNKNOWN
+02:39:32 | WARMUP INTC: SELL | VENDER INTC @ 96.14 | time-stop (no revirtio) | entrada 101.21 | PnL -5.0%
+02:39:32 | WARMUP TXN TERREMOTO ALZA | CUSUM: subiendo fuerte +2.20% px 276.02
+02:39:33 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +3.09% px 1795.55
+02:39:33 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.06% px 470.40
+02:39:33 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.02% px 392.00
+02:39:33 | WARMUP AMD: SELL (STOP) | VENDER AMD @ 469.54 | HARD STOP | entrada 510.37 | PnL -8.0%
+02:39:33 | WARMUP TXN TERREMOTO ALZA | CUSUM: subiendo fuerte +2.81% px 281.43
+02:39:33 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.03% px 385.84
+02:39:33 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.07% px 382.83
+02:39:33 | WARMUP TSM: SELL (STOP) | VENDER TSM @ 381.25 | HARD STOP | entrada 414.40 | PnL -8.0%
+02:39:33 | WARMUP AAPL TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.58% px 320.58
+02:39:33 | WARMUP AAPL TERREMOTO ALZA | CUSUM: subiendo fuerte +1.51% px 324.24
+02:39:33 | WARMUP AAPL: BUY | AAPL @ 326.22 | prob 56% | estructura-rota-arriba+MACD15-flip-arriba+recupera-BB15mid+MACD15-verde+ST5-alineado | fase=UNKNOWN
+02:39:33 | WARMUP AAPL TERREMOTO ALZA | CUSUM: subiendo fuerte +1.63% px 329.22
+02:39:33 | WARMUP AAPL: BUY | AAPL @ 329.75 | prob 59% | pullback-1%+MACD1-gira+MACD15-verde+ST5-alineado+ribbon15-alcista | fase=TREND_UP
+02:39:33 | WARMUP AAPL TERREMOTO ALZA | CUSUM: subiendo fuerte +1.65% px 334.70
+02:39:33 | WARMUP GLD TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.02% px 374.63
+02:39:33 | WARMUP GLD TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.11% px 370.71
+02:39:33 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.05% px 1778.98
+02:39:33 | WARMUP ASML: SELL | ASML @ 1710.87 | prob 56% | squeeze-p90+cierre-bajo-BB15+MACD15-rojo+ST5-alineado+ribbon15-bajista+breakaway | fase=UNKNOWN
+02:39:33 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.74% px 1679.79
+02:39:33 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.00% px 1646.45
+02:39:33 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.22% px 1651.38
+02:39:33 | WARMUP TXN: SELL | VENDER TXN @ 282.03 | target | entrada 279.24 | PnL +1.0%
+02:39:33 | WARMUP GLD TERREMOTO ALZA | CUSUM: subiendo fuerte +1.04% px 373.38
+02:39:33 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.03% px 1661.00
+02:39:33 | WARMUP GLD: SELL | GLD @ 372.89 | prob 62% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=SPIKE_FADE
+02:39:33 | WARMUP GLD: SELL | GLD @ 372.10 | prob 62% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+02:39:33 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.20% px 1629.00
+02:39:33 | WARMUP AAPL: BUY | AAPL @ 336.69 | prob 59% | pullback-7%+MACD1-gira+MACD15-verde+ST5-alineado+ribbon15-alcista | fase=UNKNOWN
+02:39:34 | WARMUP AAPL TERREMOTO ALZA | CUSUM: subiendo fuerte +1.57% px 337.44
+02:39:34 | WARMUP GLD TERREMOTO ALZA | CUSUM: subiendo fuerte +1.01% px 375.32
+02:39:34 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.03% px 1607.00
+02:39:34 | WARMUP AAPL: SELL | AAPL @ 335.86 | prob 62% | rompe-TL-1m-abajo+vol-1.8x+MACD15-rojo+ST5-alineado+bajo-VWAP+retest-ok | fase=UNKNOWN
+02:39:34 | WARMUP ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.09% px 1613.53
+02:39:34 | WARMUP AAPL: SELL | AAPL @ 335.13 | prob 62% | rompe-TL-1m-abajo+vol-2.0x+MACD15-rojo+ST5-alineado+bajo-VWAP+retest-ok | fase=UNKNOWN
+02:39:34 | WARMUP GLD: SELL | GLD @ 373.51 | prob 59% | rebote-48%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=TREND_DOWN
+02:39:34 | WARMUP GLD: BUY | COMPRAR GLD @ 373.98 | reversal a alza | entrada 368.63 | mov -1.4%
+02:39:34 | WARMUP AAPL TERREMOTO ALZA | CUSUM: subiendo fuerte +1.61% px 340.26
+02:39:34 | WARMUP GLD: BUY | COMPRAR GLD @ 373.98 | target 378.47 | floor 374.91 | capitulacion confirmada
+02:39:34 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.06% px 1585.00
+02:39:34 | WARMUP ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.10% px 1554.00
+02:39:34 | WARMUP GLD: SELL | VENDER GLD @ 374.86 | time-stop (no revirtio) | entrada 373.98 | PnL +0.2%
+02:39:34 | WARMUP AAPL: SELL | AAPL @ 337.90 | prob 60% | estructura-rota+MACD15-flip-abajo+pierde-BB15mid+MACD15-rojo+ST5-alineado | fase=SPIKE_FADE
+02:39:34 | WARMUP AAPL: SELL | AAPL @ 338.48 | prob 59% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=SPIKE_FADE
+02:39:34 | WARMUP AAPL: SELL | AAPL @ 338.26 | prob 59% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+bajo-VWAP | fase=SPIKE_FADE
+02:39:34 | WARMUP ASML: SELL (STOP) | VENDER ASML @ 1556.08 | HARD STOP | entrada 1691.39 | PnL -8.0%
+02:39:34 | WARMUP AAPL TERREMOTO ALZA | CUSUM: subiendo fuerte +1.51% px 341.19
+02:39:34 | WARMUP AAPL: SELL | VENDER AAPL @ 341.19 | trail 3xATR roto | entrada 337.69 | PnL +1.0%
+02:39:36 | WARMUP MU TERREMOTO ALZA | CUSUM: subiendo fuerte +5.32% px 1010.12
+02:39:36 | WARMUP MU TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.21% px 960.00
+02:39:36 | WARMUP MU TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.11% px 936.23
+02:39:36 | WARMUP MU: SELL | MU @ 933.18 | prob 62% | rebote-5%+MACD1-gira-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+02:39:36 | WARMUP MU: SELL | MU @ 928.60 | prob 60% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+02:39:36 | WARMUP MU: SELL | MU @ 922.59 | prob 60% | perdida-VWAP-3bars+spike-fade+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=SPIKE_FADE
+02:39:36 | WARMUP MU: BUY | COMPRAR MU @ 910.12 | reversal a alza | entrada 834.53 | mov -8.3%
+02:39:36 | WARMUP MU: BUY | COMPRAR MU @ 910.12 | target 946.52 | floor 919.22 | capitulacion confirmada
+02:39:36 | WARMUP MU: SELL | VENDER MU @ 922.50 | trail 3xATR roto | entrada 910.12 | PnL +1.4%
+02:43:09 | 🕳 CINTA CIEGA | CINTA CIEGA: 25 de la flota sin tape tick-by-tick (AAPL AMD AMZN ASML AVGO DRAM EWY GLD GOOGL INTC LRCX META MSFT NFLX NOK NVDA QCOM SNDK SPCX STX TSLA TSM TXN WDC XLK) — sus ballenas NO se ven, no es que no haya
+02:43:30 | 🔒 TRUTH-LOCK INFO | AAPL: PASADO reescrito (25 barras materiales, 92 desaparecidas). NO-TRADE hasta re-lock.
+02:43:31 | 🔒 TRUTH-LOCK INFO | AMD: PASADO reescrito (26 barras materiales, 93 desaparecidas). NO-TRADE hasta re-lock.
+02:43:31 | 🔒 TRUTH-LOCK INFO | AMZN: PASADO reescrito (24 barras materiales, 94 desaparecidas). NO-TRADE hasta re-lock.
+02:43:31 | 🔒 TRUTH-LOCK INFO | ASML: PASADO reescrito (13 barras materiales, 94 desaparecidas). NO-TRADE hasta re-lock.
+02:43:31 | 🔒 TRUTH-LOCK INFO | AVGO: PASADO reescrito (21 barras materiales, 93 desaparecidas). NO-TRADE hasta re-lock.
+02:43:31 | 🔒 TRUTH-LOCK INFO | DRAM: PASADO reescrito (22 barras materiales, 94 desaparecidas). NO-TRADE hasta re-lock.
+02:43:32 | 🔒 TRUTH-LOCK INFO | EWY: PASADO reescrito (24 barras materiales, 94 desaparecidas). NO-TRADE hasta re-lock.
+02:43:32 | 🔒 TRUTH-LOCK INFO | GLD: PASADO reescrito (13 barras materiales, 85 desaparecidas). NO-TRADE hasta re-lock.
+02:43:32 | 🔒 TRUTH-LOCK INFO | GOOGL: PASADO reescrito (24 barras materiales, 94 desaparecidas). NO-TRADE hasta re-lock.
+02:43:32 | 🔒 TRUTH-LOCK INFO | INTC: PASADO reescrito (24 barras materiales, 94 desaparecidas). NO-TRADE hasta re-lock.
+02:43:32 | 🔒 TRUTH-LOCK INFO | LRCX: PASADO reescrito (22 barras materiales, 82 desaparecidas). NO-TRADE hasta re-lock.
+02:43:32 | 🔒 TRUTH-LOCK INFO | META: PASADO reescrito (25 barras materiales, 91 desaparecidas). NO-TRADE hasta re-lock.
+02:43:33 | 🔒 TRUTH-LOCK INFO | MSFT: PASADO reescrito (25 barras materiales, 93 desaparecidas). NO-TRADE hasta re-lock.
+02:43:33 | 🔒 TRUTH-LOCK INFO | MU: PASADO reescrito (2 barras materiales, 94 desaparecidas). NO-TRADE hasta re-lock.
+02:43:33 | 🔒 TRUTH-LOCK INFO | NFLX: PASADO reescrito (23 barras materiales, 91 desaparecidas). NO-TRADE hasta re-lock.
+02:43:33 | 🔒 TRUTH-LOCK INFO | NOK: PASADO reescrito (20 barras materiales, 91 desaparecidas). NO-TRADE hasta re-lock.
+02:43:33 | 🔒 TRUTH-LOCK INFO | NVDA: PASADO reescrito (24 barras materiales, 94 desaparecidas). NO-TRADE hasta re-lock.
+02:43:33 | 🔒 TRUTH-LOCK INFO | QCOM: PASADO reescrito (16 barras materiales, 91 desaparecidas). NO-TRADE hasta re-lock.
+02:43:34 | 🔒 TRUTH-LOCK INFO | QQQ: PASADO reescrito (5 barras materiales, 94 desaparecidas). NO-TRADE hasta re-lock.
+02:43:34 | 🔒 TRUTH-LOCK INFO | SKHY: PASADO reescrito (21 barras materiales, 94 desaparecidas). NO-TRADE hasta re-lock.
+02:43:34 | 🔒 TRUTH-LOCK INFO | SMH: PASADO reescrito (16 barras materiales, 94 desaparecidas). NO-TRADE hasta re-lock.
+02:43:34 | 🔒 TRUTH-LOCK INFO | SNDK: PASADO reescrito (2 barras materiales, 94 desaparecidas). NO-TRADE hasta re-lock.
+02:43:34 | 🔒 TRUTH-LOCK INFO | SPCX: PASADO reescrito (23 barras materiales, 94 desaparecidas). NO-TRADE hasta re-lock.
+02:43:34 | 🔒 TRUTH-LOCK INFO | SPY: PASADO reescrito (16 barras materiales, 94 desaparecidas). NO-TRADE hasta re-lock.
+02:43:34 | 🔒 TRUTH-LOCK INFO | STX: PASADO reescrito (25 barras materiales, 93 desaparecidas). NO-TRADE hasta re-lock.
+02:43:35 | 🔒 TRUTH-LOCK INFO | TSLA: PASADO reescrito (23 barras materiales, 94 desaparecidas). NO-TRADE hasta re-lock.
+02:43:35 | 🔒 TRUTH-LOCK INFO | TSM: PASADO reescrito (22 barras materiales, 94 desaparecidas). NO-TRADE hasta re-lock.
+02:43:35 | 🔒 TRUTH-LOCK INFO | TXN: PASADO reescrito (16 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+02:43:35 | 🔒 TRUTH-LOCK INFO | WDC: PASADO reescrito (22 barras materiales, 94 desaparecidas). NO-TRADE hasta re-lock.
+02:43:35 | 🔒 TRUTH-LOCK INFO | XLK: PASADO reescrito (17 barras materiales, 94 desaparecidas). NO-TRADE hasta re-lock.
+02:51:01 | DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.46% px 46.33
+02:57:01 | SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.75% px 115.26
+03:01:01 | SKHY TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.57% px 126.60
+03:01:01 | NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.49% px 8.73
+03:02:00 | TXN TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.57% px 273.02
+03:04:01 | EWY TERREMOTO CAIDA | CUSUM: cayendo fuerte -7.20% px 146.00
+03:26:37 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.04% px 205.35
+03:26:37 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.70% px 198.77
+03:26:37 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.00% px 195.82
+03:26:37 | WARMUP NVDA TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.12% px 193.80
+03:26:37 | WARMUP NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.10% px 197.01
+03:26:37 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.13% px 403.47
+03:26:37 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.09% px 401.40
+03:26:37 | WARMUP TSM: BUY | COMPRAR TSM @ 399.37 | reversal a alza | entrada 392.76 | mov -1.7%
+03:26:37 | WARMUP TSM: BUY | COMPRAR TSM @ 399.37 | target 431.32 | floor 403.36 | capitulacion confirmada
+03:26:37 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.36% px 389.83
+03:26:37 | WARMUP TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.13% px 397.80
+03:26:37 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.10% px 522.55
+03:26:37 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.91% px 388.52
+03:26:37 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -8.28% px 483.52
+03:26:37 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.01% px 491.90
+03:26:37 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.07% px 382.83
+03:26:37 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.22% px 475.52
+03:26:37 | WARMUP TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.10% px 389.26
+03:26:37 | WARMUP TSM TERREMOTO ALZA | CUSUM: subiendo fuerte +2.00% px 389.15
+03:26:37 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.22% px 466.46
+03:26:37 | WARMUP AMD: SELL | AMD @ 446.82 | prob 56% | rompe-TL-1m-abajo+vol-2.1x+MACD15-rojo+ST5-alineado+ribbon15-bajista+retest-ok | fase=TREND_DOWN
+03:26:37 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -4.02% px 450.52
+03:26:37 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.07% px 461.74
+03:26:37 | WARMUP AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.22% px 451.00
+03:26:37 | WARMUP AMD TERREMOTO ALZA | CUSUM: subiendo fuerte +3.19% px 458.93
+03:26:37 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.07% px 387.00
+03:26:37 | WARMUP TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.13% px 387.18

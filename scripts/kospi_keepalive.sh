@@ -12,7 +12,7 @@ export KOSPI_SCORE_MIN=9
 while true; do
   pkill -x kospi_signal_bot 2>/dev/null
   sleep 1
-  ./kospi_signal_bot >> kospi_signals.log 2>&1
-  echo "$(date) kospi_signal_bot salio; relanzando" >> kospi_signals.log
+  bots/kospi_signal_bot >> logs/kospi_signals.log 2>&1
+  echo "$(date) kospi_signal_bot salio; relanzando" >> logs/kospi_signals.log
   sleep 30
 done

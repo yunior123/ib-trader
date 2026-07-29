@@ -199,7 +199,7 @@ def run_one(sym: str) -> dict:
     env = dict(os.environ)
     env.update(load_keepalive_env(sym))
 
-    bin_path = os.path.join(ROOT, f"{sym.lower()}_signal_bot")
+    bin_path = os.path.join(ROOT, "bots", f"{sym.lower()}_signal_bot")
     if not os.path.isfile(bin_path):
         return {"sym": sym, "error": f"no binary {bin_path}"}
 
@@ -260,7 +260,7 @@ def regen_pos():
     cutoff = time.time() - 3 * 86400
     for sym in SYMS:
         hist = os.path.join(ROOT, "data", f"bt_{sym.lower()}.txt")
-        bin_path = os.path.join(ROOT, f"{sym.lower()}_signal_bot")
+        bin_path = os.path.join(ROOT, "bots", f"{sym.lower()}_signal_bot")
         if not os.path.isfile(hist) or not os.path.isfile(bin_path):
             print(f"{sym}: falta historia o binario, skip")
             continue

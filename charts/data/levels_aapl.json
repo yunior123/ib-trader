@@ -1,7 +1,7 @@
 {
  "sym": "AAPL",
  "spot": 340.23,
- "asof": 1785270417,
+ "asof": 1785310284,
  "exp": "20260729",
  "dte": 0.99,
  "scope": "0DTE",
@@ -380,7 +380,7 @@
  "em": 4.98,
  "net_gex": 137061016.2,
  "regime": "POS",
- "flip": 332.32,
+ "flip": 334.18,
  "flip_static": 336.78,
  "call_wall": 345.0,
  "put_wall": 335.0,
@@ -636,7 +636,7 @@
   334.18
  ],
  "trapdoor_root": null,
- "flip_open": 332.32,
+ "flip_open": null,
  "frozen_at": 1785246144,
- "frozen_day": "2026-07-28"
+ "frozen_day": null
 }

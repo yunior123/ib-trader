@@ -69,7 +69,7 @@ def run(sym, hist, env_pairs):
     import tempfile
     with tempfile.TemporaryDirectory(prefix=f"rp_{low}_") as tmp:
         os.makedirs(os.path.join(tmp, "data"), exist_ok=True)
-        out = subprocess.run([os.path.join(ROOT, f"{low}_signal_bot"), "--stdin"],
+        out = subprocess.run([os.path.join(ROOT, "bots", f"{low}_signal_bot"), "--stdin"],
                              stdin=open(hist), capture_output=True, text=True,
                              env=env, cwd=tmp).stdout
     sides = {"L": [], "S": []}

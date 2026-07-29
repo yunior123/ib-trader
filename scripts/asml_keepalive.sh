@@ -36,7 +36,7 @@ export ASML_S_CANDLE=1
 while true; do
   pkill -x asml_signal_bot 2>/dev/null
   sleep 1
-  ./asml_signal_bot >> asml_signals.log 2>&1
-  echo "$(date) asml_signal_bot salio; relanzando" >> asml_signals.log
+  bots/asml_signal_bot >> logs/asml_signals.log 2>&1
+  echo "$(date) asml_signal_bot salio; relanzando" >> logs/asml_signals.log
   sleep 30
 done

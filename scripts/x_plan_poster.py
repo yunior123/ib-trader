@@ -18,7 +18,7 @@ import x_post_common as xc   # upload_media + append_gex (aditivo, degrade limpi
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BUDGET_FILE = os.path.join(ROOT, "data", "x_plan_budget.json")
-LOG_FILE = os.path.join(ROOT, "x_plan_poster.log")
+LOG_FILE = os.path.join(ROOT, "logs", "x_plan_poster.log")
 ENV_FILE = os.path.join(ROOT, "x.env")
 
 COST_PER_POST = 0.015

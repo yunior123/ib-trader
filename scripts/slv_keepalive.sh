@@ -12,7 +12,7 @@ export SLV_SCORE_MIN=9
 while true; do
   pkill -x slv_signal_bot 2>/dev/null
   sleep 1
-  ./slv_signal_bot >> slv_signals.log 2>&1
-  echo "$(date) slv_signal_bot salio; relanzando" >> slv_signals.log
+  bots/slv_signal_bot >> logs/slv_signals.log 2>&1
+  echo "$(date) slv_signal_bot salio; relanzando" >> logs/slv_signals.log
   sleep 30
 done

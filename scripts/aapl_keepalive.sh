@@ -30,7 +30,7 @@ export AAPL_S_VOL_MULT=1.0
 while true; do
   pkill -x aapl_signal_bot 2>/dev/null
   sleep 1
-  ./aapl_signal_bot >> aapl_signals.log 2>&1
-  echo "$(date) aapl_signal_bot salio; relanzando" >> aapl_signals.log
+  bots/aapl_signal_bot >> logs/aapl_signals.log 2>&1
+  echo "$(date) aapl_signal_bot salio; relanzando" >> logs/aapl_signals.log
   sleep 30
 done

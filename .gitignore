@@ -131,3 +131,11 @@ fleet_hours.dSYM/
 # Se quedan en disco (gex_snapshot las lee) pero fuera de git: 35 MB/dia de
 # crecimiento permanente. La retencion la hace chain_cube_archive (bundle .gz dia>=2).
 data/history/*/chain_full_*.json
+
+# build artifacts (regenerables)
+*_asan
+*.dSYM/
+bots/*_signal_bot
+logs/
+*.out
+*.err

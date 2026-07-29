@@ -38,10 +38,10 @@ GEX_MAX_AGE_H = 36           # el mapa es de la cadena del dia; el del viernes v
 # logs de todos los componentes que postean (mismo formato de linea que
 # x_plan_poster.py: "YYYY-MM-DD HH:MM:SS ... POSTED ...")
 POSTER_LOGS = [
-    os.path.join(ROOT, "x_plan_poster.log"),
-    os.path.join(ROOT, "x_signal_poster.log"),
-    os.path.join(ROOT, "x_postmortem.log"),
-    os.path.join(ROOT, "x_earnings_post.log"),
+    os.path.join(ROOT, "logs", "x_plan_poster.log"),
+    os.path.join(ROOT, "logs", "x_signal_poster.log"),
+    os.path.join(ROOT, "logs", "x_postmortem.log"),
+    os.path.join(ROOT, "logs", "x_earnings_post.log"),
 ]
 
 

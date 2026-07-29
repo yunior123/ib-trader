@@ -1,0 +1,914 @@
+00:01:12 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+00:01:13 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+00:02:03 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 0 P/C 0.00 | NVDA volC 0 volP 0 P/C 0.00 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 0 P/C 0.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | TXN volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+00:07:00 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 0 P/C 0.00 | NVDA volC 0 volP 0 P/C 0.00 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 0 P/C 0.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | TXN volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+00:12:00 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 0 P/C 0.00 | NVDA volC 0 volP 0 P/C 0.00 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 0 P/C 0.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | TXN volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+00:17:05 | FLUJO OPCIONES: INTC volC 0 volP 0 P/C 0.00 | MU volC 0 volP 0 P/C 0.00 | TSM volC 0 volP 0 P/C 0.00 | SMH volC 0 volP 0 P/C 0.00 | QQQ volC 0 volP 0 P/C 0.00 | NVDA volC 0 volP 0 P/C 0.00 | AMD volC 0 volP 0 P/C 0.00 | TSLA volC 0 volP 0 P/C 0.00 | AAPL volC 0 volP 0 P/C 0.00 | GOOGL volC 0 volP 0 P/C 0.00 | QCOM volC 0 volP 0 P/C 0.00 | ASML volC 0 volP 0 P/C 0.00 | TXN volC 0 volP 0 P/C 0.00 | NOK volC 0 volP 0 P/C 0.00 | DRAM volC 0 volP 0 P/C 0.00 | SKHY volC 0 volP 0 P/C 0.00 | SPCX volC 0 volP 0 P/C 0.00
+00:28:00 | SKHYNIX TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.27% px 1568000.00
+00:33:00 | KOSPI TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.67% px 95635.00
+00:37:25 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 31% (estructural, no WR medido)
+00:37:40 | 🧲 ESTRUCTURAL magnet MSFT | MSFT se dirige a su imán 430.0 ↑ · prob 33% (estructural, no WR medido)
+00:46:34 | 🕳 CINTA CIEGA | CINTA CIEGA: 3 de la flota sin tape tick-by-tick (AAPL AMD TSM) — sus ballenas NO se ven, no es que no haya
+01:11:01 | SKHY TERREMOTO ALZA | CUSUM: subiendo fuerte +2.03% px 139.00
+01:27:01 | INTC TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.07% px 87.81
+01:27:01 | MU TERREMOTO CAIDA | CUSUM: cayendo fuerte -5.02% px 856.91
+01:29:00 | SAMSUNG TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.02% px 221000.00
+01:29:00 | SKHYNIX TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.28% px 1563000.00
+01:35:00 | KOSPI TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.74% px 95310.00
+02:07:00 | DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.62% px 48.88
+02:11:01 | ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.03% px 1607.00
+02:34:12 | 🇰🇷 KRX BRIDGE CIEGO | 313s sin bars KRX en sesion — resuscribiendo (skhynix/samsung/kospi)
+03:07:01 | NOK TERREMOTO ALZA | CUSUM: subiendo fuerte +3.32% px 9.19
+04:00:23 | 🛰 FINVIZ | AMZN: target price 316.99→317.39
+04:00:23 | 🛰 FINVIZ | AVGO: recom 1.32→1.31 (mejora)
+04:00:23 | 🛰 FINVIZ | META: earnings en 36h (7/29/2026 4:30:00 PM)
+04:00:23 | 🛰 FINVIZ | MSFT: earnings en 36h (7/29/2026 4:30:00 PM)
+04:01:26 | 🛰 FINVIZ | SMH: gap -2.3% — abre fuera de rango
+04:08:00 | SKHY TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.15% px 136.05
+04:11:00 | TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.03% px 385.84
+04:25:00 | ASML TERREMOTO ALZA | CUSUM: subiendo fuerte +2.09% px 1613.53
+04:42:00 | DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.53% px 49.32
+05:10:00 | SKHY TERREMOTO ALZA | CUSUM: subiendo fuerte +2.39% px 138.50
+05:58:00 | GLD TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.07% px 368.85
+06:14:01 | ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.06% px 1585.00
+06:28:00 | DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.53% px 48.59
+06:36:00 | SKHY TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.08% px 135.90
+07:03:00 | SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.45% px 109.90
+07:08:00 | TSM TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.07% px 382.83
+07:11:00 | AMD TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.06% px 470.40
+07:20:00 | TXN TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.38% px 270.01
+07:34:00 | DRAM TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.84% px 47.91
+07:41:48 | TA BUY nuevo (finviz) | ALT+11%
+07:47:00 | SKHY TERREMOTO ALZA | CUSUM: subiendo fuerte +2.33% px 136.99
+08:25:52 | 🛰 FINVIZ | AMZN: target price 317.39→317.02
+08:43:24 | 🩸 EARNINGS-FALL GLW -17.8% | 🩸 EARNINGS-FALL GLW -17.8% (score 80, OPCIONES s/d (ATM sin cotizar) — default ACCIONES, TA: bear, capitan QQQ/XLK)
+08:43:24 | 🩸 EARNINGS-FALL BCS -6.2% | 🩸 EARNINGS-FALL BCS -6.2% (score 56, OPCIONES s/d (ATM sin cotizar) — default ACCIONES, TA: pendiente)
+08:43:24 | 🩸 EARNINGS-FALL AMKR -11.7% | 🩸 EARNINGS-FALL AMKR -11.7% (score 53, OPCIONES s/d (ATM sin cotizar) — default ACCIONES, TA: pendiente, capitan SMH)
+08:43:24 | 🩸 EARNINGS-FALL TXT -6.4% | 🩸 EARNINGS-FALL TXT -6.4% (score 47, OPCIONES s/d, TA: pendiente)
+08:44:00 | Top gainers (TA BUY) | Candidatos hoy: ALT+11%
+08:45:00 | DRAM TERREMOTO ALZA | CUSUM: subiendo fuerte +1.50% px 48.36
+08:59:07 | Top gainers (TA BUY) | Candidatos hoy: ALT+10%
+09:03:00 | SPCX TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.51% px 109.08
+09:14:13 | Top gainers (TA BUY) | Candidatos hoy: ALT+11%
+09:29:00 | AAPL TERREMOTO ALZA | CUSUM: subiendo fuerte +1.61% px 340.26
+09:29:23 | Top gainers (TA BUY) | Candidatos hoy: ALT+6%
+09:30:58 | 🛰 FINVIZ | AVGO: gap -2.4% — abre fuera de rango
+09:31:00 | TXN TERREMOTO ALZA | CUSUM: subiendo fuerte +2.20% px 276.02
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | QQQ abrio 676.29 abajo de la banda 15m (676.83). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | NVDA abrio 194.92 abajo de la banda 15m (195.63). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | TSLA abrio 305.93 abajo de la banda 15m (306.42). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | MU abrio 841.57 abajo de la banda 15m (861.14). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | SMH abrio 531.65 abajo de la banda 15m (535.62). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | AMD abrio 466.59 abajo de la banda 15m (475.39). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | AAPL abrio 340.02 arriba de la banda 15m (338.80). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:12 | 🎯 APERTURA FUERA DE BANDA | INTC abrio 86.62 abajo de la banda 15m (88.48). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:12 | 🎯 APERTURA FUERA DE BANDA | TSM abrio 385.00 abajo de la banda 15m (388.71). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:12 | 🎯 APERTURA FUERA DE BANDA | ASML abrio 1580.50 abajo de la banda 15m (1614.44). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:12 | 🎯 APERTURA FUERA DE BANDA | QCOM abrio 164.95 abajo de la banda 15m (165.79). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:12 | 🎯 APERTURA FUERA DE BANDA | AVGO abrio 374.36 abajo de la banda 15m (377.88). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:12 | 🎯 APERTURA FUERA DE BANDA | NFLX abrio 72.10 arriba de la banda 15m (71.58). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:12 | 🎯 APERTURA FUERA DE BANDA | GLD abrio 369.57 abajo de la banda 15m (373.42). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:12 | 🎯 APERTURA FUERA DE BANDA | XLK abrio 171.21 abajo de la banda 15m (172.25). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:12 | 🎯 APERTURA FUERA DE BANDA | EWY abrio 152.09 abajo de la banda 15m (156.84). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:12 | 🎯 APERTURA FUERA DE BANDA | DRAM abrio 48.27 abajo de la banda 15m (50.67). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:13 | 🎯 APERTURA FUERA DE BANDA | SPCX abrio 109.32 abajo de la banda 15m (109.42). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:13 | 🎯 APERTURA FUERA DE BANDA | SKHY abrio 135.96 abajo de la banda 15m (138.55). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:13 | 🎯 APERTURA FUERA DE BANDA | LRCX abrio 275.17 abajo de la banda 15m (277.18). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:13 | 🎯 APERTURA FUERA DE BANDA | SNDK abrio 1173.33 abajo de la banda 15m (1242.53). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:13 | 🎯 APERTURA FUERA DE BANDA | WDC abrio 466.09 abajo de la banda 15m (483.04). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:13 | 🎯 APERTURA FUERA DE BANDA | STX abrio 774.81 abajo de la banda 15m (790.42). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:32 | 🐋 BALLENA PUTS | QQQ: flujo puts 2.0 a 1 (17,510 puts vs 8,751 calls) — piso o tesis bajista
+09:31:34 | 🎯 RE-ENTRADA A BANDA +VOL | QCOM imprimio re-entrada en 166.00. Target la media 168.20, prob medida 56 por ciento. Volumen CONFIRMA (x457.4 la MA50, +10pp medido) Contexto, no gatillo: pedir confluencia. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:31:43 | 🐋 BALLENA PUTS | NVDA: flujo puts 2.5 a 1 (5,535 puts vs 2,219 calls) — piso o tesis bajista
+09:31:48 | 🐋 BALLENA PUTS | TSLA: flujo puts 2.5 a 1 (6,096 puts vs 2,429 calls) — piso o tesis bajista
+09:32:00 | NOK TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.54% px 8.87
+09:32:00 | SKHY TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.09% px 134.67
+09:32:04 | 🐋 BALLENA CALLS | AAPL: flujo calls masivo, P C 0.33 (15,519 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+09:32:14 | 🎯 RE-ENTRADA A BANDA +VOL | AAPL imprimio re-entrada en 338.31. Target la media 336.58, prob medida 56 por ciento. Volumen CONFIRMA (x16.1 la MA50, +10pp medido) Contexto, no gatillo: pedir confluencia. OPCIONES OK (spread 4%)
+09:33:15 | 🎯 RE-ENTRADA A BANDA +VOL | TSM imprimio re-entrada en 389.26. Target la media 394.19, prob medida 56 por ciento. Volumen CONFIRMA (x5.3 la MA50, +10pp medido) Contexto, no gatillo: pedir confluencia. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:33:15 | 🎯 RE-ENTRADA A BANDA +VOL | AVGO imprimio re-entrada en 378.42. Target la media 381.05, prob medida 56 por ciento. Volumen CONFIRMA (x6.3 la MA50, +10pp medido) Contexto, no gatillo: pedir confluencia. OPCIONES VETADAS spread 29% — usar ACCIONES o ETF apalancado
+09:36:00 | SMH: SELL | SMH @ 530.11 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=UNKNOWN
+09:36:00 | SKHY: SELL | SKHY @ 136.08 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ST5-alineado+ribbon15-bajista | fase=UNKNOWN
+09:36:11 | 🎈 BB BAND-WALK [MUTED p<55] | QQQ camina la banda ABAJO tambien en 5 minutos (675.34). Continuacion probable — NO hacer fade. prob medida 52 por ciento (n=25). OPCIONES OK (spread 1%)
+09:36:11 | 🎈 BB REBOTE | MU reventó la banda ABAJO y re-entró en 835.00. Elastico: rebote hacia la media 842.24 si imprime — chico y seguro. prob medida 65 por ciento (n=202). OPCIONES VETADAS spread 8% — usar ACCIONES o ETF apalancado
+09:36:11 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | AMZN reventó la banda 15 minutos ABAJO y re-entró en 231.57 — elastico mayor, digestion probable. prob medida 14 por ciento (n=7). OPCIONES OK (spread 5%)
+09:36:11 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | TXN reventó la banda 15 minutos ARRIBA y re-entró en 276.13 — elastico mayor, digestion probable. prob medida 25 por ciento (n=8). OPCIONES VETADAS spread 199% — usar ACCIONES o ETF apalancado
+09:36:11 | 🎈 BB BAND-WALK [MUTED p<55] | NOK camina la banda ABAJO tambien en 5 minutos (8.80). Continuacion probable — NO hacer fade. prob medida 50 por ciento (n=16). OPCIONES VETADAS spread 11% — usar ACCIONES o ETF apalancado
+09:36:11 | 🎈 BB BAND-WALK [MUTED p<55] | XLK camina la banda ABAJO tambien en 5 minutos (170.64). Continuacion probable — NO hacer fade. prob medida 52 por ciento (n=21). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:36:11 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | STX reventó la banda 15 minutos ABAJO y re-entró en 748.16 — elastico mayor, digestion probable. prob medida 33 por ciento (n=3). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:36:30 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 340.0 — pin · prob 89% (estructural, no WR medido)
+09:37:00 | EWY: SELL | EWY @ 151.73 | prob 55% | estructura-rota+MACD15-flip-abajo+MACD15-rojo+ribbon15-bajista+bajo-VWAP | fase=UNKNOWN
+09:37:00 | SPY: SELL | SPY @ 738.47 | prob 55% | estructura-rota+MACD15-flip-abajo+pierde-BB15mid+MACD15-rojo+ST5-alineado | fase=UNKNOWN
+09:37:11 | 🎈 BB BAND-WALK [MUTED p<55] | SKHY camina la banda ABAJO tambien en 5 minutos (134.97). Continuacion probable — NO hacer fade. prob medida 30 por ciento (n=10). OPCIONES VETADAS spread 9% — usar ACCIONES o ETF apalancado
+09:37:32 | 🐋📈 BALLENA CRECE | QQQ: el flujo de puts se DUPLICO — 91,375 contratos (P C 2.36). La marea sigue entrando
+09:37:37 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+09:37:45 | 🐋📈 BALLENA CRECE | TSLA: el flujo de puts se DUPLICO — 23,125 contratos (P C 2.33). La marea sigue entrando
+09:37:50 | 🐋 BALLENA PUTS | MU: flujo puts 3.5 a 1 (3,472 puts vs 989 calls) — piso o tesis bajista
+09:37:57 | 🐋 BALLENA PUTS | AMD: flujo puts 6.7 a 1 (8,320 puts vs 1,237 calls) — piso o tesis bajista
+09:38:03 | 🟢📈 PREMIUM BULLISH MSFT | MSFT: trade grande de opciones BULLISH — premium neto $5,513,301 (call $4,012,821 put $-1,500,480), umbral SIN CALIBRAR
+09:38:03 | 🐋 BALLENA CALLS | MSFT: flujo calls masivo, P C 0.07 (5,805 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+09:38:12 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | AAPL reventó la banda 15 minutos ARRIBA y re-entró en 339.34 — elastico mayor, digestion probable. prob medida 20 por ciento (n=5). OPCIONES OK (spread 3%)
+09:38:12 | 🎈 BB BAND-WALK | NFLX camina la banda ARRIBA tambien en 5 minutos (72.54). Continuacion probable — NO hacer fade. prob medida 56 por ciento (n=18). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:38:18 | 🐋 BALLENA CALLS | GOOGL: flujo calls masivo, P C 0.12 (5,339 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+09:38:45 | 🐋 BALLENA CALLS | NFLX: flujo calls masivo, P C 0.05 (10,736 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+09:38:56 | 🐋 BALLENA PUTS | GLD: flujo puts 4.0 a 1 (2,975 puts vs 736 calls) — piso o tesis bajista
+09:39:04 | 🕳 CINTA CIEGA | CINTA CIEGA: 3 de la flota sin tape tick-by-tick (AAPL AMD TSM) — sus ballenas NO se ven, no es que no haya
+09:39:12 | 🎈 BB BAND-WALK [MUTED p<55] | MSFT camina la banda ARRIBA tambien en 5 minutos (398.03). Continuacion probable — NO hacer fade. prob medida 50 por ciento (n=12). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:39:12 | 🐋 BALLENA PUTS | SPCX: flujo puts 3.6 a 1 (4,494 puts vs 1,249 calls) — piso o tesis bajista
+09:40:12 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | TSLA reventó la banda 15 minutos ABAJO y re-entró en 303.80 — elastico mayor, digestion probable. prob medida 0 por ciento (n=9). OPCIONES OK (spread 5%)
+09:40:12 | 🎈 BB BAND-WALK [MUTED p<55] | TSLA camina la banda ABAJO tambien en 5 minutos (303.80). Continuacion probable — NO hacer fade. prob medida 53 por ciento (n=15). OPCIONES OK (spread 5%)
+09:41:13 | 🎈 BB BAND-WALK [MUTED p<55] | SMH camina la banda ABAJO tambien en 5 minutos (526.27). Continuacion probable — NO hacer fade. prob medida 44 por ciento (n=16). OPCIONES VETADAS spread 29% — usar ACCIONES o ETF apalancado
+09:41:13 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | INTC reventó la banda 15 minutos ABAJO y re-entró en 86.39 — elastico mayor, digestion probable. prob medida 0 por ciento (n=5). OPCIONES OK (spread 4%)
+09:41:13 | 🎈 BB REBOTE | INTC reventó la banda ABAJO y re-entró en 86.39. Elastico: rebote hacia la media 86.93 si imprime — chico y seguro. prob medida 68 por ciento (n=211). OPCIONES OK (spread 4%)
+09:41:13 | 🎈 BB BAND-WALK [MUTED p<55] | LRCX camina la banda ABAJO tambien en 5 minutos (268.49). Continuacion probable — NO hacer fade. prob medida 25 por ciento (n=12). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:42:14 | 🎈 BB BAND-WALK | META camina la banda ABAJO tambien en 5 minutos (595.41). Continuacion probable — NO hacer fade. prob medida 56 por ciento (n=16). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:42:14 | 🎈 BB REBOTE | QCOM reventó la banda ABAJO y re-entró en 164.99. Elastico: rebote hacia la media 165.63 si imprime — chico y seguro. prob medida 69 por ciento (n=182). OPCIONES VETADAS spread 9% — usar ACCIONES o ETF apalancado
+09:42:14 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | AVGO reventó la banda 15 minutos ABAJO y re-entró en 373.52 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES VETADAS spread 15% — usar ACCIONES o ETF apalancado
+09:42:14 | 🎈 BB REBOTE | AVGO reventó la banda ABAJO y re-entró en 373.52. Elastico: rebote hacia la media 375.13 si imprime — chico y seguro. prob medida 68 por ciento (n=197). OPCIONES VETADAS spread 15% — usar ACCIONES o ETF apalancado
+09:42:14 | 🎈 BB BAND-WALK [MUTED p<55] | GLD camina la banda ABAJO tambien en 5 minutos (369.03). Continuacion probable — NO hacer fade. prob medida 40 por ciento (n=15). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:42:14 | 🎈 BB REBOTE | EWY reventó la banda ABAJO y re-entró en 151.31. Elastico: rebote hacia la media 151.90 si imprime — chico y seguro. prob medida 63 por ciento (n=185). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:42:14 | 🎈 BB BAND-WALK | SPCX camina la banda ABAJO tambien en 5 minutos (107.77). Continuacion probable — NO hacer fade. prob medida 71 por ciento (n=14). OPCIONES OK (spread 3%)
+09:42:14 | 🎈 BB BAND-WALK [MUTED p<55] | SNDK camina la banda ABAJO tambien en 5 minutos (1131.90). Continuacion probable — NO hacer fade. prob medida 46 por ciento (n=22). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:43:00 | QQQ TERREMOTO CAIDA | CUSUM: cayendo fuerte -1.09% px 671.66
+09:43:16 | 🎈 BB BAND-WALK [MUTED p<55] | SPY camina la banda ABAJO tambien en 5 minutos (737.26). Continuacion probable — NO hacer fade. prob medida 47 por ciento (n=17). OPCIONES OK (spread 1%)
+09:43:16 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | MSFT reventó la banda 15 minutos ARRIBA y re-entró en 396.05 — elastico mayor, digestion probable. prob medida 0 por ciento (n=2). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:43:16 | 🎈 BB BAND-WALK [MUTED p<55] | AMZN camina la banda ABAJO tambien en 5 minutos (229.91). Continuacion probable — NO hacer fade. prob medida 38 por ciento (n=16). OPCIONES OK (spread 4%)
+09:44:17 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | META reventó la banda 15 minutos ABAJO y re-entró en 595.30 — elastico mayor, digestion probable. prob medida 38 por ciento (n=8). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:44:17 | 🎈 BB REBOTE [VETO medido] | ASML reventó la banda ABAJO y re-entró en 1569.08. Elastico: rebote hacia la media 1575.66 si imprime — chico y seguro. prob medida 68 por ciento (n=189). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:44:38 | 🐋📈 BALLENA CRECE | QQQ: el flujo de puts se DUPLICO — 208,947 contratos (P C 3.12). La marea sigue entrando
+09:44:42 | 🔄 GIRO A PUTS SPY | SPY girando a puts: ratio 1.69 desde 1.03
+09:44:47 | 🔴📉 PREMIUM BEARISH NVDA | NVDA: trade grande de opciones BEARISH — premium neto $-6,091,528 (call $-1,984,280 put $4,107,248), umbral SIN CALIBRAR
+09:44:47 | 🐋📈 BALLENA CRECE | NVDA: el flujo de puts se DUPLICO — 36,337 contratos (P C 1.52). La marea sigue entrando
+09:44:55 | 🐋📈 BALLENA CRECE | MU: el flujo de puts se DUPLICO — 7,270 contratos (P C 3.53). La marea sigue entrando
+09:45:05 | 🔄 GIRO A CALLS AMD | AMD girando a calls: ratio 3.88 desde 6.73
+09:45:10 | 🟢📈 PREMIUM BULLISH AAPL | AAPL: trade grande de opciones BULLISH — premium neto $3,679,141 (call $1,583,466 put $-2,095,675), umbral SIN CALIBRAR
+09:45:10 | 🐋📈 BALLENA CRECE | AAPL: el flujo de calls se DUPLICO — 40,551 contratos (P C 0.40). La marea sigue entrando
+09:45:15 | 🔄 GIRO A PUTS MSFT | MSFT girando a puts: ratio 0.16 desde 0.07
+09:45:22 | 🔄 GIRO A PUTS AMZN | AMZN girando a puts: ratio 0.92 desde 0.42
+09:45:22 | 🐺 MANADA A PUTS | MANADA A PUTS: 3 tickers en 12 minutos — AMZN MSFT SPY . Extremo de mercado, rebote del indice al alza probable. QQQ 670.38
+09:45:26 | 🔄 GIRO A PUTS GOOGL | GOOGL girando a puts: ratio 0.36 desde 0.12
+09:45:57 | 🐋📈 BALLENA CRECE | NFLX: el flujo de calls se DUPLICO — 29,747 contratos (P C 0.06). La marea sigue entrando
+09:46:05 | 🐋📈 BALLENA CRECE | GLD: el flujo de puts se DUPLICO — 6,104 contratos (P C 3.44). La marea sigue entrando
+09:46:45 | 🔄 GIRO A CALLS WDC | WDC girando a calls: ratio 5.95 desde 22.00
+09:46:49 | 🔄 GIRO A PUTS STX | STX girando a puts: ratio 0.97 desde 0.26
+09:47:18 | 🎈 BB BAND-WALK [MUTED p<55] | DRAM camina la banda ABAJO tambien en 5 minutos (46.83). Continuacion probable — NO hacer fade. prob medida 24 por ciento (n=21). OPCIONES OK (spread 5%)
+09:47:23 | Top gainers (TA BUY) | Candidatos hoy: ALT+6%
+09:48:14 | 🩸 DIP REAL | DIP REAL en TSM: -9.4% desde el high de 5 dias, estabilizado. Valuacion sana: Forward PE 18, PEG 0.5. Prob medida de rebote 77 por ciento en 3 dias (n=13). Zona de compra tecnica 383.72. OPCIONES VETADAS spread 8% — usar ACCIONES o ETF apalancado
+09:48:59 | 🛰 FINVIZ | SMH: rel volume 2.6x — cruza 2.5x
+09:49:14 | 🩸 DIP VETADO | DIP VETADO por valuacion en TSLA: -19.9% desde el high de 5 dias, pero inflada (FPE 133 PEG 5.6).
+09:49:14 | 🩸 DIP REAL | DIP REAL en ASML: -13.6% desde el high de 5 dias, estabilizado. Valuacion sana: Forward PE 27, PEG 0.7. Prob medida de rebote 86 por ciento en 3 dias (n=14). Zona de compra tecnica 1566.11. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:49:18 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SPY reventó la banda 15 minutos ABAJO y re-entró en 737.16 — elastico mayor, digestion probable. prob medida 0 por ciento (n=8). OPCIONES OK (spread 1%)
+09:49:18 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | NVDA reventó la banda 15 minutos ABAJO y re-entró en 193.82 — elastico mayor, digestion probable. prob medida 0 por ciento (n=9). OPCIONES OK (spread 2%)
+09:49:18 | 🎈 BB BAND-WALK | NVDA camina la banda ABAJO tambien en 5 minutos (193.82). Continuacion probable — NO hacer fade. prob medida 55 por ciento (n=20). OPCIONES OK (spread 2%)
+09:49:19 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | ASML reventó la banda 15 minutos ABAJO y re-entró en 1576.28 — elastico mayor, digestion probable. prob medida 50 por ciento (n=2). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:49:19 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | QCOM reventó la banda 15 minutos ABAJO y re-entró en 164.78 — elastico mayor, digestion probable. prob medida 0 por ciento (n=2). OPCIONES VETADAS spread 13% — usar ACCIONES o ETF apalancado
+09:50:15 | 🩸 DIP REAL | DIP REAL en EWY: -13.4% desde el high de 5 dias, estabilizado. ETF/s-d: gate valuacion n/a. Prob medida de rebote 85 por ciento en 3 dias (n=13). Zona de compra tecnica 149.78. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:50:59 | 🩸 EARNINGS-FALL SANM -18.4% | 🩸 EARNINGS-FALL SANM -18.4% (score 75, OPCIONES VETADAS (C 170 20260821: spread 21.0%, OI 1) — usar ACCIONES o ETF, TA: pendiente, capitan QQQ/XLK)
+09:50:59 | 🩸 EARNINGS-FALL CNC -8.2% | 🩸 EARNINGS-FALL CNC -8.2% (score 62, OPCIONES s/d, TA: pendiente)
+09:50:59 | 🩸 EARNINGS-FALL RMBS -6.9% | 🩸 EARNINGS-FALL RMBS -6.9% (score 58, OPCIONES s/d, TA: pendiente, capitan SMH)
+09:50:59 | 🩸 EARNINGS-FALL KRC -5.6% | 🩸 EARNINGS-FALL KRC -5.6% (score 51, OPCIONES s/d, TA: pendiente)
+09:51:15 | 🩸 DIP REAL | DIP REAL en SPCX: -13.6% desde el high de 5 dias, estabilizado. ETF/s-d: gate valuacion n/a. Zona de compra tecnica 107.08. OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+09:51:19 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | AAPL reventó la banda 15 minutos ABAJO y re-entró en 338.33 — elastico mayor, digestion probable. prob medida 20 por ciento (n=5). OPCIONES OK (spread 2%)
+09:51:52 | 🔄 GIRO A CALLS QQQ | QQQ girando a calls: ratio 2.15 desde 3.12
+09:51:52 | 🐺 MANADA A CALLS | MANADA A CALLS: 3 tickers en 12 minutos — AMD QQQ WDC . Extremo de mercado, rebote del indice a la baja probable. QQQ 670.82
+09:52:05 | 🐋📈 BALLENA CRECE | TSLA: el flujo de puts se DUPLICO — 58,264 contratos (P C 1.65). La marea sigue entrando
+09:52:15 | 🩸 DIP REAL | DIP REAL en GOOGL: -6.5% desde el high de 5 dias, estabilizado. Valuacion sana: Forward PE 22, PEG 1.2. Prob medida de rebote 64 por ciento en 3 dias (n=11). Zona de compra tecnica 324.76. OPCIONES OK (spread 3%)
+09:52:19 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | GOOGL reventó la banda 15 minutos ABAJO y re-entró en 326.81 — elastico mayor, digestion probable. prob medida 0 por ciento (n=7). OPCIONES OK (spread 3%)
+09:52:29 | 🔄 GIRO A PUTS META | META girando a puts: ratio 0.51 desde 0.34
+09:52:44 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 57% (estructural, no WR medido)
+09:52:49 | 🔄 GIRO A CALLS ASML | ASML girando a calls: ratio 2.43 desde 6.82
+09:53:03 | 🔄 GIRO A CALLS AVGO | AVGO girando a calls: ratio 1.24 desde 1.80
+09:53:16 | 🩸 DIP REAL | DIP REAL en NVDA: -9.7% desde el high de 5 dias, estabilizado. Valuacion sana: Forward PE 15, PEG 0.3. Prob medida de rebote 94 por ciento en 3 dias (n=16). Zona de compra tecnica 193.05. OPCIONES OK (spread 2%)
+09:53:22 | 🔄 GIRO A CALLS EWY | EWY girando a calls: ratio 21.48 desde 28.07
+09:53:26 | 🔄 GIRO A CALLS DRAM | DRAM girando a calls: ratio 5.29 desde 7.18
+09:53:29 | 🐋📈 BALLENA CRECE | SPCX: el flujo de puts se DUPLICO — 9,659 contratos (P C 2.78). La marea sigue entrando
+09:53:37 | 🔄 GIRO A CALLS LRCX | LRCX girando a calls: ratio 6.06 desde 12.41
+09:53:40 | 🐋 BALLENA PUTS | SNDK: flujo puts 3.6 a 1 (2,546 puts vs 706 calls) — piso o tesis bajista
+09:55:06 | 🕳 CINTA CIEGA | CINTA CIEGA: 3 de la flota sin tape tick-by-tick (AAPL AMD TSM) — sus ballenas NO se ven, no es que no haya
+09:56:21 | 🎈 BB REBOTE [VETO medido] | TXN reventó la banda ABAJO y re-entró en 274.91. Elastico: rebote hacia la media 275.97 si imprime — chico y seguro. prob medida 67 por ciento (n=187). [VETO apertura: peor hora del elastico, 58 por ciento; VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES VETADAS spread 45% — usar ACCIONES o ETF apalancado
+09:57:16 | 🩸 DIP REAL | DIP REAL en SMH: -11.3% desde el high de 5 dias, estabilizado. ETF/s-d: gate valuacion n/a. Prob medida de rebote 93 por ciento en 3 dias (n=15). Zona de compra tecnica 521.93. OPCIONES VETADAS spread 44% — usar ACCIONES o ETF apalancado
+09:57:16 | 🩸 DIP REAL | DIP REAL en AMD: -19.1% desde el high de 5 dias, estabilizado. Valuacion sana: Forward PE 34, PEG 0.5. Prob medida de rebote 83 por ciento en 3 dias (n=12). Zona de compra tecnica 452.54. OPCIONES VETADAS spread 12% — usar ACCIONES o ETF apalancado
+09:57:16 | 🩸 DIP REAL | DIP REAL en LRCX: -18.0% desde el high de 5 dias, estabilizado. Valuacion sana: Forward PE 34, PEG 1.0. Prob medida de rebote 82 por ciento en 3 dias (n=11). Zona de compra tecnica 264.62. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:57:21 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | MSFT reventó la banda 15 minutos ABAJO y re-entró en 392.34 — elastico mayor, digestion probable. prob medida 0 por ciento (n=2). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:58:17 | 🩸 DIP REAL | DIP REAL en NOK: -16.9% desde el high de 5 dias, estabilizado. Valuacion sana: Forward PE 19, PEG 1.2. Prob medida de rebote 73 por ciento en 3 dias (n=11). Zona de compra tecnica 8.68. OPCIONES VETADAS spread 10% — usar ACCIONES o ETF apalancado
+09:59:08 | 🔴📉 PREMIUM BEARISH TSLA | TSLA: trade grande de opciones BEARISH — premium neto $-7,216,601 (call $-2,977,929 put $4,238,672), umbral SIN CALIBRAR
+09:59:08 | 🔄 GIRO A PUTS TSLA | TSLA girando a puts: ratio 2.21 desde 1.65
+09:59:20 | 🐋📈 BALLENA CRECE | AMD: el flujo de puts se DUPLICO — 19,360 contratos (P C 4.03). La marea sigue entrando
+09:59:41 | 🟢📈 PREMIUM BULLISH GOOGL | GOOGL: trade grande de opciones BULLISH — premium neto $2,699,395 (call $1,040,662 put $-1,658,733), umbral SIN CALIBRAR
+09:59:41 | 🐋📈 BALLENA CRECE | GOOGL: el flujo de calls se DUPLICO — 12,021 contratos (P C 0.45). La marea sigue entrando
+09:59:47 | 🐋 BALLENA PUTS | INTC: flujo puts 3.7 a 1 (7,937 puts vs 2,123 calls) — piso o tesis bajista
+09:59:52 | 🔄 GIRO A PUTS TSM | TSM girando a puts: ratio 2.32 desde 1.45
+09:59:59 | 🔄 GIRO A PUTS TXN | TXN girando a puts: ratio 0.64 desde 0.33
+10:00:03 | 🔄 GIRO A CALLS QCOM | QCOM girando a calls: ratio 2.35 desde 6.50
+10:00:22 | 🎈 BB BAND-WALK [MUTED p<55] | AMD camina la banda ABAJO tambien en 5 minutos (451.40). Continuacion probable — NO hacer fade. prob medida 38 por ciento (n=16). OPCIONES VETADAS spread 12% — usar ACCIONES o ETF apalancado
+10:00:22 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | EWY reventó la banda 15 minutos ABAJO y re-entró en 149.77 — elastico mayor, digestion probable. prob medida 0 por ciento (n=3). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:00:22 | 🔄 GIRO A CALLS XLK | XLK girando a calls: ratio 13.07 desde 33.60
+10:00:53 | 🔄 GIRO A PUTS WDC | WDC girando a puts: ratio 12.50 desde 3.71
+10:01:00 | AAPL: SELL | AAPL @ 337.90 | prob 60% | estructura-rota+MACD15-flip-abajo+pierde-BB15mid+MACD15-rojo+ST5-alineado | fase=SPIKE_FADE
+10:01:17 | 🩸 DIP REAL | DIP REAL en QQQ: -5.5% desde el high de 5 dias, estabilizado. ETF/s-d: gate valuacion n/a. Prob medida de rebote 67 por ciento en 3 dias (n=12). Zona de compra tecnica 669.47. OPCIONES OK (spread 2%)
+10:01:17 | 🩸 DIP REAL | DIP REAL en MU: -19.8% desde el high de 5 dias, estabilizado. Valuacion sana: Forward PE 6, PEG 0.0. Prob medida de rebote 91 por ciento en 3 dias (n=11). Zona de compra tecnica 807.39. OPCIONES VETADAS spread 7% — usar ACCIONES o ETF apalancado
+10:01:17 | 🩸 DIP REAL | DIP REAL en AMZN: -7.5% desde el high de 5 dias, estabilizado. Valuacion sana: Forward PE 23, PEG 1.0. Prob medida de rebote 75 por ciento en 3 dias (n=16). Zona de compra tecnica 229.59. OPCIONES OK (spread 2%)
+10:01:17 | 🩸 DIP REAL | DIP REAL en XLK: -7.1% desde el high de 5 dias, estabilizado. ETF/s-d: gate valuacion n/a. Prob medida de rebote 64 por ciento en 3 dias (n=14). Zona de compra tecnica 168.23. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:02:17 | 🩸 DIP REAL | DIP REAL en DRAM: -20.7% desde el high de 5 dias, estabilizado. ETF/s-d: gate valuacion n/a. Prob medida de rebote 75 por ciento en 3 dias (n=4). Zona de compra tecnica 46.53. OPCIONES VETADAS spread 9% — usar ACCIONES o ETF apalancado
+10:02:17 | 🩸 DIP REAL | DIP REAL en WDC: -24.9% desde el high de 5 dias, estabilizado. Valuacion sana: Forward PE 25, PEG 0.3. Prob medida de rebote 100 por ciento en 3 dias (n=10). Zona de compra tecnica 428.60. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:02:17 | 🩸 DIP REAL | DIP REAL en STX: -23.3% desde el high de 5 dias, estabilizado. Valuacion sana: Forward PE 27, PEG 0.3. Prob medida de rebote 93 por ciento en 3 dias (n=15). Zona de compra tecnica 708.58. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:02:32 | Top gainers (TA BUY) | Candidatos hoy: ALT+6%
+10:03:17 | 🩸 DIP REAL | DIP REAL en SNDK: -34.8% desde el high de 5 dias, estabilizado. Valuacion sana: Forward PE 6. Prob medida de rebote 100 por ciento en 3 dias (n=10). Zona de compra tecnica 1089.35. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:03:23 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | DRAM reventó la banda 15 minutos ABAJO y re-entró en 47.13 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES VETADAS spread 9% — usar ACCIONES o ETF apalancado
+10:04:23 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | AVGO reventó la banda 15 minutos ARRIBA y re-entró en 377.98 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES VETADAS spread 12% — usar ACCIONES o ETF apalancado
+10:05:23 | 🎈 BB REBOTE [VETO medido] | QCOM reventó la banda ARRIBA y re-entró en 166.30. Elastico: reversion corta hacia la media 165.06 si imprime — chico y seguro. prob medida 69 por ciento (n=182). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES OK (spread 5%)
+10:05:23 | 🎈 BB REBOTE [VETO medido] | NOK reventó la banda ARRIBA y re-entró en 8.75. Elastico: reversion corta hacia la media 8.71 si imprime — chico y seguro. prob medida 72 por ciento (n=205). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES VETADAS spread 11% — usar ACCIONES o ETF apalancado
+10:05:23 | 🎈 BB REBOTE [VETO medido] | STX reventó la banda ARRIBA y re-entró en 718.69. Elastico: reversion corta hacia la media 713.67 si imprime — chico y seguro. prob medida 72 por ciento (n=209). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:06:01 | 🔄 GIRO A CALLS QQQ | QQQ girando a calls: ratio 1.59 desde 2.19
+10:06:12 | 🐋📈 BALLENA CRECE | NVDA: el flujo de puts se DUPLICO — 76,013 contratos (P C 1.88). La marea sigue entrando
+10:06:17 | 🩸 DIP VETADO | DIP VETADO por valuacion en INTC: -20.0% desde el high de 5 dias, pero inflada (FPE 43).
+10:06:23 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | QQQ reventó la banda 15 minutos ABAJO y re-entró en 671.82 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES OK (spread 2%)
+10:06:23 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | MU reventó la banda 15 minutos ABAJO y re-entró en 821.19 — elastico mayor, digestion probable. prob medida 0 por ciento (n=3). OPCIONES VETADAS spread 7% — usar ACCIONES o ETF apalancado
+10:06:23 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SMH reventó la banda 15 minutos ABAJO y re-entró en 526.94 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES VETADAS spread 39% — usar ACCIONES o ETF apalancado
+10:06:30 | 🔄 GIRO A CALLS AMD | AMD girando a calls: ratio 2.71 desde 4.03
+10:06:35 | 🔴📉 PREMIUM BEARISH AAPL | AAPL: trade grande de opciones BEARISH — premium neto $-8,371,695 (call $-873,610 put $7,498,085), umbral SIN CALIBRAR
+10:06:43 | 🔄 GIRO A PUTS META | META girando a puts: ratio 1.63 desde 0.67
+10:07:23 | 🎈 BB REBOTE [VETO medido] | AMD reventó la banda ARRIBA y re-entró en 457.70. Elastico: reversion corta hacia la media 454.21 si imprime — chico y seguro. prob medida 69 por ciento (n=195). [VETO apertura: peor hora del elastico, 58 por ciento; VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES VETADAS spread 13% — usar ACCIONES o ETF apalancado
+10:07:23 | 🎈 BB BAND-WALK [MUTED p<55] | AAPL camina la banda ABAJO tambien en 5 minutos (336.56). Continuacion probable — NO hacer fade. prob medida 20 por ciento (n=15). OPCIONES OK (spread 3%)
+10:07:24 | 🎈 BB BAND-WALK [MUTED p<55] | AVGO camina la banda ARRIBA tambien en 5 minutos (379.29). Continuacion probable — NO hacer fade. prob medida 46 por ciento (n=22). OPCIONES VETADAS spread 12% — usar ACCIONES o ETF apalancado
+10:07:24 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SPCX reventó la banda 15 minutos ABAJO y re-entró en 108.25 — elastico mayor, digestion probable. prob medida 7 por ciento (n=14). OPCIONES OK (spread 3%)
+10:07:24 | 🎈 BB REBOTE [VETO medido] | WDC reventó la banda ARRIBA y re-entró en 435.11. Elastico: reversion corta hacia la media 432.05 si imprime — chico y seguro. prob medida 72 por ciento (n=204). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:07:24 | 🚀 SPIKE CALLS NOK | SPIKE de calls en NOK: 3 mil contratos, 11 veces su ritmo. Climax comprador — rebote a la baja, probabilidad 66. OPCIONES VETADAS spread 10% — acciones/ETF
+10:07:24 | 🔄 GIRO A CALLS NOK | NOK girando a calls: ratio 0.64 desde 4.30
+10:07:40 | 🔄 GIRO A CALLS DRAM | DRAM girando a calls: ratio 2.60 desde 5.56
+10:08:05 | 🔄 GIRO A CALLS STX | STX girando a calls: ratio 4.80 desde 6.56
+10:08:24 | 🎈 BB REBOTE [VETO medido] | QQQ reventó la banda ARRIBA y re-entró en 670.77. Elastico: reversion corta hacia la media 670.57 si imprime — chico y seguro. prob medida 70 por ciento (n=190). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES OK (spread 1%)
+10:08:24 | 🎈 BB REBOTE [VETO medido] | SPY reventó la banda ARRIBA y re-entró en 737.47. Elastico: reversion corta hacia la media 737.15 si imprime — chico y seguro. prob medida 72 por ciento (n=213). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES OK (spread 1%)
+10:08:24 | 🎈 BB REBOTE [VETO medido] | NVDA reventó la banda ARRIBA y re-entró en 194.39. Elastico: reversion corta hacia la media 193.95 si imprime — chico y seguro. prob medida 69 por ciento (n=196). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES OK (spread 1%)
+10:08:24 | 🎈 BB REBOTE [VETO medido] | MU reventó la banda ARRIBA y re-entró en 815.14. Elastico: reversion corta hacia la media 813.38 si imprime — chico y seguro. prob medida 65 por ciento (n=202). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES VETADAS spread 9% — usar ACCIONES o ETF apalancado
+10:08:24 | 🎈 BB REBOTE [VETO medido] | SMH reventó la banda ARRIBA y re-entró en 524.77. Elastico: reversion corta hacia la media 524.77 si imprime — chico y seguro. prob medida 66 por ciento (n=188). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES VETADAS spread 39% — usar ACCIONES o ETF apalancado
+10:08:24 | 🎈 BB REBOTE [VETO medido] | GLD reventó la banda ARRIBA y re-entró en 369.53. Elastico: reversion corta hacia la media 369.26 si imprime — chico y seguro. prob medida 64 por ciento (n=194). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:08:24 | 🎈 BB REBOTE [VETO medido] | XLK reventó la banda ARRIBA y re-entró en 168.75. Elastico: reversion corta hacia la media 168.68 si imprime — chico y seguro. prob medida 69 por ciento (n=183). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:08:24 | 🎈 BB REBOTE [VETO medido] | EWY reventó la banda ARRIBA y re-entró en 150.94. Elastico: reversion corta hacia la media 150.35 si imprime — chico y seguro. prob medida 63 por ciento (n=185). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:08:24 | 🎈 BB REBOTE [VETO medido] | DRAM reventó la banda ARRIBA y re-entró en 47.33. Elastico: reversion corta hacia la media 46.98 si imprime — chico y seguro. prob medida 61 por ciento (n=186). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES VETADAS spread 12% — usar ACCIONES o ETF apalancado
+10:11:24 | 🎈 BB REBOTE [VETO medido] | SPCX reventó la banda ARRIBA y re-entró en 108.50. Elastico: reversion corta hacia la media 107.69 si imprime — chico y seguro. prob medida 69 por ciento (n=205). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+10:11:24 | 🎈 BB REBOTE [VETO medido] | LRCX reventó la banda ABAJO y re-entró en 262.60. Elastico: rebote hacia la media 265.52 si imprime — chico y seguro. prob medida 68 por ciento (n=193). [VETO apertura: peor hora del elastico, 58 por ciento; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:12:25 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | INTC reventó la banda 15 minutos ABAJO y re-entró en 85.39 — elastico mayor, digestion probable. prob medida 0 por ciento (n=5). OPCIONES OK (spread 4%)
+10:13:10 | 🐋📈 BALLENA CRECE | QQQ: el flujo de puts se DUPLICO — 484,641 contratos (P C 1.94). La marea sigue entrando
+10:13:18 | 🔄 GIRO A CALLS NVDA | NVDA girando a calls: ratio 1.20 desde 1.88
+10:13:21 | 🐋📈 BALLENA CRECE | TSLA: el flujo de puts se DUPLICO — 138,305 contratos (P C 2.19). La marea sigue entrando
+10:13:24 | 🐋📈 BALLENA CRECE | MU: el flujo de puts se DUPLICO — 16,726 contratos (P C 2.18). La marea sigue entrando
+10:14:03 | 🔄 GIRO A CALLS ASML | ASML girando a calls: ratio 2.29 desde 5.50
+10:14:06 | 🔄 GIRO A PUTS TXN | TXN girando a puts: ratio 9.69 desde 1.30
+10:14:25 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | TXN reventó la banda 15 minutos ARRIBA y re-entró en 276.81 — elastico mayor, digestion probable. prob medida 25 por ciento (n=8). OPCIONES VETADAS spread 91% — usar ACCIONES o ETF apalancado
+10:14:25 | 🎈 BB REBOTE [VETO medido] | TXN reventó la banda ARRIBA y re-entró en 276.81. Elastico: reversion corta hacia la media 275.32 si imprime — chico y seguro. prob medida 67 por ciento (n=187). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES VETADAS spread 91% — usar ACCIONES o ETF apalancado
+10:14:25 | 🎈 BB BAND-WALK [MUTED p<55] | SNDK camina la banda ABAJO tambien en 5 minutos (1078.35). Continuacion probable — NO hacer fade. prob medida 46 por ciento (n=22). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:15:25 | 🎈 BB BAND-WALK [MUTED p<55] | TSLA camina la banda ABAJO tambien en 5 minutos (301.48). Continuacion probable — NO hacer fade. prob medida 53 por ciento (n=15). OPCIONES OK (spread 3%)
+10:16:26 | 🎈 BB REBOTE [VETO medido] | QQQ reventó la banda ABAJO y re-entró en 668.83. Elastico: rebote hacia la media 670.21 si imprime — chico y seguro. prob medida 70 por ciento (n=190). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES OK (spread 1%)
+10:16:26 | 🎈 BB REBOTE [VETO medido] | META reventó la banda ABAJO y re-entró en 592.16. Elastico: rebote hacia la media 593.36 si imprime — chico y seguro. prob medida 74 por ciento (n=212). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:16:26 | 🎈 BB REBOTE [VETO medido] | TSM reventó la banda ABAJO y re-entró en 383.61. Elastico: rebote hacia la media 385.20 si imprime — chico y seguro. prob medida 68 por ciento (n=203). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES VETADAS spread 11% — usar ACCIONES o ETF apalancado
+10:16:26 | 🎈 BB REBOTE [VETO medido] | XLK reventó la banda ABAJO y re-entró en 167.89. Elastico: rebote hacia la media 168.53 si imprime — chico y seguro. prob medida 69 por ciento (n=183). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:17:26 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | AMZN reventó la banda 15 minutos ABAJO y re-entró en 229.71 — elastico mayor, digestion probable. prob medida 14 por ciento (n=7). OPCIONES OK (spread 1%)
+10:18:26 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | META reventó la banda 15 minutos ABAJO y re-entró en 593.21 — elastico mayor, digestion probable. prob medida 38 por ciento (n=8). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:18:26 | 🎈 BB BAND-WALK [MUTED p<55] | DRAM camina la banda ABAJO tambien en 5 minutos (46.32). Continuacion probable — NO hacer fade. prob medida 24 por ciento (n=21). OPCIONES VETADAS spread 19% — usar ACCIONES o ETF apalancado
+10:18:26 | 🎈 BB REBOTE [VETO medido] | SKHY reventó la banda ABAJO y re-entró en 128.56. Elastico: rebote hacia la media 129.76 si imprime — chico y seguro. prob medida 69 por ciento (n=86). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES VETADAS spread 12% — usar ACCIONES o ETF apalancado
+10:19:27 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | NVDA reventó la banda 15 minutos ABAJO y re-entró en 193.68 — elastico mayor, digestion probable. prob medida 0 por ciento (n=9). OPCIONES OK (spread 1%)
+10:19:27 | 🎈 BB BAND-WALK [MUTED p<55] | SMH camina la banda ABAJO tambien en 5 minutos (520.17). Continuacion probable — NO hacer fade. prob medida 44 por ciento (n=16). OPCIONES VETADAS spread 24% — usar ACCIONES o ETF apalancado
+10:19:27 | 🎈 BB BAND-WALK [MUTED p<55] | ASML camina la banda ABAJO tambien en 5 minutos (1559.09). Continuacion probable — NO hacer fade. prob medida 43 por ciento (n=21). OPCIONES VETADAS spread 30% — usar ACCIONES o ETF apalancado
+10:19:27 | 🎈 BB REBOTE [VETO medido] | NOK reventó la banda ABAJO y re-entró en 8.63. Elastico: rebote hacia la media 8.70 si imprime — chico y seguro. prob medida 72 por ciento (n=205). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES OK (spread 4%)
+10:20:00 | ASML TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.10% px 1554.00
+10:20:27 | 🎈 BB REBOTE [VETO medido] | STX reventó la banda ABAJO y re-entró en 702.38. Elastico: rebote hacia la media 713.82 si imprime — chico y seguro. prob medida 72 por ciento (n=209). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:20:44 | 🐋📈 BALLENA CRECE | MSFT: el flujo de calls se DUPLICO — 11,945 contratos (P C 0.18). La marea sigue entrando
+10:21:27 | 🐋📈 BALLENA CRECE | NFLX: el flujo de calls se DUPLICO — 60,926 contratos (P C 0.09). La marea sigue entrando
+10:21:27 | 🎈 BB REBOTE [VETO medido] | AMZN reventó la banda ARRIBA y re-entró en 230.07. Elastico: reversion corta hacia la media 229.78 si imprime — chico y seguro. prob medida 68 por ciento (n=193). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES OK (spread 1%)
+10:21:27 | 🎈 BB BAND-WALK [MUTED p<55] | INTC camina la banda ABAJO tambien en 5 minutos (83.23). Continuacion probable — NO hacer fade. prob medida 31 por ciento (n=13). OPCIONES OK (spread 3%)
+10:21:39 | 🔄 GIRO A CALLS XLK | XLK girando a calls: ratio 5.62 desde 9.52
+10:22:00 | 🎯 RE-ENTRADA A BANDA | SPCX imprimio re-entrada en 109.50. Target la media 111.27, prob medida 56 por ciento. volumen debil (x0.5 MA50) — sin confirmacion Yoel Contexto, no gatillo: pedir confluencia. OPCIONES OK (spread 3%)
+10:22:27 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SPY reventó la banda 15 minutos ABAJO y re-entró en 737.21 — elastico mayor, digestion probable. prob medida 0 por ciento (n=8). OPCIONES OK (spread 1%)
+10:22:27 | 🎈 BB REBOTE [VETO medido] | NVDA reventó la banda ABAJO y re-entró en 193.42. Elastico: rebote hacia la media 194.09 si imprime — chico y seguro. prob medida 69 por ciento (n=196). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES OK (spread 1%)
+10:22:27 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | AAPL reventó la banda 15 minutos ABAJO y re-entró en 337.81 — elastico mayor, digestion probable. prob medida 20 por ciento (n=5). OPCIONES OK (spread 3%)
+10:22:27 | 🎈 BB REBOTE [VETO medido] | MSFT reventó la banda ARRIBA y re-entró en 396.38. Elastico: reversion corta hacia la media 394.26 si imprime — chico y seguro. prob medida 70 por ciento (n=203). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:22:27 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | ASML reventó la banda 15 minutos ABAJO y re-entró en 1562.97 — elastico mayor, digestion probable. prob medida 50 por ciento (n=2). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:22:27 | 🎈 BB REBOTE [VETO medido] | EWY reventó la banda ABAJO y re-entró en 150.04. Elastico: rebote hacia la media 150.38 si imprime — chico y seguro. prob medida 63 por ciento (n=185). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:23:28 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | MSFT reventó la banda 15 minutos ARRIBA y re-entró en 395.46 — elastico mayor, digestion probable. prob medida 0 por ciento (n=2). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:24:00 | SPCX TERREMOTO ALZA | CUSUM: subiendo fuerte +2.88% px 110.25
+10:24:28 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | GLD reventó la banda 15 minutos ABAJO y re-entró en 368.53 — elastico mayor, digestion probable. prob medida 0 por ciento (n=9). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:24:28 | 🎈 BB BAND-WALK [MUTED p<55] | GLD camina la banda ABAJO tambien en 5 minutos (368.53). Continuacion probable — NO hacer fade. prob medida 40 por ciento (n=15). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:25:28 | 🎈 BB REBOTE [VETO medido] | AAPL reventó la banda ARRIBA y re-entró en 337.73. Elastico: reversion corta hacia la media 337.02 si imprime — chico y seguro. prob medida 65 por ciento (n=196). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES OK (spread 3%)
+10:25:28 | 🎈 BB REBOTE [VETO medido] | META reventó la banda ARRIBA y re-entró en 594.16. Elastico: reversion corta hacia la media 593.24 si imprime — chico y seguro. prob medida 74 por ciento (n=212). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:25:28 | 🎈 BB REBOTE [VETO medido] | GOOGL reventó la banda ARRIBA y re-entró en 327.37. Elastico: reversion corta hacia la media 327.12 si imprime — chico y seguro. prob medida 68 por ciento (n=197). [VETO apertura: peor hora del elastico, 58 por ciento] OPCIONES VETADAS spread 5% — usar ACCIONES o ETF apalancado
+10:27:19 | 🔄 GIRO A CALLS QQQ | QQQ girando a calls: ratio 1.44 desde 2.37
+10:27:36 | 🔄 GIRO A CALLS MU | MU girando a calls: ratio 1.78 desde 3.67
+10:27:36 | 🐺 MANADA A CALLS | MANADA A CALLS: 3 tickers en 12 minutos — MU QQQ XLK . Extremo de mercado, rebote del indice a la baja probable. QQQ 670.11
+10:27:39 | 🔄 GIRO A CALLS SMH | SMH girando a calls: ratio 6.48 desde 10.06
+10:28:05 | 🔄 GIRO A CALLS INTC | INTC girando a calls: ratio 3.86 desde 7.49
+10:28:43 | 🔄 GIRO A CALLS EWY | EWY girando a calls: ratio 1.55 desde 14.17
+10:28:47 | 🐋 BALLENA PUTS | DRAM: flujo puts 2.9 a 1 (2,568 puts vs 878 calls) — piso o tesis bajista
+10:28:47 | 🔄 GIRO A CALLS DRAM | DRAM girando a calls: ratio 2.92 desde 4.13
+10:29:07 | 🔄 GIRO A CALLS WDC | WDC girando a calls: ratio 3.83 desde 6.36
+10:30:29 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | TSLA reventó la banda 15 minutos ABAJO y re-entró en 302.59 — elastico mayor, digestion probable. prob medida 0 por ciento (n=9). OPCIONES OK (spread 2%)
+10:30:29 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | EWY reventó la banda 15 minutos ABAJO y re-entró en 150.74 — elastico mayor, digestion probable. prob medida 0 por ciento (n=3). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:31:30 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | NFLX reventó la banda 15 minutos ARRIBA y re-entró en 73.52 — elastico mayor, digestion probable. prob medida 0 por ciento (n=7). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:31:30 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SNDK reventó la banda 15 minutos ABAJO y re-entró en 1085.71 — elastico mayor, digestion probable. prob medida 14 por ciento (n=7). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:31:30 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | STX reventó la banda 15 minutos ABAJO y re-entró en 710.42 — elastico mayor, digestion probable. prob medida 33 por ciento (n=3). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:32:30 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | NOK reventó la banda 15 minutos ABAJO y re-entró en 8.71 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES OK (spread 5%)
+10:32:30 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | XLK reventó la banda 15 minutos ABAJO y re-entró en 168.47 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:32:30 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SKHY reventó la banda 15 minutos ABAJO y re-entró en 130.65 — elastico mayor, digestion probable. prob medida 0 por ciento (n=3). OPCIONES VETADAS spread 14% — usar ACCIONES o ETF apalancado
+10:33:00 | 🎈 BB REBOTE | NFLX reventó la banda ABAJO y re-entró en 73.53. Elastico: rebote hacia la media 73.57 si imprime — chico y seguro. prob medida 77 por ciento (n=202). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:34:00 | 🎈 BB REBOTE | AMZN reventó la banda ABAJO y re-entró en 229.11. Elastico: rebote hacia la media 229.76 si imprime — chico y seguro. prob medida 68 por ciento (n=193). OPCIONES OK (spread 2%)
+10:34:22 | 🔄 GIRO A CALLS NVDA | NVDA girando a calls: ratio 1.02 desde 1.52
+10:34:40 | 🔄 GIRO A CALLS AMD | AMD girando a calls: ratio 2.78 desde 6.29
+10:35:11 | 🔄 GIRO A CALLS ASML | ASML girando a calls: ratio 2.58 desde 4.93
+10:35:41 | 🔄 GIRO A PUTS EWY | EWY girando a puts: ratio 2.13 desde 1.55
+10:35:59 | 🔄 GIRO A CALLS LRCX | LRCX girando a calls: ratio 5.69 desde 8.32
+10:36:01 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | AMD reventó la banda 15 minutos ABAJO y re-entró en 450.52 — elastico mayor, digestion probable. prob medida 40 por ciento (n=5). OPCIONES VETADAS spread 14% — usar ACCIONES o ETF apalancado
+10:36:01 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | WDC reventó la banda 15 minutos ABAJO y re-entró en 430.80 — elastico mayor, digestion probable. prob medida 0 por ciento (n=3). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:36:31 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | QQQ reventó la banda 15 minutos ABAJO y re-entró en 670.96 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES OK (spread 2%)
+10:36:31 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | MU reventó la banda 15 minutos ABAJO y re-entró en 807.92 — elastico mayor, digestion probable. prob medida 0 por ciento (n=3). OPCIONES VETADAS spread 8% — usar ACCIONES o ETF apalancado
+10:36:31 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SMH reventó la banda 15 minutos ABAJO y re-entró en 523.65 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES VETADAS spread 27% — usar ACCIONES o ETF apalancado
+10:37:01 | 🎈 BB REBOTE | ASML reventó la banda ARRIBA y re-entró en 1575.02. Elastico: reversion corta hacia la media 1564.44 si imprime — chico y seguro. prob medida 68 por ciento (n=189). OPCIONES VETADAS spread 11% — usar ACCIONES o ETF apalancado
+10:37:01 | 🎈 BB REBOTE | NOK reventó la banda ARRIBA y re-entró en 8.73. Elastico: reversion corta hacia la media 8.67 si imprime — chico y seguro. prob medida 72 por ciento (n=205). OPCIONES VETADAS spread 5% — usar ACCIONES o ETF apalancado
+10:39:01 | 🎈 BB REBOTE | QQQ reventó la banda ARRIBA y re-entró en 670.56. Elastico: reversion corta hacia la media 669.86 si imprime — chico y seguro. prob medida 70 por ciento (n=190). OPCIONES OK (spread 1%)
+10:39:01 | 🎈 BB REBOTE | SPY reventó la banda ARRIBA y re-entró en 737.70. Elastico: reversion corta hacia la media 737.42 si imprime — chico y seguro. prob medida 72 por ciento (n=213). OPCIONES OK (spread 1%)
+10:39:01 | 🎈 BB REBOTE [VETO medido] | NVDA reventó la banda ARRIBA y re-entró en 195.37. Elastico: reversion corta hacia la media 194.07 si imprime — chico y seguro. prob medida 69 por ciento (n=196). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES OK (spread 1%)
+10:39:01 | 🎈 BB REBOTE | MU reventó la banda ARRIBA y re-entró en 807.01. Elastico: reversion corta hacia la media 800.40 si imprime — chico y seguro. prob medida 65 por ciento (n=202). OPCIONES VETADAS spread 8% — usar ACCIONES o ETF apalancado
+10:39:02 | 🎈 BB REBOTE | SMH reventó la banda ARRIBA y re-entró en 523.08. Elastico: reversion corta hacia la media 521.68 si imprime — chico y seguro. prob medida 66 por ciento (n=188). OPCIONES VETADAS spread 22% — usar ACCIONES o ETF apalancado
+10:39:02 | 🎈 BB REBOTE | AMD reventó la banda ARRIBA y re-entró en 449.51. Elastico: reversion corta hacia la media 446.98 si imprime — chico y seguro. prob medida 69 por ciento (n=195). OPCIONES VETADAS spread 14% — usar ACCIONES o ETF apalancado
+10:39:02 | 🎈 BB REBOTE | INTC reventó la banda ARRIBA y re-entró en 84.27. Elastico: reversion corta hacia la media 83.92 si imprime — chico y seguro. prob medida 68 por ciento (n=211). OPCIONES OK (spread 4%)
+10:39:02 | 🎈 BB REBOTE | XLK reventó la banda ARRIBA y re-entró en 168.68. Elastico: reversion corta hacia la media 168.26 si imprime — chico y seguro. prob medida 69 por ciento (n=183). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:39:02 | 🎈 BB REBOTE | EWY reventó la banda ARRIBA y re-entró en 151.55. Elastico: reversion corta hacia la media 150.64 si imprime — chico y seguro. prob medida 63 por ciento (n=185). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:39:02 | 🎈 BB REBOTE | DRAM reventó la banda ARRIBA y re-entró en 47.11. Elastico: reversion corta hacia la media 46.79 si imprime — chico y seguro. prob medida 61 por ciento (n=186). OPCIONES VETADAS spread 11% — usar ACCIONES o ETF apalancado
+10:39:02 | 🎈 BB REBOTE | WDC reventó la banda ARRIBA y re-entró en 428.69. Elastico: reversion corta hacia la media 426.73 si imprime — chico y seguro. prob medida 72 por ciento (n=204). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:39:02 | 🎈 BB REBOTE | STX reventó la banda ARRIBA y re-entró en 718.96. Elastico: reversion corta hacia la media 711.89 si imprime — chico y seguro. prob medida 72 por ciento (n=209). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:41:02 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | LRCX reventó la banda 15 minutos ABAJO y re-entró en 263.42 — elastico mayor, digestion probable. prob medida 0 por ciento (n=1). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:41:36 | 🐋 BALLENA PUTS | SMH: flujo puts 5.7 a 1 (2,928 puts vs 514 calls) — piso o tesis bajista
+10:41:37 | 🔄 GIRO A PUTS SMH | SMH girando a puts: ratio 5.70 desde 3.92
+10:41:58 | 🔴📉 PREMIUM BEARISH AMZN | AMZN: trade grande de opciones BEARISH — premium neto $-10,183,060 (call $-2,497,117 put $7,685,943), umbral SIN CALIBRAR
+10:42:11 | 🐋 BALLENA PUTS | TSM: flujo puts 2.4 a 1 (2,363 puts vs 972 calls) — piso o tesis bajista
+10:42:33 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | INTC reventó la banda 15 minutos ABAJO y re-entró en 85.02 — elastico mayor, digestion probable. prob medida 0 por ciento (n=5). OPCIONES OK (spread 4%)
+10:42:35 | 🚀 SPIKE CALLS NOK | SPIKE de calls en NOK: 3 mil contratos, 11 veces su ritmo. Climax comprador — rebote a la baja, probabilidad 66. OPCIONES VETADAS spread 5% — acciones/ETF
+10:42:35 | 🔄 GIRO A CALLS NOK | NOK girando a calls: ratio 0.72 desde 3.32
+10:42:43 | 🔄 GIRO A CALLS XLK | XLK girando a calls: ratio 3.83 desde 5.09
+10:43:00 | 🔄 GIRO A CALLS SKHY | SKHY girando a calls: ratio 1.04 desde 1.56
+10:43:03 | 🎈 BB REBOTE | TSLA reventó la banda ARRIBA y re-entró en 302.70. Elastico: reversion corta hacia la media 302.11 si imprime — chico y seguro. prob medida 70 por ciento (n=200). OPCIONES OK (spread 3%)
+10:43:03 | 🎈 BB REBOTE [VETO medido] | TSM reventó la banda ARRIBA y re-entró en 383.74. Elastico: reversion corta hacia la media 382.75 si imprime — chico y seguro. prob medida 68 por ciento (n=203). [VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES VETADAS spread 9% — usar ACCIONES o ETF apalancado
+10:43:03 | 🎈 BB REBOTE [VETO medido] | AVGO reventó la banda ARRIBA y re-entró en 376.93. Elastico: reversion corta hacia la media 375.65 si imprime — chico y seguro. prob medida 68 por ciento (n=197). [VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES VETADAS spread 8% — usar ACCIONES o ETF apalancado
+10:45:03 | 🎈 BB BAND-WALK [MUTED p<55] | TXN camina la banda ARRIBA tambien en 5 minutos (278.22). Continuacion probable — NO hacer fade. prob medida 47 por ciento (n=15). OPCIONES VETADAS spread 32% — usar ACCIONES o ETF apalancado
+10:45:03 | 🎈 BB REBOTE | SKHY reventó la banda ARRIBA y re-entró en 131.96. Elastico: reversion corta hacia la media 130.73 si imprime — chico y seguro. prob medida 69 por ciento (n=86). OPCIONES VETADAS spread 19% — usar ACCIONES o ETF apalancado
+10:45:03 | 🎈 BB REBOTE | LRCX reventó la banda ARRIBA y re-entró en 263.08. Elastico: reversion corta hacia la media 262.01 si imprime — chico y seguro. prob medida 68 por ciento (n=193). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:45:12 | 🔴 MU PUT BOUNCE | MU BOUNCE en OI_CALL_WALL 880 — 🔴 COMPRA 1x MU 880P 0DTE @ límite $79.25 (prima $7925, spread 7.0%, OI 409, prob 43%) — NO-GO. Ejecuta TÚ en IBKR. | OPCIONES VETADAS spread 8% — usar ACCIONES o ETF apalancado | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+10:45:12 | 🟡 MU CALL BOUNCE | MU BOUNCE en ROUND 810 — 🟡 COMPRA 1x MU 810C 0DTE @ límite $25.50 (prima $2550, spread 2.8%, OI 254, prob 73%) — CAUTION. Ejecuta TÚ en IBKR. | OPCIONES VETADAS spread 8% — usar ACCIONES o ETF apalancado | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+10:46:04 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | TXN reventó la banda 15 minutos ARRIBA y re-entró en 278.01 — elastico mayor, digestion probable. prob medida 25 por ciento (n=8). OPCIONES VETADAS spread 32% — usar ACCIONES o ETF apalancado
+10:47:34 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | AMZN reventó la banda 15 minutos ABAJO y re-entró en 228.90 — elastico mayor, digestion probable. prob medida 14 por ciento (n=7). OPCIONES OK (spread 1%)
+10:48:28 | 🟢📈 PREMIUM BULLISH NVDA | NVDA: trade grande de opciones BULLISH — premium neto $4,159,281 (call $2,266,800 put $-1,892,481), umbral SIN CALIBRAR
+10:48:57 | 🔄 GIRO A CALLS META | META girando a calls: ratio 0.85 desde 1.21
+10:49:00 | NVDA TERREMOTO ALZA | CUSUM: subiendo fuerte +2.10% px 197.02
+10:49:36 | 🐋 BALLENA CALLS | NOK: flujo calls masivo, P C 0.20 (3,326 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+10:49:40 | 🔄 GIRO A CALLS GLD | GLD girando a calls: ratio 2.92 desde 4.10
+10:50:00 | 🐋 BALLENA CALLS | SPCX: flujo calls masivo, P C 0.26 (13,770 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+10:51:05 | 🎈 BB REBOTE [VETO medido] | QCOM reventó la banda ARRIBA y re-entró en 167.21. Elastico: reversion corta hacia la media 166.60 si imprime — chico y seguro. prob medida 69 por ciento (n=182). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES VETADAS spread 10% — usar ACCIONES o ETF apalancado
+10:51:51 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 197.5 — pin · prob 61% (estructural, no WR medido)
+10:52:01 | 🛰 FINVIZ | SMH: rel volume 2.5x — cruza 2.5x
+10:52:05 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | META reventó la banda 15 minutos ABAJO y re-entró en 592.49 — elastico mayor, digestion probable. prob medida 38 por ciento (n=8). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:52:18 | 🟡 AAPL PUT BOUNCE | AAPL BOUNCE en OI_CALL_WALL 340 — 🟡 COMPRA 1x AAPL 340P 0DTE @ límite $3.60 (prima $360, spread 4.3%, OI 484, prob 67%) — CAUTION. Ejecuta TÚ en IBKR. | OPCIONES OK (spread 2%)
+10:52:37 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 197.5 ↑ · prob 56% (estructural, no WR medido)
+10:53:06 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | TSM reventó la banda 15 minutos ARRIBA y re-entró en 386.52 — elastico mayor, digestion probable. prob medida 0 por ciento (n=6). OPCIONES VETADAS spread 9% — usar ACCIONES o ETF apalancado
+10:53:06 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | QCOM reventó la banda 15 minutos ARRIBA y re-entró en 166.89 — elastico mayor, digestion probable. prob medida 0 por ciento (n=2). OPCIONES VETADAS spread 10% — usar ACCIONES o ETF apalancado
+10:53:06 | 🎈 BB REBOTE [VETO medido] | GLD reventó la banda ARRIBA y re-entró en 369.41. Elastico: reversion corta hacia la media 369.07 si imprime — chico y seguro. prob medida 64 por ciento (n=194). [VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:53:06 | 🎈 BB REBOTE | SNDK reventó la banda ARRIBA y re-entró en 1109.70. Elastico: reversion corta hacia la media 1097.67 si imprime — chico y seguro. prob medida 73 por ciento (n=194). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:53:36 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | MSFT reventó la banda 15 minutos ARRIBA y re-entró en 396.55 — elastico mayor, digestion probable. prob medida 0 por ciento (n=2). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:54:06 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | GOOGL reventó la banda 15 minutos ARRIBA y re-entró en 328.66 — elastico mayor, digestion probable. prob medida 0 por ciento (n=7). OPCIONES OK (spread 4%)
+10:54:06 | 🎈 BB BAND-WALK | SPCX camina la banda ARRIBA tambien en 5 minutos (114.96). Continuacion probable — NO hacer fade. prob medida 71 por ciento (n=14). OPCIONES OK (spread 3%)
+10:55:06 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | EWY reventó la banda 15 minutos ARRIBA y re-entró en 152.88 — elastico mayor, digestion probable. prob medida 0 por ciento (n=3). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+10:56:04 | 🔴 NVDA CALL RETEST_REJECT | NVDA RETEST_REJECT en FLIP_OPEN 197.25 — 🔴 COMPRA 1x NVDA 197.5C 0DTE @ límite $2.43 (prima $243, spread 1.2%, OI 10339, prob 36%) — NO-GO. Ejecuta TÚ en IBKR. | OPCIONES OK (spread 1%) | band-walk en 2 TF a favor: continuacion, NO fadear
+10:56:06 | 🎈 BB REBOTE | GOOGL reventó la banda ARRIBA y re-entró en 328.97. Elastico: reversion corta hacia la media 328.16 si imprime — chico y seguro. prob medida 68 por ciento (n=197). OPCIONES OK (spread 1%)
+10:56:13 | 🐋📈 BALLENA CRECE | GOOGL: el flujo de calls se DUPLICO — 24,770 contratos (P C 0.32). La marea sigue entrando
+10:56:16 | 🚀 SPIKE CALLS INTC | SPIKE de calls en INTC: 5 mil contratos, 5 veces su ritmo. Climax comprador — rebote a la baja, probabilidad 66. OPCIONES OK (spread 3%)
+10:56:45 | 🚀 SPIKE PUTS NOK | SPIKE de puts en NOK: 2 mil contratos, 6 veces su ritmo. Panico vendedor — rebote al alza, probabilidad 71. OPCIONES VETADAS spread 10% — acciones/ETF
+10:56:45 | 🔄 GIRO A PUTS NOK | NOK girando a puts: ratio 0.67 desde 0.20
+10:57:01 | 🔄 GIRO A CALLS DRAM | DRAM girando a calls: ratio 1.24 desde 2.42
+10:57:04 | 🧱🚀 SPIKE CALLS SPCX | SPIKE de calls en SPCX EN EL MURO 115: 5 mil contratos, 3 veces su ritmo. Climax contra la pared — rebote a la baja reforzado, probabilidad 67. OPCIONES OK (spread 3%)
+10:58:07 | 🎈 BB REBOTE | AAPL reventó la banda ABAJO y re-entró en 337.22. Elastico: rebote hacia la media 337.84 si imprime — chico y seguro. prob medida 65 por ciento (n=196). OPCIONES OK (spread 2%)
+10:59:07 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | AAPL reventó la banda 15 minutos ABAJO y re-entró en 337.45 — elastico mayor, digestion probable. prob medida 20 por ciento (n=5). OPCIONES OK (spread 2%)
+11:02:08 | 🎈 BB REBOTE [VETO medido] | META reventó la banda ABAJO y re-entró en 589.59. Elastico: rebote hacia la media 591.77 si imprime — chico y seguro. prob medida 74 por ciento (n=212). [VETO RSI2 extremo: impulso en curso, 53 por ciento; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:03:06 | 🔴📉 PREMIUM BEARISH META | META: trade grande de opciones BEARISH — premium neto $-4,936,192 (call $-3,291,547 put $1,644,645), umbral SIN CALIBRAR
+11:03:10 | 🟢📈 PREMIUM BULLISH AMZN | AMZN: trade grande de opciones BULLISH — premium neto $8,312,947 (call $1,106,531 put $-7,206,416), umbral SIN CALIBRAR
+11:04:09 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | NVDA reventó la banda 15 minutos ARRIBA y re-entró en 196.55 — elastico mayor, digestion probable. prob medida 0 por ciento (n=9). OPCIONES OK (spread 1%)
+11:05:09 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | AVGO reventó la banda 15 minutos ARRIBA y re-entró en 377.84 — elastico mayor, digestion probable. prob medida 0 por ciento (n=4). OPCIONES VETADAS spread 11% — usar ACCIONES o ETF apalancado
+11:06:09 | 🎈 BB REBOTE | ASML reventó la banda ABAJO y re-entró en 1568.73. Elastico: rebote hacia la media 1573.93 si imprime — chico y seguro. prob medida 68 por ciento (n=189). OPCIONES VETADAS spread 61% — usar ACCIONES o ETF apalancado
+11:06:09 | 🎈 BB REBOTE [VETO medido] | SKHY reventó la banda ABAJO y re-entró en 130.03. Elastico: rebote hacia la media 132.19 si imprime — chico y seguro. prob medida 69 por ciento (n=86). [VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES VETADAS spread 16% — usar ACCIONES o ETF apalancado
+11:08:10 | 🎈 BB REBOTE | EWY reventó la banda ABAJO y re-entró en 151.95. Elastico: rebote hacia la media 152.74 si imprime — chico y seguro. prob medida 63 por ciento (n=185). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:08:10 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SKHY reventó la banda 15 minutos ABAJO y re-entró en 129.37 — elastico mayor, digestion probable. prob medida 0 por ciento (n=3). OPCIONES VETADAS spread 16% — usar ACCIONES o ETF apalancado
+11:09:10 | 🎈 BB REBOTE [VETO medido] | DRAM reventó la banda ABAJO y re-entró en 47.46. Elastico: rebote hacia la media 47.78 si imprime — chico y seguro. prob medida 61 por ciento (n=186). [VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES VETADAS spread 16% — usar ACCIONES o ETF apalancado
+11:09:31 | 🧱🚀 SPIKE PUTS SPY | SPIKE de puts en SPY EN EL MURO 740: 184 mil contratos, 4 veces su ritmo. Panico contra el piso — rebote al alza reforzado, probabilidad 50. OPCIONES OK (spread 1%)
+11:09:31 | 🎖 CAPITAN REVIERTE SPY | SPY dispara puts tras el climax de calls de INTC SPCX — reversion de mercado probable: piso local, rebote al alza. Los nombres obedecen al capitan.
+11:09:35 | 🔴📉 PREMIUM BEARISH NVDA | NVDA: trade grande de opciones BEARISH — premium neto $-3,832,014 (call $-1,605,773 put $2,226,241), umbral SIN CALIBRAR
+11:09:54 | 🟢📈 PREMIUM BULLISH AAPL | AAPL: trade grande de opciones BULLISH — premium neto $2,523,411 (call $1,395,629 put $-1,127,782), umbral SIN CALIBRAR
+11:10:40 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 64% (estructural, no WR medido)
+11:10:41 | 🐋 BALLENA CALLS | NOK: flujo calls masivo, P C 0.19 (3,668 calls) — iman y techo local, ley 13: no perseguir, esperar pullback
+11:10:55 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 340.0 — pin · prob 64% (estructural, no WR medido)
+11:10:56 | 🐋 BALLENA PUTS | DRAM: flujo puts 2.1 a 1 (3,187 puts vs 1,512 calls) — piso o tesis bajista
+11:11:01 | 🔄 GIRO A PUTS SPCX | SPCX girando a puts: ratio 0.39 desde 0.30
+11:11:11 | 🎈 BB REBOTE | AMZN reventó la banda ARRIBA y re-entró en 229.10. Elastico: reversion corta hacia la media 229.05 si imprime — chico y seguro. prob medida 68 por ciento (n=193). [post-squeeze: el fade mejora +11 medido] OPCIONES OK (spread 2%)
+11:18:12 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | TXN reventó la banda 15 minutos ARRIBA y re-entró en 279.81 — elastico mayor, digestion probable. prob medida 25 por ciento (n=8). OPCIONES VETADAS spread 38% — usar ACCIONES o ETF apalancado
+11:19:00 | QQQ TERREMOTO ALZA | CUSUM: subiendo fuerte +1.08% px 675.31
+11:20:13 | 🎈 BB REBOTE [VETO medido] | AMD reventó la banda ARRIBA y re-entró en 453.69. Elastico: reversion corta hacia la media 451.75 si imprime — chico y seguro. prob medida 69 por ciento (n=195). [post-squeeze: el fade mejora +11 medido; VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES VETADAS spread 8% — usar ACCIONES o ETF apalancado
+11:21:13 | 🎈 BB BAND-WALK [MUTED p<55] | MSFT camina la banda ARRIBA tambien en 5 minutos (399.23). Continuacion probable — NO hacer fade. prob medida 50 por ciento (n=12). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:23:14 | 🎈 BB BAND-WALK [MUTED p<55] | SPY camina la banda ARRIBA tambien en 5 minutos (740.93). Continuacion probable — NO hacer fade. prob medida 47 por ciento (n=17). OPCIONES OK (spread 2%)
+11:23:14 | 🎈 BB REBOTE [VETO medido] | NVDA reventó la banda ARRIBA y re-entró en 197.47. Elastico: reversion corta hacia la media 196.61 si imprime — chico y seguro. prob medida 69 por ciento (n=196). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES OK (spread 2%)
+11:23:14 | 🎈 BB REBOTE | TSLA reventó la banda ARRIBA y re-entró en 305.74. Elastico: reversion corta hacia la media 304.88 si imprime — chico y seguro. prob medida 70 por ciento (n=200). OPCIONES OK (spread 2%)
+11:23:14 | 🎈 BB REBOTE | SNDK reventó la banda ARRIBA y re-entró en 1095.02. Elastico: reversion corta hacia la media 1087.80 si imprime — chico y seguro. prob medida 73 por ciento (n=194). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:23:59 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 200.0 ↑ · prob 59% (estructural, no WR medido)
+11:24:14 | 🎈 BB BAND-WALK [MUTED p<55] | QQQ camina la banda ARRIBA tambien en 5 minutos (676.55). Continuacion probable — NO hacer fade. prob medida 52 por ciento (n=25). OPCIONES OK (spread 0%)
+11:24:14 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | QCOM reventó la banda 15 minutos ARRIBA y re-entró en 166.69 — elastico mayor, digestion probable. prob medida 0 por ciento (n=2). OPCIONES VETADAS spread 12% — usar ACCIONES o ETF apalancado
+11:24:14 | 🎈 BB REBOTE | NFLX reventó la banda ARRIBA y re-entró en 73.15. Elastico: reversion corta hacia la media 72.90 si imprime — chico y seguro. prob medida 77 por ciento (n=202). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:24:14 | 🎈 BB REBOTE | STX reventó la banda ARRIBA y re-entró en 725.06. Elastico: reversion corta hacia la media 722.62 si imprime — chico y seguro. prob medida 72 por ciento (n=209). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:24:38 | 🟢📈 PREMIUM BULLISH NVDA | NVDA: trade grande de opciones BULLISH — premium neto $3,396,004 (call $2,483,527 put $-912,477), umbral SIN CALIBRAR
+11:25:00 | 🟢📈 PREMIUM BULLISH MSFT | MSFT: trade grande de opciones BULLISH — premium neto $5,819,904 (call $4,482,825 put $-1,337,079), umbral SIN CALIBRAR
+11:25:02 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 200.0 ↑ · prob 58% (estructural, no WR medido)
+11:25:05 | 🟢📈 PREMIUM BULLISH META | META: trade grande de opciones BULLISH — premium neto $2,707,832 (call $2,184,436 put $-523,396), umbral SIN CALIBRAR
+11:25:11 | 🟢📈 PREMIUM BULLISH GOOGL | GOOGL: trade grande de opciones BULLISH — premium neto $3,206,669 (call $2,955,973 put $-250,696), umbral SIN CALIBRAR
+11:25:36 | 🟢📈 PREMIUM BULLISH AVGO | AVGO: trade grande de opciones BULLISH — premium neto $2,747,981 (call $584,608 put $-2,163,373), umbral SIN CALIBRAR
+11:25:36 | 🐋 BALLENA CALLS | Alto volumen de calls en AVGO
+11:25:42 | 🔇🚀 SPIKE CALLS (capitan opuesto) NFLX | SPIKE de calls en NFLX: 21 mil contratos, 17 veces su ritmo. Climax comprador — rebote a la baja, probabilidad 38. OPCIONES s/d — default ACCIONES OJO: SPY mando flujo de puts hace 16 min — el indice manda, el fade a la baja de NFLX puede abortarse
+11:25:58 | 🔄 GIRO A CALLS XLK | XLK girando a calls: ratio 1.04 desde 1.77
+11:26:19 | 🔄 GIRO A CALLS SKHY | SKHY girando a calls: ratio 0.70 desde 1.11
+11:26:19 | 🐺 MANADA A CALLS | MANADA A CALLS: 3 tickers en 12 minutos — NFLX SKHY XLK . Extremo de mercado, rebote del indice a la baja probable. QQQ 677.37
+11:27:15 | 🎈 BB BAND-WALK [MUTED p<55] | SMH camina la banda ARRIBA tambien en 5 minutos (531.41). Continuacion probable — NO hacer fade. prob medida 44 por ciento (n=16). OPCIONES VETADAS spread 27% — usar ACCIONES o ETF apalancado
+11:27:15 | 🎈 BB BAND-WALK [MUTED p<55] | TSM camina la banda ARRIBA tambien en 5 minutos (390.18). Continuacion probable — NO hacer fade. prob medida 44 por ciento (n=18). OPCIONES VETADAS spread 10% — usar ACCIONES o ETF apalancado
+11:27:15 | 🎈 BB REBOTE [VETO medido] | TXN reventó la banda ARRIBA y re-entró en 280.89. Elastico: reversion corta hacia la media 279.96 si imprime — chico y seguro. prob medida 67 por ciento (n=187). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES VETADAS spread 42% — usar ACCIONES o ETF apalancado
+11:27:15 | 🎈 BB REBOTE | SKHY reventó la banda ARRIBA y re-entró en 133.01. Elastico: reversion corta hacia la media 130.84 si imprime — chico y seguro. prob medida 69 por ciento (n=86). OPCIONES VETADAS spread 24% — usar ACCIONES o ETF apalancado
+11:28:15 | 🎈 BB REBOTE | INTC reventó la banda ARRIBA y re-entró en 86.48. Elastico: reversion corta hacia la media 85.87 si imprime — chico y seguro. prob medida 68 por ciento (n=211). OPCIONES OK (spread 3%)
+11:28:15 | 🎈 BB REBOTE | WDC reventó la banda ARRIBA y re-entró en 440.26. Elastico: reversion corta hacia la media 438.45 si imprime — chico y seguro. prob medida 72 por ciento (n=204). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:30:16 | 🎈 BB BAND-WALK [MUTED p<55] | NOK camina la banda ARRIBA tambien en 5 minutos (8.87). Continuacion probable — NO hacer fade. prob medida 50 por ciento (n=16). OPCIONES OK (spread 5%)
+11:30:16 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | GLD reventó la banda 15 minutos ARRIBA y re-entró en 370.17 — elastico mayor, digestion probable. prob medida 0 por ciento (n=9). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:31:16 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | EWY reventó la banda 15 minutos ARRIBA y re-entró en 153.56 — elastico mayor, digestion probable. prob medida 0 por ciento (n=3). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:32:44 | 🔄 GIRO A PUTS AVGO | AVGO girando a puts: ratio 0.43 desde 0.24
+11:33:11 | 🐋📈 BALLENA CRECE | SPCX: el flujo de calls se DUPLICO — 30,663 contratos (P C 0.19). La marea sigue entrando
+11:33:27 | 🔄 GIRO A PUTS WDC | WDC girando a puts: ratio 2.03 desde 1.11
+11:35:17 | 🎈 BB REBOTE | QCOM reventó la banda ARRIBA y re-entró en 166.94. Elastico: reversion corta hacia la media 166.60 si imprime — chico y seguro. prob medida 69 por ciento (n=182). [post-squeeze: el fade mejora +11 medido] OPCIONES VETADAS spread 7% — usar ACCIONES o ETF apalancado
+11:36:17 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | NVDA reventó la banda 15 minutos ARRIBA y re-entró en 197.05 — elastico mayor, digestion probable. prob medida 0 por ciento (n=9). OPCIONES OK (spread 2%)
+11:36:17 | 🎈 BB BAND-WALK [MUTED p<55] | ASML camina la banda ARRIBA tambien en 5 minutos (1583.87). Continuacion probable — NO hacer fade. prob medida 43 por ciento (n=21). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:36:19 | 🔴📉 PREMIUM BEARISH TSLA | TSLA: trade grande de opciones BEARISH — premium neto $-5,468,485 (call $-1,406,473 put $4,062,012), umbral SIN CALIBRAR
+11:36:55 | 🔴📉 PREMIUM BEARISH GOOGL | GOOGL: trade grande de opciones BEARISH — premium neto $-2,041,573 (call $-1,053,620 put $987,953), umbral SIN CALIBRAR
+11:36:57 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 197.5 — pin · prob 58% (estructural, no WR medido)
+11:37:01 | 🔄 GIRO A CALLS TSM | TSM girando a calls: ratio 0.75 desde 0.98
+11:40:18 | 🎈 BB BAND-WALK | GOOGL camina la banda ARRIBA tambien en 5 minutos (333.13). Continuacion probable — NO hacer fade. prob medida 63 por ciento (n=19). OPCIONES OK (spread 3%)
+11:40:18 | 🎈 BB REBOTE [VETO medido] | LRCX reventó la banda ARRIBA y re-entró en 266.63. Elastico: reversion corta hacia la media 265.48 si imprime — chico y seguro. prob medida 68 por ciento (n=193). [post-squeeze: el fade mejora +11 medido; VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:41:18 | 🎈 BB REBOTE | MSFT reventó la banda ABAJO y re-entró en 399.19. Elastico: rebote hacia la media 399.63 si imprime — chico y seguro. prob medida 70 por ciento (n=203). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:41:18 | 🎈 BB BAND-WALK [MUTED p<55] | AVGO camina la banda ARRIBA tambien en 5 minutos (383.22). Continuacion probable — NO hacer fade. prob medida 46 por ciento (n=22). OPCIONES VETADAS spread 5% — usar ACCIONES o ETF apalancado
+11:41:35 | 🔴 MU CALL BOUNCE | MU BOUNCE en ROUND 820 — 🔴 COMPRA 1x MU 820C 0DTE @ límite $24.95 (prima $2495, spread 2.6%, OI 12, prob 37%) — NO-GO. Ejecuta TÚ en IBKR. | OPCIONES OK (spread 3%) | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+11:41:35 | 🟡 MU PUT BOUNCE | MU BOUNCE en ROUND 820 — 🟡 COMPRA 1x MU 820P 0DTE @ límite $23.85 (prima $2385, spread 1.9%, OI 431, prob 60%) — CAUTION. Ejecuta TÚ en IBKR. | OPCIONES OK (spread 3%) | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+11:41:35 | 🔴 SKHY CALL BOUNCE | SKHY BOUNCE en ROUND 130 — 🔴 COMPRA 1x SKHY 130C 0DTE @ límite $10.30 (prima $1030, spread 9.1%, OI 68, prob 37%) — NO-GO. Ejecuta TÚ en IBKR. | OPCIONES VETADAS spread 20% — usar ACCIONES o ETF apalancado | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+11:41:35 | 🔴 SKHY CALL RETEST_REJECT | SKHY RETEST_REJECT en ROUND 130 — 🔴 COMPRA 1x SKHY 130C 0DTE @ límite $10.30 (prima $1030, spread 9.1%, OI 68, prob 37%) — NO-GO. Ejecuta TÚ en IBKR. | OPCIONES VETADAS spread 20% — usar ACCIONES o ETF apalancado | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+11:41:35 | 🔴 SKHY PUT BOUNCE | SKHY BOUNCE en ROUND 130 — 🔴 COMPRA 1x SKHY 130P 0DTE @ límite $7.90 (prima $790, spread 5.2%, OI 2112, prob 60%) — NO-GO. Ejecuta TÚ en IBKR. | OPCIONES VETADAS spread 20% — usar ACCIONES o ETF apalancado | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+11:42:18 | 🎈 BB REBOTE | SKHY reventó la banda ABAJO y re-entró en 131.90. Elastico: rebote hacia la media 132.42 si imprime — chico y seguro. prob medida 69 por ciento (n=86). [post-squeeze: el fade mejora +11 medido] OPCIONES VETADAS spread 20% — usar ACCIONES o ETF apalancado
+11:43:15 | 🔴 NVDA CALL RETEST_REJECT | NVDA RETEST_REJECT en FLIP_OPEN 197.25 — 🔴 COMPRA 1x NVDA 197.5C 0DTE @ límite $2.13 (prima $213, spread 0.9%, OI 10339, prob 36%) — NO-GO. Ejecuta TÚ en IBKR. | OPCIONES OK (spread 1%)
+11:43:19 | 🎈 BB REBOTE | SPCX reventó la banda ABAJO y re-entró en 115.40. Elastico: rebote hacia la media 116.46 si imprime — chico y seguro. prob medida 69 por ciento (n=205). OPCIONES OK (spread 3%)
+11:43:33 | 🕳 BALLENAS CIEGAS | BALLENAS CIEGAS SMH: sin spot — flujo de SMH SIN cobertura, revisar
+11:43:56 | 🐋📈 BALLENA CRECE | Sigue entrando volumen de calls en GOOGL — el techo se refuerza, mas probable el retroceso
+11:44:01 | 🐋 BALLENA CALLS | Alto volumen de calls en INTC
+11:44:19 | 🎈 BB REBOTE | AAPL reventó la banda ARRIBA y re-entró en 339.68. Elastico: reversion corta hacia la media 339.31 si imprime — chico y seguro. prob medida 65 por ciento (n=196). [post-squeeze: el fade mejora +11 medido] OPCIONES OK (spread 1%)
+11:46:19 | 🎈 BB REBOTE [VETO medido] | GLD reventó la banda ARRIBA y re-entró en 370.73. Elastico: reversion corta hacia la media 370.33 si imprime — chico y seguro. prob medida 64 por ciento (n=194). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:46:19 | 🎈 BB REBOTE [VETO medido] | EWY reventó la banda ARRIBA y re-entró en 154.26. Elastico: reversion corta hacia la media 153.89 si imprime — chico y seguro. prob medida 63 por ciento (n=185). [post-squeeze: el fade mejora +11 medido; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:47:58 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+11:48:28 | 🎈 BB REBOTE [VETO medido] | SPY reventó la banda ARRIBA y re-entró en 742.19. Elastico: reversion corta hacia la media 741.57 si imprime — chico y seguro. prob medida 72 por ciento (n=213). [post-squeeze: el fade mejora +11 medido; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES OK (spread 1%)
+11:49:31 | 🕳 CINTA CIEGA | CINTA CIEGA: 25 de la flota sin tape tick-by-tick (AAPL AMD AMZN ASML AVGO DRAM EWY GLD GOOGL INTC LRCX META MSFT NFLX NOK NVDA QCOM SKHY SPCX STX TSLA TSM TXN WDC XLK) — sus ballenas NO se ven, no es que no haya
+11:49:50 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 202.5 ↑ · prob 61% (estructural, no WR medido)
+11:50:17 | 🐋 BALLENA CALLS | Alto volumen de calls en QQQ
+11:50:28 | 🎈 BB REBOTE [VETO medido] | QQQ reventó la banda ARRIBA y re-entró en 678.59. Elastico: reversion corta hacia la media 677.48 si imprime — chico y seguro. prob medida 70 por ciento (n=190). [post-squeeze: el fade mejora +11 medido; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES OK (spread 1%)
+11:50:28 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | TSLA reventó la banda 15 minutos ARRIBA y re-entró en 307.97 — elastico mayor, digestion probable. prob medida 0 por ciento (n=9). OPCIONES OK (spread 1%)
+11:50:28 | 🎈 BB BAND-WALK [MUTED p<55] | SMH camina la banda ARRIBA tambien en 5 minutos (535.13). Continuacion probable — NO hacer fade. prob medida 44 por ciento (n=16). OPCIONES VETADAS spread 36% — usar ACCIONES o ETF apalancado
+11:50:28 | 🎈 BB BAND-WALK [MUTED p<55] | AMD camina la banda ARRIBA tambien en 5 minutos (463.36). Continuacion probable — NO hacer fade. prob medida 38 por ciento (n=16). OPCIONES VETADAS spread 8% — usar ACCIONES o ETF apalancado
+11:50:28 | 🎈 BB BAND-WALK [MUTED p<55] | INTC camina la banda ARRIBA tambien en 5 minutos (87.90). Continuacion probable — NO hacer fade. prob medida 31 por ciento (n=13). OPCIONES OK (spread 3%)
+11:50:28 | 🎈 BB BAND-WALK [MUTED p<55] | TSM camina la banda ARRIBA tambien en 5 minutos (393.22). Continuacion probable — NO hacer fade. prob medida 44 por ciento (n=18). OPCIONES VETADAS spread 7% — usar ACCIONES o ETF apalancado
+11:50:28 | 🎈 BB BAND-WALK [MUTED p<55] | ASML camina la banda ARRIBA tambien en 5 minutos (1593.92). Continuacion probable — NO hacer fade. prob medida 43 por ciento (n=21). OPCIONES VETADAS spread 45% — usar ACCIONES o ETF apalancado
+11:50:28 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | QCOM reventó la banda 15 minutos ARRIBA y re-entró en 167.34 — elastico mayor, digestion probable. prob medida 0 por ciento (n=2). OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+11:50:28 | 🎈 BB BAND-WALK [MUTED p<55] | AVGO camina la banda ARRIBA tambien en 5 minutos (385.28). Continuacion probable — NO hacer fade. prob medida 46 por ciento (n=22). OPCIONES OK (spread 4%)
+11:50:28 | 🎈 BB REBOTE | NOK reventó la banda ARRIBA y re-entró en 8.92. Elastico: reversion corta hacia la media 8.88 si imprime — chico y seguro. prob medida 72 por ciento (n=205). OPCIONES VETADAS spread 8% — usar ACCIONES o ETF apalancado
+11:50:29 | 🎈 BB BAND-WALK [MUTED p<55] | GLD camina la banda ARRIBA tambien en 5 minutos (370.92). Continuacion probable — NO hacer fade. prob medida 40 por ciento (n=15). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:50:29 | 🎈 BB REBOTE [VETO medido] | XLK reventó la banda ARRIBA y re-entró en 171.92. Elastico: reversion corta hacia la media 171.35 si imprime — chico y seguro. prob medida 69 por ciento (n=183). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:50:29 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SPCX reventó la banda 15 minutos ARRIBA y re-entró en 114.88 — elastico mayor, digestion probable. prob medida 7 por ciento (n=14). OPCIONES OK (spread 3%)
+11:51:26 | 🔄 GIRO A PUTS AVGO | AVGO girando a puts: ratio 0.42 desde 0.21
+11:51:29 | 🎈 BB REBOTE [VETO medido] | NVDA reventó la banda ARRIBA y re-entró en 198.17. Elastico: reversion corta hacia la media 197.34 si imprime — chico y seguro. prob medida 69 por ciento (n=196). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES OK (spread 2%)
+11:51:29 | 🎈 BB REBOTE [VETO medido] | TSLA reventó la banda ARRIBA y re-entró en 307.60. Elastico: reversion corta hacia la media 306.91 si imprime — chico y seguro. prob medida 70 por ciento (n=200). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES OK (spread 1%)
+11:51:29 | 🎈 BB REBOTE [VETO medido] | EWY reventó la banda ARRIBA y re-entró en 154.31. Elastico: reversion corta hacia la media 154.00 si imprime — chico y seguro. prob medida 63 por ciento (n=185). [post-squeeze: el fade mejora +11 medido; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:51:29 | 🎈 BB REBOTE [VETO medido] | DRAM reventó la banda ARRIBA y re-entró en 48.48. Elastico: reversion corta hacia la media 48.15 si imprime — chico y seguro. prob medida 61 por ciento (n=186). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES VETADAS spread 8% — usar ACCIONES o ETF apalancado
+11:51:29 | 🎈 BB REBOTE [VETO medido] | SPCX reventó la banda ABAJO y re-entró en 114.87. Elastico: rebote hacia la media 116.25 si imprime — chico y seguro. prob medida 69 por ciento (n=205). [VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES OK (spread 3%)
+11:51:29 | 🎈 BB REBOTE | LRCX reventó la banda ARRIBA y re-entró en 268.96. Elastico: reversion corta hacia la media 266.41 si imprime — chico y seguro. prob medida 68 por ciento (n=193). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:51:29 | 🎈 BB REBOTE | SNDK reventó la banda ARRIBA y re-entró en 1107.93. Elastico: reversion corta hacia la media 1098.50 si imprime — chico y seguro. prob medida 73 por ciento (n=194). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:52:02 | 🔴 SKHY PUT BOUNCE | SKHY BOUNCE en ROUND 130 — 🔴 COMPRA 1x SKHY 130P 0DTE @ límite $7.10 (prima $710, spread 5.8%, OI 2112, prob 60%) — NO-GO. Ejecuta TÚ en IBKR. | OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+11:52:29 | 🎈 BB REBOTE | MSFT reventó la banda ABAJO y re-entró en 397.40. Elastico: rebote hacia la media 398.98 si imprime — chico y seguro. prob medida 70 por ciento (n=203). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:52:29 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | ASML reventó la banda 15 minutos ARRIBA y re-entró en 1588.31 — elastico mayor, digestion probable. prob medida 50 por ciento (n=2). OPCIONES VETADAS spread 45% — usar ACCIONES o ETF apalancado
+11:55:29 | 🎈 BB REBOTE | META reventó la banda ARRIBA y re-entró en 595.08. Elastico: reversion corta hacia la media 594.11 si imprime — chico y seguro. prob medida 74 por ciento (n=212). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:57:28 | 🟢📈 PREMIUM BULLISH TSLA | TSLA: trade grande de opciones BULLISH — premium neto $4,214,179 (call $6,220,363 put $2,006,184), umbral SIN CALIBRAR
+11:57:29 | 🎈 BB REBOTE | QCOM reventó la banda ABAJO y re-entró en 166.93. Elastico: rebote hacia la media 167.20 si imprime — chico y seguro. prob medida 69 por ciento (n=182). OPCIONES VETADAS spread 11% — usar ACCIONES o ETF apalancado
+11:57:44 | 🧱🚀 SPIKE CALLS AAPL | SPIKE de calls en AAPL EN EL MURO 340: 23 mil contratos, 4 veces su ritmo. Climax contra la pared — rebote a la baja reforzado, probabilidad 67. OPCIONES OK (spread 1%)
+11:59:09 | 🟢📈 PREMIUM BULLISH NVDA | NVDA: trade grande de opciones BULLISH — premium neto $6,118,543 (call $3,414,896 put $-2,703,647), umbral SIN CALIBRAR
+12:00:30 | 🎈 BB REBOTE | TXN reventó la banda ABAJO y re-entró en 279.33. Elastico: rebote hacia la media 280.23 si imprime — chico y seguro. prob medida 67 por ciento (n=187). [post-squeeze: el fade mejora +11 medido] OPCIONES VETADAS spread 31% — usar ACCIONES o ETF apalancado
+12:00:31 | 🐋 BALLENA CALLS | Alto volumen de calls en DRAM
+12:02:00 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SPY reventó la banda 15 minutos ARRIBA y re-entró en 742.18 — elastico mayor, digestion probable. prob medida 0 por ciento (n=8). OPCIONES OK (spread 1%)
+12:02:30 | 🎈 BB REBOTE [VETO medido] | SPCX reventó la banda ARRIBA y re-entró en 116.57. Elastico: reversion corta hacia la media 115.64 si imprime — chico y seguro. prob medida 69 por ciento (n=205). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES OK (spread 3%)
+12:04:30 | 🎈 BB BAND-WALK [MUTED p<55] | WDC camina la banda ARRIBA tambien en 5 minutos (455.64). Continuacion probable — NO hacer fade. prob medida 46 por ciento (n=13). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:05:00 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | GLD reventó la banda 15 minutos ARRIBA y re-entró en 370.79 — elastico mayor, digestion probable. prob medida 0 por ciento (n=9). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:06:05 | 🧱🚀 SPIKE PUTS SPY | SPIKE de puts en SPY EN EL MURO 740: 360 mil contratos, 5 veces su ritmo. Panico contra el piso — rebote al alza reforzado, probabilidad 50. OPCIONES OK (spread 1%)
+12:06:05 | 🎖 CAPITAN REVIERTE SPY | SPY dispara puts tras el climax de calls de AAPL — reversion de mercado probable: piso local, rebote al alza. Los nombres obedecen al capitan.
+12:06:05 | 🔄 GIRO A PUTS SPY | SPY girando a puts: ratio 0.66 desde 0.50
+12:06:13 | 🟢📈 PREMIUM BULLISH TSLA | TSLA: trade grande de opciones BULLISH — premium neto $2,463,014 (call $4,490,118 put $2,027,104), umbral SIN CALIBRAR
+12:07:01 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | EWY reventó la banda 15 minutos ARRIBA y re-entró en 154.58 — elastico mayor, digestion probable. prob medida 0 por ciento (n=3). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:08:01 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | NVDA reventó la banda 15 minutos ARRIBA y re-entró en 197.73 — elastico mayor, digestion probable. prob medida 0 por ciento (n=9). OPCIONES OK (spread 1%)
+12:08:38 | 🟢📈 PREMIUM ALCISTA META | META: trade grande de opciones ALCISTA — premium neto $3,068,618 (call $2,088,284 put $-980,334), umbral SIN CALIBRAR
+12:08:48 | 🟢📈 PREMIUM ALCISTA GOOGL | GOOGL: trade grande de opciones ALCISTA — premium neto $2,338,177 (call $2,373,955 put $35,778), umbral SIN CALIBRAR
+12:08:53 | 🚀 SPIKE PUTS INTC | SPIKE de puts en INTC: 4 mil contratos, 25 veces su ritmo. Panico vendedor — rebote al alza, probabilidad 71. OPCIONES OK (spread 3%)
+12:09:26 | 🐋 BALLENA PUTS | Alto volumen de puts en GLD
+12:09:43 | 🧲 ESTRUCTURAL magnet GOOGL | GOOGL se dirige a su imán 335.0 ↑ · prob 78% (estructural, no WR medido)
+12:10:01 | 🎈 BB REBOTE [VETO medido] | NVDA reventó la banda ABAJO y re-entró en 197.72. Elastico: rebote hacia la media 198.18 si imprime — chico y seguro. prob medida 69 por ciento (n=196). [post-squeeze: el fade mejora +11 medido; VETO RSI2 extremo: impulso en curso, 53 por ciento; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES OK (spread 0%)
+12:10:01 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | TSM reventó la banda 15 minutos ARRIBA y re-entró en 390.97 — elastico mayor, digestion probable. prob medida 0 por ciento (n=6). OPCIONES VETADAS spread 13% — usar ACCIONES o ETF apalancado
+12:10:11 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+12:10:34 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+12:11:01 | 🎈 BB REBOTE [VETO medido] | QQQ reventó la banda ABAJO y re-entró en 677.69. Elastico: rebote hacia la media 678.42 si imprime — chico y seguro. prob medida 70 por ciento (n=190). [post-squeeze: el fade mejora +11 medido; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES OK (spread 1%)
+12:11:01 | 🎈 BB REBOTE | AMD reventó la banda ABAJO y re-entró en 461.38. Elastico: rebote hacia la media 463.69 si imprime — chico y seguro. prob medida 69 por ciento (n=195). [post-squeeze: el fade mejora +11 medido] OPCIONES VETADAS spread 9% — usar ACCIONES o ETF apalancado
+12:11:01 | 🎈 BB REBOTE [VETO medido] | TSM reventó la banda ABAJO y re-entró en 391.49. Elastico: rebote hacia la media 392.52 si imprime — chico y seguro. prob medida 68 por ciento (n=203). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES VETADAS spread 13% — usar ACCIONES o ETF apalancado
+12:11:01 | 🎈 BB REBOTE [VETO medido] | XLK reventó la banda ABAJO y re-entró en 171.48. Elastico: rebote hacia la media 171.76 si imprime — chico y seguro. prob medida 69 por ciento (n=183). [post-squeeze: el fade mejora +11 medido; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:11:01 | 🎈 BB REBOTE | DRAM reventó la banda ABAJO y re-entró en 48.29. Elastico: rebote hacia la media 48.53 si imprime — chico y seguro. prob medida 61 por ciento (n=186). [post-squeeze: el fade mejora +11 medido] OPCIONES VETADAS spread 8% — usar ACCIONES o ETF apalancado
+12:11:01 | 🎈 BB REBOTE | LRCX reventó la banda ABAJO y re-entró en 268.67. Elastico: rebote hacia la media 269.18 si imprime — chico y seguro. prob medida 68 por ciento (n=193). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:12:01 | 🎈 BB REBOTE [VETO medido] | SPY reventó la banda ABAJO y re-entró en 741.75. Elastico: rebote hacia la media 742.02 si imprime — chico y seguro. prob medida 72 por ciento (n=213). [post-squeeze: el fade mejora +11 medido; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES OK (spread 1%)
+12:12:01 | 🎈 BB REBOTE [VETO medido] | ASML reventó la banda ABAJO y re-entró en 1586.42. Elastico: rebote hacia la media 1590.63 si imprime — chico y seguro. prob medida 68 por ciento (n=189). [post-squeeze: el fade mejora +11 medido; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES VETADAS spread 34% — usar ACCIONES o ETF apalancado
+12:12:01 | 🎈 BB REBOTE | SKHY reventó la banda ABAJO y re-entró en 132.75. Elastico: rebote hacia la media 133.33 si imprime — chico y seguro. prob medida 69 por ciento (n=86). [post-squeeze: el fade mejora +11 medido] OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+12:13:02 | 🎈 BB REBOTE [VETO medido] | NFLX reventó la banda ARRIBA y re-entró en 73.09. Elastico: reversion corta hacia la media 72.98 si imprime — chico y seguro. prob medida 77 por ciento (n=202). [post-squeeze: el fade mejora +11 medido; VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:14:02 | 🎈 BB REBOTE | SMH reventó la banda ABAJO y re-entró en 531.59. Elastico: rebote hacia la media 533.65 si imprime — chico y seguro. prob medida 66 por ciento (n=188). OPCIONES VETADAS spread 43% — usar ACCIONES o ETF apalancado
+12:15:02 | 🎈 BB REBOTE [VETO medido] | EWY reventó la banda ABAJO y re-entró en 154.07. Elastico: rebote hacia la media 154.51 si imprime — chico y seguro. prob medida 63 por ciento (n=185). [VETO RSI2 extremo: impulso en curso, 53 por ciento; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:16:45 | 🟢📈 PREMIUM ALCISTA NVDA | NVDA: trade grande de opciones ALCISTA — premium neto $2,853,902 (call $2,230,088 put $-623,814), umbral SIN CALIBRAR
+12:17:02 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | GOOGL reventó la banda 15 minutos ARRIBA y re-entró en 333.45 — elastico mayor, digestion probable. prob medida 0 por ciento (n=7). OPCIONES OK (spread 4%)
+12:17:11 | 🐋📈 BALLENA CRECE | Más calls en MSFT, bajada probable.
+12:17:44 | 🐋 BALLENA PUTS | Alto volumen de puts en QCOM
+12:18:07 | 🟡 MU PUT BOUNCE | MU BOUNCE en ROUND 820 — 🟡 COMPRA 1x MU 820P 0DTE @ límite $24.05 (prima $2405, spread 1.7%, OI 431, prob 60%) — CAUTION. Ejecuta TÚ en IBKR. | OPCIONES VETADAS spread 8% — usar ACCIONES o ETF apalancado | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+12:19:02 | 🎈 BB REBOTE [VETO medido] | AVGO reventó la banda ABAJO y re-entró en 382.09. Elastico: rebote hacia la media 383.31 si imprime — chico y seguro. prob medida 68 por ciento (n=197). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES VETADAS spread 9% — usar ACCIONES o ETF apalancado
+12:19:23 | 🔴 MU CALL BOUNCE | MU BOUNCE en ROUND 820 — 🔴 COMPRA 1x MU 820C 0DTE @ límite $23.55 (prima $2355, spread 1.5%, OI 12, prob 37%) — NO-GO. Ejecuta TÚ en IBKR. | OPCIONES VETADAS spread 8% — usar ACCIONES o ETF apalancado | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+12:19:38 | 🟢📈 PREMIUM ALCISTA NVDA | NVDA: trade grande de opciones ALCISTA — premium neto $3,228,074 (call $2,456,894 put $-771,180), umbral SIN CALIBRAR
+12:20:02 | 🟢📈 PREMIUM ALCISTA AAPL | AAPL: trade grande de opciones ALCISTA — premium neto $2,394,845 (call $2,859,789 put $464,944), umbral SIN CALIBRAR
+12:20:07 | 🟢📈 PREMIUM ALCISTA MSFT | MSFT: trade grande de opciones ALCISTA — premium neto $2,589,590 (call $2,457,238 put $-132,352), umbral SIN CALIBRAR
+12:20:07 | 🐋📈 BALLENA CRECE | Más calls en MSFT, bajada probable.
+12:20:39 | 🐋 BALLENA PUTS | Alto volumen de puts en QCOM
+12:21:03 | 🎈 BB REBOTE | MSFT reventó la banda ARRIBA y re-entró en 398.66. Elastico: reversion corta hacia la media 397.28 si imprime — chico y seguro. prob medida 70 por ciento (n=203). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:22:03 | 🎈 BB REBOTE | AMZN reventó la banda ARRIBA y re-entró en 231.64. Elastico: reversion corta hacia la media 231.30 si imprime — chico y seguro. prob medida 68 por ciento (n=193). OPCIONES OK (spread 1%)
+12:25:13 | 🔴 MU CALL BOUNCE | MU BOUNCE en ROUND 820 — 🔴 COMPRA 1x MU 820C 0DTE @ límite $24.90 (prima $2490, spread 2.6%, OI 12, prob 37%) — NO-GO. Ejecuta TÚ en IBKR. | OPCIONES OK (spread 5%) | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+12:26:04 | 🔴 MU CALL BOUNCE | MU BOUNCE en ROUND 820 — 🔴 COMPRA 1x MU 820C 0DTE @ límite $24.90 (prima $2490, spread 2.6%, OI 12, prob 37%) — NO-GO. Ejecuta TÚ en IBKR. | OPCIONES OK (spread 5%) | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+12:26:04 | 🌊 FLOW PULSE v4 | Pulso de flujo v4 arriba: spikes 3x con veto band-walk, muros OI, manada y jerarquia de capitanes SPY QQQ SMH. Probabilidades vivas: puts 71, calls 66
+12:26:18 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+12:27:17 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 340.0 — pin · prob 82% (estructural, no WR medido)
+12:27:47 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 340.0 — pin · prob 64% (estructural, no WR medido)
+12:27:53 | 🔴 SKHY PUT BOUNCE | SKHY BOUNCE en ROUND 130 — 🔴 COMPRA 1x SKHY 130P 0DTE @ límite $7.20 (prima $720, spread 5.7%, OI 2112, prob 60%) — NO-GO. Ejecuta TÚ en IBKR. | OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+12:28:05 | 🕳 CINTA CIEGA | CINTA CIEGA: 25 de la flota sin tape tick-by-tick (AAPL AMD AMZN ASML AVGO DRAM EWY GLD GOOGL INTC LRCX META MSFT NFLX NOK QCOM SKHY SNDK SPCX STX TSLA TSM TXN WDC XLK) — sus ballenas NO se ven, no es que no haya
+12:28:55 | 🐋 BALLENA PUTS | Alto volumen de puts en GLD
+12:29:04 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 340.0 — pin · prob 82% (estructural, no WR medido)
+12:29:08 | 🟡 AAPL CALL BOUNCE | AAPL BOUNCE en OI_CALL_WALL 340 — 🟡 COMPRA 1x AAPL 340C 0DTE @ límite $2.10 (prima $210, spread 1.4%, OI 7762, prob 53%) — CAUTION. Ejecuta TÚ en IBKR. | OPCIONES OK (spread 1%)
+12:29:20 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 340.0 — pin · prob 64% (estructural, no WR medido)
+12:30:52 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 340.0 — pin · prob 82% (estructural, no WR medido)
+12:31:00 | 🩸 EARNINGS-FALL NE -8.6% | 🩸 EARNINGS-FALL NE -8.6% (score 68, OPCIONES s/d, TA: pendiente)
+12:31:00 | 🩸 EARNINGS-FALL UPS -6.5% | 🩸 EARNINGS-FALL UPS -6.5% (score 65, OPCIONES s/d, TA: pendiente)
+12:31:00 | 🩸 EARNINGS-FALL INIO -11.3% | 🩸 EARNINGS-FALL INIO -11.3% (score 62, OPCIONES s/d, TA: pendiente)
+12:31:16 | 🕳 CINTA CIEGA | CINTA CIEGA: 25 de la flota sin tape tick-by-tick (AAPL AMD AMZN ASML AVGO DRAM EWY GLD GOOGL INTC LRCX META MSFT NFLX NOK QCOM SKHY SNDK SPCX STX TSLA TSM TXN WDC XLK) — sus ballenas NO se ven, no es que no haya
+12:31:19 | 🎈 BB REBOTE | NOK reventó la banda ABAJO y re-entró en 8.87. Elastico: rebote hacia la media 8.88 si imprime — chico y seguro. prob medida 72 por ciento (n=205). [post-squeeze: el fade mejora +11 medido] OPCIONES VETADAS spread 9% — usar ACCIONES o ETF apalancado
+12:32:19 | 🎈 BB REBOTE | MU reventó la banda ABAJO y re-entró en 818.92. Elastico: rebote hacia la media 820.79 si imprime — chico y seguro. prob medida 65 por ciento (n=202). [post-squeeze: el fade mejora +11 medido] OPCIONES OK (spread 2%)
+12:32:19 | 🎈 BB REBOTE | TSM reventó la banda ABAJO y re-entró en 390.36. Elastico: rebote hacia la media 391.34 si imprime — chico y seguro. prob medida 68 por ciento (n=203). [post-squeeze: el fade mejora +11 medido] OPCIONES VETADAS spread 9% — usar ACCIONES o ETF apalancado
+12:32:19 | 🎈 BB REBOTE | NFLX reventó la banda ARRIBA y re-entró en 73.33. Elastico: reversion corta hacia la media 73.21 si imprime — chico y seguro. prob medida 77 por ciento (n=202). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:32:19 | 🎈 BB REBOTE [VETO medido] | EWY reventó la banda ABAJO y re-entró en 153.66. Elastico: rebote hacia la media 154.01 si imprime — chico y seguro. prob medida 63 por ciento (n=185). [post-squeeze: el fade mejora +11 medido; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:32:19 | 🎈 BB REBOTE | STX reventó la banda ABAJO y re-entró en 741.19. Elastico: rebote hacia la media 743.59 si imprime — chico y seguro. prob medida 72 por ciento (n=209). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:33:19 | 🎈 BB REBOTE | QQQ reventó la banda ABAJO y re-entró en 677.07. Elastico: rebote hacia la media 677.49 si imprime — chico y seguro. prob medida 70 por ciento (n=190). [post-squeeze: el fade mejora +11 medido] OPCIONES OK (spread 1%)
+12:33:19 | 🎈 BB REBOTE [VETO medido] | SPY reventó la banda ABAJO y re-entró en 741.26. Elastico: rebote hacia la media 741.51 si imprime — chico y seguro. prob medida 72 por ciento (n=213). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES OK (spread 1%)
+12:33:19 | 🎈 BB REBOTE | NVDA reventó la banda ABAJO y re-entró en 196.95. Elastico: rebote hacia la media 197.55 si imprime — chico y seguro. prob medida 69 por ciento (n=196). OPCIONES OK (spread 2%)
+12:33:19 | 🎈 BB REBOTE | SMH reventó la banda ABAJO y re-entró en 529.72. Elastico: rebote hacia la media 531.05 si imprime — chico y seguro. prob medida 66 por ciento (n=188). [post-squeeze: el fade mejora +11 medido] OPCIONES VETADAS spread 29% — usar ACCIONES o ETF apalancado
+12:33:19 | 🎈 BB REBOTE | INTC reventó la banda ABAJO y re-entró en 86.45. Elastico: rebote hacia la media 86.62 si imprime — chico y seguro. prob medida 68 por ciento (n=211). [post-squeeze: el fade mejora +11 medido] OPCIONES OK (spread 3%)
+12:33:19 | 🎈 BB REBOTE | ASML reventó la banda ABAJO y re-entró en 1574.77. Elastico: rebote hacia la media 1579.03 si imprime — chico y seguro. prob medida 68 por ciento (n=189). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:33:19 | 🎈 BB REBOTE | TXN reventó la banda ABAJO y re-entró en 278.41. Elastico: rebote hacia la media 278.57 si imprime — chico y seguro. prob medida 67 por ciento (n=187). [post-squeeze: el fade mejora +11 medido] OPCIONES VETADAS spread 31% — usar ACCIONES o ETF apalancado
+12:33:20 | 🎈 BB REBOTE | AVGO reventó la banda ABAJO y re-entró en 380.38. Elastico: rebote hacia la media 382.12 si imprime — chico y seguro. prob medida 68 por ciento (n=197). OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+12:33:20 | 🎈 BB REBOTE [VETO medido] | GLD reventó la banda ABAJO y re-entró en 370.90. Elastico: rebote hacia la media 370.95 si imprime — chico y seguro. prob medida 64 por ciento (n=194). [post-squeeze: el fade mejora +11 medido; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:33:20 | 🎈 BB REBOTE | XLK reventó la banda ABAJO y re-entró en 171.19. Elastico: rebote hacia la media 171.40 si imprime — chico y seguro. prob medida 69 por ciento (n=183). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:33:20 | 🎈 BB REBOTE | SKHY reventó la banda ABAJO y re-entró en 132.02. Elastico: rebote hacia la media 132.38 si imprime — chico y seguro. prob medida 69 por ciento (n=86). [post-squeeze: el fade mejora +11 medido] OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+12:33:20 | 🎈 BB REBOTE | LRCX reventó la banda ABAJO y re-entró en 266.74. Elastico: rebote hacia la media 267.90 si imprime — chico y seguro. prob medida 68 por ciento (n=193). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:34:20 | 🎈 BB REBOTE [VETO medido] | WDC reventó la banda ARRIBA y re-entró en 454.62. Elastico: reversion corta hacia la media 453.18 si imprime — chico y seguro. prob medida 72 por ciento (n=204). [post-squeeze: el fade mejora +11 medido; VETO RSI2 extremo: impulso en curso, 53 por ciento; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:36:20 | 🎈 BB REBOTE | AAPL reventó la banda ARRIBA y re-entró en 340.25. Elastico: reversion corta hacia la media 339.91 si imprime — chico y seguro. prob medida 65 por ciento (n=196). OPCIONES OK (spread 4%)
+12:36:20 | 🎈 BB REBOTE | SPCX reventó la banda ARRIBA y re-entró en 115.98. Elastico: reversion corta hacia la media 115.25 si imprime — chico y seguro. prob medida 69 por ciento (n=205). [post-squeeze: el fade mejora +11 medido] OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+12:36:29 | 🔴📉 PREMIUM BAJISTA NVDA | NVDA: trade grande de opciones BAJISTA — premium neto $-3,357,104 (call $-1,521,676 put $1,835,428), umbral SIN CALIBRAR
+12:36:30 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 197.5 ↑ · prob 58% (estructural, no WR medido)
+12:36:30 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 340.0 — pin · prob 65% (estructural, no WR medido)
+12:36:46 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 197.5 — pin · prob 58% (estructural, no WR medido)
+12:36:46 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 340.0 — pin · prob 82% (estructural, no WR medido)
+12:36:50 | 🔄 GIRO A PUTS AAPL | AAPL girando a puts: ratio 0.52 desde 0.38
+12:37:01 | 🔴📉 PREMIUM BAJISTA AMZN | AMZN: trade grande de opciones BAJISTA — premium neto $-2,053,181 (call $-626,720 put $1,426,461), umbral SIN CALIBRAR
+12:37:17 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 340.0 — pin · prob 65% (estructural, no WR medido)
+12:37:33 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 340.0 — pin · prob 83% (estructural, no WR medido)
+12:37:48 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 197.5 ↑ · prob 58% (estructural, no WR medido)
+12:38:01 | 🔄 GIRO A PUTS LRCX | LRCX girando a puts: ratio 2.17 desde 0.56
+12:38:03 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 197.5 — pin · prob 58% (estructural, no WR medido)
+12:38:20 | 🎈 BB REBOTE | AMZN reventó la banda ABAJO y re-entró en 231.29. Elastico: rebote hacia la media 231.52 si imprime — chico y seguro. prob medida 68 por ciento (n=193). [post-squeeze: el fade mejora +11 medido] OPCIONES OK (spread 2%)
+12:39:21 | 🎈 BB REBOTE | META reventó la banda ABAJO y re-entró en 595.49. Elastico: rebote hacia la media 596.62 si imprime — chico y seguro. prob medida 74 por ciento (n=212). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:39:51 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 340.0 — pin · prob 65% (estructural, no WR medido)
+12:40:36 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 200.0 ↑ · prob 58% (estructural, no WR medido)
+12:41:21 | 🎈 BB REBOTE | TXN reventó la banda ARRIBA y re-entró en 279.33. Elastico: reversion corta hacia la media 278.65 si imprime — chico y seguro. prob medida 67 por ciento (n=187). [post-squeeze: el fade mejora +11 medido] OPCIONES VETADAS spread 35% — usar ACCIONES o ETF apalancado
+12:43:21 | 🎈 BB REBOTE [VETO medido] | QQQ reventó la banda ARRIBA y re-entró en 677.83. Elastico: reversion corta hacia la media 677.31 si imprime — chico y seguro. prob medida 70 por ciento (n=190). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES OK (spread 1%)
+12:43:21 | 🎈 BB REBOTE [VETO medido] | SPY reventó la banda ARRIBA y re-entró en 741.81. Elastico: reversion corta hacia la media 741.39 si imprime — chico y seguro. prob medida 72 por ciento (n=213). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES OK (spread 2%)
+12:43:21 | 🎈 BB REBOTE | TSLA reventó la banda ARRIBA y re-entró en 307.31. Elastico: reversion corta hacia la media 306.71 si imprime — chico y seguro. prob medida 70 por ciento (n=200). OPCIONES OK (spread 1%)
+12:43:21 | 🎈 BB REBOTE | MU reventó la banda ARRIBA y re-entró en 823.29. Elastico: reversion corta hacia la media 821.09 si imprime — chico y seguro. prob medida 65 por ciento (n=202). [post-squeeze: el fade mejora +11 medido] OPCIONES VETADAS spread 10% — usar ACCIONES o ETF apalancado
+12:43:21 | 🎈 BB REBOTE | SMH reventó la banda ARRIBA y re-entró en 531.60. Elastico: reversion corta hacia la media 530.53 si imprime — chico y seguro. prob medida 66 por ciento (n=188). OPCIONES VETADAS spread 38% — usar ACCIONES o ETF apalancado
+12:43:21 | 🎈 BB REBOTE | ASML reventó la banda ARRIBA y re-entró en 1582.28. Elastico: reversion corta hacia la media 1577.59 si imprime — chico y seguro. prob medida 68 por ciento (n=189). OPCIONES VETADAS spread 31% — usar ACCIONES o ETF apalancado
+12:43:21 | 🎈 BB REBOTE | NOK reventó la banda ARRIBA y re-entró en 8.90. Elastico: reversion corta hacia la media 8.88 si imprime — chico y seguro. prob medida 72 por ciento (n=205). OPCIONES OK (spread 4%)
+12:43:21 | 🎈 BB REBOTE | LRCX reventó la banda ARRIBA y re-entró en 268.89. Elastico: reversion corta hacia la media 267.68 si imprime — chico y seguro. prob medida 68 por ciento (n=193). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:43:21 | 🎈 BB REBOTE | SNDK reventó la banda ARRIBA y re-entró en 1106.79. Elastico: reversion corta hacia la media 1101.00 si imprime — chico y seguro. prob medida 73 por ciento (n=194). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:43:21 | 🎈 BB REBOTE | STX reventó la banda ARRIBA y re-entró en 745.22. Elastico: reversion corta hacia la media 743.48 si imprime — chico y seguro. prob medida 72 por ciento (n=209). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:45:22 | 🎈 BB REBOTE [VETO medido] | AVGO reventó la banda ARRIBA y re-entró en 383.02. Elastico: reversion corta hacia la media 381.50 si imprime — chico y seguro. prob medida 68 por ciento (n=197). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES VETADAS spread 11% — usar ACCIONES o ETF apalancado
+12:45:22 | 🎈 BB REBOTE [VETO medido] | XLK reventó la banda ARRIBA y re-entró en 171.74. Elastico: reversion corta hacia la media 171.34 si imprime — chico y seguro. prob medida 69 por ciento (n=183). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:45:22 | 🎈 BB REBOTE [VETO medido] | DRAM reventó la banda ARRIBA y re-entró en 48.40. Elastico: reversion corta hacia la media 48.25 si imprime — chico y seguro. prob medida 61 por ciento (n=186). [post-squeeze: el fade mejora +11 medido; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES VETADAS spread 8% — usar ACCIONES o ETF apalancado
+12:46:44 | 🧲 ESTRUCTURAL pin NVDA | NVDA en su imán 197.5 — pin · prob 65% (estructural, no WR medido)
+12:48:22 | 🎈 BB REBOTE | AAPL reventó la banda ABAJO y re-entró en 339.29. Elastico: rebote hacia la media 339.93 si imprime — chico y seguro. prob medida 65 por ciento (n=196). OPCIONES OK (spread 3%)
+12:50:48 | 🟢📈 PREMIUM ALCISTA NVDA | NVDA: trade grande de opciones ALCISTA — premium neto $5,071,399 (call $1,446,233 put $-3,625,166), umbral SIN CALIBRAR
+12:51:13 | 🔴📉 PREMIUM BAJISTA AAPL | AAPL: trade grande de opciones BAJISTA — premium neto $-5,696,356 (call $-5,476,826 put $219,530), umbral SIN CALIBRAR
+12:52:23 | 🎈 BB REBOTE | SKHY reventó la banda ARRIBA y re-entró en 133.64. Elastico: reversion corta hacia la media 132.65 si imprime — chico y seguro. prob medida 69 por ciento (n=86). OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+12:53:23 | 🎈 BB REBOTE | QCOM reventó la banda ARRIBA y re-entró en 165.69. Elastico: reversion corta hacia la media 165.35 si imprime — chico y seguro. prob medida 69 por ciento (n=182). [post-squeeze: el fade mejora +11 medido] OPCIONES VETADAS spread 10% — usar ACCIONES o ETF apalancado
+12:54:23 | 🎈 BB REBOTE | MSFT reventó la banda ARRIBA y re-entró en 398.65. Elastico: reversion corta hacia la media 398.36 si imprime — chico y seguro. prob medida 70 por ciento (n=203). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+12:54:23 | 🎈 BB REBOTE | AMZN reventó la banda ARRIBA y re-entró en 231.71. Elastico: reversion corta hacia la media 231.39 si imprime — chico y seguro. prob medida 68 por ciento (n=193). OPCIONES OK (spread 2%)
+12:55:23 | 🎈 BB REBOTE [VETO medido] | TSM reventó la banda ARRIBA y re-entró en 393.05. Elastico: reversion corta hacia la media 391.64 si imprime — chico y seguro. prob medida 68 por ciento (n=203). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+12:55:23 | 🎈 BB REBOTE | SPCX reventó la banda ABAJO y re-entró en 115.45. Elastico: rebote hacia la media 115.92 si imprime — chico y seguro. prob medida 69 por ciento (n=205). [post-squeeze: el fade mejora +11 medido] OPCIONES OK (spread 3%)
+12:56:23 | 🎈 BB REBOTE | AMD reventó la banda ARRIBA y re-entró en 461.90. Elastico: reversion corta hacia la media 460.77 si imprime — chico y seguro. prob medida 69 por ciento (n=195). OPCIONES VETADAS spread 9% — usar ACCIONES o ETF apalancado
+12:56:23 | 🎈 BB REBOTE [VETO medido] | INTC reventó la banda ARRIBA y re-entró en 87.31. Elastico: reversion corta hacia la media 86.73 si imprime — chico y seguro. prob medida 68 por ciento (n=211). [VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES OK (spread 3%)
+12:59:23 | 🎈 BB BAND-WALK | GOOGL camina la banda ARRIBA tambien en 5 minutos (334.38). Continuacion probable — NO hacer fade. prob medida 63 por ciento (n=19). OPCIONES OK (spread 4%)
+13:00:03 | 🐋 BALLENA PUTS | Alto volumen de puts en EWY
+13:07:24 | 🎈 BB REBOTE | NVDA reventó la banda ABAJO y re-entró en 197.44. Elastico: rebote hacia la media 197.85 si imprime — chico y seguro. prob medida 69 por ciento (n=196). [post-squeeze: el fade mejora +11 medido] OPCIONES OK (spread 1%)
+13:07:24 | 🎈 BB REBOTE | AMD reventó la banda ABAJO y re-entró en 459.33. Elastico: rebote hacia la media 460.92 si imprime — chico y seguro. prob medida 69 por ciento (n=195). OPCIONES VETADAS spread 8% — usar ACCIONES o ETF apalancado
+13:07:24 | 🎈 BB REBOTE | AVGO reventó la banda ABAJO y re-entró en 381.88. Elastico: rebote hacia la media 383.22 si imprime — chico y seguro. prob medida 68 por ciento (n=197). OPCIONES VETADAS spread 14% — usar ACCIONES o ETF apalancado
+13:07:24 | 🎈 BB REBOTE | NFLX reventó la banda ARRIBA y re-entró en 73.38. Elastico: reversion corta hacia la media 73.28 si imprime — chico y seguro. prob medida 77 por ciento (n=202). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:07:24 | 🎈 BB REBOTE | GLD reventó la banda ARRIBA y re-entró en 370.54. Elastico: reversion corta hacia la media 370.41 si imprime — chico y seguro. prob medida 64 por ciento (n=194). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:07:24 | 🎈 BB REBOTE | EWY reventó la banda ABAJO y re-entró en 153.58. Elastico: rebote hacia la media 153.97 si imprime — chico y seguro. prob medida 63 por ciento (n=185). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:07:24 | 🎈 BB REBOTE [VETO medido] | SKHY reventó la banda ABAJO y re-entró en 132.72. Elastico: rebote hacia la media 133.30 si imprime — chico y seguro. prob medida 69 por ciento (n=86). [post-squeeze: el fade mejora +11 medido; VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES OK (spread 5%)
+13:07:42 | 🔄 GIRO A CALLS STX | STX girando a calls: ratio 0.70 desde 0.92
+13:08:25 | 🎈 BB REBOTE | QCOM reventó la banda ABAJO y re-entró en 164.95. Elastico: rebote hacia la media 165.37 si imprime — chico y seguro. prob medida 69 por ciento (n=182). OPCIONES VETADAS spread 11% — usar ACCIONES o ETF apalancado
+13:11:25 | 🎈 BB REBOTE | MU reventó la banda ABAJO y re-entró en 820.40. Elastico: rebote hacia la media 824.26 si imprime — chico y seguro. prob medida 65 por ciento (n=202). OPCIONES OK (spread 1%)
+13:11:25 | 🎈 BB BAND-WALK | META camina la banda ABAJO tambien en 5 minutos (592.38). Continuacion probable — NO hacer fade. prob medida 56 por ciento (n=16). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:11:25 | 🎈 BB REBOTE [VETO medido] | GOOGL reventó la banda ABAJO y re-entró en 333.92. Elastico: rebote hacia la media 334.25 si imprime — chico y seguro. prob medida 68 por ciento (n=197). [post-squeeze: el fade mejora +11 medido; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES OK (spread 3%)
+13:11:25 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | QCOM reventó la banda 15 minutos ABAJO y re-entró en 164.46 — elastico mayor, digestion probable. prob medida 0 por ciento (n=2). OPCIONES VETADAS spread 9% — usar ACCIONES o ETF apalancado
+13:11:25 | 🎈 BB REBOTE | SNDK reventó la banda ABAJO y re-entró en 1092.00. Elastico: rebote hacia la media 1102.06 si imprime — chico y seguro. prob medida 73 por ciento (n=194). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:12:25 | 🎈 BB REBOTE | QQQ reventó la banda ABAJO y re-entró en 677.31. Elastico: rebote hacia la media 678.45 si imprime — chico y seguro. prob medida 70 por ciento (n=190). OPCIONES OK (spread 1%)
+13:12:25 | 🎈 BB REBOTE [VETO medido] | SPY reventó la banda ABAJO y re-entró en 741.62. Elastico: rebote hacia la media 742.32 si imprime — chico y seguro. prob medida 72 por ciento (n=213). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES OK (spread 1%)
+13:12:25 | 🎈 BB REBOTE | TSLA reventó la banda ABAJO y re-entró en 306.79. Elastico: rebote hacia la media 307.54 si imprime — chico y seguro. prob medida 70 por ciento (n=200). OPCIONES OK (spread 1%)
+13:12:25 | 🎈 BB REBOTE | SMH reventó la banda ABAJO y re-entró en 531.00. Elastico: rebote hacia la media 532.73 si imprime — chico y seguro. prob medida 66 por ciento (n=188). OPCIONES VETADAS spread 15% — usar ACCIONES o ETF apalancado
+13:12:25 | 🎈 BB REBOTE | MSFT reventó la banda ABAJO y re-entró en 398.30. Elastico: rebote hacia la media 398.54 si imprime — chico y seguro. prob medida 70 por ciento (n=203). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:12:25 | 🎈 BB REBOTE [VETO medido] | XLK reventó la banda ABAJO y re-entró en 171.39. Elastico: rebote hacia la media 171.85 si imprime — chico y seguro. prob medida 69 por ciento (n=183). [VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:12:50 | 🧱🚀 SPIKE PUTS SPY | SPIKE de puts en SPY EN EL MURO 740: 442 mil contratos, 7 veces su ritmo. Panico contra el piso — rebote al alza reforzado, probabilidad 50. OPCIONES OK (spread 1%)
+13:13:25 | 🎈 BB REBOTE | ASML reventó la banda ABAJO y re-entró en 1582.37. Elastico: rebote hacia la media 1585.79 si imprime — chico y seguro. prob medida 68 por ciento (n=189). [post-squeeze: el fade mejora +11 medido] OPCIONES VETADAS spread 69% — usar ACCIONES o ETF apalancado
+13:13:25 | 🎈 BB REBOTE | DRAM reventó la banda ABAJO y re-entró en 48.00. Elastico: rebote hacia la media 48.31 si imprime — chico y seguro. prob medida 61 por ciento (n=186). OPCIONES VETADAS spread 13% — usar ACCIONES o ETF apalancado
+13:13:25 | 🎈 BB REBOTE [VETO medido] | WDC reventó la banda ABAJO y re-entró en 457.03. Elastico: rebote hacia la media 459.23 si imprime — chico y seguro. prob medida 72 por ciento (n=204). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:13:36 | 🔄 GIRO A PUTS TSM | TSM girando a puts: ratio 0.70 desde 0.47
+13:14:26 | 🎈 BB REBOTE [VETO medido] | TSM reventó la banda ABAJO y re-entró en 391.60. Elastico: rebote hacia la media 392.40 si imprime — chico y seguro. prob medida 68 por ciento (n=203). [post-squeeze: el fade mejora +11 medido; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES VETADAS spread 7% — usar ACCIONES o ETF apalancado
+13:15:26 | 🎈 BB REBOTE | SPCX reventó la banda ARRIBA y re-entró en 115.69. Elastico: reversion corta hacia la media 115.47 si imprime — chico y seguro. prob medida 69 por ciento (n=205). [post-squeeze: el fade mejora +11 medido] OPCIONES OK (spread 3%)
+13:19:26 | 🎈 BB REBOTE | STX reventó la banda ABAJO y re-entró en 751.51. Elastico: rebote hacia la media 754.26 si imprime — chico y seguro. prob medida 72 por ciento (n=209). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:20:08 | 🔴📉 PREMIUM BAJISTA AAPL | AAPL: trade grande de opciones BAJISTA — premium neto $-4,305,247 (call $-3,709,621 put $595,626), umbral SIN CALIBRAR
+13:20:19 | 🚀 SPIKE PUTS AMZN | SPIKE de puts en AMZN: 12 mil contratos, 45 veces su ritmo. Panico vendedor — rebote al alza, probabilidad 71. OPCIONES OK (spread 3%)
+13:20:19 | 🐺 MANADA A PUTS | MANADA A PUTS: 3 tickers en 12 minutos — AMZN SPY TSM . Extremo de mercado, rebote del indice al alza probable. QQQ 677.17
+13:20:19 | 🔄 GIRO A PUTS AMZN | AMZN girando a puts: ratio 0.66 desde 0.48
+13:20:23 | 🔴📉 PREMIUM BAJISTA GOOGL | GOOGL: trade grande de opciones BAJISTA — premium neto $-5,490,353 (call $-2,407,573 put $3,082,780), umbral SIN CALIBRAR
+13:20:53 | 🐋📈 BALLENA CRECE | Más calls en NOK, bajada probable.
+13:26:42 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 63% (estructural, no WR medido)
+13:27:11 | 🟢📈 PREMIUM ALCISTA META | META: trade grande de opciones ALCISTA — premium neto $3,501,136 (call $3,034,931 put $-466,205), umbral SIN CALIBRAR
+13:27:12 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 340.0 — pin · prob 63% (estructural, no WR medido)
+13:28:27 | 🎈 BB REBOTE | TXN reventó la banda ARRIBA y re-entró en 280.71. Elastico: reversion corta hacia la media 280.01 si imprime — chico y seguro. prob medida 67 por ciento (n=187). OPCIONES VETADAS spread 34% — usar ACCIONES o ETF apalancado
+13:28:27 | 🎈 BB REBOTE | NFLX reventó la banda ABAJO y re-entró en 73.28. Elastico: rebote hacia la media 73.35 si imprime — chico y seguro. prob medida 77 por ciento (n=202). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:28:58 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 63% (estructural, no WR medido)
+13:29:13 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 340.0 — pin · prob 63% (estructural, no WR medido)
+13:29:27 | 🎈 BB REBOTE | AMD reventó la banda ARRIBA y re-entró en 459.02. Elastico: reversion corta hacia la media 458.57 si imprime — chico y seguro. prob medida 69 por ciento (n=195). [post-squeeze: el fade mejora +11 medido] OPCIONES VETADAS spread 14% — usar ACCIONES o ETF apalancado
+13:29:27 | 🎈 BB BAND-WALK [MUTED p<55] | AMZN camina la banda ARRIBA tambien en 5 minutos (232.20). Continuacion probable — NO hacer fade. prob medida 38 por ciento (n=16). OPCIONES OK (spread 2%)
+13:29:27 | 🎈 BB BAND-WALK | GOOGL camina la banda ARRIBA tambien en 5 minutos (335.09). Continuacion probable — NO hacer fade. prob medida 63 por ciento (n=19). OPCIONES OK (spread 3%)
+13:30:06 | 🟡 MU PUT BOUNCE | MU BOUNCE en ROUND 820 — 🟡 COMPRA 1x MU 820P 0DTE @ límite $23.05 (prima $2305, spread 0.9%, OI 431, prob 60%) — CAUTION. Ejecuta TÚ en IBKR. | OPCIONES VETADAS spread 7% — usar ACCIONES o ETF apalancado | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+13:30:27 | 🎈 BB REBOTE [VETO medido] | INTC reventó la banda ARRIBA y re-entró en 87.18. Elastico: reversion corta hacia la media 87.08 si imprime — chico y seguro. prob medida 68 por ciento (n=211). [post-squeeze: el fade mejora +11 medido; VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES OK (spread 3%)
+13:31:27 | 🎈 BB REBOTE | NOK reventó la banda ABAJO y re-entró en 8.87. Elastico: rebote hacia la media 8.89 si imprime — chico y seguro. prob medida 72 por ciento (n=205). OPCIONES VETADAS spread 9% — usar ACCIONES o ETF apalancado
+13:35:28 | 🎈 BB REBOTE [VETO medido] | ASML reventó la banda ARRIBA y re-entró en 1588.05. Elastico: reversion corta hacia la media 1583.87 si imprime — chico y seguro. prob medida 68 por ciento (n=189). [post-squeeze: el fade mejora +11 medido; VETO RSI2 extremo: impulso en curso, 53 por ciento; VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES VETADAS spread 62% — usar ACCIONES o ETF apalancado
+13:35:28 | 🎈 BB REBOTE | SKHY reventó la banda ARRIBA y re-entró en 132.35. Elastico: reversion corta hacia la media 132.09 si imprime — chico y seguro. prob medida 69 por ciento (n=86). [post-squeeze: el fade mejora +11 medido] OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+13:36:28 | 🎈 BB REBOTE | META reventó la banda ARRIBA y re-entró en 594.22. Elastico: reversion corta hacia la media 593.57 si imprime — chico y seguro. prob medida 74 por ciento (n=212). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:36:28 | 🎈 BB REBOTE | SNDK reventó la banda ARRIBA y re-entró en 1098.70. Elastico: reversion corta hacia la media 1093.18 si imprime — chico y seguro. prob medida 73 por ciento (n=194). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:37:28 | 🎈 BB REBOTE | QCOM reventó la banda ARRIBA y re-entró en 164.63. Elastico: reversion corta hacia la media 164.57 si imprime — chico y seguro. prob medida 69 por ciento (n=182). [post-squeeze: el fade mejora +11 medido] OPCIONES VETADAS spread 7% — usar ACCIONES o ETF apalancado
+13:38:28 | 🎈 BB REBOTE | SPCX reventó la banda ABAJO y re-entró en 115.20. Elastico: rebote hacia la media 115.63 si imprime — chico y seguro. prob medida 69 por ciento (n=205). OPCIONES OK (spread 3%)
+13:39:28 | 🎈 BB BAND-WALK [MUTED p<55] | GLD camina la banda ABAJO tambien en 5 minutos (369.93). Continuacion probable — NO hacer fade. prob medida 40 por ciento (n=15). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:40:28 | 🎈 BB REBOTE | MSFT reventó la banda ARRIBA y re-entró en 399.11. Elastico: reversion corta hacia la media 398.31 si imprime — chico y seguro. prob medida 70 por ciento (n=203). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:40:32 | 🔴📉 PREMIUM BAJISTA NVDA | NVDA: trade grande de opciones BAJISTA — premium neto $-4,955,570 (call $769,611 put $5,725,181), umbral SIN CALIBRAR
+13:43:29 | 🎈 BB REBOTE | NVDA reventó la banda ABAJO y re-entró en 197.54. Elastico: rebote hacia la media 197.79 si imprime — chico y seguro. prob medida 69 por ciento (n=196). [post-squeeze: el fade mejora +11 medido] OPCIONES OK (spread 1%)
+13:43:29 | 🎈 BB REBOTE [VETO medido] | AMD reventó la banda ABAJO y re-entró en 458.31. Elastico: rebote hacia la media 459.28 si imprime — chico y seguro. prob medida 69 por ciento (n=195). [post-squeeze: el fade mejora +11 medido; VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES VETADAS spread 12% — usar ACCIONES o ETF apalancado
+13:43:29 | 🎈 BB REBOTE | AVGO reventó la banda ABAJO y re-entró en 380.36. Elastico: rebote hacia la media 380.84 si imprime — chico y seguro. prob medida 68 por ciento (n=197). [post-squeeze: el fade mejora +11 medido] OPCIONES VETADAS spread 10% — usar ACCIONES o ETF apalancado
+13:43:29 | 🎈 BB REBOTE | NFLX reventó la banda ARRIBA y re-entró en 73.35. Elastico: reversion corta hacia la media 73.31 si imprime — chico y seguro. prob medida 77 por ciento (n=202). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:43:29 | 🎈 BB REBOTE | XLK reventó la banda ABAJO y re-entró en 171.32. Elastico: rebote hacia la media 171.47 si imprime — chico y seguro. prob medida 69 por ciento (n=183). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:43:29 | 🎈 BB REBOTE | SKHY reventó la banda ABAJO y re-entró en 131.66. Elastico: rebote hacia la media 132.03 si imprime — chico y seguro. prob medida 69 por ciento (n=86). [post-squeeze: el fade mejora +11 medido] OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+13:44:29 | 🎈 BB REBOTE | AAPL reventó la banda ARRIBA y re-entró en 339.54. Elastico: reversion corta hacia la media 339.19 si imprime — chico y seguro. prob medida 65 por ciento (n=196). OPCIONES OK (spread 2%)
+13:47:22 | 🚀 SPIKE PUTS (VETADO) QQQ | SPIKE de puts en QQQ (165k, 5x) pero BAND-WALK bajista 1m+5m — panico si, rebote NO: continuacion probable
+13:47:29 | 🎈 BB REBOTE | SPY reventó la banda ABAJO y re-entró en 740.87. Elastico: rebote hacia la media 741.33 si imprime — chico y seguro. prob medida 72 por ciento (n=213). OPCIONES OK (spread 1%)
+13:47:29 | 🎈 BB BAND-WALK [MUTED p<55] | EWY camina la banda ABAJO tambien en 5 minutos (152.12). Continuacion probable — NO hacer fade. prob medida 41 por ciento (n=17). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:47:29 | 🎈 BB BAND-WALK [MUTED p<55] | SNDK camina la banda ABAJO tambien en 5 minutos (1074.59). Continuacion probable — NO hacer fade. prob medida 46 por ciento (n=22). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:47:34 | 🔴📉 PREMIUM BAJISTA TSLA | TSLA: trade grande de opciones BAJISTA — premium neto $-2,086,773 (call $-1,947,631 put $139,142), umbral SIN CALIBRAR
+13:47:59 | 🔇🚀 SPIKE CALLS (capitan opuesto) MSFT | SPIKE de calls en MSFT EN EL MURO 400: 3 mil contratos, 20 veces su ritmo. Climax contra la pared — rebote a la baja reforzado, probabilidad 38. OPCIONES s/d — default ACCIONES OJO: QQQ mando flujo de puts hace 0 min — el indice manda, el fade a la baja de MSFT puede abortarse
+13:48:29 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | QCOM reventó la banda 15 minutos ABAJO y re-entró en 163.78 — elastico mayor, digestion probable. prob medida 0 por ciento (n=2). OPCIONES VETADAS spread 7% — usar ACCIONES o ETF apalancado
+13:48:30 | 🎈 BB BAND-WALK [MUTED p<55] | DRAM camina la banda ABAJO tambien en 5 minutos (47.55). Continuacion probable — NO hacer fade. prob medida 24 por ciento (n=21). OPCIONES VETADAS spread 16% — usar ACCIONES o ETF apalancado
+13:49:18 | 🟡 NVDA PUT BOUNCE | NVDA BOUNCE en FLIP_OPEN 197.25 — 🟡 COMPRA 1x NVDA 197.5P 0DTE @ límite $2.23 (prima $223, spread 1.4%, OI 8279, prob 62%) — CAUTION. Ejecuta TÚ en IBKR. | OPCIONES OK (spread 2%) | Muro absoluto es TRAMPILLA (gamma NEG), no piso
+13:49:30 | 🎈 BB BAND-WALK [MUTED p<55] | SMH camina la banda ABAJO tambien en 5 minutos (529.16). Continuacion probable — NO hacer fade. prob medida 44 por ciento (n=16). OPCIONES VETADAS spread 32% — usar ACCIONES o ETF apalancado
+13:49:30 | 🎈 BB BAND-WALK [MUTED p<55] | TSM camina la banda ABAJO tambien en 5 minutos (389.90). Continuacion probable — NO hacer fade. prob medida 44 por ciento (n=18). OPCIONES VETADAS spread 11% — usar ACCIONES o ETF apalancado
+13:49:30 | 🎈 BB REBOTE | ASML reventó la banda ABAJO y re-entró en 1578.78. Elastico: rebote hacia la media 1583.54 si imprime — chico y seguro. prob medida 68 por ciento (n=189). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:49:30 | 🎈 BB REBOTE | TXN reventó la banda ABAJO y re-entró en 278.61. Elastico: rebote hacia la media 279.97 si imprime — chico y seguro. prob medida 67 por ciento (n=187). OPCIONES VETADAS spread 38% — usar ACCIONES o ETF apalancado
+13:49:30 | 🎈 BB REBOTE [VETO medido] | QCOM reventó la banda ABAJO y re-entró en 164.00. Elastico: rebote hacia la media 164.38 si imprime — chico y seguro. prob medida 69 por ciento (n=182). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES VETADAS spread 10% — usar ACCIONES o ETF apalancado
+13:49:30 | 🎈 BB REBOTE | LRCX reventó la banda ABAJO y re-entró en 268.48. Elastico: rebote hacia la media 269.03 si imprime — chico y seguro. prob medida 68 por ciento (n=193). OPCIONES VETADAS spread 15% — usar ACCIONES o ETF apalancado
+13:49:30 | 🎈 BB REBOTE | WDC reventó la banda ABAJO y re-entró en 452.92. Elastico: rebote hacia la media 455.79 si imprime — chico y seguro. prob medida 72 por ciento (n=204). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:49:30 | 🎈 BB REBOTE | STX reventó la banda ABAJO y re-entró en 745.90. Elastico: rebote hacia la media 749.29 si imprime — chico y seguro. prob medida 72 por ciento (n=209). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:50:08 | 🟡 NVDA PUT BOUNCE | NVDA BOUNCE en FLIP_OPEN 197.25 — 🟡 COMPRA 1x NVDA 197.5P 0DTE @ límite $2.23 (prima $223, spread 1.4%, OI 8279, prob 62%) — CAUTION. Ejecuta TÚ en IBKR. | OPCIONES OK (spread 2%)
+13:50:08 | 🟡 AAPL PUT BOUNCE | AAPL BOUNCE en OI_CALL_WALL 340 — 🟡 COMPRA 1x AAPL 340P 0DTE @ límite $2.43 (prima $243, spread 2.1%, OI 484, prob 54%) — CAUTION. Ejecuta TÚ en IBKR. | OPCIONES OK (spread 1%)
+13:50:17 | 🧲 ESTRUCTURAL pin SPY | SPY en su imán 742.0 — pin · prob 61% (estructural, no WR medido)
+13:52:23 | 🩸 DIP VETADO | DIP VETADO por valuacion en QCOM: -8.2% desde el high de 5 dias, pero inflada (PEG 3.8).
+13:52:30 | 🎈 BB REBOTE [VETO medido] | META reventó la banda ABAJO y re-entró en 593.21. Elastico: rebote hacia la media 593.97 si imprime — chico y seguro. prob medida 74 por ciento (n=212). [VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+13:54:39 | 🧱🚀 SPIKE PUTS TSLA | SPIKE de puts en TSLA EN EL MURO 307.5: 43 mil contratos, 10 veces su ritmo. Panico contra el piso — rebote al alza reforzado, probabilidad 50. OPCIONES OK (spread 3%)
+13:55:14 | 🔇🚀 SPIKE CALLS (capitan opuesto) INTC | SPIKE de calls en INTC: 4 mil contratos, 11 veces su ritmo. Climax comprador — rebote a la baja, probabilidad 38. OPCIONES OK (spread 4%) OJO: QQQ mando flujo de puts hace 7 min — el indice manda, el fade a la baja de INTC puede abortarse
+13:56:00 | 🎈 BB REBOTE | SPCX reventó la banda ARRIBA y re-entró en 115.52. Elastico: reversion corta hacia la media 115.38 si imprime — chico y seguro. prob medida 69 por ciento (n=205). OPCIONES OK (spread 3%)
+14:01:56 | 🔇🚀 SPIKE CALLS (capitan opuesto) AAPL | SPIKE de calls en AAPL EN EL MURO 340: 25 mil contratos, 10 veces su ritmo. Climax contra la pared — rebote a la baja reforzado, probabilidad 38. OPCIONES OK (spread 1%) OJO: QQQ mando flujo de puts hace 14 min — el indice manda, el fade a la baja de AAPL puede abortarse
+14:02:00 | 🧲 ESTRUCTURAL pin SPY | SPY en su imán 742.0 — pin · prob 58% (estructural, no WR medido)
+14:02:01 | 🎈 BB REBOTE | QQQ reventó la banda ARRIBA y re-entró en 676.54. Elastico: reversion corta hacia la media 676.45 si imprime — chico y seguro. prob medida 70 por ciento (n=190). OPCIONES OK (spread 2%)
+14:02:01 | 🎈 BB REBOTE | MU reventó la banda ARRIBA y re-entró en 817.97. Elastico: reversion corta hacia la media 814.64 si imprime — chico y seguro. prob medida 65 por ciento (n=202). OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+14:02:01 | 🎈 BB REBOTE ⭐[degradada] | AMD reventó la banda ARRIBA y re-entró en 457.77. Elastico: reversion corta hacia la media 457.75 si imprime — chico y seguro. prob medida 69 por ciento (n=195). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES VETADAS spread 17% — usar ACCIONES o ETF apalancado
+14:02:01 | 🎈 BB REBOTE | INTC reventó la banda ARRIBA y re-entró en 86.56. Elastico: reversion corta hacia la media 86.51 si imprime — chico y seguro. prob medida 68 por ciento (n=211). OPCIONES OK (spread 4%)
+14:02:01 | 🎈 BB REBOTE | EWY reventó la banda ARRIBA y re-entró en 152.51. Elastico: reversion corta hacia la media 152.26 si imprime — chico y seguro. prob medida 63 por ciento (n=185). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:02:01 | 🎈 BB REBOTE | DRAM reventó la banda ARRIBA y re-entró en 47.84. Elastico: reversion corta hacia la media 47.68 si imprime — chico y seguro. prob medida 61 por ciento (n=186). OPCIONES VETADAS spread 5% — usar ACCIONES o ETF apalancado
+14:02:01 | 🎈 BB REBOTE | LRCX reventó la banda ARRIBA y re-entró en 269.58. Elastico: reversion corta hacia la media 268.72 si imprime — chico y seguro. prob medida 68 por ciento (n=193). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:02:46 | 🧲 ESTRUCTURAL pin SPY | SPY en su imán 742.0 — pin · prob 57% (estructural, no WR medido)
+14:03:04 | 🟡 MU PUT BOUNCE | MU BOUNCE en ROUND 820 — 🟡 COMPRA 1x MU 820P 0DTE @ límite $25.30 (prima $2530, spread 2.4%, OI 431, prob 53%) — CAUTION. Ejecuta TÚ en IBKR. | OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+14:03:13 | 🔇🚀 SPIKE CALLS (capitan opuesto) SKHY | SPIKE de calls en SKHY: 3 mil contratos, 25 veces su ritmo. Climax comprador — rebote a la baja, probabilidad 38. OPCIONES VETADAS spread 9% — acciones/ETF OJO: QQQ mando flujo de puts hace 15 min — el indice manda, el fade a la baja de SKHY puede abortarse
+14:03:13 | 🐺 MANADA A CALLS | MANADA A CALLS: 3 tickers en 12 minutos — AAPL INTC SKHY . Extremo de mercado, rebote del indice a la baja probable. QQQ 676.59
+14:03:13 | 🔄 GIRO A CALLS SKHY | SKHY girando a calls: ratio 0.71 desde 1.13
+14:03:32 | 🧲 ESTRUCTURAL pin SPY | SPY en su imán 742.0 — pin · prob 57% (estructural, no WR medido)
+14:04:02 | 🎈 BB REBOTE [VETO medido] | STX reventó la banda ARRIBA y re-entró en 752.91. Elastico: reversion corta hacia la media 746.66 si imprime — chico y seguro. prob medida 72 por ciento (n=209). [VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:04:20 | 🟡 NVDA PUT BOUNCE | NVDA BOUNCE en FLIP_OPEN 197.25 — 🟡 COMPRA 1x NVDA 197.5P 0DTE @ límite $2.40 (prima $240, spread 1.3%, OI 8279, prob 55%) — CAUTION. Ejecuta TÚ en IBKR. | OPCIONES OK (spread 1%)
+14:06:02 | 🎈 BB REBOTE ⭐[degradada] | ASML reventó la banda ARRIBA y re-entró en 1578.03. Elastico: reversion corta hacia la media 1577.21 si imprime — chico y seguro. prob medida 68 por ciento (n=189). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:06:02 | 🎈 BB REBOTE | NOK reventó la banda ARRIBA y re-entró en 8.86. Elastico: reversion corta hacia la media 8.85 si imprime — chico y seguro. prob medida 72 por ciento (n=205). OPCIONES OK (spread 5%)
+14:08:02 | 🎈 BB REBOTE ⭐[degradada] | AAPL reventó la banda ABAJO y re-entró en 339.56. Elastico: rebote hacia la media 339.72 si imprime — chico y seguro. prob medida 65 por ciento (n=196). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES OK (spread 3%)
+14:08:02 | 🎈 BB BAND-WALK | NFLX camina la banda ABAJO tambien en 5 minutos (73.08). Continuacion probable — NO hacer fade. prob medida 56 por ciento (n=18). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:09:17 | 🚀 SPIKE PUTS INTC | SPIKE de puts en INTC: 4 mil contratos, 5 veces su ritmo. Panico vendedor — rebote al alza, probabilidad 71. OPCIONES OK (spread 2%)
+14:09:59 | 🔄 GIRO A CALLS DRAM | DRAM girando a calls: ratio 0.90 desde 1.22
+14:10:02 | 🎈 BB REBOTE [VETO medido] | GOOGL reventó la banda ABAJO y re-entró en 334.61. Elastico: rebote hacia la media 335.25 si imprime — chico y seguro. prob medida 68 por ciento (n=197). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES OK (spread 3%)
+14:11:02 | 🎈 BB BAND-WALK [MUTED p<55] | MSFT camina la banda ABAJO tambien en 5 minutos (397.34). Continuacion probable — NO hacer fade. prob medida 50 por ciento (n=12). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:13:33 | 🎈 BB REBOTE | AMD reventó la banda ABAJO y re-entró en 456.69. Elastico: rebote hacia la media 457.52 si imprime — chico y seguro. prob medida 69 por ciento (n=195). OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+14:14:03 | 🎈 BB BAND-WALK [MUTED p<55] | SKHY camina la banda ABAJO tambien en 5 minutos (130.62). Continuacion probable — NO hacer fade. prob medida 30 por ciento (n=10). OPCIONES VETADAS spread 12% — usar ACCIONES o ETF apalancado
+14:16:03 | 🎈 BB REBOTE | QQQ reventó la banda ABAJO y re-entró en 675.88. Elastico: rebote hacia la media 676.25 si imprime — chico y seguro. prob medida 70 por ciento (n=190). OPCIONES OK (spread 2%)
+14:16:03 | 🎈 BB REBOTE | NOK reventó la banda ABAJO y re-entró en 8.84. Elastico: rebote hacia la media 8.85 si imprime — chico y seguro. prob medida 72 por ciento (n=205). OPCIONES VETADAS spread 10% — usar ACCIONES o ETF apalancado
+14:18:03 | 🎈 BB REBOTE | SPY reventó la banda ABAJO y re-entró en 740.58. Elastico: rebote hacia la media 740.91 si imprime — chico y seguro. prob medida 72 por ciento (n=213). OPCIONES OK (spread 2%)
+14:20:04 | 🎈 BB REBOTE ⭐[degradada] | SNDK reventó la banda ABAJO y re-entró en 1074.31. Elastico: rebote hacia la media 1078.01 si imprime — chico y seguro. prob medida 73 por ciento (n=194). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:21:04 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | QCOM reventó la banda 15 minutos ABAJO y re-entró en 163.05 — elastico mayor, digestion probable. prob medida 0 por ciento (n=2). OPCIONES VETADAS spread 9% — usar ACCIONES o ETF apalancado
+14:22:04 | 🎈 BB REBOTE ⭐[degradada] | TSM reventó la banda ARRIBA y re-entró en 390.95. Elastico: reversion corta hacia la media 390.30 si imprime — chico y seguro. prob medida 68 por ciento (n=203). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES VETADAS spread 9% — usar ACCIONES o ETF apalancado
+14:22:45 | 🟢📈 PREMIUM ALCISTA AAPL | AAPL: trade grande de opciones ALCISTA — premium neto $2,358,850 (call $1,941,477 put $-417,373), umbral SIN CALIBRAR
+14:23:04 | 🎈 BB REBOTE ⭐[degradada] | WDC reventó la banda ARRIBA y re-entró en 455.42. Elastico: reversion corta hacia la media 454.41 si imprime — chico y seguro. prob medida 72 por ciento (n=204). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:24:04 | 🎈 BB REBOTE ⭐[degradada] | TSLA reventó la banda ARRIBA y re-entró en 306.61. Elastico: reversion corta hacia la media 306.27 si imprime — chico y seguro. prob medida 70 por ciento (n=200). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES OK (spread 2%)
+14:24:04 | 🎈 BB REBOTE ⭐[degradada] | AAPL reventó la banda ARRIBA y re-entró en 339.72. Elastico: reversion corta hacia la media 339.61 si imprime — chico y seguro. prob medida 65 por ciento (n=196). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES OK (spread 3%)
+14:25:04 | 🎈 BB REBOTE | META reventó la banda ARRIBA y re-entró en 594.47. Elastico: reversion corta hacia la media 593.81 si imprime — chico y seguro. prob medida 74 por ciento (n=212). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:27:29 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 340.0 — pin · prob 74% (estructural, no WR medido)
+14:27:44 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 340.0 — pin · prob 60% (estructural, no WR medido)
+14:28:05 | 🎈 BB REBOTE [VETO medido] | GLD reventó la banda ABAJO y re-entró en 369.34. Elastico: rebote hacia la media 369.52 si imprime — chico y seguro. prob medida 64 por ciento (n=194). [VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:29:05 | 🎈 BB REBOTE ⭐[degradada] | XLK reventó la banda ABAJO y re-entró en 170.85. Elastico: rebote hacia la media 170.97 si imprime — chico y seguro. prob medida 69 por ciento (n=183). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:29:05 | 🎈 BB REBOTE ⭐[degradada] | STX reventó la banda ABAJO y re-entró en 748.31. Elastico: rebote hacia la media 749.99 si imprime — chico y seguro. prob medida 72 por ciento (n=209). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:30:05 | 🎈 BB BAND-WALK [MUTED p<55] | TXN camina la banda ABAJO tambien en 5 minutos (277.72). Continuacion probable — NO hacer fade. prob medida 47 por ciento (n=15). OPCIONES VETADAS spread 29% — usar ACCIONES o ETF apalancado
+14:31:05 | 🎈 BB REBOTE ⭐[degradada] | NVDA reventó la banda ABAJO y re-entró en 196.87. Elastico: rebote hacia la media 196.95 si imprime — chico y seguro. prob medida 69 por ciento (n=196). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES OK (spread 1%)
+14:31:05 | 🎈 BB REBOTE ⭐[degradada] | INTC reventó la banda ABAJO y re-entró en 86.11. Elastico: rebote hacia la media 86.23 si imprime — chico y seguro. prob medida 68 por ciento (n=211). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES OK (spread 3%)
+14:32:05 | 🎈 BB REBOTE [VETO medido] | QCOM reventó la banda ABAJO y re-entró en 162.40. Elastico: rebote hacia la media 162.81 si imprime — chico y seguro. prob medida 69 por ciento (n=182). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES VETADAS spread 8% — usar ACCIONES o ETF apalancado
+14:35:06 | 🎈 BB REBOTE ⭐[degradada] | QQQ reventó la banda ARRIBA y re-entró en 676.11. Elastico: reversion corta hacia la media 675.77 si imprime — chico y seguro. prob medida 70 por ciento (n=190). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES OK (spread 2%)
+14:35:06 | 🎈 BB REBOTE ⭐[degradada] | SMH reventó la banda ARRIBA y re-entró en 528.98. Elastico: reversion corta hacia la media 528.55 si imprime — chico y seguro. prob medida 66 por ciento (n=188). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES VETADAS spread 22% — usar ACCIONES o ETF apalancado
+14:35:06 | 🎈 BB REBOTE ⭐[degradada] | AMD reventó la banda ARRIBA y re-entró en 456.29. Elastico: reversion corta hacia la media 455.62 si imprime — chico y seguro. prob medida 69 por ciento (n=195). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES VETADAS spread 8% — usar ACCIONES o ETF apalancado
+14:35:06 | 🎈 BB REBOTE ⭐[degradada] | INTC reventó la banda ARRIBA y re-entró en 86.30. Elastico: reversion corta hacia la media 86.22 si imprime — chico y seguro. prob medida 68 por ciento (n=211). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES OK (spread 4%)
+14:35:06 | 🎈 BB REBOTE ⭐[degradada] | AVGO reventó la banda ARRIBA y re-entró en 379.74. Elastico: reversion corta hacia la media 379.45 si imprime — chico y seguro. prob medida 68 por ciento (n=197). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+14:35:06 | 🎈 BB REBOTE ⭐[degradada] | XLK reventó la banda ARRIBA y re-entró en 171.08. Elastico: reversion corta hacia la media 170.95 si imprime — chico y seguro. prob medida 69 por ciento (n=183). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:35:06 | 🎈 BB REBOTE ⭐[degradada] | DRAM reventó la banda ARRIBA y re-entró en 47.83. Elastico: reversion corta hacia la media 47.75 si imprime — chico y seguro. prob medida 61 por ciento (n=186). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES VETADAS spread 9% — usar ACCIONES o ETF apalancado
+14:35:06 | 🎈 BB REBOTE | LRCX reventó la banda ARRIBA y re-entró en 270.74. Elastico: reversion corta hacia la media 270.21 si imprime — chico y seguro. prob medida 68 por ciento (n=193). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:35:06 | 🎈 BB REBOTE ⭐[degradada] | SNDK reventó la banda ARRIBA y re-entró en 1078.79. Elastico: reversion corta hacia la media 1075.83 si imprime — chico y seguro. prob medida 73 por ciento (n=194). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:35:06 | 🎈 BB REBOTE ⭐[degradada] | STX reventó la banda ARRIBA y re-entró en 750.89. Elastico: reversion corta hacia la media 749.38 si imprime — chico y seguro. prob medida 72 por ciento (n=209). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:36:06 | 🎈 BB REBOTE ⭐[degradada] | SPY reventó la banda ARRIBA y re-entró en 740.88. Elastico: reversion corta hacia la media 740.69 si imprime — chico y seguro. prob medida 72 por ciento (n=213). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES OK (spread 2%)
+14:37:06 | 🎈 BB REBOTE | NVDA reventó la banda ARRIBA y re-entró en 197.14. Elastico: reversion corta hacia la media 196.96 si imprime — chico y seguro. prob medida 69 por ciento (n=196). OPCIONES OK (spread 1%)
+14:37:06 | 🎈 BB REBOTE | MU reventó la banda ARRIBA y re-entró en 818.95. Elastico: reversion corta hacia la media 816.16 si imprime — chico y seguro. prob medida 65 por ciento (n=202). OPCIONES VETADAS spread 5% — usar ACCIONES o ETF apalancado
+14:37:06 | 🎈 BB REBOTE ⭐[degradada] | ASML reventó la banda ARRIBA y re-entró en 1583.10. Elastico: reversion corta hacia la media 1580.59 si imprime — chico y seguro. prob medida 68 por ciento (n=189). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:37:12 | 🐋📈 BALLENA CRECE | Más puts en QCOM, rebote probable.
+14:37:27 | 🚀 SPIKE PUTS GLD | SPIKE de puts en GLD: 2 mil contratos, 5 veces su ritmo. Panico vendedor — rebote al alza, probabilidad 71. OPCIONES s/d — default ACCIONES
+14:38:06 | 🎈 BB REBOTE | NFLX reventó la banda ARRIBA y re-entró en 73.05. Elastico: reversion corta hacia la media 73.01 si imprime — chico y seguro. prob medida 77 por ciento (n=202). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:38:06 | 🎈 BB REBOTE [VETO medido] | NOK reventó la banda ARRIBA y re-entró en 8.88. Elastico: reversion corta hacia la media 8.85 si imprime — chico y seguro. prob medida 72 por ciento (n=205). [VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES VETADAS spread 10% — usar ACCIONES o ETF apalancado
+14:39:06 | 🎈 BB REBOTE | AAPL reventó la banda ABAJO y re-entró en 339.25. Elastico: rebote hacia la media 339.63 si imprime — chico y seguro. prob medida 65 por ciento (n=196). OPCIONES OK (spread 3%)
+14:39:06 | 🎈 BB REBOTE | META reventó la banda ABAJO y re-entró en 593.29. Elastico: rebote hacia la media 594.06 si imprime — chico y seguro. prob medida 74 por ciento (n=212). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:41:04 | 🔴 SKHY PUT BOUNCE | SKHY BOUNCE en ROUND 130 — 🔴 COMPRA 1x SKHY 130P 0DTE @ límite $8.10 (prima $810, spread 7.7%, OI 2112, prob 60%) — NO-GO. Ejecuta TÚ en IBKR. | OPCIONES VETADAS spread 10% — usar ACCIONES o ETF apalancado | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+14:41:07 | 🎈 BB REBOTE | SPCX reventó la banda ABAJO y re-entró en 116.25. Elastico: rebote hacia la media 116.44 si imprime — chico y seguro. prob medida 69 por ciento (n=205). OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+14:43:04 | 🧱🚀 SPIKE PUTS QQQ | SPIKE de puts en QQQ EN EL MURO 677: 264 mil contratos, 3 veces su ritmo. Panico contra el piso — rebote al alza reforzado, probabilidad 50. OPCIONES OK (spread 1%)
+14:43:09 | 🔴 SKHY PUT BOUNCE | SKHY BOUNCE en ROUND 130 — 🔴 COMPRA 1x SKHY 130P 0DTE @ límite $8.10 (prima $810, spread 7.7%, OI 2112, prob 60%) — NO-GO. Ejecuta TÚ en IBKR. | OPCIONES VETADAS spread 10% — usar ACCIONES o ETF apalancado | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+14:43:12 | 🔴📉 PREMIUM BAJISTA NVDA | NVDA: trade grande de opciones BAJISTA — premium neto $-2,542,653 (call $-1,064,956 put $1,477,697), umbral SIN CALIBRAR
+14:43:17 | 🧱🚀 SPIKE PUTS TSLA | SPIKE de puts en TSLA EN EL MURO 307.5: 44 mil contratos, 10 veces su ritmo. Panico contra el piso — rebote al alza reforzado, probabilidad 50. OPCIONES OK (spread 2%)
+14:43:17 | 🐺 MANADA A PUTS | MANADA A PUTS: 3 tickers en 12 minutos — GLD QQQ TSLA . Extremo de mercado, rebote del indice al alza probable. QQQ 675.63
+14:43:54 | 🔄 GIRO A PUTS TSM | TSM girando a puts: ratio 0.66 desde 0.46
+14:44:06 | 🧲 ESTRUCTURAL magnet AAPL | AAPL se dirige a su imán 340.0 ↑ · prob 63% (estructural, no WR medido)
+14:44:24 | 🔴 SKHY CALL BOUNCE | SKHY BOUNCE en ROUND 130 — 🔴 COMPRA 1x SKHY 130C 0DTE @ límite $8.20 (prima $820, spread 6.3%, OI 68, prob 37%) — NO-GO. Ejecuta TÚ en IBKR. | OPCIONES VETADAS spread 10% — usar ACCIONES o ETF apalancado | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+14:45:07 | 🎈 BB REBOTE ⭐[degradada] | AMZN reventó la banda ARRIBA y re-entró en 231.29. Elastico: reversion corta hacia la media 231.19 si imprime — chico y seguro. prob medida 68 por ciento (n=193). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES OK (spread 3%)
+14:46:07 | 🎈 BB REBOTE ⭐[degradada] | TSLA reventó la banda ABAJO y re-entró en 306.63. Elastico: rebote hacia la media 306.88 si imprime — chico y seguro. prob medida 70 por ciento (n=200). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES OK (spread 3%)
+14:49:07 | 🎈 BB REBOTE | MSFT reventó la banda ARRIBA y re-entró en 397.60. Elastico: reversion corta hacia la media 397.40 si imprime — chico y seguro. prob medida 70 por ciento (n=203). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:49:07 | 🎈 BB REBOTE [VETO medido] | GOOGL reventó la banda ARRIBA y re-entró en 335.68. Elastico: reversion corta hacia la media 335.10 si imprime — chico y seguro. prob medida 68 por ciento (n=197). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES OK (spread 3%)
+14:49:07 | 🎈 BB REBOTE | SKHY reventó la banda ARRIBA y re-entró en 130.44. Elastico: reversion corta hacia la media 129.96 si imprime — chico y seguro. prob medida 69 por ciento (n=86). OPCIONES VETADAS spread 13% — usar ACCIONES o ETF apalancado
+14:50:11 | 🔴📉 PREMIUM BAJISTA TSLA | TSLA: trade grande de opciones BAJISTA — premium neto $-2,725,899 (call $-677,695 put $2,048,204), umbral SIN CALIBRAR
+14:51:08 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | QCOM reventó la banda 15 minutos ABAJO y re-entró en 162.57 — elastico mayor, digestion probable. prob medida 0 por ciento (n=2). OPCIONES OK (spread 5%)
+14:52:08 | 🎈 BB REBOTE | SPCX reventó la banda ARRIBA y re-entró en 116.60. Elastico: reversion corta hacia la media 116.36 si imprime — chico y seguro. prob medida 69 por ciento (n=205). OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+14:52:20 | 🔴 MU CALL RETEST_REJECT | MU RETEST_REJECT en ROUND 820 — 🔴 COMPRA 1x MU 820C 0DTE @ límite $22.50 (prima $2250, spread 2.9%, OI 12, prob 37%) — NO-GO. Ejecuta TÚ en IBKR. | OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+14:55:08 | 🎈 BB REBOTE [VETO medido] | NOK reventó la banda ABAJO y re-entró en 8.86. Elastico: rebote hacia la media 8.87 si imprime — chico y seguro. prob medida 72 por ciento (n=205). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido; VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES OK (spread 5%)
+14:55:08 | 🎈 BB REBOTE ⭐[degradada] | LRCX reventó la banda ABAJO y re-entró en 270.29. Elastico: rebote hacia la media 270.52 si imprime — chico y seguro. prob medida 68 por ciento (n=193). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES VETADAS spread 11% — usar ACCIONES o ETF apalancado
+14:55:08 | 🎈 BB REBOTE ⭐[degradada] | WDC reventó la banda ABAJO y re-entró en 455.55. Elastico: rebote hacia la media 456.47 si imprime — chico y seguro. prob medida 72 por ciento (n=204). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+14:55:58 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 340.0 — pin · prob 57% (estructural, no WR medido)
+14:56:06 | 🔴 MU CALL RETEST_REJECT | MU RETEST_REJECT en ROUND 820 — 🔴 COMPRA 1x MU 820C 0DTE @ límite $22.50 (prima $2250, spread 2.9%, OI 12, prob 37%) — NO-GO. Ejecuta TÚ en IBKR. | OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+14:56:08 | 🎈 BB REBOTE ⭐[degradada] | AMD reventó la banda ABAJO y re-entró en 456.36. Elastico: rebote hacia la media 456.07 si imprime — chico y seguro. prob medida 69 por ciento (n=195). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES VETADAS spread 9% — usar ACCIONES o ETF apalancado
+14:58:08 | 🎈 BB REBOTE | MSFT reventó la banda ABAJO y re-entró en 396.87. Elastico: rebote hacia la media 397.34 si imprime — chico y seguro. prob medida 70 por ciento (n=203). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:00:09 | 🎈 BB REBOTE [VETO medido] | AAPL reventó la banda ARRIBA y re-entró en 339.35. Elastico: reversion corta hacia la media 338.80 si imprime — chico y seguro. prob medida 65 por ciento (n=196). [VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES OK (spread 1%)
+15:03:26 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 200.0 ↑ · prob 56% (estructural, no WR medido)
+15:04:27 | 🔴📉 PREMIUM BAJISTA AMZN | AMZN: trade grande de opciones BAJISTA — premium neto $-3,183,079 (call $-125,813 put $3,057,266), umbral SIN CALIBRAR
+15:05:26 | 🚀 SPIKE CALLS SKHY | SPIKE de calls en SKHY: 3 mil contratos, 31 veces su ritmo. Climax comprador — rebote a la baja, probabilidad 66. OPCIONES VETADAS spread 6% — acciones/ETF
+15:05:26 | 🔄 GIRO A CALLS SKHY | SKHY girando a calls: ratio 0.67 desde 1.11
+15:05:28 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 200.0 ↑ · prob 56% (estructural, no WR medido)
+15:06:09 | 🎈 BB REBOTE | AMD reventó la banda ARRIBA y re-entró en 459.71. Elastico: reversion corta hacia la media 456.95 si imprime — chico y seguro. prob medida 69 por ciento (n=195). OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+15:07:09 | 🎈 BB REBOTE | QQQ reventó la banda ARRIBA y re-entró en 677.44. Elastico: reversion corta hacia la media 676.84 si imprime — chico y seguro. prob medida 70 por ciento (n=190). OPCIONES OK (spread 1%)
+15:07:09 | 🎈 BB REBOTE | SPY reventó la banda ARRIBA y re-entró en 741.75. Elastico: reversion corta hacia la media 741.48 si imprime — chico y seguro. prob medida 72 por ciento (n=213). OPCIONES OK (spread 2%)
+15:07:09 | 🎈 BB REBOTE | NVDA reventó la banda ARRIBA y re-entró en 197.41. Elastico: reversion corta hacia la media 197.23 si imprime — chico y seguro. prob medida 69 por ciento (n=196). OPCIONES OK (spread 1%)
+15:07:10 | 🎈 BB BAND-WALK [MUTED p<55] | MU camina la banda ARRIBA tambien en 5 minutos (826.16). Continuacion probable — NO hacer fade. prob medida 44 por ciento (n=16). OPCIONES VETADAS spread 8% — usar ACCIONES o ETF apalancado
+15:07:10 | 🎈 BB REBOTE | SMH reventó la banda ARRIBA y re-entró en 531.61. Elastico: reversion corta hacia la media 530.19 si imprime — chico y seguro. prob medida 66 por ciento (n=188). OPCIONES VETADAS spread 30% — usar ACCIONES o ETF apalancado
+15:07:10 | 🎈 BB REBOTE | INTC reventó la banda ARRIBA y re-entró en 86.83. Elastico: reversion corta hacia la media 86.69 si imprime — chico y seguro. prob medida 68 por ciento (n=211). OPCIONES OK (spread 4%)
+15:07:10 | 🎈 BB REBOTE [VETO medido] | TSM reventó la banda ARRIBA y re-entró en 392.76. Elastico: reversion corta hacia la media 392.21 si imprime — chico y seguro. prob medida 68 por ciento (n=203). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES VETADAS spread 9% — usar ACCIONES o ETF apalancado
+15:07:10 | 🎈 BB BAND-WALK [MUTED p<55] | ASML camina la banda ARRIBA tambien en 5 minutos (1589.86). Continuacion probable — NO hacer fade. prob medida 43 por ciento (n=21). OPCIONES VETADAS spread 57% — usar ACCIONES o ETF apalancado
+15:07:10 | 🎈 BB REBOTE | TXN reventó la banda ARRIBA y re-entró en 277.99. Elastico: reversion corta hacia la media 277.92 si imprime — chico y seguro. prob medida 67 por ciento (n=187). OPCIONES VETADAS spread 21% — usar ACCIONES o ETF apalancado
+15:07:10 | 🎈 BB BAND-WALK [MUTED p<55] | AVGO camina la banda ARRIBA tambien en 5 minutos (383.73). Continuacion probable — NO hacer fade. prob medida 46 por ciento (n=22). OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+15:07:10 | 🎈 BB REBOTE [VETO medido] | NFLX reventó la banda ABAJO y re-entró en 72.97. Elastico: rebote hacia la media 73.10 si imprime — chico y seguro. prob medida 77 por ciento (n=202). [VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:07:10 | 🎈 BB BAND-WALK [MUTED p<55] | XLK camina la banda ARRIBA tambien en 5 minutos (171.66). Continuacion probable — NO hacer fade. prob medida 52 por ciento (n=21). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:07:10 | 🎈 BB REBOTE | EWY reventó la banda ARRIBA y re-entró en 153.22. Elastico: reversion corta hacia la media 152.79 si imprime — chico y seguro. prob medida 63 por ciento (n=185). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:07:10 | 🎈 BB BAND-WALK [MUTED p<55] | DRAM camina la banda ARRIBA tambien en 5 minutos (48.23). Continuacion probable — NO hacer fade. prob medida 24 por ciento (n=21). OPCIONES VETADAS spread 13% — usar ACCIONES o ETF apalancado
+15:07:10 | 🎈 BB BAND-WALK [MUTED p<55] | LRCX camina la banda ARRIBA tambien en 5 minutos (272.63). Continuacion probable — NO hacer fade. prob medida 25 por ciento (n=12). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:07:10 | 🎈 BB REBOTE [VETO medido] | WDC reventó la banda ARRIBA y re-entró en 458.61. Elastico: reversion corta hacia la media 456.82 si imprime — chico y seguro. prob medida 72 por ciento (n=204). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:08:10 | 🎈 BB BAND-WALK [MUTED p<55] | SNDK camina la banda ARRIBA tambien en 5 minutos (1111.00). Continuacion probable — NO hacer fade. prob medida 46 por ciento (n=22). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:10:10 | 🎈 BB REBOTE | GLD reventó la banda ARRIBA y re-entró en 369.20. Elastico: reversion corta hacia la media 369.07 si imprime — chico y seguro. prob medida 64 por ciento (n=194). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:11:10 | 🎈 BB REBOTE | STX reventó la banda ABAJO y re-entró en 746.11. Elastico: rebote hacia la media 747.58 si imprime — chico y seguro. prob medida 72 por ciento (n=209). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:12:11 | 🎈 BB BAND-WALK [MUTED p<55] | NOK camina la banda ARRIBA tambien en 5 minutos (8.91). Continuacion probable — NO hacer fade. prob medida 50 por ciento (n=16). OPCIONES VETADAS spread 8% — usar ACCIONES o ETF apalancado
+15:12:22 | 🚀 SPIKE CALLS SPCX | SPIKE de calls en SPCX: 2 mil contratos, 4 veces su ritmo. Climax comprador — rebote a la baja, probabilidad 66. OPCIONES OK (spread 3%)
+15:13:11 | 🎈 BB REBOTE | META reventó la banda ABAJO y re-entró en 593.74. Elastico: rebote hacia la media 594.48 si imprime — chico y seguro. prob medida 74 por ciento (n=212). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:13:11 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SNDK reventó la banda 15 minutos ARRIBA y re-entró en 1109.39 — elastico mayor, digestion probable. prob medida 14 por ciento (n=7). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:14:00 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 200.0 ↑ · prob 56% (estructural, no WR medido)
+15:14:03 | 🟢 NVDA CALL RETEST_REJECT | NVDA RETEST_REJECT en FLIP_OPEN 197.25 — 🟢 COMPRA 1x NVDA 197.5C 0DTE @ límite $1.95 (prima $195, spread 1.0%, OI 10339, prob 65%) — GO. Ejecuta TÚ en IBKR. | OPCIONES OK (spread 1%)
+15:14:31 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 200.0 ↑ · prob 56% (estructural, no WR medido)
+15:17:57 | 🚀 SPIKE CALLS TSLA | SPIKE de calls en TSLA: 42 mil contratos, 13 veces su ritmo. Climax comprador — rebote a la baja, probabilidad 66. OPCIONES OK (spread 2%)
+15:18:11 | 🎈 BB REBOTE ⭐[degradada] | AMZN reventó la banda ABAJO y re-entró en 231.20. Elastico: rebote hacia la media 231.24 si imprime — chico y seguro. prob medida 68 por ciento (n=193). [CELDA ESTRELLA tarde+squeeze, 85 por ciento medido] OPCIONES OK (spread 2%)
+15:18:11 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | NFLX reventó la banda 15 minutos ABAJO y re-entró en 72.76 — elastico mayor, digestion probable. prob medida 0 por ciento (n=7). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:19:15 | 🚀 SPIKE PUTS SPCX | SPIKE de puts en SPCX: 2 mil contratos, 9 veces su ritmo. Panico vendedor — rebote al alza, probabilidad 71. OPCIONES OK (spread 3%)
+15:24:12 | 🎈 BB REBOTE | TSLA reventó la banda ARRIBA y re-entró en 306.64. Elastico: reversion corta hacia la media 306.14 si imprime — chico y seguro. prob medida 70 por ciento (n=200). OPCIONES OK (spread 1%)
+15:24:12 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | LRCX reventó la banda 15 minutos ARRIBA y re-entró en 273.91 — elastico mayor, digestion probable. prob medida 0 por ciento (n=1). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:24:45 | 🟢📈 PREMIUM ALCISTA NVDA | NVDA: trade grande de opciones ALCISTA — premium neto $2,700,293 (call $2,166,091 put $-534,202), umbral SIN CALIBRAR
+15:25:25 | 🐋 BALLENA CALLS | Alto volumen de calls en INTC
+15:27:12 | 🎈 BB REBOTE | QCOM reventó la banda ARRIBA y re-entró en 163.81. Elastico: reversion corta hacia la media 163.31 si imprime — chico y seguro. prob medida 69 por ciento (n=182). OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+15:27:12 | 🎈 BB BAND-WALK [MUTED p<55] | SKHY camina la banda ARRIBA tambien en 5 minutos (132.61). Continuacion probable — NO hacer fade. prob medida 30 por ciento (n=10). OPCIONES VETADAS spread 10% — usar ACCIONES o ETF apalancado
+15:28:12 | 🎈 BB REBOTE | AAPL reventó la banda ABAJO y re-entró en 339.21. Elastico: rebote hacia la media 339.30 si imprime — chico y seguro. prob medida 65 por ciento (n=196). OPCIONES OK (spread 5%)
+15:31:13 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | ASML reventó la banda 15 minutos ARRIBA y re-entró en 1594.59 — elastico mayor, digestion probable. prob medida 50 por ciento (n=2). OPCIONES VETADAS spread 52% — usar ACCIONES o ETF apalancado
+15:32:54 | 🔴📉 ALERTA PREMIUM BAJISTA NVDA | Alerta premium: barrida de opciones bajista en NVDA — neto $-3,825,566 (call $1,067,544 put $4,893,110), umbral SIN CALIBRAR
+15:33:11 | 🚀 SPIKE PUTS AMD | SPIKE de puts en AMD: 13 mil contratos, 50 veces su ritmo. Panico vendedor — rebote al alza, probabilidad 71. OPCIONES VETADAS spread 6% — acciones/ETF
+15:33:13 | 🎈 BB REBOTE | GOOGL reventó la banda ARRIBA y re-entró en 334.49. Elastico: reversion corta hacia la media 334.18 si imprime — chico y seguro. prob medida 68 por ciento (n=197). [post-squeeze: el fade mejora +11 medido] OPCIONES OK (spread 3%)
+15:33:17 | 🔴📉 ALERTA PREMIUM BAJISTA MSFT | Alerta premium: barrida de opciones bajista en MSFT — neto $-7,361,648 (call $-5,457,939 put $1,903,709), umbral SIN CALIBRAR
+15:33:22 | 🔴📉 ALERTA PREMIUM BAJISTA META | Alerta premium: barrida de opciones bajista en META — neto $-3,464,757 (call $-941,961 put $2,522,796), umbral SIN CALIBRAR
+15:39:14 | 🎈 BB REBOTE | MU reventó la banda ABAJO y re-entró en 822.60. Elastico: rebote hacia la media 827.07 si imprime — chico y seguro. prob medida 65 por ciento (n=202). OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+15:39:14 | 🎈 BB REBOTE | SMH reventó la banda ABAJO y re-entró en 531.65. Elastico: rebote hacia la media 533.59 si imprime — chico y seguro. prob medida 66 por ciento (n=188). OPCIONES VETADAS spread 24% — usar ACCIONES o ETF apalancado
+15:39:14 | 🎈 BB REBOTE | TXN reventó la banda ABAJO y re-entró en 278.67. Elastico: rebote hacia la media 279.54 si imprime — chico y seguro. prob medida 67 por ciento (n=187). OPCIONES VETADAS spread 30% — usar ACCIONES o ETF apalancado
+15:39:14 | 🎈 BB REBOTE [VETO medido] | QCOM reventó la banda ABAJO y re-entró en 163.05. Elastico: rebote hacia la media 163.69 si imprime — chico y seguro. prob medida 69 por ciento (n=182). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+15:39:14 | 🎈 BB REBOTE | NOK reventó la banda ABAJO y re-entró en 8.94. Elastico: rebote hacia la media 8.95 si imprime — chico y seguro. prob medida 72 por ciento (n=205). OPCIONES VETADAS spread 8% — usar ACCIONES o ETF apalancado
+15:39:14 | 🎈 BB REBOTE | XLK reventó la banda ABAJO y re-entró en 171.31. Elastico: rebote hacia la media 171.70 si imprime — chico y seguro. prob medida 69 por ciento (n=183). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:39:14 | 🎈 BB REBOTE | EWY reventó la banda ABAJO y re-entró en 153.00. Elastico: rebote hacia la media 153.35 si imprime — chico y seguro. prob medida 63 por ciento (n=185). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:39:14 | 🎈 BB REBOTE | DRAM reventó la banda ABAJO y re-entró en 48.13. Elastico: rebote hacia la media 48.29 si imprime — chico y seguro. prob medida 61 por ciento (n=186). OPCIONES VETADAS spread 10% — usar ACCIONES o ETF apalancado
+15:39:14 | 🎈 BB REBOTE | SPCX reventó la banda ABAJO y re-entró en 116.19. Elastico: rebote hacia la media 116.86 si imprime — chico y seguro. prob medida 69 por ciento (n=205). OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+15:39:14 | 🎈 BB REBOTE | SNDK reventó la banda ABAJO y re-entró en 1112.76. Elastico: rebote hacia la media 1118.53 si imprime — chico y seguro. prob medida 73 por ciento (n=194). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:40:15 | 🧲 ESTRUCTURAL pin SPY | SPY en su imán 742.0 — pin · prob 59% (estructural, no WR medido)
+15:40:21 | 🟢📈 ALERTA PREMIUM ALCISTA AAPL | Alerta premium: barrida de opciones alcista en AAPL — neto $8,498,707 (call $8,118,085 put $-380,622), umbral SIN CALIBRAR
+15:41:14 | 🎈 BB REBOTE | QQQ reventó la banda ABAJO y re-entró en 676.26. Elastico: rebote hacia la media 677.31 si imprime — chico y seguro. prob medida 70 por ciento (n=190). OPCIONES OK (spread 2%)
+15:41:15 | 🎈 BB REBOTE | SPY reventó la banda ABAJO y re-entró en 741.12. Elastico: rebote hacia la media 741.50 si imprime — chico y seguro. prob medida 72 por ciento (n=213). OPCIONES OK (spread 2%)
+15:41:15 | 🎈 BB REBOTE [VETO medido] | TSM reventó la banda ABAJO y re-entró en 393.67. Elastico: rebote hacia la media 394.20 si imprime — chico y seguro. prob medida 68 por ciento (n=203). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES VETADAS spread 9% — usar ACCIONES o ETF apalancado
+15:41:15 | 🚀 SPIKE CALLS GLD | SPIKE de calls en GLD: 2 mil contratos, 39 veces su ritmo. Climax comprador — rebote a la baja, probabilidad 66. OPCIONES s/d — default ACCIONES
+15:41:15 | 🔄 GIRO A CALLS GLD | GLD girando a calls: ratio 2.89 desde 4.02
+15:42:15 | 🎈 BB BAND-WALK [MUTED p<55] | TSLA camina la banda ABAJO tambien en 5 minutos (305.58). Continuacion probable — NO hacer fade. prob medida 53 por ciento (n=15). OPCIONES OK (spread 1%)
+15:42:15 | 🎈 BB REBOTE | LRCX reventó la banda ABAJO y re-entró en 271.49. Elastico: rebote hacia la media 273.35 si imprime — chico y seguro. prob medida 68 por ciento (n=193). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:42:15 | 🎈 BB REBOTE | STX reventó la banda ABAJO y re-entró en 745.10. Elastico: rebote hacia la media 749.79 si imprime — chico y seguro. prob medida 72 por ciento (n=209). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:43:15 | 🎈 BB REBOTE [VETO medido] | AMD reventó la banda ABAJO y re-entró en 458.33. Elastico: rebote hacia la media 462.57 si imprime — chico y seguro. prob medida 69 por ciento (n=195). [VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+15:43:15 | 🎈 BB REBOTE | AAPL reventó la banda ARRIBA y re-entró en 339.84. Elastico: reversion corta hacia la media 339.40 si imprime — chico y seguro. prob medida 65 por ciento (n=196). OPCIONES OK (spread 1%)
+15:43:15 | 🎈 BB 15m RE-ENTRADA [MUTED p<55] | SNDK reventó la banda 15 minutos ARRIBA y re-entró en 1106.78 — elastico mayor, digestion probable. prob medida 14 por ciento (n=7). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:43:34 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 340.0 — pin · prob 78% (estructural, no WR medido)
+15:45:11 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 340.0 — pin · prob 62% (estructural, no WR medido)
+15:45:15 | 🎈 BB REBOTE [VETO medido] | SKHY reventó la banda ABAJO y re-entró en 131.51. Elastico: rebote hacia la media 132.46 si imprime — chico y seguro. prob medida 69 por ciento (n=86). [VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES VETADAS spread 6% — usar ACCIONES o ETF apalancado
+15:47:15 | 🎈 BB REBOTE [VETO medido] | NFLX reventó la banda ABAJO y re-entró en 72.38. Elastico: rebote hacia la media 72.48 si imprime — chico y seguro. prob medida 77 por ciento (n=202). [VETO z-VWAP estirado: dia de tendencia, 55 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:47:29 | 🚀 SPIKE CALLS MSFT | SPIKE de calls en MSFT: 3 mil contratos, 7 veces su ritmo. Climax comprador — rebote a la baja, probabilidad 66. OPCIONES s/d — default ACCIONES
+15:48:24 | 🐋 ALERTA BALLENA CALLS | Alerta ballena: alto volumen de calls en DRAM, strike 48
+15:49:07 | 🟡 NVDA PUT BOUNCE | NVDA BOUNCE en FLIP_OPEN 197.25 — 🟡 COMPRA 1x NVDA 197.5P 0DTE @ límite $2.15 (prima $215, spread 1.4%, OI 8279, prob 62%) — CAUTION. Ejecuta TÚ en IBKR. | OPCIONES OK (spread 2%)
+15:49:16 | 🎈 BB REBOTE | META reventó la banda ARRIBA y re-entró en 593.81. Elastico: reversion corta hacia la media 593.46 si imprime — chico y seguro. prob medida 74 por ciento (n=212). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+15:50:16 | 🎈 BB REBOTE | GOOGL reventó la banda ABAJO y re-entró en 333.84. Elastico: rebote hacia la media 334.32 si imprime — chico y seguro. prob medida 68 por ciento (n=197). OPCIONES OK (spread 2%)
+15:51:16 | 🎈 BB REBOTE | AMZN reventó la banda ABAJO y re-entró en 230.81. Elastico: rebote hacia la media 231.03 si imprime — chico y seguro. prob medida 68 por ciento (n=193). OPCIONES OK (spread 2%)
+15:53:18 | 🔴 MU CALL BOUNCE | MU BOUNCE en ROUND 820 — 🔴 COMPRA 1x MU 820C 0DTE @ límite $25.80 (prima $2580, spread 2.4%, OI 12, prob 37%) — NO-GO. Ejecuta TÚ en IBKR. | OPCIONES OK (spread 5%) | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+15:54:01 | 🟢📈 ALERTA PREMIUM ALCISTA NVDA | Alerta premium: barrida de opciones alcista en NVDA — neto $2,911,027 (call $2,534,572 put $-376,455), umbral SIN CALIBRAR
+15:54:06 | 🚀 SPIKE CALLS TSLA | SPIKE de calls en TSLA: 46 mil contratos, 5 veces su ritmo. Climax comprador — rebote a la baja, probabilidad 66. OPCIONES OK (spread 2%)
+15:54:08 | 🟡 MU CALL BOUNCE | MU BOUNCE en ROUND 820 — 🟡 COMPRA 1x MU 820C 0DTE @ límite $25.80 (prima $2580, spread 2.4%, OI 12, prob 67%) — CAUTION. Ejecuta TÚ en IBKR. | OPCIONES OK (spread 5%) | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+15:54:11 | 🧲 ESTRUCTURAL magnet NVDA | NVDA se dirige a su imán 200.0 ↑ · prob 56% (estructural, no WR medido)
+15:55:17 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+15:55:24 | 🔴 SKHY CALL BOUNCE | SKHY BOUNCE en ROUND 130 — 🔴 COMPRA 1x SKHY 130C 0DTE @ límite $9.00 (prima $900, spread 9.3%, OI 68, prob 67%) — NO-GO. Ejecuta TÚ en IBKR. | OPCIONES VETADAS spread 18% — usar ACCIONES o ETF apalancado | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+15:56:00 | 🌊 FLOW PULSE v4 | 15:56 — pulso de flujo fuera hasta manana
+15:56:40 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 340.0 — pin · prob 78% (estructural, no WR medido)
+15:57:04 | 🔴 MU CALL BOUNCE | MU BOUNCE en ROUND 820 — 🔴 COMPRA 1x MU 820C 0DTE @ límite $26.00 (prima $2600, spread 2.3%, OI 12, prob 37%) — NO-GO. Ejecuta TÚ en IBKR. | OPCIONES VETADAS spread 8% — usar ACCIONES o ETF apalancado | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+15:59:08 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+15:59:08 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+15:59:56 | 🧲 ESTRUCTURAL pin AAPL | AAPL en su imán 340.0 — pin · prob 63% (estructural, no WR medido)
+16:00:25 | 🩸 DIP VIGIA | 16:00 — vigia de dips fuera hasta mañana
+16:00:50 | 🔴 MU CALL BOUNCE | MU BOUNCE en ROUND 820 — 🔴 COMPRA 1x MU 820C 0DTE @ límite $26.00 (prima $2600, spread 2.3%, OI 12, prob 37%) — NO-GO. Ejecuta TÚ en IBKR. | OPCIONES VETADAS spread 8% — usar ACCIONES o ETF apalancado | regimen NEG (acelerador): el nivel no es piso, NO fadear en el aire
+16:04:09 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+16:04:09 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+16:09:10 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+16:09:10 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana

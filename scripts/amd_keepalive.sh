@@ -29,7 +29,7 @@ export AMD_WHALE_USD=250000
 while true; do
   pkill -x amd_signal_bot 2>/dev/null
   sleep 1
-  ./amd_signal_bot >> amd_signals.log 2>&1
-  echo "$(date) amd_signal_bot salio; relanzando" >> amd_signals.log
+  bots/amd_signal_bot >> logs/amd_signals.log 2>&1
+  echo "$(date) amd_signal_bot salio; relanzando" >> logs/amd_signals.log
   sleep 30
 done

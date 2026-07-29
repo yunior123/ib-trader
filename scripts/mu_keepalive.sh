@@ -20,7 +20,7 @@ export MU_WHALE_USD=250000
 while true; do
   pkill -x mu_signal_bot 2>/dev/null
   sleep 1
-  ./mu_signal_bot >> mu_signals.log 2>&1
-  echo "$(date) mu_signal_bot salio; relanzando" >> mu_signals.log
+  bots/mu_signal_bot >> logs/mu_signals.log 2>&1
+  echo "$(date) mu_signal_bot salio; relanzando" >> logs/mu_signals.log
   sleep 30
 done

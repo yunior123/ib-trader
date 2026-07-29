@@ -33,7 +33,7 @@ export QQQ_S_TREND_CUSUM=0.005
 while true; do
   pkill -x qqq_signal_bot 2>/dev/null
   sleep 1
-  ./qqq_signal_bot >> qqq_signals.log 2>&1
-  echo "$(date) qqq_signal_bot salio; relanzando" >> qqq_signals.log
+  bots/qqq_signal_bot >> logs/qqq_signals.log 2>&1
+  echo "$(date) qqq_signal_bot salio; relanzando" >> logs/qqq_signals.log
   sleep 30
 done

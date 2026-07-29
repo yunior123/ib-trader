@@ -58,7 +58,7 @@ def mirror_lines():
 
 start = time.time()
 seen = len(mirror_lines())
-relanz0 = int(sh("grep -hc relanzando *_signals.log 2>/dev/null | paste -sd+ - | bc") or 0)
+relanz0 = int(sh("grep -hc relanzando logs/*_signals.log 2>/dev/null | paste -sd+ - | bc") or 0)
 signals = []          # señales nuevas del periodo
 stall_hist = {}       # sym -> ciclos seguidos sin bar fresco
 print(f"== TEST AFTER-HOURS {datetime.now():%H:%M:%S} — {CYCLES}x{PERIOD}s ==", flush=True)
@@ -67,8 +67,8 @@ for cyc in range(1, CYCLES + 1):
     time.sleep(PERIOD)
     now = time.time()
     nbots = int(sh("ps aux | grep -c '[_]signal_bot$'") or 0)
-    relanz = int(sh("grep -hc relanzando *_signals.log 2>/dev/null | paste -sd+ - | bc") or 0)
-    errs = sh("grep -ihE 'error|assert|segv|abort' *_signals.log 2>/dev/null | "
+    relanz = int(sh("grep -hc relanzando logs/*_signals.log 2>/dev/null | paste -sd+ - | bc") or 0)
+    errs = sh("grep -ihE 'error|assert|segv|abort' logs/*_signals.log 2>/dev/null | "
               "grep -viE 'relanzando|SIN DATOS' | wc -l").strip()
     fresh = stale = 0
     stallers = []

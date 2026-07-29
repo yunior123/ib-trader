@@ -31,7 +31,7 @@ export INTC_WHALE_USD=250000
 while true; do
   pkill -x intc_signal_bot 2>/dev/null
   sleep 1
-  ./intc_signal_bot >> intc_signals.log 2>&1
-  echo "$(date) intc_signal_bot salio; relanzando" >> intc_signals.log
+  bots/intc_signal_bot >> logs/intc_signals.log 2>&1
+  echo "$(date) intc_signal_bot salio; relanzando" >> logs/intc_signals.log
   sleep 30
 done

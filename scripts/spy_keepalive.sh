@@ -36,7 +36,7 @@ export SPY_S_TREND_CUSUM=0.005
 while true; do
   pkill -x spy_signal_bot 2>/dev/null
   sleep 1
-  ./spy_signal_bot >> spy_signals.log 2>&1
-  echo "$(date) spy_signal_bot salio; relanzando" >> spy_signals.log
+  bots/spy_signal_bot >> logs/spy_signals.log 2>&1
+  echo "$(date) spy_signal_bot salio; relanzando" >> logs/spy_signals.log
   sleep 30
 done

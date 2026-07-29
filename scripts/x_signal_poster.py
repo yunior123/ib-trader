@@ -35,7 +35,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import x_post_common as xc
 
 ROOT = xc.ROOT
-LOG_FILE = os.path.join(ROOT, "x_signal_poster.log")
+LOG_FILE = os.path.join(ROOT, "logs", "x_signal_poster.log")
 STATE_FILE = os.path.join(ROOT, "data", "x_signal_state.json")
 COMBO_FILE = os.path.join(ROOT, "data", "x_combo_triggers.txt")
 SIGNAL_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "trading-signals")

@@ -1,7 +1,7 @@
 {
  "sym": "NVDA",
  "spot": 196.82,
- "asof": 1785270415,
+ "asof": 1785310284,
  "exp": "20260729",
  "dte": 0.99,
  "scope": "0DTE",
@@ -372,7 +372,7 @@
  "em": 4.92,
  "net_gex": -490049.5,
  "regime": "POS",
- "flip": 197.25,
+ "flip": 196.75,
  "flip_static": 121.77,
  "call_wall": 197.5,
  "put_wall": 190.0,
@@ -624,7 +624,7 @@
   196.75
  ],
  "trapdoor_root": 196.75,
- "flip_open": 197.25,
+ "flip_open": null,
  "frozen_at": 1785246142,
- "frozen_day": "2026-07-28"
+ "frozen_day": null
 }

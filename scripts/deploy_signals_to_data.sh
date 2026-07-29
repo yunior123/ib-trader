@@ -63,6 +63,6 @@ echo "=== reiniciando la flota (keepalive relanza con binarios+codigo nuevos) ==
 pkill -f '_signal_bot$'; pkill -f 'opt_chain_cache|opt_whale_watch|flow_pulse|bollinger_alarm|band_open|signals_db|notify_relay'
 sleep 3
 nohup zsh scripts/fleet_keepalive_start.sh >/dev/null 2>&1 &
-nohup python3 scripts/signals_db.py --daemon > signals_db.log 2>&1 &
+nohup python3 scripts/signals_db.py --daemon > logs/signals_db.log 2>&1 &
 echo "=== verificacion ==="; sleep 20
 echo "  señales en data/ tras reinicio: escribir prueba"; echo "$(date +%T) | TEST | deploy /data ok" >> "data/trading-signals/$(date +%F).txt" && tail -1 "data/trading-signals/$(date +%F).txt"

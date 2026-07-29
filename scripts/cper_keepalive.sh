@@ -11,7 +11,7 @@ export CPER_SCORE_MIN=9
 while true; do
   pkill -x cper_signal_bot 2>/dev/null
   sleep 1
-  ./cper_signal_bot >> cper_signals.log 2>&1
-  echo "$(date) cper_signal_bot salio; relanzando" >> cper_signals.log
+  bots/cper_signal_bot >> logs/cper_signals.log 2>&1
+  echo "$(date) cper_signal_bot salio; relanzando" >> logs/cper_signals.log
   sleep 30
 done

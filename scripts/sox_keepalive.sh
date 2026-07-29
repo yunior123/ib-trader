@@ -4,7 +4,7 @@ cd "$(dirname "$0")/.."
 while true; do
   pkill -f "scripts/sox_index_feed.py" 2>/dev/null
   sleep 1
-  ./venv/bin/python scripts/sox_index_feed.py >> sox_feed.log 2>&1
-  echo "$(date) sox_feed salio; relanzando" >> sox_feed.log
+  ./venv/bin/python scripts/sox_index_feed.py >> logs/sox_feed.log 2>&1
+  echo "$(date) sox_feed salio; relanzando" >> logs/sox_feed.log
   sleep 30
 done

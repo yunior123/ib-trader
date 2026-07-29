@@ -18,7 +18,7 @@ if [ "$DOW" -gt 5 ] || [ "$H" -lt 0700 ] || [ "$H" -gt 1630 ]; then exit 0; fi
 PIDS=($(pgrep -f "opt_whale_watch.py" | sort -n))
 N=${#PIDS[@]}
 if [ "$N" -eq 0 ]; then
-  nohup ./venv/bin/python scripts/opt_whale_watch.py >> whale_watch_out.log 2>&1 &
+  nohup ./venv/bin/python scripts/opt_whale_watch.py >> logs/whale_watch_out.log 2>&1 &
   echo "$(date '+%F %T') relanzado (estaba muerto) pid $!" >> $LOG
   osascript -e 'display notification "opt_whale_watch relanzado (estaba muerto)" with title "🐋 keepalive ballenas" sound name "ProAlert"' 2>/dev/null
 elif [ "$N" -gt 1 ]; then

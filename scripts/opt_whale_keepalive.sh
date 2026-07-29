@@ -4,7 +4,7 @@ cd "$(dirname "$0")/.."
 while true; do
   pkill -f "scripts/opt_whale_watch.py" 2>/dev/null
   sleep 1
-  ./venv/bin/python scripts/opt_whale_watch.py >> opt_whale.log 2>&1
-  echo "$(date) opt_whale_watch salio; relanzando" >> opt_whale.log
+  ./venv/bin/python scripts/opt_whale_watch.py >> logs/opt_whale.log 2>&1
+  echo "$(date) opt_whale_watch salio; relanzando" >> logs/opt_whale.log
   sleep 60
 done

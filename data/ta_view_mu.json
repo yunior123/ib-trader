@@ -1,0 +1,16 @@
+{
+ "ts": 1785240307,
+ "sym": "MU",
+ "veredicto": "bear",
+ "rating": "Sell",
+ "prob": null,
+ "tesis": "Initiate a tactical short position in MU at ~$839.50 with a stop at $895 and target $800 (partial exit at $815). Position size: 1.5% of portfolio. Simultaneously reduce existing long exposure by 40%.",
+ "niveles": [
+  {
+   "tipo": "target",
+   "nivel": 800.0
+  }
+ ],
+ "latency_s": 198.1,
+ "fuente": "tradingagents"
+}

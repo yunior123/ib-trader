@@ -1,0 +1,179 @@
+{
+ "verdict": "DEAD",
+ "n_price_raw": 63613,
+ "n_vw_raw": 64960,
+ "n_dias": 501,
+ "price_rate": 0.2338,
+ "vw_rate": 0.2256,
+ "price_wilson_raw": [
+  0.2338,
+  0.2305,
+  0.2371
+ ],
+ "vw_wilson_raw": [
+  0.2256,
+  0.2224,
+  0.2288
+ ],
+ "sep_lb_raw": -0.0147,
+ "edge": -0.0082,
+ "edge_ci_boot_by_day": [
+  -0.0106,
+  -0.0057
+ ],
+ "horizon_periods": 8,
+ "period_min": 15,
+ "extreme_hi": 0.95,
+ "extreme_lo": 0.05,
+ "method": "%B extremo (rolling n=20) -> reversion <=8 periodos, precio(rv) vs VW(oc2). Wilson RAW sobre n_price_raw/n_vw_raw es anticonservador (sym-dia correlacionado); veredicto se decide por el bootstrap por bloque-dia (2000 remuestreos, respeta correlacion intra-sesion y entre-flota).",
+ "per_sym": {
+  "QQQ": {
+   "n_sessions": 501,
+   "price_events": 2366,
+   "vw_events": 2384
+  },
+  "SPY": {
+   "n_sessions": 501,
+   "price_events": 2385,
+   "vw_events": 2407
+  },
+  "NVDA": {
+   "n_sessions": 501,
+   "price_events": 2441,
+   "vw_events": 2466
+  },
+  "TSLA": {
+   "n_sessions": 501,
+   "price_events": 2443,
+   "vw_events": 2494
+  },
+  "MU": {
+   "n_sessions": 501,
+   "price_events": 2383,
+   "vw_events": 2439
+  },
+  "SMH": {
+   "n_sessions": 501,
+   "price_events": 2372,
+   "vw_events": 2455
+  },
+  "AMD": {
+   "n_sessions": 501,
+   "price_events": 2299,
+   "vw_events": 2347
+  },
+  "AAPL": {
+   "n_sessions": 501,
+   "price_events": 2355,
+   "vw_events": 2393
+  },
+  "MSFT": {
+   "n_sessions": 501,
+   "price_events": 2394,
+   "vw_events": 2468
+  },
+  "META": {
+   "n_sessions": 501,
+   "price_events": 2368,
+   "vw_events": 2411
+  },
+  "AMZN": {
+   "n_sessions": 501,
+   "price_events": 2450,
+   "vw_events": 2494
+  },
+  "GOOGL": {
+   "n_sessions": 501,
+   "price_events": 2368,
+   "vw_events": 2410
+  },
+  "INTC": {
+   "n_sessions": 501,
+   "price_events": 2336,
+   "vw_events": 2426
+  },
+  "TSM": {
+   "n_sessions": 501,
+   "price_events": 2428,
+   "vw_events": 2481
+  },
+  "ASML": {
+   "n_sessions": 501,
+   "price_events": 2308,
+   "vw_events": 2308
+  },
+  "TXN": {
+   "n_sessions": 501,
+   "price_events": 2390,
+   "vw_events": 2434
+  },
+  "QCOM": {
+   "n_sessions": 501,
+   "price_events": 2346,
+   "vw_events": 2424
+  },
+  "AVGO": {
+   "n_sessions": 501,
+   "price_events": 2327,
+   "vw_events": 2410
+  },
+  "NFLX": {
+   "n_sessions": 501,
+   "price_events": 2281,
+   "vw_events": 2375
+  },
+  "NOK": {
+   "n_sessions": 501,
+   "price_events": 2344,
+   "vw_events": 2399
+  },
+  "GLD": {
+   "n_sessions": 501,
+   "price_events": 2431,
+   "vw_events": 2457
+  },
+  "XLK": {
+   "n_sessions": 501,
+   "price_events": 2418,
+   "vw_events": 2434
+  },
+  "EWY": {
+   "n_sessions": 501,
+   "price_events": 2356,
+   "vw_events": 2360
+  },
+  "DRAM": {
+   "n_sessions": 78,
+   "price_events": 359,
+   "vw_events": 348
+  },
+  "SPCX": {
+   "n_sessions": 29,
+   "why": "historia insuficiente (<30 sesiones)"
+  },
+  "SKHY": {
+   "n_sessions": 10,
+   "why": "historia insuficiente (<30 sesiones)"
+  },
+  "LRCX": {
+   "n_sessions": 501,
+   "price_events": 2331,
+   "vw_events": 2385
+  },
+  "SNDK": {
+   "n_sessions": 356,
+   "price_events": 1636,
+   "vw_events": 1675
+  },
+  "WDC": {
+   "n_sessions": 501,
+   "price_events": 2310,
+   "vw_events": 2417
+  },
+  "STX": {
+   "n_sessions": 501,
+   "price_events": 2388,
+   "vw_events": 2459
+  }
+ }
+}

@@ -168,10 +168,11 @@ def poly_syms(conn):
 def bots_available():
     """{SYM: ruta} de los bots C++ compilados que existen AHORA."""
     out = {}
-    for fn in sorted(os.listdir(REPO)):
+    bdir = os.path.join(REPO, "bots")
+    for fn in sorted(os.listdir(bdir)):
         if not fn.endswith("_signal_bot"):
             continue
-        p = os.path.join(REPO, fn)
+        p = os.path.join(bdir, fn)
         if os.access(p, os.X_OK):
             out[fn[:-len("_signal_bot")].upper()] = p
     return out

@@ -38,7 +38,7 @@ export TSLA_TREND_VWAP=0
 while true; do
   pkill -x tsla_signal_bot 2>/dev/null
   sleep 1
-  ./tsla_signal_bot >> tsla_signals.log 2>&1
-  echo "$(date) tsla_signal_bot salio; relanzando" >> tsla_signals.log
+  bots/tsla_signal_bot >> logs/tsla_signals.log 2>&1
+  echo "$(date) tsla_signal_bot salio; relanzando" >> logs/tsla_signals.log
   sleep 30
 done

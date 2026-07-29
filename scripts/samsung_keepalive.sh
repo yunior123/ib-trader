@@ -14,7 +14,7 @@ export SAMSUNG_SCORE_MIN=9
 while true; do
   pkill -x samsung_signal_bot 2>/dev/null
   sleep 1
-  ./samsung_signal_bot >> samsung_signals.log 2>&1
-  echo "$(date) samsung_signal_bot salio; relanzando" >> samsung_signals.log
+  bots/samsung_signal_bot >> logs/samsung_signals.log 2>&1
+  echo "$(date) samsung_signal_bot salio; relanzando" >> logs/samsung_signals.log
   sleep 30
 done

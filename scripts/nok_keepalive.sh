@@ -28,7 +28,7 @@ export NOK_S_TREND_CUSUM=0.005
 while true; do
   pkill -x nok_signal_bot 2>/dev/null
   sleep 1
-  ./nok_signal_bot >> nok_signals.log 2>&1
-  echo "$(date) nok_signal_bot salio; relanzando" >> nok_signals.log
+  bots/nok_signal_bot >> logs/nok_signals.log 2>&1
+  echo "$(date) nok_signal_bot salio; relanzando" >> logs/nok_signals.log
   sleep 30
 done

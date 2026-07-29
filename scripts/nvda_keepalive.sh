@@ -31,7 +31,7 @@ export NVDA_WHALE_USD=250000
 while true; do
   pkill -x nvda_signal_bot 2>/dev/null
   sleep 1
-  ./nvda_signal_bot >> nvda_signals.log 2>&1
-  echo "$(date) nvda_signal_bot salio; relanzando" >> nvda_signals.log
+  bots/nvda_signal_bot >> logs/nvda_signals.log 2>&1
+  echo "$(date) nvda_signal_bot salio; relanzando" >> logs/nvda_signals.log
   sleep 30
 done

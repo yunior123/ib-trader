@@ -31,7 +31,7 @@ export DRAM_S_TSTOP=60
 while true; do
   pkill -x dram_signal_bot 2>/dev/null
   sleep 1
-  ./dram_signal_bot >> dram_signals.log 2>&1
-  echo "$(date) dram_signal_bot salio; relanzando" >> dram_signals.log
+  bots/dram_signal_bot >> logs/dram_signals.log 2>&1
+  echo "$(date) dram_signal_bot salio; relanzando" >> logs/dram_signals.log
   sleep 30
 done

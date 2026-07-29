@@ -7,8 +7,8 @@ cd "$ROOT" || exit 1
 while true; do
   if ! pgrep -f "scripts/fleet_consensus.py --daemon" >/dev/null 2>&1; then
     nohup ./venv/bin/python -u scripts/fleet_consensus.py --daemon \
-      >> "$ROOT/fleet_consensus_py.log" 2>&1 &
-    echo "$(date) fleet_consensus.py relanzado" >> "$ROOT/fleet_consensus_py.log"
+      >> "$ROOT/logs/fleet_consensus_py.log" 2>&1 &
+    echo "$(date) fleet_consensus.py relanzado" >> "$ROOT/logs/fleet_consensus_py.log"
   fi
   sleep 15
 done

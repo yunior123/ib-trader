@@ -6,8 +6,8 @@ cd "$ROOT" || exit 1
 while true; do
   if ! pgrep -f "scripts/signals_db.py --daemon" >/dev/null 2>&1; then
     nohup python3 -u scripts/signals_db.py --daemon \
-      >> "$ROOT/signals_db.log" 2>&1 &
-    echo "$(date) signals_db.py relanzado" >> "$ROOT/signals_db.log"
+      >> "$ROOT/logs/signals_db.log" 2>&1 &
+    echo "$(date) signals_db.py relanzado" >> "$ROOT/logs/signals_db.log"
   fi
   sleep 15
 done

@@ -20,10 +20,10 @@ LOCKDIR="$ROOT/data/.fleet_keepalive_start.lockd"
 if ! mkdir "$LOCKDIR" 2>/dev/null; then
   AGE=$(( $(date +%s) - $(stat -f %m "$LOCKDIR" 2>/dev/null || echo 0) ))
   if [ "$AGE" -lt 120 ]; then
-    echo "$(date) fleet: OTRA instancia activa (lock ${AGE}s) -> salgo sin tocar nada (evita doble keepalive)" >> "$ROOT/fleet_autostart.log"
+    echo "$(date) fleet: OTRA instancia activa (lock ${AGE}s) -> salgo sin tocar nada (evita doble keepalive)" >> "$ROOT/logs/fleet_autostart.log"
     exit 0
   fi
-  echo "$(date) fleet: lock viejo (${AGE}s) -> instancia anterior murio a medias, lo tomo" >> "$ROOT/fleet_autostart.log"
+  echo "$(date) fleet: lock viejo (${AGE}s) -> instancia anterior murio a medias, lo tomo" >> "$ROOT/logs/fleet_autostart.log"
   rmdir "$LOCKDIR" 2>/dev/null
   mkdir "$LOCKDIR" 2>/dev/null
 fi
@@ -94,7 +94,7 @@ fleet_stop_bridges() {
 SIGDIR="$ROOT/data/trading-signals"
 mkdir -p "$SIGDIR" 2>/dev/null
 if ! ( : > "$SIGDIR/.perm_check" ) 2>/dev/null; then
-  echo "$(date) fleet: SIN PERMISO de escritura en $SIGDIR (TCC/Full Disk Access)" >> "$ROOT/fleet_autostart.log"
+  echo "$(date) fleet: SIN PERMISO de escritura en $SIGDIR (TCC/Full Disk Access)" >> "$ROOT/logs/fleet_autostart.log"
   touch "$ROOT/data/PERM_DENIED" 2>/dev/null
   "$ROOT/scripts/speak.sh" DANGER "Atención: los bots no tienen permiso de escritura. Activar Full Disk Access. Las señales no se están guardando." 2>/dev/null
   osascript -e 'display notification "Bots SIN permiso (TCC). Activa Full Disk Access al runner." with title "🔴 PERMISO DENEGADO" sound name "Sosumi"' 2>/dev/null
@@ -111,7 +111,7 @@ FLEET_HOURS="$ROOT/fleet_hours"
 if [[ ! -x "$FLEET_HOURS" ]]; then
   # FAIL-LOUD: sin portero NO se arranca. Degradar a "pues arranco" es exactamente
   # el fallo que estamos arreglando (un LIVE plausible sin haberlo comprobado).
-  echo "$(date) fleet: PORTERO AUSENTE ($FLEET_HOURS no existe o no es ejecutable) -> NO se arranca nada. Compila con ./scripts/build_fleet_hours.sh" >> "$ROOT/fleet_autostart.log"
+  echo "$(date) fleet: PORTERO AUSENTE ($FLEET_HOURS no existe o no es ejecutable) -> NO se arranca nada. Compila con ./scripts/build_fleet_hours.sh" >> "$ROOT/logs/fleet_autostart.log"
   if [[ ! -f "$ROOT/data/FLEET_HOURS_MISSING" ]]; then
     touch "$ROOT/data/FLEET_HOURS_MISSING" 2>/dev/null
     osascript -e 'display notification "Falta ./fleet_hours: la flota NO arranca. Corre scripts/build_fleet_hours.sh" with title "🔴 PORTERO AUSENTE" sound name "Sosumi"' 2>/dev/null
@@ -126,7 +126,7 @@ if [[ $FH_RC -ne 0 ]]; then
   # el fin de semana esto es lo NORMAL, no una alarma. Solo deja rastro en el log.
   fleet_stop_all
   fleet_stop_bridges
-  echo "$(date) fleet: fuera de ventana -> todo apagado | $FH_OUT" >> "$ROOT/fleet_autostart.log"
+  echo "$(date) fleet: fuera de ventana -> todo apagado | $FH_OUT" >> "$ROOT/logs/fleet_autostart.log"
   exit 0
 fi
 
@@ -139,7 +139,7 @@ if [[ -f "$ROOT/data/fleet_sleep" ]]; then
   WAKE=$(grep -o 'wake: [0-9]*' "$ROOT/data/fleet_sleep" 2>/dev/null | awk '{print $2}')
   if [[ -n "$WAKE" && "$(date +%s)" -ge "$WAKE" ]]; then
     rm -f "$ROOT/data/fleet_sleep"
-    echo "$(date) fleet: AUTO-DESPERTAR (wake $WAKE alcanzado)" >> "$ROOT/fleet_autostart.log"
+    echo "$(date) fleet: AUTO-DESPERTAR (wake $WAKE alcanzado)" >> "$ROOT/logs/fleet_autostart.log"
     osascript -e 'display notification "La flota amaneció sola: bots, sirenas y feeds armados. Buen OPEX." with title "🌅 FLOTA DESPIERTA" sound name "ProChord"' 2>/dev/null
   else
     # MISMA lista que el portero horario (fleet_stop_all). Los bridges de datos
@@ -160,7 +160,7 @@ for b in "${FLEET_SYMS[@]}"; do
   fi
   if ! pgrep -f "scripts/${b}_keepalive.sh" >/dev/null; then
     nohup zsh "$ROOT/scripts/${b}_keepalive.sh" >/dev/null 2>&1 &
-    echo "$(date) fleet: ${b}_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+    echo "$(date) fleet: ${b}_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
   fi
 done
 
@@ -168,8 +168,8 @@ done
 # Un solo consumidor habla; price_alarm + bots encolan con speak.sh. Ver
 # docs/VOICE-QUEUE.md. Señal-solamente. Arranca antes que los productores.
 if ! pgrep -f "voice_queue.sh" >/dev/null; then
-  nohup ./scripts/voice_queue_keepalive.sh >> fleet_autostart.log 2>&1 &
-  echo "$(date) fleet: voice_queue daemon lanzado (pid $!)" >> fleet_autostart.log
+  nohup ./scripts/voice_queue_keepalive.sh >> logs/fleet_autostart.log 2>&1 &
+  echo "$(date) fleet: voice_queue daemon lanzado (pid $!)" >> logs/fleet_autostart.log
 fi
 
 # daemon IBKR de flota — FUENTE UNICA desde 2026-07-15 ("connect to ibkr
@@ -184,10 +184,10 @@ fi
 if ! pgrep -f "ibkr_bar_bridge.py --daemon" >/dev/null; then
   FLEET_SYMS="$(cat "$ROOT/data/fleet.txt" 2>/dev/null)"
   if [[ -z "$FLEET_SYMS" ]]; then
-    echo "$(date) fleet: data/fleet.txt vacio o ilegible -> NO lanzo el bridge (sin flota no hay feed que valga)" >> fleet_autostart.log
+    echo "$(date) fleet: data/fleet.txt vacio o ilegible -> NO lanzo el bridge (sin flota no hay feed que valga)" >> logs/fleet_autostart.log
   else
-    nohup ./venv/bin/python scripts/ibkr_bar_bridge.py --daemon ${=FLEET_SYMS} >> bridge_ibkr_fleet.log 2>&1 &
-    echo "$(date) fleet: ibkr fleet daemon lanzado (pid $!) con $(echo $FLEET_SYMS | wc -w | tr -d ' ') simbolos de data/fleet.txt" >> fleet_autostart.log
+    nohup ./venv/bin/python scripts/ibkr_bar_bridge.py --daemon ${=FLEET_SYMS} >> logs/bridge_ibkr_fleet.log 2>&1 &
+    echo "$(date) fleet: ibkr fleet daemon lanzado (pid $!) con $(echo $FLEET_SYMS | wc -w | tr -d ' ') simbolos de data/fleet.txt" >> logs/fleet_autostart.log
   fi
 fi
 
@@ -195,8 +195,8 @@ fi
 # (verificado 2026-07-12): mercado de memoria/DRAM en vivo y gratis, lider ~13h
 # antes que EE.UU. para MU/DRAM. Escribe data/bars_{skhynix,samsung}.txt.
 if ! pgrep -f "scripts/korea_bar_bridge.py" >/dev/null; then
-  nohup ./venv/bin/python scripts/korea_bar_bridge.py --daemon >> bridge_korea.log 2>&1 &
-  echo "$(date) fleet: korea bridge lanzado (pid $!)" >> fleet_autostart.log
+  nohup ./venv/bin/python scripts/korea_bar_bridge.py --daemon >> logs/bridge_korea.log 2>&1 &
+  echo "$(date) fleet: korea bridge lanzado (pid $!)" >> logs/fleet_autostart.log
 fi
 
 # TWS watchdog (2026-07-15, tras 75 min de ceguera): vigila puerto 7496 en
@@ -207,7 +207,7 @@ fi
 # Reactivar: quitar el 'false &&'. (Gateway trae su propio auto-restart en su config.)
 if false && ! pgrep -f "scripts/tws_watchdog.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/tws_watchdog.sh" >/dev/null 2>&1 &
-  echo "$(date) fleet: tws_watchdog lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+  echo "$(date) fleet: tws_watchdog lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi
 
 # cache de cadenas de opciones (v6.1 2026-07-16 noche): opt_chain_cache.py
@@ -216,14 +216,14 @@ fi
 # ./opt_quick NVDA [strike C|P]. SEÑAL-SOLAMENTE, cero ordenes.
 if [ -f "$ROOT/scripts/opt_chain_cache.py" ] && ! pgrep -f "scripts/opt_chain_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/opt_chain_keepalive.sh" >/dev/null 2>&1 &
-  echo "$(date) fleet: opt_chain_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+  echo "$(date) fleet: opt_chain_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi
 
 # bargain bot (2026-07-15): gangas en flota + top gainers + oversold, vetadas
 # por TradingAgents — solo BUY notifica. Signal-only, cada 10 min en RTH.
 if ! pgrep -f "scripts/bargain_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/bargain_keepalive.sh" >/dev/null 2>&1 &
-  echo "$(date) fleet: bargain_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+  echo "$(date) fleet: bargain_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi
 
 # EJECUTOR ELIMINADO 2026-07-15 (orden Yunior: "borra todo lo que ejecute
@@ -237,7 +237,7 @@ fi
 # es indice, sin volumen). Escribe data/nbbo_sox.txt en RTH.
 if ! pgrep -f "scripts/sox_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/sox_keepalive.sh" >/dev/null 2>&1 &
-  echo "$(date) fleet: sox_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+  echo "$(date) fleet: sox_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi
 
 # finviz_scout (2026-07-17): datos Finviz Elite que IBKR no da (short float,
@@ -247,14 +247,14 @@ fi
 # clang++ -std=c++17 -O2 -o finviz_scout scripts/finviz_scout.cpp -lcurl
 if [ -x "$ROOT/finviz_scout" ] && ! pgrep -f "scripts/finviz_scout_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/finviz_scout_keepalive.sh" >/dev/null 2>&1 &
-  echo "$(date) fleet: finviz_scout_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+  echo "$(date) fleet: finviz_scout_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi
 
 # notify_relay (2026-07-17): espejo Desktop -> ntfy push + Resend email (solo 🚨).
 # Anti-ruido: alertas >45s se DESCARTAN (jamas acumular).
 if ! pgrep -f "scripts/notify_relay.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/notify_relay.sh" >/dev/null 2>&1 &
-  echo "$(date) fleet: notify_relay lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+  echo "$(date) fleet: notify_relay lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi
 
 # vigia de BALLENAS de opciones (2026-07-20 "activa alarm fleet for whale puts
@@ -263,8 +263,8 @@ fi
 # patron de Yunior 2026-07-22: apertura fuera de banda 15m RTH -> re-entrada
 # (probs medidas en data/band_snap_stats.json). Corre solo 9:29-10:35 y muere.
 if ! pgrep -f "scripts/band_open_watch.py" >/dev/null; then
-  nohup ./venv/bin/python -u scripts/band_open_watch.py >> band_open_watch.log 2>&1 &
-  echo "$(date) fleet: band_open_watch lanzado (pid $!)" >> fleet_autostart.log
+  nohup ./venv/bin/python -u scripts/band_open_watch.py >> logs/band_open_watch.log 2>&1 &
+  echo "$(date) fleet: band_open_watch lanzado (pid $!)" >> logs/fleet_autostart.log
 fi
 
 # vigia Bollinger INTRADIA (Yunior 2026-07-22: "rectifica bollinger alarms"):
@@ -273,8 +273,8 @@ fi
 BA_HM=$(( $(date +%-H) * 100 + $(date +%-M) ))
 BA_DOW=$(date +%u)
 if (( BA_DOW <= 5 && BA_HM >= 930 && BA_HM < 1556 )) && ! pgrep -f "scripts/bollinger_alarm.py" >/dev/null; then
-  nohup ./venv/bin/python -u scripts/bollinger_alarm.py >> bollinger_alarm.log 2>&1 &
-  echo "$(date) fleet: bollinger_alarm lanzado (pid $!)" >> fleet_autostart.log
+  nohup ./venv/bin/python -u scripts/bollinger_alarm.py >> logs/bollinger_alarm.log 2>&1 &
+  echo "$(date) fleet: bollinger_alarm lanzado (pid $!)" >> logs/fleet_autostart.log
 fi
 
 # flow_pulse (2026-07-22, Yunior): vigia de flujo MENOS estricto en C++ —
@@ -284,8 +284,8 @@ fi
 FP_HM=$(( $(date +%-H) * 100 + $(date +%-M) ))
 FP_DOW=$(date +%u)
 if (( FP_DOW <= 5 && FP_HM >= 930 && FP_HM < 1556 )) && ! pgrep -x "flow_pulse" >/dev/null; then
-  nohup "$ROOT/flow_pulse" >> "$ROOT/flow_pulse.log" 2>&1 &
-  echo "$(date) fleet: flow_pulse lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+  nohup "$ROOT/flow_pulse" >> "$ROOT/logs/flow_pulse.log" 2>&1 &
+  echo "$(date) fleet: flow_pulse lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi
 
 # aviso hablado "posicion expira HOY" (hueco del opt_sentinel retirado; posiciones REALES, readonly)
@@ -293,7 +293,7 @@ if (( FP_DOW <= 5 && FP_HM >= 930 && FP_HM < 1600 )) \
    && ! pgrep -f "scripts/position_close_reminder.py" >/dev/null; then
   mkdir -p "$ROOT/logs"
   nohup "$ROOT/venv/bin/python" -u "$ROOT/scripts/position_close_reminder.py" >> "$ROOT/logs/position_close_reminder.log" 2>&1 &
-  echo "$(date) fleet: position_close_reminder lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+  echo "$(date) fleet: position_close_reminder lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi
 
 # scout de caidas post-earnings (2026-07-28): pasadas 8:20/9:50/12:30, muere 13:00
@@ -301,50 +301,50 @@ if (( FP_DOW <= 5 && FP_HM >= 815 && FP_HM < 1300 )) \
    && ! pgrep -f "scripts/earnings_fall_scout.py" >/dev/null; then
   mkdir -p "$ROOT/logs"
   nohup "$ROOT/venv/bin/python" -u "$ROOT/scripts/earnings_fall_scout.py" >> "$ROOT/logs/earnings_fall_scout.log" 2>&1 &
-  echo "$(date) fleet: earnings_fall_scout lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+  echo "$(date) fleet: earnings_fall_scout lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi
 
 if ! pgrep -f "scripts/opt_whale_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/opt_whale_keepalive.sh" >/dev/null 2>&1 &
-  echo "$(date) fleet: opt_whale_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+  echo "$(date) fleet: opt_whale_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi
 
 # cinta de ballenas UW (2026-07-28 "spot whales like tradingflow, usa UW"): flow-alerts
 # capitanes+foco cada 90s/sym -> data/uw_flow_tape.json (widget wgt-flow del cockpit).
 if ! pgrep -f "scripts/uw_flow_tape_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/uw_flow_tape_keepalive.sh" >/dev/null 2>&1 &
-  echo "$(date) fleet: uw_flow_tape_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+  echo "$(date) fleet: uw_flow_tape_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi
 
 # factor overnight de la flecha (2026-07-28 "night compass has as weight the NQ"): NQ/ES +
 # Corea + sentimiento X -> data/overnight_ctx.json (overnight_structure en direction_view).
 if ! pgrep -f "scripts/overnight_feed_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/overnight_feed_keepalive.sh" >/dev/null 2>&1 &
-  echo "$(date) fleet: overnight_feed_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+  echo "$(date) fleet: overnight_feed_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi
 
 # price_alarm estaba en la lista de APAGADO (linea 47 y 60) pero NUNCA en la de
 # arranque: el watcher de alarmas de precio no lo levantaba nadie (medido 2026-07-27).
 if ! pgrep -f "scripts/price_alarm_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/price_alarm_keepalive.sh" >/dev/null 2>&1 &
-  echo "$(date) fleet: price_alarm_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+  echo "$(date) fleet: price_alarm_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi
 
 # Perpetuos: perp_stock_fetch.py era one-shot y su JSON llego a 5h46m rancio; el
 # puente vuelca data/perp_stocks.json -> data/nbbo_<sym>usdt.txt para price_alarm.
 if ! pgrep -f "scripts/perp_stock_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/perp_stock_keepalive.sh" >/dev/null 2>&1 &
-  echo "$(date) fleet: perp_stock_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+  echo "$(date) fleet: perp_stock_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi
 if ! pgrep -f "scripts/perp_nbbo_bridge_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/perp_nbbo_bridge_keepalive.sh" >/dev/null 2>&1 &
-  echo "$(date) fleet: perp_nbbo_bridge_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+  echo "$(date) fleet: perp_nbbo_bridge_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi
 
 # MANADA: era el unico daemon de senal sin keepalive (el denominador de la flota).
 if ! pgrep -f "scripts/fleet_consensus_keepalive.sh" >/dev/null; then
   nohup bash "$ROOT/scripts/fleet_consensus_keepalive.sh" >/dev/null 2>&1 &
-  echo "$(date) fleet: fleet_consensus_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+  echo "$(date) fleet: fleet_consensus_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi
 
 # x_signal_poster (2026-07-21): postea en X las señales FUERTES de la flota
@@ -353,15 +353,15 @@ fi
 # data/x_plan_budget.json (10 posts/dia, $4/mes) con x_plan_poster/postmortem.
 if ! pgrep -f "scripts/x_signal_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/x_signal_keepalive.sh" >/dev/null 2>&1 &
-  echo "$(date) fleet: x_signal_keepalive lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+  echo "$(date) fleet: x_signal_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi
 
 # ---- dip alert (mision B5 2026-07-22): valuacion 1x/dia + vigia de dips RTH ----
 # finviz_valuation idempotente (<24h no re-baja). dip_alert muere solo 15:30.
-"$ROOT/venv/bin/python" "$ROOT/scripts/finviz_valuation.py" >> "$ROOT/dip_alert.log" 2>&1
+"$ROOT/venv/bin/python" "$ROOT/scripts/finviz_valuation.py" >> "$ROOT/logs/dip_alert.log" 2>&1
 HHMM=$(date +%H%M); DOW=$(date +%u)
 if [ "$DOW" -le 5 ] && [ "$HHMM" -ge 0930 ] && [ "$HHMM" -lt 1530 ] \
    && ! pgrep -f "scripts/dip_alert.py" >/dev/null; then
-  nohup "$ROOT/venv/bin/python" -u "$ROOT/scripts/dip_alert.py" >> "$ROOT/dip_alert.log" 2>&1 &
-  echo "$(date) fleet: dip_alert lanzado (pid $!)" >> "$ROOT/fleet_autostart.log"
+  nohup "$ROOT/venv/bin/python" -u "$ROOT/scripts/dip_alert.py" >> "$ROOT/logs/dip_alert.log" 2>&1 &
+  echo "$(date) fleet: dip_alert lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi

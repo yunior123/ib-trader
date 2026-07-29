@@ -33,7 +33,7 @@ export GLD_S_CANDLE=1
 while true; do
   pkill -x gld_signal_bot 2>/dev/null
   sleep 1
-  ./gld_signal_bot >> gld_signals.log 2>&1
-  echo "$(date) gld_signal_bot salio; relanzando" >> gld_signals.log
+  bots/gld_signal_bot >> logs/gld_signals.log 2>&1
+  echo "$(date) gld_signal_bot salio; relanzando" >> logs/gld_signals.log
   sleep 30
 done

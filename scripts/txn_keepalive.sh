@@ -34,7 +34,7 @@ export TXN_TREND_VWAP=0
 while true; do
   pkill -x txn_signal_bot 2>/dev/null
   sleep 1
-  ./txn_signal_bot >> txn_signals.log 2>&1
-  echo "$(date) txn_signal_bot salio; relanzando" >> txn_signals.log
+  bots/txn_signal_bot >> logs/txn_signals.log 2>&1
+  echo "$(date) txn_signal_bot salio; relanzando" >> logs/txn_signals.log
   sleep 30
 done

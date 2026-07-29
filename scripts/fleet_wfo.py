@@ -82,7 +82,7 @@ class WFORunner:
     def __init__(self, sym):
         self.sym = sym
         self.low = sym.lower()
-        self.bin = os.path.join(ROOT, f"{self.low}_signal_bot")
+        self.bin = os.path.join(ROOT, "bots", f"{self.low}_signal_bot")
         self.base = load_keepalive_env(sym)
         lines = [ln for ln in open(os.path.join(ROOT, "data", f"bt_{self.low}.txt")) if ln.strip()]
         t0, t1 = float(lines[0].split()[0]), float(lines[-1].split()[0])

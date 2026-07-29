@@ -55,7 +55,7 @@ class Runner:
         self.sym = sym
         self.low = sym.lower()
         self.hist = os.path.join(ROOT, "data", f"bt_{self.low}.txt")
-        self.bin = os.path.join(ROOT, f"{self.low}_signal_bot")
+        self.bin = os.path.join(ROOT, "bots", f"{self.low}_signal_bot")
         self.base = load_keepalive_env(sym)
         with open(self.hist) as f:
             self.bars = f.read()

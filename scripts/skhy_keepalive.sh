@@ -16,7 +16,7 @@ export SKHY_SPREAD_MAX=0.4
 while true; do
   pkill -x skhy_signal_bot 2>/dev/null
   sleep 1
-  ./skhy_signal_bot >> skhy_signals.log 2>&1
-  echo "$(date) skhy_signal_bot salio; relanzando" >> skhy_signals.log
+  bots/skhy_signal_bot >> logs/skhy_signals.log 2>&1
+  echo "$(date) skhy_signal_bot salio; relanzando" >> logs/skhy_signals.log
   sleep 30
 done

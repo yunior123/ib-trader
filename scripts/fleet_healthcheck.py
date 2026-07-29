@@ -548,7 +548,7 @@ def main():
               + ("" if me_label is None else f" | mi label launchd: {me_label} (excluido del audit)")]
     report = "\n".join(lines)
     print(report)
-    with open(os.path.join(REPO, "healthcheck.log"), "a") as f:
+    with open(os.path.join(REPO, "logs", "healthcheck.log"), "a") as f:
         f.write(f"\n{report}\n")
 
     # notificacion Mac (siempre) + email (si critico o avisos, o diario)

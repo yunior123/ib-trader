@@ -1,0 +1,16 @@
+{
+ "ts": 1785242236,
+ "sym": "GLW",
+ "veredicto": "bear",
+ "rating": "Underweight",
+ "prob": null,
+ "tesis": "Initiate a 0.5x short position in GLW near $118.39 with a tight stop at $128 (above the 10-EMA), targeting partial profits at $108 and a final leg to $100. This is a hedged bearish stance: the wall decay data for 4+|ROUND (39.1% hold rate) and 4+|NEG (47.1%) regimes confirms support deterioration, but first-touch walls still hold at 57.8%, and RSI near oversold (28.96\u201335) warns of a potential bounce. Position small and manage risk tightly; if $134 holds as support on a retest, the bearish thesis is invalidated.",
+ "niveles": [
+  {
+   "tipo": "target",
+   "nivel": 100.0
+  }
+ ],
+ "latency_s": 178.2,
+ "fuente": "tradingagents"
+}

@@ -6,7 +6,7 @@ cd "$(dirname "$0")/.."
 while true; do
   pkill -x price_alarm 2>/dev/null
   sleep 1
-  ./price_alarm >> price_alarm.log 2>&1
-  echo "$(date) price_alarm salio; relanzando" >> price_alarm.log
+  ./price_alarm >> logs/price_alarm.log 2>&1
+  echo "$(date) price_alarm salio; relanzando" >> logs/price_alarm.log
   sleep 30
 done

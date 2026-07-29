@@ -21,16 +21,16 @@ tail -n0 -F "$F" 2>/dev/null | while read -r line; do
   now_s=$(date +%s); line_s=$(date -j -f '%Y-%m-%d %H:%M' "$(date +%F) $hh" +%s 2>/dev/null || echo $now_s)
   age=$(( now_s - line_s ))
   if (( age > 45 || age < -60 )); then
-    echo "$(date +%H:%M:%S) DESCARTADA (${age}s vieja): ${line:0:60}" >> notify_relay.log; continue
+    echo "$(date +%H:%M:%S) DESCARTADA (${age}s vieja): ${line:0:60}" >> logs/notify_relay.log; continue
   fi
   [[ "$line" == "$LAST" ]] && continue
   # PRIORIDAD: SELL/STOP/TERREMOTO/DANGER/🌋 saltan el cap 1/5s (cazado 2026-07-27:
   # el cap mato dos señales SELL seguidas, las mejores del dia).
   if (( now_s - LASTSENT < 5 )); then
     if echo "$line" | grep -qE 'SELL|STOP|TERREMOTO|DANGER|🌋'; then
-      echo "$(date +%H:%M:%S) PRIORIDAD salta cap: ${line:0:50}" >> notify_relay.log
+      echo "$(date +%H:%M:%S) PRIORIDAD salta cap: ${line:0:50}" >> logs/notify_relay.log
     else
-      echo "$(date +%H:%M:%S) CAP 1/5s: ${line:0:50}" >> notify_relay.log; continue
+      echo "$(date +%H:%M:%S) CAP 1/5s: ${line:0:50}" >> logs/notify_relay.log; continue
     fi
   fi
   LAST="$line"; LASTSENT=$now_s
@@ -41,5 +41,5 @@ tail -n0 -F "$F" 2>/dev/null | while read -r line; do
       -H "Authorization: Bearer $RESEND_KEY" -H "Content-Type: application/json" \
       -d "{\"from\":\"onboarding@resend.dev\",\"to\":[\"$RESEND_TO\"],\"subject\":\"🚨 flota: ${msg:0:60}\",\"text\":\"$msg\"}" >/dev/null &
   fi
-  echo "$(date +%H:%M:%S) ENVIADA: ${msg:0:60}" >> notify_relay.log
+  echo "$(date +%H:%M:%S) ENVIADA: ${msg:0:60}" >> logs/notify_relay.log
 done

@@ -17,7 +17,7 @@ export USO_SCORE_MIN=9
 while true; do
   pkill -x uso_signal_bot 2>/dev/null
   sleep 1
-  ./uso_signal_bot >> uso_signals.log 2>&1
-  echo "$(date) uso_signal_bot salio; relanzando" >> uso_signals.log
+  bots/uso_signal_bot >> logs/uso_signals.log 2>&1
+  echo "$(date) uso_signal_bot salio; relanzando" >> logs/uso_signals.log
   sleep 30
 done

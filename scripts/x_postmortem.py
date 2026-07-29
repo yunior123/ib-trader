@@ -22,7 +22,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import x_post_common as xc
 
 ROOT = xc.ROOT
-LOG_FILE = os.path.join(ROOT, "x_postmortem.log")
+LOG_FILE = os.path.join(ROOT, "logs", "x_postmortem.log")
 DOC_FILE = os.path.join(ROOT, "docs", "POSTMORTEM-X.md")
 MAX_POSTS = 2
 TOP_N = 5
