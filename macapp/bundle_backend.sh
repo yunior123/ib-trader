@@ -183,3 +183,8 @@ mkdir -p "$RES/backend/voice_samples"
 [ -f macapp/speak_with_fallback.py ] && cp macapp/speak_with_fallback.py "$RES/backend/"
 [ -f macapp/generate_voice_samples.sh ] && cp macapp/generate_voice_samples.sh "$RES/backend/"
 [ -d macapp/voice_samples ] && cp -r macapp/voice_samples/* "$RES/backend/voice_samples/" 2>/dev/null || true
+# banco de clips (la VOZ de la app: 114 clips Matilda) + reproductor + textos fuente
+mkdir -p "$RES/backend/voice_bank"
+[ -d macapp/voice_bank ] && cp macapp/voice_bank/*.mp3 "$RES/backend/voice_bank/" 2>/dev/null || true
+[ -f macapp/voice_player.py ] && cp macapp/voice_player.py "$RES/backend/"
+[ -f macapp/voice_bank_texts.txt ] && cp macapp/voice_bank_texts.txt "$RES/backend/"
