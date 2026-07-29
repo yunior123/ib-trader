@@ -43,3 +43,10 @@
 - [ ] "relanza todo, build macos new version" (Yunior 2026-07-29, en curso — rebuild .app Cockpit en macOS 26.5.1 + relanzar flota)
 - [ ] "send agent to review finviz failure" (Yunior 2026-07-29, delegado a agente)
 - [ ] Mudanza feeds.env->config/ dejada A MEDIAS: 17 consumidores leen la raiz (finviz_scout.cpp:92, x_whale_bot.cpp:365, notify_relay.sh:14, picaro.sh, weekly_autoimprove.sh, daily_fleet_plans.py:77, options_hunter.py, polygon_dl.py, poly_client.py, ta_view.py, real_option_scorer.py, reconstruct_flow*.py x3, finviz_auth_check.py, earnings_fall_scout.py, yoel_real_options_backtest.py). PARCHE ya puesto: symlink raiz feeds.env->config/feeds.env (gitignored, no viaja). Falta el barrido durable a config/feeds.env + recompilar los 2 .cpp. (2026-07-29, hallazgo del agente finviz, pendiente)
+- [ ] "ajustar un poco la ui, ux, que no se sienta como una app vibecoded... que luzca bien profesional" (Yunior 2026-07-29, delegado a agente)
+- [ ] "explorar la logica de calculo en señales, para refinar de ser posible" (Yunior 2026-07-29, delegado a agente)
+- [ ] "finviz notifications does not stop, check that" (Yunior 2026-07-29, en curso)
+- [ ] **"send agent to do all work. save to memo that u always rebuild new version when work
+      done, save to claude.md"** (Yunior 2026-07-29 ~07:10) — delegado a 2 agentes: (A) barrido
+      feeds.env 17 consumidores + recompilar finviz_scout/x_whale_bot; (B) overnight en
+      compass.cpp. Regla "rebuild siempre al cerrar trabajo" guardada en CLAUDE.md + memoria.
