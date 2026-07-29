@@ -255,6 +255,22 @@ def compute(sym, lv=None):
     except Exception:
         pass
 
+    # 4e) ESTRUCTURA DE CADENAS de majors+ETFs+indices hermanos (Yunior 2026-07-28: "weight all
+    #     major companies... including big etfs, options chain in those etfs, spy, spx").
+    #     MULTIPLICATIVO sobre fleet/components via apply_peer (doctrina: jamas factor aditivo).
+    #     PEER_STRUCT=0 apaga.
+    if os.environ.get("PEER_STRUCT") != "0" and sym in ("QQQ", "SPY") \
+            and ("fleet" in weights or "components" in weights):
+        try:
+            from peer_structure import peer_coef, apply_peer
+            local_dir = factors.get("components") or factors.get("fleet") or 0.0
+            ps_coef, ps_why = peer_coef(sym, local_dir)
+            if ps_coef != 1.0:
+                weights = apply_peer(weights, ps_coef)
+                why.append(ps_why)              # el coeficiente aplicado SIEMPRE impreso
+        except Exception:
+            pass
+
     # 5) momentum reciente
     mom = _bars_mom(sym)
     if mom is not None:
