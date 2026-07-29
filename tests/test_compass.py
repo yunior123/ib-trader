@@ -18,7 +18,7 @@ import subprocess
 import pytest
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BIN = os.path.join(REPO, "bin", "compass")
+BIN = os.environ.get("COMPASS_TEST_BIN", os.path.join(REPO, "bin", "compass"))
 
 S_REV = "REVERSION EN EXTREMO"
 S_CONT = "CONTINUACION"
@@ -187,7 +187,9 @@ def test_approaching_without_print_is_not_a_confident_arrow():
     r = run(ev_put_wall(bars=bars_touching(740.0, 1, 740.6)))
     assert r["state"] == S_APPR
     assert r["pending_print"] is True
-    assert r["dir"] == "up", "senala el rebote PENDIENTE, marcado como no impreso"
+    assert r["dir"] == "flat", "un candidato sin print no puede verse como flecha verde operable"
+    assert r["candidate_dir"] == "up"
+    assert r["signal_kind"] == "countertrend_pullback_candidate"
     assert any("esperando print" in w for w in r["state_why"])
 
 
@@ -199,7 +201,8 @@ def test_second_reading_promotes_to_reversal():
 
 
 def test_approaching_prob_is_lower_than_printed():
-    assert run(ev_put_wall(bars=bars_touching(740.0, 1, 740.6)))["prob"] < run(ev_put_wall())["prob"]
+    assert run(ev_put_wall(bars=bars_touching(740.0, 1, 740.6)))["prob"] is None
+    assert run(ev_put_wall())["prob"] is not None
 
 
 # ------------------------------------------------------------------- familias
@@ -302,19 +305,96 @@ def test_box_and_none_have_no_amplitude():
         assert r["amplitude"] is None and r["mag"] == 0.0 and r["target"] is None
 
 
+def test_qqq_countertrend_pullback_is_candidate_not_green_up():
+    """Replay semántico del bug 2026-07-29: r6 rebota dentro de tendencia 15m bajista.
+    Puede ser pullback real; no equivale a edge alcista ni debe colorear la flecha."""
+    r = run({
+        "sym": "QQQ", "spot": 667.44, "em": 8.0, "regime": "NEG", "flip": 680.0,
+        "levels": [{"price": 675.0, "kind": "Muro call", "wall_kind": "trampilla"}],
+        "bars": [[i * 60, 667.4, 667.6, 667.2, 667.44, 1e6] for i in range(4)],
+        "r6": 0.08, "r15": -0.72, "z6": 0.18,
+        "calib_lo": 0.62, "calib_n": 120,
+    })
+    assert r["state"] == S_CONT
+    assert r["candidate_dir"] == "up"
+    assert r["dir"] == "flat"
+    assert r["prob"] is None and r["prob_source"] == "sin_edge"
+    assert r["signal_kind"] == "countertrend_pullback_candidate"
+
+
+def test_replay_qqq_20260729_1136_up50_has_no_predictive_edge():
+    """Caso exacto: QQQ 11:36 UP@50; +5m=-0.129%, +15m=-0.112%, +30m=-0.508%.
+    r6/r15 estaban apenas verdes, pero la celda NEG tenía Wilson-lo 46.48%."""
+    r = run({
+        "sym": "QQQ", "spot": 667.56, "em": 8.0, "regime": "NEG",
+        "levels": [{"price": 675.0, "kind": "Muro call", "wall_kind": "trampilla"}],
+        "bars": [[i * 60, 667.5, 667.7, 667.3, 667.56, 1e6] for i in range(4)],
+        "r6": 0.09296, "r15": 0.02997, "z6": 0.18,
+        "calib_lo": 0.4648, "calib_wr30": 0.4955, "calib_n": 1009,
+    })
+    assert r["candidate_dir"] == "up"
+    assert r["dir"] == "flat" and r["prob"] is None
+    assert r["prob_source"] == "sin_edge"
+
+
+def test_measured_wilson_at_or_below_chance_is_not_clamped_to_green_50():
+    """Caso real CONT|f0|NEG: lo=46.48%; antes clamp(50,90) => UP/DOWN 50 'medido'."""
+    r = run({
+        "sym": "GENERIC", "spot": 100.0, "em": 2.0, "regime": "NEG",
+        "levels": [{"price": 95.0, "kind": "Muro put", "wall_kind": "trampilla"}],
+        "bars": [[i * 60, 100.0, 100.1, 99.9, 100.0, 1e6] for i in range(4)],
+        "r6": -0.45, "r15": -0.90, "z6": -1.2,
+        "calib_lo": 0.4648, "calib_n": 1009,
+    })
+    assert r["candidate_dir"] == "down"
+    assert r["dir"] == "flat"
+    assert r["prob"] is None and r["prob_source"] == "sin_edge"
+    assert r["signal_kind"] == "no_predictive_edge"
+
+
+def test_rule_is_general_not_a_semiconductor_whitelist():
+    r = run({
+        "sym": "UNLISTED", "spot": 50.0, "em": 1.0, "regime": "NEG",
+        "levels": [{"price": 55.0, "kind": "Muro call", "wall_kind": "trampilla"}],
+        "bars": [[i * 60, 50.0, 50.1, 49.9, 50.0, 1e6] for i in range(4)],
+        "r6": 0.20, "r15": -0.80, "z6": 0.4,
+    })
+    assert r["candidate_dir"] == "up" and r["dir"] == "flat"
+    assert r["signal_kind"] == "countertrend_pullback_candidate"
+
+
+def test_opposite_bandwalk_cannot_promote_countertrend_candidate():
+    """Un band-walk bajista no puede servir de gate a un r6 alcista de pullback."""
+    r = run({
+        "sym": "QQQ", "spot": 667.0, "em": 8.0, "regime": "NEG", "flip": 680.0,
+        "levels": [{"price": 675.0, "kind": "Muro call", "wall_kind": "trampilla"}],
+        "bars": [[i * 60, 667.0, 667.2, 666.8, 667.0, 1e6] for i in range(4)],
+        "r6": 0.12, "r15": -0.70, "z6": 0.3,
+        "bandwalk_tf": 3, "bandwalk_dir": -1,
+    })
+    assert r["candidate_dir"] == "up"
+    assert r["dir"] == "flat"
+    assert r["signal_kind"] == "countertrend_pullback_candidate"
+
+
 # ------------------------------------------------------------------- histeresis
 def test_hysteresis_needs_two_consecutive_computes():
-    """Regla 3: un computo aislado NO cambia el estado; dos consecutivos si."""
+    """Regla 3: una barra aislada NO cambia el estado; dos barras distintas sí."""
     a = run(dict(ev_put_wall(), use_hist=True))
     assert a["state"] == S_REV
     h = a["hist"]
     flip1 = run(dict(ev_put_wall(bandwalk_tf=3, bandwalk_dir=-1), use_hist=True,
-                     hist_state=h["state"], hist_cand=h["cand"], hist_n=h["n"]))
+                     hist_state=h["state"], hist_dir=h["dir"],
+                     hist_cand=h["cand"], hist_cand_dir=h["cand_dir"], hist_n=h["n"],
+                     hist_cand_bar=h["cand_bar"]))
     assert flip1["state"] == S_REV, "el primer computo discrepante no cambia el estado"
     assert flip1["state_pending"] == S_CONT
     h = flip1["hist"]
-    flip2 = run(dict(ev_put_wall(bandwalk_tf=3, bandwalk_dir=-1), use_hist=True,
-                     hist_state=h["state"], hist_cand=h["cand"], hist_n=h["n"]))
+    flip2 = run(dict(ev_put_wall(bandwalk_tf=3, bandwalk_dir=-1,
+                                 bars=bars_touching(740.0, 4, 740.6)), use_hist=True,
+                     hist_state=h["state"], hist_dir=h["dir"],
+                     hist_cand=h["cand"], hist_cand_dir=h["cand_dir"], hist_n=h["n"],
+                     hist_cand_bar=h["cand_bar"]))
     assert flip2["state"] == S_CONT, "el segundo consecutivo si cambia"
 
 
@@ -323,18 +403,55 @@ def test_hysteresis_resets_on_flapping():
     a = run(dict(ev_put_wall(), use_hist=True))
     h = a["hist"]
     b = run(dict(ev_put_wall(bandwalk_tf=3, bandwalk_dir=-1), use_hist=True,
-                 hist_state=h["state"], hist_cand=h["cand"], hist_n=h["n"]))
+                 hist_state=h["state"], hist_dir=h["dir"],
+                 hist_cand=h["cand"], hist_cand_dir=h["cand_dir"], hist_n=h["n"],
+                 hist_cand_bar=h["cand_bar"]))
     h = b["hist"]
     c = run(dict(ev_put_wall(regime=""), use_hist=True,
-                 hist_state=h["state"], hist_cand=h["cand"], hist_n=h["n"]))
+                 hist_state=h["state"], hist_dir=h["dir"],
+                 hist_cand=h["cand"], hist_cand_dir=h["cand_dir"], hist_n=h["n"],
+                 hist_cand_bar=h["cand_bar"]))
     assert c["state"] == S_REV
-    assert c["hist"]["n"] == 0
+    assert c["hist"]["n"] == 1, "el candidato nuevo empieza en 1; no hereda el anterior"
+
+
+def test_hysteresis_covers_direction_inside_same_state():
+    """Bug real: la histéresis sólo miraba el estado CONTINUACION; UP/DOWN podía alternar
+    cada minuto sin pasar por HYST_N."""
+    def trend(r, n=4):
+        return {
+            "sym": "QQQ", "spot": 667.0, "em": 8.0, "regime": "NEG",
+            "levels": [{"price": 680.0, "kind": "Muro call", "wall_kind": "trampilla"}],
+            "bars": [[i * 60, 667, 667.2, 666.8, 667, 1e6] for i in range(n)],
+            "r6": r, "r15": r * 2, "z6": 1.2 if r > 0 else -1.2,
+            "calib_lo": 0.53, "calib_wr30": 0.58, "calib_n": 100, "use_hist": True,
+        }
+    down = run(trend(-0.3))
+    assert down["state"] == S_CONT and down["dir"] == "down"
+    h = down["hist"]
+    up1 = run(dict(trend(0.3), hist_state=h["state"], hist_dir=h["dir"],
+                   hist_cand=h["cand"], hist_cand_dir=h["cand_dir"], hist_n=h["n"],
+                   hist_cand_bar=h["cand_bar"]))
+    assert up1["state"] == S_CONT and up1["dir"] == "flat"
+    assert up1["candidate_dir"] == "up"
+    h = up1["hist"]
+    same_bar = run(dict(trend(0.3), hist_state=h["state"], hist_dir=h["dir"],
+                        hist_cand=h["cand"], hist_cand_dir=h["cand_dir"], hist_n=h["n"],
+                        hist_cand_bar=h["cand_bar"]))
+    assert same_bar["dir"] == "flat"
+    assert same_bar["hist"]["n"] == h["n"], "el loop 250ms no confirma dos veces el mismo bar"
+    h = same_bar["hist"]
+    up2 = run(dict(trend(0.3, n=5), hist_state=h["state"], hist_dir=h["dir"],
+                   hist_cand=h["cand"], hist_cand_dir=h["cand_dir"], hist_n=h["n"],
+                   hist_cand_bar=h["cand_bar"]))
+    assert up2["state"] == S_CONT and up2["dir"] == "up"
+    assert up2["prob"] == 58, "se muestra WR puntual; Wilson-lo sólo es gate"
 
 
 # ----------------------------------------------------------- degradacion limpia
 def test_thin_book_is_sin_lectura_not_an_arrow():
     r = run(ev_put_wall(book_label="THIN"))
-    assert r["state"] == S_NONE and r["dir"] == "flat" and r["prob"] == 50
+    assert r["state"] == S_NONE and r["dir"] == "flat" and r["prob"] is None
     assert any("THIN" in w for w in r["state_why"])
 
 
@@ -390,13 +507,14 @@ def test_contract_keys_always_present():
                ev_put_wall(bars=bars_touching(740.0, 1, 740.6)), ev_put_wall(regime=""),
                {"sym": "X"}):
         r = run(ev)
-        for k in ("sym", "state", "state_pending", "dir", "prob", "prob_source",
+        for k in ("sym", "state", "state_pending", "dir", "candidate_dir", "signal_kind",
+                  "prob", "prob_source",
                   "pending_print", "families", "families_why", "vetoes", "fading",
                   "state_why", "level", "amplitude", "mag", "target", "grade", "ts"):
             assert k in r, "falta la clave {} en estado {}".format(k, r.get("state"))
         assert "overnight_context" in r
         assert r["dir"] in ("up", "down", "flat")
-        assert 50 <= r["prob"] <= 90
+        assert r["prob"] is None or 51 <= r["prob"] <= 90
 
 
 # --------------------------------------------------------- calibracion: contexto, no prob
@@ -421,4 +539,4 @@ def test_prob_medida_solo_con_calibracion_del_propio_setup():
     """La unica via a 'medido' es la celda del propio setup, inyectada por --ev-stdin."""
     r = run(ev_put_wall(calib_lo=0.71, calib_n=140))
     assert r["prob_source"] == "medido"
-    assert r["prob"] == 71, "la prob medida es el limite inferior de Wilson, no un prior"
+    assert r["prob"] == 71, "sin WR inyectado, el arnés conserva lo como estimación compatible"

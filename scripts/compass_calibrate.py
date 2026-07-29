@@ -62,6 +62,31 @@ def close_at(bars, ts):
     return None
 
 
+def measured_dir(row):
+    """Dirección a evaluar: señal operable o, si quedó neutral, hipótesis candidata."""
+    direction = row.get("dir")
+    if direction in ("up", "down"):
+        return direction
+    candidate = row.get("candidate_dir")
+    return candidate if candidate in ("up", "down") else None
+
+
+def summarize_cells(cells):
+    """Colapsa observaciones correlacionadas a bloques no solapados de mercado."""
+    out = {}
+    for k, c in cells.items():
+        votes = list(c["blocks"].values())
+        n = len(votes)
+        if not n:
+            continue
+        w15 = sum(sum(x[0] for x in v) > len(v) / 2 for v in votes)
+        w30 = sum(sum(x[1] for x in v) > len(v) / 2 for v in votes)
+        out[k] = {"n": n, "n_eff": n, "n_raw": c["n_raw"],
+                  "wr15": round(w15 / n, 4), "wr30": round(w30 / n, 4),
+                  "lo": round(wilson_lo(w30, n), 4)}
+    return out
+
+
 def main():
     if not os.path.exists(LEDGER):
         print("sin ledger todavia; nada que calibrar", file=sys.stderr)
@@ -76,7 +101,8 @@ def main():
                 r = json.loads(ln)
             except json.JSONDecodeError:
                 continue
-            if r.get("dir") not in ("up", "down"):
+            direction = measured_dir(r)
+            if direction is None:
                 continue
             ts, sym, spot = r["ts"], r["sym"], r.get("spot")
             if now - ts < H30 + TOL or not spot:
@@ -100,23 +126,26 @@ def main():
                 exc += 1
                 continue
             spot = entry
-            sgn = 1 if r["dir"] == "up" else -1
+            sgn = 1 if direction == "up" else -1
             fam = min(max(int(r.get("fam", 0)), 0), 4)
             key = f"{r['state']}|f{fam}|{r.get('regime') or 'SIN'}"
-            # celda exacta + celda POOL por estado (toda la flota): la exacta tarda dias en
-            # llegar a n>=30; el pool lo alcanza en horas y es la primera medicion honesta
+            # celda exacta + POOL por estado. Ambos quedan sujetos al mismo n efectivo por
+            # bloques; el pool ya no puede fingir n grande sumando símbolos correlacionados.
+            # Las transiciones del mismo bloque se solapan y los semis se mueven juntos:
+            # contarlas como ensayos independientes inflaba n=1009 y fabricaba precisión.
+            # Una unidad efectiva = un bloque de mercado NO solapado de 30m. Dentro del bloque
+            # se promedia la flota; el bloque acierta sólo si la mayoría acierta.
+            block = (lt.tm_year, lt.tm_yday, mins // 30)
             for k in (key, f"{r['state']}|pool"):
-                c = cells.setdefault(k, {"n": 0, "w15": 0, "w30": 0})
-                c["n"] += 1
-                c["w15"] += 1 if sgn * (c15 - spot) > 0 else 0
-                c["w30"] += 1 if sgn * (c30 - spot) > 0 else 0
+                c = cells.setdefault(k, {"n_raw": 0, "blocks": {}})
+                c["n_raw"] += 1
+                c["blocks"].setdefault(block, []).append(
+                    (1 if sgn * (c15 - spot) > 0 else 0,
+                     1 if sgn * (c30 - spot) > 0 else 0))
             rows += 1
-    out = {}
-    for k, c in cells.items():
-        lo = wilson_lo(c["w30"], c["n"])
-        out[k] = {"n": c["n"], "wr15": round(c["w15"] / c["n"], 4),
-                  "wr30": round(c["w30"] / c["n"], 4), "lo": round(lo, 4)}
+    out = summarize_cells(cells)
     meta = {"_meta": {"rows": rows, "excluidas": exc, "ts": int(now),
+                      "n_eff": "bloques de mercado no solapados de 30m; voto mayoritario flota",
                       "fuente": "compass_ledger.jsonl vs bars IBKR 1m, win=cierre a favor"}}
     tmp = OUT + ".tmp"
     with open(tmp, "w") as f:

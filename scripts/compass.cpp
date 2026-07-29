@@ -48,8 +48,8 @@
 //   / retrace (50% de la pata) / em_left (lo que queda del expected move del dia)
 //
 // PRINT O NADA: sin 2 lecturas el estado es APROXIMANDO, jamas la flecha confiada.
-// HISTERESIS: un estado nuevo necesita 2 computos consecutivos (regla 3).
-// HONESTIDAD: prob_source='medido' solo con celda propia n>=30; si no 'doctrina', topada.
+// HISTERESIS: un estado/direccion nuevo necesita 2 BARRAS distintas (no 2 loops de 250ms).
+// HONESTIDAD: prob_source='medido' sólo con n_eff>=30 y Wilson-lo>50%; se muestra WR puntual.
 //   NO se usa prob_retroceso_50 como prob de la flecha: condiciona en "hubo un impulso", no
 //   en "hubo NUESTRO setup". Se publica en amplitude.retrace_prob como lo que es.
 //
@@ -249,7 +249,7 @@ struct Ev {
     std::vector<Level> levels;
     std::vector<Bar> bars;
     // celda de calibracion propia (calibration_ledger): lo unico que puede decir "medido"
-    std::optional<double> calib_lo; std::optional<double> calib_n;
+    std::optional<double> calib_lo, calib_wr; std::optional<double> calib_n;
     // hint de fuente medida (barrier_labels/null_control) + dir override para tests
     std::string calib_source, calib_dir;
     // VIX en vivo (IBKR CBOE): CONTEXTO, no dispara. vix_live=false => cierre anterior.
@@ -488,8 +488,9 @@ static Drivers drivers_for(const Ev& ev) {
 
 
 struct Out {
-    std::string sym, state, state_pending, dir = "flat", prob_source = "doctrina", calib_context;
-    std::optional<int> prob; bool pending_print = false;
+    std::string sym, state, state_pending, dir = "flat", candidate_dir = "flat";
+    std::string signal_kind = "unknown", prob_source = "sin_medir", calib_context;
+    std::optional<int> prob; std::optional<double> prob_n, prob_lo; bool pending_print = false;
     int families = 0;
     std::vector<std::string> families_why, vetoes, fading, state_why;
     bool has_level = false; Level level;
@@ -809,21 +810,27 @@ static void calib_refresh() {
     g_calib_mtime = st.st_mtime;
 }
 static bool calib_cell(const std::string& state, int nfam, const std::string& regime,
-                       std::optional<double>& lo, std::optional<double>& n) {
+                       std::optional<double>& lo, std::optional<double>& wr,
+                       std::optional<double>& n, bool& pooled) {
+    pooled = false;
     calib_refresh();
     if (g_calib_json.empty()) return false;
     std::string key = state + "|f" + std::to_string(std::min(std::max(nfam, 0), 4)) + "|" +
                       (regime.empty() ? "SIN" : regime);
     std::string sec = json_section(g_calib_json, key);
     if (!sec.empty()) {
-        auto cn = jnum(sec, "n"); auto cl = jnum(sec, "lo");
-        if (cn && cl && *cn >= K::CALIB_MIN_N) { n = cn; lo = cl; return false; }
+        auto cn = jnum(sec, "n"); auto cl = jnum(sec, "lo"); auto cw = jnum(sec, "wr30");
+        if (cn && cl && cw && *cn >= K::CALIB_MIN_N) {
+            n = cn; lo = cl; wr = cw; return true;
+        }
     }
     // fallback POOL por estado (flota entera): primera medicion honesta en horas, etiquetada
     sec = json_section(g_calib_json, state + "|pool");
     if (!sec.empty()) {
-        auto cn = jnum(sec, "n"); auto cl = jnum(sec, "lo");
-        if (cn && cl && *cn >= K::CALIB_MIN_N) { n = cn; lo = cl; return true; }
+        auto cn = jnum(sec, "n"); auto cl = jnum(sec, "lo"); auto cw = jnum(sec, "wr30");
+        if (cn && cl && cw && *cn >= K::CALIB_MIN_N) {
+            n = cn; lo = cl; wr = cw; pooled = true; return true;
+        }
     }
     return false;
 }
@@ -836,10 +843,17 @@ static bool calib_cell(const std::string& state, int nfam, const std::string& re
 // setup (nivel impreso + >=2 familias + sin vetos)". Son poblaciones distintas; usarla
 // inflaria la flecha al 90% con una n que no es de este setup. Va en amplitude.retrace_prob.
 static std::pair<std::optional<int>, std::string> prob_of(const std::string& state, int nfam,
-        std::optional<double> calib_lo, std::optional<double> calib_n, bool calib_attempted,
-        const Ev& ev, const Amp& amp) {
-    if (calib_n && *calib_n >= K::CALIB_MIN_N && calib_lo)
-        return {(int)std::lround(clampd(*calib_lo * 100.0, 50, 90)), "medido"};
+        std::optional<double> calib_lo, std::optional<double> calib_wr,
+        std::optional<double> calib_n, bool calib_attempted, const Ev& ev, const Amp& amp) {
+    if (calib_n && *calib_n >= K::CALIB_MIN_N && calib_lo) {
+        // Un Wilson <=50% es evidencia de AUSENCIA de edge, no una probabilidad que deba
+        // maquillarse a 50 y colorearse. Ese clamp produjo los UP verdes durante la caída.
+        if (*calib_lo <= 0.50) return {std::nullopt, "sin_edge"};
+        // El Wilson-lo decide si el edge sobrevive incertidumbre; la cifra mostrada es la
+        // estimación puntual OOS, no el límite inferior (son objetos estadísticos distintos).
+        double estimate = calib_wr.value_or(*calib_lo);
+        return {(int)std::lround(clampd(estimate * 100.0, 51, 90)), "medido"};
+    }
     if (calib_attempted) return {std::nullopt, "sin_medir"};
     double base;
     if (state == S_REV) {
@@ -869,7 +883,10 @@ static double overnight_coef(const Ev& ev, const std::string& dir) {
 }
 
 // ------------------------------- histeresis ---------------------------------
-struct Hist { std::string state, cand; int n = 0; bool has = false; };
+struct Hist {
+    std::string state, dir = "flat", cand, cand_dir = "flat";
+    int n = 0; long cand_bar = 0; bool has = false;
+};
 static std::unordered_map<std::string, Hist> g_hist;
 
 // ------------------------------- classify -----------------------------------
@@ -949,23 +966,35 @@ static Out classify(const Ev& ev, Hist* hist, const std::string& decay_json) {
         }
     }
 
-    // histeresis (regla 3): un estado nuevo necesita HYST_N computos consecutivos
+    // histéresis (regla 3): estado O dirección nuevos necesitan HYST_N barras distintas
     if (hist) {
         std::string want = o.state;
-        if (!hist->has || hist->state == want) {
-            hist->has = true; hist->state = want; hist->cand = want; hist->n = 0;
-        } else if (hist->cand == want) {
-            hist->n += 1;
-            if (hist->n + 1 >= K::HYST_N) { hist->state = want; hist->cand = want; hist->n = 0; }
+        std::string want_dir = o.dir;
+        long bar_id = ev.bars.empty() ? 0 : ev.bars.back().t;
+        if (!hist->has || (hist->state == want && hist->dir == want_dir)) {
+            hist->has = true; hist->state = want; hist->dir = want_dir;
+            hist->cand = want; hist->cand_dir = want_dir; hist->n = 0; hist->cand_bar = bar_id;
+        } else if (hist->cand == want && hist->cand_dir == want_dir) {
+            // El loop corre cada 250ms: contar computos confirmaba el mismo bar en 0.5s y no
+            // frenaba el chatter minuto a minuto. Sólo un timestamp de barra NUEVO confirma.
+            if (bar_id != 0 && bar_id != hist->cand_bar) {
+                hist->cand_bar = bar_id;
+                hist->n += 1;
+            }
+            if (hist->n >= K::HYST_N) {
+                hist->state = want; hist->dir = want_dir;
+                hist->cand = want; hist->cand_dir = want_dir; hist->n = 0; hist->cand_bar = bar_id;
+            }
             else {
-                o.state_pending = want; o.state = hist->state;
+                o.state_pending = want; o.state = hist->state; o.dir = hist->dir;
                 char b[120]; snprintf(b, sizeof b, "estado %s pendiente de confirmar (%d/%d)",
-                                      want.c_str(), hist->n + 1, K::HYST_N);
+                                      want.c_str(), hist->n, K::HYST_N);
                 why.insert(why.begin(), b);
             }
         } else {
-            hist->cand = want; hist->n = 0;
-            o.state_pending = want; o.state = hist->state;
+            hist->cand = want; hist->cand_dir = want_dir;
+            hist->n = bar_id == 0 ? 0 : 1; hist->cand_bar = bar_id;
+            o.state_pending = want; o.state = hist->state; o.dir = hist->dir;
             char b[120]; snprintf(b, sizeof b, "estado %s pendiente de confirmar (1/%d)",
                                   want.c_str(), K::HYST_N);
             why.insert(why.begin(), b);
@@ -999,20 +1028,80 @@ static Out classify(const Ev& ev, Hist* hist, const std::string& decay_json) {
     // el pool de bollinger de null_control), poblacion distinta: usarla aqui es la misma
     // falacia que ya se rechaza arriba con prob_retroceso_50. Se LEE para publicar el
     // veredicto como contexto, y jamas como probabilidad.
-    std::optional<double> calib_lo = ev.calib_lo, calib_n = ev.calib_n;
+    std::optional<double> calib_lo = ev.calib_lo, calib_wr = ev.calib_wr, calib_n = ev.calib_n;
     bool calib_pooled = false;
-    if (g_use_calib_table && !(calib_lo && calib_n))
-        calib_pooled = calib_cell(o.state, o.families, ev.regime, calib_lo, calib_n);
+    bool calib_found = calib_lo && calib_n;
+    if (g_use_calib_table && !calib_found)
+        calib_found = calib_cell(o.state, o.families, ev.regime, calib_lo, calib_wr,
+                                 calib_n, calib_pooled);
     if (o.state == S_REV && !(calib_lo && calib_n)) {
         std::string src0 = !ev.calib_source.empty() ? ev.calib_source
                                                     : calib_source_from_families(o.families_why);
         if (!src0.empty())
             o.calib_context = source_verdict(src0, ev.calib_dir.empty() ? "data" : ev.calib_dir);
     }
-    auto [p, src] = prob_of(o.state, o.families, calib_lo, calib_n, false, ev, o.amp);
+    auto [p, src] = prob_of(o.state, o.families, calib_lo, calib_wr, calib_n,
+                            g_use_calib_table && !calib_found, ev, o.amp);
     o.prob = p; o.prob_source = (src == "medido" && calib_pooled) ? "medido_pool" : src;
+    if (calib_found) { o.prob_n = calib_n; o.prob_lo = calib_lo; }
     o.pending_print = (o.state == S_APPR);
-    if (o.state == S_BOX || o.state == S_NONE) { o.prob = 50; o.dir = "flat"; o.amp = Amp{}; }
+    if (o.state == S_BOX || o.state == S_NONE) {
+        o.prob.reset(); o.prob_source = "sin_lectura"; o.dir = "flat"; o.amp = Amp{};
+    }
+
+    // La direccion candidata y la direccion OPERABLE no son lo mismo. `r6` detecta que acaba
+    // de aparecer un pullback, pero el walk-forward demuestra que su signo solo no anticipa
+    // el siguiente tramo (OOS ~azar). Antes ese candidato se pintaba UP verde inmediatamente.
+    // Solo se publica una flecha direccional cuando hay:
+    //   a) reversion IMPRESA + >=2 familias independientes, o
+    //   b) band-walk >=2 TF (continuacion observada), o
+    //   c) una celda propia/pool cuyo Wilson inferior sea >50%.
+    // APROXIMANDO conserva el aviso temprano en candidate_dir, pero queda gris/flat hasta PRINT.
+    o.candidate_dir = (!o.state_pending.empty() && hist) ? hist->cand_dir : o.dir;
+    bool measured_edge = o.prob && (o.prob_source == "medido" ||
+                                    o.prob_source == "medido_pool") && *o.prob > 50;
+    int candidate_sign = o.candidate_dir == "up" ? 1
+                       : (o.candidate_dir == "down" ? -1 : 0);
+    bool bandwalk_edge = o.state == S_CONT && ev.bandwalk_tf >= K::BANDWALK_TF_MIN &&
+                         ev.bandwalk_dir != 0 && candidate_sign != 0 &&
+                         candidate_sign == sgn((double)ev.bandwalk_dir);
+    if (!o.state_pending.empty()) {
+        o.signal_kind = "transition_candidate";
+        o.dir = "flat";
+        o.prob.reset();
+        o.prob_source = "esperando_bar";
+        why.insert(why.begin(), "cambio candidato: esperando segunda barra distinta");
+    } else if (o.state == S_REV && o.candidate_dir != "flat") {
+        o.signal_kind = "reversal_confirmed";
+    } else if (o.state == S_APPR && o.candidate_dir != "flat") {
+        o.signal_kind = "countertrend_pullback_candidate";
+        o.dir = "flat";
+        o.prob.reset();
+        o.prob_source = "esperando_print";
+        why.insert(why.begin(), "pullback candidato, NO edge alcista/bajista hasta confirmar print");
+    } else if (o.state == S_CONT && o.candidate_dir != "flat") {
+        int cand = candidate_sign;
+        int context = sgn(ev.r15.value_or(0.0));
+        if (!bandwalk_edge && context != 0 && cand != context) {
+            o.signal_kind = "countertrend_pullback_candidate";
+            o.dir = "flat";
+            o.prob.reset();
+            o.prob_source = "sin_edge";
+            why.insert(why.begin(),
+                       "pullback contra tendencia 15m: candidato, NO señal alcista/bajista");
+        } else if (bandwalk_edge) {
+            o.signal_kind = "continuation_multitf";
+        } else if (measured_edge) {
+            o.signal_kind = "predictive_edge_measured";
+        } else {
+            o.signal_kind = "no_predictive_edge";
+            o.dir = "flat";
+            o.prob.reset();
+            if (o.prob_source != "sin_edge") o.prob_source = "sin_medir";
+            why.insert(why.begin(),
+                       "sin edge predictivo > azar: se observa la tendencia, flecha neutral");
+        }
+    }
     o.overnight_score = ev.overnight_score;
     o.overnight_nq = ev.overnight_nq;
     o.overnight_korea = ev.overnight_korea;
@@ -1047,12 +1136,22 @@ static std::string to_json(const Out& o) {
     s += "\"state_pending\":" + (o.state_pending.empty() ? std::string("null")
                                  : "\"" + jesc(o.state_pending) + "\"") + ",";
     s += "\"dir\":\"" + o.dir + "\",";
+    s += "\"candidate_dir\":\"" + o.candidate_dir + "\",";
+    s += "\"signal_kind\":\"" + jesc(o.signal_kind) + "\",";
     if (o.prob)
-        snprintf(b, sizeof b, "\"prob\":%d,\"prob_source\":\"%s\",\"pending_print\":%s,\"families\":%d,",
-                 *o.prob, o.prob_source.c_str(), o.pending_print ? "true" : "false", o.families);
+        snprintf(b, sizeof b, "\"prob\":%d,\"prob_source\":\"%s\",\"prob_n\":%s,\"prob_lo\":%s,"
+                 "\"pending_print\":%s,\"families\":%d,",
+                 *o.prob, o.prob_source.c_str(),
+                 o.prob_n ? std::to_string((long)std::llround(*o.prob_n)).c_str() : "null",
+                 o.prob_lo ? std::to_string(*o.prob_lo).c_str() : "null",
+                 o.pending_print ? "true" : "false", o.families);
     else
-        snprintf(b, sizeof b, "\"prob\":null,\"prob_source\":\"%s\",\"pending_print\":%s,\"families\":%d,",
-                 o.prob_source.c_str(), o.pending_print ? "true" : "false", o.families);
+        snprintf(b, sizeof b, "\"prob\":null,\"prob_source\":\"%s\",\"prob_n\":%s,\"prob_lo\":%s,"
+                 "\"pending_print\":%s,\"families\":%d,",
+                 o.prob_source.c_str(),
+                 o.prob_n ? std::to_string((long)std::llround(*o.prob_n)).c_str() : "null",
+                 o.prob_lo ? std::to_string(*o.prob_lo).c_str() : "null",
+                 o.pending_print ? "true" : "false", o.families);
     s += b;
     s += "\"calib_context\":" + (o.calib_context.empty() ? std::string("null")
                                  : "\"" + jesc(o.calib_context) + "\"") + ",";
@@ -1186,7 +1285,7 @@ static Ev ev_from_json(const std::string& j) {
     e.overnight_score = opt("overnight_score");
     e.overnight_nq = opt("overnight_nq");
     e.overnight_korea = opt("overnight_korea");
-    e.calib_lo = opt("calib_lo"); e.calib_n = opt("calib_n");
+    e.calib_lo = opt("calib_lo"); e.calib_wr = opt("calib_wr30"); e.calib_n = opt("calib_n");
     if (auto s = jstr(j, "calib_source")) e.calib_source = *s;
     if (auto s = jstr(j, "calib_dir")) e.calib_dir = *s;
     if (auto s = jstr(j, "regime")) e.regime = *s;
@@ -1475,15 +1574,20 @@ int main(int argc, char** argv) {
         // histeresis opcional en test: "hist_state"/"hist_cand"/"hist_n"
         Hist h; bool use_h = false;
         if (auto s = jstr(j, "hist_state")) { h.state = *s; h.has = true; use_h = true; }
+        if (auto s = jstr(j, "hist_dir")) { h.dir = *s; use_h = true; }
         if (auto s = jstr(j, "hist_cand")) { h.cand = *s; use_h = true; }
+        if (auto s = jstr(j, "hist_cand_dir")) { h.cand_dir = *s; use_h = true; }
         if (auto v = jnum(j, "hist_n")) { h.n = (int)*v; use_h = true; }
+        if (auto v = jnum(j, "hist_cand_bar")) { h.cand_bar = (long)*v; use_h = true; }
         if (jbool(j, "use_hist", false)) use_h = true;
         Out o = classify(e, use_h ? &h : nullptr, decay);
         std::string js = to_json(o);
         // devolver tambien el histerico resultante, para que el test encadene computos
         js.pop_back();
-        js += ",\"hist\":{\"state\":\"" + jesc(h.state) + "\",\"cand\":\"" + jesc(h.cand) +
-              "\",\"n\":" + std::to_string(h.n) + "}}";
+        js += ",\"hist\":{\"state\":\"" + jesc(h.state) + "\",\"dir\":\"" + jesc(h.dir) +
+              "\",\"cand\":\"" + jesc(h.cand) + "\",\"cand_dir\":\"" + jesc(h.cand_dir) +
+              "\",\"n\":" + std::to_string(h.n) +
+              ",\"cand_bar\":" + std::to_string(h.cand_bar) + "}}";
         printf("%s\n", js.c_str());
         return 0;
     }
@@ -1513,16 +1617,21 @@ int main(int argc, char** argv) {
             // ledger de transiciones: 1 linea por cambio de estado/dir -> lo mide
             // compass_calibrate.py contra las barras y alimenta compass_calib.json
             if (e.spot && o.state != S_NONE) {
-                std::string sig = o.state + "|" + o.dir;
+                // Aunque `dir` sea flat por falta de edge, conservar el candidato permite
+                // medirlo fuera de muestra y promoverlo en el futuro si realmente mejora.
+                // No mezclar semánticas: `dir` sigue siendo lo operable; candidate_dir es
+                // sólo la hipótesis que alimenta el calibrador.
+                std::string sig = o.state + "|" + o.dir + "|" + o.candidate_dir;
                 auto& last = led_last[SYM];
                 if (last != sig) {
                     if (FILE* lf = fopen("data/compass_ledger.jsonl", "a")) {
                         fprintf(lf,
                             "{\"ts\":%ld,\"sym\":\"%s\",\"state\":\"%s\",\"dir\":\"%s\","
+                            "\"candidate_dir\":\"%s\",\"signal_kind\":\"%s\","
                             "\"prob\":%s,\"prob_source\":\"%s\",\"fam\":%d,\"regime\":\"%s\","
                             "\"spot\":%.4f}\n",
                             (long)time(nullptr), jesc(SYM).c_str(), jesc(o.state).c_str(),
-                            o.dir.c_str(),
+                            o.dir.c_str(), o.candidate_dir.c_str(), jesc(o.signal_kind).c_str(),
                             o.prob ? std::to_string(*o.prob).c_str() : "null",
                             o.prob_source.c_str(), o.families, jesc(e.regime).c_str(), *e.spot);
                         fclose(lf);

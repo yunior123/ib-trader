@@ -1650,9 +1650,12 @@ async def broadcast_direction(state, lv=None):
     if not dv:
         return
     frame = {"type": "direction", "sym": state.sym.upper(), "dir": dv.get("dir", "flat"),
+             "candidate_dir": dv.get("candidate_dir", "flat"),
+             "signal_kind": dv.get("signal_kind", "unknown"),
              "prob": dv.get("prob"), "why": dv.get("state_why", []),
              "state": dv.get("state"), "state_pending": dv.get("state_pending"),
              "prob_source": dv.get("prob_source"), "prob_n": dv.get("prob_n"),
+             "prob_lo": dv.get("prob_lo"),
              "pending_print": dv.get("pending_print"),
              "families": dv.get("families"), "fading": dv.get("fading", []),
              "vetoes": dv.get("vetoes", []), "level": dv.get("level"),

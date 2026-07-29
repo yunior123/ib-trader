@@ -6,6 +6,17 @@
 
 ## ✅ SESIÓN 2026-07-29
 
+- [x] **Compass predictivo: eliminado el UP/DOWN 50 sin ventaja, sin apagar los pullbacks.**
+      Era sistémico: CONTINUACIÓN elegía dirección sólo con `sign(r6)`, la histéresis
+      ignoraba DIR y repetía la misma barra cada 250 ms, y Wilson 46.48% se maquillaba a
+      `50 medido`. En 30 días `r6` quedó alrededor del azar OOS; hoy los UP a +30m fueron
+      AMD 0/12, MU 0/10, QQQ 1/13 y SMH 2/11. Ahora △/▽ gris conserva el candidato
+      temprano; ▲/▼ exige reversión impresa+2 familias, band-walk MTF alineado o edge OOS
+      con Wilson-lo >50%. La cifra es WR puntual, la dirección requiere dos barras
+      distintas, y 1,476 observaciones NEG correlacionadas colapsan a 18 bloques efectivos
+      (WR30 38.89%, lo 20.30%). Agente fresco + revisión principal; 983 tests verdes,
+      52 pruebas compass/calibración bajo ASan+UBSan y JSON vivo QQQ/SMH verificado.
+
 - [x] **Netflix: flujo PUTS + confirmación BB correlacionados sin fabricar anticipación.**
       Cronología real: SPIKE PUTS 11:37:18, voz terminada 11:37:24, reentrada BB nacida
       11:38:30 con la barra siguiente; no hubo cola tardía. El mensaje corto había perdido
