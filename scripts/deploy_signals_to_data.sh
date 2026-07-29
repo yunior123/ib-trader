@@ -8,9 +8,9 @@ FORCE=0
 for a in "$@"; do [ "$a" = "--force" ] && FORCE=1; done
 # Portero horario (orden Yunior 2026-07-26): pkill sin guarda mataba la flota EN
 # SESION VIVA. ./fleet_hours exit 0 = LIVE -> abortar salvo --force.
-if [ -x ./fleet_hours ]; then
-  if ./fleet_hours >/dev/null 2>&1 && [ "$FORCE" -ne 1 ]; then
-    echo "🔴 ventana LIVE ($(./fleet_hours --why)) — deploy ABORTADO, no se mata la flota."
+if [ -x bin/fleet_hours ]; then
+  if bin/fleet_hours >/dev/null 2>&1 && [ "$FORCE" -ne 1 ]; then
+    echo "🔴 ventana LIVE ($(bin/fleet_hours --why)) — deploy ABORTADO, no se mata la flota."
     echo "   Forzar con: zsh scripts/deploy_signals_to_data.sh --force"
     exit 1
   fi

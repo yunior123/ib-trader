@@ -9,7 +9,7 @@ WIN = 0.055          # ventana del perfil alrededor del spot
 
 
 def fleet_touch_curve():
-    db = os.path.join(ROOT, "trades.db")
+    db = os.path.join(ROOT, "data", "trades.db")
     if not os.path.exists(db):
         return None
     con = sqlite3.connect(f"file:{db}?mode=ro", uri=True)

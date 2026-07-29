@@ -24,7 +24,7 @@
 //
 // Compilar desde el root del repo (canonico, cpp23-fleet):
 //   clang++ -std=c++2c -O3 -mcpu=native -Wall -Wextra -o price_alarm scripts/price_alarm.cpp
-#include "../fleet_notify.h"   // banner + espejo Desktop (root del repo)
+#include "../bots/fleet_notify.h"   // banner + espejo Desktop (root del repo)
 
 #include <sys/stat.h>
 #include <unistd.h>

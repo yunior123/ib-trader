@@ -159,7 +159,7 @@ def direction(kind, source, msg):
 
 # ---------------------------------------------------------------- run
 def main():
-    c = sqlite3.connect(os.path.join(REPO, "trades.db"))
+    c = sqlite3.connect(os.path.join(REPO, "data", "trades.db"))
     rows = c.execute("SELECT ts_epoch, ts_txt, kind, source, symbol, msg FROM signals "
                      "WHERE date=? ORDER BY ts_epoch", (DAY,)).fetchall()
     c.close()

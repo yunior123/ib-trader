@@ -52,7 +52,7 @@ def _load_finnhub_key():
     if _FINNHUB_KEY is not None:
         return _FINNHUB_KEY
     _FINNHUB_KEY = ""
-    envp = os.path.join(REPO, "feeds.env")
+    envp = os.path.join(REPO, "config", "feeds.env")
     if os.path.exists(envp):
         for line in open(envp):
             line = line.strip()

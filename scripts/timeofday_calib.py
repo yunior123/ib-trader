@@ -26,7 +26,7 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(REPO); sys.path.insert(0, os.path.join(REPO, "scripts"))
 from eod_backtest import wilson
 
-DB = os.path.join(REPO, "trades.db")
+DB = os.path.join(REPO, "data", "trades.db")
 SHRINK_K = 20        # fuerza del prior bayesiano (= V6Prob en nvda_signal_bot.cpp)
 DEAD_HI = 45         # si el Wilson-hi de una celda < esto (con n grande) = muerta
 DEAD_N = 15

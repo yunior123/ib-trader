@@ -22,7 +22,7 @@ _REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def _load_env():
-    for name in ("llm.env", "feeds.env"):
+    for name in ("config/llm.env", "config/feeds.env"):
         p = os.path.join(_REPO, name)
         if os.path.exists(p):
             for line in open(p):

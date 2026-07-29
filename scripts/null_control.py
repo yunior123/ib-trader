@@ -57,7 +57,7 @@ if os.path.join(REPO, "scripts") not in sys.path:
 import barrier_labels as BL                      # noqa: E402  (misma casa, ficha #1)
 from timeofday_calib import BUCKETS, bucket_of   # noqa: E402
 
-DB = os.path.join(REPO, "trades.db")
+DB = os.path.join(REPO, "data", "trades.db")
 DB_RO = "file:" + DB + "?mode=ro"
 
 SKILL_DIR = os.path.expanduser("~/.claude/skills/stats-trading-risk/scripts")

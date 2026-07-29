@@ -2,7 +2,7 @@
 """test_fleet_consensus.py — arnes de test de la alarma de MANADA (scripts/fleet_consensus.cpp).
 
 Python aqui es SOLO arnes (orden Yunior 2026-07-25: "python solo para test, la computacion en
-C++"). El calculo vive entero en el binario ./fleet_consensus; estos tests le inyectan un
+C++"). El calculo vive entero en el binario bin/fleet_consensus; estos tests le inyectan un
 snapshot de flota por stdin con --ev-stdin y verifican su veredicto JSON. Cero computo en Python.
 
 El test #1 es el BUG HISTORICO del 2026-07-25: 21 abajo + 4 simbolos sin datos + 5 arriba.
@@ -18,14 +18,14 @@ import subprocess
 import pytest
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BIN = os.path.join(REPO, "fleet_consensus")
+BIN = os.path.join(REPO, "bin", "fleet_consensus")
 FLEET = open(os.path.join(REPO, "data", "fleet.txt")).read().split()
 CAPS = ["SPY", "QQQ", "SMH"]
 NF = len(FLEET)
 
 pytestmark = pytest.mark.skipif(
     not os.path.exists(BIN),
-    reason="falta el binario ./fleet_consensus — corre ./scripts/build_fleet_consensus.sh")
+    reason="falta el binario bin/fleet_consensus — corre ./scripts/build_fleet_consensus.sh")
 
 
 def run(ev, binary=None):
@@ -315,10 +315,10 @@ def test_produccion_mapa_gex_rancio_no_vota(tmp_path):
 
 
 # ------------------------------------------------- ASan: memoria limpia con basura y vacio
-ASAN = os.path.join(REPO, "fleet_consensus_asan")
+ASAN = os.path.join(REPO, "bin", "fleet_consensus_asan")
 
 
-@pytest.mark.skipif(not os.path.exists(ASAN), reason="falta ./fleet_consensus_asan")
+@pytest.mark.skipif(not os.path.exists(ASAN), reason="falta bin/fleet_consensus_asan")
 @pytest.mark.parametrize("payload", ["", "{}", "{{{ basura ]]]", '{"syms":[{"sym":"QQQ"}]}'])
 def test_asan_sin_errores(payload):
     p = subprocess.run([ASAN, "--ev-stdin"], input=payload, capture_output=True,
@@ -328,7 +328,7 @@ def test_asan_sin_errores(payload):
     assert "runtime error" not in p.stderr
 
 
-@pytest.mark.skipif(not os.path.exists(ASAN), reason="falta ./fleet_consensus_asan")
+@pytest.mark.skipif(not os.path.exists(ASAN), reason="falta bin/fleet_consensus_asan")
 def test_asan_con_el_bug_historico():
     r = run(snapshot(dn=21, up=5, dead=4), binary=ASAN)
     assert r["consensus"] is None

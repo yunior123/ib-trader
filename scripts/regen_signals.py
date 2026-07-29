@@ -75,7 +75,7 @@ os.chdir(REPO)
 if os.path.join(REPO, "scripts") not in sys.path:
     sys.path.insert(0, os.path.join(REPO, "scripts"))
 
-DB = os.path.join(REPO, "trades.db")
+DB = os.path.join(REPO, "data", "trades.db")
 DB_RO = "file:" + DB + "?mode=ro"
 SHIM = os.path.join(REPO, "scripts", "regen_shim")
 PY = os.path.join(REPO, "venv", "bin", "python")
@@ -676,9 +676,9 @@ def cmd_verify_replay(args):
     Asi no se reinventa el arnes: se demuestra equivalente al que ya existe."""
     sys.path.insert(0, SHIM)
     from vclock import VClock
-    exe = os.path.join(REPO, "replay")
+    exe = os.path.join(REPO, "bin", "replay")
     if not os.path.exists(exe):
-        raise SystemExit("falta ./replay (corre scripts/build_replay.sh)")
+        raise SystemExit("falta bin/replay (corre scripts/build_replay.sh)")
     date, sym, end = args.date, args.sym.lower(), args.end
     c = ro()
     t0, t1 = epoch_of(date, SESS_START), epoch_of(date, end)
@@ -698,12 +698,12 @@ def cmd_verify_replay(args):
                         "--chains", "off", "--levels", "off", "--no-ticks", "--quiet"],
                        capture_output=True, text=True, cwd=REPO, timeout=600)
     if p.returncode != 0:
-        raise SystemExit("./replay fallo: %s" % (p.stderr or p.stdout)[:400])
+        raise SystemExit("bin/replay fallo: %s" % (p.stderr or p.stdout)[:400])
     fa = os.path.join(sb_a, "data", "bars_%s_ibkr.txt" % sym)
     fb = os.path.join(sb_b, "data", "bars_%s_ibkr.txt" % sym)
     A = [l.split() for l in open(fa).read().split("\n") if l.strip()]
     B = [l.split() for l in open(fb).read().split("\n") if l.strip()]
-    print("=== FEEDER vs ./replay  %s %s hasta %s ===" % (sym.upper(), date, end))
+    print("=== FEEDER vs bin/replay  %s %s hasta %s ===" % (sym.upper(), date, end))
     print("lineas mias .... %d" % len(A))
     print("lineas replay .. %d" % len(B))
     ok = len(A) == len(B)
@@ -713,7 +713,7 @@ def cmd_verify_replay(args):
         if a[0] != b[0] or any(abs(float(x) - float(y)) > 1e-4 for x, y in zip(a[1:], b[1:])):
             dif += 1
     print("filas distintas  %d" % dif)
-    print("VEREDICTO ...... %s" % ("EQUIVALENTE a ./replay" if ok and dif == 0
+    print("VEREDICTO ...... %s" % ("EQUIVALENTE a bin/replay" if ok and dif == 0
                                    else "DIVERGE — revisar"))
     return 0 if (ok and dif == 0) else 1
 

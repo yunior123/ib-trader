@@ -119,9 +119,9 @@ OPENSSL=/opt/homebrew/opt/openssl@3
 clang++ -std=c++17 -O2 -I"$OPENSSL/include" -L"$OPENSSL/lib" \
   -o x_whale_bot scripts/x_whale_bot.cpp -lcurl -lcrypto
 
-./x_whale_bot --budget          # remaining $
-./x_whale_bot --dry-run         # compose from Finviz, $0
-./x_whale_bot --post-now        # live (needs OAuth1 user keys in x.env)
+bin/x_whale_bot --budget          # remaining $
+bin/x_whale_bot --dry-run         # compose from Finviz, $0
+bin/x_whale_bot --post-now        # live (needs OAuth1 user keys in x.env)
 zsh scripts/x_whale_bot_keepalive.sh   # daemon 09:00 Toronto
 ```
 

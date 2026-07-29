@@ -14,7 +14,7 @@
 #include <ctime>
 #include <sys/stat.h>
 #include <thread>
-#include "../fleet_notify.h"
+#include "../bots/fleet_notify.h"
 
 // Cierre previo MEDIDO de data/bars_<sym>.txt: ultimo close de un dia KST anterior
 // al de hoy. Antes eran 4 constantes del 19-jul (CLAUDE.md #7). <=0 = no medible.

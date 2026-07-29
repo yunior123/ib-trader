@@ -34,9 +34,9 @@ swiftc -O -target arm64-apple-macos13 macapp/main.swift macapp/Settings.swift -o
 
 # --- BRUJULA (C++): la flecha del cockpit ------------------------------------
 # chart_bridge.py ya NO computa la direccion, solo LEE data/compass_<sym>.json. Si
-# la .app no lleva ./compass, el cockpit empaquetado sale sin flecha (o gris/rancia).
+# la .app no lleva bin/compass, el cockpit empaquetado sale sin flecha (o gris/rancia).
 # SECUENCIAL a proposito (Mac 8GB): un solo clang++ a la vez, nunca en paralelo.
-if [ ! -x ./compass ] || [ scripts/compass.cpp -nt ./compass ]; then
+if [ ! -x bin/compass ] || [ scripts/compass.cpp -nt bin/compass ]; then
   # esperar a que no haya OTRO clang++ vivo: en el Mac de 8 GB dos a la vez = swap
   for _ in $(seq 1 120); do
     [ "$(ps aux | grep -c '[c]lang++')" -eq 0 ] && break

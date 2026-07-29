@@ -34,7 +34,7 @@ import tempfile
 from zoneinfo import ZoneInfo
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DB = os.path.join(REPO, "trades.db")
+DB = os.path.join(REPO, "data", "trades.db")
 OUT = os.path.join(REPO, "data", "gaps.json")
 FLEET = os.path.join(REPO, "data", "fleet.txt")
 

@@ -36,7 +36,7 @@ import time
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # NUNCA hardcodear rutas
 sys.path.insert(0, os.path.join(REPO, "scripts"))
-DB = os.path.join(REPO, "trades.db")
+DB = os.path.join(REPO, "data", "trades.db")
 OUT = os.path.join(REPO, "data", "iv_hist_health.json")
 
 import gex_core  # noqa: E402  (tras fijar sys.path)

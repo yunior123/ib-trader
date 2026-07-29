@@ -46,7 +46,7 @@ def token():
     if t:
         return t
     try:
-        for ln in open(os.path.join(REPO, "feeds.env")):
+        for ln in open(os.path.join(REPO, "config", "feeds.env")):
             ln = ln.strip()
             if ln.startswith("FINVIZ_AUTH3="):
                 return ln.split("=", 1)[1].strip().strip('"')

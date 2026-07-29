@@ -2,7 +2,7 @@
 """test_level_react.py — arnes de test del primitivo de NIVELES (scripts/level_react.cpp).
 
 Python aqui es SOLO arnes (orden Yunior 2026-07-25: "python solo para test, la computacion en
-C++"). Todo el calculo vive en ./level_react; estos tests le inyectan barras y niveles por stdin
+C++"). Todo el calculo vive en bin/level_react; estos tests le inyectan barras y niveles por stdin
 con --ev-stdin y verifican el JSON que devuelve. Cero computo en Python.
 
 LO QUE ESTE FICHERO PROTEGE
@@ -26,11 +26,11 @@ import subprocess
 import pytest
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BIN = os.path.join(REPO, "level_react")
+BIN = os.path.join(REPO, "bin", "level_react")
 
 pytestmark = pytest.mark.skipif(
     not os.path.exists(BIN),
-    reason="falta el binario ./level_react — corre ./scripts/build_level_react.sh")
+    reason="falta el binario bin/level_react — corre ./scripts/build_level_react.sh")
 
 
 def run(payload, expect_rc=0):

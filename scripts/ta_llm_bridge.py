@@ -28,7 +28,7 @@ def _load_env_file(path):
 def apply(load_llm_env=True):
     """Copia TA_* -> TRADINGAGENTS_* en os.environ (setdefault: no pisa overrides ya puestos)."""
     if load_llm_env:
-        _load_env_file(os.path.join(REPO, "llm.env"))
+        _load_env_file(os.path.join(REPO, "config", "llm.env"))
     for ta_key, tgt_key in _MAP.items():
         v = os.environ.get(ta_key)
         if v:

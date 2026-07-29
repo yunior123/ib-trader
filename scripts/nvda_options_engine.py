@@ -16,7 +16,7 @@ import os, sys, time, math, sqlite3, statistics as st
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(REPO); sys.path.insert(0, os.path.join(REPO, "scripts"))
 from ib_mode import get_port  # fuente unica: scripts/ib_mode.py (CLAUDE.md #7)
-DB = os.path.join(REPO, "trades.db")
+DB = os.path.join(REPO, "data", "trades.db")
 SYM = "NVDA"
 
 # ---------- parámetros del engine (stop/target) ----------

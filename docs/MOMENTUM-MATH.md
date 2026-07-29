@@ -43,7 +43,7 @@ impulso envejece más allá de lo MEDIDO (data/momentum_decay.json).
       Y  hora ∉ [11:30, 14:00]
     Vender: cuando A > p75 del lado bull O z > +2 (la colina) — lo que llegue primero.
 
-Implementación: `scripts/momentum_calc.cpp` → binario `./momentum_calc SYM` (C++2b -O3).
+Implementación: `scripts/momentum_calc.cpp` → binario `bin/momentum_calc SYM` (C++2b -O3).
 Umbrales medidos: `data/momentum_thresholds.txt` (regenerado semanal por auto-mejora).
 REGLA: el copiloto CORRE el calculador antes de cada veredicto de ticker (junto al
 gráfico y NBBO — regla gráfico-primero).

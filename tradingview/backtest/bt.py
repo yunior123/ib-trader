@@ -39,7 +39,7 @@ SLIPPAGE = 0.0005                 # 0.05% adverse per side
 
 
 def _load_env():
-    for name in ("alpaca.env", "feeds.env", "llm.env"):
+    for name in ("config/alpaca.env", "config/feeds.env", "config/llm.env"):
         p = os.path.join(REPO, name)
         if os.path.exists(p):
             for line in open(p):

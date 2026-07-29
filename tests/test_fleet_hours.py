@@ -2,7 +2,7 @@
 """test_fleet_hours.py — arnes de test del PORTERO de la flota (scripts/fleet_hours.cpp).
 
 Python aqui es SOLO arnes (ley de la casa 2026-07-25: "python solo para test, la computacion
-en C++"). El calculo de la ventana vive entero en ./fleet_hours; estos tests le inyectan
+en C++"). El calculo de la ventana vive entero en bin/fleet_hours; estos tests le inyectan
 instantes con --at y verifican el veredicto. Cero computo de horario en Python — si el test
 calculase la ventana por su cuenta, estariamos testeando el test.
 
@@ -20,14 +20,14 @@ import subprocess
 import pytest
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BIN = os.path.join(REPO, "fleet_hours")
+BIN = os.path.join(REPO, "bin", "fleet_hours")
 START_SH = os.path.join(REPO, "scripts", "fleet_keepalive_start.sh")
 
 LIVE, DEAD = 0, 1
 
 pytestmark = pytest.mark.skipif(
     not os.path.exists(BIN),
-    reason="falta el binario ./fleet_hours — corre ./scripts/build_fleet_hours.sh")
+    reason="falta el binario bin/fleet_hours — corre ./scripts/build_fleet_hours.sh")
 
 
 def run(at, *flags, env=None):
@@ -205,7 +205,7 @@ def _fleet_esta_viva():
                     reason="la flota esta VIVA: este test llama a fleet_stop_all (pkill) y no "
                            "vamos a matar una flota en marcha desde un test")
 def test_10_sin_binario_el_shell_no_arranca_la_flota(tmp_path):
-    """Si ./fleet_hours no existe, fleet_keepalive_start.sh tiene que FALLAR RUIDOSO y no
+    """Si bin/fleet_hours no existe, fleet_keepalive_start.sh tiene que FALLAR RUIDOSO y no
     arrancar nada. Degradar a "pues arranco" es el bug original con otra cara.
 
     No borramos el binario real: montamos un arbol de pega con el script y SIN portero.

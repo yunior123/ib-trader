@@ -191,7 +191,7 @@ def calibrate_barrier(db=None, min_n=BARRIER_MIN_N, out=BARRIER_OUT):
     Devuelve {} si la tabla no existe: el consumidor degrada, pero NUNCA recibe
     una probabilidad inventada."""
     import sqlite3
-    db = db or os.path.join(REPO, "trades.db")
+    db = db or os.path.join(REPO, "data", "trades.db")
     c = sqlite3.connect("file:%s?mode=ro" % db, uri=True, timeout=30)
     try:
         have = c.execute("SELECT name FROM sqlite_master WHERE type='table' AND "

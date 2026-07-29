@@ -2,7 +2,7 @@
 """test_compass.py — arnes de test de la BRUJULA (scripts/compass.cpp).
 
 Python aqui es SOLO arnes de test (orden Yunior 2026-07-25: "python solo para test, la
-computacion en C++"). El calculo vive entero en el binario ./compass; estos tests le inyectan
+computacion en C++"). El calculo vive entero en el binario bin/compass; estos tests le inyectan
 evidencia por stdin con --ev-stdin y verifican el JSON que devuelve. Cero computo en Python.
 
 El test #1 es el escenario literal de Yunior: SPY tocando el Muro put 740 con flujo masivo de
@@ -18,7 +18,7 @@ import subprocess
 import pytest
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BIN = os.path.join(REPO, "compass")
+BIN = os.path.join(REPO, "bin", "compass")
 
 S_REV = "REVERSION EN EXTREMO"
 S_CONT = "CONTINUACION"
@@ -28,7 +28,7 @@ S_NONE = "SIN LECTURA"
 DOCTRINE_CAP = 78
 
 pytestmark = pytest.mark.skipif(
-    not os.path.exists(BIN), reason="falta el binario ./compass — corre ./scripts/build_compass.sh")
+    not os.path.exists(BIN), reason="falta el binario bin/compass — corre ./scripts/build_compass.sh")
 
 
 def run(ev):

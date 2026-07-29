@@ -60,7 +60,7 @@ os.chdir(REPO)
 if os.path.join(REPO, "scripts") not in sys.path:
     sys.path.insert(0, os.path.join(REPO, "scripts"))
 
-DB = os.path.join(REPO, "trades.db")
+DB = os.path.join(REPO, "data", "trades.db")
 DB_RO = "file:" + DB + "?mode=ro"
 
 # ---- TABLAS (aditivo 2026-07-25, ficha de regeneracion) ---------------------

@@ -110,7 +110,7 @@ def token():
     if t:
         return t
     try:
-        with open(os.path.join(REPO, "feeds.env")) as f:
+        with open(os.path.join(REPO, "config", "feeds.env")) as f:
             for ln in f:
                 ln = ln.strip()
                 if ln.startswith("UW_TOKEN="):

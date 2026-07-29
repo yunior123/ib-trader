@@ -137,12 +137,12 @@ OPENSSL=/opt/homebrew/opt/openssl@3
 clang++ -std=c++17 -O2 -I"$OPENSSL/include" -L"$OPENSSL/lib" \
   -o x_whale_bot scripts/x_whale_bot.cpp -lcurl -lcrypto
 
-./x_whale_bot --budget              # month spend remaining
-./x_whale_bot --dry-run             # compose only, $0
-./x_whale_bot --compose-only        # same spirit
-./x_whale_bot --post-now            # 1 live post if gates pass
-./x_whale_bot --post-now --force    # allow 2nd same day; still money-capped
-./x_whale_bot --daemon              # weekdays 09:00–09:15 Toronto window
+bin/x_whale_bot --budget              # month spend remaining
+bin/x_whale_bot --dry-run             # compose only, $0
+bin/x_whale_bot --compose-only        # same spirit
+bin/x_whale_bot --post-now            # 1 live post if gates pass
+bin/x_whale_bot --post-now --force    # allow 2nd same day; still money-capped
+bin/x_whale_bot --daemon              # weekdays 09:00–09:15 Toronto window
 zsh scripts/x_whale_bot_keepalive.sh
 ```
 
@@ -189,7 +189,7 @@ Related: `scripts/finviz_scout.cpp`, `.claude/skills/finviz-elite/SKILL.md`.
 | Symptom | Fix |
 |---------|-----|
 | HTTP 401/403 | Add OAuth1 **user** Read+Write tokens to `x.env` |
-| FINVIZ empty / ROTO | `./finviz_scout --once`; check `FINVIZ_AUTH3` |
+| FINVIZ empty / ROTO | `bin/finviz_scout --once`; check `FINVIZ_AUTH3` |
 | BLOCK budget | Wait next calendar month or stop posting |
 | Already posted today | Wait next day or `--force` (still capped by $ and max/month) |
 | Compile missing openssl | `-I/opt/homebrew/opt/openssl@3/include -L.../lib` |

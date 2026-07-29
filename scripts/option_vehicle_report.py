@@ -133,7 +133,7 @@ for f in ("GIRO A CALLS", "GIRO A PUTS"):
 
 # ---- comparacion pareada con el subyacente
 sec("8. PAREADO CONTRA EL SUBYACENTE (mismas señales, mismo instante)")
-c = sqlite3.connect(os.path.join(REPO, "trades.db"))
+c = sqlite3.connect(os.path.join(REPO, "data", "trades.db"))
 u = {}
 for ts, sym, hz, ret, win in c.execute(
         "SELECT ts_txt,symbol,horizon,ret,win FROM backtest_signal_outcomes "

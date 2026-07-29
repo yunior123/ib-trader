@@ -17,7 +17,7 @@ log() { echo "$(date '+%F %T') ensure: $1" >> "$ROOT/screener/ensure.log"; }
 # fuera de ese horario todo muerto, salvo para testing") ---
 # launchd corre este supervisor cada 2 min, asi que sin esta guarda RESUCITA la flota que
 # `fleet_keepalive_start.sh` acaba de apagar. Medido: eso paso el sabado 2026-07-25 a las
-# 16:44:51, 11 s despues del apagado. El calculo vive en C++ (./fleet_hours): 0=LIVE 1=DEAD.
+# 16:44:51, 11 s despues del apagado. El calculo vive en C++ (bin/fleet_hours): 0=LIVE 1=DEAD.
 # Portero ausente => NO se arranca nada (degradar a "pues arranco" seria el mismo fallo).
 if [[ -x "$ROOT/fleet_hours" ]]; then
   if ! "$ROOT/fleet_hours" >/dev/null 2>&1; then

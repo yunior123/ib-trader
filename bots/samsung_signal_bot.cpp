@@ -247,7 +247,7 @@ static void play(const char* f, const char* fb) {
     std::system(cmd);
 }
 
-#include "../fleet_notify.h"
+#include "fleet_notify.h"
 
 // ---- notifications: Mac (posix_spawn C++) + ops log (solo Mac desde 2026-07-09)
 static void notify(const char* title, const char* msg, bool urgent) {

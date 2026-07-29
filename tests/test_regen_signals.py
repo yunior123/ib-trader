@@ -5,7 +5,7 @@
    Si esto falla, las señales regeneradas son ficcion y todo lo que salga de ahi no vale.
 2. `signals` (ledger vivo de 8 daemons) queda INTACTA byte a byte tras una corrida.
 3. DETERMINISMO: misma semilla -> mismas señales.
-Mas: equivalencia del feeder con ./replay, y que barrier_labels por defecto sigue
+Mas: equivalencia del feeder con bin/replay, y que barrier_labels por defecto sigue
 apuntando a `signals`/`barrier_outcomes` (el cambio es aditivo, no un cambio de conducta).
 """
 import hashlib
@@ -23,7 +23,7 @@ sys.path.insert(0, os.path.join(REPO, "scripts"))
 PY = os.path.join(REPO, "venv", "bin", "python")
 if not os.path.exists(PY):
     PY = sys.executable
-DB = os.path.join(REPO, "trades.db")
+DB = os.path.join(REPO, "data", "trades.db")
 
 import regen_signals as RS                                          # noqa: E402
 
@@ -192,8 +192,8 @@ def test_same_seed_same_signals():
 
 
 # ---------------------------------------------------- extra: paridad con replay
-@pytest.mark.skipif(not os.path.exists(os.path.join(REPO, "replay")),
-                    reason="./replay no compilado")
+@pytest.mark.skipif(not os.path.exists(os.path.join(REPO, "bin", "replay")),
+                    reason="bin/replay no compilado")
 def test_feeder_matches_replay():
     date = _pick_date()
     c = RS.ro()
@@ -202,7 +202,7 @@ def test_feeder_matches_replay():
     p = subprocess.run([PY, os.path.join(REPO, "scripts", "regen_signals.py"),
                         "verify-replay", "--date", date, "--sym", sym, "--end", "11:00"],
                        capture_output=True, text=True, cwd=REPO, timeout=900)
-    assert "EQUIVALENTE a ./replay" in p.stdout, p.stdout + p.stderr[-800:]
+    assert "EQUIVALENTE a bin/replay" in p.stdout, p.stdout + p.stderr[-800:]
     assert p.returncode == 0
 
 

@@ -1219,13 +1219,10 @@ def gamma_by_expiry(rows, spot, scale="house"):
     for r in rows:
         try:
             exp_str = str(r.get("exp", ""))
-            if len(exp_str) == 8:  # YYYYMMDD
-                exp_ts = int(exp_str[:4] + exp_str[4:6] + exp_str[6:8] + "160000", 16) if exp_str[6:8].isdigit() else 0
-                if not exp_ts:
-                    from datetime import datetime as dt
-                    exp_ts = int(dt.strptime(exp_str, "%Y%m%d").replace(hour=16).timestamp())
-            else:
+            if len(exp_str) != 8:  # YYYYMMDD
                 continue
+            from datetime import datetime as dt
+            exp_ts = int(dt.strptime(exp_str, "%Y%m%d").replace(hour=16).timestamp())
             dte = max(0, int((exp_ts - now) / 86400))
             gamma = float(r.get("gamma", 0))
             oi = float(r.get("oi", 0))

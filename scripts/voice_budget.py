@@ -60,7 +60,7 @@ BUDGET_PATH = os.path.join("data", "voice_budget.json")
 SPEND_DIR = os.path.join("data", "voice_spend")
 SPOOL_PATH = os.path.join("data", "voice_suppressed.jsonl")
 ENABLE_PATH = os.path.join("data", "voice_budget_enable")
-DB = os.path.join(REPO, "trades.db")
+DB = os.path.join(REPO, "data", "trades.db")
 
 EXIT_SPEAK = 0
 EXIT_SUPPRESS = 42          # el UNICO codigo que silencia; todo lo demas habla

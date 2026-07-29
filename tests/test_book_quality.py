@@ -171,9 +171,9 @@ def test_ledger_ignora_lineas_corruptas(tmp_path):
     assert h["QQQ"]["impact"] == [1e-9]
 
 
-# ------------------------------------- contrato con el consumidor C++ (./compass)
+# ------------------------------------- contrato con el consumidor C++ (bin/compass)
 def test_contrato_book_quality_json_para_compass():
-    """./compass hace json_section(bq, SYM) y luego jstr("book_label") / jnum("coef").
+    """bin/compass hace json_section(bq, SYM) y luego jstr("book_label") / jnum("coef").
     Eso exige que cada simbolo sea un OBJETO con esas dos claves exactas."""
     p = os.path.join(REPO, BQ.OUT_JSON)
     if not os.path.exists(p):

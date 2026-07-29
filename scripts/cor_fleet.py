@@ -49,7 +49,7 @@ import numpy as np
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SCRIPTS = os.path.join(REPO, "scripts")
 DATA = os.path.join(REPO, "data")
-DB_PATH = os.path.join(REPO, "trades.db")
+DB_PATH = os.path.join(REPO, "data", "trades.db")
 OUT_PATH = os.path.join(DATA, "cor_fleet.json")
 HIST_PATH = os.path.join(DATA, "cor_fleet_history.json")
 

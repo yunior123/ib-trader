@@ -2364,6 +2364,17 @@ def create_app(state):
         except Exception as e:
             return JSONResponse({"sym": s, "error": str(e)}, status_code=500)
 
+    _DATA_WL = ("iv_regime.json", "rv_iv_spread.json")   # whitelist: jamas servir data/ entero (BD, envs)
+    @app.get("/data/{fname}")
+    async def data_json(fname: str):
+        if not (fname in _DATA_WL or (fname.startswith("strike_heatmap_") and fname.endswith(".json"))):
+            return JSONResponse({"error": "no servido"}, status_code=404)
+        p = os.path.join(REPO, "data", os.path.basename(fname))
+        if not os.path.exists(p):
+            return JSONResponse({"error": "sin dato aun"}, status_code=404)
+        with open(p) as f:
+            return JSONResponse(json.load(f))
+
     @app.get("/api/gamma_decay")
     async def gamma_decay(sym: str = ""):
         s = (sym or state.sym).upper()
@@ -2387,7 +2398,8 @@ def create_app(state):
             if not rows or not spot:
                 return JSONResponse({"sym": s, "error": "sin chain"}, status_code=404)
             decay = gex_core.gamma_by_expiry(rows, spot)
-            return JSONResponse({"sym": s, "decay_by_dte": decay})
+            # el widget espera lista ordenada [{dte, gamma}] (gdecayDraw hace d.slice)
+            return JSONResponse([{"dte": k, "gamma": v} for k, v in sorted(decay.items())])
         except Exception as e:
             return JSONResponse({"sym": s, "error": str(e)}, status_code=500)
 
@@ -2828,7 +2840,7 @@ def _log_structural(state, sig, key=None):
         import sqlite3
         prob = f" · prob {sig['prob']}% (estructural, no WR medido)" if sig.get("prob") else ""
         msg = f"{sig['text']}{prob}"
-        c = sqlite3.connect(os.path.join(REPO, "trades.db"), timeout=3)
+        c = sqlite3.connect(os.path.join(REPO, "data", "trades.db"), timeout=3)
         c.execute("PRAGMA busy_timeout=3000")
         c.execute("""INSERT OR IGNORE INTO signals
             (ts_epoch,ts_txt,date,kind,symbol,price,priority,source,msg,raw)

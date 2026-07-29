@@ -7,7 +7,7 @@ TOUCH_EXHAUST=3. Eso nunca se midio. Esto lo mide o dice que no se puede.
 import json, os, sqlite3, sys, time
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DB = os.path.join(ROOT, "trades.db")
+DB = os.path.join(ROOT, "data", "trades.db")
 OUT = os.path.join(ROOT, "data", "wall_decay.json")
 
 RHO_FLOTA = 0.41        # medida, docs/NULL-CONTROL-2026-07-25.md; no es un prior

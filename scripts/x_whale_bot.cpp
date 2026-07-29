@@ -21,7 +21,7 @@
 //   ./x_whale_bot --budget           # estado del mes
 //   ./x_whale_bot --daemon           # loop 9:00 Toronto (skip fin de semana)
 //   ./x_whale_bot --compose-only     # imprime texto y sale 0
-#include "../fleet_notify.h"
+#include "../bots/fleet_notify.h"
 
 #include <curl/curl.h>
 #include <openssl/hmac.h>

@@ -1,49 +1,154 @@
-# CLAUDE.md — ib-trader (se lee automáticamente al abrir sesión en este repo)
+# CLAUDE.md — ib-trader (flota de detección de movimientos, C++23+Python)
 
-Índice de punteros, no copia. La doctrina larga vive en `AGENTS.md` (83 KB) y en `docs/`.
+## Sistema (1 línea)
+Flota de 21 signal bots C++ (barras 1m; prob. solo 'medido' con n>=30, si no doctrina etiquetada) + order_engine (doble llave) = anticipar movimientos antes del pico. **SEÑAL-SOLAMENTE POR DEFECTO** (no ejecuta órdenes salvo --arm-live). Tiempo real: IBKR>Polygon>CBOE.
 
-## Lee esto antes de tocar nada
-- **`AGENTS.md`** — órdenes permanentes. Empieza por "ORDENES PERMANENTES DE YUNIOR".
-- **`TODOS.md`** — lo que queda. **Apunta cada petición nueva AL MOMENTO**, con las palabras de Yunior. Lo CERRADO se mueve a `Done.md`.
-- **`~/CLAUDE.md`** — reglas globales (ya cargado por el harness).
+## Estructura del repo
 
-## Las 6 que más rompen cosas
-1. **SEÑAL-SOLAMENTE.** Nada ordena al bróker. Única excepción: `order_engine/` (doble llave, paper-first, disarm-on-exit).
-2. **Prosa PROHIBIDA** (2026-07-26). Comentarios 1 línea solo si el porqué no es obvio; la historia va al mensaje del commit. *Focus on shit done.*
-3. **Ningún `except` devuelve `0`, `0.0`, `0.5`, `50` ni `{}`** en camino de señal → `None` o levanta. Un número plausible convierte "no sé" en "sé, y es cero".
-4. **Tiempo real es prioridad.** IBKR = tiempo real (el DISPARO). Polygon = 15 min (HISTORIA). CBOE = delayed y desigual (ESTRUCTURA). Ningún nivel que dispare una orden viene de fuente delayed. → `docs/LATENCIA-FUENTES.md`
-5. **Dos universos, no uno.** `data/fleet.txt` (30, exige barras 1m, **denominador de MANADA**, 36 lectores) vs `data/universe_gamma.txt` (35, solo exige cadena, no vota). Mezclarlos rompió MANADA. → `docs/UNIVERSOS.md`
-6. **Una sola rama: `main`.** Commit directo, sin feature branches. Verifica con `git branch -a`.
+```
+bin/                16 binarios C++23: compass, fleet_consensus, flow_pulse, 
+                    fleet_hours (portero horario), gate, opt_quick, etc.
+bots/               21 signal bots C++ (aapl_signal_bot, nvda_signal_bot, ... 
+                    + fleet_notify.h: broadcast interno)
+scripts/            daemons Python: ibkr_bar_bridge.py (TWS vivo), 
+                    opt_chain_cache.py, calibration_ledger.py, chart_bridge.py, 
+                    fleet_up.sh (un comando), ib_mode.py (puertos no hardcodeados)
+config/             feeds.env (Polygon key), llm.env, x.env
+data/               fleet.txt (30 tickers), universe_gamma.txt (35), 
+                    ib_mode.txt ("paper"|"live"), trades.db (read-only), 
+                    bars_*.txt (vivos), pos_*.txt (estado)
+logs/               136 .log rotatorios por bot/operación (e.g. aapl_signals.log)
+charts/             live.html (cockpit JS, lightweight-charts, 10 widgets), históricos
+docs/               62 docs: ARCHITECTURE.md (sistema), OPERATIONS.md (runbook), 
+                    DAILY-SYSTEM.md (planes 4am), LATENCIA-FUENTES.md (medido)
+order_engine/       motor C++23: order_engine (binario), arm.sh + disarm.sh 
+                    (doble llave), tests/, ledger/
+scalper/            whale_scalper C++23 (0DTE QQQ sim/shadow)
+engines/            bb_engine, combo_engine (experimentales)
+screener/           escaneres Finviz + picks
+tests/              975 tests: conftest.py, test_*.py (69 archivos), cpp/ (GTest)
+.git/               solo rama main (no branches)
+```
 
-## 7. NADA HARDCODEADO (Yunior 2026-07-27: "evita poner hardcoded shit, it should be dynamic")
-Un valor clavado en el código es un bug esperando su turno. Medido ese día: `IBKR_PORT` con
-default `"4002"` copiado en 4 daemons mientras el Gateway estaba en 4001 → `ibkr_bar_bridge`
-(los 30 símbolos) y `korea_bar_bridge` **100% desconectados en crash-loop**, y `opt_sentinel` +
-`sox_index_feed` reventando cada 20-30 s. Cuatro copias del mismo número, cuatro averías.
-- **Puertos/cuentas/modo** → `scripts/ib_mode.py` y NADA más. Gateway-only por orden; lista
-  configurable por env (`IBT_PAPER_PORTS`/`IBT_LIVE_PORTS`), jamás reescrita en el consumidor.
-- **Rutas** → derivadas de `__file__`. Cero rutas absolutas (la mudanza a `~/ib-trader` mató 3 scripts).
-- **Universos** → `data/fleet.txt` (30, vota MANADA) y `data/universe_gamma.txt` (35, mapa). Jamás
-  una lista de símbolos copiada dentro de un script.
-- **Horarios** → el portero (`./fleet_hours`, `scripts/fleet_window.py`); para KRX, `krx_market()`.
-  Llegó a haber 4 definiciones del horario peleándose. No crees la 5ª.
-- **Cierres previos / niveles de referencia** → SE CALCULAN del dato. Precedente vivo:
-  `scripts/korea_watch.cpp:39` lleva `PCH/PCS/PCK` clavados de hace una semana → calcula Hynix
-  −3,56% y Samsung −1,47% falsos y está a 1350 KRW de cantar un `READTHRU_BEAR` inventado.
-- Si de verdad hace falta una constante: **una sola definición**, con el porqué en 1 línea, y el
-  consumidor la IMPORTA. Duplicarla es el bug.
+## Reglas duras evidentes en código
 
-## Mac de 8 GB
-Un solo `clang++` a la vez: `ps aux | grep -c "[c]lang++"` antes de compilar. Los bots/alarmas ligeros sí van en paralelo.
+1. **Señal-solamente**: bin/*_signal_bot solo grabar alertas; no ordenan. 
+   `order_engine` ejecuta órdenes SOLO si:
+   - `data/ib_mode.txt` = "live" Y
+   - `order_engine/ARM_LIVE` existe (fecha de hoy) Y
+   - se invoca con `--arm-live` flag (doble llave verificada antes de CADA envío)
+   - Por defecto: `--paper` (sin ARM_LIVE no ordena en vivo)
 
-## Flags C++
-`-std=c++2c -O3 -mcpu=native -Wall -Wextra`, cero warnings.
+2. **Ningún except devuelve 0 / 0.0 / 0.5 / 50 / {} en camino de señal**:
+   - Devuelven `None` o levantan excepción (fail-loud)
+   - Ejemplo: `calibration_ledger.py` conecta read-only a trades.db; si falla, no inventa probabilidades
 
-## Verificar antes de creer
-Lo que devuelve un agente se comprueba con fichero:línea. Un informe no es evidencia hasta que se mide. `trades.db` siempre en solo lectura: `sqlite3 "file:trades.db?mode=ro"`.
+3. **Nada hardcodeado de puertos / rutas**:
+   - Puertos IBKR: resueltos dinámicamente vía `scripts/ib_mode.py` 
+     (lee `data/ib_mode.txt` + env `IBT_PAPER_PORTS`/`IBT_LIVE_PORTS`) — JAMAS un puerto clavado en un consumidor (precedente: default 4002 copiado x4 = flota entera desconectada)
+   - Rutas derivadas de `__file__` o `BASH_SOURCE`, no rutas hardcodeadas
+   - Universos (`fleet.txt` 30, `universe_gamma.txt` 35) son data/, no código
 
-## Ventana horaria
-Portero: `./fleet_hours --why`. Flota viva dom 20:00 → vie 20:00 Toronto. Fuera de ahí, muerta a propósito, salvo los perpetuos 24/7 y sus notificaciones/alarmas.
+4. **Escritura atómica**: tmp + `os.replace()` para ficheros leídos en vivo 
+   (ej: `calibration_ledger.py`, `barrier_labels.py`, `book_quality.py`)
 
-## Tests
-`./venv/bin/python -m pytest tests/ -q` (~4 min). Referencia actual: **~690 passed**, 1 fallo preexistente y ajeno en `test_voice_budget.py::test_gate_devuelve_42_solo_al_suprimir`.
+5. **trades.db read-only excepto escritores designados**:
+   - Lectores: `sqlite3.connect("file:data/trades.db?mode=ro", uri=True)`
+   - Escritores: `barrier_labels.py`, cron del order_engine ledger
+
+6. **Una sola rama**: `git branch -a` = `main` + `remotes/origin/main`
+
+7. **Comentarios**: 1 línea si el "por qué" no es obvio. Cabecera del archivo OK (multiline). 
+   Nada de docstrings-ensayo.
+
+8. **Verificación antes de creerlo**: `fichero:línea` en hallazgos, nunca afirmaciones sin rendorizar.
+
+## Cómo correr
+
+### Tests (975 tests)
+```bash
+cd ~/ib-trader
+./venv/bin/python -m pytest tests/ -q    # salida compacta
+./venv/bin/python -m pytest tests/ -v    # detalle
+# Subconjunto: pytest tests/test_compass.py -q
+```
+
+### Compilación C++23
+```bash
+# Binarios individuales (seleccionados tienen build_*.sh):
+cd ~/ib-trader
+zsh scripts/build_compass.sh        # compass
+zsh scripts/build_fleet_hours.sh    # portero horario
+zsh scripts/build_fleet_consensus.sh
+
+# order_engine (complejo, requiere TWS libs vendoreadas):
+cd order_engine && zsh build.sh     # genera order_engine (c++23 -O3 -march=native)
+
+# whale_scalper:
+cd scalper && zsh build.sh
+```
+**Flags C++**: `-std=c++23 -O3 -march=native` (Intel) / `-mcpu=native` (Apple Silicon), 
+`-pthread -Wall -Wextra`, sin warnings.
+
+**Mac 8GB**: compila SECUENCIAL (un solo clang++ a la vez). Verifica con `ps aux | grep -c "[c]lang++"`.
+
+### Portero horario (ib_trader solo dom 20:00→vie 20:00 Toronto)
+```bash
+./bin/fleet_hours          # exit 0 = LIVE, exit 1 = DEAD
+./bin/fleet_hours --why    # explica por qué está muerto/vivo
+./bin/fleet_hours --json   # JSON para scripts
+```
+Override testing: `export FLEET_FORCE=1` o crear `data/FLEET_FORCE`.
+
+### Levantar flota (señal-solamente)
+```bash
+zsh scripts/fleet_up.sh             # todos los bots + puentes + alarmas
+zsh scripts/fleet_up.sh --chart     # + cockpit gráfico (browser)
+zsh scripts/fleet_up.sh --status    # solo informa, no arranca nada
+
+# Pasar a LIVE (lo único manual):
+zsh scripts/ib_mode.sh live         # cambia data/ib_mode.txt
+zsh scripts/fleet_up.sh              # relanza con puerto 4001 (Gateway live)
+```
+
+### Ejecutar órdenes (doble llave: order_engine + ARM_LIVE)
+```bash
+order_engine/arm.sh                         # llave 1: crea data/order_engine/ARM_LIVE
+order_engine/run.sh --arm-live --sym QQQ   # llave 2: requiere ARM_LIVE presente
+order_engine/disarm.sh                      # remover ARM_LIVE
+```
+
+## Datos críticos
+
+| Archivo | Qué es | Ejemplo |
+|---|---|---|
+| `data/fleet.txt` | 30 tickers (vota en alertas) | QQQ SPY NVDA ... STX |
+| `data/universe_gamma.txt` | 35 (mapa + 5 índices) | fleet.txt + SPX XSP NDX DIA IWM |
+| `data/ib_mode.txt` | "paper" \| "live" (resuelve puerto) | paper |
+| `data/trades.db` | SQLite: operaciones realizadas (read-only) | queries en backtest_harness.py |
+| `data/pos_*.txt` | Estado virtual de cada bot | EPOCH ENTRY TRAIL FLOOR TARGET |
+
+## Documentación clave
+
+- **ARCHITECTURE.md**: diseño completo (plano de datos, motores, contratos de fichero, latencias medidas)
+- **OPERATIONS.md**: runbook de arranque/parada, matanza, health checks, troubleshooting
+- **DAILY-SYSTEM.md**: cron autónomo (04:00 full, 08:30 refresh, 09:12 apertura) → 26 PDFs/ticker + email + X
+- **LATENCIA-FUENTES.md**: IBKR realtime, Polygon 15min (401 /v3/trades), CBOE delayed (SPY 21h)
+
+## Cambios de Yunior: APUNTA EN TODOS.md
+
+Cada nueva petición durante sesión → `TODOS.md` al momento con sus palabras exactas + fecha + estado:
+```
+- [ ] [descripción exacta del pedido] (2026-07-29, pendiente)
+- [x] [descripción] (2026-07-28, hecho commit_hash)
+```
+Al cerrar: TODOS.md es la única fuente de lo que queda; lo CERRADO se mueve a `Done.md`.
+
+## NUNCA revertir trabajo de codex ni de Yunior (orden 2026-07-29)
+Yunior manda tareas a codex directamente en paralelo: lo que parezca "trabajo no pedido" puede
+ser orden suya. Si algo rompe consumidores: ADAPTAR hacia delante o reportar con números —
+jamás `git revert/checkout`. Y en briefs a agentes: prohibido git destructivo (un checkout de
+scripts/ destruyó fixes ajenos el 2026-07-29).
+
+---
+**Actualizado**: 2026-07-29 | **Rama**: main | **Sistemas**: 21 bots, 975 tests, 1 orden_engine doble-llave

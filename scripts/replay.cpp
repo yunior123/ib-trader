@@ -625,7 +625,7 @@ int main(int argc, char** argv) {
     if (t_end <= t_start) die("--end debe ser posterior a --start");
 
     sandbox_guard(out, repo);
-    Db db(repo + "/trades.db");
+    Db db(repo + "/data/trades.db");
 
     // carga: warm-up (pasado) + sesion. El warm-up es contexto, no look-ahead.
     std::vector<Feed> feeds;

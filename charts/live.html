@@ -3401,6 +3401,8 @@ window.wgRedraw = function() {
   origWidgetRedraw();
   ivRegDraw(); rvivDraw(); hmapDraw(); bookDraw(); gdecayDraw();
 };
+setTimeout(() => window.wgRedraw(), 1500);      // primer pintado; nadie llamaba a wgRedraw (cargando eterno)
+setInterval(() => window.wgRedraw(), 60000);
 
 </script>
 </body>

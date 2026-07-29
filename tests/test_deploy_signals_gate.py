@@ -27,8 +27,9 @@ def _scaffold(tmp_path, fleet_hours_exit):
     root = tmp_path / "repo"
     (root / "scripts").mkdir(parents=True)
     (root / "data" / "trading-signals").mkdir(parents=True)
+    (root / "bin").mkdir(parents=True)
     shutil.copy(DEPLOY_SCRIPT, root / "scripts" / "deploy_signals_to_data.sh")
-    _make_exec(str(root / "fleet_hours"), f"#!/bin/sh\nexit {fleet_hours_exit}\n")
+    _make_exec(str(root / "bin" / "fleet_hours"), f"#!/bin/sh\nexit {fleet_hours_exit}\n")
     binp = tmp_path / "stubbin"
     binp.mkdir()
     for name in ("pkill", "nohup", "sleep", "python3", "clang++"):
@@ -71,7 +72,7 @@ def test_dead_window_proceeds_without_force(tmp_path):
 
 def test_missing_portero_aborts_loud(tmp_path):
     root, binp = _scaffold(tmp_path, fleet_hours_exit=0)
-    os.remove(root / "fleet_hours")
+    os.remove(root / "bin" / "fleet_hours")
     r = _run(root, binp)
     assert r.returncode == 1
     assert "no se puede verificar" in r.stdout

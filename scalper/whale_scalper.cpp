@@ -23,7 +23,7 @@
 #include "exec_adapter.h"
 #include "ledger.h"
 #include "tail.h"
-#include "../fleet_notify.h"
+#include "../bots/fleet_notify.h"
 
 using namespace scalp;
 

@@ -71,7 +71,7 @@
 #include <utility>
 #include <vector>
 
-#include "../fleet_notify.h"   // banner urgente por posix_spawn + espejo atomico al ledger
+#include "../bots/fleet_notify.h"   // banner urgente por posix_spawn + espejo atomico al ledger
 
 extern char** environ;
 

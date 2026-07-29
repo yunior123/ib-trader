@@ -33,7 +33,7 @@ import os, sys, time, json, sqlite3
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(REPO)
-DB = os.path.join(REPO, "trades.db")
+DB = os.path.join(REPO, "data", "trades.db")
 FLEET = open("data/fleet.txt").read().split()
 
 

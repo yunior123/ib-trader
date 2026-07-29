@@ -187,7 +187,7 @@ hoy) + disarm-on-exit; PAPER(7497) default, LIVE(7496) opt-in; clientId 92.
 - **order_engine/prob_profit.py** — overlay de probabilidad de profit (chip junto al icono buy): 4 capas medidas (gamma/flujo/técnico/agentes). Funcs: `_clamp()`, `_dfav()`, `_days_to_exp()`, `_measured_prob()`, `_gamma_component()`, `_flow_component()`, `_tech_component()`, `_agents_component()`, `prob_profit()`, `_cli()`.
 - **order_engine/prob_profit_test.py** — smoke test sin red, stubbea chart_levels/narrator/direction_view/signal_conditioning para verificar vetos de doctrina. Funcs: `check()`, `_stub()`.
 - **order_engine/smoke_paper.py** — prueba independiente de place/cancel de opciones en PAPER vía ib_insync. Funcs: `_paper_acct()`, `die()`, `main()`.
-- **scripts/optgate.py** — envoltura fina Python del gate C++ (`./gate --json`) para spread de opciones antes de alarma/orden. Funcs: `gate_json()`, `opt_gate()`, `opt_ok()`, `opt_veto()`, `opt_vehicle()`.
+- **scripts/optgate.py** — envoltura fina Python del gate C++ (`bin/gate --json`) para spread de opciones antes de alarma/orden. Funcs: `gate_json()`, `opt_gate()`, `opt_ok()`, `opt_veto()`, `opt_vehicle()`.
 - **scripts/order_ticket.py** — ficha de orden 0DTE para clic humano en IBKR: contrato+límite+size+OI+prob condicionada+veredicto GO/CAUTION/NO-GO. Funcs: `build()`, `_parse_chain()`.
 - **scripts/cancel_all_bot_orders.py** — cancela TODAS las órdenes abiertas (GTC/OCA) que ejecutores retirados dejaron vivas (ley "solo señales"). Script plano, conecta ib_insync.
 

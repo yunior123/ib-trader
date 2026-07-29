@@ -54,7 +54,7 @@ STATE_PATH = os.path.join("data", "truth_lock.json")
 SNAP_DIR = os.path.join("data", "truth_lock_snap")
 EVENTS_PATH = os.path.join("data", "truth_lock_events.jsonl")
 SIGDIR = os.path.join("data", "trading-signals")
-DB = os.path.join(REPO, "trades.db")
+DB = os.path.join(REPO, "data", "trades.db")
 
 WINDOW = 120            # barras cerradas que se congelan
 TICK = 0.01             # 1 tick: por debajo de esto un cambio de precio no es material

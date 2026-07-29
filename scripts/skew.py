@@ -36,7 +36,7 @@ import time
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # NUNCA hardcodear rutas
 HIST = os.path.join(REPO, "data", "history")
-DB = os.path.join(REPO, "trades.db")
+DB = os.path.join(REPO, "data", "trades.db")
 OUT = os.path.join(REPO, "data", "skew.json")
 
 TARGET_DELTA = 0.25

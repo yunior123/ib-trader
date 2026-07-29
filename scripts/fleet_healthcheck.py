@@ -24,7 +24,7 @@ os.chdir(REPO)
 def env(k):
     """Valor de `k` en feeds.env, o None si no existe la clave o el fichero.
     Cualquier otro error de E/S LEVANTA: 'ilegible' no se disfraza de 'sin clave'."""
-    p = os.path.join(REPO, "feeds.env")
+    p = os.path.join(REPO, "config", "feeds.env")
     if not os.path.exists(p):
         return None
     with open(p) as fh:

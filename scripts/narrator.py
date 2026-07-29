@@ -22,7 +22,7 @@ def _load_env():
     key = os.environ.get("DEEPSEEK_API_KEY")
     base = os.environ.get("TA_BACKEND_URL", "https://api.deepseek.com/v1")
     model = os.environ.get("TA_QUICK_MODEL", "deepseek-chat")
-    path = os.path.join(REPO, "llm.env")
+    path = os.path.join(REPO, "config", "llm.env")
     if os.path.exists(path):
         try:
             with open(path) as f:

@@ -23,7 +23,7 @@
 // Compilar: clang++ -std=c++17 -O2 -o finviz_scout scripts/finviz_scout.cpp -lcurl
 // Uso: ./finviz_scout            (loop 24/5, via scripts/finviz_scout_keepalive.sh)
 //      ./finviz_scout --once [SYM...]  (un fetch+parse+write y sale; SYM extra p/tests)
-#include "../fleet_notify.h"
+#include "../bots/fleet_notify.h"
 
 #include <curl/curl.h>
 

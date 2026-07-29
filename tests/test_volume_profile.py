@@ -2,7 +2,7 @@
 """test_volume_profile.py — arnes del POC de VOLUMEN (scripts/volume_profile.cpp).
 
 Python aqui es SOLO arnes (orden Yunior 2026-07-25: "python solo para test, la computacion en
-C++"). Todo el calculo vive en ./volume_profile; estos tests le inyectan barras por stdin con
+C++"). Todo el calculo vive en bin/volume_profile; estos tests le inyectan barras por stdin con
 --stdin y verifican el JSON. Cero computo en Python.
 
 LO QUE ESTE FICHERO PROTEGE
@@ -27,11 +27,11 @@ import subprocess
 import pytest
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BIN = os.path.join(REPO, "volume_profile")
+BIN = os.path.join(REPO, "bin", "volume_profile")
 
 pytestmark = pytest.mark.skipif(
     not os.path.exists(BIN),
-    reason="falta el binario ./volume_profile — corre ./scripts/build_volume_profile.sh")
+    reason="falta el binario bin/volume_profile — corre ./scripts/build_volume_profile.sh")
 
 TS0 = 1721894400000  # 2024-07-25 en ms
 

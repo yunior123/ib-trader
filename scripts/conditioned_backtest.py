@@ -26,7 +26,7 @@ os.chdir(REPO); sys.path.insert(0, os.path.join(REPO, "scripts"))
 from eod_backtest import wilson
 from timeofday_calib import bucket_of
 
-DB = os.path.join(REPO, "trades.db")
+DB = os.path.join(REPO, "data", "trades.db")
 
 
 def load():

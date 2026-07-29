@@ -16,6 +16,7 @@ ROOT="$(pwd)"
 # se matan el bot mutuamente cada ciclo (TODOS.md: "bot asesinado cada 31 s").
 # mkdir es atomico (macOS no trae flock, patron ya usado en speak.sh). Si el lock
 # esta viejo (>120s, instancia anterior murio a medias) se roba.
+mkdir -p "$ROOT/logs"   # los logs viven en logs/ desde la reorg 2026-07-29
 LOCKDIR="$ROOT/data/.fleet_keepalive_start.lockd"
 if ! mkdir "$LOCKDIR" 2>/dev/null; then
   AGE=$(( $(date +%s) - $(stat -f %m "$LOCKDIR" 2>/dev/null || echo 0) ))

@@ -68,7 +68,7 @@ static std::string now_iso() {
     char b[64]; strftime(b, sizeof(b), "%Y-%m-%dT%H:%M:%S%z", &lt);
     return b;
 }
-#include "../fleet_notify.h"
+#include "../bots/fleet_notify.h"
 
 static void notify(const char* title, const char* msg) {
     // URGENTE siempre, posix_spawn C++ sin shell (Yunior 2026-07-10)
@@ -98,7 +98,7 @@ static bool extract_num(const std::string& j, const char* key, double& out, size
 }
 static std::string finnhub_key() {
     static std::string key = [] {
-        std::ifstream f("feeds.env"); std::string line, k;
+        std::ifstream f("config/feeds.env"); std::string line, k;
         while (std::getline(f, line))
             if (line.rfind("FINNHUB_KEY=", 0) == 0) k = line.substr(12);
         while (!k.empty() && (k.back() == '"' || k.back() == '\r' || k.back() == ' ')) k.pop_back();

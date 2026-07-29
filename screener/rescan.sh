@@ -21,7 +21,7 @@ if pgrep -f "screener/scanner.py" >/dev/null; then
   exit 0
 fi
 
-[[ -f "$ROOT/llm.env" ]] && set -a && source "$ROOT/llm.env" && set +a
+[[ -f "$ROOT/config/llm.env" ]] && set -a && source "$ROOT/config/llm.env" && set +a
 export TA_RESEARCH=1
 export TA_RESEARCH_TOPN="${TA_RESEARCH_TOPN:-3}"
 export TA_TIMEOUT="${TA_TIMEOUT:-300}"

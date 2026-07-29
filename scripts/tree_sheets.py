@@ -72,7 +72,7 @@ def oi_by_strike(cs, right, upto_exp=None, only_exp=None):
 
 
 def touch_stats(sym):
-    db = os.path.join(ROOT, "trades.db")
+    db = os.path.join(ROOT, "data", "trades.db")
     if not os.path.exists(db):
         return None
     q = ("select touch_ord, event, count(*) from level_events where sym=? "

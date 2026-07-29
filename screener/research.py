@@ -29,7 +29,7 @@ REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 def _load_env_file(name):
-    p = os.path.join(REPO_ROOT, name)
+    p = os.path.join(REPO_ROOT, "config", name)
     if not os.path.exists(p):
         return
     for line in open(p):

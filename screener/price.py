@@ -23,7 +23,7 @@ def _load_finnhub_key():
     if _FINNHUB_KEY is not None:
         return _FINNHUB_KEY
     _FINNHUB_KEY = ""
-    envp = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "feeds.env")
+    envp = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "config", "feeds.env")
     if os.path.exists(envp):
         for line in open(envp):
             line = line.strip()

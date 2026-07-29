@@ -41,7 +41,7 @@ from collections import defaultdict
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # NUNCA hardcodear rutas
 BIN = os.path.join(REPO, "level_react")
-DB = os.path.join(REPO, "trades.db")
+DB = os.path.join(REPO, "data", "trades.db")
 
 # Barreras de la etiqueta (triple barrera de la casa, feature #1).
 #

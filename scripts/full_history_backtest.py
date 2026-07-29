@@ -27,7 +27,7 @@ except Exception:
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(REPO); sys.path.insert(0, os.path.join(REPO, "scripts"))
-DB = os.path.join(REPO, "trades.db")
+DB = os.path.join(REPO, "data", "trades.db")
 import eod_backtest as E          # reusa wilson()
 
 HOR = [5, 15, 30, 60]

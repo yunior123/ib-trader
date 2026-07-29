@@ -75,7 +75,7 @@ os.chdir(REPO)
 if os.path.join(REPO, "scripts") not in sys.path:
     sys.path.insert(0, os.path.join(REPO, "scripts"))
 
-DB = os.path.join(REPO, "trades.db")
+DB = os.path.join(REPO, "data", "trades.db")
 DB_RO = "file:" + DB + "?mode=ro"
 
 import barrier_labels as BL          # noqa: E402  etiquetado (ficha #1) — NO se reimplementa

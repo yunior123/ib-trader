@@ -68,8 +68,8 @@ pagó hasta el muro de 205. PERO: 3 TF reventados + muro de OI + número redondo
 - (noche) v6.1 RETEST-CONFIRM en los 22 bots (rupturas solo con retest-y-rechazo
   o breakaway; trampas de ballena canceladas + "TRAMPA-EVITADA" al log) +
   `opt_chain_cache.py` (cadenas ±6% ATM cada 3 min, clientId 48 readonly) +
-  `./opt_quick SYM` (P/C, muros, max pain, gates spread/OI al instante) +
-  `./qqq_xray` C++ (regla 4 codificada: top-10 con peso/contrib/tendencia/P/C,
+  `bin/opt_quick SYM` (P/C, muros, max pain, gates spread/OI al instante) +
+  `bin/qqq_xray` C++ (regla 4 codificada: top-10 con peso/contrib/tendencia/P/C,
   DIQUE MSFT+AAPL vs LASTRE semis, veredicto "empate interno / índice libre";
   `--watch` avisa solo al cambiar de estado; cache 21 syms +MSFT AVGO AMZN META)
 - (17-jul madrugada) `finviz_scout` C++ (Finviz Elite: short float/gap/relvol/earnings/target-recom → data/finviz_*.txt 60s premarket/180s RTH, banners solo-cambios, keepalive tras el candado fleet_sleep)

@@ -199,7 +199,7 @@ def _chain_txt(tmp_path, sym, filas, spot, band):
 
 def test_camino_VIVO_libro_sin_cruce_publica_flip_None_no_el_borde(tmp_path):
     """El MISMO defecto que `honest_flip` arregla en el lote, pero en el camino que leen el
-    chart y ./compass: `from_ibkr_cache` -> `build_gex` -> `_flip`.
+    chart y bin/compass: `from_ibkr_cache` -> `build_gex` -> `_flip`.
 
     Medido el 2026-07-27 sobre las cadenas archivadas del 26: EWY publicaba flip 260,0 con
     spot 163,49 (banda 0,6 -> borde 261,58: a 0,97 pp) y SNDK 2300,0 con spot 1440,88

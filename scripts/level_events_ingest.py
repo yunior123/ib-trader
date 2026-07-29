@@ -30,7 +30,7 @@ import time
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # NUNCA hardcodear rutas
 BIN = os.path.join(REPO, "level_react")
-DB = os.path.join(REPO, "trades.db")
+DB = os.path.join(REPO, "data", "trades.db")
 JSONL = os.path.join(REPO, "data", "level_events.jsonl")
 
 RETENTION_DAYS_DB = 180

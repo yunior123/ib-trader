@@ -49,7 +49,8 @@ SIG = {"kind": "magnet", "sym": "nvda", "price": 212.5, "prob": 67,
 def _sandbox(cb, tmp_path, monkeypatch):
     """Reapunta REPO a un sandbox: si la funcion escribe, escribe AHI y lo vemos."""
     monkeypatch.setattr(cb, "REPO", str(tmp_path))
-    db = tmp_path / "trades.db"
+    (tmp_path / "data").mkdir(exist_ok=True)   # la BD vive en data/ desde la reorg 2026-07-29
+    db = tmp_path / "data/trades.db"
     c = sqlite3.connect(db)
     c.execute("""CREATE TABLE signals (ts_epoch REAL, ts_txt TEXT, date TEXT, kind TEXT,
                  symbol TEXT, price REAL, priority TEXT, source TEXT, msg TEXT, raw TEXT)""")

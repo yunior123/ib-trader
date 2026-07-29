@@ -104,13 +104,13 @@ ln -sfn "$HERE/scripts" "$SUPPORT/scripts"
 
 # --- BRUJULA: la flecha la calcula C++, no el Python -------------------------
 # chart_bridge.py solo LEE data/compass_<sym>.json (0.051 ms) — el calculo es
-# ./compass (1.09 ms/simbolo). Si nadie la corre, la flecha sale gris/rancia.
+# bin/compass (1.09 ms/simbolo). Si nadie la corre, la flecha sale gris/rancia.
 # compass lee y escribe RELATIVO al cwd, y el cwd aqui ya es $SUPPORT.
 #
 # SE LANZA POR RUTA ABSOLUTA A PROPOSITO: scripts/compass_keepalive.sh del repo
-# hace `pkill -f "\./compass --loop"`. Si aqui se lanzara como "./compass --loop"
+# hace `pkill -f "\bin/compass --loop"`. Si aqui se lanzara como "bin/compass --loop"
 # los dos se matarian mutuamente (bundle vs repo). Con la ruta absoluta el patron
-# "\./compass" NO casa, asi que conviven.
+# "\bin/compass" NO casa, asi que conviven.
 #
 # HONESTIDAD: la brujula necesita data/bars_<sym>_ibkr.txt, que los produce
 # ibkr_bar_bridge.py — ese puente NO va en el bundle (necesita el Gateway y la
@@ -124,7 +124,7 @@ if [ -x "$COMPASS" ]; then
   # que no quede huerfana cuando el cockpit se cierre
   trap 'kill $COMPASS_PID 2>/dev/null' EXIT INT TERM
 else
-  echo "AVISO: sin ./compass en el bundle — el cockpit ira sin flecha" >&2
+  echo "AVISO: sin bin/compass en el bundle — el cockpit ira sin flecha" >&2
 fi
 
 # sin exec: hay que conservar el trap que mata la brujula al salir
@@ -138,7 +138,14 @@ chmod +x "$RES/backend/run.sh"
 mkdir -p "$RES/engine"
 [ -f order_engine/order_engine ] && cp order_engine/order_engine "$RES/engine/"
 # la BRUJULA (C++): sin ella el cockpit empaquetado no tiene flecha
-[ -x compass ] && cp compass "$RES/engine/" && echo "  brujula empotrada: $(du -h compass | cut -f1)"
+# Busca en bin/compass (donde la compila build.sh en el repo)
+if [ -x "$REPO/bin/compass" ]; then
+  cp "$REPO/bin/compass" "$RES/engine/" && echo "  brujula empotrada: $(du -h "$REPO/bin/compass" | cut -f1)"
+elif [ -x "compass" ]; then
+  cp compass "$RES/engine/" && echo "  brujula empotrada: $(du -h compass | cut -f1)"
+else
+  echo "  AVISO: compass no encontrado en bin/ ni en cwd — sin flecha en el bundle"
+fi
 # disarm.sh SI va (borra ARM_LIVE + SIGTERM al motor: funciona desde cualquier sitio,
 # es la palanca de emergencia y siempre debe estar a mano).
 # arm.sh NO va: deduce el repo de su propia ruta, asi que desde dentro del .app

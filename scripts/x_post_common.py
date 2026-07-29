@@ -19,7 +19,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if os.path.join(ROOT, "scripts") not in sys.path:
     sys.path.insert(0, os.path.join(ROOT, "scripts"))
 BUDGET_FILE = os.path.join(ROOT, "data", "x_plan_budget.json")
-ENV_FILE = os.path.join(ROOT, "x.env")
+ENV_FILE = os.path.join(ROOT, "config", "x.env")
 
 COST_PER_POST = 0.015
 MAX_POSTS_PER_DAY = 10       # cap compartido entre TODOS los posters

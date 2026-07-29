@@ -1,0 +1,236 @@
+{
+ "QQQ": {
+  "iv_current": 0.35,
+  "iv_p10": 0.22,
+  "iv_p50": 0.3,
+  "iv_p90": 0.58,
+  "percentile": 67.0,
+  "regime": "NORMAL",
+  "n_samples": 10298
+ },
+ "SPY": {
+  "iv_current": 0.49,
+  "iv_p10": 0.12,
+  "iv_p50": 0.2,
+  "iv_p90": 0.47,
+  "percentile": 91.0,
+  "regime": "EXPANDED",
+  "n_samples": 9858
+ },
+ "NVDA": {
+  "iv_current": 0.49,
+  "iv_p10": 0.39,
+  "iv_p50": 0.53,
+  "iv_p90": 1.34,
+  "percentile": 43.0,
+  "regime": "NORMAL",
+  "n_samples": 2001
+ },
+ "TSLA": {
+  "iv_current": -1.0,
+  "iv_p10": 0.48,
+  "iv_p50": 0.71,
+  "iv_p90": 1.78,
+  "percentile": 0.0,
+  "regime": "COMPRESSED",
+  "n_samples": 4224
+ },
+ "MU": {
+  "iv_current": 1.39,
+  "iv_p10": 0.97,
+  "iv_p50": 1.18,
+  "iv_p90": 2.11,
+  "percentile": 70.0,
+  "regime": "NORMAL",
+  "n_samples": 8423
+ },
+ "SMH": {
+  "iv_current": 0.73,
+  "iv_p10": 0.54,
+  "iv_p50": 0.67,
+  "iv_p90": 1.16,
+  "percentile": 61.0,
+  "regime": "NORMAL",
+  "n_samples": 5193
+ },
+ "AMD": {
+  "iv_current": 0.98,
+  "iv_p10": 0.83,
+  "iv_p50": 0.97,
+  "iv_p90": 1.71,
+  "percentile": 53.0,
+  "regime": "NORMAL",
+  "n_samples": 6523
+ },
+ "AAPL": {
+  "iv_current": -1.0,
+  "iv_p10": 0.3,
+  "iv_p50": 0.39,
+  "iv_p90": 0.75,
+  "percentile": 0.0,
+  "regime": "COMPRESSED",
+  "n_samples": 2202
+ },
+ "MSFT": {
+  "iv_current": -1.0,
+  "iv_p10": 0.48,
+  "iv_p50": 0.63,
+  "iv_p90": 0.98,
+  "percentile": 0.0,
+  "regime": "COMPRESSED",
+  "n_samples": 3093
+ },
+ "META": {
+  "iv_current": -1.0,
+  "iv_p10": 0.55,
+  "iv_p50": 0.75,
+  "iv_p90": 1.3,
+  "percentile": 0.0,
+  "regime": "COMPRESSED",
+  "n_samples": 5516
+ },
+ "AMZN": {
+  "iv_current": -1.0,
+  "iv_p10": 0.45,
+  "iv_p50": 0.64,
+  "iv_p90": 1.16,
+  "percentile": 0.0,
+  "regime": "COMPRESSED",
+  "n_samples": 2430
+ },
+ "GOOGL": {
+  "iv_current": -1.0,
+  "iv_p10": 0.31,
+  "iv_p50": 0.43,
+  "iv_p90": 1.13,
+  "percentile": 0.0,
+  "regime": "COMPRESSED",
+  "n_samples": 2725
+ },
+ "INTC": {
+  "iv_current": -1.0,
+  "iv_p10": 0.82,
+  "iv_p50": 0.98,
+  "iv_p90": 1.88,
+  "percentile": 0.0,
+  "regime": "COMPRESSED",
+  "n_samples": 3264
+ },
+ "TSM": {
+  "iv_current": 0.65,
+  "iv_p10": 0.49,
+  "iv_p50": 0.63,
+  "iv_p90": 1.31,
+  "percentile": 55.0,
+  "regime": "NORMAL",
+  "n_samples": 1769
+ },
+ "ASML": {
+  "iv_current": 0.79,
+  "iv_p10": 0.61,
+  "iv_p50": 0.72,
+  "iv_p90": 1.2,
+  "percentile": 63.0,
+  "regime": "NORMAL",
+  "n_samples": 5222
+ },
+ "TXN": {
+  "iv_current": 0.68,
+  "iv_p10": 0.55,
+  "iv_p50": 0.69,
+  "iv_p90": 1.47,
+  "percentile": 49.0,
+  "regime": "NORMAL",
+  "n_samples": 1659
+ },
+ "QCOM": {
+  "iv_current": 1.24,
+  "iv_p10": 0.71,
+  "iv_p50": 0.88,
+  "iv_p90": 1.38,
+  "percentile": 84.0,
+  "regime": "NORMAL",
+  "n_samples": 1187
+ },
+ "AVGO": {
+  "iv_current": 0.67,
+  "iv_p10": 0.5,
+  "iv_p50": 0.64,
+  "iv_p90": 1.57,
+  "percentile": 55.0,
+  "regime": "NORMAL",
+  "n_samples": 3776
+ },
+ "NOK": {
+  "iv_current": -1.0,
+  "iv_p10": 0.69,
+  "iv_p50": 0.84,
+  "iv_p90": 1.93,
+  "percentile": 0.0,
+  "regime": "COMPRESSED",
+  "n_samples": 371
+ },
+ "DRAM": {
+  "iv_current": 1.4,
+  "iv_p10": 1.01,
+  "iv_p50": 1.13,
+  "iv_p90": 1.49,
+  "percentile": 86.0,
+  "regime": "NORMAL",
+  "n_samples": 1860
+ },
+ "SPCX": {
+  "iv_current": -1.0,
+  "iv_p10": 1.15,
+  "iv_p50": 1.37,
+  "iv_p90": 1.86,
+  "percentile": 0.0,
+  "regime": "COMPRESSED",
+  "n_samples": 1999
+ },
+ "SKHY": {
+  "iv_current": 1.69,
+  "iv_p10": 1.25,
+  "iv_p50": 1.39,
+  "iv_p90": 1.85,
+  "percentile": 81.0,
+  "regime": "NORMAL",
+  "n_samples": 1604
+ },
+ "LRCX": {
+  "iv_current": -1.0,
+  "iv_p10": 0.93,
+  "iv_p50": 1.13,
+  "iv_p90": 1.64,
+  "percentile": 0.0,
+  "regime": "COMPRESSED",
+  "n_samples": 1764
+ },
+ "SNDK": {
+  "iv_current": 1.82,
+  "iv_p10": 1.38,
+  "iv_p50": 1.56,
+  "iv_p90": 1.93,
+  "percentile": 84.0,
+  "regime": "NORMAL",
+  "n_samples": 5152
+ },
+ "WDC": {
+  "iv_current": -1.0,
+  "iv_p10": 1.08,
+  "iv_p50": 1.29,
+  "iv_p90": 1.83,
+  "percentile": 0.0,
+  "regime": "COMPRESSED",
+  "n_samples": 2936
+ },
+ "STX": {
+  "iv_current": 1.8,
+  "iv_p10": 1.03,
+  "iv_p50": 1.35,
+  "iv_p90": 2.14,
+  "percentile": 81.0,
+  "regime": "NORMAL",
+  "n_samples": 3730
+ }
+}

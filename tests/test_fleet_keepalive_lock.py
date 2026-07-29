@@ -68,7 +68,7 @@ def test_dos_instancias_concurrentes_la_segunda_sale_sin_tocar_nada(tmp_path):
     r_b = _run(root)
     proc_a.wait(timeout=30)
 
-    log = (root / "fleet_autostart.log").read_text() if (root / "fleet_autostart.log").exists() else ""
+    log = (root / "logs" / "fleet_autostart.log").read_text() if (root / "logs" / "fleet_autostart.log").exists() else ""
     assert "OTRA instancia activa" in log, f"la segunda instancia debio ceder el paso:\n{log}"
     assert not (root / "data" / ".fleet_keepalive_start.lockd").exists(), "el lock debe liberarse siempre (trap EXIT)"
 
@@ -80,7 +80,7 @@ def test_corridas_secuenciales_normales_nunca_ven_lock_ajeno(tmp_path):
     r1 = _run(root)
     r2 = _run(root)
     assert r1.returncode == 0 and r2.returncode == 0
-    log = (root / "fleet_autostart.log").read_text() if (root / "fleet_autostart.log").exists() else ""
+    log = (root / "logs" / "fleet_autostart.log").read_text() if (root / "logs" / "fleet_autostart.log").exists() else ""
     assert "OTRA instancia activa" not in log
     assert not (root / "data" / ".fleet_keepalive_start.lockd").exists()
 
@@ -95,6 +95,6 @@ def test_lock_viejo_se_roba_no_se_queda_muerto_para_siempre(tmp_path):
     os.utime(lockdir, (old, old))
     r = _run(root)
     assert r.returncode == 0
-    log = (root / "fleet_autostart.log").read_text()
+    log = (root / "logs" / "fleet_autostart.log").read_text()
     assert "lock viejo" in log
     assert "OTRA instancia activa" not in log

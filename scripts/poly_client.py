@@ -29,7 +29,7 @@ import urllib.parse
 import urllib.request
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DB_PATH = os.path.join(REPO, "trades.db")
+DB_PATH = os.path.join(REPO, "data", "trades.db")
 STATE_DIR = os.path.join(REPO, "data")
 RATE_STATE = os.path.join(STATE_DIR, "poly_rate_state.json")
 

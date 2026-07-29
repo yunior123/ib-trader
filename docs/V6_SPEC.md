@@ -254,7 +254,7 @@ Pasos por bot (idempotente — salta si `MOTOR v6` ya presente):
 
 Keepalives: añadir a cada `scripts/<sym>_keepalive.sh` los exports v6 que difieran del default (minimo: nada — defaults del template valen; el WFO de M3 escribira overrides). NO tocar parametros clasicos existentes.
 
-`scripts/fleet_keepalive_start.sh`: añadir (idempotente via pgrep) el lanzamiento de `./price_alarm >> price_alarm.log 2>&1 &` y `scripts/options_enrich_keepalive.sh &`. Si los binarios/scripts aun no existen (M4/M5 en curso), dejar las 2 lineas añadidas pero protegidas con `[ -x ./price_alarm ] &&` / `[ -f scripts/options_enrich.py ] &&`.
+`scripts/fleet_keepalive_start.sh`: añadir (idempotente via pgrep) el lanzamiento de `bin/price_alarm >> price_alarm.log 2>&1 &` y `scripts/options_enrich_keepalive.sh &`. Si los binarios/scripts aun no existen (M4/M5 en curso), dejar las 2 lineas añadidas pero protegidas con `[ -x bin/price_alarm ] &&` / `[ -f scripts/options_enrich.py ] &&`.
 
 ---
 

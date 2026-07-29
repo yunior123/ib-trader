@@ -39,7 +39,7 @@ from datetime import datetime, timezone
 import numpy as np
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DB = os.path.join(REPO, "trades.db")
+DB = os.path.join(REPO, "data", "trades.db")
 OUT_JSON = os.path.join(REPO, "data", "peer_health.json")
 
 BAR_MS = 60_000          # barras de 1 minuto

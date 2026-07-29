@@ -8,7 +8,7 @@ ROOT="$(pwd)"
 PY="$ROOT/venv/bin/python"; [[ -x "$PY" ]] || PY="python3"
 
 # load NVIDIA/LLM config for TradingAgents
-[[ -f "$ROOT/llm.env" ]] && set -a && source "$ROOT/llm.env" && set +a
+[[ -f "$ROOT/config/llm.env" ]] && set -a && source "$ROOT/config/llm.env" && set +a
 
 export TA_RESEARCH=1                       # research is MANDATORY (Yunior's order)
 export TA_RESEARCH_TOPN="${TA_RESEARCH_TOPN:-3}"

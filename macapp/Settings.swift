@@ -98,7 +98,7 @@ enum RepoSource {
         return m.isEmpty ? nil : (m, pretty(f))
     }
 
-    static var feedsURL: URL?   { url.map { $0.appendingPathComponent("feeds.env") } }
+    static var feedsURL: URL?   { url.map { $0.appendingPathComponent("config").appendingPathComponent("feeds.env") } }
     static var accountURL: URL? { url.map { $0.appendingPathComponent("data/account.txt") } }
 }
 
@@ -162,7 +162,7 @@ struct Config: Codable {
         if !accountLive.isEmpty  { acct += "live=\(accountLive)\n" }
         try? acct.write(to: Config.dir.appendingPathComponent("account.txt"),
                         atomically: true, encoding: .utf8)
-        let envURL = Config.dir.appendingPathComponent("feeds.env")
+        let envURL = Config.dir.appendingPathComponent("config").appendingPathComponent("feeds.env")
         if env.isEmpty {
             // Nada tecleado: no dejar un feeds.env vacio tapando al del repo.
             try? FileManager.default.removeItem(at: envURL)

@@ -376,7 +376,7 @@ def test_flip_repriced_gana_y_lo_declara(tmp_path):
 
 # ================================================= 9. escritura ATOMICA del mapa
 def test_escritura_atomica_ningun_lector_ve_json_invalido(tmp_path, monkeypatch):
-    """./compass lee charts/data/levels_<sym>.json cada 0.25 s. Con json.dump directo sobre
+    """bin/compass lee charts/data/levels_<sym>.json cada 0.25 s. Con json.dump directo sobre
     el destino un lector podia leer JSON TRUNCADO. Aqui se escribe 60 veces mientras se lee
     en bucle: cada lectura que abra el fichero DEBE parsear."""
     import chart_levels as CL
@@ -447,7 +447,7 @@ CLAVES_PREVIAS_LEVELS = {
 
 
 def test_contrato_levels_json_solo_crece():
-    """./compass (C++, cada 0.25 s), chart_bridge.py, fleet_consensus.{py,cpp} leen este
+    """bin/compass (C++, cada 0.25 s), chart_bridge.py, fleet_consensus.{py,cpp} leen este
     JSON por nombre de clave. Se AÑADE, no se renombra ni se quita."""
     import chart_levels as CL
     for sym in ("qqq", "nok", "spy", "nvda"):

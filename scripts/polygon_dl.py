@@ -19,7 +19,7 @@ import os, sys, json, time, sqlite3, urllib.request, urllib.parse, datetime as d
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(REPO)
-DB = os.path.join(REPO, "trades.db")
+DB = os.path.join(REPO, "data", "trades.db")
 FLEET = open("data/fleet.txt").read().split() if os.path.exists("data/fleet.txt") else []
 
 def _key():

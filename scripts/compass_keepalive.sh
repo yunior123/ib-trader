@@ -16,7 +16,7 @@ LOOP="${COMPASS_LOOP:-0.25}"      # segundos entre ciclos (sub-segundo permitido
 LOG=compass.log
 FAILS=0
 
-if [[ ! -x ./compass ]]; then
+if [[ ! -x bin/compass ]]; then
   ./scripts/build_compass.sh >> "$LOG" 2>&1 || {
     echo "$(date) compass NO COMPILA — brujula caida" >> "$LOG"
     ./scripts/speak.sh DANGER "La brujula no compila. La flecha esta caida." 2>/dev/null
@@ -25,11 +25,11 @@ if [[ ! -x ./compass ]]; then
 fi
 
 while true; do
-  pkill -f "\./compass --loop" 2>/dev/null
+  pkill -f "bin/compass --loop" 2>/dev/null
   sleep 1
   START=$(date +%s)
   FLEET=$(cat data/fleet.txt)
-  ./compass --loop "$LOOP" ${=FLEET} >> "$LOG" 2>&1
+  bin/compass --loop "$LOOP" ${=FLEET} >> "$LOG" 2>&1
   END=$(date +%s)
   RAN=$((END - START))
   echo "$(date) compass salio tras ${RAN}s; relanzando" >> "$LOG"
