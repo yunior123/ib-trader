@@ -1,0 +1,4 @@
+interface:
+  display_name: "Semiconductor Captain Check"
+  short_description: "Resolve SMH and semiconductor flow conflicts"
+  default_prompt: "Use $semiconductor-captain-check to compare SMH captain flow with semiconductor names before a directional verdict."

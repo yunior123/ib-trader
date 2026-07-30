@@ -1,0 +1,4 @@
+interface:
+  display_name: "Options Event Risk Map"
+  short_description: "Map earnings and event options risk honestly"
+  default_prompt: "Use $options-event-risk-map to separate event positioning, implied move, and confirmed direction."

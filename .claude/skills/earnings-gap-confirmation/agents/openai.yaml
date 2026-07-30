@@ -1,0 +1,4 @@
+interface:
+  display_name: "Earnings Gap Confirmation"
+  short_description: "Confirm earnings gaps with prints and levels"
+  default_prompt: "Use $earnings-gap-confirmation to distinguish an earnings gap from a tradable hold, rejection, or gap-fill setup."

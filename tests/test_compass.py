@@ -39,6 +39,18 @@ def run(ev):
     return json.loads(p.stdout)
 
 
+def test_unknown_cli_option_fails_loud():
+    p = subprocess.run([BIN, "--definitely-unknown"], capture_output=True, text=True,
+                       cwd=REPO, timeout=20)
+    assert p.returncode == 2
+    assert "opcion desconocida" in p.stderr
+
+
+def test_calibration_consumer_prefers_effective_sample_size():
+    src = open(os.path.join(REPO, "scripts", "compass.cpp")).read()
+    assert src.count('jnum(sec, "n_eff")') >= 2
+
+
 def bars_touching(level, n=3, spot=None):
     """n barras 1m cuyo rango CONTIENE el nivel (= n lecturas / prints)."""
     spot = spot if spot is not None else level

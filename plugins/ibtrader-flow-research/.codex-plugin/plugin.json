@@ -1,0 +1,18 @@
+{
+  "name": "ibtrader-flow-research",
+  "version": "0.1.0",
+  "description": "Research options flow with aggressor-side, premium, chain, and freshness discipline.",
+  "author": {
+    "name": "ib-trader"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Ibtrader Flow Research",
+    "shortDescription": "Read signed options flow without shortcuts.",
+    "longDescription": "Read-only workflows for Unusual Whales aggressor flow, full-chain structure, event risk, and source-aware scenario trees.",
+    "developerName": "ib-trader",
+    "category": "Finance",
+    "capabilities": ["Read"],
+    "defaultPrompt": "Analyze this ticker's signed options flow and caveats."
+  }
+}

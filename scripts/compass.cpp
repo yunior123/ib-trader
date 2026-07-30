@@ -819,7 +819,9 @@ static bool calib_cell(const std::string& state, int nfam, const std::string& re
                       (regime.empty() ? "SIN" : regime);
     std::string sec = json_section(g_calib_json, key);
     if (!sec.empty()) {
-        auto cn = jnum(sec, "n"); auto cl = jnum(sec, "lo"); auto cw = jnum(sec, "wr30");
+        auto cn = jnum(sec, "n_eff");
+        if (!cn) cn = jnum(sec, "n");  // compatibilidad con calibraciones anteriores
+        auto cl = jnum(sec, "lo"); auto cw = jnum(sec, "wr30");
         if (cn && cl && cw && *cn >= K::CALIB_MIN_N) {
             n = cn; lo = cl; wr = cw; return true;
         }
@@ -827,7 +829,9 @@ static bool calib_cell(const std::string& state, int nfam, const std::string& re
     // fallback POOL por estado (flota entera): primera medicion honesta en horas, etiquetada
     sec = json_section(g_calib_json, state + "|pool");
     if (!sec.empty()) {
-        auto cn = jnum(sec, "n"); auto cl = jnum(sec, "lo"); auto cw = jnum(sec, "wr30");
+        auto cn = jnum(sec, "n_eff");
+        if (!cn) cn = jnum(sec, "n");  // el gate estadistico siempre usa ensayos efectivos
+        auto cl = jnum(sec, "lo"); auto cw = jnum(sec, "wr30");
         if (cn && cl && cw && *cn >= K::CALIB_MIN_N) {
             n = cn; lo = cl; wr = cw; pooled = true; return true;
         }
@@ -1562,7 +1566,10 @@ int main(int argc, char** argv) {
         if (a == "--ev-stdin") ev_stdin = true;
         else if (a == "--json") to_stdout = true;
         else if (a == "--loop" && i + 1 < argc) loop_s = atof(argv[++i]);
-        else if (a.rfind("--", 0) == 0) { /* ignorar desconocidos */ }
+        else if (a.rfind("--", 0) == 0) {
+            fprintf(stderr, "compass: opcion desconocida: %s\n", a.c_str());
+            return 2;
+        }
         else { for (auto& ch : a) ch = (char)tolower(ch); syms.push_back(a); }
     }
     std::string decay = slurp("data/momentum_decay.json");

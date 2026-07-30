@@ -1,0 +1,4 @@
+interface:
+  display_name: "Cockpit Flow UI Audit"
+  short_description: "Audit cockpit flow UX against professional tools"
+  default_prompt: "Use $cockpit-flow-ui-audit to review the cockpit flow widgets for hierarchy, provenance, filters, and accessibility gaps."

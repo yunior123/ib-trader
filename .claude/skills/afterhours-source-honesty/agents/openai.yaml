@@ -1,0 +1,4 @@
+interface:
+  display_name: "After-hours Source Honesty"
+  short_description: "Label after-hours data freshness and entitlement"
+  default_prompt: "Use $afterhours-source-honesty to audit which after-hours inputs are live, stale, delayed, or unavailable."

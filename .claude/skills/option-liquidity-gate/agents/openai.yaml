@@ -1,0 +1,4 @@
+interface:
+  display_name: "Option Liquidity Gate"
+  short_description: "Reject illiquid option contracts before analysis"
+  default_prompt: "Use $option-liquidity-gate to verify spreads, OI, volume, expiry, and quote freshness before naming a contract."

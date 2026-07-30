@@ -1,0 +1,4 @@
+interface:
+  display_name: "Compass Calibration Gate"
+  short_description: "Audit compass probabilities and calibration gates"
+  default_prompt: "Use $compass-calibration-gate to verify whether a compass probability is measured, pooled, doctrinal, or suppressed."
