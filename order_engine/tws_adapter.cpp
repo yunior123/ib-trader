@@ -138,8 +138,9 @@ void TwsAdapter::cancel_all_own() {
     // Se reportan EN VOZ ALTA para que el humano sepa qué queda en el broker.
     int n = 0, kept = 0;
     for (auto& [id, rec] : orders_) {
-        if (!rec.ours || !rec.live) continue;
-        if (rec.native_stop) {
+        const auto action = disarm_action(rec.ours, rec.live, rec.native_stop);
+        if (action == DisarmAction::IGNORE) continue;
+        if (action == DisarmAction::KEEP_PROTECTIVE_STOP) {
             ++kept;
             std::fprintf(stderr, "[tws] ⚠ QUEDA VIVO stop protectivo id=%d ref=%s (protege posición abierta)\n",
                          id, rec.ref.c_str());

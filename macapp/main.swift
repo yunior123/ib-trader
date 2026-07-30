@@ -23,6 +23,7 @@ import WebKit
 
 let DEFAULT_URL = "http://127.0.0.1:8080/"
 let MAX_WINDOWS = 12
+let DEFAULT_WINDOW_COUNT = 6
 
 /// Sello del build LEIDO DEL BUNDLE (build.sh lo escribe en Info.plist). Nunca `git` en
 /// runtime: la .app tiene que arrancar en un Mac sin el repo.
@@ -258,7 +259,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             if !ps.isEmpty { return ps.prefix(MAX_WINDOWS).map { url(port: $0) } }
         }
         let base = targetURL()
-        guard let s = arg("--windows"), let n = Int(s) else { return [base] }
+        let n = arg("--windows").flatMap(Int.init) ?? DEFAULT_WINDOW_COUNT
         let want = max(1, min(MAX_WINDOWS, n))
         if CommandLine.arguments.contains("--same-url") { return Array(repeating: base, count: want) }
         let p0 = base.port ?? 8080

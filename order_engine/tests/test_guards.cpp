@@ -15,10 +15,13 @@
 //   5. reconnect con reconcile a medias -> NO arma
 #include <cmath>
 #include <cstdio>
+#include <fstream>
 #include <string>
+#include <unistd.h>
 #include <vector>
 
 #include "../guards.h"
+#include "../safety.h"
 
 using namespace oe;
 
@@ -77,6 +80,37 @@ static void test_allowlist_substring() {
 
     // Tokenizador.
     CHECK(split_accounts("A,B,,C").size() == 3, "split ignora tokens vacios");
+}
+
+static int g_disarm_calls = 0;
+
+static void test_double_lock_and_disarm_ownership() {
+    section("doble llave + disarm-on-exit + ownership");
+
+    const std::string p = "/tmp/oe_arm_" + std::to_string(::getpid());
+    ::unlink(p.c_str());
+    CHECK(!armed_live(false, p), "sin flag y sin archivo -> DRY");
+    CHECK(!armed_live(true, p), "flag solo -> DRY");
+    { std::ofstream f(p); f << today_date() << "\n"; }
+    CHECK(!armed_live(false, p), "archivo de hoy solo -> DRY");
+    CHECK(armed_live(true, p), "flag + archivo de hoy -> LIVE");
+    { std::ofstream f(p); f << "1999-01-01\n"; }
+    CHECK(!armed_live(true, p), "archivo vencido -> DRY");
+    ::unlink(p.c_str());
+
+    CHECK(disarm_action(false, true, false) == DisarmAction::IGNORE,
+          "orden ajena viva -> no tocar");
+    CHECK(disarm_action(true, false, false) == DisarmAction::IGNORE,
+          "orden propia terminal -> no re-cancelar");
+    CHECK(disarm_action(true, true, false) == DisarmAction::CANCEL_ENTRY,
+          "entrada propia viva -> cancelar");
+    CHECK(disarm_action(true, true, true) == DisarmAction::KEEP_PROTECTIVE_STOP,
+          "stop propio vivo -> conservar protección");
+
+    Guard::install([] { ++g_disarm_calls; });
+    Guard::run_disarm_once();
+    Guard::run_disarm_once();
+    CHECK(g_disarm_calls == 1, "desarme idempotente: callback corre una sola vez");
 }
 
 // ================================================== #1/#2 cap agregado
@@ -393,6 +427,7 @@ static void test_orphan_stop_on_close() {
 int main() {
     std::printf("=== order_engine :: guardas de dinero ===\n");
     test_allowlist_substring();
+    test_double_lock_and_disarm_ownership();
     test_aggregate_cap();
     test_close_against_real_position();
     test_option_stop_clamp_symmetry();

@@ -133,8 +133,8 @@ public:
     void cancel(int orderId);
     void modify(int orderId, double newLimit);     // = placeOrder MISMO id (cancel/replace)
 
-    // Desarme: cancela TODAS nuestras órdenes vivas (entries en vuelo + stops
-    // nativos). Idempotente. Se llama en SIGINT/SIGTERM/crash/connectionClosed.
+    // Desarme: cancela entradas propias vivas; conserva stops protectivos propios.
+    // Ignora órdenes ajenas y terminales. Idempotente.
     void cancel_all_own();
     // Al arrancar: pide TODAS las órdenes abiertas para adoptar/cancelar las
     // huérfanas "OE:" de un run anterior (reconciliación).

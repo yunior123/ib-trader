@@ -112,6 +112,13 @@ inline bool accounts_match(const std::string& managed_csv, const std::string& ex
     return false;
 }
 
+enum class DisarmAction { IGNORE, CANCEL_ENTRY, KEEP_PROTECTIVE_STOP };
+
+inline DisarmAction disarm_action(bool ours, bool live, bool native_stop) {
+    if (!ours || !live) return DisarmAction::IGNORE;
+    return native_stop ? DisarmAction::KEEP_PROTECTIVE_STOP : DisarmAction::CANCEL_ENTRY;
+}
+
 // ===================================================================== #1/#2
 // Tope de exposicion AGREGADA por cuenta. Los topes viejos eran POR ZONA
 // (prima <= $200 / notional <= $3000) y POR ORDEN (qty*prima). N zonas armadas
