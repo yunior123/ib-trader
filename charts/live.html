@@ -342,22 +342,53 @@
   /* --- popup inline de zona (exp/qty/side/kind) — SIN alert/confirm/prompt --- */
   #zonepop { position:absolute; z-index:60; background:#161a24; border:1px solid #2a3550;
              border-radius:8px; padding:8px; box-shadow:0 8px 30px rgba(0,0,0,.6); display:none;
-             font-size:12px; width:230px; }
+             font-size:12px; width:300px; }
   #zonepop.on { display:block; }
   #zonepop .zph { color:#8aa0c8; font-size:11px; margin-bottom:6px; font-weight:700; }
   #zonepop .zrow { display:flex; align-items:center; gap:6px; margin-bottom:6px; }
-  #zonepop .zrow label { color:#9aa5b8; font-size:11px; font-weight:700; }
-  #zonepop #zone-exp { flex:1 1 auto; background:#2a2e39; color:#d1d4dc; border:1px solid #363a45;
+  #zonepop .zrow label { color:#9aa5b8; font-size:11px; font-weight:700; width:72px; }
+  #zonepop select, #zonepop input { flex:1 1 auto; min-width:0; background:#2a2e39; color:#d1d4dc; border:1px solid #363a45;
              border-radius:4px; padding:4px 6px; font:inherit; font-weight:600; cursor:pointer; }
-  #zonepop #zone-qty { width:46px; background:#2a2e39; color:#d1d4dc; border:1px solid #363a45;
-             border-radius:4px; padding:4px 5px; font:inherit; font-weight:600; }
+  #zonepop #zone-qty { max-width:90px; cursor:text; }
   #zonepop .zprev { background:#12161f; border:1px solid #232a3a; border-radius:5px; padding:5px 7px;
              margin-bottom:7px; font-size:11px; color:#9fb0cc; font-variant-numeric:tabular-nums;
              line-height:1.5; }
-  #zonepop .zbtns { display:grid; grid-template-columns:1fr 1fr; gap:5px; }
   #zonepop button { border:none; border-radius:5px; padding:6px 7px; font:inherit;
              font-weight:700; cursor:pointer; color:#fff; }
-  #zonepop .zcancel { grid-column:1/3; background:#2a2e39; color:#8aa0c8; }
+  #zonepop .zactions { display:grid; grid-template-columns:2fr 1fr; gap:5px; }
+  #zone-review { background:#2962ff; }
+  #zonepop .zcancel { background:#2a2e39; color:#aeb8ca; }
+
+  /* Revisión humana obligatoria: preparar y armar son dos acciones distintas. */
+  #orderconfirm { position:fixed; inset:0; z-index:1200; display:none; align-items:center;
+                  justify-content:center; background:rgba(4,7,12,.72); backdrop-filter:blur(3px); }
+  #orderconfirm.on { display:flex; }
+  #orderconfirm .occard { width:min(520px,calc(100vw - 28px)); background:#12161f;
+                  border:1px solid #3a4b6b; border-radius:12px; box-shadow:0 18px 60px rgba(0,0,0,.75);
+                  color:#d1d4dc; overflow:hidden; }
+  #orderconfirm .ochdr { display:flex; justify-content:space-between; align-items:center;
+                  padding:12px 14px; background:#1a2030; border-bottom:1px solid #2a3550; }
+  #orderconfirm .ochdr h2 { font-size:15px; margin:0; }
+  #orderconfirm .ocbody { padding:14px; }
+  #orderconfirm .ocsummary { font:12px "SF Mono",Menlo,monospace; line-height:1.65;
+                  padding:10px; background:#0d1119; border-radius:7px; white-space:pre-wrap; }
+  #orderconfirm .ocstatus { display:grid; grid-template-columns:repeat(2,minmax(0,1fr));
+                  gap:6px; margin:10px 0; }
+  #orderconfirm .ocstatus span { border:1px solid #2a3550; border-radius:5px; padding:6px;
+                  font-size:11px; color:#aeb8ca; }
+  #orderconfirm .ocwarn { color:#f4c430; font-size:11px; line-height:1.5; margin:8px 0; }
+  #orderconfirm .occheck { display:flex; gap:8px; align-items:flex-start; font-size:12px;
+                  padding:8px; border:1px solid #5a4720; border-radius:6px; }
+  #orderconfirm .ocactions { display:flex; justify-content:flex-end; gap:8px; margin-top:12px; }
+  #orderconfirm button { border:0; border-radius:6px; padding:8px 12px; font-weight:750; cursor:pointer; }
+  #oc-cancel { background:#2a2e39; color:#d1d4dc; }
+  #oc-final { background:#2962ff; color:white; }
+  #oc-final.arm { background:#a52b34; }
+  #oc-final:disabled { opacity:.42; cursor:not-allowed; }
+  @media (max-width:520px) {
+    #orderconfirm .ocstatus { grid-template-columns:1fr; }
+    #zonepop { width:min(300px,calc(100vw - 12px)); }
+  }
 
   /* --- sub-controles del chip de zona: exec (ficha/ARMADA) · stop · prob --- */
   #chipbar .chip .zexec, #chipbar .chip .zstop, #chipbar .chip .zprob {
@@ -576,7 +607,7 @@
     <button class="tgl" id="liqbtn">≡ Liquidez</button>
   </span>
   <button id="alarmbtn" title="Alarma manual (estilo TradingView): clic aquí y luego clic en el precio del chart para poner una alarma. Suena sirena+voz al cruzar (price_alarm).">🔔 Alarma</button>
-  <button id="zonebtn" title="Zona de ejecución: clic aquí y luego clic en el precio del chart; elige expiry, cantidad y comprar/vender call/put. Por defecto FICHA (señal-solamente); ARMA el chip ⚡ para que el order_engine la ejecute. Stop-loss arrastrable.">🎯 Zona</button>
+  <button id="zonebtn" title="Preparar BUY/SELL: clic aquí y luego en el trigger. Revisa instrumento, lado, contrato, cantidad, límite, sesión y guardas. FICHA es el destino seguro por defecto; ARMAR exige confirmación humana y doble llave.">🎯 Ticket</button>
   <button id="wgbtn" class="tgl" style="border-radius:4px;padding:4px 9px" title="Widgets acoplables: Net GEX por strike, Net Premiums, Options Flow. Se arrastran, se pliegan y se expanden — al expandirse el gráfico se ENCOGE, nunca queda tapado.">🧩 Widgets</button>
   <button id="narrbtn" title="Narrador de mercado (como gexa): lectura breve del mapa GEX. Determinista gratis + DeepSeek bajo demanda (↻).">🗣 Narrador</button>
   <button id="helpbtn" title="¿Qué es cada cosa? (guía)">ℹ Guía</button>
@@ -676,21 +707,25 @@
   <div id="dirarrow"><div class="halo"></div><div class="glyph"></div><div class="pct"></div><div class="ampbar"><i></i><i></i><i></i></div><div class="tgt"></div><div class="st"></div><div class="bq"></div><div class="drv"></div><div class="cap"></div></div>
   <div id="countdown"></div>
   <div id="zonepop">
-    <div class="zph">Zona @ <span id="zonepop-px">—</span> · <span id="zone-instlbl">acción</span></div>
-    <div class="zrow" id="zone-exprow"><label>Fecha</label><select id="zone-exp"></select></div>
-    <div class="zrow"><label>Qty</label><input id="zone-qty" type="number" min="1" value="1"></div>
+    <div class="zph">Preparar ticket @ <span id="zonepop-px">—</span></div>
+    <div class="zrow"><label for="zone-inst">Instrumento</label><select id="zone-inst">
+      <option value="opt">Opciones</option><option value="stk">Acciones</option>
+    </select></div>
+    <div class="zrow"><label for="zone-side">Lado</label><select id="zone-side">
+      <option value="buy">BUY · Comprar</option><option value="sell">SELL · Vender</option>
+    </select></div>
+    <div class="zrow" id="zone-kindrow"><label for="zone-kind">Right</label><select id="zone-kind">
+      <option value="call">CALL</option><option value="put">PUT</option>
+    </select></div>
+    <div class="zrow" id="zone-exprow"><label for="zone-exp">Expiry</label><select id="zone-exp"></select></div>
+    <div class="zrow"><label for="zone-qty">Cantidad</label><input id="zone-qty" type="number" min="1" max="10000" value="1" inputmode="numeric"></div>
+    <div class="zrow"><label for="zone-dest">Destino</label><select id="zone-dest">
+      <option value="ticket">FICHA · no enviar</option><option value="arm">ARMAR zona · doble llave</option>
+    </select></div>
+    <div class="zrow" id="zone-strikerow"><label for="zone-strike">Strike</label><input id="zone-strike" readonly value="—"></div>
+    <div class="zrow"><label for="zone-limit">Límite</label><input id="zone-limit" readonly value="preflight"></div>
     <div class="zprev" id="zone-preview">—</div>
-    <div class="zbtns" id="zone-optbtns">
-      <button data-side="buy" data-kind="call" style="background:#1e6f4c">Compra CALL</button>
-      <button data-side="buy" data-kind="put" style="background:#7a1f1f">Compra PUT</button>
-      <button data-side="sell" data-kind="call" style="background:#8a6d00">Vende CALL</button>
-      <button data-side="sell" data-kind="put" style="background:#1a5e6e">Vende PUT</button>
-    </div>
-    <div class="zbtns" id="zone-stkbtns" style="display:none;grid-template-columns:1fr 1fr">
-      <button data-side="buy" data-kind="" style="background:#1e6f4c">Compra</button>
-      <button data-side="sell" data-kind="" style="background:#b02a2a">Vende</button>
-    </div>
-    <button class="zcancel" style="width:100%;margin-top:5px">Cancelar</button>
+    <div class="zactions"><button id="zone-review">Revisar · no enviar</button><button class="zcancel">Cancelar</button></div>
   </div>
   <div id="enginepill" class="hidden"></div>
   <div id="ticketcard">
@@ -701,6 +736,20 @@
       <div class="tcgrid" id="tc-grid"></div>
       <div class="tcwhy" id="tc-why"></div>
       <div class="tcnote">⚠️ Ejecuta TÚ en IBKR — el sistema solo prepara la ficha (señal-solamente).</div>
+    </div>
+  </div>
+</div>
+<div id="orderconfirm" role="dialog" aria-modal="true" aria-labelledby="oc-title" aria-describedby="oc-warnings">
+  <div class="occard">
+    <div class="ochdr"><h2 id="oc-title">Revisión final</h2><span id="oc-mode">—</span></div>
+    <div class="ocbody">
+      <div class="ocsummary" id="oc-summary">—</div>
+      <div class="ocstatus" id="oc-status" aria-live="polite"></div>
+      <div class="ocwarn" id="oc-warnings" aria-live="assertive"></div>
+      <label class="occheck"><input id="oc-check" type="checkbox">
+        <span id="oc-check-label">He revisado símbolo, lado, cantidad y contrato.</span>
+      </label>
+      <div class="ocactions"><button id="oc-cancel">Volver</button><button id="oc-final" disabled>Crear ficha</button></div>
     </div>
   </div>
 </div>
@@ -885,6 +934,7 @@
 
 <!-- v5.2.0 vendored local (Apache-2.0), sin CDN en runtime -->
 <script src="lightweight-charts-v5.js"></script>
+<script src="order_ticket_ui.js"></script>
 <script>
 "use strict";
 const LWC = window.LightweightCharts;
@@ -1688,7 +1738,11 @@ modepill.addEventListener("click", () => {
   const next = curMode === "live" ? "paper" : "live";
   ws.send(JSON.stringify({ cmd: "ibmode", act: "set", mode: next }));
 });
-function setInstLabel() { instpill.textContent = curInstrument === "stk" ? "📊 Acciones" : "📈 Opciones"; }
+function setInstLabel() {
+  instpill.textContent = curInstrument === "stk" ? "📊 Acciones" : "📈 Opciones";
+  const select = document.getElementById("zone-inst");
+  if (select) select.value = curInstrument;
+}
 instpill.addEventListener("click", () => { curInstrument = curInstrument === "stk" ? "opt" : "stk"; setInstLabel(); });
 setInstLabel();
 
@@ -1801,6 +1855,12 @@ function onOrderAction(r) {
   const note = r.ok ? (r.note || "✓ encolado al motor") : ("⚠ " + (r.err || "falló"));
   document.getElementById("acctsum").textContent = note;
   setTimeout(reqAccount, 800);
+}
+function onOrderConfirmation(r) {
+  const pill = document.getElementById("enginepill");
+  pill.textContent = r.ok ? "✓ confirmación aceptada" :
+    ("⛔ zona NO armada: " + (r.err || "confirmación inválida"));
+  pill.classList.remove("hidden");
 }
 
 // ---- narrador de mercado (tipo gexa) ----
@@ -1971,61 +2031,179 @@ window.addEventListener("mouseup", () => {
   renderChips();
 });
 
-// --- popup inline de zona (NO usa alert/confirm/prompt) ---
+// --- ticket de zona: preflight de backend + confirmación humana explícita ---
 const zoneExpSel = document.getElementById("zone-exp");
 const zoneQtyInp = document.getElementById("zone-qty");
 const zonePrevEl = document.getElementById("zone-preview");
+const zoneInstSel = document.getElementById("zone-inst");
+const zoneSideSel = document.getElementById("zone-side");
+const zoneKindSel = document.getElementById("zone-kind");
+const zoneDestSel = document.getElementById("zone-dest");
+const zoneStrikeInp = document.getElementById("zone-strike");
+const zoneLimitInp = document.getElementById("zone-limit");
+const orderConfirm = document.getElementById("orderconfirm");
+const ocCheck = document.getElementById("oc-check");
+const ocFinal = document.getElementById("oc-final");
+let orderIntent = null, lastPreflight = null, lastOptQuote = null, lastDialogFocus = null;
 function hideZonePop() { zonepop.classList.remove("on"); pendingZonePrice = null; }
 function reqOptQuote() {
-  if (pendingZonePrice == null || !ws || ws.readyState !== WebSocket.OPEN) return;
+  if (zoneInstSel.value === "stk" || pendingZonePrice == null || !ws || ws.readyState !== WebSocket.OPEN) return;
   ws.send(JSON.stringify({ cmd: "optquote", price: pendingZonePrice, exp: zoneExpSel.value || "" }));
+}
+function syncZoneInstrument() {
+  curInstrument = zoneInstSel.value === "stk" ? "stk" : "opt";
+  setInstLabel();
+  const isStk = curInstrument === "stk";
+  document.getElementById("zone-kindrow").style.display = isStk ? "none" : "";
+  document.getElementById("zone-exprow").style.display = isStk ? "none" : "";
+  document.getElementById("zone-strikerow").style.display = isStk ? "none" : "";
+  zoneStrikeInp.value = isStk ? "n/a" : "—";
+  zoneLimitInp.value = "preflight";
+  zonePrevEl.innerHTML = isStk
+    ? "Sesión <b>Overnight+DAY</b> sólo si IBKR confirma que la acción es elegible.<br>Límite: estimado y recalculado por el motor al trigger."
+    : "leyendo cadena para strike y límite estimado…";
+  if (!isStk) reqOptQuote();
 }
 function showZonePop(x, y, price) {
   pendingZonePrice = price;
   document.getElementById("zonepop-px").textContent = price;
-  const isStk = curInstrument === "stk";   // acciones = simple (comprar/vender); opciones = fecha+strike
-  document.getElementById("zone-instlbl").textContent = isStk ? "acción" : "opción";
-  document.getElementById("zone-exprow").style.display = isStk ? "none" : "";
-  document.getElementById("zone-preview").style.display = isStk ? "none" : "";
-  document.getElementById("zone-optbtns").style.display = isStk ? "none" : "grid";
-  document.getElementById("zone-stkbtns").style.display = isStk ? "grid" : "none";
-  if (!isStk) zoneExpSel.innerHTML = curExps.length
+  zoneInstSel.value = curInstrument;
+  if (curInstrument !== "stk") zoneExpSel.innerHTML = curExps.length
     ? curExps.map(e => `<option value="${e}">${fmtExp(e)}</option>`).join("")
     : `<option value="">0DTE</option>`;
+  zoneSideSel.value = "buy";
+  zoneKindSel.value = "call";
+  zoneDestSel.value = "ticket";
   zoneQtyInp.value = 1;
-  if (!isStk) zonePrevEl.textContent = "leyendo cadena…";
   const cw = el.clientWidth, ch = el.clientHeight;
-  zonepop.style.left = Math.min(Math.max(4, x), cw - 238) + "px";
-  zonepop.style.top = Math.min(Math.max(4, y), ch - 210) + "px";
+  zonepop.style.left = Math.min(Math.max(4, x), cw - 308) + "px";
+  zonepop.style.top = Math.min(Math.max(4, y), ch - 330) + "px";
   zonepop.classList.add("on");
-  reqOptQuote();
+  syncZoneInstrument();
 }
+zoneInstSel.addEventListener("change", syncZoneInstrument);
 zoneExpSel.addEventListener("change", reqOptQuote);
+zoneKindSel.addEventListener("change", reqOptQuote);
+zoneSideSel.addEventListener("change", () => { if (lastOptQuote) onOptquote(lastOptQuote); });
 function onOptquote(msg) {
   if (!zonepop.classList.contains("on")) return;
+  lastOptQuote = msg;
   const fmt = (o, lab, col) => {
     if (!o || o.bid == null) return `<b style="color:${col}">${lab}</b> —`;
     const b = o.bid < 0 ? "—" : o.bid.toFixed(2), a = o.ask < 0 ? "—" : o.ask.toFixed(2);
     return `<b style="color:${col}">${lab}</b> ${b}/${a}`;
   };
   const strike = msg.strike != null ? msg.strike : "—";
+  zoneStrikeInp.value = strike;
+  const picked = zoneKindSel.value === "put" ? msg.put : msg.call;
+  const limit = picked && (zoneSideSel.value === "buy" ? picked.ask : picked.bid);
+  zoneLimitInp.value = limit != null && limit >= 0 ? Number(limit).toFixed(2) : "n/d";
   const oi = (msg.call && msg.call.oi != null) ? msg.call.oi : (msg.put && msg.put.oi != null ? msg.put.oi : null);
   zonePrevEl.innerHTML = `strike <b style="color:#d1d4dc">${strike}</b> · ` +
     fmt(msg.call, "C", "#26a69a") + " · " + fmt(msg.put, "P", "#f23645") +
-    (oi != null ? ` · OI ${oi}` : "");
+    (oi != null ? ` · OI ${oi}` : "") +
+    `<br>Sesión <b>DAY/RTH</b> · límite estimado; el motor lo recalcula al trigger.`;
 }
-zonepop.querySelectorAll(".zbtns button[data-side]").forEach(b => b.addEventListener("click", () => {
+function currentOrderDraft() {
+  return { sym: curSym, instrument: zoneInstSel.value, side: zoneSideSel.value,
+           kind: zoneKindSel.value, exp: zoneExpSel.value || "",
+           price: pendingZonePrice, qty: zoneQtyInp.value };
+}
+document.getElementById("zone-review").addEventListener("click", () => {
   if (pendingZonePrice == null) return;
-  const exp = zoneExpSel.value || null;
-  const qty = Math.max(1, parseInt(zoneQtyInp.value, 10) || 1);
+  const armNew = zoneDestSel.value === "arm";
+  orderIntent = { phase: armNew ? "arm_new" : "prepare", draft: currentOrderDraft() };
+  if (armNew) {
+    orderIntent.draft.purpose = "arm_new";
+  }
   if (ws && ws.readyState === WebSocket.OPEN)
-    ws.send(JSON.stringify({ cmd: "zone", act: "add", price: pendingZonePrice,
-                            side: b.dataset.side, kind: b.dataset.kind, exp, qty,
-                            instrument: curInstrument }));
-  hideZonePop(); zoneArmed = false; zonebtn.classList.remove("arm"); el.style.cursor = "";
-}));
+    ws.send(JSON.stringify(OrderTicketUI.preflightRequest(orderIntent.draft)));
+});
 zonepop.querySelector(".zcancel").addEventListener("click", () => {
   hideZonePop(); zoneArmed = false; zonebtn.classList.remove("arm"); el.style.cursor = "";
+});
+
+function closeOrderConfirm() {
+  orderConfirm.classList.remove("on");
+  ocCheck.checked = false; ocFinal.disabled = true;
+  orderIntent = null; lastPreflight = null;
+  if (lastDialogFocus && typeof lastDialogFocus.focus === "function") lastDialogFocus.focus();
+  lastDialogFocus = null;
+}
+function onOrderPreflight(p) {
+  if (!orderIntent) return;
+  lastPreflight = p;
+  const d = p.draft || {};
+  if (d.strike != null) zoneStrikeInp.value = d.strike;
+  zoneLimitInp.value = p.limit_estimate == null ? "n/d" : Number(p.limit_estimate).toFixed(2);
+  const contract = d.instrument === "opt"
+    ? `${d.sym} ${d.exp || "—"} ${d.strike == null ? "—" : d.strike}${d.right || ""}`
+    : `${d.sym} acciones`;
+  const arming = orderIntent.phase === "arm" || orderIntent.phase === "arm_new";
+  document.getElementById("oc-title").textContent = arming
+    ? "Confirmación final · ARMAR zona" : "Revisar ticket · crear ficha";
+  document.getElementById("oc-mode").textContent = `${String(p.mode || "—").toUpperCase()} · ${p.signal_only ? "bridge signal-only" : "estado desconocido"}`;
+  document.getElementById("oc-summary").textContent =
+    `${String(d.side || "").toUpperCase()}  ${d.qty || "—"} × ${contract}\n` +
+    `Trigger subyacente: ${d.price || "—"}\n` +
+    `Límite estimado: ${p.limit_estimate == null ? "n/d" : p.limit_estimate} (${p.limit_policy || "—"})\n` +
+    `Sesión: ${p.session || "—"}`;
+  const g = p.guard || {};
+  const status = document.getElementById("oc-status");
+  status.replaceChildren();
+  [["Cuenta", p.account || "NO CONFIGURADA"],
+   ["Gateway", p.connected ? "CONECTADO" : "OFFLINE"],
+   ["Motor", g.engine_up ? "ACTIVO" : "APAGADO"],
+   ["Doble llave", g.double_arm ? "ARMADA" : "DRY / INCOMPLETA"]].forEach(([label, value]) => {
+    const cell = document.createElement("span"), strong = document.createElement("b");
+    cell.append(document.createTextNode(label), document.createElement("br"));
+    strong.textContent = value; cell.appendChild(strong); status.appendChild(cell);
+  });
+  const lines = [...(p.errors || []).map(x => "⛔ " + x), ...(p.warnings || []).map(x => "⚠ " + x)];
+  document.getElementById("oc-warnings").textContent = lines.join("\n") || "Sin advertencias de preflight.";
+  document.getElementById("oc-check-label").textContent = arming
+    ? (d.instrument === "stk"
+      ? "Confirmo contrato, lado y cantidad. Acepto que Overnight+DAY sólo aplica si IBKR admite la acción y que no hay STP/GTC activo entre 20:00–03:50 ET. La doble llave y el trigger siguen siendo obligatorios."
+      : "Confirmo contrato, lado, cantidad, strike y límite. Esta zona sólo podrá enviar si la doble llave está activa y el precio imprime el trigger.")
+    : "Confirmo símbolo, lado, cantidad, contrato y sesión. Crear ficha NO arma ni envía una orden.";
+  ocFinal.textContent = arming ? "Confirmar y ARMAR zona" : "Crear ficha · NO enviar";
+  ocFinal.classList.toggle("arm", arming);
+  ocCheck.checked = false;
+  ocFinal.disabled = true;
+  if (arming && !p.confirmation_token) {
+    p.can_prepare = false;
+    document.getElementById("oc-warnings").textContent += "\n⛔ El bridge no emitió token de confirmación; no se puede armar.";
+  }
+  lastDialogFocus = document.activeElement;
+  orderConfirm.classList.add("on");
+  ocCheck.focus();
+}
+ocCheck.addEventListener("change", () => {
+  ocFinal.disabled = !ocCheck.checked || !lastPreflight || !lastPreflight.can_prepare;
+});
+document.getElementById("oc-cancel").addEventListener("click", closeOrderConfirm);
+orderConfirm.addEventListener("click", e => { if (e.target === orderConfirm) closeOrderConfirm(); });
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && orderConfirm.classList.contains("on")) closeOrderConfirm();
+  if (e.key === "Tab" && orderConfirm.classList.contains("on")) {
+    const focusable = [ocCheck, document.getElementById("oc-cancel"), ocFinal].filter(x => !x.disabled);
+    if (!focusable.length) return;
+    const i = focusable.indexOf(document.activeElement);
+    if (e.shiftKey && i <= 0) { e.preventDefault(); focusable[focusable.length - 1].focus(); }
+    else if (!e.shiftKey && i === focusable.length - 1) { e.preventDefault(); focusable[0].focus(); }
+  }
+});
+ocFinal.addEventListener("click", () => {
+  if (!ocCheck.checked || !lastPreflight || !orderIntent || !ws || ws.readyState !== WebSocket.OPEN) return;
+  const request = orderIntent.phase === "arm"
+    ? OrderTicketUI.armRequest(orderIntent.zone, true, lastPreflight)
+    : OrderTicketUI.zoneRequest(lastPreflight, orderIntent.phase === "arm_new", true);
+  ws.send(JSON.stringify(request));
+  const created = orderIntent.phase !== "arm";
+  closeOrderConfirm();
+  if (created) {
+    hideZonePop(); zoneArmed = false; zonebtn.classList.remove("arm"); el.style.cursor = "";
+  }
 });
 
 // --- líneas + chips ---
@@ -2131,8 +2309,17 @@ function renderChips() {
   chipbar.querySelectorAll("[data-zexec]").forEach(t => t.addEventListener("click", (e) => {
     e.stopPropagation();
     const z = curZones.find(z => z.id === t.dataset.zexec); if (!z) return;
-    if (ws && ws.readyState === WebSocket.OPEN)
-      ws.send(JSON.stringify({ cmd: "zone", act: "set", id: z.id, exec: !z.exec }));
+    if (!ws || ws.readyState !== WebSocket.OPEN) return;
+    if (z.exec) {
+      // Desarmar es risk-off y puede ser inmediato. Armar siempre exige el diálogo final.
+      ws.send(JSON.stringify({ cmd: "zone", act: "set", id: z.id, exec: false }));
+      return;
+    }
+    orderIntent = { phase: "arm", zone: z };
+    ws.send(JSON.stringify(OrderTicketUI.preflightRequest({
+      sym: curSym, instrument: z.instrument, side: z.side, kind: z.kind,
+      exp: z.exp, price: z.price, qty: z.qty, purpose: "arm", zone_id: z.id,
+    })));
   }));
   chipbar.querySelectorAll("[data-zstop]").forEach(t => t.addEventListener("click", (e) => {
     e.stopPropagation();
@@ -3330,6 +3517,7 @@ function connect() {
     else if (msg.type === "watchlist") onWatchlist(msg);   // fleet + lista del usuario
     else if (msg.type === "zones") onZones(msg);   // zonas de ejecución (buy/sell + exp/qty/exec/stop)
     else if (msg.type === "optquote") onOptquote(msg);   // previsualización contrato (strike/bid/ask)
+    else if (msg.type === "order_preflight") onOrderPreflight(msg);   // revisión humana, sin persistir/ordenar
     else if (msg.type === "prob") onProb(msg);   // prob de profit (order_engine) -> chip
     else if (msg.type === "engine") onEngine(msg);   // estado del order_engine (zonas ARMADAS)
     else if (msg.type === "ticket") onTicket(msg);   // ficha 0DTE (order_ticket)
@@ -3341,6 +3529,7 @@ function connect() {
     else if (msg.type === "liq_levels") onLiqLevels(msg);   // liquidez VPVR/KDE (contexto, no gatillo)
     else if (msg.type === "liq_map") onLiqMap(msg);   // mapa de liquidez (widget)
     else if (msg.type === "order_action") onOrderAction(msg);   // resultado cancel/sell/modify
+    else if (msg.type === "order_confirmation") onOrderConfirmation(msg);   // rechazo fail-closed al armar
   };
   ws.onclose = () => {
     conn.className = "off"; conn.textContent = "● reconectando…";

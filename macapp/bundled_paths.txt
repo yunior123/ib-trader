@@ -5,6 +5,7 @@
 charts/lightweight-charts-v5.js
 charts/lightweight-charts.js
 charts/live.html
+charts/order_ticket_ui.js
 config/feeds.env
 config/llm.env
 data/fleet.txt
