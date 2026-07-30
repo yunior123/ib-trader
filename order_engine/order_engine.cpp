@@ -644,7 +644,7 @@ int main(int argc, char** argv) {
                             cqty = cdec.qty;   // jamas mas de lo que el broker reporta abierto
 
                             if (!armed_live(cfg.arm_flag, arm_file)) { ledger.note("cmd close DRY (sin doble llave) " + csym); continue; }
-                            Contract cc; double lim = 0; bool outside = false;
+                            Contract cc; double lim = 0;
                             if (is_opt) {
                                 cc = make_option(csym, cexp, cstrike, cright);
                                 Chain ch2 = load_chain(cfg.repo + "/data/opt_chain_" + lower(csym) + ".txt");
@@ -665,11 +665,23 @@ int main(int argc, char** argv) {
                                 }
                                 lim = g.limit;
                             } else {
-                                cc = make_stock(csym); outside = true;
+                                cc = make_stock(csym);
                                 double sp = 0;
                                 if (!last_close(cfg.repo + "/data/bars_" + lower(csym) + "_ibkr.txt", sp) || sp <= 0) { ledger.note("cmd close stk sin spot " + csym); continue; }
                                 lim = (side == 'B') ? sp * 1.002 : sp * 0.998;
                                 lim = std::round(lim * 100.0) / 100.0;
+                            }
+                            const oe::OrderSession close_session = is_opt
+                                ? oe::OrderSession::RTH_ONLY
+                                : oe::OrderSession::OVERNIGHT_AND_DAY;
+                            const oe::LimitOrderPlan close_plan = oe::make_limit_order_plan(
+                                cc, side, cqty, lim, "OE:CLOSE", close_session,
+                                tws.server_version());
+                            if (!close_plan.ok) {
+                                ledger.note("cmd close VETADO " + csym + ": " + close_plan.error);
+                                std::fprintf(stderr, "[cmd] close VETADO %s: %s\n",
+                                             csym.c_str(), close_plan.error.c_str());
+                                continue;
                             }
                             // --- STOP HUERFANO (guarda #4, la causa documentada del desastre) ---
                             // ANTES de mandar el close: el stop NATIVO que protege esta posicion
@@ -715,7 +727,12 @@ int main(int argc, char** argv) {
                                 }
                             }
                             int oid = tws.next_order_id();
-                            tws.place_limit(cc, side, cqty, lim, oid, "OE:CLOSE", outside);
+                            if (!tws.place_limit(cc, side, cqty, lim, oid, "OE:CLOSE", close_session)) {
+                                // La prevalidación de arriba y ésta usan la misma función pura.
+                                // Si aun así difieren, no afirmar que el close fue colocado.
+                                ledger.note("cmd close fallo local inesperado " + csym);
+                                continue;
+                            }
                             ledger.note("cmd close " + csym + " " + cside + " " + std::to_string(cqty) + " @ " + std::to_string(lim));
                         }
                     }
@@ -908,8 +925,15 @@ int main(int argc, char** argv) {
                             z.st = ZoneRT::DONE; continue;
                         }
                         int oid = tws.next_order_id();
+                        if (!tws.place_limit(c, side, qty, lim, oid, "OE:" + z.id,
+                                             oe::OrderSession::OVERNIGHT_AND_DAY)) {
+                            expo.release(oe::exposure_key(sym, z.id));
+                            z.st = ZoneRT::VETOED;
+                            write_state(state_dir, sym, z,
+                                        "\"veto\":\"IBKR overnight no soportado por contrato/servidor\"");
+                            continue;
+                        }
                         z.entry_id = oid; oid2zone[oid] = {sym, z.id};
-                        tws.place_limit(c, side, qty, lim, oid, "OE:" + z.id, true);   // outsideRth=true
                         z.st = ZoneRT::SENT;
                         write_state(state_dir, sym, z, "\"instrument\":\"stk\",\"order_id\":" + std::to_string(oid) + ",\"limit\":" + std::to_string(lim));
                         continue;
@@ -983,7 +1007,13 @@ int main(int argc, char** argv) {
                     }
                     int oid = tws.next_order_id();
                     z.entry_id = oid; oid2zone[oid] = {sym, z.id};
-                    tws.place_limit(c, side, qty, g.limit, oid, "OE:" + z.id);
+                    if (!tws.place_limit(c, side, qty, g.limit, oid, "OE:" + z.id)) {
+                        expo.release(oe::exposure_key(sym, z.id));
+                        z.st = ZoneRT::VETOED;
+                        write_state(state_dir, sym, z,
+                                    "\"veto\":\"orden de opción no soportada localmente\"");
+                        continue;
+                    }
                     z.st = ZoneRT::SENT;
                     write_state(state_dir, sym, z, "\"order_id\":" + std::to_string(oid) + ",\"limit\":" + std::to_string(g.limit));
                 }

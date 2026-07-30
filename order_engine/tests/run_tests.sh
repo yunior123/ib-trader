@@ -9,21 +9,31 @@ cd "$REPO/order_engine"
 OUT="$(mktemp -d)"; trap 'rm -rf "$OUT"' EXIT
 
 ARCHFLAG="-mcpu=native"; [ "$(uname -m)" = "x86_64" ] && ARCHFLAG="-march=native"
-SUITES=(guards chain orders)
+SUITES=(guards chain orders policy)
 FAST=0; [ "${1:-}" = "--fast" ] && FAST=1
 rc=0
+CLIENT="$REPO/scalper/vendor/IBJts/cppclient/client"
+LIB="$REPO/scalper/vendor/lib"
 
 for s in "${SUITES[@]}"; do
   while [ "$(ps aux | grep -c '[c]lang++')" -gt 1 ]; do sleep 2; done
-  clang++ -std=c++2c -O3 $ARCHFLAG -Wall -Wextra "tests/test_$s.cpp" -o "$OUT/$s"
+  extra=()
+  if [ "$s" = "policy" ]; then
+    extra=(-I"$CLIENT" "$LIB/libTwsSocketClient.a" "$LIB/libbid.a" -pthread)
+  fi
+  clang++ -std=c++2c -O3 $ARCHFLAG -Wall -Wextra "tests/test_$s.cpp" "${extra[@]}" -o "$OUT/$s"
   "$OUT/$s" || rc=1
 done
 
 if [ "$FAST" = "0" ]; then
   for s in "${SUITES[@]}"; do
     while [ "$(ps aux | grep -c '[c]lang++')" -gt 1 ]; do sleep 2; done
+    extra=()
+    if [ "$s" = "policy" ]; then
+      extra=(-I"$CLIENT" "$LIB/libTwsSocketClient.a" "$LIB/libbid.a" -pthread)
+    fi
     clang++ -std=c++2c -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer \
-      -Wall -Wextra "tests/test_$s.cpp" -o "$OUT/asan_$s"
+      -Wall -Wextra "tests/test_$s.cpp" "${extra[@]}" -o "$OUT/asan_$s"
     echo "--- ASan/UBSan $s"
     "$OUT/asan_$s" >/dev/null || rc=1
   done

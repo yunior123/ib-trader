@@ -1645,6 +1645,12 @@ void EClient::placeOrder( OrderId id, const Contract& contract, const Order& ord
         }
     }
 
+    if (m_serverVersion < MIN_SERVER_VER_INCLUDE_OVERNIGHT && order.includeOvernight) {
+        m_pEWrapper->error(id, UPDATE_TWS.code(), UPDATE_TWS.msg() +
+            " It does not support include overnight parameter", "");
+        return;
+    }
+
     std::stringstream msg;
     prepareBuffer( msg);
 
@@ -2113,6 +2119,10 @@ void EClient::placeOrder( OrderId id, const Contract& contract, const Order& ord
         if (m_serverVersion >= MIN_SERVER_VER_RFQ_FIELDS) {
             ENCODE_FIELD(order.externalUserId);
             ENCODE_FIELD(order.manualOrderIndicator);
+        }
+
+        if (m_serverVersion >= MIN_SERVER_VER_INCLUDE_OVERNIGHT) {
+            ENCODE_FIELD(order.includeOvernight);
         }
     }
     catch (EClientException& ex) {

@@ -54,25 +54,30 @@ void TwsAdapter::pump() {
 }
 
 // ---------------------------------------------------------------- órdenes
-void TwsAdapter::place_limit(Contract& c, char side, int qty, double limit,
-                             int orderId, const std::string& orderRef, bool outsideRth) {
-    Order o;
-    o.action = (side == 'B') ? "BUY" : "SELL";
-    o.orderType = "LMT";
-    o.totalQuantity = DecimalFunctions::stringToDecimal(std::to_string(qty));
-    o.lmtPrice = limit;
-    o.tif = "DAY";                 // JAMÁS descansa overnight
-    o.transmit = true;             // se coloca al PRINT, sin descansar previo
-    o.outsideRth = outsideRth;     // acciones en horario extendido (24/5) -> true
-    o.orderRef = orderRef;
+bool TwsAdapter::place_limit(Contract& c, char side, int qty, double limit,
+                             int orderId, const std::string& orderRef,
+                             OrderSession session) {
+    LimitOrderPlan plan = make_limit_order_plan(
+        c, side, qty, limit, orderRef, session, server_version());
+    if (!plan.ok) {
+        std::fprintf(stderr, "[tws] RECHAZO LOCAL LMT id=%d %s: %s (server=%d)\n",
+                     orderId, c.symbol.c_str(), plan.error.c_str(), server_version());
+        if (ledger_) ledger_->note("rechazo local orden " + std::to_string(orderId) +
+                                   " " + c.symbol + ": " + plan.error);
+        return false;
+    }
+
+    c = plan.contract;
+    Order& o = plan.order;
     OpenOrd& rec = orders_[orderId];
     rec.c = c; rec.o = o; rec.ref = orderRef; rec.ours = starts_with(orderRef, OE_PREFIX);
     rec.live = true; rec.native_stop = false;
     if (ledger_) ledger_->intent(orderId, led_of(c), side, qty, limit, orderRef, "LIVE");
     client_->placeOrder(orderId, c, o);
-    std::fprintf(stderr, "[tws] placeOrder LMT id=%d %s %dx %s %.4g%s @ %.2f ref=%s\n",
+    std::fprintf(stderr, "[tws] placeOrder LMT id=%d %s %dx %s %.4g%s @ %.2f ref=%s overnight=%s\n",
                  orderId, o.action.c_str(), qty, c.symbol.c_str(), c.strike, c.right.c_str(),
-                 limit, orderRef.c_str());
+                 limit, orderRef.c_str(), o.includeOvernight ? "true" : "false");
+    return true;
 }
 
 void TwsAdapter::place_stop(Contract& c, char side, int qty, double stopPx,
@@ -85,13 +90,11 @@ void TwsAdapter::place_stop(Contract& c, char side, int qty, double stopPx,
     o.auxPrice = stopPx;           // precio de disparo (en términos de la OPCIÓN)
     o.tif = "GTC";                 // stop protectivo debe sobrevivir la sesión
     o.transmit = true;
-    // DAY *Y* NIGHT (fix 2026-07-24): la entrada de acciones va con outsideRth=true
-    // (la flota opera 24/5), pero el stop iba con outsideRth=false — o sea que una
-    // posición abierta de noche quedaba SIN protección efectiva hasta las 9:30, y
-    // parte de esos STP los rechazaba IBKR sin emitir orderStatus (-> el watchdog
-    // los re-armaba en bucle infinito). Acciones: fuera-de-horario SÍ. Opciones: no
-    // cotizan de noche, así que se deja en RTH.
+    // outsideRth cubre pre/post-market para acciones. NO se marca includeOvernight:
+    // IBKR sólo admite LMT/Adaptive en su sesión overnight; STP GTC no protege allí.
+    // Opciones permanecen RTH-only.
     o.outsideRth = (c.secType == "STK");
+    o.includeOvernight = false;
     o.orderRef = orderRef;
     OpenOrd& rec = orders_[orderId];
     rec.c = c; rec.o = o; rec.ref = orderRef; rec.ours = starts_with(orderRef, OE_PREFIX);

@@ -29,6 +29,7 @@
 
 #include "guards.h"        // PositionBook/PosKey -- fuente de verdad de posiciones (#3/#7)
 #include "ledger.h"
+#include "order_policy.h"
 
 namespace oe {
 
@@ -48,8 +49,8 @@ struct ExecReport {
     double qty = 0;           // cantidad LLENADA (para proteger fills parciales)
 };
 
-// Construye un Contract IBKR de ACCIÓN (secType STK). Acciones tradean 24/5
-// (con outsideRth) -> se puede probar el ciclo completo en paper a cualquier hora.
+// Construye un Contract IBKR de ACCIÓN (secType STK). La política de sesión se
+// aplica por separado: outsideRth por sí solo NO habilita el venue overnight.
 inline Contract make_stock(const std::string& sym) {
     Contract c;
     c.symbol = sym;
@@ -93,6 +94,10 @@ public:
 
     bool connected() const { return connected_; }  // hay nextValidId (socket vivo + listo)
     bool socket_alive() const { return client_ && client_->isConnected(); }
+    int server_version() const {
+        // EClientSocket hides the EClient getter with its protocol-sink setter.
+        return client_ ? static_cast<EClient*>(client_.get())->serverVersion() : 0;
+    }
     bool frozen() const { return frozen_; }        // 1100/502/connectionClosed -> congelar entradas
     bool reconciled() const { return reconciled_; }
     const std::string& account() const { return account_; }
@@ -124,8 +129,9 @@ public:
     // --- órdenes (SÓLO se llaman con doble llave; DRY jamás llega aquí) ---
     // Límite marketable DAY, transmit=true, orderRef "OE:..". NUNCA descansa
     // salvo que sea un stop nativo (place_stop native=true).
-    void place_limit(Contract& c, char side /*'B'|'S'*/, int qty, double limit,
-                     int orderId, const std::string& orderRef, bool outsideRth = false);
+    bool place_limit(Contract& c, char side /*'B'|'S'*/, int qty, double limit,
+                     int orderId, const std::string& orderRef,
+                     OrderSession session = OrderSession::RTH_ONLY);
     // Stop protectivo. native=true -> STP server-side (sobrevive al crash),
     // SIEMPRE en el set de cancel-all. native=false -> el motor lo vigila local.
     void place_stop(Contract& c, char side, int qty, double stopPx,

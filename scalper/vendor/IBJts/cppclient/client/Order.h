@@ -249,6 +249,7 @@ struct Order
 
 	std::string externalUserId = "";
 	int manualOrderIndicator = UNSET_INTEGER;
+	bool includeOvernight = false;
 
 public:
 

@@ -145,12 +145,14 @@ const int MIN_SERVER_VER_PROFESSIONAL_CUSTOMER       = 184;
 const int MIN_SERVER_VER_BOND_ACCRUED_INTEREST       = 185;
 const int MIN_SERVER_VER_INELIGIBILITY_REASONS       = 186;
 const int MIN_SERVER_VER_RFQ_FIELDS                  = 187;
+const int MIN_SERVER_VER_BOND_TRADING_HOURS          = 188;
+const int MIN_SERVER_VER_INCLUDE_OVERNIGHT           = 189;
 
 /* 100+ messaging */
 // 100 = enhanced handshake, msg length prefixes
 
 const int MIN_CLIENT_VER = 100;
-const int MAX_CLIENT_VER = MIN_SERVER_VER_RFQ_FIELDS;
+const int MAX_CLIENT_VER = MIN_SERVER_VER_INCLUDE_OVERNIGHT;
 
 
 // incoming msg id's

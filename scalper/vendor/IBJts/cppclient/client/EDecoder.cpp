@@ -413,7 +413,8 @@ const char* EDecoder::processOpenOrderMsg(const char* ptr, const char* endPtr) {
           && eOrderDecoder.decodePegBestPegMidOrderAttributes(ptr, endPtr)
           && eOrderDecoder.decodeCustomerAccount(ptr, endPtr)
           && eOrderDecoder.decodeProfessionalCustomer(ptr, endPtr)
-          && eOrderDecoder.decodeBondAccruedInterest(ptr, endPtr);
+          && eOrderDecoder.decodeBondAccruedInterest(ptr, endPtr)
+          && eOrderDecoder.decodeIncludeOvernight(ptr, endPtr);
 
         if (!success) {
           return nullptr;
