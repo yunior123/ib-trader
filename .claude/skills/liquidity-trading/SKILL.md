@@ -24,9 +24,14 @@ reverses. This skill turns that into checkable rules on 1m/5m/15m bars.
 **Order block**: last opposite-color 1m/5m bar before an impulsive move
 (≥2×ATR range, vol ≥1.5×volMA). Revisits of its 50% level are reaction zones.
 
-**Fair value gap (FVG)**: 3-bar pattern where bar1.high < bar3.low (bullish) —
-the bar2 imbalance tends to get filled ~70% of the time intraday; unfilled FVGs
-mark trend strength.
+**Fair value gap (FVG)**: 3-bar pattern where bar1.high < bar3.low (bullish).
+MEASURED 2026-07-30 on poly_bars (1,306,310 FVGs, 13,499 sym-day clusters, 30 syms,
+2 years): same-day complete fill = **88.55%** — but a SYMMETRIC level the same distance
+in the OPPOSITE direction is touched **87.83%** of the time. **Edge over the null =
++0.72pp** (bullish +0.19pp, bearish +1.28pp), against a house bar of +6pp.
+The fill rate is DIFFUSION, not institutional anchoring. Do NOT trade the fill.
+The old "~70% gets filled" line was folklore: wrong number AND meaningless.
+Script: scratchpad/fvg_null.py. Same precedent as scripts/gaps.py:12-15 (no p_fill published).
 
 **Session windows (ET)**: 9:30–10:00 opening auction sweeps prior-day levels;
 10:00–11:30 trend establishment; 15:30–16:00 MOC flows. Overnight (20:00–04:00,

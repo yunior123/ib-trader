@@ -88,3 +88,4 @@
 {"aggregate_volume":18852.0,"dominant_strike":240.0,"id":"opt_whale_watch:AMZN:CALLS:1785422550","premium":null,"side":"CALLS","source":"opt_whale_watch","sym":"AMZN","ts":1785422550.016159,"volume_scope":"aggregate_strikes"}
 {"aggregate_volume":115559,"dominant_strike":null,"id":"flow_pulse:QQQ:PUTS:1785422929","premium":null,"side":"PUTS","source":"flow_pulse","sym":"QQQ","ts":1785422929,"volume_scope":"aggregate_delta"}
 {"aggregate_volume":12919,"dominant_strike":null,"id":"flow_pulse:MU:PUTS:1785423361","premium":null,"side":"PUTS","source":"flow_pulse","sym":"MU","ts":1785423361,"volume_scope":"aggregate_delta"}
+{"aggregate_volume":47610,"dominant_strike":null,"id":"flow_pulse:TSLA:CALLS:1785424203","premium":null,"side":"CALLS","source":"flow_pulse","sym":"TSLA","ts":1785424203,"volume_scope":"aggregate_delta"}
