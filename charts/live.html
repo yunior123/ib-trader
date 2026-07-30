@@ -2147,7 +2147,10 @@ function onOrderPreflight(p) {
     `${String(d.side || "").toUpperCase()}  ${d.qty || "—"} × ${contract}\n` +
     `Trigger subyacente: ${d.price || "—"}\n` +
     `Límite estimado: ${p.limit_estimate == null ? "n/d" : p.limit_estimate} (${p.limit_policy || "—"})\n` +
-    `Sesión: ${p.session || "—"}`;
+    `Sesión: ${p.session || "—"}\n` +
+    `Ejecución: ${d.instrument === "stk"
+      ? "LMT marketable al tope revisado · overnight sólo LMT (IBKR) · cierres perseguidos"
+      : "IBKR Adaptive (fill-seeker, jamás sobre tu límite) · cierres perseguidos"}`;
   const g = p.guard || {};
   const status = document.getElementById("oc-status");
   status.replaceChildren();

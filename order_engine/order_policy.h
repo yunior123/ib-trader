@@ -7,6 +7,7 @@
 #include "Decimal.h"
 #include "EDecoder.h"
 #include "Order.h"
+#include "TagValue.h"
 
 namespace oe {
 
@@ -75,7 +76,8 @@ inline LimitOrderPlan make_limit_order_plan(const Contract& input, char side, in
             p.error = "TWS/Gateway server lacks includeOvernight support";
             return p;
         }
-        // Official IBKR wire policy for "Overnight + Day".
+        // Official IBKR wire policy for "Overnight + Day". The overnight venue
+        // only accepts plain LMT — no IBALGO — so this plan never carries one.
         p.contract.exchange = "SMART";
         o.outsideRth = true;
         o.includeOvernight = true;
@@ -84,6 +86,11 @@ inline LimitOrderPlan make_limit_order_plan(const Contract& input, char side, in
         // or overnight sessions.
         o.outsideRth = false;
         o.includeOvernight = false;
+        // Fill-seeker por defecto (Yunior 2026-07-29): Adaptive trabaja la orden
+        // dentro del límite revisado — jamás puede pagar más que lmtPrice.
+        o.algoStrategy = "Adaptive";
+        o.algoParams = std::make_shared<TagValueList>();
+        o.algoParams->push_back(std::make_shared<TagValue>("adaptivePriority", "Urgent"));
     }
 
     p.ok = true;

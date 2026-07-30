@@ -14,6 +14,10 @@ Spec completa: `order_engine/docs/ORDER-ENGINE.md`. Recetas TWS: `.claude/skills
   (SIGINT/SIGTERM/crash/atexit → cancela entradas propias pendientes, conserva
   stops nativos protectivos y hace flush).
 - `order_engine.cpp` — main: zone-watcher, gate (spread≤5%, OI>500, prima≤budget, cadena fresca), FSM PLACED→TRIGGERED→SENT→FILLED→STOP_HIT, estado a `state/<sym>.jsonl`.
+- `chase.h` — fill-seeker: RTH lleva IBKR **Adaptive Urgent** dentro del límite revisado
+  (`order_policy.h`); los CIERRES dormidos se re-pegan al marketable fresco cada 15 s con
+  tope de slippage (stk 1% / opt 15%) anclado al límite inicial — al tope, descansan y GRITAN.
+  Overnight IBKR solo admite LMT plano: ahí la entrada ya sale marketable al tope humano.
 - `build.sh` — 2 compilaciones secuenciales, **comentadas** (las corre el orquestador; Mac 8GB).
 
 ## Build

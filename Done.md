@@ -6,6 +6,17 @@
 
 ## ✅ SESIÓN 2026-07-29
 
+- [x] **Fill-seeker por defecto ("orders always get filled by default... smart algorithm").**
+      RTH (opciones y acciones RTH-only): toda orden sale IBKR Adaptive prioridad Urgent —
+      trabaja el fill dentro del límite revisado, jamás lo excede; el what-if simula el plan
+      idéntico. Overnight: IBKR solo admite LMT plano; la entrada ya sale marketable al tope
+      humano. Cierres dormidos (panel/emergencia/stop-local) se re-pegan al marketable fresco
+      cada 15 s (`chase.h`, puro) con tope de slippage anclado al límite inicial (stk 1% /
+      opt 15%); al tope descansan y GRITAN — nunca rematan a 0.01; parciales se siguen
+      persiguiendo. El ticket muestra el algoritmo antes de confirmar. Verificado: 130 guards
+      + 39 chain + 502 orders + 13 chase + policy/backend, ASan/UBSan limpio en 5 suites,
+      1.013 pytest verdes, binario recompilado. Release pública v5.
+
 - [x] **Órdenes desde el Cockpit listas para prueba PAPER: acciones y opciones, simples y
       protegidas.** Ticket único BUY/SELL con instrumento, CALL/PUT, expiry, cantidad,
       contrato exacto, límite máximo/mínimo revisado y destino seguro FICHA por defecto;

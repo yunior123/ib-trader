@@ -37,6 +37,7 @@
 #include "account_cfg.h"
 #include "guards.h"        // decisiones de dinero PURAS y testeables (tests/test_guards.cpp)
 #include "chain.h"         // cadena de opciones + gate, PURAS y testeables (tests/test_chain.cpp)
+#include "chase.h"         // persecución de fill en cierres, PURA (tests/test_chase.cpp)
 #include "ledger.h"
 
 using namespace oe;
@@ -454,6 +455,23 @@ int main(int argc, char** argv) {
         }
     }
     std::map<int, std::pair<std::string, std::string>> oid2zone; // orderId -> (sym, zoneId)
+    // ---- persecución de fill de CIERRES (chase.h). Un cierre que descansa es
+    // exposición viva: se re-pega hacia el marketable fresco, acotado al tope.
+    struct ChaseRec {
+        std::string sym, label; Contract c; char side = 'S';
+        double placed = 0, ref = 0; long long last_s = 0;
+        int repegs = 0; bool is_opt = true, shouted = false;
+    };
+    std::map<int, ChaseRec> chase;                               // orderId -> chase
+    const oe::ChaseCfg chase_cfg;
+    auto chase_track = [&chase](int oid, const std::string& sym, const Contract& c,
+                                char side, double lim, long long now_s,
+                                const std::string& label) {
+        ChaseRec cr; cr.sym = sym; cr.label = label; cr.c = c; cr.side = side;
+        cr.placed = lim; cr.ref = lim; cr.last_s = now_s;
+        cr.is_opt = (c.secType == "OPT");
+        chase[oid] = cr;
+    };
 
     std::fprintf(stderr, "loop activo. Ctrl-C para desarme limpio.\n");
 
@@ -522,6 +540,13 @@ int main(int argc, char** argv) {
         // --- drenar eventos de ejecución -> avanzar FSM
         ExecReport ev;
         while (tws.poll(ev)) {
+            // chase: soltar la orden al terminar. "Partial" sigue viva -> se sigue
+            // persiguiendo el remanente; "Filled"/"PartialThenCancel" ya no existen.
+            if (auto cit = chase.find(ev.order_id); cit != chase.end()) {
+                if ((ev.kind == ExecReport::FILL && ev.status != "Partial") ||
+                    ev.kind == ExecReport::CANCELED || ev.kind == ExecReport::REJECTED)
+                    chase.erase(cit);
+            }
             auto it = oid2zone.find(ev.order_id);
             if (it == oid2zone.end()) continue;
             auto& sym = it->second.first;
@@ -584,6 +609,42 @@ int main(int argc, char** argv) {
         if (now_s - last_positions_req_s >= 15) {
             tws.reqPositions();
             last_positions_req_s = now_s;
+        }
+
+        // --- chase: re-pegar cierres dormidos hacia el marketable fresco ---
+        if (!frozen) for (auto& [coid, cr] : chase) {
+            if (now_s - cr.last_s < chase_cfg.interval_s) continue;   // pacing antes de tocar disco
+            double fresh = 0;
+            if (cr.is_opt) {
+                Chain chf = load_chain(cfg.repo + "/data/opt_chain_" + lower(cr.sym) + ".txt");
+                Gate gf = run_gate(chf, cr.c.right, cr.c.lastTradeDateOrContractMonth,
+                                   cr.c.strike, cr.side, 1e9, now_s, /*require_exact_strike=*/true);
+                if (gf.go) fresh = gf.limit;   // sin cadena fresca no se persigue (fail-closed)
+            } else {
+                double sp = 0;
+                if (last_close(cfg.repo + "/data/bars_" + lower(cr.sym) + "_ibkr.txt", sp) && sp > 0)
+                    fresh = (cr.side == 'B') ? sp * 1.002 : sp * 0.998;
+            }
+            const oe::RepegDecision d = oe::decide_repeg(cr.side, cr.placed, cr.ref, fresh,
+                                                         cr.repegs, cr.last_s, now_s,
+                                                         cr.is_opt, chase_cfg);
+            if (d.modify) {
+                tws.modify(coid, d.new_limit);
+                cr.placed = d.new_limit; cr.last_s = now_s; ++cr.repegs;
+                char b[160];
+                std::snprintf(b, sizeof b, "CHASE %s %s id=%d repeg %d -> %.2f",
+                              cr.sym.c_str(), cr.label.c_str(), coid, cr.repegs, d.new_limit);
+                ledger.note(b);
+                std::fprintf(stderr, "[%s] %s\n", cr.sym.c_str(), b);
+            } else if (d.exhausted && !cr.shouted) {
+                cr.shouted = true;
+                char b[192];
+                std::snprintf(b, sizeof b,
+                              "CHASE EXHAUSTO %s %s id=%d: tope de slippage; la orden descansa en %.2f",
+                              cr.sym.c_str(), cr.label.c_str(), coid, cr.placed);
+                ledger.note(b);
+                std::fprintf(stderr, "[%s] ⚠ %s\n", cr.sym.c_str(), b);
+            }
         }
 
         // --- comandos del panel de cuenta: cancel / modify / close (líneas NUEVAS) ---
@@ -755,6 +816,7 @@ int main(int argc, char** argv) {
                                 ledger.note("cmd close fallo local inesperado " + csym);
                                 continue;
                             }
+                            chase_track(oid, csym, cc, side, lim, now_s, "CLOSE");
                             ledger.note("cmd close " + csym + " " + cside + " " + std::to_string(cqty) + " @ " + std::to_string(lim));
                         }
                     }
@@ -1229,6 +1291,7 @@ int main(int argc, char** argv) {
                                     int oid = tws.next_order_id();
                                     z.close_id = oid; oid2zone[oid] = {sym, z.id};
                                     tws.place_limit(z.entry_c, close_side, cq, lim, oid, "OE:" + z.id + ":EMERG");
+                                    chase_track(oid, sym, z.entry_c, close_side, lim, now_s, "EMERG");
                                     ledger.note("CIERRE DE EMERGENCIA " + sym + " " + z.id + " @ " + std::to_string(lim));
                                     std::fprintf(stderr, "[%s] zona %s CIERRE DE EMERGENCIA @ %.2f\n", sym.c_str(), z.id.c_str(), lim);
                                 } else {
@@ -1276,6 +1339,7 @@ int main(int argc, char** argv) {
                         int oid = tws.next_order_id();
                         z.close_id = oid; oid2zone[oid] = {sym, z.id};
                         tws.place_limit(z.entry_c, close_side, qty, lim, oid, "OE:" + z.id + ":CLOSE");
+                        chase_track(oid, sym, z.entry_c, close_side, lim, now_s, "STOP-LOCAL");
                         write_state(state_dir, sym, z, "\"stop_close\":" + std::to_string(lim));
                         std::fprintf(stderr, "[%s] zona %s STOP-LOCAL PRINT und=%.2f -> cierro @ %.2f\n",
                                      sym.c_str(), z.id.c_str(), spot, lim);

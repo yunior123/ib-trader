@@ -45,6 +45,9 @@ int main() {
         assert(p.order.account == "U_TEST");
         assert(std::abs(p.order.lmtPrice - 219.25) < 1e-9);
         assert(std::abs(DecimalFunctions::decimalToDouble(p.order.totalQuantity) - 7.0) < 1e-9);
+        // El venue overnight de IBKR solo admite LMT plano: sin IBALGO.
+        assert(p.order.algoStrategy.empty());
+        assert(!p.order.algoParams);
     }
     {
         auto p = make_limit_order_plan(option(), 'S', 2, 3.40, "OE:OPT",
@@ -57,6 +60,18 @@ int main() {
         assert(!p.order.outsideRth);
         assert(!p.order.includeOvernight);
         assert(p.order.transmit);
+        // Fill-seeker por defecto en RTH: Adaptive Urgent dentro del límite.
+        assert(p.order.algoStrategy == "Adaptive");
+        assert(p.order.algoParams && p.order.algoParams->size() == 1);
+        assert((*p.order.algoParams)[0]->tag == "adaptivePriority");
+        assert((*p.order.algoParams)[0]->value == "Urgent");
+    }
+    {
+        // El what-if debe simular EXACTAMENTE el plan real (mismo algo).
+        auto p = make_limit_order_plan(option(), 'B', 1, 1.25, "OE:WHATIF:OPT",
+                                       OrderSession::RTH_ONLY, 999, true, "U_TEST");
+        assert(p.ok && p.order.whatIf);
+        assert(p.order.algoStrategy == "Adaptive");
     }
     {
         auto p = make_limit_order_plan(stock(), 'B', 1, 219.25, "OE:WHATIF",

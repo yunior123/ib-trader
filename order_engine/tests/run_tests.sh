@@ -9,7 +9,7 @@ cd "$REPO/order_engine"
 OUT="$(mktemp -d)"; trap 'rm -rf "$OUT"' EXIT
 
 ARCHFLAG="-mcpu=native"; [ "$(uname -m)" = "x86_64" ] && ARCHFLAG="-march=native"
-SUITES=(guards chain orders policy)
+SUITES=(guards chain orders chase policy)
 FAST=0; [ "${1:-}" = "--fast" ] && FAST=1
 rc=0
 CLIENT="$REPO/scalper/vendor/IBJts/cppclient/client"
