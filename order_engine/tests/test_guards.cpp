@@ -102,10 +102,10 @@ static void test_double_lock_and_disarm_ownership() {
           "orden ajena viva -> no tocar");
     CHECK(disarm_action(true, false, false) == DisarmAction::IGNORE,
           "orden propia terminal -> no re-cancelar");
-    CHECK(disarm_action(true, true, false) == DisarmAction::CANCEL_ENTRY,
+    CHECK(disarm_action(true, true, false) == DisarmAction::CANCEL_OWN,
           "entrada propia viva -> cancelar");
-    CHECK(disarm_action(true, true, true) == DisarmAction::KEEP_PROTECTIVE_STOP,
-          "stop propio vivo -> conservar protección");
+    CHECK(disarm_action(true, true, true) == DisarmAction::CANCEL_OWN,
+          "stop propio vivo -> cancelar al desarmar");
 
     Guard::install([] { ++g_disarm_calls; });
     Guard::run_disarm_once();

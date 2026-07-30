@@ -716,6 +716,17 @@
 - [x] 2026-07-28 (Yunior): "debug notifications... spanish, simple, real. claude code start should speak spanish. finish all improvements" — hecho: (a) zombi BOLLINGER VIGIA cazado (118 banners fantasma post-cierre, portero RTH en keepalive, commit); (b) arranque Claude Code traducido (echo hook + voz session-start + indice skills + 'Falló el comando'); (c) voz del dia 0 frases en ingles, price_alarm 0 alertas viejas, korea_watch ya fail-loud; (d) capa liquidez en chart delegada a agente; (e) hiro_pulse SUPERADO por la cinta UW (tick opciones IBKR err 10189 = via muerta; UW flow-alerts ya da el flujo firmado)
 # Cierre 2026-07-29 — review all, finish all
 
+- [x] **UW + Korea + IBKR + X + seis ventanas + email + árbol SPY** — consolidado y
+      verificado: lectura UW/Finviz/options con 10 candidatos por lado y árbol de SPY;
+      alarmas temporales Korea activas; flota KRX despierta; posts X forzados a inglés;
+      Gateway 4001 cableado solo para datos y rutas BUY/SELL de acciones/opciones probadas
+      localmente (658 aserciones + ASan/UBSan, cero órdenes reales); app v2 abre seis
+      ventanas por defecto; árbol de dos páginas enviado a la OfficeJet (job 212) e informe
+      consolidado enviado por Resend (`c5757913-ddbd-4c0e-82e0-0b67a3601353`).
+- [x] **"investigate real fast why are memory stock are jumping up"** — reporte urgente
+      `docs/reports/memory-jump-2026-07-29-2105.md`: confirmación del call de Samsung +
+      rebote/short covering; X 29 positivo / 9 negativo / 60 neutral; email urgente enviado
+      por Resend (`8484ac43-795a-44bf-93df-c27143a200a5`).
 - [x] Overnight integrado en `compass.cpp` sin ocupar familia: coef 1.25/0.75 modula
       amplitud y sesgo doctrinal; probabilidad medida intacta; contexto visible en el chart.
 - [x] Migración durable de 17 consumidores a `config/feeds.env` y `x_whale_bot` a

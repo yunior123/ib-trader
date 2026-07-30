@@ -132,29 +132,20 @@ void TwsAdapter::modify(int orderId, double newLimit) {
 }
 
 void TwsAdapter::cancel_all_own() {
-    // AUDIT-FIX (crítico): al desarmar se cancelan las ENTRADAS en vuelo (jamás deben
-    // quedar residuales — desastre 2026-07-16), pero los STOPS protectivos se DEJAN
-    // vivos: son la red de una posición REAL abierta; cancelarlos la deja desnuda.
-    // Se reportan EN VOZ ALTA para que el humano sepa qué queda en el broker.
-    int n = 0, kept = 0;
+    // Al desarmar se cancela TODO lo propio que siga vivo. Los stops sobreviven un
+    // crash duro porque son nativos, pero si este cleanup alcanza a correr también
+    // pertenecen al set de cancel-all: nunca queda una orden residual deliberada.
+    int n = 0;
     for (auto& [id, rec] : orders_) {
         const auto action = disarm_action(rec.ours, rec.live, rec.native_stop);
         if (action == DisarmAction::IGNORE) continue;
-        if (action == DisarmAction::KEEP_PROTECTIVE_STOP) {
-            ++kept;
-            std::fprintf(stderr, "[tws] ⚠ QUEDA VIVO stop protectivo id=%d ref=%s (protege posición abierta)\n",
-                         id, rec.ref.c_str());
-            if (ledger_) ledger_->note("disarm: stop protectivo QUEDA VIVO id=" + std::to_string(id) + " ref=" + rec.ref);
-            continue;
-        }
         client_->cancelOrder(id, OrderCancel());
         if (ledger_) ledger_->cancel(id, rec.ref);
         rec.live = false;      // idempotente: no re-cancelar
         ++n;
     }
-    if ((n || kept) && ledger_) ledger_->flush();
-    std::fprintf(stderr, "[tws] cancel_all_own -> %d entradas canceladas, %d stops protectivos vivos\n", n, kept);
-    if (kept) std::fprintf(stderr, "[tws] ⚠⚠ HAY %d STOP(S) EN EL BROKER: si cierras la posición a mano, CANCÉLALOS (scripts/cancel_all_bot_orders.py)\n", kept);
+    if (n && ledger_) ledger_->flush();
+    std::fprintf(stderr, "[tws] cancel_all_own -> %d orden(es) propias canceladas\n", n);
 }
 
 void TwsAdapter::reconcile() {

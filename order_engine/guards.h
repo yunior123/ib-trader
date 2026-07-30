@@ -112,11 +112,12 @@ inline bool accounts_match(const std::string& managed_csv, const std::string& ex
     return false;
 }
 
-enum class DisarmAction { IGNORE, CANCEL_ENTRY, KEEP_PROTECTIVE_STOP };
+enum class DisarmAction { IGNORE, CANCEL_OWN };
 
 inline DisarmAction disarm_action(bool ours, bool live, bool native_stop) {
+    (void)native_stop;
     if (!ours || !live) return DisarmAction::IGNORE;
-    return native_stop ? DisarmAction::KEEP_PROTECTIVE_STOP : DisarmAction::CANCEL_ENTRY;
+    return DisarmAction::CANCEL_OWN;
 }
 
 // ===================================================================== #1/#2

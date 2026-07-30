@@ -9,7 +9,8 @@
 - Ningún `order_engine`, scalper ni executor estaba corriendo. No se colocó, modificó,
   canceló ni transmitió ninguna orden, tampoco paper.
 - BUY/SELL de acciones y opciones verificados con funciones puras/fixtures locales.
-- Doble llave, desarme idempotente y ownership de cancelación tienen pruebas explícitas.
+- Doble llave, desarme idempotente y ownership de cancelación tienen pruebas explícitas:
+  ignora órdenes ajenas/terminales y cancela toda orden propia viva, incluidos stops.
 - Clic normal en la app abre seis ventanas independientes; `--windows` y `--ports` mandan.
 - Puertos 8080–8085 sanos, sin blanco, `signal_only:true`, versión pública `v1`.
 

@@ -133,7 +133,7 @@ public:
     void cancel(int orderId);
     void modify(int orderId, double newLimit);     // = placeOrder MISMO id (cancel/replace)
 
-    // Desarme: cancela entradas propias vivas; conserva stops protectivos propios.
+    // Desarme: cancela TODAS las órdenes propias vivas, incluidos stops protectivos.
     // Ignora órdenes ajenas y terminales. Idempotente.
     void cancel_all_own();
     // Al arrancar: pide TODAS las órdenes abiertas para adoptar/cancelar las
