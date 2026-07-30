@@ -104,13 +104,41 @@ static void test_double_lock_and_disarm_ownership() {
           "orden propia terminal -> no re-cancelar");
     CHECK(disarm_action(true, true, false) == DisarmAction::CANCEL_OWN,
           "entrada propia viva -> cancelar");
-    CHECK(disarm_action(true, true, true) == DisarmAction::CANCEL_OWN,
-          "stop propio vivo -> cancelar al desarmar");
+    CHECK(disarm_action(true, true, true) == DisarmAction::IGNORE,
+          "stop protectivo nativo -> preservar al desarmar");
 
     Guard::install([] { ++g_disarm_calls; });
     Guard::run_disarm_once();
     Guard::run_disarm_once();
     CHECK(g_disarm_calls == 1, "desarme idempotente: callback corre una sola vez");
+}
+
+static void test_human_confirmation_and_sell_inventory() {
+    section("confirmacion humana + SELL solo reduce inventario real");
+    const long long now = 1'000'000;
+    const std::string token = "0123456789abcdef0123456789abcdef";
+    CHECK(validate_human_confirmation("2026-07-29", "2026-07-29", token, now - 1, now).ok,
+          "confirmacion de hoy con token y timestamp pasa");
+    CHECK(!validate_human_confirmation("2026-07-28", "2026-07-29", token, now - 1, now).ok,
+          "confirmacion de otro dia falla");
+    CHECK(!validate_human_confirmation("2026-07-29", "2026-07-29", "", now - 1, now).ok,
+          "sin token humano falla");
+    CHECK(!validate_human_confirmation("2026-07-29", "2026-07-29", token,
+                                       now - 60'001, now, 60'000).ok,
+          "confirmacion expirada falla");
+
+    PositionBook pb;
+    const PosKey stk = pos_key_stock("AAPL");
+    CHECK(decide_entry_side(pb, stk, 1, 'B').ok, "BUY long permitido");
+    CHECK(!decide_entry_side(pb, stk, 1, 'S').ok,
+          "SELL sin posiciones reconciliadas falla");
+    pb.begin(); pb.set(stk, 3); pb.end();
+    CHECK(decide_entry_side(pb, stk, 3, 'S').ok, "SELL hasta inventario largo pasa");
+    CHECK(!decide_entry_side(pb, stk, 4, 'S').ok, "SELL por encima del largo falla");
+    const PosKey opt = pos_key_option("AAPL", "20260807", 220, "P");
+    CHECK(!decide_entry_side(pb, opt, 1, 'S').ok, "naked option SELL falla");
+    pb.begin(); pb.set(opt, 2); pb.end();
+    CHECK(decide_entry_side(pb, opt, 2, 'S').ok, "SELL opcion poseida pasa");
 }
 
 // ================================================== #1/#2 cap agregado
@@ -428,6 +456,7 @@ int main() {
     std::printf("=== order_engine :: guardas de dinero ===\n");
     test_allowlist_substring();
     test_double_lock_and_disarm_ownership();
+    test_human_confirmation_and_sell_inventory();
     test_aggregate_cap();
     test_close_against_real_position();
     test_option_stop_clamp_symmetry();

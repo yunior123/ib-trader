@@ -42,6 +42,7 @@ import json
 import math
 import os
 import re
+import secrets
 import subprocess
 import sys
 import time
@@ -1260,7 +1261,9 @@ def _default_stop_px(price, side, kind):
     return round(price - off, 2) if bullish else round(price + off, 2)
 
 
-def zone_add(sym, price, side, kind, exp=None, qty=1, instrument="opt"):
+def zone_add(sym, price, side, kind, exp=None, qty=1, instrument="opt",
+             confirmed_exec=False, overnight_gap_ack=False,
+             reviewed_strike=None, reviewed_right=None, reviewed_limit=None):
     """Añade una zona con el ESQUEMA EXTENDIDO (ORDER-ENGINE.md §3). CANDADO señal-solamente:
     exec=False por defecto (ficha-only) — sólo el order_engine C++ con doble llave ejecuta.
     instrument: 'opt' (opciones) | 'stk' (acciones, 24/5)."""
@@ -1277,10 +1280,50 @@ def zone_add(sym, price, side, kind, exp=None, qty=1, instrument="opt"):
          "instrument": instrument,         # opt | stk (acciones tradean 24/5)
          "exp": exp,                       # expiry elegida en el chart (no solo 0DTE)
          "qty": max(1, int(qty or 1)),
-         "exec": False,                    # CANDADO: ficha-only (señal) por defecto
+         "exec": bool(confirmed_exec),     # default duro False; True sólo tras token humano
          "stop": {"on": side == "buy",     # stop propuesto por defecto en zonas de compra
                   "px": _default_stop_px(price, side, kind), "native": True},
          "armed_date": time.strftime("%Y-%m-%d")}   # caduca fin de día salvo re-arme
+    if confirmed_exec:
+        if instrument == "stk" and overnight_gap_ack is not True:
+            z["exec"] = False
+            z["confirm_error"] = (
+                "debe aceptar explícitamente que IBKR no ofrece STP/GTC overnight")
+        else:
+            z["confirm_id"] = secrets.token_hex(16)
+            z["confirmed_at"] = int(time.time() * 1000)
+            if instrument == "stk":
+                z["overnight_gap_ack"] = True
+                try:
+                    z["locked_limit"] = round(float(reviewed_limit), 2)
+                except Exception:
+                    z["locked_limit"] = 0.0
+                if z["locked_limit"] <= 0:
+                    z["exec"] = False
+                    z["confirm_error"] = "límite revisado inválido"
+                    z.pop("confirm_id", None)
+                    z.pop("confirmed_at", None)
+            else:
+                locked = chain_contract(sym, price, kind, exp)
+                try:
+                    wanted_strike = round(float(reviewed_strike), 4)
+                    wanted_limit = round(float(reviewed_limit), 2)
+                except Exception:
+                    wanted_strike, wanted_limit = 0.0, 0.0
+                quote = (locked or {}).get("ask" if side == "buy" else "bid")
+                if (not locked or wanted_strike <= 0 or wanted_limit <= 0
+                        or abs(float(locked["strike"]) - wanted_strike) > 1e-9
+                        or locked["right"] != reviewed_right
+                        or round(float(quote or 0), 2) != wanted_limit):
+                    z["exec"] = False
+                    z["confirm_error"] = "contrato/cotización cambió después del preflight"
+                    z.pop("confirm_id", None)
+                    z.pop("confirmed_at", None)
+                else:
+                    z["locked_strike"] = wanted_strike
+                    z["locked_right"] = locked["right"]
+                    z["locked_exp"] = locked["exp"]
+                    z["locked_limit"] = wanted_limit
     zones.append(z)
     zones_save(sym, zones)
     return zones
@@ -1294,6 +1337,13 @@ def zone_update(sym, zid, **fields):
     for z in zones:
         if z.get("id") != zid:
             continue
+        # Cambiar contrato/precio/cantidad invalida una autorización anterior. El
+        # humano debe volver a pulsar EXEC después de ver los términos finales.
+        material = any(fields.get(k) is not None for k in ("exp", "qty", "price"))
+        if material and fields.get("exec") is not True:
+            z["exec"] = False
+            z.pop("confirm_id", None)
+            z.pop("confirmed_at", None)
         if fields.get("exp"):
             z["exp"] = fields["exp"]
         if fields.get("qty") is not None:
@@ -1303,6 +1353,18 @@ def zone_update(sym, zid, **fields):
                 pass
         if fields.get("exec") is not None:
             z["exec"] = bool(fields["exec"])
+            if z["exec"]:
+                # Prueba backend de la acción humana. No es una llave de ejecución:
+                # el motor aún exige --arm-live + ARM_LIVE de hoy.
+                import secrets
+                z["confirm_id"] = secrets.token_hex(16)
+                z["confirmed_at"] = int(time.time() * 1000)
+                z["armed_date"] = time.strftime("%Y-%m-%d")
+                if z.get("instrument") == "stk":
+                    z["overnight_gap_ack"] = fields.get("overnight_gap_ack") is True
+            else:
+                z.pop("confirm_id", None)
+                z.pop("confirmed_at", None)
         if fields.get("price") is not None:
             try:
                 z["price"] = round(float(fields["price"]), 2)
@@ -1319,6 +1381,43 @@ def zone_update(sym, zid, **fields):
         if fields.get("stop_native") is not None:
             st["native"] = bool(fields["stop_native"])
         z["stop"] = st
+        if z.get("exec") and z.get("instrument", "opt") == "opt":
+            locked = chain_contract(sym, z.get("price"), z.get("kind"), z.get("exp"))
+            try:
+                wanted_strike = round(float(fields.get("locked_strike")), 4)
+                wanted_limit = round(float(fields.get("reviewed_limit")), 2)
+            except Exception:
+                wanted_strike, wanted_limit = 0.0, 0.0
+            wanted_right = str(fields.get("locked_right") or "")
+            quote = (locked or {}).get("ask" if z.get("side") == "buy" else "bid")
+            if (not locked or wanted_strike <= 0 or wanted_limit <= 0
+                    or abs(float(locked["strike"]) - wanted_strike) > 1e-9
+                    or locked["right"] != wanted_right
+                    or round(float(quote or 0), 2) != wanted_limit):
+                z["exec"] = False
+                z.pop("confirm_id", None)
+                z.pop("confirmed_at", None)
+                z["confirm_error"] = "contrato/cotización cambió después del preflight"
+            else:
+                z["locked_strike"] = wanted_strike
+                z["locked_right"] = locked["right"]
+                z["locked_exp"] = locked["exp"]
+                z["locked_limit"] = wanted_limit
+                z.pop("confirm_error", None)
+        elif z.get("instrument") == "stk":
+            for key in ("locked_strike", "locked_right", "locked_exp"):
+                z.pop(key, None)
+            if z.get("exec"):
+                try:
+                    z["locked_limit"] = round(float(fields.get("reviewed_limit")), 2)
+                except Exception:
+                    z["locked_limit"] = 0.0
+            if z.get("exec") and not z.get("overnight_gap_ack"):
+                z["exec"] = False
+                z.pop("confirm_id", None)
+                z.pop("confirmed_at", None)
+                z["confirm_error"] = (
+                    "debe aceptar explícitamente que IBKR no ofrece STP/GTC overnight")
         break
     zones_save(sym, zones)
     return zones
@@ -1405,6 +1504,225 @@ def ib_mode_status():
             "live_up": ib_mode.any_up("live")}
 
 
+def execution_guard_status(now=None):
+    """Estado visible de las guardas; sólo lectura y sin armar nada."""
+    now = now or time.localtime()
+    today = time.strftime("%Y-%m-%d", now)
+    arm_path = os.path.join(REPO, "order_engine", "ARM_LIVE")
+    try:
+        arm_file_today = open(arm_path).read().strip() == today
+    except Exception:
+        arm_file_today = False
+    try:
+        ps = subprocess.run(["pgrep", "-af", "order_engine/order_engine"],
+                            capture_output=True, text=True, timeout=2)
+        cmdline = ps.stdout or ""
+    except Exception:
+        cmdline = ""
+    engine_up = bool(cmdline.strip())
+    engine_arm_flag = engine_up and "--arm-live" in cmdline
+    return {"engine_up": engine_up, "arm_file_today": arm_file_today,
+            "engine_arm_flag": engine_arm_flag,
+            "double_arm": bool(arm_file_today and engine_arm_flag)}
+
+
+def order_preflight(sym, request):
+    """Normaliza una intención para la UI. Nunca persiste ni llama al broker."""
+    errors, warnings = [], []
+    symbol = str(sym or "").strip().upper()
+    instrument = str(request.get("instrument") or "").lower()
+    side = str(request.get("side") or "").lower()
+    kind = str(request.get("kind") or "").lower()
+    exp = str(request.get("exp") or "")
+    try:
+        price = round(float(request.get("price")), 2)
+    except Exception:
+        price = 0.0
+    try:
+        qty = int(request.get("qty"))
+    except Exception:
+        qty = 0
+    if not re.fullmatch(r"[A-Z][A-Z0-9.]{0,9}", symbol):
+        errors.append("símbolo inválido")
+    if instrument not in ("stk", "opt"):
+        errors.append("instrumento debe ser acciones u opciones")
+    if side not in ("buy", "sell"):
+        errors.append("lado debe ser BUY o SELL")
+    if price <= 0:
+        errors.append("nivel/trigger debe ser positivo")
+    if qty < 1 or qty > 10000:
+        errors.append("cantidad fuera de 1..10000")
+
+    right = strike = limit_estimate = None
+    overnight_eligible = instrument == "stk"
+    session = "OVERNIGHT+DAY" if overnight_eligible else "DAY (RTH)"
+    if instrument == "opt":
+        if kind not in ("call", "put"):
+            errors.append("right debe ser CALL o PUT")
+        if not re.fullmatch(r"\d{8}", exp):
+            errors.append("expiry debe tener formato YYYYMMDD")
+        contract = chain_contract(symbol, price, kind, exp) if not errors else None
+        if contract is None and not errors:
+            errors.append("contrato no disponible en la cadena local")
+        elif contract:
+            right = contract["right"]
+            strike = contract["strike"]
+            quote = contract["ask"] if side == "buy" else contract["bid"]
+            if quote is None or float(quote) <= 0:
+                errors.append("sin bid/ask válido para estimar límite")
+            else:
+                limit_estimate = round(float(quote), 2)
+        warnings.append("Opciones: sesión DAY/RTH solamente.")
+    elif instrument == "stk" and price > 0 and side in ("buy", "sell"):
+        limit_estimate = round(price * (1.002 if side == "buy" else 0.998), 2)
+        warnings.append("Overnight+DAY se solicita sólo para acciones; IBKR revalida elegibilidad al enviar.")
+        warnings.append("IBKR no admite STP/GTC en overnight (20:00–03:50 ET): la salida protectiva nativa sólo cubre pre/post y RTH.")
+
+    if side == "sell":
+        warnings.append("SELL sólo pasará si reduce inventario largo confirmado por IBKR; short/naked falla cerrado.")
+    guard = execution_guard_status()
+    mode = ib_mode.get_mode()
+    connected = ib_mode.any_up(mode)
+    account = ib_mode.get_account()
+    if not account:
+        warnings.append("Cuenta no configurada.")
+    if not connected:
+        warnings.append("IB Gateway no está conectado en el modo seleccionado.")
+    if not guard["double_arm"]:
+        warnings.append("Doble llave incompleta: el motor permanecerá DRY.")
+    draft = {"sym": symbol, "instrument": instrument, "side": side,
+             "kind": kind if instrument == "opt" else "",
+             "exp": exp if instrument == "opt" else "", "price": price, "qty": qty,
+             "right": right, "strike": strike, "reviewed_limit": limit_estimate}
+    return {"type": "order_preflight", "ok": not errors, "can_prepare": not errors,
+            "signal_only": True, "draft": draft, "limit_estimate": limit_estimate,
+            "limit_policy": "estimación; el motor recalcula el LMT al trigger",
+            "session": session, "overnight_eligible": overnight_eligible,
+            "mode": mode, "account": account, "connected": connected,
+            "guard": guard, "errors": errors, "warnings": warnings}
+
+
+_ARM_CONFIRMATIONS = {}
+_ARM_CONFIRM_TTL_S = 120
+
+
+def _zone_confirmation_signature(sym, zone):
+    """Campos que cambian dinero/contrato; editar cualquiera invalida el token."""
+    instrument = str(zone.get("instrument") or "opt")
+    return (str(sym).upper(), str(zone.get("id") or ""),
+            instrument, str(zone.get("side") or ""),
+            str(zone.get("kind") or "") if instrument == "opt" else "",
+            str(zone.get("exp") or "") if instrument == "opt" else "",
+            round(float(zone.get("price") or 0), 4), int(zone.get("qty") or 0))
+
+
+def _new_zone_confirmation_signature(sym, draft):
+    """Firma de un ticket aún no persistido (sin id)."""
+    copy = dict(draft or {})
+    copy["id"] = ""
+    return _zone_confirmation_signature(sym, copy)
+
+
+def _reviewed_terms(draft):
+    try:
+        strike = round(float(draft.get("strike") or 0), 4)
+        limit = round(float(draft.get("reviewed_limit") or 0), 2)
+    except Exception:
+        strike, limit = 0.0, 0.0
+    return (strike, str(draft.get("right") or ""),
+            str(draft.get("exp") or ""), limit)
+
+
+def issue_arm_confirmation(sym, zone_id, preflight, now=None):
+    """Challenge de un uso sólo si el preflight coincide con la zona persistida."""
+    now = time.monotonic() if now is None else float(now)
+    zone = next((z for z in zones_load(sym) if str(z.get("id")) == str(zone_id)), None)
+    if zone is None:
+        return None, "zona no encontrada"
+    draft = preflight.get("draft") or {}
+    expected = _zone_confirmation_signature(sym, zone)
+    reviewed = _zone_confirmation_signature(sym, {
+        "id": zone_id, "instrument": draft.get("instrument"), "side": draft.get("side"),
+        "kind": draft.get("kind"), "exp": draft.get("exp"), "price": draft.get("price"),
+        "qty": draft.get("qty"),
+    })
+    if expected != reviewed:
+        return None, "el preflight no coincide con la zona actual"
+    token = secrets.token_urlsafe(24)
+    _ARM_CONFIRMATIONS[token] = {"signature": expected,
+                                 "review": _reviewed_terms(draft),
+                                 "expires": now + _ARM_CONFIRM_TTL_S}
+    for old, record in list(_ARM_CONFIRMATIONS.items()):
+        if record["expires"] < now:
+            _ARM_CONFIRMATIONS.pop(old, None)
+    return token, None
+
+
+def issue_new_arm_confirmation(sym, preflight, now=None):
+    """Challenge para crear+armar en una única confirmación final."""
+    now = time.monotonic() if now is None else float(now)
+    signature = _new_zone_confirmation_signature(sym, preflight.get("draft") or {})
+    token = secrets.token_urlsafe(24)
+    _ARM_CONFIRMATIONS[token] = {
+        "signature": signature,
+        "review": _reviewed_terms(preflight.get("draft") or {}),
+        "expires": now + _ARM_CONFIRM_TTL_S, "new": True,
+    }
+    return token
+
+
+def consume_arm_confirmation(sym, zone_id, token, human_confirmed, request=None, now=None):
+    """Consume el challenge ANTES de permitir exec=true. Fail-closed y one-shot."""
+    if human_confirmed is not True or not token:
+        return False, "confirmación humana y token requeridos"
+    now = time.monotonic() if now is None else float(now)
+    record = _ARM_CONFIRMATIONS.pop(str(token), None)
+    if record is None:
+        return False, "token ausente, inválido o ya usado"
+    if record["expires"] < now:
+        return False, "token de confirmación expirado"
+    zone = next((z for z in zones_load(sym) if str(z.get("id")) == str(zone_id)), None)
+    if zone is None or record["signature"] != _zone_confirmation_signature(sym, zone):
+        return False, "la zona cambió después del preflight"
+    if record.get("review") != _reviewed_terms(request or {}):
+        return False, "strike/right/límite cambiaron después del preflight"
+    return True, None
+
+
+def consume_new_arm_confirmation(sym, request, token, human_confirmed, now=None):
+    """Valida el ticket nuevo contra el challenge y lo consume antes de persistir."""
+    if human_confirmed is not True or not token:
+        return False, "confirmación humana y token requeridos"
+    now = time.monotonic() if now is None else float(now)
+    record = _ARM_CONFIRMATIONS.pop(str(token), None)
+    if record is None or not record.get("new"):
+        return False, "token ausente, inválido o ya usado"
+    if record["expires"] < now:
+        return False, "token de confirmación expirado"
+    draft = {"instrument": request.get("instrument"), "side": request.get("side"),
+             "kind": request.get("kind"), "exp": request.get("exp"),
+             "price": request.get("price"), "qty": request.get("qty"),
+             "strike": request.get("strike"), "right": request.get("right"),
+             "reviewed_limit": request.get("reviewed_limit")}
+    if record["signature"] != _new_zone_confirmation_signature(sym, draft):
+        return False, "el ticket cambió después del preflight"
+    if record.get("review") != _reviewed_terms(draft):
+        return False, "strike/right/límite cambiaron después del preflight"
+    return True, None
+
+
+def local_websocket_origin(origin):
+    """Los controles de dinero sólo se aceptan desde el cockpit local."""
+    if not origin:
+        return True
+    try:
+        from urllib.parse import urlparse
+        host = (urlparse(origin).hostname or "").lower()
+    except Exception:
+        return False
+    return host in ("127.0.0.1", "localhost", "::1")
+
+
 async def _acct_conn():
     """Conexión readonly al puerto del MODO actual (se reconecta si el modo cambió)."""
     port = ib_mode.get_port()
@@ -1485,14 +1803,19 @@ def route_order_action(act):
            "strike": act.get("strike"), "right": act.get("right"),
            "side": act.get("side"), "secType": act.get("secType")}
     try:
+        engine_up = bool(subprocess.run(
+            ["pgrep", "-f", "order_engine/order_engine"],
+            capture_output=True, timeout=2).stdout.strip())
+        if not engine_up:
+            # El motor arranca deliberadamente al EOF para no ejecutar comandos
+            # envejecidos. Por tanto encolar ahora sería una falsa promesa.
+            return {"type": "order_action", "ok": False, "engine_up": False,
+                    "err": "order_engine no está corriendo; no se encoló ningún comando"}
         os.makedirs(os.path.dirname(CMD_PATH), exist_ok=True)
         with open(CMD_PATH, "a") as f:
             f.write(json.dumps(cmd) + "\n")
-        engine_up = bool(subprocess.run(["pgrep", "-f", "order_engine/order_engine"],
-                                        capture_output=True).stdout.strip())
         return {"type": "order_action", "ok": True, "queued": cmd,
-                "engine_up": engine_up,
-                "note": "" if engine_up else "⚠ order_engine NO está corriendo — el comando se ejecuta cuando lo lances"}
+                "engine_up": True, "note": ""}
     except Exception as e:
         return {"type": "order_action", "ok": False, "err": str(e)}
 
@@ -2430,6 +2753,9 @@ def create_app(state):
 
     @app.websocket("/stream")
     async def stream(ws: WebSocket):
+        if not local_websocket_origin(ws.headers.get("origin")):
+            await ws.close(code=1008, reason="origin no permitido")
+            return
         await ws.accept()
         # CADA CONEXION VIVE EN SU PROPIO ESTADO (Yunior 2026-07-25: "when changing
         # symbol in one graph the other graphs change too, they should be independent
@@ -2545,20 +2871,46 @@ def create_app(state):
                     # se coloca una orden. exec=false = ficha-only (señal). SEÑAL-SOLAMENTE.
                     act = ctl.get("act", "list")
                     if act == "add" and ctl.get("price") is not None:
-                        st.zones = zone_add(st.sym, ctl.get("price"),
-                                               ctl.get("side"), ctl.get("kind"),
-                                               exp=ctl.get("exp"), qty=ctl.get("qty") or 1,
-                                               instrument=ctl.get("instrument") or "opt")
+                        confirmed_exec = False
+                        if ctl.get("exec") is True:
+                            confirmed_exec, why = consume_new_arm_confirmation(
+                                st.sym, ctl, ctl.get("confirmation_token"),
+                                ctl.get("human_confirmed"))
+                            if not confirmed_exec:
+                                await ws.send_json({"type": "order_confirmation", "ok": False,
+                                                    "err": why})
+                        if ctl.get("exec") is not True or confirmed_exec:
+                            st.zones = zone_add(
+                                st.sym, ctl.get("price"), ctl.get("side"), ctl.get("kind"),
+                                exp=ctl.get("exp"), qty=ctl.get("qty") or 1,
+                                instrument=ctl.get("instrument") or "opt",
+                                confirmed_exec=confirmed_exec,
+                                overnight_gap_ack=ctl.get("overnight_gap_ack") is True,
+                                reviewed_strike=ctl.get("strike"),
+                                reviewed_right=ctl.get("right"),
+                                reviewed_limit=ctl.get("reviewed_limit"))
                     elif act == "del":
                         st.zones = zone_del(st.sym, price=ctl.get("price"), zid=ctl.get("id"))
                     elif act == "set" and ctl.get("id"):
                         # set exp/qty/exec/price/stop en una zona existente (arrastre del stop,
                         # armado exec, cambio de expiry...) -> persiste el contrato del motor.
-                        st.zones = zone_update(
-                            st.sym, ctl.get("id"),
+                        allow = True
+                        if ctl.get("exec") is True:
+                            allow, why = consume_arm_confirmation(
+                                st.sym, ctl.get("id"), ctl.get("confirmation_token"),
+                                ctl.get("human_confirmed"), ctl)
+                            if not allow:
+                                await ws.send_json({"type": "order_confirmation", "ok": False,
+                                                    "err": why, "id": ctl.get("id")})
+                        if allow:
+                            st.zones = zone_update(
+                                st.sym, ctl.get("id"),
                             exp=ctl.get("exp"), qty=ctl.get("qty"), exec=ctl.get("exec"),
                             price=ctl.get("price"), stop_px=ctl.get("stop_px"),
-                            stop_on=ctl.get("stop_on"), stop_native=ctl.get("stop_native"))
+                            stop_on=ctl.get("stop_on"), stop_native=ctl.get("stop_native"),
+                            overnight_gap_ack=ctl.get("overnight_gap_ack"),
+                            locked_strike=ctl.get("strike"), locked_right=ctl.get("right"),
+                            reviewed_limit=ctl.get("reviewed_limit"))
                     else:
                         st.zones = zones_load(st.sym)
                     await ws.send_json(zones_frame(st))
@@ -2571,6 +2923,22 @@ def create_app(state):
                     q.update({"type": "optquote", "sym": st.sym.upper(),
                               "price": ctl.get("price")})
                     await ws.send_json(q)
+                elif isinstance(ctl, dict) and ctl.get("cmd") == "order_preflight":
+                    # Ticket de revisión únicamente: normaliza contrato/límite/sesión y expone
+                    # guardas. No escribe zona/comando y jamás toca IBKR.
+                    pf = order_preflight(ctl.get("sym") or st.sym, ctl)
+                    if pf.get("ok") and ctl.get("purpose") in ("arm", "arm_new"):
+                        if ctl.get("purpose") == "arm":
+                            token, why = issue_arm_confirmation(st.sym, ctl.get("zone_id"), pf)
+                        else:
+                            token, why = issue_new_arm_confirmation(st.sym, pf), None
+                        if not token:
+                            pf["ok"] = pf["can_prepare"] = False
+                            pf.setdefault("errors", []).append(why)
+                        else:
+                            pf["confirmation_token"] = token
+                            pf["confirmation_expires_s"] = _ARM_CONFIRM_TTL_S
+                    await ws.send_json(pf)
                 elif isinstance(ctl, dict) and ctl.get("cmd") == "prob":
                     # probabilidad de profit (order_engine/prob_profit.py, otro agente) -> chip.
                     # Sólo cómputo de probabilidad; NUNCA coloca órdenes. SEÑAL-SOLAMENTE.

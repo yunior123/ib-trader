@@ -70,6 +70,7 @@
 // ############################################################################
 #pragma once
 #include <algorithm>
+#include <cctype>
 #include <cmath>
 #include <cstdio>
 #include <map>
@@ -115,8 +116,11 @@ inline bool accounts_match(const std::string& managed_csv, const std::string& ex
 enum class DisarmAction { IGNORE, CANCEL_OWN };
 
 inline DisarmAction disarm_action(bool ours, bool live, bool native_stop) {
-    (void)native_stop;
     if (!ours || !live) return DisarmAction::IGNORE;
+    // A server-side protective stop is risk reduction attached to a position,
+    // not stale entry risk. Preserve it across a clean engine shutdown; the
+    // next reconcile adopts it. Pending entries/closes are still cancelled.
+    if (native_stop) return DisarmAction::IGNORE;
     return DisarmAction::CANCEL_OWN;
 }
 
@@ -247,6 +251,48 @@ struct PositionBook {
         return it == qty.end() ? 0.0 : it->second;
     }
 };
+
+struct EntrySideDecision {
+    bool ok = false;
+    std::string reason;
+};
+
+// TFSA-safe entry boundary. BUY may open/increase a long. SELL is only permitted
+// as a reduction of a broker-confirmed long position; this engine never opens a
+// short stock or writes a naked option.
+inline EntrySideDecision decide_entry_side(const PositionBook& positions,
+                                           const PosKey& key, int qty, char side) {
+    if (qty <= 0) return {false, "qty must be positive"};
+    if (side == 'B') return {true, "BUY long permitted"};
+    if (side != 'S') return {false, "side must be B or S"};
+    if (!positions.known()) return {false, "broker positions not confirmed"};
+    const double held = positions.qty_of(key);
+    if (held <= 0) return {false, "SELL would open/increase a short position"};
+    if ((double)qty > held + 1e-9) return {false, "SELL exceeds broker-confirmed long position"};
+    return {true, "SELL reduces existing long"};
+}
+
+struct HumanConfirmationDecision {
+    bool ok = false;
+    std::string reason;
+};
+
+inline HumanConfirmationDecision validate_human_confirmation(
+        const std::string& armed_date, const std::string& today,
+        const std::string& confirm_id,
+        long long confirmed_at_ms, long long now_ms,
+        long long max_age_ms = 16LL * 60 * 60 * 1000) {
+    if (today.empty() || armed_date != today)
+        return {false, "zone authorization is not from today"};
+    if (confirm_id.size() != 32) return {false, "missing/invalid human confirmation id"};
+    for (char c : confirm_id)
+        if (!std::isxdigit((unsigned char)c)) return {false, "invalid human confirmation id"};
+    if (confirmed_at_ms <= 0 || confirmed_at_ms > now_ms + 5000)
+        return {false, "invalid human confirmation timestamp"};
+    if (now_ms - confirmed_at_ms > max_age_ms)
+        return {false, "human confirmation expired"};
+    return {true, "human confirmation valid"};
+}
 
 // Veredicto de un cierre pedido por el panel.
 struct CloseDecision {

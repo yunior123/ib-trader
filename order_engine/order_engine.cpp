@@ -150,9 +150,12 @@ static bool last_close(const std::string& path, double& out, long long* out_ep =
 // ======================================================= zona (estado runtime)
 struct ZoneRT {
     // estáticos (del archivo, refrescables en vivo)
-    std::string id, side, kind, exp, armed_date;
+    std::string id, side, kind, exp, armed_date, confirm_id;
+    long long confirmed_at_ms = 0;
     std::string instrument = "opt";      // "opt" | "stk" (acciones tradean 24/5)
-    double price = 0; int qty = 1; bool exec = false;
+    double price = 0, locked_strike = 0, locked_limit = 0; int qty = 1;
+    bool exec = false, overnight_gap_ack = false;
+    std::string locked_right, locked_exp;
     bool stop_on = false, stop_native = true; double stop_px = 0;
     // runtime
     enum St { PLACED, TRIGGERED, SENT, FILLED, STOP_HIT, CANCELED, VETOED, REJECTED, DONE } st = PLACED;
@@ -375,6 +378,9 @@ int main(int argc, char** argv) {
         }
         std::fprintf(stderr, "[SEGURIDAD] cuenta verificada: %s (modo %s)\n",
                      tws.account().c_str(), live_port ? "LIVE" : "PAPER");
+        // managedAccounts puede listar varias cuentas; fijar Order.account evita
+        // depender de la cuenta por defecto seleccionada en TWS.
+        tws.set_execution_account(expected);
     }
     // (eliminado 2026-07-25: bloque muerto `if (false)` con la cuenta a fuego;
     //  la verificacion real y configurable es la de arriba)
@@ -452,6 +458,7 @@ int main(int argc, char** argv) {
     std::fprintf(stderr, "loop activo. Ctrl-C para desarme limpio.\n");
 
     int reconnect_backoff = 1;
+    long long last_positions_req_s = now_ms() / 1000;
     while (!Guard::stop_requested()) {
         // --- HIGH #2: socket caído (connectionClosed) -> reconectar, no quedar congelado para siempre
         if (!tws.socket_alive()) {
@@ -572,6 +579,12 @@ int main(int argc, char** argv) {
 
         bool frozen = tws.frozen();
         long long now_s = now_ms() / 1000;
+        // SELL gates use broker inventory, never a local guess. Refresh it so a
+        // BUY filled during this run can later be reduced safely.
+        if (now_s - last_positions_req_s >= 15) {
+            tws.reqPositions();
+            last_positions_req_s = now_s;
+        }
 
         // --- comandos del panel de cuenta: cancel / modify / close (líneas NUEVAS) ---
         {
@@ -676,11 +689,20 @@ int main(int argc, char** argv) {
                                 : oe::OrderSession::OVERNIGHT_AND_DAY;
                             const oe::LimitOrderPlan close_plan = oe::make_limit_order_plan(
                                 cc, side, cqty, lim, "OE:CLOSE", close_session,
-                                tws.server_version());
+                                tws.server_version(), false, tws.execution_account());
                             if (!close_plan.ok) {
                                 ledger.note("cmd close VETADO " + csym + ": " + close_plan.error);
                                 std::fprintf(stderr, "[cmd] close VETADO %s: %s\n",
                                              csym.c_str(), close_plan.error.c_str());
+                                continue;
+                            }
+                            oe::PreflightReport close_pf;
+                            if (!tws.preflight_limit(cc, side, cqty, lim, "OE:WHATIF:CLOSE",
+                                                     close_session, close_pf)) {
+                                ledger.note("cmd close WHAT-IF RECHAZADO " + csym + ": " +
+                                            close_pf.warning);
+                                std::fprintf(stderr, "[cmd] close WHAT-IF RECHAZADO %s: %s\n",
+                                             csym.c_str(), close_pf.warning.c_str());
                                 continue;
                             }
                             // --- STOP HUERFANO (guarda #4, la causa documentada del desastre) ---
@@ -788,6 +810,13 @@ int main(int argc, char** argv) {
                         z.qty = (int)o.n("qty", z.qty ? z.qty : 1);
                         z.exec = o.flag("exec", false);
                         z.armed_date = o.s("armed_date", z.armed_date);
+                        z.confirm_id = o.s("confirm_id", z.confirm_id);
+                        z.confirmed_at_ms = (long long)o.n("confirmed_at", (double)z.confirmed_at_ms);
+                        z.locked_strike = o.n("locked_strike", z.locked_strike);
+                        z.locked_right = o.s("locked_right", z.locked_right);
+                        z.locked_exp = o.s("locked_exp", z.locked_exp);
+                        z.locked_limit = o.n("locked_limit", z.locked_limit);
+                        z.overnight_gap_ack = o.flag("overnight_gap_ack", false);
                         if (const JVal* st = o.child("stop")) {
                             z.stop_on = st->flag("on", false);
                             z.stop_px = st->n("px", z.stop_px);
@@ -867,18 +896,29 @@ int main(int argc, char** argv) {
                 // ---- gate + colocación (o DRY) ----
                 if (z.st == ZoneRT::TRIGGERED) {
                     if (frozen) { std::fprintf(stderr, "[%s] zona %s congelada (1100/desconexión) — espero\n", sym.c_str(), z.id.c_str()); continue; }
-                    if (!z.armed_date.empty() && z.armed_date != oe::today_date()) {
+                    const oe::HumanConfirmationDecision hc = oe::validate_human_confirmation(
+                        z.armed_date, oe::today_date(), z.confirm_id,
+                        z.confirmed_at_ms, now_ms());
+                    if (!hc.ok) {
                         z.st = ZoneRT::VETOED;
-                        write_state(state_dir, sym, z, "\"veto\":\"armed_date " + z.armed_date + " != hoy\"");
-                        ledger.note("VETOED " + sym + " " + z.id + ": armed_date " + z.armed_date + " caducado");
-                        std::fprintf(stderr, "[%s] zona %s VETOED: armed_date %s != hoy\n",
-                                     sym.c_str(), z.id.c_str(), z.armed_date.c_str());
+                        write_state(state_dir, sym, z, "\"veto\":\"" + json_escape(hc.reason) + "\"");
+                        ledger.note("VETOED " + sym + " " + z.id + ": " + hc.reason);
+                        std::fprintf(stderr, "[%s] zona %s VETOED: %s\n",
+                                     sym.c_str(), z.id.c_str(), hc.reason.c_str());
                         continue;
                     }
                     char side = (z.side == "buy") ? 'B' : 'S';
 
                     // ===== ACCIONES (activos, 24/5 con horario extendido) =====
                     if (z.instrument == "stk") {
+                        if (!z.overnight_gap_ack) {
+                            z.st = ZoneRT::VETOED;
+                            write_state(state_dir, sym, z,
+                                        "\"veto\":\"falta ack de hueco de stop overnight\"");
+                            ledger.note("VETOED " + sym + " " + z.id +
+                                        ": no overnight stop-gap ack");
+                            continue;
+                        }
                         int qty = z.qty > 0 ? z.qty : 1;
                         // decide_stock_entry (guards.h #12): mismo veto de notional de
                         // siempre, pero medido al LIMITE que de verdad se paga (no al
@@ -897,7 +937,30 @@ int main(int argc, char** argv) {
                             std::fprintf(stderr, "[%s] zona %s VETOED acciones: %s\n", sym.c_str(), z.id.c_str(), se.reason.c_str());
                             continue;
                         }
+                        const oe::EntrySideDecision side_ok = oe::decide_entry_side(
+                            tws.positions(), oe::pos_key_stock(sym), qty, side);
+                        if (!side_ok.ok) {
+                            if (side == 'S' && !tws.positions().known()) {
+                                write_state(state_dir, sym, z,
+                                            "\"wait\":\"broker positions refresh pending\"");
+                                continue;
+                            }
+                            z.st = ZoneRT::VETOED;
+                            write_state(state_dir, sym, z,
+                                        "\"veto\":\"" + json_escape(side_ok.reason) + "\"");
+                            ledger.note("VETOED " + sym + " " + z.id + ": " + side_ok.reason);
+                            continue;
+                        }
                         const double lim = se.limit;
+                        if (!(z.locked_limit > 0) ||
+                            std::fabs(z.locked_limit - lim) > 0.005) {
+                            z.st = ZoneRT::VETOED;
+                            write_state(state_dir, sym, z,
+                                        "\"veto\":\"límite cambió desde confirmación humana\"");
+                            ledger.note("VETOED " + sym + " " + z.id +
+                                        ": stock limit changed after review");
+                            continue;
+                        }
                         // TOPE AGREGADO (#1/#2): la suma de TODAS las zonas vivas. Se
                         // reserva ANTES de colocar; si no cabe, la zona se VETA aqui —
                         // no al ejecutar, cuando ya seria dinero fuera.
@@ -924,8 +987,17 @@ int main(int argc, char** argv) {
                             expo.release(oe::exposure_key(sym, z.id));   // DRY no gasta: devolver el sitio
                             z.st = ZoneRT::DONE; continue;
                         }
+                        oe::PreflightReport pf;
+                        if (!tws.preflight_limit(c, side, qty, z.locked_limit, "OE:WHATIF:" + z.id,
+                                                 oe::OrderSession::OVERNIGHT_AND_DAY, pf)) {
+                            expo.release(oe::exposure_key(sym, z.id));
+                            z.st = ZoneRT::VETOED;
+                            write_state(state_dir, sym, z,
+                                        "\"veto\":\"IBKR what-if: " + json_escape(pf.warning) + "\"");
+                            continue;
+                        }
                         int oid = tws.next_order_id();
-                        if (!tws.place_limit(c, side, qty, lim, oid, "OE:" + z.id,
+                        if (!tws.place_limit(c, side, qty, z.locked_limit, oid, "OE:" + z.id,
                                              oe::OrderSession::OVERNIGHT_AND_DAY)) {
                             expo.release(oe::exposure_key(sym, z.id));
                             z.st = ZoneRT::VETOED;
@@ -958,7 +1030,33 @@ int main(int argc, char** argv) {
                         std::fprintf(stderr, "[%s] zona %s VETOED: %s\n", sym.c_str(), z.id.c_str(), w.c_str());
                         continue;
                     }
+                    if (!(z.locked_strike > 0) || !(z.locked_limit > 0) ||
+                        z.locked_right != right || z.locked_exp != g.exp ||
+                        std::fabs(z.locked_strike - g.strike) > 1e-9 ||
+                        std::fabs(z.locked_limit - g.limit) > 0.005) {
+                        z.st = ZoneRT::VETOED;
+                        write_state(state_dir, sym, z,
+                                    "\"veto\":\"contrato exacto no coincide con confirmacion humana\"");
+                        ledger.note("VETOED " + sym + " " + z.id +
+                                    ": contrato option cambió desde confirmación");
+                        continue;
+                    }
                     int qty = z.qty > 0 ? z.qty : std::max(1, (int)(cfg.budget / g.premium));
+                    const oe::PosKey opt_key = oe::pos_key_option(sym, g.exp, g.strike, right);
+                    const oe::EntrySideDecision side_ok = oe::decide_entry_side(
+                        tws.positions(), opt_key, qty, side);
+                    if (!side_ok.ok) {
+                        if (side == 'S' && !tws.positions().known()) {
+                            write_state(state_dir, sym, z,
+                                        "\"wait\":\"broker positions refresh pending\"");
+                            continue;
+                        }
+                        z.st = ZoneRT::VETOED;
+                        write_state(state_dir, sym, z,
+                                    "\"veto\":\"" + json_escape(side_ok.reason) + "\"");
+                        ledger.note("VETOED " + sym + " " + z.id + ": " + side_ok.reason);
+                        continue;
+                    }
                     // TOPE POR ORDEN (fix 2026-07-24): run_gate() solo valida la prima de UN
                     // contrato (:202). Con z.qty del JSON de zona (que viene de un <input> del
                     // chart sin máximo) el desembolso real era qty*prima, múltiplos del tope.
@@ -1005,17 +1103,26 @@ int main(int argc, char** argv) {
                         z.st = ZoneRT::DONE;    // DRY: no re-disparar en bucle
                         continue;
                     }
+                    oe::PreflightReport pf;
+                    if (!tws.preflight_limit(c, side, qty, z.locked_limit, "OE:WHATIF:" + z.id,
+                                             oe::OrderSession::RTH_ONLY, pf)) {
+                        expo.release(oe::exposure_key(sym, z.id));
+                        z.st = ZoneRT::VETOED;
+                        write_state(state_dir, sym, z,
+                                    "\"veto\":\"IBKR what-if: " + json_escape(pf.warning) + "\"");
+                        continue;
+                    }
                     int oid = tws.next_order_id();
-                    z.entry_id = oid; oid2zone[oid] = {sym, z.id};
-                    if (!tws.place_limit(c, side, qty, g.limit, oid, "OE:" + z.id)) {
+                    if (!tws.place_limit(c, side, qty, z.locked_limit, oid, "OE:" + z.id)) {
                         expo.release(oe::exposure_key(sym, z.id));
                         z.st = ZoneRT::VETOED;
                         write_state(state_dir, sym, z,
                                     "\"veto\":\"orden de opción no soportada localmente\"");
                         continue;
                     }
+                    z.entry_id = oid; oid2zone[oid] = {sym, z.id};
                     z.st = ZoneRT::SENT;
-                    write_state(state_dir, sym, z, "\"order_id\":" + std::to_string(oid) + ",\"limit\":" + std::to_string(g.limit));
+                    write_state(state_dir, sym, z, "\"order_id\":" + std::to_string(oid) + ",\"limit\":" + std::to_string(z.locked_limit));
                 }
 
                 // ---- stop apagado (toggle off) -> cancelar el nativo si estaba ----

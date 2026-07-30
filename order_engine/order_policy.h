@@ -26,7 +26,8 @@ struct LimitOrderPlan {
 // combinations before EClientSocket::placeOrder can see them.
 inline LimitOrderPlan make_limit_order_plan(const Contract& input, char side, int qty,
                                             double limit, const std::string& order_ref,
-                                            OrderSession session, int server_version) {
+                                            OrderSession session, int server_version,
+                                            bool what_if, const std::string& account) {
     LimitOrderPlan p;
     p.contract = input;
 
@@ -46,6 +47,10 @@ inline LimitOrderPlan make_limit_order_plan(const Contract& input, char side, in
         p.error = "only STK and OPT contracts are supported";
         return p;
     }
+    if (account.empty()) {
+        p.error = "execution account is not explicitly selected";
+        return p;
+    }
 
     Order& o = p.order;
     o.action = (side == 'B') ? "BUY" : "SELL";
@@ -53,8 +58,12 @@ inline LimitOrderPlan make_limit_order_plan(const Contract& input, char side, in
     o.totalQuantity = DecimalFunctions::stringToDecimal(std::to_string(qty));
     o.lmtPrice = limit;
     o.tif = "DAY";
-    o.transmit = true;
+    // whatIf is a broker-side margin/eligibility simulation. transmit=false is
+    // deliberately redundant: even a future TWS regression must not route it.
+    o.whatIf = what_if;
+    o.transmit = !what_if;
     o.orderRef = order_ref;
+    o.account = account;
 
     if (session == OrderSession::OVERNIGHT_AND_DAY) {
         if (input.secType != "STK") {

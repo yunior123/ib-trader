@@ -17,23 +17,30 @@ LIB="$REPO/scalper/vendor/lib"
 
 for s in "${SUITES[@]}"; do
   while [ "$(ps aux | grep -c '[c]lang++')" -gt 1 ]; do sleep 2; done
-  extra=()
   if [ "$s" = "policy" ]; then
-    extra=(-I"$CLIENT" "$LIB/libTwsSocketClient.a" "$LIB/libbid.a" -pthread)
+    clang++ -std=c++2c -O3 $ARCHFLAG -Wall -Wextra "tests/test_$s.cpp" \
+      -I"$CLIENT" "$LIB/libTwsSocketClient.a" "$LIB/libbid.a" -pthread -o "$OUT/$s"
+  else
+    clang++ -std=c++2c -O3 $ARCHFLAG -Wall -Wextra "tests/test_$s.cpp" -o "$OUT/$s"
   fi
-  clang++ -std=c++2c -O3 $ARCHFLAG -Wall -Wextra "tests/test_$s.cpp" "${extra[@]}" -o "$OUT/$s"
   "$OUT/$s" || rc=1
 done
+
+PYTHON="$REPO/venv/bin/python"
+[ -x "$PYTHON" ] || PYTHON=python3
+"$PYTHON" tests/test_bridge_order_backend.py || rc=1
 
 if [ "$FAST" = "0" ]; then
   for s in "${SUITES[@]}"; do
     while [ "$(ps aux | grep -c '[c]lang++')" -gt 1 ]; do sleep 2; done
-    extra=()
     if [ "$s" = "policy" ]; then
-      extra=(-I"$CLIENT" "$LIB/libTwsSocketClient.a" "$LIB/libbid.a" -pthread)
+      clang++ -std=c++2c -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer \
+        -Wall -Wextra "tests/test_$s.cpp" -I"$CLIENT" \
+        "$LIB/libTwsSocketClient.a" "$LIB/libbid.a" -pthread -o "$OUT/asan_$s"
+    else
+      clang++ -std=c++2c -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer \
+        -Wall -Wextra "tests/test_$s.cpp" -o "$OUT/asan_$s"
     fi
-    clang++ -std=c++2c -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer \
-      -Wall -Wextra "tests/test_$s.cpp" "${extra[@]}" -o "$OUT/asan_$s"
     echo "--- ASan/UBSan $s"
     "$OUT/asan_$s" >/dev/null || rc=1
   done

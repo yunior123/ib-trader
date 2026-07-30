@@ -49,6 +49,16 @@ struct ExecReport {
     double qty = 0;           // cantidad LLENADA (para proteger fills parciales)
 };
 
+struct PreflightReport {
+    bool completed = false;
+    bool ok = false;
+    int order_id = -1;
+    std::string status;
+    std::string warning;
+    std::string init_margin_change;
+    double commission = UNSET_DOUBLE;
+};
+
 // Construye un Contract IBKR de ACCIÓN (secType STK). La política de sesión se
 // aplica por separado: outsideRth por sí solo NO habilita el venue overnight.
 inline Contract make_stock(const std::string& sym) {
@@ -56,7 +66,6 @@ inline Contract make_stock(const std::string& sym) {
     c.symbol = sym;
     c.secType = "STK";
     c.exchange = "SMART";
-    c.primaryExchange = "NASDAQ";   // ayuda a desambiguar (QQQ/NVDA/etc.)
     c.currency = "USD";
     return c;
 }
@@ -73,7 +82,6 @@ inline Contract make_option(const std::string& sym, const std::string& exp,
     c.lastTradeDateOrContractMonth = exp;
     c.strike = strike;
     c.right = right;              // "C" | "P"
-    c.tradingClass = sym;        // ayuda a cualificar el contrato
     return c;
 }
 
@@ -101,6 +109,8 @@ public:
     bool frozen() const { return frozen_; }        // 1100/502/connectionClosed -> congelar entradas
     bool reconciled() const { return reconciled_; }
     const std::string& account() const { return account_; }
+    void set_execution_account(const std::string& account) { execution_account_ = account; }
+    const std::string& execution_account() const { return execution_account_; }
 
     // --- posiciones REALES (#3/#7) -----------------------------------------
     // Fuente de verdad para "close": el estado local en RAM (book[]) NUNCA
@@ -132,15 +142,22 @@ public:
     bool place_limit(Contract& c, char side /*'B'|'S'*/, int qty, double limit,
                      int orderId, const std::string& orderRef,
                      OrderSession session = OrderSession::RTH_ONLY);
+    // Broker-side what-if using the exact final contract/order fields.
+    // The request always carries whatIf=true AND transmit=false. It can never
+    // become a working order and is not entered in orders_/cancel-all.
+    bool preflight_limit(const Contract& c, char side, int qty, double limit,
+                         const std::string& orderRef, OrderSession session,
+                         PreflightReport& out, int max_pumps = 8);
     // Stop protectivo. native=true -> STP server-side (sobrevive al crash),
     // SIEMPRE en el set de cancel-all. native=false -> el motor lo vigila local.
     void place_stop(Contract& c, char side, int qty, double stopPx,
                     int orderId, const std::string& orderRef, bool native);
-    void cancel(int orderId);
+    bool cancel(int orderId);
     void modify(int orderId, double newLimit);     // = placeOrder MISMO id (cancel/replace)
 
-    // Desarme: cancela TODAS las órdenes propias vivas, incluidos stops protectivos.
-    // Ignora órdenes ajenas y terminales. Idempotente.
+    // Desarme: cancela entradas/cierres propios vivos, pero conserva stops
+    // protectivos nativos de posiciones abiertas para no dejarlas desnudas.
+    // Reconcile los adopta al próximo arranque. Idempotente.
     void cancel_all_own();
     // Al arrancar: pide TODAS las órdenes abiertas para adoptar/cancelar las
     // huérfanas "OE:" de un run anterior (reconciliación).
@@ -189,6 +206,7 @@ private:
 
     Ledger* ledger_ = nullptr;
     std::map<int, OpenOrd> orders_;                // id -> última orden nuestra
+    std::map<int, PreflightReport> preflights_;    // what-if only; never working orders
     std::deque<ExecReport> events_;                // cola para el motor
 
     int  next_id_ = 0;
@@ -196,6 +214,7 @@ private:
     bool frozen_ = false;
     bool reconciled_ = false;
     std::string account_;
+    std::string execution_account_;                  // exact account on every order
     PositionBook positions_;
 };
 

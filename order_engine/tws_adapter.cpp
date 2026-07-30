@@ -58,7 +58,8 @@ bool TwsAdapter::place_limit(Contract& c, char side, int qty, double limit,
                              int orderId, const std::string& orderRef,
                              OrderSession session) {
     LimitOrderPlan plan = make_limit_order_plan(
-        c, side, qty, limit, orderRef, session, server_version());
+        c, side, qty, limit, orderRef, session, server_version(), false,
+        execution_account_);
     if (!plan.ok) {
         std::fprintf(stderr, "[tws] RECHAZO LOCAL LMT id=%d %s: %s (server=%d)\n",
                      orderId, c.symbol.c_str(), plan.error.c_str(), server_version());
@@ -80,6 +81,42 @@ bool TwsAdapter::place_limit(Contract& c, char side, int qty, double limit,
     return true;
 }
 
+bool TwsAdapter::preflight_limit(const Contract& c, char side, int qty, double limit,
+                                 const std::string& orderRef, OrderSession session,
+                                 PreflightReport& out, int max_pumps) {
+    out = PreflightReport{};
+    LimitOrderPlan plan = make_limit_order_plan(
+        c, side, qty, limit, orderRef, session, server_version(), true,
+        execution_account_);
+    if (!plan.ok || !plan.order.whatIf || plan.order.transmit) {
+        out.completed = true;
+        out.warning = plan.ok ? "what-if safety invariant failed" : plan.error;
+        return false;
+    }
+    const int oid = next_order_id();
+    out.order_id = oid;
+    preflights_[oid] = out;
+    client_->placeOrder(oid, plan.contract, plan.order);
+    std::fprintf(stderr,
+                 "[tws] WHAT-IF id=%d %s %dx %s @ %.2f transmit=false overnight=%s\n",
+                 oid, plan.order.action.c_str(), qty, c.symbol.c_str(), limit,
+                 plan.order.includeOvernight ? "true" : "false");
+
+    for (int i = 0; i < max_pumps && !preflights_[oid].completed; ++i) pump();
+    out = preflights_[oid];
+    preflights_.erase(oid);
+    if (!out.completed) {
+        out.warning = "what-if timeout: broker did not return openOrder";
+        return false;
+    }
+    if (ledger_) {
+        ledger_->note(std::string("what-if ") + (out.ok ? "OK " : "REJECT ") +
+                      c.symbol + " id=" + std::to_string(oid) +
+                      (out.warning.empty() ? "" : " warning=" + out.warning));
+    }
+    return out.ok;
+}
+
 void TwsAdapter::place_stop(Contract& c, char side, int qty, double stopPx,
                             int orderId, const std::string& orderRef, bool native) {
     if (!native) return;           // watch-local lo maneja el motor, no toca servidor
@@ -96,6 +133,11 @@ void TwsAdapter::place_stop(Contract& c, char side, int qty, double stopPx,
     o.outsideRth = (c.secType == "STK");
     o.includeOvernight = false;
     o.orderRef = orderRef;
+    if (execution_account_.empty()) {
+        std::fprintf(stderr, "[tws] RECHAZO LOCAL STP id=%d: cuenta de ejecución vacía\n", orderId);
+        return;
+    }
+    o.account = execution_account_;
     OpenOrd& rec = orders_[orderId];
     rec.c = c; rec.o = o; rec.ref = orderRef; rec.ours = starts_with(orderRef, OE_PREFIX);
     rec.live = true; rec.native_stop = true;
@@ -105,18 +147,33 @@ void TwsAdapter::place_stop(Contract& c, char side, int qty, double stopPx,
                  orderId, o.action.c_str(), qty, c.symbol.c_str(), stopPx, orderRef.c_str());
 }
 
-void TwsAdapter::cancel(int orderId) {
+bool TwsAdapter::cancel(int orderId) {
     auto it = orders_.find(orderId);
-    std::string ref = (it != orders_.end()) ? it->second.ref : "";
+    if (it == orders_.end() || !it->second.ours || !it->second.live ||
+        (!execution_account_.empty() && !it->second.o.account.empty() &&
+         it->second.o.account != execution_account_)) {
+        std::fprintf(stderr, "[tws] cancel RECHAZADO id=%d: no es orden OE viva de la cuenta exacta\n",
+                     orderId);
+        return false;
+    }
+    std::string ref = it->second.ref;
     client_->cancelOrder(orderId, OrderCancel());
     if (ledger_) ledger_->cancel(orderId, ref);
     std::fprintf(stderr, "[tws] cancelOrder id=%d ref=%s\n", orderId, ref.c_str());
+    return true;
 }
 
 void TwsAdapter::modify(int orderId, double newLimit) {
     auto it = orders_.find(orderId);
     if (it == orders_.end()) {
         std::fprintf(stderr, "[tws] modify id=%d SIN registro — ignoro\n", orderId);
+        return;
+    }
+    if (!it->second.ours || !it->second.live ||
+        (!execution_account_.empty() && !it->second.o.account.empty() &&
+         it->second.o.account != execution_account_)) {
+        std::fprintf(stderr, "[tws] modify id=%d no es orden OE viva de la cuenta exacta — ignoro\n",
+                     orderId);
         return;
     }
     // AUDIT-FIX: el trigger de un STOP vive en auxPrice, NO en lmtPrice. Modificar el
@@ -135,9 +192,8 @@ void TwsAdapter::modify(int orderId, double newLimit) {
 }
 
 void TwsAdapter::cancel_all_own() {
-    // Al desarmar se cancela TODO lo propio que siga vivo. Los stops sobreviven un
-    // crash duro porque son nativos, pero si este cleanup alcanza a correr también
-    // pertenecen al set de cancel-all: nunca queda una orden residual deliberada.
+    // Cancelar riesgo de entrada residual, pero preservar stops protectivos:
+    // cancelar un STP mientras la posición sigue abierta la deja desnuda.
     int n = 0;
     for (auto& [id, rec] : orders_) {
         const auto action = disarm_action(rec.ours, rec.live, rec.native_stop);
@@ -148,7 +204,7 @@ void TwsAdapter::cancel_all_own() {
         ++n;
     }
     if (n && ledger_) ledger_->flush();
-    std::fprintf(stderr, "[tws] cancel_all_own -> %d orden(es) propias canceladas\n", n);
+    std::fprintf(stderr, "[tws] cancel_all_own -> %d entrada(s)/cierre(s) cancelados; stops nativos preservados\n", n);
 }
 
 void TwsAdapter::reconcile() {
@@ -229,7 +285,22 @@ void TwsAdapter::orderStatus(OrderId orderId, const std::string& status, Decimal
     (void)filled;
 }
 
-void TwsAdapter::openOrder(OrderId orderId, const Contract& c, const Order& o, const OrderState&) {
+void TwsAdapter::openOrder(OrderId orderId, const Contract& c, const Order& o, const OrderState& os) {
+    auto pf = preflights_.find((int)orderId);
+    if (pf != preflights_.end()) {
+        PreflightReport& r = pf->second;
+        r.completed = true;
+        r.status = os.status;
+        r.warning = os.warningText;
+        r.init_margin_change = os.initMarginChange;
+        r.commission = os.commission;
+        // Fail closed on warnings or an explicitly inactive/rejected status.
+        r.ok = r.warning.empty() && r.status != "Inactive" && r.status != "Rejected";
+        std::fprintf(stderr, "[tws] WHAT-IF result id=%ld ok=%s status=%s warning=%s\n",
+                     (long)orderId, r.ok ? "true" : "false", r.status.c_str(),
+                     r.warning.c_str());
+        return;
+    }
     // Reconciliación: adoptar y CANCELAR las órdenes "OE:" de un run anterior.
     bool ours = starts_with(o.orderRef, OE_PREFIX);
     if (ours) {
@@ -276,7 +347,9 @@ void TwsAdapter::openOrderEnd() {
 }
 
 void TwsAdapter::position(const std::string& account, const Contract& c, Decimal pos, double) {
-    (void)account;   // una sola cuenta esperada (verificada en managedAccounts/accounts_match)
+    // reqPositions puede devolver TODAS las cuentas gestionadas. No mezclar
+    // inventario: SELL sólo se autoriza contra la cuenta fijada en Order.account.
+    if (execution_account_.empty() || account != execution_account_) return;
     double q = DecimalFunctions::decimalToDouble(pos);
     PosKey k = (c.secType == "OPT")
         ? pos_key_option(c.symbol, c.lastTradeDateOrContractMonth, c.strike, c.right)
@@ -307,6 +380,16 @@ void TwsAdapter::commissionReport(const CommissionReport& cr) {
 }
 
 void TwsAdapter::error(int id, int errorCode, const std::string& msg, const std::string&) {
+    auto pf = preflights_.find(id);
+    if (pf != preflights_.end() && !(errorCode >= 2100 && errorCode <= 2199)) {
+        pf->second.completed = true;
+        pf->second.ok = false;
+        pf->second.status = "Rejected";
+        pf->second.warning = "IBKR " + std::to_string(errorCode) + ": " + msg;
+        std::fprintf(stderr, "[tws] WHAT-IF rechazo id=%d code=%d: %s\n",
+                     id, errorCode, msg.c_str());
+        return;
+    }
     switch (errorCode) {
         case 1100:   // conectividad TWS<->IB perdida
         case 502:    // no conecta (API off/puerto)
