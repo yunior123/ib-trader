@@ -1,16 +1,5 @@
 {
- "ts": 1785240307,
+ "ts": 1785398600,
  "sym": "MU",
- "veredicto": "bear",
- "rating": "Sell",
- "prob": null,
- "tesis": "Initiate a tactical short position in MU at ~$839.50 with a stop at $895 and target $800 (partial exit at $815). Position size: 1.5% of portfolio. Simultaneously reduce existing long exposure by 40%.",
- "niveles": [
-  {
-   "tipo": "target",
-   "nivel": 800.0
-  }
- ],
- "latency_s": 198.1,
- "fuente": "tradingagents"
+ "error": "rc=1 sin veredicto; stderr: a_venv/lib/python3.12/site-packages/openai/_base_client.py\", line 1105, in request\n    raise self._make_status_error_from_response(err.response) from None\nopenai.APIStatusError: Error code: 402 - {'error': {'message': 'Insufficient Balance', 'type': 'unknown_error', 'param': None, 'code': 'invalid_request_error'}}\nDuring task with name 'Market Analyst' and id '27b4d8bb-54fc-8479-9ce1-717d590f28a2'"
 }

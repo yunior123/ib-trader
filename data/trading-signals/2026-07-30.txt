@@ -1,0 +1,57 @@
+00:02:11 | 🇰🇷 KRX BRIDGE CIEGO | 312s sin bars KRX en sesion — resuscribiendo (skhynix/samsung/kospi)
+00:12:56 | 🇰🇷 BARRAS COREA RANCIAS | KRX abierto y las barras estan 16 min rancias — el puente no escribe
+00:23:42 | 🇰🇷 BARRAS COREA RANCIAS | KRX abierto y las barras estan 27 min rancias — el puente no escribe
+00:34:27 | 🇰🇷 BARRAS COREA RANCIAS | KRX abierto y las barras estan 37 min rancias — el puente no escribe
+01:11:37 | KOSPI ALARMA PRECIO | KOSPI toco 87000.00 (regla: kospi 87000 down exp 2026-07-30   TEMP SELL candidate: KODEX 200 loses 87k  downside continuation, prob DATA-INSUFFICIENT) px=86990.0000
+01:11:47 | EWY ALARMA PRECIO | EWY toco 143.00 (regla: ewy 143 down exp 2026-07-30   TEMP SELL candidate: EWY loses 143  Korea weakness confirms, prob DATA-INSUFFICIENT) px=143.0000
+01:12:00 | SAMSUNG TERREMOTO CAIDA | CUSUM: cayendo fuerte -3.33% px 206500.00
+01:12:16 | MU ALARMA PRECIO | MU toco 720.00 (regla: mu 720 down exp 2026-07-30   TEMP SELL candidate: MU loses 720  Korea read-through continuation, prob DATA-INSUFFICIENT) px=719.8200
+02:16:00 | SAMSUNG TERREMOTO CAIDA | CUSUM: cayendo fuerte -2.74% px 207000.00
+02:34:12 | 🇰🇷 KRX BRIDGE CIEGO | 312s sin bars KRX en sesion — resuscribiendo (skhynix/samsung/kospi)
+03:32:28 | SKHYNIX ALARMA PRECIO | SKHYNIX toco 1295000.00 (regla: skhynix 1295000 down exp 2026-07-30   TEMP SELL candidate: SK Hynix loses 1.295m  memory selloff continues, prob DATA-INSUFFICIENT) px=1295000.0000
+03:35:33 | SKHY ALARMA PRECIO | SKHY toco 122.00 (regla: skhy 122 down exp 2026-07-30   TEMP SELL candidate: SKHY loses 122  memory basket continuation, prob DATA-INSUFFICIENT) px=121.9850
+04:01:12 | 🛰 FINVIZ | AMZN: earnings en 12h (7/30/2026 4:30:00 PM)
+04:01:12 | 🛰 FINVIZ | META: gap -7.0% — abre fuera de rango
+04:01:12 | 🛰 FINVIZ | META: target price 822.55→801.53
+04:01:12 | 🛰 FINVIZ | MSFT: gap +7.0% — abre fuera de rango
+04:01:12 | 🛰 FINVIZ | MSFT: target price 553.34→555.66
+04:01:22 | 🕳 CINTA CIEGA | CINTA CIEGA: 25 de la flota sin tape tick-by-tick (AAPL AMD AMZN ASML AVGO DRAM EWY GLD GOOGL INTC LRCX META MSFT NFLX NOK NVDA QCOM SKHY SPCX STX TSLA TSM TXN WDC XLK) — sus ballenas NO se ven, no es que no haya
+04:12:14 | 🛰 FINVIZ | META: target price 801.53→797.38
+04:12:14 | 🛰 FINVIZ | MSFT: target price 555.66→555.52
+06:16:39 | 🛰 FINVIZ | META: target price 797.38→795.94
+06:16:39 | 🛰 FINVIZ | MSFT: target price 555.52→555.53
+07:43:10 | 🕳 CINTA CIEGA | CINTA CIEGA: 5 de la flota sin tape tick-by-tick (MU QQQ SMH SNDK SPY) — sus ballenas NO se ven, no es que no haya
+08:06:03 | SMH ALARMA PRECIO | SMH toco 520.00 (regla: smh 520 up exp 2026-07-30   TEMP BUY candidate: SMH reclaims 520  sector recovery, prob DATA-INSUFFICIENT) px=520.0200
+08:20:02 | 🛰 FINVIZ | META: target price 795.94→781.94
+08:20:02 | 🛰 FINVIZ | MSFT: target price 555.53→556.66
+08:21:10 | 🩸 EARNINGS-FALL SIRI -11.2% | 🩸 EARNINGS-FALL SIRI -11.2% (score 70, OPCIONES s/d (ATM sin cotizar) — default ACCIONES, TA: pendiente)
+08:21:10 | 🩸 EARNINGS-FALL CROX -12.9% | 🩸 EARNINGS-FALL CROX -12.9% (score 69, OPCIONES s/d (ATM sin cotizar) — default ACCIONES, TA: pendiente)
+08:21:10 | 🩸 EARNINGS-FALL META -9.9% | 🩸 EARNINGS-FALL META -9.9% (score 68, OPCIONES s/d (ATM sin cotizar) — default ACCIONES, TA: pendiente)
+08:21:10 | 🩸 EARNINGS-FALL ALNY -19.8% | 🩸 EARNINGS-FALL ALNY -19.8% (score 67, OPCIONES s/d, TA: pendiente)
+08:21:10 | 🩸 EARNINGS-FALL LKQ -15.7% | 🩸 EARNINGS-FALL LKQ -15.7% (score 63, OPCIONES s/d, TA: pendiente)
+08:21:10 | 🩸 EARNINGS-FALL TENB -14.0% | 🩸 EARNINGS-FALL TENB -14.0% (score 51, OPCIONES s/d, TA: pendiente, capitan QQQ/XLK)
+08:21:10 | 🩸 EARNINGS-FALL FTAI -7.2% | 🩸 EARNINGS-FALL FTAI -7.2% (score 46, OPCIONES s/d, TA: pendiente)
+09:15:11 | 🛰 FINVIZ | META: rel volume 2.5x — cruza 2.5x
+09:30:13 | 🛰 FINVIZ | AMZN: gap +2.9% — abre fuera de rango
+09:30:13 | 🛰 FINVIZ | AVGO: gap +2.8% — abre fuera de rango
+09:30:13 | 🛰 FINVIZ | MSFT: rel volume 4.2x — cruza 2.5x
+09:30:13 | 🛰 FINVIZ | SMH: gap +5.1% — abre fuera de rango
+09:31:10 | 🟢📈 FLUJO AGRESOR ALCISTA MSFT | Flujo agresor alcista en MSFT: neto $16,201,018 (call $15,878,613 put $-322,405); strike no disponible (flujo agregado). Umbral SIN CALIBRAR.
+09:31:10 | 🎯 APERTURA FUERA DE BANDA | SMH abrio 529.86 arriba de la banda 15m (525.21). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:10 | 🎯 APERTURA FUERA DE BANDA | AMD abrio 459.93 arriba de la banda 15m (450.10). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:10 | 🎯 APERTURA FUERA DE BANDA | AAPL abrio 333.03 abajo de la banda 15m (338.54). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:10 | 🎯 APERTURA FUERA DE BANDA | MSFT abrio 438.79 arriba de la banda 15m (400.00). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:10 | 🎯 APERTURA FUERA DE BANDA | META abrio 525.59 abajo de la banda 15m (584.54). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:10 | 🎯 APERTURA FUERA DE BANDA | AMZN abrio 233.35 arriba de la banda 15m (232.75). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:10 | 🎯 APERTURA FUERA DE BANDA | TSM abrio 392.49 arriba de la banda 15m (388.80). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:10 | 🎯 APERTURA FUERA DE BANDA | ASML abrio 1645.25 arriba de la banda 15m (1604.96). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:10 | 🎯 APERTURA FUERA DE BANDA | QCOM abrio 146.50 abajo de la banda 15m (156.64). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | NFLX abrio 71.61 abajo de la banda 15m (72.21). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | NOK abrio 9.16 arriba de la banda 15m (8.67). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | XLK abrio 172.81 arriba de la banda 15m (171.73). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | DRAM abrio 48.03 arriba de la banda 15m (47.75). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | SKHY abrio 136.51 arriba de la banda 15m (133.84). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | LRCX abrio 318.29 arriba de la banda 15m (265.81). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | SNDK abrio 1135.03 arriba de la banda 15m (1103.99). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | WDC abrio 511.65 arriba de la banda 15m (494.13). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | STX abrio 878.80 arriba de la banda 15m (813.71). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir

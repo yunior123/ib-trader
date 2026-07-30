@@ -1,0 +1,4060 @@
+{
+ "date": "2026-07-29",
+ "ts": 1785355805,
+ "gex_source": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)",
+ "levels": {
+  "SMH": {
+   "spot": 503.59,
+   "exp": "20260729",
+   "call_walls": [
+    [
+     560.0,
+     5215
+    ],
+    [
+     570.0,
+     3789
+    ],
+    [
+     575.0,
+     2599
+    ]
+   ],
+   "put_walls": [
+    [
+     520.0,
+     101496
+    ],
+    [
+     500.0,
+     98685
+    ],
+    [
+     522.5,
+     32786
+    ]
+   ],
+   "max_pain": 560.0,
+   "pc_oi": 18.558,
+   "gex": {
+    "flip": 596.44,
+    "flip_all": 596.44,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 13.41,
+    "score": -293.741,
+    "bias": "PUT",
+    "poc": 520.0,
+    "magnets": [
+     520.0,
+     550.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "regime_raw": "NEG",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 363,
+     "n_pares_ok": 82,
+     "parity_ok_pct": 0.2259,
+     "net_from_calls": -1382463895.171727,
+     "net_from_puts": -1544106264.0077279,
+     "net_parity_lo": -1544106264.0077279,
+     "net_parity_hi": -1382463895.171727,
+     "call_gex_parity": 204241674.23829675,
+     "put_gex_parity": 1667526753.8280241,
+     "signo_firme": true,
+     "net_parity_conservador": -1382463895.171727,
+     "regime_parity": "NEG",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": -1544106264,
+    "net_gex_parity_hi": -1382463895,
+    "parity_ok_pct": 0.2259,
+    "call_usd": 38772121,
+    "put_usd": -332513221,
+    "net_gex": -293741100,
+    "net_gex_dollar1pct": -1544784446,
+    "gross_gex": 316336205,
+    "call_wall": 550.0,
+    "put_wall": 520.0,
+    "abs_wall": 520.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -15033630067,
+    "net_dex_shares": -28586480,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 520.0,
+    "delta_ok_pct": 1.0,
+    "spot": 525.9,
+    "ts": 1785330728,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 2% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.405,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.9,
+    "n_contracts": 1219,
+    "n_strikes_populated": 143,
+    "pin_risk": {
+     "score": 128.76491827150966,
+     "hhi": 0.10770637416784443,
+     "proximity_to_poc": 0.9887811370983077,
+     "t_min_years": 0.0008270733407204796,
+     "poc": 520.0,
+     "call_wall": 550.0,
+     "fortress_pin": false,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 16,
+     "trail": [
+      [
+       1785158700.0,
+       581.14
+      ],
+      [
+       1785159000.0,
+       581.14
+      ],
+      [
+       1785159300.0,
+       581.14
+      ],
+      [
+       1785159600.0,
+       581.14
+      ],
+      [
+       1785246000.0,
+       567.03
+      ],
+      [
+       1785246300.0,
+       567.03
+      ],
+      [
+       1785246600.0,
+       567.03
+      ],
+      [
+       1785246900.0,
+       567.03
+      ],
+      [
+       1785249600.0,
+       567.03
+      ],
+      [
+       1785249900.0,
+       567.03
+      ],
+      [
+       1785250200.0,
+       567.03
+      ],
+      [
+       1785250500.0,
+       567.03
+      ],
+      [
+       1785263400.0,
+       567.03
+      ],
+      [
+       1785263700.0,
+       567.03
+      ],
+      [
+       1785264000.0,
+       567.03
+      ],
+      [
+       1785264300.0,
+       567.03
+      ]
+     ],
+     "first": 581.14,
+     "last": 567.03,
+     "range_pct": 2.47301980957222,
+     "drift_pct": -2.4279863716144154,
+     "reversals": 0,
+     "reversal_rate": 0.0,
+     "shape": "inclinada",
+     "status": "ok",
+     "convention": "horizontal<=0.15% rango, dentada>0.5 tasa de reversion -- umbrales convencion, no medidos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "NVDA": {
+   "spot": 189.93,
+   "exp": "20260729",
+   "call_walls": [
+    [
+     210.0,
+     47379
+    ],
+    [
+     205.0,
+     40031
+    ],
+    [
+     200.0,
+     37962
+    ]
+   ],
+   "put_walls": [
+    [
+     170.0,
+     75664
+    ],
+    [
+     190.0,
+     30663
+    ],
+    [
+     190.0,
+     26473
+    ]
+   ],
+   "max_pain": 197.5,
+   "pc_oi": 1.172,
+   "gex": {
+    "flip": 194.89,
+    "flip_all": 194.89,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": -1.01,
+    "score": 69.319,
+    "bias": "CALL",
+    "poc": 190.0,
+    "magnets": [
+     190.0,
+     195.0,
+     200.0
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "regime_raw": "POS",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 209,
+     "n_pares_ok": 19,
+     "parity_ok_pct": 0.0909,
+     "net_from_calls": 164510508.2073369,
+     "net_from_puts": 208589027.19093525,
+     "net_parity_lo": 164510508.2073369,
+     "net_parity_hi": 208589027.19093525,
+     "call_gex_parity": 962864988.5689714,
+     "put_gex_parity": 776315220.8698353,
+     "signo_firme": true,
+     "net_parity_conservador": 164510508.2073369,
+     "regime_parity": "POS",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": 164510508,
+    "net_gex_parity_hi": 208589027,
+    "parity_ok_pct": 0.0909,
+    "call_usd": 470747818,
+    "put_usd": -401428609,
+    "net_gex": 69319208,
+    "net_gex_dollar1pct": 136475657,
+    "gross_gex": 496598760,
+    "call_wall": 200.0,
+    "put_wall": 195.0,
+    "abs_wall": 190.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -14699417,
+    "net_dex_shares": -74662,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 205.0,
+    "delta_ok_pct": 1.0,
+    "spot": 196.88,
+    "ts": 1785330726,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 0% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.405,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.897,
+    "n_contracts": 581,
+    "n_strikes_populated": 48,
+    "pin_risk": {
+     "score": 66.62329899814736,
+     "hhi": 0.057113763202497635,
+     "proximity_to_poc": 0.9650548557496953,
+     "t_min_years": 0.0008273068931972478,
+     "poc": 190.0,
+     "call_wall": 200.0,
+     "fortress_pin": false,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 14,
+     "trail": [
+      [
+       1785158700.0,
+       207.64
+      ],
+      [
+       1785159000.0,
+       207.64
+      ],
+      [
+       1785159300.0,
+       207.64
+      ],
+      [
+       1785159600.0,
+       207.64
+      ],
+      [
+       1785246000.0,
+       197.25
+      ],
+      [
+       1785246300.0,
+       197.25
+      ],
+      [
+       1785246600.0,
+       197.25
+      ],
+      [
+       1785246900.0,
+       197.25
+      ],
+      [
+       1785252300.0,
+       197.25
+      ],
+      [
+       1785252600.0,
+       197.25
+      ],
+      [
+       1785252900.0,
+       197.25
+      ],
+      [
+       1785255600.0,
+       197.25
+      ],
+      [
+       1785255900.0,
+       197.25
+      ],
+      [
+       1785256200.0,
+       197.25
+      ]
+     ],
+     "first": 207.64,
+     "last": 197.25,
+     "range_pct": 5.18932880494887,
+     "drift_pct": -5.00385282219225,
+     "reversals": 0,
+     "reversal_rate": 0.0,
+     "shape": "inclinada",
+     "status": "ok",
+     "convention": "horizontal<=0.15% rango, dentada>0.5 tasa de reversion -- umbrales convencion, no medidos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "MU": {
+   "spot": 731.97,
+   "exp": "20260729",
+   "call_walls": [
+    [
+     820.0,
+     855
+    ],
+    [
+     820.0,
+     578
+    ],
+    [
+     730.0,
+     503
+    ]
+   ],
+   "put_walls": [
+    [
+     750.0,
+     9471
+    ],
+    [
+     820.0,
+     9011
+    ],
+    [
+     790.0,
+     4206
+    ]
+   ],
+   "max_pain": 820.0,
+   "pc_oi": 14.495,
+   "gex": {
+    "flip": 881.06,
+    "flip_all": 881.06,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 7.7,
+    "score": -38.989,
+    "bias": "PUT",
+    "poc": 800.0,
+    "magnets": [
+     800.0,
+     900.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "regime_raw": "NEG",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 706,
+     "n_pares_ok": 122,
+     "parity_ok_pct": 0.1728,
+     "net_from_calls": -303336753.81125265,
+     "net_from_puts": -304345252.69509673,
+     "net_parity_lo": -304345252.69509673,
+     "net_parity_hi": -303336753.81125265,
+     "call_gex_parity": 351812343.3879868,
+     "put_gex_parity": 655653346.6411614,
+     "signo_firme": true,
+     "net_parity_conservador": -303336753.81125265,
+     "regime_parity": "NEG",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": -304345253,
+    "net_gex_parity_hi": -303336754,
+    "parity_ok_pct": 0.1728,
+    "call_usd": 42113055,
+    "put_usd": -81101617,
+    "net_gex": -38988562,
+    "net_gex_dollar1pct": -318949831,
+    "gross_gex": 69589842,
+    "call_wall": 900.0,
+    "put_wall": 800.0,
+    "abs_wall": 800.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -6154666459,
+    "net_dex_shares": -7523490,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 800.0,
+    "delta_ok_pct": 1.0,
+    "spot": 818.06,
+    "ts": 1785330728,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 0% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.6,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.906,
+    "n_contracts": 2126,
+    "n_strikes_populated": 236,
+    "pin_risk": {
+     "score": 40.05510399715635,
+     "hhi": 0.033879317109897944,
+     "proximity_to_poc": 0.9779233797032003,
+     "t_min_years": 0.0008271449324535513,
+     "poc": 800.0,
+     "call_wall": 900.0,
+     "fortress_pin": false,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 15,
+     "trail": [
+      [
+       1785158700.0,
+       939.17
+      ],
+      [
+       1785159000.0,
+       939.17
+      ],
+      [
+       1785159300.0,
+       939.17
+      ],
+      [
+       1785159600.0,
+       939.17
+      ],
+      [
+       1785249900.0,
+       921.27
+      ],
+      [
+       1785250200.0,
+       921.27
+      ],
+      [
+       1785250500.0,
+       921.27
+      ],
+      [
+       1785253200.0,
+       921.27
+      ],
+      [
+       1785253500.0,
+       921.27
+      ],
+      [
+       1785253800.0,
+       921.27
+      ],
+      [
+       1785254100.0,
+       921.27
+      ],
+      [
+       1785261900.0,
+       921.27
+      ],
+      [
+       1785262200.0,
+       921.27
+      ],
+      [
+       1785262500.0,
+       921.27
+      ],
+      [
+       1785262800.0,
+       921.27
+      ]
+     ],
+     "first": 939.17,
+     "last": 921.27,
+     "range_pct": 1.93295490131851,
+     "drift_pct": -1.9059382220471246,
+     "reversals": 0,
+     "reversal_rate": 0.0,
+     "shape": "inclinada",
+     "status": "ok",
+     "convention": "horizontal<=0.15% rango, dentada>0.5 tasa de reversion -- umbrales convencion, no medidos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "MSFT": {
+   "spot": 402.76,
+   "exp": "20260731",
+   "call_walls": [
+    [
+     400.0,
+     10627
+    ],
+    [
+     410.0,
+     8669
+    ],
+    [
+     390.0,
+     6138
+    ]
+   ],
+   "put_walls": [
+    [
+     395.0,
+     2032
+    ],
+    [
+     390.0,
+     2010
+    ],
+    [
+     400.0,
+     1477
+    ]
+   ],
+   "max_pain": 390.0,
+   "pc_oi": 0.125,
+   "gex": {
+    "flip": 357.67,
+    "flip_all": 357.67,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": -9.36,
+    "score": 100.33,
+    "bias": "CALL",
+    "poc": 460.0,
+    "magnets": [
+     380.0,
+     400.0,
+     460.0
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "regime_raw": "POS",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 331,
+     "n_pares_ok": 227,
+     "parity_ok_pct": 0.6858,
+     "net_from_calls": 396230516.34497905,
+     "net_from_puts": 420443945.05462855,
+     "net_parity_lo": 396230516.34497905,
+     "net_parity_hi": 420443945.05462855,
+     "call_gex_parity": 665601548.3559356,
+     "put_gex_parity": 257264317.65613174,
+     "signo_firme": true,
+     "net_parity_conservador": 396230516.34497905,
+     "regime_parity": "POS",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": 396230516,
+    "net_gex_parity_hi": 420443945,
+    "parity_ok_pct": 0.6858,
+    "call_usd": 165570625,
+    "put_usd": -65240889,
+    "net_gex": 100329736,
+    "net_gex_dollar1pct": 395891104,
+    "gross_gex": 157779262,
+    "call_wall": 400.0,
+    "put_wall": 380.0,
+    "abs_wall": 460.0,
+    "abs_wall_kind": "pin",
+    "net_dex": 3613043543,
+    "net_dex_shares": 9156450,
+    "dex_sentiment": "alcista",
+    "dex_flow_impact": "mm_compra",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 390.0,
+    "delta_ok_pct": 1.0,
+    "spot": 394.59,
+    "ts": 1785330730,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 0% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.6,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.979,
+    "n_contracts": 902,
+    "n_strikes_populated": 122,
+    "pin_risk": {
+     "score": 5.6007385170232284,
+     "hhi": 0.042338666907753855,
+     "proximity_to_poc": 0.8342330013431662,
+     "t_min_years": 0.006306367108546375,
+     "poc": 460.0,
+     "call_wall": 400.0,
+     "fortress_pin": false,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 8,
+     "trail": [
+      [
+       1785158700.0,
+       384.61
+      ],
+      [
+       1785159000.0,
+       384.61
+      ],
+      [
+       1785159300.0,
+       384.61
+      ],
+      [
+       1785159600.0,
+       384.61
+      ],
+      [
+       1785246000.0,
+       364.91
+      ],
+      [
+       1785246300.0,
+       364.91
+      ],
+      [
+       1785246600.0,
+       364.91
+      ],
+      [
+       1785246900.0,
+       364.91
+      ]
+     ],
+     "first": 384.61,
+     "last": 364.91,
+     "range_pct": 5.256697619810009,
+     "drift_pct": -5.122071709003923,
+     "reversals": 0,
+     "reversal_rate": 0.0,
+     "shape": "inclinada",
+     "status": "ok",
+     "convention": "horizontal<=0.15% rango, dentada>0.5 tasa de reversion -- umbrales convencion, no medidos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "SKHY": {
+   "spot": 124.86,
+   "exp": "20260731",
+   "call_walls": [
+    [
+     140.0,
+     8833
+    ],
+    [
+     130.0,
+     2091
+    ],
+    [
+     135.0,
+     2041
+    ]
+   ],
+   "put_walls": [
+    [
+     120.0,
+     18529
+    ],
+    [
+     110.0,
+     16500
+    ],
+    [
+     125.0,
+     14187
+    ]
+   ],
+   "max_pain": 135.0,
+   "pc_oi": 10.67,
+   "gex": {
+    "flip": 158.98,
+    "flip_all": 158.98,
+    "flip_src": "recompute_0.60_1.50",
+    "flip_dist_pct": 24.0,
+    "score": -28.345,
+    "bias": "PUT",
+    "poc": 120.0,
+    "magnets": [
+     120.0,
+     140.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "regime_raw": "NEG",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 151,
+     "n_pares_ok": 13,
+     "parity_ok_pct": 0.0861,
+     "net_from_calls": -29267975.8929149,
+     "net_from_puts": -34490258.102719575,
+     "net_parity_lo": -34490258.102719575,
+     "net_parity_hi": -29267975.8929149,
+     "call_gex_parity": 16413727.139846887,
+     "put_gex_parity": 48292844.137664124,
+     "signo_firme": true,
+     "net_parity_conservador": -29267975.8929149,
+     "regime_parity": "NEG",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": -34490258,
+    "net_gex_parity_hi": -29267976,
+    "parity_ok_pct": 0.0861,
+    "call_usd": 12080569,
+    "put_usd": -40425252,
+    "net_gex": -28344683,
+    "net_gex_dollar1pct": -36340718,
+    "gross_gex": 37417783,
+    "call_wall": 140.0,
+    "put_wall": 120.0,
+    "abs_wall": 120.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -812798850,
+    "net_dex_shares": -6339590,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 145.0,
+    "delta_ok_pct": 1.0,
+    "spot": 128.21,
+    "ts": 1785330740,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 2% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.6,
+    "chain_band_convergida": false,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.916,
+    "n_contracts": 415,
+    "n_strikes_populated": 84,
+    "pin_risk": {
+     "score": 9.594247853705161,
+     "hhi": 0.06463759138656074,
+     "proximity_to_poc": 0.9359644333515326,
+     "t_min_years": 0.006305703950723617,
+     "poc": 120.0,
+     "call_wall": 140.0,
+     "fortress_pin": false,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 4,
+     "trail": [
+      [
+       1785158700.0,
+       174.42
+      ],
+      [
+       1785159000.0,
+       174.42
+      ],
+      [
+       1785159300.0,
+       174.42
+      ],
+      [
+       1785159600.0,
+       174.42
+      ]
+     ],
+     "first": 174.42,
+     "last": 174.42,
+     "range_pct": 0.0,
+     "drift_pct": 0.0,
+     "reversals": 0,
+     "reversal_rate": 0.0,
+     "shape": "horizontal",
+     "status": "ok",
+     "convention": "horizontal<=0.15% rango, dentada>0.5 tasa de reversion -- umbrales convencion, no medidos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "AMZN": {
+   "spot": 226.94,
+   "exp": "20260729",
+   "call_walls": [
+    [
+     235.0,
+     13413
+    ],
+    [
+     240.0,
+     11803
+    ],
+    [
+     237.5,
+     11231
+    ]
+   ],
+   "put_walls": [
+    [
+     220.0,
+     5820
+    ],
+    [
+     225.0,
+     5513
+    ],
+    [
+     230.0,
+     4346
+    ]
+   ],
+   "max_pain": 230.0,
+   "pc_oi": 0.794,
+   "gex": {
+    "flip": 222.57,
+    "flip_all": 222.57,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": -3.56,
+    "score": 63.759,
+    "bias": "CALL",
+    "poc": 250.0,
+    "magnets": [
+     230.0,
+     250.0
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "regime_raw": "POS",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 233,
+     "n_pares_ok": 35,
+     "parity_ok_pct": 0.1502,
+     "net_from_calls": 159357370.96306044,
+     "net_from_puts": 163792162.93178305,
+     "net_parity_lo": 159357370.96306044,
+     "net_parity_hi": 163792162.93178305,
+     "call_gex_parity": 389068621.5379549,
+     "put_gex_parity": 227493854.5905332,
+     "signo_firme": true,
+     "net_parity_conservador": 159357370.96306044,
+     "regime_parity": "POS",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": 159357371,
+    "net_gex_parity_hi": 163792163,
+    "parity_ok_pct": 0.1502,
+    "call_usd": 164981375,
+    "put_usd": -101222403,
+    "net_gex": 63758972,
+    "net_gex_dollar1pct": 147142956,
+    "gross_gex": 160220030,
+    "call_wall": 250.0,
+    "put_wall": 230.0,
+    "abs_wall": 250.0,
+    "abs_wall_kind": "pin",
+    "net_dex": 400943017,
+    "net_dex_shares": 1737339,
+    "dex_sentiment": "alcista",
+    "dex_flow_impact": "mm_compra",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 220.0,
+    "delta_ok_pct": 1.0,
+    "spot": 230.78,
+    "ts": 1785330732,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 0% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.6,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.897,
+    "n_contracts": 669,
+    "n_strikes_populated": 77,
+    "pin_risk": {
+     "score": 62.496545833749806,
+     "hhi": 0.056366825884730465,
+     "proximity_to_poc": 0.9167172198630731,
+     "t_min_years": 0.000826804733416987,
+     "poc": 250.0,
+     "call_wall": 250.0,
+     "fortress_pin": true,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 4,
+     "trail": [
+      [
+       1785158700.0,
+       233.26
+      ],
+      [
+       1785159000.0,
+       233.26
+      ],
+      [
+       1785159300.0,
+       233.26
+      ],
+      [
+       1785159600.0,
+       233.26
+      ]
+     ],
+     "first": 233.26,
+     "last": 233.26,
+     "range_pct": 0.0,
+     "drift_pct": 0.0,
+     "reversals": 0,
+     "reversal_rate": 0.0,
+     "shape": "horizontal",
+     "status": "ok",
+     "convention": "horizontal<=0.15% rango, dentada>0.5 tasa de reversion -- umbrales convencion, no medidos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "INTC": {
+   "spot": 80.75,
+   "exp": "20260729",
+   "call_walls": [
+    [
+     90.0,
+     12702
+    ],
+    [
+     87.0,
+     6332
+    ],
+    [
+     90.0,
+     5568
+    ]
+   ],
+   "put_walls": [
+    [
+     90.0,
+     13762
+    ],
+    [
+     80.0,
+     7387
+    ],
+    [
+     75.0,
+     6647
+    ]
+   ],
+   "max_pain": 90.0,
+   "pc_oi": 2.805,
+   "gex": {
+    "flip": 85.61,
+    "flip_all": 85.61,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": -1.49,
+    "score": 6.436,
+    "bias": "CALL",
+    "poc": 80.0,
+    "magnets": [
+     80.0,
+     90.0
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "regime_raw": "POS",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 386,
+     "n_pares_ok": 248,
+     "parity_ok_pct": 0.6425,
+     "net_from_calls": 5423075.83887779,
+     "net_from_puts": 6580335.168856375,
+     "net_parity_lo": 5423075.83887779,
+     "net_parity_hi": 6580335.168856375,
+     "call_gex_parity": 71246221.01242027,
+     "put_gex_parity": 65244515.508553185,
+     "signo_firme": true,
+     "net_parity_conservador": 5423075.83887779,
+     "regime_parity": "POS",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": 5423076,
+    "net_gex_parity_hi": 6580335,
+    "parity_ok_pct": 0.6425,
+    "call_usd": 81418169,
+    "put_usd": -74982414,
+    "net_gex": 6435756,
+    "net_gex_dollar1pct": 5592672,
+    "gross_gex": 63959463,
+    "call_wall": 90.0,
+    "put_wall": 80.0,
+    "abs_wall": 80.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -551955943,
+    "net_dex_shares": -6351622,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 100.0,
+    "delta_ok_pct": 1.0,
+    "spot": 86.9,
+    "ts": 1785330733,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 0% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.6,
+    "chain_band_convergida": false,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.944,
+    "n_contracts": 978,
+    "n_strikes_populated": 105,
+    "pin_risk": {
+     "score": 39.1650058112413,
+     "hhi": 0.03517102990827138,
+     "proximity_to_poc": 0.9205983889528193,
+     "t_min_years": 0.0008267174433068174,
+     "poc": 80.0,
+     "call_wall": 90.0,
+     "fortress_pin": false,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 11,
+     "trail": [
+      [
+       1785158700.0,
+       95.13
+      ],
+      [
+       1785159000.0,
+       95.13
+      ],
+      [
+       1785159300.0,
+       95.13
+      ],
+      [
+       1785159600.0,
+       95.13
+      ],
+      [
+       1785180900.0,
+       95.1
+      ],
+      [
+       1785181200.0,
+       95.1
+      ],
+      [
+       1785181500.0,
+       95.1
+      ],
+      [
+       1785181800.0,
+       95.1
+      ],
+      [
+       1785262200.0,
+       90.39
+      ],
+      [
+       1785262500.0,
+       90.39
+      ],
+      [
+       1785262800.0,
+       90.39
+      ]
+     ],
+     "first": 95.13,
+     "last": 90.39,
+     "range_pct": 5.051885010028189,
+     "drift_pct": -4.9826553137811365,
+     "reversals": 0,
+     "reversal_rate": 0.0,
+     "shape": "inclinada",
+     "status": "ok",
+     "convention": "horizontal<=0.15% rango, dentada>0.5 tasa de reversion -- umbrales convencion, no medidos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "DRAM": {
+   "spot": 44.3,
+   "exp": "20260731",
+   "call_walls": [
+    [
+     50.0,
+     14871
+    ],
+    [
+     48.0,
+     10735
+    ],
+    [
+     50.0,
+     4351
+    ]
+   ],
+   "put_walls": [
+    [
+     49.0,
+     21722
+    ],
+    [
+     40.0,
+     12692
+    ],
+    [
+     38.0,
+     11516
+    ]
+   ],
+   "max_pain": 50.0,
+   "pc_oi": 3.963,
+   "gex": {
+    "flip": 50.47,
+    "flip_all": 50.47,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 6.66,
+    "score": -21.731,
+    "bias": "PUT",
+    "poc": 50.0,
+    "magnets": [
+     45.0,
+     50.0,
+     60.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "regime_raw": "NEG",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 163,
+     "n_pares_ok": 14,
+     "parity_ok_pct": 0.0859,
+     "net_from_calls": -4902044.048246361,
+     "net_from_puts": -8814899.203159738,
+     "net_parity_lo": -8814899.203159738,
+     "net_parity_hi": -4902044.048246361,
+     "call_gex_parity": 27046369.27831106,
+     "put_gex_parity": 33904840.90401411,
+     "signo_firme": true,
+     "net_parity_conservador": -4902044.048246361,
+     "regime_parity": "NEG",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": -8814899,
+    "net_gex_parity_hi": -4902044,
+    "parity_ok_pct": 0.0859,
+    "call_usd": 55604950,
+    "put_usd": -77335959,
+    "net_gex": -21731009,
+    "net_gex_dollar1pct": -10283113,
+    "gross_gex": 88910005,
+    "call_wall": 60.0,
+    "put_wall": 45.0,
+    "abs_wall": 50.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -570873442,
+    "net_dex_shares": -12064105,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 50.0,
+    "delta_ok_pct": 1.0,
+    "spot": 47.32,
+    "ts": 1785330739,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 1% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.6,
+    "chain_band_convergida": false,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.803,
+    "n_contracts": 472,
+    "n_strikes_populated": 92,
+    "pin_risk": {
+     "score": 10.583435487639091,
+     "hhi": 0.07074323312792252,
+     "proximity_to_poc": 0.9433643279797126,
+     "t_min_years": 0.006305763630040523,
+     "poc": 50.0,
+     "call_wall": 60.0,
+     "fortress_pin": false,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 0,
+     "trail": [],
+     "shape": null,
+     "status": "insuficiente_datos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "STX": {
+   "spot": 761.0,
+   "exp": "20260731",
+   "call_walls": [
+    [
+     855.0,
+     177
+    ],
+    [
+     750.0,
+     151
+    ],
+    [
+     747.5,
+     149
+    ]
+   ],
+   "put_walls": [
+    [
+     700.0,
+     729
+    ],
+    [
+     750.0,
+     344
+    ],
+    [
+     655.0,
+     258
+    ]
+   ],
+   "max_pain": 760.0,
+   "pc_oi": 2.039,
+   "gex": {
+    "flip": 740.61,
+    "flip_all": 740.61,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": -5.94,
+    "score": 1.536,
+    "bias": "CALL",
+    "poc": 850.0,
+    "magnets": [
+     750.0,
+     850.0
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "regime_raw": "POS",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 337,
+     "n_pares_ok": 13,
+     "parity_ok_pct": 0.0386,
+     "net_from_calls": 4849358.62213327,
+     "net_from_puts": 5209558.102502778,
+     "net_parity_lo": 4849358.62213327,
+     "net_parity_hi": 5209558.102502778,
+     "call_gex_parity": 37752279.398855716,
+     "put_gex_parity": 32722821.03653769,
+     "signo_firme": true,
+     "net_parity_conservador": 4849358.62213327,
+     "regime_parity": "POS",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": 4849359,
+    "net_gex_parity_hi": 5209558,
+    "parity_ok_pct": 0.0386,
+    "call_usd": 5231771,
+    "put_usd": -3695598,
+    "net_gex": 1536173,
+    "net_gex_dollar1pct": 12095978,
+    "gross_gex": 6195386,
+    "call_wall": 850.0,
+    "put_wall": 750.0,
+    "abs_wall": 850.0,
+    "abs_wall_kind": "pin",
+    "net_dex": -100334725,
+    "net_dex_shares": -127424,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 850.0,
+    "delta_ok_pct": 1.0,
+    "spot": 787.41,
+    "ts": 1785330743,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 0% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.6,
+    "chain_band_convergida": false,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.869,
+    "n_contracts": 1003,
+    "n_strikes_populated": 213,
+    "pin_risk": {
+     "score": 5.677392317841493,
+     "hhi": 0.03889027239697606,
+     "proximity_to_poc": 0.9205115505264093,
+     "t_min_years": 0.006305526012714474,
+     "poc": 850.0,
+     "call_wall": 850.0,
+     "fortress_pin": true,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 4,
+     "trail": [
+      [
+       1785158700.0,
+       750.13
+      ],
+      [
+       1785159000.0,
+       750.13
+      ],
+      [
+       1785159300.0,
+       750.13
+      ],
+      [
+       1785159600.0,
+       750.13
+      ]
+     ],
+     "first": 750.13,
+     "last": 750.13,
+     "range_pct": 0.0,
+     "drift_pct": 0.0,
+     "reversals": 0,
+     "reversal_rate": 0.0,
+     "shape": "horizontal",
+     "status": "ok",
+     "convention": "horizontal<=0.15% rango, dentada>0.5 tasa de reversion -- umbrales convencion, no medidos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "TSM": {
+   "spot": 375.35,
+   "exp": "20260731",
+   "call_walls": [
+    [
+     410.0,
+     4841
+    ],
+    [
+     420.0,
+     3464
+    ],
+    [
+     430.0,
+     2859
+    ]
+   ],
+   "put_walls": [
+    [
+     420.0,
+     12499
+    ],
+    [
+     350.0,
+     6989
+    ],
+    [
+     380.0,
+     5383
+    ]
+   ],
+   "max_pain": 390.0,
+   "pc_oi": 1.752,
+   "gex": {
+    "flip": 400.69,
+    "flip_all": 400.69,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 3.01,
+    "score": -21.359,
+    "bias": "PUT",
+    "poc": 380.0,
+    "magnets": [
+     380.0,
+     400.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "regime_raw": "NEG",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 182,
+     "n_pares_ok": 5,
+     "parity_ok_pct": 0.0275,
+     "net_from_calls": -28573199.53001526,
+     "net_from_puts": -52470397.96354854,
+     "net_parity_lo": -52470397.96354854,
+     "net_parity_hi": -28573199.53001526,
+     "call_gex_parity": 203001100.75783557,
+     "put_gex_parity": 243522899.50461745,
+     "signo_firme": true,
+     "net_parity_conservador": -28573199.53001526,
+     "regime_parity": "NEG",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": -52470398,
+    "net_gex_parity_hi": -28573200,
+    "parity_ok_pct": 0.0275,
+    "call_usd": 48250205,
+    "put_usd": -69609075,
+    "net_gex": -21358870,
+    "net_gex_dollar1pct": -83086004,
+    "gross_gex": 81149827,
+    "call_wall": 400.0,
+    "put_wall": 380.0,
+    "abs_wall": 380.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -422495462,
+    "net_dex_shares": -1086107,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 380.0,
+    "delta_ok_pct": 1.0,
+    "spot": 389.0,
+    "ts": 1785330733,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 0% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.6,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.887,
+    "n_contracts": 547,
+    "n_strikes_populated": 118,
+    "pin_risk": {
+     "score": 6.480943872041105,
+     "hhi": 0.04183768338479904,
+     "proximity_to_poc": 0.9768637532133676,
+     "t_min_years": 0.006306136455422788,
+     "poc": 380.0,
+     "call_wall": 400.0,
+     "fortress_pin": false,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 4,
+     "trail": [
+      [
+       1785158700.0,
+       415.56
+      ],
+      [
+       1785159000.0,
+       415.56
+      ],
+      [
+       1785159300.0,
+       415.56
+      ],
+      [
+       1785159600.0,
+       415.56
+      ]
+     ],
+     "first": 415.56,
+     "last": 415.56,
+     "range_pct": 0.0,
+     "drift_pct": 0.0,
+     "reversals": 0,
+     "reversal_rate": 0.0,
+     "shape": "horizontal",
+     "status": "ok",
+     "convention": "horizontal<=0.15% rango, dentada>0.5 tasa de reversion -- umbrales convencion, no medidos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "QQQ": {
+   "spot": 661.83,
+   "exp": "20260729",
+   "call_walls": [
+    [
+     683.0,
+     5226
+    ],
+    [
+     693.0,
+     1654
+    ],
+    [
+     670.0,
+     1498
+    ]
+   ],
+   "put_walls": [
+    [
+     670.0,
+     8744
+    ],
+    [
+     655.0,
+     6575
+    ],
+    [
+     660.0,
+     6132
+    ]
+   ],
+   "max_pain": 671.0,
+   "pc_oi": 3.745,
+   "gex": {
+    "flip": 687.19,
+    "flip_all": 687.19,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 1.75,
+    "score": -635.872,
+    "bias": "PUT",
+    "poc": 660.0,
+    "magnets": [
+     660.0,
+     685.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "regime_raw": "NEG",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 741,
+     "n_pares_ok": 70,
+     "parity_ok_pct": 0.0945,
+     "net_from_calls": -3641051694.5042953,
+     "net_from_puts": -3958057192.8239784,
+     "net_parity_lo": -3958057192.8239784,
+     "net_parity_hi": -3641051694.5042953,
+     "call_gex_parity": 4471268699.58231,
+     "put_gex_parity": 8270823143.246447,
+     "signo_firme": true,
+     "net_parity_conservador": -3641051694.5042953,
+     "regime_parity": "NEG",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": -3958057193,
+    "net_gex_parity_hi": -3641051695,
+    "parity_ok_pct": 0.0945,
+    "call_usd": 637097534,
+    "put_usd": -1272969773,
+    "net_gex": -635872240,
+    "net_gex_dollar1pct": -4294681108,
+    "gross_gex": 1063222266,
+    "call_wall": 685.0,
+    "put_wall": 660.0,
+    "abs_wall": 660.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -29988842241,
+    "net_dex_shares": -44401602,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 680.0,
+    "delta_ok_pct": 1.0,
+    "spot": 675.4,
+    "ts": 1785330725,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 1% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.18,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.9,
+    "n_contracts": 2277,
+    "n_strikes_populated": 184,
+    "pin_risk": {
+     "score": 43.271447664946024,
+     "hhi": 0.03664015162417421,
+     "proximity_to_poc": 0.9771986970684039,
+     "t_min_years": 0.0008274442007295496,
+     "poc": 660.0,
+     "call_wall": 685.0,
+     "fortress_pin": false,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 17,
+     "trail": [
+      [
+       1785158700.0,
+       691.6
+      ],
+      [
+       1785159000.0,
+       691.6
+      ],
+      [
+       1785159300.0,
+       691.6
+      ],
+      [
+       1785159600.0,
+       691.6
+      ],
+      [
+       1785161700.0,
+       689.43
+      ],
+      [
+       1785162000.0,
+       689.43
+      ],
+      [
+       1785162300.0,
+       689.43
+      ],
+      [
+       1785173400.0,
+       689.43
+      ],
+      [
+       1785173700.0,
+       689.43
+      ],
+      [
+       1785174000.0,
+       689.43
+      ],
+      [
+       1785179100.0,
+       689.43
+      ],
+      [
+       1785179400.0,
+       689.43
+      ],
+      [
+       1785179700.0,
+       689.43
+      ],
+      [
+       1785246000.0,
+       690.74
+      ],
+      [
+       1785246300.0,
+       690.74
+      ],
+      [
+       1785246600.0,
+       690.74
+      ],
+      [
+       1785246900.0,
+       690.74
+      ]
+     ],
+     "first": 691.6,
+     "last": 690.74,
+     "range_pct": 0.3143793840754888,
+     "drift_pct": -0.12434933487565263,
+     "reversals": 1,
+     "reversal_rate": 1.0,
+     "shape": "dentada",
+     "status": "ok",
+     "convention": "horizontal<=0.15% rango, dentada>0.5 tasa de reversion -- umbrales convencion, no medidos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "TXN": {
+   "spot": 271.19,
+   "exp": "20260731",
+   "call_walls": [
+    [
+     287.5,
+     1381
+    ],
+    [
+     292.5,
+     1247
+    ],
+    [
+     290.0,
+     1030
+    ]
+   ],
+   "put_walls": [
+    [
+     260.0,
+     1011
+    ],
+    [
+     265.0,
+     434
+    ],
+    [
+     250.0,
+     415
+    ]
+   ],
+   "max_pain": 285.0,
+   "pc_oi": 1.064,
+   "gex": {
+    "flip": 272.07,
+    "flip_all": 272.07,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": -2.85,
+    "score": 1.907,
+    "bias": "CALL",
+    "poc": 260.0,
+    "magnets": [
+     260.0,
+     287.5
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "regime_raw": "POS",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 156,
+     "n_pares_ok": 23,
+     "parity_ok_pct": 0.1474,
+     "net_from_calls": 4949830.343388066,
+     "net_from_puts": 6126082.970260005,
+     "net_parity_lo": 4949830.343388066,
+     "net_parity_hi": 6126082.970260005,
+     "call_gex_parity": 23263078.499234468,
+     "put_gex_parity": 17725121.84241043,
+     "signo_firme": true,
+     "net_parity_conservador": 4949830.343388066,
+     "regime_parity": "POS",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": 4949830,
+    "net_gex_parity_hi": 6126083,
+    "parity_ok_pct": 0.1474,
+    "call_usd": 8166664,
+    "put_usd": -6259358,
+    "net_gex": 1907306,
+    "net_gex_dollar1pct": 5341412,
+    "gross_gex": 9700858,
+    "call_wall": 287.5,
+    "put_wall": 260.0,
+    "abs_wall": 260.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -25571097,
+    "net_dex_shares": -91309,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 285.0,
+    "delta_ok_pct": 1.0,
+    "spot": 280.05,
+    "ts": 1785330734,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 2% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.6,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.916,
+    "n_contracts": 438,
+    "n_strikes_populated": 93,
+    "pin_risk": {
+     "score": 6.7645547076060994,
+     "hhi": 0.045947082919876606,
+     "proximity_to_poc": 0.9284056418496697,
+     "t_min_years": 0.006306036812945528,
+     "poc": 260.0,
+     "call_wall": 287.5,
+     "fortress_pin": false,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 4,
+     "trail": [
+      [
+       1785158700.0,
+       265.15
+      ],
+      [
+       1785159000.0,
+       265.15
+      ],
+      [
+       1785159300.0,
+       265.15
+      ],
+      [
+       1785159600.0,
+       265.15
+      ]
+     ],
+     "first": 265.15,
+     "last": 265.15,
+     "range_pct": 0.0,
+     "drift_pct": 0.0,
+     "reversals": 0,
+     "reversal_rate": 0.0,
+     "shape": "horizontal",
+     "status": "ok",
+     "convention": "horizontal<=0.15% rango, dentada>0.5 tasa de reversion -- umbrales convencion, no medidos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "SPCX": {
+   "spot": 112.65,
+   "exp": "20260731",
+   "call_walls": [
+    [
+     120.0,
+     12501
+    ],
+    [
+     125.0,
+     11184
+    ],
+    [
+     115.0,
+     11096
+    ]
+   ],
+   "put_walls": [
+    [
+     100.0,
+     23879
+    ],
+    [
+     110.0,
+     18659
+    ],
+    [
+     115.0,
+     17518
+    ]
+   ],
+   "max_pain": 120.0,
+   "pc_oi": 3.356,
+   "gex": {
+    "flip": 126.38,
+    "flip_all": 126.38,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 9.37,
+    "score": -34.924,
+    "bias": "PUT",
+    "poc": 110.0,
+    "magnets": [
+     110.0,
+     115.0,
+     120.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "regime_raw": "NEG",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 279,
+     "n_pares_ok": 55,
+     "parity_ok_pct": 0.1971,
+     "net_from_calls": -31355522.42125739,
+     "net_from_puts": -36152944.354176655,
+     "net_parity_lo": -36152944.354176655,
+     "net_parity_hi": -31355522.42125739,
+     "call_gex_parity": 77962391.28545316,
+     "put_gex_parity": 111716624.67317018,
+     "signo_firme": true,
+     "net_parity_conservador": -31355522.42125739,
+     "regime_parity": "NEG",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": -36152944,
+    "net_gex_parity_hi": -31355522,
+    "parity_ok_pct": 0.1971,
+    "call_usd": 65652725,
+    "put_usd": -100576376,
+    "net_gex": -34923651,
+    "net_gex_dollar1pct": -40354279,
+    "gross_gex": 74430572,
+    "call_wall": 120.0,
+    "put_wall": 115.0,
+    "abs_wall": 110.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -1643564975,
+    "net_dex_shares": -14223842,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 125.0,
+    "delta_ok_pct": 1.0,
+    "spot": 115.55,
+    "ts": 1785330739,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 3% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.6,
+    "chain_band_convergida": false,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.954,
+    "n_contracts": 647,
+    "n_strikes_populated": 106,
+    "pin_risk": {
+     "score": 7.977186767347243,
+     "hhi": 0.052839966698839565,
+     "proximity_to_poc": 0.9519688446559931,
+     "t_min_years": 0.006305732022704418,
+     "poc": 110.0,
+     "call_wall": 120.0,
+     "fortress_pin": false,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 0,
+     "trail": [],
+     "shape": null,
+     "status": "insuficiente_datos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "WDC": {
+   "spot": 460.64,
+   "exp": "20260731",
+   "call_walls": [
+    [
+     460.0,
+     205
+    ],
+    [
+     460.0,
+     147
+    ],
+    [
+     517.5,
+     100
+    ]
+   ],
+   "put_walls": [
+    [
+     470.0,
+     2102
+    ],
+    [
+     460.0,
+     525
+    ],
+    [
+     480.0,
+     505
+    ]
+   ],
+   "max_pain": 460.0,
+   "pc_oi": 1.623,
+   "gex": {
+    "flip": 511.48,
+    "flip_all": 511.48,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 7.42,
+    "score": -2.821,
+    "bias": "PUT",
+    "poc": 470.0,
+    "magnets": [
+     470.0,
+     500.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "regime_raw": "NEG",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 323,
+     "n_pares_ok": 26,
+     "parity_ok_pct": 0.0805,
+     "net_from_calls": -18779496.83107921,
+     "net_from_puts": -11369850.962744202,
+     "net_parity_lo": -18779496.83107921,
+     "net_parity_hi": -11369850.962744202,
+     "call_gex_parity": 23471921.269451942,
+     "put_gex_parity": 38546595.16636365,
+     "signo_firme": true,
+     "net_parity_conservador": -11369850.962744202,
+     "regime_parity": "NEG",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": -18779497,
+    "net_gex_parity_hi": -11369851,
+    "parity_ok_pct": 0.0805,
+    "call_usd": 4713050,
+    "put_usd": -7533609,
+    "net_gex": -2820558,
+    "net_gex_dollar1pct": -13430371,
+    "gross_gex": 6987027,
+    "call_wall": 500.0,
+    "put_wall": 470.0,
+    "abs_wall": 470.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -508511375,
+    "net_dex_shares": -1067942,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 490.0,
+    "delta_ok_pct": 1.0,
+    "spot": 476.16,
+    "ts": 1785330742,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 0% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.6,
+    "chain_band_convergida": false,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.931,
+    "n_contracts": 829,
+    "n_strikes_populated": 186,
+    "pin_risk": {
+     "score": 4.421989782874385,
+     "hhi": 0.028248624172449208,
+     "proximity_to_poc": 0.9870631720430108,
+     "t_min_years": 0.006305572366877778,
+     "poc": 470.0,
+     "call_wall": 500.0,
+     "fortress_pin": false,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 4,
+     "trail": [
+      [
+       1785158700.0,
+       528.99
+      ],
+      [
+       1785159000.0,
+       528.99
+      ],
+      [
+       1785159300.0,
+       528.99
+      ],
+      [
+       1785159600.0,
+       528.99
+      ]
+     ],
+     "first": 528.99,
+     "last": 528.99,
+     "range_pct": 0.0,
+     "drift_pct": 0.0,
+     "reversals": 0,
+     "reversal_rate": 0.0,
+     "shape": "horizontal",
+     "status": "ok",
+     "convention": "horizontal<=0.15% rango, dentada>0.5 tasa de reversion -- umbrales convencion, no medidos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "GOOGL": {
+   "spot": 335.75,
+   "exp": "20260729",
+   "call_walls": [
+    [
+     335.0,
+     11633
+    ],
+    [
+     340.0,
+     11162
+    ],
+    [
+     337.5,
+     9201
+    ]
+   ],
+   "put_walls": [
+    [
+     310.0,
+     6880
+    ],
+    [
+     325.0,
+     5297
+    ],
+    [
+     300.0,
+     4461
+    ]
+   ],
+   "max_pain": 327.5,
+   "pc_oi": 0.433,
+   "gex": {
+    "flip": 324.27,
+    "flip_all": 324.27,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": -3.47,
+    "score": 84.476,
+    "bias": "CALL",
+    "poc": 335.0,
+    "magnets": [
+     330.0,
+     335.0,
+     340.0
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "regime_raw": "POS",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 171,
+     "n_pares_ok": 16,
+     "parity_ok_pct": 0.0936,
+     "net_from_calls": 270147358.64251673,
+     "net_from_puts": 218708253.993197,
+     "net_parity_lo": 218708253.993197,
+     "net_parity_hi": 270147358.64251673,
+     "call_gex_parity": 513868664.648008,
+     "put_gex_parity": 269440858.33015114,
+     "signo_firme": true,
+     "net_parity_conservador": 218708253.993197,
+     "regime_parity": "POS",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": 218708254,
+    "net_gex_parity_hi": 270147359,
+    "parity_ok_pct": 0.0936,
+    "call_usd": 162654473,
+    "put_usd": -78178164,
+    "net_gex": 84476309,
+    "net_gex_dollar1pct": 283781264,
+    "gross_gex": 137625803,
+    "call_wall": 340.0,
+    "put_wall": 330.0,
+    "abs_wall": 335.0,
+    "abs_wall_kind": "pin",
+    "net_dex": 562349804,
+    "net_dex_shares": 1674009,
+    "dex_sentiment": "alcista",
+    "dex_flow_impact": "mm_compra",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 360.0,
+    "delta_ok_pct": 1.0,
+    "spot": 335.93,
+    "ts": 1785330732,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 3% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.405,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.819,
+    "n_contracts": 685,
+    "n_strikes_populated": 81,
+    "pin_risk": {
+     "score": 87.87015246928468,
+     "hhi": 0.0728492408075351,
+     "proximity_to_poc": 0.9972315661000803,
+     "t_min_years": 0.0008267604010940385,
+     "poc": 335.0,
+     "call_wall": 340.0,
+     "fortress_pin": false,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 10,
+     "trail": [
+      [
+       1785158700.0,
+       322.19
+      ],
+      [
+       1785159000.0,
+       322.19
+      ],
+      [
+       1785159300.0,
+       322.19
+      ],
+      [
+       1785159600.0,
+       322.19
+      ],
+      [
+       1785180900.0,
+       316.76
+      ],
+      [
+       1785181200.0,
+       316.76
+      ],
+      [
+       1785181500.0,
+       316.76
+      ],
+      [
+       1785255000.0,
+       321.91
+      ],
+      [
+       1785255300.0,
+       321.91
+      ],
+      [
+       1785255600.0,
+       321.91
+      ]
+     ],
+     "first": 322.19,
+     "last": 321.91,
+     "range_pct": 1.6943493604845299,
+     "drift_pct": -0.0869052422483543,
+     "reversals": 1,
+     "reversal_rate": 1.0,
+     "shape": "dentada",
+     "status": "ok",
+     "convention": "horizontal<=0.15% rango, dentada>0.5 tasa de reversion -- umbrales convencion, no medidos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "AMD": {
+   "spot": 424.75,
+   "exp": "20260729",
+   "call_walls": [
+    [
+     457.5,
+     3418
+    ],
+    [
+     472.5,
+     1863
+    ],
+    [
+     477.5,
+     1483
+    ]
+   ],
+   "put_walls": [
+    [
+     400.0,
+     18955
+    ],
+    [
+     410.0,
+     13249
+    ],
+    [
+     430.0,
+     8087
+    ]
+   ],
+   "max_pain": 457.5,
+   "pc_oi": 12.667,
+   "gex": {
+    "flip": 464.87,
+    "flip_all": 464.87,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 2.85,
+    "score": -19.174,
+    "bias": "PUT",
+    "poc": 400.0,
+    "magnets": [
+     400.0,
+     500.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "regime_raw": "NEG",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 529,
+     "n_pares_ok": 54,
+     "parity_ok_pct": 0.1021,
+     "net_from_calls": -52808676.78912449,
+     "net_from_puts": -67952533.76387677,
+     "net_parity_lo": -67952533.76387677,
+     "net_parity_hi": -52808676.78912449,
+     "call_gex_parity": 230214052.11849505,
+     "put_gex_parity": 290594657.3949957,
+     "signo_firme": true,
+     "net_parity_conservador": -52808676.78912449,
+     "regime_parity": "NEG",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": -67952534,
+    "net_gex_parity_hi": -52808677,
+    "parity_ok_pct": 0.1021,
+    "call_usd": 48862267,
+    "put_usd": -68036104,
+    "net_gex": -19173837,
+    "net_gex_dollar1pct": -86665743,
+    "gross_gex": 68698814,
+    "call_wall": 500.0,
+    "put_wall": 400.0,
+    "abs_wall": 400.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": 178556938,
+    "net_dex_shares": 395037,
+    "dex_sentiment": "alcista",
+    "dex_flow_impact": "mm_compra",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 300.0,
+    "delta_ok_pct": 1.0,
+    "spot": 452.0,
+    "ts": 1785330729,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 0% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.6,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.888,
+    "n_contracts": 1601,
+    "n_strikes_populated": 179,
+    "pin_risk": {
+     "score": 41.72721105058898,
+     "hhi": 0.038994046091033276,
+     "proximity_to_poc": 0.8849557522123894,
+     "t_min_years": 0.0008269904582997012,
+     "poc": 400.0,
+     "call_wall": 500.0,
+     "fortress_pin": false,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 4,
+     "trail": [
+      [
+       1785158700.0,
+       524.05
+      ],
+      [
+       1785159000.0,
+       524.05
+      ],
+      [
+       1785159300.0,
+       524.05
+      ],
+      [
+       1785159600.0,
+       524.05
+      ]
+     ],
+     "first": 524.05,
+     "last": 524.05,
+     "range_pct": 0.0,
+     "drift_pct": 0.0,
+     "reversals": 0,
+     "reversal_rate": 0.0,
+     "shape": "horizontal",
+     "status": "ok",
+     "convention": "horizontal<=0.15% rango, dentada>0.5 tasa de reversion -- umbrales convencion, no medidos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "SNDK": {
+   "spot": 1016.8,
+   "exp": "20260731",
+   "call_walls": [
+    [
+     1000.0,
+     1919
+    ],
+    [
+     1100.0,
+     800
+    ],
+    [
+     1100.0,
+     214
+    ]
+   ],
+   "put_walls": [
+    [
+     1100.0,
+     7945
+    ],
+    [
+     1000.0,
+     4436
+    ],
+    [
+     1000.0,
+     1546
+    ]
+   ],
+   "max_pain": 1100.0,
+   "pc_oi": 7.12,
+   "gex": {
+    "flip": 1308.66,
+    "flip_all": 1308.66,
+    "flip_src": "recompute_0.60_1.50",
+    "flip_dist_pct": 20.15,
+    "score": -10.325,
+    "bias": "PUT",
+    "poc": 1100.0,
+    "magnets": [
+     1000.0,
+     1100.0,
+     1200.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "regime_raw": "NEG",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 514,
+     "n_pares_ok": 80,
+     "parity_ok_pct": 0.1556,
+     "net_from_calls": -93227797.81117927,
+     "net_from_puts": -108462781.91843705,
+     "net_parity_lo": -108462781.91843705,
+     "net_parity_hi": -93227797.81117927,
+     "call_gex_parity": 78382603.34212664,
+     "put_gex_parity": 179227893.2069348,
+     "signo_firme": true,
+     "net_parity_conservador": -93227797.81117927,
+     "regime_parity": "NEG",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": -108462782,
+    "net_gex_parity_hi": -93227798,
+    "parity_ok_pct": 0.1556,
+    "call_usd": 7012780,
+    "put_usd": -17337712,
+    "net_gex": -10324932,
+    "net_gex_dollar1pct": -112460191,
+    "gross_gex": 14870105,
+    "call_wall": 1200.0,
+    "put_wall": 1000.0,
+    "abs_wall": 1100.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -4037805902,
+    "net_dex_shares": -3707096,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 1100.0,
+    "delta_ok_pct": 1.0,
+    "spot": 1089.21,
+    "ts": 1785330742,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 0% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.6,
+    "chain_band_convergida": false,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.886,
+    "n_contracts": 1247,
+    "n_strikes_populated": 235,
+    "pin_risk": {
+     "score": 6.06826031613228,
+     "hhi": 0.03864694238673448,
+     "proximity_to_poc": 0.990093737663077,
+     "t_min_years": 0.006305612093668369,
+     "poc": 1100.0,
+     "call_wall": 1200.0,
+     "fortress_pin": false,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 0,
+     "trail": [],
+     "shape": null,
+     "status": "insuficiente_datos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "LRCX": {
+   "spot": 250.5,
+   "exp": "20260731",
+   "call_walls": [
+    [
+     280.0,
+     544
+    ],
+    [
+     275.0,
+     440
+    ],
+    [
+     280.0,
+     305
+    ]
+   ],
+   "put_walls": [
+    [
+     230.0,
+     9271
+    ],
+    [
+     260.0,
+     1998
+    ],
+    [
+     250.0,
+     1693
+    ]
+   ],
+   "max_pain": 280.0,
+   "pc_oi": 5.272,
+   "gex": {
+    "flip": 289.68,
+    "flip_all": 289.68,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 10.14,
+    "score": -7.119,
+    "bias": "PUT",
+    "poc": 240.0,
+    "magnets": [
+     240.0,
+     310.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "regime_raw": "NEG",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 117,
+     "n_pares_ok": 5,
+     "parity_ok_pct": 0.0427,
+     "net_from_calls": -9033164.771779746,
+     "net_from_puts": -16531618.122304201,
+     "net_parity_lo": -16531618.122304201,
+     "net_parity_hi": -9033164.771779746,
+     "call_gex_parity": 18806079.910402954,
+     "put_gex_parity": 31588471.357444927,
+     "signo_firme": true,
+     "net_parity_conservador": -9033164.771779746,
+     "regime_parity": "NEG",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": -16531618,
+    "net_gex_parity_hi": -9033165,
+    "parity_ok_pct": 0.0427,
+    "call_usd": 6733982,
+    "put_usd": -13853006,
+    "net_gex": -7119024,
+    "net_gex_dollar1pct": -18723034,
+    "gross_gex": 16578286,
+    "call_wall": 310.0,
+    "put_wall": 240.0,
+    "abs_wall": 240.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -315155621,
+    "net_dex_shares": -1198310,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 240.0,
+    "delta_ok_pct": 1.0,
+    "spot": 263.0,
+    "ts": 1785330741,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 4% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.6,
+    "chain_band_convergida": false,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.774,
+    "n_contracts": 412,
+    "n_strikes_populated": 107,
+    "pin_risk": {
+     "score": 8.050844303926688,
+     "hhi": 0.055631054647985005,
+     "proximity_to_poc": 0.9125475285171103,
+     "t_min_years": 0.006305671742162324,
+     "poc": 240.0,
+     "call_wall": 310.0,
+     "fortress_pin": false,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 4,
+     "trail": [
+      [
+       1785158700.0,
+       303.08
+      ],
+      [
+       1785159000.0,
+       303.08
+      ],
+      [
+       1785159300.0,
+       303.08
+      ],
+      [
+       1785159600.0,
+       303.08
+      ]
+     ],
+     "first": 303.08,
+     "last": 303.08,
+     "range_pct": 0.0,
+     "drift_pct": 0.0,
+     "reversals": 0,
+     "reversal_rate": 0.0,
+     "shape": "horizontal",
+     "status": "ok",
+     "convention": "horizontal<=0.15% rango, dentada>0.5 tasa de reversion -- umbrales convencion, no medidos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "ASML": {
+   "spot": 1550.5,
+   "exp": "20260731",
+   "call_walls": [
+    [
+     1700.0,
+     307
+    ],
+    [
+     1740.0,
+     256
+    ],
+    [
+     1640.0,
+     130
+    ]
+   ],
+   "put_walls": [
+    [
+     1680.0,
+     344
+    ],
+    [
+     1500.0,
+     288
+    ],
+    [
+     1320.0,
+     251
+    ]
+   ],
+   "max_pain": 1680.0,
+   "pc_oi": 3.325,
+   "gex": {
+    "flip": 1642.64,
+    "flip_all": 1642.64,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 4.16,
+    "score": -2.189,
+    "bias": "PUT",
+    "poc": 1400.0,
+    "magnets": [
+     1400.0,
+     1500.0,
+     1700.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "regime_raw": "NEG",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 318,
+     "n_pares_ok": 24,
+     "parity_ok_pct": 0.0755,
+     "net_from_calls": -23674729.91470819,
+     "net_from_puts": -28613928.7936237,
+     "net_parity_lo": -28613928.7936237,
+     "net_parity_hi": -23674729.91470819,
+     "call_gex_parity": 64178984.878401265,
+     "put_gex_parity": 90323314.23256722,
+     "signo_firme": true,
+     "net_parity_conservador": -23674729.91470819,
+     "regime_parity": "NEG",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": -28613929,
+    "net_gex_parity_hi": -23674730,
+    "parity_ok_pct": 0.0755,
+    "call_usd": 3882213,
+    "put_usd": -6070986,
+    "net_gex": -2188773,
+    "net_gex_dollar1pct": -34519136,
+    "gross_gex": 6297817,
+    "call_wall": 1700.0,
+    "put_wall": 1500.0,
+    "abs_wall": 1400.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -642923915,
+    "net_dex_shares": -407662,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 1850.0,
+    "delta_ok_pct": 1.0,
+    "spot": 1577.1,
+    "ts": 1785330734,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 2% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.6,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.895,
+    "n_contracts": 1240,
+    "n_strikes_populated": 305,
+    "pin_risk": {
+     "score": 2.2583993274994554,
+     "hhi": 0.016043179931365958,
+     "proximity_to_poc": 0.887705281846427,
+     "t_min_years": 0.006306066154586912,
+     "poc": 1400.0,
+     "call_wall": 1700.0,
+     "fortress_pin": false,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 0,
+     "trail": [],
+     "shape": null,
+     "status": "insuficiente_datos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "AAPL": {
+   "spot": 338.07,
+   "exp": "20260729",
+   "call_walls": [
+    [
+     345.0,
+     16026
+    ],
+    [
+     340.0,
+     12739
+    ],
+    [
+     320.0,
+     12593
+    ]
+   ],
+   "put_walls": [
+    [
+     315.0,
+     18214
+    ],
+    [
+     325.0,
+     14009
+    ],
+    [
+     320.0,
+     13834
+    ]
+   ],
+   "max_pain": 325.0,
+   "pc_oi": 1.065,
+   "gex": {
+    "flip": 331.99,
+    "flip_all": 331.99,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": -2.15,
+    "score": 121.052,
+    "bias": "CALL",
+    "poc": 345.0,
+    "magnets": [
+     335.0,
+     345.0
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "regime_raw": "POS",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 260,
+     "n_pares_ok": 28,
+     "parity_ok_pct": 0.1077,
+     "net_from_calls": 427567896.2154131,
+     "net_from_puts": 570404981.3015652,
+     "net_parity_lo": 427567896.2154131,
+     "net_parity_hi": 570404981.3015652,
+     "call_gex_parity": 1141224371.078845,
+     "put_gex_parity": 642237932.3203559,
+     "signo_firme": true,
+     "net_parity_conservador": 427567896.2154131,
+     "regime_parity": "POS",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": 427567896,
+    "net_gex_parity_hi": 570404981,
+    "parity_ok_pct": 0.1077,
+    "call_usd": 312816650,
+    "put_usd": -191764476,
+    "net_gex": 121052174,
+    "net_gex_dollar1pct": 410730026,
+    "gross_gex": 235602963,
+    "call_wall": 345.0,
+    "put_wall": 335.0,
+    "abs_wall": 345.0,
+    "abs_wall_kind": "pin",
+    "net_dex": 9141942720,
+    "net_dex_shares": 26943539,
+    "dex_sentiment": "alcista",
+    "dex_flow_impact": "mm_compra",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 310.0,
+    "delta_ok_pct": 1.0,
+    "spot": 339.3,
+    "ts": 1785330730,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 1% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.27,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.949,
+    "n_contracts": 649,
+    "n_strikes_populated": 57,
+    "pin_risk": {
+     "score": 112.12760507550138,
+     "hhi": 0.09430912009380421,
+     "proximity_to_poc": 0.9832007073386384,
+     "t_min_years": 0.000826957764078493,
+     "poc": 345.0,
+     "call_wall": 345.0,
+     "fortress_pin": true,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 25,
+     "trail": [
+      [
+       1785158700.0,
+       332.64
+      ],
+      [
+       1785159000.0,
+       332.64
+      ],
+      [
+       1785159300.0,
+       332.64
+      ],
+      [
+       1785159600.0,
+       332.64
+      ],
+      [
+       1785161700.0,
+       332.94
+      ],
+      [
+       1785162000.0,
+       332.94
+      ],
+      [
+       1785162300.0,
+       332.94
+      ],
+      [
+       1785173400.0,
+       332.94
+      ],
+      [
+       1785173700.0,
+       332.94
+      ],
+      [
+       1785174000.0,
+       332.94
+      ],
+      [
+       1785180900.0,
+       332.94
+      ],
+      [
+       1785181200.0,
+       332.94
+      ],
+      [
+       1785181500.0,
+       332.94
+      ],
+      [
+       1785246000.0,
+       332.32
+      ],
+      [
+       1785246300.0,
+       332.32
+      ],
+      [
+       1785246600.0,
+       332.32
+      ],
+      [
+       1785246900.0,
+       332.32
+      ],
+      [
+       1785257400.0,
+       332.32
+      ],
+      [
+       1785257700.0,
+       332.32
+      ],
+      [
+       1785258000.0,
+       332.32
+      ],
+      [
+       1785258300.0,
+       332.32
+      ],
+      [
+       1785267600.0,
+       332.32
+      ],
+      [
+       1785267900.0,
+       332.32
+      ],
+      [
+       1785268200.0,
+       332.32
+      ],
+      [
+       1785268500.0,
+       332.32
+      ]
+     ],
+     "first": 332.64,
+     "last": 332.32,
+     "range_pct": 0.1864132408723673,
+     "drift_pct": -0.09620009620009415,
+     "reversals": 1,
+     "reversal_rate": 1.0,
+     "shape": "dentada",
+     "status": "ok",
+     "convention": "horizontal<=0.15% rango, dentada>0.5 tasa de reversion -- umbrales convencion, no medidos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "SPY": {
+   "spot": 728.75,
+   "exp": "20260729",
+   "call_walls": [
+    [
+     750.0,
+     8525
+    ],
+    [
+     750.0,
+     7710
+    ],
+    [
+     738.0,
+     6793
+    ]
+   ],
+   "put_walls": [
+    [
+     735.0,
+     15246
+    ],
+    [
+     720.0,
+     10467
+    ],
+    [
+     730.0,
+     9120
+    ]
+   ],
+   "max_pain": 738.0,
+   "pc_oi": 2.906,
+   "gex": {
+    "flip": 748.6,
+    "flip_all": 748.6,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 1.04,
+    "score": -1431.873,
+    "bias": "PUT",
+    "poc": 740.0,
+    "magnets": [
+     740.0,
+     750.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "regime_raw": "NEG",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 739,
+     "n_pares_ok": 72,
+     "parity_ok_pct": 0.0974,
+     "net_from_calls": -9525563691.374651,
+     "net_from_puts": -9400576920.635895,
+     "net_parity_lo": -9525563691.374651,
+     "net_parity_hi": -9400576920.635895,
+     "call_gex_parity": 10571547260.62938,
+     "put_gex_parity": 20034617566.63465,
+     "signo_firme": true,
+     "net_parity_conservador": -9400576920.635895,
+     "regime_parity": "NEG",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": -9525563691,
+    "net_gex_parity_hi": -9400576921,
+    "parity_ok_pct": 0.0974,
+    "call_usd": 1345262360,
+    "put_usd": -2777135665,
+    "net_gex": -1431873305,
+    "net_gex_dollar1pct": -10609035691,
+    "gross_gex": 2406938576,
+    "call_wall": 750.0,
+    "put_wall": 740.0,
+    "abs_wall": 740.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -24784200298,
+    "net_dex_shares": -33450575,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 750.0,
+    "delta_ok_pct": 1.0,
+    "spot": 740.92,
+    "ts": 1785330726,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 0% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.18,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.951,
+    "n_contracts": 2210,
+    "n_strikes_populated": 197,
+    "pin_risk": {
+     "score": 39.39255745827155,
+     "hhi": 0.03263157262935553,
+     "proximity_to_poc": 0.9987583004912811,
+     "t_min_years": 0.0008273403943416614,
+     "poc": 740.0,
+     "call_wall": 750.0,
+     "fortress_pin": false,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 32,
+     "trail": [
+      [
+       1785158700.0,
+       743.99
+      ],
+      [
+       1785159000.0,
+       743.99
+      ],
+      [
+       1785159300.0,
+       743.99
+      ],
+      [
+       1785159600.0,
+       743.99
+      ],
+      [
+       1785164700.0,
+       740.48
+      ],
+      [
+       1785165000.0,
+       740.48
+      ],
+      [
+       1785165300.0,
+       740.48
+      ],
+      [
+       1785174000.0,
+       740.48
+      ],
+      [
+       1785174300.0,
+       740.48
+      ],
+      [
+       1785174600.0,
+       740.48
+      ],
+      [
+       1785179100.0,
+       740.48
+      ],
+      [
+       1785179400.0,
+       740.48
+      ],
+      [
+       1785179700.0,
+       740.48
+      ],
+      [
+       1785180000.0,
+       740.48
+      ],
+      [
+       1785245400.0,
+       739.96
+      ],
+      [
+       1785245700.0,
+       739.96
+      ],
+      [
+       1785246000.0,
+       739.96
+      ],
+      [
+       1785246300.0,
+       739.96
+      ],
+      [
+       1785254100.0,
+       739.12
+      ],
+      [
+       1785254400.0,
+       739.12
+      ],
+      [
+       1785254700.0,
+       739.12
+      ],
+      [
+       1785255000.0,
+       739.12
+      ],
+      [
+       1785258900.0,
+       739.12
+      ],
+      [
+       1785259200.0,
+       739.12
+      ],
+      [
+       1785259500.0,
+       739.12
+      ],
+      [
+       1785262200.0,
+       739.12
+      ],
+      [
+       1785262500.0,
+       739.12
+      ],
+      [
+       1785262800.0,
+       739.12
+      ],
+      [
+       1785263100.0,
+       739.12
+      ],
+      [
+       1785267000.0,
+       739.12
+      ],
+      [
+       1785267300.0,
+       739.12
+      ],
+      [
+       1785267600.0,
+       739.12
+      ]
+     ],
+     "first": 743.99,
+     "last": 739.12,
+     "range_pct": 0.6578780730386513,
+     "drift_pct": -0.6545786905737986,
+     "reversals": 0,
+     "reversal_rate": 0.0,
+     "shape": "inclinada",
+     "status": "ok",
+     "convention": "horizontal<=0.15% rango, dentada>0.5 tasa de reversion -- umbrales convencion, no medidos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "QCOM": {
+   "spot": 147.64,
+   "exp": "20260731",
+   "call_walls": [
+    [
+     165.0,
+     890
+    ],
+    [
+     152.5,
+     523
+    ],
+    [
+     155.0,
+     469
+    ]
+   ],
+   "put_walls": [
+    [
+     165.0,
+     6024
+    ],
+    [
+     140.0,
+     2143
+    ],
+    [
+     160.0,
+     1855
+    ]
+   ],
+   "max_pain": 165.0,
+   "pc_oi": 12.362,
+   "gex": {
+    "flip": 169.81,
+    "flip_all": 169.81,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 3.88,
+    "score": -4.324,
+    "bias": "PUT",
+    "poc": 165.0,
+    "magnets": [
+     160.0,
+     165.0,
+     190.0
+    ],
+    "regime": "NEGATIVE",
+    "regime_short": "NEG",
+    "regime_raw": "NEG",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 125,
+     "n_pares_ok": 36,
+     "parity_ok_pct": 0.288,
+     "net_from_calls": -6543318.497794464,
+     "net_from_puts": -7398523.612748053,
+     "net_parity_lo": -7398523.612748053,
+     "net_parity_hi": -6543318.497794464,
+     "call_gex_parity": 23081039.78562936,
+     "put_gex_parity": 30051960.840900615,
+     "signo_firme": true,
+     "net_parity_conservador": -6543318.497794464,
+     "regime_parity": "NEG",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": -7398524,
+    "net_gex_parity_hi": -6543318,
+    "parity_ok_pct": 0.288,
+    "call_usd": 14220429,
+    "put_usd": -18544361,
+    "net_gex": -4323932,
+    "net_gex_dollar1pct": -7068332,
+    "gross_gex": 15198745,
+    "call_wall": 190.0,
+    "put_wall": 160.0,
+    "abs_wall": 165.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -475742826,
+    "net_dex_shares": -2910276,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 200.0,
+    "delta_ok_pct": 1.0,
+    "spot": 163.47,
+    "ts": 1785330735,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 4% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.6,
+    "chain_band_convergida": false,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.903,
+    "n_contracts": 345,
+    "n_strikes_populated": 78,
+    "pin_risk": {
+     "score": 9.141170034434856,
+     "hhi": 0.05818896252324441,
+     "proximity_to_poc": 0.9906404844925675,
+     "t_min_years": 0.006306013541920786,
+     "poc": 165.0,
+     "call_wall": 190.0,
+     "fortress_pin": false,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 4,
+     "trail": [
+      [
+       1785158700.0,
+       160.53
+      ],
+      [
+       1785159000.0,
+       160.53
+      ],
+      [
+       1785159300.0,
+       160.53
+      ],
+      [
+       1785159600.0,
+       160.53
+      ]
+     ],
+     "first": 160.53,
+     "last": 160.53,
+     "range_pct": 0.0,
+     "drift_pct": 0.0,
+     "reversals": 0,
+     "reversal_rate": 0.0,
+     "shape": "horizontal",
+     "status": "ok",
+     "convention": "horizontal<=0.15% rango, dentada>0.5 tasa de reversion -- umbrales convencion, no medidos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "AVGO": {
+   "spot": 368.86,
+   "exp": "20260729",
+   "call_walls": [
+    [
+     380.0,
+     1567
+    ],
+    [
+     370.0,
+     1150
+    ],
+    [
+     382.5,
+     643
+    ]
+   ],
+   "put_walls": [
+    [
+     360.0,
+     2942
+    ],
+    [
+     370.0,
+     2681
+    ],
+    [
+     377.5,
+     2077
+    ]
+   ],
+   "max_pain": 375.0,
+   "pc_oi": 2.089,
+   "gex": {
+    "flip": 378.17,
+    "flip_all": 378.17,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": -0.55,
+    "score": 2.169,
+    "bias": "CALL",
+    "poc": 370.0,
+    "magnets": [
+     370.0,
+     400.0
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "regime_raw": "POS",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 293,
+     "n_pares_ok": 24,
+     "parity_ok_pct": 0.0819,
+     "net_from_calls": 13170603.804511875,
+     "net_from_puts": 18472776.674003273,
+     "net_parity_lo": 13170603.804511875,
+     "net_parity_hi": 18472776.674003273,
+     "call_gex_parity": 187587002.94385666,
+     "put_gex_parity": 171765312.70459908,
+     "signo_firme": true,
+     "net_parity_conservador": 13170603.804511875,
+     "regime_parity": "POS",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": 13170604,
+    "net_gex_parity_hi": 18472777,
+    "parity_ok_pct": 0.0819,
+    "call_usd": 47988098,
+    "put_usd": -45818931,
+    "net_gex": 2169168,
+    "net_gex_dollar1pct": 8248260,
+    "gross_gex": 58272240,
+    "call_wall": 400.0,
+    "put_wall": 370.0,
+    "abs_wall": 370.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": 203641149,
+    "net_dex_shares": 535545,
+    "dex_sentiment": "alcista",
+    "dex_flow_impact": "mm_compra",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 300.0,
+    "delta_ok_pct": 1.0,
+    "spot": 380.25,
+    "ts": 1785330736,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 40% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.6,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.942,
+    "n_contracts": 925,
+    "n_strikes_populated": 119,
+    "pin_risk": {
+     "score": 38.83708477723196,
+     "hhi": 0.032988226613107234,
+     "proximity_to_poc": 0.9730440499671269,
+     "t_min_years": 0.0008265037864960734,
+     "poc": 370.0,
+     "call_wall": 400.0,
+     "fortress_pin": false,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 4,
+     "trail": [
+      [
+       1785158700.0,
+       384.45
+      ],
+      [
+       1785159000.0,
+       384.45
+      ],
+      [
+       1785159300.0,
+       384.45
+      ],
+      [
+       1785159600.0,
+       384.45
+      ]
+     ],
+     "first": 384.45,
+     "last": 384.45,
+     "range_pct": 0.0,
+     "drift_pct": 0.0,
+     "reversals": 0,
+     "reversal_rate": 0.0,
+     "shape": "horizontal",
+     "status": "ok",
+     "convention": "horizontal<=0.15% rango, dentada>0.5 tasa de reversion -- umbrales convencion, no medidos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "META": {
+   "spot": 537.86,
+   "exp": "20260731",
+   "call_walls": [
+    [
+     550.0,
+     527
+    ],
+    [
+     540.0,
+     132
+    ],
+    [
+     530.0,
+     81
+    ]
+   ],
+   "put_walls": [
+    [
+     550.0,
+     5564
+    ],
+    [
+     535.0,
+     1889
+    ],
+    [
+     525.0,
+     1778
+    ]
+   ],
+   "max_pain": 552.5,
+   "pc_oi": 14.905,
+   "gex": {
+    "flip": 567.54,
+    "flip_all": 567.54,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": -4.66,
+    "score": 21.112,
+    "bias": "CALL",
+    "poc": 700.0,
+    "magnets": [
+     550.0,
+     700.0
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "regime_raw": "POS",
+    "regime_why": null,
+    "parity": {
+     "n_pares": 515,
+     "n_pares_ok": 384,
+     "parity_ok_pct": 0.7456,
+     "net_from_calls": 127457780.60357031,
+     "net_from_puts": 129443727.21679088,
+     "net_parity_lo": 127457780.60357031,
+     "net_parity_hi": 129443727.21679088,
+     "call_gex_parity": 390585540.63364863,
+     "put_gex_parity": 262134786.72346807,
+     "signo_firme": true,
+     "net_parity_conservador": 127457780.60357031,
+     "regime_parity": "POS",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": 127457781,
+    "net_gex_parity_hi": 129443727,
+    "parity_ok_pct": 0.7456,
+    "call_usd": 65297214,
+    "put_usd": -44185274,
+    "net_gex": 21111940,
+    "net_gex_dollar1pct": 125675154,
+    "gross_gex": 64613384,
+    "call_wall": 700.0,
+    "put_wall": 550.0,
+    "abs_wall": 700.0,
+    "abs_wall_kind": "pin",
+    "net_dex": 346324785,
+    "net_dex_shares": 581785,
+    "dex_sentiment": "alcista",
+    "dex_flow_impact": "mm_compra",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 700.0,
+    "delta_ok_pct": 1.0,
+    "spot": 595.28,
+    "ts": 1785330731,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 0% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.6,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.997,
+    "n_contracts": 1462,
+    "n_strikes_populated": 180,
+    "pin_risk": {
+     "score": 3.438071124545158,
+     "hhi": 0.026309833132138215,
+     "proximity_to_poc": 0.824082784571966,
+     "t_min_years": 0.006306292035195926,
+     "poc": 700.0,
+     "call_wall": 700.0,
+     "fortress_pin": true,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 4,
+     "trail": [
+      [
+       1785158700.0,
+       598.37
+      ],
+      [
+       1785159000.0,
+       598.37
+      ],
+      [
+       1785159300.0,
+       598.37
+      ],
+      [
+       1785159600.0,
+       598.37
+      ]
+     ],
+     "first": 598.37,
+     "last": 598.37,
+     "range_pct": 0.0,
+     "drift_pct": 0.0,
+     "reversals": 0,
+     "reversal_rate": 0.0,
+     "shape": "horizontal",
+     "status": "ok",
+     "convention": "horizontal<=0.15% rango, dentada>0.5 tasa de reversion -- umbrales convencion, no medidos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "TSLA": {
+   "spot": 297.38,
+   "exp": "20260729",
+   "call_walls": [
+    [
+     330.0,
+     15716
+    ],
+    [
+     340.0,
+     13493
+    ],
+    [
+     315.0,
+     10948
+    ]
+   ],
+   "put_walls": [
+    [
+     307.5,
+     11291
+    ],
+    [
+     305.0,
+     8244
+    ],
+    [
+     300.0,
+     7804
+    ]
+   ],
+   "max_pain": 310.0,
+   "pc_oi": 0.742,
+   "gex": {
+    "flip": 307.76,
+    "flip_all": 307.76,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 0.1,
+    "score": -5.262,
+    "bias": "CALL",
+    "poc": 305.0,
+    "magnets": [
+     305.0,
+     310.0
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "regime_raw": "NEG",
+    "regime_why": "signo crudo NEG CONTRADICHO por la paridad put-call (pares coherentes 16%; lecturas legales +0.01..+0.01 B $/1%)",
+    "parity": {
+     "n_pares": 334,
+     "n_pares_ok": 54,
+     "parity_ok_pct": 0.1617,
+     "net_from_calls": 7929838.167011619,
+     "net_from_puts": 6348408.702532589,
+     "net_parity_lo": 6348408.702532589,
+     "net_parity_hi": 7929838.167011619,
+     "call_gex_parity": 457811941.95585907,
+     "put_gex_parity": 450672818.52108693,
+     "signo_firme": true,
+     "net_parity_conservador": 6348408.702532589,
+     "regime_parity": "POS",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": 6348409,
+    "net_gex_parity_hi": 7929838,
+    "parity_ok_pct": 0.1617,
+    "call_usd": 145238038,
+    "put_usd": -150499773,
+    "net_gex": -5261735,
+    "net_gex_dollar1pct": -16177731,
+    "gross_gex": 148204004,
+    "call_wall": 310.0,
+    "put_wall": 305.0,
+    "abs_wall": 305.0,
+    "abs_wall_kind": "trampilla",
+    "net_dex": -1170878391,
+    "net_dex_shares": -3808230,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 360.0,
+    "delta_ok_pct": 1.0,
+    "spot": 307.46,
+    "ts": 1785330727,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 0% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.6,
+    "chain_band_convergida": true,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.867,
+    "n_contracts": 1181,
+    "n_strikes_populated": 142,
+    "pin_risk": {
+     "score": 57.26267510782312,
+     "hhi": 0.04775225852028104,
+     "proximity_to_poc": 0.9919989592142068,
+     "t_min_years": 0.0008272437615436325,
+     "poc": 305.0,
+     "call_wall": 310.0,
+     "fortress_pin": false,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 4,
+     "trail": [
+      [
+       1785158700.0,
+       312.27
+      ],
+      [
+       1785159000.0,
+       312.27
+      ],
+      [
+       1785159300.0,
+       312.27
+      ],
+      [
+       1785159600.0,
+       312.27
+      ]
+     ],
+     "first": 312.27,
+     "last": 312.27,
+     "range_pct": 0.0,
+     "drift_pct": 0.0,
+     "reversals": 0,
+     "reversal_rate": 0.0,
+     "shape": "horizontal",
+     "status": "ok",
+     "convention": "horizontal<=0.15% rango, dentada>0.5 tasa de reversion -- umbrales convencion, no medidos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  },
+  "NOK": {
+   "spot": 8.34,
+   "exp": "20260731",
+   "call_walls": [
+    [
+     9.5,
+     11341
+    ],
+    [
+     9.0,
+     8790
+    ],
+    [
+     9.5,
+     3082
+    ]
+   ],
+   "put_walls": [
+    [
+     8.5,
+     15081
+    ],
+    [
+     9.0,
+     12274
+    ],
+    [
+     8.0,
+     11496
+    ]
+   ],
+   "max_pain": 9.0,
+   "pc_oi": 3.983,
+   "gex": {
+    "flip": 8.87,
+    "flip_all": 8.87,
+    "flip_src": "recompute_15pct",
+    "flip_dist_pct": 0.16,
+    "score": -2.425,
+    "bias": "CALL",
+    "poc": 9.0,
+    "magnets": [
+     8.5,
+     9.0,
+     10.0
+    ],
+    "regime": "POSITIVE",
+    "regime_short": "POS",
+    "regime_raw": "NEG",
+    "regime_why": "signo crudo NEG CONTRADICHO por la paridad put-call (pares coherentes 7%; lecturas legales +0.00..+0.00 B $/1%)",
+    "parity": {
+     "n_pares": 27,
+     "n_pares_ok": 2,
+     "parity_ok_pct": 0.0741,
+     "net_from_calls": 465036.3099227641,
+     "net_from_puts": 27964.9115735502,
+     "net_parity_lo": 27964.9115735502,
+     "net_parity_hi": 465036.3099227641,
+     "call_gex_parity": 3499253.808375583,
+     "put_gex_parity": 3252753.197627426,
+     "signo_firme": true,
+     "net_parity_conservador": 27964.9115735502,
+     "regime_parity": "POS",
+     "tol": 0.05,
+     "convention": "gamma_call == gamma_put al mismo (strike,exp) es identidad de paridad; las dos lecturas fuerzan el par al valor de una pata u otra"
+    },
+    "net_gex_parity_lo": 27965,
+    "net_gex_parity_hi": 465036,
+    "parity_ok_pct": 0.0741,
+    "call_usd": 38124614,
+    "put_usd": -40549683,
+    "net_gex": -2425069,
+    "net_gex_dollar1pct": -214861,
+    "gross_gex": 61488295,
+    "call_wall": 10.0,
+    "put_wall": 8.5,
+    "abs_wall": 9.0,
+    "abs_wall_kind": "pin",
+    "net_dex": -14986784,
+    "net_dex_shares": -1691511,
+    "dex_sentiment": "bajista",
+    "dex_flow_impact": "mm_vende",
+    "dex_convention": "OI-larga (delta CRUDO del contrato: calls +, puts -), la misma que publica Unusual Whales. NO es la dealer-long-calls del GEX.",
+    "abs_dex_wall": 9.0,
+    "delta_ok_pct": 1.0,
+    "spot": 8.86,
+    "ts": 1785330737,
+    "src": "gex_core + polygon_directo (griegas MEDIDAS: polygon_directo)",
+    "chain_src": "polygon_directo",
+    "source_why": "RESPALDO Polygon/CBOE: IBKR descartado \u2014 griegas 5% (<50%)",
+    "scope": "ALL",
+    "scope_why": "todos los vencimientos vivos del fichero, hasta 2026-08-21",
+    "chain_date": "2026-07-29",
+    "chain_snapshot_local": "2026-07-29 08:45:02",
+    "chain_band": 0.6,
+    "chain_band_convergida": false,
+    "chain_exp_hasta": "2026-08-21",
+    "greeks_ok_pct": 0.702,
+    "n_contracts": 92,
+    "n_strikes_populated": 17,
+    "pin_risk": {
+     "score": 19.736413868221597,
+     "hhi": 0.1264542764334391,
+     "proximity_to_poc": 0.984198645598194,
+     "t_min_years": 0.00630591395310585,
+     "poc": 9.0,
+     "call_wall": 10.0,
+     "fortress_pin": false,
+     "convention": "score = hhi * proximidad_al_POC / T_min(anos, piso 1h); no es probabilidad, es un ranking descriptivo"
+    },
+    "flip_migration": {
+     "n": 4,
+     "trail": [
+      [
+       1785158700.0,
+       9.4
+      ],
+      [
+       1785159000.0,
+       9.4
+      ],
+      [
+       1785159300.0,
+       9.4
+      ],
+      [
+       1785159600.0,
+       9.4
+      ]
+     ],
+     "first": 9.4,
+     "last": 9.4,
+     "range_pct": 0.0,
+     "drift_pct": 0.0,
+     "reversals": 0,
+     "reversal_rate": 0.0,
+     "shape": "horizontal",
+     "status": "ok",
+     "convention": "horizontal<=0.15% rango, dentada>0.5 tasa de reversion -- umbrales convencion, no medidos"
+    }
+   },
+   "gex_src": "gex_snapshot.json (MEDIDO en casa: griegas reales de Polygon + gex_core)"
+  }
+ }
+}

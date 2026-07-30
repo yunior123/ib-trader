@@ -228,3 +228,244 @@
 21:35:08 | 🇰🇷 KRX BRIDGE SIN GATEWAY | Puente de Corea sin Gateway.
 02:39:28 | 🇰🇷 KRX BRIDGE SIN GATEWAY | Puente de Corea sin Gateway.
 02:43:09 | 🕳 CINTA CIEGA | No veo las ballenas de 25 acciones.
+09:31:17 | 🎯 APERTURA FUERA DE BANDA | nvda abrió fuera de rango.
+09:31:17 | 🎯 APERTURA FUERA DE BANDA | mu abrió fuera de rango.
+09:31:17 | 🎯 APERTURA FUERA DE BANDA | smh abrió fuera de rango.
+09:31:17 | 🎯 APERTURA FUERA DE BANDA | amzn abrió fuera de rango.
+09:31:17 | 🎯 APERTURA FUERA DE BANDA | asml abrió fuera de rango.
+09:31:17 | 🎯 APERTURA FUERA DE BANDA | nflx abrió fuera de rango.
+09:31:17 | 🎯 APERTURA FUERA DE BANDA | gld abrió fuera de rango.
+09:31:17 | 🎯 APERTURA FUERA DE BANDA | ewy abrió fuera de rango.
+09:31:17 | 🎯 APERTURA FUERA DE BANDA | spcx abrió fuera de rango.
+09:31:17 | 🎯 APERTURA FUERA DE BANDA | wdc abrió fuera de rango.
+09:31:17 | 🎯 APERTURA FUERA DE BANDA | stx abrió fuera de rango.
+09:31:29 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+09:31:37 | 🎯 RE-ENTRADA A BANDA +VOL | mu volvió a su rango.
+09:31:37 | 🎯 RE-ENTRADA A BANDA +VOL | asml volvió a su rango.
+09:31:37 | 🎯 RE-ENTRADA A BANDA +VOL | spcx volvió a su rango.
+09:33:17 | 🎯 RE-ENTRADA A BANDA +VOL | smh volvió a su rango.
+09:34:18 | 🎯 RE-ENTRADA A BANDA +VOL | nflx volvió a su rango.
+09:35:18 | 🎯 RE-ENTRADA A BANDA +VOL | nvda volvió a su rango.
+09:37:00 | 🎈 BB REBOTE | qqq puede bajar un poco.
+09:37:00 | 🎈 BB REBOTE | smh puede bajar un poco.
+09:37:18 | 🎯 RE-ENTRADA A BANDA +VOL | gld volvió a su rango.
+09:39:50 | 🕳 BALLENAS CIEGAS | BALLENAS CIEGAS MSFT: sin spot — flujo de MSFT SIN cobertura, revisar
+09:40:18 | 🎯 RE-ENTRADA A BANDA +VOL | amzn volvió a su rango.
+09:40:18 | 🎯 RE-ENTRADA A BANDA +VOL | wdc volvió a su rango.
+09:43:02 | 🎈 BB BAND-WALK | spcx sigue bajando fuerte.
+09:47:11 | 🐋 ALERTA BALLENA CALLS | Alerta ballena, alto volumen de calls en GOOGL, strike 337.5 — cerca del muro de calls medido en $340.
+09:47:15 | 🐋 ALERTA BALLENA CALLS | Alerta ballena, alto volumen de calls en INTC, strike 88.
+09:47:36 | 🐺 MANADA A PUTS | Manada de puts. Rebote al alza.
+09:47:45 | 🐺 MANADA A CALLS | Manada de calls. Rebote a la baja.
+09:47:48 | 🐋 ALERTA BALLENA PUTS | Alerta ballena, alto volumen de puts en GLD, strike 364 — cerca del muro de puts medido en $365.
+09:49:05 | 🩸 DIP REAL | MU bajó y se calmó. Buen momento para comprar.
+09:49:05 | 🩸 DIP REAL | DRAM bajó y se calmó. Buen momento para comprar.
+09:49:05 | 🩸 DIP REAL | WDC bajó y se calmó. Buen momento para comprar.
+09:50:05 | 🩸 DIP REAL | EWY bajó y se calmó. Buen momento para comprar.
+09:52:04 | 🎈 BB BAND-WALK | googl sigue bajando fuerte.
+09:53:18 | 🎯 RE-ENTRADA A BANDA | stx volvió a su rango.
+09:53:44 | 🔴📉 ALERTA PREMIUM BAJISTA NVDA | Barrida bajista en NVDA: 5.4 millones netos comprados en calls en quince minutos.
+09:53:47 | 🔴📉 ALERTA PREMIUM BAJISTA TSLA | Barrida bajista en TSLA: 6.4 millones netos comprados en puts en quince minutos.
+09:53:56 | 🐋 ALERTA BALLENA PUTS | Alerta ballena, alto volumen de puts en SMH, strike 525 — cerca del muro de puts medido en $520.
+09:54:04 | 🎈 BB BAND-WALK | nvda sigue bajando fuerte.
+09:54:11 | 🟢📈 ALERTA PREMIUM ALCISTA AAPL | Barrida alcista en AAPL: 6.0 millones netos comprados en puts en quince minutos.
+09:54:11 | 🐋 ALERTA BALLENA CALLS | Alerta ballena, alto volumen de calls en AAPL, strike 345 — cerca del muro de calls medido en $345.
+09:54:19 | 🟢📈 ALERTA PREMIUM ALCISTA META | Barrida alcista en META: 6.7 millones netos comprados en calls en quince minutos.
+09:54:19 | 🐋 ALERTA BALLENA CALLS | Alerta ballena, alto volumen de calls en META, strike 580.
+09:54:50 | 🚀 SPIKE PUTS QCOM | Alto volumen de puts en QCOM.
+09:55:06 | 🩸 DIP REAL | LRCX bajó y se calmó. Buen momento para comprar.
+09:55:23 | 🚀 SPIKE PUTS SPCX | Alto volumen de puts en SPCX.
+10:01:06 | 🩸 DIP REAL | XLK bajó y se calmó. Buen momento para comprar.
+10:01:06 | 🩸 DIP REAL | SNDK bajó y se calmó. Buen momento para comprar.
+10:01:06 | 🩸 DIP REAL | STX bajó y se calmó. Buen momento para comprar.
+10:01:19 | 🐋 ALERTA BALLENA PUTS | Alerta ballena, alto volumen de puts en AMD, strike 450.
+10:03:06 | 🩸 DIP REAL | TSM bajó y se calmó. Buen momento para comprar.
+10:05:06 | 🩸 DIP REAL | QQQ bajó y se calmó. Buen momento para comprar.
+10:05:06 | 🩸 DIP REAL | NOK bajó y se calmó. Buen momento para comprar.
+10:06:06 | 🩸 DIP REAL | SMH bajó y se calmó. Buen momento para comprar.
+10:06:07 | 🩸 DIP REAL | AMD bajó y se calmó. Buen momento para comprar.
+10:06:07 | 🩸 DIP REAL | ASML bajó y se calmó. Buen momento para comprar.
+10:08:28 | 🟢📈 ALERTA PREMIUM ALCISTA MSFT | Barrida alcista en MSFT: 3.3 millones netos comprados en calls en quince minutos.
+10:15:28 | 🔴📉 ALERTA PREMIUM BAJISTA AAPL | Barrida bajista en AAPL: 8.2 millones netos comprados en calls en quince minutos.
+10:15:39 | 🔴📉 ALERTA PREMIUM BAJISTA AMZN | Barrida bajista en AMZN: 13.5 millones netos comprados en puts en quince minutos.
+10:16:19 | 🚀 SPIKE CALLS GLD | Alto volumen de calls en GLD.
+10:21:08 | 🩸 DIP REAL | NVDA bajó y se calmó. Buen momento para comprar.
+10:22:01 | 🚀 SPIKE CALLS QQQ | Alto volumen de calls en QQQ.
+10:22:54 | 🐺 MANADA A CALLS | Manada de calls. Rebote a la baja.
+10:26:12 | 🎈 BB BAND-WALK | nflx sigue bajando fuerte.
+10:29:24 | 🐋📈 ALERTA BALLENA CRECE | Alerta ballena, sigue entrando puts en AMD, rebote probable.
+10:30:12 | 🐋 ALERTA BALLENA PUTS | Alerta ballena, alto volumen de puts en NFLX, strike 70.
+10:36:01 | 🐋 ALERTA BALLENA PUTS | Alerta ballena, alto volumen de puts en QQQ, strike 670.
+10:36:50 | 🐋 ALERTA BALLENA PUTS | Alerta ballena, alto volumen de puts en INTC, strike 85.
+10:43:27 | 🐋 ALERTA BALLENA PUTS | Alerta ballena, alto volumen de puts en MU, strike 800.
+10:44:16 | 🐋 ALERTA BALLENA PUTS | Alerta ballena, alto volumen de puts en QCOM, strike 160.
+10:44:46 | 🐋 ALERTA BALLENA PUTS | Alerta ballena, alto volumen de puts en DRAM, strike 47.
+10:45:02 | 🐋 ALERTA BALLENA PUTS | Alerta ballena, alto volumen de puts en SNDK, strike 1000.
+10:50:24 | 🐋 ALERTA BALLENA PUTS | Alerta ballena, alto volumen de puts en TSLA, strike 302.5.
+10:50:49 | 🧱🚀 SPIKE CALLS META | Alto volumen de calls en META.
+10:51:22 | 🚀 SPIKE PUTS NFLX | Alto volumen de puts en NFLX.
+10:51:26 | 🐋 ALERTA BALLENA PUTS | Alerta ballena, alto volumen de puts en NOK, strike 8.5.
+10:51:30 | 🚀 SPIKE CALLS GLD | Alto volumen de calls en GLD.
+10:54:19 | 🎈 BB REBOTE | nvda puede bajar un poco.
+10:57:37 | 🟢📈 ALERTA PREMIUM ALCISTA AAPL | Barrida alcista en AAPL: 2.7 millones netos comprados en calls en quince minutos.
+10:57:44 | 🔴📉 ALERTA PREMIUM BAJISTA META | Barrida bajista en META: 2.1 millones netos comprados en puts en quince minutos.
+11:01:20 | 🎈 BB REBOTE | mu puede bajar un poco.
+11:04:41 | 🧱🚀 SPIKE CALLS META | Alto volumen de calls en META.
+11:04:48 | 🟢📈 ALERTA PREMIUM ALCISTA GOOGL | Barrida alcista en GOOGL: 2.6 millones netos comprados en calls en quince minutos.
+11:11:20 | 🐋📈 ALERTA BALLENA CRECE | Alerta ballena, sigue entrando puts en SMH, rebote probable.
+11:11:28 | 🐺 MANADA A CALLS | Manada de calls. Rebote a la baja.
+11:11:28 | 🧱🚀 SPIKE CALLS AAPL | Alto volumen de calls en AAPL.
+11:15:23 | 🎈 BB BAND-WALK | spcx sigue bajando fuerte.
+11:18:31 | 🚀 SPIKE CALLS AMZN | Alto volumen de calls en AMZN.
+11:19:26 | 🐋 ALERTA BALLENA PUTS | Alerta ballena, alto volumen de puts en SPCX, strike 110.
+11:21:25 | 🎈 BB REBOTE | qqq puede subir un poco.
+11:21:25 | 🎈 BB REBOTE | spy puede subir un poco.
+11:22:25 | 🎈 BB REBOTE | mu puede subir un poco.
+11:30:26 | 🚀 SPIKE CALLS GLD | Alto volumen de calls en GLD.
+11:31:28 | 🎈 BB REBOTE | smh puede subir un poco.
+11:37:13 | 🐋 ALERTA BALLENA PUTS | Alerta ballena, alto volumen de puts en AVGO, strike 370.
+11:37:18 | 🚀 SPIKE PUTS NFLX | Alto volumen de puts en NFLX.
+11:42:00 | 🎈 BB REBOTE | nvda puede subir un poco.
+11:44:53 | 🚀 SPIKE PUTS SNDK | Alto volumen de puts en SNDK.
+11:50:53 | 🐋 ALERTA BALLENA PUTS | Alerta ballena, alto volumen de puts en TSM, strike 380.
+11:52:08 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+11:54:50 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+11:58:21 | 🎈 BB REBOTE | smh puede subir un poco.
+11:59:22 | 🎈 BB BAND-WALK | meta sigue bajando fuerte.
+12:02:22 | 🐋 ALERTA BALLENA PUTS | Alerta ballena, alto volumen agregado de puts en MU; strike dominante 750.
+12:04:23 | 🎈 BB REBOTE | nvda puede subir un poco.
+12:11:24 | 🎈 BB BAND-WALK | nflx sigue subiendo fuerte.
+12:16:16 | 🐋 ALERTA BALLENA PUTS | Alerta ballena, alto volumen agregado de puts en SPY; strike dominante 735.
+12:16:58 | 🐋📈 ALERTA BALLENA CRECE | Alerta ballena, sigue entrando volumen agregado de puts en INTC, rebote probable.
+12:17:50 | 🐋 ALERTA BALLENA PUTS | Alerta ballena, alto volumen agregado de puts en SKHY; strike dominante 129.
+12:17:58 | 🐋 ALERTA BALLENA PUTS | Alerta ballena, alto volumen agregado de puts en SNDK; strike dominante 1000.
+12:23:11 | 🚀 SPIKE CALLS QQQ | Alto volumen agregado de calls en QQQ. Retroceso probable por flujo; Bollinger aun no confirma.
+12:23:26 | 🚀 SPIKE CALLS MU | Alto volumen agregado de calls en MU. Retroceso probable por flujo; Bollinger aun no confirma.
+12:23:29 | 🐺 MANADA A CALLS | Manada de calls. Rebote a la baja.
+12:24:28 | 🐋📈 ALERTA BALLENA CRECE | Alerta ballena, sigue entrando volumen agregado de puts en GLD, rebote probable.
+12:28:29 | 🎈 BB REBOTE | spy puede bajar un poco.
+12:28:29 | 🎈 BB REBOTE | smh puede bajar un poco.
+12:30:00 | 🎈 BB REBOTE | qqq puede bajar un poco.
+12:30:13 | 🚀 SPIKE CALLS SPY | Alto volumen agregado de calls en SPY. Retroceso y Bollinger ya son compatibles.
+12:30:13 | 🎖 CAPITAN REVIERTE SPY | Alto volumen de calls en SPY. Techo, baja probable.
+12:30:33 | 🚀 SPIKE CALLS AMD | Alto volumen agregado de calls en AMD. Retroceso y Bollinger ya son compatibles.
+12:30:50 | 🚀 SPIKE CALLS AMZN | Alto volumen agregado de calls en AMZN. Retroceso probable por flujo; Bollinger aun no confirma.
+12:30:58 | 🚀 SPIKE CALLS INTC | Alto volumen agregado de calls en INTC. Retroceso probable por flujo; Bollinger aun no confirma.
+12:31:21 | 🐋 ALERTA BALLENA CALLS | Alerta ballena, alto volumen agregado de calls en NFLX; strike dominante 75.
+12:37:33 | 🐋📈 ALERTA BALLENA CRECE | Alerta ballena, sigue entrando volumen agregado de puts en AMD, rebote probable.
+12:45:04 | 🎈 BB REBOTE | qqq puede subir un poco.
+12:45:04 | 🎈 BB REBOTE | mu puede subir un poco.
+12:45:04 | 🎈 BB REBOTE | smh puede subir un poco.
+12:45:28 | 🚀 SPIKE CALLS GLD | Alto volumen agregado de calls en GLD. Retroceso probable por flujo; Bollinger aun no confirma.
+12:58:13 | 🚀 SPIKE CALLS NVDA | Alto volumen agregado de calls en NVDA. Retroceso probable por flujo; Bollinger aun no confirma.
+12:58:13 | 🐺 MANADA A CALLS | Manada de calls. Rebote a la baja.
+12:58:43 | 🐋 ALERTA BALLENA CALLS | Alerta ballena, alto volumen agregado de calls en AMZN; strike dominante 230.
+12:59:08 | 🎈 BB BAND-WALK | spcx sigue subiendo fuerte.
+12:59:23 | 🚀 SPIKE CALLS GLD | Alto volumen agregado de calls en GLD. Retroceso probable por flujo; Bollinger aun no confirma.
+13:05:29 | 🧱🚀 SPIKE PUTS SMH | Alto volumen agregado de puts en SMH. Rebote probable por flujo; Bollinger aun no confirma.
+13:06:10 | 🎈 BB REBOTE | nvda puede bajar un poco.
+13:06:10 | 🎈 BB REBOTE | mu puede bajar un poco.
+13:06:27 | 🐋 ALERTA BALLENA CALLS | Alerta ballena, alto volumen agregado de calls en GLD; strike dominante 370.
+13:06:34 | 🐋 ALERTA BALLENA PUTS | Alerta ballena, alto volumen agregado de puts en EWY; strike dominante 145.
+13:06:40 | 🐋📈 ALERTA BALLENA CRECE | Alerta ballena, sigue entrando volumen agregado de puts en DRAM, rebote probable.
+13:20:30 | 🚀 SPIKE CALLS NFLX | Alto volumen agregado de calls en NFLX. Retroceso probable por flujo; Bollinger aun no confirma.
+13:21:04 | 🐋 ALERTA BALLENA CALLS | Alerta ballena, alto volumen agregado de calls en LRCX; strike dominante 265.
+13:27:17 | 🎈 BB REBOTE | mu puede subir un poco.
+13:27:36 | 🚀 SPIKE PUTS GLD | Alto volumen agregado de puts en GLD. Rebote probable por flujo; Bollinger aun no confirma.
+13:32:19 | 🎈 BB REBOTE | qqq puede subir un poco.
+13:32:19 | 🎈 BB REBOTE | spy puede subir un poco.
+13:32:19 | 🎈 BB REBOTE | smh puede subir un poco.
+13:33:20 | 🎈 BB REBOTE | nvda puede subir un poco.
+13:33:56 | 🚀 SPIKE PUTS GOOGL | Alto volumen agregado de puts en GOOGL. Rebote probable por flujo; Bollinger aun no confirma.
+13:34:44 | 🧱🚀 SPIKE PUTS SPCX | Alto volumen agregado de puts en SPCX. Rebote probable por flujo; Bollinger aun no confirma.
+13:34:44 | 🐺 MANADA A PUTS | Manada de puts. Rebote al alza.
+13:40:14 | 🔴📉 FLUJO AGRESOR BAJISTA NVDA | Flujo agresor bajista en NVDA; strike no disponible (flujo agregado).
+13:40:25 | 🔴📉 FLUJO AGRESOR BAJISTA SMH | Flujo agresor bajista en SMH; strike no disponible (flujo agregado).
+13:47:19 | 🐋 ALERTA BALLENA PUTS | Alerta ballena, alto volumen agregado de puts en MU; strike dominante 750.
+13:47:27 | 🚀 SPIKE PUTS AMD | Alto volumen agregado de puts en AMD. Rebote probable por flujo; Bollinger aun no confirma.
+13:53:26 | 🎈 BB REBOTE | nvda puede bajar un poco.
+13:55:26 | 🎈 BB REBOTE | smh puede bajar un poco.
+14:03:29 | 🎈 BB REBOTE | mu puede bajar un poco.
+14:05:29 | 🎈 BB BAND-WALK | googl sigue subiendo fuerte.
+14:07:30 | 🎈 BB BAND-WALK | meta sigue subiendo fuerte.
+14:08:10 | 🚀 SPIKE CALLS QQQ | Alto volumen agregado de calls en QQQ. Retroceso probable por flujo; Bollinger aun no confirma.
+14:08:24 | 🐺 MANADA A CALLS | Manada de calls. Rebote a la baja.
+14:08:54 | 🚀 SPIKE CALLS GOOGL | Alto volumen agregado de calls en GOOGL. Retroceso probable por flujo; Bollinger aun no confirma.
+14:16:46 | 🐺 MANADA A PUTS | Manada de puts. Rebote al alza.
+14:22:09 | 🎖 CAPITAN REVIERTE QQQ | Alto volumen de puts en QQQ. Rebote al alza.
+14:23:05 | 🔗 FLUJO + BB QQQ | Actualización QQQ: 56s después del alto volumen de puts, aparece rebote BB al alza. Señales compatibles; no prueba causalidad.
+14:23:05 | 🎈 BB REBOTE | smh puede subir un poco.
+14:29:26 | 🐋 ALERTA BALLENA PUTS | Alerta ballena, alto volumen agregado de puts en MU; strike dominante 750.
+14:43:17 | 🚀 SPIKE CALLS TSLA | Alto volumen agregado de calls en TSLA. Retroceso y Bollinger ya son compatibles.
+14:44:34 | 🐺 MANADA A CALLS | Manada de calls. Rebote a la baja.
+14:46:12 | 🎈 BB BAND-WALK | nvda sigue subiendo fuerte.
+14:50:14 | 🐋 ALERTA BALLENA CALLS | Alerta ballena, alto volumen agregado de calls en SPY; strike dominante 740.
+14:50:18 | 🚀 SPIKE CALLS NVDA | Alto volumen agregado de calls en NVDA. Retroceso probable por flujo; Bollinger aun no confirma.
+14:50:31 | 🐋 ALERTA BALLENA CALLS | Alerta ballena, alto volumen agregado de calls en SMH; strike dominante 530.
+14:51:00 | 🐋 ALERTA BALLENA CALLS | Alerta ballena, alto volumen agregado de calls en GOOGL; strike dominante 335.
+14:51:04 | 🐋 ALERTA BALLENA CALLS | Alerta ballena, alto volumen agregado de calls en INTC; strike dominante 86.
+14:51:04 | 🚀 SPIKE CALLS INTC | Alto volumen agregado de calls en INTC. Retroceso probable por flujo; Bollinger aun no confirma.
+14:51:27 | 🐋 ALERTA BALLENA CALLS | Alerta ballena, alto volumen agregado de calls en AVGO; strike dominante 375.
+15:04:35 | 🐋 ALERTA BALLENA CALLS | Alerta ballena, alto volumen agregado de calls en QQQ; strike dominante 680.
+15:04:46 | 🧱🚀 SPIKE PUTS TSLA | Alto volumen agregado de puts en TSLA. Rebote probable por flujo; Bollinger aun no confirma.
+15:05:14 | 🚀 SPIKE PUTS AMZN | Alto volumen agregado de puts en AMZN. Rebote probable por flujo; Bollinger aun no confirma.
+15:06:08 | 🧱🚀 SPIKE PUTS SPCX | Alto volumen agregado de puts en SPCX. Rebote probable por flujo; Bollinger aun no confirma.
+15:06:11 | 🐋 ALERTA BALLENA CALLS | Alerta ballena, alto volumen agregado de calls en SKHY; strike dominante 140.
+15:06:21 | 🐋 ALERTA BALLENA CALLS | Alerta ballena, alto volumen agregado de calls en SNDK; strike dominante 1100.
+15:06:21 | 🚀 SPIKE CALLS SNDK | Alto volumen agregado de calls en SNDK. Retroceso probable por flujo; Bollinger aun no confirma.
+15:07:19 | 🎈 BB REBOTE | mu puede subir un poco.
+15:11:36 | 🎖 CAPITAN REVIERTE SPY | Alto volumen de puts en SPY. Rebote al alza.
+15:11:36 | 🧱🚀 SPIKE PUTS SPY | Alto volumen agregado de puts en SPY. Rebote probable por flujo; Bollinger aun no confirma.
+15:12:21 | 🎈 BB REBOTE | qqq puede subir un poco.
+15:12:21 | 🎈 BB REBOTE | nvda puede subir un poco.
+15:12:21 | 🎈 BB REBOTE | smh puede subir un poco.
+15:12:38 | 🚀 SPIKE PUTS AVGO | Alto volumen agregado de puts en AVGO. Rebote probable por flujo; Bollinger aun no confirma.
+15:19:12 | 🚀 SPIKE PUTS GOOGL | Alto volumen agregado de puts en GOOGL. Rebote probable por flujo; Bollinger aun no confirma.
+15:34:16 | 🕳 BALLENAS CIEGAS | BALLENAS CIEGAS ASML: excepcion repetida () — flujo de ASML SIN cobertura, revisar
+15:34:33 | 🕳 BALLENAS CIEGAS | BALLENAS CIEGAS TXN: excepcion repetida () — flujo de TXN SIN cobertura, revisar
+15:35:30 | 🕳 BALLENAS CIEGAS | BALLENAS CIEGAS SNDK: excepcion repetida () — flujo de SNDK SIN cobertura, revisar
+15:35:50 | 🕳 BALLENAS CIEGAS | BALLENAS CIEGAS STX: excepcion repetida () — flujo de STX SIN cobertura, revisar
+15:49:01 | 🕳 CINTA CIEGA | No veo las ballenas de 5 acciones.
+15:55:02 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+15:55:37 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+15:55:37 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+15:56:28 | 🔴📉 FLUJO AGRESOR BAJISTA NVDA | Flujo agresor bajista en NVDA; strike no disponible (flujo agregado).
+15:56:47 | 🔴📉 FLUJO AGRESOR BAJISTA AAPL | Flujo agresor bajista en AAPL; strike no disponible (flujo agregado).
+16:04:46 | 🐋📈 ALERTA BALLENA CRECE | Alerta ballena, sigue entrando volumen agregado de calls en AMZN, bajada probable.
+16:06:10 | 🐋📈 ALERTA BALLENA CRECE | Alerta ballena, sigue entrando volumen agregado de calls en LRCX, bajada probable.
+19:55:08 | 🇰🇷 KRX BRIDGE CIEGO | Corea sin datos. Reconectando.
+20:08:08 | 🇰🇷 KRX BRIDGE CIEGO | Corea sin datos. Reconectando.
+20:18:53 | 🇰🇷 BARRAS COREA RANCIAS | Barras de Corea rancias.
+20:29:38 | 🇰🇷 BARRAS COREA RANCIAS | Barras de Corea rancias.
+21:32:10 | 🇰🇷 KRX BRIDGE CIEGO | Corea sin datos. Reconectando.
+21:42:55 | 🇰🇷 BARRAS COREA RANCIAS | Barras de Corea rancias.
+21:53:40 | 🇰🇷 BARRAS COREA RANCIAS | Barras de Corea rancias.
+22:04:13 | 🇰🇷 KRX BRIDGE CIEGO | Corea sin datos. Reconectando.
+00:02:11 | 🇰🇷 KRX BRIDGE CIEGO | Corea sin datos. Reconectando.
+00:12:56 | 🇰🇷 BARRAS COREA RANCIAS | Barras de Corea rancias.
+00:23:42 | 🇰🇷 BARRAS COREA RANCIAS | Barras de Corea rancias.
+00:34:27 | 🇰🇷 BARRAS COREA RANCIAS | Barras de Corea rancias.
+02:34:12 | 🇰🇷 KRX BRIDGE CIEGO | Corea sin datos. Reconectando.
+04:01:22 | 🕳 CINTA CIEGA | No veo las ballenas de 25 acciones.
+07:43:10 | 🕳 CINTA CIEGA | No veo las ballenas de 5 acciones.
+08:19:48 | 🚨 order_engine | close NOK NO enviado: ARM_LIVE tiene fecha 2026-07-29 pero hoy es 2026-07-30 -> renueva con order_engine/arm.sh
+08:21:55 | 🚨 order_engine | close NOK NO enviado: ARM_LIVE tiene fecha 2026-07-29 pero hoy es 2026-07-30 -> renueva con order_engine/arm.sh
+09:31:10 | 🟢📈 FLUJO AGRESOR ALCISTA MSFT | Flujo agresor alcista en MSFT; strike no disponible (flujo agregado).
+09:31:10 | 🎯 APERTURA FUERA DE BANDA | smh abrió fuera de rango.
+09:31:10 | 🎯 APERTURA FUERA DE BANDA | amd abrió fuera de rango.
+09:31:10 | 🎯 APERTURA FUERA DE BANDA | aapl abrió fuera de rango.
+09:31:10 | 🎯 APERTURA FUERA DE BANDA | msft abrió fuera de rango.
+09:31:10 | 🎯 APERTURA FUERA DE BANDA | meta abrió fuera de rango.
+09:31:10 | 🎯 APERTURA FUERA DE BANDA | amzn abrió fuera de rango.
+09:31:10 | 🎯 APERTURA FUERA DE BANDA | tsm abrió fuera de rango.
+09:31:10 | 🎯 APERTURA FUERA DE BANDA | asml abrió fuera de rango.
+09:31:10 | 🎯 APERTURA FUERA DE BANDA | qcom abrió fuera de rango.
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | nflx abrió fuera de rango.
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | nok abrió fuera de rango.
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | xlk abrió fuera de rango.
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | dram abrió fuera de rango.
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | skhy abrió fuera de rango.
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | lrcx abrió fuera de rango.
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | sndk abrió fuera de rango.
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | wdc abrió fuera de rango.
+09:31:11 | 🎯 APERTURA FUERA DE BANDA | stx abrió fuera de rango.

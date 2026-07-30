@@ -1,174 +1,167 @@
 {
  "QQQ": {
   "index": "QQQ",
-  "score": 0.149,
+  "score": -0.087,
   "verdict": "ENGRANAJE NEUTRO/MIXTO: componentes divididos \u2014 QQQ sin liderazgo claro",
   "aligned_top": [
-   "MSFT",
+   "NVDA",
    "AAPL"
   ],
   "breakdowns": [
-   "NVDA",
-   "AVGO",
-   "AMD"
+   "META",
+   "QCOM"
   ],
   "breakouts": [
    "MSFT",
-   "AAPL",
-   "GOOGL",
-   "NFLX"
+   "AMZN"
   ],
   "components": {
    "NVDA": {
     "w": 9.0,
-    "lean": -1.0,
-    "tag": "RUPTURA BAJISTA",
-    "gap": -5.21
+    "lean": -0.65,
+    "tag": "rango",
+    "gap": -1.43
    },
    "MSFT": {
     "w": 8.0,
     "lean": 1.0,
     "tag": "ruptura alcista",
-    "gap": 3.48
+    "gap": 8.81
    },
    "AAPL": {
     "w": 7.5,
-    "lean": 1.0,
-    "tag": "ruptura alcista",
-    "gap": 1.91
+    "lean": -0.78,
+    "tag": "rango",
+    "gap": -1.24
    },
    "AMZN": {
     "w": 5.5,
-    "lean": 0.27,
-    "tag": "rango",
-    "gap": 0.36
+    "lean": 1.0,
+    "tag": "ruptura alcista",
+    "gap": 1.65
    },
    "AVGO": {
     "w": 5.0,
-    "lean": -0.95,
-    "tag": "RUPTURA BAJISTA",
-    "gap": -1.42
+    "lean": -0.16,
+    "tag": "rango",
+    "gap": -0.26
    },
    "META": {
     "w": 4.5,
-    "lean": 0.38,
-    "tag": "rango",
-    "gap": 0.64
+    "lean": -1.0,
+    "tag": "RUPTURA BAJISTA",
+    "gap": -10.29
    },
    "GOOGL": {
     "w": 5.0,
-    "lean": 1.0,
-    "tag": "ruptura alcista",
-    "gap": 2.31
+    "lean": 0.75,
+    "tag": "rango",
+    "gap": 0.55
    },
    "TSLA": {
     "w": 3.0,
-    "lean": -0.77,
+    "lean": -0.58,
     "tag": "rango",
-    "gap": -1.85
+    "gap": -0.95
    },
    "NFLX": {
     "w": 3.0,
-    "lean": 1.0,
-    "tag": "ruptura alcista",
-    "gap": 2.5
+    "lean": -0.64,
+    "tag": "rango",
+    "gap": -0.68
    },
    "AMD": {
     "w": 2.0,
-    "lean": -1.0,
-    "tag": "RUPTURA BAJISTA",
-    "gap": -8.92
+    "lean": 0.01,
+    "tag": "rango",
+    "gap": 0.07
    },
    "QCOM": {
     "w": 1.2,
-    "lean": -0.5,
-    "tag": "rango",
-    "gap": -0.32
+    "lean": -1.0,
+    "tag": "RUPTURA BAJISTA",
+    "gap": -8.25
    }
   },
-  "ts": 1785244341
+  "ts": 1785417149
  },
  "SPY": {
   "index": "SPY",
-  "score": 0.219,
-  "verdict": "ENGRANAJE DEBIL (+0.22): sesgo sin confluencia \u2014 no confirma",
+  "score": -0.038,
+  "verdict": "ENGRANAJE NEUTRO/MIXTO: componentes divididos \u2014 SPY sin liderazgo claro",
   "aligned_top": [
-   "MSFT",
+   "NVDA",
    "AAPL"
   ],
   "breakdowns": [
-   "NVDA",
-   "AVGO",
-   "AMD"
+   "META"
   ],
   "breakouts": [
    "MSFT",
-   "AAPL",
-   "GOOGL",
-   "NFLX"
+   "AMZN"
   ],
   "components": {
    "NVDA": {
     "w": 7.5,
-    "lean": -1.0,
-    "tag": "RUPTURA BAJISTA",
-    "gap": -5.21
+    "lean": -0.65,
+    "tag": "rango",
+    "gap": -1.43
    },
    "MSFT": {
     "w": 7.0,
     "lean": 1.0,
     "tag": "ruptura alcista",
-    "gap": 3.48
+    "gap": 8.81
    },
    "AAPL": {
     "w": 6.5,
-    "lean": 1.0,
-    "tag": "ruptura alcista",
-    "gap": 1.91
+    "lean": -0.78,
+    "tag": "rango",
+    "gap": -1.24
    },
    "AMZN": {
     "w": 4.0,
-    "lean": 0.27,
-    "tag": "rango",
-    "gap": 0.36
+    "lean": 1.0,
+    "tag": "ruptura alcista",
+    "gap": 1.65
    },
    "META": {
     "w": 3.0,
-    "lean": 0.38,
-    "tag": "rango",
-    "gap": 0.64
+    "lean": -1.0,
+    "tag": "RUPTURA BAJISTA",
+    "gap": -10.29
    },
    "GOOGL": {
     "w": 4.0,
-    "lean": 1.0,
-    "tag": "ruptura alcista",
-    "gap": 2.31
+    "lean": 0.75,
+    "tag": "rango",
+    "gap": 0.55
    },
    "AVGO": {
     "w": 2.5,
-    "lean": -0.95,
-    "tag": "RUPTURA BAJISTA",
-    "gap": -1.42
+    "lean": -0.16,
+    "tag": "rango",
+    "gap": -0.26
    },
    "TSLA": {
     "w": 2.0,
-    "lean": -0.77,
+    "lean": -0.58,
     "tag": "rango",
-    "gap": -1.85
+    "gap": -0.95
    },
    "AMD": {
     "w": 1.2,
-    "lean": -1.0,
-    "tag": "RUPTURA BAJISTA",
-    "gap": -8.92
+    "lean": 0.01,
+    "tag": "rango",
+    "gap": 0.07
    },
    "NFLX": {
     "w": 1.5,
-    "lean": 1.0,
-    "tag": "ruptura alcista",
-    "gap": 2.5
+    "lean": -0.64,
+    "tag": "rango",
+    "gap": -0.68
    }
   },
-  "ts": 1785244341
+  "ts": 1785417150
  }
 }

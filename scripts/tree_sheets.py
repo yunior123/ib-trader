@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Arbol de niveles por ticker: muros supervivientes de la semana pasada + libro de esta
 semana hasta el viernes + la cadena que expira ese viernes. Senal-solamente."""
-import json, os, sys, datetime as dt, sqlite3
+import json, os, sys, time, datetime as dt, sqlite3
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import gex_core, gex_snapshot
 
@@ -108,6 +108,30 @@ def touch_stats(sym):
     return out
 
 
+def live_spot(sym):
+    """(px, src, age_s) del precio VIVO, o None. La cadena archivada trae el spot del momento
+    del archivo; fuera de la flota eso es el cierre previo de Polygon (GLW: 124.05 con 17h de
+    edad y el papel en 130.81, cazado 2026-07-30). El arbol se centra en el precio de AHORA."""
+    best = None
+    p = os.path.join(ROOT, "data", f"bars_{sym.lower()}_ibkr.txt")
+    try:
+        rows = [ln.split() for ln in open(p) if ln.strip()]
+        r = rows[-1]
+        best = (float(r[4]), "ibkr_bars", time.time() - int(r[0]))
+    except (OSError, IndexError, ValueError):
+        pass
+    try:
+        d = json.load(open(os.path.join(ROOT, "data", "watchlist_stats.json")))
+        row = (d.get("stats") or d.get("quotes") or d).get(sym.upper())
+        ts = row.get("ts") or d.get("ts")
+        cand = (float(row["last"]), "tws_snapshot", time.time() - float(ts))
+        if best is None or cand[2] < best[2]:
+            best = cand
+    except (OSError, ValueError, TypeError, AttributeError, KeyError, json.JSONDecodeError):
+        pass
+    return best
+
+
 def build(sym, chain_dir, fri, lw_dates):
     p = os.path.join(HIST, chain_dir, f"chain_full_{sym.lower()}.json")
     if not os.path.exists(p):
@@ -115,6 +139,10 @@ def build(sym, chain_dir, fri, lw_dates):
     cs, spot, meta, n_cand = gex_snapshot.contracts_from(p)
     if not cs or spot is None:
         return None, "cadena sin contratos usables"
+    lv = live_spot(sym)
+    if lv and lv[2] < 900 and (meta.get("spot_age_s") or 1e9) > 300:
+        spot, meta = lv[0], dict(meta, spot_source=lv[1], spot_age_s=round(lv[2], 1),
+                                 spot_archivo=spot)
     fri_c = fri.replace("-", "")
     upto = [c for c in cs if c["exp"] <= fri_c]
     if not upto:

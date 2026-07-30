@@ -194,6 +194,13 @@ if ! pgrep -f "ibkr_bar_bridge.py --daemon" >/dev/null; then
   fi
 fi
 
+# cotizacion de la watchlist del usuario (TQQQ/MSFU/MUU...): el bar_bridge solo cubre
+# fleet.txt y ampliarlo quema suscripciones (err 10190) -> snapshots a watchlist_stats.json.
+if ! pgrep -f "scripts/watchlist_quotes.py" >/dev/null; then
+  nohup ./venv-chart/bin/python scripts/watchlist_quotes.py >> logs/watchlist_quotes.log 2>&1 &
+  echo "$(date) fleet: watchlist_quotes lanzado (pid $!)" >> logs/fleet_autostart.log
+fi
+
 # bridge KRX realtime (SK Hynix + Samsung) — sub Korea waived cubre la API
 # (verificado 2026-07-12): mercado de memoria/DRAM en vivo y gratis, lider ~13h
 # antes que EE.UU. para MU/DRAM. Escribe data/bars_{skhynix,samsung}.txt.

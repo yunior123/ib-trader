@@ -13,73 +13,68 @@
   "never_suppressed": true,
   "registered": 8
  },
- "date": "2026-07-28",
+ "date": "2026-07-29",
  "enabled": false,
  "nota": "spent = locuciones ENCOLADAS por speak.sh; voice_log_today = lo que el daemon hablo de verdad. La diferencia es informacion, no un error.",
  "per_hour": {
-  "00": {
-   "INFO": 2
-  },
   "02": {
-   "DANGER": 1
+   "DANGER": 2
   },
   "09": {
-   "DANGER": 32,
-   "INFO": 1,
-   "SIGNAL": 41
+   "DANGER": 13,
+   "INFO": 3,
+   "SIGNAL": 32
   },
   "10": {
-   "DANGER": 16,
-   "INFO": 4,
-   "SIGNAL": 19
+   "DANGER": 18,
+   "INFO": 1,
+   "SIGNAL": 16
   },
   "11": {
-   "DANGER": 24,
-   "INFO": 1,
-   "SIGNAL": 10
+   "DANGER": 7,
+   "INFO": 10,
+   "SIGNAL": 8
   },
   "12": {
-   "DANGER": 21,
-   "INFO": 8,
-   "SIGNAL": 9
+   "DANGER": 12,
+   "INFO": 7,
+   "SIGNAL": 11
   },
   "13": {
    "DANGER": 8,
-   "INFO": 6,
-   "SIGNAL": 9
+   "INFO": 9,
+   "SIGNAL": 6
   },
   "14": {
-   "DANGER": 6,
-   "INFO": 10,
-   "SIGNAL": 12
+   "DANGER": 10,
+   "INFO": 3,
+   "SIGNAL": 10
   },
   "15": {
-   "DANGER": 9,
-   "INFO": 11,
-   "SIGNAL": 14
+   "DANGER": 12,
+   "INFO": 7,
+   "SIGNAL": 7
   },
   "16": {
-   "INFO": 10,
-   "SIGNAL": 1
+   "DANGER": 2
   }
  },
- "signal_this_hour": 1,
+ "signal_this_hour": 0,
  "spent": {
-  "DANGER": 117,
-  "INFO": 53,
-  "SIGNAL": 115
+  "DANGER": 84,
+  "INFO": 40,
+  "SIGNAL": 90
  },
- "spent_total": 285,
+ "spent_total": 214,
  "suppressed": {
   "by_reason": {},
   "total": 0
  },
- "updated": 1785270494,
+ "updated": 1785356724,
  "voice_log_today": {
-  "coalesced/SIGNAL": 21,
-  "notify_only/INFO": 53,
-  "preempted/SIGNAL": 8,
-  "spoke/DANGER": 117,
-  "spoke/SIGNAL": 86
+  "notify_only/INFO": 33,
+  "preempted/SIGNAL": 2,
+  "spoke/DANGER": 49,
+  "spoke/SIGNAL": 36
  }
 }

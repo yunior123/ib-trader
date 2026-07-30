@@ -1,569 +1,62 @@
 {
  "sym": "NFLX",
- "spot": 72.62,
- "asof": 1785315389,
+ "spot": 72.59,
+ "asof": 1785339457,
  "exp": "20260731",
- "dte": 2.46,
+ "dte": 2.18,
  "scope": "0DTE",
- "net_vex": 147205450.8,
- "vex_peak": 75.0,
- "vex_profile": [
-  {
-   "strike": 45.0,
-   "vex": 4117.5
-  },
-  {
-   "strike": 50.0,
-   "vex": 19012.0
-  },
-  {
-   "strike": 57.0,
-   "vex": 65036.0
-  },
-  {
-   "strike": 58.0,
-   "vex": 6531.8
-  },
-  {
-   "strike": 59.0,
-   "vex": 96944.4
-  },
-  {
-   "strike": 60.0,
-   "vex": 348913.4
-  },
-  {
-   "strike": 61.0,
-   "vex": 205470.9
-  },
-  {
-   "strike": 62.0,
-   "vex": 3143517.2
-  },
-  {
-   "strike": 63.0,
-   "vex": 423470.9
-  },
-  {
-   "strike": 64.0,
-   "vex": 731978.8
-  },
-  {
-   "strike": 65.0,
-   "vex": 9666728.5
-  },
-  {
-   "strike": 66.0,
-   "vex": 1859435.7
-  },
-  {
-   "strike": 67.0,
-   "vex": 4186753.1
-  },
-  {
-   "strike": 68.0,
-   "vex": 10310067.5
-  },
-  {
-   "strike": 69.0,
-   "vex": 8774818.3
-  },
-  {
-   "strike": 70.0,
-   "vex": 17976999.3
-  },
-  {
-   "strike": 71.0,
-   "vex": -41112518.7
-  },
-  {
-   "strike": 72.0,
-   "vex": -13737723.7
-  },
-  {
-   "strike": 73.0,
-   "vex": 9214557.8
-  },
-  {
-   "strike": 74.0,
-   "vex": 19852724.4
-  },
-  {
-   "strike": 75.0,
-   "vex": 63429444.8
-  },
-  {
-   "strike": 76.0,
-   "vex": 24186844.6
-  },
-  {
-   "strike": 77.0,
-   "vex": 4933332.5
-  },
-  {
-   "strike": 78.0,
-   "vex": 5214005.4
-  },
-  {
-   "strike": 79.0,
-   "vex": 2412673.8
-  },
-  {
-   "strike": 80.0,
-   "vex": 9585961.4
-  },
-  {
-   "strike": 81.0,
-   "vex": 451913.9
-  },
-  {
-   "strike": 82.0,
-   "vex": 528836.2
-  },
-  {
-   "strike": 83.0,
-   "vex": 689545.5
-  },
-  {
-   "strike": 84.0,
-   "vex": 472092.0
-  },
-  {
-   "strike": 85.0,
-   "vex": 602297.7
-  },
-  {
-   "strike": 86.0,
-   "vex": 189028.3
-  },
-  {
-   "strike": 87.0,
-   "vex": 208454.3
-  },
-  {
-   "strike": 88.0,
-   "vex": 352851.5
-  },
-  {
-   "strike": 89.0,
-   "vex": 412647.0
-  },
-  {
-   "strike": 90.0,
-   "vex": 524743.9
-  },
-  {
-   "strike": 91.0,
-   "vex": 113554.6
-  },
-  {
-   "strike": 92.0,
-   "vex": 39695.6
-  },
-  {
-   "strike": 93.0,
-   "vex": 43719.4
-  },
-  {
-   "strike": 94.0,
-   "vex": 52921.8
-  },
-  {
-   "strike": 95.0,
-   "vex": 224651.6
-  },
-  {
-   "strike": 100.0,
-   "vex": 499399.6
-  }
- ],
- "net_charm": -14698954.9,
- "charm_peak": 75.0,
- "charm_profile": [
-  {
-   "strike": 45.0,
-   "charm": -1809.5
-  },
-  {
-   "strike": 50.0,
-   "charm": -6214.9
-  },
-  {
-   "strike": 57.0,
-   "charm": -14297.4
-  },
-  {
-   "strike": 58.0,
-   "charm": -1343.1
-  },
-  {
-   "strike": 59.0,
-   "charm": -18472.8
-  },
-  {
-   "strike": 60.0,
-   "charm": -62095.2
-  },
-  {
-   "strike": 61.0,
-   "charm": -33797.8
-  },
-  {
-   "strike": 62.0,
-   "charm": -475342.8
-  },
-  {
-   "strike": 63.0,
-   "charm": -58515.1
-  },
-  {
-   "strike": 64.0,
-   "charm": -97419.4
-  },
-  {
-   "strike": 65.0,
-   "charm": -1148168.9
-  },
-  {
-   "strike": 66.0,
-   "charm": -187287.8
-  },
-  {
-   "strike": 67.0,
-   "charm": -406086.0
-  },
-  {
-   "strike": 68.0,
-   "charm": -940379.3
-  },
-  {
-   "strike": 69.0,
-   "charm": -768605.4
-  },
-  {
-   "strike": 70.0,
-   "charm": -1540915.5
-  },
-  {
-   "strike": 71.0,
-   "charm": 1651414.5
-  },
-  {
-   "strike": 72.0,
-   "charm": 744954.2
-  },
-  {
-   "strike": 73.0,
-   "charm": -665314.6
-  },
-  {
-   "strike": 74.0,
-   "charm": -993135.3
-  },
-  {
-   "strike": 75.0,
-   "charm": -4793755.8
-  },
-  {
-   "strike": 76.0,
-   "charm": -1877109.6
-  },
-  {
-   "strike": 77.0,
-   "charm": -388422.9
-  },
-  {
-   "strike": 78.0,
-   "charm": -476203.5
-  },
-  {
-   "strike": 79.0,
-   "charm": -238162.9
-  },
-  {
-   "strike": 80.0,
-   "charm": -1015459.3
-  },
-  {
-   "strike": 81.0,
-   "charm": -50511.5
-  },
-  {
-   "strike": 82.0,
-   "charm": -63451.9
-  },
-  {
-   "strike": 83.0,
-   "charm": -86315.5
-  },
-  {
-   "strike": 84.0,
-   "charm": -63600.3
-  },
-  {
-   "strike": 85.0,
-   "charm": -86758.9
-  },
-  {
-   "strike": 86.0,
-   "charm": -29008.9
-  },
-  {
-   "strike": 87.0,
-   "charm": -33912.1
-  },
-  {
-   "strike": 88.0,
-   "charm": -60613.6
-  },
-  {
-   "strike": 89.0,
-   "charm": -74598.4
-  },
-  {
-   "strike": 90.0,
-   "charm": -99492.2
-  },
-  {
-   "strike": 91.0,
-   "charm": -22539.7
-  },
-  {
-   "strike": 92.0,
-   "charm": -8224.4
-  },
-  {
-   "strike": 93.0,
-   "charm": -9434.6
-  },
-  {
-   "strike": 94.0,
-   "charm": -11767.2
-  },
-  {
-   "strike": 95.0,
-   "charm": -53552.9
-  },
-  {
-   "strike": 100.0,
-   "charm": -133226.5
-  }
- ],
- "charm_why": null,
- "pressure": 67,
- "pressure_lab": "PIN fuerte",
- "iv_atm": 0.3313,
- "em": 1.98,
- "net_gex": 30900722.1,
- "regime": "POS",
- "flip": 70.16,
- "flip_static": 71.43,
- "call_wall": 75.0,
- "put_wall": 70.0,
- "abs_wall": 75.0,
- "poc_dom": "95%C",
- "call_wall_gex": 10532442.6,
- "put_wall_gex": -2752082.7,
- "abs_wall_gex": 10532442.6,
+ "net_vex": null,
+ "vex_peak": null,
+ "vex_profile": [],
+ "net_charm": null,
+ "charm_peak": null,
+ "charm_profile": [],
+ "charm_why": "cadena rancia: cache TWS de hace 172 min en RTH (ciclo son 3 min)",
+ "pressure": null,
+ "pressure_lab": "sin griegas",
+ "iv_atm": null,
+ "em": null,
+ "net_gex": null,
+ "regime": null,
+ "flip": null,
+ "flip_static": null,
+ "call_wall": null,
+ "put_wall": null,
+ "abs_wall": null,
+ "poc_dom": null,
+ "call_wall_gex": null,
+ "put_wall_gex": null,
+ "abs_wall_gex": null,
  "oi_call_wall": 75.0,
  "oi_put_wall": 65.0,
  "near_call_wall": false,
  "near_put_wall": false,
  "near_flip": false,
- "profile": [
-  {
-   "strike": 45.0,
-   "gex": -459.9
-  },
-  {
-   "strike": 50.0,
-   "gex": -2000.6
-  },
-  {
-   "strike": 57.0,
-   "gex": -6922.8
-  },
-  {
-   "strike": 58.0,
-   "gex": -693.1
-  },
-  {
-   "strike": 59.0,
-   "gex": -10215.5
-  },
-  {
-   "strike": 60.0,
-   "gex": -36496.4
-  },
-  {
-   "strike": 61.0,
-   "gex": -21229.7
-  },
-  {
-   "strike": 62.0,
-   "gex": -319574.7
-  },
-  {
-   "strike": 63.0,
-   "gex": -42066.8
-  },
-  {
-   "strike": 64.0,
-   "gex": -73717.1
-  },
-  {
-   "strike": 65.0,
-   "gex": -974382.0
-  },
-  {
-   "strike": 66.0,
-   "gex": -182706.5
-  },
-  {
-   "strike": 67.0,
-   "gex": -413250.6
-  },
-  {
-   "strike": 68.0,
-   "gex": -1107131.3
-  },
-  {
-   "strike": 69.0,
-   "gex": -1061096.2
-  },
-  {
-   "strike": 70.0,
-   "gex": -2752082.7
-  },
-  {
-   "strike": 71.0,
-   "gex": 4627472.3
-  },
-  {
-   "strike": 72.0,
-   "gex": 5553519.8
-  },
-  {
-   "strike": 73.0,
-   "gex": 6971290.2
-  },
-  {
-   "strike": 74.0,
-   "gex": 3600779.1
-  },
-  {
-   "strike": 75.0,
-   "gex": 10532442.6
-  },
-  {
-   "strike": 76.0,
-   "gex": 3307159.8
-  },
-  {
-   "strike": 77.0,
-   "gex": 599954.1
-  },
-  {
-   "strike": 78.0,
-   "gex": 644147.4
-  },
-  {
-   "strike": 79.0,
-   "gex": 282674.4
-  },
-  {
-   "strike": 80.0,
-   "gex": 1149747.8
-  },
-  {
-   "strike": 81.0,
-   "gex": 53959.3
-  },
-  {
-   "strike": 82.0,
-   "gex": 60335.9
-  },
-  {
-   "strike": 83.0,
-   "gex": 82645.2
-  },
-  {
-   "strike": 84.0,
-   "gex": 56881.1
-  },
-  {
-   "strike": 85.0,
-   "gex": 72640.3
-  },
-  {
-   "strike": 86.0,
-   "gex": 22784.0
-  },
-  {
-   "strike": 87.0,
-   "gex": 25024.3
-  },
-  {
-   "strike": 88.0,
-   "gex": 42151.7
-  },
-  {
-   "strike": 89.0,
-   "gex": 48985.6
-  },
-  {
-   "strike": 90.0,
-   "gex": 61796.1
-  },
-  {
-   "strike": 91.0,
-   "gex": 13267.2
-  },
-  {
-   "strike": 92.0,
-   "gex": 4598.5
-  },
-  {
-   "strike": 93.0,
-   "gex": 5019.1
-  },
-  {
-   "strike": 94.0,
-   "gex": 6012.6
-  },
-  {
-   "strike": 95.0,
-   "gex": 26012.7
-  },
-  {
-   "strike": 100.0,
-   "gex": 53446.7
-  }
- ],
- "call_wall_kind": "pin",
- "call_wall_regime": "POS",
- "call_wall_net": 10532442.6,
- "put_wall_kind": "trampilla",
- "put_wall_regime": "NEG",
- "put_wall_net": -2752082.7,
- "abs_wall_kind": "pin",
- "abs_wall_regime": "POS",
- "abs_wall_net": 10532442.6,
- "gamma_ok": true,
+ "profile": [],
+ "call_wall_kind": null,
+ "call_wall_regime": null,
+ "call_wall_net": null,
+ "put_wall_kind": null,
+ "put_wall_regime": null,
+ "put_wall_net": null,
+ "abs_wall_kind": null,
+ "abs_wall_regime": null,
+ "abs_wall_net": null,
+ "gamma_ok": false,
  "regime_scope": "0DTE",
- "greeks_ok_pct": 0.8452,
+ "greeks_ok_pct": 0.8214,
  "chain_src": "polygon_snapshot_v3",
- "chain_ts": 1785270035.0,
- "chain_age_s": 45354.5209,
- "stale": false,
- "stale_reason": null,
- "regime_raw": "POS",
+ "chain_ts": 1785329136.0,
+ "chain_age_s": 10321.2112,
+ "stale": true,
+ "stale_reason": "cache TWS de hace 172 min en RTH (ciclo son 3 min)",
+ "regime_raw": null,
  "regime_why": null,
- "parity_ok_pct": 0.0,
- "net_gex_parity_lo": 23632667.0405,
- "net_gex_parity_hi": 27951718.5307,
- "quotes_ok": false,
- "session": "fuera_de_rth",
+ "parity_ok_pct": null,
+ "net_gex_parity_lo": null,
+ "net_gex_parity_hi": null,
+ "quotes_ok": true,
+ "session": "rth",
  "band_used": 0.405,
  "band_fetch": 0.405,
  "n_expiries": 4,
@@ -573,27 +66,25 @@
   "20260814",
   "20260821"
  ],
- "rows_total": 330,
+ "rows_total": 328,
  "n_candidates": 84,
- "n_gamma_ok": 71,
- "n_no_greeks": 13,
- "n_iv_provider": 71,
+ "n_gamma_ok": 69,
+ "n_no_greeks": 15,
+ "n_iv_provider": 70,
  "n_iv_inverted": 0,
  "iv_source": "provider",
  "exp_rolled": false,
  "roll_reason": null,
- "degraded_reason": null,
- "gross_gex": 44908773.4704,
- "bifurcation": 1.4533,
- "hhi": 0.1235,
- "n_strikes_populated": 42,
- "chain_path": "data/history/2026-07-28/poly_chain_nflx_1620.txt",
- "flip_live": 70.16,
- "flip_src": "repriced",
- "flip_why": "gamma recomputada a cada spot del barrido (definicion correcta)",
- "roots": [
-  70.16
- ],
+ "degraded_reason": "cadena rancia: cache TWS de hace 172 min en RTH (ciclo son 3 min)",
+ "gross_gex": null,
+ "bifurcation": null,
+ "hhi": null,
+ "n_strikes_populated": 0,
+ "chain_path": "data/history/2026-07-29/poly_chain_nflx_0845.txt",
+ "flip_live": null,
+ "flip_src": "none",
+ "flip_why": null,
+ "roots": [],
  "trapdoor_root": null,
  "flip_open": null,
  "frozen_at": null,

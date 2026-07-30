@@ -205,6 +205,19 @@
   .acctrow .bclose { background:#f23645; } .acctrow .bcancel { background:#607d8b; }
   .acctrow .bmod { background:#2962ff; }
   #acctempty { color:#556; padding:6px; }
+  .acctrow button:disabled { opacity:.55; cursor:progress; }
+  .acctrow .bclose.wait { background:#8a6a12; }
+  #acctage { color:#6b7a99; font-weight:400; font-size:11px; }
+  #acctage.stale { color:#ff9800; font-weight:700; }
+  #acctstale { color:#ff9800; padding:6px; font-weight:700; }
+  #acctmsg { padding:6px 10px; font-size:12px; font-weight:700; border-bottom:1px solid #232a3a;
+              white-space:pre-wrap; word-break:break-word; line-height:1.35; }
+  #acctmsg.hidden { display:none; }
+  #acctmsg.wait { background:#2a2410; color:#e0b64a; }
+  #acctmsg.bad  { background:#2b1418; color:#ff6b74; }
+  #acctmsg.good { background:#0e2a20; color:#4fd1a5; }
+  #acctmsg .amx { float:right; cursor:pointer; opacity:.6; }
+  #acctmsg .amx:hover { opacity:1; }
 
   /* --- watchlist drawer (izquierda, colapsable, buscable) estilo TradingView --- */
   #wldrawer { position:absolute; z-index:40; top:68px; bottom:24px; left:0; width:360px;
@@ -681,8 +694,10 @@
   <div id="accthdr">
     <span id="accttitle">Cuenta</span>
     <span id="acctsum"></span>
+    <span id="acctage" title="Edad del último snapshot BUENO leído del broker"></span>
     <span id="acctclose" title="Cerrar">✕</span>
   </div>
+  <div id="acctmsg" class="hidden"></div>
   <div id="acctbody">
     <div class="acctsec">Posiciones</div>
     <div id="acctpos" class="accttbl"></div>
@@ -1616,6 +1631,13 @@ function delFromWatchlist(sym) {
     ws.send(JSON.stringify({ cmd: "watchlist", act: "del", sym }));
 }
 let wlFilter = "";   // texto del buscador, EN VIVO (bug 2026-07-26: no filtraba al teclear)
+let wlReject = null; // {sym, why} del último rechazo — se DICE, no se traga (2026-07-30)
+function onWatchlistReject(msg) {
+  wlReject = { sym: msg.sym, why: msg.why || "no cualifica" };
+  wldrawer.classList.add("on");   // que se vea: el símbolo NO se añadió
+  renderWatchlist();
+  setTimeout(() => { if (wlReject && wlReject.sym === msg.sym) { wlReject = null; renderWatchlist(); } }, 12000);
+}
 function renderWatchlist() {
   const mk = (s) => {
     const q = QUOTES[s] || {};
@@ -1649,7 +1671,10 @@ function renderWatchlist() {
                            (PERP[s] && (s.includes(base) || (s + "USDT").includes(wlFilter))));
   };
   const fleetV = flt([...FLEET].sort()), userV = flt([...USERWL].sort()), koreaV = flt([...KOREA].sort());
-  let html = '<div class="wlhdr"><span>Símbolo</span><span>Último</span><span>%Día</span><span>Vol</span><span title="⛓ = PERPETUO cripto 24/7 (OKX/Bybit). Cotiza SIEMPRE, con prima propia — NO es el precio de la acción en IBKR.">⛓Perp 24/7</span><span></span></div>';
+  let html = wlReject
+    ? `<div class="wlempty" style="color:#ff5252;border-left:3px solid #ff5252">✕ «${wlReject.sym}» NO añadido — ${wlReject.why}</div>`
+    : "";
+  html += '<div class="wlhdr"><span>Símbolo</span><span>Último</span><span>%Día</span><span>Vol</span><span title="⛓ = PERPETUO cripto 24/7 (OKX/Bybit). Cotiza SIEMPRE, con prima propia — NO es el precio de la acción en IBKR.">⛓Perp 24/7</span><span></span></div>';
   if (fleetV.length) html += '<div class="wlhdr sub">Flota</div>' + fleetV.map(mk).join("");
   if (userV.length) html += '<div class="wlhdr sub">Mías</div>' + userV.map(mk).join("");
   if (koreaV.length) html += '<div class="wlhdr sub">🇰🇷 Corea (KRX realtime)</div>' + koreaV.map(mk).join("");
@@ -1806,36 +1831,126 @@ document.getElementById("whalesave").addEventListener("click", () => {
   ws.send(JSON.stringify({ cmd: "whale_cfg", act: "set", priority, filters }));
 });
 
+// ---- botón Cerrar: pendiente INSTANTÁNEO + veredicto REAL leído del ledger del motor ----
+const CLOSE_PENDING = new Map();     // key(conId) -> {sym, ts, deadline, timer}
+const VERDICT_POLL_MS = 1000, VERDICT_TIMEOUT_MS = 20000;
+let acctLastGood = null;             // último snapshot SIN error: nunca fingir "sin posiciones"
+
+function posKey(p) {
+  return String(p.conId != null ? p.conId : `${p.sym}|${p.exp}|${p.strike}|${p.right}`);
+}
+function acctMsg(text, kind) {
+  const el = document.getElementById("acctmsg");
+  el.classList.remove("hidden", "wait", "bad", "good");
+  el.classList.add(kind);
+  el.innerHTML = `<span class="amx" title="Ocultar">✕</span>${esc(text)}`;
+  el.querySelector(".amx").onclick = () => el.classList.add("hidden");
+}
+function pendingResolve(key, kind, text) {
+  const p = CLOSE_PENDING.get(key);
+  if (p && p.timer) clearTimeout(p.timer);
+  CLOSE_PENDING.delete(key);
+  acctMsg(text, kind);
+  reqAccount();
+}
+function verdictPoll(key) {
+  const p = CLOSE_PENDING.get(key);
+  if (!p) return;
+  fetch(`/api/order_verdict?sym=${encodeURIComponent(p.sym)}&since=${p.ts - 2000}&window=120000`)
+    .then(r => r.ok ? r.json() : Promise.reject(new Error("HTTP " + r.status)))
+    .then(v => {
+      if (!CLOSE_PENDING.has(key)) return;
+      const lines = (v.events || []).map(e => `· ${e.ev}${e.msg ? " " + e.msg : ""}`).join("\n");
+      if (v.verdict === "filled")
+        pendingResolve(key, "good", `✅ ${v.sym} CERRADO por el motor — ${v.msg}`);
+      else if (v.verdict === "accepted")
+        pendingResolve(key, "wait", `🟢 ${v.sym}: orden ACEPTADA por el motor, sin fill todavía.\n${lines}`);
+      else if (v.verdict === "rejected")
+        pendingResolve(key, "bad", `⛔ ${v.sym} NO se cerró — el motor RECHAZÓ el comando:\n${v.msg}`);
+      else if (v.verdict === "dry")
+        pendingResolve(key, "bad", `🟡 ${v.sym} NO se cerró — el motor corrió en DRY y no envía nada:\n${v.msg}`);
+      else if (v.verdict === "unknown")
+        pendingResolve(key, "bad", `❓ ${v.sym}: estado DESCONOCIDO — ${v.msg}`);
+      else if (Date.now() > p.deadline)
+        pendingResolve(key, "bad", `⚠ ${p.sym}: SIN RESPUESTA del motor en ${Math.round(VERDICT_TIMEOUT_MS / 1000)} s. ` +
+          `El comando está escrito pero su ledger no muestra veredicto: la posición SIGUE abierta.` +
+          ((v.context || []).length ? "\n" + v.context.map(e => "· " + e.msg).join("\n") : ""));
+      else
+        p.timer = setTimeout(() => verdictPoll(key), VERDICT_POLL_MS);
+    })
+    .catch(e => {
+      if (!CLOSE_PENDING.has(key)) return;
+      if (Date.now() > p.deadline)
+        pendingResolve(key, "bad", `❓ ${p.sym}: no se pudo leer el veredicto del motor (${e.message}). ` +
+          `Estado DESCONOCIDO — no asumas que se cerró.`);
+      else p.timer = setTimeout(() => verdictPoll(key), VERDICT_POLL_MS);
+    });
+}
+function acctAgeRender() {
+  const el = document.getElementById("acctage");
+  if (!el) return;
+  if (!acctLastGood) { el.textContent = "broker: sin dato"; el.classList.add("stale"); return; }
+  const age = Math.max(0, Math.round((Date.now() - acctLastGood.ts) / 1000));
+  el.textContent = `broker hace ${age}s`;
+  el.classList.toggle("stale", age > 15);
+}
+setInterval(() => { if (acctpanel.classList.contains("on")) acctAgeRender(); }, 1000);
+
 function onAccount(a) {
   const s = a.summary || {};
   document.getElementById("acctsum").textContent =
     `${(a.mode || "").toUpperCase()} · NetLiq ${s.NetLiquidation || "—"} · Poder compra ${s.BuyingPower || "—"}` +
     (a.err ? `  ⚠ ${a.err}` : "");
+  const snap = { ts: a.ts || Date.now(), positions: a.positions || [], orders: a.orders || [] };
+  if (!a.err) acctLastGood = snap;
+  const src = a.err ? acctLastGood : snap;
   const pos = document.getElementById("acctpos"), ord = document.getElementById("acctord");
-  pos.innerHTML = (a.positions && a.positions.length) ? a.positions.map(p => {
+  if (!src) {   // fail-loud: sin lectura buena JAMÁS se dice "sin posiciones"
+    pos.innerHTML = '<div id="acctstale">⚠ POSICIONES DESCONOCIDAS: el bridge no pudo leer el broker. No asumas que están cerradas.</div>';
+    ord.innerHTML = '<div id="acctstale">⚠ ÓRDENES DESCONOCIDAS.</div>';
+    acctAgeRender(); return;
+  }
+  const stale = a.err ? '<div id="acctstale">⚠ lectura del broker FALLÓ; abajo el último dato bueno (RANCIO).</div>' : "";
+  pos.innerHTML = stale + (src.positions.length ? src.positions.map(p => {
     const cls = p.upl == null ? "" : (p.upl > 0 ? "pos" : p.upl < 0 ? "neg" : "");
     const meta = JSON.stringify({ conId: p.conId, sym: p.sym, exp: p.exp, strike: p.strike, right: p.right, qty: p.qty, secType: p.secType }).replace(/'/g, "&#39;");
+    const pend = CLOSE_PENDING.has(posKey(p));   // el re-render cada 4 s no debe borrar el estado pendiente
     return `<div class="acctrow"><span class="albl">${p.label}</span>` +
       `<span class="aval">${p.qty > 0 ? "+" : ""}${p.qty}</span><span class="aval">@${p.avg}</span>` +
       `<span class="aval ${cls}">${p.upl == null ? "" : (p.upl > 0 ? "+" : "") + p.upl}</span>` +
-      `<button class="bclose" data-close='${meta}'>Cerrar</button></div>`;
-  }).join("") : '<div id="acctempty">sin posiciones</div>';
-  ord.innerHTML = (a.orders && a.orders.length) ? a.orders.map(o =>
+      (pend ? `<button class="bclose wait" disabled>⏳ Enviando…</button>`
+            : `<button class="bclose" data-close='${meta}'>Cerrar</button>`) + `</div>`;
+  }).join("") : '<div id="acctempty">sin posiciones</div>');
+  ord.innerHTML = stale + (src.orders.length ? src.orders.map(o =>
     `<div class="acctrow"><span class="albl">${o.label}</span>` +
     `<span class="aval">${o.action} ${o.qty}</span>` +
     `<span class="aval">${o.type} ${o.limit || o.aux || ""}</span>` +
     `<span class="aval">${o.status}</span>` +
     `<button class="bcancel" data-cancel="${o.orderId}">Cancelar</button>` +
     `<button class="bmod" data-mod="${o.orderId}" data-lim="${o.limit || ""}">Mod</button></div>`
-  ).join("") : '<div id="acctempty">sin órdenes de trabajo</div>';
+  ).join("") : '<div id="acctempty">sin órdenes de trabajo</div>');
+  acctAgeRender();
   bindAcctBtns();
 }
 function bindAcctBtns() {
   document.querySelectorAll("#acctpos .bclose").forEach(b => b.onclick = () => {
     const m = JSON.parse(b.dataset.close);
+    const key = posKey(m);
+    if (CLOSE_PENDING.has(key)) return;          // un toque = UN comando
+    b.disabled = true; b.classList.add("wait"); b.textContent = "⏳ Enviando…";   // visible YA, sin esperar red
+    if (!ws || ws.readyState !== WebSocket.OPEN) {
+      b.disabled = false; b.classList.remove("wait"); b.textContent = "Cerrar";
+      acctMsg("⛔ Sin conexión al bridge (WebSocket cerrado): NO se envió nada.", "bad");
+      return;
+    }
     const side = m.qty > 0 ? "sell" : "buy";     // cerrar long = vender; short = comprar
+    const now = Date.now();
+    CLOSE_PENDING.set(key, { sym: m.sym, ts: now, deadline: now + VERDICT_TIMEOUT_MS, timer: null });
+    acctMsg(`⏳ Enviando cierre de ${m.sym} (${Math.abs(m.qty)}) al motor…`, "wait");
     sendAction({ act: "close", conId: m.conId, sym: m.sym, exp: m.exp, strike: m.strike,
                  right: m.right, qty: Math.abs(m.qty), side, secType: m.secType });
+    const p = CLOSE_PENDING.get(key);
+    p.timer = setTimeout(() => verdictPoll(key), VERDICT_POLL_MS);
   });
   document.querySelectorAll("#acctord .bcancel").forEach(b => b.onclick = () =>
     sendAction({ act: "cancel", orderId: parseInt(b.dataset.cancel, 10) }));
@@ -1851,8 +1966,27 @@ function sendAction(a) {
   if (ws && ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(Object.assign({ cmd: "order_action" }, a)));
 }
 function onOrderAction(r) {
-  const note = r.ok ? (r.note || "✓ encolado al motor") : ("⚠ " + (r.err || "falló"));
-  document.getElementById("acctsum").textContent = note;
+  const q = r.queued || {};
+  const act = q.act || (r.ok ? "" : "");
+  let key = null;
+  if (act === "close") {
+    if (q.conId != null && CLOSE_PENDING.has(String(q.conId))) key = String(q.conId);
+    else for (const [k, v] of CLOSE_PENDING) { if (v.sym === q.sym) { key = k; break; } }
+  }
+  if (!r.ok) {
+    const err = r.err || "el bridge no dijo por qué";
+    if (key) pendingResolve(key, "bad", `⛔ El comando NO se encoló: ${err}`);
+    else acctMsg("⛔ " + err, "bad");
+    return;
+  }
+  if (key) {
+    const p = CLOSE_PENDING.get(key);
+    if (q.ts) { p.ts = q.ts; p.deadline = q.ts + VERDICT_TIMEOUT_MS; }   // reloj del comando REAL
+    acctMsg(`⏳ ${p.sym}: comando escrito en el motor (${new Date(p.ts).toLocaleTimeString()}). ` +
+            `Esperando su veredicto en el ledger…`, "wait");
+  } else {
+    acctMsg(r.note || `✓ comando ${act || "?"} encolado al motor`, "wait");
+  }
   setTimeout(reqAccount, 800);
 }
 function onOrderConfirmation(r) {
@@ -3565,6 +3699,7 @@ function connect() {
     else if (msg.type === "alarms") onAlarms(msg);   // alarmas manuales del símbolo
     else if (msg.type === "stale") onNoData(msg.text || null);   // sub congelada sin fuente (sub-minuto overnight)
     else if (msg.type === "watchlist") onWatchlist(msg);   // fleet + lista del usuario
+    else if (msg.type === "watchlist_reject") onWatchlistReject(msg);   // símbolo que IBKR no reconoce
     else if (msg.type === "zones") onZones(msg);   // zonas de ejecución (buy/sell + exp/qty/exec/stop)
     else if (msg.type === "optquote") onOptquote(msg);   // previsualización contrato (strike/bid/ask)
     else if (msg.type === "order_preflight") onOrderPreflight(msg);   // revisión humana, sin persistir/ordenar

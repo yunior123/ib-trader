@@ -228,6 +228,17 @@ static void shout_naked_stop(const std::string& dir, const std::string& sym,
       << json_escape(zone) << "\",\"msg\":\"" << json_escape(msg) << "\"}\n";
 }
 
+// Push al teléfono/ntfy: data/notify_push.txt es el canal que sigue
+// scripts/notify_relay.sh (exige el sello HH:MM:SS al principio de la línea).
+static void push_notify(const std::string& repo, const std::string& title, const std::string& msg) {
+    std::ofstream f(repo + "/data/notify_push.txt", std::ios::app);
+    if (!f.is_open()) return;
+    time_t t = time(nullptr); struct tm lt{}; localtime_r(&t, &lt);
+    char stamp[16];
+    std::snprintf(stamp, sizeof stamp, "%02d:%02d:%02d", lt.tm_hour, lt.tm_min, lt.tm_sec);
+    f << stamp << " | " << title << " | " << msg << "\n";
+}
+
 // ======================================================= config CLI
 struct Cfg {
     std::string repo = ".";
@@ -480,6 +491,14 @@ int main(int argc, char** argv) {
 
     int reconnect_backoff = 1;
     long long last_positions_req_s = now_ms() / 1000;
+    // reqPositions() pone known()=false hasta positionEnd(). Bombeo ACOTADO (cuenta Y
+    // reloj: pump() bloquea hasta 2s) para no rechazar un cierre solo porque el refresco
+    // iba en vuelo. Si tras el bombeo sigue sin llegar, se rechaza igual (fail-closed).
+    auto await_positions = [&tws]() {
+        const long long t0 = now_ms();
+        for (int i = 0; i < 80 && !tws.positions().known() && now_ms() - t0 < 3000; ++i) tws.pump();
+        return tws.positions().known();
+    };
     while (!Guard::stop_requested()) {
         // --- HIGH #2: socket caído (connectionClosed) -> reconectar, no quedar congelado para siempre
         if (!tws.socket_alive()) {
@@ -615,12 +634,6 @@ int main(int argc, char** argv) {
 
         bool frozen = tws.frozen();
         long long now_s = now_ms() / 1000;
-        // SELL gates use broker inventory, never a local guess. Refresh it so a
-        // BUY filled during this run can later be reduced safely.
-        if (now_s - last_positions_req_s >= 15) {
-            tws.reqPositions();
-            last_positions_req_s = now_s;
-        }
 
         // --- chase: re-pegar cierres dormidos hacia el marketable fresco ---
         if (!frozen) for (auto& [coid, cr] : chase) {
@@ -716,6 +729,17 @@ int main(int argc, char** argv) {
                             // no cuadra, ni se molesta en preciar.
                             oe::PosKey cpk = is_opt ? oe::pos_key_option(csym, cexp, cstrike, cright)
                                                     : oe::pos_key_stock(csym);
+                            // El refresco periódico deja known()=false hasta positionEnd():
+                            // bombear ACOTADO antes de decidir mata el rechazo FALSO sin
+                            // relajar el fail-closed (2026-07-30, NOK 1 acción sin cerrar).
+                            if (!tws.positions().known() && !await_positions()) {
+                                const std::string m = "cmd close RECHAZADO " + csym +
+                                    ": positionEnd no llego tras el bombeo acotado — posiciones sin reconciliar";
+                                ledger.note(m);
+                                std::fprintf(stderr, "[cmd] %s\n", m.c_str());
+                                push_notify(cfg.repo, "🚨 order_engine", "close " + csym + " NO enviado: posiciones sin reconciliar");
+                                continue;
+                            }
                             oe::CloseDecision cdec = oe::decide_close_qty(tws.positions(), cpk, cqty, side);
                             if (!cdec.ok) {
                                 ledger.note("cmd close RECHAZADO " + csym + ": " + cdec.reason);
@@ -728,7 +752,20 @@ int main(int argc, char** argv) {
                             }
                             cqty = cdec.qty;   // jamas mas de lo que el broker reporta abierto
 
-                            if (!armed_live(cfg.arm_flag, arm_file)) { ledger.note("cmd close DRY (sin doble llave) " + csym); continue; }
+                            // Llave inválida sigue SIN mandar orden; lo que cambia es que GRITA
+                            // qué llave falta y cómo renovarla (antes: "DRY" mudo en el ledger).
+                            const oe::ArmStatus cst = oe::arm_status(cfg.arm_flag, arm_file);
+                            if (!cst.ok) {
+                                // "(DRY)" en el texto: es el token que el cockpit clasifica
+                                // (chart_bridge._classify_ledger) para pintar el veredicto.
+                                const std::string m = "cmd close NO ENVIADO (DRY) " + csym + " " + cside + " " +
+                                    std::to_string(cqty) + ": DOBLE LLAVE INVALIDA — " + cst.reason;
+                                ledger.note(m);
+                                std::fprintf(stderr, "[cmd] ⚠ %s\n", m.c_str());
+                                push_notify(cfg.repo, "🚨 order_engine",
+                                            "close " + csym + " NO enviado: " + cst.reason);
+                                continue;
+                            }
                             Contract cc; double lim = 0;
                             if (is_opt) {
                                 cc = make_option(csym, cexp, cstrike, cright);
@@ -884,12 +921,17 @@ int main(int argc, char** argv) {
                                 ledger.note(b); std::fprintf(stderr, "[cmd] %s\n", b);
                                 continue;
                             }
-                            if (!armed_live(cfg.arm_flag, arm_file)) {
+                            const oe::ArmStatus qst = oe::arm_status(cfg.arm_flag, arm_file);
+                            if (!qst.ok) {
                                 expo.release(qkey);
-                                char b[192];
-                                std::snprintf(b, sizeof b, "cmd open DRY (sin doble llave) %s BUY %d @ %.2f",
-                                              qsym.c_str(), qqty, qlimit);
-                                ledger.note(b); std::fprintf(stderr, "[cmd] %s\n", b);
+                                // std::string, no snprintf: el motivo es largo y truncarlo
+                                // devolveria el mismo silencio que este fix elimina.
+                                const std::string b = "cmd open NO ENVIADO (DRY) " + qsym + " BUY " +
+                                    std::to_string(qqty) + " @ " + std::to_string(qlimit) +
+                                    ": DOBLE LLAVE INVALIDA — " + qst.reason;
+                                ledger.note(b); std::fprintf(stderr, "[cmd] ⚠ %s\n", b.c_str());
+                                push_notify(cfg.repo, "🚨 order_engine",
+                                            "open " + qsym + " NO enviado: " + qst.reason);
                                 continue;
                             }
                             Contract qc = q_opt ? make_option(qsym, qexp, qstrike, qright)
@@ -1444,6 +1486,15 @@ int main(int argc, char** argv) {
                     }
                 }
             }
+        }
+
+        // Refresco de inventario AL FINAL del ciclo: los gates SELL leen posiciones del
+        // broker, y pedirlo antes de decidir dejaba known()=false durante toda la
+        // iteración (rechazo falso del "cmd close", 2026-07-30). Aquí el positionEnd
+        // llega en el pump() del ciclo siguiente.
+        if (now_s - last_positions_req_s >= 15) {
+            tws.reqPositions();
+            last_positions_req_s = now_s;
         }
     }
 

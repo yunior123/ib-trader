@@ -39,12 +39,48 @@ inline std::string trim(const std::string& s) {
 }
 
 // Doble llave. arm_flag = se pasó --arm-live. arm_file = order_engine/ARM_LIVE.
-inline bool armed_live(bool arm_flag, const std::string& arm_file) {
-    if (!arm_flag) return false;
+enum class ArmFail { NONE, NO_FLAG, FILE_MISSING, FILE_STALE };
+
+// Veredicto de la doble llave CON motivo accionable: un cierre que no se manda es
+// dinero en riesgo, y "DRY" a secas no dice qué llave falta ni cómo renovarla.
+struct ArmStatus {
+    bool ok = false;
+    ArmFail fail = ArmFail::NONE;
+    std::string file_date;      // lo que había en ARM_LIVE ("" si ausente/vacío)
+    std::string reason;         // listo para stderr + ledger
+};
+
+inline ArmStatus arm_status(bool arm_flag, const std::string& arm_file,
+                            const std::string& today) {
+    ArmStatus s;
     std::ifstream f(arm_file);
-    if (!f.is_open()) return false;
-    std::string content((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
-    return trim(content) == today_date();
+    if (!f.is_open()) {
+        s.fail = ArmFail::FILE_MISSING;
+        s.reason = "falta el fichero " + arm_file + " -> arma con order_engine/arm.sh";
+    } else {
+        std::string content((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+        s.file_date = trim(content);
+        if (s.file_date != today) {
+            s.fail = ArmFail::FILE_STALE;
+            s.reason = "ARM_LIVE tiene fecha " + (s.file_date.empty() ? std::string("VACIA") : s.file_date) +
+                       " pero hoy es " + today + " -> renueva con order_engine/arm.sh";
+        }
+    }
+    if (!arm_flag) {
+        const std::string m = "falta el flag --arm-live (relanza el motor con --arm-live)";
+        if (s.fail == ArmFail::NONE) { s.fail = ArmFail::NO_FLAG; s.reason = m; }
+        else s.reason += "; ademas " + m;
+    }
+    s.ok = (s.fail == ArmFail::NONE);
+    return s;
+}
+
+inline ArmStatus arm_status(bool arm_flag, const std::string& arm_file) {
+    return arm_status(arm_flag, arm_file, today_date());
+}
+
+inline bool armed_live(bool arm_flag, const std::string& arm_file) {
+    return arm_status(arm_flag, arm_file, today_date()).ok;
 }
 
 // ---- guardias de proceso (singleton simple para señales/atexit) ----------

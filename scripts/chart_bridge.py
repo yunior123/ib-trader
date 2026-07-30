@@ -815,7 +815,14 @@ def watchlist_quote(sym):
     except Exception:
         c = []
     if not c:
-        return {"last": None, "chg": None, "vol": None}
+        # Fuera de la flota no hay fichero 1m (lo escribe ibkr_bar_bridge solo para fleet.txt):
+        # la fila salia en blanco aunque el chart SI tuviera el simbolo vivo (TQQQ/MSFU/MUU,
+        # medido 2026-07-30). Si hay un State abierto, sus barras son la misma verdad.
+        stt = STATES.get(sym.lower())
+        c = [(int(b[0]), float(b[4]), float(b[5]) if len(b) > 5 else 0.0)
+             for b in (stt.bars if stt else [])]
+        if not c:
+            return {"last": None, "chg": None, "vol": None}
     last_day = time.localtime(c[-1][0]).tm_yday
     today = [x for x in c if time.localtime(x[0]).tm_yday == last_day]
     prev = [x for x in c if time.localtime(x[0]).tm_yday != last_day]
@@ -826,6 +833,30 @@ def watchlist_quote(sym):
     # age_s: edad de la ULTIMA barra — la UI atenua filas viejas (jamas viejo como actual)
     return {"last": round(last, 2), "chg": chg, "vol": int(vol),
             "age_s": int(time.time() - c[-1][0])}
+
+
+async def qualify_watchlist_sym(st, s):
+    """(ok, motivo) de añadir S a la watchlist. qualifyContractsAsync NO lanza con un simbolo
+    inexistente: devuelve lista VACIA y solo loguea "Unknown contract" -> el codigo viejo
+    aceptaba cualquier basura (ZZZZZ, ZQXWV9 quedaron en watchlist_user.txt). Se mira el
+    RESULTADO. Sin conexion no se adivina: se rechaza diciendolo (fail-loud)."""
+    if st.mock:
+        return True, "mock"
+    if s in KOREA_SYMS():
+        return True, "KRX (contrato por conId, no SMART/USD)"
+    if st._ib is None:
+        return False, "sin conexión a TWS: no puedo verificar que el símbolo exista"
+    try:
+        from ib_async import Stock
+        res = await asyncio.wait_for(
+            st._ib.qualifyContractsAsync(Stock(s, "SMART", "USD")), 15)
+    except asyncio.TimeoutError:
+        return False, "TWS no respondió en 15s"
+    except Exception as e:
+        return False, f"error cualificando ({e})"
+    if not res or not getattr(res[0], "conId", 0):
+        return False, f"IBKR no conoce «{s}» como acción/ETF US (SMART/USD)"
+    return True, f"conId {res[0].conId}"
 
 
 def load_watchlist_stats():
@@ -1786,9 +1817,91 @@ async def account_snapshot():
             out["summary"] = {v.tag: v.value for v in summ if v.tag in keep}
         except Exception:
             pass
+        out["ts"] = int(time.time() * 1000)   # sello de frescura: la UI muestra la EDAD del dato
     except Exception as e:
         out["err"] = f"{type(e).__name__}: {e}"
     return out
+
+
+LEDGER_PATH = os.path.join(REPO, "order_engine", "ledger", "orders.jsonl")
+_VERDICT_RANK = {"dry": 1, "rejected": 2, "accepted": 3, "filled": 4}
+
+
+def _ledger_tail_lines(nbytes=262144):
+    with open(LEDGER_PATH, "rb") as f:
+        f.seek(0, 2)
+        size = f.tell()
+        f.seek(max(0, size - nbytes))
+        raw = f.read()
+    lines = raw.decode("utf-8", "replace").splitlines()
+    if size > nbytes and lines:
+        lines = lines[1:]   # la primera puede venir cortada por el seek
+    return lines
+
+
+def _classify_ledger(ev, msg):
+    if ev == "fill":
+        return "filled"
+    if ev in ("intent", "ack"):
+        return "accepted"
+    if ev == "note":
+        u = (msg or "").upper()
+        if "RECHAZAD" in u:
+            return "rejected"
+        if "DRY" in u:
+            return "dry"
+    return None
+
+
+def order_verdict(sym, since_ms, window_ms=180000):
+    """Veredicto REAL del motor para un comando ya escrito: se lee su ledger, no se adivina.
+    verdict ∈ pending|dry|rejected|accepted|filled|unknown. 'unknown' = no se sabe (fail-loud)."""
+    sym = (sym or "").strip().upper()
+    if not sym or not isinstance(since_ms, int) or since_ms <= 0:
+        return None
+    now_ms = int(time.time() * 1000)
+    if not os.path.exists(LEDGER_PATH):
+        return {"sym": sym, "verdict": "unknown", "msg": "order_engine/ledger/orders.jsonl no existe",
+                "events": [], "context": [], "ledger_age_s": None, "since": since_ms, "now": now_ms}
+    try:
+        lines = _ledger_tail_lines()
+        age = round(now_ms / 1000.0 - os.path.getmtime(LEDGER_PATH), 1)
+    except Exception as e:
+        return {"sym": sym, "verdict": "unknown", "msg": f"ledger ilegible: {type(e).__name__}: {e}",
+                "events": [], "context": [], "ledger_age_s": None, "since": since_ms, "now": now_ms}
+
+    rx = re.compile(r"\b" + re.escape(sym) + r"\b")
+    hi = since_ms + max(1000, int(window_ms))
+    events, context = [], []
+    for ln in lines:
+        ln = ln.strip()
+        if not ln.startswith("{"):
+            continue
+        try:
+            e = json.loads(ln)
+        except Exception:
+            continue
+        ts = e.get("ts")
+        if not isinstance(ts, (int, float)) or ts < since_ms or ts > hi:
+            continue
+        ev, msg = e.get("ev"), e.get("msg") or ""
+        csym = str((e.get("contract") or {}).get("sym") or "").upper()
+        rec = {"ts": int(ts), "ev": ev, "msg": msg, "sym": csym,
+               "px": e.get("px"), "qty": e.get("qty"), "orderId": e.get("orderId")}
+        if csym == sym or (not csym and rx.search(msg)):
+            rec["verdict"] = _classify_ledger(ev, msg)
+            events.append(rec)
+        elif ev == "note" and not csym and not re.search(r"\b[A-Z]{2,5}\b", msg):
+            context.append(rec)   # solo cháchara GENÉRICA del motor (p.ej. "frozen: error 1100")
+
+    best, msg = None, ""
+    for r in events:
+        v = r.get("verdict")
+        if v and _VERDICT_RANK[v] >= _VERDICT_RANK.get(best, 0):
+            best, msg = v, r["msg"] or (f"fill {r.get('qty')} @ {r.get('px')}" if v == "filled" else "")
+    return {"sym": sym, "verdict": best or "pending", "msg": msg,
+            "events": events[-12:], "context": context[-6:],
+            "ledger_age_s": age, "since": since_ms, "now": now_ms}
 
 
 def route_order_action(act):
@@ -2896,6 +3009,13 @@ def create_app(state):
         except Exception as e:
             return JSONResponse({"sym": s, "error": str(e)}, status_code=500)
 
+    @app.get("/api/order_verdict")
+    async def order_verdict_route(sym: str = "", since: int = 0, window: int = 180000):
+        v = order_verdict(sym, int(since), int(window))
+        if v is None:
+            return JSONResponse({"error": "faltan sym o since(ms>0)"}, status_code=400)
+        return JSONResponse(v)
+
     @app.get("/health")
     async def health():
         def _one(st):
@@ -3012,18 +3132,13 @@ def create_app(state):
                     if act == "add":
                         s = (ctl.get("sym") or "").strip().upper()
                         if s:
-                            ok = True
-                            if not st.mock and st._ib is not None:
-                                # LIVE: cualifica el contrato antes de aceptar (símbolo real)
-                                try:
-                                    from ib_async import Stock
-                                    await asyncio.wait_for(
-                                        st._ib.qualifyContractsAsync(Stock(s, "SMART", "USD")), 15)
-                                except Exception as e:
-                                    ok = False
-                                    print(f"[watchlist] no cualifica {s} ({e})")
+                            ok, why = await qualify_watchlist_sym(st, s)
                             if ok:
                                 _watchlist_file_add(s)
+                            else:
+                                print(f"[watchlist] RECHAZADO {s}: {why}")
+                                await ws.send_json({"type": "watchlist_reject",
+                                                    "sym": s, "why": why})
                     elif act == "del":
                         _watchlist_file_del((ctl.get("sym") or "").strip().upper())
                     await ws.send_json(watchlist_payload())

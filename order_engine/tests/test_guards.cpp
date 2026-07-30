@@ -246,6 +246,89 @@ static void test_close_against_real_position() {
           "otra expiry no es la misma posicion");
 }
 
+// ============== #3/#7 (2026-07-30) close justo tras el refresco de posiciones
+// Caso REAL: Yunior pulsa "Cerrar" (NOK 1 accion) y el motor responde "posiciones NO
+// reconciliadas" porque el refresco de 15s (reqPositions -> begin(), known()=false) cayo
+// en la MISMA iteracion y no hubo ni un pump() antes de decidir. La orden no se envio.
+static void test_close_after_positions_refresh() {
+    section("#3/#7 close inmediatamente posterior al refresco de reqPositions");
+
+    const PosKey nok = pos_key_stock("NOK");
+    PositionBook pb; pb.begin(); pb.set(nok, 1); pb.end();
+
+    // El caso NOK exacto: 1 accion en cartera, cerrar 1 vendiendo.
+    CloseDecision ok1 = decide_close_qty(pb, nok, 1, 'S');
+    CHECK(ok1.ok && ok1.qty == 1 && !ok1.clamped, "NOK 1 accion: close de 1 autorizado sin clamp");
+
+    // reqPositions() en vuelo: begin() vacia el libro y known()=false a proposito.
+    pb.begin(); pb.set(nok, 1);
+    CHECK(!pb.known(), "refresco en vuelo -> known()=false (fail-closed deliberado)");
+    // TESTIGO del bug: el flujo VIEJO decidia aqui mismo -> rechazo FALSO.
+    CHECK(!decide_close_qty(pb, nok, 1, 'S').ok,
+          "flujo VIEJO (sin bombeo) rechaza un cierre legitimo");
+
+    // Flujo NUEVO: bombeo ACOTADO hasta positionEnd, y SOLO entonces se decide.
+    int pumps = 0;
+    for (int i = 0; i < 80 && !pb.known(); ++i) { ++pumps; if (pumps == 3) pb.end(); }
+    CHECK(pb.known() && pumps == 3, "el bombeo acotado recibe positionEnd y para");
+    CloseDecision tras = decide_close_qty(pb, nok, 1, 'S');
+    CHECK(tras.ok && tras.qty == 1, "tras el bombeo el cierre YA NO se rechaza falsamente");
+
+    // Si positionEnd NUNCA llega, el bombeo se agota y se sigue rechazando.
+    PositionBook mudo; mudo.begin(); mudo.set(nok, 1);
+    int p2 = 0;
+    for (int i = 0; i < 80 && !mudo.known(); ++i) ++p2;
+    CHECK(p2 == 80 && !mudo.known(), "sin positionEnd el bombeo se agota (cota dura)");
+    CHECK(!decide_close_qty(mudo, nok, 1, 'S').ok,
+          "bombeo agotado -> RECHAZO fail-loud (jamas se adivina el inventario)");
+}
+
+// ===================== doble llave: motivo EXPLICITO y accionable (2026-07-30)
+// ARM_LIVE tenia 2026-07-29 y era el 30: el motor degrado a DRY y el unico rastro fue
+// "cmd close DRY (sin doble llave) NOK". Yunior no supo que su cierre no se mando.
+static void test_arm_reason_is_explicit() {
+    section("doble llave: motivo explicito por cada llave que falta");
+
+    const std::string p = "/tmp/oe_armreason_" + std::to_string(::getpid());
+    const std::string hoy = "2026-07-30", ayer = "2026-07-29";
+
+    ::unlink(p.c_str());
+    ArmStatus miss = arm_status(true, p, hoy);
+    CHECK(!miss.ok && miss.fail == ArmFail::FILE_MISSING, "fichero ausente -> llave invalida");
+    CHECK(miss.reason.find("arm.sh") != std::string::npos, "y el motivo dice como armar");
+
+    { std::ofstream f(p); f << ayer << "\n"; }
+    ArmStatus stale = arm_status(true, p, hoy);
+    CHECK(!stale.ok && stale.fail == ArmFail::FILE_STALE, "fecha de AYER -> llave invalida");
+    CHECK(stale.reason.find(ayer) != std::string::npos && stale.reason.find(hoy) != std::string::npos,
+          "el motivo menciona la fecha caducada Y la de hoy");
+    CHECK(stale.reason.find("arm.sh") != std::string::npos, "y como renovarla");
+    CHECK(stale.file_date == ayer, "expone la fecha leida (la UI puede mostrarla)");
+
+    { std::ofstream f(p); f << hoy << "\n"; }
+    CHECK(arm_status(true, p, hoy).ok, "fecha de HOY + flag -> llave valida");
+    ArmStatus noflag = arm_status(false, p, hoy);
+    CHECK(!noflag.ok && noflag.fail == ArmFail::NO_FLAG, "flag ausente -> llave invalida");
+    CHECK(noflag.reason.find("--arm-live") != std::string::npos, "el motivo nombra el flag");
+    CHECK(noflag.reason != stale.reason && noflag.reason != miss.reason,
+          "los tres casos dan motivos DISTINTOS");
+    CHECK(!miss.reason.empty() && !stale.reason.empty() && !noflag.reason.empty(),
+          "ningun motivo vacio (todo grep-able en el ledger)");
+
+    // Fichero vacio/basura tampoco arma, y lo dice.
+    { std::ofstream f(p); f << "\n"; }
+    ArmStatus empty = arm_status(true, p, hoy);
+    CHECK(!empty.ok && empty.fail == ArmFail::FILE_STALE, "ARM_LIVE vacio -> invalida");
+    CHECK(empty.reason.find("VACIA") != std::string::npos, "y lo nombra en el motivo");
+
+    // Compatibilidad: armed_live sigue siendo exactamente arm_status().ok.
+    { std::ofstream f(p); f << today_date() << "\n"; }
+    CHECK(armed_live(true, p) && arm_status(true, p).ok, "armed_live == arm_status().ok (hoy)");
+    { std::ofstream f(p); f << "1999-01-01\n"; }
+    CHECK(!armed_live(true, p) && !arm_status(true, p).ok, "armed_live == arm_status().ok (vencido)");
+    ::unlink(p.c_str());
+}
+
 // ============================================ #9 clamp simetrico del stop
 static void test_option_stop_clamp_symmetry() {
     section("#9 clamp del stop de opcion: simetrico en los dos lados");
@@ -459,6 +542,8 @@ int main() {
     test_human_confirmation_and_sell_inventory();
     test_aggregate_cap();
     test_close_against_real_position();
+    test_close_after_positions_refresh();
+    test_arm_reason_is_explicit();
     test_option_stop_clamp_symmetry();
     test_option_greeks_known_and_stop_trigger();
     test_advance_cross_counter();
