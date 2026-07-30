@@ -178,13 +178,14 @@ ENG
 
 echo "  backend empotrado: $(du -sh "$RES" | cut -f1)"
 
-# Copiar archivos de macapp/ (speak_with_fallback.py, voice_samples/)
-mkdir -p "$RES/backend/voice_samples"
-[ -f macapp/speak_with_fallback.py ] && cp macapp/speak_with_fallback.py "$RES/backend/"
-[ -f macapp/generate_voice_samples.sh ] && cp macapp/generate_voice_samples.sh "$RES/backend/"
-[ -d macapp/voice_samples ] && cp -r macapp/voice_samples/* "$RES/backend/voice_samples/" 2>/dev/null || true
-# banco de clips (la VOZ de la app: 114 clips Matilda) + reproductor + textos fuente
+# Voz de producción: SOLO el banco canónico Matilda. Las muestras, generadores y
+# motores con fallback son herramientas del repo y nunca viajan en la aplicación.
+python3 macapp/voice_player.py --check >/dev/null || {
+  echo "🔴 banco de voz Matilda inválido; build cancelado (no se sustituye la voz)"
+  exit 1
+}
+rm -rf "$RES/backend/voice_bank" "$RES/backend/voice_samples"
+rm -f "$RES/backend/speak_with_fallback.py" "$RES/backend/generate_voice_samples.sh"
 mkdir -p "$RES/backend/voice_bank"
-[ -d macapp/voice_bank ] && cp macapp/voice_bank/*.mp3 "$RES/backend/voice_bank/" 2>/dev/null || true
-[ -f macapp/voice_player.py ] && cp macapp/voice_player.py "$RES/backend/"
-[ -f macapp/voice_bank_texts.txt ] && cp macapp/voice_bank_texts.txt "$RES/backend/"
+cp macapp/voice_bank/*.mp3 "$RES/backend/voice_bank/"
+cp macapp/voice_player.py macapp/voice_bank_texts.txt "$RES/backend/"

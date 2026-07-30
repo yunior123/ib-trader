@@ -510,7 +510,7 @@
             font-size:9px; font-weight:700; cursor:help; margin-left:3px; padding:0;
             user-select:none; flex-shrink:0; position:relative; }
   .wginfo:hover { background:#2962ff; color:#fff; border-color:#2962ff; }
-  .wginfo:focus { outline:1px solid #2962ff; outline-offset:2px; }
+  .wginfo:focus-visible { outline:2px solid #6f95ff; outline-offset:2px; }
   .popover-box { position:absolute; top:calc(100% + 4px); right:0; z-index:1000;
                  width:240px; background:rgba(19,23,34,.96); border:1px solid #2962ff;
                  border-radius:6px; padding:10px; color:#d1d4dc; font-size:11px;
@@ -3363,15 +3363,24 @@ document.addEventListener("DOMContentLoaded", () => {
   const infoButtons = document.querySelectorAll(".wginfo");
   function closeAllPopovers() {
     document.querySelectorAll(".popover-box").forEach(box => box.classList.remove("show"));
+    infoButtons.forEach(btn => btn.setAttribute("aria-expanded", "false"));
   }
   infoButtons.forEach(btn => {
     const popover = btn.nextElementSibling;
     if (popover && popover.classList.contains("popover-box")) {
+      const popoverId = `widget-info-${btn.dataset.widget}`;
+      popover.id = popoverId;
+      popover.setAttribute("role", "dialog");
+      btn.setAttribute("aria-controls", popoverId);
+      btn.setAttribute("aria-expanded", "false");
       btn.addEventListener("click", (e) => {
         e.stopPropagation();
         const isOpen = popover.classList.contains("show");
         closeAllPopovers();
-        if (!isOpen) popover.classList.add("show");
+        if (!isOpen) {
+          popover.classList.add("show");
+          btn.setAttribute("aria-expanded", "true");
+        }
       });
       popover.addEventListener("click", (e) => { e.stopPropagation(); });
     }
@@ -3534,30 +3543,6 @@ window.wgRedraw = function() {
 };
 setTimeout(() => window.wgRedraw(), 1500);      // primer pintado; nadie llamaba a wgRedraw (cargando eterno)
 setInterval(() => window.wgRedraw(), 60000);
-
-// ===== Widget info popovers =====
-document.addEventListener("DOMContentLoaded", () => {
-  const infoButtons = document.querySelectorAll(".wginfo");
-  function closeAllPopovers() {
-    document.querySelectorAll(".popover-box").forEach(box => box.classList.remove("show"));
-  }
-  infoButtons.forEach(btn => {
-    const popover = btn.nextElementSibling;
-    if (popover && popover.classList.contains("popover-box")) {
-      btn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        const isOpen = popover.classList.contains("show");
-        closeAllPopovers();
-        if (!isOpen) popover.classList.add("show");
-      });
-      popover.addEventListener("click", (e) => { e.stopPropagation(); });
-    }
-  });
-  document.addEventListener("click", closeAllPopovers);
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") closeAllPopovers();
-  });
-});
 
 </script>
 </body>

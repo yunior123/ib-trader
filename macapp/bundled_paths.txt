@@ -9,12 +9,9 @@ config/feeds.env
 config/llm.env
 data/fleet.txt
 macapp/
-macapp/generate_voice_samples.sh
-macapp/speak_with_fallback.py
 macapp/voice_bank/
+macapp/voice_bank_texts.txt
 macapp/voice_player.py
-macapp/voice_samples/
-macapp/voice_segments.json
 order_engine/
 scripts/chart_bridge.py
 scripts/chart_levels.py

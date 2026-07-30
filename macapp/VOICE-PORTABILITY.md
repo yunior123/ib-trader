@@ -1,196 +1,58 @@
-# Portabilidad de Voces en ib-trader Cockpit.app
+# Voz canónica portable del Cockpit
 
-## Arquitectura Final: Banco de Clips Pregrabados
+La aplicación incluye un banco cerrado de 114 clips MP3 en español, generados
+previamente con la voz Matilda elegida para ib-trader. En ejecución no hay TTS,
+red, claves API, descargas ni configuración manual.
 
-La app reproduce clips de voz **pregrabados y cacheados**, no TTS en runtime. **0 latencia, 0 dependencias de red en runtime.**
+## Contrato de producción
 
-```
-Flujo:
-  App → solicita alarma ("whale_alert", "high_vol_puts", "qqq", "bounce_likely")
-    ↓
-  voice_player.py → busca clips en voice_bank/
-    ↓
-  macapp/voice_bank/alerts_whale_alert.mp3 (descargado previamente con ElevenLabs)
-  macapp/voice_bank/alerts_high_vol_puts.mp3
-  ... (concatena con afplay)
-    ↓
-  Reproducción: "Alerta ballena alto volumen de puts en Cue Cue Cue más probable el rebote"
-  
-  Si falta un clip → fallback automático a say del sistema
-```
+- Fuente única: `voice_bank_texts.txt`, IDs consecutivos `001..114`.
+- Audio: `voice_bank/001.mp3` … `voice_bank/114.mp3`.
+- Motor: `voice_player.py`, con rutas relativas a su propio directorio.
+- Reproductor del sistema: `/usr/bin/afplay`; reproduce el archivo, no genera voz.
+- Bundle: `Contents/Resources/backend/{voice_player.py,voice_bank_texts.txt,voice_bank/}`.
+- Política: el banco completo se valida antes del primer clip. Si falta o está
+  corrupto un recurso, la voz entera queda desactivada y la app muestra un aviso.
 
----
+No existe fallback a `say`, Siri, Mónica, otra voz ElevenLabs ni TTS remoto. Las
+muestras y generadores que puedan existir en el repo son herramientas de desarrollo
+y `bundle_backend.sh` los excluye explícitamente de la aplicación.
 
-## Banco de Segmentos (voice_bank/)
+## QA silencioso
 
-Inventario reutilizable de **45 segmentos básicos** (~432 caracteres):
-
-### Alertas (9)
-- "Alerta ballena"
-- "alto volumen de puts"
-- "alto volumen de calls"
-- "el piso se refuerza"
-- "el techo se refuerza"
-- "más probable el rebote"
-- "más probable el retroceso"
-- "Barrida alcista"
-- "Barrida bajista"
-
-### Acciones (4)
-- "compra"
-- "vende"
-- "stop"
-- "fuera"
-
-### Símbolos (15)
-- "Cue Cue Cue" (QQQ)
-- "Es Pi Y" (SPY)
-- "Ene Ve De A" (NVDA)
-- "A S M L", "A M D", "Es M H", "D R A M"
-- ... (30 símbolos en total)
-
-### Números (13)
-- 0-5, 10, 20, 50, 100
-- "coma", "millones", "por ciento"
-
-### Contexto (4)
-- "en", "hacia arriba", "hacia abajo", "sigue"
-
----
-
-## Generación del Banco (Una sola vez)
-
-### Cuando hay créditos ElevenLabs (~15-ago o $5/mes upgrade)
+Validar el banco del repo sin producir audio:
 
 ```bash
-# Generar clips (idempotente, salta los que ya existen)
-zsh macapp/generate_voice_bank.sh
-
-# Resultado: macapp/voice_bank/alerts_whale_alert.mp3, etc.
-# Tamaño esperado: ~5-10 MB por 45 clips
-# Coste: ~$0.013 (432 chars × $0.000030/char)
+python3 macapp/voice_player.py --check
 ```
 
-### Generador (generate_voice_bank.sh)
+Validar la misma disposición después de empaquetar:
 
-- Lee `ELEVENLABS_API_KEY` de `config/feeds.env`
-- Itera segmentos de `voice_segments.json`
-- Descarga clips con ElevenLabs (eleven_multilingual_v2, voz Sarah)
-- **Idempotente**: no regenera clips existentes
-- Maneja quota_exceeded con mensaje claro
-
----
-
-## Reproducción de Alarmas
-
-### Desde el código (chart_bridge.py, bots, etc.)
-
-```python
-from macapp.voice_player import compose_and_play
-
-# Alarma compuesta:
-compose_and_play("whale_alert", "high_vol_puts", "in", "qqq", "bounce_likely")
-# Reproduce: "Alerta ballena alto volumen de puts en Cue Cue Cue más probable el rebote"
+```bash
+python3 "macapp/ib-trader Cockpit.app/Contents/Resources/backend/voice_player.py" \
+  --check
 ```
 
-### Motor (voice_player.py)
+Solo una llamada explícita reproduce audio:
 
-1. Busca clips en `voice_bank/`
-2. Reproducecon `afplay` (secuencial, gap mínimo)
-3. Fallback automático a `say` si falta un clip
-4. Caché: clips en Application Support para reutilización
-
----
-
-## Coste Total
-
-| Escenario | Coste | Notas |
-|-----------|-------|-------|
-| Sin banco (fallback say) | $0/mes | Voz del sistema, siempre funciona |
-| Banco completo (ElevenLabs free) | $0/mes | 10k chars/mes = 23 ciclos del banco |
-| Banco extendido (ElevenLabs $5) | $5/mes | 30k chars/mes = 69 ciclos |
-| Banco mixto (ElevenLabs + say) | $0-5/mes | Clips de ElevenLabs + fallback say |
-
-Con 100 alarmas/mes y reutilización agresiva (90% son templates):
-- **ElevenLabs free**: $0/mes (432 chars × 1 descarga + caché)
-- **Seguridad**: 0 latencia, 0 red en runtime después del primer ciclo
-
----
-
-## Integración en la App
-
-### Ficheros embebidos en el bundle
-
-```
-macapp/
-  ├── voice_bank/              ← clips descargados (generados una vez)
-  │   ├── alerts_whale_alert.mp3
-  │   ├── alerts_high_vol_puts.mp3
-  │   ├── ... (45 segmentos)
-  │   └── symbols_qqq.mp3
-  ├── voice_segments.json      ← inventario
-  ├── voice_player.py          ← motor de reproducción
-  ├── generate_voice_bank.sh   ← generador (para Yunior)
-  └── speak_with_fallback.py   ← (deprecated, aquí solo voice_player)
+```bash
+python3 macapp/voice_player.py --play 001 003 039
 ```
 
-### Ruta en el bundle
+Los tests inyectan un ejecutor falso; nunca llaman a `afplay`.
 
-Los clips viajan en `Contents/Resources/backend/voice_bank/` (rutas relativas).
+## Portabilidad
 
-### Reproducción
+`voice_player.py` resuelve el banco junto a sí mismo. Esto produce la misma
+estructura en desarrollo y en un `.app` instalado en `/Applications`, Desktop o
+cualquier otra ruta. No escribe dentro del bundle y no depende de `~/ib-trader`.
 
-```python
-# chart_bridge.py u otro backend:
-from macapp.voice_player import compose_and_play
-compose_and_play("whale_alert", "high_vol_puts", "qqq")
-```
+El build falla si no valida los 114 clips. La app vuelve a comprobarlos al arrancar
+para detectar corrupción posterior y expone el estado en el menú de la barra.
 
----
+## Licencia
 
-## Nota de Seguridad
-
-**La key de ElevenLabs está en `config/feeds.env`** (viaja dentro del bundle para uso privado).
-
-- App de Yunior únicamente (nunca distribuir públicamente)
-- Si se distribuye: regenerar la key de ElevenLabs
-
----
-
-## Workflow Completo
-
-### Ahora (sin créditos ElevenLabs)
-
-1. App usa fallback `say` del sistema
-2. Voice_player.py busca clips en `voice_bank/`, no los encuentra
-3. Genera alarma automáticamente con `say` (Mónica, default del sistema)
-
-### Cuando hay créditos (~15-ago o $5)
-
-1. Ejecutar: `zsh macapp/generate_voice_bank.sh`
-2. Se descargan 45 clips (~5-10 MB)
-3. Bundle incluye clips (build siguiente)
-4. App reproduce clips pregrabados (0 latencia, 0 red)
-
-### Extender el banco
-
-1. Añadir segmentos a `voice_segments.json`
-2. Run: `zsh generate_voice_bank.sh` (descargar nuevos)
-3. Código usa IDs nuevos: `compose_and_play(...)`
-
----
-
-## Hechos
-
-- **Arquitectura**: clips pregrabados + fallback say
-- **Generador**: idempotente, maneja quota
-- **Motor**: voice_player.py (busca clips, fallback automático)
-- **Coste**: $0/mes (free tier) a $5/mes (extendido)
-- **Latencia**: 0ms (pregrabado), fallback <100ms (say)
-- **Offline**: después de descarga, 0 red en runtime
-
----
-
-**Fecha**: 2026-07-29  
-**Motor**: Banco de clips ElevenLabs + voice_player.py  
-**Estado**: listo para usar, generador pendiente de créditos
+Los clips actuales son activos pre-generados del usuario para su aplicación privada.
+No se incluye la clave de ElevenLabs. Antes de redistribuir públicamente el `.app`,
+hay que confirmar por separado que el plan y los términos con los que se generaron
+permiten esa distribución; esta revisión técnica no sustituye una auditoría legal.

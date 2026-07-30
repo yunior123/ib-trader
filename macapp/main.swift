@@ -25,6 +25,45 @@ let DEFAULT_URL = "http://127.0.0.1:8080/"
 let MAX_WINDOWS = 12
 let DEFAULT_WINDOW_COUNT = 6
 
+struct CanonicalVoiceStatus {
+    let ready: Bool
+    let detail: String
+}
+
+/// Verificación local y determinista: no reproduce una muestra ni consulta la red.
+/// Si falta un solo clip, la voz queda desactivada completa; nunca se sustituye.
+func canonicalVoiceStatus(bundle: Bundle = .main) -> CanonicalVoiceStatus {
+    guard let resources = bundle.resourceURL else {
+        return CanonicalVoiceStatus(ready: false, detail: "Resources no disponible")
+    }
+    let backend = resources.appendingPathComponent("backend", isDirectory: true)
+    let bank = backend.appendingPathComponent("voice_bank", isDirectory: true)
+    let manifest = backend.appendingPathComponent("voice_bank_texts.txt")
+    guard let text = try? String(contentsOf: manifest, encoding: .utf8) else {
+        return CanonicalVoiceStatus(ready: false, detail: "falta voice_bank_texts.txt")
+    }
+    let lines = text.split(whereSeparator: \.isNewline)
+    let expected = (1...114).map { String(format: "%03d |", $0) }
+    guard lines.count == expected.count,
+          zip(lines, expected).allSatisfy({ $0.0.hasPrefix($0.1) }) else {
+        return CanonicalVoiceStatus(ready: false, detail: "manifiesto Matilda inválido")
+    }
+    for clipID in 1...114 {
+        let name = String(format: "%03d.mp3", clipID)
+        let url = bank.appendingPathComponent(name)
+        guard let data = try? Data(contentsOf: url, options: .mappedIfSafe), data.count > 3 else {
+            return CanonicalVoiceStatus(ready: false, detail: "falta o está vacío \(name)")
+        }
+        let bytes = Array(data.prefix(3))
+        let hasID3 = bytes == [0x49, 0x44, 0x33]
+        let hasFrameSync = bytes.count >= 2 && bytes[0] == 0xFF && bytes[1] & 0xE0 == 0xE0
+        guard hasID3 || hasFrameSync else {
+            return CanonicalVoiceStatus(ready: false, detail: "MP3 inválido: \(name)")
+        }
+    }
+    return CanonicalVoiceStatus(ready: true, detail: "114/114 clips offline")
+}
+
 /// Sello del build LEIDO DEL BUNDLE (build.sh lo escribe en Info.plist). Nunca `git` en
 /// runtime: la .app tiene que arrancar en un Mac sin el repo.
 let BUILD_VERSION: String = {
@@ -300,6 +339,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let stamp = NSMenuItem(title: "\(version) · \(built)", action: nil, keyEquivalent: "")
         stamp.isEnabled = false
         m.addItem(stamp)
+        let voice = canonicalVoiceStatus()
+        let voiceStamp = NSMenuItem(
+            title: voice.ready ? "Voz Matilda · \(voice.detail)" : "Voz desactivada · \(voice.detail)",
+            action: nil,
+            keyEquivalent: ""
+        )
+        voiceStamp.isEnabled = false
+        m.addItem(voiceStamp)
         statusItem.menu = m
         installMainMenu()   // sin barra de menus reales, ⌘N/⌘W no llegaban con la app al frente
 
@@ -324,6 +371,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
         NSApp.setActivationPolicy(.regular)
         NSApp.activate(ignoringOtherApps: true)
+        if !voice.ready {
+            let alert = NSAlert()
+            alert.alertStyle = .warning
+            alert.messageText = "Voz Matilda desactivada"
+            alert.informativeText = "\(voice.detail).\nNo se usará ninguna voz sustituta. Reconstruye la app con el banco canónico completo."
+            alert.addButton(withTitle: "Entendido")
+            alert.runModal()
+        }
     }
 
     // ------------------------------------------------------------- ventanas

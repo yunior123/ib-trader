@@ -1,120 +1,129 @@
 #!/usr/bin/env python3
-"""
-voice_player.py — reproduce composiciones de voz usando clips pregrabados
+"""Reproductor offline del banco canónico Matilda.
 
-Uso:
-  from macapp.voice_player import compose_and_play
-  compose_and_play("whale_alert", ["high_vol_puts", "in"], ["qqq"], ["bounce_likely"])
-
-El motor:
-1. Busca clips en voice_bank/ (idempotente, skippea si no existe)
-2. Concatena con afplay secuencial (gap mínimo)
-3. Fallback: say del sistema si falta un clip
+La ruta es deliberadamente relativa a este fichero. Funciona sin cambios tanto en
+el repo (macapp/) como dentro de Contents/Resources/backend/. No usa red, TTS ni
+una voz alternativa: si el banco no es íntegro, falla antes de reproducir nada.
 """
 
+from __future__ import annotations
+
+import argparse
+import re
 import subprocess
-import json
 import sys
 from pathlib import Path
-from time import sleep
+from typing import Callable, Sequence
 
-# Rutas
-REPO_ROOT = Path(__file__).parent.parent
-VOICE_BANK = REPO_ROOT / "macapp" / "voice_bank"
-SEGMENTS_FILE = REPO_ROOT / "macapp" / "voice_segments.json"
-SUPPORT_DIR = Path("~/Library/Application Support/ib-trader").expanduser()
-VOICE_CACHE = SUPPORT_DIR / "voice_cache"
-VOICE_CACHE.mkdir(parents=True, exist_ok=True)
+EXPECTED_IDS = tuple(f"{n:03d}" for n in range(1, 115))
+AFPLAY = Path("/usr/bin/afplay")
+_MANIFEST_LINE = re.compile(r"^(\d{3})\s*\|\s*(\S.*)$")
 
-def load_segments():
-    """Carga el inventario de segmentos."""
-    if SEGMENTS_FILE.exists():
-        return json.load(SEGMENTS_FILE.open())
-    return {"segments": {}}
 
-def find_segment_text(seg_id):
-    """Busca el texto de un segmento por ID."""
-    data = load_segments()
-    for category, segments in data.get("segments", {}).items():
-        for seg in segments:
-            if seg["id"] == seg_id:
-                return seg["text"]
-    return None
+class VoiceBankError(RuntimeError):
+    """El banco canónico no puede usarse con seguridad."""
 
-def get_clip_path(seg_id):
-    """Retorna la ruta del clip (o None si no existe)."""
-    # Buscar en qué categoría está el segmento
-    data = load_segments()
-    for category, segments in data.get("segments", {}).items():
-        for seg in segments:
-            if seg["id"] == seg_id:
-                slug = f"{category}_{seg_id}"
-                clip = VOICE_BANK / f"{slug}.mp3"
-                if clip.exists():
-                    return clip
-                return None
-    return None
 
-def play_clip(clip_path):
-    """Reproduce un clip con afplay."""
+def canonical_paths(base: Path | None = None) -> tuple[Path, Path]:
+    """Devuelve banco y manifiesto desde una raíz portable."""
+    root = (base or Path(__file__).resolve().parent).resolve()
+    return root / "voice_bank", root / "voice_bank_texts.txt"
+
+
+def load_manifest(path: Path) -> dict[str, str]:
+    if not path.is_file():
+        raise VoiceBankError(f"falta el manifiesto canónico: {path}")
+    entries: dict[str, str] = {}
+    for line_no, raw in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        match = _MANIFEST_LINE.fullmatch(raw.strip())
+        if not match:
+            raise VoiceBankError(f"manifiesto inválido en línea {line_no}")
+        clip_id, text = match.groups()
+        if clip_id in entries:
+            raise VoiceBankError(f"ID duplicado en manifiesto: {clip_id}")
+        entries[clip_id] = text
+    if tuple(entries) != EXPECTED_IDS:
+        raise VoiceBankError("el manifiesto debe contener exactamente 001..114 en orden")
+    return entries
+
+
+def _looks_like_mp3(path: Path) -> bool:
     try:
-        subprocess.run(["afplay", str(clip_path)], timeout=30)
-    except Exception as e:
-        print(f"[voice_player] afplay falló: {e}", file=sys.stderr)
+        head = path.read_bytes()[:3]
+    except OSError:
+        return False
+    return head == b"ID3" or (len(head) >= 2 and head[0] == 0xFF and head[1] & 0xE0 == 0xE0)
 
-def fallback_say(text):
-    """Fallback: reproduce con say del sistema."""
+
+def validate_bank(base: Path | None = None) -> dict[str, str]:
+    """Valida de forma silenciosa el banco completo y devuelve el manifiesto."""
+    bank, manifest_path = canonical_paths(base)
+    manifest = load_manifest(manifest_path)
+    if not bank.is_dir():
+        raise VoiceBankError(f"falta el banco canónico: {bank}")
+    actual = tuple(sorted(p.stem for p in bank.glob("*.mp3")))
+    if actual != EXPECTED_IDS:
+        missing = sorted(set(EXPECTED_IDS) - set(actual))
+        extra = sorted(set(actual) - set(EXPECTED_IDS))
+        detail = []
+        if missing:
+            detail.append("faltan " + ",".join(missing))
+        if extra:
+            detail.append("sobran " + ",".join(extra))
+        raise VoiceBankError("banco incompleto: " + "; ".join(detail))
+    invalid = [clip_id for clip_id in EXPECTED_IDS if not _looks_like_mp3(bank / f"{clip_id}.mp3")]
+    if invalid:
+        raise VoiceBankError("clips MP3 inválidos: " + ",".join(invalid))
+    return manifest
+
+
+def play_segments(
+    segment_ids: Sequence[str | int],
+    *,
+    base: Path | None = None,
+    runner: Callable[..., subprocess.CompletedProcess] = subprocess.run,
+) -> None:
+    """Reproduce IDs canónicos en orden; valida todo antes del primer sonido."""
+    manifest = validate_bank(base)
+    bank, _ = canonical_paths(base)
+    ids = [f"{item:03d}" if isinstance(item, int) else str(item).zfill(3) for item in segment_ids]
+    if not ids:
+        raise VoiceBankError("no se solicitaron segmentos")
+    unknown = [clip_id for clip_id in ids if clip_id not in manifest]
+    if unknown:
+        raise VoiceBankError("IDs desconocidos: " + ",".join(unknown))
+    if not AFPLAY.is_file():
+        raise VoiceBankError("afplay no está disponible; voz desactivada")
+    for clip_id in ids:
+        try:
+            runner([str(AFPLAY), str(bank / f"{clip_id}.mp3")], check=True, timeout=30)
+        except (OSError, subprocess.SubprocessError) as exc:
+            raise VoiceBankError(f"falló el clip {clip_id}; voz desactivada") from exc
+
+
+def compose_and_play(*segment_ids: str | int) -> None:
+    """Alias compatible: los segmentos ahora son exclusivamente IDs 001..114."""
+    play_segments(segment_ids)
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Voz canónica Matilda, offline y fail-closed")
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument("--check", action="store_true", help="validar sin reproducir audio")
+    mode.add_argument("--play", nargs="+", metavar="ID", help="reproducir IDs 001..114")
+    parser.add_argument("--base", type=Path, help="raíz portable para QA")
+    args = parser.parse_args(argv)
     try:
-        subprocess.run(
-            ["say", "-v", "Mónica", text],
-            capture_output=True,
-            timeout=10
-        )
-    except Exception as e:
-        print(f"[voice_player] say falló: {e}", file=sys.stderr)
-
-def compose_and_play(*segment_ids):
-    """
-    Compone y reproduce una alarma concatenando segmentos.
-    
-    Args:
-        *segment_ids: "whale_alert", "high_vol_puts", "qqq", etc.
-    
-    Ejemplo:
-        compose_and_play("whale_alert", "high_vol_puts", "in", "qqq", "bounce_likely")
-        -> "Alerta ballena alto volumen de puts en Cue Cue Cue más probable el rebote"
-    """
-    if not segment_ids:
-        return
-    
-    # Recopilar clips y fallbacks
-    clips = []
-    text_parts = []
-    
-    for seg_id in segment_ids:
-        clip = get_clip_path(seg_id)
-        if clip:
-            clips.append(clip)
+        manifest = validate_bank(args.base)
+        if args.check:
+            print(f"Matilda canonical voice ready: {len(manifest)}/{len(EXPECTED_IDS)}")
         else:
-            # Fallback: encontrar texto para say
-            text = find_segment_text(seg_id)
-            if text:
-                text_parts.append(text)
-    
-    # Reproducir clips secuencialmente
-    for clip in clips:
-        play_clip(clip)
-        sleep(0.1)  # gap mínimo entre clips
-    
-    # Fallback: say de lo que falta
-    if text_parts:
-        fallback_text = " ".join(text_parts)
-        print(f"[voice_player] Fallback say: {fallback_text}", file=sys.stderr)
-        fallback_say(fallback_text)
+            play_segments(args.play, base=args.base)
+        return 0
+    except VoiceBankError as exc:
+        print(f"VOICE_DISABLED: {exc}", file=sys.stderr)
+        return 2
+
 
 if __name__ == "__main__":
-    # Prueba: python3 voice_player.py whale_alert bounce_likely
-    if len(sys.argv) > 1:
-        compose_and_play(*sys.argv[1:])
-    else:
-        print("Uso: voice_player.py <seg_id1> <seg_id2> ...", file=sys.stderr)
+    raise SystemExit(main())

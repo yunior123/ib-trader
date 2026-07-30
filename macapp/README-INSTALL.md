@@ -12,52 +12,21 @@
 
 3. **Conecta el Gateway/TWS**: desde la app, abre IB Gateway o TWS y autentica
 
-## Voz en Español (IMPORTANTE para alertas audibles)
+## Voz en español
 
-La app habla alertas críticas (DANGER, SIGNAL) en una **única voz hermosa**: **Siri Voice 2** de macOS.
+La app lleva dentro el banco canónico Matilda: 114 clips pregrabados. No requiere
+descargar voces de macOS, configurar Accesibilidad, conectarse a una API ni instalar
+nada adicional.
 
-### Configurar la voz (primera vez)
+El menú de la barra muestra `Voz Matilda · 114/114 clips offline` cuando el banco
+está íntegro. Si falta o se corrompe un clip, la voz se desactiva completa y aparece
+un aviso visual. La app nunca sustituye Matilda por una voz de prueba o del sistema.
 
-Para que la app hable en la voz hermosa y profesional:
-
-1. **Abre Ajustes de macOS** (esquina superior izquierda del menú)
-2. **Accesibilidad** (izquierda) > **Contenido Hablado**
-3. En **Voz del Sistema**, elige cualquiera con acceso a descargas
-4. Toca **[+] Descargar** (abajo a la derecha)
-5. Busca y descarga: **Siri Voice 2** (o **Siri Voice 1** si prefieres)
-6. Espera ~30 segundos a que se descargue
-7. Haz click en ella para seleccionarla como voz del sistema
-
-### Verificar que funciona
-
-Cierra y abre la app:
+QA silencioso (no reproduce una muestra):
 
 ```bash
-pkill -f "ib-trader Cockpit"
-open ~/Desktop/ib-trader/ib-trader\ Cockpit.app
+python3 "macapp/ib-trader Cockpit.app/Contents/Resources/backend/voice_player.py" --check
 ```
-
-La próxima alerta debería sonar hermosa y en español.
-
-### Si la app está muda o suena robótica
-
-**Causa**: Siri Voice 2 no está descargada, o se eligió otra voz en Ajustes.
-
-**Solución**: sigue los 7 pasos arriba (Ajustes > Accesibilidad > Contenido Hablado).
-
-**Verificar voces en tu Mac** (terminal):
-```bash
-# Listar voces español disponibles
-say -v '?' | grep -i "siri\|voice"
-
-# Si NO ves "Siri Voice 2": descárgala en Ajustes
-```
-
-## Política de voz: Una sola, la hermosa
-
-- **No hay fallback** a otras voces. La app usa SOLO Siri Voice 2.
-- **Si no está disponible**: la app queda muda para alertas + muestra un aviso visual en pantalla.
-- **Razón**: precisión y autoridad. Alertas críticas merecen la voz elegida.
 
 ## Troubleshooting
 
