@@ -1480,7 +1480,10 @@ def run_prob(sym, level, side, kind, exp=None):
 # ordenar, ley #0). El bridge NUNCA coloca órdenes -> escribe un comando en
 # order_engine/commands.jsonl que el motor ejecuta con su doble llave.
 # ============================================================================
-_ACCT = {"ib": None, "port": None}
+_ACCT = {"ib": None, "port": None, "cid": None}
+# clientId de cuenta ÚNICO por ventana: 63 compartido por 6 procesos = error 326
+# ("client ya utilizado") y TimeoutError en 5 de 6 ventanas (bug NOK 2026-07-29 23:45).
+_ACCT_CID = {"v": 63}
 CMD_PATH = os.path.join(REPO, "order_engine", "commands.jsonl")
 
 
@@ -1726,16 +1729,17 @@ def local_websocket_origin(origin):
 async def _acct_conn():
     """Conexión readonly al puerto del MODO actual (se reconecta si el modo cambió)."""
     port = ib_mode.get_port()
+    cid = _ACCT_CID["v"]
     a = _ACCT["ib"]
-    if a is not None and a.isConnected() and _ACCT["port"] == port:
+    if a is not None and a.isConnected() and _ACCT["port"] == port and _ACCT["cid"] == cid:
         return a
     if a is not None:
         try: a.disconnect()
         except Exception: pass
     from ib_async import IB
     ib = IB()
-    await ib.connectAsync("127.0.0.1", port, clientId=63, readonly=True, timeout=10)
-    _ACCT["ib"] = ib; _ACCT["port"] = port
+    await ib.connectAsync("127.0.0.1", port, clientId=cid, readonly=True, timeout=10)
+    _ACCT["ib"] = ib; _ACCT["port"] = port; _ACCT["cid"] = cid
     return ib
 
 
@@ -3870,6 +3874,7 @@ def main():
                     help="sandbox de ./replay (--out): barras 1m + cadena + niveles COHERENTES")
     ap.add_argument("--selftest", action="store_true", help="valida frames sin fastapi/TWS")
     args = ap.parse_args()
+    _ACCT_CID["v"] = 6300 + int(args.http_port) % 100   # único por ventana (8080->6380...)
 
     set_mock_dir(args.mock_dir)
     if args.mock_dir and not (args.mock or args.selftest):
