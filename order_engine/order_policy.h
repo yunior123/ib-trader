@@ -58,10 +58,11 @@ inline LimitOrderPlan make_limit_order_plan(const Contract& input, char side, in
     o.totalQuantity = DecimalFunctions::stringToDecimal(std::to_string(qty));
     o.lmtPrice = limit;
     o.tif = "DAY";
-    // whatIf is a broker-side margin/eligibility simulation. transmit=false is
-    // deliberately redundant: even a future TWS regression must not route it.
+    // IBKR must receive the request to calculate margin, so transmit stays true.
+    // `whatIf=true` is the protocol-level instruction that makes it a simulation
+    // instead of a working order (transmit=false never produced an openOrder result).
     o.whatIf = what_if;
-    o.transmit = !what_if;
+    o.transmit = true;
     o.orderRef = order_ref;
     o.account = account;
 

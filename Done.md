@@ -11,7 +11,7 @@
       contrato exacto, límite máximo/mínimo revisado y destino seguro FICHA por defecto;
       ARMAR exige confirmación final y challenge backend de un uso/120 s. El motor fija
       cuenta y contrato, veta shorts/naked, exige inventario para SELL, topes, cadena fresca,
-      dos prints, doble llave y `whatIf=true`+`transmit=false` antes de transmitir. Acciones
+      dos prints, doble llave y un `whatIf=true` confirmado por IBKR antes de transmitir. Acciones
       usan Overnight+DAY con reconocimiento explícito del hueco sin STP 20:00–03:50;
       opciones son DAY/RTH. Stops nativos sobreviven al cierre, comandos no quedan dormidos
       si el motor está apagado y sólo se aceptan Origins locales. Verificado sin órdenes:

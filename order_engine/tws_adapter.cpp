@@ -88,7 +88,7 @@ bool TwsAdapter::preflight_limit(const Contract& c, char side, int qty, double l
     LimitOrderPlan plan = make_limit_order_plan(
         c, side, qty, limit, orderRef, session, server_version(), true,
         execution_account_);
-    if (!plan.ok || !plan.order.whatIf || plan.order.transmit) {
+    if (!plan.ok || !plan.order.whatIf || !plan.order.transmit) {
         out.completed = true;
         out.warning = plan.ok ? "what-if safety invariant failed" : plan.error;
         return false;
@@ -98,7 +98,7 @@ bool TwsAdapter::preflight_limit(const Contract& c, char side, int qty, double l
     preflights_[oid] = out;
     client_->placeOrder(oid, plan.contract, plan.order);
     std::fprintf(stderr,
-                 "[tws] WHAT-IF id=%d %s %dx %s @ %.2f transmit=false overnight=%s\n",
+                 "[tws] WHAT-IF id=%d %s %dx %s @ %.2f whatIf=true overnight=%s\n",
                  oid, plan.order.action.c_str(), qty, c.symbol.c_str(), limit,
                  plan.order.includeOvernight ? "true" : "false");
 

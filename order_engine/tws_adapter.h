@@ -143,8 +143,8 @@ public:
                      int orderId, const std::string& orderRef,
                      OrderSession session = OrderSession::RTH_ONLY);
     // Broker-side what-if using the exact final contract/order fields.
-    // The request always carries whatIf=true AND transmit=false. It can never
-    // become a working order and is not entered in orders_/cancel-all.
+    // The request carries whatIf=true; IBKR requires transmit=true so the
+    // simulation reaches its margin server. It never enters orders_/cancel-all.
     bool preflight_limit(const Contract& c, char side, int qty, double limit,
                          const std::string& orderRef, OrderSession session,
                          PreflightReport& out, int max_pumps = 8);

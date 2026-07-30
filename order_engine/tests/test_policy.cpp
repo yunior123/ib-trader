@@ -63,7 +63,7 @@ int main() {
                                        OrderSession::OVERNIGHT_AND_DAY, 999, true, "U_TEST");
         assert(p.ok);
         assert(p.order.whatIf);
-        assert(!p.order.transmit);
+        assert(p.order.transmit);
         assert(p.order.outsideRth);
         assert(p.order.includeOvernight);
         assert(p.order.orderType == "LMT");
