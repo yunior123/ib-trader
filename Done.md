@@ -6,6 +6,15 @@
 
 ## ✅ SESIÓN 2026-07-29
 
+- [x] **Bug "Revisar · no enviar no hace nada" (reporte NOK en vivo, ~23:05).** Causa raíz
+      DOBLE, medida en logs: (1) el bridge devolvía **404 en `/order_ticket_ui.js`** →
+      `OrderTicketUI` undefined → el clic moría mudo; (2) los 6 bridges corrían código de las
+      17:00 con `chart_bridge.py` cambiado a las 22:08 (regla de relanzar violada). Fix: ruta
+      servida + relanzo de bridges + guard UX (⏳/⛔ si el bridge no responde en 6 s, jamás
+      silencio) + NOK como 7ª ventana supervisada (8086, cid 77) + test de regresión que exige
+      ruta para TODO `<script src>` local. E2E verificado por WebSocket real: preflight NOK
+      acciones → cuenta U26942420, OVERNIGHT+DAY, límite 8.42, `can_prepare=true`. Release v6.
+
 - [x] **Fill-seeker por defecto ("orders always get filled by default... smart algorithm").**
       RTH (opciones y acciones RTH-only): toda orden sale IBKR Adaptive prioridad Urgent —
       trabaja el fill dentro del límite revisado, jamás lo excede; el what-if simula el plan

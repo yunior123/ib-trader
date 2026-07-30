@@ -16,15 +16,16 @@ if [[ "$MODE" != live && "$MODE" != mock ]]; then
 fi
 
 if [[ "$MODE" == live ]]; then
-  SYMS=(qqq nvda smh mu aapl msft)
+  SYMS=(qqq nvda smh mu aapl msft nok)
 else
   SYMS=(qqq spy nvda mu dram gld)
 fi
-CLIENT_BASE=71   # 71-76: libre (40-49 scans, 48/60/61/63/82/83/84/87/90/91/96 ocupados, 85-99 daemons)
+CLIENT_BASE=71   # 71-77: libre (40-49 scans, 48/60/61/63/82/83/84/87/90/91/96 ocupados, 85-99 daemons)
+N=${#SYMS[@]}
 
 case "${1:-start}" in
 status)
-  for i in {1..6}; do
+  for ((i=1; i<=N; i++)); do
     p=$((8079 + i))
     printf "%-5s :%s %s\n" "${SYMS[$i]}" "$p" \
       "$(lsof -tnP -iTCP:$p -sTCP:LISTEN >/dev/null 2>&1 && echo VIVA || echo caida)"
@@ -34,7 +35,7 @@ stop)
   launchctl bootout "gui/$(id -u)/$LABEL" 2>/dev/null
   rm -f "$PLIST"
   # por PUERTO, no por patron de args: mata mock Y vivo por igual.
-  for i in {1..6}; do
+  for ((i=1; i<=N; i++)); do
     p=$((8079 + i))
     lsof -tnP -iTCP:$p -sTCP:LISTEN 2>/dev/null | xargs -r kill 2>/dev/null
   done
@@ -50,7 +51,7 @@ start)
     echo "cd '$REPO'"
     echo "SY=(${SYMS[*]})"
     echo 'while true; do'
-    echo '  for i in {1..6}; do'
+    echo "  for ((i=1; i<=${N}; i++)); do"
     echo '    p=$((8079 + i)); s=${SY[$i]}'
     # Vivo = alguien ESCUCHA el puerto, no que /health conteste: con un navegador
     # conectado el puente sirve el WebSocket perfectamente pero deja /health sin

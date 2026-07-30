@@ -2663,6 +2663,14 @@ def create_app(state):
             return FileResponse(p, media_type="application/javascript")
         return JSONResponse({"error": "lightweight-charts-v5.js no encontrado"}, status_code=404)
 
+    @app.get("/order_ticket_ui.js")
+    async def ticket_ui():
+        # Sin este fichero OrderTicketUI no existe y "Revisar" muere mudo (bug NOK 2026-07-29).
+        p = os.path.join(os.path.dirname(LIVE_HTML), "order_ticket_ui.js")
+        if os.path.exists(p):
+            return FileResponse(p, media_type="application/javascript")
+        return JSONResponse({"error": "order_ticket_ui.js no encontrado"}, status_code=404)
+
     @app.get("/favicon.svg")
     async def favicon():
         p = os.path.join(os.path.dirname(LIVE_HTML), "favicon.svg")

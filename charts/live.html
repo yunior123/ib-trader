@@ -2109,15 +2109,29 @@ function currentOrderDraft() {
            kind: zoneKindSel.value, exp: zoneExpSel.value || "",
            price: pendingZonePrice, qty: zoneQtyInp.value };
 }
+let preflightTimer = null;
 document.getElementById("zone-review").addEventListener("click", () => {
-  if (pendingZonePrice == null) return;
+  if (pendingZonePrice == null) {
+    zonePrevEl.textContent = "⛔ Falta el trigger: pulsa 🎯 Ticket y luego clic en el precio del gráfico.";
+    return;
+  }
   const armNew = zoneDestSel.value === "arm";
   orderIntent = { phase: armNew ? "arm_new" : "prepare", draft: currentOrderDraft() };
   if (armNew) {
     orderIntent.draft.purpose = "arm_new";
   }
-  if (ws && ws.readyState === WebSocket.OPEN)
-    ws.send(JSON.stringify(OrderTicketUI.preflightRequest(orderIntent.draft)));
+  if (!ws || ws.readyState !== WebSocket.OPEN) {
+    zonePrevEl.textContent = "⛔ Sin conexión al bridge (WebSocket cerrado). Reintenta en unos segundos.";
+    return;
+  }
+  ws.send(JSON.stringify(OrderTicketUI.preflightRequest(orderIntent.draft)));
+  zonePrevEl.textContent = "⏳ Preflight en curso…";
+  clearTimeout(preflightTimer);
+  // Silencio = bridge viejo o caído: decirlo, jamás morir mudo (bug NOK 2026-07-29).
+  preflightTimer = setTimeout(() => {
+    if (orderIntent && !lastPreflight)
+      zonePrevEl.textContent = "⛔ El bridge no respondió al preflight en 6 s: puente desactualizado o caído. Relanza las ventanas (chart_qa_windows.sh).";
+  }, 6000);
 });
 zonepop.querySelector(".zcancel").addEventListener("click", () => {
   hideZonePop(); zoneArmed = false; zonebtn.classList.remove("arm"); el.style.cursor = "";
@@ -2132,6 +2146,7 @@ function closeOrderConfirm() {
 }
 function onOrderPreflight(p) {
   if (!orderIntent) return;
+  clearTimeout(preflightTimer);
   lastPreflight = p;
   const d = p.draft || {};
   if (d.strike != null) zoneStrikeInp.value = d.strike;
