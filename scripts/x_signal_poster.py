@@ -148,17 +148,28 @@ def fmt(x):
     return f"{x:.2f}" if x >= 10 else f"{x:.3f}"
 
 
+def english_signal_summary(title, msg):
+    """Describe a local signal without leaking its Spanish source text to X."""
+    line = f"{title} {msg}".lower()
+    short = any(k in line for k in ("sell", "puts", "caida", "caída", "down", "bajista"))
+    if "ballena" in line or "whale" in line:
+        side = "put" if ("puts" in line or short) else "call"
+        return f"Unusual {side} volume reached the fleet threshold"
+    if "retest-ok" in line:
+        return f"{'Bearish' if short else 'Bullish'} break-and-retest confirmed"
+    if "reclaim" in line:
+        return "Bullish reclaim confirmed"
+    if "ruptura confirmada" in line or "confirmed break" in line:
+        return f"{'Bearish' if short else 'Bullish'} break confirmed"
+    return f"{'Bearish' if short else 'Bullish'} fleet setup confirmed"
+
+
 def build_post(sym, title, msg, entry, tgt, stp, prob):
-    que_paso = re.sub(r"\s+", " ", f"{title}: {msg}").strip()
+    what_happened = english_signal_summary(title, msg)
     base = ("🎯 ${sym} live signal: {q}. ENTRY: {e} (printed level, 2 reads). "
             "TARGET: {t}. MENTAL STOP: {s} (if the path fails, out). "
             "Prob ~{p}%. Not financial advice.")
-    fixed = base.format(sym=sym, q="", e=fmt(entry), t=fmt(tgt),
-                        s=fmt(stp), p=prob)
-    room = xc.MAX_CHARS - len(fixed)
-    if len(que_paso) > room:
-        que_paso = que_paso[:max(0, room - 1)].rstrip() + "…"
-    return base.format(sym=sym, q=que_paso, e=fmt(entry), t=fmt(tgt),
+    return base.format(sym=sym, q=what_happened, e=fmt(entry), t=fmt(tgt),
                        s=fmt(stp), p=prob)
 
 
@@ -301,7 +312,7 @@ def process_combos(st, dry_run, auth):
             legs_txt.append(f"{sym} {fmt(px)}")
         if not all_true:
             continue
-        text = (f"🎯 COMBO: {message.strip()}. Simultaneously: "
+        text = (f"🎯 COMBO: multi-ticker condition confirmed. Simultaneously: "
                 f"{', '.join(legs_txt)}. Not financial advice.")
         if xc.post_text(text, f"combo {cid}", log, dry_run, auth):
             st["combos"].append(cid)

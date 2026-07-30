@@ -145,6 +145,9 @@ def main():
         # el 2026-07-25). Se salta sola si no hay snapshot/ticker: el post calla el regimen
         # antes que afirmar uno que no medimos.
         text = xc.append_gex(text, sym, max_chars=MAX_CHARS)
+        if not xc.public_text_is_english(text):
+            log(f"REFUSE {sym} non-English public text")
+            continue
 
         # ADITIVO: imagen del arbol de escenarios si el PDF la genero; si falta,
         # se postea texto-solo (comportamiento previo intacto).

@@ -218,6 +218,24 @@ def append_gex(text, sym, gex=_UNSET, max_chars=MAX_CHARS):
 # caso cazado en vivo el 2026-07-21 — docs/ERRORES.md). `$200` (solo digitos) NO.
 _CASHTAGISH = re.compile(r"\$([A-Za-z0-9][A-Za-z0-9.,]*)")
 _PURE_CASHTAG = re.compile(r"^[A-Za-z]{1,6}$")
+_NON_ENGLISH_PUBLIC = re.compile(
+    r"(?:[\uac00-\ud7af]|"
+    r"\b(?:alcista|bajista|ballena|ca[ií]da|compra|comprar|consejo|corea|"
+    r"flujo|hacia|im[aá]n|lecturas|mercado|opciones|piso|rompe|se[nñ]al|"
+    r"sube|techo|toc[oó]|venta|vende)\b|"
+    r"\bsi\s+falla\b)",
+    re.IGNORECASE,
+)
+
+
+def public_text_is_english(text):
+    """Fail closed on known mixed-language output before an X API write.
+
+    This is deliberately a narrow lexical guard, not language detection. It
+    catches every Spanish/Korean fragment produced by our posting paths while
+    leaving cashtags, numbers and emoji untouched.
+    """
+    return bool(text and not _NON_ENGLISH_PUBLIC.search(text))
 
 
 def count_cashtags(text):
@@ -266,6 +284,9 @@ def post_text(text, tag, log, dry_run=False, auth=None, media_path=None):
     text = sanitize_cashtags(text.strip())
     if len(text) > MAX_CHARS:
         text = text[:MAX_CHARS]
+    if not public_text_is_english(text):
+        log(f"REFUSE {tag} non-English public text")
+        return False
     reason = budget_refusal()
     if reason:
         log(f"REFUSE {tag} {reason}")
