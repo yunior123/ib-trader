@@ -1013,7 +1013,11 @@ int main(int argc, char** argv) {
 
                     // ===== OPCIONES =====
                     std::string right = (lower(z.kind)[0] == 'c') ? "C" : "P";
-                    Gate g = run_gate(ch, right, z.exp, z.price, side, cfg.budget, now_s);
+                    // Execute the exact contract the human reviewed. A fresh quote may
+                    // improve, but a nearby strike must never be silently substituted.
+                    Gate g = run_gate(ch, right, z.locked_exp, z.locked_strike,
+                                      side, cfg.budget, now_s,
+                                      /*require_exact_strike=*/true);
                     if (!g.go) {
                         std::string w; for (auto& s : g.why) { if (!w.empty()) w += "; "; w += s; }
                         // Transient (cadena vieja / sin cadena fresca): NO latchear VETOED;
@@ -1030,15 +1034,18 @@ int main(int argc, char** argv) {
                         std::fprintf(stderr, "[%s] zona %s VETOED: %s\n", sym.c_str(), z.id.c_str(), w.c_str());
                         continue;
                     }
+                    const bool price_within_reviewed_cap =
+                        side == 'B' ? g.limit <= z.locked_limit + 0.005
+                                    : g.limit + 0.005 >= z.locked_limit;
                     if (!(z.locked_strike > 0) || !(z.locked_limit > 0) ||
                         z.locked_right != right || z.locked_exp != g.exp ||
                         std::fabs(z.locked_strike - g.strike) > 1e-9 ||
-                        std::fabs(z.locked_limit - g.limit) > 0.005) {
+                        !price_within_reviewed_cap) {
                         z.st = ZoneRT::VETOED;
                         write_state(state_dir, sym, z,
-                                    "\"veto\":\"contrato exacto no coincide con confirmacion humana\"");
+                                    "\"veto\":\"contrato/precio excede confirmacion humana\"");
                         ledger.note("VETOED " + sym + " " + z.id +
-                                    ": contrato option cambió desde confirmación");
+                                    ": contrato cambió o precio empeoró desde confirmación");
                         continue;
                     }
                     int qty = z.qty > 0 ? z.qty : std::max(1, (int)(cfg.budget / g.premium));

@@ -6,6 +6,18 @@
 
 ## ✅ SESIÓN 2026-07-29
 
+- [x] **Órdenes desde el Cockpit listas para prueba PAPER: acciones y opciones, simples y
+      protegidas.** Ticket único BUY/SELL con instrumento, CALL/PUT, expiry, cantidad,
+      contrato exacto, límite máximo/mínimo revisado y destino seguro FICHA por defecto;
+      ARMAR exige confirmación final y challenge backend de un uso/120 s. El motor fija
+      cuenta y contrato, veta shorts/naked, exige inventario para SELL, topes, cadena fresca,
+      dos prints, doble llave y `whatIf=true`+`transmit=false` antes de transmitir. Acciones
+      usan Overnight+DAY con reconocimiento explícito del hueco sin STP 20:00–03:50;
+      opciones son DAY/RTH. Stops nativos sobreviven al cierre, comandos no quedan dormidos
+      si el motor está apagado y sólo se aceptan Origins locales. Verificado sin órdenes:
+      130 guards + 39 chain + 502 orders + policy/backend, cuatro suites ASan/UBSan, 17 UI/
+      bridge tests y build arm64. Release pública v4.
+
 - [x] **Cockpit: seis ventanas visibles con gráficos y recuperación automática del backend.**
       Los seis bridges estaban vivos, pero la app quedó detrás; al relanzarla desde cero,
       WebKit abrió antes que los puertos y conservó para siempre “backend no responde”.

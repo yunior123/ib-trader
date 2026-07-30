@@ -125,6 +125,14 @@ static void test_run_gate_boundaries() {
     CHECK(run_gate(justo, "C", "20260731", 700.0, 'B', 1000.0, now_s).go, "edad 900s exacta: PASA (limite inclusivo)");
     Chain pasado = mk("700.00 C 20260731 2.00 2.05 500 900 0.20 0.45\n", now_s - 901);
     CHECK(!run_gate(pasado, "C", "20260731", 700.0, 'B', 1000.0, now_s).go, "edad 901s: RECHAZA");
+    Chain futuro_ok = mk("700.00 C 20260731 2.00 2.05 500 900 0.20 0.45\n", now_s + 5);
+    CHECK(run_gate(futuro_ok, "C", "20260731", 700.0, 'B', 1000.0, now_s).go,
+          "clock skew futuro 5s: PASA");
+    Chain futuro = mk("700.00 C 20260731 2.00 2.05 500 900 0.20 0.45\n", now_s + 6);
+    Gate g_future = run_gate(futuro, "C", "20260731", 700.0, 'B', 1000.0, now_s);
+    CHECK(!g_future.go, "timestamp futuro >5s: RECHAZA");
+    CHECK(!g_future.why.empty() && g_future.why[0].find("timestamp futuro") != std::string::npos,
+          "timestamp futuro: explica el veto");
 
     // --- SPREAD: 5.0% exacto pasa; un pelo mas, no. bid 1.95 / ask 2.05 -> mid
     //     2.00, spread 0.10 = 5.000%.

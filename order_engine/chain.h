@@ -141,7 +141,9 @@ inline Gate run_gate(const Chain& ch, const std::string& right, const std::strin
     }
     g.strike = r->strike; g.exp = r->exp; g.oi = r->oi; g.delta = r->delta; g.iv = r->iv;
     double age = (double)(now_s - ch.epoch);
-    bool fresh = age <= MAX_AGE_S;
+    // A future epoch used to look "extra fresh" because every negative age
+    // satisfies <= MAX_AGE_S. Permit only a small clock-skew tolerance.
+    bool fresh = age >= -5.0 && age <= MAX_AGE_S;
     bool quote_ok = r->bid > 0 && r->ask > 0 && r->ask >= r->bid;
     if (quote_ok) {
         double mid = (r->bid + r->ask) / 2.0;
@@ -152,7 +154,8 @@ inline Gate run_gate(const Chain& ch, const std::string& right, const std::strin
     bool spread_ok = quote_ok && g.spread_pct >= 0 && g.spread_pct <= MAX_SPREAD_PCT;  // ==0 es el MEJOR spread
     bool oi_ok = r->oi > MIN_OI;                 // doctrina: OI > 500 (estricto)
     bool budget_ok = g.premium > 0 && g.premium <= budget;
-    if (!fresh) g.why.push_back("cadena vieja " + std::to_string((int)age) + "s");
+    if (age < -5.0) g.why.push_back("cadena con timestamp futuro");
+    else if (!fresh) g.why.push_back("cadena vieja " + std::to_string((int)age) + "s");
     if (!quote_ok) g.why.push_back("sin bid/ask valido (iliquido)");
     else { char b[48]; std::snprintf(b, sizeof b, "spread %.1f%% %s", g.spread_pct, spread_ok ? "OK" : ">5% NO"); g.why.push_back(b); }
     if (!oi_ok) g.why.push_back("OI " + std::to_string(r->oi) + " < 500");
