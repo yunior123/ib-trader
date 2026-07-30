@@ -10,7 +10,9 @@ Spec completa: `order_engine/docs/ORDER-ENGINE.md`. Recetas TWS: `.claude/skills
 ## Archivos
 - `tws_adapter.h/.cpp` — `TwsAdapter : DefaultEWrapper`. Conexión, place/cancel/modify, stops nativos, reconciliación, callbacks (orderStatus/execDetails/commissionReport/error/connectionClosed), cola de `ExecReport`.
 - `ledger.h` — JSONL append-only en `ledger/orders.jsonl` (intent/ack/fill/cancel/reject/commission). P&L neto por `execId`→commission.
-- `safety.h` — doble llave (`--arm-live` + `ARM_LIVE`=hoy) y disarm-on-exit (SIGINT/SIGTERM/crash/atexit → `cancel_all_own` + flush).
+- `safety.h` — doble llave (`--arm-live` + `ARM_LIVE`=hoy) y disarm-on-exit
+  (SIGINT/SIGTERM/crash/atexit → cancela entradas propias pendientes, conserva
+  stops nativos protectivos y hace flush).
 - `order_engine.cpp` — main: zone-watcher, gate (spread≤5%, OI>500, prima≤budget, cadena fresca), FSM PLACED→TRIGGERED→SENT→FILLED→STOP_HIT, estado a `state/<sym>.jsonl`.
 - `build.sh` — 2 compilaciones secuenciales, **comentadas** (las corre el orquestador; Mac 8GB).
 
@@ -37,21 +39,26 @@ colocaría (`"mode":"DRY..."`) y NO llama a `placeOrder`. Pinta una zona con
 Para probar el camino de colocación real **en paper** (órdenes reales pero cuenta
 de práctica), armar como abajo apuntando a 7497.
 
-## Armar LIVE (7496) — SÓLO tras F1–F3 verdes en paper
+## Armar LIVE — SÓLO tras F1–F3 verdes en paper
 Doble llave (ambas obligatorias):
 ```bash
 # 1) archivo con la fecha de HOY (YYYY-MM-DD), sin nada más:
 date +%F > order_engine/ARM_LIVE
 # 2) flag en la línea de comando + puerto live:
-./order_engine/order_engine --live --arm-live --sym QQQ --budget 200 --repo .
+./order_engine/arm.sh
+./order_engine/run.sh --live --arm-live QQQ
 ```
 Sin cualquiera de las dos → DRY. El archivo caduca solo: si su fecha no es hoy,
 `armed_live()` devuelve falso. Las zonas también exigen `armed_date == hoy`.
 
 ## Desarmar
 - **Borrar la llave**: `rm order_engine/ARM_LIVE` → las próximas entradas caen a DRY al instante (se re-evalúa por entrada).
-- **Parar el proceso**: `Ctrl-C` (SIGINT) o `kill` (SIGTERM) → `cancel_all_own()` cancela TODAS nuestras órdenes vivas (entries en vuelo + stops nativos, orderRef `OE:`) y flushea el ledger ANTES de morir. En crash (SIGSEGV/ABRT) hay un intento best-effort; la red REAL es que los stops son nativos y las entradas jamás descansan.
-- Al arrancar, `reqAllOpenOrders` reconcilia y cancela cualquier huérfana `OE:` de un run previo.
+- **Parar el proceso**: `Ctrl-C` (SIGINT) o `kill` (SIGTERM) → cancela entradas/
+  cierres propios pendientes y conserva los stops nativos que protegen posiciones.
+  Luego flushea el ledger. En crash hay un intento best-effort; los stops nativos
+  sobreviven en IBKR.
+- Al arrancar, `reqAllOpenOrders` reconcilia: adopta stops protectivos `OE:*:STOP`
+  y cancela entradas propias huérfanas.
 
 ## Contrato de datos (gráfico → motor)
 `data/exec_zones_<sym>.json` (ver spec §3):
