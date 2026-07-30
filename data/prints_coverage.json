@@ -77,14 +77,14 @@
     },
     "2026-07-30": {
      "first_ts": 1785398400,
-     "last_ts": 1785418533,
-     "minutes_with_print": 317,
-     "pct_of_session_covered": 81.3,
-     "rows": 75477
+     "last_ts": 1785423544,
+     "minutes_with_print": 401,
+     "pct_of_session_covered": 102.8,
+     "rows": 447793
     }
    },
    "gaps": 0,
-   "rows": 438205,
+   "rows": 810521,
    "sessions": 3,
    "zero_byte": false
   },
@@ -160,14 +160,14 @@
     },
     "2026-07-30": {
      "first_ts": 1785398400,
-     "last_ts": 1785418533,
-     "minutes_with_print": 309,
-     "pct_of_session_covered": 79.2,
-     "rows": 55916
+     "last_ts": 1785423544,
+     "minutes_with_print": 393,
+     "pct_of_session_covered": 100.8,
+     "rows": 253048
     }
    },
    "gaps": 0,
-   "rows": 780103,
+   "rows": 977235,
    "sessions": 4,
    "zero_byte": false
   },
@@ -213,14 +213,14 @@
     },
     "2026-07-30": {
      "first_ts": 1785398400,
-     "last_ts": 1785418532,
-     "minutes_with_print": 158,
-     "pct_of_session_covered": 40.5,
-     "rows": 6289
+     "last_ts": 1785423543,
+     "minutes_with_print": 242,
+     "pct_of_session_covered": 62.1,
+     "rows": 52853
     }
    },
    "gaps": 0,
-   "rows": 193021,
+   "rows": 239585,
    "sessions": 4,
    "zero_byte": false
   },
@@ -236,14 +236,14 @@
     },
     "2026-07-30": {
      "first_ts": 1785398400,
-     "last_ts": 1785418533,
-     "minutes_with_print": 305,
-     "pct_of_session_covered": 78.2,
-     "rows": 52241
+     "last_ts": 1785423544,
+     "minutes_with_print": 389,
+     "pct_of_session_covered": 99.7,
+     "rows": 264481
     }
    },
    "gaps": 0,
-   "rows": 65236,
+   "rows": 277476,
    "sessions": 2,
    "zero_byte": false
   },
@@ -289,14 +289,14 @@
     },
     "2026-07-30": {
      "first_ts": 1785398400,
-     "last_ts": 1785418533,
-     "minutes_with_print": 268,
-     "pct_of_session_covered": 68.7,
-     "rows": 49867
+     "last_ts": 1785423544,
+     "minutes_with_print": 352,
+     "pct_of_session_covered": 90.3,
+     "rows": 293319
     }
    },
    "gaps": 0,
-   "rows": 793568,
+   "rows": 1037020,
    "sessions": 4,
    "zero_byte": false
   },
@@ -347,6 +347,6 @@
    "zero_byte": true
   }
  },
- "updated": 1785418533,
+ "updated": 1785423544,
  "whale_min_usd": 50000.0
 }

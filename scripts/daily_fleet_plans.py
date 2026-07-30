@@ -228,7 +228,8 @@ def ibkr_chain_stats(sym, spot):
 
 def overnight_stats(t, spot_now):
     d = t.history(period="3mo", interval="1d")
-    if len(d) < 25: return {}
+    if len(d) < 25:
+        return dict(insuficiente=f"solo {len(d)} sesiones diarias (<25)", n_gaps=0, fill_rate=None)
     closes, opens_, highs, lows = d.Close.values, d.Open.values, d.High.values, d.Low.values
     atr = float(np.mean(np.maximum(highs[-15:] - lows[-15:],
                  np.maximum(abs(highs[-15:] - closes[-16:-1]), abs(lows[-15:] - closes[-16:-1])))))
@@ -243,10 +244,12 @@ def overnight_stats(t, spot_now):
             tot += 1
             if (gap_pct >= 0 and lows[i] <= closes[i - 1]) or (gap_pct < 0 and highs[i] >= closes[i - 1]):
                 fills += 1
-    fill_rate = fills / tot * 100 if tot else 50
+    # n<20 -> None, JAMAS 50: un 50 plausible con n=0 se imprimia en el PDF como
+    # "50% de gaps similares hicieron dip" (cazado 2026-07-30, regla 2 de CLAUDE.md).
+    fill_rate = fills / tot * 100 if tot >= 20 else None
     # BB diario
     ma, sd = float(np.mean(closes[-20:])), float(np.std(closes[-20:], ddof=1))
-    pb = (spot_now - (ma - 2 * sd)) / (4 * sd) if sd else 0.5
+    pb = (spot_now - (ma - 2 * sd)) / (4 * sd) if sd else None
     return dict(prev_close=prev_close, atr=atr, gap_pct=gap_pct, ext_atr=ext_atr,
                 fill_rate=fill_rate, n_gaps=tot, bb_lo=ma - 2 * sd, bb_hi=ma + 2 * sd, pb=pb)
 
@@ -483,17 +486,24 @@ def plan_engine(sym, spot, cs, on, wb, ws, kor, fut, meta, vx=None, eur=None, ea
     below_flip = cs["flip"] is not None and spot < cs["flip"]
     lines, score = [], 0
     # apertura: dip de liquidez
+    # SESGO, no probabilidad: es una suma de banderas hecha a mano. Se llamaba
+    # "PROB DIP APERTURA ~X%" en el PDF sin una sola medicion detras (cazado 2026-07-30).
+    fr = on.get("fill_rate")
     dip_p = 50
     if abs(on.get("ext_atr", 0)) > 0.35: dip_p += 15
-    if on.get("fill_rate", 50) > 60: dip_p += 10
+    if fr is not None and fr > 60: dip_p += 10
     if reg == "NEGATIVO": dip_p += 10
     if abs(on.get("gap_pct", 0)) < 0.15: dip_p = 35
     dip_p = min(dip_p, 90)
     gd = "arriba" if on.get("gap_pct", 0) >= 0 else "abajo"
     lines.append(f"APERTURA: gap {on.get('gap_pct',0):+.2f}% ({gd}), expansion {on.get('ext_atr',0):+.2f} ATRs.")
-    lines.append(f"  Historico {sym}: {on.get('fill_rate',50):.0f}% de gaps similares hicieron dip-de-liquidez")
-    lines.append(f"  hasta el cierre previo ({on.get('prev_close',0):.2f}) [n={on.get('n_gaps',0)}].")
-    lines.append(f"  PROB DIP APERTURA ~{dip_p:.0f}% -> PICARO: no perseguir el gap; esperar el flush")
+    if fr is None:
+        lines.append(f"  Historico {sym}: MUESTRA INSUFICIENTE (n={on.get('n_gaps',0)}, hacen falta 20)")
+        lines.append(f"  -> no se publica tasa de dip. Cierre previo {on.get('prev_close',0):.2f}.")
+    else:
+        lines.append(f"  Historico {sym}: {fr:.0f}% de gaps similares hicieron dip-de-liquidez")
+        lines.append(f"  hasta el cierre previo ({on.get('prev_close',0):.2f}) [n={on.get('n_gaps',0)}].")
+    lines.append(f"  SESGO DIP {dip_p:.0f}/100 (HEURISTICO, no medido: suma de banderas) -> PICARO: no perseguir el gap; esperar el flush")
     lines.append(f"  9:30-9:45 y comprar/vender el RECLAIM del cierre previo con print (2 lecturas).")
     if dip_p >= 65: score += 2
     # regimen
