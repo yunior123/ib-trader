@@ -354,3 +354,11 @@
 11:13:08 | 🎈 BB REBOTE | SPCX reventó la banda ABAJO y re-entró en 114.88. Elastico: rebote hacia la media 115.21 si imprime — chico y seguro. prob medida 69 por ciento (n=205). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
 11:15:09 | 🎈 BB BAND-WALK | GOOGL camina la banda ABAJO tambien en 5 minutos (331.67). Continuacion probable — NO hacer fade. prob medida 63 por ciento (n=19). OPCIONES s/d (sin cadena fresca) — default ACCIONES
 11:15:09 | 🎈 BB REBOTE | GLD reventó la banda ABAJO y re-entró en 374.67. Elastico: rebote hacia la media 375.53 si imprime — chico y seguro. prob medida 64 por ciento (n=194). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:16:09 | 🎈 BB REBOTE | SPY reventó la banda ABAJO y re-entró en 735.37. Elastico: rebote hacia la media 735.85 si imprime — chico y seguro. prob medida 72 por ciento (n=213). OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:16:09 | 🎈 BB REBOTE | STX reventó la banda ABAJO y re-entró en 850.71. Elastico: rebote hacia la media 855.22 si imprime — chico y seguro. prob medida 72 por ciento (n=209). [post-squeeze: el fade mejora +11 medido] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:16:55 | 🧱🚀 SPIKE CALLS SPY | SPIKE de calls en SPY EN EL MURO 736: 275 mil contratos, 4 veces su ritmo. Climax contra la pared — rebote a la baja reforzado, probabilidad 62. OPCIONES OK (spread 1%)
+11:17:06 | 🐋📈 ALERTA BALLENA CRECE | Sigue entrando volumen agregado de calls en MU, bajada probable.
+11:17:51 | 🔄 GIRO A CALLS TXN | TXN girando a calls: ratio 0.45 desde 0.78
+11:18:29 | 🚀 SPIKE CALLS SKHY | SPIKE de calls en SKHY: 5 mil contratos, 6 veces su ritmo. Climax comprador — rebote a la baja, probabilidad 57. OPCIONES VETADAS spread 14% — acciones/ETF
+11:19:10 | 🎈 BB REBOTE [VETO medido] | NVDA reventó la banda ABAJO y re-entró en 194.07. Elastico: rebote hacia la media 194.67 si imprime — chico y seguro. prob medida 69 por ciento (n=196). [VETO RSI2 extremo: impulso en curso, 53 por ciento] OPCIONES s/d (sin cadena fresca) — default ACCIONES
+11:24:11 | 🎈 BB REBOTE | MSFT reventó la banda ARRIBA y re-entró en 446.28. Elastico: reversion corta hacia la media 445.26 si imprime — chico y seguro. prob medida 70 por ciento (n=203). OPCIONES s/d (sin cadena fresca) — default ACCIONES

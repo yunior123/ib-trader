@@ -1,31 +1,31 @@
-11:11:47 ±3% ATM volumen dia (expiry por simbolo)
-QQQ volC 805,049 volP 543,073 P/C 0.67 exp 20260730
-SPY volC 999,375 volP 1,314,266 P/C 1.32 exp 20260730
-NVDA volC 344,112 volP 148,929 P/C 0.43 exp 20260731
-TSLA volC 229,807 volP 173,803 P/C 0.76 exp 20260731
-MU volC 67,493 volP 25,902 P/C 0.38 exp 20260731
-SMH volC 7,549 volP 4,135 P/C 0.55 exp 20260731
-AMD volC 42,086 volP 20,310 P/C 0.48 exp 20260731
-AAPL volC 61,834 volP 43,737 P/C 0.71 exp 20260731
-MSFT volC 112,028 volP 52,615 P/C 0.47 exp 20260731
-META volC 30,833 volP 25,149 P/C 0.82 exp 20260731
-AMZN volC 25,077 volP 10,640 P/C 0.42 exp 20260731
-GOOGL volC 33,395 volP 18,332 P/C 0.55 exp 20260731
-INTC volC 51,663 volP 17,474 P/C 0.34 exp 20260731
-TSM volC 6,661 volP 1,924 P/C 0.29 exp 20260731
-ASML volC 689 volP 643 P/C 0.93 exp 20260731
-TXN volC 147 volP 114 P/C 0.78 exp 20260731
-QCOM volC 7,333 volP 6,185 P/C 0.84 exp 20260731
-AVGO volC 7,621 volP 5,173 P/C 0.68 exp 20260731
-NFLX volC 25,986 volP 21,037 P/C 0.81 exp 20260731
-NOK volC 51,954 volP 2,233 P/C 0.04 exp 20260731
-GLD volC 7,482 volP 4,908 P/C 0.66 exp 20260731
-XLK volC 327 volP 176 P/C 0.54 exp 20260731
-EWY volC 1,660 volP 1,719 P/C 1.04 exp 20260731
-DRAM volC 47,012 volP 3,056 P/C 0.07 exp 20260731
-SPCX volC 15,364 volP 19,790 P/C 1.29 exp 20260731
-SKHY volC 6,268 volP 1,851 P/C 0.30 exp 20260731
-LRCX volC 3,382 volP 1,574 P/C 0.47 exp 20260731
-SNDK volC 9,261 volP 4,536 P/C 0.49 exp 20260731
-WDC volC 662 volP 339 P/C 0.51 exp 20260731
-STX volC 490 volP 545 P/C 1.11 exp 20260731
+11:18:47 ±3% ATM volumen dia (expiry por simbolo)
+QQQ volC 780,536 volP 747,917 P/C 0.96 exp 20260730 | UW prem neto $-464,481 BEARISH (call $-216,217 put $248,264) age 51.4s
+SPY volC 1,274,824 volP 1,333,098 P/C 1.05 exp 20260730
+NVDA volC 353,905 volP 157,333 P/C 0.44 exp 20260731 | UW prem neto $-916,784 BEARISH (call $-712,735 put $204,049) age 59.0s
+TSLA volC 197,078 volP 172,454 P/C 0.88 exp 20260731 | UW prem neto $-3,494,213 BEARISH (call $-3,107,994 put $386,219) age 2.8s
+MU volC 69,014 volP 27,140 P/C 0.39 exp 20260731 | UW prem neto $2,979,977 BULLISH (call $7,491,334 put $4,511,357) age 6.6s
+SMH volC 7,632 volP 4,161 P/C 0.55 exp 20260731 | UW prem neto $7,022,027 BULLISH (call $2,992,955 put $-4,029,072) age 10.4s
+AMD volC 44,785 volP 21,940 P/C 0.49 exp 20260731
+AAPL volC 60,752 volP 47,373 P/C 0.78 exp 20260731 | UW prem neto $-162,806 BEARISH (call $-339,549 put $-176,743) age 18.0s
+MSFT volC 109,387 volP 53,881 P/C 0.49 exp 20260731 | UW prem neto $-3,410,991 BEARISH (call $-5,463,359 put $-2,052,368) age 21.8s
+META volC 32,392 volP 27,483 P/C 0.85 exp 20260731
+AMZN volC 25,686 volP 10,861 P/C 0.42 exp 20260731 | UW prem neto $-2,273,789 BEARISH (call $-151,951 put $2,121,838) age 29.4s
+GOOGL volC 34,660 volP 19,068 P/C 0.55 exp 20260731
+INTC volC 68,821 volP 26,557 P/C 0.39 exp 20260731 | UW prem neto $-445,064 BEARISH (call $129,702 put $574,766) age 39.3s
+TSM volC 6,740 volP 1,984 P/C 0.29 exp 20260731 | UW prem neto $1,309,095 BULLISH (call $1,385,857 put $76,762) age 43.2s
+ASML volC 963 volP 624 P/C 0.65 exp 20260731 | UW prem neto $1,639,747 BULLISH (call $1,449,130 put $-190,617) age 47.0s
+TXN volC 258 volP 115 P/C 0.45 exp 20260731
+QCOM volC 4,270 volP 5,984 P/C 1.40 exp 20260731 | UW prem neto $116,976 BULLISH (call $108,588 put $-8,388) age 54.5s
+AVGO volC 7,777 volP 5,394 P/C 0.69 exp 20260731 | UW prem neto $-23,064 BEARISH (call $-37,123 put $-14,059) age 58.3s
+NFLX volC 26,584 volP 21,205 P/C 0.80 exp 20260731
+NOK volC 51,975 volP 2,326 P/C 0.04 exp 20260731 | UW prem neto $-16,124 BEARISH (call $22,972 put $39,096) age 5.9s
+GLD volC 7,646 volP 5,554 P/C 0.73 exp 20260731 | UW prem neto $62,849 BULLISH (call $48,829 put $-14,020) age 9.7s
+XLK volC 334 volP 180 P/C 0.54 exp 20260731 | UW prem neto $11,559 BULLISH (call $29,481 put $17,922) age 13.5s
+EWY volC 1,742 volP 1,721 P/C 0.99 exp 20260731 | UW prem neto $3,950,608 BULLISH (call $3,669,564 put $-281,044) age 17.3s
+DRAM volC 47,506 volP 3,799 P/C 0.08 exp 20260731
+SPCX volC 15,964 volP 20,522 P/C 1.29 exp 20260731 | UW prem neto $-2,445,011 BEARISH (call $580,487 put $3,025,498) age 24.9s
+SKHY volC 11,414 volP 2,914 P/C 0.26 exp 20260731 | UW prem neto $-3,979,870 BEARISH (call $-3,612,072 put $367,798) age 28.7s
+LRCX volC 3,391 volP 1,659 P/C 0.49 exp 20260731 | UW prem neto $1,256,642 BULLISH (call $2,524,610 put $1,267,968) age 33.6s
+SNDK volC 12,351 volP 7,372 P/C 0.60 exp 20260731 | UW prem neto $2,918,492 BULLISH (call $-4,910,584 put $-7,829,076) age 40.1s
+WDC volC 676 volP 348 P/C 0.51 exp 20260731 | UW prem neto $183,922 BULLISH (call $146,573 put $-37,349) age 43.9s
+STX volC 440 volP 564 P/C 1.28 exp 20260731

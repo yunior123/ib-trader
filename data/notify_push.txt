@@ -1,7 +1,3 @@
-14:04:20 | 🟡 NVDA PUT BOUNCE | Con cuidado, put de NVDA: sale muy caro.
-14:08:02 | 🎈 BB BAND-WALK | nflx sigue bajando fuerte.
-14:09:17 | 🚀 SPIKE PUTS INTC | Alto volumen de puts en INTC.
-14:16:03 | 🎈 BB REBOTE | qqq puede subir un poco.
 14:18:03 | 🎈 BB REBOTE | spy puede subir un poco.
 14:22:45 | 🟢📈 PREMIUM ALCISTA AAPL | Alto volumen de calls en AAPL.
 14:31:05 | 🎈 BB REBOTE ⭐[degradada] | nvda puede subir un poco.
@@ -498,3 +494,7 @@
 11:03:58 | 🐺 MANADA A CALLS | Manada de calls. Rebote a la baja.
 11:10:03 | 🚀 SPIKE CALLS TSLA | Alto volumen agregado de calls en TSLA. Retroceso probable por flujo; Bollinger aun no confirma.
 11:15:09 | 🎈 BB BAND-WALK | googl sigue bajando fuerte.
+11:16:09 | 🎈 BB REBOTE | spy puede subir un poco.
+11:16:55 | 🧱🚀 SPIKE CALLS SPY | Alto volumen agregado de calls en SPY. Retroceso probable por flujo; Bollinger aun no confirma.
+11:17:06 | 🐋📈 ALERTA BALLENA CRECE | Alerta ballena, sigue entrando volumen agregado de calls en MU, bajada probable.
+11:18:29 | 🚀 SPIKE CALLS SKHY | Alto volumen agregado de calls en SKHY. Retroceso probable por flujo; Bollinger aun no confirma.

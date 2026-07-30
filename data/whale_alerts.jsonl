@@ -403,3 +403,5 @@
 {"ts":1785422933,"side":"MID","prev":"CALLS","sym":"SPY","pc":0.935,"vc":936147,"vp":875531,"spot":736.905}
 {"ts":1785423342,"side":"BEAR","prev":"UW_PREMIUM","sym":"QQQ","signed_premium":-15562492.0,"call":-5601403.0,"put":9961089.0}
 {"ts":1785423370,"side":"MID","prev":"CALLS","sym":"AMD","pc":0.626,"vc":31766,"vp":19899,"spot":483.97}
+{"ts":1785424626,"side":"CALLS","prev":"ESCALADA","sym":"MU","pc":0.393,"vc":69014,"vp":27140,"spot":852.7901}
+{"ts":1785425039,"side":"MID","prev":"CALLS","sym":"NVDA","pc":0.707,"vc":237078,"vp":167670,"spot":193.725}

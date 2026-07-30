@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.ibtrader.polychains.intraday</string>
+  <!-- REFRESCO INTRADIA del libro de opciones (Yunior 2026-07-30: "make sure our software
+       updates magnets, walls, gamma flip realtime").
+       El plist hermano solo corre 08:45 y 16:20 -> el chart recomputaba cada 15s pero SOBRE
+       EL LIBRO DE LAS 08:45. Medido hoy 11:20 con QQQ: libro de 2h36min, put wall 650 en
+       pantalla contra 675 real, flip 668.43 vs 670.14, regimen en blanco. Solo el SPOT era
+       vivo; los muros no.
+       Cada 30 min y SOLO en RTH (el portero ./bin/fleet_hours decide). ~1,5 min por corrida,
+       35 simbolos, ~400 paginas; medidas 219 peticiones seguidas sin un 429. -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string><string>-lc</string>
+    <string>cd "$HOME/ib-trader" &amp;&amp; H=$(date +%H%M) &amp;&amp; [ "$H" -ge 0935 ] &amp;&amp; [ "$H" -le 1600 ] &amp;&amp; ./bin/fleet_hours &gt;/dev/null 2&gt;&amp;1 &amp;&amp; ./venv/bin/python -u scripts/poly_chain_archive.py &gt;&gt; poly_chain_archive.log 2&gt;&amp;1</string>
+  </array>
+  <key>StartInterval</key><integer>1800</integer>
+  <key>RunAtLoad</key><false/>
+  <key>StandardErrorPath</key><string>/tmp/ibtrader.polychains.intraday.err</string>
+  <key>StandardOutPath</key><string>/tmp/ibtrader.polychains.intraday.out</string>
+</dict>
+</plist>
