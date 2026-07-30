@@ -405,3 +405,5 @@
 {"ts":1785423370,"side":"MID","prev":"CALLS","sym":"AMD","pc":0.626,"vc":31766,"vp":19899,"spot":483.97}
 {"ts":1785424626,"side":"CALLS","prev":"ESCALADA","sym":"MU","pc":0.393,"vc":69014,"vp":27140,"spot":852.7901}
 {"ts":1785425039,"side":"MID","prev":"CALLS","sym":"NVDA","pc":0.707,"vc":237078,"vp":167670,"spot":193.725}
+{"ts":1785425062,"side":"MID","prev":"CALLS","sym":"MSFT","pc":0.501,"vc":110895,"vp":55527,"spot":444.0}
+{"ts":1785425066,"side":"BEAR","prev":"UW_PREMIUM","sym":"META","signed_premium":-10379973.0,"call":-11238840.0,"put":-858867.0}

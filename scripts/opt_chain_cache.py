@@ -167,8 +167,18 @@ class ChainCache:
             rest = sorted(set(in_band[max_ks:]))
             far = []
             if rest and not narrow:
-                stride = max(1, math.ceil(len(rest) / max_ks))
-                far = rest[::stride][:max_ks]
+                if len(rest) <= max_ks:
+                    far = rest
+                else:
+                    # muestreo que SIEMPRE incluye LOS DOS BORDES de la banda. `rest[::stride]`
+                    # arrancaba en el minimo y el ultimo paso no llegaba al maximo, asi que el
+                    # ancho efectivo se quedaba corto: QQQ 0DTE daba strike_span_pct 0.0979
+                    # contra BAND_FLOOR 0.10 y chart_levels DESCARTABA la cadena IBKR (griegas
+                    # al 100%, 3 min de edad) para caer a un Polygon de 2h36min. Fallaba por
+                    # 0.21pp. Mismo numero de lineas TWS, solo cambia CUALES strikes entran.
+                    idx = sorted({round(i * (len(rest) - 1) / (max_ks - 1))
+                                  for i in range(max_ks)})
+                    far = [rest[i] for i in idx]
             for k in near:
                 for r in ("C", "P"):
                     cons.append(Option(sym, exp, k, r, "SMART",

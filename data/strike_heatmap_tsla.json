@@ -1,72 +1,72 @@
 {
  "$260-$269": {
-  "calls_vol": 49,
-  "puts_vol": 2618,
-  "total": 2667,
+  "calls_vol": 53,
+  "puts_vol": 2586,
+  "total": 2639,
   "dominance": "PUTS",
   "ratio": 0.02
  },
  "$269-$278": {
-  "calls_vol": 85,
-  "puts_vol": 3187,
-  "total": 3272,
+  "calls_vol": 96,
+  "puts_vol": 3220,
+  "total": 3316,
   "dominance": "PUTS",
   "ratio": 0.03
  },
  "$278-$287": {
-  "calls_vol": 320,
-  "puts_vol": 8366,
-  "total": 8686,
+  "calls_vol": 339,
+  "puts_vol": 8462,
+  "total": 8801,
   "dominance": "PUTS",
   "ratio": 0.04
  },
  "$287-$296": {
-  "calls_vol": 21367,
-  "puts_vol": 36330,
-  "total": 57697,
-  "dominance": "PUTS",
-  "ratio": 0.59
- },
- "$296-$305": {
-  "calls_vol": 84617,
-  "puts_vol": 146454,
-  "total": 231071,
+  "calls_vol": 21579,
+  "puts_vol": 37283,
+  "total": 58862,
   "dominance": "PUTS",
   "ratio": 0.58
  },
+ "$296-$305": {
+  "calls_vol": 87012,
+  "puts_vol": 151334,
+  "total": 238346,
+  "dominance": "PUTS",
+  "ratio": 0.57
+ },
  "$305-$314": {
-  "calls_vol": 174012,
-  "puts_vol": 110600,
-  "total": 284612,
+  "calls_vol": 178027,
+  "puts_vol": 113788,
+  "total": 291815,
   "dominance": "CALLS",
-  "ratio": 1.57
+  "ratio": 1.56
  },
  "$314-$323": {
-  "calls_vol": 104108,
-  "puts_vol": 14032,
-  "total": 118140,
+  "calls_vol": 105380,
+  "puts_vol": 14256,
+  "total": 119636,
   "dominance": "CALLS",
-  "ratio": 7.42
+  "ratio": 7.39
  },
  "$323-$332": {
-  "calls_vol": 26555,
-  "puts_vol": 1261,
-  "total": 27816,
+  "calls_vol": 27023,
+  "puts_vol": 1290,
+  "total": 28313,
   "dominance": "CALLS",
-  "ratio": 21.06
+  "ratio": 20.95
  },
  "$332-$341": {
-  "calls_vol": 11957,
-  "puts_vol": 348,
-  "total": 12305,
+  "calls_vol": 12070,
+  "puts_vol": 349,
+  "total": 12419,
   "dominance": "CALLS",
-  "ratio": 34.36
+  "ratio": 34.58
  },
  "$341-$350": {
-  "calls_vol": 6539,
-  "puts_vol": 247,
-  "total": 6786,
+  "calls_vol": 6565,
+  "puts_vol": 253,
+  "total": 6818,
   "dominance": "CALLS",
-  "ratio": 26.47
+  "ratio": 25.95
  }
 }

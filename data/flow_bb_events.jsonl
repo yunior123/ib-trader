@@ -92,3 +92,4 @@
 {"aggregate_volume":275449,"dominant_strike":null,"id":"flow_pulse:SPY:CALLS:1785424615","premium":null,"side":"CALLS","source":"flow_pulse","sym":"SPY","ts":1785424615,"volume_scope":"aggregate_delta"}
 {"aggregate_volume":69014.0,"dominant_strike":850.0,"id":"opt_whale_watch:escalada:MU:CALLS:1785424626","premium":null,"side":"CALLS","source":"opt_whale_watch:escalada","sym":"MU","ts":1785424626.641734,"volume_scope":"aggregate_strikes"}
 {"aggregate_volume":5146,"dominant_strike":null,"id":"flow_pulse:SKHY:CALLS:1785424709","premium":null,"side":"CALLS","source":"flow_pulse","sym":"SKHY","ts":1785424709,"volume_scope":"aggregate_delta"}
+{"aggregate_volume":3125,"dominant_strike":null,"id":"flow_pulse:QCOM:CALLS:1785425092","premium":null,"side":"CALLS","source":"flow_pulse","sym":"QCOM","ts":1785425092,"volume_scope":"aggregate_delta"}

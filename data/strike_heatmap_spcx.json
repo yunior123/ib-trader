@@ -1,72 +1,72 @@
 {
  "$98-$101": {
-  "calls_vol": 56,
-  "puts_vol": 6284,
-  "total": 6340,
+  "calls_vol": 51,
+  "puts_vol": 6580,
+  "total": 6631,
   "dominance": "PUTS",
   "ratio": 0.01
  },
  "$101-$105": {
-  "calls_vol": 11,
-  "puts_vol": 1027,
-  "total": 1038,
+  "calls_vol": 12,
+  "puts_vol": 1153,
+  "total": 1165,
   "dominance": "PUTS",
   "ratio": 0.01
  },
  "$105-$108": {
-  "calls_vol": 191,
-  "puts_vol": 6608,
-  "total": 6799,
+  "calls_vol": 90,
+  "puts_vol": 5795,
+  "total": 5885,
   "dominance": "PUTS",
-  "ratio": 0.03
+  "ratio": 0.02
  },
- "$108-$112": {
-  "calls_vol": 907,
-  "puts_vol": 7999,
-  "total": 8906,
+ "$108-$111": {
+  "calls_vol": 1139,
+  "puts_vol": 9192,
+  "total": 10331,
   "dominance": "PUTS",
-  "ratio": 0.11
+  "ratio": 0.12
  },
- "$112-$115": {
-  "calls_vol": 7308,
-  "puts_vol": 19300,
-  "total": 26608,
+ "$111-$114": {
+  "calls_vol": 2485,
+  "puts_vol": 10175,
+  "total": 12660,
   "dominance": "PUTS",
-  "ratio": 0.38
+  "ratio": 0.24
  },
- "$115-$118": {
-  "calls_vol": 15666,
-  "puts_vol": 16448,
-  "total": 32114,
+ "$114-$118": {
+  "calls_vol": 12789,
+  "puts_vol": 15329,
+  "total": 28118,
   "dominance": "MIXED",
-  "ratio": 0.95
+  "ratio": 0.83
  },
- "$118-$122": {
-  "calls_vol": 15975,
-  "puts_vol": 1570,
-  "total": 17545,
+ "$118-$121": {
+  "calls_vol": 20362,
+  "puts_vol": 3200,
+  "total": 23562,
   "dominance": "CALLS",
-  "ratio": 10.18
+  "ratio": 6.36
  },
- "$122-$125": {
-  "calls_vol": 6574,
-  "puts_vol": 626,
-  "total": 7200,
+ "$121-$124": {
+  "calls_vol": 2274,
+  "puts_vol": 438,
+  "total": 2712,
   "dominance": "CALLS",
-  "ratio": 10.5
+  "ratio": 5.19
  },
- "$125-$129": {
-  "calls_vol": 1884,
-  "puts_vol": 136,
-  "total": 2020,
+ "$124-$128": {
+  "calls_vol": 6165,
+  "puts_vol": 338,
+  "total": 6503,
   "dominance": "CALLS",
-  "ratio": 13.85
+  "ratio": 18.24
  },
- "$129-$132": {
-  "calls_vol": 4919,
-  "puts_vol": 546,
-  "total": 5465,
+ "$128-$131": {
+  "calls_vol": 5756,
+  "puts_vol": 559,
+  "total": 6315,
   "dominance": "CALLS",
-  "ratio": 9.01
+  "ratio": 10.3
  }
 }

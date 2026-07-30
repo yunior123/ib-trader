@@ -49,3 +49,12 @@
       FIX: com.ibtrader.polychains.intraday.plist — cada 30 min en RTH (portero fleet_hours).
       Verificado: tras refrescar, la pantalla paso a PW 675 / abs 680 / flip 670.14 / regimen POS.
       PENDIENTE: subir max_strikes del cache IBKR para que cruce BAND_FLOOR por si solo.
+- [x] "solve those issues nowww" + "build new version when done" (2026-07-30 11:30)
+      opt_chain_cache: el muestreo de la ola 2 (`rest[::stride]`) arrancaba en el minimo y el
+      ultimo paso no llegaba al maximo -> la banda efectiva se quedaba corta. Sustituido por
+      muestreo lineal que SIEMPRE incluye los dos bordes. MISMO numero de lineas TWS.
+      QQQ 0DTE: 32 strikes 621->754 half-span 0.0979 (bajo BAND_FLOOR)
+             -> 35 strikes 585->780 half-span 0.1437 (lo cruza con margen)
+      chart_levels.gen ahora devuelve chain_src=ibkr_tws, edad 8s, griegas 100%.
+      App v10 construida/firmada/relanzada (6 ventanas), 6 bridges 200, daemons vivos,
+      1009 tests OK / 25 skipped.
