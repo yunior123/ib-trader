@@ -716,6 +716,25 @@
 - [x] 2026-07-28 (Yunior): "debug notifications... spanish, simple, real. claude code start should speak spanish. finish all improvements" — hecho: (a) zombi BOLLINGER VIGIA cazado (118 banners fantasma post-cierre, portero RTH en keepalive, commit); (b) arranque Claude Code traducido (echo hook + voz session-start + indice skills + 'Falló el comando'); (c) voz del dia 0 frases en ingles, price_alarm 0 alertas viejas, korea_watch ya fail-loud; (d) capa liquidez en chart delegada a agente; (e) hiro_pulse SUPERADO por la cinta UW (tick opciones IBKR err 10189 = via muerta; UW flow-alerts ya da el flujo firmado)
 # Cierre 2026-07-29 — review all, finish all
 
+- [x] **Órdenes overnight de acciones** — el cliente TWS vendorizado ya envía el campo
+      oficial `includeOvernight` (server 189). Entradas y cierres STK usan
+      `SMART + LMT + DAY + outsideRth + includeOvernight`; opciones permanecen RTH-only y
+      combinaciones/servidores incompatibles fallan antes de `placeOrder`. Verificado contra
+      TWS API 10.37.02, 659 aserciones y cuatro suites ASan/UBSan; cero órdenes transmitidas.
+- [x] **Compass/señales/calibración auditados** — gate corregido a `n_eff`, flags CLI
+      desconocidos fallan ruidoso y la flecha queda neutral sin edge medido. Ninguna celda
+      alcanza aún 30 ensayos efectivos; no se redujo el umbral ni se fabricó confianza.
+- [x] **Skills/plugins pedidos** — 12 skills nuevos (30 contando los 18 previos de la ola) y
+      tres plugins Codex read-only, todos validados con `skill-creator`/`plugin-creator`.
+- [x] **UI profesional + ayudas** — auditoría comparativa entregada; los diez widgets conservan
+      sus botones ⓘ y ahora tienen foco visible, `aria-controls`, `aria-expanded`, diálogo y
+      cierre con Escape, sin inicializador duplicado.
+- [x] **Voz española portable** — Matilda 114/114 viaja offline dentro de la app; build y
+      arranque validan el banco completo. Sin `say`, red, API, muestra ni voz sustituta dentro
+      del bundle; si se corrompe, queda muda y avisa visualmente.
+- [x] **Level 2 IBKR comprobado en vivo/read-only** — QQQ SMART depth devolvió 0 filas y error
+      2152: faltan NASDAQ/BATS/ARCA/NYSE. Recomendación exacta entregada: base Networks A/B/C +
+      TotalView/EDS + ArcaBook; OpenBook/BZX opcionales para cobertura completa. Cero órdenes.
 - [x] **UW + Korea + IBKR + X + seis ventanas + email + árbol SPY** — consolidado y
       verificado: lectura UW/Finviz/options con 10 candidatos por lado y árbol de SPY;
       alarmas temporales Korea activas; flota KRX despierta; posts X forzados a inglés;
