@@ -139,8 +139,11 @@ def build(sym, chain_dir, fri, lw_dates):
     cs, spot, meta, n_cand = gex_snapshot.contracts_from(p)
     if not cs or spot is None:
         return None, "cadena sin contratos usables"
+    # meta["spot_age_s"] es la edad EN EL MOMENTO DE ARCHIVAR: se queda congelada en el
+    # fichero y no crece, asi que condicionarla dejaba la flota con el spot de las 08:45 a
+    # las 09:35 (SPY 734.13 impreso con 735.47 en pantalla). Si hay precio vivo, MANDA.
     lv = live_spot(sym)
-    if lv and lv[2] < 900 and (meta.get("spot_age_s") or 1e9) > 300:
+    if lv and lv[2] < 900:
         spot, meta = lv[0], dict(meta, spot_source=lv[1], spot_age_s=round(lv[2], 1),
                                  spot_archivo=spot)
     fri_c = fri.replace("-", "")

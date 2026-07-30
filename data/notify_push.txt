@@ -469,3 +469,5 @@
 09:31:11 | 🎯 APERTURA FUERA DE BANDA | sndk abrió fuera de rango.
 09:31:11 | 🎯 APERTURA FUERA DE BANDA | wdc abrió fuera de rango.
 09:31:11 | 🎯 APERTURA FUERA DE BANDA | stx abrió fuera de rango.
+09:32:11 | 🎯 RE-ENTRADA A BANDA +VOL | amzn volvió a su rango.
+09:33:14 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks

@@ -12897,3 +12897,34 @@
 {"ts":1785418260,"sym":"TSM","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"NEG","spot":389.2100}
 {"ts":1785418260,"sym":"ASML","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"NEG","spot":1635.4600}
 {"ts":1785418313,"sym":"MSFT","state":"CONTINUACION","dir":"flat","candidate_dir":"flat","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"POS","spot":434.5000}
+{"ts":1785418320,"sym":"MU","state":"CONTINUACION","dir":"up","candidate_dir":"up","signal_kind":"continuation_multitf","prob":null,"prob_source":"sin_medir","fam":1,"regime":"NEG","spot":799.1500}
+{"ts":1785418320,"sym":"MSFT","state":"CAJA / PIN","dir":"flat","candidate_dir":"flat","signal_kind":"unknown","prob":null,"prob_source":"sin_lectura","fam":0,"regime":"POS","spot":437.0600}
+{"ts":1785418320,"sym":"META","state":"CAJA / PIN","dir":"flat","candidate_dir":"flat","signal_kind":"unknown","prob":null,"prob_source":"sin_lectura","fam":0,"regime":"POS","spot":528.4500}
+{"ts":1785418320,"sym":"GOOGL","state":"CAJA / PIN","dir":"flat","candidate_dir":"flat","signal_kind":"unknown","prob":null,"prob_source":"sin_lectura","fam":0,"regime":"POS","spot":333.0000}
+{"ts":1785418320,"sym":"TSM","state":"CONTINUACION","dir":"flat","candidate_dir":"up","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_medir","fam":0,"regime":"NEG","spot":391.3700}
+{"ts":1785418320,"sym":"ASML","state":"CONTINUACION","dir":"up","candidate_dir":"up","signal_kind":"continuation_multitf","prob":null,"prob_source":"sin_medir","fam":1,"regime":"NEG","spot":1645.5200}
+{"ts":1785418320,"sym":"SPCX","state":"CONTINUACION","dir":"up","candidate_dir":"up","signal_kind":"continuation_multitf","prob":null,"prob_source":"sin_medir","fam":1,"regime":"NEG","spot":117.1300}
+{"ts":1785418320,"sym":"SKHY","state":"CONTINUACION","dir":"up","candidate_dir":"up","signal_kind":"continuation_multitf","prob":null,"prob_source":"sin_medir","fam":1,"regime":"NEG","spot":137.8200}
+{"ts":1785418380,"sym":"MU","state":"CONTINUACION","dir":"flat","candidate_dir":"up","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_medir","fam":1,"regime":"NEG","spot":797.2200}
+{"ts":1785418380,"sym":"SMH","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"NEG","spot":527.2100}
+{"ts":1785418380,"sym":"AMD","state":"CONTINUACION","dir":"flat","candidate_dir":"up","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_medir","fam":0,"regime":"NEG","spot":461.4000}
+{"ts":1785418380,"sym":"AVGO","state":"CONTINUACION","dir":"flat","candidate_dir":"up","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"NEG","spot":380.6000}
+{"ts":1785418380,"sym":"EWY","state":"CONTINUACION","dir":"flat","candidate_dir":"up","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_medir","fam":1,"regime":"NEG","spot":152.5800}
+{"ts":1785418380,"sym":"ASML","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"NEG","spot":1631.9500}
+{"ts":1785418380,"sym":"SKHY","state":"CONTINUACION","dir":"flat","candidate_dir":"up","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_medir","fam":1,"regime":"NEG","spot":137.4000}
+{"ts":1785418381,"sym":"TSM","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"NEG","spot":391.1900}
+{"ts":1785418440,"sym":"INTC","state":"CONTINUACION","dir":"flat","candidate_dir":"up","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_medir","fam":1,"regime":"NEG","spot":87.4100}
+{"ts":1785418440,"sym":"TSM","state":"CONTINUACION","dir":"up","candidate_dir":"up","signal_kind":"continuation_multitf","prob":null,"prob_source":"sin_medir","fam":1,"regime":"NEG","spot":392.6400}
+{"ts":1785418440,"sym":"DRAM","state":"CONTINUACION","dir":"flat","candidate_dir":"up","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_medir","fam":0,"regime":"NEG","spot":48.2000}
+{"ts":1785418440,"sym":"SPCX","state":"CONTINUACION","dir":"flat","candidate_dir":"up","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_medir","fam":0,"regime":"NEG","spot":115.6800}
+{"ts":1785418440,"sym":"LRCX","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"NEG","spot":299.0600}
+{"ts":1785418440,"sym":"QQQ","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"NEG","spot":673.9900}
+{"ts":1785418440,"sym":"GLD","state":"CONTINUACION","dir":"flat","candidate_dir":"up","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"NEG","spot":374.2200}
+{"ts":1785418500,"sym":"QQQ","state":"CONTINUACION","dir":"flat","candidate_dir":"up","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_medir","fam":1,"regime":"NEG","spot":674.6600}
+{"ts":1785418500,"sym":"TSLA","state":"CONTINUACION","dir":"flat","candidate_dir":"up","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"NEG","spot":304.0100}
+{"ts":1785418500,"sym":"META","state":"CAJA / PIN","dir":"flat","candidate_dir":"up","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"POS","spot":532.1400}
+{"ts":1785418500,"sym":"TSM","state":"CONTINUACION","dir":"flat","candidate_dir":"up","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_medir","fam":0,"regime":"NEG","spot":392.1900}
+{"ts":1785418500,"sym":"AVGO","state":"CONTINUACION","dir":"up","candidate_dir":"up","signal_kind":"continuation_multitf","prob":null,"prob_source":"sin_medir","fam":1,"regime":"NEG","spot":381.8600}
+{"ts":1785418500,"sym":"SPCX","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"NEG","spot":114.2700}
+{"ts":1785418500,"sym":"WDC","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"NEG","spot":510.4100}
+{"ts":1785418500,"sym":"GLD","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"countertrend_pullback_candidate","prob":null,"prob_source":"sin_edge","fam":0,"regime":"NEG","spot":373.8400}

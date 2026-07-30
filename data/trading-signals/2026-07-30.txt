@@ -55,3 +55,5 @@
 09:31:11 | 🎯 APERTURA FUERA DE BANDA | SNDK abrio 1135.03 arriba de la banda 15m (1103.99). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
 09:31:11 | 🎯 APERTURA FUERA DE BANDA | WDC abrio 511.65 arriba de la banda 15m (494.13). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
 09:31:11 | 🎯 APERTURA FUERA DE BANDA | STX abrio 878.80 arriba de la banda 15m (813.71). Patron medido: 60 por ciento se acerca en 30 minutos. Esperar la re-entrada impresa, no perseguir
+09:32:11 | 🎯 RE-ENTRADA A BANDA +VOL | AMZN imprimio re-entrada en 231.24. Target la media 229.61, prob medida 56 por ciento. Volumen CONFIRMA (x9.6 la MA50, +10pp medido) Contexto, no gatillo: pedir confluencia. OPCIONES s/d (sin cadena fresca) — default ACCIONES
+09:33:14 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks

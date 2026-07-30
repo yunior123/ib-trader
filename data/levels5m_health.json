@@ -1,111 +1,111 @@
 {
- "bytes_today": 1987408,
+ "bytes_today": 2981112,
  "date": "2026-07-30",
  "projected_mb_day": 77.51,
- "rows_today": 60,
+ "rows_today": 90,
  "skipped_already_done": [],
- "slot": "0930",
- "slots_today": 2,
+ "slot": "0935",
+ "slots_today": 3,
  "stale": [
   {
-   "age_s": 61851,
+   "age_s": 62151,
    "sym": "AMD"
   },
   {
-   "age_s": 102816,
+   "age_s": 103116,
    "sym": "AMZN"
   },
   {
-   "age_s": 102813,
+   "age_s": 103113,
    "sym": "ASML"
   },
   {
-   "age_s": 102811,
+   "age_s": 103111,
    "sym": "AVGO"
   },
   {
-   "age_s": 102808,
+   "age_s": 103108,
    "sym": "DRAM"
   },
   {
-   "age_s": 102809,
+   "age_s": 103109,
    "sym": "EWY"
   },
   {
-   "age_s": 102810,
+   "age_s": 103110,
    "sym": "GLD"
   },
   {
-   "age_s": 45240,
+   "age_s": 45540,
    "sym": "GOOGL"
   },
   {
-   "age_s": 102814,
+   "age_s": 103114,
    "sym": "INTC"
   },
   {
-   "age_s": 102806,
+   "age_s": 103106,
    "sym": "LRCX"
   },
   {
-   "age_s": 61948,
+   "age_s": 62248,
    "sym": "META"
   },
   {
-   "age_s": 78743,
+   "age_s": 79043,
    "sym": "NFLX"
   },
   {
-   "age_s": 2276,
+   "age_s": 2576,
    "sym": "NOK"
   },
   {
-   "age_s": 102812,
+   "age_s": 103112,
    "sym": "QCOM"
   },
   {
-   "age_s": 102807,
+   "age_s": 103107,
    "sym": "SKHY"
   },
   {
-   "age_s": 102806,
+   "age_s": 103106,
    "sym": "SNDK"
   },
   {
-   "age_s": 102808,
+   "age_s": 103108,
    "sym": "SPCX"
   },
   {
-   "age_s": 4910,
+   "age_s": 5210,
    "sym": "SPY"
   },
   {
-   "age_s": 102804,
+   "age_s": 103104,
    "sym": "STX"
   },
   {
-   "age_s": 102820,
+   "age_s": 103120,
    "sym": "TSLA"
   },
   {
-   "age_s": 102814,
+   "age_s": 103114,
    "sym": "TSM"
   },
   {
-   "age_s": 102813,
+   "age_s": 103113,
    "sym": "TXN"
   },
   {
-   "age_s": 102805,
+   "age_s": 103105,
    "sym": "WDC"
   },
   {
-   "age_s": 102809,
+   "age_s": 103109,
    "sym": "XLK"
   }
  ],
  "syms_expected": 30,
- "ts": 1785418250,
+ "ts": 1785418550,
  "unreadable": [],
  "written": [
   "AAPL",

@@ -357,3 +357,6 @@
 {"ts":1785418277,"side":"MID","prev":"CALLS","sym":"AMZN","pc":0.321,"vc":1921,"vp":616,"spot":233.01}
 {"ts":1785418299,"side":"MID","prev":"PUTS","sym":"QCOM","pc":8.905,"vc":21,"vp":187,"spot":149.17}
 {"ts":1785418315,"side":"MID","prev":"CALLS","sym":"GLD","pc":1.971,"vc":70,"vp":138,"spot":374.08}
+{"ts":1785418336,"side":"MID","prev":"CALLS","sym":"SKHY","pc":0.175,"vc":1008,"vp":176,"spot":137.8678}
+{"ts":1785418341,"side":"MID","prev":"CALLS","sym":"LRCX","pc":2.052,"vc":288,"vp":591,"spot":302.28}
+{"ts":1785418346,"side":"MID","prev":"CALLS","sym":"SNDK","pc":0.274,"vc":430,"vp":118,"spot":1152.37}
