@@ -6,6 +6,17 @@
 
 ## ✅ SESIÓN 2026-07-29
 
+- [x] **Un toque = orden real + cualquier ticker + 6 ventanas (órdenes ~23:20).** Botón
+      COMPRAR/VENDER directo (verde/rojo), sin diálogo de confirmación ni selector
+      FICHA/ARMAR; campo Símbolo editable: el bridge cotiza NBBO REAL de cualquier acción
+      vía IBKR (E2E: TSLL sin ventana → ask 6.78 encolado y el motor lo procesó), opciones
+      del universo vía cadena local. Nuevo cmd `open` en el motor: BUY-only (SELL viaja como
+      close reduce-only), gates decide_entry_side + run_gate exacto + topes por orden y
+      AGREGADO + what-if IBKR antes de placeOrder; sin llave queda DRY anotado. La seguridad
+      vive en el motor, no en clics. NOK fuera del default (6 ventanas); quick-order no arma
+      stop automático y overnight va sin STP hasta 03:50 — dicho en el ticket, no escondido.
+      Motor LIVE ARMADO (doble llave 2026-07-29) al cierre. Release v7.
+
 - [x] **Bug "Revisar · no enviar no hace nada" (reporte NOK en vivo, ~23:05).** Causa raíz
       DOBLE, medida en logs: (1) el bridge devolvía **404 en `/order_ticket_ui.js`** →
       `OrderTicketUI` undefined → el clic moría mudo; (2) los 6 bridges corrían código de las

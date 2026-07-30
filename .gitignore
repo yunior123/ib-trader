@@ -141,3 +141,4 @@ logs/
 *.err
 macapp/.rebuild-pending
 macapp/.rebuild-waiting
+order_engine/commands.jsonl

@@ -127,17 +127,17 @@ console.log(JSON.stringify(sent));
     assert [row["cmd"] for row in sent] == ["order_preflight", "zone", "zone", "zone"]
 
 
-def test_ticket_dialog_accessibility_and_no_one_click_arm():
+def test_ticket_one_tap_contract():
+    # Política 2026-07-29 (orden de Yunior): un toque = orden real, sin diálogo ni
+    # selector FICHA/ARMAR. La seguridad vive en motor (doble llave, gates, what-if).
     html = (ROOT / "charts" / "live.html").read_text(encoding="utf-8")
-    assert 'id="orderconfirm" role="dialog" aria-modal="true"' in html
-    for control in ("zone-inst", "zone-side", "zone-kind", "zone-exp", "zone-qty",
-                    "zone-dest", "zone-strike", "zone-limit"):
+    for control in ("zone-sym", "zone-inst", "zone-side", "zone-kind", "zone-exp",
+                    "zone-qty", "zone-strike", "zone-limit"):
         assert f'for="{control}"' in html
-    assert 'OrderTicketUI.armRequest(orderIntent.zone, true, lastPreflight)' in html
+    assert "zone-dest" not in html
+    assert 'cmd = "quick_order"' in html.replace("d.cmd", "cmd")
     assert "exec: !z.exec" not in html
-    assert 'id="oc-check" type="checkbox"' in html
-    assert 'if (e.key === "Tab" && orderConfirm.classList.contains("on"))' in html
-    assert 'aria-live="assertive"' in html
+    assert "onQuickOrder" in html
 
 
 def test_server_confirmation_token_is_one_time_bound_and_expiring(tmp_path, monkeypatch):

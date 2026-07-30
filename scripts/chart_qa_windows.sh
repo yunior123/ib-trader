@@ -16,7 +16,7 @@ if [[ "$MODE" != live && "$MODE" != mock ]]; then
 fi
 
 if [[ "$MODE" == live ]]; then
-  SYMS=(qqq nvda smh mu aapl msft nok)
+  SYMS=(qqq nvda smh mu aapl msft)   # 6 por defecto (Yunior 2026-07-29); cualquier ticker se compra desde el ticket
 else
   SYMS=(qqq spy nvda mu dram gld)
 fi

@@ -356,7 +356,8 @@
   #zonepop button { border:none; border-radius:5px; padding:6px 7px; font:inherit;
              font-weight:700; cursor:pointer; color:#fff; }
   #zonepop .zactions { display:grid; grid-template-columns:2fr 1fr; gap:5px; }
-  #zone-review { background:#2962ff; }
+  #zone-review { background:#26a69a; font-weight:700; }
+  #zone-review.sellbtn { background:#f23645; }
   #zonepop .zcancel { background:#2a2e39; color:#aeb8ca; }
 
   /* Revisión humana obligatoria: preparar y armar son dos acciones distintas. */
@@ -707,7 +708,8 @@
   <div id="dirarrow"><div class="halo"></div><div class="glyph"></div><div class="pct"></div><div class="ampbar"><i></i><i></i><i></i></div><div class="tgt"></div><div class="st"></div><div class="bq"></div><div class="drv"></div><div class="cap"></div></div>
   <div id="countdown"></div>
   <div id="zonepop">
-    <div class="zph">Preparar ticket @ <span id="zonepop-px">—</span></div>
+    <div class="zph">Orden @ <span id="zonepop-px">—</span></div>
+    <div class="zrow"><label for="zone-sym">Símbolo</label><input id="zone-sym" maxlength="10" autocapitalize="characters" spellcheck="false" placeholder="cualquier ticker"></div>
     <div class="zrow"><label for="zone-inst">Instrumento</label><select id="zone-inst">
       <option value="opt">Opciones</option><option value="stk">Acciones</option>
     </select></div>
@@ -719,13 +721,10 @@
     </select></div>
     <div class="zrow" id="zone-exprow"><label for="zone-exp">Expiry</label><select id="zone-exp"></select></div>
     <div class="zrow"><label for="zone-qty">Cantidad</label><input id="zone-qty" type="number" min="1" max="10000" value="1" inputmode="numeric"></div>
-    <div class="zrow"><label for="zone-dest">Destino</label><select id="zone-dest">
-      <option value="ticket">FICHA · no enviar</option><option value="arm">ARMAR zona · doble llave</option>
-    </select></div>
     <div class="zrow" id="zone-strikerow"><label for="zone-strike">Strike</label><input id="zone-strike" readonly value="—"></div>
-    <div class="zrow"><label for="zone-limit">Límite</label><input id="zone-limit" readonly value="preflight"></div>
+    <div class="zrow"><label for="zone-limit">Límite</label><input id="zone-limit" readonly value="NBBO al enviar"></div>
     <div class="zprev" id="zone-preview">—</div>
-    <div class="zactions"><button id="zone-review">Revisar · no enviar</button><button class="zcancel">Cancelar</button></div>
+    <div class="zactions"><button id="zone-review">COMPRAR</button><button class="zcancel">Cancelar</button></div>
   </div>
   <div id="enginepill" class="hidden"></div>
   <div id="ticketcard">
@@ -2038,7 +2037,7 @@ const zonePrevEl = document.getElementById("zone-preview");
 const zoneInstSel = document.getElementById("zone-inst");
 const zoneSideSel = document.getElementById("zone-side");
 const zoneKindSel = document.getElementById("zone-kind");
-const zoneDestSel = document.getElementById("zone-dest");
+const zoneSymInp = document.getElementById("zone-sym");
 const zoneStrikeInp = document.getElementById("zone-strike");
 const zoneLimitInp = document.getElementById("zone-limit");
 const orderConfirm = document.getElementById("orderconfirm");
@@ -2073,8 +2072,9 @@ function showZonePop(x, y, price) {
     : `<option value="">0DTE</option>`;
   zoneSideSel.value = "buy";
   zoneKindSel.value = "call";
-  zoneDestSel.value = "ticket";
+  zoneSymInp.value = curSym.toUpperCase();
   zoneQtyInp.value = 1;
+  syncOrderBtn();
   const cw = el.clientWidth, ch = el.clientHeight;
   zonepop.style.left = Math.min(Math.max(4, x), cw - 308) + "px";
   zonepop.style.top = Math.min(Math.max(4, y), ch - 330) + "px";
@@ -2105,34 +2105,67 @@ function onOptquote(msg) {
     `<br>Sesión <b>DAY/RTH</b> · límite estimado; el motor lo recalcula al trigger.`;
 }
 function currentOrderDraft() {
-  return { sym: curSym, instrument: zoneInstSel.value, side: zoneSideSel.value,
+  return { sym: (zoneSymInp.value || curSym).trim().toUpperCase(),
+           instrument: zoneInstSel.value, side: zoneSideSel.value,
            kind: zoneKindSel.value, exp: zoneExpSel.value || "",
            price: pendingZonePrice, qty: zoneQtyInp.value };
 }
-let preflightTimer = null;
-document.getElementById("zone-review").addEventListener("click", () => {
-  if (pendingZonePrice == null) {
-    zonePrevEl.textContent = "⛔ Falta el trigger: pulsa 🎯 Ticket y luego clic en el precio del gráfico.";
-    return;
-  }
-  const armNew = zoneDestSel.value === "arm";
-  orderIntent = { phase: armNew ? "arm_new" : "prepare", draft: currentOrderDraft() };
-  if (armNew) {
-    orderIntent.draft.purpose = "arm_new";
-  }
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+const orderBtn = document.getElementById("zone-review");
+function syncOrderBtn() {
+  orderBtn.textContent = zoneSideSel.value === "sell" ? "VENDER" : "COMPRAR";
+  orderBtn.classList.toggle("sellbtn", zoneSideSel.value === "sell");
+}
+zoneSideSel.addEventListener("change", syncOrderBtn);
+// Un toque = orden real (orden de Yunior 2026-07-29): sin diálogo, sin selector.
+// El bridge cotiza el NBBO fresco y encola; ejecuta el motor con su doble llave.
+let quickTimer = null, lastQuickResult = null, quickInFlight = false;
+function quickBtnIdle() {
+  quickInFlight = false;
+  orderBtn.disabled = false;
+  syncOrderBtn();
+}
+orderBtn.addEventListener("click", () => {
+  if (quickInFlight) return;                       // un toque = UNA orden, jamás dos
+  const d = currentOrderDraft();
+  if (!d.sym) { zonePrevEl.textContent = "⛔ Símbolo vacío."; return; }
   if (!ws || ws.readyState !== WebSocket.OPEN) {
     zonePrevEl.textContent = "⛔ Sin conexión al bridge (WebSocket cerrado). Reintenta en unos segundos.";
     return;
   }
-  ws.send(JSON.stringify(OrderTicketUI.preflightRequest(orderIntent.draft)));
-  zonePrevEl.textContent = "⏳ Preflight en curso…";
-  clearTimeout(preflightTimer);
+  d.cmd = "quick_order";
+  ws.send(JSON.stringify(d));
+  quickInFlight = true;
+  orderBtn.disabled = true;
+  orderBtn.textContent = "⏳ ENVIANDO…";
+  zonePrevEl.textContent = `⏳ Cotizando ${d.sym} y enviando ${d.side === "sell" ? "VENTA" : "COMPRA"} ${d.qty}…`;
+  lastQuickResult = null;
+  clearTimeout(quickTimer);
   // Silencio = bridge viejo o caído: decirlo, jamás morir mudo (bug NOK 2026-07-29).
-  preflightTimer = setTimeout(() => {
-    if (orderIntent && !lastPreflight)
-      zonePrevEl.textContent = "⛔ El bridge no respondió al preflight en 6 s: puente desactualizado o caído. Relanza las ventanas (chart_qa_windows.sh).";
-  }, 6000);
+  quickTimer = setTimeout(() => {
+    if (!lastQuickResult) {
+      zonePrevEl.textContent = "⛔ El bridge no respondió en 12 s: puente caído o desactualizado. Relanza las ventanas (chart_qa_windows.sh).";
+      quickBtnIdle();
+    }
+  }, 12000);
 });
+function onQuickOrder(r) {
+  lastQuickResult = r;
+  clearTimeout(quickTimer);
+  quickBtnIdle();
+  if (!zonepop.classList.contains("on")) return;
+  if (!r.ok) {
+    zonePrevEl.innerHTML = "⛔ " + (r.errors || ["error desconocido"]).map(esc).join("<br>⛔ ");
+    return;
+  }
+  const head = r.armed ? "✅ <b>ENVIADA</b> (motor ARMADO)"
+                       : "🟡 ENCOLADA <b>DRY</b> — motor sin doble llave, NO ejecuta";
+  zonePrevEl.innerHTML = `${head}<br>${esc(r.side.toUpperCase())} ${r.qty} × ${esc(r.sym)}` +
+    (r.limit != null ? ` LMT ${Number(r.limit).toFixed(2)}` : "") +
+    ((r.warnings || []).length ? `<br>⚠ ${r.warnings.map(esc).join("<br>⚠ ")}` : "");
+}
 zonepop.querySelector(".zcancel").addEventListener("click", () => {
   hideZonePop(); zoneArmed = false; zonebtn.classList.remove("arm"); el.style.cursor = "";
 });
@@ -2146,7 +2179,6 @@ function closeOrderConfirm() {
 }
 function onOrderPreflight(p) {
   if (!orderIntent) return;
-  clearTimeout(preflightTimer);
   lastPreflight = p;
   const d = p.draft || {};
   if (d.strike != null) zoneStrikeInp.value = d.strike;
@@ -3536,6 +3568,7 @@ function connect() {
     else if (msg.type === "zones") onZones(msg);   // zonas de ejecución (buy/sell + exp/qty/exec/stop)
     else if (msg.type === "optquote") onOptquote(msg);   // previsualización contrato (strike/bid/ask)
     else if (msg.type === "order_preflight") onOrderPreflight(msg);   // revisión humana, sin persistir/ordenar
+    else if (msg.type === "quick_order_result") onQuickOrder(msg);    // un toque = orden real (2026-07-29)
     else if (msg.type === "prob") onProb(msg);   // prob de profit (order_engine) -> chip
     else if (msg.type === "engine") onEngine(msg);   // estado del order_engine (zonas ARMADAS)
     else if (msg.type === "ticket") onTicket(msg);   // ficha 0DTE (order_ticket)

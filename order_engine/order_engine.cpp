@@ -464,6 +464,9 @@ int main(int argc, char** argv) {
     };
     std::map<int, ChaseRec> chase;                               // orderId -> chase
     const oe::ChaseCfg chase_cfg;
+    // quick-orders humanos (cmd "open"): exposición reservada hasta cancel/reject.
+    // Un fill deja el dinero reservado (conservador: el cap agregado nunca sub-cuenta).
+    std::map<int, std::string> open_expo;                        // orderId -> expo key
     auto chase_track = [&chase](int oid, const std::string& sym, const Contract& c,
                                 char side, double lim, long long now_s,
                                 const std::string& label) {
@@ -546,6 +549,14 @@ int main(int argc, char** argv) {
                 if ((ev.kind == ExecReport::FILL && ev.status != "Partial") ||
                     ev.kind == ExecReport::CANCELED || ev.kind == ExecReport::REJECTED)
                     chase.erase(cit);
+            }
+            if (auto oit = open_expo.find(ev.order_id); oit != open_expo.end()) {
+                if (ev.kind == ExecReport::CANCELED || ev.kind == ExecReport::REJECTED) {
+                    expo.release(oit->second);                   // nunca se gastó
+                    open_expo.erase(oit);
+                } else if (ev.kind == ExecReport::FILL && ev.status != "Partial") {
+                    open_expo.erase(oit);                        // gastado de verdad; la reserva queda
+                }
             }
             auto it = oid2zone.find(ev.order_id);
             if (it == oid2zone.end()) continue;
@@ -818,6 +829,93 @@ int main(int argc, char** argv) {
                             }
                             chase_track(oid, csym, cc, side, lim, now_s, "CLOSE");
                             ledger.note("cmd close " + csym + " " + cside + " " + std::to_string(cqty) + " @ " + std::to_string(lim));
+                        } else if (act == "open") {
+                            // quick-order humano (un toque en el cockpit): abrir YA.
+                            // SOLO BUY abre; SELL viaja como "close" reduce-only.
+                            std::string qsym = c.s("sym", ""), qright = c.s("right", ""),
+                                        qexp = c.s("exp", ""), qside = c.s("side", "");
+                            double qstrike = c.n("strike", 0), qlimit = c.n("limit", 0);
+                            int qqty = (int)c.n("qty", 0);
+                            if (qside != "buy") {
+                                ledger.note("cmd open RECHAZADO: solo BUY abre (SELL = close) " + qsym);
+                                continue;
+                            }
+                            bool q_opt = (qstrike > 0 && (qright == "C" || qright == "P"));
+                            if (qsym.empty() || qqty <= 0 || qlimit <= 0 || (q_opt && qexp.empty())) {
+                                ledger.note("cmd open inválido " + qsym); continue;
+                            }
+                            const oe::PosKey qpk = q_opt
+                                ? oe::pos_key_option(qsym, qexp, qstrike, qright)
+                                : oe::pos_key_stock(qsym);
+                            const oe::EntrySideDecision qok =
+                                oe::decide_entry_side(tws.positions(), qpk, qqty, 'B');
+                            if (!qok.ok) {
+                                ledger.note("cmd open RECHAZADO " + qsym + ": " + qok.reason);
+                                continue;
+                            }
+                            if (q_opt) {
+                                // mismo gate que las zonas: cadena fresca, spread, OI, prima<=budget
+                                Chain qch = load_chain(cfg.repo + "/data/opt_chain_" + lower(qsym) + ".txt");
+                                Gate qg = run_gate(qch, qright, qexp, qstrike, 'B',
+                                                   cfg.budget, now_s, /*require_exact_strike=*/true);
+                                if (!qg.go) {
+                                    std::string w; for (auto& s : qg.why) { if (!w.empty()) w += "; "; w += s; }
+                                    ledger.note("cmd open opt VETADO " + qsym + ": " + w);
+                                    std::fprintf(stderr, "[cmd] open VETADO %s: %s\n", qsym.c_str(), w.c_str());
+                                    continue;
+                                }
+                                if (qg.limit < qlimit) qlimit = qg.limit;   // jamás peor que el fresco
+                            }
+                            const double q_cost = q_opt ? qqty * qlimit * 100.0 : qqty * qlimit;
+                            const double q_cap  = q_opt ? (cfg.max_order > 0 ? cfg.max_order : cfg.budget)
+                                                        : cfg.stock_budget;
+                            if (q_cost > q_cap) {
+                                char b[160];
+                                std::snprintf(b, sizeof b, "cmd open VETADO %s: $%.0f > tope $%.0f",
+                                              qsym.c_str(), q_cost, q_cap);
+                                ledger.note(b); std::fprintf(stderr, "[cmd] %s\n", b);
+                                continue;
+                            }
+                            const std::string qkey = "cmd:" + qsym + ":" + std::to_string(now_ms());
+                            if (!expo.reserve(qkey, q_cost)) {
+                                char b[160];
+                                std::snprintf(b, sizeof b, "cmd open VETADO %s: tope AGREGADO $%.0f + $%.0f > $%.0f",
+                                              qsym.c_str(), expo.total(), q_cost, expo.cap);
+                                ledger.note(b); std::fprintf(stderr, "[cmd] %s\n", b);
+                                continue;
+                            }
+                            if (!armed_live(cfg.arm_flag, arm_file)) {
+                                expo.release(qkey);
+                                char b[192];
+                                std::snprintf(b, sizeof b, "cmd open DRY (sin doble llave) %s BUY %d @ %.2f",
+                                              qsym.c_str(), qqty, qlimit);
+                                ledger.note(b); std::fprintf(stderr, "[cmd] %s\n", b);
+                                continue;
+                            }
+                            Contract qc = q_opt ? make_option(qsym, qexp, qstrike, qright)
+                                                : make_stock(qsym);
+                            const oe::OrderSession q_sess = q_opt ? oe::OrderSession::RTH_ONLY
+                                                                  : oe::OrderSession::OVERNIGHT_AND_DAY;
+                            oe::PreflightReport qpf;
+                            if (!tws.preflight_limit(qc, 'B', qqty, qlimit, "OE:WHATIF:OPEN",
+                                                     q_sess, qpf)) {
+                                expo.release(qkey);
+                                ledger.note("cmd open WHAT-IF RECHAZADO " + qsym + ": " + qpf.warning);
+                                std::fprintf(stderr, "[cmd] open WHAT-IF RECHAZADO %s: %s\n",
+                                             qsym.c_str(), qpf.warning.c_str());
+                                continue;
+                            }
+                            int qoid = tws.next_order_id();
+                            if (!tws.place_limit(qc, 'B', qqty, qlimit, qoid, "OE:OPEN", q_sess)) {
+                                expo.release(qkey);
+                                ledger.note("cmd open fallo local " + qsym);
+                                continue;
+                            }
+                            open_expo[qoid] = qkey;
+                            char b[192];
+                            std::snprintf(b, sizeof b, "cmd open %s BUY %d @ %.2f id=%d ($%.0f)",
+                                          qsym.c_str(), qqty, qlimit, qoid, q_cost);
+                            ledger.note(b); std::fprintf(stderr, "[cmd] %s\n", b);
                         }
                     }
                     }  // if last_nl (línea a medio escribir se procesa el próximo ciclo)

@@ -1820,6 +1820,156 @@ def route_order_action(act):
         return {"type": "order_action", "ok": False, "err": str(e)}
 
 
+def _nbbo_good(x):
+    import math
+    return x is not None and isinstance(x, (int, float)) and not math.isnan(float(x)) and float(x) > 0
+
+
+def build_quick_order_cmd(symbol, instrument, side, qty, limit, exp="", strike=None, right=None):
+    """Línea de comando para el motor. BUY abre ('open'); SELL SIEMPRE viaja como
+    'close' reduce-only (el motor jamás abre cortos/naked). Pura y testeable."""
+    base = {"ts": int(time.time() * 1000), "sym": symbol,
+            "secType": "OPT" if instrument == "opt" else "STK",
+            "qty": qty, "exp": exp if instrument == "opt" else "",
+            "strike": float(strike or 0), "right": str(right or "")}
+    if side == "buy":
+        base.update({"act": "open", "side": "buy", "limit": limit})
+    else:
+        base.update({"act": "close", "side": "sell"})
+    return base
+
+
+async def stock_quote(symbol, side):
+    """(precio, fuente, error) para CUALQUIER acción, rápido: stream de mktData con
+    salida temprana al primer NBBO bueno (~1s en sesión), fallback last/close.
+    reqTickersAsync tardaba ~11s fijos -> TimeoutError (bug NOK 2026-07-29)."""
+    try:
+        from ib_async import Stock
+        ib = await _acct_conn()
+        qcs = await asyncio.wait_for(
+            ib.qualifyContractsAsync(Stock(symbol, "SMART", "USD")), 8)
+        if not qcs:
+            return None, None, f"{symbol} no cualifica en IBKR"
+        tk = ib.reqMktData(qcs[0], "", False, False)
+        try:
+            best = None
+            for i in range(35):                     # sale al primer NBBO (~0.4s en sesión)
+                await asyncio.sleep(0.2)
+                q = tk.ask if side == "buy" else tk.bid
+                if _nbbo_good(q):
+                    return float(q), "nbbo", None
+                if best is None:
+                    for cand, name in ((tk.last, "last"), (tk.close, "close")):
+                        if _nbbo_good(cand):
+                            best = (float(cand), name); break
+                if best and i >= 11:                # 2.4s sin NBBO: last/close basta, rápido
+                    return best[0], best[1], None
+            if best:
+                return best[0], best[1], None
+            return None, None, f"sin NBBO/last/close para {symbol} ahora mismo"
+        finally:
+            try: ib.cancelMktData(qcs[0])
+            except Exception: pass
+    except Exception as e:
+        return None, None, f"sin NBBO para {symbol}: {type(e).__name__}"
+
+
+_QUICK_LAST = {}
+
+
+def quick_order_duplicate(symbol, instrument, side, qty, now=None):
+    """Doble toque = dos órdenes REALES. Mismo (sym,inst,side,qty) en <2.5s se ignora."""
+    now = time.monotonic() if now is None else float(now)
+    key = (symbol, instrument, side, int(qty))
+    prev = _QUICK_LAST.get(key)
+    _QUICK_LAST[key] = now
+    return prev is not None and (now - prev) < 2.5
+
+
+async def quick_order(sym, request):
+    """Un toque = orden encolada al motor con su doble llave. El bridge cotiza el
+    NBBO fresco (CUALQUIER acción vía IBKR) o la cadena local (opciones del universo),
+    fija el límite marketable como TOPE humano y encola. JAMÁS coloca él mismo (ley #0)."""
+    symbol = str(request.get("sym") or sym or "").strip().upper()
+    instrument = str(request.get("instrument") or "stk").lower()
+    side = str(request.get("side") or "").lower()
+    kind = str(request.get("kind") or "").lower()
+    exp = str(request.get("exp") or "")
+    try:
+        qty = int(request.get("qty"))
+    except Exception:
+        qty = 0
+    errors = []
+    if not re.fullmatch(r"[A-Z][A-Z0-9.]{0,9}", symbol):
+        errors.append("símbolo inválido")
+    if side not in ("buy", "sell"):
+        errors.append("lado debe ser BUY o SELL")
+    if qty < 1 or qty > 10000:
+        errors.append("cantidad fuera de 1..10000")
+    if instrument not in ("stk", "opt"):
+        errors.append("instrumento inválido")
+    guard = execution_guard_status()
+    account = ib_mode.get_account()
+    if not account:
+        errors.append("cuenta no configurada")
+    if not guard["engine_up"]:
+        errors.append("order_engine APAGADO: no se encola (arrancarlo y re-tocar)")
+    res = {"type": "quick_order_result", "sym": symbol, "side": side, "qty": qty,
+           "instrument": instrument, "armed": guard["double_arm"],
+           "mode": ib_mode.get_mode()}
+    if errors:
+        res.update({"ok": False, "errors": errors})
+        return res
+    if quick_order_duplicate(symbol, instrument, side, qty):
+        res.update({"ok": False, "errors": ["doble toque ignorado: misma orden hace <2.5s"]})
+        return res
+
+    limit = strike = right = None
+    if instrument == "opt":
+        try:
+            level = float(request.get("strike") or request.get("price") or 0)
+        except Exception:
+            level = 0.0
+        contract = None
+        if kind in ("call", "put") and re.fullmatch(r"\d{8}", exp or ""):
+            contract = chain_contract(symbol, level, kind, exp)
+        if not contract:
+            res.update({"ok": False, "errors": [
+                "opción sin cadena local para ese sym/exp (usa un ticker del universo)"]})
+            return res
+        strike, right = contract["strike"], contract["right"]
+        q = contract["ask"] if side == "buy" else contract["bid"]
+        if not _nbbo_good(q):
+            res.update({"ok": False, "errors": ["sin bid/ask válido en la cadena"]})
+            return res
+        limit = round(float(q), 2)
+    else:
+        q, src, err = await stock_quote(symbol, side)
+        if err:
+            res.update({"ok": False, "errors": [err]})
+            return res
+        # colchón para asegurar el fill; ese número ES el tope humano que viaja.
+        # NBBO vivo = 0.1%; last/close (sin NBBO en ese instante) = 0.3% y se avisa.
+        cushion = 0.001 if src == "nbbo" else 0.003
+        limit = round(float(q) * (1 + cushion if side == "buy" else 1 - cushion), 2)
+        if src != "nbbo":
+            res.setdefault("warnings_extra", []).append(
+                f"límite desde {src} (sin NBBO vivo ahora mismo)")
+
+    cmd = build_quick_order_cmd(symbol, instrument, side, qty, limit, exp, strike, right)
+    os.makedirs(os.path.dirname(CMD_PATH), exist_ok=True)
+    with open(CMD_PATH, "a") as f:
+        f.write(json.dumps(cmd) + "\n")
+    warnings = list(res.pop("warnings_extra", []))
+    if not guard["double_arm"]:
+        warnings.append("motor SIN doble llave: el comando quedará DRY (no ejecuta)")
+    if instrument == "stk" and side == "buy":
+        warnings.append("overnight: LMT sin stop nativo hasta 03:50 ET")
+    warnings.append("quick-order no arma stop automático")
+    res.update({"ok": True, "queued": cmd, "limit": limit, "warnings": warnings})
+    return res
+
+
 def engine_state(sym, n=12):
     """Últimas N líneas de order_engine/state/<sym>.jsonl (lo escribe el motor C++). SÓLO
     LECTURA: el chart RELAYA el estado del motor; nunca ejecuta. Degrada a []."""
@@ -2931,6 +3081,12 @@ def create_app(state):
                     q.update({"type": "optquote", "sym": st.sym.upper(),
                               "price": ctl.get("price")})
                     await ws.send_json(q)
+                elif isinstance(ctl, dict) and ctl.get("cmd") == "quick_order":
+                    # Un toque = orden real (orden de Yunior 2026-07-29). El bridge cotiza
+                    # y ENCOLA; ejecuta el motor con doble llave. Cualquier acción; opciones
+                    # del universo con cadena local.
+                    qr = await quick_order(ctl.get("sym") or st.sym, ctl)
+                    await ws.send_json(qr)
                 elif isinstance(ctl, dict) and ctl.get("cmd") == "order_preflight":
                     # Ticket de revisión únicamente: normaliza contrato/límite/sesión y expone
                     # guardas. No escribe zona/comando y jamás toca IBKR.
