@@ -68,3 +68,11 @@
 - [ ] "qué hace gobierno Korea para prevenir drop + Samsung report" — HECHO (arriba)
 - [ ] "mirar TSLA, GOOGL, MSFT, AAPL, NVDA" — EN CURSO (agente noticias overnight)
 - [ ] Yunior mid-turn: "Korea alcanzó picks; probabilidad estadística de pump al cierre sesión coreana viernes dado margin calls" — RESPONDIDO: pump ya ocurrió (bear-mkt rally), zona de agotamiento, no continuación durable
+
+## 2026-07-31 ~00:20 ET — ráfaga Yunior (watch overnight + email refresh)
+- [x] email refrescado overnight + cruces flip + forense AAPL/AMZN + opciones próx sem + Finviz — ENVIADO id 3eae77b8
+- [x] watch 25 min ARMADO (ScheduleWakeup 1500s, SPEC + levels + conids + state); email solo trigger seguro; para 9:30
+- [x] forense HECHO: AAPL=ya lleno (OI pre-cargado+50/50)=cayó por guía; AMZN=fresco(ask+dOI)=popó; regla VOI+OI+agresor
+- [ ] "SPY ya en 744.92, dime con certeza" — responder con convicción honesta (overnight no dispara, print RTH manda)
+- [ ] Yunior: patrón "~12:30 AM se bombea" — MEDIR con timestamps del watch, no afirmar; overnight pump US = AMZN/semis (catalizador nuevo), distinto del agotamiento KRX
+- [ ] si dudas: TradingAgents (DeepSeek) + Finviz técnicos
