@@ -77,16 +77,16 @@
     },
     "2026-07-30": {
      "first_ts": 1785398400,
-     "last_ts": 1785425436,
-     "minutes_with_print": 432,
-     "pct_of_session_covered": 110.8,
-     "rows": 514001
+     "last_ts": 1785446548,
+     "minutes_with_print": 784,
+     "pct_of_session_covered": 201.0,
+     "rows": 910985
     }
    },
    "gaps": 0,
-   "rows": 876729,
+   "rows": 1273713,
    "sessions": 3,
-   "zero_byte": false
+   "zero_byte": true
   },
   "NOK": {
    "absorption_ready": false,
@@ -160,14 +160,14 @@
     },
     "2026-07-30": {
      "first_ts": 1785398400,
-     "last_ts": 1785425436,
-     "minutes_with_print": 424,
-     "pct_of_session_covered": 108.7,
-     "rows": 308268
+     "last_ts": 1785446546,
+     "minutes_with_print": 774,
+     "pct_of_session_covered": 198.5,
+     "rows": 724420
     }
    },
    "gaps": 0,
-   "rows": 1032455,
+   "rows": 1448607,
    "sessions": 4,
    "zero_byte": false
   },
@@ -213,14 +213,14 @@
     },
     "2026-07-30": {
      "first_ts": 1785398400,
-     "last_ts": 1785425436,
-     "minutes_with_print": 273,
-     "pct_of_session_covered": 70.0,
-     "rows": 63537
+     "last_ts": 1785446504,
+     "minutes_with_print": 607,
+     "pct_of_session_covered": 155.6,
+     "rows": 119549
     }
    },
    "gaps": 0,
-   "rows": 250269,
+   "rows": 306281,
    "sessions": 4,
    "zero_byte": false
   },
@@ -236,14 +236,14 @@
     },
     "2026-07-30": {
      "first_ts": 1785398400,
-     "last_ts": 1785425437,
-     "minutes_with_print": 420,
-     "pct_of_session_covered": 107.7,
-     "rows": 294473
+     "last_ts": 1785446545,
+     "minutes_with_print": 772,
+     "pct_of_session_covered": 197.9,
+     "rows": 577585
     }
    },
    "gaps": 0,
-   "rows": 307468,
+   "rows": 590580,
    "sessions": 2,
    "zero_byte": false
   },
@@ -289,14 +289,14 @@
     },
     "2026-07-30": {
      "first_ts": 1785398400,
-     "last_ts": 1785425437,
-     "minutes_with_print": 383,
-     "pct_of_session_covered": 98.2,
-     "rows": 361419
+     "last_ts": 1785446446,
+     "minutes_with_print": 731,
+     "pct_of_session_covered": 187.4,
+     "rows": 854091
     }
    },
    "gaps": 0,
-   "rows": 1105120,
+   "rows": 1597792,
    "sessions": 4,
    "zero_byte": false
   },
@@ -347,6 +347,6 @@
    "zero_byte": true
   }
  },
- "updated": 1785425436,
+ "updated": 1785470753,
  "whale_min_usd": 50000.0
 }

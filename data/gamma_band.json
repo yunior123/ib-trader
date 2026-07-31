@@ -1,34 +1,322 @@
 {
  "generado_por": "scripts/poly_chain_archive.py",
- "asof": "2026-07-30 11:22:39",
+ "asof": "2026-07-30 16:20:05",
  "criterio": "ensanchar x1.5 hasta que la corona nueva aporte <2% de la gamma bruta; suelo 10%, techo 60%",
  "syms": {
   "QQQ": {
    "band": 0.18,
    "convergido": true,
-   "ring_share": 0.00492,
-   "n": 3410,
+   "ring_share": 0.00696,
+   "n": 3434,
    "pages": 15,
-   "spot": 679.7,
-   "asof": "2026-07-30 11:22:39"
+   "spot": 686.5,
+   "asof": "2026-07-30 16:20:05"
   },
   "SPY": {
    "band": 0.18,
    "convergido": true,
-   "ring_share": 0.00405,
-   "n": 3380,
+   "ring_share": 0.00345,
+   "n": 3402,
    "pages": 15,
-   "spot": 735.92,
-   "asof": "2026-07-30 11:22:39"
+   "spot": 743.49,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "NVDA": {
+   "band": 0.405,
+   "convergido": true,
+   "ring_share": 0.00806,
+   "n": 744,
+   "pages": 5,
+   "spot": 196.0,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "TSLA": {
+   "band": 0.6,
+   "convergido": true,
+   "ring_share": 0.00626,
+   "n": 1682,
+   "pages": 8,
+   "spot": 307.37,
+   "asof": "2026-07-30 16:20:05"
   },
   "MU": {
    "band": 0.6,
+   "convergido": true,
+   "ring_share": 0.0131,
+   "n": 3402,
+   "pages": 15,
+   "spot": 893.0,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "SMH": {
+   "band": 0.405,
+   "convergido": true,
+   "ring_share": 0.0045,
+   "n": 2048,
+   "pages": 9,
+   "spot": 540.3,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "AMD": {
+   "band": 0.6,
+   "convergido": true,
+   "ring_share": 0.00865,
+   "n": 2502,
+   "pages": 11,
+   "spot": 487.14,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "AAPL": {
+   "band": 0.27,
+   "convergido": true,
+   "ring_share": 0.00493,
+   "n": 830,
+   "pages": 5,
+   "spot": 335.2,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "MSFT": {
+   "band": 0.27,
+   "convergido": true,
+   "ring_share": 0.01184,
+   "n": 1172,
+   "pages": 6,
+   "spot": 449.32,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "META": {
+   "band": 0.6,
+   "convergido": true,
+   "ring_share": 0.00781,
+   "n": 2392,
+   "pages": 11,
+   "spot": 542.5,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "AMZN": {
+   "band": 0.405,
+   "convergido": true,
+   "ring_share": 0.00496,
+   "n": 916,
+   "pages": 6,
+   "spot": 256.95,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "GOOGL": {
+   "band": 0.27,
+   "convergido": true,
+   "ring_share": 0.01751,
+   "n": 842,
+   "pages": 5,
+   "spot": 333.61,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "INTC": {
+   "band": 0.6,
    "convergido": false,
-   "ring_share": 0.02047,
-   "n": 3366,
-   "pages": 18,
-   "spot": 852.2,
-   "asof": "2026-07-30 11:22:39"
+   "ring_share": 0.0226,
+   "n": 1360,
+   "pages": 7,
+   "spot": 91.78,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "TSM": {
+   "band": 0.405,
+   "convergido": true,
+   "ring_share": 0.00654,
+   "n": 688,
+   "pages": 5,
+   "spot": 404.83,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "ASML": {
+   "band": 0.6,
+   "convergido": true,
+   "ring_share": 0.00439,
+   "n": 2090,
+   "pages": 9,
+   "spot": 1663.96,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "TXN": {
+   "band": 0.405,
+   "convergido": true,
+   "ring_share": 0.01427,
+   "n": 554,
+   "pages": 4,
+   "spot": 276.52,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "QCOM": {
+   "band": 0.6,
+   "convergido": false,
+   "ring_share": 0.02327,
+   "n": 492,
+   "pages": 4,
+   "spot": 151.0,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "AVGO": {
+   "band": 0.405,
+   "convergido": true,
+   "ring_share": 0.01372,
+   "n": 1402,
+   "pages": 7,
+   "spot": 386.74,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "NFLX": {
+   "band": 0.405,
+   "convergido": true,
+   "ring_share": 0.00558,
+   "n": 328,
+   "pages": 4,
+   "spot": 72.5,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "NOK": {
+   "band": 0.6,
+   "convergido": false,
+   "ring_share": 0.02985,
+   "n": 150,
+   "pages": 3,
+   "spot": 9.13,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "GLD": {
+   "band": 0.18,
+   "convergido": true,
+   "ring_share": 0.01605,
+   "n": 1480,
+   "pages": 8,
+   "spot": 377.33,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "XLK": {
+   "band": 0.27,
+   "convergido": true,
+   "ring_share": 0.01495,
+   "n": 598,
+   "pages": 5,
+   "spot": 175.83,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "EWY": {
+   "band": 0.6,
+   "convergido": true,
+   "ring_share": 0.01049,
+   "n": 864,
+   "pages": 6,
+   "spot": 161.56,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "DRAM": {
+   "band": 0.6,
+   "convergido": false,
+   "ring_share": 0.02513,
+   "n": 694,
+   "pages": 5,
+   "spot": 52.75,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "SPCX": {
+   "band": 0.6,
+   "convergido": false,
+   "ring_share": 0.0583,
+   "n": 732,
+   "pages": 5,
+   "spot": 112.54,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "SKHY": {
+   "band": 0.6,
+   "convergido": false,
+   "ring_share": 0.04662,
+   "n": 696,
+   "pages": 5,
+   "spot": 151.74,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "LRCX": {
+   "band": 0.6,
+   "convergido": true,
+   "ring_share": 0.01465,
+   "n": 788,
+   "pages": 5,
+   "spot": 297.72,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "SNDK": {
+   "band": 0.6,
+   "convergido": false,
+   "ring_share": 0.04381,
+   "n": 2370,
+   "pages": 11,
+   "spot": 1323.0,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "WDC": {
+   "band": 0.6,
+   "convergido": false,
+   "ring_share": 0.02923,
+   "n": 1318,
+   "pages": 7,
+   "spot": 544.09,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "STX": {
+   "band": 0.6,
+   "convergido": true,
+   "ring_share": 0.01248,
+   "n": 1582,
+   "pages": 8,
+   "spot": 864.49,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "SPX": {
+   "band": 0.18,
+   "convergido": true,
+   "ring_share": 0.00706,
+   "n": 8048,
+   "pages": 33,
+   "spot": 7437.6299,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "XSP": {
+   "band": 0.18,
+   "convergido": true,
+   "ring_share": 0.00113,
+   "n": 5172,
+   "pages": 23,
+   "spot": 743.76,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "NDX": {
+   "band": 0.18,
+   "convergido": true,
+   "ring_share": 0.0,
+   "n": 8618,
+   "pages": 36,
+   "spot": 28106.3457,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "DIA": {
+   "band": 0.18,
+   "convergido": true,
+   "ring_share": 0.00051,
+   "n": 642,
+   "pages": 5,
+   "spot": 515.41,
+   "asof": "2026-07-30 16:20:05"
+  },
+  "IWM": {
+   "band": 0.18,
+   "convergido": true,
+   "ring_share": 0.00239,
+   "n": 1840,
+   "pages": 9,
+   "spot": 288.57,
+   "asof": "2026-07-30 16:20:05"
   }
  }
 }

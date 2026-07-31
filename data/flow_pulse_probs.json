@@ -212,52 +212,89 @@
     "ok": 0,
     "mfe_ok": 1
    }
+  },
+  "2026-07-30": {
+   "SPIKE_PUTS|normal": {
+    "n": 15,
+    "ok": 7,
+    "mfe_ok": 10
+   },
+   "SPIKE_CALLS|normal": {
+    "n": 40,
+    "ok": 20,
+    "mfe_ok": 24
+   },
+   "SPIKE_CALLS|bandwalk": {
+    "n": 5,
+    "ok": 1,
+    "mfe_ok": 3
+   },
+   "CAPITAN_REVIERTE|alza": {
+    "n": 3,
+    "ok": 1,
+    "mfe_ok": 0
+   },
+   "SPIKE_CALLS|override": {
+    "n": 4,
+    "ok": 3,
+    "mfe_ok": 4
+   },
+   "SPIKE_CALLS|muro": {
+    "n": 3,
+    "ok": 2,
+    "mfe_ok": 2
+   },
+   "SPIKE_PUTS|muro": {
+    "n": 1,
+    "ok": 1,
+    "mfe_ok": 0
+   }
   }
  },
  "SPIKE_CALLS|normal": {
-  "n": 87,
-  "ok": 50,
-  "mfe_ok": 51,
-  "raw_pct": 57,
-  "wilson_lo": 47,
+  "n": 127,
+  "ok": 70,
+  "mfe_ok": 75,
+  "raw_pct": 55,
+  "wilson_lo": 46,
   "mfe_pct": 59,
-  "pct": 57
+  "pct": 55
  },
  "SPIKE_CALLS|muro": {
-  "n": 24,
-  "ok": 15,
-  "mfe_ok": 14,
-  "raw_pct": 62,
-  "wilson_lo": 43,
-  "mfe_pct": 58,
-  "pct": 62
+  "n": 27,
+  "ok": 17,
+  "mfe_ok": 16,
+  "raw_pct": 63,
+  "wilson_lo": 44,
+  "mfe_pct": 59,
+  "pct": 63
  },
  "SPIKE_PUTS|normal": {
-  "n": 47,
-  "ok": 29,
-  "mfe_ok": 29,
-  "raw_pct": 62,
-  "wilson_lo": 47,
-  "mfe_pct": 62,
-  "pct": 62
+  "n": 62,
+  "ok": 36,
+  "mfe_ok": 39,
+  "raw_pct": 58,
+  "wilson_lo": 46,
+  "mfe_pct": 63,
+  "pct": 58
  },
  "SPIKE_PUTS|muro": {
-  "n": 40,
-  "ok": 21,
+  "n": 41,
+  "ok": 22,
   "mfe_ok": 23,
-  "raw_pct": 52,
-  "wilson_lo": 37,
-  "mfe_pct": 57,
-  "pct": 52
+  "raw_pct": 54,
+  "wilson_lo": 39,
+  "mfe_pct": 56,
+  "pct": 54
  },
  "SPIKE_CALLS|bandwalk": {
-  "n": 12,
-  "ok": 10,
-  "mfe_ok": 11,
-  "raw_pct": 83,
-  "wilson_lo": 55,
-  "mfe_pct": 92,
-  "pct": 83
+  "n": 17,
+  "ok": 11,
+  "mfe_ok": 14,
+  "raw_pct": 65,
+  "wilson_lo": 41,
+  "mfe_pct": 82,
+  "pct": 65
  },
  "CAPITAN_REVIERTE|baja": {
   "n": 8,
@@ -278,22 +315,22 @@
   "pct": 75
  },
  "CAPITAN_REVIERTE|alza": {
-  "n": 10,
-  "ok": 4,
+  "n": 13,
+  "ok": 5,
   "mfe_ok": 5,
-  "raw_pct": 40,
-  "wilson_lo": 17,
-  "mfe_pct": 50,
-  "pct": 40
+  "raw_pct": 38,
+  "wilson_lo": 18,
+  "mfe_pct": 38,
+  "pct": 38
  },
  "SPIKE_CALLS|override": {
-  "n": 16,
-  "ok": 8,
-  "mfe_ok": 10,
-  "raw_pct": 50,
-  "wilson_lo": 28,
-  "mfe_pct": 62,
-  "pct": 50
+  "n": 20,
+  "ok": 11,
+  "mfe_ok": 14,
+  "raw_pct": 55,
+  "wilson_lo": 34,
+  "mfe_pct": 70,
+  "pct": 55
  },
  "SPIKE_PUTS|bandwalk": {
   "n": 4,
@@ -302,6 +339,6 @@
   "raw_pct": 25,
   "wilson_lo": 5,
   "mfe_pct": 75,
-  "pct": 58
+  "pct": 57
  }
 }

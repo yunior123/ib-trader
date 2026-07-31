@@ -1,9 +1,9 @@
 {
  "abs_wall": 370.0,
  "abs_wall_sign": "-",
- "asof": 1785417123,
+ "asof": 1785441366,
  "band_pct": null,
- "contracts_used": 166,
+ "contracts_used": 149,
  "corr_abs_wall_60d": null,
  "exp_max": 20260731,
  "full_chain": "data/history/2026-07-30/chain_full_gld.json",

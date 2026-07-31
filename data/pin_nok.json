@@ -1,10 +1,10 @@
 {
  "abs_wall": 9.0,
  "abs_wall_sign": "+",
- "asof": 1785417123,
+ "asof": 1785441366,
  "band_biased": true,
- "band_pct": 11.111,
- "contracts_used": 34,
+ "band_pct": 11.001,
+ "contracts_used": 36,
  "corr_abs_wall_60d": null,
  "exp_max": 20260731,
  "full_chain": "data/history/2026-07-30/chain_full_nok.json",
@@ -17,11 +17,11 @@
  "p_pin": null,
  "pin": 9.0,
  "reason": null,
- "spot": 8.34,
+ "spot": 9.07,
  "sym": "NOK",
  "verdict": "PIN_DAY",
  "width": 0.5,
- "zero_dte_buy_forbidden": false,
+ "zero_dte_buy_forbidden": true,
  "zone": [
   8.875,
   9.125

@@ -1,9 +1,9 @@
 {
- "abs_wall": 190.0,
- "abs_wall_sign": "-",
- "asof": 1785417123,
+ "abs_wall": 200.0,
+ "abs_wall_sign": "+",
+ "asof": 1785441365,
  "band_biased": true,
- "band_pct": 12.215,
+ "band_pct": 12.832,
  "contracts_used": 82,
  "corr_abs_wall_60d": null,
  "exp_max": 20260731,
@@ -15,12 +15,15 @@
  "oi_in_zone": 191460,
  "oi_src": "polygon_snapshot",
  "p_pin": null,
- "pin": null,
- "reason": "max_pain lejos del abs_wall (197.50 vs 190.00, width 2.50)",
- "spot": 189.85,
+ "pin": 197.5,
+ "reason": null,
+ "spot": 194.14,
  "sym": "NVDA",
- "verdict": "NEUTRAL",
+ "verdict": "PIN_DAY",
  "width": 2.5,
  "zero_dte_buy_forbidden": false,
- "zone": null
+ "zone": [
+  196.875,
+  198.125
+ ]
 }

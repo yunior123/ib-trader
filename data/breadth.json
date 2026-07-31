@@ -1,167 +1,171 @@
 {
  "QQQ": {
   "index": "QQQ",
-  "score": -0.087,
-  "verdict": "ENGRANAJE NEUTRO/MIXTO: componentes divididos \u2014 QQQ sin liderazgo claro",
+  "score": 0.164,
+  "verdict": "ENGRANAJE DEBIL (+0.16): sesgo sin confluencia \u2014 no confirma",
   "aligned_top": [
    "NVDA",
-   "AAPL"
+   "MSFT"
   ],
   "breakdowns": [
+   "AAPL",
    "META",
    "QCOM"
   ],
   "breakouts": [
    "MSFT",
-   "AMZN"
+   "AMZN",
+   "AMD"
   ],
   "components": {
    "NVDA": {
     "w": 9.0,
-    "lean": -0.65,
+    "lean": 0.53,
     "tag": "rango",
-    "gap": -1.43
+    "gap": 2.02
    },
    "MSFT": {
     "w": 8.0,
     "lean": 1.0,
     "tag": "ruptura alcista",
-    "gap": 8.81
+    "gap": 16.7
    },
    "AAPL": {
     "w": 7.5,
-    "lean": -0.78,
-    "tag": "rango",
-    "gap": -1.24
+    "lean": -1.0,
+    "tag": "RUPTURA BAJISTA",
+    "gap": -1.78
    },
    "AMZN": {
     "w": 5.5,
     "lean": 1.0,
     "tag": "ruptura alcista",
-    "gap": 1.65
+    "gap": 5.32
    },
    "AVGO": {
     "w": 5.0,
-    "lean": -0.16,
+    "lean": 0.76,
     "tag": "rango",
-    "gap": -0.26
+    "gap": 4.0
    },
    "META": {
     "w": 4.5,
     "lean": -1.0,
     "tag": "RUPTURA BAJISTA",
-    "gap": -10.29
+    "gap": -9.17
    },
    "GOOGL": {
     "w": 5.0,
-    "lean": 0.75,
+    "lean": -0.55,
     "tag": "rango",
-    "gap": 0.55
+    "gap": -0.52
    },
    "TSLA": {
     "w": 3.0,
-    "lean": -0.58,
+    "lean": 0.65,
     "tag": "rango",
-    "gap": -0.95
+    "gap": 2.61
    },
    "NFLX": {
     "w": 3.0,
-    "lean": -0.64,
+    "lean": -0.44,
     "tag": "rango",
-    "gap": -0.68
+    "gap": -0.91
    },
    "AMD": {
     "w": 2.0,
-    "lean": 0.01,
-    "tag": "rango",
-    "gap": 0.07
+    "lean": 1.0,
+    "tag": "ruptura alcista",
+    "gap": 13.06
    },
    "QCOM": {
     "w": 1.2,
-    "lean": -1.0,
+    "lean": -0.94,
     "tag": "RUPTURA BAJISTA",
-    "gap": -8.25
+    "gap": -1.12
    }
   },
-  "ts": 1785417149
+  "ts": 1785431182
  },
  "SPY": {
   "index": "SPY",
-  "score": -0.038,
-  "verdict": "ENGRANAJE NEUTRO/MIXTO: componentes divididos \u2014 SPY sin liderazgo claro",
+  "score": 0.179,
+  "verdict": "ENGRANAJE DEBIL (+0.18): sesgo sin confluencia \u2014 no confirma",
   "aligned_top": [
    "NVDA",
-   "AAPL"
+   "MSFT"
   ],
   "breakdowns": [
+   "AAPL",
    "META"
   ],
   "breakouts": [
    "MSFT",
-   "AMZN"
+   "AMZN",
+   "AMD"
   ],
   "components": {
    "NVDA": {
     "w": 7.5,
-    "lean": -0.65,
+    "lean": 0.53,
     "tag": "rango",
-    "gap": -1.43
+    "gap": 2.02
    },
    "MSFT": {
     "w": 7.0,
     "lean": 1.0,
     "tag": "ruptura alcista",
-    "gap": 8.81
+    "gap": 16.7
    },
    "AAPL": {
     "w": 6.5,
-    "lean": -0.78,
-    "tag": "rango",
-    "gap": -1.24
+    "lean": -1.0,
+    "tag": "RUPTURA BAJISTA",
+    "gap": -1.78
    },
    "AMZN": {
     "w": 4.0,
     "lean": 1.0,
     "tag": "ruptura alcista",
-    "gap": 1.65
+    "gap": 5.32
    },
    "META": {
     "w": 3.0,
     "lean": -1.0,
     "tag": "RUPTURA BAJISTA",
-    "gap": -10.29
+    "gap": -9.17
    },
    "GOOGL": {
     "w": 4.0,
-    "lean": 0.75,
+    "lean": -0.55,
     "tag": "rango",
-    "gap": 0.55
+    "gap": -0.52
    },
    "AVGO": {
     "w": 2.5,
-    "lean": -0.16,
+    "lean": 0.76,
     "tag": "rango",
-    "gap": -0.26
+    "gap": 4.0
    },
    "TSLA": {
     "w": 2.0,
-    "lean": -0.58,
+    "lean": 0.65,
     "tag": "rango",
-    "gap": -0.95
+    "gap": 2.61
    },
    "AMD": {
     "w": 1.2,
-    "lean": 0.01,
-    "tag": "rango",
-    "gap": 0.07
+    "lean": 1.0,
+    "tag": "ruptura alcista",
+    "gap": 13.06
    },
    "NFLX": {
     "w": 1.5,
-    "lean": -0.64,
+    "lean": -0.44,
     "tag": "rango",
-    "gap": -0.68
+    "gap": -0.91
    }
   },
-  "ts": 1785417150
+  "ts": 1785431183
  }
 }

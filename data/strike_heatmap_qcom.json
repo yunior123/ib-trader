@@ -1,72 +1,72 @@
 {
- "$128-$132": {
-  "calls_vol": 0,
-  "puts_vol": 854,
-  "total": 854,
+ "$129-$133": {
+  "calls_vol": 1,
+  "puts_vol": 1252,
+  "total": 1253,
   "dominance": "PUTS",
   "ratio": 0.0
  },
- "$132-$137": {
-  "calls_vol": 18,
-  "puts_vol": 709,
-  "total": 727,
+ "$133-$138": {
+  "calls_vol": 19,
+  "puts_vol": 4551,
+  "total": 4570,
   "dominance": "PUTS",
-  "ratio": 0.03
+  "ratio": 0.0
  },
- "$137-$141": {
-  "calls_vol": 27,
-  "puts_vol": 2095,
-  "total": 2122,
+ "$138-$142": {
+  "calls_vol": 58,
+  "puts_vol": 4308,
+  "total": 4366,
   "dominance": "PUTS",
   "ratio": 0.01
  },
- "$141-$146": {
-  "calls_vol": 177,
-  "puts_vol": 2794,
-  "total": 2971,
+ "$142-$146": {
+  "calls_vol": 221,
+  "puts_vol": 2831,
+  "total": 3052,
   "dominance": "PUTS",
-  "ratio": 0.06
+  "ratio": 0.08
  },
- "$146-$150": {
-  "calls_vol": 3558,
-  "puts_vol": 6286,
-  "total": 9844,
+ "$146-$151": {
+  "calls_vol": 4008,
+  "puts_vol": 8013,
+  "total": 12021,
   "dominance": "PUTS",
-  "ratio": 0.57
+  "ratio": 0.5
  },
- "$150-$155": {
-  "calls_vol": 1071,
-  "puts_vol": 208,
-  "total": 1279,
+ "$151-$155": {
+  "calls_vol": 9034,
+  "puts_vol": 2011,
+  "total": 11045,
   "dominance": "CALLS",
-  "ratio": 5.15
+  "ratio": 4.49
  },
  "$155-$159": {
-  "calls_vol": 6294,
-  "puts_vol": 929,
-  "total": 7223,
+  "calls_vol": 1474,
+  "puts_vol": 521,
+  "total": 1995,
   "dominance": "CALLS",
-  "ratio": 6.78
+  "ratio": 2.83
  },
  "$159-$164": {
-  "calls_vol": 5117,
-  "puts_vol": 811,
-  "total": 5928,
+  "calls_vol": 8644,
+  "puts_vol": 1123,
+  "total": 9767,
   "dominance": "CALLS",
-  "ratio": 6.31
+  "ratio": 7.7
  },
  "$164-$168": {
-  "calls_vol": 3387,
-  "puts_vol": 212,
-  "total": 3599,
+  "calls_vol": 5938,
+  "puts_vol": 396,
+  "total": 6334,
   "dominance": "CALLS",
-  "ratio": 15.98
+  "ratio": 14.99
  },
  "$168-$172": {
-  "calls_vol": 1153,
-  "puts_vol": 138,
-  "total": 1291,
+  "calls_vol": 3510,
+  "puts_vol": 625,
+  "total": 4135,
   "dominance": "CALLS",
-  "ratio": 8.36
+  "ratio": 5.62
  }
 }

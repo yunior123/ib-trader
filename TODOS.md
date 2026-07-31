@@ -58,3 +58,13 @@
       chart_levels.gen ahora devuelve chain_src=ibkr_tws, edad 8s, griegas 100%.
       App v10 construida/firmada/relanzada (6 ventanas), 6 bridges 200, daemons vivos,
       1009 tests OK / 25 skipped.
+
+## 2026-07-31 (madrugada) — petición ráfaga Yunior (plan viernes)
+- [ ] "walls/magnets/gamma flip para MU desde el cierre vía Polygon+UW; qué baja el precio mañana para liquidez y si las barreras se van con el FOMO overnight" — EN CURSO (mapa gamma reconstruido de cierre 2026-07-30)
+- [x] "email con plan actualizado..." — ENVIADO Resend id 4887d5b4 (2026-07-31)
+- [ ] "Korea sentiment vía x.com; qué hace el gobierno para prevenir caída; Samsung report" — HECHO (agente): rebote récord +13-16% KOSPI, F4 manos vacías, Samsung beat HBM
+- [ ] "probabilidades de que la acción caiga mañana en la apertura" — EN CURSO (calib medida = coin-flip en NEG gamma; honest)
+- [ ] "analiza patrones head & shoulders" — HECHO: ningún H&S activo; NVDA+AAPL double_top bajista (WR bajo, contexto)
+- [ ] "qué hace gobierno Korea para prevenir drop + Samsung report" — HECHO (arriba)
+- [ ] "mirar TSLA, GOOGL, MSFT, AAPL, NVDA" — EN CURSO (agente noticias overnight)
+- [ ] Yunior mid-turn: "Korea alcanzó picks; probabilidad estadística de pump al cierre sesión coreana viernes dado margin calls" — RESPONDIDO: pump ya ocurrió (bear-mkt rally), zona de agotamiento, no continuación durable

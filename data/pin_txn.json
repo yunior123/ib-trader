@@ -1,10 +1,10 @@
 {
  "abs_wall": 287.5,
  "abs_wall_sign": "+",
- "asof": 1785417123,
+ "asof": 1785441365,
  "band_biased": true,
- "band_pct": 14.288,
- "contracts_used": 163,
+ "band_pct": 14.777,
+ "contracts_used": 141,
  "corr_abs_wall_60d": null,
  "exp_max": 20260731,
  "full_chain": "data/history/2026-07-30/chain_full_txn.json",

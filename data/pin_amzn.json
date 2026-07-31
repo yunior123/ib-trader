@@ -1,10 +1,10 @@
 {
- "abs_wall": 235.0,
+ "abs_wall": 265.0,
  "abs_wall_sign": "+",
- "asof": 1785417123,
+ "asof": 1785441365,
  "band_biased": true,
- "band_pct": 5.846,
- "contracts_used": 118,
+ "band_pct": 5.798,
+ "contracts_used": 112,
  "corr_abs_wall_60d": null,
  "exp_max": 20260731,
  "full_chain": "data/history/2026-07-30/chain_full_amzn.json",
@@ -15,15 +15,12 @@
  "oi_in_zone": 42633,
  "oi_src": "polygon_snapshot",
  "p_pin": null,
- "pin": 232.5,
- "reason": null,
- "spot": 230.85,
+ "pin": null,
+ "reason": "max_pain lejos del abs_wall (232.50 vs 265.00, width 2.50)",
+ "spot": 237.86,
  "sym": "AMZN",
- "verdict": "PIN_DAY",
+ "verdict": "NEUTRAL",
  "width": 2.5,
  "zero_dte_buy_forbidden": false,
- "zone": [
-  231.875,
-  233.125
- ]
+ "zone": null
 }
