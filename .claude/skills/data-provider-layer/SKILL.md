@@ -119,3 +119,22 @@ NO un proveedor de esta capa. IBKR encaja como `providers/ibkr.py` con `@registe
 el camino vivo). Al existir, `market_source.txt=ibkr` podría unificarse a esta capa. Está pendiente,
 no roto — la capa ya lo contempla (base.py:26-29). Latencia de fuentes: ver skill `gamma-exposure`
 §6 y `docs/LATENCIA-FUENTES.md` (IBKR realtime, Polygon 15min, CBOE delayed).
+
+## 9. Un fallo TRANSITORIO deja un ticker mudo — reintentar (medido 2026-08-02)
+`provider_bridge` no reintentaba la cadena: **un solo `ReadTimeout` dejaba al símbolo sin
+`data/opt_chain_<sym>.txt` toda la sesión**. Cazado por `scripts/e2e_smoke.sh`: NFLX, GLD y XLK
+—los tres en `fleet.txt`, `provider_syms.txt` y `universe_gamma.txt`— sin mapa de opciones, mientras
+Polygon **sí los servía** (`/v3/snapshot/options/<sym>` → 250 resultados). No era del vendor: era
+nuestro. Ahora: 2 intentos con 2 s de espera y, si falla de verdad, `SIN MAPA DE OPCIONES` en el log
+— nunca un hueco callado. Verificado en vivo: 329/315/184 filas y `opt_quick` leyéndolas con el spot
+correcto del cierre del viernes.
+
+**El mismo patrón, en el terminal**: `orchestrator._multi_expiry_chain` usaba
+`return_exceptions=True` y descartaba en silencio los vencimientos caídos → los muros se calculaban
+sobre la cadena superviviente. Con SPY al MISMO spot 744.27: `call_wall` 775 → 700 y `flip` 729.98 →
+647.68 entre dos refrescos. Ahora reintenta, **LEVANTA si la cobertura baja de la mitad** (que
+`_with_fallback` lo declare `connected=False`) y grita si sirve con huecos.
+
+**Regla que se deriva:** en esta capa un `except` que sigue adelante sin reintentar produce un
+DENOMINADOR FABRICADO — el mapa parcial tiene exactamente la misma pinta que el completo. O se
+reintenta, o se levanta, o se declara el hueco. Nunca las tres cosas en silencio.

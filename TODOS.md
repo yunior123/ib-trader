@@ -146,7 +146,44 @@
       ⚠️ PENDIENTE LUNES: el replay de EQUITIES_EDGE trae **solo trades, 0 quotes** → confirmar si el
       socket vivo emite NBBO; si no, no hay bid/ask de Intrinio y el gate de spread se queda ciego.
       Y medir la ventana horaria exacta de encendido (no está documentada).
-- [ ] "solve all todos, new features too with fresh agents" (2026-08-02 02:05) — EN CURSO: barrido
-      de todo lo `[ ]` de este fichero con agentes frescos en paralelo + features nuevas.
+- [ ] "do all todos and remaining work, no excuses. investigate in github, web, reddit, stackoverflow,
+      etc" (2026-08-02 03:45) — EN CURSO: los 40 problemas de las revisiones + investigacion externa.
+- [ ] "solve and investigate all not solved bugs or issues" (2026-08-02 03:40) — EN CURSO: barrido
+      de TODOS los problemas medio/bajo que las revisiones adversariales dejaron sin arreglar +
+      caza de bugs nueva (skill bug-hunter) con agentes frescos.
+
+### Hallazgos del arnés E2E (lote L6) — arreglados por el orquestador 2026-08-02 03:30
+- [x] **Niveles del terminal NO deterministas** (era el peor: son números que disparan órdenes).
+      `_multi_expiry_chain` usaba `return_exceptions=True` y **descartaba en silencio** los
+      vencimientos que fallaban → el mapa se calculaba sobre la cadena que sobrevivía. Medido con
+      SPY al MISMO spot 744.27: una corrida daba call_wall 775 / flip 729.98 (4 exps) y la siguiente
+      call_wall 700 / flip 647.68 (3 exps). Ahora: reintenta los caídos; si la cobertura queda por
+      debajo de la mitad LEVANTA (lo declara `_with_fallback`, connected=False) en vez de servir un
+      mapa parcial con la misma pinta que el bueno; si sobrevive con huecos, ERROR en el log diciendo
+      que los muros NO son comparables entre refrescos. 5 tests.
+- [x] **NFLX, GLD y XLK sin cadena de opciones** (3 de los 26 símbolos, mudos en el mapa). NO era
+      del vendor: Polygon los servía. `provider_bridge` no reintentaba, así que **un solo ReadTimeout
+      dejaba al símbolo sin mapa toda la sesión**. Ahora reintenta 1 vez y, si falla de verdad, grita
+      "SIN MAPA DE OPCIONES" en vez de dejar un hueco callado. Verificado en vivo: los 3 escritos
+      (NFLX 329 / GLD 315 / XLK 184 líneas) y leídos por `opt_quick` con spot correcto contra el
+      cierre del viernes (NFLX 71.70, GLD 371.10, XLK 174.89). 3 tests.
+- [ ] PENDIENTE LUNES (no verificable con el mercado cerrado): frescura real de barras/nbbo, latencia
+      de Intrinio en vivo, y que `reversal_router` salga de INSUFFICIENT_DATA (necesita ~15 sesiones
+      RTH; hoy SPY tiene 156 barras 5m de las 260 que pide). Correr `zsh scripts/e2e_smoke.sh` tras
+      la apertura: los mismos 9 pasos sirven de sonda viva.
+
+- [x] "solve all todos, new features too with fresh agents" (2026-08-02 02:05) — HECHO: triaje +
+      6 lotes con agentes frescos (ficheros disjuntos) + revisión adversarial de cada uno.
+      18 peticiones CADUCADAS con motivo (puntuales de sesiones pasadas o ya hechas sin marcar);
+      6 lotes de trabajo real cerrados: L1 korea_pct, L2 BAND_FLOOR, L3 impresiones automatizadas,
+      L4 gradación de reversal_router (FAIL medido, wired:false), L5 TRACE con eje de tiempo real,
+      L6 arnés E2E (9/9 PASS con mercado cerrado).
+      Las revisiones cazaron 3 fallos graves que arreglé yo: colisión de las 09:12 entre
+      printpremarket y el APERTURA de dailyplans; el plan "actualizado" de las 16:25 dibujando un
+      gex_snapshot de 41,9 h; y un data/history/<domingo> de una corrida en seco que habría
+      desplazado al viernes real en skew.py (--archive ahora EXIGE --market-day).
+      NOTA: la revisión adversarial de L6 no llegó a correr (límite de sesión del agente); lo
+      verifiqué yo a mano ejecutando el arnés. De 25 pendientes quedan 3.
+      TODOS.md pasó de 25 a 3 pendientes. Suite 1023 -> 1213 tests.
 
 - [ ] "check dre image (desktop, SpotGamma TRACE); net OI mostrar movimiento realtime con WICKS (velas sobre el mapa); copiar las mejores features de SpotGamma si no las tenemos" (2026-08-01) — PENDIENTE tras widget #1. Features a copiar: (a) Net OI by Strike (barras call+/put-), (b) heatmap TIEMPO×STRIKE Delta-Pressure/GEX divergente, (c) VELAS con wicks superpuestas en eje precio (bars 1m), (d) líneas Call/Put/Hedge Wall + Gamma Flip + Implied move + Last Close (gex_core), (e) scrubber de tiempo. Dos mapas: strike×expiry (post X) + strike×hora+velas+HIRO (TRACE). drew.png=modo GEX, dre.png=modo NetOI/DeltaPressure: MISMO widget con toggle de métrica. refs en backup/spotgamma_trace_*.png

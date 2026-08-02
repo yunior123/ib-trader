@@ -1,25 +1,25 @@
 {
-  "generated_epoch": 1785655154,
-  "generated": "2026-08-02T03:19:14-0400",
+  "generated_epoch": 1785655490,
+  "generated": "2026-08-02T03:24:50-0400",
   "market_state": "DEAD",
   "steps": [
     {
       "id": "1",
       "name": "portero fleet_hours",
       "status": "PASS",
-      "evidence": "state=DEAD live=False now=dom 2026-08-02 03:12 EDT window=dom20:00-vie20:00 detail=faltan 16h47m para el arranque (dom 20:00) "
+      "evidence": "state=DEAD live=False now=dom 2026-08-02 03:23 EDT window=dom20:00-vie20:00 detail=faltan 16h36m para el arranque (dom 20:00) "
     },
     {
       "id": "2",
       "name": "contrato ficheros vivos (bars/nbbo/chain)",
       "status": "PASS",
-      "evidence": "26 syms | 75 ficheros validos | edad 78-2106 min (viejo=chain_TXN) | faltan 3: opt_chain_nflx.txt, opt_chain_gld.txt, opt_chain_xlk.txt (con mercado cerrado la edad alta es correcta; lo que no vale es malformado) "
+      "evidence": "26 syms | 75 ficheros validos | edad 89-2117 min (viejo=chain_TXN) | faltan 3: opt_chain_nflx.txt, opt_chain_gld.txt, opt_chain_xlk.txt (con mercado cerrado la edad alta es correcta; lo que no vale es malformado) "
     },
     {
       "id": "3",
       "name": "opt_quick sobre cadena real",
       "status": "PASS",
-      "evidence": "AAPL: AAPL | spot 308.92 | cache 2026-07-31 16:07:16  (edad 2105m21s)  ** CACHE VIEJO ** | exps 20260731 20260803 "
+      "evidence": "AAPL: AAPL | spot 308.92 | cache 2026-07-31 16:07:16  (edad 2116m22s)  ** CACHE VIEJO ** | exps 20260731 20260803 "
     },
     {
       "id": "4",
@@ -37,7 +37,7 @@
       "id": "6",
       "name": "terminal mit (gex_heatmap + trace)",
       "status": "PASS",
-      "evidence": "puerto 57189: heatmap 152 strikes x 4 exps, 497 celdas, spot 744.27 | trace 152 strikes, 85 velas, call_wall=775.0 put_wall=360.0 flip=729.9815884819166 max_pain=725.0 | screenshot data/e2e_shots/mit_terminal.png (235365 bytes, PNG completo) "
+      "evidence": "puerto 58306: heatmap 152 strikes x 4 exps, 497 celdas, spot 744.27 | trace 152 strikes, 85 velas, call_wall=775.0 put_wall=360.0 flip=729.9783250061263 max_pain=725.0 | screenshot data/e2e_shots/mit_terminal.png (275377 bytes, PNG completo) "
     },
     {
       "id": "7",
@@ -48,20 +48,20 @@
     {
       "id": "8",
       "name": "suite base pytest tests/",
-      "status": "PASS",
-      "evidence": "1205 passed, 18 skipped in 295.29s (0:04:55) "
+      "status": "SKIPPED",
+      "evidence": "--fast: suites omitidas a peticion "
     },
     {
       "id": "9",
       "name": "suite mit backend/tests",
-      "status": "PASS",
-      "evidence": "33 passed, 12 warnings in 35.88s "
+      "status": "SKIPPED",
+      "evidence": "--fast: suites omitidas a peticion "
     }
   ],
   "summary": {
-    "pass": 9,
+    "pass": 7,
     "fail": 0,
-    "skipped": 0,
+    "skipped": 2,
     "total": 9
   }
 }

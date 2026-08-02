@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import hashlib
+import logging
 import time
 from datetime import UTC, datetime
 from typing import Awaitable, Callable, TypeVar
@@ -29,6 +30,8 @@ from backend.app.domain import (
 )
 from backend.app.engine.event_bus import EventBus
 from backend.app.providers.registry import ProviderSet
+
+_log = logging.getLogger("mit.orchestrator")
 
 T = TypeVar("T")
 
@@ -231,13 +234,37 @@ class MarketIntelligenceEngine:
         exps = (await get_exps(symbol))[:max_expiries]
         if not exps:
             return await opt.get_option_chain(symbol)
-        chains = await asyncio.gather(
-            *(opt.get_option_chain(symbol, expiration=datetime(e.year, e.month, e.day)) for e in exps),
-            return_exceptions=True,
-        )
+
+        async def _una(e):
+            return await opt.get_option_chain(symbol, expiration=datetime(e.year, e.month, e.day))
+
+        chains = await asyncio.gather(*(_una(e) for e in exps), return_exceptions=True)
+
+        # Un vencimiento que falla desaparecia EN SILENCIO y los muros se calculaban sobre la
+        # cadena que sobrevivio: medido el 2026-08-02 con SPY al mismo spot 744.27 -> una corrida
+        # daba call_wall 775 / flip 729.98 con 4 vencimientos y la siguiente call_wall 700 /
+        # flip 647.68 con 3. Un nivel que parpadea entre refrescos es peor que no tener nivel.
+        fallidos = [(e, r) for e, r in zip(exps, chains) if isinstance(r, Exception)]
+        if fallidos:
+            _log.warning("%s: %d/%d vencimientos fallaron, reintentando: %s", symbol,
+                         len(fallidos), len(exps), [str(e) for e, _ in fallidos])
+            reintento = await asyncio.gather(*(_una(e) for e, _ in fallidos), return_exceptions=True)
+            porexp = dict(zip(exps, chains))
+            porexp.update({e: r for (e, _), r in zip(fallidos, reintento)})
+            chains = [porexp[e] for e in exps]
+            fallidos = [(e, r) for e, r in zip(exps, chains) if isinstance(r, Exception)]
+
         merged = [c for r in chains if not isinstance(r, Exception) for c in r]
-        if not merged:  # todas fallaron: fail-loud hacia el _with_fallback
-            raise chains[0] if isinstance(chains[0], Exception) else RuntimeError(f"{symbol}: sin cadena")
+        vivos = len(exps) - len(fallidos)
+        if not merged or vivos * 2 < len(exps):
+            # Cobertura por debajo de la mitad: el mapa ya no describe el mismo libro. Se levanta
+            # para que _with_fallback lo declare (connected=False) en vez de servir un mapa parcial
+            # como si fuera completo.
+            primera = fallidos[0][1] if fallidos else RuntimeError(f"{symbol}: sin cadena")
+            raise primera
+        if fallidos:
+            _log.error("%s: mapa con %d/%d vencimientos (faltan %s) — muros NO comparables entre "
+                       "refrescos", symbol, vivos, len(exps), [str(e) for e, _ in fallidos])
         return merged
 
     async def _weekly_map(self, current_symbol: str, current_bars: list[Bar]):

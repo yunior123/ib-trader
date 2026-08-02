@@ -240,12 +240,24 @@ async def one_pass(providers, settings, syms, last_ep, exch_ts, do_warmup, do_ch
         except Exception as e:
             log(f"{sym}: QUOTE error {_scrub(e)}")
         if do_chain:
-            try:
-                chain = await providers.options.get_option_chain(sym)
-                n = write_chain(sym, chain, spot or _spot_from_chain(chain), settings.options_provider)
-                log(f"{sym}: cadena {n} filas -> opt_chain_{sym.lower()}.txt")
-            except Exception as e:
-                log(f"{sym}: CHAIN error {_scrub(e)}")
+            # Un ReadTimeout puntual dejaba al simbolo SIN cadena toda la sesion (medido
+            # 2026-08-02: NFLX/GLD/XLK sin opt_chain_*.txt mientras Polygon si los servia).
+            # Un simbolo de la flota sin mapa de opciones no es un error transitorio: es un
+            # ticker mudo. Se reintenta una vez antes de darlo por perdido.
+            for intento in (1, 2):
+                try:
+                    chain = await providers.options.get_option_chain(sym)
+                    n = write_chain(sym, chain, spot or _spot_from_chain(chain),
+                                    settings.options_provider)
+                    log(f"{sym}: cadena {n} filas -> opt_chain_{sym.lower()}.txt"
+                        + (f" (intento {intento})" if intento > 1 else ""))
+                    break
+                except Exception as e:
+                    if intento == 1:
+                        log(f"{sym}: CHAIN fallo 1/2 {_scrub(e)} — reintentando")
+                        await asyncio.sleep(2)
+                    else:
+                        log(f"{sym}: CHAIN error tras 2 intentos {_scrub(e)} — SIN MAPA DE OPCIONES")
     write_status(settings, exch_ts, entitlement)
 
 
