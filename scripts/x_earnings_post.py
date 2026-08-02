@@ -342,8 +342,12 @@ def by_day_session(merged, fleet):
 
 
 # ------------------------------------------------------------------ imagen
+# Rejilla estilo "most anticipated": 5 dias (Mon-Fri) x 2 carriles (Before Open /
+# After Close), cada earnings = una tarjeta ticker-first. Marca propia, sin QR.
 ASPECT = 16 / 9        # el eje va 0-100 en x y en y sobre una figura 16:9 -> hay que
                        # estirar el radio vertical o los circulos salen ovalados
+CARDS_PER_LANE = 8     # ~como la referencia; el resto se resume en un tile "+N"
+FULL = ("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
 
 
 def _dot(ax, x, y, r, color, z=3):
@@ -351,48 +355,33 @@ def _dot(ax, x, y, r, color, z=3):
     ax.add_patch(Ellipse((x, y), 2 * r, 2 * r * ASPECT, color=color, zorder=z))
 
 
-def _sun(ax, x, y, r=0.9):
+def _sun(ax, x, y, r=0.55):
     import math
     _dot(ax, x, y, r * 0.5, C_SUN)
     for i in range(8):
         a = i * math.pi / 4
-        ax.plot([x + math.cos(a) * r * 0.75, x + math.cos(a) * r * 1.2],
-                [y + math.sin(a) * r * 0.75 * ASPECT, y + math.sin(a) * r * 1.2 * ASPECT],
-                color=C_SUN, lw=1.1, zorder=3, solid_capstyle="round")
+        ax.plot([x + math.cos(a) * r * 0.75, x + math.cos(a) * r * 1.25],
+                [y + math.sin(a) * r * 0.75 * ASPECT, y + math.sin(a) * r * 1.25 * ASPECT],
+                color=C_SUN, lw=1.0, zorder=3, solid_capstyle="round")
 
 
-def _moon(ax, x, y, r=0.9):
-    _dot(ax, x, y, r * 0.6, C_MOON)
-    _dot(ax, x + r * 0.30, y + r * 0.30 * ASPECT, r * 0.52, C_PANEL, z=4)
+def _moon(ax, x, y, r=0.55):
+    _dot(ax, x, y, r * 0.62, C_MOON)
+    _dot(ax, x + r * 0.32, y + r * 0.30 * ASPECT, r * 0.54, C_BG, z=4)
 
 
-def _tile(ax, x, y, w, h, label, is_fleet, muted=False):
+def _card(ax, x, y, w, h, sym, is_fleet, muted=False):
+    """Tarjeta limpia ticker-first (sin logo: marca ajena). Flota = borde/texto verde."""
     from matplotlib.patches import FancyBboxPatch
-    face = C_FLEET if is_fleet else (C_PANEL if muted else C_TILE)
-    edge = C_FLEET_EDGE if is_fleet else ("#30363d" if not muted else "#262c36")
-    ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0,rounding_size=0.45",
+    face = C_FLEET if is_fleet else (C_BG if muted else C_TILE)
+    edge = C_FLEET_EDGE if is_fleet else ("#2d333b" if not muted else "#22272e")
+    ax.add_patch(FancyBboxPatch((x, y), w, h, boxstyle="round,pad=0,rounding_size=0.5",
                                 facecolor=face, edgecolor=edge,
-                                linewidth=1.6 if is_fleet else 0.8, zorder=2))
-    ax.text(x + w / 2, y + h / 2, label, ha="center", va="center",
-            fontsize=10.5 if len(label) <= 4 else 9.2,
+                                linewidth=1.5 if is_fleet else 0.9, zorder=2))
+    fs = 12.5 if len(sym) <= 4 else (11.0 if len(sym) <= 5 else 9.5)
+    ax.text(x + w / 2, y + h / 2, sym, ha="center", va="center", fontsize=fs,
             color=C_FLEET_TXT if is_fleet else (C_MUTED if muted else C_TILE_TXT),
-            fontweight="bold" if is_fleet else "normal", zorder=5)
-
-
-def _ladder_row(ax, x, y, r, fleet):
-    """Escalera dibujada: puntos de color en vez de emoji (DejaVu no tiene 🔴/🎯)."""
-    rungs = ladder(r)
-    ax.text(x, y, f"{r['sym']}  {when(r)}", ha="left", va="center", fontsize=9.5,
-            fontweight="bold",
-            color=C_FLEET_TXT if fleet and r["sym"] in fleet else C_TILE_TXT, zorder=5)
-    cx = x + 17.5
-    for emo, v in rungs:
-        _dot(ax, cx, y, 0.36, LADDER_DOTS.get(emo, C_MUTED), z=5)
-        ax.text(cx + 0.85, y, fmt(v), ha="left", va="center", fontsize=9,
-                color=C_TILE_TXT, zorder=5)
-        cx += 8.2
-    ax.text(x + 60, y, " · ".join(picaro_bits(r)[:3]), ha="left", va="center",
-            fontsize=8.8, color=C_MUTED, zorder=5)
+            fontweight="bold", zorder=5)
 
 
 def render_calendar(merged, fleet, out_path=DEFAULT_PNG):
@@ -409,71 +398,73 @@ def render_calendar(merged, fleet, out_path=DEFAULT_PNG):
     if not days:
         return None
 
-    fig = plt.figure(figsize=(16, 9), dpi=100, facecolor=C_BG)
+    fig = plt.figure(figsize=(16, 9), dpi=130, facecolor=C_BG)
     ax = fig.add_axes([0, 0, 1, 1])
     ax.set_xlim(0, 100); ax.set_ylim(0, 100)
     ax.axis("off"); ax.set_facecolor(C_BG)
 
+    # --- cabecera (marca PROPIA, sin QR)
     n_fleet = len([s for s in merged if s in fleet])
-    ax.text(2.5, 95.6, "EARNINGS · NEXT WEEK", fontsize=21, fontweight="bold",
+    mon = days[0]
+    ax.text(2.6, 95.4, "MOST ANTICIPATED EARNINGS", fontsize=25, fontweight="bold",
             color="#f0f6fc", va="center")
-    ax.text(2.5, 91.6, f"{len(merged)} companies · {n_fleet} of the {len(fleet)} fleet names "
-            f"(green border) · measured levels: price±ATR and SMA20/50/200",
-            fontsize=10.5, color=C_MUTED, va="center")
-    ax.text(97.5, 94.5, "ib-trader", fontsize=12, color=C_HEAD, ha="right",
+    ax.text(2.6, 90.8, f"week of {FULL[mon.weekday()]} {MON[mon.month]} {mon.day}, {mon.year}"
+            f"   ·   {len(merged)} companies report", fontsize=12.5, color=C_MUTED,
+            va="center")
+    ax.text(97.4, 96.0, "ib-trader", fontsize=15, color=C_HEAD, ha="right",
             va="center", fontweight="bold")
+    _card(ax, 92.2, 89.6, 5.2, 2.6, "fleet", True)   # leyenda: verde = flota
+    ax.text(91.4, 90.9, "= our fleet", fontsize=9.5, color=C_MUTED, ha="right",
+            va="center", zorder=5)
+    ax.plot([2.6, 97.4], [87.6, 87.6], color="#21262d", lw=1.2, zorder=1)
 
+    # --- rejilla
+    top_lbl, card_top, bottom = 84.6, 80.6, 9.5
     col_w = 96.0 / len(days)
-    tile_w = (col_w - 3.0 - 1.4 * (TILES_PER_ROW - 1)) / TILES_PER_ROW
-    tile_h, gap = 4.6, 1.2
-    sec_top = {"BMO": 78.0, "AMC": 56.0}
+    lane_w = (col_w - 1.6) / 2
+    card_w = lane_w - 1.0
+    card_h = 6.6
+    span = card_top - bottom
+    pitch = span / CARDS_PER_LANE          # alto por fila (tarjeta + hueco)
 
     for di, d in enumerate(days):
         x0 = 2.0 + di * col_w
-        ax.add_patch(FancyBboxPatch((x0, 38.0), col_w - 1.2, 48.0,
-                                    boxstyle="round,pad=0,rounding_size=0.8",
-                                    facecolor=C_PANEL, edgecolor="#21262d",
-                                    linewidth=1.0, zorder=1))
-        ax.text(x0 + (col_w - 1.2) / 2, 83.2, f"{DOW[d.weekday()]} {d.day}",
-                ha="center", va="center", fontsize=14, fontweight="bold",
+        if di:                              # separador vertical fino entre dias
+            ax.plot([x0 - 0.1, x0 - 0.1], [bottom - 1, 86.5], color="#1b2027",
+                    lw=1.0, zorder=1)
+        ax.text(x0 + col_w / 2 - 0.8, top_lbl + 2.4,
+                f"{FULL[d.weekday()].upper()}  ·  {MON[d.month]} {d.day}",
+                ha="center", va="center", fontsize=13.5, fontweight="bold",
                 color="#f0f6fc", zorder=5)
-        for sess, label in (("BMO", "Before open"), ("AMC", "After close")):
-            top = sec_top[sess]
-            (_sun if sess == "BMO" else _moon)(ax, x0 + 2.2, top + 2.4)
+        for li, (sess, label) in enumerate((("BMO", "Before Open"),
+                                            ("AMC", "After Close"))):
+            lx = x0 + 0.4 + li * lane_w
             rows = grid.get((d, sess), [])
-            ax.text(x0 + 4.3, top + 2.4, f"{label}  ({len(rows)})", ha="left",
-                    va="center", fontsize=9.8, color=C_MUTED, zorder=5)
-            cap = TILES_PER_ROW * TILE_ROWS
-            shown = rows[:cap] if len(rows) <= cap else rows[:cap - 1]
+            (_sun if sess == "BMO" else _moon)(ax, lx + 0.9, top_lbl)
+            ax.text(lx + 1.7, top_lbl, label, ha="left", va="center", fontsize=8.6,
+                    color=C_MUTED, zorder=5)
+            if not rows:                    # honestidad: carril vacio, no se inventa
+                ax.text(lx + lane_w / 2 - 0.5, card_top - card_h / 2 - 1.5, "—",
+                        ha="center", va="center", fontsize=11, color="#2d333b", zorder=5)
+                continue
+            over = len(rows) > CARDS_PER_LANE
+            shown = rows[:CARDS_PER_LANE - 1] if over else rows
             for i, r in enumerate(shown):
-                tx = x0 + 1.5 + (i % TILES_PER_ROW) * (tile_w + 1.4)
-                ty = top - (i // TILES_PER_ROW) * (tile_h + gap) - tile_h
-                _tile(ax, tx, ty, tile_w, tile_h, r["sym"], r["sym"] in fleet)
-            if len(rows) > cap:
-                i = cap - 1
-                tx = x0 + 1.5 + (i % TILES_PER_ROW) * (tile_w + 1.4)
-                ty = top - (i // TILES_PER_ROW) * (tile_h + gap) - tile_h
-                _tile(ax, tx, ty, tile_w, tile_h, f"+{len(rows) - i}", False, muted=True)
+                cy = card_top - i * pitch - card_h
+                _card(ax, lx + 0.5, cy, card_w, card_h, r["sym"], r["sym"] in fleet)
+            if over:
+                i = CARDS_PER_LANE - 1
+                cy = card_top - i * pitch - card_h
+                _card(ax, lx + 0.5, cy, card_w, card_h,
+                      f"+{len(rows) - (CARDS_PER_LANE - 1)}", False, muted=True)
 
-    ranked = rank_ladders(merged, fleet)
-    ax.add_patch(FancyBboxPatch((2.0, 9.0), 96.0 - 1.2, 25.0,
-                                boxstyle="round,pad=0,rounding_size=0.8",
-                                facecolor=C_PANEL, edgecolor="#21262d",
-                                linewidth=1.0, zorder=1))
-    ax.text(3.5, 31.4, "CHEEKIEST FLEET NAMES  ·  ceiling · magnet · spot · floor · stop "
-            "(only the levels that exist)",
-            fontsize=10.5, fontweight="bold", color=C_HEAD, va="center", zorder=5)
-    for i, r in enumerate(ranked[:LADDER_ROWS]):
-        _ladder_row(ax, 3.5, 27.0 - i * 4.4, r, fleet)
-    # decirlo en la imagen, no callarlo: quien no tiene tecnicos no tiene niveles
-    no_tech = sorted(s for s, r in merged.items() if s in fleet and not r["tech"])
-    if no_tech:
-        ax.text(3.5, 10.6, f"no levels ({', '.join(no_tech)}): Finviz serves an incomplete "
-                f"row — they show in the grid, no ladder is invented",
-                fontsize=8.8, color=C_MUTED, va="center", zorder=5)
-    ax.text(3.5, 5.0, "Signal-only · Finviz Elite levels (measured ATR/SMA/RSI) · "
-            "bought premium does NOT cross a print · Not financial advice",
-            fontsize=9, color=C_MUTED, va="center")
+    # --- pie: marca propia + señal-solo, sin logo/copyright ajeno
+    ax.plot([2.6, 97.4], [7.6, 7.6], color="#21262d", lw=1.0, zorder=1)
+    ax.text(2.6, 5.4, f"ib-trader  ·  @YuniorR62327146  ·  {n_fleet} fleet names this week "
+            f"(green)  ·  fleet-first, then cheekiest by measured ATR/RSI/gap",
+            fontsize=9.2, color=C_MUTED, va="center")
+    ax.text(2.6, 2.8, "Señal-solamente  ·  bought premium does NOT cross a print  ·  "
+            "No es consejo financiero", fontsize=9.2, color=C_MUTED, va="center")
 
     os.makedirs(os.path.dirname(os.path.abspath(out_path)), exist_ok=True)
     tmp = out_path + ".tmp.png"
@@ -516,12 +507,22 @@ def main():
     g.add_argument("--post", action="store_true", help="publicar de verdad (sin esto NO publica)")
     ap.add_argument("--out", default=DEFAULT_PNG, help="ruta del PNG del calendario")
     ap.add_argument("--force", action="store_true", help="ignorar el cache de 6h de Finviz")
+    ap.add_argument("--sample", action="store_true",
+                    help="renderizar SOLO desde el CSV cacheado (sin fetch); nunca postea")
     a = ap.parse_args()
-    dry = not a.post
+    dry = True if a.sample else not a.post   # --sample jamas publica
 
-    auth = token()
-    b171 = fetch_csv(171, CACHE_171, auth, force=a.force)
-    b152 = fetch_csv(152, CACHE_152, auth, cols=COLS_152, force=a.force)
+    if a.sample:
+        try:
+            b171 = open(CACHE_171).read()
+            b152 = open(CACHE_152).read()
+        except OSError as e:
+            log(f"SKIP --sample sin CSV cacheado ({type(e).__name__})")
+            return 1
+    else:
+        auth = token()
+        b171 = fetch_csv(171, CACHE_171, auth, force=a.force)
+        b152 = fetch_csv(152, CACHE_152, auth, cols=COLS_152, force=a.force)
     merged = merge(parse_csv(b171), parse_csv(b152))
     if not merged:
         log("SKIP sin datos de Finviz — no se genera post")
