@@ -80,6 +80,9 @@ class Settings(BaseSettings):
     # Polygon: options chain (measured greeks/IV/OI via /v3/snapshot/options) + daily aggs.
     polygon_api_key: str | None = Field(None, alias="POLYGON_KEY")
     polygon_base_url: str = Field("https://api.polygon.io", alias="MIT_POLYGON_BASE_URL")
+    # Sin este rango, el snapshot solo devuelve el vencimiento frontal; con el, pagina a
+    # varias expiraciones (el mapa strike x vencimiento de la semana). Dias naturales hacia delante.
+    polygon_chain_days: int = Field(28, alias="MIT_POLYGON_CHAIN_DAYS")
 
     unusual_whales_token: str | None = Field(None, alias="UNUSUAL_WHALES_TOKEN")
     uw_ws_url: str | None = Field(None, alias="MIT_UW_WS_URL")

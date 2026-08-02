@@ -62,6 +62,17 @@ async def snapshot(symbol: str, force: bool = False):
     return await engine.snapshot(symbol, force=force)
 
 
+@app.get("/api/gex_heatmap/{symbol}")
+async def gex_heatmap(symbol: str, metric: str = "gex"):
+    symbol = symbol.upper()
+    if not symbol.replace(".", "").replace("-", "").isalnum():
+        raise HTTPException(status_code=400, detail="Invalid symbol")
+    metric = metric.lower()
+    if metric not in {"gex", "vex"}:
+        raise HTTPException(status_code=400, detail="Invalid metric")
+    return await engine.gex_heatmap(symbol, metric=metric)
+
+
 @app.websocket("/ws/{symbol}")
 async def websocket_endpoint(websocket: WebSocket, symbol: str) -> None:
     symbol = symbol.upper()

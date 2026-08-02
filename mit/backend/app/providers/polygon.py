@@ -41,8 +41,16 @@ class PolygonProvider(MarketDataProvider, OptionsDataProvider):
         params: dict[str, Any] = {"limit": 250}
         if expiration is not None:
             params["expiration_date"] = expiration.date().isoformat()
+        else:
+            # Sin rango el snapshot solo da el vencimiento frontal; el rango pagina a varias
+            # expiraciones (mapa de la semana). NUNCA fabricar now(): usa el reloj del sistema.
+            today = date.today()
+            params["expiration_date.gte"] = today.isoformat()
+            params["expiration_date.lte"] = today.fromordinal(
+                today.toordinal() + max(1, self.settings.polygon_chain_days)
+            ).isoformat()
         output: list[OptionContract] = []
-        for _ in range(40):  # bound pagination for a full chain
+        for _ in range(120):  # bound pagination for a multi-expiry chain
             payload = await self._get(url, params if url.startswith("/v3/snapshot") else None)
             for item in payload.get("results") or []:
                 det = item.get("details") or {}
@@ -79,6 +87,29 @@ class PolygonProvider(MarketDataProvider, OptionsDataProvider):
         if not output:
             raise ProviderError(f"Polygon returned no option contracts for {symbol}")
         return output
+
+    async def get_expirations(self, symbol: str, *, days: int | None = None) -> list[date]:
+        """Vencimientos distintos en la ventana (via /v3/reference/options/contracts, paginado).
+        El snapshot se atasca en el frontal; esto lista las fechas para pedir cada cadena aparte."""
+        today = date.today()
+        lte = today.fromordinal(today.toordinal() + (days or self.settings.polygon_chain_days))
+        url: str | None = "/v3/reference/options/contracts"
+        params: dict[str, Any] = {
+            "underlying_ticker": symbol.upper(), "expired": "false", "limit": 1000,
+            "expiration_date.gte": today.isoformat(), "expiration_date.lte": lte.isoformat(),
+        }
+        exps: set[date] = set()
+        for _ in range(10):
+            payload = await self._get(url, params if url.startswith("/v3/reference") else None)
+            for r in payload.get("results") or []:
+                e = r.get("expiration_date")
+                if e:
+                    exps.add(_parse_date(e))
+            nxt = payload.get("next_url")
+            if not nxt:
+                break
+            url, params = nxt.replace(str(self.client.base_url), ""), {}
+        return sorted(exps)
 
     async def get_quote(self, symbol: str) -> Quote:
         payload = await self._get(f"/v2/last/nbbo/{symbol.upper()}")

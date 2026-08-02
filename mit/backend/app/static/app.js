@@ -1,9 +1,9 @@
 const $ = (id) => document.getElementById(id);
-const state = { symbol: 'SPY', socket: null, chart: null, candleSeries: null, volumeSeries: null, lines: [], alertIds: new Set(), alarmEnabled: false, audioContext: null };
+const state = { symbol: 'SPY', socket: null, chart: null, candleSeries: null, volumeSeries: null, lines: [], alertIds: new Set(), alarmEnabled: false, audioContext: null, hmMetric: 'gex' };
 
 function fmt(value, digits = 2) {
   if (value === null || value === undefined || Number.isNaN(Number(value))) return '—';
-  return Number(value).toLocaleString(undefined, { maximumFractionDigits: digits, minimumFractionDigits: digits });
+  return Number(value).toLocaleString('en-US', { maximumFractionDigits: digits, minimumFractionDigits: digits });
 }
 function compact(value) {
   const n = Number(value || 0), a = Math.abs(n);
@@ -23,12 +23,97 @@ async function bootstrap() {
   $('symbol-select').value = state.symbol;
   createChart();
   connect();
-  $('symbol-select').addEventListener('change', () => { state.symbol = $('symbol-select').value; connect(); });
+  loadHeatmap();
+  $('symbol-select').addEventListener('change', () => { state.symbol = $('symbol-select').value; connect(); loadHeatmap(); });
   $('alarm-button').addEventListener('click', enableAlarm);
   $('refresh-button').addEventListener('click', async () => {
     const payload = await fetch(`/api/snapshot/${encodeURIComponent(state.symbol)}?force=true`).then(r => r.json());
     render(payload);
   });
+  $('hm-refresh').addEventListener('click', loadHeatmap);
+  $('hm-toggle').addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-metric]'); if (!btn) return;
+    state.hmMetric = btn.dataset.metric;
+    [...$('hm-toggle').children].forEach(b => b.classList.toggle('active', b === btn));
+    loadHeatmap();
+  });
+}
+
+// Diverging scale: teal/green positive, indigo/purple negative, symmetric around 0.
+function divergingColor(value, maxAbs) {
+  const base = [26, 48, 54], pos = [82, 178, 138], neg = [104, 82, 168];
+  const t = maxAbs > 0 ? Math.max(-1, Math.min(1, value / maxAbs)) : 0;
+  const f = Math.sign(t) * Math.pow(Math.abs(t), 0.5); // lift midtones for readability
+  const target = f >= 0 ? pos : neg, k = Math.abs(f);
+  const mix = base.map((c, i) => Math.round(c + (target[i] - c) * k));
+  return `rgb(${mix[0]},${mix[1]},${mix[2]})`;
+}
+function fmtCell(v) {
+  const k = v / 1000;
+  const s = Math.abs(k).toLocaleString('en-US', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  return `${v < 0 ? '-$' : '$'}${s}K`;
+}
+
+async function loadHeatmap() {
+  const sym = state.symbol;
+  $('hm-symbol').textContent = sym;
+  $('hm-metric-title').textContent = `${state.hmMetric.toUpperCase()} · strike × expiration`;
+  const grid = $('hm-grid');
+  grid.innerHTML = '<div class="empty">Loading…</div>';
+  let data;
+  try {
+    data = await fetch(`/api/gex_heatmap/${encodeURIComponent(sym)}?metric=${state.hmMetric}`).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
+  } catch (err) { grid.innerHTML = `<div class="empty">Heatmap unavailable (${escapeHtml(String(err.message || err))})</div>`; return; }
+  if (sym !== state.symbol) return; // stale response, symbol changed
+  renderHeatmap(data);
+}
+
+function renderHeatmap(data) {
+  const grid = $('hm-grid');
+  const exps = data.expirations || [], strikes = data.strikes || [], cells = data.cells || {};
+  const q = data.quote || {};
+  $('hm-price').textContent = q.last == null ? '—' : `$${fmt(q.last, q.last < 50 ? 3 : 2)}`;
+  if (q.change_pct == null) { $('hm-change').textContent = '—'; $('hm-change').className = 'muted'; }
+  else {
+    const abs = q.last != null ? q.last * (q.change_pct / 100) / (1 + q.change_pct / 100) : null;
+    $('hm-change').textContent = `${q.change_pct >= 0 ? '+' : ''}${abs == null ? '' : fmt(abs) + ' '}(${q.change_pct >= 0 ? '+' : ''}${fmt(q.change_pct)}%)`;
+    $('hm-change').className = q.change_pct > 0 ? 'positive' : q.change_pct < 0 ? 'negative' : 'muted';
+  }
+  $('hm-caveat').innerHTML = (data.caveats || []).map(escapeHtml).join(' · ');
+  if (!exps.length || !strikes.length) { grid.innerHTML = '<div class="empty">No option-chain nodes</div>'; return; }
+
+  const maxAbs = Object.values(cells).reduce((m, v) => Math.max(m, Math.abs(v)), 0);
+  const spot = data.spot;
+  const spotStrike = strikes.reduce((best, s) => Math.abs(s - spot) < Math.abs(best - spot) ? s : best, strikes[0]);
+  const maxKey = data.max_cell ? `${String(data.max_cell.strike).replace(/\.0$/, '')}|${data.max_cell.expiration}` : null;
+  grid.style.gridTemplateColumns = `72px repeat(${exps.length}, minmax(96px, 1fr))`;
+
+  const frag = document.createDocumentFragment();
+  const mk = (cls, text) => { const d = document.createElement('div'); d.className = cls; if (text != null) d.textContent = text; return d; };
+  frag.appendChild(mk('hm-corner', 'Strike'));
+  exps.forEach(e => frag.appendChild(mk('hm-colhead', e)));
+  let spotRowhead = null;
+  strikes.forEach(strike => {
+    const isSpot = strike === spotStrike;
+    const rh = mk('hm-rowhead' + (isSpot ? ' hm-spot' : ''), strike.toFixed(1));
+    if (isSpot) spotRowhead = rh;
+    frag.appendChild(rh);
+    exps.forEach(exp => {
+      const key = `${String(strike).replace(/\.0$/, '')}|${exp}`;
+      const has = Object.prototype.hasOwnProperty.call(cells, key);
+      const cell = mk('hm-cell' + (isSpot ? ' hm-spot' : ''));
+      if (!has) { cell.classList.add('hm-empty'); frag.appendChild(cell); return; } // fail-loud: blank, no fabricated 0
+      const v = cells[key];
+      cell.style.background = divergingColor(v, maxAbs);
+      if (key === maxKey) { cell.classList.add('hm-max'); cell.textContent = fmtCell(v) + '★'; }
+      else cell.textContent = fmtCell(v);
+      cell.title = `${strike.toFixed(1)} · ${exp}: ${fmtCell(v)}`;
+      frag.appendChild(cell);
+    });
+  });
+  grid.replaceChildren(frag);
+  // centrar el mapa en el spot: ahi viven los colores divergentes (call+ arriba / put- abajo)
+  if (spotRowhead) requestAnimationFrame(() => spotRowhead.scrollIntoView({ block: 'center' }));
 }
 
 function createChart() {

@@ -48,6 +48,26 @@
         </div>
       </section>
 
+      <section class="panel heatmap-panel span-12">
+        <div class="hm-toolbar">
+          <div class="hm-toggle" id="hm-toggle" role="group" aria-label="Metric">
+            <button type="button" data-metric="gex" class="active">GEX</button>
+            <button type="button" data-metric="vex">VEX</button>
+          </div>
+          <span class="hm-info" title="Dealer gamma (GEX) or vega (VEX) exposure per strike × expiration. Calls positive, puts negative — a scenario proxy, not observed dealer inventory. Blank cell = no contracts at that node.">i</span>
+          <div class="hm-quote">
+            <strong id="hm-symbol">—</strong>
+            <span id="hm-price">—</span>
+            <span id="hm-change" class="muted">—</span>
+          </div>
+          <div class="hm-spacer"></div>
+          <span class="hm-title" id="hm-metric-title">GEX · strike × expiration</span>
+          <button type="button" class="button hm-refresh" id="hm-refresh" title="Refresh heatmap">Refresh</button>
+        </div>
+        <div class="hm-scroll" id="hm-scroll"><div class="hm-grid" id="hm-grid"></div></div>
+        <div class="caveat" id="hm-caveat"></div>
+      </section>
+
       <section class="panel chart-panel span-8">
         <div class="panel-heading">
           <div><div class="eyebrow">PRICE + POSITIONING LEVELS</div><h2>Market structure</h2></div>

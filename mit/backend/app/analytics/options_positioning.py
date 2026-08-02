@@ -10,6 +10,7 @@ from backend.app.analytics.math_utils import black_scholes_greeks, linear_zero_c
 from backend.app.domain import DealerPositioning, MagnetLevel, OptionContract
 
 CONTRACT_MULTIPLIER = 100
+MATRIX_BAND = 0.12  # heatmap: strikes dentro de +/-12% del spot (donde vive la gamma)
 
 
 def _greeks(contract: OptionContract, spot: float) -> tuple[float, float]:
@@ -104,6 +105,76 @@ def analyze_dealer_positioning(
             "Gamma flip is repriced with a flat-IV Black-Scholes approximation when vendor scenario data is unavailable.",
         ],
     )
+
+
+def _cell_greeks(contract: OptionContract, spot: float) -> tuple[float, float]:
+    """Return (gamma, vega) using provider values, BS fallback when a greek is missing."""
+    gamma = contract.gamma
+    vega = contract.vega
+    if gamma is not None and vega is not None:
+        return gamma, vega
+    mid_iv = contract.implied_volatility or 0.35
+    days = max((contract.expiration - date.today()).days, 1)
+    _, bs_gamma, bs_vega, _ = black_scholes_greeks(
+        spot, contract.strike, days / 365, mid_iv, is_call=contract.option_type == "call"
+    )
+    return (gamma if gamma is not None else bs_gamma, vega if vega is not None else bs_vega)
+
+
+def compute_option_matrix(
+    symbol: str, spot: float, chain: list[OptionContract], *, metric: str = "gex"
+) -> dict:
+    """Per-(strike,expiration) GEX or VEX matrix. House sign: call +, put - (matches analyze_dealer_positioning).
+
+    Fail-loud: a strike×expiry with no contracts is omitted from `cells` (renders blank);
+    a real measured 0 stays as 0. Never fabricates a value for absent data."""
+    if metric not in {"gex", "vex"}:
+        raise ValueError(f"Unknown metric: {metric}")
+    # Banda ±MATRIX_BAND del spot: centra el mapa donde vive la gamma (como SpotGamma/opt_chain);
+    # fuera de la banda es ruido ~0 que sepulta el color cerca del dinero.
+    lo, hi = (spot * (1 - MATRIX_BAND), spot * (1 + MATRIX_BAND)) if spot > 0 else (0.0, 1e12)
+    cells: dict[str, float] = {}
+    expirations: set[date] = set()
+    strikes: set[float] = set()
+    for contract in chain:
+        if not (lo <= contract.strike <= hi):
+            continue
+        # Fail-loud: SOLO griegas MEDIDAS. Si falta la que toca, se OMITE (celda en blanco);
+        # jamas reconstruir con IV plana (eso convierte "no se" en un numero inventado).
+        greek = contract.gamma if metric == "gex" else contract.vega
+        if greek is None:
+            continue
+        sign = 1 if contract.option_type == "call" else -1
+        oi = contract.open_interest
+        if metric == "gex":
+            value = sign * greek * oi * CONTRACT_MULTIPLIER * spot * spot * 0.01
+        else:  # vex: vega notional per 1-vol move
+            value = sign * greek * oi * CONTRACT_MULTIPLIER
+        key = f"{contract.strike:g}|{contract.expiration.isoformat()}"
+        cells[key] = cells.get(key, 0.0) + value
+        expirations.add(contract.expiration)
+        strikes.add(contract.strike)
+
+    max_cell = None
+    if cells:
+        top_key = max(cells, key=lambda k: abs(cells[k]))
+        top_strike, top_expiry = top_key.split("|")
+        max_cell = {"strike": float(top_strike), "expiration": top_expiry, "value": cells[top_key]}
+
+    return {
+        "symbol": symbol.upper(),
+        "metric": metric,
+        "spot": spot,
+        "expirations": [d.isoformat() for d in sorted(expirations)],
+        "strikes": [float(f"{s:g}") for s in sorted(strikes, reverse=True)],
+        "cells": cells,
+        "max_cell": max_cell,
+        "caveats": [
+            "Open-interest signs are a dealer-positioning scenario proxy, not observed dealer inventory.",
+            "Only MEASURED greeks: strikes without provider gamma/vega are omitted (blank), never reconstructed.",
+            f"Strikes banded to +/-{int(MATRIX_BAND*100)}% of spot.",
+        ],
+    }
 
 
 def _max_pain(chain: list[OptionContract]) -> float | None:

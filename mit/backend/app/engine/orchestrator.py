@@ -13,6 +13,7 @@ from backend.app.analytics import (
     analyze_signals,
     build_weekly_rows,
 )
+from backend.app.analytics.options_positioning import compute_option_matrix
 from backend.app.config import Settings
 from backend.app.domain import (
     AlertEvent,
@@ -129,6 +130,50 @@ class MarketIntelligenceEngine:
                 "disclaimer": "Research/decision-support software, not investment advice or an autonomous trading system.",
             },
         )
+
+    async def gex_heatmap(self, symbol: str, *, metric: str = "gex") -> dict:
+        symbol = symbol.upper()
+        status: list[ProviderStatus] = []
+        quote, chain = await asyncio.gather(
+            self._with_fallback(
+                "quote",
+                self.providers.market.name,
+                lambda: self.providers.market.get_quote(symbol),
+                lambda: self.providers.fallback.get_quote(symbol),
+                status,
+            ),
+            self._with_fallback(
+                "options",
+                self.providers.options.name,
+                lambda: self._multi_expiry_chain(symbol),
+                lambda: self.providers.fallback.get_option_chain(symbol),
+                status,
+            ),
+        )
+        matrix = compute_option_matrix(symbol, quote.last, chain, metric=metric)
+        matrix["quote"] = {"last": quote.last, "change_pct": quote.change_pct}
+        matrix["provider_status"] = [s.model_dump(mode="json") for s in status]
+        matrix["generated_at"] = datetime.now(UTC).isoformat()
+        return matrix
+
+    async def _multi_expiry_chain(self, symbol: str, *, max_expiries: int = 10):
+        """Cadena multi-vencimiento para el heatmap: si el provider sabe listar vencimientos,
+        pide la cadena de cada uno (los N cercanos) y las fusiona; si no, una sola cadena."""
+        opt = self.providers.options
+        get_exps = getattr(opt, "get_expirations", None)
+        if get_exps is None:
+            return await opt.get_option_chain(symbol)
+        exps = (await get_exps(symbol))[:max_expiries]
+        if not exps:
+            return await opt.get_option_chain(symbol)
+        chains = await asyncio.gather(
+            *(opt.get_option_chain(symbol, expiration=datetime(e.year, e.month, e.day)) for e in exps),
+            return_exceptions=True,
+        )
+        merged = [c for r in chains if not isinstance(r, Exception) for c in r]
+        if not merged:  # todas fallaron: fail-loud hacia el _with_fallback
+            raise chains[0] if isinstance(chains[0], Exception) else RuntimeError(f"{symbol}: sin cadena")
+        return merged
 
     async def _weekly_map(self, current_symbol: str, current_bars: list[Bar]):
         bars_by_symbol = {current_symbol: current_bars}
