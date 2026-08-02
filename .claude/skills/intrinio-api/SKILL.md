@@ -89,3 +89,15 @@ ACTIVARLO en la cuenta/key. Diagnóstico: `curl https://equities-edge.intrinio.c
 → "Empty reply from server" = no entitled; → token JSON = entitled.
 Cuando se active: construir `providers/intrinio_realtime.py` (un fichero, @register) que corra el
 WS EQUITIES_EDGE/OPTIONS_EDGE y alimente los ficheros de la flota — reemplaza al puente REST delayed.
+
+## EL SOURCE CORRECTO ES `equities_edge` (medido 2026-08-02) + por qué el WS cae
+FIX medido: el REST realtime FMV funciona con **`source=equities_edge`** (NO iex/intrinio_mx, que
+degradan a cboe_one_delayed). HTTP 200, `src=equities_edge`, sin downgrade, en `/prices/realtime`,
+`/quote` y `/prices/intervals`. Entonces **EquitiesEdge FMV SÍ está entitled** en la key. Config:
+`MIT_INTRINIO_STOCK_SOURCE=equities_edge` + `MIT_INTRINIO_INTERVAL_SOURCE=equities_edge`.
+WebSocket (más rápido): `equities-edge.intrinio.com/auth` completa TLS, recibe el GET y **cierra
+sin respuesta HTTP** desde Toronto Y desde VPN US de **datacenter (Datacamp)**. Eso NO es
+entitlement (sería 403 con cuerpo; y el REST equities_edge da 200) → es **IP de datacenter
+bloqueada por el edge del exchange** o **host de streaming no provisionado**. Para el WS: IP US
+**RESIDENCIAL** (no datacenter/VPN) o pedir a Intrinio que provisione/whiteliste el host de
+streaming. Opciones FMV: `/options/snapshots` (bulk 5min, 200) sí; `/options/chain` por símbolo = 403.
