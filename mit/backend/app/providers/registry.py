@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import importlib
 import logging
 import pkgutil
@@ -49,8 +50,14 @@ class ProviderSet:
 
     async def close(self) -> None:
         providers = {id(p): p for p in (self.market, self.options, self.depth, self.flow, self.fallback)}
-        for provider in providers.values():
-            await provider.close()
+
+        async def _close_one(p: object) -> None:
+            try:
+                await asyncio.wait_for(p.close(), timeout=5)
+            except Exception as exc:  # una close mala no aborta el resto de la flota
+                _log.warning("provider '%s' close failed: %s: %s", getattr(p, "name", p), type(exc).__name__, exc)
+
+        await asyncio.gather(*(_close_one(p) for p in providers.values()), return_exceptions=True)
 
 
 T = TypeVar("T")
@@ -73,16 +80,22 @@ def build_providers(settings: Settings) -> ProviderSet:
         cache[name] = provider
         return provider
 
-    def capability(name: str, expected: type[T], label: str) -> T:
+    def capability(name: str, cap: str, expected: type[T], label: str) -> T:
+        # Reject an undeclared capability WITHOUT instantiating (avoids side-effectful __init__,
+        # e.g. UnusualWhales spawning tasks) when the class declares __capabilities__ and lacks it.
+        builder = PROVIDER_REGISTRY.get(name)
+        declared = getattr(builder, "__capabilities__", None)
+        if declared is not None and cap not in declared:
+            return UnavailableProvider(name, f"{name} does not declare {label}")  # type: ignore[return-value]
         provider = get(name)
-        if isinstance(provider, expected):
+        if isinstance(provider, expected):  # isinstance fallback for safety
             return provider
         return UnavailableProvider(name, f"{name} does not implement {label}")  # type: ignore[return-value]
 
     return ProviderSet(
-        market=capability(settings.market_provider, MarketDataProvider, "market data"),
-        options=capability(settings.options_provider, OptionsDataProvider, "option chains"),
-        depth=capability(settings.depth_provider, DepthDataProvider, "order-book depth"),
-        flow=capability(settings.flow_provider, FlowDataProvider, "options flow"),
+        market=capability(settings.market_provider, "market", MarketDataProvider, "market data"),
+        options=capability(settings.options_provider, "options", OptionsDataProvider, "option chains"),
+        depth=capability(settings.depth_provider, "depth", DepthDataProvider, "order-book depth"),
+        flow=capability(settings.flow_provider, "flow", FlowDataProvider, "options flow"),
         fallback=fallback,
     )

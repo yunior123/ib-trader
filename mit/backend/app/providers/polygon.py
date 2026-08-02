@@ -19,6 +19,7 @@ class PolygonProvider(MarketDataProvider, OptionsDataProvider):
     """
 
     name = "polygon"
+    __capabilities__: set[str] = {"market", "options"}
 
     def __init__(self, settings: Settings) -> None:
         if not settings.polygon_api_key:

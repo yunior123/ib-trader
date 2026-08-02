@@ -27,6 +27,7 @@ _BASE = {
 
 class MockProvider(MarketDataProvider, OptionsDataProvider, DepthDataProvider, FlowDataProvider):
     name = "mock"
+    __capabilities__: set[str] = {"market", "options", "depth", "flow"}
 
     def __init__(self) -> None:
         self._cache: dict[str, list[Bar]] = {}

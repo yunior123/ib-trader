@@ -20,6 +20,7 @@ class DatabentoProvider(MarketDataProvider, DepthDataProvider):
     """
 
     name = "databento"
+    __capabilities__: set[str] = {"market", "depth"}
 
     def __init__(self, settings: Settings) -> None:
         if not settings.databento_api_key:

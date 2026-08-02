@@ -21,6 +21,7 @@ class UnusualWhalesProvider(FlowDataProvider):
     """
 
     name = "unusual_whales"
+    __capabilities__: set[str] = {"flow"}
 
     def __init__(self, settings: Settings) -> None:
         if not settings.unusual_whales_token or not settings.uw_ws_url:

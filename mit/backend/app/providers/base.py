@@ -7,7 +7,19 @@ from backend.app.domain import Bar, OptionContract, OptionFlow, OrderBook, Quote
 
 
 class ProviderError(RuntimeError):
-    pass
+    # Optional structured context; all default to None so existing bare raises keep working.
+    def __init__(
+        self,
+        message: str = "",
+        *,
+        provider: str | None = None,
+        capability: str | None = None,
+        error_code: str | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.provider = provider
+        self.capability = capability
+        self.error_code = error_code
 
 
 # --- Registro de plugins de proveedor -----------------------------------------

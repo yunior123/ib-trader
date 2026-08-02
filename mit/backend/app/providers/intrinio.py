@@ -13,6 +13,7 @@ from backend.app.providers.base import MarketDataProvider, OptionsDataProvider, 
 @register("intrinio")
 class IntrinioProvider(MarketDataProvider, OptionsDataProvider):
     name = "intrinio"
+    __capabilities__: set[str] = {"market", "options"}
 
     def __init__(self, settings: Settings) -> None:
         if not settings.intrinio_api_key:
