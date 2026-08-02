@@ -160,6 +160,22 @@
       de TODOS los problemas medio/bajo que las revisiones adversariales dejaron sin arreglar +
       caza de bugs nueva (skill bug-hunter) con agentes frescos.
 
+### 🔴 ACCIÓN DE YUNIOR — token de Finviz CADUCADO (2026-08-02 19:08)
+`FINVIZ_AUTH3` (…8625) devuelve **HTTP 401** en el export API. Caducó según lo previsto
+(feeds.env: "new finviz api till next saturday" → ~2026-08-01). Con él muerto quedan CIEGOS
+`finviz_scout`, `finviz_valuation` y `x_whale_bot`. Yo no puedo renovarlo: hace falta el token
+nuevo de la cuenta Elite → ponerlo en `config/feeds.env` como `FINVIZ_AUTH3=` (ese es el nombre
+que TODOS los consumidores prueban primero).
+
+### ✅ BUG CERRADO 2026-08-02 19:10 — el healthcheck había dejado de revivir la flota
+`scripts/fleet_window.py:32` apuntaba a `REPO/fleet_hours`, pero el portero vive en
+`REPO/bin/fleet_hours` desde la mudanza. Resultado: `live()` devolvía **None**, y con None el
+healthcheck **NO revive NINGÚN daemon** ("portero horario AUSENTE: no revivo daemons a ciegas")
+mientras `./bin/fleet_hours` respondía perfectamente. Es EL MISMO precedente que ya mató la flota
+(mudanza a `bin/`, muerta 05:15-06:48). Ahora busca en `bin/` y cae a la raíz como respaldo;
+`live()` devuelve False (correcto un domingo a las 19:08) y desaparecen los avisos falsos de
+notify_relay / x_signal_poster. 4 tests (`tests/test_fleet_window_binario.py`).
+
 ### ✅ BUG CERRADO 2026-08-02 19:00 — muros del TRACE fuera de toda banda operativa
 `compute_trace_matrix` acota la MATRIZ a ±`MATRIX_BAND` del spot
 (`options_positioning.py:288-291`) pero los NIVELES los toma de
@@ -237,4 +253,26 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       verifiqué yo a mano ejecutando el arnés. De 25 pendientes quedan 3.
       TODOS.md pasó de 25 a 3 pendientes. Suite 1023 -> 1213 tests.
 
-- [ ] "check dre image (desktop, SpotGamma TRACE); net OI mostrar movimiento realtime con WICKS (velas sobre el mapa); copiar las mejores features de SpotGamma si no las tenemos" (2026-08-01) — PENDIENTE tras widget #1. Features a copiar: (a) Net OI by Strike (barras call+/put-), (b) heatmap TIEMPO×STRIKE Delta-Pressure/GEX divergente, (c) VELAS con wicks superpuestas en eje precio (bars 1m), (d) líneas Call/Put/Hedge Wall + Gamma Flip + Implied move + Last Close (gex_core), (e) scrubber de tiempo. Dos mapas: strike×expiry (post X) + strike×hora+velas+HIRO (TRACE). drew.png=modo GEX, dre.png=modo NetOI/DeltaPressure: MISMO widget con toggle de métrica. refs en backup/spotgamma_trace_*.png
+- [x] "check dre image (desktop, SpotGamma TRACE); net OI mostrar movimiento realtime con WICKS
+      (velas sobre el mapa); copiar las mejores features de SpotGamma si no las tenemos"
+      (2026-08-01) — HECHO 2026-08-02 19:10, verificado feature por feature contra el código
+      (refs: backup/spotgamma_trace_{gex,netoi}_ref.png):
+      (a) Net OI by Strike, call + / put −  → `options_positioning.py:339` (métrica `netoi`) ✓
+      (b) heatmap TIEMPO×STRIKE divergente con toggle de métrica → `compute_trace_matrix` (gex|netoi)
+          + `compute_option_matrix` (gex|vex). Los DOS mapas del pedido: strike×expiry (post X) y
+          strike×hora (TRACE) ✓
+      (c) VELAS con wicks sobre el eje de precio → `app.js:158` (wickUp/DownColor) y `:210`; con
+          fail-loud explícito en `:162` ("nunca wicks falsas": no se dibujan si no hay velas de la
+          misma sesión) ✓
+      (d) líneas Call/Put Wall + Gamma Flip + Implied move + Last close → `options_positioning.py:
+          347-355` y `orchestrator.py:208` (last_close), pintadas en `app.js:327` ✓
+          → y AHORA CORRECTAS: los muros estaban fuera de banda (put wall a −51,6%), arreglado hoy.
+      (e) scrubber de tiempo → `app.js` (7 referencias), cableado por el lote L5 ✓
+      NO se copian, con motivo:
+      · **HIRO** — vía MUERTA y medida: `reqTickByTickData("AllLast")` sobre opciones da **error
+        10189 en 20/20** contratos (`Done.md:437`, `docs/HIRO-2026-07-25.md:215`) y Polygon da 403
+        en `/v3/trades` de opciones. El skill `dealer-flow-limits` §6 decía "nunca se ha intentado":
+        CORREGIDO hoy para que nadie lo rediseñe. El sustituto real son las flow-alerts de UW.
+      · **Hedge Wall** — SpotGamma no publica su fórmula; inventar una y etiquetarla con su nombre
+        sería un prior disfrazado de medición (skill `anti-overfit-killlist`). Ya tenemos flip,
+        call/put wall y max pain, que son los niveles que sí sabemos calcular.

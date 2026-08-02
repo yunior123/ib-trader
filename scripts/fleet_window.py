@@ -29,7 +29,18 @@ import os
 import subprocess
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-BINARIO = os.path.join(REPO, "fleet_hours")
+def _binario():
+    """El portero vive en bin/ desde la mudanza; la raiz queda como respaldo.
+    Apuntar solo a la raiz dejaba live() en None -> el healthcheck no revivia NADA
+    ("portero AUSENTE") mientras ./bin/fleet_hours respondia perfectamente (medido 2026-08-02).
+    Es el mismo precedente que ya mato la flota: mudar un binario y dejar consumidores atras."""
+    for ruta in (os.path.join(REPO, "bin", "fleet_hours"), os.path.join(REPO, "fleet_hours")):
+        if os.access(ruta, os.X_OK):
+            return ruta
+    return os.path.join(REPO, "bin", "fleet_hours")   # el que se nombra al gritar que falta
+
+
+BINARIO = _binario()
 
 
 def live(timeout=5):

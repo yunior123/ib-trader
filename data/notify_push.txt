@@ -1,13 +1,3 @@
-09:31:11 | 🎯 APERTURA FUERA DE BANDA | xlk abrió fuera de rango.
-09:31:11 | 🎯 APERTURA FUERA DE BANDA | dram abrió fuera de rango.
-09:31:11 | 🎯 APERTURA FUERA DE BANDA | skhy abrió fuera de rango.
-09:31:11 | 🎯 APERTURA FUERA DE BANDA | lrcx abrió fuera de rango.
-09:31:11 | 🎯 APERTURA FUERA DE BANDA | sndk abrió fuera de rango.
-09:31:11 | 🎯 APERTURA FUERA DE BANDA | wdc abrió fuera de rango.
-09:31:11 | 🎯 APERTURA FUERA DE BANDA | stx abrió fuera de rango.
-09:32:11 | 🎯 RE-ENTRADA A BANDA +VOL | amzn volvió a su rango.
-09:33:14 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
-09:36:15 | 🎈 BB BAND-WALK | nvda sigue bajando fuerte.
 09:37:50 | 🐋 ALERTA BALLENA CALLS | Alerta ballena, alto volumen agregado de calls en TSLA; strike dominante 310 — cerca del muro de calls medido en $310.
 09:38:11 | 🐋 ALERTA BALLENA CALLS | Alerta ballena, alto volumen agregado de calls en MSFT; strike dominante 425.
 09:38:15 | 🎈 BB REBOTE | qqq puede bajar un poco.
@@ -498,3 +488,13 @@
 19:00:29 | INTRINIO WS | auth OK equities-edge, socket NO en weekend
 19:00:29 | INTRINIO WS | auth OK equities-edge, socket NO en rth
 19:03:30 | 🕳 CINTA CIEGA | No veo las ballenas de 3 acciones.
+19:05:06 | 🕳 CINTA CIEGA | No veo las ballenas de 3 acciones.
+19:05:11 | INTRINIO WS | auth OK equities-edge, socket NO en weekend
+19:05:11 | INTRINIO WS | auth OK equities-edge, socket NO en rth
+19:09:24 | INTRINIO WS | auth OK equities-edge, socket NO en weekend
+19:09:24 | INTRINIO WS | auth OK equities-edge, socket NO en rth
+19:10:26 | INTRINIO WS | auth OK equities-edge, socket NO en weekend
+19:10:26 | INTRINIO WS | auth OK equities-edge, socket NO en rth
+19:15:18 | 🕳 CINTA CIEGA | No veo las ballenas de 3 acciones.
+19:16:07 | 🕳 CINTA CIEGA | No veo las ballenas de 3 acciones.
+19:16:29 | 🕳 CINTA CIEGA | No veo las ballenas de 3 acciones.

@@ -140,7 +140,16 @@ tbt = ib.reqTickByTickData(smart, "AllLast", 0, False)   # y make_on_whale() la 
 `ib_insync` acepta `'Last'|'AllLast'|'BidAsk'|'MidPoint'` sobre **cualquier `Contract`**, incluido
 `Option`. **HIRO = ese motor apuntado a contratos de opcion, ponderado por delta.**
 Nota: `opt_whale_watch.py` **no** hace esto — lee VOLUMEN acumulado con `reqMktData` (ratio P/C,
-agregado bilateral). Tick-by-tick sobre opciones **nunca se ha intentado aqui**.
+agregado bilateral).
+
+> ### ⛔ ACTUALIZACIÓN 2026-07-28 — ESTA VÍA ESTÁ MUERTA, YA SE INTENTÓ Y SE MIDIÓ
+> `reqTickByTickData(..., "AllLast")` sobre contratos de OPCIÓN devuelve **error 10189 en 20/20
+> contratos de QQQ** ("tick-by-tick requests are not supported for this contract"). Evidencia:
+> `Done.md:437` y `docs/HIRO-2026-07-25.md:215`. **HIRO no es construible aquí**: ni por Polygon
+> (403 en `/v3/trades` y `/v3/quotes` de opciones) ni por IBKR (10189). No vuelvas a diseñarlo.
+> Lo que SÍ da flujo firmado son las **flow-alerts de Unusual Whales** (`Done.md:759`: "hiro_pulse
+> SUPERADO por la cinta UW"). El párrafo de arriba se conserva porque el ÁLGEBRA del hedge_flow
+> sigue siendo correcta — lo que no existe es la fuente de prints firmados de opciones.
 
 ### Del print firmado al flujo de cobertura
 ```
