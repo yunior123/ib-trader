@@ -1,4 +1,3 @@
-21:32:10 | 🇰🇷 KRX BRIDGE CIEGO | Corea sin datos. Reconectando.
 21:42:55 | 🇰🇷 BARRAS COREA RANCIAS | Barras de Corea rancias.
 21:53:40 | 🇰🇷 BARRAS COREA RANCIAS | Barras de Corea rancias.
 22:04:13 | 🇰🇷 KRX BRIDGE CIEGO | Corea sin datos. Reconectando.
@@ -498,3 +497,4 @@
 03:13:26 | 🕳 CINTA CIEGA | No veo las ballenas de 3 acciones.
 03:14:05 | INTRINIO WS | auth OK equities-edge, socket NO en weekend
 03:14:05 | INTRINIO WS | auth OK equities-edge, socket NO en rth
+03:18:37 | 🕳 CINTA CIEGA | No veo las ballenas de 3 acciones.
