@@ -70,3 +70,22 @@ Devuelve `stock_prices[]` EOD. Adapter `get_daily_bars` lo lee (soporta `price` 
 - page_size /intervals tope 1000; /prices diario tope 10000.
 - Sources del provider en config: `MIT_INTRINIO_STOCK_SOURCE`, `MIT_INTRINIO_INTERVAL_SOURCE`
   (default `iex`), `MIT_INTRINIO_OPTIONS_SOURCE` (default `delayed`), `MIT_INTRINIO_BASE_URL`.
+
+## REALTIME (FMV) = WebSocket, NO el REST (investigado + medido 2026-08-02)
+El REST `/prices/realtime` y `/prices/intervals` SIEMPRE dan delayed (`cboe_one_delayed`) por
+diseño. El **realtime FMV que se paga (EquitiesEdge/OptionsEdge)** vive en el **WebSocket** del
+SDK `intriniorealtime` (`pip install intriniorealtime`), NO en REST.
+
+- Equities: `IntrinioRealtimeEquitiesClient({"api_key":K,"provider":EQUITIES_EDGE}, on_trade, on_quote)`;
+  `.connect()` → auth `https://equities-edge.intrinio.com/auth?api_key=` → token → `wss://equities-edge.intrinio.com/socket/websocket`; `.join(["SPY",...])` o `.join("lobby")` (firehose).
+  Providers equities: `IEX|DELAYED_SIP|NASDAQ_BASIC|CBOE_ONE|EQUITIES_EDGE`.
+- Options: `IntrinioRealtimeOptionsClient(Config(api_key=K, provider=Providers.OPTIONS_EDGE, symbols=[...]), on_trade, on_quote)`;
+  auth `https://options-edge.intrinio.com/auth`; providers: `OPRA|OPTIONS_EDGE`; `OPRA_FIREHOSE` para todo.
+
+**MEDIDO 2026-08-02**: con nuestras 2 keys, los auth de equities-edge/options-edge/opra/realtime-mx
+CONECTAN (TCP/TLS) pero devuelven **Empty reply / cierran sin HTTP** = key SIN entitlement realtime
+(una entitled devuelve un token). O sea: el mecanismo es correcto, pero el feed realtime hay que
+ACTIVARLO en la cuenta/key. Diagnóstico: `curl https://equities-edge.intrinio.com/auth?api_key=K`
+→ "Empty reply from server" = no entitled; → token JSON = entitled.
+Cuando se active: construir `providers/intrinio_realtime.py` (un fichero, @register) que corra el
+WS EQUITIES_EDGE/OPTIONS_EDGE y alimente los ficheros de la flota — reemplaza al puente REST delayed.
