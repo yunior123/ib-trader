@@ -177,6 +177,57 @@ def compute_option_matrix(
     }
 
 
+def compute_trace_matrix(
+    symbol: str, spot: float, chain: list[OptionContract], *, metric: str = "gex"
+) -> dict:
+    """SpotGamma-TRACE-style per-strike metric (GEX or Net OI). House sign: call +, put -.
+
+    The metric varies slowly intraday, so the frontend paints one current value per strike
+    across the whole time axis (no history archive in v1). Fail-loud: GEX omits strikes with
+    no MEASURED gamma (never reconstructs); empty chain yields empty by_strike."""
+    if metric not in {"gex", "netoi"}:
+        raise ValueError(f"Unknown metric: {metric}")
+    lo, hi = (spot * (1 - MATRIX_BAND), spot * (1 + MATRIX_BAND)) if spot > 0 else (0.0, 1e12)
+    by_strike: dict[float, float] = defaultdict(float)
+    for contract in chain:
+        if not (lo <= contract.strike <= hi):
+            continue
+        sign = 1 if contract.option_type == "call" else -1
+        if metric == "gex":
+            if contract.gamma is None:  # fail-loud: measured greeks only, no IV reconstruction
+                continue
+            value = sign * contract.gamma * contract.open_interest * CONTRACT_MULTIPLIER * spot * spot * 0.01
+        else:  # netoi: net open interest, calls +, puts -
+            value = sign * contract.open_interest
+        by_strike[contract.strike] += value
+
+    dealer = analyze_dealer_positioning(symbol, spot, chain)
+    strikes = sorted(by_strike.keys(), reverse=True)
+    return {
+        "symbol": symbol.upper(),
+        "metric": metric,
+        "spot": spot,
+        "strikes": [float(f"{s:g}") for s in strikes],
+        "by_strike": {f"{s:g}": by_strike[s] for s in strikes},
+        "levels": {
+            "call_wall": dealer.call_wall,
+            "put_wall": dealer.put_wall,
+            "gamma_flip": dealer.gamma_flip,
+            "max_pain": dealer.max_pain,
+        },
+        "caveats": [
+            "Per-strike metric is the current snapshot painted across the whole time axis (no intraday history in v1).",
+            "Open-interest signs are a dealer-positioning scenario proxy, not observed dealer inventory.",
+            (
+                "GEX uses MEASURED greeks only; strikes without provider gamma are omitted."
+                if metric == "gex"
+                else "Net OI = sum(open interest) per strike, calls +, puts -."
+            ),
+            f"Strikes banded to +/-{int(MATRIX_BAND * 100)}% of spot.",
+        ],
+    }
+
+
 def _max_pain(chain: list[OptionContract]) -> float | None:
     strikes = sorted({contract.strike for contract in chain})
     if not strikes:

@@ -1,5 +1,6 @@
 const $ = (id) => document.getElementById(id);
-const state = { symbol: 'SPY', socket: null, chart: null, candleSeries: null, volumeSeries: null, lines: [], alertIds: new Set(), alarmEnabled: false, audioContext: null, hmMetric: 'gex' };
+const state = { symbol: 'SPY', socket: null, chart: null, candleSeries: null, volumeSeries: null, lines: [], alertIds: new Set(), alarmEnabled: false, audioContext: null, hmMetric: 'gex',
+  trMetric: 'gex', trChart: null, trCandle: null, trLines: [], trSpot: null, trData: null, trKeyLevels: true, trObserver: null };
 
 function fmt(value, digits = 2) {
   if (value === null || value === undefined || Number.isNaN(Number(value))) return '—';
@@ -22,9 +23,11 @@ async function bootstrap() {
   state.symbol = health.watchlist.includes('SPY') ? 'SPY' : health.watchlist[0];
   $('symbol-select').value = state.symbol;
   createChart();
+  createTraceChart();
   connect();
   loadHeatmap();
-  $('symbol-select').addEventListener('change', () => { state.symbol = $('symbol-select').value; connect(); loadHeatmap(); });
+  loadTrace();
+  $('symbol-select').addEventListener('change', () => { state.symbol = $('symbol-select').value; connect(); loadHeatmap(); loadTrace(); });
   $('alarm-button').addEventListener('click', enableAlarm);
   $('refresh-button').addEventListener('click', async () => {
     const payload = await fetch(`/api/snapshot/${encodeURIComponent(state.symbol)}?force=true`).then(r => r.json());
@@ -36,6 +39,18 @@ async function bootstrap() {
     state.hmMetric = btn.dataset.metric;
     [...$('hm-toggle').children].forEach(b => b.classList.toggle('active', b === btn));
     loadHeatmap();
+  });
+  $('tr-refresh').addEventListener('click', loadTrace);
+  $('tr-toggle').addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-metric]'); if (!btn) return;
+    state.trMetric = btn.dataset.metric;
+    [...$('tr-toggle').children].forEach(b => b.classList.toggle('active', b === btn));
+    loadTrace();
+  });
+  $('tr-keylevels').addEventListener('click', (e) => {
+    state.trKeyLevels = !state.trKeyLevels;
+    e.currentTarget.classList.toggle('active', state.trKeyLevels);
+    if (state.trData) renderTracePriceLines(state.trData);
   });
 }
 
@@ -114,6 +129,148 @@ function renderHeatmap(data) {
   grid.replaceChildren(frag);
   // centrar el mapa en el spot: ahi viven los colores divergentes (call+ arriba / put- abajo)
   if (spotRowhead) requestAnimationFrame(() => spotRowhead.scrollIntoView({ block: 'center' }));
+}
+
+// ---- TRACE-style intraday heatmap (strike × time) --------------------------------
+const TR_WINDOW = 0.045; // visible price window around spot (±%); bands fill it top-to-bottom
+
+function createTraceChart() {
+  const container = $('tr-chart');
+  state.trChart = LightweightCharts.createChart(container, {
+    layout: { background: { type: 'solid', color: 'transparent' }, textColor: '#9a8fb8', fontFamily: 'Inter, system-ui, sans-serif' },
+    grid: { vertLines: { color: 'rgba(160,140,200,.05)' }, horzLines: { color: 'rgba(160,140,200,.05)' } },
+    rightPriceScale: { borderColor: 'rgba(160,140,200,.14)' },
+    timeScale: { borderColor: 'rgba(160,140,200,.14)', timeVisible: true, secondsVisible: false, rightOffset: 4 },
+    crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
+    autoSize: true,
+  });
+  state.trCandle = state.trChart.addSeries(LightweightCharts.CandlestickSeries, {
+    upColor: '#3ad6b0', downColor: '#ff6178', borderUpColor: '#3ad6b0', borderDownColor: '#ff6178', wickUpColor: '#e9f0fa', wickDownColor: '#e9f0fa',
+    autoscaleInfoProvider: () => {
+      if (!state.trSpot) return null; // no fabricated range
+      return { priceRange: { minValue: state.trSpot * (1 - TR_WINDOW), maxValue: state.trSpot * (1 + TR_WINDOW) } };
+    },
+  });
+  // Repaint the canvas whenever the chart geometry changes so bands stay aligned to the price axis.
+  const repaint = () => { if (state.trData) paintTraceCanvas(state.trData); };
+  state.trChart.timeScale().subscribeVisibleLogicalRangeChange(repaint);
+  state.trObserver = new ResizeObserver(() => requestAnimationFrame(repaint));
+  state.trObserver.observe($('tr-main'));
+}
+
+async function loadTrace() {
+  const sym = state.symbol;
+  const isGex = state.trMetric === 'gex';
+  $('tr-symbol').textContent = sym;
+  $('tr-title').textContent = `${isGex ? 'GEX' : 'Net OI'} by strike · time`;
+  $('tr-left-title').textContent = `${isGex ? 'GEX' : 'Net OI'} by Strike`;
+  let data;
+  try {
+    data = await fetch(`/api/trace/${encodeURIComponent(sym)}?metric=${state.trMetric}`).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
+  } catch (err) {
+    $('tr-empty').hidden = false; $('tr-empty').textContent = `Trace unavailable (${escapeHtml(String(err.message || err))})`;
+    $('tr-bars').innerHTML = ''; return;
+  }
+  if (sym !== state.symbol) return; // stale response, symbol changed
+  renderTrace(data);
+}
+
+function renderTrace(data) {
+  state.trData = data;
+  state.trSpot = data.spot || null;
+  const q = data.quote || {};
+  $('tr-price').textContent = q.last == null ? '—' : `$${fmt(q.last, q.last < 50 ? 3 : 2)}`;
+  $('tr-change').textContent = q.change_pct == null ? '—' : `${q.change_pct >= 0 ? '+' : ''}${fmt(q.change_pct)}%`;
+  $('tr-change').className = q.change_pct > 0 ? 'positive' : q.change_pct < 0 ? 'negative' : 'muted';
+  $('tr-caveat').textContent = (data.caveats || []).join(' · ');
+
+  const candles = (data.candles || []).map(c => ({ time: c.time, open: c.open, high: c.high, low: c.low, close: c.close }));
+  const hasCandles = candles.length > 0;
+  $('tr-empty').textContent = hasCandles ? '' : 'No candle data';
+  $('tr-empty').style.display = hasCandles ? 'none' : '';  // style gana a cualquier CSS
+  state.trCandle.setData(candles);
+  renderTracePriceLines(data);
+  renderTraceBars(data);
+  requestAnimationFrame(() => { state.trChart.timeScale().fitContent(); paintTraceCanvas(data); });
+}
+
+function renderTracePriceLines(data) {
+  state.trLines.forEach(l => state.trCandle.removePriceLine(l));
+  state.trLines = [];
+  const legend = [];
+  const lv = data.levels || {};
+  const defs = state.trKeyLevels ? [
+    ['Call wall', lv.call_wall, '#ff6178', 2, LightweightCharts.LineStyle.Solid],
+    ['Put wall', lv.put_wall, '#3ad6b0', 2, LightweightCharts.LineStyle.Solid],
+    ['Gamma flip', lv.gamma_flip, '#ad8cff', 2, LightweightCharts.LineStyle.Solid],
+    ['Max pain', lv.max_pain, '#ffbe4f', 1, LightweightCharts.LineStyle.Dotted],
+    ['Last close', lv.last_close, '#8494aa', 1, LightweightCharts.LineStyle.Dashed],
+  ] : [];
+  defs.forEach(([title, price, color, width, style]) => {
+    if (price == null) return;
+    state.trLines.push(state.trCandle.createPriceLine({ price, color, lineWidth: width, lineStyle: style, axisLabelVisible: true, title }));
+    legend.push(`<span style="--color:${color}">${escapeHtml(title)}</span>`);
+  });
+  const spot = data.quote && data.quote.last;
+  if (spot != null) {
+    state.trLines.push(state.trCandle.createPriceLine({ price: spot, color: '#54d9ff', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, axisLabelVisible: true, title: 'Price' }));
+    legend.push(`<span style="--color:#54d9ff">Current price</span>`);
+  }
+  legend.push(`<span style="--color:#52b28a">${data.metric === 'gex' ? 'Positive GEX' : 'Net calls'}</span>`);
+  legend.push(`<span style="--color:#6852a8">${data.metric === 'gex' ? 'Negative GEX' : 'Net puts'}</span>`);
+  $('tr-legend').innerHTML = legend.join('');
+}
+
+// Paint horizontal per-strike bands onto the canvas, mapped to the chart's price axis.
+function paintTraceCanvas(data) {
+  const canvas = $('tr-canvas'), main = $('tr-main');
+  const w = main.clientWidth, h = main.clientHeight;
+  if (!w || !h) return;
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr);
+  const ctx = canvas.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  const byStrike = data.by_strike || {};
+  const strikes = (data.strikes || []).slice().sort((a, b) => a - b); // ascending price
+  if (!strikes.length) return;
+  const coord = (p) => state.trCandle.priceToCoordinate(p);
+  if (coord(strikes[0]) == null) return; // no price scale yet (no candles)
+  const maxAbs = Object.values(byStrike).reduce((m, v) => Math.max(m, Math.abs(v)), 0);
+  for (let i = 0; i < strikes.length; i++) {
+    const s = strikes[i];
+    const upP = i < strikes.length - 1 ? (s + strikes[i + 1]) / 2 : s + (i > 0 ? (s - strikes[i - 1]) / 2 : s * 0.001);
+    const loP = i > 0 ? (strikes[i - 1] + s) / 2 : s - (strikes.length > 1 ? (strikes[i + 1] - s) / 2 : s * 0.001);
+    const yTop = coord(upP), yBot = coord(loP);
+    if (yTop == null || yBot == null) continue;
+    const y = Math.min(yTop, yBot), bandH = Math.abs(yBot - yTop) + 1;
+    if (y + bandH < 0 || y > h) continue; // off-screen
+    ctx.fillStyle = divergingColor(byStrike[`${s}`.replace(/\.0$/, '')] ?? byStrike[`${s}`] ?? 0, maxAbs);
+    ctx.fillRect(0, y, w, bandH);
+  }
+}
+
+function renderTraceBars(data) {
+  const byStrike = data.by_strike || {};
+  const spot = data.spot || 0;
+  // Only the visible window (matches the heatmap), descending so top = high strike.
+  const lo = spot * (1 - TR_WINDOW), hi = spot * (1 + TR_WINDOW);
+  const rows = (data.strikes || []).filter(s => s >= lo && s <= hi).sort((a, b) => b - a);
+  if (!rows.length) { $('tr-bars').innerHTML = '<div class="empty">No strikes in window</div>'; return; }
+  const maxAbs = rows.reduce((m, s) => Math.max(m, Math.abs(byStrike[`${s}`.replace(/\.0$/, '')] ?? byStrike[`${s}`] ?? 0)), 0) || 1;
+  const spotStrike = rows.reduce((best, s) => Math.abs(s - spot) < Math.abs(best - spot) ? s : best, rows[0]);
+  const frag = document.createDocumentFragment();
+  rows.forEach(s => {
+    const v = byStrike[`${s}`.replace(/\.0$/, '')] ?? byStrike[`${s}`] ?? 0;
+    const pct = Math.min(50, Math.abs(v) / maxAbs * 50);
+    const row = document.createElement('div'); row.className = 'tr-bar-row';
+    const lab = document.createElement('div'); lab.className = 'tr-bar-strike' + (s === spotStrike ? ' tr-spot' : ''); lab.textContent = s.toFixed(s < 50 ? 1 : 0);
+    const track = document.createElement('div'); track.className = 'tr-bar-track';
+    const fill = document.createElement('div'); fill.className = 'tr-bar-fill ' + (v >= 0 ? 'pos' : 'neg'); fill.style.width = `${pct}%`;
+    fill.title = `${s}: ${data.metric === 'gex' ? compact(v) : fmt(v, 0)}`;
+    track.appendChild(fill); row.append(lab, track); frag.appendChild(row);
+  });
+  $('tr-bars').replaceChildren(frag);
 }
 
 function createChart() {

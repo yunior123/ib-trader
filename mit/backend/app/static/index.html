@@ -68,6 +68,41 @@
         <div class="caveat" id="hm-caveat"></div>
       </section>
 
+      <section class="panel trace-panel span-12">
+        <div class="tr-toolbar">
+          <div class="tr-toggle" id="tr-toggle" role="group" aria-label="Metric">
+            <button type="button" data-metric="gex" class="active">GEX</button>
+            <button type="button" data-metric="netoi">Net OI</button>
+          </div>
+          <button type="button" class="tr-chip" id="tr-0dte" title="0DTE filter — visual only in v1">0DTE</button>
+          <span class="tr-chip tr-static" title="Timeframe — 5m (visual only in v1)">5m</span>
+          <button type="button" class="tr-chip active" id="tr-keylevels" title="Show/hide key level lines">Key levels</button>
+          <span class="hm-info" title="TRACE-style intraday map: y = strike/price, x = time. Background bands = current per-strike metric painted across the whole session (no history archive in v1). Candles with wicks and key-level lines overlaid. Purple/indigo positive, red/pink negative — a scenario proxy, not observed dealer inventory.">i</span>
+          <div class="tr-quote">
+            <strong id="tr-symbol">—</strong>
+            <span id="tr-price">—</span>
+            <span id="tr-change" class="muted">—</span>
+          </div>
+          <div class="hm-spacer"></div>
+          <span class="hm-title" id="tr-title">GEX by strike · time</span>
+          <button type="button" class="button hm-refresh" id="tr-refresh" title="Refresh trace">Refresh</button>
+        </div>
+        <div class="tr-body">
+          <div class="tr-left">
+            <div class="tr-left-title" id="tr-left-title">GEX by Strike</div>
+            <div class="tr-bars" id="tr-bars"></div>
+          </div>
+          <div class="tr-main" id="tr-main">
+            <canvas class="tr-canvas" id="tr-canvas"></canvas>
+            <div class="tr-chart" id="tr-chart"></div>
+            <div class="tr-empty" id="tr-empty" hidden>No candle data</div>
+          </div>
+        </div>
+        <div class="tr-scrubber"><div class="tr-scrub-track"><div class="tr-scrub-fill"></div><div class="tr-scrub-handle"></div></div></div>
+        <div class="tr-legend" id="tr-legend"></div>
+        <div class="caveat" id="tr-caveat"></div>
+      </section>
+
       <section class="panel chart-panel span-8">
         <div class="panel-heading">
           <div><div class="eyebrow">PRICE + POSITIONING LEVELS</div><h2>Market structure</h2></div>

@@ -89,6 +89,41 @@ select option { background: #111a28; }
 .hm-rowhead.hm-spot { color: #0a0e14; background: #fff; font-weight: 850; border-radius: 4px; }
 .hm-cell.hm-max { background: #f4d03f !important; color: #101014 !important; font-weight: 850; }
 
+/* TRACE-style intraday heatmap (strike × time), separate from the strike×expiration grid */
+.trace-panel { background: linear-gradient(180deg, #0c0710, #0a0810); padding: 12px; }
+.tr-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; flex-wrap: wrap; }
+.tr-toggle { display: inline-flex; border: 1px solid rgba(141,165,196,.18); border-radius: 9px; overflow: hidden; }
+.tr-toggle button { background: transparent; color: var(--muted); border: 0; padding: 7px 16px; cursor: pointer; font-weight: 800; font-size: 12px; letter-spacing: .04em; }
+.tr-toggle button.active { background: rgba(173,140,255,.18); color: var(--violet); }
+.tr-chip { background: rgba(255,255,255,.03); color: var(--muted); border: 1px solid var(--line); border-radius: 8px; padding: 6px 11px; cursor: pointer; font-size: 11px; font-weight: 700; }
+.tr-chip.active { background: rgba(84,217,255,.14); color: var(--cyan); border-color: rgba(84,217,255,.25); }
+.tr-chip.tr-static { cursor: default; opacity: .8; }
+.tr-quote { display: flex; align-items: baseline; gap: 9px; }
+.tr-quote strong { font-size: 16px; }.tr-quote #tr-price { font-size: 16px; font-weight: 800; }.tr-quote #tr-change { font-size: 13px; }
+.tr-body { display: grid; grid-template-columns: 210px 1fr; gap: 10px; height: 520px; }
+.tr-left { display: flex; flex-direction: column; min-width: 0; border: 1px solid rgba(141,165,196,.1); border-radius: 10px; background: #0b0710; padding: 8px; }
+.tr-left-title { color: var(--muted); font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 6px; }
+.tr-bars { flex: 1; display: flex; flex-direction: column; gap: 1px; overflow: hidden; font-variant-numeric: tabular-nums; }
+.tr-bar-row { flex: 1; display: grid; grid-template-columns: 46px 1fr; align-items: center; gap: 5px; min-height: 0; }
+.tr-bar-strike { font-size: 8.5px; color: #9db0c8; text-align: right; font-family: "SF Mono", ui-monospace, Menlo, monospace; }
+.tr-bar-strike.tr-spot { color: #fff; font-weight: 800; }
+.tr-bar-track { position: relative; height: 62%; background: rgba(255,255,255,.03); border-radius: 2px; }
+.tr-bar-track::before { content: ""; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: rgba(255,255,255,.14); }
+.tr-bar-fill { position: absolute; top: 0; bottom: 0; border-radius: 2px; }
+.tr-bar-fill.pos { left: 50%; background: rgba(173,140,255,.8); }
+.tr-bar-fill.neg { right: 50%; background: rgba(255,97,120,.8); }
+.tr-main { position: relative; border: 1px solid rgba(141,165,196,.1); border-radius: 10px; overflow: hidden; background: #0a0610; }
+.tr-canvas { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; }
+.tr-chart { position: absolute; inset: 0; z-index: 1; }
+.tr-empty { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; color: var(--muted); font-size: 12px; background: rgba(10,6,16,.6); }
+.tr-scrubber { margin-top: 10px; }
+.tr-scrub-track { position: relative; height: 4px; border-radius: 99px; background: linear-gradient(90deg, rgba(50,214,160,.5), rgba(84,217,255,.35)); }
+.tr-scrub-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 62%; border-radius: 99px; background: rgba(84,217,255,.55); }
+.tr-scrub-handle { position: absolute; left: 62%; top: -4px; width: 12px; height: 12px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px rgba(84,217,255,.7); transform: translateX(-50%); }
+.tr-legend { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; font-size: 10px; color: var(--muted); }
+.tr-legend span::before { content: ""; width: 8px; height: 3px; border-radius: 2px; display: inline-block; margin-right: 5px; vertical-align: middle; background: var(--color); }
+@media (max-width: 900px) { .tr-body { grid-template-columns: 1fr; height: auto; }.tr-left { height: 160px; }.tr-main { height: 380px; } }
+
 .footer { padding: 18px 4px 4px; text-align: center; color: #5f7086; font-size: 9px; }
 .footer a { color: #8494aa; text-decoration: none; }
 .footer a:hover { color: #c8d7e9; }

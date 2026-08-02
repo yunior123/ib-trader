@@ -13,7 +13,7 @@ from backend.app.analytics import (
     analyze_signals,
     build_weekly_rows,
 )
-from backend.app.analytics.options_positioning import compute_option_matrix
+from backend.app.analytics.options_positioning import compute_option_matrix, compute_trace_matrix
 from backend.app.config import Settings
 from backend.app.domain import (
     AlertEvent,
@@ -155,6 +155,51 @@ class MarketIntelligenceEngine:
         matrix["provider_status"] = [s.model_dump(mode="json") for s in status]
         matrix["generated_at"] = datetime.now(UTC).isoformat()
         return matrix
+
+    async def trace_matrix(self, symbol: str, *, metric: str = "gex") -> dict:
+        symbol = symbol.upper()
+        status: list[ProviderStatus] = []
+        quote, chain = await asyncio.gather(
+            self._with_fallback(
+                "quote",
+                self.providers.market.name,
+                lambda: self.providers.market.get_quote(symbol),
+                lambda: self.providers.fallback.get_quote(symbol),
+                status,
+            ),
+            self._with_fallback(
+                "options",
+                self.providers.options.name,
+                lambda: self._multi_expiry_chain(symbol),
+                lambda: self.providers.fallback.get_option_chain(symbol),
+                status,
+            ),
+        )
+        matrix = compute_trace_matrix(symbol, quote.last, chain, metric=metric)
+        bars = await self._bars_for_trace(symbol, status)
+        # candles with wicks for the price overlay; empty list if no data (fail-loud, no fabricated bars)
+        matrix["candles"] = [
+            {"time": int(b.timestamp.timestamp()), "open": b.open, "high": b.high, "low": b.low, "close": b.close}
+            for b in bars
+        ]
+        matrix["levels"]["last_close"] = bars[-2].close if len(bars) >= 2 else None
+        matrix["quote"] = {"last": quote.last, "change_pct": quote.change_pct}
+        matrix["provider_status"] = [s.model_dump(mode="json") for s in status]
+        matrix["generated_at"] = datetime.now(UTC).isoformat()
+        return matrix
+
+    async def _bars_for_trace(self, symbol: str, status: list[ProviderStatus]) -> list[Bar]:
+        """5m candles for the trace overlay; degrade to [] on total failure (no fabricated bars)."""
+        try:
+            return await self._with_fallback(
+                "market-bars",
+                self.providers.market.name,
+                lambda: self.providers.market.get_bars(symbol, interval="5m", limit=120),
+                lambda: self.providers.fallback.get_bars(symbol, interval="5m", limit=120),
+                status,
+            )
+        except Exception:
+            return []
 
     async def _multi_expiry_chain(self, symbol: str, *, max_expiries: int = 10):
         """Cadena multi-vencimiento para el heatmap: si el provider sabe listar vencimientos,
