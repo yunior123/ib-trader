@@ -104,6 +104,34 @@ def test_runner_pasa_el_portero_de_dia_de_mercado_y_el_flag_de_papel(runner):
     assert "--print" in txt
 
 
+def test_open5_y_premarket_imprimen_EL_MISMO_PAR():
+    """Yunior 2026-07-30 pidio el mismo par en los dos pases ("do the same for apple", "before
+    market open and 5 min after open"). Son dos ficheros porque cada job es dueño de su universo
+    y print_premarket_trees.sh esta fuera de este lote; este test es el que GRITA si divergen en
+    silencio. Si algun dia se quiere divergir de verdad, se cambia este test a proposito."""
+    a = set(open(os.path.join(REPO, "data", "print_syms_open5.txt")).read().split())
+    b = set(open(os.path.join(REPO, "data", "print_syms_premarket.txt")).read().split())
+    assert a == b, f"open5 {sorted(a)} != premarket {sorted(b)}"
+
+
+def test_la_valla_la_escribe_solo_el_job_de_la_fence():
+    """--envelope a las 09:35 reescribia la valla de SPY/AAPL en los 5 min de spread mas ancho e
+    IV mas alta, dejando 2 simbolos con procedencia distinta a los otros 28 de fleet.txt. La
+    doctrina (skill expected-move-envelope) captura el straddle <=15:55 y la valla describe el
+    DIA: la escribe com.ibtrader.fence (09:12 y 15:56) sobre em_envelope --all, nadie mas."""
+    for runner in RUNNERS:
+        code = [ln for ln in open(os.path.join(SCRIPTS, runner)).read().splitlines()
+                if not ln.lstrip().startswith("#")]
+        assert "--envelope" not in " ".join(code), \
+            f"{runner} reescribe la valla: la escribe com.ibtrader.fence"
+    fence = _load_plist("com.ibtrader.fence.plist")
+    blob = " ".join(fence["ProgramArguments"])
+    assert "em_envelope.py --all" in blob
+    fleet = set(open(os.path.join(REPO, "data", "fleet.txt")).read().split())
+    for rel in ("data/print_syms_open5.txt", "data/print_syms_premarket.txt"):
+        assert set(open(os.path.join(REPO, rel)).read().split()) <= fleet
+
+
 def test_postmarket_archiva_su_propia_cadena():
     """GLW/NBIS/BE no estan en data/universe_gamma.txt: nadie les archiva el libro."""
     gamma = set(open(os.path.join(REPO, "data", "universe_gamma.txt")).read().split())
@@ -111,6 +139,39 @@ def test_postmarket_archiva_su_propia_cadena():
     if set(syms) - gamma:
         txt = open(os.path.join(SCRIPTS, "print_postmarket_plans.sh")).read()
         assert "--archive" in txt
+
+
+# ------------------------------------------------- nada clavado: impresora e interprete de PDF
+def _resolve(var, env):
+    """Resuelve de verdad las asignaciones del motor en zsh (no basta con grepearlas)."""
+    src = open(os.path.join(SCRIPTS, "print_plans.sh")).read()
+    lines = [ln for ln in src.splitlines() if re.match(r"^(PRINTER|CHROME)=", ln)]
+    assert len(lines) == 2, f"asignaciones esperadas 2, encontradas {lines}"
+    base = {k: v for k, v in os.environ.items()
+            if k not in ("PRINTER", "LPDEST", "IBT_PRINTER", "IBT_CHROME")}
+    r = subprocess.run(["/bin/zsh", "-c", "\n".join(lines) + f"\nprint -r -- ${var}"],
+                       env=dict(base, **env), capture_output=True, text=True, timeout=30)
+    assert r.returncode == 0, r.stderr
+    return r.stdout.strip()
+
+
+def test_impresora_por_defecto_y_override_por_entorno():
+    """IBT_PRINTER gana, luego el PRINTER estandar de CUPS (lpr(1)), luego el HP de casa."""
+    assert _resolve("PRINTER", {}) == "HP_OfficeJet_Pro_9120e_Series"
+    assert _resolve("PRINTER", {"IBT_PRINTER": "Brother_HL"}) == "Brother_HL"
+    assert _resolve("PRINTER", {"PRINTER": "CUPS_DEF"}) == "CUPS_DEF"
+    assert _resolve("PRINTER", {"PRINTER": "CUPS_DEF", "IBT_PRINTER": "Brother_HL"}) == "Brother_HL"
+
+
+def test_chrome_por_defecto_y_override_por_entorno():
+    assert _resolve("CHROME", {}) == "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
+    assert _resolve("CHROME", {"IBT_CHROME": "/opt/chromium/chrome"}) == "/opt/chromium/chrome"
+
+
+def test_ni_impresora_ni_chrome_clavados_en_otro_sitio():
+    src = open(os.path.join(SCRIPTS, "print_plans.sh")).read()
+    assert src.count("HP_OfficeJet") == 1, "la impresora solo puede aparecer como default"
+    assert src.count("/Applications/") == 1, "la ruta de Chrome solo puede aparecer como default"
 
 
 def test_motor_no_imprime_por_defecto():

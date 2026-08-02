@@ -1,177 +1,176 @@
 {
  "QQQ": {
   "index": "QQQ",
-  "score": 0.331,
-  "verdict": "ENGRANAJE DEBIL (+0.33): sesgo sin confluencia \u2014 no confirma",
+  "score": 0.509,
+  "verdict": "ENGRANAJE ALCISTA: NVDA+MSFT empujan QQQ arriba",
   "aligned_top": [
    "NVDA",
    "MSFT"
   ],
   "breakdowns": [
-   "AAPL",
-   "META",
-   "QCOM"
+   "AAPL"
   ],
   "breakouts": [
    "NVDA",
    "MSFT",
    "AMZN",
    "AVGO",
-   "TSLA",
-   "AMD"
+   "META",
+   "GOOGL",
+   "TSLA"
   ],
   "components": {
    "NVDA": {
     "w": 9.0,
-    "lean": 0.91,
+    "lean": 1.0,
     "tag": "ruptura alcista",
-    "gap": 3.9
+    "gap": 2.93
    },
    "MSFT": {
     "w": 8.0,
     "lean": 1.0,
     "tag": "ruptura alcista",
-    "gap": 15.65
+    "gap": 3.02
    },
    "AAPL": {
     "w": 7.5,
     "lean": -1.0,
     "tag": "RUPTURA BAJISTA",
-    "gap": -9.02
+    "gap": -7.35
    },
    "AMZN": {
     "w": 5.5,
     "lean": 1.0,
     "tag": "ruptura alcista",
-    "gap": 15.99
+    "gap": 15.32
    },
    "AVGO": {
     "w": 5.0,
-    "lean": 1.0,
+    "lean": 0.72,
     "tag": "ruptura alcista",
-    "gap": 5.77
+    "gap": 0.37
    },
    "META": {
     "w": 4.5,
-    "lean": -1.0,
-    "tag": "RUPTURA BAJISTA",
-    "gap": -6.82
+    "lean": 1.0,
+    "tag": "ruptura alcista",
+    "gap": 3.28
    },
    "GOOGL": {
     "w": 5.0,
-    "lean": 0.27,
-    "tag": "rango",
-    "gap": 0.29
+    "lean": 1.0,
+    "tag": "ruptura alcista",
+    "gap": 6.73
    },
    "TSLA": {
     "w": 3.0,
-    "lean": 0.93,
+    "lean": 0.91,
     "tag": "ruptura alcista",
-    "gap": 3.93
+    "gap": 0.76
    },
    "NFLX": {
     "w": 3.0,
-    "lean": -0.65,
+    "lean": -0.55,
     "tag": "rango",
-    "gap": -1.87
+    "gap": -2.0
    },
    "AMD": {
     "w": 2.0,
-    "lean": 1.0,
-    "tag": "ruptura alcista",
-    "gap": 17.68
+    "lean": -0.53,
+    "tag": "rango",
+    "gap": -1.9
    },
    "QCOM": {
     "w": 1.2,
-    "lean": -0.93,
-    "tag": "RUPTURA BAJISTA",
-    "gap": -0.82
+    "lean": -0.68,
+    "tag": "rango",
+    "gap": -2.63
    }
   },
-  "ts": 1785503573
+  "ts": 1785676368
  },
  "SPY": {
   "index": "SPY",
-  "score": 0.358,
+  "score": 0.54,
   "verdict": "ENGRANAJE ALCISTA: NVDA+MSFT empujan SPY arriba",
   "aligned_top": [
    "NVDA",
    "MSFT"
   ],
   "breakdowns": [
-   "AAPL",
-   "META"
+   "AAPL"
   ],
   "breakouts": [
    "NVDA",
    "MSFT",
    "AMZN",
+   "META",
+   "GOOGL",
    "AVGO",
-   "TSLA",
-   "AMD"
+   "TSLA"
   ],
   "components": {
    "NVDA": {
     "w": 7.5,
-    "lean": 0.91,
+    "lean": 1.0,
     "tag": "ruptura alcista",
-    "gap": 3.9
+    "gap": 2.93
    },
    "MSFT": {
     "w": 7.0,
     "lean": 1.0,
     "tag": "ruptura alcista",
-    "gap": 15.65
+    "gap": 3.02
    },
    "AAPL": {
     "w": 6.5,
     "lean": -1.0,
     "tag": "RUPTURA BAJISTA",
-    "gap": -9.02
+    "gap": -7.35
    },
    "AMZN": {
     "w": 4.0,
     "lean": 1.0,
     "tag": "ruptura alcista",
-    "gap": 15.99
+    "gap": 15.32
    },
    "META": {
     "w": 3.0,
-    "lean": -1.0,
-    "tag": "RUPTURA BAJISTA",
-    "gap": -6.82
+    "lean": 1.0,
+    "tag": "ruptura alcista",
+    "gap": 3.28
    },
    "GOOGL": {
     "w": 4.0,
-    "lean": 0.27,
-    "tag": "rango",
-    "gap": 0.29
+    "lean": 1.0,
+    "tag": "ruptura alcista",
+    "gap": 6.73
    },
    "AVGO": {
     "w": 2.5,
-    "lean": 1.0,
+    "lean": 0.72,
     "tag": "ruptura alcista",
-    "gap": 5.77
+    "gap": 0.37
    },
    "TSLA": {
     "w": 2.0,
-    "lean": 0.93,
+    "lean": 0.91,
     "tag": "ruptura alcista",
-    "gap": 3.93
+    "gap": 0.76
    },
    "AMD": {
     "w": 1.2,
-    "lean": 1.0,
-    "tag": "ruptura alcista",
-    "gap": 17.68
+    "lean": -0.53,
+    "tag": "rango",
+    "gap": -1.9
    },
    "NFLX": {
     "w": 1.5,
-    "lean": -0.65,
+    "lean": -0.55,
     "tag": "rango",
-    "gap": -1.87
+    "gap": -2.0
    }
   },
-  "ts": 1785503574
+  "ts": 1785676376
  }
 }

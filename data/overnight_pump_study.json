@@ -1,11 +1,12 @@
 {
- "ts": 1785652384.2891798,
+ "ts": 1785711501.6082299,
  "min_n": 30,
  "n": 3,
  "status": "DATA-INSUFFICIENT",
  "source": "data/history/<fecha>/bars/*_krx.txt",
+ "et_nota": "franjas ancladas a la apertura KRX (KST, sin DST); 'et' es la etiqueta de la sesion mas reciente y 'et_variants' todas las de la muestra",
  "symbols": {
-  "kospi": {
+  "skhynix": {
    "n": 3,
    "sessions": [
     "2026-07-29",
@@ -18,9 +19,13 @@
      "bucket": 0,
      "kst": "09:00",
      "et": "20:00",
+     "et_variants": [
+      "20:00"
+     ],
+     "et_dst_ambiguo": false,
      "n": 2,
-     "ups": 1,
-     "mean_ret_pct": -0.3663,
+     "ups": 0,
+     "mean_ret_pct": -2.1961,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -30,9 +35,13 @@
      "bucket": 1,
      "kst": "09:30",
      "et": "20:30",
+     "et_variants": [
+      "20:30"
+     ],
+     "et_dst_ambiguo": false,
      "n": 2,
-     "ups": 0,
-     "mean_ret_pct": -0.2454,
+     "ups": 1,
+     "mean_ret_pct": 0.0901,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -42,9 +51,13 @@
      "bucket": 2,
      "kst": "10:00",
      "et": "21:00",
+     "et_variants": [
+      "21:00"
+     ],
+     "et_dst_ambiguo": false,
      "n": 2,
      "ups": 1,
-     "mean_ret_pct": 0.6827,
+     "mean_ret_pct": 0.1064,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -54,9 +67,13 @@
      "bucket": 3,
      "kst": "10:30",
      "et": "21:30",
+     "et_variants": [
+      "21:30"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
      "ups": 1,
-     "mean_ret_pct": -1.9028,
+     "mean_ret_pct": -2.5203,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -66,9 +83,13 @@
      "bucket": 4,
      "kst": "11:00",
      "et": "22:00",
+     "et_variants": [
+      "22:00"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
      "ups": 1,
-     "mean_ret_pct": -0.5528,
+     "mean_ret_pct": -1.0484,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -78,9 +99,13 @@
      "bucket": 5,
      "kst": "11:30",
      "et": "22:30",
+     "et_variants": [
+      "22:30"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
      "ups": 1,
-     "mean_ret_pct": -1.6887,
+     "mean_ret_pct": -1.6871,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -90,9 +115,13 @@
      "bucket": 6,
      "kst": "12:00",
      "et": "23:00",
+     "et_variants": [
+      "23:00"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
-     "ups": 1,
-     "mean_ret_pct": -0.2216,
+     "ups": 2,
+     "mean_ret_pct": 0.3663,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -102,9 +131,13 @@
      "bucket": 7,
      "kst": "12:30",
      "et": "23:30",
+     "et_variants": [
+      "23:30"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
      "ups": 2,
-     "mean_ret_pct": -0.0638,
+     "mean_ret_pct": -0.0161,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -114,9 +147,13 @@
      "bucket": 8,
      "kst": "13:00",
      "et": "00:00",
+     "et_variants": [
+      "00:00"
+     ],
+     "et_dst_ambiguo": false,
      "n": 2,
      "ups": 1,
-     "mean_ret_pct": -1.5025,
+     "mean_ret_pct": -2.0151,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -126,9 +163,13 @@
      "bucket": 9,
      "kst": "13:30",
      "et": "00:30",
+     "et_variants": [
+      "00:30"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
      "ups": 2,
-     "mean_ret_pct": 1.2267,
+     "mean_ret_pct": 1.5853,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -138,9 +179,13 @@
      "bucket": 10,
      "kst": "14:00",
      "et": "01:00",
+     "et_variants": [
+      "01:00"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
-     "ups": 2,
-     "mean_ret_pct": 1.5385,
+     "ups": 3,
+     "mean_ret_pct": 1.9629,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -150,9 +195,13 @@
      "bucket": 11,
      "kst": "14:30",
      "et": "01:30",
+     "et_variants": [
+      "01:30"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
-     "ups": 3,
-     "mean_ret_pct": 1.1045,
+     "ups": 2,
+     "mean_ret_pct": 1.0845,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -162,9 +211,13 @@
      "bucket": 12,
      "kst": "15:00",
      "et": "02:00",
+     "et_variants": [
+      "02:00"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
-     "ups": 2,
-     "mean_ret_pct": 0.6662,
+     "ups": 1,
+     "mean_ret_pct": 0.0855,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -185,6 +238,10 @@
      "bucket": 0,
      "kst": "09:00",
      "et": "20:00",
+     "et_variants": [
+      "20:00"
+     ],
+     "et_dst_ambiguo": false,
      "n": 2,
      "ups": 1,
      "mean_ret_pct": -0.7152,
@@ -197,6 +254,10 @@
      "bucket": 1,
      "kst": "09:30",
      "et": "20:30",
+     "et_variants": [
+      "20:30"
+     ],
+     "et_dst_ambiguo": false,
      "n": 2,
      "ups": 0,
      "mean_ret_pct": -0.237,
@@ -209,6 +270,10 @@
      "bucket": 2,
      "kst": "10:00",
      "et": "21:00",
+     "et_variants": [
+      "21:00"
+     ],
+     "et_dst_ambiguo": false,
      "n": 2,
      "ups": 1,
      "mean_ret_pct": 0.5206,
@@ -221,6 +286,10 @@
      "bucket": 3,
      "kst": "10:30",
      "et": "21:30",
+     "et_variants": [
+      "21:30"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
      "ups": 1,
      "mean_ret_pct": -2.0423,
@@ -233,6 +302,10 @@
      "bucket": 4,
      "kst": "11:00",
      "et": "22:00",
+     "et_variants": [
+      "22:00"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
      "ups": 1,
      "mean_ret_pct": -0.2994,
@@ -245,6 +318,10 @@
      "bucket": 5,
      "kst": "11:30",
      "et": "22:30",
+     "et_variants": [
+      "22:30"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
      "ups": 1,
      "mean_ret_pct": -1.4655,
@@ -257,6 +334,10 @@
      "bucket": 6,
      "kst": "12:00",
      "et": "23:00",
+     "et_variants": [
+      "23:00"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
      "ups": 1,
      "mean_ret_pct": -0.1037,
@@ -269,6 +350,10 @@
      "bucket": 7,
      "kst": "12:30",
      "et": "23:30",
+     "et_variants": [
+      "23:30"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
      "ups": 2,
      "mean_ret_pct": 0.0912,
@@ -281,6 +366,10 @@
      "bucket": 8,
      "kst": "13:00",
      "et": "00:00",
+     "et_variants": [
+      "00:00"
+     ],
+     "et_dst_ambiguo": false,
      "n": 2,
      "ups": 1,
      "mean_ret_pct": -1.9138,
@@ -293,6 +382,10 @@
      "bucket": 9,
      "kst": "13:30",
      "et": "00:30",
+     "et_variants": [
+      "00:30"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
      "ups": 2,
      "mean_ret_pct": 1.9612,
@@ -305,6 +398,10 @@
      "bucket": 10,
      "kst": "14:00",
      "et": "01:00",
+     "et_variants": [
+      "01:00"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
      "ups": 2,
      "mean_ret_pct": 1.9091,
@@ -317,6 +414,10 @@
      "bucket": 11,
      "kst": "14:30",
      "et": "01:30",
+     "et_variants": [
+      "01:30"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
      "ups": 2,
      "mean_ret_pct": 0.525,
@@ -329,6 +430,10 @@
      "bucket": 12,
      "kst": "15:00",
      "et": "02:00",
+     "et_variants": [
+      "02:00"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
      "ups": 1,
      "mean_ret_pct": 0.2474,
@@ -339,7 +444,7 @@
     }
    ]
   },
-  "skhynix": {
+  "kospi": {
    "n": 3,
    "sessions": [
     "2026-07-29",
@@ -352,9 +457,13 @@
      "bucket": 0,
      "kst": "09:00",
      "et": "20:00",
+     "et_variants": [
+      "20:00"
+     ],
+     "et_dst_ambiguo": false,
      "n": 2,
-     "ups": 0,
-     "mean_ret_pct": -2.1961,
+     "ups": 1,
+     "mean_ret_pct": -0.3663,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -364,9 +473,13 @@
      "bucket": 1,
      "kst": "09:30",
      "et": "20:30",
+     "et_variants": [
+      "20:30"
+     ],
+     "et_dst_ambiguo": false,
      "n": 2,
-     "ups": 1,
-     "mean_ret_pct": 0.0901,
+     "ups": 0,
+     "mean_ret_pct": -0.2454,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -376,9 +489,13 @@
      "bucket": 2,
      "kst": "10:00",
      "et": "21:00",
+     "et_variants": [
+      "21:00"
+     ],
+     "et_dst_ambiguo": false,
      "n": 2,
      "ups": 1,
-     "mean_ret_pct": 0.1064,
+     "mean_ret_pct": 0.6827,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -388,9 +505,13 @@
      "bucket": 3,
      "kst": "10:30",
      "et": "21:30",
+     "et_variants": [
+      "21:30"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
      "ups": 1,
-     "mean_ret_pct": -2.5203,
+     "mean_ret_pct": -1.9028,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -400,9 +521,13 @@
      "bucket": 4,
      "kst": "11:00",
      "et": "22:00",
+     "et_variants": [
+      "22:00"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
      "ups": 1,
-     "mean_ret_pct": -1.0484,
+     "mean_ret_pct": -0.5528,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -412,9 +537,13 @@
      "bucket": 5,
      "kst": "11:30",
      "et": "22:30",
+     "et_variants": [
+      "22:30"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
      "ups": 1,
-     "mean_ret_pct": -1.6871,
+     "mean_ret_pct": -1.6887,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -424,9 +553,13 @@
      "bucket": 6,
      "kst": "12:00",
      "et": "23:00",
+     "et_variants": [
+      "23:00"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
-     "ups": 2,
-     "mean_ret_pct": 0.3663,
+     "ups": 1,
+     "mean_ret_pct": -0.2216,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -436,9 +569,13 @@
      "bucket": 7,
      "kst": "12:30",
      "et": "23:30",
+     "et_variants": [
+      "23:30"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
      "ups": 2,
-     "mean_ret_pct": -0.0161,
+     "mean_ret_pct": -0.0638,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -448,9 +585,13 @@
      "bucket": 8,
      "kst": "13:00",
      "et": "00:00",
+     "et_variants": [
+      "00:00"
+     ],
+     "et_dst_ambiguo": false,
      "n": 2,
      "ups": 1,
-     "mean_ret_pct": -2.0151,
+     "mean_ret_pct": -1.5025,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -460,9 +601,13 @@
      "bucket": 9,
      "kst": "13:30",
      "et": "00:30",
+     "et_variants": [
+      "00:30"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
      "ups": 2,
-     "mean_ret_pct": 1.5853,
+     "mean_ret_pct": 1.2267,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -472,9 +617,13 @@
      "bucket": 10,
      "kst": "14:00",
      "et": "01:00",
+     "et_variants": [
+      "01:00"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
-     "ups": 3,
-     "mean_ret_pct": 1.9629,
+     "ups": 2,
+     "mean_ret_pct": 1.5385,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -484,9 +633,13 @@
      "bucket": 11,
      "kst": "14:30",
      "et": "01:30",
+     "et_variants": [
+      "01:30"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
-     "ups": 2,
-     "mean_ret_pct": 1.0845,
+     "ups": 3,
+     "mean_ret_pct": 1.1045,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,
@@ -496,9 +649,13 @@
      "bucket": 12,
      "kst": "15:00",
      "et": "02:00",
+     "et_variants": [
+      "02:00"
+     ],
+     "et_dst_ambiguo": false,
      "n": 3,
-     "ups": 1,
-     "mean_ret_pct": 0.0855,
+     "ups": 2,
+     "mean_ret_pct": 0.6662,
      "status": "DATA-INSUFFICIENT",
      "p_up": null,
      "wilson_lo": null,

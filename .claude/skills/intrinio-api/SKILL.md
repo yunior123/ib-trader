@@ -135,6 +135,21 @@ Citas verificadas a mano en la fuente primaria (2026-08-02):
   `options-python-sdk:377`, `options-java-sdk:332`. ⚠️ **Es un párrafo boilerplate copiado entre
   repos: cuenta como UNA fuente, no como cuatro.**
 
+**INVESTIGACIÓN EXTERNA (GitHub/web, 2026-08-02) — dos hallazgos que cambian el cuadro:**
+- 🔴 **`intrinio-realtime-options-python-sdk` issue #7, ABIERTO desde 2024-02-23**: *"Client drops
+  connection and fails to reconnect"* — la conexión cae **alrededor de medianoche**, la reconexión
+  falla en silencio y **el cliente sigue desconectado cuando el mercado abre**, días seguidos.
+  Es el patrón del apagado nocturno, confirmado por un tercero, Y la prueba de que **el SDK oficial
+  no se recupera solo**. Consecuencia para nosotros: cachear un fallo de conexión sin caducidad deja
+  el provider muerto justo el día que hace falta → `intrinio_realtime.py` usa `ERROR_TTL_S` (60 s).
+  Ver también #13 *"improve reconnection logic"* (abierto).
+- 🟡 **Contradice el apagado**: `docs.intrinio.com/documentation/websocket_iex` dice *"Upon
+  connecting, the system will send you the last recorded IEX bid/ask/last quotes, **even during
+  off-hours**"* → al menos el feed IEX **espera aceptar conexiones fuera de horario**. Por eso la
+  hipótesis del apagado NO sube del ~70%.
+- Nadie ha reportado nuestro síntoma exacto (`Empty reply` / `RemoteDisconnected` en `/auth`) en
+  ninguno de los 7 repos de SDK. Ausencia de evidencia, no evidencia de ausencia.
+
 **Lo que NO sostiene la hipótesis** (no lo uses como prueba):
 - `status.intrinio.com` = *All Systems Operational* **NO prueba que no haya outage**: su
   `components.json` solo cubre APIv1/APIv2/Web APIs — **no hay componente de streaming**, así que una
@@ -169,6 +184,13 @@ como subprovider y da requisitos aparte para "Trades and Quotes", así que lo m�
 una limitación del *fichero de replay*, no del socket. **Confirmar en vivo el lunes**: sin quotes no
 hay NBBO de Intrinio y el gate de spread se queda ciego (el provider deja bid/ask en 0 y el puente
 rechaza — falla cerrado, que es lo correcto, pero deja la flota sin gate por esa fuente).
+
+**MEDIDO EL DOMINGO ENTERO (2026-08-02)**: 97 mediciones de 02:16 a 18:44 ET, **las 97 con el
+socket abajo**. Cubre toda la "mañana" del domingo → el *"turn on every morning"* de los README
+**NO se cumple en fin de semana**: el cluster sigue el CALENDARIO DE MERCADO, no un ciclo diario
+literal. Eso es consistente con el apagado programado y hace la hipótesis de outage menos probable
+(un outage de 16 h en fin de semana sin incidencia publicada sería raro, aunque su status page es
+ciega al streaming). Sigue sin poder cerrarse hasta medirlo en sesión.
 
 **Estado honesto**: el WS **nunca se ha medido con el mercado abierto**. Todas las medidas (2026-08-01
 noche y 2026-08-02 madrugada) son fuera de sesión. La sonda `scripts/intrinio_ws_probe.py`

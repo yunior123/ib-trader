@@ -5,7 +5,11 @@ AMZN 0.0507 — los 4 NARROW por debajo de BAND_FLOOR (0.10), asi que chart_leve
 DESCARTABA siempre su cadena TWS (griegas 100%, 3 min) y el mapa se servia de Polygon (15 min).
 Causa: los NARROW no tenian ola lejana (`if rest and not narrow`).
 
-Las escaleras de strikes son REALES: data/history/2026-07-31/chain_full_<sym>.json (Polygon).
+Las escaleras de strikes son REALES: se congelaron en tests/fixtures/chains/chain_full_<sym>.json
+desde data/history/2026-07-31/ (Polygon), recortadas a ±20% del spot y sin cotizaciones ni griegas
+(PCT_BAND es 0.15: fuera de ±20% nada entra en la seleccion). El archivo original esta
+GITIGNOREADO (.gitignore:133) y en un checkout limpio el test se SALTABA entero: la evidencia
+desaparecia. Contra ese archivo real quedan los tests EXTRA, que se saltan si no esta.
 """
 import json
 import os
@@ -19,15 +23,19 @@ sys.path.insert(0, os.path.join(REPO, "scripts"))
 import opt_chain_cache as OC            # noqa: E402
 from poly_chain_archive import BAND_FLOOR   # noqa: E402  UNA definicion, no se redefine
 
-DAY = os.path.join(REPO, "data", "history", "2026-07-31")
+FIXTURES = os.path.join(REPO, "tests", "fixtures", "chains")     # versionado: corre SIEMPRE
+REAL_DAY = os.path.join(REPO, "data", "history", "2026-07-31")   # gitignorado: EXTRA opcional
+TRIM = 0.20              # recorte de la fixture; PCT_BAND (0.15) cabe dentro con holgura
 OBJETIVO = 0.12          # margen sobre BAND_FLOOR: el fallo anterior fue por 0.21pp
 
 
-def _ladder(sym):
-    """(strikes ordenados, spot, n_exps del frontal+siguiente) de la cadena archivada."""
-    p = os.path.join(DAY, f"chain_full_{sym.lower()}.json")
-    if not os.path.exists(p):
-        pytest.skip(f"sin cadena archivada para {sym}")
+def _ladder(sym, day=None):
+    """(strikes ordenados, spot, n_exps del frontal+siguiente) de la cadena archivada.
+
+    Sin `day` lee la fixture versionada — si falta, el test FALLA (no se salta)."""
+    p = os.path.join(day or FIXTURES, f"chain_full_{sym.lower()}.json")
+    if day and not os.path.exists(p):
+        pytest.skip(f"sin cadena real archivada para {sym} en {day}")
     d = json.load(open(p))
     spot = d["meta"]["spot"]
     res = d["results"]
@@ -144,6 +152,28 @@ def test_caps_declarados_coinciden_con_las_constantes():
     assert OC.MAX_LINES_PER_EXP == 2 * (OC.MAX_STRIKES + OC.MAX_STRIKES)
 
 
+@pytest.mark.parametrize("sym", ["QQQ", "SPY", "NVDA", "NOK", "MU", "MSFT", "META"])
+def test_la_peticion_real_cabe_en_el_presupuesto_de_lineas(sym):
+    """line_budget es el guardia que corre en produccion (dump_sym): con los caps de hoy la
+    peticion de cualquier simbolo cabe, y ademas no pasa las 100 lineas de TWS."""
+    strikes, spot, n_exps = _ladder(sym)
+    near, far = _select(sym, strikes, spot)
+    pedidas = (len(near) + len(far)) * 2 * n_exps
+    budget = OC.line_budget(sym in OC.NARROW, n_exps)
+    assert pedidas <= budget, f"{sym}: {pedidas} lineas > {budget}"
+    assert budget <= 176            # 2 exps: no-narrow 160, narrow 88 (TWS: 100 concurrentes/ola)
+
+
+def test_line_budget_grita_si_alguien_sube_los_caps(monkeypatch):
+    """Si MAX_STRIKES sube sin tocar el presupuesto, el guardia lo ve: 2*(30+30)*2 = 240 > 160."""
+    assert OC.line_budget(False, 2) == 2 * OC.MAX_LINES_PER_EXP
+    assert OC.line_budget(True, 2) == 2 * OC.NARROW_MAX_LINES_PER_EXP
+    assert OC.line_budget(False, 0) == OC.MAX_LINES_PER_EXP      # jamas 0 vencimientos -> 0 lineas
+    monkeypatch.setattr(OC, "MAX_STRIKES", 30)
+    pedidas = 2 * (30 + 30) * 2
+    assert pedidas > OC.line_budget(False, 2)
+
+
 # ============================ 6. nada fuera de banda, nada duplicado
 @pytest.mark.parametrize("sym", ["MSFT", "META", "AVGO", "AMZN", "QQQ", "SPY", "NOK"])
 def test_ni_duplicados_ni_strikes_fuera_de_banda(sym):
@@ -225,3 +255,34 @@ def test_cadena_construida_con_la_seleccion_nueva_pasa_el_gate(sym, tmp_path):
     assert hdr["spot"] == pytest.approx(spot) and hdr["exps"] == [exp]
     assert hdr["band"] == pytest.approx(band) and hdr["max_strikes"] == max_ks
     assert hdr["greeks_ok_pct"] == 1.0
+
+
+# ============ 8. la fixture es la escalera REAL, y los EXTRA la comprueban cuando esta el archivo
+SYMS_FIXTURE = ["MSFT", "META", "AVGO", "AMZN", "QQQ", "SPY", "NVDA", "NOK", "MU"]
+
+
+@pytest.mark.parametrize("sym", SYMS_FIXTURE)
+def test_la_fixture_existe_y_tiene_forma_de_cadena(sym):
+    p = os.path.join(FIXTURES, f"chain_full_{sym.lower()}.json")
+    assert os.path.exists(p), f"fixture versionada ausente: {p}"
+    assert os.path.getsize(p) < 200_000, "fixture demasiado grande para el repo"
+    strikes, spot, n_exps = _ladder(sym)
+    assert spot > 0 and len(strikes) >= 5 and n_exps == 2
+    assert max(abs(k - spot) / spot for k in strikes) <= TRIM + 1e-12
+
+
+@pytest.mark.parametrize("sym", SYMS_FIXTURE)
+def test_extra_la_fixture_no_esta_fabricada(sym):
+    """Con el archivo real presente: mismo spot y misma escalera dentro del recorte."""
+    r_strikes, r_spot, _n = _ladder(sym, day=REAL_DAY)
+    f_strikes, f_spot, _m = _ladder(sym)
+    assert f_spot == pytest.approx(r_spot)
+    assert f_strikes == [k for k in r_strikes if abs(k - r_spot) / r_spot <= TRIM]
+
+
+@pytest.mark.parametrize("sym", ["MSFT", "META", "AVGO", "AMZN", "QQQ"])
+def test_extra_band_floor_contra_el_archivo_real(sym):
+    r_strikes, r_spot, _n = _ladder(sym, day=REAL_DAY)
+    near, far = _select(sym, r_strikes, r_spot)
+    span = _half_span(near + far, r_spot)
+    assert span >= BAND_FLOOR and span >= OBJETIVO, f"{sym}: half-span {span:.4f}"

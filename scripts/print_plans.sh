@@ -14,7 +14,9 @@ TREES=0; ENVELOPE=0; ARCHIVE=0; MKTDAY=0; TAG=plan
 CHAIN_MAX_DAYS=${IBT_CHAIN_MAX_DAYS:-4}          # vie->lun son 3 dias; 4 cubre un festivo
 ALLOW_PRINT=${IBT_ALLOW_PRINT:-0}
 LOG=printplans.log
-PRINTER=HP_OfficeJet_Pro_9120e_Series
+# nada clavado: IBT_PRINTER gana, luego el PRINTER estandar de CUPS (lpr(1)), luego el HP de casa
+PRINTER=${IBT_PRINTER:-${PRINTER:-HP_OfficeJet_Pro_9120e_Series}}
+CHROME=${IBT_CHROME:-"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"}
 
 while (( $# )); do
   case "$1" in
@@ -145,12 +147,11 @@ if (( TREES )); then
   ./venv/bin/python scripts/tree_sheets.py $OK >> $LOG 2>&1 || FAILS+=("tree_sheets FALLO")
   ./venv/bin/python scripts/tree_sheets_html.py $OK >> $LOG 2>&1 || FAILS+=("tree_sheets_html FALLO")
   TPDF=$DEST/ARBOLES_${TAG}.pdf
-  CHROME="/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
   if [[ -x $CHROME ]]; then
     "$CHROME" --headless=new --disable-gpu --no-pdf-header-footer \
       --print-to-pdf="$TPDF" "file://$ROOT/data/trees/arboles.html" >> $LOG 2>&1
   else
-    FAILS+=("Chrome headless ausente: sin hoja de arboles")
+    FAILS+=("Chrome headless ausente ($CHROME): sin hoja de arboles — fija IBT_CHROME")
   fi
   if [[ -s $TPDF ]]; then
     if (( ALLOW_PRINT )); then

@@ -2342,7 +2342,7 @@
   },
   "2026-07-28": {
    "bundles": 0,
-   "bytes_dir": 109735939,
+   "bytes_dir": 61159862,
    "full_chains": {
     "AAPL": {
      "bytes": 443237,
@@ -2971,7 +2971,7 @@
   },
   "2026-07-29": {
    "bundles": 0,
-   "bytes_dir": 124511985,
+   "bytes_dir": 124810211,
    "full_chains": {
     "AAPL": {
      "bytes": 458251,
@@ -4234,13 +4234,932 @@
      "snaps": 67
     }
    }
+  },
+  "2026-07-31": {
+   "bundles": 0,
+   "bytes_dir": 175385236,
+   "full_chains": {
+    "AAPL": {
+     "bytes": 443514,
+     "contracts": 816,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_aapl.json",
+     "with_greeks": 748,
+     "with_quotes": 0
+    },
+    "AMD": {
+     "bytes": 1303638,
+     "contracts": 2502,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_amd.json",
+     "with_greeks": 2374,
+     "with_quotes": 0
+    },
+    "AMZN": {
+     "bytes": 494400,
+     "contracts": 900,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_amzn.json",
+     "with_greeks": 810,
+     "with_quotes": 0
+    },
+    "ASML": {
+     "bytes": 1063954,
+     "contracts": 2074,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_asml.json",
+     "with_greeks": 1870,
+     "with_quotes": 0
+    },
+    "AVGO": {
+     "bytes": 707818,
+     "contracts": 1416,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_avgo.json",
+     "with_greeks": 1254,
+     "with_quotes": 0
+    },
+    "DIA": {
+     "bytes": 337868,
+     "contracts": 638,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_dia.json",
+     "with_greeks": 573,
+     "with_quotes": 0
+    },
+    "DRAM": {
+     "bytes": 374022,
+     "contracts": 694,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_dram.json",
+     "with_greeks": 597,
+     "with_quotes": 0
+    },
+    "EWY": {
+     "bytes": 438508,
+     "contracts": 856,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_ewy.json",
+     "with_greeks": 741,
+     "with_quotes": 0
+    },
+    "GLD": {
+     "bytes": 749667,
+     "contracts": 1464,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_gld.json",
+     "with_greeks": 1274,
+     "with_quotes": 0
+    },
+    "GOOGL": {
+     "bytes": 480919,
+     "contracts": 902,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_googl.json",
+     "with_greeks": 821,
+     "with_quotes": 0
+    },
+    "INTC": {
+     "bytes": 709353,
+     "contracts": 1382,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_intc.json",
+     "with_greeks": 1140,
+     "with_quotes": 0
+    },
+    "IWM": {
+     "bytes": 872758,
+     "contracts": 1782,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_iwm.json",
+     "with_greeks": 1480,
+     "with_quotes": 0
+    },
+    "LRCX": {
+     "bytes": 415421,
+     "contracts": 788,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_lrcx.json",
+     "with_greeks": 695,
+     "with_quotes": 0
+    },
+    "META": {
+     "bytes": 1258564,
+     "contracts": 2410,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_meta.json",
+     "with_greeks": 2219,
+     "with_quotes": 0
+    },
+    "MSFT": {
+     "bytes": 617331,
+     "contracts": 1150,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_msft.json",
+     "with_greeks": 1014,
+     "with_quotes": 0
+    },
+    "MU": {
+     "bytes": 1735468,
+     "contracts": 3342,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_mu.json",
+     "with_greeks": 3138,
+     "with_quotes": 0
+    },
+    "NDX": {
+     "bytes": 2773653,
+     "contracts": 8362,
+     "greeks_src": "cboe_delayed",
+     "path": "data/history/2026-07-31/chain_full_ndx.json",
+     "with_greeks": 8362,
+     "with_quotes": 0
+    },
+    "NFLX": {
+     "bytes": 179806,
+     "contracts": 326,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_nflx.json",
+     "with_greeks": 288,
+     "with_quotes": 0
+    },
+    "NOK": {
+     "bytes": 80459,
+     "contracts": 150,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_nok.json",
+     "with_greeks": 121,
+     "with_quotes": 0
+    },
+    "NVDA": {
+     "bytes": 418055,
+     "contracts": 760,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_nvda.json",
+     "with_greeks": 734,
+     "with_quotes": 0
+    },
+    "QCOM": {
+     "bytes": 250496,
+     "contracts": 484,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_qcom.json",
+     "with_greeks": 377,
+     "with_quotes": 0
+    },
+    "QQQ": {
+     "bytes": 1717946,
+     "contracts": 3246,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_qqq.json",
+     "with_greeks": 3026,
+     "with_quotes": 0
+    },
+    "SKHY": {
+     "bytes": 365243,
+     "contracts": 696,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_skhy.json",
+     "with_greeks": 648,
+     "with_quotes": 0
+    },
+    "SMH": {
+     "bytes": 1054506,
+     "contracts": 2064,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_smh.json",
+     "with_greeks": 1927,
+     "with_quotes": 0
+    },
+    "SNDK": {
+     "bytes": 1203113,
+     "contracts": 2226,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_sndk.json",
+     "with_greeks": 2073,
+     "with_quotes": 0
+    },
+    "SPCX": {
+     "bytes": 399793,
+     "contracts": 718,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_spcx.json",
+     "with_greeks": 692,
+     "with_quotes": 0
+    },
+    "SPX": {
+     "bytes": 2550761,
+     "contracts": 7668,
+     "greeks_src": "cboe_delayed",
+     "path": "data/history/2026-07-31/chain_full_spx.json",
+     "with_greeks": 7668,
+     "with_quotes": 0
+    },
+    "SPY": {
+     "bytes": 1735573,
+     "contracts": 3334,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_spy.json",
+     "with_greeks": 3072,
+     "with_quotes": 0
+    },
+    "STX": {
+     "bytes": 833827,
+     "contracts": 1582,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_stx.json",
+     "with_greeks": 1449,
+     "with_quotes": 0
+    },
+    "TSLA": {
+     "bytes": 898526,
+     "contracts": 1700,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_tsla.json",
+     "with_greeks": 1497,
+     "with_quotes": 0
+    },
+    "TSM": {
+     "bytes": 368734,
+     "contracts": 688,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_tsm.json",
+     "with_greeks": 619,
+     "with_quotes": 0
+    },
+    "TXN": {
+     "bytes": 330238,
+     "contracts": 644,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_txn.json",
+     "with_greeks": 566,
+     "with_quotes": 0
+    },
+    "WDC": {
+     "bytes": 691600,
+     "contracts": 1318,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_wdc.json",
+     "with_greeks": 1207,
+     "with_quotes": 0
+    },
+    "XLK": {
+     "bytes": 348123,
+     "contracts": 678,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-07-31/chain_full_xlk.json",
+     "with_greeks": 592,
+     "with_quotes": 0
+    },
+    "XSP": {
+     "bytes": 1621223,
+     "contracts": 4946,
+     "greeks_src": "cboe_delayed",
+     "path": "data/history/2026-07-31/chain_full_xsp.json",
+     "with_greeks": 4946,
+     "with_quotes": 0
+    }
+   },
+   "loose_files": 1715,
+   "snapshots": 1715,
+   "storage": "loose",
+   "syms": {
+    "AAPL": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260803"
+     ],
+     "first_ts": 1785503075,
+     "last_ts": 1785528436,
+     "rows": 8466,
+     "rows_with_greeks": 7671,
+     "rows_with_quotes": 6150,
+     "snaps": 65
+    },
+    "AMD": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260803"
+     ],
+     "first_ts": 1785503015,
+     "last_ts": 1785528766,
+     "rows": 10720,
+     "rows_with_greeks": 9737,
+     "rows_with_quotes": 9292,
+     "snaps": 67
+    },
+    "AMZN": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260803"
+     ],
+     "first_ts": 1785503132,
+     "last_ts": 1785528491,
+     "rows": 3120,
+     "rows_with_greeks": 2849,
+     "rows_with_quotes": 2738,
+     "snaps": 65
+    },
+    "ASML": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260807"
+     ],
+     "first_ts": 1785502931,
+     "last_ts": 1785528686,
+     "rows": 10410,
+     "rows_with_greeks": 9433,
+     "rows_with_quotes": 8189,
+     "snaps": 67
+    },
+    "AVGO": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260803"
+     ],
+     "first_ts": 1785503125,
+     "last_ts": 1785528484,
+     "rows": 3120,
+     "rows_with_greeks": 2815,
+     "rows_with_quotes": 2816,
+     "snaps": 65
+    },
+    "DRAM": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260807"
+     ],
+     "first_ts": 1785502964,
+     "last_ts": 1785528718,
+     "rows": 8252,
+     "rows_with_greeks": 7520,
+     "rows_with_quotes": 6995,
+     "snaps": 67
+    },
+    "GOOGL": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260803"
+     ],
+     "first_ts": 1785503093,
+     "last_ts": 1785528453,
+     "rows": 9882,
+     "rows_with_greeks": 9010,
+     "rows_with_quotes": 7477,
+     "snaps": 65
+    },
+    "INTC": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260803"
+     ],
+     "first_ts": 1785502948,
+     "last_ts": 1785528702,
+     "rows": 7444,
+     "rows_with_greeks": 6759,
+     "rows_with_quotes": 5871,
+     "snaps": 67
+    },
+    "LRCX": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260807"
+     ],
+     "first_ts": 1785503157,
+     "last_ts": 1785528514,
+     "rows": 9428,
+     "rows_with_greeks": 8705,
+     "rows_with_quotes": 7860,
+     "snaps": 65
+    },
+    "META": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260803"
+     ],
+     "first_ts": 1785503140,
+     "last_ts": 1785528498,
+     "rows": 3120,
+     "rows_with_greeks": 2889,
+     "rows_with_quotes": 2818,
+     "snaps": 65
+    },
+    "MSFT": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260803"
+     ],
+     "first_ts": 1785503117,
+     "last_ts": 1785528477,
+     "rows": 3120,
+     "rows_with_greeks": 2862,
+     "rows_with_quotes": 2773,
+     "snaps": 65
+    },
+    "MU": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260803"
+     ],
+     "first_ts": 1785502913,
+     "last_ts": 1785528669,
+     "rows": 9664,
+     "rows_with_greeks": 8784,
+     "rows_with_quotes": 8531,
+     "snaps": 67
+    },
+    "NOK": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260807"
+     ],
+     "first_ts": 1785503059,
+     "last_ts": 1785528420,
+     "rows": 1452,
+     "rows_with_greeks": 1303,
+     "rows_with_quotes": 1037,
+     "snaps": 65
+    },
+    "NVDA": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260803"
+     ],
+     "first_ts": 1785502896,
+     "last_ts": 1785528652,
+     "rows": 4660,
+     "rows_with_greeks": 4259,
+     "rows_with_quotes": 3575,
+     "snaps": 67
+    },
+    "QCOM": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260807"
+     ],
+     "first_ts": 1785503110,
+     "last_ts": 1785528470,
+     "rows": 8308,
+     "rows_with_greeks": 7584,
+     "rows_with_quotes": 6441,
+     "snaps": 65
+    },
+    "QQQ": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260803"
+     ],
+     "first_ts": 1785502879,
+     "last_ts": 1785528636,
+     "rows": 9006,
+     "rows_with_greeks": 8475,
+     "rows_with_quotes": 7429,
+     "snaps": 67
+    },
+    "SKHY": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260807"
+     ],
+     "first_ts": 1785502981,
+     "last_ts": 1785528734,
+     "rows": 8604,
+     "rows_with_greeks": 7493,
+     "rows_with_quotes": 7123,
+     "snaps": 67
+    },
+    "SMH": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260803"
+     ],
+     "first_ts": 1785502842,
+     "last_ts": 1785528601,
+     "rows": 10720,
+     "rows_with_greeks": 8932,
+     "rows_with_quotes": 9160,
+     "snaps": 67
+    },
+    "SNDK": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260807"
+     ],
+     "first_ts": 1785503176,
+     "last_ts": 1785528531,
+     "rows": 10220,
+     "rows_with_greeks": 8952,
+     "rows_with_quotes": 9105,
+     "snaps": 65
+    },
+    "SPCX": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260807"
+     ],
+     "first_ts": 1785502997,
+     "last_ts": 1785528749,
+     "rows": 8776,
+     "rows_with_greeks": 7862,
+     "rows_with_quotes": 6866,
+     "snaps": 67
+    },
+    "SPY": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260803"
+     ],
+     "first_ts": 1785503231,
+     "last_ts": 1785528584,
+     "rows": 8658,
+     "rows_with_greeks": 8142,
+     "rows_with_quotes": 6888,
+     "snaps": 66
+    },
+    "STX": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260807"
+     ],
+     "first_ts": 1785503212,
+     "last_ts": 1785528566,
+     "rows": 10198,
+     "rows_with_greeks": 8338,
+     "rows_with_quotes": 8330,
+     "snaps": 66
+    },
+    "TSLA": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260803"
+     ],
+     "first_ts": 1785503050,
+     "last_ts": 1785528413,
+     "rows": 9636,
+     "rows_with_greeks": 8581,
+     "rows_with_quotes": 7727,
+     "snaps": 65
+    },
+    "TSM": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260807"
+     ],
+     "first_ts": 1785502860,
+     "last_ts": 1785528619,
+     "rows": 10710,
+     "rows_with_greeks": 8878,
+     "rows_with_quotes": 8855,
+     "snaps": 67
+    },
+    "TXN": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260807"
+     ],
+     "first_ts": 1785503033,
+     "last_ts": 1785528396,
+     "rows": 8688,
+     "rows_with_greeks": 7022,
+     "rows_with_quotes": 6300,
+     "snaps": 65
+    },
+    "WDC": {
+     "bad_rows": 0,
+     "exps": [
+      "20260731",
+      "20260807"
+     ],
+     "first_ts": 1785503194,
+     "last_ts": 1785528549,
+     "rows": 10560,
+     "rows_with_greeks": 9692,
+     "rows_with_quotes": 9114,
+     "snaps": 66
+    }
+   }
+  },
+  "2026-08-02": {
+   "bundles": 0,
+   "bytes_dir": 31558629,
+   "full_chains": {
+    "AAPL": {
+     "bytes": 370130,
+     "contracts": 724,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_aapl.json",
+     "with_greeks": 541,
+     "with_quotes": 0
+    },
+    "AMD": {
+     "bytes": 1056135,
+     "contracts": 2126,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_amd.json",
+     "with_greeks": 1763,
+     "with_quotes": 0
+    },
+    "AMZN": {
+     "bytes": 420050,
+     "contracts": 772,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_amzn.json",
+     "with_greeks": 692,
+     "with_quotes": 0
+    },
+    "ASML": {
+     "bytes": 764977,
+     "contracts": 1516,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_asml.json",
+     "with_greeks": 1317,
+     "with_quotes": 0
+    },
+    "AVGO": {
+     "bytes": 582691,
+     "contracts": 1222,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_avgo.json",
+     "with_greeks": 967,
+     "with_quotes": 0
+    },
+    "DIA": {
+     "bytes": 247008,
+     "contracts": 470,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_dia.json",
+     "with_greeks": 423,
+     "with_quotes": 0
+    },
+    "DRAM": {
+     "bytes": 269582,
+     "contracts": 498,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_dram.json",
+     "with_greeks": 461,
+     "with_quotes": 0
+    },
+    "EWY": {
+     "bytes": 325633,
+     "contracts": 628,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_ewy.json",
+     "with_greeks": 614,
+     "with_quotes": 0
+    },
+    "GLD": {
+     "bytes": 661627,
+     "contracts": 1288,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_gld.json",
+     "with_greeks": 1193,
+     "with_quotes": 0
+    },
+    "GOOGL": {
+     "bytes": 460816,
+     "contracts": 906,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_googl.json",
+     "with_greeks": 738,
+     "with_quotes": 0
+    },
+    "INTC": {
+     "bytes": 584094,
+     "contracts": 1164,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_intc.json",
+     "with_greeks": 905,
+     "with_quotes": 0
+    },
+    "IWM": {
+     "bytes": 813165,
+     "contracts": 1636,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_iwm.json",
+     "with_greeks": 1492,
+     "with_quotes": 0
+    },
+    "LRCX": {
+     "bytes": 287574,
+     "contracts": 554,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_lrcx.json",
+     "with_greeks": 481,
+     "with_quotes": 0
+    },
+    "META": {
+     "bytes": 1004659,
+     "contracts": 2088,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_meta.json",
+     "with_greeks": 1481,
+     "with_quotes": 0
+    },
+    "MSFT": {
+     "bytes": 516822,
+     "contracts": 974,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_msft.json",
+     "with_greeks": 853,
+     "with_quotes": 0
+    },
+    "MU": {
+     "bytes": 1412925,
+     "contracts": 2834,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_mu.json",
+     "with_greeks": 2411,
+     "with_quotes": 0
+    },
+    "NDX": {
+     "bytes": 2494480,
+     "contracts": 7520,
+     "greeks_src": "cboe_delayed",
+     "path": "data/history/2026-08-02/chain_full_ndx.json",
+     "with_greeks": 7520,
+     "with_quotes": 0
+    },
+    "NFLX": {
+     "bytes": 134345,
+     "contracts": 242,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_nflx.json",
+     "with_greeks": 227,
+     "with_quotes": 0
+    },
+    "NOK": {
+     "bytes": 60377,
+     "contracts": 114,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_nok.json",
+     "with_greeks": 90,
+     "with_quotes": 0
+    },
+    "NVDA": {
+     "bytes": 342499,
+     "contracts": 664,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_nvda.json",
+     "with_greeks": 521,
+     "with_quotes": 0
+    },
+    "QCOM": {
+     "bytes": 180986,
+     "contracts": 354,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_qcom.json",
+     "with_greeks": 278,
+     "with_quotes": 0
+    },
+    "QQQ": {
+     "bytes": 1457818,
+     "contracts": 2914,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_qqq.json",
+     "with_greeks": 2283,
+     "with_quotes": 0
+    },
+    "SKHY": {
+     "bytes": 258510,
+     "contracts": 500,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_skhy.json",
+     "with_greeks": 463,
+     "with_quotes": 0
+    },
+    "SMH": {
+     "bytes": 860729,
+     "contracts": 1758,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_smh.json",
+     "with_greeks": 1460,
+     "with_quotes": 0
+    },
+    "SNDK": {
+     "bytes": 846468,
+     "contracts": 1566,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_sndk.json",
+     "with_greeks": 1524,
+     "with_quotes": 0
+    },
+    "SPCX": {
+     "bytes": 287961,
+     "contracts": 520,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_spcx.json",
+     "with_greeks": 517,
+     "with_quotes": 0
+    },
+    "SPX": {
+     "bytes": 2317047,
+     "contracts": 6952,
+     "greeks_src": "cboe_delayed",
+     "path": "data/history/2026-08-02/chain_full_spx.json",
+     "with_greeks": 6952,
+     "with_quotes": 0
+    },
+    "SPY": {
+     "bytes": 1519923,
+     "contracts": 2916,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_spy.json",
+     "with_greeks": 2790,
+     "with_quotes": 0
+    },
+    "STX": {
+     "bytes": 582691,
+     "contracts": 1124,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_stx.json",
+     "with_greeks": 1011,
+     "with_quotes": 0
+    },
+    "TSLA": {
+     "bytes": 744474,
+     "contracts": 1478,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_tsla.json",
+     "with_greeks": 1135,
+     "with_quotes": 0
+    },
+    "TSM": {
+     "bytes": 264932,
+     "contracts": 496,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_tsm.json",
+     "with_greeks": 461,
+     "with_quotes": 0
+    },
+    "TXN": {
+     "bytes": 196983,
+     "contracts": 392,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_txn.json",
+     "with_greeks": 330,
+     "with_quotes": 0
+    },
+    "WDC": {
+     "bytes": 474659,
+     "contracts": 926,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_wdc.json",
+     "with_greeks": 836,
+     "with_quotes": 0
+    },
+    "XLK": {
+     "bytes": 237585,
+     "contracts": 462,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-02/chain_full_xlk.json",
+     "with_greeks": 413,
+     "with_quotes": 0
+    },
+    "XSP": {
+     "bytes": 1482193,
+     "contracts": 4512,
+     "greeks_src": "cboe_delayed",
+     "path": "data/history/2026-08-02/chain_full_xsp.json",
+     "with_greeks": 4512,
+     "with_quotes": 0
+    }
+   },
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
   }
  },
  "totals": {
-  "days": 10,
-  "history_bytes": 583686706,
-  "rows": 955808,
-  "snapshots": 10801
+  "days": 12,
+  "history_bytes": 742353132,
+  "rows": 1162750,
+  "snapshots": 12516
  },
- "updated": 1785443105
+ "updated": 1785702300
 }

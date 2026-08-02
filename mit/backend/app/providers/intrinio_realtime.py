@@ -26,6 +26,9 @@ from backend.app.providers.base import MarketDataProvider, ProviderError, regist
 # y un precio rancio disfrazado de vivo es peor que no tener precio.
 MAX_TICK_AGE_S = float(os.environ.get("MIT_INTRINIO_RT_MAX_AGE_S", "15"))
 CONNECT_TIMEOUT_S = float(os.environ.get("MIT_INTRINIO_RT_CONNECT_TIMEOUT_S", "30"))
+# Cuanto se recuerda un fallo de conexion antes de volver a intentarlo (el cluster vuelve por la
+# manana; cachear el error para siempre deja el provider muerto justo cuando abre el mercado).
+ERROR_TTL_S = float(os.environ.get("MIT_INTRINIO_RT_ERROR_TTL_S", "60"))
 
 
 @register("intrinio_realtime")
@@ -53,6 +56,7 @@ class IntrinioRealtimeProvider(MarketDataProvider):
         self._client = None
         self._joined: set[str] = set()
         self._connect_error: str | None = None
+        self._error_ts = 0.0
         # El REST del mismo proveedor cubre historia (barras): el WS solo trae el tick vivo.
         from backend.app.providers.intrinio import IntrinioProvider
 
@@ -133,12 +137,19 @@ class IntrinioRealtimeProvider(MarketDataProvider):
     def _ensure_client(self) -> None:
         if self._client is not None:
             return
-        if self._connect_error:
+        # El error NO se cachea para siempre: Intrinio apaga el cluster de noche y lo enciende por
+        # la manana, y su propio SDK no se recupera solo — issue abierto desde 2024-02 en
+        # intrinio-realtime-options-python-sdk#7: "la conexion cae sobre medianoche, la reconexion
+        # falla y el cliente sigue desconectado CUANDO EL MERCADO ABRE". Sin caducidad, el provider
+        # se quedaria muerto justo el dia que hace falta.
+        if self._connect_error and (time.monotonic() - self._error_ts) < ERROR_TTL_S:
             raise ProviderError(self._connect_error, provider=self.name, capability="market",
                                 error_code="socket_down")
+        self._connect_error = None
         motivo = self._auth_alcanzable()
         if motivo:
             self._connect_error = f"{motivo} — ver data/intrinio_ws_status.json"
+            self._error_ts = time.monotonic()
             raise ProviderError(self._connect_error, provider=self.name, capability="market",
                                 error_code="socket_down")
         from intriniorealtime.equities_client import IntrinioRealtimeEquitiesClient
@@ -165,6 +176,7 @@ class IntrinioRealtimeProvider(MarketDataProvider):
                 + (f": {err[0]}" if err else f" (timeout {CONNECT_TIMEOUT_S}s)")
                 + " — comprobar data/intrinio_ws_status.json"
             )
+            self._error_ts = time.monotonic()
             raise ProviderError(self._connect_error, provider=self.name, capability="market",
                                 error_code="socket_down")
         self._client = client

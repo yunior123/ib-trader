@@ -114,6 +114,110 @@ def test_prev_krx_session_date_salta_fin_de_semana():
     assert OF.prev_krx_session_date(BOUNDARY) == "2026-07-30"
 
 
+# ------------------------------------------------- 3bis. festivos KRX (tabla en data/)
+FESTIVO_B = datetime(2026, 8, 18, 9, 0, tzinfo=KST).timestamp()   # martes tras Liberacion(17)
+
+
+def test_prev_krx_session_date_salta_festivo_krx():
+    """17-ago-2026 = Dia de la Liberacion (sustituto) y 15/16 fin de semana: la sesion
+    anterior al martes 18 es el VIERNES 14, no el lunes 17."""
+    assert "2026-08-17" in OF.krx_holidays()
+    assert OF.prev_krx_session_date(FESTIVO_B) == "2026-08-14"
+
+
+def test_ref_del_dia_previo_a_festivo_se_acepta(tmp_path, monkeypatch):
+    """El bug: exigir igualdad con dia-1 descartaba una referencia BUENA tras un festivo."""
+    monkeypatch.setattr(OF, "REPO", str(tmp_path))
+    monkeypatch.setattr(OF, "PREVCLOSE", str(tmp_path / "data" / OF.PREVCLOSE_NAME))
+    ep = datetime(2026, 8, 14, 15, 30, tzinfo=KST).timestamp()
+    _bars(tmp_path, "kospi", [(FESTIVO_B + 120, 101.0)])
+    _prevclose(tmp_path, {"kospi": {"close": 100.0, "epoch": int(ep), "session": "2026-08-14"}})
+    pct, src = OF.korea_pct("kospi", FESTIVO_B)
+    assert src == "prevclose" and abs(pct - 1.0) < 1e-6
+
+
+def test_año_sin_tabla_acepta_la_mas_reciente_y_la_etiqueta_degradada(tmp_path, monkeypatch):
+    """Tabla que se queda corta (2029 no tabulado): en vez de tirar la referencia se acepta
+    la mas reciente dentro de KRX_GAP_MAX_DAYS y se DICE que es degradada (_gap)."""
+    monkeypatch.setattr(OF, "REPO", str(tmp_path))
+    monkeypatch.setattr(OF, "PREVCLOSE", str(tmp_path / "data" / OF.PREVCLOSE_NAME))
+    assert not OF.krx_year_covered(2029)
+    b = datetime(2029, 2, 20, 9, 0, tzinfo=KST).timestamp()
+    _bars(tmp_path, "kospi", [(b + 120, 101.0)])
+    cerca = datetime(2029, 2, 16, 15, 30, tzinfo=KST).timestamp()      # 4 dias: dentro del tope
+    _prevclose(tmp_path, {"kospi": {"close": 100.0, "epoch": int(cerca),
+                                    "session": "2029-02-16"}})
+    pct, src = OF.korea_pct("kospi", b)
+    assert src == "prevclose_gap" and abs(pct - 1.0) < 1e-6
+    lejos = datetime(2029, 2, 5, 15, 30, tzinfo=KST).timestamp()       # 15 dias: ni degradada
+    _prevclose(tmp_path, {"kospi": {"close": 100.0, "epoch": int(lejos),
+                                    "session": "2029-02-05"}})
+    assert OF.korea_pct("kospi", b) == (None, None)
+
+
+# ------------------------------------------------- 3ter. arranque en frio -> historico archivado
+def _hist_bars(tmp_path, name, day, rows):
+    d = tmp_path / "data" / "history" / day / "bars"
+    d.mkdir(parents=True, exist_ok=True)
+    (d / f"{name}_krx.txt").write_text(
+        "".join(f"{ep:.0f} {c:.4f} {c:.4f} {c:.4f} {c:.4f} 10\n" for ep, c in rows))
+
+
+def test_arranque_en_frio_cae_al_historico_archivado(tmp_path, monkeypatch):
+    """Proceso nuevo a mitad de sesion: warmup ya trunco bars_*.txt y no hay prevclose.
+    data/history/<fecha>/bars/kospi_krx.txt SI tiene la barra — usarla, no devolver null."""
+    monkeypatch.setattr(OF, "REPO", str(tmp_path))
+    monkeypatch.setattr(OF, "PREVCLOSE", str(tmp_path / "data" / OF.PREVCLOSE_NAME))
+    _bars(tmp_path, "kospi", _session_rows())
+    _hist_bars(tmp_path, "kospi", "2026-07-30",
+               [(PREV_CLOSE_EP - 60, 99.5), (PREV_CLOSE_EP, 100.0)])
+    _hist_bars(tmp_path, "kospi", "2026-07-24", [(PREV_CLOSE_EP - 6 * 86400, 42.0)])
+    pct, src = OF.korea_pct("kospi", BOUNDARY)
+    assert src == "hist" and abs(pct - 1.0) < 1e-6
+
+
+def test_historico_rancio_no_sirve_de_referencia(tmp_path, monkeypatch):
+    """Si lo unico archivado es de hace 3 sesiones NO se fabrica un pct: null."""
+    monkeypatch.setattr(OF, "REPO", str(tmp_path))
+    monkeypatch.setattr(OF, "PREVCLOSE", str(tmp_path / "data" / OF.PREVCLOSE_NAME))
+    _bars(tmp_path, "kospi", _session_rows())
+    _hist_bars(tmp_path, "kospi", "2026-07-27", [(PREV_CLOSE_EP - 3 * 86400, 100.0)])
+    assert OF.korea_pct("kospi", BOUNDARY) == (None, None)
+
+
+def test_prevclose_rancio_pero_historico_fresco_usa_el_historico(tmp_path, monkeypatch):
+    monkeypatch.setattr(OF, "REPO", str(tmp_path))
+    monkeypatch.setattr(OF, "PREVCLOSE", str(tmp_path / "data" / OF.PREVCLOSE_NAME))
+    _bars(tmp_path, "kospi", _session_rows())
+    viejo = PREV_CLOSE_EP - 3 * 86400
+    _prevclose(tmp_path, {"kospi": {"close": 55.0, "epoch": int(viejo),
+                                    "session": OF.krx_session_date(viejo)}})
+    _hist_bars(tmp_path, "kospi", "2026-07-30", [(PREV_CLOSE_EP, 100.0)])
+    pct, src = OF.korea_pct("kospi", BOUNDARY)
+    assert src == "hist" and abs(pct - 1.0) < 1e-6
+
+
+# ------------------------------------------------- 3quater. el boundary se ancla en KST, no en ET
+def test_krx_boundary_es_las_0900_kst_tambien_en_invierno():
+    """20:00 ET clavado solo acierta en EDT: en EST el KRX abre a las 19:00 ET y la primera
+    hora de sesion se estaba midiendo contra si misma."""
+    invierno = datetime(2026, 1, 13, 19, 30, tzinfo=ET)
+    b = OF.krx_boundary(invierno)
+    assert datetime.fromtimestamp(b, KST).strftime("%Y-%m-%d %H:%M") == "2026-01-14 09:00"
+    assert OF.krx_boundary(datetime(2026, 7, 30, 20, 30, tzinfo=ET)) == BOUNDARY
+
+
+# ------------------------------------------------- 3quinquies. el jsonl no crece sin limite
+def test_archive_ctx_topa_las_lineas(tmp_path):
+    p = str(tmp_path / "hist" / "overnight_ctx.jsonl")
+    for i in range(10):
+        assert OF.archive_ctx({"ts": float(i), "relleno": "x" * 200}, path=p, max_lines=3)
+    lineas = open(p).read().strip().split("\n")
+    assert len(lineas) == 3 and json.loads(lineas[-1])["ts"] == 9.0
+    assert not any(f.startswith("overnight_ctx.jsonl.tmp")
+                   for f in os.listdir(os.path.dirname(p)))
+
+
 def test_build_escribe_ref_src_y_archiva_jsonl(tmp_path, monkeypatch):
     monkeypatch.setattr(OF, "REPO", str(tmp_path))
     monkeypatch.setattr(OF, "PREVCLOSE", str(tmp_path / "data" / OF.PREVCLOSE_NAME))
@@ -185,6 +289,54 @@ def test_prev_close_from_rows_ignora_precios_invalidos():
 def test_boundary_es_una_sola_definicion():
     kb = _bridge()
     assert kb.ovf.krx_boundary is OF.krx_boundary
+    assert kb.krx_market.__code__.co_names.count("ovf") >= 1   # horario KRX: de ovf, no clavado
+
+
+def test_roll_prev_close_reintenta_el_mismo_boundary_tras_fallo_transitorio(tmp_path, monkeypatch):
+    """El bug: _pc_boundary se marcaba ANTES de escribir; si read_bar_rows devolvia []
+    (fichero a medio escribir) la referencia de esa sesion se perdia para siempre."""
+    kb = _bridge()
+    monkeypatch.setattr(kb, "ROOT", str(tmp_path))
+    monkeypatch.setattr(kb, "_pc_boundary", 0.0)
+    monkeypatch.setattr(kb, "_pc_pending", set())
+    monkeypatch.setattr(kb.ovf, "krx_boundary", lambda now=None: BOUNDARY)
+    # bars_path explicito: tests/test_korea_bars_archive.py lo reemplaza sin restaurarlo
+    monkeypatch.setattr(kb, "bars_path", lambda n: str(tmp_path / "data" / f"bars_{n}.txt"))
+    (tmp_path / "data").mkdir(exist_ok=True)
+    for name, close in (("kospi", 100.0), ("samsung", 200.0), ("skhynix", 300.0)):
+        _bars(tmp_path, name, [(PREV_CLOSE_EP, close)])
+    real = kb.read_bar_rows
+    intentos = {"n": 0}
+
+    def flaky(path):
+        intentos["n"] += 1
+        return [] if intentos["n"] <= len(kb.CORE) else real(path)   # 1a vuelta: lectura vacia
+
+    monkeypatch.setattr(kb, "read_bar_rows", flaky)
+    assert kb.maybe_roll_prev_close() is True
+    assert not os.path.exists(str(tmp_path / "data" / OF.PREVCLOSE_NAME))
+    kb.maybe_roll_prev_close()                    # 2a vuelta, MISMO boundary: lo recupera
+    j = json.load(open(str(tmp_path / "data" / OF.PREVCLOSE_NAME)))
+    assert set(j) == set(kb.CORE) and j["kospi"]["close"] == 100.0
+    assert not kb._pc_pending
+    lecturas = intentos["n"]
+    kb.maybe_roll_prev_close()                    # 3a: nada pendiente -> ni lee
+    assert intentos["n"] == lecturas
+
+
+def test_roll_prev_close_no_reintenta_boundaries_viejos(tmp_path, monkeypatch):
+    """Al cambiar de boundary la lista de pendientes se REEMPLAZA: no se arrastra el ayer."""
+    kb = _bridge()
+    monkeypatch.setattr(kb, "ROOT", str(tmp_path))
+    monkeypatch.setattr(kb, "_pc_boundary", 0.0)
+    monkeypatch.setattr(kb, "_pc_pending", set())
+    monkeypatch.setattr(kb, "bars_path", lambda n: str(tmp_path / "data" / f"bars_{n}.txt"))
+    (tmp_path / "data").mkdir(exist_ok=True)
+    monkeypatch.setattr(kb.ovf, "krx_boundary", lambda now=None: BOUNDARY)
+    assert kb.maybe_roll_prev_close() is True and kb._pc_pending == set(kb.CORE)
+    monkeypatch.setattr(kb.ovf, "krx_boundary", lambda now=None: BOUNDARY + 86400)
+    assert kb.maybe_roll_prev_close() is True
+    assert kb._pc_pending == set(kb.CORE) and kb._pc_boundary == BOUNDARY + 86400
 
 
 # ---------------------------------------------------------------- 7. pump study

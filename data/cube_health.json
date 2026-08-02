@@ -2334,13 +2334,1535 @@
    "bytes": 1783634,
    "date": "2026-07-28",
    "path": "data/history/2026-07-28/chain_full_xsp.json"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 555070,
+   "date": "2026-07-29",
+   "files": 62,
+   "out": "data/history/2026-07-29/chains_aapl_2026-07-29.txt.gz",
+   "rows": 9158,
+   "sym": "AAPL"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 545135,
+   "date": "2026-07-29",
+   "files": 62,
+   "out": "data/history/2026-07-29/chains_amd_2026-07-29.txt.gz",
+   "rows": 9052,
+   "sym": "AMD"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 193200,
+   "date": "2026-07-29",
+   "files": 62,
+   "out": "data/history/2026-07-29/chains_amzn_2026-07-29.txt.gz",
+   "rows": 2976,
+   "sym": "AMZN"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 588927,
+   "date": "2026-07-29",
+   "files": 64,
+   "out": "data/history/2026-07-29/chains_asml_2026-07-29.txt.gz",
+   "rows": 9866,
+   "sym": "ASML"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 190127,
+   "date": "2026-07-29",
+   "files": 62,
+   "out": "data/history/2026-07-29/chains_avgo_2026-07-29.txt.gz",
+   "rows": 2976,
+   "sym": "AVGO"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 404031,
+   "date": "2026-07-29",
+   "files": 62,
+   "out": "data/history/2026-07-29/chains_dram_2026-07-29.txt.gz",
+   "rows": 6892,
+   "sym": "DRAM"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 536153,
+   "date": "2026-07-29",
+   "files": 62,
+   "out": "data/history/2026-07-29/chains_googl_2026-07-29.txt.gz",
+   "rows": 8972,
+   "sym": "GOOGL"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 389313,
+   "date": "2026-07-29",
+   "files": 64,
+   "out": "data/history/2026-07-29/chains_intc_2026-07-29.txt.gz",
+   "rows": 6464,
+   "sym": "INTC"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 456439,
+   "date": "2026-07-29",
+   "files": 62,
+   "out": "data/history/2026-07-29/chains_lrcx_2026-07-29.txt.gz",
+   "rows": 7716,
+   "sym": "LRCX"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 191542,
+   "date": "2026-07-29",
+   "files": 62,
+   "out": "data/history/2026-07-29/chains_meta_2026-07-29.txt.gz",
+   "rows": 2976,
+   "sym": "META"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 193812,
+   "date": "2026-07-29",
+   "files": 62,
+   "out": "data/history/2026-07-29/chains_msft_2026-07-29.txt.gz",
+   "rows": 2976,
+   "sym": "MSFT"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 553751,
+   "date": "2026-07-29",
+   "files": 64,
+   "out": "data/history/2026-07-29/chains_mu_2026-07-29.txt.gz",
+   "rows": 9108,
+   "sym": "MU"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 75516,
+   "date": "2026-07-29",
+   "files": 62,
+   "out": "data/history/2026-07-29/chains_nok_2026-07-29.txt.gz",
+   "rows": 1024,
+   "sym": "NOK"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 249779,
+   "date": "2026-07-29",
+   "files": 64,
+   "out": "data/history/2026-07-29/chains_nvda_2026-07-29.txt.gz",
+   "rows": 3836,
+   "sym": "NVDA"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 404831,
+   "date": "2026-07-29",
+   "files": 62,
+   "out": "data/history/2026-07-29/chains_qcom_2026-07-29.txt.gz",
+   "rows": 6814,
+   "sym": "QCOM"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 516449,
+   "date": "2026-07-29",
+   "files": 64,
+   "out": "data/history/2026-07-29/chains_qqq_2026-07-29.txt.gz",
+   "rows": 8516,
+   "sym": "QQQ"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 562607,
+   "date": "2026-07-29",
+   "files": 62,
+   "out": "data/history/2026-07-29/chains_skhy_2026-07-29.txt.gz",
+   "rows": 9528,
+   "sym": "SKHY"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 522319,
+   "date": "2026-07-29",
+   "files": 64,
+   "out": "data/history/2026-07-29/chains_smh_2026-07-29.txt.gz",
+   "rows": 8742,
+   "sym": "SMH"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 540698,
+   "date": "2026-07-29",
+   "files": 63,
+   "out": "data/history/2026-07-29/chains_sndk_2026-07-29.txt.gz",
+   "rows": 8760,
+   "sym": "SNDK"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 515588,
+   "date": "2026-07-29",
+   "files": 62,
+   "out": "data/history/2026-07-29/chains_spcx_2026-07-29.txt.gz",
+   "rows": 8496,
+   "sym": "SPCX"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 480087,
+   "date": "2026-07-29",
+   "files": 64,
+   "out": "data/history/2026-07-29/chains_spy_2026-07-29.txt.gz",
+   "rows": 7836,
+   "sym": "SPY"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 533977,
+   "date": "2026-07-29",
+   "files": 63,
+   "out": "data/history/2026-07-29/chains_stx_2026-07-29.txt.gz",
+   "rows": 8980,
+   "sym": "STX"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 553005,
+   "date": "2026-07-29",
+   "files": 62,
+   "out": "data/history/2026-07-29/chains_tsla_2026-07-29.txt.gz",
+   "rows": 9040,
+   "sym": "TSLA"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 507051,
+   "date": "2026-07-29",
+   "files": 64,
+   "out": "data/history/2026-07-29/chains_tsm_2026-07-29.txt.gz",
+   "rows": 8464,
+   "sym": "TSM"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 476150,
+   "date": "2026-07-29",
+   "files": 62,
+   "out": "data/history/2026-07-29/chains_txn_2026-07-29.txt.gz",
+   "rows": 8152,
+   "sym": "TXN"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 579455,
+   "date": "2026-07-29",
+   "files": 64,
+   "out": "data/history/2026-07-29/chains_wdc_2026-07-29.txt.gz",
+   "rows": 9880,
+   "sym": "WDC"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 458251,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_aapl.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1159574,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_amd.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 534483,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_amzn.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 987146,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_asml.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 775734,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_avgo.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 332252,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_dia.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 299045,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_dram.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 370099,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_ewy.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 946354,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_gld.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 589831,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_googl.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 616394,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_intc.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 906367,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_iwm.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 335650,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_lrcx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 996168,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_meta.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 652473,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_msft.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1468025,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_mu.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 2830365,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_ndx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 182351,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_nflx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 64980,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_nok.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 417918,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_nvda.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 216477,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_qcom.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1709758,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_qqq.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 276919,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_skhy.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1001447,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_smh.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 808389,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_sndk.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 395945,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_spcx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 2676784,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_spx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1757686,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_spy.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 697350,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_stx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 910580,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_tsla.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 384000,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_tsm.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 316697,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_txn.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 539519,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_wdc.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 311055,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_xlk.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1729661,
+   "date": "2026-07-29",
+   "path": "data/history/2026-07-29/chain_full_xsp.json"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 630302,
+   "date": "2026-07-30",
+   "files": 68,
+   "out": "data/history/2026-07-30/chains_aapl_2026-07-30.txt.gz",
+   "rows": 10448,
+   "sym": "AAPL"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 648988,
+   "date": "2026-07-30",
+   "files": 68,
+   "out": "data/history/2026-07-30/chains_amd_2026-07-30.txt.gz",
+   "rows": 10776,
+   "sym": "AMD"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 208761,
+   "date": "2026-07-30",
+   "files": 67,
+   "out": "data/history/2026-07-30/chains_amzn_2026-07-30.txt.gz",
+   "rows": 3216,
+   "sym": "AMZN"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 632594,
+   "date": "2026-07-30",
+   "files": 68,
+   "out": "data/history/2026-07-30/chains_asml_2026-07-30.txt.gz",
+   "rows": 10570,
+   "sym": "ASML"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 207496,
+   "date": "2026-07-30",
+   "files": 68,
+   "out": "data/history/2026-07-30/chains_avgo_2026-07-30.txt.gz",
+   "rows": 3264,
+   "sym": "AVGO"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 490581,
+   "date": "2026-07-30",
+   "files": 68,
+   "out": "data/history/2026-07-30/chains_dram_2026-07-30.txt.gz",
+   "rows": 8296,
+   "sym": "DRAM"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 632017,
+   "date": "2026-07-30",
+   "files": 68,
+   "out": "data/history/2026-07-30/chains_googl_2026-07-30.txt.gz",
+   "rows": 10700,
+   "sym": "GOOGL"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 452316,
+   "date": "2026-07-30",
+   "files": 68,
+   "out": "data/history/2026-07-30/chains_intc_2026-07-30.txt.gz",
+   "rows": 7512,
+   "sym": "INTC"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 572142,
+   "date": "2026-07-30",
+   "files": 67,
+   "out": "data/history/2026-07-30/chains_lrcx_2026-07-30.txt.gz",
+   "rows": 9632,
+   "sym": "LRCX"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 204993,
+   "date": "2026-07-30",
+   "files": 67,
+   "out": "data/history/2026-07-30/chains_meta_2026-07-30.txt.gz",
+   "rows": 3216,
+   "sym": "META"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 209104,
+   "date": "2026-07-30",
+   "files": 68,
+   "out": "data/history/2026-07-30/chains_msft_2026-07-30.txt.gz",
+   "rows": 3264,
+   "sym": "MSFT"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 579124,
+   "date": "2026-07-30",
+   "files": 68,
+   "out": "data/history/2026-07-30/chains_mu_2026-07-30.txt.gz",
+   "rows": 9444,
+   "sym": "MU"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 99579,
+   "date": "2026-07-30",
+   "files": 68,
+   "out": "data/history/2026-07-30/chains_nok_2026-07-30.txt.gz",
+   "rows": 1400,
+   "sym": "NOK"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 295691,
+   "date": "2026-07-30",
+   "files": 68,
+   "out": "data/history/2026-07-30/chains_nvda_2026-07-30.txt.gz",
+   "rows": 4628,
+   "sym": "NVDA"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 499989,
+   "date": "2026-07-30",
+   "files": 68,
+   "out": "data/history/2026-07-30/chains_qcom_2026-07-30.txt.gz",
+   "rows": 8440,
+   "sym": "QCOM"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 562386,
+   "date": "2026-07-30",
+   "files": 68,
+   "out": "data/history/2026-07-30/chains_qqq_2026-07-30.txt.gz",
+   "rows": 9188,
+   "sym": "QQQ"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 540988,
+   "date": "2026-07-30",
+   "files": 68,
+   "out": "data/history/2026-07-30/chains_skhy_2026-07-30.txt.gz",
+   "rows": 8992,
+   "sym": "SKHY"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 618286,
+   "date": "2026-07-30",
+   "files": 68,
+   "out": "data/history/2026-07-30/chains_smh_2026-07-30.txt.gz",
+   "rows": 10420,
+   "sym": "SMH"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 649577,
+   "date": "2026-07-30",
+   "files": 67,
+   "out": "data/history/2026-07-30/chains_sndk_2026-07-30.txt.gz",
+   "rows": 10464,
+   "sym": "SNDK"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 563907,
+   "date": "2026-07-30",
+   "files": 68,
+   "out": "data/history/2026-07-30/chains_spcx_2026-07-30.txt.gz",
+   "rows": 9288,
+   "sym": "SPCX"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 538387,
+   "date": "2026-07-30",
+   "files": 67,
+   "out": "data/history/2026-07-30/chains_spy_2026-07-30.txt.gz",
+   "rows": 8750,
+   "sym": "SPY"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 584533,
+   "date": "2026-07-30",
+   "files": 67,
+   "out": "data/history/2026-07-30/chains_stx_2026-07-30.txt.gz",
+   "rows": 9840,
+   "sym": "STX"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 611351,
+   "date": "2026-07-30",
+   "files": 68,
+   "out": "data/history/2026-07-30/chains_tsla_2026-07-30.txt.gz",
+   "rows": 10040,
+   "sym": "TSLA"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 617103,
+   "date": "2026-07-30",
+   "files": 68,
+   "out": "data/history/2026-07-30/chains_tsm_2026-07-30.txt.gz",
+   "rows": 10336,
+   "sym": "TSM"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 534091,
+   "date": "2026-07-30",
+   "files": 68,
+   "out": "data/history/2026-07-30/chains_txn_2026-07-30.txt.gz",
+   "rows": 9148,
+   "sym": "TXN"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 608822,
+   "date": "2026-07-30",
+   "files": 67,
+   "out": "data/history/2026-07-30/chains_wdc_2026-07-30.txt.gz",
+   "rows": 10332,
+   "sym": "WDC"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 433789,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_aapl.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1261944,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_amd.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 468673,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_amzn.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1059674,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_asml.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 702990,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_avgo.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 338327,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_dia.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 376597,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_dram.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 446257,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_ewy.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 770607,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_gld.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 262141,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_glw.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 452070,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_googl.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 711207,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_intc.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 917941,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_iwm.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 414782,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_lrcx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1228459,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_meta.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 621540,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_msft.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1670184,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_mu.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 2840358,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_ndx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 179062,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_nflx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 82703,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_nok.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 397622,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_nvda.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 263314,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_qcom.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1801879,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_qqq.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 350519,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_skhy.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1043345,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_smh.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1248752,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_sndk.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 406643,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_spcx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 2674536,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_spx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1794103,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_spy.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 807375,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_stx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 856539,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_tsla.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 360476,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_tsm.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 284706,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_txn.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 673256,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_wdc.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 313850,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_xlk.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1689229,
+   "date": "2026-07-30",
+   "path": "data/history/2026-07-30/chain_full_xsp.json"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 520040,
+   "date": "2026-07-31",
+   "files": 65,
+   "out": "data/history/2026-07-31/chains_aapl_2026-07-31.txt.gz",
+   "rows": 8466,
+   "sym": "AAPL"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 644341,
+   "date": "2026-07-31",
+   "files": 67,
+   "out": "data/history/2026-07-31/chains_amd_2026-07-31.txt.gz",
+   "rows": 10720,
+   "sym": "AMD"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 203382,
+   "date": "2026-07-31",
+   "files": 65,
+   "out": "data/history/2026-07-31/chains_amzn_2026-07-31.txt.gz",
+   "rows": 3120,
+   "sym": "AMZN"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 622190,
+   "date": "2026-07-31",
+   "files": 67,
+   "out": "data/history/2026-07-31/chains_asml_2026-07-31.txt.gz",
+   "rows": 10410,
+   "sym": "ASML"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 199081,
+   "date": "2026-07-31",
+   "files": 65,
+   "out": "data/history/2026-07-31/chains_avgo_2026-07-31.txt.gz",
+   "rows": 3120,
+   "sym": "AVGO"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 488764,
+   "date": "2026-07-31",
+   "files": 67,
+   "out": "data/history/2026-07-31/chains_dram_2026-07-31.txt.gz",
+   "rows": 8252,
+   "sym": "DRAM"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 589653,
+   "date": "2026-07-31",
+   "files": 65,
+   "out": "data/history/2026-07-31/chains_googl_2026-07-31.txt.gz",
+   "rows": 9882,
+   "sym": "GOOGL"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 448446,
+   "date": "2026-07-31",
+   "files": 67,
+   "out": "data/history/2026-07-31/chains_intc_2026-07-31.txt.gz",
+   "rows": 7444,
+   "sym": "INTC"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 558305,
+   "date": "2026-07-31",
+   "files": 65,
+   "out": "data/history/2026-07-31/chains_lrcx_2026-07-31.txt.gz",
+   "rows": 9428,
+   "sym": "LRCX"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 201386,
+   "date": "2026-07-31",
+   "files": 65,
+   "out": "data/history/2026-07-31/chains_meta_2026-07-31.txt.gz",
+   "rows": 3120,
+   "sym": "META"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 202113,
+   "date": "2026-07-31",
+   "files": 65,
+   "out": "data/history/2026-07-31/chains_msft_2026-07-31.txt.gz",
+   "rows": 3120,
+   "sym": "MSFT"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 592126,
+   "date": "2026-07-31",
+   "files": 67,
+   "out": "data/history/2026-07-31/chains_mu_2026-07-31.txt.gz",
+   "rows": 9664,
+   "sym": "MU"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 101283,
+   "date": "2026-07-31",
+   "files": 65,
+   "out": "data/history/2026-07-31/chains_nok_2026-07-31.txt.gz",
+   "rows": 1452,
+   "sym": "NOK"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 298031,
+   "date": "2026-07-31",
+   "files": 67,
+   "out": "data/history/2026-07-31/chains_nvda_2026-07-31.txt.gz",
+   "rows": 4660,
+   "sym": "NVDA"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 491216,
+   "date": "2026-07-31",
+   "files": 65,
+   "out": "data/history/2026-07-31/chains_qcom_2026-07-31.txt.gz",
+   "rows": 8308,
+   "sym": "QCOM"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 549783,
+   "date": "2026-07-31",
+   "files": 67,
+   "out": "data/history/2026-07-31/chains_qqq_2026-07-31.txt.gz",
+   "rows": 9006,
+   "sym": "QQQ"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 518869,
+   "date": "2026-07-31",
+   "files": 67,
+   "out": "data/history/2026-07-31/chains_skhy_2026-07-31.txt.gz",
+   "rows": 8604,
+   "sym": "SKHY"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 635181,
+   "date": "2026-07-31",
+   "files": 67,
+   "out": "data/history/2026-07-31/chains_smh_2026-07-31.txt.gz",
+   "rows": 10720,
+   "sym": "SMH"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 633666,
+   "date": "2026-07-31",
+   "files": 65,
+   "out": "data/history/2026-07-31/chains_sndk_2026-07-31.txt.gz",
+   "rows": 10220,
+   "sym": "SNDK"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 533253,
+   "date": "2026-07-31",
+   "files": 67,
+   "out": "data/history/2026-07-31/chains_spcx_2026-07-31.txt.gz",
+   "rows": 8776,
+   "sym": "SPCX"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 530995,
+   "date": "2026-07-31",
+   "files": 66,
+   "out": "data/history/2026-07-31/chains_spy_2026-07-31.txt.gz",
+   "rows": 8658,
+   "sym": "SPY"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 604281,
+   "date": "2026-07-31",
+   "files": 66,
+   "out": "data/history/2026-07-31/chains_stx_2026-07-31.txt.gz",
+   "rows": 10198,
+   "sym": "STX"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 587218,
+   "date": "2026-07-31",
+   "files": 65,
+   "out": "data/history/2026-07-31/chains_tsla_2026-07-31.txt.gz",
+   "rows": 9636,
+   "sym": "TSLA"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 638230,
+   "date": "2026-07-31",
+   "files": 67,
+   "out": "data/history/2026-07-31/chains_tsm_2026-07-31.txt.gz",
+   "rows": 10710,
+   "sym": "TSM"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 508776,
+   "date": "2026-07-31",
+   "files": 65,
+   "out": "data/history/2026-07-31/chains_txn_2026-07-31.txt.gz",
+   "rows": 8688,
+   "sym": "TXN"
+  },
+  {
+   "action": "bundle",
+   "applied": false,
+   "bytes_loose": 619732,
+   "date": "2026-07-31",
+   "files": 66,
+   "out": "data/history/2026-07-31/chains_wdc_2026-07-31.txt.gz",
+   "rows": 10560,
+   "sym": "WDC"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 443514,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_aapl.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1303638,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_amd.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 494400,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_amzn.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1063954,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_asml.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 707818,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_avgo.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 337868,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_dia.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 374022,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_dram.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 438508,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_ewy.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 749667,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_gld.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 480919,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_googl.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 709353,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_intc.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 872758,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_iwm.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 415421,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_lrcx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1258564,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_meta.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 617331,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_msft.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1735468,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_mu.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 2773653,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_ndx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 179806,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_nflx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 80459,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_nok.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 418055,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_nvda.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 250496,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_qcom.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1717946,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_qqq.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 365243,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_skhy.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1054506,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_smh.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1203113,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_sndk.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 399793,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_spcx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 2550761,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_spx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1735573,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_spy.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 833827,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_stx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 898526,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_tsla.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 368734,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_tsm.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 330238,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_txn.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 691600,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_wdc.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 348123,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_xlk.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1621223,
+   "date": "2026-07-31",
+   "path": "data/history/2026-07-31/chain_full_xsp.json"
   }
  ],
  "applied": false,
  "budget_gb": 3.0,
- "date": "2026-07-30",
- "history_bytes": 583686706,
- "history_gb": 0.5837,
+ "date": "2026-08-02",
+ "history_bytes": 742353132,
+ "history_gb": 0.7424,
  "loose_days_kept": 2,
- "updated": 1785443119
+ "updated": 1785702320
 }

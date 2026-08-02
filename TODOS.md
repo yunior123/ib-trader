@@ -114,7 +114,15 @@
       por socket, o solo trades como su fichero de replay?
 - [x] "search intrinio api+github, create new skills, same for databento/otros" (2026-08-01) — HECHO: skills intrinio-api, databento-api, alphavantage-api, data-provider-layer (commit 41bae1fa).
 - [x] "widget del market folder parecido a la imagen de X (heatmap GEX/VEX strike×expiry)" (2026-08-01) — HECHO commit 1fa35c2d: compute_option_matrix + /api/gex_heatmap/{symbol} + matriz CSS-grid divergente.
-- [ ] "run the software, ver el mapa de la semana + mapa de opciones futuro como el post X; e2e testing de las features nuevas y todos los cambios" (2026-08-01) — PENDIENTE: correr mit terminal + screenshot del heatmap + E2E (provider_bridge→flota, reversal_router, shock_calibrator).
+- [x] "run the software, ver el mapa de la semana + mapa de opciones futuro como el post X; e2e testing de las features nuevas y todos los cambios" (2026-08-01) — HECHO 2026-08-02 18:52:
+      software CORRIENDO y capturado (data/e2e_shots/mit_terminal.png): mapa de opciones FUTURO =
+      heatmap GEX strike x 4 vencimientos (2026-08-03/04/05/21), 152 strikes, 497 celdas, celda
+      maxima 749@08-04 $341,2M; cabeceras vivas (regimen gamma POSITIVE/DAMPENING, book imbalance
+      +20%, shock normal); panel TRACE con eje de tiempo y toggles GEX/NetOI/0DTE/5m/Key levels.
+      E2E: `zsh scripts/e2e_smoke.sh` 7/7 PASS en --fast y 9/9 con suites, con el mercado CERRADO —
+      cubre portero, contrato de ficheros del provider_bridge (ahora **26/26, faltan 0**; antes
+      faltaban NFLX/GLD/XLK), opt_quick, reversal_router, shock_calibrator, terminal mit con
+      screenshot verificado (magic PNG + IEND), y guarda anti-mock + 0 fugas de key.
 ## SESIÓN 2026-08-02 (~02:00 ET, domingo — mercado CERRADO)
 - [x] "do research about issue previous with intrinio please. go in depth, dont stop till websockets
       is working, verify if the error is due to the market not open yet, full research" (2026-08-02
@@ -151,6 +159,49 @@
 - [ ] "solve and investigate all not solved bugs or issues" (2026-08-02 03:40) — EN CURSO: barrido
       de TODOS los problemas medio/bajo que las revisiones adversariales dejaron sin arreglar +
       caza de bugs nueva (skill bug-hunter) con agentes frescos.
+
+### ✅ BUG CERRADO 2026-08-02 19:00 — muros del TRACE fuera de toda banda operativa
+`compute_trace_matrix` acota la MATRIZ a ±`MATRIX_BAND` del spot
+(`options_positioning.py:288-291`) pero los NIVELES los toma de
+`analyze_dealer_positioning(symbol, spot, chain)` con la cadena **COMPLETA sin acotar** (`:302`).
+`analyze_dealer_positioning:129-130` hace `max(call_oi)` / `max(put_oi)` sobre TODOS los strikes.
+REPRODUCIDO con SPY spot 744,27 y los 4 vencimientos fusionados:
+  put_wall = **360,0** (OI 26.722 en UN contrato, un tail hedge lejano) = **−51,6% del spot**
+  frente al 710 (OI 21.658, −4,6%) que es el muro operativo de verdad.
+Se dibuja en el panel como "Put wall — support". Un soporte a −52% no es un soporte: contradice la
+doctrina de muros de la casa (`oi-magnets-protocol`: el muro es un campo de fuerza que se TOCA).
+INVESTIGACIÓN EXTERNA (2026-08-02, support.spotgamma.com): el vendor de referencia define
+**Call Wall = strike donde la GAMMA NETA de calls es máxima** y **Put Wall = strike donde la gamma
+neta de puts es máxima**, y además toma "el call wall más alto POR ENCIMA del precio y el put wall
+más grande POR DEBAJO". Nosotros los calculamos por **max Open Interest** y **sin lado ni banda**
+(`analyze_dealer_positioning:129-130`) — dos diferencias, y ambas empujan al strike lejano.
+Nuestro propio `scripts/gex_core.py` (la flota) ya los calcula por gamma; es `mit/` quien se separó.
+HECHO: nuevo `_walls()` en `options_positioning.py` — call wall solo por ENCIMA del spot, put wall
+solo por DEBAJO, ambos dentro de `WALL_BAND` (= `MATRIX_BAND`, la misma ventana que el mapa), y por
+GAMMA medida cuando la hay, cayendo a OI solo si falta y ETIQUETANDO la fuente en los `caveats`
+(`source=gamma|mixto_gamma_oi|oi`). Si ningún strike cae en banda devuelve **None**, jamás el strike
+lejano. VERIFICADO con datos reales de Polygon (SPY spot 744,27, 4 vencimientos):
+  antes → call_wall 775 / **put_wall 360 (−51,6%)**
+  ahora → call_wall **749 (+0,6%)** / put_wall **733 (−1,5%)**, source=gamma
+E2E con el terminal levantado: `call_wall=749.0 put_wall=733.0 flip=729.48 max_pain=725.0`.
+6 tests nuevos (`mit/backend/tests/test_walls_band.py`), suite mit 51 verdes. PENDIENTE: `options_positioning.py` lo tiene
+tomado el lote A del barrido; se aplica en cuanto lo libere.
+
+### ⚠️ CORRECCIÓN 2026-08-02 03:55 — el veredicto de reversal_router NO era robusto
+Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fundada** y la retiro:
+- La barrera del gradador era ±1×ATR14 de barras de **1 MINUTO**. Medido por mí sobre poly_bars:
+  QQQ 0,045% del precio, SPY 0,027%, NVDA 0,084%. Eso **no cubre ni el spread**: mide si el precio
+  hace un tick a favor antes que en contra = MICROESTRUCTURA, no la tesis de un router que mezcla
+  5m/15m/30m/1h/4h/1D.
+- El WR resultó INVARIANTE al horizonte (0,506 a 30/120/390/780 barras) porque lo que ata es la
+  BARRERA, no el horizonte — señal de que se estaba midiendo ruido.
+- Con la barrera escalada al timeframe real del router, **el MISMO código cambia de veredicto**:
+  390×4ATR → 0,512 [0,501-0,522]; 390×10 → 0,514 [0,500-0,527]; 780×20 → 0,526 [0,509-0,542],
+  que por la propia regla del script (wilson_lo > 0,50) sería PASS.
+- Honestidad simétrica: ese PASS es sobre 4 de 30 símbolos, sin corrección por correlación ni null de
+  entrada aleatoria. **NO afirmo que el router tenga edge.** Afirmo que el FAIL no está establecido.
+→ EN CURSO: sustituir el punto único por un BARRIDO paramétrico con Wilson por celda y veredicto
+  "SENSIBLE AL PARÁMETRO — no concluyente" si depende del parámetro. `wired:false` se mantiene.
 
 ### Hallazgos del arnés E2E (lote L6) — arreglados por el orquestador 2026-08-02 03:30
 - [x] **Niveles del terminal NO deterministas** (era el peor: son números que disparan órdenes).

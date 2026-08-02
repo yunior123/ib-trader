@@ -85,6 +85,12 @@ def _publish_korea_syms():
             cid, krx = KOREA[n]
             f.write(f"{n.upper()} {cid} {krx}\n")
     os.replace(tmp, dst)
+    # ...y el CORE aparte: overnight_pump_study lo lee en vez de duplicar la tupla
+    dst = os.path.join(ROOT, "data", "korea_core.txt")
+    tmp = dst + ".tmp"
+    with open(tmp, "w") as f:
+        f.write("\n".join(CORE) + "\n")
+    os.replace(tmp, dst)
 
 
 _publish_korea_syms()
@@ -156,10 +162,12 @@ def make_on_nbbo(st):
     return on_tick
 
 def krx_market():
-    """Sesion KRX 09:00-15:30 KST (UTC+9, sin DST), lun-vie coreano.
+    """Sesion KRX (horario de ovf: FUENTE UNICA) KST (UTC+9, sin DST), lun-vie coreano.
     Con 5 min de gracia a cada lado para el stall-watchdog."""
     lt = time.gmtime(time.time() + 9 * 3600)
-    return lt.tm_wday < 5 and (8, 55) <= (lt.tm_hour, lt.tm_min) <= (15, 35)
+    mins = lt.tm_hour * 60 + lt.tm_min
+    return lt.tm_wday < 5 and \
+        ovf.KRX_OPEN_H * 60 + ovf.KRX_OPEN_M - 5 <= mins <= ovf.KRX_CLOSE_H * 60 + ovf.KRX_CLOSE_M + 5
 
 _last_banner = 0.0
 _last_resub = 0.0
@@ -294,12 +302,13 @@ def prev_close_from_rows(rows, boundary):
             best = (c, ep)
     return best
 
-def update_prev_close(name, rows, boundary):
+def update_prev_close(name, rows, boundary, verbose=True):
     """Persiste el cierre de la sesion KRX ANTERIOR en data/korea_prevclose.json (atomico).
     Sin barra utilizable no escribe entrada; nunca retrocede a una barra mas vieja."""
     pc = prev_close_from_rows(rows, boundary)
     if pc is None:
-        print(f"{name}: sin barra pre-boundary — prev_close NO escrito", file=sys.stderr)
+        if verbose:
+            print(f"{name}: sin barra pre-boundary — prev_close NO escrito", file=sys.stderr)
         return None
     close, ep = pc
     path = prevclose_path()
@@ -326,18 +335,26 @@ def update_prev_close(name, rows, boundary):
     return entry
 
 _pc_boundary = 0.0
+_pc_pending = set()
 
 def maybe_roll_prev_close(names=CORE, now=None):
     """Al cruzar el boundary KRX el fichero vivo aun contiene la sesion anterior: fijar
-    ahi el prev_close antes de que warmup lo trunque. True si hubo roll."""
-    global _pc_boundary
+    ahi el prev_close antes de que warmup lo trunque. Un fallo transitorio (fichero a medio
+    escribir -> read_bar_rows []) NO quema el boundary: el nombre queda PENDIENTE y se
+    reintenta en cada vuelta hasta que se persiste. True si hubo roll de boundary."""
+    global _pc_boundary, _pc_pending
     b = ovf.krx_boundary(now)
-    if b == _pc_boundary:
+    nuevo = b != _pc_boundary
+    if nuevo:
+        _pc_boundary = b
+        _pc_pending = set(names)
+    elif not _pc_pending:
         return False
-    _pc_boundary = b
-    for name in names:
-        update_prev_close(name, read_bar_rows(bars_path(name)), b)
-    return True
+    for name in sorted(_pc_pending.intersection(names)):
+        if update_prev_close(name, read_bar_rows(bars_path(name)), b,
+                             verbose=nuevo) is not None:
+            _pc_pending.discard(name)
+    return nuevo
 
 def freshness_guard(now=None):
     """GRITA si KRX esta abierto y el ultimo bar pasa de STALE_MAX_S. True si grito."""
@@ -397,7 +414,8 @@ def warmup(ib, st):
             f.write(f"{m:.0f} {b.open:.4f} {b.high:.4f} {b.low:.4f} {b.close:.4f} {v:.0f}\n")
             st.last_emitted = m; n += 1
             rows.append((m, float(b.close)))
-    update_prev_close(st.name, rows, boundary)     # truncar el fichero no puede borrar la referencia
+    if update_prev_close(st.name, rows, boundary) is not None:
+        _pc_pending.discard(st.name)               # persistido: el reintento del roll ya no insiste
     print(f"{st.name} ({sym}): warmup {n} bars", file=sys.stderr)
 
 def subscribe_sym(ib, st):

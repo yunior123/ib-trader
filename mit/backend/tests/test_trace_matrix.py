@@ -1,13 +1,14 @@
 from __future__ import annotations
 
 import json
-from datetime import date, timedelta
+from datetime import date, datetime, time as dtime, timedelta
 
 import pytest
 
 from backend.app.analytics.options_positioning import (
     MATRIX_BAND,
     compute_trace_matrix,
+    current_session_date,
     read_trace_cube,
 )
 from backend.app.domain import OptionContract
@@ -63,13 +64,17 @@ def test_trace_bad_metric_raises() -> None:
 
 # ---- measured time axis (scripts/trace_cube.py) ---------------------------------
 
-EPOCHS = [1785504900, 1785506100, 1785508500]
+# cubo de la SESION VIGENTE: read_trace_cube rechaza los de otra sesion (ver
+# test_trace_cube_freshness.py), asi que el fixture se fecha en vivo, no en duro.
+SESSION = current_session_date()
+EPOCHS = [int(datetime.combine(SESSION, dtime(9, 35)).timestamp()) + m * 60 for m in (0, 20, 60)]
 
 
 def _cube() -> dict:
     return {
         "meta": {
-            "sym": "X", "date": "2026-07-31", "band": 0.12, "generated_epoch": 1785600000,
+            "sym": "X", "date": SESSION.isoformat(), "band": 0.12,
+            "generated_epoch": EPOCHS[-1],
             "source": "ibkr_tws chain snapshots", "epochs": EPOCHS,
             "labels": ["09:35", "09:55", "10:35"], "spots": [100.5, 101.0, 101.5],
             "greeks_ok_pct": [1.0, 0.0, 1.0], "strikes": [101.0, 100.0],
@@ -78,8 +83,8 @@ def _cube() -> dict:
         },
         "cells": {
             # la foto del medio (09:55) NO tiene griegas -> ni una celda de gex: columna VACIA
-            "gex": {"100|1785504900": 4.0, "101|1785504900": -2.0,
-                    "100|1785508500": 5.0, "101|1785508500": -3.0},
+            "gex": {"100|%d" % EPOCHS[0]: 4.0, "101|%d" % EPOCHS[0]: -2.0,
+                    "100|%d" % EPOCHS[2]: 5.0, "101|%d" % EPOCHS[2]: -3.0},
             "netoi": {"100|%d" % e: 200.0 for e in EPOCHS} | {"101|%d" % e: -600.0 for e in EPOCHS},
         },
     }
@@ -108,8 +113,8 @@ def test_time_axis_measured_with_cube() -> None:
     assert [c["epoch"] for c in tt["columns"]] == EPOCHS          # tantas columnas como el fichero
     assert len(tt["columns"]) == _cube()["meta"]["columns"]
     assert [c["has_data"] for c in tt["columns"]] == [True, False, True]   # la vacia se declara
-    assert tt["cells"]["100|1785504900"] == 4.0
-    assert tt["date"] == "2026-07-31" and tt["strikes"] == [101.0, 100.0]
+    assert tt["cells"]["100|%d" % EPOCHS[0]] == 4.0
+    assert tt["date"] == SESSION.isoformat() and tt["strikes"] == [101.0, 100.0]
     assert any("Time axis MEASURED: 2/3" in c for c in matrix["caveats"])
 
 

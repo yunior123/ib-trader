@@ -118,6 +118,14 @@ def _sample_with_edges(pool, cap):
     return [pool[i] for i in idx]
 
 
+def line_budget(narrow, n_exps):
+    """Lineas de market data que puede pedir UN simbolo por ciclo (near+far, 2 rights, n_exps).
+    TWS da 100 concurrentes por defecto (maxTickerLimit): pasarse = TWS rechaza y la cadena sale
+    coja. https://interactivebrokers.github.io/tws-api/market_data.html"""
+    cap = NARROW_MAX_LINES_PER_EXP if narrow else MAX_LINES_PER_EXP
+    return cap * max(1, int(n_exps))
+
+
 def select_strikes(strikes_all, spot, band, max_ks, narrow,
                    far_band=None, far_max_ks=None):
     """(near, far) para UN vencimiento. Funcion pura: testeable sin TWS.
@@ -254,6 +262,13 @@ class ChainCache:
                                            currency="USD", tradingClass=sym))
         if not cons and not far_cons:
             log(f"{sym}: 0 strikes en ±{far_band*100:.0f}% — skip")
+            return 0
+        budget = line_budget(narrow, len(exps))
+        if len(cons) + len(far_cons) > budget:
+            # fail-loud antes de pedir: TWS corta por encima de su maxTickerLimit y la cadena
+            # saldria coja sin decirlo. Solo puede saltar si alguien sube los caps.
+            log(f"{sym}: {len(cons) + len(far_cons)} lineas > presupuesto {budget} "
+                f"({len(exps)} vencimientos) — skip")
             return 0
         rows = []
         for wave, wsleep in ((cons, NARROW_SLEEP if narrow else SLEEP_TICKS),

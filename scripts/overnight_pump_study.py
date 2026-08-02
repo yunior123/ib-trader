@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """overnight_pump_study.py — MEDIR el patron "~12:30 AM ET se bombea" (Yunior), no afirmarlo.
 Lote FUERA de sesion. Unica fuente que cubre 20:00-03:59 ET: las barras KRX archivadas en
-data/history/<fecha>/bars/{kospi,samsung,skhynix}_krx.txt (poly_bars solo tiene 04:00-19:59 ET,
-histograma comprobado 2026-08-02 -> el pump de las 00:30 NO es medible con trades.db).
-Retorno por franja de 30 min desde la apertura KRX (09:00 KST = 20:00 ET) + Wilson.
+data/history/<fecha>/bars/<sym>_krx.txt, <sym> de data/korea_core.txt (poly_bars solo tiene
+04:00-19:59 ET, histograma comprobado 2026-08-02 -> el pump de las 00:30 NO es medible con trades.db).
+Retorno por franja de 30 min desde la apertura KRX (09:00 KST = 20:00 ET en EDT, 19:00 en EST:
+la etiqueta ET se declara por sesion en et_variants) + Wilson.
 Se NIEGA a publicar probabilidad con n < 30 (doctrina measured-probability).
 Salida atomica a data/overnight_pump_study.json.\nModo --us: mide el overnight US con los futuros NQ/ES de overnight_feed (la fuente que\nSI cubre las 00:30 ET) -> data/overnight_pump_us.json.\nUso: [--us [--campo nq_pct|es_pct]] [--min-n N] [--print]"""
 import glob
@@ -17,16 +18,31 @@ from zoneinfo import ZoneInfo
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "scripts"))
+import overnight_feed as ovf     # noqa: E402  horario KRX: una sola definicion
 
 KST = ZoneInfo("Asia/Seoul")
 TZ = ZoneInfo("America/Toronto")
 HISTORY = os.path.join(REPO, "data", "history")
 OUT = os.path.join(REPO, "data", "overnight_pump_study.json")
-SYMS = ("kospi", "samsung", "skhynix")
+CORE_PATH = os.path.join(REPO, "data", "korea_core.txt")   # lo escribe korea_bar_bridge
 MIN_N = 30                      # por debajo de esto no se publica probabilidad
 BUCKET_S = 1800                 # 30 min
-OPEN_H, OPEN_M, N_BUCKETS = 9, 0, 13     # KRX 09:00-15:30 KST = 13 franjas de 30 min
+OPEN_H, OPEN_M = ovf.KRX_OPEN_H, ovf.KRX_OPEN_M
+N_BUCKETS = ((ovf.KRX_CLOSE_H * 60 + ovf.KRX_CLOSE_M) - (OPEN_H * 60 + OPEN_M)) * 60 // BUCKET_S
 Z = 1.96
+
+
+def core_syms(path=None):
+    """Los CORE de korea_bar_bridge, leidos de data/korea_core.txt. Levanta si falta: un
+    universo inventado aqui volveria a divergir del puente (lote fuera de sesion, fail-loud)."""
+    p = path or CORE_PATH
+    try:
+        syms = tuple(s for s in open(p).read().split() if s)
+    except OSError as e:
+        raise RuntimeError(f"{p} ausente ({e}) — lo publica scripts/korea_bar_bridge.py") from e
+    if not syms:
+        raise RuntimeError(f"{p} vacio — sin universo KRX no hay estudio")
+    return syms
 
 
 def wilson(ups, n, z=Z):
@@ -101,15 +117,28 @@ def bucket_labels(day_iso):
             for i in range(N_BUCKETS)]
 
 
-def study(history_root=None, min_n=MIN_N):
+def bucket_et_variants(days):
+    """Etiquetas ET distintas de cada franja entre TODAS las sesiones: KST no tiene DST pero
+    Toronto si, asi que 13:30 KST es 00:30 ET en verano y 23:30 ET en invierno. Una sola
+    etiqueta ET aplicada a todas las sesiones MIENTE media año."""
+    variants = [[] for _ in range(N_BUCKETS)]
+    for d in days:
+        for i, lab in enumerate(bucket_labels(d)):
+            if lab["et"] not in variants[i]:
+                variants[i].append(lab["et"])
+    return [sorted(v) for v in variants]
+
+
+def study(history_root=None, min_n=MIN_N, syms_list=None):
     """-> dict con status DATA-INSUFFICIENT (n<min_n) o MEASURED. Nunca un % con n chico."""
     history_root = history_root or HISTORY
     syms, n_max = {}, 0
-    for sym in SYMS:
+    for sym in (syms_list or core_syms()):
         sessions = load_sessions(sym, history_root)
         days = sorted(sessions)
         labels = bucket_labels(days[-1]) if days else bucket_labels(
             datetime.now(KST).date().isoformat())
+        variants = bucket_et_variants(days) if days else [[lab["et"]] for lab in labels]
         agg = {i: {"n": 0, "ups": 0, "sum_ret": 0.0} for i in range(N_BUCKETS)}
         for day in days:
             for i, r in bucket_returns(sessions[day], day).items():
@@ -121,6 +150,7 @@ def study(history_root=None, min_n=MIN_N):
         for i in range(N_BUCKETS):
             a = agg[i]
             b = {"bucket": i, "kst": labels[i]["kst"], "et": labels[i]["et"],
+                 "et_variants": variants[i], "et_dst_ambiguo": len(variants[i]) > 1,
                  "n": a["n"], "ups": a["ups"],
                  "mean_ret_pct": round(a["sum_ret"] / a["n"], 4) if a["n"] else None}
             if a["n"] >= min_n:
@@ -138,7 +168,10 @@ def study(history_root=None, min_n=MIN_N):
                      "buckets": buckets}
     return {"ts": time.time(), "min_n": min_n, "n": n_max,
             "status": "MEASURED" if n_max >= min_n else "DATA-INSUFFICIENT",
-            "source": "data/history/<fecha>/bars/*_krx.txt", "symbols": syms}
+            "source": "data/history/<fecha>/bars/*_krx.txt",
+            "et_nota": "franjas ancladas a la apertura KRX (KST, sin DST); 'et' es la etiqueta "
+                       "de la sesion mas reciente y 'et_variants' todas las de la muestra",
+            "symbols": syms}
 
 
 # --- Modo US: el patron que preguntó Yunior es del overnight US, NO del agotamiento KRX ------

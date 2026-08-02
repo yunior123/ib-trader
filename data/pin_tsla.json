@@ -1,21 +1,21 @@
 {
  "abs_wall": 307.5,
  "abs_wall_sign": "-",
- "asof": 1785527763,
+ "asof": 1785700562,
  "band_biased": true,
- "band_pct": 14.411,
- "contracts_used": 188,
+ "band_pct": 14.519,
+ "contracts_used": 517,
  "corr_abs_wall_60d": null,
- "exp_max": 20260731,
- "full_chain": "data/history/2026-07-31/chain_full_tsla.json",
- "max_pain": 307.5,
- "max_pain_ibkr_band": 305.0,
+ "exp_max": 20260807,
+ "full_chain": "data/history/2026-08-02/chain_full_tsla.json",
+ "max_pain": 310.0,
+ "max_pain_ibkr_band": 307.5,
  "min_oi_required": 1000,
  "nota": "descriptivo: p_pin=null (4 viernes de historico) y corr_abs_wall_60d=null (sin archivo de max_pain). El primer test de esta feature es COLINEALIDAD con abs_wall, no edge.",
- "oi_in_zone": 65319,
+ "oi_in_zone": 56269,
  "oi_src": "polygon_snapshot",
  "p_pin": null,
- "pin": 307.5,
+ "pin": 310.0,
  "reason": "abs_wall TRAMPILLA: no es pin, es trampilla",
  "spot": 306.87,
  "sym": "TSLA",
@@ -23,7 +23,7 @@
  "width": 2.5,
  "zero_dte_buy_forbidden": false,
  "zone": [
-  306.875,
-  308.125
+  309.375,
+  310.625
  ]
 }

@@ -1,5 +1,5 @@
 {
- "generated": "2026-07-26T19:01:52",
+ "generated": "2026-08-02T19:02:59",
  "params": {
   "tickers": [
    "QQQ",
@@ -32,204 +32,204 @@
   "QQQ": {
    "bull": {
     "manana": {
-     "n": 16,
-     "mediana_min": 2.5,
-     "p75_min": 6.5,
-     "ext_mediana_pct": 0.112,
-     "prob_retroceso_50": 0.875
+     "n": 4,
+     "mediana_min": 1.5,
+     "p75_min": 24.0,
+     "ext_mediana_pct": 0.126,
+     "prob_retroceso_50": 1.0
     },
     "tarde": {
-     "n": 45,
+     "n": 51,
      "mediana_min": 5.0,
-     "p75_min": 6.0,
-     "ext_mediana_pct": 0.079,
-     "prob_retroceso_50": 0.889
+     "p75_min": 14.0,
+     "ext_mediana_pct": 0.115,
+     "prob_retroceso_50": 0.902
     }
    },
    "bear": {
     "manana": {
-     "n": 17,
-     "mediana_min": 4.0,
-     "p75_min": 6.0,
-     "ext_mediana_pct": 0.136,
-     "prob_retroceso_50": 0.941
+     "n": 12,
+     "mediana_min": 5.0,
+     "p75_min": 9.2,
+     "ext_mediana_pct": 0.252,
+     "prob_retroceso_50": 0.833
     },
     "tarde": {
-     "n": 52,
-     "mediana_min": 6.5,
-     "p75_min": 11.0,
-     "ext_mediana_pct": 0.119,
-     "prob_retroceso_50": 0.788
+     "n": 51,
+     "mediana_min": 5.0,
+     "p75_min": 10.0,
+     "ext_mediana_pct": 0.103,
+     "prob_retroceso_50": 0.765
     }
    }
   },
   "SPY": {
    "bull": {
     "manana": {
-     "n": 16,
-     "mediana_min": 8.0,
-     "p75_min": 15.2,
-     "ext_mediana_pct": 0.119,
-     "prob_retroceso_50": 0.625
+     "n": 10,
+     "mediana_min": 5.0,
+     "p75_min": 32.5,
+     "ext_mediana_pct": 0.12,
+     "prob_retroceso_50": 0.9
     },
     "tarde": {
-     "n": 45,
+     "n": 61,
      "mediana_min": 5.0,
-     "p75_min": 10.0,
-     "ext_mediana_pct": 0.059,
-     "prob_retroceso_50": 0.844
+     "p75_min": 15.0,
+     "ext_mediana_pct": 0.06,
+     "prob_retroceso_50": 0.836
     }
    },
    "bear": {
     "manana": {
-     "n": 16,
+     "n": 10,
      "mediana_min": 3.5,
-     "p75_min": 7.5,
-     "ext_mediana_pct": 0.096,
-     "prob_retroceso_50": 1.0
+     "p75_min": 17.5,
+     "ext_mediana_pct": 0.113,
+     "prob_retroceso_50": 0.9
     },
     "tarde": {
-     "n": 76,
+     "n": 73,
      "mediana_min": 5.0,
-     "p75_min": 12.0,
-     "ext_mediana_pct": 0.057,
-     "prob_retroceso_50": 0.763
+     "p75_min": 10.0,
+     "ext_mediana_pct": 0.05,
+     "prob_retroceso_50": 0.726
     }
    }
   },
   "NVDA": {
    "bull": {
     "manana": {
-     "n": 17,
-     "mediana_min": 2.0,
-     "p75_min": 6.0,
-     "ext_mediana_pct": 0.235,
-     "prob_retroceso_50": 0.941
+     "n": 13,
+     "mediana_min": 5.0,
+     "p75_min": 10.0,
+     "ext_mediana_pct": 0.318,
+     "prob_retroceso_50": 0.923
     },
     "tarde": {
-     "n": 60,
+     "n": 66,
      "mediana_min": 5.0,
-     "p75_min": 15.0,
-     "ext_mediana_pct": 0.239,
-     "prob_retroceso_50": 0.767
+     "p75_min": 15.8,
+     "ext_mediana_pct": 0.292,
+     "prob_retroceso_50": 0.833
     }
    },
    "bear": {
     "manana": {
-     "n": 18,
-     "mediana_min": 2.0,
-     "p75_min": 4.8,
-     "ext_mediana_pct": 0.206,
-     "prob_retroceso_50": 0.889
-    },
-    "tarde": {
-     "n": 40,
+     "n": 15,
      "mediana_min": 5.0,
      "p75_min": 18.5,
-     "ext_mediana_pct": 0.258,
-     "prob_retroceso_50": 0.75
+     "ext_mediana_pct": 0.505,
+     "prob_retroceso_50": 0.733
+    },
+    "tarde": {
+     "n": 35,
+     "mediana_min": 5.0,
+     "p75_min": 14.5,
+     "ext_mediana_pct": 0.256,
+     "prob_retroceso_50": 0.657
     }
    }
   },
   "MU": {
    "bull": {
     "manana": {
-     "n": 14,
-     "mediana_min": 3.5,
-     "p75_min": 5.0,
-     "ext_mediana_pct": 0.695,
-     "prob_retroceso_50": 0.857
+     "n": 7,
+     "mediana_min": 3.0,
+     "p75_min": 12.5,
+     "ext_mediana_pct": 0.501,
+     "prob_retroceso_50": 0.714
     },
     "tarde": {
-     "n": 46,
+     "n": 53,
      "mediana_min": 5.0,
-     "p75_min": 10.0,
-     "ext_mediana_pct": 0.336,
-     "prob_retroceso_50": 0.87
+     "p75_min": 18.0,
+     "ext_mediana_pct": 0.545,
+     "prob_retroceso_50": 0.83
     }
    },
    "bear": {
     "manana": {
-     "n": 14,
-     "mediana_min": 2.5,
-     "p75_min": 12.8,
-     "ext_mediana_pct": 0.499,
-     "prob_retroceso_50": 0.857
+     "n": 11,
+     "mediana_min": 15.0,
+     "p75_min": 17.5,
+     "ext_mediana_pct": 1.398,
+     "prob_retroceso_50": 0.727
     },
     "tarde": {
-     "n": 61,
-     "mediana_min": 5.0,
-     "p75_min": 15.0,
-     "ext_mediana_pct": 0.429,
-     "prob_retroceso_50": 0.705
+     "n": 51,
+     "mediana_min": 10.0,
+     "p75_min": 20.0,
+     "ext_mediana_pct": 0.716,
+     "prob_retroceso_50": 0.725
     }
    }
   },
   "SMH": {
    "bull": {
     "manana": {
-     "n": 11,
-     "mediana_min": 4.0,
-     "p75_min": 15.0,
-     "ext_mediana_pct": 0.563,
-     "prob_retroceso_50": 0.909
+     "n": 9,
+     "mediana_min": 11.0,
+     "p75_min": 12.0,
+     "ext_mediana_pct": 0.678,
+     "prob_retroceso_50": 0.889
     },
     "tarde": {
-     "n": 52,
+     "n": 54,
      "mediana_min": 5.0,
-     "p75_min": 10.0,
-     "ext_mediana_pct": 0.21,
-     "prob_retroceso_50": 0.808
+     "p75_min": 15.0,
+     "ext_mediana_pct": 0.251,
+     "prob_retroceso_50": 0.815
     }
    },
    "bear": {
     "manana": {
-     "n": 19,
-     "mediana_min": 3.0,
-     "p75_min": 5.5,
-     "ext_mediana_pct": 0.298,
-     "prob_retroceso_50": 0.947
+     "n": 13,
+     "mediana_min": 7.0,
+     "p75_min": 12.0,
+     "ext_mediana_pct": 0.84,
+     "prob_retroceso_50": 0.923
     },
     "tarde": {
-     "n": 75,
+     "n": 63,
      "mediana_min": 5.0,
      "p75_min": 10.0,
-     "ext_mediana_pct": 0.224,
-     "prob_retroceso_50": 0.773
+     "ext_mediana_pct": 0.232,
+     "prob_retroceso_50": 0.794
     }
    }
   },
   "INTC": {
    "bull": {
     "manana": {
-     "n": 18,
-     "mediana_min": 2.0,
-     "p75_min": 5.8,
-     "ext_mediana_pct": 0.42,
-     "prob_retroceso_50": 0.944
+     "n": 8,
+     "mediana_min": 3.0,
+     "p75_min": 14.5,
+     "ext_mediana_pct": 0.557,
+     "prob_retroceso_50": 0.75
     },
     "tarde": {
-     "n": 45,
-     "mediana_min": 5.0,
+     "n": 46,
+     "mediana_min": 10.0,
      "p75_min": 15.0,
-     "ext_mediana_pct": 0.335,
-     "prob_retroceso_50": 0.822
+     "ext_mediana_pct": 0.584,
+     "prob_retroceso_50": 0.804
     }
    },
    "bear": {
     "manana": {
-     "n": 20,
-     "mediana_min": 3.0,
-     "p75_min": 4.0,
-     "ext_mediana_pct": 0.57,
-     "prob_retroceso_50": 0.9
+     "n": 13,
+     "mediana_min": 6.0,
+     "p75_min": 8.0,
+     "ext_mediana_pct": 0.909,
+     "prob_retroceso_50": 0.692
     },
     "tarde": {
-     "n": 60,
+     "n": 58,
      "mediana_min": 5.0,
-     "p75_min": 15.0,
-     "ext_mediana_pct": 0.418,
-     "prob_retroceso_50": 0.717
+     "p75_min": 10.8,
+     "ext_mediana_pct": 0.414,
+     "prob_retroceso_50": 0.655
     }
    }
   }
@@ -237,48 +237,48 @@
  "agregado": {
   "bull": {
    "manana": {
-    "n": 92,
+    "n": 51,
     "mediana_min": 3.0,
-    "p75_min": 8.2,
-    "ext_mediana_pct": 0.25,
-    "prob_retroceso_50": 0.859
+    "p75_min": 13.5,
+    "ext_mediana_pct": 0.43,
+    "prob_retroceso_50": 0.863
    },
    "tarde": {
-    "n": 293,
+    "n": 331,
     "mediana_min": 5.0,
-    "p75_min": 10.0,
-    "ext_mediana_pct": 0.169,
-    "prob_retroceso_50": 0.829
+    "p75_min": 15.0,
+    "ext_mediana_pct": 0.237,
+    "prob_retroceso_50": 0.837
    },
    "todo": {
-    "n": 385,
+    "n": 382,
     "mediana_min": 5.0,
-    "p75_min": 10.0,
-    "ext_mediana_pct": 0.207,
-    "prob_retroceso_50": 0.836
+    "p75_min": 15.0,
+    "ext_mediana_pct": 0.255,
+    "prob_retroceso_50": 0.84
    }
   },
   "bear": {
    "manana": {
-    "n": 104,
-    "mediana_min": 3.0,
-    "p75_min": 6.0,
-    "ext_mediana_pct": 0.246,
-    "prob_retroceso_50": 0.923
+    "n": 74,
+    "mediana_min": 7.0,
+    "p75_min": 16.5,
+    "ext_mediana_pct": 0.614,
+    "prob_retroceso_50": 0.797
    },
    "tarde": {
-    "n": 364,
+    "n": 331,
     "mediana_min": 5.0,
-    "p75_min": 14.0,
-    "ext_mediana_pct": 0.192,
-    "prob_retroceso_50": 0.75
+    "p75_min": 13.0,
+    "ext_mediana_pct": 0.19,
+    "prob_retroceso_50": 0.725
    },
    "todo": {
-    "n": 468,
+    "n": 405,
     "mediana_min": 5.0,
-    "p75_min": 11.0,
-    "ext_mediana_pct": 0.203,
-    "prob_retroceso_50": 0.788
+    "p75_min": 15.0,
+    "ext_mediana_pct": 0.234,
+    "prob_retroceso_50": 0.738
    }
   }
  }

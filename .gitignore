@@ -148,3 +148,5 @@ order_engine/commands.jsonl
 venv-mit/
 # pid de la cola de voz: estado de runtime, cambia en cada arranque/parada de la flota.
 data/voice_queue.pid
+# cubo strike x tiempo del panel TRACE: lo regenera com.ibtrader.tracecube cada 10 min.
+data/trace_cube_*.json

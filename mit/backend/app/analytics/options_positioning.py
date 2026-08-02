@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, timedelta
 import json
 import math
 import os
@@ -15,12 +15,46 @@ from backend.app.domain import DealerPositioning, MagnetLevel, OptionContract
 CONTRACT_MULTIPLIER = 100
 MATRIX_BAND = 0.12  # heatmap: strikes dentro de +/-12% del spot (donde vive la gamma)
 TRACE_CUBE_DIR_ENV = "MIT_TRACE_CUBE_DIR"
+TRACE_CUBE_MAX_AGE_ENV = "MIT_TRACE_CUBE_MAX_AGE_MIN"  # si se define, SUSTITUYE la regla de sesion
+SESSION_START_ENV = "MIT_SESSION_START_HHMM"
+DEFAULT_SESSION_START = "0400"  # premercado ET: a esa hora el cubo de ayer ya no describe hoy
 
 
 def trace_cube_dir() -> Path:
     """data/ del repo ib-trader (donde scripts/trace_cube.py escribe), override por env."""
     override = os.environ.get(TRACE_CUBE_DIR_ENV)
     return Path(override) if override else Path(__file__).resolve().parents[4] / "data"
+
+
+def current_session_date(now: datetime | None = None) -> date:
+    """Sesion de mercado VIGENTE en hora local: hoy si es dia habil y ya empezo el premercado,
+    si no el ultimo dia habil. Sin calendario de festivos a proposito: un festivo no deja cubo
+    y el panel cae a flat_current (degradacion segura; nunca pinta la sesion de otro dia)."""
+    now = now or datetime.now()
+    raw = os.environ.get(SESSION_START_ENV) or DEFAULT_SESSION_START
+    if len(raw) != 4 or not raw.isdigit():
+        raise ValueError(f"{SESSION_START_ENV} debe ser HHMM, no {raw!r}")
+    start = int(raw[:2]) * 60 + int(raw[2:])
+    day = now.date()
+    if day.weekday() < 5 and now.hour * 60 + now.minute >= start:
+        return day
+    day -= timedelta(days=1)
+    while day.weekday() >= 5:
+        day -= timedelta(days=1)
+    return day
+
+
+def _cube_is_current(meta: dict, now: datetime | None = None) -> bool:
+    """Un cubo de otra sesion BORRA las velas vivas del panel (el orquestador recorta las barras
+    a la ventana de epochs del cubo) y encima se anuncia 'measured': se rechaza."""
+    now = now or datetime.now()
+    max_age = os.environ.get(TRACE_CUBE_MAX_AGE_ENV)
+    if max_age:
+        generated = meta.get("generated_epoch")
+        if not isinstance(generated, (int, float)) or isinstance(generated, bool):
+            return False
+        return (now.timestamp() - float(generated)) <= float(max_age) * 60
+    return meta.get("date") == current_session_date(now).isoformat()
 
 
 def read_trace_cube(symbol: str, *, base_dir: str | Path | None = None) -> dict | None:
@@ -36,6 +70,8 @@ def read_trace_cube(symbol: str, *, base_dir: str | Path | None = None) -> dict 
         return None
     meta = cube.get("meta") or {}
     if not isinstance(cube.get("cells"), dict) or not meta.get("epochs"):
+        return None
+    if not _cube_is_current(meta):
         return None
     return cube
 
@@ -55,6 +91,40 @@ def _greeks(contract: OptionContract, spot: float) -> tuple[float, float]:
     return delta, gamma
 
 
+WALL_BAND = MATRIX_BAND  # los muros viven en la misma ventana que el mapa: fuera no se dibujan
+
+
+def _walls(spot, call_gamma, put_gamma, call_oi, put_oi):
+    """Call wall ARRIBA del spot, put wall ABAJO, ambos dentro de la banda del mapa, y por GAMMA
+    medida cuando la hay (OI solo como respaldo). Devuelve (call_wall, put_wall, fuente).
+
+    Por que: tomabamos `max(call_oi)`/`max(put_oi)` sobre la cadena ENTERA, sin lado ni banda.
+    Medido 2026-08-02 con SPY a 744,27: put_wall = 360 (OI 26.722 de un tail hedge lejano) = -51,6%
+    del spot, dibujado en el panel como "soporte", frente al 710 real. El vendor de referencia
+    (support.spotgamma.com) define el muro por GAMMA NETA y toma "el call wall por ENCIMA del precio
+    y el put wall por DEBAJO"; nuestro propio gex_core (la flota) ya lo hace por gamma.
+    """
+    if spot <= 0:
+        return (None, None, "sin_spot")
+    lo, hi = spot * (1 - WALL_BAND), spot * (1 + WALL_BAND)
+
+    def pick(fuente, arriba):
+        cand = {k: v for k, v in fuente.items()
+                if v > 0 and lo <= k <= hi and (k >= spot if arriba else k <= spot)}
+        return max(cand, key=cand.get) if cand else None
+
+    cw, pw = pick(call_gamma, True), pick(put_gamma, False)
+    if cw is not None or pw is not None:
+        # gamma medida en al menos un lado; el que falte cae a OI y se etiqueta como mixto
+        src = "gamma"
+        if cw is None:
+            cw, src = pick(call_oi, True), "mixto_gamma_oi"
+        if pw is None:
+            pw, src = pick(put_oi, False), "mixto_gamma_oi"
+        return (cw, pw, src)
+    return (pick(call_oi, True), pick(put_oi, False), "oi")
+
+
 def analyze_dealer_positioning(
     symbol: str, spot: float, chain: list[OptionContract]
 ) -> DealerPositioning:
@@ -72,6 +142,8 @@ def analyze_dealer_positioning(
     gex_by_strike: dict[float, float] = defaultdict(float)
     call_oi: dict[float, float] = defaultdict(float)
     put_oi: dict[float, float] = defaultdict(float)
+    call_gamma: dict[float, float] = defaultdict(float)
+    put_gamma: dict[float, float] = defaultdict(float)
     net_gex = 0.0
     net_dex = 0.0
 
@@ -87,11 +159,14 @@ def analyze_dealer_positioning(
         net_dex += dex
         if contract.option_type == "call":
             call_oi[contract.strike] += contract.open_interest
+            if contract.gamma is not None:
+                call_gamma[contract.strike] += contract.gamma * contract.open_interest
         else:
             put_oi[contract.strike] += contract.open_interest
+            if contract.gamma is not None:
+                put_gamma[contract.strike] += contract.gamma * contract.open_interest
 
-    call_wall = max(call_oi, key=call_oi.get) if call_oi else None
-    put_wall = max(put_oi, key=put_oi.get) if put_oi else None
+    call_wall, put_wall, wall_src = _walls(spot, call_gamma, put_gamma, call_oi, put_oi)
     max_pain = _max_pain(chain)
     expected_move = _expected_move(spot, chain)
     gamma_flip = _gamma_flip(spot, chain)
@@ -130,6 +205,8 @@ def analyze_dealer_positioning(
         caveats=[
             "Open-interest signs are a dealer-positioning scenario proxy, not observed dealer inventory.",
             "Gamma flip is repriced with a flat-IV Black-Scholes approximation when vendor scenario data is unavailable.",
+            f"Walls: source={wall_src}, call above spot / put below, both within ±{WALL_BAND:.0%} "
+            "of spot — a strike outside that window is not a tradable wall.",
         ],
     )
 

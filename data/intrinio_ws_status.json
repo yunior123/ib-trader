@@ -1,55 +1,55 @@
 {
- "epoch": 1785656004,
- "et": "2026-08-02 03:32:47",
+ "epoch": 1785711344,
+ "et": "2026-08-02 18:55:08",
  "phase": "weekend",
  "auth": {
   "realtime-mx": {
    "ok": false,
    "http": null,
    "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.366
+   "secs": 5.368
   },
   "realtime-delayed-sip": {
    "ok": false,
    "http": null,
    "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.161
+   "secs": 5.18
   },
   "realtime-nasdaq-basic": {
    "ok": false,
    "http": null,
    "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.354
+   "secs": 5.155
   },
   "cboe-one": {
    "ok": false,
    "http": null,
    "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.255
+   "secs": 5.156
   },
   "equities-edge": {
    "ok": false,
    "http": null,
    "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.289
+   "secs": 5.153
   },
   "realtime-options": {
    "ok": false,
    "http": null,
    "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.15
+   "secs": 5.143
   },
   "options-edge": {
    "ok": false,
    "http": null,
    "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.298
+   "secs": 5.144
   }
  },
  "socket": {},
  "tls_idle": {
   "handshake": 0.128,
-  "idle_close": 5.255,
+  "idle_close": 5.16,
   "bytes": 0
  },
  "controls": {
@@ -58,12 +58,12 @@
    "last_time": "2026-07-31T23:59:59.933Z",
    "source": "equities_edge",
    "has_bid": false,
-   "secs": 0.176
+   "secs": 0.403
   },
   "polygon_ws": {
    "connects": true,
    "hello": "[{\"ev\":\"status\",\"status\":\"connected\",\"message\":\"Connected Successfully\"}]",
-   "secs": 0.357
+   "secs": 0.331
   }
  },
  "any_up": [],

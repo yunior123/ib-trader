@@ -8,6 +8,8 @@ import importlib.util
 import json
 import os
 
+import pytest
+
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -21,6 +23,67 @@ def _load():
 
 M = _load()
 
+
+# --- Fuente unica: universo y horario KRX vienen de data/ y de overnight_feed, no duplicados ---
+
+def test_universo_krx_viene_de_data_no_de_una_tupla_duplicada():
+    """SYMS duplicaba korea_bar_bridge.CORE: dos listas que pueden divergir en silencio."""
+    assert not hasattr(M, "SYMS")
+    core = open(os.path.join(REPO, "data", "korea_core.txt")).read().split()
+    assert list(M.core_syms()) == core and core
+
+
+def test_core_syms_sin_fichero_levanta(tmp_path):
+    """Sin universo NO se inventa uno: lote fuera de sesion, fail-loud."""
+    with pytest.raises(RuntimeError):
+        M.core_syms(path=str(tmp_path / "no-existe.txt"))
+
+
+def test_apertura_krx_y_franjas_derivadas_del_horario_unico():
+    import sys
+    sys.path.insert(0, os.path.join(REPO, "scripts"))
+    import overnight_feed as OF
+    assert (M.OPEN_H, M.OPEN_M) == (OF.KRX_OPEN_H, OF.KRX_OPEN_M)
+    assert M.N_BUCKETS == 13          # 09:00->15:30 KST en franjas de 30 min
+
+
+# --- DST: la misma franja KST no cae siempre a la misma hora ET -------------------------------
+
+def _sesion(root, day_iso, n=391):
+    import datetime as dt
+    from zoneinfo import ZoneInfo
+    base = dt.datetime.fromisoformat(day_iso).replace(
+        hour=9, minute=0, tzinfo=ZoneInfo("Asia/Seoul")).timestamp()
+    d = os.path.join(root, day_iso, "bars")
+    os.makedirs(d, exist_ok=True)
+    with open(os.path.join(d, "kospi_krx.txt"), "w") as f:
+        for i in range(n):
+            c = 100.0 + i * 0.01
+            f.write(f"{base + i * 60:.0f} {c:.4f} {c:.4f} {c:.4f} {c:.4f} 10\n")
+
+
+def test_etiqueta_et_declara_la_ambiguedad_de_dst(tmp_path):
+    """13:30 KST son las 00:30 ET en verano y las 23:30 en invierno: con una sola etiqueta
+    (la del ultimo dia) la muestra de marzo se leia como si toda fuera de las 00:30."""
+    root = str(tmp_path / "hist")
+    _sesion(root, "2026-03-05")        # EST
+    _sesion(root, "2026-03-16")        # EDT (DST desde el 8-mar)
+    res = M.study(history_root=root, min_n=30, syms_list=("kospi",))
+    b9 = res["symbols"]["kospi"]["buckets"][9]
+    assert b9["kst"] == "13:30"
+    assert b9["et"] == "00:30" and b9["et_variants"] == ["00:30", "23:30"]
+    assert b9["et_dst_ambiguo"] is True
+    b0 = res["symbols"]["kospi"]["buckets"][0]
+    assert b0["et_variants"] == ["19:00", "20:00"] and b0["et_dst_ambiguo"] is True
+
+
+def test_sin_dst_en_la_muestra_no_hay_ambiguedad(tmp_path):
+    root = str(tmp_path / "hist")
+    _sesion(root, "2026-07-30")
+    _sesion(root, "2026-07-31")
+    res = M.study(history_root=root, min_n=30, syms_list=("kospi",))
+    for b in res["symbols"]["kospi"]["buckets"]:
+        assert b["et_dst_ambiguo"] is False and b["et_variants"] == [b["et"]]
 
 
 # --- Modo US (futuros NQ/ES): el patron que preguntó Yunior, no el agotamiento KRX -----------

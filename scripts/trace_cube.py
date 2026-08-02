@@ -20,6 +20,7 @@ Uso:
   ./venv/bin/python scripts/trace_cube.py SPY 2026-07-31 --stdout   # no escribe nada
 """
 import argparse
+import ast
 import contextlib
 import importlib.util
 import json
@@ -29,6 +30,7 @@ import sys
 import time
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+MIT_POSITIONING = os.path.join(REPO, "mit", "backend", "app", "analytics", "options_positioning.py")
 
 
 def _load_archive():
@@ -43,8 +45,25 @@ def _load_archive():
 ARCHIVE = _load_archive()
 
 CONTRACT_MULTIPLIER = 100
-DEFAULT_BAND = 0.12  # misma banda que MATRIX_BAND del terminal mit
 METRICS = ("gex", "netoi")
+
+
+def mit_matrix_band(path=MIT_POSITIONING):
+    """Banda del terminal (MATRIX_BAND) leida por AST: fuente UNICA, sin importar ese modulo
+    (es py3.12+numpy+pydantic y este script corre en ./venv py3.9). Duplicarla a mano hacia que
+    el universo de strikes del cubo dejara de casar con el del snapshot. Levanta si no esta."""
+    with open(path) as f:
+        tree = ast.parse(f.read(), filename=path)
+    for node in tree.body:
+        targets = getattr(node, "targets", [])
+        if isinstance(node, ast.Assign) and any(
+            isinstance(t, ast.Name) and t.id == "MATRIX_BAND" for t in targets
+        ):
+            return float(ast.literal_eval(node.value))
+    raise RuntimeError("MATRIX_BAND no encontrado en %s" % path)
+
+
+DEFAULT_BAND = mit_matrix_band()
 
 
 @contextlib.contextmanager
@@ -99,16 +118,16 @@ def build_cube(sym, date, band=DEFAULT_BAND, hist_dir=None):
     cells = {m: {} for m in METRICS}
     strikes = set()
     for epoch, spot, rows in cols:
-        in_band = [r for r in rows if lo <= r.strike <= hi]
-        if not in_band:
+        # oi ausente/negativo (sentinela TWS) fuera ANTES de contar: si esas filas se quedaran en
+        # el denominador, greeks_ok_pct nunca podria llegar a 1.0 (denominador fabricado).
+        usable = [r for r in rows if lo <= r.strike <= hi and r.oi is not None and r.oi >= 0]
+        if not usable:
             skipped += 1
             continue
         gex_col, oi_col = {}, {}
         n_gamma = 0
-        for r in in_band:
+        for r in usable:
             sign = 1 if r.right == "C" else -1
-            if r.oi is None or r.oi < 0:
-                continue
             if r.gamma is not None:
                 n_gamma += 1
                 gex_col[r.strike] = gex_col.get(r.strike, 0.0) + (
@@ -118,7 +137,7 @@ def build_cube(sym, date, band=DEFAULT_BAND, hist_dir=None):
         epochs.append(epoch)
         labels.append(time.strftime("%H:%M", time.localtime(epoch)))
         col_spots.append(round(spot, 4))
-        greeks_pct.append(round(n_gamma / len(in_band), 4))
+        greeks_pct.append(round(n_gamma / len(usable), 4))
         for strike, value in gex_col.items():  # vacio si la foto no traia gamma: columna VACIA
             cells["gex"]["%s|%d" % (_skey(strike), epoch)] = value
             strikes.add(strike)

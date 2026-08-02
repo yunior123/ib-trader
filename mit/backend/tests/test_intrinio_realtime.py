@@ -213,3 +213,32 @@ def test_preflight_no_traga_un_200_vacio(monkeypatch):
 
     monkeypatch.setitem(sys.modules, "requests", _Raro())
     assert "sin token" in (p._auth_alcanzable() or "")
+
+
+def test_el_error_de_conexion_CADUCA_y_se_reintenta(monkeypatch):
+    """Intrinio apaga el cluster de noche y lo enciende por la manana. Su propio SDK no se recupera
+    (intrinio-realtime-options-python-sdk#7, abierto desde 2024-02: "cae sobre medianoche... el
+    cliente sigue desconectado CUANDO EL MERCADO ABRE"). Si cacheamos el error para siempre, el
+    provider queda muerto justo el dia que hace falta."""
+    import time
+
+    from backend.app.providers import intrinio_realtime as rt
+
+    _stub_sdk(monkeypatch)
+    p = _provider(monkeypatch)
+    intentos = []
+    monkeypatch.setattr(p, "_auth_alcanzable", lambda: intentos.append(1) or "socket apagado")
+    monkeypatch.setattr(rt, "ERROR_TTL_S", 0.05)
+
+    with pytest.raises(ProviderError) as e:      # 1a: el socket esta caido
+        p._ensure_client()
+    assert e.value.error_code == "socket_down"
+
+    with pytest.raises(ProviderError):           # 2a inmediata: NO machaca al servidor
+        p._ensure_client()
+    assert len(intentos) == 1, "dentro del TTL no debe repreguntar"
+
+    time.sleep(0.06)                             # pasa el TTL: el cluster pudo encender
+    with pytest.raises(ProviderError):
+        p._ensure_client()
+    assert len(intentos) == 2, "tras el TTL DEBE reintentar; si no, queda muerto para siempre"
