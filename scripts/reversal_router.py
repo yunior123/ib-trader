@@ -33,6 +33,7 @@ CLI:
   reversal_router.py --once [SYMS...]
   reversal_router.py --daemon [SYMS...]
 Default symbol universe: data/provider_syms.txt if present, else data/fleet.txt.
+Grading (still shadow, wires nothing): scripts/reversal_grade.py -> data/reversal_grade.json.
 """
 from __future__ import annotations
 
@@ -307,32 +308,40 @@ def _finite(x) -> bool:
     return x is not None and np.isfinite(x)
 
 
-def _compute(sym: str) -> dict:
-    bars_1m = _load_1m(sym)
-    if bars_1m is None:
-        return dict(symbol=sym.upper(), state="INSUFFICIENT_DATA", scores={},
-                    reasons=["no bars file / unparseable"], bar_epoch=None, n_bars=0)
+def features(bars_1m: np.ndarray):
+    """Todas las series causales del router en un pase. None si no hay barras RTH.
+
+    Cada indicador aqui depende SOLO de x[0..i] (EMA/Wilder recursivos, medias rodantes
+    traseras, live_htf con buckets COMPLETOS): por eso state_at(f, i) reproduce exactamente
+    lo que el router habria dicho en vivo en la barra i (no-repaint), y el replay historico
+    no necesita recomputar por barra."""
     base = _to_5m_base(bars_1m)
     if base is None:
-        return dict(symbol=sym.upper(), state="INSUFFICIENT_DATA", scores={},
-                    reasons=["no RTH bars"], bar_epoch=int(bars_1m[-1, 0]), n_bars=0)
+        return None
+    return dict(
+        base=base,
+        enr=_enrich_base(base),
+        m15=_live_htf(base["c"], base["date_ord"], base["mins"], 15),
+        m30=_live_htf(base["c"], base["date_ord"], base["mins"], 30),
+        h1=_live_htf(base["c"], base["date_ord"], base["mins"], 60),
+        h4=_live_htf(base["c"], base["date_ord"], base["mins"], 240),
+        d1=_live_htf(base["c"], base["date_ord"], base["mins"], None),
+        prev_atr=_daily_prev_atr(base),
+    )
 
-    n5 = len(base["c"])
-    bar_epoch = int(base["epoch"][-1])
+
+def state_at(f: dict, i: int) -> dict:
+    """Estado del router en la barra base i, usando solo historia hasta i."""
+    base, enr = f["base"], f["enr"]
+    m15, m30, h1, h4, d1 = f["m15"], f["m30"], f["h1"], f["h4"], f["d1"]
+    n5 = i + 1
+    bar_epoch = int(base["epoch"][i])
     if n5 < REQUIRED_5M_BARS:
-        return dict(symbol=sym.upper(), state="INSUFFICIENT_DATA", scores={},
+        return dict(state="INSUFFICIENT_DATA", scores={},
                     reasons=[f"n_bars {n5} < required {REQUIRED_5M_BARS} (5m-equivalent)"],
                     bar_epoch=bar_epoch, n_bars=n5)
 
-    enr = _enrich_base(base)
-    m15 = _live_htf(base["c"], base["date_ord"], base["mins"], 15)
-    m30 = _live_htf(base["c"], base["date_ord"], base["mins"], 30)
-    h1 = _live_htf(base["c"], base["date_ord"], base["mins"], 60)
-    h4 = _live_htf(base["c"], base["date_ord"], base["mins"], 240)
-    d1 = _live_htf(base["c"], base["date_ord"], base["mins"], None)
-    prev_atr = _daily_prev_atr(base)
-
-    i = n5 - 1
+    prev_atr = f["prev_atr"]
     close = float(enr["close"][i])
     day_prev_atr = prev_atr.get(int(base["date_ord"][i]))
     energy = (float(enr["atr"][i]) / day_prev_atr) if (day_prev_atr and _finite(enr["atr"][i])) else None
@@ -350,7 +359,7 @@ def _compute(sym: str) -> dict:
     }
     missing = [k for k, val in required.items() if not _finite(val)]
     if missing:
-        return dict(symbol=sym.upper(), state="INSUFFICIENT_DATA",
+        return dict(state="INSUFFICIENT_DATA",
                     scores={"n_bars": n5},
                     reasons=["missing indicators (need ~15 RTH sessions): " + ",".join(missing)],
                     bar_epoch=bar_epoch, n_bars=n5)
@@ -426,7 +435,6 @@ def _compute(sym: str) -> dict:
         reasons.append("5-timeframe EMA5, ribbon, RSI, DMI/ADX and energy aligned")
 
     return dict(
-        symbol=sym.upper(),
         state=state,
         scores=dict(
             bento_dir=int(bento_dir), bento_score=round(float(bento_score), 3),
@@ -440,6 +448,23 @@ def _compute(sym: str) -> dict:
         bar_epoch=bar_epoch,
         n_bars=n5,
     )
+
+
+def evaluate(bars_1m: np.ndarray) -> dict:
+    """Estado del router en la ULTIMA barra de `bars_1m` (sin IO, sin simbolo)."""
+    f = features(bars_1m)
+    if f is None:
+        return dict(state="INSUFFICIENT_DATA", scores={}, reasons=["no RTH bars"],
+                    bar_epoch=int(bars_1m[-1, 0]), n_bars=0)
+    return state_at(f, len(f["base"]["c"]) - 1)
+
+
+def _compute(sym: str) -> dict:
+    bars_1m = _load_1m(sym)
+    if bars_1m is None:
+        return dict(symbol=sym.upper(), state="INSUFFICIENT_DATA", scores={},
+                    reasons=["no bars file / unparseable"], bar_epoch=None, n_bars=0)
+    return dict(symbol=sym.upper(), **evaluate(bars_1m))
 
 
 def _write(sym: str, result: dict) -> str:

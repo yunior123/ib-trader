@@ -1,58 +1,72 @@
 {
- "$633-$655": {
-  "calls_vol": 27,
-  "puts_vol": 4,
-  "total": 31,
-  "dominance": "CALLS",
-  "ratio": 6.75
- },
- "$655-$677": {
-  "calls_vol": 7,
-  "puts_vol": 170,
-  "total": 177,
-  "dominance": "PUTS",
-  "ratio": 0.04
- },
- "$677-$700": {
+ "$635-$657": {
   "calls_vol": 0,
-  "puts_vol": 289,
-  "total": 289,
+  "puts_vol": 360,
+  "total": 360,
   "dominance": "PUTS",
   "ratio": 0.0
  },
- "$700-$722": {
-  "calls_vol": 111,
-  "puts_vol": 27184,
-  "total": 27295,
+ "$657-$679": {
+  "calls_vol": 17,
+  "puts_vol": 5538,
+  "total": 5555,
   "dominance": "PUTS",
   "ratio": 0.0
  },
- "$722-$744": {
-  "calls_vol": 4057382,
-  "puts_vol": 3682466,
-  "total": 7739848,
+ "$679-$701": {
+  "calls_vol": 54,
+  "puts_vol": 13418,
+  "total": 13472,
+  "dominance": "PUTS",
+  "ratio": 0.0
+ },
+ "$701-$723": {
+  "calls_vol": 283,
+  "puts_vol": 44177,
+  "total": 44460,
+  "dominance": "PUTS",
+  "ratio": 0.01
+ },
+ "$723-$745": {
+  "calls_vol": 282445,
+  "puts_vol": 260241,
+  "total": 542686,
   "dominance": "MIXED",
-  "ratio": 1.1
+  "ratio": 1.09
  },
- "$744-$766": {
-  "calls_vol": 967082,
-  "puts_vol": 57659,
-  "total": 1024741,
+ "$745-$767": {
+  "calls_vol": 632664,
+  "puts_vol": 0,
+  "total": 632664,
   "dominance": "CALLS",
-  "ratio": 16.77
+  "ratio": 632664.0
  },
- "$766-$788": {
-  "calls_vol": 261,
-  "puts_vol": 810,
-  "total": 1071,
-  "dominance": "PUTS",
-  "ratio": 0.32
+ "$767-$789": {
+  "calls_vol": 6862,
+  "puts_vol": 0,
+  "total": 6862,
+  "dominance": "CALLS",
+  "ratio": 6862.0
  },
- "$788-$811": {
-  "calls_vol": 15,
-  "puts_vol": 17,
-  "total": 32,
-  "dominance": "MIXED",
-  "ratio": 0.88
+ "$789-$811": {
+  "calls_vol": 4168,
+  "puts_vol": 0,
+  "total": 4168,
+  "dominance": "CALLS",
+  "ratio": 4168.0
+ },
+ "$811-$833": {
+  "calls_vol": 436,
+  "puts_vol": 0,
+  "total": 436,
+  "dominance": "CALLS",
+  "ratio": 436.0
+ },
+ "$833-$855": {
+  "calls_vol": 3254,
+  "puts_vol": 0,
+  "total": 3254,
+  "dominance": "CALLS",
+  "ratio": 3254.0
  }
 }

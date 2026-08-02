@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from collections import defaultdict
 from datetime import UTC, date, datetime
+import json
 import math
+import os
+from pathlib import Path
 
 import numpy as np
 
@@ -11,6 +14,30 @@ from backend.app.domain import DealerPositioning, MagnetLevel, OptionContract
 
 CONTRACT_MULTIPLIER = 100
 MATRIX_BAND = 0.12  # heatmap: strikes dentro de +/-12% del spot (donde vive la gamma)
+TRACE_CUBE_DIR_ENV = "MIT_TRACE_CUBE_DIR"
+
+
+def trace_cube_dir() -> Path:
+    """data/ del repo ib-trader (donde scripts/trace_cube.py escribe), override por env."""
+    override = os.environ.get(TRACE_CUBE_DIR_ENV)
+    return Path(override) if override else Path(__file__).resolve().parents[4] / "data"
+
+
+def read_trace_cube(symbol: str, *, base_dir: str | Path | None = None) -> dict | None:
+    """Cubo strike×tiempo de scripts/trace_cube.py, o None si no existe/no es utilizable.
+    None significa 'no hay eje de tiempo medido' y el llamador lo DECLARA (time_axis)."""
+    root = Path(base_dir) if base_dir is not None else trace_cube_dir()
+    path = root / f"trace_cube_{symbol.lower()}.json"
+    if not path.is_file():
+        return None
+    try:
+        cube = json.loads(path.read_text())
+    except (OSError, ValueError):
+        return None
+    meta = cube.get("meta") or {}
+    if not isinstance(cube.get("cells"), dict) or not meta.get("epochs"):
+        return None
+    return cube
 
 
 def _greeks(contract: OptionContract, spot: float) -> tuple[float, float]:
@@ -177,14 +204,49 @@ def compute_option_matrix(
     }
 
 
+def _trace_time_axis(cube: dict, metric: str) -> dict | None:
+    """Columnas MEDIDAS del cubo para una metrica. None si el cubo no tiene esa metrica."""
+    cells = (cube.get("cells") or {}).get(metric)
+    if not isinstance(cells, dict) or not cells:
+        return None
+    meta = cube["meta"]
+    epochs = meta["epochs"]
+    labels = meta.get("labels") or [""] * len(epochs)
+    spots = meta.get("spots") or [None] * len(epochs)
+    greeks = meta.get("greeks_ok_pct") or [None] * len(epochs)
+    filled = {int(key.rsplit("|", 1)[1]) for key in cells}
+    columns = [
+        {
+            "epoch": int(epoch),
+            "label": labels[i] if i < len(labels) else "",
+            "spot": spots[i] if i < len(spots) else None,
+            "greeks_ok_pct": greeks[i] if i < len(greeks) else None,
+            # columna sin celdas = foto sin griegas medidas: se muestra VACIA, nunca a cero
+            "has_data": int(epoch) in filled,
+        }
+        for i, epoch in enumerate(epochs)
+    ]
+    return {
+        "date": meta.get("date"),
+        "source": meta.get("source"),
+        "generated_epoch": meta.get("generated_epoch"),
+        "strikes": [float(f"{s:g}") for s in meta.get("strikes", [])],
+        "columns": columns,
+        "cells": cells,
+        "intraday_variation": (meta.get("intraday_variation") or {}).get(metric),
+    }
+
+
 def compute_trace_matrix(
-    symbol: str, spot: float, chain: list[OptionContract], *, metric: str = "gex"
+    symbol: str, spot: float, chain: list[OptionContract], *, metric: str = "gex",
+    cube: dict | None = None,
 ) -> dict:
     """SpotGamma-TRACE-style per-strike metric (GEX or Net OI). House sign: call +, put -.
 
-    The metric varies slowly intraday, so the frontend paints one current value per strike
-    across the whole time axis (no history archive in v1). Fail-loud: GEX omits strikes with
-    no MEASURED gamma (never reconstructs); empty chain yields empty by_strike."""
+    `by_strike` is the CURRENT snapshot. When a measured strike×time cube exists
+    (scripts/trace_cube.py) it is served as `trace_time` and `time_axis="measured"`;
+    otherwise `time_axis="flat_current"` and the frontend must say so. Fail-loud: GEX omits
+    strikes with no MEASURED gamma (never reconstructs); empty chain yields empty by_strike."""
     if metric not in {"gex", "netoi"}:
         raise ValueError(f"Unknown metric: {metric}")
     lo, hi = (spot * (1 - MATRIX_BAND), spot * (1 + MATRIX_BAND)) if spot > 0 else (0.0, 1e12)
@@ -203,25 +265,51 @@ def compute_trace_matrix(
 
     dealer = analyze_dealer_positioning(symbol, spot, chain)
     strikes = sorted(by_strike.keys(), reverse=True)
+    trace_time = _trace_time_axis(cube, metric) if cube else None
+    levels = {
+        "call_wall": dealer.call_wall,
+        "put_wall": dealer.put_wall,
+        "gamma_flip": dealer.gamma_flip,
+        "max_pain": dealer.max_pain,
+    }
+    if dealer.expected_move is not None and dealer.expected_move > 0:  # ATM straddle, measured
+        levels["implied_move_up"] = spot + dealer.expected_move
+        levels["implied_move_dn"] = spot - dealer.expected_move
+        levels["implied_move"] = dealer.expected_move
+
+    if trace_time:
+        n_data = sum(1 for c in trace_time["columns"] if c["has_data"])
+        axis_caveat = (
+            f"Time axis MEASURED: {n_data}/{len(trace_time['columns'])} chain snapshots with data "
+            f"from {trace_time['date']} ({trace_time['columns'][0]['label']}–"
+            f"{trace_time['columns'][-1]['label']}). Columns without measured greeks stay blank."
+        )
+        var = trace_time.get("intraday_variation")
+        if var is not None:
+            axis_caveat += f" Measured intraday variation: {var:.0%} of strikes move."
+    else:
+        axis_caveat = (
+            "Time axis NOT measured: the per-strike metric is the current snapshot painted flat "
+            "across the session. Run scripts/trace_cube.py <SYM> for a real intraday axis."
+        )
+
     return {
         "symbol": symbol.upper(),
         "metric": metric,
         "spot": spot,
         "strikes": [float(f"{s:g}") for s in strikes],
         "by_strike": {f"{s:g}": by_strike[s] for s in strikes},
-        "levels": {
-            "call_wall": dealer.call_wall,
-            "put_wall": dealer.put_wall,
-            "gamma_flip": dealer.gamma_flip,
-            "max_pain": dealer.max_pain,
-        },
+        "levels": levels,
+        "time_axis": "measured" if trace_time else "flat_current",
+        "trace_time": trace_time,
         "caveats": [
-            "Per-strike metric is the current snapshot painted across the whole time axis (no intraday history in v1).",
+            axis_caveat,
             "Open-interest signs are a dealer-positioning scenario proxy, not observed dealer inventory.",
             (
                 "GEX uses MEASURED greeks only; strikes without provider gamma are omitted."
                 if metric == "gex"
-                else "Net OI = sum(open interest) per strike, calls +, puts -."
+                else "Net OI = sum(open interest) per strike, calls +, puts -. IBKR open interest "
+                     "is a T+1 field: it does not move intraday."
             ),
             f"Strikes banded to +/-{int(MATRIX_BAND * 100)}% of spot.",
         ],

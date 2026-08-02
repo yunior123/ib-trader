@@ -1,0 +1,37 @@
+{
+  "epoch": 1785654901,
+  "generated": "2026-08-02T07:15:01.497525+00:00",
+  "horizon_days": 2,
+  "reversion_min_n": 20,
+  "metric": "reversion_prob = fraccion de shocks comparables pasados con ALGUN cierre opuesto dentro del horizonte (OCURRENCIA, NO first-touch ni PnL). Condicion de alerta, no prediccion; None si muestra < piso.",
+  "symbols": {
+    "QQQ": {
+      "severity": "INFO",
+      "change_pct": 0.6495501426377004,
+      "zscore": 0.4364892949494168,
+      "direction": "UP",
+      "reversion_prob": 0.6183206106870229,
+      "wilson_lo": 0.5693641576340369,
+      "wilson_hi": 0.6649862733691644,
+      "n": 393,
+      "horizon": 2,
+      "threshold_pct": 0.6495501426377004,
+      "bars": 756,
+      "asof": "2026-07-31T00:00:00+00:00"
+    },
+    "SPY": {
+      "severity": "INFO",
+      "change_pct": 0.719977349027201,
+      "zscore": 0.671292541461575,
+      "direction": "UP",
+      "reversion_prob": 0.615686274509804,
+      "wilson_lo": 0.5546844382703247,
+      "wilson_hi": 0.6732541929234248,
+      "n": 255,
+      "horizon": 2,
+      "threshold_pct": 0.719977349027201,
+      "bars": 756,
+      "asof": "2026-07-31T00:00:00+00:00"
+    }
+  }
+}

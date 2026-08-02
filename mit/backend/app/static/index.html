@@ -77,7 +77,7 @@
           <button type="button" class="tr-chip" id="tr-0dte" title="0DTE filter — visual only in v1">0DTE</button>
           <span class="tr-chip tr-static" title="Timeframe — 5m (visual only in v1)">5m</span>
           <button type="button" class="tr-chip active" id="tr-keylevels" title="Show/hide key level lines">Key levels</button>
-          <span class="hm-info" title="TRACE-style intraday map: y = strike/price, x = time. Background bands = current per-strike metric painted across the whole session (no history archive in v1). Candles with wicks and key-level lines overlaid. Purple/indigo positive, red/pink negative — a scenario proxy, not observed dealer inventory.">i</span>
+          <span class="hm-info" title="TRACE-style intraday map: y = strike/price, x = time. With a measured cube (scripts/trace_cube.py) each column is one archived chain snapshot, so the bands really change through the session; without one the panel says so and paints the current value flat. Candles with wicks and key-level lines overlaid. Drag the scrubber to inspect one snapshot. Green positive, indigo negative — a scenario proxy, not observed dealer inventory.">i</span>
           <div class="tr-quote">
             <strong id="tr-symbol">—</strong>
             <span id="tr-price">—</span>
@@ -98,7 +98,16 @@
             <div class="tr-empty" id="tr-empty" hidden>No candle data</div>
           </div>
         </div>
-        <div class="tr-scrubber"><div class="tr-scrub-track"><div class="tr-scrub-fill"></div><div class="tr-scrub-handle"></div></div></div>
+        <div class="tr-scrubber disabled" id="tr-scrubber">
+          <div class="tr-scrub-track" id="tr-scrub-track" role="slider" tabindex="0" aria-label="Snapshot time cursor" aria-valuemin="0" aria-valuemax="0" aria-valuenow="0" aria-valuetext="no measured session">
+            <div class="tr-scrub-fill" id="tr-scrub-fill"></div>
+            <div class="tr-scrub-handle" id="tr-scrub-handle"></div>
+          </div>
+          <div class="tr-scrub-meta">
+            <span id="tr-scrub-label">No measured session</span>
+            <span id="tr-axis-badge" class="tr-axis-badge flat">flat</span>
+          </div>
+        </div>
         <div class="tr-legend" id="tr-legend"></div>
         <div class="caveat" id="tr-caveat"></div>
       </section>

@@ -257,14 +257,15 @@ def test_png_se_genera_y_no_esta_vacio(tmp_path):
 
 
 def test_la_flota_sale_destacada_en_los_tiles(tmp_path, monkeypatch):
+    # e115684a (rediseño "Most Anticipated") renombro _tile -> _card con la misma firma.
     seen = {}
-    real = M._tile
+    real = M._card
 
-    def spy(ax, x, y, w, h, label, is_fleet, muted=False):
-        seen[label] = is_fleet
-        return real(ax, x, y, w, h, label, is_fleet, muted=muted)
+    def spy(ax, x, y, w, h, sym, is_fleet, muted=False):
+        seen[sym] = is_fleet
+        return real(ax, x, y, w, h, sym, is_fleet, muted=muted)
 
-    monkeypatch.setattr(M, "_tile", spy)
+    monkeypatch.setattr(M, "_card", spy)
     M.render_calendar(_merged(), FLEET, str(tmp_path / "cal.png"))
     for sym in ("AAPL", "STX", "SKHY"):
         assert seen.get(sym) is True, (sym, seen)

@@ -13,7 +13,11 @@ from backend.app.analytics import (
     analyze_signals,
     build_weekly_rows,
 )
-from backend.app.analytics.options_positioning import compute_option_matrix, compute_trace_matrix
+from backend.app.analytics.options_positioning import (
+    compute_option_matrix,
+    compute_trace_matrix,
+    read_trace_cube,
+)
 from backend.app.config import Settings
 from backend.app.domain import (
     AlertEvent,
@@ -175,13 +179,29 @@ class MarketIntelligenceEngine:
                 status,
             ),
         )
-        matrix = compute_trace_matrix(symbol, quote.last, chain, metric=metric)
+        matrix = compute_trace_matrix(
+            symbol, quote.last, chain, metric=metric, cube=read_trace_cube(symbol)
+        )
         bars = await self._bars_for_trace(symbol, status)
+        trace_time = matrix.get("trace_time")
+        if trace_time:
+            # el panel muestra UNA sesion: la del cubo medido. Velas de otro dia fuera.
+            epochs = [c["epoch"] for c in trace_time["columns"]]
+            lo, hi = min(epochs) - 3600, max(epochs) + 3600
+            bars = [b for b in bars if lo <= b.timestamp.timestamp() <= hi]
+            matrix["spot_track"] = [
+                {"time": c["epoch"], "value": c["spot"]}
+                for c in trace_time["columns"]
+                if c["spot"] is not None
+            ]
         # candles with wicks for the price overlay; empty list if no data (fail-loud, no fabricated bars)
         matrix["candles"] = [
             {"time": int(b.timestamp.timestamp()), "open": b.open, "high": b.high, "low": b.low, "close": b.close}
             for b in bars
         ]
+        matrix["price_source"] = (
+            "candles" if bars else ("spot_track" if matrix.get("spot_track") else "none")
+        )
         matrix["levels"]["last_close"] = bars[-2].close if len(bars) >= 2 else None
         matrix["quote"] = {"last": quote.last, "change_pct": quote.change_pct}
         matrix["provider_status"] = [s.model_dump(mode="json") for s in status]

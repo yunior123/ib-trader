@@ -225,6 +225,45 @@ def test_cadena_rancia_en_rth_es_emergencia(tmp_path):
     assert out["stale_reason"]
 
 
+# ================= 5b. la cabecera que ESCRIBE opt_chain_cache (funcion pura, sin TWS)
+def test_cabecera_escrita_por_el_cache_es_append_only_y_parseable(tmp_path):
+    """Linea 1 INTACTA (scripts/opt_quick.cpp la parsea posicionalmente y busca
+    "epoch "/"spot "/"exps " por substring) y linea 2 append-only. `band` publicado es la
+    banda EXTERIOR: gex_core la usa de FILTRO, asi que si dijera la del ATM (0.08) tiraria
+    la ola lejana de los NARROW y el arreglo de BAND_FLOOR seria inerte."""
+    import opt_chain_cache as OC
+    exp = "20260807"
+    rows = [_row(k, r, exp, 1.0, 1.1, 500, 0.30, 0.05)
+            for k in (400.0, 462.5, 530.0) for r in ("C", "P")]
+    h = OC.header_lines("MSFT", 462.19, [exp], rows, OC.PCT_BAND, OC.NARROW_BAND,
+                        OC.NARROW_MAX_STRIKES, OC.NARROW_FAR_MAX_STRIKES, True,
+                        epoch=1785526231, stamp="2026-07-31 15:30:31")
+    assert h[0] == ("# opt_chain MSFT | epoch 1785526231 | 2026-07-31 15:30:31 | "
+                    "spot 462.19 | exps 20260807")
+    for tok in ("epoch ", "spot ", "exps "):
+        assert tok not in h[1] and tok not in h[2], f"{tok!r} colisiona con opt_quick.cpp"
+    p = tmp_path / "opt_chain_msft.txt"
+    p.write_text("\n".join(h + rows) + "\n")
+    hdr = G.parse_chain_header(str(p))
+    assert hdr["epoch"] == 1785526231 and hdr["spot"] == 462.19 and hdr["exps"] == [exp]
+    assert hdr["band"] == pytest.approx(OC.PCT_BAND)          # exterior, no la del ATM
+    assert hdr["max_strikes"] == OC.NARROW_MAX_STRIKES and hdr["narrow"] == 1
+    assert hdr["greeks_ok_pct"] == 1.0
+    campos = h[1].split()
+    assert campos[campos.index("band_atm") + 1] == f"{OC.NARROW_BAND:.4f}"
+    assert campos[campos.index("span_pct") + 1] == "0.1406"    # (530-400)/2/462.19
+    assert campos[campos.index("far_max_strikes") + 1] == str(OC.NARROW_FAR_MAX_STRIKES)
+    assert campos[campos.index("bidask_ok_pct") + 1] == "1.0000"
+
+
+def test_cabecera_sin_filas_no_inventa_un_span():
+    """0 filas -> span_pct -1 (centinela de 'sin dato' del formato), jamas 0.0000."""
+    import opt_chain_cache as OC
+    h = OC.header_lines("ZZ", 100.0, ["20260807"], [], 0.15, 0.15, 20, 20, False)
+    campos = h[1].split()
+    assert campos[campos.index("span_pct") + 1] == "-1.0000"
+
+
 # =============================== 8. ROLL-OFF: el vencimiento rueda EN EL CIERRE
 def test_expiry_rueda_en_el_cierre_no_a_medianoche():
     """El bug de MANADA de las 00:00:45. `exp_status` es la unica fuente de verdad."""

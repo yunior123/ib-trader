@@ -1,0 +1,14 @@
+{
+ "symbol": "QQQ",
+ "state": "INSUFFICIENT_DATA",
+ "scores": {
+  "n_bars": 320
+ },
+ "reasons": [
+  "missing indicators (need ~15 RTH sessions): energy"
+ ],
+ "bar_epoch": 1785527940,
+ "n_bars": 320,
+ "updated_utc": "2026-08-02T07:14:59.559377+00:00",
+ "shadow": true
+}

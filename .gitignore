@@ -142,3 +142,9 @@ logs/
 macapp/.rebuild-pending
 macapp/.rebuild-waiting
 order_engine/commands.jsonl
+
+# venv del proyecto mit (py3.12, 288 MB). OJO: la regla `*venv/` de arriba NO lo captura
+# porque el nombre no TERMINA en "venv" — sin esta linea el venv entero entra al repo.
+venv-mit/
+# pid de la cola de voz: estado de runtime, cambia en cada arranque/parada de la flota.
+data/voice_queue.pid

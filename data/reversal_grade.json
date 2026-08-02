@@ -1,0 +1,428 @@
+{
+ "buckets": {
+  "ALL": {
+   "by_year": {
+    "2024": {
+     "n_resolved": 10511,
+     "wilson_hi": 0.5001,
+     "wilson_lo": 0.481,
+     "win_rate": 0.4905
+    },
+    "2025": {
+     "n_resolved": 28042,
+     "wilson_hi": 0.4983,
+     "wilson_lo": 0.4866,
+     "win_rate": 0.4924
+    },
+    "2026": {
+     "n_resolved": 16766,
+     "wilson_hi": 0.5162,
+     "wilson_lo": 0.5011,
+     "win_rate": 0.5086
+    }
+   },
+   "favorable": 27492,
+   "mfe_gt_mae_pct": 49.46,
+   "min_n": 30,
+   "n_events": 55788,
+   "n_resolved": 55319,
+   "n_total": 55788,
+   "n_unresolved": 469,
+   "verdict": "FAIL",
+   "wilson_hi": 0.5011,
+   "wilson_lo": 0.4928,
+   "win_rate": 0.497
+  },
+  "CONTINUATION_ACTIVE_DO_NOT_FADE": {
+   "by_year": {
+    "2024": {
+     "n_resolved": 10465,
+     "wilson_hi": 0.4999,
+     "wilson_lo": 0.4807,
+     "win_rate": 0.4903
+    },
+    "2025": {
+     "n_resolved": 27917,
+     "wilson_hi": 0.4985,
+     "wilson_lo": 0.4868,
+     "win_rate": 0.4926
+    },
+    "2026": {
+     "n_resolved": 16692,
+     "wilson_hi": 0.5161,
+     "wilson_lo": 0.5009,
+     "win_rate": 0.5085
+    }
+   },
+   "favorable": 27372,
+   "mfe_gt_mae_pct": 49.47,
+   "min_n": 30,
+   "n_events": 55542,
+   "n_resolved": 55074,
+   "n_total": 55542,
+   "n_unresolved": 468,
+   "verdict": "FAIL",
+   "wilson_hi": 0.5012,
+   "wilson_lo": 0.4928,
+   "win_rate": 0.497
+  },
+  "REVERSAL_CONFIRMED": {
+   "by_year": {
+    "2024": {
+     "n_resolved": 46,
+     "wilson_hi": 0.6785,
+     "wilson_lo": 0.4018,
+     "win_rate": 0.5435
+    },
+    "2025": {
+     "n_resolved": 125,
+     "wilson_hi": 0.5275,
+     "wilson_lo": 0.3561,
+     "win_rate": 0.44
+    },
+    "2026": {
+     "n_resolved": 74,
+     "wilson_hi": 0.6493,
+     "wilson_lo": 0.4278,
+     "win_rate": 0.5405
+    }
+   },
+   "favorable": 120,
+   "mfe_gt_mae_pct": 46.34,
+   "min_n": 30,
+   "n_events": 246,
+   "n_resolved": 245,
+   "n_total": 246,
+   "n_unresolved": 1,
+   "verdict": "FAIL",
+   "wilson_hi": 0.5521,
+   "wilson_lo": 0.4278,
+   "win_rate": 0.4898
+  }
+ },
+ "discards": {
+  "graded": 55788,
+  "resolved": 55319,
+  "total": 55788,
+  "unresolved": 469
+ },
+ "epoch": 1785653877,
+ "events_raw": 55788,
+ "generated": "2026-08-02T06:57:57.695136+00:00",
+ "params": {
+  "atr_frac": 1.0,
+  "atr_period": 14,
+  "event_def": "transicion de estado (no cada barra en estado)",
+  "graded_states": [
+   "REVERSAL_CONFIRMED",
+   "CONTINUATION_ACTIVE_DO_NOT_FADE"
+  ],
+  "horizon_bars_1m": 30,
+  "min_n": 30,
+  "null_p": 0.5,
+  "verdict_rule": "PASS si wilson_lo > 0.50 (el CI excluye la moneda); FAIL si no; DATA-INSUFFICIENT si n resuelta < min_n (sin probabilidad publicada)"
+ },
+ "per_symbol": {
+  "AAPL": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 2151,
+    "REVERSAL_CONFIRMED": 10
+   },
+   "n_bars_1m": 376553,
+   "n_events": 2161,
+   "n_graded": 2161
+  },
+  "AMD": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 1991,
+    "REVERSAL_CONFIRMED": 11
+   },
+   "n_bars_1m": 406758,
+   "n_events": 2002,
+   "n_graded": 2002
+  },
+  "AMZN": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 2060,
+    "REVERSAL_CONFIRMED": 7
+   },
+   "n_bars_1m": 382495,
+   "n_events": 2067,
+   "n_graded": 2067
+  },
+  "ASML": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 2029,
+    "REVERSAL_CONFIRMED": 9
+   },
+   "n_bars_1m": 241173,
+   "n_events": 2038,
+   "n_graded": 2038
+  },
+  "AVGO": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 2063,
+    "REVERSAL_CONFIRMED": 9
+   },
+   "n_bars_1m": 357311,
+   "n_events": 2072,
+   "n_graded": 2072
+  },
+  "DRAM": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 253,
+    "REVERSAL_CONFIRMED": 1
+   },
+   "n_bars_1m": 70168,
+   "n_events": 254,
+   "n_graded": 254
+  },
+  "EWY": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 1885,
+    "REVERSAL_CONFIRMED": 8
+   },
+   "n_bars_1m": 248496,
+   "n_events": 1893,
+   "n_graded": 1893
+  },
+  "GLD": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 1825,
+    "REVERSAL_CONFIRMED": 12
+   },
+   "n_bars_1m": 331046,
+   "n_events": 1837,
+   "n_graded": 1837
+  },
+  "GOOGL": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 2040,
+    "REVERSAL_CONFIRMED": 9
+   },
+   "n_bars_1m": 363681,
+   "n_events": 2049,
+   "n_graded": 2049
+  },
+  "INTC": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 2076,
+    "REVERSAL_CONFIRMED": 16
+   },
+   "n_bars_1m": 435457,
+   "n_events": 2092,
+   "n_graded": 2092
+  },
+  "LRCX": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 2033,
+    "REVERSAL_CONFIRMED": 13
+   },
+   "n_bars_1m": 234112,
+   "n_events": 2046,
+   "n_graded": 2046
+  },
+  "META": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 1933,
+    "REVERSAL_CONFIRMED": 9
+   },
+   "n_bars_1m": 331939,
+   "n_events": 1942,
+   "n_graded": 1942
+  },
+  "MSFT": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 1985,
+    "REVERSAL_CONFIRMED": 13
+   },
+   "n_bars_1m": 346881,
+   "n_events": 1998,
+   "n_graded": 1998
+  },
+  "MU": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 2070,
+    "REVERSAL_CONFIRMED": 12
+   },
+   "n_bars_1m": 381580,
+   "n_events": 2082,
+   "n_graded": 2082
+  },
+  "NFLX": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 2058,
+    "REVERSAL_CONFIRMED": 9
+   },
+   "n_bars_1m": 298401,
+   "n_events": 2067,
+   "n_graded": 2067
+  },
+  "NOK": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 2493,
+    "REVERSAL_CONFIRMED": 10
+   },
+   "n_bars_1m": 274137,
+   "n_events": 2503,
+   "n_graded": 2503
+  },
+  "NVDA": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 2015,
+    "REVERSAL_CONFIRMED": 6
+   },
+   "n_bars_1m": 476157,
+   "n_events": 2021,
+   "n_graded": 2021
+  },
+  "QCOM": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 2044,
+    "REVERSAL_CONFIRMED": 3
+   },
+   "n_bars_1m": 253071,
+   "n_events": 2047,
+   "n_graded": 2047
+  },
+  "QQQ": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 2088,
+    "REVERSAL_CONFIRMED": 4
+   },
+   "n_bars_1m": 445270,
+   "n_events": 2092,
+   "n_graded": 2092
+  },
+  "SKHY": {
+   "by_state": {},
+   "n_bars_1m": 9496,
+   "n_events": 0,
+   "n_graded": 0
+  },
+  "SMH": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 2042,
+    "REVERSAL_CONFIRMED": 8
+   },
+   "n_bars_1m": 274149,
+   "n_events": 2050,
+   "n_graded": 2050
+  },
+  "SNDK": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 1536,
+    "REVERSAL_CONFIRMED": 9
+   },
+   "n_bars_1m": 219798,
+   "n_events": 1545,
+   "n_graded": 1545
+  },
+  "SPCX": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 260
+   },
+   "n_bars_1m": 28109,
+   "n_events": 260,
+   "n_graded": 260
+  },
+  "SPY": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 2233,
+    "REVERSAL_CONFIRMED": 7
+   },
+   "n_bars_1m": 426740,
+   "n_events": 2240,
+   "n_graded": 2240
+  },
+  "STX": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 2141,
+    "REVERSAL_CONFIRMED": 9
+   },
+   "n_bars_1m": 220356,
+   "n_events": 2150,
+   "n_graded": 2150
+  },
+  "TSLA": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 2046,
+    "REVERSAL_CONFIRMED": 5
+   },
+   "n_bars_1m": 467518,
+   "n_events": 2051,
+   "n_graded": 2051
+  },
+  "TSM": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 2017,
+    "REVERSAL_CONFIRMED": 10
+   },
+   "n_bars_1m": 349648,
+   "n_events": 2027,
+   "n_graded": 2027
+  },
+  "TXN": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 2009,
+    "REVERSAL_CONFIRMED": 13
+   },
+   "n_bars_1m": 212286,
+   "n_events": 2022,
+   "n_graded": 2022
+  },
+  "WDC": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 2063,
+    "REVERSAL_CONFIRMED": 11
+   },
+   "n_bars_1m": 247255,
+   "n_events": 2074,
+   "n_graded": 2074
+  },
+  "XLK": {
+   "by_state": {
+    "CONTINUATION_ACTIVE_DO_NOT_FADE": 2103,
+    "REVERSAL_CONFIRMED": 3
+   },
+   "n_bars_1m": 240136,
+   "n_events": 2106,
+   "n_graded": 2106
+  }
+ },
+ "shadow": true,
+ "source": "poly_bars (data/trades.db, read-only) \u2014 barras 1m 04:00-19:59 ET",
+ "symbols": [
+  "QQQ",
+  "SPY",
+  "NVDA",
+  "TSLA",
+  "MU",
+  "SMH",
+  "AMD",
+  "AAPL",
+  "MSFT",
+  "META",
+  "AMZN",
+  "GOOGL",
+  "INTC",
+  "TSM",
+  "ASML",
+  "TXN",
+  "QCOM",
+  "AVGO",
+  "NFLX",
+  "NOK",
+  "GLD",
+  "XLK",
+  "EWY",
+  "DRAM",
+  "SPCX",
+  "SKHY",
+  "LRCX",
+  "SNDK",
+  "WDC",
+  "STX"
+ ],
+ "wired": false
+}

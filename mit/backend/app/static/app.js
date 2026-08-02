@@ -1,6 +1,7 @@
 const $ = (id) => document.getElementById(id);
 const state = { symbol: 'SPY', socket: null, chart: null, candleSeries: null, volumeSeries: null, lines: [], alertIds: new Set(), alarmEnabled: false, audioContext: null, hmMetric: 'gex',
-  trMetric: 'gex', trChart: null, trCandle: null, trLines: [], trSpot: null, trData: null, trKeyLevels: true, trObserver: null };
+  trMetric: 'gex', trChart: null, trCandle: null, trSpotLine: null, trPriceSeries: null, trLines: [], trSpot: null, trData: null, trKeyLevels: true, trObserver: null,
+  trTime: null, trCol: 0 };
 
 function fmt(value, digits = 2) {
   if (value === null || value === undefined || Number.isNaN(Number(value))) return '—';
@@ -52,6 +53,7 @@ async function bootstrap() {
     e.currentTarget.classList.toggle('active', state.trKeyLevels);
     if (state.trData) renderTracePriceLines(state.trData);
   });
+  wireScrubber();
 }
 
 // Diverging scale: teal/green positive, indigo/purple negative, symmetric around 0.
@@ -133,6 +135,7 @@ function renderHeatmap(data) {
 
 // ---- TRACE-style intraday heatmap (strike × time) --------------------------------
 const TR_WINDOW = 0.045; // visible price window around spot (±%); bands fill it top-to-bottom
+const todayISO = () => new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD, local session date
 
 function createTraceChart() {
   const container = $('tr-chart');
@@ -140,17 +143,28 @@ function createTraceChart() {
     layout: { background: { type: 'solid', color: 'transparent' }, textColor: '#9a8fb8', fontFamily: 'Inter, system-ui, sans-serif' },
     grid: { vertLines: { color: 'rgba(160,140,200,.05)' }, horzLines: { color: 'rgba(160,140,200,.05)' } },
     rightPriceScale: { borderColor: 'rgba(160,140,200,.14)' },
-    timeScale: { borderColor: 'rgba(160,140,200,.14)', timeVisible: true, secondsVisible: false, rightOffset: 4 },
+    // Eje en hora LOCAL: los sellos del cubo son locales, un eje en UTC los contradice.
+    timeScale: { borderColor: 'rgba(160,140,200,.14)', timeVisible: true, secondsVisible: false, rightOffset: 4,
+      tickMarkFormatter: (t) => new Date(t * 1000).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }) },
+    localization: { timeFormatter: (t) => new Date(t * 1000).toLocaleString('en-US', { hour12: false }) },
     crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
     autoSize: true,
   });
+  const window_ = () => {
+    if (!state.trSpot) return null; // no fabricated range
+    return { priceRange: { minValue: state.trSpot * (1 - TR_WINDOW), maxValue: state.trSpot * (1 + TR_WINDOW) } };
+  };
   state.trCandle = state.trChart.addSeries(LightweightCharts.CandlestickSeries, {
     upColor: '#3ad6b0', downColor: '#ff6178', borderUpColor: '#3ad6b0', borderDownColor: '#ff6178', wickUpColor: '#e9f0fa', wickDownColor: '#e9f0fa',
-    autoscaleInfoProvider: () => {
-      if (!state.trSpot) return null; // no fabricated range
-      return { priceRange: { minValue: state.trSpot * (1 - TR_WINDOW), maxValue: state.trSpot * (1 + TR_WINDOW) } };
-    },
+    autoscaleInfoProvider: window_,
   });
+  // Spot medido en la cabecera de cada foto de cadena: es precio REAL de esa sesión, sin OHLC
+  // inventado. Solo se dibuja si no hay velas de la misma sesión (fail-loud: nunca wicks falsas).
+  state.trSpotLine = state.trChart.addSeries(LightweightCharts.LineSeries, {
+    color: '#54d9ff', lineWidth: 2, priceLineVisible: false, lastValueVisible: false,
+    autoscaleInfoProvider: window_,
+  });
+  state.trPriceSeries = state.trCandle;
   // Repaint the canvas whenever the chart geometry changes so bands stay aligned to the price axis.
   const repaint = () => { if (state.trData) paintTraceCanvas(state.trData); };
   state.trChart.timeScale().subscribeVisibleLogicalRangeChange(repaint);
@@ -168,8 +182,10 @@ async function loadTrace() {
   try {
     data = await fetch(`/api/trace/${encodeURIComponent(sym)}?metric=${state.trMetric}`).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
   } catch (err) {
-    $('tr-empty').hidden = false; $('tr-empty').textContent = `Trace unavailable (${escapeHtml(String(err.message || err))})`;
-    $('tr-bars').innerHTML = ''; return;
+    state.trTime = null; syncScrubber();
+    $('tr-empty').hidden = false; $('tr-empty').style.display = '';
+    $('tr-empty').textContent = `Trace unavailable (${String(err.message || err)})`;
+    $('tr-bars').replaceChildren(); return;
   }
   if (sym !== state.symbol) return; // stale response, symbol changed
   renderTrace(data);
@@ -177,26 +193,127 @@ async function loadTrace() {
 
 function renderTrace(data) {
   state.trData = data;
-  state.trSpot = data.spot || null;
+  state.trTime = (data.trace_time && (data.trace_time.columns || []).length) ? data.trace_time : null;
+  // El panel muestra UNA sesión: si es la del cubo, la ventana de precio es la de ESE día.
+  const sessionSpots = state.trTime ? state.trTime.columns.map(c => c.spot).filter(v => v != null) : [];
+  state.trSpot = sessionSpots.length ? sessionSpots[sessionSpots.length - 1] : (data.spot || null);
   const q = data.quote || {};
   $('tr-price').textContent = q.last == null ? '—' : `$${fmt(q.last, q.last < 50 ? 3 : 2)}`;
   $('tr-change').textContent = q.change_pct == null ? '—' : `${q.change_pct >= 0 ? '+' : ''}${fmt(q.change_pct)}%`;
   $('tr-change').className = q.change_pct > 0 ? 'positive' : q.change_pct < 0 ? 'negative' : 'muted';
-  $('tr-caveat').textContent = (data.caveats || []).join(' · ');
+  const caveats = (data.caveats || []).slice();
+  if (state.trTime && state.trTime.date !== todayISO()) {
+    caveats.unshift(`Archived session ${state.trTime.date}: price window and bands are that day's; key levels come from the current chain.`);
+  }
+  $('tr-caveat').textContent = caveats.join(' · ');
 
   const candles = (data.candles || []).map(c => ({ time: c.time, open: c.open, high: c.high, low: c.low, close: c.close }));
+  const track = (data.spot_track || []).filter(p => p.value != null).map(p => ({ time: p.time, value: p.value }));
   const hasCandles = candles.length > 0;
-  $('tr-empty').textContent = hasCandles ? '' : 'No candle data';
-  $('tr-empty').style.display = hasCandles ? 'none' : '';  // style gana a cualquier CSS
+  const useTrack = !hasCandles && track.length > 0;
   state.trCandle.setData(candles);
+  state.trSpotLine.setData(useTrack ? track : []);
+  state.trPriceSeries = hasCandles ? state.trCandle : state.trSpotLine;
+  const empty = hasCandles || useTrack ? '' :
+    (state.trTime ? 'No price series for the archived session' : 'No candle data');
+  $('tr-empty').textContent = empty;
+  $('tr-empty').style.display = empty ? '' : 'none';  // style gana a cualquier CSS
+
+  // Última columna con datos medidos; sin cubo el cursor no existe.
+  const cols = state.trTime ? state.trTime.columns : [];
+  let idx = cols.length - 1;
+  while (idx > 0 && !cols[idx].has_data) idx -= 1;
+  state.trCol = Math.max(0, idx);
+
   renderTracePriceLines(data);
+  syncScrubber();
   renderTraceBars(data);
   requestAnimationFrame(() => { state.trChart.timeScale().fitContent(); paintTraceCanvas(data); });
 }
 
+// ---- time scrubber ---------------------------------------------------------------
+function wireScrubber() {
+  const track = $('tr-scrub-track');
+  const pick = (ev) => {
+    const cols = state.trTime ? state.trTime.columns : [];
+    if (!cols.length) return;
+    const rect = track.getBoundingClientRect();
+    if (!rect.width) return;
+    const t = Math.max(0, Math.min(1, (ev.clientX - rect.left) / rect.width));
+    setScrubIndex(Math.round(t * (cols.length - 1)));
+  };
+  track.addEventListener('pointerdown', (ev) => {
+    if (!state.trTime) return;
+    track.setPointerCapture(ev.pointerId); pick(ev); ev.preventDefault();
+  });
+  track.addEventListener('pointermove', (ev) => { if (state.trTime && track.hasPointerCapture(ev.pointerId)) pick(ev); });
+  track.addEventListener('pointerup', (ev) => { if (track.hasPointerCapture(ev.pointerId)) track.releasePointerCapture(ev.pointerId); });
+  track.addEventListener('keydown', (ev) => {
+    const cols = state.trTime ? state.trTime.columns : [];
+    if (!cols.length) return;
+    const step = { ArrowLeft: -1, ArrowRight: 1, PageUp: 6, PageDown: -6, Home: -1e6, End: 1e6 }[ev.key];
+    if (step === undefined) return;
+    setScrubIndex(state.trCol + step); ev.preventDefault();
+  });
+}
+
+function setScrubIndex(index) {
+  const cols = state.trTime ? state.trTime.columns : [];
+  if (!cols.length) return;
+  const next = Math.max(0, Math.min(cols.length - 1, index));
+  if (next === state.trCol) return;
+  state.trCol = next;
+  syncScrubber();
+  renderTraceBars(state.trData);
+  paintTraceCanvas(state.trData);
+}
+
+function syncScrubber() {
+  const wrap = $('tr-scrubber'), track = $('tr-scrub-track'), badge = $('tr-axis-badge');
+  const measured = !!state.trTime;
+  const cols = measured ? state.trTime.columns : [];
+  wrap.classList.toggle('disabled', !measured);
+  badge.textContent = measured ? 'measured' : 'flat';
+  badge.className = `tr-axis-badge ${measured ? 'measured' : 'flat'}`;
+  const pct = measured && cols.length > 1 ? (state.trCol / (cols.length - 1)) * 100 : 0;
+  $('tr-scrub-fill').style.width = `${pct}%`;
+  $('tr-scrub-handle').style.left = `${pct}%`;
+  track.setAttribute('aria-valuemin', '0');
+  track.setAttribute('aria-valuemax', String(Math.max(0, cols.length - 1)));
+  track.setAttribute('aria-valuenow', String(measured ? state.trCol : 0));
+  track.setAttribute('aria-disabled', measured ? 'false' : 'true');
+  track.tabIndex = measured ? 0 : -1;
+  if (!measured) {
+    track.setAttribute('aria-valuetext', 'no measured session');
+    $('tr-scrub-label').textContent = `Time scrubber inactive — no measured cube for ${state.symbol} (run scripts/trace_cube.py ${state.symbol})`;
+    return;
+  }
+  const col = cols[state.trCol] || {};
+  const gp = col.greeks_ok_pct;
+  const detail = col.has_data
+    ? `spot ${col.spot == null ? '—' : fmt(col.spot)}${gp == null ? '' : ` · greeks ${(gp * 100).toFixed(0)}%`}`
+    : 'no measured greeks in this snapshot';
+  track.setAttribute('aria-valuetext', `${col.label || ''} ${detail}`);
+  $('tr-scrub-label').textContent = `${state.trTime.date} · snapshot ${state.trCol + 1}/${cols.length} @ ${col.label || '—'} · ${detail}`;
+}
+
+function traceColumnValues() {
+  /** Valores de la columna seleccionada: {strike: value}. null si no hay eje medido. */
+  if (!state.trTime) return null;
+  const col = state.trTime.columns[state.trCol];
+  if (!col || !col.has_data) return {};
+  const out = {};
+  const suffix = `|${col.epoch}`;
+  for (const [key, value] of Object.entries(state.trTime.cells)) {
+    if (key.endsWith(suffix)) out[key.slice(0, -suffix.length)] = value;
+  }
+  return out;
+}
+
 function renderTracePriceLines(data) {
-  state.trLines.forEach(l => state.trCandle.removePriceLine(l));
+  state.trLines.forEach(({ series, line }) => series.removePriceLine(line));
   state.trLines = [];
+  const series = state.trPriceSeries || state.trCandle;
   const legend = [];
   const lv = data.levels || {};
   const defs = state.trKeyLevels ? [
@@ -204,16 +321,21 @@ function renderTracePriceLines(data) {
     ['Put wall', lv.put_wall, '#3ad6b0', 2, LightweightCharts.LineStyle.Solid],
     ['Gamma flip', lv.gamma_flip, '#ad8cff', 2, LightweightCharts.LineStyle.Solid],
     ['Max pain', lv.max_pain, '#ffbe4f', 1, LightweightCharts.LineStyle.Dotted],
+    // Implied move = ATM straddle MEDIDO; sin él, el orchestrator no manda estos campos.
+    ['Implied move +', lv.implied_move_up, '#54d9ff', 1, LightweightCharts.LineStyle.LargeDashed],
+    ['Implied move −', lv.implied_move_dn, '#54d9ff', 1, LightweightCharts.LineStyle.LargeDashed],
     ['Last close', lv.last_close, '#8494aa', 1, LightweightCharts.LineStyle.Dashed],
   ] : [];
   defs.forEach(([title, price, color, width, style]) => {
     if (price == null) return;
-    state.trLines.push(state.trCandle.createPriceLine({ price, color, lineWidth: width, lineStyle: style, axisLabelVisible: true, title }));
-    legend.push(`<span style="--color:${color}">${escapeHtml(title)}</span>`);
+    state.trLines.push({ series, line: series.createPriceLine({ price, color, lineWidth: width, lineStyle: style, axisLabelVisible: true, title }) });
+    if (title !== 'Implied move −') legend.push(`<span style="--color:${color}">${escapeHtml(title === 'Implied move +' ? `Implied move ±${fmt(lv.implied_move)}` : title)}</span>`);
   });
-  const spot = data.quote && data.quote.last;
+  // La cotización viva solo tiene sentido sobre la sesión de hoy; con una sesión archivada
+  // el precio de esa sesión ya lo dibuja el spot track medido.
+  const spot = (state.trTime && state.trTime.date !== todayISO()) ? null : (data.quote && data.quote.last);
   if (spot != null) {
-    state.trLines.push(state.trCandle.createPriceLine({ price: spot, color: '#54d9ff', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, axisLabelVisible: true, title: 'Price' }));
+    state.trLines.push({ series, line: series.createPriceLine({ price: spot, color: '#54d9ff', lineWidth: 1, lineStyle: LightweightCharts.LineStyle.Dashed, axisLabelVisible: true, title: 'Price' }) });
     legend.push(`<span style="--color:#54d9ff">Current price</span>`);
   }
   legend.push(`<span style="--color:#52b28a">${data.metric === 'gex' ? 'Positive GEX' : 'Net calls'}</span>`);
@@ -221,7 +343,27 @@ function renderTracePriceLines(data) {
   $('tr-legend').innerHTML = legend.join('');
 }
 
-// Paint horizontal per-strike bands onto the canvas, mapped to the chart's price axis.
+// Row geometry (y) shared by both paths: [{strike, y, h}] for the visible price axis.
+function traceRows(strikes) {
+  const series = state.trPriceSeries || state.trCandle;
+  const asc = strikes.slice().sort((a, b) => a - b);
+  if (!asc.length || series.priceToCoordinate(asc[0]) == null) return []; // no price scale yet
+  const rows = [];
+  for (let i = 0; i < asc.length; i++) {
+    const s = asc[i];
+    const upP = i < asc.length - 1 ? (s + asc[i + 1]) / 2 : s + (i > 0 ? (s - asc[i - 1]) / 2 : s * 0.001);
+    const loP = i > 0 ? (asc[i - 1] + s) / 2 : s - (asc.length > 1 ? (asc[i + 1] - s) / 2 : s * 0.001);
+    const yTop = series.priceToCoordinate(upP), yBot = series.priceToCoordinate(loP);
+    if (yTop == null || yBot == null) continue;
+    rows.push({ strike: s, y: Math.min(yTop, yBot), h: Math.abs(yBot - yTop) + 1 });
+  }
+  return rows;
+}
+
+const cellAt = (map, strike) => map[`${strike}`.replace(/\.0$/, '')] ?? map[`${strike}`];
+
+// Paint the metric onto the canvas: one column per archived chain snapshot when the time axis
+// is MEASURED, otherwise one flat band per strike (and the caveat/badge says it is flat).
 function paintTraceCanvas(data) {
   const canvas = $('tr-canvas'), main = $('tr-main');
   const w = main.clientWidth, h = main.clientHeight;
@@ -231,46 +373,124 @@ function paintTraceCanvas(data) {
   const ctx = canvas.getContext('2d');
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   ctx.clearRect(0, 0, w, h);
+  if (state.trTime) { paintTraceColumns(ctx, w, h); return; }
+
   const byStrike = data.by_strike || {};
-  const strikes = (data.strikes || []).slice().sort((a, b) => a - b); // ascending price
-  if (!strikes.length) return;
-  const coord = (p) => state.trCandle.priceToCoordinate(p);
-  if (coord(strikes[0]) == null) return; // no price scale yet (no candles)
+  const rows = traceRows(data.strikes || []);
+  if (!rows.length) return;
   const maxAbs = Object.values(byStrike).reduce((m, v) => Math.max(m, Math.abs(v)), 0);
-  for (let i = 0; i < strikes.length; i++) {
-    const s = strikes[i];
-    const upP = i < strikes.length - 1 ? (s + strikes[i + 1]) / 2 : s + (i > 0 ? (s - strikes[i - 1]) / 2 : s * 0.001);
-    const loP = i > 0 ? (strikes[i - 1] + s) / 2 : s - (strikes.length > 1 ? (strikes[i + 1] - s) / 2 : s * 0.001);
-    const yTop = coord(upP), yBot = coord(loP);
-    if (yTop == null || yBot == null) continue;
-    const y = Math.min(yTop, yBot), bandH = Math.abs(yBot - yTop) + 1;
-    if (y + bandH < 0 || y > h) continue; // off-screen
-    ctx.fillStyle = divergingColor(byStrike[`${s}`.replace(/\.0$/, '')] ?? byStrike[`${s}`] ?? 0, maxAbs);
-    ctx.fillRect(0, y, w, bandH);
+  rows.forEach(r => {
+    if (r.y + r.h < 0 || r.y > h) return; // off-screen
+    ctx.fillStyle = divergingColor(cellAt(byStrike, r.strike) ?? 0, maxAbs);
+    ctx.fillRect(0, r.y, w, r.h);
+  });
+}
+
+// timeToCoordinate only answers for times that ARE in the series; snapshot epochs (09:07:11)
+// are not bar timestamps. Anchor on the series' own times and interpolate piecewise-linearly
+// in bar index — no invented axis, just the chart's own geometry read between its anchors.
+function traceTimeMapper() {
+  const data = state.trData || {};
+  const times = (data.candles || []).length
+    ? data.candles.map(c => c.time)
+    : (data.spot_track || []).map(p => p.time);
+  const ts = state.trChart.timeScale();
+  const anchors = [];
+  for (const t of times) { const x = ts.timeToCoordinate(t); if (x != null) anchors.push([t, x]); }
+  if (anchors.length < 2) return null;
+  anchors.sort((a, b) => a[0] - b[0]);
+  const lerp = (t, [t0, x0], [t1, x1]) => t1 === t0 ? x0 : x0 + (x1 - x0) * (t - t0) / (t1 - t0);
+  return (t) => {
+    if (t <= anchors[0][0]) return lerp(t, anchors[0], anchors[1]);
+    const n = anchors.length;
+    if (t >= anchors[n - 1][0]) return lerp(t, anchors[n - 2], anchors[n - 1]);
+    let lo = 0, hi = n - 1;
+    while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (anchors[mid][0] <= t) lo = mid; else hi = mid; }
+    return lerp(t, anchors[lo], anchors[hi]);
+  };
+}
+
+function paintTraceColumns(ctx, w, h) {
+  const tt = state.trTime;
+  const rows = traceRows(tt.strikes || []);
+  if (!rows.length) return;
+  const toX = traceTimeMapper();
+  if (!toX) return; // sin serie de precio no hay eje: no se inventa uno
+  const xs = tt.columns.map(c => toX(c.epoch));
+  const known = xs.filter(x => x != null);
+  if (!known.length) return; // cube epochs outside the rendered session: nothing faked
+  const diffs = [];
+  for (let i = 1; i < known.length; i++) diffs.push(Math.abs(known[i] - known[i - 1]));
+  const dw = diffs.length ? diffs.sort((a, b) => a - b)[Math.floor(diffs.length / 2)] : w / known.length;
+  const maxAbs = Object.values(tt.cells).reduce((m, v) => Math.max(m, Math.abs(v)), 0);
+  const byCol = tt.columns.map(c => {
+    const map = {};
+    const suffix = `|${c.epoch}`;
+    for (const [key, value] of Object.entries(tt.cells)) {
+      if (key.endsWith(suffix)) map[key.slice(0, -suffix.length)] = value;
+    }
+    return map;
+  });
+  for (let i = 0; i < tt.columns.length; i++) {
+    const x = xs[i];
+    if (x == null) continue;
+    const prev = i > 0 && xs[i - 1] != null ? xs[i - 1] : null;
+    const next = i < xs.length - 1 && xs[i + 1] != null ? xs[i + 1] : null;
+    const left = prev != null ? (prev + x) / 2 : x - dw / 2;
+    const right = next != null ? (x + next) / 2 : x + dw / 2;
+    if (right < 0 || left > w) continue;
+    const map = byCol[i];
+    rows.forEach(r => {
+      if (r.y + r.h < 0 || r.y > h) return;
+      const v = cellAt(map, r.strike);
+      if (v === undefined) return; // sin dato medido en esa foto: se queda en blanco, no en cero
+      ctx.fillStyle = divergingColor(v, maxAbs);
+      ctx.fillRect(left, r.y, Math.max(1, right - left), r.h);
+    });
   }
+  const cx = xs[state.trCol];
+  if (cx == null) return;
+  ctx.strokeStyle = 'rgba(255,255,255,.75)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(Math.round(cx) + .5, 0); ctx.lineTo(Math.round(cx) + .5, h); ctx.stroke();
 }
 
 function renderTraceBars(data) {
-  const byStrike = data.by_strike || {};
-  const spot = data.spot || 0;
+  const col = state.trTime ? state.trTime.columns[state.trCol] : null;
+  const colValues = traceColumnValues();          // null sin eje medido
+  const byStrike = colValues || data.by_strike || {};
+  const spot = (col && col.spot) || data.spot || 0;
+  const isGex = data.metric === 'gex';
+  const stamp = col ? ` · ${col.label}` : '';
+  $('tr-left-title').textContent = `${isGex ? 'GEX' : 'Net OI'} by Strike${stamp}`;
   // Only the visible window (matches the heatmap), descending so top = high strike.
   const lo = spot * (1 - TR_WINDOW), hi = spot * (1 + TR_WINDOW);
-  const rows = (data.strikes || []).filter(s => s >= lo && s <= hi).sort((a, b) => b - a);
-  if (!rows.length) { $('tr-bars').innerHTML = '<div class="empty">No strikes in window</div>'; return; }
-  const maxAbs = rows.reduce((m, s) => Math.max(m, Math.abs(byStrike[`${s}`.replace(/\.0$/, '')] ?? byStrike[`${s}`] ?? 0)), 0) || 1;
+  const universe = state.trTime ? state.trTime.strikes : (data.strikes || []);
+  const rows = universe.filter(s => s >= lo && s <= hi && cellAt(byStrike, s) !== undefined).sort((a, b) => b - a);
+  if (!rows.length) {
+    $('tr-bars').replaceChildren(mkEmpty(col && !col.has_data
+      ? `No measured greeks in the ${col.label} snapshot`
+      : 'No strikes in window'));
+    return;
+  }
+  const maxAbs = rows.reduce((m, s) => Math.max(m, Math.abs(cellAt(byStrike, s))), 0) || 1;
   const spotStrike = rows.reduce((best, s) => Math.abs(s - spot) < Math.abs(best - spot) ? s : best, rows[0]);
   const frag = document.createDocumentFragment();
   rows.forEach(s => {
-    const v = byStrike[`${s}`.replace(/\.0$/, '')] ?? byStrike[`${s}`] ?? 0;
+    const v = cellAt(byStrike, s);
     const pct = Math.min(50, Math.abs(v) / maxAbs * 50);
     const row = document.createElement('div'); row.className = 'tr-bar-row';
     const lab = document.createElement('div'); lab.className = 'tr-bar-strike' + (s === spotStrike ? ' tr-spot' : ''); lab.textContent = s.toFixed(s < 50 ? 1 : 0);
     const track = document.createElement('div'); track.className = 'tr-bar-track';
     const fill = document.createElement('div'); fill.className = 'tr-bar-fill ' + (v >= 0 ? 'pos' : 'neg'); fill.style.width = `${pct}%`;
-    fill.title = `${s}: ${data.metric === 'gex' ? compact(v) : fmt(v, 0)}`;
+    fill.title = `${s}${stamp}: ${isGex ? compact(v) : fmt(v, 0)}`;
     track.appendChild(fill); row.append(lab, track); frag.appendChild(row);
   });
   $('tr-bars').replaceChildren(frag);
+}
+
+function mkEmpty(text) {
+  const d = document.createElement('div'); d.className = 'empty'; d.textContent = text; return d;
 }
 
 function createChart() {

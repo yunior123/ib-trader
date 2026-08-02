@@ -9,8 +9,8 @@ ClientId 48 (rango 40-49; 83-99 ocupados por daemons).
 Cada ~3 min durante 9:00-16:15 ET (reloj del Mac = ET) vuelca a
 `data/opt_chain_<sym>.txt` la cadena ±15% ATM del vencimiento mas cercano +
 el siguiente semanal, para los 17 de la flota + 4 miembros QQQ (MSFT/AVGO/
-AMZN/META, banda ±8%) que alimentan el P/C de `./qqq_xray`. Escritura
-atomica (tmp+rename).
+AMZN/META: ola ATM ±8%, ola lejana ±15%) que alimentan el P/C de
+`./qqq_xray`. Escritura atomica (tmp+rename).
 
 FORMATO (contrato con scripts/opt_quick.cpp — NO desviarse):
   # opt_chain NVDA | epoch 1784298180 | 2026-07-17 10:03:00 | spot 208.35 | exps 20260717 20260724
@@ -55,8 +55,18 @@ PORT, CLIENT_ID = get_port(), 48           # 7497 paper / 7496 live; env IBKR_PO
 PCT_BAND = 0.15          # ±15% del spot
 NARROW = {"MSFT", "AVGO", "AMZN", "META"}
 NARROW_BAND, NARROW_MAX_STRIKES, NARROW_SLEEP = 0.08, 12, 4
+# los 4 NARROW no tenian ola lejana: su ancho efectivo se quedaba en ±2,5-5% (META 0.0247,
+# MSFT 0.0296, AVGO 0.0354, AMZN 0.0507) < BAND_FLOOR 0.10, asi que chart_levels DESCARTABA
+# siempre su cadena TWS (griegas 100%, 3 min) y caia a Polygon (15 min). La ola 2 se toma
+# sobre la banda ANCHA: medido sobre las cadenas del 2026-07-31 da half-span 0.145-0.149.
+# +40 lineas y +FAR_SLEEP por narrow (48->88 lineas, 4 syms = +160/ciclo, ~+16-25 s). El ciclo
+# YA iba a 388-391 s con 26 syms (logs/opt_chain_cache.log 2026-07-31), no a CYCLE_S: si crece
+# mas, bajar ESTO antes que tocar las olas de los no-narrow.
+NARROW_FAR_MAX_STRIKES = 10
 FAR_SLEEP = 4            # s de espera de la ola lejana (OI/vol pesan mas que griegas finas)
 MAX_STRIKES = 20         # cap por vencimiento (2 exps x 20 strikes x 2 rights = 80 lineas TWS max)
+MAX_LINES_PER_EXP = 2 * (MAX_STRIKES + MAX_STRIKES)          # no-narrow: near+far, 2 rights
+NARROW_MAX_LINES_PER_EXP = 2 * (NARROW_MAX_STRIKES + NARROW_FAR_MAX_STRIKES)
 CYCLE_S = 180            # cada 3 min
 SLEEP_TICKS = 5          # s de espera para que lleguen ticks/greeks por simbolo
 ONCE = "--once" in sys.argv
@@ -92,6 +102,76 @@ def read_nbbo(sym):
         return (float(bid) + float(ask)) / 2
     except Exception:
         return None
+
+
+def _sample_with_edges(pool, cap):
+    """Muestreo lineal que SIEMPRE incluye LOS DOS BORDES. `pool[::stride]` arrancaba en el
+    minimo y el ultimo paso no llegaba al maximo: QQQ 0DTE daba strike_span_pct 0.0979 contra
+    BAND_FLOOR 0.10 y chart_levels descartaba la cadena IBKR por 0.21pp."""
+    if not pool or cap <= 0:
+        return []
+    if len(pool) <= cap:
+        return list(pool)
+    if cap == 1:
+        return [pool[-1]]
+    idx = sorted({round(i * (len(pool) - 1) / (cap - 1)) for i in range(cap)})
+    return [pool[i] for i in idx]
+
+
+def select_strikes(strikes_all, spot, band, max_ks, narrow,
+                   far_band=None, far_max_ks=None):
+    """(near, far) para UN vencimiento. Funcion pura: testeable sin TWS.
+
+    near = los `max_ks` mas cercanos al ATM dentro de `band`.
+    far  = el resto de la banda LEJANA muestreado con los dos bordes incluidos. Para los
+    NARROW la banda lejana es la ancha (PCT_BAND) aunque la ola 1 sea estrecha.
+    """
+    if not strikes_all or not spot or spot <= 0:
+        return [], []
+    if far_band is None:
+        far_band = PCT_BAND if narrow else band
+    if far_max_ks is None:
+        far_max_ks = NARROW_FAR_MAX_STRIKES if narrow else max_ks
+    far_band = max(far_band, band)
+    near_pool = sorted((k for k in set(strikes_all) if abs(k - spot) / spot <= band),
+                       key=lambda k: (abs(k - spot), k))
+    near = sorted(near_pool[:max_ks])
+    far_pool = sorted({k for k in strikes_all
+                       if abs(k - spot) / spot <= far_band} - set(near))
+    return near, _sample_with_edges(far_pool, far_max_ks)
+
+
+def header_lines(sym, spot, exps, rows, band, band_atm, max_ks, far_max_ks, narrow,
+                 epoch=None, stamp=None):
+    """Las 3 lineas '#' del fichero de cadena. Funcion pura: testeable sin TWS.
+
+    CABECERA HONESTA (feature #5 chain-honesty, 2026-07-25): banda, tope de strikes y cuantas
+    filas traen griegas/cotizaciones de verdad, para que un consumidor distinga "±6% con
+    griegas" de "±4% con 0 de 80". Contrato en docs/CHAIN-HEADER.md, APPEND-ONLY.
+    La linea 1 NO se toca: scripts/opt_quick.cpp la parsea posicionalmente y busca
+    "epoch "/"spot "/"exps " por substring; las otras dos no contienen esos tokens.
+    `band` es la banda EXTERIOR pedida porque gex_core.from_ibkr_cache la usa de FILTRO:
+    declarar la del ATM tiraria la ola lejana de los narrow. `band_atm` = la densa.
+    """
+    epoch = time.time() if epoch is None else epoch
+    stamp = stamp or f"{dt.datetime.now():%Y-%m-%d %H:%M:%S}"
+    n = len(rows)
+    g_ok = sum(1 for r in rows if float(r.split()[7]) > 0)
+    q_ok = sum(1 for r in rows if float(r.split()[3]) > 0 and float(r.split()[4]) > 0)
+    ks = [float(r.split()[0]) for r in rows]
+    # semiancho REAL escrito: es lo que chart_levels compara contra BAND_FLOOR (0.10)
+    span_pct = ((max(ks) - min(ks)) / 2 / spot) if (ks and spot) else -1.0
+    return [
+        f"# opt_chain {sym} | epoch {int(epoch)} | {stamp} | spot {spot:.2f} | "
+        f"exps {' '.join(exps)}",
+        f"# fuente ibkr_tws | band {band:.4f} | max_strikes {max_ks} | "
+        f"narrow {1 if narrow else 0} | vencimientos {len(exps)} | rows {n} | "
+        f"greeks_ok_pct {(g_ok / n) if n else 0:.4f} | "
+        f"bidask_ok_pct {(q_ok / n) if n else 0:.4f} | "
+        f"band_atm {band_atm:.4f} | far_max_strikes {far_max_ks} | "
+        f"span_pct {span_pct:.4f}",
+        "# strike right exp bid ask vol oi iv delta gamma",
+    ]
 
 
 class ChainCache:
@@ -158,27 +238,12 @@ class ChainCache:
         # el lunes el put wall de MU estaba a -14% y el cache no lo veia. Ola 1 = ATM denso
         # (como siempre); ola 2 = resto de la banda muestreado a <=max_ks strikes (caza muros
         # lejanos). Olas secuenciales para no pasar el limite de lineas de market data de TWS.
+        far_band = PCT_BAND if narrow else band
+        far_cap = NARROW_FAR_MAX_STRIKES if narrow else max_ks
+        near, far = select_strikes(strikes_all, spot, band, max_ks, narrow,
+                                   far_band=far_band, far_max_ks=far_cap)
         cons, far_cons = [], []
         for exp in exps:
-            in_band = sorted((k for k in strikes_all
-                              if abs(k - spot) / spot <= band),
-                             key=lambda k: abs(k - spot))
-            near = in_band[:max_ks]
-            rest = sorted(set(in_band[max_ks:]))
-            far = []
-            if rest and not narrow:
-                if len(rest) <= max_ks:
-                    far = rest
-                else:
-                    # muestreo que SIEMPRE incluye LOS DOS BORDES de la banda. `rest[::stride]`
-                    # arrancaba en el minimo y el ultimo paso no llegaba al maximo, asi que el
-                    # ancho efectivo se quedaba corto: QQQ 0DTE daba strike_span_pct 0.0979
-                    # contra BAND_FLOOR 0.10 y chart_levels DESCARTABA la cadena IBKR (griegas
-                    # al 100%, 3 min de edad) para caer a un Polygon de 2h36min. Fallaba por
-                    # 0.21pp. Mismo numero de lineas TWS, solo cambia CUALES strikes entran.
-                    idx = sorted({round(i * (len(rest) - 1) / (max_ks - 1))
-                                  for i in range(max_ks)})
-                    far = [rest[i] for i in idx]
             for k in near:
                 for r in ("C", "P"):
                     cons.append(Option(sym, exp, k, r, "SMART",
@@ -187,8 +252,8 @@ class ChainCache:
                 for r in ("C", "P"):
                     far_cons.append(Option(sym, exp, k, r, "SMART",
                                            currency="USD", tradingClass=sym))
-        if not cons:
-            log(f"{sym}: 0 strikes en ±{band*100:.0f}% — skip")
+        if not cons and not far_cons:
+            log(f"{sym}: 0 strikes en ±{far_band*100:.0f}% — skip")
             return 0
         rows = []
         for wave, wsleep in ((cons, NARROW_SLEEP if narrow else SLEEP_TICKS),
@@ -212,27 +277,10 @@ class ChainCache:
         now = dt.datetime.now()
         path = f"data/opt_chain_{sym.lower()}.txt"
         tmp = path + ".tmp"
-        # CABECERA HONESTA (feature #5 chain-honesty, 2026-07-25). Todo el GEX de la casa corre
-        # sobre esta banda recortada y con las griegas que TWS quiera dar, y hasta hoy el
-        # fichero no decia ni la banda, ni el tope de strikes, ni cuantas filas traian griegas
-        # de verdad — asi que un consumidor no podia distinguir "±6% con griegas" de "±4% con
-        # 0 de 80". Medido ese dia: en RTH greeks_ok_pct=1.00; a las 16:16 = 0.00 en TODA la
-        # flota (bid/ask tambien a -1). Contrato en docs/CHAIN-HEADER.md.
-        # Va en su PROPIA linea '#': scripts/opt_quick.cpp parsea POSICIONALMENTE y busca
-        # "epoch "/"spot "/"exps " por substring, asi que la linea 1 se deja intacta y esta
-        # nueva no contiene ninguno de esos tokens.
-        n = len(rows)
-        g_ok = sum(1 for r in rows if float(r.split()[7]) > 0)
-        q_ok = sum(1 for r in rows if float(r.split()[3]) > 0 and float(r.split()[4]) > 0)
+        head = header_lines(sym, spot, exps, rows, far_band, band, max_ks, far_cap,
+                            narrow, epoch=time.time(), stamp=f"{now:%Y-%m-%d %H:%M:%S}")
         with open(tmp, "w") as f:
-            f.write(f"# opt_chain {sym} | epoch {int(time.time())} | "
-                    f"{now:%Y-%m-%d %H:%M:%S} | spot {spot:.2f} | "
-                    f"exps {' '.join(exps)}\n")
-            f.write(f"# fuente ibkr_tws | band {band:.4f} | max_strikes {max_ks} | "
-                    f"narrow {1 if narrow else 0} | vencimientos {len(exps)} | rows {n} | "
-                    f"greeks_ok_pct {(g_ok / n) if n else 0:.4f} | "
-                    f"bidask_ok_pct {(q_ok / n) if n else 0:.4f}\n")
-            f.write("# strike right exp bid ask vol oi iv delta gamma\n")
+            f.write("\n".join(head) + "\n")
             f.write("\n".join(rows) + "\n")
         os.replace(tmp, path)
         try:

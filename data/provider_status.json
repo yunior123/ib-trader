@@ -1,0 +1,10 @@
+{
+  "epoch": 1785650088,
+  "market_provider": "intrinio",
+  "options_provider": "polygon",
+  "entitlement_messages": [],
+  "last_exchange_ts": {},
+  "note": "epoch de bars/nbbo = tiempo REAL de bolsa; comparar last_exchange_ts vs now para latencia",
+  "intrinio_stock_source": "equities_edge",
+  "intrinio_interval_source": "equities_edge"
+}

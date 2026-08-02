@@ -34,14 +34,30 @@ Encima, **3 posters de X** comparten un presupuesto y todos cierran cada post co
 
 ## 2. Cronograma launchd
 
-Dos jobs de launchd (usuario, en `~/Library/LaunchAgents/`):
+Cinco jobs de launchd (usuario, en `~/Library/LaunchAgents/`):
 
 | Job | Plist | Disparo | Script |
 |-----|-------|---------|--------|
 | `com.ibtrader.dailyplans` | `com.ibtrader.dailyplans.plist` | 04:00, 08:30, 09:12 ET | `scripts/dailyplans_run.sh` |
 | `com.ibtrader.postmortem` | `com.ibtrader.postmortem.plist` | 16:20 ET | `scripts/postmortem_run.sh` |
+| `com.ibtrader.printpremarket` | `com.ibtrader.printpremarket.plist` | 09:12 ET, lun-vie | `scripts/print_premarket_trees.sh` → `data/print_syms_premarket.txt` |
+| `com.ibtrader.printopen5` | `com.ibtrader.printopen5.plist` | 09:35 ET, lun-vie | `scripts/print_open5_spy_aapl.sh` → `data/print_syms_open5.txt` |
+| `com.ibtrader.printpostmarket` | `com.ibtrader.printpostmarket.plist` | 16:25 ET, lun-vie | `scripts/print_postmarket_plans.sh` → `data/print_syms_postmarket.txt` |
 
-`RunAtLoad` es `false` en ambos: solo corren en su horario, no al cargar. El modo
+Los tres jobs de impresión son envoltorios finos sobre el motor `scripts/print_plans.sh`
+(`--syms-file` + `--trees` / `--envelope` / `--archive` / `--market-day` / `--print`). Reglas:
+
+- **launchd no conoce los festivos** (`Weekday 1-5` es solo lun-vie): el filtro real es
+  `--market-day`, que usa la tabla única `em_envelope.HOLIDAYS` (levanta si se agota, no
+  asume "hoy sí hay mercado").
+- **Fail-loud**: un símbolo sin `data/history/*/chain_full_<sym>.json` fresco (≤4 días) se
+  SALTA, se canta por notificación y el job sale con código ≠0. Nunca se imprime un plan con
+  niveles fabricados. `GLW/NBIS/BE` no están en `data/universe_gamma.txt`, así que el job de
+  post-market lleva `--archive` y se trae su propia cadena antes de dibujar.
+- **Papel**: `IBT_ALLOW_PRINT=1` o `--print` (orden Yunior 2026-07-27). Los tres jobs pasan
+  `--print`; para correr en seco: `IBT_ALLOW_PRINT=0 ./scripts/print_plans.sh --syms-file ...`.
+
+`RunAtLoad` es `false` en todos: solo corren en su horario, no al cargar. El modo
 del job de planes lo decide `dailyplans_run.sh` según la hora (`$HM = date +%H%M`):
 
 ```zsh
@@ -65,14 +81,16 @@ en días hábiles. Verificá que esté vivo con `pgrep -f x_signal_poster`.
 # Verificar que están cargados
 launchctl list | grep ibtrader
 
-# Recargar tras editar un plist
-launchctl unload ~/Library/LaunchAgents/com.ibtrader.dailyplans.plist
-launchctl load   ~/Library/LaunchAgents/com.ibtrader.dailyplans.plist
-# (idem com.ibtrader.postmortem.plist)
+# Instalar / recargar tras editar un plist (los plists viven en scripts/, se COPIAN a LaunchAgents)
+cp ~/ib-trader/scripts/com.ibtrader.printopen5.plist ~/Library/LaunchAgents/
+launchctl unload ~/Library/LaunchAgents/com.ibtrader.printopen5.plist
+launchctl load   ~/Library/LaunchAgents/com.ibtrader.printopen5.plist
+# (idem dailyplans / postmortem / printpremarket / printpostmarket)
 
 # Forzar una corrida AHORA (respeta el modo por hora en dailyplans)
 launchctl start com.ibtrader.dailyplans
 launchctl start com.ibtrader.postmortem
+launchctl start com.ibtrader.printopen5      # en fin de semana sale por el portero, sin imprimir
 
 # Apagar un job (deja de dispararse hasta recargarlo)
 launchctl unload ~/Library/LaunchAgents/com.ibtrader.dailyplans.plist

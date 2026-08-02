@@ -1,135 +1,135 @@
 {
- "bytes_today": 79836884,
- "date": "2026-07-30",
- "projected_mb_day": 76.88,
+ "bytes_today": 76928357,
+ "date": "2026-07-31",
+ "projected_mb_day": 74.08,
  "rows_today": 2430,
  "skipped_already_done": [],
  "slot": "1605",
  "slots_today": 81,
  "stale": [
   {
-   "age_s": 9246,
+   "age_s": 95646,
    "sym": "AAPL"
   },
   {
-   "age_s": 85551,
+   "age_s": 171951,
    "sym": "AMD"
   },
   {
-   "age_s": 9861,
+   "age_s": 63663,
    "sym": "AMZN"
   },
   {
-   "age_s": 126513,
+   "age_s": 212913,
    "sym": "ASML"
   },
   {
-   "age_s": 126511,
+   "age_s": 212911,
    "sym": "AVGO"
   },
   {
-   "age_s": 126508,
+   "age_s": 212908,
    "sym": "DRAM"
   },
   {
-   "age_s": 126509,
+   "age_s": 212909,
    "sym": "EWY"
   },
   {
-   "age_s": 126510,
+   "age_s": 212910,
    "sym": "GLD"
   },
   {
-   "age_s": 68940,
+   "age_s": 17166,
    "sym": "GOOGL"
   },
   {
-   "age_s": 126514,
+   "age_s": 212914,
    "sym": "INTC"
   },
   {
-   "age_s": 126506,
+   "age_s": 212906,
    "sym": "LRCX"
   },
   {
-   "age_s": 85648,
+   "age_s": 172048,
    "sym": "META"
   },
   {
-   "age_s": 24188,
+   "age_s": 110588,
    "sym": "MSFT"
   },
   {
-   "age_s": 24188,
+   "age_s": 110588,
    "sym": "MU"
   },
   {
-   "age_s": 102443,
+   "age_s": 188843,
    "sym": "NFLX"
   },
   {
-   "age_s": 16637,
+   "age_s": 23869,
    "sym": "NOK"
   },
   {
-   "age_s": 24188,
+   "age_s": 110588,
    "sym": "NVDA"
   },
   {
-   "age_s": 126512,
+   "age_s": 212912,
    "sym": "QCOM"
   },
   {
-   "age_s": 24188,
+   "age_s": 110588,
    "sym": "QQQ"
   },
   {
-   "age_s": 126507,
+   "age_s": 212907,
    "sym": "SKHY"
   },
   {
-   "age_s": 24188,
+   "age_s": 110588,
    "sym": "SMH"
   },
   {
-   "age_s": 126506,
+   "age_s": 212906,
    "sym": "SNDK"
   },
   {
-   "age_s": 15532,
+   "age_s": 101932,
    "sym": "SPCX"
   },
   {
-   "age_s": 9234,
+   "age_s": 17073,
    "sym": "SPY"
   },
   {
-   "age_s": 126504,
+   "age_s": 212904,
    "sym": "STX"
   },
   {
-   "age_s": 126520,
+   "age_s": 212920,
    "sym": "TSLA"
   },
   {
-   "age_s": 126514,
+   "age_s": 212914,
    "sym": "TSM"
   },
   {
-   "age_s": 126513,
+   "age_s": 212913,
    "sym": "TXN"
   },
   {
-   "age_s": 126505,
+   "age_s": 212905,
    "sym": "WDC"
   },
   {
-   "age_s": 126509,
+   "age_s": 212909,
    "sym": "XLK"
   }
  ],
  "syms_expected": 30,
- "ts": 1785441976,
+ "ts": 1785528502,
  "unreadable": [],
  "written": [
   "AAPL",

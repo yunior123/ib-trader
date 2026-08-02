@@ -1,72 +1,72 @@
 {
  "$462-$479": {
-  "calls_vol": 18,
-  "puts_vol": 305,
-  "total": 323,
+  "calls_vol": 35,
+  "puts_vol": 1645,
+  "total": 1680,
   "dominance": "PUTS",
-  "ratio": 0.06
+  "ratio": 0.02
  },
  "$479-$495": {
-  "calls_vol": 131,
-  "puts_vol": 356,
-  "total": 487,
+  "calls_vol": 81,
+  "puts_vol": 465,
+  "total": 546,
   "dominance": "PUTS",
-  "ratio": 0.37
+  "ratio": 0.17
  },
  "$495-$511": {
-  "calls_vol": 188,
-  "puts_vol": 248,
-  "total": 436,
-  "dominance": "MIXED",
-  "ratio": 0.76
+  "calls_vol": 124,
+  "puts_vol": 632,
+  "total": 756,
+  "dominance": "PUTS",
+  "ratio": 0.2
  },
  "$511-$528": {
-  "calls_vol": 497,
-  "puts_vol": 535,
-  "total": 1032,
-  "dominance": "MIXED",
-  "ratio": 0.93
+  "calls_vol": 382,
+  "puts_vol": 1099,
+  "total": 1481,
+  "dominance": "PUTS",
+  "ratio": 0.35
  },
  "$528-$544": {
-  "calls_vol": 870,
-  "puts_vol": 419,
-  "total": 1289,
-  "dominance": "CALLS",
-  "ratio": 2.08
+  "calls_vol": 2747,
+  "puts_vol": 1873,
+  "total": 4620,
+  "dominance": "MIXED",
+  "ratio": 1.47
  },
  "$544-$560": {
-  "calls_vol": 1243,
-  "puts_vol": 92,
-  "total": 1335,
+  "calls_vol": 2374,
+  "puts_vol": 1105,
+  "total": 3479,
   "dominance": "CALLS",
-  "ratio": 13.51
+  "ratio": 2.15
  },
  "$560-$576": {
-  "calls_vol": 655,
-  "puts_vol": 8,
-  "total": 663,
+  "calls_vol": 1094,
+  "puts_vol": 354,
+  "total": 1448,
   "dominance": "CALLS",
-  "ratio": 81.88
+  "ratio": 3.09
  },
  "$576-$592": {
-  "calls_vol": 159,
-  "puts_vol": 12,
-  "total": 171,
+  "calls_vol": 521,
+  "puts_vol": 24,
+  "total": 545,
   "dominance": "CALLS",
-  "ratio": 13.25
+  "ratio": 21.71
  },
  "$592-$609": {
-  "calls_vol": 157,
-  "puts_vol": 7,
-  "total": 164,
+  "calls_vol": 748,
+  "puts_vol": 9,
+  "total": 757,
   "dominance": "CALLS",
-  "ratio": 22.43
+  "ratio": 83.11
  },
  "$609-$625": {
-  "calls_vol": 630,
+  "calls_vol": 482,
   "puts_vol": 4,
-  "total": 634,
+  "total": 486,
   "dominance": "CALLS",
-  "ratio": 157.5
+  "ratio": 120.5
  }
 }

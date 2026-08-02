@@ -1,10 +1,15 @@
 from __future__ import annotations
 
+import json
 from datetime import date, timedelta
 
 import pytest
 
-from backend.app.analytics.options_positioning import MATRIX_BAND, compute_trace_matrix
+from backend.app.analytics.options_positioning import (
+    MATRIX_BAND,
+    compute_trace_matrix,
+    read_trace_cube,
+)
 from backend.app.domain import OptionContract
 from backend.app.providers.mock import MockProvider
 
@@ -54,3 +59,114 @@ def test_trace_fail_loud_empty_and_missing_greeks() -> None:
 def test_trace_bad_metric_raises() -> None:
     with pytest.raises(ValueError):
         compute_trace_matrix("X", 100.0, [], metric="bogus")
+
+
+# ---- measured time axis (scripts/trace_cube.py) ---------------------------------
+
+EPOCHS = [1785504900, 1785506100, 1785508500]
+
+
+def _cube() -> dict:
+    return {
+        "meta": {
+            "sym": "X", "date": "2026-07-31", "band": 0.12, "generated_epoch": 1785600000,
+            "source": "ibkr_tws chain snapshots", "epochs": EPOCHS,
+            "labels": ["09:35", "09:55", "10:35"], "spots": [100.5, 101.0, 101.5],
+            "greeks_ok_pct": [1.0, 0.0, 1.0], "strikes": [101.0, 100.0],
+            "columns": 3, "columns_with_gex": 2,
+            "intraday_variation": {"gex": 1.0, "netoi": 0.0},
+        },
+        "cells": {
+            # la foto del medio (09:55) NO tiene griegas -> ni una celda de gex: columna VACIA
+            "gex": {"100|1785504900": 4.0, "101|1785504900": -2.0,
+                    "100|1785508500": 5.0, "101|1785508500": -3.0},
+            "netoi": {"100|%d" % e: 200.0 for e in EPOCHS} | {"101|%d" % e: -600.0 for e in EPOCHS},
+        },
+    }
+
+
+def _write_cube(tmp_path, cube: dict, sym: str = "x"):
+    (tmp_path / f"trace_cube_{sym}.json").write_text(json.dumps(cube))
+    return tmp_path
+
+
+def test_time_axis_flat_without_cube() -> None:
+    call = OptionContract(symbol="X", expiration=date.today() + timedelta(days=30), strike=100,
+                          option_type="call", open_interest=1000, gamma=0.02)
+    matrix = compute_trace_matrix("X", 100.0, [call], metric="gex")
+    assert matrix["time_axis"] == "flat_current"
+    assert matrix["trace_time"] is None
+    assert any("NOT measured" in c for c in matrix["caveats"])
+
+
+def test_time_axis_measured_with_cube() -> None:
+    call = OptionContract(symbol="X", expiration=date.today() + timedelta(days=30), strike=100,
+                          option_type="call", open_interest=1000, gamma=0.02)
+    matrix = compute_trace_matrix("X", 100.0, [call], metric="gex", cube=_cube())
+    tt = matrix["trace_time"]
+    assert matrix["time_axis"] == "measured"
+    assert [c["epoch"] for c in tt["columns"]] == EPOCHS          # tantas columnas como el fichero
+    assert len(tt["columns"]) == _cube()["meta"]["columns"]
+    assert [c["has_data"] for c in tt["columns"]] == [True, False, True]   # la vacia se declara
+    assert tt["cells"]["100|1785504900"] == 4.0
+    assert tt["date"] == "2026-07-31" and tt["strikes"] == [101.0, 100.0]
+    assert any("Time axis MEASURED: 2/3" in c for c in matrix["caveats"])
+
+
+def test_measured_axis_per_metric() -> None:
+    """netoi tiene las 3 columnas; gex solo 2. Cada metrica declara LO SUYO."""
+    matrix = compute_trace_matrix("X", 100.0, [], metric="netoi", cube=_cube())
+    assert matrix["time_axis"] == "measured"
+    assert all(c["has_data"] for c in matrix["trace_time"]["columns"])
+    assert matrix["trace_time"]["intraday_variation"] == 0.0
+    assert any("T+1" in c for c in matrix["caveats"])
+
+
+def test_cube_without_the_requested_metric_falls_back_to_flat() -> None:
+    cube = _cube()
+    cube["cells"]["gex"] = {}
+    matrix = compute_trace_matrix("X", 100.0, [], metric="gex", cube=cube)
+    assert matrix["time_axis"] == "flat_current" and matrix["trace_time"] is None
+
+
+def test_read_trace_cube_paths_and_garbage(tmp_path) -> None:
+    assert read_trace_cube("X", base_dir=tmp_path) is None            # no existe
+    _write_cube(tmp_path, _cube())
+    assert read_trace_cube("X", base_dir=tmp_path)["meta"]["sym"] == "X"
+    assert read_trace_cube("x", base_dir=tmp_path) is not None        # case-insensitive
+    (tmp_path / "trace_cube_y.json").write_text("{not json")
+    assert read_trace_cube("Y", base_dir=tmp_path) is None            # ilegible -> flat, declarado
+    (tmp_path / "trace_cube_z.json").write_text(json.dumps({"meta": {"epochs": []}, "cells": {}}))
+    assert read_trace_cube("Z", base_dir=tmp_path) is None            # sin columnas -> flat
+
+
+def test_read_trace_cube_env_override(tmp_path, monkeypatch) -> None:
+    _write_cube(tmp_path, _cube())
+    monkeypatch.setenv("MIT_TRACE_CUBE_DIR", str(tmp_path))
+    assert read_trace_cube("X") is not None
+
+
+@pytest.mark.asyncio
+async def test_orchestrator_serves_the_measured_axis(tmp_path, monkeypatch) -> None:
+    from backend.app.config import Settings
+    from backend.app.engine.event_bus import EventBus
+    from backend.app.engine.orchestrator import MarketIntelligenceEngine
+    from backend.app.providers.registry import build_providers
+
+    _write_cube(tmp_path, _cube(), sym="spy")
+    monkeypatch.setenv("MIT_TRACE_CUBE_DIR", str(tmp_path))
+    settings = Settings()
+    engine = MarketIntelligenceEngine(settings, build_providers(settings), EventBus())
+    try:
+        measured = await engine.trace_matrix("SPY", metric="netoi")
+        flat = await engine.trace_matrix("QQQ", metric="netoi")
+    finally:
+        await engine.close()
+    assert measured["time_axis"] == "measured"
+    assert len(measured["trace_time"]["columns"]) == 3
+    # velas del proveedor: fuera de la sesion del cubo -> se filtran y queda el spot MEDIDO
+    assert all(EPOCHS[0] - 3600 <= c["time"] <= EPOCHS[-1] + 3600 for c in measured["candles"])
+    assert measured["price_source"] in {"candles", "spot_track"}
+    assert [p["value"] for p in measured["spot_track"]] == [100.5, 101.0, 101.5]
+    assert flat["time_axis"] == "flat_current" and flat["trace_time"] is None
+    assert "spot_track" not in flat

@@ -4,11 +4,19 @@
  "syms": {
   "AAPL": {
    "absorption_ready": false,
-   "days": {},
+   "days": {
+    "2026-07-31": {
+     "first_ts": 1785530200,
+     "last_ts": 1785530717,
+     "minutes_with_print": 10,
+     "pct_of_session_covered": 2.6,
+     "rows": 76
+    }
+   },
    "gaps": 0,
-   "rows": 0,
-   "sessions": 0,
-   "zero_byte": true
+   "rows": 76,
+   "sessions": 1,
+   "zero_byte": false
   },
   "AMD": {
    "absorption_ready": false,
@@ -58,6 +66,22 @@
    "sessions": 0,
    "zero_byte": true
   },
+  "MSFT": {
+   "absorption_ready": false,
+   "days": {
+    "2026-07-31": {
+     "first_ts": 1785530221,
+     "last_ts": 1785530717,
+     "minutes_with_print": 9,
+     "pct_of_session_covered": 2.3,
+     "rows": 17
+    }
+   },
+   "gaps": 0,
+   "rows": 17,
+   "sessions": 1,
+   "zero_byte": false
+  },
   "MU": {
    "absorption_ready": false,
    "days": {
@@ -81,12 +105,19 @@
      "minutes_with_print": 784,
      "pct_of_session_covered": 201.0,
      "rows": 910985
+    },
+    "2026-07-31": {
+     "first_ts": 1785484800,
+     "last_ts": 1785528772,
+     "minutes_with_print": 732,
+     "pct_of_session_covered": 187.7,
+     "rows": 1240559
     }
    },
    "gaps": 0,
-   "rows": 1273713,
-   "sessions": 3,
-   "zero_byte": true
+   "rows": 2514272,
+   "sessions": 4,
+   "zero_byte": false
   },
   "NOK": {
    "absorption_ready": false,
@@ -164,11 +195,18 @@
      "minutes_with_print": 774,
      "pct_of_session_covered": 198.5,
      "rows": 724420
+    },
+    "2026-07-31": {
+     "first_ts": 1785484800,
+     "last_ts": 1785530717,
+     "minutes_with_print": 738,
+     "pct_of_session_covered": 189.2,
+     "rows": 946873
     }
    },
    "gaps": 0,
-   "rows": 1448607,
-   "sessions": 4,
+   "rows": 2395480,
+   "sessions": 5,
    "zero_byte": false
   },
   "SKHY": {
@@ -217,11 +255,18 @@
      "minutes_with_print": 607,
      "pct_of_session_covered": 155.6,
      "rows": 119549
+    },
+    "2026-07-31": {
+     "first_ts": 1785484800,
+     "last_ts": 1785530665,
+     "minutes_with_print": 554,
+     "pct_of_session_covered": 142.1,
+     "rows": 239823
     }
    },
    "gaps": 0,
-   "rows": 306281,
-   "sessions": 4,
+   "rows": 546104,
+   "sessions": 5,
    "zero_byte": false
   },
   "SNDK": {
@@ -240,11 +285,18 @@
      "minutes_with_print": 772,
      "pct_of_session_covered": 197.9,
      "rows": 577585
+    },
+    "2026-07-31": {
+     "first_ts": 1785484800,
+     "last_ts": 1785528770,
+     "minutes_with_print": 732,
+     "pct_of_session_covered": 187.7,
+     "rows": 772386
     }
    },
    "gaps": 0,
-   "rows": 590580,
-   "sessions": 2,
+   "rows": 1362966,
+   "sessions": 3,
    "zero_byte": false
   },
   "SPCX": {
@@ -293,11 +345,18 @@
      "minutes_with_print": 731,
      "pct_of_session_covered": 187.4,
      "rows": 854091
+    },
+    "2026-07-31": {
+     "first_ts": 1785484800,
+     "last_ts": 1785530726,
+     "minutes_with_print": 682,
+     "pct_of_session_covered": 174.9,
+     "rows": 1176476
     }
    },
    "gaps": 0,
-   "rows": 1597792,
-   "sessions": 4,
+   "rows": 2774268,
+   "sessions": 5,
    "zero_byte": false
   },
   "TSLA": {
@@ -347,6 +406,6 @@
    "zero_byte": true
   }
  },
- "updated": 1785472652,
+ "updated": 1785654928,
  "whale_min_usd": 50000.0
 }

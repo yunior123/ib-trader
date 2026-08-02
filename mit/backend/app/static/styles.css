@@ -103,9 +103,10 @@ select option { background: #111a28; }
 .tr-body { display: grid; grid-template-columns: 210px 1fr; gap: 10px; height: 520px; }
 .tr-left { display: flex; flex-direction: column; min-width: 0; border: 1px solid rgba(141,165,196,.1); border-radius: 10px; background: #0b0710; padding: 8px; }
 .tr-left-title { color: var(--muted); font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 6px; }
-.tr-bars { flex: 1; display: flex; flex-direction: column; gap: 1px; overflow: hidden; font-variant-numeric: tabular-nums; }
-.tr-bar-row { flex: 1; display: grid; grid-template-columns: 46px 1fr; align-items: center; gap: 5px; min-height: 0; }
-.tr-bar-strike { font-size: 8.5px; color: #9db0c8; text-align: right; font-family: "SF Mono", ui-monospace, Menlo, monospace; }
+/* min-height:0 o el contenido desborda el panel (flex items no bajan de su altura de contenido) */
+.tr-bars { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 1px; overflow: hidden; font-variant-numeric: tabular-nums; }
+.tr-bar-row { flex: 1; display: grid; grid-template-columns: 46px 1fr; align-items: center; gap: 5px; min-height: 0; overflow: hidden; }
+.tr-bar-strike { font-size: 8.5px; line-height: 1; color: #9db0c8; text-align: right; font-family: "SF Mono", ui-monospace, Menlo, monospace; }
 .tr-bar-strike.tr-spot { color: #fff; font-weight: 800; }
 .tr-bar-track { position: relative; height: 62%; background: rgba(255,255,255,.03); border-radius: 2px; }
 .tr-bar-track::before { content: ""; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: rgba(255,255,255,.14); }
@@ -116,10 +117,19 @@ select option { background: #111a28; }
 .tr-canvas { position: absolute; inset: 0; z-index: 0; width: 100%; height: 100%; }
 .tr-chart { position: absolute; inset: 0; z-index: 1; }
 .tr-empty { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; color: var(--muted); font-size: 12px; background: rgba(10,6,16,.6); }
-.tr-scrubber { margin-top: 10px; }
-.tr-scrub-track { position: relative; height: 4px; border-radius: 99px; background: linear-gradient(90deg, rgba(50,214,160,.5), rgba(84,217,255,.35)); }
-.tr-scrub-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 62%; border-radius: 99px; background: rgba(84,217,255,.55); }
-.tr-scrub-handle { position: absolute; left: 62%; top: -4px; width: 12px; height: 12px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px rgba(84,217,255,.7); transform: translateX(-50%); }
+.tr-scrubber { margin-top: 12px; }
+.tr-scrub-track { position: relative; height: 4px; border-radius: 99px; background: linear-gradient(90deg, rgba(50,214,160,.5), rgba(84,217,255,.35)); cursor: ew-resize; touch-action: none; }
+.tr-scrub-track:focus-visible { outline: 2px solid rgba(84,217,255,.6); outline-offset: 6px; border-radius: 99px; }
+.tr-scrub-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 0%; border-radius: 99px; background: rgba(84,217,255,.55); }
+.tr-scrub-handle { position: absolute; left: 0%; top: -4px; width: 12px; height: 12px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px rgba(84,217,255,.7); transform: translateX(-50%); }
+.tr-scrub-meta { display: flex; align-items: center; gap: 8px; margin-top: 7px; font-size: 10px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.tr-axis-badge { border: 1px solid var(--line); border-radius: 99px; padding: 2px 8px; font-size: 9px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.tr-axis-badge.measured { color: var(--green); border-color: rgba(50,214,160,.3); background: rgba(50,214,160,.1); }
+.tr-axis-badge.flat { color: var(--amber); border-color: rgba(255,190,79,.3); background: rgba(255,190,79,.08); }
+/* Sin columnas medidas el scrubber queda inerte Y se ve inerte (no un slider que miente). */
+.tr-scrubber.disabled .tr-scrub-track { background: rgba(255,255,255,.06); cursor: not-allowed; pointer-events: none; }
+.tr-scrubber.disabled .tr-scrub-fill { background: transparent; }
+.tr-scrubber.disabled .tr-scrub-handle { background: rgba(255,255,255,.18); box-shadow: none; }
 .tr-legend { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; font-size: 10px; color: var(--muted); }
 .tr-legend span::before { content: ""; width: 8px; height: 3px; border-radius: 2px; display: inline-block; margin-right: 5px; vertical-align: middle; background: var(--color); }
 @media (max-width: 900px) { .tr-body { grid-template-columns: 1fr; height: auto; }.tr-left { height: 160px; }.tr-main { height: 380px; } }

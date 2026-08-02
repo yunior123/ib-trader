@@ -29,13 +29,14 @@ I/O-bound — la matematica de senal sigue en C++.
 
 Uso: korea_bar_bridge.py [--daemon]   (por defecto daemon)
 """
-import os, subprocess, sys, time
+import json, os, subprocess, sys, time
 from datetime import timezone
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "scripts"))
 import ib_mode  # noqa: E402
+import overnight_feed as ovf  # noqa: E402   krx_boundary vive ahi: UNA sola definicion
 from ib_insync import IB, Contract, util  # noqa: E402
 
 HOST = "127.0.0.1"
@@ -264,6 +265,80 @@ def archive_bars_before_warmup(name):
         print(f"{name}: archive FALLO — {e} — NO truncando", file=sys.stderr)
         return False
 
+def prevclose_path():
+    return os.path.join(ROOT, "data", ovf.PREVCLOSE_NAME)
+
+def read_bar_rows(path):
+    """[(epoch, close)] de un fichero de barras. [] si no existe o no se puede leer."""
+    rows = []
+    try:
+        with open(path) as f:
+            for ln in f:
+                p = ln.split()
+                if len(p) < 5:
+                    continue
+                try:
+                    rows.append((float(p[0]), float(p[4])))
+                except ValueError:
+                    continue
+    except Exception:
+        return []
+    return rows
+
+def prev_close_from_rows(rows, boundary):
+    """(close, epoch) de la ULTIMA barra anterior al boundary KRX. None si no hay ninguna:
+    sin barra previa NO hay referencia — jamas el open ni 0.0 (regla #2)."""
+    best = None
+    for ep, c in rows:
+        if ep < boundary and c > 0 and (best is None or ep > best[1]):
+            best = (c, ep)
+    return best
+
+def update_prev_close(name, rows, boundary):
+    """Persiste el cierre de la sesion KRX ANTERIOR en data/korea_prevclose.json (atomico).
+    Sin barra utilizable no escribe entrada; nunca retrocede a una barra mas vieja."""
+    pc = prev_close_from_rows(rows, boundary)
+    if pc is None:
+        print(f"{name}: sin barra pre-boundary — prev_close NO escrito", file=sys.stderr)
+        return None
+    close, ep = pc
+    path = prevclose_path()
+    try:
+        with open(path) as f:
+            cur = json.load(f)
+        if not isinstance(cur, dict):
+            cur = {}
+    except Exception:
+        cur = {}
+    old = cur.get(name)
+    if isinstance(old, dict) and float(old.get("epoch") or 0) >= ep:
+        return old
+    entry = {"close": round(float(close), 4), "epoch": int(ep),
+             "session": ovf.krx_session_date(ep)}
+    cur[name] = entry
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    tmp = path + ".tmp"
+    with open(tmp, "w") as f:
+        json.dump(cur, f)
+    os.replace(tmp, path)
+    print(f"{name}: prev_close {entry['close']} ({entry['session']}) persistido",
+          file=sys.stderr)
+    return entry
+
+_pc_boundary = 0.0
+
+def maybe_roll_prev_close(names=CORE, now=None):
+    """Al cruzar el boundary KRX el fichero vivo aun contiene la sesion anterior: fijar
+    ahi el prev_close antes de que warmup lo trunque. True si hubo roll."""
+    global _pc_boundary
+    b = ovf.krx_boundary(now)
+    if b == _pc_boundary:
+        return False
+    _pc_boundary = b
+    for name in names:
+        update_prev_close(name, read_bar_rows(bars_path(name)), b)
+    return True
+
 def freshness_guard(now=None):
     """GRITA si KRX esta abierto y el ultimo bar pasa de STALE_MAX_S. True si grito."""
     if not krx_market():
@@ -300,6 +375,8 @@ def resub_all(ib, why):
 def warmup(ib, st):
     """Archivar barras existentes antes de truncar; luego cargar histórico 1 día."""
     conId, sym = KOREA[st.name]
+    boundary = ovf.krx_boundary()
+    old_rows = read_bar_rows(bars_path(st.name))   # el fichero VIVO aun tiene la sesion previa
     if not archive_bars_before_warmup(st.name):
         print(f"{st.name}: saltando warmup por fallo en archivado", file=sys.stderr)
         return
@@ -310,6 +387,7 @@ def warmup(ib, st):
     except Exception as e:
         print(f"{st.name}: warmup fallo ({e})", file=sys.stderr); return
     n = 0
+    rows = list(old_rows)
     with open(bars_path(st.name), "w") as f:
         for b in hist:
             if not (b.close and b.close > 0):
@@ -318,6 +396,8 @@ def warmup(ib, st):
             v = float(b.volume) if b.volume and b.volume > 0 else 0
             f.write(f"{m:.0f} {b.open:.4f} {b.high:.4f} {b.low:.4f} {b.close:.4f} {v:.0f}\n")
             st.last_emitted = m; n += 1
+            rows.append((m, float(b.close)))
+    update_prev_close(st.name, rows, boundary)     # truncar el fichero no puede borrar la referencia
     print(f"{st.name} ({sym}): warmup {n} bars", file=sys.stderr)
 
 def subscribe_sym(ib, st):
@@ -367,9 +447,11 @@ def run():
     print(f"korea bridge: TWS {HOST}:{port}, {len(KOREA)} KRX syms "
           f"(core {'+'.join(CORE)} + {len(KOREA)-len(CORE)} satelites HBM, "
           f"bars 5s->1m + NBBO)", file=sys.stderr)
+    maybe_roll_prev_close()
     for st in STATES.values():
         warmup(ib, st)
     while ib.isConnected():
+        maybe_roll_prev_close()
         for st in STATES.values():
             subscribe_sym(ib, st)
         # STALL WATCHDOG (paridad con daemon NA 2026-07-15): en sesion KRX,
@@ -412,6 +494,7 @@ def main():
                      voz="Puente de Corea caído.")
             for st in STATES.values():
                 st.subs = []; st.blocked_until = 0
+        maybe_roll_prev_close()   # sin Gateway el boundary igual rueda: no perder la referencia
         freshness_guard()
         time.sleep(RETRY_S)
 

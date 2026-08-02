@@ -1,0 +1,12 @@
+{
+ "symbol": "SPY",
+ "state": "INSUFFICIENT_DATA",
+ "scores": {},
+ "reasons": [
+  "n_bars 156 < required 260 (5m-equivalent)"
+ ],
+ "bar_epoch": 1785527940,
+ "n_bars": 156,
+ "updated_utc": "2026-08-02T07:14:59.568804+00:00",
+ "shadow": true
+}

@@ -1,0 +1,67 @@
+{
+  "generated_epoch": 1785654940,
+  "generated": "2026-08-02T03:15:40-0400",
+  "market_state": "DEAD",
+  "steps": [
+    {
+      "id": "1",
+      "name": "portero fleet_hours",
+      "status": "PASS",
+      "evidence": "state=DEAD live=False now=dom 2026-08-02 03:14 EDT window=dom20:00-vie20:00 detail=faltan 16h45m para el arranque (dom 20:00) "
+    },
+    {
+      "id": "2",
+      "name": "contrato ficheros vivos (bars/nbbo/chain)",
+      "status": "PASS",
+      "evidence": "26 syms | 75 ficheros validos | edad 81-2108 min (viejo=chain_TXN) | faltan 3: opt_chain_nflx.txt, opt_chain_gld.txt, opt_chain_xlk.txt (con mercado cerrado la edad alta es correcta; lo que no vale es malformado) "
+    },
+    {
+      "id": "3",
+      "name": "opt_quick sobre cadena real",
+      "status": "PASS",
+      "evidence": "AAPL: AAPL | spot 308.92 | cache 2026-07-31 16:07:16  (edad 2107m43s)  ** CACHE VIEJO ** | exps 20260731 20260803 "
+    },
+    {
+      "id": "4",
+      "name": "reversal_router --once",
+      "status": "PASS",
+      "evidence": "QQQ=INSUFFICIENT_DATA SPY=INSUFFICIENT_DATA NVDA=INSUFFICIENT_DATA (INSUFFICIENT_DATA es el estado legitimo con barras cortas) "
+    },
+    {
+      "id": "5",
+      "name": "shock_calibrator --once",
+      "status": "PASS",
+      "evidence": "2 simbolos: QQQ(INFO), SPY(INFO) | metric=reversion_prob = fraccion de shocks comparables pasados con ALGUN cierre opuesto dentro del horizonte (OCURRENCIA, NO first-touch ni PnL). Condicion de alerta, no prediccion; None si muestra < piso. min_n=20 "
+    },
+    {
+      "id": "6",
+      "name": "terminal mit (gex_heatmap + trace)",
+      "status": "PASS",
+      "evidence": "puerto 57479: heatmap 152 strikes x 4 exps, 497 celdas, spot 744.27 | trace 152 strikes, 85 velas, call_wall=775.0 put_wall=360.0 flip=729.98087891209 max_pain=725.0 | screenshot data/e2e_shots/mit_terminal.png (266281 bytes, PNG completo) "
+    },
+    {
+      "id": "7",
+      "name": "guarda anti-mock + cero fugas de key",
+      "status": "PASS",
+      "evidence": "resuelto market=IntrinioProvider options=PolygonProvider | provider_status market=intrinio options=polygon | market_source=intrinio | 24 secretos vigilados, 0 fugas "
+    },
+    {
+      "id": "8",
+      "name": "suite base pytest tests/",
+      "status": "SKIPPED",
+      "evidence": "--fast: suites omitidas a peticion "
+    },
+    {
+      "id": "9",
+      "name": "suite mit backend/tests",
+      "status": "SKIPPED",
+      "evidence": "--fast: suites omitidas a peticion "
+    }
+  ],
+  "summary": {
+    "pass": 7,
+    "fail": 0,
+    "skipped": 2,
+    "total": 9
+  }
+}

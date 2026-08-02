@@ -36,7 +36,10 @@ rompa rompe `scripts/opt_quick.cpp` (el lector mas rapido de la flota, parseo PO
 | campo | significado |
 |---|---|
 | `fuente` | `ibkr_tws` \| `polygon_snapshot_v3` \| `cboe_delayed` — de donde salieron las griegas |
-| `band` | banda de strikes REAL usada por el fetcher (±fraccion del spot). En `poly_chain_archive` es **adaptativa por simbolo** desde el 2026-07-26 (0,10–0,60): leerla del fichero, jamas asumirla |
+| `band` | banda de strikes REAL usada por el fetcher (±fraccion del spot). En `poly_chain_archive` es **adaptativa por simbolo** desde el 2026-07-26 (0,10–0,60): leerla del fichero, jamas asumirla. **Desde 2026-08-02 es la banda EXTERIOR** (la de la ola lejana), no la del ATM: `gex_core.from_ibkr_cache` la usa como **FILTRO de strikes al leer**, asi que declarar aqui la banda densa tiraria la ola lejana de los NARROW y el arreglo del `BAND_FLOOR` habria sido inerte |
+| `band_atm` | (2026-08-02) banda DENSA alrededor del ATM, donde se muestrea strike a strike. `band_atm <= band` siempre |
+| `far_max_strikes` | (2026-08-02) tope de strikes de la ola LEJANA (entre `band_atm` y `band`), muestreados linealmente incluyendo ambos bordes |
+| `span_pct` | (2026-08-02) semiancho REAL escrito, `(max(k)-min(k))/2/spot`. Es **el numero que `chart_levels` compara contra `BAND_FLOOR` (0.10)** para decidir si usa la cadena IBKR o cae a Polygon. `-1.0` si no hay filas o spot (no se finge un 0) |
 | `exp_hasta` | ultimo vencimiento incluido (`poly_chain_archive`: el mensual siguiente) |
 | `spot_src` / `spot_edad_s` | de donde salio el spot y su edad. **NO se llama `spot`**: `opt_quick.cpp:92` hace `strstr("spot ")+atof` en cualquier linea `#`, y `spot ibkr_bridge` le daba `spot=0` (regla 2) |
 | `max_strikes` | tope de strikes por vencimiento |

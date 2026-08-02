@@ -82,13 +82,16 @@ SDK `intriniorealtime` (`pip install intriniorealtime`), NO en REST.
 - Options: `IntrinioRealtimeOptionsClient(Config(api_key=K, provider=Providers.OPTIONS_EDGE, symbols=[...]), on_trade, on_quote)`;
   auth `https://options-edge.intrinio.com/auth`; providers: `OPRA|OPTIONS_EDGE`; `OPRA_FIREHOSE` para todo.
 
-**MEDIDO 2026-08-02**: con nuestras 2 keys, los auth de equities-edge/options-edge/opra/realtime-mx
-CONECTAN (TCP/TLS) pero devuelven **Empty reply / cierran sin HTTP** = key SIN entitlement realtime
-(una entitled devuelve un token). O sea: el mecanismo es correcto, pero el feed realtime hay que
-ACTIVARLO en la cuenta/key. Diagnóstico: `curl https://equities-edge.intrinio.com/auth?api_key=K`
-→ "Empty reply from server" = no entitled; → token JSON = entitled.
-Cuando se active: construir `providers/intrinio_realtime.py` (un fichero, @register) que corra el
-WS EQUITIES_EDGE/OPTIONS_EDGE y alimente los ficheros de la flota — reemplaza al puente REST delayed.
+**MEDIDO 2026-08-02**: los auth de equities-edge/options-edge/opra/realtime-mx CONECTAN (TCP/TLS)
+pero devuelven **Empty reply / cierran sin HTTP**.
+~~= key SIN entitlement realtime~~ ❌ **ESA LECTURA ERA FALSA** — ver la corrección de más abajo:
+un fallo de entitlement daría 401/403 **con cuerpo**, y `/securities/replay?subsource=equities_edge`
+responde **200**, o sea que EquitiesEdge SÍ está contratado. La causa más probable es que Intrinio
+**apaga el cluster de streaming fuera de horario de mercado**.
+El provider ya existe: `mit/backend/app/providers/intrinio_realtime.py` (@register
+`intrinio_realtime`), con pre-chequeo de auth ACOTADO — obligatorio, porque
+`equities_client.py:262` hace `requests.get` **sin timeout** y su `connect()` reintenta en bucle
+infinito: arrancar el SDK con el socket apagado deja un hilo girando para siempre.
 
 ## EL SOURCE CORRECTO ES `equities_edge` (medido 2026-08-02) + por qué el WS cae
 FIX medido: el REST realtime FMV funciona con **`source=equities_edge`** (NO iex/intrinio_mx, que
@@ -96,8 +99,81 @@ degradan a cboe_one_delayed). HTTP 200, `src=equities_edge`, sin downgrade, en `
 `/quote` y `/prices/intervals`. Entonces **EquitiesEdge FMV SÍ está entitled** en la key. Config:
 `MIT_INTRINIO_STOCK_SOURCE=equities_edge` + `MIT_INTRINIO_INTERVAL_SOURCE=equities_edge`.
 WebSocket (más rápido): `equities-edge.intrinio.com/auth` completa TLS, recibe el GET y **cierra
-sin respuesta HTTP** desde Toronto Y desde VPN US de **datacenter (Datacamp)**. Eso NO es
-entitlement (sería 403 con cuerpo; y el REST equities_edge da 200) → es **IP de datacenter
-bloqueada por el edge del exchange** o **host de streaming no provisionado**. Para el WS: IP US
-**RESIDENCIAL** (no datacenter/VPN) o pedir a Intrinio que provisione/whiteliste el host de
-streaming. Opciones FMV: `/options/snapshots` (bulk 5min, 200) sí; `/options/chain` por símbolo = 403.
+sin respuesta HTTP**. Opciones FMV: `/options/snapshots` (bulk 5min, 200) sí; `/options/chain` por
+símbolo = 403.
+
+### ⚠️ CORRECCIÓN 2026-08-02 02:30 ET — NO es la IP ni el entitlement (medido, la nota vieja era falsa)
+La hipótesis anterior ("IP de datacenter bloqueada / whitelist") queda **REFUTADA** por medición:
+- **check-host.net, 20 nodos** (BR CA CH DE×2 ES FI HU IN IR IT JP PT RU SE TR UA US×2 VN): los
+  **20 fallan con `Broken pipe` a 5,1-6,9 s** contra 52.71.202.77, **sin enviar api_key**. El
+  control `api-v2.intrinio.com` da **OK en los 20**. Un bloqueo por IP no puede fallar en 20 países
+  a la vez; y sin key enviada, el entitlement no puede intervenir.
+- **Los 7 hosts del SDK fallan idéntico** (`realtime-mx`, `realtime-delayed-sip`,
+  `realtime-nasdaq-basic`, `cboe-one`, `equities-edge`, `realtime-options`, `options-edge`),
+  cada uno en su IP. Incluye `cboe-one`/`realtime-delayed-sip`, que sirven datos **delayed que SÍ
+  tenemos** — si fuera entitlement darían 401/403 **con cuerpo**.
+- **El servidor nunca lee la petición**: cierra a los ~5,14 s **aunque no se envíe un solo byte**
+  tras el handshake (`api-v2` en cambio aguanta >30 s ocioso). ~5000 ms es el `request_timeout`
+  por defecto de Cowboy (Erlang/Phoenix). Patrón de **balanceador vivo con backend ausente**.
+- **Control de "mercado cerrado"**: Polygon `wss://socket.polygon.io/stocks` el mismo domingo
+  conecta en 0,27 s y responde al auth **con cuerpo**. O sea: que el mercado esté cerrado no tumba
+  por sí solo un endpoint de streaming — pero Intrinio **puede** apagar su cluster fuera de horario.
+
+### CAUSA MÁS PROBABLE (~70%, NO cerrada): apagado del cluster fuera de horario
+Lo **cerrado y medido** es el diagnóstico técnico: *edge TLS de AWS vivo + app Phoenix/Cowboy detrás
+ausente*. Lo que falta por cerrar es el PORQUÉ de negocio. No lo afirmes como certeza hasta el lunes.
+
+Citas verificadas a mano en la fuente primaria (2026-08-02):
+- **La buena** — `intrinio-realtime-csharp-sdk/README.md:500` (repo con push el 2026-07-29), une los
+  dos términos sin inferir nada:
+  > "…especially useful for testing **when the markets are closed and the websocket servers are
+  > off for the night**."
+- `intrinio.com/how-to/stream-stock-trades-and-quotes` → Prerequisites: **"Testing the code during
+  market hours"**.
+- El SDK de equities documenta el **ReplayClient** con caso de uso declarado *"while the servers are down"*.
+- "…and **when then servers turn on every morning**" aparece en `java-sdk:356`, `go-sdk:382`,
+  `options-python-sdk:377`, `options-java-sdk:332`. ⚠️ **Es un párrafo boilerplate copiado entre
+  repos: cuenta como UNA fuente, no como cuatro.**
+
+**Lo que NO sostiene la hipótesis** (no lo uses como prueba):
+- `status.intrinio.com` = *All Systems Operational* **NO prueba que no haya outage**: su
+  `components.json` solo cubre APIv1/APIv2/Web APIs — **no hay componente de streaming**, así que una
+  caída del socket es INVISIBLE ahí. Además, de 50 incidentes históricos: 0 en sábado, 1 en domingo,
+  48/50 creados entre 09:00 y 17:36 ET → una caída de viernes noche no se publicaría hasta el lunes.
+- La doc dice "night"/"every morning"/"during market hours", **jamás menciona fin de semana ni una
+  hora numérica**. `docs.intrinio.com/documentation/websocket_*` da HTTP 500 y
+  `/websocket/getting_started` da 404.
+- Un servidor "apagado" no completa un TLS 1.3 con cert válido: lo medido es *backend muerto*,
+  compatible con escalado a cero pero **inferencia nuestra, no texto del vendor**.
+
+Ranking honesto: **A (apagado programado) 70% · B (outage en curso) 17% · D (provisioning aparte) 3%
+como causa del síntoma · C (hosts migrados) 3%**. C queda **REFUTADA**: 6.3.0 es el último en PyPI y
+los SDK de C#/Go/Java apuntan en HEAD a los MISMOS 7 hosts. A y B no son excluyentes.
+
+`/auth` y el socket **viven en el mismo host y la misma app Phoenix** (`equities_client.py:179-196`
+vs `:206-224`), así que apagar el cluster de streaming tumba `/auth` por construcción — eso explica
+exactamente el síntoma (TLS del balanceador OK + Cowboy ausente + cierre a los 5 s).
+
+**Lo que NO está documentado**: la ventana horaria numérica. Dicen "every morning" / "off for the
+night", nunca "04:00 ET". Si enciende sábados/domingos tampoco consta. Eso lo mide la sonda.
+
+**FMV EquitiesEdge está entitled, probado por otra vía**:
+`GET /securities/replay?subsource=equities_edge&date=<YYYY-MM-DD>` → **200** con URL S3 firmada
+(`EQUITIES_EDGE_20260731.bin`, 3,25 GB/día). `iex` y `cboe_one` dan **403** en ese mismo endpoint.
+El fichero es autodelimitado y se puede leer **por rangos HTTP** sin bajar los 3 GB:
+`[tipo(1)][len(1)][msg(len-2)][time_received(8, <Q)]` repetido. Con esto se valida el camino
+completo con el mercado cerrado — es el "replay client" que ellos mismos recomiendan.
+⚠️ **Medido: el replay de EQUITIES_EDGE trae SOLO trades, cero quotes** (216.265 msgs de premarket
+y 108.718 de RTH, 100% tipo 0). La doc del SDK **sí** describe mensajes Quote con `EQUITIES_EDGE`
+como subprovider y da requisitos aparte para "Trades and Quotes", así que lo más probable es que sea
+una limitación del *fichero de replay*, no del socket. **Confirmar en vivo el lunes**: sin quotes no
+hay NBBO de Intrinio y el gate de spread se queda ciego (el provider deja bid/ask en 0 y el puente
+rechaza — falla cerrado, que es lo correcto, pero deja la flota sin gate por esa fuente).
+
+**Estado honesto**: el WS **nunca se ha medido con el mercado abierto**. Todas las medidas (2026-08-01
+noche y 2026-08-02 madrugada) son fuera de sesión. La sonda `scripts/intrinio_ws_probe.py`
+(job `com.ibtrader.intrinioprobe`, cada 10 min, sin portero horario) escribe
+`data/intrinio_ws_probe.jsonl` con cada fila etiquetada por fase de sesión: si revive justo al abrir
+premarket el lunes, la causa es horaria; si sigue muerto en RTH, es outage/provisioning y toca soporte.
+Provider listo para entrar solo: `mit/backend/app/providers/intrinio_realtime.py` (@register
+`intrinio_realtime`) — levanta fail-loud si el socket no está, jamás sirve precio rancio como vivo.

@@ -8,10 +8,12 @@ Fuente de precios: IBKR MCP vía sesión viva (Polygon snapshot = 401, TWS cerra
 3. Append al pull_log: {ts, sym→last} de SPY QQQ MU AMZN AAPL + top-mover (para MEDIR el patrón "~00:30 pump" que reportó Yunior; no afirmar hasta tener varias noches).
 
 ## Triggers (SOLO estos = "seguro"; todo lo demás = SILENCIO):
-- **LONG_SQUEEZE**: last > call_wall Y regime NEG Y el pull anterior también estaba > call_wall (2 confirmaciones) → squeeze corto-gamma al alza. Capitán (SMH para semis, SPY/QQQ índice) no rojo.
+AJUSTE Yunior 2026-07-31 ~00:50: AVISAR TEMPRANO al primer trigger confirmado (2 pulls) — NO esperar a la extensión extrema (p.ej. NO esperar a que la memoria esté en 1000 para avisar). Umbral de confirmación = 2 pulls consecutivos, no 3+.
+- **LONG_SQUEEZE**: last > call_wall Y regime NEG Y el pull anterior también estaba > call_wall (2 confirmaciones) → squeeze corto-gamma al alza. Capitán (SMH para semis, SPY/QQQ índice) no rojo. AVISAR aquí, no más arriba.
 - **LONG_RECLAIM**: last recupera flip por ≥0.3% con call_wall ≥1% de recorrido Y capitán verde. 2 pulls.
 - **SHORT_BREAKDOWN**: last < put_wall Y < flip por ≥0.3%, capitán rojo/confirmando (tipo AAPL). 2 pulls.
-- **WALL_REJECT (scalp reversión)**: tras squeeze, 2 pulls estancados/bajando EN el call_wall = techo local → put scalp (espada-ballena). Simétrico en put_wall = rebote.
+- **WALL_REJECT / EXHAUSTION (scalp reversión — CRÍTICO para no perseguir el máximo)**: tras squeeze extendido, 2 pulls estancados/bajando en un techo (call_wall o número redondo) = techo local → avisar "posible techo, tomar beneficio / no perseguir". Simétrico en put_wall = rebote.
+- **MU ESCALERA HACIA 1000 (foco Yunior)**: MU rompió 900. Niveles a vigilar por encima: 920, 950, 975, **1000 (número redondo/imán psicológico)**. Avisar cuando: (a) MU rompe y AGUANTA 950 con 2 pulls + volumen (posible run a 1000), o (b) MU se estanca/rechaza en un escalón con volumen cayendo (agotamiento antes de 1000). Ambos son accionables — no callar hasta 1000.
 
 ## Reglas duras (doctrina casa):
 - **Dedupe**: no re-alertar mismo sym|dirección|nivel en la misma noche (state.alerts_sent).

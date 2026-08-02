@@ -14,10 +14,13 @@ sys.path.insert(0, os.path.join(REPO, "scripts"))
 import gex_core
 
 TZ = ZoneInfo("America/Toronto")
+KST = ZoneInfo("Asia/Seoul")
 OUT = os.path.join(REPO, "data", "overnight_ctx.json")
 SENT_DIR = os.path.join(REPO, "data", "x_sentiment")
-KOREA = {"hynix_pct": "bars_skhynix.txt", "samsung_pct": "bars_samsung.txt",
-         "kospi_pct": "bars_kospi.txt"}
+PREVCLOSE_NAME = "korea_prevclose.json"           # lo escribe korea_bar_bridge.update_prev_close
+PREVCLOSE = os.path.join(REPO, "data", PREVCLOSE_NAME)
+CTX_JSONL = os.path.join(REPO, "data", "history", "overnight_ctx.jsonl")
+KOREA = {"hynix_pct": "skhynix", "samsung_pct": "samsung", "kospi_pct": "kospi"}
 LOOP_S, RTH_NAP_S, SENT_MAX_AGE_S = 120, 300, 7200
 
 
@@ -42,24 +45,67 @@ def krx_boundary(now=None):
     return b.timestamp()
 
 
-def korea_pct(fname, boundary):
+def krx_session_date(epoch):
+    """Fecha KST de la sesion KRX a la que pertenece `epoch` (KRX 09:00-15:30 KST)."""
+    return datetime.fromtimestamp(epoch, KST).date().isoformat()
+
+
+def prev_krx_session_date(boundary):
+    """Fecha KST de la sesion inmediatamente ANTERIOR a la que abre en `boundary`."""
+    cur = datetime.fromtimestamp(boundary + 3600, KST).date()
+    d = cur - timedelta(days=1)
+    while d.weekday() >= 5:                       # KRX cierra sabado y domingo
+        d -= timedelta(days=1)
+    return d.isoformat()
+
+
+def load_prevclose(name, path=None):
+    """Entrada de data/korea_prevclose.json para `name`. None si falta o esta corrupta."""
+    try:
+        with open(path or PREVCLOSE) as f:
+            j = json.load(f)
+        e = j.get(name)
+        if not isinstance(e, dict):
+            return None
+        c, ep, s = e.get("close"), e.get("epoch"), e.get("session")
+        if not c or float(c) <= 0 or ep is None or not s:
+            return None
+        return {"close": float(c), "epoch": float(ep), "session": str(s)}
+    except Exception:
+        return None
+
+
+def korea_pct(name, boundary):
+    """(pct de la sesion KRX en curso, fuente de la referencia). Referencia: la ultima
+    barra pre-boundary del propio fichero; si ya no queda (warmup lo trunca), el
+    prev_close persistido SOLO si es de la sesion inmediatamente anterior.
+    Sin referencia honesta -> (None, None). Jamas 0.0 (regla #2)."""
     try:
         ref = last = None
         last_t = 0.0
-        with open(os.path.join(REPO, "data", fname)) as f:
-            for ln in f:
-                p = ln.split()
-                if len(p) < 5:
-                    continue
-                t, c = float(p[0]), float(p[4])
-                if t < boundary:
-                    ref = c
-                last, last_t = c, t
+        try:
+            with open(os.path.join(REPO, "data", f"bars_{name}.txt")) as f:
+                for ln in f:
+                    p = ln.split()
+                    if len(p) < 5:
+                        continue
+                    t, c = float(p[0]), float(p[4])
+                    if t < boundary:
+                        ref = c
+                    last, last_t = c, t
+        except FileNotFoundError:
+            return None, None
+        src = "bars" if ref else None
+        if not ref:
+            pc = load_prevclose(name)
+            if pc and pc["epoch"] < boundary and \
+                    pc["session"] == prev_krx_session_date(boundary):
+                ref, src = pc["close"], "prevclose"
         if ref and last is not None and last_t >= boundary:
-            return round((last - ref) / ref * 100.0, 4)
-        return None
+            return round((last - ref) / ref * 100.0, 4), src
+        return None, None
     except Exception:
-        return None
+        return None, None
 
 
 def sentiment():
@@ -83,16 +129,31 @@ def sentiment():
         return None
 
 
+def archive_ctx(ctx):
+    """Append 1 linea/ciclo: unica forma de MEDIR luego el patron de la madrugada."""
+    try:
+        os.makedirs(os.path.dirname(CTX_JSONL), exist_ok=True)
+        with open(CTX_JSONL, "a") as f:
+            f.write(json.dumps(ctx) + "\n")
+        return True
+    except Exception as e:
+        print(f"overnight_feed: archivo jsonl fallo — {e}", file=sys.stderr)
+        return False
+
+
 def build():
     ctx = {"ts": time.time(), "nq_pct": fut_pct("NQ=F"), "es_pct": fut_pct("ES=F")}
     b = krx_boundary()
-    for key, fname in KOREA.items():
-        ctx[key] = korea_pct(fname, b)
+    for key, name in KOREA.items():
+        pct, src = korea_pct(name, b)
+        ctx[key] = pct
+        ctx[key.replace("_pct", "_ref_src")] = src   # "bars"|"prevclose"|null: "no se" != "se, y es 0"
     ctx["sent"] = sentiment()
     tmp = OUT + ".tmp"
     with open(tmp, "w") as f:
         json.dump(ctx, f)
     os.replace(tmp, OUT)
+    archive_ctx(ctx)
     return ctx
 
 

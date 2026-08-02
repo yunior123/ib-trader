@@ -1,0 +1,193 @@
+{
+ "ts": 1785654448.314473,
+ "campo": "nq_pct",
+ "min_n": 30,
+ "n_noches": 4,
+ "noches": [
+  "2026-07-28",
+  "2026-07-29",
+  "2026-07-30",
+  "2026-08-01"
+ ],
+ "faltan_noches": 26,
+ "status": "DATA-INSUFFICIENT",
+ "source": "data/history/overnight_ctx.jsonl + logs/overnight_feed.log (futuros NQ/ES)",
+ "buckets": [
+  {
+   "bucket": 0,
+   "et": "20:00",
+   "n": 1,
+   "ups": 1,
+   "mean_ret_pct": 0.2471,
+   "status": "DATA-INSUFFICIENT",
+   "p_up": null,
+   "wilson_lo": null,
+   "wilson_hi": null
+  },
+  {
+   "bucket": 1,
+   "et": "20:30",
+   "n": 1,
+   "ups": 0,
+   "mean_ret_pct": -0.0496,
+   "status": "DATA-INSUFFICIENT",
+   "p_up": null,
+   "wilson_lo": null,
+   "wilson_hi": null
+  },
+  {
+   "bucket": 2,
+   "et": "21:00",
+   "n": 1,
+   "ups": 1,
+   "mean_ret_pct": 0.2967,
+   "status": "DATA-INSUFFICIENT",
+   "p_up": null,
+   "wilson_lo": null,
+   "wilson_hi": null
+  },
+  {
+   "bucket": 3,
+   "et": "21:30",
+   "n": 2,
+   "ups": 1,
+   "mean_ret_pct": -0.0042,
+   "status": "DATA-INSUFFICIENT",
+   "p_up": null,
+   "wilson_lo": null,
+   "wilson_hi": null
+  },
+  {
+   "bucket": 4,
+   "et": "22:00",
+   "n": 2,
+   "ups": 0,
+   "mean_ret_pct": -0.1611,
+   "status": "DATA-INSUFFICIENT",
+   "p_up": null,
+   "wilson_lo": null,
+   "wilson_hi": null
+  },
+  {
+   "bucket": 5,
+   "et": "22:30",
+   "n": 2,
+   "ups": 1,
+   "mean_ret_pct": -0.0453,
+   "status": "DATA-INSUFFICIENT",
+   "p_up": null,
+   "wilson_lo": null,
+   "wilson_hi": null
+  },
+  {
+   "bucket": 6,
+   "et": "23:00",
+   "n": 2,
+   "ups": 1,
+   "mean_ret_pct": -0.0978,
+   "status": "DATA-INSUFFICIENT",
+   "p_up": null,
+   "wilson_lo": null,
+   "wilson_hi": null
+  },
+  {
+   "bucket": 7,
+   "et": "23:30",
+   "n": 2,
+   "ups": 1,
+   "mean_ret_pct": 0.0213,
+   "status": "DATA-INSUFFICIENT",
+   "p_up": null,
+   "wilson_lo": null,
+   "wilson_hi": null
+  },
+  {
+   "bucket": 8,
+   "et": "00:00",
+   "n": 2,
+   "ups": 1,
+   "mean_ret_pct": -1.4969,
+   "status": "DATA-INSUFFICIENT",
+   "p_up": null,
+   "wilson_lo": null,
+   "wilson_hi": null
+  },
+  {
+   "bucket": 9,
+   "et": "00:30",
+   "n": 2,
+   "ups": 2,
+   "mean_ret_pct": 0.1192,
+   "status": "DATA-INSUFFICIENT",
+   "p_up": null,
+   "wilson_lo": null,
+   "wilson_hi": null
+  },
+  {
+   "bucket": 10,
+   "et": "01:00",
+   "n": 2,
+   "ups": 1,
+   "mean_ret_pct": 0.013,
+   "status": "DATA-INSUFFICIENT",
+   "p_up": null,
+   "wilson_lo": null,
+   "wilson_hi": null
+  },
+  {
+   "bucket": 11,
+   "et": "01:30",
+   "n": 2,
+   "ups": 2,
+   "mean_ret_pct": 0.1117,
+   "status": "DATA-INSUFFICIENT",
+   "p_up": null,
+   "wilson_lo": null,
+   "wilson_hi": null
+  },
+  {
+   "bucket": 12,
+   "et": "02:00",
+   "n": 2,
+   "ups": 1,
+   "mean_ret_pct": -0.0342,
+   "status": "DATA-INSUFFICIENT",
+   "p_up": null,
+   "wilson_lo": null,
+   "wilson_hi": null
+  },
+  {
+   "bucket": 13,
+   "et": "02:30",
+   "n": 3,
+   "ups": 1,
+   "mean_ret_pct": -0.1645,
+   "status": "DATA-INSUFFICIENT",
+   "p_up": null,
+   "wilson_lo": null,
+   "wilson_hi": null
+  },
+  {
+   "bucket": 14,
+   "et": "03:00",
+   "n": 3,
+   "ups": 2,
+   "mean_ret_pct": 0.0776,
+   "status": "DATA-INSUFFICIENT",
+   "p_up": null,
+   "wilson_lo": null,
+   "wilson_hi": null
+  },
+  {
+   "bucket": 15,
+   "et": "03:30",
+   "n": 3,
+   "ups": 2,
+   "mean_ret_pct": -0.0036,
+   "status": "DATA-INSUFFICIENT",
+   "p_up": null,
+   "wilson_lo": null,
+   "wilson_hi": null
+  }
+ ]
+}

@@ -1,9 +1,9 @@
 {
- "aviso": "caduca en 2 dia(s) segun FINVIZ_AUTH_EXPIRES",
+ "aviso": "caduca en 1 dia(s) segun FINVIZ_AUTH_EXPIRES",
  "caduca_declarado": "2026-08-01",
  "clave_efectiva": "FINVIZ_AUTH3",
- "dias_restantes": 2,
- "fecha": "2026-07-30",
+ "dias_restantes": 1,
+ "fecha": "2026-07-31",
  "http": 200,
  "motivo": "3 filas",
  "orden_de_busqueda": [
@@ -13,6 +13,6 @@
  "origen": "fichero",
  "sano": true,
  "token_cola": "8625",
- "ts": 1785416100,
+ "ts": 1785502503,
  "veredicto": "SANO_POR_POCO"
 }

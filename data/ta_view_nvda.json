@@ -1,5 +1,5 @@
 {
- "ts": 1785398623,
+ "ts": 1785485010,
  "sym": "NVDA",
  "error": "rc=1 sin veredicto; stderr: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/yuniorrodriguezosorio/ib-trader/ta_venv/lib/python3.12/site-packages/openai/_base_client.py\", line 1105, in request\n    raise self._make_status_error_from_response(err.response) from None\nopenai.APIStatusError: Error code: 402 - {'error': {'message': 'Insufficient Balance', 'type': 'unknown_error', 'param': None, 'code': 'invalid_request_error'}}"
 }
