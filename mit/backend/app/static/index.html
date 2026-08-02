@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>Market Intelligence Terminal</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+  <script src="https://unpkg.com/lightweight-charts@5.2.0/dist/lightweight-charts.standalone.production.js"></script>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand-block">
+        <div class="brand-mark">MI</div>
+        <div>
+          <h1>Market Intelligence</h1>
+          <p>Reversal · continuation · positioning · liquidity</p>
+        </div>
+      </div>
+      <div class="toolbar">
+        <label class="symbol-field">
+          <span>Symbol</span>
+          <select id="symbol-select"></select>
+        </label>
+        <button id="alarm-button" class="button">Alarm off</button>
+        <button id="refresh-button" class="button">Refresh</button>
+        <div id="connection-pill" class="pill pending"><span></span>Connecting</div>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <section class="market-header panel span-12">
+        <div>
+          <div class="eyebrow">LIVE DECISION MAP</div>
+          <div class="quote-row">
+            <strong id="quote-symbol">SPY</strong>
+            <span id="quote-last">—</span>
+            <span id="quote-change" class="muted">—</span>
+          </div>
+          <div id="quote-detail" class="subline">Bid — · Ask — · Spread —</div>
+        </div>
+        <div class="market-kpis">
+          <div class="kpi"><span>Gamma regime</span><strong id="gamma-regime">—</strong></div>
+          <div class="kpi"><span>Book imbalance</span><strong id="book-imbalance">—</strong></div>
+          <div class="kpi"><span>Shock state</span><strong id="shock-state">—</strong></div>
+          <div class="kpi"><span>Updated</span><strong id="updated-at">—</strong></div>
+        </div>
+      </section>
+
+      <section class="panel chart-panel span-8">
+        <div class="panel-heading">
+          <div><div class="eyebrow">PRICE + POSITIONING LEVELS</div><h2>Market structure</h2></div>
+          <div id="chart-legend" class="legend"></div>
+        </div>
+        <div id="price-chart" class="price-chart"></div>
+      </section>
+
+      <section class="panel signal-panel span-4">
+        <div class="panel-heading"><div><div class="eyebrow">STATE MACHINE</div><h2>Signal router</h2></div></div>
+        <div id="router-state" class="router-state neutral">NEUTRAL / CONFLICT</div>
+        <div class="signal-grid">
+          <article class="signal-card">
+            <div class="signal-top"><span>Bento</span><span id="bento-score">0%</span></div>
+            <strong id="bento-state">—</strong>
+            <small id="bento-direction">Independent reversal detector</small>
+          </article>
+          <article class="signal-card">
+            <div class="signal-top"><span>Trinity</span><span id="trinity-score">0%</span></div>
+            <strong id="trinity-state">—</strong>
+            <small id="trinity-direction">Independent continuation detector</small>
+          </article>
+        </div>
+        <div class="score-meter">
+          <div class="score-title"><span>Reversal confirmation</span><strong id="reversal-score">0 / 6</strong></div>
+          <div class="meter"><div id="reversal-meter"></div></div>
+        </div>
+        <div id="signal-reasons" class="reason-list"></div>
+      </section>
+
+      <section class="panel span-4">
+        <div class="panel-heading"><div><div class="eyebrow">DEALER PROXY</div><h2>Positioning</h2></div></div>
+        <div class="metric-matrix">
+          <div><span>Net GEX</span><strong id="net-gex">—</strong></div>
+          <div><span>Net DEX</span><strong id="net-dex">—</strong></div>
+          <div><span>Gamma flip</span><strong id="gamma-flip">—</strong></div>
+          <div><span>Expected move</span><strong id="expected-move">—</strong></div>
+          <div><span>Call wall</span><strong id="call-wall">—</strong></div>
+          <div><span>Put wall</span><strong id="put-wall">—</strong></div>
+        </div>
+        <div class="caveat">Open-interest gamma is a scenario proxy unless the provider supplies observed dealer positioning.</div>
+      </section>
+
+      <section class="panel span-4">
+        <div class="panel-heading"><div><div class="eyebrow">STRIKE MAP</div><h2>Gamma exposure</h2></div><span class="badge">GEX</span></div>
+        <div id="gex-bars" class="gex-bars"></div>
+      </section>
+
+      <section class="panel span-4">
+        <div class="panel-heading"><div><div class="eyebrow">LEVEL ENGINE</div><h2>Walls & magnets</h2></div></div>
+        <div id="magnet-list" class="magnet-list"></div>
+      </section>
+
+      <section class="panel shock-panel span-4">
+        <div class="panel-heading"><div><div class="eyebrow">10–15% / Z-SCORE WATCH</div><h2>Shock & reversion</h2></div><div id="shock-badge" class="badge">NORMAL</div></div>
+        <div class="shock-number"><strong id="shock-change">—</strong><span id="shock-zscore">—</span></div>
+        <div class="probability-block">
+          <div><span>Historical opposite move ≤2 sessions</span><strong id="reversion-probability">—</strong></div>
+          <div class="meter"><div id="probability-meter"></div></div>
+          <small id="reversion-sample">No calibration sample</small>
+        </div>
+        <p class="caveat" id="shock-note">Large moves can continue. This widget reports historical behavior; it never assumes automatic mean reversion.</p>
+      </section>
+
+      <section class="panel span-4">
+        <div class="panel-heading"><div><div class="eyebrow">L2 / L3 SIGNALS</div><h2>Deep book</h2></div></div>
+        <div class="book-visual">
+          <div class="book-side bid"><span>Bid wall</span><strong id="bid-wall">—</strong><small id="bid-wall-size">—</small></div>
+          <div class="book-center"><span>Microprice</span><strong id="microprice">—</strong><small id="spread">Spread —</small></div>
+          <div class="book-side ask"><span>Ask wall</span><strong id="ask-wall">—</strong><small id="ask-wall-size">—</small></div>
+        </div>
+        <div class="imbalance-track"><div id="imbalance-fill"></div><span class="midpoint"></span></div>
+      </section>
+
+      <section class="panel span-4">
+        <div class="panel-heading"><div><div class="eyebrow">UNUSUAL ACTIVITY</div><h2>Whale tape</h2></div><span id="flow-bias" class="badge">MIXED</span></div>
+        <div id="flow-list" class="flow-list"></div>
+      </section>
+
+      <section class="panel span-8">
+        <div class="panel-heading"><div><div class="eyebrow">MONDAY → FRIDAY</div><h2>Weekly shock matrix</h2></div><span class="microcopy">Every watchlist symbol, current week</span></div>
+        <div id="weekly-table" class="weekly-table"></div>
+      </section>
+
+      <section class="panel span-4">
+        <div class="panel-heading"><div><div class="eyebrow">ACTION QUEUE</div><h2>Alerts</h2></div><span id="alert-count" class="badge">0</span></div>
+        <div id="alert-list" class="alert-list"></div>
+      </section>
+
+      <section class="panel span-12 provider-panel">
+        <div class="panel-heading"><div><div class="eyebrow">DATA PLANE</div><h2>Provider health</h2></div><span id="mode-badge" class="badge">MOCK</span></div>
+        <div id="provider-list" class="provider-list"></div>
+      </section>
+    </main>
+    <footer class="footer">Charts by <a href="https://www.tradingview.com/lightweight-charts/" target="_blank" rel="noreferrer">TradingView Lightweight Charts™</a> · Research software, not investment advice.</footer>
+  </div>
+  <div id="toast-container" class="toast-container"></div>
+  <script type="module" src="/static/app.js"></script>
+</body>
+</html>

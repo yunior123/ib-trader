@@ -221,8 +221,9 @@ def test_10_sin_binario_el_shell_no_arranca_la_flota(tmp_path):
                        capture_output=True, text=True, timeout=120)
     assert p.returncode == 0, "el guardian sale limpio, no revienta: " + p.stderr
 
-    log = (tmp_path / "fleet_autostart.log")
-    assert log.exists(), "sin portero tiene que quedar rastro en fleet_autostart.log"
+    # logs viven en logs/ desde la reorg 2026-07-29 (el test apuntaba a la raiz, rancio)
+    log = (tmp_path / "logs" / "fleet_autostart.log")
+    assert log.exists(), "sin portero tiene que quedar rastro en logs/fleet_autostart.log"
     txt = log.read_text()
     assert "PORTERO AUSENTE" in txt, txt
     assert "lanzado" not in txt, "arranco algo sin portero: " + txt

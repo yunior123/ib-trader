@@ -1,0 +1,149 @@
+//@version=6
+indicator("Bento + Trinity Regime Router v2", overlay = true, max_labels_count = 500)
+
+// Keep Bento and Trinity independent. This third indicator is only a ROUTER:
+// - CONTINUATION ACTIVE — DO NOT FADE
+// - REVERSAL ARMED — WAIT
+// - REVERSAL CONFIRMED
+// It confirms a Bento reversal after 5 of 6 state changes and lets Trinity veto an early fade.
+
+string tz = input.string("America/New_York", "Session timezone")
+string rth = input.session("0930-1600", "Regular session")
+int bbLength = input.int(20, "Price Bollinger length", minval = 2)
+float bbDeviation = input.float(2.0, "Price Bollinger deviations", step = 0.1)
+int rsiLength = input.int(14, "RSI length", minval = 2)
+int rsiBBLength = input.int(20, "RSI Bollinger length", minval = 2)
+float rsiBBDeviation = input.float(2.0, "RSI Bollinger deviations", step = 0.1)
+int ribbonLength = input.int(20, "Ribbon length", minval = 2)
+int diLength = input.int(14, "DI length", minval = 2)
+int adxSmoothing = input.int(14, "ADX smoothing", minval = 2)
+float adxFloor = input.float(20.0, "ADX floor")
+float energyRatio = input.float(0.14, "ATR energy ratio", step = 0.01)
+int requiredScore = input.int(5, "Reversal confirmation score", minval = 1, maxval = 6)
+bool useConfirmedHTF = input.bool(false, "Use completed HTF EMA values")
+bool dynamicWebhookAlerts = input.bool(true, "Send dynamic alert() JSON")
+
+bool inSession = not na(time(timeframe.period, rth, tz))
+bool firstSessionBar = inSession and not inSession[1]
+bool isFiveMinute = timeframe.isminutes and timeframe.multiplier == 5
+var float sessionOpen = na
+if firstSessionBar
+    sessionOpen := open
+
+float previousDailyClose = request.security(syminfo.tickerid, "D", close[1], gaps = barmerge.gaps_off, lookahead = barmerge.lookahead_on)
+f_bb_state() =>
+    float basis = ta.sma(close, bbLength)
+    float deviation = bbDeviation * ta.stdev(close, bbLength)
+    [close, basis, basis + deviation, basis - deviation, ta.rsi(close, rsiLength)]
+[c15, basis15, upper15, lower15, rsi15] = request.security(syminfo.tickerid, "15", f_bb_state(), gaps = barmerge.gaps_off, lookahead = barmerge.lookahead_off)
+[c30, basis30, upper30, lower30, rsi30] = request.security(syminfo.tickerid, "30", f_bb_state(), gaps = barmerge.gaps_off, lookahead = barmerge.lookahead_off)
+
+f_mtf_ema(string tf) =>
+    useConfirmedHTF ? request.security(syminfo.tickerid, tf, ta.ema(close, 5)[1], gaps = barmerge.gaps_off, lookahead = barmerge.lookahead_on) : request.security(syminfo.tickerid, tf, ta.ema(close, 5), gaps = barmerge.gaps_off, lookahead = barmerge.lookahead_off)
+float ema5m = ta.ema(close, 5)
+float ema15m = f_mtf_ema("15")
+float ema60m = f_mtf_ema("60")
+float ema240m = f_mtf_ema("240")
+float emaDaily = f_mtf_ema("D")
+bool mtfBull = close > ema5m and close > ema15m and close > ema60m and close > ema240m and close > emaDaily
+bool mtfBear = close < ema5m and close < ema15m and close < ema60m and close < ema240m and close < emaDaily
+
+float ribbonHigh = ta.ema(high, ribbonLength)
+float ribbonMid = ta.ema(hlc3, ribbonLength)
+float ribbonLow = ta.ema(low, ribbonLength)
+float rsi = ta.rsi(close, rsiLength)
+float rsiBasis = ta.sma(rsi, rsiBBLength)
+float rsiDeviation = rsiBBDeviation * ta.stdev(rsi, rsiBBLength)
+float rsiUpper = rsiBasis + rsiDeviation
+float rsiLower = rsiBasis - rsiDeviation
+[plusDI, minusDI, adx] = ta.dmi(diLength, adxSmoothing)
+float atr5m = ta.atr(14)
+float previousDailyAtr = request.security(syminfo.tickerid, "D", ta.atr(14)[1], gaps = barmerge.gaps_off, lookahead = barmerge.lookahead_on)
+bool energy = previousDailyAtr > 0 and atr5m / previousDailyAtr >= energyRatio
+
+bool gapUp = sessionOpen > previousDailyClose
+bool gapDown = sessionOpen < previousDailyClose
+bool first30Close = inSession and hour(time, tz) == 9 and minute(time, tz) == 55
+bool armDownPulse = first30Close and gapUp and c15 > upper15 and rsi15 >= 70 and c30 > upper30 and rsi30 >= 70
+bool armUpPulse = first30Close and gapDown and c15 < lower15 and rsi15 <= 30 and c30 < lower30 and rsi30 <= 30
+
+bool trinityUp = inSession and mtfBull and close > ribbonHigh and rsi > rsiBasis and rsi > 50 and plusDI > minusDI and adx >= adxFloor and energy
+bool trinityDown = inSession and mtfBear and close < ribbonLow and rsi < rsiBasis and rsi < 50 and minusDI > plusDI and adx >= adxFloor and energy
+bool continuationUpPulse = trinityUp and not trinityUp[1]
+bool continuationDownPulse = trinityDown and not trinityDown[1]
+
+var int armedDirection = 0
+var int armedBar = na
+if firstSessionBar
+    armedDirection := 0
+    armedBar := na
+if armDownPulse
+    armedDirection := -1
+    armedBar := bar_index
+if armUpPulse
+    armedDirection := 1
+    armedBar := bar_index
+
+bool priceReenteredBand = armedDirection == -1 ? close <= upper15 : armedDirection == 1 ? close >= lower15 : false
+bool priceEnteredRibbon = armedDirection == -1 ? close <= ribbonHigh : armedDirection == 1 ? close >= ribbonLow : false
+bool rsiTurned = armedDirection == -1 ? rsi < rsi[1] and rsi < rsiUpper : armedDirection == 1 ? rsi > rsi[1] and rsi > rsiLower : false
+bool dmiFlipped = armedDirection == -1 ? minusDI > plusDI : armedDirection == 1 ? plusDI > minusDI : false
+bool originalMtfBroke = armedDirection == -1 ? not mtfBull : armedDirection == 1 ? not mtfBear : false
+bool reversalCandle = armedDirection == -1 ? close < open : armedDirection == 1 ? close > open : false
+int reversalScore = (priceReenteredBand ? 1 : 0) + (priceEnteredRibbon ? 1 : 0) + (rsiTurned ? 1 : 0) + (dmiFlipped ? 1 : 0) + (originalMtfBroke ? 1 : 0) + (reversalCandle ? 1 : 0)
+
+bool trinityOpposesArm = armedDirection == -1 ? trinityUp : armedDirection == 1 ? trinityDown : false
+bool confirmDown = armedDirection == -1 and bar_index > armedBar and reversalScore >= requiredScore
+bool confirmUp = armedDirection == 1 and bar_index > armedBar and reversalScore >= requiredScore
+bool doNotFade = armedDirection != 0 and trinityOpposesArm and reversalScore < requiredScore
+
+string routerState = confirmDown ? "REVERSAL CONFIRMED DOWN" : confirmUp ? "REVERSAL CONFIRMED UP" : doNotFade ? "CONTINUATION ACTIVE — DO NOT FADE" : armedDirection != 0 ? "REVERSAL ARMED — WAIT" : trinityUp ? "CONTINUATION ACTIVE UP" : trinityDown ? "CONTINUATION ACTIVE DOWN" : "NEUTRAL / CONFLICT"
+
+if confirmDown or confirmUp
+    armedDirection := 0
+    armedBar := na
+
+pHigh = plot(ribbonHigh, "Ribbon high", color = color.new(color.blue, 18))
+plot(ribbonMid, "Ribbon HLC3", color = color.new(color.blue, 40))
+pLow = plot(ribbonLow, "Ribbon low", color = color.new(color.blue, 18))
+fill(pHigh, pLow, color = color.new(color.blue, 89))
+plot(basis15, "15m Bollinger basis", color = color.new(color.gray, 30))
+
+bgcolor(doNotFade ? color.new(color.orange, 90) : confirmUp ? color.new(color.lime, 88) : confirmDown ? color.new(color.red, 88) : na)
+plotshape(armDownPulse, "Reversal armed down", shape.circle, location.abovebar, color.orange, size = size.small, text = "ARM")
+plotshape(armUpPulse, "Reversal armed up", shape.circle, location.belowbar, color.orange, size = size.small, text = "ARM")
+plotshape(continuationUpPulse, "Continuation up", shape.triangleup, location.belowbar, color.aqua, size = size.tiny, text = "C")
+plotshape(continuationDownPulse, "Continuation down", shape.triangledown, location.abovebar, color.fuchsia, size = size.tiny, text = "C")
+plotshape(confirmDown, "Reversal confirmed down", shape.triangledown, location.abovebar, color.red, size = size.large, text = "REV")
+plotshape(confirmUp, "Reversal confirmed up", shape.triangleup, location.belowbar, color.lime, size = size.large, text = "REV")
+
+alertcondition(continuationUpPulse, "Router continuation up", "Router classified CONTINUATION UP.")
+alertcondition(continuationDownPulse, "Router continuation down", "Router classified CONTINUATION DOWN.")
+alertcondition(doNotFade and not doNotFade[1], "Router do not fade", "Bento extreme exists, but Trinity continuation remains active. DO NOT FADE.")
+alertcondition(confirmDown, "Router reversal confirmed down", "Router confirmed REVERSAL DOWN with required score.")
+alertcondition(confirmUp, "Router reversal confirmed up", "Router confirmed REVERSAL UP with required score.")
+
+if dynamicWebhookAlerts and (confirmDown or confirmUp or continuationUpPulse or continuationDownPulse or (doNotFade and not doNotFade[1]))
+    string eventName = confirmDown ? "reversal_down" : confirmUp ? "reversal_up" : continuationUpPulse ? "continuation_up" : continuationDownPulse ? "continuation_down" : "do_not_fade"
+    alert('{"indicator":"regime_router_v2","symbol":"' + syminfo.ticker + '","event":"' + eventName + '","reversal_score":' + str.tostring(reversalScore) + ',"adx":' + str.tostring(adx, "#.##") + '}', alert.freq_once_per_bar_close)
+
+var table dashboard = table.new(position.top_right, 2, 9, border_width = 1)
+if barstate.islast
+    table.cell(dashboard, 0, 0, "REGIME ROUTER v2")
+    table.cell(dashboard, 1, 0, isFiveMinute ? "5m READY" : "USE 5m", bgcolor = isFiveMinute ? color.new(color.green, 75) : color.new(color.red, 70))
+    table.cell(dashboard, 0, 1, "Bento")
+    table.cell(dashboard, 1, 1, armedDirection == -1 ? "DOWN ARMED" : armedDirection == 1 ? "UP ARMED" : "OFF")
+    table.cell(dashboard, 0, 2, "Trinity")
+    table.cell(dashboard, 1, 2, trinityUp ? "CONTINUE UP" : trinityDown ? "CONTINUE DOWN" : "MIXED")
+    table.cell(dashboard, 0, 3, "Re-enter BB")
+    table.cell(dashboard, 1, 3, priceReenteredBand ? "YES" : "NO")
+    table.cell(dashboard, 0, 4, "Enter ribbon")
+    table.cell(dashboard, 1, 4, priceEnteredRibbon ? "YES" : "NO")
+    table.cell(dashboard, 0, 5, "RSI / DMI turn")
+    table.cell(dashboard, 1, 5, (rsiTurned ? "RSI " : "") + (dmiFlipped ? "DMI" : ""))
+    table.cell(dashboard, 0, 6, "MTF break / candle")
+    table.cell(dashboard, 1, 6, (originalMtfBroke ? "MTF " : "") + (reversalCandle ? "CANDLE" : ""))
+    table.cell(dashboard, 0, 7, "Reversal score")
+    table.cell(dashboard, 1, 7, str.tostring(reversalScore) + "/6")
+    table.cell(dashboard, 0, 8, "OUTPUT")
+    table.cell(dashboard, 1, 8, routerState, bgcolor = doNotFade ? color.new(color.orange, 70) : confirmUp ? color.new(color.green, 70) : confirmDown ? color.new(color.red, 70) : color.new(color.gray, 85))

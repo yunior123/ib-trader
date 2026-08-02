@@ -1,0 +1,36 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "market-intelligence-terminal"
+version = "0.2.0"
+description = "Provider-neutral real-time market, options, order-book and flow intelligence terminal"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "uvicorn[standard]>=0.34,<1",
+  "pydantic>=2.10,<3",
+  "pydantic-settings>=2.7,<3",
+  "httpx>=0.28,<1",
+  "websockets>=14,<16",
+  "numpy>=2.0,<3",
+  "pandas>=2.2,<3",
+  "scipy>=1.14,<2",
+]
+
+[project.optional-dependencies]
+databento = ["databento>=0.60,<1"]
+dev = ["pytest>=8,<9", "pytest-asyncio>=0.25,<1", "ruff>=0.9,<1"]
+all = ["databento>=0.60,<1", "pytest>=8,<9", "pytest-asyncio>=0.25,<1", "ruff>=0.9,<1"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["backend"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["backend/tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"

@@ -1,0 +1,9 @@
+{
+  "name": "Market Intelligence Terminal",
+  "version": "0.2.0",
+  "architecture": "separate Bento reversal + separate Trinity continuation + combined regime router",
+  "default_mode": "mock",
+  "ui": "TradingView Lightweight Charts 5.2.0",
+  "providers": ["mock", "databento", "intrinio", "unusual_whales"],
+  "not_for_order_execution": true
+}

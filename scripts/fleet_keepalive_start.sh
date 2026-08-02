@@ -7,6 +7,12 @@
 cd "$(dirname "$0")/.." || exit 1
 ROOT="$(pwd)"
 
+# --- FUENTE DE MARKET DATA (Yunior 2026-08-01): ibkr | intrinio -----------------
+# data/market_source.txt decide de donde salen barras/nbbo/cadena. "ibkr" = puentes
+# clasicos (ibkr_bar_bridge + opt_chain_cache). Cualquier otro valor (intrinio/...) =
+# provider_bridge.py (capa mit/, IBKR OFF). Korea sigue en IBKR (Intrinio no cubre KRX).
+MARKET_SOURCE="$(cat "$ROOT/data/market_source.txt" 2>/dev/null || echo ibkr)"
+
 # --- MUTEX contra arranques concurrentes (2026-07-26) -------------------------
 # El dedup de abajo es "pgrep ¿ya corre? -> si no, lanza": entre el pgrep y el nohup
 # hay una ventana. Si DOS instancias de este script corren a la vez (launchd cada
@@ -90,6 +96,7 @@ fleet_stop_bridges() {
   pkill -f 'scripts/ibkr_bar_bridge.py' 2>/dev/null
   pkill -f 'scripts/korea_bar_bridge.py' 2>/dev/null
   pkill -f 'scripts/chart_bridge.py' 2>/dev/null
+  pkill -f 'scripts/provider_bridge.py' 2>/dev/null   # bridge de datos generico: muere fuera de ventana como los demas
 }
 
 SIGDIR="$ROOT/data/trading-signals"
@@ -184,13 +191,29 @@ fi
 # cuyos keepalives se mataron el 2026-07-25. Tres suscripciones tick-by-tick gastadas en
 # nombres que ya nadie mira, y IBKR capea esas suscripciones por cuenta (err 10190).
 # `${=...}` es la division en palabras de zsh: sin el `=` la flota entera va como UN argumento.
-if ! pgrep -f "ibkr_bar_bridge.py --daemon" >/dev/null; then
-  FLEET_SYMS="$(cat "$ROOT/data/fleet.txt" 2>/dev/null)"
-  if [[ -z "$FLEET_SYMS" ]]; then
-    echo "$(date) fleet: data/fleet.txt vacio o ilegible -> NO lanzo el bridge (sin flota no hay feed que valga)" >> logs/fleet_autostart.log
-  else
-    nohup ./venv/bin/python scripts/ibkr_bar_bridge.py --daemon ${=FLEET_SYMS} >> logs/bridge_ibkr_fleet.log 2>&1 &
-    echo "$(date) fleet: ibkr fleet daemon lanzado (pid $!) con $(echo $FLEET_SYMS | wc -w | tr -d ' ') simbolos de data/fleet.txt" >> logs/fleet_autostart.log
+if [[ "$MARKET_SOURCE" == "ibkr" ]]; then
+  # Al revertir a IBKR: matar provider_bridge para no tener DOS escritores del mismo bars/nbbo.
+  pkill -f "provider_bridge.py --daemon" 2>/dev/null
+  if ! pgrep -f "ibkr_bar_bridge.py --daemon" >/dev/null; then
+    FLEET_SYMS="$(cat "$ROOT/data/fleet.txt" 2>/dev/null)"
+    if [[ -z "$FLEET_SYMS" ]]; then
+      echo "$(date) fleet: data/fleet.txt vacio o ilegible -> NO lanzo el bridge (sin flota no hay feed que valga)" >> logs/fleet_autostart.log
+    else
+      nohup ./venv/bin/python scripts/ibkr_bar_bridge.py --daemon ${=FLEET_SYMS} >> logs/bridge_ibkr_fleet.log 2>&1 &
+      echo "$(date) fleet: ibkr fleet daemon lanzado (pid $!) con $(echo $FLEET_SYMS | wc -w | tr -d ' ') simbolos de data/fleet.txt" >> logs/fleet_autostart.log
+    fi
+  fi
+else
+  # IBKR OFF: provider_bridge.py (mit/) llena bars/nbbo/opt_chain desde el proveedor elegido.
+  # market_source.txt ES el selector: exporta el nombre del proveedor de mercado (intrinio/...).
+  export MIT_MARKET_PROVIDER="$MARKET_SOURCE"
+  # Matar los escritores IBKR de los MISMOS ficheros (bars y opt_chain) para no duplicar.
+  pkill -f "ibkr_bar_bridge.py --daemon" 2>/dev/null
+  pkill -f "scripts/opt_chain_keepalive.sh" 2>/dev/null
+  pkill -f "scripts/opt_chain_cache.py" 2>/dev/null
+  if ! pgrep -f "provider_bridge.py --daemon" >/dev/null; then
+    nohup ./venv-mit/bin/python scripts/provider_bridge.py --daemon >> logs/provider_bridge.log 2>&1 &
+    echo "$(date) fleet: provider_bridge lanzado (pid $!) market=$MARKET_SOURCE (IBKR market data OFF)" >> logs/fleet_autostart.log
   fi
 fi
 
@@ -224,7 +247,7 @@ fi
 # (ib_insync readonly clientId 48) vuelca cada 3 min en RTH la cadena ±6% ATM
 # (2 vencimientos, 17 syms) a data/opt_chain_<sym>.txt; lector instantaneo:
 # ./opt_quick NVDA [strike C|P]. SEÑAL-SOLAMENTE, cero ordenes.
-if [ -f "$ROOT/scripts/opt_chain_cache.py" ] && ! pgrep -f "scripts/opt_chain_keepalive.sh" >/dev/null; then
+if [[ "$MARKET_SOURCE" == "ibkr" ]] && [ -f "$ROOT/scripts/opt_chain_cache.py" ] && ! pgrep -f "scripts/opt_chain_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/opt_chain_keepalive.sh" >/dev/null 2>&1 &
   echo "$(date) fleet: opt_chain_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi

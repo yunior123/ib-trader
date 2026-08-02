@@ -1,0 +1,10 @@
+fastapi>=0.115,<1
+uvicorn[standard]>=0.34,<1
+pydantic>=2.10,<3
+pydantic-settings>=2.7,<3
+httpx>=0.28,<1
+websockets>=14,<16
+numpy>=2.0,<3
+pandas>=2.2,<3
+scipy>=1.14,<2
+# Optional: databento>=0.60,<1

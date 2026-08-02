@@ -16,6 +16,7 @@ set -uo pipefail
 cd "$(dirname "$0")/.." || exit 1
 ROOT="$(pwd)"
 MODE="$(cat data/ib_mode.txt 2>/dev/null || echo paper)"
+MARKET_SOURCE="$(cat data/market_source.txt 2>/dev/null || echo ibkr)"
 
 alive() { pgrep -f "$1" >/dev/null 2>&1; }
 ok()    { print -P "  %F{green}✓%f $1"; }
@@ -26,9 +27,14 @@ status() {
   print -P "%F{cyan}=== estado de la flota ===%f  modo=$MODE"
   local n=$(pgrep -f '_signal_bot$' | wc -l | tr -d ' ')
   [[ $n -gt 0 ]] && ok "$n bots de señal" || bad "bots de señal: NINGUNO"
-  for p in ibkr_bar_bridge.py:"puente de barras IBKR" \
-           opt_chain_cache.py:"caché de cadenas de opciones" \
-           opt_whale_watch.py:"vigía de ballenas" \
+  # Feed de barras/cadena: según market_source (ibkr = puentes IBKR; otro = provider_bridge)
+  if [[ "$MARKET_SOURCE" == "ibkr" ]]; then
+    alive "ibkr_bar_bridge.py" && ok "puente de barras IBKR" || bad "puente de barras IBKR"
+    alive "opt_chain_cache.py" && ok "caché de cadenas de opciones (IBKR)" || bad "caché de cadenas (IBKR)"
+  else
+    alive "provider_bridge.py" && ok "provider_bridge ($MARKET_SOURCE): barras+nbbo+cadena" || bad "provider_bridge ($MARKET_SOURCE) CAÍDO"
+  fi
+  for p in opt_whale_watch.py:"vigía de ballenas" \
            notify_relay.sh:"relé de notificaciones" \
            voice_queue.sh:"cola de voz" \
            flow_pulse:"pulso de flujo" \
@@ -51,11 +57,18 @@ if [[ "${1:-}" == "--status" ]]; then status; exit 0; fi
 print -P "%F{cyan}=== levantando la flota ===%f  modo=$MODE  $(date '+%F %H:%M')"
 
 # 0) TWS/Gateway tiene que estar arriba: sin él no hay datos ni órdenes.
+#    EXCEPCION (Yunior 2026-08-01): con market_source != ibkr, el feed viene de
+#    provider_bridge (intrinio+polygon) y NO se necesita Gateway para market data.
+#    Gateway sigue haciendo falta para order_engine si se opera en vivo.
 port=4002; [[ "$MODE" == "live" ]] && port=4001
-if ! nc -z 127.0.0.1 $port 2>/dev/null && ! nc -z 127.0.0.1 7497 2>/dev/null \
-   && ! nc -z 127.0.0.1 7496 2>/dev/null; then
-  bad "NO hay TWS/Gateway escuchando. Ábrelo, entra con la cuenta $MODE, y repite."
-  exit 1
+if [[ "$MARKET_SOURCE" == "ibkr" ]]; then
+  if ! nc -z 127.0.0.1 $port 2>/dev/null && ! nc -z 127.0.0.1 7497 2>/dev/null \
+     && ! nc -z 127.0.0.1 7496 2>/dev/null; then
+    bad "NO hay TWS/Gateway escuchando. Ábrelo, entra con la cuenta $MODE, y repite."
+    exit 1
+  fi
+else
+  warn "market_source=$MARKET_SOURCE -> IBKR OFF para market data (feed via provider_bridge). Gateway solo hace falta para ordenes."
 fi
 
 # 1) permisos de escritura: si falla, las señales se pierden EN SILENCIO (lección 2026-07-24)

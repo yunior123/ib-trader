@@ -20,7 +20,21 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(REPO); sys.path.insert(0, os.path.join(REPO, "scripts"))
 import chart_levels
 
-FLEET = open("data/fleet.txt").read().split()
+# Universo de MANADA = lo que REALMENTE se alimenta. Con IBKR OFF (market_source!=ibkr) el
+# provider_bridge solo cubre provider_syms.txt (26); usarlo como denominador mantiene el gate de
+# cobertura honesto (need=int(26*0.90)=23) en vez de exigir 27/30 y dejar la alarma muda para
+# siempre. El bug de false-DANGER NO reaparece: el % se calcula sobre este MISMO universo.
+def _consensus_universe():
+    try:
+        ms = open("data/market_source.txt").read().strip()
+    except OSError:
+        ms = "ibkr"
+    path = "data/fleet.txt"
+    if ms != "ibkr" and os.path.exists("data/provider_syms.txt"):
+        path = "data/provider_syms.txt"
+    return open(path).read().split()
+
+FLEET = _consensus_universe()
 CAPS = ["SPY", "QQQ", "SMH"]
 PCT = float(os.environ.get("FLEET_CONS_PCT", "78"))
 MAX_BAR_AGE = float(os.environ.get("FLEET_CONS_MAX_BAR_AGE", "180"))   # s; barras mas viejas no votan
