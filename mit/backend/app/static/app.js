@@ -672,4 +672,54 @@ function renderProviders(items) {
 }
 function toast(title, message) { const node = document.createElement('div'); node.className = 'toast'; node.innerHTML = `<strong>${escapeHtml(title)}</strong><small>${escapeHtml(message)}</small>`; $('toast-container').appendChild(node); setTimeout(() => node.remove(), 8000); }
 
+document.getElementById('fut-refresh').addEventListener('click', loadFutures);
+setInterval(loadFutures, 60000);
+loadFutures().catch(e => console.error('gap map', e));
+
 bootstrap().catch(error => { console.error(error); setConnection('offline', 'Failed'); });
+
+// ---- Gap map (futuros CME + liderazgo coreano) --------------------------------------------
+// El widget esencial de futuros: entre el cierre del viernes y las 09:30 del lunes las acciones
+// US no imprimen NADA (medido 2026-08-02 21:18 ET: ultimo print de SPY/QQQ del viernes 19:59 y
+// el WS de Finnhub con 26 suscripciones a 0 trades). El hueco de los futuros es la unica
+// informacion de apertura que existe.
+async function loadFutures() {
+  let d;
+  try {
+    d = await fetch('/api/futures').then(r => { if (!r.ok) throw new Error(r.status); return r.json(); });
+  } catch (e) {
+    $('fut-rows').innerHTML = `<div class="empty">Gap map unavailable (${escapeHtml(String(e.message || e))})</div>`;
+    return;
+  }
+  const rows = $('fut-rows'), div = $('fut-diverge'), kr = $('fut-korea');
+  if (!d.disponible) {
+    rows.innerHTML = `<div class="empty">${escapeHtml(d.motivo || 'no data')}</div>`;
+    div.hidden = true; kr.innerHTML = ''; $('fut-age').textContent = '—';
+    $('fut-caveat').textContent = (d.avisos || []).join(' · ');
+    return;
+  }
+  $('fut-age').textContent = `${fmt(d.edad_s, 0)}s ago · ${d.generado_et || ''} ET`;
+  rows.innerHTML = d.futuros.map(f => {
+    const up = f.pct >= 0, io = f.implied_open;
+    // el retraso se PINTA: ninguna de las fuentes es tiempo real y el widget no puede disimularlo
+    const lag = f.lag_s == null ? 'lag ?' : `${fmt(f.lag_s / 60, 0)} min late`;
+    return `<div class="fut-row ${up ? 'up' : 'dn'}">
+      <div class="fut-name"><strong>${escapeHtml(f.nombre)}</strong><small>${escapeHtml(f.etiqueta || '')}</small></div>
+      <div class="fut-pct">${up ? '+' : ''}${fmt(f.pct, 2)}%</div>
+      <div class="fut-last">${fmt(f.last, 2)}<small>${f.rango && f.rango[0] != null ? `${fmt(f.rango[0], 2)} – ${fmt(f.rango[1], 2)}` : ''}</small></div>
+      <div class="fut-io">${io ? `${escapeHtml(io.simbolo)} → <strong>${fmt(io.apertura_implicita, 2)}</strong><small>${io.delta >= 0 ? '+' : ''}${fmt(io.delta, 2)} vs ${fmt(io.cierre_previo, 2)}</small>` : '<small class="muted">no cash proxy</small>'}</div>
+      <div class="fut-src"><small>${escapeHtml(f.fuente)} · ${lag}</small></div>
+    </div>`;
+  }).join('');
+  const kv = Object.entries(d.corea || {});
+  kr.innerHTML = kv.length
+    ? `<span class="fut-krlabel">🇰🇷 leads ~13h</span>` + kv.map(([n, v]) =>
+        `<span class="fut-kr ${v.pct >= 0 ? 'up' : 'dn'}">${escapeHtml(n)} ${v.pct == null ? '—' : `${v.pct >= 0 ? '+' : ''}${fmt(v.pct, 2)}%`}</span>`).join('')
+    : '';
+  const dv = d.divergencia;
+  if (dv && dv.hay) {
+    div.hidden = false;
+    div.textContent = `⚠ ${dv.lectura}: US ${dv.us_pct >= 0 ? '+' : ''}${fmt(dv.us_pct, 2)}% vs Korea ${fmt(dv.korea_pct, 2)}% — ${fmt(dv.brecha_pp, 2)} pp apart (doctrine, not measured)`;
+  } else div.hidden = true;
+  $('fut-caveat').textContent = [d.nota, ...(d.avisos || [])].filter(Boolean).join(' · ');
+}

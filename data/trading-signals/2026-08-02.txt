@@ -256,3 +256,4 @@
 20:13:00 | SKHYNIX TERREMOTO CAIDA | CUSUM: cayendo fuerte -7.68% px 1591000.00
 20:21:02 | KOSPI: SELL | KOSPI @ 99735.00 | prob 55% | estructura-rota+MACD15-flip-abajo+pierde-BB15mid+MACD15-rojo+ST5-alineado | fase=UNKNOWN
 20:25:02 | 🕳 CINTA CIEGA | CINTA CIEGA: 3 de la flota sin tape tick-by-tick (AAPL AMD TSM) — sus ballenas NO se ven, no es que no haya
+21:52:10 | 🕳 CINTA CIEGA | CINTA CIEGA: 3 de la flota sin tape tick-by-tick (AAPL AMD TSM) — sus ballenas NO se ven, no es que no haya

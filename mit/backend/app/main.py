@@ -8,6 +8,7 @@ from fastapi import FastAPI, HTTPException, WebSocket, WebSocketDisconnect
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
+from backend.app.analytics.overnight_futures import read_overnight
 from backend.app.config import get_settings
 from backend.app.engine import EventBus, MarketIntelligenceEngine
 from backend.app.providers.registry import build_providers
@@ -71,6 +72,12 @@ async def gex_heatmap(symbol: str, metric: str = "gex"):
     if metric not in {"gex", "vex"}:
         raise HTTPException(status_code=400, detail="Invalid metric")
     return await engine.gex_heatmap(symbol, metric=metric)
+
+
+@app.get("/api/futures")
+async def futures():
+    """Mapa de HUECO de la noche (futuros CME + apertura implicita + liderazgo coreano)."""
+    return read_overnight()
 
 
 @app.get("/api/trace/{symbol}")

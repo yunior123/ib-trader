@@ -43,7 +43,11 @@ AUTH_HOST = {
     "CBOE_ONE": "cboe-one", "EQUITIES_EDGE": "equities-edge",
 }
 PROVIDER = os.environ.get("MIT_INTRINIO_RT_PROVIDER", "EQUITIES_EDGE")
-WATCH_S = float(os.environ.get("INTRINIO_WS_WATCH_S", "30"))
+# 60 s y no 20: la doc de Intrinio avisa de que reconectar en cuanto algo falla "agota tu cupo de
+# conexiones y degenera en una espiral irresoluble de fallos" (Concurrent Connections, default 2).
+# Sondear /auth es HTTP y no gasta conexiones de socket, pero no hay ninguna prisa: el cluster
+# vuelve por la mañana y un sondeo por minuto lo detecta con 60 s de retraso como mucho.
+WATCH_S = float(os.environ.get("INTRINIO_WS_WATCH_S", "60"))
 UP_FILE = os.path.join(ROOT, "data", "intrinio_ws_up.json")
 SYMS_FILE = os.path.join(ROOT, "data", "provider_syms.txt")
 MAX_SUBS = int(os.environ.get("INTRINIO_WS_MAX_SUBS", "30"))

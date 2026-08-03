@@ -97,6 +97,7 @@ fleet_stop_bridges() {
   pkill -f 'scripts/korea_bar_bridge.py' 2>/dev/null
   pkill -f 'scripts/korea_naver_bridge.py' 2>/dev/null
   pkill -f 'scripts/finnhub_ws_bridge.py' 2>/dev/null
+  pkill -f 'scripts/futures_feed.py' 2>/dev/null
   pkill -f 'scripts/intrinio_ws_autostart.py' 2>/dev/null
   pkill -f 'scripts/chart_bridge.py' 2>/dev/null
   pkill -f 'scripts/provider_bridge.py' 2>/dev/null   # bridge de datos generico: muere fuera de ventana como los demas
@@ -250,6 +251,14 @@ fi
 # es REST con retraso; medido el 2026-08-02, de los sockets que tenemos key SOLO Finnhub abre y
 # acepta suscripciones (Polygon: "plan doesn't include websocket access"; UW: corta al instante;
 # Intrinio: cluster apagado del lado del vendor). Escribe data/rt_last_<SYM>.txt.
+# Mapa de HUECO de la noche (futuros CME + apertura implicita + liderazgo coreano). Es lo unico
+# que cotiza entre el cierre del viernes y las 09:30 del lunes: medido 2026-08-02 21:18 ET, el
+# ultimo print de SPY/QQQ era del viernes 19:59 y el WS de Finnhub llevaba 0 trades.
+if ! pgrep -f "scripts/futures_feed.py" >/dev/null; then
+  nohup ./venv/bin/python scripts/futures_feed.py >> logs/futures_feed.log 2>&1 &
+  echo "$(date) fleet: futures feed lanzado (pid $!)" >> logs/fleet_autostart.log
+fi
+
 if ! pgrep -f "scripts/finnhub_ws_bridge.py" >/dev/null; then
   nohup ./venv-mit/bin/python scripts/finnhub_ws_bridge.py >> logs/ws_finnhub.log 2>&1 &
   echo "$(date) fleet: finnhub ws bridge lanzado (pid $!)" >> logs/fleet_autostart.log
@@ -258,7 +267,7 @@ fi
 # Vigia del WebSocket de Intrinio: sondea /auth y lo enciende EN EL INSTANTE en que el vendor
 # levante su cluster (su propio SDK no se recupera solo — issue #7 abierto desde feb-2024).
 if ! pgrep -f "scripts/intrinio_ws_autostart.py" >/dev/null; then
-  nohup ./venv-mit/bin/python scripts/intrinio_ws_autostart.py --watch 20 >> logs/intrinio_ws_autostart.log 2>&1 &
+  nohup ./venv-mit/bin/python scripts/intrinio_ws_autostart.py --watch 60 >> logs/intrinio_ws_autostart.log 2>&1 &
   echo "$(date) fleet: intrinio ws autostart lanzado (pid $!)" >> logs/fleet_autostart.log
 fi
 

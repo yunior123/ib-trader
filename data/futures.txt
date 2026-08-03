@@ -1,0 +1,8 @@
+# Futuros de la noche. Formato: NOMBRE  RAIZ_CME  YAHOO  ETIQUETA  CASH_PROXY
+# CASH_PROXY = simbolo de la flota cuyo hueco de apertura describe (vacio = ninguno).
+# Los dos primeros son los CAPITANES de la noche: NQ manda sobre QQQ/semis, ES sobre SPY.
+NQ  NQ  NQ=F   Nasdaq-100 E-mini   QQQ
+ES  ES  ES=F   S&P 500 E-mini      SPY
+GC  GC  GC=F   Oro                 GLD
+CL  CL  CL=F   Crudo WTI           -
+RTY RTY RTY=F  Russell 2000        -
