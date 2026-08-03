@@ -17,3 +17,6 @@
 06:16:49 | 🔒 TRUTH-LOCK INFO | LRCX: PASADO reescrito (2 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
 06:16:50 | 🔒 TRUTH-LOCK INFO | QCOM: PASADO reescrito (2 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
 06:16:50 | 🔒 TRUTH-LOCK INFO | TSM: PASADO reescrito (6 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:18:52 | 🔒 TRUTH-LOCK INFO | SNDK: PASADO reescrito (15 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:18:52 | 🔒 TRUTH-LOCK INFO | STX: PASADO reescrito (2 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.
+06:18:52 | 🔒 TRUTH-LOCK INFO | WDC: PASADO reescrito (4 barras materiales, 0 desaparecidas). NO-TRADE hasta re-lock.

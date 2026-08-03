@@ -1,5 +1,5 @@
 {
- "ts": 1785752152,
+ "ts": 1785752440,
  "resultados": {
   "NASDAQ_BASIC": {
    "provider": "NASDAQ_BASIC",
@@ -24,6 +24,20 @@
    "min_s": 900.0,
    "max_s": 902.2,
    "n": 494
+  },
+  "DELAYED_SIP": {
+   "provider": "DELAYED_SIP",
+   "trades": 0,
+   "quotes": 0
+  },
+  "EQUITIES_EDGE": {
+   "provider": "EQUITIES_EDGE",
+   "trades": 96,
+   "quotes": 0,
+   "mediana_s": 900.0,
+   "min_s": 900.0,
+   "max_s": 900.1,
+   "n": 96
   }
  }
 }

@@ -32,9 +32,9 @@
  "fuente": "finnhub",
  "nbbo": null,
  "nbbo_motivo": "Finnhub gratis no trae libro: no se escribe nbbo_*",
- "ts": 1785752259,
- "trades": 5,
- "ultimo_trade": 1785752259,
+ "ts": 1785752464,
+ "trades": 23,
+ "ultimo_trade": 1785752464,
  "error": "ConnectionClosedError: no close frame received or sent",
  "caidas": 1
 }

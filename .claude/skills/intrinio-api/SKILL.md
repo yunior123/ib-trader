@@ -300,11 +300,16 @@ espaciados 75 s porque encadenarlos da `429 Too Many Requests, retry-after: 60`)
 
 | provider | trades | quotes | mediana | **min** |
 |---|---|---|---|---|
-| `EQUITIES_EDGE` | 218 | **0** | 900,0 s | **900,0 s** |
-| `CBOE_ONE` | 494 | **3674** | 900,0 s | **900,0 s** |
+| `EQUITIES_EDGE` | 218 / 96 (dos corridas) | **0** | 900,0 s | **900,0 s** (max 900,1) |
+| `CBOE_ONE` | 494 | **3674** | 900,0 s | **900,0 s** (max 902,2) |
 | `NASDAQ_BASIC` | 0 | 0 | — | `Auth failed` (es de Enterprise) |
 | `IEX` | 0 | 0 | — | `Auth failed` (es de Enterprise) |
 | `REALTIME` | 0 | 0 | — | `Auth failed` |
+| `DELAYED_SIP` | 0 | 0 | — | conecta pero no entrega nada |
+
+Barrido completo guardado en `data/intrinio_provider_latency.json` (2026-08-03 06:20 ET, los 6
+proveedores, 60 s cada uno con 75 s de separacion). **EQUITIES_EDGE medido TRES veces por
+separado: 900,0 s de mediana y 900,0 s de minimo las tres.**
 
 El **minimo** de 900,0 s es lo que zanja el asunto: no es jitter de red, es un desfase fijo.
 Dato util aparte: **`CBOE_ONE` SI manda quotes (bid/ask) y `EQUITIES_EDGE` no manda ninguno.**

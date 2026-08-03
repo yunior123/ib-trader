@@ -20764,3 +20764,10 @@
 {"ts":1785752137,"sym":"AAPL","state":"CONTINUACION","dir":"flat","candidate_dir":"up","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_edge","fam":1,"regime":"NEG","spot":308.3400}
 {"ts":1785752147,"sym":"MSFT","state":"CONTINUACION","dir":"flat","candidate_dir":"up","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"POS","spot":470.0400}
 {"ts":1785752182,"sym":"INTC","state":"CONTINUACION","dir":"flat","candidate_dir":"up","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_edge","fam":0,"regime":"NEG","spot":90.1900}
+{"ts":1785752330,"sym":"NVDA","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_edge","fam":0,"regime":"POS","spot":200.5100}
+{"ts":1785752330,"sym":"MU","state":"CAJA / PIN","dir":"flat","candidate_dir":"down","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"POS","spot":808.0000}
+{"ts":1785752331,"sym":"AMD","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"NEG","spot":476.0000}
+{"ts":1785752331,"sym":"AAPL","state":"CONTINUACION","dir":"up","candidate_dir":"up","signal_kind":"continuation_multitf","prob":null,"prob_source":"sin_edge","fam":1,"regime":"NEG","spot":308.7100}
+{"ts":1785752332,"sym":"INTC","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"NEG","spot":89.9900}
+{"ts":1785752383,"sym":"TSLA","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"NEG","spot":314.5800}
+{"ts":1785752383,"sym":"MU","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_edge","fam":0,"regime":"POS","spot":806.1300}
