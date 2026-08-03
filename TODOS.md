@@ -27,6 +27,40 @@
       automattically" (2026-08-03 06:38) — pendiente
 - [ ] 4. "solve any remaining todos as well, make sure real time is connected, intrinio is delayed
       as per the docs, so finnhub is probably better" (2026-08-03 06:38) — pendiente
+- [x] 5. "save unusual whales again: e43cebd2-1ff4-4b04-b944-29e02955497c" (2026-08-03 07:14) —
+      HECHO, y NO era redundante: `UW_TOKEN` ya era el bueno pero **`UNUSUAL_WHALES_TOKEN` tenía
+      otro valor** (mismos 8 primeros caracteres, distinto después — por eso pasó desapercibido).
+      Ese es el nombre que lee la capa `mit/` (`mit/backend/app/config.py:99` y
+      `providers/unusual_whales.py:28`), así que el terminal iba con una clave desincronizada.
+      Los dos sincronizados y VERIFICADOS en vivo: 200 en flow-alerts, darkpool, greek-exposure y
+      market-tide. Escritura atómica, permisos 600, `UW_TOKEN_ISSUED=2026-08-03`.
+      (config/feeds.env está en .gitignore: la clave no viaja al repo.)
+- [x] 2b. Parte UW del punto 2: "use unusual whales features to gain insights, search darkpool,
+      whales, make sure we have widgets for those in our software, analyze premium net, gamma, gex"
+      (2026-08-03 06:38) — HECHO. 3 widgets nuevos en el cockpit (`charts/uw_widgets.js`, fichero
+      aparte para no pisar el panel RSI/BB): **Dark Pool** (no existía consumidor: `/api/darkpool`
+      sólo aparecía en `uw_archive.py:98`), **Net Premiums** (existía VACÍO rotulado "requiere
+      tick-by-tick IBKR" — no hacía falta, UW ya firma el lado agresor) y **GEX por vencimiento**.
+      Fetchers: `scripts/uw_darkpool.py`, `uw_net_prem.py`, `uw_gex_expiry.py`. 40 tests.
+      Dark pool va **DESCRIPTIVO y rotulado**, sin probabilidad ni gatillo: la killlist #3
+      (`dpi-lite`) mató el dark pool como SEÑAL y se respeta.
+- [x] 9b. Parte de vencimientos del 2026-08-02 19:47: "make sure we have data for options net, gex
+      for next weeks, at least 2-3 from now, whole agoust" — MEDIDO y CERRADO por la vía UW.
+      Había DOS agujeros: el archivo propio se paraba en 2026-08-21 (`poly_chain_archive.py:445`,
+      `--dte` None en los 3 invocadores) y la cadena VIVA se recorta a 2 vencimientos
+      (`provider_bridge.py:160 NEAR_EXPS = 2`), así que QQQ/SPY publicaban UN solo vencimiento y
+      08-24…08-31 no existía en ninguna parte. `uw_gex_expiry.py` trae los 13 vencimientos de
+      agosto (08-28 y 08-31 incluidos) en 1 request/símbolo. **Queda pendiente** el arreglo en los
+      ficheros que no me tocaba tocar: `NEAR_EXPS = 2 → 8` y `--dte 32` en los 3 invocadores.
+- [ ] 6. "make sure walls, magnets, gamma flip, gex, vix, get updated constantly, preferably
+      realtime" (2026-08-03 07:00) — pendiente
+- [ ] 7. "review zsh procesess in mac, some are expired or not updated" (2026-08-03 07:00) — pendiente
+- [ ] 8. "debug notifications, some might not be updated and might be noise" (2026-08-03 07:00) — pendiente
+- [ ] 10. "code for ibkr stays, do not delete it, we might connect back to it later on, put
+      conditionals per data provider, remember to have all generic to avoid deleting code, and
+      modifying preferably just one one service file" (2026-08-03 07:00) — REGLA DE ARQUITECTURA,
+      vale para toda la sesión y para el futuro: el código IBKR NO SE BORRA. Selección de proveedor
+      por condicional/registro, capa genérica, y el cambio concentrado en UN fichero de servicio.
 
 ## 🔴 SESIÓN 2026-07-29 (madrugada, ráfaga ~07:05)
 - [x] **"send codex to debug compass overnight, dont think its working"** (Yunior 2026-07-29

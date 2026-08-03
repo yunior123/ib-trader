@@ -29,7 +29,37 @@ def in_session():
     return em_envelope.is_market_day(dt.date(lt.tm_year, lt.tm_mon, lt.tm_mday))
 
 
+def probe_darkpool(sym, tok, now):
+    """Edad del print de bloque mas reciente. El dato NO se toca: solo se mide."""
+    import uw_darkpool
+    rows, err = uw_darkpool.fetch_darkpool(sym, tok)
+    if rows is None:
+        return {"sym": sym, "endpoint": "darkpool", "error": err}
+    lat = uw_darkpool.latency(uw_darkpool.clean(rows), now=now.timestamp())
+    if lat is None:
+        return {"sym": sym, "endpoint": "darkpool", "error": "sin prints utilizables"}
+    return {"sym": sym, "endpoint": "darkpool", "feed_ts": lat["newest_iso"],
+            "feed_age_s": lat["feed_age_s"], "trf_lag_med_s": lat["trf_lag_med_s"],
+            "n_rows": len(rows)}
+
+
+def probe_gex_expiry(sym, tok, now):
+    """Sello EOD de greek-exposure/expiry. Se espera DIARIO, no segundos: se mide en dias."""
+    import uw_gex_expiry
+    rows, err = uw_gex_expiry.fetch_expiry(sym, tok)
+    if rows is None:
+        return {"sym": sym, "endpoint": "greek-exposure/expiry", "error": err}
+    s = uw_gex_expiry.summarize(sym, rows)
+    if "error" in s:
+        return {"sym": sym, "endpoint": "greek-exposure/expiry", "error": s["error"]}
+    stamp = s["asof_date"]
+    age = (now.date() - dt.date.fromisoformat(stamp)).days
+    return {"sym": sym, "endpoint": "greek-exposure/expiry", "feed_ts": stamp,
+            "feed_age_days": age, "n_rows": len(rows)}
+
+
 def main():
+    todo = "--all" in sys.argv    # + darkpool y greek-exposure/expiry (widgets 2026-08-03)
     if not in_session():
         print("FUERA DE SESION (fin de semana, festivo o fuera de 09:30-16:00): "
               "no se puede medir latencia real hoy — probe NO ejecutado", file=sys.stderr)
@@ -55,6 +85,17 @@ def main():
         with open(PROBE_F, "a") as f:
             f.write(json.dumps(rec, separators=(",", ":")) + "\n")
         time.sleep(0.6)
+
+    # Endpoints de los widgets nuevos: se miden APARTE porque su unidad no es la misma
+    # (darkpool en segundos, greek-exposure/expiry en DIAS) y mezclarlos daria un veredicto falso.
+    if todo:
+        for sym in SYMS:
+            for fn in (probe_darkpool, probe_gex_expiry):
+                r = dict(fn(sym, tok, now), ts=now.isoformat())
+                print(json.dumps(r))
+                with open(PROBE_F, "a") as f:
+                    f.write(json.dumps(r, separators=(",", ":")) + "\n")
+                time.sleep(0.6)
 
     fails = [r for r in results if "error" in r]
     if fails:

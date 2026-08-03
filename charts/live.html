@@ -922,6 +922,31 @@
     <div class="wgrs"></div>
   </div>
 
+  <!-- 2 WIDGETS UW (2026-08-03) — los pinta charts/uw_widgets.js, fichero aparte -->
+  <div class="wgt" id="wgt-dark">
+    <div class="wghdr">
+      <span class="wgdrag">⠿⠿</span><span class="wgname">Dark Pool</span><button class="wginfo" title="Info" data-widget="dark" aria-label="Información sobre Dark Pool">ⓘ</button><div class="popover-box" data-widget="dark"><div class="popover-title">Dark Pool</div><p><strong>Qué mide:</strong> Prints de bloque fuera de bolsa: nivel de precio con más volumen oculto, prints grandes y dónde se imprimieron respecto al punto medio del NBBO.</p><div class="popover-source"><strong>Fuente:</strong> Unusual Whales <code>/api/darkpool/{sym}</code>. Latencia declarada en el propio panel.</div><div class="popover-doctrine"><strong>Doctrina:</strong> DESCRIPTIVO. La killlist de la casa (#3 <code>dpi-lite</code>) mató el dark pool como SEÑAL: la réplica bayesiana independiente pone el edge de DIX en ~0. No dispara, no lleva probabilidad, no habla.</div></div>
+      <span class="wgsub">—</span>
+      <button class="wgb wgexp" title="Expandir">⤢</button>
+      <button class="wgb wgmin" title="Plegar">–</button>
+      <button class="wgb wgx" title="Cerrar">✕</button>
+    </div>
+    <div class="wgbody"><div class="wgempty"><div class="wgeico">◌</div><div class="wgemsg">Prints ocultos cargando...</div></div></div>
+    <div class="wgrs"></div>
+  </div>
+
+  <div class="wgt" id="wgt-gexexp">
+    <div class="wghdr">
+      <span class="wgdrag">⠿⠿</span><span class="wgname">GEX por vencimiento</span><button class="wginfo" title="Info" data-widget="gexexp" aria-label="Información sobre GEX por vencimiento">ⓘ</button><div class="popover-box" data-widget="gexexp"><div class="popover-title">GEX por vencimiento</div><p><strong>Qué mide:</strong> Net GEX (call+put) de CADA vencimiento hasta 45 DTE, no sólo el más próximo.</p><div class="popover-source"><strong>Fuente:</strong> Unusual Whales <code>/greek-exposure/expiry</code>, <strong>EOD diario</strong> (cierre de la última sesión).</div><div class="popover-doctrine"><strong>Doctrina:</strong> MAPA, no gatillo — ninguna fuente delayed dispara una orden. Existe porque el archivo propio se para en el mensual siguiente y la cadena viva en 2 vencimientos: 08-24…08-31 no estaba en ninguna parte.</div></div>
+      <span class="wgsub">—</span>
+      <button class="wgb wgexp" title="Expandir">⤢</button>
+      <button class="wgb wgmin" title="Plegar">–</button>
+      <button class="wgb wgx" title="Cerrar">✕</button>
+    </div>
+    <div class="wgbody"><div class="wgempty"><div class="wgeico">◌</div><div class="wgemsg">GEX por vencimiento cargando...</div></div></div>
+    <div class="wgrs"></div>
+  </div>
+
   </div>
 
 </div>
@@ -949,6 +974,8 @@
 <!-- v5.2.0 vendored local (Apache-2.0), sin CDN en runtime -->
 <script src="lightweight-charts-v5.js"></script>
 <script src="order_ticket_ui.js"></script>
+<script src="indicator_panel.js"></script>
+<script src="uw_widgets.js"></script>
 <script>
 "use strict";
 const LWC = window.LightweightCharts;
@@ -2936,6 +2963,7 @@ function onHistory(msg) {
   syncSymSel(msg.levels && msg.levels.sym);
   setOHLC(lastBar);
   if (msg.tf) setActiveTf(msg.tf);
+  if (window.PulsePanel) PulsePanel.render(msg.pulse);   // tarjeta RSI/BB arriba-izquierda
   zoomRecent(msg.bars.length);   // últimas ~100 barras (velas legibles en cada tf)
 }
 // pan-scroll hacia atrás (Yunior 2026-07-26 "load data on demand when scrolling, priority
@@ -3016,6 +3044,7 @@ function onBar(msg) {
   }
   drawHeader(curLevels || msg.levels);
   setOHLC(lastBar);
+  if (window.PulsePanel) PulsePanel.render(msg.pulse);   // se auto-actualiza con cada barra
 }
 
 // niveles en tiempo real (frame propio, sin esperar barra): redibuja muros/flip/GEX
@@ -3043,11 +3072,13 @@ chart.subscribeCrosshairMove((param) => {
 //                      construccion no puede taparlo. Expandir un flotante lo re-acopla.
 //   · persistentes  -> abierto/plegado/expandido/posicion/altura en localStorage.
 // Sin frameworks: la CSP del cockpit no admite CDN y el peso importa (Mac de 8 GB).
-const WGT_IDS = ["gex", "liqmap", "prem", "flow", "tech", "ivreg", "rviv", "hmap", "book", "gdecay"];
+const WGT_IDS = ["gex", "liqmap", "prem", "flow", "tech", "ivreg", "rviv", "hmap", "book", "gdecay",
+                 "dark", "gexexp"];
 const WGT_NAME = { gex: "Net GEX por strike", liqmap: "Mapa de liquidez",
                    prem: "Net Premiums", flow: "Options Flow Orders", tech: "Technicals",
                    ivreg: "IV Regime", rviv: "RV vs IV", hmap: "Strike Heat Map",
-                   book: "Book Quality", gdecay: "Gamma Decay" };
+                   book: "Book Quality", gdecay: "Gamma Decay",
+                   dark: "Dark Pool", gexexp: "GEX por vencimiento" };
 const WGT_EL = {};
 for (const k of WGT_IDS) WGT_EL[k] = document.getElementById("wgt-" + k);
 const wdockEl = document.getElementById("wdock");

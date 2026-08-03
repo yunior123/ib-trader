@@ -592,6 +592,125 @@ def indicators_series(bars, ind):
     }
 
 
+# ======================= PULSO RSI/BB (panel arriba-izquierda) ===============
+# Se calcula AQUI (no en JS) por tres razones: (1) el front solo tiene las velas del tf
+# ACTIVO, y el panel necesita 1m y 15m a la vez; (2) fuente unica de verdad — mismas
+# ce.sma/ce.stdev que dibujan las bandas del chart y que usa bollinger_alarm, y el mismo
+# ce.rsi_series del confluence_engine: reimplementarlo en JS es la deriva que ya costo
+# un 18,5% de dilucion en la flota; (3) fail-loud con el motivo exacto (n insuficiente),
+# imposible de fabricar en el cliente.
+PULSE_TAIL_1M = 1400        # ~23h de 1m -> ~93 velas de 15m: warmup sobrado para RSI(14)
+_pulse_bars_cache = {}      # sym -> (monotonic, bars)
+
+
+def pulse_bars_1m(sym, max_age_s=1.0):
+    """1m crudas del fichero del bar_bridge (LA misma fuente que bollinger_alarm.py).
+    Cache corta: bar_frame se emite cada pocos segundos y el fichero no cambia mas rapido."""
+    key = sym.lower()
+    now = time.monotonic()
+    hit = _pulse_bars_cache.get(key)
+    if hit and now - hit[0] < max_age_s:
+        return hit[1]
+    bars = load_sandbox_bars(sym, PULSE_TAIL_1M) if MOCK_DIR else load_ibkr_bars(sym, PULSE_TAIL_1M)
+    _pulse_bars_cache[key] = (now, bars)
+    return bars
+
+
+def bb_state(closes):
+    """BB(20,2) sobre el ULTIMO cierre -> %B y ancho relativo. None si no hay 20 cierres
+    o la desviacion es cero (banda degenerada): jamas un 0.5 plausible."""
+    i = len(closes) - 1
+    m = ce.sma(closes, 20, i)
+    if m is None or m <= 0:
+        return None
+    sd = ce.stdev(closes, 20, i, m)
+    if not sd or sd <= 0:
+        return None
+    up, lo = m + 2 * sd, m - 2 * sd
+    return {"pctb": (closes[i] - lo) / (up - lo), "bw": (up - lo) / m,
+            "upper": up, "lower": lo, "mid": m}
+
+
+def pulse_row(tf, bars, active=False):
+    """Fila del panel para un timeframe. RSI y %B se calculan por SEPARADO con su propio
+    warmup: sin barras suficientes queda None y `why` dice exactamente cuantas hay."""
+    n = len(bars)
+    row = {"tf": tf, "n": n, "active": active, "rsi": None, "pctb": None,
+           "bw": None, "ts": bars[-1][0] if bars else None, "why": None}
+    faltas = []
+    closes = [b[4] for b in bars]
+    if n < 20:
+        faltas.append(f"BB(20) exige 20, hay {n}")
+    else:
+        bb = bb_state(closes)
+        if bb is None:
+            faltas.append("banda degenerada (sd=0)")
+        else:
+            row["pctb"] = round(bb["pctb"], 4)
+            row["bw"] = round(bb["bw"] * 100, 3)
+            row["mid"] = round(bb["mid"], 4)
+            row["upper"] = round(bb["upper"], 4)
+            row["lower"] = round(bb["lower"], 4)
+    if n < 15:   # ce.rsi_series siembra en el indice 14: hacen falta 15 cierres
+        faltas.append(f"RSI(14) exige 15, hay {n}")
+    else:
+        r = ce.rsi_series(closes, 14)[-1]
+        if r is None:
+            faltas.append("RSI sin warmup")
+        else:
+            row["rsi"] = round(r, 2)
+    if faltas:
+        row["why"] = " · ".join(faltas)
+    return row
+
+
+def pulse_verdict(rows):
+    """BAJISTA / ALCISTA / NEUTRO segun la doctrina Bollinger de la casa (CLAUDE.md regla 1):
+    banda reventada en >=2 timeframes = BAND-WALK (continuacion, no fadear); reventada en UNO
+    solo = ELASTICO (reversion corta hacia la media, o sea sesgo CONTRARIO al lado roto).
+    Sin ninguna fila con %B: SIN DATOS — no existe el "neutro por defecto"."""
+    usable = [r for r in rows if r.get("pctb") is not None]
+    if not usable:
+        why = "; ".join(f"{r['tf']}: {r['why']}" for r in rows if r.get("why")) or "sin barras"
+        return {"label": "SIN DATOS", "kind": "nodata", "why": why, "tfs": []}
+    ups = [r["tf"] for r in usable if r["pctb"] > 1.0]
+    dns = [r["tf"] for r in usable if r["pctb"] < 0.0]
+    if len(ups) >= 2:
+        return {"label": "ALCISTA", "kind": "bandwalk", "tfs": ups,
+                "why": f"band-walk arriba en {'+'.join(ups)} — continuacion, NO fadear"}
+    if len(dns) >= 2:
+        return {"label": "BAJISTA", "kind": "bandwalk", "tfs": dns,
+                "why": f"band-walk abajo en {'+'.join(dns)} — continuacion, NO fadear"}
+    if len(ups) == 1:
+        return {"label": "BAJISTA", "kind": "elastico", "tfs": ups,
+                "why": f"banda superior reventada solo en {ups[0]} — elastico: reversion a la media"}
+    if len(dns) == 1:
+        return {"label": "ALCISTA", "kind": "elastico", "tfs": dns,
+                "why": f"banda inferior reventada solo en {dns[0]} — elastico: rebote a la media"}
+    return {"label": "NEUTRO", "kind": "neutro", "tfs": [],
+            "why": "precio dentro de las bandas en todos los marcos"}
+
+
+def compute_pulse(sym, view_bars, tf):
+    """{rows, verdict, sym, tf, ts}. El tf ACTIVO sale de las MISMAS velas que dibuja el
+    chart (para no contradecir las bandas en pantalla); 1m/15m salen del fichero 1m."""
+    tf = tf or "1m"
+    base = pulse_bars_1m(sym)
+    rows = []
+    for label in ("1m", "15m"):
+        if tf == label:
+            rows.append(pulse_row(label, view_bars, active=True))
+        elif not base:
+            rows.append({"tf": label, "n": 0, "active": False, "rsi": None, "pctb": None,
+                         "bw": None, "ts": None, "why": f"sin data/bars_{sym.lower()}_ibkr.txt"})
+        else:
+            rows.append(pulse_row(label, base if label == "1m" else agg_epoch(base, 900)))
+    if tf not in ("1m", "15m"):
+        rows.append(pulse_row(tf, view_bars, active=True))
+    return {"sym": sym.upper(), "tf": tf, "rows": rows, "verdict": pulse_verdict(rows),
+            "ts": max([r["ts"] for r in rows if r["ts"]], default=None)}
+
+
 def _marker_for(source, up):
     """Mapea una señal a un marcador de chart. TODAS las fuentes visibles para que
     Yunior debuguee visualmente (orden 2026-07-23). ABAJO/ARRIBA da la posición."""
@@ -2271,13 +2390,14 @@ async def broadcast_direction(state, lv=None):
 
 
 def history_frame(bars, levels, tf=None, nodata=None, mock=False, kind="history",
-                   exhausted=None, exhausted_reason=None):
+                   exhausted=None, exhausted_reason=None, sym=None):
     ind = compute_indicators(bars)
     frame = {
         "type": kind,
         "tf": tf,
         "bars": _candle_points(bars),
         "indicators": indicators_series(bars, ind),
+        "pulse": compute_pulse(sym or (levels or {}).get("sym", ""), bars, tf),
         "levels": levels or {},
         "signals": load_signal_markers((levels or {}).get("sym", ""), bars),
         "engineOps": load_engine_ops((levels or {}).get("sym", ""), bars),
@@ -2296,7 +2416,7 @@ def _last_point(pts):
     return pts[-1] if pts else None
 
 
-def bar_frame(bars, levels, tf=None):
+def bar_frame(bars, levels, tf=None, sym=None):
     """Frame incremental: última barra + últimos valores de cada indicador (update())."""
     ind = compute_indicators(bars)
     ser = indicators_series(bars, ind)
@@ -2306,6 +2426,7 @@ def bar_frame(bars, levels, tf=None):
         "tf": tf,
         "bar": {"time": last[0], "open": last[1], "high": last[2],
                 "low": last[3], "close": last[4]},
+        "pulse": compute_pulse(sym or (levels or {}).get("sym", ""), bars, tf),
         "indicators": {
             "bbUpper": _last_point(ser["bbUpper"]),
             "bbLower": _last_point(ser["bbLower"]),
@@ -2697,7 +2818,7 @@ async def us_stale_feed(st, interval=5.0):
             st._nodata_reason = None
             if appended > 1:   # catch-up con hueco -> history completo, no un update suelto
                 frame = history_frame(agg_view_bars(st), st.levels, st.tf,
-                                       nodata=None, mock=st.mock)
+                                       nodata=None, mock=st.mock, sym=st.sym)
                 for ws in list(st.clients):
                     try:
                         await ws.send_json(frame)
@@ -2868,7 +2989,7 @@ async def _relive_symbol(state, sym, rebroadcast=False):
         if not state.bars:   # sin archivo instantáneo Y sin contrato -> decirlo, no callar
             state._nodata_reason = f"IBKR no reconoce el símbolo {sym.upper()} ({e})"
             frame = history_frame(agg_view_bars(state), state.levels, state.tf,
-                                   nodata=state._nodata_reason, mock=state.mock)
+                                   nodata=state._nodata_reason, mock=state.mock, sym=state.sym)
             for ws in list(state.clients):
                 try: await ws.send_json(frame)
                 except Exception: state.clients.discard(ws)
@@ -2878,7 +2999,7 @@ async def _relive_symbol(state, sym, rebroadcast=False):
     except Exception: pass
     await live_reapply(state, state.tf)
     if rebroadcast:   # solo si no hubo carga instantánea (símbolo fuera de la flota)
-        frame = history_frame(agg_view_bars(state), state.levels, state.tf, nodata=state._nodata_reason, mock=state.mock)
+        frame = history_frame(agg_view_bars(state), state.levels, state.tf, nodata=state._nodata_reason, mock=state.mock, sym=state.sym)
         for ws in list(state.clients):
             try: await ws.send_json(frame)
             except Exception: state.clients.discard(ws)
@@ -2938,6 +3059,20 @@ def create_app(state):
             return FileResponse(p, media_type="application/javascript")
         return JSONResponse({"error": "order_ticket_ui.js no encontrado"}, status_code=404)
 
+    @app.get("/uw_widgets.js")
+    async def uw_widgets_js():
+        p = os.path.join(os.path.dirname(LIVE_HTML), "uw_widgets.js")
+        if os.path.exists(p):
+            return FileResponse(p, media_type="application/javascript")
+        return JSONResponse({"error": "uw_widgets.js no encontrado"}, status_code=404)
+
+    @app.get("/indicator_panel.js")
+    async def indicator_panel_ui():
+        p = os.path.join(os.path.dirname(LIVE_HTML), "indicator_panel.js")
+        if os.path.exists(p):
+            return FileResponse(p, media_type="application/javascript")
+        return JSONResponse({"error": "indicator_panel.js no encontrado"}, status_code=404)
+
     @app.get("/favicon.svg")
     async def favicon():
         p = os.path.join(os.path.dirname(LIVE_HTML), "favicon.svg")
@@ -2970,7 +3105,8 @@ def create_app(state):
         except Exception as e:
             return JSONResponse({"sym": s, "error": str(e)}, status_code=500)
 
-    _DATA_WL = ("iv_regime.json", "rv_iv_spread.json")   # whitelist: jamas servir data/ entero (BD, envs)
+    _DATA_WL = ("iv_regime.json", "rv_iv_spread.json",   # whitelist: jamas servir data/ entero (BD, envs)
+                "uw_darkpool.json", "uw_net_prem.json", "uw_gex_expiry.json")
     @app.get("/data/{fname}")
     async def data_json(fname: str):
         if not (fname in _DATA_WL or (fname.startswith("strike_heatmap_") and fname.endswith(".json"))):
@@ -3047,7 +3183,7 @@ def create_app(state):
         st.clients.add(ws)
         try:
             # frame de historia inmediato (setData once en el cliente), al tf actual
-            await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason, mock=st.mock))
+            await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason, mock=st.mock, sym=st.sym))
             # watchlist (fleet + usuario), zonas 0DTE del símbolo y flecha direccional
             await ws.send_json(watchlist_payload())
             await ws.send_json(zones_frame(st))
@@ -3070,7 +3206,7 @@ def create_app(state):
                 if isinstance(ctl, dict) and ctl.get("cmd") == "tf":
                     await set_timeframe(st, ctl.get("tf", st.tf))
                     # re-emite un frame de historia FRESCO al tf pedido
-                    await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason, mock=st.mock))
+                    await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason, mock=st.mock, sym=st.sym))
                 elif isinstance(ctl, dict) and ctl.get("cmd") == "more":
                     # pan-scroll hacia atrás: request aparte, keepUpToDate=False, nunca
                     # bloquea el tick vivo (corre en su propia corrutina de broadcast).
@@ -3078,7 +3214,7 @@ def create_app(state):
                     await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf,
                                         nodata=st._nodata_reason, mock=st.mock,
                                         kind="backfill", exhausted=not got,
-                                        exhausted_reason=st._backfill_reason))
+                                        exhausted_reason=st._backfill_reason, sym=st.sym))
                 elif isinstance(ctl, dict) and ctl.get("cmd") == "sym":
                     # NO se muta el estado compartido: se MUEVE esta conexión al State del
                     # nuevo símbolo (creándolo si no existe). Las demás ventanas ni se
@@ -3091,7 +3227,7 @@ def create_app(state):
                         reap_state(st)
                         st = get_state(want)
                         st.clients.add(ws)
-                    await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason, mock=st.mock))
+                    await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason, mock=st.mock, sym=st.sym))
                     # zonas del nuevo símbolo + flecha direccional (actualización inmediata)
                     await ws.send_json(zones_frame(st))
                     await ws.send_json(liq_frame(st.sym)[0])   # liquidez del nuevo símbolo
@@ -3360,7 +3496,7 @@ async def broadcast(state):
     view = agg_view_bars(state)
     if not view:
         return
-    frame = bar_frame(view, state.levels, state.tf)
+    frame = bar_frame(view, state.levels, state.tf, sym=state.sym)
     dead = []
     for ws in list(state.clients):
         try:
@@ -3911,7 +4047,7 @@ def selftest(args):
 
     # historia con todo menos las últimas 3 barras; luego 3 updates
     warm = bars[:-3]
-    hf = history_frame(warm, levels, "5m")
+    hf = history_frame(warm, levels, "5m", sym=sym)
     txt = json.dumps(hf)   # debe serializar sin error
     print(f"\n[selftest] HISTORY frame OK — {len(txt)} bytes")
     print(f"[selftest] top-level keys: {sorted(hf.keys())}")
@@ -3949,7 +4085,7 @@ def selftest(args):
     st.levels = levels
     for extra in bars[-3:]:
         st.upsert_bar(extra)
-        bf = bar_frame(agg_view_bars(st), st.levels, st.tf)
+        bf = bar_frame(agg_view_bars(st), st.levels, st.tf, sym=st.sym)
         json.dumps(bf)  # valida
     print(f"\n[selftest] BAR frame OK — keys {sorted(bf.keys())}, "
           f"indicator points {sorted(bf['indicators'].keys())}")
@@ -3962,7 +4098,7 @@ def selftest(args):
     # --- tf-switch: simula {cmd:"tf","tf":"15m"} en --mock (agrega 5m -> 15m) ---
     st.tf = "15m"
     view15 = agg_view_bars(st)
-    hf15 = history_frame(view15, st.levels, st.tf, mock=st.mock)
+    hf15 = history_frame(view15, st.levels, st.tf, mock=st.mock, sym=st.sym)
     json.dumps(hf15)  # valida
     print(f"\n[selftest] TF-SWITCH 5m->15m: base(5m)={len(st.bars)} barras -> "
           f"view(15m)={len(hf15['bars'])} barras  (tf={hf15['tf']})")
