@@ -149,7 +149,7 @@ static void save_spos(double e, double tr, double fl, double tg, double ep) {
     if (f) { fprintf(f, "%f %f %f %f %f\n", e, tr, fl, tg, ep); fclose(f); }
 }
 static const char* WHALE_FILE = "data/whale_kospi.txt";
-static const char* NBBO_FILE  = "data/nbbo_kospi.txt";
+static const char* NBBO_FILE  = "data/nbbo_kodex200.txt";
 
 // ballenas recientes (<=10 min) por encima de WHALE_USD -> 0..1 (solo live)
 static double whale_score(double now, int want_dir = 1) {
@@ -1373,11 +1373,12 @@ int main(int argc, char** argv) {
     bool use_stdin = (argc > 1 && !std::strcmp(argv[1], "--stdin"));
     FILE* in = stdin;
     if (!use_stdin) {
-        // ws daemon compartido escribe data/bars_kospi.txt; el reader lo sigue
+        // bars_kodex200.txt = ETF KODEX 200, el instrumento OPERABLE (bars_kospi.txt
+        // paso a ser el INDICE el 2026-08-03 y un indice no se compra)
         // (Yunior 2026-07-10: websockets, no REST; C++, no python)
-        in = popen("tail -n +1 -F data/bars_kospi.txt 2>>logs/bridge_kospi.log", "r");
+        in = popen("tail -n +1 -F data/bars_kodex200.txt 2>>logs/bridge_kospi.log", "r");
         if (!in) { std::fprintf(stderr, "no bridge\n"); return 1; }
-        std::fprintf(stderr, "kospi_signal_bot (C++): bridge KOSPI 1m real iniciado\n");
+        std::fprintf(stderr, "kospi_signal_bot (C++): bridge KODEX200 1m real iniciado\n");
     }
 
     std::deque<double> closes, vols;      // rolling 20

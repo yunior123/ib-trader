@@ -1,5 +1,5 @@
 // korea_tape.cpp — veredicto KORU/Corea INSTANTANEO (orden Yunior 2026-07-19
-// "rapido, te demoras mucho, usa c++23"). Lee nbbo_{kospi,skhynix,samsung,
+// "rapido, te demoras mucho, usa c++23"). Lee nbbo_{kodex200,skhynix,samsung,
 // koru}.txt + reglas del playbook y responde en microsegundos: estado + orden
 // de UN numero. Uso: ./korea_tape   (compilar: clang++ -std=c++2c -O3
 // -march=native -o korea_tape scripts/korea_tape.cpp)
@@ -26,7 +26,7 @@ static Q read_nbbo(const char* name) {
 int main() {
     constexpr double PC_KODEX = 109000, PC_HYNIX = 1842000, PC_SAMS = 255000,
                      PC_KORU = 18.26;
-    Q k = read_nbbo("kospi"), h = read_nbbo("skhynix"), s = read_nbbo("samsung"),
+    Q k = read_nbbo("kodex200"), h = read_nbbo("skhynix"), s = read_nbbo("samsung"),
       u = read_nbbo("koru");
     auto pct = [](double x, double pc) { return 100.0 * (x / pc - 1.0); };
     std::printf("KODEX %.0f (%+.2f%%)  Hynix %+.2f%%  Samsung %+.2f%%  KORU $%.2f (%+.1f%%)\n",

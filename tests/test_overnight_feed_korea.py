@@ -303,7 +303,7 @@ def test_roll_prev_close_reintenta_el_mismo_boundary_tras_fallo_transitorio(tmp_
     # bars_path explicito: tests/test_korea_bars_archive.py lo reemplaza sin restaurarlo
     monkeypatch.setattr(kb, "bars_path", lambda n: str(tmp_path / "data" / f"bars_{n}.txt"))
     (tmp_path / "data").mkdir(exist_ok=True)
-    for name, close in (("kospi", 100.0), ("samsung", 200.0), ("skhynix", 300.0)):
+    for name, close in (("kodex200", 100.0), ("samsung", 200.0), ("skhynix", 300.0)):
         _bars(tmp_path, name, [(PREV_CLOSE_EP, close)])
     real = kb.read_bar_rows
     intentos = {"n": 0}
@@ -317,7 +317,7 @@ def test_roll_prev_close_reintenta_el_mismo_boundary_tras_fallo_transitorio(tmp_
     assert not os.path.exists(str(tmp_path / "data" / OF.PREVCLOSE_NAME))
     kb.maybe_roll_prev_close()                    # 2a vuelta, MISMO boundary: lo recupera
     j = json.load(open(str(tmp_path / "data" / OF.PREVCLOSE_NAME)))
-    assert set(j) == set(kb.CORE) and j["kospi"]["close"] == 100.0
+    assert set(j) == set(kb.CORE) and j["kodex200"]["close"] == 100.0
     assert not kb._pc_pending
     lecturas = intentos["n"]
     kb.maybe_roll_prev_close()                    # 3a: nada pendiente -> ni lee
@@ -350,7 +350,7 @@ def _synth_history(root, n_sessions):
             step = 0.01 if hechas % 2 == 0 else -0.01
             bars = os.path.join(root, d.date().isoformat(), "bars")
             os.makedirs(bars, exist_ok=True)
-            with open(os.path.join(bars, "kospi_krx.txt"), "w") as f:
+            with open(os.path.join(bars, f"{PS.core_syms()[0]}_krx.txt"), "w") as f:
                 for i in range(391):               # 09:00 -> 15:30
                     c = 100.0 + i * step
                     f.write(f"{base + i * 60:.0f} {c:.4f} {c:.4f} {c:.4f} {c:.4f} 10\n")
@@ -362,7 +362,7 @@ def test_pump_study_data_insuficiente_con_4_sesiones(tmp_path):
     _synth_history(str(tmp_path), 4)
     res = PS.study(history_root=str(tmp_path), min_n=30)
     assert res["status"] == "DATA-INSUFFICIENT" and res["n"] == 4
-    b = res["symbols"]["kospi"]["buckets"]
+    b = res["symbols"][PS.core_syms()[0]]["buckets"]
     assert all(x["p_up"] is None and x["wilson_lo"] is None for x in b)
     assert b[0]["n"] == 4
 
@@ -371,7 +371,7 @@ def test_pump_study_wilson_con_30_sesiones(tmp_path):
     _synth_history(str(tmp_path), 30)
     res = PS.study(history_root=str(tmp_path), min_n=30)
     assert res["status"] == "MEASURED" and res["n"] == 30
-    b = res["symbols"]["kospi"]["buckets"]
+    b = res["symbols"][PS.core_syms()[0]]["buckets"]
     assert len(b) == PS.N_BUCKETS
     for x in b:
         if x["status"] != "MEASURED":
@@ -397,3 +397,63 @@ def test_pump_study_escritura_atomica(tmp_path):
     out = PS.write(res, out=str(tmp_path / "out" / "overnight_pump_study.json"))
     assert json.load(open(out))["status"] == "DATA-INSUFFICIENT"
     assert not any(f.endswith(".tmp") for f in os.listdir(os.path.dirname(out)))
+
+
+# ------------------------------------------------- 6. el cierre OFICIAL manda sobre las barras
+def test_cierre_oficial_gana_a_la_ultima_barra_pre_boundary(tmp_path, monkeypatch):
+    """2026-08-03: la ultima barra pre-boundary del KODEX era 108.900 (ultimo trade CONTINUO,
+    15:29) y el cierre de subasta 108.820. Medio punto porcentual de diferencia en el mismo
+    campo que dispara la lectura de contagio: gana el oficial."""
+    monkeypatch.setattr(OF, "REPO", str(tmp_path))
+    monkeypatch.setattr(OF, "PREVCLOSE", str(tmp_path / "data" / OF.PREVCLOSE_NAME))
+    _bars(tmp_path, "kodex200", [(BOUNDARY - 60, 108900.0), (BOUNDARY + 120, 99105.0)])
+    _prevclose(tmp_path, {"kodex200": {"close": 108820.0, "epoch": int(PREV_CLOSE_EP),
+                                       "session": "2026-07-30", "oficial": True}})
+    pct, src = OF.korea_pct("kodex200", BOUNDARY)
+    assert src == "prevclose_oficial"
+    assert abs(pct - (-8.93)) < 0.01                 # el oficial de Naver ese dia
+    assert abs(pct - (-8.99)) > 0.02                 # NO el que salia de la barra 15:29
+
+
+def test_prevclose_no_oficial_sigue_cediendo_a_las_barras(tmp_path, monkeypatch):
+    """Sin la marca `oficial` la referencia esta INFERIDA de una barra: no adelanta al fichero."""
+    monkeypatch.setattr(OF, "REPO", str(tmp_path))
+    monkeypatch.setattr(OF, "PREVCLOSE", str(tmp_path / "data" / OF.PREVCLOSE_NAME))
+    _bars(tmp_path, "kospi", [(BOUNDARY - 60, 100.0)] + _session_rows())
+    _prevclose(tmp_path, {"kospi": {"close": 50.0, "epoch": int(PREV_CLOSE_EP),
+                                    "session": "2026-07-30"}})
+    assert OF.korea_pct("kospi", BOUNDARY)[1] == "bars"
+
+
+def test_cierre_oficial_rancio_no_se_usa(tmp_path, monkeypatch):
+    """La marca `oficial` no salta la validacion de sesion: un cierre de hace 3 dias no vale."""
+    monkeypatch.setattr(OF, "REPO", str(tmp_path))
+    monkeypatch.setattr(OF, "PREVCLOSE", str(tmp_path / "data" / OF.PREVCLOSE_NAME))
+    viejo = PREV_CLOSE_EP - 3 * 86400
+    _bars(tmp_path, "kospi", _session_rows())
+    _prevclose(tmp_path, {"kospi": {"close": 100.0, "epoch": int(viejo),
+                                    "session": OF.krx_session_date(viejo), "oficial": True}})
+    pct, src = OF.korea_pct("kospi", BOUNDARY)
+    assert pct is None and src is None
+
+
+# ------------------------------------------------- 7. kospi_pct describe el INDICE, no el ETF
+def test_kospi_pct_es_el_indice_y_el_etf_va_aparte(tmp_path, monkeypatch):
+    """El 2026-08-03 el ETF cayo -8,93% y el indice -5,12%: leer uno por el otro es 1,8x de
+    panico inflado en el input de contagio a los semis US."""
+    monkeypatch.setattr(OF, "REPO", str(tmp_path))
+    monkeypatch.setattr(OF, "PREVCLOSE", str(tmp_path / "data" / OF.PREVCLOSE_NAME))
+    _bars(tmp_path, "kospi", [(BOUNDARY + 120, 6257.45)])
+    _bars(tmp_path, "kospi200", [(BOUNDARY + 120, 986.72)])
+    _bars(tmp_path, "kodex200", [(BOUNDARY + 120, 99105.0)])
+    _prevclose(tmp_path, {
+        "kospi":    {"close": 6595.45, "epoch": int(PREV_CLOSE_EP), "session": "2026-07-30", "oficial": True},
+        "kospi200": {"close": 1046.81, "epoch": int(PREV_CLOSE_EP), "session": "2026-07-30", "oficial": True},
+        "kodex200": {"close": 108820.0, "epoch": int(PREV_CLOSE_EP), "session": "2026-07-30", "oficial": True},
+    })
+    assert OF.KOREA["kospi_pct"] == "kospi" and OF.KOREA["kodex200_pct"] == "kodex200"
+    assert abs(OF.korea_pct("kospi", BOUNDARY)[0] - (-5.12)) < 0.01
+    assert abs(OF.korea_pct("kospi200", BOUNDARY)[0] - (-5.74)) < 0.01
+    assert abs(OF.korea_pct("kodex200", BOUNDARY)[0] - (-8.93)) < 0.01
+    # el ETF exagera al indice: es informacion real, por eso se conserva con nombre propio
+    assert OF.korea_pct("kodex200", BOUNDARY)[0] < OF.korea_pct("kospi", BOUNDARY)[0] - 3.0

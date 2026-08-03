@@ -74,6 +74,15 @@
       modifying preferably just one one service file" (2026-08-03 07:00) — REGLA DE ARQUITECTURA,
       vale para toda la sesión y para el futuro: el código IBKR NO SE BORRA. Selección de proveedor
       por condicional/registro, capa genérica, y el cambio concentrado en UN fichero de servicio.
+- [x] 11. Dos bugs del puente coreano encontrados y verificados por Yunior contra Naver
+      (2026-08-03 07:0x) — HECHO 07:15. (a) `kospi` era el ETF KODEX 200 y exageraba el índice
+      1,8x: hoy -8,93% contra -5,12% reales del KOSPI. Ahora `kospi`/`kospi200` son los ÍNDICES
+      (endpoint `/index/`, tipo declarado en `data/korea_endpoints.txt`) y el ETF vive con nombre
+      honesto como `kodex200`. (b) La barra de la subasta de cierre nunca se escribía
+      (`localTradedAt` se congela en 15:30 y no llega minuto nuevo): fichero 98.625 contra cierre
+      oficial 99.105, y `korea_prevclose` guardaba 108.900 contra 108.820 reales → `korea_pct`
+      inventaba medio punto (-9,435% contra -8,93%). `Agg.cierre_oficial` + prev_close OFICIAL
+      (closePrice − compareToPreviousClose), idempotente. Los 5 porcentajes cuadran con Naver.
 
 ## 🔴 SESIÓN 2026-07-29 (madrugada, ráfaga ~07:05)
 - [x] **"send codex to debug compass overnight, dont think its working"** (Yunior 2026-07-29

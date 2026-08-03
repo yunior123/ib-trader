@@ -43,7 +43,7 @@ newest_bar_epoch() {
   # salud END-TO-END. Korea incluido 2026-07-19: en la ventana KRX
   # (20:00-02:30 ET) los unicos bars frescos posibles son los coreanos.
   local newest=0 ep
-  for f in data/bars_*_ibkr.txt data/bars_skhynix.txt data/bars_samsung.txt data/bars_kospi.txt; do
+  for f in data/bars_*_ibkr.txt data/bars_skhynix.txt data/bars_samsung.txt data/bars_kodex200.txt; do
     [[ -f $f ]] || continue
     ep=$(tail -1 "$f" 2>/dev/null | awk '{print $1}')
     [[ -n $ep && $ep -gt $newest ]] && newest=$ep

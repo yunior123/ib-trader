@@ -12,7 +12,7 @@ Escribe, en el MISMO formato que la flota (para que un bot C++ lo consuma tal
 cual el resto):
   data/bars_<name>.txt   "EPOCH O H L C V"   (5s reqRealTimeBars -> agg 1m)
   data/nbbo_<name>.txt    "EPOCH BID ASK"     (throttle 1/s)
-names CORE: skhynix, samsung, kospi. Satelites HBM (2026-07-27, cualificados con
+names CORE: skhynix, samsung, kodex200. Satelites HBM (2026-07-27, cualificados con
 precio mdt=1 en vivo): hanmi, wonikips, hpsp, dbhitek, leeno, solbrain, isc.
 Los satelites NO estan en data/fleet.txt: no votan MANADA ni tienen bot.
 
@@ -49,12 +49,13 @@ STALE_MAX_S = 300                            # mismo umbral que el stall-watchdo
 NO_PERM_ERRORS = {101, 420, 10089, 10090, 354}   # 101 = max tickers: retrocede, no revienta
 
 # name -> (conId, symbol legible). Contratos KRX verificados en vivo 2026-07-12.
-# El indice KOSPI directo (K200) NO tiene sub API (error 354); usamos KODEX 200
-# (069500), ETF que replica el KOSPI200 y ES accion -> sub waived lo cubre RT.
+# El indice KOSPI directo (K200) NO tiene sub API (error 354); IBKR solo puede dar el ETF.
+# 2026-08-03: el ETF dejo de llamarse "kospi". NO es el indice — ese dia cerro -8,93% contra
+# -5,12% del KOSPI. Los indices reales los sirve korea_naver_bridge como kospi/kospi200.
 KOREA = {
     "skhynix": (17382246, "000660"),         # SK Hynix
     "samsung": (17382528, "005930"),         # Samsung Electronics
-    "kospi":   (76006841, "069500"),         # KODEX 200 ETF = proxy KOSPI200
+    "kodex200": (76006841, "069500"),        # KODEX 200 ETF (replica el KOSPI 200, no lo ES)
     # Cadena de suministro HBM/memoria, conIds cualificados con precio mdt=1 en vivo
     # 2026-07-27 12:5x KST. Hanmi (bonders HBM) se mueve ANTES que Hynix/Samsung.
     # NO entran en data/fleet.txt: no votan MANADA, no tienen bot ni keepalive.
@@ -66,7 +67,7 @@ KOREA = {
     "solbrain": (489366191, "357780"),       # Solbrain
     "isc":      (611160155, "095340"),       # ISC
 }
-CORE = ("skhynix", "samsung", "kospi")       # los que priman si IBKR raciona lineas
+CORE = ("skhynix", "samsung", "kodex200")    # los que priman si IBKR raciona lineas
 
 
 def _publish_korea_syms():
@@ -152,7 +153,7 @@ def make_on_nbbo(st):
             with open(nbbo_path(st.name), "w") as f:
                 f.write(f"{now:.0f} {t.bid:.4f} {t.ask:.4f}\n")
         elif t.last and t.last > 0:
-            # KODEX 200 (kospi): IBKR da trades REALTIME (mdt=1) pero CERO book
+            # KODEX 200 (kodex200): IBKR da trades REALTIME (mdt=1) pero CERO book
             # (bid/ask=-1 siempre — probado en vivo 2026-07-20 09:07 KST; las
             # acciones samsung/skhynix si tienen BBO). Fallback honesto: last
             # trade como bid=ask -> mid exacto, spread 0. NO es delayed.
@@ -487,7 +488,7 @@ def run():
             _last_resub = time.time()
             loud("🇰🇷 KRX BRIDGE CIEGO",
                  f"{time.time() - newest:.0f}s sin bars KRX en sesion — "
-                 f"resuscribiendo (skhynix/samsung/kospi)",
+                 f"resuscribiendo (skhynix/samsung/kodex200)",
                  voz="Corea sin datos. Reconectando.")
             resub_all(ib, f"stall {time.time() - newest:.0f}s sin bars")
         freshness_guard()   # cubre el hueco del stall-watchdog: conectado y SIN suscribir

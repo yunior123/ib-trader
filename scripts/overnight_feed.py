@@ -23,7 +23,10 @@ PREVCLOSE = os.path.join(REPO, "data", PREVCLOSE_NAME)
 CTX_JSONL = os.path.join(REPO, "data", "history", "overnight_ctx.jsonl")
 CTX_MAX_LINES = 20000                             # ~2 meses de noches; el jsonl no rota solo
 HOLIDAYS_PATH = os.path.join(REPO, "data", "krx_holidays.txt")
-KOREA = {"hynix_pct": "skhynix", "samsung_pct": "samsung", "kospi_pct": "kospi"}
+# kospi_pct = el INDICE KOSPI (2026-08-03: era el ETF KODEX 200, que ese dia cayo -8,93%
+# contra -5,12% del indice — 1,8x de panico inflado en el input de contagio a los semis US).
+KOREA = {"hynix_pct": "skhynix", "samsung_pct": "samsung", "kospi_pct": "kospi",
+         "kospi200_pct": "kospi200", "kodex200_pct": "kodex200"}
 LOOP_S, RTH_NAP_S, SENT_MAX_AGE_S = 120, 300, 7200
 # Horario KRX: FUENTE UNICA (la leen korea_bar_bridge.krx_market y overnight_pump_study)
 KRX_OPEN_H, KRX_OPEN_M = 9, 0
@@ -130,7 +133,8 @@ def load_prevclose(name, path=None):
         c, ep, s = e.get("close"), e.get("epoch"), e.get("session")
         if not c or float(c) <= 0 or ep is None or not s:
             return None
-        return {"close": float(c), "epoch": float(ep), "session": str(s)}
+        return {"close": float(c), "epoch": float(ep), "session": str(s),
+                "oficial": bool(e.get("oficial"))}
     except Exception:
         return None
 
@@ -165,11 +169,14 @@ def hist_ref(name, boundary):
 
 def korea_pct(name, boundary):
     """(pct de la sesion KRX en curso, fuente de la referencia). Referencia por orden:
-    (1) ultima barra pre-boundary del fichero vivo, (2) prev_close persistido, (3) barra
-    archivada en data/history — y solo si pertenece a la sesion KRX anterior mas reciente
-    conocida. Sin referencia honesta -> (None, None). Jamas 0.0 (regla #2)."""
+    (1) cierre OFICIAL de subasta persistido (`oficial: true`), (2) ultima barra pre-boundary
+    del fichero vivo, (3) prev_close inferido, (4) barra archivada en data/history — y solo si
+    pertenece a la sesion KRX anterior mas reciente conocida. Sin referencia honesta ->
+    (None, None). Jamas 0.0 (regla #2).
+    El oficial manda desde 2026-08-03: la ultima barra pre-boundary es el ultimo trade CONTINUO
+    (15:29), no la subasta — KODEX 108.900 contra 108.820 reales = medio punto inventado."""
     try:
-        ref = last = None
+        bars_ref = last = None
         last_t = 0.0
         try:
             with open(os.path.join(REPO, "data", f"bars_{name}.txt")) as f:
@@ -179,26 +186,35 @@ def korea_pct(name, boundary):
                         continue
                     t, c = float(p[0]), float(p[4])
                     if t < boundary:
-                        ref = c
+                        bars_ref = c
                     last, last_t = c, t
         except FileNotFoundError:
             return None, None
-        src = "bars" if ref else None
-        if not ref:
-            pc = load_prevclose(name)
-            cands = [("prevclose", lambda: (pc["close"], pc["epoch"], pc["session"]) if pc else None),
-                     ("hist", lambda: hist_ref(name, boundary))]   # perezoso: el glob solo si hace falta
-            for etiqueta, getter in cands:
-                cand = getter()
-                if not cand:
-                    continue
-                c, ep, ses = cand
-                if ep >= boundary or not c or c <= 0:
-                    continue
-                ok, degradada = ref_session_ok(ses, boundary)
-                if ok:
-                    ref, src = c, etiqueta + ("_gap" if degradada else "")
-                    break
+        pc = load_prevclose(name)
+        pc_tuple = (lambda: (pc["close"], pc["epoch"], pc["session"]) if pc else None)
+        cands = []
+        if pc and pc["oficial"]:
+            cands.append(("prevclose_oficial", pc_tuple))
+        if bars_ref:
+            cands.append(("bars", None))                 # el fichero vivo: sin sesion que validar
+        if pc and not pc["oficial"]:
+            cands.append(("prevclose", pc_tuple))
+        cands.append(("hist", lambda: hist_ref(name, boundary)))   # perezoso: el glob al final
+        ref = src = None
+        for etiqueta, getter in cands:
+            if getter is None:
+                ref, src = bars_ref, etiqueta
+                break
+            cand = getter()
+            if not cand:
+                continue
+            c, ep, ses = cand
+            if ep >= boundary or not c or c <= 0:
+                continue
+            ok, degradada = ref_session_ok(ses, boundary)
+            if ok:
+                ref, src = c, etiqueta + ("_gap" if degradada else "")
+                break
         if ref and last is not None and last_t >= boundary:
             return round((last - ref) / ref * 100.0, 4), src
         return None, None

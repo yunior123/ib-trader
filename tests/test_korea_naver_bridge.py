@@ -99,10 +99,10 @@ def test_last_emitted_se_lee_del_fichero(tmp_path, monkeypatch):
 
 # ---------- universo desde fichero, no hardcodeado ----------
 
-def test_contratos_salen_del_fichero_del_repo():
-    mapa = KNB.contratos()
-    assert mapa["samsung"] == "005930"
-    assert mapa["skhynix"] == "000660"
+def test_universo_sale_del_fichero_del_repo():
+    mapa = KNB.universo()
+    assert mapa["samsung"] == ("stock", "005930")
+    assert mapa["skhynix"] == ("stock", "000660")
     assert len(mapa) >= 3
 
 
@@ -113,7 +113,7 @@ def test_se_aparta_si_el_gateway_vive(monkeypatch, tmp_path):
     os.makedirs("data", exist_ok=True)
     monkeypatch.setattr(KNB, "SRC_FILE", os.path.join(tmp_path, "data", "korea_source.json"))
     monkeypatch.setattr(KNB, "gateway_vivo", lambda: 4002)
-    monkeypatch.setattr(KNB, "contratos", lambda: {"samsung": "005930"})
+    monkeypatch.setattr(KNB, "universo", lambda: {"samsung": ("stock", "005930")})
     monkeypatch.setattr(sys, "argv", ["korea_naver_bridge.py", "--once"])
 
     def _no_sondear(_codes):
@@ -129,7 +129,7 @@ def test_declara_procedencia_y_no_escribe_nbbo(monkeypatch, tmp_path):
     os.makedirs("data", exist_ok=True)
     monkeypatch.setattr(KNB, "SRC_FILE", os.path.join(tmp_path, "data", "korea_source.json"))
     monkeypatch.setattr(KNB, "gateway_vivo", lambda: None)
-    monkeypatch.setattr(KNB, "contratos", lambda: {"samsung": "005930"})
+    monkeypatch.setattr(KNB, "universo", lambda: {"samsung": ("stock", "005930")})
     monkeypatch.setattr(sys, "argv", ["korea_naver_bridge.py", "--once"])
     monkeypatch.setattr(KNB, "sondeo", lambda _c: [{
         "itemCode": "005930", "marketStatus": "OPEN", "closePrice": "244,000",
@@ -149,7 +149,7 @@ def test_fila_sin_precio_no_escribe_barra(monkeypatch, tmp_path):
     os.makedirs("data", exist_ok=True)
     monkeypatch.setattr(KNB, "SRC_FILE", os.path.join(tmp_path, "data", "korea_source.json"))
     monkeypatch.setattr(KNB, "gateway_vivo", lambda: None)
-    monkeypatch.setattr(KNB, "contratos", lambda: {"samsung": "005930"})
+    monkeypatch.setattr(KNB, "universo", lambda: {"samsung": ("stock", "005930")})
     monkeypatch.setattr(sys, "argv", ["korea_naver_bridge.py", "--once"])
     monkeypatch.setattr(KNB, "sondeo", lambda _c: [{
         "itemCode": "005930", "marketStatus": "CLOSE", "closePrice": None,
@@ -164,7 +164,7 @@ def test_sondeo_roto_sale_con_error(monkeypatch, tmp_path):
     os.makedirs("data", exist_ok=True)
     monkeypatch.setattr(KNB, "SRC_FILE", os.path.join(tmp_path, "data", "korea_source.json"))
     monkeypatch.setattr(KNB, "gateway_vivo", lambda: None)
-    monkeypatch.setattr(KNB, "contratos", lambda: {"samsung": "005930"})
+    monkeypatch.setattr(KNB, "universo", lambda: {"samsung": ("stock", "005930")})
     monkeypatch.setattr(sys, "argv", ["korea_naver_bridge.py", "--once"])
 
     def _revienta(_c):
@@ -180,5 +180,167 @@ def test_universo_vacio_levanta(monkeypatch, tmp_path):
     monkeypatch.setattr(KNB, "ROOT", str(tmp_path))
     os.makedirs(tmp_path / "data", exist_ok=True)
     (tmp_path / "data" / "korea_contracts.txt").write_text("\n")
+    (tmp_path / "data" / "korea_endpoints.txt").write_text("# solo comentarios\n")
     with pytest.raises(RuntimeError, match="vacio"):
-        KNB.contratos()
+        KNB.universo()
+
+
+# ---------- BUG 1: el indice NO es el ETF ----------
+
+def test_num_parsea_valores_de_indice_con_decimales():
+    """Los indices traen coma de miles Y punto decimal: '6,257.45'."""
+    assert KNB._num("6,257.45") == 6257.45
+    assert KNB._num("986.72") == 986.72
+    assert KNB._num("-338.00") == -338.0
+
+
+def test_campo_prefiere_raw_porque_el_volumen_del_indice_no_es_un_numero():
+    # '272,959천주' = miles de acciones: sin el Raw el volumen del indice seria None
+    row = {"accumulatedTradingVolume": "272,959천주",
+           "accumulatedTradingVolumeRaw": "272959000"}
+    assert KNB._num(row["accumulatedTradingVolume"]) is None
+    assert KNB.campo(row, "accumulatedTradingVolume") == 272959000.0
+
+
+def test_universo_separa_indice_de_etf():
+    """kospi = INDICE; el ETF KODEX 200 vive aparte. El tipo sale del fichero, no del .py."""
+    mapa = KNB.universo()
+    assert mapa["kospi"] == ("index", "KOSPI")
+    assert mapa["kospi200"] == ("index", "KPI200")
+    assert mapa["kodex200"] == ("stock", "069500")
+    assert "069500" not in [c for n, (_t, c) in mapa.items() if n == "kospi"]
+
+
+def test_tipo_de_endpoint_desconocido_levanta(tmp_path, monkeypatch):
+    monkeypatch.setattr(KNB, "ROOT", str(tmp_path))
+    (tmp_path / "data").mkdir()
+    (tmp_path / "data" / "korea_endpoints.txt").write_text("KOSPI futuro KOSPI\n")
+    with pytest.raises(RuntimeError, match="desconocido"):
+        KNB.universo()
+
+
+def test_universo_recoge_los_satelites_de_korea_contracts(tmp_path, monkeypatch):
+    """Un satelite nuevo en el puente IBKR no puede quedar mudo aqui."""
+    monkeypatch.setattr(KNB, "ROOT", str(tmp_path))
+    (tmp_path / "data").mkdir()
+    (tmp_path / "data" / "korea_endpoints.txt").write_text("KOSPI index KOSPI\n")
+    (tmp_path / "data" / "korea_contracts.txt").write_text("HANMI 44631844 042700\n")
+    mapa = KNB.universo()
+    assert mapa["kospi"] == ("index", "KOSPI") and mapa["hanmi"] == ("stock", "042700")
+
+
+# ---------- BUG 2: la barra de la subasta de cierre ----------
+
+_ROW_CIERRE = {
+    "itemCode": "069500", "marketStatus": "CLOSE",
+    "closePrice": "99,105", "compareToPreviousClosePrice": "-9,715",
+    "accumulatedTradingVolume": "24,439,342",
+    "localTradedAt": "2026-08-03T15:30:00+09:00",
+    "stockExchangeType": {"endTime": "1530", "zoneId": "Asia/Seoul"},
+}
+EP_CIERRE = 1785738600.0                     # 2026-08-03 15:30:00 KST
+
+
+def test_epoch_cierre_usa_endtime_no_localtradedat():
+    """Los INDICES siguen moviendo localTradedAt tras el cierre (medido 18:59 con KRX cerrado
+    a las 15:30): usar esa marca fabricaria barras de una sesion que no existe."""
+    idx = {"localTradedAt": "2026-08-03T18:59:00+09:00",
+           "stockExchangeType": {"endTime": "1530", "zoneId": "Asia/Seoul"}}
+    assert KNB.epoch_de(idx) != EP_CIERRE
+    assert KNB.epoch_cierre(idx) == EP_CIERRE
+    assert KNB.epoch_cierre(_ROW_CIERRE) == EP_CIERRE
+
+
+def test_epoch_cierre_sin_endtime_es_none():
+    assert KNB.epoch_cierre({"localTradedAt": "2026-08-03T15:30:00+09:00"}) is None
+    assert KNB.epoch_cierre(_ROW_CIERRE | {"localTradedAt": None}) is None
+
+
+def test_cierre_oficial_vuelca_la_barra_de_la_subasta(tmp_path, monkeypatch):
+    """Sin esto la barra de las 15:30 (precio oficial de la subasta) no se escribe JAMAS:
+    localTradedAt se congela y nunca llega un minuto nuevo que la cierre."""
+    a = _agg(tmp_path, monkeypatch, "kodex200")
+    a.tick(EP_CIERRE - 70, 98625.0, 24_000_000.0)      # ultima barra continua, 15:28
+    lineas = a.cierre_oficial(EP_CIERRE, 99105.0, 24_439_342.0)
+    assert len(lineas) == 2                            # cierra la 15:28 y escribe la 15:30
+    ep, o, h, l, c, v = lineas[-1].split()
+    assert float(ep) == EP_CIERRE and float(c) == 99105.0
+
+
+def test_cierre_oficial_es_idempotente(tmp_path, monkeypatch):
+    """Con KRX cerrado el puente sondea cada 60s durante horas: la barra va UNA vez."""
+    a = _agg(tmp_path, monkeypatch, "kodex200")
+    a.tick(EP_CIERRE - 70, 98625.0, 24_000_000.0)
+    lineas = a.cierre_oficial(EP_CIERRE, 99105.0, 24_439_342.0)
+    with open("data/bars_kodex200.txt", "w") as f:
+        f.writelines(lineas)
+    for _ in range(60):
+        assert a.cierre_oficial(EP_CIERRE, 99105.0, 24_439_342.0) == []
+    # ...y tampoco tras un reinicio del proceso (last_emitted se relee del fichero)
+    assert KNB.Agg("kodex200").cierre_oficial(EP_CIERRE, 99105.0, 24_439_342.0) == []
+    assert len(open("data/bars_kodex200.txt").read().splitlines()) == 2
+
+
+def test_prevclose_oficial_sale_del_delta_no_de_la_ultima_barra():
+    """108.900 era la ultima barra intradia; el previo REAL es 99.105 + 9.715 = 108.820."""
+    close, ep, ses = KNB.prevclose_oficial(_ROW_CIERRE)
+    assert close == 108820.0
+    assert ses == "2026-07-31"                          # viernes: salta el fin de semana
+    assert ep < EP_CIERRE
+
+
+def test_prevclose_oficial_no_se_fabrica_en_dia_sin_sesion():
+    """Sabado: la fuente rellena con el cierre del viernes; no hay 'sesion anterior' que fijar."""
+    sabado = _ROW_CIERRE | {"localTradedAt": "2026-08-08T18:59:00+09:00"}
+    assert KNB.prevclose_oficial(sabado) is None
+    assert KNB.prevclose_oficial(_ROW_CIERRE | {"closePrice": None}) is None
+
+
+def test_persistir_prevclose_es_monotono_y_no_pisa_otros(tmp_path):
+    p = str(tmp_path / "korea_prevclose.json")
+    with open(p, "w") as f:
+        json.dump({"samsung": {"close": 265000.0, "epoch": 1785479340, "session": "2026-07-31"}}, f)
+    assert KNB.persistir_prevclose({"kodex200": (108820.0, 1785479400, "2026-07-31")}, p) == 1
+    j = json.load(open(p))
+    assert j["kodex200"]["close"] == 108820.0 and j["kodex200"]["oficial"] is True
+    assert j["samsung"]["close"] == 265000.0                     # intacto
+    # una sesion mas VIEJA no retrocede el fichero, y repetir no reescribe
+    assert KNB.persistir_prevclose({"kodex200": (999.0, 1785000000, "2026-07-30")}, p) == 0
+    assert KNB.persistir_prevclose({"kodex200": (108820.0, 1785479400, "2026-07-31")}, p) == 0
+    assert json.load(open(p))["kodex200"]["close"] == 108820.0
+
+
+def test_mercado_cerrado_escribe_la_subasta_y_el_prevclose_una_vez(monkeypatch, tmp_path):
+    """El ciclo completo con KRX cerrado: barra de subasta + prev_close oficial, sin duplicar."""
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("data", exist_ok=True)
+    monkeypatch.setattr(KNB, "SRC_FILE", os.path.join(tmp_path, "data", "korea_source.json"))
+    monkeypatch.setattr(KNB, "PREVCLOSE_FILE", os.path.join(tmp_path, "data", "korea_prevclose.json"))
+    monkeypatch.setattr(KNB, "gateway_vivo", lambda: None)
+    monkeypatch.setattr(KNB, "universo", lambda: {"kodex200": ("stock", "069500")})
+    monkeypatch.setattr(KNB, "sondeo", lambda _c: [dict(_ROW_CIERRE)])
+    monkeypatch.setattr(sys, "argv", ["korea_naver_bridge.py", "--once"])
+    assert KNB.main() == 0
+    barras = open("data/bars_kodex200.txt").read().splitlines()
+    assert len(barras) == 1 and float(barras[0].split()[4]) == 99105.0
+    assert json.load(open(KNB.PREVCLOSE_FILE))["kodex200"]["close"] == 108820.0
+    assert json.load(open(KNB.SRC_FILE))["mercado_abierto"] is False
+    assert KNB.main() == 0                       # segunda vuelta: nada nuevo
+    assert len(open("data/bars_kodex200.txt").read().splitlines()) == 1
+
+
+def test_cierre_en_el_futuro_no_escribe_barra(monkeypatch, tmp_path):
+    """Antes de abrir, la fuente puede fechar hoy un cierre que aun no ha ocurrido."""
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("data", exist_ok=True)
+    monkeypatch.setattr(KNB, "SRC_FILE", os.path.join(tmp_path, "data", "korea_source.json"))
+    monkeypatch.setattr(KNB, "PREVCLOSE_FILE", os.path.join(tmp_path, "data", "korea_prevclose.json"))
+    monkeypatch.setattr(KNB, "gateway_vivo", lambda: None)
+    monkeypatch.setattr(KNB, "universo", lambda: {"kodex200": ("stock", "069500")})
+    import datetime as _dt
+    manana = (_dt.datetime.now(_dt.timezone.utc) + _dt.timedelta(days=1)).astimezone()
+    monkeypatch.setattr(KNB, "sondeo", lambda _c: [
+        dict(_ROW_CIERRE) | {"localTradedAt": manana.isoformat()}])
+    monkeypatch.setattr(sys, "argv", ["korea_naver_bridge.py", "--once"])
+    assert KNB.main() == 0
+    assert not os.path.exists("data/bars_kodex200.txt")

@@ -1,6 +1,6 @@
 // korea_watch.cpp — vigilante C++23 de la noche KRX (orden Yunior 2026-07-19
 // "usa c++23 como tool, python too slow"). Reemplaza el loop bash/awk: lee
-// nbbo_{kospi,skhynix,samsung,koru,soxs}.txt cada 5s, maquina de estados del
+// nbbo_{kodex200,skhynix,samsung,koru,soxs}.txt cada 5s, maquina de estados del
 // playbook, y en CADA CAMBIO: banner+sonido (fleet_notify, posix_spawn ~0.1ms)
 // + voz espanol (speak.sh serializado) + linea a stdout (Monitor -> Claude).
 // Niveles y cierres previos son DATO (data/korea_levels.txt + bars), no constantes.
@@ -74,7 +74,7 @@ static void speak(const char* prio, const char* msg) {
 enum St { BOOT, PRINT109, RECLAIM, NADIE, BAJ107, VROTA, VETO, RTBEAR, RTBULL, MUERTO };
 
 int main() {
-    const double PCK = prev_close("kospi"), PCH = prev_close("skhynix"),
+    const double PCK = prev_close("kodex200"), PCH = prev_close("skhynix"),
                  PCS = prev_close("samsung");
     if (PCK <= 0 || PCH <= 0 || PCS <= 0) {
         std::fprintf(stderr, "korea_watch: cierre previo NO medible en data/bars_*.txt "
@@ -93,7 +93,7 @@ int main() {
                 "niveles de hace %lds\n", PCK, PCH, PCS, N.age);
     St st = BOOT; int above = 0;
     for (;;) {
-        Q k = rd("kospi"), h = rd("skhynix"), s = rd("samsung"), u = rd("koru");
+        Q k = rd("kodex200"), h = rd("skhynix"), s = rd("samsung"), u = rd("koru");
         double hp = 100 * (h.mid / PCH - 1), sp = 100 * (s.mid / PCS - 1);
         St ns;
         // KORU es un ETF US: durante la sesion KRX SIEMPRE esta rancio (medido: 7,1 dias).

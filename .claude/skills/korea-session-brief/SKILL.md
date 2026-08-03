@@ -15,7 +15,7 @@ cd ~/ib-trader
 ls data/bars_krx_1m* data/nbbo_skhynix.txt data/nbbo_samsung.txt 2>/dev/null
 
 # Cuál fue el close Korea anoche?
-tail -1 data/nbbo_kospi.txt 2>/dev/null | cut -d, -f2,3 | xargs echo "KOSPI"
+tail -1 data/nbbo_kodex200.txt 2>/dev/null | cut -d, -f2,3 | xargs echo "KOSPI"
 tail -1 data/nbbo_skhynix.txt 2>/dev/null | cut -d, -f2,3 | xargs echo "SKHY"
 ```
 
@@ -27,7 +27,7 @@ import subprocess, json
 def last_line(f):
   try: return subprocess.check_output(['tail', '-1', f'data/{f}']).decode().strip().split(',')
   except: return [None]*3
-kospi = last_line('nbbo_kospi.txt')
+kospi = last_line('nbbo_kodex200.txt')
 if kospi[0]:
   print(f"KOSPI: {kospi[1]} ({kospi[2]} chg)")
   print("Implicación: SMH/MU siguen en ~30min + memory complex")

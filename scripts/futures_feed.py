@@ -266,7 +266,7 @@ def _corea():
         prev = json.load(open(os.path.join(ROOT, "data", "korea_prevclose.json")))
     except (OSError, ValueError):
         prev = {}
-    for n in ("kospi", "samsung", "skhynix"):
+    for n in ("kospi", "kospi200", "kodex200", "samsung", "skhynix"):
         try:
             with open(os.path.join(ROOT, "data", f"bars_{n}.txt")) as f:
                 lineas = [l for l in f if l.strip()]

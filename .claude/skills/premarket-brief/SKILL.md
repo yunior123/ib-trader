@@ -13,7 +13,7 @@ cd ~/ib-trader
 
 # 1. Context nocturno (Korea, futuros, VIX)
 python3 scripts/korea_watch.cpp  # si compilado
-cat data/nbbo_kospi.txt 2>/dev/null | tail -1 | cut -d, -f2,3,4
+cat data/nbbo_kodex200.txt 2>/dev/null | tail -1 | cut -d, -f2,3,4
 
 # 2. Spot + TA rápido (QQQ/SPY)
 for sym in QQQ SPY; do
