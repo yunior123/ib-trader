@@ -78,7 +78,18 @@
       agosto (08-28 y 08-31 incluidos) en 1 request/símbolo. **Queda pendiente** el arreglo en los
       ficheros que no me tocaba tocar: `NEAR_EXPS = 2 → 8` y `--dte 32` en los 3 invocadores.
 - [ ] 6. "make sure walls, magnets, gamma flip, gex, vix, get updated constantly, preferably
-      realtime" (2026-08-03 07:00) — pendiente
+      realtime" (2026-08-03 07:00) — pendiente. **Cadencia MEDIDA 2026-08-03 07:40** (edad real de
+      cada fichero, no lo que dice el plist): `charts/data/levels_qqq.json` **1,5 min** ·
+      `data/gex_snapshot.json` **1,3 min** · `data/vix.json` **0,3 min** ·
+      `data/futures_overnight.json` **0,3 min** · `data/provider_status.json` 4,8 min. Los muros/flip
+      además se **recomputan al SPOT VIVO cada 15 s** dentro del cockpit
+      (`chart_bridge.py:3516 LEVELS_REFRESH_S`), sobre el libro que refresca
+      `com.ibtrader.polychains.intraday` (StartInterval 1800 s en RTH). O sea: la parte de
+      "constantly" del pedido YA está; lo que queda es (a) `data/vix_term.json` **NO EXISTE**
+      (estructura VX, la banda de fragilidad) y (b) el techo real de frescura lo pone la fuente,
+      no el bucle: el spot de Intrinio va **15,4 min por detrás** (medido, ver PENDIENTE LUNES).
+      ⚠️ De nada sirve refrescar rápido un muro FALSO: ver el bug del put wall de cadena truncada
+      (7 de 29 símbolos) en el bloque de "solve and investigate all not solved bugs".
 - [x] 7. "review zsh procesess in mac, some are expired or not updated" (2026-08-03 07:00) — HECHO 07:20.
       Inventario: 26 jobs `com.ibtrader.*` + 77 `scripts/*.sh` + 84 procesos vivos. CERRADO:
       (a) **El precedente de `bin/` por TERCERA vez**: `screener/ensure_all.sh:22` y
