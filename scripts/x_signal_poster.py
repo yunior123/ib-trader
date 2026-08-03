@@ -14,7 +14,7 @@ EXCLUSIVAMENTE desde campos de mercado estructurados y permitidos (screen,
 ticker, BUY/SELL, precio, cambio y RVOL): nunca copia títulos/notificaciones,
 rutas, nombres, configuración ni detalles del software.
 
-Limites: hasta el cap compartido de 20 posts/dia del ledger
+Limites: hasta el cap compartido de 30 posts/dia del ledger
 data/x_plan_budget.json, sin espera artificial entre señales únicas, jamas repetir el
 mismo ticker+nivel en el dia. Premarket 8:00-9:25 ET: max 1 post.
 Estado diario: data/x_signal_state.json (se resetea solo al cambiar de dia).
