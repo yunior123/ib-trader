@@ -2,6 +2,7 @@
 # Rutas del repo que ACABAN DENTRO del .app. Fuente unica: la lee bundle_backend.sh
 # Una ruta por linea. Terminada en "/" = prefijo.
 # listas eran distintas el hook ignoro 21 commits seguidos y la .app quedo rancia.
+charts/indicator_panel.js
 charts/lightweight-charts-v5.js
 charts/lightweight-charts.js
 charts/live.html
