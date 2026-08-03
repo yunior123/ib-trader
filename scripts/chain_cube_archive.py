@@ -77,6 +77,8 @@ from collections import namedtuple
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(REPO)
+sys.path.insert(0, os.path.join(REPO, "scripts"))
+import session_dirs  # noqa: E402
 
 HIST = os.path.join("data", "history")
 INDEX_PATH = os.path.join("data", "chain_cube_index.json")
@@ -290,7 +292,9 @@ def day_snapshots(date, sym=None):
 def full_chain_path(sym, date=None):
     """chain_full_<sym>.json[.gz] del dia pedido (o el mas reciente que exista). None si no hay."""
     sl = sym.lower()
-    dates = [date] if date else sorted(os.listdir(HIST), reverse=True)
+    # sin `date` se toma la ultima SESION: una carpeta de sabado/domingo es la foto del viernes
+    # con otro nombre y desplazaria al viernes real (medido 2026-08-02, spot_age_s=159.611).
+    dates = [date] if date else session_dirs.session_dirs(HIST)
     for d in dates:
         for ext in (".json", ".json.gz"):
             p = os.path.join(HIST, d, "chain_full_%s%s" % (sl, ext))

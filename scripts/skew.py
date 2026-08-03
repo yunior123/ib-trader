@@ -35,6 +35,9 @@ import sys
 import time
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # NUNCA hardcodear rutas
+sys.path.insert(0, os.path.join(REPO, "scripts"))
+import session_dirs  # noqa: E402
+
 HIST = os.path.join(REPO, "data", "history")
 DB = os.path.join(REPO, "data", "trades.db")
 OUT = os.path.join(REPO, "data", "skew.json")
@@ -44,13 +47,13 @@ MIN_HIST_FOR_Z = 60          # la ficha: z es NULL hasta 60 sesiones, y ese NULL
 
 
 def latest_dates():
-    """Fechas con cadenas archivadas, de mas nueva a mas vieja."""
-    if not os.path.isdir(HIST):
-        return []
-    ds = [d for d in sorted(os.listdir(HIST), reverse=True)
-          if os.path.isdir(os.path.join(HIST, d))
-          and glob.glob(os.path.join(HIST, d, "chain_full_*.json"))]
-    return ds
+    """Sesiones con cadenas archivadas, de mas nueva a mas vieja.
+
+    Solo dias de MERCADO: el archivador corre tambien sabado y domingo y esa foto es la del
+    viernes con otro nombre — colada como dates[0] daria drr_1d = 0 fabricado.
+    """
+    return [d for d in session_dirs.session_dirs(HIST)
+            if glob.glob(os.path.join(HIST, d, "chain_full_*.json"))]
 
 
 def load_chain(date, sym):

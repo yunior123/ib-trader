@@ -4,7 +4,7 @@
 cd "$(dirname "$0")/.." || exit 1
 while [ "$(ps aux | grep -c '[c]lang++')" -gt 0 ]; do sleep 2; done
 set -e
-clang++ -std=c++23 -O3 -mcpu=native -Wall -Wextra -o volume_profile scripts/volume_profile.cpp -lsqlite3
+clang++ -std=c++23 -O3 -mcpu=native -Wall -Wextra -o bin/volume_profile scripts/volume_profile.cpp -lsqlite3
 clang++ -std=c++23 -O1 -g -fsanitize=address,undefined -Wall -Wextra \
     -o volume_profile_asan scripts/volume_profile.cpp -lsqlite3
-echo "OK: ./volume_profile + ./volume_profile_asan"
+echo "OK: ./bin/volume_profile + ./volume_profile_asan"

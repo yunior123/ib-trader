@@ -365,7 +365,7 @@ void write_atomic(const std::string& path, const std::string& body) {
 }  // namespace
 
 int main(int argc, char** argv) {
-    std::string db_path = "trades.db";
+    std::string db_path = "data/trades.db";   // la BD vive en data/; "trades.db" abria el vacio de la raiz
     std::string gex_path = "data/gex_snapshot.json";
     std::string out_path = "data/vpvr.json";
     std::string only_sym;

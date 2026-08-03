@@ -8,5 +8,5 @@ while [ "$(ps aux | grep -c '[c]lang++')" -gt 0 ]; do
   sleep 5
 done
 echo "== release =="
-clang++ -std=c++23 -O3 -march=native -Wall -Wextra -o fleet_hours scripts/fleet_hours.cpp
-echo "OK: ./fleet_hours"
+clang++ -std=c++23 -O3 -march=native -Wall -Wextra -o bin/fleet_hours scripts/fleet_hours.cpp
+echo "OK: ./bin/fleet_hours"

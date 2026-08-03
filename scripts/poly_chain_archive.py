@@ -558,6 +558,16 @@ def run(syms, band, dte_max, spot_max_age):
 def main():
     a = sys.argv[1:]
 
+    # launchd dispara este job a las 08:45 y 16:20 TODOS los dias. En sabado/domingo/festivo
+    # Polygon sirve la foto del VIERNES y se archiva bajo data/history/<no-sesion>/: un duplicado
+    # del viernes con otro nombre que desplazaba a la sesion real en todo consumidor que tome
+    # "la ultima carpeta" (medido 2026-08-02: chain_full_spy.json con spot_age_s=159.611 = 44,3 h).
+    import em_envelope  # tabla unica de festivos
+    hoy = dt.date.today()
+    if not em_envelope.is_market_day(hoy) and "--force" not in a:
+        print(f"{hoy} no es dia de mercado: NO se archiva (usa --force bajo tu responsabilidad)")
+        return
+
     def opt(flag, default, cast=str):
         return cast(a[a.index(flag) + 1]) if flag in a else default
 

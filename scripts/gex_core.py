@@ -43,6 +43,8 @@ R_FREE = 0.045            # misma tasa que opt_recon.py (coherencia entre vivo y
 MIN_GREEKS_OK = 0.5       # < 50% de filas con griegas usables -> sin voz gamma (spec #5)
 STALE_S = 45 * 60         # cadena mas vieja que esto = rancia (los muros ya no son de hoy)
 ROLL_HOUR_ET = 16         # 16:00 ET: al cierre el contrato que vence HOY deja de existir
+SIDE_GAP_TOL = 0.01       # hueco maximo entre el spot y el strike mas cercano de ESE lado (1 paso
+                          # de strike tipico); por encima, el lado esta truncado y no hay muro
 RTH_LO, RTH_HI = 9 * 60 + 30, 16 * 60      # ventana en la que bid/ask son reales
 
 
@@ -386,8 +388,28 @@ def build_gex(contracts, spot, scale="house"):
     # put wall = mayor |gamma-| bajo spot. abs = mayor |gex| absoluto global.
     cw = [(k, v) for k, v in call_gex.items() if k >= spot]
     pw = [(k, v) for k, v in put_gex.items() if k <= spot]
-    out["call_wall"] = max(cw, key=lambda x: x[1])[0] if cw else None
-    out["put_wall"] = min(pw, key=lambda x: x[1])[0] if pw else None
+    # COBERTURA DEL LADO antes de nombrar un muro. Un fetch de cadena truncado en orden de
+    # TICKER (la 'C' ordena antes que la 'P') se queda sin los PUTs cercanos al dinero y el
+    # put wall cae al strike mas profundo que sobrevivio. Medido 2026-08-03 07:08 en el
+    # cockpit: QQQ spot 690,96 con PUTs solo de 590 a 632 -> "soporte" dibujado en 625
+    # (-9,5%); MU spot 795,81 con PUTs 678-698 -> -12,4%. No es un muro lejano: es que NO HAY
+    # dato de puts cerca. Devolver None (chart_bridge.walls_status ya lo cuenta) en vez de un
+    # soporte inalcanzable — mismo criterio que el _walls() de mit/ (2026-08-02).
+    _todos = set(call_gex) | set(put_gex) | set(call_oi) | set(put_oi)
+    _bajo = [k for k in _todos if spot and k <= spot]
+    _alto = [k for k in _todos if spot and k >= spot]
+    _p_bajo = [k for k in set(put_gex) | set(put_oi) if spot and k <= spot]
+    _c_alto = [k for k in set(call_gex) | set(call_oi) if spot and k >= spot]
+    out["put_side_gap_pct"] = (((max(_bajo) - max(_p_bajo)) / spot) if (_bajo and _p_bajo)
+                               else (1.0 if _bajo else None))
+    out["call_side_gap_pct"] = (((min(_c_alto) - min(_alto)) / spot) if (_alto and _c_alto)
+                                else (1.0 if _alto else None))
+    _p_trunc = out["put_side_gap_pct"] is not None and out["put_side_gap_pct"] > SIDE_GAP_TOL
+    _c_trunc = out["call_side_gap_pct"] is not None and out["call_side_gap_pct"] > SIDE_GAP_TOL
+    out["put_side_truncated"] = _p_trunc
+    out["call_side_truncated"] = _c_trunc
+    out["call_wall"] = None if _c_trunc else (max(cw, key=lambda x: x[1])[0] if cw else None)
+    out["put_wall"] = None if _p_trunc else (min(pw, key=lambda x: x[1])[0] if pw else None)
     out["abs_wall"] = max(profile.items(), key=lambda x: abs(x[1]))[0] if profile else None
     # PIN vs TRAMPILLA por muro (fix 2026-07-25). Antes se tomaba solo el strike con
     # max(...)[0] y todo lo demas del muro se tiraba, asi que un nivel que AGUANTA y uno que
@@ -887,7 +909,11 @@ def parse_chain_header(path):
     docs/CHAIN-HEADER.md). Devuelve dict con lo que HAYA; los ausentes van a None —
     jamas a un valor plausible."""
     out = {"epoch": None, "spot": None, "exps": [], "fuente": None,
-           "band": None, "max_strikes": None, "narrow": None, "greeks_ok_pct": None}
+           "band": None, "max_strikes": None, "narrow": None, "greeks_ok_pct": None,
+           # el spot de la cabecera tiene RELOJ PROPIO (provider_bridge lo resuelve contra
+           # data/rt_last_<SYM>.txt); sin estas dos claves el consumidor no puede distinguir
+           # un spot en tiempo real de uno delayed dentro de la MISMA cadena.
+           "spot_src": None, "spot_age": None, "bidask_ok_pct": None}
     try:
         with open(path) as f:
             for _ in range(4):
@@ -897,17 +923,19 @@ def parse_chain_header(path):
                 p = ln.split()
                 for key, cast in (("epoch", float), ("spot", float), ("band", float),
                                   ("max_strikes", int), ("narrow", int),
-                                  ("greeks_ok_pct", float)):
+                                  ("greeks_ok_pct", float), ("spot_age", float),
+                                  ("bidask_ok_pct", float)):
                     if key in p:
                         try:
                             out[key] = cast(p[p.index(key) + 1])
                         except (ValueError, IndexError):
                             pass
-                if "fuente" in p:
-                    try:
-                        out["fuente"] = p[p.index("fuente") + 1]
-                    except IndexError:
-                        pass
+                for key in ("fuente", "spot_src"):
+                    if key in p:
+                        try:
+                            out[key] = p[p.index(key) + 1]
+                        except IndexError:
+                            pass
                 if "exps" in p:
                     i = p.index("exps") + 1
                     out["exps"] = [x for x in p[i:] if x.isdigit() and len(x) == 8]

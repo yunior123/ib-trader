@@ -4,8 +4,8 @@
 set -e
 cd "$(dirname "$0")/.."
 echo "== release =="
-clang++ -std=c++23 -O3 -march=native -Wall -Wextra -o replay scripts/replay.cpp -lsqlite3
+clang++ -std=c++23 -O3 -march=native -Wall -Wextra -o bin/replay scripts/replay.cpp -lsqlite3
 echo "== asan/ubsan =="
 clang++ -std=c++23 -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer \
     -o replay_asan scripts/replay.cpp -lsqlite3
-echo "OK: ./replay + ./replay_asan"
+echo "OK: ./bin/replay + ./replay_asan"

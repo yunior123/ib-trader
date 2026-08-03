@@ -173,3 +173,62 @@ def test_archive_fichero_roto_no_se_confunde_con_ausente(tmp_path):
     (tmp_path / "gexa_snapshot.json").write_text(json.dumps({"QQQ": {"flip": 208.0}}))
     mapa, src = da.read_gex_map(str(tmp_path))
     assert mapa["QQQ"]["flip"] == 208.0 and "gexa" in src
+
+
+# --- lado TRUNCADO de la cadena: no hay muro donde no hay dato ---------------------
+# Medido 2026-08-03 07:08 en el cockpit vivo: data/opt_chain_qqq.txt traia 153 CALLs
+# (590-790) y solo 27 PUTs (590-632) con spot 690,96 — la cadena se pide en orden de
+# TICKER y la 'C' ordena antes que la 'P', asi que al truncar en max_strikes los PUTs
+# ATM son lo primero que se cae. Resultado: "Put wall — soporte" dibujado en 625 (-9,5%).
+# 7 de 29 simbolos afectados esa mañana (QQQ SPY MU ASML SNDK STX WDC).
+import importlib.util as _ilu
+import os as _os
+
+_GC = _ilu.module_from_spec(_ilu.spec_from_file_location(
+    "ibt_gex_core_trunc",
+    _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+                  "scripts", "gex_core.py")))
+_ilu.spec_from_file_location(
+    "ibt_gex_core_trunc",
+    _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+                  "scripts", "gex_core.py")).loader.exec_module(_GC)
+
+
+def _c(strike, right, gamma=0.001, oi=100, exp="20991231"):
+    return {"strike": strike, "right": right, "exp": exp, "bid": 1.0, "ask": 1.1,
+            "vol": 10, "oi": oi, "iv": 0.3, "delta": 0.5, "gamma": gamma}
+
+
+def test_cadena_completa_si_da_los_dos_muros():
+    spot = 100.0
+    ch = [_c(k, r) for k in (90, 95, 100, 105, 110) for r in ("C", "P")]
+    g = _GC.build_gex(ch, spot)
+    assert g["put_side_truncated"] is False and g["call_side_truncated"] is False
+    assert g["put_wall"] is not None and g["call_wall"] is not None
+
+
+def test_puts_solo_lejos_no_dan_put_wall():
+    """El caso QQQ: calls hasta el dinero, puts que se quedan a -9%."""
+    spot = 100.0
+    ch = [_c(k, "C") for k in (90, 95, 100, 105, 110)] + [_c(k, "P") for k in (85, 88, 91)]
+    g = _GC.build_gex(ch, spot)
+    assert g["put_side_truncated"] is True
+    assert g["put_wall"] is None, "un soporte a -9% no es un soporte: es el unico dato que quedo"
+    assert g["call_wall"] is not None, "el lado call esta completo y no debe perderse"
+    assert g["put_side_gap_pct"] > 0.05
+
+
+def test_sin_ningun_put_bajo_el_spot_tampoco_hay_muro():
+    spot = 100.0
+    ch = [_c(k, "C") for k in (100, 105, 110)] + [_c(k, "P") for k in (105, 110)]
+    g = _GC.build_gex(ch, spot)
+    assert g["put_side_truncated"] is True and g["put_wall"] is None
+
+
+def test_hueco_de_un_solo_strike_no_borra_el_muro():
+    """Tolerancia: que a un strike le falte el put por OI=0 no es una cadena truncada."""
+    spot = 100.0
+    ch = [_c(k, "C") for k in (99, 100, 101)] + [_c(k, "P") for k in (98, 99)]
+    g = _GC.build_gex(ch, spot)
+    assert g["put_side_truncated"] is False, g["put_side_gap_pct"]
+    assert g["put_wall"] is not None

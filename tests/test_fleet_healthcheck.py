@@ -83,6 +83,116 @@ def test_audit_job_critico_ausente_es_rojo(hc):
     assert hc.exit_code(crit, []) != 0
 
 
+def test_audit_excusa_el_exit_1_de_un_job_con_portero_propio(hc):
+    """Medido 2026-08-03 07:00: polychains.intraday y tracecube salen 1 por su PROPIA
+    guarda horaria (`[ "$H" -ge 0935 ]` / ./bin/fleet_hours) y el informe los cantaba
+    "exit 1 (revisar config)" en cada corrida. Gritar por el comportamiento correcto
+    entrena a ignorar los avisos."""
+    ld = {"com.ibtrader.dailyplans": "0", "com.ibtrader.postmortem": "0",
+          "com.ibtrader.tracecube": "1"}
+    ok, warn, crit = hc.audit_launchd(ld, None, gated={"com.ibtrader.tracecube"})
+    assert not crit and not warn, (warn, crit)
+    assert any("tracecube" in o and "portero" in o for o in ok), ok
+
+
+def test_audit_no_excusa_otro_exit_de_un_job_con_portero(hc):
+    """El portero devuelve 1. Un 78 (EX_CONFIG, el de la mudanza a ~/ib-trader) o un 127
+    siguen siendo avisos aunque el job tenga guarda horaria."""
+    ld = {"com.ibtrader.dailyplans": "0", "com.ibtrader.postmortem": "0",
+          "com.ibtrader.tracecube": "78"}
+    _ok, warn, _crit = hc.audit_launchd(ld, None, gated={"com.ibtrader.tracecube"})
+    assert any("tracecube" in w and "78" in w for w in warn), warn
+
+
+def test_audit_sin_gated_se_comporta_como_antes(hc):
+    ld = {"com.ibtrader.dailyplans": "0", "com.ibtrader.postmortem": "0",
+          "com.ibtrader.tracecube": "1"}
+    _ok, warn, _crit = hc.audit_launchd(ld, None)
+    assert any("tracecube" in w for w in warn), warn
+
+
+def test_gated_jobs_se_deriva_del_plist_no_de_una_lista(hc, tmp_path):
+    """Si mañana otro job se pone portero, el audit lo respeta solo."""
+    for lbl, cmd in [
+            ("com.ibtrader.conguarda", ['/bin/zsh', '-lc', 'H=$(date +%H%M) && [ "$H" -ge 0935 ] && ./x.sh']),
+            ("com.ibtrader.conportero", ['/bin/zsh', '-lc', 'cd ~/ib-trader && ./bin/fleet_hours && ./y.sh']),
+            ("com.ibtrader.singuarda", ['/bin/zsh', '/ruta/z.sh'])]:
+        with open(tmp_path / f"{lbl}.plist", "wb") as fh:
+            plistlib.dump({"Label": lbl, "ProgramArguments": cmd}, fh)
+    g = hc.gated_jobs(agents_dir=str(tmp_path))
+    assert g == {"com.ibtrader.conguarda", "com.ibtrader.conportero"}, g
+
+
+def test_gated_jobs_reales_incluyen_los_dos_medidos(hc):
+    """Contra los plists instalados de verdad: los dos que Yunior ya verifico a mano."""
+    g = hc.gated_jobs()
+    if os.path.exists(os.path.expanduser("~/Library/LaunchAgents/com.ibtrader.tracecube.plist")):
+        assert "com.ibtrader.tracecube" in g, g
+        assert "com.ibtrader.polychains.intraday" in g, g
+
+
+# --- jobs COLGADOS: el audit de exit codes es ciego a esto ------------------------
+# launchd no relanza un job periodico mientras la instancia anterior siga viva. Un
+# proceso colgado deja de correr para siempre SIN cambiar de exit code.
+
+def test_parse_etime_formatos(hc):
+    assert hc.parse_etime("03:06:52") == 3 * 3600 + 6 * 60 + 52
+    assert hc.parse_etime("  12:30 ") == 750
+    assert hc.parse_etime("2-01:00:00") == 2 * 86400 + 3600
+
+
+def test_parse_etime_none_nunca_cero(hc):
+    """Un 0 se leeria como 'acaba de arrancar' y taparia justo el proceso colgado."""
+    for basura in ("", None, "no-soy-un-tiempo", "??:??"):
+        assert hc.parse_etime(basura) is None, basura
+
+
+def test_stuck_jobs_caza_el_intrinioprobe_real(hc):
+    """El caso medido: StartInterval 600 s y 3h06m en la misma corrida = 18 sondas
+    perdidas en silencio, mientras el informe solo decia 'exit 1'."""
+    avisos = hc.stuck_jobs(intervals={"com.ibtrader.intrinioprobe": 600},
+                           edades={"com.ibtrader.intrinioprobe": 11212})
+    assert len(avisos) == 1 and "COLGADO" in avisos[0] and "186 min" in avisos[0], avisos
+
+
+def test_stuck_jobs_no_grita_por_una_corrida_normal(hc):
+    """Un job periodico que tarda algo mas de un ciclo no esta colgado (histeresis x3)."""
+    assert hc.stuck_jobs(intervals={"com.ibtrader.prints": 120},
+                         edades={"com.ibtrader.prints": 200}) == []
+
+
+def test_stuck_jobs_ignora_los_de_calendario(hc):
+    """Sin StartInterval no hay presupuesto de tiempo: no se inventa uno."""
+    assert hc.stuck_jobs(intervals={}, edades={"com.ibtrader.dailyplans": 99999}) == []
+
+
+# --- el feed NO es siempre IBKR: condicional por proveedor -------------------------
+
+def test_bar_feed_ibkr(hc):
+    assert hc.bar_feed("ibkr") == ("bar_bridge (feed IBKR)", "ibkr_bar_bridge.py")
+
+
+def test_bar_feed_otro_proveedor_vigila_el_provider_bridge(hc):
+    """Con market_source=intrinio el healthcheck cantaba 🔴 'bar_bridge (feed IBKR):
+    MUERTO' 3 veces al dia por algo CORRECTO, y ademas relanzaba la flota para resucitar
+    un puente prohibido esta semana. El camino IBKR sigue entero (regla 10: condicional,
+    no amputacion)."""
+    lbl, pat = hc.bar_feed("intrinio")
+    assert pat == "provider_bridge.py"
+    assert "intrinio" in lbl
+
+
+def test_market_source_default_igual_que_el_lanzador(hc, tmp_path):
+    """Mismo default que fleet_keepalive_start.sh:14 y fleet_up.sh:19 (`|| echo ibkr`):
+    divergir seria la misma clase de bug que las 4 definiciones del horario."""
+    assert hc.market_source(path=str(tmp_path / "no_existe.txt")) == "ibkr"
+    p = tmp_path / "ms.txt"
+    p.write_text("")
+    assert hc.market_source(path=str(p)) == "ibkr"
+    p.write_text("intrinio\n")
+    assert hc.market_source(path=str(p)) == "intrinio"
+
+
 def test_audit_sin_label_propio_no_excluye_nada(hc):
     """me_label=None (plist no encontrado) => no se excluye a nadie por error."""
     ld = {"com.ibtrader.dailyplans": "0", "com.ibtrader.postmortem": "0",
@@ -468,6 +578,11 @@ def test_el_informe_no_pone_palomita_a_una_cura_fallida(hc, tmp_path, monkeypatc
     """Un intento de cura FALLIDO no puede salir con ✅ ni contar como 'curado':
     esa palomita era la que hacia creer que habia red de seguridad."""
     monkeypatch.setattr(hc, "proc_alive", lambda _p: False)
+    # el test parchea subprocess.Popen entero (subprocess.run lo usa) -> pgrep se queda mudo y
+    # saltaria la guarda de VISTA CIEGA. Aqui se simula "veo bien Y el daemon esta muerto".
+    monkeypatch.setattr(hc, "pgrep_ciego", lambda: False)
+    monkeypatch.setattr(hc, "launchd_state", lambda: {"com.ibtrader.dailyplans": "0",
+                                                      "com.ibtrader.postmortem": "0"})
     monkeypatch.setattr(hc, "fleet_window_live", lambda: True)
     monkeypatch.setattr(hc, "premarket_or_session", lambda: False)
     monkeypatch.setattr(hc, "spawn_keepalive", lambda _p: _MuertoAlInstante())
@@ -516,3 +631,68 @@ class _PopenMudo:
 
     def wait(self, *a, **k):
         return 0
+
+
+# --- (z) vista de procesos CIEGA != "todo muerto" ----------------------------
+# 2026-08-03: 222 lineas de 🔴 CRITICO falso en logs/healthcheck.log (notify_relay y
+# x_signal_poster "MUERTO" + heals con exit 127) mientras `pgrep` desde una shell normal
+# los veia VIVOS (pids 95547/95972), y 111 "launchd NO CARGADO" con dailyplans dejando
+# sus 30 PDFs de las 04:00. Causa medida: el pgrep de macOS EXCLUYE al invocante y a sus
+# ANCESTROS salvo con `-a`, y un entorno aislado deja a launchctl sin ver ningun job.
+
+def test_pgrep_usa_a_para_no_perder_ancestros(hc, monkeypatch):
+    visto = {}
+
+    class _R:
+        returncode, stdout, stderr = 0, "123\n", ""
+
+    def _run(args, **k):
+        visto["args"] = args
+        return _R()
+
+    monkeypatch.setattr(hc.subprocess, "run", _run)
+    assert hc.proc_alive("lo_que_sea") is True
+    assert visto["args"][:3] == ["pgrep", "-a", "-f"]
+
+
+def test_pgrep_que_falla_LEVANTA_no_dice_muerto(hc, monkeypatch):
+    class _R:
+        returncode, stdout, stderr = 2, "", "pgrep: illegal option"
+
+    monkeypatch.setattr(hc.subprocess, "run", lambda *a, **k: _R())
+    with pytest.raises(RuntimeError):
+        hc.proc_alive("x")
+
+
+def test_sin_ver_launchd_es_vista_ciega(hc, monkeypatch):
+    monkeypatch.setattr(hc, "_pgrep", lambda pat: [])
+    assert hc.pgrep_ciego() is True
+    monkeypatch.setattr(hc, "_pgrep", lambda pat: ["1"])
+    assert hc.pgrep_ciego() is False
+
+
+def test_launchctl_vacio_no_declara_NO_CARGADO(hc):
+    ok, warn, crit = hc.audit_launchd({}, "com.ibtrader.healthcheck")
+    assert crit == [] and any("VISTA CIEGA" in w for w in warn)
+
+
+def test_con_vista_ciega_no_hay_daemon_MUERTO_ni_cura(hc, monkeypatch, capsys):
+    monkeypatch.setattr(hc, "pgrep_ciego", lambda: True)
+    monkeypatch.setattr(hc, "proc_alive", lambda _p: False)
+    monkeypatch.setattr(hc, "count_proc", lambda _p: 0)
+    monkeypatch.setattr(hc, "fleet_window_live", lambda: True)
+    monkeypatch.setattr(hc, "premarket_or_session", lambda: True)
+    curas = []
+    monkeypatch.setattr(hc, "heal", lambda *a, **k: curas.append(a))
+    monkeypatch.setattr(hc, "spawn_keepalive", lambda _p: curas.append(_p))
+    monkeypatch.setattr(hc.sys, "argv", ["fleet_healthcheck.py", "--no-email"])
+    monkeypatch.setattr(hc.subprocess, "Popen", _PopenMudo)
+    try:
+        hc.main()
+    except SystemExit:
+        pass
+    out = capsys.readouterr().out
+    assert "VISTA CIEGA" in out
+    assert not [ln for ln in out.splitlines()
+                if "MUERTO" in ln and "VISTA CIEGA" not in ln], out
+    assert curas == []

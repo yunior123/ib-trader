@@ -33,12 +33,43 @@ def env(k):
                 return ln.split("=", 1)[1].strip().strip('"').strip("'")
     return None
 
+def _pgrep(pat):
+    """PIDs que casan `pat`. `-a` porque el pgrep de macOS EXCLUYE por defecto al invocante y a
+    TODOS sus ancestros (medido 2026-08-03: `pgrep -f x.py` desde dentro de x.py devuelve vacio,
+    `pgrep -a -f x.py` devuelve sus pids) — un monitor no puede tener un punto ciego con su
+    propio arbol. Se lee solo el primer campo numerico por linea (en Linux `-a` añade el cmdline).
+    Un fallo de pgrep LEVANTA: "no puedo mirar" no es "no hay".
+    """
+    r = subprocess.run(["pgrep", "-a", "-f", pat], capture_output=True, text=True)
+    if r.returncode not in (0, 1):
+        raise RuntimeError("pgrep -a -f %r fallo (rc=%d): %s" % (pat, r.returncode, r.stderr.strip()[:120]))
+    out = []
+    for ln in r.stdout.splitlines():
+        tok = ln.split(None, 1)[0] if ln.strip() else ""
+        if tok.isdigit():
+            out.append(tok)
+    return out
+
+
 def proc_alive(pat):
-    return subprocess.run(["pgrep", "-f", pat], capture_output=True).returncode == 0
+    return bool(_pgrep(pat))
+
+
+def pgrep_ciego():
+    """True si `pgrep` no ve NI a launchd (pid 1): vista de procesos ciega, no vacia.
+
+    Medido 2026-08-03: corridas desde un entorno aislado dieron notify_relay/x_signal_poster
+    "MUERTO" + 🔴 CRITICO y heals que morian con exit 127, mientras `pgrep` desde una shell
+    normal los encontraba VIVOS (pids 95547/95972). 222 lineas de ese falso critico en
+    logs/healthcheck.log desde 2026-07-26. "No puedo ver" no es "esta muerto".
+    """
+    try:
+        return not _pgrep("launchd")
+    except (RuntimeError, OSError):
+        return True
 
 def count_proc(pat):
-    r = subprocess.run(["pgrep", "-f", pat], capture_output=True, text=True)
-    return len([x for x in r.stdout.split() if x])
+    return len(_pgrep(pat))
 
 def launchd_state():
     r = subprocess.run(["launchctl", "list"], capture_output=True, text=True)
@@ -47,6 +78,40 @@ def launchd_state():
         if "ibtrader" in ln:
             p = ln.split()
             if len(p) >= 3: out[p[2]] = p[1]  # label -> last exit
+    return out
+
+
+GATE_MARCAS = ("fleet_hours", "date +%H%M", "date +%H%M%S")
+
+
+def gated_jobs(agents_dir=LAUNCHAGENTS):
+    """Labels cuyo PROPIO comando lleva un portero horario -> su exit 1 es el portero
+    diciendo "fuera de ventana", no un fallo.
+
+    Se DERIVA del plist (como self_label), jamas una lista de nombres a mano: si mañana
+    otro job se pone su portero, este audit lo respeta solo. Marcas buscadas en
+    ProgramArguments: `./bin/fleet_hours` (el portero de la casa) o un `date +%H%M` usado
+    como guarda (`H=$(date +%H%M) && [ "$H" -ge 0935 ] ...`).
+
+    Medido 2026-08-03 07:00: com.ibtrader.polychains.intraday y com.ibtrader.tracecube
+    salian 1 por su propia guarda horaria y el healthcheck los cantaba
+    "exit 1 (revisar config)" en cada corrida. Crying-wolf sobre el comportamiento correcto.
+    Solo se excusa el exit 1: cualquier otro codigo sigue siendo aviso."""
+    out = set()
+    if not os.path.isdir(agents_dir):
+        return out
+    for fn in sorted(os.listdir(agents_dir)):
+        if not fn.endswith(".plist"):
+            continue
+        try:
+            with open(os.path.join(agents_dir, fn), "rb") as fh:
+                pl = plistlib.load(fh)
+        except (OSError, ValueError, plistlib.InvalidFileException):
+            continue          # self_label ya canta los plists ilegibles; no duplicar voz
+        cmd = " ".join(x for x in (pl.get("ProgramArguments") or []) if isinstance(x, str))
+        lbl = pl.get("Label")
+        if isinstance(lbl, str) and lbl and any(m in cmd for m in GATE_MARCAS):
+            out.add(lbl)
     return out
 
 def self_label(agents_dir=LAUNCHAGENTS, me=SELF_PATH):
@@ -72,12 +137,21 @@ def self_label(agents_dir=LAUNCHAGENTS, me=SELF_PATH):
                 return lbl
     return None
 
-def audit_launchd(ld, me_label):
+def audit_launchd(ld, me_label, gated=None):
     """Clasifica los exit codes de launchd -> (ok, warn, crit).
     `me_label` (nuestro propio job) se EXCLUYE: un healthcheck no puede auditar su
     propia corrida — solo ve el LastExitStatus de la ANTERIOR, se lo canta como aviso
-    nuevo y se realimenta. Ese era el bucle del 2026-07-25."""
+    nuevo y se realimenta. Ese era el bucle del 2026-07-25.
+    `gated` (ver gated_jobs): jobs con portero horario propio; su exit 1 es el portero,
+    no un fallo — sale OK y no ensucia el informe."""
+    gated = gated or set()
     ok, warn, crit = [], [], []
+    # `launchctl list` sin NINGUN job de ib-trader, ni el nuestro, es vista CIEGA (otro dominio
+    # de arranque / entorno aislado), no "todos descargados": 111 lineas de "NO CARGADO" falso
+    # en logs/healthcheck.log mientras los jobs corrian (dailyplans dejo sus 30 PDFs de las 04:00).
+    if not ld:
+        return ok, ["launchd: VISTA CIEGA — launchctl no lista ni un job de ib-trader (ni el mio); "
+                    "no declaro NO CARGADO a ciegas"], crit
     for job in CRITICAL_JOBS:
         if job in ld:
             (ok if ld[job] in ("0", "-") else warn).append(f"launchd {job}: exit {ld[job]}")
@@ -87,9 +161,82 @@ def audit_launchd(ld, me_label):
     for job, ex in sorted(ld.items()):
         if job in CRITICAL_JOBS or (me_label is not None and job == me_label):
             continue
-        if ex not in ("0", "-"):
-            warn.append(f"launchd {job}: exit {ex} (revisar config)")
+        if ex in ("0", "-"):
+            continue
+        if ex == "1" and job in gated:
+            ok.append(f"launchd {job}: exit 1 = su propio portero horario (fuera de ventana, correcto)")
+        else:
+            warn.append(f"launchd {job}: exit {ex} (ultima corrida fallo)")
     return ok, warn, crit
+
+def parse_etime(s):
+    """Segundos de `ps -o etime=` ([[DD-]HH:]MM:SS). None si no se puede leer — nunca 0,
+    que se leeria como "acaba de arrancar" y taparia justo el proceso colgado."""
+    s = (s or "").strip()
+    if not s:
+        return None
+    dias, _, resto = s.rpartition("-")
+    partes = resto.split(":")
+    if not all(p.isdigit() for p in partes) or not 2 <= len(partes) <= 3:
+        return None
+    if dias and not dias.isdigit():
+        return None
+    seg = 0
+    for p in partes:
+        seg = seg * 60 + int(p)
+    return seg + (int(dias) * 86400 if dias else 0)
+
+
+def job_intervals(agents_dir=LAUNCHAGENTS):
+    """label -> StartInterval (s) de los jobs periodicos. Derivado del plist."""
+    out = {}
+    if not os.path.isdir(agents_dir):
+        return out
+    for fn in sorted(os.listdir(agents_dir)):
+        if not fn.endswith(".plist"):
+            continue
+        try:
+            with open(os.path.join(agents_dir, fn), "rb") as fh:
+                pl = plistlib.load(fh)
+        except (OSError, ValueError, plistlib.InvalidFileException):
+            continue
+        lbl, iv = pl.get("Label"), pl.get("StartInterval")
+        if isinstance(lbl, str) and lbl and isinstance(iv, int) and iv > 0:
+            out[lbl] = iv
+    return out
+
+
+def stuck_jobs(ld=None, intervals=None, edades=None, factor=3):
+    """Jobs periodicos COLGADOS: llevan corriendo mas de `factor` x su StartInterval.
+
+    launchd NO relanza un job mientras su instancia anterior siga viva, asi que un
+    proceso colgado deja de correr para siempre SIN cambiar de exit code — el audit de
+    exit codes es CIEGO a esto. Cazado el 2026-08-03 07:02: com.ibtrader.intrinioprobe
+    (StartInterval 600) llevaba 3h06m en el mismo proceso y su log no escribia desde las
+    03:45; el informe solo decia "exit 1". 18 sondas perdidas en silencio.
+
+    `edades` inyectable (label -> segundos) para poder testear sin procesos reales."""
+    del ld  # el PID se lee aqui de launchctl: `launchd_state` solo trae el exit code
+    intervals = job_intervals() if intervals is None else intervals
+    if edades is None:
+        edades = {}
+        r = subprocess.run(["launchctl", "list"], capture_output=True, text=True)
+        for ln in r.stdout.splitlines():
+            p = ln.split()
+            if len(p) < 3 or "ibtrader" not in ln or not p[0].isdigit():
+                continue
+            ps = subprocess.run(["ps", "-o", "etime=", "-p", p[0]], capture_output=True, text=True)
+            e = parse_etime(ps.stdout)
+            if e is not None:
+                edades[p[2]] = e
+    avisos = []
+    for lbl, edad in sorted(edades.items()):
+        iv = intervals.get(lbl)
+        if iv and edad > factor * iv:
+            avisos.append(f"launchd {lbl}: COLGADO — {edad//60} min en la misma corrida "
+                          f"(StartInterval {iv}s); launchd no lo relanza hasta que muera")
+    return avisos
+
 
 def exit_code(crit, warn):
     """CONTRATO DE SALIDA (fix 2026-07-25): non-zero SOLO con 🔴 real.
@@ -289,6 +436,38 @@ def gex_map_status(path=None, canon_n=None, poly_n=None):
     return "ok", f"mapa gamma: ok, cobertura {cobertura} MEDIDA ({edad})"
 
 
+def market_source(path=None):
+    """Proveedor de market data vigente, de data/market_source.txt.
+
+    MISMO default que el lanzador (fleet_keepalive_start.sh:14 y fleet_up.sh:19: `|| echo
+    ibkr`): este chequeo tiene que mirar lo que el lanzador ARRANCO, no lo que a el le
+    parezca. Divergir del default seria la misma clase de bug que las cuatro definiciones
+    del horario (ver fleet_window.py)."""
+    p = path or os.path.join(REPO, "data", "market_source.txt")
+    try:
+        with open(p) as fh:
+            return fh.read().strip() or "ibkr"
+    except OSError:
+        return "ibkr"
+
+
+def bar_feed(ms=None):
+    """(etiqueta, patron_pgrep) del daemon que ALIMENTA las barras con el proveedor vigente.
+
+    Condicional por proveedor, no amputacion (orden de Yunior 2026-08-03 #10): el camino
+    IBKR sigue entero y vuelve solo con poner "ibkr" en data/market_source.txt. Espeja la
+    bifurcacion que ya hacen fleet_up.sh:30-36 y fleet_keepalive_start.sh:201-224.
+
+    POR QUE: este fichero era el ULTIMO que daba por hecho que el feed es IBKR. Con
+    market_source=intrinio (semana del 2026-08-03, Gateway prohibido) cantaba 🔴 CRITICO
+    "bar_bridge (feed IBKR): MUERTO" en cada corrida — 3 al dia — por algo CORRECTO, y
+    ademas relanzaba la flota para resucitar un puente que no debe existir."""
+    ms = market_source() if ms is None else ms
+    if ms == "ibkr":
+        return "bar_bridge (feed IBKR)", "ibkr_bar_bridge.py"
+    return f"provider_bridge (feed {ms})", "provider_bridge.py"
+
+
 def market_hours():
     lt = time.localtime()
     return lt.tm_wday < 5 and 930 <= lt.tm_hour*100+lt.tm_min < 1600
@@ -388,8 +567,9 @@ def main():
     if me_label is None:
         warn.append("launchd: no encuentro mi propio plist en ~/Library/LaunchAgents "
                     "(no puedo excluirme del audit de exit codes)")
-    lok, lwarn, lcrit = audit_launchd(ld, me_label)
+    lok, lwarn, lcrit = audit_launchd(ld, me_label, gated_jobs())
     ok += lok; warn += lwarn; crit += lcrit
+    warn += stuck_jobs(ld)
 
     # 2) daemons criticos (con auto-cura)
     checks = [
@@ -400,7 +580,13 @@ def main():
     if ventana is None:
         warn.append("portero horario AUSENTE (./fleet_hours): no revivo daemons a ciegas — "
                     "compila con scripts/build_fleet_hours.sh")
+    ciego = pgrep_ciego()
+    if ciego:
+        warn.append("VISTA CIEGA: pgrep no ve ni a launchd — no declaro nada MUERTO ni revivo a "
+                    "ciegas (entorno aislado/sandbox, no un fallo de la flota)")
     for name, pat, ka, critical in checks:
+        if ciego:
+            continue
         if proc_alive(pat):
             # Vivo FUERA de ventana no es "ok": es algo que el apagado no alcanzo.
             (ok if ventana is not False else warn).append(
@@ -417,26 +603,33 @@ def main():
                 if h: healed.append(h)
 
     # 3) feed de datos + bots (solo critico en horario de mercado/premarket)
-    bridge = proc_alive("ibkr_bar_bridge.py")
+    feed_lbl, feed_pat = bar_feed()
+    bridge = proc_alive(feed_pat)
     bots = count_proc("signal_bot")
-    if premarket_or_session():
+    if ciego:
+        pass   # sin vista de procesos no se afirma ni vivo ni muerto (ya avisado arriba)
+    elif premarket_or_session():
         if not bridge and not a.no_heal:
             try:
                 # start_new_session: si no, launchd barre este arranque con el grupo del
                 # job en cuanto el healthcheck termina (ver spawn_keepalive).
                 spawn_keepalive(os.path.join(REPO, "scripts", "fleet_keepalive_start.sh"))
-                time.sleep(4); bridge = proc_alive("ibkr_bar_bridge.py"); bots = count_proc("signal_bot")
-                healed.append(f"flota: REVIVIDA (verificado: bridge vivo, {bots} bots)" if bridge
-                              else f"flota: NO revivida — el bridge sigue sin aparecer 4s despues "
+                time.sleep(4); bridge = proc_alive(feed_pat); bots = count_proc("signal_bot")
+                healed.append(f"flota: REVIVIDA (verificado: {feed_lbl} vivo, {bots} bots)" if bridge
+                              else f"flota: NO revivida — {feed_lbl} sigue sin aparecer 4s despues "
                                    f"del relanzado ({bots} bots)")
             except Exception as e:
                 crit.append(f"flota: fallo relanzar ({e})")
-        (ok if bridge else crit).append(f"bar_bridge (feed IBKR): {'vivo' if bridge else 'MUERTO en horario activo'}")
+        (ok if bridge else crit).append(f"{feed_lbl}: {'vivo' if bridge else 'MUERTO en horario activo'}")
         (ok if bots >= 1 else warn).append(f"signal bots: {bots} vivos")
     else:
-        ok.append(f"bar_bridge {'vivo' if bridge else 'dormido (fuera de horario, normal)'} | bots {bots}")
-    ow = proc_alive("opt_whale_watch")
-    (ok if (ow or not market_hours()) else warn).append(f"opt_whale (ballenas opciones): {'vivo' if ow else 'muerto'}")
+        ok.append(f"{feed_lbl} {'vivo' if bridge else 'dormido (fuera de horario, normal)'} | bots {bots}")
+    if not ciego:
+        ow = proc_alive("opt_whale_watch")
+        (ok if ow else (warn if market_hours() else ok)).append(
+            "opt_whale (ballenas opciones): vivo" if ow else
+            "opt_whale (ballenas opciones): MUERTO en horario de mercado" if market_hours() else
+            "opt_whale (ballenas opciones): parado fuera de horario (correcto)")
 
     # 4) frescura de salidas del dia
     today = time.strftime("%Y-%m-%d")

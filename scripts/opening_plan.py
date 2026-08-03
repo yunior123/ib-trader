@@ -8,6 +8,7 @@ Se publican RAMAS con su gatillo, no un porcentaje inventado.
 import json, os, sys, datetime as dt
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import uw_premium
+import session_dirs
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TREES = os.path.join(ROOT, "data", "trees")
@@ -65,7 +66,7 @@ def atr(bars, n=14):
 
 def flow(sym):
     """Premium FIRMADO por el agresor (UW). Ausente si no hay fichero: nunca 0."""
-    for d in sorted(os.listdir(os.path.join(ROOT, "data", "history")), reverse=True):
+    for d in session_dirs.session_dirs(os.path.join(ROOT, "data", "history")):
         p = os.path.join(ROOT, "data", "history", d, f"uw_net_prem_ticks_{sym.lower()}.json")
         if not os.path.exists(p):
             continue
