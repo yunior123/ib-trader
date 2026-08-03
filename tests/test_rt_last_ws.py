@@ -36,7 +36,9 @@ def test_escribe_y_relee(tmp_path, monkeypatch):
     ahora = time.time()
     assert rt_last.write_if_newer("SPY", ahora, 744.27, 100, "finnhub") is True
     ep, px, sz, src = rt_last.read("SPY")
-    assert (round(ep, 1), px, sz, src) == (round(ahora, 1), 744.27, 100.0, "finnhub")
+    # tolerancia y no round(): el fichero guarda .3f y en el limite .x5 los dos redondeos
+    # caian a lados distintos (flake real, visto 2026-08-03).
+    assert abs(ep - ahora) < 0.01 and (px, sz, src) == (744.27, 100.0, "finnhub")
 
 
 def test_un_tick_mas_viejo_NO_pisa(tmp_path, monkeypatch):

@@ -25,8 +25,21 @@
 - [ ] 3. "add in chart indicator at the top left, with RSI data and weather its bearish or not based
       on bollinger, take inspiration by bento indicator or trinity one, make sure it updates
       automattically" (2026-08-03 06:38) — pendiente
-- [ ] 4. "solve any remaining todos as well, make sure real time is connected, intrinio is delayed
-      as per the docs, so finnhub is probably better" (2026-08-03 06:38) — pendiente
+- [x] 4. "solve any remaining todos as well, make sure real time is connected, intrinio is delayed
+      as per the docs, so finnhub is probably better" (2026-08-03 06:38) — HECHO (parte realtime).
+      Medido en sesión, no de la doc: **Finnhub WS 0,00–0,04 s** vs **Intrinio quote 1.216–1.279 s
+      y barras 997–1.657 s**. Finnhub REST `/quote` = cierre del viernes (2,6 días) y
+      `/stock/candle` = 403; **Databento Live no entitlado** ("live data license is required").
+      El print de Finnhub **no lo leía nadie**: ahora `provider_bridge.resolve_spot()` es el punto
+      ÚNICO de decisión (tabla `PROVEEDORES` con capacidades y latencia por proveedor, **IBKR
+      declarado e intacto**), el spot vivo manda y la fuente viaja con el número
+      (`spot_src`/`spot_age` en la cabecera de la cadena + `provider_status.latencia`).
+      Arreglado también: dos puentes Finnhub compartiendo la key (free = 1 socket) → lockfile;
+      `caidas == 5` que gritaba una sola vez en toda la vida del proceso; socket vivo pero mudo;
+      suscripción a los 30 de fleet.txt (SPCX ya tiene su único precio vivo).
+      Doc: `docs/REALTIME-FUENTES-2026-08-03.md`. **Abierto**: las barras siguen delayed ~16 min
+      con `fleet_consensus.MAX_BAR_AGE=180 s` → MANADA muda por construcción; 16/26 símbolos con
+      huecos de barras (XLK 25/30, SMH 11/30); volumen 0 en 30/30 barras de premarket.
 - [x] 5. "save unusual whales again: e43cebd2-1ff4-4b04-b944-29e02955497c" (2026-08-03 07:14) —
       HECHO, y NO era redundante: `UW_TOKEN` ya era el bueno pero **`UNUSUAL_WHALES_TOKEN` tenía
       otro valor** (mismos 8 primeros caracteres, distinto después — por eso pasó desapercibido).

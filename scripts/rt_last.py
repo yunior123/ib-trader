@@ -32,6 +32,31 @@ def read(sym: str):
         return None
 
 
+def fresh(sym, max_age_s=None):
+    """El PRINT vivo o None. None y JAMAS un precio de respaldo: quien llama decide el
+    respaldo y esta OBLIGADO a etiquetarlo (regla: nada delayed disfrazado de vivo)."""
+    r = read(sym)
+    if r is None:
+        return None
+    tope = MAX_AGE_S if max_age_s is None else max_age_s
+    edad = time.time() - r[0]
+    if tope > 0 and edad > tope:
+        return None
+    return (r[1], r[0], r[3], edad)     # (precio, epoch, fuente, edad_s)
+
+
+def snapshot(syms):
+    """{SYM: {precio, epoch, fuente, edad_s}} o None por simbolo sin print. Para publicar
+    frescura medida: un consumidor tiene que poder ver de que fuente vino y con cuanto retraso."""
+    out = {}
+    ahora = time.time()
+    for s in syms:
+        r = read(s)
+        out[s.upper()] = None if r is None else {
+            "precio": r[1], "epoch": r[0], "fuente": r[3], "edad_s": round(ahora - r[0], 1)}
+    return out
+
+
 def write_if_newer(sym, epoch, price, size, fuente, max_age_s=None):
     # sin anotaciones `float | None`: el venv de la flota es 3.9 y ahi es TypeError al importar
     """Escribe solo si el tick es (a) fresco de verdad y (b) mas nuevo que el que ya hay."""

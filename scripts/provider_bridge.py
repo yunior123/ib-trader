@@ -15,6 +15,12 @@ feeds.env pone intrinio/polygon). Si resuelve a mock, el puente ABORTA (no inyec
 El nombre del fichero conserva el sufijo _ibkr porque 21 bots lo tienen cableado; la
 PROCEDENCIA real va en data/opt_chain header + data/provider_status.json (nada miente).
 
+PUNTO UNICO DE DECISION DE PROVEEDOR (orden Yunior 2026-08-03): la tabla `PROVEEDORES` de
+este fichero declara capacidades y clase de latencia de cada uno (ibkr incluido, apagado por
+condicional pero con su codigo intacto en scripts/ibkr_bar_bridge.py y opt_chain_cache.py) y
+`resolve_spot()` elige el precio vivo por FRESCURA medida. Añadir/quitar un proveedor se hace
+aqui; ningun consumidor cambia. El interruptor sigue siendo data/market_source.txt.
+
 Fail-loud: un error de una capacidad de un simbolo se registra y se sigue; JAMAS se escribe
 un cero/valor plausible en lugar de "no se". Uso:
   ./venv-mit/bin/python scripts/provider_bridge.py --daemon [SYM ...]
@@ -35,6 +41,9 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "mit"))
+sys.path.insert(0, str(REPO / "scripts"))
+
+import rt_last  # noqa: E402  el PRINT en tiempo real (Finnhub WS), fuera de la capa mit/
 
 from backend.app.config import get_settings  # noqa: E402
 from backend.app.domain import OptionContract, Quote  # noqa: E402
@@ -171,7 +180,8 @@ def _band_chain(chain: list[OptionContract], spot: float) -> list[OptionContract
     return out or [c for c in chain if c.expiration in exps]  # nunca devolver vacio por banda
 
 
-def write_chain(sym: str, chain: list[OptionContract], spot: float, source: str) -> int:
+def write_chain(sym: str, chain: list[OptionContract], spot: float, source: str,
+                spot_src: str = "?", spot_age: float = -1.0) -> int:
     if not chain:
         raise RuntimeError(f"{sym}: cadena vacia")
     banded = _band_chain(chain, spot)
@@ -191,8 +201,11 @@ def write_chain(sym: str, chain: list[OptionContract], spot: float, source: str)
             f"{_num(c.implied_volatility):.4f} {_num(c.delta):.4f} {_num(c.gamma):.6f}"
         )
     header = (
+        # spot_src/spot_age: opt_quick.cpp busca "spot " CON espacio, asi que "spot_src" no
+        # colisiona; y la linea sigue muy por debajo de su buffer de 256.
         f"# opt_chain {sym.upper()} | epoch {ep} | {datetime.now():%Y-%m-%d %H:%M:%S} "
-        f"| spot {spot:.2f} | exps {' '.join(exps_ymd[:2])}\n"
+        f"| spot {spot:.2f} | spot_src {spot_src} | spot_age {spot_age:.0f} "
+        f"| exps {' '.join(exps_ymd[:2])}\n"
         f"# fuente {source} | band {band:.4f} | max_strikes {len(rows)} | narrow 0 "
         f"| vencimientos {len(exps)} | rows {len(rows)} "
         f"| greeks_ok_pct {greeks_ok:.4f} | bidask_ok_pct {ba_ok:.4f}\n"
@@ -204,15 +217,92 @@ def write_chain(sym: str, chain: list[OptionContract], spot: float, source: str)
 
 # ---------------- provenance sidecar ----------------
 
-def write_status(settings, exch_ts: dict[str, str], entitlement: list[str]) -> None:
+PRINT_MAX_AGE_S = float(os.environ.get("IBT_PRINT_MAX_AGE_S", "120"))
+
+# ---------------- ENRUTADO DE PROVEEDORES: EL UNICO PUNTO DE DECISION -------------------
+# Orden Yunior 2026-08-03: "put conditionals per data provider, remember to have all generic
+# to avoid deleting code, and modifying preferably just one service file". Cada proveedor
+# DECLARA sus capacidades y su clase de latencia; nadie se borra — IBKR sigue entero (sus
+# puentes viven en scripts/ibkr_bar_bridge.py y scripts/opt_chain_cache.py, y los lanza
+# fleet_keepalive_start.sh cuando data/market_source.txt == "ibkr"). Añadir/quitar proveedor
+# = tocar esta tabla, jamas un consumidor.
+#   prio: menor = manda cuando el dato es igual de fresco. 'tiempo_real' medido, no de la doc.
+PROVEEDORES = {
+    "ibkr":     {"caps": ["bars", "nbbo", "chain", "print"], "latencia": "tiempo_real",
+                 "prio": 0, "activo_si": "market_source==ibkr",
+                 "nota": "OFF esta semana por orden de Yunior; codigo intacto"},
+    "finnhub":  {"caps": ["print"], "latencia": "tiempo_real", "prio": 1,
+                 "activo_si": "data/rt_last_<SYM>.txt fresco",
+                 "nota": "WS gratis: 0,00-0,04 s medido; sin libro y cinta MUESTREADA"},
+    "intrinio": {"caps": ["bars", "nbbo", "quote"], "latencia": "delayed_15m", "prio": 8,
+                 "activo_si": "market_source==intrinio", "nota": "cboe_one_delayed: ~1.100 s medido"},
+    "polygon":  {"caps": ["chain"], "latencia": "delayed_15m", "prio": 9,
+                 "activo_si": "MIT_OPTIONS_PROVIDER==polygon", "nota": "griegas y OI reales"},
+}
+
+
+def _print_vivo(sym: str):
+    """(precio, epoch, fuente, edad_s) del PRINT en tiempo real, o None. Generico: la fuente
+    la declara el propio fichero, asi que manana lo puede escribir IBKR sin tocar nada aqui."""
+    return rt_last.fresh(sym, PRINT_MAX_AGE_S)
+
+
+def resolve_spot(sym: str, q_last: float, q_age: float):
+    """(spot, fuente, edad_s) — resolvedor GENERICO de precio vivo, punto unico de decision.
+    Manda el candidato mas FRESCO y, a igualdad, el de menor `prio` (tiempo real antes que
+    delayed). La fuente viaja SIEMPRE con el numero; (0.0,'ninguna',-1) = no se sabe."""
+    cands = []
+    p = _print_vivo(sym)
+    if p is not None:
+        cands.append((p[3], PROVEEDORES.get(p[2], {}).get("prio", 5), p[0], p[2]))
+    if q_last > 0:
+        activo = os.environ.get("MIT_MARKET_PROVIDER", "intrinio")
+        cands.append((q_age if q_age >= 0 else 1e9,
+                      PROVEEDORES.get(activo, {}).get("prio", 5), q_last, f"{activo}_quote"))
+    if not cands:
+        return (0.0, "ninguna", -1.0)
+    edad, _prio, px, src = min(cands)
+    return (px, src, edad)
+
+
+def bar_salud(sym: str):
+    """(edad_ultima_barra_s, huecos_en_las_ultimas_30, vol_cero_en_las_ultimas_30) o (None,..).
+    El cockpit cantaba 'SIN LECTURA - barras no contiguas' sin decir de donde salia el hueco:
+    aqui se MIDE y se publica. None y no 0: un 0 seria 'recien salida y perfecta'."""
+    p = DATA / f"bars_{sym.lower()}_ibkr.txt"
+    try:
+        with open(p, "rb") as fh:
+            fh.seek(max(0, os.path.getsize(p) - 4000))
+            lines = fh.read().decode(errors="ignore").strip().split("\n")[-30:]
+        eps = [int(float(x.split()[0])) for x in lines if x.split()]
+        vols = [float(x.split()[5]) for x in lines if len(x.split()) > 5]
+        huecos = sum(1 for a, b in zip(eps, eps[1:]) if b - a != 60)
+        return (round(time.time() - eps[-1], 1), huecos, sum(1 for v in vols if v == 0))
+    except (OSError, ValueError, IndexError):
+        return (None, None, None)
+
+
+def write_status(settings, exch_ts: dict[str, str], entitlement: list[str],
+                 lat: dict | None = None) -> None:
     status = {
         "epoch": int(time.time()),
         "market_provider": settings.market_provider,
         "options_provider": settings.options_provider,
+        "proveedores": PROVEEDORES,
+        "print_file": "data/rt_last_<SYM>.txt",
         "entitlement_messages": entitlement,
         "last_exchange_ts": exch_ts,
+        "latencia": lat or {},
         "note": "epoch de bars/nbbo = tiempo REAL de bolsa; comparar last_exchange_ts vs now para latencia",
     }
+    if lat:
+        # Lo que un consumidor necesita de un vistazo: quien manda en el spot y cuanto sobra.
+        rt = {n for n, p in PROVEEDORES.items() if p["latencia"] == "tiempo_real"}
+        status["spot_delayed"] = sorted(s for s, v in lat.items()
+                                        if v["spot_src"].split("_")[0] not in rt)
+        edades = [v["bar_s"] for v in lat.values() if v["bar_s"] is not None]
+        status["bar_age_max_s"] = max(edades) if edades else None
+        status["bar_huecos"] = sorted(s for s, v in lat.items() if v["bar_huecos"])
     if settings.market_provider == "intrinio":  # sources solo aplican a intrinio
         status["intrinio_stock_source"] = settings.intrinio_stock_source
         status["intrinio_interval_source"] = settings.intrinio_interval_source
@@ -222,6 +312,7 @@ def write_status(settings, exch_ts: dict[str, str], entitlement: list[str]) -> N
 # ---------------- loop ----------------
 
 async def one_pass(providers, settings, syms, last_ep, exch_ts, do_warmup, do_chain, entitlement):
+    lat: dict[str, dict] = {}
     for sym in syms:
         try:
             if do_warmup:
@@ -230,15 +321,23 @@ async def one_pass(providers, settings, syms, last_ep, exch_ts, do_warmup, do_ch
                 await append_bars(providers.market, sym, last_ep)
         except Exception as e:  # per-capability degradation, fail-loud (key redactada)
             log(f"{sym}: BARS error {_scrub(e)}")
-        spot = 0.0
+        q_last, q_age = 0.0, -1.0
         try:
             q = await providers.market.get_quote(sym)
-            spot = float(q.last or (q.bid + q.ask) / 2)
+            q_last = float(q.last or (q.bid + q.ask) / 2)
+            q_age = round(time.time() - q.timestamp.timestamp(), 1)
             write_nbbo(sym, q, exch_ts)
             if not entitlement:
                 entitlement.extend(getattr(q, "_messages", []) or [])
         except Exception as e:
             log(f"{sym}: QUOTE error {_scrub(e)}")
+        spot, spot_src, spot_age = resolve_spot(sym, q_last, q_age)
+        edad_bar, huecos, vol0 = bar_salud(sym)
+        # `ts`: la pasada recorre 26 simbolos y dura de 30 s a 8 min (warmup). Sin el instante
+        # de medida, una edad de este bloque se leeria como si fuese de ahora mismo.
+        lat[sym] = {"ts": int(time.time()), "bar_s": edad_bar, "bar_huecos": huecos,
+                    "bar_vol0": vol0, "quote_s": q_age if q_last > 0 else None,
+                    "spot": spot or None, "spot_src": spot_src, "spot_s": spot_age}
         if do_chain:
             # Un ReadTimeout puntual dejaba al simbolo SIN cadena toda la sesion (medido
             # 2026-08-02: NFLX/GLD/XLK sin opt_chain_*.txt mientras Polygon si los servia).
@@ -248,7 +347,8 @@ async def one_pass(providers, settings, syms, last_ep, exch_ts, do_warmup, do_ch
                 try:
                     chain = await providers.options.get_option_chain(sym)
                     n = write_chain(sym, chain, spot or _spot_from_chain(chain),
-                                    settings.options_provider)
+                                    settings.options_provider,
+                                    spot_src if spot else "chain_atm", spot_age)
                     log(f"{sym}: cadena {n} filas -> opt_chain_{sym.lower()}.txt"
                         + (f" (intento {intento})" if intento > 1 else ""))
                     break
@@ -258,7 +358,7 @@ async def one_pass(providers, settings, syms, last_ep, exch_ts, do_warmup, do_ch
                         await asyncio.sleep(2)
                     else:
                         log(f"{sym}: CHAIN error tras 2 intentos {_scrub(e)} — SIN MAPA DE OPCIONES")
-    write_status(settings, exch_ts, entitlement)
+    write_status(settings, exch_ts, entitlement, lat)
 
 
 def _spot_from_chain(chain: list[OptionContract]) -> float:
