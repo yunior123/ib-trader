@@ -306,11 +306,92 @@
       weeks, at least 2-3 from now, whole agoust" (2026-08-02 19:47) — EN CURSO.
 - [ ] "termina todo, when done put the korean fleet and windows up for ib trader, wanna see it,
       run some real qa testing on ib trader too, use computer use" (2026-08-02 19:20) — EN CURSO.
+      **QA 2026-08-03 07:30 — hecho SIN computer use**: la extensión de Chrome NO está conectada
+      ("Browser extension is not connected"), así que el QA se hizo contra los endpoints vivos de las
+      6 ventanas + Chrome headless (el mismo camino que usa `e2e_smoke.sh`, con captura PNG
+      verificada por magic+IEND). Resultado: **6/6 puertos 8080-8085 responden 200** en `/` y
+      `/health`, versión `10` (commit 2026-08-03 06:55), 780 barras por ventana, `signal_only:true`,
+      `mock:false`. Hallazgo del QA = el bug del put wall (punto 1 de arriba), cazado precisamente
+      en `/health` de QQQ. **Para el QA con computer use hace falta que Yunior conecte la extensión
+      Claude de Chrome** (claude.ai/chrome, misma cuenta).
 - [ ] "do all todos and remaining work, no excuses. investigate in github, web, reddit, stackoverflow,
       etc" (2026-08-02 03:45) — EN CURSO: los 40 problemas de las revisiones + investigacion externa.
 - [ ] "solve and investigate all not solved bugs or issues" (2026-08-02 03:40) — EN CURSO: barrido
       de TODOS los problemas medio/bajo que las revisiones adversariales dejaron sin arreglar +
       caza de bugs nueva (skill bug-hunter) con agentes frescos.
+      **LOTE 2026-08-03 (premarket) — 5 números falsos VIVOS cazados y arreglados, commit `5f725032`:**
+      1. 🔴 **El put wall del cockpit salía de una cadena TRUNCADA.** La cadena se pide en orden de
+         TICKER y la `C` ordena antes que la `P`, así que al cortar en `max_strikes` los PUTs cercanos
+         al dinero son lo PRIMERO que se cae. Medido 07:08 en `data/opt_chain_qqq.txt`: **153 CALLs
+         (590→790) y sólo 27 PUTs (590→632)** con spot 690,96 → el cockpit dibujaba "Put wall —
+         soporte" en **625 (−9,5%)**; MU spot 795,81 con puts 678→698 → **−12,5%**. **7 de 29
+         símbolos** afectados (QQQ SPY MU ASML SNDK STX WDC), los otros 22 con `gap 0,000` intactos.
+         FIX en `scripts/gex_core.py:388-408`: `put_side_gap_pct`/`call_side_gap_pct` + `SIDE_GAP_TOL`
+         (`:46`); si el lado está truncado el muro es **None**, jamás el strike profundo — mismo
+         criterio que el `_walls()` de `mit/`. 4 tests en `tests/test_gex_consumers.py`.
+         VERIFICADO EN VIVO tras relanzar los 6 bridges: QQQ y MU `put_wall=None` +
+         `walls_unavailable="muros sin calcular"`; NVDA −2,2% / SMH −0,7% / AAPL −3,2% / MSFT −4,1%
+         sin cambio. **La causa RAÍZ (la cadena truncada) es de `provider_bridge`/`mit`: REPORTADA.**
+      2. 🔴 **`iv_regime` publicaba el centinela −1,0 como "IV COMPRIMIDA".** `if not iv_now` sólo es
+         falso para `0.0`, así que `-1.0` (= "sin dato" en la cadena) pasaba, `percentile` salía 0 y
+         **11 de 26 símbolos** decían `regime: COMPRESSED` (TSLA AAPL MSFT META AMZN GOOGL INTC NOK
+         SPCX LRCX WDC) — servido al cockpit por `chart_bridge.py:3108`. Y de paso: `build_iv_history`
+         leía `data["rows"]`, clave que el archivador de Polygon **no escribe** (usa `results` +
+         `implied_volatility`) → devolvía `[]` SIEMPRE; y el filtro de 60 días comparaba `YYYYMMDD`
+         con `epoch/1e6`, inerte. FIX `scripts/iv_regime.py`: `current_iv()` = mediana de las IV
+         MEDIDAS o `None`; esquema `results` con respaldo a `rows`; ventana por sesiones reales.
+         Ahora **29 símbolos, 0 centinelas** (QQQ 0,62 NORMAL p89 n=15.094). 4 tests.
+      3. 🟠 **El healthcheck declaraba MUERTO lo que estaba VIVO.** El `pgrep` de macOS **EXCLUYE al
+         invocante y a TODOS sus ancestros** salvo con `-a` (medido: `pgrep -f probe.py` desde dentro
+         de probe.py → vacío; `pgrep -a -f` → sus pids). Resultado: **222 líneas** de 🔴 CRÍTICO falso
+         en `logs/healthcheck.log` desde 2026-07-26 (notify_relay + x_signal_poster "MUERTO" y heals
+         muriendo con exit 127) mientras `pgrep` desde una shell normal los veía vivos (95547/95972),
+         y **111 "launchd NO CARGADO"** con dailyplans dejando sus 30 PDFs de las 04:00.
+         FIX `scripts/fleet_healthcheck.py`: `_pgrep()` con `-a` y que **LEVANTA** si pgrep falla
+         («no puedo mirar» ≠ «no hay»), + guarda **VISTA CIEGA** (ni launchd visible / `launchctl`
+         sin un solo job) que no declara nada muerto ni revive a ciegas. 5 tests (55 en el fichero).
+      4. 🟠 **`data/vpvr.json` rancio desde el 28-jul** (zonas de liquidez, orden de Yunior 2026-07-28).
+         DOS fallos encadenados: `dailyplans_run.sh:32` invocaba `./volume_profile` (vive en `bin/`
+         desde la mudanza — **el mismo precedente que mató la flota**) y el binario tenía
+         `db_path = "trades.db"` por defecto, que abre el fichero **VACÍO de 0 bytes de la raíz** en
+         vez de `data/trades.db` ("no such table: poly_bars"). FIX: `scripts/volume_profile.cpp:368`
+         → `data/trades.db`, `dailyplans_run.sh:32` → `./bin/volume_profile`, recompilado
+         (`bin/volume_profile`) y **corrido: `data/vpvr.json` regenerado 2026-08-03T11:04:29Z** con
+         20 sesiones de `poly_bars`. De paso, **los 6 `scripts/build_*.sh` compilaban a la RAÍZ**
+         mientras los consumidores leen `bin/` — la próxima recompilación de `fleet_hours`, `gate`,
+         `replay`, `level_react` o `fleet_consensus` habría dejado el binario viejo en `bin/`.
+         Corregidos los 6 a `-o bin/<binario>`.
+      5. 🟡 **Archivo de un DOMINGO desplazando al viernes** → ver el bloque `session_dirs` abajo.
+      **REPORTADO, NO TOCADO (ficheros de otros agentes):** la cadena truncada (punto 1) en
+      `provider_bridge`/`mit`; `WARMUP_BARS=1600` que deja a `reversal_router` en INSUFFICIENT_DATA;
+      `com.ibtrader.intrinioprobe` **COLGADO 192 min en la misma corrida** (StartInterval 600 s:
+      launchd no lo relanza hasta que muera); `walls_status` (`chart_bridge.py:314`) podría decir
+      "sin PUTs cerca del dinero" en vez del genérico "muros sin calcular".
+
+### ✅ BUG CERRADO 2026-08-03 07:14 — un DOMINGO archivado desplazaba a la última sesión real
+El patrón que `print_plans.sh:47` ya documentaba **volvió a pasar**, por otra puerta:
+`com.ibtrader.polychains` dispara `poly_chain_archive.py` a las **08:45 y 16:20 los 7 días de la
+semana** y ese script **no tenía portero de día de mercado** (el `--market-day` sólo se le había
+puesto a `print_plans.sh`). Resultado: `data/history/2026-08-02/` (domingo) con **35 chain_full**
++ 70 fotos `poly_chain_*`, y su contenido es el del VIERNES:
+`chain_full_spy.json` → `spot 744,27` con **`spot_age_s = 159.611` = 44,3 h** (vs el viernes real
+747,49 con 67 s). También hay `2026-07-25` (sábado) y `2026-07-26` (domingo) del mismo modo.
+**Consumidores que emparejaban "última sesión" por NOMBRE DE CARPETA**, verificados uno a uno:
+  · `scripts/skew.py:46` `latest_dates()` → `dates[0]` = el domingo. Su `drr_1d = rr − vals[-1]`
+    habría salido domingo−viernes = **0 fabricado**, y el z-score con el viernes duplicado.
+  · `scripts/chain_cube_archive.py:293` `full_chain_path(sym, date=None)` → "el más reciente".
+    Lo leen `em_envelope.py:363` y `pin_clock.py:203`.
+  · `scripts/opening_plan.py:68` `flow()` → primera carpeta con `uw_net_prem_ticks_*`.
+  · `scripts/iv_regime.py` → el domingo entraba duplicado en el percentil de IV.
+  ✅ `scripts/uw_oi_delta.py:54-65` YA lo hacía bien (decide por la fecha as-of del OI con
+    `em_envelope.is_market_day`), tal y como declaraba.
+FIX: `scripts/session_dirs.py` nuevo — filtro ÚNICO `session_dirs(hist)` que devuelve sólo
+carpetas `YYYY-MM-DD` que son sesión, con la **tabla de festivos única** de `em_envelope`
+(LEVANTA si se agota: nunca asume "sin festivos"). Cableado en los 4 consumidores.
+`poly_chain_archive.py:558` ya no archiva fuera de sesión (`--force` para forzar).
+La carpeta del domingo **no se borra** (es dato, no basura): queda en cuarentena por su propia
+fecha — ningún consumidor la elige ya. Verificado: `session_dirs('data/history')` devuelve
+`2026-07-21..24, 27..31` y **excluye 07-25, 07-26 y 08-02**. 7 tests (`tests/test_session_dirs.py`).
 
 ### 🔴 ACCIÓN DE YUNIOR — token de Finviz CADUCADO (2026-08-02 19:08)
 `FINVIZ_AUTH3` (…8625) devuelve **HTTP 401** en el export API. Caducó según lo previsto
@@ -352,8 +433,13 @@ lejano. VERIFICADO con datos reales de Polygon (SPY spot 744,27, 4 vencimientos)
   antes → call_wall 775 / **put_wall 360 (−51,6%)**
   ahora → call_wall **749 (+0,6%)** / put_wall **733 (−1,5%)**, source=gamma
 E2E con el terminal levantado: `call_wall=749.0 put_wall=733.0 flip=729.48 max_pain=725.0`.
-6 tests nuevos (`mit/backend/tests/test_walls_band.py`), suite mit 51 verdes. PENDIENTE: `options_positioning.py` lo tiene
-tomado el lote A del barrido; se aplica en cuanto lo libere.
+6 tests nuevos (`mit/backend/tests/test_walls_band.py`), suite mit 51 verdes.
+✅ **CERRADO 2026-08-03 07:00** — el fix YA ESTÁ APLICADO y commiteado (`ee866100`):
+`mit/backend/app/analytics/options_positioning.py:95` `WALL_BAND = MATRIX_BAND`, `:98` `_walls()`
+con `pick(fuente, arriba)` filtrando `lo <= k <= hi` y el lado (`k >= spot` / `k <= spot`), `:173`
+la llamada, `:212` el caveat con `source=`. `put_wall` a −51,6% es IMPOSIBLE por construcción.
+Tests `mit/backend/tests/test_walls_band.py` 6/6 verdes; e2e con el terminal vivo (07:00, spot
+750,87): `call_wall=752,0 (+0,15%) put_wall=730,0 (−2,8%) flip=732,74 max_pain=728,0`.
 
 ### ⚠️ CORRECCIÓN 2026-08-02 03:55 — el veredicto de reversal_router NO era robusto
 Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fundada** y la retiro:
@@ -368,8 +454,14 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
   que por la propia regla del script (wilson_lo > 0,50) sería PASS.
 - Honestidad simétrica: ese PASS es sobre 4 de 30 símbolos, sin corrección por correlación ni null de
   entrada aleatoria. **NO afirmo que el router tenga edge.** Afirmo que el FAIL no está establecido.
-→ EN CURSO: sustituir el punto único por un BARRIDO paramétrico con Wilson por celda y veredicto
-  "SENSIBLE AL PARÁMETRO — no concluyente" si depende del parámetro. `wired:false` se mantiene.
+→ ✅ **CERRADO 2026-08-03 07:00** — el barrido existe, corrió y publicó el veredicto pedido:
+  `scripts/reversal_grade.py` (replay bar a bar sobre `poly_bars`, triple barrera first-touch,
+  Wilson sobre n_eff con ρ̄ **MEDIDA in-situ 0,2808** (20 fechas, 29 símbolos, 399 puntos), null de
+  entrada aleatoria emparejado por símbolo/hora, BH-FDR q=0,10, piso `MIN_N_EFF=30`).
+  `data/reversal_grade.json` (2026-08-02T07:59Z, 55.788 eventos, 29 símbolos):
+  **`veredicto_agregado` = "SENSIBLE AL PARAMETRO — no concluyente"**; ALL 58 celdas publicables
+  = 0 PASS / 1 FAIL / 57 UNPROVEN; REVERSAL_CONFIRMED 31 celdas = 0 PASS / 5 FAIL / 26 UNPROVEN.
+  `wired:false` y `shadow:true` intactos. 33 tests (`tests/test_reversal_grade.py`).
 
 ### Hallazgos del arnés E2E (lote L6) — arreglados por el orquestador 2026-08-02 03:30
 - [x] **Niveles del terminal NO deterministas** (era el peor: son números que disparan órdenes).
@@ -386,10 +478,30 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       "SIN MAPA DE OPCIONES" en vez de dejar un hueco callado. Verificado en vivo: los 3 escritos
       (NFLX 329 / GLD 315 / XLK 184 líneas) y leídos por `opt_quick` con spot correcto contra el
       cierre del viernes (NFLX 71.70, GLD 371.10, XLK 174.89). 3 tests.
-- [ ] PENDIENTE LUNES (no verificable con el mercado cerrado): frescura real de barras/nbbo, latencia
-      de Intrinio en vivo, y que `reversal_router` salga de INSUFFICIENT_DATA (necesita ~15 sesiones
-      RTH; hoy SPY tiene 156 barras 5m de las 260 que pide). Correr `zsh scripts/e2e_smoke.sh` tras
-      la apertura: los mismos 9 pasos sirven de sonda viva.
+- [x] PENDIENTE LUNES — **CORRIDO 2026-08-03 06:51 ET (premarket): `zsh scripts/e2e_smoke.sh --force`
+      → 9/9 PASS, 0 FAIL, 0 SKIP** (`data/e2e_report.json`). Los tres puntos que faltaban:
+      · **Frescura de barras/nbbo: OK.** 26 símbolos, 78 ficheros del contrato, edad **1–10 min**,
+        **faltan 0**. Ningún fichero malformado. (Con el mercado cerrado sólo se podía decir "no
+        está roto"; ahora está MEDIDO en vivo.)
+      · **Latencia de Intrinio MEDIDA** (`provider_status.last_exchange_ts` vs `epoch`, 26 símbolos,
+        06:56:59 ET): **mínimo 15,4 min · mediana 18,4 · máximo 32,1** (más fresco STX, más rancio
+        XLK). El **mínimo** es la cota estrecha y cae justo en los **900 s** del tier delayed →
+        confirma el hallazgo de `781b1a9a` ("EQUITIES_EDGE a 900,0 s por tercera vez"). Caveat
+        honesto: en premarket un símbolo puede no haber IMPRESO en 20 min, así que la mediana y el
+        máximo son cota SUPERIOR; el mínimo no. Repetir en RTH. *Sólo medido — actuar es del agente
+        que lleva `provider_bridge`/`intrinio_ws_*`.*
+      · **`reversal_router` SIGUE en INSUFFICIENT_DATA** y no es cuestión de esperar: QQQ/SPY
+        **156** barras 5m RTH y NVDA **155**, de las **260** que pide (`REQUIRED_5M_BARS`,
+        `scripts/reversal_router.py:57`). Faltan **104 = 1,33 sesiones RTH**. 156 = exactamente
+        2 sesiones (2×78). **CAUSA MEDIDA de que no se acumule**: `scripts/provider_bridge.py:52`
+        `WARMUP_BARS = 1600  # ~2 sesiones RTH de 1m`, y `warmup_bars()` (`:98-113`) **reescribe el
+        fichero ENTERO** en cada arranque del puente (`one_pass(..., do_warmup)` `:228`). El puente
+        lleva 40 min de vida → hoy warmeó a las ~06:11 y volvió a dejarlo en 2 sesiones. `append_bars`
+        sí acumula, así que **el router sólo saldrá de INSUFFICIENT_DATA si el puente aguanta VIVO
+        desde ahora hasta el miércoles** (Lun+Mar+Mié = 234, aún <260 → **jueves 2026-08-06**);
+        cualquier reinicio del puente lo devuelve a 156. *`provider_bridge.py` es de otro agente:
+        REPORTADO, no tocado. Arreglo obvio: `WARMUP_BARS` ≥ el máximo que pida un consumidor
+        (≥ 2600 para cubrir 260 barras 5m RTH con extendido), o warmup que NO trunque.*
 
 - [x] "solve all todos, new features too with fresh agents" (2026-08-02 02:05) — HECHO: triaje +
       6 lotes con agentes frescos (ficheros disjuntos) + revisión adversarial de cada uno.
