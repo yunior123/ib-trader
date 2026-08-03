@@ -141,7 +141,9 @@ def stream(key, syms):
 
     import rt_last
 
-    def on_trade(t):
+    # El SDK llama al callback con (registro, backlog): con un solo parametro lanza
+    # TypeError por CADA tick y el socket queda vivo sin escribir nada (medido 2026-08-03 04:35).
+    def on_trade(t, backlog=0):
         sym = getattr(t, "symbol", None)
         ep = _exchange_epoch(getattr(t, "timestamp", None))
         px = getattr(t, "price", None)
@@ -156,7 +158,7 @@ def stream(key, syms):
 
     libro = {}
 
-    def on_quote(q):
+    def on_quote(q, backlog=0):
         sym = getattr(q, "symbol", None)
         ep = _exchange_epoch(getattr(q, "timestamp", None))
         px = getattr(q, "price", None)
@@ -176,10 +178,19 @@ def stream(key, syms):
     hilo = threading.Thread(target=cli.connect, daemon=True)
     hilo.start()
     time.sleep(5)
+    # join(channels) — UN solo argumento. Con `cli.join(syms, True)` (el `tradesonly` de otros
+    # SDK) lanza TypeError, el socket queda ABIERTO y suscrito a NADA: el 2026-08-03 el cluster
+    # levanto a las 03:47 ET y estuvimos 46 min con la conexion viva y 0 mensajes por esto.
     try:
-        cli.join(syms, True)
+        cli.join(syms)
     except Exception as e:
         print(f"[intrinio-ws] join fallo: {type(e).__name__}: {e}", file=sys.stderr, flush=True)
+        estado(arriba=False, error=f"join: {type(e).__name__}: {e}")
+        try:
+            cli.disconnect()
+        except Exception:
+            pass
+        return
 
     grita(f"WebSocket de Intrinio ARRIBA con {len(syms)} simbolos. Tiempo real encendido.")
     estado(arriba=True, desde=int(time.time()),

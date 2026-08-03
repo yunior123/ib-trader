@@ -1,37 +1,37 @@
 {
- "epoch": 1785721935,
- "et": "2026-08-02 21:51:36",
- "phase": "weekend",
+ "epoch": 1785743144,
+ "et": "2026-08-03 03:45:07",
+ "phase": "overnight",
  "auth": {
   "realtime-mx": {
    "ok": false,
    "http": null,
    "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.306
+   "secs": 5.343
   },
   "realtime-delayed-sip": {
    "ok": false,
    "http": null,
    "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.218
+   "secs": 5.153
   },
   "realtime-nasdaq-basic": {
    "ok": false,
    "http": null,
    "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.192
+   "secs": 5.255
   },
   "cboe-one": {
    "ok": false,
    "http": null,
    "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.145
+   "secs": 5.164
   },
   "equities-edge": {
    "ok": false,
    "http": null,
    "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.154
+   "secs": 5.149
   },
   "realtime-options": {
    "ok": false,
@@ -43,13 +43,13 @@
    "ok": false,
    "http": null,
    "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.145
+   "secs": 5.343
   }
  },
  "socket": {},
  "tls_idle": {
-  "handshake": 0.122,
-  "idle_close": 5.155,
+  "handshake": 0.129,
+  "idle_close": 5.161,
   "bytes": 0
  },
  "controls": {
@@ -58,12 +58,12 @@
    "last_time": "2026-07-31T23:59:59.933Z",
    "source": "equities_edge",
    "has_bid": false,
-   "secs": 0.242
+   "secs": 0.608
   },
   "polygon_ws": {
    "connects": true,
    "hello": "[{\"ev\":\"status\",\"status\":\"connected\",\"message\":\"Connected Successfully\"}]",
-   "secs": 0.337
+   "secs": 0.345
   }
  },
  "any_up": [],

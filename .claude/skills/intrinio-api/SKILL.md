@@ -258,3 +258,34 @@ ninguna de las dos se puede confirmar desde fuera (ver la tabla de arriba: el mi
 **Cosa util que SI tenemos**: `/securities/{sym}/prices/realtime?source=equities_edge` responde
 con `last_price` + `last_time` reales para toda la flota (probado AAPL SNDK NOK LRCX WDC SPY),
 y `/securities/replay` sirve los ficheros de ticks. Delayed, pero medido y honesto.
+
+## ⏱️ VEREDICTO MEDIDO EN SESION VIVA (2026-08-03 04:37 ET, premercado abierto)
+
+El cluster de streaming **SI vuelve**: subio a las **03:47:31 ET** del lunes (primera transicion
+abajo->arriba registrada por `scripts/intrinio_ws_autostart.py`). Confirma la frase del SDK de C#
+—"the websocket servers are off for the night"— y cierra la duda del domingo.
+
+Conectado de verdad y medido sobre 8 simbolos, 90 s, 218 trades:
+
+| | mediana | min | max |
+|---|---|---|---|
+| **Intrinio EQUITIES_EDGE (WebSocket)** | **900,0 s** | **900,0 s** | 900,1 s |
+| **Finnhub (WebSocket)** | **34,1 s** | **0,6 s** | 690,2 s |
+
+**900 segundos clavados = 15 minutos IMPUESTOS.** No es jitter: el minimo tambien es 900,0. Es
+exactamente lo que la REST ya declaraba (`"Realtime sources have been adjusted to
+cboe_one_delayed based on your access"`). **Nuestro plan de Intrinio NO es realtime.**
+Ademas: **quotes = 0** en 90 s -> el socket no nos manda NBBO, solo trades.
+
+**Consecuencia para la flota** (medido el mismo minuto, con `data/market_source.txt = intrinio`):
+`bars_spy_ibkr.txt` 1.243 s de antiguedad, `nbbo_spy.txt` **204.044 s = 56,7 h** (del viernes;
+`provider_bridge` hace bien en no escribir: "NBBO invalido bid=0.0 ask=0.0"). O sea que **el unico
+dato en tiempo real de la casa esta semana es `data/rt_last_<SYM>.txt` cuando la fuente es
+`finnhub`** (0,6-34 s). Regla de la casa: nada delayed dispara una orden -> el PRINT que confirma
+un nivel tiene que salir de ahi, no del REST de Intrinio.
+
+**Dos bugs MIOS que esto destapo** (el socket estuvo 46 min arriba y mudo por ellos):
+1. `cli.join(syms, True)` -> `TypeError: join() takes 2 positional arguments but 3 were given`.
+   La firma es `join(channels)`, un solo argumento. El socket quedaba ABIERTO y suscrito a NADA.
+2. Los callbacks reciben **(registro, backlog)**: con `def on_trade(t)` lanza TypeError por CADA
+   tick. Firma correcta: `def on_trade(t, backlog=0)`.

@@ -1,66 +1,66 @@
 {
- "$61-$63": {
-  "calls_vol": 543,
-  "puts_vol": 110,
-  "total": 653,
+ "$62-$64": {
+  "calls_vol": 187,
+  "puts_vol": 436,
+  "total": 623,
+  "dominance": "PUTS",
+  "ratio": 0.43
+ },
+ "$64-$66": {
+  "calls_vol": 150,
+  "puts_vol": 3801,
+  "total": 3951,
+  "dominance": "PUTS",
+  "ratio": 0.04
+ },
+ "$66-$68": {
+  "calls_vol": 790,
+  "puts_vol": 5556,
+  "total": 6346,
+  "dominance": "PUTS",
+  "ratio": 0.14
+ },
+ "$68-$70": {
+  "calls_vol": 1952,
+  "puts_vol": 8730,
+  "total": 10682,
+  "dominance": "PUTS",
+  "ratio": 0.22
+ },
+ "$70-$72": {
+  "calls_vol": 13210,
+  "puts_vol": 8785,
+  "total": 21995,
   "dominance": "CALLS",
-  "ratio": 4.94
- },
- "$63-$65": {
-  "calls_vol": 125,
-  "puts_vol": 1050,
-  "total": 1175,
-  "dominance": "PUTS",
-  "ratio": 0.12
- },
- "$65-$67": {
-  "calls_vol": 627,
-  "puts_vol": 4074,
-  "total": 4701,
-  "dominance": "PUTS",
-  "ratio": 0.15
- },
- "$67-$69": {
-  "calls_vol": 517,
-  "puts_vol": 4500,
-  "total": 5017,
-  "dominance": "PUTS",
-  "ratio": 0.11
- },
- "$69-$72": {
-  "calls_vol": 4997,
-  "puts_vol": 6695,
-  "total": 11692,
-  "dominance": "MIXED",
-  "ratio": 0.75
+  "ratio": 1.5
  },
  "$72-$74": {
-  "calls_vol": 21756,
-  "puts_vol": 3470,
-  "total": 25226,
+  "calls_vol": 31890,
+  "puts_vol": 4659,
+  "total": 36549,
   "dominance": "CALLS",
-  "ratio": 6.27
+  "ratio": 6.84
  },
  "$74-$76": {
-  "calls_vol": 20005,
-  "puts_vol": 1381,
-  "total": 21386,
+  "calls_vol": 25907,
+  "puts_vol": 1463,
+  "total": 27370,
   "dominance": "CALLS",
-  "ratio": 14.49
+  "ratio": 17.71
  },
  "$76-$78": {
-  "calls_vol": 15688,
-  "puts_vol": 117,
-  "total": 15805,
+  "calls_vol": 17202,
+  "puts_vol": 125,
+  "total": 17327,
   "dominance": "CALLS",
-  "ratio": 134.09
+  "ratio": 137.62
  },
  "$78-$80": {
-  "calls_vol": 2111,
-  "puts_vol": 51,
-  "total": 2162,
+  "calls_vol": 3767,
+  "puts_vol": 82,
+  "total": 3849,
   "dominance": "CALLS",
-  "ratio": 41.39
+  "ratio": 45.94
  },
  "$80-$82": {
   "calls_vol": 4317,

@@ -20647,3 +20647,19 @@
 {"ts":1785713551,"sym":"AAPL","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_edge","fam":0,"regime":"NEG","spot":307.3400}
 {"ts":1785713551,"sym":"GOOGL","state":"CONTINUACION","dir":"flat","candidate_dir":"up","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_edge","fam":0,"regime":"POS","spot":354.1600}
 {"ts":1785713552,"sym":"INTC","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_edge","fam":0,"regime":"NEG","spot":89.3000}
+{"ts":1785745077,"sym":"MU","state":"CONTINUACION","dir":"flat","candidate_dir":"flat","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"POS","spot":827.7800}
+{"ts":1785745093,"sym":"AMD","state":"CONTINUACION","dir":"flat","candidate_dir":"flat","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"NEG","spot":481.0000}
+{"ts":1785745101,"sym":"AAPL","state":"CONTINUACION","dir":"flat","candidate_dir":"flat","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"NEG","spot":308.0100}
+{"ts":1785745134,"sym":"GOOGL","state":"CONTINUACION","dir":"flat","candidate_dir":"flat","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"POS","spot":359.3300}
+{"ts":1785745142,"sym":"INTC","state":"CONTINUACION","dir":"flat","candidate_dir":"flat","signal_kind":"transition_candidate","prob":null,"prob_source":"esperando_bar","fam":0,"regime":"NEG","spot":90.6600}
+{"ts":1785746214,"sym":"QQQ","state":"CAJA / PIN","dir":"flat","candidate_dir":"flat","signal_kind":"unknown","prob":null,"prob_source":"sin_lectura","fam":0,"regime":"POS","spot":690.6700}
+{"ts":1785746260,"sym":"AMD","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_edge","fam":0,"regime":"NEG","spot":476.2200}
+{"ts":1785746268,"sym":"AAPL","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_edge","fam":0,"regime":"NEG","spot":307.4300}
+{"ts":1785746291,"sym":"AMZN","state":"CAJA / PIN","dir":"flat","candidate_dir":"flat","signal_kind":"unknown","prob":null,"prob_source":"sin_lectura","fam":0,"regime":"POS","spot":274.6300}
+{"ts":1785746299,"sym":"GOOGL","state":"CAJA / PIN","dir":"flat","candidate_dir":"flat","signal_kind":"unknown","prob":null,"prob_source":"sin_lectura","fam":0,"regime":"POS","spot":357.9200}
+{"ts":1785746307,"sym":"INTC","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_edge","fam":0,"regime":"NEG","spot":89.8500}
+{"ts":1785746314,"sym":"TSM","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_edge","fam":0,"regime":"NEG","spot":402.6500}
+{"ts":1785746434,"sym":"SNDK","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_edge","fam":0,"regime":"NEG","spot":1206.0000}
+{"ts":1785746442,"sym":"WDC","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_edge","fam":0,"regime":"NEG","spot":540.3900}
+{"ts":1785746487,"sym":"SPY","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_edge","fam":0,"regime":"NEG","spot":749.8200}
+{"ts":1785746495,"sym":"NVDA","state":"CONTINUACION","dir":"flat","candidate_dir":"down","signal_kind":"no_predictive_edge","prob":null,"prob_source":"sin_edge","fam":0,"regime":"POS","spot":199.8800}
