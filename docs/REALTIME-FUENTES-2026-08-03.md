@@ -27,6 +27,8 @@ tick**, en sesión viva. Nada viene de la documentación del vendor.
 | **Finnhub REST** `/stock/candle` | — | **HTTP 403** | plan gratis sin acceso |
 | **Databento Live** | trades/mbp-1 | **no entitlado** | `BentoError: A live data license is required` en DBEQ.BASIC, EQUS.MINI y XNAS.BASIC (la key SÍ vale para histórico: `list_datasets` devuelve 29) |
 | **Polygon** | cadena con griegas y OI | delayed 15 min | sin cambios respecto a `LATENCIA-FUENTES.md` |
+| **Finviz Elite** | — | **401 Unauthorized** | suscripción **CADUCADA el 2026-08-01** (`data/finviz_auth_health.json`: `dias_restantes -2`, `veredicto CADUCADO`). Las 23 cachés `data/finviz_<sym>.txt` son del 17–31 de julio: **nada de ahí es "realtime"** por mucho que lo diga el comentario de `watchlist_stats.py:141` |
+| **Alpha Vantage** | — | **cierre del viernes** | `GLOBAL_QUOTE SPY` → `latest trading day 2026-07-31`, price 747,03. `TIME_SERIES_INTRADAY` topado por rate-limit del plan gratis |
 
 **Conclusión: Finnhub es la única fuente de TIEMPO REAL que tenemos esta semana.** Intrinio va
 ~20 minutos por detrás; su ventaja es que trae *barras* y *libro*, que Finnhub gratis no da.

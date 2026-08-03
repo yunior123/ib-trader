@@ -166,7 +166,11 @@ def _num(x: float | None) -> float:
 
 
 BAND_PCT = 0.15   # ±15% del spot, como el contrato de opt_chain_cache (evita meter LEAPS)
-NEAR_EXPS = 2     # 2 vencimientos mas cercanos (P/C y muros de opt_quick se calculan sobre esto)
+# 8 y no 2 (Yunior 2026-08-03: "data for options net, gex for next weeks, at least 2-3 from now,
+# whole agoust"): con 2 los 0DTE se comian el fichero y QQQ/SPY publicaban UN solo vencimiento.
+# El mapa GEX por defecto NO cambia: gex_core.py:1121 filtra al vencimiento mas cercano vivo.
+NEAR_EXPS = int(os.environ.get("IBT_NEAR_EXPS", "8"))
+HDR_EXPS = 7      # opt_quick.cpp lee `%63[0-9 ]`: 7 fechas (62 chars) es el tope sin truncar
 
 
 def _band_chain(chain: list[OptionContract], spot: float) -> list[OptionContract]:
@@ -205,7 +209,7 @@ def write_chain(sym: str, chain: list[OptionContract], spot: float, source: str,
         # colisiona; y la linea sigue muy por debajo de su buffer de 256.
         f"# opt_chain {sym.upper()} | epoch {ep} | {datetime.now():%Y-%m-%d %H:%M:%S} "
         f"| spot {spot:.2f} | spot_src {spot_src} | spot_age {spot_age:.0f} "
-        f"| exps {' '.join(exps_ymd[:2])}\n"
+        f"| exps {' '.join(exps_ymd[:HDR_EXPS])}\n"
         f"# fuente {source} | band {band:.4f} | max_strikes {len(rows)} | narrow 0 "
         f"| vencimientos {len(exps)} | rows {len(rows)} "
         f"| greeks_ok_pct {greeks_ok:.4f} | bidask_ok_pct {ba_ok:.4f}\n"
