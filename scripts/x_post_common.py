@@ -227,6 +227,18 @@ _NON_ENGLISH_PUBLIC = re.compile(
     re.IGNORECASE,
 )
 
+# Public posts must never expose the operator, local machine, repository, secrets, or
+# implementation details. Posting paths should build from whitelisted market fields;
+# this is the final fail-closed guard immediately before the X API call.
+_PRIVATE_PUBLIC = re.compile(
+    r"(?:\b(?:yunior|ib[- ]?trader|cockpit|x\.env|feeds\.env|api[_ -]?key|"
+    r"access[_ -]?token|bearer[_ -]?token|auth\s*=|localhost)\b|"
+    r"/Users/|/home/|[A-Za-z]:\\\\|"
+    r"\b[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b|"
+    r"\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}\b)",
+    re.IGNORECASE,
+)
+
 
 def public_text_is_english(text):
     """Fail closed on known mixed-language output before an X API write.
@@ -236,6 +248,11 @@ def public_text_is_english(text):
     leaving cashtags, numbers and emoji untouched.
     """
     return bool(text and not _NON_ENGLISH_PUBLIC.search(text))
+
+
+def public_text_is_private_safe(text):
+    """False when public copy contains local/personal/credential-shaped data."""
+    return bool(text and not _PRIVATE_PUBLIC.search(text))
 
 
 def count_cashtags(text):
@@ -286,6 +303,9 @@ def post_text(text, tag, log, dry_run=False, auth=None, media_path=None):
         text = text[:MAX_CHARS]
     if not public_text_is_english(text):
         log(f"REFUSE {tag} non-English public text")
+        return False
+    if not public_text_is_private_safe(text):
+        log(f"REFUSE {tag} private or implementation detail")
         return False
     reason = budget_refusal()
     if reason:

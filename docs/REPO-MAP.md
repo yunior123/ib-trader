@@ -172,7 +172,7 @@ Finviz Elite en tiempo real, notifica solo cambios de estado).
 - **scripts/x_plan_poster.py** — publica en X los TOP-N drafts de los planes diarios de flota. Funcs: `load_budget()`, `save_budget()`, `posts_today()`, `main()`.
 - **scripts/x_post_common.py** — post/ledger compartido para todos los posters de X (OAuth1, cap duro 10/día $4/mes). Funcs: `load_budget()`, `posts_today_all()`, `make_auth()`, `upload_media()`, `gex_line()`, `post_text()` +4 más.
 - **scripts/x_postmortem.py** — repaso honesto del día en X: califica cada plan contra el OHLC real. Funcs: `parse_draft()`, `day_ohlc()`, `grade()`, `build_post()`, `append_doc()`, `main()`.
-- **scripts/x_signal_poster.py** — daemon que postea señales fuertes de la flota (prob≥70 o ballena≥3:1), límites estrictos. Funcs: `qualifies()`, `extract_levels()`, `build_post()`, `process_signals()`, `process_combos()`, `main()` +3 más.
+- **scripts/x_signal_poster.py** — daemon X para señales fuertes de ticker (prob≥70 o ballena≥3:1) y eventos direccionales relevantes de los screeners Finviz; copy público inglés construido desde campos de mercado permitidos, dedup y límites estrictos. Funcs: `qualifies()`, `build_post()`, `finviz_relevance()`, `build_finviz_post()`, `process_signals()`, `process_finviz()`, `process_combos()`, `main()` +3 más.
 - **scripts/xpost.py** — herramienta reutilizable de post on-demand a X (texto/imagen/draft), reusa x_post_common. Func: `main()`.
 
 ## EJECUCIÓN (order_engine + scalper)

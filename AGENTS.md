@@ -882,3 +882,13 @@ Detalle completo: `docs/BACKTEST-ALARMAS-2026-07-27.md`. Resumen que no se puede
 `x_earnings_post.py` (texto del tweet + etiquetas del PNG), `x_whale_bot.cpp` (ya estaba en
 ingles) y sus tests: DOW/MON, quips, hooks, cabeceras, "Not financial advice". Cashtags/numeros
 intactos, ≤1 cashtag, presupuesto igual. Aplica a todo post nuevo de la flota a X.
+
+### Señales + Finviz hacia X (2026-08-03)
+`x_signal_poster.py` publica únicamente las mejores señales direccionales: el carril existente
+de ticker exige probabilidad/retest/ballena fuerte y el nuevo carril Finviz consume el JSONL
+estructurado de Buffett, short squeeze y momentum breakout. Finviz exige BUY/SELL coherente,
+score absoluto ≥60%, RVOL ≥1.5x y movimiento mínimo; máximo 2 Finviz/día dentro de 5 realtime,
+10 globales y separación de 25 min. Nunca se copia `notify_push.txt`: el texto público se arma
+solo con ticker, pantalla, dirección, precio, cambio y RVOL, siempre en inglés. `x_post_common.py`
+rechaza antes del API cualquier texto con nombres personales, rutas locales, email, UUID,
+credenciales o nombres internos del software.

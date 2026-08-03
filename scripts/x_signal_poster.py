@@ -9,6 +9,11 @@ Lee en vivo ~/ib-trader/data/trading-signals/YYYY-MM-DD.txt (lineas
   - titulo BALLENA con ratio >= 3:1 (puts "N a 1" o calls "P C <=0.33"), o
   - contiene "retest-ok" / "reclaim" / "ruptura confirmada".
 
+Tambien consume data/finviz_screener_events.jsonl. Esos posts se construyen
+EXCLUSIVAMENTE desde campos de mercado estructurados y permitidos (screen,
+ticker, BUY/SELL, precio, cambio y RVOL): nunca copia títulos/notificaciones,
+rutas, nombres, configuración ni detalles del software.
+
 Limites: max 5 posts realtime/dia (dentro del cap compartido 10/dia del
 ledger data/x_plan_budget.json), min 25 min entre posts, jamas repetir el
 mismo ticker+nivel en el dia. Premarket 8:00-9:25 ET: max 1 post.
@@ -39,12 +44,14 @@ LOG_FILE = os.path.join(ROOT, "logs", "x_signal_poster.log")
 STATE_FILE = os.path.join(ROOT, "data", "x_signal_state.json")
 COMBO_FILE = os.path.join(ROOT, "data", "x_combo_triggers.txt")
 SIGNAL_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "trading-signals")
+FINVIZ_EVENTS = os.path.join(ROOT, "data", "finviz_screener_events.jsonl")
 
 ET = ZoneInfo("America/New_York")
 LOOP_SEC = 60
 MAX_REALTIME_PER_DAY = 5
 MIN_GAP_SEC = 25 * 60
 MAX_PREMARKET = 1
+MAX_FINVIZ_PER_DAY = 2
 FRESH_SEC = 600            # ignorar lineas de hace >10 min (arranques tardios)
 BARS_STALE_SEC = 300       # bars viejos >5 min -> fallback yfinance
 
@@ -56,8 +63,9 @@ FLOAT = r"(\d+(?:\.\d+)?)"
 # ---------------------------------------------------------------- estado
 def load_state():
     today = time.strftime("%Y-%m-%d")
-    st = {"date": today, "offset": 0, "posts": 0, "pm_posts": 0,
-          "last_post_epoch": 0, "posted_keys": [], "combos": []}
+    st = {"date": today, "offset": 0, "finviz_offset": 0, "posts": 0,
+          "finviz_posts": 0, "pm_posts": 0, "last_post_epoch": 0,
+          "posted_keys": [], "finviz_keys": [], "combos": []}
     try:
         with open(STATE_FILE) as f:
             cur = json.load(f)
@@ -171,6 +179,114 @@ def build_post(sym, title, msg, entry, tgt, stp, prob):
             "Prob ~{p}%. Not financial advice.")
     return base.format(sym=sym, q=what_happened, e=fmt(entry), t=fmt(tgt),
                        s=fmt(stp), p=prob)
+
+
+# -------------------------------------------------------------- Finviz Elite
+FINVIZ_LABELS = {
+    "buffett": "quality-value screen",
+    "squeeze": "short-squeeze screen",
+    "momentum": "momentum-breakout screen",
+}
+
+
+def finviz_relevance(event):
+    """Return (qualified, reason) for only the strongest directional events."""
+    try:
+        screen = str(event["screen"]).lower()
+        weather = str(event["weather"]).upper()
+        score = int(event["score"])
+        possible = int(event["possible"])
+        change = float(event["change_pct"])
+        rvol = float(event["rvol"])
+    except (KeyError, TypeError, ValueError):
+        return False, "missing market fields"
+    if screen not in FINVIZ_LABELS or weather not in ("BUY", "SELL"):
+        return False, "not directional"
+    if possible <= 0 or abs(score) / possible < 0.60:
+        return False, "weak score"
+    if weather == "BUY" and score <= 0 or weather == "SELL" and score >= 0:
+        return False, "direction mismatch"
+    # Momentum/squeeze presets already require >=1.5x RVOL at Finviz. Buffett's
+    # wider quality screen must independently earn relevance via volume or move.
+    if rvol < 1.5:
+        return False, "relative volume <1.5x"
+    if abs(change) < (0.50 if screen in ("momentum", "squeeze") else 1.00):
+        return False, "move too small"
+    return True, f"{screen} {weather.lower()}"
+
+
+def build_finviz_post(event):
+    """Build public copy from a strict market-data whitelist only."""
+    screen = str(event["screen"]).lower()
+    sym = str(event["ticker"]).upper()
+    weather = str(event["weather"]).upper()
+    price = float(event["price"])
+    change = float(event["change_pct"])
+    rvol = float(event["rvol"])
+    icon = "📈" if weather == "BUY" else "📉"
+    return (f"{icon} ${sym} · Finviz {FINVIZ_LABELS[screen]}: {weather}. "
+            f"Price ${fmt(price)}, {change:+.2f}% today, relative volume {rvol:.1f}x. "
+            "Signal only — not financial advice.")
+
+
+def process_finviz(st, now_et, dry_run, auth):
+    if not os.path.exists(FINVIZ_EVENTS):
+        return
+    size = os.path.getsize(FINVIZ_EVENTS)
+    if size < st.get("finviz_offset", 0):
+        st["finviz_offset"] = 0
+    if size == st.get("finviz_offset", 0):
+        return
+    with open(FINVIZ_EVENTS, errors="replace") as f:
+        f.seek(st.get("finviz_offset", 0))
+        chunk = f.read()
+        st["finviz_offset"] = f.tell()
+    save_state(st)
+    premarket = now_et.hour < 9 or (now_et.hour == 9 and now_et.minute < 25)
+
+    for raw in chunk.splitlines():
+        try:
+            event = json.loads(raw)
+            age = time.time() - float(event["ts"])
+        except (json.JSONDecodeError, KeyError, TypeError, ValueError):
+            continue
+        if age < -60 or age > FRESH_SEC:
+            continue
+        sym = str(event.get("ticker", "")).upper()
+        if not re.fullmatch(r"[A-Z][A-Z0-9.]{0,5}", sym):
+            continue
+        ok, why = finviz_relevance(event)
+        if not ok:
+            log(f"FINVIZ-SKIP {sym} {why}")
+            continue
+        key = f"{event['screen']}:{sym}:{event['weather']}"
+        if key in st.get("finviz_keys", []):
+            continue
+        if st.get("finviz_posts", 0) >= MAX_FINVIZ_PER_DAY:
+            log(f"FINVIZ-SKIP {key} cap {MAX_FINVIZ_PER_DAY}/day")
+            continue
+        if st["posts"] >= MAX_REALTIME_PER_DAY:
+            log(f"FINVIZ-SKIP {key} realtime cap")
+            continue
+        if premarket and st["pm_posts"] >= MAX_PREMARKET:
+            log(f"FINVIZ-SKIP {key} premarket cap")
+            continue
+        gap = time.time() - st["last_post_epoch"]
+        if gap < MIN_GAP_SEC:
+            log(f"FINVIZ-SKIP {key} spacing {gap/60:.0f}<25 min")
+            continue
+        try:
+            text = build_finviz_post(event)
+        except (KeyError, TypeError, ValueError):
+            continue
+        if xc.post_text(text, f"finviz {key} [{why}]", log, dry_run, auth):
+            st["posts"] += 1
+            st["finviz_posts"] = st.get("finviz_posts", 0) + 1
+            if premarket:
+                st["pm_posts"] += 1
+            st["last_post_epoch"] = time.time()
+            st.setdefault("finviz_keys", []).append(key)
+            save_state(st)
 
 
 # ---------------------------------------------------------------- señales
@@ -357,6 +473,7 @@ def main():
             if a.once or in_window(now_et):
                 st = load_state()
                 process_signals(st, now_et, a.dry_run, auth)
+                process_finviz(st, now_et, a.dry_run, auth)
                 process_combos(st, a.dry_run, auth)
             if a.once:
                 return 0
