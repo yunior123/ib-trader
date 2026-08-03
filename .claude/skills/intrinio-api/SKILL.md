@@ -231,3 +231,30 @@ distinguirlas es preguntar a `success@intrinio.com`.
 
 **Mientras tanto**: `scripts/intrinio_ws_autostart.py` sondea `/auth` cada 20 s y abre el socket
 en el instante en que responda, con voz. No hay que vigilarlo a mano.
+
+## CUANTAS KEYS HAY, Y QUE ENTITLEMENT TIENEN (medido 2026-08-02 21:15)
+
+**UNA sola key** en este Mac: `config/feeds.env:INTRINIO_API_KEY`. El `feeds.env` de la raiz del
+repo es un **symlink** al mismo fichero (`lrwxr-xr-x feeds.env -> config/feeds.env`), asi que no
+son dos. Buscado ademas en el keychain (`security find-generic-password -s intrinio` -> no existe),
+en el entorno y en los `.env`: no hay segunda key. Si aparece una (Intrinio da **Sandbox** y
+**Production** en el panel), probarla cuesta 30 s — pero hoy no hay ninguna otra guardada.
+
+**La propia API declara el entitlement.** Pidiendo cada `source` a
+`/securities/AAPL/prices/realtime` y leyendo el campo `messages`:
+
+| `source=` | lo que responde Intrinio |
+|---|---|
+| `iex` | **"Realtime sources have been adjusted to `cboe_one_delayed` based on your access."** |
+| `intrinio_mx` | "…adjusted to `iex` based on your access." |
+| `delayed_sip` | "…adjusted to `delayed_sip,utp_delayed,cta_a_delayed,cta_b_delayed,otc_delayed`…" |
+| `cboe_one` / `nasdaq_basic` / `equities_edge` | **sin mensaje de ajuste** (los acepta tal cual) |
+
+O sea: **el plan es de tier DELAYED y lo dice el vendor**, no nosotros. Eso encaja con que el
+socket de streaming nos rechace, y es una explicacion distinta de "cluster apagado" — aunque
+ninguna de las dos se puede confirmar desde fuera (ver la tabla de arriba: el mismo cierre a
+5,13 s le pasa a una peticion SIN key desde otra red).
+
+**Cosa util que SI tenemos**: `/securities/{sym}/prices/realtime?source=equities_edge` responde
+con `last_price` + `last_time` reales para toda la flota (probado AAPL SNDK NOK LRCX WDC SPY),
+y `/securities/replay` sirve los ficheros de ticks. Delayed, pero medido y honesto.

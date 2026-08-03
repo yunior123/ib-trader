@@ -50,3 +50,5 @@
 {"ts": 1785718676.7646239, "nq_pct": 0.6381, "es_pct": 0.4056, "hynix_pct": -5.5879, "hynix_ref_src": "bars", "samsung_pct": -7.1698, "samsung_ref_src": "bars", "kospi_pct": -7.4334, "kospi_ref_src": "bars", "sent": null}
 {"ts": 1785718798.8212302, "nq_pct": 0.7455, "es_pct": 0.4322, "hynix_pct": -5.7043, "hynix_ref_src": "bars", "samsung_pct": -7.5472, "samsung_ref_src": "bars", "kospi_pct": -7.5941, "kospi_ref_src": "bars", "sent": null}
 {"ts": 1785718920.8164852, "nq_pct": 0.6548, "es_pct": 0.4023, "hynix_pct": -5.7043, "hynix_ref_src": "bars", "samsung_pct": -7.3585, "samsung_ref_src": "bars", "kospi_pct": -7.5574, "kospi_ref_src": "bars", "sent": null}
+{"ts": 1785719042.681023, "nq_pct": 0.7314, "es_pct": 0.4588, "hynix_pct": -5.5297, "hynix_ref_src": "bars", "samsung_pct": -7.3585, "samsung_ref_src": "bars", "kospi_pct": -7.6446, "kospi_ref_src": "bars", "sent": null}
+{"ts": 1785719164.6503758, "nq_pct": 0.742, "es_pct": 0.4588, "hynix_pct": -5.4715, "hynix_ref_src": "bars", "samsung_pct": -6.9811, "samsung_ref_src": "bars", "kospi_pct": -7.314, "kospi_ref_src": "bars", "sent": null}
