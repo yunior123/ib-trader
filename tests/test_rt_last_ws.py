@@ -103,6 +103,16 @@ def test_fichero_corrupto_devuelve_none(tmp_path, monkeypatch):
     assert rt_last.read("SPY") is None
 
 
+def test_atomic_temp_name_is_writer_unique(tmp_path, monkeypatch):
+    """Concurrent feeds must not share `<symbol>.tmp` and steal the atomic rename."""
+    _cd(tmp_path, monkeypatch)
+    monkeypatch.setattr(rt_last.os, "getpid", lambda: 123)
+    monkeypatch.setattr(rt_last.threading, "get_ident", lambda: 456)
+    assert rt_last.write_if_newer("MU", time.time(), 821.23, 60, "finnhub") is True
+    assert rt_last.read("MU")[1:] == (821.23, 60.0, "finnhub")
+    assert not list((tmp_path / "data").glob("rt_last_MU.txt.*.tmp"))
+
+
 # ---------- puente Finnhub ----------
 
 def test_universo_sale_de_provider_syms(tmp_path, monkeypatch):

@@ -43,6 +43,10 @@ AUTH_HOST = {
     "CBOE_ONE": "cboe-one", "EQUITIES_EDGE": "equities-edge",
 }
 PROVIDER = os.environ.get("MIT_INTRINIO_RT_PROVIDER", "EQUITIES_EDGE")
+# Only exchange-realtime Intrinio products may write the canonical live print.
+# EQUITIES_EDGE is the account's measured 15-minute route: its socket messages arrive
+# immediately but carry delayed prices, so freshness-by-arrival cannot make them realtime.
+CANONICAL_RT_PROVIDERS = frozenset({"REALTIME", "IEX", "NASDAQ_BASIC", "CBOE_ONE"})
 # 60 s y no 20: la doc de Intrinio avisa de que reconectar en cuanto algo falla "agota tu cupo de
 # conexiones y degenera en una espiral irresoluble de fallos" (Concurrent Connections, default 2).
 # Sondear /auth es HTTP y no gasta conexiones de socket, pero no hay ninguna prisa: el cluster
@@ -51,6 +55,10 @@ WATCH_S = float(os.environ.get("INTRINIO_WS_WATCH_S", "60"))
 UP_FILE = os.path.join(ROOT, "data", "intrinio_ws_up.json")
 SYMS_FILE = os.path.join(ROOT, "data", "provider_syms.txt")
 MAX_SUBS = int(os.environ.get("INTRINIO_WS_MAX_SUBS", "30"))
+
+
+def provider_is_canonical_realtime(provider):
+    return str(provider or "").upper() in CANONICAL_RT_PROVIDERS
 
 
 def load_key():
@@ -102,10 +110,18 @@ def grita(msg, nivel="INFO"):
 
 
 def _escribe(path, linea):
-    tmp = path + ".tmp"
-    with open(tmp, "w") as f:
-        f.write(linea)
-    os.replace(tmp, path)
+    # The SDK invokes trade and quote callbacks on worker threads. Each writer needs
+    # an independent temp path before the atomic rename.
+    tmp = f"{path}.{os.getpid()}.{threading.get_ident()}.tmp"
+    try:
+        with open(tmp, "w") as f:
+            f.write(linea)
+        os.replace(tmp, path)
+    finally:
+        try:
+            os.unlink(tmp)
+        except FileNotFoundError:
+            pass
 
 
 def _exchange_epoch(raw):
@@ -151,8 +167,10 @@ def stream(key, syms):
             return
         tam = float(getattr(t, "size", 0) or 0)
         _escribe(f"data/ws_trade_{sym.upper()}.txt", f"{ep:.0f} {float(px):.4f} {tam:.0f}\n")
-        # y al PRINT canonico, que comparte con Finnhub: solo pisa quien trae un tick mas nuevo
-        rt_last.write_if_newer(sym, ep, float(px), tam, "intrinio")
+        # Delayed products stay available in ws_trade_* for provenance, but must never
+        # overwrite Finnhub's exchange-realtime canonical print.
+        if provider_is_canonical_realtime(PROVIDER):
+            rt_last.write_if_newer(sym, ep, float(px), tam, "intrinio")
         vistos["n"] += 1
         vistos["ultimo"] = time.time()
 
@@ -195,6 +213,7 @@ def stream(key, syms):
     grita(f"WebSocket de Intrinio ARRIBA con {len(syms)} simbolos. Tiempo real encendido.")
     estado(arriba=True, desde=int(time.time()),
            desde_et=time.strftime("%Y-%m-%d %H:%M:%S"), provider=PROVIDER,
+           canonical_print=provider_is_canonical_realtime(PROVIDER),
            simbolos=syms, primera_subida=json.load(open(UP_FILE)).get("primera_subida")
            if os.path.exists(UP_FILE) else None)
     if not (json.load(open(UP_FILE)).get("primera_subida")):

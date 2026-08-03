@@ -120,7 +120,7 @@ TF_S = {"5s": 5, "15s": 15, "30s": 30, "45s": 45, "1m": 60, "5m": 300, "15m": 90
         "20m": 1200, "30m": 1800, "1h": 3600, "2h": 7200, "3h": 10800, "4h": 14400}
 STALE_SUB_S = 120   # sub keepUpToDate sin barra nueva en N s = congelada (medido: para a las 20:00 ET)
 RT_FALLBACK_MAX_AGE_S = 10.0  # un print WS más viejo no mueve una vela ni parece realtime
-RT_FALLBACK_SOURCES = frozenset({"finnhub", "intrinio"})
+RT_FALLBACK_SOURCES = frozenset({"finnhub"})
 BAR_FALLBACK_POLL_S = 5.0     # OHLC/volumen lento; no releer 780 líneas a ritmo de tick
 LIVE_BAR = {  # (barSizeSetting, durationStr) para reqHistoricalData en LIVE
     "5s": ("5 secs", "3600 S"), "15s": ("15 secs", "7200 S"), "30s": ("30 secs", "14400 S"),

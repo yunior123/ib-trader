@@ -157,7 +157,7 @@ async def sesion(key, syms, hasta=None):
     # contador por simbolo: sin esto no se puede distinguir "el socket esta mudo" de
     # "ese simbolo no imprime en esta fuente" (SPY MUDO 25 min el 2026-08-03 en premarket).
     por_sym = {s: {"n": 0, "ultimo": 0, "px": None, "vol": 0.0} for s in syms}
-    grito = publicado = 0.0
+    publicado = 0.0
     async with websockets.connect(URL.format(key=key), open_timeout=15, close_timeout=5,
                                   ping_interval=20, ping_timeout=20) as ws:
         for s in syms:
@@ -193,9 +193,12 @@ async def sesion(key, syms, hasta=None):
                             g["vol"] += float(d.get("v") or 0)
             mudo = time.time() - (ultimo or abierta)
             # Socket vivo pero mudo en RTH = los rt_last_* envejecen con pinta de vivos.
-            if mudo > MUDO_S and rth() and time.time() - grito > 600:
-                grito = time.time()
-                grita(f"Print en tiempo real mudo {mudo / 60:.0f} minutos. Los precios vivos envejecen.")
+            if mudo > MUDO_S and rth():
+                # A connected-but-silent socket is not healthy. The old loop only spoke
+                # every ten minutes and remained wedged for hours; reconnect so Finnhub
+                # resubscribes and resumes exchange prints automatically.
+                raise RuntimeError(
+                    f"socket conectado pero mudo {mudo / 60:.1f} min en RTH; reconectando")
             if time.time() - publicado >= STATUS_CADA_S:
                 publicado = time.time()
                 _publica(n, ultimo, por_sym, mudo, abierta)

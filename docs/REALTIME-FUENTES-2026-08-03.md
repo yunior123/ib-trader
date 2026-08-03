@@ -23,7 +23,7 @@ tick**, en sesión viva. Nada viene de la documentación del vendor.
 |---|---|---|---|
 | **Finnhub WS** (`wss://ws.finnhub.io`) | trades US | **0,00 s mediana, 0,04 s máximo** | 26 símbolos, 150 s (06:44:11→06:46:47): QQQ lag_med −0,00 · AAPL 0,03 · GOOGL 0,01 |
 | **Intrinio** `/prices/realtime` + `/prices/intervals` | quote + barras 1m | **1.216–1.279 s (quote)**, **997–1.657 s (barras)** | `provider_status.last_exchange_ts` 06:42:07: QQQ 1.268,9 · SPY 1.278,6 · SMH 1.216,3 |
-| **Finnhub REST** `/quote` | — | **225.778 s (2,6 días)** | `t=1785528000` idéntico en los 26 símbolos = cierre del viernes |
+| **Finnhub REST** `/quote` | snapshot US realtime en RTH | **17–26 s de edad observada** | MU 815,04, `t=1785768363` a las 10:46 ET; 60 llamadas/min en el plan actual |
 | **Finnhub REST** `/stock/candle` | — | **HTTP 403** | plan gratis sin acceso |
 | **Databento Live** | trades/mbp-1 | **no entitlado** | `BentoError: A live data license is required` en DBEQ.BASIC, EQUS.MINI y XNAS.BASIC (la key SÍ vale para histórico: `list_datasets` devuelve 29) |
 | **Polygon** | cadena con griegas y OI | delayed 15 min | sin cambios respecto a `LATENCIA-FUENTES.md` |
@@ -53,7 +53,8 @@ es exactamente donde manda.
 | **El print en tiempo real no lo leía NADIE**: `rt_last_*` no aparecía en ningún bot, script ni chart — solo en tests. El dato bueno se escribía y se tiraba. | `provider_bridge.resolve_spot()` lo usa como spot primario y lo publica en la cabecera de la cadena (`spot_src`, `spot_age`) y en `provider_status.latencia`. |
 | **Dos puentes Finnhub vivos** (06:49 ET, pids 82516 y 84238). El plan gratis admite **un socket por key**: se expulsaban en bucle y el log acumuló 9 `ConnectionClosedError: no close frame received or sent`. | Lockfile `data/.finnhub_ws.lock` (`fcntl.flock`): la segunda instancia **aborta con motivo**. Verificado. |
 | `if caidas == 5: grita(...)` gritaba **una sola vez en toda la vida del proceso**; pasadas las 5 caídas un socket en bucle se quedaba mudo para siempre. Y `caidas`/backoff nunca se reseteaban (en modo daemon `sesion()` solo sale por excepción). | `caidas % 5` + reseteo de backoff y contador tras una sesión sana (≥120 s). |
-| **Socket vivo pero mudo**: los `rt_last_*` envejecían con pinta de vivos y nadie se enteraba. | Vigía: sin un solo trade en RTH durante `FINNHUB_WS_MUDO_S` (180 s) → `grita()` por voz + `mudo: true` en el status, con re-armado cada 10 min. |
+| **Socket vivo pero mudo**: quedó conectado 131 min sin un trade; hablar cada 10 min no lo recuperaba. | Vigía fail-closed: tras `FINNHUB_WS_MUDO_S` en RTH levanta error y reconecta/resuscribe automáticamente. El reinicio limpio produjo 78 trades/23 s, 17 símbolos activos y MU 816,28. |
+| Intrinio `EQUITIES_EDGE` llegaba con timestamps frescos pero precio ~15 min retrasado, y sobrescribía el print Finnhub. | `intrinio_ws_autostart` conserva esos registros para procedencia, pero sólo productos Intrinio declarados realtime pueden escribir `rt_last_*`; el chart acepta únicamente `finnhub` como fallback vivo. |
 | El status arrastraba el `error`/`caidas` del proceso muerto (`estado()` fusiona con lo anterior) y hacía pasar por roto un puente sano. | Reset explícito al arrancar (`pid`, `arranque`, `caidas 0`, `error null`). |
 | El puente sólo se suscribía a `provider_syms.txt` (26). Los 4 que Intrinio no cubre (DRAM SPCX SKHY EWY) **no tenían ningún precio vivo**, y el socket admite 50 suscripciones. | `fleet.txt` (30) primero. SPCX ya tiene print (07:06). |
 | **El hueco de SMH** que el cockpit cantaba como *"SIN LECTURA — barras no contiguas"* sin decir de dónde salía. | `bar_salud()` mide y publica: **SMH 12 huecos en las últimas 30 barras** (QQQ 0). Y **30/30 barras con volumen 0** en premarket, en los dos. |

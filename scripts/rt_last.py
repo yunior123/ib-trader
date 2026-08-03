@@ -10,6 +10,7 @@ de vivo, que es justo lo que la casa prohibe.
 EPOCH es siempre el reloj de BOLSA del tick, jamas la hora de llegada.
 """
 import os
+import threading
 import time
 
 # Un tick que LLEGA con 900 s ya no es un PRINT, es historia. Sin esta guarda, el tick de
@@ -69,8 +70,16 @@ def write_if_newer(sym, epoch, price, size, fuente, max_age_s=None):
     if prev is not None and epoch <= prev[0]:
         return False
     dst = path(sym)
-    tmp = dst + ".tmp"
-    with open(tmp, "w") as f:
-        f.write(f"{epoch:.3f} {price:.4f} {size:.0f} {fuente}\n")
-    os.replace(tmp, dst)
+    # Websocket callbacks can overlap. A shared `<dst>.tmp` lets one callback rename
+    # another's temporary file and crashes the stream with FileNotFoundError.
+    tmp = f"{dst}.{os.getpid()}.{threading.get_ident()}.tmp"
+    try:
+        with open(tmp, "w") as f:
+            f.write(f"{epoch:.3f} {price:.4f} {size:.0f} {fuente}\n")
+        os.replace(tmp, dst)
+    finally:
+        try:
+            os.unlink(tmp)
+        except FileNotFoundError:
+            pass
     return True
