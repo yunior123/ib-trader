@@ -60,6 +60,7 @@ import order_ticket              # ficha 0DTE lista para el HUMANO (build); SEÑ
 import direction_view            # sesgo direccional compuesto (flecha overlay); SEÑAL-SOLAMENTE
 import signal_conditioning       # SPEAK_MIN: umbral de voz único (regla should_speak)
 import ib_mode                   # fuente única paper/live (data/ib_mode.txt) — sin puertos hardcodeados
+import rt_last                   # print WS canónico: epoch/precio/fuente con guarda de frescura
 
 # NOTA: importar confluence_engine hace os.chdir(REPO) (efecto de modulo). Reforzamos.
 os.chdir(REPO)
@@ -118,6 +119,9 @@ ALL_TF = frozenset(TF_MIN) | SEC_TF   # tf validos para {cmd:"tf"} (set_timefram
 TF_S = {"5s": 5, "15s": 15, "30s": 30, "45s": 45, "1m": 60, "5m": 300, "15m": 900,
         "20m": 1200, "30m": 1800, "1h": 3600, "2h": 7200, "3h": 10800, "4h": 14400}
 STALE_SUB_S = 120   # sub keepUpToDate sin barra nueva en N s = congelada (medido: para a las 20:00 ET)
+RT_FALLBACK_MAX_AGE_S = 10.0  # un print WS más viejo no mueve una vela ni parece realtime
+RT_FALLBACK_SOURCES = frozenset({"finnhub", "intrinio"})
+BAR_FALLBACK_POLL_S = 5.0     # OHLC/volumen lento; no releer 780 líneas a ritmo de tick
 LIVE_BAR = {  # (barSizeSetting, durationStr) para reqHistoricalData en LIVE
     "5s": ("5 secs", "3600 S"), "15s": ("15 secs", "7200 S"), "30s": ("30 secs", "14400 S"),
     "1m": ("1 min", "2 D"), "5m": ("5 mins", "5 D"), "15m": ("15 mins", "10 D"),
@@ -2492,6 +2496,9 @@ class State:
         self._backfill_reason = None   # por qué el ultimo backfill dijo exhausted (UI lo dice UNA vez)
         self._last_sub_ts = 0.0     # ultimo update de la sub keepUpToDate (0 = nunca llego)
         self._last_tick_ts = 0.0    # ultimo tick valido de reqMktData
+        self._rt_source = None      # fallback WS canónico cuando TWS/Gateway no está disponible
+        self._rt_tick_epoch = 0.0   # epoch de bolsa del último print fallback aplicado
+        self._last_file_poll = 0.0  # throttle independiente del tick WS (fichero de barras)
         self._stale_note = None     # banner "sin fuente sub-minuto" vigente (None = sin banner)
 
     def set_bars(self, bars):
@@ -2759,11 +2766,46 @@ async def send_stale_note(st, text):
             st.clients.discard(ws)
 
 
+def apply_realtime_fallback_tick(st, max_age_s=RT_FALLBACK_MAX_AGE_S):
+    """Apply one fresh canonical websocket print to the in-progress chart candle.
+
+    This is the live-price fallback when TWS/IB Gateway is unavailable. It accepts only
+    sources that write exchange timestamps through rt_last.write_if_newer(), never REST
+    quotes or delayed bars. Returns the source name when a new tick was applied, else None.
+    """
+    if st.mock or st.sym.upper() in KOREA_SYMS() or not st.bars:
+        return None
+    tick = rt_last.fresh(st.sym, max_age_s=max_age_s)
+    if tick is None:
+        return None
+    price, epoch, source, _age = tick
+    source = str(source).lower()
+    if source not in RT_FALLBACK_SOURCES or epoch <= st._rt_tick_epoch:
+        return None
+    step = st._agg_step or TF_S.get(st.tf)
+    if not step:  # daily/weekly/monthly candles keep their native TWS semantics
+        return None
+    bucket = int(epoch) - int(epoch) % step
+    if bucket < st.bars[-1][0]:
+        return None
+    if bucket > st.bars[-1][0]:
+        st.bars.append([bucket, price, price, price, price, 0.0])
+    else:
+        bar = st.bars[-1]
+        bar[2] = max(bar[2], price)
+        bar[3] = min(bar[3], price)
+        bar[4] = price
+    st._last_tick_ts = time.time()
+    st._rt_tick_epoch = epoch
+    st._rt_source = source
+    return source
+
+
 def _hm_et(epoch):
     return datetime.fromtimestamp(epoch).strftime("%H:%M")
 
 
-async def us_stale_feed(st, interval=5.0):
+async def us_stale_feed(st, interval=0.5):
     """La sub keepUpToDate US se CONGELA a las 20:00 ET (medido: ultima barra 19:59 con
     data/bars_<sym>_ibkr.txt fresco toda la noche). Mismo patron que korea_poll_feed: sub
     muda >STALE_SUB_S -> tail del fichero 1m del bar_bridge (agregado al tf si hace falta);
@@ -2778,6 +2820,13 @@ async def us_stale_feed(st, interval=5.0):
                 if st._stale_note:
                     await send_stale_note(st, None)
                 continue
+            # TWS is absent/frozen, but the canonical websocket print can still move the
+            # current candle in realtime. The slower bar file below backfills OHLC/volume.
+            rt_source = apply_realtime_fallback_tick(st)
+            if rt_source:
+                if st._stale_note:
+                    await send_stale_note(st, None)
+                await broadcast_tick(st)
             if st.tf in SEC_TF:
                 # bar_bridge es 1m: sin fuente sub-minuto. Si hay ticks, _make_on_tick ya
                 # construye las velas; si no, se dice — jamas se ensena 19:59 como viva.
@@ -2791,6 +2840,9 @@ async def us_stale_feed(st, interval=5.0):
             step = TF_S.get(st.tf)
             if step is None:
                 continue   # 1d/1W/1M: la vela del dia no se mueve overnight
+            if now - st._last_file_poll < BAR_FALLBACK_POLL_S:
+                continue
+            st._last_file_poll = now
             fresh = load_ibkr_bars(st.sym, tail=780)
             if not fresh:
                 continue
@@ -3160,6 +3212,9 @@ def create_app(state):
             rng = chain_strike_range(lv)
             return {"sym": st.sym, "bars": len(st.bars), "clients": len(st.clients),
                     "tf": st.tf, "spot": spot,
+                    "realtime_source": st._rt_source,
+                    "realtime_age_s": (round(time.time() - st._rt_tick_epoch, 3)
+                                       if st._rt_tick_epoch else None),
                     "call_wall": lv.get("call_wall"), "put_wall": lv.get("put_wall"),
                     "flip": lv.get("flip"), "profile_strikes": len(lv.get("profile") or []),
                     "chain_strikes": list(rng) if rng else None,
@@ -3453,6 +3508,8 @@ def _make_on_tick(state):
             return
         now = time.time()
         state._last_tick_ts = now
+        state._rt_source = "ibkr"
+        state._rt_tick_epoch = now
         # sub congelada (20:00 ET) pero ticks vivos -> las velas nuevas se abren desde el
         # tick (unica fuente sub-minuto overnight; sin volumen). En sesion no interviene.
         step = state._agg_step or TF_S.get(state.tf)
@@ -3857,6 +3914,8 @@ def _make_on_bar(state):
     el 15s que llegó de TWS."""
     def on_bar(bars_, has_new):
         state._last_sub_ts = time.time()   # la sub sigue viva (el watchdog de stale lo mira)
+        state._rt_source = "ibkr"
+        state._rt_tick_epoch = state._last_sub_ts
         b = bars_[-1]
         raw = [int(b.date.timestamp()), b.open, b.high, b.low, b.close, float(b.volume)]
         step = state._agg_step
