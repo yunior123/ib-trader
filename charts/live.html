@@ -3374,7 +3374,8 @@ function onLiqMap(msg) {
   liqMap = msg;
   const sub = document.getElementById("liqmap-sub");
   if (sub) sub.textContent = msg.why ? "sin dato"
-    : `${msg.sym} · ${msg.cols.length} fotos · ${msg.whales.length} prints · ${msg.sweeps.length} sweeps`;
+    : `${msg.sym} · ${msg.cols.length} fotos · ${msg.whales.length} prints · ${msg.sweeps.length} sweeps` +
+      ((msg.sources || []).some(x => x[1] === "live_cache") ? " · cache vivo" : "");
   liqmapDraw();
 }
 function liqmapDraw() {
@@ -3395,7 +3396,8 @@ function liqmapDraw() {
   if (!m || m.why || !m.strikes.length) {
     g.fillStyle = "#6b7a99"; g.textAlign = "center"; g.textBaseline = "middle";
     g.font = "10.5px -apple-system, BlinkMacSystemFont, sans-serif";
-    g.fillText(m && m.why ? "Sin fotos de cadena hoy" : "Esperando el mapa…", W / 2, H / 2);
+    const why = m && m.why ? m.why : "Esperando el mapa…";
+    g.fillText(why.length > 54 ? why.slice(0, 51) + "…" : why, W / 2, H / 2);
     return;
   }
   const GUT = 38, padT = 6, padB = 15, padR = 6;

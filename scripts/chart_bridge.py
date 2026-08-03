@@ -1213,6 +1213,7 @@ async def uw_tape_loop():
 
 
 _VPVR_F = os.path.join(REPO, "data", "vpvr.json")
+LIQ_LIVE_CHAIN_MAX_AGE_S = 15 * 60
 
 
 def liq_frame(sym):
@@ -1255,16 +1256,37 @@ def liq_map_frame(sym):
     hdir = os.path.join(REPO, "data", "history", day)
     cols, per_col = [], []
     spot = None
+    # TWS used to archive opt_chain_<sym>_HHMM. With market_source=intrinio, the real
+    # snapshots are poly_chain_<sym>_HHMM and the rotating live cache is opt_chain_<sym>.txt.
+    # Discover all three, dedupe by minute, and prefer live > TWS > Polygon archive.
+    candidates = {}
     try:
-        snaps = sorted(f for f in os.listdir(hdir)
-                       if f.startswith(f"opt_chain_{s.lower()}_") and f.endswith(".txt"))
+        for fn in os.listdir(hdir):
+            m = re.fullmatch(rf"(opt_chain|poly_chain)_{re.escape(s.lower())}_(\d{{4}})\.txt", fn)
+            if not m:
+                continue
+            source, hhmm = m.group(1), m.group(2)
+            rank = 2 if source == "opt_chain" else 1
+            path = os.path.join(hdir, fn)
+            if hhmm not in candidates or rank > candidates[hhmm][0]:
+                candidates[hhmm] = (rank, path, source)
     except Exception:
-        snaps = []
-    for fn in snaps:
-        hhmm = fn.rsplit("_", 1)[1][:4]
+        pass
+    live_path = os.path.join(REPO, "data", f"opt_chain_{s.lower()}.txt")
+    try:
+        mt = os.path.getmtime(live_path)
+        age = time.time() - mt
+        if datetime.fromtimestamp(mt).strftime("%Y-%m-%d") == day and age <= LIQ_LIVE_CHAIN_MAX_AGE_S:
+            hhmm = datetime.fromtimestamp(mt).strftime("%H%M")
+            candidates[hhmm] = (3, live_path, "live_cache")
+    except Exception:
+        pass
+    snaps = [(hhmm, *candidates[hhmm][1:]) for hhmm in sorted(candidates)]
+    source_meta = []
+    for hhmm, path, source in snaps:
         vols = {}
         try:
-            with open(os.path.join(hdir, fn)) as f:
+            with open(path) as f:
                 for ln in f:
                     if ln.startswith("#"):
                         if " spot " in ln:
@@ -1285,6 +1307,10 @@ def liq_map_frame(sym):
             continue
         cols.append(hhmm)
         per_col.append(vols)
+        try:
+            source_meta.append([hhmm, source, round(time.time() - os.path.getmtime(path), 1)])
+        except Exception:
+            source_meta.append([hhmm, source, None])
     strikes = []
     if spot:
         lo, hi = spot * 0.94, spot * 1.06
@@ -1323,11 +1349,23 @@ def liq_map_frame(sym):
         vah, val, hvn = v.get("vah"), v.get("val"), v.get("hvn") or []
     except Exception:
         pass
+    why = None
+    if not cols:
+        why = f"sin fotos de cadena hoy en data/history/{day} ni cache vivo fresco"
+    elif spot is None:
+        why = "fotos de cadena sin spot parseable"
+    elif not strikes:
+        why = "fotos sin strikes dentro de ±6% del spot"
     frame = {"type": "liq_map", "sym": s, "spot": spot, "cols": cols, "strikes": strikes,
              "heat": heat, "whales": whales, "sweeps": sweeps,
-             "vah": vah, "val": val, "hvn": hvn,
-             "why": None if cols else f"sin fotos de cadena hoy en data/history/{day}"}
-    return frame, (len(snaps), len(whales), len(sweeps))
+             "vah": vah, "val": val, "hvn": hvn, "sources": source_meta, "why": why}
+    sig = []
+    for hhmm, path, source in snaps:
+        try:
+            sig.append((hhmm, source, os.path.getmtime(path), os.path.getsize(path)))
+        except Exception:
+            sig.append((hhmm, source, None, None))
+    return frame, (tuple(sig), len(whales), len(sweeps))
 
 
 async def liq_loop():
