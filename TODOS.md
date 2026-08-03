@@ -132,6 +132,9 @@
       2 mensajes cada ~2 min ("socket NO en weekend" **un lunes** + "socket NO en rth"), 75 de las
       últimas 100 líneas de `notify_push.txt`, por una condición que la casa YA sabe normal
       (el vendor apaga el cluster de noche) — texto obsoleto + falta histéresis.
+- [ ] 11. "make sure we have latest version of software when done, also: review notifciations of
+      failure, some are annoying, not updated. review. send agent if not already" (2026-08-03 07:28)
+      — REBUILD final de la .app + revisión de avisos de fallo obsoletos/molestos.
 - [ ] 10. "code for ibkr stays, do not delete it, we might connect back to it later on, put
       conditionals per data provider, remember to have all generic to avoid deleting code, and
       modifying preferably just one one service file" (2026-08-03 07:00) — REGLA DE ARQUITECTURA,
@@ -430,3 +433,8 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
 - [x] "remember, no ibkr this week" (2026-08-02 20:15) — Gateway NO se lanza; Corea pasa a scripts/korea_naver_bridge.py (Naver, delayTime 0 medido, 10 simbolos), keepalive cableado
 - [x] "intrinio websocket has to be on... search in depth" (2026-08-02 21:00) — agotadas TODAS las vias (tabla en .claude/skills/intrinio-api/SKILL.md): el SDK OFICIAL sin tocar falla igual, hosts identicos en los SDK de Python/Node/Java, sin mTLS, DNS identico en 3 resolvers, IP propia por host, y falla tambien desde OTRA red. La misma key da 200 en api-v2. Vigia intrinio_ws_autostart corriendo: lo enciende solo en cuanto responda.
 - [x] "probaste las dos keys de intrinio?" (2026-08-02 21:15) — NO habia dos: en este Mac hay UNA sola (config/feeds.env; el feeds.env de la raiz es symlink al mismo fichero). Corregido el skill, que afirmaba "nuestras 2 keys" sin respaldo. HALLAZGO de la busqueda: la propia API declara el entitlement — source=iex responde "Realtime sources have been adjusted to cboe_one_delayed based on your access" -> el plan es tier DELAYED.
+
+- [x] "make sure walls, magnets, gamma flip, gex, vix, get updated constantly, preferably realtime"
+      + "code for ibkr stays, do not delete it, we might connect back to it later on, put
+      conditionals per data provider, remember to have all generic to avoid deleting code, and
+      modifying preferably just one one service file" (2026-08-03, hecho)

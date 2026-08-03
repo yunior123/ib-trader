@@ -71,6 +71,13 @@ MIN_GREEKS_PCT = 0.50    # por debajo de esto el libro no se puede leer: se omit
 MIN_STRIKES = 8          # menos strikes poblados que esto y el perfil es ruido
 OUT = os.path.join(REPO, "data", "gex_snapshot.json")
 
+# CLASE DE LATENCIA POR PROVEEDOR (docs/LATENCIA-FUENTES.md, medido). No es cosmetica: dice
+# cuanto retraso trae el CONTENIDO, que es independiente de la edad del fichero. Refrescar
+# mas rapido que esto no da frescura, solo quema CPU.
+DELAY_CLASS = {"ibkr_tws": "tiempo_real", "ibkr": "tiempo_real",
+               "polygon": "delayed_15m", "cboe": "delayed_desigual",
+               "desconocida": "desconocida"}
+
 
 def universo():
     """El universo del MAPA gamma (35), fuente unica data/universe_gamma.txt via
@@ -239,10 +246,18 @@ def contracts_from_tws(sym):
     # La fuente la DECLARA la cabecera del fichero; desde que IBKR esta fuera lo escribe
     # provider_bridge desde Polygon y etiquetarlo "ibkr_tws" mentia sobre la latencia.
     fuente = hdr.get("fuente") or "desconocida"
+    ep = hdr.get("epoch")
     meta = {"spot": spot, "band": (((max(ks) - min(ks)) / 2 / spot) if (ks and spot) else None),
             "exp_hasta": (max(c["exp"] for c in cs) if cs else None),
             "greeks": fuente, "fuente": fuente,
-            "snapshot_local": None, "chain_age_s": hdr.get("epoch")}
+            "snapshot_local": (time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(ep))
+                               if ep else None),
+            "chain_epoch": ep,
+            # EDAD, no epoch: el campo se llamaba chain_age_s y guardaba el epoch crudo, asi
+            # que cualquier consumidor que lo leyera como segundos veia "1.785 millones de s".
+            "chain_age_s": (round(time.time() - ep, 1) if ep else None),
+            "spot_src": hdr.get("spot_src"), "spot_age_s": hdr.get("spot_age"),
+            "bidask_ok_pct": hdr.get("bidask_ok_pct")}
     return cs, spot, meta, n_cand
 
 
@@ -386,6 +401,16 @@ def snapshot_sym(sym):
         "scope": "ALL",
         "scope_why": f"todos los vencimientos vivos del fichero, hasta {meta.get('exp_hasta')}",
         "chain_date": fecha,
+        # --- EDAD: viaja con el dato, siempre. Un mapa de 2,8 h no puede tener la misma
+        # pinta que uno de 2 min (orden Yunior 2026-08-03). `chain_age_s` es la edad del
+        # FICHERO de cadena; `spot_age_s` la del precio con el que se recalculo el flip;
+        # `data_delay_class` dice cuanto retraso trae el CONTENIDO, que es otra cosa.
+        "chain_age_s": meta.get("chain_age_s"),
+        "chain_epoch": meta.get("chain_epoch"),
+        "spot_src": meta.get("spot_src"),
+        "spot_age_s": meta.get("spot_age_s"),
+        "bidask_ok_pct": meta.get("bidask_ok_pct"),
+        "data_delay_class": DELAY_CLASS.get(chain_src, "desconocida"),
         "chain_snapshot_local": meta.get("snapshot_local"),
         "chain_band": meta.get("band"),
         "chain_band_convergida": meta.get("band_convergida"),
@@ -398,7 +423,10 @@ def snapshot_sym(sym):
     }, None
 
 
-def build():
+def build(meta_extra=None):
+    """El mapa completo. `meta_extra` lo rellena el servicio de refresco continuo
+    (scripts/levels_refresh_daemon.py) con fase de sesion y cadencia: asi el consumidor sabe
+    NO SOLO que edad tiene el mapa, sino cada cuanto deberia renovarse."""
     syms = universo()
     out = {}
     skipped = {}
@@ -423,7 +451,16 @@ def build():
         "sustituye_a": "data/gexa_snapshot.json (gexa.ai jubilado el 2026-07-25)",
         "cobertura": f"{len(out)}/{len(syms)}",
         "skipped": skipped,
+        # edad maxima de las cadenas que han entrado en ESTE mapa: si el mapa es de hace 10 s
+        # pero la cadena mas vieja tiene 40 min, el mapa NO es de hace 10 s.
+        "chain_age_max_s": max([v["chain_age_s"] for v in out.values()
+                                if isinstance(v, dict) and v.get("chain_age_s") is not None],
+                               default=None),
+        "delay_classes": sorted({v.get("data_delay_class") for v in out.values()
+                                 if isinstance(v, dict)}),
     }
+    if meta_extra:
+        out["_meta"].update(meta_extra)
     return out
 
 

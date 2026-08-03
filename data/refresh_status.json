@@ -1,0 +1,45 @@
+{
+ "epoch": 1785756407,
+ "local": "2026-08-03 07:26:47",
+ "servicio": "scripts/levels_refresh_daemon.py",
+ "fase": "premarket",
+ "fase_why": "04:00-09:30",
+ "cadencia_s": {
+  "levels": 120,
+  "gex": 120,
+  "vix": 60
+ },
+ "ultimo_epoch": {
+  "levels": 1785756339,
+  "gex": 1785756345,
+  "vix": 1785756407
+ },
+ "proximo_en_s": {
+  "levels": 52.8,
+  "gex": 58.2,
+  "vix": 60.0
+ },
+ "detalle": {
+  "levels": {
+   "ok": 30,
+   "fallos": 0,
+   "edad_max_s": 4.0
+  },
+  "gex": {
+   "cobertura": "34/35",
+   "chain_age_max_s": 388.2
+  },
+  "vix": {
+   "vix": 15.99,
+   "estado": "close",
+   "data_age_s": 227506.0,
+   "banda": "CALM",
+   "vx_regime": "CONTANGO"
+  }
+ },
+ "edad_ficheros_s": {
+  "data/gex_snapshot.json": 61.8,
+  "data/vix.json": 0.0,
+  "charts/data/levels_qqq.json": 71.2
+ }
+}
