@@ -45,6 +45,7 @@ STATE_FILE = os.path.join(ROOT, "data", "x_signal_state.json")
 COMBO_FILE = os.path.join(ROOT, "data", "x_combo_triggers.txt")
 SIGNAL_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "trading-signals")
 FINVIZ_EVENTS = os.path.join(ROOT, "data", "finviz_screener_events.jsonl")
+PROVIDER_STATUS = os.path.join(ROOT, "data", "provider_status.json")
 
 ET = ZoneInfo("America/New_York")
 LOOP_SEC = 60
@@ -80,6 +81,21 @@ def save_state(st):
     os.makedirs(os.path.dirname(STATE_FILE), exist_ok=True)
     with open(STATE_FILE, "w") as f:
         json.dump(st, f)
+
+
+def realtime_bar_feed_ready(path=PROVIDER_STATUS):
+    """True only when the signal engines' OHLC provider is declared realtime.
+
+    A Finnhub last-price overlay cannot make Intrinio's delayed candle history realtime.
+    Local candle-derived alerts therefore fail closed while that provider is delayed.
+    """
+    try:
+        status = json.load(open(path))
+        provider = str(status.get("market_provider") or "").lower()
+        meta = (status.get("proveedores") or {}).get(provider) or {}
+        return meta.get("latencia") == "tiempo_real"
+    except (OSError, ValueError, TypeError):
+        return False
 
 
 # ---------------------------------------------------------------- parsing
@@ -472,7 +488,8 @@ def main():
             now_et = datetime.now(ET)
             if a.once or in_window(now_et):
                 st = load_state()
-                process_signals(st, now_et, a.dry_run, auth)
+                if realtime_bar_feed_ready():
+                    process_signals(st, now_et, a.dry_run, auth)
                 process_finviz(st, now_et, a.dry_run, auth)
                 process_combos(st, a.dry_run, auth)
             if a.once:
