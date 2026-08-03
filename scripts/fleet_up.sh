@@ -37,16 +37,24 @@ status() {
   for p in opt_whale_watch.py:"vigía de ballenas" \
            notify_relay.sh:"relé de notificaciones" \
            voice_queue.sh:"cola de voz" \
-           flow_pulse:"pulso de flujo" \
            price_alarm:"alarma de precio" \
            chart_bridge.py:"cockpit del gráfico"; do
     alive "${p%%:*}" && ok "${p#*:}" || bad "${p#*:}"
   done
-  # TWS/Gateway: puerto según modo
+  # flow_pulse solo vive lun-vie 09:30-15:56 (fleet_keepalive_start.sh:358). Fuera de ahí
+  # su ausencia es CORRECTA: pintarla ✗ enseña a ignorar los ✗ (doctrina anti-crying-wolf).
+  local fp_hm=$(date +%H%M) fp_dow=$(date +%u)
+  if alive flow_pulse; then ok "pulso de flujo"
+  elif (( fp_dow <= 5 && 10#$fp_hm >= 930 && 10#$fp_hm < 1556 )); then bad "pulso de flujo"
+  else ok "pulso de flujo dormido (fuera de su ventana 09:30-15:56, correcto)"; fi
+  # TWS/Gateway: puerto según modo. Con market_source != ibkr el feed NO es IBKR y su
+  # ausencia es lo ESPERADO (solo haría falta para órdenes): decirlo en rojo es ruido.
   local port=4002; [[ "$MODE" == "live" ]] && port=4001
   if nc -z 127.0.0.1 $port 2>/dev/null; then ok "IB Gateway vivo (puerto $port, $MODE)"
   elif nc -z 127.0.0.1 7497 2>/dev/null; then ok "TWS vivo (7497, paper)"
   elif nc -z 127.0.0.1 7496 2>/dev/null; then ok "TWS vivo (7496, LIVE)"
+  elif [[ "$MARKET_SOURCE" != "ibkr" ]]; then
+    ok "sin TWS/Gateway (correcto: market_source=$MARKET_SOURCE; solo haría falta para órdenes)"
   else bad "NO hay TWS ni Gateway escuchando — ábrelo y entra"; fi
   [[ -f order_engine/ARM_LIVE ]] && warn "order_engine ARMADO ($(cat order_engine/ARM_LIVE))" \
                                   || ok "order_engine desarmado (señal-solamente)"

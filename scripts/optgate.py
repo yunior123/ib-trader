@@ -36,7 +36,9 @@ import subprocess
 import sys
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-GATE = os.path.join(REPO, "gate")          # binario canonico (./scripts/build_gate.sh)
+# bin/ primero, raiz de respaldo: la mudanza a bin/ dejo esta ruta apuntando al sitio viejo.
+GATE = next((_p for _p in (os.path.join(REPO, "bin", "gate"), os.path.join(REPO, "gate"))
+        if os.access(_p, os.X_OK)), os.path.join(REPO, "bin", "gate"))          # binario canonico (./scripts/build_gate.sh)
 MAX_SPREAD_PCT = 5.0                       # informativo: el gate real esta en gate_core.hpp
 MAX_AGE_S = 900
 _warned = set()

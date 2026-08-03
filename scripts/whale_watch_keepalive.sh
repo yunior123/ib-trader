@@ -9,6 +9,19 @@
 cd "$(dirname "$0")/.." || exit 1
 LOG=whale_keepalive.log
 
+# GUARDA CONTRA GUERRA DE KEEPALIVES (2026-08-03). El keepalive CANONICO es
+# scripts/opt_whale_keepalive.sh (lo lanza fleet_keepalive_start.sh:380) y hace
+# `pkill -f "scripts/opt_whale_watch.py"` incondicional cada vuelta. Este de aqui mata "los
+# duplicados". Corriendo los dos se matan en bucle y ambos escriben data/whale_alerts.jsonl,
+# data/opt_flow.txt y data/opt_whale_state.json: doble escritor = corrupcion silenciosa de
+# la espada de Napoleon. Hoy este script es huerfano (solo aparece en docs/, su job
+# com.ibtrader.whalewatch NO existe en launchctl) — se CONSERVA como rescate manual, pero se
+# aparta si el canonico esta vivo. Escape explicito: WHALE_KA_FORCE=1.
+if [[ -z "${WHALE_KA_FORCE:-}" ]] && pgrep -f "scripts/opt_whale_keepalive.sh" >/dev/null; then
+  echo "$(date '+%F %T') me aparto: opt_whale_keepalive.sh (canonico) esta vivo. WHALE_KA_FORCE=1 para forzar" >> $LOG
+  exit 0
+fi
+
 # solo en horario de mercado extendido (7:00-16:30 ET, lun-vie)
 H=$(date +%H%M); DOW=$(date +%u)
 if [ "$DOW" -gt 5 ] || [ "$H" -lt 0700 ] || [ "$H" -gt 1630 ]; then exit 0; fi

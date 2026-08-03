@@ -40,7 +40,9 @@ import sys
 from collections import defaultdict
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # NUNCA hardcodear rutas
-BIN = os.path.join(REPO, "level_react")
+# bin/ primero, raiz de respaldo: la mudanza a bin/ dejo esta ruta apuntando al sitio viejo.
+BIN = next((_p for _p in (os.path.join(REPO, "bin", "level_react"), os.path.join(REPO, "level_react"))
+       if os.access(_p, os.X_OK)), os.path.join(REPO, "bin", "level_react"))
 DB = os.path.join(REPO, "data", "trades.db")
 
 # Barreras de la etiqueta (triple barrera de la casa, feature #1).

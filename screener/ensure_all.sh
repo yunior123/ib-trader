@@ -19,13 +19,18 @@ log() { echo "$(date '+%F %T') ensure: $1" >> "$ROOT/screener/ensure.log"; }
 # `fleet_keepalive_start.sh` acaba de apagar. Medido: eso paso el sabado 2026-07-25 a las
 # 16:44:51, 11 s despues del apagado. El calculo vive en C++ (bin/fleet_hours): 0=LIVE 1=DEAD.
 # Portero ausente => NO se arranca nada (degradar a "pues arranco" seria el mismo fallo).
-if [[ -x "$ROOT/fleet_hours" ]]; then
-  if ! "$ROOT/fleet_hours" >/dev/null 2>&1; then
-    log "fuera de ventana horaria -> no relanzo nada ($("$ROOT/fleet_hours" 2>&1 | head -1))"
+# El binario vive en bin/ desde la mudanza; la raiz queda como respaldo. Apuntar solo a la
+# raiz dejaba este supervisor en "PORTERO AUSENTE" para siempre: 2.784 de 3.758 lineas de
+# screener/ensure.log (74%), o sea que NUNCA relanzo nada desde la mudanza. Mismo precedente
+# que ya mato la flota (05:15-06:48) y que rompio fleet_window.py:32.
+FLEET_HOURS="$ROOT/bin/fleet_hours"; [[ -x "$FLEET_HOURS" ]] || FLEET_HOURS="$ROOT/fleet_hours"
+if [[ -x "$FLEET_HOURS" ]]; then
+  if ! "$FLEET_HOURS" >/dev/null 2>&1; then
+    log "fuera de ventana horaria -> no relanzo nada ($("$FLEET_HOURS" 2>&1 | head -1))"
     exit 0
   fi
 else
-  log "PORTERO AUSENTE ($ROOT/fleet_hours) -> no relanzo nada. Compila con scripts/build_fleet_hours.sh"
+  log "PORTERO AUSENTE ($FLEET_HOURS) -> no relanzo nada. Compila con scripts/build_fleet_hours.sh"
   exit 0
 fi
 
@@ -49,13 +54,25 @@ fi
 # capitanes del mercado se quedaban sin feed — y la regla 12 (jerarquia de capitanes) es el
 # veto mas fuerte del sistema. Medido el 2026-07-25: el screener relanzo el bridge con la
 # lista vieja 11 s despues de que el portero horario lo apagara.
-if ! pgrep -f "ibkr_bar_bridge.py --daemon" >/dev/null; then
+#
+# PORTERO DE PROVEEDOR (2026-08-03): este era el UNICO lanzador del bridge que no miraba
+# data/market_source.txt, y por eso resucitaba IBKR aunque el feed fuera otro
+# (fleet_keepalive_start.sh:201-224 y fleet_up.sh:30-36 ya bifurcaban). Medido hoy 07:10:03:
+# en cuanto el portero horario volvio a funcionar, este script levanto un
+# `ibkr_bar_bridge.py --daemon` de 30 simbolos con market_source=intrinio y el Gateway
+# prohibido — el bridge se puso a gritar "CINTA CIEGA" y "TWS desconectado". El camino IBKR
+# se CONSERVA entero: vuelve solo con market_source=ibkr.
+MARKET_SOURCE="$(cat "$ROOT/data/market_source.txt" 2>/dev/null || echo ibkr)"
+if [[ "$MARKET_SOURCE" != "ibkr" ]]; then
+  : # feed no-IBKR: lo alimenta provider_bridge, que arranca fleet_keepalive_start.sh
+elif ! pgrep -f "ibkr_bar_bridge.py --daemon" >/dev/null; then
   FLEET_SYMS="$(cat "$ROOT/data/fleet.txt" 2>/dev/null)"
   if [[ -z "$FLEET_SYMS" ]]; then
     log "data/fleet.txt vacio o ilegible -> NO lanzo el bridge"
   else
-    nohup "$ROOT/venv/bin/python" "$ROOT/scripts/"ibkr_bar_bridge.py --daemon ${=FLEET_SYMS} >>"$ROOT/bridge_ibkr_fleet.log" 2>&1 &
-    echo "$(date) fleet: ibkr fleet daemon lanzado por ensure_all (pid $!) con $(echo $FLEET_SYMS | wc -w | tr -d ' ') simbolos de data/fleet.txt" >>"$ROOT/fleet_autostart.log"
+    # logs/ desde la reorg 2026-07-29: estos dos apuntaban aun a la raiz del repo.
+    nohup "$ROOT/venv/bin/python" "$ROOT/scripts/"ibkr_bar_bridge.py --daemon ${=FLEET_SYMS} >>"$ROOT/logs/bridge_ibkr_fleet.log" 2>&1 &
+    echo "$(date) fleet: ibkr fleet daemon lanzado por ensure_all (pid $!) con $(echo $FLEET_SYMS | wc -w | tr -d ' ') simbolos de data/fleet.txt" >>"$ROOT/logs/fleet_autostart.log"
   fi
 fi
 

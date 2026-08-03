@@ -38,7 +38,23 @@ BOTS=( *_signal_bot.cpp(N) scripts/*_signal_bot.cpp(N) )
 for src in scripts/flow_pulse.cpp scripts/qqq_xray.cpp scripts/price_alarm.cpp scripts/korea_watch.cpp scripts/finviz_scout.cpp "${BOTS[@]}"; do
   [ -f "$src" ] || continue
   out=$(basename "$src" .cpp)
-  while [ -f /tmp/cc.lock ]; do sleep 1; done; touch /tmp/cc.lock
+  # ESPERA CON CADUCIDAD (2026-08-03). Esto era `while [ -f /tmp/cc.lock ]; do sleep 1; done`
+  # sin trap: si el script moria entre el touch (aqui) y el `rm -f` de abajo — Ctrl-C, limite
+  # de sesion, timeout — el fichero sobrevivia en /tmp hasta reiniciar el Mac y CUALQUIER
+  # despliegue posterior se colgaba aqui para siempre, mudo. Es el mismo patron que dejo
+  # `macapp/.rebuild-waiting` rancio desde el 2026-07-29 12:58 y con el la .app sin
+  # reconstruir durante dias: un automatismo desactivado en silencio por un marcador huerfano.
+  for _ in $(seq 1 600); do
+    [ -f /tmp/cc.lock ] || break
+    EDAD=$(( $(date +%s) - $(stat -f %m /tmp/cc.lock 2>/dev/null || echo 0) ))
+    if [ "$EDAD" -gt 900 ]; then
+      echo "  ⚠️  /tmp/cc.lock rancio (${EDAD}s, un clang++ anterior murio a medias) -> lo tomo"
+      rm -f /tmp/cc.lock; break
+    fi
+    sleep 1
+  done
+  touch /tmp/cc.lock
+  trap 'rm -f /tmp/cc.lock' EXIT INT TERM   # muera como muera, el candado no queda armado
   # -lcurl solo donde hace falta (finviz_scout/x_whale_bot hablan HTTP). Sin esto
   # el enlace falla y —desde el fix de abort-on-fail— aborta TODO el despliegue.
   LIBS=""; case "$out" in finviz_scout|x_whale_bot) LIBS="-lcurl";; esac

@@ -3,8 +3,10 @@
 # SEÑAL-SOLAMENTE. No broker calls.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-BIN=./x_whale_bot
-LOG=x_whale_bot.log
+# bin/ primero, raiz de respaldo: tras la mudanza esto apuntaba a la raiz, no encontraba
+# nunca el binario ya compilado (bin/x_whale_bot) y lo recompilaba en cada arranque.
+BIN=./bin/x_whale_bot; [[ -x "$BIN" ]] || BIN=./x_whale_bot
+LOG=logs/x_whale_bot.log
 
 if [[ ! -x "$BIN" ]]; then
   echo "$(date '+%F %T') | building x_whale_bot" | tee -a "$LOG"

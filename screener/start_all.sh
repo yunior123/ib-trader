@@ -16,14 +16,17 @@ echo "== top-gainer system (SEÑAL-SOLAMENTE, ley 2026-07-16) =="
 # Ventana de la flota: domingo 20:00 -> viernes 20:00 hora de Toronto. Fuera de ahi, muerto.
 # Este arranque es MANUAL, asi que el escape de testing es explicito y se anuncia solo:
 #   FLEET_FORCE=1 zsh screener/start_all.sh
-if [[ -x "$ROOT/fleet_hours" ]]; then
-  if ! "$ROOT/fleet_hours" >/dev/null 2>&1; then
-    "$ROOT/fleet_hours" --why 2>&1 | head -3
+# bin/ primero, raiz como respaldo (ver ensure_all.sh: apuntar solo a la raiz dejaba el
+# portero "AUSENTE" para siempre tras la mudanza de binarios).
+FLEET_HOURS="$ROOT/bin/fleet_hours"; [[ -x "$FLEET_HOURS" ]] || FLEET_HOURS="$ROOT/fleet_hours"
+if [[ -x "$FLEET_HOURS" ]]; then
+  if ! "$FLEET_HOURS" >/dev/null 2>&1; then
+    "$FLEET_HOURS" --why 2>&1 | head -3
     echo "NO arranco nada. Para probar fuera de horario: FLEET_FORCE=1 zsh screener/start_all.sh"
     exit 0
   fi
 else
-  echo "🔴 PORTERO AUSENTE ($ROOT/fleet_hours). Compila con scripts/build_fleet_hours.sh — no arranco nada."
+  echo "🔴 PORTERO AUSENTE ($FLEET_HOURS). Compila con scripts/build_fleet_hours.sh — no arranco nada."
   exit 1
 fi
 

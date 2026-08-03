@@ -31,7 +31,9 @@ import notify_short
 SYM = "QQQ"
 MANADA_WINDOW_S = 20 * 60
 POLL_S = 30
-LEVEL_REACT = os.path.join(REPO, "level_react")
+# bin/ primero, raiz de respaldo: la mudanza a bin/ dejo esta ruta apuntando al sitio viejo.
+LEVEL_REACT = next((_p for _p in (os.path.join(REPO, "bin", "level_react"), os.path.join(REPO, "level_react"))
+               if os.access(_p, os.X_OK)), os.path.join(REPO, "bin", "level_react"))
 CONSENSUS_F = os.path.join(REPO, "data", "consensus_signals.jsonl")
 
 

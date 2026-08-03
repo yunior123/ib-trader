@@ -22,9 +22,21 @@
       per ticker, include futures analysis so far, options chain data in depth, kospi, and
       probaility of going up or down today, plus the tree with the direction and arrows if it goes
       up or down with walls, magnets, gamma flip, gex" (2026-08-03 06:38) — pendiente
-- [ ] 3. "add in chart indicator at the top left, with RSI data and weather its bearish or not based
+- [x] 3. "add in chart indicator at the top left, with RSI data and weather its bearish or not based
       on bollinger, take inspiration by bento indicator or trinity one, make sure it updates
-      automattically" (2026-08-03 06:38) — pendiente
+      automattically" (2026-08-03 06:38) — HECHO commit 544d933d (+ el .py/.html cayeron en 2851ed67).
+      Tarjeta PULSO 186px arriba-izquierda: RSI(14) + %B de BB(20,2) en 1m/15m (+3ª fila si el tf
+      activo es otro) y veredicto ALCISTA/BAJISTA/NEUTRO/SIN DATOS por la doctrina de la regla 1
+      (>=2 marcos reventados = band-walk; UNO solo = elastico -> sesgo CONTRARIO). Calculado en el
+      BACKEND (compute_pulse en chart_bridge) con ce.sma/ce.stdev/ce.rsi_series: las MISMAS que
+      dibujan las bandas y que usa bollinger_alarm, asi no puede contradecirlas. Fail-loud con el
+      motivo escrito y edad de vela/frame siempre visible. 21 tests (RSI contra Wilder + pandas
+      ewm); suite 1364 passed. Render VERIFICADO por CDP: valores cambiando solos 4 min en la misma
+      pestaña, 0 errores de consola. charts/indicator_panel.js añadido a macapp/bundled_paths.txt
+      (sin eso la .app pedia un fichero fuera del bundle) y .app v10 reconstruida + relanzada.
+      DE PASO: macapp/.rebuild-waiting estaba rancio desde el 2026-07-29 12:58 -> el post-commit
+      hook llevaba DIAS respondiendo "ya hay build/espera en curso" y NUNCA reconstruia. Marcador
+      borrado; el auto-rebuild vuelve a funcionar.
 - [x] 4. "solve any remaining todos as well, make sure real time is connected, intrinio is delayed
       as per the docs, so finnhub is probably better" (2026-08-03 06:38) — HECHO (parte realtime).
       Medido en sesión, no de la doc: **Finnhub WS 0,00–0,04 s** vs **Intrinio quote 1.216–1.279 s
@@ -67,8 +79,59 @@
       ficheros que no me tocaba tocar: `NEAR_EXPS = 2 → 8` y `--dte 32` en los 3 invocadores.
 - [ ] 6. "make sure walls, magnets, gamma flip, gex, vix, get updated constantly, preferably
       realtime" (2026-08-03 07:00) — pendiente
-- [ ] 7. "review zsh procesess in mac, some are expired or not updated" (2026-08-03 07:00) — pendiente
-- [ ] 8. "debug notifications, some might not be updated and might be noise" (2026-08-03 07:00) — pendiente
+- [x] 7. "review zsh procesess in mac, some are expired or not updated" (2026-08-03 07:00) — HECHO 07:20.
+      Inventario: 26 jobs `com.ibtrader.*` + 77 `scripts/*.sh` + 84 procesos vivos. CERRADO:
+      (a) **El precedente de `bin/` por TERCERA vez**: `screener/ensure_all.sh:22` y
+      `screener/start_all.sh:19` buscaban `$ROOT/fleet_hours` (sin `bin/`) → el supervisor del
+      screener (launchd cada 120 s) llevaba desde la mudanza cantando "PORTERO AUSENTE -> no
+      relanzo nada": **2.784 de 3.758 líneas de `screener/ensure.log` (74%)**. Nunca revivió nada.
+      (b) Misma clase, 5 consumidores Python: `optgate.py` (el gate de spread de la regla 4 —
+      decía "falta el binario /gate, SIN VEREDICTO") y 4 de `level_react`
+      (`capitulacion_qqq.py`, `today_alarm5.py`, `level_events_ingest.py`, `level_react_validate.py`).
+      (c) `x_whale_bot_keepalive.sh` apuntaba a `./x_whale_bot` (recompilaba en cada arranque) y
+      escribía el log en la raíz, no en `logs/`.
+      (d) Rotados 5 logs desbocados: **357 MB → 1,35 MB** (`notify_relay.log` solo eran 196 MB).
+      (e) `whale_watch_keepalive.sh` (huérfano, su job `com.ibtrader.whalewatch` no existe) hacía
+      guerra de pkill con el canónico `opt_whale_keepalive.sh` sobre los MISMOS ficheros
+      (`whale_alerts.jsonl`, `opt_flow.txt`, `opt_whale_state.json`). Se CONSERVA (regla 10) pero
+      se aparta solo si el canónico está vivo; escape `WHALE_KA_FORCE=1`.
+      SIN duplicados de proceso (`price_alarm`/`compass` x2 = keepalive + binario, no duplicado;
+      `chart_bridge` x7 = 6 símbolos + el mock del agente de QA). Falsos positivos VERIFICADOS y
+      descartados: `polychains.intraday`/`tracecube` exit 1 = su propio portero; `flow_pulse` caído
+      = su ventana; `dailyplans_run.sh:32` ya usaba `./bin/volume_profile`.
+      ABIERTO: `com.ibtrader.intrinioprobe` COLGADO 3h06m (ver punto 8); `band_open_watch` se
+      relanzó 718 veces en 7 días (163/día del 27 al 31-jul, 1 hoy — ya no está en bucle, medir si
+      vuelve); huérfanos que NO se borran, solo se anotan: `backup_arquimedes.sh`,
+      `watchlist_stats_keepalive.sh`, `cper/slv/uso_keepalive.sh` (sus bots no existen),
+      `tws_watchdog.sh`; ruta VIEJA `~/Documents/GitHub/ib-trader` aún en `README.md:16`,
+      `docs/OPERATIONS.md` y 2 skills.
+- [x] 8. "debug notifications, some might not be updated and might be noise" (2026-08-03 07:00) —
+      HECHO 07:20. Ruido MEDIDO en 7 días, no impresiones:
+      (a) **`notify_relay.sh`: 305.845 `DESCARTADA` contra 1.650 envíos reales (185:1), log de
+      196 MB.** Causa: `notify_short.py:26-31` REESCRIBE el anillo de 500 líneas en cada push,
+      `tail -F` ve encoger el fichero y RELEE las 500 → todas se descartaban por viejas y cada una
+      dejaba su línea. Ahora el backlog (>300 s) se salta en SILENCIO; se sigue registrando el
+      retraso interesante (45 s…300 s), que sí dice algo. + autorrotación a 20 MB.
+      (b) **`fleet_healthcheck.py` era el ÚNICO fichero que daba por hecho que el feed es IBKR**
+      (`ibkr_bar_bridge.py` a pelo): con `market_source=intrinio` cantaba 🔴 CRÍTICO "bar_bridge
+      (feed IBKR): MUERTO" 3 veces al día por algo CORRECTO **y relanzaba la flota para resucitar
+      un puente prohibido**. Ahora `bar_feed()` bifurca por `data/market_source.txt` (regla 10:
+      condicional, el camino IBKR intacto).
+      (c) El audit de launchd cantaba "exit 1 (revisar config)" a los jobs con portero horario
+      PROPIO. `gated_jobs()` lo DERIVA del plist (nunca una lista a mano) y excusa solo el exit 1.
+      (d) **`sox_keepalive.sh`: 24.091 relanzados y 20 MB de log** estrellándose contra el puerto
+      4001 cerrado (`sox_index_feed.py:14` es `ib_insync` puro). Portero de proveedor: en pausa con
+      `market_source != ibkr`, UNA línea por hora, código IBKR intacto.
+      (e) `fleet_up.sh --status` pintaba en ✗ ROJO dos cosas correctas: "NO hay TWS ni Gateway" (con
+      feed no-IBKR es lo esperado) y `flow_pulse` fuera de su ventana 09:30-15:56. Cero falsos rojos.
+      NUEVO detector: `stuck_jobs()` caza jobs periódicos COLGADOS (launchd no relanza mientras el
+      anterior viva, y el exit code NO cambia) — cazó `com.ibtrader.intrinioprobe` con 3h06m en la
+      misma corrida y `StartInterval 600` = **18 sondas perdidas en silencio**.
+      CONSERVADO A PROPÓSITO (regla 4): la alarma de ballenas y la de precio, sin tocar volumen ni
+      umbrales. ABIERTO para el dueño de `scripts/intrinio_ws_*.py` (no me tocaba tocarlo): grita
+      2 mensajes cada ~2 min ("socket NO en weekend" **un lunes** + "socket NO en rth"), 75 de las
+      últimas 100 líneas de `notify_push.txt`, por una condición que la casa YA sabe normal
+      (el vendor apaga el cluster de noche) — texto obsoleto + falta histéresis.
 - [ ] 10. "code for ibkr stays, do not delete it, we might connect back to it later on, put
       conditionals per data provider, remember to have all generic to avoid deleting code, and
       modifying preferably just one one service file" (2026-08-03 07:00) — REGLA DE ARQUITECTURA,

@@ -30,7 +30,9 @@ import order_ticket
 
 SYMS = ["NVDA", "AAPL", "MU", "DRAM", "SKHY"]
 POLL_S = 25
-LEVEL_REACT = os.path.join(REPO, "level_react")
+# bin/ primero, raiz de respaldo: la mudanza a bin/ dejo esta ruta apuntando al sitio viejo.
+LEVEL_REACT = next((_p for _p in (os.path.join(REPO, "bin", "level_react"), os.path.join(REPO, "level_react"))
+               if os.access(_p, os.X_OK)), os.path.join(REPO, "bin", "level_react"))
 FIRED_LOG = os.path.join(REPO, "data", "today_alarm5_fired.jsonl")
 
 
