@@ -139,14 +139,18 @@ def stream(key, syms):
 
     vistos = {"n": 0, "ultimo": 0.0}
 
+    import rt_last
+
     def on_trade(t):
         sym = getattr(t, "symbol", None)
         ep = _exchange_epoch(getattr(t, "timestamp", None))
         px = getattr(t, "price", None)
         if not sym or ep is None or not px:
             return
-        _escribe(f"data/ws_trade_{sym.upper()}.txt",
-                 f"{ep:.0f} {float(px):.4f} {float(getattr(t, 'total_volume', 0) or 0):.0f}\n")
+        tam = float(getattr(t, "size", 0) or 0)
+        _escribe(f"data/ws_trade_{sym.upper()}.txt", f"{ep:.0f} {float(px):.4f} {tam:.0f}\n")
+        # y al PRINT canonico, que comparte con Finnhub: solo pisa quien trae un tick mas nuevo
+        rt_last.write_if_newer(sym, ep, float(px), tam, "intrinio")
         vistos["n"] += 1
         vistos["ultimo"] = time.time()
 
