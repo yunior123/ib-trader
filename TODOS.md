@@ -2,6 +2,32 @@
 
 > Vivo. Apuntar cada petición AL MOMENTO con las palabras de Yunior. Lo cerrado → Done.md.
 
+## 🔴 SESIÓN 2026-08-03 (lunes 06:40 ET — ráfaga de apertura)
+- [x] 1. "run the fleet with the 6 windows in ib trader" (2026-08-03 06:38) — HECHO 06:49.
+      Flota: 21 bots de señal, provider_bridge (intrinio), vigía de ballenas, relé, cola de voz,
+      alarma de precio, uw_flow_tape, fleet_consensus, compass, korea_naver_bridge, finnhub_ws_bridge.
+      6 ventanas VIVAS en 8080-8085 (qqq nvda smh mu aapl msft) + `ib-trader Cockpit.app --windows 6`
+      (v10) abierta y VERIFICADA con captura: las 6 renderizan velas, imán, régimen y net GEX.
+      flow_pulse caído es CORRECTO (su ventana es 09:30-15:56). "NO hay TWS/Gateway" es CORRECTO
+      (orden: sin IBKR esta semana).
+      Hallazgos de la captura, ver punto 4: SMH "SIN LECTURA — barras no contiguas (hueco de feed)"
+      justo el día del desplome coreano; "Sin fotos de cadena hoy" es NORMAL antes de las 09:35
+      (com.ibtrader.polychains.intraday sólo corre 09:35-16:00; su exit 1 a las 06:50 es el portero
+      horario, no un fallo).
+- [ ] 2. "run full analysis of fleet, specially for amazon, meta, google, mu, apple, nokia, intc.
+      use unusual whales features to gain insights, search darkpool, whales, make sure we have
+      widgets for those in our software, analyze premium net, gamma, gex... Review in depth.
+      also qqq, spy, smh, futures, kospi, historic posibility of nasdaq falling drastically today
+      given a fall in kospi, the pattern is quite common, verify, send me plan via email, one email
+      per ticker, include futures analysis so far, options chain data in depth, kospi, and
+      probaility of going up or down today, plus the tree with the direction and arrows if it goes
+      up or down with walls, magnets, gamma flip, gex" (2026-08-03 06:38) — pendiente
+- [ ] 3. "add in chart indicator at the top left, with RSI data and weather its bearish or not based
+      on bollinger, take inspiration by bento indicator or trinity one, make sure it updates
+      automattically" (2026-08-03 06:38) — pendiente
+- [ ] 4. "solve any remaining todos as well, make sure real time is connected, intrinio is delayed
+      as per the docs, so finnhub is probably better" (2026-08-03 06:38) — pendiente
+
 ## 🔴 SESIÓN 2026-07-29 (madrugada, ráfaga ~07:05)
 - [x] **"send codex to debug compass overnight, dont think its working"** (Yunior 2026-07-29
       ~06:00) — hecho (codex): causa raíz = `why[:5]` cortaba la línea overnight en QQQ +
@@ -281,8 +307,7 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
         sería un prior disfrazado de medición (skill `anti-overfit-killlist`). Ya tenemos flip,
         call/put wall y max pain, que son los niveles que sí sabemos calcular.
 
-- [ ] "urgent: solve korean fleet not working realtime via websocket. no excuses, check intrinio docs, review all in depth" (2026-08-02 20:05 ET, EN CURSO)
-- [x] "new unusual whales key: e43c… save it" (2026-08-02 20:03) — guardada en config/feeds.env (UW_TOKEN + UNUSUAL_WHALES_TOKEN); VERIFICADA contra la API: 200 en /api/stock/SPY/flow-alerts y /greek-exposure
+- [ ] "urgent: solve korean fleet not working realtime via websocket. no excuses, check intrinio docs, review all in depth" (2026-08-02 20:05 ET, EN CURSO)- [x] "new unusual whales key: e43c… save it" (2026-08-02 20:03) — guardada en config/feeds.env (UW_TOKEN + UNUSUAL_WHALES_TOKEN); VERIFICADA contra la API: 200 en /api/stock/SPY/flow-alerts y /greek-exposure
 - [x] "remember, no ibkr this week" (2026-08-02 20:15) — Gateway NO se lanza; Corea pasa a scripts/korea_naver_bridge.py (Naver, delayTime 0 medido, 10 simbolos), keepalive cableado
 - [x] "intrinio websocket has to be on... search in depth" (2026-08-02 21:00) — agotadas TODAS las vias (tabla en .claude/skills/intrinio-api/SKILL.md): el SDK OFICIAL sin tocar falla igual, hosts identicos en los SDK de Python/Node/Java, sin mTLS, DNS identico en 3 resolvers, IP propia por host, y falla tambien desde OTRA red. La misma key da 200 en api-v2. Vigia intrinio_ws_autostart corriendo: lo enciende solo en cuanto responda.
 - [x] "probaste las dos keys de intrinio?" (2026-08-02 21:15) — NO habia dos: en este Mac hay UNA sola (config/feeds.env; el feeds.env de la raiz es symlink al mismo fichero). Corregido el skill, que afirmaba "nuestras 2 keys" sin respaldo. HALLAZGO de la busqueda: la propia API declara el entitlement — source=iex responde "Realtime sources have been adjusted to cboe_one_delayed based on your access" -> el plan es tier DELAYED.

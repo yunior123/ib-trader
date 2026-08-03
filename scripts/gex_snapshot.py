@@ -236,9 +236,12 @@ def contracts_from_tws(sym):
             cs.append({"strike": k, "right": right[0].upper(), "oi": int(oi), "gamma": gm,
                        "delta": (dl if (iv > 0 and 0 < abs(dl) <= 1) else None),
                        "iv": (iv if iv > 0 else None), "exp": exp, "T": T})
+    # La fuente la DECLARA la cabecera del fichero; desde que IBKR esta fuera lo escribe
+    # provider_bridge desde Polygon y etiquetarlo "ibkr_tws" mentia sobre la latencia.
+    fuente = hdr.get("fuente") or "desconocida"
     meta = {"spot": spot, "band": (((max(ks) - min(ks)) / 2 / spot) if (ks and spot) else None),
             "exp_hasta": (max(c["exp"] for c in cs) if cs else None),
-            "greeks": "ibkr_tws", "fuente": "ibkr_tws",
+            "greeks": fuente, "fuente": fuente,
             "snapshot_local": None, "chain_age_s": hdr.get("epoch")}
     return cs, spot, meta, n_cand
 
@@ -262,8 +265,10 @@ def pick_source(sym):
     if cs is not None and spot:
         ancho_ok = span is not None and span >= BAND_FLOOR
         if book_quality.usable_greeks(pct) and ancho_ok:
-            return (cs, spot, meta, n_cand, "vivo", "ibkr_tws",
-                    f"IBKR PRIMARIO: griegas {pct:.0%}, ancho ±{span:.1%} (>=±{BAND_FLOOR:.0%})")
+            # el cache vivo puede venir de IBKR o de provider_bridge: la etiqueta la manda el fichero
+            src = (meta or {}).get("fuente") or "desconocida"
+            return (cs, spot, meta, n_cand, "vivo", src,
+                    f"CACHE VIVO ({src}): griegas {pct:.0%}, ancho ±{span:.1%} (>=±{BAND_FLOOR:.0%})")
         if not book_quality.usable_greeks(pct):
             why = (f"griegas {'n/d' if pct is None else f'{pct:.0%}'} "
                    f"(<{book_quality.MIN_GREEKS_SRC:.0%})")

@@ -223,3 +223,49 @@ def test_score_nunca_pierde_el_SIGNO_por_redondeo(gs, tmp_path, monkeypatch):
     assert (snap["score"] < 0) == (snap["regime"] == "NEGATIVE"), (
         f"score {snap['score']!r} contradice regime {snap['regime']}")
     assert (snap["score"] < 0) == (snap["net_gex"] < 0)
+
+
+def _cache_vivo(tmp_path, sym, fuente, spot=100.0, exp="20261218"):
+    """data/opt_chain_<sym>.txt con el MISMO formato que escriben opt_chain_cache y
+    provider_bridge: dos lineas de cabecera y 10 columnas por fila."""
+    import time
+    d = tmp_path / "data"
+    d.mkdir(parents=True, exist_ok=True)
+    ep = int(time.time())
+    filas = []
+    for i in range(14):    # ancho +-13% > BAND_FLOOR (0.10), si no pick_source cae al respaldo
+        k = spot * 0.87 + i * spot * 0.02
+        for right in ("call", "put"):
+            filas.append(f"{k:.2f} {right} {exp} 1.00 1.10 10 500 0.40 0.50 0.0200")
+    (d / f"opt_chain_{sym.lower()}.txt").write_text(
+        f"# opt_chain {sym} | epoch {ep} | x | spot {spot} | exps {exp}\n"
+        f"# fuente {fuente} | band 0.1500 | max_strikes 28 | rows 28\n"
+        "# strike right exp bid ask vol oi iv delta gamma\n" + "\n".join(filas) + "\n")
+
+
+def test_la_fuente_del_cache_vivo_la_declara_la_CABECERA_no_el_codigo(gs, tmp_path, monkeypatch):
+    """Con IBKR fuera, `data/opt_chain_*.txt` lo escribe provider_bridge desde Polygon
+    (~15 min declarados). Etiquetarlo "ibkr_tws" hacia creer que el mapa era tiempo real y
+    la doctrina de la casa prohibe que un nivel delayed pase por vivo."""
+    monkeypatch.setattr(gs, "REPO", str(tmp_path))
+    _cache_vivo(tmp_path, "QQQ", "polygon")
+    cs, spot, meta, n_cand = gs.contracts_from_tws("QQQ")
+    assert cs, "la cadena de prueba no produjo contratos"
+    assert meta["fuente"] == "polygon" and meta["greeks"] == "polygon"
+    assert "ibkr" not in str(meta["fuente"]).lower()
+
+
+def test_pick_source_propaga_la_fuente_real_del_cache(gs, tmp_path, monkeypatch):
+    monkeypatch.setattr(gs, "REPO", str(tmp_path))
+    _cache_vivo(tmp_path, "SPY", "polygon")
+    _cs, _spot, _meta, _n, fecha, chain_src, why = gs.pick_source("SPY")
+    assert fecha == "vivo" and chain_src == "polygon"
+    assert "ibkr" not in why.lower(), f"el porque sigue diciendo IBKR: {why!r}"
+
+
+def test_cache_vivo_de_IBKR_sigue_etiquetandose_ibkr_tws(gs, tmp_path, monkeypatch):
+    """El fix no puede romper el caso IBKR: si la cabecera dice ibkr_tws, se respeta."""
+    monkeypatch.setattr(gs, "REPO", str(tmp_path))
+    _cache_vivo(tmp_path, "MU", "ibkr_tws")
+    _cs, _spot, _meta, _n, fecha, chain_src, _why = gs.pick_source("MU")
+    assert fecha == "vivo" and chain_src == "ibkr_tws"
