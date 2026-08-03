@@ -154,6 +154,10 @@
       ⚠️ PENDIENTE LUNES: el replay de EQUITIES_EDGE trae **solo trades, 0 quotes** → confirmar si el
       socket vivo emite NBBO; si no, no hay bid/ask de Intrinio y el gate de spread se queda ciego.
       Y medir la ventana horaria exacta de encendido (no está documentada).
+- [ ] "envia agents to verify the widgets, make sure we have data for options net, gex for next
+      weeks, at least 2-3 from now, whole agoust" (2026-08-02 19:47) — EN CURSO.
+- [ ] "termina todo, when done put the korean fleet and windows up for ib trader, wanna see it,
+      run some real qa testing on ib trader too, use computer use" (2026-08-02 19:20) — EN CURSO.
 - [ ] "do all todos and remaining work, no excuses. investigate in github, web, reddit, stackoverflow,
       etc" (2026-08-02 03:45) — EN CURSO: los 40 problemas de las revisiones + investigacion externa.
 - [ ] "solve and investigate all not solved bugs or issues" (2026-08-02 03:40) — EN CURSO: barrido
@@ -276,3 +280,7 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       · **Hedge Wall** — SpotGamma no publica su fórmula; inventar una y etiquetarla con su nombre
         sería un prior disfrazado de medición (skill `anti-overfit-killlist`). Ya tenemos flip,
         call/put wall y max pain, que son los niveles que sí sabemos calcular.
+
+- [ ] "urgent: solve korean fleet not working realtime via websocket. no excuses, check intrinio docs, review all in depth" (2026-08-02 20:05 ET, EN CURSO)
+- [x] "new unusual whales key: e43c… save it" (2026-08-02 20:03) — guardada en config/feeds.env (UW_TOKEN + UNUSUAL_WHALES_TOKEN); VERIFICADA contra la API: 200 en /api/stock/SPY/flow-alerts y /greek-exposure
+- [x] "remember, no ibkr this week" (2026-08-02 20:15) — Gateway NO se lanza; Corea pasa a scripts/korea_naver_bridge.py (Naver, delayTime 0 medido, 10 simbolos), keepalive cableado

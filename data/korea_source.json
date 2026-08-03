@@ -1,0 +1,21 @@
+{
+ "fuente": "naver_polling",
+ "delay_declarado_s": 0,
+ "nbbo": null,
+ "nbbo_motivo": "Naver no publica libro (askingPrice -> 404): no se escribe nbbo_*",
+ "simbolos": [
+  "dbhitek",
+  "hanmi",
+  "hpsp",
+  "isc",
+  "kospi",
+  "leeno",
+  "samsung",
+  "skhynix",
+  "solbrain",
+  "wonikips"
+ ],
+ "ultimo_sondeo": 1785717049,
+ "mercado_abierto": true,
+ "barras_cerradas_este_ciclo": 0
+}

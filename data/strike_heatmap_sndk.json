@@ -1,72 +1,72 @@
 {
- "$1030-$1066": {
-  "calls_vol": 185,
-  "puts_vol": 1461,
-  "total": 1646,
-  "dominance": "PUTS",
-  "ratio": 0.13
- },
- "$1066-$1101": {
-  "calls_vol": 15,
-  "puts_vol": 814,
-  "total": 829,
-  "dominance": "PUTS",
-  "ratio": 0.02
- },
- "$1101-$1136": {
-  "calls_vol": 79,
-  "puts_vol": 1638,
-  "total": 1717,
-  "dominance": "PUTS",
-  "ratio": 0.05
- },
- "$1136-$1172": {
-  "calls_vol": 954,
-  "puts_vol": 9344,
-  "total": 10298,
-  "dominance": "PUTS",
-  "ratio": 0.1
- },
- "$1172-$1208": {
-  "calls_vol": 5619,
-  "puts_vol": 21404,
-  "total": 27023,
-  "dominance": "PUTS",
-  "ratio": 0.26
- },
- "$1208-$1243": {
-  "calls_vol": 12520,
-  "puts_vol": 18907,
-  "total": 31427,
-  "dominance": "PUTS",
-  "ratio": 0.66
- },
- "$1243-$1278": {
-  "calls_vol": 18004,
-  "puts_vol": 8802,
-  "total": 26806,
+ "$1025-$1061": {
+  "calls_vol": 35,
+  "puts_vol": 0,
+  "total": 35,
   "dominance": "CALLS",
-  "ratio": 2.05
+  "ratio": 35.0
  },
- "$1278-$1314": {
-  "calls_vol": 10574,
-  "puts_vol": 1797,
-  "total": 12371,
+ "$1061-$1097": {
+  "calls_vol": 19,
+  "puts_vol": 0,
+  "total": 19,
   "dominance": "CALLS",
-  "ratio": 5.88
+  "ratio": 19.0
  },
- "$1314-$1350": {
-  "calls_vol": 1702,
-  "puts_vol": 455,
-  "total": 2157,
+ "$1097-$1133": {
+  "calls_vol": 1273,
+  "puts_vol": 0,
+  "total": 1273,
   "dominance": "CALLS",
-  "ratio": 3.74
+  "ratio": 1273.0
  },
- "$1350-$1385": {
-  "calls_vol": 2077,
-  "puts_vol": 417,
-  "total": 2494,
+ "$1133-$1169": {
+  "calls_vol": 57,
+  "puts_vol": 0,
+  "total": 57,
   "dominance": "CALLS",
-  "ratio": 4.98
+  "ratio": 57.0
+ },
+ "$1169-$1205": {
+  "calls_vol": 1727,
+  "puts_vol": 0,
+  "total": 1727,
+  "dominance": "CALLS",
+  "ratio": 1727.0
+ },
+ "$1205-$1241": {
+  "calls_vol": 1225,
+  "puts_vol": 0,
+  "total": 1225,
+  "dominance": "CALLS",
+  "ratio": 1225.0
+ },
+ "$1241-$1277": {
+  "calls_vol": 2262,
+  "puts_vol": 0,
+  "total": 2262,
+  "dominance": "CALLS",
+  "ratio": 2262.0
+ },
+ "$1277-$1313": {
+  "calls_vol": 2425,
+  "puts_vol": 0,
+  "total": 2425,
+  "dominance": "CALLS",
+  "ratio": 2425.0
+ },
+ "$1313-$1349": {
+  "calls_vol": 332,
+  "puts_vol": 0,
+  "total": 332,
+  "dominance": "CALLS",
+  "ratio": 332.0
+ },
+ "$1349-$1385": {
+  "calls_vol": 1349,
+  "puts_vol": 0,
+  "total": 1349,
+  "dominance": "CALLS",
+  "ratio": 1349.0
  }
 }

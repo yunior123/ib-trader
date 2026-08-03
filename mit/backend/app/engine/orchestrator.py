@@ -33,6 +33,15 @@ from backend.app.providers.registry import ProviderSet
 
 _log = logging.getLogger("mit.orchestrator")
 
+
+def _prob_txt(prob, n):
+    """'0%' MEDIDO y 'no hay muestra' son cosas distintas: `or 0` las hacia indistinguibles.
+    Un 0% con n=1 leido como probabilidad medida es exactamente el cero plausible de la casa."""
+    if prob is None:
+        return f"not measured (n={n})"
+    return f"{prob:.0%}"
+
+
 T = TypeVar("T")
 
 
@@ -44,6 +53,9 @@ class MarketIntelligenceEngine:
         self._bar_cache: dict[str, tuple[float, list[Bar]]] = {}
         self._daily_cache: dict[str, tuple[float, list[Bar]]] = {}
         self._snapshot_cache: dict[str, tuple[float, TerminalSnapshot]] = {}
+        self._chain_cache: dict[str, tuple[float, list]] = {}
+        self._chain_fetched_at: dict[str, float] = {}
+        self._chain_locks: dict[str, asyncio.Lock] = {}
         self._locks: dict[str, asyncio.Lock] = {}
 
     async def snapshot(self, symbol: str, *, force: bool = False) -> TerminalSnapshot:
@@ -161,7 +173,14 @@ class MarketIntelligenceEngine:
         matrix["quote"] = {"last": quote.last, "change_pct": quote.change_pct}
         matrix["provider_status"] = [s.model_dump(mode="json") for s in status]
         matrix["generated_at"] = datetime.now(UTC).isoformat()
+        matrix["chain_age_s"] = self._chain_age_s(symbol)
         return matrix
+
+    def _chain_age_s(self, symbol: str) -> float | None:
+        """Edad de la cadena servida (s), o None si no vino del cache. Se publica para que la
+        pantalla no pueda hacer pasar por fresco un mapa de hace 5 min."""
+        t = self._chain_fetched_at.get(symbol)
+        return None if t is None else round(time.time() - t, 1)
 
     async def trace_matrix(self, symbol: str, *, metric: str = "gex") -> dict:
         symbol = symbol.upper()
@@ -225,8 +244,32 @@ class MarketIntelligenceEngine:
             return []
 
     async def _multi_expiry_chain(self, symbol: str, *, max_expiries: int = 10):
-        """Cadena multi-vencimiento para el heatmap: si el provider sabe listar vencimientos,
-        pide la cadena de cada uno (los N cercanos) y las fusiona; si no, una sola cadena."""
+        """Cadena multi-vencimiento con TTL corto compartido por heatmap y TRACE.
+
+        Sin cache, cada widget rehacia las 10 cadenas: medido 2026-08-02 con SPY -> heatmap
+        82,9 s y TRACE 51,1 s, y cada refresco del navegador repetia la factura entera. El TTL
+        (MIT_CHAIN_TTL_S, 45 s por defecto) es despreciable frente a los ~15 min de retraso que
+        la cadena de Polygon YA declara, asi que no disfraza de fresco nada que no lo fuera.
+        """
+        ttl = self.settings.chain_cache_ttl_s
+        if ttl > 0:
+            hit = self._chain_cache.get(symbol)
+            if hit and time.monotonic() - hit[0] < ttl:
+                return hit[1]
+            lock = self._chain_locks.setdefault(symbol, asyncio.Lock())
+            async with lock:   # una sola descarga aunque lleguen heatmap y TRACE a la vez
+                hit = self._chain_cache.get(symbol)
+                if hit and time.monotonic() - hit[0] < ttl:
+                    return hit[1]
+                chain = await self._fetch_multi_expiry_chain(symbol, max_expiries=max_expiries)
+                self._chain_cache[symbol] = (time.monotonic(), chain)
+                self._chain_fetched_at[symbol] = time.time()
+                return chain
+        return await self._fetch_multi_expiry_chain(symbol, max_expiries=max_expiries)
+
+    async def _fetch_multi_expiry_chain(self, symbol: str, *, max_expiries: int = 10):
+        """Si el provider sabe listar vencimientos, pide la cadena de cada uno (los N cercanos)
+        y las fusiona; si no, una sola cadena."""
         opt = self.providers.options
         get_exps = getattr(opt, "get_expirations", None)
         if get_exps is None:
@@ -356,7 +399,8 @@ class MarketIntelligenceEngine:
                 shock.severity,
                 f"{shock.label.upper()} — {shock.change_pct:+.2f}%",
                 f"Historical opposite-direction move within {shock.horizon_days} sessions: "
-                f"{(shock.historical_reversion_probability or 0):.0%} across {shock.sample_size} comparable events. Not a guarantee.",
+                f"{_prob_txt(shock.historical_reversion_probability, shock.sample_size)} across "
+                f"{shock.sample_size} comparable events. Not a guarantee.",
                 "shock",
             )
         elif shock.severity == Severity.WATCH:
@@ -427,7 +471,8 @@ class MarketIntelligenceEngine:
                 continue
             message = (
                 f"{state.change_pct:+.2f}% daily shock. Historical opposite-direction close within "
-                f"{state.horizon_days} sessions: {(state.historical_reversion_probability or 0):.0%} "
+                f"{state.horizon_days} sessions: "
+                f"{_prob_txt(state.historical_reversion_probability, state.sample_size)} "
                 f"across {state.sample_size} events. Not a guarantee."
             )
             raw = f"{symbol}|watchlist-shock|{state.label}|{now:%Y-%m-%d-%H-%M}"

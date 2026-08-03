@@ -83,6 +83,11 @@ class Settings(BaseSettings):
     # Sin este rango, el snapshot solo devuelve el vencimiento frontal; con el, pagina a
     # varias expiraciones (el mapa strike x vencimiento de la semana). Dias naturales hacia delante.
     polygon_chain_days: int = Field(28, alias="MIT_POLYGON_CHAIN_DAYS")
+    # TTL de la cadena multi-vencimiento que comparten heatmap y TRACE. 0 = sin cache.
+    # 300 s y no 45: la propia descarga tarda 35-80 s (10 vencimientos x paginacion de 250),
+    # asi que un TTL corto caducaba ANTES de que llegara la peticion siguiente y no ahorraba nada
+    # (medido 2026-08-02: 50,6 / 34,7 / 73,1 s en tres refrescos seguidos con TTL=45).
+    chain_cache_ttl_s: float = Field(300.0, alias="MIT_CHAIN_TTL_S")
 
     unusual_whales_token: str | None = Field(None, alias="UNUSUAL_WHALES_TOKEN")
     uw_ws_url: str | None = Field(None, alias="MIT_UW_WS_URL")

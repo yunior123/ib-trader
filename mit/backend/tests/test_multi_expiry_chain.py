@@ -86,3 +86,57 @@ def test_un_fallo_persistente_sobre_cuatro_grita_pero_devuelve(caplog):
 def test_sin_vencimientos_cae_a_la_cadena_simple():
     opt = _Opt([], fallan=set())
     assert asyncio.run(_engine(opt)._multi_expiry_chain("SPY")) == ["None-ok"]
+
+
+# ---------- cache de cadena (TTL corto compartido por heatmap y TRACE) ----------
+
+def _engine_ttl(opt, ttl):
+    class _P:
+        options = opt
+        market = depth = flow = fallback = None
+    return MarketIntelligenceEngine(Settings(chain_cache_ttl_s=ttl), _P(), EventBus())
+
+
+def test_segunda_llamada_dentro_del_ttl_no_vuelve_a_descargar():
+    """Medido 2026-08-02 sin cache: heatmap 82,9 s + TRACE 51,1 s sobre la MISMA cadena de SPY,
+    y cada refresco del navegador repetia la factura."""
+    opt = _Opt(EXPS, fallan=set())
+    eng = _engine_ttl(opt, 45.0)
+    a = asyncio.run(eng._multi_expiry_chain("SPY"))
+    n = len(opt.llamadas)
+    b = asyncio.run(eng._multi_expiry_chain("SPY"))
+    assert a == b
+    assert len(opt.llamadas) == n, "la segunda lectura debe salir del cache"
+
+
+def test_ttl_cero_desactiva_el_cache():
+    opt = _Opt(EXPS, fallan=set())
+    eng = _engine_ttl(opt, 0.0)
+    asyncio.run(eng._multi_expiry_chain("SPY"))
+    n = len(opt.llamadas)
+    asyncio.run(eng._multi_expiry_chain("SPY"))
+    assert len(opt.llamadas) == 2 * n
+
+
+def test_dos_widgets_a_la_vez_descargan_UNA_sola_vez():
+    """heatmap y TRACE piden en paralelo: el lock evita pagar la cadena dos veces."""
+    opt = _Opt(EXPS, fallan=set())
+    eng = _engine_ttl(opt, 45.0)
+
+    async def _dos():
+        return await asyncio.gather(eng._multi_expiry_chain("SPY"),
+                                    eng._multi_expiry_chain("SPY"))
+
+    a, b = asyncio.run(_dos())
+    assert a == b
+    assert len(opt.llamadas) == len(EXPS)
+
+
+def test_un_fallo_no_se_cachea_como_exito():
+    """Si la cadena LEVANTA, no puede quedar nada en el cache: el siguiente intento reintenta."""
+    opt = _Opt(EXPS, fallan=set(EXPS))
+    eng = _engine_ttl(opt, 45.0)
+    for _ in range(2):
+        with pytest.raises(RuntimeError):
+            asyncio.run(eng._multi_expiry_chain("SPY"))
+    assert len(opt.llamadas) > len(EXPS), "el segundo intento debe volver a pedir, no servir cache"

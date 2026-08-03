@@ -35,6 +35,7 @@ def _consensus_universe():
     return open(path).read().split()
 
 FLEET = _consensus_universe()
+FULL_FLEET = open("data/fleet.txt").read().split()   # los 30 de siempre: para DECLARAR el recorte
 CAPS = ["SPY", "QQQ", "SMH"]
 PCT = float(os.environ.get("FLEET_CONS_PCT", "78"))
 MAX_BAR_AGE = float(os.environ.get("FLEET_CONS_MAX_BAR_AGE", "180"))   # s; barras mas viejas no votan
@@ -129,7 +130,13 @@ def fire(cdir, up, dn, n, mom_up, mom_dn, skipped=None):
     arrow = "📈" if cdir == "UP" else "📉"
     nf = len(FLEET)
     faltan = f" ({len(skipped)} sin voto)" if skipped else ""
-    msg = (f"🐘 MANADA {'ALCISTA' if cdir=='UP' else 'BAJISTA'} {arrow}: {aligned}/{nf}{faltan} de la flota "
+    # Si el universo esta RECORTADO hay que decirlo en la misma frase: con 26 bastan 21 para el 78%,
+    # con 30 harian falta 24. Quien oye "21/26 de la flota" tiene que saber que la flota son 30.
+    recorte = ""
+    if nf < len(FULL_FLEET):
+        fuera = " ".join(s for s in FULL_FLEET if s not in FLEET)
+        recorte = f" [universo RECORTADO {nf}/{len(FULL_FLEET)}: sin feed {fuera}]"
+    msg = (f"🐘 MANADA {'ALCISTA' if cdir=='UP' else 'BAJISTA'} {arrow}: {aligned}/{nf}{faltan}{recorte} de la flota "
            f"alineados {'ARRIBA' if cdir=='UP' else 'ABAJO'} del flip + los 3 capitanes de acuerdo "
            f"({mom} con momentum). Sesgo direccional FUERTE -> comprar {veh}. "
            f"VERIFICA spread <=5% y print antes de entrar (optgate). No es consejo financiero.")

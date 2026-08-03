@@ -94,13 +94,21 @@ class PolygonProvider(MarketDataProvider, OptionsDataProvider):
         today = date.today()
         lte = today.fromordinal(today.toordinal() + (days or self.settings.polygon_chain_days))
         url: str | None = "/v3/reference/options/contracts"
+        # sort=expiration_date es OBLIGATORIO: sin el, la API pagina por TICKER y las 10 paginas se
+        # agotan dentro de los primeros vencimientos. Medido 2026-08-02 con SPY a 28 dias: sin sort
+        # salian 4 vencimientos (03/04/05/21 ago) y con sort salen 12 — o sea que el mapa de
+        # semanas futuras estaba MUDO para casi todo agosto.
         params: dict[str, Any] = {
             "underlying_ticker": symbol.upper(), "expired": "false", "limit": 1000,
             "expiration_date.gte": today.isoformat(), "expiration_date.lte": lte.isoformat(),
+            "sort": "expiration_date", "order": "asc",
         }
         exps: set[date] = set()
         for _ in range(10):
-            payload = await self._get(url, params if url.startswith("/v3/reference") else None)
+            # El next_url del cursor NO conserva el limit y Polygon cae a 10 por pagina: medido
+            # 2026-08-02 -> pagina 1 = 1000 resultados, paginas 2..10 = 10 cada una (1090 en total),
+            # o sea 4 vencimientos de los 12 que hay en agosto. Se reinyecta el limit en cada salto.
+            payload = await self._get(url, params if "cursor" not in url else {"limit": 1000})
             for r in payload.get("results") or []:
                 e = r.get("expiration_date")
                 if e:

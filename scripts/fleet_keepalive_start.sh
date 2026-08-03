@@ -95,6 +95,9 @@ fleet_stop_all() {
 fleet_stop_bridges() {
   pkill -f 'scripts/ibkr_bar_bridge.py' 2>/dev/null
   pkill -f 'scripts/korea_bar_bridge.py' 2>/dev/null
+  pkill -f 'scripts/korea_naver_bridge.py' 2>/dev/null
+  pkill -f 'scripts/finnhub_ws_bridge.py' 2>/dev/null
+  pkill -f 'scripts/intrinio_ws_autostart.py' 2>/dev/null
   pkill -f 'scripts/chart_bridge.py' 2>/dev/null
   pkill -f 'scripts/provider_bridge.py' 2>/dev/null   # bridge de datos generico: muere fuera de ventana como los demas
 }
@@ -227,9 +230,36 @@ fi
 # bridge KRX realtime (SK Hynix + Samsung) — sub Korea waived cubre la API
 # (verificado 2026-07-12): mercado de memoria/DRAM en vivo y gratis, lider ~13h
 # antes que EE.UU. para MU/DRAM. Escribe data/bars_{skhynix,samsung}.txt.
-if ! pgrep -f "scripts/korea_bar_bridge.py" >/dev/null; then
+# Solo con IBKR de fuente: si data/market_source.txt no es ibkr no hay Gateway al que
+# conectarse y este puente se dedica a gritar DANGER cada 15 s (medido 2026-08-02: 126
+# reintentos con voz mientras KRX caia -8%). Sin fuente IBKR manda el puente Naver de abajo.
+if [[ "$(cat data/market_source.txt 2>/dev/null)" == "ibkr" ]] && ! pgrep -f "scripts/korea_bar_bridge.py" >/dev/null; then
   nohup ./venv/bin/python scripts/korea_bar_bridge.py --daemon >> logs/bridge_korea.log 2>&1 &
   echo "$(date) fleet: korea bridge lanzado (pid $!)" >> logs/fleet_autostart.log
+fi
+
+# Respaldo KRX sin Gateway (2026-08-03): el 3-ago el Gateway llevaba horas caido y el puente
+# IBKR acumulo 126 reintentos mudos mientras KRX caia -8%. Este se aparta solo si el Gateway
+# vuelve (IBKR manda: tiene libro). Fuente Naver, delay 0 medido, sin bid/ask -> no escribe nbbo.
+if ! pgrep -f "scripts/korea_naver_bridge.py" >/dev/null; then
+  nohup ./venv/bin/python scripts/korea_naver_bridge.py >> logs/bridge_korea_naver.log 2>&1 &
+  echo "$(date) fleet: korea naver bridge lanzado (pid $!)" >> logs/fleet_autostart.log
+fi
+
+# WebSocket de trades US en tiempo real (2026-08-03). Con IBKR fuera esta semana todo lo demas
+# es REST con retraso; medido el 2026-08-02, de los sockets que tenemos key SOLO Finnhub abre y
+# acepta suscripciones (Polygon: "plan doesn't include websocket access"; UW: corta al instante;
+# Intrinio: cluster apagado del lado del vendor). Escribe data/rt_last_<SYM>.txt.
+if ! pgrep -f "scripts/finnhub_ws_bridge.py" >/dev/null; then
+  nohup ./venv-mit/bin/python scripts/finnhub_ws_bridge.py >> logs/ws_finnhub.log 2>&1 &
+  echo "$(date) fleet: finnhub ws bridge lanzado (pid $!)" >> logs/fleet_autostart.log
+fi
+
+# Vigia del WebSocket de Intrinio: sondea /auth y lo enciende EN EL INSTANTE en que el vendor
+# levante su cluster (su propio SDK no se recupera solo — issue #7 abierto desde feb-2024).
+if ! pgrep -f "scripts/intrinio_ws_autostart.py" >/dev/null; then
+  nohup ./venv-mit/bin/python scripts/intrinio_ws_autostart.py --watch 20 >> logs/intrinio_ws_autostart.log 2>&1 &
+  echo "$(date) fleet: intrinio ws autostart lanzado (pid $!)" >> logs/fleet_autostart.log
 fi
 
 # TWS watchdog (2026-07-15, tras 75 min de ceguera): vigila puerto 7496 en

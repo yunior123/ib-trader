@@ -13,6 +13,7 @@ from backend.app.analytics.math_utils import black_scholes_greeks, linear_zero_c
 from backend.app.domain import DealerPositioning, MagnetLevel, OptionContract
 
 CONTRACT_MULTIPLIER = 100
+FLAT_IV_FALLBACK = 0.35  # IV plana de respaldo: se USA pero se DECLARA (ver caveats)
 MATRIX_BAND = 0.12  # heatmap: strikes dentro de +/-12% del spot (donde vive la gamma)
 TRACE_CUBE_DIR_ENV = "MIT_TRACE_CUBE_DIR"
 TRACE_CUBE_MAX_AGE_ENV = "MIT_TRACE_CUBE_MAX_AGE_MIN"  # si se define, SUSTITUYE la regla de sesion
@@ -79,7 +80,7 @@ def read_trace_cube(symbol: str, *, base_dir: str | Path | None = None) -> dict 
 def _greeks(contract: OptionContract, spot: float) -> tuple[float, float]:
     if contract.delta is not None and contract.gamma is not None:
         return contract.delta, contract.gamma
-    mid_iv = contract.implied_volatility or 0.35
+    mid_iv = contract.implied_volatility or FLAT_IV_FALLBACK
     days = max((contract.expiration - date.today()).days, 1)
     delta, gamma, _, _ = black_scholes_greeks(
         spot,
@@ -139,6 +140,7 @@ def analyze_dealer_positioning(
             caveats=["No option chain returned by selected provider."],
         )
 
+    reconstruidos = 0   # contratos cuya gamma sale de una IV INVENTADA (0.35), no medida
     gex_by_strike: dict[float, float] = defaultdict(float)
     call_oi: dict[float, float] = defaultdict(float)
     put_oi: dict[float, float] = defaultdict(float)
@@ -148,6 +150,8 @@ def analyze_dealer_positioning(
     net_dex = 0.0
 
     for contract in chain:
+        if contract.delta is None or contract.gamma is None:
+            reconstruidos += 1
         delta, gamma = _greeks(contract, spot)
         # Scenario proxy: calls positive, puts negative. Actual dealer inventory direction is
         # not observable from open interest alone; vendor dealer-positioning fields are better.
@@ -207,6 +211,11 @@ def analyze_dealer_positioning(
             "Gamma flip is repriced with a flat-IV Black-Scholes approximation when vendor scenario data is unavailable.",
             f"Walls: source={wall_src}, call above spot / put below, both within ±{WALL_BAND:.0%} "
             "of spot — a strike outside that window is not a tradable wall.",
+            # net_gex, el titular POSITIVE/NEGATIVE y el flip se calculan con estas griegas: si una
+            # parte viene de una IV inventada (0.35 plano), hay que decir CUANTA.
+            f"Greeks: {len(chain) - reconstruidos}/{len(chain)} measured; "
+            f"{reconstruidos} reconstructed with a flat {FLAT_IV_FALLBACK:g} IV "
+            f"({reconstruidos / len(chain):.0%} of the chain) — regime and flip inherit that.",
         ],
     )
 
@@ -217,7 +226,7 @@ def _cell_greeks(contract: OptionContract, spot: float) -> tuple[float, float]:
     vega = contract.vega
     if gamma is not None and vega is not None:
         return gamma, vega
-    mid_iv = contract.implied_volatility or 0.35
+    mid_iv = contract.implied_volatility or FLAT_IV_FALLBACK
     days = max((contract.expiration - date.today()).days, 1)
     _, bs_gamma, bs_vega, _ = black_scholes_greeks(
         spot, contract.strike, days / 365, mid_iv, is_call=contract.option_type == "call"

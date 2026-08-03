@@ -1,72 +1,72 @@
 {
  "$250-$258": {
-  "calls_vol": 14,
-  "puts_vol": 2140,
-  "total": 2154,
+  "calls_vol": 26,
+  "puts_vol": 496,
+  "total": 522,
   "dominance": "PUTS",
-  "ratio": 0.01
+  "ratio": 0.05
  },
  "$258-$267": {
-  "calls_vol": 1888,
-  "puts_vol": 1414,
-  "total": 3302,
-  "dominance": "MIXED",
-  "ratio": 1.34
+  "calls_vol": 20,
+  "puts_vol": 244,
+  "total": 264,
+  "dominance": "PUTS",
+  "ratio": 0.08
  },
  "$267-$276": {
-  "calls_vol": 2058,
-  "puts_vol": 9153,
-  "total": 11211,
+  "calls_vol": 12,
+  "puts_vol": 8381,
+  "total": 8393,
   "dominance": "PUTS",
-  "ratio": 0.22
+  "ratio": 0.0
  },
  "$276-$284": {
-  "calls_vol": 180,
-  "puts_vol": 478,
-  "total": 658,
+  "calls_vol": 36,
+  "puts_vol": 174,
+  "total": 210,
   "dominance": "PUTS",
-  "ratio": 0.38
+  "ratio": 0.21
  },
  "$284-$292": {
-  "calls_vol": 421,
-  "puts_vol": 2580,
-  "total": 3001,
+  "calls_vol": 22,
+  "puts_vol": 196,
+  "total": 218,
   "dominance": "PUTS",
-  "ratio": 0.16
+  "ratio": 0.11
  },
  "$292-$301": {
-  "calls_vol": 3218,
-  "puts_vol": 1692,
-  "total": 4910,
-  "dominance": "CALLS",
-  "ratio": 1.9
+  "calls_vol": 208,
+  "puts_vol": 416,
+  "total": 624,
+  "dominance": "PUTS",
+  "ratio": 0.5
  },
  "$301-$310": {
-  "calls_vol": 829,
-  "puts_vol": 277,
-  "total": 1106,
+  "calls_vol": 305,
+  "puts_vol": 131,
+  "total": 436,
   "dominance": "CALLS",
-  "ratio": 2.99
+  "ratio": 2.33
  },
  "$310-$318": {
-  "calls_vol": 4579,
-  "puts_vol": 952,
-  "total": 5531,
+  "calls_vol": 3192,
+  "puts_vol": 172,
+  "total": 3364,
   "dominance": "CALLS",
-  "ratio": 4.81
+  "ratio": 18.56
  },
  "$318-$326": {
-  "calls_vol": 1188,
-  "puts_vol": 317,
-  "total": 1505,
+  "calls_vol": 543,
+  "puts_vol": 233,
+  "total": 776,
   "dominance": "CALLS",
-  "ratio": 3.75
+  "ratio": 2.33
  },
  "$326-$335": {
-  "calls_vol": 1531,
-  "puts_vol": 147,
-  "total": 1678,
+  "calls_vol": 1026,
+  "puts_vol": 34,
+  "total": 1060,
   "dominance": "CALLS",
-  "ratio": 10.41
+  "ratio": 30.18
  }
 }

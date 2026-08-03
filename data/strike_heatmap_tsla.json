@@ -1,72 +1,72 @@
 {
  "$265-$274": {
-  "calls_vol": 64,
-  "puts_vol": 2338,
-  "total": 2402,
+  "calls_vol": 48,
+  "puts_vol": 451,
+  "total": 499,
   "dominance": "PUTS",
-  "ratio": 0.03
+  "ratio": 0.11
  },
  "$274-$283": {
-  "calls_vol": 400,
-  "puts_vol": 6662,
-  "total": 7062,
+  "calls_vol": 293,
+  "puts_vol": 3241,
+  "total": 3534,
   "dominance": "PUTS",
-  "ratio": 0.06
+  "ratio": 0.09
  },
  "$283-$292": {
-  "calls_vol": 2053,
-  "puts_vol": 15159,
-  "total": 17212,
+  "calls_vol": 901,
+  "puts_vol": 4900,
+  "total": 5801,
   "dominance": "PUTS",
-  "ratio": 0.14
+  "ratio": 0.18
  },
  "$292-$301": {
-  "calls_vol": 27598,
-  "puts_vol": 217978,
-  "total": 245576,
+  "calls_vol": 13233,
+  "puts_vol": 28340,
+  "total": 41573,
   "dominance": "PUTS",
-  "ratio": 0.13
+  "ratio": 0.47
  },
  "$301-$310": {
-  "calls_vol": 498084,
-  "puts_vol": 669982,
-  "total": 1168066,
+  "calls_vol": 75400,
+  "puts_vol": 71313,
+  "total": 146713,
   "dominance": "MIXED",
-  "ratio": 0.74
+  "ratio": 1.06
  },
  "$310-$319": {
-  "calls_vol": 779742,
-  "puts_vol": 248499,
-  "total": 1028241,
+  "calls_vol": 95710,
+  "puts_vol": 45340,
+  "total": 141050,
   "dominance": "CALLS",
-  "ratio": 3.14
+  "ratio": 2.11
  },
  "$319-$328": {
-  "calls_vol": 159883,
-  "puts_vol": 22591,
-  "total": 182474,
+  "calls_vol": 44287,
+  "puts_vol": 7410,
+  "total": 51697,
   "dominance": "CALLS",
-  "ratio": 7.08
+  "ratio": 5.98
  },
  "$328-$337": {
-  "calls_vol": 28852,
-  "puts_vol": 1373,
-  "total": 30225,
+  "calls_vol": 8739,
+  "puts_vol": 422,
+  "total": 9161,
   "dominance": "CALLS",
-  "ratio": 21.01
+  "ratio": 20.71
  },
  "$337-$346": {
-  "calls_vol": 8434,
-  "puts_vol": 172,
-  "total": 8606,
+  "calls_vol": 5097,
+  "puts_vol": 53,
+  "total": 5150,
   "dominance": "CALLS",
-  "ratio": 49.03
+  "ratio": 96.17
  },
  "$346-$355": {
-  "calls_vol": 5642,
-  "puts_vol": 380,
-  "total": 6022,
+  "calls_vol": 1742,
+  "puts_vol": 405,
+  "total": 2147,
   "dominance": "CALLS",
-  "ratio": 14.85
+  "ratio": 4.3
  }
 }

@@ -1842,7 +1842,7 @@ function posKey(p) {
 function acctMsg(text, kind) {
   const el = document.getElementById("acctmsg");
   el.classList.remove("hidden", "wait", "bad", "good");
-  el.classList.add(kind);
+  if (kind) el.classList.add(kind);   // "" LANZA y undefined añadiria la clase literal "undefined"
   el.innerHTML = `<span class="amx" title="Ocultar">✕</span>${esc(text)}`;
   el.querySelector(".amx").onclick = () => el.classList.add("hidden");
 }
@@ -2034,7 +2034,11 @@ function onStructural(msg) {
   const s = msg.sig;
   if (!s) { structpill.classList.add("hidden"); return; }
   structpill.className = "";
-  structpill.classList.add(s.dir === "down" ? "dn" : (s.dir === "flat" ? "flat" : ""));
+  // classList.add("") LANZA SyntaxError: con dir="up" el ternario daba "" y reventaba el handler
+  // entero -> la senal estructural ALCISTA no se pintaba nunca (cazado en QA 2026-08-02, 3
+  // excepciones seguidas en consola). La clase vacia es el caso normal (alcista), no un error.
+  const cls = s.dir === "down" ? "dn" : (s.dir === "flat" ? "flat" : "");
+  if (cls) structpill.classList.add(cls);
   structpill.textContent = "🧲 " + s.text + (s.prob ? ` · ${s.prob}%` : "");
   if (s.note) {   // p.ej. "flota en contra — rebajada" (más pequeño/tenue)
     const n = document.createElement("span");
