@@ -12,6 +12,7 @@ import importlib.util
 import json
 import os
 import sys
+import time
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "scripts"))
@@ -32,15 +33,17 @@ def _cd(tmp_path, monkeypatch):
 
 def test_escribe_y_relee(tmp_path, monkeypatch):
     _cd(tmp_path, monkeypatch)
-    assert rt_last.write_if_newer("SPY", 1785716902.5, 744.27, 100, "finnhub") is True
+    ahora = time.time()
+    assert rt_last.write_if_newer("SPY", ahora, 744.27, 100, "finnhub") is True
     ep, px, sz, src = rt_last.read("SPY")
-    assert (round(ep, 1), px, sz, src) == (1785716902.5, 744.27, 100.0, "finnhub")
+    assert (round(ep, 1), px, sz, src) == (round(ahora, 1), 744.27, 100.0, "finnhub")
 
 
 def test_un_tick_mas_viejo_NO_pisa(tmp_path, monkeypatch):
     _cd(tmp_path, monkeypatch)
-    rt_last.write_if_newer("SPY", 2000.0, 744.27, 1, "finnhub")
-    assert rt_last.write_if_newer("SPY", 1999.0, 700.00, 1, "intrinio") is False
+    a = time.time()
+    rt_last.write_if_newer("SPY", a, 744.27, 1, "finnhub")
+    assert rt_last.write_if_newer("SPY", a - 1, 700.00, 1, "intrinio") is False
     assert rt_last.read("SPY")[1] == 744.27
 
 
@@ -52,9 +55,31 @@ def test_mismo_epoch_NO_pisa(tmp_path, monkeypatch):
 
 def test_tick_mas_nuevo_SI_pisa(tmp_path, monkeypatch):
     _cd(tmp_path, monkeypatch)
-    rt_last.write_if_newer("SPY", 2000.0, 744.27, 1, "finnhub")
-    assert rt_last.write_if_newer("SPY", 2001.0, 745.10, 2, "intrinio") is True
+    a = time.time()
+    rt_last.write_if_newer("SPY", a - 5, 744.27, 1, "finnhub")
+    assert rt_last.write_if_newer("SPY", a, 745.10, 2, "intrinio") is True
     assert rt_last.read("SPY")[3] == "intrinio"
+
+
+def test_un_tick_que_NACE_VIEJO_no_entra(tmp_path, monkeypatch):
+    """Intrinio entrega con 900 s impuestos (medido 2026-08-03: mediana 900,0 s, minimo 900,0).
+    Cuando Finnhub callaba un rato, ese tick ganaba el fichero canonico y rt_last_SPY se quedaba
+    con 904 s de antiguedad y pinta de vivo. Un dato que nace con 15 min no es un PRINT."""
+    _cd(tmp_path, monkeypatch)
+    assert rt_last.write_if_newer("SPY", time.time() - 900, 744.27, 1, "intrinio") is False
+    assert rt_last.read("SPY") is None
+
+
+def test_la_guarda_de_frescura_se_puede_desactivar(tmp_path, monkeypatch):
+    """Para backfills y tests: max_age_s=0 apaga la guarda."""
+    _cd(tmp_path, monkeypatch)
+    assert rt_last.write_if_newer("SPY", 2000.0, 744.27, 1, "x", max_age_s=0) is True
+
+
+def test_tick_fresco_de_fuente_lenta_SI_entra(tmp_path, monkeypatch):
+    """La guarda mira la EDAD del tick, no quien lo manda: si Intrinio mandara uno fresco, entra."""
+    _cd(tmp_path, monkeypatch)
+    assert rt_last.write_if_newer("SPY", time.time() - 2, 744.27, 1, "intrinio") is True
 
 
 def test_precio_cero_o_negativo_se_rechaza(tmp_path, monkeypatch):

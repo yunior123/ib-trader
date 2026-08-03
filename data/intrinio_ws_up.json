@@ -5,9 +5,9 @@
  "motivo": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
  "intentos": 1,
  "provider": "EQUITIES_EDGE",
- "auth_ok": 1785746145,
- "desde": 1785746150,
- "desde_et": "2026-08-03 04:35:50",
+ "auth_ok": 1785752169,
+ "desde": 1785752174,
+ "desde_et": "2026-08-03 06:16:14",
  "simbolos": [
   "QQQ",
   "SPY",
@@ -37,8 +37,8 @@
   "STX"
  ],
  "primera_subida": "2026-08-03 03:47:31 EDT",
- "mensajes": 1537,
- "ultimo_mensaje": 1785746500,
- "ts": 1785746500,
+ "mensajes": 186,
+ "ultimo_mensaje": 1785752282,
+ "ts": 1785752284,
  "caida": 1785746005
 }

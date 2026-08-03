@@ -1,6 +1,6 @@
 {
  "conectado": true,
- "desde": 1785746337,
+ "desde": 1785752169,
  "simbolos": [
   "QQQ",
   "SPY",
@@ -32,9 +32,9 @@
  "fuente": "finnhub",
  "nbbo": null,
  "nbbo_motivo": "Finnhub gratis no trae libro: no se escribe nbbo_*",
- "ts": 1785746488,
- "trades": 16,
- "ultimo_trade": 1785746488,
+ "ts": 1785752259,
+ "trades": 5,
+ "ultimo_trade": 1785752259,
  "error": "ConnectionClosedError: no close frame received or sent",
  "caidas": 1
 }

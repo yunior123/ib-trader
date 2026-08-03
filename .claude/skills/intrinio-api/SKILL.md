@@ -289,3 +289,45 @@ un nivel tiene que salir de ahi, no del REST de Intrinio.
    La firma es `join(channels)`, un solo argumento. El socket quedaba ABIERTO y suscrito a NADA.
 2. Los callbacks reciben **(registro, backlog)**: con `def on_trade(t)` lanza TypeError por CADA
    tick. Firma correcta: `def on_trade(t, backlog=0)`.
+
+## 💰 EL PLAN ES STARTUP ($333/mo) Y SIRVE 15 MIN — evidencia completa 2026-08-03
+
+La pagina de precios de Intrinio dice que el plan **Startup ($333/mo)** incluye
+**"EquitiesEdge (FMV Real-Time)" via API y WebSocket**. Lo que llega NO es realtime.
+
+**WebSocket, por proveedor** (SDK oficial 6.3.0 sin tocar, 8-10 simbolos, 60-90 s cada uno,
+espaciados 75 s porque encadenarlos da `429 Too Many Requests, retry-after: 60`):
+
+| provider | trades | quotes | mediana | **min** |
+|---|---|---|---|---|
+| `EQUITIES_EDGE` | 218 | **0** | 900,0 s | **900,0 s** |
+| `CBOE_ONE` | 494 | **3674** | 900,0 s | **900,0 s** |
+| `NASDAQ_BASIC` | 0 | 0 | — | `Auth failed` (es de Enterprise) |
+| `IEX` | 0 | 0 | — | `Auth failed` (es de Enterprise) |
+| `REALTIME` | 0 | 0 | — | `Auth failed` |
+
+El **minimo** de 900,0 s es lo que zanja el asunto: no es jitter de red, es un desfase fijo.
+Dato util aparte: **`CBOE_ONE` SI manda quotes (bid/ask) y `EQUITIES_EDGE` no manda ninguno.**
+
+**REST** — la respuesta trae el campo `source` con el feed REALMENTE servido:
+
+| pedido | servido | edad de `last_time` |
+|---|---|---|
+| `equities_edge` | `equities_edge` (sin degradar) | 900,9 / 902,2 / 904,1 s (3 muestras a 12 s) |
+| `cboe_one`, `nasdaq_basic`, `iex`, `fmv`, `bats`… | `cboe_one_delayed` | 901-946 s |
+| `iex` | + `"Realtime sources have been adjusted to cboe_one_delayed based on your access."` | |
+
+**BUG DE LA CASA QUE ESTO DESTAPO** (arreglado 2026-08-03): `MIT_INTRINIO_STOCK_SOURCE=equities_edge`
+se usaba tambien para el LIBRO. Medido sobre SPY QQQ NVDA MU GLD NOK, `equities_edge` devuelve
+`bid_price: null, ask_price: null` en los 6 (y en AAPL un absurdo `bid 232.84 / ask 1.00`), asi que
+`provider_bridge` rechazaba el NBBO fail-loud y `data/nbbo_*.txt` llevaba **56,7 h congelado**.
+Ahora hay `MIT_INTRINIO_QUOTE_SOURCE` (por defecto `cboe_one`), que si da libro (spreads
+0,007%-0,111% en esos mismos 6). Sigue siendo delayed y el epoch escrito es el de BOLSA, asi que
+el gate de frescura de los bots lo rechaza igual para disparar: sirve de mapa, no de gatillo.
+
+**Y una guarda nueva en `rt_last`**: un tick que NACE con 900 s no entra en el print canonico
+(`RT_LAST_MAX_AGE_S`, 120 s). Sin ella, cuando Finnhub callaba un rato el tick de Intrinio ganaba
+el fichero y `rt_last_SPY` se quedaba en 904 s con pinta de vivo.
+
+**Correo a soporte listo en `docs/INTRINIO-SOPORTE-2026-08-03.md`** con las tablas y el modo de
+reproducirlo. Es la unica via que queda: el fallo no esta en nuestro codigo.

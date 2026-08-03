@@ -10,6 +10,13 @@ de vivo, que es justo lo que la casa prohibe.
 EPOCH es siempre el reloj de BOLSA del tick, jamas la hora de llegada.
 """
 import os
+import time
+
+# Un tick que LLEGA con 900 s ya no es un PRINT, es historia. Sin esta guarda, el tick de
+# Intrinio (15 min impuestos, medido 2026-08-03) ganaba el fichero canonico en cuanto Finnhub
+# callaba un rato, y `rt_last_SPY` pasaba a 904 s de antiguedad con pinta de vivo.
+MAX_AGE_S = float(os.environ.get("RT_LAST_MAX_AGE_S", "120"))
+
 
 def path(sym: str) -> str:
     return os.path.join("data", f"rt_last_{sym.upper()}.txt")
@@ -25,10 +32,14 @@ def read(sym: str):
         return None
 
 
-def write_if_newer(sym: str, epoch: float, price: float, size: float, fuente: str) -> bool:
-    """Escribe solo si este tick es mas nuevo que el que ya hay. True si escribio."""
+def write_if_newer(sym, epoch, price, size, fuente, max_age_s=None):
+    # sin anotaciones `float | None`: el venv de la flota es 3.9 y ahi es TypeError al importar
+    """Escribe solo si el tick es (a) fresco de verdad y (b) mas nuevo que el que ya hay."""
     if price is None or price <= 0 or not epoch:
         return False
+    tope = MAX_AGE_S if max_age_s is None else max_age_s
+    if tope > 0 and (time.time() - epoch) > tope:
+        return False        # nace viejo: no entra en el print canonico
     prev = read(sym)
     if prev is not None and epoch <= prev[0]:
         return False

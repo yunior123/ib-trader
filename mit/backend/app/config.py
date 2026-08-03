@@ -76,6 +76,13 @@ class Settings(BaseSettings):
     # /prices/intervals accepts iex|cboe_one_delayed|<none> (NOT intrinio_mx, which is /realtime only).
     intrinio_interval_source: str = Field("iex", alias="MIT_INTRINIO_INTERVAL_SOURCE")
     intrinio_options_source: str = Field("delayed", alias="MIT_INTRINIO_OPTIONS_SOURCE")
+    # El LIBRO (bid/ask) NO sale de equities_edge: medido 2026-08-03 10:15 UTC sobre SPY QQQ NVDA
+    # MU GLD NOK, `source=equities_edge` devuelve bid=None ask=None en los 6 (y en AAPL un
+    # bid=232.84/ask=1.0 sin sentido) -> el puente rechazaba el NBBO y data/nbbo_*.txt llevaba
+    # 56 h congelado. `cboe_one` si da libro utilizable (spreads 0,007%-0,111% en esos mismos 6).
+    # Sigue siendo delayed: el epoch que se escribe es el de BOLSA, asi que el gate de frescura
+    # de los bots (now-ep<=10s) lo rechaza igual para disparar. Sirve para mapa y contexto.
+    intrinio_quote_source: str = Field("cboe_one", alias="MIT_INTRINIO_QUOTE_SOURCE")
 
     # Polygon: options chain (measured greeks/IV/OI via /v3/snapshot/options) + daily aggs.
     polygon_api_key: str | None = Field(None, alias="POLYGON_KEY")

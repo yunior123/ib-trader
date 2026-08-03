@@ -1,72 +1,72 @@
 {
- "$725-$750": {
-  "calls_vol": 74,
+ "$720-$745": {
+  "calls_vol": 78,
   "puts_vol": 0,
-  "total": 74,
+  "total": 78,
   "dominance": "CALLS",
-  "ratio": 74.0
+  "ratio": 78.0
  },
- "$750-$776": {
-  "calls_vol": 20,
+ "$745-$770": {
+  "calls_vol": 64,
   "puts_vol": 0,
-  "total": 20,
+  "total": 64,
   "dominance": "CALLS",
-  "ratio": 20.0
+  "ratio": 64.0
  },
- "$776-$802": {
-  "calls_vol": 31,
+ "$770-$795": {
+  "calls_vol": 25,
   "puts_vol": 0,
-  "total": 31,
+  "total": 25,
   "dominance": "CALLS",
-  "ratio": 31.0
+  "ratio": 25.0
  },
- "$802-$827": {
-  "calls_vol": 41,
+ "$795-$820": {
+  "calls_vol": 48,
   "puts_vol": 0,
-  "total": 41,
+  "total": 48,
   "dominance": "CALLS",
-  "ratio": 41.0
+  "ratio": 48.0
  },
- "$827-$852": {
-  "calls_vol": 92,
+ "$820-$845": {
+  "calls_vol": 87,
   "puts_vol": 0,
-  "total": 92,
+  "total": 87,
   "dominance": "CALLS",
-  "ratio": 92.0
+  "ratio": 87.0
  },
- "$852-$878": {
-  "calls_vol": 720,
+ "$845-$870": {
+  "calls_vol": 751,
   "puts_vol": 0,
-  "total": 720,
+  "total": 751,
   "dominance": "CALLS",
-  "ratio": 720.0
+  "ratio": 751.0
  },
- "$878-$904": {
-  "calls_vol": 358,
+ "$870-$895": {
+  "calls_vol": 759,
   "puts_vol": 0,
-  "total": 358,
+  "total": 759,
   "dominance": "CALLS",
-  "ratio": 358.0
+  "ratio": 759.0
  },
- "$904-$929": {
-  "calls_vol": 254,
+ "$895-$920": {
+  "calls_vol": 450,
   "puts_vol": 0,
-  "total": 254,
+  "total": 450,
   "dominance": "CALLS",
-  "ratio": 254.0
+  "ratio": 450.0
  },
- "$929-$954": {
-  "calls_vol": 500,
+ "$920-$945": {
+  "calls_vol": 444,
   "puts_vol": 0,
-  "total": 500,
+  "total": 444,
   "dominance": "CALLS",
-  "ratio": 500.0
+  "ratio": 444.0
  },
- "$954-$980": {
-  "calls_vol": 828,
+ "$945-$970": {
+  "calls_vol": 941,
   "puts_vol": 0,
-  "total": 828,
+  "total": 941,
   "dominance": "CALLS",
-  "ratio": 828.0
+  "ratio": 941.0
  }
 }

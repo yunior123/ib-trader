@@ -31,7 +31,7 @@ class IntrinioProvider(MarketDataProvider, OptionsDataProvider):
     async def get_quote(self, symbol: str) -> Quote:
         payload = await self._get(
             f"/securities/{symbol.upper()}/prices/realtime",
-            {"source": self.settings.intrinio_stock_source},
+            {"source": self.settings.intrinio_quote_source},
         )
         bid = float(payload.get("bid_price") or payload.get("bid") or 0)
         ask = float(payload.get("ask_price") or payload.get("ask") or 0)
