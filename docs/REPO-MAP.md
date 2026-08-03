@@ -75,6 +75,10 @@ Finviz Elite en tiempo real, notifica solo cambios de estado).
 ### C++ (scripts/*.cpp)
 - **scripts/compass.cpp** — la BRÚJULA: máquina de estados que fija la flecha de próximo movimiento; reemplaza la media ponderada de direction_view.py. Structs: Bar, Level, Ev, Amp, Drv, Drivers, Met, Out, DecayCell, Hist. Funcs: `metrics_of()`, `strong_enough()`, `etf_weights()`, `drivers_for()`, `nearest_level()`, `rebound_dir()`, `families()`, `vetoes_of()`, `decay_cell()`, `amplitude()`, `prob_of()`.
 - **scripts/finviz_scout.cpp** — bot Finviz Elite en tiempo real, escribe `finviz_<sym>.txt`, notifica solo cambios de estado. Structs: HttpResp, SymState. Funcs: `get_token()`, `build_tickers()`, `http_get()`, `parse_earnings()`, `market_phase()`, `main()`.
+- **scripts/finviz_screener_watch.cpp** — motor C++ de los tres screeners Elite (Buffett,
+  short squeeze, momentum breakout); weather BUY/SELL/WATCH, estado diario anti-spam y snapshots
+  `data/finviz_<screen>_signals.csv`. Build: `scripts/build_finviz_screeners.sh`; supervisor:
+  `scripts/finviz_screener_keepalive.sh`.
 - **scripts/fleet_consensus.cpp** — alarma de MANADA (port C++ del daemon Python), % siempre sobre flota completa (30) nunca sobre los que parsearon. Structs: Cfg, SymSnap, Vote, Agg, Hyst. Funcs: `load_fleet()`, `evaluate()`, `aggregate()`, `consensus_dir()`, `hyst_step()`, `fire()`, `gather()`, `ev_snaps()`.
 - **scripts/flow_pulse.cpp** — detector v4 de spikes/giros de flujo con jerarquía de capitanes (SPY/QQQ mercado, SMH memoria) y "capitán revierte". Structs: Rec, Hist, Bands, ChainInfo. Funcs: `is_captain()`, `in_memory_troop()`, `captains_of()`, `prob_of()`, `bands_of()`, `chain_info()`, `sing()`, `rth_open()`, `qqq_spot()`.
 - **scripts/korea_tape.cpp** — veredicto instantáneo KOSPI/Corea leyendo `nbbo_{kodex200,skhynix,samsung,koru}.txt`. Struct: Q. Funcs: `read_nbbo()`, `main()`.

@@ -3,6 +3,16 @@
 > Vivo. Apuntar cada petición AL MOMENTO con las palabras de Yunior. Lo cerrado → Done.md.
 
 ## 🔴 SESIÓN 2026-08-03 (lunes 06:40 ET — ráfaga de apertura)
+- [x] 12. "save finviz new token" + "create bot ... breakouts" + "add 3 bots for new finviz
+      popular screeners: warren buffet, short squeeze, momentum breakout; add signal weather to
+      buy or sell; fix annoying notifications, solve todos/issues/pending, build latest, commit,
+      push" (2026-08-03 07:4x) — HECHO. Token nuevo en `config/feeds.env` (600, gitignored).
+      Motor C++ compartido `finviz_screener_watch` con 3 instancias/estados/keepalives, filtros
+      Elite validados HTTP 200 y weather BUY/SELL/WATCH por score explícito. Snapshot inicial
+      silencioso, una alerta agrupada, membresía persistente y fallo de API agrupado entre los 3.
+      Ruido adicional cerrado: `notify_short` append-only (se acabó releer 500 líneas), dedup real
+      por payload en el relay e Intrinio sólo notifica transición REAL del socket (auth OK ya no
+      crea UP ni push). Build/selftest + live smoke de los tres verdes; commit/push al cierre.
 - [x] 1. "run the fleet with the 6 windows in ib trader" (2026-08-03 06:38) — HECHO 06:49.
       Flota: 21 bots de señal, provider_bridge (intrinio), vigía de ballenas, relé, cola de voz,
       alarma de precio, uw_flow_tape, fleet_consensus, compass, korea_naver_bridge, finnhub_ws_bridge.
@@ -77,17 +87,18 @@
       08-24…08-31 no existía en ninguna parte. `uw_gex_expiry.py` trae los 13 vencimientos de
       agosto (08-28 y 08-31 incluidos) en 1 request/símbolo. **Queda pendiente** el arreglo en los
       ficheros que no me tocaba tocar: `NEAR_EXPS = 2 → 8` y `--dte 32` en los 3 invocadores.
-- [ ] 6. "make sure walls, magnets, gamma flip, gex, vix, get updated constantly, preferably
-      realtime" (2026-08-03 07:00) — pendiente. **Cadencia MEDIDA 2026-08-03 07:40** (edad real de
+- [x] 6. "make sure walls, magnets, gamma flip, gex, vix, get updated constantly, preferably
+      realtime" (2026-08-03 07:00) — HECHO. **Cadencia MEDIDA 2026-08-03 07:40** (edad real de
       cada fichero, no lo que dice el plist): `charts/data/levels_qqq.json` **1,5 min** ·
       `data/gex_snapshot.json` **1,3 min** · `data/vix.json` **0,3 min** ·
       `data/futures_overnight.json` **0,3 min** · `data/provider_status.json` 4,8 min. Los muros/flip
       además se **recomputan al SPOT VIVO cada 15 s** dentro del cockpit
       (`chart_bridge.py:3516 LEVELS_REFRESH_S`), sobre el libro que refresca
       `com.ibtrader.polychains.intraday` (StartInterval 1800 s en RTH). O sea: la parte de
-      "constantly" del pedido YA está; lo que queda es (a) `data/vix_term.json` **NO EXISTE**
-      (estructura VX, la banda de fragilidad) y (b) el techo real de frescura lo pone la fuente,
-      no el bucle: el spot de Intrinio va **15,4 min por detrás** (medido, ver PENDIENTE LUNES).
+      "constantly" del pedido está. La estructura VX **sí existe dentro del contrato canónico
+      `data/vix.json`** (`vx1/vx2/vx_b1/vx_b2/vx_regime`; `vix_feed.py`), no necesita un segundo
+      `vix_term.json` divergente. El techo real de frescura lo pone la fuente, no el bucle: el spot
+      de Intrinio iba **15,4 min por detrás**, por eso el print en vivo se enruta por Finnhub WS.
       ⚠️ De nada sirve refrescar rápido un muro FALSO: ver el bug del put wall de cadena truncada
       (7 de 29 símbolos) en el bloque de "solve and investigate all not solved bugs".
 - [x] 7. "review zsh procesess in mac, some are expired or not updated" (2026-08-03 07:00) — HECHO 07:20.
@@ -143,14 +154,14 @@
       2 mensajes cada ~2 min ("socket NO en weekend" **un lunes** + "socket NO en rth"), 75 de las
       últimas 100 líneas de `notify_push.txt`, por una condición que la casa YA sabe normal
       (el vendor apaga el cluster de noche) — texto obsoleto + falta histéresis.
-- [ ] 11. "make sure we have latest version of software when done, also: review notifciations of
+- [x] 11. "make sure we have latest version of software when done, also: review notifciations of
       failure, some are annoying, not updated. review. send agent if not already" (2026-08-03 07:28)
-      — REBUILD final de la .app + revisión de avisos de fallo obsoletos/molestos.
-- [ ] 10. "code for ibkr stays, do not delete it, we might connect back to it later on, put
+      — HECHO: relay/cola/Intrinio sin replay ni avisos auth-only; build final + appfresh al cierre.
+- [x] 10. "code for ibkr stays, do not delete it, we might connect back to it later on, put
       conditionals per data provider, remember to have all generic to avoid deleting code, and
-      modifying preferably just one one service file" (2026-08-03 07:00) — REGLA DE ARQUITECTURA,
-      vale para toda la sesión y para el futuro: el código IBKR NO SE BORRA. Selección de proveedor
-      por condicional/registro, capa genérica, y el cambio concentrado en UN fichero de servicio.
+      modifying preferably just one one service file" (2026-08-03 07:00) — CUMPLIDA y queda como
+      regla: código IBKR intacto, selección por registro en `provider_bridge`, Finnhub sólo aporta
+      el print más fresco y los screeners Finviz son consumidores independientes señal-only.
 - [x] 11. Dos bugs del puente coreano encontrados y verificados por Yunior contra Naver
       (2026-08-03 07:0x) — HECHO 07:15. (a) `kospi` era el ETF KODEX 200 y exageraba el índice
       1,8x: hoy -8,93% contra -5,12% reales del KOSPI. Ahora `kospi`/`kospi200` son los ÍNDICES
@@ -404,12 +415,13 @@ La carpeta del domingo **no se borra** (es dato, no basura): queda en cuarentena
 fecha — ningún consumidor la elige ya. Verificado: `session_dirs('data/history')` devuelve
 `2026-07-21..24, 27..31` y **excluye 07-25, 07-26 y 08-02**. 7 tests (`tests/test_session_dirs.py`).
 
-### 🔴 ACCIÓN DE YUNIOR — token de Finviz CADUCADO (2026-08-02 19:08)
-`FINVIZ_AUTH3` (…8625) devuelve **HTTP 401** en el export API. Caducó según lo previsto
+### ✅ RESUELTO 2026-08-03 — token de Finviz renovado
+El `FINVIZ_AUTH3` anterior devolvía **HTTP 401** en el export API. Caducó según lo previsto
 (feeds.env: "new finviz api till next saturday" → ~2026-08-01). Con él muerto quedan CIEGOS
 `finviz_scout`, `finviz_valuation` y `x_whale_bot`. Yo no puedo renovarlo: hace falta el token
-nuevo de la cuenta Elite → ponerlo en `config/feeds.env` como `FINVIZ_AUTH3=` (ese es el nombre
-que TODOS los consumidores prueban primero).
+nuevo de la cuenta Elite. **Yunior entregó el reemplazo el 2026-08-03**: guardado en
+`config/feeds.env` como `FINVIZ_AUTH3=` (600, gitignored) y verificado HTTP 200 contra los tres
+screeners nuevos; scout/valuation/x_whale vuelven a compartir la clave efectiva.
 
 ### ✅ BUG CERRADO 2026-08-02 19:10 — el healthcheck había dejado de revivir la flota
 `scripts/fleet_window.py:32` apuntaba a `REPO/fleet_hours`, pero el portero vive en
@@ -552,7 +564,8 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
         sería un prior disfrazado de medición (skill `anti-overfit-killlist`). Ya tenemos flip,
         call/put wall y max pain, que son los niveles que sí sabemos calcular.
 
-- [ ] "urgent: solve korean fleet not working realtime via websocket. no excuses, check intrinio docs, review all in depth" (2026-08-02 20:05 ET, EN CURSO)- [x] "new unusual whales key: e43c… save it" (2026-08-02 20:03) — guardada en config/feeds.env (UW_TOKEN + UNUSUAL_WHALES_TOKEN); VERIFICADA contra la API: 200 en /api/stock/SPY/flow-alerts y /greek-exposure
+- [x] "urgent: solve korean fleet not working realtime via websocket. no excuses, check intrinio docs, review all in depth" (2026-08-02 20:05 ET) — RESUELTO por `korea_naver_bridge.py`, delayTime 0 medido; índices/ETF y subasta de cierre corregidos (ver punto 11 de esta sesión).
+- [x] "new unusual whales key: e43c… save it" (2026-08-02 20:03) — guardada en config/feeds.env (UW_TOKEN + UNUSUAL_WHALES_TOKEN); VERIFICADA contra la API: 200 en /api/stock/SPY/flow-alerts y /greek-exposure
 - [x] "remember, no ibkr this week" (2026-08-02 20:15) — Gateway NO se lanza; Corea pasa a scripts/korea_naver_bridge.py (Naver, delayTime 0 medido, 10 simbolos), keepalive cableado
 - [x] "intrinio websocket has to be on... search in depth" (2026-08-02 21:00) — agotadas TODAS las vias (tabla en .claude/skills/intrinio-api/SKILL.md): el SDK OFICIAL sin tocar falla igual, hosts identicos en los SDK de Python/Node/Java, sin mTLS, DNS identico en 3 resolvers, IP propia por host, y falla tambien desde OTRA red. La misma key da 200 en api-v2. Vigia intrinio_ws_autostart corriendo: lo enciende solo en cuanto responda.
 - [x] "probaste las dos keys de intrinio?" (2026-08-02 21:15) — NO habia dos: en este Mac hay UNA sola (config/feeds.env; el feeds.env de la raiz es symlink al mismo fichero). Corregido el skill, que afirmaba "nuestras 2 keys" sin respaldo. HALLAZGO de la busqueda: la propia API declara el entitlement — source=iex responde "Realtime sources have been adjusted to cboe_one_delayed based on your access" -> el plan es tier DELAYED.

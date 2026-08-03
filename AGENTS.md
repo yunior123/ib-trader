@@ -124,6 +124,26 @@ Toda señal direccional DEBE integrar el flujo de opciones (delta de volumen cal
 - Banners (fleet_notify.h) SOLO cambios de estado vs ciclo previo: gap>±2%, rel vol cruza 2.5x, short float ±0.5pt, earnings <48h (1/dia/ticker, `data/finviz_earn_notified.txt`), target/recom cambian; primer ciclo silencioso. Feed roto (HTTP≠200/CSV vacio/HTML/429) → "FINVIZ ROTO" banner+log en voz alta + backoff 5 min.
 - Test manual: `./finviz_scout --once [SYM extra...]`; watchdog `scripts/finviz_scout_keepalive.sh` (lo lanza fleet_keepalive_start.sh; fleet_sleep lo mata). Detalles: `.claude/skills/finviz-elite/SKILL.md`.
 
+### Tres screeners Finviz Elite — Buffett / squeeze / momentum (2026-08-03)
+- `scripts/finviz_screener_watch.cpp` → `bin/finviz_screener_watch`, motor C++ compartido con
+  **tres procesos y estados independientes**: `--screen buffett|squeeze|momentum`. Compilar y
+  probar: `zsh scripts/build_finviz_screeners.sh`; supervisor:
+  `scripts/finviz_screener_keepalive.sh <screen>`. Los tres los arranca/apaga el portero canónico
+  en `fleet_keepalive_start.sh`; son 100% señal-solamente.
+- Filtros Elite **verificados HTTP 200**: Buffett = ROE>15%, deuda/equity<0,5, EPS 5y positivo,
+  margen neto positivo, P/E<20 + liquidez; squeeze = short float>15%, float<50M, RVOL>1,5,
+  ADV>500k y precio>$5; momentum = señal oficial `ta_newhigh` + RVOL>1,5 + precio sobre
+  SMA20/50/200. El último es el bot de breakouts pedido.
+- Cada fila lleva weather `BUY|SELL|WATCH` + score técnico explícito (día, desde apertura,
+  RSI, SMA20/50/200, RVOL y regla propia del screen). **No se publica una probabilidad
+  inventada**. Short float alto solo NO cuenta como BUY: exige impulso comprador.
+- Anti-ruido: primer snapshot diario silencioso, estado atómico persistido en
+  `data/finviz_<screen>_state.txt`, una alerta agrupada por ráfaga, nuevas membresías una vez por
+  día y cambios de weather sólo cuando nace BUY/SELL. Snapshot consumible:
+  `data/finviz_<screen>_signals.csv`; auditoría: `data/finviz_screener_events.jsonl`.
+- Fallo de token/API se agrupa entre los tres en UN incidente (`data/finviz_screeners_broken`),
+  no tres banners. Mac + `notify_short`/ntfy; jamás hardcodea ni imprime el token.
+
 ### Skill fleet-ops
 `.claude/skills/fleet-ops` — operacion rapida de la flota (modo foco `data/focus_ticker`, reinicios via keepalives, sirenas/alarmas de precio, escaneo de opciones, estado). Usarla cuando Yunior pida activar/apagar bots o estado; todo señal-only (ley #0).
 

@@ -186,3 +186,29 @@ def test_rth_ventana():
     assert FWB.rth(lunes.replace(hour=16).timestamp()) is False
     sabado = dt.datetime(2026, 8, 1, 10, tzinfo=et)
     assert FWB.rth(sabado.timestamp()) is False
+
+
+# ---------------- veredicto de MANADA: el feed delayed se DECLARA, no se calla ----------------
+
+@solo_mit
+def test_manada_inoperante_con_barras_delayed():
+    """fleet_consensus falla cerrado ('cobertura insuficiente') sin decir que la causa es el
+    FEED. Medido 2026-08-03: barras a ~1.000 s contra un tope de 180 s."""
+    lat = {f"S{i}": {"bar_s": 1000.0} for i in range(26)}
+    v = PB.veredicto_manada(lat)
+    assert v["operativa"] is False and v["votan"] == 0 and v["need"] == 23
+    assert "FEED" in v["motivo"] and "180" in v["motivo"]
+
+
+@solo_mit
+def test_manada_operativa_con_barras_frescas():
+    lat = {f"S{i}": {"bar_s": 30.0} for i in range(26)}
+    v = PB.veredicto_manada(lat)
+    assert v["operativa"] is True and v["motivo"] is None
+
+
+@solo_mit
+def test_manada_ignora_simbolos_sin_barra_en_vez_de_contarlos_como_frescos():
+    lat = {f"S{i}": {"bar_s": None} for i in range(26)}
+    v = PB.veredicto_manada(lat)
+    assert v["operativa"] is False and v["bar_age_mediana_s"] is None

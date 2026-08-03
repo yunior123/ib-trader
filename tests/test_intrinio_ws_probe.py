@@ -105,13 +105,24 @@ def test_record_escribe_jsonl_y_status_atomico(tmp_path, monkeypatch):
     assert json.loads((tmp_path / "s.json").read_text())["epoch"] == 1
     assert not (tmp_path / "UP").exists()
 
-    row2 = dict(row, epoch=2, any_up=["equities-edge"])
+    row2 = dict(row, epoch=2, any_up=["equities-edge"], socket_ok=["equities-edge"])
     probe.record(row2)
     assert (tmp_path / "UP").exists()          # levanta la bandera cuando revive
     assert len((tmp_path / "p.jsonl").read_text().strip().splitlines()) == 2
 
     probe.record(dict(row, epoch=3))
     assert not (tmp_path / "UP").exists()      # y la retira si vuelve a caer
+
+
+def test_record_auth_ok_sin_socket_no_levanta_up_ni_notifica(tmp_path, monkeypatch):
+    monkeypatch.setattr(probe, "JSONL", tmp_path / "p.jsonl")
+    monkeypatch.setattr(probe, "STATUS", tmp_path / "s.json")
+    monkeypatch.setattr(probe, "UP_FLAG", tmp_path / "UP")
+    row = {"epoch": 1, "et": "x", "phase": "rth", "auth": {}, "tls_idle": {},
+           "controls": {}, "any_up": ["equities-edge"], "socket_ok": []}
+    probe.record(row)
+    probe.record(dict(row, epoch=2))
+    assert not (tmp_path / "UP").exists()
 
 
 def test_el_token_nunca_llega_al_disco(tmp_path, monkeypatch):
@@ -135,7 +146,9 @@ def test_el_token_nunca_llega_al_disco(tmp_path, monkeypatch):
     assert r["body_head"] == "<token>"
     probe.record({"epoch": 1, "et": "x", "phase": "rth", "auth": {"equities-edge": r},
                   "tls_idle": {}, "controls": {}, "any_up": ["equities-edge"], "socket_ok": []})
-    escrito = (tmp_path / "p.jsonl").read_text() + (tmp_path / "s.json").read_text() + (tmp_path / "UP").read_text()
+    # auth OK sin socket ya NO crea una bandera UP (antes era una mentira operativa).
+    escrito = (tmp_path / "p.jsonl").read_text() + (tmp_path / "s.json").read_text()
+    assert not (tmp_path / "UP").exists()
     assert secreto not in escrito
 
 

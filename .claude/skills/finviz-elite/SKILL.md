@@ -55,6 +55,25 @@ La export API es read-only — las alertas se configuran en la web (una vez):
 3. Con Claude-in-Chrome se puede automatizar si Yunior tiene sesión abierta
    (pedir permiso del sitio primero). Email destino: el de la cuenta Elite.
 
+## 5. Tres bots de screeners populares (2026-08-03)
+Motor: `scripts/finviz_screener_watch.cpp`; build/selftest:
+`zsh scripts/build_finviz_screeners.sh`. Instancias vivas:
+
+```bash
+bin/finviz_screener_watch --screen buffett --once
+bin/finviz_screener_watch --screen squeeze --once
+bin/finviz_screener_watch --screen momentum --once
+```
+
+- `buffett`: calidad/valor líquida (ROE, deuda, EPS, margen, P/E).
+- `squeeze`: short float/float + RVOL y liquidez; el short alto no se trata como dirección.
+- `momentum`: señal oficial Finviz New High (`s=ta_newhigh`) confirmada por RVOL y SMA20/50/200.
+
+Los tres producen `BUY|SELL|WATCH` como **weather técnico con score**, no probabilidad ni orden.
+Primer snapshot silencioso, estado diario persistente, alerts agrupadas y un solo incidente de
+feed compartido. El portero de flota arranca tres keepalives independientes y los apaga fuera de
+ventana o con `fleet_sleep`.
+
 ## Reglas
 - Señal-solamente. Datos Finviz = confirmación/contexto; el print de precio manda.
 - Si el CSV vuelve vacío o HTML → token/URL rotos: FALLAR EN VOZ ALTA (ley #6).

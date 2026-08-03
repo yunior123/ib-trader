@@ -33,10 +33,12 @@ import asyncio
 import json
 import os
 import re
+import subprocess
 import sys
 import tempfile
 import time
 from datetime import UTC, datetime
+from zoneinfo import ZoneInfo
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
@@ -286,6 +288,59 @@ def bar_salud(sym: str):
         return (None, None, None)
 
 
+# Mismos nombres de env que lee fleet_consensus.py:41-42, para que el veredicto sea el SUYO y no
+# una copia que se desincronice. Aqui solo se MIDE y se DECLARA; el gate sigue siendo suyo.
+CONS_MAX_BAR_AGE = float(os.environ.get("FLEET_CONS_MAX_BAR_AGE", "180"))
+CONS_MIN_COVER = float(os.environ.get("FLEET_CONS_MIN_COVER", "0.90"))
+
+
+def veredicto_manada(lat: dict) -> dict:
+    """¿Puede votar la MANADA con este feed? Con barras delayed la respuesta es NO, y el
+    silencio no vale: fleet_consensus falla cerrado ('cobertura insuficiente') sin decir que
+    la causa es el FEED, no el mercado. Aqui se dice, con numeros."""
+    edades = {s: v["bar_s"] for s, v in lat.items() if v["bar_s"] is not None}
+    votan = [s for s, e in edades.items() if e <= CONS_MAX_BAR_AGE]
+    need = int(len(lat) * CONS_MIN_COVER)
+    med = sorted(edades.values())[len(edades) // 2] if edades else None
+    return {
+        "operativa": len(votan) >= need,
+        "votan": len(votan), "need": need, "universo": len(lat),
+        "max_bar_age_s": CONS_MAX_BAR_AGE, "bar_age_mediana_s": med,
+        "motivo": (None if len(votan) >= need else
+                   (f"barras a {med:.0f} s de mediana" if med is not None else "SIN barras")
+                   + f" contra un tope de {CONS_MAX_BAR_AGE:.0f} s: "
+                   f"solo {len(votan)}/{len(lat)} pueden votar (hacen falta {need}). "
+                   f"Es el FEED ({', '.join(n for n, p in PROVEEDORES.items() if 'bars' in p['caps'] and p['latencia'] != 'tiempo_real')} "
+                   f"va delayed), no el mercado."),
+    }
+
+
+def _rth(ahora=None) -> bool:
+    t = datetime.fromtimestamp(ahora or time.time(), ZoneInfo("America/New_York"))
+    return t.weekday() < 5 and 9 * 60 + 30 <= t.hour * 60 + t.minute < 16 * 60
+
+
+_grito_manada = 0.0
+
+
+def grita_si_manada_muda(v: dict) -> None:
+    """Una MANADA inoperante en RTH tiene que DOLER: es la alarma de rebaño apagada."""
+    global _grito_manada
+    if v["operativa"] or not _rth() or time.time() - _grito_manada < 1800:
+        return
+    _grito_manada = time.time()
+    med = v["bar_age_mediana_s"]
+    msg = (f"Alarma de manada inoperante: solo {v['votan']} de {v['universo']} simbolos "
+           + (f"pueden votar. Las barras llegan con {med:.0f} segundos." if med is not None
+              else "pueden votar. No hay barras."))
+    print(f"{LOG_PREFIX} MANADA MUDA — {v['motivo']}", flush=True)
+    try:
+        subprocess.Popen(["/bin/bash", str(REPO / "scripts" / "speak.sh"), "DANGER", msg],
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    except OSError:
+        pass
+
+
 def write_status(settings, exch_ts: dict[str, str], entitlement: list[str],
                  lat: dict | None = None) -> None:
     status = {
@@ -307,6 +362,8 @@ def write_status(settings, exch_ts: dict[str, str], entitlement: list[str],
         edades = [v["bar_s"] for v in lat.values() if v["bar_s"] is not None]
         status["bar_age_max_s"] = max(edades) if edades else None
         status["bar_huecos"] = sorted(s for s, v in lat.items() if v["bar_huecos"])
+        status["manada"] = veredicto_manada(lat)
+        grita_si_manada_muda(status["manada"])
     if settings.market_provider == "intrinio":  # sources solo aplican a intrinio
         status["intrinio_stock_source"] = settings.intrinio_stock_source
         status["intrinio_interval_source"] = settings.intrinio_interval_source

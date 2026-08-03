@@ -46,9 +46,44 @@
   #pulsecard.v-nd   .pverd .lab { color:#787b86; font-size:11px; font-style:italic; }
   #pulsecard .page { margin-top:3px; font-size:9px; color:#787b86; letter-spacing:.02em; }
   #pulsecard .page.old { color:#e0b13c; font-style:italic; }
-  /* los chips de alarma vivian en el mismo rincon: se corren a la derecha de la tarjeta */
-  #chipbar { left:202px; max-width:calc(52% - 194px); }
+
+  /* --- rejilla de 6 ventanas (~560px de chart): la tarjeta se COMPACTA, no desaparece --- */
+  #pulsecard.narrow { width:152px; padding:6px 6px 5px; }
+  #pulsecard.narrow .phdr { font-size:8.5px; gap:4px; }
+  #pulsecard.narrow .pgrid { grid-template-columns:26px 1fr 1fr; gap:2px 3px; margin-top:5px; }
+  #pulsecard.narrow .pgh { font-size:8px; }
+  #pulsecard.narrow .ptf { font-size:9px; }
+  #pulsecard.narrow .cell { font-size:10.5px; }
+  #pulsecard.narrow .cell.nd { font-size:8.5px; }
+  #pulsecard.narrow .pverd { margin-top:5px; padding-top:4px; gap:5px; }
+  #pulsecard.narrow .pverd .lab { font-size:11.5px; }
+  #pulsecard.narrow .pverd .kind { font-size:8px; }
+  /* la EDAD no se encoge por debajo de lo legible: un RSI de hace 19 min presentado como
+     fresco es justo la mentira que la casa prohibe — en estrecho tiene que verse igual */
+  #pulsecard.narrow .page { font-size:9px; }
+
+  /* --- REFLUJO de los vecinos: nadie comparte banda horizontal con la tarjeta ---
+     El pill del iman se centraba en el 100% del chart con z-index 20 > 19: en ventana ancha
+     no estorbaba, pero en la rejilla de 6 su texto (nowrap) cubria la esquina y GANABA el
+     apilado -> la tarjeta era invisible justo en el caso de uso real. No se sube el z-index
+     (taparia el nivel del iman, que tambien importa): se centra en la franja LIBRE que queda
+     a la derecha de la tarjeta, y los chips de alarma bajan debajo de ella.
+     --pulse-w/--pulse-h las escribe syncMetrics() desde la caja REAL; sin panel valen 0 y
+     todo vuelve exactamente al comportamiento anterior. */
+  #chart { --pulse-w:0px; --pulse-h:0px; }
+  #structpill { left:calc(var(--pulse-w) + (100% - var(--pulse-w)) / 2);
+                max-width:calc(100% - var(--pulse-w) - 16px);
+                overflow:hidden; text-overflow:ellipsis; }
+  #chipbar { top:calc(var(--pulse-h) + 10px); left:8px; max-width:52%; }
+  /* franja libre demasiado corta para el pill entero: en vez de RECORTARLE el "pin · 77%"
+     (perder el tipo de muro y su probabilidad seria cambiar un problema por otro), baja de
+     FILA y recupera el ancho completo. Lo decide syncMetrics con el scrollWidth REAL. */
+  #chart.pillbelow #structpill { left:50%; top:calc(var(--pulse-h) + 10px);
+                                 max-width:calc(100% - 16px); }
+  #chart.pillbelow #chipbar { top:calc(var(--pulse-h) + 48px); }
   `;
+
+  const NARROW_PX = 560;   // por debajo: rejilla de 6 ventanas -> tarjeta compacta
 
   const OB = 70, OS = 30;   // umbrales canonicos de Wilder para RSI(14)
 
@@ -66,7 +101,8 @@
   }
 
   const Panel = {
-    card: null, grid: null, lab: null, kind: null, ageEl: null, symEl: null,
+    card: null, host: null, grid: null, lab: null, kind: null, ageEl: null, symEl: null,
+    _ro: null, _mw: null, _mh: null,      // última caja publicada (evita reescribir la var)
     last: null,          // último pulse recibido
     lastRx: 0,           // epoch (s) de recepción — delata un puente mudo
 
@@ -89,6 +125,7 @@
         const min = c.classList.toggle("min");
         car.textContent = min ? "▸" : "▾";
         try { localStorage.setItem("pulseMin", min ? "1" : "0"); } catch (e) {}
+        this.syncMetrics();
       });
       c.appendChild(hdr);
 
@@ -107,10 +144,42 @@
 
       host.appendChild(c);
       this.card = c;
+      this.host = host;
       try {
         if (localStorage.getItem("pulseMin") === "1") { c.classList.add("min"); car.textContent = "▸"; }
       } catch (e) {}
+      this.syncMetrics();
+      if (window.ResizeObserver) {
+        this._ro = new ResizeObserver(() => this.syncMetrics());
+        this._ro.observe(host); this._ro.observe(c);
+      }
+      window.addEventListener("resize", () => this.syncMetrics());
       setInterval(() => this.tickAge(), 1000);
+    },
+
+    // Publica la caja REAL de la tarjeta como --pulse-w/--pulse-h para que el pill del imán
+    // y los chips se recoloquen a su alrededor. Se escribe solo si cambia (sin bucle de RO).
+    syncMetrics() {
+      const host = this.host, c = this.card;
+      if (!host || !c) return;
+      const narrow = host.clientWidth > 0 && host.clientWidth < NARROW_PX;
+      if (narrow !== c.classList.contains("narrow")) c.classList.toggle("narrow", narrow);
+      const hb = host.getBoundingClientRect(), cb = c.getBoundingClientRect();
+      const w = Math.round(cb.right - hb.left) + 8, h = Math.round(cb.bottom - hb.top);
+      if (this._mw !== w) { host.style.setProperty("--pulse-w", w + "px"); this._mw = w; }
+      if (this._mh !== h) { host.style.setProperty("--pulse-h", h + "px"); this._mh = h; }
+      const pill = document.getElementById("structpill");
+      const was = host.classList.contains("pillbelow");
+      let below = was;
+      if (!pill || pill.classList.contains("hidden")) {
+        below = false;
+      } else {
+        const free = host.clientWidth - w - 16;
+        // histéresis de 24px: en la frontera el pill no puede saltar arriba/abajo cada segundo
+        if (pill.scrollWidth > free) below = true;
+        else if (pill.scrollWidth < free - 24) below = false;
+      }
+      if (below !== was) host.classList.toggle("pillbelow", below);
     },
 
     // %B -> celda. Fuera de banda = estado, no adorno: >1 arriba, <0 abajo.
@@ -176,6 +245,7 @@
         : "Sin barras suficientes: el panel NO inventa un neutro.";
       this.card.title = vd.label + " — " + (vd.why || "") + "\n\n" + doctrina;
       this.tickAge();
+      this.syncMetrics();   // 2 filas vs 3 cambia la altura -> los chips bajan con ella
     },
 
     // Edad del dato, misma regla que #h-age: si está rancio se DICE, no se disfraza.
@@ -194,6 +264,7 @@
       this.ageEl.className = "page" + (aVela > 180 || aFrame > 120 ? " old" : "");
       this.ageEl.title = "Antigüedad de la última vela usada y del último frame recibido del "
         + "puente. Si crecen, lo de arriba NO es de ahora.";
+      this.syncMetrics();   // el texto del pill del imán cambia solo: se re-mide a 1 Hz
     }
   };
 

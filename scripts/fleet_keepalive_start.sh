@@ -53,7 +53,7 @@ fleet_stop_all() {
   # keepalives de infraestructura
   for p in price_alarm_keepalive.sh opt_sentinel_keepalive.sh options_enrich_keepalive.sh \
            opt_chain_keepalive.sh bargain_keepalive.sh sox_keepalive.sh \
-           finviz_scout_keepalive.sh notify_relay.sh x_signal_keepalive.sh \
+           finviz_scout_keepalive.sh finviz_screener_keepalive.sh notify_relay.sh x_signal_keepalive.sh \
            opt_whale_keepalive.sh uw_flow_tape_keepalive.sh overnight_feed_keepalive.sh voice_queue_keepalive.sh compass_keepalive.sh \
            perp_stock_keepalive.sh perp_nbbo_bridge_keepalive.sh \
            fleet_consensus_keepalive.sh levels_refresh_keepalive.sh; do
@@ -69,6 +69,7 @@ fleet_stop_all() {
   done
   # binarios de señal C++
   pkill -x finviz_scout 2>/dev/null
+  pkill -x finviz_screener_watch 2>/dev/null
   pkill -x price_alarm 2>/dev/null
   pkill -x flow_pulse 2>/dev/null
   pkill -x fleet_consensus 2>/dev/null
@@ -320,6 +321,18 @@ fi
 if { [ -x "$ROOT/bin/finviz_scout" ] || [ -x "$ROOT/finviz_scout" ]; } && ! pgrep -f "scripts/finviz_scout_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/finviz_scout_keepalive.sh" >/dev/null 2>&1 &
   echo "$(date) fleet: finviz_scout_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
+fi
+
+# Tres screeners Finviz Elite populares, señal-solamente. Un motor C++ compartido,
+# tres procesos/estados independientes: Buffett, short squeeze y momentum breakout.
+# Primer snapshot diario silencioso; después sólo entradas nuevas o weather BUY<->SELL.
+if [ -x "$ROOT/bin/finviz_screener_watch" ]; then
+  for screen in buffett squeeze momentum; do
+    if ! pgrep -f "scripts/finviz_screener_keepalive.sh $screen" >/dev/null; then
+      nohup zsh "$ROOT/scripts/finviz_screener_keepalive.sh" "$screen" >/dev/null 2>&1 &
+      echo "$(date) fleet: finviz_${screen} lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
+    fi
+  done
 fi
 
 # notify_relay (2026-07-17): espejo Desktop -> ntfy push + Resend email (solo 🚨).

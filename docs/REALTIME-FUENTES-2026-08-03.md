@@ -86,6 +86,58 @@ Estado y respaldo **declarado** (nunca silencioso):
 - Un print de más de `IBT_PRINT_MAX_AGE_S` (120 s) **deja de mandar** y el símbolo pasa a delayed
   declarado. Un precio vivo caducado no se recicla.
 
+### 5-a. SMH: RESUELTO. Finnhub sí lo sirve
+
+A las 07:32 alguien miró y no había `data/rt_last_SMH.txt` → conclusión falsa "SMH mudo". A las
+**07:34:32** el fichero existía: **`533.8900`, 40 acciones, fuente finnhub**. En la misma sesión
+de socket (25 min) SMH imprimió **5 veces, 270 acciones**. No es falta de cobertura: es cinta
+escasa. A las 07:37:47 SMH tenía print de **43,4 s**.
+
+Ese susto era un fallo del propio status: **`sin_print` se calculaba con el contador de la sesión
+del socket**, que vuelve a cero en cada reconexión, así que un símbolo que había impreso hace dos
+minutos aparecía como mudo. Arreglado: ahora `sin_print` mira el fichero canónico y se distingue
+
+| campo del status | qué significa | a las 07:37:47 |
+|---|---|---|
+| `sin_print` | **nunca** ha impreso hoy | DRAM EWY GLD LRCX **NOK** QCOM SKHY TSM TXN WDC XLK (11) |
+| `print_rancio` | imprimió, pero hace >120 s | AMD ASML AVGO GOOGL INTC META NFLX NVDA SNDK SPCX **SPY** STX (12) |
+| `print_edad_s` | edad exacta por símbolo | QQQ 0,0 · AAPL 11,9 · TSLA 18,1 · MSFT 32,7 · **SMH 43,4** · AMZN 65,9 · MU 76,5 |
+
+**NOK sigue sin un solo print** en toda la mañana. Su cobertura declarada es Intrinio quote
+(delayed), y así sale etiquetado en `spot_src`. Repetir la medida tras la apertura.
+
+### 5-b. MANADA: INOPERANTE mientras el feed sea delayed — y ahora lo grita
+
+`fleet_consensus.py:41` exige barras de **≤180 s** para que un símbolo vote; las barras de
+Intrinio llegan a **~1.000 s de mediana**. Resultado: **0 de 26 pueden votar**, hacen falta 23.
+`fleet_consensus.py:110` ya fallaba cerrado (`cobertura insuficiente`, no un DANGER falso), pero
+**en silencio y sin decir que la causa es el FEED y no el mercado**.
+
+No se arregla subiendo la frescura porque no se puede: Intrinio sirve lo que sirve, y reconstruir
+barras desde la cinta muestreada de Finnhub daría OHLC y volumen falsos (§3). Así que se
+**DECLARA**, que es la otra salida aceptable:
+
+- `provider_status.manada` = `{operativa, votan, need, universo, bar_age_mediana_s, motivo}`.
+- El motivo nombra al culpable: *"Es el FEED (intrinio va delayed), no el mercado"*.
+- Y en RTH **grita por voz** cada 30 min mientras siga inoperante: una alarma de rebaño apagada
+  tiene que doler.
+- Los umbrales se leen de **las mismas env** que usa `fleet_consensus` (`FLEET_CONS_MAX_BAR_AGE`,
+  `FLEET_CONS_MIN_COVER`) para que el veredicto no se desincronice de su gate.
+
+### 5-c. Mezclar barras y print sin mirar la etiqueta cuesta 1,2 %
+
+Medido en MU: barras (Intrinio, ~17 min) marcaban **804,74 a las 06:59** mientras el print de
+Finnhub daba **795,18 a las 07:07** y **796,00 a las 07:16**. Auditado quién puede mezclarlas:
+
+- Consumidores reales de `rt_last`: `provider_bridge`, `gex_core.parse_chain_header`,
+  `levels_refresh_daemon`, `intrinio_ws_autostart`. **Ninguno mezcla a ciegas.**
+- La única combinación cruzada es **spot vivo × cadena/OI delayed**, que es la doctrina de la casa
+  (el nivel se calcula con el libro lento, el print que lo confirma va rápido) y viaja etiquetada:
+  `gex_core.parse_chain_header` devuelve `spot_src` y `spot_age` junto al `spot`, así que un
+  consumidor **no puede** confundir un spot en tiempo real con uno delayed dentro de la misma
+  cadena.
+- No hay ningún sitio que calcule un % de variación entre cierre de barra y print vivo.
+
 ## 5-bis. Dos problemas de calidad que salieron al medir (Intrinio, no Finnhub)
 
 Medido a las 07:06:26 ET sobre las últimas 30 barras 1m de cada símbolo:

@@ -22,8 +22,10 @@ cd "$(dirname "$0")/.." || exit 1
 ROOT="$(pwd)"; source config/feeds.env 2>/dev/null
 F="$ROOT/data/notify_push.txt"
 touch "$F"
-BACKLOG_S=${BACKLOG_S:-300}   # mas viejo que esto = relectura del anillo, no una alerta tardia
-LAST=""; LASTSENT=0
+BACKLOG_S=${BACKLOG_S:-300}   # mas viejo que esto = relectura/arranque, no una alerta tardia
+DEDUP_S=${NOTIFY_DEDUP_S:-60} # payload idéntico en 60s = repetición, aunque cambie HH:MM:SS
+typeset -A DEDUP_AT
+LASTSENT=0
 # El log se diagnostica a mano: si crece sin freno deja de servir (llego a 205 MB).
 if [[ -f logs/notify_relay.log ]] && (( $(stat -f %z logs/notify_relay.log) > 20000000 )); then
   tail -n 2000 logs/notify_relay.log > logs/notify_relay.log.tmp \
@@ -39,7 +41,12 @@ tail -n0 -F "$F" 2>/dev/null | while read -r line; do
   if (( age > 45 )); then
     echo "$(date +%H:%M:%S) DESCARTADA (${age}s vieja): ${line:0:60}" >> logs/notify_relay.log; continue
   fi
-  [[ "$line" == "$LAST" ]] && continue
+  payload="${line#* | }"
+  prev=${DEDUP_AT[$payload]:-0}
+  if (( now_s - prev < DEDUP_S )); then
+    continue
+  fi
+  DEDUP_AT[$payload]=$now_s
   # PRIORIDAD: SELL/STOP/TERREMOTO/DANGER/🌋 saltan el cap 1/5s (cazado 2026-07-27:
   # el cap mato dos señales SELL seguidas, las mejores del dia).
   if (( now_s - LASTSENT < 5 )); then
@@ -49,7 +56,7 @@ tail -n0 -F "$F" 2>/dev/null | while read -r line; do
       echo "$(date +%H:%M:%S) CAP 1/5s: ${line:0:50}" >> logs/notify_relay.log; continue
     fi
   fi
-  LAST="$line"; LASTSENT=$now_s
+  LASTSENT=$now_s
   msg="${line:0:180}"
   curl -s --max-time 5 -d "$msg" -H "Title: 🔔 flota" "https://ntfy.sh/$NTFY_TOPIC" >/dev/null &
   if echo "$line" | grep -q '🚨'; then

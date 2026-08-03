@@ -229,24 +229,37 @@ def write_atomic(path: Path, text: str) -> None:
 
 
 def record(row: dict) -> None:
+    # El estado ANTERIOR se lee antes de reemplazarlo. En la versión vieja se hacía push en
+    # CADA sonda con auth OK aunque el socket siguiera caído: dos mensajes obsoletos cada
+    # ~10 min y una bandera UP falsa. Sólo una transición real del SOCKET merece alerta.
+    previous = None
+    if STATUS.exists():
+        try:
+            previous = json.loads(STATUS.read_text())
+        except (OSError, ValueError):
+            previous = None
+    was_socket_up = bool((previous or {}).get("socket_ok"))
+    socket_up = bool(row.get("socket_ok"))
     JSONL.parent.mkdir(parents=True, exist_ok=True)
     with open(JSONL, "a") as f:
         f.write(json.dumps(row, separators=(",", ":")) + "\n")
     write_atomic(STATUS, json.dumps(row, indent=1))
 
-    if row["any_up"]:
+    if socket_up:
         socks = row.get("socket_ok") or []
-        write_atomic(UP_FLAG, f"{row['et']} auth={' '.join(row['any_up'])} socket={' '.join(socks)}\n")
+        write_atomic(UP_FLAG, f"{row['et']} socket={' '.join(socks)}\n")
+    elif UP_FLAG.exists():
+        UP_FLAG.unlink()
+
+    if previous is not None and socket_up != was_socket_up:
         try:
             sys.path.insert(0, str(REPO / "scripts"))
             from notify_short import push
-
-            estado = f"SOCKET OK {','.join(socks)}" if socks else f"auth OK {','.join(row['any_up'])}, socket NO"
+            estado = (f"socket ARRIBA {','.join(row.get('socket_ok') or [])}"
+                      if socket_up else "socket CAÍDO")
             push("INTRINIO WS", f"{estado} en {row['phase']}")
         except Exception as e:
             print(f"[warn] notify fallo: {type(e).__name__}: {e}", file=sys.stderr)
-    elif UP_FLAG.exists():
-        UP_FLAG.unlink()
 
 
 def resumen() -> int:

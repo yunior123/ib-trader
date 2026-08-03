@@ -132,10 +132,20 @@ def grita(msg, nivel="DANGER"):
 
 
 def _publica(n, ultimo, por_sym, mudo, abierta):
-    estado(ts=int(time.time()), latido=int(time.time()), trades=n, ultimo_trade=int(ultimo),
+    # `sin_print` mira el fichero canonico, NO el contador de esta sesion: al reconectar el
+    # contador vuelve a 0 y SMH aparecia como mudo aunque hubiese impreso hace 2 min (paso el
+    # 2026-08-03 07:32). Un simbolo escaso no es un simbolo sin cobertura.
+    ahora = time.time()
+    edades = {}
+    for s in por_sym:
+        r = rt_last.read(s)
+        edades[s] = None if r is None else round(ahora - r[0], 1)
+    estado(ts=int(ahora), latido=int(ahora), trades=n, ultimo_trade=int(ultimo),
            mudo_s=round(mudo, 1), mudo=mudo > MUDO_S and rth(), rth=rth(),
-           sesion_s=round(time.time() - abierta, 1), por_simbolo=por_sym,
-           sin_print=sorted(s for s in por_sym if not por_sym[s]["n"]))
+           sesion_s=round(ahora - abierta, 1), por_simbolo=por_sym, print_edad_s=edades,
+           sin_print=sorted(s for s, e in edades.items() if e is None),
+           print_rancio=sorted(s for s, e in edades.items()
+                               if e is not None and e > rt_last.MAX_AGE_S))
 
 
 async def sesion(key, syms, hasta=None):

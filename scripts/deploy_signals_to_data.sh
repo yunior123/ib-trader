@@ -67,6 +67,14 @@ for src in scripts/flow_pulse.cpp scripts/qqq_xray.cpp scripts/price_alarm.cpp s
   fi
   rm -f /tmp/cc.lock
 done
+# Los tres bots Finviz comparten este motor y viven en bin/. Mantener su build en el
+# deploy canónico evita que un checkout nuevo arranque sin screeners.
+if [ -f scripts/finviz_screener_watch.cpp ]; then
+  if [ ! -f scripts/build_finviz_screeners.sh ] || ! zsh scripts/build_finviz_screeners.sh; then
+    echo "  🔴 finviz_screener_watch: build/selftest fallo"
+    FAILED=$((FAILED+1))
+  fi
+fi
 # NO reiniciar con binarios a medias: antes seguia adelante y dejaba la flota con
 # una mezcla de binarios viejos y nuevos, que es peor que no desplegar.
 if [ "$FAILED" -gt 0 ]; then
