@@ -1,8 +1,8 @@
 {
  "arriba": false,
- "ultimo_sondeo": 1785717028,
- "ultimo_sondeo_et": "2026-08-02 20:30:28",
+ "ultimo_sondeo": 1785718939,
+ "ultimo_sondeo_et": "2026-08-02 21:02:19",
  "motivo": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
- "intentos": 13,
+ "intentos": 89,
  "provider": "EQUITIES_EDGE"
 }

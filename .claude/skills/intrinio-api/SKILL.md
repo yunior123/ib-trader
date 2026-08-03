@@ -199,3 +199,35 @@ noche y 2026-08-02 madrugada) son fuera de sesión. La sonda `scripts/intrinio_w
 premarket el lunes, la causa es horaria; si sigue muerto en RTH, es outage/provisioning y toca soporte.
 Provider listo para entrar solo: `mit/backend/app/providers/intrinio_realtime.py` (@register
 `intrinio_realtime`) — levanta fail-loud si el socket no está, jamás sirve precio rancio como vivo.
+
+## WEBSOCKET: TODO LO PROBADO EL 2026-08-02 21:00 ET (para no repetirlo)
+
+Antes de volver a tocar esto, lee la tabla. **Ninguna de estas vias conecta**, y la conclusion
+importante es que **el SDK OFICIAL sin modificar falla igual** — o sea que no es un error de
+integracion nuestro.
+
+| prueba | resultado |
+|---|---|
+| SDK oficial `intriniorealtime` 6.3.0 (**la ultima de PyPI**) tal cual, `EQUITIES_EDGE` | `Cannot connect: RemoteDisconnected` a los 5,1 s, en bucle |
+| hosts de HEAD en los SDK de **Python, Node y Java** | los MISMOS 5 + options-edge/opra: no hay host nuevo al que migrar |
+| `curl --http1.1` / `--http2-prior-knowledge` / `--tlsv1.2` | los tres: cierre a 5,13 s, `http=000` |
+| `openssl s_client` + GET crudo con Host y SNI correctos | el server lee y cierra: **`DONE`**, cero bytes de respuesta |
+| upgrade WebSocket directo a `/socket/websocket` en los 5 hosts | `InvalidMessage: did not receive a valid HTTP response` (5,14-5,24 s) |
+| modo *public key* (`Authorization: Public <key>`, sin api_key en la query) | igual, 5,13 s |
+| mTLS (¿pide cert de cliente?) | **NO**: `No client certificate CA names sent` |
+| ALPN | `No ALPN negotiated` incluso ofreciendo solo `http/1.1` (normal en Cowboy pelado) |
+| DNS local vs Google (8.8.8.8) vs Cloudflare (1.1.1.1) | **identico** en los 6 hosts; y cada host tiene **IP propia** (no es un edge compartido caido) |
+| desde OTRA red (infra de fetch de Anthropic, ruta distinta a la nuestra) | `socket hang up` |
+| 20 nodos de check-host.net en 4 continentes | los 20 fallan; el control `api-v2` responde OK en los 20 |
+| **misma key** contra `api-v2.intrinio.com` | **200** — `/prices/realtime?source=equities_edge` devuelve `last_price` y `/securities/replay` sirve el fichero |
+
+**Los 5,13 s no son casualidad**: es el `request_timeout` por defecto de Cowboy (5000 ms) + el RTT
+a us-east-1 (~130 ms). El proceso que termina el TLS esta vivo y sirve el cert `*.intrinio.com`
+valido, pero nunca da por completa la peticion.
+
+**Lo que NO se puede decidir desde fuera**: "cluster apagado" y "el WAF descarta en silencio a
+quien no esta autorizado" producen exactamente la misma observacion. Lo unico que queda para
+distinguirlas es preguntar a `success@intrinio.com`.
+
+**Mientras tanto**: `scripts/intrinio_ws_autostart.py` sondea `/auth` cada 20 s y abre el socket
+en el instante en que responda, con voz. No hay que vigilarlo a mano.

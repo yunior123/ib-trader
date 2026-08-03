@@ -1,55 +1,55 @@
 {
- "epoch": 1785716544,
- "et": "2026-08-02 20:21:48",
+ "epoch": 1785718428,
+ "et": "2026-08-02 20:53:11",
  "phase": "weekend",
  "auth": {
   "realtime-mx": {
    "ok": false,
    "http": null,
    "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.152
+   "secs": 5.344
   },
   "realtime-delayed-sip": {
    "ok": false,
    "http": null,
    "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.134
+   "secs": 5.304
   },
   "realtime-nasdaq-basic": {
    "ok": false,
    "http": null,
    "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.138
+   "secs": 5.323
   },
   "cboe-one": {
    "ok": false,
    "http": null,
    "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.158
+   "secs": 5.522
   },
   "equities-edge": {
    "ok": false,
    "http": null,
    "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.133
+   "secs": 5.148
   },
   "realtime-options": {
    "ok": false,
    "http": null,
    "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.13
+   "secs": 5.144
   },
   "options-edge": {
    "ok": false,
    "http": null,
    "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.138
+   "secs": 5.311
   }
  },
  "socket": {},
  "tls_idle": {
-  "handshake": 0.164,
-  "idle_close": 5.133,
+  "handshake": 0.165,
+  "idle_close": 5.196,
   "bytes": 0
  },
  "controls": {
@@ -58,12 +58,12 @@
    "last_time": "2026-07-31T23:59:59.933Z",
    "source": "equities_edge",
    "has_bid": false,
-   "secs": 0.219
+   "secs": 0.786
   },
   "polygon_ws": {
    "connects": true,
    "hello": "[{\"ev\":\"status\",\"status\":\"connected\",\"message\":\"Connected Successfully\"}]",
-   "secs": 0.385
+   "secs": 0.317
   }
  },
  "any_up": [],
