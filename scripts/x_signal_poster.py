@@ -14,8 +14,8 @@ EXCLUSIVAMENTE desde campos de mercado estructurados y permitidos (screen,
 ticker, BUY/SELL, precio, cambio y RVOL): nunca copia títulos/notificaciones,
 rutas, nombres, configuración ni detalles del software.
 
-Limites: max 5 posts realtime/dia (dentro del cap compartido 10/dia del
-ledger data/x_plan_budget.json), min 25 min entre posts, jamas repetir el
+Limites: hasta el cap compartido de 20 posts/dia del ledger
+data/x_plan_budget.json, sin espera artificial entre señales únicas, jamas repetir el
 mismo ticker+nivel en el dia. Premarket 8:00-9:25 ET: max 1 post.
 Estado diario: data/x_signal_state.json (se resetea solo al cambiar de dia).
 
@@ -48,10 +48,10 @@ FINVIZ_EVENTS = os.path.join(ROOT, "data", "finviz_screener_events.jsonl")
 
 ET = ZoneInfo("America/New_York")
 LOOP_SEC = 60
-MAX_REALTIME_PER_DAY = 5
-MIN_GAP_SEC = 25 * 60
+MAX_REALTIME_PER_DAY = 20
+MIN_GAP_SEC = 0
 MAX_PREMARKET = 1
-MAX_FINVIZ_PER_DAY = 2
+MAX_FINVIZ_PER_DAY = 20
 FRESH_SEC = 600            # ignorar lineas de hace >10 min (arranques tardios)
 BARS_STALE_SEC = 300       # bars viejos >5 min -> fallback yfinance
 

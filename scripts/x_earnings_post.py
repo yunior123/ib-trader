@@ -17,7 +17,7 @@ tweet lleva UN cashtag como maximo. La flota de data/fleet.txt sale DESTACADA, y
 mas picaros llevan su escalera 🔴🎯📍🟢🛑 dibujada con niveles medidos (precio±ATR y SMAs).
 Sin logos de empresa: solo texto (marca registrada ajena).
 
-Ledger/caps: x_post_common (10 posts/dia compartidos, $4/mes).
+Ledger/caps: x_post_common (20 posts/dia compartidos, $4/mes).
 SEÑAL-SOLAMENTE. --dry-run es el DEFAULT; publica solo con --post.
 Log: x_earnings_post.log
 """

@@ -734,7 +734,7 @@ Pipeline autónomo **señal-solamente** que arma el mapa del día por ticker, se
 - **Calibración empírica por SETUP, no por ticker** — el bucket es `(setup_type × régimen)`, Wilson CI, `MIN_N=20`, decaimiento 120d. El generador solo sustituye la heurística con el **CI-low medido** cuando hay confianza. Datos: `data/calib_log.jsonl` → `data/calibration.json`.
 - **Patrones medidos = contexto, no gatillo** — operables solo si `confidence≥0.5 Y n≥8`; las tasas reales son flojas (mayoría <50%) y se reportan sin maquillar.
 - **SEÑAL-SOLAMENTE** — jamás ejecuta órdenes; todo post cierra "No es consejo financiero".
-- **Presupuesto X compartido** — `data/x_plan_budget.json`, $0.015/post, caps 10/día y $4/mes entre los 3 posters (`x_post_common.py`).
+- **Presupuesto X compartido** — `data/x_plan_budget.json`, $0.015/post, caps 20/día y $4/mes entre los posters (`x_post_common.py`; owner OK 2026-08-03).
 - **Degradación limpia** — si falta `calibration.json`/`patterns.json`/`gexa_snapshot.json`, el generador sigue con heurísticas; gexa verify grita en el log si no conectó. `notify_relay.sh` debe estar vivo para que lleguen las alertas.
 
 ### Flota (26 tickers, fuente única `data/fleet.txt`)
@@ -887,8 +887,8 @@ intactos, ≤1 cashtag, presupuesto igual. Aplica a todo post nuevo de la flota 
 `x_signal_poster.py` publica únicamente las mejores señales direccionales: el carril existente
 de ticker exige probabilidad/retest/ballena fuerte y el nuevo carril Finviz consume el JSONL
 estructurado de Buffett, short squeeze y momentum breakout. Finviz exige BUY/SELL coherente,
-score absoluto ≥60%, RVOL ≥1.5x y movimiento mínimo; máximo 2 Finviz/día dentro de 5 realtime,
-10 globales y separación de 25 min. Nunca se copia `notify_push.txt`: el texto público se arma
+score absoluto ≥60%, RVOL ≥1.5x y movimiento mínimo; Finviz y flota comparten el techo de
+20 posts/día sin espera artificial entre señales únicas. Nunca se copia `notify_push.txt`: el texto público se arma
 solo con ticker, pantalla, dirección, precio, cambio y RVOL, siempre en inglés. `x_post_common.py`
 rechaza antes del API cualquier texto con nombres personales, rutas locales, email, UUID,
 credenciales o nombres internos del software.

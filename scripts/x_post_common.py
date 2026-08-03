@@ -2,7 +2,7 @@
 """x_post_common.py — post/ledger compartido para TODOS los posters de X.
 
 Mismo patron que x_plan_poster.py (OAuth1 + x.env + data/x_plan_budget.json).
-UN solo ledger para toda la flota: $0.015/post, HARD caps 10 posts/dia y
+UN solo ledger para toda la flota: $0.015/post, HARD caps 20 posts/dia y
 $4.00/mes. El conteo diario se hace escaneando los logs de todos los
 componentes (" POSTED " lineas de hoy), asi ningun poster puede saltarse
 el cap de otro. SEÑAL-SOLAMENTE: esto solo publica texto, jamas ordena.
@@ -22,7 +22,7 @@ BUDGET_FILE = os.path.join(ROOT, "data", "x_plan_budget.json")
 ENV_FILE = os.path.join(ROOT, "config", "x.env")
 
 COST_PER_POST = 0.015
-MAX_POSTS_PER_DAY = 10       # cap compartido entre TODOS los posters
+MAX_POSTS_PER_DAY = 20       # cap compartido entre TODOS los posters (owner OK 2026-08-03)
 MAX_SPEND_PER_MONTH = 4.00
 MAX_CHARS = 275
 API_URL = "https://api.x.com/2/tweets"
@@ -97,7 +97,7 @@ def save_budget(b):
 
 
 def posts_today_all():
-    """Posts OK de HOY sumando los logs de todos los posters (cap 10/dia)."""
+    """Posts OK de HOY sumando los logs de todos los posters (cap 20/dia)."""
     today = time.strftime("%Y-%m-%d")
     n = 0
     for path in POSTER_LOGS:

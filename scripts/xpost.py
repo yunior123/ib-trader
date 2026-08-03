@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """xpost.py — herramienta REUTILIZABLE para postear a X on-demand, respetando el
-ledger compartido (10/dia $4/mes) y con imagen + mapa gamma propio opcionales.
+ledger compartido (20/dia $4/mes) y con imagen + mapa gamma propio opcionales.
 
 Uso:
   ./venv/bin/python scripts/xpost.py "texto del tweet"

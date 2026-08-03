@@ -229,12 +229,12 @@ Corrida manual: `pattern_detect.py SYM [SYM2 ...]` o `--fleet` (21 tickers).
 ### Presupuesto compartido — `x_post_common.py`
 
 Ledger único `data/x_plan_budget.json` (`{month, posts, spent}`). **$0.015/post**,
-caps duros **10 posts/día** y **$4.00/mes**, compartidos entre los posters que usan
+caps duros **20 posts/día** y **$4.00/mes**, compartidos entre los posters que usan
 este módulo. El conteo diario escanea las líneas `" POSTED "` de HOY en los logs de
 los tres posters, así ninguno se salta el cap de otro. `MAX_CHARS=275`.
 
 > Nota de precisión: `x_signal_poster.py` y `x_postmortem.py` usan este ledger
-> compartido (10/día, $4/mes). `x_plan_poster.py` escribe al **mismo archivo** pero
+> compartido (20/día, $4/mes). `x_plan_poster.py` escribe al **mismo archivo** pero
 > tiene su propio límite interno más estricto (`MAX_POSTS_PER_DAY=3`, `$2/mes`) y
 > cuenta solo su propio log. En la práctica el poster premarket se auto-limita a 3.
 

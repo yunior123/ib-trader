@@ -286,5 +286,5 @@ def test_el_png_no_usa_logos_de_empresa(tmp_path):
 
 
 def test_el_log_cuenta_para_el_cap_diario_compartido():
-    """Sin esto, este poster se saltaria el cap de 10/dia de los otros."""
+    """Sin esto, este poster se saltaria el cap de 20/dia de los otros."""
     assert any(p.endswith("x_earnings_post.log") for p in xc.POSTER_LOGS)

@@ -5,7 +5,7 @@ Lee ~/Desktop/planes-YYYY-MM-DD/ranking.json + x_drafts/<SYM>.txt (lo que se
 planeo), baja el OHLC del dia via yfinance para los top-5 del ranking y
 califica cada plan sin maquillaje: ¿imprimio la entrada (piso)? ¿target
 (techo)? ¿stop? Postea 1-2 posts (ledger compartido data/x_plan_budget.json,
-10/dia $4/mes): preferencia 1 ganador + 1 error; si todo fallo, se dice.
+20/dia $4/mes): preferencia 1 ganador + 1 error; si todo fallo, se dice.
 Ademas anexa el repaso completo (los 5) a docs/POSTMORTEM-X.md.
 
 SEÑAL-SOLAMENTE. Uso: x_postmortem.py [--dry-run] [--date YYYY-MM-DD]
