@@ -44,6 +44,13 @@ status() {
   for s in buffett squeeze momentum; do
     alive "finviz_screener_watch --screen $s" && ok "Finviz $s" || bad "Finviz $s"
   done
+  # Discord: sin webhooks configurados su ausencia es CORRECTA (aún no se ha hecho bootstrap),
+  # pintarla ✗ enseñaría a ignorar los ✗ — misma doctrina anti-crying-wolf que flow_pulse.
+  if [[ -s config/discord_webhooks.json ]]; then
+    alive "discord_relay.py" && ok "relé de Discord" || bad "relé de Discord"
+  else
+    ok "Discord sin configurar (correcto: falta scripts/discord_bootstrap.sh)"
+  fi
   # flow_pulse solo vive lun-vie 09:30-15:56 (fleet_keepalive_start.sh:358). Fuera de ahí
   # su ausencia es CORRECTA: pintarla ✗ enseña a ignorar los ✗ (doctrina anti-crying-wolf).
   local fp_hm=$(date +%H%M) fp_dow=$(date +%u)

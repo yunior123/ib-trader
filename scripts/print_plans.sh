@@ -165,6 +165,15 @@ if (( TREES )); then
   fi
 fi
 
+# Discord (Yunior 2026-08-04: "we post plans, trees, strategies there too"). Aditivo y con
+# degradacion limpia: sin webhooks configurados no hace nada y NO tumba la impresion.
+if [[ -s config/discord_webhooks.json ]]; then
+  ./venv/bin/python scripts/discord_post.py --plans --day "$DAY" >> $LOG 2>&1 \
+    || FAILS+=("discord_post --plans FALLO")
+else
+  echo "$(date) [$TAG] Discord sin configurar (config/discord_webhooks.json) — no se publica" >> $LOG
+fi
+
 VERBO=$( (( ALLOW_PRINT )) && echo "🖨 Impreso" || echo "📄 Generado (NO impreso)" )
 if (( $#FAILS )); then
   echo "$(date) [$TAG] FALLOS: ${(j:; :)FAILS}" | tee -a $LOG

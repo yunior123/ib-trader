@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.ibtrader.uwflowarchive</string>
+  <!-- Archivador forward-only de las series intradia de UW (net-prem-ticks, greek-flow,
+       flow-per-strike). UW NO sirve estas series hacia atras: cada sesion sin archivar es
+       una sesion que las alertas de flujo no podran validar jamas. El portero de RTH y de
+       dia de mercado vive DENTRO del script (uw_flow_archive.in_session), que launchd no
+       conoce; por eso KeepAlive y no StartCalendarInterval. -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string><string>-lc</string>
+    <string>cd "$HOME/ib-trader" &amp;&amp; ./scripts/uw_flow_archive_keepalive.sh</string>
+  </array>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>ThrottleInterval</key><integer>60</integer>
+  <key>StandardOutPath</key><string>/tmp/ibtrader.uwflowarchive.out</string>
+  <key>StandardErrorPath</key><string>/tmp/ibtrader.uwflowarchive.err</string>
+</dict>
+</plist>

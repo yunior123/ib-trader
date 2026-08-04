@@ -70,6 +70,11 @@ def test_liq_map_reads_polygon_archive_and_fresh_live_cache(cb, tmp_path, monkey
         _chain(100, [(99, "C", 10), (99, "P", 5), (101, "C", 20)]))
     live = tmp_path / "data" / "opt_chain_test.txt"
     live.write_text(_chain(101, [(99, "C", 30), (101, "P", 40)]))
+    # El mtime del live fija su columna y las columnas van en orden cronologico: si la suite
+    # corre antes de las 09:36 el live se colaba DELANTE del archivo y el test fallaba por la
+    # hora, no por el codigo. Se clava a las 10:00 de hoy para que el orden sea determinista.
+    diez = cb.datetime.now().replace(hour=10, minute=0, second=0, microsecond=0).timestamp()
+    os.utime(live, (diez, diez))
 
     frame, fingerprint = cb.liq_map_frame("test")
 

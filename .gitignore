@@ -150,3 +150,7 @@ venv-mit/
 data/voice_queue.pid
 # cubo strike x tiempo del panel TRACE: lo regenera com.ibtrader.tracecube cada 10 min.
 data/trace_cube_*.json
+
+# Discord: las URLs de webhook son credenciales (quien la tiene, publica)
+config/discord_webhooks.json
+.webhooks.json

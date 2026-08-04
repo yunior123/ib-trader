@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.ibtrader.discordrelay</string>
+  <!-- Espejo de data/notify_push.txt a Discord (Yunior 2026-08-04: "make sure we post all
+       signals during the day to discord"). El keepalive sigue el fichero y sobrevive a
+       rotaciones; launchd solo garantiza que el keepalive exista. Independiente de
+       notify_relay.sh: si Discord cae, ntfy/voz/email siguen intactos. -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string><string>-lc</string>
+    <string>cd "$HOME/ib-trader" &amp;&amp; ./scripts/discord_relay_keepalive.sh</string>
+  </array>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>ThrottleInterval</key><integer>30</integer>
+  <key>StandardOutPath</key><string>/tmp/ibtrader.discordrelay.out</string>
+  <key>StandardErrorPath</key><string>/tmp/ibtrader.discordrelay.err</string>
+</dict>
+</plist>
