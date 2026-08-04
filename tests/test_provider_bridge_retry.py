@@ -40,7 +40,8 @@ class _Opts:
 
 def _correr(monkeypatch, mod, opts):
     escrito, logs = [], []
-    monkeypatch.setattr(mod, "write_chain", lambda s, c, sp, p: escrito.append(s) or len(c))
+    monkeypatch.setattr(mod, "write_chain",
+                        lambda s, c, sp, p, *a: escrito.append(s) or len(c))
     monkeypatch.setattr(mod, "write_status", lambda *a, **k: None)
     monkeypatch.setattr(mod, "log", lambda m: logs.append(m))
     async def _sin_espera(_s):        # mod.asyncio ES el asyncio global: parchear con

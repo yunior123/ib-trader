@@ -401,7 +401,44 @@ def write_status(settings, exch_ts: dict[str, str], entitlement: list[str],
 
 # ---------------- loop ----------------
 
-async def one_pass(providers, settings, syms, last_ep, exch_ts, do_warmup, do_chain, entitlement):
+async def _chain_once(providers, settings, sym, spot, spot_src, spot_age) -> None:
+    # Un ReadTimeout puntual dejaba al simbolo SIN cadena toda la sesion (medido
+    # 2026-08-02: NFLX/GLD/XLK sin opt_chain_*.txt mientras Polygon si los servia).
+    # Un simbolo de la flota sin mapa de opciones no es un error transitorio: es un
+    # ticker mudo. Se reintenta una vez antes de darlo por perdido.
+    for intento in (1, 2):
+        try:
+            chain = await providers.options.get_option_chain(sym)
+            n = write_chain(sym, chain, spot or _spot_from_chain(chain),
+                            settings.options_provider,
+                            spot_src if spot else "chain_atm", spot_age)
+            log(f"{sym}: cadena {n} filas -> opt_chain_{sym.lower()}.txt"
+                + (f" (intento {intento})" if intento > 1 else ""))
+            break
+        except Exception as e:
+            if intento == 1:
+                log(f"{sym}: CHAIN fallo 1/2 {_scrub(e)} — reintentando")
+                await asyncio.sleep(2)
+            else:
+                log(f"{sym}: CHAIN error tras 2 intentos {_scrub(e)} — SIN MAPA DE OPCIONES")
+
+
+async def chain_loop(providers, settings, syms, last_q: dict) -> None:
+    """Cadenas en tarea PROPIA: 26 cadenas Polygon x ~8 s = ~3,5 min que antes iban EN SERIE
+    con barras/nbbo — el camino vivo quedaba rehen y cada simbolo se refrescaba cada ~4 min
+    (medido 2026-08-04: '+4 barras' de golpe). El spot viene del ultimo quote del bucle vivo."""
+    while True:
+        t0 = time.time()
+        for sym in syms:
+            px, qa, med = last_q.get(sym, (0.0, -1.0, 0.0))
+            q_age = (qa + (time.time() - med)) if px > 0 else -1.0
+            spot, spot_src, spot_age = resolve_spot(sym, px, q_age)
+            await _chain_once(providers, settings, sym, spot, spot_src, spot_age)
+        await asyncio.sleep(max(1.0, CHAIN_REFRESH_S - (time.time() - t0)))
+
+
+async def one_pass(providers, settings, syms, last_ep, exch_ts, do_warmup, do_chain,
+                   entitlement, last_q: dict | None = None):
     lat: dict[str, dict] = {}
     for sym in syms:
         try:
@@ -421,6 +458,8 @@ async def one_pass(providers, settings, syms, last_ep, exch_ts, do_warmup, do_ch
                 entitlement.extend(getattr(q, "_messages", []) or [])
         except Exception as e:
             log(f"{sym}: QUOTE error {_scrub(e)}")
+        if last_q is not None and q_last > 0:
+            last_q[sym] = (q_last, q_age, time.time())
         spot, spot_src, spot_age = resolve_spot(sym, q_last, q_age)
         edad_bar, huecos, vol0 = bar_salud(sym)
         # `ts`: la pasada recorre 26 simbolos y dura de 30 s a 8 min (warmup). Sin el instante
@@ -429,25 +468,7 @@ async def one_pass(providers, settings, syms, last_ep, exch_ts, do_warmup, do_ch
                     "bar_vol0": vol0, "quote_s": q_age if q_last > 0 else None,
                     "spot": spot or None, "spot_src": spot_src, "spot_s": spot_age}
         if do_chain:
-            # Un ReadTimeout puntual dejaba al simbolo SIN cadena toda la sesion (medido
-            # 2026-08-02: NFLX/GLD/XLK sin opt_chain_*.txt mientras Polygon si los servia).
-            # Un simbolo de la flota sin mapa de opciones no es un error transitorio: es un
-            # ticker mudo. Se reintenta una vez antes de darlo por perdido.
-            for intento in (1, 2):
-                try:
-                    chain = await providers.options.get_option_chain(sym)
-                    n = write_chain(sym, chain, spot or _spot_from_chain(chain),
-                                    settings.options_provider,
-                                    spot_src if spot else "chain_atm", spot_age)
-                    log(f"{sym}: cadena {n} filas -> opt_chain_{sym.lower()}.txt"
-                        + (f" (intento {intento})" if intento > 1 else ""))
-                    break
-                except Exception as e:
-                    if intento == 1:
-                        log(f"{sym}: CHAIN fallo 1/2 {_scrub(e)} — reintentando")
-                        await asyncio.sleep(2)
-                    else:
-                        log(f"{sym}: CHAIN error tras 2 intentos {_scrub(e)} — SIN MAPA DE OPCIONES")
+            await _chain_once(providers, settings, sym, spot, spot_src, spot_age)
     write_status(settings, exch_ts, entitlement, lat)
 
 
@@ -477,20 +498,24 @@ async def run(syms: list[str], daemon: bool) -> None:
     last_ep: dict[str, int] = {}
     exch_ts: dict[str, str] = {}
     entitlement: list[str] = []
-    # primera pasada: warmup barras + cadena
-    await one_pass(providers, settings, syms, last_ep, exch_ts, True, True, entitlement)
+    last_q: dict[str, tuple] = {}
+    # primera pasada: warmup de barras SIN cadena (la cadena la trae chain_loop en paralelo;
+    # en --once si va inline para que el contrato de una pasada quede completo)
+    await one_pass(providers, settings, syms, last_ep, exch_ts, True, not daemon, entitlement, last_q)
     if not daemon:
         await providers.close()
         return
-    last_chain = time.time()
+    chains = asyncio.create_task(chain_loop(providers, settings, syms, last_q))
     try:
         while True:
             await asyncio.sleep(BARS_REFRESH_S)
-            do_chain = time.time() - last_chain >= CHAIN_REFRESH_S
-            if do_chain:
-                last_chain = time.time()
-            await one_pass(providers, settings, syms, last_ep, exch_ts, False, do_chain, entitlement)
+            if chains.done():  # fail-loud: sin cadenas la flota se queda sin mapa de muros
+                exc = chains.exception()
+                log(f"CHAIN LOOP MUERTO ({_scrub(exc) if exc else 'sin excepcion'}) — relanzando")
+                chains = asyncio.create_task(chain_loop(providers, settings, syms, last_q))
+            await one_pass(providers, settings, syms, last_ep, exch_ts, False, False, entitlement, last_q)
     finally:
+        chains.cancel()
         await providers.close()
 
 
