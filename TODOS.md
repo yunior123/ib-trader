@@ -3,6 +3,19 @@
 > Vivo. Apuntar cada petición AL MOMENTO con las palabras de Yunior. Lo cerrado → Done.md.
 
 ## 🔴 SESIÓN 2026-08-04 (martes — ráfaga Discord + UW flows + backtest de alertas)
+- [x] 18. "busca cuchillos con trading agents, maybe stocks with high put/call ratio, search
+      options chain, UW net, 0dte for today. 2. search high call/put ratio for this week till
+      friday, calculate net premium from today tuesday 10:35 till friday, search whales,
+      darkpool, ... sentiment." (2026-08-04 10:35) — HECHO por 2 agentes, ambos publicados en
+      #estrategias + docs. (1) `docs/CUCHILLOS-0DTE-2026-08-04.md`: CAT y VST cuchillos REALES
+      pero VETADOS por regla 4 (spreads 11-62% / 15-18% + earnings VST 8/7); SPX con hedge
+      masivo (net_call -171,7M) pero SPY en maximos = sin print; embudo en SILENCIO a proposito.
+      ⚠️ TradingAgents SIN OPINAR: DeepSeek 402 Insufficient Balance — RECARGAR SALDO (accion
+      Yunior). (2) `docs/SEMANA-VIERNES-2026-08-04.md`: NOK el unico que pasa TODO (C/P 9,4,
+      10C 8/7 spread 3,9%, OI 14k, cabe en $200); GRAB/BBAI C/P altisimos pero opciones VETADAS
+      -> acciones; bajista CVX 190P $205k la ballena mayor <=viernes; VIXW vendiendo calls VIX
+      (apuesta a calma); WBD C/P 0,05 pero puts VENDIDAS (+514k, el ratio miente). Dark pool y
+      headlines DESCRIPTIVOS rotulados (killlist #3). Cupo UW total dia: 12.457/30.000.
 - [x] 17. "find me best tickers with high liquidity for options that might go down like a
       kniefe today starting now" (2026-08-04 10:11) — RESPONDIDO 10:15 en chat + #estrategias +
       embudo. Medido (Finviz losers opcionables + puts ATM CBOE + flujo UW): los cuchillos
