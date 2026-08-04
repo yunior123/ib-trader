@@ -45,6 +45,8 @@ CATEGORIES = [
         ("dark-pool", "DESCRIPTIVO — dark pool no es señal (killlist #3). Contexto, nunca gatillo", False),
         ("finviz-screeners", "Buffett · Short Squeeze · Momentum Breakout", False),
         ("corea-overnight", "🇰🇷 KOSPI / Samsung / SK-Hynix — lidera semis ~13 h", False),
+        ("taiwan-japon", "🇹🇼🇯🇵 TAIEX/TSMC · Nikkei/TokyoElectron/Advantest — semis asiáticos, lideran ~12-13 h", False),
+        ("china-semis", "🇨🇳 CXMT / SMIC / YMTC — DRAM china, precios spot, export controls. Noticias + datos", False),
         ("earnings-catalizadores", "Earnings, vencimientos que expiran hoy, catalizadores", False),
     ]),
     ("watchlists", "👁️ WATCHLISTS", [
@@ -139,6 +141,8 @@ RULES = [
 
     # corea (R3 vive arriba, antes de capitanes)
     (r"🇰🇷|KOSPI|KRX|SAMSUNG|SK-?HYNIX|KODEX", "corea-overnight", NORMAL),
+    (r"🇹🇼|🇯🇵|TAIEX|TWSE|NIKKEI|TOPIX|TOKYO ?ELECTRON|ADVANTEST|LASERTEC|DISCO CORP|\b2330\.TW\b", "taiwan-japon", NORMAL),
+    (r"🇨🇳|CXMT|CHANGXIN|SMIC|YMTC|HUA ?HONG|DRAM CHIN|SEMIS CHIN", "china-semis", NORMAL),
 
     # catalizadores
     (r"⏰|EXPIRA HOY|EARNINGS|RESULTADOS", "earnings-catalizadores", NORMAL),
