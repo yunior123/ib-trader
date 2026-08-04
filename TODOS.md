@@ -3,6 +3,16 @@
 > Vivo. Apuntar cada petición AL MOMENTO con las palabras de Yunior. Lo cerrado → Done.md.
 
 ## 🔴 SESIÓN 2026-08-04 (martes — ráfaga Discord + UW flows + backtest de alertas)
+- [x] 19. "make sure we have signals working properly. 2. bug: con cuidado call the nvda is
+      bad, it repeats 3 times plus its a bad signal" (2026-08-04 ~11:2x) — HECHO. Causas
+      MEDIDAS del bug: (a) 4 niveles de NVDA cruzaron en el MISMO poll -> 4 fichas con la misma
+      voz en el mismo segundo (11:24:56 x4 en el embudo); (b) multiples instancias de
+      today_alarm5 (5 lineas "armado" en el log: cron 09:31 + arranques manuales sin candado);
+      (c) un CAUTION "sale muy caro" hablando no es señal. Arreglos en today_alarm5: candado
+      de instancia unica (flock, verificado: el doble arranque rebota), SOLO GO habla/pushea
+      (CAUTION/NO-GO se registran en FIRED_LOG con motivo y callan), cooldown 30 min por
+      (sym,kind). Señales verificadas por SALIDA: embudo/relay/uw_fleet_flow/cboe_nbbo/levels/
+      gex/vix todo 0-5 min de edad, relay entregando en #flujo-uw en <2 s.
 - [x] 18. "busca cuchillos con trading agents, maybe stocks with high put/call ratio, search
       options chain, UW net, 0dte for today. 2. search high call/put ratio for this week till
       friday, calculate net premium from today tuesday 10:35 till friday, search whales,

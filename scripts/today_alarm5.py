@@ -79,7 +79,26 @@ def veto_suffix(sym):
     return ""
 
 
+VOICE_COOLDOWN_S = 1800.0
+_voz_cooldown = {}
+
+
+def _instancia_unica():
+    """Candado: manana a las 09:31 el cron de launchd y un arranque manual doblarian la voz
+    (medido hoy: multiples 'armado' en el log y 4 pushes en el mismo segundo)."""
+    import fcntl
+    fd = os.open(os.path.join(REPO, "data", ".today_alarm5.lock"),
+                 os.O_WRONLY | os.O_CREAT, 0o600)
+    try:
+        fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        print("today_alarm5: ya hay una instancia viva — me voy", file=sys.stderr)
+        sys.exit(0)
+    return fd            # se mantiene abierto: el lock vive lo que el proceso
+
+
 def main():
+    _lock = _instancia_unica()  # noqa: F841
     if gex_core.in_rth() is not True:
         print("today_alarm5: mercado cerrado ahora mismo, nada que armar hoy", file=sys.stderr)
         return
@@ -101,6 +120,19 @@ def main():
                 msg = (f"{s} {e['event']} en {e['level_type']} {e['level_px']:g} — "
                        f"{t['ticket']} | {gate}{veto_suffix(s)}")
                 icon = "🟢" if t["verdict"] == "GO" else "🟡" if t["verdict"] == "CAUTION" else "🔴"
+                # SOLO GO interrumpe (Yunior 2026-08-04: "con cuidado call de nvda is bad, it
+                # repeats 3 times plus its a bad signal"). Un CAUTION por "sale muy caro" no es
+                # accionable: se REGISTRA (FIRED_LOG + trading-signals) y calla. Y cooldown por
+                # (sym,kind): 4 niveles cruzando en el MISMO poll eran 4 voces identicas.
+                ck = (s, kind)
+                en_cooldown = time.time() - _voz_cooldown.get(ck, 0) < VOICE_COOLDOWN_S
+                if t["verdict"] != "GO" or en_cooldown:
+                    motivo = "cooldown" if en_cooldown else t["verdict"]
+                    print(f"{s} {kind}: registrado sin voz ({motivo}) — {msg[:80]}")
+                    jappend(FIRED_LOG, {"ts": int(time.time()), "sym": s, "event": e,
+                                        "ticket": t, "gate": gate, "silenciada": motivo})
+                    continue
+                _voz_cooldown[ck] = time.time()
                 if t["verdict"] == "GO":
                     voz = f"Compra {kind} de {s}."
                 else:
