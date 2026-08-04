@@ -5,12 +5,25 @@
 ## 🔴 SESIÓN 2026-08-04 (martes — ráfaga Discord + UW flows + backtest de alertas)
 - [ ] 20. "dont reveal personal info on our personal trades via notifications, only via local
       notification in mac with editeur de script as always" (2026-08-04 ~11:30) — en curso
-- [ ] 21. "use osacript here vs3d.volsignals.com/app?viewstate=... take screenshots, read them,
-      change selectors to gamma as well, then tell me whether is going up up or down" — en curso
-- [ ] 22. "activate alert to buy and sell in options, post them to discord channel, also post
+- [x] 21. "use osacript here vs3d.volsignals.com... take screenshots, read them, change
+      selectors to gamma as well, then tell me whether is going up or down" — HECHO 11:51 via
+      SAFARI (la sesion vivia ahi; CDP/Chrome daba login wall). osascript abrio la pestaña,
+      `do JavaScript` cambio el dropdown custom Delta→Gamma (button.dropdown + MouseEvent),
+      screencapture + lectura propia. VEREDICTO publicado en #posicionamiento-dealer: SPX
+      sentado EXACTO en el flip (~7710-15), estanteria 0DTE -9k/-6k en 7715/7725, suelo +6k en
+      7690 (=borde de la valla), straddle subiendo. SUBE pero contra techo: print de 7715-16 =
+      acelera (gamma negativa) a 7725/7735; rechazo = caja 7690-7710. Picadora hasta 14:00.
+- [x] 22. "activate alert to buy and sell in options, post them to discord channel, also post
       lottos with high confidence for the best ones in fleet based on gamma, net options,
-      whales for tomorrow and whole week till friday" — delegado a agente (lottos) + verificar
-      fichas GO bidireccionales ya enrutadas a #opciones-contratos
+      whales for tomorrow and whole week till friday" — HECHO. Fichas buy/sell YA activas y
+      verificadas (GO call y GO put enrutan a #opciones-contratos; today_alarm5 con candado y
+      solo-GO). LOTTOS publicados en #opciones-contratos (docs/LOTTOS-SEMANA-2026-08-04.md):
+      solo 2 pasaron TODOS los gates — AAPL 307.5c 8/5 @$165 (spr 2,5%, OI 5.608, imán 310,
+      net +$4,3M) y AMZN 275p 8/5 @$157 (spr 1,3%, OI 2.842, put-wall 275, net −$17M).
+      Viernes: CERO legales (AAPL 310c falla prima por $8; NOK 10c spread 7,4%). Las 4
+      confluencias 3/3 plenas (MU→900 +$95,8M, MSFT→500, INTC→100, SMH→580) NO caben en $200
+      — publicadas como info. Vetos que más mataron: prima, PIN (QQQ/SPY/NVDA pegados al
+      muro), earnings (AMD hoy AH, SNDK/WDC 8/5). Cuota: 35 requests.
 - [x] 19. "make sure we have signals working properly. 2. bug: con cuidado call the nvda is
       bad, it repeats 3 times plus its a bad signal" (2026-08-04 ~11:2x) — HECHO. Causas
       MEDIDAS del bug: (a) 4 niveles de NVDA cruzaron en el MISMO poll -> 4 fichas con la misma
