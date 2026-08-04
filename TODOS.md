@@ -16,6 +16,12 @@
       -> acciones; bajista CVX 190P $205k la ballena mayor <=viernes; VIXW vendiendo calls VIX
       (apuesta a calma); WBD C/P 0,05 pero puts VENDIDAS (+514k, el ratio miente). Dark pool y
       headlines DESCRIPTIVOS rotulados (killlist #3). Cupo UW total dia: 12.457/30.000.
+      ADENDA 10:57 ("si no hay deepseek then use your own analysis"): veredictos PROPIOS con
+      dato fresco (UW ohlc/1m + BB(20,2) + net-prem-ticks 10 min) publicados en #estrategias:
+      CAT cuchillo MUERTO (reboto +8 del low, flujo +827k comprador — regla 11); VST cuchillo
+      VIVO sin vehiculo (band-walk 15m + flujo -264k, pero spreads 15-18% + earnings 8/7 —
+      se mira, no se paga); NOK CONFIRMA y acelera (+363k en 10 min, %B 0,78/0,31 girando sin
+      extension) -> vigilancia armada en el embudo: print de 10,13 dos lecturas = 10C 8/7.
 - [x] 17. "find me best tickers with high liquidity for options that might go down like a
       kniefe today starting now" (2026-08-04 10:11) — RESPONDIDO 10:15 en chat + #estrategias +
       embudo. Medido (Finviz losers opcionables + puts ATM CBOE + flujo UW): los cuchillos
