@@ -60,7 +60,8 @@ LOG_PREFIX = "[provider_bridge]"
 # senales disparan sin confirmacion de spread (aceptable con dato delayed, señal-solamente).
 BARS_REFRESH_S = 20.0   # barras/nbbo
 CHAIN_REFRESH_S = 180.0  # cadena de opciones (como opt_chain_cache)
-WARMUP_BARS = 1600       # ~2 sesiones RTH de 1m
+WARMUP_BARS = 1440       # 24h de 1m: tope de display (Yunior 2026-08-04); backtest vive en poly_bars/history
+BARS_PRUNE_LINES = 2880  # al doblar el tope se poda el fichero a WARMUP_BARS (lectores lo releen entero)
 
 
 def log(msg: str) -> None:
@@ -143,6 +144,13 @@ async def append_bars(market, sym: str, last_ep: dict[str, int]) -> None:
             fh.write("".join(new))
         last_ep[sym] = prev
         log(f"{sym}: +{len(new)} barras (ep {prev})")
+        try:
+            lines = path.read_text().splitlines(keepends=True)
+            if len(lines) > BARS_PRUNE_LINES:
+                _atomic_write(path, "".join(lines[-WARMUP_BARS:]))
+                log(f"{sym}: poda {len(lines)}->{WARMUP_BARS} barras (tope display 24h)")
+        except OSError as e:
+            log(f"{sym}: poda fallo {e}")
 
 
 # ---------------- NBBO (data/nbbo_<sym>.txt) ----------------
