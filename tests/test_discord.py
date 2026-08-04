@@ -373,3 +373,54 @@ def test_notify_short_no_publica_bajo_pytest():
     despues = os.path.getsize(ns.PATH) if os.path.exists(ns.PATH) else 0
     assert ns.under_pytest() is True
     assert despues == antes, "notify_short escribio en el embudo real durante la suite"
+
+
+# --- reglas R1-R8 de la auditoria de cobertura (2026-08-04) --------------------------------
+@pytest.mark.parametrize("linea,canal", [
+    ("QQQ: BUY 683.20 tp 685 (compass UP)", "senales-flota"),        # R1: los 21 bots C++
+    ("MU: SELL 178.9 (STOP)", "criticas"),                           # STOP mayuscula = evento
+    ("STOP tocado | fuera de NVDA", "criticas"),
+    ("🎯 ZONA NVDA | compra 212.5 stop 211", "senales-flota"),       # stop minuscula = precio
+    ("🚨 ALARMA PRECIO | SPY 630 impreso", "criticas"),              # R2
+    ("🛑 SCALPER | stop del scalper", "criticas"),                   # R5
+    ("🐻 READ-THROUGH | kospi -3% -> semis", "corea-overnight"),     # R3
+    ("🔪 VETO | capitan coreano en contra", "corea-overnight"),      # R3 antes que capitanes
+    ("🎖 CAPITAN REVIERTE SMH | puts del capitan", "capitanes"),
+    ("QQQ X-RAY | RETEST_REJECT en muro 690", "gamma-niveles"),      # R8
+    ("DRAM GUARD | dram guard activo", "senales-flota"),             # R8
+    ("X POSTED premarket | ok", "bot-logs"),                         # R7
+    ("🩺 HEALTHCHECK | 3 criticos", "estado-flota"),                 # R7
+    ("TA BUY | bargain FSLR", "finviz-screeners"),                   # R4
+])
+def test_reglas_de_la_auditoria_de_cobertura(linea, canal):
+    assert L.classify(linea)[0] == canal
+
+
+def test_stop_minuscula_de_ficha_no_es_critica():
+    """El bug cazado el 2026-08-04: 'compra 212.5 stop 211' se iba a #criticas por \\bSTOP\\b."""
+    ch, sev = L.classify("🎯 ZONA NVDA | compra 212.5 stop 211")
+    assert sev != L.CRITICA
+
+
+# --- frontera de medianoche (revision 2026-08-04): edad -86099 tiraba alertas frescas ------
+def test_parse_a_medianoche_no_tira_la_alerta_de_ayer(monkeypatch):
+    """A las 00:05, una linea de las 23:59 parecia del FUTURO y el filtro la descartaba."""
+    import time as _t
+    real_lt = _t.localtime
+    madrugada = _t.mktime((2026, 8, 4, 0, 5, 0, 1, 216, 1))
+    monkeypatch.setattr(R.time, "localtime", lambda: real_lt(madrugada))
+    monkeypatch.setattr(R.time, "time", lambda: madrugada)
+    p = R.parse("23:59:00 | 🚨 DANGER | qqq rompe")
+    assert p is not None
+    age = p[0]
+    assert 300 <= age <= 400, "la linea de las 23:59 debe tener ~6 min, no -24h (age=%s)" % age
+
+
+def test_parse_no_desplaza_lineas_normales(monkeypatch):
+    import time as _t
+    real_lt = _t.localtime
+    tarde = _t.mktime((2026, 8, 4, 15, 30, 0, 1, 216, 1))
+    monkeypatch.setattr(R.time, "localtime", lambda: real_lt(tarde))
+    monkeypatch.setattr(R.time, "time", lambda: tarde)
+    age = R.parse("15:29:30 | 🎈 BB REBOTE | mu")[0]
+    assert 25 <= age <= 35

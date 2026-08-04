@@ -2287,6 +2287,10 @@ async def broadcast_engine(state):
 MOCK = False   # lo fija main() desde --mock; ver la guarda de integridad de _log_structural
 
 
+_ZONE_PUSHED = {}          # (fecha, sym) -> nº de pushes hoy
+ZONE_PUSH_MAX_DIA = 5      # cap diario al embudo por simbolo; el chart no se capa
+
+
 def _signals_file_line(sym, text):
     """Escribe la ficha en data/trading-signals/<fecha>.txt para que el relay de voz/teléfono
     la dispare (mismo canal que el resto de señales). SEÑAL-SOLAMENTE (solo texto).
@@ -2304,6 +2308,26 @@ def _signals_file_line(sym, text):
             f.write(f"{time.strftime('%H:%M:%S')} | 🎯 ZONA {sym.upper()} | {text}\n")
     except Exception as e:
         print(f"[zone] signals-file falló ({e})")
+    # embudo (ntfy + Discord): la ficha solo salia del navegador. 2 disparos en 12 sesiones
+    # es el caso TIPICO; el maximo era 120/h con el precio serruchando sobre la zona
+    # (ZONE_REFIRE_S=30 y el texto del ticket cambia -> el dedup de 60 s no frenaba).
+    # Cap diario por simbolo: las primeras N valen, el resto es la misma historia.
+    hoy = time.strftime("%Y-%m-%d")
+    key = (hoy, sym.upper())
+    _ZONE_PUSHED[key] = _ZONE_PUSHED.get(key, 0) + 1
+    if _ZONE_PUSHED[key] > ZONE_PUSH_MAX_DIA:
+        if _ZONE_PUSHED[key] == ZONE_PUSH_MAX_DIA + 1:
+            print(f"[zone] {sym.upper()}: cap diario de push ({ZONE_PUSH_MAX_DIA}) — "
+                  "el chart sigue, el embudo calla")
+        return
+    try:
+        d = os.path.dirname(os.path.abspath(__file__))
+        if d not in sys.path:
+            sys.path.insert(0, d)
+        import notify_short
+        notify_short.push(f"🎯 ZONA {sym.upper()}", text[:180])
+    except Exception as e:
+        print(f"[zone] notify_short no disponible ({e})")
 
 
 def build_ticket(sym, price, side, kind):

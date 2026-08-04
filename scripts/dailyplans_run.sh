@@ -58,5 +58,9 @@ if [[ $MODE == FULL ]]; then
     echo "$(date) mapa gamma MEDIDO ok: ${GEX_N}/${FLEET_N} syms, ${GEX_AGE}s" >> logs/dailyplans.log
   fi
   ./venv/bin/python scripts/x_plan_poster.py --top 5 >> logs/dailyplans.log 2>&1
+  # Discord: los PDFs del dia a #planes-premarket + salud de la flota a #estado-flota.
+  # scripts/discord_post.py existia y NADIE lo llamaba: esos canales nacian vacios.
+  # Sin webhooks configurados imprime "ROTO" al log y sigue; nunca aborta el 4AM.
+  ./venv/bin/python scripts/discord_post.py --plans --status >> logs/dailyplans.log 2>&1
 fi
 osascript -e 'display notification "📋 Planes flota generados + email + X" with title "ib-trader"'

@@ -154,3 +154,10 @@ data/trace_cube_*.json
 # Discord: las URLs de webhook son credenciales (quien la tiene, publica)
 config/discord_webhooks.json
 .webhooks.json
+# backups de credenciales (feeds.env.bak.<epoch>) — jamas al repo
+config/*.bak.*
+config/*.bak
+# series intradia de UW (backfill + daemon): ~1 GB re-descargable del vendor (0 coste marginal)
+data/history/*/uw_*.json
+data/history/*/uw_*.HUECO
+data/uw_backfill_report.json

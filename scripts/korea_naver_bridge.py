@@ -311,13 +311,32 @@ def escribe_procedencia(estado):
     os.replace(tmp, SRC_FILE)
 
 
-def grita(msg):
+def krx_en_horario(gm=None):
+    """Sesion regular KRX 09:00-15:30 KST, lun-vie. Gate INDEPENDIENTE del dato de Naver:
+    la bandera `abierto` sale del propio sondeo, asi que cuando el sondeo falla no existe —
+    y sin este gate, Naver en mantenimiento a mediodia US daba DANGER con KRX cerrado."""
+    t = time.gmtime((gm if gm is not None else time.time()) + 9 * 3600)   # KST = UTC+9
+    if t.tm_wday >= 5:
+        return False
+    hm = t.tm_hour * 100 + t.tm_min
+    return 900 <= hm <= 1530
+
+
+def grita(msg, titulo=None, corto=None):
+    # titulo -> tambien al embudo data/notify_push.txt (ntfy + Discord). Sin el, solo voz:
+    # este puente es la UNICA fuente KRX sin Gateway y su caida era muda fuera del Mac.
     print(msg, file=sys.stderr, flush=True)
     try:
         subprocess.Popen(["/bin/bash", os.path.join(ROOT, "scripts", "speak.sh"), "DANGER", msg],
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except OSError:
         pass
+    if titulo:
+        try:
+            import notify_short
+            notify_short.push(titulo, corto or msg)
+        except Exception as e:                    # el aviso jamas tumba al puente
+            print(f"[korea-naver] push fallo: {e}", file=sys.stderr, flush=True)
 
 
 def main():
@@ -354,8 +373,13 @@ def main():
             fallos += 1
             print(f"[korea-naver] sondeo fallo ({fallos}): {type(e).__name__}: {e}",
                   file=sys.stderr, flush=True)
-            if fallos == FAILS_LOUD:
-                grita(f"Puente Corea de respaldo caido: {fallos} sondeos fallidos seguidos.")
+            if fallos == FAILS_LOUD and krx_en_horario():
+                grita(f"Puente Corea de respaldo caido: {fallos} sondeos fallidos seguidos.",
+                      titulo="🇰🇷 KRX NAVER BRIDGE CIEGO",
+                      corto="Corea sin datos: el respaldo Naver tambien cayo.")
+            elif fallos == FAILS_LOUD:
+                print("[korea-naver] 5 fallos seguidos pero KRX CERRADO — sin alarma",
+                      file=sys.stderr, flush=True)
             if once:
                 return 1
             time.sleep(POLL_S * 2)

@@ -66,15 +66,20 @@ def num(v):
         return None
 
 
-def say(title, msg, voice, prio="SIGNAL", sound="ProAlert", voice_msg=None):
-    """voice_msg: version corta (Yunior 2026-07-28 "voces muy largas, resume")."""
+def say(title, msg, voice, prio="SIGNAL", sound="ProAlert", voice_msg=None, push=None):
+    """voice_msg: version corta (Yunior 2026-07-28 "voces muy largas, resume").
+    push: al embudo notify_push (ntfy+Discord). Por defecto sigue a la voz, como
+    bollinger_alarm.say(); se separa cuando la voz esta vetada pero la senal vale."""
+    if push is None:
+        push = voice
     if TEST:
-        print(f"[EF_TEST {'VOZ' if voice else 'banner'}] {title} | {msg}")
+        print(f"[EF_TEST {'VOZ' if voice else 'banner'}{' PUSH' if push else ''}] {title} | {msg}")
         return
     corto = voice_msg or msg
     if voice:
         subprocess.Popen(["/bin/bash", os.path.join(SCRIPTS, "speak.sh"), prio, corto],
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    if push:
         import notify_short; notify_short.push(title, corto)
     subprocess.Popen(["/usr/bin/osascript", "-e",
                       f'display notification "{corto}" with title "{title}" sound name "{sound}"'],
@@ -348,7 +353,10 @@ def run_pass(label, auth):
         msg = (f"Caida post earnings en {c['sym']}: {abs(c['drop_pct']):.1f} por ciento, "
                f"{c['drop_atr'] or '?'} ATRs. Score {c['score']}. {c.get('opciones_txt') or 'opciones sin dato'}. "
                f"TradingAgents {c['ta']}.")
-        say(line.split(" (")[0], msg if voice else line, voice=voice,
+        # push aunque la voz este vetada: la voz exige OPCIONES OK y el 08-03, con IBKR
+        # caido, dos caidas score 68/65 se quedaron solo en el Mac. El gate de RUIDO ya
+        # es SCORE_FEED + un aviso por simbolo y dia (3 lineas en 12 sesiones medidas).
+        say(line.split(" (")[0], msg if voice else line, voice=voice, push=True,
             voice_msg=f"{c['sym']} cayó fuerte tras resultados. {c['ta']}.")
         if not TEST:
             with open(alerted_path(), "a") as f:

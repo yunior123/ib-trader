@@ -122,13 +122,29 @@ def estado(**kw):
     os.replace(tmp, STATUS)
 
 
-def grita(msg, nivel="DANGER"):
+_PUSH_THROTTLE_S = 1800.0
+_ultimo_push = 0.0
+
+
+def grita(msg, nivel="DANGER", titulo=None, corto=None):
+    # titulo -> tambien al embudo data/notify_push.txt (ntfy + Discord). #estado-proveedores
+    # ya tenia la regla "FINNHUB WS" y ningun productor que la alimentase.
+    # Throttle 30 min y payload SIN contador: "caido 5/10/15 veces" derrotaba el dedup de 60 s
+    # del rele -> un socket caido toda la noche eran ~96 pings al telefono (revision 2026-08-04).
+    global _ultimo_push
     print(msg, file=sys.stderr, flush=True)
     try:
         subprocess.Popen(["/bin/bash", os.path.join(ROOT, "scripts", "speak.sh"), nivel, msg],
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except OSError:
         pass
+    if titulo and time.time() - _ultimo_push >= _PUSH_THROTTLE_S:
+        _ultimo_push = time.time()
+        try:
+            import notify_short
+            notify_short.push(titulo, corto or msg)
+        except Exception as e:                    # el aviso jamas tumba al puente
+            print(f"[finnhub-ws] push fallo: {e}", file=sys.stderr, flush=True)
 
 
 def _publica(n, ultimo, por_sym, mudo, abierta):
@@ -233,7 +249,9 @@ async def main():
             # `caidas == 5` gritaba UNA sola vez en toda la vida del proceso: pasadas las 5, un
             # socket en bucle de reconexion se quedaba callado para siempre. Ahora cada 5.
             if caidas % 5 == 0:
-                grita(f"Puente Finnhub caido {caidas} veces seguidas. Sin print en tiempo real.")
+                grita(f"Puente Finnhub caido {caidas} veces seguidas. Sin print en tiempo real.",
+                      titulo="FINNHUB WS",
+                      corto="socket CAIDO en bucle — sin print en tiempo real")
         if vivo >= SESION_SANA_S:     # aguanto: la caida anterior fue transitoria
             espera, caidas = 2.0, 0
         if hasta is not None and time.time() >= hasta:

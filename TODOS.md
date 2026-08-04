@@ -2,6 +2,139 @@
 
 > Vivo. Apuntar cada petición AL MOMENTO con las palabras de Yunior. Lo cerrado → Done.md.
 
+## 🔴 SESIÓN 2026-08-04 (martes — ráfaga Discord + UW flows + backtest de alertas)
+- [ ] 11. "make sure we have options alerts separately, take a look at spartan for reference"
+      (2026-08-04) — HECHO commits 8bd15bcc: #opciones-contratos (ficha GO/CAUTION de
+      order_ticket), NO-GO a #senales-rechazadas; Spartan separa por vehiculo, 19 ideas/dia
+      vs nuestras 390, mudez medida 11:00-12:59.
+- [x] 12. "continue, review all changes, hunt for bugs, logic issues, make sure we post updated
+      and accurate data to discord. commit and push when done, but first review all in depth and
+      send agents to review the whole repo. hunt hunt hunt." (2026-08-04) — HECHO. 3 revisores:
+      (a) puente Discord: cazado el bug de MEDIANOCHE (alerta de las 23:59 leida a las 00:05 =
+      edad -86099s -> descartada en silencio; arreglado en parse()), tope de sleep en 429 a 10s
+      (60s atascaba la cola y pudria el resto), validacion --end;
+      (b) parches de productores: throttle temporal en finnhub (el payload con contador
+      derrotaba el dedup -> ~96 pings/noche), throttle de MANADA MUDA persistido a disco
+      (crash-loop lo reseteaba), gate krx_en_horario() (Naver caido a mediodia US ya no es
+      DANGER), cap diario 5/dia/sym en la ficha de zona del chart (max era 120/h), guardas
+      try en los 3 puentes (un aviso jamas tumba el feed);
+      (c) frescura: cayo por limite de sesion; verificado a mano lo esencial — el 04:00 de HOY
+      genero 30 PDFs y los publico solo (planes: 30/30 subidos + estado: publicado).
+      Relanzados con el codigo nuevo: korea_naver, finnhub_ws, provider_bridge, chart_bridge x6,
+      discord_relay — todos verificados con logs frescos. Suite 1727 passed.
+      HALLAZGO COLATERAL: la suscripcion Finviz Elite EXPIRO ("User's subscription expired" en
+      dailyplans.log) — lane jugosas y valuation ROTOS hasta renovar.
+      Backfill UW de los 30 de la flota COMPLETO: 8.412 ficheros + 414 HUECO declarados, 1,7 GB,
+      cupo 9.282/30.000. data/history/*/uw_*.json queda fuera del repo (re-descargable).
+- [ ] 8. "send another agent to explore UW to see if there is some other feature they have we
+      could exploit, take a look at latest updates from them" (2026-08-04) — delegado a agente
+- [ ] 9. "make sure the we send all realtime updates and signals to discord server, send agent
+      for that" (2026-08-04) — delegado a agente (auditoría de cobertura: qué productores NO
+      pasan por data/notify_push.txt y por tanto NO llegarían a Discord)
+- [ ] 10. "send agent to investigate all logs, to find noise or bugs or broken things"
+      (2026-08-04) — delegado a agente
+
+- [ ] 1. "create alert system with UW to detect flows, advanced ones" (2026-08-04) — **RECON HECHO,
+      motor pendiente**. Informe: `docs/UW-FLOW-RECON-2026-08-04.md`. Sonda reutilizable
+      `scripts/uw_endpoint_probe.py` (+13 tests). **64/69 rutas → 200, cero 401/403: el plan da
+      acceso a TODO** (129 peticiones = 0,43% del cupo de 30.000). Websocket: **101 y cierre en
+      0,09 s con 0 bytes** → puerta de plan, el motor va por REST. 3 alertas diseñadas
+      (CAPITAN-CONTRA-TROPA, VEGA-AGRESOR EXTREMO, MURO EN CONSTRUCCIÓN), nacen UNPROVEN.
+      El motor NO se cablea hasta medir la latencia en RTH (punto 8) y las colinealidades (8c).
+      **ARCHIVADOR YA VIVO (cierra el 8d)**: `scripts/uw_flow_archive.py` + keepalive +
+      `com.ibtrader.uwflowarchive` cargado y esperando la apertura (LastExitStatus 0). Rescatada
+      de paso la sesión ENTERA del 2026-08-03 para SPY/QQQ/SMH/NVDA/MU (15 ficheros en
+      `data/history/2026-08-03/`) porque el endpoint del día aún la servía. Cazado y arreglado un
+      fallo real: etiquetaba por RELOJ, así que a las 02:37 archivaba la sesión del lunes en la
+      carpeta del martes; ahora el día sale del propio dato y levanta si la respuesta mezcla días.
+      +20 tests (`tests/test_uw_flow_archive.py`).
+- [~] 2. "100 percent of alert system, including finviz should be also in our discord
+      1534075283093848094 server DISCORD_GUILD_ID, use mcp" (guild 1534075283093848094,
+      canal 1534075287480959088, app 1534079940675240066) — CÓDIGO COMPLETO Y VERIFICADO EN SECO,
+      **BLOQUEADO** en que el bot no está autorizado en el servidor (0 servidores, 404 al guild).
+      6 módulos `scripts/discord_{client,layout,setup,webhooks,send,relay,post}.py` + keepalive +
+      `com.ibtrader.discordrelay.plist` + `discord_bootstrap.sh` (un comando, idempotente).
+      El embudo `data/notify_push.txt` (19 productores: bots, bollinger, ballenas, manada, finviz,
+      corea, proveedores) se enruta ENTERO: **676/676 líneas reales clasificadas, 0 al fallback**.
+      Consumidor INDEPENDIENTE de `notify_relay.sh`: si Discord cae, ntfy/voz/email siguen.
+      55 tests. MCP de Discord NO instalado: decisión pendiente de Yunior (riesgo de cadena de
+      suministro — un paquete npm de terceros recibiría el bot token; nuestro código ya hace todo).
+- [~] 3. "full backtest to todays alerts, finetune them, lets see how we can maybe filter more
+      and be more excusite to avoid signal noise weather for fleet or finviz. review one by one
+      with fresh agents" (2026-08-04) — FLOTA HECHA: `docs/BACKTEST-ALERTAS-FLOTA-2026-08-04.md`,
+      10 sesiones, 5.366 alertas, 3.907 medibles, triple barrera + Wilson sobre n_eff (ρ̄ medida
+      0,351) + null emparejado + BH-FDR. **0 KEEP de 95 tests.** `🧲 ESTRUCTURAL pin` canta
+      74-76% y el precio se queda quieto el **1,0%** (es el 46% del feed); el **mute p<55 está
+      INVERTIDO** (BAND-WALK hablada −0,080, silenciada +0,065); la confluencia es PEOR que la
+      alerta suelta. FINVIZ HECHA: `docs/BACKTEST-ALERTAS-FINVIZ-2026-08-04.md`. 184 alertas el 08-03 en 116
+      banners; hit 43,3% contra null 51,7% = **−8,4 pp CONTRA EL AZAR**, signo negativo en 3 de
+      4 umbrales, cero cortes sobreviven BH-FDR. El score es INVENTADO (ningún fichero de
+      calibración) y además **el componente SMA20 NO EXISTE**: `finviz_screener_watch.cpp:340-341`
+      tiene el comentario corrido un puesto, las columnas c=53,54,55 son 50-Day SMA/200-Day
+      SMA/50-Day High, `sma20_pct` sale vacío en el 100% de las filas. Momentum **se auto-vota**:
+      3 de sus 7 votos ya están en el filtro que manda a Finviz. Y `score N/6` no es una
+      fracción (`add(r,0,…)` sube `possible` aunque el voto valga 0) pero la voz lo canta como si
+      lo fuera. **NINGÚN filtro aplicado: la decisión es de Yunior.**
+- [~] 4. "make sure we post all signals during the day to discord" + estructura de canales/roles
+      del brief (categorías START HERE / LIVE TRADING ALERTS / WATCHLISTS / ANALYSIS / SYSTEM),
+      webhooks por canal, secretos fuera del repo — hecho salvo la autorización (ver punto 2).
+      Estructura ADAPTADA al proyecto: 5 categorías / 33 canales, **cada uno con un productor real
+      verificado en el repo** (ley: canal sin productor no existe). Enganchado a `print_plans.sh`
+      (planes del día) y a `fleet_up.sh --status`. Roles con permisos mínimos, sin Administrator.
+      Canales nuevos que salieron de MEDIR el embudo: `#confluencia` y `#capitanes` (las 8 líneas
+      que ninguna regla reconocía eran las dos señales más selectivas de la casa).
+- [ ] 5. Rotar el bot token de Discord: llegó pegado en el chat → comprometido por definición.
+      Reset en el Developer Portal y sustituir en `config/feeds.env` (600, gitignored) — pendiente
+- [ ] 6. "we post plans, trees, strategies there too" (2026-08-04) — los PDFs/planes diarios,
+      árboles de escenarios y estrategias también van a Discord — pendiente
+- [ ] 7. "take a look at this server and see what we can learn and take from them to boost and
+      improve our server architecture: discord.com/channels/492093482576510982/493845991523352579.
+      server in spanish for now, with posibility for english too later. send agent for this task,
+      let it use claude in chrome" (2026-08-04) — delegado a agente
+
+### 8. Derivados del recon UW (2026-08-04) — "add new todos for the future as needed once we have better tools or ibkr" (Yunior)
+- [ ] 8a. **MEDIR LA LATENCIA DE UW EN RTH** — es la condición dura de `~/CLAUDE.md` antes de
+      fiarse de una fuente, y sigue abierta desde el 2026-07-26. De madrugada NO se puede: "edad
+      del sello" = "tiempo desde el cierre". Un comando, ya implementado:
+      `./venv/bin/python scripts/uw_endpoint_probe.py --rth-latency --sym SPY --minutes 30`
+      (6 pasadas × 9 endpoints = 54 peticiones, 0,18% del cupo). Procedimiento completo en
+      `docs/UW-FLOW-RECON-2026-08-04.md` §4. **Predicción registrada de antemano: 30-90 s.**
+      Al terminar, sustituir la fila de UW en `docs/LATENCIA-FUENTES.md:18` (dice "trial, caduca
+      ~2026-08-01", obsoleta: el token se renovó el 08-03) por el número medido — pendiente
+- [ ] 8b. **RE-PROBAR EL WEBSOCKET EN RTH** — el único experimento cuyo resultado puede cambiar
+      con el mercado abierto. Hoy: 101 Switching Protocols y cierre en 0,05-0,09 s sin close-frame
+      y con 0 bytes, insensible a 4 formatos de join y a no enviar nada; `GET /api/socket` declara
+      `{"data":[]}` = cero canales. Si en RTH entrega mensajes, **el veredicto se revoca y el
+      socket pasa a ser la vía preferente** (latencia = dinero) — pendiente
+- [ ] 8c. **TRES COLINEALIDADES QUE HAY QUE MEDIR ANTES DE ESCRIBIR UNA LÍNEA DE MOTOR** (test 1
+      de la killlist: ρ antes que edge, |ρ|>0,9 = muere ya):
+      (1) `dir_vega_flow` vs el `signed_premium` que ya publica `uw_net_prem.py`;
+      (2) `señal_capitan` vs `fleet_consensus` (que mide manada sobre BARRAS, no sobre premium);
+      (3) `max_pain` de UW vs nuestro `abs_wall`/`pin-and-expiry-mechanics`.
+      Precedente que justifica el orden: `greek-flow.dir_delta_flow` resultó **byte-idéntico** a
+      `net_prem_ticks.net_delta` en 406/406 minutos (ρ=1,0) y mató la idea del HIRO-lite — pendiente
+- [ ] 8d. **ARCHIVADOR FORWARD-ONLY de la serie intradía de UW** — `net-prem-ticks` de los 30 + los
+      3 capitanes y `flow-per-strike` de los 8 de la cinta. La serie intradía **NO es recuperable
+      hacia atrás**: el reloj de la muestra empieza el día que se encienda, así que cada día que
+      pasa sin archivar es un día que las 3 alertas nunca podrán validar. `uw_archive.py:88-103`
+      ya archiva `net_prem_ticks` a diario — solo hay que subir la frecuencia a intradía.
+      Presupuesto calculado: ~7.560 req/día = 25,2% del cupo, cabe con margen ×4 — pendiente
+- [ ] 8e. **BLOQUEADO POR HERRAMIENTAS/DATOS** (no se toca hasta que exista la muestra):
+      · las 3 alertas no publican probabilidad hasta que su celda tenga `n_eff` suficiente
+        (ρ̄=0,412 → `n_eff` = n/(1+(k−1)ρ̄)), pase el null de entrada aleatoria y BH-FDR q=0,10;
+      · `CAPITAN-CONTRA-TROPA` solo actúa cuando hay conflicto, y el conflicto es raro: puede
+        tardar 2-3 meses en salir de DATA-INSUFFICIENT. **Dicho de antemano** para que nadie lo
+        presente como fracaso en septiembre;
+      · `full-tape/{date}` (ZIP 1,54 GB/día) para backtest de un día concreto: solo por streaming
+        a disco, JAMÁS en memoria en el Mac de 8 GB. ~380 GB/año si se archivara a diario — pendiente
+- [ ] 8f. **CUANDO VUELVA IBKR** (orden vigente: sin TWS/Gateway esta semana) — el contraste que
+      de verdad decide: `stock_state.tape_time` de UW contra el último print de IBKR del mismo
+      símbolo (`data/bars_SPY.txt`, que escribe `ibkr_bar_bridge.py`). La diferencia de sellos ES
+      la latencia de UW contra la fuente de disparo. Sin IBKR vivo esa comparación no existe y la
+      medición del 8a queda a medias (mide la edad del feed, no el desfase contra el disparador).
+      **Regla que no cambia pase lo que pase: ningún nivel que dispare una orden viene de UW** —
+      el nivel se calcula, el PRINT que lo confirma es de IBKR — pendiente
+
 ## 🔴 SESIÓN 2026-08-03 (lunes 06:40 ET — ráfaga de apertura)
 - [x] 12. "save finviz new token" + "create bot ... breakouts" + "add 3 bots for new finviz
       popular screeners: warren buffet, short squeeze, momentum breakout; add signal weather to

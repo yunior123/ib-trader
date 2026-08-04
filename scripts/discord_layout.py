@@ -92,11 +92,18 @@ RULES = [
 
     # criticas: exigen accion ya
     (r"🚨|🌋|DANGER|TERREMOTO|CAPITULACI", "criticas", CRITICA),
-    (r"\bSTOP\b|order_engine|ORDEN ENVIADA|FILL\b", "criticas", CRITICA),
+    # STOP solo en MAYUSCULAS: "MU: SELL (STOP)" y "STOP tocado" son criticos, pero el
+    # "stop 211" minuscula de una ficha ("compra 212.5 stop 211") es un precio, no un evento.
+    (r"\b(?-i:STOP)\b|order_engine|ORDEN ENVIADA|FILL\b", "criticas", CRITICA),
+    (r"ALARMA PRECIO", "criticas", CRITICA),          # price_alarm.cpp:260 — el PRINT
+    (r"🛑|SCALPER", "criticas", CRITICA),             # scalper_core.h:600-712
 
     # confluencia y capitanes ANTES que lo generico: "🔗 FLUJO + BB QQQ" lleva "BB" dentro
     # y caeria en senales-flota. Son las dos senales mas selectivas que emite la casa.
     (r"🔗|FLUJO \+ BB|CONFLUENCIA", "confluencia", NORMAL),
+    # El veto/read-through COREANO va antes que capitanes: su cuerpo suele nombrar al capitan
+    # ("🔪 VETO | capitan coreano en contra") y sin este orden se lo llevaria #capitanes.
+    (r"🔪 VETO|READ-?THROUGH|KORU|V ROTA", "corea-overnight", NORMAL),
     (r"🎖|CAPITAN|CAPITÁN", "capitanes", NORMAL),
 
     # La ficha RECHAZADA va antes que la operable: un NO-GO no es una idea, es una idea MUERTA,
@@ -121,21 +128,32 @@ RULES = [
     # manada
     (r"🐺|🐘|MANADA|CONSENSO", "manada", NORMAL),
 
-    # estructura de opciones
+    # estructura de opciones. X-RAY/RETEST_REJECT/BOUNCE: eventos de NIVEL de qqq_xray.cpp:205 y
+    # today_alarm5 — ya empujaban al embudo y caian en #sin-clasificar (auditoria 2026-08-04 R8).
     (r"MURO|WALL|GAMMA FLIP|\bGEX\b|IMAN|IMÁN|\bPIN\b|MAX ?PAIN", "gamma-niveles", NORMAL),
+    (r"X-?RAY|RETEST_REJECT|\bBOUNCE\b", "gamma-niveles", NORMAL),
 
-    # screeners
+    # screeners (+ R4: screener/state.py:56 y alert_bot.py:39)
     (r"FINVIZ", "finviz-screeners", NORMAL),
+    (r"TA BUY|BUY-CONSIDER|BARGAIN", "finviz-screeners", NORMAL),
 
-    # corea
+    # corea (R3 vive arriba, antes de capitanes)
     (r"🇰🇷|KOSPI|KRX|SAMSUNG|SK-?HYNIX|KODEX", "corea-overnight", NORMAL),
 
     # catalizadores
     (r"⏰|EXPIRA HOY|EARNINGS|RESULTADOS", "earnings-catalizadores", NORMAL),
 
     # senales de la flota (lo mas generico, al final)
+    # R1: los 21 bots C++ ("QQQ: BUY ...", "MU: SELL ..."). Va DESPUES de \bSTOP\b para que
+    # "(STOP)" siga siendo critica. R8: dram_guard/memoria-confluencia ya empujaban al embudo.
+    (r"^[A-Z0-9]{1,6}: (BUY|SELL)|\bCOMPRAR\b|\bVENDER\b", "senales-flota", NORMAL),
+    (r"MEMORIA CONFLUENCIA|DRAM GUARD", "senales-flota", NORMAL),
     (r"🎈|BOLLINGER|BB REBOTE|BB BAND-WALK|%B", "senales-flota", NORMAL),
     (r"🎯|FUERA DE BANDA|RE-ENTRADA|BRUJULA|BRÚJULA|COMPASS|DIP\b", "senales-flota", NORMAL),
+
+    # R7: telemetria de los posters y el healthcheck — sistema, jamas canal de alerta
+    (r"^X (POSTED|BUDGET|AUTH FAIL|WHALE BOT)", "bot-logs", SISTEMA),
+    (r"🩺|HEALTHCHECK", "estado-flota", SISTEMA),
 ]
 
 FALLBACK_CHANNEL = "sin-clasificar"       # jamas se descarta una alerta en silencio

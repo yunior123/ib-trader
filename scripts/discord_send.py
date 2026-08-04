@@ -90,7 +90,10 @@ def _post(url, body, headers):
                     wait = float(json.loads(raw).get("retry_after", 1.0))
                 except (ValueError, AttributeError, TypeError):
                     wait = 1.0
-                time.sleep(min(wait + 0.25, 60.0))
+                # Tope 10 s, no el retry_after entero: el rele es sincrono, y un sleep de
+                # 60 s dejaria las alertas siguientes mas viejas que FRESH_S=45 -> se
+                # tirarian todas. Mejor perder ESTE mensaje que atascar la cola entera.
+                time.sleep(min(wait + 0.25, 10.0))
                 last = "429"
                 continue
             if e.code in (401, 403, 404):

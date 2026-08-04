@@ -323,12 +323,32 @@ def _rth(ahora=None) -> bool:
 _grito_manada = 0.0
 
 
+_GRITO_MANADA_F = REPO / "data" / ".manada_muda_grito"
+
+
+def _grito_manada_reciente(ventana_s: float = 1800.0) -> bool:
+    """Throttle por MTIME de un side-file: sobrevive reinicios del puente.
+
+    En memoria, cada relanzamiento de com.ibtrader.fleet (StartInterval 300) reseteaba el
+    throttle: un crash-loop en RTH convertia "1 aviso/30 min" en 1 por relanzamiento.
+    """
+    try:
+        return time.time() - _GRITO_MANADA_F.stat().st_mtime < ventana_s
+    except OSError:
+        return False
+
+
 def grita_si_manada_muda(v: dict) -> None:
     """Una MANADA inoperante en RTH tiene que DOLER: es la alarma de rebaño apagada."""
     global _grito_manada
-    if v["operativa"] or not _rth() or time.time() - _grito_manada < 1800:
+    if v["operativa"] or not _rth() or time.time() - _grito_manada < 1800 \
+            or _grito_manada_reciente():
         return
     _grito_manada = time.time()
+    try:
+        _GRITO_MANADA_F.touch()
+    except OSError:
+        pass
     med = v["bar_age_mediana_s"]
     msg = (f"Alarma de manada inoperante: solo {v['votan']} de {v['universo']} simbolos "
            + (f"pueden votar. Las barras llegan con {med:.0f} segundos." if med is not None
@@ -339,6 +359,15 @@ def grita_si_manada_muda(v: dict) -> None:
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except OSError:
         pass
+    # embudo (ntfy + Discord): el denominador fabricado ya disparo un DANGER falso
+    # (21/26 = 80,8% cuando era 21/30 = 70%). Fuera del Mac esto era mudo.
+    # Con guarda: este es el UNICO feed de la flota esta semana; un aviso jamas lo tumba.
+    try:
+        import notify_short
+        notify_short.push("🕳 MANADA MUDA",
+                          f"Manada inoperante: solo {v['votan']} de {v['universo']} pueden votar.")
+    except Exception as e:
+        print(f"{LOG_PREFIX} push MANADA MUDA fallo: {e}", flush=True)
 
 
 def write_status(settings, exch_ts: dict[str, str], entitlement: list[str],

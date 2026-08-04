@@ -64,6 +64,11 @@ def parse(line):
     lt = time.localtime()
     t = time.mktime((lt.tm_year, lt.tm_mon, lt.tm_mday, int(hh), int(mm), int(ss),
                      0, 0, lt.tm_isdst))
+    # El sello solo lleva HH:MM:SS: a las 00:05, una linea de las 23:59 parecia venir del
+    # FUTURO (edad -86099 s) y el filtro age<-60 la tiraba en silencio. Si el sello queda
+    # mas de 60 s por delante del reloj, era de ayer.
+    if t - time.time() > 60:
+        t -= 86400.0
     return time.time() - t, title.strip(), body.strip()
 
 
