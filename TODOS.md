@@ -3,6 +3,23 @@
 > Vivo. Apuntar cada petición AL MOMENTO con las palabras de Yunior. Lo cerrado → Done.md.
 
 ## 🔴 SESIÓN 2026-08-04 (martes — ráfaga Discord + UW flows + backtest de alertas)
+- [x] 17. "find me best tickers with high liquidity for options that might go down like a
+      kniefe today starting now" (2026-08-04 10:11) — RESPONDIDO 10:15 en chat + #estrategias +
+      embudo. Medido (Finviz losers opcionables + puts ATM CBOE + flujo UW): los cuchillos
+      grandes tienen opciones IMPAGABLES (BRKR -17,6% spread 188% · APTV 22% · NRG 18,8% ·
+      HUT 53%) — regla 4 los VETA todos. CIFR -12,6% el unico casi-operable (7,9%, OI 780)
+      pero reboto +4,3% desde apertura: solo retest-rechazo impreso. AMZN reboto EXACTO en su
+      put wall 275 (gano el lado CALL del plan premarket). NVDA con $2,8M de puts VENDIDAS
+      (bid-side, alcista). Veredicto honesto: sin cuchillo liquido que pase el gate a esa hora.
+- [x] 16. "make sure we post the best signals to x.com realtime" (2026-08-04 ~10:0x) — HECHO.
+      Medido el problema: 15 posts hoy en X, TODOS Finviz (anti-señal a -8,4pp) y CERO de flota
+      (`posted_keys: []` — qualifies() exigia "prob>=70" que el feed casi nunca trae).
+      Arreglo en x_signal_poster: (a) Finviz DEGRADADO — cap 20->3/dia y RVOL>=2,0 (el unico
+      corte del backtest con vida propia, +24,7pp); (b) rama FACTUAL nueva: los prints UW
+      grandes (premium>=$1M con lado declarado, o SWEEP) postean el DATO en ingles sin fabricar
+      probabilidad (ley measured-probability), cap 6/dia, dedup por contrato; los 🧱 MUROS se
+      quedan en Discord (redactados en espanol). Relanzado y verificado: "FINVIZ-SKIP cap
+      3/day" ya en el log. 6 tests nuevos.
 - [x] 15. "are signals ready for fleet calls or puts?" (2026-08-04 09:54) — NO lo estaban, y
       ahora SÍ (con techo honesto). Diagnóstico medido: la cadena Polygon trae CERO bid/ask
       (`bidask_ok_pct 0.0000`; /v3/quotes = 403) → order_ticket daba NO-GO "sin bid/ask" en

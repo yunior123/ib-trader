@@ -52,7 +52,12 @@ LOOP_SEC = 60
 MAX_REALTIME_PER_DAY = 20
 MIN_GAP_SEC = 0
 MAX_PREMARKET = 1
-MAX_FINVIZ_PER_DAY = 20
+# Finviz DEGRADADO en X (Yunior 2026-08-04 "post the BEST signals"): el backtest del mismo dia
+# (docs/BACKTEST-ALERTAS-FINVIZ-2026-08-04.md) lo mide a -8,4pp CONTRA el azar, y el 08-04 a
+# mediodia llevabamos 15 posts en X, TODOS Finviz y CERO de flota. X es la cara publica: el
+# cupo grande es para lo MEDIDO de la casa (flujo UW, muros, fichas), no para el screener.
+MAX_FINVIZ_PER_DAY = 3
+MAX_FACTUAL_PER_DAY = 6    # posts de HECHO medido (UW FLOW / MUROS): sin prob fabricada
 FRESH_SEC = 600            # ignorar lineas de hace >10 min (arranques tardios)
 BARS_STALE_SEC = 300       # bars viejos >5 min -> fallback yfinance
 
@@ -188,6 +193,39 @@ def english_signal_summary(title, msg):
     return f"{'Bearish' if short else 'Bullish'} fleet setup confirmed"
 
 
+def qualifies_factual(title, msg):
+    """(True, clave, texto) para HECHOS medidos que valen X sin fabricar una probabilidad.
+
+    UW FLOW: solo los prints grandes con lado declarado (premium >= $1M o SWEEP) — son los
+    mas selectivos del motor (el resto ya se quedo en Discord). MUROS: confluencia de
+    estructura que la casa redacta a mano, de por si escasa. Nada de prob inventada: la ley
+    `measured-probability` prohibe publicar un numero sin muestra, asi que el post es el dato.
+    """
+    up = title.upper()
+    if up.startswith("UW FLOW"):
+        m = re.search(r"UW FLOW ([A-Z0-9.]{1,6})", up)
+        if not m:
+            return False, None, None
+        sym = m.group(1)
+        big = re.search(r"premium ([\d.]+)M (ask|bid)-side", msg)
+        sweep = re.search(r"SWEEP \$([\d.]+)k", msg)
+        if not big and not sweep:
+            return False, None, None
+        cp = "calls" if "CALLS" in msg.upper() else "puts"
+        strike = re.search(r"strike ([\d.]+)", msg)
+        exp = re.search(r"exp ([\d-]+)", msg)
+        det = "$%sM %s-side" % (big.group(1), big.group(2)) if big else "$%sk sweep" % sweep.group(1)
+        texto = ("📊 ${s} options flow: {det} in {cp}{k}{e}. Measured print (UW), "
+                 "flow is context not direction. Not financial advice.").format(
+            s=sym, det=det, cp=cp,
+            k=" @ %s" % strike.group(1) if strike else "",
+            e=" exp %s" % exp.group(1) if exp else "")
+        return True, "uwflow:%s:%s:%s" % (sym, cp, strike.group(1) if strike else "?"), texto
+    # (los 🧱 MUROS se quedan en Discord: van redactados en espanol a mano y X publica en
+    # ingles via english_signal_summary — no se filtra texto local a la cara publica)
+    return False, None, None
+
+
 def build_post(sym, title, msg, entry, tgt, stp, prob):
     what_happened = english_signal_summary(title, msg)
     base = ("🎯 ${sym} live signal: {q}. ENTRY: {e} (printed level, 2 reads). "
@@ -224,8 +262,10 @@ def finviz_relevance(event):
         return False, "direction mismatch"
     # Momentum/squeeze presets already require >=1.5x RVOL at Finviz. Buffett's
     # wider quality screen must independently earn relevance via volume or move.
-    if rvol < 1.5:
-        return False, "relative volume <1.5x"
+    # 2.0, no 1.5: el UNICO corte del backtest con vida propia (RVOL>=2.0 -> concentracion
+    # +24,7pp). Por debajo, el screener no bate al azar y no se publica en la cara publica.
+    if rvol < 2.0:
+        return False, "relative volume <2.0x"
     if abs(change) < (0.50 if screen in ("momentum", "squeeze") else 1.00):
         return False, "move too small"
     return True, f"{screen} {weather.lower()}"
@@ -336,6 +376,24 @@ def process_signals(st, now_et, dry_run, auth):
             if age > FRESH_SEC:
                 continue
         except Exception:
+            continue
+
+        # HECHOS medidos primero (UW FLOW grande): postean el dato, sin prob fabricada
+        f_ok, f_key, f_text = qualifies_factual(title, msg)
+        if f_ok:
+            if f_key in st["posted_keys"]:
+                continue
+            if st.get("factual_posts", 0) >= MAX_FACTUAL_PER_DAY:
+                log(f"SKIP {f_key} cap factual {MAX_FACTUAL_PER_DAY}/dia")
+                continue
+            if st["posts"] >= MAX_REALTIME_PER_DAY:
+                continue
+            if xc.post_text(f_text, f"factual {f_key}", log, dry_run, auth):
+                st["posts"] += 1
+                st["factual_posts"] = st.get("factual_posts", 0) + 1
+                st["last_post_epoch"] = time.time()
+                st["posted_keys"].append(f_key)
+                save_state(st)
             continue
 
         ok, prob, why = qualifies(title, msg)
