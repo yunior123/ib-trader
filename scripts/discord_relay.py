@@ -194,13 +194,14 @@ def main():
         now = time.time()
         if now - dedup.get(payload, 0) < DEDUP_S:
             continue
-        dedup[payload] = now
-        if len(dedup) > 500:
-            dedup = {k: v for k, v in dedup.items() if now - v < DEDUP_S * 4}
         prioritaria = bool(PRIORIDAD.search(payload))
         if now - lastsent < CAP_S and not prioritaria:
             log("CAP 1/%ds: %s" % (CAP_S, title[:50]))
             continue
+        # TODO 32: dedup SOLO tras pasar el cap — un capado debe poder reenviarse en <60s.
+        dedup[payload] = now
+        if len(dedup) > 500:
+            dedup = {k: v for k, v in dedup.items() if now - v < DEDUP_S * 4}
         lastsent = now
         ch, sev, mirrors = route(title, body, universe)
         emb = S.build_embed(title, body, sev, source="ib-trader")

@@ -167,10 +167,28 @@ FALLBACK_CHANNEL = "sin-clasificar"       # jamas se descarta una alerta en sile
 # Lo que describe NUESTRAS operaciones (ordenes, fills, P&L, posiciones, cuenta) se queda en
 # el Mac: banner osascript + voz local. Los reles EXTERNOS (ntfy, Resend, Discord) lo saltan.
 # OJO: "posicion nueva" del flujo UW es dato de MERCADO (vol/OI del vendor), no nuestro.
-PRIVADO = re.compile(
+# TODO 20: los patrones viven en config/notify_private.txt (compartidos con notify_relay.sh);
+# la copia embebida es SOLO respaldo — un unlink del config jamas abre la puerta.
+PRIV_FILE = os.environ.get("NOTIFY_PRIVATE_FILE",
+                           os.path.join(REPO, "config", "notify_private.txt"))
+_PRIV_DEFAULT = (
     r"order_engine|ORDEN (ENVIADA|RECHAZADA|LIMITE)|\bFILL\b|realizedPnl|EXPIRA HOY|"
-    r"POSICIONES? (ABIERTA|CERRADA|DESCONOCIDAS)|\bU\d{8}\b|comisi[oó]n|ARM_LIVE|CERRAR ",
-    re.IGNORECASE)
+    r"POSICIONES? (ABIERTA|CERRADA|DESCONOCIDAS)|\bU[0-9]{8}\b|comisi[oó]n|ARM_LIVE|CERRAR\s")
+
+
+def _priv_regex():
+    try:
+        with open(PRIV_FILE, encoding="utf-8") as f:
+            pats = [ln.strip() for ln in f
+                    if ln.strip() and not ln.lstrip().startswith("#")]
+        if pats:
+            return re.compile("|".join("(?:%s)" % p for p in pats), re.IGNORECASE)
+    except (OSError, re.error):
+        pass
+    return re.compile(_PRIV_DEFAULT, re.IGNORECASE)
+
+
+PRIVADO = _priv_regex()
 
 
 def is_private(line):

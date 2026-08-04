@@ -3,20 +3,28 @@
 > Vivo. Apuntar cada petición AL MOMENTO con las palabras de Yunior. Lo cerrado → Done.md.
 
 ## 🔴 SESIÓN 2026-08-04 (martes — ráfaga Discord + UW flows + backtest de alertas)
-- [ ] 29. "for displaying in chart priority goes to realtime data, old data is not priority for display, we can keep up to 24h top, no need for more on chart, it will make them heavier. we can still store locally data for backtesting" (2026-08-04 ~15:15) — en curso
+- [x] 29. "for displaying in chart priority goes to realtime data, old data is not priority for display, we can keep up to 24h top, no need for more on chart, it will make them heavier. we can still store locally data for backtesting" (2026-08-04 ~15:15) — HECHO commit 50f4db93 (bars_*.txt tope display 24h: warmup 1440 + poda al doblar; backtest sigue en poly_bars/history)
 - [x] 30. "review spcx in depth, seeing some alerts now for high volume, also check x.com sentiment, something big is coming, musk says that things will be big, lets see" (2026-08-04 ~15:20) — HECHO en sesión: 941k contratos, IV 232%, dos colas, 330C OI 547k; Musk "Few understand"; Kalshi 92% data-center; Polymarket 34% beat
 - [x] 31. "analyze taiwan and japanese markets and chinese cxmt semis, create new channels, analyze meta and msft too" (2026-08-04 ~15:48) — HECHO: canales #taiwan-japon/#china-semis + webhooks + RULES; asia_semis_watch.py launchd 30min con titulares CXMT entregados; docs/ASIA-SEMIS-2026-08-04.md; META caja 580-600 (flip corregido con puts), MSFT drift 485-500
-- [ ] 32. BUG relay (agente Asia): notify_relay.sh:56 registra dedup ANTES del cap 1/5s — mensaje capado no puede reenviarse en 60s y se pierde en silencio. Mover dedup a después del envío OK. (pendiente)
+- [x] 32. BUG relay (agente Asia): notify_relay.sh:56 registra dedup ANTES del cap 1/5s — mensaje capado no puede reenviarse en 60s y se pierde en silencio. Mover dedup a después del envío OK. — HECHO: dedup movido a después del cap en notify_relay.sh (~:75) Y en discord_relay.py:197 (mismo bug heredado); reproducido EN VIVO hoy 17:23:19 (🇹🇼 NOTICIA SEMIS capada y perdida en ambos relés); 3 tests e2e nuevos con arnés zsh+curl-stub (tests/test_notify_relay.py); relés relanzados y push de prueba ENVIADA #bot-logs 17:27:47
 - [x] 33. "review amd and spcx reports, amd is falling like knife, how down can it go?" (2026-08-04 ~16:2x AH) — HECHO: escalera 470-468/450 (put-wall 9.9k)/440-430/424-428 (low 7/28 + precedente -18.7%); 40% gamma muere viernes; SPCX -8.2% mapa 110→100 lockup jueves; MU 884 sobre el 883 darkpool
 - [x] 34. "post amd plan and spcx plan on x.com, in depth, two posts" (2026-08-04 ~16:4x) — HECHO 16:31: 2 posts con imagen-plan (ids 2084738925885530490 AMD / 2084738929979257014 SPCX), ledger 17/30, inglés+disclaimer
+- [ ] 35. "send agents to solve all bugs and todos; net premium like Quant Data NYC (green calls line, red puts, another line), nice, auto-update realtime (or delayed polygon); agents to debug logic/calibration/architecture/realtime/broken; backtest todays signals specially failed, improve, remove noise; surprise me software or discord" (2026-08-04 ~17:0x) — en curso: 3 agentes + widget netprem + sorpresa (Claude)
 - [x] 28. "review again with fresh data. 2. backtest todays signals so far, specially finviz, send fresh agent for it. 3. review with strength micron, tell me positives or bad scenarios if amd or wdc go bad today after earnings" (2026-08-04 ~14:1x) — HECHO: docs/BACKTEST-SIGNALS-2026-08-04.md (finviz_scout 401 todo el dia -> causa: keepalive del domingo con token pre-rotacion en env, matado y relanzado; bb-fade-sup 17W/44L; today_alarm5 vetos acertaron; PLTR/AAOI no cazados por diseño momentum-solo-nuevos); refresh+MU entregados en sesion; BONUS: fix paginacion Polygon (cadenas sin puts toda la semana)
 - [x] 27. "analyze walls too, how explosive it could go tomorrow or next week, but tomorrow is the day, it does caput, specially korean at night, might they sell or buy? analyze sentiment in social media. us UW api" (2026-08-04 ~13:05) — HECHO: Corea MIXTO sesgo compran condicionado a AMD 16:05; explosividad medida (MU 51% gamma muere 8/5, SNDK EM ±19,5%)
 - [x] 26. "dime para la semana que viene, y esta tambien, con studio de ballenas. give me top 5 bullish and top 5 bearish based on evidence from this week and next one. weather from fleet or finviz with high volume, do fresh research. take a look at gamma, gamma flip. think about doing some sort of strangle. take a look at spcx too, tsla. give me the best strangle with low risk high reward and based on catalysts, tomorrow is the day, we can also choose next tuesday, within 200 usd budget" (2026-08-04 ~12:50) — HECHO: 4 docs (WHALES-NEXTWEEK, CATALYSTS-2W, STRANGLE-SCAN, KOREA-SENTIMENT) + sintesis en sesion; hallazgo gordo: SPCX=SpaceX common (memoria nueva); strangle veredicto NO-TRADE medido (ratio max 0,49), boleto NOK $29 unica alternativa
 - [x] 23. "analyze UW, polygon, and others and tell me about the fleet net premiums for week and per day expiration this week, find me the most bullish and bearish tickers either from the fleet or high volume for options from finviz" (2026-08-04 12:32) — HECHO por agente — docs/NET-PREMIUMS-2026-08-04.md (41 req UW)
 - [x] 24. "bugs in ib trader, not updating realtime properly, real crazy, debug" (2026-08-04 12:32) — causa hallada y arreglada: cadenas Polygon en serie con barras/nbbo secuestraban el bucle vivo (cada símbolo cada ~4 min); chain_loop separado en provider_bridge.py, daemon relanzado; MEDIDO tras fix: barra 1m a ~30-50 s de cerrar, manada operativa 26/26 (commit ef90f3da). Pendiente aparte: uw_flow_tape muerto desde ayer, el token UW nuevo da 401 en flow-alerts (entitlement, decision de Yunior)
 - [x] 25. "build new version and make sure new version have the v11 ... or higher text in window" (2026-08-04 ~12:40) — HECHO: VERSION 10→11, rebuild+firma+relanzo, 6 ventanas verificadas con "v11" en el título
-- [ ] 20. "dont reveal personal info on our personal trades via notifications, only via local
-      notification in mac with editeur de script as always" (2026-08-04 ~11:30) — en curso
+- [x] 20. "dont reveal personal info on our personal trades via notifications, only via local
+      notification in mac with editeur de script as always" (2026-08-04 ~11:30) — HECHO: títulos
+      personales identificados en el embudo real (🚨 order_engine ×4, ⏰ EXPIRA HOY; +FILL/
+      realizedPnl/POSICION/U########/comisión/ARM_LIVE/CERRAR de position_close_reminder y
+      order_engine); patrones movidos a `config/notify_private.txt` (fuente única, sin hardcode)
+      leído por notify_relay.sh y discord_layout.is_private() con respaldo embebido si falta el
+      fichero; el banner local osascript lo dispara el propio emisor (position_close_reminder.py:28,
+      patrón de la casa) y los 2 relés externos saltan (verificado en vivo 17:28:00: "PRIVADA
+      (solo local)" en ambos logs, cero curl); 6 tests (tests/test_notify_relay.py)
 - [x] 21. "use osacript here vs3d.volsignals.com... take screenshots, read them, change
       selectors to gamma as well, then tell me whether is going up or down" — HECHO 11:51 via
       SAFARI (la sesion vivia ahi; CDP/Chrome daba login wall). osascript abrio la pestaña,
@@ -141,9 +149,15 @@
       cupo 9.282/30.000. data/history/*/uw_*.json queda fuera del repo (re-descargable).
 - [ ] 8. "send another agent to explore UW to see if there is some other feature they have we
       could exploit, take a look at latest updates from them" (2026-08-04) — delegado a agente
-- [ ] 9. "make sure the we send all realtime updates and signals to discord server, send agent
-      for that" (2026-08-04) — delegado a agente (auditoría de cobertura: qué productores NO
-      pasan por data/notify_push.txt y por tanto NO llegarían a Discord)
+- [x] 9. "make sure the we send all realtime updates and signals to discord server, send agent
+      for that" (2026-08-04) — HECHO, MEDIDO 17:26: última hora el embudo tuvo 2 líneas reales
+      (17:23:18 🇨🇳 y 17:23:19 🇹🇼 NOTICIA SEMIS) y Discord entregó 1/2 — la 🇹🇼 murió por el
+      cap+dedup (bug 32, arreglado hoy) y la 🇨🇳 salió a #sin-clasificar porque el relé corría
+      desde 11:41 con código anterior a f9391259 (sin reglas Asia). Tras fix+relanzo 17:27:23:
+      33 webhooks/33 canales (taiwan-japon y china-semis incluidos), push de prueba ENVIADA
+      #bot-logs en <1 s y puerta PRIVADA operando. Familias que no llegaban: (a) capadas en
+      ráfaga → arreglado con dedup-tras-cap; (b) Asia mal enrutada → arreglado con relanzo.
+      El resto del día: ENVIADAS a #flujo-uw/#senales-flota/#estado-proveedores según log
 - [ ] 10. "send agent to investigate all logs, to find noise or bugs or broken things"
       (2026-08-04) — delegado a agente
 
@@ -197,7 +211,14 @@
       Canales nuevos que salieron de MEDIR el embudo: `#confluencia` y `#capitanes` (las 8 líneas
       que ninguna regla reconocía eran las dos señales más selectivas de la casa).
 - [ ] 5. Rotar el bot token de Discord: llegó pegado en el chat → comprometido por definición.
-      Reset en el Developer Portal y sustituir en `config/feeds.env` (600, gitignored) — pendiente
+      — bloqueado: requiere portal Discord de Yunior. El token vive en `config/feeds.env:48`
+      (`DISCORD_BOT_TOKEN`, chmod 600, gitignored — verificado con git check-ignore). Los 3 pasos
+      de Yunior: (1) discord.com/developers/applications → app 1534079940675240066 → pestaña
+      Bot → "Reset Token" (invalida el viejo al instante); (2) copiar el token nuevo y pegarlo
+      en `config/feeds.env:48` como valor de `DISCORD_BOT_TOKEN=` (sin comillas); (3) avisar a
+      Claude para relanzar `com.ibtrader.discordrelay` y verificar con `scripts/discord_relay.py
+      --once --dry-run` + push de prueba. Los WEBHOOKS de canal (config/discord_webhooks.json)
+      NO dependen del bot token: el relé sigue publicando mientras tanto
 - [ ] 6. "we post plans, trees, strategies there too" (2026-08-04) — los PDFs/planes diarios,
       árboles de escenarios y estrategias también van a Discord — pendiente
 - [ ] 7. "take a look at this server and see what we can learn and take from them to boost and
