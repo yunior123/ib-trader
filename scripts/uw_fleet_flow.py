@@ -230,6 +230,8 @@ def main():
                     print("silencio (%s): %s | %s"
                           % ("cooldown" if en_cooldown else "tope/min", titulo, cuerpo))
                     continue
+                if pushes_este_min:
+                    time.sleep(5.5)   # el rele descarta rafagas (cap 1/5s): espaciar salva la 2a y 3a
                 pushes_este_min += 1
                 notify_short.push(titulo, cuerpo)
                 print("CANTADA %s | %s" % (titulo, cuerpo))
