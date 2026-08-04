@@ -2,6 +2,18 @@ import importlib.util
 import os
 import threading
 
+import pytest
+
+
+@pytest.fixture(autouse=True)
+def _permite_escribir(monkeypatch):
+    """Estos tests SI necesitan que push() escriba (en su tmp_path): abren la puerta.
+
+    El resto de la suite la deja cerrada — medido 2026-08-04: `pytest tests/` metia 52 alarmas
+    "🕳 CINTA CIEGA" reales en data/notify_push.txt, y de ahi a ntfy, email y Discord.
+    """
+    monkeypatch.setenv("IBT_NOTIFY_ALLOW_IN_TESTS", "1")
+
 
 def _load():
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))

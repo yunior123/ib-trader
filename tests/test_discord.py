@@ -319,3 +319,57 @@ def test_ids_se_guardan_atomicos(tmp_path):
 
 def test_load_ids_inexistente_no_revienta(tmp_path):
     assert L.load_ids(str(tmp_path / "nada.json")) == {}
+
+
+# --- alertas de OPCIONES separadas (Yunior 2026-08-04, referencia Spartan Trading) ----------
+@pytest.mark.parametrize("linea", [
+    "🟢 NVDA CALL BOUNCE | NVDA BOUNCE en abs_wall 210 — 🟢 GO 212C 0DTE @1.85 | OPCIONES OK (spread 2%)",
+    "🟡 MU PUT RETEST_REJECT | ficha CAUTION 180P @0.95 | OPCIONES OK (spread 4%)",
+])
+def test_la_ficha_operable_va_a_su_canal_de_opciones(linea):
+    """order_ticket arma un CONTRATO ejecutable; no puede diluirse entre las senales de precio."""
+    assert L.classify(linea)[0] == "opciones-contratos"
+
+
+@pytest.mark.parametrize("linea", [
+    "🔴 QQQ CALL BOUNCE | 🔴 NO-GO — sale muy caro | OPCIONES VETADAS spread 15% — usar ACCIONES",
+    "🔴 SPY PUT BREAK | ❌ SPY: sin cadena — no puedo armar ficha | OPCIONES s/d (sin cadena fresca)",
+    "🔴 NVDA CALL BOUNCE | 🔴 NVDA 177.5C 0DTE — sin bid/ask válido (ilíquido), OI 26. NO-GO.",
+    "🔴 MU PUT BREAK | ❌ MU: sin puts 0DTE en la cadena",
+])
+def test_la_ficha_RECHAZADA_no_ensucia_el_canal_de_opciones(linea):
+    """Un NO-GO no es una idea: es una idea muerta. Se archiva para auditar el veto, no se canta.
+
+    Medido en Spartan Trading (docs/DISCORD-REFERENCIA-2026-08-04.md): 11 ideas de opciones al
+    dia en una sala de pago. Un canal de contratos lleno de vetos deja de leerse.
+    """
+    ch, sev = L.classify(linea)
+    assert ch == "senales-rechazadas" and sev == L.SISTEMA
+
+
+def test_ballena_calls_no_se_va_al_canal_de_opciones():
+    """'🐋 ALERTA BALLENA CALLS' lleva CALLS pero es FLUJO, no un contrato operable."""
+    assert L.classify("🐋 ALERTA BALLENA CALLS | mu 37k calls")[0] == "ballenas-flujo"
+
+
+def test_spike_calls_sigue_en_flujo():
+    assert L.classify("🚀 SPIKE CALLS TSLA | premium x4")[0] == "ballenas-flujo"
+
+
+def test_critica_sigue_ganando_a_la_ficha():
+    assert L.classify("🚨 DANGER | NO-GO en todo, OPCIONES VETADAS")[0] == "criticas"
+
+
+# --- un test JAMAS notifica al humano (bug medido 2026-08-04: 52 alarmas reales) -----------
+def test_notify_short_no_publica_bajo_pytest():
+    """Si esto falla, `pytest tests/` vuelve a mandar DANGER a ntfy, email y Discord."""
+    import importlib.util as _il
+    sp = _il.spec_from_file_location("ibt_notify_short_t",
+                                     os.path.join(SCRIPTS, "notify_short.py"))
+    ns = _il.module_from_spec(sp)
+    sp.loader.exec_module(ns)
+    antes = os.path.getsize(ns.PATH) if os.path.exists(ns.PATH) else 0
+    ns.push("🕳 CINTA CIEGA", "esto NO puede llegar al embudo desde un test")
+    despues = os.path.getsize(ns.PATH) if os.path.exists(ns.PATH) else 0
+    assert ns.under_pytest() is True
+    assert despues == antes, "notify_short escribio en el embudo real durante la suite"

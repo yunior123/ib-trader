@@ -34,6 +34,8 @@ CATEGORIES = [
     ("alertas-vivo", "🚨 ALERTAS EN VIVO", [
         ("criticas", "🚨 DANGER · TERREMOTO · STOP · order_engine. Solo lo que exige acción YA", False),
         ("senales-flota", "Bollinger, apertura fuera de banda, compass y los 21 signal bots", False),
+        ("opciones-contratos", "📅 CONTRATO OPERABLE: strike, vencimiento, límite, spread, OI y "
+                              "presupuesto ≤$200. Veredicto GO / CAUTION / NO-GO. Señal-solamente", False),
         ("ballenas-flujo", "🐋 opt_whale_watch + 🚀 spikes de premium + flujo agresor", False),
         ("flujo-uw", "Unusual Whales: flujo avanzado, net premium, sweeps", False),
         ("manada", "🐺 fleet_consensus: ≥3 tickers de la flota alineados", False),
@@ -96,6 +98,19 @@ RULES = [
     # y caeria en senales-flota. Son las dos senales mas selectivas que emite la casa.
     (r"🔗|FLUJO \+ BB|CONFLUENCIA", "confluencia", NORMAL),
     (r"🎖|CAPITAN|CAPITÁN", "capitanes", NORMAL),
+
+    # La ficha RECHAZADA va antes que la operable: un NO-GO no es una idea, es una idea MUERTA,
+    # y meterla en el canal de contratos lo llena de cosas que no se pueden ejecutar (Spartan
+    # publica 11 ideas de opciones al dia, no 11 vetos). Se archiva para poder auditar el veto.
+    (r"\bNO-GO\b|OPCIONES VETADAS|OPCIONES s/d|sin cadena — no puedo armar ficha|"
+     r"sin bid/ask válido|sin \w+s 0DTE", "senales-rechazadas", SISTEMA),
+
+    # CONTRATO operable antes que el flujo: es lo unico que se puede ejecutar, no contexto.
+    # Referencia Spartan Trading, que separa 📅options-ideas de 📈equity-ideas (Yunior 2026-08-04:
+    # "make sure we have options alerts separately"). Anclado en los strings EXACTOS que emiten
+    # order_ticket.py:129 (veredicto+icono) y optgate.py:106-109 (gate de spread de la regla 4);
+    # sin la ficha delante, `🐋 BALLENA CALLS` se llevaria estas por el "CALLS".
+    (r"OPCIONES OK|\bCAUTION\b|\bGO\b 0DTE|0DTE @", "opciones-contratos", NORMAL),
 
     # flujo de opciones
     (r"🐋|BALLENA", "ballenas-flujo", NORMAL),

@@ -19,7 +19,29 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PATH = os.path.join(REPO, "data", "notify_push.txt")
 
 
+ALLOW_ENV = "IBT_NOTIFY_ALLOW_IN_TESTS"
+
+
+def under_pytest():
+    """True si estamos dentro de la suite y NO se ha pedido explicitamente escribir.
+
+    La puerta es para los tests DE ESTE fichero, que verifican el append-only y la
+    concurrencia y por tanto necesitan que push() escriba de verdad (en su tmp_path).
+    Cualquier otro test la deja cerrada y no puede despertar a nadie.
+    """
+    if os.environ.get(ALLOW_ENV) == "1":
+        return False
+    return bool(os.environ.get("PYTEST_CURRENT_TEST")) or "PYTEST_VERSION" in os.environ
+
+
 def push(title, corto):
+    # Un TEST jamas notifica al humano. Medido 2026-08-04: `pytest tests/` metio 52 alarmas
+    # "🕳 CINTA CIEGA | No veo las ballenas de 3 acciones." en el embudo real -> ntfy, email y
+    # (desde hoy) Discord. tests/test_whale_tape.py:110 parchea subprocess.Popen pero no esto,
+    # y el monkeypatch.chdir no aisla nada porque PATH se deriva de __file__. Crying wolf puro:
+    # es la regla 3 (senal marginal != decisiva) rota por nuestro propio arnes de test.
+    if under_pytest():
+        return
     lt = time.localtime()
     line = f"{lt.tm_hour:02d}:{lt.tm_min:02d}:{lt.tm_sec:02d} | {title} | {corto}"
     try:
