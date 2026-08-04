@@ -3,9 +3,9 @@
 > Vivo. Apuntar cada petición AL MOMENTO con las palabras de Yunior. Lo cerrado → Done.md.
 
 ## 🔴 SESIÓN 2026-08-04 (martes — ráfaga Discord + UW flows + backtest de alertas)
-- [ ] 23. "analyze UW, polygon, and others and tell me about the fleet net premiums for week and per day expiration this week, find me the most bullish and bearish tickers either from the fleet or high volume for options from finviz" (2026-08-04 12:32) — delegado a agente
-- [ ] 24. "bugs in ib trader, not updating realtime properly, real crazy, debug" (2026-08-04 12:32) — causa hallada y arreglada: cadenas Polygon en serie con barras/nbbo secuestraban el bucle vivo (cada símbolo cada ~4 min); chain_loop separado en provider_bridge.py, daemon relanzado — verificando cadencia
-- [ ] 25. "build new version and make sure new version have the v11 ... or higher text in window" (2026-08-04 ~12:40) — HECHO: VERSION 10→11, rebuild+firma+relanzo, 6 ventanas verificadas con "v11" en el título
+- [x] 23. "analyze UW, polygon, and others and tell me about the fleet net premiums for week and per day expiration this week, find me the most bullish and bearish tickers either from the fleet or high volume for options from finviz" (2026-08-04 12:32) — HECHO por agente — docs/NET-PREMIUMS-2026-08-04.md (41 req UW)
+- [x] 24. "bugs in ib trader, not updating realtime properly, real crazy, debug" (2026-08-04 12:32) — causa hallada y arreglada: cadenas Polygon en serie con barras/nbbo secuestraban el bucle vivo (cada símbolo cada ~4 min); chain_loop separado en provider_bridge.py, daemon relanzado; MEDIDO tras fix: barra 1m a ~30-50 s de cerrar, manada operativa 26/26 (commit ef90f3da). Pendiente aparte: uw_flow_tape muerto desde ayer, el token UW nuevo da 401 en flow-alerts (entitlement, decision de Yunior)
+- [x] 25. "build new version and make sure new version have the v11 ... or higher text in window" (2026-08-04 ~12:40) — HECHO: VERSION 10→11, rebuild+firma+relanzo, 6 ventanas verificadas con "v11" en el título
 - [ ] 20. "dont reveal personal info on our personal trades via notifications, only via local
       notification in mac with editeur de script as always" (2026-08-04 ~11:30) — en curso
 - [x] 21. "use osacript here vs3d.volsignals.com... take screenshots, read them, change
