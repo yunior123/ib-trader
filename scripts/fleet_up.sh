@@ -34,6 +34,12 @@ status() {
   else
     alive "provider_bridge.py" && ok "provider_bridge ($MARKET_SOURCE): barras+nbbo+cadena" || bad "provider_bridge ($MARKET_SOURCE) CAÍDO"
   fi
+  # opt_whale_watch es ib_insync: con market_source != ibkr su salida esta CONGELADA aunque el
+  # proceso viva (verde falso cazado por el forense 2026-08-04). El vigia UW es el sustituto.
+  if [[ "$MARKET_SOURCE" != "ibkr" ]]; then
+    alive "uw_fleet_flow.py" && ok "vigía de ballenas UW (flota, sustituto sin IBKR)" \
+      || bad "vigía de ballenas UW CAÍDO (y el IBKR está congelado sin Gateway)"
+  fi
   for p in opt_whale_watch.py:"vigía de ballenas" \
            notify_relay.sh:"relé de notificaciones" \
            voice_queue.sh:"cola de voz" \

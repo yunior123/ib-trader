@@ -3,6 +3,22 @@
 > Vivo. Apuntar cada petición AL MOMENTO con las palabras de Yunior. Lo cerrado → Done.md.
 
 ## 🔴 SESIÓN 2026-08-04 (martes — ráfaga Discord + UW flows + backtest de alertas)
+- [x] 13. "1. create alerts for unusual whales as well for the fleet. 2. make sure software
+      running 3. create alert for possible puts or calls of the fleet based on evidence, a lot
+      going on right now premarket, take a look." (2026-08-04 08:47 premarket) — HECHO.
+      (1) `scripts/uw_fleet_flow.py` + keepalive + `com.ibtrader.uwfleetflow` CARGADO: cinta UW
+      de los 30 (1 req global/60s = 1,3% cupo), descriptiva señal-solamente (premium>=1M con
+      lado dominante / vol-OI>=2 con >=250k / sweep>=500k), dedup persistido + cooldown 15min
+      por contrato + tope 3/min. Titulo "UW FLOW <SYM>" -> #flujo-uw (canal que estaba SIN
+      productor). Probado contra la API real: cazo SNDK CALLS 1370 bid-side = venta de calls
+      EN el muro del plan. 17 tests. Es el sustituto del vigia IBKR (opt_flow.txt congelado
+      desde 07-31), y fleet_up --status ya lo vigila (el verde falso del vigia viejo, avisado).
+      (2) flota verificada verde + salidas REALES comprobadas (no solo procesos).
+      (3) plan premarket con evidencia publicado 09:10 en #estrategias + embudo (#gamma-niveles):
+      ROTACION memoria/semis en gap (WDC +6,4% SNDK +6,3% MU +5,0%) vs megacap software en rojo
+      (AMZN -2,5%); SNDK y SMH CLAVADOS en su call wall (1370/565) = candidato fade con print;
+      AMZN dos caras en su put wall 275 (flip 271); QQQ abre sobre su muro 710 = retest manda;
+      SPY pegado a 761 = pin, sin 0DTE. VIX 15,6 contango. Doctrina: 09:45-10:30 ventana de oro.
 - [ ] 11. "make sure we have options alerts separately, take a look at spartan for reference"
       (2026-08-04) — HECHO commits 8bd15bcc: #opciones-contratos (ficha GO/CAUTION de
       order_ticket), NO-GO a #senales-rechazadas; Spartan separa por vehiculo, 19 ideas/dia
