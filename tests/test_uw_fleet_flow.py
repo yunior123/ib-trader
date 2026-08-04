@@ -141,3 +141,36 @@ def test_in_session_fin_de_semana_no():
 def test_fleet_lee_los_30():
     syms = F.fleet()
     assert len(syms) == 30 and "QQQ" in syms and "MU" in syms
+
+
+# --- respaldo CBOE para las fichas (2026-08-04) -------------------------------------------
+def test_cboe_nbbo_cachea_y_order_ticket_lo_lee(tmp_path, monkeypatch):
+    import importlib.util as _il
+    sp = _il.spec_from_file_location("ibt_ot_t", os.path.join(SCRIPTS, "order_ticket.py"))
+    OT = _il.module_from_spec(sp); sys.modules[sp.name] = OT; sp.loader.exec_module(OT)
+    monkeypatch.setattr(OT, "REPO", str(tmp_path))
+    os.makedirs(str(tmp_path / "data"))
+    import time as _t
+    with open(str(tmp_path / "data" / "cboe_nbbo_qqq.json"), "w") as f:
+        json.dump({"sym": "QQQ", "asof": _t.time(), "src": "cboe_delayed",
+                   "quotes": {"C|20260804|709": [5.25, 5.31]}}, f)
+    assert OT._cboe_nbbo("QQQ", "C", "20260804", 709.0)[:2] == (5.25, 5.31)
+    assert OT._cboe_nbbo("QQQ", "P", "20260804", 709.0) is None      # sin dato -> None, no 0
+
+
+def test_cboe_nbbo_rancio_devuelve_none(tmp_path, monkeypatch):
+    import importlib.util as _il
+    sp = _il.spec_from_file_location("ibt_ot_t2", os.path.join(SCRIPTS, "order_ticket.py"))
+    OT = _il.module_from_spec(sp); sys.modules[sp.name] = OT; sp.loader.exec_module(OT)
+    monkeypatch.setattr(OT, "REPO", str(tmp_path))
+    os.makedirs(str(tmp_path / "data"))
+    with open(str(tmp_path / "data" / "cboe_nbbo_qqq.json"), "w") as f:
+        json.dump({"sym": "QQQ", "asof": 1000.0, "quotes": {"C|20260804|709": [5.25, 5.31]}}, f)
+    assert OT._cboe_nbbo("QQQ", "C", "20260804", 709.0) is None
+
+
+def test_ficha_con_respaldo_cboe_nunca_es_GO():
+    """La doctrina: delayed dimensiona, jamas aprueba. El techo con CBOE es CAUTION."""
+    src = open(os.path.join(SCRIPTS, "order_ticket.py")).read()
+    assert 'nbbo_src == "cboe_delayed"' in src.split("# veredicto")[1]
+    assert "[spread CBOE delayed]" in src

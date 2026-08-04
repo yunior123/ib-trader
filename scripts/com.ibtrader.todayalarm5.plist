@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.ibtrader.todayalarm5</string>
+  <!-- 09:35 ET open+5 (Yunior 2026-07-30: "print spy again 5 min after market open, do the
+       same for apple"). Lun-vie; los festivos los filtra el portero de dia de mercado del runner (flag market-day)
+       (tabla unica em_envelope.HOLIDAYS), que launchd no conoce. -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string><string>-lc</string>
+    <string>cd "$HOME/ib-trader" &amp;&amp; ./venv/bin/python -u scripts/today_alarm5.py &gt;&gt; logs/print_open5.log 2&gt;&amp;1</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>9</integer><key>Minute</key><integer>31</integer></dict>
+    <dict><key>Weekday</key><integer>2</integer><key>Hour</key><integer>9</integer><key>Minute</key><integer>31</integer></dict>
+    <dict><key>Weekday</key><integer>3</integer><key>Hour</key><integer>9</integer><key>Minute</key><integer>31</integer></dict>
+    <dict><key>Weekday</key><integer>4</integer><key>Hour</key><integer>9</integer><key>Minute</key><integer>31</integer></dict>
+    <dict><key>Weekday</key><integer>5</integer><key>Hour</key><integer>9</integer><key>Minute</key><integer>31</integer></dict>
+  </array>
+  <key>RunAtLoad</key><false/>
+  <key>StandardOutPath</key><string>/tmp/ibtrader.todayalarm5.out</string>
+  <key>StandardErrorPath</key><string>/tmp/ibtrader.todayalarm5.err</string>
+</dict>
+</plist>

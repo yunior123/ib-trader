@@ -61,6 +61,27 @@ def _parse_chain(sym):
     return dict(spot=spot, epoch=epoch, exps=exps, rows=rows)
 
 
+CBOE_NBBO_MAX_AGE_S = 900.0
+
+
+def _cboe_nbbo(sym, right, exp, strike):
+    """(bid, ask, edad_s) del cache del sidecar CBOE, o None. Rancio (>15 min) = None."""
+    path = os.path.join(REPO, "data", f"cboe_nbbo_{sym.lower()}.json")
+    try:
+        with open(path) as f:
+            d = json.load(f)
+        age = time.time() - float(d["asof"])
+        if age > CBOE_NBBO_MAX_AGE_S:
+            return None
+        # clave del sidecar: "C|YYYYMMDD|strike" (exp de la cadena ya viene YYYYMMDD)
+        q = d["quotes"].get("%s|%s|%g" % (right, exp, float(strike)))
+        if not q:
+            return None
+        return float(q[0]), float(q[1]), age
+    except (OSError, ValueError, KeyError, TypeError):
+        return None
+
+
 def build(sym, level, side, kind):
     """side: buy|sell ; kind: call|put. level: nivel-gatillo (precio del subyacente)."""
     sym = sym.upper(); side = side.lower(); kind = kind.lower()
@@ -80,6 +101,17 @@ def build(sym, level, side, kind):
     bid, ask = c["bid"], c["ask"]
     # IBKR usa bid/ask = -1.00 (o 0) como "sin cotización" -> opción ilíquida, no cotizable
     quote_ok = bid > 0 and ask > 0 and ask >= bid
+    # RESPALDO CBOE (2026-08-04): sin IBKR la cadena Polygon trae 0 bid/ask en TODA la flota
+    # (bidask_ok_pct 0.0000 en cabecera) y ninguna ficha podia armarse. CBOE es DELAYED ->
+    # doctrina LATENCIA-FUENTES "bid/ask de respaldo": sirve para dimensionar y para el gate
+    # de spread, pero JAMAS aprueba un GO (tope CAUTION mas abajo). Etiquetado siempre.
+    nbbo_src = "chain"
+    if not quote_ok:
+        cb = _cboe_nbbo(sym, right, exp, c["strike"])
+        if cb is not None:
+            bid, ask, nbbo_age = cb
+            quote_ok = bid > 0 and ask > 0 and ask >= bid
+            nbbo_src = "cboe_delayed"
     if quote_ok:
         mid = (bid + ask) / 2
         spread_pct = round((ask - bid) / mid * 100, 1)
@@ -117,10 +149,13 @@ def build(sym, level, side, kind):
         why.append(f"prima ${prem} > ${BUDGET_USD:.0f} presupuesto")
     why += cond_why
 
-    # veredicto
+    if nbbo_src == "cboe_delayed":
+        why.append("spread de CBOE DELAYED — verifica el NBBO real en IBKR")
+
+    # veredicto. Con NBBO delayed el techo es CAUTION: un GO exige cotizacion viva.
     if not spread_ok or veto or not fresh:
         verdict = "NO-GO"
-    elif not budget_ok or not oi_ok or not speak:
+    elif not budget_ok or not oi_ok or not speak or nbbo_src == "cboe_delayed":
         verdict = "CAUTION"
     else:
         verdict = "GO"
@@ -131,10 +166,11 @@ def build(sym, level, side, kind):
         ticket = (f"🔴 {sym} {c['strike']:g}{right} 0DTE — sin bid/ask válido (ilíquido), "
                   f"OI {c['oi']}. NO-GO. No cotizable.")
     else:
-        ticket = (f"{icon} {action} @ límite ${limit:.2f} (prima ${prem:.0f}, spread {spread_pct}%, "
-                  f"OI {c['oi']}, prob {prob if prob is not None else '?'}%) — {verdict}. "
-                  f"Ejecuta TÚ en IBKR.")
-    return dict(ok=True, verdict=verdict, sym=sym, side=side, kind=kind,
+        etiqueta_nbbo = " [spread CBOE delayed]" if nbbo_src == "cboe_delayed" else ""
+        ticket = (f"{icon} {action} @ límite ${limit:.2f} (prima ${prem:.0f}, spread {spread_pct}%"
+                  f"{etiqueta_nbbo}, OI {c['oi']}, prob {prob if prob is not None else '?'}%) — "
+                  f"{verdict}. Ejecuta TÚ en IBKR.")
+    return dict(ok=True, verdict=verdict, sym=sym, side=side, kind=kind, nbbo_src=nbbo_src,
                 strike=c["strike"], right=right, exp=exp, limit=round(limit, 2),
                 premium=prem, size=size, spread_pct=spread_pct, spread_ok=spread_ok,
                 oi=c["oi"], oi_ok=oi_ok, budget_ok=budget_ok, fresh=fresh,

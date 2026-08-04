@@ -3,6 +3,16 @@
 > Vivo. Apuntar cada petición AL MOMENTO con las palabras de Yunior. Lo cerrado → Done.md.
 
 ## 🔴 SESIÓN 2026-08-04 (martes — ráfaga Discord + UW flows + backtest de alertas)
+- [x] 15. "are signals ready for fleet calls or puts?" (2026-08-04 09:54) — NO lo estaban, y
+      ahora SÍ (con techo honesto). Diagnóstico medido: la cadena Polygon trae CERO bid/ask
+      (`bidask_ok_pct 0.0000`; /v3/quotes = 403) → order_ticket daba NO-GO "sin bid/ask" en
+      TODA la flota, y today_alarm5 (el armador de fichas) NO tenía launcher (última corrida
+      07-28). Arreglo: (a) `scripts/cboe_nbbo_sidecar.py` + com.ibtrader.cboenbbo — bid/ask de
+      RESPALDO CBOE delayed (medido: 11.985 contratos QQQ) cada 5 min, doctrina LATENCIA-FUENTES;
+      (b) order_ticket cae al respaldo ETIQUETADO "[spread CBOE delayed]" y con techo CAUTION —
+      un GO exige NBBO vivo (IBKR); (c) today_alarm5 lanzado + com.ibtrader.todayalarm5 (L-V
+      09:31). Verificado en vivo 09:57: QQQ 709C spread 0,4% CAUTION · MU 870C 3,2% CAUTION ·
+      SNDK 1370C 1,4% CAUTION · SMH 565C 28,4% NO-GO (el gate VETA con dato real). 20 tests.
 - [x] 14. "avoid too much noise with finviz" (2026-08-04 09:1x) — HECHO commit (siguiente).
       Los 4 filtros del backtest aplicados EN EL EMISOR (finviz_screener_watch.cpp): ventana
       09:45-15:30, solo BUY/SELL interrumpen (WATCH al CSV), RVOL>=1.5 (el unico corte con vida
