@@ -187,6 +187,10 @@ def main():
             log("DESCARTADA (%ds vieja): %s" % (int(age), title[:50]))
             continue
         payload = title + " | " + body
+        # PRIVACIDAD: nuestras operaciones jamas salen del Mac (solo banner/voz local).
+        if L.is_private(payload):
+            log("PRIVADA (solo local): %s" % title[:50])
+            continue
         now = time.time()
         if now - dedup.get(payload, 0) < DEDUP_S:
             continue

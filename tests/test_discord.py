@@ -424,3 +424,26 @@ def test_parse_no_desplaza_lineas_normales(monkeypatch):
     monkeypatch.setattr(R.time, "time", lambda: tarde)
     age = R.parse("15:29:30 | 🎈 BB REBOTE | mu")[0]
     assert 25 <= age <= 35
+
+
+# --- PRIVACIDAD (Yunior 2026-08-04): lo nuestro no sale del Mac ----------------------------
+@pytest.mark.parametrize("linea", [
+    "🚨 order_engine | orden rechazada por safety",
+    "⏰ EXPIRA HOY | NOK 10C queda 1 dia",
+    "NOK CERRADA | SELL 1 @ 8.90 realizedPnl +0.35 comision 0.09",
+    "cuenta | U26942420 posiciones abiertas 2",
+    "ORDEN ENVIADA | QQQ 709C limite 5.31",
+])
+def test_lo_personal_es_privado(linea):
+    assert L.is_private(linea) is True
+
+
+@pytest.mark.parametrize("linea", [
+    "UW FLOW TSLA | PUTS bid-side strike 322.5 — vol/OI 26.9 (posicion nueva) $534k",
+    "🎈 BB REBOTE | mu puede bajar un poco.",
+    "FINVIZ BUFFETT · WEATHER · BUY 1 | FSLR BUY $234",
+    "🐋 ALERTA BALLENA CALLS | mu 37k calls",
+])
+def test_el_dato_de_mercado_no_es_privado(linea):
+    """'posicion nueva' del vendor es vol/OI de MERCADO, no nuestra posicion."""
+    assert L.is_private(linea) is False

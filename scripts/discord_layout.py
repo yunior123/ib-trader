@@ -158,6 +158,21 @@ RULES = [
 
 FALLBACK_CHANNEL = "sin-clasificar"       # jamas se descarta una alerta en silencio
 
+# --- PRIVACIDAD (Yunior 2026-08-04: "dont reveal personal info on our personal trades via
+# notifications, only via local notification in mac") ------------------------------------
+# Lo que describe NUESTRAS operaciones (ordenes, fills, P&L, posiciones, cuenta) se queda en
+# el Mac: banner osascript + voz local. Los reles EXTERNOS (ntfy, Resend, Discord) lo saltan.
+# OJO: "posicion nueva" del flujo UW es dato de MERCADO (vol/OI del vendor), no nuestro.
+PRIVADO = re.compile(
+    r"order_engine|ORDEN (ENVIADA|RECHAZADA|LIMITE)|\bFILL\b|realizedPnl|EXPIRA HOY|"
+    r"POSICIONES? (ABIERTA|CERRADA|DESCONOCIDAS)|\bU\d{8}\b|comisi[oó]n|ARM_LIVE|CERRAR ",
+    re.IGNORECASE)
+
+
+def is_private(line):
+    """True si la linea habla de NUESTRAS operaciones y no puede salir del Mac."""
+    return bool(PRIVADO.search(line or ""))
+
 # espejos por simbolo: (canal, conjunto de simbolos)
 SPY_QQQ = ("SPY", "QQQ", "SPX", "XSP", "NDX", "DIA", "IWM")
 SEMIS = ("SMH", "NVDA", "MU", "AMD", "TSM", "ASML", "SKHY", "DRAM", "SNDK",

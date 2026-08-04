@@ -3,6 +3,14 @@
 > Vivo. Apuntar cada petición AL MOMENTO con las palabras de Yunior. Lo cerrado → Done.md.
 
 ## 🔴 SESIÓN 2026-08-04 (martes — ráfaga Discord + UW flows + backtest de alertas)
+- [ ] 20. "dont reveal personal info on our personal trades via notifications, only via local
+      notification in mac with editeur de script as always" (2026-08-04 ~11:30) — en curso
+- [ ] 21. "use osacript here vs3d.volsignals.com/app?viewstate=... take screenshots, read them,
+      change selectors to gamma as well, then tell me whether is going up up or down" — en curso
+- [ ] 22. "activate alert to buy and sell in options, post them to discord channel, also post
+      lottos with high confidence for the best ones in fleet based on gamma, net options,
+      whales for tomorrow and whole week till friday" — delegado a agente (lottos) + verificar
+      fichas GO bidireccionales ya enrutadas a #opciones-contratos
 - [x] 19. "make sure we have signals working properly. 2. bug: con cuidado call the nvda is
       bad, it repeats 3 times plus its a bad signal" (2026-08-04 ~11:2x) — HECHO. Causas
       MEDIDAS del bug: (a) 4 niveles de NVDA cruzaron en el MISMO poll -> 4 fichas con la misma

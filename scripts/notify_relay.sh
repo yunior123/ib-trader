@@ -41,6 +41,12 @@ tail -n0 -F "$F" 2>/dev/null | while read -r line; do
   if (( age > 45 )); then
     echo "$(date +%H:%M:%S) DESCARTADA (${age}s vieja): ${line:0:60}" >> logs/notify_relay.log; continue
   fi
+  # PRIVACIDAD (Yunior 2026-08-04): NUESTRAS operaciones no salen del Mac. El banner y la voz
+  # locales ya sonaron; ntfy/Resend se saltan. Mismo patron que discord_layout.PRIVADO — si
+  # se toca alli, tocar aqui.
+  if echo "$line" | grep -qiE 'order_engine|ORDEN (ENVIADA|RECHAZADA|LIMITE)|FILL|realizedPnl|EXPIRA HOY|POSICION(ES)? (ABIERTA|CERRADA|DESCONOCIDAS)|U[0-9]{8}|comisi.n|ARM_LIVE|CERRAR '; then
+    echo "$(date +%H:%M:%S) PRIVADA (solo local): ${line:0:50}" >> logs/notify_relay.log; continue
+  fi
   payload="${line#* | }"
   prev=${DEDUP_AT[$payload]:-0}
   if (( now_s - prev < DEDUP_S )); then
