@@ -294,6 +294,23 @@ static void phone_push(const std::string& title, const std::string& msg) {
     posix_spawn(&pid, py, nullptr, nullptr, const_cast<char* const*>(argv), environ);
 }
 
+// ANTI-RUIDO (Yunior 2026-08-04 "avoid too much noise with finviz"; numeros del backtest
+// docs/BACKTEST-ALERTAS-FINVIZ-2026-08-04.md — 184 alertas/dia a -8,4pp CONTRA el azar):
+//   ventana 09:45-15:30 (fuera: 82 muertas, 17 buenas), solo BUY/SELL (WATCH no interrumpe),
+//   RVOL>=1.5 (el unico corte con vida propia: concentracion +6,5pp), 1 alerta/ticker/dia
+//   (la mediana de momentum era UNA interrupcion cada 3 minutos por oscilacion WATCH<->BUY).
+// El CSV, el estado y los eventos se escriben SIEMPRE: solo se gatea la interrupcion.
+static bool notify_window_open() {
+    time_t t = time(nullptr); struct tm lt; localtime_r(&t, &lt);
+    int hm = lt.tm_hour * 100 + lt.tm_min;
+    return hm >= 945 && hm <= 1530;
+}
+
+static bool row_alertable(const Row& r) {
+    return (r.weather == "BUY" || r.weather == "SELL") &&
+           !std::isnan(r.rvol) && r.rvol >= 1.5;
+}
+
 static void notify(const Profile& p, const std::vector<Row>& rows, const std::string& kind) {
     if (rows.empty()) return;
     int buy = 0, sell = 0, watch = 0;
@@ -371,6 +388,7 @@ static int run_cycle(const Profile& p, bool alert_existing) {
     bool first = !old.valid || old.date != next.date;
     if (!first) next.alerted = old.alerted;
     std::vector<Row> fresh, changed;
+    const bool window = notify_window_open();
     for (const Row& r : rows) {
         next.current[r.ticker] = r.weather;
         auto it = old.current.find(r.ticker);
@@ -379,10 +397,19 @@ static int run_cycle(const Profile& p, bool alert_existing) {
         // snapshot pero no genera otra interrupción: perdió convicción, no nació una señal.
         bool direction_change = !first && it != old.current.end() && it->second != r.weather &&
                                 (r.weather == "BUY" || r.weather == "SELL");
+        // El EVENTO se registra siempre (es la memoria del backtest); la INTERRUPCION exige
+        // ventana + BUY/SELL + RVOL>=1.5 + cupo de 1/ticker/dia (direction_change tambien
+        // lo consume: WATCH<->BUY oscilando era una interrupcion cada 3 minutos).
         if (is_new || (first && alert_existing)) {
-            fresh.push_back(r); next.alerted.insert(r.ticker); append_event(p, r, "new_match");
+            append_event(p, r, "new_match");
+            if (window && row_alertable(r) && !next.alerted.count(r.ticker)) {
+                fresh.push_back(r); next.alerted.insert(r.ticker);
+            }
         } else if (direction_change) {
-            changed.push_back(r); append_event(p, r, "weather_change");
+            append_event(p, r, "weather_change");
+            if (window && row_alertable(r) && !next.alerted.count(r.ticker)) {
+                changed.push_back(r); next.alerted.insert(r.ticker);
+            }
         }
     }
     if (!save_state(path, next)) {

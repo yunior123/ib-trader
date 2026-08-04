@@ -3,6 +3,14 @@
 > Vivo. Apuntar cada petición AL MOMENTO con las palabras de Yunior. Lo cerrado → Done.md.
 
 ## 🔴 SESIÓN 2026-08-04 (martes — ráfaga Discord + UW flows + backtest de alertas)
+- [x] 14. "avoid too much noise with finviz" (2026-08-04 09:1x) — HECHO commit (siguiente).
+      Los 4 filtros del backtest aplicados EN EL EMISOR (finviz_screener_watch.cpp): ventana
+      09:45-15:30, solo BUY/SELL interrumpen (WATCH al CSV), RVOL>=1.5 (el unico corte con vida
+      propia del estudio), y 1 alerta/ticker/dia — direction_change tambien consume el cupo
+      (la mediana de momentum era UNA interrupcion cada 3 min por oscilacion WATCH<->BUY).
+      El CSV/estado/eventos se escriben SIEMPRE: solo se gatea la interrupcion, el backtest
+      no pierde memoria. Proyeccion con los numeros del 08-03: de 184 alertas a ~16-38.
+      Rebuild + selftest OK + 3 instancias relanzadas 09:22 con el binario nuevo.
 - [x] 13. "1. create alerts for unusual whales as well for the fleet. 2. make sure software
       running 3. create alert for possible puts or calls of the fleet based on evidence, a lot
       going on right now premarket, take a look." (2026-08-04 08:47 premarket) — HECHO.
