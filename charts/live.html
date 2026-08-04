@@ -1142,9 +1142,23 @@ volS.priceScale().applyOptions({ scaleMargins: { top: 0.8, bottom: 0 } });
 const macdHist = chart.addSeries(HistogramSeries, { priceFormat:{type:"price",precision:3,minMove:0.001}, lastValueVisible:false }, 2);
 const macdLine = chart.addSeries(LineSeries, { color:"#2962ff", lineWidth:1, priceLineVisible:false, lastValueVisible:false, crosshairMarkerVisible:false }, 2);
 const macdSig  = chart.addSeries(LineSeries, { color:"#ff9800", lineWidth:1, priceLineVisible:false, lastValueVisible:false, crosshairMarkerVisible:false }, 2);
+// NET PREMIUM estilo QuantData (pane 3): verde=cum calls, rojo=cum puts, blanco=neto firmado.
+const npFmt = { type:"custom", minMove:1, formatter: v => (Math.abs(v)>=1e6 ? (v/1e6).toFixed(1)+"M" : (v/1e3).toFixed(0)+"k") };
+const npCall = chart.addSeries(LineSeries, { color:"#26a69a", lineWidth:2, priceFormat:npFmt, priceLineVisible:false, lastValueVisible:true,  crosshairMarkerVisible:true }, 3);
+const npPut  = chart.addSeries(LineSeries, { color:"#ef5350", lineWidth:2, priceFormat:npFmt, priceLineVisible:false, lastValueVisible:true,  crosshairMarkerVisible:true }, 3);
+const npNet  = chart.addSeries(LineSeries, { color:"#e0e0e0", lineWidth:1, lineStyle:1, priceFormat:npFmt, priceLineVisible:false, lastValueVisible:false, crosshairMarkerVisible:false }, 3);
+function onNetprem(msg){
+  const s = msg.series || [];
+  if (!s.length) return;
+  const mk = k => s.map(p => ({ time: Math.floor(p.ts), value: p[k] })).filter(p => Number.isFinite(p.value));
+  npCall.setData(mk("cum_call"));
+  npPut.setData(mk("cum_put"));
+  npNet.setData(mk("cum"));
+  try { chart.panes()[3].setHeight(110); } catch (e) {}   // el pane nace lazy: altura tras el 1er setData
+}
 
 // proporción de panes: velas grande, volumen fino, MACD chico
-try { chart.panes()[1].setHeight(80); chart.panes()[2].setHeight(120); } catch (e) {}
+try { chart.panes()[1].setHeight(80); chart.panes()[2].setHeight(120); chart.panes()[3].setHeight(110); } catch (e) {}
 
 // ------------------------------------------------- price lines (muros / flip)
 // Muros GEX = VERDE (call-wall brillante, put-wall/abs tinte distinto); flip = AMARILLO.
@@ -3732,6 +3746,7 @@ function connect() {
     else if (msg.type === "levels") onLevels(msg);   // GEX/flip/muros en tiempo real
     else if (msg.type === "narrator") onNarrator(msg);   // narrador de mercado
     else if (msg.type === "signals") { sigMarkers = msg.signals || []; engineOps = msg.engineOps || []; applyMarkers(); }  // refresco marcadores + ops engine
+    else if (msg.type === "netprem") onNetprem(msg);   // net premium UW estilo QuantData (pane 3)
     else if (msg.type === "structural") onStructural(msg);   // señal imán/flip
     else if (msg.type === "alarms") onAlarms(msg);   // alarmas manuales del símbolo
     else if (msg.type === "stale") onNoData(msg.text || null);   // sub congelada sin fuente (sub-minuto overnight)

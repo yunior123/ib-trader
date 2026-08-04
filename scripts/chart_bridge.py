@@ -1053,6 +1053,42 @@ async def broadcast_watchlist(state):
             state.clients.discard(ws)
 
 
+_netprem_cache = {"mtime": 0.0, "data": None}
+
+
+def netprem_payload(sym):
+    """Serie net premium estilo QuantData (verde call / rojo put / neto) del uw_net_prem.json.
+    None si no hay dato del simbolo (jamas una curva plana fingida)."""
+    path = os.path.join(REPO, "data", "uw_net_prem.json")
+    try:
+        mt = os.path.getmtime(path)
+        if mt != _netprem_cache["mtime"]:
+            with open(path) as f:
+                _netprem_cache["data"] = json.load(f)
+            _netprem_cache["mtime"] = mt
+        d = _netprem_cache["data"]
+        v = (d.get("syms") or {}).get(sym.upper())
+        if not v or not v.get("series"):
+            return None
+        return {"type": "netprem", "sym": sym.upper(), "asof": d.get("asof"),
+                "day": v.get("day"), "series": v["series"]}
+    except (OSError, ValueError, AttributeError):
+        return None
+
+
+async def broadcast_netprem(state):
+    if not state.clients:
+        return
+    pl = netprem_payload(state.sym)
+    if not pl:
+        return
+    for ws in list(state.clients):
+        try:
+            await ws.send_json(pl)
+        except Exception:
+            state.clients.discard(ws)
+
+
 def _watchlist_file_add(sym):
     """Añade sym al archivo del usuario (dedup contra fleet + user). SEÑAL-SOLAMENTE."""
     sym = (sym or "").strip().upper()
@@ -3303,6 +3339,9 @@ def create_app(state):
             await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason, mock=st.mock, sym=st.sym))
             # watchlist (fleet + usuario), zonas 0DTE del símbolo y flecha direccional
             await ws.send_json(watchlist_payload())
+            np = netprem_payload(st.sym)
+            if np:
+                await ws.send_json(np)
             await ws.send_json(zones_frame(st))
             if any(z.get("exec") for z in st.zones):
                 await ws.send_json({"type": "engine", "sym": st.sym.upper(),
@@ -3899,6 +3938,7 @@ async def levels_loop(state):
                     await broadcast_engine(state)         # estado del motor para zonas ARMADAS
                 await broadcast_direction(state, lv=lv)   # flecha direccional compuesta
                 await broadcast_watchlist(state)          # quotes watchlist (último/%día/vol)
+                await broadcast_netprem(state)            # net premium estilo QuantData (UW)
         except Exception as e:
             print(f"[levels] refresh falló ({e})")
 

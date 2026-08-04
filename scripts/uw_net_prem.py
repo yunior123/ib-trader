@@ -44,12 +44,16 @@ def cumulative(rows):
     if not rows:
         return None
     ordered = sorted(rows, key=lambda r: r["tape_time"])
-    acc = 0.0
+    acc = accc = accp = 0.0
     out = []
     for r in ordered:
-        acc += float(r["net_call_premium"]) - float(r["net_put_premium"])
+        c, p = float(r["net_call_premium"]), float(r["net_put_premium"])
+        acc += c - p
+        accc += c
+        accp += p
+        # cum_call/cum_put separados: el widget estilo QuantData pinta verde/rojo aparte
         out.append({"ts": round(uw_premium._epoch(r["tape_time"]).timestamp(), 1),
-                    "cum": round(acc, 2)})
+                    "cum": round(acc, 2), "cum_call": round(accc, 2), "cum_put": round(accp, 2)})
     return out[-SERIES_MAX:]
 
 
@@ -102,6 +106,41 @@ def write_atomic(path, obj):
     os.replace(tmp, path)
 
 
+_DIV_LAST = {}
+DIV_MIN_USD = 25e6      # pendiente 30m del cum firmado para considerar flujo "fuerte"
+DIV_MIN_PX = 0.15       # % de caida/subida del precio en la misma ventana
+DIV_COOLDOWN_S = 1800.0
+
+
+def check_divergencia(sym, summ):
+    """Flujo fuerte CONTRA el precio (30 min) = acumulacion/distribucion oculta. Banner
+    sin voz via embudo (canal flujo-uw). Descriptivo: contexto, jamas gatillo."""
+    try:
+        serie = summ.get("series") or []
+        if len(serie) < 31:
+            return
+        d_cum = serie[-1]["cum"] - serie[-31]["cum"]
+        with open(os.path.join(REPO, "data", f"ws_trade_{sym}.txt")) as f:
+            ts, px, _ = f.read().split()
+        rows = open(os.path.join(REPO, "data", f"bars_{sym.lower()}_ibkr.txt")).read().strip().split("\n")
+        px30 = float(rows[-31].split()[4]) if len(rows) > 31 else None
+        if not px30:
+            return
+        d_px = (float(px) / px30 - 1) * 100
+        div_up = d_cum >= DIV_MIN_USD and d_px <= -DIV_MIN_PX     # compran opciones, precio cae
+        div_dn = d_cum <= -DIV_MIN_USD and d_px >= DIV_MIN_PX     # venden/puts, precio sube
+        if not (div_up or div_dn) or time.time() - _DIV_LAST.get(sym, 0) < DIV_COOLDOWN_S:
+            return
+        _DIV_LAST[sym] = time.time()
+        lado = "CALLS acumulando bajo precio cayendo" if div_up else "PUTS cargando contra precio subiendo"
+        import notify_short
+        notify_short.push(f"🔀 DIVERGENCIA FLUJO-PRECIO {sym}",
+                          f"{lado}: flujo 30m {d_cum/1e6:+.1f}M vs precio {d_px:+.2f}%. "
+                          f"Contexto, no gatillo.")
+    except Exception as e:
+        print(f"uw_net_prem divergencia {sym}: {e.__class__.__name__} (se sigue)", file=sys.stderr)
+
+
 def main():
     ap = argparse.ArgumentParser(description="premium neto firmado UW (senal-solamente)")
     ap.add_argument("--once", action="store_true")
@@ -135,6 +174,7 @@ def main():
             else:
                 fail_streak = 0
                 by_sym[sym] = summarize(sym, rows)
+                check_divergencia(sym, by_sym[sym])
                 write_atomic(OUT, payload(by_sym))
             time.sleep(0.3 if a.once else stagger)
         if a.once:
