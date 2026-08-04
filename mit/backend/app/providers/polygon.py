@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import UTC, date, datetime
 from typing import Any
+from urllib.parse import urlencode
 
 import httpx
 
@@ -28,9 +29,13 @@ class PolygonProvider(MarketDataProvider, OptionsDataProvider):
         self.client = httpx.AsyncClient(base_url=settings.polygon_base_url, timeout=30)
 
     async def _get(self, url: str, params: dict[str, Any] | None = None) -> dict[str, Any]:
+        # httpx REEMPLAZA la query de la URL si se pasa params= -> el cursor de next_url se
+        # perdia y cada "pagina" era la primera otra vez (medido 2026-08-04: MU 120x250
+        # contratos duplicados, cadenas sin puts). Fusionar a mano: la query del url MANDA.
         query = dict(params or {})
         query["apiKey"] = self.settings.polygon_api_key
-        response = await self.client.get(url, params=query)
+        sep = "&" if "?" in url else "?"
+        response = await self.client.get(url + sep + urlencode(query))
         response.raise_for_status()
         return response.json()
 
@@ -51,7 +56,10 @@ class PolygonProvider(MarketDataProvider, OptionsDataProvider):
             ).isoformat()
         output: list[OptionContract] = []
         for _ in range(120):  # bound pagination for a multi-expiry chain
-            payload = await self._get(url, params if url.startswith("/v3/snapshot") else None)
+            # Mismo bug que get_expirations: el next_url del cursor pierde el limit y Polygon cae
+            # a 10/pagina -> 120 paginas se agotaban en el tramo CALL del expiry frontal y la
+            # cadena salia SIN PUTS (medido 2026-08-04: MU 1390C/50P, todo 8/5). Reinyectar limit.
+            payload = await self._get(url, params if "cursor" not in url else {"limit": 250})
             for item in payload.get("results") or []:
                 det = item.get("details") or {}
                 greeks = item.get("greeks") or {}
