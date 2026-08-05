@@ -98,6 +98,9 @@ RULES = [
     # "stop 211" minuscula de una ficha ("compra 212.5 stop 211") es un precio, no un evento.
     (r"\b(?-i:STOP)\b|order_engine|ORDEN ENVIADA|FILL\b", "criticas", CRITICA),
     (r"ALARMA PRECIO", "criticas", CRITICA),          # price_alarm.cpp:260 — el PRINT
+    # El PRINT es LA senal de entrada de la casa (regla 2 "print o nada"): jamas a
+    # #sin-clasificar. Medido 2026-08-04 11:57: "🟢 SPX PRINT 7715 — CALL" cayo alli.
+    (r"\bPRINT\b.*\b(CALL|PUT|COMPRA|VENTA)\b|PRINT \d", "criticas", CRITICA),
     (r"🛑|SCALPER", "criticas", CRITICA),             # scalper_core.h:600-712
 
     # confluencia y capitanes ANTES que lo generico: "🔗 FLUJO + BB QQQ" lleva "BB" dentro

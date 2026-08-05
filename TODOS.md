@@ -269,7 +269,7 @@
       goteando 08:54→09:29, 23 sesiones sin variar. Publicar en #planes-premarket una línea de
       6 huecos por ticker sobre datos ya calculados (daily_fleet_plans/gex_snapshot), PDF como
       adjunto para quien lo quiera — pendiente
-- [ ] 13d. Regla de enrutado para los PRINT de SPX: "🟢 SPX PRINT 7715 — CALL" cayó a
+- [x] 13d. Regla de enrutado para los PRINT de SPX: "🟢 SPX PRINT 7715 — CALL" cayó a — HECHO 2026-08-05: regla PRINT->#criticas en discord_layout.py (verificada con los 3 emisores reales: spx_print_watch, korea_watch, korea_tape; 135 tests verdes)
       #sin-clasificar (relay log 08-04 11:57). Un PRINT es el gatillo de la casa → #criticas.
       Cazado verificando el item 11 — pendiente
 
