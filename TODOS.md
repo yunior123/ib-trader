@@ -951,9 +951,9 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
 
 ## Sesión 2026-08-05 — auditoría TOP-10 (agente, orden "ataca hallazgos #1-#8 del AUDIT-2026-08-04")
 - [x] AUDIT #1 NBBO dos relojes: provider_bridge.py write_nbbo → campo1 wall-clock + campo4 epoch de bolsa + feed_tier en provider_status.json; verificado vivo (nbbo_spy campo1 edad 42s, campo4 1021s delayed declarado); lectores parsean 3 campos sin romper (2026-08-05, hecho)
-- [ ] "add hood to fleet" (2026-08-05 ~07:05) — estado: en curso
+- [x] "add hood to fleet" (2026-08-05 ~07:05) — hecho: HOOD + PLTR MSTR COIN CRWV RKLB en fleet.txt(36)/universe_gamma(41)/provider_syms(32), barras verificadas vivas
 - [ ] "tell me some contract to buy for next week with high conviction and max profitability, pure max, lets make sure its the next nokia" (HOOD, 2026-08-05) — estado: en curso (quotes vivos UW)
-- [ ] "take a look at C/P ratio find more like hood which are quite loved by community, at least 3, have them all onboard" (2026-08-05) — estado: delegado a agente
+- [x] "take a look at C/P ratio find more like hood..." (2026-08-05) — hecho: PLTR MSTR COIN limpios + CRWV RKLB (earnings 08-11/08-10, watch sin premium comprado); medido C/P, netprem, IV/RV, muros
 - [ ] "run full analysis on bargain fleet this week and next, options, whales... similar to how u did with apple, next premium too" (2026-08-05) — estado: delegado a agente
 - [ ] "find me the best contracts for the rest of the week or next week expiration" (2026-08-05 ~07:10) — estado: en curso (quotes vivos UW: 6 principales + HOOD; bargain top-5 vía agente)
 - [x] AUDIT #4 calibración congelada: calibration_ledger.py record_from_ranking parsea formato emoji (▶️reclaim/🎯/🛑, régimen desde ranking.json porque 🚀 pisa el emoji) + fallback legado; backfill 22-jul→05-ago = 324 filas, 294 calificadas; calibration.json pasa de n=27/1día a reclaim_wall POSITIVO n=131 59% / NEGATIVO n=67 42%, trust=SI; +2 tests (2026-08-05, hecho)
