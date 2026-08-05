@@ -260,7 +260,7 @@ struct Ev {
 struct Amp {
     bool ok = false;
     double amp_pct = 0, amp_price = 0, mag = 0, ratio_em = 0;
-    std::string grade, binding, retrace_src;
+    std::string grade, binding, retrace_src, why;   // why: por que NO hay amplitud (ok=false)
     std::optional<double> retrace_prob, retrace_n, leg_minutes_median;
     bool capped_by_rule11 = false;
     std::vector<std::pair<std::string, double>> constraints;
@@ -699,8 +699,11 @@ static DecayCell decay_cell(const std::string& decay_json, const std::string& sy
 static Amp amplitude(const Ev& ev, int rdir, const std::string& decay_json) {
     Amp a;
     if (!ev.spot || rdir == 0) return a;
+    // sin EM MEDIDO no hay valla del dia: el 2% inventado decidia LATIGAZO/REBOTE/SCALP y la
+    // amplitud de la flecha sobre una valla fabricada (AUDIT-2026-08-04 #6)
+    if (!ev.em) { a.why = "sin EM medido"; return a; }
     double spot = *ev.spot;
-    double em_pct = (ev.em.value_or(spot * 0.02) / spot) * 100.0;
+    double em_pct = (*ev.em / spot) * 100.0;
     std::vector<std::pair<std::string, double>> cons;
     auto put = [&](const char* k, double v) { cons.emplace_back(k, v); };
 
@@ -917,7 +920,9 @@ static Out classify(const Ev& ev, Hist* hist, const std::string& decay_json) {
         o.families = (int)o.families_why.size();
         vetoes_of(ev, *lvl, rdir, o.vetoes);
         double spot = *ev.spot;
-        double em_pct = (ev.em.value_or(spot * 0.02)) / spot;
+        // sin EM medido el gate de aproximacion cae al umbral de distancia pura (NEAR_PCT*2),
+        // nunca a una valla del 2% inventada (AUDIT #6)
+        double em_pct = ev.em ? (*ev.em / spot) : 0.0;
         bool near = lvl->dist <= K::NEAR_PCT * 2;
         bool approaching = lvl->dist <= std::max(K::APPROACH_EM * em_pct, K::NEAR_PCT * 2);
         char lbl[96];
@@ -1024,6 +1029,8 @@ static Out classify(const Ev& ev, Hist* hist, const std::string& decay_json) {
             why.emplace_back(b);
             if (o.amp.capped_by_rule11)
                 why.emplace_back("solo flujo lo sostiene: scalp seguro, no pedir el latigazo (regla 11)");
+        } else if (!o.amp.why.empty()) {
+            why.emplace_back(o.amp.why + ": sin amplitud (no se afirma cuanto se mueve)");
         }
     }
 
@@ -1462,7 +1469,11 @@ static Ev gather(const std::string& sym_lo) {
         struct stat lst{};
         bool lv_fresh = stat(lv_path.c_str(), &lst) == 0 &&
                         time(nullptr) - lst.st_mtime <= 600;
-        if (lv_fresh) if (auto v = jnum(lv, "spot")) e.spot = *v;
+        // ademas del mtime, la EDAD DEL DATO que el productor estampa (spot_age_s en
+        // levels_refresh_daemon.py): un fichero reescrito hace 116 s puede llevar dentro un
+        // spot de 1.412 s y la flecha se declaraba FRESCA sobre el (AUDIT-2026-08-04 #8)
+        if (lv_fresh && jnum(lv, "spot_age_s").value_or(1e9) <= 300)
+            if (auto v = jnum(lv, "spot")) e.spot = *v;
         struct WSpec { const char* key; const char* kind; };
         for (auto ws : {WSpec{"put_wall", "Muro put"}, WSpec{"call_wall", "Muro call"},
                         WSpec{"abs_wall", "Muro absoluto"}, WSpec{"poc_dom", "POC"}}) {

@@ -7,6 +7,7 @@ no un shape fabricado); los umbrales de forma son CONVENCION declarada, no medid
 flip_history nunca revienta si falta el fichero de un dia (fin de semana, dia sin cron).
 """
 import importlib.util
+import datetime as _dt
 import json
 import os
 import sys
@@ -86,7 +87,7 @@ def test_flip_history_sin_fichero_de_ningun_dia_da_lista_vacia(gs, tmp_path, mon
 
 def test_flip_history_filtra_por_simbolo_y_descarta_stale(gs, tmp_path, monkeypatch):
     monkeypatch.setattr(gs, "REPO", str(tmp_path))
-    d = tmp_path / "data" / "history" / "2026-07-25"
+    d = tmp_path / "data" / "history" / _dt.date.today().isoformat()
     d.mkdir(parents=True)
     rows = [
         {"sym": "QQQ", "ts": 100, "stale": False, "levels": {"flip": 700.0}},
@@ -102,7 +103,7 @@ def test_flip_history_filtra_por_simbolo_y_descarta_stale(gs, tmp_path, monkeypa
 
 def test_flip_history_ignora_linea_corrupta(gs, tmp_path, monkeypatch):
     monkeypatch.setattr(gs, "REPO", str(tmp_path))
-    d = tmp_path / "data" / "history" / "2026-07-25"
+    d = tmp_path / "data" / "history" / _dt.date.today().isoformat()
     d.mkdir(parents=True)
     good = {"sym": "QQQ", "ts": 100, "stale": False, "levels": {"flip": 700.0}}
     (d / "levels_5m.jsonl").write_text("{esto no es json\n" + json.dumps(good) + "\n")

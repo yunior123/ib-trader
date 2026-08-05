@@ -153,7 +153,8 @@ def compute(sym, lv=None):
                 "doctrine_score": 50, "score": 0.0, "factors": {},
                 "why": ["sin mapa GEX fresco"], "book_label": None, "book_coef": None}
     spot = lv["spot"]; flip = lv["flip"]; reg = lv.get("regime", "POS")
-    em = lv.get("em") or spot * 0.02
+    em = lv.get("em")   # None es legitimo (gex_core: sin IV no hay EM). Jamas fabricar la valla
+                        # al 2% (AUDIT #6): la doctrina expected-move la MIDE con el straddle ATM
     cw = lv.get("call_wall"); pw = lv.get("put_wall")
     press = lv.get("pressure") or 0
     factors = {}; why = []; weights = {}
@@ -171,12 +172,15 @@ def compute(sym, lv=None):
             why.append(f"libro {bq_label or '?'} coef {bq_coef:.2f}: gamma con peso reducido")
 
     # 1) posición vs flip (régimen manda el signo del efecto)
-    dflip = _clamp((spot - flip) / em)
+    dflip = _clamp((spot - flip) / em) if em else None
     reg_pos = (reg == "POS")
-    f_flip = dflip * (1.0 if reg_pos else 0.5)   # en NEG el flip es whippy -> menos peso
-    factors["flip"] = round(f_flip, 2); weights["flip"] = 1.5 * gmul
-    if abs(dflip) > 0.15 and gmul > 0:
-        why.append(f"{'sobre' if dflip>0 else 'bajo'} el flip {flip} ({reg})")
+    if dflip is None:
+        why.append("sin EM medido: el flip no vota")
+    else:
+        f_flip = dflip * (1.0 if reg_pos else 0.5)   # en NEG el flip es whippy -> menos peso
+        factors["flip"] = round(f_flip, 2); weights["flip"] = 1.5 * gmul
+        if abs(dflip) > 0.15 and gmul > 0:
+            why.append(f"{'sobre' if dflip>0 else 'bajo'} el flip {flip} ({reg})")
 
     # 2) espacio muros: cerca del put wall con recorrido al call wall = sesgo arriba (y viceversa)
     f_wall = 0.0
@@ -191,7 +195,7 @@ def compute(sym, lv=None):
 
     # 3) GEX net + pressure: pin (POS, pressure+) frena; NEG con pressure- acelera el movimiento
     f_gex = 0.0
-    if not reg_pos and press:
+    if not reg_pos and press and dflip is not None:
         # en NEG, la aceleración va EN el sentido del momentum/flip actual
         f_gex = _clamp(dflip) * 0.4
         factors["gex_accel"] = round(f_gex, 2); weights["gex_accel"] = 0.8

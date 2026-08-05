@@ -168,9 +168,13 @@ static std::string to_json(const gate::Verdict& v, const std::string& sym,
     s += b;
     // frescura
     if (v.have_age) {
+        char sa[64] = "null";
+        if (v.have_spot_age) std::snprintf(sa, sizeof sa, "%.0f", v.spot_age_s);
         std::snprintf(b, sizeof b,
-                      "\"freshness\":{\"epoch\":%lld,\"age_s\":%.0f,\"fresh\":%s,\"max_age_s\":%.0f},",
-                      (long long)ch.epoch, v.age_s, v.fresh ? "true" : "false", v.p.max_age_s);
+                      "\"freshness\":{\"epoch\":%lld,\"age_s\":%.0f,\"fresh\":%s,\"max_age_s\":%.0f,"
+                      "\"spot_age_s\":%s,\"max_spot_age_s\":%.0f},",
+                      (long long)ch.epoch, v.age_s, v.fresh ? "true" : "false", v.p.max_age_s,
+                      sa, v.p.max_spot_age_s);
     } else {
         std::snprintf(b, sizeof b,
                       "\"freshness\":{\"epoch\":null,\"age_s\":null,\"fresh\":false,\"max_age_s\":%.0f},",

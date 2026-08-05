@@ -92,9 +92,9 @@ static const char* DN_S = "DN";
 // ------------------------------- config -------------------------------------
 struct Cfg {
     double pct           = 78.0;
-    double max_bar_age   = 180.0;
+    double max_bar_age   = 240.0;   // AUDIT #5: 180 dejo la MANADA ciega 238/239 ciclos (feed delayed)
     double min_cover     = 0.90;
-    double max_level_age = 180.0;
+    double max_level_age = 240.0;   // sigue = max_bar_age, como declara la cabecera
     int    win_open      = 9 * 60 + 25;
     int    win_close     = 16 * 60 + 5;
 };

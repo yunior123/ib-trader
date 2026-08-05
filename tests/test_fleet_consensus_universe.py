@@ -21,7 +21,7 @@ def _load():
 
 def test_conoce_la_flota_completa_ademas_del_universo_recortado():
     m = _load()
-    assert len(m.FULL_FLEET) == 30, "fleet.txt son los 30 de siempre"
+    assert len(m.FULL_FLEET) >= 30, "fleet.txt es la flota COMPLETA (30 + los que se añadan)"
     assert len(m.FLEET) <= len(m.FULL_FLEET)
 
 

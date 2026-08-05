@@ -40,7 +40,7 @@ def test_fleet_txt_parsea_por_PALABRAS_no_por_lineas():
     simbolos no estan en la flota (error medido 2026-07-27). .read().split() = 30."""
     p = os.path.join(REPO, "data", "fleet.txt")
     words = open(p).read().split()
-    assert len(words) == 30, f"fleet.txt no tiene 30 palabras: {len(words)}"
+    assert len(words) >= 30, f"fleet.txt no tiene la flota entera: {len(words)}"
     lines = [ln for ln in open(p).read().splitlines() if ln.strip()]
     assert len(lines) == 1, "fleet.txt deberia ser UNA linea (por eso split por palabras)"
     assert len(words) > len(lines), "la trampa: por lineas da 1, por palabras da 30"

@@ -42,6 +42,7 @@ T_FLOOR = 5.0 / (365.0 * 24.0 * 60.0)   # ~5 min: evita el blow-up de gamma ATM 
 R_FREE = 0.045            # misma tasa que opt_recon.py (coherencia entre vivo y reconstruido)
 MIN_GREEKS_OK = 0.5       # < 50% de filas con griegas usables -> sin voz gamma (spec #5)
 STALE_S = 45 * 60         # cadena mas vieja que esto = rancia (los muros ya no son de hoy)
+SPOT_STALE_S = float(__import__("os").environ.get("IBT_CHAIN_SPOT_STALE_S", 600))  # edad del spot DENTRO
 ROLL_HOUR_ET = 16         # 16:00 ET: al cierre el contrato que vence HOY deja de existir
 SIDE_GAP_TOL = 0.01       # hueco maximo entre el spot y el strike mas cercano de ESE lado (1 paso
                           # de strike tipico); por encima, el lado esta truncado y no hay muro
@@ -1080,13 +1081,21 @@ def from_ibkr_cache(path, spot, band=None, scale="house", all_exp=False, now=Non
     # gamma overnight en todas partes), y lo que se pierde ahi son las COTIZACIONES (bid/ask
     # a -1), no el OI. Eso se declara aparte en `quotes_ok`, y quien decide si hay voz gamma
     # es `greeks_ok_pct` — dato medible — no el reloj.
-    stale = bool(age is None or (rth and age > STALE_S))
+    # AUDIT-2026-08-04 #7: `epoch` es el reloj del ESCRITOR (provider_bridge lo reestampa cada
+    # 180 s) -> `age` vivia en 0-180 s y `stale` era codigo muerto mientras el spot de dentro
+    # llevaba 900-1750 s. La frescura del camino del dinero la manda el DATO, no el escritor.
+    spot_age = hdr.get("spot_age")
+    spot_rancio = bool(spot_age is not None and spot_age > SPOT_STALE_S)
+    stale = bool(age is None or (rth and age > STALE_S) or (rth and spot_rancio))
     health = {
         "chain_path": path, "chain_ts": hdr["epoch"], "chain_age_s": age,
         "chain_src": hdr["fuente"] or "ibkr_tws",
         "quotes_ok": rth, "session": "rth" if rth else "fuera_de_rth",
+        "chain_spot_age_s": spot_age,
         "stale_reason": (None if not stale else
                          ("cabecera sin epoch" if age is None else
+                          f"spot de la cadena de hace {spot_age / 60:.0f} min "
+                          f"(tope {SPOT_STALE_S / 60:.0f} min)" if spot_rancio else
                           f"cache TWS de hace {age / 60:.0f} min en RTH (ciclo son 3 min)")),
         "stale": stale,
         "band_used": band, "band_fetch": hdr["band"],

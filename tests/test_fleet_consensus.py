@@ -73,16 +73,21 @@ def test_bug_historico_21_de_30_no_dispara():
     assert r["consensus"] is None, "21/30 = 70% JAMAS debe dar consenso"
     assert r["fired"] is False
     assert "cobertura" in r["why"], r["why"]
-    assert "26/30" in r["why"] and "min 27" in r["why"], r["why"]
+    # NF sale de data/fleet.txt: la flota crece (HOOD el 08-05) y el test mide la LOGICA
+    assert f"26/{NF}" in r["why"] and f"min {int(NF * 0.90)}" in r["why"], r["why"]
 
 
 # ---------------------------------------------------------------- 2. el caso que SI dispara
 def test_24_de_30_con_cobertura_y_capitanes_dispara():
-    ev = snapshot(dn=24, up=3, dead=3)
+    # el umbral es 78% de la flota COMPLETA: el n minimo se deriva de NF, no se clava
+    import math
+    dn = math.ceil(NF * 0.78)
+    dead = NF - dn - 3
+    ev = snapshot(dn=dn, up=3, dead=dead)
     r = run(ev)
-    assert r["n"] == 27 and r["dn"] == 24
+    assert r["n"] == dn + 3 and r["dn"] == dn
     assert r["consensus"] == "DN", r["why"]
-    assert "24/30 = 80%" in r["why"], r["why"]
+    assert f"{dn}/{NF} = {round(100 * dn / NF)}%" in r["why"], r["why"]
     assert r["fired"] is False, "primer ciclo: histeresis"
     # segundo ciclo consecutivo -> disparo
     ev2 = dict(ev, pending="DN", pend_cnt=1)

@@ -140,7 +140,8 @@ def test_in_session_fin_de_semana_no():
 
 def test_fleet_lee_los_30():
     syms = F.fleet()
-    assert len(syms) == 30 and "QQQ" in syms and "MU" in syms
+    fleet = open("data/fleet.txt").read().split()
+    assert len(syms) == len(fleet) and "QQQ" in syms and "MU" in syms
 
 
 # --- respaldo CBOE para las fichas (2026-08-04) -------------------------------------------

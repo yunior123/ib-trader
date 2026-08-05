@@ -76,7 +76,8 @@ struct Params {
     double max_spread_pct     = 5.0;    // OPT_MAX_SPREAD_PCT   (CLAUDE.md #4)
     long   min_oi             = 500;    // OPT_MIN_OI           (estricto: >)
     double budget_usd         = 200.0;  // OPT_BUDGET_USD       (ENMIENDA 2026-07-22)
-    double max_age_s          = 900.0;  // OPT_MAX_AGE_S
+    double max_age_s          = 900.0;  // OPT_MAX_AGE_S      (edad del ESCRITOR de la cadena)
+    double max_spot_age_s     = 600.0;  // OPT_MAX_SPOT_AGE_S (edad del SPOT dentro de la cadena)
     double caution_spread_pct = 3.0;    // OPT_CAUTION_SPREAD_PCT  (pasa, pero caro)
     long   caution_oi         = 1000;   // OPT_CAUTION_OI          (pasa, pero flaco)
 };
@@ -94,6 +95,7 @@ inline Params params_from_env() {
     p.min_oi             = (long)env_d("OPT_MIN_OI", (double)p.min_oi);
     p.budget_usd         = env_d("OPT_BUDGET_USD", p.budget_usd);
     p.max_age_s          = env_d("OPT_MAX_AGE_S", p.max_age_s);
+    p.max_spot_age_s     = env_d("OPT_MAX_SPOT_AGE_S", p.max_spot_age_s);
     p.caution_spread_pct = env_d("OPT_CAUTION_SPREAD_PCT", p.caution_spread_pct);
     p.caution_oi         = (long)env_d("OPT_CAUTION_OI", (double)p.caution_oi);
     return p;
@@ -119,6 +121,8 @@ struct Chain {
     long long epoch = 0;
     bool have_spot = false;
     double spot = 0;
+    bool have_spot_age = false;   // spot_age del header: la edad del DATO, no la del escritor
+    double spot_age = 0;
     std::vector<std::string> exps;
     std::vector<Row> rows;
 };
@@ -160,6 +164,14 @@ inline Chain parse_chain_text(const std::string& text, const std::string& sym) {
                     if (e && e != v.c_str() && s > 0) { ch.spot = s; ch.have_spot = true; }
                 }
             }
+            if (!ch.have_spot_age) {
+                std::string v = hdr_field(line, "spot_age ");
+                if (!v.empty()) {
+                    char* e = nullptr;
+                    double a = std::strtod(v.c_str(), &e);
+                    if (e && e != v.c_str() && a >= 0) { ch.spot_age = a; ch.have_spot_age = true; }
+                }
+            }
             if (ch.exps.empty()) {
                 std::istringstream es(hdr_field(line, "exps "));
                 std::string x;
@@ -180,7 +192,7 @@ inline Chain parse_chain_text(const std::string& text, const std::string& sym) {
 
 inline Chain load_chain(const std::string& path, const std::string& sym) {
     std::ifstream f(path);
-    if (!f) return Chain{sym, false, false, 0, false, 0, {}, {}};
+    if (!f) { Chain c; c.sym = sym; return c; }   // defaults del struct: sin campos que olvidar
     std::ostringstream ss;
     ss << f.rdbuf();
     return parse_chain_text(ss.str(), sym);
@@ -277,6 +289,8 @@ struct Verdict {
     // frescura
     bool have_age = false, fresh = false;
     double age_s = 0;
+    bool have_spot_age = false;
+    double spot_age_s = 0;
     // dinero
     char side = 'B';
     double limit = 0, premium = 0;
@@ -328,6 +342,20 @@ inline Verdict evaluate(const Chain& ch, const Row* r, char side, const Params& 
         v.known = true;   // que este vieja SI es un veredicto
         std::snprintf(b, sizeof b, "cadena vieja %.0fs (> %.0fs)", v.age_s, p.max_age_s);
         v.why.emplace_back(b);
+    }
+    // AUDIT-2026-08-04 #7: `epoch` es el reloj del ESCRITOR (provider_bridge reestampa cada
+    // 180 s), asi que `fresh` era codigo muerto mientras el spot de dentro llevaba 900-1750 s.
+    // La frescura del camino del dinero la manda el DATO.
+    if (ch.have_spot_age) {
+        v.have_spot_age = true;
+        v.spot_age_s = ch.spot_age;
+        if (ch.spot_age > p.max_spot_age_s + EPS) {
+            v.fresh = false;
+            v.known = true;
+            std::snprintf(b, sizeof b, "spot de la cadena viejo %.0fs (> %.0fs)",
+                          ch.spot_age, p.max_spot_age_s);
+            v.why.emplace_back(b);
+        }
     }
     // ---- 3. contrato --------------------------------------------------------
     if (!r) {

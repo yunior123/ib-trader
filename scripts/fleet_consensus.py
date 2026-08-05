@@ -38,8 +38,13 @@ FLEET = _consensus_universe()
 FULL_FLEET = open("data/fleet.txt").read().split()   # los 30 de siempre: para DECLARAR el recorte
 CAPS = ["SPY", "QQQ", "SMH"]
 PCT = float(os.environ.get("FLEET_CONS_PCT", "78"))
-MAX_BAR_AGE = float(os.environ.get("FLEET_CONS_MAX_BAR_AGE", "180"))   # s; barras mas viejas no votan
+# 240 y no 180 (AUDIT-2026-08-04 #5): con el feed delayed el lag bar-epoch->fichero es ~78 s
+# mediana en RTH y el gate de 180 dejo la MANADA ciega 238/239 ciclos de la mañana del 04-ago.
+MAX_BAR_AGE = float(os.environ.get("FLEET_CONS_MAX_BAR_AGE", "240"))   # s; barras mas viejas no votan
 MIN_COVER = float(os.environ.get("FLEET_CONS_MIN_COVER", "0.90"))      # cobertura minima de la flota
+# 20 s x 2 ciclos de histeresis = 40 s de retraso en la voz DANGER (antes 45 -> 90 s: el
+# precedente literal "sleep(45)+histeresis = hasta 90 s"; retraso = dinero)
+CYCLE_S = float(os.environ.get("FLEET_CONS_CYCLE_S", "20"))
 WIN_OPEN = int(os.environ.get("FLEET_CONS_WIN_OPEN", str(9 * 60 + 25)))    # 09:25
 WIN_CLOSE = int(os.environ.get("FLEET_CONS_WIN_CLOSE", str(16 * 60 + 5)))  # 16:05
 SIGDIR = os.path.join(REPO, "data", "trading-signals")
@@ -211,7 +216,7 @@ def main():
             if not cdir:
                 print("  -> sin consenso ahora (flota dividida o capitanes discordes)")
             break
-        time.sleep(45)
+        time.sleep(CYCLE_S)
 
 
 if __name__ == "__main__":
