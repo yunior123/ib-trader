@@ -15,7 +15,7 @@
 | **IBKR / TWS** | 🟢 **TIEMPO REAL** | `reqMarketDataType(1)` en los 4 puentes; `ibkr_bar_bridge.py:352` lo declara *"1 = REALTIME. Delayed PROHIBIDO"* | **DISPARO**: spot, NBBO, la cinta, el gate de spread |
 | **Polygon** | 🔴 **15 min** | `/v3/trades` y `/v3/quotes` → **401 NOT_AUTHORIZED**; el snapshot de acciones también. Su tabla de precios: Starter $29/mes = *15-minute delayed*; Advanced $199/mes = *real-time* | **HISTORIA**: 2 años de barras 1m, archivo de cadenas |
 | **CBOE CDN** | 🔴 **delayed, y desigual** | El endpoint se llama literalmente `delayed_quotes`. Medido a la vez: `QQQ` 1,8 h · `_SPX` 4,2 h · `SPY` y `SMH` **21,5 h** | **ESTRUCTURA**: cadena completa, SPX/XSP/NDX, bid/ask de respaldo |
-| **Unusual Whales** | 🟠 mixto (trial, caduca ~2026-08-01) | `market-tide` en cubos de 5 min de la sesión anterior; `greek-exposure` diario | **HISTORIA que no teníamos**: 1 año de griegas de dealer, DEX por strike |
+| **Unusual Whales** | 🟢 **segundos** (MEDIDO en RTH 2026-08-05 09:35-09:37) | `stock-state` mediana **1,5 s** · `net-prem-ticks` mediana **8,5 s** con `cube_lag=0` · `market_time:"regular"`. Detalle y avisos en `docs/UW-LATENCIA-RTH-2026-08-05.md`. **Ojo**: hay desfase de reloj con UW (una edad salió −1,3 s) → afirmar por debajo de ~2 s no está justificado; medido solo en la apertura, falta la picadora. `market-tide` sigue en cubos de 5 min **por construcción** (su resolución la descalifica para disparar), `greek-exposure` diario | **HISTORIA**: 1 año de griegas de dealer, DEX por strike. **Candidato**, NO disparador: la regla dura no cambia — ningún nivel que dispare una orden viene de UW; el contraste contra `data/bars_<SYM>.txt` sigue pendiente (TODOS 8f, sin IBKR esta semana) |
 
 ---
 

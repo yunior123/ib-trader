@@ -1,152 +1,96 @@
-# UW — latencia en sesion y colinealidades (2026-08-05)
+# UW — latencia medida en sesion (2026-08-05)
 
-TODOS 8a (latencia RTH) + 8b (websocket en RTH) + 8c (las 3 colinealidades).
+Generado por `scripts/uw_latency_probe.py --rth-measure`. TODOS 8a (latencia) + 8b (websocket).
 
-## Estado a las 07:2x ET — 8a y 8b quedan **MEDIDO-PENDIENTE** hasta la apertura
+- Corrida: 2026-08-05T13:35:05.682505+00:00 UTC · en_rth=True · peticiones UW=9 (tope 10) · cupo 3704/30000
 
-**No se midio la latencia esta manana y no es un olvido: a las 07:20 ET el mercado esta en
-PREMARKET.** La doctrina de la casa (`~/CLAUDE.md`, "la latencia SOLO se mide en sesion") lo
-prohibe porque fuera de RTH la edad del sello es el tiempo desde el cierre, identica para un
-endpoint con 0 s de retraso y para uno con 60 min.
+- sin IBKR esta semana: el proxy del disparador es el print de finnhub (data/rt_last_<SYM>.txt); TODOS 8f sigue pendiente
 
-Lo unico que se midio ahora, y que **fija la hora con el propio dato en vez de con una suposicion**
-(1 peticion):
 
-```
-GET /api/stock/SPY/stock-state  ->  200 en 149,1 ms
-  market_time : "premarket"
-  tape_time   : 2026-08-05T11:19:28Z   (= 07:19:28 ET)
-  reloj local : 2026-08-05T11:20:21Z
-  cupo UW     : 2.417 / 30.000 usadas hoy
-```
+## 8a — edad del feed y desfase contra el disparador
 
-La medicion real queda **programada sola** para las **09:35 ET** (5 min tras la apertura, ya con
-cinta consolidada y fuera de la subasta):
-
-- `scripts/uw_latency_probe.py --rth-measure` — tope duro **10 peticiones UW/corrida**
-- `scripts/com.ibtrader.uwlatency.plist` — `StartCalendarInterval` 09:35, una vez al dia
-- **El portero de RTH vive DENTRO del script y aborta fail-loud** (verificado: al invocarlo en
-  premarket dijo `FUERA DE SESION ... Probe NO ejecutado` y gasto **0 peticiones**). Un festivo
-  no puede producir un numero mal etiquetado.
-- Salida: `data/uw_latency.json` + reescritura de este mismo documento con los numeros medidos.
-
-Que medira, y contra que:
-
-| medida | contra que |
-|---|---|
-| `stock-state.tape_time` vs reloj | edad del feed |
-| `net-prem-ticks.tape_time` vs reloj + `cube_lag` | edad del cubo de minuto |
-| **UW − print de finnhub** (`data/rt_last_<SYM>.txt`) | **desfase contra el disparador** |
-
-Sin IBKR esta semana (orden vigente), el proxy del disparador es finnhub. **El contraste
-definitivo contra `data/bars_<SYM>.txt` sigue abierto en TODOS 8f.**
-
-**Prediccion registrada de antemano (TODOS 8a): 30-90 s.** Si sale < 30 s, sospechar de la
-medicion antes de celebrarla.
-
----
-
-## 8c — las 3 colinealidades (killlist test 1: rho antes que edge, |rho| > 0,9 = muere ya)
-
-Medido con `scripts/uw_colinealidad.py` sobre lo ya archivado. **Cero peticiones UW**: todo sale
-de `data/history/`. Numeros crudos en `data/uw_colinealidad.json`.
-
-### Control de metodo (antes de creerse nada)
-
-El recon del 2026-08-04 encontro que `greek-flow.dir_delta_flow` era **byte-identico** a
-`net_prem_ticks.net_delta` en 406/406 minutos. Ese mismo control, ahora sobre **1.013.120
-minutos** (92 sesiones x 30 syms):
-
-```
-rho(dir_delta_flow, net_delta) = 0,9999992
-byte-identicos                 = 1.013.079 / 1.013.120  (99,996 %)
-```
-
-**El precedente se reproduce a escala de un millon de minutos.** La tuberia mide bien; lo que
-sigue se puede leer.
-
-### (1) `dir_vega_flow` vs `signed_premium` — **SOBREVIVE**
-
-| | valor |
-|---|---|
-| rho agrupado | **0,0706** (n = 1.013.120 minutos, 92 dias, 30 syms) |
-| rho por simbolo: min / mediana / max | **−0,242 / 0,193 / 0,544** |
-| mas altos | NOK 0,544 · DRAM 0,501 · XLK 0,417 · NVDA 0,402 · MSFT 0,386 |
-| mas bajos | SMH −0,242 · SNDK −0,111 · ASML −0,086 |
-
-**Muy lejos de 0,9: vega NO es un re-etiquetado del premium firmado.** Sobrevive el test 1, que
-es exactamente lo que la mitad de delta no hizo. Consistente con el recon ("sobrevive solo la
-mitad de vega").
-
-**Aviso honesto de inestabilidad**: SPY agrupado en 92 dias da **−0,082**, pero SPY el 8/4 solo
-da **+0,327** (verificado a mano, 391 pares). La relacion **cambia de signo entre dias**. Eso
-refuerza que no es la misma columna, pero tambien avisa de que cualquier motor que use vega
-tendra que condicionar por regimen, no asumir un signo fijo.
-
-### (2) `senal_capitan` vs manada sobre BARRAS — **SOBREVIVE**
-
-`signed_premium` 15 m del capitan contra la amplitud (`ret15` de la flota) en rejilla de 5 min,
-mismo minimo de cobertura que `fleet_consensus` (27/30 votando, si no es FEED y no direccion):
-
-| capitan | rho | n buckets | acuerdo de signo |
+| medida | min | mediana | max |
 |---|---|---|---|
-| SPY | **0,420** | 678 | 68,1 % |
-| QQQ | **0,506** | 678 | 72,2 % |
-| SMH | **0,123** | 678 | 56,6 % |
+| `stock-state.tape_time` vs reloj (s) | -1.30 | 1.50 | 1.70 |
+| `net-prem-ticks.tape_time` vs reloj (s) | 5.70 | 8.50 | 8.50 |
+| UW − print finnhub (s, >0 = UW detras) | -224.23 | 0.20 | 0.67 |
 
-**Ninguno pasa de 0,51: el premium del capitan NO es la manada de barras con otro nombre.** Miden
-cosas distintas (dolares agresivos en opciones vs. cuantos nombres suben), que es justo lo que la
-regla 12 de la casa afirma sin haberlo medido hasta hoy.
+**Veredicto** (umbral de la casa: <60 s = candidato a tiempo real):
+- `stock-state`: **CANDIDATO A TIEMPO-REAL**
+- `net-prem-ticks`: **CANDIDATO A TIEMPO-REAL**
 
-**Aviso de muestra**: `n = 678` son buckets **solapados** (ventanas de 15 min sobre rejilla de
-5 min) de solo **9 sesiones** (2026-07-21 → 07-31, las que tienen `bars/` archivadas). El `n_eff`
-real es **mucho menor** que 678. Sirve para descartar colinealidad (que es lo que pedia 8c); **no
-sirve para publicar una probabilidad** — eso sigue bloqueado en 8e.
+Prediccion registrada de antemano en TODOS 8a: **30-90 s**.
 
-### (3) `max_pain` (UW/OI) vs `abs_wall` (gex) — **SOBREVIVE**
 
-| | valor |
-|---|---|
-| rho de (nivel−spot)/spot | **−0,0196** (n = 185 sym-dias, 7 sesiones) |
-| strike identico | **8,6 %** |
-| mediana \|max_pain − abs_wall\| / spot | **5,14 %** |
+## 8b — websocket en RTH
 
-Filas reales del 8/4 que explican el rho≈0:
+| caso | status | handshake s | cierre s | bytes | close-frame |
+|---|---|---|---|---|---|
+| sin enviar nada | HTTP/1.1 101 Switching Protocols | 0.2622 | 0.2626 | 0 | False |
+| join lista | HTTP/1.1 101 Switching Protocols | 0.366 | 0.3685 | 0 | False |
+| join objeto | HTTP/1.1 101 Switching Protocols | 0.1902 | 0.1907 | 0 | False |
 
-```
-SMH   spot 576,86   max_pain 585,00   abs_wall 530,00   |d| 9,53 %
-NVDA  spot 212,44   max_pain 200,00   abs_wall 210,00   |d| 4,71 %
-MU    spot 889,80   max_pain 940,00   abs_wall 800,00   |d| 15,73 %
-MSFT  spot 495,30   max_pain 440,00   abs_wall 500,00   |d| 12,11 %
-SKHY  spot 142,93   max_pain 143,00   abs_wall 145,00   |d|  1,40 %
-AMZN  spot 277,51   max_pain 250,00   abs_wall 280,00   |d| 10,81 %
-```
+`GET /api/socket` canales declarados: `[]`
 
-**No son el mismo iman: coinciden en menos de 1 de cada 10 sym-dias y de media estan a 5 % del
-spot el uno del otro.** `max_pain` sobrevive el test de colinealidad — pero que sea *distinto* de
-`abs_wall` no lo convierte en *operable*: eso exige su propia medicion de edge contra el null de
-nivel aleatorio, y sigue bloqueado en 8e.
+**El socket entrega datos en RTH: NO — se mantiene el veredicto: no se construye consumidor**
 
-**Bug de higiene cazado durante esta medicion**: la primera pasada metia `2026-07-25` (sabado),
-`07-26` y `08-02` (domingos) porque existe un `levels.json` rancio en esas carpetas — 77 sym-dias
-duplicados del viernes anterior inflando la muestra. Corregido con un filtro de dia de mercado
-(`uw_colinealidad.dias_de_mercado`); n bajo de 262 a 185 y el rho de −0,025 a −0,0196.
+## 8c — colinealidades (killlist test 1: |rho|>0,9 = muere ya)
 
-### Veredicto de 8c
+**(1) `dir_vega_flow` vs `signed_premium`** — rho_pooled=**0.0706** (n=1013120 minutos, 92 dias, 30 syms); per-sym min/mediana/max = -0.2416 / 0.1929 / 0.5442
+- control `dir_delta_flow` vs `net_delta` (precedente rho=1,0): rho=**1.0000**, byte-identicos 1013079/1013120
 
-**Las tres sobreviven el test 1 de la killlist (ninguna con |rho| > 0,9).** Ninguna muere hoy, y
-ninguna nace probada: pasar de "no es colineal" a "tiene edge" exige el null de entrada aleatoria,
-BH-FDR y `n_eff` suficiente — TODOS 8e, que sigue **BLOQUEADO por muestra**.
+**(2) `senal_capitan` vs `fleet_consensus` (manada sobre BARRAS)** — 9 dias:
+
+| capitan | rho | n | acuerdo de signo |
+|---|---|---|---|
+| SPY | 0.4198 | 678 | 68.1% |
+| QQQ | 0.5065 | 678 | 72.2% |
+| SMH | 0.1229 | 678 | 56.6% |
+
+**(3) `max_pain` (UW/OI) vs `abs_wall` (gex)** — rho=**-0.0196** (n=185 sym-dias, 7 dias); strike identico en **8.6%**; mediana |max_pain−abs_wall|/spot = **5.14%**
+
+Avisos que NO se pueden omitir al leer estos numeros: la muestra de (2) son buckets SOLAPADOS de pocas sesiones (n_eff mucho menor que n) y el signo de (1) cambia entre dias. Sobrevivir la colinealidad NO es tener edge: publicar probabilidad sigue bloqueado en TODOS 8e.
 
 ---
 
-## Estado de los TODOS 8
+## Lectura honesta de 8a — la prediccion FALLO, y por que no se celebra
 
-| todo | estado |
-|---|---|
-| 8a latencia RTH | **MEDIDO-PENDIENTE** — programado 09:35 ET hoy (launchd) |
-| 8b websocket RTH | **MEDIDO-PENDIENTE** — en la misma corrida de las 09:35 |
-| 8c colinealidades | **HECHO** — las 3 sobreviven, numeros arriba |
-| 8d archivador forward-only | **HECHO** — `uw_netprem_archive.py` + launchd 16:10 |
-| 8e alertas con probabilidad | **BLOQUEADO** por muestra (n_eff), a proposito |
-| 8f contraste contra IBKR | **BLOQUEADO** — sin TWS/Gateway esta semana |
+**Predije 30-90 s y salio 1,5-8,5 s.** La regla que yo mismo registre de antemano dice: *"si sale
+< 30 s, sospechar de la medicion antes de celebrarla"*. Sospechas concretas, no retoricas:
+
+1. **Hay desfase de reloj entre este Mac y los servidores de UW.** Una de las edades salio
+   **−1,3 s** (negativa): el `tape_time` de UW venia por delante de nuestro reloj. Con un offset
+   de ese orden, **cualquier afirmacion por debajo de ~2 s no esta justificada**. Lo defendible
+   es "unidades de segundo", no "1,5 s".
+2. **El −224,23 s del minimo de `UW − finnhub` NO significa que UW se adelante 224 s.** Significa
+   que el print de finnhub de SPY estaba **rancio** (102 s en la 1ª pasada) y UW venia mas
+   fresco. Mide la ranciedad de finnhub, no la de UW.
+3. **Ventana estrecha**: 2 pasadas, 2 simbolos, 09:35-09:37 ET — la ventana de mas volumen del
+   dia. **La latencia en la apertura no es la latencia de la picadora de las 11:30-14:00.**
+   Repetir a mediodia antes de generalizar.
+4. **`cube_lag = 0`** en `net-prem-ticks`: el cubo del minuto en curso ya estaba publicado. Eso
+   es consistente con un feed que consolida por minuto y lo publica rapido.
+
+**Lo que SI queda establecido**: UW no es un feed de 15 minutos. En la apertura entrega en
+unidades de segundo, con `stock-state` mas fresco que `net-prem-ticks` (1,5 s vs 8,5 s de
+mediana), y con `market_time: "regular"` confirmando sesion viva.
+
+**Lo que NO cambia**: la regla dura de la casa sigue intacta — **ningun nivel que dispare una
+orden viene de UW**. El nivel se calcula; el PRINT que lo confirma es de IBKR. Que UW sea rapido
+lo asciende a *candidato*, no a disparador, y el contraste que de verdad decide (contra
+`data/bars_<SYM>.txt`) sigue pendiente en **TODOS 8f** porque no hay IBKR esta semana.
+
+## Lectura honesta de 8b — el veredicto de madrugada SE MANTIENE
+
+Los 3 casos en RTH dan **exactamente la misma firma** que de madrugada: **101 Switching
+Protocols** y cierre en **0,19-0,37 s con 0 bytes y sin close-frame**, insensible a lo que se
+envie. `GET /api/socket` sigue declarando **`[]` = cero canales**.
+
+**La hipotesis falsable ("UW apaga el socket fuera de horario") queda REFUTADA con el mercado
+abierto.** Es una puerta de plan, no un horario. **No se construye ningun consumidor de
+websocket**; el motor de flujo va por REST con sondeo, cuya latencia es la de arriba.
+
+**No se pudo medir si el 101 consume cupo**: el contador salto 3.651 → 3.704 (+53) entre las dos
+lecturas, pero en esa ventana tambien pedian `uw_flow_tape` y demas procesos de la flota — el
+contador es **global del token, no de este proceso**. Se declara no medible por esta via en vez
+de atribuir el salto al websocket.

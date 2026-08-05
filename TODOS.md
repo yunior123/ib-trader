@@ -274,7 +274,7 @@
       Cazado verificando el item 11 — pendiente
 
 ### 8. Derivados del recon UW (2026-08-04) — "add new todos for the future as needed once we have better tools or ibkr" (Yunior)
-- [ ] 8a. **MEDIR LA LATENCIA DE UW EN RTH** — es la condición dura de `~/CLAUDE.md` antes de
+- [x] 8a. **MEDIR LA LATENCIA DE UW EN RTH** — es la condición dura de `~/CLAUDE.md` antes de
       fiarse de una fuente, y sigue abierta desde el 2026-07-26. De madrugada NO se puede: "edad
       del sello" = "tiempo desde el cierre". Un comando, ya implementado:
       `./venv/bin/python scripts/uw_endpoint_probe.py --rth-latency --sym SPY --minutes 30`
@@ -292,7 +292,19 @@
       registrado (`launchctl list` → `com.ibtrader.uwlatency`). El portero de RTH vive DENTRO
       del script y **aborta fail-loud con 0 peticiones** (verificado en premarket). Escribe
       `data/uw_latency.json` y reescribe `docs/UW-LATENCIA-RTH-2026-08-05.md`
-- [ ] 8b. **RE-PROBAR EL WEBSOCKET EN RTH** — el único experimento cuyo resultado puede cambiar
+      — **MEDIDO 2026-08-05 09:35-09:37 ET** (el job launchd disparó solo, `runs=1`, 9 peticiones,
+      cupo 3.704/30.000). `market_time:"regular"` confirmando sesión viva:
+      **`stock-state` mediana 1,5 s** (min −1,3 / max 1,7) · **`net-prem-ticks` mediana 8,5 s**
+      (min 5,7) con **`cube_lag=0`** · **UW − print finnhub mediana +0,2 s**.
+      Los dos → **CANDIDATO A TIEMPO-REAL** (umbral <60 s). Fila de `docs/LATENCIA-FUENTES.md`
+      sustituida: UW pasa de "🟠 mixto (trial caducado)" a "🟢 segundos (MEDIDO)".
+      **LA PREDICCIÓN FALLÓ: dije 30-90 s y salió 1,5-8,5 s.** No se celebra, por la regla que
+      yo mismo registré ("<30 s = sospechar antes de celebrar"): (a) hay **desfase de reloj** con
+      UW — una edad salió **−1,3 s**, así que afirmar por debajo de ~2 s no está justificado;
+      (b) el −224 s del mínimo de UW−finnhub mide la RANCIEDAD DE FINNHUB (print SPY de 102 s),
+      no un adelanto de UW; (c) ventana estrecha: 2 pasadas, 2 syms, en la APERTURA — falta la
+      picadora de 11:30-14:00. **La regla dura no cambia: UW es candidato, NO disparador**
+- [x] 8b. **RE-PROBAR EL WEBSOCKET EN RTH** — el único experimento cuyo resultado puede cambiar
       con el mercado abierto. Hoy: 101 Switching Protocols y cierre en 0,05-0,09 s sin close-frame
       y con 0 bytes, insensible a 4 formatos de join y a no enviar nada; `GET /api/socket` declara
       `{"data":[]}` = cero canales. Si en RTH entrega mensajes, **el veredicto se revoca y el
@@ -303,6 +315,16 @@
       join objeto), midiendo status, t_handshake, t_cierre, bytes y close-frame; además mide si
       el 101 **consume cupo** comparando el contador antes/después. `GET /api/socket` se repite
       en RTH para ver si declara canales
+      — **MEDIDO 2026-08-05 en RTH: EL VEREDICTO DE MADRUGADA SE MANTIENE.** Los 3 casos dan la
+      **misma firma exacta** con el mercado abierto: **101 Switching Protocols** y cierre en
+      **0,19-0,37 s con 0 bytes y sin close-frame**, insensible a lo que se envíe.
+      `GET /api/socket` sigue declarando **`[]` = cero canales**.
+      **La hipótesis falsable ("UW apaga el socket fuera de horario") queda REFUTADA**: es una
+      puerta de plan, no un horario. **NO se construye consumidor de websocket**; el motor de
+      flujo va por REST con sondeo (latencia de 8a). Lo que NO se pudo medir: si el 101 consume
+      cupo — el contador saltó 3.651→3.704 (+53) pero en esa ventana también pedían `uw_flow_tape`
+      y el resto de la flota; **el contador es global del token**, así que se declara no medible
+      por esta vía en vez de atribuirle el salto al socket
 - [x] 8c. **TRES COLINEALIDADES QUE HAY QUE MEDIR ANTES DE ESCRIBIR UNA LÍNEA DE MOTOR** (test 1
       de la killlist: ρ antes que edge, |ρ|>0,9 = muere ya):
       (1) `dir_vega_flow` vs el `signed_premium` que ya publica `uw_net_prem.py`;
