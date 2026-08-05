@@ -63,4 +63,8 @@ if [[ $MODE == FULL ]]; then
   # Sin webhooks configurados imprime "ROTO" al log y sigue; nunca aborta el 4AM.
   ./venv/bin/python scripts/discord_post.py --plans --status >> logs/dailyplans.log 2>&1
 fi
+# Discord: arboles de escenarios (data/trees) a #arboles-escenarios. FULL manda los del cierre
+# de ayer (edad visible en el embed) y REFRESH los regenerados premarket. Si faltan o el
+# webhook falla, discord_post imprime el fallo al log y el cron sigue; jamas aborta.
+[[ $MODE == FULL || $MODE == REFRESH ]] && ./venv/bin/python scripts/discord_post.py --trees >> logs/dailyplans.log 2>&1
 osascript -e 'display notification "📋 Planes flota generados + email + X" with title "ib-trader"'

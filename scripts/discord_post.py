@@ -26,7 +26,8 @@ import discord_webhooks as W         # noqa: E402
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 HOY = os.environ.get("IBT_DESKTOP_HOY", os.path.expanduser("~/Desktop/ib-trader/hoy"))
-TREES = os.path.join(REPO, "data", "trees_horizonte")
+TREES = os.path.join(REPO, "data", "trees")               # arboles vivos (tree_sheets_html.py)
+TREES_PDF = os.path.join(REPO, "data", "trees_horizonte")  # PDFs puntuales (adhoc), fallback
 
 
 def plans_dir(day=None):
@@ -80,10 +81,60 @@ def cmd_plans(a, hooks):
     return 0 if not fails else 1
 
 
+def _tree_line(path):
+    """Una linea legible por arbol; None si el JSON esta roto (se dice, no se inventa)."""
+    import json
+    try:
+        with open(path) as f:
+            d = json.load(f)
+        edad_h = (time.time() - os.path.getmtime(path)) / 3600.0
+        muros = ""
+        if d.get("put_wall") is not None and d.get("call_wall") is not None:
+            muros = " muros %g P / %g C" % (d["put_wall"], d["call_wall"])
+        flip = " flip %g" % d["flip"] if d.get("flip") is not None else ""
+        return ("`%s` %s %s%s%s → vie %s (hace %.1f h)%s" % (
+            d.get("sym", os.path.basename(path)), d.get("spot", "?"),
+            d.get("regime", "?"), flip, muros, d.get("viernes", "?"), edad_h,
+            " ⚠️RANCIO" if edad_h > 24 else ""))
+    except Exception as e:
+        print("  arbol %s ilegible: %s" % (os.path.basename(path), e), file=sys.stderr)
+        return None
+
+
 def cmd_trees(a, hooks):
-    pdfs = sorted(glob.glob(os.path.join(TREES, "*.pdf")))
+    """data/trees/*.json (vivos) -> resumen + arboles.html adjunto; fallback PDFs adhoc."""
+    js = [p for p in sorted(glob.glob(os.path.join(TREES, "*.json")))
+          if os.path.basename(p) != "opening_plan.json"]
+    if js:
+        lines = [ln for ln in (_tree_line(p) for p in js) if ln]
+        if not lines:
+            print("todos los árboles de %s ilegibles" % TREES, file=sys.stderr)
+            return 1
+        edad_h = (time.time() - max(os.path.getmtime(p) for p in js)) / 3600.0
+        ok, err = S.send_long(
+            "arboles-escenarios", "🌳 Árboles de escenarios (%d)" % len(lines),
+            "\n".join(lines)
+            + ("\n⚠️ el más fresco tiene >24 h; regenera antes de operar con ellos."
+               if edad_h > 24 else ""),
+            L.NORMAL if edad_h <= 24 else L.SISTEMA, source="tree_sheets_html.py", hooks=hooks)
+        if not ok:
+            print("árboles: FALLO resumen: %s" % err, file=sys.stderr)
+            return 1
+        html = os.path.join(TREES, "arboles.html")
+        fails = []
+        if os.path.isfile(html):
+            good, err = S.send_file("arboles-escenarios", html,
+                                    content="`arboles.html` — hoja completa", hooks=hooks)
+            if not good:
+                fails.append(("arboles.html", err))
+        print("árboles: %d líneas + %s (antigüedad %.1f h)"
+              % (len(lines), "html OK" if not fails else "html FALLO", edad_h))
+        for name, err in fails:
+            print("  FALLO %s: %s" % (name, err), file=sys.stderr)
+        return 0 if not fails else 1
+    pdfs = sorted(glob.glob(os.path.join(TREES_PDF, "*.pdf")))
     if not pdfs:
-        print("sin árboles en %s" % TREES, file=sys.stderr)
+        print("sin árboles en %s ni %s" % (TREES, TREES_PDF), file=sys.stderr)
         return 1
     edad_h = (time.time() - max(os.path.getmtime(p) for p in pdfs)) / 3600.0
     S.send("arboles-escenarios",

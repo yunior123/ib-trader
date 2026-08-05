@@ -127,10 +127,19 @@
       (AMZN -2,5%); SNDK y SMH CLAVADOS en su call wall (1370/565) = candidato fade con print;
       AMZN dos caras en su put wall 275 (flip 271); QQQ abre sobre su muro 710 = retest manda;
       SPY pegado a 761 = pin, sin 0DTE. VIX 15,6 contango. Doctrina: 09:45-10:30 ventana de oro.
-- [ ] 11. "make sure we have options alerts separately, take a look at spartan for reference"
+- [x] 11. "make sure we have options alerts separately, take a look at spartan for reference"
       (2026-08-04) — HECHO commits 8bd15bcc: #opciones-contratos (ficha GO/CAUTION de
       order_ticket), NO-GO a #senales-rechazadas; Spartan separa por vehiculo, 19 ideas/dia
       vs nuestras 390, mudez medida 11:00-12:59.
+      VERIFICADO 2026-08-05: (a) classify() 6/6 sobre los strings REALES de los productores
+      (GO/CAUTION → opciones-contratos; NO-GO, sin bid/ask, OPCIONES VETADAS → senales-rechazadas;
+      discord_layout.py:117-124); (b) relay log 04-ago 03:02 → 05-ago 06:56: 614 ENVIADAs y CERO
+      fichas en canal equivocado — no hubo ficha que enrutar porque today_alarm5 registro las 16
+      del 08-04 (6 CAUTION + 10 NO-GO, 0 GO) en data/today_alarm5_fired.jsonl SIN empujar al
+      embudo (solo GO interrumpe, orden Yunior 2026-08-04); (c) webhook probado en vivo: ficha
+      TEST GO → #opciones-contratos OK (05-ago). El canal espera el primer GO real.
+      HALLAZGO colateral: "🟢 SPX PRINT 7715 — CALL" cayo a #sin-clasificar el 08-04 11:57 —
+      falta regla para los PRINT de SPX (apuntado en 13d).
 - [x] 12. "continue, review all changes, hunt for bugs, logic issues, make sure we post updated
       and accurate data to discord. commit and push when done, but first review all in depth and
       send agents to review the whole repo. hunt hunt hunt." (2026-08-04) — HECHO. 3 revisores:
@@ -222,12 +231,41 @@
       Claude para relanzar `com.ibtrader.discordrelay` y verificar con `scripts/discord_relay.py
       --once --dry-run` + push de prueba. Los WEBHOOKS de canal (config/discord_webhooks.json)
       NO dependen del bot token: el relé sigue publicando mientras tanto
-- [ ] 6. "we post plans, trees, strategies there too" (2026-08-04) — los PDFs/planes diarios,
-      árboles de escenarios y estrategias también van a Discord — pendiente
-- [ ] 7. "take a look at this server and see what we can learn and take from them to boost and
+- [x] 6. "we post plans, trees, strategies there too" (2026-08-04) — HECHO 2026-08-05:
+      PLANES ya cableados (dailyplans_run.sh → discord_post.py --plans; evidencia HOY 04:02
+      "planes: 30/30 subidos" en logs/dailyplans.log:5678) + prueba con UN PDF real
+      (QQQ_plan.pdf → #planes-premarket OK). ARBOLES nuevos: cmd_trees lee data/trees/*.json
+      (resumen 1 línea/sym: spot, régimen, flip, muros, viernes, edad) + arboles.html adjunto,
+      fallback a los PDFs adhoc de trees_horizonte; cron FULL+REFRESH con degradación limpia
+      (falla → log, jamás aborta). Probado en vivo: "árboles: 11 líneas + html OK (0.5 h)" →
+      #arboles-escenarios. ESTRATEGIAS sigue sin productor automático → capturado en 13b.
+- [x] 7. "take a look at this server and see what we can learn and take from them to boost and
       improve our server architecture: discord.com/channels/492093482576510982/493845991523352579.
       server in spanish for now, with posibility for english too later. send agent for this task,
-      let it use claude in chrome" (2026-08-04) — delegado a agente
+      let it use claude in chrome" (2026-08-04) — HECHO: estudio completo en
+      docs/DISCORD-REFERENCIA-2026-08-04.md (617 líneas, botín de 13 hallazgos con canal+fecha,
+      §11 respondió el item 11). Destiladas 2026-08-05 las 3 mejoras de más valor/coste AÚN NO
+      implementadas → items 13a-13c (verificado con grep: ni mudez horaria en el relé, ni
+      productor de víspera, ni plantilla de 6 huecos existen hoy).
+
+### 13. Derivados del estudio Spartan (2026-08-05) — top-3 del botín de docs/DISCORD-REFERENCIA-2026-08-04.md §10, NO implementados (apuntar, no construir)
+- [ ] 13a. **APAGÓN 11:00-12:59 ET en el relé** (botín #1): Spartan calla en la picadora
+      (medido: cero mensajes en sus 3 canales de alerta 2026-08-03); nuestra flota publica igual
+      (390 alertas/día). Ventana de mudez en discord_relay.py: en 11:00-12:59 solo pasa
+      #criticas, el resto se registra sin publicar. 1 función horaria + tests — pendiente
+- [ ] 13b. **VÍSPERA A LAS 15:45, NO A LAS 16:25** (botín #4): productor para #estrategias (hoy
+      SIN productor automático) que publique ANTES de la campana las condiciones copiables del
+      día siguiente formato `Alert: Bid>X` desde chart_levels/gex_core — es la regla 10 ("fichas
+      preparadas la víspera") sin implementar. Spartan: side-charts 15:45-16:09; nuestro
+      postmortem 16:20 llega cuando ya no se puede armar nada. ~80 líneas — pendiente
+- [ ] 13c. **PLANTILLA DE 6 HUECOS GOTEADA EN PREMARKET** (botín #5): los 30 PDFs de las 04:00
+      no se leen en Discord; Spartan publica 1 párrafo/ticker (pivote + 2 res + 2 sop + sesgo)
+      goteando 08:54→09:29, 23 sesiones sin variar. Publicar en #planes-premarket una línea de
+      6 huecos por ticker sobre datos ya calculados (daily_fleet_plans/gex_snapshot), PDF como
+      adjunto para quien lo quiera — pendiente
+- [ ] 13d. Regla de enrutado para los PRINT de SPX: "🟢 SPX PRINT 7715 — CALL" cayó a
+      #sin-clasificar (relay log 08-04 11:57). Un PRINT es el gatillo de la casa → #criticas.
+      Cazado verificando el item 11 — pendiente
 
 ### 8. Derivados del recon UW (2026-08-04) — "add new todos for the future as needed once we have better tools or ibkr" (Yunior)
 - [ ] 8a. **MEDIR LA LATENCIA DE UW EN RTH** — es la condición dura de `~/CLAUDE.md` antes de
@@ -852,3 +890,13 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
 - [x] "find nokia similar tickers like we did last week on friday... call/put was like 7... find 20 tickers like nokia that people like, that could go to the moon the next week... add them to watch, we will call it the bargain watch fleet" (2026-08-05 06:08) — estado: hecho 97d843f1 (data/bargain_fleet.txt 20 tickers + docs/BARGAIN-FLEET-2026-08-05.md; spot-check OPEN 4.5C OI 27299 verificado)
 - [x] "bargain watch fleet": 20 tickers como NOK (C/P alto, baratos, retail, opciones liquidas) -> data/bargain_fleet.txt + docs/BARGAIN-FLEET-2026-08-05.md (2026-08-05, hecho)
 - [x] backtest 2026-08-04: veto capitan al fade bb-rebote SHORT + re-canto apertura finviz momentum (2026-08-05) — estado: hecho. Veto medido retro: sector calla 42/77 fades (perdedoras 30/51) pero mata 12/26 ganadoras (46%) → OFF por defecto, tras IBT_BB_CAPTAIN_VETO=1 (banner sin voz). Re-canto 09:31-09:35 de matches momentum vivos "(pre-open match)" con dedup diario (PLTR/AAOI ya no se pierden).
+
+## Sesión 2026-08-05 — auditoría TOP-10 (agente, orden "ataca hallazgos #1-#8 del AUDIT-2026-08-04")
+- [x] AUDIT #1 NBBO dos relojes: provider_bridge.py write_nbbo → campo1 wall-clock + campo4 epoch de bolsa + feed_tier en provider_status.json; verificado vivo (nbbo_spy campo1 edad 42s, campo4 1021s delayed declarado); lectores parsean 3 campos sin romper (2026-08-05, hecho)
+- [ ] "add hood to fleet" (2026-08-05 ~07:05) — estado: en curso
+- [ ] "tell me some contract to buy for next week with high conviction and max profitability, pure max, lets make sure its the next nokia" (HOOD, 2026-08-05) — estado: en curso (quotes vivos UW)
+- [ ] "take a look at C/P ratio find more like hood which are quite loved by community, at least 3, have them all onboard" (2026-08-05) — estado: delegado a agente
+- [ ] "run full analysis on bargain fleet this week and next, options, whales... similar to how u did with apple, next premium too" (2026-08-05) — estado: delegado a agente
+- [ ] "find me the best contracts for the rest of the week or next week expiration" (2026-08-05 ~07:10) — estado: en curso (quotes vivos UW: 6 principales + HOOD; bargain top-5 vía agente)
+- [x] AUDIT #4 calibración congelada: calibration_ledger.py record_from_ranking parsea formato emoji (▶️reclaim/🎯/🛑, régimen desde ranking.json porque 🚀 pisa el emoji) + fallback legado; backfill 22-jul→05-ago = 324 filas, 294 calificadas; calibration.json pasa de n=27/1día a reclaim_wall POSITIVO n=131 59% / NEGATIVO n=67 42%, trust=SI; +2 tests (2026-08-05, hecho)
+- [x] AUDIT #3 flecha diluida: direction_view.py:212 → fleet=0.0 (sin dato/capitanes discrepan) ya NO se registra con peso 1.4 (dilución 28,6% muerta); verificado vivo (QQQ fleet=1.0 sigue entrando, caso 0 cubierto por test nuevo test_fleet_cero_no_entra_como_familia) (2026-08-05, hecho)
