@@ -995,6 +995,24 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
 - [x] "bargain watch fleet": 20 tickers como NOK (C/P alto, baratos, retail, opciones liquidas) -> data/bargain_fleet.txt + docs/BARGAIN-FLEET-2026-08-05.md (2026-08-05, hecho)
 - [x] backtest 2026-08-04: veto capitan al fade bb-rebote SHORT + re-canto apertura finviz momentum (2026-08-05) — estado: hecho. Veto medido retro: sector calla 42/77 fades (perdedoras 30/51) pero mata 12/26 ganadoras (46%) → OFF por defecto, tras IBT_BB_CAPTAIN_VETO=1 (banner sin voz). Re-canto 09:31-09:35 de matches momentum vivos "(pre-open match)" con dedup diario (PLTR/AAOI ya no se pierden).
 
+## Sesión 2026-08-05 mediodía
+- [x] "review nokia c/p ratio, whales, dark pool, options chain, walls, same for aapl, nvda, mu,
+      tsla, ... plus also for the bargain fleet. do it for this week and next week. order them
+      from bullish to bearish, include the whole main fleet as well" (2026-08-05 10:40) —
+      estado: hecho. `scripts/fleet_cp_scan.py` (57 syms = flota 36 + bargain 21, ~800 req UW,
+      ~40s) + `fleet_cp_rank.py` (5 votos iguales, umbral fijo, sin z-scores compuestos) +
+      `fleet_cp_report.py` → `docs/CP-SCAN-2026-08-05.md`.
+      **3 GOTCHAS UW MEDIDOS Y CORREGIDOS**: (1) `/oi-per-strike` y `/flow-per-strike` IGNORAN
+      `expiry` (NOK: 54.877 calls igual con 08-07, 08-14 y sin parámetro) → muros y OI por
+      vencimiento se construyen desde `/option-contracts?expiry=X`, que sí lo respeta; sumar
+      w1+w2 contaba el mismo día DOS VECES. (2) `/darkpool` topa en 500 prints: el agregado
+      estaba TRUNCADO (el "$1,11B de QQQ" cubría 26 min, no el día) → se marca `TRUNC` + ventana
+      real. (3) el flip tomaba el PRIMER cruce de cero (COIN "flip 65" con spot 151) → ahora el
+      más cercano al spot, y `None` + motivo si está a >20%.
+      Hallazgo de lectura: **C/P alto ≠ alcista** — NOK C/P 7,2 con las calls al BID (agresor
+      −0,06) y los puts vendidos (−0,43); por eso el C/P se muestra pero NO vota, vota el lado
+      agresor.
+
 ## Sesión 2026-08-05 — auditoría TOP-10 (agente, orden "ataca hallazgos #1-#8 del AUDIT-2026-08-04")
 - [x] AUDIT #1 NBBO dos relojes: provider_bridge.py write_nbbo → campo1 wall-clock + campo4 epoch de bolsa + feed_tier en provider_status.json; verificado vivo (nbbo_spy campo1 edad 42s, campo4 1021s delayed declarado); lectores parsean 3 campos sin romper (2026-08-05, hecho)
 - [x] "add hood to fleet" (2026-08-05 ~07:05) — hecho: HOOD + PLTR MSTR COIN CRWV RKLB en fleet.txt(36)/universe_gamma(41)/provider_syms(32), barras verificadas vivas
