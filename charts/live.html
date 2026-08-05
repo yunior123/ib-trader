@@ -1076,6 +1076,9 @@ const S = {
   // combo_tl: Supertrend (2 ramas, huecos = break) + trendlines (2 puntos + extensión)
   stUp:    mkLine("#26a69a", 2, false),
   stDn:    mkLine("#f23645", 2, false),
+  // Target Trend [BigBeluga] (port, translucido para no ensuciar la UI)
+  ttUp:    mkLine("rgba(6,182,144,0.45)", 2, true),
+  ttDn:    mkLine("rgba(182,112,6,0.45)", 2, true),
   tlUp:    mkLine("#26a69a", 1, false),
   tlDn:    mkLine("#f23645", 1, false),
 };
@@ -1084,7 +1087,7 @@ const S = {
 // marcadores Buy/Sell del Supertrend (v5: createSeriesMarkers)
 let stMarkersApi = null;
 try { stMarkersApi = LWC.createSeriesMarkers(candle, []); } catch (e) { stMarkersApi = null; }
-let curStMarkers = [], sigMarkers = [], engineOps = [];
+let curStMarkers = [], sigMarkers = [], engineOps = [], curTtMarkers = [], curWhaleMarkers = [];
 // RACIMOS: en NVDA/MU las señales del día se apilan en bolas que TAPAN LAS VELAS. Se agrupan
 // por barra+lado (y las rachas de <=2 barras se juntan) en UN marcador con contador; el
 // tooltip mantiene el detalle. No se descarta ninguna señal: se cuentan.
@@ -1123,10 +1126,29 @@ function clusterSignals(mk) {
   }
   return out.sort((a, b) => a.time - b.time);
 }
+// price-lines de Target Trend (entry/stop/T1-3 del ultimo flip); translucidas, ✔ si tocado
+let ttPriceLines = [];
+function drawTtLevels(levels) {
+  for (const pl of ttPriceLines) { try { candle.removePriceLine(pl); } catch (e) {} }
+  ttPriceLines = [];
+  for (const lv of levels) {
+    const hit = lv.hit;
+    const col = lv.label === "stop" ? "rgba(219,30,30,0.4)"
+              : lv.label === "entry" ? "rgba(29,128,221,0.45)"
+              : hit ? "rgba(120,120,120,0.35)" : "rgba(6,182,144,0.4)";
+    try {
+      ttPriceLines.push(candle.createPriceLine({
+        price: lv.price, color: col, lineWidth: 1, lineStyle: LineStyle.Dashed,
+        axisLabelVisible: false, title: (hit ? "✔ " : "") + lv.label + " " + lv.price,
+      }));
+    } catch (e) {}
+  }
+}
 function applyMarkers() {
   if (!stMarkersApi) return;
   try {
-    const mk = [...curStMarkers, ...clusterSignals(sigMarkers), ...engineOps]
+    const mk = [...curStMarkers, ...curTtMarkers, ...curWhaleMarkers,
+                ...clusterSignals(sigMarkers), ...engineOps]
                .sort((a, b) => a.time - b.time);
     stMarkersApi.setMarkers(mk);
   } catch (e) {}
@@ -2966,6 +2988,11 @@ function onHistory(msg) {
   drawTrendlines(ind.trendlines);
   // marcadores = Supertrend Buy/Sell + NUESTRAS señales (whale/flow/bollinger/alarma/estructural)
   curStMarkers = ind.stMarkers || [];
+  S.ttUp.setData(ind.ttUp || []);   // Target Trend trailing alcista
+  S.ttDn.setData(ind.ttDn || []);
+  curTtMarkers = ind.ttMarkers || [];
+  curWhaleMarkers = ind.whaleMarkers || [];   // Big Trades (vol intrabar; vacio si feed sin volumen)
+  drawTtLevels(ind.ttLevels || []);
   sigMarkers = msg.signals || [];
   engineOps = msg.engineOps || [];
   applyMarkers();

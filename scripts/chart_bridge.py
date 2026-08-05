@@ -519,12 +519,97 @@ def compute_indicators(bars):
     # combo_tl: Supertrend (ATR 10, mult 3.0) — dos ramas alcista/bajista
     stUp, stDn, stMarkers = supertrend(bars, 10, 3.0)
 
+    ttUp, ttDn, ttMarkers, ttLevels = target_trend(bars)
+    whaleMarkers = whale_vol_markers(bars)
+
     return {
         "bbUpper": bbUpper, "bbLower": bbLower, "bbMid": bbMid,
         "sma20": sma20, "sma40": sma40, "sma100": sma100, "sma200": sma200,
         "vwap": vwap, "macd": macd, "signal": signal, "hist": hist, "volume": volume,
         "stUp": stUp, "stDn": stDn, "stMarkers": stMarkers,
+        "ttUp": ttUp, "ttDn": ttDn, "ttMarkers": ttMarkers, "ttLevels": ttLevels,
+        "whaleMarkers": whaleMarkers,
     }
+
+
+
+# ---- Target Trend [BigBeluga, port CC BY-NC-SA uso propio] + Whale Detector [HK] ----
+
+def target_trend(bars, length=10, target=0):
+    """SMA(high/low,10) +/- SMA(ATR200,200)*0.8: flip por cruce de close, trailing por rama,
+    y niveles entry/stop/T1-3 del ULTIMO flip con estado tocado. Todo None si n corta."""
+    n = len(bars)
+    if n < 12:
+        return [None] * n, [None] * n, [], []
+    highs = [b[2] for b in bars]; lows = [b[3] for b in bars]; closes = [b[4] for b in bars]
+    tr = [highs[0] - lows[0]] + [max(highs[i] - lows[i], abs(highs[i] - closes[i-1]),
+                                     abs(lows[i] - closes[i-1])) for i in range(1, n)]
+    def _sma(arr, p):
+        out = [None] * len(arr); acc = 0.0
+        for i, v in enumerate(arr):
+            acc += v
+            if i >= p: acc -= arr[i - p]
+            if i >= p - 1: out[i] = acc / p
+        return out
+    atr200 = _sma(tr, min(200, max(2, n // 2)))
+    atrs = _sma([x if x is not None else tr[i] for i, x in enumerate(atr200)], min(200, max(2, n // 2)))
+    smaH = _sma(highs, length); smaL = _sma(lows, length)
+    up = [None] * n; dn = [None] * n; markers = []
+    trend = None; last_flip = None
+    for i in range(n):
+        if smaH[i] is None or atrs[i] is None: continue
+        av = atrs[i] * 0.8
+        hi_b = smaH[i] + av; lo_b = smaL[i] - av
+        prev = trend
+        if closes[i] > hi_b: trend = True
+        elif closes[i] < lo_b: trend = False
+        if trend is True: up[i] = round(lo_b, 4)
+        elif trend is False: dn[i] = round(hi_b, 4)
+        if prev is not None and trend != prev:
+            markers.append({"time": bars[i][0], "position": "belowBar" if trend else "aboveBar",
+                            "shape": "arrowUp" if trend else "arrowDown",
+                            "color": "rgba(6,182,144,0.65)" if trend else "rgba(182,112,6,0.65)",
+                            "text": ""})
+            last_flip = (i, trend, closes[i], lo_b if trend else hi_b, av)
+    levels = []
+    if last_flip:
+        i0, tdir, entry, stop, av = last_flip
+        sgn = 1 if tdir else -1
+        levels.append({"price": round(stop, 2), "label": "stop", "hit": False})
+        levels.append({"price": round(entry, 2), "label": "entry", "hit": False})
+        for k in (1, 2, 3):
+            tprice = entry + sgn * av * (5 * k + target * k)
+            hit = any(lows[j] <= tprice <= highs[j] for j in range(i0 + 1, n))
+            levels.append({"price": round(tprice, 2), "label": f"T{k}", "hit": hit})
+    return up, dn, markers, levels
+
+
+def whale_vol_markers(bars, lookback=5, mult=3.0):
+    """Anomalias de volumen intrabar (HK): buy=(c-l)/rango*v, sell=(h-c)/rango*v vs
+    media+sigma*mult de las lookback velas PREVIAS. 3 tamanos. Translucido (UX)."""
+    n = len(bars)
+    out = []
+    if n < lookback + 2:
+        return out
+    buy = []; sell = []
+    for b in bars:
+        rng = b[2] - b[3]
+        buy.append((b[4] - b[3]) / rng * b[5] if rng > 0 else 0.0)
+        sell.append((b[2] - b[4]) / rng * b[5] if rng > 0 else 0.0)
+    import statistics as _st
+    for i in range(lookback, n):
+        wb = buy[i - lookback:i]; ws = sell[i - lookback:i]
+        mb, sb = _st.mean(wb), _st.pstdev(wb)
+        ms, ss = _st.mean(ws), _st.pstdev(ws)
+        for val, m, sd, pos, col in ((buy[i], mb, sb, "belowBar", "38,166,154"),
+                                     (sell[i], ms, ss, "aboveBar", "239,83,80")):
+            if sd <= 0: continue
+            z = (val - m) / sd
+            if z > mult:
+                size = 1 if z <= mult + 1.5 else (2 if z <= mult + 3.0 else 3)
+                out.append({"time": bars[i][0], "position": pos, "shape": "circle",
+                            "color": f"rgba({col},0.35)", "size": size, "text": ""})
+    return out[-120:]   # tope: un chart lleno de circulos es peor UX que ninguno
 
 
 # --------- serialización a puntos lightweight-charts (time = epoch seg) -------
@@ -591,6 +676,11 @@ def indicators_series(bars, ind):
         "stUp": _break_points(bars, ind["stUp"]),
         "stDn": _break_points(bars, ind["stDn"]),
         "stMarkers": ind["stMarkers"],
+        "ttUp": _break_points(bars, ind["ttUp"]),
+        "ttDn": _break_points(bars, ind["ttDn"]),
+        "ttMarkers": ind["ttMarkers"],
+        "ttLevels": ind["ttLevels"],
+        "whaleMarkers": ind["whaleMarkers"],
         "trendlines": compute_trendlines(bars),
         "madrid": madrid_ribbon(bars),   # ribbon Madrid: 18 EMAs con color por punto
     }
