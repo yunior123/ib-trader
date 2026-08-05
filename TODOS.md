@@ -841,3 +841,9 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       + "code for ibkr stays, do not delete it, we might connect back to it later on, put
       conditionals per data provider, remember to have all generic to avoid deleting code, and
       modifying preferably just one one service file" (2026-08-03, hecho)
+
+## Sesión 2026-08-05 premarket (6:08 AM)
+- [ ] "analyze these tickers in full depth premarket... msft y aapl dark pools >$1B ayer... options chain, dark pool, whales, gamma, gex, dealers zones, call wall, put walls... today session and rest of week, also next week... use UW or polygon... msft, aapl, amd, nok, nvda, hood... include plan, tree with directions, strategies, post the results to discord and also to x.com, analyze premarket news, prices" (2026-08-05 06:08) — estado: en curso (agentes de datos lanzados, síntesis en camino crítico)
+- [x] "send agent to add MAG7 to our software for tracking" (2026-08-05 06:08) — estado: hecho 4854885c (data/mag7.txt + scripts/mag7_view.py)
+- [ ] "add filter finviz for squeeze, vrp or volatility, overpriced options, to find nice trades for puts or calls, be smart on this" (2026-08-05 06:08) — estado: delegado a agente
+- [ ] "find nokia similar tickers like we did last week on friday... call/put was like 7... find 20 tickers like nokia that people like, that could go to the moon the next week... add them to watch, we will call it the bargain watch fleet" (2026-08-05 06:08) — estado: delegado a agente
