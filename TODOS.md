@@ -2,6 +2,18 @@
 
 > Vivo. Apuntar cada petición AL MOMENTO con las palabras de Yunior. Lo cerrado → Done.md.
 
+- [ ] 43. "add news for all fleet in discord, but make sure they dont get repeated, no need to
+      store them more than 24 h, debug, fix, improve" (2026-08-05 13:25) — pendiente
+- [ ] 44. "debug channels in discord, make sure we are using them properly and all integrated"
+      (2026-08-05 13:25) — pendiente
+- [ ] 45. "be more strict for BB alerts, go rsi 80/20, filter out noise" (2026-08-05 13:25) —
+      pendiente
+- [ ] 46. "try alpaca for news too, do tests on providers to see the best ones" (2026-08-05 13:45)
+      — adaptador `src_alpaca()` escrito (1 sola petición para los 30, Benzinga tiempo real).
+      BLOQUEADO: Alpaca se purgó del repo el 2026-07-15 ("no alpaca all over") y no queda ninguna
+      clave; el endpoint da 401 sin credencial. Hace falta que Yunior pegue en config/feeds.env:
+      `ALPACA_API_KEY_ID=` y `ALPACA_API_SECRET_KEY=` (sirven las de cuenta paper, gratis) y el
+      barrido comparativo lo incluye solo.
 - [ ] 39. DATO PERDIDO: `data/trading-signals/2026-08-03.txt` esta truncado (2,6 KB vs 122 KB
       del 08-04) — el dia se regenero/corto. El test ya no clava esa fecha (usa el dia completo
       mas reciente), pero el backtest de ese dia NO es reproducible. Investigar quien lo trunco
@@ -1030,3 +1042,17 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
 - [x] AUDIT #6 EM inventado al 2%: compass.cpp:703 amplitude() aborta con why="sin EM medido" (LATIGAZO/REBOTE/SCALP ya no se gradúan contra una valla fabricada) + :920 el gate S_APPR cae a NEAR_PCT*2; direction_view.py:156 em sin fallback y el factor flip no vota sin EM (2026-08-05, hecho)
 - [x] AUDIT #7 frescura del camino del dinero: gate_core.hpp parsea spot_age del header + OPT_MAX_SPOT_AGE_S=600 y lo mete en `fresh`; gex_core.py SPOT_STALE_S=600 en el veredicto `stale`. MEDIDO: gate SPY antes fresh=true (age 30s del ESCRITOR) → ahora fresh=false "spot de la cadena viejo 919s"; QQQ spot_age 8s sigue fresh=true; gex_core en RTH: SPY/TXN stale=True con motivo (15/20 min) donde antes stale=False (2026-08-05, hecho)
 - [x] AUDIT #8 compass adoptaba spot por mtime: compass.cpp:1475 exige además spot_age_s<=300 del propio productor (levels_txn.json: mtime 137s pero spot_age_s 954s) (2026-08-05, hecho)
+
+## Sesión 2026-08-05 tarde
+- [x] "review expiring gamma for nokia, intc and aapl this week, msft too. take a look at spcx for
+      options and leveraged. review with uw" (2026-08-05 14:40) — hecho: uw_gex_expiry + cage_lotto_scan
+      (--max-spot 9999) + perfil de muros por expiry vía /option-contracts?expiry= + net-prem-ticks.
+      Muere esta semana (08-05+08-07): INTC 32,2% · AAPL 28,8% · MSFT 20,9% · NOK 11,6% · SPCX 30,9%.
+      SPCX: lockup 08-06 (911,5M acc / $116B), régimen NEGATIVE, signed −58M; el "muro" C330 08-07
+      con OI 558.996 es basura de $0,01 (IV 461%) — NO es imán. Apalancados verificados vivos:
+      SPCH/SSPC/SPCU/SPCF/LOFF/SPAL/SNK; SPCK ilíquido (vol 4.370).
+- [x] "find me contracts for just 10-30 dolars for this week for cheap tickers similar to nokia,
+      with high chances of success, take a look at gamma about to expire that would put the
+      tickers out of jail" (2026-08-05 14:35) — estado: hecho, docs/LOTOS-JAULA-2026-08-05.md. Scan de lotos $10-30 sobre
+      bargain fleet + baratos de la flota, expiry 08-07/08-14, con score de JAULA (gamma que
+      expira el 08-07 vs OI que queda) — scripts/cage_lotto_scan.py
