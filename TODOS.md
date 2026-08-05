@@ -239,6 +239,12 @@
       fallback a los PDFs adhoc de trees_horizonte; cron FULL+REFRESH con degradación limpia
       (falla → log, jamás aborta). Probado en vivo: "árboles: 11 líneas + html OK (0.5 h)" →
       #arboles-escenarios. ESTRATEGIAS sigue sin productor automático → capturado en 13b.
+      EVIDENCIA EN EL CANAL (API Discord, no solo rc=0): #planes-premarket 2026-08-05T08 UTC =
+      **31 mensajes** (1 embed + 30 PDFs, el 04:02 del cron) y T11 el PDF de prueba;
+      #arboles-escenarios T11 = 3 (resumen + arboles.html + otro agente). Los 3 webhooks
+      resueltos por channel_id a su canal correcto. Nota: los PDFs NO pasan por
+      discord_relay.log — discord_post.py publica por webhook directo; el log del relé solo
+      espeja data/notify_push.txt.
 - [x] 7. "take a look at this server and see what we can learn and take from them to boost and
       improve our server architecture: discord.com/channels/492093482576510982/493845991523352579.
       server in spanish for now, with posibility for english too later. send agent for this task,
