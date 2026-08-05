@@ -161,7 +161,7 @@
       #bot-logs en <1 s y puerta PRIVADA operando. Familias que no llegaban: (a) capadas en
       ráfaga → arreglado con dedup-tras-cap; (b) Asia mal enrutada → arreglado con relanzo.
       El resto del día: ENVIADAS a #flujo-uw/#senales-flota/#estado-proveedores según log
-- [ ] 10. "send agent to investigate all logs, to find noise or bugs or broken things"
+- [x] 10. "send agent to investigate all logs, noise/bugs/broken" — HECHO 2026-08-05: auditoria completa docs/AUDIT-2026-08-04.md (TOP-10 + 15 medios + 17 descartados); fixes en curso
       (2026-08-04) — delegado a agente
 
 - [ ] 1. "create alert system with UW to detect flows, advanced ones" (2026-08-04) — **RECON HECHO,
@@ -213,7 +213,7 @@
       (planes del día) y a `fleet_up.sh --status`. Roles con permisos mínimos, sin Administrator.
       Canales nuevos que salieron de MEDIR el embudo: `#confluencia` y `#capitanes` (las 8 líneas
       que ninguna regla reconocía eran las dos señales más selectivas de la casa).
-- [ ] 5. Rotar el bot token de Discord: llegó pegado en el chat → comprometido por definición.
+- [x] 5. Token bot Discord — VERIFICADO 2026-08-05 06:45: feeds.env:48 responde 200 (bot "Gamma War Room" id 1534079940675240066), fichero actualizado por Yunior 8/4 02:15 ("ya te di todo"); 33/33 webhooks entregando. Si el token del chat viejo sigue activo en el portal, resetearlo allí sigue recomendado.
       — bloqueado: requiere portal Discord de Yunior. El token vive en `config/feeds.env:48`
       (`DISCORD_BOT_TOKEN`, chmod 600, gitignored — verificado con git check-ignore). Los 3 pasos
       de Yunior: (1) discord.com/developers/applications → app 1534079940675240066 → pestaña
