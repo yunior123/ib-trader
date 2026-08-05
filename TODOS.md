@@ -17,6 +17,15 @@
 - [ ] 41. BUG (preexistente, hallado 2026-08-05): `tests/test_chart_bridge_liq.py::test_liq_map_reads_polygon_archive_and_fresh_live_cache` falla — el mapa de liquidez
       devuelve cols=["0936"] y NO incluye la columna del cache VIVO (mtime 10:00). O el mapa
       ignora el dato vivo (bug de camino vivo, malo en RTH) o el test es fragil. Verificar cual.
+- [x] 42. "finviz message wrong: buy sell watch instead of just one" + "UW notifications should
+      say bearish or bullish" + "keep it simple" (2026-08-05) — HECHO y VERIFICADO EN VIVO:
+      finviz "· NUEVOS · BUY 2 SELL 0 WATCH 0 | URGN BUY $43.94 ... score 7/7" -> "· BUY | ATKR
+      $93.61 +0.1% RVOL 12.5x" (sin recuento, sin score, sin NUEVOS; "(giro)" solo si cambia de
+      opinion; lado por fila solo si la tanda es mixta). OJO: la 1a vez fallo porque edite el .cpp
+      y NO recompile — el binario es lo que corre.
+      UW: "CALLS ask-side ... premium 1.0M ask-side" -> "UW FLOW NVDA 🟢 BULLISH | CALLS compradas
+      220 exp 08-05 · vol/OI 8.3 $252k". Doctrina aplicada: vender put = BULLISH, vender call =
+      BEARISH; al mid NO se afirma direccion. Enrutado a #flujo-uw verificado con los 5 casos.
 ## 🔴 SESIÓN 2026-08-04 (martes — ráfaga Discord + UW flows + backtest de alertas)
 - [x] 29. "for displaying in chart priority goes to realtime data, old data is not priority for display, we can keep up to 24h top, no need for more on chart, it will make them heavier. we can still store locally data for backtesting" (2026-08-04 ~15:15) — HECHO commit 50f4db93 (bars_*.txt tope display 24h: warmup 1440 + poda al doblar; backtest sigue en poly_bars/history)
 - [x] 30. "review spcx in depth, seeing some alerts now for high volume, also check x.com sentiment, something big is coming, musk says that things will be big, lets see" (2026-08-04 ~15:20) — HECHO en sesión: 941k contratos, IV 232%, dos colas, 330C OI 547k; Musk "Few understand"; Kalshi 92% data-center; Polymarket 34% beat

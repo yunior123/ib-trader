@@ -151,6 +151,20 @@ def save_state(st):
     os.replace(tmp, STATE)
 
 
+# Sesgo del flujo (Yunior 2026-08-05: "UW notifications should say bearish or bullish").
+# Doctrina de la casa: signed_premium = net_call - net_put -> VENDER UN PUT ES ALCISTA y
+# VENDER UNA CALL es techo. El lado agresor (ask=compra, bid=venta) fija el signo.
+_SESGO = {("CALLS", "ask"): ("BULLISH", "🟢", "compradas"),
+          ("CALLS", "bid"): ("BEARISH", "🔴", "vendidas"),
+          ("PUTS", "ask"): ("BEARISH", "🔴", "compradas"),
+          ("PUTS", "bid"): ("BULLISH", "🟢", "vendidas")}
+
+
+def _sesgo(cp, lado):
+    """(sesgo, icono, verbo). Al mid NO se afirma direccion: se dice 'al mid' y sin sesgo."""
+    return _SESGO.get((cp, lado), ("", "", "al mid"))
+
+
 def prune(st, now):
     """El estado no crece sin techo: ids >6h y cooldowns vencidos fuera."""
     st["vistos"] = {k: v for k, v in st["vistos"].items() if now - v < 6 * 3600}
@@ -219,9 +233,10 @@ def main():
                 cantadas.append(fila)
                 en_cooldown = now - st["contrato_ts"].get(d["chain"], 0) < COOLDOWN_CONTRATO_S
                 st["contrato_ts"][d["chain"]] = now
-                titulo = "UW FLOW %s" % d["sym"]
-                cuerpo = "%s %s strike %g exp %s — %s" % (
-                    d["cp"], d["lado"] + "-side", d["strike"], d["exp"][5:], motivo)
+                sesgo, icono, verbo = _sesgo(d["cp"], d["lado"])
+                titulo = "UW FLOW %s%s" % (d["sym"], (" %s %s" % (icono, sesgo)) if sesgo else "")
+                cuerpo = "%s %s %g exp %s · %s" % (
+                    d["cp"], verbo, d["strike"], d["exp"][5:], motivo)
                 if a.dry_run:
                     print("[dry] %s | %s%s" % (titulo, cuerpo,
                                                "  (cooldown, no cantaria)" if en_cooldown else ""))

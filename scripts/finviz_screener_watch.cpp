@@ -326,21 +326,8 @@ static void notify(const Profile& p, const std::vector<Row>& rows, const std::st
     if (rows.empty()) return;
     int buy = 0, sell = 0, watch = 0;
     for (const auto& r : rows) (r.weather == "BUY" ? buy : r.weather == "SELL" ? sell : watch)++;
-    std::string msg;
-    size_t shown = std::min<size_t>(3, rows.size());
-    for (size_t i = 0; i < shown; ++i) {
-        const Row& r = rows[i];
-        char b[160];
-        std::snprintf(b, sizeof b, "%s%s %s $%.2f %+.1f%% RVOL %.1fx score %d/%d",
-                      i ? " | " : "", r.ticker.c_str(), r.weather.c_str(),
-                      std::isnan(r.price) ? 0 : r.price, std::isnan(r.change) ? 0 : r.change,
-                      std::isnan(r.rvol) ? 0 : r.rvol, r.score, r.possible);
-        msg += b;
-    }
-    if (rows.size() > shown) msg += " | +" + std::to_string(rows.size() - shown) + " más";
-    // Un solo veredicto cuando solo hay uno (Yunior 2026-08-05: "buy sell watch instead of
-    // just one"): "BUY 1 SELL 0 WATCH 0" obligaba a leer tres numeros para saber que es una
-    // compra. Solo se desglosa si de verdad hay mezcla.
+    // KEEP IT SIMPLE (Yunior 2026-08-05): accion + ticker + precio + %. El score y el
+    // recuento "BUY 1 SELL 0 WATCH 0" obligaban a descifrar la alerta antes de entenderla.
     auto parte = [](const char* k, int n) {
         return n <= 0 ? std::string() : std::string(k) + (n > 1 ? " ×" + std::to_string(n) : "");
     };
@@ -353,7 +340,23 @@ static void notify(const Profile& p, const std::vector<Row>& rows, const std::st
             if (n > 0) veredicto += (veredicto.empty() ? "" : " · ") + parte(k, n);
         }
     }
-    std::string title = "FINVIZ " + p.label + " · " + kind + " · " + veredicto;
+    std::string msg;
+    size_t shown = std::min<size_t>(3, rows.size());
+    for (size_t i = 0; i < shown; ++i) {
+        const Row& r = rows[i];
+        char b[160];
+        // el lado solo se repite por fila si la tanda es MIXTA (si no, ya esta en el titulo)
+        std::snprintf(b, sizeof b, "%s%s %s$%.2f %+.1f%% RVOL %.1fx",
+                      i ? " | " : "", r.ticker.c_str(),
+                      lados > 1 ? (r.weather + " ").c_str() : "",
+                      std::isnan(r.price) ? 0 : r.price, std::isnan(r.change) ? 0 : r.change,
+                      std::isnan(r.rvol) ? 0 : r.rvol);
+        msg += b;
+    }
+    if (rows.size() > shown) msg += " | +" + std::to_string(rows.size() - shown) + " más";
+    // "NUEVOS" es el caso normal y no aporta; solo se marca el GIRO de opinion.
+    std::string title = "FINVIZ " + p.label + " · " + veredicto
+                      + (kind == "WEATHER" ? " (giro)" : "");
     if (!std::getenv("FINVIZ_TEST")) fleet_notify_urgent(title.c_str(), msg.c_str(), "ProAlert");
     phone_push(title, msg);
     std::printf("%s | %s\n", title.c_str(), msg.c_str()); std::fflush(stdout);
