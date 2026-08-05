@@ -193,11 +193,14 @@ def test_rth_ventana():
 @solo_mit
 def test_manada_inoperante_con_barras_delayed():
     """fleet_consensus falla cerrado ('cobertura insuficiente') sin decir que la causa es el
-    FEED. Medido 2026-08-03: barras a ~1.000 s contra un tope de 180 s."""
+    FEED. Medido 2026-08-03: barras a ~1.000 s contra el tope del gemelo."""
     lat = {f"S{i}": {"bar_s": 1000.0} for i in range(26)}
     v = PB.veredicto_manada(lat)
     assert v["operativa"] is False and v["votan"] == 0 and v["need"] == 23
-    assert "FEED" in v["motivo"] and "180" in v["motivo"]
+    # el tope NO se clava en el test: se lee del modulo, que lo importa de fleet_consensus
+    # (un 180 clavado aqui rompio al subirlo a 240 por AUDIT #5).
+    assert "FEED" in v["motivo"] and f"{PB.CONS_MAX_BAR_AGE:.0f}" in v["motivo"]
+    assert v["max_bar_age_s"] == PB.CONS_MAX_BAR_AGE
 
 
 @solo_mit

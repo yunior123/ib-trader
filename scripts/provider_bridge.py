@@ -309,10 +309,15 @@ def bar_salud(sym: str):
         return (None, None, None)
 
 
-# Mismos nombres de env que lee fleet_consensus.py:41-42, para que el veredicto sea el SUYO y no
-# una copia que se desincronice. Aqui solo se MIDE y se DECLARA; el gate sigue siendo suyo.
-CONS_MAX_BAR_AGE = float(os.environ.get("FLEET_CONS_MAX_BAR_AGE", "180"))
-CONS_MIN_COVER = float(os.environ.get("FLEET_CONS_MIN_COVER", "0.90"))
+# El umbral se IMPORTA de fleet_consensus, no se copia: el default duplicado se desincronizo
+# (fleet_consensus subio a 240 por AUDIT #5 y aqui quedo 180 -> este modulo, que es quien GRITA
+# "MANADA MUDA", habria avisado en falso). Fallback solo si el import falla.
+try:
+    from fleet_consensus import MAX_BAR_AGE as _CONS_DEFAULT_AGE, MIN_COVER as _CONS_DEFAULT_COVER
+except Exception:   # noqa: BLE001  sin el gemelo, se declara el default y se sigue midiendo
+    _CONS_DEFAULT_AGE, _CONS_DEFAULT_COVER = 240.0, 0.90
+CONS_MAX_BAR_AGE = float(os.environ.get("FLEET_CONS_MAX_BAR_AGE", _CONS_DEFAULT_AGE))
+CONS_MIN_COVER = float(os.environ.get("FLEET_CONS_MIN_COVER", _CONS_DEFAULT_COVER))
 
 
 def veredicto_manada(lat: dict) -> dict:
