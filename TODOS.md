@@ -2,6 +2,10 @@
 
 > Vivo. Apuntar cada petición AL MOMENTO con las palabras de Yunior. Lo cerrado → Done.md.
 
+- [ ] 39. DATO PERDIDO: `data/trading-signals/2026-08-03.txt` esta truncado (2,6 KB vs 122 KB
+      del 08-04) — el dia se regenero/corto. El test ya no clava esa fecha (usa el dia completo
+      mas reciente), pero el backtest de ese dia NO es reproducible. Investigar quien lo trunco
+      antes de fiarse de metricas historicas del 08-03. (2026-08-05)
 ## 🔴 SESIÓN 2026-08-04 (martes — ráfaga Discord + UW flows + backtest de alertas)
 - [x] 29. "for displaying in chart priority goes to realtime data, old data is not priority for display, we can keep up to 24h top, no need for more on chart, it will make them heavier. we can still store locally data for backtesting" (2026-08-04 ~15:15) — HECHO commit 50f4db93 (bars_*.txt tope display 24h: warmup 1440 + poda al doblar; backtest sigue en poly_bars/history)
 - [x] 30. "review spcx in depth, seeing some alerts now for high volume, also check x.com sentiment, something big is coming, musk says that things will be big, lets see" (2026-08-04 ~15:20) — HECHO en sesión: 941k contratos, IV 232%, dos colas, 330C OI 547k; Musk "Few understand"; Kalshi 92% data-center; Polymarket 34% beat

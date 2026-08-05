@@ -323,9 +323,18 @@ def test_pct():
 @pytest.mark.skipif(not os.path.exists(os.path.join(B.SIGDIR, "2026-08-03.txt")),
                     reason="feed del 2026-08-03 ausente")
 def test_parse_day_real_2026_08_03():
+    """Parser contra un dia REAL. La fecha NO se clava: `2026-08-03` se trunco a 2,6 KB
+    (frente a los 122 KB del 08-04) y el test rojo enmascaraba fallos de verdad. Se toma el
+    dia mas reciente con registro completo; si no hay ninguno, se dice por que."""
+    import glob
     with open(os.path.join(REPO, "data", "fleet.txt")) as fh:
         fs = set(fh.read().split())
-    al = B.parse_day("2026-08-03", fs)
+    dias = sorted((os.path.getsize(f), os.path.basename(f)[:-4])
+                  for f in glob.glob(os.path.join(REPO, "data", "trading-signals", "2026-*.txt")))
+    completos = [d for tam, d in dias if tam > 50_000]
+    if not completos:
+        pytest.skip(f"sin dia completo en data/trading-signals (mayor: {dias[-1] if dias else 'ninguno'})")
+    al = B.parse_day(completos[-1], fs)
     assert len(al) > 300
     tipos = set(a["type"] for a in al)
     assert "ESTRUCTURAL_PIN" in tipos and "BB_REBOTE" in tipos

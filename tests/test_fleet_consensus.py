@@ -21,6 +21,9 @@ REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BIN = os.path.join(REPO, "bin", "fleet_consensus")
 FLEET = open(os.path.join(REPO, "data", "fleet.txt")).read().split()
 CAPS = ["SPY", "QQQ", "SMH"]
+# La flota CRECE (30 -> 36 con HOOD/COIN/CRWV/MSTR...): un "dn=30" clavado dejaba la
+# cobertura por debajo del 90% y los tests fallaban por el universo, no por el codigo.
+N_FLEET = len(FLEET)
 NF = len(FLEET)
 
 pytestmark = pytest.mark.skipif(
@@ -116,12 +119,12 @@ def test_barras_rancias_no_votan_y_salen_en_skipped():
 
 # ---------------------------------------------------------------- 5. capitanes divididos
 def test_capitanes_divididos_sin_consenso():
-    ev = snapshot(dn=30, up=0)
+    ev = snapshot(dn=N_FLEET, up=0)
     for s in ev["syms"]:
         if s["sym"] == "SMH":
             s.update(sym("SMH", "UP"))
     r = run(ev)
-    assert r["n"] == 30 and r["dn"] == 29
+    assert r["n"] == N_FLEET and r["dn"] == N_FLEET - 1
     assert r["consensus"] is None
     assert r["why"] == "capitanes divididos", r["why"]
     assert r["fired"] is False
@@ -129,31 +132,31 @@ def test_capitanes_divididos_sin_consenso():
 
 # ---------------------------------------------------------------- 6. falta un capitan
 def test_falta_un_capitan_sin_consenso():
-    ev = snapshot(dn=30, up=0)
+    ev = snapshot(dn=N_FLEET, up=0)
     for s in ev["syms"]:
         if s["sym"] == "SMH":
             s.clear(); s.update({"sym": "SMH", "have_bars": False})
     r = run(ev)
-    assert r["n"] == 29 and len(r["caps"]) == 2
+    assert r["n"] == N_FLEET - 1 and len(r["caps"]) == 2
     assert r["consensus"] is None
     assert "faltan capitanes (2/3)" == r["why"], r["why"]
 
 
 # ---------------------------------------------------------------- 7. fuera de ventana
 def test_fuera_de_ventana_no_dispara():
-    ev = snapshot(dn=30, up=0, now_min=0)      # 00:00 — el artefacto de rollover de fecha
+    ev = snapshot(dn=N_FLEET, up=0, now_min=0)      # 00:00 — el artefacto de rollover de fecha
     r = run(ev)
     assert r["consensus"] == "DN", "el consenso existe..."
     assert r["in_window"] is False
     assert r["fired"] is False, "...pero fuera de 09:25-16:05 no se dispara"
     # con la misma flota dentro de ventana y un ciclo previo, si dispara
-    r2 = run(dict(snapshot(dn=30, up=0, now_min=600), pending="DN", pend_cnt=1))
+    r2 = run(dict(snapshot(dn=N_FLEET, up=0, now_min=600), pending="DN", pend_cnt=1))
     assert r2["fired"] is True
 
 
 # ---------------------------------------------------------------- 8. histeresis
 def test_histeresis_dos_ciclos_y_rearme():
-    ev = snapshot(dn=30, up=0)
+    ev = snapshot(dn=N_FLEET, up=0)
     c1 = run(ev)
     assert c1["fired"] is False
     assert c1["hyst"] == {"last": None, "pending": "DN", "pend_cnt": 1}
@@ -180,7 +183,7 @@ def test_levels_json_truncado_va_a_skipped_sin_crash(tmp_path):
     bueno.write_text('{\n "sym": "X",\n "spot": 100.0,\n "flip": 99.0\n}')
     malo = tmp_path / "levels_trunc.json"
     malo.write_text('{\n "sym": "X",\n "spot": 100.0,\n "fl')      # json.dump a medias
-    ev = snapshot(dn=30, up=0)
+    ev = snapshot(dn=N_FLEET, up=0)
     ev["syms"][3].pop("flip"); ev["syms"][3]["levels_file"] = str(bueno)
     ev["syms"][4].pop("flip"); ev["syms"][4]["levels_file"] = str(malo)
     ev["syms"][5].pop("flip"); ev["syms"][5]["levels_file"] = str(tmp_path / "no_existe.json")
@@ -189,7 +192,7 @@ def test_levels_json_truncado_va_a_skipped_sin_crash(tmp_path):
     assert "flip" in r["skipped"][victima], r["skipped"][victima]
     assert "mapa GEX" in r["skipped"][ausente], r["skipped"][ausente]
     assert r["no_levels"] == 2
-    assert r["n"] == 28, "el mapa bueno si vota"
+    assert r["n"] == N_FLEET - 2, "el mapa bueno si vota (los 2 sin flip no votan)"
     # el que leyo el mapa bueno voto ARRIBA (spot 100 >= flip 99)
     lados = {v["sym"]: v["side"] for v in r["votes"]}
     assert lados[ev["syms"][3]["sym"]] == 1
@@ -197,7 +200,7 @@ def test_levels_json_truncado_va_a_skipped_sin_crash(tmp_path):
 
 def test_levels_ausentes_en_mas_del_10_por_ciento_es_feed(tmp_path):
     """(c) del contrato: mapa GEX ausente/rancio en >10% de la flota = sin veredicto."""
-    ev = snapshot(dn=30, up=0)
+    ev = snapshot(dn=N_FLEET, up=0)
     for s in ev["syms"][:4]:
         s.pop("flip"); s["levels_file"] = str(tmp_path / "no_existe.json")
     r = run(dict(ev, **{}))
