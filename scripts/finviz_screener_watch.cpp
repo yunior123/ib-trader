@@ -26,7 +26,6 @@
 #include <cstdlib>
 #include <cstring>
 #include <fstream>
-#include <limits>
 #include <map>
 #include <set>
 #include <sstream>
@@ -51,6 +50,7 @@ struct Row {
 struct Saved {
     std::string date;
     bool valid = false;
+    bool preopen = false;
     std::map<std::string, std::string> current;
     std::set<std::string> alerted;
 };
@@ -239,6 +239,7 @@ static Saved load_state(const std::string& path) {
             size_t x = line.find('|', 8);
             if (x != std::string::npos) s.current[line.substr(8, x - 8)] = line.substr(x + 1);
         } else if (line.rfind("alerted|", 0) == 0) s.alerted.insert(trim(line.substr(8)));
+        else if (line.rfind("preopen|", 0) == 0) s.preopen = trim(line.substr(8)) == "1";
     }
     s.valid = !s.date.empty();
     return s;
@@ -249,6 +250,7 @@ static bool save_state(const std::string& path, const Saved& s) {
     std::ofstream f(tmp, std::ios::trunc);
     if (!f) return false;
     f << "date=" << s.date << "\n";
+    if (s.preopen) f << "preopen|1\n";
     for (const auto& kv : s.current) f << "current|" << kv.first << "|" << kv.second << "\n";
     for (const auto& x : s.alerted) f << "alerted|" << x << "\n";
     f.close();
@@ -309,6 +311,15 @@ static bool notify_window_open() {
 static bool row_alertable(const Row& r) {
     return (r.weather == "BUY" || r.weather == "SELL") &&
            !std::isnan(r.rvol) && r.rvol >= 1.5;
+}
+
+// Re-canto de apertura (backtest 2026-08-04: PLTR/AAOI gap-up premarket jamas sonaron
+// porque solo cantan matches NUEVOS y el gap ya estaba en la lista antes de abrir).
+static bool preopen_recant_window() {
+    if (std::getenv("FINVIZ_FORCE_PREOPEN")) return true;
+    time_t t = time(nullptr); struct tm lt; localtime_r(&t, &lt);
+    int hm = lt.tm_hour * 100 + lt.tm_min;
+    return hm >= 931 && hm <= 935;
 }
 
 static void notify(const Profile& p, const std::vector<Row>& rows, const std::string& kind) {
@@ -386,9 +397,19 @@ static int run_cycle(const Profile& p, bool alert_existing) {
     Saved old = load_state(path), next;
     next.date = today(); next.valid = true;
     bool first = !old.valid || old.date != next.date;
-    if (!first) next.alerted = old.alerted;
-    std::vector<Row> fresh, changed;
+    if (!first) { next.alerted = old.alerted; next.preopen = old.preopen; }
+    std::vector<Row> fresh, changed, preopen;
     const bool window = notify_window_open();
+    // UNA vez 09:31-09:35: canta los matches momentum VIVOS de antes de la apertura.
+    const bool recant = p.id == "momentum" && !first && !next.preopen && preopen_recant_window();
+    if (recant) {
+        next.preopen = true;
+        for (const Row& r : rows)
+            if (old.current.count(r.ticker) && row_alertable(r) && !next.alerted.count(r.ticker)) {
+                append_event(p, r, "preopen_match");
+                preopen.push_back(r); next.alerted.insert(r.ticker);
+            }
+    }
     for (const Row& r : rows) {
         next.current[r.ticker] = r.weather;
         auto it = old.current.find(r.ticker);
@@ -420,9 +441,11 @@ static int run_cycle(const Profile& p, bool alert_existing) {
         std::fprintf(stderr, "FINVIZ %s ROTO: no pude guardar snapshot CSV\n", p.id.c_str());
         return 1;
     }
+    notify(p, preopen, "(pre-open match)");
     notify(p, fresh, "NUEVOS"); notify(p, changed, "WEATHER");
-    std::printf("FINVIZ %s OK: %zu matches, nuevos=%zu, weather=%zu%s\n", p.id.c_str(),
-                rows.size(), fresh.size(), changed.size(), first ? " (snapshot inicial silencioso)" : "");
+    std::printf("FINVIZ %s OK: %zu matches, nuevos=%zu, weather=%zu, preopen=%zu%s\n", p.id.c_str(),
+                rows.size(), fresh.size(), changed.size(), preopen.size(),
+                first ? " (snapshot inicial silencioso)" : "");
     return 0;
 }
 
@@ -440,6 +463,15 @@ static int selftest() {
     if (profile("buffett").filters.find("fa_roe_o15") == std::string::npos) return 5;
     if (profile("squeeze").filters.find("sh_short_o15") == std::string::npos) return 6;
     if (profile("momentum").signal != "ta_newhigh") return 7;
+    // roundtrip del flag preopen (dedup del re-canto de apertura)
+    Saved s; s.date = today(); s.preopen = true; s.current["PLTR"] = "BUY"; s.alerted.insert("PLTR");
+    std::string sp = std::string("/tmp/finviz_selftest_state.") + std::to_string(getpid());
+    if (!save_state(sp, s)) return 8;
+    Saved back = load_state(sp); unlink(sp.c_str());
+    if (!back.valid || !back.preopen || back.current["PLTR"] != "BUY" || !back.alerted.count("PLTR")) return 9;
+    setenv("FINVIZ_FORCE_PREOPEN", "1", 1);
+    if (!preopen_recant_window()) return 10;
+    unsetenv("FINVIZ_FORCE_PREOPEN");
     std::puts("finviz_screener_watch selftest OK"); return 0;
 }
 

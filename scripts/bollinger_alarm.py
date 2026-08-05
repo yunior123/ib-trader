@@ -143,6 +143,28 @@ def bb_context(sym, bars):
     except Exception:
         return "", True
 
+# Tropa de SMH (regla 12); el resto del mercado responde a SPY/QQQ.
+CAPTAIN_SEMIS = {"mu", "skhy", "dram", "smh", "nvda", "tsm", "asml", "amd", "intc",
+                 "avgo", "txn", "qcom", "lrcx", "sndk", "wdc", "stx", "ewy"}
+
+def captain_over_flip(sym):
+    """True = capitan del simbolo SOBRE su gamma flip -> fade SHORT banner sin voz.
+    OFF por defecto (backtest 2026-08-04: callo 42/77 fades pero mato 12/26 ganadoras=46%);
+    activar con IBT_BB_CAPTAIN_VETO=1. Degradacion limpia: sin snapshot/spot fresco -> False."""
+    if os.environ.get("IBT_BB_CAPTAIN_VETO") != "1":
+        return False
+    try:
+        snap = json.load(open("data/gex_snapshot.json"))
+    except Exception:
+        return False
+    for cap in (("smh",) if sym.lower() in CAPTAIN_SEMIS else ("spy", "qqq")):
+        flip = (snap.get(cap.upper()) or {}).get("flip")
+        b = bars_of(cap, 3)
+        if isinstance(flip, (int, float)) and b and time.time() - b[-1][0] <= 240 \
+                and b[-1][4] > flip:
+            return True
+    return False
+
 def bb(closes):
     m = sum(closes) / len(closes)
     sd = (sum((c - m) ** 2 for c in closes) / len(closes)) ** .5
@@ -266,7 +288,10 @@ while True:
                         ctx, ctx_ok = bb_context(sym, bars)
                         msge = (f"{sym.upper()} reventó la banda {lado} y re-entró en {c:.2f}. "
                                 f"Elastico: {rev} {mid:.2f} si imprime — chico y seguro.{pre}{ctx} {veh}")
-                        if ene and ctx_ok:
+                        if ene and ctx_ok and side == "up" and captain_over_flip(sym):
+                            # regla 12: capitan sobre flip = fade contra-tendencia registrado sin voz
+                            say("🎈 BB REBOTE [VETO capitan]", msge, voice=False, push=False)
+                        elif ene and ctx_ok:
                             # DEGRADADA 2026-07-25 por MEDICION, no por corazonada.
                             # Backtest del 2026-07-24 (docs/BACKTEST-SIGNALS-2026-07-24.md):
                             # BB REBOTE ⭐ = 20% WR [8,42] con n=20 — la UNICA celda cuyo
