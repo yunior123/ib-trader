@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.ibtrader.uwlatency</string>
+  <!-- TODOS 8a+8b: la latencia de UW SOLO se mide con el mercado abierto (fuera de sesion la
+       edad del sello es el tiempo desde el cierre y no significa nada). 09:35 ET = 5 min tras la
+       apertura, ya con cinta consolidada y fuera de la subasta. El portero de RTH vive DENTRO
+       del script y aborta fail-loud, asi que un festivo no produce un dato mal etiquetado.
+       Tope: 10 peticiones UW por corrida. Una vez al dia. -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string><string>-lc</string>
+    <string>cd "$HOME/ib-trader" &amp;&amp; ./venv/bin/python scripts/uw_latency_probe.py --rth-measure</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key><integer>9</integer>
+    <key>Minute</key><integer>35</integer>
+  </dict>
+  <key>RunAtLoad</key><false/>
+  <key>StandardOutPath</key><string>/tmp/ibtrader.uwlatency.out</string>
+  <key>StandardErrorPath</key><string>/tmp/ibtrader.uwlatency.err</string>
+</dict>
+</plist>

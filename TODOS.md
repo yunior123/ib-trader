@@ -281,25 +281,68 @@
       (6 pasadas × 9 endpoints = 54 peticiones, 0,18% del cupo). Procedimiento completo en
       `docs/UW-FLOW-RECON-2026-08-04.md` §4. **Predicción registrada de antemano: 30-90 s.**
       Al terminar, sustituir la fila de UW en `docs/LATENCIA-FUENTES.md:18` (dice "trial, caduca
-      ~2026-08-01", obsoleta: el token se renovó el 08-03) por el número medido — pendiente
+      ~2026-08-01", obsoleta: el token se renovó el 08-03) por el número medido
+      — **MEDIDO-PENDIENTE 2026-08-05: PROGRAMADO, no medido aún.** A las 07:20 ET el mercado
+      estaba en PREMARKET y la doctrina prohíbe medir fuera de sesión. Verificado con el propio
+      dato (1 petición): `stock-state` SPY → `market_time:"premarket"`, `tape_time`
+      2026-08-05T11:19:28Z, 149 ms, cupo 2.417/30.000. Sonda nueva
+      `scripts/uw_latency_probe.py --rth-measure` (tope duro 10 req/corrida; compara contra el
+      reloj Y contra el print de finnhub `data/rt_last_<SYM>.txt`, que es el proxy del
+      disparador sin IBKR) + `com.ibtrader.uwlatency.plist` a las **09:35 ET**, cargado y
+      registrado (`launchctl list` → `com.ibtrader.uwlatency`). El portero de RTH vive DENTRO
+      del script y **aborta fail-loud con 0 peticiones** (verificado en premarket). Escribe
+      `data/uw_latency.json` y reescribe `docs/UW-LATENCIA-RTH-2026-08-05.md`
 - [ ] 8b. **RE-PROBAR EL WEBSOCKET EN RTH** — el único experimento cuyo resultado puede cambiar
       con el mercado abierto. Hoy: 101 Switching Protocols y cierre en 0,05-0,09 s sin close-frame
       y con 0 bytes, insensible a 4 formatos de join y a no enviar nada; `GET /api/socket` declara
       `{"data":[]}` = cero canales. Si en RTH entrega mensajes, **el veredicto se revoca y el
-      socket pasa a ser la vía preferente** (latencia = dinero) — pendiente
-- [ ] 8c. **TRES COLINEALIDADES QUE HAY QUE MEDIR ANTES DE ESCRIBIR UNA LÍNEA DE MOTOR** (test 1
+      socket pasa a ser la vía preferente** (latencia = dinero)
+      — **MEDIDO-PENDIENTE 2026-08-05: va en la MISMA corrida de las 09:35** (no gasta corrida
+      aparte). Implementado en `uw_latency_probe.ws_suite()`: handshake WS crudo por ssl+socket
+      (cero dependencias), los 3 casos de control del recon (sin enviar nada / join lista /
+      join objeto), midiendo status, t_handshake, t_cierre, bytes y close-frame; además mide si
+      el 101 **consume cupo** comparando el contador antes/después. `GET /api/socket` se repite
+      en RTH para ver si declara canales
+- [x] 8c. **TRES COLINEALIDADES QUE HAY QUE MEDIR ANTES DE ESCRIBIR UNA LÍNEA DE MOTOR** (test 1
       de la killlist: ρ antes que edge, |ρ|>0,9 = muere ya):
       (1) `dir_vega_flow` vs el `signed_premium` que ya publica `uw_net_prem.py`;
       (2) `señal_capitan` vs `fleet_consensus` (que mide manada sobre BARRAS, no sobre premium);
       (3) `max_pain` de UW vs nuestro `abs_wall`/`pin-and-expiry-mechanics`.
       Precedente que justifica el orden: `greek-flow.dir_delta_flow` resultó **byte-idéntico** a
-      `net_prem_ticks.net_delta` en 406/406 minutos (ρ=1,0) y mató la idea del HIRO-lite — pendiente
-- [ ] 8d. **ARCHIVADOR FORWARD-ONLY de la serie intradía de UW** — `net-prem-ticks` de los 30 + los
+      `net_prem_ticks.net_delta` en 406/406 minutos (ρ=1,0) y mató la idea del HIRO-lite
+      — **HECHO 2026-08-05** con `scripts/uw_colinealidad.py` (cero peticiones UW: todo de
+      `data/history/`). **LAS 3 SOBREVIVEN, ninguna con |ρ|>0,9.** Números en
+      `data/uw_colinealidad.json` y `docs/UW-LATENCIA-RTH-2026-08-05.md`:
+      (1) ρ agrupado **0,0706** (n=1.013.120 min, 92 días, 30 syms), per-sym min/mediana/max
+      **−0,242/0,193/0,544** → vega NO es re-etiquetado del premium firmado. Aviso: SPY agrupado
+      −0,082 pero SPY el 8/4 solo **+0,327** → la relación CAMBIA DE SIGNO entre días;
+      (2) capitán vs manada-barras ρ = SPY **0,420** · QQQ **0,506** · SMH **0,123** (acuerdo de
+      signo 68,1/72,2/56,6%) → miden cosas distintas, que es lo que la regla 12 afirmaba sin
+      medir. Aviso: n=678 son buckets SOLAPADOS de solo 9 sesiones, n_eff ≪ 678;
+      (3) `max_pain` vs `abs_wall` ρ **−0,0196** (n=185 sym-días, 7 sesiones), strike idéntico
+      solo **8,6%**, mediana |d|/spot **5,14%** → no son el mismo imán.
+      **CONTROL DE MÉTODO**: el precedente se reproduce a escala — ρ(dir_delta_flow, net_delta)
+      = **0,9999992** y **1.013.079/1.013.120 byte-idénticos (99,996%)**.
+      **BUG DE HIGIENE CAZADO**: la 1ª pasada colaba `07-25` (sábado), `07-26` y `08-02`
+      (domingos) porque hay `levels.json` rancio en esas carpetas = 77 sym-días duplicados;
+      corregido con `dias_de_mercado()` (n 262→185, ρ −0,025→−0,0196). Sobrevivir ≠ tener edge:
+      publicar probabilidad sigue bloqueado en 8e
+- [x] 8d. **ARCHIVADOR FORWARD-ONLY de la serie intradía de UW** — `net-prem-ticks` de los 30 + los
       3 capitanes y `flow-per-strike` de los 8 de la cinta. La serie intradía **NO es recuperable
       hacia atrás**: el reloj de la muestra empieza el día que se encienda, así que cada día que
       pasa sin archivar es un día que las 3 alertas nunca podrán validar. `uw_archive.py:88-103`
       ya archiva `net_prem_ticks` a diario — solo hay que subir la frecuencia a intradía.
-      Presupuesto calculado: ~7.560 req/día = 25,2% del cupo, cabe con margen ×4 — pendiente
+      Presupuesto calculado: ~7.560 req/día = 25,2% del cupo, cabe con margen ×4
+      — **HECHO 2026-08-05**: `scripts/uw_netprem_archive.py` + `com.ibtrader.uwnetpremarchive.plist`
+      a las **16:10 ET** (cargado, `launchctl list` → `com.ibtrader.uwnetpremarchive`).
+      **Una pasada al cierre en vez de muestreo intradía**: el endpoint devuelve la SESIÓN ENTERA
+      en una llamada, así que 31 req/día = **0,10% del cupo** en vez de los 7.560 (25,2%)
+      presupuestados — mismo dato, 250× más barato. Lee `data/fleet.txt` como fuente única (hoy
+      31 syms: alguien añadió HOOD). **VERIFICADO EN VIVO** con `--syms SPY`: escribió 405 filas
+      cubriendo 13:30:00Z→20:14:00Z (sesión completa incl. post-cierre) contra las 391 que tenía
+      el snapshot a media sesión del daemon → el diseño EOD da MEJOR cobertura.
+      **Trampa confirmada y manejada**: lanzado en premarket, UW sirve la sesión de AYER y
+      `session_day()` lo archivó correctamente bajo `2026-08-04`, no bajo `08-05`
 - [ ] 8e. **BLOQUEADO POR HERRAMIENTAS/DATOS** (no se toca hasta que exista la muestra):
       · las 3 alertas no publican probabilidad hasta que su celda tenga `n_eff` suficiente
         (ρ̄=0,412 → `n_eff` = n/(1+(k−1)ρ̄)), pase el null de entrada aleatoria y BH-FDR q=0,10;
@@ -307,14 +350,23 @@
         tardar 2-3 meses en salir de DATA-INSUFFICIENT. **Dicho de antemano** para que nadie lo
         presente como fracaso en septiembre;
       · `full-tape/{date}` (ZIP 1,54 GB/día) para backtest de un día concreto: solo por streaming
-        a disco, JAMÁS en memoria en el Mac de 8 GB. ~380 GB/año si se archivara a diario — pendiente
+        a disco, JAMÁS en memoria en el Mac de 8 GB. ~380 GB/año si se archivara a diario
+      — **SIGUE BLOQUEADO A PROPÓSITO 2026-08-05.** Que 8c diga "las 3 sobreviven" NO las
+      desbloquea: sobrevivir a la colinealidad es el test 1, no el edge. Dato nuevo que refuerza
+      el bloqueo: la muestra de (2) son 9 sesiones con buckets solapados (n_eff ≪ 678) y el signo
+      de (1) cambia entre días. El reloj de la muestra de verdad empieza HOY con 8d encendido
 - [ ] 8f. **CUANDO VUELVA IBKR** (orden vigente: sin TWS/Gateway esta semana) — el contraste que
       de verdad decide: `stock_state.tape_time` de UW contra el último print de IBKR del mismo
       símbolo (`data/bars_SPY.txt`, que escribe `ibkr_bar_bridge.py`). La diferencia de sellos ES
       la latencia de UW contra la fuente de disparo. Sin IBKR vivo esa comparación no existe y la
       medición del 8a queda a medias (mide la edad del feed, no el desfase contra el disparador).
       **Regla que no cambia pase lo que pase: ningún nivel que dispare una orden viene de UW** —
-      el nivel se calcula, el PRINT que lo confirma es de IBKR — pendiente
+      el nivel se calcula, el PRINT que lo confirma es de IBKR
+      — **SIGUE BLOQUEADO 2026-08-05** (sin TWS/Gateway esta semana). Mitigación parcial ya
+      cableada: la sonda de las 09:35 compara UW contra el print de **finnhub**
+      (`data/rt_last_<SYM>.txt`, campo `uw_menos_finnhub_s`), que es el mejor proxy disponible
+      del disparador. **No sustituye a IBKR**: cuando vuelva, repetir el contraste contra
+      `data/bars_<SYM>.txt` y sustituir la fila de `docs/LATENCIA-FUENTES.md:18` — pendiente
 
 ## 🔴 SESIÓN 2026-08-03 (lunes 06:40 ET — ráfaga de apertura)
 - [x] 12. "save finviz new token" + "create bot ... breakouts" + "add 3 bots for new finviz
