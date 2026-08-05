@@ -209,7 +209,10 @@ def compute(sym, lv=None):
             why.append(f"capitán {gov_name or gov_key} {'↑' if cd>0 else '↓'}")
         elif sym in ("SPY", "QQQ", "SMH"):
             f_fleet = float(fb.get("market" if sym != "SMH" else "semis", 0))
-        factors["fleet"] = f_fleet; weights["fleet"] = 1.4
+        # 0.0 incluye "faltan barras/excepción" (signal_conditioning.py:157,171-175): registrarlo
+        # con peso 1.4 diluia la flecha 28,6% (AUDIT-2026-08-04 #3). Sin dato no hay familia.
+        if f_fleet != 0.0:
+            factors["fleet"] = f_fleet; weights["fleet"] = 1.4
     except Exception:
         pass
 

@@ -118,7 +118,9 @@ def bb_context(sym, bars):
         rsi2 = 100.0 if losses == 0 else 100 - 100/(1 + gains/losses)
         # z-VWAP de la sesion (barras de hoy)
         vb = bars_vol_of(sym)
-        day0 = time.time() - time.time() % 86400 + 9.5*3600
+        # 09:30 LOCAL: el % 86400 es medianoche UTC y arrancaba la "sesion" a las 05:30 EDT
+        # (4 h de premarket contaminando el z-VWAP del veto; AUDIT-2026-08-04 #2)
+        day0 = time.mktime(time.localtime()[:3] + (9, 30, 0, 0, 0, -1))
         sess = [(c, v) for t, c, v in vb if t >= day0 and v > 0]
         zv = None
         if len(sess) >= 30:

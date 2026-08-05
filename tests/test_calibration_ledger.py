@@ -324,3 +324,40 @@ def test_grade_sin_entrada_es_no_entry(calib, tmp_path, monkeypatch):
                regime="POSITIVO", direction="bull", entry=100.0, target=102.0,
                stop=99.0, pred_prob=0.55, result=None)
     assert _graded(calib, tmp_path, monkeypatch, row, bars) == "no_entry"
+
+
+# ---------- record_from_ranking(): formato emoji (AUDIT-2026-08-04 #4) ----------
+def _mk_planes(tmp_path, draft, rank=None):
+    d = tmp_path / "planes-2026-08-05"
+    (d / "x_drafts").mkdir(parents=True)
+    (d / "x_drafts" / "QQQ.txt").write_text(draft)
+    (d / "ranking.json").write_text(json.dumps(rank or []))
+    return d
+
+
+def test_record_parsea_formato_emoji(calib, tmp_path, monkeypatch):
+    # el formato real de x_draft() desde el 22-jul; el regex legado registraba 0 filas
+    draft = ("🚀 $QQQ 0DTE prob ~62%\n"
+             "🔴710 🎯712 📍724 🟢700\n"
+             "▶️reclaim 710 (2 reads, not 9:30-9:45)\n"
+             "🛑704 if it fails · Gap +0.0% ➡️flat\n"
+             "Not financial advice.")
+    d = _mk_planes(tmp_path, draft, [{"sym": "QQQ", "reg": "NEGATIVO"}])
+    monkeypatch.setattr(calib, "LOG", str(tmp_path / "log.jsonl"))
+    assert calib.record_from_ranking(str(d)) == 1
+    row = json.loads((tmp_path / "log.jsonl").read_text())
+    assert (row["entry"], row["target"], row["stop"]) == (710.0, 712.0, 704.0)
+    assert row["pred_prob"] == 0.62
+    # 🚀 pisa el emoji de regimen: manda ranking.json, no el fallback POSITIVO/NEGATIVO
+    assert row["regime"] == "NEGATIVO"
+
+
+def test_record_formato_legado_sigue_funcionando(calib, tmp_path, monkeypatch):
+    draft = ("🧲 $QQQ prob ~55%\nENTRADA: reclaim de 500.5\n"
+             "TARGET: 505.0\nSTOP MENTAL: 498.0\n")
+    d = _mk_planes(tmp_path, draft)
+    monkeypatch.setattr(calib, "LOG", str(tmp_path / "log.jsonl"))
+    assert calib.record_from_ranking(str(d)) == 1
+    row = json.loads((tmp_path / "log.jsonl").read_text())
+    assert (row["entry"], row["target"], row["stop"]) == (500.5, 505.0, 498.0)
+    assert row["regime"] == "POSITIVO"

@@ -5,7 +5,8 @@ correr la flota SIN IBKR. CERO computo de senal (doctrina: los puentes mueven by
 
 Escribe, por simbolo de data/fleet.txt:
   data/bars_<sym>_ibkr.txt   "EPOCH O H L C V"  (min-alineado, epoch estrictamente creciente)
-  data/nbbo_<sym>.txt        "EPOCH BID ASK"    (atomico, epoch = wall-clock, como ibkr_bar_bridge)
+  data/nbbo_<sym>.txt        "EPOCH_WALL BID ASK EPOCH_BOLSA" (atomico; campo1=escritura,
+                             campo4=hora de bolsa; feed_tier en provider_status.json)
   data/opt_chain_<sym>.txt   3 cabeceras + filas (atomico, mismo contrato que opt_quick.cpp)
 
 Fuentes seleccionables por CAPACIDAD via feeds.env / env (el DEFAULT del codigo es 'mock';
@@ -58,7 +59,12 @@ LOG_PREFIX = "[provider_bridge]"
 # midiendo el rate-limit real del plan (si sobra margen, bajar; si 429, subir o escalonar).
 # Con nbbo a 20s, el gate de spread de los bots (frescura 10s) puede fallar-cerrado -> las
 # senales disparan sin confirmacion de spread (aceptable con dato delayed, señal-solamente).
-BARS_REFRESH_S = 20.0   # barras/nbbo
+BARS_REFRESH_S = 20.0   # barras
+# NBBO en tarea PROPIA (AUDIT #1): iba dentro de la pasada de barras -> ciclo real 25-27 s y
+# 0/27 simbolos pasaban el gate de 10 s de los bots. Un quote es 1 GET barato: en paralelo
+# acotado el barrido baja a ~1 s y la edad del fichero queda por debajo del gate.
+QUOTES_REFRESH_S = float(os.environ.get("IBT_QUOTES_REFRESH_S", "7"))
+QUOTES_CONCURRENCY = int(os.environ.get("IBT_QUOTES_CONCURRENCY", "6"))
 CHAIN_REFRESH_S = 180.0  # cadena de opciones (como opt_chain_cache)
 WARMUP_BARS = 1440       # 24h de 1m: tope de display (Yunior 2026-08-04); backtest vive en poly_bars/history
 BARS_PRUNE_LINES = 2880  # al doblar el tope se poda el fichero a WARMUP_BARS (lectores lo releen entero)
@@ -68,11 +74,17 @@ def log(msg: str) -> None:
     print(f"{LOG_PREFIX} {datetime.now(UTC):%H:%M:%S} {msg}", flush=True)
 
 
+_RATE_LIMIT = {"n": 0, "last": 0.0}   # 429s vistos: el quote_loop retrocede con ellos
+
+
 def _scrub(e: Exception) -> str:
     # httpx HTTPStatusError incrusta la URL COMPLETA con api_key/apiKey en la query.
     # NUNCA logear la key: se redacta antes de escribir a disco (logs/ no se commitea, pero
     # una key en claro en disco viola la doctrina 'ninguna key a logs').
     msg = re.sub(r"(api_?key=)[^&\s'\"]+", r"\1***", str(e), flags=re.IGNORECASE)
+    if "429" in msg or "rate limit" in msg.lower():
+        _RATE_LIMIT["n"] += 1
+        _RATE_LIMIT["last"] = time.time()
     return f"{type(e).__name__}: {msg}"
 
 
@@ -160,11 +172,12 @@ def write_nbbo(sym: str, q: Quote, exch_ts: dict[str, str]) -> bool:
     if not (ask > bid > 0):   # fail-loud: quote invalido -> NO escribir cero plausible
         log(f"{sym}: NBBO invalido bid={bid} ask={ask} (no se escribe)")
         return False
-    # epoch = tiempo REAL de bolsa (q.timestamp), NO wall-clock: asi el gate de frescura de
-    # los bots (now-ep<=10s, aapl_signal_bot.cpp:176) falla-cerrado con dato delayed en vez de
-    # tratar un spread de hace 15 min como vivo. Con feed realtime pasa; con delayed se rechaza.
+    # DOS RELOJES (AUDIT-2026-08-04 #1): campo 1 = wall-clock de escritura (gate <=10s de los
+    # bots vuelve a funcionar), campo 4 = epoch de BOLSA (edad real del dato; feed_tier en
+    # provider_status declara el tier). El %lf%lf%lf de los bots ignora el 4o sin romper.
     ep = int(q.timestamp.timestamp())
-    _atomic_write(DATA / f"nbbo_{sym.lower()}.txt", f"{ep:.0f} {bid:.4f} {ask:.4f}\n")
+    _atomic_write(DATA / f"nbbo_{sym.lower()}.txt",
+                  f"{int(time.time())} {bid:.4f} {ask:.4f} {ep}\n")
     exch_ts[sym] = q.timestamp.isoformat()
     return True
 
@@ -378,18 +391,44 @@ def grita_si_manada_muda(v: dict) -> None:
         print(f"{LOG_PREFIX} push MANADA MUDA fallo: {e}", flush=True)
 
 
+BOT_NBBO_GATE_S = 10.0   # aapl_signal_bot.cpp:176 y los otros 20: `now-ep > 10 -> sin NBBO`
+
+
+def nbbo_gate_salud(syms: list[str]) -> dict:
+    """¿Cuantos simbolos pasan AHORA el gate de 10 s de los bots? Es la medida del #1 del
+    audit: antes 0/27 (el campo 1 era hora de bolsa delayed). Se publica, no se supone."""
+    ahora, edades, delays = time.time(), [], []
+    for s in syms:
+        try:
+            f = (DATA / f"nbbo_{s.lower()}.txt").read_text().split()
+            edades.append(ahora - float(f[0]))
+            if len(f) > 3:
+                delays.append(float(f[0]) - float(f[3]))
+        except (OSError, ValueError, IndexError):
+            continue
+    if not edades:
+        return {"pasan": 0, "universo": len(syms), "edad_p50_s": None}
+    edades.sort()
+    return {"pasan": sum(1 for e in edades if e <= BOT_NBBO_GATE_S), "universo": len(syms),
+            "gate_s": BOT_NBBO_GATE_S, "edad_p50_s": round(edades[len(edades) // 2], 1),
+            "edad_max_s": round(edades[-1], 1),
+            "retraso_bolsa_p50_s": round(sorted(delays)[len(delays) // 2], 1) if delays else None}
+
+
 def write_status(settings, exch_ts: dict[str, str], entitlement: list[str],
                  lat: dict | None = None) -> None:
     status = {
         "epoch": int(time.time()),
         "market_provider": settings.market_provider,
         "options_provider": settings.options_provider,
+        "feed_tier": PROVEEDORES.get(settings.market_provider, {}).get("latencia", "desconocida"),
         "proveedores": PROVEEDORES,
         "print_file": "data/rt_last_<SYM>.txt",
         "entitlement_messages": entitlement,
         "last_exchange_ts": exch_ts,
         "latencia": lat or {},
-        "note": "epoch de bars/nbbo = tiempo REAL de bolsa; comparar last_exchange_ts vs now para latencia",
+        "note": "nbbo campo1=wall-clock de escritura, campo4=epoch de bolsa; "
+                "bars epoch=hora de bolsa; feed_tier declara el tier del market provider",
     }
     if lat:
         # Lo que un consumidor necesita de un vistazo: quien manda en el spot y cuanto sobra.
@@ -400,6 +439,7 @@ def write_status(settings, exch_ts: dict[str, str], entitlement: list[str],
         status["bar_age_max_s"] = max(edades) if edades else None
         status["bar_huecos"] = sorted(s for s, v in lat.items() if v["bar_huecos"])
         status["manada"] = veredicto_manada(lat)
+        status["nbbo_gate"] = nbbo_gate_salud(list(lat))
         grita_si_manada_muda(status["manada"])
     if settings.market_provider == "intrinio":  # sources solo aplican a intrinio
         status["intrinio_stock_source"] = settings.intrinio_stock_source
@@ -431,6 +471,43 @@ async def _chain_once(providers, settings, sym, spot, spot_src, spot_age) -> Non
                 log(f"{sym}: CHAIN error tras 2 intentos {_scrub(e)} — SIN MAPA DE OPCIONES")
 
 
+async def _quote_once(providers, sym, exch_ts, last_q, entitlement) -> None:
+    try:
+        q = await providers.market.get_quote(sym)
+        q_last = float(q.last or (q.bid + q.ask) / 2)
+        q_age = round(time.time() - q.timestamp.timestamp(), 1)
+        write_nbbo(sym, q, exch_ts)
+        if not entitlement:
+            entitlement.extend(getattr(q, "_messages", []) or [])
+        if q_last > 0:
+            last_q[sym] = (q_last, q_age, time.time())
+    except Exception as e:
+        log(f"{sym}: QUOTE error {_scrub(e)}")
+
+
+async def quote_loop(providers, syms, exch_ts, last_q: dict, entitlement) -> None:
+    """NBBO en tarea propia y en paralelo acotado: la edad del fichero (campo 1) tiene que
+    caber bajo el gate de 10 s de los 21 bots. Con 429 se retrocede en vez de martillear."""
+    sem = asyncio.Semaphore(QUOTES_CONCURRENCY)
+    periodo = QUOTES_REFRESH_S
+
+    async def uno(sym):
+        async with sem:
+            await _quote_once(providers, sym, exch_ts, last_q, entitlement)
+
+    while True:
+        t0 = time.time()
+        n429 = _RATE_LIMIT["n"]
+        await asyncio.gather(*(uno(s) for s in syms))
+        dur = time.time() - t0
+        if _RATE_LIMIT["n"] > n429:      # el proveedor dijo basta: doblar periodo (tope 60 s)
+            periodo = min(60.0, periodo * 2)
+            log(f"QUOTES: 429 del proveedor -> periodo {periodo:.0f}s")
+        elif periodo > QUOTES_REFRESH_S and dur < periodo / 2:
+            periodo = max(QUOTES_REFRESH_S, periodo / 1.5)
+        await asyncio.sleep(max(0.5, periodo - dur))
+
+
 async def chain_loop(providers, settings, syms, last_q: dict) -> None:
     """Cadenas en tarea PROPIA: 26 cadenas Polygon x ~8 s = ~3,5 min que antes iban EN SERIE
     con barras/nbbo — el camino vivo quedaba rehen y cada simbolo se refrescaba cada ~4 min
@@ -446,8 +523,10 @@ async def chain_loop(providers, settings, syms, last_q: dict) -> None:
 
 
 async def one_pass(providers, settings, syms, last_ep, exch_ts, do_warmup, do_chain,
-                   entitlement, last_q: dict | None = None):
+                   entitlement, last_q: dict | None = None, do_quote: bool = False):
     lat: dict[str, dict] = {}
+    if last_q is None:
+        last_q = {}
     for sym in syms:
         try:
             if do_warmup:
@@ -456,18 +535,11 @@ async def one_pass(providers, settings, syms, last_ep, exch_ts, do_warmup, do_ch
                 await append_bars(providers.market, sym, last_ep)
         except Exception as e:  # per-capability degradation, fail-loud (key redactada)
             log(f"{sym}: BARS error {_scrub(e)}")
-        q_last, q_age = 0.0, -1.0
-        try:
-            q = await providers.market.get_quote(sym)
-            q_last = float(q.last or (q.bid + q.ask) / 2)
-            q_age = round(time.time() - q.timestamp.timestamp(), 1)
-            write_nbbo(sym, q, exch_ts)
-            if not entitlement:
-                entitlement.extend(getattr(q, "_messages", []) or [])
-        except Exception as e:
-            log(f"{sym}: QUOTE error {_scrub(e)}")
-        if last_q is not None and q_last > 0:
-            last_q[sym] = (q_last, q_age, time.time())
+        if do_quote:   # --once: sin quote_loop, el contrato de una pasada debe quedar completo
+            await _quote_once(providers, sym, exch_ts, last_q, entitlement)
+        px, qa, med = last_q.get(sym, (0.0, -1.0, 0.0))
+        q_last = px
+        q_age = (qa + (time.time() - med)) if px > 0 else -1.0
         spot, spot_src, spot_age = resolve_spot(sym, q_last, q_age)
         edad_bar, huecos, vol0 = bar_salud(sym)
         # `ts`: la pasada recorre 26 simbolos y dura de 30 s a 8 min (warmup). Sin el instante
@@ -509,11 +581,13 @@ async def run(syms: list[str], daemon: bool) -> None:
     last_q: dict[str, tuple] = {}
     # primera pasada: warmup de barras SIN cadena (la cadena la trae chain_loop en paralelo;
     # en --once si va inline para que el contrato de una pasada quede completo)
-    await one_pass(providers, settings, syms, last_ep, exch_ts, True, not daemon, entitlement, last_q)
+    await one_pass(providers, settings, syms, last_ep, exch_ts, True, not daemon, entitlement,
+                   last_q, do_quote=True)
     if not daemon:
         await providers.close()
         return
     chains = asyncio.create_task(chain_loop(providers, settings, syms, last_q))
+    quotes = asyncio.create_task(quote_loop(providers, syms, exch_ts, last_q, entitlement))
     try:
         while True:
             await asyncio.sleep(BARS_REFRESH_S)
@@ -521,9 +595,14 @@ async def run(syms: list[str], daemon: bool) -> None:
                 exc = chains.exception()
                 log(f"CHAIN LOOP MUERTO ({_scrub(exc) if exc else 'sin excepcion'}) — relanzando")
                 chains = asyncio.create_task(chain_loop(providers, settings, syms, last_q))
+            if quotes.done():  # sin NBBO los 21 bots pierden el gate de spread
+                exc = quotes.exception()
+                log(f"QUOTE LOOP MUERTO ({_scrub(exc) if exc else 'sin excepcion'}) — relanzando")
+                quotes = asyncio.create_task(quote_loop(providers, syms, exch_ts, last_q, entitlement))
             await one_pass(providers, settings, syms, last_ep, exch_ts, False, False, entitlement, last_q)
     finally:
         chains.cancel()
+        quotes.cancel()
         await providers.close()
 
 

@@ -124,3 +124,10 @@ def test_calib_context_nunca_es_una_probabilidad(DV, tmp_path, monkeypatch):
     ctx = DV._calib_context({"magnet": 1.0}, {"magnet": 1.1})
     assert ctx is not None and "DATA-INSUFFICIENT" in ctx
     assert not ctx[0].isdigit()
+
+
+def test_fleet_cero_no_entra_como_familia(DV, monkeypatch):
+    """AUDIT-2026-08-04 #3: fleet=0.0 ('capitanes discrepan' o sin barras) con peso 1.4
+    diluia la flecha 28,6%. Sin dato del capitan NO hay familia fleet."""
+    r = DV.compute("NVDA", lv=dict(LV_DOWN))
+    assert "fleet" not in r["factors"], f"fleet=0 registrado: {r['factors']}"

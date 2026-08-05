@@ -906,3 +906,7 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
 - [ ] "find me the best contracts for the rest of the week or next week expiration" (2026-08-05 ~07:10) — estado: en curso (quotes vivos UW: 6 principales + HOOD; bargain top-5 vía agente)
 - [x] AUDIT #4 calibración congelada: calibration_ledger.py record_from_ranking parsea formato emoji (▶️reclaim/🎯/🛑, régimen desde ranking.json porque 🚀 pisa el emoji) + fallback legado; backfill 22-jul→05-ago = 324 filas, 294 calificadas; calibration.json pasa de n=27/1día a reclaim_wall POSITIVO n=131 59% / NEGATIVO n=67 42%, trust=SI; +2 tests (2026-08-05, hecho)
 - [x] AUDIT #3 flecha diluida: direction_view.py:212 → fleet=0.0 (sin dato/capitanes discrepan) ya NO se registra con peso 1.4 (dilución 28,6% muerta); verificado vivo (QQQ fleet=1.0 sigue entrando, caso 0 cubierto por test nuevo test_fleet_cero_no_entra_como_familia) (2026-08-05, hecho)
+      · AUDIT #1 completado (a): NBBO pasa a tarea async propia (quote_loop, concurrencia 6,
+        periodo 7s, back-off x2 si 429) — MEDIDO antes 0/27 símbolos pasaban el gate de 10s de
+        los bots (ciclo real 25-27s), DESPUÉS 27/27 sostenido en 8 muestras/40s, edad p50 1,5-6,5s,
+        0 respuestas 429; retraso real de bolsa declarado (915s) en nbbo_gate.retraso_bolsa_p50_s

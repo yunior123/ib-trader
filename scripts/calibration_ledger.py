@@ -47,7 +47,8 @@ def record(setups):
 
 def record_from_ranking(planes_dir):
     """Extrae setups de los x_drafts + ranking.json de un dir de planes ya generado.
-    Parsea ENTRADA/TARGET/STOP de los drafts (formato del x_draft actual)."""
+    Parsea el formato emoji de x_draft() (▶️reclaim/🎯/🛑) con fallback al legado
+    ENTRADA/TARGET/STOP (AUDIT-2026-08-04 #4: el legado congelo el loop desde el 22-jul)."""
     import re, glob
     rows = []
     date = os.path.basename(planes_dir).replace("planes-", "")
@@ -62,13 +63,14 @@ def record_from_ranking(planes_dir):
         def num(pat):
             m = re.search(pat, txt)
             return float(m.group(1)) if m else None
-        entry = num(r"ENTRADA:\s*reclaim de ([\d.]+)")
-        target = num(r"TARGET:\s*([\d.]+)")
-        stop = num(r"STOP MENTAL:\s*([\d.]+)")
+        entry = num(r"▶️reclaim ([\d.]+)") or num(r"ENTRADA:\s*reclaim de ([\d.]+)")
+        target = num(r"🎯([\d.]+)") or num(r"TARGET:\s*([\d.]+)")
+        stop = num(r"🛑([\d.]+)") or num(r"STOP MENTAL:\s*([\d.]+)")
         prob = num(r"prob ~(\d+)%")
         pisoB = num(r"piso ([\d.]+); si rompe")
         tgtB = num(r"target ([\d.]+)\.")
-        reg = "POSITIVO" if "🧲" in txt else "NEGATIVO"
+        # 🚀 (lead Korea/EU) PISA el emoji de regimen: la fuente fiable es ranking.json
+        reg = rank.get(sym, {}).get("reg") or ("POSITIVO" if "🧲" in txt else "NEGATIVO")
         if entry and target and stop:
             rows.append(dict(date=date, sym=sym, setup_type="reclaim_wall", regime=reg,
                              direction="bull", entry=entry, target=target, stop=stop,

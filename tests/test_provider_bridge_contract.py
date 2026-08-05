@@ -2,7 +2,7 @@
 
 Corre el puente en modo mock (venv-mit, py3.12) hacia un dir temporal y valida el
 formato byte a byte contra lo que parsean nvda_signal_bot.cpp (bars 6 campos, epoch
-creciente min-alineado), aapl_signal_bot.cpp (nbbo 3 campos ask>bid>0) y opt_quick.cpp
+creciente min-alineado), aapl_signal_bot.cpp (nbbo wall-clock+bolsa, ask>bid>0) y opt_quick.cpp
 (cadena: 3 cabeceras, tokens epoch/spot/exps en L1, filas >=7 campos, right C|P).
 
 Se lanza por subprocess con venv-mit porque la capa mit/ exige py3.11+ y la suite corre
@@ -54,10 +54,13 @@ def test_bars_contract(mock_output):
 
 
 def test_nbbo_contract(mock_output):
+    import time
     f = (mock_output / "nbbo_spy.txt").read_text().split()
-    assert len(f) == 3, "nbbo: EPOCH BID ASK"
-    ep, bid, ask = int(f[0]), float(f[1]), float(f[2])
+    assert len(f) == 4, "nbbo: EPOCH_WALL BID ASK EPOCH_BOLSA (AUDIT #1 dos relojes)"
+    ep_wall, bid, ask, ep_bolsa = int(f[0]), float(f[1]), float(f[2]), int(f[3])
     assert ask > bid > 0, "nbbo debe cumplir ask>bid>0 (gate de spread de los bots)"
+    assert abs(time.time() - ep_wall) < 300, "campo1 debe ser wall-clock de escritura"
+    assert ep_bolsa <= ep_wall + 5, "campo4 (bolsa) no puede ser futuro vs escritura"
 
 
 def test_chain_contract(mock_output):
