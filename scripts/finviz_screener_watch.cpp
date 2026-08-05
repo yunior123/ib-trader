@@ -338,9 +338,22 @@ static void notify(const Profile& p, const std::vector<Row>& rows, const std::st
         msg += b;
     }
     if (rows.size() > shown) msg += " | +" + std::to_string(rows.size() - shown) + " más";
-    std::string title = "FINVIZ " + p.label + " · " + kind + " · BUY " +
-                        std::to_string(buy) + " SELL " + std::to_string(sell) +
-                        " WATCH " + std::to_string(watch);
+    // Un solo veredicto cuando solo hay uno (Yunior 2026-08-05: "buy sell watch instead of
+    // just one"): "BUY 1 SELL 0 WATCH 0" obligaba a leer tres numeros para saber que es una
+    // compra. Solo se desglosa si de verdad hay mezcla.
+    auto parte = [](const char* k, int n) {
+        return n <= 0 ? std::string() : std::string(k) + (n > 1 ? " ×" + std::to_string(n) : "");
+    };
+    int lados = (buy > 0) + (sell > 0) + (watch > 0);
+    std::string veredicto;
+    if (lados <= 1) {
+        veredicto = parte("BUY", buy) + parte("SELL", sell) + parte("WATCH", watch);
+    } else {
+        for (const auto& [k, n] : {std::pair{"BUY", buy}, {"SELL", sell}, {"WATCH", watch}}) {
+            if (n > 0) veredicto += (veredicto.empty() ? "" : " · ") + parte(k, n);
+        }
+    }
+    std::string title = "FINVIZ " + p.label + " · " + kind + " · " + veredicto;
     if (!std::getenv("FINVIZ_TEST")) fleet_notify_urgent(title.c_str(), msg.c_str(), "ProAlert");
     phone_push(title, msg);
     std::printf("%s | %s\n", title.c_str(), msg.c_str()); std::fflush(stdout);

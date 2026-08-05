@@ -14,6 +14,9 @@
       (b) Target Trend estaba renderizando pero invisible bajo el ribbon de 18 EMAs: lineas 0.45
       dashed -> 0.85 solidas y niveles con etiqueta EN EL EJE (TT T3/T2/✔T1/◉entry/TT stop), como
       el original de TradingView. Verificado con captura del cockpit.
+- [ ] 41. BUG (preexistente, hallado 2026-08-05): `tests/test_chart_bridge_liq.py::test_liq_map_reads_polygon_archive_and_fresh_live_cache` falla — el mapa de liquidez
+      devuelve cols=["0936"] y NO incluye la columna del cache VIVO (mtime 10:00). O el mapa
+      ignora el dato vivo (bug de camino vivo, malo en RTH) o el test es fragil. Verificar cual.
 ## 🔴 SESIÓN 2026-08-04 (martes — ráfaga Discord + UW flows + backtest de alertas)
 - [x] 29. "for displaying in chart priority goes to realtime data, old data is not priority for display, we can keep up to 24h top, no need for more on chart, it will make them heavier. we can still store locally data for backtesting" (2026-08-04 ~15:15) — HECHO commit 50f4db93 (bars_*.txt tope display 24h: warmup 1440 + poda al doblar; backtest sigue en poly_bars/history)
 - [x] 30. "review spcx in depth, seeing some alerts now for high volume, also check x.com sentiment, something big is coming, musk says that things will be big, lets see" (2026-08-04 ~15:20) — HECHO en sesión: 941k contratos, IV 232%, dos colas, 330C OI 547k; Musk "Few understand"; Kalshi 92% data-center; Polymarket 34% beat

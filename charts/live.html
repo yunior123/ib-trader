@@ -968,6 +968,7 @@
   <span><span class="dot" style="background:#f4c430"></span>gamma-flip</span>
   <span><span class="dot" style="background:#26d0b0;border-radius:50%"></span>burbujas PIN (aguanta)</span>
   <span><span class="dot" style="background:#ff5252;border-radius:50%"></span>burbujas TRAMPILLA (se atraviesa)</span>
+  <span id="whaleTally" style="color:#8b949e">🐋 —</span>
   <span style="margin-left:auto;color:#555">FICHA por defecto · el motor sólo ejecuta zonas ARMADAS ⚡</span>
 </footer>
 
@@ -1149,6 +1150,19 @@ function drawTtLevels(levels) {
       }));
     } catch (e) {}
   }
+}
+// Contador de ballenas SIEMPRE visible: con zoom corto los circulos caen fuera de la vista y
+// el indicador parecia ausente (Yunior 2026-08-05). Cuenta las de los ultimos 60 min.
+function updateWhaleTally() {
+  const el = document.getElementById("whaleTally");
+  if (!el) return;
+  const corte = (lastBarTime || Math.floor(Date.now() / 1000)) - 3600;
+  const rec = curWhaleMarkers.filter(m => m.time >= corte);
+  const compras = rec.filter(m => m.position === "belowBar").length;
+  const ventas = rec.length - compras;
+  el.innerHTML = rec.length
+    ? `🐋 <b style="color:#26a69a">${compras}↑</b> <b style="color:#ef5350">${ventas}↓</b> <span style="color:#555">60m</span>`
+    : '🐋 <span style="color:#555">sin anomalías 60m</span>';
 }
 function applyMarkers() {
   if (!stMarkersApi) return;
@@ -1563,9 +1577,12 @@ function setOHLC(bar) {
 // ZOOM DE VELAS (Yunior 2026-07-27: "zoom not working for chart candles, only window"): el
 // pageZoom de la .app agranda la INTERFAZ, no el grosor de la vela. Lo que engorda la vela es
 // cuantas barras caben en el ancho: menos barras = velas mas anchas. Se persiste por navegador.
-let SHOW_BARS = Math.max(12, Math.min(600, +(localStorage.getItem("showBars") || 100)));
+// suelo 30 (era 12): con 12 velas de 1m no cabe NINGUN marcador de contexto — ni ballenas
+// ni flips (medido 2026-08-05: 0 de 27 ballenas en las ultimas 12 velas). Zoom guardado
+// por debajo del suelo se reajusta una vez.
+let SHOW_BARS = Math.max(30, Math.min(600, +(localStorage.getItem("showBars") || 100)));
 function setShowBars(n, refit = true) {
-  SHOW_BARS = Math.max(12, Math.min(600, Math.round(n)));
+  SHOW_BARS = Math.max(30, Math.min(600, Math.round(n)));
   localStorage.setItem("showBars", SHOW_BARS);
   const el = document.getElementById("cz");
   if (el) el.textContent = SHOW_BARS + " velas";
@@ -2998,6 +3015,7 @@ function onHistory(msg) {
   S.ttDn.setData(ind.ttDn || []);
   curTtMarkers = ind.ttMarkers || [];
   curWhaleMarkers = ind.whaleMarkers || [];   // Big Trades (vol intrabar; vacio si feed sin volumen)
+  updateWhaleTally();
   drawTtLevels(ind.ttLevels || []);
   sigMarkers = msg.signals || [];
   engineOps = msg.engineOps || [];
