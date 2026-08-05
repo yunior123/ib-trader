@@ -1077,8 +1077,8 @@ const S = {
   stUp:    mkLine("#26a69a", 2, false),
   stDn:    mkLine("#f23645", 2, false),
   // Target Trend [BigBeluga] (port, translucido para no ensuciar la UI)
-  ttUp:    mkLine("rgba(6,182,144,0.45)", 2, true),
-  ttDn:    mkLine("rgba(182,112,6,0.45)", 2, true),
+  ttUp:    mkLine("rgba(6,182,144,0.85)", 3, false),
+  ttDn:    mkLine("rgba(182,112,6,0.85)", 3, false),
   tlUp:    mkLine("#26a69a", 1, false),
   tlDn:    mkLine("#f23645", 1, false),
 };
@@ -1133,13 +1133,19 @@ function drawTtLevels(levels) {
   ttPriceLines = [];
   for (const lv of levels) {
     const hit = lv.hit;
-    const col = lv.label === "stop" ? "rgba(219,30,30,0.4)"
-              : lv.label === "entry" ? "rgba(29,128,221,0.45)"
-              : hit ? "rgba(120,120,120,0.35)" : "rgba(6,182,144,0.4)";
+    const col = lv.label === "stop" ? "#db1e1e"
+              : lv.label === "entry" ? "#1d80dd"
+              : hit ? "rgba(140,140,140,0.7)" : "#06b690";
+    // etiqueta EN EL EJE como el original de TradingView: sin ella el nivel es invisible
+    // entre el ribbon de 18 EMAs (Yunior 2026-08-05 "still dont see the 2 new indicators")
+    const tit = lv.label === "entry" ? "◉ " + lv.price
+              : lv.label === "stop"  ? "TT stop " + lv.price
+              : (hit ? "✔ " : "") + "TT " + lv.label + " " + lv.price;
     try {
       ttPriceLines.push(candle.createPriceLine({
-        price: lv.price, color: col, lineWidth: 1, lineStyle: LineStyle.Dashed,
-        axisLabelVisible: false, title: (hit ? "✔ " : "") + lv.label + " " + lv.price,
+        price: lv.price, color: col, lineWidth: hit ? 1 : 2,
+        lineStyle: hit ? LineStyle.Dotted : LineStyle.Dashed,
+        axisLabelVisible: true, title: tit,
       }));
     } catch (e) {}
   }

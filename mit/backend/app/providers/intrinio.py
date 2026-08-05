@@ -78,7 +78,11 @@ class IntrinioProvider(MarketDataProvider, OptionsDataProvider):
                         high=float(row.get("high") or 0),
                         low=float(row.get("low") or 0),
                         close=float(row.get("close") or 0),
-                        volume=float(row.get("volume") or 0),
+                        # cboe_one_delayed da volume=0 SIEMPRE en acciones pero si da
+                        # trade_count (medido 2026-08-05: 550/752/959 por minuto en QQQ). Se usa
+                        # como PROXY DECLARADO (provider_status.volume_source): un 0 afirmaria
+                        # "no hubo actividad" y mata whale-detector, VWAP y perfil de volumen.
+                        volume=float(row.get("volume") or row.get("trade_count") or 0),
                     )
                 )
             next_page = payload.get("next_page")

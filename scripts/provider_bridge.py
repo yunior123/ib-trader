@@ -429,6 +429,10 @@ def write_status(settings, exch_ts: dict[str, str], entitlement: list[str],
         "feed_tier": PROVEEDORES.get(settings.market_provider, {}).get("latencia", "desconocida"),
         "proveedores": PROVEEDORES,
         "print_file": "data/rt_last_<SYM>.txt",
+        # El volumen de acciones NO viene con cboe_one_delayed (volume=0 siempre); se publica
+        # trade_count como proxy DECLARADO. Nada que dependa de tamano en USD puede usarlo.
+        "volume_source": ("trade_count (Intrinio cboe_one_delayed no da volumen de acciones)"
+                          if settings.market_provider == "intrinio" else "nativo"),
         "entitlement_messages": entitlement,
         "last_exchange_ts": exch_ts,
         "latencia": lat or {},

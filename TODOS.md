@@ -6,6 +6,14 @@
       del 08-04) — el dia se regenero/corto. El test ya no clava esa fecha (usa el dia completo
       mas reciente), pero el backtest de ese dia NO es reproducible. Investigar quien lo trunco
       antes de fiarse de metricas historicas del 08-03. (2026-08-05)
+- [x] 40. "still dont see the 2 new indicators, take a look at my safari" (2026-08-05) — HECHO:
+      (a) CAUSA RAIZ del whale detector muerto: Intrinio cboe_one_delayed manda volume=0 SIEMPRE
+      en acciones pero SI manda trade_count (539/463/455 por minuto medido) -> proxy DECLARADO en
+      provider_status.volume_source. La flota llevaba TODA la semana con volumen 0 (afectaba VWAP,
+      perfil de volumen y el detector). 0 -> 53 marcadores; calibrado a 20/3.5 (13% de velas -> 4%).
+      (b) Target Trend estaba renderizando pero invisible bajo el ribbon de 18 EMAs: lineas 0.45
+      dashed -> 0.85 solidas y niveles con etiqueta EN EL EJE (TT T3/T2/✔T1/◉entry/TT stop), como
+      el original de TradingView. Verificado con captura del cockpit.
 ## 🔴 SESIÓN 2026-08-04 (martes — ráfaga Discord + UW flows + backtest de alertas)
 - [x] 29. "for displaying in chart priority goes to realtime data, old data is not priority for display, we can keep up to 24h top, no need for more on chart, it will make them heavier. we can still store locally data for backtesting" (2026-08-04 ~15:15) — HECHO commit 50f4db93 (bars_*.txt tope display 24h: warmup 1440 + poda al doblar; backtest sigue en poly_bars/history)
 - [x] 30. "review spcx in depth, seeing some alerts now for high volume, also check x.com sentiment, something big is coming, musk says that things will be big, lets see" (2026-08-04 ~15:20) — HECHO en sesión: 941k contratos, IV 232%, dos colas, 330C OI 547k; Musk "Few understand"; Kalshi 92% data-center; Polymarket 34% beat

@@ -584,7 +584,9 @@ def target_trend(bars, length=10, target=0):
     return up, dn, markers, levels
 
 
-def whale_vol_markers(bars, lookback=5, mult=3.0):
+# lookback 5 / mult 3.0 son los del indicador original (pensado para 5m); en 1m marcaban el
+# 13% de las velas y tapaban el precio. 20/3.5 deja el 4% = solo la anomalia de verdad.
+def whale_vol_markers(bars, lookback=20, mult=3.5):
     """Anomalias de volumen intrabar (HK): buy=(c-l)/rango*v, sell=(h-c)/rango*v vs
     media+sigma*mult de las lookback velas PREVIAS. 3 tamanos. Translucido (UX)."""
     n = len(bars)
@@ -608,8 +610,10 @@ def whale_vol_markers(bars, lookback=5, mult=3.0):
             if z > mult:
                 size = 1 if z <= mult + 1.5 else (2 if z <= mult + 3.0 else 3)
                 out.append({"time": bars[i][0], "position": pos, "shape": "circle",
-                            "color": f"rgba({col},0.35)", "size": size, "text": ""})
-    return out[-120:]   # tope: un chart lleno de circulos es peor UX que ninguno
+                            "color": f"rgba({col},{0.45 + 0.15 * size:.2f})", "size": size,
+                            "text": "", "tip": f"{'compra' if pos == 'belowBar' else 'venta'} "
+                                               f"intensa z={z:.1f}"})
+    return out[-60:]   # tope: un chart lleno de circulos es peor UX que ninguno
 
 
 # --------- serialización a puntos lightweight-charts (time = epoch seg) -------
