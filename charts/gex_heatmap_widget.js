@@ -8,7 +8,7 @@
   #wgt-gexheat .wgbody { padding:0; overflow:auto; }
   .ghwrap { padding:7px 8px 9px; }
   .ghtop { display:flex; align-items:center; gap:6px; margin-bottom:7px; flex-wrap:wrap; }
-  .ghpill { background:#16325c; color:#cfe0ff; font-size:10.5px; font-weight:600; padding:3px 8px;
+  .ghpill { background:#2563eb; color:#fff; font-size:10.5px; font-weight:600; padding:3px 8px;
             border-radius:5px; letter-spacing:.3px; }
   .ghpill.dim { background:#1b2130; color:#8a94a8; font-weight:500; }
   .ghpill.warn { background:#2a2113; color:#e0b64a; }
@@ -22,16 +22,16 @@
                font-variant-numeric:tabular-nums; }
   table.ghtb th { font-size:9.5px; color:#8a94a8; font-weight:500; padding:2px 1px; }
   table.ghtb th.ghk { text-align:right; padding-right:5px; white-space:nowrap;
-                      position:sticky; left:0; z-index:2; background:#161a24; }
+                      position:sticky; left:0; z-index:2; background:#0a0f1e; }
   table.ghtb td { font-size:10px; text-align:center; padding:5px 2px; border-radius:3px;
                   color:#e8edf6; white-space:nowrap; }
   table.ghtb td.nd { background:#12161f; color:#39414f; }
-  table.ghtb tr td.ghk { background:#161a24; color:#c3cad6; font-size:10.5px; text-align:right;
+  table.ghtb tr td.ghk { background:#0a0f1e; color:#e6ebf5; font-size:10.5px; text-align:right;
                          padding-right:6px; font-weight:500;
                          position:sticky; left:0; z-index:2; }
-  table.ghtb tr.spot td.ghk { color:#5b9cff; font-weight:700; }
+  table.ghtb tr.spot td.ghk { color:#3b82f6; font-weight:700; }
   table.ghtb tr.spot td { box-shadow:inset 0 -1px 0 #2b4a80, inset 0 1px 0 #2b4a80; }
-  table.ghtb td.mvc { outline:1.5px solid #a855f7; outline-offset:-1.5px; }
+  table.ghtb td.mvc { outline:2px solid #a855f7; outline-offset:-2px; background:#a855f7 !important; }
   .ghfoot { display:flex; justify-content:space-between; gap:8px; margin-top:7px;
             font-size:9.5px; color:#5f6878; border-top:1px solid #232838; padding-top:5px; }
   .ghfoot .ghwarn { color:#e0b64a; font-weight:600; }
@@ -63,7 +63,7 @@
     if (v === null || v === undefined) return null;
     const t = max > 0 ? Math.min(1, Math.abs(v) / max) : 0;
     const a = 0.14 + 0.72 * Math.pow(t, 0.55);
-    return v >= 0 ? `rgba(20,190,110,${a.toFixed(3)})` : `rgba(230,60,75,${a.toFixed(3)})`;
+    return v >= 0 ? `rgba(34,197,94,${a.toFixed(3)})` : `rgba(220,38,38,${a.toFixed(3)})`;
   }
 
   function empty(msg) {
