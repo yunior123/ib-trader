@@ -1044,6 +1044,8 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
 - [x] AUDIT #8 compass adoptaba spot por mtime: compass.cpp:1475 exige además spot_age_s<=300 del propio productor (levels_txn.json: mtime 137s pero spot_age_s 954s) (2026-08-05, hecho)
 
 ## Sesión 2026-08-05 tarde
+- [ ] "make sure to kill those fuckin notifications for intrinio and finnhub not connected,
+      debug that shit, fix" (2026-08-06 06:50) — estado: en curso.
 - [ ] "mejora todo" (2026-08-06 00:50) — en curso: (a) flip forward en pipeline de niveles
       [Claude directo], (b) escáneres UW: bug max-pain + peaje + muros sin céntimos + dOI
       etiquetado [agentes, bloqueados por límite hasta 4:40am — relanzar], (c) "7. backtest
@@ -1144,6 +1146,10 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       (structure/hiro 90s, heatmap 6min) + muestra el error UW REAL en ambar (uwNote);
       hasta que UW resetee, heatmap/cards sin dato y DICIENDO por que. Icono: escudo ChatGPT
       -> AppIcon.appiconset (mac 16-1024 + ios 1024), AppIcon.icns verificado en el bundle.
-- [ ] "release some space in my mac too, old dependencies deleted from cache, explore, send
-      agent" (2026-08-06) — estado: delegado a agente (caches regenerables solamente, reporte
-      de GB liberados)
+- [x] "release some space in my mac, old dependencies deleted from cache, explore, send
+      agent" (2026-08-06) — hecho: ~23GB liberados en total. Agente: ~8GB de caches
+      regenerables (JetBrains 3.9G, Chrome 1.7G, playwright 1.1G, pip 543M + uv 592M,
+      com.apple.python 597M, DerivedData 532M, cpptools 517M, brew 228M, logs 198M);
+      yo: ~15GB de simulator runtimes viejos (iOS 18.2 + 26.4.1) + dmg de descarga Xcode.
+      Disco 99% -> 90% (22Gi libres, VERIFICADO df). Pendiente decision Yunior: cargo 134M,
+      node_modules de Documents/GitHub 257M (no tocados).
