@@ -632,6 +632,7 @@
     <span><span class="lab">H</span> <span class="val" id="o-h">—</span></span>
     <span><span class="lab">L</span> <span class="val" id="o-l">—</span></span>
     <span><span class="lab">C</span> <span class="val" id="o-c">—</span></span>
+    <span><span class="lab">Vol</span> <span class="val" id="o-v">—</span></span>
   </div>
   <span class="infosep">│</span>
   <span><span class="k">VIX</span> <span class="v" id="h-vix" title="Índice de volatilidad (CBOE, vía TWS). CALM <16 · ELEVADO 16-24 · ALTO >24. Vol alta ensancha rangos y hace los días de gamma negativa más violentos.">—</span></span>
@@ -1023,8 +1024,8 @@ const chart = LWC.createChart(el, {
 // ================== INDICADORES OPCIONALES (Yunior 2026-08-06) ==================
 // "all indicators should be optional": estado por navegador; panel ƒ + leyenda al final
 // del script. indOn() vive aqui porque los guards de abajo lo usan.
-const IND_DEF = { ribbon:false, bb:false, smas:false, vwap:false, supertrend:false,
-                  targettrend:false, trendlines:false, macd:false, netprem:true };
+const IND_DEF = { volume:false, ribbon:false, bb:false, smas:false, vwap:false, supertrend:false,
+                  targettrend:false, trendlines:false, macd:false, netprem:true, whales:false };
 let IND = { ...IND_DEF };
 try { const _is = JSON.parse(localStorage.getItem("indPanel_v1") || "null"); if (_is) IND = { ...IND_DEF, ..._is }; } catch (e) {}
 const indOn = k => !!IND[k];
@@ -1193,7 +1194,8 @@ function applyMarkers() {
   if (!stMarkersApi) return;
   try {
     const mk = [...(indOn("supertrend") ? curStMarkers : []),
-                ...(indOn("targettrend") ? curTtMarkers : []), ...curWhaleMarkers,
+                ...(indOn("targettrend") ? curTtMarkers : []),
+                ...(indOn("whales") ? curWhaleMarkers : []),
                 ...clusterSignals(sigMarkers), ...engineOps]
                .sort((a, b) => a.time - b.time);
     stMarkersApi.setMarkers(mk);
@@ -1226,7 +1228,7 @@ function onNetprem(msg){
 }
 
 // proporción de panes: velas grande, volumen fino, MACD chico
-try { chart.panes()[1].setHeight(80); chart.panes()[2].setHeight(indOn("macd") ? 120 : 0); chart.panes()[3].setHeight(indOn("netprem") ? 110 : 0); } catch (e) {}
+try { chart.panes()[1].setHeight(indOn("volume") ? 80 : 0); chart.panes()[2].setHeight(indOn("macd") ? 120 : 0); chart.panes()[3].setHeight(indOn("netprem") ? 110 : 0); } catch (e) {}
 
 // ------------------------------------------------- price lines (muros / flip)
 // Muros GEX = VERDE (call-wall brillante, put-wall/abs tinte distinto); flip = AMARILLO.
@@ -1590,22 +1592,22 @@ function drawHeader(lv) {
 }
 
 // OHLC readout (colorea verde/rojo según close>=open) — TradingView-like
-function setOHLC(bar) {
+const fmtVol = v => v == null ? "—"
+  : Math.abs(v) >= 1e9 ? (v / 1e9).toFixed(2) + "B"
+  : Math.abs(v) >= 1e6 ? (v / 1e6).toFixed(1) + "M"
+  : Math.abs(v) >= 1e3 ? (v / 1e3).toFixed(1) + "K" : String(Math.round(v));
+let lastVol = null;   // volumen de la ultima barra (reposo del crosshair)
+function setOHLC(bar, vol) {
   if (!bar) return;
   const up = bar.close >= bar.open;
   const col = up ? "#26a69a" : "#f23645";
   const set = (id, v) => { const e = document.getElementById(id);
     e.textContent = (v == null ? "—" : v.toFixed(2)); e.style.color = col; };
   set("o-o", bar.open); set("o-h", bar.high); set("o-l", bar.low); set("o-c", bar.close);
+  const ve = document.getElementById("o-v");
+  if (ve) { ve.textContent = fmtVol(vol != null ? vol : lastVol); ve.style.color = col; }
 }
 
-// ------------------------------------------------------- zoom (velas legibles)
-// ZOOM DE VELAS (Yunior 2026-07-27: "zoom not working for chart candles, only window"): el
-// pageZoom de la .app agranda la INTERFAZ, no el grosor de la vela. Lo que engorda la vela es
-// cuantas barras caben en el ancho: menos barras = velas mas anchas. Se persiste por navegador.
-// suelo 30 (era 12): con 12 velas de 1m no cabe NINGUN marcador de contexto — ni ballenas
-// ni flips (medido 2026-08-05: 0 de 27 ballenas en las ultimas 12 velas). Zoom guardado
-// por debajo del suelo se reajusta una vez.
 // Zoom custom RETIRADO (Yunior 2026-08-06 "remove the zooming, keep it original"):
 // encuadre inicial fijo; el zoom es el nativo de la libreria (rueda / pinch / drag del eje).
 const SHOW_BARS = 100;
@@ -3011,6 +3013,7 @@ function onHistory(msg) {
   S.stDn.setData(ind.stDn || []);   // Supertrend rama bajista
   setRibbon(ind.madrid);            // Madrid Ribbon (18 EMAs coloreadas)
   volS.setData(ind.volume);
+  lastVol = ind.volume && ind.volume.length ? ind.volume[ind.volume.length - 1].value : null;
   macdHist.setData(ind.hist);
   macdLine.setData(ind.macd);
   macdSig.setData(ind.signal);
@@ -3109,6 +3112,7 @@ function onBar(msg) {
   upd(S.stUp, ind.stUp); upd(S.stDn, ind.stDn);
   updRibbon(ind.madrid);
   upd(volS, ind.volume);
+  if (ind.volume && ind.volume.value != null) lastVol = ind.volume.value;
   upd(macdHist, ind.hist); upd(macdLine, ind.macd); upd(macdSig, ind.signal);
   lastBar = msg.bar; lastBarTime = msg.bar.time;
   liveQuoteTick(msg.bar.close);   // cierre de vela -> fila del ticker en pantalla
@@ -3135,7 +3139,8 @@ function onLevels(msg) {
 chart.subscribeCrosshairMove((param) => {
   if (!param || !param.time || !param.seriesData) { setOHLC(lastBar); return; }
   const d = param.seriesData.get(candle);
-  if (d && d.open != null) setOHLC(d); else setOHLC(lastBar);
+  const v = param.seriesData.get(volS);          // hover: el numero de ESA barra de volumen
+  if (d && d.open != null) setOHLC(d, v ? v.value : null); else setOHLC(lastBar);
 });
 
 // ============================ WIDGETS ACOPLABLES ============================
@@ -4028,6 +4033,7 @@ async function gdecayDraw(force) {
 // =============== PANEL ƒ INDICADORES + LEYENDA (Yunior 2026-08-06) ===============
 (() => {
   const REG = [
+    { k:"volume",      n:"Volumen",                 c:"#26a69a" },
     { k:"ribbon",      n:"Madrid Ribbon (18 EMAs)", c:"#00e676" },
     { k:"bb",          n:"Bollinger (20,2)",        c:"#2962ff" },
     { k:"smas",        n:"SMA 40/100/200",          c:"#ff9800" },
@@ -4037,6 +4043,7 @@ async function gdecayDraw(force) {
     { k:"trendlines",  n:"Trendlines",              c:"#f23645" },
     { k:"macd",        n:"MACD (12,26,9)",          c:"#2962ff" },
     { k:"netprem",     n:"Net Premium (flujo)",     c:"#26a69a" },
+    { k:"whales",      n:"Big Trades 🐋",           c:"#5b9cff" },
   ];
   const css = document.createElement("style");
   css.textContent = `
@@ -4073,6 +4080,10 @@ async function gdecayDraw(force) {
     setVis([S.tlUp, S.tlDn], indOn("trendlines"));
     setVis([macdHist, macdLine, macdSig], indOn("macd"));
     setVis([npCall, npPut, npNet], indOn("netprem"));
+    setVis([volS], indOn("volume"));
+    try { chart.panes()[1].setHeight(indOn("volume") ? 80 : 0); } catch (e) {}
+    const wt = document.getElementById("whaleTally");
+    if (wt) wt.style.display = indOn("whales") ? "" : "none";
     try { chart.panes()[2].setHeight(indOn("macd") ? 120 : 0); } catch (e) {}
     try { chart.panes()[3].setHeight(indOn("netprem") ? 110 : 0); } catch (e) {}
     const li = window._lastInd;

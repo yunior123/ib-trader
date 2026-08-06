@@ -1,5 +1,5 @@
 {
-  "epoch": 1785989859,
+  "epoch": 1785990259,
   "market_provider": "intrinio",
   "options_provider": "polygon",
   "feed_tier": "delayed_15m",
@@ -85,324 +85,324 @@
   },
   "latencia": {
     "QQQ": {
-      "ts": 1785989851,
-      "bar_s": 15511.4,
+      "ts": 1785990251,
+      "bar_s": 15911.6,
       "bar_huecos": 2,
       "bar_vol0": 0,
-      "quote_s": 15453.821727323531,
+      "quote_s": 15854.106028699875,
       "spot": 716.59,
       "spot_src": "intrinio_quote",
-      "spot_s": 15453.821727323531
+      "spot_s": 15854.106028699875
     },
     "SPY": {
-      "ts": 1785989851,
-      "bar_s": 15571.6,
+      "ts": 1785990251,
+      "bar_s": 15971.8,
       "bar_huecos": 9,
       "bar_vol0": 0,
-      "quote_s": 15544.785275936127,
+      "quote_s": 15944.99732003212,
       "spot": 771.03,
       "spot_src": "intrinio_quote",
-      "spot_s": 15544.785275936127
+      "spot_s": 15944.99732003212
     },
     "NVDA": {
-      "ts": 1785989851,
-      "bar_s": 15511.8,
+      "ts": 1785990251,
+      "bar_s": 15911.9,
       "bar_huecos": 0,
       "bar_vol0": 0,
-      "quote_s": 15467.804423809052,
+      "quote_s": 15867.974811077118,
       "spot": 220.65,
       "spot_src": "intrinio_quote",
-      "spot_s": 15467.804423809052
+      "spot_s": 15867.974811077118
     },
     "TSLA": {
-      "ts": 1785989851,
-      "bar_s": 15511.9,
+      "ts": 1785990252,
+      "bar_s": 15912.3,
       "bar_huecos": 8,
       "bar_vol0": 0,
-      "quote_s": 15474.866652154922,
+      "quote_s": 15875.24894990921,
       "spot": 321.48,
       "spot_src": "intrinio_quote",
-      "spot_s": 15474.866652154922
+      "spot_s": 15875.24894990921
     },
     "MU": {
-      "ts": 1785989852,
-      "bar_s": 15513.0,
+      "ts": 1785990252,
+      "bar_s": 15912.4,
       "bar_huecos": 0,
       "bar_vol0": 0,
-      "quote_s": 15456.260961008073,
+      "quote_s": 15855.63871998787,
       "spot": 875.56,
       "spot_src": "intrinio_quote",
-      "spot_s": 15456.260961008073
+      "spot_s": 15855.63871998787
     },
     "SMH": {
-      "ts": 1785989853,
-      "bar_s": 15513.4,
+      "ts": 1785990252,
+      "bar_s": 15912.6,
       "bar_huecos": 21,
       "bar_vol0": 0,
-      "quote_s": 15479.107653045654,
+      "quote_s": 15878.1928129673,
       "spot": 571.0,
       "spot_src": "intrinio_quote",
-      "spot_s": 15479.107653045654
+      "spot_s": 15878.1928129673
     },
     "AMD": {
-      "ts": 1785989853,
-      "bar_s": 15513.8,
+      "ts": 1785990253,
+      "bar_s": 15913.2,
       "bar_huecos": 3,
       "bar_vol0": 0,
-      "quote_s": 15455.960806846619,
+      "quote_s": 15855.365522003174,
       "spot": 481.26,
       "spot_src": "intrinio_quote",
-      "spot_s": 15455.960806846619
+      "spot_s": 15855.365522003174
     },
     "AAPL": {
-      "ts": 1785989853,
-      "bar_s": 15693.9,
+      "ts": 1785990253,
+      "bar_s": 16093.4,
       "bar_huecos": 9,
       "bar_vol0": 0,
-      "quote_s": 15638.09548816681,
+      "quote_s": 16037.582959842683,
       "spot": 312.4,
       "spot_src": "intrinio_quote",
-      "spot_s": 15638.09548816681
+      "spot_s": 16037.582959842683
     },
     "MSFT": {
-      "ts": 1785989853,
-      "bar_s": 15514.0,
+      "ts": 1785990253,
+      "bar_s": 15913.7,
       "bar_huecos": 9,
       "bar_vol0": 0,
-      "quote_s": 15477.457930898667,
+      "quote_s": 15877.126878976822,
       "spot": 485.75,
       "spot_src": "intrinio_quote",
-      "spot_s": 15477.457930898667
+      "spot_s": 15877.126878976822
     },
     "META": {
-      "ts": 1785989854,
-      "bar_s": 15574.1,
+      "ts": 1785990253,
+      "bar_s": 15973.9,
       "bar_huecos": 14,
       "bar_vol0": 0,
-      "quote_s": 15530.785960865021,
+      "quote_s": 15930.55537586212,
       "spot": 591.47,
       "spot_src": "intrinio_quote",
-      "spot_s": 15530.785960865021
+      "spot_s": 15930.55537586212
     },
     "AMZN": {
-      "ts": 1785989854,
-      "bar_s": 15634.2,
+      "ts": 1785990254,
+      "bar_s": 16034.4,
       "bar_huecos": 11,
       "bar_vol0": 0,
-      "quote_s": 15611.52052488327,
+      "quote_s": 16011.830770015717,
       "spot": 272.75,
       "spot_src": "intrinio_quote",
-      "spot_s": 15611.52052488327
+      "spot_s": 16011.830770015717
     },
     "GOOGL": {
-      "ts": 1785989854,
-      "bar_s": 15514.3,
+      "ts": 1785990255,
+      "bar_s": 15915.9,
       "bar_huecos": 2,
       "bar_vol0": 0,
-      "quote_s": 15495.55966105461,
+      "quote_s": 15897.15936088562,
       "spot": 364.681,
       "spot_src": "intrinio_quote",
-      "spot_s": 15495.55966105461
+      "spot_s": 15897.15936088562
     },
     "INTC": {
-      "ts": 1785989854,
-      "bar_s": 15515.0,
+      "ts": 1785990256,
+      "bar_s": 15916.6,
       "bar_huecos": 13,
       "bar_vol0": 0,
-      "quote_s": 15467.096669960021,
+      "quote_s": 15868.701635026931,
       "spot": 100.9,
       "spot_src": "intrinio_quote",
-      "spot_s": 15467.096669960021
+      "spot_s": 15868.701635026931
     },
     "TSM": {
-      "ts": 1785989855,
-      "bar_s": 15695.1,
+      "ts": 1785990256,
+      "bar_s": 16096.7,
       "bar_huecos": 17,
       "bar_vol0": 0,
-      "quote_s": 15692.354678106309,
+      "quote_s": 16094.025081157684,
       "spot": 412.79,
       "spot_src": "intrinio_quote",
-      "spot_s": 15692.354678106309
+      "spot_s": 16094.025081157684
     },
     "ASML": {
-      "ts": 1785989855,
-      "bar_s": 15755.3,
+      "ts": 1785990256,
+      "bar_s": 16156.8,
       "bar_huecos": 24,
       "bar_vol0": 0,
-      "quote_s": 15705.960889720916,
+      "quote_s": 16107.438218164443,
       "spot": 1678.0,
       "spot_src": "intrinio_quote",
-      "spot_s": 15705.960889720916
+      "spot_s": 16107.438218164443
     },
     "TXN": {
-      "ts": 1785989855,
-      "bar_s": 18995.4,
+      "ts": 1785990257,
+      "bar_s": 19397.1,
       "bar_huecos": 23,
       "bar_vol0": 0,
-      "quote_s": 18992.872199964524,
+      "quote_s": 19394.47755293846,
       "spot": 278.53,
       "spot_src": "intrinio_quote",
-      "spot_s": 18992.872199964524
+      "spot_s": 19394.47755293846
     },
     "QCOM": {
-      "ts": 1785989855,
-      "bar_s": 16115.8,
+      "ts": 1785990257,
+      "bar_s": 16517.2,
       "bar_huecos": 20,
       "bar_vol0": 0,
-      "quote_s": 16058.048430776596,
+      "quote_s": 16459.46370382309,
       "spot": 157.27,
       "spot_src": "intrinio_quote",
-      "spot_s": 16058.048430776596
+      "spot_s": 16459.46370382309
     },
     "AVGO": {
-      "ts": 1785989855,
-      "bar_s": 15515.9,
+      "ts": 1785990257,
+      "bar_s": 15917.3,
       "bar_huecos": 7,
       "bar_vol0": 0,
-      "quote_s": 15463.08730120659,
+      "quote_s": 15864.497310876846,
       "spot": 421.44,
       "spot_src": "intrinio_quote",
-      "spot_s": 15463.08730120659
+      "spot_s": 15864.497310876846
     },
     "NFLX": {
-      "ts": 1785989855,
-      "bar_s": 15576.0,
+      "ts": 1785990257,
+      "bar_s": 15977.4,
       "bar_huecos": 16,
       "bar_vol0": 0,
-      "quote_s": 15565.929924058913,
+      "quote_s": 15967.394289064407,
       "spot": 74.12,
       "spot_src": "intrinio_quote",
-      "spot_s": 15565.929924058913
+      "spot_s": 15967.394289064407
     },
     "NOK": {
-      "ts": 1785989856,
-      "bar_s": 15636.1,
+      "ts": 1785990257,
+      "bar_s": 16037.7,
       "bar_huecos": 19,
       "bar_vol0": 0,
-      "quote_s": 15616.501128959655,
+      "quote_s": 16018.071172904969,
       "spot": 9.57,
       "spot_src": "intrinio_quote",
-      "spot_s": 15616.501128959655
+      "spot_s": 16018.071172904969
     },
     "GLD": {
-      "ts": 1785989856,
-      "bar_s": 15576.2,
+      "ts": 1785990257,
+      "bar_s": 15977.8,
       "bar_huecos": 5,
       "bar_vol0": 0,
-      "quote_s": 15565.014151763917,
+      "quote_s": 15966.515075778962,
       "spot": 392.24,
       "spot_src": "intrinio_quote",
-      "spot_s": 15565.014151763917
+      "spot_s": 15966.515075778962
     },
     "XLK": {
-      "ts": 1785989856,
-      "bar_s": 15636.4,
+      "ts": 1785990257,
+      "bar_s": 16037.9,
       "bar_huecos": 20,
       "bar_vol0": 0,
-      "quote_s": 15606.451232767105,
+      "quote_s": 16008.004815101624,
       "spot": 185.499,
       "spot_src": "intrinio_quote",
-      "spot_s": 15606.451232767105
+      "spot_s": 16008.004815101624
     },
     "LRCX": {
-      "ts": 1785989857,
-      "bar_s": 16057.7,
+      "ts": 1785990258,
+      "bar_s": 16458.0,
       "bar_huecos": 19,
       "bar_vol0": 0,
-      "quote_s": 16046.871607971192,
+      "quote_s": 16447.227985048296,
       "spot": 308.41,
       "spot_src": "intrinio_quote",
-      "spot_s": 16046.871607971192
+      "spot_s": 16447.227985048296
     },
     "SNDK": {
-      "ts": 1785989858,
-      "bar_s": 15518.4,
+      "ts": 1785990258,
+      "bar_s": 15918.2,
       "bar_huecos": 0,
       "bar_vol0": 0,
-      "quote_s": 15464.90724310875,
+      "quote_s": 15864.678313159942,
       "spot": 1243.01,
       "spot_src": "intrinio_quote",
-      "spot_s": 15464.90724310875
+      "spot_s": 15864.678313159942
     },
     "WDC": {
-      "ts": 1785989858,
-      "bar_s": 15518.5,
+      "ts": 1785990258,
+      "bar_s": 15918.3,
       "bar_huecos": 2,
       "bar_vol0": 0,
-      "quote_s": 15468.405534029007,
+      "quote_s": 15868.147175121307,
       "spot": 458.2,
       "spot_src": "intrinio_quote",
-      "spot_s": 15468.405534029007
+      "spot_s": 15868.147175121307
     },
     "STX": {
-      "ts": 1785989858,
-      "bar_s": 15758.6,
+      "ts": 1785990258,
+      "bar_s": 16158.4,
       "bar_huecos": 18,
       "bar_vol0": 0,
-      "quote_s": 15734.623173093796,
+      "quote_s": 16134.386552810669,
       "spot": 821.0,
       "spot_src": "intrinio_quote",
-      "spot_s": 15734.623173093796
+      "spot_s": 16134.386552810669
     },
     "HOOD": {
-      "ts": 1785989858,
-      "bar_s": 15518.7,
+      "ts": 1785990258,
+      "bar_s": 15918.5,
       "bar_huecos": 24,
       "bar_vol0": 0,
-      "quote_s": 15492.682646131516,
+      "quote_s": 15892.49900689125,
       "spot": 92.76,
       "spot_src": "intrinio_quote",
-      "spot_s": 15492.682646131516
+      "spot_s": 15892.49900689125
     },
     "PLTR": {
-      "ts": 1785989858,
-      "bar_s": 15518.8,
+      "ts": 1785990258,
+      "bar_s": 15918.6,
       "bar_huecos": 6,
       "bar_vol0": 0,
-      "quote_s": 15465.231630182267,
+      "quote_s": 15864.922927188873,
       "spot": 156.9,
       "spot_src": "intrinio_quote",
-      "spot_s": 15465.231630182267
+      "spot_s": 15864.922927188873
     },
     "MSTR": {
-      "ts": 1785989858,
-      "bar_s": 15698.9,
+      "ts": 1785990258,
+      "bar_s": 16098.7,
       "bar_huecos": 20,
       "bar_vol0": 0,
-      "quote_s": 15650.725597238541,
+      "quote_s": 16050.545562076568,
       "spot": 97.7,
       "spot_src": "intrinio_quote",
-      "spot_s": 15650.725597238541
+      "spot_s": 16050.545562076568
     },
     "COIN": {
-      "ts": 1785989859,
-      "bar_s": 16179.0,
+      "ts": 1785990258,
+      "bar_s": 16578.8,
       "bar_huecos": 25,
       "bar_vol0": 0,
-      "quote_s": 16164.073131990433,
+      "quote_s": 16563.94407687187,
       "spot": 150.07,
       "spot_src": "intrinio_quote",
-      "spot_s": 16164.073131990433
+      "spot_s": 16563.94407687187
     },
     "CRWV": {
-      "ts": 1785989859,
-      "bar_s": 15699.1,
+      "ts": 1785990258,
+      "bar_s": 16098.9,
       "bar_huecos": 16,
       "bar_vol0": 0,
-      "quote_s": 15656.583664131165,
+      "quote_s": 16056.3710501194,
       "spot": 88.94,
       "spot_src": "intrinio_quote",
-      "spot_s": 15656.583664131165
+      "spot_s": 16056.3710501194
     },
     "RKLB": {
-      "ts": 1785989859,
-      "bar_s": 15699.3,
+      "ts": 1785990259,
+      "bar_s": 16099.0,
       "bar_huecos": 18,
       "bar_vol0": 0,
-      "quote_s": 15670.145897960663,
+      "quote_s": 16069.990991830826,
       "spot": 74.74,
       "spot_src": "intrinio_quote",
-      "spot_s": 15670.145897960663
+      "spot_s": 16069.990991830826
     }
   },
   "note": "nbbo campo1=wall-clock de escritura, campo4=epoch de bolsa; bars epoch=hora de bolsa; feed_tier declara el tier del market provider",
@@ -440,7 +440,7 @@
     "WDC",
     "XLK"
   ],
-  "bar_age_max_s": 18995.4,
+  "bar_age_max_s": 19397.1,
   "bar_huecos": [
     "AAPL",
     "AMD",
@@ -478,16 +478,16 @@
     "need": 28,
     "universo": 32,
     "max_bar_age_s": 240.0,
-    "bar_age_mediana_s": 15576.0,
-    "motivo": "barras a 15576 s de mediana contra un tope de 240 s: solo 0/32 pueden votar (hacen falta 28). Es el FEED (intrinio va delayed), no el mercado."
+    "bar_age_mediana_s": 15977.4,
+    "motivo": "barras a 15977 s de mediana contra un tope de 240 s: solo 0/32 pueden votar (hacen falta 28). Es el FEED (intrinio va delayed), no el mercado."
   },
   "nbbo_gate": {
     "pasan": 32,
     "universo": 32,
     "gate_s": 10.0,
-    "edad_p50_s": 0.3,
-    "edad_max_s": 7.3,
-    "retraso_bolsa_p50_s": 15568.0
+    "edad_p50_s": 1.0,
+    "edad_max_s": 2.0,
+    "retraso_bolsa_p50_s": 15967.0
   },
   "intrinio_stock_source": "equities_edge",
   "intrinio_interval_source": "equities_edge"

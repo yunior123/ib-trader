@@ -1,376 +1,376 @@
 {
  "sym": "GOOGL",
  "spot": 364.68,
- "asof": 1785989555,
+ "asof": 1785990162,
  "exp": "20260807",
- "dte": 1.66,
+ "dte": 1.65,
  "scope": "0DTE",
- "net_vex": 1526123594.0,
+ "net_vex": 1523356460.5,
  "vex_peak": 380.0,
  "vex_profile": [
   {
    "strike": 310.0,
-   "vex": 5655602.8
+   "vex": 5650852.9
   },
   {
    "strike": 312.5,
-   "vex": 983906.5
+   "vex": 982512.3
   },
   {
    "strike": 315.0,
-   "vex": 5089949.5
+   "vex": 5083111.4
   },
   {
    "strike": 317.5,
-   "vex": 580430.4
+   "vex": 579560.7
   },
   {
    "strike": 320.0,
-   "vex": 9830385.3
+   "vex": 9816677.9
   },
   {
    "strike": 322.5,
-   "vex": 8644214.2
+   "vex": 8631943.8
   },
   {
    "strike": 325.0,
-   "vex": 23837308.6
+   "vex": 23798307.6
   },
   {
    "strike": 327.5,
-   "vex": 6325469.1
+   "vex": 6317129.4
   },
   {
    "strike": 330.0,
-   "vex": 29575615.6
+   "vex": 29532385.7
   },
   {
    "strike": 332.5,
-   "vex": 4516343.8
+   "vex": 4508522.8
   },
   {
    "strike": 335.0,
-   "vex": 27018312.7
+   "vex": 26979425.2
   },
   {
    "strike": 337.5,
-   "vex": 5693436.1
+   "vex": 5683644.4
   },
   {
    "strike": 340.0,
-   "vex": 44898256.3
+   "vex": 44809260.2
   },
   {
    "strike": 342.5,
-   "vex": 35976034.4
+   "vex": 35903956.3
   },
   {
    "strike": 345.0,
-   "vex": 67011987.5
+   "vex": 66873316.5
   },
   {
    "strike": 347.5,
-   "vex": 98349203.2
+   "vex": 98134613.7
   },
   {
    "strike": 350.0,
-   "vex": 130197386.1
+   "vex": 129917843.0
   },
   {
    "strike": 352.5,
-   "vex": 43888081.1
+   "vex": 43789945.5
   },
   {
    "strike": 355.0,
-   "vex": 70564488.6
+   "vex": 70403037.3
   },
   {
    "strike": 357.5,
-   "vex": -538393998.0
+   "vex": -537048203.0
   },
   {
    "strike": 360.0,
-   "vex": -430792608.0
+   "vex": -429679024.5
   },
   {
    "strike": 362.5,
-   "vex": -29450155.3
+   "vex": -29368547.4
   },
   {
    "strike": 365.0,
-   "vex": 10293259.3
+   "vex": 10280500.8
   },
   {
    "strike": 367.5,
-   "vex": 156764317.2
+   "vex": 156343320.1
   },
   {
    "strike": 370.0,
-   "vex": 128096765.3
+   "vex": 127757965.7
   },
   {
    "strike": 372.5,
-   "vex": -11591066.9
+   "vex": -11561076.9
   },
   {
    "strike": 375.0,
-   "vex": 419371325.2
+   "vex": 418426196.7
   },
   {
    "strike": 377.5,
-   "vex": 25670942.3
+   "vex": 25612650.1
   },
   {
    "strike": 380.0,
-   "vex": 605171337.9
+   "vex": 603901204.0
   },
   {
    "strike": 382.5,
-   "vex": 41346444.1
+   "vex": 41262697.1
   },
   {
    "strike": 385.0,
-   "vex": 217365047.0
+   "vex": 216931658.2
   },
   {
    "strike": 387.5,
-   "vex": 29976651.4
+   "vex": 29922638.0
   },
   {
    "strike": 390.0,
-   "vex": 110446525.4
+   "vex": 110250609.3
   },
   {
    "strike": 392.5,
-   "vex": 4332544.2
+   "vex": 4324037.1
   },
   {
    "strike": 395.0,
-   "vex": 37197504.9
+   "vex": 37137323.4
   },
   {
    "strike": 397.5,
-   "vex": 1501030.4
+   "vex": 1498568.4
   },
   {
    "strike": 400.0,
-   "vex": 59976642.5
+   "vex": 59880013.5
   },
   {
    "strike": 402.5,
-   "vex": 623108.6
+   "vex": 622547.6
   },
   {
    "strike": 405.0,
-   "vex": 31451205.4
+   "vex": 31401231.1
   },
   {
    "strike": 407.5,
-   "vex": 169552.2
+   "vex": 169285.0
   },
   {
    "strike": 410.0,
-   "vex": 10212262.2
+   "vex": 10195011.4
   },
   {
    "strike": 412.5,
-   "vex": 125540.1
+   "vex": 125356.6
   },
   {
    "strike": 415.0,
-   "vex": 27539564.6
+   "vex": 27491143.1
   },
   {
    "strike": 417.5,
-   "vex": 83440.0
+   "vex": 83308.6
   }
  ],
- "net_charm": -275857210.8,
+ "net_charm": -277095541.9,
  "charm_peak": 380.0,
  "charm_profile": [
   {
    "strike": 310.0,
-   "charm": -1570636.9
+   "charm": -1579759.7
   },
   {
    "strike": 312.5,
-   "charm": -272171.7
+   "charm": -273567.4
   },
   {
    "strike": 315.0,
-   "charm": -1161208.7
+   "charm": -1167200.6
   },
   {
    "strike": 317.5,
-   "charm": -125956.8
+   "charm": -126584.1
   },
   {
    "strike": 320.0,
-   "charm": -2321108.9
+   "charm": -2333088.8
   },
   {
    "strike": 322.5,
-   "charm": -1835897.8
+   "charm": -1845277.9
   },
   {
    "strike": 325.0,
-   "charm": -5110949.0
+   "charm": -5135840.6
   },
   {
    "strike": 327.5,
-   "charm": -1297175.6
+   "charm": -1304041.4
   },
   {
    "strike": 330.0,
-   "charm": -5756018.5
+   "charm": -5785493.4
   },
   {
    "strike": 332.5,
-   "charm": -845047.8
+   "charm": -849088.6
   },
   {
    "strike": 335.0,
-   "charm": -5015244.0
+   "charm": -5041609.4
   },
   {
    "strike": 337.5,
-   "charm": -1021330.6
+   "charm": -1026327.3
   },
   {
    "strike": 340.0,
-   "charm": -7888095.8
+   "charm": -7923652.8
   },
   {
    "strike": 342.5,
-   "charm": -6177140.1
+   "charm": -6205179.4
   },
   {
    "strike": 345.0,
-   "charm": -11227242.2
+   "charm": -11278113.4
   },
   {
    "strike": 347.5,
-   "charm": -16141324.2
+   "charm": -16213448.6
   },
   {
    "strike": 350.0,
-   "charm": -21553370.4
+   "charm": -21646162.5
   },
   {
    "strike": 352.5,
-   "charm": -7060201.9
+   "charm": -7090440.9
   },
   {
    "strike": 355.0,
-   "charm": -11289004.3
+   "charm": -11336979.2
   },
   {
    "strike": 357.5,
-   "charm": 39061155.2
+   "charm": 39241189.4
   },
   {
    "strike": 360.0,
-   "charm": 30483854.7
+   "charm": 30612746.4
   },
   {
    "strike": 362.5,
-   "charm": 1674677.0
+   "charm": 1681692.0
   },
   {
    "strike": 365.0,
-   "charm": -1168712.1
+   "charm": -1172592.9
   },
   {
    "strike": 367.5,
-   "charm": -17627026.8
+   "charm": -17694406.2
   },
   {
    "strike": 370.0,
-   "charm": -13118886.4
+   "charm": -13170392.0
   },
   {
    "strike": 372.5,
-   "charm": 3147689.4
+   "charm": 3160303.4
   },
   {
    "strike": 375.0,
-   "charm": -45385760.8
+   "charm": -45577392.3
   },
   {
    "strike": 377.5,
-   "charm": -2834363.7
+   "charm": -2847034.3
   },
   {
    "strike": 380.0,
-   "charm": -75387069.3
+   "charm": -75727218.8
   },
   {
    "strike": 382.5,
-   "charm": -5428039.2
+   "charm": -5452428.0
   },
   {
    "strike": 385.0,
-   "charm": -29205624.9
+   "charm": -29336177.0
   },
   {
    "strike": 387.5,
-   "charm": -4282952.9
+   "charm": -4303318.3
   },
   {
    "strike": 390.0,
-   "charm": -15936020.9
+   "charm": -16011627.8
   },
   {
    "strike": 392.5,
-   "charm": -761629.3
+   "charm": -765058.3
   },
   {
    "strike": 395.0,
-   "charm": -5809510.0
+   "charm": -5838068.1
   },
   {
    "strike": 397.5,
-   "charm": -257973.9
+   "charm": -259233.0
   },
   {
    "strike": 400.0,
-   "charm": -10255084.8
+   "charm": -10305314.5
   },
   {
    "strike": 402.5,
-   "charm": -109442.1
+   "charm": -110071.4
   },
   {
    "strike": 405.0,
-   "charm": -5897321.1
+   "charm": -5926224.0
   },
   {
    "strike": 407.5,
-   "charm": -37720.7
+   "charm": -37908.2
   },
   {
    "strike": 410.0,
-   "charm": -1952887.9
+   "charm": -1962173.1
   },
   {
    "strike": 412.5,
-   "charm": -30779.3
+   "charm": -30936.9
   },
   {
    "strike": 415.0,
-   "charm": -7047576.0
+   "charm": -7080857.9
   },
   {
    "strike": 417.5,
-   "charm": -21079.9
+   "charm": -21184.0
   }
  ],
  "charm_why": null,
  "pressure": 65,
  "pressure_lab": "PIN fuerte",
- "iv_atm": 0.3551,
+ "iv_atm": 0.3559,
  "em": 8.73,
- "net_gex": 102149895.8,
+ "net_gex": 102146711.0,
  "regime": "POS",
  "flip": 352.19,
  "flip_static": 357.74,
@@ -378,9 +378,9 @@
  "put_wall": 360.0,
  "abs_wall": 360.0,
  "poc_dom": "76%C",
- "call_wall_gex": 19023458.0,
- "put_wall_gex": 21385125.0,
- "abs_wall_gex": 21385125.0,
+ "call_wall_gex": 19022971.9,
+ "put_wall_gex": 21384050.9,
+ "abs_wall_gex": 21384050.9,
  "oi_call_wall": 380.0,
  "oi_put_wall": 360.0,
  "near_call_wall": false,
@@ -465,43 +465,43 @@
   },
   {
    "strike": 357.5,
-   "gex": 18480215.8
+   "gex": 18482000.4
   },
   {
    "strike": 360.0,
-   "gex": 21385125.0
+   "gex": 21384050.9
   },
   {
    "strike": 362.5,
-   "gex": 2291210.1
+   "gex": 2290892.2
   },
   {
    "strike": 365.0,
-   "gex": 9594505.4
+   "gex": 9593780.6
   },
   {
    "strike": 367.5,
-   "gex": 19023458.0
+   "gex": 19022971.9
   },
   {
    "strike": 370.0,
-   "gex": 7825053.5
+   "gex": 7824772.1
   },
   {
    "strike": 372.5,
-   "gex": -1224775.1
+   "gex": -1224793.8
   },
   {
    "strike": 375.0,
-   "gex": 14783404.6
+   "gex": 14782635.9
   },
   {
    "strike": 377.5,
-   "gex": 766532.6
+   "gex": 766482.4
   },
   {
    "strike": 380.0,
-   "gex": 17124963.5
+   "gex": 17123715.7
   },
   {
    "strike": 382.5,
@@ -566,26 +566,26 @@
  ],
  "call_wall_kind": "pin",
  "call_wall_regime": "POS",
- "call_wall_net": 19023458.0,
+ "call_wall_net": 19022971.9,
  "put_wall_kind": "pin",
  "put_wall_regime": "POS",
- "put_wall_net": 21385125.0,
+ "put_wall_net": 21384050.9,
  "abs_wall_kind": "pin",
  "abs_wall_regime": "POS",
- "abs_wall_net": 21385125.0,
+ "abs_wall_net": 21384050.9,
  "gamma_ok": true,
  "regime_scope": "0DTE",
  "greeks_ok_pct": 0.7841,
  "chain_src": "polygon",
- "chain_ts": 1785989377.0,
- "chain_age_s": 178.9624,
+ "chain_ts": 1785990097.0,
+ "chain_age_s": 65.1416,
  "stale": false,
  "stale_reason": null,
  "regime_raw": "POS",
  "regime_why": null,
  "parity_ok_pct": 0.0,
- "net_gex_parity_lo": 79965073.6427,
- "net_gex_parity_hi": 86006224.0765,
+ "net_gex_parity_lo": 79965990.0872,
+ "net_gex_parity_hi": 86004938.9796,
  "quotes_ok": false,
  "session": "fuera_de_rth",
  "band_used": 0.15,
@@ -611,7 +611,7 @@
  "exp_rolled": false,
  "roll_reason": null,
  "degraded_reason": null,
- "gross_gex": 145733000.9176,
+ "gross_gex": 145729853.4077,
  "bifurcation": 1.4267,
  "hhi": 0.0909,
  "n_strikes_populated": 44,
@@ -627,5 +627,5 @@
  "frozen_at": 1785936981,
  "frozen_day": null,
  "spot_src": "intrinio_quote",
- "spot_age_s": 15018.0
+ "spot_age_s": 15738.0
 }

@@ -1114,3 +1114,8 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       con color/nombre (clic quita); title en cada serie (BB/SMA/VWAP/ST/TT/MACD) para
       etiqueta en el eje; ribbon/ttLevels/marcadores respetan el toggle; panes MACD y
       netprem colapsan a 0 si OFF. node --check OK, 12 tests, app relanzada.
+- [x] "volume optional; number when hovering (150M); big trades balloons -> beluga and big
+      trades optional" (2026-08-06) — hecho: volume y whales en IND_DEF (OFF), pane volumen
+      colapsa, Vol en la barra OHLC con el numero de la barra bajo el crosshair (fmtVol
+      B/M/K) y color de la vela, whaleTally se oculta con el toggle; Target Trend (beluga)
+      ya era opcional; comentario zombie del zoom viejo limpiado.
