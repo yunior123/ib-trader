@@ -1057,9 +1057,16 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       Los logs jsonl siguen registrando TODO — solo calla la voz/telefono fuera de sesion.
 - [ ] "mejora todo" (2026-08-06 00:50) — en curso: (a) flip forward en pipeline de niveles
       [Claude directo], (b) escáneres UW: bug max-pain + peaje + muros sin céntimos + dOI
-      etiquetado [agentes, bloqueados por límite hasta 4:40am — relanzar], (c) "7. backtest
-      finviz signals too" (2026-08-06 00:55), (d) "8. review logs. send agents for it"
-      (2026-08-06 00:55). Estado: agentes en cola para 4:45am.
+      etiquetado [agentes, bloqueados por límite hasta 4:40am — relanzar], (c) "7. backtest finviz signals too" — HECHO:
+      docs/BACKTEST-ALERTAS-FINVIZ-2026-08-06.md (3 sesiones, 439 decididas, n_eff 124):
+      TODOS 53,1% vs null 51,0% p=0,21; buffett 52,3% (null 53,0%!); momentum 55,0% p=0,19;
+      squeeze 51,5%. NADA sobrevive FDR; curva k inestable (momentum +4pp solo en k=1.0)
+      = MEDIDO-SIN-EDGE los 3. Siguen grabando, sin voz. Agregador scripts/finviz_bt_agg.py.
+      (d) "8. review logs" — HECHO (ver commit e611781a): disco 10->22Gi tras 3 ENOSPC,
+      korea relanzado, UW 30k/dia agotado (sonda de reset activa), DeepSeek 402 SIN SALDO
+      (decision de Yunior recargar), probe intrinio con timeout 540s.
+      PENDIENTE menor: watchlist_quotes y opt_whale_watch en bucle contra 4001 (gate por
+      market_source), falso verde healthcheck, Databento timeout->yfinance.
 - [x] "calibrate the crazy compass... the arrow should be red when strong trend down based on
       math or whales... only show the arrow, remove the description under" (2026-08-06 00:20) —
       hecho d1fb2b29. Causa del bug medida: regime POS && !near iba a CAJA flat SIN mirar la
