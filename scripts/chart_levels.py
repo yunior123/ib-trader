@@ -30,6 +30,7 @@ OUT = "charts/data"
 # decide Yunior. Sin IBT_ASOF nada de esto se activa.
 _ASOF = os.environ.get("IBT_ASOF") or ""
 _real_time, _real_strftime, _real_localtime = time.time, time.strftime, time.localtime
+_FWD_CACHE = {}   # path -> (mtime, contratos ALL-exp) para el flip forward
 
 
 def _freeze_clock(epoch):
@@ -229,6 +230,59 @@ def gen(sym, spot=None, write=True, all_exp=False):
             regime_scope = "ALL"
             g["regime_why"] = (f"0DTE sin signo firme por paridad; regimen del LIBRO ENTERO "
                                f"de la misma cadena ({g_all.get('parity_ok_pct')} pares ok)")
+    # ---- FLIP FORWARD (2026-08-06): el mapa SIN los vencimientos que mueren hoy / esta
+    # semana. Caso INTC 2026-08-05: flip del dia 98.39 vs forward 102.90 — cerro BAJO su
+    # flip forward y el "colchon" era 0DTE+viernes. Sin libro forward medible -> None+motivo.
+    fwd = {"flip_manana": None, "flip_fwd": None, "regime_fwd": None,
+           "net_gex_manana": None, "net_gex_fwd": None,
+           "gamma_muere_hoy_pct": None, "gamma_muere_semana_pct": None, "fwd_why": None}
+    try:
+        cs_fwd = cs_used
+        if not all_exp:
+            # cache por (path, mtime): la 2a pasada ALL-exp invierte IV y en el loop del
+            # bridge (write=False, cada ~15s) seria pagarla por tick sin que la cadena cambie
+            mt = os.path.getmtime(path)
+            hit = _FWD_CACHE.get(path)
+            if hit and hit[0] == mt:
+                cs_fwd = hit[1]
+            else:
+                g_ax, cs_ax = _from_cache_capturing(path, spot, True)
+                cs_fwd = cs_ax if (g_ax and g_ax.get("gamma_ok") and cs_ax) else []
+                _FWD_CACHE[path] = (mt, cs_fwd)
+        if not cs_fwd:
+            fwd["fwd_why"] = "sin contratos ALL-exp casados para el libro forward"
+        else:
+            # exp de los contratos = YYYYMMDD (medido); cutoffs en el mismo formato
+            today_s = time.strftime("%Y%m%d")
+            _lt = time.localtime(time.time())
+            friday_s = time.strftime(
+                "%Y%m%d", _real_localtime(time.time() + max(0, 4 - _lt.tm_wday) * 86400))
+            def _sub(cutoff):
+                cs = [c for c in cs_fwd
+                      if "".join(ch for ch in str(c.get("exp") or "") if ch.isdigit()) > cutoff]
+                if not cs:
+                    return None
+                return gex_core.build_gex(cs, spot, scale="dollar1pct")
+            # gross |gamma| del libro entero vs el que sobrevive: la cuota que MUERE
+            gross_all = sum(abs(v) for v in gex_core.build_gex(
+                cs_fwd, spot, scale="dollar1pct")["profile"].values())
+            for tag, cutoff in (("manana", today_s), ("fwd", friday_s)):
+                gs = _sub(cutoff)
+                if gs is None:
+                    fwd["fwd_why"] = f"todo el libro vence antes de {cutoff}"
+                    continue
+                fwd[f"flip_{tag}"] = round(gs["flip"], 2) if gs.get("flip") else None
+                fwd[f"net_gex_{tag}"] = (round(gs["net_gex"], 1)
+                                         if gs.get("net_gex") is not None else None)
+                if tag == "fwd":
+                    fwd["regime_fwd"] = gs.get("regime")
+                if gross_all > 0:
+                    die = 1.0 - sum(abs(v) for v in gs["profile"].values()) / gross_all
+                    fwd[f"gamma_muere_{'hoy' if tag == 'manana' else 'semana'}_pct"] = (
+                        round(die * 100, 1))
+    except Exception as e:                        # fail-loud: motivo, jamas un numero plausible
+        fwd = {k: None for k in fwd}
+        fwd["fwd_why"] = f"forward no calculable: {type(e).__name__}: {e}"
     wc = gex_core.wall_context(g, spot)
     # perfil ordenado por strike (para el histograma horizontal)
     prof = [{"strike": k, "gex": round(v, 1)} for k, v in sorted(g["profile"].items())]
@@ -296,6 +350,7 @@ def gen(sym, spot=None, write=True, all_exp=False):
         "regime": g.get("regime"),
         "flip": round(g["flip"], 2) if g["flip"] else None,
         "flip_static": round(g["flip_static"], 2) if g["flip_static"] else None,
+        **fwd,
         "call_wall": g["call_wall"], "put_wall": g["put_wall"], "abs_wall": g["abs_wall"],
         "poc_dom": poc_dom,
         "call_wall_gex": round(pmap.get(g["call_wall"], 0), 1) if g["call_wall"] else None,

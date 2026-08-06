@@ -1044,6 +1044,11 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
 - [x] AUDIT #8 compass adoptaba spot por mtime: compass.cpp:1475 exige además spot_age_s<=300 del propio productor (levels_txn.json: mtime 137s pero spot_age_s 954s) (2026-08-05, hecho)
 
 ## Sesión 2026-08-05 tarde
+- [ ] "mejora todo" (2026-08-06 00:50) — en curso: (a) flip forward en pipeline de niveles
+      [Claude directo], (b) escáneres UW: bug max-pain + peaje + muros sin céntimos + dOI
+      etiquetado [agentes, bloqueados por límite hasta 4:40am — relanzar], (c) "7. backtest
+      finviz signals too" (2026-08-06 00:55), (d) "8. review logs. send agents for it"
+      (2026-08-06 00:55). Estado: agentes en cola para 4:45am.
 - [x] "calibrate the crazy compass... the arrow should be red when strong trend down based on
       math or whales... only show the arrow, remove the description under" (2026-08-06 00:20) —
       hecho d1fb2b29. Causa del bug medida: regime POS && !near iba a CAJA flat SIN mirar la
@@ -1139,3 +1144,6 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       (structure/hiro 90s, heatmap 6min) + muestra el error UW REAL en ambar (uwNote);
       hasta que UW resetee, heatmap/cards sin dato y DICIENDO por que. Icono: escudo ChatGPT
       -> AppIcon.appiconset (mac 16-1024 + ios 1024), AppIcon.icns verificado en el bundle.
+- [ ] "release some space in my mac too, old dependencies deleted from cache, explore, send
+      agent" (2026-08-06) — estado: delegado a agente (caches regenerables solamente, reporte
+      de GB liberados)

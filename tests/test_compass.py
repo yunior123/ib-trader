@@ -609,3 +609,17 @@ def test_weak_drift_still_a_box():
     r = run(_ev_box_far(r6=-0.10, r15=-0.15, z6=-0.4))
     assert r["state"] == S_BOX
     assert r["dir"] == "flat"
+
+
+def test_box_below_forward_flip_says_so():
+    """Leccion INTC 2026-08-05: caja con spot BAJO el flip del libro que sobrevive la
+    semana = colchon con fecha de caducidad. Se DICE (contexto), el estado no cambia."""
+    r = run(_ev_box_far(flip_fwd=106.19, gamma_die_week=58.8))
+    assert r["state"] == S_BOX
+    assert any("flip FORWARD 106.19" in w and "59%" in w or "58" in w for w in r["state_why"])
+
+
+def test_box_above_forward_flip_stays_quiet():
+    r = run(_ev_box_far(flip_fwd=97.0))
+    assert r["state"] == S_BOX
+    assert not any("FORWARD" in w for w in r["state_why"])

@@ -243,7 +243,7 @@ struct Level {
 struct Ev {
     std::string sym = "?";
     std::optional<double> spot, em, flip, r6, r15, z6, pctb_1m, pctb_15m, flow,
-        vt, bb_mid, leg_pct, em_used_pct, exhaustion, net_prem;
+        vt, bb_mid, leg_pct, em_used_pct, exhaustion, net_prem, flip_fwd, gamma_die_week;
     std::string regime, force_phase, book_label;
     std::optional<double> book_coef;
     int bandwalk_tf = 0, bandwalk_dir = 0, candle_bias = 0;
@@ -978,6 +978,14 @@ static Out classify(const Ev& ev, Hist* hist, const std::string& decay_json) {
         } else if (ev.regime == "POS" && !near && trend == 0) {
             o.state = S_BOX;
             why.emplace_back("gamma+ entre Muros, sin extremo: caja");
+            // flip FORWARD (leccion INTC 2026-08-05): bajo el flip del libro que sobrevive
+            // la semana, el colchon de la caja tiene fecha de caducidad. CONTEXTO, no estado.
+            if (ev.flip_fwd && spot < *ev.flip_fwd) {
+                char b[160];
+                snprintf(b, sizeof b, "OJO: bajo flip FORWARD %.2f (muere %.0f%% de gamma esta semana)",
+                         *ev.flip_fwd, ev.gamma_die_week.value_or(0.0));
+                why.emplace_back(b);
+            }
         } else {
             o.state = S_CONT;
             int m = trend != 0 ? trend : sgn(ev.r6.value_or(0.0));
@@ -1323,6 +1331,7 @@ static Ev ev_from_json(const std::string& j) {
     e.pctb_1m = opt("pctb_1m"); e.pctb_15m = opt("pctb_15m");
     e.flow = opt("flow"); e.vt = opt("vt"); e.bb_mid = opt("bb_mid");
     e.net_prem = opt("net_prem");
+    e.flip_fwd = opt("flip_fwd"); e.gamma_die_week = opt("gamma_die_week");
     e.leg_pct = opt("leg_pct"); e.em_used_pct = opt("em_used_pct");
     e.exhaustion = opt("exhaustion"); e.now_min = opt("now_min");
     e.book_coef = opt("book_coef");
@@ -1496,6 +1505,8 @@ static Ev gather(const std::string& sym_lo) {
     if (!lv.empty()) {
         if (auto s = jstr(lv, "regime")) e.regime = *s;
         if (auto v = jnum(lv, "flip")) e.flip = *v;
+        if (auto v = jnum(lv, "flip_fwd")) e.flip_fwd = *v;
+        if (auto v = jnum(lv, "gamma_muere_semana_pct")) e.gamma_die_week = *v;
         if (auto v = jnum(lv, "em")) e.em = *v;
         // el spot del mapa manda SOLO si el mapa es fresco: overnight el mapa es del cierre
         // y pisaba el precio real de las barras (cazado 2026-07-28: mapa 682.02 vs bar 677.9)

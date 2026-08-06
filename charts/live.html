@@ -1282,6 +1282,13 @@ function drawLevels(lv) {
   // flip con etiqueta +Γ DAMPENING / −Γ AMPLIFYING (signo del libro), como gexa
   const gsym = lv.net_gex == null ? "" : (lv.net_gex >= 0 ? " +Γ" : " −Γ");
   add(lv.flip, "rgba(244,196,48,0.85)", "flip" + gsym, true);
+  // flip FORWARD: el flip del libro que sobrevive esta semana (lección INTC 2026-08-05:
+  // 98.39 hoy vs 102.90 forward). Naranja punteado; solo si difiere del flip vivo.
+  if (lv.flip_fwd != null && lv.flip_fwd !== lv.flip) {
+    const die = lv.gamma_muere_semana_pct;
+    add(lv.flip_fwd, "rgba(255,140,60,0.7)",
+        "flip→" + (lv.regime_fwd ? " " + lv.regime_fwd : "") + (die != null ? " (muere " + Math.round(die) + "%)" : ""), true);
+  }
   // expected move ±1σ (rango esperado hasta el vencimiento) — cian punteado
   if (lv.em && lv.spot) {
     add(lv.spot + lv.em, "rgba(41,182,246,0.5)", "EM+", true);
