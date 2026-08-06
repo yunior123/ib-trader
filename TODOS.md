@@ -1044,8 +1044,15 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
 - [x] AUDIT #8 compass adoptaba spot por mtime: compass.cpp:1475 exige además spot_age_s<=300 del propio productor (levels_txn.json: mtime 137s pero spot_age_s 954s) (2026-08-05, hecho)
 
 ## Sesión 2026-08-05 tarde
-- [ ] "make sure to kill those fuckin notifications for intrinio and finnhub not connected,
-      debug that shit, fix" (2026-08-06 06:50) — estado: en curso.
+- [x] "make sure to kill those fuckin notifications for intrinio and finnhub not connected,
+      debug that shit, fix" (2026-08-06 06:50) — hecho. CAUSAS MEDIDAS, no silenciadas a ciegas:
+      (1) FINNHUB: overnight sin trades -> el servidor corta por idle sin close frame (185
+      caidas/noche, 0 trades perdidos) -> grita() cada 5 caidas 24/7. Fix: voz/push solo en
+      RTH + backoff min 120s fuera de RTH (menos churn). (2) INTRINIO: el vendor APAGA el WS
+      overnight (~70% medido, memoria) -> el probe pusheaba cada transicion y el autostart
+      hablaba a las 3am. Fix: push solo en premarket/rth/afterhours; voz gateada por fase;
+      + handler x8 duplicado del SDK deduplicado + timeout duro 540s al probe (colgado 307min).
+      Los logs jsonl siguen registrando TODO — solo calla la voz/telefono fuera de sesion.
 - [ ] "mejora todo" (2026-08-06 00:50) — en curso: (a) flip forward en pipeline de niveles
       [Claude directo], (b) escáneres UW: bug max-pain + peaje + muros sin céntimos + dOI
       etiquetado [agentes, bloqueados por límite hasta 4:40am — relanzar], (c) "7. backtest

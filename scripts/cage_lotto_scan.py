@@ -94,16 +94,25 @@ def scan_sym(sym, tok, w1, w2):
         # MEDIDO 2026-08-05: /max-pain IGNORA ?expiry y devuelve una fila POR vencimiento;
         # coger mp[0] daba siempre el 08-07. Se filtra por el campo expiry de la fila.
         mp = get("/api/stock/%s/max-pain" % sym, tok)
-        mpv = None
+        mpv, mp_why = None, None
         if isinstance(mp, list):
-            row = next((r for r in mp if r.get("expiry") == exp), None)
-            mpv = f(row.get("max_pain")) if row else None
+            row = next((r for r in mp if (r.get("expiry") or r.get("date")) == exp), None)
+            if row is None:
+                mp_why = "expiry %s ausente en /max-pain (%d filas)" % (exp, len(mp))
+            else:
+                mpv = f(row.get("max_pain")) or f(row.get("price"))
+                if mpv is None:
+                    mp_why = "fila de %s sin max_pain/price" % exp
+        else:
+            mp_why = "/max-pain no devolvio lista"
 
         T = max((dt.date.fromisoformat(exp) - dt.date.today()).days, 0) / 365.0
         # el dia del vencimiento aun tiene horas: piso de medio dia
         T = max(T, 0.5 / 365.0)
         agg = {"call_oi": {}, "put_oi": {}, "vol_c": 0, "vol_p": 0,
                "ask_c": 0, "bid_c": 0, "ask_p": 0, "bid_p": 0}
+        # MEDIDO 2026-08-05: OI enorme con ask<=0.05 = gamma ~0 (INTC P55, SPCX C330); fuera del muro
+        wall_c, wall_p, oi_nominal = {}, {}, {"C": 0, "P": 0}
         for r in rows:
             osym = r.get("option_symbol")
             if not osym:
@@ -115,6 +124,11 @@ def scan_sym(sym, tok, w1, w2):
             vol = int(r.get("volume") or 0)
             av, bv = int(r.get("ask_volume") or 0), int(r.get("bid_volume") or 0)
             (agg["call_oi"] if right == "C" else agg["put_oi"])[K] = oi
+            ask_raw = f(r.get("nbbo_ask"))
+            if ask_raw is not None and ask_raw <= 0.05:
+                oi_nominal[right] += oi
+            else:
+                (wall_c if right == "C" else wall_p)[K] = oi
             if right == "C":
                 agg["vol_c"] += vol
                 agg["ask_c"] += av
@@ -139,6 +153,11 @@ def scan_sym(sym, tok, w1, w2):
             if pr is None:
                 continue
             pitm, pprof, dlt, gam = pr
+            # peaje = % que debe moverse el SUBYACENTE para pagar la horquilla (medido: bueno <=0.60)
+            peaje = round((ask - bid) / (abs(dlt) * spot) * 100, 2) if abs(dlt) >= 0.02 else None
+            # suelo del tick medido: 0.20 (mismo numero que optgate.MIN_MID), no 0.25
+            ganga = bool(mid >= 0.20 and vol >= 200 and spr <= 0.05
+                         and peaje is not None and peaje <= 0.60)
             out["lottos"].append({
                 "osym": osym, "exp": exp, "right": right, "strike": K,
                 "bid": bid, "ask": ask, "cost": round(ask * 100, 2),
@@ -152,10 +171,11 @@ def scan_sym(sym, tok, w1, w2):
                 "be": round(be, 2), "be_pct": round((be - spot) / spot * 100, 2),
                 "p_itm": round(pitm, 3), "p_profit": round(pprof, 3) if pprof else None,
                 "sig_move_pct": round(iv * math.sqrt(T) * 100, 2) if iv else None,
+                "peaje_pct": peaje, "ganga_limpia": ganga,
             })
 
-        cw = max(agg["call_oi"].items(), key=lambda kv: kv[1], default=(None, 0))
-        pw = max(agg["put_oi"].items(), key=lambda kv: kv[1], default=(None, 0))
+        cw = max(wall_c.items(), key=lambda kv: kv[1], default=(None, 0))
+        pw = max(wall_p.items(), key=lambda kv: kv[1], default=(None, 0))
         # max pain propio DESDE el OI de ESTE vencimiento (control del endpoint que ignora expiry)
         ks = sorted(set(agg["call_oi"]) | set(agg["put_oi"]))
         mp_own = None
@@ -167,7 +187,8 @@ def scan_sym(sym, tok, w1, w2):
         tot_by_k = {k: agg["call_oi"].get(k, 0) + agg["put_oi"].get(k, 0) for k in ks}
         pin_k = max(tot_by_k, key=tot_by_k.get) if tot_by_k else None
         out["expiries"][exp] = {
-            "max_pain": mpv, "max_pain_own": mp_own,
+            "max_pain": mpv, "max_pain_why": mp_why, "max_pain_own": mp_own,
+            "oi_nominal_sin_gamma": oi_nominal,
             "pin_strike": pin_k, "pin_oi": tot_by_k.get(pin_k) if pin_k else None,
             "pin_dist_pct": round((pin_k - spot) / spot * 100, 2) if pin_k else None,
             "call_wall": cw[0], "call_wall_oi": cw[1],
@@ -218,6 +239,7 @@ def main():
     path = os.path.join(OUT, "cage_lotto_%s.json" % today.isoformat())
     with open(path, "w") as fh:
         json.dump({"ts": dt.datetime.now().isoformat(timespec="seconds"), "w1": w1, "w2": w2,
+                   "doi_sesion": "anterior (OI de UW = cierre de ayer)",
                    "max_spot": a.max_spot, "syms": res, "errors": errs}, fh, indent=1)
     print("escrito %s | %d simbolos | %d errores" % (path, len(res), len(errs)))
     if errs:

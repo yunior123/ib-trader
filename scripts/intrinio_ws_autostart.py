@@ -102,6 +102,15 @@ def auth_token(key, timeout=10):
 
 def grita(msg, nivel="INFO"):
     print(msg, flush=True)
+    # overnight/weekend Intrinio esta APAGADO por el vendor (~70% medido): la voz ahi es
+    # crying-wolf a las 3am (Yunior 2026-08-06). Se imprime siempre; se habla solo en sesion.
+    try:
+        from intrinio_ws_probe import market_phase
+        from datetime import datetime
+        if market_phase(datetime.now().astimezone()) in ("overnight", "weekend"):
+            return
+    except Exception:
+        pass                                      # sin fase no se calla: mejor ruido que mudo
     try:
         subprocess.Popen(["/bin/bash", os.path.join(ROOT, "scripts", "speak.sh"), nivel, msg],
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -193,6 +202,12 @@ def stream(key, syms):
 
     cfg = {"api_key": key, "provider": PROVIDER}
     cli = IntrinioRealtimeEquitiesClient(cfg, on_trade, on_quote)
+    # el SDK añade un handler por instancia -> tras N reconexiones cada ERROR salia x8
+    # (medido 2026-08-06: mismos ms repetidos); un solo handler basta
+    import logging as _logging
+    _lg = _logging.getLogger("intrinio_realtime")
+    if len(_lg.handlers) > 1:
+        _lg.handlers = _lg.handlers[:1]
     hilo = threading.Thread(target=cli.connect, daemon=True)
     hilo.start()
     time.sleep(5)

@@ -251,7 +251,11 @@ def record(row: dict) -> None:
     elif UP_FLAG.exists():
         UP_FLAG.unlink()
 
-    if previous is not None and socket_up != was_socket_up:
+    # push SOLO en fases donde el servicio se espera vivo: overnight/weekend el vendor lo
+    # apaga (~70% medido, memoria intrinio-websocket-off-overnight) y cada transicion era
+    # un ping al telefono (Yunior 2026-08-06). El jsonl lo registra todo igual.
+    if (previous is not None and socket_up != was_socket_up
+            and row["phase"] in ("premarket", "rth", "afterhours")):
         try:
             sys.path.insert(0, str(REPO / "scripts"))
             from notify_short import push
@@ -296,6 +300,10 @@ def resumen() -> int:
 def main() -> int:
     if "--summary" in sys.argv:
         return resumen()
+    # timeout duro < StartInterval 600s: un probe colgado (156 y 307 min medidos) bloquea
+    # a launchd hasta que muera; SIGALRM lo mata y el siguiente ciclo corre limpio
+    import signal
+    signal.alarm(540)
     key = load_key()
     row = run_once(key)
     record(row)

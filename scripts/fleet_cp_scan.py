@@ -178,13 +178,19 @@ def contracts_expiry(rows, spot):
     """ΔOI real (open_interest − prev_oi), sweeps, OI y flujo firmado POR VENCIMIENTO.
 
     Es la unica fuente por-vencimiento fiable de OI y volumen: oi-per-strike y flow-per-strike
-    ignoran `expiry` (medido). De aqui salen los muros del vencimiento y su flujo del dia."""
+    ignoran `expiry` (medido). De aqui salen los muros del vencimiento y su flujo del dia.
+    OJO dOI: en sesion open_interest es el cierre de AYER (medido 2026-08-05 incluso 23:48 ET)
+    -> doi_* describe la sesion ANTERIOR, no hoy (campo doi_sesion). Y los muros excluyen
+    contratos con nbbo_ask<=0.05 (OI enorme con gamma ~0 -> oi_nominal_sin_gamma aparte)."""
     if not rows:
         return None
     out = {"doi_call": 0, "doi_put": 0, "sweep_call_vol": 0, "sweep_put_vol": 0,
            "prem_call": 0.0, "prem_put": 0.0, "top_doi": [], "n": len(rows),
            "oi_call": 0, "oi_put": 0, "vol_call": 0, "vol_put": 0,
-           "ask_call": 0, "bid_call": 0, "ask_put": 0, "bid_put": 0}
+           "ask_call": 0, "bid_call": 0, "ask_put": 0, "bid_put": 0,
+           # OI de ayer: en sesion open_interest es el cierre de AYER (verificado 23:48 ET)
+           "doi_sesion": "anterior",
+           "oi_nominal_sin_gamma": 0}
     detail = []
     oi_by_k = {}
     for r in rows:
@@ -201,9 +207,14 @@ def contracts_expiry(rows, spot):
         sw = int(r.get("sweep_volume") or 0)
         av, bv = int(r.get("ask_volume") or 0), int(r.get("bid_volume") or 0)
         avg = f(r.get("avg_price"))
+        ask_px = f(r.get("nbbo_ask"))
         if strike is not None:
-            e = oi_by_k.setdefault(strike, {"strike": strike, "call_oi": 0, "put_oi": 0})
-            e["call_oi" if right == "C" else "put_oi"] += int(oi or 0)
+            # ask<=0.05 = OI nominal sin gamma (INTC P55 22.308 OI a -46%): fuera del muro
+            if ask_px is not None and ask_px <= 0.05:
+                out["oi_nominal_sin_gamma"] += int(oi or 0)
+            else:
+                e = oi_by_k.setdefault(strike, {"strike": strike, "call_oi": 0, "put_oi": 0})
+                e["call_oi" if right == "C" else "put_oi"] += int(oi or 0)
         if right == "C":
             out["prem_call"] += prem
             out["sweep_call_vol"] += sw

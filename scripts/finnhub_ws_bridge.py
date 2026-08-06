@@ -248,7 +248,9 @@ async def main():
                   file=sys.stderr, flush=True)
             # `caidas == 5` gritaba UNA sola vez en toda la vida del proceso: pasadas las 5, un
             # socket en bucle de reconexion se quedaba callado para siempre. Ahora cada 5.
-            if caidas % 5 == 0:
+            # SOLO en RTH (Yunior 2026-08-06): overnight Finnhub cierra por idle sin close
+            # frame (185 caidas/noche medidas, 0 trades que perder) — gritar ahi es crying-wolf.
+            if caidas % 5 == 0 and rth():
                 grita(f"Puente Finnhub caido {caidas} veces seguidas. Sin print en tiempo real.",
                       titulo="FINNHUB WS",
                       corto="socket CAIDO en bucle — sin print en tiempo real")
@@ -257,7 +259,8 @@ async def main():
         if hasta is not None and time.time() >= hasta:
             estado(conectado=False, ts=int(time.time()), motivo_fin="--seconds")
             return 0
-        await asyncio.sleep(espera)
+        # fuera de RTH el idle-close es esperado: reconectar cada 2s toda la noche es churn
+        await asyncio.sleep(espera if rth() else max(espera, 120.0))
         espera = min(BACKOFF_MAX_S, espera * 2)
 
 
