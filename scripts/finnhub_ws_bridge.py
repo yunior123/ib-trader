@@ -246,14 +246,12 @@ async def main():
                    caidas=caidas)
             print(f"[finnhub-ws] caida {caidas}: {type(e).__name__}: {e}",
                   file=sys.stderr, flush=True)
-            # `caidas == 5` gritaba UNA sola vez en toda la vida del proceso: pasadas las 5, un
-            # socket en bucle de reconexion se quedaba callado para siempre. Ahora cada 5.
-            # SOLO en RTH (Yunior 2026-08-06): overnight Finnhub cierra por idle sin close
-            # frame (185 caidas/noche medidas, 0 trades que perder) — gritar ahi es crying-wolf.
-            if caidas % 5 == 0 and rth():
-                grita(f"Puente Finnhub caido {caidas} veces seguidas. Sin print en tiempo real.",
-                      titulo="FINNHUB WS",
-                      corto="socket CAIDO en bucle — sin print en tiempo real")
+            # NOTIFICACIONES MUERTAS (orden Yunior 2026-08-06 "kill finnhub websocket
+            # notifications"): ni voz ni push, nunca. El estado queda en el log y en
+            # data/finnhub_ws_status.json; el healthcheck sigue viendolo ahi.
+            if caidas % 5 == 0:
+                print(f"[finnhub-ws] caido {caidas} veces seguidas (notificaciones muertas por orden)",
+                      file=sys.stderr, flush=True)
         if vivo >= SESION_SANA_S:     # aguanto: la caida anterior fue transitoria
             espera, caidas = 2.0, 0
         if hasta is not None and time.time() >= hasta:

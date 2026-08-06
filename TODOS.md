@@ -1044,6 +1044,8 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
 - [x] AUDIT #8 compass adoptaba spot por mtime: compass.cpp:1475 exige además spot_age_s<=300 del propio productor (levels_txn.json: mtime 137s pero spot_age_s 954s) (2026-08-05, hecho)
 
 ## Sesión 2026-08-05 tarde
+- [x] "kill finnhub websocket notifications" (2026-08-06 10:00) — hecho: grita() eliminado del
+      todo en finnhub_ws_bridge (ni voz ni push, nunca); estado sigue en log + status.json.
 - [x] "make sure to kill those fuckin notifications for intrinio and finnhub not connected,
       debug that shit, fix" (2026-08-06 06:50) — hecho. CAUSAS MEDIDAS, no silenciadas a ciegas:
       (1) FINNHUB: overnight sin trades -> el servidor corta por idle sin close frame (185
