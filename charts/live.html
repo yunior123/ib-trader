@@ -41,8 +41,7 @@
   #tfsel { display: inline-block; order: -1; background: #2a2e39; color: #d1d4dc;
            border: 1px solid #363a45; border-radius: 4px; padding: 4px 6px; font: inherit;
            font-weight: 700; cursor: pointer; flex: 0 0 auto; }
-  #czbar { display: inline-flex; align-items: center; gap: 2px; flex: 0 0 auto; order: -1; }
-  #cz { color: #b2b5be; font-weight: 700; font-size: 11.5px; min-width: 58px; text-align: center; }
+  #indbtn { flex: 0 0 auto; order: -1; }
   /* la insignia de cadena es la mas ancha y la menos urgente: al final y con tope, para que nunca
      empuje al selector fuera de vista */
   #sourcebadge { order: 90; max-width: 120px; overflow: hidden; text-overflow: ellipsis; }
@@ -604,9 +603,7 @@
     <button class="tfbtn" data-tf="1M">1M</button>
   </div>
   <select id="tfsel" title="Temporalidad. Mismas opciones que la fila de botones (que se oculta en ventana estrecha)."></select>
-  <span id="czbar" title="Zoom de las VELAS (no de la interfaz): menos barras visibles = velas más anchas. También con la rueda sobre el gráfico.">
-    <button class="tgl" id="czout">−</button><span id="cz">100 velas</span><button class="tgl" id="czin">+</button>
-  </span>
+  <button class="tgl" id="indbtn" title="Indicadores del gráfico: todos opcionales, elige cuáles se dibujan.">ƒ Indicadores</button>
   <span id="scopebar" title="0DTE = solo hoy (pin intradía) · ALL = toda la cadena (mapa multi-día). En ALL el flip apenas se mueve pero la Vanna salta.">
     <button class="tgl active" data-scope="0DTE">0DTE</button><button class="tgl" data-scope="ALL">ALL</button>
   </span>
@@ -683,7 +680,7 @@
   <h4>Ciclo del nodo</h4>
   <p>Fresh (0 toques, máximo) → Tested (1) → Weakening (2) → Dead (3+, evitar). <b>1er toque &gt; retests.</b> Gamma creciendo = fortalece; cayendo = pierde fuerza.</p>
   <h4>Combo_tl en el chart</h4>
-  <p><b>Madrid ribbon</b> = 18 EMAs coloreadas (rojo cae / verde sube). <b>Supertrend</b> = línea verde↑/rojo↓ con Buy/Sell. <b>BB(20,2)</b>, SMA20/40/100/200, VWAP, MACD abajo, trendlines automáticas.</p>
+  <p><b>Indicadores OPCIONALES</b> (botón ƒ Indicadores): Madrid ribbon (18 EMAs), Supertrend, BB(20,2), SMA20/40/100/200, VWAP, MACD, Target Trend, trendlines. Cada línea activa lleva su nombre en el eje y su chip en la leyenda; clic en el chip la quita.</p>
   <p style="margin-top:10px;color:#6f8bbf">Cifras en $/1% como gexa. Nada es consejo financiero — es un mapa de flujos mecánicos. El print manda la entrada; la estructura da la paciencia. Doctrina completa: skill <b>gexa-framework</b>.</p>
 </div>
 <div id="wldrawer">
@@ -1023,6 +1020,15 @@ const chart = LWC.createChart(el, {
   crosshair: { mode: 0 },
 });
 
+// ================== INDICADORES OPCIONALES (Yunior 2026-08-06) ==================
+// "all indicators should be optional": estado por navegador; panel ƒ + leyenda al final
+// del script. indOn() vive aqui porque los guards de abajo lo usan.
+const IND_DEF = { ribbon:false, bb:false, smas:false, vwap:false, supertrend:false,
+                  targettrend:false, trendlines:false, macd:false, netprem:true };
+let IND = { ...IND_DEF };
+try { const _is = JSON.parse(localStorage.getItem("indPanel_v1") || "null"); if (_is) IND = { ...IND_DEF, ..._is }; } catch (e) {}
+const indOn = k => !!IND[k];
+
 // Madrid Ribbon (combo_tl ④): 18 EMAs (5..90) con COLOR POR PUNTO (LineData.color).
 // Se crean ANTES de las velas -> las velas dibujan ENCIMA (precio visible, como TV).
 const MMA_KEYS = [];
@@ -1036,11 +1042,11 @@ for (const k of MMA_KEYS) {
   }, 0);
 }
 function setRibbon(madrid) {           // history: {ma05:[{time,value,color}],...}
-  if (!madrid) return;
+  if (!madrid || !indOn("ribbon")) return;
   for (const k of MMA_KEYS) if (madrid[k]) RIB[k].setData(madrid[k]);
 }
 function updRibbon(madrid) {            // bar: {ma05:{time,value,color},...}
-  if (!madrid) return;
+  if (!madrid || !indOn("ribbon")) return;
   for (const k of MMA_KEYS) if (madrid[k]) RIB[k].update(madrid[k]);
 }
 
@@ -1077,27 +1083,29 @@ const candle = chart.addSeries(CandlestickSeries, {
 // autoscaleInfoProvider:()=>null -> los indicadores NO expanden el eje. La escala de precio la
 // FIJAN SOLO LAS VELAS (candleAutoscale). Sin esto, de noche SMA200/BB/VWAP/Supertrend, lejanos
 // del precio plano, jalaban el eje a 5+ puntos y la vela se veia PLANA aunque se movia 0,08.
-const mkLine = (color, w, dashed) => chart.addSeries(LineSeries, {
-  color, lineWidth: w, priceLineVisible: false, lastValueVisible: false,
+// name -> title en la serie: la linea ACTIVA pinta su nombre en el eje (Yunior 2026-08-06
+// "the lines should contain the names"; aplica a HIRO y a toda linea futura).
+const mkLine = (color, w, dashed, name) => chart.addSeries(LineSeries, {
+  color, lineWidth: w, priceLineVisible: false, lastValueVisible: !!name, title: name || "",
   crosshairMarkerVisible: false, autoscaleInfoProvider: () => null,
   lineStyle: dashed ? LineStyle.Dotted : LineStyle.Solid,
 }, 0);
 const S = {
-  bbUpper: mkLine("#2962ff", 1, true),
-  bbLower: mkLine("#2962ff", 1, true),
-  bbMid:   mkLine("#f4c430", 1, false),   // = SMA20 (base BB de Yoel)
-  sma40:   mkLine("#ff9800", 1, false),
-  sma100:  mkLine("#26c6da", 1, false),
-  sma200:  mkLine("#ab47bc", 2, false),
-  vwap:    mkLine("#e0e0e0", 1, true),
+  bbUpper: mkLine("#2962ff", 1, true, "BB↑"),
+  bbLower: mkLine("#2962ff", 1, true, "BB↓"),
+  bbMid:   mkLine("#f4c430", 1, false, "SMA20·BB"),   // = SMA20 (base BB de Yoel)
+  sma40:   mkLine("#ff9800", 1, false, "SMA40"),
+  sma100:  mkLine("#26c6da", 1, false, "SMA100"),
+  sma200:  mkLine("#ab47bc", 2, false, "SMA200"),
+  vwap:    mkLine("#e0e0e0", 1, true, "VWAP"),
   // combo_tl: Supertrend (2 ramas, huecos = break) + trendlines (2 puntos + extensión)
-  stUp:    mkLine("#26a69a", 2, false),
-  stDn:    mkLine("#f23645", 2, false),
+  stUp:    mkLine("#26a69a", 2, false, "ST↑"),
+  stDn:    mkLine("#f23645", 2, false, "ST↓"),
   // Target Trend [BigBeluga] (port, translucido para no ensuciar la UI)
-  ttUp:    mkLine("rgba(6,182,144,0.85)", 3, false),
-  ttDn:    mkLine("rgba(182,112,6,0.85)", 3, false),
-  tlUp:    mkLine("#26a69a", 1, false),
-  tlDn:    mkLine("#f23645", 1, false),
+  ttUp:    mkLine("rgba(6,182,144,0.85)", 3, false, "TT↑"),
+  ttDn:    mkLine("rgba(182,112,6,0.85)", 3, false, "TT↓"),
+  tlUp:    mkLine("#26a69a", 1, false, "TL"),
+  tlDn:    mkLine("#f23645", 1, false, "TL"),
 };
 // sma20 y bbMid son la MISMA línea (media central) -> una sola serie (bbMid).
 
@@ -1146,6 +1154,7 @@ function clusterSignals(mk) {
 // price-lines de Target Trend (entry/stop/T1-3 del ultimo flip); translucidas, ✔ si tocado
 let ttPriceLines = [];
 function drawTtLevels(levels) {
+  if (!indOn("targettrend")) levels = [];
   for (const pl of ttPriceLines) { try { candle.removePriceLine(pl); } catch (e) {} }
   ttPriceLines = [];
   for (const lv of levels) {
@@ -1183,7 +1192,8 @@ function updateWhaleTally() {
 function applyMarkers() {
   if (!stMarkersApi) return;
   try {
-    const mk = [...curStMarkers, ...curTtMarkers, ...curWhaleMarkers,
+    const mk = [...(indOn("supertrend") ? curStMarkers : []),
+                ...(indOn("targettrend") ? curTtMarkers : []), ...curWhaleMarkers,
                 ...clusterSignals(sigMarkers), ...engineOps]
                .sort((a, b) => a.time - b.time);
     stMarkersApi.setMarkers(mk);
@@ -1198,8 +1208,8 @@ volS.priceScale().applyOptions({ scaleMargins: { top: 0.8, bottom: 0 } });
 
 // pane 2: MACD (línea + señal + histograma) — pequeño
 const macdHist = chart.addSeries(HistogramSeries, { priceFormat:{type:"price",precision:3,minMove:0.001}, lastValueVisible:false }, 2);
-const macdLine = chart.addSeries(LineSeries, { color:"#2962ff", lineWidth:1, priceLineVisible:false, lastValueVisible:false, crosshairMarkerVisible:false }, 2);
-const macdSig  = chart.addSeries(LineSeries, { color:"#ff9800", lineWidth:1, priceLineVisible:false, lastValueVisible:false, crosshairMarkerVisible:false }, 2);
+const macdLine = chart.addSeries(LineSeries, { color:"#2962ff", lineWidth:1, priceLineVisible:false, lastValueVisible:true, title:"MACD", crosshairMarkerVisible:false }, 2);
+const macdSig  = chart.addSeries(LineSeries, { color:"#ff9800", lineWidth:1, priceLineVisible:false, lastValueVisible:true, title:"Señal", crosshairMarkerVisible:false }, 2);
 // NET PREMIUM estilo QuantData (pane 3): verde=cum calls, rojo=cum puts, blanco=neto firmado.
 const npFmt = { type:"custom", minMove:1, formatter: v => (Math.abs(v)>=1e6 ? (v/1e6).toFixed(1)+"M" : (v/1e3).toFixed(0)+"k") };
 const npCall = chart.addSeries(LineSeries, { color:"#26a69a", lineWidth:2, priceFormat:npFmt, priceLineVisible:false, lastValueVisible:true,  crosshairMarkerVisible:true }, 3);
@@ -1212,11 +1222,11 @@ function onNetprem(msg){
   npCall.setData(mk("cum_call"));
   npPut.setData(mk("cum_put"));
   npNet.setData(mk("cum"));
-  try { chart.panes()[3].setHeight(110); } catch (e) {}   // el pane nace lazy: altura tras el 1er setData
+  try { chart.panes()[3].setHeight(indOn("netprem") ? 110 : 0); } catch (e) {}   // el pane nace lazy: altura tras el 1er setData
 }
 
 // proporción de panes: velas grande, volumen fino, MACD chico
-try { chart.panes()[1].setHeight(80); chart.panes()[2].setHeight(120); chart.panes()[3].setHeight(110); } catch (e) {}
+try { chart.panes()[1].setHeight(80); chart.panes()[2].setHeight(indOn("macd") ? 120 : 0); chart.panes()[3].setHeight(indOn("netprem") ? 110 : 0); } catch (e) {}
 
 // ------------------------------------------------- price lines (muros / flip)
 // Muros GEX = VERDE (call-wall brillante, put-wall/abs tinte distinto); flip = AMARILLO.
@@ -1596,14 +1606,9 @@ function setOHLC(bar) {
 // suelo 30 (era 12): con 12 velas de 1m no cabe NINGUN marcador de contexto — ni ballenas
 // ni flips (medido 2026-08-05: 0 de 27 ballenas en las ultimas 12 velas). Zoom guardado
 // por debajo del suelo se reajusta una vez.
-let SHOW_BARS = Math.max(30, Math.min(600, +(localStorage.getItem("showBars") || 100)));
-function setShowBars(n, refit = true) {
-  SHOW_BARS = Math.max(30, Math.min(600, Math.round(n)));
-  localStorage.setItem("showBars", SHOW_BARS);
-  const el = document.getElementById("cz");
-  if (el) el.textContent = SHOW_BARS + " velas";
-  if (refit) zoomRecent(candleData.length);
-}
+// Zoom custom RETIRADO (Yunior 2026-08-06 "remove the zooming, keep it original"):
+// encuadre inicial fijo; el zoom es el nativo de la libreria (rueda / pinch / drag del eje).
+const SHOW_BARS = 100;
 function zoomRecent(n) {
   if (!n) return;
   try {
@@ -1643,20 +1648,6 @@ function setActiveTf(tf) {
   const ab = document.getElementById("aggbadge");
   if (ab) ab.classList.toggle("hidden", tf !== "45s");
 }
-// Zoom de velas: botones + rueda sobre el grafico (paso multiplicativo, como TradingView).
-(() => {
-  const zi = document.getElementById("czin"), zo = document.getElementById("czout");
-  if (zi) zi.addEventListener("click", () => setShowBars(SHOW_BARS / 1.3));   // menos barras = mas grandes
-  if (zo) zo.addEventListener("click", () => setShowBars(SHOW_BARS * 1.3));
-  setShowBars(SHOW_BARS, false);
-  const host = document.getElementById("chart") || document.getElementById("main");
-  if (host) host.addEventListener("wheel", e => {
-    if (!e.ctrlKey && !e.metaKey) return;   // sin modificador manda el paneo nativo del chart
-    setShowBars(e.deltaY > 0 ? SHOW_BARS * 1.15 : SHOW_BARS / 1.15);
-    e.preventDefault();
-  }, { passive: false });
-})();
-
 tfsel.addEventListener("change", () => {
   const tf = tfsel.value;
   setActiveTf(tf);
@@ -3008,6 +2999,7 @@ function onHistory(msg) {
   candle.setData(msg.bars);
   candleData = msg.bars || [];      // espejo para candleAutoscale (el eje lo fijan las velas)
   const ind = msg.indicators;
+  window._lastInd = ind;              // para re-pintar al activar un indicador desde el panel
   S.bbUpper.setData(ind.bbUpper);
   S.bbLower.setData(ind.bbLower);
   S.bbMid.setData(ind.bbMid);       // SMA20 = media central
@@ -3068,6 +3060,7 @@ function onBackfill(msg) {
   candle.setData(newBars);
   candleData = newBars;
   const ind = msg.indicators;
+  window._lastInd = ind;
   S.bbUpper.setData(ind.bbUpper); S.bbLower.setData(ind.bbLower); S.bbMid.setData(ind.bbMid);
   S.sma40.setData(ind.sma40); S.sma100.setData(ind.sma100); S.sma200.setData(ind.sma200);
   S.vwap.setData(ind.vwap);
@@ -4031,6 +4024,91 @@ async function gdecayDraw(force) {
     body.innerHTML = `<div class="wgempty"><div class="wgeico">◌</div><div>${e.message}</div></div>`;
   }
 }
+
+// =============== PANEL ƒ INDICADORES + LEYENDA (Yunior 2026-08-06) ===============
+(() => {
+  const REG = [
+    { k:"ribbon",      n:"Madrid Ribbon (18 EMAs)", c:"#00e676" },
+    { k:"bb",          n:"Bollinger (20,2)",        c:"#2962ff" },
+    { k:"smas",        n:"SMA 40/100/200",          c:"#ff9800" },
+    { k:"vwap",        n:"VWAP",                    c:"#e0e0e0" },
+    { k:"supertrend",  n:"Supertrend",              c:"#26a69a" },
+    { k:"targettrend", n:"Target Trend",            c:"#06b690" },
+    { k:"trendlines",  n:"Trendlines",              c:"#f23645" },
+    { k:"macd",        n:"MACD (12,26,9)",          c:"#2962ff" },
+    { k:"netprem",     n:"Net Premium (flujo)",     c:"#26a69a" },
+  ];
+  const css = document.createElement("style");
+  css.textContent = `
+  #indmenu { position:absolute; z-index:60; background:#161a25; border:1px solid #2a2e39;
+    border-radius:8px; padding:6px; display:none; min-width:232px;
+    box-shadow:0 8px 24px rgba(0,0,0,.5); }
+  #indmenu.on { display:block; }
+  #indmenu label { display:flex; align-items:center; gap:8px; padding:5px 8px; font-size:12px;
+    color:#d1d4dc; border-radius:5px; cursor:pointer; }
+  #indmenu label:hover { background:#1e2330; }
+  #indmenu i { width:9px; height:9px; border-radius:2px; flex:none; }
+  #indlegend { position:absolute; top:8px; left:202px; z-index:18; display:flex; gap:5px;
+    flex-wrap:wrap; max-width:46%; }
+  #indlegend .ilg { display:flex; align-items:center; gap:5px; background:rgba(30,34,45,.85);
+    border:1px solid rgba(255,255,255,.08); border-radius:5px; padding:2px 7px; font-size:10.5px;
+    color:#c3cad6; cursor:pointer; user-select:none; }
+  #indlegend .ilg:hover { border-color:#f23645; }
+  #indlegend .ilg i { width:8px; height:8px; border-radius:2px; }`;
+  document.head.appendChild(css);
+  const menu = document.createElement("div"); menu.id = "indmenu"; document.body.appendChild(menu);
+  const leg = document.createElement("div"); leg.id = "indlegend";
+  (document.getElementById("chart") || document.body).appendChild(leg);
+
+  const save = () => { try { localStorage.setItem("indPanel_v1", JSON.stringify(IND)); } catch (e) {} };
+  const setVis = (arr, on) => arr.forEach(x => { try { x.applyOptions({ visible: on }); } catch (e) {} });
+
+  function indApply() {
+    setVis(Object.values(RIB), indOn("ribbon"));
+    setVis([S.bbUpper, S.bbLower, S.bbMid], indOn("bb"));
+    setVis([S.sma40, S.sma100, S.sma200], indOn("smas"));
+    setVis([S.vwap], indOn("vwap"));
+    setVis([S.stUp, S.stDn], indOn("supertrend"));
+    setVis([S.ttUp, S.ttDn], indOn("targettrend"));
+    setVis([S.tlUp, S.tlDn], indOn("trendlines"));
+    setVis([macdHist, macdLine, macdSig], indOn("macd"));
+    setVis([npCall, npPut, npNet], indOn("netprem"));
+    try { chart.panes()[2].setHeight(indOn("macd") ? 120 : 0); } catch (e) {}
+    try { chart.panes()[3].setHeight(indOn("netprem") ? 110 : 0); } catch (e) {}
+    const li = window._lastInd;
+    if (li && indOn("ribbon") && li.madrid) setRibbon(li.madrid);   // se salto el guard estando OFF
+    drawTtLevels((li && li.ttLevels) || []);                        // el guard interno decide
+    applyMarkers();
+    leg.innerHTML = "";
+    for (const r of REG) if (indOn(r.k)) {
+      const d = document.createElement("span");
+      d.className = "ilg"; d.title = "Clic = quitar " + r.n;
+      d.innerHTML = `<i style="background:${r.c}"></i>${r.n}`;
+      d.onclick = () => { IND[r.k] = false; save(); indApply(); paintMenu(); };
+      leg.appendChild(d);
+    }
+  }
+  function paintMenu() {
+    menu.innerHTML = REG.map(r =>
+      `<label><input type="checkbox" data-k="${r.k}" ${indOn(r.k) ? "checked" : ""}><i style="background:${r.c}"></i>${r.n}</label>`).join("");
+    menu.querySelectorAll("input").forEach(cb => cb.addEventListener("change", () => {
+      IND[cb.dataset.k] = cb.checked; save(); indApply();
+    }));
+  }
+  const btn = document.getElementById("indbtn");
+  if (btn) btn.addEventListener("click", (e) => {
+    const r = btn.getBoundingClientRect();
+    menu.style.top = (r.bottom + 4) + "px"; menu.style.left = Math.max(6, r.left - 40) + "px";
+    menu.classList.toggle("on");
+    if (menu.classList.contains("on")) paintMenu();
+    e.stopPropagation();
+  });
+  document.addEventListener("click", (e) => {
+    if (!menu.contains(e.target) && e.target !== btn) menu.classList.remove("on");
+  });
+  window.indApply = indApply;
+  indApply();
+})();
 
 // Agregar a la llamada de redraw de widgets
 const origWidgetRedraw = window.wgRedraw || (() => {});

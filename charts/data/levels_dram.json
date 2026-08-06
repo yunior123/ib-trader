@@ -1,7 +1,7 @@
 {
  "sym": "DRAM",
  "spot": 50.22,
- "asof": 1785988345,
+ "asof": 1785989557,
  "exp": "20260807",
  "dte": 2.04,
  "scope": "0DTE",
@@ -796,7 +796,7 @@
  "em": 4.5,
  "net_gex": 8283386.0,
  "regime": "POS",
- "flip": 51.63,
+ "flip": 51.06,
  "flip_static": 54.72,
  "call_wall": 55.0,
  "put_wall": 50.0,
@@ -1254,9 +1254,9 @@
   51.06
  ],
  "trapdoor_root": null,
- "flip_open": 51.63,
+ "flip_open": null,
  "frozen_at": 1785936983,
- "frozen_day": "2026-08-05",
+ "frozen_day": null,
  "spot_src": null,
  "spot_age_s": null
 }

@@ -1,72 +1,72 @@
 {
  "$360-$372": {
-  "calls_vol": 380,
-  "puts_vol": 6116,
-  "total": 6496,
+  "calls_vol": 313,
+  "puts_vol": 6278,
+  "total": 6591,
   "dominance": "PUTS",
-  "ratio": 0.06
+  "ratio": 0.05
  },
  "$372-$384": {
-  "calls_vol": 668,
-  "puts_vol": 5568,
-  "total": 6236,
+  "calls_vol": 611,
+  "puts_vol": 5382,
+  "total": 5993,
   "dominance": "PUTS",
-  "ratio": 0.12
+  "ratio": 0.11
  },
  "$384-$397": {
-  "calls_vol": 1328,
-  "puts_vol": 4837,
-  "total": 6165,
+  "calls_vol": 1069,
+  "puts_vol": 3885,
+  "total": 4954,
   "dominance": "PUTS",
-  "ratio": 0.27
+  "ratio": 0.28
  },
  "$397-$409": {
-  "calls_vol": 2109,
-  "puts_vol": 9231,
-  "total": 11340,
+  "calls_vol": 1374,
+  "puts_vol": 5415,
+  "total": 6789,
   "dominance": "PUTS",
-  "ratio": 0.23
+  "ratio": 0.25
  },
  "$409-$421": {
-  "calls_vol": 12785,
-  "puts_vol": 26243,
-  "total": 39028,
+  "calls_vol": 6420,
+  "puts_vol": 12756,
+  "total": 19176,
   "dominance": "PUTS",
-  "ratio": 0.49
+  "ratio": 0.5
  },
  "$421-$434": {
-  "calls_vol": 45156,
-  "puts_vol": 6565,
-  "total": 51721,
+  "calls_vol": 11623,
+  "puts_vol": 4646,
+  "total": 16269,
   "dominance": "CALLS",
-  "ratio": 6.88
+  "ratio": 2.5
  },
  "$434-$446": {
-  "calls_vol": 19484,
-  "puts_vol": 344,
-  "total": 19828,
+  "calls_vol": 10183,
+  "puts_vol": 510,
+  "total": 10693,
   "dominance": "CALLS",
-  "ratio": 56.64
+  "ratio": 19.97
  },
  "$446-$458": {
-  "calls_vol": 8352,
-  "puts_vol": 44,
-  "total": 8396,
+  "calls_vol": 7913,
+  "puts_vol": 43,
+  "total": 7956,
   "dominance": "CALLS",
-  "ratio": 189.82
+  "ratio": 184.02
  },
  "$458-$470": {
-  "calls_vol": 3701,
-  "puts_vol": 13,
-  "total": 3714,
+  "calls_vol": 3440,
+  "puts_vol": 18,
+  "total": 3458,
   "dominance": "CALLS",
-  "ratio": 284.69
+  "ratio": 191.11
  },
  "$470-$482": {
-  "calls_vol": 1211,
-  "puts_vol": 7,
-  "total": 1218,
+  "calls_vol": 960,
+  "puts_vol": 8,
+  "total": 968,
   "dominance": "CALLS",
-  "ratio": 173.0
+  "ratio": 120.0
  }
 }

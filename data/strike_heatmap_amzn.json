@@ -1,72 +1,72 @@
 {
  "$232-$240": {
-  "calls_vol": 1623,
-  "puts_vol": 5800,
-  "total": 7423,
-  "dominance": "PUTS",
-  "ratio": 0.28
- },
- "$240-$248": {
-  "calls_vol": 1293,
-  "puts_vol": 5314,
-  "total": 6607,
+  "calls_vol": 1443,
+  "puts_vol": 6006,
+  "total": 7449,
   "dominance": "PUTS",
   "ratio": 0.24
  },
+ "$240-$248": {
+  "calls_vol": 1139,
+  "puts_vol": 5379,
+  "total": 6518,
+  "dominance": "PUTS",
+  "ratio": 0.21
+ },
  "$248-$256": {
-  "calls_vol": 3125,
-  "puts_vol": 10074,
-  "total": 13199,
+  "calls_vol": 2988,
+  "puts_vol": 9541,
+  "total": 12529,
   "dominance": "PUTS",
   "ratio": 0.31
  },
  "$256-$264": {
-  "calls_vol": 5305,
-  "puts_vol": 20813,
-  "total": 26118,
+  "calls_vol": 5048,
+  "puts_vol": 18855,
+  "total": 23903,
   "dominance": "PUTS",
-  "ratio": 0.25
+  "ratio": 0.27
  },
  "$264-$272": {
-  "calls_vol": 83443,
-  "puts_vol": 176524,
-  "total": 259967,
+  "calls_vol": 21456,
+  "puts_vol": 59183,
+  "total": 80639,
   "dominance": "PUTS",
-  "ratio": 0.47
+  "ratio": 0.36
  },
  "$272-$280": {
-  "calls_vol": 291408,
-  "puts_vol": 133732,
-  "total": 425140,
+  "calls_vol": 92164,
+  "puts_vol": 30880,
+  "total": 123044,
   "dominance": "CALLS",
-  "ratio": 2.18
+  "ratio": 2.98
  },
  "$280-$288": {
-  "calls_vol": 92536,
-  "puts_vol": 5552,
-  "total": 98088,
+  "calls_vol": 46042,
+  "puts_vol": 4222,
+  "total": 50264,
   "dominance": "CALLS",
-  "ratio": 16.67
+  "ratio": 10.91
  },
  "$288-$296": {
-  "calls_vol": 35297,
-  "puts_vol": 2811,
-  "total": 38108,
+  "calls_vol": 31015,
+  "puts_vol": 2549,
+  "total": 33564,
   "dominance": "CALLS",
-  "ratio": 12.56
+  "ratio": 12.17
  },
  "$296-$304": {
-  "calls_vol": 23041,
-  "puts_vol": 2193,
-  "total": 25234,
+  "calls_vol": 27630,
+  "puts_vol": 2173,
+  "total": 29803,
   "dominance": "CALLS",
-  "ratio": 10.51
+  "ratio": 12.72
  },
  "$304-$312": {
-  "calls_vol": 10950,
-  "puts_vol": 3546,
-  "total": 14496,
+  "calls_vol": 11087,
+  "puts_vol": 2138,
+  "total": 13225,
   "dominance": "CALLS",
-  "ratio": 3.09
+  "ratio": 5.19
  }
 }

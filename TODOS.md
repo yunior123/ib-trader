@@ -1044,9 +1044,16 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
 - [x] AUDIT #8 compass adoptaba spot por mtime: compass.cpp:1475 exige además spot_age_s<=300 del propio productor (levels_txn.json: mtime 137s pero spot_age_s 954s) (2026-08-05, hecho)
 
 ## Sesión 2026-08-05 tarde
-- [ ] "review intc de nuevo, in depth, net options, walls, delears, gamma, etc" (2026-08-05 15:00) —
-      estado: en curso. Workflow ultracode 8 dimensiones (muros/gamma/flujo/dealers/vol/técnico/
-      darkpool/catalizador) + refutador adversarial por dimensión + cruce de contradicciones.
+- [x] "review intc de nuevo, in depth, net options, walls, delears, gamma, etc" (2026-08-05 15:00) —
+      HECHO. Workflow ultracode: 8 dimensiones + 8 refutadores + cruce (17 agentes, 1,05M tokens).
+      **REGLA NUEVA MEDIDA: el open_interest de UW es el cierre de AYER incluso a las 23:48 ET**
+      (verificado: 09-18 C100 sigue 32.551/prev_oi 32.061 a medianoche). Lo único de HOY es
+      ask_volume−bid_volume y la prima. Todo "la ballena construye AHORA" leído del dOI va
+      1 sesión desfasado. El C108 08-07 (dOI +19.082) se construyó el 08-04, y con 89,2%
+      MULTI-LEG = pata de spread alcista, no call desnuda vendida.
+      **FLIP FORWARD 102,90** (reconstruido sin 08-05 y 08-07) vs 98,39 con el 0DTE dentro:
+      INTC cerró en 101,06 = POR DEBAJO de su flip forward -> acelerador, no colchón.
+      13 contradicciones resueltas y 10 vetos en docs/. Cierre 101,06 (+0,198%), NO 102,66.
 - [ ] "review bargain fleet, find me bargains for options tomorrow. maybe VELO?" + "use data
       realtime AH too" (2026-08-05 15:15 / 23:45) — estado: en curso (re-verificacion al CIERRE).
       **VELO = NO**, tres vetos independientes: earnings 11-ago postmarket (confirmado por la
@@ -1093,3 +1100,17 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       GME en ventana VWAP 35 sesiones del canje $1.4B (8-K 08-02, mata el C20 08-14), BBAI
       con ATM de 100M acciones (424B5 07-31, mata el C3 como loto). Top5: OPEN P4 / SNAP C5.5
       08-14 (liberacion) / SOFI P18 print-only / NOK P9.5 doble-cara / DJT P10 vigilancia.
+- [x] "1. heatmap 3+ meses adelante, realtime, APIs de fallback. 2. remove zooming velas.
+      3. remove madrid ribbon. 5. lineas con nombre (HIRO etc), macd y TODOS los indicadores
+      opcionales, panel tipo TradingView" (2026-08-06) — hecho:
+      (1) gex_heatmap.py reescrito: horizonte 110 dias (cap 24 exps; 100 dejaba fuera el
+      mensual NOK 11-20, cazado por el verificador), cascada uw->polygon->chain_local con
+      src/partial/stale declarados, si todo falla NO toca el JSON anterior; widget con
+      scroll-x + strike sticky + fuente/avisos en el pie; daemon relanzado (QQQ 20 exps,
+      edad 32s; fallback polygon medido 1.4s).
+      (2) czbar + setShowBars + rueda custom RETIRADOS, SHOW_BARS=100 fijo, zoom nativo.
+      (3+5) live.html: registro IND (localStorage indPanel_v1), TODO opcional y OFF por
+      defecto salvo Net Premium; boton "f Indicadores" con checkboxes + leyenda de chips
+      con color/nombre (clic quita); title en cada serie (BB/SMA/VWAP/ST/TT/MACD) para
+      etiqueta en el eje; ribbon/ttLevels/marcadores respetan el toggle; panes MACD y
+      netprem colapsan a 0 si OFF. node --check OK, 12 tests, app relanzada.

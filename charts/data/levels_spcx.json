@@ -1,7 +1,7 @@
 {
  "sym": "SPCX",
  "spot": 108.14,
- "asof": 1785988345,
+ "asof": 1785989558,
  "exp": "20260807",
  "dte": 2.04,
  "scope": "0DTE",
@@ -796,7 +796,7 @@
  "em": 11.54,
  "net_gex": -46652624.1,
  "regime": "NEG",
- "flip": 127.3,
+ "flip": 121.66,
  "flip_static": null,
  "call_wall": 120.0,
  "put_wall": 100.0,
@@ -1254,9 +1254,9 @@
   121.66
  ],
  "trapdoor_root": null,
- "flip_open": 127.3,
+ "flip_open": null,
  "frozen_at": 1785937065,
- "frozen_day": "2026-08-05",
+ "frozen_day": null,
  "spot_src": null,
  "spot_age_s": null
 }

@@ -1,5 +1,5 @@
 {
-  "epoch": 1785988517,
+  "epoch": 1785989859,
   "market_provider": "intrinio",
   "options_provider": "polygon",
   "feed_tier": "delayed_15m",
@@ -85,324 +85,324 @@
   },
   "latencia": {
     "QQQ": {
-      "ts": 1785988507,
-      "bar_s": 14167.3,
+      "ts": 1785989851,
+      "bar_s": 15511.4,
       "bar_huecos": 2,
       "bar_vol0": 0,
-      "quote_s": 14109.78028497696,
+      "quote_s": 15453.821727323531,
       "spot": 716.59,
       "spot_src": "intrinio_quote",
-      "spot_s": 14109.78028497696
+      "spot_s": 15453.821727323531
     },
     "SPY": {
-      "ts": 1785988508,
-      "bar_s": 14228.2,
+      "ts": 1785989851,
+      "bar_s": 15571.6,
       "bar_huecos": 9,
       "bar_vol0": 0,
-      "quote_s": 14201.347247076035,
+      "quote_s": 15544.785275936127,
       "spot": 771.03,
       "spot_src": "intrinio_quote",
-      "spot_s": 14201.347247076035
+      "spot_s": 15544.785275936127
     },
     "NVDA": {
-      "ts": 1785988509,
-      "bar_s": 14169.1,
+      "ts": 1785989851,
+      "bar_s": 15511.8,
       "bar_huecos": 0,
       "bar_vol0": 0,
-      "quote_s": 14125.108249759674,
+      "quote_s": 15467.804423809052,
       "spot": 220.65,
       "spot_src": "intrinio_quote",
-      "spot_s": 14125.108249759674
+      "spot_s": 15467.804423809052
     },
     "TSLA": {
-      "ts": 1785988510,
-      "bar_s": 14170.6,
+      "ts": 1785989851,
+      "bar_s": 15511.9,
       "bar_huecos": 8,
       "bar_vol0": 0,
-      "quote_s": 14133.700902795792,
+      "quote_s": 15474.866652154922,
       "spot": 321.48,
       "spot_src": "intrinio_quote",
-      "spot_s": 14133.700902795792
+      "spot_s": 15474.866652154922
     },
     "MU": {
-      "ts": 1785988510,
-      "bar_s": 14170.7,
+      "ts": 1785989852,
+      "bar_s": 15513.0,
       "bar_huecos": 0,
       "bar_vol0": 0,
-      "quote_s": 14113.980911779403,
+      "quote_s": 15456.260961008073,
       "spot": 875.56,
       "spot_src": "intrinio_quote",
-      "spot_s": 14113.980911779403
+      "spot_s": 15456.260961008073
     },
     "SMH": {
-      "ts": 1785988510,
-      "bar_s": 14170.8,
+      "ts": 1785989853,
+      "bar_s": 15513.4,
       "bar_huecos": 21,
       "bar_vol0": 0,
-      "quote_s": 14136.571659135818,
+      "quote_s": 15479.107653045654,
       "spot": 571.0,
       "spot_src": "intrinio_quote",
-      "spot_s": 14136.571659135818
+      "spot_s": 15479.107653045654
     },
     "AMD": {
-      "ts": 1785988511,
-      "bar_s": 14171.0,
+      "ts": 1785989853,
+      "bar_s": 15513.8,
       "bar_huecos": 3,
       "bar_vol0": 0,
-      "quote_s": 14113.122187948227,
+      "quote_s": 15455.960806846619,
       "spot": 481.26,
       "spot_src": "intrinio_quote",
-      "spot_s": 14113.122187948227
+      "spot_s": 15455.960806846619
     },
     "AAPL": {
-      "ts": 1785988511,
-      "bar_s": 14351.1,
+      "ts": 1785989853,
+      "bar_s": 15693.9,
       "bar_huecos": 9,
       "bar_vol0": 0,
-      "quote_s": 14295.37337284088,
+      "quote_s": 15638.09548816681,
       "spot": 312.4,
       "spot_src": "intrinio_quote",
-      "spot_s": 14295.37337284088
+      "spot_s": 15638.09548816681
     },
     "MSFT": {
-      "ts": 1785988511,
-      "bar_s": 14171.7,
+      "ts": 1785989853,
+      "bar_s": 15514.0,
       "bar_huecos": 9,
       "bar_vol0": 0,
-      "quote_s": 14135.121654987335,
+      "quote_s": 15477.457930898667,
       "spot": 485.75,
       "spot_src": "intrinio_quote",
-      "spot_s": 14135.121654987335
+      "spot_s": 15477.457930898667
     },
     "META": {
-      "ts": 1785988511,
-      "bar_s": 14231.9,
+      "ts": 1785989854,
+      "bar_s": 15574.1,
       "bar_huecos": 14,
       "bar_vol0": 0,
-      "quote_s": 14188.472346305847,
+      "quote_s": 15530.785960865021,
       "spot": 591.47,
       "spot_src": "intrinio_quote",
-      "spot_s": 14188.472346305847
+      "spot_s": 15530.785960865021
     },
     "AMZN": {
-      "ts": 1785988511,
-      "bar_s": 14292.0,
+      "ts": 1785989854,
+      "bar_s": 15634.2,
       "bar_huecos": 11,
       "bar_vol0": 0,
-      "quote_s": 14269.327216863632,
+      "quote_s": 15611.52052488327,
       "spot": 272.75,
       "spot_src": "intrinio_quote",
-      "spot_s": 14269.327216863632
+      "spot_s": 15611.52052488327
     },
     "GOOGL": {
-      "ts": 1785988512,
-      "bar_s": 14172.1,
+      "ts": 1785989854,
+      "bar_s": 15514.3,
       "bar_huecos": 2,
       "bar_vol0": 0,
-      "quote_s": 14153.306800985336,
+      "quote_s": 15495.55966105461,
       "spot": 364.681,
       "spot_src": "intrinio_quote",
-      "spot_s": 14153.306800985336
+      "spot_s": 15495.55966105461
     },
     "INTC": {
-      "ts": 1785988513,
-      "bar_s": 14173.7,
+      "ts": 1785989854,
+      "bar_s": 15515.0,
       "bar_huecos": 13,
       "bar_vol0": 0,
-      "quote_s": 14125.869693899154,
+      "quote_s": 15467.096669960021,
       "spot": 100.9,
       "spot_src": "intrinio_quote",
-      "spot_s": 14125.869693899154
+      "spot_s": 15467.096669960021
     },
     "TSM": {
-      "ts": 1785988513,
-      "bar_s": 14353.8,
+      "ts": 1785989855,
+      "bar_s": 15695.1,
       "bar_huecos": 17,
       "bar_vol0": 0,
-      "quote_s": 14351.117744207382,
+      "quote_s": 15692.354678106309,
       "spot": 412.79,
       "spot_src": "intrinio_quote",
-      "spot_s": 14351.117744207382
+      "spot_s": 15692.354678106309
     },
     "ASML": {
-      "ts": 1785988513,
-      "bar_s": 14413.9,
+      "ts": 1785989855,
+      "bar_s": 15755.3,
       "bar_huecos": 24,
       "bar_vol0": 0,
-      "quote_s": 14364.560615205764,
+      "quote_s": 15705.960889720916,
       "spot": 1678.0,
       "spot_src": "intrinio_quote",
-      "spot_s": 14364.560615205764
+      "spot_s": 15705.960889720916
     },
     "TXN": {
-      "ts": 1785988514,
-      "bar_s": 17654.3,
+      "ts": 1785989855,
+      "bar_s": 18995.4,
       "bar_huecos": 23,
       "bar_vol0": 0,
-      "quote_s": 17651.65095887184,
+      "quote_s": 18992.872199964524,
       "spot": 278.53,
       "spot_src": "intrinio_quote",
-      "spot_s": 17651.65095887184
+      "spot_s": 18992.872199964524
     },
     "QCOM": {
-      "ts": 1785988514,
-      "bar_s": 14774.4,
+      "ts": 1785989855,
+      "bar_s": 16115.8,
       "bar_huecos": 20,
       "bar_vol0": 0,
-      "quote_s": 14716.65376996994,
+      "quote_s": 16058.048430776596,
       "spot": 157.27,
       "spot_src": "intrinio_quote",
-      "spot_s": 14716.65376996994
+      "spot_s": 16058.048430776596
     },
     "AVGO": {
-      "ts": 1785988514,
-      "bar_s": 14174.6,
+      "ts": 1785989855,
+      "bar_s": 15515.9,
       "bar_huecos": 7,
       "bar_vol0": 0,
-      "quote_s": 14121.830306053162,
+      "quote_s": 15463.08730120659,
       "spot": 421.44,
       "spot_src": "intrinio_quote",
-      "spot_s": 14121.830306053162
+      "spot_s": 15463.08730120659
     },
     "NFLX": {
-      "ts": 1785988514,
-      "bar_s": 14234.9,
+      "ts": 1785989855,
+      "bar_s": 15576.0,
       "bar_huecos": 16,
       "bar_vol0": 0,
-      "quote_s": 14224.832382154465,
+      "quote_s": 15565.929924058913,
       "spot": 74.12,
       "spot_src": "intrinio_quote",
-      "spot_s": 14224.832382154465
+      "spot_s": 15565.929924058913
     },
     "NOK": {
-      "ts": 1785988515,
-      "bar_s": 14295.2,
+      "ts": 1785989856,
+      "bar_s": 15636.1,
       "bar_huecos": 19,
       "bar_vol0": 0,
-      "quote_s": 14275.579999876023,
+      "quote_s": 15616.501128959655,
       "spot": 9.57,
       "spot_src": "intrinio_quote",
-      "spot_s": 14275.579999876023
+      "spot_s": 15616.501128959655
     },
     "GLD": {
-      "ts": 1785988515,
-      "bar_s": 14235.3,
+      "ts": 1785989856,
+      "bar_s": 15576.2,
       "bar_huecos": 5,
       "bar_vol0": 0,
-      "quote_s": 14224.051884746552,
+      "quote_s": 15565.014151763917,
       "spot": 392.24,
       "spot_src": "intrinio_quote",
-      "spot_s": 14224.051884746552
+      "spot_s": 15565.014151763917
     },
     "XLK": {
-      "ts": 1785988515,
-      "bar_s": 14295.4,
+      "ts": 1785989856,
+      "bar_s": 15636.4,
       "bar_huecos": 20,
       "bar_vol0": 0,
-      "quote_s": 14265.430572891235,
+      "quote_s": 15606.451232767105,
       "spot": 185.499,
       "spot_src": "intrinio_quote",
-      "spot_s": 14265.430572891235
+      "spot_s": 15606.451232767105
     },
     "LRCX": {
-      "ts": 1785988515,
-      "bar_s": 14715.5,
+      "ts": 1785989857,
+      "bar_s": 16057.7,
       "bar_huecos": 19,
       "bar_vol0": 0,
-      "quote_s": 14704.730364990235,
+      "quote_s": 16046.871607971192,
       "spot": 308.41,
       "spot_src": "intrinio_quote",
-      "spot_s": 14704.730364990235
+      "spot_s": 16046.871607971192
     },
     "SNDK": {
-      "ts": 1785988515,
-      "bar_s": 14175.6,
+      "ts": 1785989858,
+      "bar_s": 15518.4,
       "bar_huecos": 0,
       "bar_vol0": 0,
-      "quote_s": 14122.130364179611,
+      "quote_s": 15464.90724310875,
       "spot": 1243.01,
       "spot_src": "intrinio_quote",
-      "spot_s": 14122.130364179611
+      "spot_s": 15464.90724310875
     },
     "WDC": {
-      "ts": 1785988515,
-      "bar_s": 14175.8,
+      "ts": 1785989858,
+      "bar_s": 15518.5,
       "bar_huecos": 2,
       "bar_vol0": 0,
-      "quote_s": 14125.758673906326,
+      "quote_s": 15468.405534029007,
       "spot": 458.2,
       "spot_src": "intrinio_quote",
-      "spot_s": 14125.758673906326
+      "spot_s": 15468.405534029007
     },
     "STX": {
-      "ts": 1785988515,
-      "bar_s": 14415.9,
+      "ts": 1785989858,
+      "bar_s": 15758.6,
       "bar_huecos": 18,
       "bar_vol0": 0,
-      "quote_s": 14391.989582157135,
+      "quote_s": 15734.623173093796,
       "spot": 821.0,
       "spot_src": "intrinio_quote",
-      "spot_s": 14391.989582157135
+      "spot_s": 15734.623173093796
     },
     "HOOD": {
-      "ts": 1785988516,
-      "bar_s": 14176.1,
+      "ts": 1785989858,
+      "bar_s": 15518.7,
       "bar_huecos": 24,
       "bar_vol0": 0,
-      "quote_s": 14150.048763847351,
+      "quote_s": 15492.682646131516,
       "spot": 92.76,
       "spot_src": "intrinio_quote",
-      "spot_s": 14150.048763847351
+      "spot_s": 15492.682646131516
     },
     "PLTR": {
-      "ts": 1785988516,
-      "bar_s": 14176.2,
+      "ts": 1785989858,
+      "bar_s": 15518.8,
       "bar_huecos": 6,
       "bar_vol0": 0,
-      "quote_s": 14122.630761957169,
+      "quote_s": 15465.231630182267,
       "spot": 156.9,
       "spot_src": "intrinio_quote",
-      "spot_s": 14122.630761957169
+      "spot_s": 15465.231630182267
     },
     "MSTR": {
-      "ts": 1785988517,
-      "bar_s": 14357.6,
+      "ts": 1785989858,
+      "bar_s": 15698.9,
       "bar_huecos": 20,
       "bar_vol0": 0,
-      "quote_s": 14309.375826835632,
+      "quote_s": 15650.725597238541,
       "spot": 97.7,
       "spot_src": "intrinio_quote",
-      "spot_s": 14309.375826835632
+      "spot_s": 15650.725597238541
     },
     "COIN": {
-      "ts": 1785988517,
-      "bar_s": 14837.7,
+      "ts": 1785989859,
+      "bar_s": 16179.0,
       "bar_huecos": 25,
       "bar_vol0": 0,
-      "quote_s": 14822.739583063125,
+      "quote_s": 16164.073131990433,
       "spot": 150.07,
       "spot_src": "intrinio_quote",
-      "spot_s": 14822.739583063125
+      "spot_s": 16164.073131990433
     },
     "CRWV": {
-      "ts": 1785988517,
-      "bar_s": 14357.8,
+      "ts": 1785989859,
+      "bar_s": 15699.1,
       "bar_huecos": 16,
       "bar_vol0": 0,
-      "quote_s": 14315.263187932967,
+      "quote_s": 15656.583664131165,
       "spot": 88.94,
       "spot_src": "intrinio_quote",
-      "spot_s": 14315.263187932967
+      "spot_s": 15656.583664131165
     },
     "RKLB": {
-      "ts": 1785988517,
-      "bar_s": 14357.9,
+      "ts": 1785989859,
+      "bar_s": 15699.3,
       "bar_huecos": 18,
       "bar_vol0": 0,
-      "quote_s": 14328.858350801467,
+      "quote_s": 15670.145897960663,
       "spot": 74.74,
       "spot_src": "intrinio_quote",
-      "spot_s": 14328.858350801467
+      "spot_s": 15670.145897960663
     }
   },
   "note": "nbbo campo1=wall-clock de escritura, campo4=epoch de bolsa; bars epoch=hora de bolsa; feed_tier declara el tier del market provider",
@@ -440,7 +440,7 @@
     "WDC",
     "XLK"
   ],
-  "bar_age_max_s": 17654.3,
+  "bar_age_max_s": 18995.4,
   "bar_huecos": [
     "AAPL",
     "AMD",
@@ -478,16 +478,16 @@
     "need": 28,
     "universo": 32,
     "max_bar_age_s": 240.0,
-    "bar_age_mediana_s": 14234.9,
-    "motivo": "barras a 14235 s de mediana contra un tope de 240 s: solo 0/32 pueden votar (hacen falta 28). Es el FEED (intrinio va delayed), no el mercado."
+    "bar_age_mediana_s": 15576.0,
+    "motivo": "barras a 15576 s de mediana contra un tope de 240 s: solo 0/32 pueden votar (hacen falta 28). Es el FEED (intrinio va delayed), no el mercado."
   },
   "nbbo_gate": {
     "pasan": 32,
     "universo": 32,
     "gate_s": 10.0,
-    "edad_p50_s": 2.9,
-    "edad_max_s": 3.9,
-    "retraso_bolsa_p50_s": 14224.0
+    "edad_p50_s": 0.3,
+    "edad_max_s": 7.3,
+    "retraso_bolsa_p50_s": 15568.0
   },
   "intrinio_stock_source": "equities_edge",
   "intrinio_interval_source": "equities_edge"
