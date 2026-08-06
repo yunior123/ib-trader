@@ -1044,10 +1044,13 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
 - [x] AUDIT #8 compass adoptaba spot por mtime: compass.cpp:1475 exige además spot_age_s<=300 del propio productor (levels_txn.json: mtime 137s pero spot_age_s 954s) (2026-08-05, hecho)
 
 ## Sesión 2026-08-05 tarde
-- [ ] "calibrate the crazy compass... its buggy... the arrow in the chart, it should be red when
-      strong trend down based on math or whales or your analysis similar to how u did with intc,
-      plus other features already there, just improve, only show the arrow, remove the description
-      under, its crazy" (2026-08-06 00:20) — estado: en curso.
+- [x] "calibrate the crazy compass... the arrow should be red when strong trend down based on
+      math or whales... only show the arrow, remove the description under" (2026-08-06 00:20) —
+      hecho d1fb2b29. Causa del bug medida: regime POS && !near iba a CAJA flat SIN mirar la
+      tendencia (INTC 2026-08-05 -1,7% en 53min = flat). Fix: TENDENCIA FUERTE (band-walk >=2TF
+      o |z6|>=2 persistente) manda sobre la caja; edge nuevo trend_flow = impulso 2σ + ballena
+      (flujo capitán o signed_premium UW >=100k, <=10min); sin ballena sigue flat (honestidad
+      OOS). UI: solo la flecha, texto al tooltip. 56 tests, ASan OK, Cockpit relanzada.
 - [x] "review intc de nuevo, in depth, net options, walls, delears, gamma, etc" (2026-08-05 15:00) —
       HECHO. Workflow ultracode: 8 dimensiones + 8 refutadores + cruce (17 agentes, 1,05M tokens).
       **REGLA NUEVA MEDIDA: el open_interest de UW es el cierre de AYER incluso a las 23:48 ET**
@@ -1123,3 +1126,8 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       colapsa, Vol en la barra OHLC con el numero de la barra bajo el crosshair (fmtVol
       B/M/K) y color de la vela, whaleTally se oculta con el toggle; Target Trend (beluga)
       ya era opcional; comentario zombie del zoom viejo limpiado.
+- [ ] "create a simple macos app called Gamma War Room in swift, websockets realtime, generic
+      provider (finnhub/polygon or your choice), features: indicators optionals, chart, heatmap
+      widget, hiro, walls, gex, dex, charm, flips, magnets, keep it simple fully portable, pure
+      swift, build to desktop + iphone 14 (developer mode, no paid account), layout ok, realtime
+      perfect" (2026-08-06) — estado: macOS HECHO (app en ~/Desktop, corre con llaves sembradas; commit inicial en ~/GammaWarRoom rama main); iPhone PENDIENTE de cable+Apple ID en Xcode. AMPLIACION: "for the heatmap use same colors as quantdata and the picture i just sent u, keep same colors and ui ux as quantdata" (fondo azul-negro 0A0F1E, pills azul 2563EB, verde 22C55E, rojo granate DC2626, MVC morado A855F7, fila spot azul)
