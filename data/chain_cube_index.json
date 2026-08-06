@@ -1,8 +1,737 @@
 {
  "days": {
+  "2026-03-24": {
+   "bundles": 0,
+   "bytes_dir": 10363554,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-03-25": {
+   "bundles": 0,
+   "bytes_dir": 10349880,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-03-26": {
+   "bundles": 0,
+   "bytes_dir": 10490266,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-03-27": {
+   "bundles": 0,
+   "bytes_dir": 10633802,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-03-30": {
+   "bundles": 0,
+   "bytes_dir": 10520812,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-03-31": {
+   "bundles": 0,
+   "bytes_dir": 10432558,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-04-01": {
+   "bundles": 0,
+   "bytes_dir": 10483141,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-04-02": {
+   "bundles": 0,
+   "bytes_dir": 10441376,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-04-06": {
+   "bundles": 0,
+   "bytes_dir": 10362853,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-04-07": {
+   "bundles": 0,
+   "bytes_dir": 10414788,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-04-08": {
+   "bundles": 0,
+   "bytes_dir": 10832094,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-04-09": {
+   "bundles": 0,
+   "bytes_dir": 10768800,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-04-10": {
+   "bundles": 0,
+   "bytes_dir": 10802066,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-04-13": {
+   "bundles": 0,
+   "bytes_dir": 10802734,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-04-14": {
+   "bundles": 0,
+   "bytes_dir": 10980497,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-04-15": {
+   "bundles": 0,
+   "bytes_dir": 10988475,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-04-16": {
+   "bundles": 0,
+   "bytes_dir": 10968571,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-04-17": {
+   "bundles": 0,
+   "bytes_dir": 11169431,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-04-20": {
+   "bundles": 0,
+   "bytes_dir": 10905429,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-04-21": {
+   "bundles": 0,
+   "bytes_dir": 10806983,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-04-22": {
+   "bundles": 0,
+   "bytes_dir": 11050366,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-04-23": {
+   "bundles": 0,
+   "bytes_dir": 11113573,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-04-24": {
+   "bundles": 0,
+   "bytes_dir": 11261477,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-04-27": {
+   "bundles": 0,
+   "bytes_dir": 11108935,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-04-28": {
+   "bundles": 0,
+   "bytes_dir": 11089627,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-04-29": {
+   "bundles": 0,
+   "bytes_dir": 11146622,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-04-30": {
+   "bundles": 0,
+   "bytes_dir": 11316130,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-05-01": {
+   "bundles": 0,
+   "bytes_dir": 11349436,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-05-04": {
+   "bundles": 0,
+   "bytes_dir": 11262421,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-05-05": {
+   "bundles": 0,
+   "bytes_dir": 11386276,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-05-06": {
+   "bundles": 0,
+   "bytes_dir": 11484836,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-05-07": {
+   "bundles": 0,
+   "bytes_dir": 11435821,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-05-08": {
+   "bundles": 0,
+   "bytes_dir": 11546166,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-05-11": {
+   "bundles": 0,
+   "bytes_dir": 11543922,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-05-12": {
+   "bundles": 0,
+   "bytes_dir": 11594453,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-05-13": {
+   "bundles": 0,
+   "bytes_dir": 11567150,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-05-14": {
+   "bundles": 0,
+   "bytes_dir": 11563990,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-05-15": {
+   "bundles": 0,
+   "bytes_dir": 11679708,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-05-18": {
+   "bundles": 0,
+   "bytes_dir": 11597834,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-05-19": {
+   "bundles": 0,
+   "bytes_dir": 11561800,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-05-20": {
+   "bundles": 0,
+   "bytes_dir": 11522611,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-05-21": {
+   "bundles": 0,
+   "bytes_dir": 11562199,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-05-22": {
+   "bundles": 0,
+   "bytes_dir": 11674619,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-05-26": {
+   "bundles": 0,
+   "bytes_dir": 11620428,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-05-27": {
+   "bundles": 0,
+   "bytes_dir": 11613793,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-05-28": {
+   "bundles": 0,
+   "bytes_dir": 11676628,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-05-29": {
+   "bundles": 0,
+   "bytes_dir": 11762384,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-06-01": {
+   "bundles": 0,
+   "bytes_dir": 11804257,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-06-02": {
+   "bundles": 0,
+   "bytes_dir": 11716017,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-06-03": {
+   "bundles": 0,
+   "bytes_dir": 11798604,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-06-04": {
+   "bundles": 0,
+   "bytes_dir": 11781141,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-06-05": {
+   "bundles": 0,
+   "bytes_dir": 12067208,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-06-08": {
+   "bundles": 0,
+   "bytes_dir": 11712478,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-06-09": {
+   "bundles": 0,
+   "bytes_dir": 11838995,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-06-10": {
+   "bundles": 0,
+   "bytes_dir": 11706666,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-06-11": {
+   "bundles": 0,
+   "bytes_dir": 11808010,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-06-12": {
+   "bundles": 0,
+   "bytes_dir": 11906717,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-06-15": {
+   "bundles": 0,
+   "bytes_dir": 11882038,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-06-16": {
+   "bundles": 0,
+   "bytes_dir": 12211270,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-06-17": {
+   "bundles": 0,
+   "bytes_dir": 12325508,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-06-18": {
+   "bundles": 0,
+   "bytes_dir": 12476585,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-06-22": {
+   "bundles": 0,
+   "bytes_dir": 12267336,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-06-23": {
+   "bundles": 0,
+   "bytes_dir": 12301922,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-06-24": {
+   "bundles": 0,
+   "bytes_dir": 12331041,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-06-25": {
+   "bundles": 0,
+   "bytes_dir": 12474472,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-06-26": {
+   "bundles": 0,
+   "bytes_dir": 12556703,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-06-29": {
+   "bundles": 0,
+   "bytes_dir": 12448844,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-06-30": {
+   "bundles": 0,
+   "bytes_dir": 12431621,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-07-01": {
+   "bundles": 0,
+   "bytes_dir": 12382270,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-07-02": {
+   "bundles": 0,
+   "bytes_dir": 12529037,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-07-06": {
+   "bundles": 0,
+   "bytes_dir": 12297742,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-07-07": {
+   "bundles": 0,
+   "bytes_dir": 12340619,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-07-08": {
+   "bundles": 0,
+   "bytes_dir": 12315447,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-07-09": {
+   "bundles": 0,
+   "bytes_dir": 12417634,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-07-10": {
+   "bundles": 0,
+   "bytes_dir": 12475536,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-07-13": {
+   "bundles": 0,
+   "bytes_dir": 12410284,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-07-14": {
+   "bundles": 0,
+   "bytes_dir": 12651334,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-07-15": {
+   "bundles": 0,
+   "bytes_dir": 12769184,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-07-16": {
+   "bundles": 0,
+   "bytes_dir": 12827881,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-07-17": {
+   "bundles": 0,
+   "bytes_dir": 13023025,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-07-20": {
+   "bundles": 0,
+   "bytes_dir": 12792922,
+   "full_chains": {},
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
   "2026-07-21": {
    "bundles": 0,
-   "bytes_dir": 1753571,
+   "bytes_dir": 14488469,
    "full_chains": {},
    "loose_files": 0,
    "snapshots": 0,
@@ -11,7 +740,7 @@
   },
   "2026-07-22": {
    "bundles": 0,
-   "bytes_dir": 4609794,
+   "bytes_dir": 17282616,
    "full_chains": {},
    "loose_files": 208,
    "snapshots": 208,
@@ -359,7 +1088,7 @@
   },
   "2026-07-23": {
    "bundles": 0,
-   "bytes_dir": 8719707,
+   "bytes_dir": 21505313,
    "full_chains": {},
    "loose_files": 1009,
    "snapshots": 1009,
@@ -707,7 +1436,7 @@
   },
   "2026-07-24": {
    "bundles": 0,
-   "bytes_dir": 10903488,
+   "bytes_dir": 23755431,
    "full_chains": {},
    "loose_files": 2105,
    "snapshots": 2105,
@@ -1713,7 +2442,7 @@
   },
   "2026-07-27": {
    "bundles": 0,
-   "bytes_dir": 83961530,
+   "bytes_dir": 92758504,
    "full_chains": {
     "AAPL": {
      "bytes": 425064,
@@ -2342,7 +3071,7 @@
   },
   "2026-07-28": {
    "bundles": 0,
-   "bytes_dir": 61159862,
+   "bytes_dir": 74028298,
    "full_chains": {
     "AAPL": {
      "bytes": 443237,
@@ -2971,7 +3700,7 @@
   },
   "2026-07-29": {
    "bundles": 0,
-   "bytes_dir": 124810211,
+   "bytes_dir": 72029827,
    "full_chains": {
     "AAPL": {
      "bytes": 458251,
@@ -3600,7 +4329,7 @@
   },
   "2026-07-30": {
    "bundles": 0,
-   "bytes_dir": 169098865,
+   "bytes_dir": 109330084,
    "full_chains": {
     "AAPL": {
      "bytes": 433789,
@@ -4237,7 +4966,7 @@
   },
   "2026-07-31": {
    "bundles": 0,
-   "bytes_dir": 175385236,
+   "bytes_dir": 118316844,
    "full_chains": {
     "AAPL": {
      "bytes": 443514,
@@ -5153,13 +5882,979 @@
    "snapshots": 0,
    "storage": "loose",
    "syms": {}
+  },
+  "2026-08-03": {
+   "bundles": 0,
+   "bytes_dir": 140307564,
+   "full_chains": {
+    "AAPL": {
+     "bytes": 414419,
+     "contracts": 770,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_aapl.json",
+     "with_greeks": 709,
+     "with_quotes": 0
+    },
+    "AMD": {
+     "bytes": 1150275,
+     "contracts": 2200,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_amd.json",
+     "with_greeks": 2102,
+     "with_quotes": 0
+    },
+    "AMZN": {
+     "bytes": 449950,
+     "contracts": 820,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_amzn.json",
+     "with_greeks": 754,
+     "with_quotes": 0
+    },
+    "ASML": {
+     "bytes": 790658,
+     "contracts": 1528,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_asml.json",
+     "with_greeks": 1416,
+     "with_quotes": 0
+    },
+    "AVGO": {
+     "bytes": 651914,
+     "contracts": 1296,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_avgo.json",
+     "with_greeks": 1156,
+     "with_quotes": 0
+    },
+    "BE": {
+     "bytes": 320852,
+     "contracts": 590,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_be.json",
+     "with_greeks": 571,
+     "with_quotes": 0
+    },
+    "DIA": {
+     "bytes": 255944,
+     "contracts": 470,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_dia.json",
+     "with_greeks": 463,
+     "with_quotes": 0
+    },
+    "DRAM": {
+     "bytes": 273567,
+     "contracts": 498,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_dram.json",
+     "with_greeks": 456,
+     "with_quotes": 0
+    },
+    "EWY": {
+     "bytes": 335889,
+     "contracts": 628,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_ewy.json",
+     "with_greeks": 619,
+     "with_quotes": 0
+    },
+    "GLD": {
+     "bytes": 699237,
+     "contracts": 1348,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_gld.json",
+     "with_greeks": 1252,
+     "with_quotes": 0
+    },
+    "GLW": {
+     "bytes": 252085,
+     "contracts": 476,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_glw.json",
+     "with_greeks": 429,
+     "with_quotes": 0
+    },
+    "GOOGL": {
+     "bytes": 513409,
+     "contracts": 984,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_googl.json",
+     "with_greeks": 848,
+     "with_quotes": 0
+    },
+    "INTC": {
+     "bytes": 649667,
+     "contracts": 1214,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_intc.json",
+     "with_greeks": 1146,
+     "with_quotes": 0
+    },
+    "IWM": {
+     "bytes": 831555,
+     "contracts": 1694,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_iwm.json",
+     "with_greeks": 1415,
+     "with_quotes": 0
+    },
+    "LRCX": {
+     "bytes": 294862,
+     "contracts": 560,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_lrcx.json",
+     "with_greeks": 485,
+     "with_quotes": 0
+    },
+    "META": {
+     "bytes": 1100877,
+     "contracts": 2204,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_meta.json",
+     "with_greeks": 1717,
+     "with_quotes": 0
+    },
+    "MSFT": {
+     "bytes": 679590,
+     "contracts": 1268,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_msft.json",
+     "with_greeks": 1148,
+     "with_quotes": 0
+    },
+    "MU": {
+     "bytes": 1479867,
+     "contracts": 2902,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_mu.json",
+     "with_greeks": 2523,
+     "with_quotes": 0
+    },
+    "NBIS": {
+     "bytes": 296853,
+     "contracts": 546,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_nbis.json",
+     "with_greeks": 522,
+     "with_quotes": 0
+    },
+    "NDX": {
+     "bytes": 2665624,
+     "contracts": 8070,
+     "greeks_src": "cboe_delayed",
+     "path": "data/history/2026-08-03/chain_full_ndx.json",
+     "with_greeks": 8070,
+     "with_quotes": 0
+    },
+    "NFLX": {
+     "bytes": 137582,
+     "contracts": 248,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_nflx.json",
+     "with_greeks": 222,
+     "with_quotes": 0
+    },
+    "NOK": {
+     "bytes": 62145,
+     "contracts": 114,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_nok.json",
+     "with_greeks": 97,
+     "with_quotes": 0
+    },
+    "NVDA": {
+     "bytes": 382039,
+     "contracts": 722,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_nvda.json",
+     "with_greeks": 627,
+     "with_quotes": 0
+    },
+    "QCOM": {
+     "bytes": 191019,
+     "contracts": 360,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_qcom.json",
+     "with_greeks": 309,
+     "with_quotes": 0
+    },
+    "QQQ": {
+     "bytes": 1575426,
+     "contracts": 2996,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_qqq.json",
+     "with_greeks": 2736,
+     "with_quotes": 0
+    },
+    "SKHY": {
+     "bytes": 267176,
+     "contracts": 500,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_skhy.json",
+     "with_greeks": 484,
+     "with_quotes": 0
+    },
+    "SMH": {
+     "bytes": 939056,
+     "contracts": 1830,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_smh.json",
+     "with_greeks": 1748,
+     "with_quotes": 0
+    },
+    "SNDK": {
+     "bytes": 898411,
+     "contracts": 1660,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_sndk.json",
+     "with_greeks": 1539,
+     "with_quotes": 0
+    },
+    "SPCX": {
+     "bytes": 283081,
+     "contracts": 520,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_spcx.json",
+     "with_greeks": 448,
+     "with_quotes": 0
+    },
+    "SPX": {
+     "bytes": 2352308,
+     "contracts": 7078,
+     "greeks_src": "cboe_delayed",
+     "path": "data/history/2026-08-03/chain_full_spx.json",
+     "with_greeks": 7078,
+     "with_quotes": 0
+    },
+    "SPY": {
+     "bytes": 1537110,
+     "contracts": 2996,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_spy.json",
+     "with_greeks": 2569,
+     "with_quotes": 0
+    },
+    "STX": {
+     "bytes": 578129,
+     "contracts": 1106,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_stx.json",
+     "with_greeks": 979,
+     "with_quotes": 0
+    },
+    "TSLA": {
+     "bytes": 827878,
+     "contracts": 1592,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_tsla.json",
+     "with_greeks": 1347,
+     "with_quotes": 0
+    },
+    "TSM": {
+     "bytes": 273730,
+     "contracts": 502,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_tsm.json",
+     "with_greeks": 486,
+     "with_quotes": 0
+    },
+    "TXN": {
+     "bytes": 237723,
+     "contracts": 454,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_txn.json",
+     "with_greeks": 431,
+     "with_quotes": 0
+    },
+    "WDC": {
+     "bytes": 479485,
+     "contracts": 910,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_wdc.json",
+     "with_greeks": 857,
+     "with_quotes": 0
+    },
+    "XLK": {
+     "bytes": 270698,
+     "contracts": 518,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-03/chain_full_xlk.json",
+     "with_greeks": 478,
+     "with_quotes": 0
+    },
+    "XSP": {
+     "bytes": 1527307,
+     "contracts": 4674,
+     "greeks_src": "cboe_delayed",
+     "path": "data/history/2026-08-03/chain_full_xsp.json",
+     "with_greeks": 4674,
+     "with_quotes": 0
+    }
+   },
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-08-04": {
+   "bundles": 0,
+   "bytes_dir": 128173417,
+   "full_chains": {
+    "AAPL": {
+     "bytes": 386775,
+     "contracts": 754,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_aapl.json",
+     "with_greeks": 627,
+     "with_quotes": 0
+    },
+    "AMD": {
+     "bytes": 1092024,
+     "contracts": 2166,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_amd.json",
+     "with_greeks": 1871,
+     "with_quotes": 0
+    },
+    "AMZN": {
+     "bytes": 389796,
+     "contracts": 738,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_amzn.json",
+     "with_greeks": 652,
+     "with_quotes": 0
+    },
+    "ASML": {
+     "bytes": 818730,
+     "contracts": 1554,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_asml.json",
+     "with_greeks": 1529,
+     "with_quotes": 0
+    },
+    "AVGO": {
+     "bytes": 649302,
+     "contracts": 1274,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_avgo.json",
+     "with_greeks": 1193,
+     "with_quotes": 0
+    },
+    "BE": {
+     "bytes": 319448,
+     "contracts": 612,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_be.json",
+     "with_greeks": 489,
+     "with_quotes": 0
+    },
+    "DIA": {
+     "bytes": 247800,
+     "contracts": 460,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_dia.json",
+     "with_greeks": 425,
+     "with_quotes": 0
+    },
+    "DRAM": {
+     "bytes": 273869,
+     "contracts": 498,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_dram.json",
+     "with_greeks": 448,
+     "with_quotes": 0
+    },
+    "EWY": {
+     "bytes": 332453,
+     "contracts": 628,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_ewy.json",
+     "with_greeks": 566,
+     "with_quotes": 0
+    },
+    "GLD": {
+     "bytes": 672530,
+     "contracts": 1332,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_gld.json",
+     "with_greeks": 1200,
+     "with_quotes": 0
+    },
+    "GLW": {
+     "bytes": 253162,
+     "contracts": 494,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_glw.json",
+     "with_greeks": 376,
+     "with_quotes": 0
+    },
+    "GOOGL": {
+     "bytes": 565411,
+     "contracts": 1128,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_googl.json",
+     "with_greeks": 947,
+     "with_quotes": 0
+    },
+    "INTC": {
+     "bytes": 631261,
+     "contracts": 1232,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_intc.json",
+     "with_greeks": 1048,
+     "with_quotes": 0
+    },
+    "IWM": {
+     "bytes": 850281,
+     "contracts": 1678,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_iwm.json",
+     "with_greeks": 1555,
+     "with_quotes": 0
+    },
+    "LRCX": {
+     "bytes": 302978,
+     "contracts": 574,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_lrcx.json",
+     "with_greeks": 492,
+     "with_quotes": 0
+    },
+    "META": {
+     "bytes": 943034,
+     "contracts": 1890,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_meta.json",
+     "with_greeks": 1534,
+     "with_quotes": 0
+    },
+    "MSFT": {
+     "bytes": 697027,
+     "contracts": 1348,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_msft.json",
+     "with_greeks": 1174,
+     "with_quotes": 0
+    },
+    "MU": {
+     "bytes": 1476992,
+     "contracts": 2940,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_mu.json",
+     "with_greeks": 2553,
+     "with_quotes": 0
+    },
+    "NBIS": {
+     "bytes": 335806,
+     "contracts": 628,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_nbis.json",
+     "with_greeks": 588,
+     "with_quotes": 0
+    },
+    "NDX": {
+     "bytes": 2639888,
+     "contracts": 7992,
+     "greeks_src": "cboe_delayed",
+     "path": "data/history/2026-08-04/chain_full_ndx.json",
+     "with_greeks": 7992,
+     "with_quotes": 0
+    },
+    "NFLX": {
+     "bytes": 139171,
+     "contracts": 248,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_nflx.json",
+     "with_greeks": 231,
+     "with_quotes": 0
+    },
+    "NOK": {
+     "bytes": 69254,
+     "contracts": 126,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_nok.json",
+     "with_greeks": 109,
+     "with_quotes": 0
+    },
+    "NVDA": {
+     "bytes": 380319,
+     "contracts": 740,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_nvda.json",
+     "with_greeks": 617,
+     "with_quotes": 0
+    },
+    "QCOM": {
+     "bytes": 201527,
+     "contracts": 380,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_qcom.json",
+     "with_greeks": 323,
+     "with_quotes": 0
+    },
+    "QQQ": {
+     "bytes": 1583000,
+     "contracts": 3016,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_qqq.json",
+     "with_greeks": 2758,
+     "with_quotes": 0
+    },
+    "SKHY": {
+     "bytes": 257600,
+     "contracts": 500,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_skhy.json",
+     "with_greeks": 407,
+     "with_quotes": 0
+    },
+    "SMH": {
+     "bytes": 914072,
+     "contracts": 1792,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_smh.json",
+     "with_greeks": 1683,
+     "with_quotes": 0
+    },
+    "SNDK": {
+     "bytes": 965354,
+     "contracts": 1790,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_sndk.json",
+     "with_greeks": 1588,
+     "with_quotes": 0
+    },
+    "SPCX": {
+     "bytes": 289953,
+     "contracts": 520,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_spcx.json",
+     "with_greeks": 481,
+     "with_quotes": 0
+    },
+    "SPX": {
+     "bytes": 2338048,
+     "contracts": 7030,
+     "greeks_src": "cboe_delayed",
+     "path": "data/history/2026-08-04/chain_full_spx.json",
+     "with_greeks": 7030,
+     "with_quotes": 0
+    },
+    "SPY": {
+     "bytes": 1555412,
+     "contracts": 2998,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_spy.json",
+     "with_greeks": 2580,
+     "with_quotes": 0
+    },
+    "STX": {
+     "bytes": 588742,
+     "contracts": 1118,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_stx.json",
+     "with_greeks": 994,
+     "with_quotes": 0
+    },
+    "TSLA": {
+     "bytes": 655877,
+     "contracts": 1266,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_tsla.json",
+     "with_greeks": 1074,
+     "with_quotes": 0
+    },
+    "TSM": {
+     "bytes": 274038,
+     "contracts": 504,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_tsm.json",
+     "with_greeks": 477,
+     "with_quotes": 0
+    },
+    "TXN": {
+     "bytes": 209760,
+     "contracts": 398,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_txn.json",
+     "with_greeks": 364,
+     "with_quotes": 0
+    },
+    "WDC": {
+     "bytes": 487996,
+     "contracts": 936,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_wdc.json",
+     "with_greeks": 822,
+     "with_quotes": 0
+    },
+    "XLK": {
+     "bytes": 262772,
+     "contracts": 514,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-04/chain_full_xlk.json",
+     "with_greeks": 413,
+     "with_quotes": 0
+    },
+    "XSP": {
+     "bytes": 1472345,
+     "contracts": 4496,
+     "greeks_src": "cboe_delayed",
+     "path": "data/history/2026-08-04/chain_full_xsp.json",
+     "with_greeks": 4496,
+     "with_quotes": 0
+    }
+   },
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
+  },
+  "2026-08-05": {
+   "bundles": 0,
+   "bytes_dir": 135701450,
+   "full_chains": {
+    "AAPL": {
+     "bytes": 427881,
+     "contracts": 836,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_aapl.json",
+     "with_greeks": 711,
+     "with_quotes": 0
+    },
+    "AMD": {
+     "bytes": 1252895,
+     "contracts": 2564,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_amd.json",
+     "with_greeks": 2079,
+     "with_quotes": 0
+    },
+    "AMZN": {
+     "bytes": 420343,
+     "contracts": 804,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_amzn.json",
+     "with_greeks": 653,
+     "with_quotes": 0
+    },
+    "ASML": {
+     "bytes": 645657,
+     "contracts": 1246,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_asml.json",
+     "with_greeks": 1125,
+     "with_quotes": 0
+    },
+    "AVGO": {
+     "bytes": 717239,
+     "contracts": 1454,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_avgo.json",
+     "with_greeks": 1237,
+     "with_quotes": 0
+    },
+    "COIN": {
+     "bytes": 220399,
+     "contracts": 400,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_coin.json",
+     "with_greeks": 388,
+     "with_quotes": 0
+    },
+    "CRWV": {
+     "bytes": 285651,
+     "contracts": 522,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_crwv.json",
+     "with_greeks": 505,
+     "with_quotes": 0
+    },
+    "DIA": {
+     "bytes": 317582,
+     "contracts": 610,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_dia.json",
+     "with_greeks": 571,
+     "with_quotes": 0
+    },
+    "DRAM": {
+     "bytes": 286438,
+     "contracts": 512,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_dram.json",
+     "with_greeks": 492,
+     "with_quotes": 0
+    },
+    "EWY": {
+     "bytes": 351108,
+     "contracts": 658,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_ewy.json",
+     "with_greeks": 624,
+     "with_quotes": 0
+    },
+    "GLD": {
+     "bytes": 763235,
+     "contracts": 1470,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_gld.json",
+     "with_greeks": 1398,
+     "with_quotes": 0
+    },
+    "GOOGL": {
+     "bytes": 516498,
+     "contracts": 1008,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_googl.json",
+     "with_greeks": 840,
+     "with_quotes": 0
+    },
+    "HOOD": {
+     "bytes": 218300,
+     "contracts": 392,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_hood.json",
+     "with_greeks": 370,
+     "with_quotes": 0
+    },
+    "INTC": {
+     "bytes": 689955,
+     "contracts": 1370,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_intc.json",
+     "with_greeks": 1125,
+     "with_quotes": 0
+    },
+    "IWM": {
+     "bytes": 849633,
+     "contracts": 1678,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_iwm.json",
+     "with_greeks": 1581,
+     "with_quotes": 0
+    },
+    "LRCX": {
+     "bytes": 322969,
+     "contracts": 602,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_lrcx.json",
+     "with_greeks": 563,
+     "with_quotes": 0
+    },
+    "META": {
+     "bytes": 1079888,
+     "contracts": 2116,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_meta.json",
+     "with_greeks": 1922,
+     "with_quotes": 0
+    },
+    "MSFT": {
+     "bytes": 776492,
+     "contracts": 1508,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_msft.json",
+     "with_greeks": 1303,
+     "with_quotes": 0
+    },
+    "MSTR": {
+     "bytes": 225698,
+     "contracts": 410,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_mstr.json",
+     "with_greeks": 381,
+     "with_quotes": 0
+    },
+    "MU": {
+     "bytes": 1651468,
+     "contracts": 3366,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_mu.json",
+     "with_greeks": 2801,
+     "with_quotes": 0
+    },
+    "NDX": {
+     "bytes": 2775879,
+     "contracts": 8380,
+     "greeks_src": "cboe_delayed",
+     "path": "data/history/2026-08-05/chain_full_ndx.json",
+     "with_greeks": 8380,
+     "with_quotes": 0
+    },
+    "NFLX": {
+     "bytes": 115998,
+     "contracts": 210,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_nflx.json",
+     "with_greeks": 182,
+     "with_quotes": 0
+    },
+    "NOK": {
+     "bytes": 65085,
+     "contracts": 120,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_nok.json",
+     "with_greeks": 98,
+     "with_quotes": 0
+    },
+    "NVDA": {
+     "bytes": 335268,
+     "contracts": 618,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_nvda.json",
+     "with_greeks": 559,
+     "with_quotes": 0
+    },
+    "PLTR": {
+     "bytes": 255307,
+     "contracts": 464,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_pltr.json",
+     "with_greeks": 437,
+     "with_quotes": 0
+    },
+    "QCOM": {
+     "bytes": 193695,
+     "contracts": 370,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_qcom.json",
+     "with_greeks": 297,
+     "with_quotes": 0
+    },
+    "QQQ": {
+     "bytes": 1573337,
+     "contracts": 2950,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_qqq.json",
+     "with_greeks": 2823,
+     "with_quotes": 0
+    },
+    "RKLB": {
+     "bytes": 246624,
+     "contracts": 446,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_rklb.json",
+     "with_greeks": 439,
+     "with_quotes": 0
+    },
+    "SKHY": {
+     "bytes": 274040,
+     "contracts": 518,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_skhy.json",
+     "with_greeks": 474,
+     "with_quotes": 0
+    },
+    "SMH": {
+     "bytes": 995055,
+     "contracts": 2040,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_smh.json",
+     "with_greeks": 1726,
+     "with_quotes": 0
+    },
+    "SNDK": {
+     "bytes": 985601,
+     "contracts": 1770,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_sndk.json",
+     "with_greeks": 1768,
+     "with_quotes": 0
+    },
+    "SPCX": {
+     "bytes": 312308,
+     "contracts": 552,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_spcx.json",
+     "with_greeks": 528,
+     "with_quotes": 0
+    },
+    "SPX": {
+     "bytes": 2485215,
+     "contracts": 7478,
+     "greeks_src": "cboe_delayed",
+     "path": "data/history/2026-08-05/chain_full_spx.json",
+     "with_greeks": 7478,
+     "with_quotes": 0
+    },
+    "SPY": {
+     "bytes": 1601682,
+     "contracts": 3050,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_spy.json",
+     "with_greeks": 2706,
+     "with_quotes": 0
+    },
+    "STX": {
+     "bytes": 615745,
+     "contracts": 1140,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_stx.json",
+     "with_greeks": 1103,
+     "with_quotes": 0
+    },
+    "TSLA": {
+     "bytes": 694416,
+     "contracts": 1358,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_tsla.json",
+     "with_greeks": 1110,
+     "with_quotes": 0
+    },
+    "TSM": {
+     "bytes": 268871,
+     "contracts": 512,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_tsm.json",
+     "with_greeks": 426,
+     "with_quotes": 0
+    },
+    "TXN": {
+     "bytes": 201227,
+     "contracts": 392,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_txn.json",
+     "with_greeks": 320,
+     "with_quotes": 0
+    },
+    "WDC": {
+     "bytes": 530233,
+     "contracts": 1002,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_wdc.json",
+     "with_greeks": 967,
+     "with_quotes": 0
+    },
+    "XLK": {
+     "bytes": 267667,
+     "contracts": 514,
+     "greeks_src": "polygon_directo",
+     "path": "data/history/2026-08-05/chain_full_xlk.json",
+     "with_greeks": 446,
+     "with_quotes": 0
+    },
+    "XSP": {
+     "bytes": 1482892,
+     "contracts": 4514,
+     "greeks_src": "cboe_delayed",
+     "path": "data/history/2026-08-05/chain_full_xsp.json",
+     "with_greeks": 4514,
+     "with_quotes": 0
+    }
+   },
+   "loose_files": 0,
+   "snapshots": 0,
+   "storage": "loose",
+   "syms": {}
   }
  },
  "totals": {
-  "days": 12,
-  "history_bytes": 742353132,
+  "days": 96,
+  "history_bytes": 1989419406,
   "rows": 1162750,
   "snapshots": 12516
  },
- "updated": 1785702300
+ "updated": 1785961505
 }

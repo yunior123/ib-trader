@@ -1044,6 +1044,25 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
 - [x] AUDIT #8 compass adoptaba spot por mtime: compass.cpp:1475 exige además spot_age_s<=300 del propio productor (levels_txn.json: mtime 137s pero spot_age_s 954s) (2026-08-05, hecho)
 
 ## Sesión 2026-08-05 tarde
+- [ ] "review intc de nuevo, in depth, net options, walls, delears, gamma, etc" (2026-08-05 15:00) —
+      estado: en curso. Workflow ultracode 8 dimensiones (muros/gamma/flujo/dealers/vol/técnico/
+      darkpool/catalizador) + refutador adversarial por dimensión + cruce de contradicciones.
+- [ ] "review bargain fleet, find me bargains for options tomorrow. maybe VELO?" + "use data
+      realtime AH too" (2026-08-05 15:15 / 23:45) — estado: en curso (re-verificacion al CIERRE).
+      **VELO = NO**, tres vetos independientes: earnings 11-ago postmarket (confirmado por la
+      empresa), spread mediano 13,0% en el dinero (1 de 13 chains cumple <=5%), y flujo VENDEDOR
+      (487 calls al ask vs 1.763 al bid; sweep de 500 al BID). Sin semanales: 08-21/09-18/12-18.
+      **HALLAZGO ESTRUCTURAL**: en tickers de $3-12 el tick de 1 centavo hace ARITMETICAMENTE
+      imposible spread<=5% en contratos de $0,05-0,30 -> 95% de la bargain fleet muere por spread,
+      no por falta de flujo (POET P8.5 agresor +2.121 pero spread 21,5%).
+      AH medido 16:00-20:00 ET (ya cerrado): SOUN +22,02% (max 8,20, cierra 7,8456 = fade del 4,3%),
+      RUN -12,39% (min 8,78, rebota a 9,19), RDW +7,93% (max 12,14, cierra 11,57). Los 3 reportaron
+      hoy postmarket. Manana reportan RGTI+CLSK (post) y QBTS (pre) = vetados.
+      LA SESION SE DIO LA VUELTA: QQQ -0,90% SMH -1,04% SPY -0,20% cierran los tres en el 3-8% de
+      su rango = veto de capitan sobre calls en la apertura. Workflow: 4 lotes (21 bargain + NOK) + VELO dedicado + calendario de vetos
+      por earnings; criterios duros spread<=5%, OI>=500, agresor comprador, dOI abre, IV/RV, BE<1σ.
+      MEDIDO ya: VELO (Velo3D) NO tiene semanales — vencimientos 08-21/09-18/12-18/03-19; su C17.5
+      del 08-21 va al BID (556 bid vs 61 ask) = venden prima, no compran.
 - [x] "review expiring gamma for nokia, intc and aapl this week, msft too. take a look at spcx for
       options and leveraged. review with uw" (2026-08-05 14:40) — hecho: uw_gex_expiry + cage_lotto_scan
       (--max-spot 9999) + perfil de muros por expiry vía /option-contracts?expiry= + net-prem-ticks.
@@ -1056,3 +1075,21 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       tickers out of jail" (2026-08-05 14:35) — estado: hecho, docs/LOTOS-JAULA-2026-08-05.md. Scan de lotos $10-30 sobre
       bargain fleet + baratos de la flota, expiry 08-07/08-14, con score de JAULA (gamma que
       expira el 08-07 vs OI que queda) — scripts/cage_lotto_scan.py
+- [x] "put a single window for ib trader instead of 6, 3" (2026-08-05 16:2x) — hecho:
+      DEFAULT_WINDOW_COUNT 6->1 (main.swift), test actualizado, VERSION 17, app rebuild+relanzada.
+- [x] "review heatmap, that it works properly realtime as widget... should be as beautiful as
+      that one [captura Exposure/UW], its the top only widget by default in the right panel"
+      (2026-08-05 16:2x) — hecho: scripts/gex_heatmap.py (UW greek-exposure/strike-expiry ->
+      data/gex_heatmap_<sym>.json, daemon --loop 60 corriendo) + charts/gex_heatmap_widget.js
+      (matriz strike x expiry verde/rojo, MVC morado, fila spot azul, edad pintada, escala
+      $/1% = raw x S^2 x 0.01 verificada contra la app de UW) + wgt-gexheat PRIMERO y UNICO
+      abierto por defecto en live.html + rutas /data y /js en chart_bridge.py; bridges
+      reiniciados, verificado 200 en 8080. GOTCHA: strike-expiry da gamma-share crudo
+      (gamma x OI x 100), el endpoint /expiry ya viene en $ — no mezclar escalas.
+- [x] "review again, give me 5 with all that needs to be done. go in depth first, news, all"
+      (2026-08-05 15:1x) — hecho: docs/LOTOS-TOP5-2026-08-05.md. 2 workflows (16 agentes) se
+      comieron el limite de sesion 2 veces; sobrevivieron los 3 de noticias con 3 hallazgos
+      que CAMBIARON el ranking: DJT reporta 08-10 17:00 (EDGAR, el scan decia 07-31 = falso),
+      GME en ventana VWAP 35 sesiones del canje $1.4B (8-K 08-02, mata el C20 08-14), BBAI
+      con ATM de 100M acciones (424B5 07-31, mata el C3 como loto). Top5: OPEN P4 / SNAP C5.5
+      08-14 (liberacion) / SOFI P18 print-only / NOK P9.5 doble-cara / DJT P10 vigilancia.

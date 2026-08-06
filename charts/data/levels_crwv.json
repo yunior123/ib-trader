@@ -1,0 +1,424 @@
+{
+ "sym": "CRWV",
+ "spot": 88.94,
+ "asof": 1785988347,
+ "exp": "20260807",
+ "dte": 1.67,
+ "scope": "0DTE",
+ "net_vex": 27778980.0,
+ "vex_peak": 100.0,
+ "vex_profile": [
+  {
+   "strike": 76.0,
+   "vex": -180702.9
+  },
+  {
+   "strike": 77.0,
+   "vex": 937359.3
+  },
+  {
+   "strike": 78.0,
+   "vex": -21692.8
+  },
+  {
+   "strike": 79.0,
+   "vex": 763723.0
+  },
+  {
+   "strike": 80.0,
+   "vex": -5642697.9
+  },
+  {
+   "strike": 81.0,
+   "vex": 965169.4
+  },
+  {
+   "strike": 82.0,
+   "vex": -23412.8
+  },
+  {
+   "strike": 83.0,
+   "vex": -275299.8
+  },
+  {
+   "strike": 84.0,
+   "vex": 824823.8
+  },
+  {
+   "strike": 85.0,
+   "vex": 8450193.6
+  },
+  {
+   "strike": 86.0,
+   "vex": -698962.6
+  },
+  {
+   "strike": 87.0,
+   "vex": 52488.0
+  },
+  {
+   "strike": 88.0,
+   "vex": -33549.9
+  },
+  {
+   "strike": 89.0,
+   "vex": 161636.6
+  },
+  {
+   "strike": 90.0,
+   "vex": 38052.9
+  },
+  {
+   "strike": 91.0,
+   "vex": -193.0
+  },
+  {
+   "strike": 92.0,
+   "vex": 176663.6
+  },
+  {
+   "strike": 93.0,
+   "vex": -2087932.6
+  },
+  {
+   "strike": 94.0,
+   "vex": 696809.9
+  },
+  {
+   "strike": 95.0,
+   "vex": 1561410.8
+  },
+  {
+   "strike": 96.0,
+   "vex": 1620138.7
+  },
+  {
+   "strike": 97.0,
+   "vex": 1149739.3
+  },
+  {
+   "strike": 98.0,
+   "vex": 1446334.8
+  },
+  {
+   "strike": 99.0,
+   "vex": 1775603.0
+  },
+  {
+   "strike": 100.0,
+   "vex": 13427888.8
+  },
+  {
+   "strike": 101.0,
+   "vex": 1600553.8
+  },
+  {
+   "strike": 102.0,
+   "vex": 1094834.7
+  }
+ ],
+ "net_charm": -8386230.7,
+ "charm_peak": 100.0,
+ "charm_profile": [
+  {
+   "strike": 76.0,
+   "charm": 289019.0
+  },
+  {
+   "strike": 77.0,
+   "charm": -79851.4
+  },
+  {
+   "strike": 78.0,
+   "charm": 169047.9
+  },
+  {
+   "strike": 79.0,
+   "charm": -172451.0
+  },
+  {
+   "strike": 80.0,
+   "charm": 3580632.2
+  },
+  {
+   "strike": 81.0,
+   "charm": -174944.0
+  },
+  {
+   "strike": 82.0,
+   "charm": 343181.8
+  },
+  {
+   "strike": 83.0,
+   "charm": 304600.0
+  },
+  {
+   "strike": 84.0,
+   "charm": -129023.9
+  },
+  {
+   "strike": 85.0,
+   "charm": -2182363.9
+  },
+  {
+   "strike": 86.0,
+   "charm": 385519.6
+  },
+  {
+   "strike": 87.0,
+   "charm": 33745.0
+  },
+  {
+   "strike": 88.0,
+   "charm": 25017.3
+  },
+  {
+   "strike": 89.0,
+   "charm": -77297.8
+  },
+  {
+   "strike": 90.0,
+   "charm": -233638.9
+  },
+  {
+   "strike": 91.0,
+   "charm": -71555.2
+  },
+  {
+   "strike": 92.0,
+   "charm": -202409.6
+  },
+  {
+   "strike": 93.0,
+   "charm": 445277.1
+  },
+  {
+   "strike": 94.0,
+   "charm": -307914.2
+  },
+  {
+   "strike": 95.0,
+   "charm": -1318527.5
+  },
+  {
+   "strike": 96.0,
+   "charm": -734489.9
+  },
+  {
+   "strike": 97.0,
+   "charm": -464601.8
+  },
+  {
+   "strike": 98.0,
+   "charm": -592608.4
+  },
+  {
+   "strike": 99.0,
+   "charm": -723040.2
+  },
+  {
+   "strike": 100.0,
+   "charm": -5406247.9
+  },
+  {
+   "strike": 101.0,
+   "charm": -641166.0
+  },
+  {
+   "strike": 102.0,
+   "charm": -450139.2
+  }
+ ],
+ "charm_why": null,
+ "pressure": 54,
+ "pressure_lab": "amortigua",
+ "iv_atm": 1.4378,
+ "em": 8.65,
+ "net_gex": 5274873.0,
+ "regime": "POS",
+ "flip": 79.19,
+ "flip_static": 84.93,
+ "call_wall": 90.0,
+ "put_wall": 85.0,
+ "abs_wall": 85.0,
+ "poc_dom": "68%P",
+ "call_wall_gex": 315523.4,
+ "put_wall_gex": -1773702.7,
+ "abs_wall_gex": -1773702.7,
+ "oi_call_wall": 100.0,
+ "oi_put_wall": 85.0,
+ "near_call_wall": false,
+ "near_put_wall": false,
+ "near_flip": false,
+ "profile": [
+  {
+   "strike": 76.0,
+   "gex": 75956.6
+  },
+  {
+   "strike": 77.0,
+   "gex": -22038.8
+  },
+  {
+   "strike": 78.0,
+   "gex": 54353.8
+  },
+  {
+   "strike": 79.0,
+   "gex": -55783.3
+  },
+  {
+   "strike": 80.0,
+   "gex": 1360803.5
+  },
+  {
+   "strike": 81.0,
+   "gex": -67029.9
+  },
+  {
+   "strike": 82.0,
+   "gex": 185058.8
+  },
+  {
+   "strike": 83.0,
+   "gex": 186439.9
+  },
+  {
+   "strike": 84.0,
+   "gex": -76936.3
+  },
+  {
+   "strike": 85.0,
+   "gex": -1773702.7
+  },
+  {
+   "strike": 86.0,
+   "gex": 519247.3
+  },
+  {
+   "strike": 87.0,
+   "gex": 111055.2
+  },
+  {
+   "strike": 88.0,
+   "gex": 225017.5
+  },
+  {
+   "strike": 89.0,
+   "gex": 473132.7
+  },
+  {
+   "strike": 90.0,
+   "gex": 315523.4
+  },
+  {
+   "strike": 91.0,
+   "gex": 70531.2
+  },
+  {
+   "strike": 92.0,
+   "gex": 175898.7
+  },
+  {
+   "strike": 93.0,
+   "gex": -376075.0
+  },
+  {
+   "strike": 94.0,
+   "gex": 187679.5
+  },
+  {
+   "strike": 95.0,
+   "gex": 651473.9
+  },
+  {
+   "strike": 96.0,
+   "gex": 336774.5
+  },
+  {
+   "strike": 97.0,
+   "gex": 192739.5
+  },
+  {
+   "strike": 98.0,
+   "gex": 222281.5
+  },
+  {
+   "strike": 99.0,
+   "gex": 248852.9
+  },
+  {
+   "strike": 100.0,
+   "gex": 1735975.7
+  },
+  {
+   "strike": 101.0,
+   "gex": 192232.9
+  },
+  {
+   "strike": 102.0,
+   "gex": 125410.0
+  }
+ ],
+ "call_wall_kind": "pin",
+ "call_wall_regime": "POS",
+ "call_wall_net": 315523.4,
+ "put_wall_kind": "pin",
+ "put_wall_regime": "POS",
+ "put_wall_net": -1773702.7,
+ "abs_wall_kind": "pin",
+ "abs_wall_regime": "POS",
+ "abs_wall_net": -1773702.7,
+ "gamma_ok": true,
+ "regime_scope": "0DTE",
+ "greeks_ok_pct": 0.9074,
+ "chain_src": "polygon",
+ "chain_ts": 1785988309.0,
+ "chain_age_s": 37.9985,
+ "stale": false,
+ "stale_reason": null,
+ "regime_raw": "POS",
+ "regime_why": null,
+ "parity_ok_pct": 0.0,
+ "net_gex_parity_lo": 6979491.8537,
+ "net_gex_parity_hi": 7491430.9187,
+ "quotes_ok": false,
+ "session": "fuera_de_rth",
+ "band_used": 0.15,
+ "band_fetch": 0.15,
+ "n_expiries": 4,
+ "exps_en_fichero": [
+  "20260807",
+  "20260814",
+  "20260821",
+  "20260828"
+ ],
+ "rows_total": 218,
+ "n_candidates": 54,
+ "n_gamma_ok": 49,
+ "n_no_greeks": 5,
+ "n_iv_provider": 49,
+ "n_iv_inverted": 0,
+ "iv_source": "provider",
+ "exp_rolled": false,
+ "roll_reason": null,
+ "degraded_reason": null,
+ "gross_gex": 10018004.8724,
+ "bifurcation": 1.8992,
+ "hhi": 0.0968,
+ "n_strikes_populated": 27,
+ "chain_path": "data/opt_chain_crwv.txt",
+ "flip_live": 84.93,
+ "flip_src": "static_no_iv",
+ "flip_why": "menos de 3 IVs distintas en la banda: el barrido no es fiable, se usa el perfil estatico -> peso del factor flip x0.5",
+ "roots": [
+  85.26,
+  84.93
+ ],
+ "trapdoor_root": 85.26,
+ "flip_open": 79.19,
+ "frozen_at": 1785936900,
+ "frozen_day": "2026-08-05",
+ "spot_src": "intrinio_quote",
+ "spot_age_s": 14106.0
+}

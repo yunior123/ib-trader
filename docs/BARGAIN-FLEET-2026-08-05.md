@@ -40,6 +40,11 @@ calls compradas con antelación). Banda $1–$25, opciones líquidas, comunidad 
 
 Premiums objetivo $8–$195/contrato: **todos caben en el presupuesto ≤$200**.
 
+## Manual watch override
+- **SHOP** added 2026-08-05 after its Q2 earnings gap. It is outside the original
+  $1–$25 NOK-style bargain screen and is watched specifically for post-earnings
+  continuation versus gap-fade; it does not inherit the original basket thesis.
+
 ## Descartados con números (los que la comunidad ama pero la liquidez veta)
 - **PCG** C/P 17.0 pero spread 20.5% (17C 08/28) y cero retail → institucional, fuera.
 - **GRAB** C/P 13.6, spread 22% (mid $0.09). **IE** C/P 96 = un bloque único, spread 13%.

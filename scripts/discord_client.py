@@ -142,8 +142,10 @@ def roles(gid=None, tok=None):
 
 
 def bot_member(gid=None, tok=None):
+    """Miembro del bot en el servidor. /members/@me es ruta de OAuth bearer: con token de bot
+    devuelve 400 NUMBER_TYPE_COERCE (medido 2026-08-05). Hay que resolver el id primero."""
     gid = gid or guild_id()
-    return request("GET", "/guilds/%s/members/@me" % gid, tok=tok)
+    return request("GET", "/guilds/%s/members/%s" % (gid, me(tok)["id"]), tok=tok)
 
 
 def in_guild(gid=None, tok=None):

@@ -37,8 +37,11 @@ BACKLOG_S = 300       # mas viejo que esto: ni se registra (relectura)
 DEDUP_S = 60
 CAP_S = 5
 POLL_S = 0.5
+COLA_MAX = 60         # rafaga retenida por el cap; mas que esto es una tormenta, no una rafaga
 
-PRIORIDAD = re.compile(r"SELL|STOP|TERREMOTO|DANGER|🌋|🚨", re.IGNORECASE)
+# Las tres senales MAS selectivas de la casa (confluencia, manada, capitan) tambien saltan el
+# cap: medido 2026-08-05, el cap se comio 6 de #confluencia, 8 de #manada y 1 de #capitanes.
+PRIORIDAD = re.compile(r"SELL|STOP|TERREMOTO|DANGER|🌋|🚨|🔗|🐺|🐘|🎖", re.IGNORECASE)
 LINE = re.compile(r"^(\d{2}):(\d{2}):(\d{2}) \| (.*?) \| (.*)$")
 
 
@@ -50,7 +53,9 @@ def log(msg):
             with open(LOG, "w") as f:
                 f.writelines(keep)
         with open(LOG, "a") as f:
-            f.write("%s %s\n" % (time.strftime("%H:%M:%S"), dc.redact(msg)))
+            # con FECHA: sin ella era imposible datar un evento del log (la propia auditoria
+            # del 2026-08-05 tuvo que apoyarse en los separadores del keepalive)
+            f.write("%s %s\n" % (time.strftime("%Y-%m-%d %H:%M:%S"), dc.redact(msg)))
     except OSError:
         pass
 
@@ -95,6 +100,63 @@ def load_role_ids():
     except Exception as e:
         log("roles no legibles (%s): se publicara sin menciones" % e.__class__.__name__)
         return {}
+
+
+def enviar(item, role_ids, hooks):
+    """Publica UNA alerta en su canal y sus espejos. True si el canal principal la acepto."""
+    ok, err = S.send(item["ch"], item["emb"], mention_id(role_ids, item["sev"]), hooks=hooks)
+    if not ok:
+        log("FALLO #%s: %s | %s" % (item["ch"], err, item["title"][:50]))
+        return False
+    log("ENVIADA #%s [%s] %s" % (item["ch"], item["sev"], item["title"][:50]))
+    for m in item["mirrors"]:
+        mok, merr = S.send(m, item["emb"], hooks=hooks)
+        if not mok:
+            log("FALLO espejo #%s: %s" % (m, merr))
+    return True
+
+
+def drenar(estado, role_ids, hooks, ahora=None):
+    """Vacia la cola del cap agrupando por canal en un solo POST multi-embed por canal.
+
+    Antes esto era un `continue`: 200 de 909 alertas (18%) se tiraban en 34,5 h, y 44 de ellas
+    dentro de la ventana de oro 09:00-10:00 (auditoria 2026-08-05). Ahora se retienen y salen
+    juntas en el siguiente hueco. La ley de frescura SIGUE mandando: lo que espero mas de
+    FRESH_S se descarta igual, porque una alerta tardia miente.
+    """
+    now = time.time() if ahora is None else ahora
+    if not estado["cola"] or now - estado["lastsent"] < CAP_S:
+        return 0
+    vivos, viejos = [], 0
+    for it in estado["cola"]:
+        if now - it["ts"] > FRESH_S:
+            viejos += 1
+            log("DESCARTADA en cola (%ds vieja): %s" % (int(now - it["ts"]), it["title"][:50]))
+        else:
+            vivos.append(it)
+    estado["cola"] = []
+    if not vivos:
+        return 0
+    por_canal = {}
+    for it in vivos:
+        por_canal.setdefault(it["ch"], []).append(it)
+        for m in it["mirrors"]:
+            por_canal.setdefault(m, []).append(dict(it, ch=m, mirrors=[], sev=L.SISTEMA))
+    enviados = 0
+    for ch, items in por_canal.items():
+        for i in range(0, len(items), S.MAX_EMBEDS):
+            lote = items[i:i + S.MAX_EMBEDS]
+            mid = next((mention_id(role_ids, x["sev"]) for x in lote
+                        if x["sev"] == L.CRITICA), None)
+            ok, err = S.send_many(ch, [x["emb"] for x in lote], mid, hooks=hooks)
+            if ok:
+                enviados += len(lote)
+                log("COLA -> #%s: %d agrupadas (%s)"
+                    % (ch, len(lote), " · ".join(x["title"][:24] for x in lote[:4])))
+            else:
+                log("FALLO cola #%s: %s" % (ch, err))
+    estado["lastsent"] = now
+    return enviados
 
 
 def follow(path):
@@ -172,9 +234,10 @@ def main():
     print("discord_relay: siguiendo %s -> %d canales" % (FUNNEL, len(hooks)))
     log("arranque: %d webhooks, %d roles" % (len(hooks), len(role_ids)))
     dedup = {}
-    lastsent = 0.0
+    estado = {"lastsent": 0.0, "cola": []}
     for line in follow(FUNNEL):
         if line is None:
+            drenar(estado, role_ids, hooks)            # la rafaga se vacia aunque no llegue nada
             time.sleep(POLL_S)
             continue
         p = parse(line)
@@ -193,27 +256,27 @@ def main():
             continue
         now = time.time()
         if now - dedup.get(payload, 0) < DEDUP_S:
-            continue
-        prioritaria = bool(PRIORIDAD.search(payload))
-        if now - lastsent < CAP_S and not prioritaria:
-            log("CAP 1/%ds: %s" % (CAP_S, title[:50]))
+            log("DEDUP (%ds): %s" % (DEDUP_S, title[:50]))   # antes moria en silencio
             continue
         # TODO 32: dedup SOLO tras pasar el cap — un capado debe poder reenviarse en <60s.
         dedup[payload] = now
         if len(dedup) > 500:
             dedup = {k: v for k, v in dedup.items() if now - v < DEDUP_S * 4}
-        lastsent = now
         ch, sev, mirrors = route(title, body, universe)
         emb = S.build_embed(title, body, sev, source="ib-trader")
-        ok, err = S.send(ch, emb, mention_id(role_ids, sev), hooks=hooks)
-        if not ok:
-            log("FALLO #%s: %s | %s" % (ch, err, title[:50]))
-            continue
-        log("ENVIADA #%s [%s] %s" % (ch, sev, title[:50]))
-        for m in mirrors:
-            mok, merr = S.send(m, emb, hooks=hooks)
-            if not mok:
-                log("FALLO espejo #%s: %s" % (m, merr))
+        item = {"ts": now, "ch": ch, "sev": sev, "emb": emb, "mirrors": mirrors,
+                "title": title}
+        if PRIORIDAD.search(payload) or (now - estado["lastsent"] >= CAP_S
+                                         and not estado["cola"]):
+            enviar(item, role_ids, hooks)
+            estado["lastsent"] = now
+        else:
+            # CAP: NO se tira. Se encola y sale agrupada en el siguiente hueco (multi-embed).
+            estado["cola"].append(item)
+            if len(estado["cola"]) > COLA_MAX:
+                muerta = estado["cola"].pop(0)
+                log("COLA LLENA, perdida: %s" % muerta["title"][:50])
+        drenar(estado, role_ids, hooks)
     return 0
 
 

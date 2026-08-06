@@ -3310,6 +3310,13 @@ def create_app(state):
             return FileResponse(p, media_type="application/javascript")
         return JSONResponse({"error": "uw_widgets.js no encontrado"}, status_code=404)
 
+    @app.get("/gex_heatmap_widget.js")
+    async def gex_heatmap_widget_js():
+        p = os.path.join(os.path.dirname(LIVE_HTML), "gex_heatmap_widget.js")
+        if os.path.exists(p):
+            return FileResponse(p, media_type="application/javascript")
+        return JSONResponse({"error": "gex_heatmap_widget.js no encontrado"}, status_code=404)
+
     @app.get("/indicator_panel.js")
     async def indicator_panel_ui():
         p = os.path.join(os.path.dirname(LIVE_HTML), "indicator_panel.js")
@@ -3353,7 +3360,7 @@ def create_app(state):
                 "uw_darkpool.json", "uw_net_prem.json", "uw_gex_expiry.json")
     @app.get("/data/{fname}")
     async def data_json(fname: str):
-        if not (fname in _DATA_WL or (fname.startswith("strike_heatmap_") and fname.endswith(".json"))):
+        if not (fname in _DATA_WL or ((fname.startswith("strike_heatmap_") or fname.startswith("gex_heatmap_")) and fname.endswith(".json"))):
             return JSONResponse({"error": "no servido"}, status_code=404)
         p = os.path.join(REPO, "data", os.path.basename(fname))
         if not os.path.exists(p):

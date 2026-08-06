@@ -776,6 +776,21 @@
 <div id="wgmenu"></div>
 <div id="wdock" class="off">
 
+  <!-- Net GEX Heat Map (Yunior 2026-08-05): EL widget por defecto del panel derecho.
+       Matriz strike x vencimiento estilo Exposure; lo pinta charts/gex_heatmap_widget.js
+       desde data/gex_heatmap_<sym>.json (UW greek-exposure/strike-expiry). -->
+  <div class="wgt" id="wgt-gexheat">
+    <div class="wghdr">
+      <span class="wgdrag">⠿⠿</span><span class="wgname">Net GEX Heat Map</span><button class="wginfo" title="Info" data-widget="gexheat" aria-label="Información sobre Net GEX Heat Map">ⓘ</button><div class="popover-box" data-widget="gexheat"><div class="popover-title">Net GEX Heat Map</div><p><strong>Qué mide:</strong> Net GEX (call+put) por strike × vencimiento, escalado a $ por 1% de movimiento. Verde = dealers amparan (imán/pin). Rojo = amplían (acelerador). Morado = MVC, la celda de mayor |gamma| de la matriz.</p><div class="popover-source"><strong>Fuente:</strong> UW <code>greek-exposure/strike-expiry</code> vía <code>scripts/gex_heatmap.py</code>. La edad del dato se pinta en la cabecera.</div><div class="popover-doctrine"><strong>Doctrina:</strong> MAPA, no gatillo. La columna del viernes que muere = la jaula que se abre el lunes. Celda vacía = sin dato, jamás cero.</div></div>
+      <span class="wgsub">—</span>
+      <button class="wgb wgexp" title="Expandir / contraer">⤢</button>
+      <button class="wgb wgmin" title="Plegar">–</button>
+      <button class="wgb wgx" title="Cerrar">✕</button>
+    </div>
+    <div class="wgbody"></div>
+    <div class="wgrs" title="Arrastra para cambiar la altura"></div>
+  </div>
+
   <div class="wgt" id="wgt-gex">
     <div class="wghdr">
       <span class="wgdrag">⠿⠿</span><span class="wgname">Net GEX por strike</span><button class="wginfo" title="Info" data-widget="gex" aria-label="Información sobre Net GEX por strike">ⓘ</button><div class="popover-box" data-widget="gex"><div class="popover-title">Net GEX por strike</div><p><strong>Qué mide:</strong> Gamma agregada por cada strike de precio. Arriba del flip = dealers amparan (rango). Abajo = amplían (tienden).</p><div class="popover-source"><strong>Fuente:</strong> Snapshot Polygon (cadena completa de opciones, 15min delayed si TWS no disponible).</div><div class="popover-doctrine"><strong>Doctrina:</strong> Muros = imanes (campos de fuerza). Flip = nivel de pivote estructural. Sin dato = confiar en NBBO.</div></div>
@@ -977,6 +992,7 @@
 <script src="order_ticket_ui.js"></script>
 <script src="indicator_panel.js"></script>
 <script src="uw_widgets.js"></script>
+<script src="gex_heatmap_widget.js"></script>
 <script>
 "use strict";
 const LWC = window.LightweightCharts;
@@ -3137,9 +3153,9 @@ chart.subscribeCrosshairMove((param) => {
 //                      construccion no puede taparlo. Expandir un flotante lo re-acopla.
 //   · persistentes  -> abierto/plegado/expandido/posicion/altura en localStorage.
 // Sin frameworks: la CSP del cockpit no admite CDN y el peso importa (Mac de 8 GB).
-const WGT_IDS = ["gex", "liqmap", "prem", "flow", "tech", "ivreg", "rviv", "hmap", "book", "gdecay",
+const WGT_IDS = ["gexheat", "gex", "liqmap", "prem", "flow", "tech", "ivreg", "rviv", "hmap", "book", "gdecay",
                  "dark", "gexexp"];
-const WGT_NAME = { gex: "Net GEX por strike", liqmap: "Mapa de liquidez",
+const WGT_NAME = { gexheat: "Net GEX Heat Map", gex: "Net GEX por strike", liqmap: "Mapa de liquidez",
                    prem: "Net Premiums", flow: "Options Flow Orders", tech: "Technicals",
                    ivreg: "IV Regime", rviv: "RV vs IV", hmap: "Strike Heat Map",
                    book: "Book Quality", gdecay: "Gamma Decay",
@@ -3272,8 +3288,9 @@ const wgDockW = (exp) => {
              : Math.round(Math.min(320, Math.max(210, W * 0.42)));
 };
 
-const wgFresh = () => ({ open: { gex: true, liqmap: true, prem: false, flow: false, tech: false },
-                         float: {}, h: { gex: 320, liqmap: 340, prem: 300, flow: 300, tech: 300 },
+// Yunior 2026-08-05: el Heat Map es EL widget por defecto del panel derecho (el resto se abre a mano).
+const wgFresh = () => ({ open: { gexheat: true },
+                         float: {}, h: { gexheat: 470, gex: 320, liqmap: 340, prem: 300, flow: 300, tech: 300 },
                          min: {}, exp: {} });
 let WG = wgFresh();
 try {
@@ -3282,6 +3299,8 @@ try {
     WG = Object.assign(wgFresh(), s);
     // estados guardados de antes del mapa: se abre una vez para que se descubra
     if (s.open.liqmap === undefined) { WG.open.liqmap = true; WG.h.liqmap = WG.h.liqmap || 340; }
+    // estados guardados de antes del Heat Map: se abre una vez (es el widget por defecto)
+    if (s.open.gexheat === undefined) { WG.open.gexheat = true; WG.h.gexheat = WG.h.gexheat || 470; }
   }
 } catch (e) {}
 const wgSave = () => { try { localStorage.setItem(WG_KEY, JSON.stringify(WG)); } catch (e) {} };

@@ -14,8 +14,8 @@
 // dos ventanas en el mismo puerto se pisan el simbolo. Por eso una ventana = un puerto.
 //
 // build: zsh macapp/build.sh
-//   1 ventana:    open "macapp/ib-trader Cockpit.app"
-//   6 simbolos:   open "…app" --args --windows 6          (puertos 8080..8085)
+//   1 ventana:    open "macapp/ib-trader Cockpit.app"     <- POR DEFECTO
+//   6 simbolos:   open "…app" --args --windows 6          (puertos 8080..8085, opt-in)
 //   a la carta:   open "…app" --args --ports 8080,8083,8085
 
 import Cocoa
@@ -23,7 +23,7 @@ import WebKit
 
 let DEFAULT_URL = "http://127.0.0.1:8080/"
 let MAX_WINDOWS = 12
-let DEFAULT_WINDOW_COUNT = 6
+let DEFAULT_WINDOW_COUNT = 1   // Yunior 2026-08-05: una sola ventana, no 6
 
 struct CanonicalVoiceStatus {
     let ready: Bool

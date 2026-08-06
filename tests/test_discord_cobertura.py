@@ -84,7 +84,10 @@ def _partes(linea):
 # pero al canal de descarte, que nadie mira.
 TITULOS_NUEVOS = [
     ("🇰🇷 KRX NAVER BRIDGE CIEGO", "estado-proveedores"),
-    ("🕳 MANADA MUDA", "estado-proveedores"),
+    # 2026-08-05: MOVIDA a #manada. Es el DENOMINADOR de la senal mas selectiva de la
+    # casa (precedente 21/26=80,8% disparando DANGER cuando 21/30=70% no debia): quien lee
+    # #manada tiene que ver ahi que la manada esta muda, no enterrado en un canal privado.
+    ("🕳 MANADA MUDA", "manada"),
     ("FINNHUB WS", "estado-proveedores"),
     ("🩸 EARNINGS-FALL TGTX -8.0%", "earnings-catalizadores"),
     ("🎯 ZONA NVDA", "senales-flota"),
@@ -278,7 +281,7 @@ def test_dailyplans_no_puede_abortar_por_discord():
 def test_ningun_titulo_nuevo_pisa_una_regla_mas_especifica():
     """Orden de RULES: la primera que casa gana. Ningun titulo nuevo puede robar
     alertas a #criticas ni a #manada."""
-    assert L.classify("🕳 MANADA MUDA | solo 21 de 30 votan")[0] == "estado-proveedores"
+    assert L.classify("🕳 MANADA MUDA | solo 21 de 30 votan")[0] == "manada"
     assert L.classify("🐘 MANADA ALCISTA | 25/30 alineados")[0] == "manada"
     assert L.classify("🇰🇷 KRX NAVER BRIDGE CIEGO | Corea sin datos")[0] == "estado-proveedores"
     assert L.classify("🇰🇷 KOSPI TERREMOTO ALZA | CUSUM +2%")[0] == "criticas"

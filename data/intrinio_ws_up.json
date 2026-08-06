@@ -1,13 +1,13 @@
 {
- "arriba": true,
- "ultimo_sondeo": 1785743186,
- "ultimo_sondeo_et": "2026-08-03 03:46:26",
+ "arriba": false,
+ "ultimo_sondeo": 1785988488,
+ "ultimo_sondeo_et": "2026-08-05 23:54:48",
  "motivo": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
- "intentos": 1,
+ "intentos": 150,
  "provider": "EQUITIES_EDGE",
- "auth_ok": 1785752169,
- "desde": 1785752174,
- "desde_et": "2026-08-03 06:16:14",
+ "auth_ok": 1785975918,
+ "desde": 1785975923,
+ "desde_et": "2026-08-05 20:25:23",
  "simbolos": [
   "QQQ",
   "SPY",
@@ -34,11 +34,16 @@
   "LRCX",
   "SNDK",
   "WDC",
-  "STX"
+  "STX",
+  "HOOD",
+  "PLTR",
+  "MSTR",
+  "COIN"
  ],
  "primera_subida": "2026-08-03 03:47:31 EDT",
- "mensajes": 583,
- "ultimo_mensaje": 1785752463,
- "ts": 1785752464,
- "caida": 1785746005
+ "mensajes": 0,
+ "ultimo_mensaje": 0,
+ "ts": 1785976226,
+ "caida": 1785976227,
+ "canonical_print": false
 }

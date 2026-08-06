@@ -1,0 +1,70 @@
+{
+ "ts": 1785925358,
+ "group": "MAG7",
+ "up": 7,
+ "dn": 0,
+ "n": 7,
+ "total": 7,
+ "score": 1.0,
+ "verdict": "UP",
+ "why": "7/7 arriba, score ponderado +1.00",
+ "members": {
+  "AAPL": {
+   "spot": 311.73,
+   "mom": -0.032,
+   "flip": 307.74,
+   "side": 1,
+   "basis": "flip",
+   "pb": 0.25
+  },
+  "MSFT": {
+   "spot": 494.0,
+   "mom": 0.045,
+   "flip": 485.09,
+   "side": 1,
+   "basis": "flip",
+   "pb": 0.4
+  },
+  "GOOGL": {
+   "spot": 383.04,
+   "mom": 0.17,
+   "flip": 378.77,
+   "side": 1,
+   "basis": "flip",
+   "pb": 1.04
+  },
+  "AMZN": {
+   "spot": 279.07,
+   "mom": 0.054,
+   "flip": 278.76,
+   "side": 1,
+   "basis": "flip",
+   "pb": 0.99
+  },
+  "NVDA": {
+   "spot": 215.99,
+   "mom": -0.005,
+   "flip": 214.14,
+   "side": 1,
+   "basis": "flip",
+   "pb": 0.75
+  },
+  "META": {
+   "spot": 591.1,
+   "mom": 0.003,
+   "flip": 585.11,
+   "side": 1,
+   "basis": "flip",
+   "pb": 0.78
+  },
+  "TSLA": {
+   "spot": 324.06,
+   "mom": -0.085,
+   "flip": 312.29,
+   "side": 1,
+   "basis": "flip",
+   "pb": -0.01
+  }
+ },
+ "skipped": {}
+}

@@ -1,0 +1,424 @@
+{
+ "sym": "PLTR",
+ "spot": 156.9,
+ "asof": 1785988346,
+ "exp": "20260807",
+ "dte": 1.67,
+ "scope": "0DTE",
+ "net_vex": 596966061.9,
+ "vex_peak": 165.0,
+ "vex_profile": [
+  {
+   "strike": 134.0,
+   "vex": -4217839.3
+  },
+  {
+   "strike": 135.0,
+   "vex": -11625272.9
+  },
+  {
+   "strike": 136.0,
+   "vex": -3566793.8
+  },
+  {
+   "strike": 137.0,
+   "vex": -2345035.5
+  },
+  {
+   "strike": 138.0,
+   "vex": -1274127.0
+  },
+  {
+   "strike": 139.0,
+   "vex": -1460411.7
+  },
+  {
+   "strike": 140.0,
+   "vex": -11353781.1
+  },
+  {
+   "strike": 141.0,
+   "vex": -829360.8
+  },
+  {
+   "strike": 142.0,
+   "vex": -1285344.0
+  },
+  {
+   "strike": 143.0,
+   "vex": 1430111.9
+  },
+  {
+   "strike": 144.0,
+   "vex": 3169761.4
+  },
+  {
+   "strike": 145.0,
+   "vex": -3506125.7
+  },
+  {
+   "strike": 146.0,
+   "vex": 2133130.6
+  },
+  {
+   "strike": 147.0,
+   "vex": -6441118.3
+  },
+  {
+   "strike": 148.0,
+   "vex": 12290886.5
+  },
+  {
+   "strike": 149.0,
+   "vex": 17963265.7
+  },
+  {
+   "strike": 150.0,
+   "vex": 49663409.3
+  },
+  {
+   "strike": 152.5,
+   "vex": 15177543.6
+  },
+  {
+   "strike": 155.0,
+   "vex": 58041256.8
+  },
+  {
+   "strike": 157.5,
+   "vex": 44057.0
+  },
+  {
+   "strike": 160.0,
+   "vex": -13396223.5
+  },
+  {
+   "strike": 162.5,
+   "vex": 47134913.3
+  },
+  {
+   "strike": 165.0,
+   "vex": 172932615.2
+  },
+  {
+   "strike": 167.5,
+   "vex": 85392894.1
+  },
+  {
+   "strike": 170.0,
+   "vex": 130696002.6
+  },
+  {
+   "strike": 175.0,
+   "vex": 37540599.3
+  },
+  {
+   "strike": 180.0,
+   "vex": 24657048.1
+  }
+ ],
+ "net_charm": -81691396.7,
+ "charm_peak": 165.0,
+ "charm_profile": [
+  {
+   "strike": 134.0,
+   "charm": 2934664.1
+  },
+  {
+   "strike": 135.0,
+   "charm": 10155540.1
+  },
+  {
+   "strike": 136.0,
+   "charm": 2362980.2
+  },
+  {
+   "strike": 137.0,
+   "charm": 1614887.9
+  },
+  {
+   "strike": 138.0,
+   "charm": 1579860.5
+  },
+  {
+   "strike": 139.0,
+   "charm": 1447133.9
+  },
+  {
+   "strike": 140.0,
+   "charm": 11662634.1
+  },
+  {
+   "strike": 141.0,
+   "charm": 1316691.6
+  },
+  {
+   "strike": 142.0,
+   "charm": 1664191.9
+  },
+  {
+   "strike": 143.0,
+   "charm": 790045.0
+  },
+  {
+   "strike": 144.0,
+   "charm": 61560.4
+  },
+  {
+   "strike": 145.0,
+   "charm": 6808435.2
+  },
+  {
+   "strike": 146.0,
+   "charm": 493880.4
+  },
+  {
+   "strike": 147.0,
+   "charm": 3697058.9
+  },
+  {
+   "strike": 148.0,
+   "charm": -1283773.8
+  },
+  {
+   "strike": 149.0,
+   "charm": -1344160.9
+  },
+  {
+   "strike": 150.0,
+   "charm": 3946589.4
+  },
+  {
+   "strike": 152.5,
+   "charm": 1966565.4
+  },
+  {
+   "strike": 155.0,
+   "charm": -7235379.7
+  },
+  {
+   "strike": 157.5,
+   "charm": -987673.1
+  },
+  {
+   "strike": 160.0,
+   "charm": -5960341.4
+  },
+  {
+   "strike": 162.5,
+   "charm": -11028803.4
+  },
+  {
+   "strike": 165.0,
+   "charm": -39557258.0
+  },
+  {
+   "strike": 167.5,
+   "charm": -19685506.6
+  },
+  {
+   "strike": 170.0,
+   "charm": -30861264.1
+  },
+  {
+   "strike": 175.0,
+   "charm": -9498367.7
+  },
+  {
+   "strike": 180.0,
+   "charm": -6751587.1
+  }
+ ],
+ "charm_why": null,
+ "pressure": 68,
+ "pressure_lab": "PIN fuerte",
+ "iv_atm": 0.8117,
+ "em": 8.62,
+ "net_gex": 48388349.8,
+ "regime": "POS",
+ "flip": 149.93,
+ "flip_static": 154.99,
+ "call_wall": 165.0,
+ "put_wall": 155.0,
+ "abs_wall": 165.0,
+ "poc_dom": "100%C",
+ "call_wall_gex": 16406705.7,
+ "put_wall_gex": -12501171.5,
+ "abs_wall_gex": 16406705.7,
+ "oi_call_wall": 165.0,
+ "oi_put_wall": 150.0,
+ "near_call_wall": false,
+ "near_put_wall": false,
+ "near_flip": false,
+ "profile": [
+  {
+   "strike": 134.0,
+   "gex": 423733.3
+  },
+  {
+   "strike": 135.0,
+   "gex": 1544711.9
+  },
+  {
+   "strike": 136.0,
+   "gex": 376919.5
+  },
+  {
+   "strike": 137.0,
+   "gex": 270242.6
+  },
+  {
+   "strike": 138.0,
+   "gex": 275039.8
+  },
+  {
+   "strike": 139.0,
+   "gex": 263680.8
+  },
+  {
+   "strike": 140.0,
+   "gex": 2248965.3
+  },
+  {
+   "strike": 141.0,
+   "gex": 268727.6
+  },
+  {
+   "strike": 142.0,
+   "gex": 366233.4
+  },
+  {
+   "strike": 143.0,
+   "gex": 191947.8
+  },
+  {
+   "strike": 144.0,
+   "gex": 9347.4
+  },
+  {
+   "strike": 145.0,
+   "gex": 1888278.2
+  },
+  {
+   "strike": 146.0,
+   "gex": 146732.6
+  },
+  {
+   "strike": 147.0,
+   "gex": 1272255.6
+  },
+  {
+   "strike": 148.0,
+   "gex": -486286.8
+  },
+  {
+   "strike": 149.0,
+   "gex": -564509.1
+  },
+  {
+   "strike": 150.0,
+   "gex": 2127804.2
+  },
+  {
+   "strike": 152.5,
+   "gex": 1820552.7
+  },
+  {
+   "strike": 155.0,
+   "gex": -12501171.5
+  },
+  {
+   "strike": 157.5,
+   "gex": 2477794.0
+  },
+  {
+   "strike": 160.0,
+   "gex": 5160076.0
+  },
+  {
+   "strike": 162.5,
+   "gex": 6324789.0
+  },
+  {
+   "strike": 165.0,
+   "gex": 16406705.7
+  },
+  {
+   "strike": 167.5,
+   "gex": 6501457.5
+  },
+  {
+   "strike": 170.0,
+   "gex": 8448917.2
+  },
+  {
+   "strike": 175.0,
+   "gex": 1957702.6
+  },
+  {
+   "strike": 180.0,
+   "gex": 1167702.6
+  }
+ ],
+ "call_wall_kind": "pin",
+ "call_wall_regime": "POS",
+ "call_wall_net": 16406705.7,
+ "put_wall_kind": "pin",
+ "put_wall_regime": "POS",
+ "put_wall_net": -12501171.5,
+ "abs_wall_kind": "pin",
+ "abs_wall_regime": "POS",
+ "abs_wall_net": 16406705.7,
+ "gamma_ok": true,
+ "regime_scope": "0DTE",
+ "greeks_ok_pct": 0.8621,
+ "chain_src": "polygon",
+ "chain_ts": 1785988308.0,
+ "chain_age_s": 38.5763,
+ "stale": false,
+ "stale_reason": null,
+ "regime_raw": "POS",
+ "regime_why": null,
+ "parity_ok_pct": 0.0476,
+ "net_gex_parity_lo": 61531077.368,
+ "net_gex_parity_hi": 68740005.1766,
+ "quotes_ok": false,
+ "session": "fuera_de_rth",
+ "band_used": 0.15,
+ "band_fetch": 0.15,
+ "n_expiries": 4,
+ "exps_en_fichero": [
+  "20260807",
+  "20260814",
+  "20260821",
+  "20260828"
+ ],
+ "rows_total": 204,
+ "n_candidates": 58,
+ "n_gamma_ok": 50,
+ "n_no_greeks": 8,
+ "n_iv_provider": 50,
+ "n_iv_inverted": 0,
+ "iv_source": "provider",
+ "exp_rolled": false,
+ "roll_reason": null,
+ "degraded_reason": null,
+ "gross_gex": 75492284.6405,
+ "bifurcation": 1.5601,
+ "hhi": 0.1121,
+ "n_strikes_populated": 27,
+ "chain_path": "data/opt_chain_pltr.txt",
+ "flip_live": 154.99,
+ "flip_src": "static_no_iv",
+ "flip_why": "menos de 3 IVs distintas en la banda: el barrido no es fiable, se usa el perfil estatico -> peso del factor flip x0.5",
+ "roots": [
+  155.06,
+  154.99
+ ],
+ "trapdoor_root": 155.06,
+ "flip_open": 149.93,
+ "frozen_at": 1785937887,
+ "frozen_day": "2026-08-05",
+ "spot_src": "intrinio_quote",
+ "spot_age_s": 13914.0
+}

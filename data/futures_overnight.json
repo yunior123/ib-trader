@@ -1,77 +1,77 @@
 {
- "ts": 1785752421,
- "et": "2026-08-03 06:20:26",
+ "ts": 1785988517,
+ "et": "2026-08-05 23:55:33",
  "futuros": [
   {
    "fuente": "yfinance",
-   "last": 28538.0,
-   "prev_close": 28674.5,
+   "last": 29550.0,
+   "prev_close": 29890.0,
    "rango": [
-    28471.75,
-    28688.5
+    29454.25,
+    30074.0
    ],
-   "lag_s": 621.6,
-   "pct": -0.476,
+   "lag_s": 617.5,
+   "pct": -1.138,
    "nombre": "NQ",
    "etiqueta": "Nasdaq-100 E-mini",
    "cash_proxy": "QQQ",
    "implied_open": {
     "simbolo": "QQQ",
-    "cierre_previo": 691.41,
-    "apertura_implicita": 688.1189,
-    "delta": -3.2911
+    "cierre_previo": 716.501,
+    "apertura_implicita": 708.3472,
+    "delta": -8.1538
    }
   },
   {
    "fuente": "yfinance",
-   "last": 7558.5,
-   "prev_close": 7562.25,
+   "last": 7761.25,
+   "prev_close": 7792.0,
    "rango": [
-    7547.5,
-    7567.0
+    7745.75,
+    7820.25
    ],
-   "lag_s": 621.6,
-   "pct": -0.05,
+   "lag_s": 617.5,
+   "pct": -0.395,
    "nombre": "ES",
    "etiqueta": "S&P 500 E-mini",
    "cash_proxy": "SPY",
    "implied_open": {
     "simbolo": "SPY",
-    "cierre_previo": 750.66,
-    "apertura_implicita": 750.2847,
-    "delta": -0.3753
+    "cierre_previo": 771.03,
+    "apertura_implicita": 767.9844,
+    "delta": -3.0456
    }
   },
   {
    "fuente": "yfinance",
-   "last": 4110.5,
-   "prev_close": 4120.0,
+   "last": 4321.5,
+   "prev_close": 4186.6001,
    "rango": [
-    4102.2998,
-    4127.2998
+    4186.0,
+    4363.7002
    ],
-   "lag_s": 621.6,
-   "pct": -0.231,
+   "lag_s": 617.5,
+   "pct": 3.222,
    "nombre": "GC",
    "etiqueta": "Oro",
    "cash_proxy": "GLD",
    "implied_open": {
     "simbolo": "GLD",
-    "cierre_previo": 371.9,
-    "apertura_implicita": 371.0409,
-    "delta": -0.8591
+    "cierre_previo": 392.24,
+    "apertura_implicita": 404.878,
+    "delta": 12.638
    }
   },
   {
    "fuente": "yfinance",
-   "last": 79.72,
-   "prev_close": 79.79,
+   "last": 75.07,
+   "prev_close": 74.58,
    "rango": [
-    78.87,
-    80.66
+    74.45,
+    76.7
    ],
-   "lag_s": 621.6,
-   "pct": -0.088,
+   "lag_s": 617.5,
+   "pct": 0.657,
    "nombre": "CL",
    "etiqueta": "Crudo WTI",
    "cash_proxy": null,
@@ -79,14 +79,14 @@
   },
   {
    "fuente": "yfinance",
-   "last": 2957.8,
-   "prev_close": 2956.0,
+   "last": 3027.8999,
+   "prev_close": 3055.6001,
    "rango": [
-    2952.5,
-    2961.8999
+    3023.3,
+    3058.3
    ],
-   "lag_s": 621.6,
-   "pct": 0.061,
+   "lag_s": 617.5,
+   "pct": -0.907,
    "nombre": "RTY",
    "etiqueta": "Russell 2000",
    "cash_proxy": null,
@@ -95,26 +95,38 @@
  ],
  "corea": {
   "kospi": {
-   "last": 98625.0,
-   "edad_s": 13886.6,
-   "sesion_ref": "2026-07-31",
-   "pct": -9.435
+   "last": 6308.71,
+   "edad_s": 93.2,
+   "sesion_ref": "2026-08-04",
+   "pct": -0.79
+  },
+  "kospi200": {
+   "last": 985.93,
+   "edad_s": 93.2,
+   "sesion_ref": "2026-08-04",
+   "pct": -1.41
+  },
+  "kodex200": {
+   "last": 98955.0,
+   "edad_s": 93.2,
+   "sesion_ref": "2026-08-04",
+   "pct": -1.37
   },
   "samsung": {
-   "last": 239000.0,
-   "edad_s": 13886.6,
-   "sesion_ref": "2026-07-31",
-   "pct": -9.811
+   "last": 231250.0,
+   "edad_s": 93.2,
+   "sesion_ref": "2026-08-04",
+   "pct": -3.646
   },
   "skhynix": {
-   "last": 1568000.0,
-   "edad_s": 13886.6,
-   "sesion_ref": "2026-07-31",
-   "pct": -8.731
+   "last": 1514000.0,
+   "edad_s": 93.2,
+   "sesion_ref": "2026-08-04",
+   "pct": -3.995
   }
  },
  "avisos": [
-  "Databento GLBX fuera de licencia para la sesion viva (Part or all of your request for dataset 'GLBX.MDP3' requires a subscription and/or license to access. Try again with an end time before 2026-08-03T02:20:21.989491000Z.) — la fila viva sale de yfinance"
+  "Databento GLBX fuera de licencia para la sesion viva (Part or all of your request for dataset 'GLBX.MDP3' requires a subscription and/or license to access. Try again with an end time before 2026-08-05T19:55:21.456351000Z.) — la fila viva sale de yfinance"
  ],
  "nota": "Databento GLBX.MDP3 (historico) ~12 min de retraso medido; yfinance ~11 min. NINGUNA es tiempo real: esto describe el HUECO, no dispara ordenes."
 }

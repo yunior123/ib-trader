@@ -3856,13 +3856,524 @@
    "bytes": 1621223,
    "date": "2026-07-31",
    "path": "data/history/2026-07-31/chain_full_xsp.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 370130,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_aapl.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1056135,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_amd.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 420050,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_amzn.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 764977,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_asml.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 582691,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_avgo.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 247008,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_dia.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 269582,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_dram.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 325633,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_ewy.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 661627,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_gld.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 460816,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_googl.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 584094,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_intc.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 813165,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_iwm.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 287574,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_lrcx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1004659,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_meta.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 516822,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_msft.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1412925,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_mu.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 2494480,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_ndx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 134345,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_nflx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 60377,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_nok.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 342499,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_nvda.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 180986,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_qcom.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1457818,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_qqq.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 258510,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_skhy.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 860729,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_smh.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 846468,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_sndk.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 287961,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_spcx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 2317047,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_spx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1519923,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_spy.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 582691,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_stx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 744474,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_tsla.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 264932,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_tsm.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 196983,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_txn.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 474659,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_wdc.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 237585,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_xlk.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1482193,
+   "date": "2026-08-02",
+   "path": "data/history/2026-08-02/chain_full_xsp.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 414419,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_aapl.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1150275,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_amd.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 449950,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_amzn.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 790658,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_asml.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 651914,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_avgo.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 320852,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_be.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 255944,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_dia.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 273567,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_dram.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 335889,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_ewy.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 699237,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_gld.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 252085,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_glw.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 513409,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_googl.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 649667,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_intc.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 831555,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_iwm.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 294862,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_lrcx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1100877,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_meta.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 679590,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_msft.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1479867,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_mu.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 296853,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_nbis.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 2665624,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_ndx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 137582,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_nflx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 62145,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_nok.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 382039,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_nvda.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 191019,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_qcom.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1575426,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_qqq.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 267176,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_skhy.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 939056,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_smh.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 898411,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_sndk.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 283081,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_spcx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 2352308,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_spx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1537110,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_spy.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 578129,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_stx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 827878,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_tsla.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 273730,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_tsm.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 237723,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_txn.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 479485,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_wdc.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 270698,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_xlk.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1527307,
+   "date": "2026-08-03",
+   "path": "data/history/2026-08-03/chain_full_xsp.json"
   }
  ],
  "applied": false,
  "budget_gb": 3.0,
- "date": "2026-08-02",
- "history_bytes": 742353132,
- "history_gb": 0.7424,
+ "date": "2026-08-05",
+ "history_bytes": 1989419406,
+ "history_gb": 1.9894,
  "loose_days_kept": 2,
- "updated": 1785702320
+ "updated": 1785961529
 }

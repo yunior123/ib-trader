@@ -1,6 +1,6 @@
 {
  "conectado": true,
- "desde": 1785752169,
+ "desde": 1785982882,
  "simbolos": [
   "QQQ",
   "SPY",
@@ -24,17 +24,329 @@
   "NOK",
   "GLD",
   "XLK",
+  "EWY",
+  "DRAM",
+  "SPCX",
+  "SKHY",
   "LRCX",
   "SNDK",
   "WDC",
-  "STX"
+  "STX",
+  "HOOD",
+  "PLTR",
+  "MSTR",
+  "COIN",
+  "CRWV",
+  "RKLB"
  ],
  "fuente": "finnhub",
  "nbbo": null,
  "nbbo_motivo": "Finnhub gratis no trae libro: no se escribe nbbo_*",
- "ts": 1785752464,
- "trades": 23,
- "ultimo_trade": 1785752464,
+ "ts": 1785988531,
+ "trades": 0,
+ "ultimo_trade": 0,
  "error": "ConnectionClosedError: no close frame received or sent",
- "caidas": 1
+ "caidas": 2,
+ "latido": 1785988531,
+ "mudo_s": 5649.1,
+ "mudo": false,
+ "rth": false,
+ "sesion_s": 5649.1,
+ "por_simbolo": {
+  "QQQ": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "SPY": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "NVDA": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "TSLA": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "MU": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "SMH": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "AMD": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "AAPL": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "MSFT": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "META": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "AMZN": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "GOOGL": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "INTC": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "TSM": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "ASML": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "TXN": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "QCOM": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "AVGO": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "NFLX": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "NOK": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "GLD": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "XLK": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "EWY": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "DRAM": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "SPCX": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "SKHY": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "LRCX": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "SNDK": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "WDC": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "STX": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "HOOD": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "PLTR": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "MSTR": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "COIN": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "CRWV": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  },
+  "RKLB": {
+   "n": 0,
+   "ultimo": 0,
+   "px": null,
+   "vol": 0.0
+  }
+ },
+ "print_edad_s": {
+  "QQQ": 14425.8,
+  "SPY": 19772.5,
+  "NVDA": 14606.1,
+  "TSLA": 14355.5,
+  "MU": 14204.9,
+  "SMH": 24492.9,
+  "AMD": 17733.9,
+  "AAPL": 17764.2,
+  "MSFT": 14999.9,
+  "META": 16754.2,
+  "AMZN": 17464.1,
+  "GOOGL": 15194.2,
+  "INTC": 16132.1,
+  "TSM": 27862.9,
+  "ASML": 22322.3,
+  "TXN": 28166.2,
+  "QCOM": 27558.8,
+  "AVGO": 18230.2,
+  "NFLX": 15981.8,
+  "NOK": 27175.1,
+  "GLD": 14793.4,
+  "XLK": 28231.6,
+  "EWY": 28544.7,
+  "DRAM": 28540.9,
+  "SPCX": 14363.6,
+  "SKHY": 15018.3,
+  "LRCX": 21798.8,
+  "SNDK": 14364.2,
+  "WDC": 14754.3,
+  "STX": 14828.4,
+  "HOOD": 14304.7,
+  "PLTR": 16311.3,
+  "MSTR": 24412.3,
+  "COIN": 15207.4,
+  "CRWV": 15219.2,
+  "RKLB": 14958.9
+ },
+ "sin_print": [],
+ "print_rancio": [
+  "AAPL",
+  "AMD",
+  "AMZN",
+  "ASML",
+  "AVGO",
+  "COIN",
+  "CRWV",
+  "DRAM",
+  "EWY",
+  "GLD",
+  "GOOGL",
+  "HOOD",
+  "INTC",
+  "LRCX",
+  "META",
+  "MSFT",
+  "MSTR",
+  "MU",
+  "NFLX",
+  "NOK",
+  "NVDA",
+  "PLTR",
+  "QCOM",
+  "QQQ",
+  "RKLB",
+  "SKHY",
+  "SMH",
+  "SNDK",
+  "SPCX",
+  "SPY",
+  "STX",
+  "TSLA",
+  "TSM",
+  "TXN",
+  "WDC",
+  "XLK"
+ ],
+ "pid": 1344,
+ "arranque": 1785952728
 }

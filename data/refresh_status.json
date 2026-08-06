@@ -1,45 +1,45 @@
 {
- "epoch": 1785756407,
- "local": "2026-08-03 07:26:47",
+ "epoch": 1785988522,
+ "local": "2026-08-05 23:55:22",
  "servicio": "scripts/levels_refresh_daemon.py",
- "fase": "premarket",
- "fase_why": "04:00-09:30",
+ "fase": "noche",
+ "fase_why": "despues de las 20:00",
  "cadencia_s": {
-  "levels": 120,
-  "gex": 120,
-  "vix": 60
+  "levels": 600,
+  "gex": 600,
+  "vix": 600
  },
  "ultimo_epoch": {
-  "levels": 1785756339,
-  "gex": 1785756345,
-  "vix": 1785756407
+  "levels": 1785988347,
+  "gex": 1785988522,
+  "vix": 1785988348
  },
  "proximo_en_s": {
-  "levels": 52.8,
-  "gex": 58.2,
-  "vix": 60.0
+  "levels": 425.0,
+  "gex": 600.0,
+  "vix": 426.7
  },
  "detalle": {
   "levels": {
-   "ok": 30,
+   "ok": 36,
    "fallos": 0,
-   "edad_max_s": 4.0
+   "edad_max_s": 6.0
   },
   "gex": {
-   "cobertura": "34/35",
-   "chain_age_max_s": 388.2
+   "cobertura": "40/41",
+   "chain_age_max_s": 38.8
   },
   "vix": {
-   "vix": 15.99,
-   "estado": "close",
-   "data_age_s": 227506.0,
+   "vix": 15.81,
+   "estado": "delayed",
+   "data_age_s": 27447.7,
    "banda": "CALM",
    "vx_regime": "CONTANGO"
   }
  },
  "edad_ficheros_s": {
-  "data/gex_snapshot.json": 61.8,
-  "data/vix.json": 0.0,
-  "charts/data/levels_qqq.json": 71.2
+  "data/gex_snapshot.json": 0.0,
+  "data/vix.json": 173.3,
+  "charts/data/levels_qqq.json": 180.9
  }
 }

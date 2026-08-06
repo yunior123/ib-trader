@@ -1,322 +1,376 @@
 {
  "generado_por": "scripts/poly_chain_archive.py",
- "asof": "2026-08-02 16:20:05",
+ "asof": "2026-08-05 14:59:28",
  "criterio": "ensanchar x1.5 hasta que la corona nueva aporte <2% de la gamma bruta; suelo 10%, techo 60%",
  "syms": {
   "QQQ": {
    "band": 0.18,
    "convergido": true,
-   "ring_share": 0.00899,
-   "n": 2914,
+   "ring_share": 0.00446,
+   "n": 2948,
    "pages": 13,
-   "spot": 687.97,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 720.3801,
+   "asof": "2026-08-05 14:59:28"
   },
   "SPY": {
    "band": 0.18,
    "convergido": true,
-   "ring_share": 0.0039,
-   "n": 2916,
+   "ring_share": 0.00132,
+   "n": 3068,
    "pages": 13,
-   "spot": 744.27,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 771.5578,
+   "asof": "2026-08-05 14:59:28"
   },
   "NVDA": {
-   "band": 0.405,
+   "band": 0.27,
    "convergido": true,
-   "ring_share": 0.00546,
-   "n": 664,
+   "ring_share": 0.01258,
+   "n": 618,
    "pages": 4,
-   "spot": 200.78,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 221.7115,
+   "asof": "2026-08-05 14:59:28"
   },
   "TSLA": {
-   "band": 0.6,
+   "band": 0.405,
    "convergido": true,
-   "ring_share": 0.008,
-   "n": 1478,
+   "ring_share": 0.00758,
+   "n": 1358,
    "pages": 7,
-   "spot": 310.02,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 320.6271,
+   "asof": "2026-08-05 14:59:28"
   },
   "MU": {
    "band": 0.6,
-   "convergido": false,
-   "ring_share": 0.0274,
-   "n": 2834,
-   "pages": 13,
-   "spot": 820.56,
-   "asof": "2026-08-02 16:20:05"
+   "convergido": true,
+   "ring_share": 0.00997,
+   "n": 3374,
+   "pages": 14,
+   "spot": 917.478,
+   "asof": "2026-08-05 14:59:28"
   },
   "SMH": {
    "band": 0.405,
    "convergido": true,
-   "ring_share": 0.00805,
-   "n": 1758,
-   "pages": 8,
-   "spot": 540.2,
-   "asof": "2026-08-02 16:20:05"
+   "ring_share": 0.0089,
+   "n": 2040,
+   "pages": 9,
+   "spot": 575.279,
+   "asof": "2026-08-05 14:59:28"
   },
   "AMD": {
    "band": 0.6,
-   "convergido": false,
-   "ring_share": 0.02019,
-   "n": 2126,
-   "pages": 10,
-   "spot": 479.85,
-   "asof": "2026-08-02 16:20:05"
+   "convergido": true,
+   "ring_share": 0.00574,
+   "n": 2564,
+   "pages": 11,
+   "spot": 486.9017,
+   "asof": "2026-08-05 14:59:28"
   },
   "AAPL": {
    "band": 0.27,
    "convergido": true,
-   "ring_share": 0.01148,
-   "n": 724,
+   "ring_share": 0.00221,
+   "n": 820,
    "pages": 5,
-   "spot": 307.98,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 308.9299,
+   "asof": "2026-08-05 14:59:28"
   },
   "MSFT": {
-   "band": 0.27,
+   "band": 0.405,
    "convergido": true,
-   "ring_share": 0.01925,
-   "n": 974,
-   "pages": 5,
-   "spot": 464.38,
-   "asof": "2026-08-02 16:20:05"
+   "ring_share": 0.0019,
+   "n": 1502,
+   "pages": 8,
+   "spot": 490.0758,
+   "asof": "2026-08-05 14:59:28"
   },
   "META": {
-   "band": 0.6,
+   "band": 0.405,
    "convergido": true,
-   "ring_share": 0.00475,
-   "n": 2088,
+   "ring_share": 0.007,
+   "n": 2090,
    "pages": 10,
-   "spot": 557.82,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 583.5226,
+   "asof": "2026-08-05 14:59:28"
   },
   "AMZN": {
-   "band": 0.405,
+   "band": 0.27,
    "convergido": true,
-   "ring_share": 0.00567,
-   "n": 772,
+   "ring_share": 0.0075,
+   "n": 794,
    "pages": 5,
-   "spot": 271.04,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 271.2191,
+   "asof": "2026-08-05 14:59:28"
   },
   "GOOGL": {
-   "band": 0.405,
+   "band": 0.27,
    "convergido": true,
-   "ring_share": 0.00411,
-   "n": 906,
+   "ring_share": 0.01075,
+   "n": 1008,
    "pages": 6,
-   "spot": 355.0,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 361.6817,
+   "asof": "2026-08-05 14:59:28"
   },
   "INTC": {
    "band": 0.6,
-   "convergido": false,
-   "ring_share": 0.0231,
-   "n": 1164,
-   "pages": 6,
-   "spot": 90.06,
-   "asof": "2026-08-02 16:20:05"
+   "convergido": true,
+   "ring_share": 0.00997,
+   "n": 1370,
+   "pages": 7,
+   "spot": 102.001,
+   "asof": "2026-08-05 14:59:28"
   },
   "TSM": {
    "band": 0.405,
    "convergido": true,
-   "ring_share": 0.00955,
-   "n": 496,
+   "ring_share": 0.00526,
+   "n": 512,
    "pages": 4,
-   "spot": 405.03,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 416.2106,
+   "asof": "2026-08-05 14:59:28"
   },
   "ASML": {
-   "band": 0.6,
+   "band": 0.405,
    "convergido": true,
-   "ring_share": 0.00633,
-   "n": 1516,
-   "pages": 7,
-   "spot": 1630.0,
-   "asof": "2026-08-02 16:20:05"
+   "ring_share": 0.01405,
+   "n": 1246,
+   "pages": 6,
+   "spot": 1691.1116,
+   "asof": "2026-08-05 14:59:28"
   },
   "TXN": {
    "band": 0.405,
    "convergido": true,
-   "ring_share": 0.0162,
+   "ring_share": 0.01125,
    "n": 392,
    "pages": 4,
-   "spot": 275.74,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 278.4854,
+   "asof": "2026-08-05 14:59:28"
   },
   "QCOM": {
    "band": 0.6,
-   "convergido": false,
-   "ring_share": 0.03077,
-   "n": 354,
+   "convergido": true,
+   "ring_share": 0.00818,
+   "n": 370,
    "pages": 4,
-   "spot": 147.58,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 157.89,
+   "asof": "2026-08-05 14:59:28"
   },
   "AVGO": {
    "band": 0.405,
    "convergido": true,
-   "ring_share": 0.01735,
-   "n": 1222,
-   "pages": 6,
-   "spot": 389.27,
-   "asof": "2026-08-02 16:20:05"
+   "ring_share": 0.00431,
+   "n": 1440,
+   "pages": 7,
+   "spot": 421.0074,
+   "asof": "2026-08-05 14:59:28"
   },
   "NFLX": {
-   "band": 0.405,
+   "band": 0.27,
    "convergido": true,
-   "ring_share": 0.00952,
-   "n": 242,
+   "ring_share": 0.01503,
+   "n": 208,
    "pages": 3,
-   "spot": 71.7,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 73.4147,
+   "asof": "2026-08-05 14:59:28"
   },
   "NOK": {
    "band": 0.6,
    "convergido": false,
-   "ring_share": 0.02464,
-   "n": 114,
+   "ring_share": 0.02602,
+   "n": 120,
    "pages": 3,
-   "spot": 9.11,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 9.675,
+   "asof": "2026-08-05 14:59:28"
   },
   "GLD": {
    "band": 0.18,
    "convergido": true,
-   "ring_share": 0.01464,
-   "n": 1288,
-   "pages": 7,
-   "spot": 371.1,
-   "asof": "2026-08-02 16:20:05"
+   "ring_share": 0.01252,
+   "n": 1470,
+   "pages": 8,
+   "spot": 390.8158,
+   "asof": "2026-08-05 14:59:28"
   },
   "XLK": {
-   "band": 0.27,
+   "band": 0.405,
    "convergido": true,
-   "ring_share": 0.01816,
-   "n": 462,
+   "ring_share": 0.01267,
+   "n": 514,
    "pages": 4,
-   "spot": 174.89,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 187.4247,
+   "asof": "2026-08-05 14:59:28"
   },
   "EWY": {
    "band": 0.6,
-   "convergido": false,
-   "ring_share": 0.03939,
-   "n": 628,
+   "convergido": true,
+   "ring_share": 0.00943,
+   "n": 658,
    "pages": 5,
-   "spot": 156.88,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 171.14,
+   "asof": "2026-08-05 14:59:28"
   },
   "DRAM": {
    "band": 0.6,
-   "convergido": false,
-   "ring_share": 0.04928,
-   "n": 498,
+   "convergido": true,
+   "ring_share": 0.01345,
+   "n": 512,
    "pages": 4,
-   "spot": 49.98,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 54.89,
+   "asof": "2026-08-05 14:59:28"
   },
   "SPCX": {
    "band": 0.6,
-   "convergido": false,
-   "ring_share": 0.10082,
-   "n": 520,
+   "convergido": true,
+   "ring_share": 0.01538,
+   "n": 552,
    "pages": 4,
-   "spot": 108.2,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 125.33,
+   "asof": "2026-08-05 14:59:28"
   },
   "SKHY": {
    "band": 0.6,
    "convergido": false,
-   "ring_share": 0.08418,
-   "n": 500,
+   "ring_share": 0.03184,
+   "n": 518,
    "pages": 4,
-   "spot": 143.0,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 154.38,
+   "asof": "2026-08-05 14:59:28"
   },
   "LRCX": {
    "band": 0.6,
    "convergido": true,
-   "ring_share": 0.01855,
-   "n": 554,
+   "ring_share": 0.0092,
+   "n": 602,
    "pages": 4,
-   "spot": 293.02,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 311.9986,
+   "asof": "2026-08-05 14:59:28"
   },
   "SNDK": {
    "band": 0.6,
    "convergido": false,
-   "ring_share": 0.12964,
-   "n": 1566,
+   "ring_share": 0.04853,
+   "n": 1770,
    "pages": 8,
-   "spot": 1213.0,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 1404.8083,
+   "asof": "2026-08-05 14:59:28"
   },
   "WDC": {
    "band": 0.6,
    "convergido": false,
-   "ring_share": 0.05357,
-   "n": 926,
+   "ring_share": 0.02297,
+   "n": 1002,
    "pages": 6,
-   "spot": 542.0,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 546.7913,
+   "asof": "2026-08-05 14:59:28"
   },
   "STX": {
    "band": 0.6,
-   "convergido": false,
-   "ring_share": 0.03289,
-   "n": 1124,
+   "convergido": true,
+   "ring_share": 0.01238,
+   "n": 1140,
    "pages": 6,
-   "spot": 853.0,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 871.6245,
+   "asof": "2026-08-05 14:59:28"
+  },
+  "HOOD": {
+   "band": 0.6,
+   "convergido": true,
+   "ring_share": 0.00428,
+   "n": 392,
+   "pages": 4,
+   "spot": 93.7201,
+   "asof": "2026-08-05 14:59:28"
+  },
+  "PLTR": {
+   "band": 0.405,
+   "convergido": true,
+   "ring_share": 0.00906,
+   "n": 464,
+   "pages": 4,
+   "spot": 159.2609,
+   "asof": "2026-08-05 14:59:28"
+  },
+  "MSTR": {
+   "band": 0.6,
+   "convergido": true,
+   "ring_share": 0.00854,
+   "n": 410,
+   "pages": 4,
+   "spot": 97.4999,
+   "asof": "2026-08-05 14:59:28"
+  },
+  "COIN": {
+   "band": 0.6,
+   "convergido": true,
+   "ring_share": 0.00654,
+   "n": 400,
+   "pages": 4,
+   "spot": 151.3795,
+   "asof": "2026-08-05 14:59:28"
+  },
+  "CRWV": {
+   "band": 0.6,
+   "convergido": false,
+   "ring_share": 0.02368,
+   "n": 522,
+   "pages": 4,
+   "spot": 91.471,
+   "asof": "2026-08-05 14:59:28"
+  },
+  "RKLB": {
+   "band": 0.6,
+   "convergido": false,
+   "ring_share": 0.03912,
+   "n": 446,
+   "pages": 4,
+   "spot": 74.57,
+   "asof": "2026-08-05 14:59:28"
   },
   "SPX": {
    "band": 0.18,
    "convergido": true,
-   "ring_share": 0.00483,
-   "n": 6952,
-   "pages": 29,
-   "spot": 7489.7202,
-   "asof": "2026-08-02 16:20:05"
+   "ring_share": 0.0001,
+   "n": 7478,
+   "pages": 32,
+   "spot": 7741.5,
+   "asof": "2026-08-05 14:59:28"
   },
   "XSP": {
    "band": 0.18,
    "convergido": true,
-   "ring_share": 0.00092,
-   "n": 4512,
+   "ring_share": 0.00157,
+   "n": 4514,
    "pages": 19,
-   "spot": 748.97,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 773.95,
+   "asof": "2026-08-05 14:59:28"
   },
   "NDX": {
    "band": 0.18,
    "convergido": true,
    "ring_share": 0.0,
-   "n": 7520,
-   "pages": 32,
-   "spot": 28274.1953,
-   "asof": "2026-08-02 16:20:05"
+   "n": 8380,
+   "pages": 35,
+   "spot": 29617.0605,
+   "asof": "2026-08-05 14:59:28"
   },
   "DIA": {
    "band": 0.18,
    "convergido": true,
-   "ring_share": 0.00125,
-   "n": 470,
-   "pages": 4,
-   "spot": 524.32,
-   "asof": "2026-08-02 16:20:05"
+   "ring_share": 0.00116,
+   "n": 610,
+   "pages": 5,
+   "spot": 540.43,
+   "asof": "2026-08-05 14:59:28"
   },
   "IWM": {
    "band": 0.18,
    "convergido": true,
-   "ring_share": 0.00461,
-   "n": 1636,
+   "ring_share": 0.00579,
+   "n": 1678,
    "pages": 8,
-   "spot": 291.2,
-   "asof": "2026-08-02 16:20:05"
+   "spot": 301.71,
+   "asof": "2026-08-05 14:59:28"
   }
  }
 }

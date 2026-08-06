@@ -131,6 +131,31 @@ def send(channel, embed=None, content=None, mention_role_id=None, hooks=None):
                  {"Content-Type": "application/json", "User-Agent": UA})
 
 
+MAX_EMBEDS = 10                      # tope de Discord por mensaje
+
+
+def send_many(channel, embeds, mention_role_id=None, hooks=None):
+    """Varios embeds en UN solo POST (tope 10). Para vaciar una rafaga sin perder alertas.
+
+    Medido 2026-08-05: el cap 1/5 s del relé descartaba el 18-21% del embudo (200 de 909 en
+    34,5 h), y 44 de esas caidas fueron en la ventana de oro 09:00-10:00. Agrupar cuesta un
+    POST en vez de N y no rompe el limite de Discord.
+    """
+    hooks = hooks if hooks is not None else W.load()
+    url = hooks.get(channel)
+    if not url:
+        return False, "sin webhook para #%s (corre discord_webhooks.py)" % channel
+    if not embeds:
+        return False, "sin embeds: no se publica"
+    payload = {"embeds": embeds[:MAX_EMBEDS],
+               "allowed_mentions": {"parse": [], "roles": []}}
+    if mention_role_id:
+        payload["content"] = ("<@&%s>" % mention_role_id)[:MAX_CONTENT]
+        payload["allowed_mentions"]["roles"] = [str(mention_role_id)]
+    return _post(url + "?wait=true", json.dumps(payload).encode("utf-8"),
+                 {"Content-Type": "application/json", "User-Agent": UA})
+
+
 def send_file(channel, path, content=None, embed=None, hooks=None):
     """Adjunta un fichero (PDF de plan, informe). multipart a mano: sin dependencias nuevas."""
     hooks = hooks if hooks is not None else W.load()

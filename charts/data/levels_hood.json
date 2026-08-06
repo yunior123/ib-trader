@@ -1,0 +1,435 @@
+{
+ "sym": "HOOD",
+ "spot": 92.76,
+ "asof": 1785988346,
+ "exp": "20260807",
+ "dte": 1.67,
+ "scope": "0DTE",
+ "net_vex": 55261815.8,
+ "vex_peak": 100.0,
+ "vex_profile": [
+  {
+   "strike": 79.0,
+   "vex": 2409488.2
+  },
+  {
+   "strike": 80.0,
+   "vex": 2693967.0
+  },
+  {
+   "strike": 81.0,
+   "vex": 393539.2
+  },
+  {
+   "strike": 82.0,
+   "vex": 1366561.6
+  },
+  {
+   "strike": 83.0,
+   "vex": 731205.5
+  },
+  {
+   "strike": 84.0,
+   "vex": 2888695.9
+  },
+  {
+   "strike": 85.0,
+   "vex": 3233091.2
+  },
+  {
+   "strike": 86.0,
+   "vex": 627087.5
+  },
+  {
+   "strike": 87.0,
+   "vex": 2715616.8
+  },
+  {
+   "strike": 88.0,
+   "vex": 2256205.0
+  },
+  {
+   "strike": 89.0,
+   "vex": -15590527.1
+  },
+  {
+   "strike": 90.0,
+   "vex": -5363267.7
+  },
+  {
+   "strike": 91.0,
+   "vex": -2943957.9
+  },
+  {
+   "strike": 92.0,
+   "vex": -3672514.0
+  },
+  {
+   "strike": 93.0,
+   "vex": 2953786.4
+  },
+  {
+   "strike": 94.0,
+   "vex": 6216048.4
+  },
+  {
+   "strike": 95.0,
+   "vex": 8677667.8
+  },
+  {
+   "strike": 96.0,
+   "vex": 4315292.8
+  },
+  {
+   "strike": 97.0,
+   "vex": 4004211.7
+  },
+  {
+   "strike": 98.0,
+   "vex": 4247296.8
+  },
+  {
+   "strike": 99.0,
+   "vex": 4192733.8
+  },
+  {
+   "strike": 100.0,
+   "vex": 16766898.1
+  },
+  {
+   "strike": 101.0,
+   "vex": 3231335.3
+  },
+  {
+   "strike": 102.0,
+   "vex": 2341973.2
+  },
+  {
+   "strike": 103.0,
+   "vex": 1866082.4
+  },
+  {
+   "strike": 104.0,
+   "vex": 1258797.4
+  },
+  {
+   "strike": 105.0,
+   "vex": 3002837.5
+  },
+  {
+   "strike": 106.0,
+   "vex": 441663.0
+  }
+ ],
+ "net_charm": -14509922.7,
+ "charm_peak": 100.0,
+ "charm_profile": [
+  {
+   "strike": 79.0,
+   "charm": -741994.9
+  },
+  {
+   "strike": 80.0,
+   "charm": -764313.6
+  },
+  {
+   "strike": 81.0,
+   "charm": -126116.8
+  },
+  {
+   "strike": 82.0,
+   "charm": -435555.3
+  },
+  {
+   "strike": 83.0,
+   "charm": -159834.9
+  },
+  {
+   "strike": 84.0,
+   "charm": -660328.0
+  },
+  {
+   "strike": 85.0,
+   "charm": -842630.1
+  },
+  {
+   "strike": 86.0,
+   "charm": -51367.1
+  },
+  {
+   "strike": 87.0,
+   "charm": -516054.0
+  },
+  {
+   "strike": 88.0,
+   "charm": -398866.2
+  },
+  {
+   "strike": 89.0,
+   "charm": 3776455.6
+  },
+  {
+   "strike": 90.0,
+   "charm": 1401421.0
+  },
+  {
+   "strike": 91.0,
+   "charm": 730008.4
+  },
+  {
+   "strike": 92.0,
+   "charm": 827973.3
+  },
+  {
+   "strike": 93.0,
+   "charm": -789953.8
+  },
+  {
+   "strike": 94.0,
+   "charm": -1545392.0
+  },
+  {
+   "strike": 95.0,
+   "charm": -2199323.2
+  },
+  {
+   "strike": 96.0,
+   "charm": -1090750.8
+  },
+  {
+   "strike": 97.0,
+   "charm": -1026691.7
+  },
+  {
+   "strike": 98.0,
+   "charm": -1089056.8
+  },
+  {
+   "strike": 99.0,
+   "charm": -1085382.6
+  },
+  {
+   "strike": 100.0,
+   "charm": -4412631.0
+  },
+  {
+   "strike": 101.0,
+   "charm": -851623.5
+  },
+  {
+   "strike": 102.0,
+   "charm": -639851.4
+  },
+  {
+   "strike": 103.0,
+   "charm": -512889.3
+  },
+  {
+   "strike": 104.0,
+   "charm": -343978.3
+  },
+  {
+   "strike": 105.0,
+   "charm": -833215.0
+  },
+  {
+   "strike": 106.0,
+   "charm": -127980.6
+  }
+ ],
+ "charm_why": null,
+ "pressure": 81,
+ "pressure_lab": "PIN fuerte",
+ "iv_atm": 0.8076,
+ "em": 5.07,
+ "net_gex": 28674960.5,
+ "regime": "POS",
+ "flip": 81.6,
+ "flip_static": 88.55,
+ "call_wall": 93.0,
+ "put_wall": 90.0,
+ "abs_wall": 93.0,
+ "poc_dom": "97%C",
+ "call_wall_gex": 6452237.0,
+ "put_wall_gex": 1739025.0,
+ "abs_wall_gex": 6452237.0,
+ "oi_call_wall": 93.0,
+ "oi_put_wall": 80.0,
+ "near_call_wall": true,
+ "near_put_wall": false,
+ "near_flip": false,
+ "profile": [
+  {
+   "strike": 79.0,
+   "gex": -183494.6
+  },
+  {
+   "strike": 80.0,
+   "gex": -200843.4
+  },
+  {
+   "strike": 81.0,
+   "gex": -37319.9
+  },
+  {
+   "strike": 82.0,
+   "gex": -139741.3
+  },
+  {
+   "strike": 83.0,
+   "gex": -56587.5
+  },
+  {
+   "strike": 84.0,
+   "gex": -266017.2
+  },
+  {
+   "strike": 85.0,
+   "gex": -369185.2
+  },
+  {
+   "strike": 86.0,
+   "gex": -29943.4
+  },
+  {
+   "strike": 87.0,
+   "gex": -304932.1
+  },
+  {
+   "strike": 88.0,
+   "gex": -282063.1
+  },
+  {
+   "strike": 89.0,
+   "gex": 3404179.3
+  },
+  {
+   "strike": 90.0,
+   "gex": 1739025.0
+  },
+  {
+   "strike": 91.0,
+   "gex": 1479736.2
+  },
+  {
+   "strike": 92.0,
+   "gex": 4386705.7
+  },
+  {
+   "strike": 93.0,
+   "gex": 6452237.0
+  },
+  {
+   "strike": 94.0,
+   "gex": 3586856.0
+  },
+  {
+   "strike": 95.0,
+   "gex": 3024913.4
+  },
+  {
+   "strike": 96.0,
+   "gex": 1063242.6
+  },
+  {
+   "strike": 97.0,
+   "gex": 790886.0
+  },
+  {
+   "strike": 98.0,
+   "gex": 691233.8
+  },
+  {
+   "strike": 99.0,
+   "gex": 590703.0
+  },
+  {
+   "strike": 100.0,
+   "gex": 2123745.4
+  },
+  {
+   "strike": 101.0,
+   "gex": 366998.0
+  },
+  {
+   "strike": 102.0,
+   "gex": 248416.8
+  },
+  {
+   "strike": 103.0,
+   "gex": 185887.2
+  },
+  {
+   "strike": 104.0,
+   "gex": 114371.5
+  },
+  {
+   "strike": 105.0,
+   "gex": 258313.2
+  },
+  {
+   "strike": 106.0,
+   "gex": 37638.1
+  }
+ ],
+ "call_wall_kind": "pin",
+ "call_wall_regime": "POS",
+ "call_wall_net": 6452237.0,
+ "put_wall_kind": "pin",
+ "put_wall_regime": "POS",
+ "put_wall_net": 1739025.0,
+ "abs_wall_kind": "pin",
+ "abs_wall_regime": "POS",
+ "abs_wall_net": 6452237.0,
+ "gamma_ok": true,
+ "regime_scope": "0DTE",
+ "greeks_ok_pct": 0.8929,
+ "chain_src": "polygon",
+ "chain_ts": 1785988307.0,
+ "chain_age_s": 39.4077,
+ "stale": false,
+ "stale_reason": null,
+ "regime_raw": "POS",
+ "regime_why": null,
+ "parity_ok_pct": 0.4091,
+ "net_gex_parity_lo": 28198566.5818,
+ "net_gex_parity_hi": 29254450.2706,
+ "quotes_ok": false,
+ "session": "fuera_de_rth",
+ "band_used": 0.15,
+ "band_fetch": 0.15,
+ "n_expiries": 4,
+ "exps_en_fichero": [
+  "20260807",
+  "20260814",
+  "20260821",
+  "20260828"
+ ],
+ "rows_total": 220,
+ "n_candidates": 56,
+ "n_gamma_ok": 50,
+ "n_no_greeks": 6,
+ "n_iv_provider": 50,
+ "n_iv_inverted": 0,
+ "iv_source": "provider",
+ "exp_rolled": false,
+ "roll_reason": null,
+ "degraded_reason": null,
+ "gross_gex": 32415216.1766,
+ "bifurcation": 1.1304,
+ "hhi": 0.1024,
+ "n_strikes_populated": 28,
+ "chain_path": "data/opt_chain_hood.txt",
+ "flip_live": 84.14,
+ "flip_src": "repriced",
+ "flip_why": "gamma recomputada a cada spot del barrido (definicion correcta)",
+ "roots": [
+  84.14
+ ],
+ "trapdoor_root": null,
+ "flip_open": 81.6,
+ "frozen_at": 1785936984,
+ "frozen_day": "2026-08-05",
+ "spot_src": "intrinio_quote",
+ "spot_age_s": 13941.0
+}

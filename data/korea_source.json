@@ -8,14 +8,32 @@
   "hanmi",
   "hpsp",
   "isc",
+  "kodex200",
   "kospi",
+  "kospi200",
   "leeno",
   "samsung",
   "skhynix",
   "solbrain",
   "wonikips"
  ],
- "ultimo_sondeo": 1785752455,
- "mercado_abierto": false,
- "barras_cerradas_este_ciclo": 0
+ "tipos": {
+  "dbhitek": "stock",
+  "hanmi": "stock",
+  "hpsp": "stock",
+  "isc": "stock",
+  "kodex200": "stock",
+  "kospi": "index",
+  "kospi200": "index",
+  "leeno": "stock",
+  "samsung": "stock",
+  "skhynix": "stock",
+  "solbrain": "stock",
+  "wonikips": "stock"
+ },
+ "ultimo_sondeo": 1785988542,
+ "mercado_abierto": true,
+ "barras_cerradas_este_ciclo": 0,
+ "barras_de_subasta_este_ciclo": 0,
+ "prevclose_oficiales_persistidos": 0
 }

@@ -1,135 +1,14 @@
 {
- "bytes_today": 76928357,
- "date": "2026-07-31",
- "projected_mb_day": 74.08,
- "rows_today": 2430,
+ "bytes_today": 55551813,
+ "date": "2026-08-05",
+ "projected_mb_day": 53.49,
+ "rows_today": 2911,
  "skipped_already_done": [],
  "slot": "1605",
  "slots_today": 81,
- "stale": [
-  {
-   "age_s": 95646,
-   "sym": "AAPL"
-  },
-  {
-   "age_s": 171951,
-   "sym": "AMD"
-  },
-  {
-   "age_s": 63663,
-   "sym": "AMZN"
-  },
-  {
-   "age_s": 212913,
-   "sym": "ASML"
-  },
-  {
-   "age_s": 212911,
-   "sym": "AVGO"
-  },
-  {
-   "age_s": 212908,
-   "sym": "DRAM"
-  },
-  {
-   "age_s": 212909,
-   "sym": "EWY"
-  },
-  {
-   "age_s": 212910,
-   "sym": "GLD"
-  },
-  {
-   "age_s": 17166,
-   "sym": "GOOGL"
-  },
-  {
-   "age_s": 212914,
-   "sym": "INTC"
-  },
-  {
-   "age_s": 212906,
-   "sym": "LRCX"
-  },
-  {
-   "age_s": 172048,
-   "sym": "META"
-  },
-  {
-   "age_s": 110588,
-   "sym": "MSFT"
-  },
-  {
-   "age_s": 110588,
-   "sym": "MU"
-  },
-  {
-   "age_s": 188843,
-   "sym": "NFLX"
-  },
-  {
-   "age_s": 23869,
-   "sym": "NOK"
-  },
-  {
-   "age_s": 110588,
-   "sym": "NVDA"
-  },
-  {
-   "age_s": 212912,
-   "sym": "QCOM"
-  },
-  {
-   "age_s": 110588,
-   "sym": "QQQ"
-  },
-  {
-   "age_s": 212907,
-   "sym": "SKHY"
-  },
-  {
-   "age_s": 110588,
-   "sym": "SMH"
-  },
-  {
-   "age_s": 212906,
-   "sym": "SNDK"
-  },
-  {
-   "age_s": 101932,
-   "sym": "SPCX"
-  },
-  {
-   "age_s": 17073,
-   "sym": "SPY"
-  },
-  {
-   "age_s": 212904,
-   "sym": "STX"
-  },
-  {
-   "age_s": 212920,
-   "sym": "TSLA"
-  },
-  {
-   "age_s": 212914,
-   "sym": "TSM"
-  },
-  {
-   "age_s": 212913,
-   "sym": "TXN"
-  },
-  {
-   "age_s": 212905,
-   "sym": "WDC"
-  },
-  {
-   "age_s": 212909,
-   "sym": "XLK"
-  }
- ],
- "syms_expected": 30,
- "ts": 1785528502,
+ "stale": [],
+ "syms_expected": 36,
+ "ts": 1785960532,
  "unreadable": [],
  "written": [
   "AAPL",
@@ -137,20 +16,26 @@
   "AMZN",
   "ASML",
   "AVGO",
+  "COIN",
+  "CRWV",
   "DRAM",
   "EWY",
   "GLD",
   "GOOGL",
+  "HOOD",
   "INTC",
   "LRCX",
   "META",
   "MSFT",
+  "MSTR",
   "MU",
   "NFLX",
   "NOK",
   "NVDA",
+  "PLTR",
   "QCOM",
   "QQQ",
+  "RKLB",
   "SKHY",
   "SMH",
   "SNDK",

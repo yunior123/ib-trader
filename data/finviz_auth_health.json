@@ -1,17 +1,18 @@
 {
+ "aviso": "caduca en -4 dia(s) segun FINVIZ_AUTH_EXPIRES",
  "caduca_declarado": "2026-08-01",
  "clave_efectiva": "FINVIZ_AUTH3",
- "dias_restantes": -1,
- "fecha": "2026-08-02",
- "http": 401,
- "motivo": "HTTP 401",
+ "dias_restantes": -4,
+ "fecha": "2026-08-05",
+ "http": 200,
+ "motivo": "3 filas",
  "orden_de_busqueda": [
   "FINVIZ_AUTH3",
   "FINVIZ_AUTH"
  ],
  "origen": "fichero",
- "sano": false,
- "token_cola": "8625",
- "ts": 1785675302,
- "veredicto": "CADUCADO"
+ "sano": true,
+ "token_cola": "2acb",
+ "ts": 1785934503,
+ "veredicto": "SANO_POR_POCO"
 }

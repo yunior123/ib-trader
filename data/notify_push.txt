@@ -498,3 +498,906 @@
 21:47:33 | INTRINIO WS | auth OK equities-edge, socket NO en weekend
 21:47:33 | INTRINIO WS | auth OK equities-edge, socket NO en rth
 21:52:10 | 🕳 CINTA CIEGA | No veo las ballenas de 3 acciones.
+12:38:34 | UW FLOW GOOGL | PUTS ask-side strike 340 exp 02-19 — vol/OI 29.4 (posicion nueva) $893k
+12:39:34 | UW FLOW SMH | CALLS ask-side strike 620 exp 09-04 — premium 2.0M ask-side
+12:40:11 | 🐘 MANADA ALCISTA | 24/26 alineados. Comprar calls.
+12:42:35 | UW FLOW AMD | PUTS ask-side strike 380 exp 12-18 — premium 1.2M ask-side
+12:42:41 | UW FLOW TSLA | CALLS ask-side strike 325 exp 08-05 — vol/OI 14.8 (posicion nueva) $439k
+12:43:41 | UW FLOW SPY | PUTS bid-side strike 750 exp 09-18 — premium 1.3M bid-side
+12:44:42 | UW FLOW QQQ | PUTS bid-side strike 700 exp 09-18 — premium 1.6M bid-side
+12:44:47 | UW FLOW SPY | CALLS bid-side strike 770 exp 08-04 — vol/OI 109.5 (posicion nueva) $327k
+12:46:39 | 🎈 BB REBOTE | spy puede bajar un poco.
+12:46:48 | UW FLOW MU | CALLS ask-side strike 900 exp 08-05 — premium 2.1M ask-side
+12:47:16 | FINVIZ SHORT SQUEEZE · NUEVOS · BUY 1 SELL 0 WATCH 0 | WIX BUY $65.78 +15.7% RVOL 1.5x score 5/7
+12:47:48 | UW FLOW QQQ | CALLS ask-side strike 730 exp 10-16 — premium 2.9M ask-side
+12:47:53 | UW FLOW MSFT | PUTS ask-side strike 495 exp 09-18 — vol/OI 3.4 (posicion nueva) $421k
+12:48:54 | UW FLOW INTC | PUTS bid-side strike 100 exp 08-05 — vol/OI 19.8 (posicion nueva) $681k
+12:50:40 | 🎈 BB REBOTE | smh puede bajar un poco.
+12:50:55 | UW FLOW AAPL | CALLS ask-side strike 302.5 exp 08-05 — vol/OI 5.3 (posicion nueva) $265k
+12:51:55 | UW FLOW SNDK | PUTS ask-side strike 1300 exp 08-07 — vol/OI 4.0 (posicion nueva) $477k
+12:52:00 | UW FLOW GOOGL | CALLS ask-side strike 410 exp 10-16 — vol/OI 4.4 (posicion nueva) $733k
+12:53:01 | UW FLOW QQQ | CALLS ask-side strike 720 exp 08-07 — SWEEP $589k
+12:53:06 | UW FLOW NVDA | PUTS bid-side strike 200 exp 06-17 — premium 1.2M bid-side
+12:54:07 | UW FLOW AMD | CALLS ask-side strike 550 exp 08-05 — vol/OI 2.4 (posicion nueva) $332k
+12:55:07 | UW FLOW QQQ | CALLS ask-side strike 719 exp 08-21 — vol/OI 3.1 (posicion nueva) $387k
+12:56:07 | UW FLOW SMH | CALLS ask-side strike 620 exp 09-04 — premium 1.5M ask-side
+12:56:13 | UW FLOW QQQ | CALLS ask-side strike 725 exp 08-07 — premium 1.8M ask-side
+12:57:13 | UW FLOW QQQ | PUTS bid-side strike 721 exp 08-04 — vol/OI 7416.5 (posicion nueva) $389k
+12:58:14 | UW FLOW GOOGL | PUTS ask-side strike 377.5 exp 08-05 — premium 1.0M ask-side
+12:58:19 | UW FLOW AMD | CALLS ask-side strike 522.5 exp 08-05 — vol/OI 5.3 (posicion nueva) $280k
+12:59:19 | UW FLOW MU | PUTS bid-side strike 870 exp 08-05 — vol/OI 27.7 (posicion nueva) $353k
+12:59:25 | UW FLOW SKHY | CALLS ask-side strike 315 exp 10-16 — vol/OI 127.8 (posicion nueva) $913k
+12:59:30 | UW FLOW QQQ | CALLS bid-side strike 696 exp 08-21 — premium 2.3M bid-side
+13:00:31 | UW FLOW INTC | CALLS ask-side strike 105 exp 08-19 — premium 2.6M ask-side
+13:01:31 | UW FLOW EWY | CALLS bid-side strike 165 exp 08-21 — premium 3.7M bid-side
+13:01:37 | UW FLOW SKHY | CALLS ask-side strike 200 exp 12-17 — SWEEP $992k
+13:02:42 | 🎈 BB REBOTE | qqq puede bajar un poco.
+13:03:37 | UW FLOW SPY | PUTS bid-side strike 800 exp 08-14 — vol/OI 569.0 (posicion nueva) $299k
+13:05:38 | UW FLOW QQQ | CALLS ask-side strike 728 exp 08-14 — vol/OI 2.5 (posicion nueva) $543k
+13:06:38 | UW FLOW QQQ | PUTS ask-side strike 726 exp 08-07 — vol/OI 123.9 (posicion nueva) $457k
+13:07:39 | UW FLOW SPY | PUTS ask-side strike 770 exp 08-04 — vol/OI 38811.5 (posicion nueva) $270k
+13:08:39 | UW FLOW MU | PUTS bid-side strike 860 exp 08-05 — vol/OI 9.5 (posicion nueva) $271k
+13:08:44 | UW FLOW NVDA | CALLS bid-side strike 210 exp 08-05 — vol/OI 6.0 (posicion nueva) $286k
+13:10:45 | UW FLOW AMD | CALLS bid-side strike 530 exp 08-05 — premium 4.2M bid-side
+13:11:45 | UW FLOW SNDK | CALLS bid-side strike 1450 exp 08-07 — premium 3.8M bid-side
+13:13:46 | UW FLOW MU | CALLS bid-side strike 950 exp 08-07 — premium 2.1M bid-side
+13:15:47 | UW FLOW SNDK | PUTS bid-side strike 1045 exp 08-28 — vol/OI 31.7 (posicion nueva) $446k
+13:15:52 | UW FLOW SNDK | PUTS bid-side strike 1050 exp 08-28 — vol/OI 2.3 (posicion nueva) $460k
+13:16:53 | UW FLOW SPY | PUTS bid-side strike 772 exp 08-06 — vol/OI 2318.0 (posicion nueva) $261k
+13:19:16 | 🎈 BB REBOTE | spy puede bajar un poco.
+13:19:54 | UW FLOW AMZN | CALLS ask-side strike 277.5 exp 08-05 — vol/OI 30.9 (posicion nueva) $542k
+13:19:59 | UW FLOW SPY | CALLS bid-side strike 766 exp 08-04 — premium 1.1M bid-side
+13:22:00 | UW FLOW NFLX | CALLS ask-side strike 80 exp 11-20 — premium 2.5M ask-side
+13:27:01 | UW FLOW QQQ | CALLS bid-side strike 723 exp 08-04 — vol/OI 454.8 (posicion nueva) $492k
+13:27:07 | UW FLOW AVGO | CALLS bid-side strike 420 exp 08-21 — premium 2.6M bid-side
+13:27:12 | UW FLOW AMD | CALLS bid-side strike 550 exp 08-05 — premium 1.5M bid-side
+13:28:13 | UW FLOW QQQ | PUTS bid-side strike 718 exp 08-05 — vol/OI 2580.2 (posicion nueva) $261k
+13:28:18 | UW FLOW NVDA | CALLS ask-side strike 212.5 exp 08-05 — vol/OI 16.6 (posicion nueva) $327k
+13:29:18 | 🎈 BB BAND-WALK | nvda sigue subiendo fuerte.
+13:29:18 | 🎈 BB REBOTE | smh puede bajar un poco.
+13:29:19 | UW FLOW SPY | PUTS ask-side strike 800 exp 08-14 — vol/OI 743.0 (posicion nueva) $288k
+13:29:24 | UW FLOW SPY | PUTS bid-side strike 796 exp 08-21 — SWEEP $837k
+13:29:30 | UW FLOW QQQ | CALLS ask-side strike 805 exp 03-19 — premium 3.0M ask-side
+13:31:30 | UW FLOW QQQ | CALLS ask-side strike 900 exp 06-17 — premium 1.9M ask-side
+13:32:31 | UW FLOW SKHY | CALLS ask-side strike 162.5 exp 08-21 — vol/OI 20.7 (posicion nueva) $806k
+13:32:36 | UW FLOW MU | CALLS bid-side strike 900 exp 08-07 — premium 2.7M bid-side
+13:34:37 | UW FLOW TSLA | PUTS bid-side strike 325 exp 08-05 — vol/OI 49.6 (posicion nueva) $750k
+13:34:50 | 🎈 BB REBOTE | qqq puede bajar un poco.
+13:35:37 | UW FLOW QQQ | CALLS ask-side strike 725 exp 08-07 — vol/OI 4.2 (posicion nueva) $524k
+13:37:39 | UW FLOW AMZN | PUTS bid-side strike 280 exp 08-05 — vol/OI 2.3 (posicion nueva) $689k
+13:37:44 | UW FLOW SPY | PUTS bid-side strike 730 exp 08-21 — SWEEP $653k
+13:38:45 | UW FLOW AMD | CALLS bid-side strike 515 exp 08-07 — SWEEP $521k
+13:38:50 | UW FLOW AMD | CALLS bid-side strike 520 exp 08-07 — premium 1.5M bid-side
+13:38:56 | UW FLOW SPY | PUTS ask-side strike 737 exp 08-21 — vol/OI 2.8 (posicion nueva) $428k
+13:39:56 | UW FLOW TSM | CALLS bid-side strike 420 exp 08-21 — premium 2.4M bid-side
+13:40:02 | UW FLOW SPY | CALLS ask-side strike 772 exp 08-04 — vol/OI 1097.9 (posicion nueva) $308k
+13:40:07 | UW FLOW STX | CALLS bid-side strike 900 exp 10-16 — SWEEP $525k
+13:41:08 | UW FLOW SPCX | PUTS bid-side strike 110 exp 08-21 — premium 1.5M bid-side
+13:42:52 | 🎈 BB BAND-WALK | meta sigue subiendo fuerte.
+13:43:08 | UW FLOW SNDK | CALLS bid-side strike 1450 exp 08-07 — premium 1.7M bid-side
+13:44:08 | UW FLOW AMD | CALLS bid-side strike 520 exp 08-05 — vol/OI 8.0 (posicion nueva) $813k
+13:45:09 | UW FLOW AMD | CALLS bid-side strike 530 exp 08-05 — vol/OI 7.6 (posicion nueva) $501k
+13:46:09 | UW FLOW AVGO | PUTS bid-side strike 460 exp 06-17 — premium 4.3M bid-side
+13:46:15 | UW FLOW AVGO | PUTS bid-side strike 460 exp 03-19 — premium 2.0M bid-side
+13:46:20 | UW FLOW SPCX | PUTS bid-side strike 129 exp 08-14 — vol/OI 12.6 (posicion nueva) $631k
+13:47:20 | UW FLOW QQQ | CALLS ask-side strike 724 exp 08-07 — vol/OI 2.2 (posicion nueva) $371k
+13:48:21 | UW FLOW QQQ | CALLS ask-side strike 700 exp 08-21 — premium 4.9M ask-side
+13:50:24 | 🎈 BB REBOTE | spy puede bajar un poco.
+13:51:22 | UW FLOW MU | CALLS ask-side strike 900 exp 08-05 — vol/OI 10.0 (posicion nueva) $500k
+13:51:27 | UW FLOW QQQ | PUTS ask-side strike 718 exp 08-05 — vol/OI 3366.0 (posicion nueva) $388k
+13:51:33 | UW FLOW SNDK | PUTS ask-side strike 1300 exp 08-07 — vol/OI 4.5 (posicion nueva) $971k
+13:52:33 | UW FLOW TSLA | CALLS bid-side strike 360 exp 08-12 — vol/OI 15.6 (posicion nueva) $261k
+13:52:39 | UW FLOW AMD | CALLS bid-side strike 550 exp 08-07 — SWEEP $506k
+13:54:39 | UW FLOW AVGO | PUTS ask-side strike 440 exp 10-16 — SWEEP $863k
+13:54:45 | UW FLOW EWY | PUTS ask-side strike 115 exp 08-14 — vol/OI 9.2 (posicion nueva) $460k
+13:55:45 | UW FLOW SPY | PUTS bid-side strike 700 exp 03-19 — premium 1.2M bid-side
+13:55:51 | UW FLOW AVGO | PUTS bid-side strike 400 exp 10-16 — premium 1.2M bid-side
+13:57:52 | UW FLOW AMD | CALLS bid-side strike 527.5 exp 08-05 — premium 2.1M bid-side
+13:58:52 | UW FLOW AVGO | CALLS bid-side strike 430 exp 09-18 — premium 1.6M bid-side
+13:59:53 | UW FLOW SPY | PUTS ask-side strike 800 exp 08-21 — vol/OI 17.3 (posicion nueva) $293k
+13:59:58 | UW FLOW NVDA | CALLS bid-side strike 207.5 exp 08-14 — premium 3.8M bid-side
+14:00:59 | UW FLOW SNDK | PUTS ask-side strike 1435 exp 08-07 — premium 2.2M ask-side
+14:01:04 | UW FLOW SMH | PUTS ask-side strike 450 exp 01-15 — premium 1.7M ask-side
+14:02:04 | UW FLOW SPY | CALLS bid-side strike 766 exp 08-04 — vol/OI 87.2 (posicion nueva) $266k
+14:02:57 | 🎈 BB REBOTE | spy puede subir un poco.
+14:02:57 | 🎈 BB REBOTE | nvda puede subir un poco.
+14:02:58 | 🎈 BB REBOTE | smh puede subir un poco.
+14:03:05 | UW FLOW SPY | CALLS bid-side strike 770 exp 08-04 — vol/OI 143.3 (posicion nueva) $253k
+14:05:28 | 🎈 BB REBOTE | qqq puede bajar un poco.
+14:06:06 | UW FLOW INTC | CALLS bid-side strike 100 exp 08-21 — premium 1.9M bid-side
+14:06:11 | UW FLOW MU | CALLS bid-side strike 890 exp 08-07 — premium 2.4M bid-side
+14:06:29 | 🎈 BB REBOTE | qqq puede subir un poco.
+14:07:12 | UW FLOW MU | PUTS bid-side strike 850 exp 08-05 — vol/OI 14.6 (posicion nueva) $395k
+14:09:29 | 🎈 BB REBOTE | mu puede subir un poco.
+14:10:12 | UW FLOW AMD | PUTS mid-side strike 540 exp 09-18 — SWEEP $1283k
+14:10:18 | UW FLOW SPY | PUTS bid-side strike 805 exp 08-17 — SWEEP $637k
+14:11:18 | UW FLOW MU | CALLS bid-side strike 880 exp 08-07 — premium 4.0M bid-side
+14:13:19 | UW FLOW QQQ | CALLS bid-side strike 710 exp 08-07 — premium 1.7M bid-side
+14:13:25 | UW FLOW NVDA | PUTS ask-side strike 212.5 exp 08-14 — premium 3.6M ask-side
+14:15:25 | UW FLOW QQQ | PUTS bid-side strike 723 exp 08-07 — vol/OI 478.6 (posicion nueva) $480k
+14:16:26 | UW FLOW QQQ | CALLS ask-side strike 724 exp 08-07 — vol/OI 2.9 (posicion nueva) $276k
+14:16:31 | UW FLOW AAPL | CALLS ask-side strike 310 exp 08-07 — vol/OI 2.2 (posicion nueva) $956k
+14:18:32 | UW FLOW SPCX | CALLS bid-side strike 126 exp 08-07 — vol/OI 2.2 (posicion nueva) $305k
+14:19:32 | UW FLOW AMD | PUTS bid-side strike 490 exp 08-05 — vol/OI 4.6 (posicion nueva) $278k
+14:20:33 | UW FLOW SPY | PUTS bid-side strike 732 exp 08-21 — vol/OI 5.8 (posicion nueva) $369k
+14:21:33 | UW FLOW SPY | PUTS ask-side strike 737 exp 08-21 — vol/OI 5.9 (posicion nueva) $326k
+14:22:32 | 🎈 BB REBOTE | nvda puede bajar un poco.
+14:22:33 | UW FLOW SPCX | PUTS bid-side strike 126 exp 08-07 — vol/OI 2.1 (posicion nueva) $262k
+14:23:33 | 🎈 BB REBOTE | spy puede bajar un poco.
+14:23:34 | UW FLOW QQQ | CALLS ask-side strike 736 exp 08-06 — vol/OI 90.7 (posicion nueva) $403k
+14:23:39 | UW FLOW SPY | PUTS bid-side strike 772 exp 08-06 — vol/OI 5684.0 (posicion nueva) $408k
+14:24:39 | UW FLOW AMD | CALLS bid-side strike 482.5 exp 08-05 — premium 5.1M bid-side
+14:26:40 | UW FLOW SPY | PUTS bid-side strike 770 exp 08-06 — vol/OI 2907.3 (posicion nueva) $433k
+14:27:59 | FINVIZ MOMENTUM BREAKOUT · NUEVOS · BUY 1 SELL 0 WATCH 0 | JAZZ BUY $260.65 +3.6% RVOL 1.9x score 7/7
+14:28:41 | UW FLOW QQQ | CALLS ask-side strike 880 exp 06-17 — vol/OI 4.6 (posicion nueva) $525k
+14:30:00 | FINVIZ MOMENTUM BREAKOUT · NUEVOS · BUY 1 SELL 0 WATCH 0 | MGA BUY $70.29 +3.6% RVOL 1.6x score 7/7
+14:33:42 | UW FLOW INTC | CALLS bid-side strike 100 exp 08-05 — premium 1.5M bid-side
+14:35:43 | UW FLOW SPY | PUTS bid-side strike 771 exp 08-06 — vol/OI 7968.0 (posicion nueva) $431k
+14:37:44 | UW FLOW MU | CALLS bid-side strike 950 exp 01-21 — premium 2.2M bid-side
+14:38:44 | UW FLOW AMD | CALLS bid-side strike 485 exp 08-05 — premium 5.4M bid-side
+14:39:45 | UW FLOW QQQ | PUTS bid-side strike 737 exp 09-30 — vol/OI 7.0 (posicion nueva) $375k
+14:39:50 | UW FLOW SPY | PUTS bid-side strike 750 exp 09-18 — SWEEP $871k
+14:40:37 | 🎈 BB REBOTE ⭐[degradada] | spy puede subir un poco.
+14:41:51 | UW FLOW SMH | CALLS ask-side strike 650 exp 09-04 — vol/OI 21.9 (posicion nueva) $641k
+14:41:56 | UW FLOW GOOGL | PUTS ask-side strike 380 exp 08-05 — vol/OI 156.3 (posicion nueva) $712k
+14:42:02 | UW FLOW MU | CALLS bid-side strike 900 exp 08-14 — vol/OI 2.6 (posicion nueva) $489k
+14:42:37 | 🎈 BB REBOTE | qqq puede subir un poco.
+14:44:03 | UW FLOW SNDK | PUTS ask-side strike 1435 exp 08-07 — vol/OI 14.1 (posicion nueva) $287k
+14:45:03 | UW FLOW AMZN | CALLS ask-side strike 275 exp 08-05 — vol/OI 3.9 (posicion nueva) $855k
+14:45:09 | UW FLOW QQQ | CALLS bid-side strike 710 exp 08-04 — vol/OI 6.0 (posicion nueva) $263k
+14:46:09 | UW FLOW AMD | PUTS bid-side strike 525 exp 08-05 — premium 4.3M bid-side
+14:46:14 | UW FLOW QQQ | CALLS ask-side strike 810 exp 12-18 — premium 1.0M ask-side
+14:46:20 | UW FLOW QQQ | PUTS bid-side strike 705 exp 06-17 — premium 1.1M bid-side
+14:47:20 | UW FLOW QQQ | PUTS bid-side strike 719 exp 08-14 — vol/OI 12.2 (posicion nueva) $261k
+14:47:26 | UW FLOW QQQ | CALLS ask-side strike 725 exp 08-07 — vol/OI 4.6 (posicion nueva) $505k
+14:47:32 | UW FLOW SPY | PUTS bid-side strike 777 exp 10-16 — vol/OI 2.6 (posicion nueva) $407k
+14:48:32 | UW FLOW QQQ | CALLS ask-side strike 721 exp 08-04 — vol/OI 273.0 (posicion nueva) $785k
+14:48:37 | UW FLOW SNDK | CALLS ask-side strike 1450 exp 12-15 — premium 1.2M ask-side
+14:49:38 | UW FLOW TSLA | CALLS bid-side strike 315 exp 08-05 — vol/OI 5.0 (posicion nueva) $417k
+14:49:43 | UW FLOW SNDK | CALLS bid-side strike 1425 exp 08-07 — premium 1.7M bid-side
+14:52:44 | UW FLOW MU | CALLS bid-side strike 900 exp 08-07 — premium 2.8M bid-side
+14:53:44 | UW FLOW QQQ | CALLS ask-side strike 700 exp 12-18 — premium 1.7M ask-side
+14:53:50 | UW FLOW QQQ | PUTS ask-side strike 724 exp 08-21 — vol/OI 23.1 (posicion nueva) $269k
+14:57:51 | UW FLOW SMH | PUTS bid-side strike 505 exp 08-21 — premium 1.1M bid-side
+14:57:57 | UW FLOW AMD | PUTS bid-side strike 545 exp 08-05 — vol/OI 14.0 (posicion nueva) $384k
+14:58:57 | UW FLOW QCOM | PUTS bid-side strike 160 exp 11-20 — vol/OI 2.1 (posicion nueva) $665k
+14:59:03 | UW FLOW SPY | CALLS ask-side strike 775 exp 09-18 — premium 2.3M ask-side
+15:00:03 | UW FLOW QQQ | PUTS ask-side strike 715 exp 08-11 — vol/OI 2710.0 (posicion nueva) $409k
+15:00:09 | UW FLOW SMH | PUTS bid-side strike 555 exp 08-14 — vol/OI 3.8 (posicion nueva) $503k
+15:00:42 | 🎈 BB REBOTE | mu puede subir un poco.
+15:01:09 | UW FLOW MU | CALLS bid-side strike 780 exp 08-07 — premium 6.2M bid-side
+15:01:15 | UW FLOW MSFT | CALLS ask-side strike 455 exp 08-21 — premium 1.3M ask-side
+15:01:30 | FINVIZ SHORT SQUEEZE · WEATHER · BUY 1 SELL 0 WATCH 0 | WLK BUY $79.34 +13.5% RVOL 2.1x score 4/7
+15:02:15 | UW FLOW WDC | PUTS bid-side strike 490 exp 09-18 — vol/OI 3.1 (posicion nueva) $944k
+15:02:21 | UW FLOW SPY | CALLS bid-side strike 796 exp 10-16 — vol/OI 11.1 (posicion nueva) $462k
+15:03:21 | UW FLOW QQQ | CALLS ask-side strike 730 exp 08-07 — vol/OI 3.5 (posicion nueva) $338k
+15:03:27 | UW FLOW SNDK | CALLS bid-side strike 1400 exp 08-14 — premium 1.2M bid-side
+15:03:32 | UW FLOW AVGO | PUTS bid-side strike 360 exp 08-28 — vol/OI 2.6 (posicion nueva) $403k
+15:03:43 | 🎈 BB REBOTE | smh puede bajar un poco.
+15:04:43 | 🎈 BB REBOTE | qqq puede bajar un poco.
+15:05:33 | UW FLOW AVGO | PUTS bid-side strike 430 exp 01-21 — SWEEP $979k
+15:05:38 | UW FLOW MSFT | PUTS ask-side strike 500 exp 08-07 — premium 1.2M ask-side
+15:05:44 | UW FLOW TSLA | CALLS ask-side strike 327.5 exp 08-05 — vol/OI 38.8 (posicion nueva) $913k
+15:06:44 | UW FLOW SMH | PUTS bid-side strike 495 exp 08-21 — SWEEP $578k
+15:09:45 | UW FLOW SPCX | CALLS ask-side strike 135 exp 08-14 — premium 1.0M ask-side
+15:10:45 | UW FLOW NFLX | PUTS bid-side strike 70 exp 08-28 — vol/OI 5.4 (posicion nueva) $480k
+15:10:51 | UW FLOW TSLA | CALLS ask-side strike 330 exp 08-05 — vol/OI 21.3 (posicion nueva) $571k
+15:11:51 | UW FLOW QQQ | PUTS ask-side strike 720 exp 08-21 — SWEEP $683k
+15:11:57 | UW FLOW SMH | CALLS ask-side strike 650 exp 09-04 — vol/OI 26.0 (posicion nueva) $547k
+15:12:03 | UW FLOW QQQ | CALLS ask-side strike 730 exp 08-21 — SWEEP $574k
+15:13:03 | UW FLOW SPCX | CALLS bid-side strike 120 exp 09-04 — vol/OI 2.7 (posicion nueva) $629k
+15:13:08 | UW FLOW SPCX | CALLS bid-side strike 124 exp 08-28 — premium 6.9M bid-side
+15:15:45 | 🎈 BB REBOTE ⭐[degradada] | nvda puede subir un poco.
+15:17:10 | UW FLOW AMD | PUTS ask-side strike 517.5 exp 08-05 — vol/OI 35.1 (posicion nueva) $321k
+15:18:10 | UW FLOW SPCX | CALLS ask-side strike 126 exp 08-07 — vol/OI 3.8 (posicion nueva) $274k
+15:20:11 | UW FLOW MU | PUTS bid-side strike 850 exp 08-05 — vol/OI 19.1 (posicion nueva) $400k
+15:21:11 | UW FLOW TSLA | PUTS ask-side strike 325 exp 08-10 — vol/OI 11.1 (posicion nueva) $284k
+15:21:17 | UW FLOW SPY | PUTS ask-side strike 733 exp 10-16 — vol/OI 19.5 (posicion nueva) $324k
+15:21:22 | UW FLOW AAPL | CALLS ask-side strike 307.5 exp 08-10 — premium 1.8M ask-side
+15:22:23 | UW FLOW QQQ | PUTS bid-side strike 715 exp 08-07 — vol/OI 27.6 (posicion nueva) $671k
+15:22:28 | UW FLOW AMD | CALLS bid-side strike 505 exp 08-07 — premium 6.2M bid-side
+15:25:18 | 🎈 BB REBOTE | mu puede bajar un poco.
+15:25:29 | UW FLOW SMH | CALLS bid-side strike 592.5 exp 08-12 — vol/OI 77.0 (posicion nueva) $324k
+15:25:35 | UW FLOW SPCX | PUTS ask-side strike 124 exp 08-07 — vol/OI 12.4 (posicion nueva) $362k
+15:26:35 | UW FLOW SMH | PUTS mid-side strike 575 exp 08-07 — vol/OI 3.3 (posicion nueva) $250k
+15:26:41 | UW FLOW SPY | PUTS bid-side strike 772 exp 08-05 — vol/OI 16040.0 (posicion nueva) $306k
+15:27:41 | UW FLOW SKHY | PUTS ask-side strike 150 exp 08-07 — vol/OI 2.7 (posicion nueva) $288k
+15:28:41 | UW FLOW QQQ | CALLS bid-side strike 725 exp 08-07 — vol/OI 5.1 (posicion nueva) $265k
+15:28:47 | UW FLOW AMZN | PUTS ask-side strike 285 exp 08-21 — SWEEP $757k
+15:28:49 | 🎈 BB REBOTE ⭐[degradada] | spy puede subir un poco.
+15:28:49 | 🎈 BB REBOTE ⭐[degradada] | smh puede subir un poco.
+15:29:13 | FINVIZ MOMENTUM BREAKOUT · WEATHER · BUY 1 SELL 0 WATCH 0 | AME BUY $255.49 +4.8% RVOL 1.6x score 4/7
+15:29:47 | UW FLOW SPY | CALLS ask-side strike 765 exp 10-16 — premium 2.3M ask-side
+15:29:53 | UW FLOW LRCX | PUTS ask-side strike 315 exp 08-07 — vol/OI 3.5 (posicion nueva) $292k
+15:30:53 | UW FLOW AAPL | CALLS ask-side strike 310 exp 08-05 — vol/OI 14.4 (posicion nueva) $583k
+15:30:59 | UW FLOW SPCX | PUTS ask-side strike 110 exp 08-21 — premium 1.1M ask-side
+15:31:19 | 🎈 BB REBOTE | qqq puede subir un poco.
+15:31:59 | UW FLOW GOOGL | PUTS bid-side strike 377.5 exp 08-05 — vol/OI 520.6 (posicion nueva) $536k
+15:33:59 | UW FLOW NVDA | CALLS ask-side strike 215 exp 08-14 — premium 2.3M ask-side
+15:35:00 | UW FLOW INTC | CALLS bid-side strike 100 exp 08-21 — premium 1.7M bid-side
+15:35:05 | UW FLOW AMZN | CALLS ask-side strike 275 exp 08-05 — vol/OI 9.7 (posicion nueva) $702k
+15:35:51 | 🎈 BB REBOTE | mu puede subir un poco.
+15:36:06 | UW FLOW SPY | CALLS ask-side strike 762 exp 08-04 — premium 1.1M ask-side
+15:38:06 | UW FLOW SPY | PUTS ask-side strike 770 exp 08-28 — vol/OI 6.8 (posicion nueva) $300k
+15:38:12 | UW FLOW SNDK | CALLS bid-side strike 1450 exp 08-07 — vol/OI 3.6 (posicion nueva) $307k
+15:40:12 | UW FLOW MSFT | CALLS bid-side strike 560 exp 11-20 — SWEEP $935k
+15:43:13 | UW FLOW MU | PUTS ask-side strike 895 exp 08-07 — vol/OI 3.4 (posicion nueva) $272k
+15:43:19 | UW FLOW MU | PUTS ask-side strike 850 exp 08-05 — vol/OI 21.9 (posicion nueva) $358k
+15:43:24 | UW FLOW MU | PUTS ask-side strike 895 exp 08-05 — premium 1.5M ask-side
+15:44:25 | UW FLOW SPY | CALLS bid-side strike 772 exp 08-04 — vol/OI 2283.6 (posicion nueva) $407k
+15:44:30 | UW FLOW DRAM | PUTS bid-side strike 48 exp 08-21 — vol/OI 3.6 (posicion nueva) $507k
+15:45:31 | UW FLOW META | CALLS bid-side strike 590 exp 08-05 — vol/OI 17.2 (posicion nueva) $327k
+15:46:31 | UW FLOW TSM | CALLS bid-side strike 440 exp 08-28 — vol/OI 2.3 (posicion nueva) $653k
+15:47:31 | UW FLOW AAPL | PUTS ask-side strike 310 exp 06-17 — premium 1.0M ask-side
+15:47:37 | UW FLOW SPY | PUTS ask-side strike 765 exp 08-10 — vol/OI 3.5 (posicion nueva) $391k
+15:47:53 | 🎈 BB REBOTE | qqq puede bajar un poco.
+15:48:54 | 🎈 BB BAND-WALK | meta sigue subiendo fuerte.
+15:49:38 | UW FLOW QQQ | PUTS bid-side strike 724 exp 09-18 — vol/OI 327.5 (posicion nueva) $321k
+15:49:43 | UW FLOW INTC | PUTS ask-side strike 100 exp 08-21 — SWEEP $562k
+15:50:43 | UW FLOW AMD | CALLS ask-side strike 530 exp 08-05 — vol/OI 12.8 (posicion nueva) $312k
+15:51:44 | UW FLOW SPCX | PUTS mid-side strike 123 exp 08-07 — vol/OI 15.1 (posicion nueva) $472k
+15:52:37 | 🇨🇳 NOTICIA SEMIS | Three major PC makers now using Chinese memory to fight 'unprecedented memory shortage,' report claims — HP, Asus, and Acer using 'small amounts' of CXMT chips in limited number of
+15:52:37 | 🇨🇳 NOTICIA SEMIS | Micron Stock Pops. It Gains Memory-Chip Share but So Does Chinese Rival CXMT. - barrons.com
+15:52:37 | 🇨🇳 NOTICIA SEMIS | HP, Asus and Acer begin using CXMT chips amid memory shortage - Nikkei Asia
+15:52:37 | 🇨🇳 NOTICIA SEMIS | Major PC Makers Start Using Memory Chips From China’s CXMT - The Information
+15:52:37 | 🇨🇳 NOTICIA SEMIS | HP among PC makers using CXMT memory chips amid national security concerns: report (HPQ:NYSE) - Seeking Alpha
+15:52:37 | 🇨🇳 NOTICIA SEMIS | Samsung secures No. 1 spot for DRAM market share during Q2: Counterpoint - Seeking Alpha
+15:52:44 | UW FLOW NVDA | PUTS ask-side strike 217.5 exp 08-21 — vol/OI 11.6 (posicion nueva) $482k
+15:52:50 | UW FLOW AMD | CALLS bid-side strike 565 exp 08-05 — vol/OI 4.3 (posicion nueva) $394k
+15:52:55 | UW FLOW QQQ | CALLS ask-side strike 720 exp 08-07 — premium 1.1M ask-side
+15:53:56 | UW FLOW AMD | CALLS mid-side strike 530 exp 11-20 — vol/OI 3.0 (posicion nueva) $866k
+15:54:01 | UW FLOW QQQ | PUTS ask-side strike 724 exp 08-05 — vol/OI 6598.0 (posicion nueva) $436k
+15:55:02 | UW FLOW QQQ | CALLS bid-side strike 725 exp 08-07 — vol/OI 6.0 (posicion nueva) $799k
+15:55:07 | UW FLOW QQQ | CALLS ask-side strike 735 exp 08-07 — premium 2.1M ask-side
+15:55:13 | UW FLOW NVDA | CALLS bid-side strike 215 exp 08-10 — vol/OI 3.9 (posicion nueva) $320k
+15:55:25 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+15:56:13 | UW FLOW AMD | CALLS ask-side strike 550 exp 08-21 — SWEEP $678k
+15:56:19 | UW FLOW QQQ | CALLS bid-side strike 724 exp 08-05 — vol/OI 257.3 (posicion nueva) $403k
+15:56:24 | UW FLOW SPY | PUTS ask-side strike 760 exp 08-31 — premium 4.7M ask-side
+15:57:25 | UW FLOW AMD | PUTS ask-side strike 547.5 exp 08-07 — vol/OI 3.1 (posicion nueva) $505k
+15:58:07 | 🇹🇼 ASIA SEMIS — SINTESIS | 🇹🇼 TAIEX 43.360 (−0,06%) con swing >1.000 pts; TSMC 2330 −2,11% a NT$2.320 (2 días, −4,3%). NO fue venta: ROTACIÓN hacia MEMORIA (Nanya limit-up), CPO y satélites. Niveles: 43.000 suelo (2 defensas) / 43.912 techo; 2330 soporte 2.300-2.310, resistencia 2.370. 🇯🇵 Nikkei 63.957 (+0,32%), recompra de semis. TEL 7/30 subió WFE a ≥$150B/2026 y ≥$190B/2027; Advantest 7/29 guidance +42% → el rally memoria US del 7/30 llegó <24h después. Japón sigue a SOX en precio pero LIDERA en información (guidance equipment = demanda LRCX/AMAT). 📅 ESTA NOCHE (tras AMD/SpaceX 16:30): Corea+Tokio abren 20:00 ET, Taiwán 21:00 ET (cierra 01:30). Primera reacción mundial a AMD = TEL/Advantest en la apertura de Tokio. AMD entró +7,7% hoy a ~$513 (+140% YTD): beat modesto puede no bastar. 👀 Mirar: Nikkei sostiene 64.000 (perder 63.000 = corrección otra vez); TAIEX defiende 43.000; 2330 bajo NT$2.300 = drag para TSM mañana; Nanya segundo limit-up = confirmación memoria-bull pre-SNDK (reporta mañana AMC con WDC). 📅 TSM: revenue JULIO lunes 8/10 ~01:30 ET (junio fue récord +67,9% YoY). CoWoS vendido hasta fin 2026, ASP packaging +10-20%/año. FLOTA: MU 🟢 fondo (25% share DRAM, ×5 revenue YoY — Counterpoint 8/4) con ⚠️ titulares CXMT; SNDK ⚠️ earnings mañana (GS PT $2.200); WDC/STX 🟠; SMH 🟢 si AMD cumple; TSM/ASML/LRCX 🟢 por WFE. Detalle: docs/ASIA-SEMIS-2026-08-04.md 
+15:58:11 | 🇨🇳 CXMT — SINTESIS | 🇨🇳 CXMT — deal de HOY (Nikkei Asia 8/4): HP, Asus y Acer YA usan DRAM de CXMT en laptops (volúmenes chicos, validado mid-2026, SOLO fuera de US; Dell/HP cualificando). Lo hacen en silencio por miedo a Micron/Samsung/Hynix. Driver: la escasez AI, no el precio. 📊 Números: 7,6% del DRAM global Q1-26, #4 mundial (TrendForce); +716% YoY, el que más crece (Counterpoint 8/4). Q2-26: Samsung 39% #1, Hynix 26% (desde 39%!), MU 25% (va a ser #2). Capacidad ~200k→300-350k wpm fin 2026; DDR5/LPDDR5X en 16nm; TODOS los mobo-makers validan su DDR5. 🔑 SIN HBM: apunta HBM3 doméstico fin 2026. El premium AI (HBM3E/HBM4) sigue siendo solo Hynix/Samsung/MU. Counterpoint: ventana de amenaza real 2028-2030. 💥 Pero desde el IPO (7/27 STAR: +466% día 1, ~$102B, la más valiosa del A-share) es máquina de titulares: 7/27 SNDK −12/MU −5/Hynix −8; 8/3 memoria US −5/−6%. CXMT news → MU inverso, documentado. ⚠️ MATIZ HOY: Taiwán leyó el mismo titular como BULL memoria (Nanya limit-up = escasez brutal). Si Corea/Taiwán compran memoria esta noche, el titular está digerido y SNDK entra a earnings mañana con viento a favor. 🏭 YMTC (NAND): 11,8% share 2025; plan 500k wpm (3 fabs nuevas Wuhan, >50% tools chinos) = mayor productor NAND por wafers; objetivo 15-20%. Amenaza a SNDK/Kioxia primero. SMIC: órdenes a equipment chino +80% YoY (share perdido para AMAT/LRCX/TEL en China). VEREDICTO 6-18m: amenaza REAL pero lenta — no toca HBM ni el ciclo AI todavía; techo de precios commodity 2027, competencia seria 2028-2030. El riesgo AHORA es de titulares, no de fundamento. MU salió de DDR4 = justo el segmento de CXMT. Detalle: docs/ASIA-SEMIS-2026-08-04.md 
+15:58:25 | UW FLOW SMH | PUTS ask-side strike 570 exp 09-18 — SWEEP $819k
+15:58:31 | UW FLOW MU | CALLS bid-side strike 875 exp 08-05 — vol/OI 18.4 (posicion nueva) $282k
+15:58:44 | 🇨🇳 CXMT — SINTESIS | 🇨🇳 CXMT — deal de HOY (Nikkei Asia 8/4): HP, Asus y Acer YA usan DRAM de CXMT en laptops (volúmenes chicos, validado mid-2026, SOLO fuera de US; Dell/HP cualificando). Lo hacen en silencio por miedo a Micron/Samsung/Hynix. Driver: la escasez AI, no el precio. 📊 Números: 7,6% del DRAM global Q1-26, #4 mundial (TrendForce); +716% YoY, el que más crece (Counterpoint 8/4). Q2-26: Samsung 39% #1, Hynix 26% (desde 39%!), MU 25% (va a ser #2). Capacidad ~200k→300-350k wpm fin 2026; DDR5/LPDDR5X en 16nm; TODOS los mobo-makers validan su DDR5. 🔑 SIN HBM: apunta HBM3 doméstico fin 2026. El premium AI (HBM3E/HBM4) sigue siendo solo Hynix/Samsung/MU. Counterpoint: ventana de amenaza real 2028-2030. 💥 Pero desde el IPO (7/27 STAR: +466% día 1, ~$102B, la más valiosa del A-share) es máquina de titulares: 7/27 SNDK −12/MU −5/Hynix −8; 8/3 memoria US −5/−6%. CXMT news → MU inverso, documentado. ⚠️ MATIZ HOY: Taiwán leyó el mismo titular como BULL memoria (Nanya limit-up = escasez brutal). Si Corea/Taiwán compran memoria esta noche, el titular está digerido y SNDK entra a earnings mañana con viento a favor. 🏭 YMTC (NAND): 11,8% share 2025; plan 500k wpm (3 fabs nuevas Wuhan, >50% tools chinos) = mayor productor NAND por wafers; objetivo 15-20%. Amenaza a SNDK/Kioxia primero. SMIC: órdenes a equipment chino +80% YoY (share perdido para AMAT/LRCX/TEL en China). VEREDICTO 6-18m: amenaza REAL pero lenta — no toca HBM ni el ciclo AI todavía; techo de precios commodity 2027, competencia seria 2028-2030. El riesgo AHORA es de titulares, no de fundamento. MU salió de DDR4 = justo el segmento de CXMT. Detalle: docs/ASIA-SEMIS-2026-08-04.md 
+15:59:27 | 🇨🇳 CXMT — SINTESIS | 🇨🇳 CXMT — deal de HOY (Nikkei Asia 8/4): HP, Asus y Acer YA usan DRAM de CXMT en laptops (volúmenes chicos, validado mid-2026, SOLO fuera de US; Dell/HP cualificando). Lo hacen en silencio por miedo a Micron/Samsung/Hynix. Driver: la escasez AI, no el precio. 📊 Números: 7,6% del DRAM global Q1-26, #4 mundial (TrendForce); +716% YoY, el que más crece (Counterpoint 8/4). Q2-26: Samsung 39% #1, Hynix 26% (desde 39%!), MU 25% (va a ser #2). Capacidad ~200k→300-350k wpm fin 2026; DDR5/LPDDR5X en 16nm; TODOS los mobo-makers validan su DDR5. 🔑 SIN HBM: apunta HBM3 doméstico fin 2026. El premium AI (HBM3E/HBM4) sigue siendo solo Hynix/Samsung/MU. Counterpoint: ventana de amenaza real 2028-2030. 💥 Pero desde el IPO (7/27 STAR: +466% día 1, ~$102B, la más valiosa del A-share) es máquina de titulares: 7/27 SNDK −12/MU −5/Hynix −8; 8/3 memoria US −5/−6%. CXMT news → MU inverso, documentado. ⚠️ MATIZ HOY: Taiwán leyó el mismo titular como BULL memoria (Nanya limit-up = escasez brutal). Si Corea/Taiwán compran memoria esta noche, el titular está digerido y SNDK entra a earnings mañana con viento a favor. 🏭 YMTC (NAND): 11,8% share 2025; plan 500k wpm (3 fabs nuevas Wuhan, >50% tools chinos) = mayor productor NAND por wafers; objetivo 15-20%. Amenaza a SNDK/Kioxia primero. SMIC: órdenes a equipment chino +80% YoY (share perdido para AMAT/LRCX/TEL en China). VEREDICTO 6-18m: amenaza REAL pero lenta — no toca HBM ni el ciclo AI todavía; techo de precios commodity 2027, competencia seria 2028-2030. El riesgo AHORA es de titulares, no de fundamento. MU salió de DDR4 = justo el segmento de CXMT. Detalle: docs/ASIA-SEMIS-2026-08-04.md 
+15:59:31 | UW FLOW MU | PUTS ask-side strike 865 exp 08-05 — vol/OI 18.2 (posicion nueva) $269k
+16:23:09 | 🇨🇳 NOTICIA SEMIS | China memory chipmaker CXMT's shares soar in a blockbuster share listing in Shanghai - The Day
+17:23:18 | 🇨🇳 NOTICIA SEMIS | Micron Stock Pops. It Gains Memory-Chip Share but So Does Chinese Rival CXMT. - Barron's
+17:23:19 | 🇹🇼 NOTICIA SEMIS | ASML vs. TSMC: Which Semiconductor Supply Chain Stock Is the Better AI Play? - AOL.com
+17:27:46 | X WHALE BOT | prueba relay fix TODO32 dedup-tras-cap (ignorar)
+17:28:00 | PRUEBA PRIVACIDAD | realizedPnl +0.00 no debe salir del Mac (ignorar)
+17:47:28 | FINVIZ SCREENERS ROTO | MOMENTUM BREAKOUT: transporte curl · reintento 5m
+17:48:03 | INTRINIO WS | socket ARRIBA cboe-one,equities-edge,options-edge en overnight
+17:49:19 | FINVIZ SCREENERS | Feed recuperado
+17:53:23 | 🇨🇳 NOTICIA SEMIS | China's CXMT Narrows Gap With SK Hynix and Samsung in Smartphone Memory - Bloomberg.com
+18:23:28 | 🇨🇳 NOTICIA SEMIS | Samsung Electronics Maintains No. 1 DRAM Market Share in Q2... Micron Closes in on SK hynix - 아시아경제
+18:53:41 | 🇹🇼 NOTICIA SEMIS | Taiwan Semiconductor's AI Push Hits Surprising Milestone - TradingView
+19:23:47 | 🇨🇳 NOTICIA SEMIS | Major PC Makers Start Using Memory Chips From China’s CXMT - theinformation.com
+19:23:48 | 🇹🇼 NOTICIA SEMIS | TSMC Resumes Operations at Kumamoto Fab Following Earthquake - thelec.net
+19:53:52 | 🇹🇼 SEMIS ASIA | TSMC-TW 2,320 -2.1%
+19:53:52 | 🇯🇵 SEMIS ASIA | TokyoElectron 56,700 +3.1% · Advantest 31,000 -1.4%
+19:53:52 | 🇨🇳 SEMIS ASIA | SMIC 65 +5.0% · HuaHong 135 +6.5%
+19:53:54 | 🇨🇳 NOTICIA SEMIS | Samsung Electronics Maintains No. 1 DRAM Market Share in Q2... Micron Closes in on SK hynix - asiae.co.kr
+19:53:55 | 🇹🇼 NOTICIA SEMIS | Chip Manufacturing to Add over 1 GW to APS Load - RTO Insider
+19:53:57 | 🇯🇵 NOTICIA SEMIS | TSMCs Kumamoto chip hub returns to full speed after quake - ajupress.com
+20:24:01 | 🇹🇼 SEMIS ASIA | TSMC-TW 2,320 -2.1%
+20:24:01 | 🇯🇵 SEMIS ASIA | TokyoElectron 59,270 +4.5% · Advantest 32,860 +6.0% · DiscoCorp 64,280 +5.6%
+20:24:01 | 🇨🇳 SEMIS ASIA | SMIC 65 +5.0% · HuaHong 135 +6.5%
+20:24:05 | 🇹🇼 NOTICIA SEMIS | Chip Manufacturing to Add over 1 GW to APS Load - rtoinsider.com
+20:24:05 | 🇯🇵 NOTICIA SEMIS | TSMCs Kumamoto chip hub returns to full speed after quake - Aju Press
+20:36:51 | INTRINIO WS | socket CAÍDO en overnight
+20:54:08 | 🇹🇼 SEMIS ASIA | TSMC-TW 2,320 -2.1%
+20:54:08 | 🇯🇵 SEMIS ASIA | TokyoElectron 58,680 +3.5% · Advantest 33,240 +7.2% · DiscoCorp 63,200 +3.8%
+20:54:08 | 🇨🇳 SEMIS ASIA | SMIC 65 +5.0% · HuaHong 135 +6.5%
+20:54:11 | 🇨🇳 NOTICIA SEMIS | Samsung to reclaim global DRAM leadership in Q2 2026 with 39% market share, regaining the top spot - 富途牛牛
+21:24:21 | 🇹🇼 SEMIS ASIA | TSMC-TW 2,375 +2.4%
+21:24:21 | 🇯🇵 SEMIS ASIA | TokyoElectron 58,860 +3.8% · Advantest 33,380 +7.7% · DiscoCorp 62,780 +3.1%
+21:24:21 | 🇨🇳 SEMIS ASIA | SMIC 66 +1.8% · HuaHong 143 +5.7%
+21:54:28 | 🇹🇼 SEMIS ASIA | TSMC-TW 2,390 +3.0%
+21:54:28 | 🇯🇵 SEMIS ASIA | TokyoElectron 58,930 +3.9% · Advantest 33,300 +7.4% · DiscoCorp 62,910 +3.3%
+21:54:28 | 🇨🇳 SEMIS ASIA | SMIC 67 +3.0% · HuaHong 140 +4.0%
+21:54:32 | 🇯🇵 NOTICIA SEMIS | Japan Stocks Jump As AI Names Lead The Way - Finimize
+22:24:36 | 🇹🇼 SEMIS ASIA | TSMC-TW 2,395 +3.2%
+22:24:36 | 🇯🇵 SEMIS ASIA | TokyoElectron 59,460 +4.9% · Advantest 33,360 +7.6% · DiscoCorp 62,970 +3.4%
+22:24:36 | 🇨🇳 SEMIS ASIA | SMIC 68 +4.0% · HuaHong 138 +2.4%
+22:24:52 | 🇨🇳 NOTICIA SEMIS | FMS 2026 opens with major memory makers present, but CXMT missing from exhibitor list - digitimes
+22:24:53 | 🇹🇼 NOTICIA SEMIS | TSMC in Talks to Raise Prices By up to 10% in 2027 - SME & Entrepreneurship Magazine
+22:24:55 | 🇯🇵 NOTICIA SEMIS | SoftBank jumps 10% as Asia tech stocks track Wall Street AI rally - CNBC
+22:54:58 | 🇹🇼 SEMIS ASIA | TSMC-TW 2,405 +3.7%
+22:54:58 | 🇯🇵 SEMIS ASIA | TokyoElectron 58,880 +3.8% · Advantest 33,090 +6.7% · DiscoCorp 62,680 +2.9%
+22:54:58 | 🇨🇳 SEMIS ASIA | SMIC 68 +3.4% · HuaHong 140 +3.3%
+22:55:01 | 🇯🇵 NOTICIA SEMIS | Nikkei Average Soars to Retake 66,000 in Morning - The Japan News
+23:25:04 | 🇹🇼 SEMIS ASIA | TAIEX 44,973 +3.7% · TSMC-TW 2,415 +4.1%
+23:25:04 | 🇯🇵 SEMIS ASIA | Nikkei 65,861 +3.0% · TokyoElectron 58,880 +3.8% · Advantest 33,090 +6.7% · DiscoCorp 62,680 +2.9%
+23:25:04 | 🇨🇳 SEMIS ASIA | SMIC 68 +4.1% · HuaHong 141 +4.5%
+23:25:05 | 🇨🇳 NOTICIA SEMIS | Sources say HP, Asus, and Acer begin adopting CXMT memory chips - TechNode
+23:25:06 | 🇹🇼 NOTICIA SEMIS | Why Is TSMC Stock Rising In Premarket Today? - Stocktwits
+23:55:10 | 🇹🇼 SEMIS ASIA | TAIEX 44,717 +3.1% · TSMC-TW 2,400 +3.4%
+23:55:10 | 🇯🇵 SEMIS ASIA | Nikkei 65,894 +3.0% · TokyoElectron 58,920 +3.9% · Advantest 32,920 +6.2% · DiscoCorp 63,350 +4.0%
+23:55:10 | 🇨🇳 SEMIS ASIA | SMIC 68 +4.4% · HuaHong 142 +5.0%
+23:55:13 | 🇯🇵 NOTICIA SEMIS | Nikkei 225 Surges Over 2,200 Yen as AI Semiconductor Rally Reignites on Strong Japan-U.S. Earnings; Ibiden Soars - finance.biggo.com
+23:55:13 | 🇯🇵 NOTICIA SEMIS | Tokyo market opens higher: Nikkei extends gains; most BOJ board members expect underlying inflation rate to gradually rise, per BOJ minutes; Furukawa Electric surges on fiber-optic
+00:25:15 | 🇹🇼 SEMIS ASIA | TAIEX 44,714 +3.1% · TSMC-TW 2,400 +3.4%
+00:25:15 | 🇯🇵 SEMIS ASIA | Nikkei 66,048 +3.3% · TokyoElectron 58,910 +3.9% · Advantest 33,270 +7.3% · DiscoCorp 63,680 +4.6%
+00:25:15 | 🇨🇳 SEMIS ASIA | SMIC 68 +4.7% · HuaHong 143 +6.1%
+00:25:16 | 🇨🇳 NOTICIA SEMIS | Samsung holds Q2 DRAM lead as Micron nears SK hynix in market share - CHOSUNBIZ - Chosunbiz
+00:55:19 | 🇹🇼 SEMIS ASIA | TAIEX 44,582 +2.8% · TSMC-TW 2,390 +3.0%
+00:55:19 | 🇯🇵 SEMIS ASIA | Nikkei 66,123 +3.4% · TokyoElectron 58,790 +3.7% · Advantest 33,310 +7.5% · DiscoCorp 64,180 +5.4%
+00:55:19 | 🇨🇳 SEMIS ASIA | SMIC 68 +4.7% · HuaHong 143 +6.1%
+00:55:20 | 🇨🇳 NOTICIA SEMIS | NVIDIA at Decade-Low Valuation as AI Selloff Hits 40-60%: Top AI Investor Gavin Baker Says the Bear Case Doesn't Survive Contact With Data - finance.biggo.com
+01:25:23 | 🇹🇼 SEMIS ASIA | TAIEX 44,621 +2.9% · TSMC-TW 2,400 +3.4%
+01:25:23 | 🇯🇵 SEMIS ASIA | Nikkei 66,092 +3.3% · TokyoElectron 58,620 +3.4% · Advantest 33,490 +8.0% · DiscoCorp 64,030 +5.2%
+01:25:23 | 🇨🇳 SEMIS ASIA | SMIC 68 +4.5% · HuaHong 145 +7.0%
+01:25:25 | 🇹🇼 NOTICIA SEMIS | Intel vs. TSM: Which Semiconductor Stock Looks Like the Better Investment? - TradingKey
+01:25:25 | 🇯🇵 NOTICIA SEMIS | University receives $20 million grant for cloud-based semiconductor lab - Virginia Tech News
+01:55:28 | 🇹🇼 SEMIS ASIA | TAIEX 44,612 +2.9% · TSMC-TW 2,405 +3.7%
+01:55:28 | 🇯🇵 SEMIS ASIA | Nikkei 66,194 +3.5% · TokyoElectron 58,780 +3.7% · Advantest 33,490 +8.0% · DiscoCorp 63,980 +5.1%
+01:55:28 | 🇨🇳 SEMIS ASIA | SMIC 68 +4.9% · HuaHong 144 +6.4%
+01:55:28 | 🇨🇳 NOTICIA SEMIS | HP buys CXMT DRAM - Electronics Weekly
+01:55:28 | 🇨🇳 NOTICIA SEMIS | SKHY, MU, Samsung's Memory Technology Lead Over China’s CXMT Unlikely To Narrow Soon, Says Futurum Analyst - Stocktwits
+01:55:29 | 🇹🇼 NOTICIA SEMIS | Taiwan Semiconductor Is Copying One of Intel’s Best Ideas — Here’s Why Investors Should Pay Attention - AOL.com
+02:11:37 | FINNHUB WS | socket CAIDO en bucle — sin print en tiempo real
+02:25:32 | 🇹🇼 SEMIS ASIA | TAIEX 44,612 +2.9% · TSMC-TW 2,405 +3.7%
+02:25:32 | 🇯🇵 SEMIS ASIA | Nikkei 66,263 +3.6% · TokyoElectron 58,830 +3.8% · Advantest 33,710 +8.7% · DiscoCorp 63,800 +4.8%
+02:25:32 | 🇨🇳 SEMIS ASIA | SMIC 68 +4.5% · HuaHong 143 +6.0%
+02:25:32 | 🇨🇳 NOTICIA SEMIS | Sources say HP, Asus, and Acer begin adopting CXMT memory chips - technode.com
+02:55:37 | 🇨🇳 NOTICIA SEMIS | DRAM chip prices expected to rise again as agentic AI grows | Counterpoint Research - gamesbeat.com
+02:55:38 | 🇯🇵 NOTICIA SEMIS | Tokyo Electron's Taiwan unit says it will not appeal ruling in TSMC trade secrets case - aol.com
+03:25:41 | 🇹🇼 NOTICIA SEMIS | TSMC trumpets another huge expansion - thefoothillsfocus.com
+03:25:41 | 🇯🇵 NOTICIA SEMIS | Nikkei 225 Extends Gains, Reclaims ¥66,300 Level as U.S. Semiconductor Rally Lifts Sentiment; Hits Two-Week High - finance.biggo.com
+03:25:41 | 🇯🇵 NOTICIA SEMIS | Japan Stocks Jump As AI Names Lead The Way - finimize.com
+03:55:45 | 🇯🇵 NOTICIA SEMIS | Nikkei 225 Rebounds to 61,867.43 in Tokyo as Advantest's Earnings Lift Chip Stocks and Trump Announces a Hamas Disarmament Deal via the Board of Peace - BBN Times
+04:25:49 | 🇨🇳 NOTICIA SEMIS | DRAM chip prices expected to rise again as agentic AI grows | Counterpoint Research - GamesBeat
+04:25:49 | 🇨🇳 NOTICIA SEMIS | Samsung Reclaims DRAM Throne, Tops SK hynix in Market Share - Seoul Economic Daily
+04:55:54 | 🇯🇵 NOTICIA SEMIS | University receives $20 million grant for cloud-based semiconductor lab - news.vt.edu
+05:25:58 | 🇹🇼 NOTICIA SEMIS | TSMC trumpets another huge expansion - The Foothills Focus
+05:25:59 | 🇯🇵 NOTICIA SEMIS | Nikkei Rebounds as Oil Slide Eases Inflation Fears - News On Japan
+05:56:02 | 🇨🇳 NOTICIA SEMIS | [News] TSMC Reportedly Expands Outsourcing of Key CoWoS Front-End Step to OSATs Amid Rising NVIDIA, ASIC Demand - trendforce.com
+06:26:06 | 🇨🇳 NOTICIA SEMIS | CXMT Becomes World’s Fastest-Growing DRAM Maker as Revenue Explodes 716% – China’s Memory Champion Charges at the Big Three Club - Wccftech
+06:26:07 | 🇨🇳 NOTICIA SEMIS | AI Memory Crunch 2026: Why DRAM and NAND Prices Are Still Surging - KuCoin
+06:26:08 | 🇯🇵 NOTICIA SEMIS | SoftBank jumps 13% as Asia tech stocks track Wall Street AI rally - CNBC
+06:56:11 | 🇨🇳 NOTICIA SEMIS | Are Acer, ASUS, and HP incorporating CXMT memory into their products? - Overclocking.com
+07:56:20 | 🇨🇳 NOTICIA SEMIS | Global DRAM Market Landscape Shifts: Samsung to Reclaim Global Leadership in Q2 2026 with 39% Market Share, as Micron Closes In on SK Hynix - 富途牛牛
+07:56:21 | 🇯🇵 NOTICIA SEMIS | Nikkei Rebounds as Oil Slide Eases Inflation Fears - newsonjapan.com
+08:20:24 | 🩸 EARNINGS-FALL FLUT -7.3% | FLUT cayó fuerte tras resultados. pendiente.
+08:20:24 | 🩸 EARNINGS-FALL PODD -17.0% | PODD cayó fuerte tras resultados. pendiente.
+08:20:24 | 🩸 EARNINGS-FALL CDW -20.8% | CDW cayó fuerte tras resultados. pendiente.
+08:20:24 | 🩸 EARNINGS-FALL SEDG -13.9% | SEDG cayó fuerte tras resultados. pendiente.
+08:20:24 | 🩸 EARNINGS-FALL MDLN -15.6% | MDLN cayó fuerte tras resultados. pendiente.
+08:20:24 | 🩸 EARNINGS-FALL SPCX -10.5% | SPCX cayó fuerte tras resultados. pendiente.
+08:20:24 | 🩸 EARNINGS-FALL EXTR -13.2% | EXTR cayó fuerte tras resultados. pendiente.
+08:20:24 | 🩸 EARNINGS-FALL TDC -13.3% | TDC cayó fuerte tras resultados. pendiente.
+08:20:24 | 🩸 EARNINGS-FALL MTCH -9.3% | MTCH cayó fuerte tras resultados. pendiente.
+08:20:24 | 🩸 EARNINGS-FALL AMD -8.8% | AMD cayó fuerte tras resultados. pendiente.
+08:20:24 | 🩸 EARNINGS-FALL NYT -8.7% | NYT cayó fuerte tras resultados. pendiente.
+08:20:24 | 🩸 EARNINGS-FALL PINS -9.3% | PINS cayó fuerte tras resultados. pendiente.
+08:20:24 | 🩸 EARNINGS-FALL TMDX -8.5% | TMDX cayó fuerte tras resultados. pendiente.
+08:56:30 | 🇹🇼 NOTICIA SEMIS | Bull of the Day: Amkor (AMKR) - TradingView
+09:26:33 | 🇨🇳 NOTICIA SEMIS | CXMT DRAM Is Now Inside Laptops: China Learns of Chip Flaws Before PC Makers Can Patch Them - Tech Times
+09:26:34 | 🇹🇼 NOTICIA SEMIS | AI Chip Design Era Ends: TSMC Affiliate GUC Posts Record Revenue as Turnkey Surpasses 80% - Tech Times
+09:30:14 | 🕳 MANADA MUDA | Manada inoperante: solo 17 de 27 pueden votar.
+09:30:19 | UW FLOW SPCX | PUTS ask-side strike 110 exp 08-07 — SWEEP $638k
+09:30:25 | UW FLOW QQQ | CALLS bid-side strike 712 exp 08-04 — vol/OI 25.1 (posicion nueva) $630k
+09:31:21 | 🎯 APERTURA FUERA DE BANDA | spy abrió fuera de rango.
+09:31:21 | 🎯 APERTURA FUERA DE BANDA | nvda abrió fuera de rango.
+09:31:21 | 🎯 APERTURA FUERA DE BANDA | mu abrió fuera de rango.
+09:31:21 | 🎯 APERTURA FUERA DE BANDA | smh abrió fuera de rango.
+09:31:21 | 🎯 APERTURA FUERA DE BANDA | amd abrió fuera de rango.
+09:31:21 | 🎯 APERTURA FUERA DE BANDA | nflx abrió fuera de rango.
+09:31:21 | 🎯 APERTURA FUERA DE BANDA | nok abrió fuera de rango.
+09:31:21 | 🎯 APERTURA FUERA DE BANDA | gld abrió fuera de rango.
+09:31:25 | UW FLOW SPCX | CALLS bid-side strike 108 exp 08-21 — vol/OI 4.1 (posicion nueva) $359k
+09:31:26 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+09:31:31 | UW FLOW SPY | CALLS bid-side strike 775 exp 09-18 — premium 2.6M bid-side
+09:31:36 | UW FLOW MU | PUTS bid-side strike 875 exp 08-07 — SWEEP $823k
+09:31:42 | 🎯 RE-ENTRADA A BANDA | smh volvió a su rango.
+09:31:42 | 🎯 APERTURA FUERA DE BANDA | msft abrió fuera de rango.
+09:31:42 | 🎯 APERTURA FUERA DE BANDA | meta abrió fuera de rango.
+09:31:42 | 🎯 APERTURA FUERA DE BANDA | amzn abrió fuera de rango.
+09:31:42 | 🎯 APERTURA FUERA DE BANDA | googl abrió fuera de rango.
+09:31:42 | 🎯 APERTURA FUERA DE BANDA | intc abrió fuera de rango.
+09:31:42 | 🎯 APERTURA FUERA DE BANDA | qcom abrió fuera de rango.
+09:32:03 | 🎯 RE-ENTRADA A BANDA | intc volvió a su rango.
+09:32:03 | 🎯 APERTURA FUERA DE BANDA | wdc abrió fuera de rango.
+09:32:03 | 🎯 APERTURA FUERA DE BANDA | stx abrió fuera de rango.
+09:32:03 | 🎯 APERTURA FUERA DE BANDA | hood abrió fuera de rango.
+09:32:03 | 🎯 APERTURA FUERA DE BANDA | mstr abrió fuera de rango.
+09:32:03 | 🎯 APERTURA FUERA DE BANDA | crwv abrió fuera de rango.
+09:32:23 | 🎯 RE-ENTRADA A BANDA | wdc volvió a su rango.
+09:32:23 | 🎯 RE-ENTRADA A BANDA | hood volvió a su rango.
+09:32:23 | 🎯 RE-ENTRADA A BANDA | mstr volvió a su rango.
+09:32:37 | UW FLOW SPY | CALLS bid-side strike 779 exp 08-05 — SWEEP $594k
+09:32:42 | UW FLOW SNDK | CALLS bid-side strike 1400 exp 08-07 — SWEEP $917k
+09:32:48 | UW FLOW SPCX | CALLS bid-side strike 180 exp 09-04 — vol/OI 14.0 (posicion nueva) $252k
+09:32:51 | FINVIZ MOMENTUM BREAKOUT · (pre-open match) · BUY 2 SELL 0 WATCH 0 | WBS BUY $79.10 +1.5% RVOL 9.2x score 6/7 | SAN BUY $14.65 +1.3% RVOL 7.7x score 4/7
+09:33:23 | 🎯 RE-ENTRADA A BANDA | msft volvió a su rango.
+09:33:23 | 🎯 RE-ENTRADA A BANDA | crwv volvió a su rango.
+09:33:48 | UW FLOW SPCX | PUTS bid-side strike 100 exp 09-18 — SWEEP $516k
+09:33:54 | UW FLOW SPY | CALLS bid-side strike 785 exp 09-18 — SWEEP $962k
+09:33:59 | UW FLOW QQQ | PUTS bid-side strike 750 exp 08-10 — vol/OI 53.0 (posicion nueva) $265k
+09:35:00 | UW FLOW SPY | CALLS bid-side strike 790 exp 11-20 — premium 1.8M bid-side
+09:35:05 | UW FLOW SPY | PUTS ask-side strike 815 exp 08-14 — premium 1.2M ask-side
+09:35:11 | UW FLOW SPY | CALLS bid-side strike 785 exp 11-20 — premium 2.3M bid-side
+09:35:24 | 🎯 RE-ENTRADA A BANDA | nok volvió a su rango.
+09:36:11 | UW FLOW SPCX | PUTS ask-side strike 110 exp 08-14 — SWEEP $781k
+09:36:17 | UW FLOW NVDA | CALLS ask-side strike 190 exp 06-17 — premium 9.1M ask-side
+09:36:22 | UW FLOW MU | PUTS bid-side strike 905 exp 08-12 — vol/OI 9.3 (posicion nueva) $285k
+09:36:25 | 🎯 RE-ENTRADA A BANDA | stx volvió a su rango.
+09:36:27 | 🎈 BB BAND-WALK | rklb sigue bajando fuerte.
+09:37:23 | UW FLOW MU | CALLS ask-side strike 850 exp 08-21 — premium 1.4M ask-side
+09:37:27 | 🎈 BB REBOTE | qqq puede bajar un poco.
+09:37:27 | 🎈 BB REBOTE | mu puede subir un poco.
+09:37:28 | UW FLOW QQQ | PUTS ask-side strike 735 exp 08-10 — vol/OI 13.3 (posicion nueva) $274k
+09:37:34 | UW FLOW SPY | PUTS bid-side strike 775 exp 09-18 — premium 2.0M bid-side
+09:38:28 | 🎈 BB BAND-WALK | nvda sigue subiendo fuerte.
+09:38:28 | 🎈 BB BAND-WALK | mstr sigue bajando fuerte.
+09:38:34 | UW FLOW NVDA | CALLS bid-side strike 220 exp 08-05 — vol/OI 2.9 (posicion nueva) $349k
+09:38:40 | UW FLOW SPCX | CALLS bid-side strike 111 exp 08-07 — SWEEP $909k
+09:38:45 | UW FLOW SPCX | CALLS bid-side strike 110 exp 08-07 — premium 1.0M bid-side
+09:39:05 | 🎯 RE-ENTRADA A BANDA | amzn volvió a su rango.
+09:39:45 | UW FLOW SPY | PUTS bid-side strike 745 exp 06-17 — premium 1.4M bid-side
+09:39:51 | UW FLOW NVDA | CALLS ask-side strike 205 exp 08-21 — premium 1.4M ask-side
+09:40:28 | 🎈 BB REBOTE | mu puede bajar un poco.
+09:40:51 | UW FLOW SPY | CALLS ask-side strike 777 exp 08-05 — vol/OI 6.0 (posicion nueva) $270k
+09:41:29 | 🎈 BB BAND-WALK | pltr sigue subiendo fuerte.
+09:41:52 | UW FLOW EWY | CALLS bid-side strike 160 exp 08-21 — SWEEP $649k
+09:41:57 | UW FLOW SPCX | CALLS ask-side strike 115 exp 09-11 — vol/OI 13.5 (posicion nueva) $438k
+09:42:57 | UW FLOW MU | CALLS ask-side strike 935 exp 08-21 — SWEEP $521k
+09:43:27 | 🎯 RE-ENTRADA A BANDA | mu volvió a su rango.
+09:43:58 | UW FLOW MU | CALLS ask-side strike 950 exp 11-20 — SWEEP $748k
+09:44:03 | UW FLOW SNDK | CALLS bid-side strike 1380 exp 08-07 — premium 2.6M bid-side
+09:44:09 | UW FLOW QQQ | PUTS mid-side strike 722 exp 08-05 — vol/OI 2.1 (posicion nueva) $310k
+09:44:29 | 🎈 BB BAND-WALK | googl sigue bajando fuerte.
+09:45:08 | 🎯 RE-ENTRADA A BANDA | qcom volvió a su rango.
+09:45:54 | FINVIZ MOMENTUM BREAKOUT · NUEVOS · BUY 1 SELL 0 WATCH 0 | NUE BUY $278.65 +1.7% RVOL 1.5x score 7/7
+09:46:09 | UW FLOW MU | CALLS bid-side strike 940 exp 08-10 — SWEEP $506k
+09:46:15 | UW FLOW MU | PUTS bid-side strike 885 exp 08-21 — SWEEP $682k
+09:46:21 | UW FLOW MU | PUTS ask-side strike 875 exp 08-21 — SWEEP $744k
+09:46:48 | FINVIZ SHORT SQUEEZE · WEATHER · BUY 1 SELL 0 WATCH 0 | HYMC BUY $24.25 +8.4% RVOL 2.2x score 5/7
+09:46:54 | FINVIZ MOMENTUM BREAKOUT · NUEVOS · BUY 1 SELL 0 WATCH 0 | ACRS BUY $6.08 +1.7% RVOL 4.2x score 7/7
+09:47:21 | UW FLOW MU | CALLS bid-side strike 935 exp 08-12 — vol/OI 12.4 (posicion nueva) $359k
+09:47:26 | UW FLOW MU | CALLS bid-side strike 925 exp 08-14 — SWEEP $642k
+09:47:28 | 🎯 RE-ENTRADA A BANDA | googl volvió a su rango.
+09:47:30 | 🎈 BB BAND-WALK | crwv sigue subiendo fuerte.
+09:47:55 | FINVIZ MOMENTUM BREAKOUT · WEATHER · BUY 1 SELL 0 WATCH 0 | ELAN BUY $27.45 +7.2% RVOL 1.8x score 7/7
+09:48:27 | UW FLOW NVDA | CALLS ask-side strike 222.5 exp 08-05 — vol/OI 14.9 (posicion nueva) $257k
+09:48:48 | FINVIZ SHORT SQUEEZE · WEATHER · BUY 2 SELL 0 WATCH 0 | JLHL BUY $9.07 +67.3% RVOL 24.8x score 4/7 | ARDT BUY $10.77 +0.2% RVOL 1.8x score 4/7
+09:49:27 | UW FLOW MU | CALLS ask-side strike 900 exp 08-28 — premium 1.9M ask-side
+09:49:31 | 🎈 BB BAND-WALK | meta sigue bajando fuerte.
+09:50:23 | 🩸 EARNINGS-FALL RBA -13.1% | RBA cayó fuerte tras resultados. pendiente.
+09:50:23 | 🩸 EARNINGS-FALL CC -15.7% | CC cayó fuerte tras resultados. pendiente.
+09:50:23 | 🩸 EARNINGS-FALL GLXY -9.4% | GLXY cayó fuerte tras resultados. pendiente.
+09:50:23 | 🩸 EARNINGS-FALL VVV -6.8% | VVV cayó fuerte tras resultados. pendiente.
+09:50:23 | 🩸 EARNINGS-FALL CE -6.6% | CE cayó fuerte tras resultados. pendiente.
+09:50:23 | 🩸 EARNINGS-FALL RRX -11.4% | RRX cayó fuerte tras resultados. pendiente.
+09:50:23 | 🩸 EARNINGS-FALL GXO -6.3% | GXO cayó fuerte tras resultados. pendiente.
+09:50:23 | 🩸 EARNINGS-FALL VSH -7.6% | VSH cayó fuerte tras resultados. pendiente.
+09:50:23 | 🩸 EARNINGS-FALL CVS -6.3% | CVS cayó fuerte tras resultados. pendiente.
+09:50:27 | UW FLOW SPY | PUTS ask-side strike 795 exp 09-18 — premium 1.1M ask-side
+09:50:33 | UW FLOW TSLA | PUTS ask-side strike 350 exp 08-21 — SWEEP $957k
+09:50:38 | UW FLOW MU | CALLS bid-side strike 900 exp 08-21 — premium 1.5M bid-side
+09:50:48 | FINVIZ SHORT SQUEEZE · NUEVOS · BUY 1 SELL 0 WATCH 0 | SVV BUY $10.88 +1.4% RVOL 1.6x score 6/7
+09:52:31 | 🎈 BB BAND-WALK | nflx sigue bajando fuerte.
+09:52:39 | UW FLOW SPY | PUTS ask-side strike 773 exp 08-05 — vol/OI 4.8 (posicion nueva) $521k
+09:52:41 | FINVIZ BUFFETT · WEATHER · BUY 4 SELL 1 WATCH 0 | PAAS BUY $47.60 +6.0% RVOL 1.8x score 4/6 | IAG BUY $15.78 +6.6% RVOL 1.6x score 4/6 | KGC BUY $25.28 +7.1% RVOL 1.6x score 4/6 | +2 más
+09:52:45 | UW FLOW MU | CALLS bid-side strike 930 exp 08-10 — vol/OI 2.4 (posicion nueva) $735k
+09:52:49 | FINVIZ SHORT SQUEEZE · NUEVOS · BUY 1 SELL 0 WATCH 0 | GRPN BUY $28.57 +3.9% RVOL 1.6x score 7/7
+09:53:45 | UW FLOW AMZN | CALLS bid-side strike 300 exp 01-15 — SWEEP $837k
+09:54:45 | UW FLOW SKHY | PUTS bid-side strike 125 exp 11-20 — premium 4.4M bid-side
+09:54:49 | FINVIZ SHORT SQUEEZE · WEATHER · BUY 1 SELL 0 WATCH 0 | FUBO BUY $9.65 +1.1% RVOL 4.4x score 5/7
+09:54:51 | UW FLOW TSLA | PUTS bid-side strike 325 exp 08-07 — vol/OI 2.2 (posicion nueva) $853k
+09:55:51 | UW FLOW AMD | CALLS bid-side strike 600 exp 09-18 — SWEEP $817k
+09:55:57 | UW FLOW SPCX | PUTS ask-side strike 100 exp 09-18 — SWEEP $677k
+09:56:39 | 🇨🇳 NOTICIA SEMIS | TrendForce: DDR chip price increases are slowing, while NAND prices lack momentum for a rebound. - Moomoo
+09:56:39 | 🇨🇳 NOTICIA SEMIS | AI Stocks Shed $2.2 Trillion in July; Legendary Fund Manager Says GPU Rental Prices Surged Over 50%, Fundamentals Remain Intact - finance.biggo.com
+09:56:39 | 🇯🇵 NOTICIA SEMIS | SoftBank jumps 13% as Asia tech stocks track Wall Street AI rally - cnbc.com
+09:56:57 | UW FLOW NVDA | PUTS bid-side strike 215 exp 10-16 — SWEEP $515k
+09:57:57 | FINVIZ MOMENTUM BREAKOUT · WEATHER · BUY 1 SELL 0 WATCH 0 | PGEN BUY $7.20 +10.3% RVOL 6.2x score 6/7
+09:57:57 | UW FLOW QQQ | CALLS bid-side strike 755 exp 08-13 — vol/OI 22.0 (posicion nueva) $276k
+09:58:03 | UW FLOW GOOGL | CALLS ask-side strike 385 exp 08-07 — SWEEP $633k
+09:58:08 | UW FLOW SPCX | CALLS ask-side strike 180 exp 09-04 — vol/OI 35.7 (posicion nueva) $360k
+09:59:09 | UW FLOW MU | CALLS ask-side strike 935 exp 08-28 — SWEEP $698k
+09:59:14 | UW FLOW LRCX | PUTS bid-side strike 320 exp 08-28 — vol/OI 5.5 (posicion nueva) $497k
+09:59:20 | UW FLOW SNDK | CALLS bid-side strike 1500 exp 08-07 — premium 1.7M bid-side
+09:59:33 | 🎈 BB BAND-WALK | rklb sigue subiendo fuerte.
+10:02:21 | UW FLOW SKHY | PUTS ask-side strike 140 exp 12-15 — vol/OI 5.6 (posicion nueva) $477k
+10:02:26 | UW FLOW SKHY | PUTS ask-side strike 150 exp 12-15 — vol/OI 2.5 (posicion nueva) $495k
+10:02:32 | UW FLOW QQQ | CALLS bid-side strike 705 exp 06-17 — premium 4.7M bid-side
+10:02:41 | FINVIZ BUFFETT · WEATHER · BUY 0 SELL 1 WATCH 0 | PUK SELL $27.81 -5.8% RVOL 5.0x score -3/6
+10:03:32 | UW FLOW QQQ | CALLS bid-side strike 700 exp 06-30 — premium 7.3M bid-side
+10:03:59 | FINVIZ MOMENTUM BREAKOUT · WEATHER · BUY 1 SELL 0 WATCH 0 | XYZ BUY $85.02 +0.5% RVOL 1.8x score 4/7
+10:05:33 | UW FLOW SPCX | CALLS bid-side strike 155 exp 08-28 — vol/OI 4.8 (posicion nueva) $311k
+10:07:59 | FINVIZ MOMENTUM BREAKOUT · NUEVOS · BUY 1 SELL 0 WATCH 0 | HELP BUY $9.68 +4.3% RVOL 1.6x score 6/7
+10:08:33 | UW FLOW MU | CALLS ask-side strike 850 exp 08-21 — premium 2.0M ask-side
+10:09:34 | UW FLOW NVDA | CALLS ask-side strike 205 exp 12-18 — premium 1.0M ask-side
+10:09:39 | UW FLOW NVDA | CALLS ask-side strike 222.5 exp 08-05 — vol/OI 27.0 (posicion nueva) $317k
+10:09:45 | UW FLOW SPCX | CALLS bid-side strike 205 exp 10-16 — vol/OI 2.9 (posicion nueva) $290k
+10:11:45 | UW FLOW SNDK | CALLS bid-side strike 1410 exp 08-07 — premium 3.4M bid-side
+10:13:46 | UW FLOW AMD | PUTS bid-side strike 400 exp 09-04 — premium 2.0M bid-side
+10:13:52 | UW FLOW META | PUTS bid-side strike 595 exp 08-05 — vol/OI 2.9 (posicion nueva) $285k
+10:13:57 | UW FLOW NVDA | CALLS ask-side strike 210 exp 08-21 — premium 1.0M ask-side
+10:14:51 | FINVIZ SHORT SQUEEZE · NUEVOS · BUY 1 SELL 0 WATCH 0 | CHH BUY $112.60 +3.7% RVOL 1.6x score 7/7
+10:14:57 | UW FLOW NVDA | PUTS bid-side strike 190 exp 09-04 — vol/OI 3.2 (posicion nueva) $264k
+10:15:01 | FINVIZ MOMENTUM BREAKOUT · WEATHER · BUY 1 SELL 0 WATCH 0 | BLMN BUY $12.22 +36.9% RVOL 8.6x score 6/7
+10:15:03 | UW FLOW NVDA | CALLS ask-side strike 222.5 exp 08-12 — vol/OI 3.7 (posicion nueva) $255k
+10:16:03 | UW FLOW MU | PUTS bid-side strike 920 exp 08-05 — premium 1.3M bid-side
+10:17:04 | UW FLOW NVDA | CALLS bid-side strike 200 exp 08-14 — premium 2.4M bid-side
+10:18:02 | FINVIZ MOMENTUM BREAKOUT · NUEVOS · BUY 2 SELL 0 WATCH 0 | URGN BUY $43.94 +10.1% RVOL 2.3x score 7/7 | DYN BUY $27.03 +4.1% RVOL 1.5x score 7/7
+10:18:04 | UW FLOW AMZN | PUTS ask-side strike 240 exp 01-15 — premium 1.3M ask-side
+10:19:04 | UW FLOW AVGO | PUTS bid-side strike 422.5 exp 08-07 — vol/OI 6.0 (posicion nueva) $431k
+10:19:10 | UW FLOW MU | PUTS bid-side strike 925 exp 08-21 — SWEEP $505k
+10:19:15 | UW FLOW SNDK | PUTS bid-side strike 1500 exp 08-07 — SWEEP $598k
+10:20:16 | UW FLOW MU | CALLS ask-side strike 915 exp 08-14 — vol/OI 2.3 (posicion nueva) $262k
+10:22:52 | FINVIZ SHORT SQUEEZE · WEATHER · BUY 0 SELL 1 WATCH 0 | TYRA SELL $28.48 -12.5% RVOL 3.6x score -4/7
+10:23:17 | UW FLOW SPY | PUTS bid-side strike 775 exp 11-20 — vol/OI 3.0 (posicion nueva) $688k
+10:23:22 | UW FLOW QQQ | PUTS bid-side strike 740 exp 10-16 — premium 1.1M bid-side
+10:24:22 | UW FLOW AMD | CALLS ask-side strike 507.5 exp 08-21 — vol/OI 6.0 (posicion nueva) $613k
+10:24:28 | UW FLOW SPY | PUTS ask-side strike 772 exp 08-05 — vol/OI 5.9 (posicion nueva) $384k
+10:25:02 | FINVIZ MOMENTUM BREAKOUT · BUY | ATKR $93.61 +0.1% RVOL 12.5x
+10:26:43 | 🇨🇳 NOTICIA SEMIS | HP buys CXMT DRAM - electronicsweekly.com
+10:28:01 | UW FLOW NVDA 🟢 BULLISH | CALLS compradas 220 exp 08-05 · vol/OI 8.3 (posicion nueva) $252k
+10:29:01 | UW FLOW WDC 🔴 BEARISH | CALLS vendidas 880 exp 10-16 · vol/OI 3.0 (posicion nueva) $317k
+10:30:02 | UW FLOW QQQ 🟢 BULLISH | CALLS compradas 720 exp 01-15 · premium 5.9M ask-side
+10:31:02 | UW FLOW GLD 🟢 BULLISH | PUTS vendidas 352 exp 01-15 · premium 1.7M bid-side
+10:31:07 | UW FLOW QQQ 🔴 BEARISH | CALLS vendidas 780 exp 01-15 · premium 3.2M bid-side
+10:32:08 | UW FLOW SPY 🟢 BULLISH | PUTS vendidas 774 exp 08-05 · vol/OI 47.0 (posicion nueva) $272k
+10:32:13 | UW FLOW SPY 🔴 BEARISH | CALLS vendidas 744 exp 09-18 · premium 1.2M bid-side
+10:32:22 | 🎯 RE-ENTRADA A BANDA | meta volvió a su rango.
+10:33:13 | UW FLOW EWY 🔴 BEARISH | PUTS compradas 160 exp 08-21 · premium 2.0M ask-side
+10:33:40 | FINVIZ SHORT SQUEEZE · SELL (giro) | IEP $7.39 -4.4% RVOL 3.6x
+10:34:14 | UW FLOW QQQ 🔴 BEARISH | PUTS compradas 694 exp 08-13 · vol/OI 41.0 (posicion nueva) $349k
+10:34:43 | 🎈 BB REBOTE | nvda puede subir un poco.
+10:35:04 | FINVIZ SHORT SQUEEZE · BUY (giro) | LIFE $26.12 -5.5% RVOL 6.9x
+10:35:14 | UW FLOW SPY 🔴 BEARISH | PUTS compradas 770 exp 08-06 · vol/OI 4.3 (posicion nueva) $323k
+10:35:43 | 🎈 BB REBOTE | qqq puede subir un poco.
+10:36:14 | UW FLOW NVDA 🔴 BEARISH | PUTS compradas 215 exp 08-17 · premium 2.5M ask-side
+10:38:01 | FINVIZ MOMENTUM BREAKOUT · BUY (giro) | STGW $9.03 +0.2% RVOL 1.9x
+10:39:04 | FINVIZ SHORT SQUEEZE · SELL (giro) | METC $9.57 -0.7% RVOL 1.7x
+10:41:16 | UW FLOW SNDK 🔴 BEARISH | PUTS compradas 1355 exp 08-07 · SWEEP $635k
+10:41:22 | UW FLOW AMD 🔴 BEARISH | CALLS vendidas 620 exp 10-16 · premium 1.1M bid-side
+10:41:27 | UW FLOW AMD 🔴 BEARISH | CALLS vendidas 560 exp 10-16 · premium 1.3M bid-side
+10:42:02 | FINVIZ MOMENTUM BREAKOUT · BUY | WT $22.65 +1.2% RVOL 1.5x
+10:43:28 | UW FLOW AMD 🟢 BULLISH | CALLS compradas 600 exp 01-15 · premium 2.7M ask-side
+10:43:34 | UW FLOW CRWV 🟢 BULLISH | CALLS compradas 90 exp 09-18 · SWEEP $901k
+10:44:34 | UW FLOW TSM 🟢 BULLISH | CALLS compradas 400 exp 09-18 · premium 1.2M ask-side
+10:44:40 | UW FLOW SPY 🔴 BEARISH | CALLS vendidas 760 exp 09-18 · premium 2.9M bid-side
+10:45:40 | UW FLOW SNDK 🔴 BEARISH | CALLS vendidas 1380 exp 08-07 · vol/OI 6.4 (posicion nueva) $467k
+10:46:40 | UW FLOW SNDK 🟢 BULLISH | CALLS compradas 1420 exp 08-07 · vol/OI 2.2 (posicion nueva) $573k
+10:48:41 | UW FLOW MU 🔴 BEARISH | CALLS vendidas 910 exp 08-05 · vol/OI 9.1 (posicion nueva) $250k
+10:49:19 | 🎈 BB REBOTE | mu puede subir un poco.
+10:49:41 | UW FLOW SNDK 🟢 BULLISH | CALLS compradas 1435 exp 08-07 · vol/OI 2.2 (posicion nueva) $252k
+10:49:47 | UW FLOW MU 🟢 BULLISH | PUTS vendidas 915 exp 08-05 · vol/OI 17.7 (posicion nueva) $411k
+10:50:47 | UW FLOW SNDK 🔴 BEARISH | PUTS compradas 1410 exp 08-07 · vol/OI 2.1 (posicion nueva) $253k
+10:50:53 | UW FLOW SNDK 🟢 BULLISH | CALLS compradas 1200 exp 08-07 · SWEEP $903k
+10:51:53 | UW FLOW MU 🟢 BULLISH | CALLS compradas 915 exp 08-05 · vol/OI 16.3 (posicion nueva) $272k
+10:52:53 | UW FLOW SPY 🔴 BEARISH | CALLS vendidas 810 exp 11-20 · premium 1.2M bid-side
+10:52:59 | UW FLOW AMD 🔴 BEARISH | CALLS vendidas 420 exp 02-19 · vol/OI 59.0 (posicion nueva) $666k
+10:53:04 | UW FLOW AVGO 🟢 BULLISH | PUTS vendidas 340 exp 09-04 · vol/OI 8.2 (posicion nueva) $568k
+10:54:04 | UW FLOW SPY 🔴 BEARISH | PUTS compradas 782 exp 08-07 · vol/OI 3.5 (posicion nueva) $268k
+10:54:10 | UW FLOW SPY 🔴 BEARISH | PUTS compradas 775 exp 08-05 · vol/OI 139.5 (posicion nueva) $381k
+10:54:16 | UW FLOW SNDK 🟢 BULLISH | PUTS vendidas 1380 exp 08-07 · SWEEP $566k
+10:55:16 | UW FLOW MU 🟢 BULLISH | CALLS compradas 905 exp 08-05 · vol/OI 7.8 (posicion nueva) $602k
+10:56:48 | 🇨🇳 NOTICIA SEMIS | China's CXMT targets 30% DRAM memory market share by 2030 with sixth mega-fab — future plans bottlenecked by access to advanced chipmaking tools - Tom's Hardware
+10:56:48 | 🇨🇳 NOTICIA SEMIS | Major PC makers turn to China’s CXMT amid memory shortage - Semafor
+10:56:49 | 🇨🇳 NOTICIA SEMIS | Memory Price Rally Diverges: Contract Prices Hit Record Highs in July, Spot Market Momentum Fades - finance.biggo.com
+10:56:49 | 🇹🇼 NOTICIA SEMIS | Why Is TSMC Stock Up In Premarket Today? - Stocktwits
+10:58:17 | UW FLOW QQQ 🟢 BULLISH | PUTS vendidas 720 exp 08-07 · SWEEP $530k
+11:00:17 | UW FLOW NVDA 🔴 BEARISH | CALLS vendidas 220 exp 08-07 · premium 1.1M bid-side
+11:02:18 | UW FLOW AMD 🟢 BULLISH | CALLS compradas 500 exp 08-28 · vol/OI 2.1 (posicion nueva) $517k
+11:06:19 | UW FLOW AMZN 🔴 BEARISH | PUTS compradas 230 exp 03-19 · premium 1.0M ask-side
+11:09:20 | UW FLOW MU 🟢 BULLISH | CALLS compradas 910 exp 08-05 · premium 1.1M ask-side
+11:10:20 | UW FLOW AAPL 🟢 BULLISH | CALLS compradas 310 exp 08-07 · premium 1.0M ask-side
+11:10:26 | UW FLOW SPY 🔴 BEARISH | CALLS vendidas 776 exp 08-05 · vol/OI 32.9 (posicion nueva) $474k
+11:11:26 | UW FLOW SPY 🟢 BULLISH | PUTS vendidas 769 exp 08-05 · vol/OI 14.2 (posicion nueva) $272k
+11:12:26 | 🎈 BB REBOTE | smh puede bajar un poco.
+11:13:27 | UW FLOW MU 🔴 BEARISH | CALLS vendidas 920 exp 08-05 · vol/OI 13.9 (posicion nueva) $518k
+11:14:28 | UW FLOW SPY 🟢 BULLISH | PUTS vendidas 770 exp 08-06 · vol/OI 7.7 (posicion nueva) $260k
+11:15:30 | UW FLOW DRAM 🟢 BULLISH | CALLS compradas 60 exp 12-17 · premium 1.3M ask-side
+11:16:30 | UW FLOW MU 🟢 BULLISH | CALLS compradas 915 exp 08-05 · vol/OI 22.0 (posicion nueva) $554k
+11:17:28 | 🎈 BB REBOTE | qqq puede subir un poco.
+11:17:31 | UW FLOW MSFT 🟢 BULLISH | PUTS vendidas 492.5 exp 08-05 · vol/OI 3.8 (posicion nueva) $285k
+11:18:31 | UW FLOW SPY 🔴 BEARISH | PUTS compradas 774 exp 08-05 · vol/OI 108.3 (posicion nueva) $269k
+11:18:37 | UW FLOW SPY | PUTS al mid 763 exp 08-14 · vol/OI 8.4 (posicion nueva) $396k
+11:19:37 | UW FLOW SPY 🟢 BULLISH | PUTS vendidas 772 exp 08-05 · vol/OI 18.2 (posicion nueva) $391k
+11:19:43 | UW FLOW SPY 🟢 BULLISH | PUTS vendidas 770 exp 09-04 · vol/OI 7.0 (posicion nueva) $468k
+11:19:48 | UW FLOW TSLA 🔴 BEARISH | CALLS vendidas 300 exp 09-18 · premium 1.7M bid-side
+11:20:30 | 🎈 BB REBOTE | nvda puede subir un poco.
+11:20:48 | UW FLOW MU 🔴 BEARISH | PUTS compradas 920 exp 08-05 · vol/OI 21.9 (posicion nueva) $573k
+11:20:54 | UW FLOW MSFT 🔴 BEARISH | CALLS vendidas 500 exp 09-18 · SWEEP $725k
+11:22:55 | UW FLOW QQQ 🔴 BEARISH | CALLS vendidas 722 exp 08-05 · vol/OI 8.2 (posicion nueva) $354k
+11:23:00 | UW FLOW SPCX 🟢 BULLISH | CALLS compradas 115 exp 08-14 · vol/OI 7.1 (posicion nueva) $389k
+11:23:06 | UW FLOW STX 🟢 BULLISH | PUTS vendidas 830 exp 08-07 · vol/OI 3.8 (posicion nueva) $274k
+11:24:06 | UW FLOW QQQ 🔴 BEARISH | CALLS vendidas 724 exp 08-05 · vol/OI 18.5 (posicion nueva) $297k
+11:24:12 | UW FLOW SNDK 🟢 BULLISH | PUTS vendidas 1350 exp 08-21 · premium 2.1M bid-side
+11:24:18 | UW FLOW SPCX 🔴 BEARISH | CALLS vendidas 225 exp 10-16 · vol/OI 5.1 (posicion nueva) $426k
+11:26:53 | 🇨🇳 NOTICIA SEMIS | Memory Price Rally Diverges: Contract Prices Hit Record Highs in July as Spot Market Momentum Fades - finance.biggo.com
+11:26:53 | 🇨🇳 NOTICIA SEMIS | Samsung Continues DRAM Market Share Lead, Micron Is Catching Up, Notes Report - TechPowerUp
+11:26:54 | 🇯🇵 NOTICIA SEMIS | AI and semiconductor stocks rebounding?! Heavy buying seen in Kioxia; focus on SoftBank Group, JX Advanced Metals, and Fujikura earnings later this week—can they erase the 'July ni
+11:29:33 | 🎈 BB REBOTE | mu puede bajar un poco.
+11:30:20 | UW FLOW SPCX 🔴 BEARISH | PUTS compradas 108 exp 08-21 · vol/OI 2.0 (posicion nueva) $399k
+11:30:26 | UW FLOW MU 🟢 BULLISH | PUTS vendidas 915 exp 08-05 · vol/OI 25.7 (posicion nueva) $510k
+11:35:35 | 🎈 BB REBOTE | nvda puede bajar un poco.
+11:37:28 | UW FLOW AMD 🟢 BULLISH | CALLS compradas 485 exp 08-05 · vol/OI 5.7 (posicion nueva) $333k
+11:41:12 | FINVIZ SHORT SQUEEZE · BUY (giro) | BOBS $18.53 +0.1% RVOL 1.6x
+11:42:37 | 🎈 BB REBOTE | smh puede bajar un poco.
+11:43:30 | UW FLOW MSFT 🔴 BEARISH | CALLS vendidas 500 exp 09-18 · premium 1.5M bid-side
+11:43:36 | UW FLOW AAPL 🟢 BULLISH | PUTS vendidas 310 exp 08-07 · vol/OI 2.3 (posicion nueva) $736k
+11:44:36 | UW FLOW AAPL 🔴 BEARISH | CALLS vendidas 315 exp 08-14 · vol/OI 2.2 (posicion nueva) $323k
+11:45:37 | UW FLOW MU 🟢 BULLISH | PUTS vendidas 920 exp 08-05 · vol/OI 32.8 (posicion nueva) $985k
+11:45:42 | UW FLOW AMD 🔴 BEARISH | CALLS vendidas 500 exp 08-07 · vol/OI 2.6 (posicion nueva) $529k
+11:46:43 | UW FLOW SNDK 🔴 BEARISH | PUTS compradas 1490 exp 03-19 · premium 1.1M ask-side
+11:47:43 | UW FLOW MU | CALLS al mid 920 exp 08-05 · vol/OI 17.1 (posicion nueva) $415k
+11:48:44 | UW FLOW SPY 🟢 BULLISH | CALLS compradas 772 exp 08-05 · vol/OI 3.6 (posicion nueva) $270k
+11:49:44 | UW FLOW NVDA 🔴 BEARISH | CALLS vendidas 220 exp 08-28 · premium 6.3M bid-side
+11:50:40 | 🎈 BB BAND-WALK | nflx sigue bajando fuerte.
+11:50:44 | UW FLOW QQQ 🟢 BULLISH | CALLS compradas 715 exp 08-07 · SWEEP $930k
+11:50:50 | UW FLOW SPY 🔴 BEARISH | CALLS vendidas 770 exp 08-21 · premium 1.5M bid-side
+11:50:56 | UW FLOW QQQ 🔴 BEARISH | CALLS vendidas 725 exp 08-07 · SWEEP $847k
+11:52:56 | UW FLOW GLD 🔴 BEARISH | CALLS vendidas 390 exp 08-14 · vol/OI 2.5 (posicion nueva) $322k
+11:54:12 | 🎈 BB REBOTE | qqq puede subir un poco.
+11:54:12 | 🎈 BB REBOTE | nvda puede subir un poco.
+11:56:58 | UW FLOW AMD 🟢 BULLISH | PUTS vendidas 485 exp 08-05 · vol/OI 10.9 (posicion nueva) $893k
+11:57:03 | UW FLOW SNDK 🔴 BEARISH | PUTS compradas 1400 exp 08-07 · vol/OI 2.8 (posicion nueva) $268k
+11:58:04 | UW FLOW SNDK 🔴 BEARISH | PUTS compradas 1470 exp 08-07 · premium 1.0M ask-side
+11:58:13 | 🎈 BB REBOTE | smh puede subir un poco.
+12:00:04 | UW FLOW SNDK 🔴 BEARISH | CALLS vendidas 1380 exp 08-07 · vol/OI 10.7 (posicion nueva) $372k
+12:03:06 | UW FLOW TSLA 🟢 BULLISH | PUTS vendidas 325 exp 08-05 · vol/OI 11.2 (posicion nueva) $350k
+12:05:06 | UW FLOW QQQ 🟢 BULLISH | PUTS vendidas 720 exp 08-07 · vol/OI 2.2 (posicion nueva) $523k
+12:05:12 | UW FLOW MU 🟢 BULLISH | CALLS compradas 920 exp 08-05 · vol/OI 19.6 (posicion nueva) $760k
+12:05:18 | UW FLOW AMD 🟢 BULLISH | CALLS compradas 485 exp 08-05 · vol/OI 7.0 (posicion nueva) $487k
+12:06:18 | UW FLOW SPY 🟢 BULLISH | PUTS vendidas 792 exp 08-05 · vol/OI 217.0 (posicion nueva) $435k
+12:09:17 | 🎈 BB REBOTE | mu puede subir un poco.
+12:09:19 | UW FLOW QQQ 🔴 BEARISH | PUTS compradas 720 exp 08-05 · vol/OI 21.2 (posicion nueva) $256k
+12:10:48 | 🎈 BB BAND-WALK | googl sigue bajando fuerte.
+12:11:20 | UW FLOW SPCX 🟢 BULLISH | PUTS vendidas 110 exp 09-18 · SWEEP $706k
+12:12:21 | UW FLOW NVDA 🔴 BEARISH | CALLS vendidas 225 exp 08-14 · vol/OI 3.6 (posicion nueva) $305k
+12:13:21 | UW FLOW SNDK 🔴 BEARISH | PUTS compradas 1400 exp 08-07 · vol/OI 3.4 (posicion nueva) $424k
+12:15:22 | UW FLOW QQQ 🔴 BEARISH | PUTS compradas 721 exp 08-07 · vol/OI 8.4 (posicion nueva) $301k
+12:15:27 | UW FLOW SPY 🔴 BEARISH | PUTS compradas 700 exp 10-16 · premium 1.1M ask-side
+12:17:28 | UW FLOW SPY 🟢 BULLISH | PUTS vendidas 771 exp 08-05 · vol/OI 38.2 (posicion nueva) $287k
+12:17:34 | UW FLOW SPY 🟢 BULLISH | PUTS vendidas 773 exp 08-05 · premium 1.0M bid-side
+12:18:51 | 🎈 BB REBOTE | nvda puede bajar un poco.
+12:20:35 | UW FLOW SPY 🟢 BULLISH | PUTS vendidas 770 exp 08-05 · vol/OI 26.8 (posicion nueva) $775k
+12:21:16 | FINVIZ MOMENTUM BREAKOUT · BUY | ING $35.92 +1.6% RVOL 2.4x
+12:23:16 | FINVIZ MOMENTUM BREAKOUT · BUY (giro) | AEG $9.48 +1.0% RVOL 1.5x
+12:23:23 | 🎈 BB REBOTE | spy puede bajar un poco.
+12:23:36 | UW FLOW GOOGL 🔴 BEARISH | CALLS vendidas 410 exp 09-18 · SWEEP $811k
+12:24:36 | UW FLOW MU 🔴 BEARISH | CALLS vendidas 920 exp 08-05 · vol/OI 21.1 (posicion nueva) $451k
+12:27:02 | 🇨🇳 NOTICIA SEMIS | The RAM Crisis Is Forcing PC Makers to Team Up With a Company the U.S. Hates - Gizmodo
+12:27:02 | 🇨🇳 NOTICIA SEMIS | Apple reportedly rebuffed by CXMT in push for lower memory prices: report (AAPL:NASDAQ) - Seeking Alpha
+12:27:24 | 🎈 BB REBOTE | qqq puede bajar un poco.
+12:29:25 | 🎈 BB BAND-WALK | coin sigue subiendo fuerte.
+12:29:38 | UW FLOW MU 🟢 BULLISH | CALLS compradas 925 exp 08-05 · vol/OI 10.8 (posicion nueva) $947k
+12:29:44 | UW FLOW TSLA 🟢 BULLISH | PUTS vendidas 322.5 exp 08-07 · vol/OI 9.2 (posicion nueva) $747k
+12:30:40 | 🩸 EARNINGS-FALL UBER -6.9% | UBER cayó fuerte tras resultados. pendiente.
+12:30:40 | 🩸 EARNINGS-FALL PARR -9.9% | PARR cayó fuerte tras resultados. pendiente.
+12:30:40 | 🩸 EARNINGS-FALL TRI -9.1% | TRI cayó fuerte tras resultados. pendiente.
+12:30:40 | 🩸 EARNINGS-FALL ALAB -8.2% | ALAB cayó fuerte tras resultados. pendiente.
+12:30:40 | 🩸 EARNINGS-FALL EOG -5.7% | EOG cayó fuerte tras resultados. pendiente.
+12:30:40 | 🩸 EARNINGS-FALL DK -6.5% | DK cayó fuerte tras resultados. pendiente.
+12:30:40 | 🩸 EARNINGS-FALL LSCC -6.3% | LSCC cayó fuerte tras resultados. pendiente.
+12:30:40 | 🩸 EARNINGS-FALL PRIM -6.8% | PRIM cayó fuerte tras resultados. pendiente.
+12:30:44 | UW FLOW MU 🔴 BEARISH | CALLS vendidas 950 exp 08-07 · SWEEP $687k
+12:30:50 | UW FLOW MU 🔴 BEARISH | CALLS vendidas 930 exp 08-07 · vol/OI 4.7 (posicion nueva) $307k
+12:31:25 | 🎈 BB REBOTE | mu puede bajar un poco.
+12:31:50 | UW FLOW NVDA 🟢 BULLISH | CALLS compradas 220 exp 08-07 · vol/OI 3.4 (posicion nueva) $300k
+12:31:56 | UW FLOW AMD 🔴 BEARISH | PUTS compradas 485 exp 08-07 · vol/OI 2.4 (posicion nueva) $327k
+12:32:25 | 🎈 BB REBOTE | smh puede bajar un poco.
+12:32:56 | UW FLOW SNDK 🔴 BEARISH | PUTS compradas 1400 exp 08-07 · vol/OI 3.6 (posicion nueva) $300k
+12:34:57 | UW FLOW NVDA 🔴 BEARISH | PUTS compradas 222.5 exp 08-05 · vol/OI 193.3 (posicion nueva) $355k
+12:35:57 | UW FLOW NVDA 🔴 BEARISH | PUTS compradas 210 exp 03-19 · SWEEP $553k
+12:37:58 | UW FLOW MU 🟢 BULLISH | PUTS vendidas 920 exp 08-05 · vol/OI 44.1 (posicion nueva) $666k
+12:38:04 | UW FLOW EWY 🟢 BULLISH | PUTS vendidas 150 exp 08-21 · SWEEP $785k
+12:40:19 | FINVIZ MOMENTUM BREAKOUT · BUY | BSP $45.72 +22.1% RVOL 1.5x
+12:42:05 | UW FLOW INTC 🟢 BULLISH | CALLS compradas 100 exp 08-07 · SWEEP $892k
+12:44:06 | UW FLOW EWY 🔴 BEARISH | PUTS compradas 120 exp 08-21 · premium 1.8M ask-side
+12:45:06 | FINVIZ BUFFETT · BUY (giro) | VIPS $15.55 -0.3% RVOL 1.6x
+12:45:07 | UW FLOW NVDA 🔴 BEARISH | CALLS vendidas 220 exp 08-17 · premium 3.2M bid-side
+12:45:12 | UW FLOW INTC 🟢 BULLISH | CALLS compradas 95 exp 08-05 · premium 1.5M ask-side
+12:45:18 | UW FLOW SNDK 🔴 BEARISH | PUTS compradas 1420 exp 08-07 · vol/OI 4.7 (posicion nueva) $376k
+12:46:18 | UW FLOW AMD 🟢 BULLISH | CALLS compradas 487.5 exp 08-05 · vol/OI 21.2 (posicion nueva) $491k
+12:47:19 | UW FLOW GOOGL 🟢 BULLISH | CALLS compradas 405 exp 01-15 · premium 1.2M ask-side
+12:48:19 | UW FLOW MU 🟢 BULLISH | CALLS compradas 920 exp 08-05 · vol/OI 23.5 (posicion nueva) $892k
+12:49:19 | UW FLOW NVDA 🟢 BULLISH | CALLS compradas 225 exp 09-18 · premium 1.2M ask-side
+12:49:25 | UW FLOW MU 🟢 BULLISH | CALLS compradas 925 exp 08-05 · vol/OI 12.8 (posicion nueva) $303k
+12:51:26 | UW FLOW AVGO 🟢 BULLISH | PUTS vendidas 415 exp 08-07 · vol/OI 5.6 (posicion nueva) $264k
+12:52:26 | UW FLOW QQQ 🔴 BEARISH | CALLS vendidas 725 exp 08-07 · premium 1.2M bid-side
+12:52:32 | UW FLOW AMD | PUTS al mid 500 exp 08-05 · SWEEP $906k
+12:53:32 | UW FLOW SNDK 🟢 BULLISH | CALLS compradas 1420 exp 08-07 · premium 1.2M ask-side
+12:53:37 | UW FLOW SNDK 🟢 BULLISH | CALLS compradas 1415 exp 08-07 · vol/OI 10.0 (posicion nueva) $984k
+12:53:43 | UW FLOW SNDK 🟢 BULLISH | PUTS vendidas 1415 exp 08-07 · vol/OI 14.0 (posicion nueva) $505k
+12:54:43 | UW FLOW SPY 🟢 BULLISH | PUTS vendidas 771 exp 08-05 · vol/OI 49.0 (posicion nueva) $311k
+12:57:15 | 🇹🇼 NOTICIA SEMIS | What Is Going on with Taiwan Semiconductor Stock on Wednesday? - Benzinga
+12:58:45 | UW FLOW INTC 🔴 BEARISH | CALLS vendidas 100 exp 08-07 · premium 1.6M bid-side
+12:58:50 | UW FLOW NVDA 🟢 BULLISH | CALLS compradas 225 exp 09-17 · SWEEP $594k
+12:59:51 | UW FLOW SPCX 🟢 BULLISH | CALLS compradas 127 exp 08-07 · vol/OI 6.0 (posicion nueva) $803k
+12:59:56 | UW FLOW MU 🔴 BEARISH | CALLS vendidas 900 exp 08-07 · premium 2.2M bid-side
+13:01:57 | UW FLOW NVDA 🔴 BEARISH | CALLS vendidas 220 exp 08-07 · premium 1.4M bid-side
+13:02:57 | UW FLOW SNDK 🔴 BEARISH | CALLS vendidas 1425 exp 08-07 · vol/OI 2.1 (posicion nueva) $752k
+13:03:57 | UW FLOW RKLB 🟢 BULLISH | PUTS vendidas 55 exp 09-18 · vol/OI 2.2 (posicion nueva) $662k
+13:05:58 | UW FLOW QQQ 🟢 BULLISH | CALLS compradas 725 exp 06-17 · premium 2.2M ask-side
+13:06:38 | 🎈 BB REBOTE | qqq puede subir un poco.
+13:07:38 | 🎈 BB REBOTE | smh puede subir un poco.
+13:07:58 | UW FLOW SPCX | PUTS al mid 110 exp 08-07 · vol/OI 2.4 (posicion nueva) $1763k
+13:08:38 | 🎈 BB REBOTE | nvda puede subir un poco.
+13:08:39 | 🎈 BB BAND-WALK | crwv sigue bajando fuerte.
+13:09:59 | UW FLOW TSLA 🟢 BULLISH | PUTS vendidas 320 exp 08-07 · vol/OI 7.6 (posicion nueva) $614k
+13:11:09 | 🎈 BB REBOTE | mu puede subir un poco.
+13:12:10 | 🎈 BB REBOTE | spy puede subir un poco.
+13:13:00 | UW FLOW INTC 🟢 BULLISH | PUTS vendidas 90 exp 09-04 · vol/OI 3.0 (posicion nueva) $274k
+13:14:00 | UW FLOW MSFT | CALLS al mid 500 exp 09-18 · SWEEP $772k
+13:14:06 | UW FLOW QQQ 🟢 BULLISH | CALLS compradas 722 exp 08-07 · vol/OI 2.2 (posicion nueva) $250k
+13:16:06 | UW FLOW AAPL 🟢 BULLISH | CALLS compradas 307.5 exp 08-07 · premium 1.2M ask-side
+13:17:07 | UW FLOW SNDK 🟢 BULLISH | CALLS compradas 1920 exp 12-18 · premium 1.4M ask-side
+13:19:07 | UW FLOW QQQ 🔴 BEARISH | CALLS vendidas 710 exp 08-31 · premium 1.2M bid-side
+13:21:08 | UW FLOW AMD 🟢 BULLISH | PUTS vendidas 450 exp 11-20 · premium 1.3M bid-side
+13:26:09 | UW FLOW QQQ 🔴 BEARISH | PUTS compradas 720 exp 08-05 · vol/OI 30.3 (posicion nueva) $290k
+13:27:09 | UW FLOW SNDK 🟢 BULLISH | CALLS compradas 1600 exp 08-07 · premium 1.0M ask-side
+13:28:10 | UW FLOW NVDA 🔴 BEARISH | CALLS vendidas 220 exp 08-07 · premium 1.2M bid-side
+13:31:11 | UW FLOW TSLA 🟢 BULLISH | PUTS vendidas 320 exp 08-07 · vol/OI 8.4 (posicion nueva) $606k
+13:32:11 | UW FLOW NVDA 🔴 BEARISH | PUTS compradas 222.5 exp 08-05 · vol/OI 547.2 (posicion nueva) $544k
+13:33:12 | UW FLOW AAPL 🟢 BULLISH | CALLS compradas 307.5 exp 08-07 · premium 1.0M ask-side
+13:33:15 | 🎈 BB BAND-WALK | rklb sigue bajando fuerte.
+13:35:12 | UW FLOW SPY 🟢 BULLISH | PUTS vendidas 772 exp 08-05 · vol/OI 32.6 (posicion nueva) $432k
+13:35:18 | UW FLOW NVDA 🔴 BEARISH | PUTS compradas 220 exp 08-28 · vol/OI 2.3 (posicion nueva) $445k
+13:35:23 | UW FLOW AVGO 🔴 BEARISH | CALLS vendidas 485 exp 09-04 · vol/OI 34.8 (posicion nueva) $698k
+13:42:17 | 🎈 BB REBOTE | qqq puede bajar un poco.
+13:42:17 | 🎈 BB REBOTE | spy puede bajar un poco.
+13:45:18 | 🎈 BB REBOTE | mu puede bajar un poco.
+13:45:26 | UW FLOW SPCX 🔴 BEARISH | CALLS vendidas 115 exp 08-07 · vol/OI 2.5 (posicion nueva) $288k
+13:47:19 | 🎈 BB REBOTE | qqq puede subir un poco.
+13:47:26 | UW FLOW NVDA 🔴 BEARISH | PUTS compradas 222.5 exp 08-07 · premium 1.2M ask-side
+13:47:32 | UW FLOW GOOGL 🟢 BULLISH | PUTS vendidas 360 exp 08-07 · vol/OI 2.5 (posicion nueva) $476k
+13:50:33 | UW FLOW TSLA 🟢 BULLISH | PUTS vendidas 322.5 exp 08-07 · vol/OI 12.6 (posicion nueva) $746k
+13:50:38 | UW FLOW SPY 🔴 BEARISH | CALLS vendidas 700 exp 08-21 · premium 1.7M bid-side
+13:51:39 | UW FLOW STX 🟢 BULLISH | PUTS vendidas 720 exp 09-18 · vol/OI 2.5 (posicion nueva) $658k
+13:57:29 | FINVIZ SCREENERS ROTO | MOMENTUM BREAKOUT: transporte curl · reintento 5m
+13:58:48 | 🎈 BOLLINGER VIGIA | Vigia Bollinger intradia arriba: toda la flota, rebotes y band-walks
+13:58:59 | FINVIZ SCREENERS | Feed recuperado
+14:00:55 | UW FLOW SNDK 🟢 BULLISH | CALLS compradas 1600 exp 08-07 · vol/OI 2.3 (posicion nueva) $292k
+14:02:56 | UW FLOW QQQ | PUTS al mid 698 exp 08-14 · vol/OI 2.8 (posicion nueva) $365k
+14:04:56 | UW FLOW AMD 🟢 BULLISH | PUTS vendidas 400 exp 09-04 · vol/OI 55.1 (posicion nueva) $265k
+14:05:02 | UW FLOW AMZN 🟢 BULLISH | CALLS compradas 275 exp 08-14 · premium 1.4M ask-side
+14:06:20 | 🎈 BB REBOTE | qqq puede bajar un poco.
+14:08:03 | UW FLOW QQQ 🔴 BEARISH | CALLS vendidas 741 exp 09-18 · premium 1.3M bid-side
+14:09:03 | UW FLOW AAPL 🟢 BULLISH | PUTS vendidas 312.5 exp 08-07 · premium 1.4M bid-side
+14:09:09 | UW FLOW MSFT 🔴 BEARISH | CALLS vendidas 482.5 exp 08-07 · SWEEP $603k
+14:09:21 | 🎈 BB BAND-WALK | nvda sigue bajando fuerte.
+14:12:09 | UW FLOW EWY 🟢 BULLISH | PUTS vendidas 130 exp 08-21 · vol/OI 2.5 (posicion nueva) $329k
+14:13:10 | UW FLOW TSLA 🟢 BULLISH | CALLS compradas 322.5 exp 08-07 · vol/OI 4.7 (posicion nueva) $535k
+14:15:10 | UW FLOW SPCX 🟢 BULLISH | CALLS compradas 115 exp 09-18 · vol/OI 4.7 (posicion nueva) $368k
+14:16:11 | UW FLOW AAPL 🟢 BULLISH | PUTS vendidas 310 exp 08-05 · vol/OI 14.7 (posicion nueva) $327k
+14:17:22 | 🎈 BB BAND-WALK | mstr sigue subiendo fuerte.
+14:23:13 | UW FLOW QQQ 🔴 BEARISH | PUTS compradas 718 exp 08-06 · vol/OI 20.0 (posicion nueva) $715k
+14:26:13 | UW FLOW QQQ 🟢 BULLISH | PUTS vendidas 722 exp 08-07 · vol/OI 5.7 (posicion nueva) $310k
+14:28:36 | 🇨🇳 NOTICIA SEMIS | A Chinese memory manufacturer has scooped up one fourteenth of the market - PC Gamer
+14:28:36 | 🇨🇳 NOTICIA SEMIS | AI Memory Crunch 2026: Why DRAM and NAND Prices Are Still Surging - kucoin.com
+14:30:15 | UW FLOW TXN 🔴 BEARISH | CALLS vendidas 310 exp 11-20 · SWEEP $656k
+14:30:25 | 🎈 BB REBOTE ⭐[degradada] | mu puede subir un poco.
+14:33:15 | UW FLOW SNDK 🟢 BULLISH | CALLS compradas 1650 exp 08-21 · SWEEP $884k
+14:33:21 | UW FLOW TSLA 🟢 BULLISH | PUTS vendidas 320 exp 08-07 · vol/OI 9.5 (posicion nueva) $508k
+14:33:27 | UW FLOW AVGO 🟢 BULLISH | PUTS vendidas 340 exp 09-04 · vol/OI 13.5 (posicion nueva) $338k
+14:34:27 | UW FLOW NVDA 🟢 BULLISH | CALLS compradas 210 exp 09-18 · SWEEP $978k
+14:35:26 | 🎈 BB REBOTE | smh puede subir un poco.
+14:36:26 | 🎈 BB BAND-WALK | crwv sigue bajando fuerte.
+14:37:28 | UW FLOW SPY 🟢 BULLISH | PUTS vendidas 763 exp 08-14 · vol/OI 11.7 (posicion nueva) $281k
+14:38:28 | UW FLOW SPY 🔴 BEARISH | PUTS compradas 525 exp 06-30 · vol/OI 14.1 (posicion nueva) $272k
+14:39:28 | UW FLOW NVDA 🟢 BULLISH | CALLS compradas 225 exp 08-07 · vol/OI 8.3 (posicion nueva) $285k
+14:41:29 | UW FLOW WDC 🔴 BEARISH | CALLS vendidas 690 exp 08-21 · premium 2.7M bid-side
+14:42:29 | UW FLOW SNDK 🔴 BEARISH | PUTS compradas 1400 exp 08-07 · vol/OI 4.4 (posicion nueva) $399k
+14:42:35 | UW FLOW AAPL 🟢 BULLISH | PUTS vendidas 310 exp 08-07 · premium 1.6M bid-side
+14:43:35 | UW FLOW XLK 🟢 BULLISH | CALLS compradas 187.5 exp 08-28 · vol/OI 97.8 (posicion nueva) $484k
+14:44:36 | UW FLOW WDC 🟢 BULLISH | PUTS vendidas 430 exp 11-20 · premium 2.1M bid-side
+14:44:49 | FINVIZ MOMENTUM BREAKOUT · BUY | AVT $96.47 +4.3% RVOL 1.5x
+14:48:37 | UW FLOW AVGO 🟢 BULLISH | PUTS vendidas 340 exp 09-04 · vol/OI 18.4 (posicion nueva) $306k
+14:50:37 | UW FLOW NVDA 🔴 BEARISH | CALLS vendidas 220 exp 08-07 · premium 1.8M bid-side
+14:50:43 | UW FLOW AMD 🟢 BULLISH | PUTS vendidas 450 exp 09-04 · vol/OI 4.0 (posicion nueva) $447k
+14:53:51 | FINVIZ MOMENTUM BREAKOUT · BUY | WTTR $21.66 +17.1% RVOL 2.8x
+14:54:44 | UW FLOW SNDK 🔴 BEARISH | PUTS compradas 1420 exp 08-07 · vol/OI 16.1 (posicion nueva) $266k
+14:57:45 | UW FLOW LRCX 🔴 BEARISH | CALLS vendidas 400 exp 09-18 · vol/OI 2.3 (posicion nueva) $415k
+14:58:31 | 🎈 BB REBOTE ⭐[degradada] | nvda puede subir un poco.
+15:00:46 | UW FLOW SPCX 🔴 BEARISH | PUTS compradas 108 exp 08-07 · vol/OI 3.6 (posicion nueva) $285k
+15:01:46 | UW FLOW SPCX 🟢 BULLISH | PUTS vendidas 105 exp 08-07 · SWEEP $714k
+15:02:47 | UW FLOW MSFT 🔴 BEARISH | CALLS vendidas 450 exp 08-07 · premium 1.1M bid-side
+15:02:52 | UW FLOW NVDA 🔴 BEARISH | CALLS vendidas 212.5 exp 08-14 · premium 3.7M bid-side
+15:06:54 | UW FLOW AAPL 🟢 BULLISH | PUTS vendidas 310 exp 08-05 · vol/OI 16.8 (posicion nueva) $251k
+15:06:59 | UW FLOW QQQ 🟢 BULLISH | CALLS compradas 735 exp 08-21 · SWEEP $566k
+15:07:05 | UW FLOW MU 🔴 BEARISH | CALLS vendidas 920 exp 08-10 · SWEEP $629k
+15:07:32 | 🎈 BB REBOTE | spy puede bajar un poco.
+15:15:17 | UW FLOW TSLA 🟢 BULLISH | CALLS compradas 320 exp 08-07 · vol/OI 2.9 (posicion nueva) $709k
+15:16:18 | UW FLOW SNDK 🔴 BEARISH | PUTS compradas 1410 exp 08-07 · vol/OI 8.5 (posicion nueva) $957k
+15:16:23 | UW FLOW QQQ 🟢 BULLISH | PUTS vendidas 722 exp 08-05 · vol/OI 55.2 (posicion nueva) $275k
+15:17:55 | FINVIZ MOMENTUM BREAKOUT · BUY | AMCX $12.32 +8.1% RVOL 1.5x
+15:18:24 | UW FLOW SPY 🟢 BULLISH | PUTS vendidas 773 exp 08-07 · vol/OI 6.2 (posicion nueva) $286k
+15:19:27 | FINVIZ SHORT SQUEEZE · BUY | AMCX $12.32 +8.1% RVOL 1.5x
+15:20:25 | UW FLOW MU 🔴 BEARISH | PUTS compradas 920 exp 08-05 · vol/OI 69.1 (posicion nueva) $597k
+15:20:30 | UW FLOW SPY 🟢 BULLISH | CALLS compradas 775 exp 08-21 · SWEEP $835k
+15:21:31 | UW FLOW SPY 🔴 BEARISH | PUTS compradas 772 exp 08-07 · vol/OI 5.7 (posicion nueva) $282k
+15:23:31 | UW FLOW TSLA 🟢 BULLISH | CALLS compradas 327.5 exp 08-12 · premium 1.0M ask-side
+15:25:32 | UW FLOW MU 🔴 BEARISH | PUTS compradas 915 exp 08-05 · vol/OI 73.5 (posicion nueva) $455k
+15:26:32 | UW FLOW AAPL 🟢 BULLISH | CALLS compradas 310 exp 08-07 · vol/OI 3.3 (posicion nueva) $689k
+15:27:33 | UW FLOW SPCX | PUTS al mid 110 exp 08-07 · vol/OI 3.6 (posicion nueva) $595k
+15:28:33 | UW FLOW SPCX 🔴 BEARISH | PUTS compradas 120 exp 08-07 · premium 2.4M ask-side
+15:28:46 | 🇨🇳 NOTICIA SEMIS | [News] U.S. Export Curbs Backfire? Samsung, SK hynix Reportedly Mull AMEC’s Tools as China Fab Backup - TrendForce
+15:28:47 | 🇹🇼 NOTICIA SEMIS | Intel vs. TSM: Which Semiconductor Stock Looks Like the Better Investment? - tradingkey.com
+15:29:33 | UW FLOW TSLA 🟢 BULLISH | CALLS compradas 322.5 exp 08-07 · premium 1.3M ask-side
+15:29:39 | UW FLOW AMD 🔴 BEARISH | CALLS vendidas 487.5 exp 08-10 · vol/OI 8.9 (posicion nueva) $435k
+15:29:44 | UW FLOW SPCX 🟢 BULLISH | PUTS vendidas 104 exp 08-07 · vol/OI 6.8 (posicion nueva) $641k
+15:30:45 | UW FLOW NVDA 🟢 BULLISH | CALLS compradas 220 exp 08-05 · vol/OI 20.1 (posicion nueva) $291k
+15:32:37 | 🎈 BB BAND-WALK | hood sigue subiendo fuerte.
+15:32:45 | UW FLOW DRAM 🟢 BULLISH | PUTS vendidas 47 exp 08-28 · vol/OI 13.2 (posicion nueva) $285k
+15:34:46 | UW FLOW AAPL 🟢 BULLISH | CALLS compradas 312.5 exp 08-07 · vol/OI 3.3 (posicion nueva) $505k
+15:34:52 | UW FLOW MSFT 🔴 BEARISH | CALLS vendidas 490 exp 08-07 · vol/OI 2.2 (posicion nueva) $437k
+15:35:52 | UW FLOW AMD 🔴 BEARISH | CALLS vendidas 485 exp 08-07 · vol/OI 2.1 (posicion nueva) $356k
+15:36:52 | UW FLOW TSLA 🟢 BULLISH | PUTS vendidas 320 exp 08-07 · vol/OI 11.8 (posicion nueva) $598k
+15:36:58 | UW FLOW SPCX 🔴 BEARISH | CALLS vendidas 109 exp 08-28 · vol/OI 16.2 (posicion nueva) $404k
+15:37:03 | UW FLOW SPCX 🔴 BEARISH | CALLS vendidas 110 exp 08-28 · premium 8.8M bid-side
+15:38:04 | UW FLOW AVGO 🔴 BEARISH | PUTS compradas 417.5 exp 08-14 · premium 1.7M ask-side
+15:38:38 | 🎈 BB REBOTE | smh puede subir un poco.
+15:39:04 | UW FLOW NVDA 🔴 BEARISH | PUTS compradas 225 exp 08-07 · vol/OI 24.1 (posicion nueva) $271k
+15:40:04 | UW FLOW NVDA 🔴 BEARISH | CALLS vendidas 225 exp 08-07 · vol/OI 10.7 (posicion nueva) $466k
+15:40:39 | 🎈 BB REBOTE | spy puede subir un poco.
+15:41:05 | UW FLOW AMZN 🟢 BULLISH | CALLS compradas 300 exp 08-28 · vol/OI 2.3 (posicion nueva) $284k
+15:42:05 | UW FLOW AMZN 🟢 BULLISH | PUTS vendidas 272.5 exp 08-07 · vol/OI 6.6 (posicion nueva) $765k
+15:42:11 | UW FLOW SNDK 🟢 BULLISH | CALLS compradas 1425 exp 08-07 · vol/OI 3.4 (posicion nueva) $979k
+15:43:11 | UW FLOW LRCX 🔴 BEARISH | PUTS compradas 300 exp 08-14 · vol/OI 2.6 (posicion nueva) $526k
+15:44:11 | UW FLOW AMD 🔴 BEARISH | CALLS vendidas 510 exp 12-15 · premium 1.9M bid-side
+15:47:12 | UW FLOW NVDA 🟢 BULLISH | CALLS compradas 260 exp 06-17 · premium 4.0M ask-side
+15:48:13 | UW FLOW SNDK 🟢 BULLISH | CALLS compradas 2710 exp 12-15 · vol/OI 8.0 (posicion nueva) $998k
+15:48:18 | UW FLOW NVDA 🔴 BEARISH | PUTS compradas 215 exp 11-20 · vol/OI 2.3 (posicion nueva) $496k
+15:48:24 | UW FLOW AMD 🟢 BULLISH | CALLS compradas 700 exp 11-20 · premium 1.5M ask-side
+15:49:24 | UW FLOW AMD 🟢 BULLISH | CALLS compradas 490 exp 09-18 · premium 1.2M ask-side
+15:49:30 | UW FLOW SPCX 🟢 BULLISH | PUTS vendidas 110 exp 08-07 · vol/OI 3.9 (posicion nueva) $586k
+15:50:30 | UW FLOW AMD 🟢 BULLISH | PUTS vendidas 530 exp 01-15 · premium 1.1M bid-side
+15:50:35 | UW FLOW MU 🔴 BEARISH | CALLS vendidas 1000 exp 08-07 · premium 1.7M bid-side
+15:50:41 | UW FLOW MU 🔴 BEARISH | CALLS vendidas 910 exp 08-07 · vol/OI 2.6 (posicion nueva) $310k
+15:51:41 | 🎈 BB BAND-WALK | nflx sigue subiendo fuerte.
+15:51:41 | UW FLOW SPY 🔴 BEARISH | CALLS vendidas 771 exp 08-06 · vol/OI 18.7 (posicion nueva) $251k
+15:54:42 | UW FLOW NVDA | PUTS al mid 220 exp 08-07 · vol/OI 54.3 (posicion nueva) $453k
+15:54:48 | UW FLOW MU 🔴 BEARISH | PUTS compradas 860 exp 08-10 · vol/OI 2.7 (posicion nueva) $340k
+15:54:54 | UW FLOW NVDA 🟢 BULLISH | PUTS vendidas 220 exp 08-21 · SWEEP $594k
+15:55:11 | 🎈 BOLLINGER VIGIA | 15:55 — vigia Bollinger fuera hasta mañana
+15:55:54 | UW FLOW QQQ 🔴 BEARISH | PUTS compradas 720 exp 01-15 · premium 2.0M ask-side
+15:55:59 | UW FLOW MU 🔴 BEARISH | PUTS compradas 850 exp 08-07 · premium 2.0M ask-side
+15:56:05 | UW FLOW NVDA 🔴 BEARISH | PUTS compradas 225 exp 08-07 · vol/OI 35.0 (posicion nueva) $361k
+15:57:05 | UW FLOW SPY 🟢 BULLISH | PUTS vendidas 777 exp 10-16 · premium 1.0M bid-side
+15:58:06 | UW FLOW NVDA 🔴 BEARISH | CALLS vendidas 215 exp 08-05 · SWEEP $500k
+15:58:11 | UW FLOW SPCX 🟢 BULLISH | CALLS compradas 110 exp 12-18 · vol/OI 6.2 (posicion nueva) $957k
+15:58:17 | UW FLOW WDC 🔴 BEARISH | CALLS vendidas 540 exp 08-14 · vol/OI 4.4 (posicion nueva) $613k
+15:59:17 | UW FLOW NVDA 🔴 BEARISH | PUTS compradas 217.5 exp 08-07 · vol/OI 92.0 (posicion nueva) $517k
+16:28:56 | 🇹🇼 NOTICIA SEMIS | What Is Going on with Taiwan Semiconductor Stock on Wednesday? - benzinga.com
+16:58:59 | 🇨🇳 NOTICIA SEMIS | The RAM Crisis Is Forcing PC Makers to Team Up With a Company the U.S. Hates - gizmodo.com
+17:29:04 | 🇨🇳 NOTICIA SEMIS | Apple Failed to Find Fourth DRAM Supplier as 2027 Market Closes Completely - Tech Times
+18:59:17 | 🇹🇼 NOTICIA SEMIS | Sony's TSMC Sensor Venture Could Reshape Its Imaging Growth Story - The Globe and Mail
+18:59:18 | 🇯🇵 NOTICIA SEMIS | Japan Stocks’ ‘Korea Linkage’ Frustrates Tokyo Brokers as Fundamentals Get Drowned Out - bloomingbit
+19:29:22 | 🇯🇵 NOTICIA SEMIS | Nikkei 225 Set to Fall as U.S. Tech Selloff and Profit-Taking Trigger Correction - finance.biggo.com
+19:59:24 | 🇹🇼 SEMIS ASIA | TSMC-TW 2,405 +3.7%
+19:59:24 | 🇯🇵 SEMIS ASIA | TokyoElectron 58,550 +3.3% · Advantest 33,720 +8.8% · DiscoCorp 63,740 +4.7%
+19:59:24 | 🇨🇳 SEMIS ASIA | SMIC 68 +4.1% · HuaHong 142 +4.7%
+19:59:26 | 🇹🇼 NOTICIA SEMIS | TSMC Inches Closer to $2 Trillion Market Cap As Chip Stocks Rebound: Top Executive Buys Stock - Stocktwits
+20:26:01 | INTRINIO WS | socket ARRIBA cboe-one,equities-edge en rth
+20:29:29 | 🇹🇼 SEMIS ASIA | TSMC-TW 2,405 +3.7%
+20:29:29 | 🇯🇵 SEMIS ASIA | TokyoElectron 55,640 -5.0% · Advantest 32,400 -3.9% · DiscoCorp 62,360 -2.2%
+20:29:29 | 🇨🇳 SEMIS ASIA | SMIC 68 +4.1% · HuaHong 142 +4.7%
+20:29:31 | 🇯🇵 NOTICIA SEMIS | Tokyo Electron (TSE:8035) Could Be 19% Below Fair Value As It Lifts Guidance and Dividend - simplywall.st
+20:36:45 | INTRINIO WS | socket CAÍDO en overnight
+20:59:33 | 🇹🇼 SEMIS ASIA | TSMC-TW 2,405 +3.7%
+20:59:33 | 🇯🇵 SEMIS ASIA | TokyoElectron 55,600 -5.0% · Advantest 32,430 -3.8% · DiscoCorp 61,750 -3.1%
+20:59:33 | 🇨🇳 SEMIS ASIA | SMIC 68 +4.1% · HuaHong 142 +4.7%
+21:29:37 | 🇹🇼 SEMIS ASIA | TSMC-TW 2,380 -1.0%
+21:29:37 | 🇯🇵 SEMIS ASIA | Nikkei 65,247 -1.6% · TokyoElectron 55,960 -4.4% · Advantest 32,440 -3.8% · DiscoCorp 61,310 -3.8%
+21:29:37 | 🇨🇳 SEMIS ASIA | SMIC 67 -1.5% · HuaHong 138 -2.5%
+21:29:38 | 🇨🇳 NOTICIA SEMIS | Changxin Rejects Apple's Price Cut Demand: Sets Prices No Lower Than Samsung & SK Hynix, Eliminating Apple's Bargaining Power - 36 Kr
+22:44:55 | 🇹🇼 SEMIS ASIA | TSMC-TW 2,370 -1.5%
+22:44:55 | 🇯🇵 SEMIS ASIA | Nikkei 65,280 -1.5% · TokyoElectron 55,500 -5.2% · Advantest 32,620 -3.3% · DiscoCorp 61,150 -4.1%
+22:44:55 | 🇨🇳 SEMIS ASIA | SMIC 67 -1.8%
+22:44:56 | 🇨🇳 NOTICIA SEMIS | Apple Failed to Find Fourth DRAM Supplier as 2027 Market Closes Completely - techtimes.com
+22:44:57 | 🇯🇵 NOTICIA SEMIS | Japan Stocks’ ‘Korea Linkage’ Frustrates Tokyo Brokers as Fundamentals Get Drowned Out - en.bloomingbit.io
+23:14:59 | 🇹🇼 SEMIS ASIA | TSMC-TW 2,380 -1.0%
+23:14:59 | 🇯🇵 SEMIS ASIA | Nikkei 65,267 -1.6% · TokyoElectron 55,380 -5.4% · Advantest 32,610 -3.3% · DiscoCorp 61,150 -4.1%
+23:14:59 | 🇨🇳 SEMIS ASIA | SMIC 67 -2.1%
+23:15:01 | 🇯🇵 NOTICIA SEMIS | Tokyo Market Open: Nikkei Average Reverses Lower. Taiyo Yuden Plunges as Profit-Taking Weighs Despite Upward Operating Profit Revision. Meiji Holdings Rises as Q1 Operating Profit 
+23:45:08 | 🇹🇼 SEMIS ASIA | TSMC-TW 2,375 -1.2%
+23:45:08 | 🇯🇵 SEMIS ASIA | Nikkei 65,477 -1.2% · TokyoElectron 55,660 -4.9% · Advantest 32,700 -3.0% · DiscoCorp 61,700 -3.2%
+23:45:08 | 🇨🇳 SEMIS ASIA | SMIC 65 -4.0% · HuaHong 137 -3.2%

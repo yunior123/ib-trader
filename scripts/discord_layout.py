@@ -47,12 +47,17 @@ CATEGORIES = [
         ("corea-overnight", "🇰🇷 KOSPI / Samsung / SK-Hynix — lidera semis ~13 h", False),
         ("taiwan-japon", "🇹🇼🇯🇵 TAIEX/TSMC · Nikkei/TokyoElectron/Advantest — semis asiáticos, lideran ~12-13 h", False),
         ("china-semis", "🇨🇳 CXMT / SMIC / YMTC — DRAM china, precios spot, export controls. Noticias + datos", False),
+        ("noticias-flota", "📰 Titulares de los 30 de data/fleet.txt (UW · Polygon · Finnhub · "
+                           "Google News). Sin repetir, memoria 24 h. 🔴 = catalizador. Contexto, "
+                           "no gatillo", False),
         ("earnings-catalizadores", "Earnings, vencimientos que expiran hoy, catalizadores", False),
     ]),
     ("watchlists", "👁️ WATCHLISTS", [
         ("spy-qqq", "Espejo de toda alerta que toque SPY o QQQ (capitanes del mercado)", False),
         ("semis-memoria", "Espejo: SMH NVDA MU AMD TSM ASML SKHY DRAM SNDK WDC STX LRCX", False),
-        ("mis-posiciones", "Espejo de los símbolos con posición abierta", False),
+        # #mis-posiciones RETIRADO 2026-08-05: inalcanzable por construccion (no era destino de
+        # ninguna RULE ni de MIRRORS) y contrario a la orden de privacidad de Yunior — nuestras
+        # posiciones no salen del Mac. 0 mensajes desde su creacion. Borrarlo en la UI.
     ]),
     ("analisis", "📊 ANÁLISIS", [
         ("planes-premarket", "Planes diarios por ticker (PDF): mapa, escenarios, plan pícaro", False),
@@ -87,10 +92,29 @@ MENTION_ROLE = "Alertas Premium"          # el unico rol que se menciona, y solo
 # --- enrutado --------------------------------------------------------------------------
 # (regex sobre la LINEA COMPLETA, canal, severidad). Primera que casa, gana: el orden importa.
 RULES = [
-    # sistema primero: 168 de 676 lineas medidas el 2026-08-04 eran infraestructura, no senal
-    (r"INTRINIO WS|FINNHUB WS|PROVIDER|PROVEEDOR|socket", "estado-proveedores", SISTEMA),
+    # --- AVERIA DE FEED PRIMERO, LUEGO ANCLAS DE TITULO (auditoria 2026-08-05, 3015 lineas) --
+    # MANADA MUDA va ANTES que el 🕳 generico: que la manada no pueda votar no es un socket
+    # caido, es el denominador de la senal mas selectiva de la casa. A su canal, no a infra.
+    (r"MANADA (MUDA|INOPERANTE)", "manada", NORMAL),
+    # Y la averia de puente va antes que la bandera del pais: "🇰🇷 KRX BRIDGE CIEGO | Corea sin
+    # datos" es infraestructura, no una senal de Corea (18 lineas medidas).
     (r"🕳|CINTA CIEGA|SIN GATEWAY|BRIDGE CIEGO|feed muerto", "estado-proveedores", SISTEMA),
+
+    # El emisor DECLARA el destino en el primer caracter del titulo. Va antes que el resto
+    # porque el CUERPO de un titular puede llevar cualquier palabra del router: medido, 5 reglas
+    # distintas robaban noticias — "Wall Street" se la llevaba a #gamma-niveles (3 lineas),
+    # "SAMSUNG" a #corea-overnight (10), "Nikkei Asia" (el MEDIO, no el indice) a #taiwan-japon.
+    # Un titular tambien puede decir "cloud PROVIDER" o "latency": por eso van antes de R05/R06.
+    (r"^📰", "noticias-flota", NORMAL),
+
+    # sistema: 168 de 676 lineas medidas el 2026-08-04 eran infraestructura, no senal
+    (r"INTRINIO WS|FINNHUB WS|PROVIDER|PROVEEDOR|socket", "estado-proveedores", SISTEMA),
     (r"LATENCIA|latency", "latencia", SISTEMA),
+    # 267 lineas al fallback en 2 dias: el titulo mas frecuente de #sin-clasificar. Integridad
+    # de datos (barras reescritas), no senal. Sin esto ahogaba el embudo de lo no reconocido.
+    (r"🔒 TRUTH-?LOCK|PASADO reescrito", "estado-proveedores", SISTEMA),
+    # 42 lineas: "export Finviz caido" es una AVERIA publicandose en el canal de screeners.
+    (r"EARNINGS-FALL ROTO|export Finviz caido", "estado-proveedores", SISTEMA),
 
     # criticas: exigen accion ya
     (r"🚨|🌋|DANGER|TERREMOTO|CAPITULACI", "criticas", CRITICA),
@@ -103,18 +127,35 @@ RULES = [
     (r"\bPRINT\b.*\b(CALL|PUT|COMPRA|VENTA)\b|PRINT \d", "criticas", CRITICA),
     (r"🛑|SCALPER", "criticas", CRITICA),             # scalper_core.h:600-712
 
+    # Banderas ancladas al TITULO, justo DESPUES de las criticas: "🇰🇷 KOSPI TERREMOTO ALZA" es
+    # critica antes que coreana, pero "🇨🇳 NOTICIA SEMIS | Samsung..." es china aunque el cuerpo
+    # diga SAMSUNG (13 lineas medidas se iban a #corea-overnight) y "🇯🇵 ... Wall Street rally"
+    # es japonesa aunque el cuerpo diga WALL (3 lineas se iban a #gamma-niveles).
+    (r"^🇨🇳", "china-semis", NORMAL),
+    (r"^🇹🇼|^🇯🇵", "taiwan-japon", NORMAL),
+    (r"^🇰🇷", "corea-overnight", NORMAL),
+
     # confluencia y capitanes ANTES que lo generico: "🔗 FLUJO + BB QQQ" lleva "BB" dentro
     # y caeria en senales-flota. Son las dos senales mas selectivas que emite la casa.
-    (r"🔗|FLUJO \+ BB|CONFLUENCIA", "confluencia", NORMAL),
+    # ANCLADAS al titulo: la palabra suelta "confluencia" aparecia en PROSA ("pedir confluencia")
+    # y se llevaba 19 alertas de #senales-flota — justo lo contrario de haber confluencia.
+    (r"^🔗|FLUJO \+ BB|^CONFLUENCIA", "confluencia", NORMAL),
     # El veto/read-through COREANO va antes que capitanes: su cuerpo suele nombrar al capitan
     # ("🔪 VETO | capitan coreano en contra") y sin este orden se lo llevaria #capitanes.
     (r"🔪 VETO|READ-?THROUGH|KORU|V ROTA", "corea-overnight", NORMAL),
-    (r"🎖|CAPITAN|CAPITÁN", "capitanes", NORMAL),
+    # La manada ANTES que capitanes: "🐘 MANADA ALCISTA ... capitan QQQ" perdia con la regla
+    # generica de capitan, que solo era un campo de contexto del cuerpo (17 lineas medidas).
+    (r"🐺|🐘|MANADA|CONSENSO", "manada", NORMAL),
+    (r"^🎖|CAPIT[AÁ]N (REVIERTE|MANDA|ANULA)", "capitanes", NORMAL),
 
     # La ficha RECHAZADA va antes que la operable: un NO-GO no es una idea, es una idea MUERTA,
     # y meterla en el canal de contratos lo llena de cosas que no se pueden ejecutar (Spartan
     # publica 11 ideas de opciones al dia, no 11 vetos). Se archiva para poder auditar el veto.
-    (r"\bNO-GO\b|OPCIONES VETADAS|OPCIONES s/d|sin cadena — no puedo armar ficha|"
+    # SIN "OPCIONES s/d" (fuera 2026-08-05): cazaba 572 de las 583 lineas de esta regla (98%) y
+    # NO es un veredicto, es la coletilla de disponibilidad que order_ticket pega a casi toda
+    # alerta. Enterraba 522 Bollinger, 30 EARNINGS-FALL y 20 fichas ejecutables en un canal
+    # PRIVADO. La falta de cadena fresca no convierte una senal en una senal rechazada.
+    (r"\bNO-GO\b|OPCIONES VETADAS|sin cadena — no puedo armar ficha|"
      r"sin bid/ask válido|sin \w+s 0DTE", "senales-rechazadas", SISTEMA),
 
     # CONTRATO operable antes que el flujo: es lo unico que se puede ejecutar, no contexto.
@@ -126,16 +167,15 @@ RULES = [
 
     # flujo de opciones
     (r"🐋|BALLENA", "ballenas-flujo", NORMAL),
-    (r"🚀 SPIKE|FLUJO AGRESOR|SWEEP|BARRIDO", "ballenas-flujo", NORMAL),
+    (r"🚀 SPIKE|FLUJO AGRESOR|SWEEP|BARRIDO|🌊 FLOW ?PULSE", "ballenas-flujo", NORMAL),
     (r"\bUW\b|UNUSUAL WHALES|NET PREM", "flujo-uw", NORMAL),
     (r"DARK ?POOL", "dark-pool", SISTEMA),
 
-    # manada
-    (r"🐺|🐘|MANADA|CONSENSO", "manada", NORMAL),
-
     # estructura de opciones. X-RAY/RETEST_REJECT/BOUNCE: eventos de NIVEL de qqq_xray.cpp:205 y
     # today_alarm5 — ya empujaban al embudo y caian en #sin-clasificar (auditoria 2026-08-04 R8).
-    (r"MURO|WALL|GAMMA FLIP|\bGEX\b|IMAN|IMÁN|\bPIN\b|MAX ?PAIN", "gamma-niveles", NORMAL),
+    # WALL(?! ?Street): "Wall Street" en el cuerpo de un titular no es un muro de OI (3 lineas).
+    (r"MURO|WALL(?! ?Street)|GAMMA FLIP|\bGEX\b|IMAN|IMÁN|\bPIN\b|MAX ?PAIN", "gamma-niveles",
+     NORMAL),
     (r"X-?RAY|RETEST_REJECT|\bBOUNCE\b", "gamma-niveles", NORMAL),
 
     # screeners (+ R4: screener/state.py:56 y alert_bot.py:39)
@@ -153,6 +193,8 @@ RULES = [
     # senales de la flota (lo mas generico, al final)
     # R1: los 21 bots C++ ("QQQ: BUY ...", "MU: SELL ..."). Va DESPUES de \bSTOP\b para que
     # "(STOP)" siga siendo critica. R8: dram_guard/memoria-confluencia ya empujaban al embudo.
+    # WARMUP: 17 lineas al fallback. El ancla ^[A-Z]{1,6}: se rompia con el prefijo "WARMUP ".
+    (r"^WARMUP [A-Z0-9]{1,6}: (BUY|SELL)", "senales-flota", NORMAL),
     (r"^[A-Z0-9]{1,6}: (BUY|SELL)|\bCOMPRAR\b|\bVENDER\b", "senales-flota", NORMAL),
     (r"MEMORIA CONFLUENCIA|DRAM GUARD", "senales-flota", NORMAL),
     (r"🎈|BOLLINGER|BB REBOTE|BB BAND-WALK|%B", "senales-flota", NORMAL),
@@ -210,7 +252,6 @@ def alert_channels():
     keys = set(ch for _, ch, _ in RULES)
     keys.add(FALLBACK_CHANNEL)
     keys.update(ch for ch, _ in MIRRORS)
-    keys.add("mis-posiciones")
     return keys
 
 
