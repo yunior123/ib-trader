@@ -1044,6 +1044,10 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
 - [x] AUDIT #8 compass adoptaba spot por mtime: compass.cpp:1475 exige además spot_age_s<=300 del propio productor (levels_txn.json: mtime 137s pero spot_age_s 954s) (2026-08-05, hecho)
 
 ## Sesión 2026-08-05 tarde
+- [ ] "calibrate the crazy compass... its buggy... the arrow in the chart, it should be red when
+      strong trend down based on math or whales or your analysis similar to how u did with intc,
+      plus other features already there, just improve, only show the arrow, remove the description
+      under, its crazy" (2026-08-06 00:20) — estado: en curso.
 - [x] "review intc de nuevo, in depth, net options, walls, delears, gamma, etc" (2026-08-05 15:00) —
       HECHO. Workflow ultracode: 8 dimensiones + 8 refutadores + cruce (17 agentes, 1,05M tokens).
       **REGLA NUEVA MEDIDA: el open_interest de UW es el cierre de AYER incluso a las 23:48 ET**

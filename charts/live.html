@@ -350,6 +350,9 @@
   #dirarrow.pending .glyph::before { -webkit-text-stroke:2.5px var(--c2); background-image:none; }
   #dirarrow.pending .glyph::after { opacity:0; }
   #dirarrow.stale { filter:grayscale(1); }
+  /* SOLO LA FLECHA (Yunior 2026-08-06): fuera el texto de debajo; todo sigue en el tooltip */
+  #dirarrow .pct, #dirarrow .tgt, #dirarrow .st, #dirarrow .bq, #dirarrow .drv,
+  #dirarrow .cap, #dirarrow .ampbar { display:none !important; }
 
   /* --- popup inline de zona (exp/qty/side/kind) — SIN alert/confirm/prompt --- */
   #zonepop { position:absolute; z-index:60; background:#161a24; border:1px solid #2a3550;

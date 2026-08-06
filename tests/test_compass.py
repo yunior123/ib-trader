@@ -375,8 +375,9 @@ def test_rule_is_general_not_a_semiconductor_whitelist():
     assert r["signal_kind"] == "countertrend_pullback_candidate"
 
 
-def test_opposite_bandwalk_cannot_promote_countertrend_candidate():
-    """Un band-walk bajista no puede servir de gate a un r6 alcista de pullback."""
+def test_opposite_bandwalk_overrides_r6_blip():
+    """Doctrina 2026-08-06: band-walk 3 TF abajo con blip r6 +0.12% (z 0.3 = ruido) es
+    TENDENCIA FUERTE abajo, no pullback candidato. Regla 1: band-walk = continuacion."""
     r = run({
         "sym": "QQQ", "spot": 667.0, "em": 8.0, "regime": "NEG", "flip": 680.0,
         "levels": [{"price": 675.0, "kind": "Muro call", "wall_kind": "trampilla"}],
@@ -384,9 +385,8 @@ def test_opposite_bandwalk_cannot_promote_countertrend_candidate():
         "r6": 0.12, "r15": -0.70, "z6": 0.3,
         "bandwalk_tf": 3, "bandwalk_dir": -1,
     })
-    assert r["candidate_dir"] == "up"
-    assert r["dir"] == "flat"
-    assert r["signal_kind"] == "countertrend_pullback_candidate"
+    assert r["dir"] == "down"
+    assert r["signal_kind"] == "continuation_multitf"
 
 
 # ------------------------------------------------------------------- histeresis
@@ -552,3 +552,60 @@ def test_prob_medida_solo_con_calibracion_del_propio_setup():
     r = run(ev_put_wall(calib_lo=0.71, calib_n=140))
     assert r["prob_source"] == "medido"
     assert r["prob"] == 71, "sin WR inyectado, el arnés conserva lo como estimación compatible"
+
+
+def _ev_box_far(**kw):
+    """POS, muro call a +3% (ni near ni approaching): la vieja caja."""
+    ev = {
+        "sym": "GENERIC", "spot": 100.0, "em": 2.0, "regime": "POS",
+        "levels": [{"price": 103.0, "kind": "Muro call"}],
+        "bars": [[i * 60, 100.0, 100.1, 99.9, 100.0, 1e6] for i in range(4)],
+    }
+    ev.update(kw)
+    return ev
+
+
+def test_strong_downtrend_beats_the_box():
+    """Bug 2026-08-05: INTC -1.7% en 53min con band-walk y la caja decia flat."""
+    r = run(_ev_box_far(r6=-0.60, r15=-1.10, z6=-2.4, bandwalk_tf=3, bandwalk_dir=-1))
+    assert r["state"] == S_CONT
+    assert r["dir"] == "down"
+    assert r["signal_kind"] == "continuation_multitf"
+    assert any("tendencia fuerte" in w for w in r["state_why"])
+
+
+def test_zimpulse_with_captain_flow_paints_trend_flow():
+    """Impulso 2-sigma persistente + flujo capitan del mismo signo = flecha roja."""
+    r = run(_ev_box_far(r6=-0.60, r15=-1.10, z6=-2.4, flow=-0.8))
+    assert r["state"] == S_CONT
+    assert r["dir"] == "down"
+    assert r["signal_kind"] == "trend_flow"
+
+
+def test_zimpulse_with_net_prem_paints_trend_flow():
+    """Prima neta firmada del dia (UW) del mismo signo tambien confirma."""
+    r = run(_ev_box_far(r6=-0.60, r15=-1.10, z6=-2.4, net_prem=-450000.0))
+    assert r["dir"] == "down"
+    assert r["signal_kind"] == "trend_flow"
+
+
+def test_zimpulse_without_whales_stays_flat():
+    """Sin ballena que confirme, el impulso solo NO colorea (honestidad OOS intacta)."""
+    r = run(_ev_box_far(r6=-0.60, r15=-1.10, z6=-2.4))
+    assert r["state"] == S_CONT
+    assert r["dir"] == "flat"
+    assert r["candidate_dir"] == "down"
+    assert r["signal_kind"] == "no_predictive_edge"
+
+
+def test_net_prem_calderilla_does_not_confirm():
+    """|signed| < 100k = calderilla: no confirma nada."""
+    r = run(_ev_box_far(r6=-0.60, r15=-1.10, z6=-2.4, net_prem=-40000.0))
+    assert r["dir"] == "flat"
+
+
+def test_weak_drift_still_a_box():
+    """Deriva floja sin band-walk ni z-impulso: la caja sigue siendo caja."""
+    r = run(_ev_box_far(r6=-0.10, r15=-0.15, z6=-0.4))
+    assert r["state"] == S_BOX
+    assert r["dir"] == "flat"

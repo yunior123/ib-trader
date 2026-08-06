@@ -84,6 +84,9 @@ constexpr double FLOW_MIN       = 0.25;    // |flujo capitan| minimo para contar
 constexpr double PCTB_HI        = 0.85;
 constexpr double PCTB_LO        = 0.15;
 constexpr int    BANDWALK_TF_MIN= 2;       // >=2 TF a favor = continuacion (regla 1)
+constexpr double TREND_Z        = 2.0;     // |z6|>=2 con r6/r15 persistentes = impulso real
+constexpr double NETPREM_MIN    = 100000.0;// USD firmados del dia; menos es calderilla
+constexpr double NETPREM_MAX_AGE= 600.0;   // uw_net_prem.json solo si <10min
 constexpr int    TOUCH_EXHAUST  = 3;       // 3+ toques = muro exhausto
 constexpr double FUEL_SAT       = 2.5;     // |z| de saturacion del combustible
 constexpr double FUEL_MAX       = 8.0;     // puntos de prob que aporta el combustible
@@ -240,7 +243,7 @@ struct Level {
 struct Ev {
     std::string sym = "?";
     std::optional<double> spot, em, flip, r6, r15, z6, pctb_1m, pctb_15m, flow,
-        vt, bb_mid, leg_pct, em_used_pct, exhaustion;
+        vt, bb_mid, leg_pct, em_used_pct, exhaustion, net_prem;
     std::string regime, force_phase, book_label;
     std::optional<double> book_coef;
     int bandwalk_tf = 0, bandwalk_dir = 0, candle_bias = 0;
@@ -919,6 +922,14 @@ static Out classify(const Ev& ev, Hist* hist, const std::string& decay_json) {
         families(ev, rdir, o.families_why);
         o.families = (int)o.families_why.size();
         vetoes_of(ev, *lvl, rdir, o.vetoes);
+        // TENDENCIA FUERTE (bug 2026-08-05: INTC -1.7% en 53min y la caja decia flat):
+        // band-walk >=2 TF, o impulso |z6|>=2 con persistencia 15m
+        int trend = 0;
+        if (ev.bandwalk_tf >= K::BANDWALK_TF_MIN && ev.bandwalk_dir != 0)
+            trend = ev.bandwalk_dir;
+        else if (ev.z6 && std::fabs(*ev.z6) >= K::TREND_Z && ev.r6 && ev.r15 &&
+                 sgn(*ev.r6) != 0 && sgn(*ev.r6) == sgn(*ev.r15))
+            trend = sgn(*ev.r6);
         double spot = *ev.spot;
         // sin EM medido el gate de aproximacion cae al umbral de distancia pura (NEAR_PCT*2),
         // nunca a una valla del 2% inventada (AUDIT #6)
@@ -964,14 +975,23 @@ static Out classify(const Ev& ev, Hist* hist, const std::string& decay_json) {
             snprintf(b, sizeof b, "aproximando %s — esperando print (%d/%d)", lbl, lvl->prints, K::PRINT_MIN);
             why.emplace_back(b);
             for (size_t i = 0; i < o.families_why.size() && i < 2; ++i) why.push_back(o.families_why[i]);
-        } else if (ev.regime == "POS" && !near) {
+        } else if (ev.regime == "POS" && !near && trend == 0) {
             o.state = S_BOX;
             why.emplace_back("gamma+ entre Muros, sin extremo: caja");
         } else {
             o.state = S_CONT;
-            int m = sgn(ev.r6.value_or(0.0));
+            int m = trend != 0 ? trend : sgn(ev.r6.value_or(0.0));
             o.dir = m > 0 ? "up" : (m < 0 ? "down" : "flat");
-            why.emplace_back("sin extremo confirmado: manda la tendencia");
+            if (trend != 0) {
+                char b[120];
+                if (ev.bandwalk_tf >= K::BANDWALK_TF_MIN)
+                    snprintf(b, sizeof b, "tendencia fuerte: band-walk %d TF", ev.bandwalk_tf);
+                else
+                    snprintf(b, sizeof b, "tendencia fuerte: z6 %+.1f con 15m a favor",
+                             ev.z6.value_or(0.0));
+                why.emplace_back(b);
+            } else
+                why.emplace_back("sin extremo confirmado: manda la tendencia");
         }
     }
 
@@ -1076,6 +1096,16 @@ static Out classify(const Ev& ev, Hist* hist, const std::string& decay_json) {
     bool bandwalk_edge = o.state == S_CONT && ev.bandwalk_tf >= K::BANDWALK_TF_MIN &&
                          ev.bandwalk_dir != 0 && candidate_sign != 0 &&
                          candidate_sign == sgn((double)ev.bandwalk_dir);
+    // impulso 2-sigma persistente CONFIRMADO por ballenas (flujo capitan o prima neta firmada
+    // del dia): flecha coloreada (orden Yunior 2026-08-06). El ledger lo sigue midiendo OOS.
+    bool zimpulse = ev.z6 && std::fabs(*ev.z6) >= K::TREND_Z && ev.r6 && ev.r15 &&
+                    sgn(*ev.r6) != 0 && sgn(*ev.r6) == sgn(*ev.r15) &&
+                    candidate_sign != 0 && candidate_sign == sgn(*ev.r6);
+    bool whale_confirm =
+        (ev.flow && std::fabs(*ev.flow) >= K::FLOW_MIN && sgn(*ev.flow) == candidate_sign) ||
+        (ev.net_prem && std::fabs(*ev.net_prem) >= K::NETPREM_MIN &&
+         sgn(*ev.net_prem) == candidate_sign);
+    bool trend_flow_edge = o.state == S_CONT && zimpulse && whale_confirm;
     if (!o.state_pending.empty()) {
         o.signal_kind = "transition_candidate";
         o.dir = "flat";
@@ -1102,6 +1132,8 @@ static Out classify(const Ev& ev, Hist* hist, const std::string& decay_json) {
                        "pullback contra tendencia 15m: candidato, NO señal alcista/bajista");
         } else if (bandwalk_edge) {
             o.signal_kind = "continuation_multitf";
+        } else if (trend_flow_edge) {
+            o.signal_kind = "trend_flow";
         } else if (measured_edge) {
             o.signal_kind = "predictive_edge_measured";
         } else {
@@ -1290,6 +1322,7 @@ static Ev ev_from_json(const std::string& j) {
     e.r6 = opt("r6"); e.r15 = opt("r15"); e.z6 = opt("z6");
     e.pctb_1m = opt("pctb_1m"); e.pctb_15m = opt("pctb_15m");
     e.flow = opt("flow"); e.vt = opt("vt"); e.bb_mid = opt("bb_mid");
+    e.net_prem = opt("net_prem");
     e.leg_pct = opt("leg_pct"); e.em_used_pct = opt("em_used_pct");
     e.exhaustion = opt("exhaustion"); e.now_min = opt("now_min");
     e.book_coef = opt("book_coef");
@@ -1521,6 +1554,17 @@ static Ev gather(const std::string& sym_lo) {
         if (!sec.empty()) {
             if (auto s = jstr(sec, "book_label")) e.book_label = *s;
             if (auto v = jnum(sec, "coef")) e.book_coef = *v;
+        }
+    }
+    // BALLENAS: prima neta firmada del dia (UW). CONFIRMACION, jamas gatillo — el titular
+    // puede venir contaminado de multi-leg (INTC 2026-08-05: -11.8M que era financiacion).
+    std::string np = slurp("data/uw_net_prem.json");
+    if (!np.empty()) {
+        auto asof = jnum(np, "asof");
+        if (asof && (double)time(nullptr) - *asof <= K::NETPREM_MAX_AGE) {
+            std::string day = json_section(json_section(json_section(np, "syms"), SYM), "day");
+            if (!day.empty())
+                if (auto v = jnum(day, "signed_premium")) e.net_prem = *v;
         }
     }
     load_overnight(e);
