@@ -1592,11 +1592,7 @@ function drawHeader(lv) {
 }
 
 // OHLC readout (colorea verde/rojo según close>=open) — TradingView-like
-const fmtVol = v => v == null ? "—"
-  : Math.abs(v) >= 1e9 ? (v / 1e9).toFixed(2) + "B"
-  : Math.abs(v) >= 1e6 ? (v / 1e6).toFixed(1) + "M"
-  : Math.abs(v) >= 1e3 ? (v / 1e3).toFixed(1) + "K" : String(Math.round(v));
-let lastVol = null;   // volumen de la ultima barra (reposo del crosshair)
+let lastVol = null;   // volumen de la ultima barra (reposo del crosshair); fmtVol ya existe abajo
 function setOHLC(bar, vol) {
   if (!bar) return;
   const up = bar.close >= bar.open;
@@ -1605,7 +1601,8 @@ function setOHLC(bar, vol) {
     e.textContent = (v == null ? "—" : v.toFixed(2)); e.style.color = col; };
   set("o-o", bar.open); set("o-h", bar.high); set("o-l", bar.low); set("o-c", bar.close);
   const ve = document.getElementById("o-v");
-  if (ve) { ve.textContent = fmtVol(vol != null ? vol : lastVol); ve.style.color = col; }
+  if (ve) { const vv = vol != null ? vol : lastVol;
+    ve.textContent = vv == null ? "—" : fmtVol(vv); ve.style.color = col; }
 }
 
 // Zoom custom RETIRADO (Yunior 2026-08-06 "remove the zooming, keep it original"):
