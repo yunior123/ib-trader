@@ -1131,3 +1131,11 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       widget, hiro, walls, gex, dex, charm, flips, magnets, keep it simple fully portable, pure
       swift, build to desktop + iphone 14 (developer mode, no paid account), layout ok, realtime
       perfect" (2026-08-06) — estado: macOS HECHO (app en ~/Desktop, corre con llaves sembradas; commit inicial en ~/GammaWarRoom rama main); iPhone PENDIENTE de cable+Apple ID en Xcode. AMPLIACION: "for the heatmap use same colors as quantdata and the picture i just sent u, keep same colors and ui ux as quantdata" (fondo azul-negro 0A0F1E, pills azul 2563EB, verde 22C55E, rojo granate DC2626, MVC morado A855F7, fila spot azul)
+- [x] "verify, no data [GWR] + icon from downloads" (2026-08-06) — hecho. CAUSAS MEDIDAS del
+      no-data: (1) finnhub /stock/candle = 403 en el tier (el WS si va) -> Polygon primero,
+      VERIFICADO con el codigo compilado: 400 velas SPY; (2) UW daily limit 30.000 REVENTADO
+      por el daemon gex_heatmap (7 syms x ~26 req cada 60s tras subir el horizonte a 110d
+      ~260k/dia) -> daemon relanzado QQQ SPY --loop 900 (~5k/dia) y la app dosifica
+      (structure/hiro 90s, heatmap 6min) + muestra el error UW REAL en ambar (uwNote);
+      hasta que UW resetee, heatmap/cards sin dato y DICIENDO por que. Icono: escudo ChatGPT
+      -> AppIcon.appiconset (mac 16-1024 + ios 1024), AppIcon.icns verificado en el bundle.
