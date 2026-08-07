@@ -1044,6 +1044,10 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
 - [x] AUDIT #8 compass adoptaba spot por mtime: compass.cpp:1475 exige además spot_age_s<=300 del propio productor (levels_txn.json: mtime 137s pero spot_age_s 954s) (2026-08-05, hecho)
 
 ## Sesión 2026-08-05 tarde
+- [x] "make sure to shut up intrinio alert websocket" (2026-08-06 20:25) — hecho: push del
+      probe y grita() del autostart ELIMINADOS del todo (antes solo gateados por fase). Ni voz
+      ni telefono en ninguna fase; el estado vive en el log, intrinio_ws_up.json y el jsonl del
+      probe. Verificado en vivo: transicion a CAIDO detectada y muda.
 - [x] "kill finnhub websocket notifications" (2026-08-06 10:00) — hecho: grita() eliminado del
       todo en finnhub_ws_bridge (ni voz ni push, nunca); estado sigue en log + status.json.
 - [x] "make sure to kill those fuckin notifications for intrinio and finnhub not connected,

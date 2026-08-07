@@ -252,18 +252,12 @@ def record(row: dict) -> None:
         UP_FLAG.unlink()
 
     # push SOLO en fases donde el servicio se espera vivo: overnight/weekend el vendor lo
-    # apaga (~70% medido, memoria intrinio-websocket-off-overnight) y cada transicion era
-    # un ping al telefono (Yunior 2026-08-06). El jsonl lo registra todo igual.
-    if (previous is not None and socket_up != was_socket_up
-            and row["phase"] in ("premarket", "rth", "afterhours")):
-        try:
-            sys.path.insert(0, str(REPO / "scripts"))
-            from notify_short import push
-            estado = (f"socket ARRIBA {','.join(row.get('socket_ok') or [])}"
-                      if socket_up else "socket CAÍDO")
-            push("INTRINIO WS", f"{estado} en {row['phase']}")
-        except Exception as e:
-            print(f"[warn] notify fallo: {type(e).__name__}: {e}", file=sys.stderr)
+    # apaga (~70% medido, memoria intrinio-websocket-off-overnight).
+    # NOTIFICACIONES MUERTAS (orden Yunior 2026-08-06 "shut up intrinio alert websocket"):
+    # ni push ni voz, en ninguna fase. La serie completa sigue en el jsonl y en el status.
+    if previous is not None and socket_up != was_socket_up:
+        print(f"[intrinio-ws] transicion a {'ARRIBA' if socket_up else 'CAIDO'} "
+              f"en {row['phase']} (notificaciones muertas por orden)", file=sys.stderr)
 
 
 def resumen() -> int:

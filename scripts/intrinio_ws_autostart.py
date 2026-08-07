@@ -101,21 +101,10 @@ def auth_token(key, timeout=10):
 
 
 def grita(msg, nivel="INFO"):
+    # MUDO POR ORDEN (Yunior 2026-08-06 "shut up intrinio alert websocket"): ni voz ni push
+    # en ninguna fase. El estado del socket vive en el log, en data/intrinio_ws_up.json y en
+    # el jsonl del probe — el healthcheck lo sigue viendo ahi.
     print(msg, flush=True)
-    # overnight/weekend Intrinio esta APAGADO por el vendor (~70% medido): la voz ahi es
-    # crying-wolf a las 3am (Yunior 2026-08-06). Se imprime siempre; se habla solo en sesion.
-    try:
-        from intrinio_ws_probe import market_phase
-        from datetime import datetime
-        if market_phase(datetime.now().astimezone()) in ("overnight", "weekend"):
-            return
-    except Exception:
-        pass                                      # sin fase no se calla: mejor ruido que mudo
-    try:
-        subprocess.Popen(["/bin/bash", os.path.join(ROOT, "scripts", "speak.sh"), nivel, msg],
-                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    except OSError:
-        pass
 
 
 def _escribe(path, linea):
