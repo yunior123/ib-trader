@@ -1185,3 +1185,14 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       Configurator ("Attach the device"). App iOS YA firmada y lista en
       build-ios/Build/Products/Debug-iphoneos/GammaWarRoom-iOS.app (perfil con el UDID, caduca
       2027-08-06). Falta: Yunior activa Modo de desarrollador + cable 60s una vez.
+
+## 2026-08-06 21:35 — peticion nocturna (SPY + monitoreo hasta viernes 09:25)
+- [ ] "analyze fleet, spy priority and do post to x.com on them, the ones u are confident the
+      most, check polygon chain, UW, intrinio, ... provide tree, update as of right now based
+      on korea" (2026-08-06) — pendiente
+- [ ] "schedule monitoring every 2 hours till 9:30 am friday, last monitoring at 9:25, after
+      monitoring create a post in x.com, mainly based on spy, use overnight data, accumulated,
+      unconsolidated order flow" (2026-08-06) — pendiente
+- [ ] "make sure we have a feature in software that allows us to read unconsolidated data
+      premarket and calibrate arrow based on that before market opens on 9:30 am every day.
+      see web on how big softwares do it, big institutions." (2026-08-06) — pendiente

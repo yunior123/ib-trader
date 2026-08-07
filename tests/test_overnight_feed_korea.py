@@ -223,7 +223,7 @@ def test_build_escribe_ref_src_y_archiva_jsonl(tmp_path, monkeypatch):
     monkeypatch.setattr(OF, "PREVCLOSE", str(tmp_path / "data" / OF.PREVCLOSE_NAME))
     monkeypatch.setattr(OF, "OUT", str(tmp_path / "overnight_ctx.json"))
     monkeypatch.setattr(OF, "CTX_JSONL", str(tmp_path / "hist" / "overnight_ctx.jsonl"))
-    monkeypatch.setattr(OF, "fut_pct", lambda s: 0.25)
+    monkeypatch.setattr(OF, "fut_ref", lambda s: (0.25, 100.0, "close_rth_2026-07-30_16:00"))
     monkeypatch.setattr(OF, "sentiment", lambda: None)
     monkeypatch.setattr(OF, "krx_boundary", lambda now=None: BOUNDARY)
     _bars(tmp_path, "kospi", _session_rows())
@@ -457,3 +457,83 @@ def test_kospi_pct_es_el_indice_y_el_etf_va_aparte(tmp_path, monkeypatch):
     assert abs(OF.korea_pct("kodex200", BOUNDARY)[0] - (-8.93)) < 0.01
     # el ETF exagera al indice: es informacion real, por eso se conserva con nombre propio
     assert OF.korea_pct("kodex200", BOUNDARY)[0] < OF.korea_pct("kospi", BOUNDARY)[0] - 3.0
+
+
+# ------------------------------------------------- 7. fut_ref: referencia = cierre RTH, no ayer
+def _fake_yf(monkeypatch, index_dt, closes, tz=ET):
+    """Inyecta un yfinance falso cuyo history() devuelve las velas dadas (ET, tz-aware)."""
+    import pandas as pd
+    idx = pd.DatetimeIndex([d.replace(tzinfo=None) for d in index_dt]).tz_localize(tz)
+    df = pd.DataFrame({"Close": closes}, index=idx)
+
+    class _T:
+        def __init__(self, sym): pass
+        def history(self, **kw): return df
+
+    mod = type(sys)("yfinance")
+    mod.Ticker = _T
+    monkeypatch.setitem(sys.modules, "yfinance", mod)
+    return df
+
+
+def _velas(base, n, step_min=5):
+    return [base + timedelta(minutes=step_min * i) for i in range(n)]
+
+
+def test_fut_ref_mide_desde_el_cierre_rth_no_desde_ayer(monkeypatch):
+    # cierre RTH de hoy 16:00 = 100.0; sesion Globex posterior a 99.0 -> -1.00%, NO contra ayer
+    idx = [datetime(2026, 8, 6, 15, 55, tzinfo=ET), datetime(2026, 8, 6, 16, 0, tzinfo=ET),
+           datetime(2026, 8, 6, 18, 0, tzinfo=ET), datetime(2026, 8, 6, 21, 30, tzinfo=ET)]
+    _fake_yf(monkeypatch, idx, [104.0, 100.0, 99.5, 99.0])
+    monkeypatch.setattr(OF.time, "time", lambda: idx[-1].timestamp() + 60)
+    pct, ref, src = OF.fut_ref("ES=F")
+    assert ref == 100.0 and src == "close_rth_2026-08-06_16:00"
+    assert abs(pct - (-1.0)) < 1e-6          # -1.00%, no -4.8% (que seria contra la vela de ayer)
+
+
+def test_fut_ref_none_si_no_hay_sesion_tras_el_cierre(monkeypatch):
+    idx = [datetime(2026, 8, 6, 15, 55, tzinfo=ET), datetime(2026, 8, 6, 16, 0, tzinfo=ET)]
+    _fake_yf(monkeypatch, idx, [104.0, 100.0])
+    monkeypatch.setattr(OF.time, "time", lambda: idx[-1].timestamp() + 60)
+    assert OF.fut_ref("ES=F") == (None, None, None)   # "no se" != "se, y es 0"
+
+
+def test_fut_ref_none_si_la_cotizacion_esta_rancia(monkeypatch):
+    idx = [datetime(2026, 8, 6, 16, 0, tzinfo=ET), datetime(2026, 8, 6, 18, 0, tzinfo=ET)]
+    _fake_yf(monkeypatch, idx, [100.0, 99.0])
+    monkeypatch.setattr(OF.time, "time",
+                        lambda: idx[-1].timestamp() + OF.FUT_LAST_MAX_AGE_S + 1)
+    assert OF.fut_ref("ES=F") == (None, None, None)
+
+
+def test_fut_ref_none_si_no_hay_vela_en_la_ventana_de_cierre(monkeypatch):
+    idx = _velas(datetime(2026, 8, 6, 18, 0, tzinfo=ET), 4)     # solo Globex, ningun 15:30-16:00
+    _fake_yf(monkeypatch, idx, [100.0, 99.0, 98.0, 97.0])
+    monkeypatch.setattr(OF.time, "time", lambda: idx[-1].timestamp() + 60)
+    assert OF.fut_ref("ES=F") == (None, None, None)
+
+
+def test_fut_ref_cruza_el_fin_de_semana_hasta_el_viernes(monkeypatch):
+    # domingo 18:00: la referencia sigue siendo el cierre del VIERNES 16:00
+    idx = [datetime(2026, 8, 7, 16, 0, tzinfo=ET), datetime(2026, 8, 9, 18, 0, tzinfo=ET),
+           datetime(2026, 8, 9, 20, 0, tzinfo=ET)]
+    _fake_yf(monkeypatch, idx, [200.0, 202.0, 204.0])
+    monkeypatch.setattr(OF.time, "time", lambda: idx[-1].timestamp() + 60)
+    pct, ref, src = OF.fut_ref("ES=F")
+    assert ref == 200.0 and src == "close_rth_2026-08-07_16:00" and abs(pct - 2.0) < 1e-6
+
+
+def test_build_escribe_ref_y_ref_src_de_futuros(tmp_path, monkeypatch):
+    monkeypatch.setattr(OF, "REPO", str(tmp_path))
+    monkeypatch.setattr(OF, "PREVCLOSE", str(tmp_path / "data" / OF.PREVCLOSE_NAME))
+    monkeypatch.setattr(OF, "OUT", str(tmp_path / "overnight_ctx.json"))
+    monkeypatch.setattr(OF, "CTX_JSONL", str(tmp_path / "hist" / "overnight_ctx.jsonl"))
+    monkeypatch.setattr(OF, "sentiment", lambda: None)
+    monkeypatch.setattr(OF, "krx_boundary", lambda now=None: BOUNDARY)
+    monkeypatch.setattr(OF, "fut_ref",
+                        lambda s: ((-0.5, 100.0, "close_rth_2026-08-06_16:00")
+                                   if s == "ES=F" else (None, None, None)))
+    ctx = OF.build()
+    assert ctx["es_pct"] == -0.5 and ctx["es_ref"] == 100.0
+    assert ctx["es_ref_src"] == "close_rth_2026-08-06_16:00"
+    assert ctx["nq_pct"] is None and ctx["nq_ref"] is None and ctx["nq_ref_src"] is None

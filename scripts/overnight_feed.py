@@ -33,18 +33,43 @@ KRX_OPEN_H, KRX_OPEN_M = 9, 0
 KRX_CLOSE_H, KRX_CLOSE_M = 15, 30
 KRX_GAP_MAX_DAYS = 6       # cierre mas largo del KRX (Seollal/Chuseok + fin de semana)
 KRX_HIST_LOOKBACK = 10     # carpetas data/history/<fecha> que se miran hacia atras
+FUT_REF_LO, FUT_REF_HI = 15 * 60 + 30, 16 * 60   # ventana ET donde vive el cierre RTH del futuro
+FUT_LAST_MAX_AGE_S = 1800  # cotizacion de futuro mas vieja que esto = no se afirma nada
 
 
-def fut_pct(sym):
+def fut_ref(sym):
+    """(pct, ref, ref_src) del futuro DESDE EL CIERRE RTH (16:00 ET) de la ultima sesion US.
+    `fast_info['previous_close']` NO vale: apunta a la sesion ANTERIOR y mete el movimiento del
+    dia dentro del 'overnight'. Medido 2026-08-06 21:40 ET — ES: -0.4284% reportado por
+    previous_close vs -0.07% real desde las 16:00 (6x); NQ: -0.263% vs -0.02% (13x). Con
+    OVERNIGHT_STRONG=0.5 en compass.cpp ese error cruza el umbral y aplica x1.25/x0.75 sin
+    motivo. Dato que no se puede medir -> None, jamas 0.0."""
     try:
         import yfinance as yf
-        fi = yf.Ticker(sym).fast_info
-        last, prev = fi["last_price"], fi["previous_close"]
-        if last and prev:
-            return round((last - prev) / prev * 100.0, 4)
-        return None
-    except Exception:
-        return None
+        h = yf.Ticker(sym).history(period="5d", interval="5m", prepost=True)
+        if h.empty or h.index.tz is None:
+            return None, None, None
+        h = h.tz_convert(TZ)
+        ref_ts = None
+        for ts in reversed(h.index):                       # ultima vela dentro de [15:30,16:00] ET
+            if FUT_REF_LO <= ts.hour * 60 + ts.minute <= FUT_REF_HI:
+                ref_ts = ts
+                break
+        if ref_ts is None:
+            return None, None, None
+        last_ts = h.index[-1]
+        if last_ts <= ref_ts:                              # aun no hay sesion posterior al cierre
+            return None, None, None
+        if time.time() - last_ts.timestamp() > FUT_LAST_MAX_AGE_S:
+            return None, None, None                        # cotizacion rancia: no se afirma
+        ref, last = float(h.loc[ref_ts, "Close"]), float(h["Close"].iloc[-1])
+        if not ref or not last:
+            return None, None, None
+        return (round((last - ref) / ref * 100.0, 4), round(ref, 4),
+                f"close_rth_{ref_ts.strftime('%Y-%m-%d_%H:%M')}")
+    except Exception as e:
+        print(f"overnight_feed: fut_ref({sym}) fallo — {e}", file=sys.stderr)
+        return None, None, None
 
 
 def krx_boundary(now=None):
@@ -266,7 +291,10 @@ def archive_ctx(ctx, path=None, max_lines=CTX_MAX_LINES):
 
 
 def build():
-    ctx = {"ts": time.time(), "nq_pct": fut_pct("NQ=F"), "es_pct": fut_pct("ES=F")}
+    ctx = {"ts": time.time()}
+    for key, sym in (("nq", "NQ=F"), ("es", "ES=F")):
+        pct, ref, src = fut_ref(sym)
+        ctx[f"{key}_pct"], ctx[f"{key}_ref"], ctx[f"{key}_ref_src"] = pct, ref, src
     b = krx_boundary()
     for key, name in KOREA.items():
         pct, src = korea_pct(name, b)
