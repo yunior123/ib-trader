@@ -1212,3 +1212,24 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
 - [ ] PENDIENTE DERIVADO: Intrinio equities_edge iba 16 min detras a las 09:12 del 2026-08-07
       (medido contra su propia API). Si eso es cronico, la flecha premarket nunca sera
       "usable" por el portero de edad: o se sube el umbral con motivo, o se busca fuente.
+- [x] "chances of SPY going down in opening / review again with full depth" (2026-08-07) — hecho.
+      Workflow 9 agentes (flujo, gamma, base rates, macro, tecnico + 3 escepticos incl. auditor
+      de metodo) -> docs pendiente, resultado en el journal wf_5d9de5b7-5f4.
+      CORRECCION MATERIAL que encontro el auditor: publique 45% midiendo "rojo contra la
+      APERTURA" sin declararlo. Contra el CIERRE PREVIO (lo que significa "en rojo") = 12,8%
+      [8,5-19,0] n=156, ajustado a 11%. Y el 45% NO MIDE NADA: P(SPY rojo en CUALQUIER ventana
+      de 30 min) = 47,85% n=179.056 -> condicionar por gap no separa del incondicional.
+      Tambien: el 36,4% de los viernes es pesca (p=0,268, no pasa BH-FDR), y el "-0,18% de
+      minimo medio" era la cola izquierda de una distribucion simetrica (maximo medio +0,20%).
+      VALIDACION EN VIVO de la doctrina: 3 señales tentadoras, 3 trampas, 0 operaciones,
+      0 perdidas. (a) 09:57 pinchazo a 770,51 SIN cierre debajo -> print-o-nada lo veto;
+      (b) 10:11-10:12 dos cierres bajo 770,63 = ruptura confirmada, pero entrada 770,55 ya
+      perdida y R:R 0,65:1 -> se exigio retest-rechazo; el retest (10:15 H770,72) NO rechazo
+      y a las 10:19 recupero 771,30 = trampa bajista, habria costado -1,5 pts; (c) 10:30
+      maximo 773,35 = 6 CENTAVOS bajo el gatillo largo 773,41, rechazado por la banda alta
+      diaria 773,79 justo donde la regla 1 decia mala entrada.
+      Lo pronostico el estudio: netGEX +27.659 sobre absGamma 1.422.984 = 1,9% -> los dealers
+      ni amortiguan ni amplifican, los stops se barren en los dos sentidos.
+- [ ] AVISO: el agente de macro dijo "Michigan preliminar HOY 10:00" -> FALSO, sale el 08-14
+      (segundo viernes); julio final fue 55,2 no 54,4. Verificar fechas de datos macro contra
+      el calendario antes de imponer ventanas ciegas.
