@@ -7,20 +7,20 @@
         "rate": 0.426
       },
       "double_top": {
-        "n": 102,
-        "rate": 0.304
+        "n": 101,
+        "rate": 0.307
       },
       "double_bottom": {
-        "n": 98,
-        "rate": 0.429
+        "n": 97,
+        "rate": 0.423
       },
       "triangle_ascending": {
         "n": 18,
         "rate": 0.333
       },
       "triangle_descending": {
-        "n": 153,
-        "rate": 0.255,
+        "n": 158,
+        "rate": 0.247,
         "source": "pooled"
       },
       "triangle_symmetric": {
@@ -37,12 +37,12 @@
         "rate": 0.404
       },
       "double_top": {
-        "n": 113,
-        "rate": 0.327
+        "n": 112,
+        "rate": 0.33
       },
       "double_bottom": {
-        "n": 107,
-        "rate": 0.43
+        "n": 106,
+        "rate": 0.425
       },
       "triangle_ascending": {
         "n": 18,
@@ -65,31 +65,30 @@
       "trigger_level": 214.39,
       "target": 238.77,
       "stop": 190.01,
-      "formed_bars_ago": 1,
+      "formed_bars_ago": 2,
       "confidence": 0.3,
-      "last_close": 211.94
+      "last_close": 219.22
     },
     "empirical": {
       "head_shoulders": {
-        "n": 48,
-        "rate": 0.375
+        "n": 50,
+        "rate": 0.36
       },
       "double_top": {
-        "n": 71,
-        "rate": 0.352
+        "n": 73,
+        "rate": 0.342
       },
       "double_bottom": {
-        "n": 61,
-        "rate": 0.393
+        "n": 60,
+        "rate": 0.383
       },
       "triangle_ascending": {
         "n": 8,
         "rate": 0.25
       },
       "triangle_descending": {
-        "n": 153,
-        "rate": 0.255,
-        "source": "pooled"
+        "n": 8,
+        "rate": 0.25
       },
       "triangle_symmetric": {
         "n": 9,
@@ -101,16 +100,16 @@
     "active": null,
     "empirical": {
       "head_shoulders": {
-        "n": 43,
-        "rate": 0.465
+        "n": 42,
+        "rate": 0.476
       },
       "double_top": {
-        "n": 67,
-        "rate": 0.358
+        "n": 68,
+        "rate": 0.353
       },
       "double_bottom": {
-        "n": 56,
-        "rate": 0.411
+        "n": 55,
+        "rate": 0.4
       },
       "triangle_ascending": {
         "n": 185,
@@ -122,8 +121,8 @@
         "rate": 0.25
       },
       "triangle_symmetric": {
-        "n": 20,
-        "rate": 0.35
+        "n": 21,
+        "rate": 0.333
       }
     }
   },
@@ -134,9 +133,9 @@
       "trigger_level": 930.88,
       "target": 1082.21,
       "stop": 770.1,
-      "formed_bars_ago": 1,
+      "formed_bars_ago": 2,
       "confidence": 0.76,
-      "last_close": 892.67
+      "last_close": 893.19
     },
     "empirical": {
       "head_shoulders": {
@@ -144,12 +143,12 @@
         "rate": 0.474
       },
       "double_top": {
-        "n": 46,
-        "rate": 0.261
+        "n": 48,
+        "rate": 0.271
       },
       "double_bottom": {
-        "n": 54,
-        "rate": 0.537
+        "n": 56,
+        "rate": 0.536
       },
       "triangle_ascending": {
         "n": 185,
@@ -157,13 +156,13 @@
         "source": "pooled"
       },
       "triangle_descending": {
-        "n": 153,
-        "rate": 0.255,
+        "n": 158,
+        "rate": 0.247,
         "source": "pooled"
       },
       "triangle_symmetric": {
-        "n": 16,
-        "rate": 0.438
+        "n": 14,
+        "rate": 0.429
       }
     }
   },
@@ -174,22 +173,22 @@
       "trigger_level": 564.53,
       "target": 625.43,
       "stop": 503.63,
-      "formed_bars_ago": 1,
+      "formed_bars_ago": 2,
       "confidence": 0.31,
-      "last_close": 575.71
+      "last_close": 569.7
     },
     "empirical": {
       "head_shoulders": {
-        "n": 37,
-        "rate": 0.324
+        "n": 36,
+        "rate": 0.333
       },
       "double_top": {
         "n": 68,
-        "rate": 0.265
+        "rate": 0.279
       },
       "double_bottom": {
-        "n": 61,
-        "rate": 0.525
+        "n": 60,
+        "rate": 0.517
       },
       "triangle_ascending": {
         "n": 185,
@@ -208,14 +207,14 @@
   },
   "AMD": {
     "active": {
-      "pattern": "head_shoulders",
-      "direction": "bull",
-      "trigger_level": 521.81,
-      "target": 619.59,
-      "stop": 424.03,
+      "pattern": "double_top",
+      "direction": "bear",
+      "trigger_level": 455.3,
+      "target": 387.72,
+      "stop": 530.13,
       "formed_bars_ago": 1,
-      "confidence": 0.48,
-      "last_close": 518.58
+      "confidence": 0.72,
+      "last_close": 482.05
     },
     "empirical": {
       "head_shoulders": {
@@ -224,53 +223,62 @@
       },
       "double_top": {
         "n": 58,
-        "rate": 0.276
+        "rate": 0.293
       },
       "double_bottom": {
         "n": 50,
-        "rate": 0.48
+        "rate": 0.46
       },
       "triangle_ascending": {
-        "n": 11,
-        "rate": 0.545
+        "n": 10,
+        "rate": 0.5
       },
       "triangle_descending": {
         "n": 9,
         "rate": 0.333
       },
       "triangle_symmetric": {
-        "n": 12,
-        "rate": 0.417
+        "n": 13,
+        "rate": 0.385
       }
     }
   },
   "AAPL": {
-    "active": null,
+    "active": {
+      "pattern": "double_bottom",
+      "direction": "bull",
+      "trigger_level": 311.8,
+      "target": 322.94,
+      "stop": 300.0,
+      "formed_bars_ago": 1,
+      "confidence": 0.41,
+      "last_close": 311.0
+    },
     "empirical": {
       "head_shoulders": {
-        "n": 46,
-        "rate": 0.5
+        "n": 48,
+        "rate": 0.479
       },
       "double_top": {
-        "n": 99,
-        "rate": 0.253
+        "n": 103,
+        "rate": 0.252
       },
       "double_bottom": {
-        "n": 89,
-        "rate": 0.494
+        "n": 93,
+        "rate": 0.484
       },
       "triangle_ascending": {
         "n": 8,
         "rate": 0.5
       },
       "triangle_descending": {
-        "n": 153,
-        "rate": 0.255,
+        "n": 158,
+        "rate": 0.247,
         "source": "pooled"
       },
       "triangle_symmetric": {
-        "n": 19,
-        "rate": 0.211
+        "n": 17,
+        "rate": 0.235
       }
     }
   },
@@ -278,16 +286,16 @@
     "active": null,
     "empirical": {
       "head_shoulders": {
-        "n": 56,
-        "rate": 0.464
+        "n": 58,
+        "rate": 0.448
       },
       "double_top": {
-        "n": 103,
-        "rate": 0.359
+        "n": 104,
+        "rate": 0.356
       },
       "double_bottom": {
-        "n": 99,
-        "rate": 0.495
+        "n": 100,
+        "rate": 0.49
       },
       "triangle_ascending": {
         "n": 9,
@@ -308,15 +316,15 @@
     "empirical": {
       "head_shoulders": {
         "n": 45,
-        "rate": 0.489
+        "rate": 0.511
       },
       "double_top": {
-        "n": 72,
-        "rate": 0.417
+        "n": 74,
+        "rate": 0.419
       },
       "double_bottom": {
-        "n": 83,
-        "rate": 0.325
+        "n": 84,
+        "rate": 0.321
       },
       "triangle_ascending": {
         "n": 185,
@@ -324,13 +332,13 @@
         "source": "pooled"
       },
       "triangle_descending": {
-        "n": 153,
-        "rate": 0.255,
+        "n": 158,
+        "rate": 0.247,
         "source": "pooled"
       },
       "triangle_symmetric": {
-        "n": 19,
-        "rate": 0.211
+        "n": 18,
+        "rate": 0.222
       }
     }
   },
@@ -342,12 +350,12 @@
         "rate": 0.417
       },
       "double_top": {
-        "n": 100,
-        "rate": 0.3
+        "n": 99,
+        "rate": 0.303
       },
       "double_bottom": {
-        "n": 97,
-        "rate": 0.392
+        "n": 96,
+        "rate": 0.385
       },
       "triangle_ascending": {
         "n": 185,
@@ -365,19 +373,28 @@
     }
   },
   "GOOGL": {
-    "active": null,
+    "active": {
+      "pattern": "double_top",
+      "direction": "bear",
+      "trigger_level": 363.35,
+      "target": 346.12,
+      "stop": 384.48,
+      "formed_bars_ago": 0,
+      "confidence": 0.45,
+      "last_close": 362.43
+    },
     "empirical": {
       "head_shoulders": {
         "n": 57,
         "rate": 0.456
       },
       "double_top": {
-        "n": 99,
-        "rate": 0.323
+        "n": 101,
+        "rate": 0.337
       },
       "double_bottom": {
-        "n": 87,
-        "rate": 0.46
+        "n": 90,
+        "rate": 0.444
       },
       "triangle_ascending": {
         "n": 11,
@@ -389,7 +406,7 @@
       },
       "triangle_symmetric": {
         "n": 14,
-        "rate": 0.357
+        "rate": 0.429
       }
     }
   },
@@ -400,9 +417,9 @@
       "trigger_level": 102.38,
       "target": 122.96,
       "stop": 81.79,
-      "formed_bars_ago": 1,
+      "formed_bars_ago": 2,
       "confidence": 0.26,
-      "last_close": 100.86
+      "last_close": 101.06
     },
     "empirical": {
       "head_shoulders": {
@@ -423,8 +440,8 @@
         "source": "pooled"
       },
       "triangle_descending": {
-        "n": 153,
-        "rate": 0.255,
+        "n": 158,
+        "rate": 0.247,
         "source": "pooled"
       },
       "triangle_symmetric": {
@@ -440,30 +457,30 @@
       "trigger_level": 420.35,
       "target": 447.8,
       "stop": 387.6,
-      "formed_bars_ago": 1,
+      "formed_bars_ago": 2,
       "confidence": 0.57,
-      "last_close": 417.17
+      "last_close": 414.0
     },
     "empirical": {
       "head_shoulders": {
-        "n": 52,
-        "rate": 0.346
+        "n": 53,
+        "rate": 0.358
       },
       "double_top": {
-        "n": 66,
-        "rate": 0.212
+        "n": 67,
+        "rate": 0.224
       },
       "double_bottom": {
-        "n": 64,
-        "rate": 0.688
+        "n": 65,
+        "rate": 0.677
       },
       "triangle_ascending": {
         "n": 10,
         "rate": 0.5
       },
       "triangle_descending": {
-        "n": 153,
-        "rate": 0.255,
+        "n": 158,
+        "rate": 0.247,
         "source": "pooled"
       },
       "triangle_symmetric": {
@@ -479,9 +496,9 @@
       "trigger_level": 1718.3,
       "target": 1905.95,
       "stop": 1530.64,
-      "formed_bars_ago": 1,
+      "formed_bars_ago": 2,
       "confidence": 0.24,
-      "last_close": 1711.89
+      "last_close": 1678.22
     },
     "empirical": {
       "head_shoulders": {
@@ -489,12 +506,12 @@
         "rate": 0.261
       },
       "double_top": {
-        "n": 64,
-        "rate": 0.266
+        "n": 65,
+        "rate": 0.262
       },
       "double_bottom": {
-        "n": 54,
-        "rate": 0.426
+        "n": 55,
+        "rate": 0.436
       },
       "triangle_ascending": {
         "n": 185,
@@ -502,8 +519,8 @@
         "source": "pooled"
       },
       "triangle_descending": {
-        "n": 153,
-        "rate": 0.255,
+        "n": 158,
+        "rate": 0.247,
         "source": "pooled"
       },
       "triangle_symmetric": {
@@ -519,9 +536,9 @@
       "trigger_level": 285.11,
       "target": 304.15,
       "stop": 264.74,
-      "formed_bars_ago": 1,
+      "formed_bars_ago": 2,
       "confidence": 0.72,
-      "last_close": 283.63
+      "last_close": 277.72
     },
     "empirical": {
       "head_shoulders": {
@@ -529,12 +546,12 @@
         "rate": 0.404
       },
       "double_top": {
-        "n": 79,
-        "rate": 0.354
-      },
-      "double_bottom": {
         "n": 78,
         "rate": 0.359
+      },
+      "double_bottom": {
+        "n": 77,
+        "rate": 0.351
       },
       "triangle_ascending": {
         "n": 185,
@@ -555,24 +572,24 @@
     "active": null,
     "empirical": {
       "head_shoulders": {
-        "n": 39,
-        "rate": 0.462
+        "n": 40,
+        "rate": 0.425
       },
       "double_top": {
         "n": 73,
-        "rate": 0.562
+        "rate": 0.575
       },
       "double_bottom": {
         "n": 75,
-        "rate": 0.307
+        "rate": 0.293
       },
       "triangle_ascending": {
         "n": 9,
         "rate": 0.222
       },
       "triangle_descending": {
-        "n": 153,
-        "rate": 0.255,
+        "n": 158,
+        "rate": 0.247,
         "source": "pooled"
       },
       "triangle_symmetric": {
@@ -585,16 +602,16 @@
     "active": null,
     "empirical": {
       "head_shoulders": {
-        "n": 44,
-        "rate": 0.477
+        "n": 45,
+        "rate": 0.489
       },
       "double_top": {
         "n": 69,
-        "rate": 0.29
+        "rate": 0.304
       },
       "double_bottom": {
-        "n": 59,
-        "rate": 0.525
+        "n": 58,
+        "rate": 0.517
       },
       "triangle_ascending": {
         "n": 185,
@@ -602,8 +619,8 @@
         "source": "pooled"
       },
       "triangle_descending": {
-        "n": 153,
-        "rate": 0.255,
+        "n": 158,
+        "rate": 0.247,
         "source": "pooled"
       },
       "triangle_symmetric": {
@@ -619,9 +636,9 @@
       "trigger_level": 75.06,
       "target": 85.04,
       "stop": 65.08,
-      "formed_bars_ago": 3,
+      "formed_bars_ago": 4,
       "confidence": 0.47,
-      "last_close": 73.57
+      "last_close": 74.2
     },
     "empirical": {
       "head_shoulders": {
@@ -641,8 +658,8 @@
         "rate": 0.308
       },
       "triangle_descending": {
-        "n": 153,
-        "rate": 0.255,
+        "n": 158,
+        "rate": 0.247,
         "source": "pooled"
       },
       "triangle_symmetric": {
@@ -687,30 +704,30 @@
       "trigger_level": 382.22,
       "target": 400.84,
       "stop": 363.6,
-      "formed_bars_ago": 1,
+      "formed_bars_ago": 2,
       "confidence": 0.52,
-      "last_close": 374.16
+      "last_close": 389.64
     },
     "empirical": {
       "head_shoulders": {
-        "n": 38,
-        "rate": 0.474
+        "n": 40,
+        "rate": 0.45
       },
       "double_top": {
-        "n": 69,
-        "rate": 0.174
+        "n": 74,
+        "rate": 0.162
       },
       "double_bottom": {
-        "n": 78,
-        "rate": 0.679
+        "n": 81,
+        "rate": 0.691
       },
       "triangle_ascending": {
         "n": 12,
         "rate": 0.667
       },
       "triangle_descending": {
-        "n": 153,
-        "rate": 0.255,
+        "n": 158,
+        "rate": 0.247,
         "source": "pooled"
       },
       "triangle_symmetric": {

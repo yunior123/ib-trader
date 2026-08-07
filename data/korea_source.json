@@ -31,9 +31,9 @@
   "solbrain": "stock",
   "wonikips": "stock"
  },
- "ultimo_sondeo": 1785991029,
+ "ultimo_sondeo": 1786063364,
  "mercado_abierto": true,
- "barras_cerradas_este_ciclo": 1,
+ "barras_cerradas_este_ciclo": 0,
  "barras_de_subasta_este_ciclo": 0,
  "prevclose_oficiales_persistidos": 0
 }

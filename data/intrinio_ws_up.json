@@ -1,13 +1,13 @@
 {
  "arriba": false,
- "ultimo_sondeo": 1785990969,
- "ultimo_sondeo_et": "2026-08-06 00:36:09",
+ "ultimo_sondeo": 1786063326,
+ "ultimo_sondeo_et": "2026-08-06 20:42:06",
  "motivo": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
- "intentos": 188,
+ "intentos": 13,
  "provider": "EQUITIES_EDGE",
- "auth_ok": 1785975918,
- "desde": 1785975923,
- "desde_et": "2026-08-05 20:25:23",
+ "auth_ok": 1786062313,
+ "desde": 1786062318,
+ "desde_et": "2026-08-06 20:25:18",
  "simbolos": [
   "QQQ",
   "SPY",
@@ -43,7 +43,7 @@
  "primera_subida": "2026-08-03 03:47:31 EDT",
  "mensajes": 0,
  "ultimo_mensaje": 0,
- "ts": 1785976226,
- "caida": 1785976227,
+ "ts": 1786062369,
+ "caida": 1786062313,
  "canonical_print": false
 }

@@ -1,45 +1,45 @@
 {
- "epoch": 1785991008,
- "local": "2026-08-06 00:36:48",
+ "epoch": 1786063316,
+ "local": "2026-08-06 20:41:56",
  "servicio": "scripts/levels_refresh_daemon.py",
  "fase": "noche",
- "fase_why": "antes de las 04:00",
+ "fase_why": "despues de las 20:00",
  "cadencia_s": {
   "levels": 600,
   "gex": 600,
   "vix": 600
  },
  "ultimo_epoch": {
-  "levels": 1785990773,
-  "gex": 1785991008,
-  "vix": 1785990775
+  "levels": 1786063316,
+  "gex": 1786063016,
+  "vix": 1786063215
  },
  "proximo_en_s": {
-  "levels": 365.6,
-  "gex": 600.0,
-  "vix": 367.3
+  "levels": 600.0,
+  "gex": 300.7,
+  "vix": 499.1
  },
  "detalle": {
   "levels": {
    "ok": 36,
    "fallos": 0,
-   "edad_max_s": 6.9
+   "edad_max_s": 15.4
   },
   "gex": {
    "cobertura": "40/41",
-   "chain_age_max_s": 178.6
+   "chain_age_max_s": 27.7
   },
   "vix": {
-   "vix": 15.81,
-   "estado": "close",
-   "data_age_s": 29874.3,
+   "vix": 15.15,
+   "estado": "delayed",
+   "data_age_s": 15914.1,
    "banda": "CALM",
    "vx_regime": "CONTANGO"
   }
  },
  "edad_ficheros_s": {
-  "data/gex_snapshot.json": 0.0,
-  "data/vix.json": 232.7,
-  "charts/data/levels_qqq.json": 241.2
+  "data/gex_snapshot.json": 299.3,
+  "data/vix.json": 100.9,
+  "charts/data/levels_qqq.json": 15.4
  }
 }

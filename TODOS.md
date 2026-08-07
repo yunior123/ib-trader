@@ -1173,3 +1173,15 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       yo: ~15GB de simulator runtimes viejos (iOS 18.2 + 26.4.1) + dmg de descarga Xcode.
       Disco 99% -> 90% (22Gi libres, VERIFICADO df). Pendiente decision Yunior: cargo 134M,
       node_modules de Documents/GitHub 257M (no tocados).
+- [ ] "try the app on my iphone again via wifi, search docs" (2026-08-06) — estado: BLOQUEADO
+      por accion fisica. Medido con 3 agentes + verificacion propia: el iPhone NO anuncia
+      `_remotepairing._tcp` (5 servicios de pairing vacios) mientras el mDNS del Mac esta SANO
+      (llegan _airplay/_ipp/_printer/_companion-link por en0) y ping6 ff02::1%en0 responde 10
+      vecinos incluido el iPhone -> ProtonVPN y firewall EXONERADOS por medicion. Causa: iOS
+      17+ solo publica ese servicio con MODO DE DESARROLLADOR activado, y el primer
+      emparejamiento exige CABLE una vez (doc Device Hub: "otherwise, use a cable"; wireless
+      nativo = iOS 27 + Xcode 27). Vias sin cable descartadas por doc: OTA/itms-services (exige
+      perfil de DISTRIBUCION; el nuestro es development con get-task-allow=true) y Apple
+      Configurator ("Attach the device"). App iOS YA firmada y lista en
+      build-ios/Build/Products/Debug-iphoneos/GammaWarRoom-iOS.app (perfil con el UDID, caduca
+      2027-08-06). Falta: Yunior activa Modo de desarrollador + cable 60s una vez.

@@ -1,0 +1,12 @@
+{
+ "ts": "2026-08-06T06:51:20",
+ "w1": "2026-08-07",
+ "w2": "2026-08-14",
+ "doi_sesion": "anterior (OI de UW = cierre de ayer)",
+ "max_spot": 9999.0,
+ "syms": [],
+ "errors": {
+  "NOK": "UW /api/stock/NOK/stock-state fallo tras 3 intentos: HTTP Error 429: Too Many Requests",
+  "SOFI": "UW /api/stock/SOFI/stock-state fallo tras 3 intentos: HTTP Error 429: Too Many Requests"
+ }
+}

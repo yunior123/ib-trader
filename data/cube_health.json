@@ -4367,13 +4367,279 @@
    "bytes": 1527307,
    "date": "2026-08-03",
    "path": "data/history/2026-08-03/chain_full_xsp.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 386775,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_aapl.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1092024,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_amd.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 389796,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_amzn.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 818730,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_asml.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 649302,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_avgo.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 319448,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_be.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 247800,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_dia.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 273869,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_dram.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 332453,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_ewy.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 672530,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_gld.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 253162,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_glw.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 565411,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_googl.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 631261,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_intc.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 850281,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_iwm.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 302978,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_lrcx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 943034,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_meta.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 697027,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_msft.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1476992,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_mu.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 335806,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_nbis.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 2639888,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_ndx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 139171,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_nflx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 69254,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_nok.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 380319,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_nvda.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 201527,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_qcom.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1583000,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_qqq.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 257600,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_skhy.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 914072,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_smh.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 965354,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_sndk.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 289953,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_spcx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 2338048,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_spx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1555412,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_spy.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 588742,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_stx.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 655877,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_tsla.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 274038,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_tsm.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 209760,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_txn.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 487996,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_wdc.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 262772,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_xlk.json"
+  },
+  {
+   "action": "gzip_full",
+   "applied": false,
+   "bytes": 1472345,
+   "date": "2026-08-04",
+   "path": "data/history/2026-08-04/chain_full_xsp.json"
   }
  ],
  "applied": false,
  "budget_gb": 3.0,
- "date": "2026-08-05",
- "history_bytes": 1989419406,
- "history_gb": 1.9894,
+ "date": "2026-08-06",
+ "history_bytes": 2094718005,
+ "history_gb": 2.0947,
  "loose_days_kept": 2,
- "updated": 1785961529
+ "updated": 1786048008
 }

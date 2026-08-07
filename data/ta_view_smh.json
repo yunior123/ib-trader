@@ -1,5 +1,5 @@
 {
- "ts": 1785916975,
+ "ts": 1786003377,
  "sym": "SMH",
- "error": "rc=1 sin veredicto; stderr: a_venv/lib/python3.12/site-packages/openai/_base_client.py\", line 1105, in request\n    raise self._make_status_error_from_response(err.response) from None\nopenai.APIStatusError: Error code: 402 - {'error': {'message': 'Insufficient Balance', 'type': 'unknown_error', 'param': None, 'code': 'invalid_request_error'}}\nDuring task with name 'Market Analyst' and id 'eaeef987-4c50-dd91-5a7e-079929be7744'"
+ "error": "rc=1 sin veredicto; stderr: a_venv/lib/python3.12/site-packages/openai/_base_client.py\", line 1105, in request\n    raise self._make_status_error_from_response(err.response) from None\nopenai.APIStatusError: Error code: 402 - {'error': {'message': 'Insufficient Balance', 'type': 'unknown_error', 'param': None, 'code': 'invalid_request_error'}}\nDuring task with name 'Market Analyst' and id '0d246c8d-f314-e389-4244-f9366861ea79'"
 }
