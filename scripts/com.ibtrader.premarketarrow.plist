@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.ibtrader.premarketarrow</string>
+  <!-- FLECHA PREMARKET (Yunior 2026-08-06: "read unconsolidated data premarket and calibrate
+       arrow based on that before market opens on 9:30 am every day").
+       Arranca a las 03:58 ET de lunes a viernes y corre en bucle hasta las 09:28. El portero
+       de dia de mercado vive dentro del script (bin/fleet_hours), no aqui: los festivos no
+       son derivables de un calendario de launchd. -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string><string>-lc</string>
+    <string>cd "$HOME/ib-trader" &amp;&amp; ./scripts/premarket_run.sh &gt;&gt; logs/premarket_arrow.log 2&gt;&amp;1</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>3</integer><key>Minute</key><integer>58</integer></dict>
+    <dict><key>Weekday</key><integer>2</integer><key>Hour</key><integer>3</integer><key>Minute</key><integer>58</integer></dict>
+    <dict><key>Weekday</key><integer>3</integer><key>Hour</key><integer>3</integer><key>Minute</key><integer>58</integer></dict>
+    <dict><key>Weekday</key><integer>4</integer><key>Hour</key><integer>3</integer><key>Minute</key><integer>58</integer></dict>
+    <dict><key>Weekday</key><integer>5</integer><key>Hour</key><integer>3</integer><key>Minute</key><integer>58</integer></dict>
+  </array>
+  <key>RunAtLoad</key><false/>
+  <key>StandardOutPath</key><string>/tmp/ibtrader.premarketarrow.out</string>
+  <key>StandardErrorPath</key><string>/tmp/ibtrader.premarketarrow.err</string>
+</dict>
+</plist>

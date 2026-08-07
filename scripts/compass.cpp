@@ -258,6 +258,7 @@ struct Ev {
     // VIX en vivo (IBKR CBOE): CONTEXTO, no dispara. vix_live=false => cierre anterior.
     std::optional<double> vix; std::optional<bool> vix_live;
     std::optional<double> overnight_score, overnight_nq, overnight_korea;
+    std::optional<double> pm_score; std::string pm_dir, pm_clase, pm_why; bool pm_usable = false;
 };
 
 struct Amp {
@@ -501,6 +502,11 @@ struct Out {
     Drivers drv;
     std::optional<double> vix; std::optional<bool> vix_live;   // CONTEXTO, no dispara
     std::optional<double> overnight_score, overnight_nq, overnight_korea, overnight_coef;
+    // flecha PREMARKET (bin/premarket_arrow, ventana 04:00-09:30). Solo puede tocar
+    // candidate_dir; `dir` sigue exigiendo PRINT. Se promovera a `dir` cuando la calibracion
+    // con dato NO consolidado tenga n_eff>=30 y Wilson inferior >50 (ley de la casa).
+    std::optional<double> pm_score; std::string pm_dir, pm_clase, pm_why;
+    bool pm_usable = false;
 };
 
 // --------------------------- PRINT O NADA ----------------------------------
@@ -1153,6 +1159,18 @@ static Out classify(const Ev& ev, Hist* hist, const std::string& decay_json) {
                        "sin edge predictivo > azar: se observa la tendencia, flecha neutral");
         }
     }
+    o.pm_score = ev.pm_score; o.pm_dir = ev.pm_dir; o.pm_clase = ev.pm_clase;
+    o.pm_why = ev.pm_why; o.pm_usable = ev.pm_usable;
+    // La flecha premarket AVISA, no dispara: solo puede rellenar candidate_dir cuando la
+    // brujula no tiene direccion propia. `dir` sigue exigiendo PRINT (doctrina 2 de la casa).
+    if (o.pm_usable && o.pm_dir != "flat" && o.candidate_dir == "flat" && o.dir == "flat") {
+        o.candidate_dir = o.pm_dir;
+        char pb[160];
+        snprintf(pb, sizeof pb, "premarket %+.2f -> candidato %s (%s, sin print: no opera)",
+                 o.pm_score.value_or(0.0), o.pm_dir.c_str(),
+                 o.pm_clase.empty() ? "sin clase" : o.pm_clase.c_str());
+        why.insert(why.begin(), pb);
+    }
     o.overnight_score = ev.overnight_score;
     o.overnight_nq = ev.overnight_nq;
     o.overnight_korea = ev.overnight_korea;
@@ -1308,6 +1326,15 @@ static std::string to_json(const Out& o) {
                  o.overnight_coef.value_or(1.0));
         s += b;
     } else s += "\"overnight_context\":null,";
+    if (o.pm_score || !o.pm_why.empty()) {
+        snprintf(b, sizeof b, "\"premarket\":{\"score\":%s,\"dir\":\"%s\",\"usable\":%s,",
+                 o.pm_score ? std::to_string(*o.pm_score).c_str() : "null",
+                 o.pm_dir.empty() ? "flat" : o.pm_dir.c_str(), o.pm_usable ? "true" : "false");
+        s += b;
+        s += "\"clase_dato\":" + (o.pm_clase.empty() ? std::string("null")
+                                                     : "\"" + o.pm_clase + "\"") + ",";
+        s += "\"why\":" + (o.pm_why.empty() ? std::string("null") : "\"" + o.pm_why + "\"") + "},";
+    } else s += "\"premarket\":null,";
     // VIX como CONTEXTO (no dispara): banda + si es vivo. La flecha lo MUESTRA, no lo obedece;
     // para que module amplitud/regimen hace falta medirlo (barrier_labels+null_control+BH-FDR).
     if (o.vix) {
@@ -1438,6 +1465,26 @@ static void load_overnight(Ev& e) {
     e.overnight_score = num / den;
     e.overnight_nq = nq;
     e.overnight_korea = korea;
+}
+
+// Flecha premarket: SOLO dentro de 04:00-09:30 y SOLO si el fichero es de la sesion de HOY.
+// Sin esa doble guarda un fichero de ayer pintaria la apertura de hoy (el fallo que ya costo
+// caro en otros colectores). No fabrica nada: ausente = no se lee y punto.
+static void load_premarket(Ev& e) {
+    time_t now = time(nullptr); struct tm v{}; localtime_r(&now, &v);
+    int hm = v.tm_hour * 60 + v.tm_min;
+    if (v.tm_wday < 1 || v.tm_wday > 5 || hm < 4 * 60 || hm >= 570) return;
+    std::string lo = e.sym; for (auto& c : lo) c = (char)tolower(c);
+    std::string j = slurp("data/premarket_arrow_" + lo + ".json");
+    if (j.empty()) return;
+    char hoy[16]; strftime(hoy, sizeof hoy, "%Y-%m-%d", &v);
+    auto sd = jstr(j, "session_date");
+    if (!sd || *sd != hoy) return;                       // fichero de otra sesion: se ignora
+    e.pm_score = jnum(j, "score");
+    if (auto d = jstr(j, "dir")) e.pm_dir = *d;
+    if (auto c = jstr(j, "clase_dato")) e.pm_clase = *c;
+    if (auto r = jstr(j, "unusable_reason")) e.pm_why = *r;
+    e.pm_usable = j.find("\"usable\":true") != std::string::npos;
 }
 
 static Ev gather(const std::string& sym_lo) {
@@ -1579,6 +1626,7 @@ static Ev gather(const std::string& sym_lo) {
         }
     }
     load_overnight(e);
+    load_premarket(e);
     return e;
 }
 

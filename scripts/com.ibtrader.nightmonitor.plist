@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.ibtrader.nightmonitor</string>
+  <!-- Control nocturno cada 2h hasta la apertura (Yunior 2026-08-06: "schedule monitoring
+       every 2 hours till 9:30 am friday, last monitoring at 9:25, after monitoring create a
+       post in x.com, mainly based on spy").
+       El plist se queda cargado, pero NO hace nada salvo que exista data/night_monitor_until.txt
+       con la fecha limite: ese fichero es el seguro, y el control de las 09:25 lo borra al
+       terminar. Armar otra noche = volver a escribirlo. -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string><string>-lc</string>
+    <string>cd "$HOME/ib-trader" &amp;&amp; ./scripts/night_monitor.sh &gt;&gt; logs/night_monitor_run.log 2&gt;&amp;1</string>
+  </array>
+  <key>StartCalendarInterval</key>
+  <array>
+    <dict><key>Hour</key><integer>23</integer><key>Minute</key><integer>25</integer></dict>
+    <dict><key>Hour</key><integer>1</integer><key>Minute</key><integer>25</integer></dict>
+    <dict><key>Hour</key><integer>3</integer><key>Minute</key><integer>25</integer></dict>
+    <dict><key>Hour</key><integer>5</integer><key>Minute</key><integer>25</integer></dict>
+    <dict><key>Hour</key><integer>7</integer><key>Minute</key><integer>25</integer></dict>
+    <dict><key>Hour</key><integer>9</integer><key>Minute</key><integer>25</integer></dict>
+  </array>
+  <key>RunAtLoad</key><false/>
+  <key>StandardOutPath</key><string>/tmp/ibtrader.nightmonitor.out</string>
+  <key>StandardErrorPath</key><string>/tmp/ibtrader.nightmonitor.err</string>
+</dict>
+</plist>
