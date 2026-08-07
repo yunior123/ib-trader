@@ -49,7 +49,13 @@ def _finviz_elite_export(signal, max_price=10.0, auth=None, src="finviz_elite",
     auth token in FINVIZ_AUTH). Returns [] if no token or on error.
     filters: lista extra de codigos finviz (f=) que se suman al price cap.
     price_cap=False: sin filtro de precio penny (screens de calidad/no-penny)."""
-    auth = auth or os.environ.get("FINVIZ_AUTH") or os.environ.get("FINVIZ_API_KEY")
+    # FINVIZ_AUTH3 PRIMERO: es el orden que ya usan earnings_fall_scout.py:47,
+    # finviz_vol_screen.py:48, options_hunter.py:34 y finviz_auth_check.py:59. Este fichero se
+    # quedo atras leyendo FINVIZ_AUTH, cuya SUSCRIPCION esta caducada ("User's subscription
+    # expired", HTTP 401) -> 776 fallos seguidos en screener/bargain.log y el escaner de gangas
+    # mudo desde el 2026-08-05. El token no estaba roto: se leia el que no era.
+    auth = (auth or os.environ.get("FINVIZ_AUTH3") or os.environ.get("FINVIZ_AUTH")
+            or os.environ.get("FINVIZ_API_KEY"))
     if not auth:
         return []
     fparts = list(filters or [])
