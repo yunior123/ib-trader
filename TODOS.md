@@ -1187,12 +1187,28 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       2027-08-06). Falta: Yunior activa Modo de desarrollador + cable 60s una vez.
 
 ## 2026-08-06 21:35 — peticion nocturna (SPY + monitoreo hasta viernes 09:25)
-- [ ] "analyze fleet, spy priority and do post to x.com on them, the ones u are confident the
+- [x] "analyze fleet, spy priority and do post to x.com on them, the ones u are confident the
       most, check polygon chain, UW, intrinio, ... provide tree, update as of right now based
-      on korea" (2026-08-06) — pendiente
-- [ ] "schedule monitoring every 2 hours till 9:30 am friday, last monitoring at 9:25, after
+      on korea" (2026-08-06) — hecho 6596d7c0. scripts/night_tree.py (arbol re-ejecutable) +
+      2 posts en X (ids 2085545037027291336 SPY / 2085545056052682951 Corea). UW: su archivo
+      era de AYER (uw_net_prem asof 08-05 14:42) y se dijo; Polygon: acciones a T-1, opciones
+      si (el mapa gamma vive de ahi); Intrinio: unica fuente viva de barras 1m premarket.
+- [x] "schedule monitoring every 2 hours till 9:30 am friday, last monitoring at 9:25, after
       monitoring create a post in x.com, mainly based on spy, use overnight data, accumulated,
-      unconsolidated order flow" (2026-08-06) — pendiente
-- [ ] "make sure we have a feature in software that allows us to read unconsolidated data
+      unconsolidated order flow" (2026-08-06) — hecho f6cb41d3. launchd
+      com.ibtrader.nightmonitor 23:25/01:25/03:25/05:25/07:25/09:25, armado por
+      data/night_monitor_until.txt (el control final lo borra). El de 09:25 publica en X.
+- [x] "make sure we have a feature in software that allows us to read unconsolidated data
       premarket and calibrate arrow based on that before market opens on 9:30 am every day.
-      see web on how big softwares do it, big institutions." (2026-08-06) — pendiente
+      see web on how big softwares do it, big institutions." (2026-08-06) — hecho f6cb41d3 +
+      3cdcacc0. bin/premarket_arrow (C++23) + com.ibtrader.premarketarrow (03:58->09:28) +
+      premarket_unconsolidated.py/premarket_calibrate.py (Databento a nivel de PLAZA).
+      LIMITE MEDIDO: Databento NO tiene licencia live -> lo no consolidado es T-1 y CALIBRA;
+      lo vivo es Intrinio equities_edge (consolidado) y el JSON lo declara en 3 campos.
+      PENDIENTE: la calibracion tiene 0 buckets medidos (n_eff max 9 < 30). Hacen falta ~40
+      sesiones archivadas antes de que la flecha premarket pueda mover `dir`.
+- [ ] PENDIENTE DERIVADO: seguir archivando premarket no consolidado a diario (falta el
+      launchd de premarket_unconsolidated.py tras el cierre) hasta llegar a n_eff>=30.
+- [ ] PENDIENTE DERIVADO: Intrinio equities_edge iba 16 min detras a las 09:12 del 2026-08-07
+      (medido contra su propia API). Si eso es cronico, la flecha premarket nunca sera
+      "usable" por el portero de edad: o se sube el umbral con motivo, o se busca fuente.
