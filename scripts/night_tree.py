@@ -86,14 +86,30 @@ def us_day(sym):
     if not rth:
         return None
     dias = sorted(rth)
-    hoy, prev = ohlc(rth[dias[-1]]), (ohlc(rth[dias[-2]]) if len(dias) > 1 else None)
-    ext = [r for r in rows if r[0].strftime("%Y-%m-%d") == dias[-1]
-           and r[0].hour * 60 + r[0].minute >= 960]
-    pre = [r for r in rows if r[0].strftime("%Y-%m-%d") == dias[-1]
-           and r[0].hour * 60 + r[0].minute < 570]
-    return {"dia": dias[-1], "rth": hoy, "prev_close": prev["c"] if prev else None,
-            "pre": ohlc(pre), "ah": ohlc(ext), "last": (ext[-1][4] if ext else hoy["c"]),
-            "last_ts": (ext[-1][0] if ext else rth[dias[-1]][-1][0]).isoformat()}
+    ult = dias[-1]
+    hoy_local = datetime.datetime.now(ET).strftime("%Y-%m-%d")
+    # PREMARKET de una sesion NUEVA: hay barras de hoy pero aun no hay RTH de hoy. La sesion
+    # OBJETIVO es hoy, no la ultima cerrada — si no, el arbol dibuja el mapa de ayer con el
+    # spot de ayer mientras el precio ya se movio (medido 2026-08-07 09:14: spot 768.90 de
+    # ayer contra 772.75 real, y el muro saltando a 750 por excluir el vencimiento equivocado).
+    hoy_bars = [r for r in rows if r[0].strftime("%Y-%m-%d") == hoy_local]
+    premkt_nuevo = bool(hoy_bars) and hoy_local > ult
+    objetivo = hoy_local if premkt_nuevo else ult
+    ref = hoy_bars if premkt_nuevo else [r for r in rows if r[0].strftime("%Y-%m-%d") == ult]
+    cerrada = ohlc(rth[ult])
+    prev = ohlc(rth[dias[-2]]) if len(dias) > 1 else None
+    ext = [r for r in ref if r[0].hour * 60 + r[0].minute >= 960]
+    pre = [r for r in ref if r[0].hour * 60 + r[0].minute < 570]
+    if premkt_nuevo:
+        last, last_ts = ref[-1][4], ref[-1][0]
+        prev_close = cerrada["c"]                    # el cierre de AYER es la referencia de hoy
+    else:
+        last = ext[-1][4] if ext else cerrada["c"]
+        last_ts = (ext[-1][0] if ext else rth[ult][-1][0])
+        prev_close = prev["c"] if prev else None
+    return {"dia": ult, "sesion_objetivo": objetivo, "premkt_nuevo": premkt_nuevo,
+            "rth": cerrada, "prev_close": prev_close,
+            "pre": ohlc(pre), "ah": ohlc(ext), "last": last, "last_ts": last_ts.isoformat()}
 
 
 def chain(sym):
@@ -123,10 +139,11 @@ def chain(sym):
     return None if not rows else {"rows": rows, "spot": spot, "age_s": round(age, 1)}
 
 
-def mapa_manana(ch, spot, hoy_iso):
-    """Muros/max-pain de MANANA: fuera los contratos que expiran hoy (skill pin-and-expiry)."""
-    hoy = hoy_iso.replace("-", "")
-    viv = [r for r in ch["rows"] if r["exp"] > hoy]
+def mapa_manana(ch, spot, sesion_iso, premkt=False):
+    """Muros/max-pain de la sesion OBJETIVO. Fuera los contratos ya vencidos (skill
+    pin-and-expiry). Ojo: en premarket el 0DTE de HOY sigue VIVO y es el que manda."""
+    corte = sesion_iso.replace("-", "")
+    viv = [r for r in ch["rows"] if (r["exp"] >= corte if premkt else r["exp"] > corte)]
     if not viv:
         return None
     oic, oip, gex = defaultdict(float), defaultdict(float), defaultdict(float)
@@ -153,6 +170,10 @@ def mapa_manana(ch, spot, hoy_iso):
         "suelo_operable": max(cerca, key=lambda x: x[1])[0] if cerca else None,
         "operable_pct": OPERABLE_PCT,
         "abs_wall": max(gex, key=lambda k: abs(gex[k])) if gex else None,
+        # techo operable = el mayor OI de CALL por encima del spot. El abs_wall por |GEX| puede
+        # caer POR DEBAJO (2026-08-07: 750, arrastrado por los puts del 0DTE) y entonces no es
+        # techo de nada: la caja se quedaria del reves.
+        "techo": max(arriba, key=lambda x: x[1])[0] if arriba else None,
         "max_pain": min(pain, key=pain.get) if pain else None,
         "pc_oi": round(tp / tc, 3) if tc else None,
         "techos": [{"k": k, "oi": v, "d": dist(k)} for k, v in sorted(arriba, key=lambda x: -x[1])[:4]],
@@ -160,11 +181,11 @@ def mapa_manana(ch, spot, hoy_iso):
     }
 
 
-def valla(ch, spot, hoy_iso):
-    """Valla de la proxima sesion por IV ATM del vencimiento mas cercano VIVO. None si la IV
+def valla(ch, spot, sesion_iso, premkt=False):
+    """Valla de la sesion OBJETIVO por IV ATM del vencimiento mas cercano VIVO. None si la IV
     del proveedor no es sana — una valla inventada es peor que ninguna."""
-    hoy = hoy_iso.replace("-", "")
-    viv = [r for r in ch["rows"] if r["exp"] > hoy]
+    corte = sesion_iso.replace("-", "")
+    viv = [r for r in ch["rows"] if (r["exp"] >= corte if premkt else r["exp"] > corte)]
     if not viv:
         return None
     exp = min(r["exp"] for r in viv)
@@ -174,7 +195,8 @@ def valla(ch, spot, hoy_iso):
         return None
     iv = sum(ivs) / len(ivs)
     d = datetime.datetime.strptime(exp, "%Y%m%d").date()
-    dias = max((d - datetime.date.fromisoformat(hoy_iso)).days, 1)
+    base = datetime.date.fromisoformat(sesion_iso)
+    dias = max((d - base).days, 1) if d > base else 1
     em = spot * iv * math.sqrt(dias / 365.0)
     return {"exp": exp, "iv_atm": round(iv, 4), "dias": dias, "n_iv": len(ivs),
             "em_abs": round(em, 2), "em_pct": round(em / spot * 100, 3),
@@ -206,9 +228,11 @@ def korea():
     return out
 
 
-def macro(hoy_iso):
+def macro(sesion_iso, premkt=False):
+    """Eventos de la sesion que viene. En premarket esa sesion es HOY, no manana."""
     cal = jload(os.path.join(REPO, "data", "macro_calendar_2026.json")) or {}
-    manana = (datetime.date.fromisoformat(hoy_iso) + datetime.timedelta(days=1)).isoformat()
+    base = datetime.date.fromisoformat(sesion_iso)
+    manana = base.isoformat() if premkt else (base + datetime.timedelta(days=1)).isoformat()
     ev = []
     for clave in ("nfp", "cpi", "ppi"):
         for e in cal.get(clave, []) or []:
@@ -233,12 +257,12 @@ def build(sym):
     t = {
         "ts": time.time(), "sym": SU,
         "asof_local": datetime.datetime.now(ET).strftime("%Y-%m-%d %H:%M:%S ET"),
-        "sesion_us": us, "spot": spot,
-        "evento": macro(us["dia"]),
+        "sesion_us": us, "spot": spot, "sesion": us["sesion_objetivo"],
+        "evento": macro(us["sesion_objetivo"], us["premkt_nuevo"]),
         "chain_age_s": ch["age_s"] if ch else None,
         "chain_stale": (ch["age_s"] > CHAIN_MAX_AGE_S) if ch else None,
-        "mapa": mapa_manana(ch, spot, us["dia"]) if ch else None,
-        "valla": valla(ch, spot, us["dia"]) if ch else None,
+        "mapa": mapa_manana(ch, spot, us["sesion_objetivo"], us["premkt_nuevo"]) if ch else None,
+        "valla": valla(ch, spot, us["sesion_objetivo"], us["premkt_nuevo"]) if ch else None,
         "korea": korea(),
         "futuros": ({k: ctx.get(k) for k in
                      ("nq_pct", "nq_ref_src", "es_pct", "es_ref_src", "ts")} if ctx else None),
@@ -268,11 +292,13 @@ def render(t):
     ev = ", ".join(f"{e['tipo']} {e['hora_et']} ET" for e in t["evento"]) or "sin evento tabulado"
     L.append(f"╔═ {t['sym']} · {t['asof_local']}")
     us = t["sesion_us"]
-    if us["rth"] and us["prev_close"]:
-        d = (us["rth"]["c"] / us["prev_close"] - 1) * 100
-        L.append(f"║ cierre {us['rth']['c']:.2f} ({d:+.2f}%) rango {us['rth']['l']:.2f}-{us['rth']['h']:.2f}"
-                 f" · ext {us['last']:.2f}")
-    L.append(f"║ EVENTO MANANA: {ev}")
+    if us["rth"]:
+        base = us["rth"]["c"]
+        d = (spot / base - 1) * 100
+        etq = "premarket" if us.get("premkt_nuevo") else "ext"
+        L.append(f"║ cierre previo {base:.2f} rango {us['rth']['l']:.2f}-{us['rth']['h']:.2f}"
+                 f" · {etq} {spot:.2f} ({d:+.2f}%)")
+    L.append(f"║ EVENTO {t['sesion']}: {ev}")
     if t["futuros"]:
         f = t["futuros"]
         L.append(f"║ futuros desde el cierre 16:00 — ES {_pct(f['es_pct'])} NQ {_pct(f['nq_pct'])}"
@@ -283,7 +309,7 @@ def render(t):
                  + (f" ({g['regime_why']})" if g.get("regime_why") else "")
                  + f" · OI {g.get('oi_asof')}")
     if m:
-        L.append(f"║ mapa de MANANA (sin el vencimiento de hoy): muro {m['abs_wall']} · "
+        L.append(f"║ mapa de la sesion {t['sesion']}: techo {m.get('techo')} · absGEX {m['abs_wall']} · "
                  f"max pain {m['max_pain']} · suelo operable {m['suelo_operable']} · P/C {m['pc_oi']}")
         L.append("║   techos " + " ".join(f"{x['k']:.0f}({x['oi']:,.0f}|{x['d']:+.1f}%)" for x in m["techos"]))
         L.append("║   suelos " + " ".join(f"{x['k']:.0f}({x['oi']:,.0f}|{x['d']:+.1f}%)" for x in m["suelos"]))
@@ -295,7 +321,7 @@ def render(t):
                  f"(±{v['em_pct']:.2f}%) → {v['lo']:.2f} — {v['hi']:.2f}")
     L.append("╠═ ARBOL")
     flip = g.get("flip")
-    techo = m["abs_wall"] if m else None
+    techo = (m.get("techo") or m.get("abs_wall")) if m else None
     pain = m["max_pain"] if m else None
     suelo = m["suelo_operable"] if m else None
     if flip and techo:

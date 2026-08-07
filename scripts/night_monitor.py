@@ -129,7 +129,14 @@ def flujo_premarket(sym):
     if edad > 900:
         return None, f"flecha premarket rancia ({edad/60:.0f} min)"
     if not f.get("usable"):
-        return None, f"flecha premarket NO usable: {f.get('unusable_reason')}"
+        # Un POST no es una orden: si lo UNICO que falla es la edad (retraso del proveedor,
+        # medido 2026-08-07: Intrinio equities_edge iba 16 min detras a las 09:12), la lectura
+        # vale para publicar SIEMPRE que se diga el retraso. Cualquier otro motivo si la anula.
+        r = f.get("unusable_reason") or ""
+        if r.startswith("ultima barra de hace") and f.get("score") is not None:
+            f = dict(f, _solo_retraso=True)
+            return f, None
+        return None, f"flecha premarket NO usable: {r}"
     return f, None
 
 
@@ -145,12 +152,16 @@ def texto_post(t, hist, flujo, motivo_sin_flujo):
         L.append(f"Korea: Hynix {k['pct']:+.1f}% (opened {k['abrio_pct']:+.1f}%)")
     if flujo:
         # n_prints es trade_count (equities_edge no da volumen premarket): se dice tal cual
-        L.append(f"Premkt {flujo['n_bars']}m, {int(flujo['n_prints']):,} prints, "
-                 f"drift {flujo['drift_pct']:+.2f}%, arrow {flujo['dir']}")
+        lag = ""
+        if flujo.get("_solo_retraso"):
+            lag = f" [{(flujo.get('bars_age_s') or 0)/60:.0f}m lag]"
+        L.append(f"Premkt {int(flujo['n_prints']):,} prints, gap {flujo['gap_pct']:+.2f}%, "
+                 f"drift {flujo['drift_pct']:+.2f}%{lag}")
     elif motivo_sin_flujo:
         L.append(f"Premkt flow: n/a ({motivo_sin_flujo[:40]})")
-    if g.get("flip") and m.get("abs_wall"):
-        L.append(f"Box {g['flip']}-{m['abs_wall']} | spot {spot:.2f}")
+    techo = m.get("techo") or m.get("abs_wall")
+    if g.get("flip") and techo:
+        L.append(f"Box {g['flip']}-{techo} | spot {spot:.2f}")
     if v.get("em_pct"):
         L.append(f"Fence ±{v['em_pct']:.2f}% -> {v['lo']:.0f}-{v['hi']:.0f}")
     L.append("")
