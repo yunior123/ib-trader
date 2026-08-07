@@ -86,7 +86,11 @@ def deltas(t, prev):
 def material(t, d):
     """Lista de motivos por los que este control SI merece un push. Vacia = silencio."""
     m, g, spot = [], t.get("gex") or {}, t.get("spot")
-    flip, muro = g.get("flip"), (t.get("mapa") or {}).get("abs_wall")
+    mp = t.get("mapa") or {}
+    # el techo es el muro de CALL por encima del spot, no el abs_wall por |GEX|: con el 0DTE
+    # ese cae por debajo (2026-08-07: 750) y el control gritaba "por encima del muro" con el
+    # precio a +2,9% de el. Crying wolf, justo lo que la casa prohibe.
+    flip, muro = g.get("flip"), (mp.get("techo") or mp.get("abs_wall"))
     if spot and flip:
         if spot < flip:
             m.append(f"{t['sym']} {spot:.2f} POR DEBAJO del flip {flip}: gamma negativa")
