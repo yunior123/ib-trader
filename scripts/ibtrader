@@ -1,0 +1,126 @@
+#!/bin/zsh
+# ibtrader — CLI global de la flota. Se instala con `scripts/ibtrader install` y a partir de
+# ahi funciona desde cualquier directorio.
+#
+# El repo ya tenia las piezas (fleet_up.sh, ib_mode.sh, fleet_hours, healthcheck...) pero
+# habia que recordar rutas y flags. Esto es la puerta unica.
+# SEÑAL-SOLAMENTE: `ibtrader arm` es lo unico que toca la doble llave, y avisa antes.
+set -u
+REPO="${IBT_REPO:-$HOME/ib-trader}"
+cd "$REPO" 2>/dev/null || { print -u2 "ibtrader: no encuentro el repo en $REPO (exporta IBT_REPO)"; exit 2 }
+PY="./venv/bin/python"
+
+c_verde=$'\033[32m'; c_rojo=$'\033[31m'; c_amb=$'\033[33m'; c_dim=$'\033[2m'; c_off=$'\033[0m'
+
+uso() {
+  cat <<EOF
+${c_dim}ibtrader — flota de deteccion de movimientos (senal-solamente)${c_off}
+
+  ${c_verde}ibtrader start${c_off} [--chart]   levanta la flota (idempotente)
+  ${c_verde}ibtrader stop${c_off}              para bots, puentes y keepalives
+  ${c_verde}ibtrader restart${c_off}           stop + start
+  ${c_verde}ibtrader status${c_off}            que esta vivo (sin tocar nada)
+  ${c_verde}ibtrader health${c_off}            chequeo profundo (frescura de datos)
+  ${c_verde}ibtrader hours${c_off}             ¿estamos dentro de la ventana de la flota?
+
+  ${c_verde}ibtrader levels${c_off} <SYM>      muros / flip / iman del simbolo
+  ${c_verde}ibtrader gamma${c_off} <SYM>       mapa gamma completo
+  ${c_verde}ibtrader skew${c_off} [SYM...]     skew por strike + risk reversal 25 delta
+  ${c_verde}ibtrader zerolag${c_off} [SYM...]  tabla Zero Lag multi-temporalidad
+  ${c_verde}ibtrader veto${c_off} [SYM...]     veto por divergencia de delta acumulado
+  ${c_verde}ibtrader whales${c_off} [n]        ultimas ballenas UW cantadas
+  ${c_verde}ibtrader flow${c_off} <SYM>        flujo neto de prima del dia
+
+  ${c_verde}ibtrader chart${c_off}             abre el cockpit
+  ${c_verde}ibtrader logs${c_off} [patron]     sigue los logs (por defecto los vivos)
+  ${c_verde}ibtrader mode${c_off} [paper|live] lee o cambia el modo IB
+  ${c_amb}ibtrader arm${c_off} / ${c_amb}disarm${c_off}     doble llave del motor de ordenes
+  ${c_verde}ibtrader test${c_off} [expr]       pytest del repo
+  ${c_verde}ibtrader build${c_off}             recompila los binarios C++
+  ${c_verde}ibtrader todo${c_off}              lo que queda pendiente
+  ${c_verde}ibtrader install${c_off}           enlaza en /usr/local/bin (o ~/.local/bin)
+EOF
+}
+
+vivos() { pgrep -fl "signal_bot|_bridge.py|keepalive|chart_bridge|uw_|opt_chain_cache" 2>/dev/null }
+
+json_get() {  # $1 fichero, $2 expresion python sobre `d`
+  [[ -f "$1" ]] || { print "${c_rojo}sin $1${c_off}"; return 1 }
+  $PY -c "import json,sys; d=json.load(open('$1')); print($2)" 2>/dev/null || print "${c_rojo}$1 ilegible${c_off}"
+}
+
+cmd="${1:-}"; shift 2>/dev/null || true
+case "$cmd" in
+  start)    zsh scripts/fleet_up.sh "$@" ;;
+  stop)
+    print "parando flota…"
+    pkill -f "signal_bot" 2>/dev/null
+    pkill -f "keepalive" 2>/dev/null
+    pkill -f "_bridge.py" 2>/dev/null
+    pkill -f "chart_bridge.py" 2>/dev/null
+    pkill -f "scripts/uw_" 2>/dev/null
+    sleep 1
+    n=$(vivos | wc -l | tr -d ' ')
+    print "quedan ${n} procesos"
+    ;;
+  restart)  "$0" stop; sleep 2; "$0" start "$@" ;;
+  status)
+    zsh scripts/fleet_up.sh --status 2>/dev/null || {
+      print "procesos vivos:"; vivos | sed 's/^/  /' | head -40 }
+    ;;
+  health)   $PY scripts/fleet_healthcheck.py "$@" ;;
+  hours)    ./bin/fleet_hours --why ;;
+  levels)
+    s="${1:?uso: ibtrader levels SYM}"; f="charts/data/levels_${s:l}.json"
+    json_get "$f" "'%s  spot %s  CW %s  PW %s  flip %s  regimen %s  (%s, edad %.0fs)' % (d['sym'],d['spot'],d['call_wall'],d['put_wall'],d['flip'],d['regime'],d.get('chain_src','?'),d.get('chain_age_s') or 0)"
+    ;;
+  gamma)
+    s="${1:?uso: ibtrader gamma SYM}"; f="charts/data/levels_${s:l}.json"
+    json_get "$f" "json.dumps({k:v for k,v in d.items() if k not in ('profile','vex_profile','charm_profile')}, indent=1)"
+    ;;
+  skew)     $PY scripts/skew_imbalance.py "$@" ;;
+  zerolag)  ./bin/zerolag "$@" ;;
+  veto)     ./bin/delta_imbalance "$@" ;;
+  whales)
+    n="${1:-15}"
+    json_get data/uw_fleet_flow.json "'\n'.join('%s %-5s %-7s %s %g exp %s · %s' % (__import__('time').strftime('%H:%M',__import__('time').localtime(r['ts'])), r['sym'], r.get('sesgo',''), r['cp'], r['strike'], r['exp'][5:], r['motivo']) for r in d.get('rows',[])[-${n}:])"
+    ;;
+  flow)
+    s="${1:?uso: ibtrader flow SYM}"
+    json_get data/uw_net_prem.json "json.dumps(d.get('${s:u}', d), indent=1)[:1200]"
+    ;;
+  chart)    open "macapp/ib-trader Cockpit.app" 2>/dev/null || zsh scripts/fleet_up.sh --chart ;;
+  logs)
+    pat="${1:-}"
+    if [[ -n "$pat" ]]; then tail -f logs/*${pat}*.log
+    else tail -f $(ls -t logs/*.log | head -6); fi
+    ;;
+  mode)
+    if [[ $# -eq 0 ]]; then print "modo IB: $(cat data/ib_mode.txt 2>/dev/null || print '?')"
+    else zsh scripts/ib_mode.sh "$1"; fi
+    ;;
+  arm)
+    print "${c_amb}Esto ARMA el motor de ordenes (llave 1 de 2). La llave 2 es --arm-live.${c_off}"
+    print -n "escribe ARMAR para confirmar: "; read -r r
+    [[ "$r" == "ARMAR" ]] && zsh order_engine/arm.sh || print "cancelado"
+    ;;
+  disarm)   zsh order_engine/disarm.sh ;;
+  test)     $PY -m pytest tests/ -q ${1:+-k "$1"} ;;
+  build)
+    for b in scripts/build_*.sh; do
+      print "${c_dim}== $b${c_off}"; zsh "$b" || print "${c_rojo}fallo $b${c_off}"
+    done
+    ;;
+  todo)     grep -n "^- \[ \]" TODOS.md | tail -25 ;;
+  install)
+    src="$REPO/scripts/ibtrader"
+    for d in /usr/local/bin "$HOME/.local/bin"; do
+      [[ -d "$d" && -w "$d" ]] && { ln -sf "$src" "$d/ibtrader" && print "instalado en $d/ibtrader"; exit 0 }
+    done
+    mkdir -p "$HOME/.local/bin" && ln -sf "$src" "$HOME/.local/bin/ibtrader"
+    print "instalado en ~/.local/bin/ibtrader"
+    print "${c_amb}añade a tu ~/.zshrc:  export PATH=\"\$HOME/.local/bin:\$PATH\"${c_off}"
+    ;;
+  ""|-h|--help|help) uso ;;
+  *) print -u2 "ibtrader: comando desconocido '$cmd'"; uso; exit 1 ;;
+esac

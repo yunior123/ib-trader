@@ -1370,3 +1370,29 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       -- cantada o no -- se archiva en data/history/<dia>/uw_fleet_flow_stream.jsonl para poder
       GRADUAR la conviccion contra el precio (hoy es doctrina medida en ruido, no en acierto).
       6 tests nuevos en tests/test_uw_fleet_flow_conviccion.py (644 -> 321 candidatas, 50% fuera).
+
+## 2026-08-08 — peticion (CLI global + OVI + backtest de sus posts + Zero Lag MTF)
+- [x] "create cli so that we can operate ib trader from global terminal..." (2026-08-08) —
+      HECHO. scripts/ibtrader (zsh) + `ibtrader install` -> ~/.local/bin. 20 comandos:
+      start/stop/restart/status/health/hours, levels/gamma/skew/zerolag/veto/whales/flow,
+      chart/logs/mode/arm/disarm/test/build/todo. Probado desde /tmp.
+- [x] "OVI indicator new, search first: options volume inbalance" (2026-08-08) — HECHO.
+      Buscado: hay DOS (el propietario de Guy Cohen, sin formula publica, y el academico de
+      arXiv 2201.09319). Implementado el academico en scripts/ovi.py con 3 variantes sobre
+      uw_flow_per_strike (2.376 obs, 30 syms, 84 dias). Sale CONTRARIAN: seguir el
+      desequilibrio pierde (OVI_vista overnight wr 44,9%, media -0,238%, t=-2,09). Con el
+      test transversal correcto t=-1,75: UNPROVEN, pero la lectura ingenua "mucho volumen
+      de calls = alcista" queda MEDIDA como falsa.
+- [x] "backtest again each post from crack head i told u, tell me win rate" (2026-08-08) —
+      HECHO (scripts/architect_backtest.py). 53 operaciones extraidas de 610 tuits, 22
+      descartadas por no ser entradas suyas (reportes de P&L ya ganados = hindsight), 29
+      evaluadas: 25 calls / 4 puts. WIN RATE 55,2% (H=1) / 59,3% (H=3) / 44,0% (H=5) /
+      52,2% (H=10) — IDENTICO a estar SIEMPRE LARGO el mismo ticker (55,2/55,6/48,0/52,2).
+      Retorno medio NEGATIVO en 3 de 4 horizontes. Strike a +6,2% de media y solo 15 de 29
+      (51,7%) tocaron el strike antes del vencimiento.
+- [x] "add that new indicator to ib trader" — Zero Lag Trend Signals (MTF) (2026-08-08) —
+      HECHO. Port fiel del Pine a C++23: scripts/zerolag.cpp -> bin/zerolag, publica
+      data/zerolag.json con la tabla MTF 5m/15m/60m/240m/1D. MEDIDO ANTES: 0 de 24 celdas
+      pasan BH-FDR (wr 0,496 vs null 0,494) -> queda DESCRIPTIVO, sin voz y sin cantar
+      señales. Para que 60m/240m/1D junten las 212 velas hizo falta
+      scripts/export_hist_bars.py (poly_bars -> data/bars_hist_<sym>.txt).
