@@ -1390,6 +1390,14 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       52,2% (H=10) — IDENTICO a estar SIEMPRE LARGO el mismo ticker (55,2/55,6/48,0/52,2).
       Retorno medio NEGATIVO en 3 de 4 horizontes. Strike a +6,2% de media y solo 15 de 29
       (51,7%) tocaron el strike antes del vencimiento.
+- [x] "el win rate da igual la fecha de las opciones, es solo q llegue a su objetivo asi sea
+      antes, mide por ahi" (2026-08-08) — CORREGIDO y rehecho en scripts/architect_target.py.
+      Medido como se opera: GANA = el subyacente toco el strike en algun momento antes de
+      vencer. 28 operaciones. LLEGO AL OBJETIVO 39,3% (11/28) contra 55,3% de comprar el
+      MISMO contrato en fecha al azar; con el control al mismo regimen (+-10 sesiones) la
+      base sube a 57,6% -> edge -18,3 pp con t=-3,14. Su temporizacion RESTA. Mecanismo:
+      objetivos FACILES (base>=70%) 9 de 10 acertados; objetivos DIFICILES (base<40%) 0 de 9.
+      Distancia media: ganadoras +2,7%, perdedoras +13,7%.
 - [x] "add that new indicator to ib trader" — Zero Lag Trend Signals (MTF) (2026-08-08) —
       HECHO. Port fiel del Pine a C++23: scripts/zerolag.cpp -> bin/zerolag, publica
       data/zerolag.json con la tabla MTF 5m/15m/60m/240m/1D. MEDIDO ANTES: 0 de 24 celdas
