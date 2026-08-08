@@ -355,3 +355,81 @@ De las 7 piezas de su método, 4 eran testables con datos y **ninguna bate a su 
 Lo único que sale VIVO de toda esta línea de trabajo sigue siendo el **veto por divergencia de
 delta acumulado** de la primera parte (−1,02 pp en largos, p=1,2e‑7), que ya está en producción
 como veto y no como entrada.
+
+---
+
+# LAS DOS PIEZAS QUE FALTABAN — datos encontrados y probadas (2026-08-08)
+
+Orden: *"busca lo q falta de datos"*. Encontrados los dos, ninguno hizo falta comprar.
+
+## Dónde estaban
+
+| pieza | fuente | qué da |
+|---|---|---|
+| **IV vs RV por ticker** | UW `/api/stock/{t}/volatility/realized` | **251 días** en UNA llamada por símbolo: `implied_volatility` del día y `realized_volatility` **futura** (el campo `unshifted_rv_date` va ~30 días por delante) |
+| **Curva VIX** | CBOE CDN público: `VIX9D_History.csv`, `VIX3M_History.csv`, `VVIX_History.csv`, `VIX1D_History.csv` | OHLC diario de toda la familia VIX, sin API key |
+
+`scripts/ivrv_fetch.py` baja la flota entera: **36 símbolos × 231 días** con la RV futura ya
+cerrada (las últimas ~30 filas traen `rv=null` porque la ventana no ha vencido — se guardan
+como null, jamás se rellenan).
+
+## 5. Su modelo IV vs RV — separa en FRECUENCIA, pierde en MAGNITUD
+
+5.649 observaciones, 34 símbolos, 171 días. Percentil de IV **expandido** (≥60 días propios).
+
+**Base rate**: la IV superó a la RV futura el **53,2%** de las veces (ratio mediano 1,02) —
+la prima de riesgo de varianza que dice la literatura, ahí está.
+
+Por decil de IV propia, y lo que gana **vender vol** (IV − RV futura, en puntos de vol, con
+el error típico calculado sobre n de DÍAS, no de filas):
+
+| bucket de IV | n | % IV>RV | P&L medio | t |
+|---|---|---|---|---|
+| decil ALTO (IV cara) | 1.480 | **56,4%** | **−0,0093** | −1,23 |
+| p70‑90 | 1.457 | 53,5% | −0,0085 | −1,50 |
+| medio | 2.178 | 50,7% | −0,0264 | **−5,68** |
+| p0‑30 (IV barata) | 534 | 47,4% | −0,0019 | −0,32 |
+| TODOS | 5.649 | 53,2% | −0,0139 | −3,30 |
+
+**Su dirección es correcta pero el efecto no paga.** Cuando la IV está en su decil alto, la
+frecuencia de "IV cara" sube de 52,1% a 56,4% (**+4,3 pp**) — pero la diferencia de P&L es
++0,0097 puntos de vol con **t=+1,13**, no significativa, y el nivel absoluto sigue siendo
+**negativo**. En esta ventana (ago‑2025 → ago‑2026) la IV **subestimó** sistemáticamente la RV
+futura: vender vol perdió en todos los buckets, y en el bucket medio perdió con t=−5,68.
+
+Es la forma de pago clásica del corto de volatilidad: **ganas a menudo y pierdes mucho cuando
+pierdes.** Su modelo detecta el "a menudo" y no ve el "mucho".
+
+**VEREDICTO: UNPROVEN como señal.** Útil como CONTEXTO (saber si la prima está cara o barata
+frente a su propia historia), que es como ya lo usa `event-premium-discipline`.
+
+## 6. La curva VIX (contango vs backwardation) — sin información, y con el signo al revés
+
+501 sesiones (2 años), VIX3M/VIX del cierre → retorno de SPY open→close del día siguiente:
+
+| estado de la curva | n | SPY d+1 | t | % verdes |
+|---|---|---|---|---|
+| CONTANGO fuerte (>1,10) | 310 | +0,013% | +0,34 | 54,8% |
+| contango leve (1,00‑1,10) | 142 | +0,107% | +1,33 | 57,0% |
+| **BACKWARDATION** (VIX3M<VIX) | 48 | **+0,242%** | +0,68 | 50,0% |
+
+Ninguno significativo, y el orden es el **contrario** al que implica su uso ("backwardation →
+ponte corto"): la backwardation tuvo el retorno futuro más ALTO de los tres.
+
+**VEREDICTO: DEAD.**
+
+## Cierre — las 6 piezas testables
+
+| pieza | veredicto |
+|---|---|
+| VIX pivot | **DEAD** (igual que un número aleatorio: 3% vs 4% a ±$0,04) |
+| Pivot/ceiling/floor semanal | **DEAD** (50‑53% vs 60,7% de niveles aleatorios) |
+| Skew 25Δ | **DEAD** neutralizado de mercado (t = −0,02) |
+| Niveles de % odds | calibrados ✔, sin edge como gatillo |
+| IV vs RV | **UNPROVEN**: +4,3 pp de frecuencia, P&L negativo (t=+1,13 en la diferencia) |
+| Curva VIX | **DEAD**, y con el signo invertido |
+
+La séptima (MAPS / incentivo del dealer) no había que probarla: es nuestro mapa gamma.
+
+**Nada de su método entra en la flota.** Lo único vivo de toda esta línea sigue siendo el veto
+por divergencia de delta acumulado (−1,02 pp en largos, p=1,2e‑7), que ya está en producción.

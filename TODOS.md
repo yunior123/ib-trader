@@ -1294,6 +1294,18 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       sesiones bajadas): BIEN CALIBRADOS como probabilidad (50%->50,0%, 13%->18,6%, 7%->9,0%)
       pero como soporte/resistencia 64,3% vs 63,2% de un nivel aleatorio emparejado = sin edge.
       Detalle en docs/DELTA-IMBALANCE-2026-08-07.md.
+- [x] "busca lo q falta de datos. usa optionschart website or api, polygon, intrinio ..."
+      (2026-08-08) — ENCONTRADOS los dos, sin comprar nada. (a) IV vs RV por ticker: UW
+      /api/stock/{t}/volatility/realized da 251 dias en UNA llamada por simbolo, con la RV
+      FUTURA a 30 dias alineada (scripts/ivrv_fetch.py, flota entera = 36 syms x 231 dias).
+      (b) Curva VIX: CSVs publicos de CBOE (VIX9D/VIX3M/VVIX/VIX1D_History.csv), sin key.
+      PROBADAS: IV/RV separa en FRECUENCIA (decil alto 56,4% vs resto 52,1% = +4,3 pp) pero
+      el P&L de vender vol es NEGATIVO en todos los buckets (decil alto -0,0093 pts de vol,
+      t=-1,23; el medio -0,0264 con t=-5,68) -> en esta ventana la IV subestimo la RV futura.
+      UNPROVEN como señal, util como contexto. Curva VIX: contango fuerte +0,013%, leve
+      +0,107%, BACKWARDATION +0,242% -> ninguno significativo y el orden es el CONTRARIO al
+      que implica su uso. DEAD. Con esto quedan probadas 6 de sus 7 piezas y NINGUNA entra
+      en la flota.
 - [ ] PENDIENTE DERIVADO: repetir el test del skew NEUTRALIZANDO el mercado (long/short contra
       SPY o contra el sector), que es la unica forma de que la deriva no se cuele.
 - [ ] "create optional widget in gamma war room to detect delta imbalances, search web how to do
