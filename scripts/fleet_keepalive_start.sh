@@ -51,7 +51,7 @@ FLEET_SYMS=(dram nok spcx tsla nvda txn tsm amd intc asml aapl gld qqq spy
 
 fleet_stop_all() {
   # keepalives de infraestructura
-  for p in price_alarm_keepalive.sh opt_sentinel_keepalive.sh options_enrich_keepalive.sh \
+  for p in price_alarm_keepalive.sh opt_sentinel_keepalive.sh options_enrich_keepalive.sh options_alert_engine_keepalive.sh \
            opt_chain_keepalive.sh bargain_keepalive.sh sox_keepalive.sh \
            finviz_scout_keepalive.sh finviz_screener_keepalive.sh notify_relay.sh x_signal_keepalive.sh \
            opt_whale_keepalive.sh uw_flow_tape_keepalive.sh overnight_feed_keepalive.sh voice_queue_keepalive.sh compass_keepalive.sh \
@@ -73,6 +73,7 @@ fleet_stop_all() {
   pkill -x price_alarm 2>/dev/null
   pkill -x flow_pulse 2>/dev/null
   pkill -x fleet_consensus 2>/dev/null
+  pkill -x options_alert_engine 2>/dev/null
   pkill -f 'ib-trader/compass --loop' 2>/dev/null
   pkill -f 'scripts/voice_queue.sh' 2>/dev/null
   # HUERFANOS: notify_relay lanza 'timeout N tail -n0 -F .../trading-signals/<hoy>.txt'.
@@ -290,6 +291,14 @@ fi
 if [[ "$MARKET_SOURCE" == "ibkr" ]] && [ -f "$ROOT/scripts/opt_chain_cache.py" ] && ! pgrep -f "scripts/opt_chain_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/opt_chain_keepalive.sh" >/dev/null 2>&1 &
   echo "$(date) fleet: opt_chain_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
+fi
+
+# Selector C++ de contratos: consume BUY/SELL de la flota (o ticker custom por CLI), aplica
+# frescura + delta + spread + OI + presupuesto. Automatico por orden explicita 2026-08-08,
+# con cap duro de 2/dia; el backtest OOS negativo sigue documentado, no se oculta.
+if [ -f "$ROOT/scripts/options_alert_engine.cpp" ] && ! pgrep -f "scripts/options_alert_engine_keepalive.sh" >/dev/null; then
+  nohup zsh "$ROOT/scripts/options_alert_engine_keepalive.sh" >/dev/null 2>&1 &
+  echo "$(date) fleet: options_alert_engine_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi
 
 # bargain bot (2026-07-15): gangas en flota + top gainers + oversold, vetadas

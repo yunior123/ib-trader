@@ -108,6 +108,16 @@ def _fleet_syms() -> list[str]:
     return [s.strip().upper() for s in src.read_text().split() if s.strip()]
 
 
+def _custom_option_syms() -> list[str]:
+    """Tickers pedidos por el motor C++; solo amplían CHAIN, no barras/quotes/MANADA."""
+    path = DATA / "options_alert_tickers.txt"
+    try:
+        return [s.upper() for s in path.read_text().split()
+                if re.fullmatch(r"[A-Za-z0-9](?:[A-Za-z0-9.-]{0,10}[A-Za-z0-9])?", s)]
+    except OSError:
+        return []
+
+
 def _bar_line(ep: int, o: float, h: float, l: float, c: float, v: float) -> str:
     return f"{ep:.0f} {o:.4f} {h:.4f} {l:.4f} {c:.4f} {v:.0f}\n"
 
@@ -523,7 +533,8 @@ async def chain_loop(providers, settings, syms, last_q: dict) -> None:
     (medido 2026-08-04: '+4 barras' de golpe). El spot viene del ultimo quote del bucle vivo."""
     while True:
         t0 = time.time()
-        for sym in syms:
+        chain_syms = list(dict.fromkeys(list(syms) + _custom_option_syms()))
+        for sym in chain_syms:
             px, qa, med = last_q.get(sym, (0.0, -1.0, 0.0))
             q_age = (qa + (time.time() - med)) if px > 0 else -1.0
             spot, spot_src, spot_age = resolve_spot(sym, px, q_age)

@@ -331,6 +331,30 @@ def test_la_ficha_operable_va_a_su_canal_de_opciones(linea):
     assert L.classify(linea)[0] == "opciones-contratos"
 
 
+def test_alerta_cpp_compacta_va_a_opciones_y_conserva_una_linea(monkeypatch):
+    """El contrato humano es byte-a-byte: sin embed, título extra ni salto de línea."""
+    body = "nvda call 230 5-DTE"
+    ch, sev, mirrors = R.route("OPTIONS ALERT", body, set())
+    assert (ch, sev, mirrors) == ("opciones-contratos", L.NORMAL, [])
+    assert R.OPTION_ALERT.fullmatch(body)
+
+    got = {}
+    def fake_send(channel, embed=None, content=None, **kwargs):
+        got.update(channel=channel, embed=embed, content=content)
+        return True, None
+    monkeypatch.setattr(R.S, "send", fake_send)
+    monkeypatch.setattr(R, "log", lambda _msg: None)
+    item = {"ch": ch, "sev": sev, "mirrors": [], "title": "OPTIONS ALERT",
+            "emb": None, "content": body}
+    assert R.enviar(item, {}, {ch: "unused"})
+    assert got == {"channel": "opciones-contratos", "embed": None, "content": body}
+
+
+def test_alerta_compacta_salta_el_cap_del_rele():
+    assert R.PRIORIDAD.search("OPTIONS ALERT | nvda call 230 5-DTE")
+    assert R.OPTION_ALERT.fullmatch("brk.b call 500 5-DTE")
+
+
 @pytest.mark.parametrize("linea", [
     "🔴 QQQ CALL BOUNCE | 🔴 NO-GO — sale muy caro | OPCIONES VETADAS spread 15% — usar ACCIONES",
     "🔴 SPY PUT BREAK | ❌ SPY: sin cadena — no puedo armar ficha | OPCIONES s/d (sin cadena fresca)",

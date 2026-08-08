@@ -92,6 +92,10 @@ MENTION_ROLE = "Alertas Premium"          # el unico rol que se menciona, y solo
 # --- enrutado --------------------------------------------------------------------------
 # (regex sobre la LINEA COMPLETA, canal, severidad). Primera que casa, gana: el orden importa.
 RULES = [
+    # Contrato compacto emitido por el motor C++: el cuerpo se publica como texto plano para
+    # conservar EXACTAMENTE `nvda call 230 5-DTE` en una sola línea.
+    (r"^OPTIONS ALERT \| [A-Z0-9](?:[A-Z0-9.-]{0,10}[A-Z0-9])? (CALL|PUT) [0-9]+(?:\.[0-9]+)? [0-9]+-DTE$",
+     "opciones-contratos", NORMAL),
     # --- AVERIA DE FEED PRIMERO, LUEGO ANCLAS DE TITULO (auditoria 2026-08-05, 3015 lineas) --
     # MANADA MUDA va ANTES que el 🕳 generico: que la manada no pueda votar no es un socket
     # caido, es el denominador de la senal mas selectiva de la casa. A su canal, no a infra.

@@ -16,7 +16,7 @@ uso() {
   cat <<EOF
 ${c_dim}ibtrader — flota de deteccion de movimientos (senal-solamente)${c_off}
 
-  ${c_verde}ibtrader start${c_off} [--chart]   levanta la flota (idempotente)
+  ${c_verde}ibtrader start${c_off} [--chart]   rebuild completo + levanta la flota
   ${c_verde}ibtrader stop${c_off}              para bots, puentes y keepalives
   ${c_verde}ibtrader restart${c_off}           stop + start
   ${c_verde}ibtrader status${c_off}            que esta vivo (sin tocar nada)
@@ -36,13 +36,31 @@ ${c_dim}ibtrader — flota de deteccion de movimientos (senal-solamente)${c_off}
   ${c_verde}ibtrader mode${c_off} [paper|live] lee o cambia el modo IB
   ${c_amb}ibtrader arm${c_off} / ${c_amb}disarm${c_off}     doble llave del motor de ordenes
   ${c_verde}ibtrader test${c_off} [expr]       pytest del repo
-  ${c_verde}ibtrader build${c_off}             recompila los binarios C++
+  ${c_verde}ibtrader build${c_off}             recompila C++ y la app Cockpit
   ${c_verde}ibtrader todo${c_off}              lo que queda pendiente
   ${c_verde}ibtrader install${c_off}           enlaza en /usr/local/bin (o ~/.local/bin)
 EOF
 }
 
 vivos() { pgrep -fl "signal_bot|_bridge.py|keepalive|chart_bridge|uw_|opt_chain_cache" 2>/dev/null }
+
+build_all() {
+  local b
+  print "${c_dim}ibtrader: rebuild completo antes de arrancar${c_off}"
+  for b in scripts/build_*.sh; do
+    print "${c_dim}== $b${c_off}"
+    if ! zsh "$b"; then
+      print -u2 "${c_rojo}ibtrader: build falló en $b; la flota NO arrancó${c_off}"
+      return 1
+    fi
+  done
+  print "${c_dim}== macapp/build.sh${c_off}"
+  if ! zsh macapp/build.sh; then
+    print -u2 "${c_rojo}ibtrader: build falló en macapp; la flota NO arrancó${c_off}"
+    return 1
+  fi
+  print "${c_verde}ibtrader: build completo OK${c_off}"
+}
 
 json_get() {  # $1 fichero, $2 expresion python sobre `d`
   [[ -f "$1" ]] || { print "${c_rojo}sin $1${c_off}"; return 1 }
@@ -51,7 +69,7 @@ json_get() {  # $1 fichero, $2 expresion python sobre `d`
 
 cmd="${1:-}"; shift 2>/dev/null || true
 case "$cmd" in
-  start)    zsh scripts/fleet_up.sh "$@" ;;
+  start)    build_all && zsh scripts/fleet_up.sh "$@" ;;
   stop)
     print "parando flota…"
     pkill -f "signal_bot" 2>/dev/null
@@ -106,11 +124,7 @@ case "$cmd" in
     ;;
   disarm)   zsh order_engine/disarm.sh ;;
   test)     $PY -m pytest tests/ -q ${1:+-k "$1"} ;;
-  build)
-    for b in scripts/build_*.sh; do
-      print "${c_dim}== $b${c_off}"; zsh "$b" || print "${c_rojo}fallo $b${c_off}"
-    done
-    ;;
+  build)    build_all ;;
   todo)     grep -n "^- \[ \]" TODOS.md | tail -25 ;;
   install)
     src="$REPO/scripts/ibtrader"

@@ -57,6 +57,15 @@ status() {
   else
     ok "Discord sin configurar (correcto: falta scripts/discord_bootstrap.sh)"
   fi
+  if alive "options_alert_engine --daemon"; then
+    if [[ "${OPTIONS_ALERT_AUTO:-0}" == "1" ]] || grep -q '^export OPTIONS_ALERT_AUTO=1$' scripts/options_alert_engine_keepalive.sh 2>/dev/null; then
+      ok "motor C++ de opciones (Discord AUTO)"
+    else ok "motor C++ de opciones (shadow; top diario local)"; fi
+  else
+    local oa_dow=$(date +%u)
+    [[ $oa_dow -eq 6 ]] && ok "motor C++ de opciones dormido (sábado, correcto)" \
+                        || bad "motor C++ de opciones"
+  fi
   # flow_pulse solo vive lun-vie 09:30-15:56 (fleet_keepalive_start.sh:358). Fuera de ahí
   # su ausencia es CORRECTA: pintarla ✗ enseña a ignorar los ✗ (doctrina anti-crying-wolf).
   local fp_hm=$(date +%H%M) fp_dow=$(date +%u)

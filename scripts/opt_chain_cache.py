@@ -23,6 +23,7 @@ Uso:  ./venv/bin/python scripts/opt_chain_cache.py          # daemon (keepalive)
 import datetime as dt
 import math
 import os
+import re
 import shutil
 import sys
 import time
@@ -42,6 +43,25 @@ os.chdir(REPO)
 FLEET = ["SMH", "TSM", "QQQ", "NVDA", "MU", "ASML", "INTC", "DRAM", "SKHY",
          "SPCX", "AMD", "TXN", "TSLA", "NOK", "AAPL", "GOOGL", "QCOM",
          "MSFT", "AVGO", "AMZN", "META", "LRCX", "SNDK", "WDC", "STX", "SPY"]
+CUSTOM_TICKERS = "data/options_alert_tickers.txt"
+
+
+def symbols_to_cache():
+    """Flota canónica + tickers pedidos al motor C++.
+
+    El fichero custom solo amplía el adaptador de datos; no mete esos símbolos en fleet.txt ni
+    en MANADA. Se relee cada ciclo para que `options_alert_engine XYZ CALL` funcione sin restart.
+    """
+    out = list(FLEET)
+    try:
+        with open(CUSTOM_TICKERS) as f:
+            for raw in f.read().split():
+                sym = raw.strip().upper()
+                if re.fullmatch(r"[A-Z0-9](?:[A-Z0-9.-]{0,10}[A-Z0-9])?", sym) and sym not in out:
+                    out.append(sym)
+    except OSError:
+        pass
+    return out
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from ib_mode import get_port                # fuente única: data/ib_mode.txt (paper/live)
@@ -314,7 +334,7 @@ class ChainCache:
         return len(rows)
 
     def run(self):
-        log(f"opt_chain_cache ARRANCADO ({len(FLEET)} syms, ±{PCT_BAND*100:.0f}% ATM, "
+        log(f"opt_chain_cache ARRANCADO ({len(symbols_to_cache())} syms, ±{PCT_BAND*100:.0f}% ATM, "
             f"2 vencimientos, ciclo {CYCLE_S}s, ventana 9:00-16:15 ET)")
         while True:
             t = dt.datetime.now()
@@ -327,7 +347,7 @@ class ChainCache:
             self.connect()
             t0 = time.time()
             total = 0
-            for sym in FLEET:
+            for sym in symbols_to_cache():
                 try:
                     total += self.dump_sym(sym)
                 except Exception as e:

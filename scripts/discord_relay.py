@@ -41,8 +41,10 @@ COLA_MAX = 60         # rafaga retenida por el cap; mas que esto es una tormenta
 
 # Las tres senales MAS selectivas de la casa (confluencia, manada, capitan) tambien saltan el
 # cap: medido 2026-08-05, el cap se comio 6 de #confluencia, 8 de #manada y 1 de #capitanes.
-PRIORIDAD = re.compile(r"SELL|STOP|TERREMOTO|DANGER|🌋|🚨|🔗|🐺|🐘|🎖", re.IGNORECASE)
+PRIORIDAD = re.compile(r"OPTIONS ALERT|SELL|STOP|TERREMOTO|DANGER|🌋|🚨|🔗|🐺|🐘|🎖", re.IGNORECASE)
 LINE = re.compile(r"^(\d{2}):(\d{2}):(\d{2}) \| (.*?) \| (.*)$")
+OPTION_ALERT = re.compile(
+    r"^[a-z0-9](?:[a-z0-9.-]{0,10}[a-z0-9])? (call|put) [0-9]+(?:\.[0-9]+)? [0-9]+-DTE$")
 
 
 def log(msg):
@@ -104,7 +106,8 @@ def load_role_ids():
 
 def enviar(item, role_ids, hooks):
     """Publica UNA alerta en su canal y sus espejos. True si el canal principal la acepto."""
-    ok, err = S.send(item["ch"], item["emb"], mention_id(role_ids, item["sev"]), hooks=hooks)
+    ok, err = S.send(item["ch"], item.get("emb"), content=item.get("content"),
+                     mention_role_id=mention_id(role_ids, item["sev"]), hooks=hooks)
     if not ok:
         log("FALLO #%s: %s | %s" % (item["ch"], err, item["title"][:50]))
         return False
@@ -223,8 +226,10 @@ def main():
                                                ("espejo: " + ",".join(mirrors)) if mirrors else ""))
                 n += 1
                 continue
-            emb = S.build_embed(title, body, sev, source="ib-trader · replay")
-            ok, err = S.send(ch, emb, mention_role_id=None, hooks=hooks)
+            compact = ch == "opciones-contratos" and title == "OPTIONS ALERT" and OPTION_ALERT.match(body)
+            emb = None if compact else S.build_embed(title, body, sev, source="ib-trader · replay")
+            ok, err = S.send(ch, emb, content=body if compact else None,
+                             mention_role_id=None, hooks=hooks)
             print("#%-22s %s" % (ch, "OK" if ok else "FALLO: " + str(err)))
             n += 1
             time.sleep(0.5)
@@ -263,9 +268,12 @@ def main():
         if len(dedup) > 500:
             dedup = {k: v for k, v in dedup.items() if now - v < DEDUP_S * 4}
         ch, sev, mirrors = route(title, body, universe)
-        emb = S.build_embed(title, body, sev, source="ib-trader")
+        compact = ch == "opciones-contratos" and title == "OPTIONS ALERT" and OPTION_ALERT.match(body)
+        emb = None if compact else S.build_embed(title, body, sev, source="ib-trader")
         item = {"ts": now, "ch": ch, "sev": sev, "emb": emb, "mirrors": mirrors,
-                "title": title}
+                "title": title, "content": body if compact else None}
+        if compact:
+            item["mirrors"] = []       # contrato dedicado: no duplicarlo en watchlists
         if PRIORIDAD.search(payload) or (now - estado["lastsent"] >= CAP_S
                                          and not estado["cola"]):
             enviar(item, role_ids, hooks)

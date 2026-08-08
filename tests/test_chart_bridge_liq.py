@@ -75,6 +75,8 @@ def test_liq_map_reads_polygon_archive_and_fresh_live_cache(cb, tmp_path, monkey
     # hora, no por el codigo. Se clava a las 10:00 de hoy para que el orden sea determinista.
     diez = cb.datetime.now().replace(hour=10, minute=0, second=0, microsecond=0).timestamp()
     os.utime(live, (diez, diez))
+    # Keep freshness deterministic even when the suite runs after market hours.
+    monkeypatch.setattr(cb.time, "time", lambda: diez + 60)
 
     frame, fingerprint = cb.liq_map_frame("test")
 
