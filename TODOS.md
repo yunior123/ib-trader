@@ -1383,6 +1383,16 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       desequilibrio pierde (OVI_vista overnight wr 44,9%, media -0,238%, t=-2,09). Con el
       test transversal correcto t=-1,75: UNPROVEN, pero la lectura ingenua "mucho volumen
       de calls = alcista" queda MEDIDA como falsa.
+- [x] "take knowledge, create skills, test ovi" (2026-08-08) — HECHO. OVI probado a fondo
+      (scripts/ovi_study.py, 5 variantes x 3 retornos x 2 colas x 2 modos = 60 celdas):
+      12 pasan BH-FDR, TODAS de ovi_put (puts firmadas por agresor) — total t=+2,84,
+      overnight t=+2,69/+2,51. Confirma 2 de las 4 afirmaciones del paper (overnight tiene
+      señal; puts >> calls, +2,84 vs +1,24) y REFUTA una (OTM/IV alta es la PEOR, |t|=0,51).
+      PERO neutralizado contra la media del panel del dia cae a t=+0,49 overnight / +1,12
+      total: es TIMING DE MERCADO, no seleccion de valores, y 64 sesiones no bastan.
+      DATA-INSUFFICIENT. 5 skills creadas: option-volume-imbalance, drift-confound,
+      guru-backtest, delta-divergence-veto, whale-conviction-gate; + anti-overfit-killlist
+      actualizada con 10 muertos nuevos.
 - [x] "backtest again each post from crack head i told u, tell me win rate" (2026-08-08) —
       HECHO (scripts/architect_backtest.py). 53 operaciones extraidas de 610 tuits, 22
       descartadas por no ser entradas suyas (reportes de P&L ya ganados = hindsight), 29
