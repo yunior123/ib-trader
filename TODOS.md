@@ -1425,3 +1425,16 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       pasan BH-FDR (wr 0,496 vs null 0,494) -> queda DESCRIPTIVO, sin voz y sin cantar
       señales. Para que 60m/240m/1D junten las 212 velas hizo falta
       scripts/export_hist_bars.py (poly_bars -> data/bars_hist_<sym>.txt).
+
+- [x] "refine delta reversal detection via absorbtion... integrate it" + "lets use delta
+      reversion to reinforce bollinger reversals" (2026-08-08) — HECHO y medido.
+      ABSORCION refinada (3 piezas: agresion pesada + ineficiencia + repeticion en zona):
+      0 de 84 celdas pasan BH-FDR, y lo que puntua mas alto es el CONTROL que opera CON el
+      delta -> en nuestros datos es continuacion, no reversion. La pieza de "repeticion" da
+      CERO disparos en 85 sesiones (no se afloja el umbral para que salga algo).
+      BOLLINGER + DIVERGENCIA: bollinger solo edge +0,24 pp; exigiendo la divergencia del
+      delta acumulado sube a +0,85 pp, consistente en las 6 celdas (edge_lo -0,0012, sigue
+      UNPROVEN, 0 de 30 pasan FDR). El refuerzo C (delta del dia en contra) muere por su
+      propio control invertido (+0,45 vs +0,45). INTEGRADO como GATE, no como alerta:
+      bin/delta_imbalance publica "banda" y "refuerzo_bollinger". Detalle en
+      docs/ABSORCION-BOLLINGER-2026-08-08.md.

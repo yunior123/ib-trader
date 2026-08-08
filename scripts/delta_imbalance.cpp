@@ -33,6 +33,8 @@ namespace {
 
 constexpr int kDivWindow = 15;      // ventana de extremos MEDIDA (w=15 fue la de mayor edge)
 constexpr int kAtrN = 14;
+constexpr int kBB = 20;             // Bollinger(20,2) 1m: el setup que este veto REFUERZA
+constexpr double kBBK = 2.0;
 constexpr int kRthOpen = 585;       // 09:45 ET — la ventana del estudio
 constexpr int kRthClose = 940;      // 15:40 ET
 bool g_forzar = false;              // --forzar: calcula fuera de la ventana (verificacion)
@@ -185,6 +187,8 @@ int minute_et(long epoch) {
 
 struct State {
     std::string sym;
+    int banda = 0;                  // +1 cierre fuera de la banda alta, -1 de la baja, 0 dentro
+    bool refuerzo = false;          // ruptura de banda Y divergencia en el sentido del fade
     bool tiene_dato = false;
     std::string motivo;            // por que no hay estado (jamas silencio)
     double spot = 0, atr = 0, cumdelta = 0;
@@ -208,7 +212,10 @@ State evaluate(const std::string& sym, const Calib& cal) {
     std::string err;
     const char* tzday = nullptr;
     char day[16];
-    {
+    if (const char* env = std::getenv("IBT_DIA")) {   // replay/verificacion: dia explicito
+        std::snprintf(day, sizeof day, "%s", env);
+        tzday = day;
+    } else {
         std::time_t now = std::time(nullptr);
         std::tm lt{};
         localtime_r(&now, &lt);
@@ -277,7 +284,26 @@ State evaluate(const std::string& sym, const Calib& cal) {
                         bars[idx[k]].c, cum[k]);
         }
     }
+    // Bollinger(20,2) del ultimo minuto sobre las mismas barras
+    if (bi + 1 >= static_cast<size_t>(kBB)) {
+        double m = 0, m2 = 0;
+        for (size_t j = bi + 1 - kBB; j <= bi; ++j) { m += bars[j].c; m2 += bars[j].c * bars[j].c; }
+        m /= kBB;
+        const double sd = std::sqrt(std::max(m2 / kBB - m * m, 0.0));
+        if (sd > 0) {
+            if (bars[bi].c > m + kBBK * sd) st.banda = 1;
+            else if (bars[bi].c < m - kBBK * sd) st.banda = -1;
+        }
+    }
     st.div = divergente(last);
+    // MEDIDO (scripts/bollinger_delta_study.py, 20.643 disparos): fadear la banda a secas da
+    // edge +0,24 pp; exigiendo ademas la divergencia sube a +0,85 pp, consistente en las 6
+    // celdas de barrera/horizonte. Sigue UNPROVEN (edge_lo -0,0012), asi que es un GATE de
+    // confirmacion sobre un setup que ya existe, no una alerta nueva.
+    if (st.div) {
+        st.refuerzo = (st.banda == 1 && std::strcmp(st.div, "BAJISTA") == 0) ||
+                      (st.banda == -1 && std::strcmp(st.div, "ALCISTA") == 0);
+    }
     if (st.div) {
         for (size_t k = last + 1; k-- > 0;) {
             const char* d = divergente(k);
@@ -315,6 +341,8 @@ void write_json(const std::vector<State>& sts, const Calib& cal, const std::stri
         std::fprintf(f, "\"spot\":%.4f,\"atr\":%.4f,\"cumdelta\":%.0f,\"asof\":%ld",
                      s.spot, s.atr, s.cumdelta, s.asof);
         if (!s.motivo.empty()) std::fprintf(f, ",\"motivo\":\"%s\"", s.motivo.c_str());
+        std::fprintf(f, ",\"banda\":%d,\"refuerzo_bollinger\":%s", s.banda,
+                     s.refuerzo ? "true" : "false");
         if (s.div) {
             const bool bajista = std::strcmp(s.div, "BAJISTA") == 0;
             std::fprintf(f, ",\"divergencia\":\"%s\",\"minutos\":%d,"
