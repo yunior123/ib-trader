@@ -46,8 +46,15 @@ def test_premium_grande_pero_mid_no_canta():
 
 
 def test_voloi_alto_con_premium_canta():
-    motivo, _ = F.qualifies(_alert(volume_oi_ratio="3.4", total_premium="300000"))
+    motivo, _ = F.qualifies(_alert(volume_oi_ratio="3.4", total_premium="300000",
+                                   total_ask_side_prem="250000"))
     assert "vol/OI" in motivo
+
+
+def test_voloi_alto_al_mid_no_canta():
+    """Conviccion 2026-08-07: el lado agresor es obligatorio en TODAS las reglas, no solo en
+    la del premium. Sin agresor no hay direccion que afirmar."""
+    assert F.qualifies(_alert(volume_oi_ratio="3.4", total_premium="300000")) is None
 
 
 def test_voloi_alto_sin_premium_no_canta():
@@ -56,8 +63,13 @@ def test_voloi_alto_sin_premium_no_canta():
 
 
 def test_sweep_con_premium_canta():
-    motivo, _ = F.qualifies(_alert(has_sweep=True, total_premium="600000"))
+    motivo, _ = F.qualifies(_alert(has_sweep=True, total_premium="600000",
+                                   total_ask_side_prem="500000"))
     assert "SWEEP" in motivo
+
+
+def test_sweep_al_mid_no_canta():
+    assert F.qualifies(_alert(has_sweep=True, total_premium="600000")) is None
 
 
 def test_pequeno_no_canta():
