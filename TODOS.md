@@ -1282,12 +1282,18 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       mezcla long/short, skew NO extremo) el edge cae a +4,25 pp CI [-0,86,+8,58] p=0,129:
       UNPROVEN. Era deriva, no skew. Y leidos sus 610 posts: su metodo son 7 piezas, y la que
       mas repite (~50 posts) NO es el skew sino el $VIX PIVOT.
-- [ ] SIGUIENTE (lo mas rentable de copiar): el $VIX PIVOT de @astocks92. Es su portero de todo
-      ("who is lying?"): VIX encima = indices bajistas, debajo = alcistas, con T1/T2/T3. Reto a
-      150+ seguidores, 0 aciertos -> formula propia, pero AFIRMA que el HOD/LOD del VIX cae a
-      0,01-0,04 del pivote casi a diario. Eso es FALSABLE con datos que ya tenemos (VIX diario
-      + intradia): probar candidatos (pivote clasico (H+L+C)/3, VIX9D/VIX, VVIX) y medir la
-      tasa de acierto a +-0,04. Si reproduce, se implementa; si no, se descarta con numeros.
+- [x] "no todos, ahora, prueba todo ahora" (2026-08-08) — PROBADO TODO. 4 piezas testables de
+      @astocks92, ninguna bate a su control: (1) VIX PIVOT: extraidos 32 pivotes suyos con fecha
+      de los 610 posts + VIX_History.csv de CBOE. Ninguna formula clasica encaja (MAE 0,55) ni la
+      regresion en muestra (MAE 0,26). Su afirmacion "HOD/LOD a 0,01-0,04": 3% de acierto vs 4%
+      de un pivote ALEATORIO; identico en los 3 umbrales. Direccion: SPY -0,034% con VIX encima
+      vs -0,028% debajo = nada. DEAD. (2) Pivot/ceiling/floor SEMANAL en SPY (105 semanas):
+      50-53% de rechazo vs 60,7% de niveles aleatorios = peor que el azar. DEAD. (3) SKEW
+      neutralizado de mercado (exceso sobre SPY): t entre -0,19 y +0,11, y el control SIN señal
+      (percentil 40-60) es el que mas gana. DEAD. (4) Niveles de % ODDS (implied move UW, 79
+      sesiones bajadas): BIEN CALIBRADOS como probabilidad (50%->50,0%, 13%->18,6%, 7%->9,0%)
+      pero como soporte/resistencia 64,3% vs 63,2% de un nivel aleatorio emparejado = sin edge.
+      Detalle en docs/DELTA-IMBALANCE-2026-08-07.md.
 - [ ] PENDIENTE DERIVADO: repetir el test del skew NEUTRALIZANDO el mercado (long/short contra
       SPY o contra el sector), que es la unica forma de que la deriva no se cuele.
 - [ ] "create optional widget in gamma war room to detect delta imbalances, search web how to do

@@ -242,3 +242,116 @@ Dos frases suyas que resumen la doctrina y que coinciden con la de esta casa:
 portero de TODO lo demás ("who is lying?"), y es una afirmación **falsable con los datos que ya
 tenemos** (VIX diario + intradía) — si un candidato de fórmula reproduce el HOD/LOD del VIX a
 ±$0,04 con la frecuencia que él publica, eso se mide y se cierra en una tarde.
+
+---
+
+# PRUEBA DE TODO SU MÉTODO — las 4 piezas testables, medidas (2026-08-08)
+
+Orden: *"no todos, ahora, prueba todo ahora"*. Nada de esto queda pendiente.
+
+## 1. El $VIX PIVOT — su pieza central. **No sobrevive a sus propios números**
+
+Se extrajeron de sus posts **32 pivotes publicados con fecha** (regex sobre los 610 tuits) y se
+contrastaron contra el histórico diario OHLC del VIX de CBOE (`VIX_History.csv`, 9.247 sesiones).
+
+**(a) Ingeniería inversa de la fórmula.** Ninguna fórmula clásica se acerca:
+
+| candidato | MAE | ≤$0,04 |
+|---|---|---|
+| pivote clásico (H+L+C)/3 | 0,547 | 0% |
+| Woodie (H+L+2C)/4 | 0,545 | 3% |
+| OHLC/4 · cierre previo · (H+L)/2 | 0,53–0,61 | 0–6% |
+
+Ni siquiera una **regresión lineal ajustada EN MUESTRA** sobre sus 32 valores (con O/H/L/C
+previos + apertura de hoy + VIX9D + VIX3M + VIX1D + VVIX) baja de **MAE 0,263** y sólo acierta
+±$0,04 el **10%** de las veces. La fórmula no sale de datos diarios de la familia VIX.
+
+**(b) Su afirmación de precisión, medida.** Dice que el HOD/LOD del VIX cae a $0,01–0,04 del
+pivote casi a diario. Sobre SUS 32 pivotes, contra el VIX real:
+
+| distancia al extremo más cercano | sus pivotes | **pivote ALEATORIO** (cierre previo ± N(0,1)) |
+|---|---|---|
+| ≤ $0,01 | 3% | — |
+| ≤ $0,04 | **3%** (1 de 32) | **4%** |
+| ≤ $0,10 | 9% | 10% |
+| ≤ $0,25 | 25% | 25% |
+
+**Indistinguible del azar en los tres umbrales.** El rango diario del VIX es ~1 punto: cualquier
+número del vecindario cae a $0,25 una de cada cuatro veces. Él publica *"off by .01!"* el 3% de
+los días que ocurre y no publica nada los otros 97%.
+
+**(c) Su afirmación direccional.** *"VIX encima del pivote = los índices mienten"*:
+
+| | n | SPY open→close medio | verdes |
+|---|---|---|---|
+| VIX abre ENCIMA del pivote | 17 | **−0,034%** | 9/17 |
+| VIX abre DEBAJO del pivote | 12 | **−0,028%** | 6/12 |
+
+Cero gradiente. **VEREDICTO: DEAD.** No se construye.
+
+## 2. PIVOT / CEILING / FLOOR semanal — **peor que niveles aleatorios**
+
+Pivote semanal clásico sobre SPY, 105 semanas, rechazo a 30 min tras el primer toque:
+
+| nivel | n | % que rechaza |
+|---|---|---|
+| PIVOT | 76 | 52,6% |
+| CEILING (R1) | 56 | 50,0% |
+| FLOOR (S1) | 47 | 51,1% |
+| **NULL: nivel aleatorio del rango de la semana previa** | 191 | **60,7%** |
+
+**VEREDICTO: DEAD.**
+
+## 3. El SKEW, neutralizado de mercado — **exactamente cero**
+
+El +7,39 pp del test anterior era deriva. Repetido midiendo el **exceso sobre SPY** del día
+siguiente (open→close), error típico con n de DÍAS:
+
+| celda | n | días | media% | t |
+|---|---|---|---|---|
+| decil BAJO (puts caros) → LARGO | 637 | 117 | −0,057 | −0,19 |
+| decil ALTO (calls caras) → CORTO | 1.135 | 143 | +0,024 | +0,11 |
+| ambos deciles, FADE | 1.772 | 178 | −0,005 | −0,02 |
+| **CONTROL: percentil 40‑60 (sin señal)** | 705 | 160 | **+0,166** | +0,73 |
+
+El control SIN señal es el que más gana. **VEREDICTO: DEAD como direccional.**
+
+## 4. Los niveles de "% ODDS" — **bien calibrados, pero no operables**
+
+Construidos desde el implied move de UW (`volatility/term-structure?date=`, 79 sesiones de SPY
+bajadas para esto) y aplicados al día siguiente:
+
+**Como probabilidad, son honestos** (y esto sí es útil):
+
+| nivel teórico | veces tocado |
+|---|---|
+| 50% | 50,0% |
+| 30% | 45,5% |
+| 13% | 18,6% |
+| 7% | 9,0% |
+
+Bien calibrados con sesgo leve a tocarse MÁS que el nominal.
+
+**Como soporte/resistencia, no aportan nada**: rechazo a 30 min de 69,2% (50%), 57,5% (30%),
+64,3% (13%) — contra **63,2% de un nivel ALEATORIO a distancia emparejada**. Sin gradiente.
+
+**VEREDICTO: la envolvente sirve (ya la tenemos, `expected-move-envelope`); el nivel como
+gatillo, UNPROVEN.**
+
+## Resumen
+
+De las 7 piezas de su método, 4 eran testables con datos y **ninguna bate a su control**:
+
+| pieza | veredicto |
+|---|---|
+| VIX pivot (precisión + dirección) | **DEAD** — igual que un número aleatorio |
+| Pivot/ceiling/floor semanal | **DEAD** — peor que niveles aleatorios |
+| Skew 25Δ (fade el extremo) | **DEAD** neutralizado de mercado (t = −0,02) |
+| Niveles de % odds | calibrados ✔, sin edge como gatillo |
+| MAPS / incentivo del dealer | = nuestro mapa gamma, ya lo tenemos |
+| IV vs RV en earnings | no testado: sin historia de RV/IV por ticker |
+| Curva VIX contango/backwardation | no testado: sin historia de VX archivada |
+
+Lo único que sale VIVO de toda esta línea de trabajo sigue siendo el **veto por divergencia de
+delta acumulado** de la primera parte (−1,02 pp en largos, p=1,2e‑7), que ya está en producción
+como veto y no como entrada.
