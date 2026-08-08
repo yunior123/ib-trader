@@ -141,8 +141,20 @@ def test_dex_por_vencimiento_cuadra_con_el_bruto_total():
 
 
 # ----------------------------------------------- referee Unusual Whales (trial)
+# El referee es un fichero CONGELADO de un dia concreto. La cadena con la que se compara tiene
+# que ser la de ESE MISMO DIA, no la de hoy: era el bug que hacia fallar a SPY (2026-08-07).
+# Medido con las dos cadenas contra el mismo referee:
+#            cadena del mismo dia        cadena de HOY (spot 34 pts mas arriba)
+#   SPY      call r=0,836 put r=0,935    call r=0,571 put r=0,378  <- rojo
+#   QQQ      call r=0,810 put r=0,897    call r=0,723 put r=0,698
+#   MU       call r=0,820 put r=0,908    call r=0,723 put r=0,749
+# No era la convencion: era comparar el libro del 24-jul con el del 7-ago.
+REFEREE_DIA = "2026-07-26"          # pull del domingo -> el libro es el del viernes 24-jul
+REFEREE_R_MIN = 0.70                # con el par correcto lo peor medido es 0,810
+
+
 def _uw_legs(sym):
-    p = os.path.join(REPO, "data", "history", "2026-07-26",
+    p = os.path.join(REPO, "data", "history", REFEREE_DIA,
                      f"uw_greek_exposure_strike_{sym}.json")
     if not os.path.exists(p):
         return None
@@ -174,19 +186,24 @@ def test_convencion_de_signo_concuerda_por_pata_con_unusual_whales(sym):
     esta, se salta). Se compara PATA A PATA, no el neto: UW agrega TODA la cadena y nuestro
     `chain_full` es `dte_max=10`, asi que los netos no son la misma magnitud — en MU el neto
     hasta cambia de signo. Lo que si tiene que concordar es la CONVENCION: nuestras calls
-    positivas contra sus `call_delta`, nuestros puts negativos contra sus `put_delta`."""
+    positivas contra sus `call_delta`, nuestros puts negativos contra sus `put_delta`.
+
+    La cadena se toma del MISMO dia archivado que el referee: con `latest_chain()` el test
+    comparaba dos libros separados por semanas y se ponia rojo por el movimiento del spot,
+    no por la convencion."""
     legs = _uw_legs(sym)
     if legs is None:
         pytest.skip("sin fichero de referee UW (trial caducado)")
     sys.path.insert(0, os.path.join(REPO, "scripts"))
     import gex_snapshot as gs
-    path, _ = gs.latest_chain(sym)
-    if not path:
-        pytest.skip(f"sin chain_full de {sym}")
+    path = os.path.join(REPO, "data", "history", REFEREE_DIA, f"chain_full_{sym.lower()}.json")
+    if not os.path.exists(path):
+        pytest.skip(f"sin chain_full de {sym} del dia del referee ({REFEREE_DIA})")
     cs, spot, _, _ = gs.contracts_from(path)
     dx = G.build_dex(cs, spot, scale="shares")
     for mine, ref in ((dx["call_dex"], legs[0]), (dx["put_dex"], legs[1])):
         ks = sorted(set(mine) & set(ref))
         assert len(ks) >= 10, f"{sym}: solo {len(ks)} strikes en comun"
-        assert _corr([mine[k] for k in ks], [ref[k] for k in ks]) > 0.4
+        r = _corr([mine[k] for k in ks], [ref[k] for k in ks])
+        assert r > REFEREE_R_MIN, f"{sym}: r={r:.3f} <= {REFEREE_R_MIN}"
         assert (sum(mine[k] for k in ks) > 0) == (sum(ref[k] for k in ks) > 0)

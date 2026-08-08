@@ -88,3 +88,69 @@ los mismos dos ficheros — **576/576 minutos idénticos**, 22 BAJISTA y 17 ALCI
 1. Condicionar por régimen de gamma (el archivo de cadenas es *forward-only* desde julio).
 2. Divergencia **en un nivel** (muro/flip), no en el aire — es como la usa el footprint.
 3. Repetir con `poly_bars` extendido más allá del 2026‑07‑24 para recuperar las 9 sesiones.
+
+---
+
+# CORRECCIÓN: lo que @astocks92 llama "delta imbalance" NO es lo que yo medí
+
+Yunior mandó mirar la cuenta. Es **@astocks92 ("The Architect", 35.298 seguidores)**, y su bio
+lo dice entero: *"enjoy analyzing data | GAMMA, delta, vanna charm analysis | ... NEVER CHART
+AGAIN"*. Leída por la API de X con las credenciales del repo (`config/x.env`, OAuth1; el bearer
+da 401), 304 posts de 2026‑06‑24 a 2026‑08‑07.
+
+El post que importa: **2026‑08‑04 14:31 — "$AAPL 8/28 $315C · Playing the delta imbalance ·
+Lotto sized"**. Y el 08‑03: *"S/O a todos los que siguieron el delta & skew"*.
+
+**Su "delta imbalance" es el desequilibrio del SKEW por strike, no el flujo de delta por minuto.**
+Su propia definición, en sus palabras:
+
+| fecha | post |
+|---|---|
+| 07‑07 | *"Remember: **SKEW is pricing in inventory**"* |
+| 06‑26 | *"**Dealer inventory** Monday $QQQ y $SPY: Call side 3‑6%. Put side 12‑15%"* |
+| 06‑30 | *"$SPY >$750 is 28%+ Call side Skew | Put side to $740 is 7%"* |
+| 07‑14 | *"$QQQ: Call skew runs 19% a 25%+ para $1‑$6+ | Put skew 4% a 6%"* |
+| 07‑12 | *"$QCOM: **85th Percentile CALL SKEW 25 Delta**"* |
+| 07‑21 | *"Gamma = cuánto cambia delta; **Speed** = cuánto cambia la propia gamma... Delta puts subiendo + IV bajando + **charm support**"* |
+
+O sea: una medida **transversal sobre la cadena** (IV por strike frente a la ATM, por lado, a
+$1..$6 del spot) y percentilada contra su propia historia. Nada que ver con la serie temporal de
+`dir_delta_flow` que medí arriba. **Mi estudio midió otra cosa** — sigue siendo válido para lo
+que mide, y su veredicto (VETO, no entrada) no cambia. Pero no era su métrica.
+
+## Su métrica, reproducida — `scripts/skew_imbalance.py`
+
+Sale de `chain_full_<sym>.json`, que ya archivamos con IV y griegas MEDIDAS de Polygon:
+
+```
+SPY 2026-08-07  spot 772.88   venc 08-10
+   call skew $1..$6:  -5 -4 -6 -5 -6 -5   media -5.0%
+   put  skew $1..$6:  +2 +6 +6 +9 +12 +14 media +8.3%
+   IMBALANCE -13.3% -> lado PUT mas caro  |  RR25 -1.08 vol pts
+```
+
+Formato idéntico al suyo. Añade además el **risk reversal 25Δ**, que es lo que permite el
+percentil del que él habla.
+
+## La lectura que se deduce de su operación: **compra el lado BARATO**
+
+El 04‑ago AAPL tenía el **put** claramente más caro (imbalance −13,1% a 1 día, −7,0% a 3 días;
+RR25 −4,0 vol pts) — y él compró **calls** (315C, +1,8% OTM). No sigue el skew: lo **fadea**. Si
+"skew = inventario del dealer", el inventario estaba cargado de puts y la convexidad barata
+estaba en las calls.
+
+Resultado de esa operación con nuestros propios datos: AAPL 309,44 (04‑ago) → máximo **315,66**
+el 06‑ago → 313,33 el 07‑ago. Él publicó +17% al día siguiente. **n=1: es una anécdota, no
+evidencia.** La serie de SPY es coherente con la misma lectura (31‑jul imbalance −30,9%, el más
+extremo del archivo → SPY 747,49 → 771,12 en dos sesiones), pero eso también es n=1.
+
+## Estado honesto y qué falta
+
+`chain_full` solo tiene **13 sesiones archivadas** (25‑jul → 7‑ago). El percentil del que él vive
+exige ≥30 y un keep/kill honesto ~60. Por eso `skew_imbalance.py` **dice "sin percentil: 13
+sesiones archivadas, hacen falta 30"** en vez de inventar uno. El archivo crece solo (ya
+archivamos las cadenas a diario), así que el reloj corre desde hoy.
+
+Hipótesis registrada para graduar cuando haya muestra, con la misma vara que todo lo demás
+(triple barrera, null emparejado, n_eff, BH‑FDR): **comprar el lado con el skew más barato
+cuando el imbalance está en el decil extremo de su propia historia**.

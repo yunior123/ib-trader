@@ -1260,6 +1260,20 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       1 pp NO es una entrada (Wilson-LB de la expectancia sigue negativo) -> se entrega como
       VETO, con objetivo MFE p60 = 1,08 ATR y stop MAE p75 = 1,29 ATR. Motor bin/delta_imbalance
       (C++23) + keepalive; port verificado 576/576 minutos contra Python.
+- [x] "review changes, make sure u https://x.com/astocks92 took a look there, its important"
+      (2026-08-07) — HECHO y CORRIGE lo anterior. @astocks92 = "The Architect" (35.298 seg.),
+      bio "GAMMA, delta, vanna charm analysis... NEVER CHART AGAIN". 304 posts leidos por la
+      API de X con OAuth1 de config/x.env (el bearer da 401). Su "delta imbalance" (post del
+      2026-08-04: "$AAPL 8/28 $315C Playing the delta imbalance") NO es flujo de delta por
+      minuto: es el desequilibrio del SKEW por strike ("SKEW is pricing in inventory"),
+      publicado como "call side X% / put side Y%" a $1..$6 del spot, y percentilado con el
+      risk reversal 25 delta. Reproducido en scripts/skew_imbalance.py desde chain_full
+      (IV+griegas medidas). Lectura deducida de su trade: COMPRA EL LADO BARATO (fadea el
+      skew) — el 04-ago AAPL tenia el put mas caro (imbalance -13,1%, RR25 -4,0) y compro
+      calls; AAPL 309,44 -> max 315,66. n=1, es anecdota. Solo 13 sesiones de cadenas
+      archivadas: el percentil exige 30 y el script lo DICE en vez de inventarlo.
+- [ ] PENDIENTE DERIVADO: graduar la hipotesis "comprar el lado barato del skew en el decil
+      extremo" cuando chain_full llegue a >=30 sesiones (hoy 13; el archivo crece solo).
 - [ ] "create optional widget in gamma war room to detect delta imbalances, search web how to do
       it, search github best project, skills, delta trading, imbalances, https://x.com/astocks92
       he is a goat, study him, backtest him, verify his posts, he hardly fails. see what u can
@@ -1282,6 +1296,35 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
         traen el lado agresor. Sin agresor no hay footprint: el delta vivo tendría que salir
         de tick-rule sobre una cinta completa que HAY QUE ESCRIBIR (candidato:
         scripts/finnhub_ws_bridge.py, que ya recibe cada print y hoy solo guarda el último).
+      · SÍ EXISTE una cinta FIRMADA archivada: data/prints/<fecha>/<sym>.txt.gz
+        ("EPOCH PX USD DIR", DIR ±1/0), la escribe scripts/equity_prints_archiver.py desde
+        data/whale_<sym>.txt del puente IBKR. Límites honestos declarados en su cabecera:
+        solo ballenas ≥$50.000 (WHALE_MIN_USD), NBBO cacheado → clasificación rancia, y
+        6 sesiones (2026-07-24 → 07-31, ninguna posterior porque IBKR está apagado).
+- [ ] **BUG MEDIDO 2026-08-08: data/prints/ tiene 89,1% de líneas DUPLICADAS.** SPY del
+      2026-07-31: 1.176.476 líneas totales / 127.693 únicas (×9,2). Hay filas repetidas hasta
+      438 veces y todas las multiplicidades altas son múltiplos de 6 → el cursor de
+      idempotencia (data/prints_state.json) no está cortando: el archivador re-lee y
+      re-anexa la ventana de 900 s del puente en cada corrida de 120 s. Consecuencia: todo
+      volumen o delta calculado sobre este archivo sale inflado ~9x y de forma NO uniforme
+      (las filas que sobreviven más ventanas se duplican más → sesgo por hora del día).
+      Tras deduplicar: DIR −1 46.758 / 0 32.712 / +1 48.223, o sea 25,6% indeterminados.
+      CAUSA NO PROBADA: prune_whales() (ibkr_bar_bridge.py:438) SÍ es atómico (tmp+os.replace)
+      y el cursor actual está consistente (state last_ep 1785530726 == max del fichero, y
+      n_at_last_ep 1 == las filas en ese epoch), así que hoy no duplicaría. Pero el estado
+      acumula rows=2.773.983 para SPY frente a 127.693 únicas archivadas del 07-31: se
+      re-archivó muchas veces mientras el puente estaba VIVO. Sospecha principal: dos
+      procesos del puente a la vez anexando al mismo whale_<sym>.txt (ya hay precedente
+      medido de contención de daemons), o la rama de reset del cursor
+      equity_prints_archiver.py:155-157 (`file_max < last_ep` → cursor a 0 → re-archiva la
+      ventana entera).
+      **NO DEDUPLICAR A POSTERIORI**: con epoch de resolución 1 s, dos prints reales de 200
+      acciones al mismo precio y segundo producen una línea IDÉNTICA (verificado: 149012 USD
+      a 745,06 = 200,0 acciones exactas). Un `sort -u` borraría operaciones reales. Hay que
+      arreglar el PRODUCTOR (id de trade único del tick de IBKR en la línea) y considerar
+      la historia ya archivada como NO APTA para volumen ni delta.
+      → Para el backtest de delta imbalance esto NO bloquea: la fuente correcta es el
+        histórico tbbo de Databento, con lado sellado por el exchange.
 - [x] "refine UW alerts, lets make them lessannoying, try to filter out irrelevant whales based
       on total volume of shares or whales that are not backed by other whales, we only need
       strong conviction" (2026-08-07) — HECHO en scripts/uw_fleet_flow.py, daemon relanzado.
