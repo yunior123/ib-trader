@@ -1233,3 +1233,63 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
 - [ ] AVISO: el agente de macro dijo "Michigan preliminar HOY 10:00" -> FALSO, sale el 08-14
       (segundo viernes); julio final fue 55,2 no 54,4. Verificar fechas de datos macro contra
       el calendario antes de imponer ventanas ciegas.
+- [ ] "find me bargains for next week, and today 0dte, the best bearish and bullish, 5 each,
+      explore options chain, uw" (2026-08-07 ~11:10) — estado: en curso. 4 listas de 5:
+      0DTE bajista / 0DTE alcista / 08-14 bajista / 08-14 alcista
+
+## 2026-08-07 23:00 — peticion nocturna (GWR muros + delta imbalance + UW menos ruidoso)
+- [x] "in the new gamma war room app we have the call, put, walls, magnets which is ok, but if
+      u look at ib trader u will see that we show even the smaller ones and the amount in
+      millions or billions" (2026-08-07) — HECHO. GWR: `Wall` (strike + importe + PIN/TRAMP +
+      intensidad), 4 muros por pata dentro de +-6% del spot, grosor/opacidad ~ |gamma|, tarjeta
+      "MUROS 2o", imanes y pastillas con importe, y los que salen de escala se anuncian en el
+      borde con su distancia (jamas pegados al canto). Verificado renderizando:
+      "CW 775.00 +4.0B ·PIN +1.62" / "PW 770.00 -1.4B ·PIN -2.71". GWR pinta CALL WALL/PUT WALL/FLIP/MAGNET
+      como lineas con SOLO el strike; ib-trader (charts/live.html:1252 fmtM) pinta CW/PW/POC con
+      "+296M / -1.2B" + PIN/TRAMPILLA + grosor ∝ |gamma| + perfil por strike completo.
+- [ ] "try to setup delta imbalance alert and weather to enter o exit a trade based on that
+      plus the target price, search github for best skills for delta imbalances, take a look at
+      these expert posts one year from now and study them, backtest them with real data, see
+      what are the patterns he is using that we could also use for our alert system, go in
+      depth" (2026-08-07) — HECHO, con veredicto INCOMODO y medido (docs/DELTA-IMBALANCE-2026-08-07.md).
+      85 sesiones x 30 syms = 939.784 minutos. Delta crudo (seguir/fadear), apilado, absorcion,
+      conviccion y relevancia: 0 de 128 celdas pasan BH-FDR, y el control negativo de la
+      picadora puntua IGUAL que los patrones "buenos" = ruido. Lo unico que sobrevive es la
+      divergencia sobre el delta ACUMULADO (CVD/HIRO), no sobre el incremento: largo dentro de
+      divergencia bajista 48,69% vs 49,72% fuera = -1,02 pp, p=1,2e-7, CI [-1,58,-0,50].
+      1 pp NO es una entrada (Wilson-LB de la expectancia sigue negativo) -> se entrega como
+      VETO, con objetivo MFE p60 = 1,08 ATR y stop MAE p75 = 1,29 ATR. Motor bin/delta_imbalance
+      (C++23) + keepalive; port verificado 576/576 minutos contra Python.
+- [ ] "create optional widget in gamma war room to detect delta imbalances, search web how to do
+      it, search github best project, skills, delta trading, imbalances, https://x.com/astocks92
+      he is a goat, study him, backtest him, verify his posts, he hardly fails. see what u can
+      learn from it" (2026-08-08, + captura Sierra Chart "Spotting Delta Reversal Easily" de
+      @SieraChart: footprint bid×ask, celdas resaltadas, cajas de imbalances apilados) —
+      en curso, workflow wf_586269e4-3b4. HALLAZGOS DE VIABILIDAD ya medidos:
+      · DATABENTO VIVO (HTTP 200, key en config/feeds.env). XNAS.ITCH 2018-05-01→hoy con
+        schemas mbo/mbp-1/mbp-10/tbbo/trades; DBEQ.BASIC y EQUS.MINI desde 2023-03-28;
+        OPRA.PILLAR desde 2013. tbbo = trade + BBO en el instante → agresor EXACTO, que es
+        justo lo que exige un footprint de verdad. Auth = basic `-u "$DATABENTO_API_KEY:"`.
+      · Coste MEDIDO con metadata.get_cost: 1 día RTH de SPY tbbo (XNAS.ITCH) = $0,045.
+        20 días × 2 símbolos ≈ $1,8. El backtest real es asequible.
+      · X API de LECTURA = HTTP 401 (el plan de config/x.env es solo-escritura) → a
+        @astocks92 hay que llegar por frontends alternativos o por el Chrome de Yunior.
+      · DATABENTO **LIVE NO** — medido con venv-mit/bin/python + databento 0.82.0: los 4
+        datasets devuelven "A live data license is required to access <DS>". O sea histórico
+        SÍ (backtest real), tiempo real NO. Consecuencia de diseño obligada.
+      · NO EXISTE CINTA COMPLETA EN CASA: data/rt_last_<SYM>.txt y data/ws_trade_<SYM>.txt son
+        de UNA SOLA LÍNEA (último print), no un tape; y ni Finnhub WS /trade ni Polygon T
+        traen el lado agresor. Sin agresor no hay footprint: el delta vivo tendría que salir
+        de tick-rule sobre una cinta completa que HAY QUE ESCRIBIR (candidato:
+        scripts/finnhub_ws_bridge.py, que ya recibe cada print y hoy solo guarda el último).
+- [x] "refine UW alerts, lets make them lessannoying, try to filter out irrelevant whales based
+      on total volume of shares or whales that are not backed by other whales, we only need
+      strong conviction" (2026-08-07) — HECHO en scripts/uw_fleet_flow.py, daemon relanzado.
+      Ritmo MEDIDO antes: 1093 pushes en 4 sesiones = ~273/sesion (uno cada 85 s de RTH).
+      Cuatro porteros: (1) lado agresor obligatorio en TODAS las reglas (antes solo en la del
+      premium); (2) RELEVANCIA notional/ADV$ >= 0,20% = p75 medido sobre 6.000 alertas
+      archivadas (deja 51%); (3) RESPALDO: 2 contratos distintos del mismo sesgo en 20 min o se
+      queda en banner (deja 14%); (4) presupuesto de voz 2/sym-hora y 14/sesion. Toda candidata
+      -- cantada o no -- se archiva en data/history/<dia>/uw_fleet_flow_stream.jsonl para poder
+      GRADUAR la conviccion contra el precio (hoy es doctrina medida en ruido, no en acierto).
+      6 tests nuevos en tests/test_uw_fleet_flow_conviccion.py (644 -> 321 candidatas, 50% fuera).
