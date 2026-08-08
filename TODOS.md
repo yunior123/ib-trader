@@ -1272,8 +1272,24 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       skew) — el 04-ago AAPL tenia el put mas caro (imbalance -13,1%, RR25 -4,0) y compro
       calls; AAPL 309,44 -> max 315,66. n=1, es anecdota. Solo 13 sesiones de cadenas
       archivadas: el percentil exige 30 y el script lo DICE en vez de inventarlo.
-- [ ] PENDIENTE DERIVADO: graduar la hipotesis "comprar el lado barato del skew en el decil
-      extremo" cuando chain_full llegue a >=30 sesiones (hoy 13; el archivo crece solo).
+- [x] "no dejes todo eso, nowwww, search the data u need then testssssss" + "read all his x
+      posts and see" (2026-08-08) — HECHO. Datos: endpoint UW historical-risk-reversal-skew
+      (RR 25 delta DIARIO por vencimiento, hasta 2025-08-11 = un año) -> scripts/skew_rr_fetch.py,
+      36 syms x ~250 dias. Test (scripts/skew_rr_study.py, triple barrera, entrada a la apertura
+      del dia siguiente): cola 10 FADE H=1 dia dio +7,39 pp (wr 0,547 vs 0,473, p=0,018, unica
+      positiva que pasa BH-FDR)... pero el 64% de las entradas son CORTOS y "SIEMPRE CORTO" en
+      esas mismas fechas da 54,47% = casi lo mismo. Contra el null honesto (mismos dias, misma
+      mezcla long/short, skew NO extremo) el edge cae a +4,25 pp CI [-0,86,+8,58] p=0,129:
+      UNPROVEN. Era deriva, no skew. Y leidos sus 610 posts: su metodo son 7 piezas, y la que
+      mas repite (~50 posts) NO es el skew sino el $VIX PIVOT.
+- [ ] SIGUIENTE (lo mas rentable de copiar): el $VIX PIVOT de @astocks92. Es su portero de todo
+      ("who is lying?"): VIX encima = indices bajistas, debajo = alcistas, con T1/T2/T3. Reto a
+      150+ seguidores, 0 aciertos -> formula propia, pero AFIRMA que el HOD/LOD del VIX cae a
+      0,01-0,04 del pivote casi a diario. Eso es FALSABLE con datos que ya tenemos (VIX diario
+      + intradia): probar candidatos (pivote clasico (H+L+C)/3, VIX9D/VIX, VVIX) y medir la
+      tasa de acierto a +-0,04. Si reproduce, se implementa; si no, se descarta con numeros.
+- [ ] PENDIENTE DERIVADO: repetir el test del skew NEUTRALIZANDO el mercado (long/short contra
+      SPY o contra el sector), que es la unica forma de que la deriva no se cuele.
 - [ ] "create optional widget in gamma war room to detect delta imbalances, search web how to do
       it, search github best project, skills, delta trading, imbalances, https://x.com/astocks92
       he is a goat, study him, backtest him, verify his posts, he hardly fails. see what u can

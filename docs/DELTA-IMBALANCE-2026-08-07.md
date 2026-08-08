@@ -154,3 +154,91 @@ archivamos las cadenas a diario), así que el reloj corre desde hoy.
 Hipótesis registrada para graduar cuando haya muestra, con la misma vara que todo lo demás
 (triple barrera, null emparejado, n_eff, BH‑FDR): **comprar el lado con el skew más barato
 cuando el imbalance está en el decil extremo de su propia historia**.
+
+---
+
+# TEST del skew con un año de datos — y el confound que se lo come (2026-08-08)
+
+Orden de Yunior: *"no dejes todo eso, nowwww, search the data u need then testssssss"* y
+*"read all his x posts and see"*.
+
+## Los datos que faltaban, conseguidos
+
+`chain_full` solo tenía 13 sesiones. La historia estaba en un endpoint de UW que no usábamos:
+**`/api/stock/{t}/historical-risk-reversal-skew`** — serie DIARIA del risk reversal 25Δ por
+vencimiento, **hasta 2025‑08‑11** (un año). `scripts/skew_rr_fetch.py` monta la escalera de
+vencimientos mensuales y la archiva: **36 símbolos × ~250 días**.
+
+Cruzado con `poly_bars` 1m → **4.982 observaciones** con percentil expandido (sin mirar el
+futuro, ≥60 días propios antes de percentilar), 29 símbolos con serie usable.
+Serie de **madurez constante**: cada día se toma el vencimiento con DTE más cercano a 30.
+
+## El resultado que parecía bueno
+
+`scripts/skew_rr_study.py`, triple barrera sobre el camino 1m real, entrada a la APERTURA del
+día siguiente (el RR es de cierre: cero look‑ahead):
+
+```
+cola 10 · FADE (comprar el lado barato) · TP=SL=1 ATR · H=1 día
+n=514   clusters-día=126   wr 0,547 vs null 0,473
+edge +7,39 pp   CI bootstrap [+1,96, +12,94]   p=0,018   ÚNICA celda positiva que pasa BH-FDR
+```
+
+Siete veces el efecto del flujo de delta, en la dirección exacta que dedujimos de su operación
+de AAPL, y sólo a **1 día** (a 3 y 5 días desaparece) y sólo en el **decil** extremo.
+
+## El confound: era la deriva, no el skew
+
+El null usaba dirección ALEATORIA. Pero las entradas no están balanceadas: **el 64% son cortos**
+(la cola alta manda). En ese periodo el lado corto pagaba solo:
+
+| control (mismas fechas, mismos símbolos) | win rate |
+|---|---|
+| señal cola10 fade | **54,67%** |
+| **SIEMPRE CORTO** | **54,47%** ← casi idéntico |
+| SIEMPRE LARGO | 45,53% |
+| desglose: cola alta → corto | 57,14% (n=329) |
+| desglose: cola baja → largo | 50,27% (n=185) |
+
+Contra el null HONESTO —**mismos días, mismos símbolos, misma mezcla long/short, pero con el
+skew NO extremo**— el edge cae de +7,39 pp a:
+
+```
++4,25 pp   CI [-0,86, +8,58]   p=0,129   ->  NO SIGNIFICATIVO
+```
+
+**Veredicto: UNPROVEN.** El +7,4 pp era en su mayor parte la deriva bajista del periodo. Lo que
+queda atribuible al skew son ~2,6 pp en el lado corto, con el intervalo cruzando el cero.
+No está muerto —el punto estimado sigue siendo positivo y es lo mejor medido hasta ahora—
+pero no pasa la vara, y por poco no publico un número que era beta disfrazada.
+
+## Lo que falta para volver a intentarlo
+
+1. Más muestra: 126 clusters‑día es poco. La serie crece sola (el fetch es reanudable).
+2. Neutralizar el mercado: la prueba correcta es **long/short contra el sector o contra SPY**,
+   no direccional — así la deriva no puede colarse por la puerta de atrás.
+3. Condicionar por régimen de VIX (ver abajo): él nunca mira el skew solo.
+
+---
+
+# El método completo de @astocks92, leído en sus 610 posts (2026‑05‑09 → 08‑07)
+
+El skew es una pieza de siete. Ordenadas por cuánto las repite:
+
+| pieza | qué es | ¿lo tenemos? |
+|---|---|---|
+| **$VIX PIVOT** (~50 posts) | un número diario + T1/T2/T3 arriba/abajo. VIX **encima** = los índices "mienten" (bajista); **debajo** = alcista. "VIX crush de T2 a pivot es sano". Retó a 150+ seguidores a adivinarlo: **0 aciertos** → fórmula propia. Afirma que el HOD/LOD del VIX cae a **$0,01‑0,04** del pivote casi a diario | **NO.** Es su pieza central y no la tenemos |
+| **Niveles con % de ODDS** | líneas amarilla/azul/roja = strikes a probabilidad fija. *"$SPY 13% y 7% odds a +$11; 6% a $7 abajo"*, *"MM hedged hasta $722,28 — not offsides"*, y la frase clave: ***"d spot delta diff both sides — this drives skew"*** | **Casi.** Es delta‑como‑probabilidad sobre la cadena: trivial desde `chain_full` |
+| **PIVOT/CEILING/FLOOR semanal** | fijados el lunes, **no se cambian** en toda la semana | NO |
+| **MAPS / incentivo del dealer** | *"$SPY: burn upside calls >$734/735 + burn $730P; $QQQ: burn shorts <709, demasiadas calls >711 → CHOP"* | **SÍ** = nuestro mapa gamma + pin/max‑pain, con otro nombre |
+| **SKEW = inventario** | call/put side % a $1..$6 + percentil 25Δ | **SÍ** (`skew_imbalance.py` + `skew_rr_fetch.py`) |
+| **IV vs RV para earnings** | *"$TXN: IV 43% por encima de su RV normal"*, objetivos de expansión de IV e "IV crush" | Parcial (`event-premium-discipline`) |
+| **Curva VIX** contango/backwardation + VIX9D + VVIX | *"know when LONG vs Short"* | Parcial (`cboe-data` trae VX) |
+
+Dos frases suyas que resumen la doctrina y que coinciden con la de esta casa:
+*"SKEW is pricing in inventory"* y *"Prediction = delivery = boring"*.
+
+**La pieza que más rendimiento daría copiar es el VIX PIVOT**, no el skew: es lo que usa como
+portero de TODO lo demás ("who is lying?"), y es una afirmación **falsable con los datos que ya
+tenemos** (VIX diario + intradía) — si un candidato de fórmula reproduce el HOD/LOD del VIX a
+±$0,04 con la frecuencia que él publica, eso se mide y se cierra en una tarde.
