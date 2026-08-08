@@ -1398,6 +1398,17 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       base sube a 57,6% -> edge -18,3 pp con t=-3,14. Su temporizacion RESTA. Mecanismo:
       objetivos FACILES (base>=70%) 9 de 10 acertados; objetivos DIFICILES (base<40%) 0 de 9.
       Distancia media: ganadoras +2,7%, perdedoras +13,7%.
+- [x] "win rate pero en vez de objetivo que haya variado almenos 10% para profit"
+      (2026-08-08) — HECHO con PRIMAS REALES (scripts/architect_profit.py): OCC de cada
+      operacion + /v2/aggs/ticker/O:<contrato> de Polygon; 23 de 28 contratos existen.
+      GANA >= +10% de prima antes de vencer: 65,2% (15/23) contra 79,4% del MISMO contrato
+      comprado un dia al azar de su vida -> edge -14,2 pp, t=-1,41 (no significativo).
+      Barrido: +25% 65,2 vs 72,3 (t=-0,71) · +50% 43,5 vs 58,9 (t=-1,43) · +100% 21,7 vs
+      45,9 (t=-2,90 SIGNIFICATIVO) · +200% 13,0 vs 31,7 (t=-2,49). Sus "DOINK +100%" pasan
+      LA MITAD de veces que por azar en el mismo contrato.
+      LO QUE VALE PARA OPERAR: MFE medio +79% (mediana +44%) pero AL VENCIMIENTO -55% medio
+      y MEDIANA -100% (12 de 23 acabaron en cero). Sus ideas dan pico aprovechable; aguantar
+      hasta vencimiento es ruina. Se cobra rapido o no se cobra.
 - [x] "add that new indicator to ib trader" — Zero Lag Trend Signals (MTF) (2026-08-08) —
       HECHO. Port fiel del Pine a C++23: scripts/zerolag.cpp -> bin/zerolag, publica
       data/zerolag.json con la tabla MTF 5m/15m/60m/240m/1D. MEDIDO ANTES: 0 de 24 celdas

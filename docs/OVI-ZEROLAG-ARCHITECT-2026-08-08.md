@@ -141,3 +141,48 @@ lejanos vencen en silencio.
 se descartaron: contarlos seria hindsight). Con esa muestra el intervalo es ancho, pero el
 signo es consistente en los tres controles y el desglose facil/dificil no deja mucho margen
 a la interpretacion.
+
+---
+
+## 3-ter. Win rate sobre la PRIMA REAL (+10% de beneficio) — la medicion definitiva
+
+*"win rate pero en vez de objetivo que haya variado almenos 10% para profit"*. Para esto no
+vale un proxy del subyacente: hacen falta los precios del CONTRATO. Polygon los sirve
+(`/v2/aggs/ticker/O:<contrato>`), asi que se bajaron los OCC reales de cada operacion.
+**23 de 28 contratos existen en Polygon** (5 no, y se dice).
+
+  ENTRADA = cierre del contrato el dia del tuit (o apertura de la siguiente sesion)
+  GANA    = el maximo del contrato desde la entrada hasta el vencimiento >= entrada × (1+U)
+  NULL    = el MISMO contrato comprado un dia AL AZAR de su vida cotizada
+
+### El barrido de umbrales
+
+| beneficio | **SU win rate** | mismo contrato, dia al azar | edge | t |
+|---|---|---|---|---|
+| **+10%** | **65,2%** (15/23) | 79,4% | −14,2 pp | −1,41 |
+| +25% | 65,2% | 72,3% | −7,1 pp | −0,71 |
+| +50% | 43,5% | 58,9% | −15,4 pp | −1,43 |
+| **+100%** | **21,7%** | **45,9%** | **−24,2 pp** | **−2,90** |
+| +200% | 13,0% | 31,7% | −18,7 pp | −2,49 |
+
+**A +10% da 65%**, que suena bien hasta que se mira el control: el mismo contrato comprado
+cualquier otro dia daba 79%. La diferencia no es significativa (t=−1,41) — su entrada no
+aporta, pero tampoco destruye.
+
+**Donde SI es significativo es arriba.** Los "+100%" y "+200%" que publica ocurren **la mitad
+de veces que si hubieras comprado ese mismo contrato en un dia cualquiera** (21,7% vs 45,9%,
+t=−2,90). Los DOINK son mas raros de lo que serian por azar.
+
+### Los dos numeros que valen para operar
+
+| | media | mediana |
+|---|---|---|
+| **MFE — lo mas que llego a valer el contrato** | **+79%** | **+44%** |
+| **Al VENCIMIENTO, si se aguanta** | **−55%** | **−100%** |
+
+Ahi esta todo. Sus ideas **si** dan un pico aprovechable —la mediana llego a +44%— pero
+**aguantarlas hasta el vencimiento es ruina: la mediana es −100%**, cero. Doce de 23
+terminaron en −100%.
+
+**La leccion operativa, que es lo unico que hay que llevarse de esta cuenta:** el contrato
+que sigas de ahi se cobra rapido o no se cobra. No es una tesis, es un boleto con fecha.
