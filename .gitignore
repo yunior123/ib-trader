@@ -162,3 +162,7 @@ data/history/*/uw_*.json
 data/history/*/uw_*.HUECO
 data/uw_backfill_report.json
 venv-lse/
+# Local compiled helpers that are not part of the tracked release set.
+bin/lse_price_alarm
+bin/orderflow_footprint
+bin/premarket_arrow
