@@ -1,551 +1,103 @@
 {
  "sym": "LRCX",
- "spot": 308.04,
- "asof": 1786063313,
- "exp": "20260807",
- "dte": 0.8,
+ "spot": 332.37,
+ "asof": 1786737602,
+ "exp": "20260821",
+ "dte": 7.0,
  "scope": "0DTE",
- "net_vex": 295192605.4,
- "vex_peak": 317.5,
- "vex_profile": [
-  {
-   "strike": 262.5,
-   "vex": 387227.8
-  },
-  {
-   "strike": 265.0,
-   "vex": 5498888.7
-  },
-  {
-   "strike": 267.5,
-   "vex": 18025826.5
-  },
-  {
-   "strike": 270.0,
-   "vex": 20038775.9
-  },
-  {
-   "strike": 272.5,
-   "vex": 10346843.0
-  },
-  {
-   "strike": 275.0,
-   "vex": 6795572.0
-  },
-  {
-   "strike": 277.5,
-   "vex": 1015623.9
-  },
-  {
-   "strike": 280.0,
-   "vex": 5233284.5
-  },
-  {
-   "strike": 282.5,
-   "vex": 780758.3
-  },
-  {
-   "strike": 285.0,
-   "vex": 5480019.3
-  },
-  {
-   "strike": 287.5,
-   "vex": 734962.9
-  },
-  {
-   "strike": 290.0,
-   "vex": 12012582.3
-  },
-  {
-   "strike": 292.5,
-   "vex": 1780797.3
-  },
-  {
-   "strike": 295.0,
-   "vex": 3525523.5
-  },
-  {
-   "strike": 297.5,
-   "vex": 128429.3
-  },
-  {
-   "strike": 300.0,
-   "vex": -10408932.8
-  },
-  {
-   "strike": 302.5,
-   "vex": -3247950.4
-  },
-  {
-   "strike": 305.0,
-   "vex": 296.7
-  },
-  {
-   "strike": 307.5,
-   "vex": -222687.5
-  },
-  {
-   "strike": 310.0,
-   "vex": 10361840.5
-  },
-  {
-   "strike": 312.5,
-   "vex": 952122.8
-  },
-  {
-   "strike": 315.0,
-   "vex": 32963243.1
-  },
-  {
-   "strike": 317.5,
-   "vex": 54892918.3
-  },
-  {
-   "strike": 320.0,
-   "vex": 11844436.1
-  },
-  {
-   "strike": 322.5,
-   "vex": 5189305.0
-  },
-  {
-   "strike": 325.0,
-   "vex": 3177442.2
-  },
-  {
-   "strike": 327.5,
-   "vex": 43025787.4
-  },
-  {
-   "strike": 330.0,
-   "vex": 12579716.4
-  },
-  {
-   "strike": 332.5,
-   "vex": 2767484.7
-  },
-  {
-   "strike": 335.0,
-   "vex": -557787.6
-  },
-  {
-   "strike": 337.5,
-   "vex": 880998.4
-  },
-  {
-   "strike": 340.0,
-   "vex": 12249994.6
-  },
-  {
-   "strike": 342.5,
-   "vex": 761849.8
-  },
-  {
-   "strike": 345.0,
-   "vex": 10257906.4
-  },
-  {
-   "strike": 347.5,
-   "vex": 10611472.4
-  },
-  {
-   "strike": 350.0,
-   "vex": 3655854.6
-  },
-  {
-   "strike": 352.5,
-   "vex": 1672179.3
-  }
- ],
- "net_charm": -193348322.7,
- "charm_peak": 317.5,
- "charm_profile": [
-  {
-   "strike": 262.5,
-   "charm": -333631.3
-  },
-  {
-   "strike": 265.0,
-   "charm": -5508952.6
-  },
-  {
-   "strike": 267.5,
-   "charm": -19478281.8
-  },
-  {
-   "strike": 270.0,
-   "charm": -15111097.3
-  },
-  {
-   "strike": 272.5,
-   "charm": -9641395.2
-  },
-  {
-   "strike": 275.0,
-   "charm": -5661732.0
-  },
-  {
-   "strike": 277.5,
-   "charm": -728510.2
-  },
-  {
-   "strike": 280.0,
-   "charm": -3751213.6
-  },
-  {
-   "strike": 282.5,
-   "charm": -540590.0
-  },
-  {
-   "strike": 285.0,
-   "charm": -3747087.2
-  },
-  {
-   "strike": 287.5,
-   "charm": -484294.2
-  },
-  {
-   "strike": 290.0,
-   "charm": -7988052.0
-  },
-  {
-   "strike": 292.5,
-   "charm": -1160243.7
-  },
-  {
-   "strike": 295.0,
-   "charm": -2398971.3
-  },
-  {
-   "strike": 297.5,
-   "charm": -812710.5
-  },
-  {
-   "strike": 300.0,
-   "charm": 834507.3
-  },
-  {
-   "strike": 302.5,
-   "charm": 1014700.7
-  },
-  {
-   "strike": 305.0,
-   "charm": -877037.7
-  },
-  {
-   "strike": 307.5,
-   "charm": 91340.8
-  },
-  {
-   "strike": 310.0,
-   "charm": -4811137.8
-  },
-  {
-   "strike": 312.5,
-   "charm": -255229.4
-  },
-  {
-   "strike": 315.0,
-   "charm": -15787783.7
-  },
-  {
-   "strike": 317.5,
-   "charm": -28184108.3
-  },
-  {
-   "strike": 320.0,
-   "charm": -5085088.1
-  },
-  {
-   "strike": 322.5,
-   "charm": -2349738.1
-  },
-  {
-   "strike": 325.0,
-   "charm": 708686.0
-  },
-  {
-   "strike": 327.5,
-   "charm": -23557375.6
-  },
-  {
-   "strike": 330.0,
-   "charm": -6549552.4
-  },
-  {
-   "strike": 332.5,
-   "charm": -1548103.9
-  },
-  {
-   "strike": 335.0,
-   "charm": 1667287.7
-  },
-  {
-   "strike": 337.5,
-   "charm": -708699.9
-  },
-  {
-   "strike": 340.0,
-   "charm": -8636112.7
-  },
-  {
-   "strike": 342.5,
-   "charm": -387117.1
-  },
-  {
-   "strike": 345.0,
-   "charm": -7034862.1
-  },
-  {
-   "strike": 347.5,
-   "charm": -10901825.4
-  },
-  {
-   "strike": 350.0,
-   "charm": -1982826.6
-  },
-  {
-   "strike": 352.5,
-   "charm": -1661483.0
-  }
- ],
- "charm_why": null,
- "pressure": 63,
- "pressure_lab": "PIN fuerte",
- "iv_atm": 0.8026,
- "em": 11.61,
- "net_gex": 13095339.9,
- "regime": "POS",
- "flip": 300.59,
- "flip_static": 313.11,
- "flip_manana": 297.4,
- "flip_fwd": 277.78,
+ "net_vex": null,
+ "vex_peak": null,
+ "vex_profile": [],
+ "net_charm": null,
+ "charm_peak": null,
+ "charm_profile": [],
+ "charm_why": "cadena rancia: spot de la cadena de hace 15 min (tope 10 min)",
+ "pressure": null,
+ "pressure_lab": "sin griegas",
+ "iv_atm": null,
+ "em": null,
+ "net_gex": null,
+ "regime": null,
+ "flip": null,
+ "flip_static": null,
+ "flip_manana": 308.9,
+ "flip_fwd": 308.9,
  "regime_fwd": "POS",
- "net_gex_manana": 17653746.9,
- "net_gex_fwd": 4558407.0,
- "gamma_muere_hoy_pct": 0.0,
- "gamma_muere_semana_pct": 62.1,
+ "net_gex_manana": 9608912.8,
+ "net_gex_fwd": 9608912.8,
+ "gamma_muere_hoy_pct": 38.1,
+ "gamma_muere_semana_pct": 38.1,
  "fwd_why": null,
- "call_wall": 317.5,
- "put_wall": 305.0,
- "abs_wall": 317.5,
- "poc_dom": "99%C",
- "call_wall_gex": 4705335.1,
- "put_wall_gex": -565655.0,
- "abs_wall_gex": 4705335.1,
- "oi_call_wall": 317.5,
- "oi_put_wall": 270.0,
+ "call_wall": null,
+ "put_wall": null,
+ "abs_wall": null,
+ "poc_dom": null,
+ "call_wall_gex": null,
+ "put_wall_gex": null,
+ "abs_wall_gex": null,
+ "oi_call_wall": 350.0,
+ "oi_put_wall": 317.5,
  "near_call_wall": false,
  "near_put_wall": false,
  "near_flip": false,
- "profile": [
-  {
-   "strike": 262.5,
-   "gex": -14432.6
-  },
-  {
-   "strike": 265.0,
-   "gex": -224437.4
-  },
-  {
-   "strike": 267.5,
-   "gex": -832284.0
-  },
-  {
-   "strike": 270.0,
-   "gex": -763699.9
-  },
-  {
-   "strike": 272.5,
-   "gex": -472249.4
-  },
-  {
-   "strike": 275.0,
-   "gex": -302078.5
-  },
-  {
-   "strike": 277.5,
-   "gex": -42168.5
-  },
-  {
-   "strike": 280.0,
-   "gex": -233697.1
-  },
-  {
-   "strike": 282.5,
-   "gex": -35888.6
-  },
-  {
-   "strike": 285.0,
-   "gex": -268528.8
-  },
-  {
-   "strike": 287.5,
-   "gex": -38492.0
-  },
-  {
-   "strike": 290.0,
-   "gex": -703217.8
-  },
-  {
-   "strike": 292.5,
-   "gex": -116775.7
-  },
-  {
-   "strike": 295.0,
-   "gex": -285387.6
-  },
-  {
-   "strike": 297.5,
-   "gex": -116163.2
-  },
-  {
-   "strike": 300.0,
-   "gex": 131025.7
-  },
-  {
-   "strike": 302.5,
-   "gex": 263371.6
-  },
-  {
-   "strike": 305.0,
-   "gex": -565655.0
-  },
-  {
-   "strike": 307.5,
-   "gex": 345476.9
-  },
-  {
-   "strike": 310.0,
-   "gex": 3331288.0
-  },
-  {
-   "strike": 312.5,
-   "gex": 99553.4
-  },
-  {
-   "strike": 315.0,
-   "gex": 3466124.8
-  },
-  {
-   "strike": 317.5,
-   "gex": 4705335.1
-  },
-  {
-   "strike": 320.0,
-   "gex": 738401.2
-  },
-  {
-   "strike": 322.5,
-   "gex": 292439.8
-  },
-  {
-   "strike": 325.0,
-   "gex": 8644.7
-  },
-  {
-   "strike": 327.5,
-   "gex": 2278109.5
-  },
-  {
-   "strike": 330.0,
-   "gex": 595903.7
-  },
-  {
-   "strike": 332.5,
-   "gex": 130842.3
-  },
-  {
-   "strike": 335.0,
-   "gex": -81620.2
-  },
-  {
-   "strike": 337.5,
-   "gex": 45184.7
-  },
-  {
-   "strike": 340.0,
-   "gex": 567876.4
-  },
-  {
-   "strike": 342.5,
-   "gex": 31129.2
-  },
-  {
-   "strike": 345.0,
-   "gex": 428261.0
-  },
-  {
-   "strike": 347.5,
-   "gex": 523850.8
-  },
-  {
-   "strike": 350.0,
-   "gex": 132010.5
-  },
-  {
-   "strike": 352.5,
-   "gex": 77286.8
-  }
- ],
- "call_wall_kind": "pin",
- "call_wall_regime": "POS",
- "call_wall_net": 4705335.1,
- "put_wall_kind": "pin",
- "put_wall_regime": "POS",
- "put_wall_net": -565655.0,
- "abs_wall_kind": "pin",
- "abs_wall_regime": "POS",
- "abs_wall_net": 4705335.1,
- "gamma_ok": true,
+ "profile": [],
+ "call_wall_kind": null,
+ "call_wall_regime": null,
+ "call_wall_net": null,
+ "put_wall_kind": null,
+ "put_wall_regime": null,
+ "put_wall_net": null,
+ "abs_wall_kind": null,
+ "abs_wall_regime": null,
+ "abs_wall_net": null,
+ "gamma_ok": false,
  "regime_scope": "0DTE",
- "greeks_ok_pct": 0.8108,
+ "greeks_ok_pct": 0.9706,
  "chain_src": "polygon",
- "chain_ts": 1786063163.0,
- "chain_age_s": 150.2256,
- "stale": false,
- "stale_reason": null,
- "regime_raw": "POS",
+ "chain_ts": 1786711547.0,
+ "chain_age_s": 26055.5948,
+ "stale": true,
+ "stale_reason": "spot de la cadena de hace 15 min (tope 10 min)",
+ "regime_raw": null,
  "regime_why": null,
- "parity_ok_pct": 0.0455,
- "net_gex_parity_lo": 9580066.4728,
- "net_gex_parity_hi": 11154883.9153,
- "quotes_ok": false,
- "session": "fuera_de_rth",
+ "parity_ok_pct": null,
+ "net_gex_parity_lo": null,
+ "net_gex_parity_hi": null,
+ "quotes_ok": true,
+ "session": "rth",
  "band_used": 0.15,
  "band_fetch": 0.15,
  "n_expiries": 4,
  "exps_en_fichero": [
-  "20260807",
   "20260814",
   "20260821",
-  "20260828"
+  "20260828",
+  "20260904",
+  "20260911"
  ],
- "rows_total": 242,
- "n_candidates": 74,
- "n_gamma_ok": 60,
- "n_no_greeks": 14,
- "n_iv_provider": 60,
+ "rows_total": 306,
+ "n_candidates": 68,
+ "n_gamma_ok": 66,
+ "n_no_greeks": 2,
+ "n_iv_provider": 66,
  "n_iv_inverted": 0,
  "iv_source": "provider",
- "exp_rolled": false,
- "roll_reason": null,
- "degraded_reason": null,
- "gross_gex": 23288892.3151,
- "bifurcation": 1.7784,
- "hhi": 0.1017,
- "n_strikes_populated": 37,
+ "exp_rolled": true,
+ "roll_reason": "20260814 vencido_hoy -> mapa desde 20260821",
+ "degraded_reason": "cadena rancia: spot de la cadena de hace 15 min (tope 10 min)",
+ "gross_gex": null,
+ "bifurcation": null,
+ "hhi": null,
+ "n_strikes_populated": 0,
  "chain_path": "data/opt_chain_lrcx.txt",
- "flip_live": 299.36,
- "flip_src": "repriced",
- "flip_why": "gamma recomputada a cada spot del barrido (definicion correcta)",
- "roots": [
-  299.36
- ],
- "trapdoor_root": 299.36,
- "flip_open": 300.59,
- "frozen_at": 1786023374,
- "frozen_day": "2026-08-06",
- "spot_src": "intrinio_quote",
- "spot_age_s": 2596.0
+ "flip_live": null,
+ "flip_src": "none",
+ "flip_why": null,
+ "roots": [],
+ "trapdoor_root": null,
+ "flip_open": null,
+ "frozen_at": 1786368936,
+ "frozen_day": null,
+ "spot_src": "finnhub",
+ "spot_age_s": 5.2
 }

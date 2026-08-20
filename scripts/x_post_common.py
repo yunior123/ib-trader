@@ -341,3 +341,73 @@ def post_text(text, tag, log, dry_run=False, auth=None, media_path=None):
     except Exception as e:
         log(f"ERROR {tag} exc {str(e)[:100]}")
     return False
+
+
+def post_thread(texts, tag, log, dry_run=False, auth=None, media_path=None):
+    """Publica un HILO encadenado. Devuelve nº de posts publicados.
+
+    Fail-closed ANTES de escribir nada: si un solo tramo no pasa los guards (ingles,
+    privacidad, longitud) o el presupuesto no cubre el hilo COMPLETO, no se publica
+    ninguno — un hilo a medias es peor que ninguno, y X no lo deshace.
+    `media_path` se adjunta solo al PRIMER post.
+    """
+    clean = []
+    for i, t in enumerate(texts, 1):
+        t = sanitize_cashtags(t.strip())
+        if len(t) > MAX_CHARS:
+            log(f"REFUSE {tag} tramo {i} mide {len(t)} > {MAX_CHARS}")
+            return 0
+        if not public_text_is_english(t):
+            log(f"REFUSE {tag} tramo {i} non-English public text")
+            return 0
+        if not public_text_is_private_safe(t):
+            log(f"REFUSE {tag} tramo {i} private or implementation detail")
+            return 0
+        clean.append(t)
+    if posts_today_all() + len(clean) > MAX_POSTS_PER_DAY:
+        log(f"REFUSE {tag} el hilo ({len(clean)}) no cabe en el cap diario {MAX_POSTS_PER_DAY}")
+        return 0
+    b = load_budget()
+    if b["spent"] + COST_PER_POST * len(clean) > MAX_SPEND_PER_MONTH:
+        log(f"REFUSE {tag} hilo de {len(clean)} no cabe en el cap mensual "
+            f"(${b['spent']:.3f} + ${COST_PER_POST * len(clean):.3f} > ${MAX_SPEND_PER_MONTH:.2f})")
+        return 0
+    if dry_run:
+        for i, t in enumerate(clean, 1):
+            log(f"DRY-RUN {tag} {i}/{len(clean)} ({len(t)} chars)")
+            print(f"[{i}/{len(clean)}] {t}", flush=True)
+            print("-" * 40, flush=True)
+        return len(clean)
+    import requests
+    parent, done = None, 0
+    for i, t in enumerate(clean, 1):
+        body = {"text": t}
+        if parent:
+            body["reply"] = {"in_reply_to_tweet_id": parent}
+        elif media_path:
+            mid = upload_media(media_path, auth, log)
+            if mid:
+                body["media"] = {"media_ids": [mid]}
+            else:
+                log(f"MEDIA-SKIP {tag} subida fallo -> texto-solo")
+        try:
+            r = requests.post(API_URL, json=body, auth=auth, timeout=30)
+            resp = r.text.replace("\n", " ")[:100]
+        except Exception as e:                                   # noqa: BLE001
+            log(f"ERROR {tag} {i}/{len(clean)} exc {str(e)[:100]} — HILO CORTADO en {done}")
+            return done
+        if r.status_code != 201:
+            log(f"FAIL {tag} {i}/{len(clean)} {r.status_code} {resp} — HILO CORTADO en {done}")
+            return done
+        parent = (r.json().get("data") or {}).get("id")
+        done += 1
+        bb = load_budget()
+        bb["posts"] += 1
+        bb["spent"] = round(bb["spent"] + COST_PER_POST, 4)
+        save_budget(bb)
+        log(f"POSTED {tag} {i}/{len(clean)} id={parent}")
+        if not parent:
+            log(f"WARN {tag} sin id en la respuesta — el resto del hilo iria suelto, se corta")
+            return done
+        time.sleep(1.5)
+    return done

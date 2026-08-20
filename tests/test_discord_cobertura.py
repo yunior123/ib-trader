@@ -154,10 +154,12 @@ def test_finnhub_grita_sin_titulo_no_toca_el_embudo(embudo, monkeypatch):
     assert embudo() == []
 
 
-def test_finnhub_solo_grita_cada_5_caidas():
+def test_finnhub_cada_5_caidas_solo_deja_log_sin_notificar():
     src = open(os.path.join(SCRIPTS, "finnhub_ws_bridge.py")).read()
     assert "if caidas % 5 == 0:" in src
-    assert 'titulo="FINNHUB WS"' in src
+    bloque = src.split("if caidas % 5 == 0:", 1)[1].split("if vivo >=", 1)[0]
+    assert "notificaciones muertas por orden" in bloque
+    assert "grita(" not in bloque and "notify_short" not in bloque
 
 
 # --- provider_bridge: exige py>=3.11 (datetime.UTC), se audita por fuente --------------
@@ -299,13 +301,13 @@ class _SubprocessMudo(object):
         return None
 
 
-def test_finnhub_push_con_throttle_y_payload_estable():
-    """Revision 2026-08-04: 'caido 5/10/15 veces' derrotaba el dedup -> ~96 pings nocturnos.
-    El payload no puede llevar contador y el push lleva throttle temporal propio."""
+def test_finnhub_helper_conserva_throttle_pero_caidas_no_lo_invocan():
+    """El helper manual conserva throttle; la orden 2026-08-06 apagó el push automático."""
     src = open(os.path.join(SCRIPTS, "finnhub_ws_bridge.py")).read()
     assert "_PUSH_THROTTLE_S" in src and "_ultimo_push" in src
-    assert 'corto="socket CAIDO en bucle' in src          # sin {caidas} en el push
     assert "except Exception" in src.split("def grita")[1].split("\ndef ")[0]
+    main = src.split("async def main", 1)[1]
+    assert "grita(" not in main and "notify_short" not in main
 
 
 def test_korea_no_grita_con_krx_cerrado():

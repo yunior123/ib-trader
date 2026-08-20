@@ -1,77 +1,77 @@
 {
- "generado_utc": "2026-08-06T13:35:03.623719+00:00",
+ "generado_utc": "2026-08-10T13:35:05.143242+00:00",
  "en_rth": true,
  "forzado": false,
  "tope_peticiones": 10,
  "pasadas": [
   {
    "n": 1,
-   "ts": "2026-08-06T13:35:03.623892+00:00",
+   "ts": "2026-08-10T13:35:05.143469+00:00",
    "syms": [
     {
      "sym": "SPY",
-     "ts": "2026-08-06T13:35:03.623892+00:00",
+     "ts": "2026-08-10T13:35:05.143469+00:00",
      "net_prem_ticks": {
-      "error": "HTTPError: HTTP Error 429: Too Many Requests"
+      "error": "HTTPError: HTTP Error 401: Unauthorized"
      },
      "stock_state": {
-      "error": "HTTPError: HTTP Error 429: Too Many Requests"
+      "error": "HTTPError: HTTP Error 401: Unauthorized"
      },
      "finnhub": {
-      "print_epoch": 1785968759.463,
-      "print_px": 771.59,
-      "print_age_s": 54544.16
+      "print_epoch": 1786368801.603,
+      "print_px": 773.56,
+      "print_age_s": 103.54
      }
     },
     {
      "sym": "QQQ",
-     "ts": "2026-08-06T13:35:03.623892+00:00",
+     "ts": "2026-08-10T13:35:05.143469+00:00",
      "net_prem_ticks": {
-      "error": "HTTPError: HTTP Error 429: Too Many Requests"
+      "error": "HTTPError: HTTP Error 401: Unauthorized"
      },
      "stock_state": {
-      "error": "HTTPError: HTTP Error 429: Too Many Requests"
+      "error": "HTTPError: HTTP Error 401: Unauthorized"
      },
      "finnhub": {
-      "print_epoch": 1786023183.665,
-      "print_px": 708.66,
-      "print_age_s": 119.96
+      "print_epoch": 1786368904.056,
+      "print_px": 720.85,
+      "print_age_s": 1.09
      }
     }
    ]
   },
   {
    "n": 2,
-   "ts": "2026-08-06T13:37:28.331273+00:00",
+   "ts": "2026-08-10T13:37:30.297562+00:00",
    "syms": [
     {
      "sym": "SPY",
-     "ts": "2026-08-06T13:37:28.331273+00:00",
+     "ts": "2026-08-10T13:37:30.297562+00:00",
      "net_prem_ticks": {
-      "error": "HTTPError: HTTP Error 429: Too Many Requests"
+      "error": "HTTPError: HTTP Error 401: Unauthorized"
      },
      "stock_state": {
-      "error": "HTTPError: HTTP Error 429: Too Many Requests"
+      "error": "HTTPError: HTTP Error 401: Unauthorized"
      },
      "finnhub": {
-      "print_epoch": 1785968759.463,
-      "print_px": 771.59,
-      "print_age_s": 54688.87
+      "print_epoch": 1786368929.763,
+      "print_px": 772.61,
+      "print_age_s": 120.53
      }
     },
     {
      "sym": "QQQ",
-     "ts": "2026-08-06T13:37:28.331273+00:00",
+     "ts": "2026-08-10T13:37:30.297562+00:00",
      "net_prem_ticks": {
-      "error": "HTTPError: HTTP Error 429: Too Many Requests"
+      "error": "HTTPError: HTTP Error 401: Unauthorized"
      },
      "stock_state": {
-      "error": "HTTPError: HTTP Error 429: Too Many Requests"
+      "error": "HTTPError: HTTP Error 401: Unauthorized"
      },
      "finnhub": {
-      "print_epoch": 1786023428.405,
-      "print_px": 713.3,
-      "print_age_s": 19.93
+      "print_epoch": 1786369042.547,
+      "print_px": 721.5,
+      "print_age_s": 7.75
      }
     }
    ]
@@ -83,14 +83,14 @@
     "label": "sin enviar nada",
     "path": "/api/socket",
     "envio": null,
-    "t_handshake_s": 0.1012,
-    "status_line": "HTTP/1.1 429 Too Many Requests",
+    "t_handshake_s": 0.1471,
+    "status_line": "HTTP/1.1 401 Unauthorized",
     "upgraded": false,
     "eof": false,
-    "t_cierre_s": 8.1025,
-    "bytes_datos": 809,
+    "t_cierre_s": 8.2103,
+    "bytes_datos": 320,
     "close_frame": false,
-    "muestra": "31d\r\n{\"code\":\"daily_request_limit_hit\",\"message\":\"You have hit your daily request limit of 30000 requests.\\n\\nUpgrade your plan at https://unusualwhales.com/dashboard/api?utm_source=api&utm_campaign=j"
+    "muestra": "134\r\n{\"code\":\"authentication_required\",\"message\":\"Your token was invalid. If you are using an AI agent update your AGENTS.md/CLAUDE.md/GEMINI.md or cursor rules\\nand make it read https://unusualwhales"
    },
    {
     "label": "join lista",
@@ -99,14 +99,14 @@
      "flow-alerts",
      "join"
     ],
-    "t_handshake_s": 0.1021,
-    "status_line": "HTTP/1.1 429 Too Many Requests",
+    "t_handshake_s": 0.1384,
+    "status_line": "HTTP/1.1 401 Unauthorized",
     "upgraded": false,
     "eof": false,
-    "t_cierre_s": 8.1039,
-    "bytes_datos": 809,
+    "t_cierre_s": 8.1605,
+    "bytes_datos": 320,
     "close_frame": false,
-    "muestra": "31d\r\n{\"code\":\"daily_request_limit_hit\",\"message\":\"You have hit your daily request limit of 30000 requests.\\n\\nUpgrade your plan at https://unusualwhales.com/dashboard/api?utm_source=api&utm_campaign=j"
+    "muestra": "134\r\n{\"code\":\"authentication_required\",\"message\":\"Your token was invalid. If you are using an AI agent update your AGENTS.md/CLAUDE.md/GEMINI.md or cursor rules\\nand make it read https://unusualwhales"
    },
    {
     "label": "join objeto",
@@ -115,21 +115,21 @@
      "channel": "flow-alerts",
      "msg_type": "join"
     },
-    "t_handshake_s": 0.0898,
-    "status_line": "HTTP/1.1 429 Too Many Requests",
+    "t_handshake_s": 0.1726,
+    "status_line": "HTTP/1.1 401 Unauthorized",
     "upgraded": false,
     "eof": false,
-    "t_cierre_s": 8.091,
-    "bytes_datos": 809,
+    "t_cierre_s": 8.1941,
+    "bytes_datos": 320,
     "close_frame": false,
-    "muestra": "31d\r\n{\"code\":\"daily_request_limit_hit\",\"message\":\"You have hit your daily request limit of 30000 requests.\\n\\nUpgrade your plan at https://unusualwhales.com/dashboard/api?utm_source=api&utm_campaign=j"
+    "muestra": "134\r\n{\"code\":\"authentication_required\",\"message\":\"Your token was invalid. If you are using an AI agent update your AGENTS.md/CLAUDE.md/GEMINI.md or cursor rules\\nand make it read https://unusualwhales"
    }
   ],
   "cupo_antes": null
  },
  "nota_disparador": "sin IBKR esta semana: el proxy del disparador es el print de finnhub (data/rt_last_<SYM>.txt); TODOS 8f sigue pendiente",
  "socket_get": {
-  "error": "HTTPError: HTTP Error 429: Too Many Requests"
+  "error": "HTTPError: HTTP Error 401: Unauthorized"
  },
  "cupo": {
   "usado_hoy": null,

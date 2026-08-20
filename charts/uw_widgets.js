@@ -48,7 +48,10 @@
     catch (e) { return null; }
   }
   function isOpen(id) {
-    try { return typeof WG !== "undefined" && WG.open ? !!WG.open[id] : true; }
+    try {
+      if (window.cockpitWidgetOpen) return window.cockpitWidgetOpen(id);
+      return typeof WG !== "undefined" && WG.open ? !!WG.open[id] : true;
+    }
     catch (e) { return true; }
   }
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) =>
@@ -282,6 +285,12 @@
 
   // ------------------------------------------------- ciclo
   async function tick() {
+    if (window.chartIsLondonOnly && window.chartIsLondonOnly()) {
+      if (isOpen("dark")) fail(parts("dark"), "Desactivado en London-only", "Fuente UW no iniciada.");
+      if (isOpen("prem")) fail(parts("prem"), "Desactivado en London-only", "Fuente UW no iniciada.");
+      if (isOpen("gexexp")) fail(parts("gexexp"), "Desactivado en London-only", "Fuente UW no iniciada.");
+      return;
+    }
     if (isOpen("dark")) {
       try { drawDark(await grab("uw_darkpool.json")); }
       catch (e) { fail(parts("dark"), "Dark pool no disponible", e.message); }

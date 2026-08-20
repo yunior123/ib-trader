@@ -145,6 +145,23 @@ def triple_barrera(B, ds, d0, direccion, atr, k_tp, k_sl, H):
     return (1 if t_tp < t_sl else 0), mfe, entrada
 
 
+def segment_stats(rows, k_tp, k_sl):
+    """Stats for paired ``(date, signal_label, random_label)`` observations."""
+    n = len(rows)
+    if not n:
+        return {"n": 0, "clusters": 0, "n_eff": 0.0, "wr": None,
+                "wr_lo": None, "null_wr": None, "edge": None, "exp_lo": None}
+    wins = sum(row[1] for row in rows)
+    random_wins = sum(row[2] for row in rows)
+    clusters = len({row[0] for row in rows})
+    n_eff = effective_n(n, clusters)
+    wr, lo, _ = wilson(wins, max(1.0, n_eff), p=wins / n)
+    null_wr = random_wins / n
+    return {"n": n, "clusters": clusters, "n_eff": round(n_eff, 1),
+            "wr": wr, "wr_lo": lo, "null_wr": null_wr,
+            "edge": wr - null_wr, "exp_lo": lo * k_tp - (1 - lo) * k_sl}
+
+
 def main():
     ap = argparse.ArgumentParser(description="¿el skew extremo predice? (hipotesis Architect)")
     ap.add_argument("--dte", type=int, default=30)
@@ -153,7 +170,9 @@ def main():
 
     syms = sorted(os.path.basename(p)[len("rr25_"):-5].upper()
                   for p in glob.glob("data/research/rr25_*.json"))
-    con = sqlite3.connect("file:%s?mode=ro" % DB, uri=True)
+    # The 3.8GB archive is cold/immutable during research.  SQLite otherwise tries to
+    # create sidecars and fails with SQLITE_CANTOPEN on this macOS volume.
+    con = sqlite3.connect("file:%s?mode=ro&immutable=1" % os.path.abspath(DB), uri=True)
     entradas = []           # (sym, fecha, rr, pct, atr, B, ds)
     cache = {}
     for sym in syms:
@@ -186,7 +205,7 @@ def main():
             for k_tp in K_TP:
                 for k_sl in K_SL:
                     for H in HORIZONS:
-                        lab, clusters, rnd = [], set(), []
+                        lab, clusters, rnd, paired = [], set(), [], []
                         rng = np.random.default_rng(7)
                         for (sym, d, v, pct, atr) in entradas:
                             B, ds = cache[sym]
@@ -209,6 +228,7 @@ def main():
                                                        int(rng.choice([-1, 1])), atr, k_tp, k_sl, H)
                             if rr_ is not None:
                                 rnd.append(rr_)
+                                paired.append((d, r, rr_))
                         n, rn = len(lab), len(rnd)
                         if n < 100 or rn < 100:
                             continue
@@ -217,12 +237,21 @@ def main():
                         pw, lo, hi = wilson(wins, max(1.0, n_eff), p=wins / n)
                         ex = lambda q: q * k_tp - (1 - q) * k_sl
                         boot = block_bootstrap_edge(np.array(lab, float), np.array(rnd, float))
+                        dates = sorted({row[0] for row in paired})
+                        cut = max(1, int(len(dates) * 0.60))
+                        train_dates = set(dates[:cut])
+                        train = segment_stats([row for row in paired if row[0] in train_dates],
+                                              k_tp, k_sl)
+                        oos = segment_stats([row for row in paired if row[0] not in train_dates],
+                                            k_tp, k_sl)
                         celdas.append(dict(cola=cola, modo=modo, k_tp=k_tp, k_sl=k_sl, H=H,
                                            n=n, wins=wins, wr=pw, wr_lo=lo, clusters=len(clusters),
                                            n_eff=round(n_eff, 1), exp_lo=ex(lo), exp=ex(pw),
                                            null_wr=rwins / rn, null_n=rn,
                                            edge=boot["edge"], edge_lo=boot["lo"], edge_hi=boot["hi"],
-                                           p=two_prop_p(wins, n, rwins, rn)))
+                                           p=two_prop_p(wins, n, rwins, rn),
+                                           split_date=(dates[cut] if cut < len(dates) else None),
+                                           train=train, oos=oos))
     if not celdas:
         sys.exit("ninguna celda alcanzo el minimo de muestra")
     keep = bh_fdr([c["p"] for c in celdas], q=0.10)
@@ -231,10 +260,25 @@ def main():
         c["veredicto"] = ("DEAD" if c["edge_hi"] <= 0 else
                           "DATA-INSUFFICIENT" if c["n_eff"] < 50 else
                           "PROVEN" if (k and c["exp_lo"] > 0 and c["edge_lo"] > 0) else "UNPROVEN")
+    candidates = [c for c in celdas if c["train"]["n"] >= 100 and c["oos"]["n"] >= 50]
+    tuned = max(candidates, key=lambda c: (c["train"]["exp_lo"], c["train"]["edge"])) \
+        if candidates else None
+    if tuned:
+        oos = tuned["oos"]
+        tuned_summary = {
+            "selection": "max train Wilson-LB expectancy; chronological 60/40 dates",
+            "params": {k: tuned[k] for k in ("cola", "modo", "k_tp", "k_sl", "H")},
+            "split_date": tuned["split_date"], "train": tuned["train"], "oos": oos,
+            "verdict": ("OOS_POSITIVE_CANDIDATE" if oos["n_eff"] >= 50
+                         and oos["exp_lo"] > 0 and oos["edge"] > 0 else "REJECTED_OOS"),
+        }
+    else:
+        tuned_summary = {"verdict": "DATA_INSUFFICIENT_FOR_60_40_TUNING"}
     celdas.sort(key=lambda c: -c["edge_lo"])
     with open(OUT + ".tmp", "w") as f:
         json.dump({"dte": a.dte, "n_cells": len(celdas), "fdr_pass": int(keep.sum()),
-                   "obs": len(entradas), "cells": celdas}, f, indent=1)
+                   "obs": len(entradas), "tuned_60_40": tuned_summary,
+                   "cells": celdas}, f, indent=1)
     os.replace(OUT + ".tmp", OUT)
 
     print("\n%-5s %-5s %4s %4s %2s | %5s %6s %5s | %6s %6s | %8s %8s %7s | %s"
@@ -245,6 +289,7 @@ def main():
               % (c["cola"], c["modo"], c["k_tp"], c["k_sl"], c["H"], c["n"], c["n_eff"],
                  c["clusters"], c["wr"], c["null_wr"], c["edge"], c["edge_lo"], c["p"],
                  c["veredicto"]))
+    print("\nTUNED 60/40: %s" % json.dumps(tuned_summary, ensure_ascii=False))
     print("\nceldas=%d  pasan BH-FDR=%d -> %s" % (len(celdas), int(keep.sum()), OUT))
 
 

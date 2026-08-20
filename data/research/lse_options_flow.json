@@ -1,0 +1,1842 @@
+{
+ "_meta": {
+  "written_at": "2026-08-08T23:25:06.104717Z",
+  "probe": "scripts/research/lse_flow_probe.py"
+ },
+ "meta": {
+  "usage": {
+   "bytes_used_month": 330965872,
+   "bytes_cap_month": 53687091200,
+   "bytes_used_week": 330965872,
+   "bytes_cap_week": 16106127360,
+   "exports_this_hour": 3,
+   "exports_cap_hour": 5,
+   "historical_data_months": -1,
+   "calls_per_minute": 200,
+   "max_rows_per_request": 5000,
+   "vault_concurrency": 2
+  },
+  "flow_fields": [
+   "contract_type",
+   "delta",
+   "dte",
+   "expiry",
+   "gamma",
+   "id",
+   "iv",
+   "last_price",
+   "premium",
+   "rho",
+   "strike",
+   "theta",
+   "ticker",
+   "ts",
+   "underlying",
+   "underlying_price",
+   "vega",
+   "volume"
+  ],
+  "chain_fields": [
+   "contract_type",
+   "delta",
+   "dte",
+   "expiry",
+   "gamma",
+   "iv",
+   "last_price",
+   "last_trade_at",
+   "premium_today",
+   "rho",
+   "strike",
+   "theta",
+   "ticker",
+   "underlying",
+   "underlying_price",
+   "updated_at",
+   "vega",
+   "volume_today"
+  ],
+  "candle_fields": [
+   "close",
+   "contract_type",
+   "delta_avg",
+   "dte",
+   "expiry",
+   "gamma_avg",
+   "high",
+   "iv_avg",
+   "low",
+   "minute",
+   "open",
+   "premium",
+   "print_count",
+   "rho_avg",
+   "strike",
+   "theta_avg",
+   "ticker",
+   "underlying",
+   "underlying_price",
+   "vega_avg",
+   "volume"
+  ],
+  "tape_oldest_ts": "2026-06-26 13:30:03.283291",
+  "tape_newest_ts": "2026-08-07 20:15:01.924386",
+  "tape_span_days": 42,
+  "row_cap_measured": 5000,
+  "start_end_formatos": {
+   "2026-08-07": {
+    "ok": true,
+    "first_ts": "2026-08-07 13:30:30.597097"
+   },
+   "2026-08-07 14:00:00": {
+    "ok": true,
+    "first_ts": "2026-08-07 14:01:03.357733"
+   },
+   "2026-08-07T14:00:00": {
+    "ok": true,
+    "first_ts": "2026-08-07 14:01:03.357733"
+   },
+   "2026-08-07T14:00:00Z": {
+    "ok": false,
+    "err": "400 en /options/flow: {\"detail\":\"{\\\"detail\\\":\\\"invalid date '2026-08-07T14:00:00Z' (use YYYY-MM-DD)\\\"}\"} <- ht"
+   },
+   "2026-08-07 14:00:00.123456": {
+    "ok": false,
+    "err": "400 en /options/flow: {\"detail\":\"{\\\"detail\\\":\\\"invalid date '2026-08-07 14:00:00.123456' (use YYYY-MM-DD)\\\"}\"}"
+   },
+   "1786114800": {
+    "ok": false,
+    "err": "400 en /options/flow: {\"detail\":\"{\\\"detail\\\":\\\"invalid date '1786114800' (use YYYY-MM-DD)\\\"}\"} <- https://api."
+   }
+  },
+  "bid_ask_in_flow": false,
+  "bid_ask_in_chain": false,
+  "premium_minimo_en_tape": 1
+ },
+ "dte0_gap": {
+  "por_dia": [
+   {
+    "print_day": "2026-06-26",
+    "weekday": "Fri",
+    "n_rows_250k": 5000,
+    "truncated": true,
+    "min_expiry": "2026-06-29",
+    "min_dte": 3,
+    "n_rows_expiry_eq_print_day": 0,
+    "n_rows_max_dte_0": 0
+   },
+   {
+    "print_day": "2026-07-01",
+    "weekday": "Wed",
+    "n_rows_250k": 5000,
+    "truncated": true,
+    "min_expiry": "2026-07-02",
+    "min_dte": 1,
+    "n_rows_expiry_eq_print_day": 0,
+    "n_rows_max_dte_0": 0
+   },
+   {
+    "print_day": "2026-07-15",
+    "weekday": "Wed",
+    "n_rows_250k": 5000,
+    "truncated": true,
+    "min_expiry": "2026-07-16",
+    "min_dte": 1,
+    "n_rows_expiry_eq_print_day": 0,
+    "n_rows_max_dte_0": 0
+   },
+   {
+    "print_day": "2026-08-03",
+    "weekday": "Mon",
+    "n_rows_250k": 5000,
+    "truncated": true,
+    "min_expiry": "2026-08-04",
+    "min_dte": 1,
+    "n_rows_expiry_eq_print_day": 0,
+    "n_rows_max_dte_0": 0
+   },
+   {
+    "print_day": "2026-08-05",
+    "weekday": "Wed",
+    "n_rows_250k": 5000,
+    "truncated": true,
+    "min_expiry": "2026-08-06",
+    "min_dte": 1,
+    "n_rows_expiry_eq_print_day": 0,
+    "n_rows_max_dte_0": 0
+   },
+   {
+    "print_day": "2026-08-07",
+    "weekday": "Fri",
+    "n_rows_250k": 4619,
+    "truncated": false,
+    "min_expiry": "2026-08-10",
+    "min_dte": 3,
+    "n_rows_expiry_eq_print_day": 0,
+    "n_rows_max_dte_0": 0
+   }
+  ],
+  "control_expiry_2026_08_14": 10,
+  "veredicto": "SIN 0DTE: ningun print con vencimiento = dia de impresion"
+ },
+ "websocket": {
+  "url": "wss://data-ws.londonstrategicedge.com",
+  "symbols": [
+   "SPY",
+   "QQQ",
+   "NVDA"
+  ],
+  "seconds": 100,
+  "control_messages": [
+   {
+    "symbols_available": 8074,
+    "options_available": 276038,
+    "type": "welcome"
+   },
+   {
+    "type": "authenticated",
+    "tier": "registered",
+    "key_type": "main",
+    "name": "Default",
+    "options_available": 276038,
+    "max_subscriptions": 16
+   },
+   {
+    "type": "options_subscribed",
+    "underlying": "SPY",
+    "contracts": 18180,
+    "active_underlyings": 1,
+    "count": 1,
+    "max": 16
+   },
+   {
+    "type": "options_subscribed",
+    "underlying": "QQQ",
+    "contracts": 16953,
+    "active_underlyings": 2,
+    "count": 2,
+    "max": 16
+   },
+   {
+    "type": "options_subscribed",
+    "underlying": "NVDA",
+    "contracts": 5039,
+    "active_underlyings": 3,
+    "count": 3,
+    "max": 16
+   },
+   {
+    "type": "subscribed",
+    "symbol": "BTC-USD",
+    "count": 4,
+    "max": 16
+   }
+  ],
+  "n_ticks": 0,
+  "tick_keys": [],
+  "n_ticks_con_bid_y_ask": 0,
+  "sample_ticks": [],
+  "por_symbol": {
+   "SPY": 0,
+   "QQQ": 0,
+   "NVDA": 0,
+   "BTC-USD": 0
+  },
+  "nota": "sabado con bolsa cerrada: lo que llegue es snapshot, no flujo"
+ },
+ "cobertura": {
+  "n_underlyings_options_catalogo": 3186,
+  "fleet_n": 36,
+  "fleet_en_lse": 29,
+  "fleet_ausentes": [
+   "TSM",
+   "ASML",
+   "NOK",
+   "XLK",
+   "EWY",
+   "DRAM",
+   "SKHY"
+  ],
+  "universe_gamma_ausentes": [
+   "TSM",
+   "ASML",
+   "NOK",
+   "XLK",
+   "EWY",
+   "DRAM",
+   "SKHY",
+   "SPX",
+   "XSP",
+   "NDX"
+  ],
+  "verificacion_tape_de_los_ausentes": {
+   "TSM": 0,
+   "ASML": 5,
+   "NOK": 5,
+   "XLK": 0,
+   "EWY": 0,
+   "DRAM": 0,
+   "SKHY": 0,
+   "SPX": 0,
+   "XSP": 0,
+   "NDX": 0
+  }
+ },
+ "sweep": {
+  "2026-08-03": {
+   "weekday": "Mon",
+   "min_premium_50000": {
+    "n": 52100,
+    "premium_total": 10998539326.0,
+    "premium_p50": 91370,
+    "premium_p90": 353580,
+    "premium_p99": 2062000,
+    "premium_max": 53550000,
+    "call_frac": 0.6678,
+    "dte_min": 1,
+    "dte_p50": 39,
+    "n_underlyings": 456,
+    "frac_prints_flota": 0.7031,
+    "top15_by_premium": [
+     {
+      "sym": "SPY",
+      "premium": 947914257.0,
+      "n": 4397
+     },
+     {
+      "sym": "MSFT",
+      "premium": 902378989.0,
+      "n": 3161
+     },
+     {
+      "sym": "MU",
+      "premium": 820018316.0,
+      "n": 3725
+     },
+     {
+      "sym": "QQQ",
+      "premium": 704647338.0,
+      "n": 2772
+     },
+     {
+      "sym": "AMZN",
+      "premium": 640906848.0,
+      "n": 4137
+     },
+     {
+      "sym": "SNDK",
+      "premium": 605855994.0,
+      "n": 3236
+     },
+     {
+      "sym": "NVDA",
+      "premium": 458469757.0,
+      "n": 1932
+     },
+     {
+      "sym": "ASML",
+      "premium": 448159285.0,
+      "n": 940
+     },
+     {
+      "sym": "AMD",
+      "premium": 280511037.0,
+      "n": 1674
+     },
+     {
+      "sym": "SPCX",
+      "premium": 270409742.0,
+      "n": 1172
+     },
+     {
+      "sym": "INTC",
+      "premium": 269988051.0,
+      "n": 691
+     },
+     {
+      "sym": "META",
+      "premium": 250355151.0,
+      "n": 1562
+     },
+     {
+      "sym": "ORCL",
+      "premium": 248436670.0,
+      "n": 1112
+     },
+     {
+      "sym": "GOOGL",
+      "premium": 242632265.0,
+      "n": 1166
+     },
+     {
+      "sym": "SMH",
+      "premium": 176940355.0,
+      "n": 495
+     }
+    ],
+    "min_premium": 50000,
+    "peticiones": 11
+   },
+   "min_premium_250000": {
+    "n": 7792,
+    "premium_total": 6665592292.0,
+    "premium_p50": 451440,
+    "premium_p90": 1490170,
+    "premium_p99": 6831000,
+    "premium_max": 53550000,
+    "call_frac": 0.6546,
+    "dte_min": 1,
+    "dte_p50": 46,
+    "n_underlyings": 265,
+    "frac_prints_flota": 0.7179,
+    "top15_by_premium": [
+     {
+      "sym": "MSFT",
+      "premium": 631805254.0,
+      "n": 525
+     },
+     {
+      "sym": "SPY",
+      "premium": 590566541.0,
+      "n": 722
+     },
+     {
+      "sym": "MU",
+      "premium": 515397680.0,
+      "n": 643
+     },
+     {
+      "sym": "QQQ",
+      "premium": 481247387.0,
+      "n": 385
+     },
+     {
+      "sym": "ASML",
+      "premium": 391680095.0,
+      "n": 468
+     },
+     {
+      "sym": "SNDK",
+      "premium": 336850465.0,
+      "n": 465
+     },
+     {
+      "sym": "NVDA",
+      "premium": 306581873.0,
+      "n": 297
+     },
+     {
+      "sym": "AMZN",
+      "premium": 254390499.0,
+      "n": 354
+     },
+     {
+      "sym": "INTC",
+      "premium": 231856265.0,
+      "n": 301
+     },
+     {
+      "sym": "SPCX",
+      "premium": 173409472.0,
+      "n": 231
+     },
+     {
+      "sym": "ORCL",
+      "premium": 154460965.0,
+      "n": 202
+     },
+     {
+      "sym": "AMD",
+      "premium": 143441424.0,
+      "n": 195
+     },
+     {
+      "sym": "GOOGL",
+      "premium": 140356846.0,
+      "n": 132
+     },
+     {
+      "sym": "SMH",
+      "premium": 136435900.0,
+      "n": 117
+     },
+     {
+      "sym": "IWM",
+      "premium": 131471501.0,
+      "n": 109
+     }
+    ],
+    "min_premium": 250000,
+    "peticiones": 2
+   },
+   "min_premium_1000000": {
+    "n": 1413,
+    "premium_total": 3764421283.0,
+    "premium_p50": 1620000,
+    "premium_p90": 5189400,
+    "premium_p99": 16097360.000000002,
+    "premium_max": 53550000,
+    "call_frac": 0.6653,
+    "dte_min": 2,
+    "dte_p50": 74,
+    "n_underlyings": 121,
+    "frac_prints_flota": 0.719,
+    "top15_by_premium": [
+     {
+      "sym": "MSFT",
+      "premium": 445713106.0,
+      "n": 111
+     },
+     {
+      "sym": "QQQ",
+      "premium": 350182259.0,
+      "n": 92
+     },
+     {
+      "sym": "SPY",
+      "premium": 316114055.0,
+      "n": 97
+     },
+     {
+      "sym": "MU",
+      "premium": 277939780.0,
+      "n": 106
+     },
+     {
+      "sym": "NVDA",
+      "premium": 199309658.0,
+      "n": 71
+     },
+     {
+      "sym": "ASML",
+      "premium": 188764704.0,
+      "n": 124
+     },
+     {
+      "sym": "SNDK",
+      "premium": 168447332.0,
+      "n": 83
+     },
+     {
+      "sym": "AMZN",
+      "premium": 120343136.0,
+      "n": 45
+     },
+     {
+      "sym": "INTC",
+      "premium": 96867305.0,
+      "n": 59
+     },
+     {
+      "sym": "IWM",
+      "premium": 92793876.0,
+      "n": 32
+     },
+     {
+      "sym": "SMH",
+      "premium": 91776010.0,
+      "n": 22
+     },
+     {
+      "sym": "GOOGL",
+      "premium": 90929897.0,
+      "n": 20
+     },
+     {
+      "sym": "SPCX",
+      "premium": 90521163.0,
+      "n": 43
+     },
+     {
+      "sym": "ORCL",
+      "premium": 76114104.0,
+      "n": 32
+     },
+     {
+      "sym": "AMD",
+      "premium": 73809245.0,
+      "n": 39
+     }
+    ],
+    "min_premium": 1000000,
+    "peticiones": 1
+   }
+  },
+  "2026-08-04": {
+   "weekday": "Tue",
+   "min_premium_50000": {
+    "n": 65415,
+    "premium_total": 13861559079.0,
+    "premium_p50": 91800,
+    "premium_p90": 362992,
+    "premium_p99": 1956880,
+    "premium_max": 138750000,
+    "call_frac": 0.6689,
+    "dte_min": 1,
+    "dte_p50": 24,
+    "n_underlyings": 477,
+    "frac_prints_flota": 0.7283,
+    "top15_by_premium": [
+     {
+      "sym": "SPY",
+      "premium": 1482733547.0,
+      "n": 7126
+     },
+     {
+      "sym": "QQQ",
+      "premium": 1457173003.0,
+      "n": 5150
+     },
+     {
+      "sym": "MU",
+      "premium": 1014046125.0,
+      "n": 5030
+     },
+     {
+      "sym": "SNDK",
+      "premium": 921837127.0,
+      "n": 4016
+     },
+     {
+      "sym": "AMD",
+      "premium": 792400016.0,
+      "n": 3847
+     },
+     {
+      "sym": "PLTR",
+      "premium": 571835898.0,
+      "n": 3144
+     },
+     {
+      "sym": "INTC",
+      "premium": 563150543.0,
+      "n": 1444
+     },
+     {
+      "sym": "MSFT",
+      "premium": 502026078.0,
+      "n": 2263
+     },
+     {
+      "sym": "SPCX",
+      "premium": 426567305.0,
+      "n": 2226
+     },
+     {
+      "sym": "NVDA",
+      "premium": 351759560.0,
+      "n": 1824
+     },
+     {
+      "sym": "GOOGL",
+      "premium": 326739357.0,
+      "n": 826
+     },
+     {
+      "sym": "AMZN",
+      "premium": 323975311.0,
+      "n": 2848
+     },
+     {
+      "sym": "SMH",
+      "premium": 252140473.0,
+      "n": 982
+     },
+     {
+      "sym": "TSLA",
+      "premium": 246290722.0,
+      "n": 1623
+     },
+     {
+      "sym": "ORCL",
+      "premium": 228890836.0,
+      "n": 883
+     }
+    ],
+    "min_premium": 50000,
+    "peticiones": 14
+   },
+   "min_premium_250000": {
+    "n": 10001,
+    "premium_total": 8460247642.0,
+    "premium_p50": 454510,
+    "premium_p90": 1511280,
+    "premium_p99": 5941560,
+    "premium_max": 138750000,
+    "call_frac": 0.6766,
+    "dte_min": 1,
+    "dte_p50": 38,
+    "n_underlyings": 277,
+    "frac_prints_flota": 0.7398,
+    "top15_by_premium": [
+     {
+      "sym": "QQQ",
+      "premium": 1036991930.0,
+      "n": 922
+     },
+     {
+      "sym": "SPY",
+      "premium": 878152192.0,
+      "n": 1155
+     },
+     {
+      "sym": "MU",
+      "premium": 602486239.0,
+      "n": 845
+     },
+     {
+      "sym": "SNDK",
+      "premium": 581530238.0,
+      "n": 590
+     },
+     {
+      "sym": "INTC",
+      "premium": 485771795.0,
+      "n": 601
+     },
+     {
+      "sym": "AMD",
+      "premium": 472684494.0,
+      "n": 577
+     },
+     {
+      "sym": "MSFT",
+      "premium": 312385111.0,
+      "n": 388
+     },
+     {
+      "sym": "PLTR",
+      "premium": 303015120.0,
+      "n": 351
+     },
+     {
+      "sym": "GOOGL",
+      "premium": 258001904.0,
+      "n": 134
+     },
+     {
+      "sym": "SPCX",
+      "premium": 237544667.0,
+      "n": 356
+     },
+     {
+      "sym": "NVDA",
+      "premium": 200011530.0,
+      "n": 270
+     },
+     {
+      "sym": "MCHP",
+      "premium": 183201444.0,
+      "n": 6
+     },
+     {
+      "sym": "SMH",
+      "premium": 166469044.0,
+      "n": 162
+     },
+     {
+      "sym": "ORCL",
+      "premium": 159886137.0,
+      "n": 184
+     },
+     {
+      "sym": "GLD",
+      "premium": 134151392.0,
+      "n": 48
+     }
+    ],
+    "min_premium": 250000,
+    "peticiones": 3
+   },
+   "min_premium_1000000": {
+    "n": 1791,
+    "premium_total": 4746595641.0,
+    "premium_p50": 1612880,
+    "premium_p90": 4320000,
+    "premium_p99": 17141376,
+    "premium_max": 138750000,
+    "call_frac": 0.7074,
+    "dte_min": 1,
+    "dte_p50": 45,
+    "n_underlyings": 121,
+    "frac_prints_flota": 0.751,
+    "top15_by_premium": [
+     {
+      "sym": "QQQ",
+      "premium": 720496936.0,
+      "n": 239
+     },
+     {
+      "sym": "SPY",
+      "premium": 446334798.0,
+      "n": 155
+     },
+     {
+      "sym": "SNDK",
+      "premium": 366841530.0,
+      "n": 104
+     },
+     {
+      "sym": "MU",
+      "premium": 293596327.0,
+      "n": 138
+     },
+     {
+      "sym": "AMD",
+      "premium": 272254121.0,
+      "n": 127
+     },
+     {
+      "sym": "INTC",
+      "premium": 210785333.0,
+      "n": 128
+     },
+     {
+      "sym": "GOOGL",
+      "premium": 210505365.0,
+      "n": 39
+     },
+     {
+      "sym": "MCHP",
+      "premium": 181073170.0,
+      "n": 3
+     },
+     {
+      "sym": "PLTR",
+      "premium": 175547768.0,
+      "n": 57
+     },
+     {
+      "sym": "MSFT",
+      "premium": 166199558.0,
+      "n": 67
+     },
+     {
+      "sym": "GLD",
+      "premium": 122698525.0,
+      "n": 24
+     },
+     {
+      "sym": "SMH",
+      "premium": 106147133.0,
+      "n": 37
+     },
+     {
+      "sym": "ORCL",
+      "premium": 103342880.0,
+      "n": 62
+     },
+     {
+      "sym": "SPCX",
+      "premium": 102220473.0,
+      "n": 47
+     },
+     {
+      "sym": "NVDA",
+      "premium": 100526768.0,
+      "n": 38
+     }
+    ],
+    "min_premium": 1000000,
+    "peticiones": 1
+   }
+  },
+  "2026-08-05": {
+   "weekday": "Wed",
+   "min_premium_50000": {
+    "n": 50020,
+    "premium_total": 10069202804.0,
+    "premium_p50": 91670,
+    "premium_p90": 343700,
+    "premium_p99": 1818612,
+    "premium_max": 65320000,
+    "call_frac": 0.6681,
+    "dte_min": 1,
+    "dte_p50": 37,
+    "n_underlyings": 443,
+    "frac_prints_flota": 0.7271,
+    "top15_by_premium": [
+     {
+      "sym": "SNDK",
+      "premium": 992978692.0,
+      "n": 4454
+     },
+     {
+      "sym": "NVDA",
+      "premium": 887536494.0,
+      "n": 4111
+     },
+     {
+      "sym": "QQQ",
+      "premium": 792420091.0,
+      "n": 3013
+     },
+     {
+      "sym": "MU",
+      "premium": 780005355.0,
+      "n": 3609
+     },
+     {
+      "sym": "SPY",
+      "premium": 776972727.0,
+      "n": 3929
+     },
+     {
+      "sym": "AMD",
+      "premium": 603098429.0,
+      "n": 3005
+     },
+     {
+      "sym": "SPCX",
+      "premium": 481149141.0,
+      "n": 2313
+     },
+     {
+      "sym": "INTC",
+      "premium": 260967386.0,
+      "n": 693
+     },
+     {
+      "sym": "AMZN",
+      "premium": 250563872.0,
+      "n": 1969
+     },
+     {
+      "sym": "MSFT",
+      "premium": 226064970.0,
+      "n": 1246
+     },
+     {
+      "sym": "GOOGL",
+      "premium": 162582781.0,
+      "n": 962
+     },
+     {
+      "sym": "META",
+      "premium": 160578405.0,
+      "n": 973
+     },
+     {
+      "sym": "GLD",
+      "premium": 151390670.0,
+      "n": 633
+     },
+     {
+      "sym": "NBIS",
+      "premium": 141930217.0,
+      "n": 475
+     },
+     {
+      "sym": "SMH",
+      "premium": 129476947.0,
+      "n": 570
+     }
+    ],
+    "min_premium": 50000,
+    "peticiones": 11
+   },
+   "min_premium_250000": {
+    "n": 7329,
+    "premium_total": 5884763600.0,
+    "premium_p50": 441200,
+    "premium_p90": 1446250,
+    "premium_p99": 6278400,
+    "premium_max": 65320000,
+    "call_frac": 0.6738,
+    "dte_min": 1,
+    "dte_p50": 44,
+    "n_underlyings": 267,
+    "frac_prints_flota": 0.7435,
+    "top15_by_premium": [
+     {
+      "sym": "SNDK",
+      "premium": 619666199.0,
+      "n": 772
+     },
+     {
+      "sym": "QQQ",
+      "premium": 546719753.0,
+      "n": 493
+     },
+     {
+      "sym": "NVDA",
+      "premium": 532759977.0,
+      "n": 606
+     },
+     {
+      "sym": "MU",
+      "premium": 487244751.0,
+      "n": 639
+     },
+     {
+      "sym": "SPY",
+      "premium": 438352497.0,
+      "n": 444
+     },
+     {
+      "sym": "AMD",
+      "premium": 359823101.0,
+      "n": 439
+     },
+     {
+      "sym": "SPCX",
+      "premium": 290755510.0,
+      "n": 412
+     },
+     {
+      "sym": "INTC",
+      "premium": 223562472.0,
+      "n": 294
+     },
+     {
+      "sym": "MSFT",
+      "premium": 121195057.0,
+      "n": 183
+     },
+     {
+      "sym": "NBIS",
+      "premium": 105403475.0,
+      "n": 66
+     },
+     {
+      "sym": "GLD",
+      "premium": 96933916.0,
+      "n": 91
+     },
+     {
+      "sym": "GDX",
+      "premium": 84236130.0,
+      "n": 49
+     },
+     {
+      "sym": "GOOGL",
+      "premium": 81479739.0,
+      "n": 129
+     },
+     {
+      "sym": "SMH",
+      "premium": 81155488.0,
+      "n": 96
+     },
+     {
+      "sym": "META",
+      "premium": 78871166.0,
+      "n": 134
+     }
+    ],
+    "min_premium": 250000,
+    "peticiones": 2
+   },
+   "min_premium_1000000": {
+    "n": 1261,
+    "premium_total": 3169906344.0,
+    "premium_p50": 1599000,
+    "premium_p90": 4675000,
+    "premium_p99": 14517360,
+    "premium_max": 65320000,
+    "call_frac": 0.7018,
+    "dte_min": 2,
+    "dte_p50": 44,
+    "n_underlyings": 116,
+    "frac_prints_flota": 0.7605,
+    "top15_by_premium": [
+     {
+      "sym": "QQQ",
+      "premium": 382532728.0,
+      "n": 120
+     },
+     {
+      "sym": "SNDK",
+      "premium": 332235900.0,
+      "n": 151
+     },
+     {
+      "sym": "NVDA",
+      "premium": 309975435.0,
+      "n": 96
+     },
+     {
+      "sym": "SPY",
+      "premium": 286081744.0,
+      "n": 69
+     },
+     {
+      "sym": "MU",
+      "premium": 241398340.0,
+      "n": 106
+     },
+     {
+      "sym": "AMD",
+      "premium": 190600208.0,
+      "n": 103
+     },
+     {
+      "sym": "SPCX",
+      "premium": 131272077.0,
+      "n": 49
+     },
+     {
+      "sym": "INTC",
+      "premium": 107923318.0,
+      "n": 56
+     },
+     {
+      "sym": "NBIS",
+      "premium": 85584797.0,
+      "n": 19
+     },
+     {
+      "sym": "GDX",
+      "premium": 69176999.0,
+      "n": 14
+     },
+     {
+      "sym": "GLD",
+      "premium": 66805282.0,
+      "n": 15
+     },
+     {
+      "sym": "ASML",
+      "premium": 59071198.0,
+      "n": 33
+     },
+     {
+      "sym": "WYNN",
+      "premium": 53789550.0,
+      "n": 2
+     },
+     {
+      "sym": "MSFT",
+      "premium": 49793034.0,
+      "n": 27
+     },
+     {
+      "sym": "SMH",
+      "premium": 42179930.0,
+      "n": 14
+     }
+    ],
+    "min_premium": 1000000,
+    "peticiones": 1
+   }
+  },
+  "2026-08-06": {
+   "weekday": "Thu",
+   "min_premium_50000": {
+    "n": 44479,
+    "premium_total": 10921672616.0,
+    "premium_p50": 93000,
+    "premium_p90": 376800,
+    "premium_p99": 2531700,
+    "premium_max": 286500000,
+    "call_frac": 0.6252,
+    "dte_min": 1,
+    "dte_p50": 25,
+    "n_underlyings": 451,
+    "frac_prints_flota": 0.683,
+    "top15_by_premium": [
+     {
+      "sym": "SNDK",
+      "premium": 1505629634.0,
+      "n": 4267
+     },
+     {
+      "sym": "MU",
+      "premium": 870704375.0,
+      "n": 4064
+     },
+     {
+      "sym": "APP",
+      "premium": 554302726.0,
+      "n": 650
+     },
+     {
+      "sym": "SPY",
+      "premium": 494857302.0,
+      "n": 3439
+     },
+     {
+      "sym": "QQQ",
+      "premium": 473839363.0,
+      "n": 2223
+     },
+     {
+      "sym": "NVDA",
+      "premium": 388860905.0,
+      "n": 1926
+     },
+     {
+      "sym": "GLD",
+      "premium": 316498155.0,
+      "n": 521
+     },
+     {
+      "sym": "MSFT",
+      "premium": 311262811.0,
+      "n": 1146
+     },
+     {
+      "sym": "SPCX",
+      "premium": 310758582.0,
+      "n": 1784
+     },
+     {
+      "sym": "TSLA",
+      "premium": 280313462.0,
+      "n": 1049
+     },
+     {
+      "sym": "AMD",
+      "premium": 276778937.0,
+      "n": 1614
+     },
+     {
+      "sym": "MSTR",
+      "premium": 259926401.0,
+      "n": 270
+     },
+     {
+      "sym": "AMZN",
+      "premium": 222083838.0,
+      "n": 1875
+     },
+     {
+      "sym": "CAR",
+      "premium": 195434617.0,
+      "n": 46
+     },
+     {
+      "sym": "META",
+      "premium": 188707484.0,
+      "n": 1239
+     }
+    ],
+    "min_premium": 50000,
+    "peticiones": 9
+   },
+   "min_premium_250000": {
+    "n": 7095,
+    "premium_total": 7241549747.0,
+    "premium_p50": 455816,
+    "premium_p90": 1770600,
+    "premium_p99": 9557022,
+    "premium_max": 286500000,
+    "call_frac": 0.5638,
+    "dte_min": 1,
+    "dte_p50": 43,
+    "n_underlyings": 286,
+    "frac_prints_flota": 0.6324,
+    "top15_by_premium": [
+     {
+      "sym": "SNDK",
+      "premium": 1147335586.0,
+      "n": 727
+     },
+     {
+      "sym": "MU",
+      "premium": 528474280.0,
+      "n": 610
+     },
+     {
+      "sym": "APP",
+      "premium": 513221632.0,
+      "n": 233
+     },
+     {
+      "sym": "QQQ",
+      "premium": 294605830.0,
+      "n": 345
+     },
+     {
+      "sym": "GLD",
+      "premium": 278975814.0,
+      "n": 124
+     },
+     {
+      "sym": "MSTR",
+      "premium": 242688317.0,
+      "n": 103
+     },
+     {
+      "sym": "NVDA",
+      "premium": 229980740.0,
+      "n": 288
+     },
+     {
+      "sym": "SPY",
+      "premium": 221128824.0,
+      "n": 296
+     },
+     {
+      "sym": "MSFT",
+      "premium": 219180657.0,
+      "n": 171
+     },
+     {
+      "sym": "TSLA",
+      "premium": 201168786.0,
+      "n": 150
+     },
+     {
+      "sym": "CAR",
+      "premium": 194000994.0,
+      "n": 33
+     },
+     {
+      "sym": "LULU",
+      "premium": 177221550.0,
+      "n": 16
+     },
+     {
+      "sym": "NFLX",
+      "premium": 168958220.0,
+      "n": 117
+     },
+     {
+      "sym": "SPCX",
+      "premium": 157685633.0,
+      "n": 249
+     },
+     {
+      "sym": "AMD",
+      "premium": 137944287.0,
+      "n": 197
+     }
+    ],
+    "min_premium": 250000,
+    "peticiones": 2
+   },
+   "min_premium_1000000": {
+    "n": 1418,
+    "premium_total": 4680431523.0,
+    "premium_p50": 1770600,
+    "premium_p90": 6109050,
+    "premium_p99": 23079414,
+    "premium_max": 286500000,
+    "call_frac": 0.3815,
+    "dte_min": 1,
+    "dte_p50": 43,
+    "n_underlyings": 123,
+    "frac_prints_flota": 0.6544,
+    "top15_by_premium": [
+     {
+      "sym": "SNDK",
+      "premium": 892013267.0,
+      "n": 180
+     },
+     {
+      "sym": "APP",
+      "premium": 449446554.0,
+      "n": 103
+     },
+     {
+      "sym": "MU",
+      "premium": 301369462.0,
+      "n": 113
+     },
+     {
+      "sym": "GLD",
+      "premium": 235190436.0,
+      "n": 34
+     },
+     {
+      "sym": "MSTR",
+      "premium": 217618254.0,
+      "n": 59
+     },
+     {
+      "sym": "CAR",
+      "premium": 190794794.0,
+      "n": 25
+     },
+     {
+      "sym": "QQQ",
+      "premium": 180517215.0,
+      "n": 77
+     },
+     {
+      "sym": "LULU",
+      "premium": 174701234.0,
+      "n": 11
+     },
+     {
+      "sym": "MSFT",
+      "premium": 158936067.0,
+      "n": 33
+     },
+     {
+      "sym": "TSLA",
+      "premium": 154674624.0,
+      "n": 47
+     },
+     {
+      "sym": "NFLX",
+      "premium": 136633355.0,
+      "n": 59
+     },
+     {
+      "sym": "NVDA",
+      "premium": 120843150.0,
+      "n": 51
+     },
+     {
+      "sym": "SPY",
+      "premium": 112534558.0,
+      "n": 40
+     },
+     {
+      "sym": "AAPL",
+      "premium": 67261217.0,
+      "n": 29
+     },
+     {
+      "sym": "SPCX",
+      "premium": 64190519.0,
+      "n": 30
+     }
+    ],
+    "min_premium": 1000000,
+    "peticiones": 1
+   }
+  },
+  "2026-08-07": {
+   "weekday": "Fri",
+   "min_premium_50000": {
+    "n": 29001,
+    "premium_total": 6679181683.0,
+    "premium_p50": 91975,
+    "premium_p90": 371150,
+    "premium_p99": 2194170,
+    "premium_max": 126214200,
+    "call_frac": 0.6757,
+    "dte_min": 3,
+    "dte_p50": 42,
+    "n_underlyings": 415,
+    "frac_prints_flota": 0.6535,
+    "top15_by_premium": [
+     {
+      "sym": "SPY",
+      "premium": 538622274.0,
+      "n": 2673
+     },
+     {
+      "sym": "SNDK",
+      "premium": 375871878.0,
+      "n": 1353
+     },
+     {
+      "sym": "NVDA",
+      "premium": 355311565.0,
+      "n": 1807
+     },
+     {
+      "sym": "SPCX",
+      "premium": 333331884.0,
+      "n": 1757
+     },
+     {
+      "sym": "MU",
+      "premium": 323147534.0,
+      "n": 1654
+     },
+     {
+      "sym": "QQQ",
+      "premium": 235617156.0,
+      "n": 1074
+     },
+     {
+      "sym": "IBM",
+      "premium": 219649551.0,
+      "n": 597
+     },
+     {
+      "sym": "AAPL",
+      "premium": 193828420.0,
+      "n": 682
+     },
+     {
+      "sym": "META",
+      "premium": 188725206.0,
+      "n": 688
+     },
+     {
+      "sym": "MCHP",
+      "premium": 185441474.0,
+      "n": 19
+     },
+     {
+      "sym": "AMD",
+      "premium": 176437584.0,
+      "n": 1336
+     },
+     {
+      "sym": "TSLA",
+      "premium": 175559724.0,
+      "n": 986
+     },
+     {
+      "sym": "MSTR",
+      "premium": 172024922.0,
+      "n": 299
+     },
+     {
+      "sym": "GLD",
+      "premium": 158013016.0,
+      "n": 464
+     },
+     {
+      "sym": "MSFT",
+      "premium": 153670944.0,
+      "n": 778
+     }
+    ],
+    "min_premium": 50000,
+    "peticiones": 6
+   },
+   "min_premium_250000": {
+    "n": 4619,
+    "premium_total": 4297849628.0,
+    "premium_p50": 453500,
+    "premium_p90": 1546145,
+    "premium_p99": 8268960.000000001,
+    "premium_max": 126214200,
+    "call_frac": 0.6553,
+    "dte_min": 3,
+    "dte_p50": 42,
+    "n_underlyings": 240,
+    "frac_prints_flota": 0.6224,
+    "top15_by_premium": [
+     {
+      "sym": "SPY",
+      "premium": 322943885.0,
+      "n": 298
+     },
+     {
+      "sym": "SNDK",
+      "premium": 260025727.0,
+      "n": 236
+     },
+     {
+      "sym": "NVDA",
+      "premium": 204735933.0,
+      "n": 261
+     },
+     {
+      "sym": "MU",
+      "premium": 186953024.0,
+      "n": 279
+     },
+     {
+      "sym": "SPCX",
+      "premium": 183912988.0,
+      "n": 279
+     },
+     {
+      "sym": "MCHP",
+      "premium": 183908630.0,
+      "n": 5
+     },
+     {
+      "sym": "IBM",
+      "premium": 169023627.0,
+      "n": 244
+     },
+     {
+      "sym": "MSTR",
+      "premium": 153947326.0,
+      "n": 100
+     },
+     {
+      "sym": "QQQ",
+      "premium": 151052457.0,
+      "n": 205
+     },
+     {
+      "sym": "CAR",
+      "premium": 143161840.0,
+      "n": 19
+     },
+     {
+      "sym": "AAPL",
+      "premium": 139117386.0,
+      "n": 129
+     },
+     {
+      "sym": "META",
+      "premium": 129492526.0,
+      "n": 66
+     },
+     {
+      "sym": "LULU",
+      "premium": 129032965.0,
+      "n": 13
+     },
+     {
+      "sym": "GLD",
+      "premium": 121822567.0,
+      "n": 90
+     },
+     {
+      "sym": "TSLA",
+      "premium": 96095474.0,
+      "n": 121
+     }
+    ],
+    "min_premium": 250000,
+    "peticiones": 1
+   },
+   "min_premium_1000000": {
+    "n": 856,
+    "premium_total": 2591866786.0,
+    "premium_p50": 1623700,
+    "premium_p90": 5010000,
+    "premium_p99": 20784894,
+    "premium_max": 126214200,
+    "call_frac": 0.5841,
+    "dte_min": 3,
+    "dte_p50": 70,
+    "n_underlyings": 102,
+    "frac_prints_flota": 0.6577,
+    "top15_by_premium": [
+     {
+      "sym": "SPY",
+      "premium": 214513131.0,
+      "n": 57
+     },
+     {
+      "sym": "MCHP",
+      "premium": 182574000.0,
+      "n": 2
+     },
+     {
+      "sym": "SNDK",
+      "premium": 176050274.0,
+      "n": 65
+     },
+     {
+      "sym": "CAR",
+      "premium": 142608420.0,
+      "n": 17
+     },
+     {
+      "sym": "LULU",
+      "premium": 127360985.0,
+      "n": 11
+     },
+     {
+      "sym": "MSTR",
+      "premium": 121580237.0,
+      "n": 40
+     },
+     {
+      "sym": "NVDA",
+      "premium": 111654329.0,
+      "n": 50
+     },
+     {
+      "sym": "META",
+      "premium": 109301966.0,
+      "n": 13
+     },
+     {
+      "sym": "AAPL",
+      "premium": 94858252.0,
+      "n": 30
+     },
+     {
+      "sym": "GLD",
+      "premium": 89427510.0,
+      "n": 16
+     },
+     {
+      "sym": "MU",
+      "premium": 80731382.0,
+      "n": 42
+     },
+     {
+      "sym": "IBM",
+      "premium": 79028085.0,
+      "n": 32
+     },
+     {
+      "sym": "SPCX",
+      "premium": 78269126.0,
+      "n": 37
+     },
+     {
+      "sym": "QQQ",
+      "premium": 74007669.0,
+      "n": 48
+     },
+     {
+      "sym": "ASML",
+      "premium": 53239560.0,
+      "n": 37
+     }
+    ],
+    "min_premium": 1000000,
+    "peticiones": 1
+   }
+  }
+ },
+ "uw_compare": {
+  "day": "2026-08-07",
+  "por_sym": {
+   "SPY": {
+    "lse_prints_dia": 227271,
+    "peticiones": 46,
+    "uw_asof_utc": "2026-08-07T19:57:14Z",
+    "lse_ts_ultimo": "2026-08-07 20:15:01.924386",
+    "uw_volume": 11913633,
+    "lse_volume": 773105,
+    "cobertura_volumen": 0.0649,
+    "uw_trades": 1436115,
+    "lse_prints": 69107,
+    "prints_lse_por_trade_uw": 0.0481,
+    "uw_premium": 2041270556.0,
+    "lse_premium": 242278859.0,
+    "cobertura_premium": 0.1187,
+    "dte_min_tape_completo": 3,
+    "polygon_chain": {
+     "contratos_polygon_con_volumen": 2585,
+     "contratos_lse": 4984,
+     "contratos_comunes": 1622,
+     "vol_polygon_total": 10288013,
+     "vol_polygon_en_comunes": 2770174,
+     "vol_lse_en_comunes": 2542655,
+     "cobertura_vol_en_comunes": 0.9179,
+     "cobertura_vol_dia_total": 0.2471,
+     "contratos_lse_por_encima_de_polygon": 389,
+     "contratos_0dte_polygon": 300,
+     "vol_0dte_polygon": 7483358,
+     "frac_volumen_dia_que_es_0dte": 0.7274,
+     "vol_0dte_visto_por_lse": 0
+    }
+   },
+   "QQQ": {
+    "lse_prints_dia": 119574,
+    "peticiones": 24,
+    "uw_asof_utc": "2026-08-07T19:56:55.300000Z",
+    "lse_ts_ultimo": "2026-08-07 20:15:01.182307",
+    "uw_volume": 7001485,
+    "lse_volume": 184238,
+    "cobertura_volumen": 0.0263,
+    "uw_trades": 1093048,
+    "lse_prints": 25791,
+    "prints_lse_por_trade_uw": 0.0236,
+    "uw_premium": 1583987175.0,
+    "lse_premium": 96804596.0,
+    "cobertura_premium": 0.0611,
+    "dte_min_tape_completo": 3,
+    "polygon_chain": {
+     "contratos_polygon_con_volumen": 2460,
+     "contratos_lse": 4173,
+     "contratos_comunes": 1564,
+     "vol_polygon_total": 6112117,
+     "vol_polygon_en_comunes": 1117097,
+     "vol_lse_en_comunes": 776154,
+     "cobertura_vol_en_comunes": 0.6948,
+     "cobertura_vol_dia_total": 0.127,
+     "contratos_lse_por_encima_de_polygon": 191,
+     "contratos_0dte_polygon": 270,
+     "vol_0dte_polygon": 4983141,
+     "frac_volumen_dia_que_es_0dte": 0.8153,
+     "vol_0dte_visto_por_lse": 0
+    }
+   },
+   "NVDA": {
+    "lse_prints_dia": 161324,
+    "peticiones": 33,
+    "uw_asof_utc": "2026-08-07T19:57:07Z",
+    "lse_ts_ultimo": "2026-08-07 20:00:17.410167",
+    "uw_volume": 3852352,
+    "lse_volume": 672819,
+    "cobertura_volumen": 0.1747,
+    "uw_trades": 484770,
+    "lse_prints": 85542,
+    "prints_lse_por_trade_uw": 0.1765,
+    "uw_premium": 1339886637.0,
+    "lse_premium": 364107024.0,
+    "cobertura_premium": 0.2717,
+    "dte_min_tape_completo": 3,
+    "polygon_chain": {
+     "contratos_polygon_con_volumen": 515,
+     "contratos_lse": 1668,
+     "contratos_comunes": 375,
+     "vol_polygon_total": 3053954,
+     "vol_polygon_en_comunes": 924732,
+     "vol_lse_en_comunes": 1084994,
+     "cobertura_vol_en_comunes": 1.1733,
+     "cobertura_vol_dia_total": 0.3553,
+     "contratos_lse_por_encima_de_polygon": 202,
+     "contratos_0dte_polygon": 79,
+     "vol_0dte_polygon": 2125428,
+     "frac_volumen_dia_que_es_0dte": 0.696,
+     "vol_0dte_visto_por_lse": 0
+    }
+   },
+   "SMH": {
+    "lse_prints_dia": 13090,
+    "peticiones": 3,
+    "uw_asof_utc": "2026-08-07T19:56:59.800000Z",
+    "lse_ts_ultimo": "2026-08-07 20:15:01.187141",
+    "uw_volume": 413225,
+    "lse_volume": 155523,
+    "cobertura_volumen": 0.3764,
+    "uw_trades": 30320,
+    "lse_prints": 4398,
+    "prints_lse_por_trade_uw": 0.1451,
+    "uw_premium": 195453705.0,
+    "lse_premium": 56540488.0,
+    "cobertura_premium": 0.2893,
+    "dte_min_tape_completo": 3,
+    "polygon_chain": {
+     "contratos_polygon_con_volumen": 1264,
+     "contratos_lse": 1586,
+     "contratos_comunes": 575,
+     "vol_polygon_total": 258042,
+     "vol_polygon_en_comunes": 215567,
+     "vol_lse_en_comunes": 222529,
+     "cobertura_vol_en_comunes": 1.0323,
+     "cobertura_vol_dia_total": 0.8624,
+     "contratos_lse_por_encima_de_polygon": 161,
+     "contratos_0dte_polygon": 265,
+     "vol_0dte_polygon": 37786,
+     "frac_volumen_dia_que_es_0dte": 0.1464,
+     "vol_0dte_visto_por_lse": 0
+    }
+   },
+   "MU": {
+    "lse_prints_dia": 71740,
+    "peticiones": 15,
+    "uw_asof_utc": "2026-08-07T19:57:10.500000Z",
+    "lse_ts_ultimo": "2026-08-07 20:00:22.232566",
+    "uw_volume": 1208480,
+    "lse_volume": 68677,
+    "cobertura_volumen": 0.0568,
+    "uw_trades": 340713,
+    "lse_prints": 20037,
+    "prints_lse_por_trade_uw": 0.0588,
+    "uw_premium": 1720472157.0,
+    "lse_premium": 152506253.0,
+    "cobertura_premium": 0.0886,
+    "dte_min_tape_completo": 3,
+    "polygon_chain": {
+     "contratos_polygon_con_volumen": 2205,
+     "contratos_lse": 3457,
+     "contratos_comunes": 1145,
+     "vol_polygon_total": 957264,
+     "vol_polygon_en_comunes": 257122,
+     "vol_lse_en_comunes": 181018,
+     "cobertura_vol_en_comunes": 0.704,
+     "cobertura_vol_dia_total": 0.1891,
+     "contratos_lse_por_encima_de_polygon": 122,
+     "contratos_0dte_polygon": 460,
+     "vol_0dte_polygon": 692773,
+     "frac_volumen_dia_que_es_0dte": 0.7237,
+     "vol_0dte_visto_por_lse": 0
+    }
+   }
+  }
+ }
+}

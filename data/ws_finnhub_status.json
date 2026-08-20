@@ -1,6 +1,6 @@
 {
- "conectado": false,
- "desde": 1786063329,
+ "conectado": true,
+ "desde": 1786711302,
  "simbolos": [
   "QQQ",
   "SPY",
@@ -42,311 +42,293 @@
  "fuente": "finnhub",
  "nbbo": null,
  "nbbo_motivo": "Finnhub gratis no trae libro: no se escribe nbbo_*",
- "ts": 1786063331,
- "trades": 0,
- "ultimo_trade": 0,
- "error": "ConnectionClosedError: no close frame received or sent",
- "caidas": 452,
- "latido": 1786062602,
- "mudo_s": 1.1,
+ "ts": 1786737744,
+ "trades": 129715,
+ "ultimo_trade": 1786737744,
+ "error": null,
+ "caidas": 0,
+ "latido": 1786737744,
+ "mudo_s": 0.0,
  "mudo": false,
  "rth": false,
- "sesion_s": 1.1,
+ "sesion_s": 26442.5,
  "por_simbolo": {
   "QQQ": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 11070,
+   "ultimo": 1786737744,
+   "px": 730.96,
+   "vol": 977907.0
   },
   "SPY": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 603,
+   "ultimo": 1786737719,
+   "px": 776.12,
+   "vol": 47815.0
   },
   "NVDA": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 8296,
+   "ultimo": 1786737679,
+   "px": 225.0,
+   "vol": 1337614.0
   },
   "TSLA": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 11003,
+   "ultimo": 1786737615,
+   "px": 342.28,
+   "vol": 1186484.0
   },
   "MU": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 6328,
+   "ultimo": 1786737728,
+   "px": 971.66,
+   "vol": 478396.0
   },
   "SMH": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 249,
+   "ultimo": 1786737474,
+   "px": 586.96,
+   "vol": 13119.0
   },
   "AMD": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 3108,
+   "ultimo": 1786737599,
+   "px": 514.48,
+   "vol": 409257.0
   },
   "AAPL": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 6126,
+   "ultimo": 1786737640,
+   "px": 305.79,
+   "vol": 472894.0
   },
   "MSFT": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 3594,
+   "ultimo": 1786737727,
+   "px": 494.8,
+   "vol": 274528.0
   },
   "META": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 2551,
+   "ultimo": 1786737599,
+   "px": 589.76,
+   "vol": 186844.0
   },
   "AMZN": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 4750,
+   "ultimo": 1786737599,
+   "px": 262.64,
+   "vol": 622445.0
   },
   "GOOGL": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 4840,
+   "ultimo": 1786737673,
+   "px": 345.95,
+   "vol": 341378.0
   },
   "INTC": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 10523,
+   "ultimo": 1786737599,
+   "px": 102.53,
+   "vol": 1329531.0
   },
   "TSM": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 141,
+   "ultimo": 1786737595,
+   "px": 426.41,
+   "vol": 7686.0
   },
   "ASML": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 856,
+   "ultimo": 1786737603,
+   "px": 1840.78,
+   "vol": 17350.0
   },
   "TXN": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 727,
+   "ultimo": 1786737627,
+   "px": 280.14,
+   "vol": 81192.0
   },
   "QCOM": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 751,
+   "ultimo": 1786737640,
+   "px": 165.94,
+   "vol": 93814.0
   },
   "AVGO": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 8374,
+   "ultimo": 1786737599,
+   "px": 393.06,
+   "vol": 626214.0
   },
   "NFLX": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 2797,
+   "ultimo": 1786737687,
+   "px": 78.15,
+   "vol": 402311.0
   },
   "NOK": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 674,
+   "ultimo": 1786737598,
+   "px": 10.77,
+   "vol": 258864.0
   },
   "GLD": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 1763,
+   "ultimo": 1786737687,
+   "px": 401.39,
+   "vol": 141639.0
   },
   "XLK": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 947,
+   "ultimo": 1786737730,
+   "px": 190.32,
+   "vol": 116545.0
   },
   "EWY": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 99,
+   "ultimo": 1786737595,
+   "px": 179.74,
+   "vol": 14782.0
   },
   "DRAM": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 10352,
+   "ultimo": 1786737718,
+   "px": 57.34,
+   "vol": 3558990.0
   },
   "SPCX": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 8724,
+   "ultimo": 1786737697,
+   "px": 139.9,
+   "vol": 1245565.0
   },
   "SKHY": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 161,
+   "ultimo": 1786737595,
+   "px": 166.43,
+   "vol": 18159.0
   },
   "LRCX": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 1433,
+   "ultimo": 1786737597,
+   "px": 332.37,
+   "vol": 167830.0
   },
   "SNDK": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 3916,
+   "ultimo": 1786737743,
+   "px": 1646.49,
+   "vol": 281735.0
   },
   "WDC": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 1634,
+   "ultimo": 1786737598,
+   "px": 510.08,
+   "vol": 108859.0
   },
   "STX": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 1024,
+   "ultimo": 1786737598,
+   "px": 973.38,
+   "vol": 61590.0
   },
   "HOOD": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 1525,
+   "ultimo": 1786737599,
+   "px": 95.54,
+   "vol": 201870.0
   },
   "PLTR": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 2669,
+   "ultimo": 1786737599,
+   "px": 174.03,
+   "vol": 363460.0
   },
   "MSTR": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 2576,
+   "ultimo": 1786737599,
+   "px": 93.04,
+   "vol": 358764.0
   },
   "COIN": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 947,
+   "ultimo": 1786737714,
+   "px": 148.0,
+   "vol": 118787.0
   },
   "CRWV": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 3155,
+   "ultimo": 1786737637,
+   "px": 104.63,
+   "vol": 491022.0
   },
   "RKLB": {
-   "n": 0,
-   "ultimo": 0,
-   "px": null,
-   "vol": 0.0
+   "n": 1429,
+   "ultimo": 1786737666,
+   "px": 80.25,
+   "vol": 191143.0
   }
  },
  "print_edad_s": {
-  "QQQ": 13876.7,
-  "SPY": 8983.0,
-  "NVDA": 8375.6,
-  "TSLA": 16243.9,
-  "MU": 16305.1,
-  "SMH": 26134.2,
-  "AMD": 16367.2,
-  "AAPL": 7284.0,
-  "MSFT": 16243.8,
-  "META": 16243.5,
-  "AMZN": 16244.0,
-  "GOOGL": 16305.4,
-  "INTC": 16243.9,
-  "TSM": 16800.0,
-  "ASML": 17595.3,
-  "TXN": 16305.3,
-  "QCOM": 16428.5,
-  "AVGO": 16305.4,
-  "NFLX": 16920.4,
-  "NOK": 16798.4,
-  "GLD": 16366.6,
-  "XLK": 38560.2,
-  "EWY": 16244.3,
-  "DRAM": 25521.3,
-  "SPCX": 15818.2,
-  "SKHY": 16800.0,
-  "LRCX": 16305.6,
-  "SNDK": 16551.4,
-  "WDC": 16367.1,
-  "STX": 16489.8,
-  "HOOD": 16551.3,
-  "PLTR": 16244.0,
-  "MSTR": 16244.2,
-  "COIN": 16982.0,
-  "CRWV": 17226.9,
-  "RKLB": 16920.3
+  "QQQ": 0.1,
+  "SPY": 25.2,
+  "NVDA": 65.5,
+  "TSLA": 129.8,
+  "MU": 15.9,
+  "SMH": 270.7,
+  "AMD": 144.9,
+  "AAPL": 104.7,
+  "MSFT": 17.5,
+  "META": 145.3,
+  "AMZN": 145.2,
+  "GOOGL": 71.5,
+  "INTC": 144.9,
+  "TSM": 149.7,
+  "ASML": 141.3,
+  "TXN": 117.7,
+  "QCOM": 104.3,
+  "AVGO": 144.9,
+  "NFLX": 57.1,
+  "NOK": 145.8,
+  "GLD": 57.0,
+  "XLK": 14.5,
+  "EWY": 149.2,
+  "DRAM": 26.2,
+  "SPCX": 47.5,
+  "SKHY": 149.6,
+  "LRCX": 147.4,
+  "SNDK": 1.2,
+  "WDC": 146.0,
+  "STX": 146.5,
+  "HOOD": 144.8,
+  "PLTR": 144.9,
+  "MSTR": 145.2,
+  "COIN": 29.8,
+  "CRWV": 107.3,
+  "RKLB": 78.2
  },
  "sin_print": [],
  "print_rancio": [
-  "AAPL",
   "AMD",
   "AMZN",
   "ASML",
   "AVGO",
-  "COIN",
-  "CRWV",
-  "DRAM",
   "EWY",
-  "GLD",
-  "GOOGL",
   "HOOD",
   "INTC",
   "LRCX",
   "META",
-  "MSFT",
   "MSTR",
-  "MU",
-  "NFLX",
   "NOK",
-  "NVDA",
   "PLTR",
-  "QCOM",
-  "QQQ",
-  "RKLB",
   "SKHY",
   "SMH",
-  "SNDK",
-  "SPCX",
-  "SPY",
   "STX",
   "TSLA",
   "TSM",
-  "TXN",
-  "WDC",
-  "XLK"
+  "WDC"
  ],
- "pid": 72933,
- "arranque": 1786025034
+ "pid": 52296,
+ "arranque": 1786711302
 }

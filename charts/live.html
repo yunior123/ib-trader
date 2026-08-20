@@ -69,9 +69,27 @@
   #infobar .k { color: #9aa5b8; }
   #infobar .v { color: #d1d4dc; font-weight: 600; }
   .pos { color: #26a69a; } .neg { color: #f23645; } .trans { color: #ffb300; }
+  #h-fuel.fuel-active { color:#ff8c3c; text-shadow:0 0 7px rgba(255,140,60,.8);
+                        animation:fuelPulse .85s ease-in-out infinite; }
+  #h-fuel.fuel-build { color:#ffb300; }
+  #h-fuel.fuel-potential { color:#b58cff; }
+  @keyframes fuelPulse { 0%,100% { opacity:1; } 50% { opacity:.58; } }
+  @media (prefers-reduced-motion: reduce) { #h-fuel.fuel-active { animation:none; } }
   /* dato del cierre anterior, no un tick: gris y en cursiva, se distingue tambien sin color */
   #infobar .v.vstale, #infobar .k.vstale { color:#9aa5b8; font-style:italic; font-weight:600; }
   #infobar .v.vold { color:#e0b13c; font-style:italic; }   /* dato con edad: se dice, no se disfraza */
+  #refreshbar { display:inline-flex; align-items:center; gap:6px; color:#73809a;
+                border-left:1px solid #363a45; padding-left:8px; }
+  #refreshbar.hidden { display:none; }
+  #refreshbar b { color:#8796b3; font-size:9px; font-weight:700; }
+  #refreshbar i { color:#5bc0a8; font-style:normal; font-variant-numeric:tabular-nums; }
+  #h-flip.flip-data { color:#8a96aa; display:inline-block; padding:1px 4px;
+                      border:1px solid #3b4558; border-radius:3px;
+                      background:repeating-linear-gradient(135deg,#242b38 0 4px,#1b202b 4px 8px); }
+  #h-flip.flip-data::before { content:"▦ "; color:#f4c430; opacity:.65;
+                              animation:flipDataLock 1.8s steps(2,end) infinite; }
+  #h-flip.flip-live { color:#f4c430; text-shadow:0 0 7px rgba(244,196,48,.55); }
+  @keyframes flipDataLock { 0%,100% { opacity:.35; } 50% { opacity:.9; } }
   .tgl { background:#20242f; color:#8aa0c8; border:1px solid #333a48; padding: 4px 8px;
          font:inherit; font-weight:700; font-size:11px; cursor:pointer; }
   .tgl:first-child { border-radius:4px 0 0 4px; } .tgl:last-child { border-radius:0 4px 4px 0; border-left:none; }
@@ -105,11 +123,43 @@
   #structpill.hidden { display:none; }
   #structpill.dn { border-color:#f23645; color:#f23645; }
   #structpill.flat { border-color:#8aa0c8; color:#8aa0c8; }
+  #fuelpill { position:absolute; top:38px; left:50%; transform:translateX(-50%); z-index:21;
+              border:1px solid #ff8c3c; color:#ffb45f; background:rgba(40,22,14,.94);
+              border-radius:13px; padding:3px 11px; font-size:11px; font-weight:800;
+              box-shadow:0 0 13px rgba(255,140,60,.35); pointer-events:none;
+              white-space:nowrap; }
+  #fuelpill.hidden { display:none; }
+  #fuelpill.active { animation:fuelPulse .85s ease-in-out infinite; }
+  #fuelpill.build { border-color:#ffb300; color:#ffd166; box-shadow:none; }
+  @media (prefers-reduced-motion: reduce) { #fuelpill.active { animation:none; } }
+  /* Six independent WebKit windows share one GPU process.  Keep all states and colors,
+     but make the default cockpit presentation static so decorative infinite animation
+     cannot monopolize WindowServer/GPU.  Transient popovers and user actions still work. */
+  #h-fuel.fuel-active, #fuelpill.active, #h-flip.flip-data::before,
+  #dirarrow.live.act .halo, #dirarrow.live .glyph::before,
+  #dirarrow.live .glyph::after, .loadspin, .ghspin, .mmfspin {
+    animation:none !important;
+  }
   #nodataBanner { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); z-index:25;
                   background:rgba(20,24,31,.96); border:1px solid #f23645; color:#f23645;
                   border-radius:8px; padding:10px 18px; font-size:14px; font-weight:700;
                   box-shadow:0 2px 12px rgba(0,0,0,.5); pointer-events:none; text-align:center; }
   #nodataBanner.hidden { display:none; }
+  #chartload { position:absolute; top:10px; right:10px; z-index:28; display:flex;
+               align-items:center; gap:6px; padding:4px 7px; border-radius:5px;
+               background:rgba(19,23,34,.92); border:1px solid #3a4b6b; color:#b8c5dc;
+               font-size:9px; font-variant-numeric:tabular-nums; pointer-events:none; }
+  #chartload.hidden { display:none; }
+  .loadspin { width:10px; height:10px; border:2px solid #33405a; border-top-color:#5b8cff;
+              border-radius:50%; animation:loadspin .75s linear infinite; }
+  @keyframes loadspin { to { transform:rotate(360deg); } }
+  #chartfeed { position:absolute; right:9px; bottom:5px; z-index:22; max-width:72%;
+               overflow:hidden; text-overflow:ellipsis; white-space:nowrap; pointer-events:none;
+               color:#78859a; background:rgba(19,23,34,.78); padding:2px 5px; border-radius:3px;
+               font-size:8.5px; font-variant-numeric:tabular-nums; }
+  #chartfeed.live { color:#63bfae; }
+  #chartfeed.connected { color:#64b5f6; }
+  #chartfeed.delayed { color:#d1a84a; }
   #replaybadge { background:#5c1a00; color:#ffb74d; border:2px solid #ff6d00;
                  border-radius:4px; padding:4px 10px; font-weight:800; font-size:12.5px;
                  letter-spacing:.02em; animation:replayblink 1.4s ease-in-out infinite; }
@@ -121,6 +171,25 @@
                  border-radius:4px; padding:4px 10px; font-weight:800; font-size:12.5px;
                  letter-spacing:.02em; }
   #sourcebadge.hidden { display:none; }
+  #providerbtn { order:-1; }
+  #providerpanel { position:absolute; top:42px; right:12px; z-index:90; width:310px;
+                   display:none; background:#151a25; border:1px solid #35415a;
+                   border-radius:8px; padding:8px; box-shadow:0 10px 30px rgba(0,0,0,.65); }
+  #providerpanel.on { display:block; }
+  .pvtitle { color:#d7dfef; font-size:12px; font-weight:700; padding:2px 4px 7px; }
+  .pvgroup { color:#63718a; font-size:9px; font-weight:700; letter-spacing:.08em;
+             text-transform:uppercase; padding:7px 4px 3px; border-top:1px solid #252d3d; }
+  .pvrow { display:grid; grid-template-columns:18px 1fr auto 9px; gap:6px; align-items:center;
+           padding:5px 4px; border-radius:4px; font-size:10px; color:#b9c4d8; }
+  .pvrow:hover { background:#1d2432; }
+  .pvrow small { color:#65718a; font-size:8.5px; }
+  .pvdot { width:7px; height:7px; border-radius:50%; background:#3f4859; }
+  .pvdot.on { background:#25b99a; box-shadow:0 0 6px rgba(37,185,154,.8); }
+  .pvnote { color:#647087; font-size:8.5px; line-height:1.35; padding:6px 4px 2px; }
+  #providerBlocked { position:absolute; inset:0; z-index:24; display:flex; align-items:center;
+                     justify-content:center; text-align:center; padding:30px; background:#131722;
+                     color:#d1a84a; font-size:12px; font-weight:700; }
+  #providerBlocked.hidden { display:none; }
   /* 45s no es nativo IBKR (se agrega 15s×3) — el chart lo dice, nunca lo finge. */
   #aggbadge { background:#1a2a4a; color:#8ab4ff; border:2px solid #2962ff;
               border-radius:4px; padding:4px 10px; font-weight:800; font-size:12.5px;
@@ -150,6 +219,7 @@
   #help h3 { margin:2px 0 8px; font-size:14px; color:#d1d4dc; }
   #help h4 { margin:12px 0 4px; font-size:12px; color:#8aa0c8; text-transform:uppercase; letter-spacing:.4px; }
   #help p { margin:3px 0; color:#b2b5be; }
+  #help.london > :not(.x):not(#londonhelp) { display:none; }
   #help b.gold { color:#ffb300; } #help b.pur { color:#ba68c8; } #help b.yel { color:#f4c430; }
   #help .x { position:absolute; top:8px; right:12px; cursor:pointer; color:#6f8bbf; font-size:16px; }
 
@@ -239,7 +309,7 @@
   #wllist .wlrow .wlast, #wllist .wlrow .wchg, #wllist .wlrow .wvol {
                    text-align:right; font-weight:600; font-size:12px; font-variant-numeric:tabular-nums; }
   #wllist .wlrow .wvol { color:#8a8f9c; }
-  #wllist .wlrow .wperp { text-align:right; font-weight:700; font-size:10px; color:#8ab4ff;
+  #wllist .wlrow .wperp { text-align:right; font-weight:700; font-size:10px; color:#8ab4ff; cursor:pointer;
                    font-variant-numeric:tabular-nums; overflow:hidden; text-overflow:ellipsis;
                    white-space:nowrap; }
   #wllist .wlempty { padding:14px 8px; color:#6b7a99; font-size:12px; }
@@ -248,6 +318,11 @@
   #wllist .wlrow.sel .wvol, #wllist .wlrow.sel .wchg { color:#dbe4ff; }
   #wllist .wlrow .wx { opacity:.45; cursor:pointer; font-weight:400; text-align:center; }
   #wllist .wlrow .wx:hover { opacity:1; color:#f23645; }
+  #wllist .wlrow.lsehit { grid-template-columns:78px 1fr 54px; border-left:2px solid #2962ff; }
+  #wllist .wlrow.lsehit .wlname { overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+                                  color:#9aa5b8; font-size:11px; }
+  #wllist .wlrow.lsehit .wldataset { text-align:right; color:#6f8bbf; font-size:9px;
+                                     text-transform:uppercase; }
 
   /* --- chips inline (alarmas + zonas) en la banda superior del chart --- */
   #chipbar { position:absolute; top:6px; left:8px; max-width:52%; z-index:18;
@@ -543,6 +618,8 @@
             color:#d1d4dc; font:inherit; font-size:12px; padding:5px 8px; border-radius:4px; cursor:pointer; }
   #wgmenu button:hover { background:#2a2e39; }
   #wgmenu button .tick { color:#26a69a; margin-right:5px; }
+  #wgmenu button.wgpanel { color:#e6ebf5; font-weight:700; border-bottom:1px solid #2a3550;
+            border-radius:4px 4px 0 0; margin-bottom:3px; padding-bottom:7px; }
 
   #chart { position: absolute; top: 68px; bottom: 24px; left: 0; right: var(--dockw); }
   footer { position: absolute; bottom: 0; height: 24px; left: 0; right: 0;
@@ -607,6 +684,7 @@
   </div>
   <select id="tfsel" title="Temporalidad. Mismas opciones que la fila de botones (que se oculta en ventana estrecha)."></select>
   <button class="tgl" id="indbtn" title="Indicadores del gráfico: todos opcionales, elige cuáles se dibujan.">ƒ Indicadores</button>
+  <button class="tgl" id="providerbtn" title="Fuentes visibles: chart, heatmap y perpetuos. No cambia el tier real del proveedor.">🛰 Fuentes</button>
   <span id="scopebar" title="0DTE = solo hoy (pin intradía) · ALL = toda la cadena (mapa multi-día). En ALL el flip apenas se mueve pero la Vanna salta.">
     <button class="tgl active" data-scope="0DTE">0DTE</button><button class="tgl" data-scope="ALL">ALL</button>
   </span>
@@ -614,20 +692,21 @@
     <button class="tgl active" data-layer="GEX">GEX</button><button class="tgl" data-layer="VEX">VEX</button><button class="tgl" data-layer="CHARM">CHARM</button>
   </span>
   <span id="charmwhy" class="hidden" title="El charm no se pudo calcular sobre este libro: se dice el motivo en vez de pintar un perfil plano."></span>
-  <span id="bubblebar" title="Muros GEX como hileras de BURBUJAS (además de las líneas). Tamaño+densidad+longitud de la hilera ∝ |gamma| del strike. Color: verde-azulado = PIN (el nivel AGUANTA) · rojo = TRAMPILLA (el precio la ATRAVIESA acelerando — no fadear ahí) · gris ? = sin dato. Anillo = muro absoluto (POC).">
-    <button class="tgl active" id="bubbtn">⚬ Burbujas</button>
+  <span id="bubblebar" title="Muros, imán y gamma flip como ladrillos vivos. Cada contacto distinto consume un grupo; tres tests = agotado (convención visual). Una subida relativa de actividad puede reforzarlo. Ruptura = tres precios consecutivos al otro lado. London conserva Γ×volumen y nunca finge inventario dealer/OI.">
+    <button class="tgl active" id="bubbtn">▦ Ladrillos</button>
   </span>
   <span id="liqbar" title="Capa de LIQUIDEZ: POC de VOLUMEN + VAH/VAL (VPVR 20 sesiones) y niveles KDE por TF. CONTEXTO, NO GATILLO — medido 37,3% vs 36,1% aleatorio (docs/LEVEL-REACT-2026-07-25). Sin voz.">
     <button class="tgl" id="liqbtn">≡ Liquidez</button>
   </span>
   <button id="alarmbtn" title="Alarma manual (estilo TradingView): clic aquí y luego clic en el precio del chart para poner una alarma. Suena sirena+voz al cruzar (price_alarm).">🔔 Alarma</button>
   <button id="zonebtn" title="Preparar BUY/SELL: clic aquí y luego en el trigger. Revisa instrumento, lado, contrato, cantidad, límite, sesión y guardas. FICHA es el destino seguro por defecto; ARMAR exige confirmación humana y doble llave.">🎯 Ticket</button>
-  <button id="wgbtn" class="tgl" style="border-radius:4px;padding:4px 9px" title="Widgets acoplables: Net GEX por strike, Net Premiums, Options Flow. Se arrastran, se pliegan y se expanden — al expandirse el gráfico se ENCOGE, nunca queda tapado.">🧩 Widgets</button>
+  <button id="wgbtn" class="tgl" style="border-radius:4px;padding:4px 9px" aria-haspopup="menu" aria-expanded="false" aria-pressed="true" title="Mostrar u ocultar el panel completo y elegir widgets individuales. La preferencia queda guardada.">🧩 Widgets ▾</button>
   <button id="narrbtn" title="Narrador de mercado (como gexa): lectura breve del mapa GEX. Determinista gratis + DeepSeek bajo demanda (↻).">🗣 Narrador</button>
   <button id="helpbtn" title="¿Qué es cada cosa? (guía)">ℹ Guía</button>
   <span id="conn" class="off">● desconectado</span>
   <span id="swver" title="Versión del software: commit de main que sirve este puente (git, no hardcodeada)" style="color:#6b7a99;font-size:10px;margin-left:6px">v?</span>
 </div>
+<div id="providerpanel" role="dialog" aria-label="Proveedores de datos"></div>
 <!-- fila 2: lectura OHLC de la barra + info GEX -->
 <div id="infobar">
   <div id="ohlc">
@@ -638,16 +717,27 @@
     <span><span class="lab">Vol</span> <span class="val" id="o-v">—</span></span>
   </div>
   <span class="infosep">│</span>
+  <span id="refreshbar" class="hidden" title="Cuenta atrás hasta que el backend vuelve a consultar London Strategic Edge.">
+    <b title="Heatmap">H <i id="r-heat">↻—</i></b><b title="Walls">W <i id="r-walls">↻—</i></b>
+    <b title="Magnet">M <i id="r-magnets">↻—</i></b><b title="Gamma flip (recheck; sin OI)">F <i id="r-flip">↻—</i></b>
+  </span>
   <span><span class="k">VIX</span> <span class="v" id="h-vix" title="Índice de volatilidad (CBOE, vía TWS). CALM <16 · ELEVADO 16-24 · ALTO >24. Vol alta ensancha rangos y hace los días de gamma negativa más violentos.">—</span></span>
   <span class="v" id="h-dte" title="Vencimiento del mapa GEX. 0DTE = solo hoy (batalla intradía, pin/rechazo). NDTE = vencimiento más cercano. Como gexa." style="color:#f4c430">—</span>
-  <span><span class="k">régimen</span> <span class="v" id="h-reg">—</span><span class="info" title="POSITIVO (arriba del flip): dealers amortiguan → rango, dips comprados. NEGATIVO (abajo): amplifican → tendencia, no fadear. TRANSICIÓN (±0.12% del flip): inestable, no operar direccional.">i</span></span>
-  <span><span class="k">net GEX</span> <span class="v" id="h-gex">—</span><span class="info" title="Gamma total del dealer en $/1%. Positivo = libro largo gamma (amortigua). Negativo = corto gamma (amplifica). Es la suma cuyo cruce por cero define el flip.">i</span></span>
-  <span><span class="k">flip</span> <span class="v" id="h-flip">—</span><span class="info" title="Gamma-flip: precio donde el libro del dealer cambia de signo. Arriba = régimen +Γ (amortigua), abajo = −Γ (amplifica). Nivel estructural: se recomputa ~15s, no salta por tick.">i</span></span>
-  <span><span class="k">CW</span> <span class="v" id="h-cw">—</span><span class="info" title="Call wall: strike de mayor gamma+ de calls arriba = techo (dealers venden acciones al acercarse). Junto con PW define el rango esperado.">i</span></span>
-  <span><span class="k">PW</span> <span class="v" id="h-pw">—</span><span class="info" title="Put wall: strike de mayor gamma de puts abajo = piso (dealers compran al acercarse). En régimen negativo puede ser un ACELERADOR (morado), no un soporte real.">i</span></span>
-  <span><span class="k">Vanna</span> <span class="v" id="h-vex">—</span><span class="info" title="Vanna exposure (VEX): cuánto delta ajustan los dealers por cada punto de IV. Combustible de vol: positivo = melt-up (compran al caer IV), negativo = caída. Salta en ALL-EXP (posicionamiento de vencimientos lejanos).">i</span></span>
-  <span><span class="k">Charm/d</span> <span class="v" id="h-charm">—</span><span class="info" title="Charm exposure por DÍA (∂delta/∂t · OI, escala $/1%): cuánto delta tienen que recomprar/vender los dealers solo por el paso del tiempo. Es el motor del DRIFT y del PIN de la tarde (13:30-15:45). Positivo = arrastre al alza hacia el strike; negativo = arrastre a la baja. A 0DTE explota: por eso se lee por día, no por año.">i</span></span>
-  <span><span class="k">Pressure</span> <span class="v" id="h-press">—</span><span class="info" title="Dealer Pressure −100..+100 (gamma 80% + vanna 20%). Positivo = dealers PINEAN (rango, dips comprados). Negativo = AMPLIFICAN (moves corren). Cerca del flip se degrada (inestable). Régimen, no dirección.">i</span></span>
+  <span><span class="k">régimen</span> <span class="v" id="h-reg">—</span><span class="info" id="h-reg-info" title="POSITIVO (arriba del flip): dealers amortiguan → rango, dips comprados. NEGATIVO (abajo): amplifican → tendencia, no fadear. TRANSICIÓN (±0.12% del flip): inestable, no operar direccional.">i</span></span>
+  <span id="h-fuel-wrap"><span class="k">FUEL ↑</span> <span class="v" id="h-fuel">DATA</span><span class="info" id="h-fuel-info" title="Combina velocidad alcista London con la escalera de gamma OI de calls Polygon sobre el spot. No confirma short covering de acciones.">i</span></span>
+  <span><span class="k" id="h-gex-label">net GEX</span> <span class="v" id="h-gex">—</span><span class="info" id="h-gex-info" title="Gamma total del dealer en $/1%. Positivo = libro largo gamma (amortigua). Negativo = corto gamma (amplifica). Es la suma cuyo cruce por cero define el flip.">i</span></span>
+  <span><span class="k" id="h-flip-label">flip</span> <span class="v" id="h-flip">—</span><span class="info" id="h-flip-info" title="Gamma-flip: precio donde el libro del dealer cambia de signo. Arriba = régimen +Γ (amortigua), abajo = −Γ (amplifica). Nivel estructural: se recomputa ~15s, no salta por tick.">i</span></span>
+  <span><span class="k">A-FLIP</span> <span class="v" id="h-aflip">—</span><span class="info" id="h-aflip-info" title="Cruce descriptivo de gamma×volume_today recalculada a distintos spots. No es gamma flip dealer ni usa OI.">i</span></span>
+  <span><span class="k">CW</span> <span class="v" id="h-cw">—</span><span class="info" id="h-cw-info" title="Call wall: strike de mayor gamma+ de calls arriba = techo (dealers venden acciones al acercarse). Junto con PW define el rango esperado.">i</span></span>
+  <span><span class="k">PW</span> <span class="v" id="h-pw">—</span><span class="info" id="h-pw-info" title="Put wall: strike de mayor gamma de puts abajo = piso (dealers compran al acercarse). En régimen negativo puede ser un ACELERADOR (morado), no un soporte real.">i</span></span>
+  <span id="h-dnd-wrap"><span class="k">DN·D VOL</span> <span class="v" id="h-dnd">—</span><span class="info" id="h-dnd-info" title="Dealer-neutral activity diaria: proxy London del vencimiento activo más cercano. No es Net Dealer ni inventario market-maker.">i</span></span>
+  <span id="h-dnw-wrap"><span class="k">DN·W VOL</span> <span class="v" id="h-dnw">—</span><span class="info" id="h-dnw-info" title="Dealer-neutral activity semanal: proxy London del viernes estándar. No es Net Dealer ni inventario market-maker.">i</span></span>
+  <span id="h-mmd-wrap"><span class="k">MM$·D VOL</span> <span class="v" id="h-mmd">—</span><span class="info" id="h-mmd-info" title="Payout mínimo ponderado por volume_today del vencimiento activo más cercano. No es PML propietario ni max pain por OI.">i</span></span>
+  <span id="h-mmw-wrap"><span class="k">MM$·W VOL</span> <span class="v" id="h-mmw">—</span><span class="info" id="h-mmw-info" title="Payout mínimo ponderado por volume_today del viernes estándar. No es PML propietario ni max pain por OI.">i</span></span>
+  <span><span class="k" id="h-vex-label">Vanna</span> <span class="v" id="h-vex">—</span><span class="info" id="h-vex-info" title="Vanna exposure (VEX): cuánto delta ajustan los dealers por cada punto de IV. Combustible de vol: positivo = melt-up (compran al caer IV), negativo = caída. Salta en ALL-EXP (posicionamiento de vencimientos lejanos).">i</span></span>
+  <span><span class="k" id="h-charm-label">Charm/d</span> <span class="v" id="h-charm">—</span><span class="info" id="h-charm-info" title="Charm exposure por DÍA (∂delta/∂t · OI, escala $/1%): cuánto delta tienen que recomprar/vender los dealers solo por el paso del tiempo. Es el motor del DRIFT y del PIN de la tarde (13:30-15:45). Positivo = arrastre al alza hacia el strike; negativo = arrastre a la baja. A 0DTE explota: por eso se lee por día, no por año.">i</span></span>
+  <span><span class="k" id="h-press-label">Pressure</span> <span class="v" id="h-press">—</span><span class="info" id="h-press-info" title="Dealer Pressure −100..+100 (gamma 80% + vanna 20%). Positivo = dealers PINEAN (rango, dips comprados). Negativo = AMPLIFICAN (moves corren). Cerca del flip se degrada (inestable). Régimen, no dirección.">i</span></span>
+  <span><span class="k">REV 3</span> <span class="v" id="h-rev">—</span><span class="info" id="h-rev-info" title="Order-flow reversal: value + 2 de 3 patrones (absorción, cambio de Delta, imbalance Bid×Ask).">i</span></span>
   <span><span class="k">EM</span> <span class="v" id="h-em" title="Expected move ±1σ = spot·IV·√T. Rango esperado hasta el vencimiento (líneas cian punteadas en el chart).">—</span></span>
   <span class="k" id="h-asof"></span>
   <span class="v" id="h-age" title="Edad de la última vela recibida: si supera 2 min, el precio en pantalla NO es actual."></span>
@@ -660,6 +750,18 @@
 </div>
 <div id="help">
   <span class="x" id="helpx">✕</span>
+  <div id="londonhelp" class="hidden">
+    <h3>Guía — London + Architect</h3>
+    <p><b style="color:#26a69a">CW verde-azulado</b> = pico de actividad gamma×volumen de calls arriba del spot.</p>
+    <p><b style="color:#ef5350">PW rojo</b> = pico de actividad gamma×volumen de puts debajo del spot.</p>
+    <p><b class="gold">MAG dorado</b> = mayor |gamma×volumen|. Son actividad negociada, no inventario dealer.</p>
+    <p>Verde/rojo en el heatmap significa calls/puts. Sin OI no existen Net GEX ni gamma flip honestos.</p>
+    <p><b>ARCH</b> combina Γ×volumen, Δ×volumen y premium. RR25, Vanna y Charm se muestran aparte; el umbral ±20 sigue sin validar.</p>
+    <p><b style="color:#00bcd4">DN·D VOL cian</b> y <b style="color:#42a5f5">DN·W VOL azul</b> = neutralidad linealizada de actividad para el vencimiento activo más cercano y el viernes estándar: Sref ponderado por Gamma×vol − Σ(Delta×vol)/Σ(Gamma×vol). <b>No son Net Dealer.</b></p>
+    <p><b style="color:#ff7043">MM$·D VOL naranja</b> y <b style="color:#ec407a">MM$·W VOL rosa</b> = strikes que minimizan payout terminal ponderado por volume_today para esas expiraciones. <b>No son PML propietario ni max pain de OI.</b> El precio relativo cambia por WebSocket LSE; los niveles de opciones se reajustan cada 5 minutos.</p>
+    <p><b>REV 3</b> exige una zona de valor y 2/3 patrones reales: absorción, cambio de Delta e imbalance Bid×Ask. LSE no entrega ejecuciones Bid×Ask, por eso muestra DATA y no finge un giro.</p>
+    <p><b style="color:#ff8c3c">FUEL ↑</b> se enciende cuando London confirma impulso alcista de 1/5 minutos y el libro Polygon muestra una escalera relevante de gamma OI de calls arriba, o el precio sigue en la zona −Γ bajo el flip. El porcentaje es participación de convexidad, <b>no probabilidad</b>. Short interest/borrow permanece DATA: no se llama short covering sin esa fuente.</p>
+  </div>
   <h3>Guía — leer la estructura de dealers</h3>
   <p><b>Idea central:</b> los market makers no eligen — su gamma los OBLIGA a cubrirse. El mapa dibuja esos flujos forzados. Se opera CON la corriente, no contra ella.</p>
   <h4>Código de color</h4>
@@ -674,13 +776,10 @@
   <p><b>POC</b> = strike de mayor |gamma| = máxima influencia. Oro (imán) → operar hacia él. Morado (acelerador) → bifurcación: ±10pt NO direccional, esperar 2 velas. <b>%C/%P</b> = dominancia call/put del nodo.</p>
   <p><b>Call/Put wall</b> = techo/piso = rango esperado. Muros que ruedan = señal direccional (call wall baja = bajista; put wall sube = alcista).</p>
   <p><b>Air pocket</b> = tramo sin imanes, nada frena la caída. <b>Gatekeeper</b> = acelerador morado que bloquea el camino: no operar a través.</p>
-  <h4>Burbujas — PIN vs TRAMPILLA (chip <b>⚬ Burbujas</b>)</h4>
-  <p>Cada muro se pinta también como una <b>hilera de círculos</b> (además de su línea). Es un modo de VISUALIZACIÓN de los muros que ya calculamos, no un indicador nuevo — cero cómputo extra.</p>
-  <p><b>Tamaño · densidad · longitud</b> de la hilera ∝ <b>|gamma| del strike</b> normalizado al máximo del perfil. Bolas grandes, tupidas y una fila que cruza el pane = muro gordo. Bolas chicas y sueltas = muro flojo.</p>
-  <p><b style="color:#26d0b0">VERDE-AZULADO = PIN</b>: el nivel cae del lado <b>+Γ</b> del flip → dealers amortiguan, el muro <b>AGUANTA</b>. Ahí el fade tiene sentido: operar hacia el nivel y esperar el rechazo impreso.</p>
-  <p><b style="color:#ff5252">ROJO = TRAMPILLA</b>: el nivel cae del lado <b>−Γ</b> → dealers amplifican, el precio lo <b>ATRAVIESA acelerando</b>. <b>Prohibido fadear contra una trampilla</b> — es el error que la doctrina veta (whipsaw de gamma negativa). Se opera la ruptura, no el rebote.</p>
-  <p><b style="color:#90a4ae">GRIS "?"</b>: el dato de tipo no llegó (mapa viejo o sin flip). No se inventa un pin: se admite que no se sabe.</p>
-  <p><b>Anillo</b> alrededor de las bolas = <b>muro absoluto (POC)</b>, el nodo de máxima influencia. Amarillo = gamma-flip.</p>
+  <h4>Ladrillos vivos (chip <b>▦ Ladrillos</b>)</h4>
+  <p><b style="color:#26a69a">CW verde-azulado</b>, <b style="color:#ef5350">PW rojo</b>, <b style="color:#ffb300">MAG dorado</b>, <b style="color:#ff8c3c">A-FLIP naranja</b> y <b class="yel">FLIP amarillo</b> conservan sus colores. Los carriles se separan cuando dos niveles coinciden.</p>
+  <p>Cada entrada del precio en la zona consume un grupo de ladrillos; exige salir y volver a entrar, además de un cooldown, para no contar cada tick como un golpe. Tres precios consecutivos al otro lado confirman <b>ROTO</b>. Una subida relativa ≥10% de la actividad del nodo restaura un grupo como <b>REFUERZO</b>.</p>
+  <p><b>Fresh → Tested → Weakening → Exhausted → Broken</b> es una convención visual de auditoría, no probabilidad ni backtest. En London CW/PW/MAG miden contactos + Γ×volumen. <b>A-FLIP</b> es el cruce descriptivo de actividad; <b>FLIP</b> sólo aparece cuando el overlay Polygon trae OI+IV completo y produce un zero-crossing repreciado con el spot London.</p>
   <h4>Ciclo del nodo</h4>
   <p>Fresh (0 toques, máximo) → Tested (1) → Weakening (2) → Dead (3+, evitar). <b>1er toque &gt; retests.</b> Gamma creciendo = fortalece; cayendo = pierde fuerza.</p>
   <h4>Combo_tl en el chart</h4>
@@ -719,7 +818,11 @@
 </div>
 <div id="chart">
   <div id="structpill" class="hidden"></div>
+  <div id="fuelpill" class="hidden"></div>
   <div id="nodataBanner" class="hidden"></div>
+  <div id="providerBlocked" class="hidden"></div>
+  <div id="chartload" class="hidden"><span class="loadspin"></span><span id="chartloadtxt">Cargando…</span></div>
+  <div id="chartfeed" title="Procedencia y transporte del dato dibujado">esperando feed…</div>
   <div id="chipbar"></div>
   <div id="dirarrow"><div class="halo"></div><div class="glyph"></div><div class="pct"></div><div class="ampbar"><i></i><i></i><i></i></div><div class="tgt"></div><div class="st"></div><div class="bq"></div><div class="drv"></div><div class="cap"></div></div>
   <div id="countdown"></div>
@@ -774,8 +877,20 @@
      nueva). Los otros dos están VACÍOS Y ROTULADOS: el dato que necesitan no existe
      todavía. Rellenarlos con demo sería exactamente el fallo que llevamos todo el día
      matando (el cero plausible), así que se quedan vacíos y dicen por qué. -->
-<div id="wgmenu"></div>
+<div id="wgmenu" role="menu" aria-label="Widgets opcionales"></div>
 <div id="wdock" class="off">
+
+  <div class="wgt" id="wgt-mmfractal">
+    <div class="wghdr">
+      <span class="wgdrag">⠿⠿</span><span class="wgname">MM Fractal · LSE</span><button class="wginfo" title="Info" data-widget="mmfractal" aria-label="Información sobre MM Fractal LSE">ⓘ</button><div class="popover-box" data-widget="mmfractal"><div class="popover-title">OMM / DMM Fractal · LSE</div><p><strong>Qué mide:</strong> techo, piso, green line y PML derivados de la actividad gamma×volumen de London. OMM congela el dead zone overnight como pivote; DMM actualiza el dead zone posterior a 09:45 ET como imán.</p><div class="popover-source"><strong>Fuente:</strong> exclusivamente London Strategic Edge. La fórmula sustituta está publicada en el pie del widget.</div><div class="popover-doctrine"><strong>Guarda:</strong> conserva la geometría pública del ejemplo; no reproduce la fórmula propietaria de Russell Capital Group ni afirma inventario dealer.</div></div>
+      <span class="wgsub">LSE · esperando</span>
+      <button class="wgb wgexp" title="Expandir / contraer">⤢</button>
+      <button class="wgb wgmin" title="Plegar">–</button>
+      <button class="wgb wgx" title="Cerrar">✕</button>
+    </div>
+    <div class="wgbody"></div>
+    <div class="wgrs" title="Arrastra para cambiar la altura"></div>
+  </div>
 
   <!-- Net GEX Heat Map (Yunior 2026-08-05): EL widget por defecto del panel derecho.
        Matriz strike x vencimiento estilo Exposure; lo pinta charts/gex_heatmap_widget.js
@@ -992,12 +1107,83 @@
 <script src="lightweight-charts-v5.js"></script>
 <script src="order_ticket_ui.js"></script>
 <script src="indicator_panel.js"></script>
+<script src="orderflow_panel.js"></script>
 <script src="uw_widgets.js"></script>
-<script src="gex_heatmap_widget.js"></script>
+<script src="gex_heatmap_widget.js?v=28-lse-ws-options"></script>
+<script src="mm_fractal_widget.js?v=23-lse-only"></script>
 <script>
 "use strict";
 const LWC = window.LightweightCharts;
 const { CandlestickSeries, LineSeries, HistogramSeries, LineStyle } = LWC;
+
+// Fuentes VISIBLES, no selector mágico del daemon. El backend decide qué feed está disponible;
+// estos checks permiten ocultar su capa y muestran protocolo/actividad sin mentir sobre el tier.
+const PROVIDERS = [
+  {k:"ibkr", n:"IBKR", proto:"WebSocket", g:"Chart"},
+  {k:"finnhub", n:"Finnhub", proto:"WebSocket", g:"Chart"},
+  {k:"intrinio", n:"Intrinio", proto:"REST delayed", g:"Chart"},
+  {k:"uw", n:"Unusual Whales", proto:"REST snapshot", g:"Heatmap"},
+  {k:"polygon", n:"Polygon", proto:"REST 15 min", g:"Heatmap"},
+  {k:"chain_local", n:"Cadena local", proto:"file cache", g:"Heatmap"},
+  {k:"okx", n:"OKX perps", proto:"WebSocket", g:"Perpetuos"},
+  {k:"bybit", n:"Bybit perps", proto:"WebSocket", g:"Perpetuos"},
+  {k:"lse", n:"London Strategic Edge", proto:"REST + WebSocket", g:"Chart"},
+];
+const PV_DEF = Object.fromEntries(PROVIDERS.map(p => [p.k, true]));
+let PV = {...PV_DEF}, PV_ACTIVE = {};
+try { PV = {...PV_DEF, ...(JSON.parse(localStorage.getItem("providerDisplay_v1") || "null") || {})}; } catch (e) {}
+function providerKey(src) {
+  const s = String(src || "").toLowerCase().replaceAll("_", "-");
+  if (s.includes("ibkr")) return "ibkr";
+  if (s.includes("finnhub")) return "finnhub";
+  if (s.includes("intrinio")) return "intrinio";
+  if (s === "uw" || s.includes("unusual")) return "uw";
+  if (s.includes("polygon")) return "polygon";
+  if (s.includes("chain-local") || s.includes("cadena")) return "chain_local";
+  if (s.includes("okx")) return "okx";
+  if (s.includes("bybit")) return "bybit";
+  if (s.includes("lse") || s.includes("london")) return "lse";
+  return null;
+}
+function providerEnabled(src) { const k = providerKey(src); return k == null || PV[k] !== false; }
+window.providerEnabled = providerEnabled;
+function renderProviderPanel() {
+  const p = document.getElementById("providerpanel"); if (!p) return;
+  const londonOnly = Boolean(window.chartIsLondonOnly && window.chartIsLondonOnly());
+  let g = null, h = '<div class="pvtitle">🛰 Proveedores visibles</div>';
+  for (const x of PROVIDERS) {
+    if (londonOnly && x.k !== "lse") continue;
+    if (x.g !== g) { g=x.g; h += `<div class="pvgroup">${g}</div>`; }
+    h += `<label class="pvrow"><input type="checkbox" data-pv="${x.k}" ${PV[x.k] ? "checked" : ""}>`
+      + `<span>${x.n}</span><small>${x.proto}</small><i class="pvdot ${PV_ACTIVE[x.k] ? "on" : ""}"></i></label>`;
+  }
+  h += `<div class="pvnote">${londonOnly ? "Modo London-only: chart, WebSocket y opciones usan LSE." : "El punto verde indica una fuente observada en esta sesión. Desmarcar oculta su capa; no altera ni mejora su latencia."}</div>`;
+  p.innerHTML = h;
+  p.querySelectorAll("input[data-pv]").forEach(c => c.addEventListener("change", () => {
+    PV[c.dataset.pv] = c.checked;
+    try { localStorage.setItem("providerDisplay_v1", JSON.stringify(PV)); } catch (e) {}
+    applyProviderFilters(true); renderProviderPanel();
+  }));
+}
+function providerMark(src) {
+  const k = providerKey(src); if (!k || PV_ACTIVE[k]) return;
+  PV_ACTIVE[k] = true; renderProviderPanel();
+}
+window.providerMark = providerMark;
+function applyProviderFilters(refreshHeatmap=false) {
+  const b = document.getElementById("providerBlocked");
+  if (b && lastChartFeed && !providerEnabled(lastChartFeed.provider)) {
+    b.textContent = `Fuente ${lastChartFeed.provider} ocultada en 🛰 Fuentes`;
+    b.classList.remove("hidden");
+  } else if (b) b.classList.add("hidden");
+  if (typeof renderWatchlist === "function") renderWatchlist();
+  if (refreshHeatmap && window.gexHeatRefresh) window.gexHeatRefresh();
+}
+const providerBtn = document.getElementById("providerbtn"), providerPanel = document.getElementById("providerpanel");
+providerBtn?.addEventListener("click", e => { e.stopPropagation(); providerPanel?.classList.toggle("on"); });
+providerPanel?.addEventListener("click", e => e.stopPropagation());
+document.addEventListener("click", () => providerPanel?.classList.remove("on"));
+renderProviderPanel();
 
 // ---------------------------------------------------------------- chart / panes
 // hora de Toronto (America/Toronto, DST automático) — LWC renderiza en UTC por defecto
@@ -1027,10 +1213,44 @@ const chart = LWC.createChart(el, {
 // ================== INDICADORES OPCIONALES (Yunior 2026-08-06) ==================
 // "all indicators should be optional": estado por navegador; panel ƒ + leyenda al final
 // del script. indOn() vive aqui porque los guards de abajo lo usan.
+// netprem pasa a false (Yunior 2026-08-08: "remove 3 lines from panel in chart bottom that are
+// empty by default, only should appear if selected") — era el UNICO true y sus 3 lineas (call,
+// put, neta) ocupaban el pane inferior aunque no hubiera dato.
 const IND_DEF = { volume:false, ribbon:false, bb:false, smas:false, vwap:false, supertrend:false,
-                  targettrend:false, trendlines:false, macd:false, netprem:true, whales:false };
+                  targettrend:false, trendlines:false, macd:false, rsi:false,
+                  rsi_divergence:false, netprem:false, whales:false, footprint:false,
+                  dealer_net_daily:false, dealer_net_weekly:false,
+                  mm_top_profit_daily:false, mm_top_profit_weekly:false };
 let IND = { ...IND_DEF };
 try { const _is = JSON.parse(localStorage.getItem("indPanel_v1") || "null"); if (_is) IND = { ...IND_DEF, ..._is }; } catch (e) {}
+// el localStorage de quien ya lo tenia encendido conservaria netprem:true para siempre; se apaga
+// UNA vez y se marca, para que el que lo encienda a mano despues siga mandando.
+try {
+  if (!localStorage.getItem("indPanel_netpremOff_v1")) {
+    IND.netprem = false;
+    localStorage.setItem("indPanel_netpremOff_v1", "1");
+    localStorage.setItem("indPanel_v1", JSON.stringify(IND));
+  }
+} catch (e) {}
+// v25 initially enabled the two Milk/RCG-inspired proxies. They are context overlays,
+// so migrate existing browsers to OFF once; after that the user's checkbox choice wins.
+try {
+  if (!localStorage.getItem("indPanel_milkProxiesOptional_v1")) {
+    IND.weekly_dealer_net = false; IND.mm_top_profit = false;
+    localStorage.setItem("indPanel_milkProxiesOptional_v1", "1");
+    localStorage.setItem("indPanel_v1", JSON.stringify(IND));
+  }
+} catch (e) {}
+// Preserve an explicit old weekly choice while moving to four day/week switches.
+try {
+  if (!localStorage.getItem("indPanel_dailyWeeklyProxies_v1")) {
+    if (IND.weekly_dealer_net === true) IND.dealer_net_weekly = true;
+    if (IND.mm_top_profit === true) IND.mm_top_profit_weekly = true;
+    delete IND.weekly_dealer_net; delete IND.mm_top_profit;
+    localStorage.setItem("indPanel_dailyWeeklyProxies_v1", "1");
+    localStorage.setItem("indPanel_v1", JSON.stringify(IND));
+  }
+} catch (e) {}
 const indOn = k => !!IND[k];
 
 // Madrid Ribbon (combo_tl ④): 18 EMAs (5..90) con COLOR POR PUNTO (LineData.color).
@@ -1116,7 +1336,8 @@ const S = {
 // marcadores Buy/Sell del Supertrend (v5: createSeriesMarkers)
 let stMarkersApi = null;
 try { stMarkersApi = LWC.createSeriesMarkers(candle, []); } catch (e) { stMarkersApi = null; }
-let curStMarkers = [], sigMarkers = [], engineOps = [], curTtMarkers = [], curWhaleMarkers = [];
+let curStMarkers = [], sigMarkers = [], engineOps = [], curTtMarkers = [], curWhaleMarkers = [],
+    curRsiDivMarkers = [];
 // RACIMOS: en NVDA/MU las señales del día se apilan en bolas que TAPAN LAS VELAS. Se agrupan
 // por barra+lado (y las rachas de <=2 barras se juntan) en UN marcador con contador; el
 // tooltip mantiene el detalle. No se descarta ninguna señal: se cuentan.
@@ -1205,33 +1426,93 @@ function applyMarkers() {
   } catch (e) {}
 }
 
-// pane 1: volumen (fino)
-const volS = chart.addSeries(HistogramSeries, {
-  priceFormat: { type: "volume" }, priceScaleId: "", lastValueVisible: false,
-}, 1);
-volS.priceScale().applyOptions({ scaleMargins: { top: 0.8, bottom: 0 } });
+// Los panes opcionales NO se crean al arrancar. Lightweight Charts conserva el separador de
+// un pane aunque setHeight(0), que dejaba cuatro/cinco franjas vacías abajo. Se crean al
+// marcar el indicador y se destruyen al apagarlo; el chart inicial contiene solo velas.
+let volS = null, macdHist = null, macdLine = null, macdSig = null;
+let npCall = null, npPut = null, npNet = null;
+let rsiLine = null, rsi70 = null, rsi30 = null, rsiDivLine = null, rsiDivZero = null;
 
-// pane 2: MACD (línea + señal + histograma) — pequeño
-const macdHist = chart.addSeries(HistogramSeries, { priceFormat:{type:"price",precision:3,minMove:0.001}, lastValueVisible:false }, 2);
-const macdLine = chart.addSeries(LineSeries, { color:"#2962ff", lineWidth:1, priceLineVisible:false, lastValueVisible:true, title:"MACD", crosshairMarkerVisible:false }, 2);
-const macdSig  = chart.addSeries(LineSeries, { color:"#ff9800", lineWidth:1, priceLineVisible:false, lastValueVisible:true, title:"Señal", crosshairMarkerVisible:false }, 2);
-// NET PREMIUM estilo QuantData (pane 3): verde=cum calls, rojo=cum puts, blanco=neto firmado.
 const npFmt = { type:"custom", minMove:1, formatter: v => (Math.abs(v)>=1e6 ? (v/1e6).toFixed(1)+"M" : (v/1e3).toFixed(0)+"k") };
-const npCall = chart.addSeries(LineSeries, { color:"#26a69a", lineWidth:2, priceFormat:npFmt, priceLineVisible:false, lastValueVisible:true,  crosshairMarkerVisible:true }, 3);
-const npPut  = chart.addSeries(LineSeries, { color:"#ef5350", lineWidth:2, priceFormat:npFmt, priceLineVisible:false, lastValueVisible:true,  crosshairMarkerVisible:true }, 3);
-const npNet  = chart.addSeries(LineSeries, { color:"#e0e0e0", lineWidth:1, lineStyle:1, priceFormat:npFmt, priceLineVisible:false, lastValueVisible:false, crosshairMarkerVisible:false }, 3);
+const rsiFmt = { type:"price", precision:1, minMove:0.1 };
+let lastNetprem = null;
+
+function optionalPaneIndex() { return chart.panes().length; }
+function ensureOptionalPane(k) {
+  const pane = optionalPaneIndex();
+  if (k === "volume" && !volS) {
+    volS = chart.addSeries(HistogramSeries, {
+      priceFormat:{type:"volume"}, priceScaleId:"", lastValueVisible:false,
+    }, pane);
+    volS.priceScale().applyOptions({scaleMargins:{top:0.8,bottom:0}});
+    chart.panes()[pane].setHeight(80);
+  } else if (k === "macd" && !macdHist) {
+    macdHist = chart.addSeries(HistogramSeries, {priceFormat:{type:"price",precision:3,minMove:0.001},lastValueVisible:false}, pane);
+    macdLine = chart.addSeries(LineSeries, {color:"#2962ff",lineWidth:1,priceLineVisible:false,lastValueVisible:true,title:"MACD",crosshairMarkerVisible:false}, pane);
+    macdSig = chart.addSeries(LineSeries, {color:"#ff9800",lineWidth:1,priceLineVisible:false,lastValueVisible:true,title:"Señal",crosshairMarkerVisible:false}, pane);
+    chart.panes()[pane].setHeight(120);
+  } else if (k === "netprem" && !npCall) {
+    npCall = chart.addSeries(LineSeries, {color:"#26a69a",lineWidth:2,priceFormat:npFmt,priceLineVisible:false,lastValueVisible:true,crosshairMarkerVisible:true}, pane);
+    npPut = chart.addSeries(LineSeries, {color:"#ef5350",lineWidth:2,priceFormat:npFmt,priceLineVisible:false,lastValueVisible:true,crosshairMarkerVisible:true}, pane);
+    npNet = chart.addSeries(LineSeries, {color:"#e0e0e0",lineWidth:1,lineStyle:1,priceFormat:npFmt,priceLineVisible:false,lastValueVisible:false,crosshairMarkerVisible:false}, pane);
+    chart.panes()[pane].setHeight(110);
+  } else if (k === "rsi" && !rsiLine) {
+    rsiLine = chart.addSeries(LineSeries, {color:"#ab47bc",lineWidth:2,priceFormat:rsiFmt,priceLineVisible:false,lastValueVisible:true,title:"RSI 14",crosshairMarkerVisible:true}, pane);
+    rsi70 = chart.addSeries(LineSeries, {color:"rgba(239,83,80,.7)",lineWidth:1,lineStyle:LineStyle.Dashed,priceFormat:rsiFmt,priceLineVisible:false,lastValueVisible:false,crosshairMarkerVisible:false}, pane);
+    rsi30 = chart.addSeries(LineSeries, {color:"rgba(38,166,154,.7)",lineWidth:1,lineStyle:LineStyle.Dashed,priceFormat:rsiFmt,priceLineVisible:false,lastValueVisible:false,crosshairMarkerVisible:false}, pane);
+    rsiLine.priceScale().applyOptions({autoScale:true,scaleMargins:{top:0.08,bottom:0.08}});
+    chart.panes()[pane].setHeight(120);
+  } else if (k === "rsi_divergence" && !rsiDivLine) {
+    rsiDivLine = chart.addSeries(LineSeries, {color:"#00c853",lineWidth:2,priceFormat:rsiFmt,priceLineVisible:false,lastValueVisible:true,title:"RSI 5−14",crosshairMarkerVisible:true}, pane);
+    rsiDivZero = chart.addSeries(LineSeries, {color:"rgba(138,148,168,.7)",lineWidth:1,lineStyle:LineStyle.Dashed,priceFormat:rsiFmt,priceLineVisible:false,lastValueVisible:false,crosshairMarkerVisible:false}, pane);
+    rsiDivLine.priceScale().applyOptions({autoScale:true,scaleMargins:{top:0.12,bottom:0.12}});
+    chart.panes()[pane].setHeight(105);
+  }
+}
+function removeOptionalPane(k) {
+  const names = k === "volume" ? ["volS"] : k === "macd" ? ["macdHist","macdLine","macdSig"]
+    : k === "netprem" ? ["npCall","npPut","npNet"] : k === "rsi" ? ["rsiLine","rsi70","rsi30"]
+    : ["rsiDivLine","rsiDivZero"];
+  for (const name of names) {
+    const s = ({volS,macdHist,macdLine,macdSig,npCall,npPut,npNet,rsiLine,rsi70,rsi30,rsiDivLine,rsiDivZero})[name];
+    if (s) { try { chart.removeSeries(s); } catch (e) {} }
+    if (name === "volS") volS=null; else if (name === "macdHist") macdHist=null;
+    else if (name === "macdLine") macdLine=null; else if (name === "macdSig") macdSig=null;
+    else if (name === "npCall") npCall=null; else if (name === "npPut") npPut=null; else if (name === "npNet") npNet=null;
+    else if (name === "rsiLine") rsiLine=null; else if (name === "rsi70") rsi70=null; else if (name === "rsi30") rsi30=null;
+    else if (name === "rsiDivLine") rsiDivLine=null; else if (name === "rsiDivZero") rsiDivZero=null;
+  }
+}
+function syncOptionalPanes() {
+  for (const k of ["volume","macd","netprem","rsi","rsi_divergence"])
+    if (indOn(k)) ensureOptionalPane(k); else removeOptionalPane(k);
+}
+function hydrateOptionalPanes(ind) {
+  if (!ind) return;
+  if (volS) volS.setData(ind.volume || []);
+  if (macdHist) { macdHist.setData(ind.hist || []); macdLine.setData(ind.macd || []); macdSig.setData(ind.signal || []); }
+  if (rsiLine) {
+    rsiLine.setData(ind.rsi || []);
+    rsi70.setData((ind.rsi || []).map(p => ({time:p.time,value:70})));
+    rsi30.setData((ind.rsi || []).map(p => ({time:p.time,value:30})));
+  }
+  if (rsiDivLine) {
+    rsiDivLine.setData(ind.rsiDivergence || []);
+    rsiDivZero.setData((ind.rsiDivergence || []).map(p => ({time:p.time,value:0})));
+  }
+  if (npCall && lastNetprem) onNetprem(lastNetprem);
+}
 function onNetprem(msg){
+  lastNetprem = msg;
+  if (!indOn("netprem")) return;
+  ensureOptionalPane("netprem");
   const s = msg.series || [];
   if (!s.length) return;
   const mk = k => s.map(p => ({ time: Math.floor(p.ts), value: p[k] })).filter(p => Number.isFinite(p.value));
   npCall.setData(mk("cum_call"));
   npPut.setData(mk("cum_put"));
   npNet.setData(mk("cum"));
-  try { chart.panes()[3].setHeight(indOn("netprem") ? 110 : 0); } catch (e) {}   // el pane nace lazy: altura tras el 1er setData
 }
-
-// proporción de panes: velas grande, volumen fino, MACD chico
-try { chart.panes()[1].setHeight(indOn("volume") ? 80 : 0); chart.panes()[2].setHeight(indOn("macd") ? 120 : 0); chart.panes()[3].setHeight(indOn("netprem") ? 110 : 0); } catch (e) {}
 
 // ------------------------------------------------- price lines (muros / flip)
 // Muros GEX = VERDE (call-wall brillante, put-wall/abs tinte distinto); flip = AMARILLO.
@@ -1263,6 +1544,7 @@ function drawLevels(lv) {
       axisLabelVisible: true, title,
     }));
   };
+  const londonGammaVol = lv && lv.profile_metric === "gamma_volume";
   // IMÁN (gamma+) = dorado / ACELERADOR (gamma-) = morado (como gexa). Semi-transparente.
   const kind = (gex) => gex == null ? { c: "rgba(176,190,197,0.5)", t: "" }
     : gex >= 0 ? { c: "rgba(255,179,0,0.62)", t: "imán " }      // dorado, translúcido
@@ -1275,13 +1557,22 @@ function drawLevels(lv) {
     const k = kind(gex);
     add(price, k.c, name + " " + k.t + fmtM(gex) + kindTag(wkind), false);
   };
-  addW(lv.call_wall, lv.call_wall_gex, "CW", lv.call_wall_kind);
-  addW(lv.put_wall, lv.put_wall_gex, "PW", lv.put_wall_kind);
-  if (lv.abs_wall && lv.abs_wall !== lv.call_wall && lv.abs_wall !== lv.put_wall)
-    addW(lv.abs_wall, lv.abs_wall_gex, "POC" + (lv.poc_dom ? " " + lv.poc_dom : ""), lv.abs_wall_kind);  // GPOC + %C/%P
+  if (londonGammaVol) {
+    add(lv.call_wall, "rgba(38,166,154,0.72)", "LSE CW Γvol " + fmtM(lv.call_wall_gex), false);
+    add(lv.put_wall, "rgba(239,83,80,0.72)", "LSE PW Γvol " + fmtM(lv.put_wall_gex), false);
+    if (lv.abs_wall != null && lv.abs_wall !== lv.call_wall && lv.abs_wall !== lv.put_wall)
+      add(lv.abs_wall, "rgba(255,179,0,0.72)", "LSE MAG Γvol " + fmtM(lv.abs_wall_gex), false);
+  } else {
+    addW(lv.call_wall, lv.call_wall_gex, "CW", lv.call_wall_kind);
+    addW(lv.put_wall, lv.put_wall_gex, "PW", lv.put_wall_kind);
+    if (lv.abs_wall && lv.abs_wall !== lv.call_wall && lv.abs_wall !== lv.put_wall)
+      addW(lv.abs_wall, lv.abs_wall_gex, "POC" + (lv.poc_dom ? " " + lv.poc_dom : ""), lv.abs_wall_kind);  // GPOC + %C/%P
+  }
   // flip con etiqueta +Γ DAMPENING / −Γ AMPLIFYING (signo del libro), como gexa
   const gsym = lv.net_gex == null ? "" : (lv.net_gex >= 0 ? " +Γ" : " −Γ");
   add(lv.flip, "rgba(244,196,48,0.85)", "flip" + gsym, true);
+  if (londonGammaVol)
+    add(lv.activity_flip, "rgba(255,140,60,0.86)", "A-FLIP Γvol", true);
   // flip FORWARD: el flip del libro que sobrevive esta semana (lección INTC 2026-08-05:
   // 98.39 hoy vs 102.90 forward). Naranja punteado; solo si difiere del flip vivo.
   if (lv.flip_fwd != null && lv.flip_fwd !== lv.flip) {
@@ -1294,54 +1585,74 @@ function drawLevels(lv) {
     add(lv.spot + lv.em, "rgba(41,182,246,0.5)", "EM+", true);
     add(lv.spot - lv.em, "rgba(41,182,246,0.5)", "EM−", true);
   }
-  wallBub.setLevels(lv);   // capa BURBUJAS (aditiva, se dibuja además de estas líneas)
+  // Milk/RCG-inspired public geometry, computed only from London fields.  These are
+  // deliberately named VOL proxies: LSE has no OI/dealer book and cannot reproduce
+  // Net Dealer or the proprietary PML.  Existing CW/PW/MAG colors above stay untouched.
+  const dnd = lv.dealer_activity_daily || {};
+  const dnw = lv.dealer_activity_weekly || lv.weekly_dealer_activity || {};
+  const mmd = lv.mm_top_profit_daily || {};
+  const mmw = lv.mm_top_profit_weekly || lv.mm_top_profit || {};
+  if (indOn("dealer_net_daily"))
+    add(dnd.level, "rgba(0,188,212,0.90)", "LSE DN·D VOL " + (dnd.expiry || ""), true);
+  if (indOn("dealer_net_weekly"))
+    add(dnw.level, "rgba(66,165,245,0.88)", "LSE DN·W VOL " + (dnw.expiry || ""), true);
+  if (indOn("mm_top_profit_daily"))
+    add(mmd.level, "rgba(255,112,67,0.90)", "LSE MM$·D VOL " + (mmd.expiry || ""), true);
+  if (indOn("mm_top_profit_weekly"))
+    add(mmw.level, "rgba(236,64,122,0.88)", "LSE MM$·W VOL " + (mmw.expiry || ""), true);
+  wallBub.setLevels(lv);   // capa LADRILLOS viva (aditiva; las líneas se conservan)
 }
 
-// ------------------------------- muros como BURBUJAS (estilo @BullflowIO) ----
-// Hilera horizontal de círculos por muro, en vez de una línea plana. Codifica lo que
-// TENEMOS medido, no lo del tuit:
-//   · TAMAÑO + DENSIDAD + LONGITUD de la hilera ∝ |gamma| del strike (normalizado al
-//     máx del perfil) -> un muro gordo es una fila larga y tupida de bolas grandes.
-//   · COLOR = PIN vs TRAMPILLA (call_wall_kind / put_wall_kind / abs_wall_kind, del
-//     régimen acumulado en el nivel). Verde-azulado = AGUANTA. Rojo = el precio la
-//     ATRAVIESA acelerando. Gris "?" = el dato no vino (jamás se pinta un pin falso).
-//   · El muro ABSOLUTO (POC) va más grande y con anillo.
-// Es un modo de VISUALIZACIÓN de los muros que ya calculamos — cero cómputo nuevo.
-const BUB = {
-  pin:        { rgb: "38,208,176",   lab: "PIN" },        // verde-azulado: aguanta
-  trampilla:  { rgb: "255,82,82",    lab: "TRAMPILLA" },  // rojo: se atraviesa
-  desconocido:{ rgb: "144,164,174",  lab: "?" },          // gris: sin dato
-  flip:       { rgb: "244,196,48",   lab: "" },           // amarillo: frontera
+// ------------------------ muros/imán/flip como LADRILLOS animados -----------
+// El backend lleva la máquina de estados; canvas sólo la representa. Colores previos:
+// CW verde-azulado, PW rojo, MAG dorado, FLIP amarillo. Un ladrillo vacío es un contacto
+// consumido, no una estimación de inventario. En London la fuerza es Γ×volume_today.
+const BRICK = {
+  call_wall:{ rgb:"38,166,154",  lab:"CW" },
+  put_wall: { rgb:"239,83,80",   lab:"PW" },
+  magnet:   { rgb:"255,179,0",   lab:"MAG" },
+  flip:     { rgb:"244,196,48",  lab:"FLIP" },
+  activity_flip:{ rgb:"255,140,60", lab:"A-FLIP" },
 };
 function wallInten(lv, price, net) {
   const prof = (lv && lv.profile) || [];
   if (!prof.length) return 0.5;
-  const maxAbs = Math.max(1, ...prof.map(p => Math.abs(p.gex)));
+  const maxAbs = Math.max(1, ...prof.map(p => Math.abs(p.gex != null ? p.gex : p.gamma_volume || 0)));
   if (net != null) return Math.min(1, Math.abs(net) / maxAbs);   // gamma exacta del strike
   return wallIntensity(lv, price);                               // fallback: strike vecino
 }
 function bubbleRows(lv) {
   if (!lv) return [];
   const rows = [];
-  const push = (price, wkind, name, gex, net, big) => {
+  const integrity = ((lv.wall_integrity || {}).levels) || {};
+  const push = (key, price, name, mass, big) => {
     if (price == null) return;
-    rows.push({ price, kind: BUB[wkind] ? wkind : "desconocido", name, gex,
-                inten: wallInten(lv, price, net), big: !!big });
+    const live = integrity[key] || {};
+    const capacity = Math.max(6, live.capacity || 9);
+    rows.push({ key, price:+price, name, big:!!big, capacity,
+      remaining:Math.max(0, Math.min(capacity, live.bricks_remaining == null ? capacity : live.bricks_remaining)),
+      hits:live.hits || 0, state:live.state || "FRESH", near:!!live.near,
+      event:live.last_event || "NEW", eventTs:live.last_event_ts || 0,
+      metric:live.metric || lv.profile_metric || "dealer_gex",
+      inten:live.intensity == null ? wallInten(lv, price, mass) : live.intensity });
   };
-  // el flip va PRIMERO: cuando un muro cae EXACTAMENTE en el flip, el color que debe
-  // ganar es el del muro (PIN/TRAMPILLA = lo operable), no el amarillo de la frontera.
-  if (lv.flip != null)
-    rows.push({ price: lv.flip, kind: "flip", name: "flip", gex: lv.net_gex, inten: 0.42, big: false });
-  push(lv.call_wall, lv.call_wall_kind, "CW", lv.call_wall_gex, lv.call_wall_net, false);
-  push(lv.put_wall,  lv.put_wall_kind,  "PW", lv.put_wall_gex,  lv.put_wall_net,  false);
-  if (lv.abs_wall != null && lv.abs_wall !== lv.call_wall && lv.abs_wall !== lv.put_wall)
-    push(lv.abs_wall, lv.abs_wall_kind, "POC" + (lv.poc_dom ? " " + lv.poc_dom : ""),
-         lv.abs_wall_gex, lv.abs_wall_net, true);
+  push("flip", lv.flip, "FLIP", lv.net_gex, false);
+  push("activity_flip", lv.activity_flip, "A-FLIP", lv.activity_flip_strength, false);
+  push("call_wall", lv.call_wall, "CW", lv.call_wall_gex, false);
+  push("put_wall", lv.put_wall, "PW", lv.put_wall_gex, false);
+  push("magnet", lv.magnet != null ? lv.magnet : lv.abs_wall, "MAG",
+       lv.magnet_gamma_volume != null ? lv.magnet_gamma_volume : lv.abs_wall_gex, true);
+  // Si dos niveles coinciden, separar carriles unos píxeles sin cambiar su precio lógico.
+  const counts = {};
+  rows.forEach(r => { const k = r.price.toFixed(6); counts[k] = (counts[k] || 0) + 1; });
+  const seen = {};
+  rows.forEach(r => { const k = r.price.toFixed(6), n = counts[k], i = seen[k] || 0;
+                      r.offset = n > 1 ? (i - (n - 1) / 2) * 7 : 0; seen[k] = i + 1; });
   return rows;
 }
-class BubbleView {
+class BrickView {
   constructor(src) { this._src = src; }
-  zOrder() { return "top"; }   // encima de las velas pero translúcido: no las tapa
+  zOrder() { return "top"; }
   renderer() {
     const src = this._src;
     return { draw: (target) => target.useBitmapCoordinateSpace((scope) => {
@@ -1349,39 +1660,54 @@ class BubbleView {
       const ctx = scope.context;
       const W = scope.bitmapSize.width, H = scope.bitmapSize.height;
       const hr = scope.horizontalPixelRatio, vr = scope.verticalPixelRatio;
-      const x0 = W * 0.82;   // arranca a la izq. del histograma GEX (que ocupa el 16% dcho.)
+      const x0 = W * 0.815;
+      const now = Date.now() / 1000;
       ctx.save();
       for (const r of src._rows) {
         const y = src._series.priceToCoordinate(r.price);
         if (y == null) continue;
-        const yb = y * vr;
+        const yb = y * vr + r.offset * vr;
         if (yb < -20 || yb > H + 20) continue;
         const inten = Math.max(0.10, Math.min(1, r.inten));
-        const pal = BUB[r.kind] || BUB.desconocido;
-        const rad = (r.big ? 3.9 : 3.0) * (0.5 + 0.9 * inten) * vr;   // tamaño ∝ |gamma|
-        const gap = (14 - 6 * inten) * hr;                            // densidad ∝ |gamma|
-        const xEnd = Math.max(2 * hr, x0 - x0 * (0.22 + 0.76 * inten)); // longitud ∝ |gamma|
-        const step = gap + 2 * rad;
-        ctx.fillStyle = `rgba(${pal.rgb},${(0.26 + 0.5 * inten).toFixed(3)})`;
-        ctx.shadowColor = `rgba(${pal.rgb},0.75)`;
-        ctx.shadowBlur = 7 * inten * vr;
-        for (let x = x0; x > xEnd; x -= step) {
-          ctx.beginPath(); ctx.arc(x, yb, rad, 0, 6.283185); ctx.fill();
-        }
-        ctx.shadowBlur = 0;
-        if (r.big) {   // muro absoluto: anillo para que cante que es el nodo dominante
-          ctx.strokeStyle = `rgba(${pal.rgb},0.9)`;
-          ctx.lineWidth = Math.max(1, 1.2 * vr);
-          for (let x = x0; x > xEnd; x -= step) {
-            ctx.beginPath(); ctx.arc(x, yb, rad + 1.8 * vr, 0, 6.283185); ctx.stroke();
+        const pal = BRICK[r.key] || BRICK.magnet;
+        const elapsed = Math.max(0, now - r.eventTs);
+        const pulse = (r.near || elapsed < 2.2) ? .5 + .5 * Math.sin(now * 10) : 0;
+        const brokenFall = r.state === "BROKEN" ? Math.min(1, elapsed / 1.4) : 0;
+        const bw = (r.big ? 9.5 : 8.0) * hr, bh = (r.big ? 5.6 : 4.8) * vr;
+        const gapX = 2.2 * hr, gapY = 2.0 * vr, cols = Math.ceil(r.capacity / 3);
+        const totalW = cols * (bw + gapX), xEnd = x0 - totalW;
+        for (let i = 0; i < r.capacity; i++) {
+          const col = i % cols, row = Math.floor(i / cols);
+          const stagger = row % 2 ? (bw + gapX) * .45 : 0;
+          const x = xEnd + col * (bw + gapX) + stagger;
+          const intact = i < r.remaining && r.state !== "BROKEN";
+          const fall = intact ? 0 : brokenFall * (8 + (i % 3) * 6) * vr;
+          const yy = yb + (row - 1) * (bh + gapY) + fall;
+          ctx.lineWidth = Math.max(1, .8 * vr);
+          ctx.strokeStyle = `rgba(${pal.rgb},${intact ? .72 : .22})`;
+          ctx.fillStyle = intact
+            ? `rgba(${pal.rgb},${(.45 + .36 * inten + .15 * pulse).toFixed(3)})`
+            : `rgba(${pal.rgb},${r.state === "BROKEN" ? .08 : .035})`;
+          ctx.shadowColor = `rgba(${pal.rgb},${.45 + .35 * pulse})`;
+          ctx.shadowBlur = intact ? (3 + 7 * pulse) * vr : 0;
+          ctx.fillRect(x, yy, bw, bh); ctx.strokeRect(x, yy, bw, bh);
+          if (intact) { // bisel de videojuego: arriba claro, abajo oscuro
+            ctx.fillStyle = `rgba(255,255,255,${.10 + .12 * pulse})`;
+            ctx.fillRect(x + hr, yy + vr, Math.max(1, bw - 2 * hr), Math.max(1, vr));
+          } else if (r.state !== "BROKEN") { // grieta simple en ladrillo consumido
+            ctx.beginPath(); ctx.moveTo(x + bw*.2, yy); ctx.lineTo(x + bw*.55, yy + bh*.55);
+            ctx.lineTo(x + bw*.35, yy + bh); ctx.stroke();
           }
         }
-        // etiqueta al extremo izq. de la hilera: qué muro, a qué precio, y PIN/TRAMPILLA
-        const txt = [r.name, r.price, pal.lab].filter(v => v !== "" && v != null).join(" ");
+        ctx.shadowBlur = 0;
+        const shortState = ({FRESH:"NUEVO",TESTED:"HIT",WEAKENING:"DÉBIL",
+          EXHAUSTED:"AGOTADO",BROKEN:"ROTO",REINFORCED:"REFUERZO"})[r.state] || r.state;
+        const metric = r.metric === "gamma_volume" ? "Γvol" : "GEX";
+        const txt = `${r.name} ${r.price} · ${shortState} · ${r.hits} hit · ${metric}`;
         ctx.font = `${(r.big ? 11 : 10) * vr}px -apple-system, sans-serif`;
         ctx.textAlign = "left"; ctx.textBaseline = "bottom";
         ctx.fillStyle = `rgba(${pal.rgb},0.95)`;
-        ctx.fillText(txt, xEnd, yb - rad - 3 * vr);
+        ctx.fillText(txt, xEnd, yb - 10 * vr);
       }
       ctx.restore();
     }) };
@@ -1389,12 +1715,19 @@ class BubbleView {
 }
 class WallBubbles {
   constructor(series) { this._series = series; this._rows = []; this._on = true;
-                        this._req = null; this._view = new BubbleView(this); }
-  attached(p) { this._req = p.requestUpdate; }
-  detached() { this._req = null; }
+                        this._req = null; this._view = new BrickView(this); this._timer = null; }
+  attached(p) { this._req = p.requestUpdate; this._syncTimer(); }
+  detached() { this._req = null; if (this._timer) clearInterval(this._timer); this._timer = null; }
   paneViews() { return [this._view]; }
-  setLevels(lv) { this._rows = bubbleRows(lv); if (this._req) this._req(); }
-  setOn(on) { this._on = !!on; if (this._req) this._req(); }
+  _syncTimer() {
+    // Wall state is redrawn by setLevels/setOn.  A timer here only animated glow/falling
+    // bricks and forced every chart canvas through WindowServer even with unchanged data.
+    if (this._timer) {
+      clearInterval(this._timer); this._timer = null;
+    }
+  }
+  setLevels(lv) { this._rows = bubbleRows(lv); this._syncTimer(); if (this._req) this._req(); }
+  setOn(on) { this._on = !!on; this._syncTimer(); if (this._req) this._req(); }
 }
 const wallBub = new WallBubbles(candle);
 candle.attachPrimitive(wallBub);
@@ -1512,15 +1845,69 @@ function fmtBig(n) {
   return n.toFixed(0);
 }
 const SOURCE_LABEL = { polygon_snapshot_v3: "Polygon 15min", cboe_delayed: "CBOE delayed" };
+let levelRefreshMeta = null;
+function reloadClock(epoch) {
+  if (!epoch) return "↻—";
+  const left = Math.max(0, Math.ceil(+epoch - Date.now() / 1000));
+  return `↻${String(Math.floor(left / 60)).padStart(2, "0")}:${String(left % 60).padStart(2, "0")}`;
+}
+function renderReloadClocks() {
+  const bar = document.getElementById("refreshbar"), r = levelRefreshMeta;
+  if (!bar || !r) { bar?.classList.add("hidden"); return; }
+  bar.classList.remove("hidden");
+  for (const [key, id] of [["heatmap","r-heat"], ["walls","r-walls"],
+                           ["magnets","r-magnets"], ["gamma_flip","r-flip"]]) {
+    const e = document.getElementById(id); if (e) e.textContent = reloadClock(r[key]);
+  }
+}
+setInterval(renderReloadClocks, 1000);
 function setSourceBadge(chainSrc) {
   const b = document.getElementById("sourcebadge");
   if (!b) return;
   if (!chainSrc || chainSrc === "ibkr_tws") { b.classList.add("hidden"); return; }
-  b.textContent = "⚠ CADENA " + (SOURCE_LABEL[chainSrc] || chainSrc);
+  b.textContent = String(chainSrc).includes("lse")
+    ? "LONDON · OPTIONS Γ×VOL"
+    : "⚠ CADENA " + (SOURCE_LABEL[chainSrc] || chainSrc);
   b.classList.remove("hidden");
+}
+function renderSqueezeFuel(fuel) {
+  const el = document.getElementById("h-fuel"), info = document.getElementById("h-fuel-info");
+  const pill = document.getElementById("fuelpill");
+  if (!el) return;
+  if (!fuel || fuel.status !== "OK") {
+    el.textContent = "DATA"; el.className = "v trans";
+    if (pill) pill.className = "hidden";
+    el.title = fuel && fuel.why ? fuel.why : "sin OI/IV suficiente para medir convexidad";
+    if (info) info.title = "Sin estructura OI válida. No se sustituye por volumen ni por una señal inventada.";
+    return;
+  }
+  const label = fuel.label || "POTENTIAL";
+  const share = fuel.call_convexity_share_pct;
+  const pct = share == null ? "" : ` ${Number(share).toFixed(0)}%`;
+  el.textContent = (label === "ACTIVE" ? "🔥 " : label === "BUILD" ? "↗ " : "") + label + pct;
+  el.className = "v " + (label === "ACTIVE" ? "fuel-active" :
+    label === "BUILD" ? "fuel-build" : label === "POTENTIAL" ? "fuel-potential" : "");
+  const ladder = (fuel.ladder || []).map(x => Number(x.strike).toFixed(2)).join(" › ") || "—";
+  const r1 = fuel.return_1m_pct == null ? "warmup" : `${fuel.return_1m_pct >= 0 ? "+" : ""}${fuel.return_1m_pct}%`;
+  const r5 = fuel.return_5m_pct == null ? "warmup" : `${fuel.return_5m_pct >= 0 ? "+" : ""}${fuel.return_5m_pct}%`;
+  el.title = `${label} · London r1m ${r1}, r5m ${r5} · calls OI gamma sobre spot ${pct.trim() || "DATA"}`
+    + ` · zona ${fuel.gamma_zone || "DATA"} · escalera ${ladder}`;
+  if (pill) {
+    if (label === "ACTIVE" || label === "BUILD") {
+      pill.className = label === "ACTIVE" ? "active" : "build";
+      pill.textContent = label === "ACTIVE"
+        ? `🔥 SQUEEZE FUEL${pct} · 5m ${r5}`
+        : `↗ FUEL BUILD${pct} · 5m ${r5}`;
+      pill.title = el.title;
+    } else pill.className = "hidden";
+  }
+  if (info) info.title = `${fuel.activation_rule}. El % es participación de gamma OI cercana, no probabilidad. `
+    + `Inventario dealer no confirmado; short interest/borrow: ${fuel.equity_short_interest_status || "DATA"}. ${fuel.validation}.`;
 }
 function drawHeader(lv) {
   if (!lv) return;
+  levelRefreshMeta = lv.refresh || null; renderReloadClocks();
+  const londonGammaVol = lv.profile_metric === "gamma_volume";
   setSourceBadge(lv.chain_src);
   // vix_live=false es el CIERRE ANTERIOR, no un tick: se marca, no se hace pasar por vivo
   const vixEl = document.getElementById("h-vix");
@@ -1533,12 +1920,12 @@ function drawHeader(lv) {
       ? "VIX EN VIVO (tick CBOE via TWS). CALM <16 · ELEVADO 16-24 · ALTO >24."
       : "VIX del CIERRE ANTERIOR: el indice no ha tickeado todavia (no cotiza hasta 09:30). "
         + "No es el VIX de ahora — no dispares nada con este numero.";
-  }
+  } else if (vixEl) { vixEl.textContent = "—"; vixEl.className = "v"; }
   const dteEl = document.getElementById("h-dte");   // 0DTE puro (como gexa)
   if (lv.dte != null) {
     dteEl.textContent = (lv.dte < 1 ? "0DTE" : Math.round(lv.dte) + "DTE") +
       (lv.exp ? " " + lv.exp.slice(4, 6) + "-" + lv.exp.slice(6, 8) : "");
-  }
+  } else dteEl.textContent = "—";
   const reg = document.getElementById("h-reg");
   // El flip se congela (es del mapa), pero DE QUÉ LADO cae el precio no: eso se recalcula
   // con el precio VIVO. Con lv.spot (el de cuando se calculó la cadena) DRAM publicaba
@@ -1552,24 +1939,88 @@ function drawHeader(lv) {
   }
   if (dflip != null && Math.abs(dflip) < 0.12) { rtxt = "TRANSICIÓN"; rcls = "trans"; }
   reg.textContent = rtxt; reg.className = "v " + rcls;
+  renderSqueezeFuel(lv.squeeze_fuel);
   const gx = document.getElementById("h-gex");
-  gx.textContent = lv.net_gex != null ? fmtBig(lv.net_gex) : "—";
-  gx.className = "v " + (lv.net_gex >= 0 ? "pos" : "neg");
+  const gxLabel = document.getElementById("h-gex-label");
+  const polygonOi = londonGammaVol && lv.oi_available && lv.oi_source === "polygon_options_snapshot";
+  if (gxLabel) gxLabel.textContent = polygonOi ? "OI GEX" : londonGammaVol ? "LSE Γ×Vol" : "net GEX";
+  gx.textContent = polygonOi
+    ? (lv.net_gex != null ? fmtBig(lv.net_gex) : "DATA")
+    : londonGammaVol ? (lv.gamma_volume_total != null ? fmtBig(lv.gamma_volume_total) : "—")
+    : (lv.net_gex != null ? fmtBig(lv.net_gex) : "—");
+  const gxValue = polygonOi ? lv.net_gex : londonGammaVol ? lv.gamma_volume_total : lv.net_gex;
+  gx.className = "v " + (gxValue == null ? "" : gxValue >= 0 ? "pos" : "neg");
+  const gxInfo = document.getElementById("h-gex-info"), regInfo = document.getElementById("h-reg-info");
+  if (gxInfo && polygonOi) gxInfo.title = "GEX $/1%: OI start-of-day + IV de Polygon, gamma BS repreciada con spot London. Convención calls + / puts −; contexto estructural.";
+  else if (gxInfo && londonGammaVol) gxInfo.title = "Suma LSE gamma×volume_today. Verde/calls y rojo/puts; sin OI válido no es Net GEX ni inventario dealer.";
+  if (regInfo && polygonOi) regInfo.title = "Régimen por el lado del zero-crossing OI: arriba +Γ amortigua; abajo −Γ amplifica. OI Polygon, spot realtime London.";
+  else if (regInfo && londonGammaVol) regInfo.title = "Sin OI válido no se calcula régimen dealer ni gamma flip. El guion significa no disponible, no neutral.";
   const vx = document.getElementById("h-vex");
-  if (vx) { vx.textContent = lv.net_vex != null ? fmtBig(lv.net_vex) : "—";
-            vx.className = "v " + (lv.net_vex >= 0 ? "pos" : "neg"); }
+  const vxLabel = document.getElementById("h-vex-label"), vxInfo = document.getElementById("h-vex-info");
+  const arch = londonGammaVol ? lv.architect : null;
+  const pctBal = (v) => v == null ? "—" : (v >= 0 ? "+" : "") + Math.round(100 * v) + "%";
+  if (vxLabel) vxLabel.textContent = londonGammaVol ? "Vanna act" : "Vanna";
+  if (vx) { const v = londonGammaVol && arch ? arch.vanna_volume_balance : lv.net_vex;
+            vx.textContent = londonGammaVol ? pctBal(v) : (v != null ? fmtBig(v) : "—");
+            vx.className = "v " + (v == null ? "" : v >= 0 ? "pos" : "neg"); }
+  if (vxInfo && londonGammaVol) vxInfo.title = "Vanna de modelo × volume_today, normalizada −100..+100. Requiere un cambio de IV para realizarse; no es dirección dealer.";
   const ch = document.getElementById("h-charm");
-  if (ch) { ch.textContent = lv.net_charm != null ? fmtBig(lv.net_charm) : "—";
-            ch.className = "v " + (lv.net_charm == null ? "" : lv.net_charm >= 0 ? "pos" : "neg");
-            ch.title = lv.net_charm == null ? (lv.charm_why || "sin charm") : ""; }
+  const chLabel = document.getElementById("h-charm-label"), chInfo = document.getElementById("h-charm-info");
+  if (chLabel) chLabel.textContent = londonGammaVol ? "Charm act" : "Charm/d";
+  if (ch) { const v = londonGammaVol && arch ? arch.charm_volume_balance : lv.net_charm;
+            ch.textContent = londonGammaVol ? pctBal(v) : (v != null ? fmtBig(v) : "—");
+            ch.className = "v " + (v == null ? "" : v >= 0 ? "pos" : "neg");
+            ch.title = !londonGammaVol && v == null ? (lv.charm_why || "sin charm") : ""; }
+  if (chInfo && londonGammaVol) chInfo.title = "Charm de modelo × volume_today, normalizada −100..+100. Actividad condicional al paso del tiempo; sin OI no es exposición dealer.";
   const pr = document.getElementById("h-press");
-  if (pr && lv.pressure != null) {
+  const prLabel = document.getElementById("h-press-label");
+  if (londonGammaVol && lv.architect) {
+    const a = lv.architect, s = a.activity_score;
+    if (prLabel) prLabel.textContent = "ARCH act";
+    pr.textContent = s == null ? "—" : (s > 0 ? "+" : "") + s.toFixed(0);
+    pr.className = "v " + (s == null || Math.abs(s) <= 20 ? "trans" : s > 0 ? "pos" : "neg");
+    pr.title = `${a.activity_side} · actividad London, no dealer GEX · ${a.validation}`;
+  } else if (pr && lv.pressure != null) {
+    if (prLabel) prLabel.textContent = "Pressure";
     pr.textContent = (lv.pressure > 0 ? "+" : "") + lv.pressure + (lv.pressure_lab ? " " + lv.pressure_lab : "");
     pr.className = "v " + (Math.abs(lv.pressure) < 20 ? "trans" : lv.pressure > 0 ? "pos" : "neg");
+  } else if (pr) { if (prLabel) prLabel.textContent = "Pressure"; pr.textContent = "—"; pr.className = "v"; }
+  const prInfo = document.getElementById("h-press-info");
+  if (prInfo && londonGammaVol) prInfo.title = "ARCH activity: media igual de Γ×volumen, Δ×volumen y premium. Umbral ±20 convencional, todavía no validado OOS.";
+  const rev = document.getElementById("h-rev"), revInfo = document.getElementById("h-rev-info");
+  if (rev) {
+    const triad = lv.reversal || (arch && arch.reversal), lab = triad && triad.label;
+    rev.textContent = lab || "—";
+    rev.className = "v " + (lab === "REVERSAL" ? (triad.direction === "BULLISH" ? "pos" : "neg") : lab === "WATCH" || lab === "DATA" ? "trans" : "");
+    rev.title = triad ? `${triad.guard} · ${triad.validation}` : "sin triada";
+    if (revInfo && triad) revInfo.title = `${triad.guard}. LSE-only muestra DATA porque no entrega ejecuciones Bid×Ask/aggressor side.`;
   }
   const em = document.getElementById("h-em");
   if (em && lv.em != null && lv.spot) em.textContent = "±" + lv.em + " (" + (lv.spot - lv.em).toFixed(0) + "–" + (lv.spot + lv.em).toFixed(0) + ")";
-  document.getElementById("h-flip").textContent = lv.flip != null ? lv.flip : "—";
+  else if (em) em.textContent = "—";
+  const flipLabel = document.getElementById("h-flip-label"), flipEl = document.getElementById("h-flip");
+  if (flipLabel) flipLabel.textContent = londonGammaVol ? "flip (OI)" : "flip";
+  flipEl.textContent = lv.flip != null ? lv.flip : (londonGammaVol ? (lv.oi_available ? "sin cruce" : "sin OI") : "—");
+  flipEl.classList.toggle("flip-data", lv.flip == null && londonGammaVol);
+  flipEl.classList.toggle("flip-live", lv.flip != null);
+  flipEl.title = londonGammaVol ? (lv.flip_why || "LSE no entrega open interest") : "";
+  const flipInfo = document.getElementById("h-flip-info"), cwInfo = document.getElementById("h-cw-info"), pwInfo = document.getElementById("h-pw-info");
+  if (flipInfo && polygonOi) flipInfo.title = `Zero-crossing OI real: ${(lv.oi_structure || {}).flip_method || "Polygon OI+IV repreciado con spot London"}. ${lv.flip_why || "sin cruce"}`;
+  else if (flipInfo && londonGammaVol) flipInfo.title = "No disponible: un gamma flip requiere OI fresco. El timer F sólo indica cuándo se vuelve a comprobar.";
+  const aflipEl = document.getElementById("h-aflip"), aflipInfo = document.getElementById("h-aflip-info");
+  if (aflipEl) {
+    const afd = lv.activity_flip_detail || {};
+    aflipEl.textContent = lv.activity_flip != null ? lv.activity_flip : "DATA";
+    aflipEl.className = "v " + (lv.activity_flip != null ? "trans" : "");
+    aflipEl.title = afd.why || "sin zero-crossing Γ×volume_today en cobertura observada";
+    if (aflipInfo) aflipInfo.title = `${afd.method || "zero crossing gamma×volume_today"}. ${afd.validation || "UNPROVEN_DESCRIPTIVE_CONTEXT_ONLY"}. No es inventario dealer.`;
+  }
+  if (rev) {
+    const tape = lv.option_tape || {};
+    if (tape.prints) rev.title += ` · LSE tape ${tape.prints} prints, ${tape.classified_pct}% inferidos; ${tape.guard}`;
+  }
+  if (cwInfo && londonGammaVol) cwInfo.title = "Pico de gamma×volume_today de calls en strike ≥ spot. Color conservado: verde-azulado. Actividad, no resistencia dealer probada.";
+  if (pwInfo && londonGammaVol) pwInfo.title = "Pico de gamma×volume_today de puts en strike ≤ spot. Color conservado: rojo. Actividad, no soporte dealer probado.";
   // CW/PW con su tipo: PIN aguanta (fade OK) · TRAMP se atraviesa (prohibido fadear)
   const kt = (wk) => wk === "pin" ? " PIN" : wk === "trampilla" ? " TRAMP" : "";
   const kc = (wk) => wk === "pin" ? "pos" : wk === "trampilla" ? "neg" : "";
@@ -1578,12 +2029,37 @@ function drawHeader(lv) {
   cwEl.className = "v " + kc(lv.call_wall_kind);
   pwEl.textContent = lv.put_wall != null ? lv.put_wall + kt(lv.put_wall_kind) : "—";
   pwEl.className = "v " + kc(lv.put_wall_kind);
+  const livePx = (lastBar && lastBar.close != null) ? lastBar.close : lv.spot;
+  const proxyCell = (id, infoId, obj, name, formula) => {
+    const out = document.getElementById(id), info = document.getElementById(infoId);
+    if (!out) return;
+    const level = obj && obj.level;
+    if (level == null) {
+      out.textContent = "DATA"; out.className = "v trans";
+      out.title = (obj && obj.why) || "sin campo London suficiente";
+    } else {
+      const dist = livePx != null ? (livePx - level) / level * 100 : null;
+      const side = dist == null ? "" : dist >= 0 ? " ↑" : " ↓";
+      out.textContent = Number(level).toFixed(2) + side + (dist == null ? "" : Math.abs(dist).toFixed(2) + "%");
+      out.className = "v " + (dist == null ? "" : dist >= 0 ? "pos" : "neg");
+      out.title = `${name} · expiración ${obj.expiry || "—"} · relación al precio LSE WS actualizada con cada tick/bar. Nivel de opciones se reajusta cada 5m.`;
+    }
+    if (info) info.title = `${formula}. Proxy volume_today; no libro dealer, no fórmula propietaria. Precio live LSE WS · opciones REST 5m.`;
+  };
+  proxyCell("h-dnd", "h-dnd-info", lv.dealer_activity_daily,
+            "Daily dealer-neutral activity", "Sref Γ×vol − Σ(delta×vol)/Σ(gamma×vol)");
+  proxyCell("h-dnw", "h-dnw-info", lv.dealer_activity_weekly || lv.weekly_dealer_activity,
+            "Weekly dealer-neutral activity", "Sref Γ×vol − Σ(delta×vol)/Σ(gamma×vol)");
+  proxyCell("h-mmd", "h-mmd-info", lv.mm_top_profit_daily,
+            "Daily MM top-profit volume proxy", "mínimo payout terminal ponderado por volume_today");
+  proxyCell("h-mmw", "h-mmw-info", lv.mm_top_profit_weekly || lv.mm_top_profit,
+            "Weekly MM top-profit volume proxy", "mínimo payout terminal ponderado por volume_today");
   if (lv.asof) {
     // asof se refresca cada 15s aunque la CADENA sea de ayer (2026-07-27: mapa de las 9:22
     // enseñado todo el día como fresco). La edad honesta es la de chain_ts, no la de asof.
     const asofEl = document.getElementById("h-asof");
     const now = Math.floor(Date.now() / 1000);
-    let txt = "GEX " + torHM(lv.asof) + " ET", old = false;
+    let txt = (londonGammaVol ? "LSE Γvol " : "GEX ") + torHM(lv.asof) + " ET", old = false;
     if (lv.chain_ts) {
       if (torDay(lv.chain_ts) !== torDay(now)) {
         txt = "mapa de AYER " + torHM(lv.chain_ts) + " ET";
@@ -1596,8 +2072,12 @@ function drawHeader(lv) {
     if (now - lv.asof > 300) { txt += " · SIN REFRESCO " + fmtAge(now - lv.asof); old = true; }
     asofEl.textContent = txt;
     asofEl.className = "k" + (old ? " vstale" : "");
-    asofEl.title = old ? "El mapa GEX/muros/flip NO es de esta sesión: describe el libro de cuando "
-      + "se capturó la cadena. Niveles orientativos — el print manda, no este mapa." : "";
+    asofEl.title = old ? (londonGammaVol
+      ? "La actividad Γ×volumen y los muros London vienen de la sesión indicada. El fetch es nuevo, los contratos no: contexto orientativo."
+      : "El mapa GEX/muros/flip NO es de esta sesión: describe el libro de cuando se capturó la cadena. Niveles orientativos — el print manda, no este mapa.") : "";
+  } else {
+    const asofEl = document.getElementById("h-asof");
+    if (asofEl) { asofEl.textContent = ""; asofEl.title = ""; }
   }
 }
 
@@ -1624,6 +2104,89 @@ function zoomRecent(n) {
     chart.timeScale().setVisibleLogicalRange({ from: Math.max(0, n - SHOW_BARS), to: n + 4 });
   } catch (e) {}
 }
+
+// Telemetria visible del pipeline. "WS conectado" describe solo browser<->bridge;
+// `feed.realtime` decide si el upstream tambien es tiempo real.
+let chartLoadAt = null, chartLoadTimer = null, chartLoadLabel = "datos";
+let lastChartFeed = null, lastChartFeedAt = 0, lastChartFetchMs = null, lastServerMs = null;
+window.chartIsLondonOnly = () => Boolean(lastChartFeed && lastChartFeed.lse_only);
+function enforceLondonOnlyFeed(feed) {
+  if (!feed || !feed.lse_only || providerKey(feed.provider) !== "lse" || PV.lse !== false) return false;
+  PV.lse = true;
+  try { localStorage.setItem("providerDisplay_v1", JSON.stringify(PV)); } catch (e) {}
+  renderProviderPanel();
+  return true;
+}
+function applyLondonOnlyUi(on) {
+  for (const id of ["scopebar", "layerbar", "bubblebar", "liqbar", "narrbtn"]) {
+    const e = document.getElementById(id); if (e) e.style.display = on ? "none" : "";
+  }
+  const help = document.getElementById("help"), londonHelp = document.getElementById("londonhelp");
+  if (help) help.classList.toggle("london", on);
+  if (londonHelp) londonHelp.classList.toggle("hidden", !on);
+  if (on && chartSymbolMode === "perp") {
+    chartSymbolMode = "equity";
+    const here = new URL(location.href); here.searchParams.delete("perp");
+    history.replaceState(null, "", here);
+  }
+  renderProviderPanel();
+}
+function chartAge(v) {
+  if (v == null || !Number.isFinite(+v)) return "edad —";
+  const s = Math.max(0, Math.round(+v));
+  return s < 90 ? `edad ${s}s` : `edad ${Math.round(s/60)}m`;
+}
+function paintChartLoading() {
+  const e = document.getElementById("chartloadtxt");
+  if (!e || chartLoadAt == null) return;
+  e.textContent = `${chartLoadLabel} · ${((performance.now()-chartLoadAt)/1000).toFixed(1)}s`;
+}
+function beginChartLoad(label) {
+  chartLoadAt = performance.now(); chartLoadLabel = label || "cargando";
+  document.getElementById("chartload")?.classList.remove("hidden");
+  clearInterval(chartLoadTimer); paintChartLoading();
+  chartLoadTimer = setInterval(paintChartLoading, 100);
+}
+function renderChartFeedMeta() {
+  const e = document.getElementById("chartfeed"); if (!e || !lastChartFeed) return;
+  const f = lastChartFeed;
+  const extra = lastChartFeedAt ? (Date.now()-lastChartFeedAt)/1000 : 0;
+  const age = f.age_s == null ? null : +f.age_s + extra;
+  const ws = f.lse_ws || null;
+  const socketLive = !!(ws && ws.connected);
+  const mode = f.realtime ? "REALTIME" : socketLive
+    ? `LSE WS ✓ ${ws.status || "CONNECTED"} · PRICE STALE`
+    : (f.tier || "NO REALTIME").toUpperCase();
+  const fetchTxt = lastChartFetchMs == null ? "" : ` · fetch ${Math.round(lastChartFetchMs)}ms`;
+  e.textContent = `${mode} · ${f.provider || "—"} · upstream ${f.upstream || "—"} · UI WS · ${chartAge(age)}${fetchTxt}`
+    + (f.note ? ` · ${f.note}` : "");
+  e.className = f.realtime ? "live" : socketLive ? "connected" : "delayed";
+  e.title = `Proveedor: ${f.provider || "—"}; upstream: ${f.upstream || "—"}; `
+    + `transporte al chart: WebSocket; tier: ${f.tier || "—"}`
+    + (ws ? `; LSE socket ${ws.status || "—"}; reconexiones ${ws.reconnects || 0}` : "")
+    + (lastServerMs == null ? "" : `; servidor ${lastServerMs}ms`)
+    + (f.note ? `; ${f.note}` : "");
+}
+function updateChartFeed(feed, fetchMs, serverMs) {
+  const enteredLondonOnly = Boolean(feed && feed.lse_only && !(lastChartFeed && lastChartFeed.lse_only));
+  if (feed) { lastChartFeed = feed; lastChartFeedAt = Date.now(); providerMark(feed.provider); }
+  enforceLondonOnlyFeed(feed);
+  applyLondonOnlyUi(Boolean(feed && feed.lse_only));
+  renderModePill();
+  if (fetchMs != null) lastChartFetchMs = fetchMs;
+  if (serverMs != null) lastServerMs = serverMs;
+  renderChartFeedMeta();
+  applyProviderFilters();
+  if (enteredLondonOnly && window.gexHeatRefresh) window.gexHeatRefresh();
+  if (enteredLondonOnly && window.mmFractalRefresh) window.mmFractalRefresh();
+}
+function endChartLoad(feed, serverMs) {
+  const elapsed = chartLoadAt == null ? null : performance.now() - chartLoadAt;
+  chartLoadAt = null; clearInterval(chartLoadTimer); chartLoadTimer = null;
+  document.getElementById("chartload")?.classList.add("hidden");
+  updateChartFeed(feed, elapsed, serverMs);
+}
+setInterval(renderChartFeedMeta, 1000);
 
 // ------------------------------------------------------- timeframe selector
 // Rueda VERTICAL sobre la barra = desplazarla en horizontal: es el gesto que se intenta solo.
@@ -1660,15 +2223,19 @@ function setActiveTf(tf) {
 tfsel.addEventListener("change", () => {
   const tf = tfsel.value;
   setActiveTf(tf);
-  if (ws && ws.readyState === WebSocket.OPEN)
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    beginChartLoad(`cargando ${tf}`);
     ws.send(JSON.stringify({ cmd: "tf", tf }));
+  }
 });
 document.querySelectorAll(".tfbtn").forEach(btn => {
   btn.addEventListener("click", () => {
     const tf = btn.dataset.tf;
     setActiveTf(tf);
-    if (ws && ws.readyState === WebSocket.OPEN)
+    if (ws && ws.readyState === WebSocket.OPEN) {
+      beginChartLoad(`cargando ${tf}`);
       ws.send(JSON.stringify({ cmd: "tf", tf }));   // el server reenvía history al tf
+    }
   });
 });
 
@@ -1684,6 +2251,12 @@ let PERP = {};      // {sym:{px,src,feed_age_s,...}} — Bybit 24/7, JAMÁS el p
 let QUOTES = {};   // {sym:{last,chg,vol}} para las columnas estilo TradingView
 let PREVCLOSE = {};// {sym: cierre previo implícito} -> %día vivo del símbolo en pantalla
 let curSym = null;
+// Modo de la VENTANA, no del ticker. Si se abre/elige un perp, cambiar de fila conserva
+// PERP 24/7 automáticamente; la URL sigue al último base para que un reconnect no vuelva
+// al símbolo inicial. El chip PERP permite regresar explícitamente al equity.
+const initialPerpParam = new URLSearchParams(location.search).get("perp");
+let autoPerpPending = String(initialPerpParam || "").toLowerCase() === "auto";
+let chartSymbolMode = new URLSearchParams(location.search).get("perp") ? "perp" : "equity";
 function fmtVol(v) {
   if (v == null) return "";
   if (v >= 1e9) return (v/1e9).toFixed(1) + "B";
@@ -1697,12 +2270,20 @@ function fmtVol(v) {
 function setSelLabel(sym) { const b = document.getElementById("wlbtn"); if (b) b.textContent = "📋 " + (sym || "—") + " ▾"; }
 function rebuildSymSel() { setSelLabel(curSym); }
 rebuildSymSel();
-function switchSymbol(sym) {
+function switchSymbol(sym, forceEquity=false) {
   if (!sym) return;
-  const u = sym.toUpperCase();
+  const u = sym.toUpperCase().replace(/USDT$/, "");
+  if (!forceEquity && chartSymbolMode === "perp") {
+    switchPerp(u);
+    return;
+  }
+  chartSymbolMode = "equity";
+  const here = new URL(location.href); here.searchParams.delete("perp");
+  history.replaceState(null, "", here);
   curSym = u;
   techDraw(true);
   if (ws && ws.readyState === WebSocket.OPEN) {
+    beginChartLoad(`cargando ${u}`);
     ws.send(JSON.stringify({ cmd: "sym", sym: u }));        // el server re-pide y reenvía history
     ws.send(JSON.stringify({ cmd: "alarm", act: "list" })); // alarmas del nuevo símbolo
     ws.send(JSON.stringify({ cmd: "zone", act: "list" }));  // zonas 0DTE del nuevo símbolo
@@ -1711,13 +2292,43 @@ function switchSymbol(sym) {
   const d = document.getElementById("wldrawer"); if (d) d.classList.remove("on");  // cerrar lista al elegir
   syncSymSel(u);
 }
+function switchPerp(sym) {
+  if (!sym) return;
+  if (window.chartIsLondonOnly && window.chartIsLondonOnly()) {
+    switchSymbol(sym.toUpperCase().replace(/USDT$/, ""), true); return;
+  }
+  const base = sym.toUpperCase().replace(/USDT$/, "");
+  const u = base + "USDT";
+  chartSymbolMode = "perp";
+  const here = new URL(location.href); here.searchParams.set("perp", base);
+  history.replaceState(null, "", here);
+  curSym = u;
+  techDraw(true);
+  if (ws && ws.readyState === WebSocket.OPEN) {
+    beginChartLoad(`cargando ${u} · PERP 24/7`);
+    ws.send(JSON.stringify({ cmd: "perp", sym: base }));
+  }
+  structpill.classList.add("hidden");
+  const d = document.getElementById("wldrawer"); if (d) d.classList.remove("on");
+  syncSymSel(u);
+}
 function syncSymSel(sym) {
   if (!sym) return;
   const u = sym.toUpperCase();
+  chartSymbolMode = u.endsWith("USDT") ? "perp" : "equity";
+  const here = new URL(location.href);
+  if (chartSymbolMode === "perp") here.searchParams.set("perp", u.slice(0, -4));
+  else here.searchParams.delete("perp");
+  history.replaceState(null, "", here);
   curSym = u;
   document.title = "IBT:" + u;  // la app nativa observa esto y actualiza SU ventana
   setSelLabel(u);
+  if (typeof renderModePill === "function") renderModePill();
   renderWatchlist();
+  // El heatmap no espera al próximo poll de 20 s: al recibir/cambiar ticker enseña su
+  // spinner y pide inmediatamente el snapshot REST correspondiente.
+  if (window.gexHeatRefresh) window.gexHeatRefresh();
+  if (window.mmFractalRefresh) window.mmFractalRefresh();
 }
 // ---- drawer de watchlist (izquierda, colapsable) ----
 const wlbtn = document.getElementById("wlbtn");
@@ -1734,6 +2345,20 @@ function delFromWatchlist(sym) {
 }
 let wlFilter = "";   // texto del buscador, EN VIVO (bug 2026-07-26: no filtraba al teclear)
 let wlReject = null; // {sym, why} del último rechazo — se DICE, no se traga (2026-07-30)
+let lseMatches = [], lseSearchTimer = null, lseSearchSeq = 0;
+async function searchLseCatalog(query) {
+  const q = String(query || "").trim().toUpperCase(), seq = ++lseSearchSeq;
+  if (!q || !(window.chartIsLondonOnly && window.chartIsLondonOnly())) {
+    lseMatches = []; renderWatchlist(); return;
+  }
+  try {
+    const r = await fetch(`/api/lse_symbols?q=${encodeURIComponent(q)}&limit=30`);
+    const d = await r.json();
+    if (seq !== lseSearchSeq || q !== wlFilter) return;
+    lseMatches = r.ok && d.src === "lse" && Array.isArray(d.rows) ? d.rows : [];
+  } catch (e) { if (seq === lseSearchSeq) lseMatches = []; }
+  renderWatchlist();
+}
 function onWatchlistReject(msg) {
   wlReject = { sym: msg.sym, why: msg.why || "no cualifica" };
   wldrawer.classList.add("on");   // que se vea: el símbolo NO se añadió
@@ -1749,11 +2374,12 @@ function renderWatchlist() {
     const chg = (q.chg != null) ? (q.chg > 0 ? "+" : "") + q.chg.toFixed(2) + "%" : "";
     const chgCls = ((q.chg == null) ? "" : (q.chg > 0 ? "pos" : q.chg < 0 ? "neg" : "")) + (oldQ ? " wold" : "");
     const last = (q.last != null) ? q.last.toFixed(2) : "";
-    const p = PERP[s];
+    const rawPerp = PERP[s];
+    const p = rawPerp && providerEnabled(rawPerp.src) ? rawPerp : null;
     const perpBadge = p ?
-      `<span class="wperp" title="PERP Bybit — precio con PRIMA propia, NO es el precio de la acción (IBKR). Fuente ${p.src}, edad ${p.feed_age_s == null ? "?" : Math.round(p.feed_age_s)}s.">⛓${p.px}</span>` :
+      `<span class="wperp" data-perp="${s}" title="Abrir ${s}USDT en el chart · PERP WebSocket 24/7. Precio con prima propia, NO es la acción. Fuente ${p.src}, edad ${p.feed_age_s == null ? "?" : Math.round(p.feed_age_s)}s.">⛓${p.px}</span>` :
       `<span class="wperp"></span>`;
-    return `<div class="wlrow${s === curSym ? " sel" : ""}" data-sym="${s}"` +
+    return `<div class="wlrow${s === curSym || s + "USDT" === curSym ? " sel" : ""}" data-sym="${s}"` +
       (oldQ ? ` title="dato de hace ${fmtAge(q.age_s)} (última barra ${torHM(Date.now() / 1000 - q.age_s)} ET) — NO es el precio de ahora"` : "") + ">" +
       `<span class="wsym">${s}</span>` +
       `<span class="wlast${oldQ ? " wold" : ""}">${last}${oldQ ? "·" + fmtAge(q.age_s) : ""}</span>` +
@@ -1780,13 +2406,30 @@ function renderWatchlist() {
   if (fleetV.length) html += '<div class="wlhdr sub">Flota</div>' + fleetV.map(mk).join("");
   if (userV.length) html += '<div class="wlhdr sub">Mías</div>' + userV.map(mk).join("");
   if (koreaV.length) html += '<div class="wlhdr sub">🇰🇷 Corea (KRX realtime)</div>' + koreaV.map(mk).join("");
-  if (wlFilter && !fleetV.length && !userV.length && !koreaV.length)
-    html += `<div class="wlempty">sin coincidencias para "${wlFilter}" — Enter para añadirlo (se cualifica contra IBKR)</div>`;
+  if (wlFilter && window.chartIsLondonOnly && window.chartIsLondonOnly()) {
+    const existing = new Set([...fleetV, ...userV]);
+    const hits = lseMatches.filter(r => !existing.has(r.symbol));
+    if (hits.length) html += '<div class="wlhdr sub">London · catálogo completo</div>' + hits.map(r =>
+      `<div class="wlrow lsehit" data-lse="${esc(r.symbol)}"><span class="wsym">${esc(r.symbol)}</span>` +
+      `<span class="wlname" title="${esc(r.name || "")}">${esc(r.name || "")}</span>` +
+      `<span class="wldataset">${esc(r.dataset || "")}${r.live ? " · live" : ""}</span></div>`).join("");
+    else if (!fleetV.length && !userV.length)
+      html += `<div class="wlempty">sin coincidencias LSE para "${esc(wlFilter)}"</div>`;
+  } else if (wlFilter && !fleetV.length && !userV.length && !koreaV.length) {
+    html += `<div class="wlempty">sin coincidencias para "${esc(wlFilter)}" — Enter para añadirlo</div>`;
+  }
   const prevScroll = wllist.scrollTop;   // no perder posición al re-render (15s watchlist tick)
   wllist.innerHTML = html;
   wllist.scrollTop = prevScroll;
   wllist.querySelectorAll(".wlrow").forEach(r => r.addEventListener("click", (e) => {
+    if (r.dataset.lse) {
+      const s = r.dataset.lse; wlsearch.value = ""; wlFilter = ""; lseMatches = [];
+      if (ws && ws.readyState === WebSocket.OPEN)
+        ws.send(JSON.stringify({ cmd: "watchlist", act: "add", sym: s }));
+      switchSymbol(s, true); return;
+    }
     if (e.target.dataset.del) return;   // el ✕ se maneja aparte
+    if (e.target.dataset.perp) { e.stopPropagation(); wlsearch.value = ""; wlFilter = ""; switchPerp(e.target.dataset.perp); return; }
     wlsearch.value = ""; wlFilter = "";
     switchSymbol(r.dataset.sym);
   }));
@@ -1797,14 +2440,28 @@ function renderWatchlist() {
 wlsearch.addEventListener("input", () => {
   wlFilter = wlsearch.value.trim().toUpperCase();
   renderWatchlist();
+  clearTimeout(lseSearchTimer);
+  if (window.chartIsLondonOnly && window.chartIsLondonOnly())
+    lseSearchTimer = setTimeout(() => searchLseCatalog(wlFilter), 120);
 });
 wlsearch.addEventListener("keydown", (e) => {
   if (e.key !== "Enter") return;
   let s = wlsearch.value.trim().toUpperCase();
   if (!s) return;
+  if (window.chartIsLondonOnly && window.chartIsLondonOnly()) {
+    wlsearch.value = ""; wlFilter = ""; lseMatches = [];
+    if (ws && ws.readyState === WebSocket.OPEN)
+      ws.send(JSON.stringify({ cmd: "watchlist", act: "add", sym: s }));
+    switchSymbol(s, true); return;
+  }
   // "MUUSDT" es el nombre del PERP; el subyacente en IBKR es "MU". Sin esto se intentaba
   // cualificar MUUSDT contra IBKR y fallaba.
-  if (s.endsWith("USDT") && PERP[s.slice(0, -4)]) s = s.slice(0, -4);
+  if (s.endsWith("USDT")) {
+    const base = s.slice(0, -4); wlsearch.value = ""; wlFilter = ""; switchPerp(base); return;
+  }
+  if (chartSymbolMode === "perp") {
+    wlsearch.value = ""; wlFilter = ""; switchPerp(s); return;
+  }
   wlsearch.value = ""; wlFilter = "";
   if (ws && ws.readyState === WebSocket.OPEN)
     ws.send(JSON.stringify({ cmd: "watchlist", act: "add", sym: s }));  // server cualifica + responde watchlist
@@ -1815,7 +2472,10 @@ function onWatchlist(msg) {
   if (Array.isArray(msg.user)) USERWL = msg.user;
   if (Array.isArray(msg.korea)) KOREA = msg.korea;
   if (msg.quotes) QUOTES = msg.quotes;
-  if (msg.perp) PERP = msg.perp;
+  if (msg.perp) {
+    PERP = msg.perp;
+    Object.values(PERP).forEach(p => { if (p && p.src) providerMark(p.src); });
+  }
   // cierre previo implícito por símbolo -> el %día del ticker en pantalla se recalcula VIVO
   // con cada tick (el server solo reenvía quotes cada 15s; el precio del que MIRAS es sub-seg)
   for (const s in QUOTES) {
@@ -1847,20 +2507,42 @@ function liveQuoteTick(price) {
 }
 
 // ============ switcher PAPER/LIVE + selector Opciones/Acciones + panel Cuenta ============
-let curInstrument = "opt", curMode = null;
+let curInstrument = "opt", curMode = null, lastIbMode = null;
 const modepill = document.getElementById("modepill");
 const instpill = document.getElementById("instpill");
 const acctbtn = document.getElementById("acctbtn");
 const acctpanel = document.getElementById("acctpanel");
-function onIbMode(m) {
-  curMode = m.mode;
+function renderModePill() {
+  if (curSym && curSym.endsWith("USDT")) {
+    modepill.textContent = "● PERP 24/7";
+    modepill.classList.remove("live");
+    modepill.title = `${curSym} · precio y velas WebSocket 24/7; walls/magnets/GEX son del subyacente y pueden tener basis.`;
+    return;
+  }
+  if (window.chartIsLondonOnly && window.chartIsLondonOnly()) {
+    modepill.textContent = "● LSE LIVE";
+    modepill.classList.add("live");
+    modepill.title = "London Strategic Edge exclusivamente · precio y opciones por WebSocket; griegas reconciliadas por REST.";
+    return;
+  }
+  const m = lastIbMode; if (!m) return;
   const up = m.mode === "live" ? m.live_up : m.paper_up;
   modepill.textContent = (m.mode === "live" ? "● LIVE" : "● PAPER") + (up ? "" : " (TWS off)");
   modepill.classList.toggle("live", m.mode === "live");
   modepill.title = `Cuenta ${m.account} · puerto ${m.port} · paper ${m.paper_up ? "up" : "off"} / live ${m.live_up ? "up" : "off"}. Clic para cambiar.`;
 }
+function onIbMode(m) {
+  lastIbMode = m;
+  curMode = m.mode;
+  renderModePill();
+}
 modepill.addEventListener("click", () => {
   if (!ws || ws.readyState !== WebSocket.OPEN || !curMode) return;
+  if (window.chartIsLondonOnly && window.chartIsLondonOnly()) return;
+  if (curSym && curSym.endsWith("USDT")) {
+    switchSymbol(curSym.slice(0, -4), true); // salida explícita de PERP hacia el subyacente
+    return;
+  }
   const next = curMode === "live" ? "paper" : "live";
   ws.send(JSON.stringify({ cmd: "ibmode", act: "set", mode: next }));
 });
@@ -2942,7 +3624,7 @@ document.querySelectorAll("#layerbar .tgl").forEach(btn => {
     gexPrim.setLayer(btn.dataset.layer);
   });
 });
-// toggle BURBUJAS on/off (aditivo: las líneas de muro siguen ahí). Recuerda la elección.
+// toggle LADRILLOS on/off (aditivo: las líneas de muro siguen ahí). Recuerda la elección.
 const bubBtn = document.getElementById("bubbtn");
 function setBubbles(on) {
   bubBtn.classList.toggle("active", on);
@@ -3002,6 +3684,15 @@ function setReplayBadge(isMock, lastBarEpoch) {
 }
 let fetchingMore = false, backfillExhausted = false;
 function onHistory(msg) {
+  // `?perp=auto` means: keep this window's configured base symbol, but move its chart
+  // to that base's genuine 24/7 perpetual stream. This lets a six-port launch preserve
+  // QQQ/NVDA/SMH/MU/AAPL/MSFT instead of forcing the same symbol into every window.
+  const historySym = String(msg.levels && msg.levels.sym || "").toUpperCase();
+  if (autoPerpPending && historySym && !historySym.endsWith("USDT") && ws && ws.readyState === WebSocket.OPEN) {
+    autoPerpPending = false;
+    switchPerp(historySym);
+    return;
+  }
   fetchingMore = false; backfillExhausted = false;   // dataset nuevo (tf/sym) -> reintenta pan
   setReplayBadge(msg.mock, msg.bars && msg.bars.length ? msg.bars[msg.bars.length - 1].time : null);
   onNoData(msg.nodata || null);
@@ -3019,11 +3710,18 @@ function onHistory(msg) {
   S.stUp.setData(ind.stUp || []);   // Supertrend rama alcista (con whitespace = break)
   S.stDn.setData(ind.stDn || []);   // Supertrend rama bajista
   setRibbon(ind.madrid);            // Madrid Ribbon (18 EMAs coloreadas)
-  volS.setData(ind.volume);
+  if (volS) volS.setData(ind.volume);
   lastVol = ind.volume && ind.volume.length ? ind.volume[ind.volume.length - 1].value : null;
-  macdHist.setData(ind.hist);
-  macdLine.setData(ind.macd);
-  macdSig.setData(ind.signal);
+  if (macdHist) { macdHist.setData(ind.hist); macdLine.setData(ind.macd); macdSig.setData(ind.signal); }
+  if (rsiLine) {
+    rsiLine.setData(ind.rsi || []);
+    rsi70.setData((ind.rsi || []).map(p => ({ time:p.time, value:70 })));
+    rsi30.setData((ind.rsi || []).map(p => ({ time:p.time, value:30 })));
+  }
+  if (rsiDivLine) {
+    rsiDivLine.setData(ind.rsiDivergence || []);
+    rsiDivZero.setData((ind.rsiDivergence || []).map(p => ({ time:p.time, value:0 })));
+  }
   lastBar = msg.bars.length ? msg.bars[msg.bars.length - 1] : null;
   lastBarTime = lastBar ? lastBar.time : null;
   drawTrendlines(ind.trendlines);
@@ -3033,6 +3731,7 @@ function onHistory(msg) {
   S.ttDn.setData(ind.ttDn || []);
   curTtMarkers = ind.ttMarkers || [];
   curWhaleMarkers = ind.whaleMarkers || [];   // Big Trades (vol intrabar; vacio si feed sin volumen)
+  curRsiDivMarkers = ind.rsiDivMarkers || []; // fecha = confirmación, nunca pivote futuro
   updateWhaleTally();
   drawTtLevels(ind.ttLevels || []);
   sigMarkers = msg.signals || [];
@@ -3044,10 +3743,12 @@ function onHistory(msg) {
   wgexDraw();          // widget Net GEX por strike (mismo profile, cero red nueva)
   drawHeader(msg.levels);
   syncSymSel(msg.levels && msg.levels.sym);
+  if (window.OrderFlowPanel && historySym.endsWith("USDT")) OrderFlowPanel.setFeed("perp");
   setOHLC(lastBar);
   if (msg.tf) setActiveTf(msg.tf);
   if (window.PulsePanel) PulsePanel.render(msg.pulse);   // tarjeta RSI/BB arriba-izquierda
   zoomRecent(msg.bars.length);   // últimas ~100 barras (velas legibles en cada tf)
+  endChartLoad(msg.feed, msg.server_ms);
 }
 // pan-scroll hacia atrás (Yunior 2026-07-26 "load data on demand when scrolling, priority
 // to live data"): PREPEND, no reset — la vista y el borde vivo no se mueven.
@@ -3064,6 +3765,7 @@ function onBackfill(msg) {
   if (msg.exhausted || delta <= 0) {
     backfillExhausted = true;
     announceBackfillDone(msg.reason);
+    endChartLoad(msg.feed, msg.server_ms);
     return;
   }
   const vr = chart.timeScale().getVisibleLogicalRange();
@@ -3076,14 +3778,25 @@ function onBackfill(msg) {
   S.vwap.setData(ind.vwap);
   S.stUp.setData(ind.stUp || []); S.stDn.setData(ind.stDn || []);
   setRibbon(ind.madrid);
-  volS.setData(ind.volume);
-  macdHist.setData(ind.hist); macdLine.setData(ind.macd); macdSig.setData(ind.signal);
+  if (volS) volS.setData(ind.volume);
+  if (macdHist) { macdHist.setData(ind.hist); macdLine.setData(ind.macd); macdSig.setData(ind.signal); }
+  if (rsiLine) {
+    rsiLine.setData(ind.rsi || []);
+    rsi70.setData((ind.rsi || []).map(p => ({ time:p.time, value:70 })));
+    rsi30.setData((ind.rsi || []).map(p => ({ time:p.time, value:30 })));
+  }
+  if (rsiDivLine) {
+    rsiDivLine.setData(ind.rsiDivergence || []);
+    rsiDivZero.setData((ind.rsiDivergence || []).map(p => ({ time:p.time, value:0 })));
+  }
   curStMarkers = ind.stMarkers || [];
+  curRsiDivMarkers = ind.rsiDivMarkers || [];
   sigMarkers = msg.signals || [];
   engineOps = msg.engineOps || [];
   applyMarkers();
   drawTrendlines(ind.trendlines);
   if (vr) chart.timeScale().setVisibleLogicalRange({ from: vr.from + delta, to: vr.to + delta });
+  endChartLoad(msg.feed, msg.server_ms);
 }
 // cerca del borde izquierdo cargado -> pide más historia. Un solo vuelo a la vez;
 // backfillExhausted corta el spam una vez TWS ya no tiene más barras que dar.
@@ -3091,10 +3804,11 @@ chart.timeScale().subscribeVisibleLogicalRangeChange((range) => {
   if (!range || fetchingMore || backfillExhausted || !candleData.length) return;
   if (range.from < 20) {
     fetchingMore = true;
+    beginChartLoad("cargando historial");
     ws.send(JSON.stringify({ cmd: "more", before: candleData[0].time }));
   }
 });
-function upd(series, pt) { if (pt) series.update(pt); }
+function upd(series, pt) { if (series && pt) series.update(pt); }
 function mirrorBar(bar) {           // upsert en el espejo: misma regla que series.update()
   if (!bar) return;
   const n = candleData.length;
@@ -3106,8 +3820,13 @@ function onTick(msg) {
   candle.update(msg.bar);
   mirrorBar(msg.bar);
   lastBar = msg.bar; lastBarTime = msg.bar.time;
+  if (msg.squeeze_fuel) {
+    if (curLevels) curLevels.squeeze_fuel = msg.squeeze_fuel;
+    renderSqueezeFuel(msg.squeeze_fuel);
+  }
   setOHLC(msg.bar);
   liveQuoteTick(msg.bar.close);   // fila del ticker en pantalla: precio/%día VIVOS
+  updateChartFeed(msg.feed, null, null);
 }
 function onBar(msg) {
   candle.update(msg.bar);           // update(), NUNCA setData por tick
@@ -3121,6 +3840,10 @@ function onBar(msg) {
   upd(volS, ind.volume);
   if (ind.volume && ind.volume.value != null) lastVol = ind.volume.value;
   upd(macdHist, ind.hist); upd(macdLine, ind.macd); upd(macdSig, ind.signal);
+  upd(rsiLine, ind.rsi);
+  if (rsiLine && ind.rsi) { upd(rsi70, {time:ind.rsi.time, value:70}); upd(rsi30, {time:ind.rsi.time, value:30}); }
+  upd(rsiDivLine, ind.rsiDivergence);
+  if (rsiDivLine && ind.rsiDivergence) upd(rsiDivZero, {time:ind.rsiDivergence.time, value:0});
   lastBar = msg.bar; lastBarTime = msg.bar.time;
   liveQuoteTick(msg.bar.close);   // cierre de vela -> fila del ticker en pantalla
   if (ind.trendlines) drawTrendlines(ind.trendlines);
@@ -3130,9 +3853,11 @@ function onBar(msg) {
   drawHeader(curLevels || msg.levels);
   setOHLC(lastBar);
   if (window.PulsePanel) PulsePanel.render(msg.pulse);   // se auto-actualiza con cada barra
+  updateChartFeed(msg.feed, null, null);
 }
 
-// niveles en tiempo real (frame propio, sin esperar barra): redibuja muros/flip/GEX
+// niveles auxiliares REST/cache de 1 min (frame propio, sin esperar barra):
+// redibuja muros/flip/GEX sin atribuirles el tier realtime del precio/velas.
 function onLevels(msg) {
   if (!msg.levels) return;
   curLevels = msg.levels;
@@ -3146,7 +3871,7 @@ function onLevels(msg) {
 chart.subscribeCrosshairMove((param) => {
   if (!param || !param.time || !param.seriesData) { setOHLC(lastBar); return; }
   const d = param.seriesData.get(candle);
-  const v = param.seriesData.get(volS);          // hover: el numero de ESA barra de volumen
+  const v = volS ? param.seriesData.get(volS) : null; // hover: volumen solo si existe su pane
   if (d && d.open != null) setOHLC(d, v ? v.value : null); else setOHLC(lastBar);
 });
 
@@ -3158,9 +3883,9 @@ chart.subscribeCrosshairMove((param) => {
 //                      construccion no puede taparlo. Expandir un flotante lo re-acopla.
 //   · persistentes  -> abierto/plegado/expandido/posicion/altura en localStorage.
 // Sin frameworks: la CSP del cockpit no admite CDN y el peso importa (Mac de 8 GB).
-const WGT_IDS = ["gexheat", "gex", "liqmap", "prem", "flow", "tech", "ivreg", "rviv", "hmap", "book", "gdecay",
+const WGT_IDS = ["mmfractal", "gexheat", "gex", "liqmap", "prem", "flow", "tech", "ivreg", "rviv", "hmap", "book", "gdecay",
                  "dark", "gexexp"];
-const WGT_NAME = { gexheat: "Net GEX Heat Map", gex: "Net GEX por strike", liqmap: "Mapa de liquidez",
+const WGT_NAME = { mmfractal: "MM Fractal · LSE", gexheat: "Net GEX Heat Map", gex: "Net GEX por strike", liqmap: "Mapa de liquidez",
                    prem: "Net Premiums", flow: "Options Flow Orders", tech: "Technicals",
                    ivreg: "IV Regime", rviv: "RV vs IV", hmap: "Strike Heat Map",
                    book: "Book Quality", gdecay: "Gamma Decay",
@@ -3183,7 +3908,12 @@ function techCls(n, inv) { if (n == null) return ""; const p = inv ? -n : n;
 
 async function techDraw(force) {
   const body = document.getElementById("techbody"), sub = document.getElementById("techsub");
-  if (!body || !WG.open.tech) return;
+  if (!body || !wgShowing("tech")) return;
+  if (window.chartIsLondonOnly && window.chartIsLondonOnly()) {
+    sub.textContent = "London-only";
+    body.innerHTML = '<div class="wgempty"><div class="wgeico">◌</div><div>Technicals externos desactivados.</div></div>';
+    body.dataset.filled = "0"; return;
+  }
   const s = (curSym || "").toUpperCase();
   if (!force && s === techLastSym && body.dataset.filled === "1") return;
   techLastSym = s;
@@ -3224,7 +3954,7 @@ async function techDraw(force) {
 }
 function techSchedule() {
   if (techTimer) { clearInterval(techTimer); techTimer = null; }
-  if (WG.open.tech) { techDraw(true); techTimer = setInterval(() => techDraw(true), 60000); }
+  if (wgShowing("tech")) { techDraw(true); techTimer = setInterval(() => techDraw(true), 60000); }
 }
 
 // ---- cinta de ballenas UW (wgt-flow): frame uw_tape del bridge (uw_flow_tape.py) ----
@@ -3248,7 +3978,7 @@ function uwBlocked(body, sub, why) {
 }
 function uwTapeDraw() {
   const body = document.getElementById("flowbody"), sub = document.getElementById("flowsub");
-  if (!body || !sub) return;
+  if (!body || !sub || !wgShowing("flow")) return;
   if (!uwTape) { uwBlocked(body, sub, "sin uw_flow_tape.json"); return; }
   if (uwTape.error) { uwBlocked(body, sub, uwTape.error); return; }
   const rows = uwTape.rows || [];
@@ -3294,8 +4024,8 @@ const wgDockW = (exp) => {
 };
 
 // Yunior 2026-08-05: el Heat Map es EL widget por defecto del panel derecho (el resto se abre a mano).
-const wgFresh = () => ({ open: { gexheat: true },
-                         float: {}, h: { gexheat: 470, gex: 320, liqmap: 340, prem: 300, flow: 300, tech: 300 },
+const wgFresh = () => ({ visible: true, open: { mmfractal: true, gexheat: true },
+                         float: {}, h: { mmfractal: 350, gexheat: 470, gex: 320, liqmap: 340, prem: 300, flow: 300, tech: 300 },
                          min: {}, exp: {} });
 let WG = wgFresh();
 try {
@@ -3306,9 +4036,16 @@ try {
     if (s.open.liqmap === undefined) { WG.open.liqmap = true; WG.h.liqmap = WG.h.liqmap || 340; }
     // estados guardados de antes del Heat Map: se abre una vez (es el widget por defecto)
     if (s.open.gexheat === undefined) { WG.open.gexheat = true; WG.h.gexheat = WG.h.gexheat || 470; }
+    // nuevo fractal London: se descubre una vez sin borrar la configuración previa.
+    if (s.open.mmfractal === undefined) { WG.open.mmfractal = true; WG.h.mmfractal = WG.h.mmfractal || 350; }
   }
 } catch (e) {}
 const wgSave = () => { try { localStorage.setItem(WG_KEY, JSON.stringify(WG)); } catch (e) {} };
+const wgShowing = (id) => WG.visible !== false && !!WG.open[id];
+// External widget files load before this inline controller.  They use this public check
+// once DOMContentLoaded fires so a hidden dock also suspends fetches and countdown redraws.
+window.cockpitWidgetOpen = (id) => wgShowing(id);
+let wgVisibilitySignature = "";
 
 // El chart NO se auto-redimensiona al cambiar el ancho del dock: hay que decirselo.
 function wgFitChart() {
@@ -3320,10 +4057,11 @@ function wgFitChart() {
 }
 
 function wgApply() {
+  const panelVisible = WG.visible !== false;
   let dockW = 0;
   for (const id of WGT_IDS) {
     const w = WGT_EL[id]; if (!w) continue;
-    const on = !!WG.open[id], flo = on && !!WG.float[id];
+    const on = wgShowing(id), flo = on && !!WG.float[id];
     w.style.display = on ? "flex" : "none";
     w.classList.toggle("float", flo);
     w.classList.toggle("min", !!WG.min[id]);
@@ -3344,8 +4082,20 @@ function wgApply() {
   }
   document.documentElement.style.setProperty("--dockw", dockW + "px");
   wdockEl.classList.toggle("off", dockW === 0);
-  const anyOpen = WGT_IDS.some(id => WG.open[id]);
-  document.getElementById("wgbtn").classList.toggle("on", anyOpen);
+  const anyOpen = WGT_IDS.some(id => !!WG.open[id]);
+  const btn = document.getElementById("wgbtn");
+  btn.classList.toggle("on", panelVisible && anyOpen);
+  btn.setAttribute("aria-pressed", String(panelVisible));
+  btn.title = panelVisible
+    ? "Panel de widgets visible. Abre el menú para ocultarlo o elegir widgets."
+    : "Panel de widgets oculto; el gráfico usa todo el ancho. Abre el menú para restaurarlo.";
+  const visibilitySignature = `${panelVisible}:${WGT_IDS.filter(id => WG.open[id]).join(",")}`;
+  if (visibilitySignature !== wgVisibilitySignature) {
+    wgVisibilitySignature = visibilitySignature;
+    window.dispatchEvent(new CustomEvent("cockpitWidgetsVisibility", {
+      detail: { visible: panelVisible, anyOpen }
+    }));
+  }
   wgFitChart();
 }
 
@@ -3418,12 +4168,25 @@ for (const id of WGT_IDS) {
 
 function wgMenuBuild() {
   wgMenuEl.innerHTML = "";
+  const panel = document.createElement("button");
+  panel.className = "wgpanel";
+  panel.setAttribute("role", "menuitemcheckbox");
+  panel.setAttribute("aria-checked", String(WG.visible !== false));
+  panel.innerHTML = `<span class="tick">${WG.visible !== false ? "✓" : "&nbsp;"}</span>` +
+    `${WG.visible !== false ? "Ocultar" : "Mostrar"} panel completo`;
+  panel.addEventListener("click", () => {
+    WG.visible = WG.visible === false;
+    wgApply(); wgSave(); techSchedule(); wgMenuBuild();
+  });
+  wgMenuEl.appendChild(panel);
   for (const id of WGT_IDS) {
     const b = document.createElement("button");
+    b.setAttribute("role", "menuitemcheckbox");
+    b.setAttribute("aria-checked", String(!!WG.open[id]));
     b.innerHTML = `<span class="tick">${WG.open[id] ? "✓" : "&nbsp;"}</span>${WGT_NAME[id]}`;
     b.addEventListener("click", () => {
       WG.open[id] = !WG.open[id];
-      if (WG.open[id]) { WG.min[id] = false; }
+      if (WG.open[id]) { WG.visible = true; WG.min[id] = false; }
       wgApply(); wgSave(); techSchedule(); wgMenuBuild();
     });
     wgMenuEl.appendChild(b);
@@ -3434,10 +4197,14 @@ document.getElementById("wgbtn").addEventListener("click", (e) => {
   wgMenuEl.style.left = Math.round(r.left) + "px";
   wgMenuEl.style.top = Math.round(r.bottom + 4) + "px";
   wgMenuEl.classList.toggle("on");
+  e.currentTarget.setAttribute("aria-expanded", String(wgMenuEl.classList.contains("on")));
   wgMenuBuild();
 });
 document.addEventListener("click", (e) => {
-  if (!e.target.closest("#wgmenu") && !e.target.closest("#wgbtn")) wgMenuEl.classList.remove("on");
+  if (!e.target.closest("#wgmenu") && !e.target.closest("#wgbtn")) {
+    wgMenuEl.classList.remove("on");
+    document.getElementById("wgbtn").setAttribute("aria-expanded", "false");
+  }
 });
 
 // ---------------- WIDGET: Mapa de liquidez (cubo 5-min + prints + VPVR) ----------------
@@ -3469,7 +4236,7 @@ function onLiqMap(msg) {
 }
 function liqmapDraw() {
   const cv = document.getElementById("liqmap-cv");
-  if (!cv || !WG.open.liqmap || WG.min.liqmap) return;
+  if (!cv || !wgShowing("liqmap") || WG.min.liqmap) return;
   const body = cv.parentNode;
   const W = body.clientWidth, H = body.clientHeight;
   if (W < 40 || H < 40) return;
@@ -3653,7 +4420,7 @@ function liqmapLeave() {
 // spot, línea del flip, y el neto total en la cabecera.
 function wgexDraw() {
   const cv = document.getElementById("wgex-cv");
-  if (!cv || !WG.open.gex || WG.min.gex) return;
+  if (!cv || !wgShowing("gex") || WG.min.gex) return;
   const body = cv.parentNode;
   const W = body.clientWidth, H = body.clientHeight;
   if (W < 20 || H < 20) return;
@@ -3668,11 +4435,16 @@ function wgexDraw() {
   g.textBaseline = "middle";
 
   const lv = curLevels || {};
+  const londonGammaVol = lv.profile_metric === "gamma_volume";
+  const widgetName = document.querySelector("#wgt-gex .wgname");
+  if (widgetName) widgetName.textContent = londonGammaVol ? "LSE Γ×Vol por strike" : "Net GEX por strike";
+  const widgetPop = document.querySelector('#wgt-gex .popover-box[data-widget="gex"]');
+  if (widgetPop && londonGammaVol) widgetPop.innerHTML = '<div class="popover-title">LSE Γ×Vol por strike</div><p><strong>Qué mide:</strong> actividad gamma×volume_today agregada. Verde-azulado = calls; rojo = puts.</p><div class="popover-source"><strong>Fuente:</strong> London Strategic Edge; expiries explícitos y sesión coherente por last_trade_at.</div><div class="popover-doctrine"><strong>Guarda:</strong> sin OI no es Net GEX, no define régimen dealer ni flip.</div>';
   let prof = (lv.profile || []).filter(p => p && p.strike != null && p.gex != null);
   const sub = document.getElementById("wgex-sub");
   if (!prof.length) {
     g.fillStyle = "#6b7a99"; g.textAlign = "center";
-    g.fillText("Sin perfil GEX todavía", W / 2, H / 2);
+    g.fillText(londonGammaVol ? "Sin perfil Γ×volumen London todavía" : "Sin perfil GEX todavía", W / 2, H / 2);
     if (sub) sub.textContent = "—";
     return;
   }
@@ -3755,12 +4527,15 @@ function wgexDraw() {
   }
 
   g.fillStyle = "#4b5b7a"; g.textAlign = "center";   // pie: escala real de las barras
-  g.fillText("← gamma −     |     gamma + →   (máx " + fmtBig(maxAbs) + ")", cx, H - 6);
+  g.fillText((londonGammaVol ? "← puts Γ×vol | calls Γ×vol →" : "← gamma −     |     gamma + →")
+    + "   (máx " + fmtBig(maxAbs) + ")", cx, H - 6);
 
   if (sub) {
-    const net = lv.net_gex != null ? fmtBig(lv.net_gex) : "—";
+    const net = londonGammaVol
+      ? (lv.gamma_volume_total != null ? fmtBig(lv.gamma_volume_total) : "—")
+      : (lv.net_gex != null ? fmtBig(lv.net_gex) : "—");
     const vto = lv.dte != null ? (lv.dte < 1 ? "0DTE" : Math.round(lv.dte) + "DTE") : "—";
-    sub.textContent = `${net} · alcance ${lv.scope || "—"} · vto ${vto}`
+    sub.textContent = `${londonGammaVol ? "LSE Γ×vol " : ""}${net} · alcance ${lv.scope || "—"} · vto ${vto}`
       + ` · ${windowed ? n + "/" + total + " strikes (ventana al spot)" : total + " strikes"}`;
     sub.title = windowed
       ? `Perfil completo: ${total} strikes. No caben todos, se muestran los ${n} más cercanos al spot. Expande (⤢) o agranda el widget para ver más.`
@@ -3808,10 +4583,19 @@ window.addEventListener("keydown", (e) => {
 function connect() {
   const conn = document.getElementById("conn");
   const url = `ws://${location.host || "127.0.0.1:8080"}/stream`;
+  beginChartLoad("conectando chart");
   ws = new WebSocket(url);
-  ws.onopen = () => { conn.className = "on"; conn.textContent = "● en vivo";
+  ws.onopen = () => { conn.className = "on"; conn.textContent = "● WS conectado";
     try { ws.send(JSON.stringify({ cmd: "alarm", act: "list" }));
-          ws.send(JSON.stringify({ cmd: "ibmode", act: "get" })); } catch (e) {} };
+          if (window.OrderFlowPanel) OrderFlowPanel.setTransport(m => ws.send(JSON.stringify(m)));
+          ws.send(JSON.stringify({ cmd: "ibmode", act: "get" }));
+          // Apertura directa para fin de semana/noche: --url http://…/?perp=QQQ.
+          // El backend confirma el símbolo con un history QQQUSDT; no se mezcla equity.
+          const qp = new URLSearchParams(location.search).get("perp");
+          if (qp && qp.toLowerCase() !== "auto") { const base = qp.toUpperCase().replace(/USDT$/, "");
+                    beginChartLoad(`cargando ${base}USDT · PERP 24/7`);
+                    ws.send(JSON.stringify({ cmd: "perp", sym: base })); }
+        } catch (e) {} };
   ws.onmessage = (ev) => {
     const msg = JSON.parse(ev.data);
     if (msg.type === "history") onHistory(msg);
@@ -3819,6 +4603,7 @@ function connect() {
     else if (msg.type === "bar") onBar(msg);
     else if (msg.type === "tick") onTick(msg);   // precio vivo sub-segundo (solo la vela)
     else if (msg.type === "levels") onLevels(msg);   // GEX/flip/muros en tiempo real
+    else if (msg.type === "feed_status") updateChartFeed(msg.feed);
     else if (msg.type === "narrator") onNarrator(msg);   // narrador de mercado
     else if (msg.type === "signals") { sigMarkers = msg.signals || []; engineOps = msg.engineOps || []; applyMarkers(); }  // refresco marcadores + ops engine
     else if (msg.type === "netprem") onNetprem(msg);   // net premium UW estilo QuantData (pane 3)
@@ -3841,11 +4626,13 @@ function connect() {
     else if (msg.type === "uw_tape") onUwTape(msg);   // cinta de ballenas UW (wgt-flow)
     else if (msg.type === "liq_levels") onLiqLevels(msg);   // liquidez VPVR/KDE (contexto, no gatillo)
     else if (msg.type === "liq_map") onLiqMap(msg);   // mapa de liquidez (widget)
+    else if (msg.type === "footprint" && window.OrderFlowPanel) OrderFlowPanel.render(msg); // Bid x Ask AllLast
     else if (msg.type === "order_action") onOrderAction(msg);   // resultado cancel/sell/modify
     else if (msg.type === "order_confirmation") onOrderConfirmation(msg);   // rechazo fail-closed al armar
   };
   ws.onclose = () => {
     conn.className = "off"; conn.textContent = "● reconectando…";
+    beginChartLoad("reconectando chart");
     clearTimeout(retry);
     retry = setTimeout(connect, 2000);   // reconecta -> el server reenvía history
   };
@@ -3904,7 +4691,7 @@ fetch('/version').then(r => r.json()).then(v => {
 // === NEW FEATURE WIDGETS (2026-07-29) ===
 async function ivRegDraw(force) {
   const body = document.getElementById("ivreg-body"), sub = document.getElementById("ivreg-sub");
-  if (!body || !WG.open.ivreg) return;
+  if (!body || !wgShowing("ivreg")) return;
   const s = (curSym || "").toUpperCase();
   try {
     const r = await fetch("/data/iv_regime.json");
@@ -3927,7 +4714,10 @@ async function ivRegDraw(force) {
 
 async function rvivDraw(force) {
   const body = document.getElementById("rviv-body"), sub = document.getElementById("rviv-sub");
-  if (!body || !WG.open.rviv) return;
+  if (!body || !wgShowing("rviv")) return;
+  if (window.chartIsLondonOnly && window.chartIsLondonOnly()) {
+    sub.textContent = "London-only"; body.innerHTML = '<div class="wgempty"><div class="wgeico">◌</div><div>RV/IV no viene de London.</div></div>'; return;
+  }
   const s = (curSym || "").toUpperCase();
   try {
     const r = await fetch("/data/rv_iv_spread.json");
@@ -3949,7 +4739,10 @@ async function rvivDraw(force) {
 
 async function hmapDraw(force) {
   const body = document.getElementById("hmap-body"), sub = document.getElementById("hmap-sub");
-  if (!body || !WG.open.hmap) return;
+  if (!body || !wgShowing("hmap")) return;
+  if (window.chartIsLondonOnly && window.chartIsLondonOnly()) {
+    sub.textContent = "London-only"; body.innerHTML = '<div class="wgempty"><div class="wgeico">◌</div><div>Usa el London Γ×Volume Heat Map.</div></div>'; return;
+  }
   const s = (curSym || "").toUpperCase();
   try {
     const r = await fetch(`/data/strike_heatmap_${s.toLowerCase()}.json`);
@@ -3980,7 +4773,10 @@ async function hmapDraw(force) {
 
 async function bookDraw(force) {
   const body = document.getElementById("book-body"), sub = document.getElementById("book-sub");
-  if (!body || !WG.open.book) return;
+  if (!body || !wgShowing("book")) return;
+  if (window.chartIsLondonOnly && window.chartIsLondonOnly()) {
+    sub.textContent = "London-only"; body.innerHTML = '<div class="wgempty"><div class="wgeico">◌</div><div>Calidad de libro no disponible en London.</div></div>'; return;
+  }
   const s = (curSym || "").toUpperCase();
   try {
     const r = await fetch(`/api/book_quality?sym=${s}`);
@@ -4001,7 +4797,10 @@ async function bookDraw(force) {
 
 async function gdecayDraw(force) {
   const body = document.getElementById("gdecay-body"), sub = document.getElementById("gdecay-sub");
-  if (!body || !WG.open.gdecay) return;
+  if (!body || !wgShowing("gdecay")) return;
+  if (window.chartIsLondonOnly && window.chartIsLondonOnly()) {
+    sub.textContent = "sin OI"; body.innerHTML = '<div class="wgempty"><div class="wgeico">◌</div><div>Gamma decay requiere OI; London no lo entrega.</div></div>'; return;
+  }
   const s = (curSym || "").toUpperCase();
   try {
     const r = await fetch(`/api/gamma_decay?sym=${s}`);
@@ -4049,8 +4848,15 @@ async function gdecayDraw(force) {
     { k:"targettrend", n:"Target Trend",            c:"#06b690" },
     { k:"trendlines",  n:"Trendlines",              c:"#f23645" },
     { k:"macd",        n:"MACD (12,26,9)",          c:"#2962ff" },
+    { k:"rsi",         n:"RSI (14)",                c:"#ab47bc" },
+    { k:"rsi_divergence", n:"RSI Divergence (5−14)", c:"#00c853" },
     { k:"netprem",     n:"Net Premium (flujo)",     c:"#26a69a" },
     { k:"whales",      n:"Big Trades 🐋",           c:"#5b9cff" },
+    { k:"footprint",   n:"Order Flow · Bid × Ask",  c:"#43c9af" },
+    { k:"dealer_net_daily", n:"Dealer-neutral · Día (VOL proxy)", c:"#00bcd4" },
+    { k:"dealer_net_weekly", n:"Dealer-neutral · Semana (VOL proxy)", c:"#42a5f5" },
+    { k:"mm_top_profit_daily", n:"MM payout-min · Día (VOL proxy)", c:"#ff7043" },
+    { k:"mm_top_profit_weekly", n:"MM payout-min · Semana (VOL proxy)", c:"#ec407a" },
   ];
   const css = document.createElement("style");
   css.textContent = `
@@ -4078,6 +4884,9 @@ async function gdecayDraw(force) {
   const setVis = (arr, on) => arr.forEach(x => { try { x.applyOptions({ visible: on }); } catch (e) {} });
 
   function indApply() {
+    // Crea solo los panes seleccionados y elimina por completo los apagados. No usar
+    // setHeight(0): en LWC v5 deja el separador y produce paneles vacíos visibles.
+    syncOptionalPanes();
     setVis(Object.values(RIB), indOn("ribbon"));
     setVis([S.bbUpper, S.bbLower, S.bbMid], indOn("bb"));
     setVis([S.sma40, S.sma100, S.sma200], indOn("smas"));
@@ -4086,14 +4895,23 @@ async function gdecayDraw(force) {
     setVis([S.ttUp, S.ttDn], indOn("targettrend"));
     setVis([S.tlUp, S.tlDn], indOn("trendlines"));
     setVis([macdHist, macdLine, macdSig], indOn("macd"));
+    setVis([rsiLine, rsi70, rsi30], indOn("rsi"));
+    setVis([rsiDivLine, rsiDivZero], indOn("rsi_divergence"));
     setVis([npCall, npPut, npNet], indOn("netprem"));
     setVis([volS], indOn("volume"));
-    try { chart.panes()[1].setHeight(indOn("volume") ? 80 : 0); } catch (e) {}
     const wt = document.getElementById("whaleTally");
     if (wt) wt.style.display = indOn("whales") ? "" : "none";
-    try { chart.panes()[2].setHeight(indOn("macd") ? 120 : 0); } catch (e) {}
-    try { chart.panes()[3].setHeight(indOn("netprem") ? 110 : 0); } catch (e) {}
+    if (window.OrderFlowPanel) OrderFlowPanel.setVisible(indOn("footprint"));
+    for (const [id, key] of [["h-dnd-wrap", "dealer_net_daily"],
+                             ["h-dnw-wrap", "dealer_net_weekly"],
+                             ["h-mmd-wrap", "mm_top_profit_daily"],
+                             ["h-mmw-wrap", "mm_top_profit_weekly"]]) {
+      const head = document.getElementById(id);
+      if (head) head.style.display = indOn(key) ? "" : "none";
+    }
+    if (curLevels) drawLevels(curLevels);
     const li = window._lastInd;
+    hydrateOptionalPanes(li);
     if (li && indOn("ribbon") && li.madrid) setRibbon(li.madrid);   // se salto el guard estando OFF
     drawTtLevels((li && li.ttLevels) || []);                        // el guard interno decide
     applyMarkers();
@@ -4125,6 +4943,10 @@ async function gdecayDraw(force) {
     if (!menu.contains(e.target) && e.target !== btn) menu.classList.remove("on");
   });
   window.indApply = indApply;
+  window.setIndicator = (key, on) => {
+    if (!(key in IND)) return;
+    IND[key] = !!on; save(); indApply(); paintMenu();
+  };
   indApply();
 })();
 

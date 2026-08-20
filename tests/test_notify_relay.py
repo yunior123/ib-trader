@@ -39,7 +39,7 @@ def relay(tmp_path):
     stub.mkdir()
     curl_log = tmp_path / "curl.log"
     c = stub / "curl"
-    c.write_text('#!/bin/sh\necho "$@" >> "%s"\n' % curl_log)
+    c.write_text('#!/bin/sh\necho "$@" >> "%s"\nprintf 204\n' % curl_log)
     c.chmod(0o755)
     funnel = tmp_path / "push.txt"
     funnel.write_text("")
@@ -102,6 +102,32 @@ def test_dedup_sigue_funcionando_tras_envio(relay):
     _push(funnel, "T TRES", "mu rebota")
     time.sleep(1.5)
     assert len(re.findall("mu rebota", curl_log.read_text())) == 1
+
+
+def test_infra_repetida_se_reduce_a_una_por_hora(relay):
+    """La telemetría repetitiva queda en Discord estado; el teléfono recibe una/hora."""
+    funnel, _rlog, curl_log = relay
+    _push(funnel, "🕳 CINTA CIEGA", "sin prints 10m")
+    assert _wait(lambda: curl_log.exists() and "CINTA CIEGA" in curl_log.read_text())
+    time.sleep(2.2)
+    _push(funnel, "🕳 CINTA CIEGA", "sin prints 11m")
+    time.sleep(1.5)
+    assert len(re.findall("CINTA CIEGA", curl_log.read_text())) == 1
+
+
+def test_fallo_http_no_se_declara_enviado_y_permite_reintento(relay):
+    funnel, rlog, curl_log = relay
+    # Sustituir el stub mientras el relay corre: primera entrega falla, segunda funciona.
+    curl = curl_log.parent / "bin" / "curl"
+    curl.write_text('#!/bin/sh\necho "$@" >> "%s"\nprintf 503\n' % curl_log)
+    curl.chmod(0o755)
+    _push(funnel, "T HTTP", "prueba verificable")
+    assert _wait(lambda: rlog.exists() and "FALLO ntfy HTTP 503" in rlog.read_text())
+    curl.write_text('#!/bin/sh\necho "$@" >> "%s"\nprintf 204\n' % curl_log)
+    curl.chmod(0o755)
+    time.sleep(2.2)
+    _push(funnel, "T HTTP", "prueba verificable")
+    assert _wait(lambda: "ENVIADA ntfy=204" in rlog.read_text())
 
 
 # --- discord_layout.is_private: patrones desde config -------------------------------------

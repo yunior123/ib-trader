@@ -1,891 +1,106 @@
 {
  "sym": "MU",
- "spot": 889.98,
- "asof": 1786063303,
- "exp": "20260807",
- "dte": 0.8,
+ "spot": 972.77,
+ "asof": 1786737595,
+ "exp": "20260814",
+ "dte": 0.0,
  "scope": "0DTE",
- "net_vex": 8672960093.0,
- "vex_peak": 950.0,
- "vex_profile": [
-  {
-   "strike": 760.0,
-   "vex": 15286530.8
-  },
-  {
-   "strike": 765.0,
-   "vex": 12242541.2
-  },
-  {
-   "strike": 767.5,
-   "vex": 7026899.9
-  },
-  {
-   "strike": 770.0,
-   "vex": 24486650.7
-  },
-  {
-   "strike": 772.5,
-   "vex": 4246803.1
-  },
-  {
-   "strike": 775.0,
-   "vex": 15036484.5
-  },
-  {
-   "strike": 777.5,
-   "vex": 3744082.2
-  },
-  {
-   "strike": 780.0,
-   "vex": 42757041.8
-  },
-  {
-   "strike": 782.5,
-   "vex": 9725806.8
-  },
-  {
-   "strike": 785.0,
-   "vex": 25244779.3
-  },
-  {
-   "strike": 787.5,
-   "vex": 3296470.6
-  },
-  {
-   "strike": 790.0,
-   "vex": 61079124.1
-  },
-  {
-   "strike": 792.5,
-   "vex": 21145411.2
-  },
-  {
-   "strike": 795.0,
-   "vex": 47300279.6
-  },
-  {
-   "strike": 800.0,
-   "vex": 911145080.8
-  },
-  {
-   "strike": 805.0,
-   "vex": 36687922.3
-  },
-  {
-   "strike": 810.0,
-   "vex": 73368172.5
-  },
-  {
-   "strike": 815.0,
-   "vex": 76059041.9
-  },
-  {
-   "strike": 820.0,
-   "vex": 167412312.0
-  },
-  {
-   "strike": 825.0,
-   "vex": 106169079.9
-  },
-  {
-   "strike": 830.0,
-   "vex": 107316306.6
-  },
-  {
-   "strike": 835.0,
-   "vex": 54367603.5
-  },
-  {
-   "strike": 840.0,
-   "vex": 197932358.4
-  },
-  {
-   "strike": 845.0,
-   "vex": 112772730.6
-  },
-  {
-   "strike": 850.0,
-   "vex": 668128430.0
-  },
-  {
-   "strike": 855.0,
-   "vex": 379552177.6
-  },
-  {
-   "strike": 860.0,
-   "vex": 149815178.0
-  },
-  {
-   "strike": 865.0,
-   "vex": -28749779.5
-  },
-  {
-   "strike": 870.0,
-   "vex": -144013682.7
-  },
-  {
-   "strike": 875.0,
-   "vex": -100279857.1
-  },
-  {
-   "strike": 880.0,
-   "vex": -127917424.1
-  },
-  {
-   "strike": 885.0,
-   "vex": -172166306.6
-  },
-  {
-   "strike": 890.0,
-   "vex": -2669763.1
-  },
-  {
-   "strike": 895.0,
-   "vex": 24681094.8
-  },
-  {
-   "strike": 900.0,
-   "vex": 817705452.3
-  },
-  {
-   "strike": 905.0,
-   "vex": 110332983.3
-  },
-  {
-   "strike": 910.0,
-   "vex": 241378984.5
-  },
-  {
-   "strike": 915.0,
-   "vex": 141694798.1
-  },
-  {
-   "strike": 920.0,
-   "vex": 500214374.4
-  },
-  {
-   "strike": 925.0,
-   "vex": 274109132.8
-  },
-  {
-   "strike": 930.0,
-   "vex": 512224491.8
-  },
-  {
-   "strike": 935.0,
-   "vex": 689942502.9
-  },
-  {
-   "strike": 940.0,
-   "vex": 261895430.7
-  },
-  {
-   "strike": 945.0,
-   "vex": 61380923.4
-  },
-  {
-   "strike": 950.0,
-   "vex": 1023367995.8
-  },
-  {
-   "strike": 955.0,
-   "vex": 72680425.5
-  },
-  {
-   "strike": 957.5,
-   "vex": 30937612.1
-  },
-  {
-   "strike": 960.0,
-   "vex": 126714626.4
-  },
-  {
-   "strike": 962.5,
-   "vex": 41969236.4
-  },
-  {
-   "strike": 965.0,
-   "vex": 145737663.1
-  },
-  {
-   "strike": 967.5,
-   "vex": 10390639.6
-  },
-  {
-   "strike": 970.0,
-   "vex": 112719381.4
-  },
-  {
-   "strike": 972.5,
-   "vex": 10937578.9
-  },
-  {
-   "strike": 975.0,
-   "vex": 58225551.9
-  },
-  {
-   "strike": 977.5,
-   "vex": 7181166.5
-  },
-  {
-   "strike": 980.0,
-   "vex": 36677629.4
-  },
-  {
-   "strike": 982.5,
-   "vex": 6525888.0
-  },
-  {
-   "strike": 985.0,
-   "vex": 18071102.5
-  },
-  {
-   "strike": 990.0,
-   "vex": 40297461.1
-  },
-  {
-   "strike": 995.0,
-   "vex": 8316297.9
-  },
-  {
-   "strike": 1000.0,
-   "vex": 473681531.0
-  },
-  {
-   "strike": 1005.0,
-   "vex": 15683125.9
-  },
-  {
-   "strike": 1010.0,
-   "vex": 15599626.6
-  },
-  {
-   "strike": 1015.0,
-   "vex": 1515768.8
-  },
-  {
-   "strike": 1020.0,
-   "vex": 22621128.2
-  }
- ],
- "net_charm": -4646485204.1,
- "charm_peak": 800.0,
- "charm_profile": [
-  {
-   "strike": 760.0,
-   "charm": -12263233.2
-  },
-  {
-   "strike": 765.0,
-   "charm": -9665686.8
-  },
-  {
-   "strike": 767.5,
-   "charm": -5491419.5
-  },
-  {
-   "strike": 770.0,
-   "charm": -19349683.3
-  },
-  {
-   "strike": 772.5,
-   "charm": -3279592.4
-  },
-  {
-   "strike": 775.0,
-   "charm": -11480870.0
-  },
-  {
-   "strike": 777.5,
-   "charm": -2797750.6
-  },
-  {
-   "strike": 780.0,
-   "charm": -31617150.0
-  },
-  {
-   "strike": 782.5,
-   "charm": -7088360.2
-  },
-  {
-   "strike": 785.0,
-   "charm": -18169421.6
-  },
-  {
-   "strike": 787.5,
-   "charm": -2328486.4
-  },
-  {
-   "strike": 790.0,
-   "charm": -42588416.7
-  },
-  {
-   "strike": 792.5,
-   "charm": -14612089.4
-  },
-  {
-   "strike": 795.0,
-   "charm": -32326205.1
-  },
-  {
-   "strike": 800.0,
-   "charm": -612684573.4
-  },
-  {
-   "strike": 805.0,
-   "charm": -24225748.1
-  },
-  {
-   "strike": 810.0,
-   "charm": -47315955.3
-  },
-  {
-   "strike": 815.0,
-   "charm": -47676027.8
-  },
-  {
-   "strike": 820.0,
-   "charm": -103197654.7
-  },
-  {
-   "strike": 825.0,
-   "charm": -65662893.8
-  },
-  {
-   "strike": 830.0,
-   "charm": -64986806.7
-  },
-  {
-   "strike": 835.0,
-   "charm": -32644440.1
-  },
-  {
-   "strike": 840.0,
-   "charm": -119101053.1
-  },
-  {
-   "strike": 845.0,
-   "charm": -67677006.9
-  },
-  {
-   "strike": 850.0,
-   "charm": -400378794.1
-  },
-  {
-   "strike": 855.0,
-   "charm": -231545151.4
-  },
-  {
-   "strike": 860.0,
-   "charm": -91812629.0
-  },
-  {
-   "strike": 865.0,
-   "charm": -36794180.4
-  },
-  {
-   "strike": 870.0,
-   "charm": 11922604.9
-  },
-  {
-   "strike": 875.0,
-   "charm": 18895348.8
-  },
-  {
-   "strike": 880.0,
-   "charm": 26327766.0
-  },
-  {
-   "strike": 885.0,
-   "charm": 62122228.2
-  },
-  {
-   "strike": 890.0,
-   "charm": 3343049.9
-  },
-  {
-   "strike": 895.0,
-   "charm": -6231949.6
-  },
-  {
-   "strike": 900.0,
-   "charm": -318576358.4
-  },
-  {
-   "strike": 905.0,
-   "charm": -38690795.6
-  },
-  {
-   "strike": 910.0,
-   "charm": -94424403.0
-  },
-  {
-   "strike": 915.0,
-   "charm": -53107512.8
-  },
-  {
-   "strike": 920.0,
-   "charm": -219331713.6
-  },
-  {
-   "strike": 925.0,
-   "charm": -115064337.4
-  },
-  {
-   "strike": 930.0,
-   "charm": -229291304.7
-  },
-  {
-   "strike": 935.0,
-   "charm": -335579598.1
-  },
-  {
-   "strike": 940.0,
-   "charm": -109139369.9
-  },
-  {
-   "strike": 945.0,
-   "charm": -26158620.8
-  },
-  {
-   "strike": 950.0,
-   "charm": -484209150.3
-  },
-  {
-   "strike": 955.0,
-   "charm": -34511007.7
-  },
-  {
-   "strike": 957.5,
-   "charm": -15246335.1
-  },
-  {
-   "strike": 960.0,
-   "charm": -57806164.6
-  },
-  {
-   "strike": 962.5,
-   "charm": -20524603.3
-  },
-  {
-   "strike": 965.0,
-   "charm": -72487063.6
-  },
-  {
-   "strike": 967.5,
-   "charm": -3988022.0
-  },
-  {
-   "strike": 970.0,
-   "charm": -52949308.0
-  },
-  {
-   "strike": 972.5,
-   "charm": -5482930.6
-  },
-  {
-   "strike": 975.0,
-   "charm": -28499393.0
-  },
-  {
-   "strike": 977.5,
-   "charm": -3939237.3
-  },
-  {
-   "strike": 980.0,
-   "charm": 2715917.9
-  },
-  {
-   "strike": 982.5,
-   "charm": -3062454.7
-  },
-  {
-   "strike": 985.0,
-   "charm": -4227918.7
-  },
-  {
-   "strike": 990.0,
-   "charm": -16791270.4
-  },
-  {
-   "strike": 995.0,
-   "charm": 8009211.5
-  },
-  {
-   "strike": 1000.0,
-   "charm": -257168089.8
-  },
-  {
-   "strike": 1005.0,
-   "charm": -4188024.1
-  },
-  {
-   "strike": 1010.0,
-   "charm": -5986173.8
-  },
-  {
-   "strike": 1015.0,
-   "charm": 6331723.6
-  },
-  {
-   "strike": 1020.0,
-   "charm": -10728663.8
-  }
- ],
- "charm_why": null,
- "pressure": 52,
- "pressure_lab": "amortigua",
- "iv_atm": 0.6628,
- "em": 27.69,
- "net_gex": 101145589.5,
- "regime": "POS",
- "flip": 873.86,
- "flip_static": 898.86,
- "flip_manana": 866.27,
- "flip_fwd": 858.15,
+ "net_vex": null,
+ "vex_peak": null,
+ "vex_profile": [],
+ "net_charm": null,
+ "charm_peak": null,
+ "charm_profile": [],
+ "charm_why": "cadena rancia: cache TWS de hace 434 min en RTH (ciclo son 3 min)",
+ "pressure": null,
+ "pressure_lab": "sin griegas",
+ "iv_atm": null,
+ "em": null,
+ "net_gex": null,
+ "regime": null,
+ "flip": null,
+ "flip_static": null,
+ "flip_manana": 914.82,
+ "flip_fwd": 914.82,
  "regime_fwd": "POS",
- "net_gex_manana": 136664951.6,
- "net_gex_fwd": 35519362.1,
- "gamma_muere_hoy_pct": 0.0,
- "gamma_muere_semana_pct": 57.2,
+ "net_gex_manana": 215051269.9,
+ "net_gex_fwd": 215051269.9,
+ "gamma_muere_hoy_pct": 60.7,
+ "gamma_muere_semana_pct": 60.7,
  "fwd_why": null,
- "call_wall": 900.0,
- "put_wall": 850.0,
- "abs_wall": 900.0,
- "poc_dom": "80%C",
- "call_wall_gex": 46722169.7,
- "put_wall_gex": -16220096.8,
- "abs_wall_gex": 46722169.7,
+ "call_wall": null,
+ "put_wall": null,
+ "abs_wall": null,
+ "poc_dom": null,
+ "call_wall_gex": null,
+ "put_wall_gex": null,
+ "abs_wall_gex": null,
  "oi_call_wall": 1000.0,
- "oi_put_wall": 800.0,
+ "oi_put_wall": 900.0,
  "near_call_wall": false,
  "near_put_wall": false,
  "near_flip": false,
- "profile": [
-  {
-   "strike": 760.0,
-   "gex": -215273.6
-  },
-  {
-   "strike": 765.0,
-   "gex": -170533.8
-  },
-  {
-   "strike": 767.5,
-   "gex": -97162.5
-  },
-  {
-   "strike": 770.0,
-   "gex": -328556.2
-  },
-  {
-   "strike": 772.5,
-   "gex": -56911.4
-  },
-  {
-   "strike": 775.0,
-   "gex": -204313.0
-  },
-  {
-   "strike": 777.5,
-   "gex": -51016.9
-  },
-  {
-   "strike": 780.0,
-   "gex": -597303.7
-  },
-  {
-   "strike": 782.5,
-   "gex": -138085.3
-  },
-  {
-   "strike": 785.0,
-   "gex": -363399.1
-  },
-  {
-   "strike": 787.5,
-   "gex": -47754.4
-  },
-  {
-   "strike": 790.0,
-   "gex": -892268.5
-  },
-  {
-   "strike": 792.5,
-   "gex": -311655.2
-  },
-  {
-   "strike": 795.0,
-   "gex": -699705.7
-  },
-  {
-   "strike": 800.0,
-   "gex": -13464164.1
-  },
-  {
-   "strike": 805.0,
-   "gex": -538792.3
-  },
-  {
-   "strike": 810.0,
-   "gex": -1129521.9
-  },
-  {
-   "strike": 815.0,
-   "gex": -1206570.7
-  },
-  {
-   "strike": 820.0,
-   "gex": -2733872.1
-  },
-  {
-   "strike": 825.0,
-   "gex": -1784487.8
-  },
-  {
-   "strike": 830.0,
-   "gex": -1899696.0
-  },
-  {
-   "strike": 835.0,
-   "gex": -1023542.1
-  },
-  {
-   "strike": 840.0,
-   "gex": -4001806.4
-  },
-  {
-   "strike": 845.0,
-   "gex": -2474543.8
-  },
-  {
-   "strike": 850.0,
-   "gex": -16220096.8
-  },
-  {
-   "strike": 855.0,
-   "gex": -10602464.8
-  },
-  {
-   "strike": 860.0,
-   "gex": -4848508.2
-  },
-  {
-   "strike": 865.0,
-   "gex": -1671880.8
-  },
-  {
-   "strike": 870.0,
-   "gex": 1109160.3
-  },
-  {
-   "strike": 875.0,
-   "gex": 1873510.3
-  },
-  {
-   "strike": 880.0,
-   "gex": 3742406.9
-  },
-  {
-   "strike": 885.0,
-   "gex": 19973613.9
-  },
-  {
-   "strike": 890.0,
-   "gex": 2929188.0
-  },
-  {
-   "strike": 895.0,
-   "gex": 2039566.6
-  },
-  {
-   "strike": 900.0,
-   "gex": 46722169.7
-  },
-  {
-   "strike": 905.0,
-   "gex": 3953042.1
-  },
-  {
-   "strike": 910.0,
-   "gex": 7206028.5
-  },
-  {
-   "strike": 915.0,
-   "gex": 3408649.1
-  },
-  {
-   "strike": 920.0,
-   "gex": 11683963.0
-  },
-  {
-   "strike": 925.0,
-   "gex": 5462076.9
-  },
-  {
-   "strike": 930.0,
-   "gex": 9681392.9
-  },
-  {
-   "strike": 935.0,
-   "gex": 12808373.6
-  },
-  {
-   "strike": 940.0,
-   "gex": 4063860.7
-  },
-  {
-   "strike": 945.0,
-   "gex": 902879.8
-  },
-  {
-   "strike": 950.0,
-   "gex": 15416918.9
-  },
-  {
-   "strike": 955.0,
-   "gex": 1068109.9
-  },
-  {
-   "strike": 957.5,
-   "gex": 455373.7
-  },
-  {
-   "strike": 960.0,
-   "gex": 1743862.1
-  },
-  {
-   "strike": 962.5,
-   "gex": 584410.5
-  },
-  {
-   "strike": 965.0,
-   "gex": 1990261.4
-  },
-  {
-   "strike": 967.5,
-   "gex": 119950.2
-  },
-  {
-   "strike": 970.0,
-   "gex": 1472778.0
-  },
-  {
-   "strike": 972.5,
-   "gex": 148607.9
-  },
-  {
-   "strike": 975.0,
-   "gex": 780067.8
-  },
-  {
-   "strike": 977.5,
-   "gex": 100715.7
-  },
-  {
-   "strike": 980.0,
-   "gex": 226375.2
-  },
-  {
-   "strike": 982.5,
-   "gex": 82081.6
-  },
-  {
-   "strike": 985.0,
-   "gex": 170922.0
-  },
-  {
-   "strike": 990.0,
-   "gex": 450148.4
-  },
-  {
-   "strike": 995.0,
-   "gex": -23374.6
-  },
-  {
-   "strike": 1000.0,
-   "gex": 6012595.7
-  },
-  {
-   "strike": 1005.0,
-   "gex": 161332.4
-  },
-  {
-   "strike": 1010.0,
-   "gex": 178108.4
-  },
-  {
-   "strike": 1015.0,
-   "gex": -37235.7
-  },
-  {
-   "strike": 1020.0,
-   "gex": 257584.9
-  }
- ],
- "call_wall_kind": "pin",
- "call_wall_regime": "POS",
- "call_wall_net": 46722169.7,
- "put_wall_kind": "trampilla",
- "put_wall_regime": "NEG",
- "put_wall_net": -16220096.8,
- "abs_wall_kind": "pin",
- "abs_wall_regime": "POS",
- "abs_wall_net": 46722169.7,
- "gamma_ok": true,
+ "profile": [],
+ "call_wall_kind": null,
+ "call_wall_regime": null,
+ "call_wall_net": null,
+ "put_wall_kind": null,
+ "put_wall_regime": null,
+ "put_wall_net": null,
+ "abs_wall_kind": null,
+ "abs_wall_regime": null,
+ "abs_wall_net": null,
+ "gamma_ok": false,
  "regime_scope": "0DTE",
- "greeks_ok_pct": 0.7923,
+ "greeks_ok_pct": 0.7231,
  "chain_src": "polygon",
- "chain_ts": 1786063148.0,
- "chain_age_s": 155.1019,
- "stale": false,
- "stale_reason": null,
- "regime_raw": "POS",
+ "chain_ts": 1786711537.0,
+ "chain_age_s": 26057.8777,
+ "stale": true,
+ "stale_reason": "cache TWS de hace 434 min en RTH (ciclo son 3 min)",
+ "regime_raw": null,
  "regime_why": null,
- "parity_ok_pct": 0.0263,
- "net_gex_parity_lo": 72625190.4022,
- "net_gex_parity_hi": 85507117.4973,
- "quotes_ok": false,
- "session": "fuera_de_rth",
+ "parity_ok_pct": null,
+ "net_gex_parity_lo": null,
+ "net_gex_parity_hi": null,
+ "quotes_ok": true,
+ "session": "rth",
  "band_used": 0.15,
  "band_fetch": 0.15,
  "n_expiries": 8,
  "exps_en_fichero": [
-  "20260807",
-  "20260810",
-  "20260812",
   "20260814",
   "20260817",
   "20260819",
   "20260821",
-  "20260828"
+  "20260824",
+  "20260826",
+  "20260828",
+  "20260904"
  ],
- "rows_total": 896,
+ "rows_total": 952,
  "n_candidates": 130,
- "n_gamma_ok": 103,
- "n_no_greeks": 27,
- "n_iv_provider": 103,
+ "n_gamma_ok": 94,
+ "n_no_greeks": 36,
+ "n_iv_provider": 94,
  "n_iv_inverted": 0,
  "iv_source": "provider",
  "exp_rolled": false,
  "roll_reason": null,
- "degraded_reason": null,
- "gross_gex": 236814584.2733,
- "bifurcation": 2.3413,
- "hhi": 0.0721,
- "n_strikes_populated": 65,
+ "degraded_reason": "cadena rancia: cache TWS de hace 434 min en RTH (ciclo son 3 min)",
+ "gross_gex": null,
+ "bifurcation": null,
+ "hhi": null,
+ "n_strikes_populated": 0,
  "chain_path": "data/opt_chain_mu.txt",
- "flip_live": 868.19,
- "flip_src": "repriced",
- "flip_why": "gamma recomputada a cada spot del barrido (definicion correcta)",
- "roots": [
-  868.19
- ],
- "trapdoor_root": 868.19,
- "flip_open": 873.86,
- "frozen_at": 1786023366,
- "frozen_day": "2026-08-06",
- "spot_src": "intrinio_quote",
- "spot_age_s": 2347.0
+ "flip_live": null,
+ "flip_src": "none",
+ "flip_why": null,
+ "roots": [],
+ "trapdoor_root": null,
+ "flip_open": null,
+ "frozen_at": 1786368928,
+ "frozen_day": null,
+ "spot_src": "finnhub",
+ "spot_age_s": 0.3
 }

@@ -11,6 +11,7 @@ alertas vivas; esto publica documentos.
   discord_post.py --status                      # salud de la flota -> #estado-flota
   discord_post.py --channel backtests --file docs/X.md --caption "..."
   discord_post.py --channel estrategias --title "Plan MU" --text "..."
+  discord_post.py --channel biblioteca-trading --file ~/Downloads/book.pdf --caption "..."
 """
 import argparse
 import glob

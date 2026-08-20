@@ -12,6 +12,7 @@ ROOT="$(pwd)"
 # clasicos (ibkr_bar_bridge + opt_chain_cache). Cualquier otro valor (intrinio/...) =
 # provider_bridge.py (capa mit/, IBKR OFF). Korea sigue en IBKR (Intrinio no cubre KRX).
 MARKET_SOURCE="$(cat "$ROOT/data/market_source.txt" 2>/dev/null || echo ibkr)"
+FOOTPRINT_EQUITY_SOURCE="$(cat "$ROOT/data/footprint_equity_source.txt" 2>/dev/null || echo off)"
 
 # --- MUTEX contra arranques concurrentes (2026-07-26) -------------------------
 # El dedup de abajo es "pgrep ¿ya corre? -> si no, lanza": entre el pgrep y el nohup
@@ -53,9 +54,8 @@ fleet_stop_all() {
   # keepalives de infraestructura
   for p in price_alarm_keepalive.sh opt_sentinel_keepalive.sh options_enrich_keepalive.sh options_alert_engine_keepalive.sh \
            opt_chain_keepalive.sh bargain_keepalive.sh sox_keepalive.sh \
-           finviz_scout_keepalive.sh finviz_screener_keepalive.sh notify_relay.sh x_signal_keepalive.sh \
+           finviz_scout_keepalive.sh finviz_screener_keepalive.sh x_signal_keepalive.sh \
            opt_whale_keepalive.sh uw_flow_tape_keepalive.sh overnight_feed_keepalive.sh voice_queue_keepalive.sh compass_keepalive.sh \
-           perp_stock_keepalive.sh perp_nbbo_bridge_keepalive.sh \
            fleet_consensus_keepalive.sh levels_refresh_keepalive.sh; do
     pkill -f "scripts/$p" 2>/dev/null
   done
@@ -103,6 +103,9 @@ fleet_stop_bridges() {
   pkill -f 'scripts/intrinio_ws_autostart.py' 2>/dev/null
   pkill -f 'scripts/chart_bridge.py' 2>/dev/null
   pkill -f 'scripts/provider_bridge.py' 2>/dev/null   # bridge de datos generico: muere fuera de ventana como los demas
+  # Solo las cintas de ACCIONES obedecen el portero 24/5. El agregador PERP consume
+  # mercados 24/7 y debe sobrevivir al cierre de la flota de acciones.
+  pkill -f 'bin/orderflow_footprint --format normalized' 2>/dev/null
 }
 
 SIGDIR="$ROOT/data/trading-signals"
@@ -115,18 +118,13 @@ if ! ( : > "$SIGDIR/.perm_check" ) 2>/dev/null; then
 else
   rm -f "$SIGDIR/.perm_check" "$ROOT/data/PERM_DENIED" 2>/dev/null
 fi
-# --- PORTERO HORARIO (orden Yunior 2026-07-25) --------------------------------
-# "los horarios de la flota son de domingo 8pm a viernes 8 pm hora de toronto,
-#  fuera de ese horario todo muerto, salvo para testing, backtesting, fixes."
-# El 2026-07-25 (sabado) la flota entera estaba arriba porque NADIE miraba el reloj.
-# El calculo vive en C++ (./fleet_hours): exit 0 = LIVE, exit 1 = DEAD.
-# Escape de testing: FLEET_FORCE=1 o data/FLEET_FORCE (el binario lo ANUNCIA).
-# bin/ primero (mudanza de binarios 2026-07-29); raiz como fallback legado
+
+# Ningún daemon auxiliar puede arrancar antes de comprobar las dos guardas globales.
+# En particular, London-only usa data/fleet_sleep: perps, heatmap multi-provider y relay
+# deben permanecer apagados también cuando launchd vuelve a invocar este script.
 FLEET_HOURS="$ROOT/bin/fleet_hours"
 [[ -x "$FLEET_HOURS" ]] || FLEET_HOURS="$ROOT/fleet_hours"
 if [[ ! -x "$FLEET_HOURS" ]]; then
-  # FAIL-LOUD: sin portero NO se arranca. Degradar a "pues arranco" es exactamente
-  # el fallo que estamos arreglando (un LIVE plausible sin haberlo comprobado).
   echo "$(date) fleet: PORTERO AUSENTE ($FLEET_HOURS no existe o no es ejecutable) -> NO se arranca nada. Compila con ./scripts/build_fleet_hours.sh" >> "$ROOT/logs/fleet_autostart.log"
   if [[ ! -f "$ROOT/data/FLEET_HOURS_MISSING" ]]; then
     touch "$ROOT/data/FLEET_HOURS_MISSING" 2>/dev/null
@@ -136,34 +134,71 @@ if [[ ! -x "$FLEET_HOURS" ]]; then
   exit 0
 fi
 rm -f "$ROOT/data/FLEET_HOURS_MISSING" 2>/dev/null
-FH_OUT="$("$FLEET_HOURS" 2>&1)"; FH_RC=$?
-if [[ $FH_RC -ne 0 ]]; then
-  # FUERA DE VENTANA. Idempotente y SILENCIOSO: sin voz y sin notificacion, porque
-  # el fin de semana esto es lo NORMAL, no una alarma. Solo deja rastro en el log.
-  fleet_stop_all
-  fleet_stop_bridges
-  echo "$(date) fleet: fuera de ventana -> todo apagado | $FH_OUT" >> "$ROOT/logs/fleet_autostart.log"
-  exit 0
-fi
 
-# MODO SUEÑO (orden Yunior 2026-07-16 noche "alertas dormidas tambien"):
-# si data/fleet_sleep existe, se APAGA todo salvo bridge de datos + tws_watchdog
-# y launchd no revive nada. Despertar: rm data/fleet_sleep (+ focus_ticker del dia).
+# MODO SUEÑO / London-only: el candado cubre también los daemons 24/7.
 if [[ -f "$ROOT/data/fleet_sleep" ]]; then
-  # AUTO-DESPERTAR (sorpresa 2026-07-16): si fleet_sleep contiene "wake: <epoch>"
-  # y ya paso la hora, el candado se quita solo y la flota amanece armada.
   WAKE=$(grep -o 'wake: [0-9]*' "$ROOT/data/fleet_sleep" 2>/dev/null | awk '{print $2}')
   if [[ -n "$WAKE" && "$(date +%s)" -ge "$WAKE" ]]; then
     rm -f "$ROOT/data/fleet_sleep"
     echo "$(date) fleet: AUTO-DESPERTAR (wake $WAKE alcanzado)" >> "$ROOT/logs/fleet_autostart.log"
     osascript -e 'display notification "La flota amaneció sola: bots, sirenas y feeds armados. Buen OPEX." with title "🌅 FLOTA DESPIERTA" sound name "ProChord"' 2>/dev/null
   else
-    # MISMA lista que el portero horario (fleet_stop_all). Los bridges de datos
-    # sobreviven al sueño a proposito: el sueño calla alertas, no el tape.
     fleet_stop_all
+    pkill -f 'scripts/perp_ws_keepalive.sh|scripts/perp_ws_bridge.py' 2>/dev/null
+    pkill -f 'scripts/perp_stock_keepalive.sh|scripts/perp_stock_fetch.py' 2>/dev/null
+    pkill -f 'scripts/gex_heatmap.py --loop' 2>/dev/null
+    pkill -f 'scripts/notify_relay.sh' 2>/dev/null
     exit 0
   fi
 fi
+
+# Los perps negocian sábado y domingo: viven FUERA del portero 24/5 de acciones. WS manda;
+# REST a 60 s conserva el snapshot de OI/volumen y sirve de respaldo para el cockpit.
+if ! pgrep -f "scripts/perp_ws_keepalive.sh" >/dev/null; then
+  nohup zsh "$ROOT/scripts/perp_ws_keepalive.sh" >/dev/null 2>&1 &
+  echo "$(date) fleet: perp_ws_keepalive lanzado 24/7 (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
+fi
+if ! pgrep -f "scripts/perp_stock_keepalive.sh" >/dev/null; then
+  nohup zsh "$ROOT/scripts/perp_stock_keepalive.sh" >/dev/null 2>&1 &
+  echo "$(date) fleet: perp_stock_keepalive lanzado 24/7 (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
+fi
+# Panel auxiliar REST: vive 24/7 y materializa cada minuto el ticker seleccionado. No es
+# motor de señales ni chart realtime, por eso no pertenece al portero 24/5.
+if ! pgrep -f "scripts/gex_heatmap.py --loop" >/dev/null; then
+  nohup ./venv/bin/python scripts/gex_heatmap.py --loop 60 >> logs/gex_heatmap.log 2>&1 &
+  echo "$(date) fleet: gex heatmap REST 60s/24x7 lanzado (pid $!)" >> logs/fleet_autostart.log
+fi
+# El embudo también transporta alertas de perpetuos, por eso vive 24/7 junto a sus WS.
+# No produce señales: solo entrega una alerta ya aceptada por notify_short.
+if ! pgrep -f "scripts/notify_relay.sh" >/dev/null; then
+  nohup zsh "$ROOT/scripts/notify_relay.sh" >/dev/null 2>&1 &
+  echo "$(date) fleet: notify_relay lanzado 24/7 (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
+fi
+# --- PORTERO HORARIO (orden Yunior 2026-07-25) --------------------------------
+# "los horarios de la flota son de domingo 8pm a viernes 8 pm hora de toronto,
+#  fuera de ese horario todo muerto, salvo para testing, backtesting, fixes."
+# El 2026-07-25 (sabado) la flota entera estaba arriba porque NADIE miraba el reloj.
+# El calculo vive en C++ (./fleet_hours): exit 0 = LIVE, exit 1 = DEAD.
+# Escape de testing: FLEET_FORCE=1 o data/FLEET_FORCE (el binario lo ANUNCIA).
+FH_OUT="$("$FLEET_HOURS" 2>&1)"; FH_RC=$?
+if [[ $FH_RC -ne 0 ]]; then
+  # FUERA DE VENTANA. Idempotente y SILENCIOSO: sin voz y sin notificacion, porque
+  # el fin de semana esto es lo NORMAL, no una alarma. Solo deja rastro en el log.
+  fleet_stop_all
+  fleet_stop_bridges
+  # launchd llama cada 5 min: repetir doce veces/hora el mismo estado normal destruía
+  # la utilidad del log. Se deja una marca inmediata al cambiar y luego una por hora.
+  GATE_LOG_STATE="$ROOT/data/fleet_gate_log_epoch"
+  GATE_NOW=$(date +%s)
+  GATE_LAST=$(cat "$GATE_LOG_STATE" 2>/dev/null || echo 0)
+  if (( GATE_NOW - GATE_LAST >= 3600 )); then
+    echo "$(date) fleet: fuera de ventana -> todo apagado | $FH_OUT" >> "$ROOT/logs/fleet_autostart.log"
+    echo "$GATE_NOW" > "$GATE_LOG_STATE.tmp" && mv "$GATE_LOG_STATE.tmp" "$GATE_LOG_STATE"
+  fi
+  exit 0
+fi
+rm -f "$ROOT/data/fleet_gate_log_epoch" 2>/dev/null
+
 # MODO FOCO (orden Yunior 2026-07-16 "run fleet bot for intc only today"):
 # si data/focus_ticker existe, solo los tickers listados ahi corren; el resto
 # se APAGA en cada tick de 5 min. Restaurar flota completa: rm data/focus_ticker
@@ -200,6 +235,8 @@ fi
 if [[ "$MARKET_SOURCE" == "ibkr" ]]; then
   # Al revertir a IBKR: matar provider_bridge para no tener DOS escritores del mismo bars/nbbo.
   pkill -f "provider_bridge.py --daemon" 2>/dev/null
+  pkill -f "scripts/equity_footprint_ws.py" 2>/dev/null
+  pkill -f "bin/orderflow_footprint --format normalized --dir $ROOT/data/equity_footprint_tape" 2>/dev/null
   if ! pgrep -f "ibkr_bar_bridge.py --daemon" >/dev/null; then
     FLEET_SYMS="$(cat "$ROOT/data/fleet.txt" 2>/dev/null)"
     if [[ -z "$FLEET_SYMS" ]]; then
@@ -209,18 +246,64 @@ if [[ "$MARKET_SOURCE" == "ibkr" ]]; then
       echo "$(date) fleet: ibkr fleet daemon lanzado (pid $!) con $(echo $FLEET_SYMS | wc -w | tr -d ' ') simbolos de data/fleet.txt" >> logs/fleet_autostart.log
     fi
   fi
+  # Footprint Bid x Ask C++: consume SOLO la cinta AllLast completa de los cinco contratos
+  # concedidos y publica FORMING/BAR_CLOSED. Sin footprint_tape no inventa delta desde OHLCV.
+  if [[ -x "$ROOT/bin/orderflow_footprint" ]] && ! pgrep -f "bin/orderflow_footprint --format normalized" >/dev/null; then
+    nohup "$ROOT/bin/orderflow_footprint" --format normalized --dir "$ROOT/data" \
+      --out-dir "$ROOT/data" --loop 250 \
+      --source "IBKR AllLast realtime" --quality "FULL_L1_EXECUTION_TAPE" \
+      >> "$ROOT/logs/orderflow_footprint.log" 2>&1 &
+    echo "$(date) fleet: orderflow footprint C++ lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
+  fi
 else
   # IBKR OFF: provider_bridge.py (mit/) llena bars/nbbo/opt_chain desde el proveedor elegido.
   # market_source.txt ES el selector: exporta el nombre del proveedor de mercado (intrinio/...).
   export MIT_MARKET_PROVIDER="$MARKET_SOURCE"
   # Matar los escritores IBKR de los MISMOS ficheros (bars y opt_chain) para no duplicar.
   pkill -f "ibkr_bar_bridge.py --daemon" 2>/dev/null
+  pkill -f "bin/orderflow_footprint --format normalized --dir $ROOT/data --out-dir" 2>/dev/null
   pkill -f "scripts/opt_chain_keepalive.sh" 2>/dev/null
   pkill -f "scripts/opt_chain_cache.py" 2>/dev/null
   if ! pgrep -f "provider_bridge.py --daemon" >/dev/null; then
     nohup ./venv-mit/bin/python scripts/provider_bridge.py --daemon >> logs/provider_bridge.log 2>&1 &
     echo "$(date) fleet: provider_bridge lanzado (pid $!) market=$MARKET_SOURCE (IBKR market data OFF)" >> logs/fleet_autostart.log
   fi
+
+  # ACCIONES no-perpetuas: Massive Advanced/SIP únicamente. El tier delayed actual NO se
+  # autoactiva. Para habilitar tras contratar realtime: echo massive > data/footprint_equity_source.txt.
+  if [[ "$FOOTPRINT_EQUITY_SOURCE" == "massive" ]]; then
+    mkdir -p "$ROOT/data/equity_footprint_tape"
+    if ! pgrep -f "scripts/equity_footprint_ws.py" >/dev/null; then
+      nohup ./venv/bin/python scripts/equity_footprint_ws.py \
+        >> "$ROOT/logs/equity_footprint_ws.log" 2>&1 &
+      echo "$(date) fleet: equity footprint Massive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
+    fi
+    if [[ -x "$ROOT/bin/orderflow_footprint" ]] \
+       && ! pgrep -f "bin/orderflow_footprint --format normalized" >/dev/null; then
+      nohup "$ROOT/bin/orderflow_footprint" --format normalized \
+        --dir "$ROOT/data/equity_footprint_tape" --out-dir "$ROOT/data" --loop 250 \
+        --source "Massive consolidated SIP trades+NBBO realtime" \
+        --quality "FULL_SIP_INFERRED_SIDE" \
+        >> "$ROOT/logs/orderflow_footprint_equity.log" 2>&1 &
+      echo "$(date) fleet: footprint ACCIONES/Massive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
+    fi
+  else
+    pkill -f "scripts/equity_footprint_ws.py" 2>/dev/null
+    pkill -f "bin/orderflow_footprint --format normalized" 2>/dev/null
+  fi
+fi
+
+# Footprint 24/7 SIN IBKR: trades firmados por el venue de los perps tokenizados OKX/Bybit.
+# Se publica como <SYM>USDT y con instrument_kind=TOKENIZED_STOCK_PERPETUAL: JAMÁS suplanta
+# la acción US. Es descriptivo/no validado como predictor del subyacente, pero el lado es nativo.
+if [[ -x "$ROOT/bin/orderflow_footprint" ]] && [[ -d "$ROOT/data/perp_tape" ]] \
+   && ! pgrep -f "bin/orderflow_footprint --format perp" >/dev/null; then
+  nohup "$ROOT/bin/orderflow_footprint" --format perp --dir "$ROOT/data/perp_tape" \
+    --out-dir "$ROOT/data" --sym-suffix USDT --instrument-kind TOKENIZED_STOCK_PERPETUAL \
+    --source "OKX/Bybit tokenized-stock perpetual signed tape" \
+    --quality "VENUE_NATIVE_SIDE_THIN_PERP" --loop 250 \
+    >> "$ROOT/logs/orderflow_footprint_perp.log" 2>&1 &
+  echo "$(date) fleet: footprint PERP 24/7 lanzado (pid $!) — nativo, proxy != acción" >> "$ROOT/logs/fleet_autostart.log"
 fi
 
 # cotizacion de la watchlist del usuario (TQQQ/MSFU/MUU...): el bar_bridge solo cubre
@@ -271,6 +354,13 @@ fi
 if ! pgrep -f "scripts/intrinio_ws_autostart.py" >/dev/null; then
   nohup ./venv-mit/bin/python scripts/intrinio_ws_autostart.py --watch 60 >> logs/intrinio_ws_autostart.log 2>&1 &
   echo "$(date) fleet: intrinio ws autostart lanzado (pid $!)" >> logs/fleet_autostart.log
+fi
+
+# Heatmap del ticker visible: snapshot REST cada 60 s, ya arrancado antes del portero para
+# servir también a los charts perpetual de fin de semana. Este bloque solo es fallback.
+if ! pgrep -f "scripts/gex_heatmap.py --loop" >/dev/null; then
+  nohup ./venv/bin/python scripts/gex_heatmap.py --loop 60 >> logs/gex_heatmap.log 2>&1 &
+  echo "$(date) fleet: gex heatmap REST 60s/RTH lanzado (pid $!)" >> logs/fleet_autostart.log
 fi
 
 # TWS watchdog (2026-07-15, tras 75 min de ceguera): vigila puerto 7496 en
@@ -342,13 +432,6 @@ if [ -x "$ROOT/bin/finviz_screener_watch" ]; then
       echo "$(date) fleet: finviz_${screen} lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
     fi
   done
-fi
-
-# notify_relay (2026-07-17): espejo Desktop -> ntfy push + Resend email (solo 🚨).
-# Anti-ruido: alertas >45s se DESCARTAN (jamas acumular).
-if ! pgrep -f "scripts/notify_relay.sh" >/dev/null; then
-  nohup zsh "$ROOT/scripts/notify_relay.sh" >/dev/null 2>&1 &
-  echo "$(date) fleet: notify_relay lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi
 
 # vigia de BALLENAS de opciones (2026-07-20 "activa alarm fleet for whale puts
@@ -437,17 +520,6 @@ fi
 if ! pgrep -f "scripts/price_alarm_keepalive.sh" >/dev/null; then
   nohup zsh "$ROOT/scripts/price_alarm_keepalive.sh" >/dev/null 2>&1 &
   echo "$(date) fleet: price_alarm_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
-fi
-
-# Perpetuos: perp_stock_fetch.py era one-shot y su JSON llego a 5h46m rancio; el
-# puente vuelca data/perp_stocks.json -> data/nbbo_<sym>usdt.txt para price_alarm.
-if ! pgrep -f "scripts/perp_stock_keepalive.sh" >/dev/null; then
-  nohup zsh "$ROOT/scripts/perp_stock_keepalive.sh" >/dev/null 2>&1 &
-  echo "$(date) fleet: perp_stock_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
-fi
-if ! pgrep -f "scripts/perp_nbbo_bridge_keepalive.sh" >/dev/null; then
-  nohup zsh "$ROOT/scripts/perp_nbbo_bridge_keepalive.sh" >/dev/null 2>&1 &
-  echo "$(date) fleet: perp_nbbo_bridge_keepalive lanzado (pid $!)" >> "$ROOT/logs/fleet_autostart.log"
 fi
 
 # MANADA: era el unico daemon de senal sin keepalive (el denominador de la flota).

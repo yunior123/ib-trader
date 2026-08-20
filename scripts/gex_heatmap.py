@@ -20,6 +20,7 @@ import json
 import os
 import sys
 import time
+from zoneinfo import ZoneInfo
 
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "scripts"))
@@ -30,6 +31,7 @@ MAX_EXPIRIES = 24
 MAX_ROWS = 17
 STALE_S = 900
 OUTDIR = os.path.join(REPO, "data")
+NY = ZoneInfo("America/New_York")
 
 
 def atomic(path, obj):
@@ -219,6 +221,10 @@ def main():
 
     base = [s.upper() for s in a.syms]
     while True:
+        # Contrato UI (Yunior 2026-08-09): paneles auxiliares pueden usar REST, pero el
+        # ticker visible se MATERIALIZA cada 60 s también fuera de RTH. `date` conserva la
+        # fecha real del snapshot cerrado; `ts` es la hora de fetch/cache, no se etiqueta
+        # como market realtime ni como WebSocket.
         syms = list(base) or _focus()
         if a.loop:
             fs = _focus_sym()
@@ -240,12 +246,21 @@ def main():
 
 
 def _focus_sym():
-    p = os.path.join(OUTDIR, "focus_ticker.txt")
-    if os.path.exists(p):
-        s = open(p).read().split()
-        if s:
-            return s[0].upper()
+    # heatmap_focus lo escribe el chart al cambiar de ticker; focus_ticker conserva su
+    # semantica de flota y solo es fallback. Una ventana = un foco, cero barrido innecesario.
+    for name in ("heatmap_focus.txt", "focus_ticker.txt"):
+        p = os.path.join(OUTDIR, name)
+        if os.path.exists(p):
+            s = open(p).read().split()
+            if s:
+                return s[0].upper()
     return None
+
+
+def _options_rth(now=None):
+    now = now or dt.datetime.now(NY)
+    hm = now.hour * 100 + now.minute
+    return now.weekday() < 5 and 930 <= hm < 1600
 
 
 def _focus():

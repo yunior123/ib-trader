@@ -118,7 +118,11 @@ final class CockpitWindow: NSObject, NSWindowDelegate, WKNavigationDelegate {
         refreshTitle()
     }
 
-    func load() { web.load(URLRequest(url: url)) }
+    func load() {
+        let request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData,
+                                 timeoutInterval: 30)
+        web.load(request)
+    }
 
     /// La app y los seis bridges arrancan en procesos distintos. En un relanzamiento limpio,
     /// WebKit puede intentar cargar 8080..8085 unos segundos antes de que fleet_keepalive los

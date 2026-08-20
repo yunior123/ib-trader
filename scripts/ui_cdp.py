@@ -274,6 +274,74 @@ async def run(cdp, out, url, res):
             "sin errores ni excepciones" if not errs
             else "; ".join(f"[{c['level']}] {c['text'][:300]}" for c in errs[:10]))
 
+    # panel de proveedores: en London-only la lista debe contener SOLO London. El
+    # arnés antiguo asumía siempre nueve fuentes e intentaba mutar Intrinio, que ya
+    # no existe intencionalmente en ese modo; eso hacía fallar QA aunque la UI fuera
+    # correcta.
+    pv = await cdp.js("""(() => {
+      document.getElementById('providerbtn').click();
+      const panel=document.getElementById('providerpanel');
+      const london=!!(window.chartIsLondonOnly && window.chartIsLondonOnly());
+      const c=panel.querySelector(london ? 'input[data-pv="lse"]' : 'input[data-pv="intrinio"]');
+      if (!c) return {error:'control de proveedor esperado ausente', london:london,
+                      rows:panel.querySelectorAll('input[data-pv]').length};
+      c.checked=false; c.dispatchEvent(new Event('change'));
+      const hidden=getComputedStyle(document.getElementById('providerBlocked')).display !== 'none';
+      c.checked=true; c.dispatchEvent(new Event('change'));
+      panel.classList.add('on');
+      return {london:london, rows:panel.querySelectorAll('input[data-pv]').length,
+              ws:[...panel.querySelectorAll('small')].filter(x=>x.textContent.includes('WebSocket')).length,
+              hidden:hidden, active:panel.querySelectorAll('.pvdot.on').length};
+    })()""")
+    s = await cdp.shot(shot_path("01c-panel-proveedores"))
+    expected_rows = 1 if pv and pv.get("london") else 9
+    expected_ws = 1 if pv and pv.get("london") else 4
+    pvok = (pv and not pv.get("error") and pv.get("rows") == expected_rows
+            and pv.get("ws", 0) >= expected_ws and pv.get("hidden"))
+    res.rec("1c-panel-proveedores", "PASA" if pvok else "FALLA",
+            f"modo={'London-only' if pv and pv.get('london') else 'multi'}; "
+            f"checks={pv.get('rows') if pv else None}/{expected_rows}; "
+            f"WebSocket={pv.get('ws') if pv else None}; "
+            f"ocultar fuente activa cubre chart={pv.get('hidden') if pv else None}; "
+            f"fuentes activas={pv.get('active') if pv else None}", s)
+    await cdp.js("document.getElementById('providerpanel').classList.remove('on'); 1")
+
+    # Los cuatro proxies London deben ser seleccionables de forma independiente y
+    # dibujar su vencimiento real. Se encienden solo durante esta captura y después
+    # se restauran a OFF para no contaminar el perfil de QA.
+    proxy = await cdp.js("""(() => {
+      const keys=['dealer_net_daily','dealer_net_weekly',
+                  'mm_top_profit_daily','mm_top_profit_weekly'];
+      document.getElementById('indbtn').click();
+      const boxes=keys.map(k=>document.querySelector(`#indmenu input[data-k="${k}"]`));
+      if (boxes.some(x=>!x)) return {error:'faltan toggles', found:boxes.map(Boolean)};
+      boxes.forEach(x=>{ x.checked=true; x.dispatchEvent(new Event('change')); });
+      document.getElementById('indmenu').classList.add('on');
+      const heads=['h-dnd-wrap','h-dnw-wrap','h-mmd-wrap','h-mmw-wrap']
+        .map(id=>getComputedStyle(document.getElementById(id)).display !== 'none');
+      const titles=(typeof priceLines!=='undefined' ? priceLines : [])
+        .map(x=>x.options().title || '')
+        .filter(x=>x.includes('LSE DN·') || x.includes('LSE MM$·'));
+      const labels=boxes.map(x=>x.closest('label').textContent.trim());
+      return {found:boxes.map(Boolean), heads, titles, labels};
+    })()""")
+    s = await cdp.shot(shot_path("01d-indicadores-dealer-mm-dia-semana"))
+    proxy_ok = (proxy and not proxy.get("error") and all(proxy.get("heads", []))
+                and len(proxy.get("titles", [])) == 4
+                and all("2026-" in title for title in proxy.get("titles", [])))
+    res.rec("1d-dealer-mm-dia-semana", "PASA" if proxy_ok else "FALLA",
+            f"toggles={proxy.get('labels') if proxy else None}; "
+            f"headers={proxy.get('heads') if proxy else None}; "
+            f"lineas={proxy.get('titles') if proxy else None}", s)
+    await cdp.js("""(() => {
+      for (const k of ['dealer_net_daily','dealer_net_weekly',
+                       'mm_top_profit_daily','mm_top_profit_weekly']) {
+        const x=document.querySelector(`#indmenu input[data-k="${k}"]`);
+        if (x) { x.checked=false; x.dispatchEvent(new Event('change')); }
+      }
+      document.getElementById('indmenu').classList.remove('on'); return 1;
+    })()""")
+
     # ---------- 2. la BRUJULA, cuatro estados ----------
     have_fn = await cdp.js("typeof onDirection")
     if have_fn != "function":
@@ -367,24 +435,25 @@ async def run(cdp, out, url, res):
                 else f"faltan {miss} en el tooltip: {tip!r}", s)
         await cdp.js("ws.onmessage = window.__ui_test_ws_onmessage; delete window.__ui_test_ws_onmessage; 1")
 
-    # ---------- 3. burbujas GEX ----------
+    # ---------- 3. ladrillos vivos: walls/magnet/flip ----------
     bub = await cdp.js("""(() => {
       if (typeof wallBub === 'undefined') return {impl:false, why:'wallBub no definido'};
       const rows = (wallBub._rows || []);
       return { impl:true, n: rows.length,
-               rows: rows.map(r => ({ price:r.price, kind:r.kind, inten:r.inten,
-                                      n:r.n, rad:r.rad, abs:!!r.abs, lab:r.lab })) };
+               rows: rows.map(r => ({ key:r.key, price:r.price, state:r.state,
+                                      hits:r.hits, remaining:r.remaining,
+                                      capacity:r.capacity, metric:r.metric })) };
     })()""")
     lv = await cdp.js("(typeof LV !== 'undefined' && LV) ? "
                       "{cw:LV.call_wall, pw:LV.put_wall, abs:LV.abs_wall, flip:LV.flip, "
                       " prof:(LV.profile||[]).length} : null")
-    s = await cdp.shot(shot_path("03-burbujas-gex"))
+    s = await cdp.shot(shot_path("03-ladrillos-niveles"))
     if not bub or not bub.get("impl"):
         res.rec("3-burbujas-gex", "FALLA",
                 f"no implementado en la pagina cargada: {bub}", s)
     elif bub["n"] == 0:
         res.rec("3-burbujas-gex", "NO PROBADO",
-                f"la capa EXISTE (bubbleRows/WallBubbles en charts/live.html) pero 0 "
+                f"la capa EXISTE (BrickView/WallBubbles en charts/live.html) pero 0 "
                 f"hileras con los niveles de hoy: LV={lv}. Sin muros en data/ no hay "
                 f"nada que pintar (sabado, cadena archivada sin muros para el sym).", s)
     else:

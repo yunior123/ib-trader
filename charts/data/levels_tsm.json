@@ -1,695 +1,103 @@
 {
  "sym": "TSM",
- "spot": 420.38,
- "asof": 1786063308,
- "exp": "20260807",
- "dte": 0.8,
+ "spot": 426.41,
+ "asof": 1786737598,
+ "exp": "20260814",
+ "dte": 0.0,
  "scope": "0DTE",
- "net_vex": 1435919117.8,
- "vex_peak": 430.0,
- "vex_profile": [
-  {
-   "strike": 357.5,
-   "vex": 505416.5
-  },
-  {
-   "strike": 360.0,
-   "vex": 3169749.7
-  },
-  {
-   "strike": 362.5,
-   "vex": 565471.9
-  },
-  {
-   "strike": 365.0,
-   "vex": 2881034.6
-  },
-  {
-   "strike": 367.5,
-   "vex": 1213636.7
-  },
-  {
-   "strike": 370.0,
-   "vex": 6944689.6
-  },
-  {
-   "strike": 372.5,
-   "vex": 3817027.0
-  },
-  {
-   "strike": 375.0,
-   "vex": 13305240.3
-  },
-  {
-   "strike": 377.5,
-   "vex": 4742128.7
-  },
-  {
-   "strike": 380.0,
-   "vex": 27641293.9
-  },
-  {
-   "strike": 382.5,
-   "vex": 6462952.9
-  },
-  {
-   "strike": 385.0,
-   "vex": 17309691.0
-  },
-  {
-   "strike": 387.5,
-   "vex": 6369566.8
-  },
-  {
-   "strike": 390.0,
-   "vex": 18854165.5
-  },
-  {
-   "strike": 392.5,
-   "vex": 23362634.7
-  },
-  {
-   "strike": 395.0,
-   "vex": 12420561.0
-  },
-  {
-   "strike": 397.5,
-   "vex": 11760603.4
-  },
-  {
-   "strike": 400.0,
-   "vex": 127264195.5
-  },
-  {
-   "strike": 402.5,
-   "vex": 25573919.3
-  },
-  {
-   "strike": 405.0,
-   "vex": 42495305.7
-  },
-  {
-   "strike": 407.5,
-   "vex": 88464294.9
-  },
-  {
-   "strike": 410.0,
-   "vex": 129312033.9
-  },
-  {
-   "strike": 412.5,
-   "vex": 23477510.5
-  },
-  {
-   "strike": 415.0,
-   "vex": -119356771.7
-  },
-  {
-   "strike": 417.5,
-   "vex": -54848580.7
-  },
-  {
-   "strike": 420.0,
-   "vex": -91278808.6
-  },
-  {
-   "strike": 422.5,
-   "vex": 29258975.2
-  },
-  {
-   "strike": 425.0,
-   "vex": 182081916.3
-  },
-  {
-   "strike": 427.5,
-   "vex": 96695967.9
-  },
-  {
-   "strike": 430.0,
-   "vex": 243083365.1
-  },
-  {
-   "strike": 432.5,
-   "vex": 64351656.1
-  },
-  {
-   "strike": 435.0,
-   "vex": 209591664.7
-  },
-  {
-   "strike": 437.5,
-   "vex": 43716291.7
-  },
-  {
-   "strike": 440.0,
-   "vex": 138122638.8
-  },
-  {
-   "strike": 442.5,
-   "vex": 27627736.6
-  },
-  {
-   "strike": 445.0,
-   "vex": 19141412.4
-  },
-  {
-   "strike": 447.5,
-   "vex": 5592711.0
-  },
-  {
-   "strike": 450.0,
-   "vex": 14117534.0
-  },
-  {
-   "strike": 452.5,
-   "vex": 2052996.2
-  },
-  {
-   "strike": 455.0,
-   "vex": 2680404.5
-  },
-  {
-   "strike": 457.5,
-   "vex": 1104798.9
-  },
-  {
-   "strike": 460.0,
-   "vex": 8283790.2
-  },
-  {
-   "strike": 462.5,
-   "vex": 501976.0
-  },
-  {
-   "strike": 465.0,
-   "vex": 6194011.9
-  },
-  {
-   "strike": 467.5,
-   "vex": 292546.3
-  },
-  {
-   "strike": 470.0,
-   "vex": 5050440.2
-  },
-  {
-   "strike": 472.5,
-   "vex": 54382.6
-  },
-  {
-   "strike": 475.0,
-   "vex": 775199.5
-  },
-  {
-   "strike": 480.0,
-   "vex": 3117738.5
-  }
- ],
- "net_charm": -460916474.9,
- "charm_peak": 430.0,
- "charm_profile": [
-  {
-   "strike": 357.5,
-   "charm": -382216.4
-  },
-  {
-   "strike": 360.0,
-   "charm": -2246808.1
-  },
-  {
-   "strike": 362.5,
-   "charm": -398726.9
-  },
-  {
-   "strike": 365.0,
-   "charm": -1963386.8
-  },
-  {
-   "strike": 367.5,
-   "charm": -773154.8
-  },
-  {
-   "strike": 370.0,
-   "charm": -4028547.3
-  },
-  {
-   "strike": 372.5,
-   "charm": -2281539.3
-  },
-  {
-   "strike": 375.0,
-   "charm": -7832401.4
-  },
-  {
-   "strike": 377.5,
-   "charm": -2931009.3
-  },
-  {
-   "strike": 380.0,
-   "charm": -15014266.9
-  },
-  {
-   "strike": 382.5,
-   "charm": -2965238.4
-  },
-  {
-   "strike": 385.0,
-   "charm": -7558329.9
-  },
-  {
-   "strike": 387.5,
-   "charm": -3091242.2
-  },
-  {
-   "strike": 390.0,
-   "charm": -7764261.7
-  },
-  {
-   "strike": 392.5,
-   "charm": -9137716.0
-  },
-  {
-   "strike": 395.0,
-   "charm": -4458646.7
-  },
-  {
-   "strike": 397.5,
-   "charm": -4185967.1
-  },
-  {
-   "strike": 400.0,
-   "charm": -42463880.4
-  },
-  {
-   "strike": 402.5,
-   "charm": -8078819.3
-  },
-  {
-   "strike": 405.0,
-   "charm": -13109199.1
-  },
-  {
-   "strike": 407.5,
-   "charm": -27042266.8
-  },
-  {
-   "strike": 410.0,
-   "charm": -39856721.8
-  },
-  {
-   "strike": 412.5,
-   "charm": -7444014.0
-  },
-  {
-   "strike": 415.0,
-   "charm": 3511829.6
-  },
-  {
-   "strike": 417.5,
-   "charm": 8219863.9
-  },
-  {
-   "strike": 420.0,
-   "charm": 13424525.7
-  },
-  {
-   "strike": 422.5,
-   "charm": -6144585.4
-  },
-  {
-   "strike": 425.0,
-   "charm": -40501720.2
-  },
-  {
-   "strike": 427.5,
-   "charm": -23040589.6
-  },
-  {
-   "strike": 430.0,
-   "charm": -52507028.5
-  },
-  {
-   "strike": 432.5,
-   "charm": -16531181.4
-  },
-  {
-   "strike": 435.0,
-   "charm": -51475940.6
-  },
-  {
-   "strike": 437.5,
-   "charm": -12411452.4
-  },
-  {
-   "strike": 440.0,
-   "charm": -35046379.0
-  },
-  {
-   "strike": 442.5,
-   "charm": -8911924.3
-  },
-  {
-   "strike": 445.0,
-   "charm": -5653613.3
-  },
-  {
-   "strike": 447.5,
-   "charm": -2194815.1
-  },
-  {
-   "strike": 450.0,
-   "charm": -1895364.5
-  },
-  {
-   "strike": 452.5,
-   "charm": -705489.1
-  },
-  {
-   "strike": 455.0,
-   "charm": -1078272.0
-  },
-  {
-   "strike": 457.5,
-   "charm": -549827.0
-  },
-  {
-   "strike": 460.0,
-   "charm": -3731361.1
-  },
-  {
-   "strike": 462.5,
-   "charm": -250629.1
-  },
-  {
-   "strike": 465.0,
-   "charm": -3072275.8
-  },
-  {
-   "strike": 467.5,
-   "charm": -168953.9
-  },
-  {
-   "strike": 470.0,
-   "charm": -2691643.9
-  },
-  {
-   "strike": 472.5,
-   "charm": -28845.6
-  },
-  {
-   "strike": 475.0,
-   "charm": -463665.8
-  },
-  {
-   "strike": 480.0,
-   "charm": -2008775.7
-  }
- ],
- "charm_why": null,
- "pressure": 70,
- "pressure_lab": "PIN fuerte",
- "iv_atm": 0.31,
- "em": 6.12,
- "net_gex": 98732509.6,
- "regime": "POS",
- "flip": 400.73,
- "flip_static": 418.1,
- "flip_manana": 408.82,
- "flip_fwd": 396.55,
+ "net_vex": null,
+ "vex_peak": null,
+ "vex_profile": [],
+ "net_charm": null,
+ "charm_peak": null,
+ "charm_profile": [],
+ "charm_why": "cadena rancia: spot de la cadena de hace 16 min (tope 10 min)",
+ "pressure": null,
+ "pressure_lab": "sin griegas",
+ "iv_atm": null,
+ "em": null,
+ "net_gex": null,
+ "regime": null,
+ "flip": null,
+ "flip_static": null,
+ "flip_manana": 403.83,
+ "flip_fwd": 403.83,
  "regime_fwd": "POS",
- "net_gex_manana": 189418486.8,
- "net_gex_fwd": 90685977.2,
- "gamma_muere_hoy_pct": 0.0,
- "gamma_muere_semana_pct": 38.4,
+ "net_gex_manana": 159565628.2,
+ "net_gex_fwd": 159565628.2,
+ "gamma_muere_hoy_pct": 29.8,
+ "gamma_muere_semana_pct": 29.8,
  "fwd_why": null,
- "call_wall": 425.0,
- "put_wall": 410.0,
- "abs_wall": 420.0,
- "poc_dom": "92%C",
- "call_wall_gex": 13156610.5,
- "put_wall_gex": -6276674.4,
- "abs_wall_gex": 65669682.1,
- "oi_call_wall": 440.0,
- "oi_put_wall": 400.0,
+ "call_wall": null,
+ "put_wall": null,
+ "abs_wall": null,
+ "poc_dom": null,
+ "call_wall_gex": null,
+ "put_wall_gex": null,
+ "abs_wall_gex": null,
+ "oi_call_wall": 430.0,
+ "oi_put_wall": 410.0,
  "near_call_wall": false,
  "near_put_wall": false,
  "near_flip": false,
- "profile": [
-  {
-   "strike": 357.5,
-   "gex": -13455.4
-  },
-  {
-   "strike": 360.0,
-   "gex": -87628.8
-  },
-  {
-   "strike": 362.5,
-   "gex": -15501.8
-  },
-  {
-   "strike": 365.0,
-   "gex": -81846.0
-  },
-  {
-   "strike": 367.5,
-   "gex": -32754.9
-  },
-  {
-   "strike": 370.0,
-   "gex": -193685.3
-  },
-  {
-   "strike": 372.5,
-   "gex": -112145.2
-  },
-  {
-   "strike": 375.0,
-   "gex": -392893.0
-  },
-  {
-   "strike": 377.5,
-   "gex": -143849.5
-  },
-  {
-   "strike": 380.0,
-   "gex": -791522.6
-  },
-  {
-   "strike": 382.5,
-   "gex": -186253.4
-  },
-  {
-   "strike": 385.0,
-   "gex": -510116.6
-  },
-  {
-   "strike": 387.5,
-   "gex": -197448.3
-  },
-  {
-   "strike": 390.0,
-   "gex": -532569.2
-  },
-  {
-   "strike": 392.5,
-   "gex": -703184.8
-  },
-  {
-   "strike": 395.0,
-   "gex": -378232.2
-  },
-  {
-   "strike": 397.5,
-   "gex": -365004.3
-  },
-  {
-   "strike": 400.0,
-   "gex": -4039521.6
-  },
-  {
-   "strike": 402.5,
-   "gex": -863899.4
-  },
-  {
-   "strike": 405.0,
-   "gex": -1518964.4
-  },
-  {
-   "strike": 407.5,
-   "gex": -3606570.4
-  },
-  {
-   "strike": 410.0,
-   "gex": -6276674.4
-  },
-  {
-   "strike": 412.5,
-   "gex": -1499750.8
-  },
-  {
-   "strike": 415.0,
-   "gex": 2390661.1
-  },
-  {
-   "strike": 417.5,
-   "gex": 4432321.0
-  },
-  {
-   "strike": 420.0,
-   "gex": 65669682.1
-  },
-  {
-   "strike": 422.5,
-   "gex": 4177481.7
-  },
-  {
-   "strike": 425.0,
-   "gex": 13156610.5
-  },
-  {
-   "strike": 427.5,
-   "gex": 5094866.8
-  },
-  {
-   "strike": 430.0,
-   "gex": 9276495.3
-  },
-  {
-   "strike": 432.5,
-   "gex": 2391160.6
-  },
-  {
-   "strike": 435.0,
-   "gex": 6795106.0
-  },
-  {
-   "strike": 437.5,
-   "gex": 1412523.9
-  },
-  {
-   "strike": 440.0,
-   "gex": 3791670.6
-  },
-  {
-   "strike": 442.5,
-   "gex": 838680.3
-  },
-  {
-   "strike": 445.0,
-   "gex": 537637.0
-  },
-  {
-   "strike": 447.5,
-   "gex": 169789.1
-  },
-  {
-   "strike": 450.0,
-   "gex": 297669.6
-  },
-  {
-   "strike": 452.5,
-   "gex": 53601.8
-  },
-  {
-   "strike": 455.0,
-   "gex": 77249.3
-  },
-  {
-   "strike": 457.5,
-   "gex": 33057.8
-  },
-  {
-   "strike": 460.0,
-   "gex": 237679.0
-  },
-  {
-   "strike": 462.5,
-   "gex": 14358.3
-  },
-  {
-   "strike": 465.0,
-   "gex": 175583.2
-  },
-  {
-   "strike": 467.5,
-   "gex": 8107.5
-  },
-  {
-   "strike": 470.0,
-   "gex": 134222.8
-  },
-  {
-   "strike": 472.5,
-   "gex": 1487.1
-  },
-  {
-   "strike": 475.0,
-   "gex": 21806.8
-  },
-  {
-   "strike": 480.0,
-   "gex": 86472.8
-  }
- ],
- "call_wall_kind": "pin",
- "call_wall_regime": "POS",
- "call_wall_net": 13156610.5,
- "put_wall_kind": "trampilla",
- "put_wall_regime": "NEG",
- "put_wall_net": -6276674.4,
- "abs_wall_kind": "pin",
- "abs_wall_regime": "POS",
- "abs_wall_net": 65669682.1,
- "gamma_ok": true,
+ "profile": [],
+ "call_wall_kind": null,
+ "call_wall_regime": null,
+ "call_wall_net": null,
+ "put_wall_kind": null,
+ "put_wall_regime": null,
+ "put_wall_net": null,
+ "abs_wall_kind": null,
+ "abs_wall_regime": null,
+ "abs_wall_net": null,
+ "gamma_ok": false,
  "regime_scope": "0DTE",
- "greeks_ok_pct": 0.7653,
+ "greeks_ok_pct": 0.78,
  "chain_src": "polygon",
- "chain_ts": 1786063157.0,
- "chain_age_s": 151.1192,
- "stale": false,
- "stale_reason": null,
- "regime_raw": "POS",
+ "chain_ts": 1786711543.0,
+ "chain_age_s": 26055.7078,
+ "stale": true,
+ "stale_reason": "spot de la cadena de hace 16 min (tope 10 min)",
+ "regime_raw": null,
  "regime_why": null,
- "parity_ok_pct": 0.0714,
- "net_gex_parity_lo": 65948399.2116,
- "net_gex_parity_hi": 92546448.2367,
- "quotes_ok": false,
- "session": "fuera_de_rth",
+ "parity_ok_pct": null,
+ "net_gex_parity_lo": null,
+ "net_gex_parity_hi": null,
+ "quotes_ok": true,
+ "session": "rth",
  "band_used": 0.15,
  "band_fetch": 0.15,
- "n_expiries": 4,
+ "n_expiries": 5,
  "exps_en_fichero": [
-  "20260807",
   "20260814",
   "20260821",
-  "20260828"
+  "20260828",
+  "20260904",
+  "20260911"
  ],
- "rows_total": 322,
- "n_candidates": 98,
- "n_gamma_ok": 75,
- "n_no_greeks": 23,
- "n_iv_provider": 75,
+ "rows_total": 358,
+ "n_candidates": 100,
+ "n_gamma_ok": 78,
+ "n_no_greeks": 22,
+ "n_iv_provider": 78,
  "n_iv_inverted": 0,
  "iv_source": "provider",
  "exp_rolled": false,
  "roll_reason": null,
- "degraded_reason": null,
- "gross_gex": 143819454.5716,
- "bifurcation": 1.4567,
- "hhi": 0.2314,
- "n_strikes_populated": 49,
+ "degraded_reason": "cadena rancia: spot de la cadena de hace 16 min (tope 10 min)",
+ "gross_gex": null,
+ "bifurcation": null,
+ "hhi": null,
+ "n_strikes_populated": 0,
  "chain_path": "data/opt_chain_tsm.txt",
- "flip_live": 411.91,
- "flip_src": "repriced",
- "flip_why": "gamma recomputada a cada spot del barrido (definicion correcta)",
- "roots": [
-  411.91
- ],
+ "flip_live": null,
+ "flip_src": "none",
+ "flip_why": null,
+ "roots": [],
  "trapdoor_root": null,
- "flip_open": 400.73,
- "frozen_at": 1786023369,
- "frozen_day": "2026-08-06",
- "spot_src": "intrinio_quote",
- "spot_age_s": 2452.0
+ "flip_open": null,
+ "frozen_at": 1786368931,
+ "frozen_day": null,
+ "spot_src": "finnhub",
+ "spot_age_s": 10.3
 }

@@ -1,0 +1,159 @@
+{
+ "fuente_npz": "/Users/yuniorrodriguezosorio/ib-trader/data/research/delta_bars_1m.npz",
+ "n_bloques": 66,
+ "checks": [
+  {
+   "check": "n_se\u00f1ales DIVERG_M5",
+   "mio": 5066.0,
+   "publicado": 5066.0,
+   "tol": 0.0,
+   "ok": true
+  },
+  {
+   "check": "n_se\u00f1ales DIVERG_M10",
+   "mio": 3604.0,
+   "publicado": 3604.0,
+   "tol": 0.0,
+   "ok": true
+  },
+  {
+   "check": "n_se\u00f1ales DIVERG_M20",
+   "mio": 2611.0,
+   "publicado": 2611.0,
+   "tol": 0.0,
+   "ok": true
+  },
+  {
+   "check": "n_se\u00f1ales ABSORCION",
+   "mio": 412.0,
+   "publicado": 412.0,
+   "tol": 0.0,
+   "ok": true
+  },
+  {
+   "check": "DIVERG_M20 LARGO 2.0ATR/2.0ATR/15m n",
+   "mio": 1258.0,
+   "publicado": 1258.0,
+   "tol": 0.0,
+   "ok": true
+  },
+  {
+   "check": "DIVERG_M20 LARGO 2.0ATR/2.0ATR/15m win_rate",
+   "mio": 0.4356120826709062,
+   "publicado": 0.43561,
+   "tol": 0.004,
+   "ok": true
+  },
+  {
+   "check": "DIVERG_M20 LARGO 1.5ATR/1.5ATR/15m n",
+   "mio": 1258.0,
+   "publicado": 1258.0,
+   "tol": 0.0,
+   "ok": true
+  },
+  {
+   "check": "DIVERG_M20 LARGO 1.5ATR/1.5ATR/15m win_rate",
+   "mio": 0.5039745627980922,
+   "publicado": 0.50397,
+   "tol": 0.004,
+   "ok": true
+  },
+  {
+   "check": "DIVERG_M20 LARGO 2.0ATR/2.0ATR/30m n",
+   "mio": 1258.0,
+   "publicado": 1258.0,
+   "tol": 0.0,
+   "ok": true
+  },
+  {
+   "check": "DIVERG_M20 LARGO 2.0ATR/2.0ATR/30m win_rate",
+   "mio": 0.519872813990461,
+   "publicado": 0.51987,
+   "tol": 0.004,
+   "ok": true
+  },
+  {
+   "check": "DIVERG_M20 ALL 1.5ATR/1.5ATR/15m n",
+   "mio": 2611.0,
+   "publicado": 2611.0,
+   "tol": 0.0,
+   "ok": true
+  },
+  {
+   "check": "DIVERG_M20 ALL 1.5ATR/1.5ATR/15m win_rate",
+   "mio": 0.48946763692072004,
+   "publicado": 0.48947,
+   "tol": 0.004,
+   "ok": true
+  },
+  {
+   "check": "ABSORCION LARGO 2.0/2.0/30 n",
+   "mio": 223.0,
+   "publicado": 223.0,
+   "tol": 0.0,
+   "ok": true
+  },
+  {
+   "check": "ABSORCION LARGO 2.0/2.0/30 win_rate",
+   "mio": 0.5246636771300448,
+   "publicado": 0.52466,
+   "tol": 0.004,
+   "ok": true
+  },
+  {
+   "check": "DIVERG_M20 LARGO null EXACTO vs publicado (mc_sd=0.0034)",
+   "mio": 0.383954279667141,
+   "publicado": 0.38544,
+   "tol": 0.010199999999999999,
+   "ok": true,
+   "edge_pp_recalculado": 5.166,
+   "edge_pp_publicado": 5.017
+  },
+  {
+   "check": "ABSORCION LARGO null EXACTO vs publicado (mc_sd=0.0073)",
+   "mio": 0.45093169668870814,
+   "publicado": 0.44682,
+   "tol": 0.0219,
+   "ok": true,
+   "edge_pp_recalculado": 7.373,
+   "edge_pp_publicado": 7.785
+  },
+  {
+   "check": "DIVERG_M20 LARGO wr_direccion_opuesta",
+   "mio": 0.36089030206677264,
+   "publicado": 0.36089,
+   "tol": 0.004,
+   "ok": true,
+   "wr_a_favor": 0.43561,
+   "suma": 0.7965,
+   "2x_null": 0.77088
+  },
+  {
+   "check": "ABSORCION LARGO wr_direccion_opuesta",
+   "mio": 0.3901345291479821,
+   "publicado": 0.39013,
+   "tol": 0.004,
+   "ok": true,
+   "wr_a_favor": 0.52466,
+   "suma": 0.9148,
+   "2x_null": 0.89364
+  }
+ ],
+ "corr_delta_ret_misma_barra": 0.28769,
+ "corr_delta_ret_barra_siguiente": 0.03067,
+ "estratos_null": {
+  "n_estratos": 18,
+  "tam_medio": 1206.3
+ },
+ "delta_predice_barra_siguiente": {
+  "corr_media_por_sesion": -0.00714,
+  "sd_entre_sesiones": 0.06638,
+  "n_sesiones": 66,
+  "t_agrupado": -0.874,
+  "R2_implicito_pct": 0.0051,
+  "corr_misma_barra_pooled": 0.28769,
+  "R2_misma_barra_pct": 8.277,
+  "nota": "contemporaneo vs predictivo: el delta explica el pasado inmediato y casi nada del futuro, igual que la literatura OFI (Cont et al.)"
+ },
+ "verificacion_global": "OK"
+}

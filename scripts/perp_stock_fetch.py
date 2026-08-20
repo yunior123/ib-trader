@@ -135,10 +135,19 @@ def main():
     if args:
         json.dump(out, sys.stdout, indent=1, sort_keys=True)
         print()
-    else:
-        atomic_write_json("data/perp_stocks.json", out)
-        print(f"{len(out)}/{len(syms)} symbols -> data/perp_stocks.json", file=sys.stderr)
+        return 0 if out else 1
+    # Una pasada que no trajo NADA es un fallo de red, no "no hay perps": escribirla borraba
+    # el ultimo dato bueno y el cockpit se quedaba mudo sin decir por que (medido 2026-08-07
+    # 16:06: 6 pasadas 0/34 por DNS caido dejaron data/perp_stocks.json en {}).
+    if not out:
+        print(f"[DANGER] 0/{len(syms)} symbols: NO se toca data/perp_stocks.json "
+              f"(se conserva el dato anterior). Fallo de red o de los dos venues.",
+              file=sys.stderr)
+        return 1
+    atomic_write_json("data/perp_stocks.json", out)
+    print(f"{len(out)}/{len(syms)} symbols -> data/perp_stocks.json", file=sys.stderr)
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

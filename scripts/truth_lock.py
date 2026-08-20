@@ -511,6 +511,8 @@ def main():
                 print("truth_lock: FALLO %s" % e, file=sys.stderr, flush=True)
             time.sleep(a.loop)
     r = check(syms=a.sym)
+    if a.check and not r["events"]:
+        return
     print("chequeados %d syms, %d reescrituras materiales" % (r["checked"], len(r["events"])))
     for s, v in sorted(r["syms"].items()):
         if v.get("adjusted"):

@@ -32,6 +32,11 @@ PRIV_FILE="${NOTIFY_PRIVATE_FILE:-$ROOT/config/notify_private.txt}"
 PRIV_RE=$(grep -hvE '^[[:space:]]*(#|$)' "$PRIV_FILE" 2>/dev/null | paste -sd'|' -)
 [[ -z "$PRIV_RE" ]] && PRIV_RE='order_engine|ORDEN (ENVIADA|RECHAZADA|LIMITE)|\bFILL\b|realizedPnl|EXPIRA HOY|POSICIONES? (ABIERTA|CERRADA|DESCONOCIDAS)|\bU[0-9]{8}\b|comisi[oó]n|ARM_LIVE|CERRAR\s'
 typeset -A DEDUP_AT
+typeset -A INFRA_AT
+# Estado de proveedores sigue visible en #estado-proveedores de Discord, pero no debe
+# vibrar el teléfono cada 10/30 min. Se permite un recordatorio por tipo y hora.
+INFRA_RE='INTRINIO WS|FINNHUB WS|PROVIDER|CINTA CIEGA|SIN GATEWAY|BRIDGE CIEGO|TRUTH-LOCK|PASADO reescrito'
+INFRA_DEDUP_S=${NOTIFY_INFRA_DEDUP_S:-3600}
 LASTSENT=0
 # El log se diagnostica a mano: si crece sin freno deja de servir (llego a 205 MB).
 if [[ -f "$RLOG" ]] && (( $(stat -f %z "$RLOG") > 20000000 )); then
@@ -53,6 +58,15 @@ tail -n0 -F "$F" 2>/dev/null | while read -r line; do
     echo "$(date +%H:%M:%S) PRIVADA (solo local): ${line:0:50}" >> "$RLOG"; continue
   fi
   payload="${line#* | }"
+  infra_key=""
+  if echo "$payload" | grep -qiE "$INFRA_RE"; then
+    infra_key="${payload%% | *}"
+    infra_prev=${INFRA_AT[$infra_key]:-0}
+    if (( now_s - infra_prev < INFRA_DEDUP_S )); then
+      continue
+    fi
+    INFRA_AT[$infra_key]=$now_s
+  fi
   prev=${DEDUP_AT[$payload]:-0}
   if (( now_s - prev < DEDUP_S )); then
     continue
@@ -71,11 +85,26 @@ tail -n0 -F "$F" 2>/dev/null | while read -r line; do
   DEDUP_AT[$payload]=$now_s
   LASTSENT=$now_s
   msg="${line:0:180}"
-  curl -s --max-time 5 -d "$msg" -H "Title: 🔔 flota" "https://ntfy.sh/$NTFY_TOPIC" >/dev/null &
-  if echo "$line" | grep -q '🚨'; then
-    curl -s --max-time 8 -X POST https://api.resend.com/emails \
-      -H "Authorization: Bearer $RESEND_KEY" -H "Content-Type: application/json" \
-      -d "{\"from\":\"onboarding@resend.dev\",\"to\":[\"$RESEND_TO\"],\"subject\":\"🚨 flota: ${msg:0:60}\",\"text\":\"$msg\"}" >/dev/null &
+  ntfy_code=$(curl -sS --max-time 5 -o /dev/null -w '%{http_code}' \
+    -d "$msg" -H "Title: 🔔 flota" "https://ntfy.sh/$NTFY_TOPIC" 2>>"$RLOG")
+  if [[ "$ntfy_code" != 2* ]]; then
+    echo "$(date +%H:%M:%S) FALLO ntfy HTTP ${ntfy_code:-sin_respuesta}: ${msg:0:60}" >> "$RLOG"
+    DEDUP_AT[$payload]=0
+    [[ -n "$infra_key" ]] && INFRA_AT[$infra_key]=0
+    continue
   fi
-  echo "$(date +%H:%M:%S) ENVIADA: ${msg:0:60}" >> "$RLOG"
+  email_status="no"
+  if echo "$line" | grep -q '🚨'; then
+    email_json=$(jq -nc --arg to "$RESEND_TO" --arg subject "🚨 flota: ${msg:0:60}" --arg text "$msg" \
+      '{from:"onboarding@resend.dev",to:[$to],subject:$subject,text:$text}')
+    email_code=$(curl -sS --max-time 8 -o /dev/null -w '%{http_code}' -X POST https://api.resend.com/emails \
+      -H "Authorization: Bearer $RESEND_KEY" -H "Content-Type: application/json" \
+      -d "$email_json" 2>>"$RLOG")
+    if [[ "$email_code" == 2* ]]; then
+      email_status="ok"
+    else
+      email_status="FALLO_HTTP_${email_code:-sin_respuesta}"
+    fi
+  fi
+  echo "$(date +%H:%M:%S) ENVIADA ntfy=$ntfy_code email=$email_status: ${msg:0:60}" >> "$RLOG"
 done

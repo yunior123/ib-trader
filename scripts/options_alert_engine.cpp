@@ -48,11 +48,15 @@ static int produce(const std::string& raw_sym, char right, Config cfg, bool emit
         if (!quiet) std::cerr << raw_sym << ": ticker inválido\n";
         return 2;
     }
-    const std::string path = "data/opt_chain_" + lower(sym) + ".txt";
+    // SPXW es la raiz OSI de los semanales, no otro subyacente. Comparte spot/cadena SPX,
+    // pero se conserva en la linea final para que el humano sepa que pidió el weekly.
+    const std::string chain_sym = sym == "SPXW" ? "SPX" : sym;
+    const std::string path = "data/opt_chain_" + lower(chain_sym) + ".txt";
     if (!fs::exists(path)) {
-        register_custom(sym);
+        register_custom(chain_sym);
         if (!quiet)
-            std::cerr << sym << ": sin cache; registrado en data/options_alert_tickers.txt "
+            std::cerr << sym << ": sin cache; registrado " << chain_sym
+                      << " en data/options_alert_tickers.txt "
                       << "para el adaptador de cadena\n";
         return 3;
     }

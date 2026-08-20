@@ -25,7 +25,11 @@ class IntrinioProvider(MarketDataProvider, OptionsDataProvider):
         query = dict(params or {})
         query["api_key"] = self.settings.intrinio_api_key
         response = await self.client.get(path, params=query)
-        response.raise_for_status()
+        try:
+            response.raise_for_status()
+        except httpx.HTTPStatusError as exc:
+            # The request URL contains api_key; exposing the native httpx exception leaks it.
+            raise ProviderError(f"Intrinio HTTP {response.status_code} for {path}") from exc
         return response.json()
 
     async def get_quote(self, symbol: str) -> Quote:

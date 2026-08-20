@@ -1,7 +1,4 @@
-"""test_ta_llm_bridge.py — TA_* (llm.env) debe gobernar TRADINGAGENTS_* (lo que
-default_config.py de TradingAgents realmente lee). Antes de este puente, el
-framework leia solo TRADINGAGENTS_* y llm.env no tenia efecto: research.py
-(screener) caia a defaults NVIDIA NIM cuando TA_* no estaba en el entorno."""
+"""TA_* must govern the TRADINGAGENTS_* variables read by TradingAgents."""
 import json
 import os
 import subprocess
@@ -51,18 +48,26 @@ def test_absent_ta_var_leaves_target_unset(monkeypatch):
         assert k not in os.environ
 
 
-def test_real_llm_env_file_maps_to_deepseek_not_nim(monkeypatch):
-    """llm.env real del repo debe apuntar a DeepSeek; NIM prohibido (orden 2026-07-16)."""
+def test_nvidia_key_loaded_from_tradingagents_without_copying_secret(monkeypatch, tmp_path):
+    _clean(monkeypatch)
+    monkeypatch.delenv("NVIDIA_API_KEY", raising=False)
+    monkeypatch.setenv("TA_LLM_PROVIDER", "nvidia")
+    monkeypatch.setenv("TA_REPO", str(tmp_path))
+    (tmp_path / ".env").write_text("NVIDIA_API_KEY=test-only-secret\n")
+    bridge.apply(load_llm_env=False)
+    assert os.environ["NVIDIA_API_KEY"] == "test-only-secret"
+
+
+def test_real_llm_env_file_maps_to_current_fast_nemotron(monkeypatch):
+    """The current research profile must select the live fast Nemotron ID."""
     _clean(monkeypatch)
     bridge.apply(load_llm_env=True)
     provider = os.environ.get("TRADINGAGENTS_LLM_PROVIDER", "")
     backend = os.environ.get("TRADINGAGENTS_LLM_BACKEND_URL", "")
     deep = os.environ.get("TRADINGAGENTS_DEEP_THINK_LLM", "")
-    for banned in ("nvidia", "nim", "kimi"):
-        assert banned not in provider.lower()
-        assert banned not in backend.lower()
-        assert banned not in deep.lower()
-    assert "deepseek" in backend.lower()
+    assert provider == "nvidia"
+    assert "integrate.api.nvidia.com" in backend.lower()
+    assert deep == "nvidia/nemotron-3.5-lightning-30b-a3b"
 
 
 _TA_PY = os.path.join(REPO, "ta_venv", "bin", "python")
@@ -84,14 +89,14 @@ print(json.dumps({k: C[k] for k in
                     reason="ta_venv (py3.12) o el repo TradingAgents no estan aqui")
 def test_llm_env_really_governs_tradingagents_config():
     """End-to-end: no basta con exportar TRADINGAGENTS_*; el DEFAULT_CONFIG que
-    ve el framework debe acabar apuntando a DeepSeek. Corre en ta_venv porque
+    ve el framework debe acabar apuntando al Nemotron rapido. Corre en ta_venv porque
     TradingAgents pide py3.10+ y el venv principal es 3.9."""
     env = {k: v for k, v in os.environ.items() if not k.startswith("TRADINGAGENTS_")}
     r = subprocess.run([_TA_PY, "-c", _E2E], capture_output=True, text=True,
                        timeout=120, env=env, cwd=REPO)
     assert r.returncode == 0, r.stderr[-500:]
     cfg = json.loads([x for x in r.stdout.splitlines() if x.startswith("{")][-1])
-    assert "deepseek" in cfg["backend_url"].lower()
-    for key in ("llm_provider", "backend_url", "deep_think_llm", "quick_think_llm"):
-        for banned in ("nvidia", "nim", "kimi", "moonshot"):
-            assert banned not in str(cfg[key]).lower(), (key, cfg[key])
+    assert cfg["llm_provider"] == "nvidia"
+    assert "integrate.api.nvidia.com" in cfg["backend_url"].lower()
+    assert cfg["deep_think_llm"] == "nvidia/nemotron-3.5-lightning-30b-a3b"
+    assert cfg["quick_think_llm"] == "nvidia/nemotron-3.5-lightning-30b-a3b"

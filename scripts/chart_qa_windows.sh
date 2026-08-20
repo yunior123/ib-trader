@@ -1,6 +1,6 @@
 #!/bin/zsh
 # 6 ventanas del cockpit en 8080-8085, VIVAS (Gateway real) o mock (sandbox de replay).
-# Uso: scripts/chart_qa_windows.sh [start|stop|status] [live|mock] [sandbox si mock]
+# Uso: scripts/chart_qa_windows.sh [start|stop|status] [live|lse|mock] [sandbox si mock]
 # Compat vieja: scripts/chart_qa_windows.sh start /tmp/qa6  -> se interpreta como mock.
 set -u
 REPO="${0:A:h:h}"
@@ -11,11 +11,11 @@ PY="$REPO/venv-chart/bin/python"; [[ -x $PY ]] || PY="$REPO/venv/bin/python"
 
 MODE="${2:-live}"
 SANDBOX="${3:-/tmp/qa6}"
-if [[ "$MODE" != live && "$MODE" != mock ]]; then
+if [[ "$MODE" != live && "$MODE" != lse && "$MODE" != mock ]]; then
   SANDBOX="${2:-/tmp/qa6}"; MODE=mock   # 2º arg no era modo -> era sandbox (uso viejo)
 fi
 
-if [[ "$MODE" == live ]]; then
+if [[ "$MODE" == live || "$MODE" == lse ]]; then
   SYMS=(qqq nvda smh mu aapl msft)   # 6 por defecto (Yunior 2026-07-29); cualquier ticker se compra desde el ticket
 else
   SYMS=(qqq spy nvda mu dram gld)
@@ -61,6 +61,8 @@ start)
     if [[ "$MODE" == live ]]; then
       echo '    cid=$(('"$CLIENT_BASE"' + i - 1))'
       echo "    '$PY' scripts/chart_bridge.py --sym \$s --http-port \$p --client-id \$cid >/tmp/w6_\$s.log 2>&1 &"
+    elif [[ "$MODE" == lse ]]; then
+      echo "    '$PY' scripts/chart_bridge.py --lse-only --sym \$s --http-port \$p >/tmp/w6_\$s.log 2>&1 &"
     else
       echo "    '$PY' scripts/chart_bridge.py --mock --mock-dir '$SANDBOX' --sym \$s --http-port \$p >/tmp/w6_\$s.log 2>&1 &"
     fi
@@ -87,5 +89,5 @@ PL
   sleep 12
   "$0" status "$MODE" "$SANDBOX"
   ;;
-*) echo "uso: $0 [start|stop|status] [live|mock] [sandbox si mock]"; exit 2;;
+*) echo "uso: $0 [start|stop|status] [live|lse|mock] [sandbox si mock]"; exit 2;;
 esac

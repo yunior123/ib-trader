@@ -10,6 +10,8 @@ whale_<sym>.txt de 0 bytes es indistinguible de 'no hay ballenas' (patron prohib
 import importlib.util
 import os
 import sys
+from datetime import datetime, timezone
+from types import SimpleNamespace
 
 import pytest
 
@@ -134,3 +136,26 @@ def test_declare_blind_vacio_no_rompe(tmp_path, monkeypatch):
     # fichero escrito (solo cabecera), sin voz
     assert os.path.exists(m.BLIND_F)
     assert calls == []
+
+
+def test_alllast_writes_complete_footprint_not_only_whales(tmp_path, monkeypatch):
+    """La huella necesita TODAS las ejecuciones. whale_ conserva su filtro $50k, pero la
+    cinta footprint recibe también los prints pequeños y mantiene DIR=0 como desconocido."""
+    m = _load(["QQQ"])
+    monkeypatch.chdir(tmp_path)
+    os.makedirs("data", exist_ok=True)
+    st = m.SymState("QQQ")
+    st.bid, st.ask = 99.99, 100.01
+    now = datetime.now(timezone.utc)
+    ticks = [
+        SimpleNamespace(price=100.00, size=2, time=now),    # mid inicial -> desconocido
+        SimpleNamespace(price=100.01, size=3, time=now),    # ask -> compra
+        SimpleNamespace(price=99.99, size=4, time=now),     # bid -> venta
+        SimpleNamespace(price=100.01, size=600, time=now),  # $60k -> también ballena
+    ]
+    m.make_on_whale(st)(SimpleNamespace(tickByTicks=ticks))
+    fp = (tmp_path / "data/footprint_tape_qqq.txt").read_text().splitlines()
+    whale = (tmp_path / "data/whale_qqq.txt").read_text().splitlines()
+    assert len(fp) == 4 and [int(x.split()[3]) for x in fp] == [0, 1, -1, 1]
+    assert len(whale) == 1 and int(whale[0].split()[3]) == 1
+    assert len(fp[0].split()) == 7   # EPOCH PX SIZE DIR BID ASK METHOD

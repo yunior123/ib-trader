@@ -40,18 +40,19 @@ def _load_env_file(name):
 
 
 def _configure_llm_env():
-    """DeepSeek es el unico motor (NIM prohibido); OPENAI_API_KEY = DEEPSEEK_API_KEY."""
+    """Load the configured TradingAgents provider; fail closed if its key is absent."""
     _load_env_file("llm.env")
     _load_env_file("feeds.env")
-    # Orden Yunior 2026-07-16 (2a): "deepseek still has money, no nim, forbidden
-    # till i change my mind, too slow" — DeepSeek es EL motor; NIM PROHIBIDO
-    # (503 saturado + modelo razonador lento reventaba los timeouts). Sin clave
-    # DeepSeek se falla EN VOZ ALTA, jamas degradar a NIM.
-    ds = os.environ.get("DEEPSEEK_API_KEY", "")
-    if ds:
-        os.environ["OPENAI_API_KEY"] = ds
-    else:
-        print("[research] SIN DEEPSEEK_API_KEY y NIM prohibido (orden 2026-07-16) — no hay LLM", file=sys.stderr)
+    sys.path.insert(0, os.path.join(REPO_ROOT, "scripts"))
+    from ta_llm_bridge import apply as apply_ta_bridge
+    apply_ta_bridge()
+    provider = os.environ.get("TA_LLM_PROVIDER", "").lower()
+    required = {"nvidia": "NVIDIA_API_KEY", "openai": "OPENAI_API_KEY",
+                "deepseek": "DEEPSEEK_API_KEY"}.get(provider)
+    if required and not os.environ.get(required):
+        raise RuntimeError(f"configured provider {provider!r} is missing {required}")
+    if provider == "deepseek" and os.environ.get("DEEPSEEK_API_KEY"):
+        os.environ.setdefault("OPENAI_API_KEY", os.environ["DEEPSEEK_API_KEY"])
     # FinnHub tool key (data layer)
     if os.environ.get("FINNHUB_KEY") and not os.environ.get("FINNHUB_API_KEY"):
         os.environ["FINNHUB_API_KEY"] = os.environ["FINNHUB_KEY"]
@@ -60,9 +61,6 @@ def _configure_llm_env():
 # ---- subprocess entrypoint: `python research.py _run SYM DATE` ----
 def _run(sym, date_str):
     _configure_llm_env()
-    sys.path.insert(0, os.path.join(REPO_ROOT, "scripts"))
-    from ta_llm_bridge import apply as apply_ta_bridge
-    apply_ta_bridge()
     sys.path.insert(0, TA_REPO)
     from tradingagents.graph.trading_graph import TradingAgentsGraph
     from tradingagents.default_config import DEFAULT_CONFIG as C

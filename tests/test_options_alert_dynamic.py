@@ -11,6 +11,21 @@ REPO = Path(__file__).resolve().parents[1]
 ENGINE = REPO / "bin" / "options_alert_engine"
 
 
+def test_spxw_uses_spx_chain_but_keeps_weekly_root_in_alert(tmp_path):
+    (tmp_path / "data").mkdir()
+    (tmp_path / "logs").mkdir()
+    expiry = dt.date.today() + dt.timedelta(days=5)
+    (tmp_path / "data" / "opt_chain_spx.txt").write_text(
+        f"# opt_chain SPX | epoch {int(time.time())} | spot 6000 | exps {expiry:%Y%m%d}\n"
+        "# strike right exp bid ask vol oi iv delta gamma\n"
+        f"6000 C {expiry:%Y%m%d} 1.00 1.04 900 2200 .40 .54 .01\n"
+    )
+    got = subprocess.run([str(ENGINE), "SPXW", "CALL"], cwd=tmp_path,
+                         text=True, capture_output=True)
+    assert got.returncode == 0, got.stderr
+    assert got.stdout.strip() == "spxw call 6000 5-DTE"
+
+
 def test_dynamic_ticker_retries_after_chain_subscription(tmp_path):
     signals = tmp_path / "data" / "trading-signals"
     signals.mkdir(parents=True)

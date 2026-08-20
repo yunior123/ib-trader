@@ -94,9 +94,49 @@ def _house_regime(sym):
     return f"regimen gamma casa ({p}): " + json.dumps({k: d[k] for k in keys if k in d})
 
 
+def _house_heatmap(sym):
+    """Compact, provenance-preserving options heatmap context for the LLM."""
+    p = os.path.join(DATA, f"gex_heatmap_{sym.lower()}.json")
+    if not os.path.exists(p):
+        return None
+    d = json.load(open(p))
+    architect = d.get("architect") or {}
+    oi = d.get("oi_structure") or {}
+    out = {
+        "spot": d.get("spot"), "date": d.get("date"), "fetch_ts": d.get("fetch_ts"),
+        "option_source_ts": d.get("source_ts"), "stale": d.get("stale"),
+        "activity_metric": d.get("metric"),
+        "activity": {k: architect.get(k) for k in
+                     ("activity_score", "activity_side", "components", "rr25_mean_vol_points",
+                      "dealer_gex_available", "validation", "note") if k in architect},
+        "oi_structure": {k: oi.get(k) for k in
+                         ("status", "source", "oi_semantics", "net_gex", "gross_gex", "flip",
+                          "regime", "contracts_usable", "greeks_ok_pct_oi", "age_s", "validation")
+                         if k in oi},
+    }
+    return f"heatmap opciones ({p}): " + json.dumps(out, separators=(",", ":"))
+
+
+def _house_orderflow(sym):
+    """Never turn a missing Massive feed or a tokenized-perp proxy into equity flow."""
+    p = os.path.join(DATA, "equity_footprint_ws_state.json")
+    if not os.path.exists(p):
+        return "orderflow equity: DATA (estado Massive ausente)"
+    d = json.load(open(p))
+    if str(d.get("status", "")).upper() != "OK":
+        reason = str(d.get("reason") or d.get("last_error") or "feed no disponible")[:240]
+        return (f"orderflow equity: DATA — provider={d.get('provider', 'unknown')} "
+                f"status={d.get('status', 'unknown')} doctrine={d.get('doctrine', 'FAIL_CLOSED')} "
+                f"reason={reason}")
+    return (f"orderflow equity ({p}): provider={d.get('provider')} status=OK "
+            f"last_trade_ts={d.get('last_trade_ts')} last_quote_ts={d.get('last_quote_ts')}")
+
+
 def _house_context(sym):
     lines = [f"## Datos de la casa ib-trader — {sym} (solo lectura, cada linea con su fuente)"]
-    for name, fn in (("barras", _house_bars), ("muros", _house_walls), ("regimen", _house_regime)):
+    for name, fn in (("barras", _house_bars), ("muros", _house_walls),
+                     ("regimen", _house_regime), ("heatmap", _house_heatmap),
+                     ("orderflow", _house_orderflow)):
         try:
             s = fn(sym)
         except Exception as e:
@@ -109,13 +149,16 @@ def _house_context(sym):
 def _run(sym, date_str):
     _load_env_file("llm.env")
     _load_env_file("feeds.env")
-    ds = os.environ.get("DEEPSEEK_API_KEY", "")
-    if not ds:
-        raise SystemExit("SIN DEEPSEEK_API_KEY y NIM prohibido (orden 2026-07-16) — no hay LLM")
-    os.environ["OPENAI_API_KEY"] = ds
     sys.path.insert(0, SCRIPTS)
     from ta_llm_bridge import apply as apply_ta_bridge
     apply_ta_bridge()
+    provider = os.environ.get("TA_LLM_PROVIDER", "").lower()
+    required = {"nvidia": "NVIDIA_API_KEY", "openai": "OPENAI_API_KEY",
+                "deepseek": "DEEPSEEK_API_KEY"}.get(provider)
+    if required and not os.environ.get(required):
+        raise SystemExit(f"configured provider {provider!r} is missing {required}")
+    if provider == "deepseek" and os.environ.get("DEEPSEEK_API_KEY"):
+        os.environ.setdefault("OPENAI_API_KEY", os.environ["DEEPSEEK_API_KEY"])
     sys.path.insert(0, TA_REPO)
     from tradingagents.graph.trading_graph import TradingAgentsGraph
     from tradingagents.default_config import DEFAULT_CONFIG as C
@@ -137,7 +180,10 @@ def _run(sym, date_str):
 
     _, rating = ta.propagate(sym, date_str)
     final = ta.curr_state.get("final_trade_decision", "")
-    print("TA_VIEW_JSON " + json.dumps({"sym": sym, "rating": str(rating), "final": final[:8000]}))
+    print("TA_VIEW_JSON " + json.dumps({
+        "sym": sym, "rating": str(rating), "final": final[:8000],
+        "llm_model": os.environ.get("TRADINGAGENTS_DEEP_THINK_LLM"),
+    }))
 
 
 # ---------- padre ----------
@@ -195,7 +241,9 @@ def main():
                     "rating": obj["rating"],
                     "prob": None,  # el framework no emite probabilidad numerica; no se inventa
                     "tesis": _tesis(obj["final"]), "niveles": _niveles(obj["final"]),
-                    "latency_s": round(time.time() - t0, 1), "fuente": "tradingagents"})
+                    "latency_s": round(time.time() - t0, 1), "fuente": "tradingagents",
+                    "llm_model": obj.get("llm_model"),
+                    "decision_excerpt": obj["final"][:3000]})
                 print(f"{sym}: {veredicto} ({obj['rating']}) en {time.time() - t0:.0f}s -> {out_path}")
                 return 0
     except subprocess.TimeoutExpired:

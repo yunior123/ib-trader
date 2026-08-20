@@ -1,26 +1,31 @@
 #!/usr/bin/env python
-"""D0 — 3 meses de barras 5m para la flota via IBKR historico.
+"""D0 — 3 meses de barras 5m para la flota: IBKR y LSE histórico.
 
 Señal-solamente: SOLO lectura de datos historicos, cero ordenes.
 TWS live puerto 7496, clientId 41. Salida: data/backtest/bars3mo5m_<sym>.csv
 formato "epoch,o,h,l,c,v" (epoch segundos, cronologico, sin duplicados).
-Fallback yfinance (interval=5m period=60d) para tickers que IBKR no sirva.
+Con IBKR apagado usa London Strategic Edge. Yahoo/datos delayed opacos no participan.
 """
+import argparse
 import csv
+import datetime as dt
 import json
 import sys
 import time
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 REPO = Path(__file__).resolve().parent.parent
 OUT = REPO / "data" / "backtest"
 FLEET = (REPO / "data" / "fleet.txt").read_text().split()
-LIKELY_MISSING = {"SKHY", "DRAM", "SPCX"}  # ETFs que IBKR puede no servir
 
 import os as _o, sys as _s
 _s.path.insert(0, _o.path.join(_o.path.dirname(_o.path.dirname(_o.path.abspath(__file__))), 'scripts'))
 from ib_insync import IB, Stock, util
 from ib_mode import get_port  # fuente unica: scripts/ib_mode.py (CLAUDE.md #7)  # noqa: E402
+import lse_client  # noqa: E402  histórico ilimitado; limitador/cuota compartidos en disco
+
+NY = ZoneInfo("America/New_York")
 
 
 def bars_to_rows(bars):
@@ -81,22 +86,34 @@ def fetch_ibkr(ib, sym):
     return sorted(all_rows.values()) if all_rows else None
 
 
-def fetch_yf(sym):
-    """Fallback yfinance: 5m x 60d (maximo que da yfinance en 5m)."""
-    import yfinance as yf
+def fetch_lse(client, sym, days=93):
+    """Barras 5m LSE por tramos de 14d (<5000 incluso en mercados 24/7), filtradas RTH US."""
+    end = dt.datetime.now(dt.timezone.utc)
+    start = end - dt.timedelta(days=days)
+    got = {}
     try:
-        df = yf.Ticker(sym).history(interval="5m", period="60d", prepost=False,
-                                    auto_adjust=False)
-    except Exception as e:
-        print(f"  {sym}: yfinance error {e}", flush=True)
+        cursor = start
+        while cursor < end:
+            stop = min(cursor + dt.timedelta(days=14), end)
+            # El vault acepta fechas YYYY-MM-DD (no timestamps ISO completos).
+            bars = client.candles(sym, "5m", start=cursor.date().isoformat(),
+                                  end=stop.date().isoformat(), limit=5000, order="asc")
+            for b in bars:
+                stamp = str(b.get("ts") or b.get("timestamp") or "")
+                when = dt.datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+                local = when.astimezone(NY)
+                minute = local.hour * 60 + local.minute
+                if local.weekday() >= 5 or not (570 <= minute < 960):
+                    continue
+                row = (int(when.timestamp()), float(b["open"]), float(b["high"]),
+                       float(b["low"]), float(b["close"]), int(float(b.get("volume") or 0)))
+                if row[4] > 0:
+                    got[row[0]] = row
+            cursor = stop
+    except (lse_client.LSEError, KeyError, TypeError, ValueError) as e:
+        print(f"  {sym}: LSE error {e}", flush=True)
         return None
-    if df is None or df.empty:
-        return None
-    rows = []
-    for ts, r in df.iterrows():
-        rows.append((int(ts.timestamp()), float(r["Open"]), float(r["High"]),
-                     float(r["Low"]), float(r["Close"]), int(r["Volume"])))
-    return sorted(dict((r[0], r) for r in rows).values())
+    return [got[k] for k in sorted(got)] or None
 
 
 def write_csv(sym, rows):
@@ -109,20 +126,33 @@ def write_csv(sym, rows):
     return path
 
 
-def main():
+def main(argv=None):
+    ap = argparse.ArgumentParser()
+    ap.add_argument("symbols", nargs="*", help="default: data/fleet.txt")
+    ap.add_argument("--lse-only", action="store_true", help="no intenta conectar IBKR")
+    args = ap.parse_args(argv)
+    fleet = [s.upper() for s in args.symbols] or FLEET
     report = {}
-    ib = IB()
+    ib = None
+    lse = lse_client.LSE()
     try:
-        ib.connect("127.0.0.1", get_port(), clientId=41, readonly=True, timeout=20)
-        print(f"Conectado TWS 7496 clientId 41 (readonly). Flota: {len(FLEET)}", flush=True)
-        for sym in FLEET:
+        if not args.lse_only:
+            candidate = IB()
+            try:
+                candidate.connect("127.0.0.1", get_port(), clientId=41,
+                                  readonly=True, timeout=5)
+                ib = candidate
+                print(f"Conectado TWS readonly. Flota: {len(fleet)}", flush=True)
+            except Exception as e:
+                print(f"IBKR no disponible ({e}); backfill completo por LSE", flush=True)
+        for sym in fleet:
             print(f"== {sym} ==", flush=True)
-            rows = fetch_ibkr(ib, sym)
-            source = "IBKR"
+            rows = fetch_ibkr(ib, sym) if ib is not None else None
+            source = "IBKR" if rows else "LSE"
             if not rows:
-                print(f"  {sym}: fallback yfinance", flush=True)
-                rows = fetch_yf(sym)
-                source = "yfinance-60d" if rows else "FALLO"
+                print(f"  {sym}: fallback LSE", flush=True)
+                rows = fetch_lse(lse, sym)
+                source = "LSE" if rows else "FALLO"
             if rows:
                 path = write_csv(sym, rows)
                 import datetime as _dt
@@ -135,17 +165,19 @@ def main():
             else:
                 report[sym] = {"source": "FALLO", "bars": 0, "days": 0,
                                "first": None, "last": None}
-                print(f"  {sym}: FALLO total (IBKR + yfinance)", flush=True)
+                print(f"  {sym}: FALLO total (IBKR + LSE)", flush=True)
             time.sleep(2)
     finally:
         try:
-            ib.disconnect()
+            if ib is not None:
+                ib.disconnect()
             print("IB desconectado.", flush=True)
         except Exception:
             pass
-    (OUT / "bars3mo5m_report.json").write_text(json.dumps(report, indent=2))
+    report_name = "bars3mo5m_report.json" if fleet == FLEET else "bars3mo5m_report_subset.json"
+    (OUT / report_name).write_text(json.dumps(report, indent=2))
     print("\n=== TABLA ticker -> dias ===", flush=True)
-    for sym in FLEET:
+    for sym in fleet:
         r = report.get(sym, {})
         print(f"{sym:6s} {r.get('days',0):3d} dias  {r.get('first')} -> {r.get('last')}  [{r.get('source')}]", flush=True)
 

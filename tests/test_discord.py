@@ -7,6 +7,7 @@ import importlib.util
 import json
 import os
 import sys
+from pathlib import Path
 
 import pytest
 
@@ -137,6 +138,40 @@ def test_sanitize_conserva_el_texto_legible():
 def test_embed_respeta_los_topes_de_discord():
     emb = S.build_embed("T" * 400, "B" * 9000, L.NORMAL)
     assert len(emb["title"]) <= 256 and len(emb["description"]) <= 4096
+
+
+def test_send_file_declara_attachment_en_multipart(tmp_path, monkeypatch):
+    book = tmp_path / "Order Flow.pdf"
+    book.write_bytes(b"%PDF-test")
+    captured = {}
+
+    class Response:
+        status_code = 200
+        def json(self):
+            return {"attachments": [{"filename": "Order Flow.pdf", "size": 9}]}
+
+    def fake_post(url, **kwargs):
+        captured.update(url=url, **kwargs)
+        return Response()
+
+    monkeypatch.setattr(S.requests, "post", fake_post)
+    ok, err = S.send_file("biblioteca-trading", str(book), content="Order Flow",
+                          hooks={"biblioteca-trading": "https://example.invalid/hook"})
+    assert ok and err is None
+    payload = json.loads(captured["data"]["payload_json"])
+    assert payload["attachments"] == [{"id": 0, "filename": "Order Flow.pdf"}]
+    assert captured["files"]["files[0]"][0] == "Order Flow.pdf"
+
+
+def test_send_file_rechaza_exito_vacio_de_discord(tmp_path, monkeypatch):
+    book = tmp_path / "book.pdf"; book.write_bytes(b"%PDF-test")
+    class Empty:
+        status_code = 200
+        def json(self): return {"attachments": []}
+    monkeypatch.setattr(S.requests, "post", lambda *a, **k: Empty())
+    ok, err = S.send_file("biblioteca-trading", str(book),
+                          hooks={"biblioteca-trading": "https://example.invalid/hook"})
+    assert not ok and "descartó" in err
 
 
 def test_color_por_direccion():

@@ -42,6 +42,17 @@ VIX desbloquea la banda de fragilidad (`charts/live.html:295` ya tiene el chip e
 - SPX y SPY **divergen el mismo día** (recap TradingFlow 22-jul: *"a still-positive SPX and a newly
   short SPY"*): el índice NO es redundante con su ETF, y ése es el motivo de añadirlo.
 
+### SPX/SPXW + perpetuos 24/7 (2026-08-08)
+- Pedido posterior de Yunior: "add spx, spxw to our fleet". Cobertura implementada sin romper
+  MANADA: SPX sigue en `data/universe_gamma.txt`; SPX y SPXW están en
+  `data/options_alert_tickers.txt`; el motor C++ acepta SPXW pero lee la cadena canónica SPX y
+  conserva `spxw` en la alerta. SPXW NO entra en `fleet.txt` porque no tiene barras propias.
+- Los perps de la flota viven incluso sábado: `perp_ws_bridge.py` cubre 34/34 válidos, 32 por
+  OKX WS y TXN/XLK por Bybit WS. Arrancan ANTES de `fleet_hours`; REST a 60 s solo aporta
+  OI/volumen y respaldo. GLD no tiene perp y STX-USDT es Stacks, no Seagate: ambos se excluyen.
+- LSE se usa para historia/backfill (`fetch_bars3mo5m.py`), nunca como cinta live: su WS publica
+  `price==bid` y no trae lado agresor. Perpetuos y LSE son proveedores distintos.
+
 ### 🧮 EL ARCHIVO DE CADENAS: banda ADAPTATIVA + mensual (2026-07-26, MEDIDO)
 - **`BAND=0.045` + `DTE_MAX=10` capturaban el 28% de la gamma** (mediana flota, MU 7,7%) y dejaban
   **14 de 25 flips clavados en el borde del recorte**. Ahora `poly_chain_archive.py` ensancha por
@@ -892,3 +903,128 @@ score absoluto ≥60%, RVOL ≥1.5x y movimiento mínimo; Finviz y flota compart
 solo con ticker, pantalla, dirección, precio, cambio y RVOL, siempre en inglés. `x_post_common.py`
 rechaza antes del API cualquier texto con nombres personales, rutas locales, email, UUID,
 credenciales o nombres internos del software.
+
+## Footprint Bid × Ask realtime — patrones delta0/1/3/5 (2026-08-10)
+- Dos carriles **separados**: `ACCIONES` usa acción/ETF US y `PERP 24/7` usa el perpetuo
+  tokenizado `SYMUSDT`; el segundo siempre publica `proxy_for`,
+  `instrument_kind=TOKENIZED_STOCK_PERPETUAL` y `PROXY ≠ ACCIÓN`. Jamás se mezclan.
+- Sin IBKR, `scripts/equity_footprint_ws.py` está listo para Massive SIP trades+NBBO realtime:
+  quote rule ≤2 s + tick rule, indeterminado DIR=0, delayed >10 s rechazado. El tier actual
+  rechazó el WebSocket; por eso `footprint_equity_source.txt` queda ausente/off y ACCIONES
+  dice `NO_TAPE` con causa. Intrinio delayed, Finnhub sin NBBO y OHLCV no fingen footprint.
+- `scripts/perp_ws_bridge.py` + `bin/orderflow_footprint --format perp` sí están activos 24/7:
+  lado nativo OKX/Bybit, clasificación 100% cuando el venue firma, pero proxy fino/no validado.
+- `scripts/orderflow_footprint.cpp` agrega 1m/5m/15m/30m y publica Bid×Ask, desconocido,
+  procedencia, delta/CVD, POC, absorción adaptativa, delta flip/divergencia, stacked imbalance
+  diagonal 3×/3 filas y Double/Triple HVN. `FORMING` intrabar y `BAR_CLOSED` al cierre.
+- UI: **ƒ Indicadores → Order Flow · Bid × Ask**, ACCIONES/PERP, HUELLA/DIVIDIR, contrato
+  WebSocket/API `footprint`, renderer `charts/orderflow_panel.js`. `evidence_score` NO es WR;
+  todo queda `DESCRIPTIVE_UNPROVEN_SIGNAL_ONLY` hasta OOS. Manual:
+  `docs/ORDERFLOW-FOOTPRINT.md`.
+
+## Cockpit v28 — LSE options realmente realtime (2026-08-12)
+- Estado vigente: seis ventanas London-only QQQ/NVDA/SMH/MU/AAPL/MSFT, puertos
+  8080–8085; `data/fleet_sleep` presente; Intrinio y proveedores no-London apagados.
+- Endpoint correcto: `wss://data-ws.londonstrategicedge.com`. El host corto
+  `wss://ws.londonstrategicedge.com` daba equity pero rechazo `subscribe_options`
+  con `UNKNOWN_ACTION` en la prueba real; no usarlo en el cockpit.
+- Cada conexión autentica y suscribe subyacente + `subscribe_options`; salud real de
+  opciones exige `options_subscribed`, y `/health` separa transporte equity/opciones,
+  last tick, eventos recibidos/aplicados y errores.
+- Contrato honesto: REST cada 300s da griegas/modelo y reconcilia `volume_today`;
+  cada print OSI WebSocket incrementa el volumen del contrato conocido y refitea
+  Γ×volumen tras batch de 200ms. Heatmap relee cada 1s; muros cambian de lado también
+  al cruzar el spot vivo. Etiqueta UI: `WS prints · REST Greeks`, `sin OI`.
+- Guarda decisiva: coherencia dentro de cada expiry NO basta. Se elige como sesión
+  activa el `max(session_date)` entre expiries y se excluye entero todo vencimiento
+  anterior. QQQ 2026-08-12 traía solo sesión 2026-08-11; al excluirlo PW corrigió
+  718→723. `excluded_expiries` y `active_session_date` quedan visibles.
+- Sin OI, gamma flip/Net GEX/dealer inventory siguen `DATA`/null: jamás fabricarlos.
+- Validación de entrega: seis sockets equity+options `SUBSCRIBED`, prints recibidos y
+  aplicados en todos los símbolos, precio ~0–1,25s, 93 tests OK/1 skip, selftest OK,
+  firma válida. Memoria detallada: `~/.claude/projects/-Users-yuniorrodriguezosorio-ib-trader/memory/lse-cockpit-v28-realtime-options.md`.
+
+## Cockpit v29 — reversals auditables + ladrillos vivos (2026-08-13)
+- Nueva skill global `~/.codex/skills/options-chain-reversal-patterns`: la cadena es
+  MAPA; `REVERSAL` exige rechazo en value + 2/3 patrones verdaderos (absorción,
+  cambio de Delta, imbalance Bid×Ask). Los proxies de Γ×volumen/Δ×volumen/premium/skew
+  nunca cuentan hacia la triada. London permanece `DATA` sin aggressor-side Bid×Ask.
+- `scripts/wall_integrity.py` lleva por símbolo una máquina de estados realtime para
+  call wall, put wall, magnet y gamma flip: `FRESH→TESTED→WEAKENING→EXHAUSTED→BROKEN`,
+  con contactos distintos, cooldown, ruptura persistente y refuerzo por aumento relativo
+  de actividad. Tres tests y +10% son convenciones visuales forward-audit, no win rate.
+- `charts/live.html` dibuja clusters de ladrillos con los colores históricos: CW teal,
+  PW rojo, MAG dorado y FLIP amarillo. Golpes agrietan/consumen; ruptura hace caer los
+  ladrillos; refuerzo pulsa. Si niveles coinciden usan carriles separados.
+- En LSE la métrica visible sigue siendo Γ×`volume_today`. Gamma flip queda animado como
+  lock `DATA · sin OI` y con 0 ladrillos; sólo aparece como barrera a precio real cuando
+  existe zero-crossing con OI fresco. Nunca inferir dealers por volumen.
+- El estado compacto aparece en `/health.wall_integrity` y el frame WS completo en
+  `levels.wall_integrity`, para auditar seis ventanas y reconexiones. v29 quedó construida,
+  firmada y entregada en Desktop; seis equity/options sockets volvieron `SUBSCRIBED`.
+
+## Cockpit v30 — A-FLIP London + auditoría de cinta (2026-08-13)
+- La API/SDK oficial LSE v0.14 confirma dos capas útiles: `/options/flow` y
+  `subscribe_options` entregan prints individuales; el vault exporta la cinta histórica
+  con `price,size,exchange,conditions,osi`. Ninguna capa entrega OI ni aggressor side.
+- `scripts/lse_gamma_map.py` añade `activity_flip`: zero-crossing de gamma BS recalculada
+  a spots hipotéticos, firmada call+ / put− y ponderada por `volume_today`. Nombre visible
+  obligatorio: **A-FLIP Γvol**. Es contexto descriptivo no validado; jamás Net GEX,
+  dealer inventory ni sustituto del FLIP real.
+- El `flip` real sigue `null/DATA/sin OI`. A-FLIP tiene línea naranja y carril propio de
+  ladrillos; CW/PW/MAG/FLIP conservan colores y lógica v29.
+- Cada print WS conocido entra en `option_tape`: quote-rule cuando el tick trae bid/ask,
+  tick-rule si sólo permite comparar con el precio anterior, y UNKNOWN en otro caso.
+  Son inferencias forward-audit; `reversal_triad_eligible=false` siempre, porque no son
+  ejecuciones Bid×Ask exchange-sealed/consolidadas.
+- Validación de código v30: 159 tests relevantes OK/1 skip. La colección pytest global no
+  es válida como gate porque recorre backups, el Python 3.12 empotrado y un test after-hours
+  de 26×300s; se usa la suite dirigida de cockpit/LSE.
+
+## Cockpit v31 — Polygon OI overlay sobre London realtime (2026-08-13)
+- Autorización del usuario: Polygon se usa temporalmente para completar el OI faltante;
+  LSE sigue siendo la fuente única de precio realtime, prints, Γ×volumen, heatmap,
+  CW/PW/MAG, Architect activity y timers.
+- `scripts/polygon_oi.py` descarga snapshot OPRA por vencimientos explícitos y banda ±20%,
+  pagina fail-closed, exige calls+puts y campo OI en cada contrato, y cachea 36 h porque
+  el OI es start-of-day. Nunca publica una cadena parcial ni convierte OI ausente en cero.
+- El libro OI usa Polygon OI+IV y recalcula gamma BS al spot vivo London. Convención
+  declarada calls + / puts −; produce `net_gex`, `regime`, todas las raíces y `flip`.
+  Requiere ≥10 contratos positivos, ≥3 por lado y ≥50% de IV usable; si falla, todo vuelve
+  a DATA sin tocar los niveles London.
+- UI: `OI GEX` muestra el libro Polygon/London; FLIP amarillo es el zero-crossing OI real.
+  A-FLIP naranja sigue independiente. Los muros históricos conservan colores y valores
+  London Γ×volume. `/health` expone fuente, edad, contratos usables, Net GEX y ambos flips.
+- Prueba real previa al deploy: seis símbolos con expiries completos; QQQ 886 contratos,
+  683 usables (95,66%), Net GEX +$1,18B y flip 721,319 con spot 723,685. Validación:
+  163 tests relevantes OK/1 skip y chart selftest OK.
+
+## Cockpit v32 — Squeeze Fuel visible y honesto (2026-08-13)
+- `FUEL ↑` combina velocidad de precio London (retornos 1m/5m) con una escalera
+  estructural Polygon de gamma OI de calls entre spot y spot+5%.
+- El porcentaje visible es `overhead call OI gamma / (overhead call + downside put OI
+  gamma)` dentro del corredor simétrico ±5%; no es probabilidad ni win rate.
+- `ACTIVE` exige retorno London 5m >= +0.15%, retorno 1m > 0 y además mayoría (>=50%)
+  de convexidad call sobre el spot o precio aún bajo el flip OI (zona aceleradora −Γ).
+  Son umbrales visuales sin validar, conservados en auditoría forward/OOS.
+- El chip actualiza con cada tick London. La escalera OI se recalcula con los snapshots
+  estructurales; muestra los seis strikes de call gamma más fuertes por encima del spot.
+- Nunca llama al evento `short covering`: Polygon actual no aporta short-interest/borrow
+  en este flujo y el signo de inventario dealer no está observado. Ambos quedan `DATA`.
+- Validación de entrega: 242 tests relevantes OK/1 skip; 31 tests focales OK;
+  chart bridge selftest OK; bundle v32 firmado y seis ventanas London verificadas.
+
+## Cockpit v32 — panel Heatmap/Widgets opcional (2026-08-18)
+- `🧩 Widgets ▾` tiene un switch maestro persistente `Ocultar/Mostrar panel completo`.
+  Su estado vive en `cockpitWidgets.v1` como `WG.visible`; las selecciones individuales
+  siguen en `WG.open` y NO se borran al ocultar. Al restaurar vuelve exactamente el panel previo.
+- Ocultar pone `--dockw: 0`, contrae `#wdock`, redimensiona el chart y entrega todo el ancho
+  al gráfico. El botón queda visualmente apagado y anuncia el estado por ARIA.
+- Un widget oculto tampoco debe seguir consumiendo datos: los internos usan `wgShowing(id)`;
+  `gex_heatmap_widget.js`, `mm_fractal_widget.js` y `uw_widgets.js` consultan
+  `window.cockpitWidgetOpen(id)` antes de fetch/redraw. `cockpitWidgetsVisibility` sólo se emite
+  al cambiar visibilidad/selección y permite un refresh inmediato al reabrir, no durante drag/resize.
+- Regresión canónica: `tests/test_widget_panel_optional.py`. Entrega comprobada en WKWebView:
+  menú visible, chart full-width al ocultar, restauración del dock y rejilla final de seis ventanas.
+  Bundle v32 firmado; QQQ/NVDA/SMH/MU/AAPL/MSFT siguieron `15m`, LSE equity+options
+  `SUBSCRIBED`, proveedor `lse-ws-bbo-mid`, cero reconnects; `data/fleet_sleep` quedó intacto.

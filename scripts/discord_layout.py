@@ -67,6 +67,10 @@ CATEGORIES = [
         ("cierre-recap", "Post-mortem del día: qué disparó, qué acertó, qué falló", False),
         ("calendario-economico", "Macro, earnings de la flota, vencimientos", False),
     ]),
+    ("aprendizaje", "🎓 APRENDIZAJE", [
+        ("biblioteca-trading", "Libros y manuales de estudio: order flow, volume profile, "
+                               "VWAP, ejecución y estructura de mercado", False),
+    ]),
     ("sistema", "⚙️ SISTEMA", [
         ("estado-proveedores", "Intrinio/Finnhub/Polygon/IBKR: sockets, cintas ciegas, latencia", True),
         ("senales-rechazadas", "Lo que el filtro descartó — aquí se audita el ruido", True),
@@ -245,7 +249,7 @@ def is_private(line):
     return bool(PRIVADO.search(line or ""))
 
 # espejos por simbolo: (canal, conjunto de simbolos)
-SPY_QQQ = ("SPY", "QQQ", "SPX", "XSP", "NDX", "DIA", "IWM")
+SPY_QQQ = ("SPY", "QQQ", "SPX", "SPXW", "XSP", "NDX", "DIA", "IWM")
 SEMIS = ("SMH", "NVDA", "MU", "AMD", "TSM", "ASML", "SKHY", "DRAM", "SNDK",
          "WDC", "STX", "LRCX", "INTC", "AVGO", "TXN", "QCOM", "XLK")
 MIRRORS = [("spy-qqq", SPY_QQQ), ("semis-memoria", SEMIS)]
@@ -264,7 +268,7 @@ def analysis_channels():
     return {"planes-premarket", "arboles-escenarios", "estrategias",
             "posicionamiento-dealer", "cierre-recap", "calendario-economico",
             "backtests", "estado-flota", "guia-alertas", "bienvenida", "bot-logs",
-            "senales-rechazadas"}
+            "senales-rechazadas", "biblioteca-trading"}
 
 
 def webhook_channels():

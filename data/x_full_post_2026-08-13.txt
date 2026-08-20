@@ -1,0 +1,189 @@
+152 tickers measured. 100 contracts survive. All 44 names sit on the same side of the flip.
+13 Aug 2026 premarket | CBOE chain from the 12th close | expiries 14 Aug - 4 Sep | budget $200 max
+
+WHAT RULES TODAY
+Gamma is POSITIVE in 44 of 44 names. Spot sits above the gamma flip in every survivor, VIX 14.59.
+That is a PIN regime: dealers dampen, first touch of a wall bounces ~70-75%, rallies get sold,
+dips get bought. For bought premium that is brutal, the theta of a pin eats whoever reaches far.
+What the regime allows is going TO the magnet, never THROUGH the wall. 61 candidates were vetoed
+for having the strike on the far side of it.
+
+Ranked by need/EM: how much of the expiry expected move you burn just to reach break-even.
+Under 0.50 the break-even sits inside the first half of the envelope. Over 1.00 you are paying
+for a move the options market itself does not price.
+
+======================================================================
+DEALER POSITIONING (flip recomputed, BS gamma re-evaluated per spot, expiries <=60d)
+sorted by proximity to the flip: the top ones flip negative on a small move
+======================================================================
+UPST     29.23 | flip 29.09 (-0.5%)         | POS | CW 30.00 +2.6%     PW 27.50 -5.9%     | 29.00 TRAPDOOR
+WULF     17.12 | flip 16.99 (-0.7%)         | POS | CW 18.00 +5.1%     PW 17.00 -0.7%     | 15.00 TRAPDOOR
+MARA      9.67 | flip 9.59 (-0.9%)          | POS | CW 10.00 +3.4%     PW 9.50 -1.8%      | 10.50 pin
+GME      18.52 | flip 18.34 (-1.0%)         | POS | CW 19.00 +2.6%     PW 18.00 -2.8%     | 18.00 TRAPDOOR
+COIN    149.30 | flip 147.67 (-1.1%)        | POS | CW 155.00 +3.8%    PW 145.00 -2.9%    | 157.50 pin
+CLSK     12.13 | flip 12.00 (-1.1%)         | POS | CW 15.00 +23.7%    PW 11.00 -9.3%     | 15.00 pin
+F        13.84 | flip 13.68 (-1.1%)         | POS | CW 14.00 +1.2%     PW 13.00 -6.1%     | 13.00 TRAPDOOR
+PINS     22.95 | flip 22.68 (-1.2%)         | POS | CW 24.00 +4.6%     PW 22.00 -4.1%     | 24.00 pin
+AAL      15.05 | flip 14.72 (-2.2%)         | POS | CW 17.00 +13.0%    PW 15.00 -0.3%     | 17.00 pin
+MSTR     95.48 | flip 92.57 (-3.0%)         | POS | CW 100.00 +4.7%    PW 95.00 -0.5%     | 100.00 pin
+NFLX     75.55 | flip 73.17 (-3.2%)         | POS | CW 80.00 +5.9%     PW 73.00 -3.4%     | 75.00 pin
+MS      218.77 | flip 210.88 (-3.6%)        | POS | CW 220.00 +0.6%    PW 210.00 -4.0%    | 220.00 pin
+RKLB     78.80 | flip 75.67 (-4.0%)         | POS | CW 80.00 +1.5%     PW 75.00 -4.8%     | 85.00 pin
+TTD      13.57 | flip 13.03 (-4.0%)         | POS | CW 14.00 +3.2%     PW 13.00 -4.2%     | 14.00 pin
+HOOD     95.10 | flip 91.27 (-4.0%)         | POS | CW 100.00 +5.2%    PW 90.00 -5.4%     | 100.00 pin
+PFE      26.37 | flip 25.23 (-4.3%)         | POS | CW 27.00 +2.4%     PW 26.00 -1.4%     | 26.00 pin
+WBD      27.65 | flip 26.39 (-4.6%)         | POS | CW 28.00 +1.3%     PW 27.00 -2.4%     | 28.00 pin
+HIMS     29.93 | flip 28.57 (-4.6%)         | POS | CW 30.00 +0.2%     PW 29.00 -3.1%     | 35.00 pin
+RIVN     15.96 | flip 15.10 (-5.4%)         | POS | CW 17.00 +6.5%     PW 15.00 -6.0%     | 17.00 pin
+SOFI     17.94 | flip 16.90 (-5.8%)         | POS | CW 18.00 +0.3%     PW 17.00 -5.2%     | 18.00 pin
+MP       53.96 | flip 50.82 (-5.8%)         | POS | CW 55.00 +1.9%     PW 50.00 -7.3%     | 60.00 pin
+JPM     366.38 | flip 344.63 (-5.9%)        | POS | CW 370.00 +1.0%    PW 360.00 -1.7%    | 370.00 pin
+T        24.27 | flip 22.66 (-6.6%)         | POS | CW 25.00 +3.0%     PW 23.00 -5.2%     | 25.00 pin
+FCX      68.19 | flip 63.55 (-6.8%)         | POS | CW 70.00 +2.7%     PW 65.00 -4.7%     | 70.00 pin
+PYPL     59.76 | flip 55.63 (-6.9%)         | POS | CW 60.00 +0.4%     PW 55.00 -8.0%     | 60.00 pin
+ASTS     73.25 | flip 68.01 (-7.2%)         | POS | CW 80.00 +9.2%     PW 70.00 -4.4%     | 80.00 pin
+CRCL     70.85 | flip 65.75 (-7.2%)         | POS | CW 75.00 +5.9%     PW 65.00 -8.3%     | 72.00 pin
+BAC      64.82 | flip 59.81 (-7.7%)         | POS | CW 65.00 +0.3%     PW 64.00 -1.3%     | 65.00 pin
+JOBY      7.98 | flip 7.31 (-8.4%)          | POS | CW 8.00 +0.3%      PW 7.00 -12.3%     | 10.00 pin
+IREN     43.38 | flip 39.75 (-8.4%)         | POS | CW 45.00 +3.7%     PW 41.00 -5.5%     | 43.00 pin
+LYFT     16.60 | flip 15.16 (-8.7%)         | POS | CW 17.00 +2.4%     PW 16.00 -3.6%     | 17.00 pin
+NU       13.65 | flip 12.41 (-9.1%)         | POS | CW 14.00 +2.6%     PW 13.00 -4.8%     | 15.00 pin
+RIOT     20.30 | flip 18.45 (-9.1%)         | POS | CW 23.00 +13.3%    PW 19.00 -6.4%     | 23.00 pin
+APLD     31.00 | flip 27.99 (-9.7%)         | POS | CW 35.00 +12.9%    PW 30.00 -3.2%     | 35.00 pin
+CVNA     72.20 | flip 65.04 (-9.9%)         | POS | CW 73.00 +1.1%     PW 70.00 -3.1%     | 73.00 pin
+QBTS     20.79 | flip 18.67 (-10.2%)        | POS | CW 22.00 +5.8%     PW 20.00 -3.8%     | 22.00 pin
+SOUN      7.39 | flip 6.61 (-10.5%)         | POS | CW 8.00 +8.3%      PW 7.00 -5.3%      | 7.50 pin
+SCHW    109.34 | flip 97.85 (-10.5%)        | POS | CW 110.00 +0.6%    PW 105.00 -4.0%    | 110.00 pin
+MSFT    493.00 | flip 419.54 (-14.9%)       | POS | CW 500.00 +1.4%    PW 480.00 -2.6%    | 500.00 pin
+HTZ       2.72 | flip outside the book      | POS | CW 3.00 +10.4%     PW 2.50 -8.0%      | 3.00 pin
+ONDS     10.48 | flip outside the book      | POS | CW 11.00 +5.0%     PW 9.00 -14.1%     | 10.00 pin
+POET      9.05 | flip outside the book      | POS | CW 10.00 +10.5%    PW 8.50 -6.1%      | 9.00 pin
+SMCI     38.58 | flip outside the book      | POS | CW 40.00 +3.7%     PW 35.00 -9.3%     | 40.00 pin
+UEC      11.36 | flip outside the book      | POS | CW 12.00 +5.6%     PW 11.00 -3.2%     | 12.00 pin
+
+======================================================================
+CALLS - 50 contracts, ranked by need/EM
+======================================================================
+NFLX  08/14   74.00C $82   spr  3.6% OI 10009  vol 7530  IV  32% d +0.56 BE   74.83 need -0.96% EM 2.96% n/EM -0.32  BE inside wall
+PYPL  08/14   59.00C $59   spr 16.9% OI 3342   vol 915   IV  25% d +0.57 BE   59.59 need -0.28% EM 2.37% n/EM -0.12  BE inside wall | toll 0.29%
+SMCI  08/14   37.00C $140  spr  7.8% OI 6282   vol 22942 IV  97% d +0.60 BE   38.41 need -0.44% EM 6.17% n/EM -0.07  BE inside wall | toll 0.48%
+NFLX  08/14   75.00C $39   spr  5.1% OI 20517  vol 12063 IV  32% d +0.34 BE   75.39 need -0.21% EM 2.96% n/EM -0.07  BE inside wall | toll 0.08%
+NFLX  08/21   74.00C $152  spr  5.3% OI 8436   vol 3686  IV  29% d +0.54 BE   75.52 need -0.04% EM 4.20% n/EM -0.01  BE inside wall | toll 0.19%
+SMCI  08/14   38.00C $92   spr  5.4% OI 6784   vol 15775 IV 100% d +0.46 BE   38.92 need +0.90% EM 6.17% n/EM  0.15  BE inside wall | toll 0.28%
+PYPL  08/21   59.00C $114  spr 11.5% OI 1581   vol 590   IV  27% d +0.55 BE   60.13 need +0.63% EM 3.58% n/EM  0.18  BE crosses wall | toll 0.40%
+SMCI  08/21   38.00C $168  spr  3.6% OI 6064   vol 7719  IV  80% d +0.49 BE   39.68 need +2.86% EM 10.38% n/EM  0.28  BE inside wall
+MARA  08/14    9.50C $33   spr  6.1% OI 4656   vol 2150  IV  86% d +0.61 BE    9.83 need +1.65% EM 5.27% n/EM  0.31  BE inside wall | flip -0.9% | toll 0.34%
+TTD   08/14   13.50C $24   spr 12.8% OI 3466   vol 4094  IV  62% d +0.49 BE   13.73 need +1.22% EM 3.76% n/EM  0.32  BE inside wall | toll 0.45%
+POET  08/14    9.00C $31   spr  6.5% OI 20409  vol 6284  IV 140% d +0.47 BE    9.31 need +2.87% EM 8.78% n/EM  0.33  BE inside wall | toll 0.48%
+LYFT  08/14   16.50C $26   spr 18.9% OI 1741   vol 3321  IV  44% d +0.57 BE   16.77 need +0.99% EM 2.95% n/EM  0.34  BE inside wall | toll 0.53%
+PYPL  08/14   60.00C $24   spr 25.0% OI 6774   vol 905   IV  31% d +0.28 BE   60.24 need +0.80% EM 2.37% n/EM  0.34  BE crosses wall | toll 0.35%
+MSTR  08/14   95.00C $185  spr  5.4% OI 2075   vol 1469  IV  68% d +0.50 BE   96.85 need +1.43% EM 4.01% n/EM  0.36  BE inside wall | toll 0.21%
+RIOT  08/14   20.00C $78   spr  6.5% OI 5297   vol 2880  IV 100% d +0.60 BE   20.77 need +2.34% EM 5.94% n/EM  0.39  BE inside wall | toll 0.41%
+MARA  08/21    9.50C $56   spr  5.3% OI 2295   vol 1901  IV  79% d +0.58 BE   10.06 need +4.08% EM 10.03% n/EM  0.41  BE crosses wall | flip -0.9% | toll 0.53%
+TTD   08/21   13.50C $46   spr  6.5% OI 2267   vol 1478  IV  56% d +0.51 BE   13.96 need +2.91% EM 7.00% n/EM  0.42  BE inside wall | toll 0.43%
+AAL   08/21   15.00C $39   spr 10.3% OI 21770  vol 997   IV  44% d +0.50 BE   15.39 need +2.26% EM 5.38% n/EM  0.42  BE inside wall | toll 0.53%
+RIOT  08/21   20.00C $127  spr  3.9% OI 12028  vol 1612  IV  87% d +0.58 BE   21.27 need +4.80% EM 10.91% n/EM  0.44  BE inside wall
+AAL   08/28   15.00C $53   spr  7.5% OI 1041   vol 401   IV  44% d +0.51 BE   15.53 need +3.19% EM 7.18% n/EM  0.44  BE inside wall | toll 0.52%
+CLSK  08/14   12.00C $44   spr  9.1% OI 3704   vol 1050  IV  95% d +0.60 BE   12.44 need +2.55% EM 5.56% n/EM  0.46  BE inside wall | flip -1.1% | toll 0.55%
+HOOD  08/14   95.00C $178  spr  5.6% OI 8377   vol 3728  IV  64% d +0.50 BE   96.78 need +1.77% EM 3.77% n/EM  0.47  BE inside wall | toll 0.21%
+RIVN  08/14   16.00C $21   spr  9.5% OI 8631   vol 5056  IV  53% d +0.46 BE   16.21 need +1.54% EM 3.07% n/EM  0.50  BE inside wall | toll 0.27%
+PINS  08/21   23.00C $54   spr  9.2% OI 2525   vol 113   IV  40% d +0.49 BE   23.55 need +2.59% EM 5.05% n/EM  0.51  BE inside wall | flip -1.2% | toll 0.44%
+MSTR  08/14   96.00C $147  spr  9.5% OI 1099   vol 1288  IV  70% d +0.42 BE   97.47 need +2.08% EM 4.01% n/EM  0.52  BE inside wall | toll 0.35%
+JPM   08/14  367.50C $132  spr 15.8% OI 680    vol 565   IV  21% d +0.35 BE  368.82 need +0.67% EM 1.28% n/EM  0.52  BE inside wall | toll 0.16%
+SOFI  09/04   18.00C $81   spr  2.5% OI 2254   vol 547   IV  45% d +0.53 BE   18.81 need +4.85% EM 9.14% n/EM  0.53  BE crosses wall
+BAC   09/04   65.00C $116  spr  9.5% OI 794    vol 197   IV  18% d +0.50 BE   66.16 need +2.06% EM 3.87% n/EM  0.53  BE crosses wall | toll 0.34%
+SOFI  08/28   18.00C $65   spr  6.2% OI 4666   vol 925   IV  44% d +0.51 BE   18.65 need +3.96% EM 7.41% n/EM  0.53  BE crosses wall | toll 0.43%
+MS    08/14  220.00C $108  spr 27.0% OI 1070   vol 592   IV  31% d +0.33 BE  221.07 need +1.05% EM 1.96% n/EM  0.54  BE crosses wall | toll 0.40%
+SOFI  08/21   18.00C $46   spr  2.2% OI 37771  vol 8472  IV  43% d +0.50 BE   18.46 need +2.93% EM 5.43% n/EM  0.54  BE crosses wall
+UEC   08/21   11.50C $43   spr  4.7% OI 3224   vol 1235  IV  67% d +0.48 BE   11.93 need +5.02% EM 9.02% n/EM  0.56  BE inside wall
+SOUN  08/21    7.50C $29   spr  3.5% OI 12342  vol 2247  IV  72% d +0.47 BE    7.79 need +5.34% EM 9.27% n/EM  0.58  BE inside wall
+BAC   08/28   65.00C $95   spr  6.3% OI 3585   vol 285   IV  18% d +0.50 BE   65.95 need +1.74% EM 3.02% n/EM  0.58  BE crosses wall | toll 0.19%
+PFE   08/21   26.50C $24   spr  8.3% OI 7761   vol 978   IV  19% d +0.42 BE   26.74 need +1.40% EM 2.43% n/EM  0.58  BE inside wall | toll 0.18%
+BAC   08/21   65.00C $64   spr  9.4% OI 25497  vol 2410  IV  17% d +0.48 BE   65.64 need +1.27% EM 2.17% n/EM  0.58  BE crosses wall | toll 0.19%
+RIOT  08/14   20.50C $52   spr  9.7% OI 5772   vol 5273  IV  99% d +0.47 BE   21.02 need +3.52% EM 5.94% n/EM  0.59  BE inside wall | toll 0.52%
+MSTR  08/14   96.50C $130  spr  6.9% OI 514    vol 1334  IV  71% d +0.38 BE   97.80 need +2.42% EM 4.01% n/EM  0.60  BE inside wall | toll 0.25%
+SCHW  08/21  110.00C $107  spr 24.3% OI 9117   vol 170   IV  21% d +0.41 BE  111.07 need +1.58% EM 2.60% n/EM  0.61  BE crosses wall | toll 0.58%
+HOOD  08/14   96.00C $136  spr  5.2% OI 7611   vol 2217  IV  65% d +0.42 BE   97.36 need +2.37% EM 3.77% n/EM  0.63  BE inside wall | toll 0.18%
+T     08/21   24.50C $25   spr 24.0% OI 6276   vol 544   IV  22% d +0.42 BE   24.75 need +1.98% EM 3.01% n/EM  0.66  BE inside wall | toll 0.58%
+TTD   08/28   14.00C $40   spr  7.6% OI 1551   vol 839   IV  53% d +0.39 BE   14.39 need +6.08% EM 8.95% n/EM  0.68  BE crosses wall | toll 0.56%
+IREN  08/14   44.00C $106  spr  6.6% OI 13073  vol 13298 IV  94% d +0.47 BE   45.06 need +3.89% EM 5.60% n/EM  0.69  BE crosses wall | toll 0.34%
+MARA  08/21   10.00C $35   spr  5.7% OI 10233  vol 1739  IV  81% d +0.42 BE   10.35 need +7.03% EM 10.03% n/EM  0.70  BE crosses wall | flip -0.9% | toll 0.49%
+CVNA  08/14   73.00C $104  spr  8.6% OI 3990   vol 1628  IV  59% d +0.45 BE   74.05 need +2.55% EM 3.59% n/EM  0.71  BE crosses wall | toll 0.28%
+APLD  08/14   31.50C $72   spr  9.8% OI 3031   vol 3361  IV  93% d +0.45 BE   32.22 need +3.92% EM 5.42% n/EM  0.72  BE inside wall | toll 0.50%
+IREN  08/21   45.00C $189  spr  4.2% OI 9273   vol 6400  IV  89% d +0.45 BE   46.89 need +8.10% EM 11.19% n/EM  0.72  BE crosses wall
+CRCL  08/14   72.00C $148  spr 10.2% OI 5729   vol 1200  IV  84% d +0.45 BE   73.47 need +3.71% EM 4.98% n/EM  0.74  BE inside wall | toll 0.47%
+LYFT  08/21   17.00C $28   spr 10.9% OI 8199   vol 898   IV  42% d +0.37 BE   17.27 need +4.07% EM 5.18% n/EM  0.78  BE crosses wall | toll 0.48%
+HOOD  08/14   97.00C $100  spr  7.0% OI 5735   vol 1912  IV  65% d +0.34 BE   98.00 need +3.05% EM 3.77% n/EM  0.81  BE inside wall | toll 0.22%
+
+======================================================================
+PUTS - 50 contracts, ranked by need/EM
+======================================================================
+FCX   08/14   69.00P $91   spr 11.0% OI 1787   vol 127   IV  50% d -0.46 BE   68.09 need +0.15% EM 3.23% n/EM  0.05  BE inside wall | toll 0.32%
+RKLB  08/14   80.00P $166  spr  4.2% OI 2547   vol 1733  IV  92% d -0.40 BE   78.34 need +0.58% EM 5.86% n/EM  0.10  BE inside wall
+RKLB  08/14   79.00P $124  spr  6.5% OI 731    vol 731   IV  91% d -0.33 BE   77.76 need +1.32% EM 5.86% n/EM  0.23  BE inside wall | toll 0.31%
+F     08/21   14.00P $34   spr  9.0% OI 8153   vol 664   IV  29% d -0.59 BE   13.66 need +1.26% EM 3.76% n/EM  0.34  BE inside wall | wall 13.00 TRAPDOOR | flip -1.1% | toll 0.37%
+BAC   08/14   65.00P $43   spr  4.7% OI 2061   vol 3942  IV  17% d -0.58 BE   64.57 need +0.39% EM 1.06% n/EM  0.36  BE inside wall
+F     08/28   14.00P $40   spr  7.4% OI 1054   vol 179   IV  28% d -0.56 BE   13.60 need +1.77% EM 4.88% n/EM  0.36  BE inside wall | wall 13.00 TRAPDOOR | flip -1.1% | toll 0.39%
+MARA  08/21   10.00P $69   spr  2.9% OI 13893  vol 591   IV  82% d -0.59 BE    9.31 need +3.72% EM 10.03% n/EM  0.37  BE crosses wall | flip -0.9%
+RKLB  08/14   78.00P $92   spr 10.9% OI 1633   vol 2015  IV  91% d -0.27 BE   77.08 need +2.18% EM 5.86% n/EM  0.37  BE inside wall | toll 0.48%
+RIOT  08/14   20.50P $69   spr  8.7% OI 825    vol 590   IV 100% d -0.53 BE   19.81 need +2.41% EM 5.94% n/EM  0.41  BE inside wall | toll 0.56%
+ASTS  08/14   73.00P $164  spr  7.3% OI 574    vol 1086  IV 103% d -0.39 BE   71.36 need +2.58% EM 6.21% n/EM  0.42  BE inside wall | toll 0.42%
+BAC   08/21   65.00P $76   spr  6.5% OI 1609   vol 2552  IV  17% d -0.53 BE   64.23 need +0.90% EM 2.17% n/EM  0.42  BE inside wall | toll 0.15%
+PFE   08/21   26.50P $40   spr 15.0% OI 993    vol 452   IV  19% d -0.59 BE   26.10 need +1.02% EM 2.43% n/EM  0.42  BE inside wall | toll 0.39%
+SOUN  08/21    7.50P $40   spr  5.0% OI 1296   vol 345   IV  74% d -0.53 BE    7.10 need +3.93% EM 9.27% n/EM  0.42  BE inside wall
+SOFI  08/14   18.00P $28   spr  7.1% OI 7271   vol 5975  IV  47% d -0.53 BE   17.72 need +1.23% EM 2.81% n/EM  0.44  BE inside wall | toll 0.21%
+SOFI  08/21   18.00P $51   spr  3.9% OI 13693  vol 2203  IV  43% d -0.50 BE   17.49 need +2.51% EM 5.43% n/EM  0.46  BE inside wall
+SOFI  08/28   18.00P $68   spr  2.9% OI 3923   vol 147   IV  44% d -0.49 BE   17.32 need +3.46% EM 7.41% n/EM  0.47  BE inside wall
+GME   08/21   18.50P $32   spr 12.5% OI 908    vol 407   IV  30% d -0.47 BE   18.18 need +1.81% EM 3.83% n/EM  0.47  BE inside wall | wall 18.00 TRAPDOOR | flip -1.0% | toll 0.46%
+RIVN  08/14   16.00P $28   spr 14.3% OI 4166   vol 2916  IV  49% d -0.55 BE   15.72 need +1.53% EM 3.07% n/EM  0.50  BE inside wall | toll 0.46%
+JOBY  08/21    8.00P $36   spr  5.6% OI 5574   vol 959   IV  67% d -0.50 BE    7.64 need +4.24% EM 8.27% n/EM  0.51  BE inside wall | toll 0.50%
+IREN  08/14   43.00P $88   spr  9.1% OI 1017   vol 1504  IV  92% d -0.40 BE   42.12 need +2.90% EM 5.60% n/EM  0.52  BE inside wall | toll 0.47%
+HOOD  08/14   95.00P $181  spr  5.5% OI 733    vol 712   IV  63% d -0.50 BE   93.19 need +2.01% EM 3.77% n/EM  0.53  BE inside wall | toll 0.21%
+ASTS  08/14   72.00P $123  spr  6.5% OI 780    vol 987   IV 101% d -0.32 BE   70.77 need +3.39% EM 6.21% n/EM  0.55  BE inside wall | toll 0.34%
+AAL   08/21   15.00P $42   spr  9.5% OI 12335  vol 686   IV  42% d -0.51 BE   14.58 need +3.12% EM 5.38% n/EM  0.58  BE crosses wall | toll 0.53%
+MSTR  08/14   95.00P $198  spr  8.1% OI 6423   vol 2631  IV  68% d -0.50 BE   93.02 need +2.58% EM 4.01% n/EM  0.64  BE crosses wall | toll 0.33%
+HOOD  08/14   94.00P $134  spr  5.2% OI 1162   vol 1589  IV  63% d -0.41 BE   92.67 need +2.56% EM 3.77% n/EM  0.68  BE inside wall | toll 0.18%
+T     08/21   24.00P $23   spr 17.4% OI 2772   vol 653   IV  24% d -0.36 BE   23.77 need +2.06% EM 3.01% n/EM  0.68  BE inside wall | toll 0.46%
+ASTS  08/14   71.00P $92   spr  9.7% OI 935    vol 741   IV 102% d -0.26 BE   70.08 need +4.33% EM 6.21% n/EM  0.70  BE inside wall | toll 0.47%
+AAL   08/14   15.00P $22   spr  9.1% OI 3958   vol 2496  IV  44% d -0.54 BE   14.78 need +1.79% EM 2.56% n/EM  0.70  BE crosses wall | toll 0.24%
+JPM   08/14  365.00P $197  spr 13.2% OI 911    vol 1236  IV  20% d -0.48 BE  363.03 need +0.91% EM 1.28% n/EM  0.71  BE inside wall | toll 0.15%
+CVNA  08/14   71.00P $70   spr 12.9% OI 2765   vol 218   IV  62% d -0.31 BE   70.31 need +2.63% EM 3.59% n/EM  0.73  BE inside wall | toll 0.41%
+NFLX  08/21   75.00P $178  spr  3.4% OI 13085  vol 601   IV  30% d -0.57 BE   73.22 need +3.08% EM 4.20% n/EM  0.73  BE inside wall
+COIN  08/14  147.00P $196  spr  8.7% OI 1429   vol 610   IV  65% d -0.38 BE  145.04 need +2.85% EM 3.87% n/EM  0.74  BE inside wall | flip -1.1% | toll 0.30%
+CVNA  08/21   70.00P $140  spr  7.1% OI 4182   vol 1040  IV  55% d -0.32 BE   68.60 need +4.99% EM 6.77% n/EM  0.74  BE crosses wall | toll 0.43%
+PFE   08/28   26.00P $24   spr 12.8% OI 538    vol 234   IV  18% d -0.36 BE   25.77 need +2.29% EM 2.96% n/EM  0.78  BE crosses wall | toll 0.32%
+RIVN  08/21   15.50P $28   spr  7.1% OI 2937   vol 803   IV  47% d -0.34 BE   15.22 need +4.66% EM 5.98% n/EM  0.78  BE inside wall | toll 0.37%
+SMCI  08/14   38.00P $136  spr  5.2% OI 784    vol 2700  IV 101% d -0.55 BE   36.65 need +5.01% EM 6.17% n/EM  0.81  BE inside wall | toll 0.33%
+COIN  08/14  146.00P $154  spr  7.1% OI 653    vol 556   IV  64% d -0.33 BE  144.46 need +3.25% EM 3.87% n/EM  0.84  BE crosses wall | flip -1.1% | toll 0.23%
+BAC   08/21   64.00P $36   spr  8.2% OI 4929   vol 4007  IV  18% d -0.32 BE   63.63 need +1.83% EM 2.17% n/EM  0.84  BE crosses wall | toll 0.15%
+HOOD  08/14   93.00P $95   spr  4.2% OI 1301   vol 1322  IV  63% d -0.32 BE   92.05 need +3.21% EM 3.77% n/EM  0.85  BE inside wall
+NFLX  08/21   74.00P $123  spr  2.4% OI 3964   vol 1557  IV  30% d -0.46 BE   72.77 need +3.69% EM 4.20% n/EM  0.88  BE crosses wall
+SMCI  08/14   37.50P $106  spr  8.5% OI 508    vol 1750  IV  98% d -0.48 BE   36.45 need +5.52% EM 6.17% n/EM  0.90  BE inside wall | toll 0.49%
+NFLX  08/14   74.00P $58   spr  3.4% OI 3565   vol 4037  IV  32% d -0.44 BE   73.42 need +2.82% EM 2.96% n/EM  0.95  BE inside wall
+COIN  08/14  145.00P $123  spr  7.3% OI 5854   vol 883   IV  64% d -0.28 BE  143.78 need +3.70% EM 3.87% n/EM  0.96  BE crosses wall | flip -1.1% | toll 0.22%
+UPST  08/14   28.50P $26   spr 18.9% OI 801    vol 253   IV  60% d -0.32 BE   28.23 need +3.40% EM 3.40% n/EM  1.00  BE inside wall | wall 29.00 TRAPDOOR | flip -0.5% | toll 0.54%
+SMCI  08/14   37.00P $82   spr  8.6% OI 1623   vol 4461  IV  97% d -0.40 BE   36.19 need +6.20% EM 6.17% n/EM  1.00  BE inside wall | toll 0.45%
+CVNA  08/14   70.00P $42   spr 21.7% OI 645    vol 330   IV  62% d -0.21 BE   69.58 need +3.63% EM 3.59% n/EM  1.01  BE crosses wall | toll 0.59%
+MP    08/21   50.00P $67   spr  9.0% OI 967    vol 223   IV  65% d -0.20 BE   49.33 need +8.58% EM 8.41% n/EM  1.02  BE crosses wall | toll 0.54%
+JPM   08/14  362.50P $108  spr 12.1% OI 541    vol 1000  IV  20% d -0.31 BE  361.43 need +1.35% EM 1.28% n/EM  1.05  BE inside wall | toll 0.11%
+MSFT  08/14  485.00P $152  spr  2.0% OI 3956   vol 6261  IV  30% d -0.24 BE  483.49 need +1.93% EM 1.67% n/EM  1.16  BE inside wall
+MSFT  08/14  482.50P $106  spr 20.8% OI 742    vol 1474  IV  30% d -0.18 BE  481.44 need +2.34% EM 1.67% n/EM  1.41  BE inside wall | toll 0.25%
+
+======================================================================
+WHAT EACH NUMBER IS
+need% = how far the underlying must move to reach break-even.
+EM% = the expiry expected move, measured from the ATM straddle.
+n/EM = need divided by EM. The ranking metric.
+toll = (ask-bid)/(|delta|*spot), the gate amendment for high-delta contracts.
+
+VETOES ALREADY APPLIED
+Expiry containing earnings, strike on the far side of the wall, spread above the 5% gate,
+premium over $200, OI under 500, volume under 100, delta outside 0.15-0.62, mid under $0.20.
+
+FRESHNESS
+CBOE delayed chain, captured premarket: it reflects the 12 August close. Good for PICKING a
+contract, not for firing one. Re-check spread and print live before paying, a closing spread
+can open twice as wide. A delayed level never triggers an order.
+
+Model probabilities are lognormal Black-Scholes with each contract own IV. MODEL numbers, not
+measured hit rates. Signal only. Not financial advice.

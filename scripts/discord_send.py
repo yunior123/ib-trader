@@ -16,7 +16,8 @@ import sys
 import time
 import urllib.error
 import urllib.request
-import uuid
+
+import requests
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import discord_layout as L           # noqa: E402
@@ -157,7 +158,11 @@ def send_many(channel, embeds, mention_role_id=None, hooks=None):
 
 
 def send_file(channel, path, content=None, embed=None, hooks=None):
-    """Adjunta un fichero (PDF de plan, informe). multipart a mano: sin dependencias nuevas."""
+    """Adjunta un fichero y verifica que Discord realmente lo conservó.
+
+    No se construye multipart a mano: Discord aceptaba ese POST con 200 pero creaba mensajes
+    vacíos. `requests` genera el boundary correcto y la respuesta `?wait=true` se audita.
+    """
     hooks = hooks if hooks is not None else W.load()
     url = hooks.get(channel)
     if not url:
@@ -168,29 +173,54 @@ def send_file(channel, path, content=None, embed=None, hooks=None):
     if size > MAX_FILE_BYTES:
         return False, "%s pesa %.1f MB (tope %.0f MB)" % (
             os.path.basename(path), size / 1e6, MAX_FILE_BYTES / 1e6)
-    with open(path, "rb") as f:
-        data = f.read()
     name = os.path.basename(path)
     ctype = mimetypes.guess_type(name)[0] or "application/octet-stream"
-    payload = {"allowed_mentions": {"parse": [], "roles": []}}
+    # Discord API v10 requires each multipart files[n] part to be declared in attachments.
+    # Without this it can return 200 yet create a blank message (measured 2026-08-10).
+    payload = {"allowed_mentions": {"parse": [], "roles": []},
+               "attachments": [{"id": 0, "filename": name}]}
     if content:
         payload["content"] = sanitize(content)[:MAX_CONTENT]
     if embed:
         payload["embeds"] = [embed]
-    boundary = "----ibtrader" + uuid.uuid4().hex
-    b = boundary.encode()
-    parts = [b"--" + b + b"\r\n",
-             b'Content-Disposition: form-data; name="payload_json"\r\n',
-             b"Content-Type: application/json\r\n\r\n",
-             json.dumps(payload).encode("utf-8") + b"\r\n",
-             b"--" + b + b"\r\n",
-             ('Content-Disposition: form-data; name="files[0]"; filename="%s"\r\n'
-              % name.replace('"', "_")).encode("utf-8"),
-             ("Content-Type: %s\r\n\r\n" % ctype).encode(),
-             data, b"\r\n", b"--" + b + b"--\r\n"]
-    return _post(url + "?wait=true", b"".join(parts),
-                 {"Content-Type": "multipart/form-data; boundary=" + boundary,
-                  "User-Agent": UA})
+    last = None
+    for attempt in range(MAX_RETRY):
+        try:
+            with open(path, "rb") as f:
+                response = requests.post(
+                    url + "?wait=true",
+                    data={"payload_json": json.dumps(payload)},
+                    files={"files[0]": (name.replace('"', "_"), f, ctype)},
+                    headers={"User-Agent": UA}, timeout=TIMEOUT_S,
+                )
+            if 200 <= response.status_code < 300:
+                try:
+                    posted = response.json()
+                except ValueError:
+                    posted = {}
+                attachments = posted.get("attachments") or []
+                if not attachments:
+                    return False, "Discord aceptó el POST pero descartó el adjunto"
+                return True, None
+            if response.status_code == 429:
+                try:
+                    wait = float(response.json().get("retry_after", 1.0))
+                except (ValueError, AttributeError, TypeError):
+                    wait = 1.0
+                time.sleep(min(wait + 0.25, 10.0))
+                last = "429"
+                continue
+            if response.status_code in (401, 403, 404):
+                return False, "webhook inválido o borrado (%d)" % response.status_code
+            if 500 <= response.status_code < 600:
+                time.sleep(1.5 * (attempt + 1))
+                last = "%d servidor" % response.status_code
+                continue
+            return False, "%d %s" % (response.status_code, response.text[:160])
+        except requests.RequestException as e:
+            last = "%s: %s" % (e.__class__.__name__, str(e)[:80])
+            time.sleep(1.0 * (attempt + 1))
+    return False, "agotados %d intentos: %s" % (MAX_RETRY, last)
 
 
 def send_long(channel, title, text, sev=L.NORMAL, source=None, hooks=None):

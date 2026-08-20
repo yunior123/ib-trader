@@ -25,30 +25,39 @@ warn()  { print -P "  %F{yellow}!%f $1"; }
 
 status() {
   print -P "%F{cyan}=== estado de la flota ===%f  modo=$MODE"
+  local fleet_live=0
+  [[ -x "$ROOT/bin/fleet_hours" ]] && "$ROOT/bin/fleet_hours" >/dev/null 2>&1 && fleet_live=1
+  gated_status() {
+    local pat="$1" label="$2"
+    if alive "$pat"; then ok "$label"
+    elif (( fleet_live )); then bad "$label CAÍDO"
+    else ok "$label dormido (fuera de ventana, correcto)"; fi
+  }
   local n=$(pgrep -f '_signal_bot$' | wc -l | tr -d ' ')
-  [[ $n -gt 0 ]] && ok "$n bots de señal" || bad "bots de señal: NINGUNO"
+  if [[ $n -gt 0 ]]; then ok "$n bots de señal"
+  elif (( fleet_live )); then bad "bots de señal: NINGUNO"
+  else ok "bots de señal dormidos (fuera de ventana, correcto)"; fi
+  alive "perp_ws_bridge.py" && ok "perpetuos 24/7 WS (OKX + Bybit)" || bad "perpetuos 24/7 WS CAÍDOS"
+  alive "perp_stock_keepalive.sh" && ok "respaldo REST de perps (solo si WS cae)" || bad "respaldo REST de perps CAÍDO"
   # Feed de barras/cadena: según market_source (ibkr = puentes IBKR; otro = provider_bridge)
   if [[ "$MARKET_SOURCE" == "ibkr" ]]; then
-    alive "ibkr_bar_bridge.py" && ok "puente de barras IBKR" || bad "puente de barras IBKR"
-    alive "opt_chain_cache.py" && ok "caché de cadenas de opciones (IBKR)" || bad "caché de cadenas (IBKR)"
+    gated_status "ibkr_bar_bridge.py" "puente de barras IBKR"
+    gated_status "opt_chain_cache.py" "caché de cadenas de opciones (IBKR)"
   else
-    alive "provider_bridge.py" && ok "provider_bridge ($MARKET_SOURCE): barras+nbbo+cadena" || bad "provider_bridge ($MARKET_SOURCE) CAÍDO"
+    gated_status "provider_bridge.py" "provider_bridge ($MARKET_SOURCE): barras+nbbo+cadena"
   fi
   # opt_whale_watch es ib_insync: con market_source != ibkr su salida esta CONGELADA aunque el
   # proceso viva (verde falso cazado por el forense 2026-08-04). El vigia UW es el sustituto.
   if [[ "$MARKET_SOURCE" != "ibkr" ]]; then
-    alive "uw_fleet_flow.py" && ok "vigía de ballenas UW (flota, sustituto sin IBKR)" \
-      || bad "vigía de ballenas UW CAÍDO (y el IBKR está congelado sin Gateway)"
+    gated_status "uw_fleet_flow.py" "vigía de ballenas UW (flota, sustituto sin IBKR)"
   fi
-  for p in opt_whale_watch.py:"vigía de ballenas" \
-           notify_relay.sh:"relé de notificaciones" \
-           voice_queue.sh:"cola de voz" \
-           price_alarm:"alarma de precio" \
-           chart_bridge.py:"cockpit del gráfico"; do
-    alive "${p%%:*}" && ok "${p#*:}" || bad "${p#*:}"
-  done
+  gated_status "opt_whale_watch.py" "vigía de ballenas"
+  alive "notify_relay.sh" && ok "relé de notificaciones 24/7" || bad "relé de notificaciones 24/7 CAÍDO"
+  gated_status "voice_queue.sh" "cola de voz"
+  gated_status "price_alarm" "alarma de precio"
+  alive "chart_bridge.py" && ok "cockpit del gráfico" || bad "cockpit del gráfico CAÍDO"
   for s in buffett squeeze momentum; do
-    alive "finviz_screener_watch --screen $s" && ok "Finviz $s" || bad "Finviz $s"
+    gated_status "finviz_screener_watch --screen $s" "Finviz $s"
   done
   # Discord: sin webhooks configurados su ausencia es CORRECTA (aún no se ha hecho bootstrap),
   # pintarla ✗ enseñaría a ignorar los ✗ — misma doctrina anti-crying-wolf que flow_pulse.
@@ -62,9 +71,8 @@ status() {
       ok "motor C++ de opciones (Discord AUTO)"
     else ok "motor C++ de opciones (shadow; top diario local)"; fi
   else
-    local oa_dow=$(date +%u)
-    [[ $oa_dow -eq 6 ]] && ok "motor C++ de opciones dormido (sábado, correcto)" \
-                        || bad "motor C++ de opciones"
+    (( fleet_live )) && bad "motor C++ de opciones CAÍDO" \
+                       || ok "motor C++ de opciones dormido (fuera de ventana, correcto)"
   fi
   # flow_pulse solo vive lun-vie 09:30-15:56 (fleet_keepalive_start.sh:358). Fuera de ahí
   # su ausencia es CORRECTA: pintarla ✗ enseña a ignorar los ✗ (doctrina anti-crying-wolf).

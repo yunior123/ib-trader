@@ -84,7 +84,11 @@ class SymState:
         self.warmed = False           # warm-up historico ya escrito
         self.bid = 0.0                # NBBO vivo (para el lado de la ballena)
         self.ask = 0.0
+        self.quote_epoch = 0.0        # no clasificar un print contra una quote rancia
         self.whale_day = ""           # truncado diario del whale file
+        self.footprint_day = ""       # cinta COMPLETA para Bid x Ask (los 5 con AllLast)
+        self.last_trade_px = 0.0       # tick rule: desempata prints dentro del spread
+        self.last_trade_dir = 0
         self.whales_on = False        # tick-by-tick suscrito (cap IBKR)
 
 STATES = {s: SymState(s) for s in SYMS}
@@ -141,6 +145,7 @@ def make_on_nbbo(st):
                 return                        # fantasma: no escribir
             st.nbbo_mid = mid
             st.bid, st.ask = t.bid, t.ask     # siempre fresco para las ballenas
+            st.quote_epoch = now
             if now - st.nbbo_last < 0.25:     # 4/s (era 1/s; orden 2026-07-15
                 return                        # "blazing fast" — spread gate fresco)
             st.nbbo_last = now
@@ -174,25 +179,63 @@ def make_on_whale(st):
         # ticker.tickByTicks (iterar el Ticker directo revienta en silencio
         # dentro del event-loop de ib_insync — bug cazado 2026-07-15 al abrir)
         lines = []
+        footprint = []
         for t in (getattr(ticker, "tickByTicks", None) or []):
             px = float(t.price or 0); sz = float(t.size or 0)
+            if px <= 0 or sz <= 0:
+                continue
+            ep = t.time.timestamp() if getattr(t, "time", None) else time.time()
+            # Lee-Ready/quote rule sobre el NBBO vivo; si el print cae exactamente dentro
+            # del spread, tick rule con memoria por simbolo. Cero queda CERO (desconocido),
+            # nunca se reparte volumen a un lado inventado. El motor publica classification_pct.
+            d = 0
+            method = "U"
+            eps = max(1e-9, px * 1e-10)
+            quote_fresh = st.quote_epoch > 0 and abs(ep - st.quote_epoch) <= 2.0
+            if quote_fresh and st.ask > 0 and px >= st.ask - eps:
+                d = 1
+                method = "Q"
+            elif quote_fresh and st.bid > 0 and px <= st.bid + eps:
+                d = -1
+                method = "Q"
+            elif quote_fresh and st.bid > 0 and st.ask > st.bid:
+                mid = (st.bid + st.ask) * 0.5
+                if px > mid + eps:
+                    d = 1; method = "Q"
+                elif px < mid - eps:
+                    d = -1; method = "Q"
+            if d == 0 and st.last_trade_px > 0:
+                if px > st.last_trade_px + eps:
+                    d = 1; method = "T"
+                elif px < st.last_trade_px - eps:
+                    d = -1; method = "T"
+                else:
+                    d = st.last_trade_dir
+                    if d:
+                        method = "T"
+            st.last_trade_px = px
+            if d:
+                st.last_trade_dir = d
+            # EPOCH PX SIZE DIR BID ASK METHOD. SIZE son acciones/contratos, NO dolares.
+            # Este fichero es el único input válido del footprint; OHLCV nunca lo sustituye.
+            footprint.append(f"{ep:.6f} {px:.6f} {sz:.6f} {d} "
+                             f"{st.bid if quote_fresh else 0:.6f} "
+                             f"{st.ask if quote_fresh else 0:.6f} {method}\n")
             usd = px * sz
             if usd < WHALE_MIN_USD or px <= 0:
                 continue
-            ep = t.time.timestamp() if getattr(t, "time", None) else time.time()
-            d = 0
-            if st.ask > 0 and px >= st.ask:
-                d = 1
-            elif st.bid > 0 and px <= st.bid:
-                d = -1
             lines.append(f"{ep:.0f} {px:.4f} {usd:.0f} {d}\n")
-        if not lines:
-            return
         day = time.strftime("%Y%m%d")
-        mode = "a" if st.whale_day == day else "w"   # nuevo dia -> truncar
-        st.whale_day = day
-        with open(f"data/whale_{st.sym.lower()}.txt", mode) as f:
-            f.writelines(lines)
+        if footprint:
+            mode = "a" if st.footprint_day == day else "w"
+            st.footprint_day = day
+            with open(f"data/footprint_tape_{st.sym.lower()}.txt", mode) as f:
+                f.writelines(footprint)
+        if lines:
+            mode = "a" if st.whale_day == day else "w"   # nuevo dia -> truncar
+            st.whale_day = day
+            with open(f"data/whale_{st.sym.lower()}.txt", mode) as f:
+                f.writelines(lines)
     return on_ticks
 
 def warmup_sym(ib, st):
@@ -454,6 +497,31 @@ def prune_whales(st):
         pass
 
 
+def prune_footprint(st):
+    """Acota la cinta completa a 4 h. El motor C++ conserva 240 minutos y detecta el
+    rewrite por tamaño; no necesitamos un fichero diario de millones de prints en data/.
+    El histórico profundo exacto pertenece a Databento, no a este ring live."""
+    p = f"data/footprint_tape_{st.sym.lower()}.txt"
+    try:
+        if not os.path.exists(p) or os.path.getsize(p) < 16 * 1024 * 1024:
+            return
+        cut = time.time() - 4 * 3600
+        keep = []
+        with open(p) as f:
+            for ln in f:
+                try:
+                    if float(ln.split(" ", 1)[0]) >= cut:
+                        keep.append(ln)
+                except (ValueError, IndexError):
+                    continue
+        tmp = p + f".tmp{os.getpid()}"
+        with open(tmp, "w") as f:
+            f.writelines(keep)
+        os.replace(tmp, p)
+    except Exception:
+        pass
+
+
 def _resub_all(ib, why):
     """Suelta TODAS las suscripciones y fuerza resuscripcion (Error 1101
     'data lost' / stall: tras un flap del uplink —hoy causado por ProtonVPN—
@@ -504,6 +572,7 @@ def run_daemon():
             for st in STATES.values():
                 if st.whales_on:
                     prune_whales(st)
+                    prune_footprint(st)
         # STALL WATCHDOG: conectado + suscrito pero NINGUN bar en 5 min en
         # ventana de mercado (L-V 04:00-20:00 ET o KRX via US overnight) =
         # suscripciones muertas (caso 1100->reconexion sin 1101 explicito).

@@ -1438,3 +1438,164 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       propio control invertido (+0,45 vs +0,45). INTEGRADO como GATE, no como alerta:
       bin/delta_imbalance publica "banda" y "refuerzo_bollinger". Detalle en
       docs/ABSORCION-BOLLINGER-2026-08-08.md.
+
+## 2026-08-08 — London Strategic Edge (key nueva de Yunior)
+- [ ] "2. lse_live_... try london strategic edge websocket and api, lets see if we can connect it, test it
+      with all markets and sample tickers" (2026-08-08) — CONECTA. Medido por el orquestador antes de
+      delegar; evidencia cruda en `data/research/lse_socket_evidencia.json`.
+      · **Auth**: cabecera `X-API-Key`. Bearer y `?api_key=` dan 401. Key en `config/feeds.env`.
+      · REST `https://api.londonstrategicedge.com/vault` · WS `wss://data-ws.londonstrategicedge.com`
+      · SDK oficial en `venv-lse/` (pip `lse-data` 0.14.0). GOTCHA: hubo que renombrar el directorio del
+        paquete de `LSE/` a `lse/` para que importara.
+      · **Plan medido** (`/vault/usage`): 50 GB/mes, 15 GB/semana, 200 req/min, 5.000 filas/petición,
+        `historical_data_months=-1` (ILIMITADO), 5 exports/hora. Catálogo: 22.851 símbolos en 18 datasets
+        (acciones 70,2e9 ticks · opciones 9,18e9 · fx 36,4e9 · cripto 16,4e9). SPY diario desde 2003.
+      · **GOTCHA DE RED**: urllib con su User-Agent por defecto recibe **HTTP 403 `error code: 1010`** de
+        Cloudflare. Cualquier UA explícito lo arregla (probado `ib-trader/1.0` y `curl/8.7.1` → 200).
+        Parece fallo de credenciales y NO lo es.
+      · **EL SOCKET NO SIRVE PARA DELTA** (tramas CRUDAS, sin el SDK): manda solo 7 campos
+        (type, symbol, ts, price, bid, ask, volume), **sin ningún campo de lado agresor**, y en
+        **1.110 de 1.110 ticks `price == bid` exacto** (0 al ask, 0 independiente). Publica la PUJA, no el
+        precio cruzado → la quote rule daría 100% vendedor agresor. Concluyente en cripto, que sí negocia
+        hoy sábado. Protocolo: `{"action":"subscribe","symbol":"SPY"}` en SINGULAR (el plural da
+        `MISSING_SYMBOL`).
+      · **LÍMITE DURO: 16 símbolos** en el plan `registered`. Se pidieron los 30 de `data/fleet.txt`:
+        16 aceptados, 14 con `LIMIT_REACHED`. **Un socket NO cubre la flota.** La suscripción de opciones
+        de un subyacente gasta 1 solo cupo (SPY = 18.180 contratos).
+      · **LAS VELAS SÍ SON BUENAS** (SPY 1m contra Polygon, 1.703 minutos en común): 47,4% de cierres
+        idénticos al céntimo, mediana de diferencia 0,0000, error simétrico (26,6% abajo / 26,0% arriba),
+        volumen mediano 0,967x. El problema es SOLO el socket. A VERIFICAR: en 1m el 32% de las velas tiene
+        `high == open+0,01` o `low == open-0,01` (en 1d es 0-3%) → huele a extremos rellenados en minutos
+        sin actividad; si se confirma, todo ATR o rango sobre el 1m de LSE está contaminado.
+      · **`options_flow` es una cinta de opciones REAL con griegas por print** (18 campos: ts de
+        microsegundo, contrato OSI, prima, iv, delta, gamma, theta, vega, rho) sobre 3.186 subyacentes,
+        barrido global por `min_premium`. PERO **sin lado agresor**: verificado contra el endpoint crudo,
+        no contra el SDK (`_clean_option_rows` solo redondea). Sin lado no hay dirección → contexto, no señal.
+      · **COREA**: 005930.KS (Samsung) y 000660.KS (SK hynix) en catálogo con `live=1`, más Londres (123),
+        Tokio (42), Hong Kong (30), India (20), Australia (19), Taiwán (15). Puede sustituir o respaldar al
+        puente de Naver — en evaluación.
+
+## 2026-08-08 — peticiones de Yunior (perpetuos, websockets, panel del chart)
+- [x] "add indicator for rsi divergence, and another for RSI" (2026-08-09) — HECHO;
+      ambos opcionales y apagados por defecto: RSI Wilder(14) con bandas 70/30 y el estudio pedido
+      exactamente como Pine, RSI Wilder(5) − RSI Wilder(14), verde/rojo alrededor de cero.
+- [x] "make sure all is realtimme in chart and heatmap, show loading indicator while so, show timer
+      to fetch time if so and data provider and if rest api or websocket, show it via tiny text."
+      (2026-08-09) — HECHO; procedencia/transport/edad/latencia medidos, loader durante cada
+      cambio, y delayed declarado en vez de disfrazarlo de realtime. Chart UI via WS; upstream
+      IBKR/Finnhub WS o Intrinio REST delayed. Heatmap UW/Polygon = REST snapshot, refresco del
+      ticker visible cada 60 s RTH, edad de caché y fetch visibles.
+- [x] "try perpetuals outside trading hours" + "websockets all the time as possible" (2026-08-09)
+      — HECHO y probado domingo 02:xx ET: 34/34, cero mudos; conexión directa OKX de 15 s recibió
+      BBO en SPY/QQQ/NVDA/MU/DRAM y trades con ID+lado en QQQ/NVDA/MU. `perp_ws_bridge.py` ahora
+      también consume ticker+OI por WS y escribe `perp_stocks.json` cada 5 s; REST queda dormido
+      y solo corre si el heartbeat WS supera 20 s. Volumen OKX corregido a USD (base×last).
+- [x] "run with perpetuals, wanna see moving" + "heatmap actualizado cada minuto, walls,
+      magnets, gex, same" (2026-08-09) — HECHO: el precio ⛓ o buscar `BASEUSDT` abre un chart
+      REAL de 5 s construido desde el tape OKX/Bybit (tradeId/lado/tamaño) y movido por BBO WS;
+      nunca mezcla barras delayed de la acción. Probado E2E domingo: AMDUSDT cambió 5 precios
+      distintos en 8 s, feed `okx-ws` con edad 0,116–0,754 s. App abierta directamente en
+      AMDUSDT y chip `PERP 24/7`. Walls/magnets/GEX del subyacente se releen cada 60 s y se
+      etiquetan como estructura de opciones del subyacente (puede haber basis); fuera de RTH se
+      conserva la última foto con edad visible, no se inventa gamma nueva.
+      FIX dinámico (misma fecha): el primer arranque con `?perp=AMD` dejaba AMD fijado y
+      pulsar otra fila volvía al equity delayed. Ahora el modo pertenece a la ventana:
+      AMDUSDT → MUUSDT → NVDAUSDT → QQQUSDT conserva PERP automáticamente, actualiza la
+      URL para sobrevivir reconnects y el chip `PERP 24/7` vuelve explícitamente al equity.
+      Secuencia WS E2E verificada con historia propia para los cuatro símbolos.
+      FIX UNIVERSAL tras aclaración "anyyy existing tickers": ya NO depende de fleet.txt.
+      El buscador resuelve cualquier símbolo existente: primero perpetual OKX/Bybit si la
+      ventana está en PERP (solicitud append-safe + subscribe caliente sin reiniciar); si no
+      existe allí, cae al instrumento normal del catálogo LSE (stocks/ETF/index/futures/FX/
+      crypto/etc.), carga 1.500 velas 1m REST y abre BBO WS declarado como midpoint. Pruebas
+      reales fuera de flota: IBM, BRK.B y BTC/USD cargaron 1.500 barras; ADBEUSDT se descubrió,
+      el universo WS pasó 35→36 y entregó BBO en 9,19 s. Inexistente dice por qué, nunca queda
+      mudo. La app quedó abierta en ADBEUSDT con edad WS 0,364 s.
+- [x] "add data provider panel with checkboxes in ui so that i can select from ui the providers
+      to display data" (2026-08-09) — HECHO: panel 🛰 Fuentes con 9 checks persistentes y punto
+      activo para IBKR/Finnhub/Intrinio, UW/Polygon/cadena local, OKX/Bybit y LSE. Oculta de verdad
+      chart/heatmap/perp de una fuente desmarcada; protocolo y tier siempre visibles. UI CDP:
+      9/9 checks, 4 fuentes WS, ocultar Intrinio cubre el chart, cero errores de consola.
+- [x] "ok, conecta lo que creas, build, then test, lets use it for now for perpetuals 24/7 and
+      what else u consider. make sure to cover all mayor perpetuals we are using. 2. lets add spx,
+      spxw to our fleet too." (2026-08-08) — HECHO. Perpetuos = OKX WS primario + Bybit WS
+      para los huecos, independientes del portero 24/5; LSE = historia/backfill, no cinta live.
+      SPXW se cubre como raiz semanal/alias de SPX, no como voto sin barras en MANADA. Build
+      unificado + app v17 OK; suite completa 1933 passed / 40 skipped; live 34/34 perps.
+- [x] "1. test with perpetuals like DRAMUSDT, QQQUSDT, SPYUSDT, and some others, keep it dynamic so that we
+      can select any ticker" (2026-08-08) — PROBADO EN VIVO (sábado, con la bolsa US cerrada y los perps
+      negociando 24/7). Ya existía `scripts/perp_stock_fetch.py` (OKX primario, Bybit de respaldo) y acepta
+      CUALQUIER ticker por argumento: `python3 scripts/perp_stock_fetch.py DRAM QQQ SPY`.
+      Medido ahora: DRAM 51,19 (spread 0,0195%, OI $7,2M) · QQQ 723,93 (spread 0,0014%, OI $13,4M) ·
+      SPY 773,85 (spread 0,0013%, OI $6,5M). Cobertura: **33 de los 36 de fleet.txt tienen perp en OKX**
+      (faltan TXN, GLD, XLK; STX excluido por choque con el token Stacks).
+- [x] **BUG CAZADO Y ARREGLADO**: `perp_stock_fetch.py` escribía `0/34 symbols` cuando fallaba la red y
+      **borraba el último dato bueno** (medido: 6 pasadas 0/34 el 2026-08-07 16:06 por DNS caído dejaron
+      `data/perp_stocks.json` en `{}`, y el cockpit se quedó mudo sin decir por qué durante un día).
+      Es el "cero plausible" que prohíbe CLAUDE.md. Ahora una pasada sin NADA conserva el fichero, grita
+      `[DANGER]` y sale con rc=1. Verificado forzando un fallo total con proxy muerto: 34 símbolos antes,
+      34 después, `[DANGER]` en el log. Fichero repoblado: 34/34.
+- [ ] **OKX WS SÍ TRAE EL LADO AGRESOR — reabre el delta imbalance.** Medido en
+      `wss://ws.okx.com:8443/ws/v5/public`, canal `trades`: cada print trae `side` (buy/sell),
+      `tradeId` ÚNICO, `px`, `sz` y `ts` en milisegundos; el canal `bbo-tbt` da el libro tick a tick.
+      En 45 s: MU 4 trades, TSLA 11, lados {buy 5, sell 10}. Sin autenticación y 24/7.
+      Es la ÚNICA fuente con agresor a la que llegamos hoy (Databento sin licencia live, el WS de LSE
+      publica la puja, Finnhub muestrea, IBKR apagado).
+      ⚠️ CAVEAT HONESTO antes de emocionarse: es el PERPETUO, no la cinta US, y es FINÍSIMO —
+      volumen 24 h medido: SPY $988, QQQ $4.562, DRAM $37.016. Que el delta del perp anticipe al
+      subyacente es una pregunta EMPÍRICA por medir, no un supuesto. Pero ahora SÍ se puede medir.
+- [ ] "todo websockets" (2026-08-08) — migrar de sondeo REST a WebSocket donde exista. Inventario:
+      OKX perps ✅ (trades + bbo-tbt, con agresor) · LSE ✅ (pero máx 16 símbolos y publica la puja) ·
+      Finnhub ✅ (ya en uso, 1 sola conexión por key) · Polygon ❌ (`auth_failed`, el plan no incluye WS) ·
+      Intrinio ❌ (apagado la mayor parte del tiempo) · UW ❌ (acepta el TCP y corta).
+      Hoy `perp_stock_keepalive.sh` resondea REST cada 15 s: sustituible por un socket vivo.
+- [x] "remove 3 lines from panel in chart bottom that are empty by default, only should appear if
+      selected" (2026-08-08) — HECHO: Net Premium (call/put/net) queda apagado por defecto y
+      solo aparece al activarlo desde Indicadores; migración única corrige localStorage viejo.
+
+- [x] "create skills to find contracts with low vix up to 10-15 dte to skip earnings high vix" — HECHO 2026-08-12: skill `low-iv-hunter` + `scripts/low_iv_hunter.py` (3 filtros: vencimiento limpio de earnings, IV ATM/HV20-HV60 realizada, gate spread 5%-mid o peaje 0.60%; bump de term-structure; descartes contados)
+
+- [x] "review options chain... top 50 bullish/bearish... find specific best contracts from this week
+      up to 2-3 weeks... review dealers positioning too... use all trading skills required"
+      (2026-08-13) — HECHO: 152 tickers barridos (cadena CBOE + gex_core + low_iv_hunter).
+      Precios de la lista VERIFICADOS correctos (solo OCFC -13,8% y AURA -9,7% desviados).
+      Salida: 50 calls + 50 puts con gate de spread, mapa de dealers de 44 nombres.
+      HALLAZGO: gamma POSITIVA en 44/44 (flip por debajo del spot, VIX 14,59) = pin generalizado.
+- [ ] **X API SIN CREDITOS — los posts llevan MUERTOS desde el 2026-08-10 y nadie se entero.**
+      Medido hoy: POST /2/tweets = **402 "credits depleted"** (GET /2/users/me = 200, o sea las
+      credenciales estan BIEN, es el plan el que se agoto). Ultimo post con exito: 2026-08-07 09:33.
+      **11 posts perdidos en silencio** en x_signal_poster.log. El ledger interno no lo detecta
+      porque solo cuenta los POSTED. FALTA: (a) recargar creditos del plan X, (b) que
+      x_post_common GRITE (ntfy) al primer 402 en vez de escribir una linea de log que nadie lee.
+      Hilo de hoy listo para disparar: `data/x_thread_contracts_2026-08-13.txt`.
+- [ ] TOKENS CADUCADOS medidos hoy 2026-08-13: **Unusual Whales 401** (`authentication_required`)
+      y **Finviz Elite 401** ("User's subscription expired"). Consumidores afectados:
+      finviz_scout.cpp, x_whale_bot.cpp, options_hunter.py, finviz_valuation.py, uw_*.py.
+      Y **Polygon ya NO da griegas en el listado de cadena** (`/v3/snapshot/options/<SYM>` devuelve
+      `greeks:{}`; el snapshot de UN contrato sí las trae) ni quotes de opciones (403) ni snapshot
+      de acciones v2 (NOT_AUTHORIZED). Decidir: renovar, o cablear el fallback a CBOE en esos 5.
+- [ ] "review options chain... find me stocks people talk about under 100 usd... top 50 bullish
+      y top 50 bearish... find specific best contracts from this week up to 2-3 weeks... review
+      dealers positioning too... use all trading skills required" (2026-08-13) — EN CURSO:
+      verificar precios REALES de la lista pegada (viene de Grok, con precios sospechosos tipo
+      NFLX ~$75), cadenas CBOE + gex_core para dealer positioning, gate de spread y presupuesto
+      <=$200, vencimientos 08-14/08-21/08-28/09-04.
+- [x] "create new skill based on this: Own Custom Tools & Analysis Methods... Custom IV vs RV
+      models built by ARCHI, advanced skew (25-delta, call/put), deep greeks (gamma delta vanna
+      charm speed), option chain structure, positional data tracking. search github and web for
+      help" (2026-08-14, hecho) — skill `architect-method` en `~/.claude/skills/`: su arsenal
+      reproducido desde sus 610 posts archivados + lo ya MEDIDO en casa (RR25 REJECTED_OOS,
+      sus llamadas 42,2% vs 58,5% del azar). Verificado: **vanna no aparece en ninguno de sus
+      610 posts** (usa gamma/charm/speed/zomma y "d spot delta"); `speed` NO existe en gex_core.
+- [x] FIX de paso: `scripts/rv_iv_cross.py` publicaba SHORT_VOL en 20/20 con SPY RV=0,21% anual
+      (anualizaba retornos 1m con sqrt(252) en vez de sqrt(252*390) = 19,7x, y tomaba la IV del
+      PRIMER contrato del fichero en vez de la ATM). Lo pinta el cockpit en `charts/live.html:4678`.
+      Ahora NVDA 20,0/33,5 ratio 1,67 · AAPL 26,0/24,7 FAIR, y con barras rancias OMITE el símbolo
+      en vez de inventar. (2026-08-14, hecho)
+- [x] "launch ib trader" (2026-08-14, hecho) — la flota llevaba **4 días muerta** (última línea de
+      `logs/fleet_autostart.log`: lun 10-ago 10:12) y `fleet_up.sh` NO la levantaba: existía
+      `data/fleet_sleep` con "manual sleep: 2026-08-10" **sin campo `wake:`** → sueño indefinido, y
+      `fleet_keepalive_start.sh:139` llama a `fleet_stop_all` + `exit 0` en cada arranque. Borrado el
+      centinela → 21 signal bots + 40 keepalives arriba, provider_bridge(intrinio) con barras a 3 min.
+      **Pendiente:** que `fleet_up.sh --status` GRITE si `data/fleet_sleep` existe, en vez de reportar
+      "CAÍDO" símbolo a símbolo sin decir la causa (perdí 6 llamadas en diagnosticarlo).

@@ -13,6 +13,12 @@ _MAP = {
     "TA_QUICK_MODEL": "TRADINGAGENTS_QUICK_THINK_LLM",
 }
 
+_PROVIDER_KEYS = {
+    "nvidia": "NVIDIA_API_KEY",
+    "openai": "OPENAI_API_KEY",
+    "deepseek": "DEEPSEEK_API_KEY",
+}
+
 
 def _load_env_file(path):
     if not os.path.exists(path):
@@ -25,10 +31,32 @@ def _load_env_file(path):
         os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
 
 
+def _load_provider_key():
+    """Load only the selected provider credential from TradingAgents' .env."""
+    provider = os.environ.get("TA_LLM_PROVIDER", "").strip().lower()
+    key_name = _PROVIDER_KEYS.get(provider)
+    if not key_name or os.environ.get(key_name):
+        return key_name
+    ta_repo = os.getenv("TA_REPO", os.path.expanduser("~/Documents/GitHub/TradingAgents"))
+    env_path = os.path.join(ta_repo, ".env")
+    if not os.path.exists(env_path):
+        return key_name
+    for raw in open(env_path):
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        k, v = line.split("=", 1)
+        if k.strip() == key_name:
+            os.environ.setdefault(key_name, v.strip().strip('"').strip("'"))
+            break
+    return key_name
+
+
 def apply(load_llm_env=True):
     """Copia TA_* -> TRADINGAGENTS_* en os.environ (setdefault: no pisa overrides ya puestos)."""
     if load_llm_env:
         _load_env_file(os.path.join(REPO, "config", "llm.env"))
+    _load_provider_key()
     for ta_key, tgt_key in _MAP.items():
         v = os.environ.get(ta_key)
         if v:

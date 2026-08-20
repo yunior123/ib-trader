@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 """asia_semis_watch.py — Taiwán/Japón/China-semis a Discord (#taiwan-japon, #china-semis).
 
-Lote FUERA de camino de señal (Yunior 2026-08-04 #31): datos yfinance + titulares Google News
-RSS. Publica via notify_short.push -> el embudo enruta por los emojis 🇹🇼🇯🇵🇨🇳 (discord_layout
+Lote FUERA de camino de señal (Yunior 2026-08-04 #31): titulares Google News RSS.
+Publica via notify_short.push -> el embudo enruta por los emojis 🇹🇼🇯🇵🇨🇳 (discord_layout
 RULES). Corre por launchd cada 30 min; solo habla en ventana asiática o si hay titular nuevo.
 Fail-loud: sin dato no se publica nada (jamás un cero plausible).
+
+Las cotizaciones Yahoo quedaron retiradas: son cierres diarios/delayed y violan la política
+de fuentes realtime. QUOTES se conserva como inventario para conectarlo a un feed permitido.
 """
 import json
 import os
@@ -28,9 +31,13 @@ QUOTES = [
     ("6857.T", "Advantest", "🇯🇵"), ("6146.T", "DiscoCorp", "🇯🇵"),
     ("0981.HK", "SMIC", "🇨🇳"), ("1347.HK", "HuaHong", "🇨🇳"),
 ]
-NEWS_Q = [("CXMT OR ChangXin memory", "🇨🇳"), ("DRAM spot price", "🇨🇳"),
-          ("TSMC OR TAIEX semiconductor", "🇹🇼"), ("Tokyo Electron OR Advantest OR Nikkei semiconductor", "🇯🇵")]
-MOVE_PCT = 1.0   # solo se canta un quote si |%| del dia supera esto (anti-ruido)
+NEWS_Q = [
+    ("CXMT OR ChangXin memory", "🇨🇳", ("cxmt", "changxin")),
+    ("DRAM spot price", "🇨🇳", ("dram", "memory chip", "memory price")),
+    ("TSMC OR TAIEX semiconductor", "🇹🇼", ("tsmc", "taiwan semiconductor", "taiex")),
+    ("Tokyo Electron OR Advantest OR Nikkei semiconductor", "🇯🇵",
+     ("tokyo electron", "advantest", "nikkei semiconductor")),
+]
 
 
 def _state():
@@ -54,22 +61,14 @@ def asia_window(now=None):
 
 
 def quotes_block():
-    try:
-        import yfinance as yf
-    except ImportError:
-        print("asia_semis: SIN yfinance en este venv — quotes omitidos (fail-loud)")
-        return {}
-    out = {}
-    for tk, name, flag in QUOTES:
-        try:
-            h = yf.Ticker(tk).history(period="2d", interval="1d")
-            if len(h) < 2:
-                continue
-            prev, last = float(h["Close"].iloc[-2]), float(h["Close"].iloc[-1])
-            out[name] = (flag, last, (last / prev - 1) * 100)
-        except Exception as e:
-            print(f"asia_semis: {name} sin dato ({type(e).__name__}) — no se publica")
-    return out
+    """No publica precios hasta tener un feed realtime permitido para Asia."""
+    return {}
+
+
+def relevant_title(title, required_terms):
+    """Google aplica OR de forma amplia; exigimos una entidad concreta en el titular."""
+    clean = re.sub(r"\s+", " ", title.lower())
+    return any(term in clean for term in required_terms)
 
 
 def news(query):
@@ -98,9 +97,11 @@ def main():
                 notify_short.push(f"{flag} SEMIS ASIA", cuerpo)
                 print(f"asia_semis: publicado {flag} {cuerpo}")
     nuevos = 0
-    for query, flag in NEWS_Q:
+    for query, flag, required_terms in NEWS_Q:
         try:
             for t in news(query):
+                if not relevant_title(t, required_terms):
+                    continue
                 key = re.sub(r"\W+", "", t.lower())[:80]
                 if key in seen:
                     continue
@@ -112,7 +113,8 @@ def main():
             print(f"asia_semis: news '{query}' fallo ({type(e).__name__})")
     st["seen"] = list(seen)[-500:]
     _save(st)
-    print(f"asia_semis: {len(q)} quotes, {nuevos} titulares nuevos")
+    if nuevos:
+        print(f"asia_semis: {nuevos} titulares relevantes nuevos")
 
 
 if __name__ == "__main__":

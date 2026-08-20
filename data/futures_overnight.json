@@ -1,77 +1,77 @@
 {
- "ts": 1786063329,
- "et": "2026-08-06 20:42:13",
+ "ts": 1786737724,
+ "et": "2026-08-14 16:02:06",
  "futuros": [
   {
    "fuente": "yfinance",
-   "last": 29507.5,
-   "prev_close": 29564.0,
+   "last": 30124.0,
+   "prev_close": 30153.75,
    "rango": [
-    29241.25,
-    29686.25
+    30028.5,
+    30283.0
    ],
-   "lag_s": 609.6,
-   "pct": -0.191,
+   "lag_s": 604.8,
+   "pct": -0.099,
    "nombre": "NQ",
    "etiqueta": "Nasdaq-100 E-mini",
    "cash_proxy": "QQQ",
    "implied_open": {
     "simbolo": "QQQ",
-    "cierre_previo": 717.0,
-    "apertura_implicita": 715.6305,
-    "delta": -1.3695
+    "cierre_previo": 734.0624,
+    "apertura_implicita": 733.3357,
+    "delta": -0.7267
    }
   },
   {
    "fuente": "yfinance",
-   "last": 7731.5,
-   "prev_close": 7761.75,
+   "last": 7805.75,
+   "prev_close": 7824.25,
    "rango": [
-    7724.25,
-    7768.5
+    7796.5,
+    7831.75
    ],
-   "lag_s": 609.6,
-   "pct": -0.39,
+   "lag_s": 604.8,
+   "pct": -0.236,
    "nombre": "ES",
    "etiqueta": "S&P 500 E-mini",
    "cash_proxy": "SPY",
    "implied_open": {
     "simbolo": "SPY",
-    "cierre_previo": 768.9,
-    "apertura_implicita": 765.9013,
-    "delta": -2.9987
+    "cierre_previo": 778.3784,
+    "apertura_implicita": 776.5414,
+    "delta": -1.837
    }
   },
   {
    "fuente": "yfinance",
-   "last": 4300.2002,
-   "prev_close": 4324.8999,
+   "last": 4432.5,
+   "prev_close": 4379.6001,
    "rango": [
-    4281.2002,
-    4344.2002
+    4365.6001,
+    4454.6001
    ],
-   "lag_s": 609.6,
-   "pct": -0.571,
+   "lag_s": 604.8,
+   "pct": 1.208,
    "nombre": "GC",
    "etiqueta": "Oro",
    "cash_proxy": "GLD",
    "implied_open": {
     "simbolo": "GLD",
-    "cierre_previo": 390.0,
-    "apertura_implicita": 387.7731,
-    "delta": -2.2269
+    "cierre_previo": 402.35,
+    "apertura_implicita": 407.2104,
+    "delta": 4.8604
    }
   },
   {
    "fuente": "yfinance",
-   "last": 78.2,
-   "prev_close": 74.99,
+   "last": 82.3,
+   "prev_close": 81.35,
    "rango": [
-    74.57,
-    78.51
+    80.76,
+    82.99
    ],
-   "lag_s": 609.6,
-   "pct": 4.281,
+   "lag_s": 664.8,
+   "pct": 1.168,
    "nombre": "CL",
    "etiqueta": "Crudo WTI",
    "cash_proxy": null,
@@ -79,14 +79,14 @@
   },
   {
    "fuente": "yfinance",
-   "last": 3003.8,
-   "prev_close": 3027.5,
+   "last": 3075.3999,
+   "prev_close": 3058.3,
    "rango": [
-    3002.0,
-    3041.0
+    3051.7,
+    3076.3
    ],
-   "lag_s": 669.6,
-   "pct": -0.783,
+   "lag_s": 604.8,
+   "pct": 0.559,
    "nombre": "RTY",
    "etiqueta": "Russell 2000",
    "cash_proxy": null,
@@ -95,38 +95,38 @@
  ],
  "corea": {
   "kospi": {
-   "last": 6269.77,
-   "edad_s": 73.6,
-   "sesion_ref": "2026-08-05",
-   "pct": -4.978
+   "last": 6977.94,
+   "edad_s": 48726.7,
+   "sesion_ref": "2026-08-13",
+   "pct": 2.416
   },
   "kospi200": {
-   "last": 979.05,
-   "edad_s": 73.6,
-   "sesion_ref": "2026-08-05",
-   "pct": -5.733
+   "last": 1098.18,
+   "edad_s": 48726.7,
+   "sesion_ref": "2026-08-13",
+   "pct": 2.515
   },
   "kodex200": {
-   "last": 98540.0,
-   "edad_s": 73.6,
-   "sesion_ref": "2026-08-05",
-   "pct": -5.523
+   "last": 110060.0,
+   "edad_s": 48726.7,
+   "sesion_ref": "2026-08-13",
+   "pct": 2.601
   },
   "samsung": {
-   "last": 233000.0,
-   "edad_s": 73.6,
-   "sesion_ref": "2026-08-05",
-   "pct": -5.285
+   "last": 274500.0,
+   "edad_s": 48726.7,
+   "sesion_ref": "2026-08-13",
+   "pct": 2.425
   },
   "skhynix": {
-   "last": 1459000.0,
-   "edad_s": 73.6,
-   "sesion_ref": "2026-08-05",
-   "pct": -12.53
+   "last": 1645000.0,
+   "edad_s": 48726.7,
+   "sesion_ref": "2026-08-13",
+   "pct": 3.264
   }
  },
  "avisos": [
-  "Databento GLBX fuera de licencia para la sesion viva (The dataset GLBX.MDP3 has data available up to '2026-08-07 00:00:00+00:00'. The `end` in the query ('2026-08-07 00:22:09+00:00') is after the available range. Try requesting with a) — la fila viva sale de yfinance"
+  "Databento GLBX fuera de licencia para la sesion viva (Part or all of your request for dataset 'GLBX.MDP3' requires a subscription and/or license to access. Try again with an end time before 2026-08-14T12:02:05.177308000Z.) — la fila viva sale de yfinance"
  ],
  "nota": "Databento GLBX.MDP3 (historico) ~12 min de retraso medido; yfinance ~11 min. NINGUNA es tiempo real: esto describe el HUECO, no dispara ordenes."
 }

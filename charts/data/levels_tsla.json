@@ -1,579 +1,106 @@
 {
  "sym": "TSLA",
- "spot": 320.46,
- "asof": 1786063302,
- "exp": "20260807",
- "dte": 0.8,
+ "spot": 342.29,
+ "asof": 1786737594,
+ "exp": "20260814",
+ "dte": 0.0,
  "scope": "0DTE",
- "net_vex": 2475467328.2,
- "vex_peak": 330.0,
- "vex_profile": [
-  {
-   "strike": 272.5,
-   "vex": 665373.4
-  },
-  {
-   "strike": 275.0,
-   "vex": 2193509.8
-  },
-  {
-   "strike": 277.5,
-   "vex": 1235057.4
-  },
-  {
-   "strike": 280.0,
-   "vex": 7264325.9
-  },
-  {
-   "strike": 282.5,
-   "vex": 1726489.4
-  },
-  {
-   "strike": 285.0,
-   "vex": 3594637.6
-  },
-  {
-   "strike": 287.5,
-   "vex": 2776961.3
-  },
-  {
-   "strike": 290.0,
-   "vex": 12158226.7
-  },
-  {
-   "strike": 292.5,
-   "vex": 7089966.0
-  },
-  {
-   "strike": 295.0,
-   "vex": 17093044.4
-  },
-  {
-   "strike": 297.5,
-   "vex": 4204366.0
-  },
-  {
-   "strike": 300.0,
-   "vex": 37178599.1
-  },
-  {
-   "strike": 302.5,
-   "vex": 17750162.5
-  },
-  {
-   "strike": 305.0,
-   "vex": 131422035.4
-  },
-  {
-   "strike": 307.5,
-   "vex": 69308596.1
-  },
-  {
-   "strike": 310.0,
-   "vex": 229336344.3
-  },
-  {
-   "strike": 312.5,
-   "vex": 89304258.1
-  },
-  {
-   "strike": 315.0,
-   "vex": -685338474.2
-  },
-  {
-   "strike": 317.5,
-   "vex": -486863997.0
-  },
-  {
-   "strike": 320.0,
-   "vex": -27346823.3
-  },
-  {
-   "strike": 322.5,
-   "vex": 127735021.7
-  },
-  {
-   "strike": 325.0,
-   "vex": 672918126.4
-  },
-  {
-   "strike": 327.5,
-   "vex": 182113148.4
-  },
-  {
-   "strike": 330.0,
-   "vex": 931984197.0
-  },
-  {
-   "strike": 332.5,
-   "vex": 471763388.1
-  },
-  {
-   "strike": 335.0,
-   "vex": 157210107.5
-  },
-  {
-   "strike": 337.5,
-   "vex": 78930618.3
-  },
-  {
-   "strike": 340.0,
-   "vex": 159134362.5
-  },
-  {
-   "strike": 342.5,
-   "vex": 29163224.7
-  },
-  {
-   "strike": 345.0,
-   "vex": 63305122.5
-  },
-  {
-   "strike": 347.5,
-   "vex": 12968118.4
-  },
-  {
-   "strike": 350.0,
-   "vex": 108401848.9
-  },
-  {
-   "strike": 352.5,
-   "vex": 7112538.8
-  },
-  {
-   "strike": 355.0,
-   "vex": 5066066.7
-  },
-  {
-   "strike": 357.5,
-   "vex": 154891.9
-  },
-  {
-   "strike": 360.0,
-   "vex": 7328717.7
-  },
-  {
-   "strike": 362.5,
-   "vex": 8014504.5
-  },
-  {
-   "strike": 365.0,
-   "vex": 7724759.6
-  },
-  {
-   "strike": 367.5,
-   "vex": 9685905.9
-  }
- ],
- "net_charm": -863396632.9,
- "charm_peak": 330.0,
- "charm_profile": [
-  {
-   "strike": 272.5,
-   "charm": -515039.6
-  },
-  {
-   "strike": 275.0,
-   "charm": -1492170.3
-  },
-  {
-   "strike": 277.5,
-   "charm": -795633.1
-  },
-  {
-   "strike": 280.0,
-   "charm": -4604000.5
-  },
-  {
-   "strike": 282.5,
-   "charm": -1027243.4
-  },
-  {
-   "strike": 285.0,
-   "charm": -1997765.6
-  },
-  {
-   "strike": 287.5,
-   "charm": -1435433.7
-  },
-  {
-   "strike": 290.0,
-   "charm": -5816051.7
-  },
-  {
-   "strike": 292.5,
-   "charm": -3120498.0
-  },
-  {
-   "strike": 295.0,
-   "charm": -6875944.8
-  },
-  {
-   "strike": 297.5,
-   "charm": -1571174.0
-  },
-  {
-   "strike": 300.0,
-   "charm": -12506513.4
-  },
-  {
-   "strike": 302.5,
-   "charm": -5753964.9
-  },
-  {
-   "strike": 305.0,
-   "charm": -40112434.2
-  },
-  {
-   "strike": 307.5,
-   "charm": -20755727.8
-  },
-  {
-   "strike": 310.0,
-   "charm": -68696542.4
-  },
-  {
-   "strike": 312.5,
-   "charm": -26742747.0
-  },
-  {
-   "strike": 315.0,
-   "charm": 107365081.4
-  },
-  {
-   "strike": 317.5,
-   "charm": 103313695.2
-  },
-  {
-   "strike": 320.0,
-   "charm": 3085818.6
-  },
-  {
-   "strike": 322.5,
-   "charm": -26419511.6
-  },
-  {
-   "strike": 325.0,
-   "charm": -170968994.3
-  },
-  {
-   "strike": 327.5,
-   "charm": -46118053.8
-  },
-  {
-   "strike": 330.0,
-   "charm": -258882137.3
-  },
-  {
-   "strike": 332.5,
-   "charm": -143825752.6
-  },
-  {
-   "strike": 335.0,
-   "charm": -45659971.4
-  },
-  {
-   "strike": 337.5,
-   "charm": -26335128.9
-  },
-  {
-   "strike": 340.0,
-   "charm": -54313957.9
-  },
-  {
-   "strike": 342.5,
-   "charm": -10491215.3
-  },
-  {
-   "strike": 345.0,
-   "charm": -21520474.0
-  },
-  {
-   "strike": 347.5,
-   "charm": -4827262.0
-  },
-  {
-   "strike": 350.0,
-   "charm": -45005800.9
-  },
-  {
-   "strike": 352.5,
-   "charm": -3330462.6
-  },
-  {
-   "strike": 355.0,
-   "charm": -701819.3
-  },
-  {
-   "strike": 357.5,
-   "charm": 1539406.6
-  },
-  {
-   "strike": 360.0,
-   "charm": -1248017.7
-  },
-  {
-   "strike": 362.5,
-   "charm": -4604901.8
-  },
-  {
-   "strike": 365.0,
-   "charm": -4309809.3
-  },
-  {
-   "strike": 367.5,
-   "charm": -6318479.8
-  }
- ],
- "charm_why": null,
- "pressure": 75,
- "pressure_lab": "PIN fuerte",
- "iv_atm": 0.3837,
- "em": 5.77,
- "net_gex": 246263350.9,
- "regime": "POS",
- "flip": 306.33,
- "flip_static": 314.71,
- "flip_manana": 312.3,
- "flip_fwd": 315.27,
+ "net_vex": null,
+ "vex_peak": null,
+ "vex_profile": [],
+ "net_charm": null,
+ "charm_peak": null,
+ "charm_profile": [],
+ "charm_why": "cadena rancia: cache TWS de hace 434 min en RTH (ciclo son 3 min)",
+ "pressure": null,
+ "pressure_lab": "sin griegas",
+ "iv_atm": null,
+ "em": null,
+ "net_gex": null,
+ "regime": null,
+ "flip": null,
+ "flip_static": null,
+ "flip_manana": 325.81,
+ "flip_fwd": 325.81,
  "regime_fwd": "POS",
- "net_gex_manana": 277460171.6,
- "net_gex_fwd": 31196820.7,
- "gamma_muere_hoy_pct": 0.0,
- "gamma_muere_semana_pct": 70.3,
+ "net_gex_manana": 245073608.1,
+ "net_gex_fwd": 245073608.1,
+ "gamma_muere_hoy_pct": 58.8,
+ "gamma_muere_semana_pct": 58.8,
  "fwd_why": null,
- "call_wall": 325.0,
- "put_wall": 320.0,
- "abs_wall": 325.0,
- "poc_dom": "84%C",
- "call_wall_gex": 57568017.8,
- "put_wall_gex": 7142629.8,
- "abs_wall_gex": 57568017.8,
- "oi_call_wall": 330.0,
- "oi_put_wall": 320.0,
+ "call_wall": null,
+ "put_wall": null,
+ "abs_wall": null,
+ "poc_dom": null,
+ "call_wall_gex": null,
+ "put_wall_gex": null,
+ "abs_wall_gex": null,
+ "oi_call_wall": 350.0,
+ "oi_put_wall": 330.0,
  "near_call_wall": false,
- "near_put_wall": true,
+ "near_put_wall": false,
  "near_flip": false,
- "profile": [
-  {
-   "strike": 272.5,
-   "gex": -23979.0
-  },
-  {
-   "strike": 275.0,
-   "gex": -82027.9
-  },
-  {
-   "strike": 277.5,
-   "gex": -45826.9
-  },
-  {
-   "strike": 280.0,
-   "gex": -248640.7
-  },
-  {
-   "strike": 282.5,
-   "gex": -59640.5
-  },
-  {
-   "strike": 285.0,
-   "gex": -126235.3
-  },
-  {
-   "strike": 287.5,
-   "gex": -99060.0
-  },
-  {
-   "strike": 290.0,
-   "gex": -440868.0
-  },
-  {
-   "strike": 292.5,
-   "gex": -261261.7
-  },
-  {
-   "strike": 295.0,
-   "gex": -638867.3
-  },
-  {
-   "strike": 297.5,
-   "gex": -161612.1
-  },
-  {
-   "strike": 300.0,
-   "gex": -1429194.7
-  },
-  {
-   "strike": 302.5,
-   "gex": -680545.4
-  },
-  {
-   "strike": 305.0,
-   "gex": -5321011.4
-  },
-  {
-   "strike": 307.5,
-   "gex": -3042453.7
-  },
-  {
-   "strike": 310.0,
-   "gex": -11461988.3
-  },
-  {
-   "strike": 312.5,
-   "gex": -5494073.2
-  },
-  {
-   "strike": 315.0,
-   "gex": 33575775.3
-  },
-  {
-   "strike": 317.5,
-   "gex": 53975094.3
-  },
-  {
-   "strike": 320.0,
-   "gex": 7142629.8
-  },
-  {
-   "strike": 322.5,
-   "gex": 19200816.9
-  },
-  {
-   "strike": 325.0,
-   "gex": 57568017.8
-  },
-  {
-   "strike": 327.5,
-   "gex": 10720316.3
-  },
-  {
-   "strike": 330.0,
-   "gex": 47205081.5
-  },
-  {
-   "strike": 332.5,
-   "gex": 21637624.4
-  },
-  {
-   "strike": 335.0,
-   "gex": 6422279.8
-  },
-  {
-   "strike": 337.5,
-   "gex": 3126530.0
-  },
-  {
-   "strike": 340.0,
-   "gex": 6170179.2
-  },
-  {
-   "strike": 342.5,
-   "gex": 1111038.0
-  },
-  {
-   "strike": 345.0,
-   "gex": 2205243.2
-  },
-  {
-   "strike": 347.5,
-   "gex": 430823.1
-  },
-  {
-   "strike": 350.0,
-   "gex": 3893505.0
-  },
-  {
-   "strike": 352.5,
-   "gex": 263981.7
-  },
-  {
-   "strike": 355.0,
-   "gex": 142068.4
-  },
-  {
-   "strike": 357.5,
-   "gex": -29511.8
-  },
-  {
-   "strike": 360.0,
-   "gex": 216432.8
-  },
-  {
-   "strike": 362.5,
-   "gex": 293381.6
-  },
-  {
-   "strike": 365.0,
-   "gex": 266479.3
-  },
-  {
-   "strike": 367.5,
-   "gex": 342850.3
-  }
- ],
- "call_wall_kind": "pin",
- "call_wall_regime": "POS",
- "call_wall_net": 57568017.8,
- "put_wall_kind": "pin",
- "put_wall_regime": "POS",
- "put_wall_net": 7142629.8,
- "abs_wall_kind": "pin",
- "abs_wall_regime": "POS",
- "abs_wall_net": 57568017.8,
- "gamma_ok": true,
+ "profile": [],
+ "call_wall_kind": null,
+ "call_wall_regime": null,
+ "call_wall_net": null,
+ "put_wall_kind": null,
+ "put_wall_regime": null,
+ "put_wall_net": null,
+ "abs_wall_kind": null,
+ "abs_wall_regime": null,
+ "abs_wall_net": null,
+ "gamma_ok": false,
  "regime_scope": "0DTE",
- "greeks_ok_pct": 0.7821,
+ "greeks_ok_pct": 0.7683,
  "chain_src": "polygon",
- "chain_ts": 1786063146.0,
- "chain_age_s": 156.6411,
- "stale": false,
- "stale_reason": null,
- "regime_raw": "POS",
+ "chain_ts": 1786711536.0,
+ "chain_age_s": 26058.2775,
+ "stale": true,
+ "stale_reason": "cache TWS de hace 434 min en RTH (ciclo son 3 min)",
+ "regime_raw": null,
  "regime_why": null,
- "parity_ok_pct": 0.0455,
- "net_gex_parity_lo": 222231902.4207,
- "net_gex_parity_hi": 241139918.1609,
- "quotes_ok": false,
- "session": "fuera_de_rth",
+ "parity_ok_pct": null,
+ "net_gex_parity_lo": null,
+ "net_gex_parity_hi": null,
+ "quotes_ok": true,
+ "session": "rth",
  "band_used": 0.15,
  "band_fetch": 0.15,
  "n_expiries": 8,
  "exps_en_fichero": [
-  "20260807",
-  "20260810",
-  "20260812",
   "20260814",
   "20260817",
   "20260819",
   "20260821",
-  "20260828"
+  "20260824",
+  "20260826",
+  "20260828",
+  "20260904"
  ],
- "rows_total": 570,
- "n_candidates": 78,
- "n_gamma_ok": 61,
- "n_no_greeks": 17,
- "n_iv_provider": 61,
+ "rows_total": 584,
+ "n_candidates": 82,
+ "n_gamma_ok": 63,
+ "n_no_greeks": 19,
+ "n_iv_provider": 63,
  "n_iv_inverted": 0,
  "iv_source": "provider",
  "exp_rolled": false,
  "roll_reason": null,
- "degraded_reason": null,
- "gross_gex": 305556946.3858,
- "bifurcation": 1.2408,
- "hhi": 0.1167,
- "n_strikes_populated": 39,
+ "degraded_reason": "cadena rancia: cache TWS de hace 434 min en RTH (ciclo son 3 min)",
+ "gross_gex": null,
+ "bifurcation": null,
+ "hhi": null,
+ "n_strikes_populated": 0,
  "chain_path": "data/opt_chain_tsla.txt",
- "flip_live": 311.83,
- "flip_src": "repriced",
- "flip_why": "gamma recomputada a cada spot del barrido (definicion correcta)",
- "roots": [
-  311.83
- ],
+ "flip_live": null,
+ "flip_src": "none",
+ "flip_why": null,
+ "roots": [],
  "trapdoor_root": null,
- "flip_open": 306.33,
- "frozen_at": 1786023365,
- "frozen_day": "2026-08-06",
- "spot_src": "intrinio_quote",
- "spot_age_s": 2348.0
+ "flip_open": null,
+ "frozen_at": 1786368927,
+ "frozen_day": null,
+ "spot_src": "finnhub",
+ "spot_age_s": 0.5
 }

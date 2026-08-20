@@ -112,8 +112,10 @@ def _custom_option_syms() -> list[str]:
     """Tickers pedidos por el motor C++; solo amplían CHAIN, no barras/quotes/MANADA."""
     path = DATA / "options_alert_tickers.txt"
     try:
-        return [s.upper() for s in path.read_text().split()
+        syms = [s.upper() for s in path.read_text().split()
                 if re.fullmatch(r"[A-Za-z0-9](?:[A-Za-z0-9.-]{0,10}[A-Za-z0-9])?", s)]
+        # SPXW es raiz de contrato, no subyacente independiente: el adaptador pide SPX una vez.
+        return list(dict.fromkeys("SPX" if s == "SPXW" else s for s in syms))
     except OSError:
         return []
 
@@ -275,6 +277,9 @@ PROVEEDORES = {
                  "activo_si": "market_source==intrinio", "nota": "cboe_one_delayed: ~1.100 s medido"},
     "polygon":  {"caps": ["chain"], "latencia": "delayed_15m", "prio": 9,
                  "activo_si": "MIT_OPTIONS_PROVIDER==polygon", "nota": "griegas y OI reales"},
+    "lse":      {"caps": ["bars_history", "option_flow_unsigned"], "latencia": "historico",
+                 "prio": 10, "activo_si": "backfill/research solamente",
+                 "nota": "sin tape agresor; no escribe NBBO ni dispara señales"},
 }
 
 

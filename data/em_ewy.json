@@ -1,5 +1,5 @@
 {
- "asof": 1786046161,
+ "asof": 1786367522,
  "atm_strike": null,
  "calendar_days": null,
  "confluence": null,
@@ -20,6 +20,6 @@
  "snap_origin": null,
  "snap_ts": null,
  "span_days": null,
- "spot": 169.14,
+ "spot": 162.74,
  "sym": "EWY"
 }

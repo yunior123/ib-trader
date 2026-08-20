@@ -12,13 +12,15 @@ Antes salia 1 con cualquier aviso: launchd lo grababa como job FALLIDO y la corr
 siguiente leia su propio LastExitStatus=1, lo cantaba como aviso nuevo y se
 realimentaba — nunca podia volver a verde. Ademas se EXCLUYE del audit de exit codes
 de launchd (self_label() lo lee del plist, no hardcodeado)."""
-import argparse, json, os, plistlib, subprocess, sys, time, warnings
+import argparse, hashlib, json, os, plistlib, subprocess, sys, time, warnings
 warnings.filterwarnings("ignore")
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(REPO, "scripts"))   # em_envelope: tabla de festivos real
 SELF_PATH = os.path.abspath(__file__)
 LAUNCHAGENTS = os.path.expanduser("~/Library/LaunchAgents")
+HEALTH_EMAIL_STATE = os.path.join(REPO, "data", "healthcheck_email_state.json")
 CRITICAL_JOBS = ("com.ibtrader.dailyplans", "com.ibtrader.postmortem")
+SESSION_PROBE_JOBS = ("com.ibtrader.intrinioprobe", "com.ibtrader.uwlatency")
 os.chdir(REPO)
 
 def env(k):
@@ -137,7 +139,7 @@ def self_label(agents_dir=LAUNCHAGENTS, me=SELF_PATH):
                 return lbl
     return None
 
-def audit_launchd(ld, me_label, gated=None):
+def audit_launchd(ld, me_label, gated=None, fleet_live=True):
     """Clasifica los exit codes de launchd -> (ok, warn, crit).
     `me_label` (nuestro propio job) se EXCLUYE: un healthcheck no puede auditar su
     propia corrida — solo ve el LastExitStatus de la ANTERIOR, se lo canta como aviso
@@ -163,8 +165,12 @@ def audit_launchd(ld, me_label, gated=None):
             continue
         if ex in ("0", "-"):
             continue
-        if ex == "1" and job in gated:
+        if ex == "-15":
+            ok.append(f"launchd {job}: terminado por SIGTERM/reinicio controlado")
+        elif ex == "1" and job in gated:
             ok.append(f"launchd {job}: exit 1 = su propio portero horario (fuera de ventana, correcto)")
+        elif ex == "1" and fleet_live is False and job in SESSION_PROBE_JOBS:
+            ok.append(f"launchd {job}: exit 1 = probe sin sesión (fuera de ventana, correcto)")
         else:
             warn.append(f"launchd {job}: exit {ex} (ultima corrida fallo)")
     return ok, warn, crit
@@ -246,6 +252,27 @@ def exit_code(crit, warn):
     Un healthcheck que informa de avisos no ha fallado; uno que ve un 🔴 si."""
     del warn  # deliberadamente IGNORADO: un aviso 🟡 no es un fallo del job
     return 2 if crit else 0
+
+
+def health_email_due(crit, warn, today, path=HEALTH_EMAIL_STATE):
+    """Un mismo diagnóstico se manda una vez al día; cambios reales se mandan al instante."""
+    signature = hashlib.sha256(json.dumps(
+        {"crit": sorted(crit), "warn": sorted(warn)}, ensure_ascii=False,
+        sort_keys=True).encode("utf-8")).hexdigest()
+    try:
+        with open(path) as fh:
+            old = json.load(fh)
+    except (OSError, ValueError):
+        old = {}
+    return old.get("date") != today or old.get("signature") != signature, signature
+
+
+def mark_health_email_sent(today, signature, path=HEALTH_EMAIL_STATE):
+    rec = {"date": today, "signature": signature, "sent_at": time.time()}
+    tmp = path + ".tmp"
+    with open(tmp, "w") as fh:
+        json.dump(rec, fh, sort_keys=True)
+    os.replace(tmp, path)
 
 def sessions_since(epoch):
     """Cuantas SESIONES DE MERCADO han abierto desde `epoch` (dias de mercado estrictamente
@@ -361,7 +388,9 @@ def finviz_token_status(rec=None, path=None, now=None):
 
     dias = rec.get("dias_restantes")
     if isinstance(dias, int) and dias <= 2:
-        return "warn", f"🟡 finviz token sano pero caduca en {dias} dia(s) — pedir uno nuevo"
+        cuando = (f"caducidad declarada hace {-dias} día(s)" if dias < 0
+                  else f"caduca en {dias} día(s)")
+        return "warn", f"finviz token responde sano pero {cuando} — renovar/verificar"
     extra = f", caduca en {dias} dias" if isinstance(dias, int) else ""
     return "ok", f"finviz token OK ({clave}, ...{cola}){extra}"
 
@@ -561,13 +590,16 @@ def main():
     ok, warn, crit, healed = [], [], [], []
     now = time.strftime("%Y-%m-%d %H:%M ET")
 
+    # Portero calculado una vez: launchd y los daemons deben juzgar el mismo horario.
+    ventana = fleet_window_live()
+
     # 1) launchd jobs criticos (excluyendo nuestro propio job: ver audit_launchd)
     ld = launchd_state()
     me_label = self_label()
     if me_label is None:
         warn.append("launchd: no encuentro mi propio plist en ~/Library/LaunchAgents "
                     "(no puedo excluirme del audit de exit codes)")
-    lok, lwarn, lcrit = audit_launchd(ld, me_label, gated_jobs())
+    lok, lwarn, lcrit = audit_launchd(ld, me_label, gated_jobs(), fleet_live=ventana)
     ok += lok; warn += lwarn; crit += lcrit
     warn += stuck_jobs(ld)
 
@@ -576,7 +608,6 @@ def main():
         ("notify_relay (notificaciones)", "scripts/notify_relay.sh", "notify_relay.sh", True),
         ("x_signal_poster (X realtime)", "scripts/x_signal_poster.py", "x_signal_keepalive.sh", True),
     ]
-    ventana = fleet_window_live()
     if ventana is None:
         warn.append("portero horario AUSENTE (./fleet_hours): no revivo daemons a ciegas — "
                     "compila con scripts/build_fleet_hours.sh")
@@ -587,20 +618,27 @@ def main():
     for name, pat, ka, critical in checks:
         if ciego:
             continue
+        always_live = "notify_relay" in pat
         if proc_alive(pat):
             # Vivo FUERA de ventana no es "ok": es algo que el apagado no alcanzo.
-            (ok if ventana is not False else warn).append(
-                f"{name}: vivo" if ventana is not False
+            (ok if ventana is not False or always_live else warn).append(
+                f"{name}: vivo" if ventana is not False or always_live
                 else f"{name}: VIVO fuera de ventana (el apagado no lo alcanzo)")
-        elif ventana is False:
+        elif ventana is False and not always_live:
             ok.append(f"{name}: muerto (fuera de ventana, correcto)")
         elif ventana is None:
             warn.append(f"{name}: muerto y sin portero para saber si toca — no lo revivo")
         else:
-            (crit if critical else warn).append(f"{name}: MUERTO")
+            recovered = False
             if not a.no_heal:
                 h = heal(name, ka)
-                if h: healed.append(h)
+                if h:
+                    healed.append(h)
+                    recovered = "REVIVIDO" in h
+            if recovered:
+                ok.append(f"{name}: vivo tras auto-cura verificada")
+            else:
+                (crit if critical else warn).append(f"{name}: MUERTO")
 
     # 3) feed de datos + bots (solo critico en horario de mercado/premarket)
     feed_lbl, feed_pat = bar_feed()
@@ -704,11 +742,13 @@ def main():
             warn.append(f"cobertura generador: NO PUDE LEER {gpath} ({e})")
         if gen is not None:
             missing = canon - gen
-            (ok if not missing else warn).append(f"cobertura generador: {len(gen)}/{len(canon)}" + (f" FALTAN {missing}" if missing else ""))
+            miss_txt = ",".join(sorted(missing))
+            (ok if not missing else warn).append(f"cobertura generador: {len(gen)}/{len(canon)}" + (f" FALTAN [{miss_txt}]" if missing else ""))
         # skills
         sk = set(x.replace("ticker-", "").upper() for x in os.listdir(os.path.expanduser("~/.claude/skills")) if x.startswith("ticker-"))
         smiss = canon - sk
-        (ok if not smiss else warn).append(f"skills ticker: {len(sk & canon)}/{len(canon)}" + (f" FALTAN {smiss}" if smiss else ""))
+        smiss_txt = ",".join(sorted(smiss))
+        (ok if not smiss else warn).append(f"skills ticker: {len(sk & canon)}/{len(canon)}" + (f" FALTAN [{smiss_txt}]" if smiss else ""))
 
     # 7) presupuesto X
     try:
@@ -749,14 +789,17 @@ def main():
         f'display notification "{status}: {len(crit)} crit, {len(warn)} avisos, '
         f'{len(curados)}/{len(healed)} curados" with title "🩺 ib-trader healthcheck"'],
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    if not a.no_email and env("RESEND_KEY"):
+    email_due, email_signature = health_email_due(crit, warn, today)
+    if not a.no_email and env("RESEND_KEY") and email_due:
         try:
             import requests
             subj = f"{status} Healthcheck ib-trader {today}"
-            requests.post("https://api.resend.com/emails", timeout=20,
+            resp = requests.post("https://api.resend.com/emails", timeout=20,
                 headers={"Authorization": f"Bearer {env('RESEND_KEY')}", "Content-Type": "application/json"},
                 json={"from": "onboarding@resend.dev", "to": [env("RESEND_TO")],
                       "subject": subj, "text": report})
+            resp.raise_for_status()
+            mark_health_email_sent(today, email_signature)
         except Exception as e:
             print("email fallo:", e)
     return rc

@@ -87,6 +87,14 @@ Todo fichero que cruce fuentes lleva la procedencia **dentro**, no en un comenta
 una de Polygon sin decirlo en la cabecera** (`~/CLAUDE.md`). Si un consumidor no puede saber si su
 nivel vino de tiempo real o de un feed de 21 horas, el nivel no vale.
 
+## Polygon.io ahora es MASSIVE.COM (verificado 2026-08-07)
+Renombrado 2025-10-30; `polygon.io/*` hace **301** a `massive.com/*`. **`api.polygon.io` sigue vivo
+(401 con key inválida, sin redirección) → los ~20 scripts del repo NO se tocan.** Solo cambian docs.
+Su tarifa confirma lo de arriba: `Stocks Starter` **$29 = 15-min delayed y SIN quotes**;
+`Stocks Developer` $79 = delayed, trades sin quotes; el realtime con **Trades + Quotes + WebSockets**
+es `Stocks Advanced` **$199/mes** (solo no-profesionales).
+
 Sources:
-- [Polygon.io Pricing](https://polygon.io/pricing)
-- [Polygon.io Stocks](https://polygon.io/stocks)
+- [Massive Pricing (ex-Polygon.io)](https://massive.com/pricing)
+- [Massive Stocks (ex-Polygon.io)](https://massive.com/stocks)
+- [Polygon.io is Now Massive](https://massive.com/blog/polygon-is-now-massive)

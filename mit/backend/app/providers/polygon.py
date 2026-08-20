@@ -36,7 +36,14 @@ class PolygonProvider(MarketDataProvider, OptionsDataProvider):
         query["apiKey"] = self.settings.polygon_api_key
         sep = "&" if "?" in url else "?"
         response = await self.client.get(url + sep + urlencode(query))
-        response.raise_for_status()
+        try:
+            response.raise_for_status()
+        except httpx.HTTPStatusError as exc:
+            # httpx includes the complete request URL in its exception, including apiKey.
+            # Never let provider diagnostics or logs disclose credentials.
+            raise ProviderError(
+                f"Polygon HTTP {response.status_code} for {url.split('?', 1)[0]}"
+            ) from exc
         return response.json()
 
     async def get_option_chain(

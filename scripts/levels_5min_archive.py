@@ -373,6 +373,8 @@ def main():
             nxt = slot_of(time.time()) + a.loop
             time.sleep(max(1.0, nxt - time.time()))
     h = snapshot(session_only=a.session_only)
+    if a.once and h.get("skipped"):
+        return
     print(json.dumps({k: v for k, v in h.items() if k != "levels"}, indent=1))
 
 

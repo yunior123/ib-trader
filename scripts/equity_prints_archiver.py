@@ -380,6 +380,8 @@ def main():
             time.sleep(a.loop)
     r = archive_once()
     coverage()
+    if a.once and not r.get("rows") and not r.get("gaps"):
+        return
     print(json.dumps(r, indent=1))
 
 

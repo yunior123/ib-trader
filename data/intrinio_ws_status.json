@@ -1,69 +1,76 @@
 {
- "epoch": 1786062999,
- "et": "2026-08-06 20:36:01",
- "phase": "overnight",
+ "epoch": 1786971118,
+ "et": "2026-08-17 08:51:56",
+ "phase": "premarket",
  "auth": {
   "realtime-mx": {
    "ok": false,
-   "http": null,
-   "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.575
+   "http": 401,
+   "body_len": 117,
+   "body_head": "{\"errors\":[{\"human\":\"No active subscription(s).\",\"message\":\"An active subscripti",
+   "secs": 0.493
   },
   "realtime-delayed-sip": {
    "ok": false,
-   "http": null,
-   "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.263
+   "http": 401,
+   "body_len": 117,
+   "body_head": "{\"errors\":[{\"human\":\"No active subscription(s).\",\"message\":\"An active subscripti",
+   "secs": 0.156
   },
   "realtime-nasdaq-basic": {
    "ok": false,
-   "http": null,
-   "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.371
+   "http": 401,
+   "body_len": 117,
+   "body_head": "{\"errors\":[{\"human\":\"No active subscription(s).\",\"message\":\"An active subscripti",
+   "secs": 0.263
   },
   "cboe-one": {
    "ok": false,
-   "http": null,
-   "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.27
+   "http": 401,
+   "body_len": 117,
+   "body_head": "{\"errors\":[{\"human\":\"No active subscription(s).\",\"message\":\"An active subscripti",
+   "secs": 0.135
   },
   "equities-edge": {
    "ok": false,
-   "http": null,
-   "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.189
+   "http": 401,
+   "body_len": 117,
+   "body_head": "{\"errors\":[{\"human\":\"No active subscription(s).\",\"message\":\"An active subscripti",
+   "secs": 0.397
   },
   "realtime-options": {
    "ok": false,
-   "http": null,
-   "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.188
+   "http": 401,
+   "body_len": 117,
+   "body_head": "{\"errors\":[{\"human\":\"No active subscription(s).\",\"message\":\"An active subscripti",
+   "secs": 0.147
   },
   "options-edge": {
    "ok": false,
-   "http": null,
-   "err": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))",
-   "secs": 5.319
+   "http": 401,
+   "body_len": 117,
+   "body_head": "{\"errors\":[{\"human\":\"No active subscription(s).\",\"message\":\"An active subscripti",
+   "secs": 0.372
   }
  },
  "socket": {},
  "tls_idle": {
-  "handshake": 0.156,
-  "idle_close": 5.206,
+  "handshake": 0.07,
+  "idle_close": 6.393,
   "bytes": 0
  },
  "controls": {
   "intrinio_rest": {
-   "http": 200,
-   "last_time": "2026-08-06T23:58:36.551Z",
-   "source": "equities_edge",
+   "http": 401,
+   "last_time": null,
+   "source": null,
    "has_bid": false,
-   "secs": 0.337
+   "secs": 0.115
   },
   "polygon_ws": {
    "connects": true,
    "hello": "[{\"ev\":\"status\",\"status\":\"connected\",\"message\":\"Connected Successfully\"}]",
-   "secs": 0.442
+   "secs": 0.139
   }
  },
  "any_up": [],

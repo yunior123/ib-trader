@@ -61,6 +61,10 @@ import direction_view            # sesgo direccional compuesto (flecha overlay);
 import signal_conditioning       # SPEAK_MIN: umbral de voz único (regla should_speak)
 import ib_mode                   # fuente única paper/live (data/ib_mode.txt) — sin puertos hardcodeados
 import rt_last                   # print WS canónico: epoch/precio/fuente con guarda de frescura
+import lse_gamma_map             # contexto London gamma×volumen; nunca dealer GEX
+import polygon_oi               # OI estructural diario; London sigue siendo realtime
+import architect_lse             # actividad London al estilo Architect; sin OI, nunca GEX
+import wall_integrity            # impactos/agotamiento auditable de muros, imán y flip
 
 # NOTA: importar confluence_engine hace os.chdir(REPO) (efecto de modulo). Reforzamos.
 os.chdir(REPO)
@@ -118,10 +122,13 @@ ALL_TF = frozenset(TF_MIN) | SEC_TF   # tf validos para {cmd:"tf"} (set_timefram
 # segundos por bucket de los tf intradia (1d+ fuera: su vela no se mueve overnight)
 TF_S = {"5s": 5, "15s": 15, "30s": 30, "45s": 45, "1m": 60, "5m": 300, "15m": 900,
         "20m": 1200, "30m": 1800, "1h": 3600, "2h": 7200, "3h": 10800, "4h": 14400}
+PERP_TF_S = dict(TF_S, **{"1d": 86400, "1W": 604800, "1M": 2592000})
 STALE_SUB_S = 120   # sub keepUpToDate sin barra nueva en N s = congelada (medido: para a las 20:00 ET)
 RT_FALLBACK_MAX_AGE_S = 10.0  # un print WS más viejo no mueve una vela ni parece realtime
 RT_FALLBACK_SOURCES = frozenset({"finnhub"})
 BAR_FALLBACK_POLL_S = 5.0     # OHLC/volumen lento; no releer 780 líneas a ritmo de tick
+LSE_CHART_PAINT_S = 0.25      # every LSE event is ingested; WebKit is painted at most 4 Hz
+LSE_OPTION_REFIT_S = 1.0      # batch option prints before the expensive surface refit
 LIVE_BAR = {  # (barSizeSetting, durationStr) para reqHistoricalData en LIVE
     "5s": ("5 secs", "3600 S"), "15s": ("15 secs", "7200 S"), "30s": ("30 secs", "14400 S"),
     "1m": ("1 min", "2 D"), "5m": ("5 mins", "5 D"), "15m": ("15 mins", "10 D"),
@@ -131,7 +138,7 @@ LIVE_BAR = {  # (barSizeSetting, durationStr) para reqHistoricalData en LIVE
     "1d": ("1 day", "1 Y"), "1W": ("1 week", "1 Y"), "1M": ("1 month", "2 Y"),
 }
 DEFAULT_TF_MOCK = "5m"
-DEFAULT_TF_LIVE = "1m"
+DEFAULT_TF_LIVE = "15m"
 
 
 # ============================ SEÑAL-SOLAMENTE (guardia) =======================
@@ -321,6 +328,9 @@ def walls_status(lv, spot):
     'el cálculo falló'."""
     if not lv:
         return "sin mapa GEX"
+    if lv.get("profile_metric") == "gamma_volume":
+        return None if lv.get("call_wall") is not None and lv.get("put_wall") is not None \
+            else "sin muros LSE gamma×volumen"
     if all(lv.get(k) is not None for k in WALL_KEYS):
         return None
     rng = chain_strike_range(lv)
@@ -498,6 +508,16 @@ def compute_indicators(bars):
             signal[i] = None
             hist[i] = None
 
+    # RSI(14) comparte EXACTAMENTE la matemática del motor de confluencia.
+    # "RSI Divergence" sigue la definición pedida (Pine): RSI Wilder(5) - RSI Wilder(14),
+    # verde sobre cero y rojo bajo cero. No se confunde con divergencia clásica precio/RSI.
+    rsi = ce.rsi_series(closes, 14)
+    rsi_fast = ce.rsi_series(closes, 5)
+    rsi_divergence = [(rsi_fast[i] - rsi[i])
+                      if rsi_fast[i] is not None and rsi[i] is not None else None
+                      for i in range(n)]
+    rsiDivMarkers = rsi_divergence_markers(bars, rsi)
+
     # VWAP diario (reset por día local) — idéntico a votes_for_series
     vwap = [None] * n
     cumPV = 0.0
@@ -525,11 +545,58 @@ def compute_indicators(bars):
     return {
         "bbUpper": bbUpper, "bbLower": bbLower, "bbMid": bbMid,
         "sma20": sma20, "sma40": sma40, "sma100": sma100, "sma200": sma200,
-        "vwap": vwap, "macd": macd, "signal": signal, "hist": hist, "volume": volume,
+        "vwap": vwap, "macd": macd, "signal": signal, "hist": hist, "rsi": rsi,
+        "rsiFast": rsi_fast, "rsiDivergence": rsi_divergence,
+        "rsiDivMarkers": rsiDivMarkers, "volume": volume,
         "stUp": stUp, "stDn": stDn, "stMarkers": stMarkers,
         "ttUp": ttUp, "ttDn": ttDn, "ttMarkers": ttMarkers, "ttLevels": ttLevels,
         "whaleMarkers": whaleMarkers,
     }
+
+
+def rsi_divergence_markers(bars, rsi, left=2, right=2, min_gap=5, max_gap=60,
+                           min_rsi_delta=2.0):
+    """Divergencia regular confirmada: precio LL + RSI HL (bull) o precio HH + RSI LH (bear).
+
+    El marcador se fecha en la vela de CONFIRMACIÓN (pivote+right), no retroactivamente en el
+    pivote. Así el chart no sugiere que la divergencia era conocida antes de existir.
+    """
+    n = len(bars)
+    if n != len(rsi) or n < left + right + 2:
+        return []
+    prev_low = prev_high = None
+    out = []
+    for i in range(left, n - right):
+        if rsi[i] is None:
+            continue
+        low = bars[i][3]
+        high = bars[i][2]
+        low_window = [bars[j][3] for j in range(i - left, i + right + 1)]
+        high_window = [bars[j][2] for j in range(i - left, i + right + 1)]
+        is_low = low == min(low_window) and any(low < x for x in low_window)
+        is_high = high == max(high_window) and any(high > x for x in high_window)
+        confirm = i + right
+        if is_low:
+            if prev_low is not None:
+                pi, pp, pr = prev_low
+                gap = i - pi
+                if min_gap <= gap <= max_gap and low < pp and rsi[i] >= pr + min_rsi_delta:
+                    out.append({"time": bars[confirm][0], "position": "belowBar",
+                                "shape": "arrowUp", "color": "#00c853", "size": 1,
+                                "text": "RSI↗", "tip": "divergencia RSI alcista confirmada: "
+                                f"precio {pp:.2f}→{low:.2f}, RSI {pr:.1f}→{rsi[i]:.1f}"})
+            prev_low = (i, low, rsi[i])
+        if is_high:
+            if prev_high is not None:
+                pi, pp, pr = prev_high
+                gap = i - pi
+                if min_gap <= gap <= max_gap and high > pp and rsi[i] <= pr - min_rsi_delta:
+                    out.append({"time": bars[confirm][0], "position": "aboveBar",
+                                "shape": "arrowDown", "color": "#ff5252", "size": 1,
+                                "text": "RSI↘", "tip": "divergencia RSI bajista confirmada: "
+                                f"precio {pp:.2f}→{high:.2f}, RSI {pr:.1f}→{rsi[i]:.1f}"})
+            prev_high = (i, high, rsi[i])
+    return out[-60:]
 
 
 
@@ -675,6 +742,10 @@ def indicators_series(bars, ind):
         "macd": _line_points(bars, ind["macd"]),
         "signal": _line_points(bars, ind["signal"]),
         "hist": _hist_points(bars, ind["hist"]),
+        "rsi": _line_points(bars, ind["rsi"]),
+        "rsiFast": _line_points(bars, ind["rsiFast"]),
+        "rsiDivergence": _hist_points(bars, ind["rsiDivergence"]),
+        "rsiDivMarkers": ind["rsiDivMarkers"],
         "volume": _vol_points(bars, ind["volume"]),
         # combo_tl: Supertrend (2 ramas con huecos None = break) + marcadores + trendlines
         "stUp": _break_points(bars, ind["stUp"]),
@@ -1059,10 +1130,19 @@ async def qualify_watchlist_sym(st, s):
     RESULTADO. Sin conexion no se adivina: se rechaza diciendolo (fail-loud)."""
     if st.mock:
         return True, "mock"
+    if STATE_CFG.get("lse_only"):
+        entry = lse_catalog_entry(s)
+        return ((True, f"LSE/{entry.get('dataset')} (ticker dinámico)") if entry else
+                (False, "no existe como instrumento gráfico en el catálogo LSE"))
     if s in KOREA_SYMS():
         return True, "KRX (contrato por conId, no SMART/USD)"
     if st._ib is None:
-        return False, "sin conexión a TWS: no puedo verificar que el símbolo exista"
+        entry = lse_catalog_entry(s)
+        if entry:
+            return True, f"LSE/{entry.get('dataset')} (ticker dinámico)"
+        if s in load_perp_stocks():
+            return True, "perpetual disponible en OKX/Bybit"
+        return False, "no existe en LSE ni en el universo perpetual; TWS está desconectado"
     try:
         from ib_async import Stock
         res = await asyncio.wait_for(
@@ -1109,8 +1189,178 @@ def load_perp_stocks():
     return d
 
 
+PERP_REQUESTS = os.path.join(REPO, "data", "perp_requests.txt")
+PERP_REQUEST_STATUS = os.path.join(REPO, "data", "perp_request_status.json")
+
+
+def request_perp(sym):
+    """Append is atomic for a short line and safe across the six chart processes."""
+    base = re.sub(r"USDT$", "", (sym or "").strip().upper())
+    if not re.fullmatch(r"[A-Z0-9.]{1,20}", base):
+        return None
+    os.makedirs(os.path.dirname(PERP_REQUESTS), exist_ok=True)
+    with open(PERP_REQUESTS, "a", encoding="utf-8") as fh:
+        fh.write(base + "\n")
+        fh.flush()
+    return time.time()
+
+
+def perp_request_result(base, requested_at=0.0):
+    try:
+        row = json.load(open(PERP_REQUEST_STATUS)).get(base.upper())
+    except (OSError, ValueError, AttributeError):
+        return None
+    if not isinstance(row, dict) or float(row.get("ts") or 0) + 0.001 < requested_at:
+        return None
+    return row
+
+
+async def await_dynamic_perp(base, timeout=20.0):
+    """Ask the long-lived bridge to resolve and hot-subscribe an arbitrary venue ticker."""
+    requested = request_perp(base)
+    if requested is None:
+        return False, "ticker inválido"
+    end = time.time() + timeout
+    while time.time() < end:
+        row = perp_request_result(base, requested)
+        if row is not None and not row.get("ok"):
+            return False, row.get("why") or "no existe como perpetual"
+        snap = load_perp_stocks().get(base.upper())
+        nbbo = os.path.join(REPO, "data", f"nbbo_{base.lower()}usdt.txt")
+        if snap and os.path.exists(nbbo) and time.time() - os.path.getmtime(nbbo) < 15:
+            return True, snap.get("src") or "perp-ws"
+        await asyncio.sleep(0.25)
+    return False, "el venue no entregó BBO WebSocket en 20 s"
+
+
+_LSE_CATALOG_CACHE = {"path": None, "mtime": None, "rows": []}
+_LSE_CHART_DATASETS = ("stocks", "etf", "index", "futures", "crypto", "fx",
+                       "commodity", "volatility", "bonds", "bond_futures",
+                       "currency_index")
+
+
+def _lse_catalog_rows():
+    path = os.path.join(REPO, "data", "lse_catalog.json")
+    try:
+        mtime = os.path.getmtime(path)
+        if _LSE_CATALOG_CACHE["path"] != path or _LSE_CATALOG_CACHE["mtime"] != mtime:
+            rows = json.load(open(path))
+            _LSE_CATALOG_CACHE.update(path=path, mtime=mtime,
+                                      rows=rows if isinstance(rows, list) else [])
+    except (OSError, ValueError):
+        return []
+    return _LSE_CATALOG_CACHE["rows"]
+
+
+def lse_catalog_entry(sym):
+    """Resolve arbitrary chartable instruments from the cached 22k-symbol LSE catalog."""
+    rows = _lse_catalog_rows()
+    want = (sym or "").upper()
+    priority = {k: i for i, k in enumerate(_LSE_CHART_DATASETS)}
+    found = [r for r in rows if str(r.get("symbol") or "").upper() == want
+             and r.get("dataset") in priority]
+    return min(found, key=lambda r: priority[r.get("dataset")]) if found else None
+
+
+def lse_catalog_search(query, limit=30):
+    """Search the full LSE chartable catalog; exact/prefix matches rank first."""
+    q = str(query or "").strip().upper()
+    if not q:
+        return []
+    priority = {k: i for i, k in enumerate(_LSE_CHART_DATASETS)}
+    candidates = []
+    for row in _lse_catalog_rows():
+        dataset = row.get("dataset")
+        if dataset not in priority:
+            continue
+        symbol = str(row.get("symbol") or "").upper()
+        name = str(row.get("name") or "")
+        name_u = name.upper()
+        if q not in symbol and q not in name_u:
+            continue
+        rank = (0 if symbol == q else 1 if symbol.startswith(q) else
+                2 if name_u.startswith(q) else 3)
+        candidates.append((rank, priority[dataset], -int(bool(row.get("live"))),
+                           len(symbol), symbol, name, row))
+    out, seen = [], set()
+    for *_rank, row in sorted(candidates):
+        symbol = str(row.get("symbol") or "").upper()
+        if symbol in seen:
+            continue
+        seen.add(symbol)
+        out.append({"symbol": symbol, "name": row.get("name") or "",
+                    "dataset": row.get("dataset"), "live": bool(row.get("live"))})
+        if len(out) >= max(1, min(int(limit), 50)):
+            break
+    return out
+
+
+def load_lse_dynamic_bars(sym, dataset, limit=1500):
+    import lse_client
+    rows = lse_client.LSE().candles(sym.upper(), timeframe="1m", dataset=dataset,
+                                    limit=limit, order="desc")
+    out = {}
+    for r in rows:
+        try:
+            ts = str(r["ts"]).replace("Z", "+00:00")
+            ep = int(datetime.fromisoformat(ts).timestamp())
+            ep -= ep % 60
+            o, h, lo, c = (float(r[k]) for k in ("open", "high", "low", "close"))
+            v = float(r.get("volume") or 0.0)
+            if ep > 0 and min(o, h, lo, c) > 0:
+                out[ep] = [ep, o, h, lo, c, v]
+        except (KeyError, TypeError, ValueError):
+            continue
+    return [out[k] for k in sorted(out)]
+
+
+def load_perp_tape_bars(sym, step_s=5, max_files=7):
+    """Build honest OHLCV bars from the signed OKX/Bybit perpetual trade tape.
+
+    Tape rows are ``TS_MS TRADE_ID PX SZ SIDE``.  The trade id is intentionally not
+    deduplicated away: the producer already guarantees venue ids and two real prints at
+    the same millisecond/price are allowed.  Five seconds is the native chart base; all
+    larger views aggregate this same raw series.
+    """
+    base = re.sub(r"USDT$", "", (sym or "").upper()).lower()
+    paths = sorted(glob.glob(os.path.join(REPO, "data", "perp_tape", "*", base + ".txt")))[-max_files:]
+    rows = []
+    for path in paths:
+        try:
+            with open(path, encoding="utf-8") as fh:
+                for line in fh:
+                    p = line.split()
+                    if len(p) < 5:
+                        continue
+                    epoch = int(float(p[0]) / 1000.0)
+                    px, size = float(p[2]), float(p[3])
+                    if epoch > 0 and px > 0 and size >= 0:
+                        rows.append([epoch, px, size])
+        except (OSError, ValueError):
+            continue
+    bars = []
+    for epoch, px, size in sorted(rows, key=lambda r: r[0]):
+        bucket = epoch - epoch % step_s
+        if bars and bars[-1][0] == bucket:
+            b = bars[-1]
+            b[2] = max(b[2], px); b[3] = min(b[3], px); b[4] = px; b[5] += size
+        else:
+            bars.append([bucket, px, px, px, px, size])
+    return bars[-50000:]
+
+
 def watchlist_payload():
     fleet = load_fleet(); user = load_user_watchlist()
+    if STATE_CFG.get("lse_only"):
+        fleet = [s for s in fleet if lse_catalog_entry(s)]
+        user = [s for s in user if lse_catalog_entry(s)]
+        quotes = {}
+        for s in dict.fromkeys(fleet + user):
+            st = STATES.get(s.lower())
+            quotes[s] = watchlist_quote(s) if st and st._dynamic_provider == "lse" else {
+                "last": None, "chg": None, "vol": None}
+        return {"type": "watchlist", "fleet": fleet, "user": user, "korea": [],
+                "quotes": quotes, "perp": {}, "src": "lse"}
     quotes = {s: watchlist_quote(s) for s in dict.fromkeys(fleet + user)}
     korea = sorted(KOREA_SYMS())
     quotes.update({s: watchlist_quote(s) for s in korea})
@@ -1522,6 +1772,145 @@ async def liq_loop():
                             st.clients.discard(ws)
         except Exception as e:
             print(f"[liq] {e}")
+
+
+# --------------------------- footprint Bid x Ask REAL ------------------------
+# NO confundir con data/delta_imbalance.json (delta de OPCIONES UW). Este contrato viene
+# de una cinta normalizada de ejecuciones; N/Q/T/U conserva lado nativo/inferido/desconocido.
+_FOOTPRINT_TF_SEC = {"1m": 60, "5m": 300, "15m": 900, "30m": 1800}
+
+
+def _market_source_name():
+    try:
+        with open(os.path.join(REPO, "data", "market_source.txt"), encoding="utf-8") as f:
+            return f.read().strip().lower() or "unknown"
+    except OSError:
+        return "unknown"
+
+
+def _footprint_equity_source_name():
+    try:
+        with open(os.path.join(REPO, "data", "footprint_equity_source.txt"), encoding="utf-8") as f:
+            return f.read().strip().lower() or "off"
+    except OSError:
+        return "off"
+
+
+def _missing_footprint_reason(provider):
+    reasons = {
+        "intrinio": "Intrinio activo: el plan actual es delayed 15m y no entrega cinta trade+NBBO completa; footprint pausado",
+        "intrinio_realtime": "Intrinio realtime no tiene una cinta consolidada con lado agresor; footprint pausado",
+        "finnhub": "Finnhub sólo aporta prints muestreados y no transmite NBBO; no puede formar un footprint real",
+        "polygon": "Massive/Polygon actual es delayed y sin quotes realtime; no puede formar un footprint real",
+        "databento": "Databento histórico está disponible, pero live requiere licencia; footprint realtime pausado",
+        "databento_live": "Databento live aún no ha publicado cinta normalizada para este símbolo",
+        "massive": "Massive aún no ha publicado cinta trade+NBBO normalizada para este símbolo",
+        "tradier": "Tradier aún no ha publicado cinta trade+NBBO normalizada para este símbolo",
+    }
+    return reasons.get(provider, "sin cinta realtime completa para este símbolo; OHLCV nunca se convierte en footprint")
+
+
+def footprint_frame(sym, tf, tape_source="equity"):
+    """Carga el snapshot C++ del símbolo y selecciona el timeframe del chart.
+
+    Siempre devuelve un frame: NO_TAPE/UNSUPPORTED_TF son estados explícitos, nunca una
+    serie de ceros que parezca ausencia de agresión. `age_s` se recalcula al servirlo.
+    """
+    sec = _FOOTPRINT_TF_SEC.get(tf)
+    provider = _market_source_name()
+    equity_provider = _footprint_equity_source_name()
+    requested = sym.upper()
+    base_sym = re.sub(r"USDT$", "", requested)
+    is_perp = tape_source == "perp" or requested.endswith("USDT")
+    lookup = base_sym + "USDT" if is_perp else base_sym
+    base = {"type": "footprint", "sym": lookup, "requested_sym": requested, "tf": tf,
+            "market_provider": provider,
+            "equity_tape_provider": equity_provider,
+            "tape_source": "perp" if is_perp else "equity",
+            "state": "NO_TAPE", "reason": None, "bars": []}
+    if sec is None:
+        base["state"] = "UNSUPPORTED_TF"
+        base["reason"] = "footprint disponible en 1m, 5m, 15m y 30m"
+        return base, None
+    path = os.path.join(REPO, "data", f"footprint_{lookup.lower()}.json")
+    try:
+        mt = os.path.getmtime(path)
+        with open(path) as f:
+            raw = json.load(f)
+    except FileNotFoundError:
+        if is_perp:
+            base["reason"] = f"sin cinta PERP firmada para {base_sym}; no existe o todavía no imprimió en OKX/Bybit"
+        elif equity_provider == "massive":
+            base["reason"] = "Massive equity tape configurado, pero aún no publicó una ejecución realtime para este símbolo"
+            state_path = os.path.join(REPO, "data", "equity_footprint_ws_state.json")
+            try:
+                eqstate = json.load(open(state_path))
+                if eqstate.get("status") == "FAILED":
+                    base["reason"] = "Massive equity tape falló cerrado: " + str(eqstate.get("reason") or "sin detalle")
+            except (OSError, ValueError, AttributeError):
+                pass
+        else:
+            base["reason"] = _missing_footprint_reason(provider)
+        return base, None
+    except Exception as e:
+        base["state"] = "BROKEN"
+        base["reason"] = f"snapshot footprint ilegible: {e}"
+        return base, None
+    view = (raw.get("timeframes") or {}).get(str(sec))
+    if not isinstance(view, dict):
+        base["state"] = "BROKEN"
+        base["reason"] = f"snapshot sin timeframe {sec}s"
+        return base, mt
+    base.update(view)
+    base.update({k: raw.get(k) for k in
+                 ("asof", "source", "quality", "instrument_kind", "proxy_for",
+                  "side_provenance", "classification_pct",
+                  "native_side_pct", "quote_rule_pct", "tick_rule_pct", "unknown_pct",
+                  "tick_size", "doctrine")})
+    asof = raw.get("asof") or 0
+    base["age_s"] = max(0, round(time.time() - asof, 2)) if asof else None
+    base["state"] = "LIVE" if asof and base["age_s"] <= 10 else "STALE"
+    if not asof:
+        base["state"] = "NO_TAPE"
+        base["reason"] = "archivo presente pero todavía sin operaciones clasificables"
+    elif base["state"] == "STALE":
+        base["reason"] = f"última ejecución de la cinta hace {base['age_s']:.0f}s"
+        if is_perp:
+            try:
+                ws_state = json.load(open(os.path.join(REPO, "data", "perp_ws_state.json")))
+                heartbeat = float(ws_state.get("latido") or ws_state.get("ts") or 0)
+                muted = set(ws_state.get("mudos") or [])
+                if time.time() - heartbeat <= 12 and base_sym not in muted:
+                    base["state"] = "QUIET"
+                    base["reason"] = (f"socket PERP vivo; {base_sym} no imprime desde hace "
+                                      f"{base['age_s']:.0f}s (mercado fino, no feed caído)")
+            except (OSError, ValueError, TypeError, AttributeError):
+                pass
+    if (raw.get("classification_pct") or 0) < 70:
+        base["quality"] = "LOW_CLASSIFICATION"
+    return base, mt
+
+
+async def footprint_loop():
+    """Broadcast sub-segundo por mtime; el cómputo pesado queda en C++, no en FastAPI."""
+    last = {}
+    while True:
+        await asyncio.sleep(0.25)
+        try:
+            for st in list(STATES.values()):
+                frame, mt = footprint_frame(st.sym, st.tf)
+                sig = (mt, st.tf, frame.get("state"), int(frame.get("age_s") or 0))
+                # LIVE cambia por mtime; STALE/NO_TAPE se refresca 1/s para que la edad sea real.
+                if last.get(st.sym) == sig:
+                    continue
+                last[st.sym] = sig
+                for ws in list(st.clients):
+                    try:
+                        await ws.send_json(frame)
+                    except Exception:
+                        st.clients.discard(ws)
+        except Exception as e:
+            print(f"[footprint] {e}")
 
 
 def chain_exps(sym):
@@ -2586,7 +2975,8 @@ async def broadcast_direction(state, lv=None):
 
 
 def history_frame(bars, levels, tf=None, nodata=None, mock=False, kind="history",
-                   exhausted=None, exhausted_reason=None, sym=None):
+                   exhausted=None, exhausted_reason=None, sym=None, feed=None,
+                   server_ms=None):
     ind = compute_indicators(bars)
     frame = {
         "type": kind,
@@ -2601,6 +2991,8 @@ def history_frame(bars, levels, tf=None, nodata=None, mock=False, kind="history"
         # REPLAY: cero "premium disfrazado de real" en la UI (Yunior 2026-07-26). El
         # header debe gritarlo; la fecha la deriva el cliente de bars[-1].time.
         "mock": bool(mock),
+        "feed": feed,
+        "server_ms": server_ms,
     }
     if exhausted is not None:
         frame["exhausted"] = exhausted   # backfill: True = no hay más historia atrás
@@ -2612,7 +3004,7 @@ def _last_point(pts):
     return pts[-1] if pts else None
 
 
-def bar_frame(bars, levels, tf=None, sym=None):
+def bar_frame(bars, levels, tf=None, sym=None, feed=None):
     """Frame incremental: última barra + últimos valores de cada indicador (update())."""
     ind = compute_indicators(bars)
     ser = indicators_series(bars, ind)
@@ -2635,6 +3027,12 @@ def bar_frame(bars, levels, tf=None, sym=None):
             "macd": _last_point(ser["macd"]),
             "signal": _last_point(ser["signal"]),
             "hist": _last_point(ser["hist"]),
+            "rsi": _last_point(ser["rsi"]),
+            "rsiFast": _last_point(ser["rsiFast"]),
+            "rsiDivergence": _last_point(ser["rsiDivergence"]),
+            # Lista completa (máx 60): una divergencia confirmada pertenece a una vela anterior
+            # y no se puede expresar correctamente como un único `update()` de la última barra.
+            "rsiDivMarkers": ser["rsiDivMarkers"],
             "volume": _last_point(ser["volume"]),
             "stUp": _last_point(ser["stUp"]),
             "stDn": _last_point(ser["stDn"]),
@@ -2642,6 +3040,7 @@ def bar_frame(bars, levels, tf=None, sym=None):
             "madrid": {k: _last_point(v) for k, v in ser["madrid"].items()},
         },
         "levels": levels or {},
+        "feed": feed,
     }
 
 
@@ -2692,6 +3091,36 @@ class State:
         self._rt_tick_epoch = 0.0   # epoch de bolsa del último print fallback aplicado
         self._last_file_poll = 0.0  # throttle independiente del tick WS (fichero de barras)
         self._stale_note = None     # banner "sin fuente sub-minuto" vigente (None = sin banner)
+        self.perp_base = None       # base de BASEUSDT; None = acción/ETF normal
+        self._perp_raw = []         # velas 5s propias del tape/BBO, jamás barras de la acción
+        self._dynamic_provider = None   # fallback descubierto para ticker fuera de la flota
+        self._dynamic_dataset = None
+        self._dynamic_raw = []
+        self._dynamic_loading = False
+        self._dynamic_ws_started = False
+        self._feed_note = None
+        self._lse_option_expiries = []
+        self._lse_option_snapshot = None
+        self._lse_option_lock = asyncio.Lock()
+        self._lse_option_rebuild_task = None
+        self._lse_option_last_rebuild_at = 0.0
+        self._lse_options_ws_status = "DISCONNECTED"
+        self._lse_options_ws_subscribed_at = None
+        self._lse_options_ws_last_tick_at = None
+        self._lse_options_ws_events = 0
+        self._lse_options_ws_applied = 0
+        self._lse_options_ws_last_error = None
+        # Transport health is independent from market freshness. A quiet premarket
+        # subscription can be fully connected while the last exchange tick is old.
+        self._lse_ws_status = "DISCONNECTED"
+        self._lse_ws_connected_at = None
+        self._lse_ws_authenticated_at = None
+        self._lse_ws_subscribed_at = None
+        self._lse_ws_last_message_at = None
+        self._lse_ws_last_error = None
+        self._lse_ws_reconnects = 0
+        self._last_milk_proxy_sig = None
+        self._wall_integrity = wall_integrity.WallIntegrityTracker(self.sym)
 
     def set_bars(self, bars):
         self.bars = bars
@@ -2702,6 +3131,85 @@ class State:
             self.bars[-1] = bar
         else:
             self.bars.append(bar)
+
+
+def chart_feed_meta(state):
+    """Procedencia observable del dato que el chart esta pintando.
+
+    El navegador siempre recibe frames por nuestro WebSocket, pero el upstream puede ser
+    otro WebSocket (IBKR/Finnhub) o barras REST escritas a fichero (Intrinio). No llamar
+    "realtime" al transporte local si el dato upstream es delayed.
+    """
+    now = time.time()
+    bar_epoch = state.bars[-1][0] if state.bars else None
+    bar_age = max(0.0, now - bar_epoch) if bar_epoch else None
+    rt_age = max(0.0, now - state._rt_tick_epoch) if state._rt_tick_epoch else None
+    rt_fresh = bool(state._rt_source and rt_age is not None
+                    and rt_age <= max(RT_FALLBACK_MAX_AGE_S, 15.0))
+    lse_ws_connected = state._lse_ws_status in {
+        "CONNECTED", "AUTHENTICATING", "AUTHENTICATED", "SUBSCRIBING", "SUBSCRIBED"
+    }
+    if state.perp_base:
+        provider = str(state._rt_source or "perp-ws").lower()
+        upstream, tier, realtime = "websocket", "realtime_24x7", rt_fresh
+        age = rt_age
+    elif state.mock:
+        provider, upstream, tier, realtime = "replay", "file", "replay", False
+        age = bar_age
+    elif rt_fresh:
+        provider = str(state._rt_source).lower()
+        upstream, tier, realtime = "websocket", "realtime", True
+        age = rt_age
+    elif state._dynamic_provider:
+        provider = state._dynamic_provider
+        upstream = "websocket+rest" if lse_ws_connected else "rest"
+        tier = "subscribed/no-fresh-tick" if lse_ws_connected else "historical/latest_snapshot"
+        realtime = False
+        age = bar_age
+    else:
+        try:
+            provider = open(os.path.join(REPO, "data", "market_source.txt")).read().strip().lower()
+        except OSError:
+            provider = "local-bars"
+        if not provider:
+            provider = "local-bars"
+        if provider == "ibkr":
+            upstream, tier = "websocket", "stale/closed"
+        elif provider == "intrinio":
+            upstream, tier = "rest->file", "delayed_15m"
+        else:
+            upstream, tier = "rest/file", "unknown"
+        realtime, age = False, bar_age
+    return {
+        "provider": provider,
+        "upstream": upstream,
+        "ui_transport": "websocket",
+        "lse_only": bool(STATE_CFG.get("lse_only")),
+        "tier": tier,
+        "realtime": realtime,
+        "age_s": round(age, 3) if age is not None else None,
+        "bar_ts": bar_epoch,
+        "server_ts": round(now, 3),
+        "note": state._feed_note,
+        "lse_ws": {
+            "connected": lse_ws_connected,
+            "status": state._lse_ws_status,
+            "connected_at": state._lse_ws_connected_at,
+            "authenticated_at": state._lse_ws_authenticated_at,
+            "subscribed_at": state._lse_ws_subscribed_at,
+            "last_message_at": state._lse_ws_last_message_at,
+            "last_error": state._lse_ws_last_error,
+            "reconnects": state._lse_ws_reconnects,
+            "options": {
+                "status": state._lse_options_ws_status,
+                "subscribed_at": state._lse_options_ws_subscribed_at,
+                "last_tick_at": state._lse_options_ws_last_tick_at,
+                "events": state._lse_options_ws_events,
+                "applied": state._lse_options_ws_applied,
+                "last_error": state._lse_options_ws_last_error,
+            },
+        } if STATE_CFG.get("lse_only") else None,
+    }
 
 
 def agg_epoch(bars, step_s):
@@ -2733,6 +3241,14 @@ def agg_view_bars(state):
           con el engine); SEC_TF no tiene fuente sub-minuto -> [] (nunca finge, y NUNCA
           destruye state.bars: el CSV base sigue intacto para el siguiente tf). LIVE:
           state.bars ya viene al barSize nativo pedido en live_reapply, tal cual."""
+    if state.perp_base:
+        step = PERP_TF_S.get(state.tf, 60)
+        return agg_epoch(state._perp_raw, step) if step > 5 else state._perp_raw
+    if state._dynamic_provider:
+        if state.tf in SEC_TF:
+            return []
+        step = PERP_TF_S.get(state.tf, 60)
+        return agg_epoch(state._dynamic_raw, step) if step > 60 else state._dynamic_raw
     if not state.mock:
         return state.bars
     if state.tf in SEC_TF:
@@ -2751,6 +3267,12 @@ async def set_timeframe(state, tf):
     if tf not in ALL_TF:
         return
     state.tf = tf
+    if state.perp_base:
+        state._nodata_reason = None if state._perp_raw else "esperando cinta perpetual WebSocket"
+        return
+    if state._dynamic_provider:
+        state._nodata_reason = (f"{tf}: LSE dinámico tiene base 1m" if tf in SEC_TF else None)
+        return
     if state.mock:
         if tf in SEC_TF:
             state._nodata_reason = (f"{tf}: sin fuente offline en --mock "
@@ -2884,7 +3406,8 @@ async def fetch_more_history(state, before_epoch):
 # LIMITACION CONOCIDA: el timeframe va por SIMBOLO, no por ventana. Dos ventanas del
 # MISMO ticker con tf distinto se pisan; con tickers distintos, cada una manda en el suyo.
 STATES = {}            # sym (minusculas) -> State
-STATE_CFG = {"mock": False, "port": None, "client_id": 60, "interval": 1.0}
+STATE_CFG = {"mock": False, "lse_only": False, "port": None,
+             "client_id": 60, "interval": 1.0}
 SHARED_IB = {"ib": None}   # conexion ib_async unica, compartida por todos los estados
 PRIMARY_SYM = {"sym": None}
 
@@ -2896,6 +3419,11 @@ def _prime_bars(st):
     handler mandaba el frame antes de que corriera) -> ventana muda tras elegir un simbolo
     nuevo en la watchlist. Si de verdad no hay dato (sandbox sin ese simbolo, o sin archivo
     de barras 1m) se deja constancia en st._nodata_reason en vez de quedar en silencio."""
+    if STATE_CFG.get("lse_only") and not st.mock:
+        # London-only means exactly that: never seed the chart from an old IBKR/provider
+        # file before the LSE REST history + WebSocket task has taken ownership.
+        st._nodata_reason = f"cargando {st.sym.upper()} desde London Strategic Edge"
+        return
     if st.mock:
         all_bars, warm, reason = _mock_load(st.sym)
         if reason:
@@ -2923,12 +3451,299 @@ def get_state(sym):
     if st is not None:
         return st
     st = State(sym, mock=STATE_CFG["mock"])
-    st.levels = load_levels(sym) or {}
+    st.levels = ({"sym": sym.upper(), "chain_src": "lse_pending"}
+                 if STATE_CFG.get("lse_only") else (load_levels(sym) or {}))
     _prime_bars(st)
     STATES[sym] = st
     asyncio.ensure_future(_spawn_state(st))
     print(f"[multi] estado NUEVO {sym.upper()} (abiertos: {len(STATES)})")
     return st
+
+
+async def prepare_dynamic_equity(st):
+    """Load any catalogued non-option ticker when no local fleet bars exist."""
+    if st.bars or st._dynamic_provider:
+        return bool(st.bars)
+    if st._dynamic_loading:
+        end = time.time() + 65
+        while st._dynamic_loading and time.time() < end:
+            await asyncio.sleep(0.1)
+        return bool(st.bars)
+    st._dynamic_loading = True
+    try:
+        entry = lse_catalog_entry(st.sym)
+        if not entry:
+            st._nodata_reason = (f"{st.sym.upper()} no existe en los catálogos dinámicos "
+                                 "de mercado disponibles")
+            return False
+        dataset = entry.get("dataset")
+        try:
+            bars = await asyncio.to_thread(load_lse_dynamic_bars, st.sym, dataset)
+        except Exception as e:
+            st._nodata_reason = f"{st.sym.upper()}: LSE REST falló ({type(e).__name__}: {e})"
+            return False
+        if not bars:
+            st._nodata_reason = f"{st.sym.upper()}: existe en LSE/{dataset}, pero no devolvió velas"
+            return False
+        st._dynamic_provider = "lse"
+        st._dynamic_dataset = dataset
+        st._dynamic_raw = bars
+        st.bars = st._dynamic_raw
+        st.levels = (st.levels or {"sym": st.sym.upper()}) if STATE_CFG.get("lse_only") \
+            else (load_levels(st.sym) or {"sym": st.sym.upper()})
+        st.levels["sym"] = st.sym.upper()
+        st._nodata_reason = None
+        if not st._dynamic_ws_started:
+            st._dynamic_ws_started = True
+            tasks = getattr(st, "_tasks", [])
+            tasks.append(asyncio.ensure_future(lse_dynamic_ws_feed(st)))
+            st._tasks = tasks
+        st._feed_note = f"ticker dinámico · LSE/{dataset}"
+        print(f"[dynamic] {st.sym.upper()} LSE/{dataset}: {len(bars)} barras 1m")
+        return True
+    finally:
+        st._dynamic_loading = False
+
+
+def _lse_tick_time(value):
+    try:
+        x = float(value)
+        return x / 1000.0 if x > 10_000_000_000 else x
+    except (TypeError, ValueError):
+        pass
+    try:
+        return datetime.fromisoformat(str(value).replace("Z", "+00:00")).timestamp()
+    except (TypeError, ValueError):
+        return time.time()
+
+
+async def _lse_ws_state(st, status, *, error=None):
+    """Publish transport state without manufacturing a price update."""
+    st._lse_ws_status = status
+    if error is not None:
+        st._lse_ws_last_error = str(error)[:240]
+    elif status in {"CONNECTED", "AUTHENTICATED", "SUBSCRIBED"}:
+        st._lse_ws_last_error = None
+    frame = {"type": "feed_status", "sym": st.sym.upper(),
+             "feed": chart_feed_meta(st)}
+    for client in list(st.clients):
+        try:
+            await client.send_json(frame)
+        except Exception:
+            st.clients.discard(client)
+
+
+async def lse_dynamic_ws_feed(st):
+    """BBO midpoint for arbitrary LSE instruments; never uses LSE's price==bid field."""
+    import lse_client
+    import websockets
+    while True:
+        try:
+            await _lse_ws_state(st, "CONNECTING")
+            async with websockets.connect(lse_client.WS_URL, ping_interval=25, ping_timeout=30,
+                                          open_timeout=15, close_timeout=5, max_size=None) as ws:
+                st._lse_ws_connected_at = time.time()
+                await _lse_ws_state(st, "CONNECTED")
+                await ws.recv()  # server hello
+                st._lse_ws_last_message_at = time.time()
+                await _lse_ws_state(st, "AUTHENTICATING")
+                await ws.send(json.dumps({"action": "auth", "api_key": lse_client.api_key()}))
+                authenticated = False
+                seen_quotes = 0
+                async for raw in ws:
+                    st._lse_ws_last_message_at = time.time()
+                    msg = json.loads(raw)
+                    auth_ok = (msg.get("type") == "authenticated" or
+                               (msg.get("type") == "auth" and msg.get("status") == "ok"))
+                    if auth_ok and not authenticated:
+                        authenticated = True
+                        st._lse_ws_authenticated_at = time.time()
+                        await _lse_ws_state(st, "AUTHENTICATED")
+                        await ws.send(json.dumps({"action": "subscribe", "symbol": st.sym.upper()}))
+                        await ws.send(json.dumps({"action": "subscribe_options",
+                                                  "underlying": st.sym.upper()}))
+                        st._lse_options_ws_status = "SUBSCRIBING"
+                        await _lse_ws_state(st, "SUBSCRIBING")
+                        continue
+                    if (msg.get("type") == "subscribed" and
+                            str(msg.get("symbol") or "").upper() == st.sym.upper()):
+                        st._lse_ws_subscribed_at = time.time()
+                        await _lse_ws_state(st, "SUBSCRIBED")
+                        continue
+                    if (msg.get("type") == "options_subscribed" and
+                            str(msg.get("underlying") or "").upper() == st.sym.upper()):
+                        st._lse_options_ws_status = "SUBSCRIBED"
+                        st._lse_options_ws_subscribed_at = time.time()
+                        st._lse_options_ws_last_error = None
+                        await _lse_ws_state(st, st._lse_ws_status)
+                        continue
+                    if msg.get("type") not in ("tick", "quote", "trade"):
+                        continue
+                    option_symbol = str(msg.get("symbol") or "").upper()
+                    if lse_gamma_map.OSI_RE.match(option_symbol):
+                        st._lse_options_ws_events += 1
+                        st._lse_options_ws_last_tick_at = _lse_tick_time(
+                            msg.get("ts") or msg.get("timestamp") or time.time())
+                        async with st._lse_option_lock:
+                            applied = lse_gamma_map.apply_option_tick(
+                                st._lse_option_snapshot, st.sym, msg)
+                        if applied:
+                            st._lse_options_ws_applied += 1
+                            if st._lse_option_rebuild_task is None or st._lse_option_rebuild_task.done():
+                                st._lse_option_rebuild_task = asyncio.ensure_future(
+                                    _lse_rebuild_from_ws(st))
+                        continue
+                    if str(msg.get("symbol") or "").upper() != st.sym.upper():
+                        continue
+                    try:
+                        bid, ask = float(msg["bid"]), float(msg["ask"])
+                    except (KeyError, TypeError, ValueError):
+                        continue
+                    if not (bid > 0 and ask >= bid):
+                        continue
+                    arrival = time.time()
+                    exchange_ts = _lse_tick_time(msg.get("ts") or msg.get("timestamp") or arrival)
+                    # One closed-market snapshot is not realtime. Require a second fresh event.
+                    seen_quotes += 1
+                    if seen_quotes < 2 or abs(arrival - exchange_ts) > 30:
+                        continue
+                    px = (bid + ask) / 2.0
+                    bucket = int(exchange_ts) - int(exchange_ts) % 60
+                    rawbars = st._dynamic_raw
+                    if rawbars and bucket == rawbars[-1][0]:
+                        b = rawbars[-1]; b[2] = max(b[2], px); b[3] = min(b[3], px); b[4] = px
+                    elif not rawbars or bucket > rawbars[-1][0]:
+                        rawbars.append([bucket, px, px, px, px, 0.0]); del rawbars[:-5000]
+                    else:
+                        continue
+                    st._rt_source = "lse-ws-bbo-mid"
+                    st._rt_tick_epoch = exchange_ts
+                    st._last_tick_ts = arrival
+                    # Registrar el contacto contra la geometría anterior antes de que
+                    # el selector lado-aware pueda mover CW/PW al siguiente strike.
+                    # broadcast_tick deduplica este mismo precio/epoch en el tracker.
+                    integrity_changed = st._wall_integrity.on_price(px, now=exchange_ts)
+                    st.levels["wall_integrity"] = st._wall_integrity.payload()
+                    wall_changed = lse_gamma_map.reprice_levels(st.levels, px)
+                    # Preserve every BBO update in the in-memory bar and wall tracker, while
+                    # coalescing display paint.  Six WebKit windows do not benefit from being
+                    # redrawn faster than 4 Hz, and no market event is discarded.
+                    if arrival - st._last_tick_bcast >= LSE_CHART_PAINT_S:
+                        st._last_tick_bcast = arrival
+                        await broadcast_tick(st)
+                    if wall_changed or integrity_changed:
+                        await broadcast_levels(st)
+        except asyncio.CancelledError:
+            raise
+        except Exception as e:
+            st._lse_ws_reconnects += 1
+            st._lse_options_ws_status = "RECONNECTING"
+            st._lse_options_ws_last_error = f"{type(e).__name__}: {e}"[:240]
+            await _lse_ws_state(st, "RECONNECTING", error=f"{type(e).__name__}: {e}")
+            print(f"[dynamic] LSE WS {st.sym.upper()} reconecta: {type(e).__name__}: {e}")
+            await asyncio.sleep(2)
+
+
+def get_perp_state(sym):
+    """State separado para BASEUSDT: no abre IBKR ni mezcla niveles/precio de la acción."""
+    base = re.sub(r"USDT$", "", (sym or "").strip().upper())
+    key = (base + "USDT").lower()
+    st = STATES.get(key)
+    if st is not None:
+        return st
+    available = load_perp_stocks()
+    if base not in available:
+        status = perp_request_result(base)
+        nbbo = os.path.join(REPO, "data", f"nbbo_{base.lower()}usdt.txt")
+        if not (status and status.get("ok") and os.path.exists(nbbo)
+                and time.time() - os.path.getmtime(nbbo) < 15):
+            return None
+    st = State(key, mock=False)
+    st.perp_base = base
+    st.base_min = 0
+    st.tf = "5s"
+    st._perp_raw = load_perp_tape_bars(base)
+    if not st._perp_raw:
+        try:
+            p = open(os.path.join(REPO, "data", f"nbbo_{base.lower()}usdt.txt")).read().split()
+            bid, ask, epoch = float(p[0]), float(p[1]), float(p[2])
+            if time.time() - epoch < 15 and bid > 0 and ask >= bid:
+                px = (bid + ask) / 2.0; bucket = int(epoch) - int(epoch) % 5
+                st._perp_raw = [[bucket, px, px, px, px, 0.0]]
+                st._rt_source = str(available.get(base, {}).get("src") or "perp-ws").lower()
+                st._rt_tick_epoch = epoch
+        except (OSError, ValueError, IndexError):
+            pass
+    st.bars = st._perp_raw
+    st.levels = perp_underlying_levels(base)
+    if not st._perp_raw:
+        st._nodata_reason = "esperando primera operación perpetual WebSocket"
+    STATES[key] = st
+    st._tasks = [asyncio.ensure_future(perp_chart_feed(st)),
+                 asyncio.ensure_future(perp_levels_poll(st))]
+    print(f"[perp-chart] estado NUEVO {key.upper()} bars5s={len(st._perp_raw)}")
+    return st
+
+
+def perp_underlying_levels(base):
+    """Options structure belongs to BASE, while price/candles belong to BASEUSDT."""
+    lv = load_levels(base.lower()) or {}
+    lv["sym"] = base.upper() + "USDT"
+    lv["underlying_sym"] = base.upper()
+    lv["scope"] = "UNDERLYING OPTIONS · PERP 24/7 PRICE"
+    src = lv.get("chain_src") or "local options snapshot"
+    lv["chain_src"] = f"{src} · niveles del subyacente {base.upper()}"
+    lv["basis_note"] = (f"walls/magnets/GEX de {base.upper()}; velas y spot de "
+                        f"{base.upper()}USDT (puede existir basis)")
+    return lv
+
+
+async def perp_levels_poll(st, interval=60.0):
+    """Reload underlying walls/magnets/GEX once a minute; never fabricate weekend gamma."""
+    while True:
+        await asyncio.sleep(interval)
+        try:
+            nxt = perp_underlying_levels(st.perp_base)
+            if nxt != st.levels:
+                st.levels = nxt
+                await broadcast_levels(st)
+        except Exception as e:
+            print(f"[perp-levels] {st.perp_base} reload falló ({e})")
+
+
+async def perp_chart_feed(st, interval=0.12):
+    """Tail the WS bridge BBO file and move a genuine 24/7 perpetual candle."""
+    path = os.path.join(REPO, "data", f"nbbo_{st.perp_base.lower()}usdt.txt")
+    last_epoch = 0.0
+    while True:
+        await asyncio.sleep(interval)
+        try:
+            parts = open(path, encoding="utf-8").read().split()
+            if len(parts) < 3:
+                continue
+            bid, ask, epoch = float(parts[0]), float(parts[1]), float(parts[2])
+            if epoch <= last_epoch or time.time() - epoch > 15 or bid <= 0 or ask < bid:
+                continue
+            last_epoch = epoch
+            px = (bid + ask) / 2.0
+            bucket = int(epoch) - int(epoch) % 5
+            raw = st._perp_raw
+            if raw and raw[-1][0] == bucket:
+                b = raw[-1]
+                b[2] = max(b[2], px); b[3] = min(b[3], px); b[4] = px
+            elif not raw or bucket > raw[-1][0]:
+                raw.append([bucket, px, px, px, px, 0.0])
+                del raw[:-50000]
+            else:
+                continue
+            snap = load_perp_stocks().get(st.perp_base, {})
+            st._rt_source = str(snap.get("src") or "perp-ws").lower()
+            st._rt_tick_epoch = epoch
+            st._last_tick_ts = time.time()
+            st._nodata_reason = None
+            await broadcast_tick(st)
+        except (OSError, ValueError):
+            continue
 
 
 async def korea_poll_feed(st, interval=5.0):
@@ -3080,6 +3895,10 @@ async def _spawn_state(st):
     try:
         if st.mock:
             st._tasks = [asyncio.ensure_future(mock_feed(st, interval=STATE_CFG["interval"]))]
+        elif STATE_CFG.get("lse_only"):
+            st._tasks = []
+            await prepare_dynamic_equity(st)
+            st._tasks.append(asyncio.ensure_future(lse_options_loop(st)))
         elif st.sym.upper() in KOREA_SYMS():
             st._tasks = [asyncio.ensure_future(korea_poll_feed(st))]
         else:
@@ -3095,7 +3914,8 @@ async def _spawn_state(st):
                 except Exception:
                     pass
                 await _relive_symbol(st, st.sym, rebroadcast=not base)
-        st._tasks.append(asyncio.ensure_future(levels_loop(st)))
+        if not STATE_CFG.get("lse_only"):
+            st._tasks.append(asyncio.ensure_future(levels_loop(st)))
     except Exception as e:
         print(f"[multi] no pude arrancar {st.sym.upper()}: {e}")
 
@@ -3233,7 +4053,8 @@ async def _relive_symbol(state, sym, rebroadcast=False):
         if not state.bars:   # sin archivo instantáneo Y sin contrato -> decirlo, no callar
             state._nodata_reason = f"IBKR no reconoce el símbolo {sym.upper()} ({e})"
             frame = history_frame(agg_view_bars(state), state.levels, state.tf,
-                                   nodata=state._nodata_reason, mock=state.mock, sym=state.sym)
+                                   nodata=state._nodata_reason, mock=state.mock, sym=state.sym,
+                                   feed=chart_feed_meta(state))
             for ws in list(state.clients):
                 try: await ws.send_json(frame)
                 except Exception: state.clients.discard(ws)
@@ -3243,7 +4064,9 @@ async def _relive_symbol(state, sym, rebroadcast=False):
     except Exception: pass
     await live_reapply(state, state.tf)
     if rebroadcast:   # solo si no hubo carga instantánea (símbolo fuera de la flota)
-        frame = history_frame(agg_view_bars(state), state.levels, state.tf, nodata=state._nodata_reason, mock=state.mock, sym=state.sym)
+        frame = history_frame(agg_view_bars(state), state.levels, state.tf,
+                              nodata=state._nodata_reason, mock=state.mock, sym=state.sym,
+                              feed=chart_feed_meta(state))
         for ws in list(state.clients):
             try: await ws.send_json(frame)
             except Exception: state.clients.discard(ws)
@@ -3265,6 +4088,16 @@ def create_app(state):
     from fastapi.responses import FileResponse, JSONResponse
 
     app = FastAPI(title="ib-trader chart bridge (signal-only)")
+
+    @app.middleware("http")
+    async def prevent_stale_cockpit_assets(request, call_next):
+        """La UI cambia junto al bridge: WebKit no debe revivir HTML/JS de otro build."""
+        response = await call_next(request)
+        path = request.url.path
+        if path == "/" or path.endswith((".html", ".js")):
+            response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+            response.headers["Pragma"] = "no-cache"
+        return response
 
     @app.get("/")
     async def index():
@@ -3303,6 +4136,13 @@ def create_app(state):
             return FileResponse(p, media_type="application/javascript")
         return JSONResponse({"error": "order_ticket_ui.js no encontrado"}, status_code=404)
 
+    @app.get("/orderflow_panel.js")
+    async def orderflow_panel_js():
+        p = os.path.join(os.path.dirname(LIVE_HTML), "orderflow_panel.js")
+        if os.path.exists(p):
+            return FileResponse(p, media_type="application/javascript")
+        return JSONResponse({"error": "orderflow_panel.js no encontrado"}, status_code=404)
+
     @app.get("/uw_widgets.js")
     async def uw_widgets_js():
         p = os.path.join(os.path.dirname(LIVE_HTML), "uw_widgets.js")
@@ -3316,6 +4156,20 @@ def create_app(state):
         if os.path.exists(p):
             return FileResponse(p, media_type="application/javascript")
         return JSONResponse({"error": "gex_heatmap_widget.js no encontrado"}, status_code=404)
+
+    @app.get("/mm_fractal_widget.js")
+    async def mm_fractal_widget_js():
+        p = os.path.join(os.path.dirname(LIVE_HTML), "mm_fractal_widget.js")
+        if os.path.exists(p):
+            return FileResponse(p, media_type="application/javascript")
+        return JSONResponse({"error": "mm_fractal_widget.js no encontrado"}, status_code=404)
+
+    @app.get("/api/lse_symbols")
+    async def lse_symbols(q: str = "", limit: int = 30):
+        if not STATE_CFG.get("lse_only"):
+            return JSONResponse({"error": "endpoint exclusivo de London-only"}, status_code=404)
+        return JSONResponse({"src": "lse", "query": q,
+                             "rows": lse_catalog_search(q, limit)})
 
     @app.get("/indicator_panel.js")
     async def indicator_panel_ui():
@@ -3360,6 +4214,8 @@ def create_app(state):
                 "uw_darkpool.json", "uw_net_prem.json", "uw_gex_expiry.json")
     @app.get("/data/{fname}")
     async def data_json(fname: str):
+        if STATE_CFG.get("lse_only") and not (fname.startswith("gex_heatmap_") and fname.endswith(".json")):
+            return JSONResponse({"error": "desactivado en London-only"}, status_code=404)
         if not (fname in _DATA_WL or ((fname.startswith("strike_heatmap_") or fname.startswith("gex_heatmap_")) and fname.endswith(".json"))):
             return JSONResponse({"error": "no servido"}, status_code=404)
         p = os.path.join(REPO, "data", os.path.basename(fname))
@@ -3370,6 +4226,8 @@ def create_app(state):
 
     @app.get("/api/gamma_decay")
     async def gamma_decay(sym: str = ""):
+        if STATE_CFG.get("lse_only"):
+            return JSONResponse({"error": "gamma decay requiere OI; no disponible en London-only"}, status_code=404)
         s = (sym or state.sym).upper()
         try:
             import json, os, gex_core
@@ -3414,14 +4272,47 @@ def create_app(state):
                     "realtime_source": st._rt_source,
                     "realtime_age_s": (round(time.time() - st._rt_tick_epoch, 3)
                                        if st._rt_tick_epoch else None),
+                    "lse_ws": chart_feed_meta(st).get("lse_ws"),
                     "call_wall": lv.get("call_wall"), "put_wall": lv.get("put_wall"),
-                    "flip": lv.get("flip"), "profile_strikes": len(lv.get("profile") or []),
+                    "magnet": lv.get("magnet"),
+                    "dealer_net_daily": (lv.get("dealer_activity_daily") or {}).get("level"),
+                    "dealer_net_daily_expiry": (lv.get("dealer_activity_daily") or {}).get("expiry"),
+                    "dealer_net_weekly": (lv.get("dealer_activity_weekly") or {}).get("level"),
+                    "dealer_net_weekly_expiry": (lv.get("dealer_activity_weekly") or {}).get("expiry"),
+                    "mm_top_profit_daily": (lv.get("mm_top_profit_daily") or {}).get("level"),
+                    "mm_top_profit_daily_expiry": (lv.get("mm_top_profit_daily") or {}).get("expiry"),
+                    "mm_top_profit_weekly": (lv.get("mm_top_profit_weekly") or {}).get("level"),
+                    "mm_top_profit_weekly_expiry": (lv.get("mm_top_profit_weekly") or {}).get("expiry"),
+                    "option_active_session": lv.get("active_session_date"),
+                    "option_excluded_expiries": lv.get("excluded_expiries") or {},
+                    "option_update_mode": lv.get("update_mode"),
+                    "option_ws_events_applied": lv.get("ws_events"),
+                    "flip": lv.get("flip"), "activity_flip": lv.get("activity_flip"),
+                    "net_gex": lv.get("net_gex"),
+                    "oi_available": lv.get("oi_available"), "oi_source": lv.get("oi_source"),
+                    "oi_status": (lv.get("oi_structure") or {}).get("status"),
+                    "oi_age_s": (lv.get("oi_structure") or {}).get("age_s"),
+                    "oi_contracts_usable": (lv.get("oi_structure") or {}).get("contracts_usable"),
+                    "squeeze_fuel": lv.get("squeeze_fuel"),
+                    "profile_strikes": len(lv.get("profile") or []),
+                    "wall_integrity": {
+                        key: {field: row.get(field) for field in
+                              ("state", "hits", "bricks_remaining", "capacity", "metric")}
+                        for key, row in ((lv.get("wall_integrity") or {}).get("levels") or {}).items()
+                    },
                     "chain_strikes": list(rng) if rng else None,
                     "walls_unavailable": walls_status(lv, spot)}
         out = _one(state)
         out.update(mock=state.mock, mock_dir=MOCK_DIR, signal_only=True,
                    states={s: _one(st) for s, st in STATES.items()})
         return out
+
+    @app.get("/api/footprint")
+    async def footprint_route(sym: str = "", tf: str = "5m", source: str = "equity"):
+        """Vista independiente del timeframe de velas; usada por el modo Footprint/Split."""
+        want = (sym or state.sym).strip().lower()
+        source = source if source in {"equity", "perp"} else "equity"
+        return JSONResponse(footprint_frame(want, tf, source)[0])
 
     @app.websocket("/stream")
     async def stream(ws: WebSocket):
@@ -3436,8 +4327,12 @@ def create_app(state):
         st = state
         st.clients.add(ws)
         try:
+            st._wall_integrity.update_levels(st.levels or {}, now=time.time())
+            st.levels["wall_integrity"] = st._wall_integrity.payload()
             # frame de historia inmediato (setData once en el cliente), al tf actual
-            await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason, mock=st.mock, sym=st.sym))
+            await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf,
+                                             nodata=st._nodata_reason, mock=st.mock, sym=st.sym,
+                                             feed=chart_feed_meta(st), server_ms=0.0))
             # watchlist (fleet + usuario), zonas 0DTE del símbolo y flecha direccional
             await ws.send_json(watchlist_payload())
             np = netprem_payload(st.sym)
@@ -3453,6 +4348,7 @@ def create_app(state):
                 await ws.send_json(uw0)
             await ws.send_json(liq_frame(st.sym)[0])   # liquidez VPVR/KDE (contexto, no gatillo)
             await ws.send_json(liq_map_frame(st.sym)[0])   # mapa liquidez (widget)
+            await ws.send_json(footprint_frame(st.sym, st.tf)[0])  # Bid x Ask AllLast (o NO_TAPE)
             while True:
                 # drenamos pings/close + controles del cliente (cambio de timeframe)
                 txt = await ws.receive_text()
@@ -3461,35 +4357,89 @@ def create_app(state):
                 except Exception:
                     continue
                 if isinstance(ctl, dict) and ctl.get("cmd") == "tf":
+                    req_t0 = time.perf_counter()
                     await set_timeframe(st, ctl.get("tf", st.tf))
                     # re-emite un frame de historia FRESCO al tf pedido
-                    await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason, mock=st.mock, sym=st.sym))
+                    await ws.send_json(history_frame(
+                        agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason,
+                        mock=st.mock, sym=st.sym, feed=chart_feed_meta(st),
+                        server_ms=round((time.perf_counter() - req_t0) * 1000, 1)))
+                    await ws.send_json(footprint_frame(st.sym, st.tf)[0])
                 elif isinstance(ctl, dict) and ctl.get("cmd") == "more":
                     # pan-scroll hacia atrás: request aparte, keepUpToDate=False, nunca
                     # bloquea el tick vivo (corre en su propia corrutina de broadcast).
+                    req_t0 = time.perf_counter()
                     got = await fetch_more_history(st, ctl.get("before"))
                     await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf,
                                         nodata=st._nodata_reason, mock=st.mock,
                                         kind="backfill", exhausted=not got,
-                                        exhausted_reason=st._backfill_reason, sym=st.sym))
+                                        exhausted_reason=st._backfill_reason, sym=st.sym,
+                                        feed=chart_feed_meta(st),
+                                        server_ms=round((time.perf_counter() - req_t0) * 1000, 1)))
                 elif isinstance(ctl, dict) and ctl.get("cmd") == "sym":
+                    req_t0 = time.perf_counter()
                     # NO se muta el estado compartido: se MUEVE esta conexión al State del
                     # nuevo símbolo (creándolo si no existe). Las demás ventanas ni se
                     # enteran — que era justo el fallo: una cambiaba de ticker y las otras
                     # se quedaban con sus velas y los niveles del ticker ajeno (escala de
                     # precios reventada, medido con 6 ventanas el 2026-07-25).
                     want = (ctl.get("sym") or st.sym).strip().lower()
+                    if want:
+                        _atomic_write(os.path.join(REPO, "data", "heatmap_focus.txt"),
+                                      want.upper() + "\n")
                     if want and want != st.sym:
                         st.clients.discard(ws)
                         reap_state(st)
                         st = get_state(want)
                         st.clients.add(ws)
-                    await ws.send_json(history_frame(agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason, mock=st.mock, sym=st.sym))
+                    if not st.bars and not st.mock:
+                        await prepare_dynamic_equity(st)
+                    await ws.send_json(history_frame(
+                        agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason,
+                        mock=st.mock, sym=st.sym, feed=chart_feed_meta(st),
+                        server_ms=round((time.perf_counter() - req_t0) * 1000, 1)))
                     # zonas del nuevo símbolo + flecha direccional (actualización inmediata)
                     await ws.send_json(zones_frame(st))
                     await ws.send_json(liq_frame(st.sym)[0])   # liquidez del nuevo símbolo
                     await ws.send_json(liq_map_frame(st.sym)[0])
+                    await ws.send_json(footprint_frame(st.sym, st.tf)[0])
                     await broadcast_direction(st)
+                elif isinstance(ctl, dict) and ctl.get("cmd") == "perp":
+                    if STATE_CFG.get("lse_only"):
+                        await ws.send_json({"type": "watchlist_reject",
+                                            "sym": ctl.get("sym") or "",
+                                            "why": "London-only: solo se permiten instrumentos LSE"})
+                        continue
+                    req_t0 = time.perf_counter()
+                    base = re.sub(r"USDT$", "", (ctl.get("sym") or "").strip().upper())
+                    nxt = get_perp_state(base)
+                    if nxt is None:
+                        ok, why = await await_dynamic_perp(base)
+                        nxt = get_perp_state(base) if ok else None
+                    if nxt is None:
+                        # No perpetual: resolve the same base as an arbitrary market ticker.
+                        # This makes "type any existing ticker" useful instead of a dead end.
+                        st.clients.discard(ws)
+                        reap_state(st)
+                        st = get_state(base)
+                        st.clients.add(ws)
+                        await prepare_dynamic_equity(st)
+                        st._feed_note = (f"{base}USDT no disponible ({why}); "
+                                         f"mostrando {base} vía {st._dynamic_provider or 'feed local'}")
+                        await ws.send_json(history_frame(
+                            agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason,
+                            mock=st.mock, sym=st.sym, feed=chart_feed_meta(st),
+                            server_ms=round((time.perf_counter() - req_t0) * 1000, 1)))
+                        continue
+                    st.clients.discard(ws)
+                    reap_state(st)
+                    st = nxt
+                    st.clients.add(ws)
+                    _atomic_write(os.path.join(REPO, "data", "heatmap_focus.txt"), base + "\n")
+                    await ws.send_json(history_frame(
+                        agg_view_bars(st), st.levels, st.tf, nodata=st._nodata_reason,
+                        mock=False, sym=st.sym, feed=chart_feed_meta(st),
+                        server_ms=round((time.perf_counter() - req_t0) * 1000, 1)))
                 elif isinstance(ctl, dict) and ctl.get("cmd") == "scope":
                     st.all_exp = (ctl.get("scope") == "ALL")   # 0DTE <-> ALL-EXP
                     sp = st.bars[-1][4] if st.bars else None
@@ -3677,19 +4627,31 @@ async def broadcast_tick(state):
     """Empuja SOLO la última vela (precio vivo por tick) -> el cliente hace series.update()
     O(1), render instantáneo. Blazing-fast: el precio se mueve sub-segundo, sin esperar la
     barra de IBKR (~5s). SEÑAL-SOLAMENTE."""
-    if not state.clients:
-        return
     view = agg_view_bars(state)
     if not view:
         return
     b = view[-1]
+    lse_gamma_map.update_squeeze_fuel(
+        state.levels, b[4], state.bars,
+        now=(state._rt_tick_epoch or time.time()))
+    # Mantener el estado incluso si el navegador se reconecta. Sólo se emite una
+    # actualización de niveles cuando ocurre una transición visible (hit/break/etc.).
+    integrity_changed = state._wall_integrity.on_price(
+        b[4], now=(state._rt_tick_epoch or time.time()))
+    state.levels["wall_integrity"] = state._wall_integrity.payload()
+    if not state.clients:
+        return
     frame = {"type": "tick", "bar": {"time": b[0], "open": b[1], "high": b[2],
-                                     "low": b[3], "close": b[4]}}
+                                     "low": b[3], "close": b[4]},
+             "feed": chart_feed_meta(state),
+             "squeeze_fuel": state.levels.get("squeeze_fuel")}
     for ws in list(state.clients):
         try:
             await ws.send_json(frame)
         except Exception:
             state.clients.discard(ws)
+    if integrity_changed:
+        await broadcast_levels(state)
 
 
 def _make_on_tick(state):
@@ -3755,7 +4717,11 @@ async def broadcast(state):
     view = agg_view_bars(state)
     if not view:
         return
-    frame = bar_frame(view, state.levels, state.tf, sym=state.sym)
+    lse_gamma_map.update_squeeze_fuel(
+        state.levels, view[-1][4], state.bars,
+        now=(state._rt_tick_epoch or time.time()))
+    frame = bar_frame(view, state.levels, state.tf, sym=state.sym,
+                      feed=chart_feed_meta(state))
     dead = []
     for ws in list(state.clients):
         try:
@@ -3772,12 +4738,14 @@ async def broadcast(state):
         state.clients.discard(ws)
 
 
-LEVELS_REFRESH_S = 15   # recomputa GEX/flip/muros al SPOT VIVO cada N segundos
+LEVELS_REFRESH_S = 60   # panel auxiliar: GEX/flip/muros por snapshot/cache cada minuto
 
 
 async def broadcast_levels(state):
     """Empuja SOLO los niveles (GEX/flip/muros) a los clientes -> redibujo inmediato
     sin esperar a la próxima barra."""
+    state._wall_integrity.update_levels(state.levels or {}, now=time.time())
+    state.levels["wall_integrity"] = state._wall_integrity.payload()
     if not state.clients:
         return
     frame = {"type": "levels", "tf": state.tf, "levels": state.levels or {}}
@@ -3987,9 +4955,13 @@ async def narrator_tick(state):
 
 
 async def levels_loop(state):
-    """REAL TIME de GEX/flip/muros: cada LEVELS_REFRESH_S recalcula al SPOT VIVO (última
-    barra) desde el cache de opciones (OI/gamma lento; el flip y los muros se DESPLAZAN
-    con el precio) y lo empuja al chart. SEÑAL-SOLAMENTE (solo lee cache + calcula)."""
+    """Snapshot auxiliar de GEX/flip/muros cada minuto.
+
+    Recalcula contra el último spot recibido por el chart, usando el cache de opciones,
+    y lo empuja por el WebSocket local. Esto NO convierte la fuente de opciones en tiempo
+    real: precio/velas viven en el feed WS; walls, magnets y GEX son REST/cache de 1 min.
+    SEÑAL-SOLAMENTE (solo lee cache + calcula).
+    """
     while True:
         await asyncio.sleep(LEVELS_REFRESH_S)
         try:
@@ -4042,6 +5014,117 @@ async def levels_loop(state):
                 await broadcast_netprem(state)            # net premium estilo QuantData (UW)
         except Exception as e:
             print(f"[levels] refresh falló ({e})")
+
+
+async def _install_lse_option_result(state, result, *, archive):
+    """Publish one London-only option fit to disk and connected chart clients."""
+    heatmap, levels, expiries = result[:3]
+    now = time.time()
+    state._lse_option_expiries = expiries
+    architect = heatmap["architect"]
+    prior = architect_lse.load_prior_distinct(
+        REPO, state.sym, architect.get("option_source_ts"))
+    triad = architect_lse.reversal_triad(
+        architect, prior, state.bars, levels, now)
+    architect["reversal"] = triad
+    levels["architect"] = architect
+    levels["reversal"] = triad
+    live_spot = state.bars[-1][4] if state.bars else levels.get("spot")
+    lse_gamma_map.update_squeeze_fuel(levels, live_spot, state.bars, now=now)
+    if archive:
+        dealer_day = levels.get("dealer_activity_daily") or {}
+        dealer_week = levels.get("dealer_activity_weekly") or {}
+        mm_day = levels.get("mm_top_profit_daily") or {}
+        mm_week = levels.get("mm_top_profit_weekly") or {}
+        proxy_sig = (levels.get("chain_ts"),
+                     dealer_day.get("expiry"), dealer_day.get("level"),
+                     dealer_week.get("expiry"), dealer_week.get("level"),
+                     mm_day.get("level"), mm_week.get("level"))
+        if proxy_sig != state._last_milk_proxy_sig:
+            lse_gamma_map.append_proxy_history(REPO, state.sym, levels)
+            state._last_milk_proxy_sig = proxy_sig
+        architect_lse.append_history(REPO, state.sym, architect)
+    lse_gamma_map.atomic_write(
+        os.path.join(REPO, "data", f"gex_heatmap_{state.sym.lower()}.json"), heatmap)
+    state.levels = levels
+    state.walls_why = walls_status(levels, levels.get("spot"))
+    await broadcast_levels(state)
+
+
+async def _lse_rebuild_from_ws(state):
+    """Batch option prints briefly, then refit Γ×volume without another REST call."""
+    # A refit walks the complete option surface.  One refit/s keeps the London heatmap live
+    # while collapsing bursts of hundreds of contract messages into one coherent snapshot.
+    await asyncio.sleep(LSE_OPTION_REFIT_S)
+    try:
+        async with state._lse_option_lock:
+            snapshot = state._lse_option_snapshot
+            spot = state.bars[-1][4] if state.bars else None
+            if not snapshot or not spot:
+                return
+            result = await asyncio.to_thread(
+                lse_gamma_map.build, state.sym, spot, state._lse_option_expiries,
+                None, time.time(), lse_gamma_map.REFRESH_S,
+                os.path.join(REPO, "data", f"lse_mm_fractal_{state.sym.lower()}.json"),
+                snapshot, False)
+            state._lse_option_last_rebuild_at = time.time()
+        await _install_lse_option_result(state, result, archive=False)
+    except asyncio.CancelledError:
+        raise
+    except Exception as e:
+        state._lse_options_ws_last_error = f"rebuild: {type(e).__name__}: {e}"[:240]
+        print(f"[lse-options-ws] {state.sym.upper()} refit falló ({type(e).__name__}: {e})")
+
+
+async def lse_options_loop(state, refresh_s=lse_gamma_map.REFRESH_S):
+    """REST Greek reconciliation; prints between snapshots arrive over LSE WebSocket.
+
+    This deliberately only broadcasts chart context.  It does not call narrator,
+    structural signals, direction, zones, orders, or any daemon that consumes dealer GEX.
+    """
+    while True:
+        started = time.time()
+        try:
+            spot = state.bars[-1][4] if state.bars else None
+            if spot:
+                result = await asyncio.to_thread(
+                    lse_gamma_map.build, state.sym, spot, state._lse_option_expiries,
+                    None, started, refresh_s,
+                    os.path.join(REPO, "data", f"lse_mm_fractal_{state.sym.lower()}.json"),
+                    None, True)
+                heatmap, levels, expiries, snapshot = result
+                try:
+                    oi_overlay = await asyncio.to_thread(
+                        polygon_oi.load_or_fetch, state.sym, expiries, spot, now=started)
+                    lse_gamma_map.attach_polygon_oi(snapshot, oi_overlay)
+                    result = await asyncio.to_thread(
+                        lse_gamma_map.build, state.sym, spot, expiries,
+                        None, started, refresh_s,
+                        os.path.join(REPO, "data", f"lse_mm_fractal_{state.sym.lower()}.json"),
+                        snapshot, True)
+                    heatmap, levels, expiries, snapshot = result
+                except Exception as oi_error:
+                    snapshot["polygon_oi_error"] = f"{type(oi_error).__name__}: {oi_error}"[:240]
+                    levels["oi_available"] = False
+                    levels["oi_source"] = "polygon_options_snapshot"
+                    levels["flip"] = None
+                    levels["net_gex"] = None
+                    levels["regime"] = None
+                    levels["flip_why"] = snapshot["polygon_oi_error"]
+                    print(f"[polygon-oi] {state.sym.upper()} DATA ({snapshot['polygon_oi_error']})")
+                async with state._lse_option_lock:
+                    state._lse_option_snapshot = snapshot
+                await _install_lse_option_result(state, result, archive=True)
+                excluded = ",".join(sorted(heatmap.get("excluded_expiries") or {})) or "ninguno"
+                print(f"[lse-options] {state.sym.upper()} Γ×vol: "
+                      f"{levels.get('contracts_used')} contratos, "
+                      f"{len(expiries)} vencimientos activos; excluidos={excluded}; "
+                      f"REST {refresh_s}s + prints WS")
+        except asyncio.CancelledError:
+            raise
+        except Exception as e:
+            print(f"[lse-options] {state.sym.upper()} refresh falló ({type(e).__name__}: {e})")
+        await asyncio.sleep(max(5.0, refresh_s - (time.time() - started)))
 
 
 # ============================== feed MOCK (offline) ==========================
@@ -4225,7 +5308,8 @@ def build_state_and_feed(args):
     set_mock_dir(getattr(args, "mock_dir", None))
     sym = resolve_sym(args.sym)
     state = State(sym, mock=args.mock)
-    state.levels = load_levels(sym) or {}
+    state.levels = ({"sym": sym.upper(), "chain_src": "lse_pending"}
+                    if getattr(args, "lse_only", False) else (load_levels(sym) or {}))
     if not args.mock:
         # en modo live las barras iniciales las trae el feed; precarga vacía
         state.set_bars([])
@@ -4234,7 +5318,8 @@ def build_state_and_feed(args):
     STATES.clear()   # el `app` de módulo se construye al importar y deja un estado fantasma
     STATES[sym] = state
     PRIMARY_SYM["sym"] = sym
-    STATE_CFG.update(mock=bool(args.mock), interval=float(getattr(args, "interval", 1.0) or 1.0),
+    STATE_CFG.update(mock=bool(args.mock), lse_only=bool(getattr(args, "lse_only", False)),
+                     interval=float(getattr(args, "interval", 1.0) or 1.0),
                      client_id=int(getattr(args, "client_id", 60) or 60))
     return state
 
@@ -4248,12 +5333,21 @@ async def _serve(args):
     app = create_app(state)
     if args.mock:
         asyncio.ensure_future(mock_feed(state, interval=args.interval))
+    elif args.lse_only:
+        # No TWS/IBKR reconnect loop and no local-file/rt_last fallback. The initial
+        # history is LSE REST; then options context also stays entirely on LSE.
+        async def _lse_primary():
+            await prepare_dynamic_equity(state)
+            await lse_options_loop(state)
+        asyncio.ensure_future(_lse_primary())
     else:
         asyncio.ensure_future(live_feed(state, args.port, args.client_id))
         asyncio.ensure_future(us_stale_feed(state))   # anti-congelada 20:00 ET (skip mock/korea)
-    asyncio.ensure_future(levels_loop(state))   # GEX/flip/muros en tiempo real
-    asyncio.ensure_future(uw_tape_loop())   # cinta de ballenas UW -> wgt-flow
-    asyncio.ensure_future(liq_loop())       # liquidez VPVR/KDE -> pricelines (contexto)
+    if not args.lse_only:
+        asyncio.ensure_future(levels_loop(state))   # GEX/flip/muros en tiempo real
+        asyncio.ensure_future(uw_tape_loop())   # cinta de ballenas UW -> wgt-flow
+        asyncio.ensure_future(liq_loop())       # liquidez VPVR/KDE -> pricelines (contexto)
+        asyncio.ensure_future(footprint_loop()) # footprint Bid x Ask AllLast -> indicador opcional
     config = uvicorn.Config(app, host=args.host, port=args.http_port, log_level="info")
     server = uvicorn.Server(config)
     await server.serve()
@@ -4283,6 +5377,7 @@ if HAVE_FASTAPI:
             asyncio.ensure_future(levels_loop(state))   # GEX/flip/muros en tiempo real
             asyncio.ensure_future(uw_tape_loop())   # cinta de ballenas UW -> wgt-flow
             asyncio.ensure_future(liq_loop())       # liquidez VPVR/KDE -> pricelines (contexto)
+            asyncio.ensure_future(footprint_loop()) # footprint Bid x Ask AllLast -> indicador opcional
         return app
 
     app = _app_factory()
@@ -4383,10 +5478,14 @@ def main():
     ap.add_argument("--client-id", type=int, default=60, help="clientId IBKR (60 libre)")
     ap.add_argument("--interval", type=float, default=1.0, help="seg entre barras en --mock")
     ap.add_argument("--mock", action="store_true", help="feed offline desde CSV (sin TWS)")
+    ap.add_argument("--lse-only", action="store_true",
+                    help="US stocks solo por London Strategic Edge (REST 1m + WebSocket BBO), sin TWS/fallbacks")
     ap.add_argument("--mock-dir", default=None,
                     help="sandbox de ./replay (--out): barras 1m + cadena + niveles COHERENTES")
     ap.add_argument("--selftest", action="store_true", help="valida frames sin fastapi/TWS")
     args = ap.parse_args()
+    if args.mock and args.lse_only:
+        ap.error("--mock y --lse-only son mutuamente excluyentes")
     _ACCT_CID["v"] = 6300 + int(args.http_port) % 100   # único por ventana (8080->6380...)
 
     set_mock_dir(args.mock_dir)

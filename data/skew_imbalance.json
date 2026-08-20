@@ -1,0 +1,68 @@
+{
+ "asof": 1786161228.1855638,
+ "syms": [
+  {
+   "sym": "AAPL",
+   "dia": "2026-08-04",
+   "spot": 309.44,
+   "expiries": [
+    {
+     "expiry": "2026-08-05",
+     "n": 84,
+     "iv_atm": 0.3169,
+     "call_skew_pct": [
+      -13.8,
+      -8.1,
+      -8.1,
+      -8.1,
+      -2.3,
+      -2.3
+     ],
+     "put_skew_pct": [
+      6.3,
+      6.3,
+      6.3,
+      4.5,
+      4.5,
+      8.0
+     ],
+     "call_media": -7.1,
+     "put_media": 6.0,
+     "imbalance": -13.1,
+     "rr25": -3.99,
+     "rr25_percentil": null,
+     "rr25_n_sesiones": 13,
+     "rr25_nota": "sin percentil: 13 sesiones archivadas, hacen falta 30"
+    },
+    {
+     "expiry": "2026-08-07",
+     "n": 88,
+     "iv_atm": 0.315,
+     "call_skew_pct": [
+      -5.8,
+      -4.2,
+      -4.2,
+      -4.2,
+      -3.8,
+      -3.8
+     ],
+     "put_skew_pct": [
+      2.7,
+      2.7,
+      2.7,
+      2.7,
+      2.7,
+      2.5
+     ],
+     "call_media": -4.3,
+     "put_media": 2.7,
+     "imbalance": -7.0,
+     "rr25": -2.05,
+     "rr25_percentil": null,
+     "rr25_n_sesiones": 13,
+     "rr25_nota": "sin percentil: 13 sesiones archivadas, hacen falta 30"
+    }
+   ]
+  }
+ ]
+}

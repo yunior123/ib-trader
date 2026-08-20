@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import pytest
+import httpx
 
 from backend.app.config import Settings
 from backend.app.providers.base import (
@@ -95,3 +96,30 @@ async def test_close_survives_one_bad_provider():
     # Must not raise despite the bad provider; the good one still closes.
     await fresh.close()
     assert closed["options"] is True
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("provider_cls,key_field", [
+    (PolygonProvider, "polygon_api_key"),
+    (IntrinioProvider, "intrinio_api_key"),
+])
+async def test_http_errors_never_disclose_provider_api_keys(provider_cls, key_field):
+    secret = "do-not-log-this-secret"
+    settings = Settings(**{key_field: secret})
+    provider = provider_cls(settings)
+
+    async def forbidden(_request):
+        return httpx.Response(403, request=_request)
+
+    await provider.client.aclose()
+    provider.client = httpx.AsyncClient(
+        base_url="https://example.invalid", transport=httpx.MockTransport(forbidden)
+    )
+    try:
+        with pytest.raises(ProviderError) as excinfo:
+            await provider._get("/probe")
+        assert secret not in str(excinfo.value)
+        assert "api_key=" not in str(excinfo.value)
+        assert "apiKey=" not in str(excinfo.value)
+    finally:
+        await provider.close()

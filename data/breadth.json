@@ -1,172 +1,166 @@
 {
  "QQQ": {
   "index": "QQQ",
-  "score": 0.09,
+  "score": -0.135,
   "verdict": "ENGRANAJE NEUTRO/MIXTO: componentes divididos \u2014 QQQ sin liderazgo claro",
   "aligned_top": [
-   "NVDA",
-   "AAPL"
+   "MSFT"
   ],
   "breakdowns": [
    "AMZN",
-   "GOOGL",
-   "AMD"
+   "AVGO"
   ],
   "breakouts": [
-   "NVDA",
-   "AAPL",
-   "NFLX"
+   "TSLA",
+   "AMD"
   ],
   "components": {
    "NVDA": {
     "w": 9.0,
-    "lean": 1.0,
-    "tag": "ruptura alcista",
-    "gap": 4.42
+    "lean": -0.1,
+    "tag": "rango",
+    "gap": -0.06
    },
    "MSFT": {
     "w": 8.0,
-    "lean": -0.65,
+    "lean": -0.38,
     "tag": "rango",
-    "gap": -1.75
+    "gap": -0.3
    },
    "AAPL": {
     "w": 7.5,
-    "lean": 1.0,
-    "tag": "ruptura alcista",
-    "gap": 1.42
+    "lean": 0.47,
+    "tag": "rango",
+    "gap": 0.22
    },
    "AMZN": {
     "w": 5.5,
-    "lean": -0.96,
+    "lean": -1.0,
     "tag": "RUPTURA BAJISTA",
-    "gap": -1.22
+    "gap": -0.94
    },
    "AVGO": {
     "w": 5.0,
-    "lean": 0.58,
-    "tag": "rango",
-    "gap": 0.41
+    "lean": -1.0,
+    "tag": "RUPTURA BAJISTA",
+    "gap": -5.94
    },
    "META": {
     "w": 4.5,
-    "lean": 0.69,
+    "lean": -0.42,
     "tag": "rango",
-    "gap": 0.55
+    "gap": -0.86
    },
    "GOOGL": {
     "w": 5.0,
-    "lean": -1.0,
-    "tag": "RUPTURA BAJISTA",
-    "gap": -4.62
+    "lean": -0.1,
+    "tag": "rango",
+    "gap": -0.13
    },
    "TSLA": {
     "w": 3.0,
-    "lean": -0.77,
-    "tag": "rango",
-    "gap": -1.86
+    "lean": 0.92,
+    "tag": "ruptura alcista",
+    "gap": 0.68
    },
    "NFLX": {
     "w": 3.0,
-    "lean": 1.0,
-    "tag": "ruptura alcista",
-    "gap": 1.48
+    "lean": 0.17,
+    "tag": "rango",
+    "gap": -0.1
    },
    "AMD": {
     "w": 2.0,
-    "lean": -1.0,
-    "tag": "RUPTURA BAJISTA",
-    "gap": -8.27
+    "lean": 1.0,
+    "tag": "ruptura alcista",
+    "gap": 6.5
    },
    "QCOM": {
     "w": 1.2,
-    "lean": -0.73,
+    "lean": 0.66,
     "tag": "rango",
-    "gap": -3.9
+    "gap": 0.61
    }
   },
-  "ts": 1786021946
+  "ts": 1786969816
  },
  "SPY": {
   "index": "SPY",
-  "score": 0.099,
+  "score": -0.133,
   "verdict": "ENGRANAJE NEUTRO/MIXTO: componentes divididos \u2014 SPY sin liderazgo claro",
   "aligned_top": [
-   "NVDA",
-   "AAPL"
+   "MSFT"
   ],
   "breakdowns": [
    "AMZN",
-   "GOOGL",
-   "AMD"
+   "AVGO"
   ],
   "breakouts": [
-   "NVDA",
-   "AAPL",
-   "NFLX"
+   "TSLA",
+   "AMD"
   ],
   "components": {
    "NVDA": {
     "w": 7.5,
-    "lean": 1.0,
-    "tag": "ruptura alcista",
-    "gap": 4.42
+    "lean": -0.1,
+    "tag": "rango",
+    "gap": -0.06
    },
    "MSFT": {
     "w": 7.0,
-    "lean": -0.65,
+    "lean": -0.38,
     "tag": "rango",
-    "gap": -1.75
+    "gap": -0.3
    },
    "AAPL": {
     "w": 6.5,
-    "lean": 1.0,
-    "tag": "ruptura alcista",
-    "gap": 1.42
+    "lean": 0.47,
+    "tag": "rango",
+    "gap": 0.22
    },
    "AMZN": {
     "w": 4.0,
-    "lean": -0.96,
+    "lean": -1.0,
     "tag": "RUPTURA BAJISTA",
-    "gap": -1.22
+    "gap": -0.94
    },
    "META": {
     "w": 3.0,
-    "lean": 0.69,
+    "lean": -0.42,
     "tag": "rango",
-    "gap": 0.55
+    "gap": -0.86
    },
    "GOOGL": {
     "w": 4.0,
-    "lean": -1.0,
-    "tag": "RUPTURA BAJISTA",
-    "gap": -4.62
+    "lean": -0.1,
+    "tag": "rango",
+    "gap": -0.13
    },
    "AVGO": {
     "w": 2.5,
-    "lean": 0.58,
-    "tag": "rango",
-    "gap": 0.41
+    "lean": -1.0,
+    "tag": "RUPTURA BAJISTA",
+    "gap": -5.94
    },
    "TSLA": {
     "w": 2.0,
-    "lean": -0.77,
-    "tag": "rango",
-    "gap": -1.86
+    "lean": 0.92,
+    "tag": "ruptura alcista",
+    "gap": 0.68
    },
    "AMD": {
     "w": 1.2,
-    "lean": -1.0,
-    "tag": "RUPTURA BAJISTA",
-    "gap": -8.27
+    "lean": 1.0,
+    "tag": "ruptura alcista",
+    "gap": 6.5
    },
    "NFLX": {
     "w": 1.5,
-    "lean": 1.0,
-    "tag": "ruptura alcista",
-    "gap": 1.48
+    "lean": 0.17,
+    "tag": "rango",
+    "gap": -0.1
    }
   },
-  "ts": 1786021947
+  "ts": 1786969818
  }
 }

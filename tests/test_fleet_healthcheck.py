@@ -676,6 +676,29 @@ def test_launchctl_vacio_no_declara_NO_CARGADO(hc):
     assert crit == [] and any("VISTA CIEGA" in w for w in warn)
 
 
+def test_launchd_sigterm_y_probes_fuera_de_sesion_no_hacen_ruido(hc):
+    ld = {
+        "com.ibtrader.dailyplans": "0",
+        "com.ibtrader.postmortem": "0",
+        "com.ibtrader.discordrelay": "-15",
+        "com.ibtrader.intrinioprobe": "1",
+        "com.ibtrader.uwlatency": "1",
+    }
+    ok, warn, crit = hc.audit_launchd(ld, None, fleet_live=False)
+    assert not warn and not crit
+    assert len([x for x in ok if "correcto" in x or "SIGTERM" in x]) >= 3
+
+
+def test_email_healthcheck_una_vez_por_dia_salvo_cambio(hc, tmp_path):
+    p = str(tmp_path / "email_state.json")
+    due, sig = hc.health_email_due([], ["mismo aviso"], "2026-08-09", p)
+    assert due
+    hc.mark_health_email_sent("2026-08-09", sig, p)
+    assert hc.health_email_due([], ["mismo aviso"], "2026-08-09", p)[0] is False
+    assert hc.health_email_due([], ["aviso distinto"], "2026-08-09", p)[0] is True
+    assert hc.health_email_due([], ["mismo aviso"], "2026-08-10", p)[0] is True
+
+
 def test_con_vista_ciega_no_hay_daemon_MUERTO_ni_cura(hc, monkeypatch, capsys):
     monkeypatch.setattr(hc, "pgrep_ciego", lambda: True)
     monkeypatch.setattr(hc, "proc_alive", lambda _p: False)
