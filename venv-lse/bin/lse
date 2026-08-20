@@ -1,6 +1,0 @@
-#!/Users/yuniorrodriguezosorio/ib-trader/venv-lse/bin/python3
-import sys
-from lse.cli import main
-if __name__ == '__main__':
-    sys.argv[0] = sys.argv[0].removesuffix('.exe')
-    sys.exit(main())

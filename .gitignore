@@ -161,3 +161,4 @@ config/*.bak
 data/history/*/uw_*.json
 data/history/*/uw_*.HUECO
 data/uw_backfill_report.json
+venv-lse/
