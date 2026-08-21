@@ -87,3 +87,14 @@ def test_bundle_excludes_developer_voices_and_hard_validates_canonical_bank():
     assert "mkdir -p \"$RES/backend/voice_samples\"" not in bundle
     assert "speak_with_fallback.py" not in paths
     assert "voice_samples/" not in paths
+
+
+def test_portability_gate_checks_runtime_text_not_binary_wheel_build_metadata():
+    build = (ROOT / "macapp" / "build.sh").read_text(encoding="utf-8")
+    workflow = (ROOT / ".github" / "workflows" / "macapp.yml").read_text(encoding="utf-8")
+    assert 'PORTABLE_TEXT=("$APP/Contents/MacOS"' in build
+    assert 'grep -Ilr "$HOME" ${=PORTABLE_TEXT}' in build
+    assert 'RUNTIME=("$APP/Contents/MacOS"' in workflow
+    assert 'grep -Ilr "$HOME" "${RUNTIME[@]}"' in workflow
+    assert 'grep -rl "$HOME" "$APP"' not in build
+    assert 'grep -rl "$HOME" "$APP"' not in workflow

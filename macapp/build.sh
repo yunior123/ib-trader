@@ -140,15 +140,19 @@ else
   echo "  🔴 AVISO: el sello de la firma NO valida — revisar antes de pasarla a otro Mac"
 fi
 
-# --- PORTABILIDAD: cero rutas absolutas de esta maquina ----------------------
+# --- PORTABILIDAD: cero rutas absolutas en texto ejecutable/runtime ----------
 # El fallo clasico: los wrappers que pip escribe en Resources/python/bin llevan el
-# shebang con la ruta del .app en ESTE Mac -> en otro Mac no arrancan.
-if BAD=$(grep -rl "$HOME" "$APP" 2>/dev/null); then
-  echo "🔴 PORTABILIDAD ROTA — estos ficheros del bundle llevan la ruta de este Mac:"
+# shebang con la ruta del .app en ESTE Mac -> en otro Mac no arrancan. No se escanea
+# site-packages binario: wheels como pydantic-core/duckdb incluyen rutas de compilacion
+# en DWARF/SBOM que no son dependencias de carga y grep las confundia con shebangs rotos.
+PORTABLE_TEXT=("$APP/Contents/MacOS" "$APP/Contents/Resources/backend"
+               "$APP/Contents/Resources/python/bin")
+if BAD=$(grep -Ilr "$HOME" ${=PORTABLE_TEXT} 2>/dev/null); then
+  echo "🔴 PORTABILIDAD ROTA — estos ficheros runtime llevan la ruta de este Mac:"
   echo "$BAD" | sed 's/^/     /'
   exit 1
 fi
-echo "  portabilidad: 0 rutas absolutas de este Mac dentro del bundle"
+echo "  portabilidad: 0 rutas absolutas en texto ejecutable/runtime"
 
 # --- ENTREGA A DESKTOP (pipeline automatico) -------------------------------
 # Desktop esta bajo TCC: desde una shell interactiva se escribe bien, pero si esto

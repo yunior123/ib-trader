@@ -83,8 +83,9 @@ jobs:
       - name: Puerta de portabilidad (cero rutas absolutas)
         run: |
           APP="macapp/ib-trader Cockpit.app"
-          if grep -rl "$HOME" "$APP"; then echo "::error::rutas absolutas dentro del bundle"; exit 1; fi
-          if grep -rl "/Users/yuniorrodriguezosorio" "$APP"; then echo "::error::ruta del Mac de Yunior dentro del bundle"; exit 1; fi
+          RUNTIME=("$APP/Contents/MacOS" "$APP/Contents/Resources/backend" "$APP/Contents/Resources/python/bin")
+          if grep -Ilr "$HOME" "${RUNTIME[@]}"; then echo "::error::ruta del runner en texto runtime"; exit 1; fi
+          if grep -Ilr "/Users/yuniorrodriguezosorio" "${RUNTIME[@]}"; then echo "::error::ruta del Mac de Yunior en texto runtime"; exit 1; fi
           codesign --verify --deep "$APP"
           test -f "$APP/Contents/Resources/AppIcon.icns"
           test -x "$APP/Contents/Resources/backend/run.sh"
