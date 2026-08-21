@@ -62,6 +62,7 @@ import signal_conditioning       # SPEAK_MIN: umbral de voz único (regla should
 import ib_mode                   # fuente única paper/live (data/ib_mode.txt) — sin puertos hardcodeados
 import rt_last                   # print WS canónico: epoch/precio/fuente con guarda de frescura
 import lse_gamma_map             # contexto London gamma×volumen; nunca dealer GEX
+import free_oi                  # OI estructural keyless; London aporta IV/spot realtime
 import polygon_oi               # OI estructural diario; London sigue siendo realtime
 import architect_lse             # actividad London al estilo Architect; sin OI, nunca GEX
 import wall_integrity            # impactos/agotamiento auditable de muros, imán y flip
@@ -83,6 +84,10 @@ POLYGON_OI_ENABLED = os.environ.get("IBT_ENABLE_POLYGON_OI", "0").strip().lower(
 POLYGON_OI_DISABLED_REASON = (
     "Polygon OI disabled by default; set IBT_ENABLE_POLYGON_OI=1 only for rollback QA"
 )
+FREE_OI_ENABLED = os.environ.get("IBT_ENABLE_FREE_OI", "1").strip().lower() in {
+    "1", "true", "yes", "on",
+}
+FREE_OI_DISABLED_REASON = "free structural OI disabled with IBT_ENABLE_FREE_OI=0"
 
 # SANDBOX DE REPLAY (--mock-dir): barras y cadena del MISMO instante. El CSV de backtest
 # arranca en 2026-04-23 y su spot cae fuera de la banda de strikes de cualquier cadena de
@@ -5104,23 +5109,41 @@ async def lse_options_loop(state, refresh_s=lse_gamma_map.REFRESH_S):
                     os.path.join(REPO, "data", f"lse_mm_fractal_{state.sym.lower()}.json"),
                     None, True)
                 heatmap, levels, expiries, snapshot = result
-                if POLYGON_OI_ENABLED:
+                oi_attached = False
+                if FREE_OI_ENABLED:
+                    try:
+                        oi_overlay = await asyncio.to_thread(
+                            free_oi.load_or_fetch, state.sym, expiries, spot, now=started)
+                        oi_attached = lse_gamma_map.attach_oi(snapshot, oi_overlay)
+                    except Exception as oi_error:
+                        snapshot["oi_overlay_error"] = (
+                            f"{type(oi_error).__name__}: {oi_error}"
+                        )[:240]
+                        print(f"[free-oi] {state.sym.upper()} DATA "
+                              f"({snapshot['oi_overlay_error']})")
+                else:
+                    snapshot["oi_overlay_error"] = FREE_OI_DISABLED_REASON
+
+                # Polygon remains a deliberate rollback only and is never contacted on
+                # a normal launch.  It can fill the structural lane only if free OI failed.
+                if not oi_attached and POLYGON_OI_ENABLED:
                     try:
                         oi_overlay = await asyncio.to_thread(
                             polygon_oi.load_or_fetch, state.sym, expiries, spot, now=started)
-                        lse_gamma_map.attach_polygon_oi(snapshot, oi_overlay)
+                        oi_attached = lse_gamma_map.attach_polygon_oi(snapshot, oi_overlay)
                     except Exception as oi_error:
                         snapshot["polygon_oi_error"] = (
                             f"{type(oi_error).__name__}: {oi_error}"
                         )[:240]
                         print(f"[polygon-oi] {state.sym.upper()} DATA "
                               f"({snapshot['polygon_oi_error']})")
-                else:
-                    # Do not read the old cache either: disabled means no Polygon-derived
-                    # levels can leak into a newly published frame.
+                if not oi_attached and not POLYGON_OI_ENABLED:
+                    # Never read the retired provider's cache on the normal lane.
                     snapshot.pop("polygon_oi_overlay", None)
                     snapshot.pop("polygon_oi_error", None)
                     snapshot["polygon_oi_disabled"] = POLYGON_OI_DISABLED_REASON
+                elif oi_attached:
+                    snapshot.pop("polygon_oi_disabled", None)
 
                 # Rebuild from the same London snapshot so every field (scope, flip,
                 # squeeze fuel and provenance) reflects the selected OI lane coherently.

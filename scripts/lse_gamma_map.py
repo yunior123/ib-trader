@@ -238,17 +238,53 @@ def attach_polygon_oi(snapshot, overlay):
     return True
 
 
+def attach_oi(snapshot, overlay):
+    """Attach a provider-neutral OI book to the coherent London snapshot."""
+    if not snapshot or not isinstance(overlay, dict) or overlay.get("status") != "OK":
+        return False
+    snapshot["oi_overlay"] = overlay
+    return True
+
+
+def _oi_overlay(snapshot):
+    """Prefer the free lane while retaining the explicit Polygon rollback shape."""
+    snapshot = snapshot or {}
+    if snapshot.get("oi_overlay"):
+        return snapshot["oi_overlay"]
+    if snapshot.get("polygon_oi_disabled"):
+        return {}
+    return snapshot.get("polygon_oi_overlay") or {}
+
+
+def _lse_iv_lookup(snapshot):
+    """IV keyed by the same expiry/strike/right as the structural OI contract."""
+    out = {}
+    for expiry, rows in ((snapshot or {}).get("rows_by_expiry") or {}).items():
+        for row in rows:
+            strike = _num(row.get("strike"))
+            right = str(row.get("contract_type") or "").lower()
+            iv = _num(row.get("iv"))
+            if (strike is not None and right in ("call", "put") and
+                    iv is not None and 0 < iv <= 5):
+                out[(str(expiry), strike, right)] = iv
+    return out
+
+
 def _polygon_oi_structure(snapshot, spot, now):
-    """Build OI-weighted GEX from Polygon OI/IV and the live London spot.
+    """Build OI-weighted GEX from a structural OI book and live London inputs.
 
     This is isolated from the London gamma×volume map: it may populate Net GEX,
     regime and the true OI flip, but it never replaces London walls or magnets.
     """
-    overlay = (snapshot or {}).get("polygon_oi_overlay") or {}
+    overlay = _oi_overlay(snapshot)
     disabled_reason = (snapshot or {}).get("polygon_oi_disabled")
+    legacy_polygon = bool((snapshot or {}).get("polygon_oi_overlay")) and bool(overlay)
+    source = str(overlay.get("source") or
+                 ("polygon_options_snapshot" if legacy_polygon else
+                  ("disabled_polygon" if disabled_reason else "oi_overlay_unavailable")))
     base = {
         "status": "DATA",
-        "source": "disabled_polygon" if disabled_reason else "polygon_options_snapshot",
+        "source": source,
         "spot_source": "lse_realtime", "oi_semantics": "start_of_day_open_interest",
         "dealer_sign_convention": "calls_positive_puts_negative",
         "net_gex": None, "gross_gex": None, "flip": None, "roots": [],
@@ -257,12 +293,13 @@ def _polygon_oi_structure(snapshot, spot, now):
         "validation": "STRUCTURAL_CONTEXT_NOT_DIRECTIONAL_BACKTEST",
         "why": None,
     }
-    if disabled_reason:
+    if disabled_reason and not overlay:
         base["why"] = disabled_reason
         return base
     if overlay.get("status") != "OK":
-        base["why"] = ((snapshot or {}).get("polygon_oi_error") or
-                       "Polygon open_interest overlay unavailable")
+        base["why"] = ((snapshot or {}).get("oi_overlay_error") or
+                       (snapshot or {}).get("polygon_oi_error") or
+                       "structural open_interest overlay unavailable")
         return base
     fetched = _num(overlay.get("fetched_at"))
     age = None if fetched is None else max(0.0, now - fetched)
@@ -273,16 +310,19 @@ def _polygon_oi_structure(snapshot, spot, now):
         "strike_low": overlay.get("strike_low"), "strike_high": overlay.get("strike_high"),
     })
     if fetched is None or age > 36 * 3600:
-        base["why"] = "Polygon OI snapshot stale or missing fetch timestamp"
+        base["why"] = "%s OI snapshot stale or missing fetch timestamp" % source
         return base
 
     candidates, positive, usable = [], [], []
+    lse_iv = _lse_iv_lookup(snapshot)
     for row in overlay.get("contracts") or []:
         strike = _num(row.get("strike"))
         oi = _num(row.get("open_interest"))
         iv = _num(row.get("iv"))
         expiry = str(row.get("expiry") or "")
         right = str(row.get("right") or "").lower()
+        if iv is None:
+            iv = lse_iv.get((expiry, strike, right))
         years = _expiry_years(expiry, now)
         if strike is None or oi is None or right not in ("call", "put"):
             continue
@@ -319,8 +359,8 @@ def _polygon_oi_structure(snapshot, spot, now):
         "regime": gex.get("regime"), "strike_span_pct": gex.get("strike_span_pct"),
         "oi_call_wall": gex.get("oi_call_wall"), "oi_put_wall": gex.get("oi_put_wall"),
         "gex_call_wall": gex.get("call_wall"), "gex_put_wall": gex.get("put_wall"),
-        "flip_method": ("BS gamma repriced across hypothetical LSE spots; "
-                         "Polygon start-of-day OI and IV"),
+        "flip_method": ("BS gamma repriced across hypothetical LSE spots; %s "
+                         "start-of-day OI joined to matching London IV" % source),
         "why": ("measured OI zero crossing" if gex.get("flip") is not None else
                 "complete OI profile has no zero crossing in observed strike range"),
     })
@@ -331,8 +371,8 @@ def _squeeze_fuel_structure(snapshot, spot, now, oi_structure=None):
     """Measure the *potential* upside options accelerator around live spot.
 
     This deliberately does not claim that equity shorts are covering, nor that
-    dealers are short the calls.  Polygon supplies start-of-day OI/IV and London
-    supplies spot; the metric is the share of nearby absolute OI gamma sitting in
+    dealers are short the calls.  The structural lane supplies start-of-day OI and
+    London supplies matching IV plus spot; the metric is the share of nearby OI gamma sitting in
     calls above spot.  Live price velocity is attached separately by
     :func:`update_squeeze_fuel`.
     """
@@ -340,7 +380,7 @@ def _squeeze_fuel_structure(snapshot, spot, now, oi_structure=None):
     base = {
         "status": "DATA", "label": "DATA", "active": False,
         "source": ("disabled_polygon" if oi_structure.get("source") == "disabled_polygon"
-                   else "polygon_oi_iv_lse_spot"),
+                   else "%s_lse_iv_spot" % oi_structure.get("source", "oi")),
         "metric": "overhead_call_oi_gamma_share",
         "call_convexity_share_pct": None,
         "overhead_call_gex": None, "nearby_put_gex": None,
@@ -355,16 +395,20 @@ def _squeeze_fuel_structure(snapshot, spot, now, oi_structure=None):
         "why": None,
     }
     if oi_structure.get("status") != "OK":
-        base["why"] = oi_structure.get("why") or "usable Polygon OI structure unavailable"
+        base["why"] = oi_structure.get("why") or "usable structural OI unavailable"
         return base
 
     calls, puts, book_gross = [], [], 0.0
-    for row in ((snapshot or {}).get("polygon_oi_overlay") or {}).get("contracts") or []:
+    lse_iv = _lse_iv_lookup(snapshot)
+    for row in _oi_overlay(snapshot).get("contracts") or []:
         strike = _num(row.get("strike"))
         oi = _num(row.get("open_interest"))
         iv = _num(row.get("iv"))
         right = str(row.get("right") or "").lower()
-        years = _expiry_years(str(row.get("expiry") or ""), now)
+        expiry = str(row.get("expiry") or "")
+        if iv is None:
+            iv = lse_iv.get((expiry, strike, right))
+        years = _expiry_years(expiry, now)
         if (strike is None or oi is None or oi <= 0 or iv is None or
                 not (0 < iv <= 5) or years is None or right not in ("call", "put")):
             continue
@@ -995,7 +1039,7 @@ def build(sym, spot, known_expiries=None, client=None, now=None, refresh_s=REFRE
                        if item.get("expected_move_model")), None)
     nearest_expiry = next((item.get("expiry") for item in architect["expiries"]
                            if item.get("expected_move_model")), None)
-    oi_source = oi_structure.get("source") or "polygon_options_snapshot"
+    oi_source = oi_structure.get("source") or "oi_overlay_unavailable"
     heatmap = {
         "sym": sym, "spot": spot,
         "date": (dt.datetime.fromtimestamp(source_ts).date().isoformat() if source_ts else None),
@@ -1024,7 +1068,8 @@ def build(sym, spot, known_expiries=None, client=None, now=None, refresh_s=REFRE
         "option_tape": option_tape,
         "oi_structure": oi_structure,
         "squeeze_fuel": squeeze_fuel,
-        "note": ("heatmap gamma × volume_today de LSE; OI/flip estructural separado de Polygon"
+        "note": ("heatmap gamma × volume_today de LSE; OI/flip estructural separado de %s" %
+                 oi_source
                  if oi_structure.get("status") == "OK" else
                  "gamma × volume_today; sin open interest válido, no es Net GEX"),
     }
@@ -1053,12 +1098,12 @@ def build(sym, spot, known_expiries=None, client=None, now=None, refresh_s=REFRE
         "em_why": nearest_em.get("method") if nearest_em else "LSE sin IV ATM util",
         "exp": nearest_expiry.replace("-", "") if nearest_expiry else None,
         "dte": nearest_em.get("dte_model") if nearest_em else None,
-        "scope": (("LSE realtime · Polygon OI OFF · %d expiries" % len(expiries))
-                  if oi_source == "disabled_polygon" else
-                  ("LSE realtime + Polygon OI · %d expiries" % len(expiries))),
+        "scope": (("LSE realtime · OI DATA · %d expiries" % len(expiries))
+                  if oi_structure.get("status") != "OK" else
+                  ("LSE realtime + %s · %d expiries" % (oi_source, len(expiries)))),
         "flip": oi_structure.get("flip"),
         "flip_why": oi_structure.get("why"),
-        "flip_src": ("polygon_oi_lse_spot_repriced" if oi_structure.get("status") == "OK"
+        "flip_src": ("%s_lse_spot_repriced" % oi_source if oi_structure.get("status") == "OK"
                      else "none"),
         "regime": oi_structure.get("regime"),
         "oi_available": oi_structure.get("status") == "OK",

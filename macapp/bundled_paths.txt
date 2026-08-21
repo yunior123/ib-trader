@@ -26,6 +26,7 @@ scripts/architect_lse.py
 scripts/compass.cpp
 scripts/confluence_engine.py
 scripts/direction_view.py
+scripts/free_oi.py
 scripts/gex_core.py
 scripts/ib_mode.py
 scripts/lse_client.py

@@ -1,35 +1,32 @@
 # Reemplazo gratuito de Polygon OI — 2026-08-21
 
-## Decisión para la semana próxima
+## Decisión implementada para la semana próxima
 
 Polygon queda **OFF por defecto**. El cockpit no consulta su API ni acepta su caché.
-Hasta validar un sustituto con datos reales, `flip`, `net_gex` y `regime` permanecen
-`DATA`; London sigue entregando paredes, imán y perfil descriptivo `gamma × volume_today`.
+El adaptador `scripts/free_oi.py` usa ahora la cadena pública de Nasdaq, sin clave,
+cuenta, tarjeta ni pago. Descarga sólo el rango de expiraciones activo y normaliza OI por
+contrato; London conserva spot, IV/Greeks y actividad intradía. El 21-ago se verificó el
+camino completo en QQQ, NVDA, SMH, SPY, TSLA y SPCX: los seis publicaron
+`oi_source=nasdaq_public_option_chain`, `oi_available=true`, Net GEX y flip.
 
-La ruta recomendada es:
+La ruta falla cerrada: OI ausente se conserva como desconocido, una expiración sin calls y
+puts suficientes invalida la captura, la caché vence a las 36 h, y se exige IV London del
+mismo vencimiento/strike/lado antes de calcular gamma. Polygon sólo conserva un rollback
+manual con `IBT_ENABLE_POLYGON_OI=1`; no participa en el arranque normal.
 
-1. **Tradier como OI primario.** Su plan Lite es gratuito, el mínimo de cuenta publicado
-   es $0, la API está incluida, y la cadena por vencimiento entrega `open_interest`, IV y
-   Greeks de ORATS. Producción ofrece opciones en tiempo real; sandbox es 15 minutos
-   retrasado. El límite publicado es 120 solicitudes/minuto, muy por encima de una captura
-   diaria para seis símbolos.
-2. **Alpaca como segundo proveedor diario.** El plan Basic es gratuito y el endpoint de
-   contratos de opciones expone `open_interest` junto con `open_interest_date`. Su feed
-   gratuito de precios es indicativo, pero eso no bloquea este diseño: London conserva spot,
-   IV/Greeks y actividad intradía; Alpaca sólo aporta OI start-of-day.
-3. **OCC como control/fallback autoritativo.** OCC publica una descarga CSV diaria de OI y
-   documenta el URL para automatización. Requiere parser de símbolo OCC y unión con la
-   superficie London, pero no requiere clave y sirve para reconciliar Tradier/Alpaca.
+Tradier Lite y Alpaca Basic siguen siendo alternativas gratuitas sin mínimo publicado, pero
+ambas necesitan que el usuario cree una cuenta/token. No se fingió que estaban conectadas sin
+credenciales. Optionwatch y OptionCharts son interfaces, no feeds públicos documentados.
 
-No se cambia automáticamente a un proveedor sin una captura paralela y estas puertas:
-fecha de OI explícita, cobertura call/put de ambos lados, al menos 50% de contratos positivos
-con IV London utilizable, expiraciones solicitadas completas y diferencia de muros/flip
-explicada frente al control OCC.
+Corrección importante: se probó el CSV keyless de OCC y contiene totales agregados de mercado
+por categoría, no OI por símbolo/strike. Sirve como control de totales del mercado, pero **no**
+puede alimentar paredes ni flip y queda fuera del camino del cockpit.
 
 ## Lo que encontré al revisar las alternativas mencionadas
 
 | Servicio | ¿API gratuita utilizable? | OI por contrato | Veredicto |
 |---|---:|---:|---|
+| [Nasdaq Option Chain](https://www.nasdaq.com/market-activity/stocks/nvda/option-chain) | Sí, endpoint público keyless | Sí | **Conectado y verificado en los seis símbolos.** Sin SLA/API pública documentada: caché y fail-closed obligatorios. |
 | [Optionwatch.io](https://optionwatch.io/) | No API pública documentada | Visible en UI | Buena interfaz gratuita; no construir un daemon contra HTML privado. |
 | [option.watch](https://www.option.watch/) | Es frontend BYOD | Según proveedor | Confirma la ruta: para acciones recomienda conectar Tradier; no es un feed independiente. |
 | [OptionCharts](https://optioncharts.io/docs) | No API pública documentada | Visible con 15 min de retraso | UI gratis; su propia página reserva descargas para planes de pago. No usar scraping. |
@@ -40,6 +37,7 @@ explicada frente al control OCC.
 | [FlashAlpha](https://flashalpha.com/pricing) | 5 llamadas/día | Cotización completa es Growth | Free sirve para probar GEX/metadata, no para seis cadenas diarias. |
 | [OptionData](https://www.optiondata.io/option_chain) | Prueba de 14 días | Sí | Beta y luego $599/mes de lista; no es solución gratuita permanente. |
 | [Cboe delayed quotes](https://www.cboe.com/delayed_quotes/API/quote_table/) | No automatizable | Visible | Cboe prohíbe expresamente autoextracción; descartado. |
+| [OCC Daily Open Interest](https://www.theocc.com/market-data/market-data-reports/other-market-data-info/batch-processing/daily-open-interest) | Sí, CSV keyless | **No; sólo agregados** | Verificado y descartado para paredes/flip. |
 
 ## Contrato mínimo del adaptador
 
@@ -51,8 +49,8 @@ El proveedor nuevo debe normalizar cada fila a:
   "strike": 0.0,
   "right": "call|put",
   "open_interest": 0,
-  "oi_date": "YYYY-MM-DD",
-  "source": "tradier|alpaca|occ"
+  "oi_date": "YYYY-MM-DD|null",
+  "source": "nasdaq_public_option_chain|tradier|alpaca"
 }
 ```
 
