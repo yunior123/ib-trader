@@ -51,6 +51,12 @@ def test_calibration_consumer_prefers_effective_sample_size():
     assert src.count('jnum(sec, "n_eff")') >= 2
 
 
+def test_float_json_parser_is_portable_to_xcode_16_libcxx():
+    src = open(os.path.join(REPO, "scripts", "compass.cpp")).read()
+    assert "parse_double_range" in src
+    assert "std::from_chars(" not in src
+
+
 def bars_touching(level, n=3, spot=None):
     """n barras 1m cuyo rango CONTIENE el nivel (= n lecturas / prints)."""
     spot = spot if spot is not None else level

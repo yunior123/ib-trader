@@ -59,8 +59,9 @@
 //        ./compass --loop 5 qqq            (bucle cada 5s)
 //        ./compass --ev-stdin < ev.json    (modo TEST: evidencia inyectada -> stdout)
 #include <algorithm>
-#include <charconv>
+#include <cerrno>
 #include <cmath>
+#include <cstdlib>
 #include <cstdio>
 #include <cstring>
 #include <ctime>
@@ -115,6 +116,20 @@ static const char* S_NONE = "SIN LECTURA";
 static double clampd(double x, double lo, double hi) { return std::max(lo, std::min(hi, x)); }
 static int sgn(double x) { return x > 0 ? 1 : (x < 0 ? -1 : 0); }
 
+// libc++ in the GitHub macos-15/Xcode 16.4 runner does not implement the floating-point
+// std::from_chars overload (it is explicitly deleted there).  strtod is locale-stable here
+// because this process never calls setlocale(), so the C locale remains the required JSON
+// decimal-dot locale.  Return the first unconsumed source character, matching from_chars.
+static const char* parse_double_range(const char* first, const char* last, double& out) {
+    if (!first || first >= last) return nullptr;
+    std::string copy(first, last);
+    char* parsed_end = nullptr;
+    errno = 0;
+    out = std::strtod(copy.c_str(), &parsed_end);
+    if (parsed_end == copy.c_str() || errno == ERANGE || !std::isfinite(out)) return nullptr;
+    return first + (parsed_end - copy.c_str());
+}
+
 // --------------------------- JSON minimo (idiom del repo, flow_pulse.cpp) ---------------
 static std::optional<double> jnum(std::string_view s, std::string_view key) {
     std::string pat = "\"" + std::string(key) + "\":";
@@ -124,8 +139,8 @@ static std::optional<double> jnum(std::string_view s, std::string_view key) {
     while (p < s.size() && (s[p] == ' ' || s[p] == '\t')) ++p;
     if (p < s.size() && (s[p] == 'n' || s[p] == '"')) return std::nullopt;  // null / string
     double out{};
-    auto [ptr, ec] = std::from_chars(s.data() + p, s.data() + s.size(), out);
-    if (ec != std::errc{}) return std::nullopt;
+    const char* ptr = parse_double_range(s.data() + p, s.data() + s.size(), out);
+    if (!ptr) return std::nullopt;
     (void)ptr;
     return out;
 }
@@ -381,9 +396,9 @@ static std::vector<std::pair<std::string, double>> etf_weights(const std::string
         size_t p = col + 1;
         while (p < w.size() && (w[p] == ' ' || w[p] == '\t')) ++p;
         double v{};
-        auto [np, ec] = std::from_chars(w.data() + p, w.data() + w.size(), v);
-        if (ec == std::errc{} && !tk.empty() && v > 0) out.emplace_back(tk, v);
-        i = (ec == std::errc{}) ? (size_t)(np - w.data()) : q2 + 1;
+        const char* np = parse_double_range(w.data() + p, w.data() + w.size(), v);
+        if (np && !tk.empty() && v > 0) out.emplace_back(tk, v);
+        i = np ? (size_t)(np - w.data()) : q2 + 1;
     }
     return out;
 }
@@ -1400,8 +1415,8 @@ static Ev ev_from_json(const std::string& j) {
             int k = 0; const char* p = row.c_str(); const char* e2 = p + row.size();
             while (k < 6 && p < e2) {
                 while (p < e2 && (*p == ' ' || *p == ',')) ++p;
-                double v{}; auto [np, ec] = std::from_chars(p, e2, v);
-                if (ec != std::errc{}) break;
+                double v{}; const char* np = parse_double_range(p, e2, v);
+                if (!np) break;
                 vals[k++] = v; p = np;
             }
             if (k >= 5) e.bars.push_back(Bar{(long)vals[0], vals[1], vals[2], vals[3], vals[4], vals[5]});
