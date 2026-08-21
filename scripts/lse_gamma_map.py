@@ -245,8 +245,10 @@ def _polygon_oi_structure(snapshot, spot, now):
     regime and the true OI flip, but it never replaces London walls or magnets.
     """
     overlay = (snapshot or {}).get("polygon_oi_overlay") or {}
+    disabled_reason = (snapshot or {}).get("polygon_oi_disabled")
     base = {
-        "status": "DATA", "source": "polygon_options_snapshot",
+        "status": "DATA",
+        "source": "disabled_polygon" if disabled_reason else "polygon_options_snapshot",
         "spot_source": "lse_realtime", "oi_semantics": "start_of_day_open_interest",
         "dealer_sign_convention": "calls_positive_puts_negative",
         "net_gex": None, "gross_gex": None, "flip": None, "roots": [],
@@ -255,6 +257,9 @@ def _polygon_oi_structure(snapshot, spot, now):
         "validation": "STRUCTURAL_CONTEXT_NOT_DIRECTIONAL_BACKTEST",
         "why": None,
     }
+    if disabled_reason:
+        base["why"] = disabled_reason
+        return base
     if overlay.get("status") != "OK":
         base["why"] = ((snapshot or {}).get("polygon_oi_error") or
                        "Polygon open_interest overlay unavailable")
@@ -334,7 +339,8 @@ def _squeeze_fuel_structure(snapshot, spot, now, oi_structure=None):
     oi_structure = oi_structure or _polygon_oi_structure(snapshot, spot, now)
     base = {
         "status": "DATA", "label": "DATA", "active": False,
-        "source": "polygon_oi_iv_lse_spot",
+        "source": ("disabled_polygon" if oi_structure.get("source") == "disabled_polygon"
+                   else "polygon_oi_iv_lse_spot"),
         "metric": "overhead_call_oi_gamma_share",
         "call_convexity_share_pct": None,
         "overhead_call_gex": None, "nearby_put_gex": None,
@@ -989,6 +995,7 @@ def build(sym, spot, known_expiries=None, client=None, now=None, refresh_s=REFRE
                        if item.get("expected_move_model")), None)
     nearest_expiry = next((item.get("expiry") for item in architect["expiries"]
                            if item.get("expected_move_model")), None)
+    oi_source = oi_structure.get("source") or "polygon_options_snapshot"
     heatmap = {
         "sym": sym, "spot": spot,
         "date": (dt.datetime.fromtimestamp(source_ts).date().isoformat() if source_ts else None),
@@ -1000,7 +1007,7 @@ def build(sym, spot, known_expiries=None, client=None, now=None, refresh_s=REFRE
         "col_totals": col_totals, "gamma_volume_total_raw": sum(col_totals),
         "src": "lse", "metric": "gamma_volume",
         "oi_available": oi_structure.get("status") == "OK",
-        "oi_source": "polygon_options_snapshot",
+        "oi_source": oi_source,
         "contracts_used": contracts, "stale": stale,
         "session_dates": session_dates, "stale_session_rows_dropped": dropped,
         "active_session_date": snapshot.get("active_session_date"),
@@ -1046,14 +1053,16 @@ def build(sym, spot, known_expiries=None, client=None, now=None, refresh_s=REFRE
         "em_why": nearest_em.get("method") if nearest_em else "LSE sin IV ATM util",
         "exp": nearest_expiry.replace("-", "") if nearest_expiry else None,
         "dte": nearest_em.get("dte_model") if nearest_em else None,
-        "scope": "LSE realtime + Polygon OI · %d expiries" % len(expiries),
+        "scope": (("LSE realtime · Polygon OI OFF · %d expiries" % len(expiries))
+                  if oi_source == "disabled_polygon" else
+                  ("LSE realtime + Polygon OI · %d expiries" % len(expiries))),
         "flip": oi_structure.get("flip"),
         "flip_why": oi_structure.get("why"),
         "flip_src": ("polygon_oi_lse_spot_repriced" if oi_structure.get("status") == "OK"
                      else "none"),
         "regime": oi_structure.get("regime"),
         "oi_available": oi_structure.get("status") == "OK",
-        "oi_source": "polygon_options_snapshot",
+        "oi_source": oi_source,
         "oi_structure": oi_structure,
         "oi_gross_gex": oi_structure.get("gross_gex"),
         "squeeze_fuel": squeeze_fuel,

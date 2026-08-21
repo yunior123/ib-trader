@@ -160,6 +160,25 @@
   #chartfeed.live { color:#63bfae; }
   #chartfeed.connected { color:#64b5f6; }
   #chartfeed.delayed { color:#d1a84a; }
+  #leveltip { position:absolute; z-index:58; width:min(330px,calc(100% - 20px));
+              pointer-events:none; padding:9px 11px; border-radius:7px;
+              background:rgba(10,14,22,.97); border:1px solid #3b4964;
+              box-shadow:0 8px 26px rgba(0,0,0,.68); color:#d7dfef;
+              font-size:10.5px; line-height:1.42; font-variant-numeric:tabular-nums; }
+  #leveltip.hidden { display:none; }
+  .leveltip-row + .leveltip-row { border-top:1px solid #283247; margin-top:7px; padding-top:7px; }
+  .leveltip-head { display:flex; align-items:baseline; gap:6px; font-weight:800; font-size:11.5px; }
+  .leveltip-dot { width:7px; height:7px; border-radius:50%; flex:0 0 auto; }
+  .leveltip-price { margin-left:auto; color:#fff; }
+  .leveltip-detail { color:#b7c3d8; margin-top:3px; }
+  .leveltip-stats { color:#f0c96a; margin-top:3px; }
+  .leveltip-source { color:#74839e; margin-top:3px; font-size:9.5px; }
+  #leveltags { position:absolute; inset:0; z-index:24; pointer-events:none; overflow:hidden; }
+  .leveltag { position:absolute; right:53px; transform:translateY(-50%);
+              min-width:10px; height:13px; box-sizing:border-box; padding:0 3px;
+              border:1px solid; border-radius:2px; font-size:8px; font-weight:900;
+              line-height:11px; text-align:center; white-space:nowrap;
+              text-shadow:0 1px 2px rgba(0,0,0,.95); }
   #replaybadge { background:#5c1a00; color:#ffb74d; border:2px solid #ff6d00;
                  border-radius:4px; padding:4px 10px; font-weight:800; font-size:12.5px;
                  letter-spacing:.02em; animation:replayblink 1.4s ease-in-out infinite; }
@@ -336,17 +355,16 @@
     border-radius:3px; font-size:10px; padding:0 2px; width:104px; color-scheme:dark; }
   #chipbar .chip .cx:hover { opacity:1; }
 
-  /* --- countdown de barra (eje de precios derecho, estilo TradingView) --- */
-  /* semi-transparente: el contador TAPABA el precio/nivel de debajo (Yunior 2026-07-27). Fondo a
-     baja alpha + text-shadow para que los digitos sigan legibles y se vea a traves. */
-  #countdown { position:absolute; z-index:19; right:58px;
-               background:rgba(41,98,255,.34); color:#fff; font-size:11px; font-weight:700;
-               padding:1px 6px; border-radius:4px; pointer-events:none; display:none;
-               text-shadow:0 0 3px rgba(0,0,0,.9),0 1px 2px rgba(0,0,0,.9);
-               font-variant-numeric:tabular-nums; }
+  /* Candle countdown lives in the information bar, never on the price scale. */
+  #countdown { align-items:center; flex:0 0 auto; order:-1; margin-left:4px;
+               background:#20345f; border:1px solid #3f67b7; color:#d9e7ff;
+               font-size:10px; font-weight:800; line-height:16px; padding:0 6px;
+               border-radius:4px; pointer-events:none; display:none;
+               font-variant-numeric:tabular-nums; white-space:nowrap; }
 
   /* --- flecha direccional compuesta (overlay semitransparente, no bloquea clics) --- */
-  #dirarrow { position:absolute; z-index:16; right:13%; top:48%; transform:translateY(-50%);
+  #dirarrow { position:absolute; z-index:16; left:55%; right:auto; top:48%;
+              transform:translate(-50%,-50%);
               pointer-events:none; text-align:center; user-select:none; display:none; opacity:.32;
               --c1:#4a5468; --c2:#9fb0cc; --hl:#ffffff; --glow:8px; --liq:1.4s; --breathe:2.4s;
               transition:opacity .22s ease; }
@@ -535,7 +553,7 @@
      dock es una COLUMNA que ENCOGE el chart (#chart right = --dockw), no un overlay.
      Un widget se puede arrastrar FUERA (flotante) para colocarlo donde se quiera, pero
      al EXPANDIRLO vuelve al dock: expandido y flotante taparia el precio. */
-  :root { --dockw: 0px; }
+  :root { --dockw: 0px; --chart-left-gutter: 22px; }
   #wdock { position:absolute; z-index:44; top:68px; bottom:24px; right:0; width:var(--dockw);
            background:#10141d; border-left:1px solid #2a3550; display:flex; flex-direction:column;
            gap:6px; padding:6px; overflow-y:auto; overflow-x:hidden; }
@@ -621,7 +639,8 @@
   #wgmenu button.wgpanel { color:#e6ebf5; font-weight:700; border-bottom:1px solid #2a3550;
             border-radius:4px 4px 0 0; margin-bottom:3px; padding-bottom:7px; }
 
-  #chart { position: absolute; top: 68px; bottom: 24px; left: 0; right: var(--dockw); }
+  #chart { position: absolute; top: 68px; bottom: 24px;
+           left: var(--chart-left-gutter); right: var(--dockw); }
   footer { position: absolute; bottom: 0; height: 24px; left: 0; right: 0;
            display: flex; align-items: center; gap: 8px; padding: 0 10px;
            background: #1e222d; font-size: 10px; color: #9aa5b8; overflow-x: auto;
@@ -721,6 +740,7 @@
     <b title="Heatmap">H <i id="r-heat">↻—</i></b><b title="Walls">W <i id="r-walls">↻—</i></b>
     <b title="Magnet">M <i id="r-magnets">↻—</i></b><b title="Gamma flip (recheck; sin OI)">F <i id="r-flip">↻—</i></b>
   </span>
+  <span id="countdown" title="Tiempo restante de la vela actual"></span>
   <span><span class="k">VIX</span> <span class="v" id="h-vix" title="Índice de volatilidad (CBOE, vía TWS). CALM <16 · ELEVADO 16-24 · ALTO >24. Vol alta ensancha rangos y hace los días de gamma negativa más violentos.">—</span></span>
   <span class="v" id="h-dte" title="Vencimiento del mapa GEX. 0DTE = solo hoy (batalla intradía, pin/rechazo). NDTE = vencimiento más cercano. Como gexa." style="color:#f4c430">—</span>
   <span><span class="k">régimen</span> <span class="v" id="h-reg">—</span><span class="info" id="h-reg-info" title="POSITIVO (arriba del flip): dealers amortiguan → rango, dips comprados. NEGATIVO (abajo): amplifican → tendencia, no fadear. TRANSICIÓN (±0.12% del flip): inestable, no operar direccional.">i</span></span>
@@ -817,6 +837,8 @@
   </div>
 </div>
 <div id="chart">
+  <div id="leveltags" aria-hidden="true"></div>
+  <div id="leveltip" class="hidden" role="tooltip" aria-live="polite"></div>
   <div id="structpill" class="hidden"></div>
   <div id="fuelpill" class="hidden"></div>
   <div id="nodataBanner" class="hidden"></div>
@@ -825,7 +847,6 @@
   <div id="chartfeed" title="Procedencia y transporte del dato dibujado">esperando feed…</div>
   <div id="chipbar"></div>
   <div id="dirarrow"><div class="halo"></div><div class="glyph"></div><div class="pct"></div><div class="ampbar"><i></i><i></i><i></i></div><div class="tgt"></div><div class="st"></div><div class="bq"></div><div class="drv"></div><div class="cap"></div></div>
-  <div id="countdown"></div>
   <div id="zonepop">
     <div class="zph">Orden @ <span id="zonepop-px">—</span></div>
     <div class="zrow"><label for="zone-sym">Símbolo</label><input id="zone-sym" maxlength="10" autocapitalize="characters" spellcheck="false" placeholder="cualquier ticker"></div>
@@ -1518,6 +1539,12 @@ function onNetprem(msg){
 // Muros GEX = VERDE (call-wall brillante, put-wall/abs tinte distinto); flip = AMARILLO.
 // Grosor ∝ intensidad |gex| del strike (normalizado por el máx del perfil).
 let priceLines = [];
+let curLevels = null;
+let levelHoverRows = [];
+// When the brick layer is visible it owns the five structural labels. With it
+// off (the default), native price-line chips stay deliberately tiny: one marker
+// plus the price. Full names/exposure/source belong in the hover tooltip.
+let packedWallLabelsOn = true;
 function wallIntensity(lv, price) {
   const prof = (lv && lv.profile) || [];
   if (!prof.length || price == null) return 0.5;
@@ -1536,15 +1563,38 @@ function fmtM(g) {   // $ en millones/billones estilo gexa: "+296M", "-1.2B"
 function drawLevels(lv) {
   priceLines.forEach(pl => { try { candle.removePriceLine(pl); } catch(e){} });
   priceLines = [];
-  const add = (price, color, title, dashed) => {
+  levelHoverRows = [];
+  const add = (price, color, title, dashed, axisLabel = true, fixedWidth = null, hover = null, axisTag = title) => {
     if (price == null) return;
     priceLines.push(candle.createPriceLine({
-      price, color, lineWidth: dashed ? 1 : wallW(wallIntensity(lv, price)),
+      price, color, lineWidth: fixedWidth == null
+        ? (dashed ? 1 : wallW(wallIntensity(lv, price)))
+        : fixedWidth,
       lineStyle: dashed ? LineStyle.Dashed : LineStyle.Solid,
-      axisLabelVisible: true, title,
+      // Structural rows use our translucent mini-tag instead. Lightweight Charts
+      // intentionally flattens alpha on its native price boxes, making them opaque.
+      axisLabelVisible: axisLabel && !hover, title: axisLabel && !hover ? title : "",
     }));
+    if (hover) levelHoverRows.push({ price:+price, color, tag:axisTag, ...hover });
   };
   const londonGammaVol = lv && lv.profile_metric === "gamma_volume";
+  const integrity = ((lv.wall_integrity || {}).levels) || {};
+  const integrityText = (key, mass) => {
+    const s = integrity[key] || {};
+    const bits = [];
+    if (mass != null) bits.push("Exposure " + fmtM(mass));
+    if (s.state) bits.push("State " + s.state);
+    if (s.hits != null) bits.push(s.hits + " hit" + (s.hits === 1 ? "" : "s"));
+    if (s.metric) bits.push("Metric " + s.metric);
+    return bits.join(" · ");
+  };
+  const londonSource = "London Strategic Edge options · gamma × volume_today";
+  const oiSource = (lv.oi_source || "OI/IV options chain") + " · repriced with London spot";
+  const wallHover = (key, heading, detail, mass) => ({
+    heading, detail,
+    stats:integrityText(key, mass),
+    source:londonGammaVol ? londonSource : (lv.chain_src || lv.oi_source || "Options structure")
+  });
   // IMÁN (gamma+) = dorado / ACELERADOR (gamma-) = morado (como gexa). Semi-transparente.
   const kind = (gex) => gex == null ? { c: "rgba(176,190,197,0.5)", t: "" }
     : gex >= 0 ? { c: "rgba(255,179,0,0.62)", t: "imán " }      // dorado, translúcido
@@ -1552,38 +1602,77 @@ function drawLevels(lv) {
   // PIN aguanta / TRAMPILLA se atraviesa acelerando -> sufijo en la etiqueta del eje.
   // null (gex_core viejo o sin flip) = "?" — nunca se inventa un pin.
   const kindTag = (wk) => wk === "pin" ? " ·PIN" : wk === "trampilla" ? " ·TRAMP" : wk ? " ·" + wk : "";
-  const addW = (price, gex, name, wkind) => {
+  const addW = (price, gex, name, wkind, hover) => {
     if (price == null) return;
     const k = kind(gex);
-    add(price, k.c, name + " " + k.t + fmtM(gex) + kindTag(wkind), false);
+    const width = name.startsWith("POC") ? 4 : Math.max(3, wallW(wallIntensity(lv, price)));
+    const tiny = name.startsWith("CW") ? "C" : name.startsWith("PW") ? "P" : "M";
+    add(price, k.c, tiny, false,
+        !packedWallLabelsOn, width, hover);
   };
   if (londonGammaVol) {
-    add(lv.call_wall, "rgba(38,166,154,0.72)", "LSE CW Γvol " + fmtM(lv.call_wall_gex), false);
-    add(lv.put_wall, "rgba(239,83,80,0.72)", "LSE PW Γvol " + fmtM(lv.put_wall_gex), false);
-    if (lv.abs_wall != null && lv.abs_wall !== lv.call_wall && lv.abs_wall !== lv.put_wall)
-      add(lv.abs_wall, "rgba(255,179,0,0.72)", "LSE MAG Γvol " + fmtM(lv.abs_wall_gex), false);
+    const magPrice = lv.magnet != null ? lv.magnet : lv.abs_wall;
+    const magMass = lv.magnet_gamma_volume != null ? lv.magnet_gamma_volume : lv.abs_wall_gex;
+    const magOnCall = magPrice != null && lv.call_wall != null && +magPrice === +lv.call_wall;
+    const magOnPut = magPrice != null && lv.put_wall != null && +magPrice === +lv.put_wall;
+    add(lv.call_wall, "rgba(38,166,154,0.72)", magOnCall ? "C·M" : "C", false,
+        !packedWallLabelsOn, magOnCall ? 4 : Math.max(3, wallW(wallIntensity(lv, lv.call_wall))),
+        wallHover("call_wall", magOnCall ? "CW + MAG · Call Wall and Magnet" : "CW · Call Wall",
+          "Strongest call gamma×volume strike at or above spot. It can act as a first-touch ceiling or magnet; it is activity context, not proof of dealer inventory." +
+          (magOnCall ? " This strike is also the market's strongest absolute gamma×volume concentration (MAG)." : ""), lv.call_wall_gex));
+    add(lv.put_wall, "rgba(239,83,80,0.72)", magOnPut ? "P·M" : "P", false,
+        !packedWallLabelsOn, magOnPut ? 4 : Math.max(3, wallW(wallIntensity(lv, lv.put_wall))),
+        wallHover("put_wall", magOnPut ? "PW + MAG · Put Wall and Magnet" : "PW · Put Wall",
+          "Strongest put gamma×volume strike at or below spot. It may behave as a floor in damping conditions or an accelerator in negative gamma; it is not guaranteed support." +
+          (magOnPut ? " This strike is also the market's strongest absolute gamma×volume concentration (MAG)." : ""), lv.put_wall_gex));
+    if (magPrice != null && !magOnCall && !magOnPut)
+      add(magPrice, "rgba(255,179,0,0.72)", "M", false,
+          !packedWallLabelsOn, 4,
+          wallHover("magnet", "MAG · Gamma-volume Magnet",
+            "Strongest absolute gamma×volume concentration in the observed chain. It is a potential pin or attraction zone, not a guaranteed target.", magMass));
   } else {
-    addW(lv.call_wall, lv.call_wall_gex, "CW", lv.call_wall_kind);
-    addW(lv.put_wall, lv.put_wall_gex, "PW", lv.put_wall_kind);
+    addW(lv.call_wall, lv.call_wall_gex, "CW", lv.call_wall_kind,
+      wallHover("call_wall", "CW · Call Wall", "Largest positive call-gamma concentration above spot; structural ceiling or magnet context, not a guaranteed rejection.", lv.call_wall_gex));
+    addW(lv.put_wall, lv.put_wall_gex, "PW", lv.put_wall_kind,
+      wallHover("put_wall", "PW · Put Wall", "Largest put-gamma concentration below spot; structural floor or accelerator context, not guaranteed support.", lv.put_wall_gex));
     if (lv.abs_wall && lv.abs_wall !== lv.call_wall && lv.abs_wall !== lv.put_wall)
-      addW(lv.abs_wall, lv.abs_wall_gex, "POC" + (lv.poc_dom ? " " + lv.poc_dom : ""), lv.abs_wall_kind);  // GPOC + %C/%P
+      addW(lv.abs_wall, lv.abs_wall_gex, "POC" + (lv.poc_dom ? " " + lv.poc_dom : ""), lv.abs_wall_kind,
+        wallHover("magnet", "POC · Largest absolute gamma node", "Highest absolute gamma concentration in the OI structure. Treat it as structural context, not a certain pin.", lv.abs_wall_gex));  // GPOC + %C/%P
   }
   // flip con etiqueta +Γ DAMPENING / −Γ AMPLIFYING (signo del libro), como gexa
-  const gsym = lv.net_gex == null ? "" : (lv.net_gex >= 0 ? " +Γ" : " −Γ");
-  add(lv.flip, "rgba(244,196,48,0.85)", "flip" + gsym, true);
+  add(lv.flip, "rgba(244,196,48,0.85)", "F", true, !packedWallLabelsOn, 2, {
+    heading:"FLIP · Dealer gamma zero-crossing",
+    detail:"Uses open interest and implied volatility. This is the structural price where estimated dealer gamma crosses zero: above it +Γ tends to dampen moves; below it −Γ can amplify them.",
+    stats:integrityText("flip", lv.net_gex) + (lv.regime ? " · Regime " + lv.regime : ""),
+    source:oiSource
+  });
   if (londonGammaVol)
-    add(lv.activity_flip, "rgba(255,140,60,0.86)", "A-FLIP Γvol", true);
+    add(lv.activity_flip, "rgba(255,140,60,0.86)", "A", true, !packedWallLabelsOn, 2, {
+      heading:"A-FLIP · Activity zero-crossing",
+      detail:"Uses gamma × volume_today and does not use open interest. It describes today's traded options activity; it is not the dealer FLIP and does not reveal dealer inventory.",
+      stats:integrityText("activity_flip", lv.activity_flip_strength) + ((lv.activity_flip_detail || {}).validation ? " · " + lv.activity_flip_detail.validation : ""),
+      source:londonSource + ((lv.activity_flip_detail || {}).method ? " · " + lv.activity_flip_detail.method : "")
+    });
   // flip FORWARD: el flip del libro que sobrevive esta semana (lección INTC 2026-08-05:
   // 98.39 hoy vs 102.90 forward). Naranja punteado; solo si difiere del flip vivo.
   if (lv.flip_fwd != null && lv.flip_fwd !== lv.flip) {
     const die = lv.gamma_muere_semana_pct;
     add(lv.flip_fwd, "rgba(255,140,60,0.7)",
-        "flip→" + (lv.regime_fwd ? " " + lv.regime_fwd : "") + (die != null ? " (muere " + Math.round(die) + "%)" : ""), true);
+        "F→", true, true, null, {
+          heading:"FLIP→ · Forward gamma flip",
+          detail:"Zero-crossing for the later-expiry structure that survives the current week. It is a forward context level, not the live dealer FLIP.",
+          stats:(lv.regime_fwd ? "Forward regime " + lv.regime_fwd : "") + (die != null ? " · Current-week gamma decays " + Math.round(die) + "%" : ""),
+          source:oiSource
+        });
   }
   // expected move ±1σ (rango esperado hasta el vencimiento) — cian punteado
   if (lv.em && lv.spot) {
-    add(lv.spot + lv.em, "rgba(41,182,246,0.5)", "EM+", true);
-    add(lv.spot - lv.em, "rgba(41,182,246,0.5)", "EM−", true);
+    const emDetail = "One-standard-deviation expected-move boundary from the reference spot to the selected expiry. It is a volatility range estimate, not a guaranteed reversal line.";
+    const emStats = "Reference " + (+lv.spot).toFixed(2) + " · ±" + (+lv.em).toFixed(2);
+    add(lv.spot + lv.em, "rgba(41,182,246,0.5)", "+σ", true, true, null,
+      {heading:"EM+ · Upper expected move", detail:emDetail, stats:emStats, source:"Options implied volatility"});
+    add(lv.spot - lv.em, "rgba(41,182,246,0.5)", "−σ", true, true, null,
+      {heading:"EM− · Lower expected move", detail:emDetail, stats:emStats, source:"Options implied volatility"});
   }
   // Milk/RCG-inspired public geometry, computed only from London fields.  These are
   // deliberately named VOL proxies: LSE has no OI/dealer book and cannot reproduce
@@ -1593,15 +1682,80 @@ function drawLevels(lv) {
   const mmd = lv.mm_top_profit_daily || {};
   const mmw = lv.mm_top_profit_weekly || lv.mm_top_profit || {};
   if (indOn("dealer_net_daily"))
-    add(dnd.level, "rgba(0,188,212,0.90)", "LSE DN·D VOL " + (dnd.expiry || ""), true);
+    add(dnd.level, "rgba(0,188,212,0.90)", "LSE DN·D VOL " + (dnd.expiry || ""), true, true, null,
+      {heading:"DN·D VOL · Daily neutral-activity proxy", detail:"Linearized London activity-neutral level for the active daily expiry. Volume-based proxy only—not Net Dealer or dealer inventory.", stats:dnd.expiry ? "Expiry " + dnd.expiry : "", source:londonSource}, "D");
   if (indOn("dealer_net_weekly"))
-    add(dnw.level, "rgba(66,165,245,0.88)", "LSE DN·W VOL " + (dnw.expiry || ""), true);
+    add(dnw.level, "rgba(66,165,245,0.88)", "LSE DN·W VOL " + (dnw.expiry || ""), true, true, null,
+      {heading:"DN·W VOL · Weekly neutral-activity proxy", detail:"Linearized London activity-neutral level for the standard weekly expiry. Volume-based proxy only—not Net Dealer or dealer inventory.", stats:dnw.expiry ? "Expiry " + dnw.expiry : "", source:londonSource}, "W");
   if (indOn("mm_top_profit_daily"))
-    add(mmd.level, "rgba(255,112,67,0.90)", "LSE MM$·D VOL " + (mmd.expiry || ""), true);
+    add(mmd.level, "rgba(255,112,67,0.90)", "LSE MM$·D VOL " + (mmd.expiry || ""), true, true, null,
+      {heading:"MM$·D VOL · Daily payout-minimum proxy", detail:"Strike minimizing terminal payout weighted by volume_today. It is not proprietary PML and not OI max pain.", stats:mmd.expiry ? "Expiry " + mmd.expiry : "", source:londonSource}, "$D");
   if (indOn("mm_top_profit_weekly"))
-    add(mmw.level, "rgba(236,64,122,0.88)", "LSE MM$·W VOL " + (mmw.expiry || ""), true);
+    add(mmw.level, "rgba(236,64,122,0.88)", "LSE MM$·W VOL " + (mmw.expiry || ""), true, true, null,
+      {heading:"MM$·W VOL · Weekly payout-minimum proxy", detail:"Strike minimizing terminal payout weighted by volume_today. It is not proprietary PML and not OI max pain.", stats:mmw.expiry ? "Expiry " + mmw.expiry : "", source:londonSource}, "$W");
   wallBub.setLevels(lv);   // capa LADRILLOS viva (aditiva; las líneas se conservan)
+  scheduleLevelTags();
 }
+
+// Lightweight Charts price lines do not expose native tooltips. Match the pointer's
+// Y-coordinate to the rendered structural levels and show every nearby row, so two
+// close flips remain distinguishable instead of one silently winning the hover.
+const levelTip = document.getElementById("leveltip");
+const levelTags = document.getElementById("leveltags");
+const levelTipEsc = (v) => String(v == null ? "" : v).replace(/[&<>"']/g, ch =>
+  ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"})[ch]);
+const levelTagColor = (color, alpha) => {
+  const m = String(color).match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/i);
+  return m ? `rgba(${m[1]},${m[2]},${m[3]},${alpha})` : `rgba(90,105,135,${alpha})`;
+};
+let levelTagsFrame = 0;
+function scheduleLevelTags() {
+  if (levelTagsFrame) return;
+  levelTagsFrame = requestAnimationFrame(() => { levelTagsFrame = 0; syncLevelTags(); });
+}
+function syncLevelTags() {
+  levelTags.replaceChildren();
+  if (packedWallLabelsOn || !levelHoverRows.length) return;
+  const items = levelHoverRows.map(r => ({...r, anchorY:candle.priceToCoordinate(r.price)}))
+    .filter(r => r.tag && r.anchorY != null && r.anchorY >= 0 && r.anchorY <= el.clientHeight);
+  if (!items.length) return;
+  packBubbleRows(items, 15, 8, Math.max(8, el.clientHeight - 8));
+  for (const r of items) {
+    const tag = document.createElement("span");
+    tag.className = "leveltag";
+    tag.textContent = r.tag;
+    tag.style.top = r.drawY + "px";
+    tag.style.background = levelTagColor(r.color, 0.24);
+    tag.style.borderColor = levelTagColor(r.color, 0.72);
+    tag.style.color = levelTagColor(r.color, 1);
+    levelTags.appendChild(tag);
+  }
+}
+function hideLevelTip() { levelTip.classList.add("hidden"); }
+function showLevelTip(ev) {
+  if (!levelHoverRows.length || alarmArmed || zoneArmed || dragStop) { hideLevelTip(); return; }
+  const rect = el.getBoundingClientRect();
+  const x = ev.clientX - rect.left, y = ev.clientY - rect.top;
+  const matches = levelHoverRows.map(r => ({...r, y:candle.priceToCoordinate(r.price)}))
+    .filter(r => r.y != null && Math.abs(r.y - y) <= 10)
+    .sort((a,b) => Math.abs(a.y-y) - Math.abs(b.y-y)).slice(0, 4);
+  if (!matches.length) { hideLevelTip(); return; }
+  levelTip.innerHTML = matches.map(r => `<div class="leveltip-row">
+    <div class="leveltip-head"><i class="leveltip-dot" style="background:${levelTipEsc(r.color)}"></i><span>${levelTipEsc(r.heading)}</span><span class="leveltip-price">${levelTipEsc(r.price.toFixed(2))}</span></div>
+    <div class="leveltip-detail">${levelTipEsc(r.detail)}</div>
+    ${r.stats ? `<div class="leveltip-stats">${levelTipEsc(r.stats)}</div>` : ""}
+    ${r.source ? `<div class="leveltip-source">Source: ${levelTipEsc(r.source)}</div>` : ""}
+  </div>`).join("");
+  levelTip.classList.remove("hidden");
+  const tw = Math.min(330, rect.width - 20), th = levelTip.offsetHeight;
+  levelTip.style.left = Math.max(8, Math.min(rect.width - tw - 8, x + 15)) + "px";
+  levelTip.style.top = Math.max(8, Math.min(rect.height - th - 8, y + 13)) + "px";
+}
+el.addEventListener("mousemove", showLevelTip);
+el.addEventListener("mouseleave", hideLevelTip);
+el.addEventListener("wheel", scheduleLevelTags, {passive:true});
+el.addEventListener("mouseup", scheduleLevelTags);
+new ResizeObserver(scheduleLevelTags).observe(el);
 
 // ------------------------ muros/imán/flip como LADRILLOS animados -----------
 // El backend lleva la máquina de estados; canvas sólo la representa. Colores previos:
@@ -1642,13 +1796,25 @@ function bubbleRows(lv) {
   push("put_wall", lv.put_wall, "PW", lv.put_wall_gex, false);
   push("magnet", lv.magnet != null ? lv.magnet : lv.abs_wall, "MAG",
        lv.magnet_gamma_volume != null ? lv.magnet_gamma_volume : lv.abs_wall_gex, true);
-  // Si dos niveles coinciden, separar carriles unos píxeles sin cambiar su precio lógico.
-  const counts = {};
-  rows.forEach(r => { const k = r.price.toFixed(6); counts[k] = (counts[k] || 0) + 1; });
-  const seen = {};
-  rows.forEach(r => { const k = r.price.toFixed(6), n = counts[k], i = seen[k] || 0;
-                      r.offset = n > 1 ? (i - (n - 1) / 2) * 7 : 0; seen[k] = i + 1; });
   return rows;
+}
+// Pack by *screen* position, not equal prices. Nearby distinct strikes can map
+// to the same handful of pixels. Labels move; connector lines keep exact anchors.
+function packBubbleRows(items, minGap, top, bottom) {
+  if (!items.length) return items;
+  items.sort((a, b) => a.anchorY - b.anchorY);
+  let next = top;
+  for (const item of items) {
+    item.drawY = Math.max(item.anchorY, next);
+    next = item.drawY + minGap;
+  }
+  const overflow = items[items.length - 1].drawY - bottom;
+  if (overflow > 0) for (const item of items) item.drawY -= overflow;
+  for (let i = items.length - 2; i >= 0; i--)
+    items[i].drawY = Math.min(items[i].drawY, items[i + 1].drawY - minGap);
+  const underflow = top - items[0].drawY;
+  if (underflow > 0) for (const item of items) item.drawY += underflow;
+  return items;
 }
 class BrickView {
   constructor(src) { this._src = src; }
@@ -1662,12 +1828,18 @@ class BrickView {
       const hr = scope.horizontalPixelRatio, vr = scope.verticalPixelRatio;
       const x0 = W * 0.815;
       const now = Date.now() / 1000;
-      ctx.save();
+      const visible = [];
       for (const r of src._rows) {
         const y = src._series.priceToCoordinate(r.price);
         if (y == null) continue;
-        const yb = y * vr + r.offset * vr;
-        if (yb < -20 || yb > H + 20) continue;
+        const anchorY = y * vr;
+        if (anchorY < -20 * vr || anchorY > H + 20 * vr) continue;
+        visible.push({ r, anchorY, drawY: anchorY });
+      }
+      packBubbleRows(visible, 31 * vr, 26 * vr, H - 22 * vr);
+      ctx.save();
+      for (const item of visible) {
+        const r = item.r, yb = item.drawY, anchorY = item.anchorY;
         const inten = Math.max(0.10, Math.min(1, r.inten));
         const pal = BRICK[r.key] || BRICK.magnet;
         const elapsed = Math.max(0, now - r.eventTs);
@@ -1676,6 +1848,22 @@ class BrickView {
         const bw = (r.big ? 9.5 : 8.0) * hr, bh = (r.big ? 5.6 : 4.8) * vr;
         const gapX = 2.2 * hr, gapY = 2.0 * vr, cols = Math.ceil(r.capacity / 3);
         const totalW = cols * (bw + gapX), xEnd = x0 - totalW;
+        if (Math.abs(yb - anchorY) > 1 * vr) {
+          ctx.shadowBlur = 0;
+          ctx.lineWidth = Math.max(1, 1.15 * vr);
+          ctx.strokeStyle = `rgba(${pal.rgb},0.78)`;
+          ctx.setLineDash([3 * hr, 2 * hr]);
+          ctx.beginPath();
+          ctx.moveTo(x0 + 13 * hr, anchorY);
+          ctx.lineTo(x0 + 13 * hr, yb);
+          ctx.lineTo(x0 + 2 * hr, yb);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          ctx.fillStyle = `rgba(${pal.rgb},0.95)`;
+          ctx.beginPath();
+          ctx.arc(x0 + 13 * hr, anchorY, 2.4 * vr, 0, Math.PI * 2);
+          ctx.fill();
+        }
         for (let i = 0; i < r.capacity; i++) {
           const col = i % cols, row = Math.floor(i / cols);
           const stagger = row % 2 ? (bw + gapX) * .45 : 0;
@@ -1704,10 +1892,17 @@ class BrickView {
           EXHAUSTED:"AGOTADO",BROKEN:"ROTO",REINFORCED:"REFUERZO"})[r.state] || r.state;
         const metric = r.metric === "gamma_volume" ? "Γvol" : "GEX";
         const txt = `${r.name} ${r.price} · ${shortState} · ${r.hits} hit · ${metric}`;
-        ctx.font = `${(r.big ? 11 : 10) * vr}px -apple-system, sans-serif`;
+        ctx.font = `700 ${(r.big ? 11 : 10) * vr}px -apple-system, sans-serif`;
         ctx.textAlign = "left"; ctx.textBaseline = "bottom";
+        const tw = ctx.measureText(txt).width;
+        const chipY = yb - 27 * vr, chipH = 18 * vr;
+        ctx.fillStyle = "rgba(8,12,20,0.92)";
+        ctx.fillRect(xEnd - 4 * hr, chipY, tw + 8 * hr, chipH);
+        ctx.strokeStyle = `rgba(${pal.rgb},0.72)`;
+        ctx.lineWidth = Math.max(1, vr);
+        ctx.strokeRect(xEnd - 4 * hr, chipY, tw + 8 * hr, chipH);
         ctx.fillStyle = `rgba(${pal.rgb},0.95)`;
-        ctx.fillText(txt, xEnd, yb - 10 * vr);
+        ctx.fillText(txt, xEnd, yb - 12 * vr);
       }
       ctx.restore();
     }) };
@@ -1737,7 +1932,9 @@ candle.attachPrimitive(wallBub);
 // un glow (shadowBlur) ∝ intensidad -> los strikes fuertes "revientan".
 class GexView {
   constructor(src) { this._src = src; }
-  zOrder() { return "bottom"; }
+  // The structural CW/PW/flip lines cross these same strikes. Keep the compact
+  // gamma bars and their values above those lines so the exposure stays legible.
+  zOrder() { return "top"; }
   renderer() {
     const src = this._src;
     return { draw: (target) => target.useBitmapCoordinateSpace((scope) => {
@@ -1768,13 +1965,13 @@ class GexView {
         // cifra $/1% del nodo (como gexa), solo los relevantes para no saturar
         if (inten >= 0.22) {
           ctx.shadowBlur = 0;
-          ctx.font = `${10 * vr}px -apple-system, sans-serif`;
+          ctx.font = `700 ${10 * vr}px -apple-system, sans-serif`;
           ctx.textAlign = "right";
           ctx.textBaseline = "middle";
           const txt = fmtM(p.val), tw = ctx.measureText(txt).width;
-          ctx.fillStyle = "rgba(12,16,24,0.72)";   // chip: la cifra no se pierde sobre velas
+          ctx.fillStyle = "rgba(12,16,24,0.90)";   // tapa la línea detrás, no la cifra
           ctx.fillRect(W - bw - 8 * vr - tw, yb - 7 * vr, tw + 6 * vr, 14 * vr);
-          ctx.fillStyle = mag ? "rgba(255,213,79,0.95)" : "rgba(206,147,216,0.95)";
+          ctx.fillStyle = mag ? "rgba(255,213,79,1)" : "rgba(206,147,216,1)";
           ctx.fillText(txt, W - bw - 5 * vr, yb);
         }
       }
@@ -2097,11 +2294,18 @@ function setOHLC(bar, vol) {
 
 // Zoom custom RETIRADO (Yunior 2026-08-06 "remove the zooming, keep it original"):
 // encuadre inicial fijo; el zoom es el nativo de la libreria (rueda / pinch / drag del eje).
-const SHOW_BARS = 100;
+// In a six-window tile the structural chips occupy much of the right third.
+// Keep the live candle around center-screen, with a comparable pixels-per-bar
+// density to the old 100-history + 22-future framing.
+const SHOW_BARS = 62;
+const RIGHT_BREATHING_BARS = 60;
 function zoomRecent(n) {
   if (!n) return;
   try {
-    chart.timeScale().setVisibleLogicalRange({ from: Math.max(0, n - SHOW_BARS), to: n + 4 });
+    chart.timeScale().setVisibleLogicalRange({
+      from: Math.max(0, n - SHOW_BARS),
+      to: n + RIGHT_BREATHING_BARS
+    });
   } catch (e) {}
 }
 
@@ -2118,7 +2322,9 @@ function enforceLondonOnlyFeed(feed) {
   return true;
 }
 function applyLondonOnlyUi(on) {
-  for (const id of ["scopebar", "layerbar", "bubblebar", "liqbar", "narrbtn"]) {
+  // Bricks remain available in London-only mode as an optional visual layer.
+  // Scope/layer controls still stay hidden because London uses the fixed Γ×volume map.
+  for (const id of ["scopebar", "layerbar", "liqbar", "narrbtn"]) {
     const e = document.getElementById(id); if (e) e.style.display = on ? "none" : "";
   }
   const help = document.getElementById("help"), londonHelp = document.getElementById("londonhelp");
@@ -3560,7 +3766,7 @@ function onDirection(msg) {
   dirEl.style.display = "block";
 }
 
-// ---- countdown de barra en el eje de precios derecho (estilo TradingView) ----
+// ---- countdown de barra en la banda de información (nunca sobre precio/niveles) ----
 const countdownEl = document.getElementById("countdown");
 function tfSeconds(tf) {
   return ({ "5s":5,"15s":15,"30s":30,"45s":45,
@@ -3584,12 +3790,8 @@ function tickCountdown() {
   // clavado como si fuera vivo. Si la barra actual ya venció hace más de una vela (nadie
   // abrió la siguiente = feed frío), se OCULTA, no se miente con un 00:00 fijo.
   if (rem < -sec) { countdownEl.style.display = "none"; return; }
-  let y = null;
-  try { y = candle.priceToCoordinate(lastBar.close); } catch (e) {}
-  if (y == null) { countdownEl.style.display = "none"; return; }
-  countdownEl.textContent = fmtCountdown(rem, sec);
-  countdownEl.style.top = (y + 12) + "px";   // debajo de la etiqueta de último precio, no encima
-  countdownEl.style.display = "block";
+  countdownEl.textContent = "⏱ " + fmtCountdown(rem, sec);
+  countdownEl.style.display = "inline-flex";
 }
 // edad de la última vela (chip #h-age): >2 min desde que debió cerrar = dato viejo, se DICE.
 // Corea opera en horario KRX (dom-jue 20:00→02:30 ET): la marca es de EDAD, no de "cerrado",
@@ -3627,13 +3829,15 @@ document.querySelectorAll("#layerbar .tgl").forEach(btn => {
 // toggle LADRILLOS on/off (aditivo: las líneas de muro siguen ahí). Recuerda la elección.
 const bubBtn = document.getElementById("bubbtn");
 function setBubbles(on) {
+  packedWallLabelsOn = !!on;
   bubBtn.classList.toggle("active", on);
   wallBub.setOn(on);
-  try { localStorage.setItem("gexBubbles", on ? "1" : "0"); } catch (e) {}
+  try { localStorage.setItem("gexBubbles_v2", on ? "1" : "0"); } catch (e) {}
+  if (curLevels) drawLevels(curLevels);
 }
 bubBtn.addEventListener("click", () => setBubbles(!bubBtn.classList.contains("active")));
-setBubbles((() => { try { const v = localStorage.getItem("gexBubbles"); return v === null ? true : v === "1"; }
-                    catch (e) { return true; } })());
+setBubbles((() => { try { return localStorage.getItem("gexBubbles_v2") === "1"; }
+                    catch (e) { return false; } })());
 // capa de LIQUIDEZ (frame liq_levels): VPVR POCv/VAH/VAL + KDE — CONTEXTO, no gatillo. Sin voz.
 const liqBtn = document.getElementById("liqbtn");
 let liqData = null, liqLines = [];
@@ -3662,7 +3866,6 @@ liqBtn.addEventListener("click", () => setLiq(!liqBtn.classList.contains("active
 setLiq((() => { try { return localStorage.getItem("liqLayer") === "1"; } catch (e) { return false; } })());
 
 // ------------------------------------------------------- WS pipeline
-let curLevels = null;
 let lastBar = null;
 function onNoData(reason) {
   const b = document.getElementById("nodataBanner");
@@ -3812,8 +4015,11 @@ function upd(series, pt) { if (series && pt) series.update(pt); }
 function mirrorBar(bar) {           // upsert en el espejo: misma regla que series.update()
   if (!bar) return;
   const n = candleData.length;
-  if (n && candleData[n - 1].time === bar.time) candleData[n - 1] = bar;
+  const prev = n ? candleData[n - 1] : null;
+  const scaleMayChange = !prev || prev.time !== bar.time || bar.high > prev.high || bar.low < prev.low;
+  if (n && prev.time === bar.time) candleData[n - 1] = bar;
   else candleData.push(bar);
+  if (scaleMayChange) scheduleLevelTags();
 }
 // precio vivo por tick: SOLO la vela (O(1), sin recomputar indicadores) -> blazing-fast
 function onTick(msg) {
@@ -4014,6 +4220,7 @@ function uwTapeDraw() {
 setInterval(uwTapeDraw, 30000);   // re-evalúa la edad aunque no llegue frame nuevo
 
 const WG_KEY = "cockpitWidgets.v1";
+const WG_DEFAULT_HIDDEN_KEY = "cockpitWidgets.defaultHidden.v1";
 // Ancho del dock: normal / expandido. RESPONSIVO — con 6 cockpits repartidos en
 // rejilla (Yunior 2026-07-25) cada ventana mide ~480 px y un dock fijo de 320 se comia
 // la mitad del precio. El dock nunca pasa del 42% (72% expandido) del ancho util.
@@ -4023,8 +4230,8 @@ const wgDockW = (exp) => {
              : Math.round(Math.min(320, Math.max(210, W * 0.42)));
 };
 
-// Yunior 2026-08-05: el Heat Map es EL widget por defecto del panel derecho (el resto se abre a mano).
-const wgFresh = () => ({ visible: true, open: { mmfractal: true, gexheat: true },
+// Widget selections are remembered, but the dock starts closed so the chart owns the screen.
+const wgFresh = () => ({ visible: false, open: { mmfractal: true, gexheat: true },
                          float: {}, h: { mmfractal: 350, gexheat: 470, gex: 320, liqmap: 340, prem: 300, flow: 300, tech: 300 },
                          min: {}, exp: {} });
 let WG = wgFresh();
@@ -4038,6 +4245,15 @@ try {
     if (s.open.gexheat === undefined) { WG.open.gexheat = true; WG.h.gexheat = WG.h.gexheat || 470; }
     // nuevo fractal London: se descubre una vez sin borrar la configuración previa.
     if (s.open.mmfractal === undefined) { WG.open.mmfractal = true; WG.h.mmfractal = WG.h.mmfractal || 350; }
+  }
+} catch (e) {}
+// One-time migration for existing six-window origins that previously restored a visible dock.
+// It changes only master visibility; selected/open widgets remain ready for manual restoration.
+try {
+  if (localStorage.getItem(WG_DEFAULT_HIDDEN_KEY) !== "1") {
+    WG.visible = false;
+    localStorage.setItem(WG_DEFAULT_HIDDEN_KEY, "1");
+    localStorage.setItem(WG_KEY, JSON.stringify(WG));
   }
 } catch (e) {}
 const wgSave = () => { try { localStorage.setItem(WG_KEY, JSON.stringify(WG)); } catch (e) {} };

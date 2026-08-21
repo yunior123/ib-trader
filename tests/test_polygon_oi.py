@@ -88,6 +88,21 @@ def test_polygon_oi_structure_produces_real_flip_without_replacing_lse_activity(
     assert out["spot_source"] == "lse_realtime"
 
 
+def test_explicitly_disabled_polygon_never_uses_a_cached_overlay():
+    snap = {
+        "polygon_oi_disabled": "Polygon OI disabled by default",
+        "polygon_oi_overlay": {"status": "OK", "contracts": [
+            {"expiry": "2026-08-28", "strike": 100, "right": "call",
+             "open_interest": 9999, "iv": .25},
+        ]},
+    }
+    out = L._polygon_oi_structure(snap, 100, 1_787_932_800)
+    assert out["status"] == "DATA"
+    assert out["source"] == "disabled_polygon"
+    assert out["net_gex"] is None and out["flip"] is None
+    assert out["why"] == "Polygon OI disabled by default"
+
+
 def test_squeeze_fuel_combines_oi_call_ladder_with_live_london_velocity():
     expiry = "2026-08-14"
     now = dt.datetime(2026, 8, 13, 15, 0, tzinfo=dt.timezone.utc).timestamp()

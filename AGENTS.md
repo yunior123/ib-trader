@@ -1028,3 +1028,18 @@ credenciales o nombres internos del software.
   menú visible, chart full-width al ocultar, restauración del dock y rejilla final de seis ventanas.
   Bundle v32 firmado; QQQ/NVDA/SMH/MU/AAPL/MSFT siguieron `15m`, LSE equity+options
   `SUBSCRIBED`, proveedor `lse-ws-bbo-mid`, cero reconnects; `data/fleet_sleep` quedó intacto.
+
+## Cockpit v32 — layout de seis ventanas (2026-08-21)
+- Defaults vigentes por puerto: QQQ:8080, NVDA:8081, SMH:8082, SPY:8083,
+  TSLA:8084 y SPCX:8085. SPY reemplaza a MU en el cuarto slot.
+- Los chips nativos opacos de CW/PW/MAG/FLIP/A-FLIP se suprimen. El chart conserva
+  líneas y hover detallado, y dibuja tags propios mínimos C/P/M/F/A con fondo 24%
+  translúcido para no tapar los muros amarillos de gamma bajo ellos.
+- El perfil gamma se renderiza en capa `top`: sus barras y cifras amarillas/moradas
+  quedan por encima de las líneas CW/PW/flip que comparten exactamente el strike.
+- La brújula direccional se ancla en `left:55%` del chart, dentro de la zona media,
+  no en el antiguo borde derecho del 13% donde competía con muros y etiquetas.
+- Polygon OI queda apagado por defecto y el puente no consulta red ni reutiliza su
+  caché. Sólo `IBT_ENABLE_POLYGON_OI=1` lo reactiva para QA de rollback. Mientras no
+  haya sustituto validado, flip/net GEX/régimen salen como DATA, nunca como cero.
+- Evaluación de reemplazos y decisión operativa: `docs/POLYGON-REPLACEMENT-2026-08-21.md`.

@@ -4,7 +4,7 @@
   <img src="docs/images/ib-trader-six-window.png" alt="IB Trader six-window London-only cockpit" width="100%">
 </p>
 
-<p align="center"><strong>Six isolated London-only cockpit windows on one screen: QQQ, NVDA, SMH, MU, AAPL, and MSFT.</strong></p>
+<p align="center"><strong>Six isolated London-only cockpit windows on one screen: QQQ, NVDA, SMH, SPY, TSLA, and SPCX.</strong></p>
 
 Real-time trading system: **16 C++ signal engines** on 1-minute bars (validated
 WR≥70 + out-of-sample walk-forward per ticker), a **~0.3ms local signal pipeline**

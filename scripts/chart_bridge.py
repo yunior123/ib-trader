@@ -73,6 +73,17 @@ LEVELS_DIR = os.path.join(REPO, "charts", "data")
 LIVE_HTML = os.path.join(REPO, "charts", "live.html")
 DEFAULT_SYM = "nvda"
 
+# Polygon is a dormant rollback lane, never an implicit dependency.  Its options
+# service is being retired for this installation, so a normal cockpit launch must
+# perform zero Polygon requests.  A deliberate one-process rollback remains
+# possible for diagnostics only: IBT_ENABLE_POLYGON_OI=1.
+POLYGON_OI_ENABLED = os.environ.get("IBT_ENABLE_POLYGON_OI", "0").strip().lower() in {
+    "1", "true", "yes", "on",
+}
+POLYGON_OI_DISABLED_REASON = (
+    "Polygon OI disabled by default; set IBT_ENABLE_POLYGON_OI=1 only for rollback QA"
+)
+
 # SANDBOX DE REPLAY (--mock-dir): barras y cadena del MISMO instante. El CSV de backtest
 # arranca en 2026-04-23 y su spot cae fuera de la banda de strikes de cualquier cadena de
 # hoy -> perfil vacío y muros None: con ese arnés no se puede QA-ear un muro.
@@ -5093,25 +5104,32 @@ async def lse_options_loop(state, refresh_s=lse_gamma_map.REFRESH_S):
                     os.path.join(REPO, "data", f"lse_mm_fractal_{state.sym.lower()}.json"),
                     None, True)
                 heatmap, levels, expiries, snapshot = result
-                try:
-                    oi_overlay = await asyncio.to_thread(
-                        polygon_oi.load_or_fetch, state.sym, expiries, spot, now=started)
-                    lse_gamma_map.attach_polygon_oi(snapshot, oi_overlay)
-                    result = await asyncio.to_thread(
-                        lse_gamma_map.build, state.sym, spot, expiries,
-                        None, started, refresh_s,
-                        os.path.join(REPO, "data", f"lse_mm_fractal_{state.sym.lower()}.json"),
-                        snapshot, True)
-                    heatmap, levels, expiries, snapshot = result
-                except Exception as oi_error:
-                    snapshot["polygon_oi_error"] = f"{type(oi_error).__name__}: {oi_error}"[:240]
-                    levels["oi_available"] = False
-                    levels["oi_source"] = "polygon_options_snapshot"
-                    levels["flip"] = None
-                    levels["net_gex"] = None
-                    levels["regime"] = None
-                    levels["flip_why"] = snapshot["polygon_oi_error"]
-                    print(f"[polygon-oi] {state.sym.upper()} DATA ({snapshot['polygon_oi_error']})")
+                if POLYGON_OI_ENABLED:
+                    try:
+                        oi_overlay = await asyncio.to_thread(
+                            polygon_oi.load_or_fetch, state.sym, expiries, spot, now=started)
+                        lse_gamma_map.attach_polygon_oi(snapshot, oi_overlay)
+                    except Exception as oi_error:
+                        snapshot["polygon_oi_error"] = (
+                            f"{type(oi_error).__name__}: {oi_error}"
+                        )[:240]
+                        print(f"[polygon-oi] {state.sym.upper()} DATA "
+                              f"({snapshot['polygon_oi_error']})")
+                else:
+                    # Do not read the old cache either: disabled means no Polygon-derived
+                    # levels can leak into a newly published frame.
+                    snapshot.pop("polygon_oi_overlay", None)
+                    snapshot.pop("polygon_oi_error", None)
+                    snapshot["polygon_oi_disabled"] = POLYGON_OI_DISABLED_REASON
+
+                # Rebuild from the same London snapshot so every field (scope, flip,
+                # squeeze fuel and provenance) reflects the selected OI lane coherently.
+                result = await asyncio.to_thread(
+                    lse_gamma_map.build, state.sym, spot, expiries,
+                    None, started, refresh_s,
+                    os.path.join(REPO, "data", f"lse_mm_fractal_{state.sym.lower()}.json"),
+                    snapshot, True)
+                heatmap, levels, expiries, snapshot = result
                 async with state._lse_option_lock:
                     state._lse_option_snapshot = snapshot
                 await _install_lse_option_result(state, result, archive=True)

@@ -8,7 +8,7 @@ FRACTAL = (ROOT / "charts" / "mm_fractal_widget.js").read_text(encoding="utf-8")
 
 
 def test_widget_panel_has_persistent_master_visibility_switch():
-    assert 'const wgFresh = () => ({ visible: true' in HTML
+    assert 'const wgFresh = () => ({ visible: false' in HTML
     assert 'WG.visible = WG.visible === false' in HTML
     assert 'localStorage.setItem(WG_KEY, JSON.stringify(WG))' in HTML
     assert '"--dockw", dockW + "px"' in HTML
