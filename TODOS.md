@@ -1617,6 +1617,16 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       `ibtrader tradier <TOKEN>` -> sonda expirations+chains de SPY, exige >=20 contratos con
       OI>0 y solo entonces escribe `TRADIER_TOKEN` en feeds.env (chmod 600). Sin eso no se
       instala nada. NO bloquea el cockpit: la cadena ya corre con nasdaq -> cboe.
+      **REQUISITOS VERIFICADOS en las paginas de Tradier (2026-08-22), corrigen lo asumido:**
+      el alta ES una cuenta de BROKERAGE (auth.tradier.com/signup, titulo "Signup | Tradier
+      Brokerage"), minimo de cuenta $0 pero "sin fondear >60 dias = experiencia online
+      limitada", y **cuota de inactividad $50/ano si el saldo < $2.000 y menos de 2 operaciones
+      al ano** (linea internacional aparte: $20 con menos de 2 ejecuciones al mes).
+      Datos: "no cobramos a los titulares de cuenta por el acceso API". **Sandbox = 15 min
+      delayed, SIN griegas y SIN indices**; realtime solo para titulares de cuenta de brokerage.
+      Para nosotros basta el sandbox (solo tomamos `open_interest`; London pone IV y spot).
+      Limite 60-120 req/min por token. **Recomendacion: no abrir una cuenta de brokerage solo
+      por el tercer escalon** — nasdaq + cboe ya cubren el carril.
       El carril está escrito, testeado y entra solo en cuanto exista `TRADIER_TOKEN` en
       `config/feeds.env`. No lo pude crear yo: `POST p-be-auth.tradier.com/api/register` está
       protegido por reCAPTCHA v3 (resolver CAPTCHAs está prohibido) y el alta pasa por los
