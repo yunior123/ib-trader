@@ -221,6 +221,11 @@ def chain_full_map(sym, max_days=CHAIN_MAX_DAYS):
         edad_d = (time.time() - time.mktime(time.strptime(fecha, "%Y-%m-%d"))) / 86400.0
     except (TypeError, ValueError):
         return None                    # sin fecha utilizable no se puede fechar el libro
+    # `latest_chain` filtra por FECHA (dias de calendario) y esto mide en horas: en el borde
+    # un fichero de hace 5 dias puede dar 5,14. La ventana manda, y sin libro dentro de ella
+    # se devuelve None en vez de publicar una cadena vencida.
+    if edad_d > max_days:
+        return None
     out = dict(gi)
     out.update({
         "spot": spot,

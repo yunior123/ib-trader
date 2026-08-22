@@ -234,13 +234,25 @@ def attach_polygon_oi(snapshot, overlay):
     """Attach a complete Polygon structural snapshot to an LSE REST snapshot."""
     if not snapshot or not isinstance(overlay, dict) or overlay.get("status") != "OK":
         return False
+    if overlay.get("realtime") is not False:
+        snapshot["polygon_oi_error"] = "Polygon overlay did not declare realtime=false"
+        return False
     snapshot["polygon_oi_overlay"] = overlay
     return True
 
 
 def attach_oi(snapshot, overlay):
-    """Attach a provider-neutral OI book to the coherent London snapshot."""
+    """Attach a provider-neutral OI book to the coherent London snapshot.
+
+    Refuses an overlay that does not declare itself delayed: structural OI may be
+    delayed, but it may never be published as if it were the London realtime lane.
+    """
     if not snapshot or not isinstance(overlay, dict) or overlay.get("status") != "OK":
+        return False
+    if overlay.get("realtime") is not False:
+        snapshot["oi_overlay_error"] = (
+            "structural OI provider %s did not declare realtime=false" %
+            (overlay.get("source") or "unknown"))
         return False
     snapshot["oi_overlay"] = overlay
     return True
@@ -287,6 +299,12 @@ def _polygon_oi_structure(snapshot, spot, now):
         "source": source,
         "spot_source": "lse_realtime", "oi_semantics": "start_of_day_open_interest",
         "dealer_sign_convention": "calls_positive_puts_negative",
+        # Structure may be delayed; firing may not.  The number is measured or None.
+        "realtime": False,
+        "structural_delay_minutes": None,
+        "observed_quote_lag_minutes": None,
+        "structural_delay_basis": "no_structural_provider",
+        "delay_policy": "structural_only_never_fires_an_order",
         "net_gex": None, "gross_gex": None, "flip": None, "roots": [],
         "regime": None, "contracts_total": 0, "contracts_oi_positive": 0,
         "contracts_usable": 0, "greeks_ok_pct_oi": None,
@@ -308,6 +326,12 @@ def _polygon_oi_structure(snapshot, spot, now):
         "expiries": overlay.get("expiries") or [], "coverage": overlay.get("coverage") or {},
         "pages": overlay.get("pages"), "cache": overlay.get("cache"),
         "strike_low": overlay.get("strike_low"), "strike_high": overlay.get("strike_high"),
+        "structural_delay_minutes": overlay.get("structural_delay_minutes"),
+        "observed_quote_lag_minutes": overlay.get("observed_quote_lag_minutes"),
+        "structural_delay_basis": (overlay.get("structural_delay_basis") or
+                                   "provider_did_not_declare_a_delay_basis"),
+        "provider_order": overlay.get("provider_order"),
+        "provider_errors": overlay.get("provider_errors"),
     })
     if fetched is None or age > 36 * 3600:
         base["why"] = "%s OI snapshot stale or missing fetch timestamp" % source
@@ -1052,6 +1076,9 @@ def build(sym, spot, known_expiries=None, client=None, now=None, refresh_s=REFRE
         "src": "lse", "metric": "gamma_volume",
         "oi_available": oi_structure.get("status") == "OK",
         "oi_source": oi_source,
+        "oi_realtime": False,
+        "oi_structural_delay_minutes": oi_structure.get("structural_delay_minutes"),
+        "oi_delay_basis": oi_structure.get("structural_delay_basis"),
         "contracts_used": contracts, "stale": stale,
         "session_dates": session_dates, "stale_session_rows_dropped": dropped,
         "active_session_date": snapshot.get("active_session_date"),
@@ -1108,6 +1135,9 @@ def build(sym, spot, known_expiries=None, client=None, now=None, refresh_s=REFRE
         "regime": oi_structure.get("regime"),
         "oi_available": oi_structure.get("status") == "OK",
         "oi_source": oi_source,
+        "oi_realtime": False,
+        "oi_structural_delay_minutes": oi_structure.get("structural_delay_minutes"),
+        "oi_delay_basis": oi_structure.get("structural_delay_basis"),
         "oi_structure": oi_structure,
         "oi_gross_gex": oi_structure.get("gross_gex"),
         "squeeze_fuel": squeeze_fuel,

@@ -1,6 +1,6 @@
 #!/bin/zsh
 cd '/Users/yuniorrodriguezosorio/ib-trader'
-SY=(qqq nvda smh mu aapl msft)
+SY=(qqq nvda smh spy tsla spcx)
 while true; do
   for ((i=1; i<=6; i++)); do
     p=$((8079 + i)); s=${SY[$i]}

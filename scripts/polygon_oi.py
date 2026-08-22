@@ -52,6 +52,8 @@ def _atomic_write(path, payload):
 def _cache_usable(payload, sym, expiries, spot, now):
     if not isinstance(payload, dict) or payload.get("status") != "OK":
         return False
+    if payload.get("realtime") is not False:
+        return False  # cache anterior a los campos de retraso: refetch, no claim silencioso
     if str(payload.get("symbol") or "").upper() != str(sym).upper():
         return False
     if not set(expiries).issubset(set(payload.get("expiries") or [])):
@@ -145,6 +147,12 @@ def fetch(sym, expiries, spot, *, now=None, client=None):
         "band": BAND, "expiries": expiries, "pages": pages,
         "contracts": contracts, "coverage": by_expiry,
         "note": "Polygon OI+IV structural overlay; London remains realtime price/activity",
+        # Starter es 15 min delayed por tarifa; no se mide por contrato, se declara.
+        "realtime": False,
+        "structural_delay_minutes": 15,
+        "observed_quote_lag_minutes": None,
+        "structural_delay_basis": "vendor_documented_starter_15min",
+        "delay_policy": "structural_only_never_fires_an_order",
     }
     _atomic_write(_cache_path(sym), payload)
     return payload

@@ -4308,6 +4308,14 @@ def create_app(state):
                     "oi_available": lv.get("oi_available"), "oi_source": lv.get("oi_source"),
                     "oi_status": (lv.get("oi_structure") or {}).get("status"),
                     "oi_age_s": (lv.get("oi_structure") or {}).get("age_s"),
+                    # Estructura puede ser delayed; el disparo NO. Nada aguas abajo
+                    # puede leer el libro estructural como si fuera realtime.
+                    "oi_realtime": False,
+                    "oi_structural_delay_minutes":
+                        (lv.get("oi_structure") or {}).get("structural_delay_minutes"),
+                    "oi_delay_basis":
+                        (lv.get("oi_structure") or {}).get("structural_delay_basis"),
+                    "oi_provider_order": (lv.get("oi_structure") or {}).get("provider_order"),
                     "oi_contracts_usable": (lv.get("oi_structure") or {}).get("contracts_usable"),
                     "squeeze_fuel": lv.get("squeeze_fuel"),
                     "profile_strikes": len(lv.get("profile") or []),
@@ -5113,7 +5121,8 @@ async def lse_options_loop(state, refresh_s=lse_gamma_map.REFRESH_S):
                 if FREE_OI_ENABLED:
                     try:
                         oi_overlay = await asyncio.to_thread(
-                            free_oi.load_or_fetch, state.sym, expiries, spot, now=started)
+                            free_oi.load_or_fetch, state.sym, expiries, spot, now=started,
+                            london_rows=snapshot.get("rows_by_expiry"))
                         oi_attached = lse_gamma_map.attach_oi(snapshot, oi_overlay)
                     except Exception as oi_error:
                         snapshot["oi_overlay_error"] = (

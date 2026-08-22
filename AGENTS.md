@@ -13,7 +13,7 @@
 |---|---|---|---|
 | **IBKR / TWS** | 🟢 **TIEMPO REAL** | `reqMarketDataType(1)` en los 4 puentes; `ibkr_bar_bridge.py:352` "Delayed PROHIBIDO" | **DISPARO**: spot, NBBO, cinta, gate de spread, el PRINT |
 | **Polygon** | 🔴 **15 MIN** | `/v3/trades` y `/v3/quotes` → **401 NOT_AUTHORIZED**; tarifa Starter $29 = 15-min, Advanced $199 = realtime | **HISTORIA**: barras 1m de 2 años, archivo de cadenas |
-| **CBOE CDN** | 🔴 **delayed y DESIGUAL** | el endpoint se llama `delayed_quotes`; a la vez: QQQ 1,8 h · SPX 4,2 h · **SPY y SMH 21,5 h** | **ESTRUCTURA**: cadena completa, SPX/XSP/NDX, bid/ask |
+| **CBOE CDN** | 🔴 **~15 MIN** (remedido 2026-08-21 16:04 ET, tras el cierre) | ~~QQQ 1,8 h · SPX 4,2 h · SPY y SMH 21,5 h~~ **esa medición fue FUERA DE SESIÓN**. Remedido el 21-ago 16:04 ET en los seis del cockpit a la vez: QQQ 16,1 · NVDA 15,9 · SMH 16,0 · SPY 15,9 · TSLA 15,9 · SPCX 16,0 min — **uniforme**, la misma latencia que Polygon Starter | **ESTRUCTURA**: cadena completa con OI+IV+griegas, SPX/XSP/NDX, bid/ask. **Primer fallback de OI del cockpit** (`free_oi.py`, sólo el OI; su IV delayed se descarta) |
 | **Unusual Whales** | 🟠 **SIN MEDIR** | sin suscripción 15 min y solo JPM/INTC/IWM/XSP; con suscripción "live" + WebSocket (`/api/socket` = 200). **No verificado en vivo** | historia de griegas. **Medir el lunes ANTES de fiarse** |
 
 **REGLA DURA: ningún nivel que dispare una orden puede venir de fuente delayed.** El nivel se

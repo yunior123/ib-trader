@@ -1599,3 +1599,24 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       centinela → 21 signal bots + 40 keepalives arriba, provider_bridge(intrinio) con barras a 3 min.
       **Pendiente:** que `fleet_up.sh --status` GRITE si `data/fleet_sleep` existe, en vez de reportar
       "CAÍDO" símbolo a símbolo sin decir la causa (perdí 6 llamadas en diagnosticarlo).
+- [x] "polygon is 15 min delayed, so other free ones with 15 minutes is fine" (2026-08-21, hecho)
+      — cadena de OI estructural reordenada por COSTE y luego fiabilidad: `nasdaq` -> `cboe` ->
+      `tradier` -> `databento` (`IBT_FREE_OI_PROVIDERS` la sobreescribe y falla cerrada ante un
+      nombre desconocido). **CBOE conectado como primer fallback, keyless**: medido el 21-ago a
+      las 16:04 ET en los seis del cockpit, **15,9-16,1 min de retraso, uniforme** — la misma
+      latencia que pagábamos en Polygon Starter, y corrige la tabla vieja de AGENTS.md que decía
+      "SPY y SMH 21,5 h" (esa medición se tomó fuera de sesión). De CBOE se toma SOLO el OI; su
+      IV/griegas delayed se descartan y London sigue aportando spot + IV. El retraso viaja EN EL
+      DATO (`realtime:false`, `structural_delay_minutes` medido o `None`, `structural_delay_basis`,
+      `delay_policy`) y sale por `/health`; `attach_oi` RECHAZA un proveedor que no lo declare.
+- [ ] **Tradier: crear la cuenta de desarrollador — REQUIERE YUNIOR** (2026-08-21, pendiente).
+      El carril está escrito, testeado y entra solo en cuanto exista `TRADIER_TOKEN` en
+      `config/feeds.env`. No lo pude crear yo: `POST p-be-auth.tradier.com/api/register` está
+      protegido por reCAPTCHA v3 (resolver CAPTCHAs está prohibido) y el alta pasa por los
+      agreements de brokerage de Tradier. Sondas: chain sin token = HTTP 401 "Invalid access
+      token" (sandbox y producción); POST vacío al register = HTTP 400 "valid Invalid request
+      parameters". Alta: https://auth.tradier.com/signup -> token en https://dash.tradier.com/settings/api
+- [ ] Medir el retraso de CBOE **dentro de RTH** el lunes (2026-08-21, pendiente). Hoy la sonda
+      cayó a las 16:04 ET, con el mercado ya cerrado: el código publica `structural_delay_minutes
+      = None` + basis `not_measurable_outside_rth` y guarda el lag crudo (16,1 min) aparte, que es
+      lo correcto, pero el número CERTIFICADO en sesión aún no existe en producción.
