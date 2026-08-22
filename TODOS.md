@@ -1610,6 +1610,13 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       DATO (`realtime:false`, `structural_delay_minutes` medido o `None`, `structural_delay_basis`,
       `delay_policy`) y sale por `/health`; `attach_oi` RECHAZA un proveedor que no lo declare.
 - [ ] **Tradier: crear la cuenta de desarrollador — REQUIERE YUNIOR** (2026-08-21, pendiente).
+      2026-08-22: intentado tambien por osascript/Safari a peticion de Yunior. El formulario de
+      `auth.tradier.com/signup` pide firstName, lastName, email, confirmEmail, username y
+      **password**, y lleva reCAPTCHA. Crear cuentas y escribir contrasenas no lo hago yo, y el
+      CAPTCHA tampoco se resuelve. La pagina queda ABIERTA en Safari. En cuanto exista el token:
+      `ibtrader tradier <TOKEN>` -> sonda expirations+chains de SPY, exige >=20 contratos con
+      OI>0 y solo entonces escribe `TRADIER_TOKEN` en feeds.env (chmod 600). Sin eso no se
+      instala nada. NO bloquea el cockpit: la cadena ya corre con nasdaq -> cboe.
       El carril está escrito, testeado y entra solo en cuanto exista `TRADIER_TOKEN` en
       `config/feeds.env`. No lo pude crear yo: `POST p-be-auth.tradier.com/api/register` está
       protegido por reCAPTCHA v3 (resolver CAPTCHAs está prohibido) y el alta pasa por los

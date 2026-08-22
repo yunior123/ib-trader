@@ -124,6 +124,7 @@ case "$cmd" in
     ;;
   disarm)   zsh order_engine/disarm.sh ;;
   test)     $PY -m pytest tests/ -q ${1:+-k "$1"} ;;
+  tradier)  zsh "$REPO/scripts/tradier_token.sh" "$1" ;;
   build)    build_all ;;
   todo)     grep -n "^- \[ \]" TODOS.md | tail -25 ;;
   install)
