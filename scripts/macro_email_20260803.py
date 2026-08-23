@@ -8,6 +8,12 @@ import json
 import os
 import time
 
+
+# seguridad: interruptor duro de notificaciones (Yunior 2026-08-23)
+import os as _os
+if _os.path.exists(_os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))), "data", "notify_off")):
+    raise SystemExit("notificaciones apagadas (data/notify_off)")
+
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(REPO, "data", "analisis_2026-08-03")
 HTML = os.path.join(OUT, "MACRO.html")
