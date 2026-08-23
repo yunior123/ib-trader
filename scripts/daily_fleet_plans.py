@@ -815,6 +815,8 @@ def make_pdf(outdir, sym, spot, cs, on, plan_lines, series):
 
 # ---------- email ----------
 def send_email(paths, summary, tag=""):
+    if os.path.exists(os.path.join(REPO, "data", "notify_off")):
+        return "notificaciones apagadas (data/notify_off)"
     key, to = ENV.get("RESEND_KEY"), ENV.get("RESEND_TO")
     if not key or not to: return "sin RESEND_KEY/TO"
     atts = []
