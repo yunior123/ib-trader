@@ -1788,4 +1788,22 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       Freno verificado en produccion 07:36 con el codigo corregido: `freno` ("vault en 429
       (7 en 10 min)") + `mapa:QQQ` y `mapa:XLK` ok=1 en la misma vuelta -> el vault se salta
       pero el mapa CBOE (gratis) sigue, niveles refrescados a 81 s. gastado congelado en 3621.
-      PENDIENTE: verificar en RTH (9:30) que el cash baja a age_s pequeño.
+      CORRECCION (Yunior: "it was working premarket before" + "use lse" + "we only use free
+      ones"): el pulso de cash NO era Finnhub. Finnhub /quote no cubre premarket — medido
+      07:39 del lunes, NVDA y QQQ con t=2026-08-21 16:00 (63,7 h). Quien cubre extendido es
+      el VAULT: las barras de NVDA en D1 van de 16:40 a 19:59 ET del viernes. El premarket
+      murio cuando murio la cuota de LSE, no por Finnhub. Ahora el tick sale de la ultima
+      barra 1m del vault (provider='lse'), /api/quotes retirada (410) y quoteFinnhub sin
+      llamadores. Segundo hallazgo MEDIDO: el vault IGNORA el parametro interval — tf='15m'
+      y tf='1m' guardaban las MISMAS 200 filas, identicas o/h/l/c fila a fila: la mitad de
+      las peticiones eran duplicados exactos. Se pide solo 1m y las velas mayores se agregan
+      en el worker. Presupuesto estimado ~4.300/dia de 15.000. Commits e8afbb2a, ef331cbc.
+      PENDIENTE: (a) la cuota LSE de HOY sigue agotada — verificar a que hora resetea;
+      (b) en RTH comprobar que el age_s del cash baja a segundos.
+
+- [ ] 58. "comment code for finnhub, ibkr, polygon, intrinio. we only use free ones"
+      (2026-08-24 ~07:50) — HECHO en el worker de Cloudflare (Finnhub era el unico de los
+      cuatro que tocaba; fuera del camino vivo, conservado comentado). PENDIENTE decidir el
+      alcance en el resto del repo: son ~190 ficheros de codigo (polygon 122, finnhub 43,
+      intrinio 35, ib_insync/ib_async 33) y comentarlos a ciegas tumba la flota. Hay que ir
+      por areas y verificando, no de golpe.
