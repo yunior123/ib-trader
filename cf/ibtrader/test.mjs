@@ -16,12 +16,18 @@ ok("interpola el cruce", cerca(gammaFlip(perfil([[100,-10],[110,6],[120,10]]), 1
 ok("sin cruce devuelve null", gammaFlip(perfil([[100,5],[110,5]]), 105) === null);
 ok("perfil vacio devuelve null", gammaFlip([], 100) === null);
 {
-  // dos cruces: uno en 114 y otro arriba. Con spot 200 gana el mas cercano al spot.
+  // dos cruces: uno en ~114 y otro arriba. Con el spot en 130 los dos caen dentro del 25%.
   const p = perfil([[100,-10],[110,6],[120,10],[130,-20],[140,1]]);
-  const raices = flipRaices(p, 200);
-  ok("devuelve TODAS las raices", raices.length === 2, JSON.stringify(raices));
-  ok("ordena por cercania al spot", raices[0] > raices[1], JSON.stringify(raices));
-  ok("el flip publicado es el mas cercano", cerca(gammaFlip(p, 200), raices[0]));
+  const raices = flipRaices(p, 130);
+  ok("devuelve TODAS las raices cercanas", raices.length === 2, JSON.stringify(raices));
+  ok("ordena por cercania al spot", Math.abs(raices[0] - 130) <= Math.abs(raices[1] - 130),
+     JSON.stringify(raices));
+  ok("el flip publicado es el mas cercano", cerca(gammaFlip(p, 130), raices[0]));
+  // Una raiz al 40% del spot no es un nivel que el precio pueda cruzar: MU publicaba flip
+  // 276 con el spot en 914 (2026-08-24) y el chart lo pintaba como si fuera operable.
+  ok("descarta las raices lejanas al spot", flipRaices(p, 200).length === 0,
+     JSON.stringify(flipRaices(p, 200)));
+  ok("sin raiz cercana el flip es null", gammaFlip(p, 200) === null);
 }
 
 console.log("\n[max pain]");
