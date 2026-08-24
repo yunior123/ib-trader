@@ -1772,5 +1772,17 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       (pre-commit+pre-push, encadena al hook del repo) probado 3/3.
       🔴 PENDIENTE YUNIOR: las 4 claves VIEJAS siguen dando HTTP 200 — crear una nueva NO
       revoca las anteriores. Hay que BORRARLAS en build.nvidia.com. Y rotar el MILVUS_TOKEN.
-- [ ] 57. "fix: https://ibtrader.quant-academy.workers.dev/ not working realtime" (2026-08-24 ~07:08)
-      — pendiente de diagnóstico.
+- [x] 57. "fix: https://ibtrader.quant-academy.workers.dev/ not working realtime" (2026-08-24 ~07:08)
+      — hecho, commit fceece90. Eran DOS techos, ninguno visible desde la página:
+      (1) LSE con la cuota diaria AGOTADA ("daily request limit reached (15000/day)" a las
+      07:20): el cron corría cada minuto 24h con 13 peticiones/vuelta = 18.720/día. Cadencia
+      por fase (RTH 1/min 15m+1m, ext 1/3min, noche 1/15min) ≈ 6.600/día + techo 12.000 +
+      freno si el vault viene en 429 (una petición rechazada gasta cuota igual). Cazado de
+      paso: el bucle mandaba 4 peticiones a la vez contra vault_concurrency 2.
+      (2) Finnhub 429 permanente: /stream pedía precio POR SOCKET con caché por isolate; las
+      6 ventanas = 6 sockets = hasta 72 pet/min contra 60. Ahora el tick sale de la tabla
+      `quotes` de D1, compartida entre isolates y ya estrangulada.
+      MEDIDO: antes 3 ticks y 429 a los 17s; ahora 8 ticks/ventana en 40s, 6 ventanas, cero
+      errores. `modo=perp` da age_s 0-6s. El cash fuera de RTH sigue con age_s alto (63h =
+      cierre del viernes) porque Finnhub free solo da la última operación — viejo DECLARADO.
+      PENDIENTE: verificar en RTH (9:30) que el cash baja a age_s pequeño.

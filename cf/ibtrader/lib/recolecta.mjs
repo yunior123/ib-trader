@@ -108,8 +108,6 @@ export async function vuelta(env, { tfs = ["15m", "1m"] } = {}) {
   const symMapa = turno(resto);
   const res = { cockpit: COCKPIT, mapa: symMapa, errores: [] };
 
-  // De DOS en dos: el vault declara vault_concurrency 2 y en paralelo devuelve 429 (medido
-  // aqui y ya escrito en scripts/lse_client.py:174).
   res.barras_ok = 0;
   res.tfs = tfs;
   // El vault declara vault_concurrency 2 y en paralelo devuelve 429 (medido; ya escrito en
@@ -125,20 +123,18 @@ export async function vuelta(env, { tfs = ["15m", "1m"] } = {}) {
        AND (tarea LIKE 'barras:%' OR tarea = 'flujo') LIMIT 20`)
     .bind(Math.floor(Date.now() / 1000) - 600).all();
   const rechazos = (recientes.results || []).filter(r => String(r.detalle).includes("429")).length;
-  if (rechazos >= 3) {
-    res.errores.push(`vault en 429 (${rechazos} en 10 min): se salta la recoleccion`);
-    await bitacora(db, "freno", true, 0, `429 x${rechazos} en 10 min`);
-    return res;
-  }
-
   const gastado = await gastoLseHoy(db);
   res.lse_gastado = gastado;
-  if (gastado + trabajos.length + 1 > TECHO_LSE) {
-    res.errores.push(`presupuesto LSE agotado: ${gastado}/${TECHO_LSE} — no se recolecta`);
-    await bitacora(db, "presupuesto", false, 0, `${gastado}/${TECHO_LSE}`);
-    return res;
+  // Saltar el VAULT no es saltar la vuelta: el mapa sale de CBOE, que es gratis, y es lo que
+  // pinta muros/flip. Cortarlo tambien dejaria el chart sin niveles por un problema de LSE.
+  let saltar = null;
+  if (rechazos >= 3) saltar = `vault en 429 (${rechazos} en 10 min)`;
+  else if (gastado + trabajos.length + 1 > TECHO_LSE) saltar = `presupuesto agotado ${gastado}/${TECHO_LSE}`;
+  if (saltar) {
+    res.errores.push(`${saltar}: se salta el vault, el mapa sigue`);
+    await bitacora(db, "freno", true, 0, saltar);
   }
-  for (let i = 0; i < trabajos.length; i += 2) {
+  for (let i = 0; !saltar && i < trabajos.length; i += 2) {
     const par = trabajos.slice(i, i + 2);
     const r = await Promise.allSettled(par.map(t => recolectarBarras(db, t.sym, key, t.tf)));
     r.forEach((x, j) => x.status === "fulfilled" ? res.barras_ok++
@@ -153,8 +149,10 @@ export async function vuelta(env, { tfs = ["15m", "1m"] } = {}) {
   }
   res.mapa_ok = [seisEnRueda, symMapa];
 
-  try { res.flujo_ok = await recolectarFlujo(db, key); }
-  catch (e) { res.errores.push(`flujo: ${e.message}`); }
+  if (!saltar) {
+    try { res.flujo_ok = await recolectarFlujo(db, key); }
+    catch (e) { res.errores.push(`flujo: ${e.message}`); }
+  }
 
   // Retencion: sin esto la base crece sin fin y el sistema deja de sostenerse solo. Se conserva
   // el historico de NIVELES (es el producto) y se poda lo voluminoso: perfiles y bitacora.
