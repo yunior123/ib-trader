@@ -62,40 +62,6 @@ function soloContiguas(filas) {
   return filas.slice(desde);
 }
 
-// 1m del dia desde Yahoo (sin clave). Solo rellena lo que FALTA: nunca pisa una barra que
-// ya este, para no sustituir el print del vault por el de otra fuente.
-async function rellenoYahoo(db, sym) {
-  const u = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}`
-          + `?interval=1m&range=1d`;
-  const r = await fetch(u, { headers: { "User-Agent":
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/140.0 Safari/537.36" } });
-  if (!r.ok) throw new Error(`yahoo HTTP ${r.status}`);
-  const j = await r.json();
-  const res = j?.chart?.result?.[0];
-  const t = res?.timestamp, q = res?.indicators?.quote?.[0];
-  if (!Array.isArray(t) || !q) throw new Error("yahoo sin serie 1m");
-  const filas = [];
-  for (let i = 0; i < t.length; i++) {
-    const o = q.open?.[i], h = q.high?.[i], l = q.low?.[i], c = q.close?.[i];
-    // Yahoo mete null en los minutos sin print: se SALTAN, no se rellenan con el anterior.
-    if (![o, h, l, c].every(x => typeof x === "number" && x > 0)) continue;
-    filas.push({ ts: new Date(t[i] * 1000).toISOString().replace("T", " ").replace("Z", "000"),
-                 o, h, l, c, v: q.volume?.[i] || 0 });
-  }
-  if (!filas.length) throw new Error("yahoo: ninguna vela legible");
-  const { results } = await db.prepare(
-    "SELECT ts FROM barras WHERE sym=? AND tf='1m' AND ts >= ?")
-    .bind(sym, filas[0].ts).all();
-  const ya = new Set((results || []).map(x => x.ts));
-  const nuevas = filas.filter(f => !ya.has(f.ts));
-  for (let i = 0; i < nuevas.length; i += 100) {
-    await db.batch(nuevas.slice(i, i + 100).map(b => db.prepare(
-      "INSERT OR IGNORE INTO barras (sym,tf,ts,o,h,l,c,v) VALUES (?,?,?,?,?,?,?,?)")
-      .bind(sym, "1m", b.ts, b.o, b.h, b.l, b.c, b.v)));
-  }
-  return { sym, yahoo: filas.length, ya_estaban: filas.length - nuevas.length, insertadas: nuevas.length };
-}
-
 function nivelesUI(d, perp) {
   const red = (x, n) => (typeof x === "number" && isFinite(x) ? +x.toFixed(n) : null);
   return {
@@ -523,21 +489,9 @@ export default {
     const f = fase();
     const { cada, tfs } = CADENCIA[f];
     const min = Math.floor(Date.now() / 60000);
-    // Relleno del intradia cada 10 min: tapa las horas que el vault deja sin cubrir cuando
-    // la cuota (compartida con el Mac) se agota. Yahoo es gratis y solo responde desde el
-    // borde. Nunca pisa una barra existente, asi que el print del vault siempre manda.
-    if (min % 10 === 0 && f !== "noche") {
-      ctx.waitUntil((async () => {
-        let n = 0, errs = [];
-        for (const s2 of COCKPIT) {
-          try { n += (await rellenoYahoo(env.DB, s2)).insertadas; }
-          catch (e) { errs.push(`${s2}: ${e.message}`); }
-        }
-        await env.DB.prepare("INSERT INTO vueltas (ts,tarea,ok,ms,detalle) VALUES (?,?,?,?,?)")
-          .bind(Math.floor(Date.now() / 1000), "relleno", errs.length ? 0 : 1, 0,
-                (errs.length ? errs.join(" | ") : `${n} barras 1m de yahoo`).slice(0, 400)).run();
-      })());
-    }
+    // YAHOO RETIRADO del chart (orden Yunior 2026-08-24: "lse for chart, the rest for
+    // options"). Las velas son de LSE y solo de LSE: WebSocket (que no gasta cuota) y vault.
+    // CBOE y las demas fuentes gratis se quedan donde les toca: la cadena de opciones.
     if (min % cada !== 0) return;
     ctx.waitUntil(vuelta(env, { tfs }));
   },
@@ -706,19 +660,6 @@ export default {
       // (medido), asi que este relleno SOLO puede vivir aqui. Gratis y sin clave: cubre las
       // horas que la cuota del vault se dejo sin cubrir, para que el chart no arranque el dia
       // con dos velas. La fuente queda declarada en la bitacora.
-      if (p === "/tarea/relleno") {
-        if (!env.PUSH_KEY || url.searchParams.get("key") !== env.PUSH_KEY)
-          return json({ error: "no autorizado" }, 401);
-        const syms = (url.searchParams.get("syms") || COCKPIT.join(",")).toUpperCase()
-          .split(",").map(x => x.trim()).filter(Boolean).slice(0, 12);
-        const out = [];
-        for (const s2 of syms) {
-          try { out.push(await rellenoYahoo(db, s2)); }
-          catch (e) { out.push({ sym: s2, error: String(e?.message || e) }); }
-        }
-        return json(out);
-      }
-
       // Disparo manual de una vuelta: util para verificar sin esperar al cron.
       if (p === "/tarea/vuelta") {
         if (url.searchParams.get("key") !== env.ADMIN_KEY) return json({ error: "no autorizado" }, 401);
