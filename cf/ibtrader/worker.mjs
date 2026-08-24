@@ -145,8 +145,14 @@ async function streamWs(server, db, url, env) {
         .bind(sym).all();
       barras = agregarVelas((results || []).reverse(), tf);
     }
-    const velasUI = (barras || []).map(b =>
+    let velasUI = (barras || []).map(b =>
       ({ time: b._t ?? aEpoch(b.ts), o: b.o, h: b.h, l: b.l, c: b.c, v: b.v || 0 }));
+    // Las de D1 son historia del vault (REST); las del ws son las de HOY. Se pegan detras,
+    // nunca solapando: si el REST esta sin cuota, el chart vive igual de las del ws.
+    if (!perp && tickerLse) {
+      const corte = velasUI.length ? velasUI[velasUI.length - 1].time : 0;
+      for (const v of tickerLse.velas(sym)) if (v.time > corte) velasUI.push(v);
+    }
     if (barras?.length) ultimaVela = { ...barras[barras.length - 1] };
     const nivel = await nivelesDe();
     enviar({ type: "history", bars: velasUI, tf, mock: false,
@@ -205,14 +211,19 @@ async function streamWs(server, db, url, env) {
         // viernes: t=2026-08-21 16:00 medido a las 07:39 del lunes.)
         const t = await tickerLse.tick(sym);
         if (!t) throw new Error(`vault ws sin tick de ${sym} todavia (${tickerLse.estado().estado})`);
-        const u = ultimaVela;
-        ultimaVela = { ...u, h: Math.max(u.h ?? t.price, t.price),
-                             l: Math.min(u.l ?? t.price, t.price), c: t.price };
+        // La vela la CONSTRUYE el ws con sus propios ticks (mid del BBO, cubos de 1 minuto),
+        // igual que el puente local. El chart se mueve sin tocar el REST ni su cuota.
+        const vs = tickerLse.velas(sym);
+        const viva = vs[vs.length - 1];
+        if (!viva) throw new Error(`vault ws sin vela de ${sym} todavia`);
+        ultimaVela = { ts: new Date(viva.time * 1000).toISOString().replace("T", " ").slice(0, 19),
+                       o: viva.o, h: viva.h, l: viva.l, c: viva.c, v: viva.v };
+        const r4 = x => Math.round(x * 1e4) / 1e4;   // el chart no tiene por que ver ruido binario
         enviar({ type: "tick",
-                 bar: { time: aEpoch(u.ts), o: u.o, h: ultimaVela.h, l: ultimaVela.l,
-                        c: ultimaVela.c, v: u.v || 0 },
-                 feed: { provider: "lse", upstream: "data-ws.londonstrategicedge.com", proto: "ws",
-                         bid: t.bid, ask: t.ask,
+                 bar: { time: viva.time, o: r4(viva.o), h: r4(viva.h), l: r4(viva.l),
+                        c: r4(viva.c), v: viva.v },
+                 feed: { provider: "lse", upstream: "data-ws.londonstrategicedge.com",
+                         proto: "ws-bbo-mid", bid: t.bid, ask: t.ask,
                          age_s: Math.max(0, Math.floor((Date.now() - t.ts) / 1000)) } });
       } else if (false && ultimaVela) {   // rama Finnhub, conservada por si vuelve a hacer falta
         // Cash 24/5: precio de la accion via Finnhub. La vela base es la de D1; h/l/c se
@@ -245,7 +256,10 @@ async function streamWs(server, db, url, env) {
         : { provider: "finnhub", upstream: "finnhub.io", proto: "rest-poll" };
       enviar({ type: "feed_status", feed: { ...quien, error: String(e?.message || e) } });
     }
-    setTimeout(paso, 5000);
+    // En cash el pulso NO cuesta nada aguas arriba: el ws ya esta entregando ticks y aqui solo
+    // se reenvia la vela viva. El puente local pinta a 4 Hz (LSE_CHART_PAINT_S); 1 s es de sobra
+    // para el cockpit y no castiga al isolate. En perp cada vuelta SI es una peticion a OKX: 5 s.
+    setTimeout(paso, perp ? 5000 : 1000);
   };
   setTimeout(paso, 1500 + Math.random() * 2500);
 }

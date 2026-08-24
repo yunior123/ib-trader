@@ -126,7 +126,7 @@ export const MAX_SUBS_LSE = 16;
 export function abrirTickerLse(key) {
   if (!key) throw new Error("sin LSE_API_KEY");
   const est = { estado: "cerrado", subs: new Set(), ultimo: new Map(), pend: new Set(),
-                errores: [], ws: null };
+                errores: [], ws: null, velas: new Map(), vistas: new Map() };
 
   const suscribir = sym => {
     if (est.subs.has(sym) || est.subs.size >= MAX_SUBS_LSE || !est.ws) return;
@@ -154,8 +154,25 @@ export function abrirTickerLse(key) {
         const sy = String(m.symbol || "").toUpperCase();
         const t = Date.parse(m.ts || m.timestamp || "");
         if (!sy || !Number.isFinite(t)) return;   // sin hora no se declara frescura: se tira
-        est.ultimo.set(sy, { price: Number(m.price ?? m.bid), bid: m.bid, ask: m.ask,
-                             volume: m.volume ?? 0, ts: t });
+        const bid = Number(m.bid), ask = Number(m.ask);
+        if (!(bid > 0 && ask >= bid)) return;
+        // El campo `price` del vault ES el bid (medido: NVDA price=214.32 bid=214.32
+        // ask=214.34). El puente local lo dice en su propia docstring: "never uses LSE's
+        // price==bid field". El precio es el PUNTO MEDIO del BBO.
+        const px = Math.round(((bid + ask) / 2) * 1e4) / 1e4;   // sin ruido binario en el chart
+        const llegada = Date.now();
+        // Una foto de mercado cerrado no es realtime: hace falta un SEGUNDO evento fresco.
+        const n = (est.vistas.get(sy) || 0) + 1; est.vistas.set(sy, n);
+        if (n < 2 || Math.abs(llegada - t) > 30000) return;
+        est.ultimo.set(sy, { price: px, bid, ask, volume: m.volume ?? 0, ts: t });
+        // Velas de 1 minuto CONSTRUIDAS con los ticks: es lo que hace que el chart se mueva
+        // sin tocar el REST (chart_bridge.py:3625). Cubo = epoch truncado al minuto.
+        const cubo = Math.floor(t / 1000) - (Math.floor(t / 1000) % 60);
+        let vs = est.velas.get(sy); if (!vs) est.velas.set(sy, vs = []);
+        const u = vs[vs.length - 1];
+        if (u && u.time === cubo) { u.h = Math.max(u.h, px); u.l = Math.min(u.l, px); u.c = px; u.v += Number(m.volume || 0); }
+        else if (!u || cubo > u.time) { vs.push({ time: cubo, o: px, h: px, l: px, c: px, v: Number(m.volume || 0) });
+                                        if (vs.length > 600) vs.splice(0, vs.length - 600); }
       });
       const caer = () => { est.estado = "cerrado"; est.ws = null; est.subs.clear(); };
       ws.addEventListener("close", caer);
@@ -174,6 +191,7 @@ export function abrirTickerLse(key) {
       return est.ultimo.get(sym) || null;
     },
     ver: sym => est.ultimo.get(sym) || null,
+    velas: sym => est.velas.get(sym) || [],
     estado: () => ({ estado: est.estado, subs: [...est.subs], vistos: [...est.ultimo.keys()],
                      errores: est.errores.slice(-5) }),
     cerrar: () => { try { est.ws?.close(); } catch {} est.ws = null; est.estado = "cerrado"; },
