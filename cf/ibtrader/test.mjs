@@ -85,6 +85,7 @@ console.log("\n[agregar]");
   ok("el put wall es el alcanzable, no el mayor", lejos.put_wall === 99, String(lejos.put_wall));
   ok("el call wall es el alcanzable, no el mayor", lejos.call_wall === 102, String(lejos.call_wall));
   ok("declara la banda usada", typeof lejos.muros_banda === "number", String(lejos.muros_banda));
+  ok("la banda no pasa del 10% del spot", lejos.muros_banda <= 10.0001, String(lejos.muros_banda));
 
     ok("spot invalido LANZA en vez de devolver cero", tiro);
   let tiro2 = false;

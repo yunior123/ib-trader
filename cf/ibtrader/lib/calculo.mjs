@@ -89,7 +89,11 @@ export function agregar(json) {
   // (-25,3% del spot, coberturas y rollos lejanos) contra 52.434 en el 700 (-1,3%), que es
   // el que los dealers defienden de verdad. Un muro que el precio no puede alcanzar esta
   // semana no es un campo de fuerza. Banda = 3 movimientos esperados, con suelo del 4%.
-  const banda = Math.max(3 * (em || 0), 0.04 * spot);
+  // El EM es el del vencimiento MAS CERCANO, que en los nombres sin 0DTE es SEMANAL: usarlo
+  // crudo daba bandas de +/-25% (COIN) y volvia a colar muros inalcanzables. Se escala a un
+  // dia por raiz del tiempo, con suelo del 4% y techo del 10% del spot.
+  const emDia = em ? em / Math.sqrt(Math.max(1, dte || 1)) : 0;
+  const banda = Math.min(Math.max(3 * emDia, 0.04 * spot), 0.10 * spot);
   const enBanda = filas.filter(k => Math.abs(k.strike - spot) <= banda);
   const base = enBanda.length ? enBanda : filas;
   const call_wall = mayor(base, campoC);
