@@ -811,7 +811,14 @@ def main():
         f'{len(curados)}/{len(healed)} curados" with title "🩺 ib-trader healthcheck"'],
         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     email_due, email_signature = health_email_due(crit, warn, today)
-    if not a.no_email and env("RESEND_KEY") and email_due:
+    # El interruptor data/notify_off apagaba voz, Discord, ntfy y los OTROS correos, pero este
+    # bloque no lo miraba: era el unico emisor de email que se lo saltaba (Yunior 2026-08-24,
+    # "why email notifications? kill" con notify_off ya puesto desde las 08:06).
+    _off = _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))),
+                         "data", "notify_off")
+    if _os.path.exists(_off):
+        print("[healthcheck] notificaciones apagadas (data/notify_off): no se manda email")
+    elif not a.no_email and env("RESEND_KEY") and email_due:
         try:
             import requests
             subj = f"{status} Healthcheck ib-trader {today}"
