@@ -10,13 +10,22 @@ CREATE TABLE IF NOT EXISTS niveles (
   max_pain REAL,
   gex_total REAL,                   -- $ por punto de movimiento del subyacente
   contratos INTEGER, strikes INTEGER,
+  -- Anadidas por ALTER en produccion; el fichero se habia quedado atras y un despliegue
+  -- limpio no reproducia la tabla (comprobado contra sqlite_master el 2026-08-24).
+  flip_raices TEXT,                 -- todas las raices del GEX acumulado, no solo la publicada
+  gross_gex REAL, strike_span_pct REAL,
+  net_vex REAL, gross_vex REAL, net_charm REAL, gross_charm REAL,
+  pressure REAL, em REAL, dte INTEGER, exp TEXT,
+  greeks_ok_pct REAL,               -- fraccion de contratos con IV legible; 0 => vex/charm NULL
+  dex_bruto REAL,
+  muros_dte INTEGER,                -- horizonte en dias del OI de los muros; NULL = cadena entera
   PRIMARY KEY (sym, ts)
 );
 
 -- Perfil por strike de la ultima instantanea (solo los que pesan: top por |gex|).
 CREATE TABLE IF NOT EXISTS perfil (
   sym TEXT NOT NULL, ts INTEGER NOT NULL, strike REAL NOT NULL,
-  call_oi REAL, put_oi REAL, call_vol REAL, put_vol REAL, gex REAL,
+  call_oi REAL, put_oi REAL, call_vol REAL, put_vol REAL, gex REAL, vex REAL, charm REAL,
   PRIMARY KEY (sym, ts, strike)
 );
 
