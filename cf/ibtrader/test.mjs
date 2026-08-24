@@ -65,9 +65,9 @@ console.log("\n[agregar]");
 
 console.log("\n[ventana y turno]");
 ok("sabado cerrado", ventanaAbierta(new Date("2026-08-22T18:00:00Z")) === false);
-ok("domingo cerrado", ventanaAbierta(new Date("2026-08-23T18:00:00Z")) === false);
+ok("domingo 14:00 ET abierto (24/5)", ventanaAbierta(new Date("2026-08-23T18:00:00Z")) === true);
 ok("lunes 14:00 UTC (10:00 ET) abierto", ventanaAbierta(new Date("2026-08-24T14:00:00Z")) === true);
-ok("lunes 02:00 UTC (22:00 ET domingo) cerrado", ventanaAbierta(new Date("2026-08-24T02:00:00Z")) === false);
+ok("lunes 02:00 UTC (22:00 ET domingo) abierto (24/5)", ventanaAbierta(new Date("2026-08-24T02:00:00Z")) === true);
 {
   const lista = ["A", "B", "C"];
   const t0 = turno(lista, 0), t1 = turno(lista, 5 * 60 * 1000), t3 = turno(lista, 15 * 60 * 1000);

@@ -44,3 +44,13 @@ CREATE TABLE IF NOT EXISTS vueltas (
   ms INTEGER, detalle TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_vueltas_ts ON vueltas(ts DESC);
+
+-- Ultima cotacion viva por simbolo (barrido rotativo /api/quotes, Finnhub free tier).
+-- Compartida entre isolates: la rotacion lee de aqui para saber a quien refrescar.
+CREATE TABLE IF NOT EXISTS quotes (
+  sym   TEXT PRIMARY KEY,
+  price REAL,
+  prev  REAL,
+  ts    INTEGER,              -- epoch s del quote segun la fuente
+  at    INTEGER               -- epoch ms de cuando se tomó
+);

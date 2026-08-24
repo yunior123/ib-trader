@@ -4799,7 +4799,11 @@ window.addEventListener("keydown", (e) => {
 
 function connect() {
   const conn = document.getElementById("conn");
-  const url = `ws://${location.host || "127.0.0.1:8080"}/stream`;
+  // Servido desde Cloudflare la pagina es https: un ws:// plano es mixed-content y el navegador
+  // lo bloquea SIEMPRE (wss obligatorio). El query viaja para que un backend con ruta /stream
+  // sepa sym/tf/modo sin tocar el protocolo de comandos del puente local.
+  const qs = location.search || "";
+  const url = `${location.protocol === "https:" ? "wss" : "ws"}://${location.host || "127.0.0.1:8080"}/stream${qs}`;
   beginChartLoad("conectando chart");
   ws = new WebSocket(url);
   ws.onopen = () => { conn.className = "on"; conn.textContent = "● WS conectado";

@@ -105,7 +105,9 @@ console.log("\n[estado y seguridad]");
   const r = await get("/api/estado");
   ok("responde 200", r.status === 200);
   ok("declara si la ventana está abierta", typeof r.cuerpo.ventana_abierta === "boolean");
-  ok("informa de la cuota de LSE", r.cuerpo.cuota_lse && r.cuerpo.cuota_lse.bytes_cap_month > 0);
+  // La cuota se informa en cualquiera de sus dos formas honestas: dato (upstream OK) o
+  // error declarado (upstream 429/caido). Lo que NO se acepta es ausenciar el campo.
+  ok("informa de la cuota de LSE", r.cuerpo.cuota_lse != null || !!r.cuerpo.cuota_error);
   ok("la bitácora registra vueltas", Array.isArray(r.cuerpo.ultimas_vueltas) && r.cuerpo.ultimas_vueltas.length > 0);
   ok("no filtra la clave de LSE", !JSON.stringify(r.cuerpo).includes("X-API-Key"));
 

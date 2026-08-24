@@ -6,13 +6,12 @@ export const FLOTA = ["QQQ","SPY","NVDA","TSLA","MU","SMH","AMD","AAPL","MSFT","
 
 export const MAPA = [...FLOTA, "SPX", "XSP", "NDX", "DIA", "IWM"];
 
-// Ventana de mercado US en Nueva York, incluida la sesion extendida que sirven las fuentes.
-// Los festivos NO se conocen aqui: si el mercado esta cerrado la cadena no cambia y se ve en
-// fuente_ts, que es justo el dato que hay que mirar antes de fiarse de un nivel.
+// Ventana de recoleccion 24/5 (Yunior 2026-08-23: "sunday to friday"): del domingo al viernes
+// SE RECOLECTA CONTINUO, sabado reposa. El precio vivo de cada ventana lo pone /stream
+// (finnhub en cash, OKX perpetuo en modo=perp); esta puerta solo decide si el cron rota la
+// cadena/barras. Los festivos NO se conocen aqui: si el mercado esta cerrado la cadena no cambia
+// y se ve en fuente_ts, que es justo el dato que hay que mirar antes de fiarse de un nivel.
 export function ventanaAbierta(fecha = new Date()) {
   const ny = new Date(fecha.toLocaleString("en-US", { timeZone: "America/New_York" }));
-  const dia = ny.getDay();
-  if (dia === 0 || dia === 6) return false;
-  const min = ny.getHours() * 60 + ny.getMinutes();
-  return min >= 4 * 60 && min <= 20 * 60;        // 04:00-20:00 ET
+  return ny.getDay() !== 6;                      // solo el sabado cierra
 }

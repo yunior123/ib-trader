@@ -39,19 +39,42 @@ export async function cuotaLse(key) {
 // OKX: perpetuales de acciones tokenizadas. Cotizan 24/7, traen LIBRO (bid/ask) y son lo unico
 // con precio VIVO fuera del horario de bolsa. No son la accion: es un derivado con su propia
 // base, asi que sirve para el pulso y el spread, NO para fijar un nivel de la cadena.
+//
+// 429/BLOQUEO MEDIDO (2026-08-23, worker en el borde): las IPs de salida de Cloudflare son
+// compartidas y OKX responde intermitente — 429 por rafaga, 404 y paginas HTML de reto anti-bot
+// para la MISMA url que un minuto antes devolvio JSON. Defensa: peticion SIN User-Agent de
+// navegador (menos sospecha de bot desde datacenter), reintentos tratando 429/404/HTML-basura
+// como transitorios y backoff con jitter. Fail-loud solo tras agotar los intentos.
 const OKX = "https://www.okx.com/api/v5";
 
+async function okxJson(path, intentos = 4) {
+  let ultimo;
+  for (let i = 0; i < intentos; i++) {
+    try {
+      const r = await fetch(`${OKX}${path}`);   // sin UA: ver comentario arriba
+      if (!r.ok) throw new Error(`okx HTTP ${r.status}`);
+      return await r.json();
+    } catch (e) {
+      ultimo = e;
+      const msg = String(e?.message || "");
+      const transitorio = msg.includes("HTTP 429") || msg.includes("HTTP 404") ||
+                          msg.includes("JSON") || msg.includes("unexpected");
+      if (!transitorio) throw e;
+      await new Promise(rs => setTimeout(rs, 700 + Math.random() * 900));
+    }
+  }
+  throw ultimo;
+}
+
 export async function perpTicker(sym) {
-  const r = await pedir(`${OKX}/market/ticker?instId=${sym.toUpperCase()}-USDT-SWAP`);
-  const d = (await r.json())?.data?.[0];
+  const d = (await okxJson(`/market/ticker?instId=${sym.toUpperCase()}-USDT-SWAP`))?.data?.[0];
   if (!d?.last) throw new Error(`okx sin ticker para ${sym}`);
   return { last: +d.last, bid: +d.bidPx, ask: +d.askPx, ts: +d.ts,
            vol24h: +d.volCcy24h || 0, open24h: +d.open24h || 0 };
 }
 
 export async function perpVelas(sym, { bar = "1m", limite = 120 } = {}) {
-  const r = await pedir(`${OKX}/market/candles?instId=${sym.toUpperCase()}-USDT-SWAP&bar=${bar}&limit=${limite}`);
-  const d = (await r.json())?.data;
+  const d = (await okxJson(`/market/candles?instId=${sym.toUpperCase()}-USDT-SWAP&bar=${bar}&limit=${limite}`))?.data;
   if (!Array.isArray(d) || !d.length) throw new Error(`okx sin velas para ${sym}`);
   // OKX sirve mas reciente primero: [ts, o, h, l, c, vol, volCcy, volCcyQuote, confirm]
   return d.map(v => ({ ts: new Date(+v[0]).toISOString().replace("T", " ").slice(0, 19),
@@ -59,7 +82,17 @@ export async function perpVelas(sym, { bar = "1m", limite = 120 } = {}) {
 }
 
 export async function perpDisponibles() {
-  const r = await pedir(`${OKX}/public/instruments?instType=SWAP`);
-  const d = (await r.json())?.data || [];
+  const d = (await okxJson(`/public/instruments?instType=SWAP`))?.data || [];
   return new Set(d.map(x => String(x.instId).replace("-USDT-SWAP", "")));
+}
+
+// Finnhub /quote — precio REALTIME de la accion US (la casa ya lo usa asi en scripts/:
+// watchlist_stats.py "fuente realtime"). Free tier: ~60 peticiones/min; el worker la llama con
+// cache compartida y solo para los simbolos que tienen ventana abierta. Fail-loud sin key.
+export async function quoteFinnhub(sym, key) {
+  if (!key) throw new Error("sin FINNHUB_API_KEY");
+  const r = await pedir(`https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(sym)}&token=${encodeURIComponent(key)}`);
+  const q = await r.json();
+  if (!q?.c) throw new Error(`finnhub sin precio para ${sym}`);
+  return { last: +q.c, prev_close: +q.pc || null, ts: (+q.t || 0) * 1000 };
 }
