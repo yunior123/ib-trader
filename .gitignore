@@ -166,3 +166,15 @@ venv-lse/
 bin/lse_price_alarm
 bin/orderflow_footprint
 bin/premarket_arrow
+
+# === DEFENSA ACTIVA: jamás al repo ===
+config/discord_webhooks.json
+config/discord_webhooks*.json
+config/defensa_intruso_*.json
+config/discord_bloqueo_*.json
+config/discord_mensajes_evidencia_*.json
+config/notify_private.txt
+config/*.muerto_*
+config/*_purgados_*
+config/*_evidencia.json
+data/secrets_names.txt

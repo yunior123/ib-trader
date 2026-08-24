@@ -3,6 +3,13 @@
 
 ### 🔒 REGLA CERO — TOKENS, CLAVES Y CREDENCIALES (2026-08-23, tras filtrar 35 webhooks a GitHub público)
 **NINGÚN token, clave API, webhook URL, contraseña ni secreto sale de `config/feeds.env` (chmod 600, gitignored).**
+**ACTUALIZACIÓN 2026-08-24 ("keys in keychain only"): la FUENTE ÚNICA de credenciales es el**
+**LLAVERO de macOS** (servicio `ibtrader.feeds`, una entrada por clave). `config/feeds.env` es un
+ARTEFACTO GENERADO: se borra y se regenera con `scripts/secrets_keychain.sh env > config/feeds.env
+&& chmod 600 config/feeds.env`. Para rotar una clave: `security add-generic-password -s ibtrader.feeds
+-a NOMBRE -w NUEVO_VALOR -U` + regenerar. Los nombres viven en `data/secrets_names.txt` (gitignored).
+Prohibido pegar claves en chats, en ficheros tracked, o en CUALQUIER repo. Todos los repos locales
+llevan pre-commit/pre-push con el escáner (`~/.config/git-hooks/git-secrets-check.sh`).
 - **Prohibido pegar tokens en chats** (Discord, X, WhatsApp, Claude, Codebuff, o CUALQUIER chat).
   Si necesitas mover un token, usa `pbcopy < config/feeds.env`. El chat es público para siempre.
 - **Prohibido renombrar credenciales** pensando que "ya no son activas". `.apagado`, `.bak`,
