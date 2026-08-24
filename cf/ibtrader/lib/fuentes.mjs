@@ -107,3 +107,75 @@ export async function quoteFinnhub(sym, key) {
   if (!q?.c) throw new Error(`finnhub sin precio para ${sym}`);
   return { last: +q.c, prev_close: +q.pc || null, ts: (+q.t || 0) * 1000 };
 }
+
+// --- WebSocket del vault: el UNICO realtime que tenemos -----------------------------------
+// Protocolo verificado en vivo 2026-08-24 08:12 ET (premarket, con la cuota REST en 429 ->
+// el stream NO consume el presupuesto diario): hello -> {action:auth,api_key} ->
+// {type:authenticated, max:16 subscripciones} -> {action:subscribe,symbol} -> ticks
+// {type:tick,symbol,price,volume,bid,ask,ts} con ts ISO8601. Mismo protocolo que el puente
+// local (scripts/lse_price_alarm_feed.py:73).
+//
+// UNO POR CONEXION, no un singleton de modulo. Medido 2026-08-24: un socket SALIENTE en
+// Workers solo entrega eventos al contexto que lo creo — compartirlo entre peticiones daba
+// `estado=listo` con CERO ticks en las ventanas que no lo habian abierto (QQQ, SPY y NVDA
+// mudas mientras TSLA, SMH y SPCX iban). Con el tope de 16 suscripciones por conexion, seis
+// ventanas con una cada una caben de sobra.
+const LSE_WS = "https://data-ws.londonstrategicedge.com";
+export const MAX_SUBS_LSE = 16;
+
+export function abrirTickerLse(key) {
+  if (!key) throw new Error("sin LSE_API_KEY");
+  const est = { estado: "cerrado", subs: new Set(), ultimo: new Map(), pend: new Set(),
+                errores: [], ws: null };
+
+  const suscribir = sym => {
+    if (est.subs.has(sym) || est.subs.size >= MAX_SUBS_LSE || !est.ws) return;
+    est.subs.add(sym);
+    try { est.ws.send(JSON.stringify({ action: "subscribe", symbol: sym })); }
+    catch (e) { est.subs.delete(sym); est.errores.push(String(e.message || e).slice(0, 80)); }
+  };
+
+  const conectar = async () => {
+    est.estado = "conectando";
+    try {
+      const r = await fetch(LSE_WS, { headers: { Upgrade: "websocket" } });
+      if (!r.webSocket) throw new Error(`ws sin upgrade (HTTP ${r.status})`);
+      const ws = r.webSocket; ws.accept(); est.ws = ws;
+      ws.addEventListener("message", ev => {
+        let m; try { m = JSON.parse(ev.data); } catch { return; }
+        if (m.type === "welcome") { ws.send(JSON.stringify({ action: "auth", api_key: key })); return; }
+        if (m.type === "authenticated" || (m.type === "auth" && m.status === "ok")) {
+          est.estado = "listo"; est.subs.clear();
+          for (const s2 of est.pend) suscribir(s2);
+          return;
+        }
+        if (m.type === "error" || m.error) { est.errores.push(String(m.message || m.error).slice(0, 120)); return; }
+        if (m.type !== "tick" && m.type !== "quote" && m.type !== "trade") return;
+        const sy = String(m.symbol || "").toUpperCase();
+        const t = Date.parse(m.ts || m.timestamp || "");
+        if (!sy || !Number.isFinite(t)) return;   // sin hora no se declara frescura: se tira
+        est.ultimo.set(sy, { price: Number(m.price ?? m.bid), bid: m.bid, ask: m.ask,
+                             volume: m.volume ?? 0, ts: t });
+      });
+      const caer = () => { est.estado = "cerrado"; est.ws = null; est.subs.clear(); };
+      ws.addEventListener("close", caer);
+      ws.addEventListener("error", caer);
+    } catch (e) { est.estado = "cerrado"; est.ws = null; est.errores.push(String(e.message || e).slice(0, 120)); }
+  };
+
+  return {
+    async tick(sym) {
+      est.pend.add(sym);
+      if (est.estado === "cerrado") await conectar();
+      else if (est.estado === "listo") suscribir(sym);
+      // Al abrir, el hello+auth+subscribe+primer tick tardan ~200 ms. Sin esta espera corta la
+      // primera vuelta cantaba un feed_status de error que no era tal: solo iba por delante.
+      for (let i = 0; i < 12 && !est.ultimo.has(sym); i++) await new Promise(r => setTimeout(r, 150));
+      return est.ultimo.get(sym) || null;
+    },
+    ver: sym => est.ultimo.get(sym) || null,
+    estado: () => ({ estado: est.estado, subs: [...est.subs], vistos: [...est.ultimo.keys()],
+                     errores: est.errores.slice(-5) }),
+    cerrar: () => { try { est.ws?.close(); } catch {} est.ws = null; est.estado = "cerrado"; },
+  };
+}

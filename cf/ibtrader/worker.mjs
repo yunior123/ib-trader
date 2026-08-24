@@ -1,5 +1,5 @@
 import { vuelta, recolectarMapa, recolectarBarras, gastoLseHoy, TECHO_LSE } from "./lib/recolecta.mjs";
-import { cuotaLse, perpTicker, perpVelas, quoteFinnhub } from "./lib/fuentes.mjs";
+import { cuotaLse, perpTicker, perpVelas, quoteFinnhub, abrirTickerLse } from "./lib/fuentes.mjs";
 import { bollinger } from "./lib/calculo.mjs";
 import { ventanaAbierta, fase, CADENCIA, MAPA, FLOTA } from "./lib/universo.mjs";
 import { pagina, COCKPIT } from "./lib/panel.mjs";
@@ -107,8 +107,12 @@ async function streamWs(server, db, url, env) {
   const tf = url.searchParams.get("tf") || "1m";   // el vault solo sirve 1m; lo mayor se agrega
   const finKey = env?.FINNHUB_API_KEY || null;
   let vivo = true;
-  server.addEventListener("close", () => { vivo = false; });
-  server.addEventListener("error", () => { vivo = false; });
+  // Un ticker del vault POR CONEXION: los eventos de un ws saliente solo llegan al contexto
+  // que lo abrio (medido 2026-08-24 — compartirlo dejaba mudas las ventanas que no lo abrian).
+  const tickerLse = perp ? null : abrirTickerLse(env?.LSE_API_KEY);
+  const morir = () => { vivo = false; try { tickerLse?.cerrar(); } catch {} };
+  server.addEventListener("close", morir);
+  server.addEventListener("error", morir);
   const enviar = o => {
     try { if (vivo && server.readyState === 1) server.send(JSON.stringify(o)); }
     catch { vivo = false; }
@@ -194,19 +198,22 @@ async function streamWs(server, db, url, env) {
                    feed: { ...feedBase, age_s: Math.max(0, Math.floor(Date.now() / 1000 - t.ts / 1000)) } });
         }
       } else if (ultimaVela) {
-        // FINNHUB COMENTADO (orden Yunior 2026-08-24: "we only use free ones"). Ademas daba el
-        // cierre del viernes en premarket: t=2026-08-21 16:00 medido a las 07:39 del lunes.
-        // El pulso de cash sale ahora de la ultima barra de 1m del vault (LSE), que SI cubre
-        // horario extendido: las barras de NVDA en D1 van de 16:40 a 19:59 ET del viernes.
-        const f = await db.prepare(
-          "SELECT ts,o,h,l,c,v FROM barras WHERE sym=? AND tf='1m' ORDER BY ts DESC LIMIT 1")
-          .bind(sym).first();
-        if (!f) throw new Error(`sin barras 1m de ${sym} en D1`);
-        ultimaVela = { ...f };
+        // REALTIME DE CASH = WEBSOCKET DEL VAULT. Es lo mismo que usa el puente local y es lo
+        // unico que da premarket: verificado 2026-08-24 08:12 ET con NVDA a 214,32 y ts de hace
+        // un segundo, CON la cuota REST en 429 — el stream no gasta el presupuesto diario.
+        // (Finnhub comentado por orden de Yunior y porque en premarket daba el cierre del
+        // viernes: t=2026-08-21 16:00 medido a las 07:39 del lunes.)
+        const t = await tickerLse.tick(sym);
+        if (!t) throw new Error(`vault ws sin tick de ${sym} todavia (${tickerLse.estado().estado})`);
+        const u = ultimaVela;
+        ultimaVela = { ...u, h: Math.max(u.h ?? t.price, t.price),
+                             l: Math.min(u.l ?? t.price, t.price), c: t.price };
         enviar({ type: "tick",
-                 bar: { time: aEpoch(f.ts), o: f.o, h: f.h, l: f.l, c: f.c, v: f.v || 0 },
-                 feed: { provider: "lse", upstream: "api.londonstrategicedge.com", proto: "d1-barras",
-                         age_s: Math.max(0, Math.floor(Date.now() / 1000 - aEpoch(f.ts))) } });
+                 bar: { time: aEpoch(u.ts), o: u.o, h: ultimaVela.h, l: ultimaVela.l,
+                        c: ultimaVela.c, v: u.v || 0 },
+                 feed: { provider: "lse", upstream: "data-ws.londonstrategicedge.com", proto: "ws",
+                         bid: t.bid, ask: t.ask,
+                         age_s: Math.max(0, Math.floor((Date.now() - t.ts) / 1000)) } });
       } else if (false && ultimaVela) {   // rama Finnhub, conservada por si vuelve a hacer falta
         // Cash 24/5: precio de la accion via Finnhub. La vela base es la de D1; h/l/c se
         // actualizan con el vivo. Si el mercado esta cerrado, q.ts lo dice: age_s grande =
@@ -341,6 +348,25 @@ export default {
         try { cuota = await cuotaLse(env.LSE_API_KEY); } catch { /* el panel se pinta igual */ }
         return new Response(pagina({ datos, cuota }),
           { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+      }
+
+      // Diagnostico del WebSocket del vault: sin esto un simbolo mudo no se distingue de uno
+      // sin suscribir. Abre el socket si hace falta y contesta lo que el vault confirmo.
+      if (p === "/api/lse") {
+        const syms = (url.searchParams.get("syms") || "QQQ").toUpperCase().split(",").filter(Boolean);
+        const tk = abrirTickerLse(env.LSE_API_KEY);
+        for (const s2 of syms) { try { await tk.tick(s2); } catch { /* se ve en estado */ } }
+        await new Promise(r => setTimeout(r, 3000));
+        for (const s2 of syms) { try { await tk.tick(s2); } catch {} }
+        await new Promise(r => setTimeout(r, 1500));
+        const est = tk.estado();
+        const ticks = Object.fromEntries(syms.map(s2 => {
+          const t = tk.ver(s2);
+          return [s2, t ? { price: t.price, bid: t.bid, ask: t.ask,
+                            age_s: Math.max(0, Math.floor((Date.now() - t.ts) / 1000)) } : null];
+        }));
+        tk.cerrar();
+        return json({ ...est, ticks });
       }
 
       if (p === "/api/niveles") return json(await ultimosNiveles(db));
