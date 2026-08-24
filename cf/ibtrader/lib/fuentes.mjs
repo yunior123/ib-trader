@@ -19,8 +19,15 @@ export async function cadenaCboe(sym) {
   return r.json();
 }
 
+// El parametro es `timeframe`, NO `interval`. Con `interval` el vault no se queja: ignora el
+// parametro y sirve 1m siempre — por eso tf='15m' y tf='1m' guardaban las MISMAS filas en D1
+// (medido 2026-08-24, 200 filas identicas o/h/l/c). El cliente de casa siempre lo hizo bien:
+// scripts/lse_client.py:429 manda ("timeframe", _chk_tf(timeframe)).
+// Validos segun el 400 del propio vault: 1s 5s 15s 30s 1m 3m 5m 15m 30m 1h 4h 1d 1w 1mo.
+const TF_LSE = ["1s","5s","15s","30s","1m","3m","5m","15m","30m","1h","4h","1d","1w","1mo"];
 export async function barrasLse(sym, key, { intervalo = "1m", limite = 120 } = {}) {
-  const u = `${LSE}/candles?symbol=${encodeURIComponent(sym)}&interval=${intervalo}&limit=${limite}&order=desc`;
+  if (!TF_LSE.includes(intervalo)) throw new Error(`timeframe ${intervalo} invalido para el vault`);
+  const u = `${LSE}/candles?symbol=${encodeURIComponent(sym)}&timeframe=${intervalo}&limit=${limite}&order=desc`;
   const filas = await (await pedir(u, { "X-API-Key": key })).json();
   if (!Array.isArray(filas)) throw new Error("candles: respuesta no es lista");
   return filas.reverse();                       // el vault sirve desc; aqui se quiere cronologico
