@@ -214,7 +214,7 @@ async function streamWs(server, db, url, env) {
       barras = await okxCompartido(`velas:${sym}:${tf}`, () => perpVelas(sym, { bar: tf, limite: 150 }));
     } else {
       const { results } = await db.prepare(
-        "SELECT ts,o,h,l,c,v FROM barras WHERE sym=? AND tf='1m' ORDER BY ts DESC LIMIT 400")
+        "SELECT ts,o,h,l,c,v FROM barras WHERE sym=? AND tf='1m' ORDER BY ts DESC LIMIT 3000")
         .bind(sym).all();
       barras = agregarVelas((results || []).reverse(), tf);
     }
@@ -261,7 +261,7 @@ async function streamWs(server, db, url, env) {
       // Honesto: aqui NO hay mas historia que dar. D1 guarda 200 barras por simbolo y el
       // vault REST esta sin cuota. Se dice y el chart deja de girar, en vez de fingir.
       enviar({ type: "backfill", bars: [], exhausted: true, feed: feedBase,
-               reason: "fin del historial: D1 guarda 200 barras y el REST del vault esta sin cuota diaria" });
+               reason: "no hay mas historial guardado para este simbolo" });
       return;
     }
   });

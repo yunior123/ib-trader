@@ -50,7 +50,11 @@ export async function recolectarMapa(db, sym) {
 export async function recolectarBarras(db, sym, key, tf = "15m") {
   const t0 = Date.now();
   try {
-    const filas = await barrasLse(sym, key, { intervalo: tf, limite: 200 });
+// 200 barras de 1m son 3h20m: en la vista de 15m salen ~14 velas, el chart se cree en el
+// borde izquierdo (pide mas por debajo de 20) y saltaba el banner de "fin del historial" en
+// las seis ventanas. El vault admite hasta 5000 filas por peticion (MAX_ROWS en
+// scripts/lse_client.py:51), asi que 1500 cuesta LO MISMO: una peticion.
+    const filas = await barrasLse(sym, key, { intervalo: tf, limite: 1500 });
     if (filas.length) {
       await db.batch(filas.map(b => db.prepare(
         "INSERT OR REPLACE INTO barras (sym,tf,ts,o,h,l,c,v) VALUES (?,?,?,?,?,?,?,?)")
