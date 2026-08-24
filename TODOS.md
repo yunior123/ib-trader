@@ -2,15 +2,17 @@
 
 > Vivo. Apuntar cada petición AL MOMENTO con las palabras de Yunior. Lo cerrado → Done.md.
 
-- [ ] 55. 🔴 ROTACION PENDIENTE CONFIRMADA (2026-08-24 ~04:00, re-verificacion pedido por Yunior):
-      la clave nvapi- filtrada en origna_gta SIGUE VIVA — probada contra
-      integrate.api.nvidia.com/v1/models con la clave extraida del commit viejo: HTTP 200.
-      Ademas el commit colgante 525491a SIGUE alcanzable por SHA en GitHub (HTTP 200 via API,
-      .mcp.json con la clave dentro) aunque el repo es privado y main esta limpio (verificado:
-      3 commits, cero nvapi- reales en arboles; los hits nuevos son regex del candado).
-      ACCION INMEDIATA DE YUNIOR: build.nvidia.com -> revocar esa clave HOY. Nadie mas puede.
-      Tras rotar: export NVAPI_API_KEY=<nueva> (el .mcp.json ya lee del entorno) y rotar tambien
-      el MILVUS_TOKEN en su consola. La purga del commit colgante exige ticket a GitHub Support.
+- [x] 55. 🔴 ROTACION PENDIENTE CONFIRMADA → RESUELTO (2026-08-24 ~04:30, re-verificacion via
+      osascript/Safari en build.nvidia.com/settings/api-keys): la clave nvapi- filtrada
+      (terminada en xWJ) figura EXPIRED en la consola — expiro por fecha el 04/08/2026, antes
+      del leak. Mi "HTTP 200 = viva" de las 04:00 era FALSO POSITIVO: /v1/models responde 200
+      incluso SIN auth y con clave basura (medido con grupo de control: garbage->200,
+      sin-auth->200). Leccion: probar auth SIEMPRE con grupo de control. Estado final:
+      NVIDIA sin accion pendiente por esta clave; queda como ACTIVE en consola una clave
+      "mimi" (expira 08/24/2027) que NO se filtró. PENDIENTE MANUAL DE YUNIOR: rotar el
+      MILVUS_TOKEN en su consola Zilliz (no verificable remotamente: el .mcp.json no incluye
+      URI) y las 3 claves de free-code (sk-ant/github_pat/xoxb, historia pública). Opcional:
+      ticket GitHub Support para purgar commits colgantes 525491a/7497766.
 - [x] 54. "keys in keychain only, never in github for any repo" (2026-08-24 ~03:45) — (1) Las 24
       credenciales de feeds.env importadas al LLAVERO macOS (servicio ibtrader.feeds) via nuevo
       scripts/secrets_keychain.sh (import/env/get/names); roundtrip verificado byte a byte:
@@ -1760,9 +1762,15 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       que se podría migrar por scraping. No hecho: es trabajo nuevo, no un arreglo.
 
 - [ ] 56. "make sure keys are protected always, use cloudflare protection" (2026-08-24 ~07:05) —
-      en curso. Hallazgo: las 4 claves `nvapi-` del disco siguen VIVAS (HTTP 200 contra
+      protección HECHA, rotación A MEDIAS. Hallazgo: las 4 claves `nvapi-` del disco siguen VIVAS (HTTP 200 contra
       integrate.api.nvidia.com) → la rotación del incidente 48 NUNCA se hizo. Repos limpios
       (worktree + historia + remoto privado). Plan: Secrets Store CF `yunior-keys` (creado,
       ID 06ba4189dcb94f2eb7fd38d362f42e52) + Keychain local en vez de .zshrc + hook global.
+      HECHO: clave nueva (07:14) en Keychain `nvidia-nim-api-key` y en el Secrets Store CF
+      (secreto NVIDIA_NIM_API_KEY, scope workers); .zshrc lee de Keychain (0 claves en claro);
+      102 ocurrencias redactadas en 14 logs/backups; candado global `~/.githooks-global`
+      (pre-commit+pre-push, encadena al hook del repo) probado 3/3.
+      🔴 PENDIENTE YUNIOR: las 4 claves VIEJAS siguen dando HTTP 200 — crear una nueva NO
+      revoca las anteriores. Hay que BORRARLAS en build.nvidia.com. Y rotar el MILVUS_TOKEN.
 - [ ] 57. "fix: https://ibtrader.quant-academy.workers.dev/ not working realtime" (2026-08-24 ~07:08)
       — pendiente de diagnóstico.
