@@ -179,10 +179,17 @@ async def append_bars(market, sym: str, last_ep: dict[str, int]) -> None:
 
 # ---------------- NBBO (data/nbbo_<sym>.txt) ----------------
 
+_NBBO_QUEJA: dict[str, float] = {}
+
+
 def write_nbbo(sym: str, q: Quote, exch_ts: dict[str, str]) -> bool:
     bid, ask = float(q.bid), float(q.ask)
     if not (ask > bid > 0):   # fail-loud: quote invalido -> NO escribir cero plausible
-        log(f"{sym}: NBBO invalido bid={bid} ask={ask} (no se escribe)")
+        # Una queja por minuto y simbolo: TSM llega con bid==ask permanentemente y llenaba el
+        # log a razon de una linea cada 7 s. Rechazarlo esta bien; repetirlo 12.000 veces no.
+        if time.time() - _NBBO_QUEJA.get(sym, 0) > 60:
+            _NBBO_QUEJA[sym] = time.time()
+            log(f"{sym}: NBBO invalido bid={bid} ask={ask} (no se escribe)")
         return False
     # DOS RELOJES (AUDIT-2026-08-04 #1): campo 1 = wall-clock de escritura (gate <=10s de los
     # bots vuelve a funcionar), campo 4 = epoch de BOLSA (edad real del dato; feed_tier en
@@ -559,7 +566,16 @@ async def one_pass(providers, settings, syms, last_ep, exch_ts, do_warmup, do_ch
             else:
                 await append_bars(providers.market, sym, last_ep)
         except Exception as e:  # per-capability degradation, fail-loud (key redactada)
-            log(f"{sym}: BARS error {_scrub(e)}")
+            # El cortacircuito de cuota (scripts/lse_budget.py) corta SIN tocar la red: el
+            # fallo es el mismo para los 36 simbolos en cada vuelta. Una linea por minuto,
+            # no 36 cada 20 s — asi el log sigue sirviendo para ver lo que SI cambia.
+            msg = _scrub(e)
+            if "cuota diaria" in str(msg) or "techo local" in str(msg):
+                if time.time() - _NBBO_QUEJA.get("__cuota__", 0) > 60:
+                    _NBBO_QUEJA["__cuota__"] = time.time()
+                    log(f"BARS en pausa para toda la flota: {msg}")
+            else:
+                log(f"{sym}: BARS error {msg}")
         if do_quote:   # --once: sin quote_loop, el contrato de una pasada debe quedar completo
             await _quote_once(providers, sym, exch_ts, last_q, entitlement)
         px, qa, med = last_q.get(sym, (0.0, -1.0, 0.0))

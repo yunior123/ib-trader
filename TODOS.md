@@ -1807,3 +1807,34 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       alcance en el resto del repo: son ~190 ficheros de codigo (polygon 122, finnhub 43,
       intrinio 35, ib_insync/ib_async 33) y comentarlos a ciegas tumba la flota. Hay que ir
       por areas y verificando, no de golpe.
+
+- [x] 59. "investigate unnecesary background tasks" + "online ibtrader buggy" (2026-08-24 ~14:00)
+      — hecho, commit fa127f7d. La causa era UNA sola y unia las dos peticiones: la cuota de
+      LSE (15.000/dia) es POR API KEY y la comparten el Mac y el worker. `provider_bridge`
+      pedia el NBBO por REST (get_quote -> get_bars(limit=1)) para 36 simbolos cada 7 s
+      = ~274 pet/min: la cuota moria antes de las 08:00 y luego martilleaba (58.823
+      peticiones 429 en un dia) -> el ib-trader online servia las barras del VIERNES.
+      Arreglado: presupuesto+cortacircuito compartidos (scripts/lse_budget.py, techo local
+      4.000, worker 10.500), NBBO por WebSocket (cero cuota; tope MEDIDO de 16 suscripciones
+      por conexion -> lotes, 32/36 vivos), CBOE espaciado 1,5 s en el Mac y con reintento en
+      el worker (mapa NVDA/TSLA/HOOD/STX ok=1), /api/barras filtrando tf, y sin gamma el GEX
+      es null y no 0.
+      Apagados por inutiles y MEDIDOS: intrinio_ws_autostart (401 cada 60 s, 1,5 MB de log,
+      proveedor muerto por orden) y watchlist_quotes (5.148 ConnectionRefused a IBKR hoy,
+      5,6 MB). Ruido de log de provider_bridge: 98 -> 39 lineas/minuto.
+      PENDIENTE verificar manana: (a) `logs/lse_reset_probe.log` dice a que hora resetea de
+      verdad la cuota — de eso depende el reparto; (b) con cuota viva, que el chart online
+      deje de tener el hueco entre las velas del viernes y el tick de hoy.
+
+- [ ] 60. La ESPADA (opt_whale_watch) lleva dias CAIDA: reintenta contra IBKR 127.0.0.1:4001
+      (prohibido esta semana) cada 30 s — 23 MB de log, 61% errores, cero alarmas de ballena.
+      Migrarla a LSE /options/flow (ya implementado en LibreProvider.get_option_flow) o
+      declararla apagada. NO dejarla en crash-loop mudo: es el recurso mas potente del repo.
+
+- [ ] 61. TSM, EWY, DRAM y SKHY no dan tick por el WebSocket de LSE (32 de 36). Medir si el
+      vault no los cubre o si llegan con bid==ask (TSM llega asi por la otra fuente y se
+      rechaza, correctamente). Sin esto esos cuatro dependen del REST.
+
+- [ ] 62. Los 6 chart_bridge locales y lse_gamma_map siguen pidiendo barras por REST a LSE:
+      ahora pasan por el presupuesto (bien) pero el arreglo de verdad es que construyan las
+      velas del WebSocket, como ya hace el worker. Mientras, comparten los 4.000 del techo.
