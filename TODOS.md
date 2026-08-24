@@ -1785,4 +1785,7 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       MEDIDO: antes 3 ticks y 429 a los 17s; ahora 8 ticks/ventana en 40s, 6 ventanas, cero
       errores. `modo=perp` da age_s 0-6s. El cash fuera de RTH sigue con age_s alto (63h =
       cierre del viernes) porque Finnhub free solo da la última operación — viejo DECLARADO.
+      Freno verificado en produccion 07:36 con el codigo corregido: `freno` ("vault en 429
+      (7 en 10 min)") + `mapa:QQQ` y `mapa:XLK` ok=1 en la misma vuelta -> el vault se salta
+      pero el mapa CBOE (gratis) sigue, niveles refrescados a 81 s. gastado congelado en 3621.
       PENDIENTE: verificar en RTH (9:30) que el cash baja a age_s pequeño.
