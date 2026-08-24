@@ -52,6 +52,9 @@ def relay(tmp_path):
         "NOTIFY_PUSH_FILE": str(funnel),
         "NOTIFY_RELAY_LOG": str(rlog),
         "NOTIFY_PRIVATE_FILE": str(priv),
+        # Hermetico (2026-08-23): el interruptor data/notify_off del operador NO debe decidir
+        # si los tests pasan — apuntamos el apagado a un path que nunca existe en el sandbox.
+        "NOTIFY_OFF_FILE": str(tmp_path / "notify_off"),
         "NOTIFY_CAP_S": "2",
         "NOTIFY_DEDUP_S": "60",
         "NTFY_TOPIC": "test-topic",
@@ -61,8 +64,11 @@ def relay(tmp_path):
                          start_new_session=True)
     time.sleep(1.0)  # que el tail -F arranque antes del primer append
     yield funnel, rlog, curl_log
-    os.killpg(os.getpgid(p.pid), signal.SIGKILL)
-    p.wait(timeout=5)
+    try:
+        os.killpg(os.getpgid(p.pid), signal.SIGKILL)
+        p.wait(timeout=5)
+    except ProcessLookupError:
+        pass  # el relay ya murio solo (p.ej. apagado): no enmascarar el fallo real del test
 
 
 def _push(funnel, title, body):
@@ -147,9 +153,9 @@ def test_layout_privado_sin_config_usa_respaldo(tmp_path, monkeypatch):
     assert rx.search("cuenta | U26942420 posiciones abiertas 2")
 
 
-def test_layout_privado_produccion_desde_fichero_real():
-    """El PRIVADO activo sale de config/notify_private.txt y cubre los titulos reales."""
-    assert os.path.exists(os.path.join(REPO, "config", "notify_private.txt"))
+def test_layout_privado_produccion_cubre_titulos_reales():
+    """El PRIVADO de PRODUCCION (fichero config presente o fallback embebido si fue borrado,
+    p.ej. en la limpieza REGLA CERO del 2026-08-23) cubre los titulos reales."""
     for linea in ("🚨 order_engine | open AAPL NO enviado",
                   "⏰ EXPIRA HOY | Tu opción de AAPL 300P vence hoy",
                   "NOK CERRADA | SELL 1 @ 8.90 realizedPnl +0.35 comisión 0.09"):

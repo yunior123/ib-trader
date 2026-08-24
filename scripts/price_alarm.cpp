@@ -34,6 +34,7 @@
 #include <cstdarg>
 #include <cstdio>
 #include <cstdlib>
+#include <fstream>
 #include <cstring>
 #include <ctime>
 #include <map>
@@ -235,6 +236,18 @@ static void fire(const Rule& r, double px) {
     char SYM[32];
     std::snprintf(SYM, sizeof(SYM), "%s", r.sym.c_str());
     for (char* p = SYM; *p; ++p) *p = (char)std::toupper((unsigned char)*p);
+
+    // CANDATO NOTIFICACIONES (data/notify_off, incidente 2026-08-23): con el interruptor
+    // presente el disparo NO emite sirena, voz ni banner — solo queda en el log y la linea
+    // se marca igual (el estado de la regla no se pierde). El watcher sigue vigilando.
+    for (const char* off : {"data/notify_off", "../data/notify_off"}) {
+        std::ifstream candato(off);
+        if (candato.good()) {
+            logline("*** DISPARADA (SILENCIADA: notify_off) *** %s toco %.2f", SYM, px);
+            return;
+        }
+    }
+
 
     // (a) SIRENA ultra-pro: ProAlarm (tono AAC calidad iPhone, eleccion Yunior
     // 2026-07-18 para CRITICOS con dinero en juego) x3 en background. Fallback

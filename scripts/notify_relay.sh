@@ -20,8 +20,11 @@
 # registrando es el retraso INTERESANTE (45s..BACKLOG_S), que si dice algo.
 cd "$(dirname "$0")/.." || exit 1
 ROOT="$(pwd)"; source config/feeds.env 2>/dev/null
-if [ -f "$ROOT/data/notify_off" ]; then
-  echo "$(date) notify_relay: data/notify_off presente, no arranco" >> logs/notify_relay.log
+# El apagado admite override (NOTIFY_OFF_FILE): los tests apuntan a un path del sandbox para no
+# depender del estado real del Mac; en produccion queda igual: $ROOT/data/notify_off.
+OFF_FILE="${NOTIFY_OFF_FILE:-$ROOT/data/notify_off}"
+if [ -f "$OFF_FILE" ]; then
+  echo "$(date) notify_relay: $OFF_FILE presente, no arranco" >> logs/notify_relay.log
   exit 0
 fi
 F="${NOTIFY_PUSH_FILE:-$ROOT/data/notify_push.txt}"     # override solo para tests

@@ -25,6 +25,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <fstream>
 
 extern char** environ;
 
@@ -79,6 +80,16 @@ static void fleet_notify_urgent(const char* title, const char* msg,
                                 const char* sound = "ProChord") {
     static bool init = [] { std::signal(SIGCHLD, SIG_IGN); return true; }();
     (void)init;
+    // CANDATO NOTIFICACIONES (data/notify_off, incidente 2026-08-23): interruptor presente =
+    // CERO banner ni sonido en el Mac. Return antes del spawn: coste ~0 en el hot path.
+    {
+        std::ifstream candato("data/notify_off");
+        if (!candato.good()) {
+            std::ifstream candato2("../data/notify_off");   // por si el cwd es un subdirectorio
+            if (!candato2.good()) { /* sin candato: notificar */ }
+            else return;
+        } else return;
+    }
     char t[256], m[768], script[1300];
     as_escape(title, t, sizeof(t));
     as_escape(msg, m, sizeof(m));
