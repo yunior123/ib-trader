@@ -1838,3 +1838,27 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
 - [ ] 62. Los 6 chart_bridge locales y lse_gamma_map siguen pidiendo barras por REST a LSE:
       ahora pasan por el presupuesto (bien) pero el arreglo de verdad es que construyan las
       velas del WebSocket, como ya hace el worker. Mientras, comparten los 4.000 del techo.
+
+- [x] 63. "ib trader, verify" (2026-08-24 ~14:30) — la verificacion encontro DOS fallos que el
+      arreglo de la cuota no cubria, los dos ya cerrados:
+      (a) commit 01a7ca56: los 21 bots de senal llevaban 66 h con la ultima barra del viernes
+      19:59 (bars_<sym>_ibkr.txt venia del REST y murio con la cuota). Al arrancar hoy
+      re-procesaron ese historico con `tail -F` y emitieron COMPRAR 714,86 / VENDER 713,50 con
+      precios de hace tres dias; despues, 4 h mudos. No hubo voz falsa solo porque
+      data/notify_off estaba puesto desde las 08:06. Ahora las velas 1m se construyen de la
+      CINTA del WebSocket (el tick trae price y volume): 32/36 simbolos, volumen real, cero
+      cuota. MEDIDO: barras 1m continuas sin huecos y 11/21 bots emitiendo con epoch de hoy.
+      (b) commit 20ac8309: los muros seguian sin servir aun filtrando por vencimiento <=8 dias
+      — QQQ tenia 53.167 puts en el 530 (-25,3%) con vencimiento de esta semana contra 52.434
+      en el 700 (-1,3%). Banda de 3 EM con suelo del 4%: TSLA quedo cw 365 / pw 350 con el
+      spot en 351,92, que es un mapa operable.
+      Suite completa despues de todo: 2069 pasan, 48 skip.
+
+- [ ] 64. El worker online sigue sin barras de HOY (el chart pinta el viernes y el tick vivo
+      con un hueco en medio) porque su historico entra por REST y la cuota esta agotada. El
+      Mac YA tiene esas barras construidas del WS. Empujarlas a D1 por un endpoint con
+      ADMIN_KEY quitaria la dependencia del REST tambien online.
+
+- [ ] 65. La banda de los muros usa el EM del vencimiento MAS CERCANO: en simbolos sin 0DTE
+      ese EM es semanal y ensancha la banda (PLTR salio +/-17%). Escalar por raiz del tiempo
+      al horizonte del dia.
