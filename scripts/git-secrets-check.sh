@@ -35,6 +35,9 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 # Ficheros staged (pre-commit) o commits por empujar (pre-push)
+FILES=()   # si el bucle de pre-push no llega a correr (stdin vacio) el escaner moria con
+           # "FILES: parameter not set" y bloqueaba el push entero. Sin refs no hay nada
+           # que revisar, no un fallo del escaner.
 if [[ "${1:-}" == "--pre-push" ]]; then
   # pre-push: revisar los commits que se van a empujar
   while read -r local_ref local_sha remote_ref remote_sha; do
