@@ -89,6 +89,10 @@ export async function perpDisponibles() {
 // Finnhub /quote — precio REALTIME de la accion US (la casa ya lo usa asi en scripts/:
 // watchlist_stats.py "fuente realtime"). Free tier: ~60 peticiones/min; el worker la llama con
 // cache compartida y solo para los simbolos que tienen ventana abierta. Fail-loud sin key.
+// RETIRADA (Yunior 2026-08-24: "we only use free ones"). Se conserva por si vuelve a hacer
+// falta, pero NADIE la llama en el camino vivo: el pulso de cash sale de las barras del vault.
+// Motivo tecnico ademas del de politica: en premarket devolvia el cierre del viernes
+// (t=2026-08-21 16:00 medido a las 07:39 del lunes, 63,7 h de antiguedad).
 export async function quoteFinnhub(sym, key) {
   if (!key) throw new Error("sin FINNHUB_API_KEY");
   const r = await pedir(`https://finnhub.io/api/v1/quote?symbol=${encodeURIComponent(sym)}&token=${encodeURIComponent(key)}`);

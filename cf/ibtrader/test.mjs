@@ -87,8 +87,11 @@ ok("02:00 ET (06:00 UTC) es noche", fase(new Date("2026-08-24T06:00:00Z")) === "
    fase(new Date("2026-08-24T06:00:00Z")));
 ok("sabado es noche aunque sean las 11:00 ET", fase(new Date("2026-08-22T15:00:00Z")) === "noche",
    fase(new Date("2026-08-22T15:00:00Z")));
-ok("RTH pide 1m; el resto no", CADENCIA.rth.tfs.includes("1m") &&
-   !CADENCIA.ext.tfs.includes("1m") && !CADENCIA.noche.tfs.includes("1m"));
+// El vault ignora `interval`: pedir 15m devolvia las MISMAS barras de 1m (medido en D1,
+// 200 filas identicas). Ninguna fase puede pedir mas de una temporalidad o son duplicados.
+ok("ninguna fase pide temporalidades duplicadas",
+   Object.values(CADENCIA).every(c => c.tfs.length === 1 && c.tfs[0] === "1m"),
+   JSON.stringify(CADENCIA));
 {
   // El techo son 15.000/dia. Con 6 simbolos del cockpit: RTH 12 barras + 1 flujo por vuelta.
   const dia = 390 / CADENCIA.rth.cada * (6 * CADENCIA.rth.tfs.length + 1)

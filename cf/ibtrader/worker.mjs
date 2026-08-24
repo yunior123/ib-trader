@@ -27,6 +27,23 @@ function okxCompartido(clave, fn, ttlMs = 6000) {
 // "2026-08-24 06:07:00" (UTC, como sirve OKX via perpVelas) -> epoch segundos para lightweight-charts.
 const aEpoch = s => Math.floor(new Date(String(s).replace(" ", "T") + "Z").getTime() / 1000);
 
+// El vault solo sirve barras de 1 minuto (ignora `interval`, medido). Las velas mayores se
+// agregan aqui a partir de esas: cero peticiones extra y sin inventar nada — el open es el
+// del primer minuto del cubo, el close el del ultimo, y h/l los extremos reales.
+const MINUTOS = { "1m": 1, "5m": 5, "15m": 15, "30m": 30, "1h": 60 };
+function agregarVelas(filas, tf) {
+  const m = MINUTOS[tf] || 1;
+  if (m === 1) return filas;
+  const cubos = new Map();
+  for (const b of filas) {
+    const t = aEpoch(b.ts), k = t - (t % (m * 60));
+    const c = cubos.get(k);
+    if (!c) cubos.set(k, { ts: b.ts, _t: k, o: b.o, h: b.h, l: b.l, c: b.c, v: b.v || 0 });
+    else { c.h = Math.max(c.h, b.h); c.l = Math.min(c.l, b.l); c.c = b.c; c.v += b.v || 0; }
+  }
+  return [...cubos.values()].sort((a, b) => a._t - b._t);
+}
+
 // ---- Cotaciones de TODA la flota bajo el techo del free tier de Finnhub (~60/min) ----
 // No se puede preguntar 36 simbolos cada 5 s: son 432/min y el limite salta. Ademas el worker
 // corre en VARIOS isolates que NO comparten memoria (medido 2026-08-24: con cache en RAM el
@@ -87,7 +104,7 @@ async function streamWs(server, db, url, env) {
   const sym = (url.searchParams.get("sym") || url.searchParams.get("perp") || "QQQ")
     .toUpperCase().replace(/USDT$/, "").trim();
   const perp = url.searchParams.get("modo") === "perp" || !!url.searchParams.get("perp");
-  const tf = url.searchParams.get("tf") || (perp ? "1m" : "15m");   // D1 solo guarda 15m en cash
+  const tf = url.searchParams.get("tf") || "1m";   // el vault solo sirve 1m; lo mayor se agrega
   const finKey = env?.FINNHUB_API_KEY || null;
   let vivo = true;
   server.addEventListener("close", () => { vivo = false; });
@@ -120,12 +137,12 @@ async function streamWs(server, db, url, env) {
       barras = await okxCompartido(`velas:${sym}:${tf}`, () => perpVelas(sym, { bar: tf, limite: 150 }));
     } else {
       const { results } = await db.prepare(
-        "SELECT ts,o,h,l,c FROM barras WHERE sym=? AND tf=? ORDER BY ts DESC LIMIT 200")
-        .bind(sym, tf).all();
-      barras = (results || []).reverse();
+        "SELECT ts,o,h,l,c,v FROM barras WHERE sym=? AND tf='1m' ORDER BY ts DESC LIMIT 400")
+        .bind(sym).all();
+      barras = agregarVelas((results || []).reverse(), tf);
     }
     const velasUI = (barras || []).map(b =>
-      ({ time: aEpoch(b.ts), o: b.o, h: b.h, l: b.l, c: b.c, v: b.v || 0 }));
+      ({ time: b._t ?? aEpoch(b.ts), o: b.o, h: b.h, l: b.l, c: b.c, v: b.v || 0 }));
     if (barras?.length) ultimaVela = { ...barras[barras.length - 1] };
     const nivel = await nivelesDe();
     enviar({ type: "history", bars: velasUI, tf, mock: false,
@@ -176,7 +193,21 @@ async function streamWs(server, db, url, env) {
                           l: ultimaVela.l, c: ultimaVela.c, v: ultimaVela.v || 0 },
                    feed: { ...feedBase, age_s: Math.max(0, Math.floor(Date.now() / 1000 - t.ts / 1000)) } });
         }
-      } else if (finKey && ultimaVela) {
+      } else if (ultimaVela) {
+        // FINNHUB COMENTADO (orden Yunior 2026-08-24: "we only use free ones"). Ademas daba el
+        // cierre del viernes en premarket: t=2026-08-21 16:00 medido a las 07:39 del lunes.
+        // El pulso de cash sale ahora de la ultima barra de 1m del vault (LSE), que SI cubre
+        // horario extendido: las barras de NVDA en D1 van de 16:40 a 19:59 ET del viernes.
+        const f = await db.prepare(
+          "SELECT ts,o,h,l,c,v FROM barras WHERE sym=? AND tf='1m' ORDER BY ts DESC LIMIT 1")
+          .bind(sym).first();
+        if (!f) throw new Error(`sin barras 1m de ${sym} en D1`);
+        ultimaVela = { ...f };
+        enviar({ type: "tick",
+                 bar: { time: aEpoch(f.ts), o: f.o, h: f.h, l: f.l, c: f.c, v: f.v || 0 },
+                 feed: { provider: "lse", upstream: "api.londonstrategicedge.com", proto: "d1-barras",
+                         age_s: Math.max(0, Math.floor(Date.now() / 1000 - aEpoch(f.ts))) } });
+      } else if (false && ultimaVela) {   // rama Finnhub, conservada por si vuelve a hacer falta
         // Cash 24/5: precio de la accion via Finnhub. La vela base es la de D1; h/l/c se
         // actualizan con el vivo. Si el mercado esta cerrado, q.ts lo dice: age_s grande =
         // precio viejo DECLARADO, jamas disfrazado de fresco.
@@ -317,6 +348,10 @@ export default {
       // Precio vivo de TODA la flota (o los syms que se pidan) bajo el techo del free tier:
       // barrido rotativo con D1 como almacén compartido entre isolates.
       if (p === "/api/quotes") {
+        // FINNHUB COMENTADO (orden Yunior 2026-08-24: solo fuentes gratis). Esta ruta era la
+        // unica que lo usaba para toda la flota; el precio vive ahora en las barras del vault.
+        return json({ error: "ruta retirada: Finnhub fuera, usa /api/barras o /stream" }, 410);
+        /* eslint-disable no-unreachable */
         const key = env.FINNHUB_API_KEY;
         if (!key) return json({ error: "worker sin FINNHUB_API_KEY" }, 503);
         const syms = (url.searchParams.get("syms") || FLOTA.join(",")).toUpperCase()

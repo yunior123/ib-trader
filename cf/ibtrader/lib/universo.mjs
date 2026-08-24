@@ -29,6 +29,9 @@ export function fase(fecha = new Date()) {
 }
 
 // Cada cuantos minutos toca vuelta, y con que temporalidades, en cada fase.
-export const CADENCIA = { rth: { cada: 1, tfs: ["15m", "1m"] },
-                          ext: { cada: 3, tfs: ["15m"] },
-                          noche: { cada: 15, tfs: ["15m"] } };
+// El vault IGNORA `interval`: pedirle 15m devuelve las MISMAS barras de 1 minuto (medido
+// 2026-08-24 en D1 — 200 filas identicas o/h/l/c fila a fila entre tf='15m' y tf='1m').
+// La mitad de las peticiones eran duplicados. Se pide 1m y las velas mayores se agregan aqui.
+export const CADENCIA = { rth: { cada: 1, tfs: ["1m"] },
+                          ext: { cada: 3, tfs: ["1m"] },
+                          noche: { cada: 15, tfs: ["1m"] } };
