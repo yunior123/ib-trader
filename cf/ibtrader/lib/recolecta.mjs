@@ -86,7 +86,21 @@ export async function recolectarFlujo(db, key) {
   }
 }
 
-export async function vuelta(env) {
+// Peticiones LSE gastadas hoy (dia ET), contadas desde la bitacora: barras y flujo son las
+// unicas tareas que van al vault (el mapa es CBOE, gratis). Sin llamada extra al upstream.
+export async function gastoLseHoy(db) {
+  const ny = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
+  const inicio = Math.floor(new Date(ny.getFullYear(), ny.getMonth(), ny.getDate()).getTime() / 1000)
+               + (Math.floor(Date.now() / 1000) - Math.floor(ny.getTime() / 1000));
+  const r = await db.prepare(
+    "SELECT COUNT(*) n FROM vueltas WHERE ts >= ? AND (tarea LIKE 'barras:%' OR tarea = 'flujo')")
+    .bind(inicio).first();
+  return r?.n ?? 0;
+}
+
+export const TECHO_LSE = 12000;   // de 15.000/dia; el resto es margen para /panel, /chart y manual
+
+export async function vuelta(env, { tfs = ["15m", "1m"] } = {}) {
   const db = env.DB, key = env.LSE_API_KEY;
   // Los SEIS del cockpit se refrescan en CADA vuelta: son los que se miran. El resto del
   // universo va en rueda, un simbolo por vuelta, porque 5 MB de cadena no caben todos juntos.
@@ -97,12 +111,38 @@ export async function vuelta(env) {
   // De DOS en dos: el vault declara vault_concurrency 2 y en paralelo devuelve 429 (medido
   // aqui y ya escrito en scripts/lse_client.py:174).
   res.barras_ok = 0;
-  for (let i = 0; i < COCKPIT.length; i += 2) {
-    const par = COCKPIT.slice(i, i + 2);
-    const r = await Promise.allSettled(par.flatMap(s => [recolectarBarras(db, s, key, "15m"),
-                                                        recolectarBarras(db, s, key, "1m")]));
+  res.tfs = tfs;
+  // El vault declara vault_concurrency 2 y en paralelo devuelve 429 (medido; ya escrito en
+  // scripts/lse_client.py:174). Antes se lanzaban 2 simbolos x 2 tf = CUATRO peticiones a la vez:
+  // el doble de lo permitido. Ahora la lista se aplana y se va de DOS PETICIONES en dos.
+  const trabajos = COCKPIT.flatMap(s => tfs.map(tf => ({ sym: s, tf })));
+  // Una peticion que devuelve 429 GASTA cuota igual. Sin freno, el worker seguia martilleando
+  // el vault todo el dia para nada (medido 2026-08-24: "daily request limit reached (15000/day)"
+  // a las 07:20 y las vueltas siguiendo). Si el vault viene rechazando, se para y se deja
+  // respirar; el mapa (CBOE, gratis) sigue corriendo igual.
+  const recientes = await db.prepare(
+    `SELECT detalle FROM vueltas WHERE ts >= ? AND ok = 0
+       AND (tarea LIKE 'barras:%' OR tarea = 'flujo') LIMIT 20`)
+    .bind(Math.floor(Date.now() / 1000) - 600).all();
+  const rechazos = (recientes.results || []).filter(r => String(r.detalle).includes("429")).length;
+  if (rechazos >= 3) {
+    res.errores.push(`vault en 429 (${rechazos} en 10 min): se salta la recoleccion`);
+    await bitacora(db, "freno", true, 0, `429 x${rechazos} en 10 min`);
+    return res;
+  }
+
+  const gastado = await gastoLseHoy(db);
+  res.lse_gastado = gastado;
+  if (gastado + trabajos.length + 1 > TECHO_LSE) {
+    res.errores.push(`presupuesto LSE agotado: ${gastado}/${TECHO_LSE} — no se recolecta`);
+    await bitacora(db, "presupuesto", false, 0, `${gastado}/${TECHO_LSE}`);
+    return res;
+  }
+  for (let i = 0; i < trabajos.length; i += 2) {
+    const par = trabajos.slice(i, i + 2);
+    const r = await Promise.allSettled(par.map(t => recolectarBarras(db, t.sym, key, t.tf)));
     r.forEach((x, j) => x.status === "fulfilled" ? res.barras_ok++
-                                                 : res.errores.push(`barras ${par[j >> 1]}: ${x.reason?.message}`));
+                                                 : res.errores.push(`barras ${par[j].sym} ${par[j].tf}: ${x.reason?.message}`));
   }
 
   // mapa: dos del cockpit por vuelta (en rueda entre los seis) + uno del resto

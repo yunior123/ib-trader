@@ -1,7 +1,7 @@
-import { vuelta, recolectarMapa, recolectarBarras } from "./lib/recolecta.mjs";
+import { vuelta, recolectarMapa, recolectarBarras, gastoLseHoy, TECHO_LSE } from "./lib/recolecta.mjs";
 import { cuotaLse, perpTicker, perpVelas, quoteFinnhub } from "./lib/fuentes.mjs";
 import { bollinger } from "./lib/calculo.mjs";
-import { ventanaAbierta, MAPA, FLOTA } from "./lib/universo.mjs";
+import { ventanaAbierta, fase, CADENCIA, MAPA, FLOTA } from "./lib/universo.mjs";
 import { pagina, COCKPIT } from "./lib/panel.mjs";
 
 const json = (o, status = 200) => new Response(JSON.stringify(o, null, 1),
@@ -177,10 +177,18 @@ async function streamWs(server, db, url, env) {
                    feed: { ...feedBase, age_s: Math.max(0, Math.floor(Date.now() / 1000 - t.ts / 1000)) } });
         }
       } else if (finKey && ultimaVela) {
-        // Cash 24/5: precio REALTIME de la accion via Finnhub (la casa ya lo usa en scripts/).
-        // La vela base es la de D1; h/l/c se actualizan con el vivo. Si el mercado esta cerrado,
-        // q.ts lo dice: age_s grande = precio viejo declarado, jamas disfrazado de fresco.
-        const q = await okxCompartido(`fh:${sym}`, () => quoteFinnhub(sym, finKey), 10100);
+        // Cash 24/5: precio de la accion via Finnhub. La vela base es la de D1; h/l/c se
+        // actualizan con el vivo. Si el mercado esta cerrado, q.ts lo dice: age_s grande =
+        // precio viejo DECLARADO, jamas disfrazado de fresco.
+        //
+        // El cache de okxCompartido es POR ISOLATE: con las 6 ventanas del cockpit (6 iframes =
+        // 6 sockets, repartidos entre isolates) eran hasta 72 peticiones/min contra un techo de
+        // 60 -> 429 permanente (medido 2026-08-24 07:19: 7 feed_status seguidos con HTTP 429).
+        // La tabla `quotes` de D1 SI es compartida entre isolates y ya trae su propio
+        // estrangulador: una sola llamada a Finnhub sirve a todas las ventanas.
+        const [m] = await rellenarQuotes(db, [sym], finKey);
+        if (m?.price == null) throw new Error(m?.err || "sin quote en D1");
+        const q = { last: m.price, ts: m.ts ?? Date.now() };
         const u = ultimaVela;
         ultimaVela = { ...u,
           h: Math.max(u.h ?? q.last, q.last), l: Math.min(u.l ?? q.last, q.last), c: q.last };
@@ -266,7 +274,14 @@ export default {
         .bind(Math.floor(Date.now() / 1000), "ventana", 1, 0, "fuera de ventana: no se recolecta").run();
       return;
     }
-    ctx.waitUntil(vuelta(env));
+    // El cron dispara cada minuto (es la granularidad de Cloudflare), pero la VUELTA solo
+    // corre cuando toca segun la fase: RTH 1/min con 15m+1m, extendida 1/3min y noche 1/15min.
+    // A 13 peticiones/min 24h eran 18.720/dia contra un techo de 15.000 -> cuota muerta a diario.
+    const f = fase();
+    const { cada, tfs } = CADENCIA[f];
+    const min = Math.floor(Date.now() / 60000);
+    if (min % cada !== 0) return;
+    ctx.waitUntil(vuelta(env, { tfs }));
   },
 
   async fetch(request, env, ctx) {
@@ -357,7 +372,9 @@ export default {
         let cuota = null, cuotaErr = null;
         try { cuota = await cuotaLse(env.LSE_API_KEY); } catch (e) { cuotaErr = e.message; }
         return json({
-          ventana_abierta: ventanaAbierta(), universo_mapa: MAPA.length, flota: FLOTA.length,
+          ventana_abierta: ventanaAbierta(), fase: fase(), cadencia: CADENCIA[fase()],
+          lse_presupuesto: { gastado: await gastoLseHoy(db), techo: TECHO_LSE, limite_diario: 15000 },
+          universo_mapa: MAPA.length, flota: FLOTA.length,
           niveles: nv, flujo: fl, barras: ba, ultimas_vueltas: vu, cuota_lse: cuota, cuota_error: cuotaErr,
         });
       }

@@ -1,6 +1,6 @@
 // Pruebas de las funciones puras. `node test.mjs` — sin dependencias.
 import { flipRaices, gammaFlip, maxPain, bollinger, agregar } from "./lib/calculo.mjs";
-import { ventanaAbierta } from "./lib/universo.mjs";
+import { ventanaAbierta, fase, CADENCIA } from "./lib/universo.mjs";
 import { turno } from "./lib/recolecta.mjs";
 
 let pasa = 0, falla = 0;
@@ -73,6 +73,29 @@ ok("lunes 02:00 UTC (22:00 ET domingo) abierto (24/5)", ventanaAbierta(new Date(
   const t0 = turno(lista, 0), t1 = turno(lista, 5 * 60 * 1000), t3 = turno(lista, 15 * 60 * 1000);
   ok("el turno avanza cada 5 min", t0 !== t1, `${t0} ${t1}`);
   ok("el turno da la vuelta", t0 === t3, `${t0} ${t3}`);
+}
+
+console.log("\n[fase y presupuesto LSE]");
+// 2026-08-24 es lunes. ET = UTC-4 en agosto.
+ok("09:00 ET (13:00 UTC) es extendida", fase(new Date("2026-08-24T13:00:00Z")) === "ext",
+   fase(new Date("2026-08-24T13:00:00Z")));
+ok("09:30 ET (13:30 UTC) es RTH", fase(new Date("2026-08-24T13:30:00Z")) === "rth",
+   fase(new Date("2026-08-24T13:30:00Z")));
+ok("16:00 ET (20:00 UTC) ya no es RTH", fase(new Date("2026-08-24T20:00:00Z")) === "ext",
+   fase(new Date("2026-08-24T20:00:00Z")));
+ok("02:00 ET (06:00 UTC) es noche", fase(new Date("2026-08-24T06:00:00Z")) === "noche",
+   fase(new Date("2026-08-24T06:00:00Z")));
+ok("sabado es noche aunque sean las 11:00 ET", fase(new Date("2026-08-22T15:00:00Z")) === "noche",
+   fase(new Date("2026-08-22T15:00:00Z")));
+ok("RTH pide 1m; el resto no", CADENCIA.rth.tfs.includes("1m") &&
+   !CADENCIA.ext.tfs.includes("1m") && !CADENCIA.noche.tfs.includes("1m"));
+{
+  // El techo son 15.000/dia. Con 6 simbolos del cockpit: RTH 12 barras + 1 flujo por vuelta.
+  const dia = 390 / CADENCIA.rth.cada * (6 * CADENCIA.rth.tfs.length + 1)
+            + 570 / CADENCIA.ext.cada * (6 * CADENCIA.ext.tfs.length + 1)
+            + 480 / CADENCIA.noche.cada * (6 * CADENCIA.noche.tfs.length + 1);
+  ok("el dia entero cabe en 15.000 peticiones LSE", dia < 15000, `estimado ${Math.round(dia)}`);
+  ok("y deja al menos 40% de margen", dia < 9000, `estimado ${Math.round(dia)}`);
 }
 
 console.log(`\n${pasa} pasan · ${falla} fallan\n`);
