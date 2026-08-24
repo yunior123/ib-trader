@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import fcntl
 import datetime as dt
 import json
 import os
@@ -27,6 +28,10 @@ STATUS = os.path.join(DATA, "lse_price_alarm_feed_status.json")
 # Tope MEDIDO del vault (2026-08-24): el server contesta {"type":"subscribed","max":16} y a
 # partir de la 17a manda {"type":"error"}. Con 36 simbolos de flota faltaban 21 en silencio.
 MAX_POR_CONEXION = int(os.environ.get("LSE_WS_MAX_SUBS", "16"))
+# Velas 1m construidas de la CINTA del WebSocket (el tick trae price y volume, no solo BBO).
+# Sin esto las barras venian del REST y morian con la cuota: los 21 bots de senal llevaban
+# 66 h con la ultima barra del viernes 19:59 y al arrancar re-procesaban ese historico.
+BARRAS = os.environ.get("LSE_WS_BARS", "1") != "0"
 
 
 def _epoch(value):
@@ -50,8 +55,63 @@ def _atomic_text(path, text):
     os.replace(tmp, path)
 
 
+_VELAS: dict = {}      # sym -> [min_ep, o, h, l, c, v]
 _LOTES: dict = {}
 _QUOTES: dict = {}      # compartido: cada lote es una conexion, el estado es UNO
+
+
+def _ultimo_epoch(path):
+    """Ultimo epoch del fichero de barras, leyendo solo la cola."""
+    try:
+        with open(path, "rb") as fh:
+            fh.seek(0, os.SEEK_END)
+            fh.seek(max(0, fh.tell() - 256))
+            cola = fh.read().decode("utf-8", "replace").strip().splitlines()
+        return int(float(cola[-1].split()[0])) if cola else 0
+    except (OSError, ValueError, IndexError):
+        return 0
+
+
+def _cerrar_vela(symbol):
+    """Anexa la vela cerrada a data/bars_<sym>_ibkr.txt. Un solo dueño por epoch: si el
+    fichero ya tiene esa barra (la escribio provider_bridge desde el REST) no se toca."""
+    v = _VELAS.get(symbol)
+    if not v:
+        return
+    ep, o, h, l, c, vol = v
+    path = os.path.join(DATA, "bars_%s_ibkr.txt" % symbol.lower())
+    if ep <= _ultimo_epoch(path):
+        return
+    with open(path, "a", encoding="utf-8") as fh:
+        fcntl.flock(fh.fileno(), fcntl.LOCK_EX)
+        fh.write("%d %.4f %.4f %.4f %.4f %d\n" % (ep, o, h, l, c, vol))
+        fh.flush()
+        fcntl.flock(fh.fileno(), fcntl.LOCK_UN)
+
+
+def _tick_vela(symbol, ts, price, vol):
+    ep = int(ts // 60) * 60
+    v = _VELAS.get(symbol)
+    if v is None or ep > v[0]:
+        if v is not None and ep > v[0]:
+            _cerrar_vela(symbol)
+        _VELAS[symbol] = [ep, price, price, price, price, int(vol)]
+        return
+    if ep < v[0]:
+        return                      # tick atrasado: no reabre una vela ya cerrada
+    v[2] = max(v[2], price)
+    v[3] = min(v[3], price)
+    v[4] = price
+    v[5] += int(vol)
+
+
+def _barrer_velas(ahora):
+    """Cierra las velas cuyo minuto ya paso: un simbolo que deja de imprimir no puede dejar
+    la barra abierta para siempre (los bots leen el fichero con tail -F)."""
+    for sym, v in list(_VELAS.items()):
+        if v and ahora - v[0] >= 75:
+            _cerrar_vela(sym)
+            _VELAS.pop(sym, None)
 
 
 def _status(state, symbols, quotes, error=None, lote=0):
@@ -120,6 +180,14 @@ async def run(symbols, lote=0):
                     exchange_ts = _epoch(msg.get("ts") or msg.get("timestamp"))
                     if exchange_ts is None or abs(arrival - exchange_ts) > 30:
                         continue
+                    # La vela va con el PRICE de la cinta, no con el mid: es el print.
+                    if BARRAS:
+                        try:
+                            px = float(msg["price"])
+                            if px > 0:
+                                _tick_vela(symbol, exchange_ts, px, msg.get("volume") or 0)
+                        except (KeyError, TypeError, ValueError):
+                            pass
                     if not (bid > 0 and ask >= bid):
                         continue
                     quotes[symbol] = {
@@ -138,6 +206,8 @@ async def run(symbols, lote=0):
                     )
                     published[symbol] = arrival
                     if arrival - last_status_at >= 1.0:
+                        if BARRAS:
+                            _barrer_velas(arrival)
                         _status("LIVE", symbols, quotes, lote=lote)
                         last_status_at = arrival
         except asyncio.CancelledError:
