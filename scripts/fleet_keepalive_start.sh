@@ -310,7 +310,10 @@ fi
 
 # cotizacion de la watchlist del usuario (TQQQ/MSFU/MUU...): el bar_bridge solo cubre
 # fleet.txt y ampliarlo quema suscripciones (err 10190) -> snapshots a watchlist_stats.json.
-if ! pgrep -f "scripts/watchlist_quotes.py" >/dev/null; then
+# Necesita el Gateway de IBKR (127.0.0.1:4001): sin fuente ibkr son 5.148 ConnectionRefused
+# al dia y 5,6 MB de log (medido 2026-08-24), ni una cotizacion.
+if [[ "$(cat data/market_source.txt 2>/dev/null)" == "ibkr" ]] \
+   && ! pgrep -f "scripts/watchlist_quotes.py" >/dev/null; then
   nohup ./venv-chart/bin/python scripts/watchlist_quotes.py >> logs/watchlist_quotes.log 2>&1 &
   echo "$(date) fleet: watchlist_quotes lanzado (pid $!)" >> logs/fleet_autostart.log
 fi
@@ -353,9 +356,23 @@ fi
 
 # Vigia del WebSocket de Intrinio: sondea /auth y lo enciende EN EL INSTANTE en que el vendor
 # levante su cluster (su propio SDK no se recupera solo — issue #7 abierto desde feb-2024).
-if ! pgrep -f "scripts/intrinio_ws_autostart.py" >/dev/null; then
+# SOLO si Intrinio es la fuente elegida: con market_source=libre la suscripcion esta muerta
+# (401) y el vigia escribia "sigue abajo (HTTP 401)" cada 60 s — 1,5 MB de log y cero uso
+# (medido 2026-08-24). Orden de Yunior 2026-08-23: "all free api only".
+if [[ "$(cat data/market_source.txt 2>/dev/null)" == "intrinio" ]] \
+   && ! pgrep -f "scripts/intrinio_ws_autostart.py" >/dev/null; then
   nohup ./venv-mit/bin/python scripts/intrinio_ws_autostart.py --watch 60 >> logs/intrinio_ws_autostart.log 2>&1 &
   echo "$(date) fleet: intrinio ws autostart lanzado (pid $!)" >> logs/fleet_autostart.log
+fi
+
+# NBBO por WebSocket de LSE: el PULSO vivo de la flota y CERO cuota REST (medido 2026-08-24
+# con la cuota diaria agotada, el WS seguia sirviendo bid/ask). Antes el NBBO salia del REST
+# (get_quote -> get_bars): 36 simbolos cada 7 s mataban las 15.000 peticiones/dia en menos de
+# una hora y el ib-trader ONLINE se quedaba con las barras del viernes. Tope MEDIDO: 16
+# suscripciones por conexion — el puente reparte en lotes.
+if ! pgrep -f "scripts/lse_price_feed_keepalive.sh" >/dev/null; then
+  nohup ./scripts/lse_price_feed_keepalive.sh >/dev/null 2>&1 &
+  echo "$(date) fleet: NBBO WS de LSE lanzado (pid $!)" >> logs/fleet_autostart.log
 fi
 
 # Heatmap del ticker visible: snapshot REST cada 60 s, ya arrancado antes del portero para

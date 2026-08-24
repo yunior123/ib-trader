@@ -93,16 +93,22 @@ export async function recolectarFlujo(db, key) {
 // Peticiones LSE gastadas hoy (dia ET), contadas desde la bitacora: barras y flujo son las
 // unicas tareas que van al vault (el mapa es CBOE, gratis). Sin llamada extra al upstream.
 export async function gastoLseHoy(db) {
-  const ny = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
-  const inicio = Math.floor(new Date(ny.getFullYear(), ny.getMonth(), ny.getDate()).getTime() / 1000)
-               + (Math.floor(Date.now() / 1000) - Math.floor(ny.getTime() / 1000));
+  // El dia se cuenta en UTC, como lo cuenta el vendor: su "daily request limit" no sabe de
+  // Nueva York. Contarlo en hora NY desfasaba el presupuesto 4-5 h y entre 20:00 y 01:00 ET
+  // el worker creia tener cuota del dia anterior (o al reves).
+  const inicio = Math.floor(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(),
+                                     new Date().getUTCDate()) / 1000);
   const r = await db.prepare(
     "SELECT COUNT(*) n FROM vueltas WHERE ts >= ? AND (tarea LIKE 'barras:%' OR tarea = 'flujo')")
     .bind(inicio).first();
   return r?.n ?? 0;
 }
 
-export const TECHO_LSE = 12000;   // de 15.000/dia; el resto es margen para /panel, /chart y manual
+// De 15.000/dia COMPARTIDOS con el Mac: la cuota es por API KEY, no por cliente. El Mac se la
+// comia entera antes de las 08:00 (provider_bridge pedia NBBO por REST cada 7 s x 36 simbolos)
+// y este worker se quedaba sirviendo las barras del viernes. Reparto: worker 10.500 + techo
+// local 4.000 (scripts/lse_budget.py) = 14.500, 500 de margen para /panel, /chart y manual.
+export const TECHO_LSE = 10500;
 
 export async function vuelta(env, { tfs = ["15m", "1m"] } = {}) {
   const db = env.DB, key = env.LSE_API_KEY;

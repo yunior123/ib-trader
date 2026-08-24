@@ -24,6 +24,9 @@ import lse_client
 REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(REPO, "data")
 STATUS = os.path.join(DATA, "lse_price_alarm_feed_status.json")
+# Tope MEDIDO del vault (2026-08-24): el server contesta {"type":"subscribed","max":16} y a
+# partir de la 17a manda {"type":"error"}. Con 36 simbolos de flota faltaban 21 en silencio.
+MAX_POR_CONEXION = int(os.environ.get("LSE_WS_MAX_SUBS", "16"))
 
 
 def _epoch(value):
@@ -47,28 +50,36 @@ def _atomic_text(path, text):
     os.replace(tmp, path)
 
 
-def _status(state, symbols, quotes, error=None):
+_LOTES: dict = {}
+_QUOTES: dict = {}      # compartido: cada lote es una conexion, el estado es UNO
+
+
+def _status(state, symbols, quotes, error=None, lote=0):
+    _QUOTES.update(quotes)
+    _LOTES[lote] = {"state": state, "symbols": symbols, "n_quotes": len(quotes),
+                    "error": str(error)[:240] if error else None}
     payload = {
         "source": "london_strategic_edge_websocket",
         "mode": "signal_only_no_orders",
         "state": state,
+        "lotes": _LOTES,
         "symbols": symbols,
         "pid": os.getpid(),
         "updated_at": time.time(),
-        "quotes": quotes,
+        "quotes": _QUOTES,
         "error": str(error)[:240] if error else None,
     }
     _atomic_text(STATUS, json.dumps(payload, separators=(",", ":")) + "\n")
 
 
-async def run(symbols):
+async def run(symbols, lote=0):
     quotes = {}
     published = {}
     last_status_at = 0.0
     backoff = 1.0
     while True:
         try:
-            _status("CONNECTING", symbols, quotes)
+            _status("CONNECTING", symbols, quotes, lote=lote)
             async with websockets.connect(
                 lse_client.WS_URL,
                 ping_interval=20,
@@ -78,10 +89,10 @@ async def run(symbols):
                 max_size=None,
             ) as ws:
                 backoff = 1.0
-                _status("CONNECTED", symbols, quotes)
+                _status("CONNECTED", symbols, quotes, lote=lote)
                 await ws.recv()  # server hello precedes client authentication
                 await ws.send(json.dumps({"action": "auth", "api_key": lse_client.api_key()}))
-                _status("AUTHENTICATING", symbols, quotes)
+                _status("AUTHENTICATING", symbols, quotes, lote=lote)
                 async for raw in ws:
                     arrival = time.time()
                     msg = json.loads(raw)
@@ -92,7 +103,10 @@ async def run(symbols):
                     if auth_ok:
                         for symbol in symbols:
                             await ws.send(json.dumps({"action": "subscribe", "symbol": symbol}))
-                        _status("SUBSCRIBING", symbols, quotes)
+                        _status("SUBSCRIBING", symbols, quotes, lote=lote)
+                        continue
+                    if msg.get("type") == "error":
+                        _status("ERROR", symbols, quotes, msg.get("message") or msg, lote=lote)
                         continue
                     if msg.get("type") not in ("tick", "quote", "trade"):
                         continue
@@ -124,12 +138,12 @@ async def run(symbols):
                     )
                     published[symbol] = arrival
                     if arrival - last_status_at >= 1.0:
-                        _status("LIVE", symbols, quotes)
+                        _status("LIVE", symbols, quotes, lote=lote)
                         last_status_at = arrival
         except asyncio.CancelledError:
             raise
         except Exception as exc:
-            _status("RECONNECTING", symbols, quotes, exc)
+            _status("RECONNECTING", symbols, quotes, exc, lote=lote)
             await asyncio.sleep(backoff)
             backoff = min(backoff * 2.0, 20.0)
 
@@ -149,12 +163,15 @@ def main():
             loop.add_signal_handler(sig, loop.stop)
         except NotImplementedError:
             pass
-    task = loop.create_task(run(symbols))
+    lotes = [symbols[i:i + MAX_POR_CONEXION]
+             for i in range(0, len(symbols), MAX_POR_CONEXION)]
+    tasks = [loop.create_task(run(l, i)) for i, l in enumerate(lotes)]
     try:
         loop.run_forever()
     finally:
-        task.cancel()
-        loop.run_until_complete(asyncio.gather(task, return_exceptions=True))
+        for t in tasks:
+            t.cancel()
+        loop.run_until_complete(asyncio.gather(*tasks, return_exceptions=True))
         loop.close()
 
 

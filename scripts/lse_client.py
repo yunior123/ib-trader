@@ -55,6 +55,11 @@ TIMEOUT_S = float(os.environ.get("LSE_TIMEOUT_S", "60"))
 TRIES = 4
 CATALOG_TTL_S = float(os.environ.get("LSE_CATALOG_TTL_S", "86400"))
 
+try:
+    import lse_budget                  # techo local + cortacircuito compartidos con el worker
+except ImportError:
+    lse_budget = None
+
 STATE_DIR = os.path.join(REPO, "data")
 RATE_STATE = os.path.join(STATE_DIR, "lse_rate_state.json")
 SLOT_DIR = os.path.join(STATE_DIR, "lse_slots")
@@ -357,6 +362,11 @@ class LSE:
         headers = {"X-API-Key": self.key, "Accept": "application/json", "User-Agent": UA}
         last = None
         for attempt in range(self.tries):
+            if lse_budget is not None:
+                try:
+                    lse_budget.consumir(1, quien="lse_client")
+                except lse_budget.LSEBudgetError as e:
+                    raise LSEError(str(e), status=429) from e
             self.stats["waited_s"] += self.limiter.acquire()
             slot = self.slots.acquire()
             self.stats["requests"] += 1
@@ -387,9 +397,16 @@ class LSE:
                     raise LSEError("%s devolvio %s, se esperaba una lista de filas"
                                    % (path, type(out).__name__), status=200)
                 self.stats["ok"] += 1
+                if lse_budget is not None:
+                    lse_budget.sonda_ok()
                 return out
             if status == 429:
                 self.stats["http_429"] += 1
+                if "daily request limit" in _detail(body).lower():
+                    if lse_budget is not None:
+                        lse_budget.agotado("daily request limit reached (15000/day)")
+                    raise LSEError("cuota diaria de LSE agotada (15.000/dia): todo cliente "
+                                   "local queda cortado hasta el reset", status=429)
                 try:
                     wait = float(hdrs.get("retry-after") or hdrs.get("Retry-After") or 1.0)
                 except (TypeError, ValueError):

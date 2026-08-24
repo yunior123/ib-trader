@@ -57,7 +57,18 @@ console.log("\n[agregar]");
   ok("GEX con la convencion declarada", cerca(m.gex_total, -3000, 1e-6), String(m.gex_total));
   let tiro = false;
   try { agregar({ data: { current_price: 0, options: [] } }); } catch { tiro = true; }
-  ok("spot invalido LANZA en vez de devolver cero", tiro);
+  // Cadena SIN griegas: un 0 aqui se lee igual que un libro neutro de verdad (paso con AAPL
+  // el 2026-08-24: greeks_ok_pct 0 y gex_total 0 guardados como dato).
+  const sinG = agregar({ data: { current_price: 100, last_trade_time: "x", options: [
+    { option: "TST260828C00100000", open_interest: 10, volume: 1 },
+    { option: "TST260828P00100000", open_interest: 20, volume: 2 },
+  ] } });
+  ok("sin gamma el GEX es null, no 0", sinG.gex_total === null && sinG.gross_gex === null,
+     String(sinG.gex_total));
+  ok("sin gamma los MUROS siguen (son OI)", sinG.call_wall === 100 && sinG.put_wall === 100);
+  ok("sin IV vex/charm son null", sinG.net_vex === null && sinG.net_charm === null);
+
+    ok("spot invalido LANZA en vez de devolver cero", tiro);
   let tiro2 = false;
   try { agregar({}); } catch { tiro2 = true; }
   ok("cadena sin data LANZA", tiro2);

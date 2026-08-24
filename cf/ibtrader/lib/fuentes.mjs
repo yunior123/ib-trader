@@ -14,9 +14,22 @@ async function pedir(url, cabeceras = {}) {
 // CBOE llama _SPX/_VIX a los indices; los ETF van tal cual.
 export const cboeSym = sym => (["SPX", "VIX", "NDX", "RUT", "XSP"].includes(sym) ? `_${sym}` : sym);
 
-export async function cadenaCboe(sym) {
-  const r = await pedir(`https://cdn.cboe.com/api/global/delayed_quotes/options/${cboeSym(sym)}.json`);
-  return r.json();
+export async function cadenaCboe(sym, intentos = 3) {
+  // cdn.cboe.com corta por RAFAGA y las IPs de salida del worker son compartidas: el 429 es
+  // transitorio (medido 2026-08-24: mapa:XSP y mapa:SPCX en 429 seguidos, y a los pocos
+  // segundos la misma cadena entraba). Sin reintento el simbolo se quedaba sin mapa esa vuelta.
+  let ultimo;
+  for (let i = 0; i < intentos; i++) {
+    try {
+      const r = await pedir(`https://cdn.cboe.com/api/global/delayed_quotes/options/${cboeSym(sym)}.json`);
+      return await r.json();
+    } catch (e) {
+      ultimo = e;
+      if (!String(e?.message || "").includes("429")) throw e;
+      await new Promise(rs => setTimeout(rs, 900 + i * 700 + Math.random() * 500));
+    }
+  }
+  throw ultimo;
 }
 
 // El parametro es `timeframe`, NO `interval`. Con `interval` el vault no se queja: ignora el

@@ -240,7 +240,10 @@ async function streamWs(server, db, url, env) {
                     ttUp: [], ttDn: [], ttLevels: [], trendlines: [] },
       signals: [], engineOps: [],
       levels: nivel || { sym }, feed: feedBase,
-      nodata: velasUI.length ? null : `sin barras ${perp ? "OKX" : "D1"} para ${sym}` });
+      nodata: velasUI.length ? null
+        : (perp ? `sin barras OKX para ${sym}`
+                : `sin historico de ${sym} en D1 (el recolector solo guarda los seis del cockpit): `
+                  + `el chart se construye desde el feed vivo del vault`) });
   };
   // El chart HABLA: pide mas historia al hacer pan y reenvio de history al cambiar de
   // temporalidad. Sin contestar, su spinner se queda encendido para siempre ("cargando
@@ -303,7 +306,12 @@ async function streamWs(server, db, url, env) {
                           low: ultimaVela.l, close: ultimaVela.c, v: ultimaVela.v || 0 },
                    feed: { ...feedBase, age_s: Math.max(0, Math.floor(Date.now() / 1000 - t.ts / 1000)) } });
         }
-      } else if (ultimaVela) {
+      } else if (!perp) {
+        // Antes esto exigia `ultimaVela`, que solo existe si D1 tenia barras. Como el
+        // recolector solo guarda los SEIS del cockpit, los otros 35 simbolos del universo
+        // daban chart vacio: cero velas Y cero ticks, aunque el vault los sirva en vivo
+        // (medido: AAPL, MSFT, AMD, MU, META y GLD con 0 barras y 0 ticks, spot y perfil OK).
+        // El ws construye sus propias velas, asi que no necesita semilla de D1.
         // REALTIME DE CASH = WEBSOCKET DEL VAULT. Es lo mismo que usa el puente local y es lo
         // unico que da premarket: verificado 2026-08-24 08:12 ET con NVDA a 214,32 y ts de hace
         // un segundo, CON la cuota REST en 429 — el stream no gasta el presupuesto diario.
@@ -313,9 +321,21 @@ async function streamWs(server, db, url, env) {
         if (!t) throw new Error(`vault ws sin tick de ${sym} todavia (${tickerLse.estado().estado})`);
         // La vela la CONSTRUYE el ws con sus propios ticks (mid del BBO, cubos de 1 minuto),
         // igual que el puente local. El chart se mueve sin tocar el REST ni su cuota.
-        const vs = agregarEpoch(tickerLse.velas(sym), tf);
-        const viva = vs[vs.length - 1];
-        if (!viva) throw new Error(`vault ws sin vela de ${sym} todavia`);
+        // Agregar las ~600 velas guardadas EN CADA tick (1/s) reconstruia un Map entero cada
+        // segundo y quemaba el presupuesto de CPU del isolate: el socket moria con CLOSE 1006
+        // a los ~6 s y solo llegaban 2 ticks en 75 s (lo cazo test-online). Aqui solo se
+        // recorre el cubo ACTUAL hacia atras: como mucho 15 velas en 15m, no 600.
+        const vs = tickerLse.velas(sym);
+        const mm = (MINUTOS[tf] || 1) * 60;
+        const ult = vs[vs.length - 1];
+        if (!ult) throw new Error(`vault ws sin vela de ${sym} todavia`);
+        const k = ult.time - (ult.time % mm);
+        let viva = null;
+        for (let i = vs.length - 1; i >= 0 && vs[i].time >= k; i--) {
+          const b = vs[i];
+          if (!viva) viva = { time: k, o: b.o, h: b.h, l: b.l, c: b.c, v: b.v || 0 };
+          else { viva.o = b.o; viva.h = Math.max(viva.h, b.h); viva.l = Math.min(viva.l, b.l); viva.v += b.v || 0; }
+        }
         ultimaVela = { ts: new Date(viva.time * 1000).toISOString().replace("T", " ").slice(0, 19),
                        o: viva.o, h: viva.h, l: viva.l, c: viva.c, v: viva.v };
         const r4 = x => Math.round(x * 1e4) / 1e4;   // el chart no tiene por que ver ruido binario
@@ -377,7 +397,9 @@ async function streamWs(server, db, url, env) {
     // En cash el pulso NO cuesta nada aguas arriba: el ws ya esta entregando ticks y aqui solo
     // se reenvia la vela viva. El puente local pinta a 4 Hz (LSE_CHART_PAINT_S); 1 s es de sobra
     // para el cockpit y no castiga al isolate. En perp cada vuelta SI es una peticion a OKX: 5 s.
-    setTimeout(paso, perp ? 5000 : 1000);
+    // 2 s en cash: el ws ya entrega los ticks y esto solo reenvia la vela viva, pero cada
+    // vuelta cuesta CPU del isolate y el socket tiene presupuesto. 2 s va sobrado para el ojo.
+    setTimeout(paso, perp ? 5000 : 2000);
   };
   setTimeout(paso, 1500 + Math.random() * 2500);
 }
@@ -552,11 +574,14 @@ export default {
 
       if (p === "/api/barras") {
         const sym = (url.searchParams.get("sym") || "QQQ").toUpperCase();
+        // Sin filtrar por tf, 1m y 15m salian INTERCALADAS con el mismo ts: velas duplicadas
+        // en el grafico y una Bollinger calculada sobre la serie doblada (sd 0,06 en QQQ).
+        const tf = (url.searchParams.get("tf") || "1m").toLowerCase();
         const { results } = await db.prepare(
-          "SELECT * FROM barras WHERE sym=? ORDER BY ts DESC LIMIT 240").bind(sym).all();
+          "SELECT * FROM barras WHERE sym=? AND tf=? ORDER BY ts DESC LIMIT 240").bind(sym, tf).all();
         const filas = (results || []).reverse();
         const bb = bollinger(filas.map(b => b.c));
-        return json({ sym, barras: filas.length, bollinger: bb, ultimas: filas.slice(-60) });
+        return json({ sym, tf, barras: filas.length, bollinger: bb, ultimas: filas.slice(-60) });
       }
 
       if (p === "/api/estado") {

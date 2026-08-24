@@ -19,7 +19,7 @@ export function agregar(json) {
   const ahora = Date.now();
   const porStrike = new Map();
   const porExp = new Map();
-  let contratos = 0, ivOk = 0;
+  let contratos = 0, ivOk = 0, gammaOk = 0, deltaOk = 0;
   // Acumuladores de las griegas de segundo orden: vanna y charm NO vienen en la cadena, se
   // calculan por Black-Scholes con la IV MEDIDA de cada contrato. Sin IV, el contrato no entra
   // y se cuenta: nunca se rellena con una IV plana.
@@ -35,10 +35,11 @@ export function agregar(json) {
       { strike, call_oi: 0, put_oi: 0, call_vol: 0, put_vol: 0, gamma_call: 0, gamma_put: 0,
         vex: 0, charm: 0, iv: 0, iv_peso: 0 };
     const oi = o.open_interest || 0, vol = o.volume || 0, g = o.gamma || 0;
+    if (typeof o.gamma === "number" && o.gamma !== 0) gammaOk++;
     const iv = o.iv > 0 ? o.iv : null;
     if (call) { k.call_oi += oi; k.call_vol += vol; k.gamma_call += g * oi; }
     else { k.put_oi += oi; k.put_vol += vol; k.gamma_put += g * oi; }
-    if (typeof o.delta === "number") dexBruto += Math.abs(o.delta) * oi;
+    if (typeof o.delta === "number") { dexBruto += Math.abs(o.delta) * oi; deltaOk++; }
     if (iv) {
       ivOk++;
       k.iv += iv * (oi + 1); k.iv_peso += oi + 1;
@@ -74,15 +75,25 @@ export function agregar(json) {
   const call_wall = mayor(filas, "call_oi");
   const put_wall = mayor(filas, "put_oi");
 
-  return { spot, contratos, strikes: filas.length, filas, gex_total,
-           net_vex, gross_vex, net_charm, gross_charm, dex_bruto: dexBruto * f100,
-           pressure: pressure(gex_total, gross_gex_val, net_vex, gross_vex),
+  // Sin griegas legibles NO hay GEX: un 0 aqui es "cero plausible" — se lee igual que un libro
+  // neutro de verdad. AAPL llego asi (greeks_ok_pct 0, gex_total 0) y el panel lo pintaba como
+  // dato. Los MUROS sobreviven: son OI, no dependen de griegas.
+  // Cada familia depende de SU griega: el GEX de gamma, vex/charm de la IV, el DEX de delta.
+  const oNull = (v, hay) => (hay ? v : null);
+
+  return { spot, contratos, strikes: filas.length, filas, gex_total: oNull(gex_total, gammaOk),
+           net_vex: oNull(net_vex, ivOk), gross_vex: oNull(gross_vex, ivOk),
+           net_charm: oNull(net_charm, ivOk), gross_charm: oNull(gross_charm, ivOk),
+           dex_bruto: oNull(dexBruto * f100, deltaOk),
+           pressure: (gammaOk && ivOk)
+             ? pressure(gex_total, gross_gex_val, net_vex, gross_vex) : null,
            em, dte, exp: expCerca, exps: expVivos.slice(0, 12),
            greeks_ok_pct: contratos ? ivOk / contratos : null,
+           gamma_ok_pct: contratos ? gammaOk / contratos : null,
            call_wall: call_wall?.strike ?? null, call_wall_oi: call_wall?.call_oi ?? null,
            put_wall: put_wall?.strike ?? null, put_wall_oi: put_wall?.put_oi ?? null,
            flip: gammaFlip(filas, spot), flip_raices: flipRaices(filas, spot),
-           gross_gex: gross_gex_val,
+           gross_gex: oNull(gross_gex_val, gammaOk),
            strike_span_pct: filas.length > 1
              ? (filas[filas.length - 1].strike - filas[0].strike) / 2 / spot : null,
            max_pain: maxPain(filas),
