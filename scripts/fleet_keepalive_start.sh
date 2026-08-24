@@ -375,6 +375,13 @@ if ! pgrep -f "scripts/lse_price_feed_keepalive.sh" >/dev/null; then
   echo "$(date) fleet: NBBO WS de LSE lanzado (pid $!)" >> logs/fleet_autostart.log
 fi
 
+# Empuje de barras al worker de Cloudflare: el chart online no puede depender del REST del
+# vault (cuota compartida). Las velas ya estan construidas del WS en el Mac.
+if ! pgrep -f "scripts/bars_push_keepalive.sh" >/dev/null; then
+  nohup ./scripts/bars_push_keepalive.sh >/dev/null 2>&1 &
+  echo "$(date) fleet: bars_push a D1 lanzado (pid $!)" >> logs/fleet_autostart.log
+fi
+
 # Heatmap del ticker visible: snapshot REST cada 60 s, ya arrancado antes del portero para
 # servir también a los charts perpetual de fin de semana. Este bloque solo es fallback.
 if ! pgrep -f "scripts/gex_heatmap.py --loop" >/dev/null; then

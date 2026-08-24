@@ -50,6 +50,52 @@ function etAEpoch(v) {
   return Math.floor((base + (enUtc - enEt)) / 1000);   // el epoch cuyo reloj ET es esa cadena
 }
 
+// Corta el historico en el ultimo salto grande: devuelve el tramo continuo mas reciente.
+// HUECO_MAX: 4 h cubre el almuerzo y cualquier parada corta, y corta entre sesiones.
+const HUECO_MAX_S = 4 * 3600;
+function soloContiguas(filas) {
+  if (!filas || filas.length < 2) return filas || [];
+  let desde = 0;
+  for (let i = filas.length - 1; i > 0; i--) {
+    if (aEpoch(filas[i].ts) - aEpoch(filas[i - 1].ts) > HUECO_MAX_S) { desde = i; break; }
+  }
+  return filas.slice(desde);
+}
+
+// 1m del dia desde Yahoo (sin clave). Solo rellena lo que FALTA: nunca pisa una barra que
+// ya este, para no sustituir el print del vault por el de otra fuente.
+async function rellenoYahoo(db, sym) {
+  const u = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(sym)}`
+          + `?interval=1m&range=1d`;
+  const r = await fetch(u, { headers: { "User-Agent":
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/140.0 Safari/537.36" } });
+  if (!r.ok) throw new Error(`yahoo HTTP ${r.status}`);
+  const j = await r.json();
+  const res = j?.chart?.result?.[0];
+  const t = res?.timestamp, q = res?.indicators?.quote?.[0];
+  if (!Array.isArray(t) || !q) throw new Error("yahoo sin serie 1m");
+  const filas = [];
+  for (let i = 0; i < t.length; i++) {
+    const o = q.open?.[i], h = q.high?.[i], l = q.low?.[i], c = q.close?.[i];
+    // Yahoo mete null en los minutos sin print: se SALTAN, no se rellenan con el anterior.
+    if (![o, h, l, c].every(x => typeof x === "number" && x > 0)) continue;
+    filas.push({ ts: new Date(t[i] * 1000).toISOString().replace("T", " ").replace("Z", "000"),
+                 o, h, l, c, v: q.volume?.[i] || 0 });
+  }
+  if (!filas.length) throw new Error("yahoo: ninguna vela legible");
+  const { results } = await db.prepare(
+    "SELECT ts FROM barras WHERE sym=? AND tf='1m' AND ts >= ?")
+    .bind(sym, filas[0].ts).all();
+  const ya = new Set((results || []).map(x => x.ts));
+  const nuevas = filas.filter(f => !ya.has(f.ts));
+  for (let i = 0; i < nuevas.length; i += 100) {
+    await db.batch(nuevas.slice(i, i + 100).map(b => db.prepare(
+      "INSERT OR IGNORE INTO barras (sym,tf,ts,o,h,l,c,v) VALUES (?,?,?,?,?,?,?,?)")
+      .bind(sym, "1m", b.ts, b.o, b.h, b.l, b.c, b.v)));
+  }
+  return { sym, yahoo: filas.length, ya_estaban: filas.length - nuevas.length, insertadas: nuevas.length };
+}
+
 function nivelesUI(d, perp) {
   const red = (x, n) => (typeof x === "number" && isFinite(x) ? +x.toFixed(n) : null);
   return {
@@ -216,7 +262,12 @@ async function streamWs(server, db, url, env) {
       const { results } = await db.prepare(
         "SELECT ts,o,h,l,c,v FROM barras WHERE sym=? AND tf='1m' ORDER BY ts DESC LIMIT 3000")
         .bind(sym).all();
-      barras = agregarVelas((results || []).reverse(), tf);
+      // Solo el BLOQUE CONTIGUO mas reciente. Si el historico tiene un salto (la sesion
+      // anterior, o las horas que la cuota del vault se dejo sin cubrir), el chart pintaba
+      // las velas del viernes a 714 pegadas al tick de hoy a 707 con un vacio en medio:
+      // parecia una caida vertical que nunca ocurrio. Una sesion partida no se dibuja como
+      // si fuera continua.
+      barras = agregarVelas(soloContiguas((results || []).reverse()), tf);
     }
     // lightweight-charts exige open/high/low/close. Con o/h/l/c el chart pintaba vacio y por
     // eso existia el shim de polling en public/ibt-online.js.
@@ -472,6 +523,21 @@ export default {
     const f = fase();
     const { cada, tfs } = CADENCIA[f];
     const min = Math.floor(Date.now() / 60000);
+    // Relleno del intradia cada 10 min: tapa las horas que el vault deja sin cubrir cuando
+    // la cuota (compartida con el Mac) se agota. Yahoo es gratis y solo responde desde el
+    // borde. Nunca pisa una barra existente, asi que el print del vault siempre manda.
+    if (min % 10 === 0 && f !== "noche") {
+      ctx.waitUntil((async () => {
+        let n = 0, errs = [];
+        for (const s2 of COCKPIT) {
+          try { n += (await rellenoYahoo(env.DB, s2)).insertadas; }
+          catch (e) { errs.push(`${s2}: ${e.message}`); }
+        }
+        await env.DB.prepare("INSERT INTO vueltas (ts,tarea,ok,ms,detalle) VALUES (?,?,?,?,?)")
+          .bind(Math.floor(Date.now() / 1000), "relleno", errs.length ? 0 : 1, 0,
+                (errs.length ? errs.join(" | ") : `${n} barras 1m de yahoo`).slice(0, 400)).run();
+      })());
+    }
     if (min % cada !== 0) return;
     ctx.waitUntil(vuelta(env, { tfs }));
   },
@@ -599,6 +665,58 @@ export default {
           universo_mapa: MAPA.length, flota: FLOTA.length,
           niveles: nv, flujo: fl, barras: ba, ultimas_vueltas: vu, cuota_lse: cuota, cuota_error: cuotaErr,
         });
+      }
+
+      // Empuje de barras desde el Mac. POR QUE: el historico del chart entra por REST del
+      // vault, y cuando la cuota diaria (compartida) se agota el grafico se queda con las
+      // velas del ultimo dia bueno y el tick vivo suelto — un hueco de horas en pantalla
+      // (medido 2026-08-24 en las seis ventanas). El Mac YA construye esas velas 1m de la
+      // CINTA del WebSocket, que no gasta cuota: aqui solo se reciben.
+      if (p === "/tarea/barras-push") {
+        if (request.method !== "POST") return json({ error: "se espera POST" }, 405);
+        if (!env.PUSH_KEY || url.searchParams.get("key") !== env.PUSH_KEY)
+          return json({ error: "no autorizado" }, 401);
+        let filas;
+        try { filas = await request.json(); }
+        catch (e) { return json({ error: "cuerpo no es JSON", detalle: String(e?.message || e) }, 400); }
+        if (!Array.isArray(filas) || !filas.length) return json({ error: "se espera una lista de barras" }, 400);
+        if (filas.length > 2000) return json({ error: `${filas.length} barras: el tope por peticion es 2000` }, 413);
+        const buenas = [];
+        for (const b of filas) {
+          const sym = String(b.sym || "").toUpperCase();
+          const tf = String(b.tf || "1m");
+          // Fail-loud: una barra con OHLC incoherente o sin sym no se guarda "por si acaso".
+          const nums = [b.o, b.h, b.l, b.c].map(Number);
+          if (!sym || !b.ts || nums.some(n => !Number.isFinite(n) || n <= 0)) continue;
+          if (nums[1] < Math.max(nums[0], nums[3]) || nums[2] > Math.min(nums[0], nums[3])) continue;
+          buenas.push({ sym, tf, ts: String(b.ts), o: nums[0], h: nums[1], l: nums[2], c: nums[3],
+                        v: Number(b.v) || 0 });
+        }
+        if (!buenas.length) return json({ error: "ninguna barra valida", recibidas: filas.length }, 400);
+        for (let i = 0; i < buenas.length; i += 100) {
+          await db.batch(buenas.slice(i, i + 100).map(b => db.prepare(
+            "INSERT OR REPLACE INTO barras (sym,tf,ts,o,h,l,c,v) VALUES (?,?,?,?,?,?,?,?)")
+            .bind(b.sym, b.tf, b.ts, b.o, b.h, b.l, b.c, b.v)));
+        }
+        return json({ recibidas: filas.length, guardadas: buenas.length,
+                      descartadas: filas.length - buenas.length });
+      }
+
+      // Relleno del intradia desde Yahoo. Yahoo devuelve 429 desde casa y 200 desde el borde
+      // (medido), asi que este relleno SOLO puede vivir aqui. Gratis y sin clave: cubre las
+      // horas que la cuota del vault se dejo sin cubrir, para que el chart no arranque el dia
+      // con dos velas. La fuente queda declarada en la bitacora.
+      if (p === "/tarea/relleno") {
+        if (!env.PUSH_KEY || url.searchParams.get("key") !== env.PUSH_KEY)
+          return json({ error: "no autorizado" }, 401);
+        const syms = (url.searchParams.get("syms") || COCKPIT.join(",")).toUpperCase()
+          .split(",").map(x => x.trim()).filter(Boolean).slice(0, 12);
+        const out = [];
+        for (const s2 of syms) {
+          try { out.push(await rellenoYahoo(db, s2)); }
+          catch (e) { out.push({ sym: s2, error: String(e?.message || e) }); }
+        }
+        return json(out);
       }
 
       // Disparo manual de una vuelta: util para verificar sin esperar al cron.
