@@ -1862,3 +1862,16 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
 - [ ] 65. La banda de los muros usa el EM del vencimiento MAS CERCANO: en simbolos sin 0DTE
       ese EM es semanal y ensancha la banda (PLTR salio +/-17%). Escalar por raiz del tiempo
       al horizonte del dia.
+
+- [x] 66. "toma capture y dime si es normal" (2026-08-24 ~15:00) — NO era normal, y la captura
+      lo demostraba: las seis ventanas pintaban ~15 velas del viernes a 714, un vacio, y el
+      precio de hoy a 707 suelto. Cerrado en commit ce31d634 (barras del Mac a D1 por
+      /tarea/barras-push, soloContiguas() para no dibujar dos sesiones como una, y relleno
+      Yahoo 1m desde el borde). Verificado con captura: sesion completa en las seis.
+
+- [ ] 67. El volumen de Yahoo (consolidado) y el del WebSocket de LSE (su propia cinta) NO son
+      la misma medida y ahora conviven en la misma serie de barras. Medir la diferencia en una
+      hora con las dos fuentes y decidir cual manda, o marcar el origen por barra.
+
+- [ ] 68. El relleno de Yahoo solo cubre los 6 del cockpit. Los otros 30 de la flota siguen
+      dependiendo del vault para su historia online.
