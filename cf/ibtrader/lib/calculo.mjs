@@ -85,8 +85,15 @@ export function agregar(json) {
   const hayCerca = filas.some(k => k.call_oi_cerca || k.put_oi_cerca);
   const campoC = hayCerca ? "call_oi_cerca" : "call_oi";
   const campoP = hayCerca ? "put_oi_cerca" : "put_oi";
-  const call_wall = mayor(filas, campoC);
-  const put_wall = mayor(filas, campoP);
+  // El vencimiento cercano no basta: QQQ tenia 53.167 puts en el 530 a MENOS DE 8 DIAS
+  // (-25,3% del spot, coberturas y rollos lejanos) contra 52.434 en el 700 (-1,3%), que es
+  // el que los dealers defienden de verdad. Un muro que el precio no puede alcanzar esta
+  // semana no es un campo de fuerza. Banda = 3 movimientos esperados, con suelo del 4%.
+  const banda = Math.max(3 * (em || 0), 0.04 * spot);
+  const enBanda = filas.filter(k => Math.abs(k.strike - spot) <= banda);
+  const base = enBanda.length ? enBanda : filas;
+  const call_wall = mayor(base, campoC);
+  const put_wall = mayor(base, campoP);
   // El flip tambien: con toda la cadena, MU daba flip 276 con el spot en 914 (2026-08-24).
   const filasFlip = hayCerca
     ? filas.map(k => ({ strike: k.strike, gex: (k.gamma_call_cerca - k.gamma_put_cerca) * f }))
@@ -110,6 +117,7 @@ export function agregar(json) {
            call_wall: call_wall?.strike ?? null, call_wall_oi: call_wall?.[campoC] ?? null,
            put_wall: put_wall?.strike ?? null, put_wall_oi: put_wall?.[campoP] ?? null,
            muros_dte: hayCerca ? HORIZONTE_MUROS_D : null,   // null = no habia vencimiento cercano
+           muros_banda: enBanda.length ? banda : null,       // +/- $ alrededor del spot usados
            flip: gammaFlip(filasFlip, spot), flip_raices: flipRaices(filasFlip, spot),
            gross_gex: oNull(gross_gex_val, gammaOk),
            strike_span_pct: filas.length > 1

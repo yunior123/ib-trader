@@ -362,7 +362,9 @@ class LSE:
         headers = {"X-API-Key": self.key, "Accept": "application/json", "User-Agent": UA}
         last = None
         for attempt in range(self.tries):
-            if lse_budget is not None:
+            # Solo se cobra lo que va al vault DE VERDAD: los tests apuntan VAULT_URL a un
+            # servidor local y no gastan cuota de nadie.
+            if lse_budget is not None and "londonstrategicedge.com" in url:
                 try:
                     lse_budget.consumir(1, quien="lse_client")
                 except lse_budget.LSEBudgetError as e:

@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS niveles (
   greeks_ok_pct REAL,               -- fraccion de contratos con IV legible; 0 => vex/charm NULL
   dex_bruto REAL,
   muros_dte INTEGER,                -- horizonte en dias del OI de los muros; NULL = cadena entera
+  muros_banda REAL,                 -- +/- $ alrededor del spot dentro de los que se busco el muro
   PRIMARY KEY (sym, ts)
 );
 

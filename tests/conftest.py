@@ -27,6 +27,20 @@ def _load(name):
     return mod
 
 
+@pytest.fixture(autouse=True)
+def _presupuesto_lse_aislado(tmp_path, monkeypatch):
+    """El cortacircuito de cuota (scripts/lse_budget.py) esta en el camino de toda peticion
+    al vault. En los tests tiene que EJERCITARSE, pero contra un fichero propio: heredar el
+    estado de produccion hacia fallar 27 tests con "cuota diaria agotada" cuando el limite
+    real se agotaba fuera."""
+    try:
+        sys.path.insert(0, SCRIPTS)
+        import lse_budget
+    except ImportError:
+        return
+    monkeypatch.setattr(lse_budget, "ESTADO", str(tmp_path / "lse_budget.json"))
+
+
 @pytest.fixture(scope="session", autouse=True)
 def _restore_cwd():
     yield

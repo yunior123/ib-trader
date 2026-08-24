@@ -25,13 +25,13 @@ export async function recolectarMapa(db, sym) {
         (sym,ts,fuente_ts,spot,call_wall,call_wall_oi,put_wall,put_wall_oi,flip,flip_raices,
          max_pain,gex_total,gross_gex,strike_span_pct,contratos,strikes,
          net_vex,gross_vex,net_charm,gross_charm,pressure,em,dte,exp,greeks_ok_pct,dex_bruto,
-         muros_dte)
-        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`)
+         muros_dte,muros_banda)
+        VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`)
       .bind(sym, ts, m.fuente_ts, m.spot, m.call_wall, m.call_wall_oi, m.put_wall, m.put_wall_oi,
             m.flip, JSON.stringify(m.flip_raices.slice(0, 6)), m.max_pain, m.gex_total,
             m.gross_gex, m.strike_span_pct, m.contratos, m.strikes,
             m.net_vex, m.gross_vex, m.net_charm, m.gross_charm, m.pressure, m.em, m.dte, m.exp,
-            m.greeks_ok_pct, m.dex_bruto, m.muros_dte ?? null).run();
+            m.greeks_ok_pct, m.dex_bruto, m.muros_dte ?? null, m.muros_banda ?? null).run();
 
     const top = m.filas.slice().sort((a, b) => Math.abs(b.gex) - Math.abs(a.gex)).slice(0, TOP_STRIKES);
     if (top.length) {

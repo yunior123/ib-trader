@@ -74,6 +74,18 @@ console.log("\n[agregar]");
   ok("sin gamma los MUROS siguen (son OI)", sinG.call_wall === 100 && sinG.put_wall === 100);
   ok("sin IV vex/charm son null", sinG.net_vex === null && sinG.net_charm === null);
 
+    // Un muro fuera de alcance no es un muro: QQQ tenia 53.167 puts en el 530 a <=8 dias
+  // (-25,3%) contra 52.434 en el 700 (-1,3%). El grande gana solo si esta en la banda.
+  const lejos = agregar({ data: { current_price: 100, last_trade_time: "x", options: [
+    { option: "TST260828P00070000", open_interest: 9000, volume: 1, gamma: 0.01, iv: 0.2 },
+    { option: "TST260828P00099000", open_interest: 8000, volume: 1, gamma: 0.01, iv: 0.2 },
+    { option: "TST260828C00130000", open_interest: 9000, volume: 1, gamma: 0.01, iv: 0.2 },
+    { option: "TST260828C00102000", open_interest: 8000, volume: 1, gamma: 0.01, iv: 0.2 },
+  ] } });
+  ok("el put wall es el alcanzable, no el mayor", lejos.put_wall === 99, String(lejos.put_wall));
+  ok("el call wall es el alcanzable, no el mayor", lejos.call_wall === 102, String(lejos.call_wall));
+  ok("declara la banda usada", typeof lejos.muros_banda === "number", String(lejos.muros_banda));
+
     ok("spot invalido LANZA en vez de devolver cero", tiro);
   let tiro2 = false;
   try { agregar({}); } catch { tiro2 = true; }
