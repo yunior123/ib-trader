@@ -11,16 +11,14 @@
   // El widget PULSO necesita cinta en vivo, que aqui no hay. Se puede pedir con ?pulso=1;
   // por defecto se oculta para no dejar un "SIN DATOS · ESPERANDO" permanente en pantalla.
   const PULSO = PARAM.get("pulso") === "1";
-  if (!PULSO) addEventListener("DOMContentLoaded", () => {
-    const p = document.getElementById("pulsebox") || document.querySelector(".pulse-box, #pulso");
-    if (p) p.style.display = "none";
-    document.querySelectorAll("*").forEach(el => {
-      if (el.children.length === 0 && /^\s*PULSO\s*$/i.test(el.textContent || "")) {
-        const caja = el.closest("div");
-        if (caja) caja.style.display = "none";
-      }
-    });
-  });
+  // La tarjeta la crea indicator_panel.js con id="pulsecard" (no "pulsebox": por eso el
+  // ocultador de antes no acertaba y quedaba un "SIN DATOS · esperando" fijo en las seis
+  // ventanas). Se oculta por CSS, que funciona aunque la tarjeta se monte despues.
+  if (!PULSO) {
+    const st = document.createElement("style");
+    st.textContent = "#pulsecard{display:none !important}";
+    (document.head || document.documentElement).appendChild(st);
+  }
   const SYM = (PARAM.get("sym") || "QQQ").toUpperCase();
   const MODO = PARAM.get("modo") === "perp" ? "perp" : "cash";
   const TF = PARAM.get("tf") || "15m";   // el mismo por defecto que la .app
@@ -151,9 +149,26 @@
   }
   WSFalso.CONNECTING = 0; WSFalso.OPEN = 1; WSFalso.CLOSING = 2; WSFalso.CLOSED = 3;
 
+  // 2026-08-24: el worker YA implementa /stream de verdad (WebSocket del vault, velas
+  // construidas con los ticks). Interceptarlo era lo que mataba el realtime en la pagina: el
+  // chart nunca abria el socket y hacia polling a /api/panel cada 5 s sobre barras de D1 que
+  // estaban congeladas. Se usa el WebSocket REAL; el doble queda como red de seguridad si el
+  // socket no llega a abrir en 6 s (?polling=1 lo fuerza).
+  const FORZAR_POLLING = PARAM.get("polling") === "1";
   window.WebSocket = function (url, protos) {
-    // Solo se intercepta el stream del bridge; cualquier otro WS sigue siendo el de verdad.
-    return /\/stream\b/.test(String(url)) ? new WSFalso(url) : new REAL(url, protos);
+    if (!/\/stream\b/.test(String(url))) return new REAL(url, protos);
+    if (FORZAR_POLLING) return new WSFalso(url);
+    // Antes esto CERRABA el socket a los 6 s si no habia llegado nada. Mala idea: un nombre
+    // fino en premarket (SMH) necesita DOS ticks frescos antes de emitir, tarda mas de 6 s y
+    // se quedaba sin feed — en la captura salia "NO REALTIME · finnhub" mientras las otras
+    // cinco iban a "REALTIME · lse". Se avisa por consola y no se toca el socket.
+    const real = new REAL(url, protos);
+    let recibido = false;
+    real.addEventListener("message", () => { recibido = true; }, { once: true });
+    setTimeout(() => {
+      if (!recibido) console.warn("[ibt-online] /stream sin frames a los 25 s; ?polling=1 fuerza el doble");
+    }, 25000);
+    return real;
   };
   window.WebSocket.prototype = WSFalso.prototype;
   Object.assign(window.WebSocket, { CONNECTING: 0, OPEN: 1, CLOSING: 2, CLOSED: 3 });

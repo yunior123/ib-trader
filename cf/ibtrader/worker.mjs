@@ -25,12 +25,77 @@ function okxCompartido(clave, fn, ttlMs = 6000) {
 }
 
 // "2026-08-24 06:07:00" (UTC, como sirve OKX via perpVelas) -> epoch segundos para lightweight-charts.
+const VERSION = "2026-08-24-lse-ws";
 const aEpoch = s => Math.floor(new Date(String(s).replace(" ", "T") + "Z").getTime() / 1000);
 
 // El vault solo sirve barras de 1 minuto (ignora `interval`, medido). Las velas mayores se
 // agregan aqui a partir de esas: cero peticiones extra y sin inventar nada — el open es el
 // del primer minuto del cubo, el close el del ultimo, y h/l los extremos reales.
+// Los niveles TAL COMO los consume el chart. Portado de public/ibt-online.js (el shim que
+// hacia polling): el chart pinta estos numeros tal cual y necesita `profile` para dibujar
+// muros e imanes — sin el, la cabecera dice "GEX: sin perfil en este libro".
+// `fuente_ts` llega como cadena ISO SIN zona y en hora de Nueva York; el chart hace
+// new Date(t*1000), o sea que espera EPOCH EN SEGUNDOS. Pasarle la cadena reventaba
+// drawHeader con "RangeError: Invalid time value" y esa excepcion se llevaba por delante
+// el resto del manejador de `history`: ni zoom, ni endChartLoad — de ahi el "conectando
+// chart" eterno y el pie clavado en NO REALTIME.
+function etAEpoch(v) {
+  if (v == null) return null;
+  if (typeof v === "number") return Math.floor(v);
+  const base = Date.parse(String(v).replace(" ", "T") + "Z");   // leido como si fuera UTC
+  if (!Number.isFinite(base)) return null;
+  const d = new Date(base);
+  const enEt = new Date(d.toLocaleString("en-US", { timeZone: "America/New_York" }));
+  const enUtc = new Date(d.toLocaleString("en-US", { timeZone: "UTC" }));
+  return Math.floor((base + (enUtc - enEt)) / 1000);   // el epoch cuyo reloj ET es esa cadena
+}
+
+function nivelesUI(d, perp) {
+  const red = (x, n) => (typeof x === "number" && isFinite(x) ? +x.toFixed(n) : null);
+  return {
+    sym: d.sym, spot: red(d.spot, 2), call_wall: d.call_wall, put_wall: d.put_wall,
+    call_wall_oi: d.call_wall_oi, put_wall_oi: d.put_wall_oi,
+    flip: red(d.flip, 2),
+    flip_raices: (() => { try { return JSON.parse(d.flip_raices || "[]").map(x => +Number(x).toFixed(2)); } catch { return []; } })(),
+    max_pain: d.max_pain, net_gex: d.gex_total, gross_gex: d.gross_gex,
+    net_vex: d.net_vex, gross_vex: d.gross_vex, net_charm: d.net_charm, gross_charm: d.gross_charm,
+    pressure: red(d.pressure, 1),
+    pressure_lab: d.pressure == null ? null : (d.pressure >= 0 ? "PINEAN" : "AMPLIFICAN"),
+    em: red(d.em, 2), dte: d.dte, exp: d.exp, greeks_ok_pct: d.greeks_ok_pct,
+    oi_available: true, oi_source: "cboe_delayed",
+    regime: d.gex_total == null ? null : (d.gex_total >= 0 ? "POS" : "NEG"),
+    asof: etAEpoch(d.fuente_ts) ?? d.ts ?? null,
+    chain_ts: d.ts ?? null,   // el chart compara con Date.now()/1000: SEGUNDOS, no ms
+    chain_src: perp ? "okx" : "cboe", scale: "dollar1pct", profile_metric: "gex",
+    profile: (d.profile || []).map(p => ({
+      strike: p.strike, gex: p.gex, vex: p.vex, charm: p.charm,
+      call_oi: p.call_oi, put_oi: p.put_oi, oi: (p.call_oi || 0) + (p.put_oi || 0),
+      call_pct: (p.call_oi + p.put_oi) > 0 ? p.call_oi / (p.call_oi + p.put_oi) : null,
+    })),
+    strikes: d.strikes, contratos: d.contratos,
+    flip_why: d.flip == null
+      ? "El GEX acumulado no cruza cero en este libro: no hay flip, y el borde del recorte no es un nivel."
+      : "Raiz del GEX acumulado mas cercana al spot (todas las raices en flip_raices).",
+  };
+}
+
 const MINUTOS = { "1m": 1, "5m": 5, "15m": 15, "30m": 30, "1h": 60 };
+// Las velas del ws vienen en cubos de 1 minuto con `time` epoch. Para dibujarlas en la
+// temporalidad pedida hay que agregarlas igual que las de D1, o el chart recibe cubos que no
+// encajan con los suyos y aparecen velas sueltas al borde.
+function agregarEpoch(velas, tf) {
+  const m = MINUTOS[tf] || 1;
+  if (m === 1) return velas.map(v => ({ time: v.time, o: v.o, h: v.h, l: v.l, c: v.c, v: v.v }));
+  const cubos = new Map();
+  for (const b of velas) {
+    const k = b.time - (b.time % (m * 60));
+    const c = cubos.get(k);
+    if (!c) cubos.set(k, { time: k, o: b.o, h: b.h, l: b.l, c: b.c, v: b.v || 0 });
+    else { c.h = Math.max(c.h, b.h); c.l = Math.min(c.l, b.l); c.c = b.c; c.v += b.v || 0; }
+  }
+  return [...cubos.values()].sort((a, b) => a.time - b.time);
+}
+
 function agregarVelas(filas, tf) {
   const m = MINUTOS[tf] || 1;
   if (m === 1) return filas;
@@ -104,7 +169,8 @@ async function streamWs(server, db, url, env) {
   const sym = (url.searchParams.get("sym") || url.searchParams.get("perp") || "QQQ")
     .toUpperCase().replace(/USDT$/, "").trim();
   const perp = url.searchParams.get("modo") === "perp" || !!url.searchParams.get("perp");
-  const tf = url.searchParams.get("tf") || "1m";   // el vault solo sirve 1m; lo mayor se agrega
+  let tf = url.searchParams.get("tf") || "15m";  // por defecto 15m (Yunior); el vault solo
+                                                  // sirve 1m y lo mayor se agrega aqui
   const finKey = env?.FINNHUB_API_KEY || null;
   let vivo = true;
   // Un ticker del vault POR CONEXION: los eventos de un ws saliente solo llegan al contexto
@@ -124,10 +190,17 @@ async function streamWs(server, db, url, env) {
       `SELECT n.* FROM niveles n
         JOIN (SELECT sym, MAX(ts) AS ts FROM niveles WHERE sym=? GROUP BY sym) u
           ON n.sym = u.sym AND n.ts = u.ts`).bind(sym).all();
-    return results?.[0] || null;
+    const n = results?.[0];
+    if (!n) return null;
+    // El perfil por strike ES lo que el chart dibuja como muros e imanes. Sin el no hay muros.
+    const pr = await db.prepare(
+      "SELECT strike,call_oi,put_oi,call_vol,put_vol,gex,vex,charm FROM perfil WHERE sym=? AND ts=? ORDER BY strike")
+      .bind(sym, n.ts).all();
+    return nivelesUI({ sym, ...n, profile: pr.results || [] }, perp);
   };
   const feedBase = perp ? { provider: "okx", upstream: "www.okx.com", proto: "ws-rest-poll" }
-                        : { provider: "d1", upstream: "cloudflare-d1", proto: "snapshot" };
+                        : { provider: "lse", upstream: "data-ws.londonstrategicedge.com",
+                            proto: "ws-bbo-mid", tier: "registered" };
 
   // Snapshot inicial -> history. Los indicadores van VACIOS declarados: el worker no calcula
   // Supertrend/Madrid/RSI (eso vive en el puente local); mejor una serie ausente que una inventada.
@@ -145,13 +218,16 @@ async function streamWs(server, db, url, env) {
         .bind(sym).all();
       barras = agregarVelas((results || []).reverse(), tf);
     }
+    // lightweight-charts exige open/high/low/close. Con o/h/l/c el chart pintaba vacio y por
+    // eso existia el shim de polling en public/ibt-online.js.
     let velasUI = (barras || []).map(b =>
-      ({ time: b._t ?? aEpoch(b.ts), o: b.o, h: b.h, l: b.l, c: b.c, v: b.v || 0 }));
+      ({ time: b._t ?? aEpoch(b.ts), open: b.o, high: b.h, low: b.l, close: b.c, v: b.v || 0 }));
     // Las de D1 son historia del vault (REST); las del ws son las de HOY. Se pegan detras,
     // nunca solapando: si el REST esta sin cuota, el chart vive igual de las del ws.
     if (!perp && tickerLse) {
       const corte = velasUI.length ? velasUI[velasUI.length - 1].time : 0;
-      for (const v of tickerLse.velas(sym)) if (v.time > corte) velasUI.push(v);
+      for (const v of agregarEpoch(tickerLse.velas(sym), tf))
+        if (v.time > corte) velasUI.push({ time: v.time, open: v.o, high: v.h, low: v.l, close: v.c, v: v.v });
     }
     if (barras?.length) ultimaVela = { ...barras[barras.length - 1] };
     const nivel = await nivelesDe();
@@ -163,9 +239,33 @@ async function streamWs(server, db, url, env) {
                     stMarkers: [], ttMarkers: [], whaleMarkers: [], rsiDivMarkers: [],
                     ttUp: [], ttDn: [], ttLevels: [], trendlines: [] },
       signals: [], engineOps: [],
-      levels: { sym, ...(nivel || {}) }, feed: feedBase,
+      levels: nivel || { sym }, feed: feedBase,
       nodata: velasUI.length ? null : `sin barras ${perp ? "OKX" : "D1"} para ${sym}` });
   };
+  // El chart HABLA: pide mas historia al hacer pan y reenvio de history al cambiar de
+  // temporalidad. Sin contestar, su spinner se queda encendido para siempre ("cargando
+  // historial · 19.7s" en la captura) aunque el precio vaya vivo.
+  server.addEventListener("message", async ev => {
+    let c; try { c = JSON.parse(ev.data); } catch { return; }
+    if (c?.cmd === "tf" && c.tf) {
+      if (!MINUTOS[c.tf] && c.tf !== tf) {
+        enviar({ type: "backfill", bars: [], exhausted: true, feed: feedBase,
+                 reason: `temporalidad ${c.tf} no disponible aqui: el vault sirve 1m y el worker agrega 5m/15m/30m/1h` });
+        return;
+      }
+      tf = c.tf; ultimaVela = null;
+      await conReintento();
+      return;
+    }
+    if (c?.cmd === "more") {
+      // Honesto: aqui NO hay mas historia que dar. D1 guarda 200 barras por simbolo y el
+      // vault REST esta sin cuota. Se dice y el chart deja de girar, en vez de fingir.
+      enviar({ type: "backfill", bars: [], exhausted: true, feed: feedBase,
+               reason: "fin del historial: D1 guarda 200 barras y el REST del vault esta sin cuota diaria" });
+      return;
+    }
+  });
+
   let historiaIntentos = 0;
   const conReintento = async () => {
     try { await enviarHistoria(); }
@@ -199,8 +299,8 @@ async function streamWs(server, db, url, env) {
           ultimaVela = { ...u,
             h: Math.max(u.h ?? t.last, t.last), l: Math.min(u.l ?? t.last, t.last), c: t.last };
           enviar({ type: "tick",
-                   bar: { time: aEpoch(ultimaVela.ts), o: ultimaVela.o, h: ultimaVela.h,
-                          l: ultimaVela.l, c: ultimaVela.c, v: ultimaVela.v || 0 },
+                   bar: { time: aEpoch(ultimaVela.ts), open: ultimaVela.o, high: ultimaVela.h,
+                          low: ultimaVela.l, close: ultimaVela.c, v: ultimaVela.v || 0 },
                    feed: { ...feedBase, age_s: Math.max(0, Math.floor(Date.now() / 1000 - t.ts / 1000)) } });
         }
       } else if (ultimaVela) {
@@ -213,18 +313,26 @@ async function streamWs(server, db, url, env) {
         if (!t) throw new Error(`vault ws sin tick de ${sym} todavia (${tickerLse.estado().estado})`);
         // La vela la CONSTRUYE el ws con sus propios ticks (mid del BBO, cubos de 1 minuto),
         // igual que el puente local. El chart se mueve sin tocar el REST ni su cuota.
-        const vs = tickerLse.velas(sym);
+        const vs = agregarEpoch(tickerLse.velas(sym), tf);
         const viva = vs[vs.length - 1];
         if (!viva) throw new Error(`vault ws sin vela de ${sym} todavia`);
         ultimaVela = { ts: new Date(viva.time * 1000).toISOString().replace("T", " ").slice(0, 19),
                        o: viva.o, h: viva.h, l: viva.l, c: viva.c, v: viva.v };
         const r4 = x => Math.round(x * 1e4) / 1e4;   // el chart no tiene por que ver ruido binario
         enviar({ type: "tick",
-                 bar: { time: viva.time, o: r4(viva.o), h: r4(viva.h), l: r4(viva.l),
-                        c: r4(viva.c), v: viva.v },
-                 feed: { provider: "lse", upstream: "data-ws.londonstrategicedge.com",
-                         proto: "ws-bbo-mid", bid: t.bid, ask: t.ask,
-                         age_s: Math.max(0, Math.floor((Date.now() - t.ts) / 1000)) } });
+                 bar: { time: viva.time, open: r4(viva.o), high: r4(viva.h), low: r4(viva.l),
+                        close: r4(viva.c), v: viva.v },
+                 feed: (() => {
+                   const edad = Math.max(0, Math.floor((Date.now() - t.ts) / 1000));
+                   const est = tickerLse.estado();
+                   // realtime SOLO si el ultimo tick es fresco. Con el socket vivo pero el
+                   // precio parado (nombre fino en premarket) el chart dice PRICE STALE, que
+                   // es la verdad, en vez de pintarse de verde.
+                   return { ...feedBase, bid: t.bid, ask: t.ask, age_s: edad,
+                            realtime: edad <= 30,
+                            lse_ws: { connected: est.estado === "listo", status: est.estado === "listo"
+                                      ? "SUBSCRIBED" : est.estado.toUpperCase(), reconnects: 0 } };
+                 })() });
       } else if (false && ultimaVela) {   // rama Finnhub, conservada por si vuelve a hacer falta
         // Cash 24/5: precio de la accion via Finnhub. La vela base es la de D1; h/l/c se
         // actualizan con el vivo. Si el mercado esta cerrado, q.ts lo dice: age_s grande =
@@ -252,9 +360,19 @@ async function streamWs(server, db, url, env) {
         if (n) enviar({ type: "levels", levels: n });
       }
     } catch (e) {
-      const quien = perp ? feedBase
-        : { provider: "finnhub", upstream: "finnhub.io", proto: "rest-poll" };
-      enviar({ type: "feed_status", feed: { ...quien, error: String(e?.message || e) } });
+      // El resto de Finnhub estaba AQUI: el frame de error seguia diciendo
+      // provider:"finnhub" upstream:"finnhub.io" aunque el dato fuese del vault, y el pie del
+      // chart lo pintaba tal cual -> "NO REALTIME · finnhub" en la ventana de SMH mientras las
+      // otras cinco decian "REALTIME · lse". La etiqueta mentia, el dato no.
+      const msg = String(e?.message || e);
+      const calentando = /sin tick|sin vela|conectando/.test(msg);
+      enviar({ type: "feed_status",
+               feed: { ...feedBase, realtime: false,
+                       lse_ws: perp ? undefined : { connected: !calentando, status: calentando ? "SUBSCRIBING" : "ERROR" },
+                       note: calentando
+                         ? "esperando el segundo tick fresco del vault (nombre fino en premarket)"
+                         : msg,
+                       error: calentando ? undefined : msg } });
     }
     // En cash el pulso NO cuesta nada aguas arriba: el ws ya esta entregando ticks y aqui solo
     // se reenvia la vela viva. El puente local pinta a 4 Hz (LSE_CHART_PAINT_S); 1 s es de sobra
@@ -278,7 +396,7 @@ async function ultimosNiveles(db) {
 // Niveles + ultimas barras de los seis, en un solo viaje.
 async function datosPanel(db, url) {
   const syms = (url.searchParams.get("syms") || COCKPIT.join(",")).toUpperCase().split(",").slice(0, 6);
-  const tf = url.searchParams.get("tf") || "15m";
+  let tf = url.searchParams.get("tf") || "15m";
   // modo=perp: precio VIVO 24/7 desde OKX. Los niveles siguen siendo los de la cadena (CBOE):
   // el perpetual tiene su propia base, asi que sirve para el pulso, no para fijar el nivel.
   if (url.searchParams.get("modo") === "perp") {
@@ -382,6 +500,10 @@ export default {
         tk.cerrar();
         return json({ ...est, ticks });
       }
+
+      // El chart pide /version al arrancar; sin ruta eran 6 peticiones 404 por carga de la
+      // rejilla y un "v?" en la cabecera.
+      if (p === "/version") return json({ name: "ibtrader-worker", version: VERSION });
 
       if (p === "/api/niveles") return json(await ultimosNiveles(db));
 
