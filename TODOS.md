@@ -2,8 +2,97 @@
 
 > Vivo. Apuntar cada petición AL MOMENTO con las palabras de Yunior. Lo cerrado → Done.md.
 
+- [ ] 55. 🔴 ROTACION PENDIENTE CONFIRMADA (2026-08-24 ~04:00, re-verificacion pedido por Yunior):
+      la clave nvapi- filtrada en origna_gta SIGUE VIVA — probada contra
+      integrate.api.nvidia.com/v1/models con la clave extraida del commit viejo: HTTP 200.
+      Ademas el commit colgante 525491a SIGUE alcanzable por SHA en GitHub (HTTP 200 via API,
+      .mcp.json con la clave dentro) aunque el repo es privado y main esta limpio (verificado:
+      3 commits, cero nvapi- reales en arboles; los hits nuevos son regex del candado).
+      ACCION INMEDIATA DE YUNIOR: build.nvidia.com -> revocar esa clave HOY. Nadie mas puede.
+      Tras rotar: export NVAPI_API_KEY=<nueva> (el .mcp.json ya lee del entorno) y rotar tambien
+      el MILVUS_TOKEN en su consola. La purga del commit colgante exige ticket a GitHub Support.
+- [x] 54. "keys in keychain only, never in github for any repo" (2026-08-24 ~03:45) — (1) Las 24
+      credenciales de feeds.env importadas al LLAVERO macOS (servicio ibtrader.feeds) via nuevo
+      scripts/secrets_keychain.sh (import/env/get/names); roundtrip verificado byte a byte:
+      el llavero regenera feeds.env identico. feeds.env queda como artefacto generado (gitignored,
+      nunca en git — confirmado con git ls-files). (2) Barrido de historia completa en los 26 repos
+      con remoto GitHub: ib-trader limpio (los hits del Initial commit son getenv() en codigo, sin
+      valores; feeds.env jamas estuvo tracked); origna_gta falso positivo (texto del candado).
+      🔴 HALLAZGO REAL: repo PUBLICO free-code tuvo sk-ant- / github_pat_ / xoxb- en la historia
+      del README (borrados de HEAD despues, pero siguen en GitHub history) -> ROTAR esas 3 claves.
+      (3) Escaner de secretos instalado como pre-commit+pre-push en TODOS los repos locales que no
+      tenian (~/.config/git-hooks/git-secrets-check.sh); probado: bloquea webhook discord, deja
+      pasar commit limpio. Regla codificada en AGENTS.md REGLA CERO.
+- [x] 53. "no alarms" (2026-08-24 ~03:10) — apagados LOS DAEMONAS de alarma, no solo
+      silenciados: price_alarm + su keepalive muertos (24839/14292), lse_price_alarm y
+      lse_price_alarm_feed.py muertos, y los jobs launchd com.ibtrader.lsepricealarm,
+      com.ibtrader.lsepricefeed y com.ibtrader.todayalarm5 con bootout + disable (no vuelven
+      ni al relanzar sesion). Verificado: cero procesos de alarma, cero jobs alarm en launchd.
+      La flota de senales (bots + keepalives) sigue viva pero muda por el candato. Para
+      reactivar: launchctl enable gui/$UID/<label> + bootstrap, o zsh scripts/fleet_up.sh.
+- [x] 52. "notifications in mac disabled please, check background" (2026-08-24 ~03:00) — auditoria
+      de emisores vivos con el candato data/notify_off puesto (15:04). HALLAZGO Y CIERRE:
+      price_alarm/lse_price_alarm (sirena ProAlarm x3 + voz Paulina + banner osascript) estaban
+      VIVOS y SIN candato — unico emisor Mac activo que lo ignoraba. Arreglado en fuente
+      (scripts/price_alarm.cpp fire(): con notify_off registra DISPARADA silenciada y marca la
+      regla igual), recompilado (clang++ -std=c++2c -O3) y hot-swap a bin/price_alarm +
+      bin/lse_price_alarm (respawn verificado 14292/13831); backup del binario viejo en
+      backup/price_alarm_bin_pre_candato. Ademas bots/fleet_notify.h fleet_notify_urgent ahora
+      devuelve sin spawn si el candato existe (cubre a TODOS los bots C++ de golpe). Limpieza:
+      tail huerfano de data/notify_push.txt eliminado. Confirmado apagado y respetando el
+      interruptor: notify_relay (no corre), speak.sh/voice_queue.sh (osa_gate), today_alarm5
+      (parado), macro_email/daily_fleet_plans (commits de hoy), discord relay (no cargado),
+      cero crontab. El worker Cloudflare no notifica por diseño.
+- [x] 51. "all tickers" (2026-08-24 ~02:40) — /api/quotes: precio vivo de LOS 36 de la flota (o
+      syms a mano) bajo el techo del free tier de Finnhub (~60/min): rotacion con presupuesto
+      (~1 upstream/1.1s, refresca primero el mas viejo) y D1 (tabla `quotes`, nueva en schema)
+      como almacen COMPARTIDO entre isolates — la primera version con cache en RAM no avanzaba
+      porque cada isolate repetia el barrido (medido). age_s declara la edad de cada precio.
+      Verificado en produccion: barrido completo 36/36 con demanda sostenida; fallo por simbolo
+      aislado sin tumbar el lote. test.mjs 21/21.
+- [x] 50. "24/5 sunday to friday" (2026-08-23 ~18:40) — el cockpit en CASH queda realtime toda la
+      semana: (1) ventanaAbierta() 24/5 — se recolecta domingo->viernes continuo, solo el sabado
+      reposa (test.mjs actualizado, 21/21); (2) /stream en modo cash ahora emite TICKS con precio
+      REALTIME de la ACCION via Finnhub /quote (la casa ya lo usa en scripts/watchlist_stats.py;
+      secreto FINNHUB_API_KEY subido al worker desde feeds.env sin imprimirlo), cache 6.1s/simbolo
+      para respetar el free tier (~60/min); age_s declara la edad — verificado: domingo noche
+      sirve el cierre del viernes con age_s ~210000 y pasara a segundos al abrir el mercado.
+      Verificado en produccion: ventana_abierta=true y el cron ya rota barras de nuevo.
+      🔴 PENDIENTE EXTERNO: LSE (api.londonstrategicedge.com) sigue 429 HASTA EN /usage — cuota
+      agotada o key caida; mientras tanto las barras/flujo de D1 no se refrescan (falla en voz
+      alta, como manda la casa). El precio vivo NO depende de LSE.
+- [x] 49. "ibtrader.quant-academy.workers.dev should work realtime, debug now" (2026-08-23 ~18:00)
+      — CAUSA: live.html (el chart de cada ventana) abria `ws://host/stream` — ws plano en pagina
+      https = mixed-content bloqueado, y el worker no tenia ruta /stream (ese protocolo vive en el
+      puente local del Mac) -> bucle infinito de reconexion, cero realtime. ARREGLO: (1) live.html
+      usa wss en https y pasa el query; (2) worker.mjs implementa /stream como WebSocket
+      (history + tick ~5s + niveles ~1min + feed_status), con modo=perp sirviendo OKX 24/7 y cache
+      compartida por isolate; (3) fuentes.mjs OKX tolerante al bloqueo MEDIDO desde CF (429/404/HTML
+      anti-bot intermitente): sin UA de navegador, 4 reintentos con backoff, velas solo 1/min.
+      Verificado EN PRODUCCION: wss conecta, HISTORY 150 barras y TICKS age_s=0 con precio moviendo;
+      test.mjs 21/21, test-online 43/44 (el 1 que falla es cuota LSE upstream 429, preexistente).
+- [x] 48. INCIDENTE GitGuardian (2026-08-23 ~17:40): clave NVIDIA `nvapi-` + MILVUS_TOKEN
+      filtrados en `.mcp.json` del repo **origna_gta** (push publico "Initial commit" 16:01 EDT;
+      NO era ib-trader — barrido de todos los repos locales: unico hit). Contencion hecha:
+      repo puesto PRIVADO via gh, `.mcp.json` saneado a placeholders `${NVAPI_API_KEY}` /
+      `${MILVUS_TOKEN}`, historico reescrito (amend del unico commit) y force-push verificado
+      con ls-remote + API (0 hits de nvapi- en el remoto). Bonus: el hook pre-commit de
+      origna_gta estaba ROTO (wrapper llamaba `bash` a un script zsh) — arreglado a `zsh`,
+      ahora si escanea secretos. 🔴 PENDIENTE DE YUNIOR: ROTAR la clave en
+      build.nvidia.com (nvapi.nvidia.com/keys) y el token en la consola Zilliz/Milvus —
+      la purga del repo NO invalida una clave ya raspada.
+
 - [ ] 43. "add news for all fleet in discord, but make sure they dont get repeated, no need to
       store them more than 24 h, debug, fix, improve" (2026-08-05 13:25) — pendiente
+- [x] 47. Mejora hallada por barrido de la suite completa (2026-08-23 17:14): 6 FAILED + 5 ERROR
+      en tests/test_notify_relay.py — el interruptor `data/notify_off` (creado 15:04) mataba el
+      relay en el arranque y los tests dependian del estado real del Mac; ademas el test de
+      produccion exigia config/notify_private.txt en disco (borrado en la limpieza REGLA CERO)
+      cuando el codigo ya tiene fallback embebido por diseño. Arreglo: notify_relay.sh acepta
+      `NOTIFY_OFF_FILE` (produccion sin cambio: $ROOT/data/notify_off), fixture del test
+      hermetica apuntando al sandbox, teardown tolera relay ya muerto y el test de layout
+      verifica los titulos reales contra el PRIVADO de produccion (fichero o fallback).
+      Verificado: 8/8 passed; con notify_off presente el relay sigue sin arrancar (exit 0).
 - [ ] 44. "debug channels in discord, make sure we are using them properly and all integrated"
       (2026-08-05 13:25) — pendiente
 - [ ] 45. "be more strict for BB alerts, go rsi 80/20, filter out noise" (2026-08-05 13:25) —
@@ -1669,3 +1758,11 @@ Lo reporté como "sale moneda al aire (WR 0,497)". **Esa certeza estaba mal fund
       de spread no se dispara nada — es el bloqueador que impide operar, no solo mapear.
 - [ ] **Finviz Elite 401**: el screener gratuito (`finviz.com/screener`) responde 200 en HTML, así
       que se podría migrar por scraping. No hecho: es trabajo nuevo, no un arreglo.
+
+- [ ] 56. "make sure keys are protected always, use cloudflare protection" (2026-08-24 ~07:05) —
+      en curso. Hallazgo: las 4 claves `nvapi-` del disco siguen VIVAS (HTTP 200 contra
+      integrate.api.nvidia.com) → la rotación del incidente 48 NUNCA se hizo. Repos limpios
+      (worktree + historia + remoto privado). Plan: Secrets Store CF `yunior-keys` (creado,
+      ID 06ba4189dcb94f2eb7fd38d362f42e52) + Keychain local en vez de .zshrc + hook global.
+- [ ] 57. "fix: https://ibtrader.quant-academy.workers.dev/ not working realtime" (2026-08-24 ~07:08)
+      — pendiente de diagnóstico.
