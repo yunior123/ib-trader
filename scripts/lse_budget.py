@@ -96,7 +96,11 @@ def consumir(n: int = 1, quien: str = "") -> None:
 
 
 def agotado(motivo: str = "daily request limit reached") -> None:
-    """El vault dijo que la cuota diaria murio: se corta a TODOS los clientes locales."""
+    """El vault dijo que la cuota diaria murio: se corta a TODOS los clientes locales.
+
+    Solo para la cuota DIARIA. Un 429 de ritmo es transitorio y se reintenta: llamar aqui
+    con uno de esos tiraba el dia entero del Mac (medido 2026-08-25: bloqueado con 79
+    peticiones gastadas de 4.000 y el vault contestando 200 a /vault/usage)."""
     fh = _abrir()
     try:
         d = _leer(fh)
@@ -144,7 +148,10 @@ def estado() -> dict:
 
 if __name__ == "__main__":
     import sys
-    if len(sys.argv) > 1 and sys.argv[1] == "--reset":
+    if len(sys.argv) > 1 and sys.argv[1] == "--desbloquear":
+        sonda_ok()
+        print(json.dumps(estado(), indent=1))
+    elif len(sys.argv) > 1 and sys.argv[1] == "--reset":
         os.path.exists(ESTADO) and os.remove(ESTADO)
         print("estado borrado")
     else:

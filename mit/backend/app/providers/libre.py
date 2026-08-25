@@ -163,8 +163,11 @@ async def _vault(url: str, key: str, quien: str, cap: str):
     try:
         filas = await _json(url, {"X-API-Key": key}, quien=quien, cap=cap)
     except ProviderError as e:
-        if lse_budget is not None and ("429" in str(e) or "daily request limit" in str(e).lower()):
-            lse_budget.agotado("429 del vault")
+        # SOLO la cuota DIARIA corta el dia. El 429 de RITMO es transitorio y se reintenta:
+        # tratarlos igual bloqueaba las 4.000 peticiones del Mac por un rechazo pasajero
+        # (medido 2026-08-25: bloqueado con 79 gastadas y el vault contestando 200).
+        if lse_budget is not None and "daily request limit" in str(e).lower():
+            lse_budget.agotado("daily request limit reached (15000/day)")
         raise
     if lse_budget is not None:
         lse_budget.sonda_ok()

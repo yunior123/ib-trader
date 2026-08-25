@@ -86,6 +86,13 @@ def _barras(sym: str, desde: int) -> list[dict]:
 def main() -> int:
     key = _key()
     est = _estado()
+    # --completo ignora el estado y reenvia la ventana entera. Hace falta porque el warmup del
+    # vault mete barras ANTERIORES a la ultima subida (la manana que la cuota dejo sin cubrir),
+    # y un push que solo avanza hacia adelante no las veria nunca. INSERT OR REPLACE en el
+    # worker lo hace idempotente.
+    completo = "--completo" in sys.argv
+    if completo:
+        est = {}
     corte = int(time.time()) - ATRAS_S
     total = 0
     for sym in COCKPIT:

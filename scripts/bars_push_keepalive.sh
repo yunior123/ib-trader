@@ -5,8 +5,13 @@
 cd "$(dirname "$0")/.."
 LOG=logs/bars_push.log
 FAILS=0
+N=0
 while true; do
-  if ./venv/bin/python scripts/bars_push.py >> "$LOG" 2>&1; then
+  # Cada 30 vueltas se reenvia la ventana entera: el warmup del vault mete barras anteriores
+  # a la ultima subida y el push incremental no las alcanzaria.
+  if (( N % 30 == 0 )); then ARG=--completo; else ARG=; fi
+  N=$((N + 1))
+  if ./venv/bin/python scripts/bars_push.py $ARG >> "$LOG" 2>&1; then
     FAILS=0
   else
     FAILS=$((FAILS + 1))
