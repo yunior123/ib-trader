@@ -927,6 +927,23 @@
     <div class="wgbody"></div>
     <div class="wgrs" title="Arrastra para cambiar la altura"></div>
   </div>
+  <!-- GEX Live Table (Yunior 2026-08-27, estilo Tanuki): rail de vencimientos DTE
+       arriba (click = elegir vencimiento) + tabla strike-level con spot/CW/PW/MVC.
+       Lo pinta charts/gex_live_table_widget.js desde el MISMO feed que el Heat Map
+       (data/gex_heatmap_<sym>.json): cero red nueva y compatible con London-only. -->
+  <div class="wgt" id="wgt-gexlive">
+    <div class="wghdr">
+      <span class="wgdrag">⠿⠿</span><span class="wgname">GEX Live Table</span><button class="wginfo" title="Info" data-widget="gexlive" aria-label="Información sobre GEX Live Table">ⓘ</button><div class="popover-box" data-widget="gexlive"><div class="popover-title">GEX Live Table</div><p><strong>Qué mide:</strong> rail de vencimientos (fecha, DTE, semana/mensual, Net GEX con signo) y, debajo, el Net GEX por strike del vencimiento elegido con SPOT, CW (call wall), PW (put wall) y Γ (mayor |gamma|). Píldora ALL = todos los vencimientos sumados.</p><div class="popover-source"><strong>Fuente:</strong> el mismo feed que el Net GEX Heat Map (<code>data/gex_heatmap_&lt;sym&gt;.json</code>); la edad se pinta en la cabecera y en el pie.</div><div class="popover-doctrine"><strong>Doctrina:</strong> MAPA, no gatillo. Celda sin dato = vacía, jamás cero. En London-only sólo se muestra el mapa Γ×volumen de London, sin atribuir inventario dealer.</div></div>
+      <span class="wgsub">—</span>
+      <button class="wgb wgexp" title="Expandir / contraer">⤢</button>
+      <button class="wgb wgmin" title="Plegar">–</button>
+      <button class="wgb wgx" title="Cerrar">✕</button>
+    </div>
+    <div class="wgbody"></div>
+    <div class="wgrs" title="Arrastra para cambiar la altura"></div>
+  </div>
+
+
 
   <div class="wgt" id="wgt-gex">
     <div class="wghdr">
@@ -1125,13 +1142,14 @@
 </footer>
 
 <!-- v5.2.0 vendored local (Apache-2.0), sin CDN en runtime -->
-<script src="/ibt-online.js"></script>
 <script src="lightweight-charts-v5.js"></script>
+<script src="/ibt-online.js"></script>
 <script src="order_ticket_ui.js"></script>
 <script src="indicator_panel.js"></script>
 <script src="orderflow_panel.js"></script>
 <script src="uw_widgets.js"></script>
 <script src="gex_heatmap_widget.js?v=28-lse-ws-options"></script>
+<script src="gex_live_table_widget.js?v=1"></script>
 <script src="mm_fractal_widget.js?v=23-lse-only"></script>
 <script>
 "use strict";
@@ -4090,9 +4108,9 @@ chart.subscribeCrosshairMove((param) => {
 //                      construccion no puede taparlo. Expandir un flotante lo re-acopla.
 //   · persistentes  -> abierto/plegado/expandido/posicion/altura en localStorage.
 // Sin frameworks: la CSP del cockpit no admite CDN y el peso importa (Mac de 8 GB).
-const WGT_IDS = ["mmfractal", "gexheat", "gex", "liqmap", "prem", "flow", "tech", "ivreg", "rviv", "hmap", "book", "gdecay",
+const WGT_IDS = ["mmfractal", "gexheat", "gexlive", "gex", "liqmap", "prem", "flow", "tech", "ivreg", "rviv", "hmap", "book", "gdecay",
                  "dark", "gexexp"];
-const WGT_NAME = { mmfractal: "MM Fractal · LSE", gexheat: "Net GEX Heat Map", gex: "Net GEX por strike", liqmap: "Mapa de liquidez",
+const WGT_NAME = { mmfractal: "MM Fractal · LSE", gexheat: "Net GEX Heat Map", gexlive: "GEX Live Table", gex: "Net GEX por strike", liqmap: "Mapa de liquidez",
                    prem: "Net Premiums", flow: "Options Flow Orders", tech: "Technicals",
                    ivreg: "IV Regime", rviv: "RV vs IV", hmap: "Strike Heat Map",
                    book: "Book Quality", gdecay: "Gamma Decay",
@@ -4232,8 +4250,8 @@ const wgDockW = (exp) => {
 };
 
 // Widget selections are remembered, but the dock starts closed so the chart owns the screen.
-const wgFresh = () => ({ visible: false, open: { mmfractal: true, gexheat: true },
-                         float: {}, h: { mmfractal: 350, gexheat: 470, gex: 320, liqmap: 340, prem: 300, flow: 300, tech: 300 },
+const wgFresh = () => ({ visible: false, open: { mmfractal: true, gexheat: true, gexlive: true },
+                         float: {}, h: { mmfractal: 350, gexheat: 470, gexlive: 470, gex: 320, liqmap: 340, prem: 300, flow: 300, tech: 300 },
                          min: {}, exp: {} });
 let WG = wgFresh();
 try {
@@ -4244,6 +4262,8 @@ try {
     if (s.open.liqmap === undefined) { WG.open.liqmap = true; WG.h.liqmap = WG.h.liqmap || 340; }
     // estados guardados de antes del Heat Map: se abre una vez (es el widget por defecto)
     if (s.open.gexheat === undefined) { WG.open.gexheat = true; WG.h.gexheat = WG.h.gexheat || 470; }
+    // GEX Live Table (estilo Tanuki): mismo trato de descubrimiento que el Heat Map.
+    if (s.open.gexlive === undefined) { WG.open.gexlive = true; WG.h.gexlive = WG.h.gexlive || 470; }
     // nuevo fractal London: se descubre una vez sin borrar la configuración previa.
     if (s.open.mmfractal === undefined) { WG.open.mmfractal = true; WG.h.mmfractal = WG.h.mmfractal || 350; }
   }
@@ -4799,11 +4819,7 @@ window.addEventListener("keydown", (e) => {
 
 function connect() {
   const conn = document.getElementById("conn");
-  // Servido desde Cloudflare la pagina es https: un ws:// plano es mixed-content y el navegador
-  // lo bloquea SIEMPRE (wss obligatorio). El query viaja para que un backend con ruta /stream
-  // sepa sym/tf/modo sin tocar el protocolo de comandos del puente local.
-  const qs = location.search || "";
-  const url = `${location.protocol === "https:" ? "wss" : "ws"}://${location.host || "127.0.0.1:8080"}/stream${qs}`;
+  const url = `ws://${location.host || "127.0.0.1:8080"}/stream`;
   beginChartLoad("conectando chart");
   ws = new WebSocket(url);
   ws.onopen = () => { conn.className = "on"; conn.textContent = "● WS conectado";

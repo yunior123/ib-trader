@@ -84,6 +84,21 @@ console.log("\n[agregar]");
   ] } });
   ok("el put wall es el alcanzable, no el mayor", lejos.put_wall === 99, String(lejos.put_wall));
   ok("el call wall es el alcanzable, no el mayor", lejos.call_wall === 102, String(lejos.call_wall));
+
+  // Convencion de la casa (gex_core.py): call wall = techo (>= spot), put wall = piso
+  // (<= spot). XSP 2026-08-26 publico put wall 770 con call wall 765 y spot 767,57: un
+  // "piso" por ENCIMA del "techo". El mayor OI de cada lado no puede cruzarse de lado.
+  const cruzado = agregar({ data: { current_price: 100, last_trade_time: "x", options: [
+    { option: "TST260828C00099000", open_interest: 9000, volume: 1, gamma: 0.01, iv: 0.2 },
+    { option: "TST260828C00101000", open_interest: 100, volume: 1, gamma: 0.01, iv: 0.2 },
+    { option: "TST260828P00099000", open_interest: 100, volume: 1, gamma: 0.01, iv: 0.2 },
+    { option: "TST260828P00101000", open_interest: 9000, volume: 1, gamma: 0.01, iv: 0.2 },
+  ] } });
+  ok("el call wall no baja del spot aunque el mayor OI este abajo",
+     cruzado.call_wall === 101, String(cruzado.call_wall));
+  ok("el put wall no sube del spot aunque el mayor OI este arriba",
+     cruzado.put_wall === 99, String(cruzado.put_wall));
+  ok("piso <= techo por construccion", cruzado.put_wall <= cruzado.call_wall);
   ok("declara la banda usada", typeof lejos.muros_banda === "number", String(lejos.muros_banda));
   ok("la banda no pasa del 10% del spot", lejos.muros_banda <= 10.0001, String(lejos.muros_banda));
 

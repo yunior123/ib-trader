@@ -95,9 +95,15 @@ export function agregar(json) {
   const emDia = em ? em / Math.sqrt(Math.max(1, dte || 1)) : 0;
   const banda = Math.min(Math.max(3 * emDia, 0.04 * spot), 0.10 * spot);
   const enBanda = filas.filter(k => Math.abs(k.strike - spot) <= banda);
-  const base = enBanda.length ? enBanda : filas;
-  const call_wall = mayor(base, campoC);
-  const put_wall = mayor(base, campoP);
+  // Convencion de la CASA (gex_core.py, fuente unica): el call wall es el techo (strikes
+  // AL spot o ARRIBA) y el put wall el piso (AL spot o ABAJO). Sin el lado, XSP 2026-08-26
+  // publicaba put wall 770 con call wall 765 y spot 767,57: un "piso" por ENCIMA del
+  // "techo". Si un lado no tiene strikes en banda se cae a la cadena entera DEL MISMO lado
+  // (los muros son OI y sobreviven); si tampoco hay, null — jamas un muro del lado contrario.
+  const ladoAlto = f => f.filter(k => k.strike >= spot);
+  const ladoBajo = f => f.filter(k => k.strike <= spot);
+  const call_wall = mayor(ladoAlto(enBanda).length ? ladoAlto(enBanda) : ladoAlto(filas), campoC);
+  const put_wall = mayor(ladoBajo(enBanda).length ? ladoBajo(enBanda) : ladoBajo(filas), campoP);
   // El flip tambien: con toda la cadena, MU daba flip 276 con el spot en 914 (2026-08-24).
   const filasFlip = hayCerca
     ? filas.map(k => ({ strike: k.strike, gex: (k.gamma_call_cerca - k.gamma_put_cerca) * f }))

@@ -585,6 +585,40 @@ export default {
         return json({ sym, ts: ts.ts, strikes: results || [] });
       }
 
+      // El cockpit pide /data/gex_heatmap_<sym>.json al bridge local (Heat Map y GEX Live
+      // Table). En el borde no existe ese fichero: aqui se ADAPTA lo que D1 tiene real —
+      // UN vencimiento (el `exp` de la instantanea CBOE) y el gex por strike de `perfil`.
+      // Sin instantanea o sin perfil => 404, nunca matriz vacia ni ceros plausibles.
+      if (p.startsWith("/data/gex_heatmap_") && p.endsWith(".json")) {
+        const sym = p.slice("/data/gex_heatmap_".length, -".json".length).toUpperCase();
+        const n = await db.prepare(
+          "SELECT * FROM niveles WHERE sym=? ORDER BY ts DESC LIMIT 1").bind(sym).first();
+        if (!n) return json({ error: `sin instantanea de ${sym}` }, 404);
+        const { results } = await db.prepare(
+          "SELECT strike, gex FROM perfil WHERE sym=? AND ts=? ORDER BY strike DESC")
+          .bind(sym, n.ts).all();
+        if (!results || !results.length) return json({ error: `sin perfil de ${sym}` }, 404);
+        const exp = (n.exp || "").replace(/^(\d{4})(\d{2})(\d{2})$/, "$1-$2-$3") || null;
+        const strikes = results.map(r => r.strike);
+        const cells = results.map(r => (r.gex === null || r.gex === undefined) ? null : [r.gex]);
+        let mvc = null;
+        for (const r of results) {
+          if (r.gex === null || r.gex === undefined) continue;
+          if (!mvc || Math.abs(r.gex) > Math.abs(mvc.gamma_volume_raw))
+            mvc = { strike: r.strike, expiry: exp, gamma_volume_raw: r.gex };
+        }
+        return json({
+          sym, spot: n.spot, date: (n.fuente_ts || "").slice(0, 10) || null,
+          ts: n.ts, fetch_ts: n.ts, source_ts: n.ts,
+          expiries: exp ? [exp] : [], strikes, cells,
+          mvc, col_totals: [n.gex_total ?? null],
+          gamma_volume_total_raw: n.gex_total ?? null,
+          src: "cboe", metric: "gex",
+          oi_available: true, oi_source: "cboe_delayed_chain", oi_realtime: false,
+          refresh_interval_s: 60,
+        });
+      }
+
       if (p === "/api/flujo") {
         const min = Number(url.searchParams.get("min_prima") || 0);
         const { results } = await db.prepare(
