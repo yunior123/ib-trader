@@ -629,6 +629,7 @@ def main():
         ("notify_relay (notificaciones)", "scripts/notify_relay.sh", "notify_relay.sh", True),
         ("x_signal_poster (X realtime)", "scripts/x_signal_poster.py", "x_signal_keepalive.sh", True),
     ]
+    notifications_muted = os.path.exists(os.path.join(REPO, "data", "notify_off"))
     if ventana is None:
         warn.append("portero horario AUSENTE (./fleet_hours): no revivo daemons a ciegas — "
                     "compila con scripts/build_fleet_hours.sh")
@@ -640,6 +641,9 @@ def main():
         if ciego:
             continue
         always_live = "notify_relay" in pat
+        if always_live and notifications_muted:
+            ok.append(f"{name}: apagado por data/notify_off")
+            continue
         if proc_alive(pat):
             # Vivo FUERA de ventana no es "ok": es algo que el apagado no alcanzo.
             (ok if ventana is not False or always_live else warn).append(
