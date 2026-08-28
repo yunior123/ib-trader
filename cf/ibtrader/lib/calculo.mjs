@@ -100,10 +100,14 @@ export function agregar(json) {
   // publicaba put wall 770 con call wall 765 y spot 767,57: un "piso" por ENCIMA del
   // "techo". Si un lado no tiene strikes en banda se cae a la cadena entera DEL MISMO lado
   // (los muros son OI y sobreviven); si tampoco hay, null — jamas un muro del lado contrario.
-  const ladoAlto = f => f.filter(k => k.strike >= spot);
-  const ladoBajo = f => f.filter(k => k.strike <= spot);
-  const call_wall = mayor(ladoAlto(enBanda).length ? ladoAlto(enBanda) : ladoAlto(filas), campoC);
-  const put_wall = mayor(ladoBajo(enBanda).length ? ladoBajo(enBanda) : ladoBajo(filas), campoP);
+  // Un strike del lado correcto pero con OI=0 para ESA familia tampoco es un muro. Sin
+  // este filtro, una cadena que solo tuviera calls debajo del spot y puts encima devolvia
+  // dos niveles aparentemente validos, ambos con OI 0, en vez de null/null.
+  const lado = (f, pred, campo) => f.filter(k => pred(k.strike) && Number(k[campo]) > 0);
+  const callBanda = lado(enBanda, k => k >= spot, campoC);
+  const putBanda = lado(enBanda, k => k <= spot, campoP);
+  const call_wall = mayor(callBanda.length ? callBanda : lado(filas, k => k >= spot, campoC), campoC);
+  const put_wall = mayor(putBanda.length ? putBanda : lado(filas, k => k <= spot, campoP), campoP);
   // El flip tambien: con toda la cadena, MU daba flip 276 con el spot en 914 (2026-08-24).
   const filasFlip = hayCerca
     ? filas.map(k => ({ strike: k.strike, gex: (k.gamma_call_cerca - k.gamma_put_cerca) * f }))
@@ -140,7 +144,10 @@ export function agregar(json) {
 // semana en curso, que es lo que los dealers cubren hoy.
 export const HORIZONTE_MUROS_D = 8;
 
-const mayor = (filas, campo) => filas.reduce((a, b) => (b[campo] > (a?.[campo] ?? -1) ? b : a), null);
+const mayor = (filas, campo) => {
+  const m = filas.reduce((a, b) => (b[campo] > (a?.[campo] ?? -1) ? b : a), null);
+  return m && Number(m[campo]) > 0 ? m : null;
+};
 
 // TODAS las raices del GEX acumulado, no solo la primera. Alineado con gex_core._flip_roots
 // del repo ("flip-honesty", 2026-07-27): quedarse con la primera raiz engaña, porque una segunda

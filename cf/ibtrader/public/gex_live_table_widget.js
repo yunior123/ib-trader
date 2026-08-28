@@ -3,9 +3,10 @@
 // Dato: data/gex_heatmap_<sym>.json (el MISMO fichero que ya sirve el Heat Map;
 // cero red nueva y funciona en London-only). Arriba: rail de vencimientos DTE
 // (fecha, N DTE, tag W#/M#, punto verde/rojo por signo, barra de magnitud y total)
-// clicable para elegir vencimiento + pildora ALL. Abajo: tabla strike-level del
-// vencimiento elegido con spot, CW/PW y MVC. MAPA, no gatillo: celda sin dato =
-// vacia, jamas 0. La edad del dato se pinta siempre.
+// cuando la fuente trae desglose real; si solo existe el perfil agregado, muestra UNA
+// pildora ALL. Abajo: tabla strike-level con spot, CW/PW reales y MVC. MAPA, no gatillo:
+// celda sin dato = vacia, jamas 0. Fuente y recoleccion tienen edades separadas y estado
+// FRESH/STALE explicito.
 (function () {
   const CSS = `
   #wgt-gexlive .wgbody { padding:0; overflow:auto; }
@@ -73,7 +74,9 @@
   st.textContent = CSS;
   document.head.appendChild(st);
 
-  const POLL_MS = 1000;   // fichero local; mismo ritmo que el Heat Map (refit LSE <=1 s)
+  // El mapa del borde rota por simbolo, no cambia a 1 Hz. Cinco segundos conserva una UX
+  // fluida en el bridge local y evita duplicar consultas D1 cada segundo por cada ventana.
+  const POLL_MS = 5000;
   const el = () => document.querySelector("#wgt-gexlive .wgbody");
   const sub = () => document.querySelector("#wgt-gexlive .wgsub");
   let timer = null, metaTimer = null, lastSym = null, requestSeq = 0, lastPayload = null;
@@ -104,13 +107,26 @@
   function srcText(d) {
     return { lse: "London Γ×volumen", polygon: "Polygon", cboe: "CBOE", uw: "Unusual Whales" }[d.src] || (d.src || "?");
   }
-  function ageTxt(d) {
-    const ts = d.fetch_ts || d.ts;
-    if (!ts) return "edad ?";
-    const s = Math.max(0, Math.floor(Date.now() / 1000 - ts));
+  function fmtAge(s) {
+    if (s === null || s === undefined || !Number.isFinite(+s)) return "?";
+    s = Math.max(0, Math.floor(+s));
     if (s < 90) return s + "s";
     if (s < 5400) return Math.round(s / 60) + " min";
     return (s / 3600).toFixed(1) + " h";
+  }
+  function freshness(d) {
+    const f = d.freshness || {};
+    const now = Math.floor(Date.now() / 1000);
+    const collectionTs = f.collection_ts || d.collection_ts || d.fetch_ts || d.ts;
+    const sourceTs = f.source_ts || d.source_ts;
+    const collectionAge = collectionTs ? now - collectionTs : (f.collection_age_s ?? d.collection_age_s ?? null);
+    const sourceAge = sourceTs ? now - sourceTs : (f.source_age_s ?? d.source_age_s ?? null);
+    const collectionStale = f.collection_stale_after_s != null && collectionAge != null
+      ? collectionAge > f.collection_stale_after_s : f.collection_stale === true;
+    const sourceStale = f.source_stale_after_s != null && sourceAge != null
+      ? sourceAge > f.source_stale_after_s : f.source_stale === true;
+    const stale = d.stale === true || f.state === "stale" || collectionStale || sourceStale;
+    return { stale, text: `fuente ${fmtAge(sourceAge)} · recolectado ${fmtAge(collectionAge)}` };
   }
   function empty(msg, tag) {
     const b = el(); if (!b) return;
@@ -129,17 +145,22 @@
     if (key === "all") {
       let acc = null;
       for (let j = 0; j < d.expiries.length; j++) {
-        const v = d.cells[i][j];
+        const row = Array.isArray(d.cells[i]) ? d.cells[i] : [];
+        const v = row[j];
         if (v === null || v === undefined) continue;
         acc = (acc === null ? 0 : acc) + v;
       }
       return acc;
     }
     const j = d.expiries.indexOf(key);
-    return j < 0 ? null : d.cells[i][j];
+    const row = Array.isArray(d.cells[i]) ? d.cells[i] : [];
+    return j < 0 ? null : (row[j] ?? null);
   }
   function colTotal(d, key) {
-    if (key === "all") return (d.col_totals || []).reduce((a, v) => a + (v || 0), 0);
+    if (key === "all") {
+      const known = (d.col_totals || []).filter(v => v !== null && v !== undefined);
+      return known.length ? known.reduce((a, v) => a + v, 0) : null;
+    }
     const j = d.expiries.indexOf(key);
     return j < 0 ? null : d.col_totals[j];
   }
@@ -149,14 +170,17 @@
     if (!Array.isArray(d.expiries) || !d.expiries.length || !Array.isArray(d.cells) || !d.cells.length) {
       empty("Matriz vacía para " + d.sym + "."); return;
     }
-    if (selKey === null || (selKey !== "all" && d.expiries.indexOf(selKey) < 0)) selKey = d.expiries[0];
+    const allOnly = d.expiry_scope === "all" || (d.expiries.length === 1 && d.expiries[0] === "ALL");
+    if (allOnly) selKey = "all";
+    else if (selKey === null || (selKey !== "all" && d.expiries.indexOf(selKey) < 0)) selKey = d.expiries[0];
     const totals = d.expiries.map((e, j) => d.col_totals ? d.col_totals[j] : null);
     const maxAbs = Math.max(1e-9, ...totals.map((t) => Math.abs(t || 0)));
     const allTot = colTotal(d, "all");
 
-    // ---- rail DTE (arriba): una pildora por vencimiento + ALL ----
+    // ---- rail DTE (arriba): expiries reales, o una unica pildora ALL si D1 solo
+    // guarda el perfil agregado. Nunca se inventa un 0DTE con el `exp` del EM.
     let rail = "";
-    d.expiries.forEach((exp, j) => {
+    if (!allOnly) d.expiries.forEach((exp, j) => {
       const t = totals[j];
       const dte = dteOf(exp);
       const cls = t === null || t === undefined ? "mut" : (t >= 0 ? "pos" : "neg");
@@ -170,23 +194,26 @@
         `<span class="gltvbar"><i class="${cls}" style="height:${t === null || t === undefined ? 0 : Math.max(8, Math.round(100 * Math.abs(t) / maxAbs))}%"></i></span>` +
         `<span class="gltamt ${cls}">${fmt(t)}</span></button>`;
     });
-    const allCls = allTot >= 0 ? "pos" : "neg";
-    rail += `<button class="gltexp gltall${selKey === "all" ? " sel" : ""}" data-key="all" title="Todos los vencimientos sumados">` +
+    const allCls = allTot === null || allTot === undefined ? "mut" : (allTot >= 0 ? "pos" : "neg");
+    rail += `<button class="gltexp gltall${selKey === "all" ? " sel" : ""}" data-key="all" title="Perfil agregado de todos los vencimientos disponibles">` +
       `<span class="gltdatelbl">ALL</span>` +
-      `<span class="gltdte">${d.expiries.length} exp</span>` +
-      `<span class="glttag">Σ</span>` +
-      `<span class="gltdot ${allCls}">${allTot >= 0 ? "+" : "−"}</span>` +
-      `<span class="gltvbar"><i class="${allCls}" style="height:${Math.max(8, Math.round(100 * Math.abs(allTot) / maxAbs))}%"></i></span>` +
+      `<span class="gltdte">${allOnly ? "libro" : d.expiries.length + " exp"}</span>` +
+      `<span class="glttag">Σ real</span>` +
+      `<span class="gltdot ${allCls}">${allTot === null || allTot === undefined ? "·" : (allTot >= 0 ? "+" : "−")}</span>` +
+      `<span class="gltvbar"><i class="${allCls}" style="height:${allTot === null || allTot === undefined ? 0 : Math.max(8, Math.round(100 * Math.abs(allTot) / maxAbs))}%"></i></span>` +
       `<span class="gltamt ${allCls}">${fmt(allTot)}</span></button>`;
 
     // ---- tabla strike-level del vencimiento elegido ----
     const vals = d.strikes.map((_, i) => cellVal(d, i, selKey));
     const known = vals.filter((v) => v !== null && v !== undefined);
     const rowMax = Math.max(1e-9, ...known.map(Math.abs));
-    const iCW = known.length ? vals.indexOf(Math.max(...known)) : -1;
-    const negs = known.filter((v) => v < 0);
-    const iPW = negs.length ? vals.indexOf(Math.min(...negs)) : -1;
-    const iMVC = known.length ? vals.reduce((bi, v, i) => Math.abs(v) > Math.abs(vals[bi]) ? i : bi, 0) : -1;
+    const strikeIndex = (v) => v === null || v === undefined ? -1
+      : d.strikes.findIndex(k => Math.abs(Number(k) - Number(v)) < 1e-9);
+    // CW/PW son los muros OI calculados por el motor. El extremo positivo/negativo del GEX
+    // neto NO equivale a call/put wall y no se vuelve a etiquetar como tal en el navegador.
+    const iCW = strikeIndex(d.call_wall);
+    const iPW = strikeIndex(d.put_wall);
+    const iMVC = strikeIndex(d.mvc && d.mvc.strike);
     let rows = "";
     let spotInserted = false;
     const spotRow = () => `<tr class="gltspot"><td class="glstk" style="text-align:left">SPOT</td>` +
@@ -198,9 +225,11 @@
       const v = vals[i];
       const cls = v === null || v === undefined ? "mut" : (v >= 0 ? "pos" : "neg");
       const w = v === null || v === undefined ? 0 : Math.max(1.5, 100 * Math.abs(v) / rowMax);
-      const badge = i === iCW ? `<span class="cw" title="Call wall: mayor gamma+ del vencimiento">CW</span>`
-        : i === iPW ? `<span class="pw" title="Put wall: mayor gamma− del vencimiento">PW</span>`
-        : i === iMVC ? `<span class="mvc" title="MVC: mayor |gamma| de la columna">Γ</span>` : "";
+      const badges = [];
+      if (i === iCW) badges.push(`<span class="cw" title="Call wall real por OI">CW</span>`);
+      if (i === iPW) badges.push(`<span class="pw" title="Put wall real por OI">PW</span>`);
+      if (i === iMVC) badges.push(`<span class="mvc" title="Mayor |GEX| del perfil visible">Γ</span>`);
+      const badge = badges.join(" ");
       rows += `<tr${i === iMVC ? ' class="gltmvc"' : ""}><td class="glstk">${k}</td>` +
         `<td><div class="glttrack"><i class="${cls}" style="width:${w}%"></i></div></td>` +
         `<td class="gltval ${cls}">${fmt(v === null ? null : v)}</td>` +
@@ -209,12 +238,13 @@
     if (!spotInserted) rows += spotRow();
 
     const lse = d.src === "lse";
+    const fr = freshness(d);
     b.innerHTML = `<div class="gltwrap"><div class="gltrail">${rail}</div>` +
       `<div class="glttbwrap"><table class="glttb">` +
-      `<tr><th>Strike</th><th>Net ${lse ? "Γ×vol" : "GEX"}${selKey === "all" ? " · ALL" : ""}</th><th style="text-align:right">Total</th><th></th></tr>` +
+      `<tr><th>Strike</th><th>Net ${lse ? "Γ×vol" : "GEX"}${selKey === "all" ? " · ALL expiries" : ""}</th><th style="text-align:right">Total</th><th></th></tr>` +
       `${rows}</table></div>` +
-      `<div class="gltleg"><i class="cw"></i>CW call wall<i class="pw"></i>PW put wall<i class="mvc"></i>Γ mayor |gamma|</div>` +
-      `<div class="gltfoot"><span>${srcText(d)} · ${ageTxt(d)} · fetch ${Math.round(lastFetchMs || 0)}ms</span>` +
+      `<div class="gltleg"><i class="cw"></i>CW ${d.call_wall ?? "—"}<i class="pw"></i>PW ${d.put_wall ?? "—"}<i class="mvc"></i>Γ mayor |GEX|</div>` +
+      `<div class="gltfoot"><span class="${fr.stale ? "gltwarn" : ""}">${fr.stale ? "STALE · " : "FRESH · "}${srcText(d)} · ${fr.text} · fetch ${Math.round(lastFetchMs || 0)}ms</span>` +
       `<span class="gltwarn">MAPA, no gatillo</span></div></div>`;
 
     b.querySelectorAll(".gltexp").forEach((btn) => {
@@ -224,7 +254,7 @@
       });
     });
     const s = sub();
-    if (s) s.textContent = `${d.sym} · ${selKey === "all" ? "ALL" : selKey.slice(5)} · ${srcText(d)} · ${ageTxt(d)}`;
+    if (s) s.textContent = `${fr.stale ? "STALE · " : ""}${d.sym} · ${selKey === "all" ? "ALL" : selKey.slice(5)} · ${srcText(d)} · ${fr.text}`;
     if (window.providerMark) window.providerMark(d.src);
   }
 
@@ -240,6 +270,7 @@
     if (window.cockpitWidgetOpen && !window.cockpitWidgetOpen("gexlive")) return;
     const sym = curSymbol();
     if (!sym) { empty("Sin símbolo activo."); return; }
+    if (!/^[A-Z0-9._-]{1,12}$/.test(sym)) { empty("Símbolo inválido."); return; }
     const londonOnly = Boolean(window.chartIsLondonOnly && window.chartIsLondonOnly());
     if (sym !== lastSym) { lastSym = sym; lastData = null; lastPayload = null; selKey = null; }
     const seq = ++requestSeq;
@@ -280,11 +311,13 @@
   function meta() {   // re-evalua solo la edad en la cabecera (1 Hz, sin tocar la tabla)
     if (!lastData) return;
     const s = sub();
-    if (s) s.textContent = `${lastData.sym} · ${selKey === "all" ? "ALL" : String(selKey).slice(5)} · ${srcText(lastData)} · ${ageTxt(lastData)}`;
+    const fr = freshness(lastData);
+    if (s) s.textContent = `${fr.stale ? "STALE · " : ""}${lastData.sym} · ${selKey === "all" ? "ALL" : String(selKey).slice(5)} · ${srcText(lastData)} · ${fr.text}`;
   }
 
   function start() {
     if (timer) clearInterval(timer);
+    if (metaTimer) clearInterval(metaTimer);
     tick();
     timer = setInterval(tick, POLL_MS);
     metaTimer = setInterval(meta, 1000);

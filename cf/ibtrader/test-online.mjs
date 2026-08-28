@@ -35,6 +35,25 @@ let niveles;
   ok("put wall <= call wall en todos", niveles.every(n =>
      n.put_wall === null || n.call_wall === null || n.put_wall <= n.call_wall),
      niveles.filter(n => n.put_wall > n.call_wall).map(n => n.sym).join(","));
+  // D1 conserva instantaneas anteriores al despliegue del contrato por lados. No se borra
+  // historia para poner verde un test: la invariantes se exige a toda fila recalculada por
+  // la version nueva, y cualquier excepcion legacy debe seguir identificable por su `ts`.
+  const wallSideFixTs = Math.floor(Date.parse("2026-08-27T13:13:00-04:00") / 1000);
+  const violaLado = n => (n.call_wall != null && n.call_wall < n.spot) ||
+    (n.put_wall != null && n.put_wall > n.spot);
+  const postFix = niveles.filter(n => n.ts >= wallSideFixTs);
+  const legacyViolations = niveles.filter(violaLado);
+  ok("cada fila recalculada por la version nueva respeta techo >= spot >= piso",
+     postFix.length > 0 && postFix.every(n => !violaLado(n)),
+     postFix.filter(violaLado).map(n => n.sym).join(","));
+  ok("una violacion legacy queda fechada antes del fix (no se disfraza de fila nueva)",
+     legacyViolations.every(n => n.ts < wallSideFixTs),
+     legacyViolations.map(n => `${n.sym}@${n.ts}`).join(","));
+  ok("ningun muro publicado tiene OI cero",
+     niveles.every(n => (n.call_wall == null || n.call_wall_oi > 0) &&
+       (n.put_wall == null || n.put_wall_oi > 0)),
+     niveles.filter(n => (n.call_wall != null && !(n.call_wall_oi > 0)) ||
+       (n.put_wall != null && !(n.put_wall_oi > 0))).map(n => n.sym).join(","));
   ok("ningún GEX es exactamente 0 (sería un cero plausible)",
      niveles.every(n => n.gex_total !== 0));
   ok("guarda la hora de la FUENTE, no la nuestra", niveles.every(n => typeof n.fuente_ts === "string"));
@@ -68,6 +87,11 @@ console.log("\n[flujo]");
   ok("responde 200", r.status === 200);
   ok("trae operaciones", r.cuerpo.length > 0, String(r.cuerpo.length));
   ok("viene ordenado por prima", r.cuerpo.every((f, i, a) => i === 0 || a[i - 1].premium >= f.premium));
+  ok("el timestamp UTC del flujo es inequivoco (se conserva ts legacy)",
+     r.cuerpo.every(f => typeof f.ts === "string" && typeof f.source_ts_epoch === "number" &&
+       f.source_ts_epoch > 1e9 && typeof f.source_ts_utc === "string" && f.source_ts_utc.endsWith("Z")),
+     r.cuerpo.filter(f => typeof f.source_ts_epoch !== "number" || !f.source_ts_utc?.endsWith("Z"))
+       .map(f => f.ticker).join(","));
   // MEDIDO (2026-08-24): LSE no publicaba griegas de los contratos que vencen ESE día (dte 0).
   // RE-MEDIDO (2026-08-25, SNDK260828P02010000: put 2010 con subyacente 1495, dte 3): LSE
   // también las omite en contratos lejanos/iliquidos. La expectativa honesta NO es "siempre
@@ -79,8 +103,14 @@ console.log("\n[flujo]");
      r.cuerpo.filter(f => [f.delta, f.iv, f.gamma].some(g => g !== null && (typeof g !== "number" || g === 0)))
         .map(f => f.ticker).join(","));
   ok("cuando faltan, faltan las TRES juntas como null",
-     r.cuerpo.filter(f => f.delta === null).every(f => f.iv === null && f.gamma === null),
-     r.cuerpo.filter(f => f.delta === null && (f.iv !== null || f.gamma !== null))
+     r.cuerpo.every(f => {
+       const n = [f.delta, f.iv, f.gamma].filter(g => g === null).length;
+       return n === 0 || n === 3;
+     }),
+     r.cuerpo.filter(f => {
+       const n = [f.delta, f.iv, f.gamma].filter(g => g === null).length;
+       return n !== 0 && n !== 3;
+     })
         .map(f => f.ticker).join(","));
   ok("ninguna griega llega como cero exacto",
      !r.cuerpo.some(f => f.delta === 0 && f.iv === 0));

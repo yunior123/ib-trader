@@ -25,8 +25,19 @@ function okxCompartido(clave, fn, ttlMs = 6000) {
 }
 
 // "2026-08-24 06:07:00" (UTC, como sirve OKX via perpVelas) -> epoch segundos para lightweight-charts.
-const VERSION = "2026-08-24-lse-ws";
+const VERSION = "2026-08-27-gex-contract";
 const aEpoch = s => Math.floor(new Date(String(s).replace(" ", "T") + "Z").getTime() / 1000);
+
+// LSE guarda flujo en UTC pero el string historico no trae zona ("YYYY-MM-DD HH:mm:ss.ffffff").
+// Se conserva `ts` por compatibilidad y se anaden representaciones inequívocas. JavaScript
+// solo acepta milisegundos: se recorta la fraccion, nunca se reinterpreta como hora local.
+export function flujoTsUtc(v) {
+  if (typeof v !== "string" || !v.trim()) return { source_ts_epoch: null, source_ts_utc: null };
+  const s = v.trim().replace(" ", "T").replace(/(\.\d{3})\d+$/, "$1");
+  const ms = Date.parse(/[zZ]$|[+-]\d\d:\d\d$/.test(s) ? s : s + "Z");
+  if (!Number.isFinite(ms)) return { source_ts_epoch: null, source_ts_utc: null };
+  return { source_ts_epoch: Math.floor(ms / 1000), source_ts_utc: new Date(ms).toISOString() };
+}
 
 // El vault solo sirve barras de 1 minuto (ignora `interval`, medido). Las velas mayores se
 // agregan aqui a partir de esas: cero peticiones extra y sin inventar nada — el open es el
@@ -48,6 +59,62 @@ function etAEpoch(v) {
   const enEt = new Date(d.toLocaleString("en-US", { timeZone: "America/New_York" }));
   const enUtc = new Date(d.toLocaleString("en-US", { timeZone: "UTC" }));
   return Math.floor((base + (enUtc - enEt)) / 1000);   // el epoch cuyo reloj ET es esa cadena
+}
+
+// D1 guarda un perfil por strike AGREGADO sobre toda la cadena, no un cubo por vencimiento.
+// El adaptador del borde debe decir ALL con honestidad: asignarlo a `n.exp` (el vencimiento
+// mas cercano usado para EM) convertia un agregado multi-expiry en un falso rail 0DTE.
+// Se exporta para que el contrato de datos tenga pruebas puras sin tocar D1 ni la red.
+export function adaptarGexHeatmap(n, results, ahoraS = Math.floor(Date.now() / 1000)) {
+  const sourceTs = etAEpoch(n.fuente_ts);
+  const collectionTs = Number(n.ts) || null;
+  const collectionAge = collectionTs == null ? null : Math.max(0, ahoraS - collectionTs);
+  const sourceAge = sourceTs == null ? null : Math.max(0, ahoraS - sourceTs);
+  // El cockpit rota entre 6 simbolos; el resto rota por separado. Dos vueltas del carril
+  // correspondiente dan margen a una peticion aislada fallida sin esconder un cockpit muerto
+  // durante los ~82 min del universo completo.
+  const collectionLane = COCKPIT.includes(n.sym) ? "cockpit" : "mapa";
+  const laneSize = collectionLane === "cockpit" ? COCKPIT.length : MAPA.filter(s => !COCKPIT.includes(s)).length;
+  const collectionCycle = laneSize * 60;
+  const collectionStaleAfter = Math.max(300, collectionCycle * 2);
+  // CBOE es ~15 min delayed en sesion; se toleran 30 min adicionales sobre el SLA local.
+  const sourceStaleAfter = collectionStaleAfter + 30 * 60;
+  const collectionStale = collectionAge == null || collectionAge > collectionStaleAfter;
+  const sourceStale = sourceAge == null || sourceAge > sourceStaleAfter;
+  const stale = collectionStale || sourceStale;
+  const strikes = results.map(r => r.strike);
+  // Matriz siempre rectangular. Una griega ausente es [null], no una fila null que haria
+  // fallar cellVal() al indexarla, y nunca se rellena con cero.
+  const cells = results.map(r => [r.gex === null || r.gex === undefined ? null : r.gex]);
+  let mvc = null;
+  for (const r of results) {
+    if (r.gex === null || r.gex === undefined) continue;
+    if (!mvc || Math.abs(r.gex) > Math.abs(mvc.gamma_volume_raw))
+      mvc = { strike: r.strike, expiry: "ALL", gamma_volume_raw: r.gex };
+  }
+  return {
+    sym: n.sym, spot: n.spot, date: (n.fuente_ts || "").slice(0, 10) || null,
+    ts: collectionTs, fetch_ts: collectionTs, source_ts: sourceTs,
+    collection_ts: collectionTs,
+    collection_age_s: collectionAge, source_age_s: sourceAge,
+    stale, freshness: {
+      state: stale ? "stale" : "fresh",
+      collection_ts: collectionTs, source_ts: sourceTs,
+      collection_age_s: collectionAge, source_age_s: sourceAge,
+      collection_stale: collectionStale, source_stale: sourceStale,
+      collection_lane: collectionLane, collection_cycle_s: collectionCycle,
+      collection_stale_after_s: collectionStaleAfter,
+      source_stale_after_s: sourceStaleAfter,
+    },
+    expiry_scope: "all", expiries: ["ALL"], strikes, cells,
+    call_wall: n.call_wall ?? null, call_wall_oi: n.call_wall_oi ?? null,
+    put_wall: n.put_wall ?? null, put_wall_oi: n.put_wall_oi ?? null,
+    mvc, col_totals: [n.gex_total ?? null],
+    gamma_volume_total_raw: n.gex_total ?? null,
+    src: "cboe", metric: "gex", scale: "dollar1pct",
+    oi_available: true, oi_source: "cboe_delayed_chain", oi_realtime: false,
+    refresh_interval_s: collectionCycle,
+  };
 }
 
 // Corta el historico en el ultimo salto grande: devuelve el tramo continuo mas reciente.
@@ -591,6 +658,7 @@ export default {
       // Sin instantanea o sin perfil => 404, nunca matriz vacia ni ceros plausibles.
       if (p.startsWith("/data/gex_heatmap_") && p.endsWith(".json")) {
         const sym = p.slice("/data/gex_heatmap_".length, -".json".length).toUpperCase();
+        if (!/^[A-Z0-9._-]{1,12}$/.test(sym)) return json({ error: "simbolo invalido" }, 400);
         const n = await db.prepare(
           "SELECT * FROM niveles WHERE sym=? ORDER BY ts DESC LIMIT 1").bind(sym).first();
         if (!n) return json({ error: `sin instantanea de ${sym}` }, 404);
@@ -598,32 +666,14 @@ export default {
           "SELECT strike, gex FROM perfil WHERE sym=? AND ts=? ORDER BY strike DESC")
           .bind(sym, n.ts).all();
         if (!results || !results.length) return json({ error: `sin perfil de ${sym}` }, 404);
-        const exp = (n.exp || "").replace(/^(\d{4})(\d{2})(\d{2})$/, "$1-$2-$3") || null;
-        const strikes = results.map(r => r.strike);
-        const cells = results.map(r => (r.gex === null || r.gex === undefined) ? null : [r.gex]);
-        let mvc = null;
-        for (const r of results) {
-          if (r.gex === null || r.gex === undefined) continue;
-          if (!mvc || Math.abs(r.gex) > Math.abs(mvc.gamma_volume_raw))
-            mvc = { strike: r.strike, expiry: exp, gamma_volume_raw: r.gex };
-        }
-        return json({
-          sym, spot: n.spot, date: (n.fuente_ts || "").slice(0, 10) || null,
-          ts: n.ts, fetch_ts: n.ts, source_ts: n.ts,
-          expiries: exp ? [exp] : [], strikes, cells,
-          mvc, col_totals: [n.gex_total ?? null],
-          gamma_volume_total_raw: n.gex_total ?? null,
-          src: "cboe", metric: "gex",
-          oi_available: true, oi_source: "cboe_delayed_chain", oi_realtime: false,
-          refresh_interval_s: 60,
-        });
+        return json(adaptarGexHeatmap(n, results));
       }
 
       if (p === "/api/flujo") {
         const min = Number(url.searchParams.get("min_prima") || 0);
         const { results } = await db.prepare(
           "SELECT * FROM flujo WHERE premium >= ? ORDER BY premium DESC LIMIT 100").bind(min).all();
-        return json(results || []);
+        return json((results || []).map(f => ({ ...f, ...flujoTsUtc(f.ts) })));
       }
 
       if (p === "/api/barras") {

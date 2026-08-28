@@ -65,7 +65,7 @@
     if (a >= 1e3) return (v / 1e3).toFixed(2) + " K";
     return v.toFixed(0);
   };
-  const md = (s) => s.slice(5).replace("-", "/");
+  const md = (s) => s === "ALL" ? "ALL" : String(s || "").slice(5).replace("-", "/");
 
   // En London: verde = actividad gamma de calls; rojo = actividad gamma de puts.
   // Sin OI no se atribuye el color a inventario dealer. La intensidad es relativa.
@@ -96,7 +96,7 @@
 
   function sourceText(d) {
     const src = { uw: "UW", polygon: "Polygon 15min", chain_local: "cadena local",
-                  lse: "London Strategic Edge" };
+                  lse: "London Strategic Edge", cboe: "CBOE 15min" };
     const mode = d && d.update_mode === "websocket_prints_rest_greeks"
       ? "WS prints · REST Greeks"
       : "REST snapshot";
@@ -124,9 +124,10 @@
     const b = el(); if (!b) return;
     const age = Math.max(0, Math.round(Date.now() / 1000 - (d.source_ts || d.ts || 0)));
     const spot = d.spot;
-    // escala a $ por 1% de movimiento: convencion publica de GEX aplicada POR NOSOTROS
-    // sobre el gex crudo de UW (gamma x OI). Se declara en el pie, no se disfraza de dato.
-    const K = spot * spot * 0.01;
+    // UW/London local guardan gamma cruda y necesitan ×S²·0,01. El adaptador D1 del borde
+    // ya sirve `dollar1pct`: volver a multiplicarlo inflaba el mapa por S²·0,01 otra vez.
+    const yaEscalado = d.scale === "dollar1pct" || d.metric === "gex";
+    const K = yaEscalado ? 1 : spot * spot * 0.01;
     let max = 0;
     for (const row of d.cells) for (const v of row) if (v !== null) max = Math.max(max, Math.abs(v * K));
 
@@ -181,7 +182,7 @@
     if (d.partial) flags += ` <span class="ghwarn">⚠ ${d.note || "parcial"}</span>`;
     h += `</table></div><div class="ghfoot">
       <span class="ghscale">−<b style="background:rgba(230,60,75,.8)"></b><b style="background:rgba(230,60,75,.3)"></b><b style="background:#12161f"></b><b style="background:rgba(20,190,110,.3)"></b><b style="background:rgba(20,190,110,.8)"></b>+</span>
-      <span>${sourceText(d)} · ${london ? "Γ×volume, NO dealer GEX" : "×S²·0,01"} · fetch ${Math.round(fetchMs)}ms${flags}</span></div></div>`;
+      <span>${sourceText(d)} · ${london ? "Γ×volume, NO dealer GEX" : (yaEscalado ? "$/1% · ya escalado" : "×S²·0,01")} · fetch ${Math.round(fetchMs)}ms${flags}</span></div></div>`;
     b.innerHTML = h;
     lastData = d; lastFetchMs = fetchMs; loadingAt = null;
     refreshMeta();

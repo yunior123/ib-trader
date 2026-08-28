@@ -14,8 +14,9 @@ Mac y 200 aquí):
 | **CBOE** `delayed_quotes` | cadena completa con **gamma, delta, IV y OI por contrato** | no |
 | **LSE** vault | barras 1m y **flujo de opciones con prima y griegas** | `X-API-Key` |
 
-CBOE sirve 5 MB por ETF y 12,5 MB en SPX, y el Worker del plan gratuito los parsea sin romper el
-límite de CPU (medido).
+CBOE sirve varios MB por símbolo. El cálculo cabe normalmente, pero cadenas pesadas pueden
+alcanzar el límite de CPU del plan gratuito; `/api/estado` y los estados FRESH/STALE permiten
+detectar una rueda interrumpida sin presentar una fila vieja como reciente.
 
 ## Qué calcula
 - **Muros** de OI (call wall / put wall).
@@ -32,9 +33,10 @@ límite de CPU (medido).
 | `/` | panel |
 | `/api/niveles` | última instantánea de cada símbolo |
 | `/api/perfil?sym=QQQ` | perfil por strike (top 40 por \|GEX\|) |
-| `/api/flujo?min_prima=100000` | flujo de opciones por prima |
+| `/api/flujo?min_prima=100000` | flujo de opciones por prima; conserva `ts` y añade UTC/epoch inequívocos |
 | `/api/barras?sym=QQQ` | barras 1m + Bollinger |
-| `/api/quotes` | **precio vivo de TODA la flota** (o `?syms=A,B`): barrido rotativo Finnhub con D1 como almacén compartido; `age_s` declara la edad de cada precio. Barrido completo ~1 min de demanda |
+| `/api/quotes` | retirada (`410`); el precio vivo llega por `/stream` desde LSE |
+| `/data/gex_heatmap_<sym>.json` | perfil GEX agregado `ALL`, muros OI reales y frescura separada de fuente/recolección |
 | `/api/estado` | recuentos, cuota de LSE y últimas vueltas |
 | `/stream?sym=…&modo=perp` | **WebSocket realtime** del worker: history + ticks (~5 s) + niveles (~1 min). Con `modo=perp` (o `perp=…`) sirve el perpetuo OKX 24/7; sin él, snapshot de D1 declarado sin ticks. Habla un subconjunto del protocolo del puente local — el cockpit de seis ventanas funciona en el borde sin el Mac |
 | `/tarea/vuelta?key=…` | fuerza una vuelta (requiere `ADMIN_KEY`) |
@@ -42,10 +44,10 @@ límite de CPU (medido).
 
 ## Cómo corre
 Cron cada minuto, **ventana 24/5** (Yunior 2026-08-23: "sunday to friday") — del domingo al
-viernes se recolecta continuo y solo el sabado reposa. Cada vuelta hace **un símbolo del mapa**
-(41), **un símbolo de barras** de la flota (36) y el flujo: 5 MB de cadena no caben todos en una
-invocación, así que van en rueda. El precio VIVO de las ventanas no depende del cron: lo sirve
-`/stream` (Finnhub realtime en cash, perpetuo OKX en modo=perp).
+viernes se recolecta continuo y solo el sábado reposa. Cada vuelta actualiza barras de los seis
+símbolos del cockpit, un mapa del carril cockpit, un mapa del resto del universo y el flujo. Las
+cadenas van en rueda porque no caben todas en una invocación. El precio vivo de las ventanas no
+depende del cron: lo sirve `/stream` desde LSE (cash) u OKX (perpetuo declarado).
 
 ## Lo que NO hace
 No coloca órdenes ni las sugiere, y **no notifica** — ver `data/notify_off` en el repo. Es un mapa.
@@ -60,9 +62,19 @@ No coloca órdenes ni las sugiere, y **no notifica** — ver `data/notify_off` e
 
 ## Desarrollo
 ```
-node test.mjs                                   # 21 pruebas de las funciones puras
-node test-online.mjs                            # 44 pruebas contra el worker PUBLICADO
+node test.mjs                                   # pruebas puras y contratos del adaptador
+node test-online.mjs                            # regresión completa contra el worker PUBLICADO
+node test-gexlive-online.mjs                    # assets + contrato GEX Live/Heat Map
 npx wrangler deploy
 npx wrangler d1 execute ibtrader --remote --command="SELECT COUNT(*) FROM niveles"
 ```
 Secretos: `LSE_API_KEY` y `ADMIN_KEY` (`npx wrangler secret put …`).
+
+## Licencias y publicación
+
+Este worker es una herramienta interna. Que un endpoint responda sin clave no concede derecho
+de extracción o redistribución: Cboe prohíbe la extracción automatizada de su tabla diferida y
+los términos publicados por LSE no permiten revender ni exponer sus datos a terceros. Antes de
+convertir estas rutas en un producto público hay que sustituirlas por una fuente con derechos de
+redistribución o adoptar un modelo bring-your-own-data. FRESH/STALE describe edad técnica, no
+licencia comercial.

@@ -918,7 +918,7 @@
        desde data/gex_heatmap_<sym>.json (UW greek-exposure/strike-expiry). -->
   <div class="wgt" id="wgt-gexheat">
     <div class="wghdr">
-      <span class="wgdrag">⠿⠿</span><span class="wgname">Net GEX Heat Map</span><button class="wginfo" title="Info" data-widget="gexheat" aria-label="Información sobre Net GEX Heat Map">ⓘ</button><div class="popover-box" data-widget="gexheat"><div class="popover-title">Net GEX Heat Map</div><p><strong>Qué mide:</strong> Net GEX (call+put) por strike × vencimiento, escalado a $ por 1% de movimiento. Verde = dealers amparan (imán/pin). Rojo = amplían (acelerador). Morado = MVC, la celda de mayor |gamma| de la matriz.</p><div class="popover-source"><strong>Fuente:</strong> UW <code>greek-exposure/strike-expiry</code> vía <code>scripts/gex_heatmap.py</code>. La edad del dato se pinta en la cabecera.</div><div class="popover-doctrine"><strong>Doctrina:</strong> MAPA, no gatillo. La columna del viernes que muere = la jaula que se abre el lunes. Celda vacía = sin dato, jamás cero.</div></div>
+      <span class="wgdrag">⠿⠿</span><span class="wgname">Net GEX Heat Map</span><button class="wginfo" title="Info" data-widget="gexheat" aria-label="Información sobre Net GEX Heat Map">ⓘ</button><div class="popover-box" data-widget="gexheat"><div class="popover-title">Net GEX Heat Map</div><p><strong>Qué mide:</strong> Net GEX por strike × vencimiento, escalado a $ por 1% de movimiento. Verde = GEX positivo y rojo = GEX negativo bajo la convención declarada de la casa; no es inventario dealer observado. Morado = MVC, la celda de mayor |gamma| de la matriz.</p><div class="popover-source"><strong>Fuente:</strong> el feed declarado en el pie del widget. La edad de la fuente se pinta en la cabecera.</div><div class="popover-doctrine"><strong>Doctrina:</strong> MAPA, no gatillo. Celda vacía = sin dato, jamás cero. La interpretación direccional requiere confirmación independiente.</div></div>
       <span class="wgsub">—</span>
       <button class="wgb wgexp" title="Expandir / contraer">⤢</button>
       <button class="wgb wgmin" title="Plegar">–</button>
@@ -928,12 +928,13 @@
     <div class="wgrs" title="Arrastra para cambiar la altura"></div>
   </div>
   <!-- GEX Live Table (Yunior 2026-08-27, estilo Tanuki): rail de vencimientos DTE
-       arriba (click = elegir vencimiento) + tabla strike-level con spot/CW/PW/MVC.
+       cuando la fuente los desglosa; ALL honesto cuando solo hay perfil agregado.
+       Tabla strike-level con spot/CW/PW reales y MVC.
        Lo pinta charts/gex_live_table_widget.js desde el MISMO feed que el Heat Map
        (data/gex_heatmap_<sym>.json): cero red nueva y compatible con London-only. -->
   <div class="wgt" id="wgt-gexlive">
     <div class="wghdr">
-      <span class="wgdrag">⠿⠿</span><span class="wgname">GEX Live Table</span><button class="wginfo" title="Info" data-widget="gexlive" aria-label="Información sobre GEX Live Table">ⓘ</button><div class="popover-box" data-widget="gexlive"><div class="popover-title">GEX Live Table</div><p><strong>Qué mide:</strong> rail de vencimientos (fecha, DTE, semana/mensual, Net GEX con signo) y, debajo, el Net GEX por strike del vencimiento elegido con SPOT, CW (call wall), PW (put wall) y Γ (mayor |gamma|). Píldora ALL = todos los vencimientos sumados.</p><div class="popover-source"><strong>Fuente:</strong> el mismo feed que el Net GEX Heat Map (<code>data/gex_heatmap_&lt;sym&gt;.json</code>); la edad se pinta en la cabecera y en el pie.</div><div class="popover-doctrine"><strong>Doctrina:</strong> MAPA, no gatillo. Celda sin dato = vacía, jamás cero. En London-only sólo se muestra el mapa Γ×volumen de London, sin atribuir inventario dealer.</div></div>
+      <span class="wgdrag">⠿⠿</span><span class="wgname">GEX Live Table</span><button class="wginfo" title="Info" data-widget="gexlive" aria-label="Información sobre GEX Live Table">ⓘ</button><div class="popover-box" data-widget="gexlive"><div class="popover-title">GEX Live Table</div><p><strong>Qué mide:</strong> Net GEX por strike con SPOT, CW/PW reales por OI y Γ (mayor |GEX|). Si la fuente trae desglose real aparece el rail DTE; el perfil agregado de D1 se etiqueta ALL y nunca se atribuye al vencimiento más cercano.</p><div class="popover-source"><strong>Fuente:</strong> el mismo feed que el Net GEX Heat Map (<code>data/gex_heatmap_&lt;sym&gt;.json</code>); muestra por separado la edad de la fuente y de la recolección, con FRESH/STALE explícito.</div><div class="popover-doctrine"><strong>Doctrina:</strong> MAPA, no gatillo. Celda sin dato = vacía, jamás cero. En London-only sólo se muestra el mapa Γ×volumen de London, sin atribuir inventario dealer.</div></div>
       <span class="wgsub">—</span>
       <button class="wgb wgexp" title="Expandir / contraer">⤢</button>
       <button class="wgb wgmin" title="Plegar">–</button>
@@ -4819,7 +4820,11 @@ window.addEventListener("keydown", (e) => {
 
 function connect() {
   const conn = document.getElementById("conn");
-  const url = `ws://${location.host || "127.0.0.1:8080"}/stream`;
+  // HTTPS exige WSS; ademas el worker lee sym/tf/modo del query inicial. Perder el query
+  // conecta siempre al default y usar ws:// desde /chart hace que el navegador bloquee el
+  // socket como mixed content antes de que ibt-online pueda observar un solo frame.
+  const qs = location.search || "";
+  const url = `${location.protocol === "https:" ? "wss" : "ws"}://${location.host || "127.0.0.1:8080"}/stream${qs}`;
   beginChartLoad("conectando chart");
   ws = new WebSocket(url);
   ws.onopen = () => { conn.className = "on"; conn.textContent = "● WS conectado";

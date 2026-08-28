@@ -33,7 +33,8 @@ CREATE TABLE IF NOT EXISTS perfil (
 -- Flujo de opciones de LSE: prima y griegas REALES, no reconstruidas.
 CREATE TABLE IF NOT EXISTS flujo (
   id INTEGER PRIMARY KEY,           -- el id del vault: evita duplicar en cada vuelta
-  ts TEXT NOT NULL, underlying TEXT NOT NULL, ticker TEXT NOT NULL,
+  ts TEXT NOT NULL,                 -- UTC naive de LSE; /api/flujo añade source_ts_epoch/source_ts_utc
+  underlying TEXT NOT NULL, ticker TEXT NOT NULL,
   strike REAL, expiry TEXT, tipo TEXT, dte INTEGER,
   last_price REAL, volume REAL, premium REAL, underlying_price REAL,
   iv REAL, delta REAL, gamma REAL

@@ -2,6 +2,7 @@
 import { flipRaices, gammaFlip, maxPain, bollinger, agregar } from "./lib/calculo.mjs";
 import { ventanaAbierta, fase, CADENCIA } from "./lib/universo.mjs";
 import { turno } from "./lib/recolecta.mjs";
+import { adaptarGexHeatmap, flujoTsUtc } from "./worker.mjs";
 
 let pasa = 0, falla = 0;
 const ok = (n, c, extra = "") => c ? (pasa++, console.log("  ✓ " + n))
@@ -99,6 +100,17 @@ console.log("\n[agregar]");
   ok("el put wall no sube del spot aunque el mayor OI este arriba",
      cruzado.put_wall === 99, String(cruzado.put_wall));
   ok("piso <= techo por construccion", cruzado.put_wall <= cruzado.call_wall);
+
+  const sinOiEnSuLado = agregar({ data: { current_price: 100, last_trade_time: "x", options: [
+    { option: "TST260828C00099000", open_interest: 10, volume: 1, gamma: 0.01, iv: 0.2 },
+    { option: "TST260828P00101000", open_interest: 20, volume: 1, gamma: 0.01, iv: 0.2 },
+  ] } });
+  ok("sin OI call sobre spot no inventa un call wall de OI 0",
+     sinOiEnSuLado.call_wall === null && sinOiEnSuLado.call_wall_oi === null,
+     JSON.stringify({ wall: sinOiEnSuLado.call_wall, oi: sinOiEnSuLado.call_wall_oi }));
+  ok("sin OI put bajo spot no inventa un put wall de OI 0",
+     sinOiEnSuLado.put_wall === null && sinOiEnSuLado.put_wall_oi === null,
+     JSON.stringify({ wall: sinOiEnSuLado.put_wall, oi: sinOiEnSuLado.put_wall_oi }));
   ok("declara la banda usada", typeof lejos.muros_banda === "number", String(lejos.muros_banda));
   ok("la banda no pasa del 10% del spot", lejos.muros_banda <= 10.0001, String(lejos.muros_banda));
 
@@ -144,6 +156,55 @@ ok("ninguna fase pide temporalidades duplicadas",
             + 480 / CADENCIA.noche.cada * (6 * CADENCIA.noche.tfs.length + 1);
   ok("el dia entero cabe en 15.000 peticiones LSE", dia < 15000, `estimado ${Math.round(dia)}`);
   ok("y deja al menos 40% de margen", dia < 9000, `estimado ${Math.round(dia)}`);
+}
+
+console.log("\n[gex live adapter]");
+{
+  const n = {
+    sym: "TST", spot: 100, ts: 2000000000, fuente_ts: "2026-08-27T10:00:00",
+    call_wall: 101, call_wall_oi: 400, put_wall: 99, put_wall_oi: 500,
+    gex_total: 12345, exp: "20260827",
+  };
+  const d = adaptarGexHeatmap(n,
+    [{ strike: 101, gex: 200 }, { strike: 100, gex: null }, { strike: 99, gex: -300 }],
+    2000000100);
+  ok("el perfil agregado se etiqueta ALL, no como n.exp",
+     d.expiry_scope === "all" && d.expiries.length === 1 && d.expiries[0] === "ALL",
+     JSON.stringify(d.expiries));
+  ok("declara GEX ya escalado a $/1% para que el heatmap no multiplique dos veces",
+     d.metric === "gex" && d.scale === "dollar1pct", JSON.stringify({ metric: d.metric, scale: d.scale }));
+  ok("conserva los muros OI reales del motor",
+     d.call_wall === 101 && d.call_wall_oi === 400 && d.put_wall === 99 && d.put_wall_oi === 500);
+  ok("celda sin GEX queda [null] y la matriz sigue rectangular",
+     d.cells.length === 3 && d.cells.every(c => Array.isArray(c) && c.length === 1) && d.cells[1][0] === null,
+     JSON.stringify(d.cells));
+  ok("separa fuente de recoleccion", d.source_ts !== d.collection_ts && d.collection_ts === n.ts,
+     JSON.stringify({ source: d.source_ts, collection: d.collection_ts }));
+  ok("declara freshness/stale con edades separadas",
+     typeof d.stale === "boolean" && ["fresh", "stale"].includes(d.freshness.state) &&
+     typeof d.freshness.source_age_s === "number" && typeof d.freshness.collection_age_s === "number");
+  const cockpitViejo = adaptarGexHeatmap({ ...n, sym: "QQQ" }, [], 2000000800);
+  const mapaMismaEdad = adaptarGexHeatmap({ ...n, sym: "TST" }, [], 2000000800);
+  ok("cockpit usa su rueda de 6 y queda stale tras dos vueltas",
+     cockpitViejo.freshness.collection_lane === "cockpit" &&
+     cockpitViejo.freshness.collection_cycle_s === 6 * 60 && cockpitViejo.freshness.collection_stale === true,
+     JSON.stringify(cockpitViejo.freshness));
+  ok("resto usa su propia rueda y no hereda el SLA corto del cockpit",
+     mapaMismaEdad.freshness.collection_lane === "mapa" &&
+     mapaMismaEdad.freshness.collection_cycle_s > 6 * 60 && mapaMismaEdad.freshness.collection_stale === false,
+     JSON.stringify(mapaMismaEdad.freshness));
+  ok("MVC pertenece al agregado ALL", d.mvc?.strike === 99 && d.mvc?.expiry === "ALL", JSON.stringify(d.mvc));
+}
+
+console.log("\n[flujo UTC]");
+{
+  const t = flujoTsUtc("2026-08-27 16:21:04.269665");
+  ok("el timestamp naive de LSE se interpreta como UTC, no ET local",
+     t.source_ts_utc === "2026-08-27T16:21:04.269Z", JSON.stringify(t));
+  ok("publica epoch de segundos coherente con el ISO UTC",
+     t.source_ts_epoch === Math.floor(Date.parse(t.source_ts_utc) / 1000), String(t.source_ts_epoch));
+  const malo = flujoTsUtc("no-es-fecha");
+  ok("timestamp ilegible falla como null, no como ahora", malo.source_ts_epoch === null && malo.source_ts_utc === null);
 }
 
 console.log(`\n${pasa} pasan · ${falla} fallan\n`);
