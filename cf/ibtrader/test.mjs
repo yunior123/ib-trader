@@ -158,6 +158,17 @@ ok("ninguna fase pide temporalidades duplicadas",
   ok("y deja al menos 40% de margen", dia < 9000, `estimado ${Math.round(dia)}`);
 }
 
+console.log("\n[edge pesado]");
+{
+  // Solo el literal "1" habilita la carga; "false" o "0" no deben encenderla por ser truthy.
+  const fs = await import("node:fs");
+  const worker = fs.readFileSync(new URL("./worker.mjs", import.meta.url), "utf8");
+  ok("el cron pesado es opt-in estricto",
+     worker.includes('env.ENABLE_EDGE_HEAVY_COLLECTION === "1"'));
+  ok("el modo ligero omite barras REST y mapas pesados",
+     worker.includes("tfs: edgeHeavy ? tfs : []") && worker.includes("mapas: edgeHeavy"));
+}
+
 console.log("\n[gex live adapter]");
 {
   const n = {

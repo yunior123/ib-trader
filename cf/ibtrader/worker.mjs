@@ -560,7 +560,12 @@ export default {
     // options"). Las velas son de LSE y solo de LSE: WebSocket (que no gasta cuota) y vault.
     // CBOE y las demas fuentes gratis se quedan donde les toca: la cadena de opciones.
     if (min % cada !== 0) return;
-    ctx.waitUntil(vuelta(env, { tfs }));
+    // En el free edge las barras ya llegan por /tarea/barras-push desde el Mac. Repetir seis
+    // descargas de 1.500 filas y parsear dos cadenas de opciones en la misma invocacion excede
+    // el limite de CPU (medido por tail). La carga pesada solo se activa de forma explicita
+    // cuando exista fuente con derechos de uso y un plan con CPU suficiente.
+    const edgeHeavy = env.ENABLE_EDGE_HEAVY_COLLECTION === "1";
+    ctx.waitUntil(vuelta(env, { tfs: edgeHeavy ? tfs : [], mapas: edgeHeavy }));
   },
 
   async fetch(request, env, ctx) {

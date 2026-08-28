@@ -44,10 +44,14 @@ detectar una rueda interrumpida sin presentar una fila vieja como reciente.
 
 ## Cómo corre
 Cron cada minuto, **ventana 24/5** (Yunior 2026-08-23: "sunday to friday") — del domingo al
-viernes se recolecta continuo y solo el sábado reposa. Cada vuelta actualiza barras de los seis
-símbolos del cockpit, un mapa del carril cockpit, un mapa del resto del universo y el flujo. Las
-cadenas van en rueda porque no caben todas en una invocación. El precio vivo de las ventanas no
-depende del cron: lo sirve `/stream` desde LSE (cash) u OKX (perpetuo declarado).
+viernes se recolecta continuo y solo el sábado reposa. En el plan gratuito, el cron corre en modo
+ligero: las barras llegan por `/tarea/barras-push`, se actualiza el flujo y las instantáneas de
+opciones existentes se conservan con FRESH/STALE explícito. La descarga y cálculo pesado de mapas
+queda apagada porque excede el CPU del free tier y además requiere confirmar derechos de fuente.
+
+`ENABLE_EDGE_HEAVY_COLLECTION=1` vuelve a habilitar barras REST + mapas en el cron, pero solo debe
+usarse con un plan de CPU suficiente y una fuente cuya licencia autorice esa recopilación. El
+precio vivo de las ventanas lo sirve `/stream` desde LSE (cash) u OKX (perpetuo declarado).
 
 ## Lo que NO hace
 No coloca órdenes ni las sugiere, y **no notifica** — ver `data/notify_off` en el repo. Es un mapa.

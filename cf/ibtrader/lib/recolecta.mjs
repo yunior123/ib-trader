@@ -111,7 +111,7 @@ export async function gastoLseHoy(db) {
 // local 4.000 (scripts/lse_budget.py) = 14.500, 500 de margen para /panel, /chart y manual.
 export const TECHO_LSE = 10500;
 
-export async function vuelta(env, { tfs = ["15m", "1m"] } = {}) {
+export async function vuelta(env, { tfs = ["15m", "1m"], mapas = true } = {}) {
   const db = env.DB, key = env.LSE_API_KEY;
   // Los SEIS del cockpit se refrescan en CADA vuelta: son los que se miran. El resto del
   // universo va en rueda, un simbolo por vuelta, porque 5 MB de cadena no caben todos juntos.
@@ -152,13 +152,20 @@ export async function vuelta(env, { tfs = ["15m", "1m"] } = {}) {
                                                  : res.errores.push(`barras ${par[j].sym} ${par[j].tf}: ${x.reason?.message}`));
   }
 
-  // mapa: dos del cockpit por vuelta (en rueda entre los seis) + uno del resto
-  const seisEnRueda = turno(COCKPIT);
-  for (const sym of [seisEnRueda, symMapa]) {
-    try { await recolectarMapa(db, sym); }
-    catch (e) { res.errores.push(`mapa ${sym}: ${e.message}`); }
+  // El mapa de opciones es la carga pesada: una cadena grande no cabe de forma fiable en los
+  // 10 ms de CPU del plan gratuito. El cron del borde lo desactiva por defecto y conserva las
+  // instantaneas existentes como STALE; solo se habilita con fuente autorizada + plan capaz.
+  if (mapas) {
+    const seisEnRueda = turno(COCKPIT);
+    for (const sym of [seisEnRueda, symMapa]) {
+      try { await recolectarMapa(db, sym); }
+      catch (e) { res.errores.push(`mapa ${sym}: ${e.message}`); }
+    }
+    res.mapa_ok = [seisEnRueda, symMapa];
+  } else {
+    res.mapa_ok = [];
+    res.mapa_estado = "desactivado: requiere fuente autorizada y presupuesto CPU";
   }
-  res.mapa_ok = [seisEnRueda, symMapa];
 
   if (!saltar) {
     try { res.flujo_ok = await recolectarFlujo(db, key); }
