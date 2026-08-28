@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="La Manada is an educational market-structure workspace with explicit freshness and quality labels.">
+  <title>La Manada | Market Structure, Without the Hype</title>
+  <link rel="icon" href="app/favicon.svg" type="image/svg+xml">
+  <style>
+    :root { color-scheme: dark; --bg:#080b0d; --ink:#f3f0e7; --muted:#a5afb0; --gold:#d9b66d; --mint:#6ed6b3; --line:rgba(255,255,255,.1); --panel:#11171a; font-family:Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    * { box-sizing:border-box; } html { scroll-behavior:smooth; } body { margin:0; color:var(--ink); background:var(--bg); line-height:1.55; }
+    body::before { content:""; position:fixed; inset:0; z-index:-1; background:radial-gradient(circle at 75% 0,rgba(217,182,109,.14),transparent 34rem),linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px); background-size:auto,52px 52px,52px 52px; }
+    a { color:inherit; } .skip { position:fixed; top:1rem; left:1rem; transform:translateY(-200%); z-index:5; padding:.7rem 1rem; color:#111; background:var(--gold); } .skip:focus { transform:none; }
+    nav { display:flex; justify-content:space-between; align-items:center; width:min(1240px,calc(100% - 2rem)); min-height:78px; margin:auto; border-bottom:1px solid var(--line); }
+    .brand { display:flex; align-items:center; gap:.75rem; text-decoration:none; font-weight:800; letter-spacing:.12em; } .mark { display:grid; place-items:center; width:38px; height:38px; color:#151007; background:linear-gradient(145deg,#f0d28e,#ad843b); border-radius:11px; font:800 .75rem/1 ui-monospace,monospace; }
+    .navlinks { display:flex; gap:1.2rem; align-items:center; color:var(--muted); font-size:.84rem; } .navlinks a { text-decoration:none; } .navlinks a:hover,.navlinks a:focus-visible { color:var(--ink); }
+    .button { display:inline-flex; align-items:center; justify-content:center; min-height:46px; padding:0 1.1rem; border:1px solid var(--line); border-radius:999px; text-decoration:none; font-weight:700; font-size:.84rem; }
+    .button-primary { color:#17130b; border-color:var(--gold); background:var(--gold); box-shadow:0 18px 45px rgba(217,182,109,.15); } .button-secondary { background:rgba(255,255,255,.035); }
+    main { width:min(1240px,calc(100% - 2rem)); margin:auto; } section { padding:6rem 0; border-bottom:1px solid var(--line); }
+    .hero { display:grid; grid-template-columns:1.2fr .8fr; gap:4rem; align-items:center; min-height:calc(100vh - 78px); }
+    .eyebrow { margin:0 0 .8rem; color:var(--gold); font:700 .7rem/1.2 ui-monospace,monospace; letter-spacing:.19em; }
+    h1,h2,h3 { font-family:Georgia,"Times New Roman",serif; font-weight:400; letter-spacing:-.04em; } h1 { max-width:780px; margin:0; font-size:clamp(4rem,8vw,8.2rem); line-height:.88; } h2 { margin:.2rem 0 1rem; font-size:clamp(2.4rem,5vw,4.8rem); line-height:1; } h3 { margin:.3rem 0 .65rem; font-size:1.55rem; }
+    .hero-copy>p:not(.eyebrow) { max-width:650px; margin:1.5rem 0; color:#bdc5c4; font-size:1.15rem; } .actions { display:flex; flex-wrap:wrap; gap:.65rem; margin-top:2rem; }
+    .proof-card { padding:1.2rem; border:1px solid var(--line); border-radius:24px; background:linear-gradient(145deg,rgba(255,255,255,.06),rgba(255,255,255,.015)); box-shadow:0 40px 100px rgba(0,0,0,.32); transform:rotate(1.5deg); }
+    .terminal { padding:1.35rem; border-radius:17px; background:#080b0d; font: .78rem/1.8 ui-monospace,SFMono-Regular,monospace; } .terminal-head { display:flex; justify-content:space-between; color:var(--muted); border-bottom:1px solid var(--line); padding-bottom:.8rem; margin-bottom:.8rem; } .terminal-row { display:grid; grid-template-columns:1fr auto auto; gap:1rem; border-bottom:1px solid rgba(255,255,255,.055); padding:.45rem 0; } .fresh { color:var(--mint); } .stale { color:#ff8080; }
+    .trustline { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; } .trustline article,.feature,.boundary { padding:1.5rem; border:1px solid var(--line); border-radius:18px; background:rgba(255,255,255,.025); } .trustline strong { display:block; font:400 2rem/1 Georgia,serif; } .trustline span { display:block; margin-top:.5rem; color:var(--muted); }
+    .section-intro { display:grid; grid-template-columns:.7fr 1fr; gap:3rem; margin-bottom:3rem; } .section-intro p:last-child { color:var(--muted); }
+    .feature-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; } .feature-number { color:var(--gold); font:700 .7rem/1 ui-monospace,monospace; letter-spacing:.12em; } .feature p { margin:0; color:var(--muted); }
+    .boundary-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; } .boundary.available { border-color:rgba(110,214,179,.25); } .boundary.pending { border-color:rgba(217,182,109,.25); } .boundary ul { padding-left:1.2rem; color:var(--muted); } .boundary li { margin:.6rem 0; }
+    .launch { display:grid; grid-template-columns:1.2fr .8fr; gap:3rem; align-items:end; } .launch p { max-width:700px; color:var(--muted); } .status-card { padding:1.4rem; border:1px solid var(--line); border-radius:18px; background:var(--panel); } .status-card strong,.status-card span { display:block; } .status-card strong { font:400 1.7rem/1.1 Georgia,serif; } .status-card span { margin-top:.5rem; color:var(--muted); }
+    footer { display:flex; justify-content:space-between; gap:2rem; width:min(1240px,calc(100% - 2rem)); margin:auto; padding:2rem 0 3rem; color:var(--muted); font-size:.78rem; }
+    @media(max-width:850px){.hero,.section-intro,.launch{grid-template-columns:1fr}.hero{padding-top:4rem}.proof-card{transform:none}.feature-grid,.trustline{grid-template-columns:1fr}.boundary-grid{grid-template-columns:1fr}.navlinks a:not(.button){display:none}}
+    @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <nav aria-label="Primary navigation">
+    <a class="brand" href="#top"><span class="mark" aria-hidden="true">LM</span>LA MANADA</a>
+    <div class="navlinks"><a href="#inside">Inside</a><a href="#boundaries">Boundaries</a><a class="button button-secondary" href="app/index.html">Open preview</a></div>
+  </nav>
+  <main id="main">
+    <section id="top" class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">EDUCATIONAL MARKET STRUCTURE</p>
+        <h1>Clarity has a timestamp.</h1>
+        <p>La Manada turns measured options structure into a restrained daily desk: walls, flip, expected move, options activity, and the age of every source. Stale data is labeled—not polished away.</p>
+        <div class="actions"><a class="button button-primary" href="app/index.html">Explore the dashboard</a><a class="button button-secondary" href="#boundaries">Review product status</a></div>
+      </div>
+      <aside class="proof-card" aria-label="Illustrative data-health preview">
+        <div class="terminal">
+          <div class="terminal-head"><span>STRUCTURE DESK</span><span>ILLUSTRATION</span></div>
+          <div class="terminal-row"><strong>Levels</strong><span class="fresh">FRESH</span><span>12.4m</span></div>
+          <div class="terminal-row"><strong>Flow</strong><span class="stale">STALE</span><span>91.0m</span></div>
+          <div class="terminal-row"><strong>Execution</strong><span>OFF</span><span>HUMAN</span></div>
+          <p>Example labels only. The member desk displays generated snapshot values, not these illustrations.</p>
+        </div>
+      </aside>
+    </section>
+
+    <section aria-label="Core principles">
+      <div class="trustline"><article><strong>Signal-only</strong><span>No brokerage connection or automated execution.</span></article><article><strong>Null stays null</strong><span>Missing evidence is never converted into a plausible zero.</span></article><article><strong>Age is visible</strong><span>Every structural and activity row carries a freshness state.</span></article></div>
+    </section>
+
+    <section id="inside">
+      <div class="section-intro"><div><p class="eyebrow">WHAT MEMBERS SEE</p><h2>A desk, not a promise.</h2></div><p>The product organizes already measured data. It does not manufacture trades, returns, dealer inventory, or directional meaning from options volume alone.</p></div>
+      <div class="feature-grid">
+        <article class="feature"><span class="feature-number">01 / STRUCTURE</span><h3>Walls and flip</h3><p>Spot, put wall, call wall, flip, expected move, and explicit quality flags in one sortable view.</p></article>
+        <article class="feature"><span class="feature-number">02 / ACTIVITY</span><h3>Options observations</h3><p>Notional contract activity with age labels—and a standing warning that call/put is not aggressor side.</p></article>
+        <article class="feature"><span class="feature-number">03 / TRUTH</span><h3>Data-health layer</h3><p>Fresh, stale, unknown, invalid-future, crossed-wall, and missing-field conditions remain visible.</p></article>
+      </div>
+    </section>
+
+    <section id="boundaries">
+      <div class="section-intro"><div><p class="eyebrow">RELEASE BOUNDARIES</p><h2>Honest before launch.</h2></div><p>This repository is a product preview, not a live commercial membership. The remaining operational work is deliberately visible.</p></div>
+      <div class="boundary-grid">
+        <article class="boundary available"><p class="eyebrow">BUILT IN THIS KIT</p><h3>Preview-ready</h3><ul><li>Offline-testable snapshot generator</li><li>Responsive member dashboard</li><li>Sales-page preview</li><li>Freshness and quality contract</li><li>Educational-only disclosures</li></ul></article>
+        <article class="boundary pending"><p class="eyebrow">REQUIRES OWNER SETUP</p><h3>Not live yet</h3><ul><li>Whop product and membership configuration</li><li>Authentication and server-side access control</li><li>Published pricing or checkout</li><li>Course, community, or Discord operations</li><li>Documented audited performance record</li></ul></article>
+      </div>
+    </section>
+
+    <section class="launch">
+      <div><p class="eyebrow">PRODUCT PREVIEW</p><h2>Ready for internal review.</h2><p>Generate a snapshot from fixtures or approved sources, serve the folder locally, and review the complete member journey before configuring anything in Whop.</p><div class="actions"><a class="button button-primary" href="app/index.html">Open member desk</a></div></div>
+      <aside class="status-card"><strong>No checkout configured</strong><span>No plans have been created, no users charged, and no content published by this kit.</span></aside>
+    </section>
+  </main>
+  <footer><p>La Manada product preview</p><p>Educational only · not financial advice · no performance claims</p></footer>
+</body>
+</html>

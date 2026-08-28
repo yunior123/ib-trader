@@ -1,0 +1,38 @@
+[
+  {
+    "sym": "QQQ",
+    "fuente_ts": "2026-08-27T12:20:00",
+    "spot": 702.25,
+    "call_wall": 710,
+    "put_wall": 695,
+    "flip": 699.5,
+    "max_pain": 700,
+    "gex_total": 1250000000,
+    "pressure": 58.4,
+    "em": 6.8
+  },
+  {
+    "sym": "SPY",
+    "fuente_ts": "2026-08-27T10:00:00",
+    "spot": 650.4,
+    "call_wall": 660,
+    "put_wall": 645,
+    "flip": null,
+    "max_pain": 650,
+    "gex_total": -820000000,
+    "pressure": 43.1,
+    "em": 5.2
+  },
+  {
+    "sym": "TEST",
+    "fuente_ts": "2026-08-27T12:25:00",
+    "spot": 100,
+    "call_wall": 99,
+    "put_wall": 101,
+    "flip": null,
+    "max_pain": null,
+    "gex_total": null,
+    "pressure": null,
+    "em": null
+  }
+]

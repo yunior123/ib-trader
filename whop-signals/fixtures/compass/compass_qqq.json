@@ -1,0 +1,8 @@
+{
+  "sym": "QQQ",
+  "state": "CONTINUACION",
+  "dir": "up",
+  "prob": 0.61,
+  "prob_source": "measured_oos",
+  "ts": "2026-08-27T16:25:00Z"
+}

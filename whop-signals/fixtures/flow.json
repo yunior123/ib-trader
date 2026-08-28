@@ -1,0 +1,26 @@
+[
+  {
+    "ts": "2026-08-27 16:28:00",
+    "underlying": "QQQ",
+    "ticker": "QQQ260828C00710000",
+    "strike": 710,
+    "expiry": "2026-08-28",
+    "tipo": "call",
+    "dte": 1,
+    "premium": 1250000,
+    "delta": 0.42,
+    "gamma": 0.012
+  },
+  {
+    "ts": "2026-08-27 15:00:00",
+    "underlying": "SPY",
+    "ticker": "SPY260828P00645000",
+    "strike": 645,
+    "expiry": "2026-08-28",
+    "tipo": "put",
+    "dte": 1,
+    "premium": 900000,
+    "delta": null,
+    "gamma": null
+  }
+]

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">La Manada</title>
+  <defs>
+    <linearGradient id="gold" x1="8" y1="4" x2="56" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f2d597"/>
+      <stop offset="1" stop-color="#af8842"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="18" fill="url(#gold)"/>
+  <path d="M16 43V20h6l10 14 10-14h6v23h-7V31l-9 12-9-12v12z" fill="#17130a"/>
+</svg>

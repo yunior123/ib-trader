@@ -1,0 +1,8 @@
+{
+  "sym": "SPY",
+  "state": "SIN LECTURA",
+  "dir": "down",
+  "prob": 0.88,
+  "prob_source": "heuristic",
+  "ts": "2026-08-27T14:00:00Z"
+}

@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Educational market-structure dashboard with explicit freshness and data-quality labels.">
+  <title>La Manada | Market Structure Desk</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to market structure</a>
+  <div class="ambient ambient-one" aria-hidden="true"></div>
+  <div class="ambient ambient-two" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="../landing.html" aria-label="La Manada home">
+      <span class="brand-mark" aria-hidden="true">LM</span>
+      <span><strong>LA MANADA</strong><small>MARKET STRUCTURE DESK</small></span>
+    </a>
+    <div class="topbar-actions">
+      <span id="mode-badge" class="badge badge-neutral">LOADING</span>
+      <span id="generated-at" class="timestamp">Snapshot pending</span>
+      <button id="refresh" class="button button-quiet" type="button">Refresh</button>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="hero-panel" aria-labelledby="desk-title">
+      <div>
+        <p class="eyebrow">STRUCTURE BEFORE STORY</p>
+        <h1 id="desk-title">A calmer read on a noisy tape.</h1>
+        <p class="lede">Measured levels, options activity, and data age in one view. Every stale or missing field stays visible. No orders. No hidden certainty.</p>
+      </div>
+      <aside class="truth-card" aria-label="Product boundaries">
+        <span class="pulse" aria-hidden="true"></span>
+        <div><strong>Signal-only</strong><small>Human execution remains outside this product.</small></div>
+      </aside>
+    </section>
+
+    <section aria-labelledby="health-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">TRUTH LAYER</p><h2 id="health-title">Data health</h2></div>
+        <p id="load-message" class="load-message" role="status" aria-live="polite">Loading snapshot…</p>
+      </div>
+      <div id="health-grid" class="metric-grid" aria-live="polite"></div>
+    </section>
+
+    <section class="context-grid" aria-labelledby="context-title">
+      <article class="panel context-panel">
+        <div class="section-heading compact">
+          <div><p class="eyebrow">FLEET READ</p><h2 id="context-title">Context, not prediction</h2></div>
+          <span id="context-status" class="badge badge-neutral">UNKNOWN</span>
+        </div>
+        <div id="context-content" class="context-content"></div>
+      </article>
+      <article class="panel notes-panel">
+        <p class="eyebrow">READ THIS FIRST</p>
+        <h2>What the desk refuses to infer</h2>
+        <ul id="source-notes" class="boundary-list"></ul>
+      </article>
+    </section>
+
+    <section aria-labelledby="levels-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">STRUCTURAL MAP</p><h2 id="levels-title">Walls, flip, and expected move</h2></div>
+        <div class="filters" aria-label="Level filters">
+          <label><span class="visually-hidden">Search symbol</span><input id="symbol-filter" type="search" placeholder="Filter symbol" autocomplete="off"></label>
+          <label><span class="visually-hidden">Freshness</span><select id="freshness-filter"><option value="all">All ages</option><option value="fresh">Fresh only</option><option value="stale">Stale only</option><option value="unknown">Unknown only</option></select></label>
+        </div>
+      </div>
+      <div class="table-shell">
+        <table>
+          <thead><tr><th scope="col">Symbol</th><th scope="col">Spot</th><th scope="col">Put wall</th><th scope="col">Call wall</th><th scope="col">Flip</th><th scope="col">Exp. move</th><th scope="col">Compass</th><th scope="col">Source age</th><th scope="col">Quality</th></tr></thead>
+          <tbody id="levels-body"></tbody>
+        </table>
+        <p id="levels-empty" class="empty-state" hidden>No structural rows match this filter.</p>
+      </div>
+    </section>
+
+    <section aria-labelledby="flow-title">
+      <div class="section-heading">
+        <div><p class="eyebrow">OPTIONS ACTIVITY</p><h2 id="flow-title">Large notional observations</h2></div>
+        <p class="section-note">Call or put does not establish aggressor side.</p>
+      </div>
+      <div id="flow-grid" class="flow-grid"></div>
+      <p id="flow-empty" class="empty-state" hidden>No options-activity rows are available.</p>
+    </section>
+  </main>
+
+  <footer>
+    <p id="disclaimer">Educational market-structure context only. Not financial advice.</p>
+    <p>La Manada preview · no brokerage connection · no performance claims</p>
+  </footer>
+
+  <template id="metric-template">
+    <article class="metric-card"><span class="metric-label"></span><strong class="metric-value"></strong><small class="metric-detail"></small></article>
+  </template>
+  <script src="dashboard.js" defer></script>
+</body>
+</html>

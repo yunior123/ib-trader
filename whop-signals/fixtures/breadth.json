@@ -1,0 +1,11 @@
+{
+  "QQQ": {
+    "index": "QQQ",
+    "score": -0.2,
+    "verdict": "WEAK: descriptive breadth lacks confluence",
+    "aligned_top": ["MSFT", "AAPL"],
+    "breakdowns": ["AMZN"],
+    "breakouts": ["NVDA"],
+    "ts": "2026-08-27T16:23:00Z"
+  }
+}
