@@ -178,3 +178,34 @@ config/*.muerto_*
 config/*_purgados_*
 config/*_evidencia.json
 data/secrets_names.txt
+
+# runtime data artifacts (option chains, perp tapes, signals)
+data/history/*/opt_chain_*
+data/history/*/opt_flow*
+data/history/*/opt_whale*
+data/history/*/ranking.json
+data/perp_tape/
+data/trading-signals/
+data/truth_lock_snap/
+data/nbbo_*.tmp.*
+data/perp_stocks.json.tmp.*
+data/*.tmp.*
+data/linkedin_cola_*
+data/x_candidatas_*
+data/x_cosecha_*
+data/x_snapshot_*
+data/lse_budget.json
+
+# more runtime data
+data/dip_alerted_*
+data/earnings_fall_passes_*
+data/bars_push_state.json
+data/history/*/gex_snapshot.json
+data/history/*/levels.json
+data/history/*/*.txt
+data/history/*/levels_5m.jsonl.gz
+.claude/scheduled_tasks.lock
+.wrangler/
+
+# entire dated history directories (runtime captures)
+data/history/2026-*/
